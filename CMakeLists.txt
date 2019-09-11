@@ -11,32 +11,36 @@ include_directories(
 
 add_definitions(-std=c++11)
 
-macro(add_prog name)
+macro(add_prog)
 
-  add_executable(${name} ${name}.cpp)
+  set(ARGS ${ARGN})
+  list(GET ARGS 0 name)
+  list(REMOVE_AT ARGS 0)
+
+  add_executable(${name} ${name}.cpp ${ARGS})
   target_link_libraries(${name} ${OpenCV_LIBS})
 
   install(TARGETS ${name} DESTINATION bin )
 endmacro()
 
 add_prog(CannyWebcam1)
-add_prog(findLaserPoint)
+# add_prog(findLaserPoint)
 add_prog(mouth)
 #add_prog(eyebrow)
 
 
-add_prog(App)
+#add_prog(App)
 add_prog(canny)
 add_prog(contour)
 add_prog(Contour_detection)
 add_prog(contours2)
-add_prog(contours3)
+#add_prog(contours3)
 add_prog(contours4)
 add_prog(contours)
 add_prog(distance)
-add_prog(images)
+add_prog(images polygon.cpp data.cpp)
 add_prog(laser)
-add_prog(mulobject)
+#add_prog(mulobject)
 #7u add_prog(MusicJamboree)
 add_prog(o_angle)
 #add_prog(ObjectProcessor)

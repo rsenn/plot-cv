@@ -1,13 +1,14 @@
 #include <iostream>
-#include <opencv/cv.h>
+#include <opencv2/opencv.hpp>
 #include <opencv/cvaux.h>
 #include <opencv/cxcore.h>
-#include <opencv/highgui.h>
+#include <opencv2/highgui.hpp>
 #include <fstream>
 #include <string>
 #include <sstream>
 using namespace std;
 using namespace cv;
+
 int thresholdValue = 155;
 int thresholdValueHSV = 100;
 int mouseY = 100, mouseX = 100;
@@ -87,7 +88,7 @@ invertColor(Mat& img) {
   for(int i = 0; i < img.rows; i++)
     for(int j = 0; j < img.cols; j++) img.at<uchar>(i, j) = 255 - img.at<uchar>(i, j);
 }
-void
+int
 main() {
   Mat imgRaw;
   Mat imgProc;
@@ -255,7 +256,7 @@ main() {
         circle(imgToMapProcCopy, brightPoint, 3, Scalar(255));
         laserPoint.x = (brightPoint.x - center.x) / 6;
         laserPoint.y = (center.y - brightPoint.y) / 6;
-        stringstream info;
+        istringstream info;
         String coordInfo = "(";
         String tempStr;
         info.clear();

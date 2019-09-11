@@ -1,0 +1,811 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"poly",
+				"polygonArea"
+			],
+			[
+				"Parsigr",
+				"ParsigramBalances"
+			],
+			[
+				"require_",
+				"require_parsigram"
+			],
+			[
+				"capture_",
+				"capture_api_errors"
+			],
+			[
+				"acti",
+				"activate_token"
+			],
+			[
+				"encode",
+				"encode_query_string"
+			],
+			[
+				"getaddres",
+				"getaddressesbylabel\tabc"
+			],
+			[
+				"split",
+				"split_string\tabc"
+			],
+			[
+				"capture",
+				"capture_api_errors\tabc"
+			],
+			[
+				"Trans",
+				"TransactionEndpoint\tabc"
+			],
+			[
+				"capture_er",
+				"capture_errors_json"
+			],
+			[
+				"cap",
+				"capture_errors_json"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				]
+			],
+			[
+				"Packages/Makefile/Make.sublime-build",
+				"Clean"
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"schemee",
+				"SchemeEditor: Edit Current Scheme"
+			],
+			[
+				"out",
+				"Browse Mode: Outline (Right)"
+			],
+			[
+				"schemd",
+				"SchemeEditor: Edit Current Scheme"
+			],
+			[
+				"install pac",
+				"Package Control: Install Package"
+			],
+			[
+				"add re",
+				"Package Control: Add Repository"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
+				"install pa",
+				"Package Control: Install Package"
+			],
+			[
+				"adva",
+				"Package Control: Advanced Install Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"instalp",
+				"Package Control: Install Package"
+			],
+			[
+				"schemeed",
+				"SchemeEditor: Edit Current Scheme"
+			],
+			[
+				"adv",
+				"Package Control: Advanced Install Package"
+			],
+			[
+				"html",
+				"HTMLPrettify"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			],
+			[
+				"install p",
+				"Package Control: Install Package"
+			],
+			[
+				"install pack",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: install",
+				"Package Control: Install Package"
+			],
+			[
+				"edit ",
+				"Color Scheme Editor: Edit current color scheme"
+			],
+			[
+				"scheme",
+				"Color Scheme Editor: Goto previous matching scope"
+			],
+			[
+				"INSTALL",
+				"Package Control: Install Package"
+			],
+			[
+				"INST",
+				"Package Control: Install Package"
+			],
+			[
+				"REMOVE",
+				"Package Control: Remove Package"
+			],
+			[
+				"SCHEMED",
+				"Color Scheme Editor: Edit current color scheme"
+			],
+			[
+				"edit",
+				"SchemeEditor: Edit installed scheme"
+			],
+			[
+				"color",
+				"Color Scheme Editor: Edit current color scheme"
+			],
+			[
+				"install p$",
+				"Package Control: Install Package"
+			],
+			[
+				"remove pac",
+				"Package Control: Remove Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"DELETE",
+				"Delete Blank Lines"
+			],
+			[
+				"moon",
+				"Browse Mode: Outline (Left)"
+			],
+			[
+				"outline",
+				"Browse Mode: Outline (Right)"
+			],
+			[
+				"lua",
+				"Set Syntax: Lua"
+			],
+			[
+				"moonscr",
+				"Build With: Compile MoonScript"
+			],
+			[
+				"moons",
+				"Set Syntax: MoonScript"
+			],
+			[
+				"repository",
+				"Package Control: Remove Repository"
+			],
+			[
+				"REPOS",
+				"Package Control: Add Repository"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 425.0,
+		"history":
+		[
+			"sublime.log_commands(True)",
+			"sublime.log_commands(False)",
+			"sublime.log_commands(True)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/roman/Dokumente/Sources/contours/plot-cv"
+	],
+	"file_history":
+	[
+		"/home/roman/Dokumente/Sources/contours/plot-cv/cfg.sh",
+		"/home/roman/Dokumente/Sources/contours/plot-cv/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/contours/plot-cv/distance.cpp",
+		"/home/roman/Dokumente/Sources/contours/testApp.cpp",
+		"/home/roman/Dokumente/Sources/contours/smootour/smootour-test/smootour-test/main.cpp",
+		"/home/roman/Dokumente/Sources/contours/plot-cv/canny.cpp",
+		"/home/roman/Dokumente/Sources/contours/canny.cpp",
+		"/home/roman/Dokumente/Sources/contours/eyebrow.cpp",
+		"/home/roman/Dokumente/Sources/contours/VideoCapturePeopleCounter.cpp",
+		"/home/roman/Dokumente/Sources/contours/canny",
+		"/home/roman/Dokumente/Sources/contours/overhead-camera-people-counter/src/main.cpp",
+		"/home/roman/Dokumente/Sources/c-utils/dirlist.sublime-project",
+		"/home/roman/Dokumente/Sources/c-utils/list-r.c",
+		"/home/roman/Dokumente/Sources/c-utils/bsdiffcat.c",
+		"/home/roman/Dokumente/Sources/c-utils/parse.c",
+		"/home/roman/Dokumente/Sources/c-utils/plsconv.c",
+		"/home/roman/Dokumente/Sources/c-utils/GNUmakefile",
+		"/home/roman/Dokumente/Sources/c-utils/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/c-utils/sln.c",
+		"/home/roman/Dokumente/Sources/pictest/src/timer0.c",
+		"/home/enki/lotto/test.txt",
+		"/home/enki/lotto/utils/util.js",
+		"/home/enki/lotto/pages/deposit.js",
+		"/home/enki/lotto/helpers/app.moon",
+		"/home/enki/lotto/applications/payment.lua",
+		"/home/enki/lotto/applications/payment.moon",
+		"/home/enki/lotto/helpers/payment.moon",
+		"/home/enki/lotto/helpers/json.moon",
+		"/home/enki/lotto/helpers/date.moon",
+		"/home/enki/lotto/applications/users.moon",
+		"/home/enki/lotto/applications/api.moon",
+		"/home/enki/lotto/helpers/validate.moon",
+		"/home/enki/lotto/helpers/api.moon",
+		"/home/enki/lotto/helpers/time.moon",
+		"/home/enki/lotto/applications/socket.moon",
+		"/home/enki/lotto/helpers/validate.lua",
+		"/home/enki/lotto/helpers/payment.lua",
+		"/home/enki/lotto/stores/RootStore.js",
+		"/home/enki/lotto/config.moon",
+		"/home/enki/lotto/helpers/websocket.moon",
+		"/home/enki/lotto/applications/tickets.lua",
+		"/home/enki/lotto/models/users.moon",
+		"/home/enki/lotto/helpers/app.lua",
+		"/home/enki/lotto/helpers/parsigram.moon",
+		"/home/enki/lotto/models/tickets.moon",
+		"/home/enki/lotto/nginx.conf",
+		"/home/roman/lotto/applications/api.moon",
+		"/home/roman/lotto/helpers/api.moon",
+		"/home/roman/lotto/helpers/parsigram.moon",
+		"/home/roman/lotto/static/parsigram.html",
+		"/home/roman/lotto/config.moon",
+		"/home/enki/lotto/helpers/email.moon",
+		"/home/enki/lotto/helpers/email.lua",
+		"/home/enki/lotto/helpers/perfectmoney.moon",
+		"/home/roman/lotto/helpers/perfectmoney.moon",
+		"/home/roman/lotto/docker/backend/config.moon",
+		"/home/roman/lotto/test-parsigram.moon",
+		"/home/roman/lotto/applications/payment.lua",
+		"/home/roman/lotto/helpers/payment.moon",
+		"/home/roman/lotto/helpers/app.moon",
+		"/home/roman/lotto/models/users.moon",
+		"/home/enki/lotto/applications/drawings.moon",
+		"/home/enki/lotto/models/drawings.moon",
+		"/home/roman/lotto/helpers/util.moon",
+		"/home/roman/lotto/test-perfectmoney.moon",
+		"/home/roman/lotto/helpers/queue.moon",
+		"/home/roman/lotto/helpers/perfectmoneysci.moon",
+		"/home/roman/lotto/helpers/validate.moon",
+		"/home/roman/lotto/helpers/string.moon",
+		"/home/roman/lotto/app.moon",
+		"/home/enki/lotto/helpers/perfectmoney.lua",
+		"/home/roman/lotto/test-perfectmoney.lua",
+		"/home/roman/lotto/applications/drawings.moon",
+		"/home/roman/lotto/helpers/models.moon",
+		"/home/roman/lotto/applications/users.moon",
+		"/home/enki/lotto/helpers/bitcoin.moon",
+		"/home/enki/lotto/helpers/model.moon",
+		"/home/roman/lotto/helpers/json.moon",
+		"/home/roman/lotto/helpers/bitcoin.moon",
+		"/home/enki/lotto/helpers/util.moon",
+		"/home/roman/lotto/helpers/url.moon",
+		"/home/enki/lotto/helpers/api.lua",
+		"/home/roman/lotto/test-parsigram.lua",
+		"/home/roman/lotto/applications/payment.moon",
+		"/home/enki/Documents/Sources/lapis-1.7.0-1/lapis/lapis/application.lua",
+		"/home/enki/Documents/Sources/lapis-1.7.0-1/lapis/lapis/application.moon",
+		"/home/roman/lotto/helpers/json.lua",
+		"/home/enki/Documents/Sources/lapis-1.7.0-1/lapis/lapis/validate.moon",
+		"/home/roman/lotto/applications/games.moon",
+		"/home/roman/lotto/helpers/validate.lua",
+		"/home/roman/lotto/models/games.moon",
+		"/home/roman/lotto/helpers/app.lua",
+		"/home/enki/lotto/helpers/bitcoin2.moon",
+		"/home/roman/lotto/applications/users.lua",
+		"/home/roman/lotto/helpers/models.lua",
+		"/home/roman/lotto/nginx.conf",
+		"/home/roman/lotto/doc/parsigram/hazarat.live.txt",
+		"/home/roman/lotto/static/shetab-deposit.html",
+		"/home/enki/Documents/Sources/c-utils/proxy.c",
+		"/home/roman/lotto/helpers/parsigram.lua",
+		"/home/roman/lotto/static/parsigram.min.html",
+		"/home/roman/lotto/doc/parsigram/api.html",
+		"/home/roman/lotto/doc/parsigram/wire.html",
+		"/home/roman/lotto/doc/parsigram/gateway.html",
+		"/home/enki/lotto/doc/parsigram/api.html",
+		"/home/enki/lotto/doc/parsigram/parspay.html",
+		"/home/enki/Desktop/hazarat-parsipardakhtia-live.dump",
+		"/home/enki/lotto/doc/parsigram/samples/Parsigram.php",
+		"/home/enki/lotto/doc/parsigram/gateway.html",
+		"/home/enki/lotto/doc/parsigram/gateway.min.html",
+		"/home/enki/.config/sublime-text-3/Packages/User/.jsbeautifyrc",
+		"/home/enki/.config/sublime-text-3/Packages/HTML-CSS-JS Prettify/.jsbeautifyrc.defaults.json",
+		"/home/enki/.config/sublime-text-3/Packages/HTML-CSS-JS Prettify/HTMLPrettify.sublime-settings",
+		"/home/roman/lotto/static/test.html",
+		"/home/roman/lotto/doc/parsigram/samples/Parsigram.php",
+		"/home/roman/lotto/helpers/model.moon",
+		"/home/enki/lotto/models/user_profiles.moon",
+		"/home/enki/Documents/Sources/lapis-1.7.0-1/lapis/spec/relations_spec.moon",
+		"/home/enki/lotto/models/users.js",
+		"/home/enki/Sources/lotto/applications/users.moon",
+		"/home/enki/Sources/lotto/models/users.lua",
+		"/home/enki/Sources/lotto/models/user_profiles.moon",
+		"/home/enki/Sources/lotto/test-parsigram.lua",
+		"/home/enki/Sources/lotto/test-parsigram.moon",
+		"/home/enki/Sources/lotto/applications/users.lua",
+		"/home/enki/Sources/lotto/helpers/parsigram.moon",
+		"/home/enki/Sources/lotto/models/users.moon",
+		"/home/enki/Documents/Sources/lapis-1.7.0-1/lapis/lapis/db/base_model.moon"
+	],
+	"find":
+	{
+		"height": 27.0
+	},
+	"find_in_files":
+	{
+		"height": 258.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+		],
+		"highlight": false,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": false,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 27.0
+	},
+	"input":
+	{
+		"height": 79.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.SublimeLinter":
+	{
+		"height": 0.0
+	},
+	"output.SublimeLinter Messages":
+	{
+		"height": 194.0
+	},
+	"output.exec":
+	{
+		"height": 419.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.unsaved_changes":
+	{
+		"height": 96.0
+	},
+	"pinned_build_system": "Packages/Makefile/Make.sublime-build",
+	"project": "plot-cv.sublime-project",
+	"replace":
+	{
+		"height": 50.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"canny.cpp",
+				"canny.cpp"
+			],
+			[
+				"hexed",
+				"hexedit.c"
+			],
+			[
+				"parse.c",
+				"parse.c"
+			],
+			[
+				"GNUMa",
+				"GNUmakefile"
+			],
+			[
+				"GENMA",
+				"genmakefile.c"
+			],
+			[
+				"payme",
+				"applications/payment.moon"
+			],
+			[
+				"users.moon",
+				"applications/users.moon"
+			],
+			[
+				"socket.moo",
+				"applications/socket.moon"
+			],
+			[
+				"config.moo",
+				"config.moon"
+			],
+			[
+				"config.moon",
+				"config.moon"
+			],
+			[
+				"payment",
+				"applications/payment.moon"
+			],
+			[
+				"socket",
+				"applications/socket.moon"
+			],
+			[
+				"webso",
+				"helpers/websocket.moon"
+			],
+			[
+				"websock",
+				"helpers/websocket.moon"
+			],
+			[
+				"payment.moo",
+				"applications/payment.moon"
+			],
+			[
+				"parsigram.html",
+				"static/parsigram.html"
+			],
+			[
+				"config.mo",
+				"docker/backend/config.moon"
+			],
+			[
+				"test-pa",
+				"test-parsigram.moon"
+			],
+			[
+				"test-pars",
+				"test-parsigram.moon"
+			],
+			[
+				"test-per",
+				"test-perfectmoney.moon"
+			],
+			[
+				"test-perf",
+				"test-perfectmoney.lua"
+			],
+			[
+				"parsi",
+				"helpers/parsigram.moon"
+			],
+			[
+				"app.moo",
+				"app.moon"
+			],
+			[
+				"test-pe",
+				"test-perfectmoney.moon"
+			],
+			[
+				"test-",
+				"test-parsigram.moon"
+			],
+			[
+				"pay",
+				"applications/payment.moon"
+			],
+			[
+				"drawings.moo",
+				"applications/drawings.moon"
+			],
+			[
+				"api.moon",
+				"applications/api.moon"
+			],
+			[
+				"users.moo",
+				"applications/users.moon"
+			],
+			[
+				"paymen",
+				"applications/payment.moon"
+			],
+			[
+				"models",
+				"helpers/models.moon"
+			],
+			[
+				"models.m",
+				"helpers/models.moon"
+			],
+			[
+				"bitcoin.moo",
+				"helpers/bitcoin.moon"
+			],
+			[
+				"api.moo",
+				"applications/api.moon"
+			],
+			[
+				"api.mo",
+				"helpers/api.moon"
+			],
+			[
+				"perfe",
+				"helpers/perfectmoney.moon"
+			],
+			[
+				"parsigram.moo",
+				"helpers/parsigram.moon"
+			],
+			[
+				"test-p",
+				"test-perfectmoney.moon"
+			],
+			[
+				"perfectmoney.moo",
+				"helpers/perfectmoney.moon"
+			],
+			[
+				"perfect",
+				"helpers/perfectmoney.moon"
+			],
+			[
+				"api.m",
+				"helpers/api.moon"
+			],
+			[
+				"pars",
+				"helpers/parsigram.moon"
+			],
+			[
+				"",
+				"test-parsigram.moon"
+			],
+			[
+				"json.moo",
+				"helpers/json.moon"
+			],
+			[
+				"parsigram.mo",
+				"helpers/parsigram.moon"
+			],
+			[
+				"valida",
+				"helpers/validate.moon"
+			],
+			[
+				"validate",
+				"~/Documents/Sources/lapis-1.7.0-1/lapis/lapis/validate.moon"
+			],
+			[
+				"games",
+				"applications/games.moon"
+			],
+			[
+				"games.moo",
+				"models/games.moon"
+			],
+			[
+				"vali",
+				"helpers/validate.moon"
+			],
+			[
+				"sheta",
+				"static/shetab-deposit.html"
+			],
+			[
+				"parsig",
+				"helpers/parsigram.moon"
+			],
+			[
+				"nginx.conf",
+				"nginx.conf"
+			],
+			[
+				"nginx",
+				"nginx.conf"
+			],
+			[
+				"gate",
+				"doc/parsigram/gateway.html"
+			],
+			[
+				"test.html",
+				"static/test.html"
+			],
+			[
+				"query.",
+				"helpers/query.moon"
+			],
+			[
+				"test.moo",
+				"test.moon"
+			],
+			[
+				"mobile",
+				"static/css/mobile.css"
+			],
+			[
+				"desktop",
+				"static/css/desktop.css"
+			],
+			[
+				"application.m",
+				"applications/users.moon"
+			],
+			[
+				"users.mo",
+				"applications/users.moon"
+			],
+			[
+				"json-to",
+				"scripts/convert-json-to-po.sh"
+			],
+			[
+				"users.",
+				"applications/users.moon"
+			],
+			[
+				"ngin.",
+				"nginx.conf"
+			],
+			[
+				"app.m",
+				"app.moon"
+			],
+			[
+				"embe",
+				"embed.html"
+			],
+			[
+				"ngix",
+				"nginx.conf"
+			],
+			[
+				"components.cs",
+				"static/css/components.css"
+			],
+			[
+				"games.moon",
+				"models/games.moon"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 452.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
