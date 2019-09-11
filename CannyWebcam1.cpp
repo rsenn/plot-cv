@@ -17,7 +17,7 @@ numAbs(double num) {
 }
 // Function that calculates the area given a
 // vector of vertices in the XY plane.
-template<class Point>
+template <class Point>
 double
 polygonArea(std::vector<Point> list) {
 
@@ -68,7 +68,7 @@ getContours(cv::Mat start, std::vector<cv::Vec4i>& hierarchy, int flag = CV_RETR
 }
 
 std::vector<cv::Point2f>
-getMassCenters(std::vector<std::vector<cv::Point> > contours) {
+getMassCenters(std::vector<std::vector<cv::Point>> contours) {
 
   std::vector<cv::Moments> mu(contours.size());
   std::vector<cv::Point2f> mc(contours.size());
@@ -89,7 +89,7 @@ std::vector<cv::Point>
 ToPointVec(const std::vector<InputType>& v) {
   std::vector<cv::Point> ret;
 
-  std::for_each(v.cbegin(), v.cend(), [&ret](const InputType& pt)  { ret.push_back(cv::Point(pt.x, pt.y)); });
+  std::for_each(v.cbegin(), v.cend(), [&ret](const InputType& pt) { ret.push_back(cv::Point(pt.x, pt.y)); });
 
   return ret;
 }
@@ -123,7 +123,7 @@ main() {
       std::cout << "error: frame not read from webcam\n";  // print error message to std out
       break;                                               // and jump out of while loop
     }
-//cv::normalize(imgOriginal,imgTemp,0,255,cv::NORM_L1);
+    // cv::normalize(imgOriginal,imgTemp,0,255,cv::NORM_L1);
 
     cvtColor(imgOriginal, imgTemp, CV_BGR2GRAY); // convert to grayscale
 
@@ -153,7 +153,7 @@ main() {
         cv::approxPolyDP(a, b, 0.5, true);
         contours2.push_back(b);
       }
-    }); 
+    });
 
     std::sort(contours2.begin(), contours2.end(), [](Point2fVec a, Point2fVec b) -> bool {
       return polygonArea(a) >= polygonArea(b);
@@ -161,7 +161,7 @@ main() {
 
     for(size_t i = 0; i < std::min<size_t>(100, contours2.size()); ++i) {
       int npts = contours2[i].size();
-      double area  = polygonArea(contours2[i]);
+      double area = polygonArea(contours2[i]);
       std::cout << i << ": " << area << std::endl;
 
       if(npts > 0) {
@@ -170,7 +170,6 @@ main() {
       }
     }
 
-     
     // CV_WINDOW_AUTOSIZE is the default
     cv::imshow("imgOriginal", imgOriginal);   // show windows
     cv::imshow("imgCanny", imgCanny);         //
