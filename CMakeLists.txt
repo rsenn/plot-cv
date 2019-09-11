@@ -4,6 +4,9 @@ project (plot-cv)
 include(CheckLibraryExists)
 check_library_exists(json-cpp ZN4YAML6detail9node_data9reset_mapEv /usr JSON_CPP)
 
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 
 find_package(OpenCV 3.1 REQUIRED)
 
