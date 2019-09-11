@@ -43,7 +43,7 @@ cfg() {
   ${CMAKE:-cmake} -Wno-dev \
     -DCMAKE_INSTALL_PREFIX="${prefix-/usr}" \
     -G "$generator" \
-    ${VERBOSE+:-DCMAKE_VERBOSE_MAKEFILE=TRUE} \
+    ${VERBOSE+:-DCMAKE_VERBOSE_MAKEFILE="$VERBOSE"} \
     -DCMAKE_BUILD_TYPE="${TYPE:-Debug}" \
     ${CC:+-DCMAKE_C_COMPILER="$CC"} \
     ${CXX:+-DCMAKE_CXX_COMPILER="$CXX"} \
@@ -62,8 +62,6 @@ cfg-android ()
 {
   (: ${builddir=build/android}
     cfg \
-  -DCMAKE_INSTALL_PREFIX=/opt/arm-linux-androideabi/sysroot/usr \
-  -DCMAKE_VERBOSE_MAKEFILE=TRUE \
   -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN:-/opt/android-cmake/android.cmake} \
   -DANDROID_NATIVE_API_LEVEL=21 \
   -DPKG_CONFIG_EXECUTABLE=arm-linux-androideabi-pkg-config \
@@ -89,7 +87,6 @@ cfg-diet() {
   cfg \
     -DSHARED_LIBS=OFF \
     -DBUILD_SHARED_LIBS=OFF \
-    -DCMAKE_VERBOSE_MAKEFILE=ON \
     "$@")
 }
 
@@ -107,7 +104,6 @@ cfg-musl() {
   cfg \
     -DSHARED_LIBS=OFF \
     -DBUILD_SHARED_LIBS=OFF \
-    -DCMAKE_VERBOSE_MAKEFILE=ON \
     "$@")
 }
 
@@ -128,8 +124,7 @@ cfg-termux()
   (builddir=build/termux
     cfg \
   -DCMAKE_INSTALL_PREFIX=/data/data/com.termux/files/usr \
-  -DCMAKE_VERBOSE_MAKEFILE=TRUE \
-  -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN:-/opt/android-cmake/android.cmake} \
+  -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN:-/opt/android-cmake/android.cmake} \//
   -DANDROID_NATIVE_API_LEVEL=21 \
   -DPKG_CONFIG_EXECUTABLE=arm-linux-androideabi-pkg-config \
   -DCMAKE_PREFIX_PATH=/data/data/com.termux/files/usr \
