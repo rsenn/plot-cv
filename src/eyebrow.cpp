@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include <utility>
-#include "opencv2/imgproc/imgproc.hpp"
+#include <opencv2/imgproc/imgproc.hpp>
 
 using namespace std;
 using namespace cv;

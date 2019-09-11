@@ -5,7 +5,7 @@
 #include "wheels/cmd_set_car_direction_speed.h"
 #include "wheelcontroller.h"
 #include "raspicam/raspicam_cv.h"
-#include "opencv2/imgproc/imgproc.hpp"
+#include <opencv2/imgproc/imgproc.hpp>
 using namespace std;
 
 #define TESTROI 0

@@ -4,8 +4,8 @@
   // Info: http://docs.opencv.org/doc/tutorials/imgproc/shapedescriptors/find_contours/find_contours.html
 */
 
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/highgui/highgui.hpp"
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <stdlib.h>
 #include <stdio.h>
 

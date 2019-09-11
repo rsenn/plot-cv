@@ -38,9 +38,9 @@
  */
 
 #include <opencv/cv.hpp>
-#include "opencv2/core.hpp"
+#include <opencv2/core.hpp>
 // #include <raspicam/raspicam_cv.h>
-// #include "opencv2/background_segm.hpp"
+// #include <opencv2/background_segm.hpp>
 // #include <opencv/highgui.h>
 #include <stdio.h>
 #include <iostream>

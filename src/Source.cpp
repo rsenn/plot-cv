@@ -8,8 +8,8 @@
 // http://docs.opencv.org/2.4/doc/tutorials/tutorials.html
 // http://docs.opencv.org/2.4/modules/refman.html
 
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/highgui/highgui.hpp"
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
