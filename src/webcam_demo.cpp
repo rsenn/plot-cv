@@ -75,7 +75,10 @@ public:
 // Discard wrongly recognised strings
 bool isRepetitive(const string& s);
 // Draw ER's in an image via floodFill
-void er_draw(std::vector<cv::Mat>& channels, std::vector<std::vector<ERStat>>& regions, std::vector<Vec2i> group, cv::Mat& segmentation);
+void er_draw(std::vector<cv::Mat>& channels,
+             std::vector<std::vector<ERStat>>& regions,
+             std::vector<Vec2i> group,
+             cv::Mat& segmentation);
 
 const char* keys = {"{@input   | 0 | camera index or video file name}"
                     "{ image i |   | specify input image}"};
@@ -406,7 +409,10 @@ isRepetitive(const string& s) {
 }
 
 void
-er_draw(std::vector<cv::Mat>& channels, std::vector<std::vector<ERStat>>& regions, std::vector<Vec2i> group, cv::Mat& segmentation) {
+er_draw(std::vector<cv::Mat>& channels,
+        std::vector<std::vector<ERStat>>& regions,
+        std::vector<Vec2i> group,
+        cv::Mat& segmentation) {
   for(int r = 0; r < (int)group.size(); r++) {
     ERStat er = regions[group[r][0]][group[r][1]];
     if(er.parent != NULL) { // deprecate the root region

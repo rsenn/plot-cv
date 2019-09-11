@@ -709,9 +709,7 @@ public:
 
   // This method is meant to have more overhead
   STDMETHODIMP
-  BufferCB(double, BYTE*, long) {
-    return E_NOTIMPL;
-  }
+  BufferCB(double, BYTE*, long) { return E_NOTIMPL; }
 
   int freezeCheck;
 

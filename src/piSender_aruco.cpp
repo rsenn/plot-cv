@@ -134,7 +134,8 @@ main(int argc, char** argv) {
 
     for(unsigned int i = 0; i < TheMarkers.size(); i++) {
       // Each element of the marker array is a marker, and the first four elements of the marker give the corners as xy
-      // coordinates.  xy 0 is at the top left of the screen.  Print each of the four corners.  cout<<endl<<TheMarkers[i];
+      // coordinates.  xy 0 is at the top left of the screen.  Print each of the four corners.
+      // cout<<endl<<TheMarkers[i];
       circle(TheInputImageCopy, TheMarkers[i][0], 10, Scalar(0, 255, 0));
       cv::putText(TheInputImageCopy, "0", TheMarkers[i][0], fontFace, 0.8, Scalar::all(255));
 

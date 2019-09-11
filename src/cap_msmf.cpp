@@ -424,26 +424,18 @@ class ImageGrabberWinRT : public Microsoft::WRL::RuntimeClass<
     return ImageGrabberCallback::OnClockStart(hnsSystemTime, llClockStartOffset);
   }
   STDMETHODIMP
-  OnClockStop(MFTIME hnsSystemTime) {
-    return ImageGrabberCallback::OnClockStop(hnsSystemTime);
-  }
+  OnClockStop(MFTIME hnsSystemTime) { return ImageGrabberCallback::OnClockStop(hnsSystemTime); }
   STDMETHODIMP
-  OnClockPause(MFTIME hnsSystemTime) {
-    return ImageGrabberCallback::OnClockPause(hnsSystemTime);
-  }
+  OnClockPause(MFTIME hnsSystemTime) { return ImageGrabberCallback::OnClockPause(hnsSystemTime); }
   STDMETHODIMP
-  OnClockRestart(MFTIME hnsSystemTime) {
-    return ImageGrabberCallback::OnClockRestart(hnsSystemTime);
-  }
+  OnClockRestart(MFTIME hnsSystemTime) { return ImageGrabberCallback::OnClockRestart(hnsSystemTime); }
   STDMETHODIMP
   OnClockSetRate(MFTIME hnsSystemTime, float flRate) {
     return ImageGrabberCallback::OnClockSetRate(hnsSystemTime, flRate);
   }
   // IMFSampleGrabberSinkCallback methods
   STDMETHODIMP
-  OnSetPresentationClock(IMFPresentationClock* pClock) {
-    return ImageGrabberCallback::OnSetPresentationClock(pClock);
-  }
+  OnSetPresentationClock(IMFPresentationClock* pClock) { return ImageGrabberCallback::OnSetPresentationClock(pClock); }
   STDMETHODIMP
   OnProcessSample(REFGUID guidMajorMediaType,
                   DWORD dwSampleFlags,
@@ -455,9 +447,7 @@ class ImageGrabberWinRT : public Microsoft::WRL::RuntimeClass<
         guidMajorMediaType, dwSampleFlags, llSampleTime, llSampleDuration, pSampleBuffer, dwSampleSize);
   }
   STDMETHODIMP
-  OnShutdown() {
-    return ImageGrabberCallback::OnShutdown();
-  }
+  OnShutdown() { return ImageGrabberCallback::OnShutdown(); }
   // Function of creation of the instance of the class
   static HRESULT CreateInstance(ImageGrabberWinRT** ppIG, bool synchronous = false);
 

@@ -32,7 +32,7 @@ private:
 
   void make_train_set(); // function to build the training set multimap
   void make_pos_neg();   // function to extract BOW features from training images and organize them into positive and
-                       // negative samples
+                         // negative samples
   string remove_extension(
       string); // function to remove extension from file name, used for organizing templates into categories
 public:

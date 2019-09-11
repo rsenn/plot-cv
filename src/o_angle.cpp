@@ -28,7 +28,7 @@ main(int argc, char** argv) {
   cv::Mat hsv_element_erode = getStructuringElement(MORPH_ERODE, Size(3, 3));      // 20170420
   cv::Mat center_element_dilate = getStructuringElement(MORPH_RECT, Size(10, 10)); // 20170420
   cv::Mat center_element_erode = getStructuringElement(MORPH_RECT, Size(7, 7));    // 20170420
-  cv::Point2f vec_center_minus_red, vec_horizontal;                                    // 20170420
+  cv::Point2f vec_center_minus_red, vec_horizontal;                                // 20170420
   double arc_theta;
   double theta;
 
@@ -121,7 +121,7 @@ main(int argc, char** argv) {
           minEnclosingCircle(contours[old_2i], center, radius);
           line(src, center, center, Scalar(0, 0, 255), 5);
         }
-        vec_center_minus_red = center_2 - center;           // 20170420
+        vec_center_minus_red = center_2 - center;                   // 20170420
         vec_horizontal = cv::Point(300, 240) - cv::Point(200, 240); // 20170420
         ///////////////////�|(��)��!!!!!!!!!!! 20170420
         arc_theta =

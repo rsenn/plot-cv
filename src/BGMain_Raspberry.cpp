@@ -280,7 +280,8 @@ main(int argc, char** argv) {
       // 循环遍历所有的部分
       for(unsigned int i = 0; i < contours.size(); i++) {
         approxPolyDP(cv::Mat(contours[i]), contours_poly[i], 3, true); //用指定精度逼近多边形曲线
-        for(std::vector<cv::Point>::const_iterator itp = contours_poly[i].begin(); itp != contours_poly[i].end(); itp++) {
+        for(std::vector<cv::Point>::const_iterator itp = contours_poly[i].begin(); itp != contours_poly[i].end();
+            itp++) {
           setGridStatus(itp->x, itp->y, grid_array);
         }
       }

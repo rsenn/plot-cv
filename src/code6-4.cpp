@@ -57,15 +57,17 @@ public:
 class ellipseFinder {
 private:
   cv::Mat img;                                  // input image
-  std::vector<std::vector<cv::Point>> contours;               // contours in image
+  std::vector<std::vector<cv::Point>> contours; // contours in image
   cv::Mat Q;                                    // cv::Matrix representing conic section of detected ellipse
-  cv::Mat fit_ellipse(std::vector<cv::Point>);           // function to fit ellipse to a contour
+  cv::Mat fit_ellipse(std::vector<cv::Point>);  // function to fit ellipse to a contour
   cv::Mat RANSACellipse(std::vector<std::vector<cv::Point>>); // function to find ellipse in contours using RANSAC
   bool is_good_ellipse(cv::Mat); // function that determines whether given conic section represents a valid ellipse
-  std::vector<std::vector<cv::Point>> choose_random(std::vector<cv::Point>); // function to choose points at random from contour
-  std::vector<float> distance(cv::Mat, std::vector<cv::Point>);     // function to return distance of points from the ellipse
-  float distance(cv::Mat, cv::Point);            // overloaded function to return signed distance of point from ellipse
-  void draw_ellipse(cv::Mat);                // function to draw ellipse in an image
+  std::vector<std::vector<cv::Point>>
+      choose_random(std::vector<cv::Point>); // function to choose points at random from contour
+  std::vector<float> distance(cv::Mat,
+                              std::vector<cv::Point>); // function to return distance of points from the ellipse
+  float distance(cv::Mat, cv::Point); // overloaded function to return signed distance of point from ellipse
+  void draw_ellipse(cv::Mat);         // function to draw ellipse in an image
   std::vector<cv::Point> ellipse_contour(cv::Mat);    // function to convert equation of ellipse to a contour of points
   void draw_inliers(cv::Mat, std::vector<cv::Point>); // function to debug inliers
 

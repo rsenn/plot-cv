@@ -12,11 +12,11 @@
 void subtractPlane(const cv::Mat& depth, cv::Mat& mask, std::vector<Cvcv::Point>& chain, double f);
 
 std::vector<Cvcv::Point> maskFromTemplate(const std::vector<cv::linemod::Template>& templates,
-                                      int num_modalities,
-                                      cv::Point offset,
-                                      cv::Size size,
-                                      cv::Mat& mask,
-                                      cv::Mat& dst);
+                                          int num_modalities,
+                                          cv::Point offset,
+                                          cv::Size size,
+                                          cv::Mat& mask,
+                                          cv::Mat& dst);
 
 void templateConvexHull(const std::vector<cv::linemod::Template>& templates,
                         int num_modalities,

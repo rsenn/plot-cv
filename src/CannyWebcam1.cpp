@@ -22,32 +22,22 @@ operator<<(O& os, const cv::Point_<T>& pt) {
  * @return     { description_of_the_return_value }
  */
 template <class P, class O>
-O& 
+O&
 operator<<(O& os, const std::vector<P>& pl) {
   size_t i, n = pl.size();
   for(i = 0; i < n; ++i) {
-    if(i > 0) os << ' ';
+    if(i > 0)
+      os << ' ';
     os << pl[i];
   }
 }
 
-template <class P, class O>
-O& 
-operator<<(O& os, const std::vector<std::vector<P> >& pl) {
-  size_t i, n = pl.size();
-  for(i = 0; i < n; ++i) {
-//    if(i > 0) os << ',';
-    os << '[' << pl[i] << ']' << '\n';
-  }
-}
-
-
-template<class T>
+template <class T>
 std::string
 to_string(const T& t) {
- std::ostringstream oss;
- oss << t;
- return oss.str();
+  std::ostringstream oss;
+  oss << t;
+  return oss.str();
 }
 
 // of a double type.
@@ -186,9 +176,13 @@ main() {
     std::vector<cv::Vec4i> hier;
     std::vector<PointVec> contours = getContours(imgCanny, hier, CV_RETR_TREE);
 
-    std::string contoursStr = to_string(contours);
+    std::for_each(contours.cbegin(), contours.cend(), [](const std::vector<cv::Point>& a) {
 
-    std::cout << contoursStr << std::endl;
+      std::string contoursStr = to_string(a);
+
+      std::cout << contoursStr << std::endl;
+
+    });
 
     std::for_each(contours.cbegin(), contours.cend(), [&contours2](const std::vector<cv::Point>& a) {
       double area = polygonArea(a);

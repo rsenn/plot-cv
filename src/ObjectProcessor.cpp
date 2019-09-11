@@ -250,7 +250,8 @@ track_and_identify(int argc, char** argv) {
           for(int i = 0; i < hue_size; i++) {
             int val = saturate_cast<int>(hist.at<float>(i) * histimg.rows / 255); // value of the histogram
             rectangle(histimg,
-                      cv::Point(i * binW, histimg.rows), // value from the rectangle of selected object to convert into the
+                      cv::Point(i * binW,
+                                histimg.rows), // value from the rectangle of selected object to convert into the
                       // colored histogram
                       cv::Point((i + 1) * binW, histimg.rows - val),
                       Scalar(buf.at<Vec3b>(i)),
@@ -431,7 +432,8 @@ contour_figure(int, void*) {
     Scalar color = Scalar(rng.uniform(0, 255),
                           rng.uniform(0, 255),
                           rng.uniform(0, 255)); // changes scalar colours based on various edges
-    drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, cv::Point()); // adds colours while also drawing the
+    drawContours(
+        drawing, contours, (int)i, color, 2, 8, hierarchy, 0, cv::Point()); // adds colours while also drawing the
     // contour lines
   }
 
