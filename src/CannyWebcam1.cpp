@@ -12,22 +12,35 @@ typedef std::vector<cv::Point2f> Point2fVec;
 template <class T, class O>
 O&
 operator<<(O& os, const cv::Point_<T>& pt) {
-  os << '[';
   os << pt.x;
   os << ',';
   os << pt.y;
-  os << ']';
 }
 
+/**
+ * @brief      Ôutput point list
+ * @return     { description_of_the_return_value }
+ */
 template <class P, class O>
 O& 
 operator<<(O& os, const std::vector<P>& pl) {
   size_t i, n = pl.size();
   for(i = 0; i < n; ++i) {
-    if(i > 0) os << ',';
+    if(i > 0) os << ' ';
     os << pl[i];
   }
 }
+
+template <class P, class O>
+O& 
+operator<<(O& os, const std::vector<std::vector<P> >& pl) {
+  size_t i, n = pl.size();
+  for(i = 0; i < n; ++i) {
+//    if(i > 0) os << ',';
+    os << '[' << pl[i] << ']' << '\n';
+  }
+}
+
 
 template<class T>
 std::string
