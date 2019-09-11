@@ -5,8 +5,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include <iostream>
-typedef std::vector<cv::Point> cv::PointVec;
-typedef std::vector<cv::Point2f> cv::Point2fVec;
+typedef std::vector<cv::Point> PointVec;
+typedef std::vector<cv::Point2f> Point2fVec;
 // Function that calculates the absolute value
 
 // of a double type.
@@ -54,11 +54,11 @@ imageToBinary(cv::Mat start) {
   return thresh_image;
 }
 
-std::vector<cv::PointVec>
+std::vector<PointVec>
 getContours(cv::Mat start, std::vector<cv::Vec4i>& hierarchy, int flag = CV_RETR_EXTERNAL) {
 
   cv::Mat dst = cv::Mat::zeros(start.rows, start.cols, CV_8UC3);
-  std::vector<cv::PointVec> contours;
+  std::vector<PointVec> contours;
 
   start = start > 1;
 
@@ -86,7 +86,7 @@ getMassCenters(std::vector<std::vector<cv::Point>> contours) {
 
 template <class InputType>
 std::vector<cv::Point>
-Tocv::PointVec(const std::vector<InputType>& v) {
+ToPointVec(const std::vector<InputType>& v) {
   std::vector<cv::Point> ret;
 
   std::for_each(v.cbegin(), v.cend(), [&ret](const InputType& pt) { ret.push_back(cv::Point(pt.x, pt.y)); });
@@ -141,21 +141,21 @@ main() {
               20,         // high threshold
               3);
 
-    std::vector<cv::Point2fVec> contours2;
+    std::vector<Point2fVec> contours2;
     std::vector<cv::Vec4i> hier;
-    std::vector<cv::PointVec> contours = getContours(imgCanny, hier, CV_RETR_TREE);
+    std::vector<PointVec> contours = getContours(imgCanny, hier, CV_RETR_TREE);
 
     std::for_each(contours.cbegin(), contours.cend(), [&contours2](const std::vector<cv::Point>& a) {
       double area = polygonArea(a);
 
       if(a.size() >= 3 && area > 8) {
-        cv::Point2fVec b;
+        Point2fVec b;
         cv::approxPolyDP(a, b, 0.5, true);
         contours2.push_back(b);
       }
     });
 
-    std::sort(contours2.begin(), contours2.end(), [](cv::Point2fVec a, cv::Point2fVec b) -> bool {
+    std::sort(contours2.begin(), contours2.end(), [](Point2fVec a, Point2fVec b) -> bool {
       return polygonArea(a) >= polygonArea(b);
     });
 
@@ -165,7 +165,7 @@ main() {
       std::cout << i << ": " << area << std::endl;
 
       if(npts > 0) {
-        std::vector<cv::Point> pl = Tocv::PointVec(contours2[i]);
+        std::vector<cv::Point> pl = ToPointVec(contours2[i]);
         cv::polylines(imgOriginal, pl, true, cv::Scalar(0, 0, 255), 1);
       }
     }
