@@ -59,7 +59,7 @@ int grid_width = 0; //格子的宽高
 int grid_height = 0;
 
 int image_fliped_direc =
-    -2; //定义原始图像翻转的形式，默认不进行翻转，如果检测到位-2则不执行翻转处理，因为小于0都会进行翻转
+  -2; //定义原始图像翻转的形式，默认不进行翻转，如果检测到位-2则不执行翻转处理，因为小于0都会进行翻转
 
 void DrawRectangle(cv::Mat& img, cv::Rect box);
 void on_MouseHandle(int event, int x, int y, int flags, void* param);
@@ -328,8 +328,8 @@ main(int argc, char** argv) {
 
       if(showOutput) {
         imshow(WINDOW_SRC, g_srcImage); // 显示经过处理之后的彩色图像
-                                        // namedWindow(WINDOW_DEST, WINDOW_AUTOSIZE);
-                                        // imshow(WINDOW_DEST, drawing);
+        // namedWindow(WINDOW_DEST, WINDOW_AUTOSIZE);
+        // imshow(WINDOW_DEST, drawing);
       }
 
       t = ((double)getTickCount() - t) / getTickFrequency();
@@ -398,7 +398,7 @@ main(int argc, char** argv) {
         readPicCount++;
         cvtColor(g_srcImage, hsvImage_base, COLOR_BGR2HSV); //【3】 将图像由BGR色彩空间转换到 HSV色彩空间
         hsvImage_halfDown =
-            hsvImage_base(Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
+          hsvImage_base(Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
         if(showOutput) { //显示部分框选画面
           imshow("ROI", hsvImage_halfDown);
         }
@@ -410,7 +410,7 @@ main(int argc, char** argv) {
 
         //【4】创建包含基准图像下半部的半身图像(HSV格式)  从原始图像中提取感兴趣的区域，每帧图像与模板区域进行比较
         hsvImage_halfDown =
-            hsvImage_base(Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
+          hsvImage_base(Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
         if(showOutput) { //显示部分框选画面
           imshow("ROI", hsvImage_halfDown);
         }
@@ -502,55 +502,54 @@ on_MouseHandle(int event, int x, int y, int flags, void* param) {
   cv::Mat originalImage = image.clone(); //在原始图像上进行画框之前将图像复制一份
 
   switch(event) {
-      //鼠标移动消息
-    case EVENT_MOUSEMOVE: {
-      if(g_bDrawingBox) //如果是否进行绘制的标识符为真，则记录下长和宽到RECT型变量中
-      {
-        g_rectangle.width = x - g_rectangle.x;
-        g_rectangle.height = y - g_rectangle.y;
-      }
-    } break;
+  //鼠标移动消息
+  case EVENT_MOUSEMOVE: {
+    if(g_bDrawingBox) { //如果是否进行绘制的标识符为真，则记录下长和宽到RECT型变量中
+      g_rectangle.width = x - g_rectangle.x;
+      g_rectangle.height = y - g_rectangle.y;
+    }
+  } break;
 
-    //左键按下消息
-    case EVENT_LBUTTONDOWN: {
-      g_bDrawingBox = true;
-      g_rectangle = Rect(x, y, 0, 0); //记录起始点
-    } break;
+  //左键按下消息
+  case EVENT_LBUTTONDOWN: {
+    g_bDrawingBox = true;
+    g_rectangle = Rect(x, y, 0, 0); //记录起始点
+  } break;
 
-    //左键抬起消息
-    case EVENT_LBUTTONUP: {
-      g_bDrawingBox = false; //置标识符为false
-                             //对宽和高小于0的处理
-      if(g_rectangle.width < 0) {
-        g_rectangle.x += g_rectangle.width;
-        g_rectangle.width *= -1;
-      }
+  //左键抬起消息
+  case EVENT_LBUTTONUP: {
+    g_bDrawingBox = false; //置标识符为false
+    //对宽和高小于0的处理
+    if(g_rectangle.width < 0) {
+      g_rectangle.x += g_rectangle.width;
+      g_rectangle.width *= -1;
+    }
 
-      if(g_rectangle.height < 0) {
-        g_rectangle.y += g_rectangle.height;
-        g_rectangle.height *= -1;
-      }
-      //调用函数进行绘制
-      DrawRectangle(image, g_rectangle);
-      LEFT_TOP_X = g_rectangle.x;
-      LEFT_TOP_Y = g_rectangle.y;
-      if(g_rectangle.width > 0) { //如果只是鼠标点击了一下，检测区域不变
-        RIGHT_BOTTOM_X = g_rectangle.x + g_rectangle.width;
-      } else if(g_rectangle.width == 0) {
-        RIGHT_BOTTOM_X = LEFT_TOP_X + 1;
-      }
-      if(g_rectangle.height > 0) {
-        RIGHT_BOTTOM_Y = g_rectangle.y + g_rectangle.height;
-      } else if(g_rectangle.height == 0) {
-        RIGHT_BOTTOM_Y = LEFT_TOP_Y + 1;
-      }
-      grid_width = (RIGHT_BOTTOM_X - LEFT_TOP_X) / col_count; //重新计算模板区域格子的高宽
-      grid_height = (RIGHT_BOTTOM_Y - LEFT_TOP_Y) / row_count;
-      saveConfig(); //写入文件
-      if(showOutput) {
-        cout << "--起点x = " << g_rectangle.x << ", y = " << g_rectangle.y << "， 区域宽w = " << g_rectangle.width
-             << ", h = " << g_rectangle.height << endl;
-      }
-    } break;
+    if(g_rectangle.height < 0) {
+      g_rectangle.y += g_rectangle.height;
+      g_rectangle.height *= -1;
+    }
+    //调用函数进行绘制
+    DrawRectangle(image, g_rectangle);
+    LEFT_TOP_X = g_rectangle.x;
+    LEFT_TOP_Y = g_rectangle.y;
+    if(g_rectangle.width > 0) { //如果只是鼠标点击了一下，检测区域不变
+      RIGHT_BOTTOM_X = g_rectangle.x + g_rectangle.width;
+    } else if(g_rectangle.width == 0) {
+      RIGHT_BOTTOM_X = LEFT_TOP_X + 1;
+    }
+    if(g_rectangle.height > 0) {
+      RIGHT_BOTTOM_Y = g_rectangle.y + g_rectangle.height;
+    } else if(g_rectangle.height == 0) {
+      RIGHT_BOTTOM_Y = LEFT_TOP_Y + 1;
+    }
+    grid_width = (RIGHT_BOTTOM_X - LEFT_TOP_X) / col_count; //重新计算模板区域格子的高宽
+    grid_height = (RIGHT_BOTTOM_Y - LEFT_TOP_Y) / row_count;
+    saveConfig(); //写入文件
+    if(showOutput) {
+      cout << "--起点x = " << g_rectangle.x << ", y = " << g_rectangle.y << "， 区域宽w = " << g_rectangle.width
+           << ", h = " << g_rectangle.height << endl;
+    }
+  } break;
   }
 }

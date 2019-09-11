@@ -53,13 +53,16 @@ static double MIN_OBJ_AREA = 1000;
 // TODO all of this is wrong and will need to change
 static KALMAN_TYPE dt = 0.25;
 static KALMAN_TYPE A_init[] = {1, dt, 0, 0, 0,  0, 0, 1, dt, 0, 0, 0,  0, 0, 1, 0, 0, 0,
-                               0, 0,  0, 1, dt, 0, 0, 0, 0,  0, 1, dt, 0, 0, 0, 0, 0, 1};
+                               0, 0,  0, 1, dt, 0, 0, 0, 0,  0, 1, dt, 0, 0, 0, 0, 0, 1
+                              };
 static KALMAN_TYPE C_init[] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0};
 static KALMAN_TYPE Q_init[] = {1e-2, 0, 0, 0,    0, 0, 0, 5.0, 0, 0, 0,   0, 0, 0, 1e-2, 0, 0, 0,
-                               0,    0, 0, 1e-2, 0, 0, 0, 0,   0, 0, 5.0, 0, 0, 0, 0,    0, 0, 1e-2};
+                               0,    0, 0, 1e-2, 0, 0, 0, 0,   0, 0, 5.0, 0, 0, 0, 0,    0, 0, 1e-2
+                              };
 static KALMAN_TYPE R_init[] = {5.0, 0, 0, 5.0};
 static KALMAN_TYPE P_init[] = {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
-                               0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1};
+                               0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1
+                              };
 static KALMAN_TYPE x_hat_init[] = {0, 0, 0, 0, 0, 0};
 static int n = 6;
 static int m = 2;
@@ -626,19 +629,19 @@ get_settings_file(int argc, char** argv, string& vid_name, string& back_name, ch
     while(getline(file, next_line) && !done) {
       if(next_line[0] != '#') {
         switch(input_cnt) {
-          case 0:
-            // TODO handle live stream
-            vid_name = next_line.c_str();
-            break;
-          case 1: back_name = next_line.c_str(); break;
-          case 2: MAX_DIST_SQD = str_to_int(next_line); break;
-          case 3: SENSITIVITY_VALUE_1 = str_to_int(next_line); break;
-          case 4: SENSITIVITY_VALUE_2 = str_to_int(next_line); break;
-          case 5: BLUR_SIZE_1 = str_to_int(next_line); break;
-          case 6: BLUR_SIZE_2 = str_to_int(next_line); break;
-          case 7: MIN_OBJ_AREA = str_to_int(next_line); break;
-          case 8: bs_type = next_line[0]; break;
-          case 9: Trackers::set_algo(next_line[0]); break;
+        case 0:
+          // TODO handle live stream
+          vid_name = next_line.c_str();
+          break;
+        case 1: back_name = next_line.c_str(); break;
+        case 2: MAX_DIST_SQD = str_to_int(next_line); break;
+        case 3: SENSITIVITY_VALUE_1 = str_to_int(next_line); break;
+        case 4: SENSITIVITY_VALUE_2 = str_to_int(next_line); break;
+        case 5: BLUR_SIZE_1 = str_to_int(next_line); break;
+        case 6: BLUR_SIZE_2 = str_to_int(next_line); break;
+        case 7: MIN_OBJ_AREA = str_to_int(next_line); break;
+        case 8: bs_type = next_line[0]; break;
+        case 9: Trackers::set_algo(next_line[0]); break;
         } // switch
         input_cnt++;
       } // if not comment
@@ -658,31 +661,31 @@ interpret_input(char c, bool& debugMode, bool& trackingEnabled, bool& pause) {
   bool wait = pause;
   // TODO set defines or somthing for these numbers
   switch(c) {
-    // case 1048603:
-    case 27: //'esc' key has been pressed, exit program.
-      cout << "Have a nice day! :)" << endl;
-      exit(0);
-    // case 1048692:
-    case 116: //'t' has been pressed. this will toggle tracking
-      trackingEnabled = !trackingEnabled;
-      if(trackingEnabled == false)
-        cout << "Tracking disabled." << endl;
-      else
-        cout << "Tracking enabled." << endl;
-      break;
-    // case 1048676:
-    case 100: //'d' has been pressed. this will debug mode
-      debugMode = !debugMode;
-      if(debugMode == false)
-        cout << "Debug mode disabled." << endl;
-      else
-        cout << "Debug mode enabled." << endl;
-      break;
-    // case 1048688:
-    case 112: //'p' has been pressed. this will pause/resume the code.
-      pause = !pause;
-      wait = pause;
-      cout << "Code paused, press 'p' again to resume, 's' to step" << endl;
+  // case 1048603:
+  case 27: //'esc' key has been pressed, exit program.
+    cout << "Have a nice day! :)" << endl;
+    exit(0);
+  // case 1048692:
+  case 116: //'t' has been pressed. this will toggle tracking
+    trackingEnabled = !trackingEnabled;
+    if(trackingEnabled == false)
+      cout << "Tracking disabled." << endl;
+    else
+      cout << "Tracking enabled." << endl;
+    break;
+  // case 1048676:
+  case 100: //'d' has been pressed. this will debug mode
+    debugMode = !debugMode;
+    if(debugMode == false)
+      cout << "Debug mode disabled." << endl;
+    else
+      cout << "Debug mode enabled." << endl;
+    break;
+  // case 1048688:
+  case 112: //'p' has been pressed. this will pause/resume the code.
+    pause = !pause;
+    wait = pause;
+    cout << "Code paused, press 'p' again to resume, 's' to step" << endl;
   }
 
   if(pause == true) {
@@ -690,15 +693,15 @@ interpret_input(char c, bool& debugMode, bool& trackingEnabled, bool& pause) {
       // stay in this loop until
       c2 = waitKey(10);
       switch(c2) {
-        case 112: // p is for unpause
-          pause = false;
-          wait = false;
-          cout << "Code resumed." << endl;
-          break;
-        case 115: // s is for step
-          pause = true;
-          wait = false;
-          break;
+      case 112: // p is for unpause
+        pause = false;
+        wait = false;
+        cout << "Code resumed." << endl;
+        break;
+      case 115: // s is for step
+        pause = true;
+        wait = false;
+        break;
       }
     }
   }
@@ -732,17 +735,17 @@ void
 show_help() {
   cout << endl
        << " Usage: ./counter.out <video_name> <gray background image> [MAX_DIST_SQD] [SENSITIVITY_VALUE] [BLUR_SIZE] "
-          "[MIN_OBJ_AREA]\n"
-          " examples:\n"
-          " ./counter.out /home/pi/test_videos/my_vid.h264 NONE\n"
-          " ./counter.out /home/pi/test_videos/my_vid.h264 /home/pi/test_videos/my_background.jpg \n"
-          " ./counter.out /home/pi/test_videos/my_vid.h264 NONE 50 20 10 10\n"
-          "\n"
-          "OR \n"
-          "\n"
-          " Usage: ./counter.out <configuration file>\n"
-          " example:\n"
-          " ./counter.out config_example.txt\n"
+       "[MIN_OBJ_AREA]\n"
+       " examples:\n"
+       " ./counter.out /home/pi/test_videos/my_vid.h264 NONE\n"
+       " ./counter.out /home/pi/test_videos/my_vid.h264 /home/pi/test_videos/my_background.jpg \n"
+       " ./counter.out /home/pi/test_videos/my_vid.h264 NONE 50 20 10 10\n"
+       "\n"
+       "OR \n"
+       "\n"
+       " Usage: ./counter.out <configuration file>\n"
+       " example:\n"
+       " ./counter.out config_example.txt\n"
        << endl
        << endl;
   exit(1);

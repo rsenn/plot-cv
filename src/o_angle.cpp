@@ -1,4 +1,4 @@
-﻿#include <opencv2/opencv.hpp>
+﻿#include < opencv2 / opencv.hpp >
 
 using namespace cv;
 using namespace std;
@@ -69,8 +69,7 @@ main(int argc, char** argv) {
     erode(hsv_threshold, hsv_threshold, hsv_element_erode);                       // 20170420
     add(src_HSV, src_HSV, src_add_mask, hsv_threshold);                           // 20170420
     int num = 0;
-    if(!src_HSV.empty()) // 20170420
-    {
+    if(!src_HSV.empty()) { // 20170420
       findContours(hsv_threshold, contours_2, hierarchy_2, CV_RETR_TREE, CHAIN_APPROX_NONE, Point(0, 0));
       if(!contours_2.empty()) {
         //#pragma omp parallel for
@@ -126,22 +125,18 @@ main(int argc, char** argv) {
         vec_horizontal = Point(300, 240) - Point(200, 240); // 20170420
         ///////////////////�|(��)��!!!!!!!!!!! 20170420
         arc_theta =
-            acos(vec_center_minus_red.dot(vec_horizontal) / (pow(vec_center_minus_red.dot(vec_center_minus_red), 0.5) *
-                                                             pow(vec_horizontal.dot(vec_horizontal), 0.5)));
+          acos(vec_center_minus_red.dot(vec_horizontal) / (pow(vec_center_minus_red.dot(vec_center_minus_red), 0.5) *
+               pow(vec_horizontal.dot(vec_horizontal), 0.5)));
         theta = (arc_theta * 360) / (2 * pi); // 20170420
 
-        if((center_2.x > center.x) && (center_2.y < center.y)) // 20170420
-        {
+        if((center_2.x > center.x) && (center_2.y < center.y)) { // 20170420
           // cout << "arc_theta:  " << theta << endl;
-        } else if((center_2.x < center.x) && (center_2.y < center.y)) // 20170420
-        {
+        } else if((center_2.x < center.x) && (center_2.y < center.y)) { // 20170420
           // cout << "arc_theta:  " << theta << endl;
-        } else if((center_2.x < center.x) && (center_2.y > center.y)) // 20170420
-        {
+        } else if((center_2.x < center.x) && (center_2.y > center.y)) { // 20170420
           theta = 360 - theta;
           // cout << "arc_theta:  " << theta << endl;
-        } else if((center_2.x > center.x) && (center_2.y > center.y)) // 20170420
-        {
+        } else if((center_2.x > center.x) && (center_2.y > center.y)) { // 20170420
           theta = 360 - theta;
           // cout << "arc_theta:  " << theta << endl;
         }

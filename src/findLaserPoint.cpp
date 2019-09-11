@@ -142,8 +142,7 @@ main() {
           down = contours[maxAreaIndex][j].y;
       }
       for(int j = 0; j < contours[maxAreaIndex].size(); j++) {
-        if(abs(contours[maxAreaIndex][j].y - up) < 5) // Deal with the upside points
-        {
+        if(abs(contours[maxAreaIndex][j].y - up) < 5) { // Deal with the upside points
           if(contours[maxAreaIndex][j].x < tempLeftU) {
             tempLeftU = contours[maxAreaIndex][j].x;
             tempLeftUIndex = j;
@@ -154,8 +153,7 @@ main() {
           }
         }
 
-        if(abs(contours[maxAreaIndex][j].y - down) < 10) // Deal with the down side points
-        {
+        if(abs(contours[maxAreaIndex][j].y - down) < 10) { // Deal with the down side points
           if(contours[maxAreaIndex][j].x < tempLeftD) {
             tempLeftD = contours[maxAreaIndex][j].x;
             tempLeftDIndex = j;

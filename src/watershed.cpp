@@ -10,16 +10,16 @@ using namespace std;
 static void
 help() {
   cout << "\nThis program demonstrates the famous watershed segmentation algorithm in OpenCV: watershed()\n"
-          "Usage:\n"
-          "./watershed [image_name -- default is fruits.jpg]\n"
+       "Usage:\n"
+       "./watershed [image_name -- default is fruits.jpg]\n"
        << endl;
 
   cout << "Hot keys: \n"
-          "\tESC - quit the program\n"
-          "\tr - restore the original image\n"
-          "\tw or SPACE - run watershed segmentation algorithm\n"
-          "\t\t(before running it, *roughly* mark the areas to segment on the image)\n"
-          "\t  (before that, roughly outline several markers on the image)\n";
+       "\tESC - quit the program\n"
+       "\tr - restore the original image\n"
+       "\tw or SPACE - run watershed segmentation algorithm\n"
+       "\t\t(before running it, *roughly* mark the areas to segment on the image)\n"
+       "\t  (before that, roughly outline several markers on the image)\n";
 }
 cv::Mat markerMask, img;
 Point prevPt(-1, -1);

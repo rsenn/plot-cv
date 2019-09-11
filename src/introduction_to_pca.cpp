@@ -62,7 +62,7 @@ getOrientation(const vector<Point>& pts, cv::Mat& img) {
 
   // Store the center of the object
   Point cntr =
-      Point(static_cast<int>(pca_analysis.mean.at<double>(0, 0)), static_cast<int>(pca_analysis.mean.at<double>(0, 1)));
+    Point(static_cast<int>(pca_analysis.mean.at<double>(0, 0)), static_cast<int>(pca_analysis.mean.at<double>(0, 1)));
 
   // Store the eigenvalues and eigenvectors
   vector<Point2d> eigen_vecs(2);
@@ -85,7 +85,7 @@ getOrientation(const vector<Point>& pts, cv::Mat& img) {
   drawAxis(img, cntr, p2, Scalar(255, 255, 0), 5);
 
   double angle = atan2(eigen_vecs[0].y, eigen_vecs[0].x); // orientation in radians
-                                                          //! [visualization]
+  //! [visualization]
 
   return angle;
 }

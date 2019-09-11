@@ -25,19 +25,19 @@ using namespace cv;
 static void
 help() {
   cout << "This demo demonstrates the use of the Qt enhanced version of the highgui GUI interface\n"
-          "and dang if it doesn't throw in the use of of the POSIT 3D tracking algorithm too\n"
-          "It works off of the video: cube4.avi\n"
-          "Using OpenCV version "
+       "and dang if it doesn't throw in the use of of the POSIT 3D tracking algorithm too\n"
+       "It works off of the video: cube4.avi\n"
+       "Using OpenCV version "
        << CV_VERSION
        << "\n\n"
 
-          " 1) This demo is mainly based on work from Javier Barandiaran Martirena\n"
-          "    See this page http://code.opencv.org/projects/opencv/wiki/Posit.\n"
-          " 2) This is a demo to illustrate how to use **OpenGL Callback**.\n"
-          " 3) You need Qt binding to compile this sample with OpenGL support enabled.\n"
-          " 4) The features' detection is very basic and could highly be improved\n"
-          "    (basic thresholding tuned for the specific video) but 2).\n"
-          " 5) Thanks to Google Summer of Code 2010 for supporting this work!\n"
+       " 1) This demo is mainly based on work from Javier Barandiaran Martirena\n"
+       "    See this page http://code.opencv.org/projects/opencv/wiki/Posit.\n"
+       " 2) This is a demo to illustrate how to use **OpenGL Callback**.\n"
+       " 3) You need Qt binding to compile this sample with OpenGL support enabled.\n"
+       " 4) The features' detection is very basic and could highly be improved\n"
+       "    (basic thresholding tuned for the specific video) but 2).\n"
+       " 5) Thanks to Google Summer of Code 2010 for supporting this work!\n"
        << endl;
 }
 
@@ -178,7 +178,7 @@ foundCorners(vector<CvPoint2D32f>* srcImagePoints, const cv::Mat& source, cv::Ma
 
       // new coordinate system in the middle of the frame and reversed (camera coordinate system)
       srcImagePoints->at(i) =
-          cvPoint2D32f(srcImagePoints_temp.at(i).x - source.cols / 2, source.rows / 2 - srcImagePoints_temp.at(i).y);
+        cvPoint2D32f(srcImagePoints_temp.at(i).x - source.cols / 2, source.rows / 2 - srcImagePoints_temp.at(i).y);
     }
   }
 }

@@ -22,7 +22,7 @@ main(int argc, char** argv) {
     area = contourArea(contours[i]);
     Rect rect = boundingRect(contours[i]);
     if((area > 3000 && area < 4500) && (rect.width > 60 && rect.width < 100) &&
-       (rect.height > 60 && rect.height < 100)) {
+        (rect.height > 60 && rect.height < 100)) {
       cout << "contours[i]: " << area << endl;
       cout << "width" << rect.width << "height" << rect.height << endl;
       Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));

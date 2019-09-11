@@ -89,7 +89,7 @@ std::vector<cv::Point>
 ToPointVec(const std::vector<InputType>& v) {
   std::vector<cv::Point> ret;
 
-  std::for_each(v.cbegin(), v.cend(), [&ret](const InputType& pt) { ret.push_back(cv::Point(pt.x, pt.y)); });
+  std::for_each(v.cbegin(), v.cend(), [&ret](const InputType & pt) { ret.push_back(cv::Point(pt.x, pt.y)); });
 
   return ret;
 }

@@ -301,34 +301,35 @@ createCookBook(cv::Mat staveReg, int rightIndex) {
     templateQuarter = staveReg.rowRange(startRow, endRow);
     templateQuarter = templateQuarter.colRange(startCol, endCol);
 
-   /*namedWindow( "Quarter Note", CV_WINDOW_AUTOSIZE );
-	 imshow( "Quarter Note", templateQuarter);
-	 waitKey();*/}
+    /*namedWindow( "Quarter Note", CV_WINDOW_AUTOSIZE );
+    imshow( "Quarter Note", templateQuarter);
+    waitKey();*/
+  }
 
-   if(rightIndex == 1) {
-     int startCol = boundRect[halfIndex].tl().x;
-     int endCol = boundRect[halfIndex].br().x;
-     int startRow = boundRect[halfIndex].tl().y;
-     int endRow = boundRect[halfIndex].br().y;
-     templateHalf = staveReg.rowRange(startRow, endRow);
-     templateHalf = templateHalf.colRange(startCol, endCol);
+  if(rightIndex == 1) {
+    int startCol = boundRect[halfIndex].tl().x;
+    int endCol = boundRect[halfIndex].br().x;
+    int startRow = boundRect[halfIndex].tl().y;
+    int endRow = boundRect[halfIndex].br().y;
+    templateHalf = staveReg.rowRange(startRow, endRow);
+    templateHalf = templateHalf.colRange(startCol, endCol);
 
-     /*namedWindow( "Half Note", CV_WINDOW_AUTOSIZE );
-	 imshow( "Half Note", templateHalf);
-	 waitKey()*/;
-   }
+    /*namedWindow( "Half Note", CV_WINDOW_AUTOSIZE );
+    imshow( "Half Note", templateHalf);
+    waitKey()*/;
+  }
 
-   if(rightIndex == 6) {
-     int startCol = boundRect[holeIndex].tl().x;
-     int endCol = boundRect[holeIndex].br().x;
-     int startRow = boundRect[holeIndex].tl().y;
-     int endRow = boundRect[holeIndex].br().y;
-     templateHole = staveReg.rowRange(startRow, endRow);
-     templateHole = templateHole.colRange(startCol, endCol);
-     /* namedWindow( "Whole Note", CV_WINDOW_AUTOSIZE );
-	 imshow( "Whole Note", templateHole);
-	 waitKey()*/;
-   }
+  if(rightIndex == 6) {
+    int startCol = boundRect[holeIndex].tl().x;
+    int endCol = boundRect[holeIndex].br().x;
+    int startRow = boundRect[holeIndex].tl().y;
+    int endRow = boundRect[holeIndex].br().y;
+    templateHole = staveReg.rowRange(startRow, endRow);
+    templateHole = templateHole.colRange(startCol, endCol);
+    /* namedWindow( "Whole Note", CV_WINDOW_AUTOSIZE );
+    imshow( "Whole Note", templateHole);
+    waitKey()*/;
+  }
 }
 void
 findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
@@ -390,7 +391,7 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
     imshow(result_window, result);
     waitKey();
     if(boundRect[i].area() >= templateQuarter.size[0] * templateQuarter.size[1] &&
-       boundRect[i].area() <= 3 * (templateQuarter.size[0] * templateQuarter.size[1])) {
+        boundRect[i].area() <= 3 * (templateQuarter.size[0] * templateQuarter.size[1])) {
       // know you're in business
 
       // construct a new cv::Mat from boundRect coordinates in staveRegion
@@ -459,14 +460,14 @@ type2str(int type) {
   uchar chans = 1 + (type >> CV_CN_SHIFT);
 
   switch(depth) {
-    case CV_8U: r = "8U"; break;
-    case CV_8S: r = "8S"; break;
-    case CV_16U: r = "16U"; break;
-    case CV_16S: r = "16S"; break;
-    case CV_32S: r = "32S"; break;
-    case CV_32F: r = "32F"; break;
-    case CV_64F: r = "64F"; break;
-    default: r = "User"; break;
+  case CV_8U: r = "8U"; break;
+  case CV_8S: r = "8S"; break;
+  case CV_16U: r = "16U"; break;
+  case CV_16S: r = "16S"; break;
+  case CV_32S: r = "32S"; break;
+  case CV_32F: r = "32F"; break;
+  case CV_64F: r = "64F"; break;
+  default: r = "User"; break;
   }
 
   r += "C";

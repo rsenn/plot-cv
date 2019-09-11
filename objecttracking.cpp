@@ -67,16 +67,16 @@ Entity::setHSVmax(Scalar max) {
 string
 findDirection(Entity playerrear, Entity ball) {
   if(playerrear.getXPos() >= ball.getXPos() &&
-     playerrear.getYPos() >= ball.getYPos()) // if ball is in the left top corner
+      playerrear.getYPos() >= ball.getYPos()) // if ball is in the left top corner
     return "NORTHWEST";
   if(playerrear.getXPos() >= ball.getXPos() &&
-     playerrear.getYPos() <= ball.getYPos()) // if the ball is in the left bottom corner
+      playerrear.getYPos() <= ball.getYPos()) // if the ball is in the left bottom corner
     return "SOUTHWEST";
   if(playerrear.getXPos() <= ball.getXPos() &&
-     playerrear.getYPos() <= ball.getYPos()) // if the ball is in the bottom right corner
+      playerrear.getYPos() <= ball.getYPos()) // if the ball is in the bottom right corner
     return "SOUTHEAST";
   if(playerrear.getXPos() <= ball.getXPos() &&
-     playerrear.getYPos() >= ball.getYPos()) // if the ball is in the top right corner
+      playerrear.getYPos() >= ball.getYPos()) // if the ball is in the top right corner
     return "NORTHEAST";
 }
 //

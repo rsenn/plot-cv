@@ -65,54 +65,54 @@ void
 trackFiliteredObject::Multiple_inRanage(Mat& hsv, Mat& threshold, int arguments) {
 
   switch(arguments) {
-    case default_value:
-      H_MIN = 0;
-      H_MAX = 256;
-      S_MIN = 0;
-      S_MAX = 256;
-      V_MIN = 0;
-      V_MAX = 256;
-      // cv::inRange(hsv,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX), threshold);
-      break;
-    case morring:
-      H_MIN = 17;
-      H_MAX = 256;
-      S_MIN = 150;
-      S_MAX = 256;
-      V_MIN = 36;
-      V_MAX = 170;
-      // cv::inRange(hsv, Scalar(17,150,36), Scalar(256,256,170), threshold);
-      break;
-    case morring_pi:
-      H_MIN = 26;
-      H_MAX = 256;
-      S_MIN = 158;
-      S_MAX = 256;
-      V_MIN = 73;
-      V_MAX = 249;
-      break;
-    case noon: break;
-    case morring_demo:
-      H_MIN = 24;
-      H_MAX = 104;
-      S_MIN = 80;
-      S_MAX = 170;
-      V_MIN = 52;
-      V_MAX = 256;
-      break;
+  case default_value:
+    H_MIN = 0;
+    H_MAX = 256;
+    S_MIN = 0;
+    S_MAX = 256;
+    V_MIN = 0;
+    V_MAX = 256;
+    // cv::inRange(hsv,Scalar(H_MIN,S_MIN,V_MIN),Scalar(H_MAX,S_MAX,V_MAX), threshold);
+    break;
+  case morring:
+    H_MIN = 17;
+    H_MAX = 256;
+    S_MIN = 150;
+    S_MAX = 256;
+    V_MIN = 36;
+    V_MAX = 170;
+    // cv::inRange(hsv, Scalar(17,150,36), Scalar(256,256,170), threshold);
+    break;
+  case morring_pi:
+    H_MIN = 26;
+    H_MAX = 256;
+    S_MIN = 158;
+    S_MAX = 256;
+    V_MIN = 73;
+    V_MAX = 249;
+    break;
+  case noon: break;
+  case morring_demo:
+    H_MIN = 24;
+    H_MAX = 104;
+    S_MIN = 80;
+    S_MAX = 170;
+    V_MIN = 52;
+    V_MAX = 256;
+    break;
 
-    case night:
-      H_MIN = 24;
-      H_MAX = 80;
-      S_MIN = 84;
-      S_MAX = 256;
-      V_MIN = 113;
-      V_MAX = 240;
-      // cv::inRange(hsv, Scalar(24,84,113), Scalar(80,256,240), threshold);
-      break;
-    case night2: break;
+  case night:
+    H_MIN = 24;
+    H_MAX = 80;
+    S_MIN = 84;
+    S_MAX = 256;
+    V_MIN = 113;
+    V_MAX = 240;
+    // cv::inRange(hsv, Scalar(24,84,113), Scalar(80,256,240), threshold);
+    break;
+  case night2: break;
 
-    default: break;
+  default: break;
   }
 }
 void

@@ -106,9 +106,9 @@ backFilterImageBased() {
   createTrackbar("PostBlur", "Params", &SecondBlurStrng, 10);
 
   switch(m) {
-    case M_KNN: knn->apply(frame, fgmask); break;
+  case M_KNN: knn->apply(frame, fgmask); break;
 
-    case M_MOG2: mog2->apply(frame, fgmask); break;
+  case M_MOG2: mog2->apply(frame, fgmask); break;
   }
   bool running = true;
   while(running) {
@@ -120,9 +120,9 @@ backFilterImageBased() {
 
     // update the model
     switch(m) {
-      case M_KNN: knn->apply(frame, fgmask); break;
+    case M_KNN: knn->apply(frame, fgmask); break;
 
-      case M_MOG2: mog2->apply(frame, fgmask); break;
+    case M_MOG2: mog2->apply(frame, fgmask); break;
     }
     // Filter model
     medianBlur(fgmask, fgmask, nearestEvenInt(medianBlurStrng));
@@ -144,12 +144,12 @@ backFilterImageBased() {
     char key = (char)waitKey(30);
 
     switch(key) {
-      case 27: running = false; break;
-      case 'm':
-      case 'M':
-        ocl::setUseOpenCL(!ocl::useOpenCL());
-        cout << "Switched to " << (ocl::useOpenCL() ? "OpenCL enabled" : "CPU") << " mode\n";
-        break;
+    case 27: running = false; break;
+    case 'm':
+    case 'M':
+      ocl::setUseOpenCL(!ocl::useOpenCL());
+      cout << "Switched to " << (ocl::useOpenCL() ? "OpenCL enabled" : "CPU") << " mode\n";
+      break;
     }
   }
 }
@@ -223,7 +223,7 @@ trackObjectloop() {
 }
 
 void on_trackbar(int, void*) { // This function gets called whenever a
-                               // trackbar position is changed
+  // trackbar position is changed
 }
 string
 intToString(int number) {

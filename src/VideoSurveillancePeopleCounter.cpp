@@ -53,7 +53,7 @@ public:
       }
 
       // erase old contours (seen 16 frames ago) -- CHANGED TO 100 frames
-      unregisterPersonIf([&](const Person* p) { return frameNumber - lastFrameWherePersonWasSeen[p] > fps; });
+      unregisterPersonIf([&](const Person * p) { return frameNumber - lastFrameWherePersonWasSeen[p] > fps; });
 
       // and then process the current frame
       processFrame(frame);

@@ -32,11 +32,13 @@ bool Undistort = false;
 
 int Lower[3] = {calibration_data["h_low"].as<int>(),
                 calibration_data["s_low"].as<int>(),
-                calibration_data["v_low"].as<int>()};
+                calibration_data["v_low"].as<int>()
+               };
 
 int Upper[3] = {calibration_data["h_up"].as<int>(),
                 calibration_data["s_up"].as<int>(),
-                calibration_data["v_up"].as<int>()};
+                calibration_data["v_up"].as<int>()
+               };
 
 double lower[3], upper[3];
 int intLow[3], intUp[3];

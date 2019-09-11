@@ -35,7 +35,7 @@ using namespace std;
 
 // declaring variables for track and identify and trackbars
 cv::Mat image; // Declaring the matrix image
-           // Declaring of variables used for the tracker
+// Declaring of variables used for the tracker
 bool backprojMode = false;
 bool objectSelection = false;
 int inputWindowSize = 0;
@@ -100,16 +100,16 @@ userMouse(int click, int x, int y, int, void*) {
   }
 
   switch(click) {
-    case EVENT_LBUTTONDOWN:
-      origin = Point(x, y);
-      boundingbox = Rect(x, y, 0, 0);
-      objectSelection = true;
-      break;
-    case EVENT_LBUTTONUP:
-      objectSelection = false;
-      if(boundingbox.width > 0 && boundingbox.height > 0)
-        inputWindowSize = -1; // Set up CAMShift properties in track_and_identify() loop
-      break;
+  case EVENT_LBUTTONDOWN:
+    origin = Point(x, y);
+    boundingbox = Rect(x, y, 0, 0);
+    objectSelection = true;
+    break;
+  case EVENT_LBUTTONUP:
+    objectSelection = false;
+    if(boundingbox.width > 0 && boundingbox.height > 0)
+      inputWindowSize = -1; // Set up CAMShift properties in track_and_identify() loop
+    break;
   }
 }
 
@@ -137,7 +137,7 @@ getMaxClass(const cv::Mat& probBlob, int* classId, double* classProb) {
 int track_and_identify(int argc, char** argv);
 int bg_sub_contour(int argc, char** argv);
 void contour_figure(int, void*); // prototype to contour function
-                                 // void drawObject();
+// void drawObject();
 
 // readClassNames() is from dnn module in OpenCV library
 static std::vector<String>
@@ -183,12 +183,11 @@ track_and_identify(int argc, char** argv) {
   VideoCapture cap(0); // Camera capture
   Rect trackingBox;    // Delcaing the rectangular box of type
   int hue_size = 32;   // Hue quantizes to 32 levels to get pixel data for histogram
-                       // Hue varies from 0 to 170
+  // Hue varies from 0 to 170
   float hranges[] = {0, 180};
   const float* phranges = hranges; // pixel range is only based on hue range
 
-  if(!cap.isOpened()) // Error for unsuccessful opening of the camera
-  {
+  if(!cap.isOpened()) { // Error for unsuccessful opening of the camera
 
     cerr << "Cannot open Camera" << endl;
 
@@ -200,7 +199,7 @@ track_and_identify(int argc, char** argv) {
   setMouseCallback("Object Tracker", userMouse, 0); // User can draw inside of the Object tracker box display
 
   cv::Mat frame, hsv, hue, mask, hist, histimg = cv::Mat::zeros(400, 640, CV_8UC3),
-                                   backproj; // setting up the matrix holding the colors and frames of histrogram image
+                                       backproj; // setting up the matrix holding the colors and frames of histrogram image
   bool pause = false;
 
   for(;;) {
@@ -233,12 +232,12 @@ track_and_identify(int argc, char** argv) {
           normalize(hist, hist, 0, 255, NORM_MINMAX);
           cv::Mat image_save = image(boundingbox).clone(); // savind the image of the bounding box from the roi
           imwrite("save.jpg", image_save);             // saves boundingbox as an image
-                                                       //-------------------------
-                                                       //---------------------
+          //-------------------------
+          //---------------------
           trackingBox = boundingbox;
           inputWindowSize = 1; // Don't set up again, unless user selects new ROI
-                               // Setting up the bars of the histrogram once user has selected rectangle around object
-                               // Detecting possible color scheme from that object
+          // Setting up the bars of the histrogram once user has selected rectangle around object
+          // Detecting possible color scheme from that object
           histimg = Scalar::all(0);
           int binW = histimg.cols / hue_size;
           cv::Mat buf(1, hue_size, CV_8UC3);
@@ -250,7 +249,7 @@ track_and_identify(int argc, char** argv) {
             int val = saturate_cast<int>(hist.at<float>(i) * histimg.rows / 255); // value of the histogram
             rectangle(histimg,
                       Point(i * binW, histimg.rows), // value from the rectangle of selected object to convert into the
-                                                     // colored histogram
+                      // colored histogram
                       Point((i + 1) * binW, histimg.rows - val),
                       Scalar(buf.at<Vec3b>(i)),
                       -1,
@@ -264,12 +263,12 @@ track_and_identify(int argc, char** argv) {
         RotatedRect trackBox = CamShift(backproj,
                                         trackingBox,
                                         TermCriteria(TermCriteria::EPS | TermCriteria::COUNT,
-                                                     0,
-                                                     1)); // using opencv's function criteria for tracking window
+                                            0,
+                                            1)); // using opencv's function criteria for tracking window
         if(trackingBox.area() <= 1) {
           int cols = backproj.cols, rows = backproj.rows, r = (MIN(cols, rows) + 5) / 6;
           trackingBox =
-              Rect(trackingBox.x - r, trackingBox.y - r, trackingBox.x + r, trackingBox.y + r) & Rect(0, 0, cols, rows);
+            Rect(trackingBox.x - r, trackingBox.y - r, trackingBox.x + r, trackingBox.y + r) & Rect(0, 0, cols, rows);
         }
 
         if(backprojMode)
@@ -291,10 +290,10 @@ track_and_identify(int argc, char** argv) {
     if(q == 27)
       break;
     switch(q) {
-      case 'p': // creating a still frame for user interaction
-        pause = !pause;
-        break;
-      default:;
+    case 'p': // creating a still frame for user interaction
+      pause = !pause;
+      break;
+    default:;
     }
   }
 
@@ -305,8 +304,7 @@ track_and_identify(int argc, char** argv) {
   String modelBin = "bvlc_googlenet.caffemodel";        // Accesing the caffe model files
   String imageFile = (argc > 1) ? argv[1] : "save.jpg"; // calls boundingbox image instead of entire camera frame
   Net net = dnn::readNetFromCaffe(modelTxt, modelBin);
-  if(net.empty()) // if reading from caffe model is not successful
-  {
+  if(net.empty()) { // if reading from caffe model is not successful
     std::cerr << "Can't load network by using the following files: " << std::endl;
     std::cerr << "prototxt:   " << modelTxt << std::endl;
     std::cerr << "caffemodel: " << modelBin << std::endl;
@@ -316,8 +314,7 @@ track_and_identify(int argc, char** argv) {
   }
   cv::Mat img = imread(imageFile);
   // cv::Mat img = roi(image, boundingbox);
-  if(img.empty()) // checking if image exists in the file
-  {
+  if(img.empty()) { // checking if image exists in the file
     std::cerr << "Can't read image from the file: " << imageFile << std::endl;
     exit(-1);
   }
@@ -325,8 +322,7 @@ track_and_identify(int argc, char** argv) {
   cv::Mat inputBlob = blobFromImage(img, 1, Size(224, 224), Scalar(104, 117, 123)); // Convert cv::Mat to batch of images
   cv::Mat prob;
   cv::TickMeter t;
-  for(int i = 0; i < 10; i++) // setting # of iterations for blob dnn method recognition
-  {
+  for(int i = 0; i < 10; i++) { // setting # of iterations for blob dnn method recognition
     CV_TRACE_REGION("forward");
     net.setInput(inputBlob, "data"); // set the network input
     t.start();
@@ -343,7 +339,7 @@ track_and_identify(int argc, char** argv) {
   cout << "Best class: #" << classId << " Object Identified as '" << classNames.at(classId) << "'" << endl;
   cout << "Probability: " << classProb * 100 << "%"
        << endl; // It also determines the probability of that object being the detected correctly
-                // The time it took to detected the correct item
+  // The time it took to detected the correct item
   cout << "Time: " << (double)t.getTimeMilli() / t.getCounter() << " ms (average from " << t.getCounter()
        << " iterations)" << endl;
 }
@@ -378,8 +374,7 @@ bg_sub_contour(int argc, char** argv) {
     return -1;
   }
 
-  for(;;) // iterates a camera feed
-  {
+  for(;;) { // iterates a camera feed
     stream.read(streamFeed); // stores image to matrix
 
     cvtColor(streamFeed, hsv, COLOR_BGR2HSV); // converting from BGR color space to HSV
@@ -391,8 +386,7 @@ bg_sub_contour(int argc, char** argv) {
     imshow("Threshold feed", threshold); // displays the produced thresh image very smoothly
 
     int k = waitKey(1);
-    if(k == 27) // press ESC to exit the thresh feed
-    {
+    if(k == 27) { // press ESC to exit the thresh feed
       break;
     }
     imwrite("backsub.jpg", threshold); // saves the last frame from threshold feed as an image
@@ -434,7 +428,7 @@ contour_figure(int, void*) {
                           rng.uniform(0, 255),
                           rng.uniform(0, 255)); // changes scalar colours based on various edges
     drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point()); // adds colours while also drawing the
-                                                                                 // contour lines
+    // contour lines
   }
 
   // displays the image

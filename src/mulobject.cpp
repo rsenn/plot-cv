@@ -38,7 +38,7 @@ void myFunc(cv::Mat& cameraFeed, Entity& playerfront, Entity& playerrear, Entity
 void movePlayer(string balld, Entity& playerfront, Entity& playerrear, Entity& ball, Entity& goal, Serial& serial);
 
 void on_trackbar(int, void*) { // This function gets called whenever a
-                               // trackbar position is changed
+  // trackbar position is changed
 }
 string
 intToString(int number) {
@@ -92,7 +92,7 @@ drawObject(Entity anEntity, cv::Mat& frame) {
               1,
               Scalar(0, 255, 0));
   cv::putText(
-      frame, anEntity.getType(), cv::Point(anEntity.getXPos(), anEntity.getYPos() - 30), 1, 2, anEntity.getColor());
+    frame, anEntity.getType(), cv::Point(anEntity.getXPos(), anEntity.getYPos() - 30), 1, 2, anEntity.getColor());
 }
 void
 morphOps(cv::Mat& thresh) {
@@ -502,12 +502,12 @@ myFunc(cv::Mat& cameraFeed, Entity& playerfront, Entity& playerrear, Entity& bal
   inRange(HSV, playerrear.getHSVmin(), playerrear.getHSVmax(), threshold); // enter the range of hsv for the object
   morphOps(threshold);
   trackFilteredObject(playerrear, threshold, HSV, cameraFeed); // passes the object to the tracking function
-                                                               // ball
+  // ball
   cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
   inRange(HSV, goal.getHSVmin(), goal.getHSVmax(), threshold); // enter the range of hsv for the object
   morphOps(threshold);
   trackFilteredObject(goal, threshold, HSV, cameraFeed); // passes the object to the tracking function
-                                                         // goal
+  // goal
   cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
   inRange(HSV, ball.getHSVmin(), ball.getHSVmax(), threshold); // enter the range of hsv for the object
   morphOps(threshold);

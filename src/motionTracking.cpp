@@ -186,43 +186,43 @@ main() {
       // cout << key << endl;
       // switch(key){
       switch(waitKey(10)) {
-        case 1048603:
-          // case 27: //'esc' key has been pressed, exit program.
-          return 0;
-        case 1048692:
-          // case 116: //'t' has been pressed. this will toggle tracking
-          trackingEnabled = !trackingEnabled;
-          if(trackingEnabled == false)
-            cout << "Tracking disabled." << endl;
-          else
-            cout << "Tracking enabled." << endl;
-          break;
-        case 1048676:
-          // case 100: //'d' has been pressed. this will debug mode
-          debugMode = !debugMode;
-          if(debugMode == false)
-            cout << "Debug mode disabled." << endl;
-          else
-            cout << "Debug mode enabled." << endl;
-          break;
-        case 1048688:
-          // case 112: //'p' has been pressed. this will pause/resume the code.
-          pause = !pause;
-          if(pause == true) {
-            cout << "Code paused, press 'p' again to resume" << endl;
-            while(pause == true) {
-              // stay in this loop until
-              switch(waitKey()) {
-                  // a switch statement inside a switch statement? Mind blown.
-                case 1048688:
-                  // case 112:
-                  // change pause back to false
-                  pause = false;
-                  cout << "Code resumed." << endl;
-                  break;
-              }
+      case 1048603:
+        // case 27: //'esc' key has been pressed, exit program.
+        return 0;
+      case 1048692:
+        // case 116: //'t' has been pressed. this will toggle tracking
+        trackingEnabled = !trackingEnabled;
+        if(trackingEnabled == false)
+          cout << "Tracking disabled." << endl;
+        else
+          cout << "Tracking enabled." << endl;
+        break;
+      case 1048676:
+        // case 100: //'d' has been pressed. this will debug mode
+        debugMode = !debugMode;
+        if(debugMode == false)
+          cout << "Debug mode disabled." << endl;
+        else
+          cout << "Debug mode enabled." << endl;
+        break;
+      case 1048688:
+        // case 112: //'p' has been pressed. this will pause/resume the code.
+        pause = !pause;
+        if(pause == true) {
+          cout << "Code paused, press 'p' again to resume" << endl;
+          while(pause == true) {
+            // stay in this loop until
+            switch(waitKey()) {
+            // a switch statement inside a switch statement? Mind blown.
+            case 1048688:
+              // case 112:
+              // change pause back to false
+              pause = false;
+              cout << "Code resumed." << endl;
+              break;
             }
           }
+        }
       }
     }
     // release the capture before re-opening and looping again.

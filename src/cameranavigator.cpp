@@ -103,30 +103,28 @@ FindLineCenter(raspicam::RaspiCam_Cv& Camera, int32_t nTick, int32_t& nCenterX, 
         nRet = 1;
         // here is the center pixel
 #if 0
-				{
-					try {
-						cv::circle(roiImg, center, 5, cv::Scalar(255, 255, 255), -1, 8, 0);
-					} catch (cv::Exception& e)
-					{
-						const char* err_msg = e.what();
-						std::cout << "exception caught: " << err_msg << std::endl;
-					}
-					sprintf(szFilename, "roi_image%d.png", nTick);
-					sprintf(szOriFilename, "image%d.png", nTick);
-					try {
-						cv::drawContours(roiImg, contours, s, cv::Scalar(255, 255, 255), 2, 8, hierarchy, 0, cv::Point());
-						cv::imwrite(szFilename, roiImg);
-						//cv::imwrite(szOriFilename, image);
+        {
+          try {
+            cv::circle(roiImg, center, 5, cv::Scalar(255, 255, 255), -1, 8, 0);
+          } catch(cv::Exception& e) {
+            const char* err_msg = e.what();
+            std::cout << "exception caught: " << err_msg << std::endl;
+          }
+          sprintf(szFilename, "roi_image%d.png", nTick);
+          sprintf(szOriFilename, "image%d.png", nTick);
+          try {
+            cv::drawContours(roiImg, contours, s, cv::Scalar(255, 255, 255), 2, 8, hierarchy, 0, cv::Point());
+            cv::imwrite(szFilename, roiImg);
+            //cv::imwrite(szOriFilename, image);
 #if PRESERVEROI
-						sprintf(szOriROIFilename, "ori_roi_image%d.png", nTick);
-						cv::imwrite(szOriROIFilename, roiImgPreserve);
-#endif						
-					} catch (cv::Exception& e)
-					{
-						const char* err_msg = e.what();
-						std::cout << "exception caught: " << err_msg << std::endl;
-					}
-				}
+            sprintf(szOriROIFilename, "ori_roi_image%d.png", nTick);
+            cv::imwrite(szOriROIFilename, roiImgPreserve);
+#endif
+          } catch(cv::Exception& e) {
+            const char* err_msg = e.what();
+            std::cout << "exception caught: " << err_msg << std::endl;
+          }
+        }
 #endif
       }
     }
@@ -164,22 +162,17 @@ OffsetNavigator(ros::ServiceClient& client, float fXOffset) {
   srv2.request.nNewSpeed = 60; // max speed;
 
   if(fabs(fXOffset) > 0.2 &&
-     fabs(fXOffset) < 0.4) // If the offset is more than 30% on either side from the center of the image
-  {
+      fabs(fXOffset) < 0.4) { // If the offset is more than 30% on either side from the center of the image
     srv2.request.nNewSpeed = 60; // max speed;
   } else if(fabs(fXOffset) > 0.4 &&
-            fabs(fXOffset) < 0.6) // If the offset is more than 50% on either side from the center of the image
-  {
+            fabs(fXOffset) < 0.6) { // If the offset is more than 50% on either side from the center of the image
     srv2.request.nNewSpeed = 65; // max speed;
   } else if(fabs(fXOffset) > 0.6 &&
-            fabs(fXOffset) < 0.8) // If the offset is more than 70% on either side from the center of the image
-  {
+            fabs(fXOffset) < 0.8) { // If the offset is more than 70% on either side from the center of the image
     srv2.request.nNewSpeed = 70;  // max speed;
-  } else if(fabs(fXOffset) > 0.8) // If the offset is more than 90% on either side from the center of the image
-  {
+  } else if(fabs(fXOffset) > 0.8) { // If the offset is more than 90% on either side from the center of the image
     srv2.request.nNewSpeed = 75; // max speed;
-  } else                         // Move forward with the specified speed by the user
-  {
+  } else {                       // Move forward with the specified speed by the user
     srv2.request.nNewSpeed = 60;    // max speed;
     srv2.request.nNewDirection = 1; // forward
   }
