@@ -15,29 +15,32 @@ using namespace std;
 
 void trackbarChanged(int pos, void* data);
 
-static void help() {
+static void
+help() {
   cout << "\nThis program demonstrates SEEDS superpixels using OpenCV class SuperpixelSEEDS\n"
-       "Use [space] to toggle output mode\n"
-       "\n"
-       "It captures either from the camera of your choice: 0, 1, ... default 0\n"
-       "Or from an input image\n"
-       "Call:\n"
-       "./seeds [camera #, default 0]\n"
-       "./seeds [input image file]\n" << endl;
+          "Use [space] to toggle output mode\n"
+          "\n"
+          "It captures either from the camera of your choice: 0, 1, ... default 0\n"
+          "Or from an input image\n"
+          "Call:\n"
+          "./seeds [camera #, default 0]\n"
+          "./seeds [input image file]\n"
+       << endl;
 }
 
 static const char* window_name = "SEEDS Superpixels";
 
 static bool init = false;
 
-void trackbarChanged(int, void*) {
+void
+trackbarChanged(int, void*) {
   init = false;
 }
 
-
-int main(int argc, char** argv) {
+int
+main(int argc, char** argv) {
   VideoCapture cap;
-  Mat input_image;
+  cv::Mat input_image;
   bool use_video_capture = false;
   help();
 
@@ -70,13 +73,13 @@ int main(int argc, char** argv) {
   createTrackbar("Number of Levels", window_name, &num_levels, 10, trackbarChanged);
   createTrackbar("Iterations", window_name, &num_iterations, 12, 0);
 
-  Mat result, mask;
+  cv::Mat result, mask;
   Ptr<SuperpixelSEEDS> seeds;
   int width, height;
   int display_mode = 0;
 
   for(;;) {
-    Mat frame;
+    cv::Mat frame;
     if(use_video_capture)
       cap >> frame;
     else
@@ -88,24 +91,23 @@ int main(int argc, char** argv) {
     if(!init) {
       width = frame.size().width;
       height = frame.size().height;
-      seeds = createSuperpixelSEEDS(width, height, frame.channels(), num_superpixels,
-                                    num_levels, prior, num_histogram_bins, double_step);
+      seeds = createSuperpixelSEEDS(
+          width, height, frame.channels(), num_superpixels, num_levels, prior, num_histogram_bins, double_step);
       init = true;
     }
-    Mat converted;
+    cv::Mat converted;
     cvtColor(frame, converted, COLOR_BGR2HSV);
 
-    double t = (double) getTickCount();
+    double t = (double)getTickCount();
 
     seeds->iterate(converted, num_iterations);
     result = frame;
 
-    t = ((double) getTickCount() - t) / getTickFrequency();
-    printf("SEEDS segmentation took %i ms with %3i superpixels\n",
-           (int)(t * 1000), seeds->getNumberOfSuperpixels());
+    t = ((double)getTickCount() - t) / getTickFrequency();
+    printf("SEEDS segmentation took %i ms with %3i superpixels\n", (int)(t * 1000), seeds->getNumberOfSuperpixels());
 
     /* retrieve the segmentation result */
-    Mat labels;
+    cv::Mat labels;
     seeds->getLabels(labels);
 
     /* get the contours for displaying */
@@ -114,23 +116,21 @@ int main(int argc, char** argv) {
 
     /* display output */
     switch(display_mode) {
-    case 0: //superpixel contours
-      imshow(window_name, result);
-      break;
-    case 1: //mask
-      imshow(window_name, mask);
-      break;
-    case 2: { //labels array
-      // use the last x bit to determine the color. Note that this does not
-      // guarantee that 2 neighboring superpixels have different colors.
-      const int num_label_bits = 2;
-      labels &= (1 << num_label_bits) - 1;
-      labels *= 1 << (16 - num_label_bits);
-      imshow(window_name, labels);
+      case 0: // superpixel contours
+        imshow(window_name, result);
+        break;
+      case 1: // mask
+        imshow(window_name, mask);
+        break;
+      case 2: { // labels array
+        // use the last x bit to determine the color. Note that this does not
+        // guarantee that 2 neighboring superpixels have different colors.
+        const int num_label_bits = 2;
+        labels &= (1 << num_label_bits) - 1;
+        labels *= 1 << (16 - num_label_bits);
+        imshow(window_name, labels);
+      } break;
     }
-    break;
-    }
-
 
     int c = waitKey(1);
     if((c & 255) == 'q' || c == 'Q' || (c & 255) == 27)

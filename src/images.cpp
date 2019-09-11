@@ -18,7 +18,7 @@ void
 onMouse1(int event, int x, int y, int foo, void* p) {
   if(event != CV_EVENT_LBUTTONDOWN)
     return;
-  Point m1(x, y);
+  cv::Point m1(x, y);
   Data* D = (Data*)p;
   D->polygon.addPoint(m1);
   cout << "Adding point: (" << x << ", " << y << ")" << endl;

@@ -75,12 +75,12 @@ Data::drawNextStep(double step, const Mat& Image, SegmentationMode mode) {
     // cout << "Step" << i << ": " << g * curv  * step<< endl;
     float scalar = 0.;
     switch(mode) {
-    case BALLOON_MODE: scalar = -(curv + COEFF_BALL) * g * step; break;
-    case CURV_MODE: scalar = -curv * COEFF_CURV; break;
-    case ALL_MODE:
-      curv = curv + COEFF_BALL;
-      scalar = (gradx * nx + grady * ny - (curv) * g) * step;
-      break;
+      case BALLOON_MODE: scalar = -(curv + COEFF_BALL) * g * step; break;
+      case CURV_MODE: scalar = -curv * COEFF_CURV; break;
+      case ALL_MODE:
+        curv = curv + COEFF_BALL;
+        scalar = (gradx * nx + grady * ny - (curv)*g) * step;
+        break;
     }
     // cout << scalar << endl;
     Point2d nextP(scalar * nx + p.x, scalar * ny + p.y);
@@ -121,12 +121,12 @@ Data::findContour(double step, SegmentationMode mode) {
     float ny = normale(1);
     float scalar = 0.;
     switch(mode) {
-    case BALLOON_MODE: scalar = -(curv + COEFF_BALL) * g * step; break;
-    case CURV_MODE: scalar = -curv * COEFF_CURV; break;
-    case ALL_MODE:
-      curv = curv + COEFF_BALL;
-      scalar = (gradx * nx + grady * ny - curv * g) * step;
-      break;
+      case BALLOON_MODE: scalar = -(curv + COEFF_BALL) * g * step; break;
+      case CURV_MODE: scalar = -curv * COEFF_CURV; break;
+      case ALL_MODE:
+        curv = curv + COEFF_BALL;
+        scalar = (gradx * nx + grady * ny - curv * g) * step;
+        break;
     }
     Point2d nextP(scalar * nx + p.x, scalar * ny + p.y);
     if(isValidPoint(nextP)) {

@@ -4,7 +4,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
 #include <iostream>
-#include <vector>
+#include <std::vector>
 #include <numeric>
 
 using namespace cv;
@@ -67,16 +67,16 @@ main(int argc, char* argv[]) {
 
     threshold(diff, diff, 38, 255, cv::THRESH_BINARY); // 32
 
-    vector<vector<Point>> conts;
-    vector<Vec4i> hierarchy;
+    std::vector<std::vector<cv::Point>> conts;
+    std::vector<Vec4i> hierarchy;
     findContours(diff, conts, hierarchy, RETR_TREE, CHAIN_APPROX_NONE);
 
-    vector<vector<Point>> hull(conts.size());
+    std::vector<std::vector<cv::Point>> hull(conts.size());
     Scalar color = Scalar(255, 255, 255);
     for(int i = 0; i < conts.size(); i++) {
       // drawContours(frameDraw, conts, i, Scalar(0,0,255), 1, LINE_AA); //desenha contorno
       convexHull(cv::Mat(conts[i]), hull[i], false);
-      drawContours(diff, hull, i, color, -1, 8, vector<Vec4i>(), 0, Point());
+      drawContours(diff, hull, i, color, -1, 8, std::vector<Vec4i>(), 0, cv::Point());
     }
 
     frameDraw = frame.clone();

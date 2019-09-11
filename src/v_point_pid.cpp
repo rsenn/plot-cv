@@ -11,14 +11,14 @@ main(int argc, char* argv[]) {
   VideoCapture cap(1);
   cap.set(CAP_PROP_FPS, 60);
   cv::Mat src, hsv, threshold_blue;
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
+  std::vector<std::vector<cv::Point>> contours;
+  std::vector<Vec4i> hierarchy;
   short int old_i = 0;
-  Point2f center;
+  cv::Point2f center;
   float radius;
   bool ifExist = false;
 
-  ros::init(argc, argv, "middlePoint_node");
+  ros::init(argc, argv, "middlecv::Point_node");
   ros::NodeHandle nh;
   geometry_msgs::Twist msg_pid_xy;
   ros::Publisher pub_msg_pid_xy = nh.advertise<geometry_msgs::Twist>("pid_xy", 1000000);
@@ -49,15 +49,15 @@ main(int argc, char* argv[]) {
     if(!hsv.empty()) {
       inRange(hsv, Scalar(105, 114, 0), Scalar(120, 255, 255), threshold_blue);
       if(!threshold_blue.empty()) {
-        findContours(threshold_blue, contours, hierarchy, CV_RETR_TREE, CHAIN_APPROX_NONE, Point(0, 0));
+        findContours(threshold_blue, contours, hierarchy, CV_RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
         if(!contours.empty()) {
           for(int i = 0; i < contours.size(); i++) {
             if(hierarchy[i][0] == -1) {
               if(hierarchy[i][1] == -1) {
                 if(hierarchy[i][2] != -1) {
                   if(hierarchy[i][3] != -1) {
-                    line(src, Point(300, 240), Point(340, 240), Scalar(0, 255, 0), 3);
-                    line(src, Point(320, 220), Point(320, 260), Scalar(0, 255, 0), 3);
+                    line(src, cv::Point(300, 240), cv::Point(340, 240), Scalar(0, 255, 0), 3);
+                    line(src, cv::Point(320, 220), cv::Point(320, 260), Scalar(0, 255, 0), 3);
                     old_i = i;
                     ifExist = true;
                   }

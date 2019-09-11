@@ -60,7 +60,7 @@ main(int argc, char** argv) {
 // draw it and approximate it by ellipses.
 void
 processImage(int /*h*/, void*) {
-  vector<vector<Point>> contours;
+  std::vector<std::vector<cv::Point>> contours;
   cv::Mat bimage = image >= sliderPos;
 
   findContours(bimage, contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
@@ -82,7 +82,7 @@ processImage(int /*h*/, void*) {
 
     ellipse(cimage, box, Scalar(0, 0, 255), 1, CV_AA);
     ellipse(cimage, box.center, box.size * 0.5f, box.angle, 0, 360, Scalar(0, 255, 255), 1, CV_AA);
-    Point2f vtx[4];
+    cv::Point2f vtx[4];
     box.points(vtx);
     for(int j = 0; j < 4; j++) line(cimage, vtx[j], vtx[(j + 1) % 4], Scalar(0, 255, 0), 1, CV_AA);
   }

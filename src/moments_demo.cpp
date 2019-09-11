@@ -52,31 +52,31 @@ main(int, char** argv) {
 void
 thresh_callback(int, void*) {
   cv::Mat canny_output;
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
+  std::vector<std::vector<cv::Point>> contours;
+  std::vector<Vec4i> hierarchy;
 
   /// Detect edges using canny
   Canny(src_gray, canny_output, thresh, thresh * 2, 3);
   /// Find contours
-  findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
+  findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Get the moments
-  vector<Moments> mu(contours.size());
+  std::vector<Moments> mu(contours.size());
   for(size_t i = 0; i < contours.size(); i++) {
     mu[i] = moments(contours[i], false);
   }
 
   ///  Get the mass centers:
-  vector<Point2f> mc(contours.size());
+  std::vector<cv::Point2f> mc(contours.size());
   for(size_t i = 0; i < contours.size(); i++) {
-    mc[i] = Point2f(static_cast<float>(mu[i].m10 / mu[i].m00), static_cast<float>(mu[i].m01 / mu[i].m00));
+    mc[i] = cv::Point2f(static_cast<float>(mu[i].m10 / mu[i].m00), static_cast<float>(mu[i].m01 / mu[i].m00));
   }
 
   /// Draw contours
   cv::Mat drawing = cv::Mat::zeros(canny_output.size(), CV_8UC3);
   for(size_t i = 0; i < contours.size(); i++) {
     Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-    drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+    drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, cv::Point());
     circle(drawing, mc[i], 4, color, -1, 8, 0);
   }
 
@@ -93,7 +93,7 @@ thresh_callback(int, void*) {
            contourArea(contours[i]),
            arcLength(contours[i], true));
     Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-    drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point());
+    drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, cv::Point());
     circle(drawing, mc[i], 4, color, -1, 8, 0);
   }
 }

@@ -4,7 +4,7 @@
 #include <opencv2/video/background_segm.hpp>
 #include <cstdio>
 #include <string>
-#include <vector>
+#include <std::vector>
 
 using namespace cv;
 
@@ -22,14 +22,14 @@ static void
 refineSegments(const cv::Mat& img, cv::Mat& mask, cv::Mat& dst) {
   int niters = 3;
 
-  std::vector<std::vector<Point>> contours;
+  std::vector<std::vector<cv::Point>> contours;
   std::vector<Vec4i> hierarchy;
 
   cv::Mat temp;
 
-  dilate(mask, temp, cv::Mat(), Point(-1, -1), niters);
-  erode(temp, temp, cv::Mat(), Point(-1, -1), niters * 2);
-  dilate(temp, temp, cv::Mat(), Point(-1, -1), niters);
+  dilate(mask, temp, cv::Mat(), cv::Point(-1, -1), niters);
+  erode(temp, temp, cv::Mat(), cv::Point(-1, -1), niters * 2);
+  dilate(temp, temp, cv::Mat(), cv::Point(-1, -1), niters);
 
   findContours(temp, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
 
@@ -44,7 +44,7 @@ refineSegments(const cv::Mat& img, cv::Mat& mask, cv::Mat& dst) {
   double maxArea = 0;
 
   for(; idx >= 0; idx = hierarchy[idx][0]) {
-    const std::vector<Point>& c = contours[idx];
+    const std::vector<cv::Point>& c = contours[idx];
     double area = fabs(contourArea(cv::Mat(c)));
     if(area > maxArea) {
       maxArea = area;

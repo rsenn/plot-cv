@@ -36,7 +36,6 @@ or tort (including negligence or otherwise) arising in any way out of
 the use of this software, even if advised of the possibility of such damage.
 */
 
-
 #include <opencv2/highgui.hpp>
 #include <opencv2/aruco.hpp>
 #include <iostream>
@@ -46,38 +45,37 @@ using namespace cv;
 
 namespace {
 const char* about = "Basic marker detection";
-const char* keys  =
-  "{d        |       | dictionary: DICT_4X4_50=0, DICT_4X4_100=1, DICT_4X4_250=2,"
-  "DICT_4X4_1000=3, DICT_5X5_50=4, DICT_5X5_100=5, DICT_5X5_250=6, DICT_5X5_1000=7, "
-  "DICT_6X6_50=8, DICT_6X6_100=9, DICT_6X6_250=10, DICT_6X6_1000=11, DICT_7X7_50=12,"
-  "DICT_7X7_100=13, DICT_7X7_250=14, DICT_7X7_1000=15, DICT_ARUCO_ORIGINAL = 16,"
-  "DICT_APRILTAG_16h5=17, DICT_APRILTAG_25h9=18, DICT_APRILTAG_36h10=19, DICT_APRILTAG_36h11=20}"
-  "{v        |       | Input from video file, if ommited, input comes from camera }"
-  "{ci       | 0     | Camera id if input doesnt come from video (-v) }"
-  "{c        |       | Camera intrinsic parameters. Needed for camera pose }"
-  "{l        | 0.1   | Marker side lenght (in meters). Needed for correct scale in camera pose }"
-  "{dp       |       | File of marker detector parameters }"
-  "{r        |       | show rejected candidates too }"
-  "{refine   |       | Corner refinement: CORNER_REFINE_NONE=0, CORNER_REFINE_SUBPIX=1,"
-  "CORNER_REFINE_CONTOUR=2, CORNER_REFINE_APRILTAG=3}";
-}
+const char* keys = "{d        |       | dictionary: DICT_4X4_50=0, DICT_4X4_100=1, DICT_4X4_250=2,"
+                   "DICT_4X4_1000=3, DICT_5X5_50=4, DICT_5X5_100=5, DICT_5X5_250=6, DICT_5X5_1000=7, "
+                   "DICT_6X6_50=8, DICT_6X6_100=9, DICT_6X6_250=10, DICT_6X6_1000=11, DICT_7X7_50=12,"
+                   "DICT_7X7_100=13, DICT_7X7_250=14, DICT_7X7_1000=15, DICT_ARUCO_ORIGINAL = 16,"
+                   "DICT_APRILTAG_16h5=17, DICT_APRILTAG_25h9=18, DICT_APRILTAG_36h10=19, DICT_APRILTAG_36h11=20}"
+                   "{v        |       | Input from video file, if ommited, input comes from camera }"
+                   "{ci       | 0     | Camera id if input doesnt come from video (-v) }"
+                   "{c        |       | Camera intrinsic parameters. Needed for camera pose }"
+                   "{l        | 0.1   | Marker side lenght (in meters). Needed for correct scale in camera pose }"
+                   "{dp       |       | File of marker detector parameters }"
+                   "{r        |       | show rejected candidates too }"
+                   "{refine   |       | Corner refinement: CORNER_REFINE_NONE=0, CORNER_REFINE_SUBPIX=1,"
+                   "CORNER_REFINE_CONTOUR=2, CORNER_REFINE_APRILTAG=3}";
+} // namespace
 
 /**
  */
-static bool readCameraParameters(string filename, Mat &camMatrix, Mat &distCoeffs) {
+static bool
+readCameraParameters(string filename, cv::Mat& camcv::Matrix, cv::Mat& distCoeffs) {
   FileStorage fs(filename, FileStorage::READ);
   if(!fs.isOpened())
     return false;
-  fs["camera_matrix"] >> camMatrix;
+  fs["camera_matrix"] >> camcv::Matrix;
   fs["distortion_coefficients"] >> distCoeffs;
   return true;
 }
 
-
-
 /**
  */
-static bool readDetectorParameters(string filename, Ptr<aruco::DetectorParameters> &params) {
+static bool
+readDetectorParameters(string filename, Ptr<aruco::DetectorParameters>& params) {
   FileStorage fs(filename, FileStorage::READ);
   if(!fs.isOpened())
     return false;
@@ -104,11 +102,10 @@ static bool readDetectorParameters(string filename, Ptr<aruco::DetectorParameter
   return true;
 }
 
-
-
 /**
  */
-int main(int argc, char *argv[]) {
+int
+main(int argc, char* argv[]) {
   CommandLineParser parser(argc, argv, keys);
   parser.about(about);
 
@@ -132,10 +129,11 @@ int main(int argc, char *argv[]) {
   }
 
   if(parser.has("refine")) {
-    //override cornerRefinementMethod read from config file
+    // override cornerRefinementMethod read from config file
     detectorParams->cornerRefinementMethod = parser.get<int>("refine");
   }
-  std::cout << "Corner refinement method (0: None, 1: Subpixel, 2:contour, 3: AprilTag 2): " << detectorParams->cornerRefinementMethod << std::endl;
+  std::cout << "Corner refinement method (0: None, 1: Subpixel, 2:contour, 3: AprilTag 2): "
+            << detectorParams->cornerRefinementMethod << std::endl;
 
   int camId = parser.get<int>("ci");
 
@@ -149,12 +147,11 @@ int main(int argc, char *argv[]) {
     return 0;
   }
 
-  Ptr<aruco::Dictionary> dictionary =
-    aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
+  Ptr<aruco::Dictionary> dictionary = aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
 
-  Mat camMatrix, distCoeffs;
+  cv::Mat camcv::Matrix, distCoeffs;
   if(estimatePose) {
-    bool readOk = readCameraParameters(parser.get<string>("c"), camMatrix, distCoeffs);
+    bool readOk = readCameraParameters(parser.get<string>("c"), camcv::Matrix, distCoeffs);
     if(!readOk) {
       cerr << "Invalid camera file" << endl;
       return 0;
@@ -175,20 +172,19 @@ int main(int argc, char *argv[]) {
   int totalIterations = 0;
 
   while(inputVideo.grab()) {
-    Mat image, imageCopy;
+    cv::Mat image, imageCopy;
     inputVideo.retrieve(image);
 
     double tick = (double)getTickCount();
 
-    vector< int > ids;
-    vector< vector< Point2f > > corners, rejected;
-    vector< Vec3d > rvecs, tvecs;
+    std::vector<int> ids;
+    std::vector<std::vector<cv::Point2f>> corners, rejected;
+    std::vector<Vec3d> rvecs, tvecs;
 
     // detect markers and estimate pose
     aruco::detectMarkers(image, dictionary, corners, ids, detectorParams, rejected);
     if(estimatePose && ids.size() > 0)
-      aruco::estimatePoseSingleMarkers(corners, markerLength, camMatrix, distCoeffs, rvecs,
-                                       tvecs);
+      aruco::estimatePoseSingleMarkers(corners, markerLength, camcv::Matrix, distCoeffs, rvecs, tvecs);
 
     double currentTime = ((double)getTickCount() - tick) / getTickFrequency();
     totalTime += currentTime;
@@ -205,8 +201,7 @@ int main(int argc, char *argv[]) {
 
       if(estimatePose) {
         for(unsigned int i = 0; i < ids.size(); i++)
-          aruco::drawAxis(imageCopy, camMatrix, distCoeffs, rvecs[i], tvecs[i],
-                          markerLength * 0.5f);
+          aruco::drawAxis(imageCopy, camcv::Matrix, distCoeffs, rvecs[i], tvecs[i], markerLength * 0.5f);
       }
     }
 
@@ -215,7 +210,8 @@ int main(int argc, char *argv[]) {
 
     imshow("out", imageCopy);
     char key = (char)waitKey(waitTime);
-    if(key == 27) break;
+    if(key == 27)
+      break;
   }
 
   return 0;

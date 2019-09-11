@@ -48,7 +48,7 @@ main(int argc, char** argv) {
 
   // for(int i = 0; i < rows; i++) {
   // if (rowsums2.at<unsigned char>(i, 0) == 255) {
-  //	 line(dest, Point2d(0, i), Point2d(cols - 1, i), Scalar(0, 0, 255));
+  //	 line(dest, cv::Point2d(0, i), cv::Point2d(cols - 1, i), Scalar(0, 0, 255));
   // }
   //}
 
@@ -73,8 +73,8 @@ main(int argc, char** argv) {
       if(i - last != 1) {
         if(first != -1) {
           avgrows.push_back(((float)last + (float)first) / 2.0);
-          staffbegins.push_back(first); // making a vector of all the beginning staffline locations
-          staffends.push_back(last);    // making a vector of all the end staffline locations
+          staffbegins.push_back(first); // making a std::vector of all the beginning staffline locations
+          staffends.push_back(last);    // making a std::vector of all the end staffline locations
         }
         first = i;
       }
@@ -83,8 +83,8 @@ main(int argc, char** argv) {
   }
   if(first != -1) {
     avgrows.push_back(((float)last + (float)first) / 2.0);
-    staffbegins.push_back(first); // making a vector of all the beginning staffline locations
-    staffends.push_back(last);    // making a vector of all the end staffline locations
+    staffbegins.push_back(first); // making a std::vector of all the beginning staffline locations
+    staffends.push_back(last);    // making a std::vector of all the end staffline locations
   }
 
   // Now staffrows has all the rows with staff lines and avgrows has the center of these lines.
@@ -113,8 +113,8 @@ main(int argc, char** argv) {
     int startrow = (int)(avgrows[barLineIndex - 1] + avgStaffDistance);
     int endrow = (int)(avgrows[barLineIndex] - avgStaffDistance);
     int target = (endrow - startrow) * 8 / 10;
-    cv::Mat testMat = bw.rowRange(startrow, endrow);
-    reduce(testMat, lilColSums, 0, CV_REDUCE_SUM, CV_32SC1);
+    cv::Mat testcv::Mat = bw.rowRange(startrow, endrow);
+    reduce(testcv::Mat, lilColSums, 0, CV_REDUCE_SUM, CV_32SC1);
     for(int i = 0; i < cols; i++) {
       if(lilColSums.at<int>(0, i) > target) {
         found = 1;
@@ -148,7 +148,7 @@ main(int argc, char** argv) {
   cv::Mat cleanImage = imbw;
 
   // string ty =  type2str( cleanImage.type() );
-  // printf("Matrix: %s %dx%d \n", ty.c_str(), cleanImage.cols, cleanImage.rows);
+  // printf("cv::Matrix: %s %dx%d \n", ty.c_str(), cleanImage.cols, cleanImage.rows);
 
   removeStaves(bw, staffbegins, staffends, cleanImage);
 
@@ -169,11 +169,11 @@ main(int argc, char** argv) {
     if(endrow > rows) {
       endrow = rows;
     }
-    cv::Mat testMat = cleanImage.rowRange(startrow, endrow);
+    cv::Mat testcv::Mat = cleanImage.rowRange(startrow, endrow);
 
     // Anurag TODO: Here is the matrix with the line.
     // avgStaffDistance has the average distance between lines in a staff.
-    // avgrows is a vector with the approximate centers of all the staff lines.
+    // avgrows is a std::vector with the approximate centers of all the staff lines.
     // avgrows[barLineIndex - barLineIndex+4] will have the centers of the region you're processing.
     // staffrows is like avgrows, but it has all the rows considered to be staff lines, in case
     //   staff lines are more than a pixel thick.  You can do some magic to find all the lines you need
@@ -193,14 +193,14 @@ main(int argc, char** argv) {
     // in which case you dont' remove it for now.
 
     /*
-    findNotes(testMat,avgrows);
+    findNotes(testcv::Mat,avgrows);
     namedWindow( "Hough Circle Transform Demo", CV_WINDOW_AUTOSIZE );
-    imshow( "Hough Circle Transform Demo", testMat );
+    imshow( "Hough Circle Transform Demo", testcv::Mat );
     waitKey();
     */
 
-    // findNotes(testMat,avgrows);
-    createCookBook(testMat, p);
+    // findNotes(testcv::Mat,avgrows);
+    createCookBook(testcv::Mat, p);
     p++;
     barLineIndex += 5;
     group = (group + 1) % stavesInGroup;
@@ -218,8 +218,8 @@ main(int argc, char** argv) {
     if(endrow > rows) {
       endrow = rows;
     }
-    cv::Mat testMat = cleanImage.rowRange(startrow, endrow);
-    findNotes(testMat, avgrows);
+    cv::Mat testcv::Mat = cleanImage.rowRange(startrow, endrow);
+    findNotes(testcv::Mat, avgrows);
     barLineIndex += 5;
     group = (group + 1) % stavesInGroup;
   }
@@ -263,16 +263,16 @@ createCookBook(cv::Mat staveReg, int rightIndex) {
   int max_thresh = 255;
   RNG rng(12345);
   cv::Mat threshold_output;
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy; // never used but needed as an input arg for some reason
+  std::vector<std::vector<cv::Point>> contours;
+  std::vector<Vec4i> hierarchy; // never used but needed as an input arg for some reason
 
   threshold(staveReg, threshold_output, thresh, 255, THRESH_BINARY);
   /// Find contours
-  findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
+  findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Approximate contours to polygons + get bounding rects and circles
-  vector<vector<Point>> contours_poly(contours.size());
-  vector<Rect> boundRect(contours.size());
+  std::vector<std::vector<cv::Point>> contours_poly(contours.size());
+  std::vector<Rect> boundRect(contours.size());
 
   for(int i = 0; i < contours.size(); i++) {
     approxPolyDP(cv::Mat(contours[i]), contours_poly[i], 3, true);
@@ -283,7 +283,7 @@ createCookBook(cv::Mat staveReg, int rightIndex) {
   cv::Mat drawing = cv::Mat::zeros(threshold_output.size(), CV_8UC3);
   for(int i = 0; i < contours.size(); i++) {
     Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-    drawContours(drawing, contours, i, color, 1, 8, vector<Vec4i>(), 0, Point());
+    drawContours(drawing, contours, i, color, 1, 8, std::vector<Vec4i>(), 0, cv::Point());
   }
 
   /// Show in a window
@@ -338,8 +338,8 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
   int max_thresh = 255;
   RNG rng(12345);
   cv::Mat threshold_output;
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
+  std::vector<std::vector<cv::Point>> contours;
+  std::vector<Vec4i> hierarchy;
 
   namedWindow("original", CV_WINDOW_AUTOSIZE);
   imshow("Original Stave", staveReg);
@@ -347,11 +347,11 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
 
   threshold(staveReg, threshold_output, thresh, 255, THRESH_BINARY);
   /// Find contours
-  findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
+  findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Approximate contours to polygons + get bounding rects and circles
-  vector<vector<Point>> contours_poly(contours.size());
-  vector<Rect> boundRect(contours.size());
+  std::vector<std::vector<cv::Point>> contours_poly(contours.size());
+  std::vector<Rect> boundRect(contours.size());
 
   for(int i = 0; i < contours.size(); i++) {
     approxPolyDP(cv::Mat(contours[i]), contours_poly[i], 3, true);
@@ -391,7 +391,7 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
     imshow(result_window, result);
     waitKey();
     if(boundRect[i].area() >= templateQuarter.size[0] * templateQuarter.size[1] &&
-        boundRect[i].area() <= 3 * (templateQuarter.size[0] * templateQuarter.size[1])) {
+       boundRect[i].area() <= 3 * (templateQuarter.size[0] * templateQuarter.size[1])) {
       // know you're in business
 
       // construct a new cv::Mat from boundRect coordinates in staveRegion
@@ -419,9 +419,9 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
       /// Localizing the best match with minMaxLoc
       double minVal;
       double maxVal;
-      Point minLoc;
-      Point maxLoc;
-      Point matchLoc;
+      cv::Point minLoc;
+      cv::Point maxLoc;
+      cv::Point matchLoc;
 
       minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc, cv::Mat());
 
@@ -438,8 +438,8 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
       if(maxVal > NOTE_THRESHOLD) {
 
         rectangle(staveReg,
-                  Point(matchLoc.x + boundRect[i].tl().x, boundRect[i].tl().y + matchLoc.y),
-                  Point(matchLoc.x + boundRect[i].br().x, boundRect[i].br().y + matchLoc.y),
+                  cv::Point(matchLoc.x + boundRect[i].tl().x, boundRect[i].tl().y + matchLoc.y),
+                  cv::Point(matchLoc.x + boundRect[i].br().x, boundRect[i].br().y + matchLoc.y),
                   Scalar::all(0),
                   2,
                   8,
@@ -460,14 +460,14 @@ type2str(int type) {
   uchar chans = 1 + (type >> CV_CN_SHIFT);
 
   switch(depth) {
-  case CV_8U: r = "8U"; break;
-  case CV_8S: r = "8S"; break;
-  case CV_16U: r = "16U"; break;
-  case CV_16S: r = "16S"; break;
-  case CV_32S: r = "32S"; break;
-  case CV_32F: r = "32F"; break;
-  case CV_64F: r = "64F"; break;
-  default: r = "User"; break;
+    case CV_8U: r = "8U"; break;
+    case CV_8S: r = "8S"; break;
+    case CV_16U: r = "16U"; break;
+    case CV_16S: r = "16S"; break;
+    case CV_32S: r = "32S"; break;
+    case CV_32F: r = "32F"; break;
+    case CV_64F: r = "64F"; break;
+    default: r = "User"; break;
   }
 
   r += "C";

@@ -11,14 +11,14 @@ using namespace std;
 using namespace cv;
 
 // Function declarations
-void drawAxis(cv::Mat&, Point, Point, Scalar, const float);
-double getOrientation(const vector<Point>&, cv::Mat&);
+void drawAxis(cv::Mat&, cv::Point, cv::Point, Scalar, const float);
+double getOrientation(const std::vector<cv::Point>&, cv::Mat&);
 
 /**
  * @function drawAxis
  */
 void
-drawAxis(cv::Mat& img, Point p, Point q, Scalar colour, const float scale = 0.2) {
+drawAxis(cv::Mat& img, cv::Point p, cv::Point q, Scalar colour, const float scale = 0.2) {
   //! [visualization1]
   double angle;
   double hypotenuse;
@@ -47,7 +47,7 @@ drawAxis(cv::Mat& img, Point p, Point q, Scalar colour, const float scale = 0.2)
  * @function getOrientation
  */
 double
-getOrientation(const vector<Point>& pts, cv::Mat& img) {
+getOrientation(const std::vector<cv::Point>& pts, cv::Mat& img) {
   //! [pca]
   // Construct a buffer used by the pca analysis
   int sz = static_cast<int>(pts.size());
@@ -61,14 +61,14 @@ getOrientation(const vector<Point>& pts, cv::Mat& img) {
   PCA pca_analysis(data_pts, cv::Mat(), CV_PCA_DATA_AS_ROW);
 
   // Store the center of the object
-  Point cntr =
-    Point(static_cast<int>(pca_analysis.mean.at<double>(0, 0)), static_cast<int>(pca_analysis.mean.at<double>(0, 1)));
+  cv::Point cntr =
+      cv::Point(static_cast<int>(pca_analysis.mean.at<double>(0, 0)), static_cast<int>(pca_analysis.mean.at<double>(0, 1)));
 
-  // Store the eigenvalues and eigenvectors
-  vector<Point2d> eigen_vecs(2);
-  vector<double> eigen_val(2);
+  // Store the eigenvalues and eigenstd::vectors
+  std::vector<cv::Point2d> eigen_vecs(2);
+  std::vector<double> eigen_val(2);
   for(int i = 0; i < 2; ++i) {
-    eigen_vecs[i] = Point2d(pca_analysis.eigenvectors.at<double>(i, 0), pca_analysis.eigenvectors.at<double>(i, 1));
+    eigen_vecs[i] = cv::Point2d(pca_analysis.eigenstd::vectors.at<double>(i, 0), pca_analysis.eigenstd::vectors.at<double>(i, 1));
 
     eigen_val[i] = pca_analysis.eigenvalues.at<double>(0, i);
   }
@@ -77,9 +77,9 @@ getOrientation(const vector<Point>& pts, cv::Mat& img) {
   //! [visualization]
   // Draw the principal components
   circle(img, cntr, 3, Scalar(255, 0, 255), 2);
-  Point p1 = cntr + 0.02 * Point(static_cast<int>(eigen_vecs[0].x * eigen_val[0]),
+  cv::Point p1 = cntr + 0.02 * cv::Point(static_cast<int>(eigen_vecs[0].x * eigen_val[0]),
                                  static_cast<int>(eigen_vecs[0].y * eigen_val[0]));
-  Point p2 = cntr - 0.02 * Point(static_cast<int>(eigen_vecs[1].x * eigen_val[1]),
+  cv::Point p2 = cntr - 0.02 * cv::Point(static_cast<int>(eigen_vecs[1].x * eigen_val[1]),
                                  static_cast<int>(eigen_vecs[1].y * eigen_val[1]));
   drawAxis(img, cntr, p1, Scalar(0, 255, 0), 1);
   drawAxis(img, cntr, p2, Scalar(255, 255, 0), 5);
@@ -119,8 +119,8 @@ main(int, char** argv) {
 
   //! [contours]
   // Find all the contours in the thresholded image
-  vector<Vec4i> hierarchy;
-  vector<vector<Point>> contours;
+  std::vector<Vec4i> hierarchy;
+  std::vector<std::vector<cv::Point>> contours;
   findContours(bw, contours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
 
   for(size_t i = 0; i < contours.size(); ++i) {

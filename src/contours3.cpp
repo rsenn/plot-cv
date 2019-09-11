@@ -5,7 +5,7 @@
 #include <opencv2/core/mat.hpp>
 #include "highgui.h"
 #include <iostream>
-#include <vector>
+#include <std::vector>
 
 // Get thresholded image in HSV format
 IplImage*
@@ -43,16 +43,16 @@ main() {
       break;
 
     IplImage* imgThresh = GetThresholdedImageHSV(frame);
-    cv::Mat imageThreshMat = cv::Mat(imgThresh, false);
-    cv::Mat frameMat = cv::Mat(frame, false);
+    cv::Mat imageThreshcv::Mat = cv::Mat(imgThresh, false);
+    cv::Mat framecv::Mat = cv::Mat(frame, false);
 
     // Find the contours.
     std::vector<std::vector<cv::Point>> contours;
-    cv::Mat contourOutput = imageThreshMat.clone();
+    cv::Mat contourOutput = imageThreshcv::Mat.clone();
     cv::findContours(contourOutput, contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
 
     // Draw the contours
-    cv::Mat contourImage = frameMat.clone();
+    cv::Mat contourImage = framecv::Mat.clone();
     for(size_t idx = 0; idx < contours.size(); idx++) {
       cv::drawContours(contourImage, contours, idx, cv::Scalar(255, 0, 0));
     }

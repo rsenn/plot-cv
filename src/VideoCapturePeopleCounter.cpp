@@ -33,7 +33,7 @@ public:
 
   void
   start() {
-    Mat frame;
+    cv::Mat frame;
     VideoCapture videoCapture(videoCapturePath);
 
     while(videoCapture.isOpened()) {
@@ -43,7 +43,7 @@ public:
         refLine = Line(0, refLineY, frame.cols, refLineY);
 
       // erase old contours (seen 16 frames ago)
-      unregisterPersonIf([&](const Person * p) { return frameNumber - lastFrameWherePersonWasSeen[p] > 16; });
+      unregisterPersonIf([&](const Person* p) { return frameNumber - lastFrameWherePersonWasSeen[p] > 16; });
 
       // and then process the current frame
       processFrame(frame);
@@ -54,7 +54,7 @@ protected:
   set<Person*> people;
 
   Person*
-  registerPerson(const vector<Point>& contour) {
+  registerPerson(const std::vector<cv::Point>& contour) {
     time_p now = high_resolution_clock::now();
     Person* person = NULL;
 
@@ -103,7 +103,7 @@ private:
 
   int frameNumber = 0;
   map<const Person*, int> lastFrameWherePersonWasSeen;
-  map<const Person*, vector<Line>> linesCrossedByPerson;
+  map<const Person*, std::vector<Line>> linesCrossedByPerson;
 
   void
   countIfPersonIsCrossingTheRefLine(const Person* person) {
@@ -142,8 +142,8 @@ private:
   }
 
   void
-  processFrame(const Mat& frame) {
-    Mat tempFrame;
+  processFrame(const cv::Mat& frame) {
+    cv::Mat tempFrame;
 
     // substract background from frame
     backgroundSubstractor->apply(frame, tempFrame);
@@ -152,12 +152,12 @@ private:
     threshold(tempFrame, tempFrame, 128, 255, THRESH_BINARY);
 
     // morph ops
-    morphologyEx(tempFrame, tempFrame, MORPH_OPEN, Mat(8, 8, CV_8UC1, Scalar(1)));
-    morphologyEx(tempFrame, tempFrame, MORPH_CLOSE, Mat(8, 8, CV_8UC1, cv::Scalar(1)));
+    morphologyEx(tempFrame, tempFrame, MORPH_OPEN, cv::Mat(8, 8, CV_8UC1, Scalar(1)));
+    morphologyEx(tempFrame, tempFrame, MORPH_CLOSE, cv::Mat(8, 8, CV_8UC1, cv::Scalar(1)));
 
     // find contours
-    vector<vector<Point>> contours;
-    vector<Vec4i> hierarchy;
+    std::vector<std::vector<cv::Point>> contours;
+    std::vector<Vec4i> hierarchy;
     findContours(tempFrame, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
     // foreach identified person contour

@@ -18,8 +18,8 @@ main(int argc, char** argv) {
   namedWindow("Source", 1);
   imshow("Source", src);
 
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
+  std::vector<std::vector<cv::Point>> contours;
+  std::vector<Vec4i> hierarchy;
 
   findContours(src, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
 

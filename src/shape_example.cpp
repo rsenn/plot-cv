@@ -23,10 +23,10 @@ help() {
          "./shape_example [number between 1 and 20, 1 default]\n\n");
 }
 
-static vector<Point>
+static std::vector<cv::Point>
 simpleContour(const cv::Mat& currentQuery, int n = 300) {
-  vector<vector<Point>> _contoursQuery;
-  vector<Point> contoursQuery;
+  std::vector<std::vector<cv::Point>> _contoursQuery;
+  std::vector<cv::Point> contoursQuery;
   findContours(currentQuery, _contoursQuery, RETR_LIST, CHAIN_APPROX_NONE);
   for(size_t border = 0; border < _contoursQuery.size(); border++) {
     for(size_t p = 0; p < _contoursQuery[border].size(); p++) {
@@ -42,7 +42,7 @@ simpleContour(const cv::Mat& currentQuery, int n = 300) {
 
   // Uniformly sampling
   random_shuffle(contoursQuery.begin(), contoursQuery.end());
-  vector<Point> cont;
+  std::vector<cv::Point> cont;
   for(int i = 0; i < n; i++) {
     cont.push_back(contoursQuery[i]);
   }
@@ -77,8 +77,8 @@ main(int argc, char** argv) {
   resize(query, queryToShow, sz2Sh);
   imshow("QUERY", queryToShow);
   moveWindow("TEST", 0, 0);
-  vector<Point> contQuery = simpleContour(query);
-  int bestMatch = 0;
+  std::vector<cv::Point> contQuery = simpleContour(query);
+  int bestcv::Match = 0;
   float bestDis = FLT_MAX;
   for(int ii = 1; ii <= 20; ii++) {
     if(ii == indexQuery)
@@ -92,17 +92,17 @@ main(int argc, char** argv) {
     resize(iiIm, iiToShow, sz2Sh);
     imshow("TEST", iiToShow);
     moveWindow("TEST", sz2Sh.width + 50, 0);
-    vector<Point> contii = simpleContour(iiIm);
+    std::vector<cv::Point> contii = simpleContour(iiIm);
     float dis = mysc->computeDistance(contQuery, contii);
     if(dis < bestDis) {
-      bestMatch = ii;
+      bestcv::Match = ii;
       bestDis = dis;
     }
     std::cout << " distance between " << queryName.str() << " and " << iiname.str() << " is: " << dis << std::endl;
   }
   destroyWindow("TEST");
   stringstream bestname;
-  bestname << path << bestMatch << ".png";
+  bestname << path << bestcv::Match << ".png";
   cv::Mat iiIm = imread(bestname.str(), 0);
   cv::Mat bestToShow;
   resize(iiIm, bestToShow, sz2Sh);

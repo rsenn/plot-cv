@@ -23,7 +23,7 @@ cv::Mat_<uchar> CRTransform(const cv::Mat& image);
 cv::Mat_<uchar> exponentialTransform(const cv::Mat_<uchar>& image);
 pair<double, double> returnImageStats(const cv::Mat_<uchar>& image);
 cv::Mat_<uchar> binaryThresholding(const cv::Mat_<uchar>& image, const pair<double, double>& stats);
-int returnLargestContourIndex(vector<vector<Point>> contours);
+int returnLargestContourIndex(std::vector<std::vector<cv::Point>> contours);
 
 int
 main(int argc, char** argv) {
@@ -41,7 +41,7 @@ main(int argc, char** argv) {
   // Detect faces and eyebrows in image
   EyebrowROI eyebrow_detector(image_BGR, face_cascade_path, eye_cascade_path);
   eyebrow_detector.detectEyebrows();
-  vector<cv::Mat> eyebrows_roi = eyebrow_detector.displayROI();
+  std::vector<cv::Mat> eyebrows_roi = eyebrow_detector.displayROI();
 
   // cv::Mat_<uchar> image_exp = exponentialTransform(CRTransform(image_BGR));
   cv::Mat_<uchar> image_exp = exponentialTransform(CRTransform(eyebrows_roi[0]));
@@ -49,7 +49,7 @@ main(int argc, char** argv) {
 
   // A clone image is required because findContours() modifies the input image
   cv::Mat image_binary_clone = image_binary.clone();
-  vector<vector<Point>> contours;
+  std::vector<std::vector<cv::Point>> contours;
   findContours(image_binary_clone, contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
 
   // Initialize blank image (for drawing contours)
@@ -62,7 +62,7 @@ main(int argc, char** argv) {
   cout << "Size of the contour image: " << image_contour.rows << " X " << image_contour.cols << "\n";
   int largest_contour_idx = returnLargestContourIndex(contours);
   for(int i = 0; i < contours[largest_contour_idx].size(); ++i) {
-    Point_<int> pt = contours[largest_contour_idx][i];
+    cv::Point_<int> pt = contours[largest_contour_idx][i];
     image_contour.at<uchar>(pt.y, pt.x) = 255;
   }
 
@@ -85,7 +85,7 @@ CRTransform(const cv::Mat& image) {
 
 cv::Mat_<uchar>
 exponentialTransform(const cv::Mat_<uchar>& image) {
-  vector<int> exponential_transform(256, 0);
+  std::vector<int> exponential_transform(256, 0);
   for(int i = 0; i < 256; ++i) exponential_transform[i] = round(exp((i * log(255)) / 255));
 
   cv::Mat_<uchar> image_exp(image.size());
@@ -133,7 +133,7 @@ binaryThresholding(const cv::Mat_<uchar>& image, const pair<double, double>& sta
 }
 
 int
-returnLargestContourIndex(vector<vector<Point>> contours) {
+returnLargestContourIndex(std::vector<std::vector<cv::Point>> contours) {
   int max_contour_size = 0;
   int max_contour_idx = -1;
   for(int i = 0; i < contours.size(); ++i) {

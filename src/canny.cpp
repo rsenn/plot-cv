@@ -17,7 +17,7 @@ cv::Mat src, src_gray;
 cv::Mat dst, detected_edges;
 cv::Mat final;
 cv::Mat canny_output, alpha;
-std::vector<std::vector<Point>> contours;
+std::vector<std::vector<cv::Point>> contours;
 std::vector<Vec4i> hierarchy;
 
 int edgeThresh = 1;
@@ -36,13 +36,13 @@ doCanny() {
   /// Detect edges using canny
   Canny(src_gray, canny_output, lowThreshold, lowThreshold * 2, 3);
   /// Find contours
-  findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
+  findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Draw contours
   final = cv::Mat::zeros(canny_output.size(), CV_8UC4);
   for(int i = 0; i < contours.size(); i++) {
     Scalar color = Scalar(blue, green, red);
-    drawContours(final, contours, i, color, fill, 8, hierarchy, 2, Point());
+    drawContours(final, contours, i, color, fill, 8, hierarchy, 2, cv::Point());
   }
 
   // Set the Alpha channel to get transparent background

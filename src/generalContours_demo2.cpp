@@ -52,17 +52,17 @@ main(int, char** argv) {
 void
 thresh_callback(int, void*) {
   cv::Mat threshold_output;
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
+  std::vector<std::vector<cv::Point>> contours;
+  std::vector<Vec4i> hierarchy;
 
   /// Detect edges using Threshold
   threshold(src_gray, threshold_output, thresh, 255, THRESH_BINARY);
   /// Find contours
-  findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
+  findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Find the rotated rectangles and ellipses for each contour
-  vector<RotatedRect> minRect(contours.size());
-  vector<RotatedRect> minEllipse(contours.size());
+  std::vector<RotatedRect> minRect(contours.size());
+  std::vector<RotatedRect> minEllipse(contours.size());
 
   for(size_t i = 0; i < contours.size(); i++) {
     minRect[i] = minAreaRect(cv::Mat(contours[i]));
@@ -76,11 +76,11 @@ thresh_callback(int, void*) {
   for(size_t i = 0; i < contours.size(); i++) {
     Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
     // contour
-    drawContours(drawing, contours, (int)i, color, 1, 8, vector<Vec4i>(), 0, Point());
+    drawContours(drawing, contours, (int)i, color, 1, 8, std::vector<Vec4i>(), 0, cv::Point());
     // ellipse
     ellipse(drawing, minEllipse[i], color, 2, 8);
     // rotated rectangle
-    Point2f rect_points[4];
+    cv::Point2f rect_points[4];
     minRect[i].points(rect_points);
     for(int j = 0; j < 4; j++) line(drawing, rect_points[j], rect_points[(j + 1) % 4], color, 1, 8);
   }

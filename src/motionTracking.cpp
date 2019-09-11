@@ -40,23 +40,23 @@ searchForMovement(cv::Mat thresholdImage, cv::Mat& cameraFeed) {
   bool objectDetected = false;
   cv::Mat temp;
   thresholdImage.copyTo(temp);
-  // these two vectors needed for output of findContours
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
+  // these two std::vectors needed for output of findContours
+  std::vector<std::vector<cv::Point>> contours;
+  std::vector<Vec4i> hierarchy;
   // find contours of filtered image using openCV findContours function
   // findContours(temp,contours,hierarchy,CV_RETR_CCOMP,CV_CHAIN_APPROX_SIMPLE );// retrieves all contours
   findContours(temp, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE); // retrieves external contours
 
-  // if contours vector is not empty, we have found some objects
+  // if contours std::vector is not empty, we have found some objects
   if(contours.size() > 0)
     objectDetected = true;
   else
     objectDetected = false;
 
   if(objectDetected) {
-    // the largest contour is found at the end of the contours vector
+    // the largest contour is found at the end of the contours std::vector
     // we will simply assume that the biggest contour is the object we are looking for.
-    vector<vector<Point>> largestContourVec;
+    std::vector<std::vector<cv::Point>> largestContourVec;
     largestContourVec.push_back(contours.at(contours.size() - 1));
     // make a bounding rectangle around the largest contour then find its centroid
     // this will be the object's final estimated position.
@@ -71,14 +71,14 @@ searchForMovement(cv::Mat thresholdImage, cv::Mat& cameraFeed) {
   int x = theObject[0];
   int y = theObject[1];
   // draw some crosshairs on the object
-  circle(cameraFeed, Point(x, y), 20, Scalar(0, 255, 0), 2);
-  line(cameraFeed, Point(x, y), Point(x, y - 25), Scalar(0, 255, 0), 2);
-  line(cameraFeed, Point(x, y), Point(x, y + 25), Scalar(0, 255, 0), 2);
-  line(cameraFeed, Point(x, y), Point(x - 25, y), Scalar(0, 255, 0), 2);
-  line(cameraFeed, Point(x, y), Point(x + 25, y), Scalar(0, 255, 0), 2);
+  circle(cameraFeed, cv::Point(x, y), 20, Scalar(0, 255, 0), 2);
+  line(cameraFeed, cv::Point(x, y), cv::Point(x, y - 25), Scalar(0, 255, 0), 2);
+  line(cameraFeed, cv::Point(x, y), cv::Point(x, y + 25), Scalar(0, 255, 0), 2);
+  line(cameraFeed, cv::Point(x, y), cv::Point(x - 25, y), Scalar(0, 255, 0), 2);
+  line(cameraFeed, cv::Point(x, y), cv::Point(x + 25, y), Scalar(0, 255, 0), 2);
   putText(cameraFeed,
           "Tracking object at (" + intToString(x) + "," + intToString(y) + ")",
-          Point(x, y),
+          cv::Point(x, y),
           1,
           1,
           Scalar(255, 0, 0),
@@ -186,43 +186,43 @@ main() {
       // cout << key << endl;
       // switch(key){
       switch(waitKey(10)) {
-      case 1048603:
-        // case 27: //'esc' key has been pressed, exit program.
-        return 0;
-      case 1048692:
-        // case 116: //'t' has been pressed. this will toggle tracking
-        trackingEnabled = !trackingEnabled;
-        if(trackingEnabled == false)
-          cout << "Tracking disabled." << endl;
-        else
-          cout << "Tracking enabled." << endl;
-        break;
-      case 1048676:
-        // case 100: //'d' has been pressed. this will debug mode
-        debugMode = !debugMode;
-        if(debugMode == false)
-          cout << "Debug mode disabled." << endl;
-        else
-          cout << "Debug mode enabled." << endl;
-        break;
-      case 1048688:
-        // case 112: //'p' has been pressed. this will pause/resume the code.
-        pause = !pause;
-        if(pause == true) {
-          cout << "Code paused, press 'p' again to resume" << endl;
-          while(pause == true) {
-            // stay in this loop until
-            switch(waitKey()) {
-            // a switch statement inside a switch statement? Mind blown.
-            case 1048688:
-              // case 112:
-              // change pause back to false
-              pause = false;
-              cout << "Code resumed." << endl;
-              break;
+        case 1048603:
+          // case 27: //'esc' key has been pressed, exit program.
+          return 0;
+        case 1048692:
+          // case 116: //'t' has been pressed. this will toggle tracking
+          trackingEnabled = !trackingEnabled;
+          if(trackingEnabled == false)
+            cout << "Tracking disabled." << endl;
+          else
+            cout << "Tracking enabled." << endl;
+          break;
+        case 1048676:
+          // case 100: //'d' has been pressed. this will debug mode
+          debugMode = !debugMode;
+          if(debugMode == false)
+            cout << "Debug mode disabled." << endl;
+          else
+            cout << "Debug mode enabled." << endl;
+          break;
+        case 1048688:
+          // case 112: //'p' has been pressed. this will pause/resume the code.
+          pause = !pause;
+          if(pause == true) {
+            cout << "Code paused, press 'p' again to resume" << endl;
+            while(pause == true) {
+              // stay in this loop until
+              switch(waitKey()) {
+                // a switch statement inside a switch statement? Mind blown.
+                case 1048688:
+                  // case 112:
+                  // change pause back to false
+                  pause = false;
+                  cout << "Code resumed." << endl;
+                  break;
+              }
             }
           }
-        }
       }
     }
     // release the capture before re-opening and looping again.

@@ -26,7 +26,7 @@
 #include <iostream>
 #include <ctype.h>
 #include <cstdlib>
-#include <vector>
+#include <std::vector>
 #include <math.h>
 
 using namespace cv;
@@ -40,7 +40,7 @@ bool backprojMode = false;
 bool objectSelection = false;
 int inputWindowSize = 0;
 bool showHist = true;
-Point origin;
+cv::Point origin;
 Rect boundingbox;
 int vmin = 0, vmax = 256, smin = 10, smax = 256, hueMin = 0, hueMax = 256;
 
@@ -100,16 +100,16 @@ userMouse(int click, int x, int y, int, void*) {
   }
 
   switch(click) {
-  case EVENT_LBUTTONDOWN:
-    origin = Point(x, y);
-    boundingbox = Rect(x, y, 0, 0);
-    objectSelection = true;
-    break;
-  case EVENT_LBUTTONUP:
-    objectSelection = false;
-    if(boundingbox.width > 0 && boundingbox.height > 0)
-      inputWindowSize = -1; // Set up CAMShift properties in track_and_identify() loop
-    break;
+    case EVENT_LBUTTONDOWN:
+      origin = cv::Point(x, y);
+      boundingbox = Rect(x, y, 0, 0);
+      objectSelection = true;
+      break;
+    case EVENT_LBUTTONUP:
+      objectSelection = false;
+      if(boundingbox.width > 0 && boundingbox.height > 0)
+        inputWindowSize = -1; // Set up CAMShift properties in track_and_identify() loop
+      break;
   }
 }
 
@@ -128,9 +128,9 @@ centerstring(char* a) {
 /* Find best class for the blob (i. e. class with maximal probability) */
 static void
 getMaxClass(const cv::Mat& probBlob, int* classId, double* classProb) {
-  cv::Mat probMat = probBlob.reshape(1, 1); // reshape the blob to 1x1000 matrix
-  Point classNumber;
-  minMaxLoc(probMat, NULL, classProb, NULL, &classNumber);
+  cv::Mat probcv::Mat = probBlob.reshape(1, 1); // reshape the blob to 1x1000 matrix
+  cv::Point classNumber;
+  minMaxLoc(probcv::Mat, NULL, classProb, NULL, &classNumber);
   *classId = classNumber.x;
 }
 
@@ -198,8 +198,9 @@ track_and_identify(int argc, char** argv) {
   namedWindow("Object Tracker", 0);                 // Object tracker box display name
   setMouseCallback("Object Tracker", userMouse, 0); // User can draw inside of the Object tracker box display
 
-  cv::Mat frame, hsv, hue, mask, hist, histimg = cv::Mat::zeros(400, 640, CV_8UC3),
-                                       backproj; // setting up the matrix holding the colors and frames of histrogram image
+  cv::Mat frame, hsv, hue, mask, hist,
+      histimg = cv::Mat::zeros(400, 640, CV_8UC3),
+      backproj; // setting up the matrix holding the colors and frames of histrogram image
   bool pause = false;
 
   for(;;) {
@@ -227,11 +228,12 @@ track_and_identify(int argc, char** argv) {
 
         if(inputWindowSize < 0) {
           // Object has been selected by user, set up CAMShift search properties once
-          cv::Mat roi(hue, boundingbox), maskroi(mask, boundingbox); // creating a matrix that will hold the bounding box
+          cv::Mat roi(hue, boundingbox),
+              maskroi(mask, boundingbox); // creating a matrix that will hold the bounding box
           calcHist(&roi, 1, 0, maskroi, hist, 1, &hue_size, &phranges);
           normalize(hist, hist, 0, 255, NORM_MINMAX);
           cv::Mat image_save = image(boundingbox).clone(); // savind the image of the bounding box from the roi
-          imwrite("save.jpg", image_save);             // saves boundingbox as an image
+          imwrite("save.jpg", image_save);                 // saves boundingbox as an image
           //-------------------------
           //---------------------
           trackingBox = boundingbox;
@@ -248,9 +250,9 @@ track_and_identify(int argc, char** argv) {
           for(int i = 0; i < hue_size; i++) {
             int val = saturate_cast<int>(hist.at<float>(i) * histimg.rows / 255); // value of the histogram
             rectangle(histimg,
-                      Point(i * binW, histimg.rows), // value from the rectangle of selected object to convert into the
+                      cv::Point(i * binW, histimg.rows), // value from the rectangle of selected object to convert into the
                       // colored histogram
-                      Point((i + 1) * binW, histimg.rows - val),
+                      cv::Point((i + 1) * binW, histimg.rows - val),
                       Scalar(buf.at<Vec3b>(i)),
                       -1,
                       8);
@@ -263,12 +265,12 @@ track_and_identify(int argc, char** argv) {
         RotatedRect trackBox = CamShift(backproj,
                                         trackingBox,
                                         TermCriteria(TermCriteria::EPS | TermCriteria::COUNT,
-                                            0,
-                                            1)); // using opencv's function criteria for tracking window
+                                                     0,
+                                                     1)); // using opencv's function criteria for tracking window
         if(trackingBox.area() <= 1) {
           int cols = backproj.cols, rows = backproj.rows, r = (MIN(cols, rows) + 5) / 6;
           trackingBox =
-            Rect(trackingBox.x - r, trackingBox.y - r, trackingBox.x + r, trackingBox.y + r) & Rect(0, 0, cols, rows);
+              Rect(trackingBox.x - r, trackingBox.y - r, trackingBox.x + r, trackingBox.y + r) & Rect(0, 0, cols, rows);
         }
 
         if(backprojMode)
@@ -290,10 +292,10 @@ track_and_identify(int argc, char** argv) {
     if(q == 27)
       break;
     switch(q) {
-    case 'p': // creating a still frame for user interaction
-      pause = !pause;
-      break;
-    default:;
+      case 'p': // creating a still frame for user interaction
+        pause = !pause;
+        break;
+      default:;
     }
   }
 
@@ -319,7 +321,8 @@ track_and_identify(int argc, char** argv) {
     exit(-1);
   }
   // GoogLeNet accepts only specific sized RGB-images
-  cv::Mat inputBlob = blobFromImage(img, 1, Size(224, 224), Scalar(104, 117, 123)); // Convert cv::Mat to batch of images
+  cv::Mat inputBlob =
+      blobFromImage(img, 1, Size(224, 224), Scalar(104, 117, 123)); // Convert cv::Mat to batch of images
   cv::Mat prob;
   cv::TickMeter t;
   for(int i = 0; i < 10; i++) { // setting # of iterations for blob dnn method recognition
@@ -374,7 +377,7 @@ bg_sub_contour(int argc, char** argv) {
     return -1;
   }
 
-  for(;;) { // iterates a camera feed
+  for(;;) {                  // iterates a camera feed
     stream.read(streamFeed); // stores image to matrix
 
     cvtColor(streamFeed, hsv, COLOR_BGR2HSV); // converting from BGR color space to HSV
@@ -411,23 +414,24 @@ bg_sub_contour(int argc, char** argv) {
 void
 contour_figure(int, void*) {
   cv::Mat canny_output; // stores canny output
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
+  std::vector<std::vector<cv::Point>> contours;
+  std::vector<Vec4i> hierarchy;
   Canny(src_gray, canny_output, thresh, thresh * 2, 3); // gathers the edges of the image, marks them in the output map
   findContours(canny_output,
                contours,
                hierarchy,
                RETR_TREE,
                CHAIN_APPROX_SIMPLE,
-               Point(0, 0)); // retrives the countour from the binary image
+               cv::Point(0, 0)); // retrives the countour from the binary image
 
   // draw contours
-  cv::Mat drawing = cv::Mat::zeros(canny_output.size(), CV_8UC3); // stores the output of canny to the columns of cv::Mat
+  cv::Mat drawing =
+      cv::Mat::zeros(canny_output.size(), CV_8UC3); // stores the output of canny to the columns of cv::Mat
   for(size_t i = 0; i < contours.size(); i++) {
     Scalar color = Scalar(rng.uniform(0, 255),
                           rng.uniform(0, 255),
                           rng.uniform(0, 255)); // changes scalar colours based on various edges
-    drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, Point()); // adds colours while also drawing the
+    drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, cv::Point()); // adds colours while also drawing the
     // contour lines
   }
 

@@ -14,9 +14,9 @@ private:
   int count;
 
 public:
-  objectCounter(cv::Mat);  // constructor
-  void get_markers();  // function to get markers for watershed segmentation
-  int count_objects(); // function to implement watershed segmentation and count catchment basins
+  objectCounter(cv::Mat); // constructor
+  void get_markers();     // function to get markers for watershed segmentation
+  int count_objects();    // function to implement watershed segmentation and count catchment basins
 };
 
 objectCounter::objectCounter(cv::Mat _image) {
@@ -52,11 +52,11 @@ objectCounter::get_markers() {
 
   // erode binary image twice to separate regions
   cv::Mat th_e;
-  erode(th_a, th_e, strel, Point(-1, -1), 2);
+  erode(th_a, th_e, strel, cv::Point(-1, -1), 2);
   // imshow("th_e", th_e);
 
-  vector<vector<Point>> c, contours;
-  vector<Vec4i> heirarchy;
+  std::vector<std::vector<cv::Point>> c, contours;
+  std::vector<Vec4i> heirarchy;
   findContours(th_e, c, heirarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_NONE);
 
   // remove very small contours
@@ -76,7 +76,7 @@ objectCounter::count_objects() {
   watershed(image, markers);
 
   // colors generated randomly to make the output look pretty
-  vector<Vec3b> colorTab;
+  std::vector<Vec3b> colorTab;
   for(int i = 0; i < count; i++) {
     int b = theRNG().uniform(0, 255);
     int g = theRNG().uniform(0, 255);

@@ -24,11 +24,9 @@ main(void) {
   /* Look-up table for linear interpolation. If you want to make your own version, you have to re-measure these values.
    */
   static std::vector<double> pixel = {
-    42.0, 94.0, 122.0, 139.0, 150.0, 157.0, 163.0, 168.0, 171.0
-  }; /**< Measured values of pixels. */
+      42.0, 94.0, 122.0, 139.0, 150.0, 157.0, 163.0, 168.0, 171.0}; /**< Measured values of pixels. */
   static std::vector<double> cm = {
-    20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0
-  }; /**< Measured values of centimeters. */
+      20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0}; /**< Measured values of centimeters. */
 
   /* Initialize the video formats. */
   cv::Mat video;

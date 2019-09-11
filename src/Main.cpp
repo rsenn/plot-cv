@@ -11,43 +11,36 @@
 using namespace cv;
 using namespace std;
 
+cv::Mat
+run(Tensile* obj, int count) {
 
-Mat run(Tensile *obj, int count) {
-
-  vector<Point2f> mc;
-  vector<vector<Point>> contours;
-  Mat original = obj->getCurrentFrame();
+  std::vector<cv::Point2f> mc;
+  std::vector<std::vector<cv::Point>> contours;
+  cv::Mat original = obj->getCurrentFrame();
 
   obj->getCurrentFrame() = obj->imageToBinary(obj->getCurrentFrame());
 
-  contours = obj->getContours(obj->getCurrentFrame());	// get the contours
+  contours = obj->getContours(obj->getCurrentFrame()); // get the contours
 
-  mc = obj->getMassCenters(contours);		// get the mass centers
+  mc = obj->getMassCenters(contours); // get the mass centers
 
   cout << endl << "Frame: " << count << endl;
-  obj->printMassCenters(mc, contours);		// print mass centers
+  obj->printMassCenters(mc, contours); // print mass centers
 
+  // waitKey(0);
 
-  //waitKey(0);
-
-  for(int i = 0; i < contours.size(); i++)
-    circle(original, mc[i], 1, CV_RGB(255, 0, 0), 3, 8, 0);
-
+  for(int i = 0; i < contours.size(); i++) circle(original, mc[i], 1, CV_RGB(255, 0, 0), 3, 8, 0);
 
   return original;
 }
 
-
-int main() {
-
+int
+main() {
 
   VideoCapture capture("C:/Users/Jameson/Desktop/data/specvid.avi");
-  Tensile *object = new Tensile(capture.get(CV_CAP_PROP_FRAME_COUNT));
+  Tensile* object = new Tensile(capture.get(CV_CAP_PROP_FRAME_COUNT));
 
-  Mat currentFrame;
-
-
-
+  cv::Mat currentFrame;
 
   namedWindow("Contour", WINDOW_AUTOSIZE);
 
@@ -57,14 +50,9 @@ int main() {
 
     imshow("Contour", run(object, i));
     waitKey(10);
-
-
   }
 
-
-
   cout << endl << endl << "total amount of frames: " << object->getFrameNumber() << endl << endl;
-
 
   return 0;
 }

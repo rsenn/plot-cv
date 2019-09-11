@@ -53,16 +53,13 @@ static double MIN_OBJ_AREA = 1000;
 // TODO all of this is wrong and will need to change
 static KALMAN_TYPE dt = 0.25;
 static KALMAN_TYPE A_init[] = {1, dt, 0, 0, 0,  0, 0, 1, dt, 0, 0, 0,  0, 0, 1, 0, 0, 0,
-                               0, 0,  0, 1, dt, 0, 0, 0, 0,  0, 1, dt, 0, 0, 0, 0, 0, 1
-                              };
+                               0, 0,  0, 1, dt, 0, 0, 0, 0,  0, 1, dt, 0, 0, 0, 0, 0, 1};
 static KALMAN_TYPE C_init[] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0};
 static KALMAN_TYPE Q_init[] = {1e-2, 0, 0, 0,    0, 0, 0, 5.0, 0, 0, 0,   0, 0, 0, 1e-2, 0, 0, 0,
-                               0,    0, 0, 1e-2, 0, 0, 0, 0,   0, 0, 5.0, 0, 0, 0, 0,    0, 0, 1e-2
-                              };
+                               0,    0, 0, 1e-2, 0, 0, 0, 0,   0, 0, 5.0, 0, 0, 0, 0,    0, 0, 1e-2};
 static KALMAN_TYPE R_init[] = {5.0, 0, 0, 5.0};
 static KALMAN_TYPE P_init[] = {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
-                               0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1
-                              };
+                               0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1};
 static KALMAN_TYPE x_hat_init[] = {0, 0, 0, 0, 0, 0};
 static int n = 6;
 static int m = 2;
@@ -92,17 +89,17 @@ void search_for_movement(cv::Mat& thresholdImage,
                          double& total_targets,
                          int& count_LR,
                          int& count_RL,
-                         vector<Target*>& targets);
+                         std::vector<Target*>& targets);
 void dynamic_threshold(cv::Mat& input_image, cv::Mat& threshold_image, float percent_peak, bool debugMode);
 
-char is_center_crossed(const Point2d& a, const Point2d& b, double middle);
+char is_center_crossed(const cv::Point2d& a, const cv::Point2d& b, double middle);
 char is_center_crossed(const Object& obj_a, const Object& obj_b, double middle);
 
 void get_settings_inline(int argc, char** argv, string& vid_name, string& back_name);
 void get_settings_file(int argc, char** argv, string& vid_name, string& back_name, char& bs_type);
 void interpret_input(char c, bool& debugMode, bool& trackingEnabled, bool& pause);
-void draw_rectangles(vector<Rect2d>& obj_rects, cv::Mat& display);
-void draw_centers(vector<Target*>& targets, cv::Mat& display);
+void draw_rectangles(std::vector<Rect2d>& obj_rects, cv::Mat& display);
+void draw_centers(std::vector<Target*>& targets, cv::Mat& display);
 
 void show_help();
 
@@ -244,7 +241,7 @@ track_with_non_adaptive_BS(ImageInput* capture,
 
   cv::Mat frame1, frame2;
   cv::Mat grayImage1, grayImage2;
-  vector<Target*> targets;
+  std::vector<Target*> targets;
   cv::Mat thresholdImage;
 
   success = capture->read(frame1);
@@ -285,7 +282,7 @@ track_with_non_adaptive_BS(ImageInput* capture,
     loop_switch = !loop_switch;
   } // while
 
-  for(vector<Target*>::iterator it = targets.begin(); it != targets.end(); it++) {
+  for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); it++) {
     (*it)->~Target();
   }
 } // track with non-adaptive BS
@@ -347,7 +344,7 @@ track_with_adaptive_BS(ImageInput* capture,
   Ptr<BackgroundSubtractorMOG2> subtractor = createBackgroundSubtractorMOG2();
   cv::Mat frame, image;
   cv::Mat thresholdImage;
-  vector<Target*> targets;
+  std::vector<Target*> targets;
 
   success = capture->read(frame);
   if(!success) {
@@ -377,7 +374,7 @@ track_with_adaptive_BS(ImageInput* capture,
   cout << "Time    = " << tot_time << endl;
   cout << "Frames  = " << frames << endl;
   cout << "t per f = " << tot_time / (double)frames << endl;
-  for(vector<Target*>::iterator it = targets.begin(); it != targets.end(); it++) {
+  for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); it++) {
     (*it)->~Target();
   }
 }
@@ -424,27 +421,27 @@ search_for_movement(cv::Mat& thresholdImage,
                     double& total_targets,
                     int& count_LR,
                     int& count_RL,
-                    vector<Target*>& targets) {
+                    std::vector<Target*>& targets) {
 
   int obj_count = 0, i = 0;
   double mid_row = (double)(thresholdImage.cols >> 1); // half way across the screen
   double obj_area = 0;
-  vector<vector<Point>> contours;
+  std::vector<std::vector<cv::Point>> contours;
   cv::Mat temp;
   Rect2d temp_rect;
-  vector<Rect2d> obj_rects;
-  vector<Vec4i> hierarchy;
-  vector<Object> objects;
+  std::vector<Rect2d> obj_rects;
+  std::vector<Vec4i> hierarchy;
+  std::vector<Object> objects;
   Object* prev_obj = NULL;
   Target* temp_target;
-  Point2d temp_point;
+  cv::Point2d temp_point;
 
   bool cont_delete = true;
 
   thresholdImage.copyTo(temp);
 
   findContours(temp, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-  for(vector<vector<Point>>::iterator it_0 = contours.begin(); it_0 != contours.end(); it_0++) {
+  for(std::vector<std::vector<cv::Point>>::iterator it_0 = contours.begin(); it_0 != contours.end(); it_0++) {
     temp_rect = boundingRect(*it_0);
     obj_area = temp_rect.area();
 
@@ -455,7 +452,7 @@ search_for_movement(cv::Mat& thresholdImage,
     }
   }
 
-  for(vector<Target*>::iterator it = targets.begin(); it != targets.end(); it++) {
+  for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); it++) {
     (*it)->update(objects, dt);
 
     if(((*it)->get_num_steps() > MIN_ALIVE) && !((*it)->get_is_counted())) {
@@ -467,7 +464,7 @@ search_for_movement(cv::Mat& thresholdImage,
 
   while(cont_delete) {
     cont_delete = false;
-    for(vector<Target*>::iterator it = targets.begin(); it != targets.end(); it++) {
+    for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); it++) {
       if((*it)->get_num_empty_steps() > EMPTY_LIMIT) {
         (*it)->~Target();
         // cout << "Target " << (*it)->get_id_num() << " removed." << endl;
@@ -478,7 +475,7 @@ search_for_movement(cv::Mat& thresholdImage,
     }
   }
 
-  for(vector<Object>::iterator it_obj = objects.begin(); it_obj != objects.end(); it_obj++) {
+  for(std::vector<Object>::iterator it_obj = objects.begin(); it_obj != objects.end(); it_obj++) {
     if(!(it_obj->get_is_found())) {
       it_obj->get_center(temp_point);
       x_hat_init[0] = temp_point.x;
@@ -489,7 +486,7 @@ search_for_movement(cv::Mat& thresholdImage,
   }
   draw_centers(targets, display);
   draw_rectangles(obj_rects, display);
-  line(display, Point(mid_row, 0), Point(mid_row, display.cols), Scalar(0, 255, 0), 2, 1);
+  line(display, cv::Point(mid_row, 0), cv::Point(mid_row, display.cols), Scalar(0, 255, 0), 2, 1);
 
 } // search for movement
 
@@ -540,8 +537,8 @@ dynamic_threshold(cv::Mat& input_image, cv::Mat& threshold_image, float percent_
     normalize(hist, hist, 0, histImage.rows, NORM_MINMAX, -1, cv::Mat());
     for(int i = 1; i < hist_size; i++) {
       line(histImage,
-           Point(bin_w * (i - 1), hist_h - cvRound(hist.at<float>(i - 1))),
-           Point(bin_w * (i), hist_h - cvRound(hist.at<float>(i))),
+           cv::Point(bin_w * (i - 1), hist_h - cvRound(hist.at<float>(i - 1))),
+           cv::Point(bin_w * (i), hist_h - cvRound(hist.at<float>(i))),
            Scalar(255, 0, 0),
            2,
            8,
@@ -560,7 +557,7 @@ dynamic_threshold(cv::Mat& input_image, cv::Mat& threshold_image, float percent_
 //@checks if the center is crossed
 //@returns N- no, L- right to left, R- left to right
 char
-is_center_crossed(const Point2d& a, const Point2d& b, double middle) {
+is_center_crossed(const cv::Point2d& a, const cv::Point2d& b, double middle) {
   if((a.x < middle) && (b.x >= middle))
     return 'R';
   else if((b.x < middle) && (a.x >= middle))
@@ -573,7 +570,7 @@ is_center_crossed(const Point2d& a, const Point2d& b, double middle) {
 //@returns N- no, L- right to left, R- left to right
 char
 is_center_crossed(const Object& obj_a, const Object& obj_b, double middle) {
-  Point2d a, b;
+  cv::Point2d a, b;
   obj_a.get_center(a);
   obj_b.get_center(b);
   if((a.x < middle) && (b.x >= middle))
@@ -629,19 +626,19 @@ get_settings_file(int argc, char** argv, string& vid_name, string& back_name, ch
     while(getline(file, next_line) && !done) {
       if(next_line[0] != '#') {
         switch(input_cnt) {
-        case 0:
-          // TODO handle live stream
-          vid_name = next_line.c_str();
-          break;
-        case 1: back_name = next_line.c_str(); break;
-        case 2: MAX_DIST_SQD = str_to_int(next_line); break;
-        case 3: SENSITIVITY_VALUE_1 = str_to_int(next_line); break;
-        case 4: SENSITIVITY_VALUE_2 = str_to_int(next_line); break;
-        case 5: BLUR_SIZE_1 = str_to_int(next_line); break;
-        case 6: BLUR_SIZE_2 = str_to_int(next_line); break;
-        case 7: MIN_OBJ_AREA = str_to_int(next_line); break;
-        case 8: bs_type = next_line[0]; break;
-        case 9: Trackers::set_algo(next_line[0]); break;
+          case 0:
+            // TODO handle live stream
+            vid_name = next_line.c_str();
+            break;
+          case 1: back_name = next_line.c_str(); break;
+          case 2: MAX_DIST_SQD = str_to_int(next_line); break;
+          case 3: SENSITIVITY_VALUE_1 = str_to_int(next_line); break;
+          case 4: SENSITIVITY_VALUE_2 = str_to_int(next_line); break;
+          case 5: BLUR_SIZE_1 = str_to_int(next_line); break;
+          case 6: BLUR_SIZE_2 = str_to_int(next_line); break;
+          case 7: MIN_OBJ_AREA = str_to_int(next_line); break;
+          case 8: bs_type = next_line[0]; break;
+          case 9: Trackers::set_algo(next_line[0]); break;
         } // switch
         input_cnt++;
       } // if not comment
@@ -661,31 +658,31 @@ interpret_input(char c, bool& debugMode, bool& trackingEnabled, bool& pause) {
   bool wait = pause;
   // TODO set defines or somthing for these numbers
   switch(c) {
-  // case 1048603:
-  case 27: //'esc' key has been pressed, exit program.
-    cout << "Have a nice day! :)" << endl;
-    exit(0);
-  // case 1048692:
-  case 116: //'t' has been pressed. this will toggle tracking
-    trackingEnabled = !trackingEnabled;
-    if(trackingEnabled == false)
-      cout << "Tracking disabled." << endl;
-    else
-      cout << "Tracking enabled." << endl;
-    break;
-  // case 1048676:
-  case 100: //'d' has been pressed. this will debug mode
-    debugMode = !debugMode;
-    if(debugMode == false)
-      cout << "Debug mode disabled." << endl;
-    else
-      cout << "Debug mode enabled." << endl;
-    break;
-  // case 1048688:
-  case 112: //'p' has been pressed. this will pause/resume the code.
-    pause = !pause;
-    wait = pause;
-    cout << "Code paused, press 'p' again to resume, 's' to step" << endl;
+    // case 1048603:
+    case 27: //'esc' key has been pressed, exit program.
+      cout << "Have a nice day! :)" << endl;
+      exit(0);
+    // case 1048692:
+    case 116: //'t' has been pressed. this will toggle tracking
+      trackingEnabled = !trackingEnabled;
+      if(trackingEnabled == false)
+        cout << "Tracking disabled." << endl;
+      else
+        cout << "Tracking enabled." << endl;
+      break;
+    // case 1048676:
+    case 100: //'d' has been pressed. this will debug mode
+      debugMode = !debugMode;
+      if(debugMode == false)
+        cout << "Debug mode disabled." << endl;
+      else
+        cout << "Debug mode enabled." << endl;
+      break;
+    // case 1048688:
+    case 112: //'p' has been pressed. this will pause/resume the code.
+      pause = !pause;
+      wait = pause;
+      cout << "Code paused, press 'p' again to resume, 's' to step" << endl;
   }
 
   if(pause == true) {
@@ -693,15 +690,15 @@ interpret_input(char c, bool& debugMode, bool& trackingEnabled, bool& pause) {
       // stay in this loop until
       c2 = waitKey(10);
       switch(c2) {
-      case 112: // p is for unpause
-        pause = false;
-        wait = false;
-        cout << "Code resumed." << endl;
-        break;
-      case 115: // s is for step
-        pause = true;
-        wait = false;
-        break;
+        case 112: // p is for unpause
+          pause = false;
+          wait = false;
+          cout << "Code resumed." << endl;
+          break;
+        case 115: // s is for step
+          pause = true;
+          wait = false;
+          break;
       }
     }
   }
@@ -709,7 +706,7 @@ interpret_input(char c, bool& debugMode, bool& trackingEnabled, bool& pause) {
 
 //@draws the rectagles
 void
-draw_rectangles(vector<Rect2d>& obj_rects, cv::Mat& display) {
+draw_rectangles(std::vector<Rect2d>& obj_rects, cv::Mat& display) {
   for(unsigned j = 0; j < obj_rects.size(); j++) {
     rectangle(display, obj_rects[j], Scalar(255, 0, 0), 2, 1); // draw rectangle around object
     // int mid_x = obj_rects[j].x + (obj_rects[j].width / 2);  // was this important?
@@ -720,9 +717,9 @@ draw_rectangles(vector<Rect2d>& obj_rects, cv::Mat& display) {
 //@draws the rectagles
 // TODO make this work with targets
 void
-draw_centers(vector<Target*>& targets, cv::Mat& display) {
-  Point2d temp_pt;
-  for(vector<Target*>::iterator it = targets.begin(); it != targets.end(); it++) {
+draw_centers(std::vector<Target*>& targets, cv::Mat& display) {
+  cv::Point2d temp_pt;
+  for(std::vector<Target*>::iterator it = targets.begin(); it != targets.end(); it++) {
     (*it)->prev_obj.get_center(temp_pt);
     circle(display, temp_pt, 5, Scalar(0, 0, 255), 2, 1);
     // circle( display, temp_pt, MAX_DIST_SQD, Scalar( 0, 255, 255 ), 2, 1 );
@@ -735,17 +732,17 @@ void
 show_help() {
   cout << endl
        << " Usage: ./counter.out <video_name> <gray background image> [MAX_DIST_SQD] [SENSITIVITY_VALUE] [BLUR_SIZE] "
-       "[MIN_OBJ_AREA]\n"
-       " examples:\n"
-       " ./counter.out /home/pi/test_videos/my_vid.h264 NONE\n"
-       " ./counter.out /home/pi/test_videos/my_vid.h264 /home/pi/test_videos/my_background.jpg \n"
-       " ./counter.out /home/pi/test_videos/my_vid.h264 NONE 50 20 10 10\n"
-       "\n"
-       "OR \n"
-       "\n"
-       " Usage: ./counter.out <configuration file>\n"
-       " example:\n"
-       " ./counter.out config_example.txt\n"
+          "[MIN_OBJ_AREA]\n"
+          " examples:\n"
+          " ./counter.out /home/pi/test_videos/my_vid.h264 NONE\n"
+          " ./counter.out /home/pi/test_videos/my_vid.h264 /home/pi/test_videos/my_background.jpg \n"
+          " ./counter.out /home/pi/test_videos/my_vid.h264 NONE 50 20 10 10\n"
+          "\n"
+          "OR \n"
+          "\n"
+          " Usage: ./counter.out <configuration file>\n"
+          " example:\n"
+          " ./counter.out config_example.txt\n"
        << endl
        << endl;
   exit(1);

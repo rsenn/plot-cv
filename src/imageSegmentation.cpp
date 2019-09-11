@@ -44,8 +44,8 @@ main(int, char** argv) {
 
   //! [sharp]
   // Create a kernel that we will use for accuting/sharpening our image
-  cv::Mat kernel =
-    (cv::Mat_<float>(3, 3) << 1, 1, 1, 1, -8, 1, 1, 1, 1); // an approximation of second derivative, a quite strong kernel
+  cv::Mat kernel = (cv::Mat_<float>(3, 3) << 1, 1, 1, 1, -8, 1, 1, 1, 1); // an approximation of second derivative, a
+                                                                          // quite strong kernel
 
   // do the laplacian filtering as it is
   // well, we need to convert everything in something more deeper then CV_8U
@@ -106,7 +106,7 @@ main(int, char** argv) {
   dist.convertTo(dist_8u, CV_8U);
 
   // Find total markers
-  vector<vector<Point>> contours;
+  std::vector<std::vector<cv::Point>> contours;
   findContours(dist_8u, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
 
   // Create the marker image for the watershed algorithm
@@ -117,7 +117,7 @@ main(int, char** argv) {
     drawContours(markers, contours, static_cast<int>(i), Scalar::all(static_cast<int>(i) + 1), -1);
 
   // Draw the background marker
-  circle(markers, Point(5, 5), 3, CV_RGB(255, 255, 255), -1);
+  circle(markers, cv::Point(5, 5), 3, CV_RGB(255, 255, 255), -1);
   imshow("Markers", markers * 10000);
   //! [seeds]
 
@@ -132,7 +132,7 @@ main(int, char** argv) {
   // image looks like at that point
 
   // Generate random colors
-  vector<Vec3b> colors;
+  std::vector<Vec3b> colors;
   for(size_t i = 0; i < contours.size(); i++) {
     int b = theRNG().uniform(0, 255);
     int g = theRNG().uniform(0, 255);

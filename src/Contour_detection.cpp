@@ -43,19 +43,19 @@ main(int argc, char** argv) {
 void
 thresh_callback(int, void*) {
   cv::Mat canny_output;
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
+  std::vector<std::vector<cv::Point>> contours;
+  std::vector<Vec4i> hierarchy;
 
   /// Detect edges using canny
   Canny(src_gray, canny_output, thresh, thresh * 2, 3);
   /// Find contours
-  findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
+  findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Draw contours
   cv::Mat drawing = cv::Mat::zeros(canny_output.size(), CV_8UC3);
   for(int i = 0; i < (int)contours.size(); i++) {
     Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-    drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, Point());
+    drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, cv::Point());
   }
 
   /// Show in a window

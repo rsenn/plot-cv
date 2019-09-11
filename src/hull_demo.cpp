@@ -53,17 +53,17 @@ void
 thresh_callback(int, void*) {
   cv::Mat src_copy = src.clone();
   cv::Mat threshold_output;
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
+  std::vector<std::vector<cv::Point>> contours;
+  std::vector<Vec4i> hierarchy;
 
   /// Detect edges using Threshold
   threshold(src_gray, threshold_output, thresh, 255, THRESH_BINARY);
 
   /// Find contours
-  findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
+  findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Find the convex hull object for each contour
-  vector<vector<Point>> hull(contours.size());
+  std::vector<std::vector<cv::Point>> hull(contours.size());
   for(size_t i = 0; i < contours.size(); i++) {
     convexHull(cv::Mat(contours[i]), hull[i], false);
   }
@@ -72,8 +72,8 @@ thresh_callback(int, void*) {
   cv::Mat drawing = cv::Mat::zeros(threshold_output.size(), CV_8UC3);
   for(size_t i = 0; i < contours.size(); i++) {
     Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-    drawContours(drawing, contours, (int)i, color, 1, 8, vector<Vec4i>(), 0, Point());
-    drawContours(drawing, hull, (int)i, color, 1, 8, vector<Vec4i>(), 0, Point());
+    drawContours(drawing, contours, (int)i, color, 1, 8, std::vector<Vec4i>(), 0, cv::Point());
+    drawContours(drawing, hull, (int)i, color, 1, 8, std::vector<Vec4i>(), 0, cv::Point());
   }
 
   /// Show in a window

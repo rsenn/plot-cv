@@ -29,8 +29,8 @@ cv::Mat_<uchar> transformModifiedLUX(cv::Mat_<Vec3b> image_BGR);
 
 pair<double, double> returnImageStats(const cv::Mat_<uchar>& image);
 cv::Mat_<uchar> binaryThresholding(const cv::Mat_<uchar>& image, const pair<double, double>& stats);
-int returnLargestContourIndex(vector<vector<Point>> contours);
-int findClosest(vector<int> x_contour, int x);
+int returnLargestContourIndex(std::vector<std::vector<cv::Point>> contours);
+int findClosest(std::vector<int> x_contour, int x);
 
 int
 main(int argc, char** argv) {
@@ -51,7 +51,7 @@ main(int argc, char** argv) {
 
   // A clone image is required because findContours() modifies the input image
   cv::Mat binary_clone = pseudo_hue_bin.clone();
-  vector<vector<Point>> contours;
+  std::vector<std::vector<cv::Point>> contours;
   findContours(binary_clone, contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
 
   // Initialize blank image (for drawing contours)
@@ -66,11 +66,11 @@ main(int argc, char** argv) {
 
   // Draw largest contour on the blank image
   int largest_contour_idx = returnLargestContourIndex(contours);
-  vector<Point> largest_contour = contours[largest_contour_idx];
-  vector<int> x_contour(largest_contour.size());
-  vector<int> y_contour(largest_contour.size());
+  std::vector<cv::Point> largest_contour = contours[largest_contour_idx];
+  std::vector<int> x_contour(largest_contour.size());
+  std::vector<int> y_contour(largest_contour.size());
   for(int i = 0; i < largest_contour.size(); ++i) {
-    Point_<int> pt = largest_contour[i];
+    cv::Point_<int> pt = largest_contour[i];
     x_contour[i] = pt.x;
     y_contour[i] = pt.y;
 
@@ -101,7 +101,7 @@ main(int argc, char** argv) {
   int closest_mid_x = x_contour[closest_x_idx];
 
   int count = 0;
-  vector<int> mid_y_values;
+  std::vector<int> mid_y_values;
   for(int i = 0; i < x_contour.size(); ++i) {
     if(x_contour[i] == closest_mid_x) {
       ++count;
@@ -110,15 +110,15 @@ main(int argc, char** argv) {
   }
 
   // Mark end-points
-  circle(image_contour, Point(min_x, min_y), 3.0, Scalar(0, 0, 255), -1, 8);
-  circle(image_contour, Point(max_x, max_y), 3.0, Scalar(0, 0, 255), -1, 8);
-  line(image_contour, Point(min_x, min_y), Point(max_x, max_y), Scalar(0, 0, 255), 1, 8);
+  circle(image_contour, cv::Point(min_x, min_y), 3.0, Scalar(0, 0, 255), -1, 8);
+  circle(image_contour, cv::Point(max_x, max_y), 3.0, Scalar(0, 0, 255), -1, 8);
+  line(image_contour, cv::Point(min_x, min_y), cv::Point(max_x, max_y), Scalar(0, 0, 255), 1, 8);
 
   // Mark mid-points
   for(int i = 0; i < mid_y_values.size(); ++i) {
-    circle(image_contour, Point(closest_mid_x, mid_y_values[i]), 3.0, Scalar(0, 0, 255), -1, 8);
-    line(image_contour, Point(closest_mid_x, mid_y_values[i]), Point(min_x, min_y), Scalar(0, 0, 255), 1, 8);
-    line(image_contour, Point(closest_mid_x, mid_y_values[i]), Point(max_x, max_y), Scalar(0, 0, 255), 1, 8);
+    circle(image_contour, cv::Point(closest_mid_x, mid_y_values[i]), 3.0, Scalar(0, 0, 255), -1, 8);
+    line(image_contour, cv::Point(closest_mid_x, mid_y_values[i]), cv::Point(min_x, min_y), Scalar(0, 0, 255), 1, 8);
+    line(image_contour, cv::Point(closest_mid_x, mid_y_values[i]), cv::Point(max_x, max_y), Scalar(0, 0, 255), 1, 8);
   }
 
   // imshow("Face-ROI", face);
@@ -144,7 +144,7 @@ main(int argc, char** argv) {
 cv::Mat_<Vec3b>
 extractFaceROI(cv::Mat_<Vec3b> image, string face_cascade_path) {
   CascadeClassifier face_cascade;
-  vector<Rect_<int>> faces;
+  std::vector<Rect_<int>> faces;
 
   face_cascade.load(face_cascade_path);
   face_cascade.detectMultiScale(image, faces, 1.15, 3, 0 | CASCADE_SCALE_IMAGE, Size(30, 30));
@@ -162,7 +162,7 @@ extractFaceROI(cv::Mat_<Vec3b> image, string face_cascade_path) {
     int roi_x = face.x, roi_y = face.y + ((2 * face_rows) / 3);
     int roi_rows = (face_rows - roi_y), roi_cols = face_cols;
 
-    rectangle(image, Point(roi_x, roi_y), Point(roi_x+roi_cols, roi_y+roi_rows),
+    rectangle(image, cv::Point(roi_x, roi_y), cv::Point(roi_x+roi_cols, roi_y+roi_rows),
                             Scalar(255, 0, 0), 1, 4);
 
     */
@@ -188,7 +188,7 @@ extractMouthROI(cv::Mat_<Vec3b> face_image) {
  */
 cv::Mat_<Vec3b>
 equalizeImage(cv::Mat_<Vec3b> image_BGR) {
-  vector<cv::Mat> channels;
+  std::vector<cv::Mat> channels;
   cv::Mat_<Vec3b> image_eq;
 
   cvtColor(image_BGR, image_eq, CV_BGR2YCrCb);
@@ -254,7 +254,7 @@ Stats(cv::Mat_<double> pseudo_hue_plane) {
 cv::Mat_<uchar>
 transformCIELAB(cv::Mat_<Vec3b> image_BGR) {
   cv::Mat_<Vec3b> image_Lab;
-  vector<cv::Mat> channels;
+  std::vector<cv::Mat> channels;
   cvtColor(image_BGR, image_Lab, CV_BGR2Lab);
   split(image_Lab, channels);
 
@@ -349,7 +349,7 @@ binaryThresholding(const cv::Mat_<uchar>& image, const pair<double, double>& sta
 }
 
 int
-returnLargestContourIndex(vector<vector<Point>> contours) {
+returnLargestContourIndex(std::vector<std::vector<cv::Point>> contours) {
   int max_contour_size = 0;
   int max_contour_idx = -1;
   for(int i = 0; i < contours.size(); ++i) {
@@ -362,8 +362,8 @@ returnLargestContourIndex(vector<vector<Point>> contours) {
 }
 
 int
-findClosest(vector<int> x_contour, int x) {
-  vector<int> diff(x_contour.size());
+findClosest(std::vector<int> x_contour, int x) {
+  std::vector<int> diff(x_contour.size());
   for(int i = 0; i < x_contour.size(); ++i) diff[i] = (int)abs(x_contour[i] - x);
 
   // Find the minimum value in the diff array

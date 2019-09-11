@@ -72,7 +72,7 @@ createTrackbars() {
   createTrackbar("V_MIN", trackbarWindowName, &V_MIN, V_MAX, on_trackbar);
   createTrackbar("V_MAX", trackbarWindowName, &V_MAX, V_MAX, on_trackbar);
 }
-// void drawObject(vector<Entity> theEntities, cv::Mat &frame) {
+// void drawObject(std::vector<Entity> theEntities, cv::Mat &frame) {
 //
 //	for (int i = 0; i < theEntities.size(); i++) {
 //		cv::circle(frame, cv::Point(theEntities.at(i).getXPos(), theEntities.at(i).getYPos()), 10, cv::Scalar(0, 0,
@@ -92,7 +92,7 @@ drawObject(Entity anEntity, cv::Mat& frame) {
               1,
               Scalar(0, 255, 0));
   cv::putText(
-    frame, anEntity.getType(), cv::Point(anEntity.getXPos(), anEntity.getYPos() - 30), 1, 2, anEntity.getColor());
+      frame, anEntity.getType(), cv::Point(anEntity.getXPos(), anEntity.getYPos() - 30), 1, 2, anEntity.getColor());
 }
 void
 morphOps(cv::Mat& thresh) {
@@ -111,13 +111,13 @@ morphOps(cv::Mat& thresh) {
   dilate(thresh, thresh, dilateElement);
 }
 // void trackFilteredObject(cv::Mat threshold, cv::Mat HSV, cv::Mat &cameraFeed) {
-//	vector <Entity> entities;
+//	std::vector <Entity> entities;
 //
 //	cv::Mat temp;
 //	threshold.copyTo(temp);
-//	//these two vectors needed for output of findContours
-//	vector<vector<Point>> contours;
-//	vector<Vec4i> hierarchy;
+//	//these two std::vectors needed for output of findContours
+//	std::vector<std::vector<cv::Point>> contours;
+//	std::vector<Vec4i> hierarchy;
 //	//find contours of filtered image using openCV findContours function
 //	findContours(temp, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
 //	//use moments method to find our filtered object
@@ -143,7 +143,7 @@ morphOps(cv::Mat& thresh) {
 //					entity1.setXPos(moment.m10 / area);
 //					entity1.setYPos(moment.m01 / area);
 //
-//					entities.push_back(entity1);//whenever an object is detected it is pushed to the vector
+//					entities.push_back(entity1);//whenever an object is detected it is pushed to the std::vector
 //
 //					objectFound = true;
 //				}
@@ -158,19 +158,19 @@ morphOps(cv::Mat& thresh) {
 //			}
 //
 //		}
-//		else putText(cameraFeed, "TOO MUCH NOISE! ADJUST FILTER", Point(0, 50), 1, 2, Scalar(0, 0, 255), 2);
+//		else putText(cameraFeed, "TOO MUCH NOISE! ADJUST FILTER", cv::Point(0, 50), 1, 2, Scalar(0, 0, 255), 2);
 //	}
 //}
 
 void
 trackFilteredObject(Entity& anEntity, cv::Mat threshold, cv::Mat HSV, cv::Mat& cameraFeed) {
-  /*vector <Entity> entities;*/ // vector of entities that are passed
+  /*std::vector <Entity> entities;*/ // std::vector of entities that are passed
 
   cv::Mat temp;
   threshold.copyTo(temp);
-  // these two vectors needed for output of findContours
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
+  // these two std::vectors needed for output of findContours
+  std::vector<std::vector<cv::Point>> contours;
+  std::vector<Vec4i> hierarchy;
   // find contours of filtered image using openCV findContours function
   findContours(temp, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
   // use moments method to find our filtered object
@@ -196,7 +196,7 @@ trackFilteredObject(Entity& anEntity, cv::Mat threshold, cv::Mat HSV, cv::Mat& c
           // anEntity.setType(anEntity.getType());//get type from the passed entity
           // anEntity.setColor(anEntity.getColor());//get color from the passed entity
 
-          /*entities.push_back(anEntity);*/ // whenever an object is detected it is pushed to the vector
+          /*entities.push_back(anEntity);*/ // whenever an object is detected it is pushed to the std::vector
 
           objectFound = true;
         } else
@@ -209,7 +209,7 @@ trackFilteredObject(Entity& anEntity, cv::Mat threshold, cv::Mat HSV, cv::Mat& c
       }
 
     } else
-      putText(cameraFeed, "TOO MUCH NOISE! ADJUST FILTER", Point(0, 50), 1, 2, Scalar(0, 0, 255), 2);
+      putText(cameraFeed, "TOO MUCH NOISE! ADJUST FILTER", cv::Point(0, 50), 1, 2, Scalar(0, 0, 255), 2);
   }
 }
 

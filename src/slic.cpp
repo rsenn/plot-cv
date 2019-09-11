@@ -15,14 +15,13 @@ using namespace std;
 
 static const char* window_name = "SLIC Superpixels";
 
-static const char* keys =
-  "{h help      | | help menu}"
-  "{c camera    |0| camera id}"
-  "{i image     | | image file}"
-  "{a algorithm |1| SLIC(0),SLICO(1),MSLIC(2)}"
-  ;
+static const char* keys = "{h help      | | help menu}"
+                          "{c camera    |0| camera id}"
+                          "{i image     | | image file}"
+                          "{a algorithm |1| SLIC(0),SLICO(1),MSLIC(2)}";
 
-int main(int argc, char** argv) {
+int
+main(int argc, char** argv) {
   CommandLineParser cmd(argc, argv, keys);
   if(cmd.has("help")) {
     cmd.about("This program demonstrates SLIC superpixels using OpenCV class SuperpixelSLIC.\n"
@@ -41,7 +40,7 @@ int main(int argc, char** argv) {
   bool use_video_capture = img_file.empty();
 
   VideoCapture cap;
-  Mat input_image;
+  cv::Mat input_image;
 
   if(use_video_capture) {
     if(!cap.open(capture)) {
@@ -63,11 +62,11 @@ int main(int argc, char** argv) {
   createTrackbar("Connectivity", window_name, &min_element_size, 100, 0);
   createTrackbar("Iterations", window_name, &num_iterations, 12, 0);
 
-  Mat result, mask;
+  cv::Mat result, mask;
   int display_mode = 0;
 
   for(;;) {
-    Mat frame;
+    cv::Mat frame;
     if(use_video_capture)
       cap >> frame;
     else
@@ -77,20 +76,19 @@ int main(int argc, char** argv) {
       break;
 
     result = frame;
-    Mat converted;
+    cv::Mat converted;
     cvtColor(frame, converted, COLOR_BGR2HSV);
 
-    double t = (double) getTickCount();
+    double t = (double)getTickCount();
 
     Ptr<SuperpixelSLIC> slic = createSuperpixelSLIC(converted, algorithm + SLIC, region_size, float(ruler));
     slic->iterate(num_iterations);
     if(min_element_size > 0)
       slic->enforceLabelConnectivity(min_element_size);
 
-    t = ((double) getTickCount() - t) / getTickFrequency();
-    cout << "SLIC" << (algorithm ? 'O' : ' ')
-         << " segmentation took " << (int)(t * 1000)
-         << " ms with " << slic->getNumberOfSuperpixels() << " superpixels" << endl;
+    t = ((double)getTickCount() - t) / getTickFrequency();
+    cout << "SLIC" << (algorithm ? 'O' : ' ') << " segmentation took " << (int)(t * 1000) << " ms with "
+         << slic->getNumberOfSuperpixels() << " superpixels" << endl;
 
     // get the contours for displaying
     slic->getLabelContourMask(mask, true);
@@ -98,24 +96,24 @@ int main(int argc, char** argv) {
 
     // display output
     switch(display_mode) {
-    case 0: //superpixel contours
-      imshow(window_name, result);
-      break;
-    case 1: //mask
-      imshow(window_name, mask);
-      break;
-    case 2: { //labels array
-      // use the last x bit to determine the color. Note that this does not
-      // guarantee that 2 neighboring superpixels have different colors.
-      // retrieve the segmentation result
-      Mat labels;
-      slic->getLabels(labels);
-      const int num_label_bits = 2;
-      labels &= (1 << num_label_bits) - 1;
-      labels *= 1 << (16 - num_label_bits);
-      imshow(window_name, labels);
-      break;
-    }
+      case 0: // superpixel contours
+        imshow(window_name, result);
+        break;
+      case 1: // mask
+        imshow(window_name, mask);
+        break;
+      case 2: { // labels array
+        // use the last x bit to determine the color. Note that this does not
+        // guarantee that 2 neighboring superpixels have different colors.
+        // retrieve the segmentation result
+        cv::Mat labels;
+        slic->getLabels(labels);
+        const int num_label_bits = 2;
+        labels &= (1 << num_label_bits) - 1;
+        labels *= 1 << (16 - num_label_bits);
+        imshow(window_name, labels);
+        break;
+      }
     }
 
     int c = waitKey(1) & 0xff;

@@ -12,8 +12,8 @@ static void
 on_trackbar(int, void*) {
   cv::Mat bw = threshval < 128 ? (img < threshval) : (img > threshval);
 
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
+  std::vector<std::vector<cv::Point>> contours;
+  std::vector<Vec4i> hierarchy;
 
   findContours(bw, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
 
@@ -35,10 +35,10 @@ on_trackbar(int, void*) {
 static void
 help() {
   cout << "\n This program demonstrates connected components and use of the trackbar\n"
-       "Usage: \n"
-       "  ./connected_components <image(stuff.jpg as default)>\n"
-       "The image is converted to grayscale and displayed, another image has a trackbar\n"
-       "that controls thresholding and thereby the extracted contours which are drawn in color\n";
+          "Usage: \n"
+          "  ./connected_components <image(stuff.jpg as default)>\n"
+          "The image is converted to grayscale and displayed, another image has a trackbar\n"
+          "that controls thresholding and thereby the extracted contours which are drawn in color\n";
 }
 
 const char* keys = {"{1| |stuff.jpg|image for converting to a grayscale}"};

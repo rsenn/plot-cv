@@ -23,14 +23,14 @@ main(void) {
   cv::Mat src = cv::Mat::zeros(Size(4 * r, 4 * r), CV_8UC1);
 
   /// Create a sequence of points to make a contour:
-  vector<Point2f> vert(6);
+  std::vector<cv::Point2f> vert(6);
 
-  vert[0] = Point(3 * r / 2, static_cast<int>(1.34 * r));
-  vert[1] = Point(1 * r, 2 * r);
-  vert[2] = Point(3 * r / 2, static_cast<int>(2.866 * r));
-  vert[3] = Point(5 * r / 2, static_cast<int>(2.866 * r));
-  vert[4] = Point(3 * r, 2 * r);
-  vert[5] = Point(5 * r / 2, static_cast<int>(1.34 * r));
+  vert[0] = cv::Point(3 * r / 2, static_cast<int>(1.34 * r));
+  vert[1] = cv::Point(1 * r, 2 * r);
+  vert[2] = cv::Point(3 * r / 2, static_cast<int>(2.866 * r));
+  vert[3] = cv::Point(5 * r / 2, static_cast<int>(2.866 * r));
+  vert[4] = cv::Point(3 * r, 2 * r);
+  vert[5] = cv::Point(5 * r / 2, static_cast<int>(1.34 * r));
 
   /// Draw it in src
   for(int j = 0; j < 6; j++) {
@@ -38,8 +38,8 @@ main(void) {
   }
 
   /// Get the contours
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
+  std::vector<std::vector<cv::Point>> contours;
+  std::vector<Vec4i> hierarchy;
   cv::Mat src_copy = src.clone();
 
   findContours(src_copy, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
@@ -49,7 +49,7 @@ main(void) {
 
   for(int j = 0; j < src.rows; j++) {
     for(int i = 0; i < src.cols; i++) {
-      raw_dist.at<float>(j, i) = (float)pointPolygonTest(contours[0], Point2f((float)i, (float)j), true);
+      raw_dist.at<float>(j, i) = (float)pointPolygonTest(contours[0], cv::Point2f((float)i, (float)j), true);
     }
   }
 

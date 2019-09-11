@@ -93,18 +93,18 @@ Tserial::connect(char* port_arg, int rate_arg, serial_parity parity_arg) {
     dcb.BaudRate = rate;
 
     switch(parityMode) {
-    case spNONE:
-      dcb.Parity = NOPARITY;
-      dcb.fParity = 0;
-      break;
-    case spEVEN:
-      dcb.Parity = EVENPARITY;
-      dcb.fParity = 1;
-      break;
-    case spODD:
-      dcb.Parity = ODDPARITY;
-      dcb.fParity = 1;
-      break;
+      case spNONE:
+        dcb.Parity = NOPARITY;
+        dcb.fParity = 0;
+        break;
+      case spEVEN:
+        dcb.Parity = EVENPARITY;
+        dcb.fParity = 1;
+        break;
+      case spODD:
+        dcb.Parity = ODDPARITY;
+        dcb.fParity = 1;
+        break;
     }
 
     dcb.StopBits = ONESTOPBIT;

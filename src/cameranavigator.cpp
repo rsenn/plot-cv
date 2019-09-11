@@ -30,8 +30,8 @@ FindLineCenter(raspicam::RaspiCam_Cv& Camera, int32_t nTick, int32_t& nCenterX, 
   cv::Rect roi(0, 190, CAMERA_IMG_WIDTH, 100);
   cv::Mat roiImg, erodeElmt, dilateElmt;
   int thVal = IMGTHRESHOLD;
-  vector<vector<cv::Point>> contours;
-  vector<cv::Vec4i> hierarchy;
+  std::vector<std::vector<cv::Point>> contours;
+  std::vector<cv::Vec4i> hierarchy;
 
   int nRet = -1;
   nCenterX = CAMERA_IMG_WIDTH / 2;
@@ -162,17 +162,17 @@ OffsetNavigator(ros::ServiceClient& client, float fXOffset) {
   srv2.request.nNewSpeed = 60; // max speed;
 
   if(fabs(fXOffset) > 0.2 &&
-      fabs(fXOffset) < 0.4) { // If the offset is more than 30% on either side from the center of the image
+     fabs(fXOffset) < 0.4) {     // If the offset is more than 30% on either side from the center of the image
     srv2.request.nNewSpeed = 60; // max speed;
   } else if(fabs(fXOffset) > 0.4 &&
             fabs(fXOffset) < 0.6) { // If the offset is more than 50% on either side from the center of the image
-    srv2.request.nNewSpeed = 65; // max speed;
+    srv2.request.nNewSpeed = 65;    // max speed;
   } else if(fabs(fXOffset) > 0.6 &&
             fabs(fXOffset) < 0.8) { // If the offset is more than 70% on either side from the center of the image
-    srv2.request.nNewSpeed = 70;  // max speed;
+    srv2.request.nNewSpeed = 70;    // max speed;
   } else if(fabs(fXOffset) > 0.8) { // If the offset is more than 90% on either side from the center of the image
-    srv2.request.nNewSpeed = 75; // max speed;
-  } else {                       // Move forward with the specified speed by the user
+    srv2.request.nNewSpeed = 75;    // max speed;
+  } else {                          // Move forward with the specified speed by the user
     srv2.request.nNewSpeed = 60;    // max speed;
     srv2.request.nNewDirection = 1; // forward
   }

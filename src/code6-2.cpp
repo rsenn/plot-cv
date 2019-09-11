@@ -8,15 +8,15 @@
 using namespace std;
 using namespace cv;
 
-vector<vector<Point>> contours;
-vector<Vec4i> heirarchy;
+std::vector<std::vector<cv::Point>> contours;
+std::vector<Vec4i> heirarchy;
 cv::Mat img_all_contours;
 
 // Function to make the contours closed
 void
-make_contours_closed(vector<vector<Point>> contours) {
+make_contours_closed(std::vector<std::vector<cv::Point>> contours) {
   for(int i = 0; i < contours.size(); i++) {
-    vector<Point> cc;
+    std::vector<cv::Point> cc;
     approxPolyDP(contours[i], cc, 0.1, true);
     contours[i] = cc;
   }
@@ -24,11 +24,11 @@ make_contours_closed(vector<vector<Point>> contours) {
 
 // Function to find the index of smalledst enclosing contour in 'contours'
 int
-smallest_contour(Point p, vector<vector<Point>> contours, vector<Vec4i> heirarchy) {
+smallest_contour(cv::Point p, std::vector<std::vector<cv::Point>> contours, std::vector<Vec4i> heirarchy) {
   int idx = 0, prev_idx = -1;
   while(idx >= 0) {
-    vector<Point> c = contours[idx];
-    // Point polygon test
+    std::vector<cv::Point> c = contours[idx];
+    // cv::Point polygon test
     double d = pointPolygonTest(c, p, false);
     // If point is inside the contour, move to its child...
     if(d > 0) {
@@ -48,13 +48,13 @@ void
 on_mouse(int event, int x, int y, int, void*) {
   if(event != EVENT_LBUTTONDOWN)
     return;
-  Point p(x, y);
+  cv::Point p(x, y);
 
   int idx = smallest_contour(p, contours, heirarchy);
 
   // If function returned a valid contour index, draw it using a thick red line
   if(idx > 0) {
-    vector<vector<Point>> contour_show(1, contours[idx]);
+    std::vector<std::vector<cv::Point>> contour_show(1, contours[idx]);
     cv::Mat img_show = img_all_contours.clone();
     drawContours(img_show, contour_show, -1, Scalar(0, 0, 255), 3);
     imshow("Contours", img_show);

@@ -147,43 +147,43 @@ main(int argc, char** argv) {
       // if removed, frames will not have enough time to referesh and a blank
       // image will appear.
       switch(waitKey(10)) {
-      case 1048603:
-        // case 27: //'esc' key has been pressed, exit program.
-        return 0;
-      case 1048692:
-        // case 116: //'t' has been pressed. this will toggle tracking
-        trackingEnabled = !trackingEnabled;
-        if(trackingEnabled == false)
-          cout << "Tracking disabled." << endl;
-        else
-          cout << "Tracking enabled." << endl;
-        break;
-      case 1048676:
-        // case 100: //'d' has been pressed. this will debug mode
-        debugMode = !debugMode;
-        if(debugMode == false)
-          cout << "Debug mode disabled." << endl;
-        else
-          cout << "Debug mode enabled." << endl;
-        break;
-      case 1048688:
-        // case 112: //'p' has been pressed. this will pause/resume the code.
-        pause = !pause;
-        if(pause == true) {
-          cout << "Code paused, press 'p' again to resume" << endl;
-          while(pause == true) {
-            // stay in this loop until
-            switch(waitKey()) {
-            // a switch statement inside a switch statement? Mind blown.
-            case 1048688:
-              // case 112:
-              // change pause back to false
-              pause = false;
-              cout << "Code resumed." << endl;
-              break;
+        case 1048603:
+          // case 27: //'esc' key has been pressed, exit program.
+          return 0;
+        case 1048692:
+          // case 116: //'t' has been pressed. this will toggle tracking
+          trackingEnabled = !trackingEnabled;
+          if(trackingEnabled == false)
+            cout << "Tracking disabled." << endl;
+          else
+            cout << "Tracking enabled." << endl;
+          break;
+        case 1048676:
+          // case 100: //'d' has been pressed. this will debug mode
+          debugMode = !debugMode;
+          if(debugMode == false)
+            cout << "Debug mode disabled." << endl;
+          else
+            cout << "Debug mode enabled." << endl;
+          break;
+        case 1048688:
+          // case 112: //'p' has been pressed. this will pause/resume the code.
+          pause = !pause;
+          if(pause == true) {
+            cout << "Code paused, press 'p' again to resume" << endl;
+            while(pause == true) {
+              // stay in this loop until
+              switch(waitKey()) {
+                // a switch statement inside a switch statement? Mind blown.
+                case 1048688:
+                  // case 112:
+                  // change pause back to false
+                  pause = false;
+                  cout << "Code resumed." << endl;
+                  break;
+              }
             }
           }
-        }
       } // big switch statement
 
       frame2.copyTo(frame1);
@@ -208,11 +208,11 @@ searchForMovement(cv::Mat thresholdImage, cv::Mat& cameraFeed) {
   double obj_area = 0;
   cv::Mat temp;
   Rect2d temp_rect;
-  vector<Rect2d> obj_rects;
+  std::vector<Rect2d> obj_rects;
   thresholdImage.copyTo(temp);
 
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
+  std::vector<std::vector<cv::Point>> contours;
+  std::vector<Vec4i> hierarchy;
 
   // retrieves external contours
   findContours(temp, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
@@ -267,9 +267,9 @@ void
 show_help() {
   cout << endl
        << " Usage: ./motionTracking_modified.out <video_name> [SENSITIVITY_VALUE] [BLUR_SIZE] [MIN_OBJ_AREA]\n"
-       " examples:\n"
-       " ./motionTracking_modified.out /home/pi/videos/my_vid.h264\n"
-       " ./motionTracking_modified.out /home/pi/videos/my_vid.h264 20 10 10\n"
+          " examples:\n"
+          " ./motionTracking_modified.out /home/pi/videos/my_vid.h264\n"
+          " ./motionTracking_modified.out /home/pi/videos/my_vid.h264 20 10 10\n"
        << endl
        << endl;
   exit(1);

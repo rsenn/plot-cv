@@ -59,7 +59,7 @@ int grid_width = 0; //格子的宽高
 int grid_height = 0;
 
 int image_fliped_direc =
-  -2; //定义原始图像翻转的形式，默认不进行翻转，如果检测到位-2则不执行翻转处理，因为小于0都会进行翻转
+    -2; //定义原始图像翻转的形式，默认不进行翻转，如果检测到位-2则不执行翻转处理，因为小于0都会进行翻转
 
 void DrawRectangle(cv::Mat& img, cv::Rect box);
 void on_MouseHandle(int event, int x, int y, int flags, void* param);
@@ -244,7 +244,7 @@ main(int argc, char** argv) {
           }
           int x2 = RIGHT_BOTTOM_X;
           int y2 = y1;
-          line(g_srcImage, Point(x1, y1), Point(x2, y2), Scalar(0, 255, 255), 1);
+          line(g_srcImage, cv::Point(x1, y1), cv::Point(x2, y2), Scalar(0, 255, 255), 1);
         }
         for(int j = 0; j < col_count + 1; j++) {
           int x1 = LEFT_TOP_X + j * grid_width + 1;
@@ -254,33 +254,33 @@ main(int argc, char** argv) {
           int y1 = LEFT_TOP_Y;
           int x2 = x1;
           int y2 = RIGHT_BOTTOM_Y;
-          line(g_srcImage, Point(x1, y1), Point(x2, y2), Scalar(0, 255, 255), 1);
+          line(g_srcImage, cv::Point(x1, y1), cv::Point(x2, y2), Scalar(0, 255, 255), 1);
         }
       }
 
-      cv::Mat img_mask;                                     //前景移动物体图像
-      cv::Mat img_bkgmodel;                                 //祛除移动物体的背景图像
+      cv::Mat img_mask;                                 //前景移动物体图像
+      cv::Mat img_bkgmodel;                             //祛除移动物体的背景图像
       bgs->process(g_srcImage, img_mask, img_bkgmodel); // by default, it shows automatically the foreground mask image
 
       // 1.对前景移动物体进行滤波,中值滤波
       medianBlur(img_mask, g_filterImage, g_medianBlurGridThresh);
 
       // 找出运动物体轮廓
-      vector<vector<Point>> contours;
-      vector<Vec4i> hierarchy;
-      findContours(g_filterImage, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));
+      std::vector<std::vector<cv::Point>> contours;
+      std::vector<Vec4i> hierarchy;
+      findContours(g_filterImage, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
       // 多边形逼近轮廓+获取矩形和圆形边界框
-      vector<vector<Point>> contours_poly(contours.size());
-      vector<Rect> boundRect(contours.size());
-      vector<Point2f> center(contours.size());
-      vector<float> radius(contours.size());
+      std::vector<std::vector<cv::Point>> contours_poly(contours.size());
+      std::vector<Rect> boundRect(contours.size());
+      std::vector<cv::Point2f> center(contours.size());
+      std::vector<float> radius(contours.size());
 
       int grid_array[100][100] = {0}; //定义存储格子值的数组，最大100格子精度
       // 循环遍历所有的部分
       for(unsigned int i = 0; i < contours.size(); i++) {
         approxPolyDP(cv::Mat(contours[i]), contours_poly[i], 3, true); //用指定精度逼近多边形曲线
-        for(vector<Point>::const_iterator itp = contours_poly[i].begin(); itp != contours_poly[i].end(); itp++) {
+        for(std::vector<cv::Point>::const_iterator itp = contours_poly[i].begin(); itp != contours_poly[i].end(); itp++) {
           setGridStatus(itp->x, itp->y, grid_array);
         }
       }
@@ -300,7 +300,7 @@ main(int argc, char** argv) {
             if(grid_array[i][j] == 1) {
               int x = LEFT_TOP_X + j * grid_width; // 每个子区域的左上角x,y坐标
               int y = LEFT_TOP_Y + i * grid_height;
-              Point p0;
+              cv::Point p0;
               p0.x = x + grid_width / 2;
               p0.y = y + grid_height / 2;
               circle(g_srcImage, p0, 5, Scalar(0, 0, 255), -1);
@@ -323,7 +323,7 @@ main(int argc, char** argv) {
       // for (int unsigned i = 0; i<contours.size(); i++)
       //{
       //	Scalar color = Scalar(g_rng.uniform(0, 255), g_rng.uniform(0, 255), g_rng.uniform(0, 255));//设置随机颜色
-      //	drawContours(drawing, contours_poly, i, color, 1, 8, vector<Vec4i>(), 0, Point());//绘制轮廓
+      //	drawContours(drawing, contours_poly, i, color, 1, 8, std::vector<Vec4i>(), 0, cv::Point());//绘制轮廓
       //}
 
       if(showOutput) {
@@ -398,7 +398,7 @@ main(int argc, char** argv) {
         readPicCount++;
         cvtColor(g_srcImage, hsvImage_base, COLOR_BGR2HSV); //【3】 将图像由BGR色彩空间转换到 HSV色彩空间
         hsvImage_halfDown =
-          hsvImage_base(Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
+            hsvImage_base(Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
         if(showOutput) { //显示部分框选画面
           imshow("ROI", hsvImage_halfDown);
         }
@@ -410,7 +410,7 @@ main(int argc, char** argv) {
 
         //【4】创建包含基准图像下半部的半身图像(HSV格式)  从原始图像中提取感兴趣的区域，每帧图像与模板区域进行比较
         hsvImage_halfDown =
-          hsvImage_base(Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
+            hsvImage_base(Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
         if(showOutput) { //显示部分框选画面
           imshow("ROI", hsvImage_halfDown);
         }
@@ -502,54 +502,54 @@ on_MouseHandle(int event, int x, int y, int flags, void* param) {
   cv::Mat originalImage = image.clone(); //在原始图像上进行画框之前将图像复制一份
 
   switch(event) {
-  //鼠标移动消息
-  case EVENT_MOUSEMOVE: {
-    if(g_bDrawingBox) { //如果是否进行绘制的标识符为真，则记录下长和宽到RECT型变量中
-      g_rectangle.width = x - g_rectangle.x;
-      g_rectangle.height = y - g_rectangle.y;
-    }
-  } break;
+    //鼠标移动消息
+    case EVENT_MOUSEMOVE: {
+      if(g_bDrawingBox) { //如果是否进行绘制的标识符为真，则记录下长和宽到RECT型变量中
+        g_rectangle.width = x - g_rectangle.x;
+        g_rectangle.height = y - g_rectangle.y;
+      }
+    } break;
 
-  //左键按下消息
-  case EVENT_LBUTTONDOWN: {
-    g_bDrawingBox = true;
-    g_rectangle = Rect(x, y, 0, 0); //记录起始点
-  } break;
+    //左键按下消息
+    case EVENT_LBUTTONDOWN: {
+      g_bDrawingBox = true;
+      g_rectangle = Rect(x, y, 0, 0); //记录起始点
+    } break;
 
-  //左键抬起消息
-  case EVENT_LBUTTONUP: {
-    g_bDrawingBox = false; //置标识符为false
-    //对宽和高小于0的处理
-    if(g_rectangle.width < 0) {
-      g_rectangle.x += g_rectangle.width;
-      g_rectangle.width *= -1;
-    }
+    //左键抬起消息
+    case EVENT_LBUTTONUP: {
+      g_bDrawingBox = false; //置标识符为false
+      //对宽和高小于0的处理
+      if(g_rectangle.width < 0) {
+        g_rectangle.x += g_rectangle.width;
+        g_rectangle.width *= -1;
+      }
 
-    if(g_rectangle.height < 0) {
-      g_rectangle.y += g_rectangle.height;
-      g_rectangle.height *= -1;
-    }
-    //调用函数进行绘制
-    DrawRectangle(image, g_rectangle);
-    LEFT_TOP_X = g_rectangle.x;
-    LEFT_TOP_Y = g_rectangle.y;
-    if(g_rectangle.width > 0) { //如果只是鼠标点击了一下，检测区域不变
-      RIGHT_BOTTOM_X = g_rectangle.x + g_rectangle.width;
-    } else if(g_rectangle.width == 0) {
-      RIGHT_BOTTOM_X = LEFT_TOP_X + 1;
-    }
-    if(g_rectangle.height > 0) {
-      RIGHT_BOTTOM_Y = g_rectangle.y + g_rectangle.height;
-    } else if(g_rectangle.height == 0) {
-      RIGHT_BOTTOM_Y = LEFT_TOP_Y + 1;
-    }
-    grid_width = (RIGHT_BOTTOM_X - LEFT_TOP_X) / col_count; //重新计算模板区域格子的高宽
-    grid_height = (RIGHT_BOTTOM_Y - LEFT_TOP_Y) / row_count;
-    saveConfig(); //写入文件
-    if(showOutput) {
-      cout << "--起点x = " << g_rectangle.x << ", y = " << g_rectangle.y << "， 区域宽w = " << g_rectangle.width
-           << ", h = " << g_rectangle.height << endl;
-    }
-  } break;
+      if(g_rectangle.height < 0) {
+        g_rectangle.y += g_rectangle.height;
+        g_rectangle.height *= -1;
+      }
+      //调用函数进行绘制
+      DrawRectangle(image, g_rectangle);
+      LEFT_TOP_X = g_rectangle.x;
+      LEFT_TOP_Y = g_rectangle.y;
+      if(g_rectangle.width > 0) { //如果只是鼠标点击了一下，检测区域不变
+        RIGHT_BOTTOM_X = g_rectangle.x + g_rectangle.width;
+      } else if(g_rectangle.width == 0) {
+        RIGHT_BOTTOM_X = LEFT_TOP_X + 1;
+      }
+      if(g_rectangle.height > 0) {
+        RIGHT_BOTTOM_Y = g_rectangle.y + g_rectangle.height;
+      } else if(g_rectangle.height == 0) {
+        RIGHT_BOTTOM_Y = LEFT_TOP_Y + 1;
+      }
+      grid_width = (RIGHT_BOTTOM_X - LEFT_TOP_X) / col_count; //重新计算模板区域格子的高宽
+      grid_height = (RIGHT_BOTTOM_Y - LEFT_TOP_Y) / row_count;
+      saveConfig(); //写入文件
+      if(showOutput) {
+        cout << "--起点x = " << g_rectangle.x << ", y = " << g_rectangle.y << "， 区域宽w = " << g_rectangle.width
+             << ", h = " << g_rectangle.height << endl;
+      }
+    } break;
   }
 }

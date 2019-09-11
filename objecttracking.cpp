@@ -67,16 +67,16 @@ Entity::setHSVmax(Scalar max) {
 string
 findDirection(Entity playerrear, Entity ball) {
   if(playerrear.getXPos() >= ball.getXPos() &&
-      playerrear.getYPos() >= ball.getYPos()) // if ball is in the left top corner
+     playerrear.getYPos() >= ball.getYPos()) // if ball is in the left top corner
     return "NORTHWEST";
   if(playerrear.getXPos() >= ball.getXPos() &&
-      playerrear.getYPos() <= ball.getYPos()) // if the ball is in the left bottom corner
+     playerrear.getYPos() <= ball.getYPos()) // if the ball is in the left bottom corner
     return "SOUTHWEST";
   if(playerrear.getXPos() <= ball.getXPos() &&
-      playerrear.getYPos() <= ball.getYPos()) // if the ball is in the bottom right corner
+     playerrear.getYPos() <= ball.getYPos()) // if the ball is in the bottom right corner
     return "SOUTHEAST";
   if(playerrear.getXPos() <= ball.getXPos() &&
-      playerrear.getYPos() >= ball.getYPos()) // if the ball is in the top right corner
+     playerrear.getYPos() >= ball.getYPos()) // if the ball is in the top right corner
     return "NORTHEAST";
 }
 //
@@ -125,7 +125,7 @@ findDirection(Entity playerrear, Entity ball) {
 //	//if direction is southeast x and y both are increased until they match
 //	if (balld == "SOUTHEAST") {
 //		//turn right until car front x - car rear x >= whatever distance is between them && car's front y == car's rear
-//y
+// y
 //		//go forward until ball's x coordinate == car's x coordinate
 //		//turn right until car's front y - car rear y >= whatever distance between them && car's front x == car's rear x
 //		//go forward until ball's y coordinate == car's y coordinate
@@ -146,7 +146,7 @@ findDirection(Entity playerrear, Entity ball) {
 //	//if direction is northeast x is increased and y is decreased until they match
 //	if (balld == "NORTHEAST") {
 //		//turn right until car front x - car rear x >= whatever distance is between them && car's front y == car's rear
-//y
+// y
 //		//go forward until ball's x coordinate == car's x coordinate
 //		//turn left until car's rear y - car front y >= whatever distance between them && car's front x == car's rear x
 //		//go forward until ball's y coordinate == car's y coordinate

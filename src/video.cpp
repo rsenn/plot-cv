@@ -2,7 +2,7 @@
 //µo¥¬°T®§"center_position"
 
 #include <ros/ros.h>
-#include <geometry_msgs/Point.h>
+#include <geometry_msgs/cv::Point.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
@@ -10,8 +10,8 @@ using namespace cv;
 using namespace std;
 
 ros::Publisher pub;
-geometry_msgs::Point msg;
-std::deque<Point2f> trac(32);
+geometry_msgs::cv::Point msg;
+std::deque<cv::Point2f> trac(32);
 
 int
 main(int argc, char** argv) {
@@ -22,7 +22,7 @@ main(int argc, char** argv) {
   ros::init(argc, argv, "circle_node");
   ros::NodeHandle nh;
 
-  pub = nh.advertise<geometry_msgs::Point>("center_position", 1000);
+  pub = nh.advertise<geometry_msgs::cv::Point>("center_position", 1000);
   while(/*(char(waitKey(1)) != 27) ||*/ (ros::ok())) {
 
     cv::Mat frame;
@@ -45,13 +45,13 @@ main(int argc, char** argv) {
     cv::Mat edge;
     Canny(not_img, edge, 20, 160, 3); // trackbar_test
 
-    vector<vector<Point>> contours;
-    vector<Vec4i> hierarchy;
+    std::vector<std::vector<cv::Point>> contours;
+    std::vector<Vec4i> hierarchy;
 
     RNG rng(12345);
     findContours(edge, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-    vector<Point2f> center(contours.size());
-    vector<float> radius(contours.size());
+    std::vector<cv::Point2f> center(contours.size());
+    std::vector<float> radius(contours.size());
 
     for(int i = 0; i < contours.size(); i++) {
       minEnclosingCircle(contours[i], center[i], radius[i]);
@@ -69,12 +69,12 @@ main(int argc, char** argv) {
       center[0].y = 0;
       msg.z = 0;
     } // for
-    std::deque<Point2f>::iterator it = trac.begin();
+    std::deque<cv::Point2f>::iterator it = trac.begin();
     int cnt = 0;
     while(it != trac.end()) {
       int thickness = 4 - cnt++ / 8;
-      Point2f p = *it;
-      Point2f p2 = *(it + 1);
+      cv::Point2f p = *it;
+      cv::Point2f p2 = *(it + 1);
       if(p.x == 0 || p2.x == 0) {
         it++;
         continue;
@@ -92,8 +92,8 @@ main(int argc, char** argv) {
     if(msg.z == 0)
       ROS_ERROR_STREAM("Where's the ball???");
     pub.publish(msg);
-    line(frame, Point(320, 220), Point(320, 260), Scalar(0, 0, 0), 2, 8);
-    line(frame, Point(300, 240), Point(340, 240), Scalar(0, 0, 0), 2, 8);
+    line(frame, cv::Point(320, 220), cv::Point(320, 260), Scalar(0, 0, 0), 2, 8);
+    line(frame, cv::Point(300, 240), cv::Point(340, 240), Scalar(0, 0, 0), 2, 8);
     imshow("From Webcam", frame);
     waitKey(1);
     // imshow("erode",midImage);

@@ -18,9 +18,9 @@ int
 main(int argc, char** argv) {
   VideoCapture cap(0);
   cv::Mat src, src_copy;
-  vector<vector<Point>> contours, contours_2;
-  vector<Vec4i> hierarchy, hierarchy_2;
-  Point2f center, center_2; // onject_center, red_center;
+  std::vector<std::vector<cv::Point>> contours, contours_2;
+  std::vector<Vec4i> hierarchy, hierarchy_2;
+  cv::Point2f center, center_2; // onject_center, red_center;
   float radius;
   float radius_2;
 
@@ -28,14 +28,14 @@ main(int argc, char** argv) {
   cv::Mat hsv_element_erode = getStructuringElement(MORPH_ERODE, Size(3, 3));      // 20170420
   cv::Mat center_element_dilate = getStructuringElement(MORPH_RECT, Size(10, 10)); // 20170420
   cv::Mat center_element_erode = getStructuringElement(MORPH_RECT, Size(7, 7));    // 20170420
-  Point2f vec_center_minus_red, vec_horizontal;                                // 20170420
+  cv::Point2f vec_center_minus_red, vec_horizontal;                                    // 20170420
   double arc_theta;
   double theta;
 
-  // ros::init(argc, argv, "middlePoint_node");
+  // ros::init(argc, argv, "middlecv::Point_node");
   // ros::NodeHandle nh; //20170414
-  // geometry_msgs::Point msg_xy_angle; //20170414
-  // ros::Publisher pub_xy_angle = nh.advertise<geometry_msgs::Point>("xy_angle", 1000); //20170409
+  // geometry_msgs::cv::Point msg_xy_angle; //20170414
+  // ros::Publisher pub_xy_angle = nh.advertise<geometry_msgs::cv::Point>("xy_angle", 1000); //20170409
   // std_msgs::Int64 msg_area; //20170414
   // ros::Publisher pub_area = nh.advertise<std_msgs::Int64>("area", 1000); //20170409
 
@@ -70,7 +70,7 @@ main(int argc, char** argv) {
     add(src_HSV, src_HSV, src_add_mask, hsv_threshold);                           // 20170420
     int num = 0;
     if(!src_HSV.empty()) { // 20170420
-      findContours(hsv_threshold, contours_2, hierarchy_2, CV_RETR_TREE, CHAIN_APPROX_NONE, Point(0, 0));
+      findContours(hsv_threshold, contours_2, hierarchy_2, CV_RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
       if(!contours_2.empty()) {
         //#pragma omp parallel for
         for(int i = 0; i < contours_2.size(); i++) {
@@ -80,7 +80,7 @@ main(int argc, char** argv) {
       }
     }
     if(!src_copy.empty()) {
-      findContours(src_copy, contours, hierarchy, CV_RETR_TREE, CHAIN_APPROX_NONE, Point(0, 0));
+      findContours(src_copy, contours, hierarchy, CV_RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
       if(!contours.empty()) {
         //#pragma omp parallel for
         for(int i = 0; i < contours.size(); i++) {
@@ -89,8 +89,8 @@ main(int argc, char** argv) {
               if(hierarchy[i][2] != -1) {
                 if(hierarchy[i][3] != -1) {
                   if(!contours.empty()) {
-                    line(src, Point(300, 240), Point(340, 240), Scalar(0, 255, 0), 3);
-                    line(src, Point(320, 220), Point(320, 260), Scalar(0, 255, 0), 3);
+                    line(src, cv::Point(300, 240), cv::Point(340, 240), Scalar(0, 255, 0), 3);
+                    line(src, cv::Point(320, 220), cv::Point(320, 260), Scalar(0, 255, 0), 3);
 
                     now_i = i;
                     if(old_i > now_i) {
@@ -122,11 +122,11 @@ main(int argc, char** argv) {
           line(src, center, center, Scalar(0, 0, 255), 5);
         }
         vec_center_minus_red = center_2 - center;           // 20170420
-        vec_horizontal = Point(300, 240) - Point(200, 240); // 20170420
+        vec_horizontal = cv::Point(300, 240) - cv::Point(200, 240); // 20170420
         ///////////////////�|(��)��!!!!!!!!!!! 20170420
         arc_theta =
-          acos(vec_center_minus_red.dot(vec_horizontal) / (pow(vec_center_minus_red.dot(vec_center_minus_red), 0.5) *
-               pow(vec_horizontal.dot(vec_horizontal), 0.5)));
+            acos(vec_center_minus_red.dot(vec_horizontal) / (pow(vec_center_minus_red.dot(vec_center_minus_red), 0.5) *
+                                                             pow(vec_horizontal.dot(vec_horizontal), 0.5)));
         theta = (arc_theta * 360) / (2 * pi); // 20170420
 
         if((center_2.x > center.x) && (center_2.y < center.y)) { // 20170420
@@ -152,7 +152,7 @@ main(int argc, char** argv) {
           num = 1;
         } else if((old_area - resis_area > 200) && (num == 0) && (resis_area != 0)) {
           // cout << "Too low" << "  old_area  " << old_area << "�@resis_area�@" << resis_area << " delta  " << old_area
-          // - resis_area << endl; //20170414  putText(src, "Too low", Point(20, 50), 2, 1, Scalar(0, 0, 255));
+          // - resis_area << endl; //20170414  putText(src, "Too low", cv::Point(20, 50), 2, 1, Scalar(0, 0, 255));
           // ReSharper disable once CppExpressionStatementsWithoudSideEffects
           num = 1;
         } else {
@@ -165,7 +165,7 @@ main(int argc, char** argv) {
     // pub_xy_angle.publish(msg_xy_angle); //20170420
     // pub_area.publish(msg_area); //20170420
     // pub_if_image.publish(msg_if_image);
-    // ROS_INFO_STREAM("Point (" << msg_xy_angle.x << ", " << msg_xy_angle.y << ")\tangle " << msg_xy_angle.z << "\t
+    // ROS_INFO_STREAM("cv::Point (" << msg_xy_angle.x << ", " << msg_xy_angle.y << ")\tangle " << msg_xy_angle.z << "\t
     // Area " << msg_area.data); //20170420
     imshow("src", src);
     ////imshow("inRange_HSV", hsv_threshold);   //20170420

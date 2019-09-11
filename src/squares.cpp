@@ -16,13 +16,13 @@ using namespace std;
 static void
 help() {
   cout << "\nA program using pyramid scaling, Canny, contours, contour simpification and\n"
-       "memory storage (it's got it all folks) to find\n"
-       "squares in a list of images pic1-6.png\n"
-       "Returns sequence of squares detected on the image.\n"
-       "the sequence is stored in the specified memory storage\n"
-       "Call:\n"
-       "./squares\n"
-       "Using OpenCV version %s\n"
+          "memory storage (it's got it all folks) to find\n"
+          "squares in a list of images pic1-6.png\n"
+          "Returns sequence of squares detected on the image.\n"
+          "the sequence is stored in the specified memory storage\n"
+          "Call:\n"
+          "./squares\n"
+          "Using OpenCV version %s\n"
        << CV_VERSION << "\n"
        << endl;
 }
@@ -31,10 +31,10 @@ int thresh = 50, N = 11;
 const char* wndname = "Square Detection Demo";
 
 // helper function:
-// finds a cosine of angle between vectors
+// finds a cosine of angle between std::vectors
 // from pt0->pt1 and from pt0->pt2
 static double
-angle(Point pt1, Point pt2, Point pt0) {
+angle(cv::Point pt1, cv::Point pt2, cv::Point pt0) {
   double dx1 = pt1.x - pt0.x;
   double dy1 = pt1.y - pt0.y;
   double dx2 = pt2.x - pt0.x;
@@ -45,7 +45,7 @@ angle(Point pt1, Point pt2, Point pt0) {
 // returns sequence of squares detected on the image.
 // the sequence is stored in the specified memory storage
 static void
-findSquares(const cv::Mat& image, vector<vector<Point>>& squares) {
+findSquares(const cv::Mat& image, std::vector<std::vector<cv::Point>>& squares) {
   squares.clear();
 
   cv::Mat pyr, timg, gray0(image.size(), CV_8U), gray;
@@ -53,7 +53,7 @@ findSquares(const cv::Mat& image, vector<vector<Point>>& squares) {
   // down-scale and upscale the image to filter out the noise
   pyrDown(image, pyr, Size(image.cols / 2, image.rows / 2));
   pyrUp(pyr, timg, image.size());
-  vector<vector<Point>> contours;
+  std::vector<std::vector<cv::Point>> contours;
 
   // find squares in every color plane of the image
   for(int c = 0; c < 3; c++) {
@@ -70,7 +70,7 @@ findSquares(const cv::Mat& image, vector<vector<Point>>& squares) {
         Canny(gray0, gray, 0, thresh, 5);
         // dilate canny output to remove potential
         // holes between edge segments
-        dilate(gray, gray, cv::Mat(), Point(-1, -1));
+        dilate(gray, gray, cv::Mat(), cv::Point(-1, -1));
       } else {
         // apply threshold if l!=0:
         //     tgray(x,y) = gray(x,y) < (l+1)*255/N ? 255 : 0
@@ -80,7 +80,7 @@ findSquares(const cv::Mat& image, vector<vector<Point>>& squares) {
       // find contours and store them all as a list
       findContours(gray, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
 
-      vector<Point> approx;
+      std::vector<cv::Point> approx;
 
       // test each contour
       for(size_t i = 0; i < contours.size(); i++) {
@@ -116,9 +116,9 @@ findSquares(const cv::Mat& image, vector<vector<Point>>& squares) {
 
 // the function draws all the squares in the image
 static void
-drawSquares(cv::Mat& image, const vector<vector<Point>>& squares) {
+drawSquares(cv::Mat& image, const std::vector<std::vector<cv::Point>>& squares) {
   for(size_t i = 0; i < squares.size(); i++) {
-    const Point* p = &squares[i][0];
+    const cv::Point* p = &squares[i][0];
     int n = (int)squares[i].size();
     polylines(image, &p, &n, 1, true, Scalar(0, 255, 0), 3, CV_AA);
   }
@@ -131,7 +131,7 @@ main(int /*argc*/, char** /*argv*/) {
   static const char* names[] = {"pic1.png", "pic2.png", "pic3.png", "pic4.png", "pic5.png", "pic6.png", 0};
   help();
   namedWindow(wndname, 1);
-  vector<vector<Point>> squares;
+  std::vector<std::vector<cv::Point>> squares;
 
   for(int i = 0; names[i] != 0; i++) {
     cv::Mat image = imread(names[i], 1);

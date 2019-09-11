@@ -31,15 +31,15 @@ main(int argc, char* argv[]) {
     // convertScaleAbs(img, img);
     threshold(img_gray, img_gray, 90, 255, THRESH_BINARY);
 
-    erode(img_gray, img_gray, cv::Mat(), Point(-1, -1), 4);
-    dilate(img_gray, img_gray, cv::Mat(), Point(-1, -1), 4);
+    erode(img_gray, img_gray, cv::Mat(), cv::Point(-1, -1), 4);
+    dilate(img_gray, img_gray, cv::Mat(), cv::Point(-1, -1), 4);
 
-    vector<vector<Size>> contors;
-    vector<Vec4i> heirarcy;
-    findContours(img_gray, contors, heirarcy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
+    std::vector<std::vector<Size>> contors;
+    std::vector<Vec4i> heirarcy;
+    findContours(img_gray, contors, heirarcy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
-    vector<Rect> boundRect(contors.size());
-    vector<vector<Point>> contor_poly(contors.size());
+    std::vector<Rect> boundRect(contors.size());
+    std::vector<std::vector<cv::Point>> contor_poly(contors.size());
 
     for(int i = 0; i < contors.size(); i++) {
       approxPolyDP(cv::Mat(contors[i]), contor_poly[i], 3, true);
@@ -58,7 +58,7 @@ main(int argc, char* argv[]) {
     for(int i = 0; i < boundRect.size(); i++) {
       if((boundRect[i].x < boundRect[max_index].x + boundRect[max_index].width &&
           boundRect[i].x > boundRect[max_index].x - int(0.1 * boundRect[max_index].width)) &&
-          (boundRect[i].y > boundRect[max_index].y))
+         (boundRect[i].y > boundRect[max_index].y))
         confidence += 45;
     }
     if(boundRect.size() > 0) {

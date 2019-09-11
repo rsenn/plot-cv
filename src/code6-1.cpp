@@ -9,8 +9,8 @@ using namespace std;
 using namespace cv;
 
 cv::Mat img;
-vector<vector<Point>> contours;
-vector<Vec4i> heirarchy;
+std::vector<std::vector<cv::Point>> contours;
+std::vector<Vec4i> heirarchy;
 int levels = 0;
 
 void

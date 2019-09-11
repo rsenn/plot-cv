@@ -10,30 +10,30 @@ using namespace std;
 static void
 help() {
   cout << "\nThis program demonstrates the famous watershed segmentation algorithm in OpenCV: watershed()\n"
-       "Usage:\n"
-       "./watershed [image_name -- default is fruits.jpg]\n"
+          "Usage:\n"
+          "./watershed [image_name -- default is fruits.jpg]\n"
        << endl;
 
   cout << "Hot keys: \n"
-       "\tESC - quit the program\n"
-       "\tr - restore the original image\n"
-       "\tw or SPACE - run watershed segmentation algorithm\n"
-       "\t\t(before running it, *roughly* mark the areas to segment on the image)\n"
-       "\t  (before that, roughly outline several markers on the image)\n";
+          "\tESC - quit the program\n"
+          "\tr - restore the original image\n"
+          "\tw or SPACE - run watershed segmentation algorithm\n"
+          "\t\t(before running it, *roughly* mark the areas to segment on the image)\n"
+          "\t  (before that, roughly outline several markers on the image)\n";
 }
 cv::Mat markerMask, img;
-Point prevPt(-1, -1);
+cv::Point prevPt(-1, -1);
 
 static void
 onMouse(int event, int x, int y, int flags, void*) {
   if(x < 0 || x >= img.cols || y < 0 || y >= img.rows)
     return;
   if(event == CV_EVENT_LBUTTONUP || !(flags & CV_EVENT_FLAG_LBUTTON))
-    prevPt = Point(-1, -1);
+    prevPt = cv::Point(-1, -1);
   else if(event == CV_EVENT_LBUTTONDOWN)
-    prevPt = Point(x, y);
+    prevPt = cv::Point(x, y);
   else if(event == CV_EVENT_MOUSEMOVE && (flags & CV_EVENT_FLAG_LBUTTON)) {
-    Point pt(x, y);
+    cv::Point pt(x, y);
     if(prevPt.x < 0)
       prevPt = pt;
     line(markerMask, prevPt, pt, Scalar::all(255), 5, 8, 0);
@@ -76,8 +76,8 @@ main(int argc, char** argv) {
 
     if((char)c == 'w' || (char)c == ' ') {
       int i, j, compCount = 0;
-      vector<vector<Point>> contours;
-      vector<Vec4i> hierarchy;
+      std::vector<std::vector<cv::Point>> contours;
+      std::vector<Vec4i> hierarchy;
 
       findContours(markerMask, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
 
@@ -92,7 +92,7 @@ main(int argc, char** argv) {
       if(compCount == 0)
         continue;
 
-      vector<Vec3b> colorTab;
+      std::vector<Vec3b> colorTab;
       for(i = 0; i < compCount; i++) {
         int b = theRNG().uniform(0, 255);
         int g = theRNG().uniform(0, 255);

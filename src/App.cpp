@@ -80,7 +80,7 @@ public:
     grey.mirror(true, false);
     contours.findContours(grey, 10, img.width * img.height / 2, 200, true);
     for(int i = 0; i < contours.blobs.size(); i++) {
-      vector<ofPoint>& pts = contours.blobs[i].pts;
+      std::vector<ofcv::Point>& pts = contours.blobs[i].pts;
       path.moveTo(pts[0]);
       for(int j = 0; j < pts.size(); j++) {
         path.lineTo(pts[j]);
@@ -100,7 +100,7 @@ public:
     ofVec3f zOffset(0, 0, thickness);
 
     mesh.clear();
-    vector<ofPolyline> outline = path.getOutline();
+    std::vector<ofPolyline> outline = path.getOutline();
     ofxMesh* tess = (ofxMesh*)&path.getTessellation();
     ofxMesh top = *tess;  // copy
     ofxMesh bottom = top; // copy
@@ -140,11 +140,11 @@ public:
     // mesh.addBox(ofRectangle(-50,-50,100,100), 100);
   }
 
-  vector<ofPolyline>
-  ofxGetPolyLinesFromBlobs(vector<ofxCvBlob> blobs) {
-    vector<ofPolyline> lines;
+  std::vector<ofPolyline>
+  ofxGetPolyLinesFromBlobs(std::vector<ofxCvBlob> blobs) {
+    std::vector<ofPolyline> lines;
     for(int i = 0; i < blobs.size(); i++) {
-      vector<ofPoint>& pts = blobs[i].pts;
+      std::vector<ofcv::Point>& pts = blobs[i].pts;
       ofPolyline line;
       for(int j = 0; j < pts.size(); j++) {
         line.lineTo(pts[j].x, pts[j].y);

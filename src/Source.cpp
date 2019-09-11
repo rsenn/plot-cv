@@ -33,7 +33,7 @@ const char* window_name = "Jelly Fish";
  */
 void
 CannyDetect() {
-  std::vector<std::vector<cv::Point> > contours;
+  std::vector<std::vector<cv::Point>> contours;
   // Reduce noise with a kernel for better detection
   blur(src_gray, detected_edges, Size(3, 3));
   std::vector<Vec4i> hierarchy;

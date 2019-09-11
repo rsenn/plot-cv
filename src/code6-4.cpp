@@ -57,17 +57,17 @@ public:
 class ellipseFinder {
 private:
   cv::Mat img;                                  // input image
-  vector<vector<Point>> contours;           // contours in image
+  std::vector<std::vector<cv::Point>> contours;               // contours in image
   cv::Mat Q;                                    // cv::Matrix representing conic section of detected ellipse
-  cv::Mat fit_ellipse(vector<Point>);           // function to fit ellipse to a contour
-  cv::Mat RANSACellipse(vector<vector<Point>>); // function to find ellipse in contours using RANSAC
+  cv::Mat fit_ellipse(std::vector<cv::Point>);           // function to fit ellipse to a contour
+  cv::Mat RANSACellipse(std::vector<std::vector<cv::Point>>); // function to find ellipse in contours using RANSAC
   bool is_good_ellipse(cv::Mat); // function that determines whether given conic section represents a valid ellipse
-  vector<vector<Point>> choose_random(vector<Point>); // function to choose points at random from contour
-  vector<float> distance(cv::Mat, vector<Point>);         // function to return distance of points from the ellipse
-  float distance(cv::Mat, Point);            // overloaded function to return signed distance of point from ellipse
+  std::vector<std::vector<cv::Point>> choose_random(std::vector<cv::Point>); // function to choose points at random from contour
+  std::vector<float> distance(cv::Mat, std::vector<cv::Point>);     // function to return distance of points from the ellipse
+  float distance(cv::Mat, cv::Point);            // overloaded function to return signed distance of point from ellipse
   void draw_ellipse(cv::Mat);                // function to draw ellipse in an image
-  vector<Point> ellipse_contour(cv::Mat);    // function to convert equation of ellipse to a contour of points
-  void draw_inliers(cv::Mat, vector<Point>); // function to debug inliers
+  std::vector<cv::Point> ellipse_contour(cv::Mat);    // function to convert equation of ellipse to a contour of points
+  void draw_inliers(cv::Mat, std::vector<cv::Point>); // function to debug inliers
 
   // RANSAC parameters
   int iter, min_inliers, N;
@@ -82,15 +82,15 @@ public:
     // Edge detection and contour extraction
     cv::Mat edges;
     Canny(img_b, edges, l_canny, h_canny);
-    vector<vector<Point>> c;
+    std::vector<std::vector<cv::Point>> c;
     findContours(edges, c, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
     // Remove small spurious short contours
     for(int i = 0; i < c.size(); i++) {
       bool is_closed = false;
 
-      vector<Point> _c = c[i];
+      std::vector<cv::Point> _c = c[i];
 
-      Point p1 = _c.front(), p2 = _c.back();
+      cv::Point p1 = _c.front(), p2 = _c.back();
       float d = sqrt((p1.x - p2.x) ^ 2 + (p1.y - p2.y) ^ 2);
       if(d <= 0.5)
         is_closed = true;
@@ -122,10 +122,10 @@ public:
   void debug();          // debug function
 };
 
-vector<float>
-ellipseFinder::distance(cv::Mat Q, vector<Point> c) {
-  vector<Point> ellipse = ellipse_contour(Q);
-  vector<float> distances;
+std::vector<float>
+ellipseFinder::distance(cv::Mat Q, std::vector<cv::Point> c) {
+  std::vector<cv::Point> ellipse = ellipse_contour(Q);
+  std::vector<float> distances;
   for(int i = 0; i < c.size(); i++) {
     distances.push_back(float(pointPolygonTest(ellipse, c[i], true)));
   }
@@ -134,15 +134,15 @@ ellipseFinder::distance(cv::Mat Q, vector<Point> c) {
 }
 
 float
-ellipseFinder::distance(cv::Mat Q, Point p) {
-  vector<Point> ellipse = ellipse_contour(Q);
+ellipseFinder::distance(cv::Mat Q, cv::Point p) {
+  std::vector<cv::Point> ellipse = ellipse_contour(Q);
   return float(pointPolygonTest(ellipse, p, true));
 }
 
-vector<vector<Point>>
-ellipseFinder::choose_random(vector<Point> c) {
-  vector<vector<Point>> cr;
-  vector<Point> cr0, cr1;
+std::vector<std::vector<cv::Point>>
+ellipseFinder::choose_random(std::vector<cv::Point> c) {
+  std::vector<std::vector<cv::Point>> cr;
+  std::vector<cv::Point> cr0, cr1;
   // Randomly shuffle all elements of contour
   std::random_shuffle(c.begin(), c.end());
   // Put the first N elements into cr[0] as consensus set (see Wikipedia RANSAC algorithm) and
@@ -160,11 +160,11 @@ ellipseFinder::choose_random(vector<Point> c) {
 }
 
 cv::Mat
-ellipseFinder::fit_ellipse(vector<Point> c) {
+ellipseFinder::fit_ellipse(std::vector<cv::Point> c) {
   /*
   // for debug
   cv::Mat img_show = img.clone();
-  vector<vector<Point> > cr;
+  std::vector<std::vector<cv::Point> > cr;
   cr.push_back(c);
   drawContours(img_show, cr, -1, Scalar(0, 0, 255), 2);
   imshow("Debug fitEllipse", img_show);
@@ -173,7 +173,7 @@ ellipseFinder::fit_ellipse(vector<Point> c) {
 
   cv::Mat D;
   for(int i = 0; i < N; i++) {
-    Point p = c[i];
+    cv::Point p = c[i];
     cv::Mat r(1, 6, CV_32FC1);
     r = (cv::Mat_<float>(1, 6) << (p.x) * (p.x), (p.x) * (p.y), (p.y) * (p.y), p.x, p.y, 1.f);
     D.push_back(r);
@@ -188,15 +188,15 @@ ellipseFinder::fit_ellipse(vector<Point> c) {
   C.at<float>(1, 1) = -1;
   C.at<float>(0, 2) = 2;
 
-  // Using EIGEN to calculate eigenvalues and eigenvectors
+  // Using EIGEN to calculate eigenvalues and eigenstd::vectors
   cv::Mat prod = _S * C;
-  Eigen::MatrixXd prod_e;
+  Eigen::cv::MatrixXd prod_e;
   cv2eigen(prod, prod_e);
-  EigenSolver<Eigen::MatrixXd> es(prod_e);
+  EigenSolver<Eigen::cv::MatrixXd> es(prod_e);
 
   cv::Mat evec, eval, vec(6, 6, CV_32FC1), val(6, 1, CV_32FC1);
 
-  eigen2cv(es.eigenvectors(), evec);
+  eigen2cv(es.eigenstd::vectors(), evec);
   eigen2cv(es.eigenvalues(), eval);
 
   evec.convertTo(evec, CV_32F);
@@ -207,7 +207,7 @@ ellipseFinder::fit_ellipse(vector<Point> c) {
   mixChannels(&evec, 1, &vec, 1, from_to, 1);
   mixChannels(&eval, 1, &val, 1, from_to, 1);
 
-  Point maxLoc;
+  cv::Point maxLoc;
   minMaxLoc(val, NULL, NULL, NULL, &maxLoc);
 
   return vec.col(maxLoc.y);
@@ -233,14 +233,14 @@ ellipseFinder::is_good_ellipse(cv::Mat Q) {
 }
 
 cv::Mat
-ellipseFinder::RANSACellipse(vector<vector<Point>> contours) {
+ellipseFinder::RANSACellipse(std::vector<std::vector<cv::Point>> contours) {
   int best_overall_inlier_score = 0;
   cv::Mat Q_best = 777 * cv::Mat::ones(6, 1, CV_32FC1);
   int idx_best = -1;
 
   // for each contour...
   for(int i = 0; i < contours.size(); i++) {
-    vector<Point> c = contours[i];
+    std::vector<cv::Point> c = contours[i];
     if(c.size() < min_inliers)
       continue;
 
@@ -248,12 +248,12 @@ ellipseFinder::RANSACellipse(vector<vector<Point>> contours) {
     int best_inlier_score = 0;
     for(int j = 0; j < iter; j++) {
       // ...choose points at random...
-      vector<vector<Point>> cr = choose_random(c);
-      vector<Point> consensus_set = cr[0], rest = cr[1];
+      std::vector<std::vector<cv::Point>> cr = choose_random(c);
+      std::vector<cv::Point> consensus_set = cr[0], rest = cr[1];
       // ...fit ellipse to those points...
       cv::Mat Q_maybe = fit_ellipse(consensus_set);
       // ...check for inliers...
-      vector<float> d = distance(Q_maybe, rest);
+      std::vector<float> d = distance(Q_maybe, rest);
       for(int k = 0; k < d.size(); k++)
         if(abs(d[k]) < dist_thresh)
           consensus_set.push_back(rest[k]);
@@ -286,18 +286,18 @@ ellipseFinder::RANSACellipse(vector<vector<Point>> contours) {
   return Q_best;
 }
 
-vector<Point>
+std::vector<cv::Point>
 ellipseFinder::ellipse_contour(cv::Mat Q) {
   float a = Q.at<float>(0, 0), b = (Q.at<float>(1, 0)) / 2, c = Q.at<float>(2, 0), d = (Q.at<float>(3, 0)) / 2,
         f = (Q.at<float>(4, 0)) / 2, g = Q.at<float>(5, 0);
 
-  vector<Point> ellipse;
+  std::vector<cv::Point> ellipse;
   if(b * b - a * c == 0) {
-    ellipse.push_back(Point(0, 0));
+    ellipse.push_back(cv::Point(0, 0));
     return ellipse;
   }
 
-  Point2f center((c * d - b * f) / (b * b - a * c), (a * f - b * d) / (b * b - a * c));
+  cv::Point2f center((c * d - b * f) / (b * b - a * c), (a * f - b * d) / (b * b - a * c));
 
   float num = 2 * (a * f * f + c * d * d + g * b * b - 2 * b * d * f - a * c * g),
         den1 = (b * b - a * c) * (sqrt((a - c) * (a - c) + 4 * b * b) - (a + c)),
@@ -313,18 +313,18 @@ ellipseFinder::ellipse_contour(cv::Mat Q) {
   else if(b != 0.f && a < c)
     alpha = PI / 2 - 0.5 * atan2(2 * b, a - c);
 
-  // 'draw' the ellipse and put it into a STL Point vector so you can use drawContours()
+  // 'draw' the ellipse and put it into a STL cv::Point std::vector so you can use drawContours()
   int N = 200;
   float theta = 0.f;
   for(int i = 0; i < N; i++, theta += 2 * PI / N) {
     float x = center.x + major_axis * cos(theta) * cos(alpha) + minor_axis * sin(theta) * sin(alpha);
     float y = center.y - major_axis * cos(theta) * sin(alpha) + minor_axis * sin(theta) * cos(alpha);
-    Point p(x, y);
+    cv::Point p(x, y);
     if(x < img.cols && y < img.rows)
       ellipse.push_back(p);
   }
   if(ellipse.size() == 0)
-    ellipse.push_back(Point(0, 0));
+    ellipse.push_back(cv::Point(0, 0));
 
   return ellipse;
 }
@@ -350,8 +350,8 @@ ellipseFinder::debug() {
 
 void
 ellipseFinder::draw_ellipse(cv::Mat Q) {
-  vector<Point> ellipse = ellipse_contour(Q);
-  vector<vector<Point>> c;
+  std::vector<cv::Point> ellipse = ellipse_contour(Q);
+  std::vector<std::vector<cv::Point>> c;
   c.push_back(ellipse);
   cv::Mat img_show = img.clone();
   drawContours(img_show, c, -1, Scalar(0, 0, 255), 3);
@@ -359,9 +359,9 @@ ellipseFinder::draw_ellipse(cv::Mat Q) {
 }
 
 void
-ellipseFinder::draw_inliers(cv::Mat Q, vector<Point> c) {
-  vector<Point> ellipse = ellipse_contour(Q);
-  vector<vector<Point>> cs;
+ellipseFinder::draw_inliers(cv::Mat Q, std::vector<cv::Point> c) {
+  std::vector<cv::Point> ellipse = ellipse_contour(Q);
+  std::vector<std::vector<cv::Point>> cs;
   cs.push_back(ellipse);
   cv::Mat img_show = img.clone();
   // draw all contours in thin red

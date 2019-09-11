@@ -42,19 +42,19 @@ main(int argc, char** argv) {
 void
 thresh_callback(int, void*) {
   cv::Mat threshold_output;
-  vector<vector<Point>> contours;
-  vector<Vec4i> hierarchy;
+  std::vector<std::vector<cv::Point>> contours;
+  std::vector<Vec4i> hierarchy;
 
   /// Detect edges using Threshold
   threshold(src_gray, threshold_output, thresh, 255, THRESH_BINARY);
   /// Find contours
-  findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
+  findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Approximate contours to polygons + get bounding rects and circles
-  vector<vector<Point>> contours_poly(contours.size());
-  vector<Rect> boundRect(contours.size());
-  vector<Point2f> center(contours.size());
-  vector<float> radius(contours.size());
+  std::vector<std::vector<cv::Point>> contours_poly(contours.size());
+  std::vector<Rect> boundRect(contours.size());
+  std::vector<cv::Point2f> center(contours.size());
+  std::vector<float> radius(contours.size());
 
   for(int i = 0; i < contours.size(); i++) {
     approxPolyDP(cv::Mat(contours[i]), contours_poly[i], 3, true);
@@ -66,7 +66,7 @@ thresh_callback(int, void*) {
   cv::Mat drawing = cv::Mat::zeros(threshold_output.size(), CV_8UC3);
   for(int i = 0; i < contours.size(); i++) {
     Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-    drawContours(drawing, contours_poly, i, color, 1, 8, vector<Vec4i>(), 0, Point());
+    drawContours(drawing, contours_poly, i, color, 1, 8, std::vector<Vec4i>(), 0, cv::Point());
     rectangle(drawing, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0);
     circle(drawing, center[i], (int)radius[i], color, 2, 8, 0);
   }
