@@ -17,9 +17,9 @@ numAbs(double num) {
 }
 // Function that calculates the area given a
 // std::vector of vertices in the XY plane.
-template <class cv::Point>
+template <class P>
 double
-polygonArea(std::vector<cv::Point> list) {
+polygonArea(std::vector<P> list) {
 
   if(list.size() < 3)
     return 0;
@@ -156,7 +156,7 @@ main() {
     });
 
     std::sort(contours2.begin(), contours2.end(), [](Point2fVec a, Point2fVec b) -> bool {
-      return polygonArea(a) >= polygonArea(b);
+      return polygonArea<cv::Point2f>(a) >= polygonArea<cv::Point2f>(b);
     });
 
     for(size_t i = 0; i < std::min<size_t>(100, contours2.size()); ++i) {
