@@ -25,7 +25,7 @@ int lowThreshold = 99;
 int const max_lowThreshold = 100, maxRGB = 255;
 int ratio = 3;
 int kernel_size = 3;
-char* window_name = "Contours";
+const char* window_name = "Contours";
 
 int red = 0, blue = 255, green = 0, minActivate = 100;
 int save = 0;
