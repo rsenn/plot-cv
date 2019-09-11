@@ -13,3 +13,5 @@ add_definitions(-std=c++11)
 
 add_executable(CannyWebcam1 CannyWebcam1.cpp)
 target_link_libraries(CannyWebcam1 ${OpenCV_LIBS})
+
+install(TARGETS CannyWebcam1 DESTINATION bin )
