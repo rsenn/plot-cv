@@ -264,6 +264,10 @@
 	],
 	"file_history":
 	[
+		"/home/roman/Dokumente/Sources/contours/plot-cv/src/CannyWebcam1.cpp",
+		"/home/roman/Dokumente/Sources/contours/plot-cv/CannyWebcam1",
+		"/home/roman/Dokumente/Sources/contours/plot-cv/src/code6-2.cpp",
+		"/home/roman/Dokumente/Sources/contours/plot-cv/src/contour.cpp",
 		"/home/roman/Dokumente/Sources/contours/plot-cv/video-stream-writer-impl-test.cpp",
 		"/home/roman/Dokumente/Sources/contours/plot-cv/video.cpp",
 		"/home/roman/Dokumente/Sources/contours/plot-cv/VideoCapturePeopleCounter.cpp",
@@ -387,15 +391,11 @@
 		"/home/roman/Dokumente/Sources/rpi-opencv/PiCar/Assets/opencv-3.2.0/modules/cudabgsegm/test/test_bgsegm.cpp",
 		"/home/roman/Dokumente/Sources/rpi-opencv/PiCar/Assets/opencv-3.2.0/modules/calib3d/test/test_fisheye.cpp",
 		"/home/roman/Dokumente/Sources/rpi-opencv/PiCar/Assets/opencv-3.2.0/modules/superres/src/frame_source.cpp",
-		"/home/roman/Dokumente/Sources/rpi-opencv/PiCar/Assets/opencv-3.2.0/modules/cudalegacy/perf/perf_bgsegm.cpp",
-		"/home/roman/Dokumente/Sources/rpi-opencv/PiCar/Assets/opencv-3.2.0/modules/videostab/src/frame_source.cpp",
-		"/home/roman/Dokumente/Sources/rpi-opencv/PiCar/Assets/opencv-3.2.0/samples/winrt_universal/VideoCaptureXAML/video_capture_xaml/video_capture_xaml.Windows/MainPage.xaml.cpp",
-		"/home/roman/Dokumente/Sources/rpi-opencv/PiCar/Assets/opencv-3.2.0/samples/winrt_universal/VideoCaptureXAML/video_capture_xaml/video_capture_xaml.WindowsPhone/MainPage.xaml.cpp",
-		"/home/roman/Dokumente/Sources/rpi-opencv/PiCar/Assets/opencv-3.2.0/samples/winrt_universal/VideoCaptureXAML/video_capture_xaml/video_capture_xaml.Shared/main.cpp"
+		"/home/roman/Dokumente/Sources/rpi-opencv/PiCar/Assets/opencv-3.2.0/modules/cudalegacy/perf/perf_bgsegm.cpp"
 	],
 	"find":
 	{
-		"height": 48.0
+		"height": 44.0
 	},
 	"find_in_files":
 	{
@@ -410,6 +410,7 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"/V",
 			"VideoCap",
 			"VideoCap\n",
 			"VideoCap"
@@ -437,7 +438,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 36.0
+		"height": 32.0
 	},
 	"input":
 	{
@@ -490,7 +491,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 68.0
+		"height": 60.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -499,6 +500,14 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"cannywe",
+				"src/CannyWebcam1.cpp"
+			],
+			[
+				"weca",
+				"CannyWebcam1"
+			],
 			[
 				"ima",
 				"image_track.cpp"
