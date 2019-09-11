@@ -87,7 +87,7 @@ int main(int argc, char** argv)
     namedWindow("video", 1);
     namedWindow("segmented", 1);
 
-    BackgroundSubtractorMOG bgsubtractor;
+    cv::BackgroundSubtractorMOG bgsubtractor;
     bgsubtractor.set("noiseSigma", 10);
 
     for(;;)
