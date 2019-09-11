@@ -4,11 +4,9 @@
 #include <algorithm>
 #include <numeric>
 
-#include <opencv2/core/core.hpp>
-//#include <opencv2/core/opengl_interop.hpp>
-#include <opencv2/gpu/gpu.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/contrib/contrib.hpp>
+#include <opencv2/opencv.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
 
 int
 main(int argc, const char* argv[]) {
