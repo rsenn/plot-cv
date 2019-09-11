@@ -1,6 +1,10 @@
 cmake_minimum_required (VERSION 2.8)
 project (plot-cv)
 
+include(CheckLibraryExists)
+check_library_exists(json-cpp ZN4YAML6detail9node_data9reset_mapEv /usr JSON_CPP)
+
+
 find_package(OpenCV 3.1 REQUIRED)
 
 
@@ -76,5 +80,6 @@ add_prog(SimplerBlobDetector)
 add_prog(squares)
 add_prog(tracking_calibration)
 add_prog(tracking_calibration_with_img)
+target_link_libraries(tracking_calibration_with_img json-cpp)
 add_prog(video)
 add_prog(watershed)
