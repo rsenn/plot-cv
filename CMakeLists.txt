@@ -24,7 +24,7 @@ macro(add_prog)
   list(GET ARGS 0 name)
   list(REMOVE_AT ARGS 0)
 
-  add_executable(${name} ${name}.cpp ${ARGS})
+  add_executable(${name} src/${name}.cpp ${ARGS})
   target_link_libraries(${name} ${OpenCV_LIBS})
 
   install(TARGETS ${name} DESTINATION bin )
