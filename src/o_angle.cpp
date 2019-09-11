@@ -147,7 +147,7 @@ main(int argc, char** argv) {
         }
         // ReSharper disable once CppExpressionStatementsWithoudSideEffects
         if(theta > 180)
-          360;
+          theta -= 360;
         line(src, center, center_2, Scalar(250, 50, 120), 5); // 20170420
         /*msg_xy_angle.x = center.x;
         msg_xy_angle.y = center.y;

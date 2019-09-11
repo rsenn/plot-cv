@@ -24,7 +24,7 @@ int edgeThresh = 1;
 int lowThreshold;
 int ratio = 3;
 int kernel_size = 3;
-char* window_name = "Jelly Fish";
+const char* window_name = "Jelly Fish";
 
 /**
  * @function CannyThreshold
@@ -33,15 +33,15 @@ char* window_name = "Jelly Fish";
  */
 void
 CannyDetect() {
-  vector<vector<Point>> contours;
+  std::vector<std::vector<cv::Point> > contours;
   // Reduce noise with a kernel for better detection
   blur(src_gray, detected_edges, Size(3, 3));
-  vector<Vec4i> hierarchy;
+  std::vector<Vec4i> hierarchy;
 
   // Running the Canny detector
   Canny(detected_edges, detected_edges, lowThreshold, lowThreshold * ratio, kernel_size);
   // finding contours
-  findContours(detected_edges, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE, Point(0, 0));
+  findContours(detected_edges, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE, cv::Point(0, 0));
   // converting image from grayscale to coloured
   cvtColor(detected_edges, detected_edges, CV_GRAY2BGR);
 
@@ -51,23 +51,23 @@ CannyDetect() {
   // Getting centres fo each contour using moments and centres
 
   // Get the moments
-  vector<Moments> mu(contours.size());
+  std::vector<Moments> mu(contours.size());
   for(int i = 0; i < contours.size(); i++) {
     mu[i] = moments(contours[i], false);
   }
 
   ///  Get the centroids using moments
-  vector<Point> mc(contours.size());
+  std::vector<cv::Point> mc(contours.size());
   for(int i = 0; i < contours.size(); i++) {
 
-    mc[i] = Point(mu[i].m10 / mu[i].m00, mu[i].m01 / mu[i].m00);
+    mc[i] = cv::Point(mu[i].m10 / mu[i].m00, mu[i].m01 / mu[i].m00);
   }
 
   // making the red cross using lines
   for(int i = 0; i < mc.size(); i++) {
 
-    line(dst, Point(mc[i].x - 6, mc[i].y), Point(mc[i].x + 6, mc[i].y), Scalar(0, 0, 255), 1, 8, 0);
-    line(dst, Point(mc[i].x, mc[i].y - 6), Point(mc[i].x, mc[i].y + 6), Scalar(0, 0, 255), 1, 8, 0);
+    line(dst, cv::Point(mc[i].x - 6, mc[i].y), cv::Point(mc[i].x + 6, mc[i].y), Scalar(0, 0, 255), 1, 8, 0);
+    line(dst, cv::Point(mc[i].x, mc[i].y - 6), cv::Point(mc[i].x, mc[i].y + 6), Scalar(0, 0, 255), 1, 8, 0);
   }
 
   imshow(window_name, dst);
