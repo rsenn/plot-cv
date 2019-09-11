@@ -175,18 +175,20 @@ main() {
     std::vector<Point2fVec> contours2;
     std::vector<cv::Vec4i> hier;
     std::vector<PointVec> contours = getContours(imgCanny, hier, CV_RETR_TREE);
+    std::string countourStr;
 
-    std::for_each(contours.cbegin(), contours.cend(), [](const std::vector<cv::Point>& a) {
-
-      std::string contoursStr = to_string(a);
-
-      std::cout << contoursStr << std::endl;
-
+    std::for_each(contours.cbegin(), contours.cend(), [&countourStr](const std::vector<cv::Point>& a) {
+      if(a.size() >= 3) {
+        std::string plstr = to_string(a);
+        if(countourStr.size())
+          countourStr += "\n";
+        countourStr += plstr;
+      }
     });
+    std::cout << countourStr << std::endl;
 
     std::for_each(contours.cbegin(), contours.cend(), [&contours2](const std::vector<cv::Point>& a) {
       double area = polygonArea(a);
-
       if(a.size() >= 3 && area > 8) {
         Point2fVec b;
         cv::approxPolyDP(a, b, 0.5, true);
@@ -201,7 +203,7 @@ main() {
     for(size_t i = 0; i < std::min<size_t>(100, contours2.size()); ++i) {
       int npts = contours2[i].size();
       double area = polygonArea(contours2[i]);
-      std::cout << i << ": " << area << std::endl;
+    //  std::cout << i << ": " << area << std::endl;
 
       if(npts > 0) {
         std::vector<cv::Point> pl = ToPointVec(contours2[i]);
