@@ -1,8 +1,9 @@
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/video/background_segm.hpp"
-#include <stdio.h>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/video/background_segm.hpp>
+#include <cstdio>
 #include <string>
+#include <vector>
 
 using namespace cv;
 
@@ -20,8 +21,8 @@ static void refineSegments(const Mat& img, Mat& mask, Mat& dst)
 {
     int niters = 3;
 
-    vector<vector<Point> > contours;
-    vector<Vec4i> hierarchy;
+    std::vector<std::vector<Point> > contours;
+    std::vector<Vec4i> hierarchy;
 
     Mat temp;
 
@@ -43,7 +44,7 @@ static void refineSegments(const Mat& img, Mat& mask, Mat& dst)
 
     for( ; idx >= 0; idx = hierarchy[idx][0] )
     {
-        const vector<Point>& c = contours[idx];
+        const std::vector<Point>& c = contours[idx];
         double area = fabs(contourArea(Mat(c)));
         if( area > maxArea )
         {
