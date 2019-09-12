@@ -8,7 +8,7 @@
 typedef std::vector<cv::Point> PointVec;
 typedef std::vector<cv::Point2f> Point2fVec;
 
-int thresh = 100;
+int thresh = 10;
 int max_thresh = 255;
 
 // Function that calculates the absolute value
@@ -285,7 +285,7 @@ main(int argc, char* argv[]) {
     /// Apply Histogram Equalization
     //  cv::equalizeHist(imgTemp, imgGrayscale);
 
-    cv::GaussianBlur(imgGrayscale, imgBlurred, cv::Size(3, 3), 1.2);
+    cv::GaussianBlur(imgGrayscale, imgBlurred, cv::Size(5, 5), 1.75);
 
     cv::Canny(imgBlurred, imgCanny, thresh, thresh * 2, 3);
 
