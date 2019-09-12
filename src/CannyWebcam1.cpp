@@ -7,6 +7,10 @@
 #include <iostream>
 typedef std::vector<cv::Point> PointVec;
 typedef std::vector<cv::Point2f> Point2fVec;
+
+int thresh = 100;
+int max_thresh = 255;
+
 // Function that calculates the absolute value
 
 template <class T, class O>
@@ -85,6 +89,103 @@ polygonArea(std::vector<P> list) {
   return area; // Return The Area
 }
 
+void
+applyCLAHE(const cv::Mat& bgr_image, cv::Mat& image_clahe) {
+  cv::Mat lab_image;
+  cv::cvtColor(bgr_image, lab_image, CV_BGR2Lab);
+
+  // Extract the L channel
+  std::vector<cv::Mat> lab_planes(3);
+  cv::split(lab_image, lab_planes); // now we have the L image in lab_planes[0]
+
+  // apply the CLAHE algorithm to the L channel
+  cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
+  clahe->setClipLimit(4);
+  cv::Mat dst;
+  clahe->apply(lab_planes[0], dst);
+
+  // Merge the the color planes back into an Lab image
+  dst.copyTo(lab_planes[0]);
+  cv::merge(lab_planes, lab_image);
+
+  // convert back to RGB
+  cv::cvtColor(lab_image, image_clahe, CV_Lab2BGR);
+}
+
+/**
+ *  \brief Automatic brightness and contrast optimization with optional histogram clipping
+ *  \param [in]src Input image GRAY or BGR or BGRA
+ *  \param [out]dst Destination image
+ *  \param clipHistPercent cut wings of histogram at given percent tipical=>1, 0=>Disabled
+ *  \note In case of BGRA image, we won't touch the transparency
+ */
+void
+BrightnessAndContrastAuto(const cv::Mat& src, cv::Mat& dst, float clipHistPercent = 0) {
+
+  CV_Assert(clipHistPercent >= 0);
+  CV_Assert((src.type() == CV_8UC1) || (src.type() == CV_8UC3) || (src.type() == CV_8UC4));
+
+  int histSize = 256;
+  float alpha, beta;
+  double minGray = 0, maxGray = 0;
+
+  // to calculate grayscale histogram
+  cv::Mat gray;
+  if(src.type() == CV_8UC1)
+    gray = src;
+  else if(src.type() == CV_8UC3)
+    cvtColor(src, gray, CV_BGR2GRAY);
+  else if(src.type() == CV_8UC4)
+    cvtColor(src, gray, CV_BGRA2GRAY);
+  if(clipHistPercent == 0) {
+    // keep full available range
+    cv::minMaxLoc(gray, &minGray, &maxGray);
+  } else {
+    cv::Mat hist; // the grayscale histogram
+
+    float range[] = {0, 256};
+    const float* histRange = {range};
+    bool uniform = true;
+    bool accumulate = false;
+    calcHist(&gray, 1, 0, cv::Mat(), hist, 1, &histSize, &histRange, uniform, accumulate);
+
+    // calculate cumulative distribution from the histogram
+    std::vector<float> accumulator(histSize);
+    accumulator[0] = hist.at<float>(0);
+    for(int i = 1; i < histSize; i++) {
+      accumulator[i] = accumulator[i - 1] + hist.at<float>(i);
+    }
+
+    // locate points that cuts at required value
+    float max = accumulator.back();
+    clipHistPercent *= (max / 100.0); // make percent as absolute
+    clipHistPercent /= 2.0;           // left and right wings
+    // locate left cut
+    minGray = 0;
+    while(accumulator[minGray] < clipHistPercent) minGray++;
+
+    // locate right cut
+    maxGray = histSize - 1;
+    while(accumulator[maxGray] >= (max - clipHistPercent)) maxGray--;
+  }
+
+  // current range
+  float inputRange = maxGray - minGray;
+
+  alpha = (histSize - 1) / inputRange; // alpha expands current range to histsize range
+  beta = -minGray * alpha;             // beta shifts current range so that minGray will go to 0
+
+  // Apply brightness and contrast normalization
+  // convertTo operates with saurate_cast
+  src.convertTo(dst, -1, alpha, beta);
+
+  // restore alpha channel from source
+  if(dst.type() == CV_8UC4) {
+    int from_to[] = {3, 3};
+    cv::mixChannels(&src, 4, &dst, 1, from_to, 1);
+  }
+  return;
+}
 cv::Mat
 imageToBinary(cv::Mat start) {
   cv::Mat gray_image, thresh_image;
@@ -147,8 +248,10 @@ ToPointVec(const std::vector<InputType>& v) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 int
-main() {
-  cv::VideoCapture capWebcam(0); // declare a VideoCapture object and associate to webcam, 0 => use 1st webcam
+main(int argc, char* argv[]) {
+  int camID = argc > 1 ? atoi(argv[1]) : 0;
+
+  cv::VideoCapture capWebcam(camID); // declare a VideoCapture object and associate to webcam, 0 => use 1st webcam
 
   if(capWebcam.isOpened() == false) { // check if VideoCapture object was associated to webcam successfully
     std::cout << "error: capWebcam not accessed successfully\n\n"; // if not, print error message to std out
@@ -156,7 +259,7 @@ main() {
     return (0);                                                    // and exit program
   }
 
-  cv::Mat imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny; // Canny edge image
+  cv::Mat imgRaw, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny; // Canny edge image
 
   char charCheckForEscKey = 0;
 
@@ -168,29 +271,23 @@ main() {
   cv::namedWindow("imgGrayscale", CV_WINDOW_AUTOSIZE);
 
   while(charCheckForEscKey != 27 && capWebcam.isOpened()) { // until the Esc key is pressed or webcam connection is lost
-    bool blnFrameReadSuccessfully = capWebcam.read(imgOriginal); // get next frame
+    bool blnFrameReadSuccessfully = capWebcam.read(imgRaw); // get next frame
 
-    if(!blnFrameReadSuccessfully || imgOriginal.empty()) { // if frame not read successfully
-      std::cout << "error: frame not read from webcam\n";  // print error message to std out
-      break;                                               // and jump out of while loop
+    if(!blnFrameReadSuccessfully || imgRaw.empty()) {     // if frame not read successfully
+      std::cout << "error: frame not read from webcam\n"; // print error message to std out
+      break;                                              // and jump out of while loop
     }
     // cv::normalize(imgOriginal,imgTemp,0,255,cv::NORM_L1);
+    applyCLAHE(imgRaw, imgOriginal);
 
-    cvtColor(imgOriginal, imgTemp, CV_BGR2GRAY); // convert to grayscale
+    cvtColor(imgOriginal, imgGrayscale, CV_BGR2GRAY); // convert to grayscale
 
     /// Apply Histogram Equalization
-    cv::equalizeHist(imgTemp, imgGrayscale);
+    //  cv::equalizeHist(imgTemp, imgGrayscale);
 
-    cv::GaussianBlur(imgGrayscale,   // input image
-                     imgBlurred,     // output image
-                     cv::Size(5, 5), // smoothing window width and height in pixels
-                     1.8);           // sigma value, determines how much the image will be blurred
+    cv::GaussianBlur(imgGrayscale, imgBlurred, cv::Size(3, 3), 1.2);
 
-    cv::Canny(imgBlurred, // input image
-              imgCanny,   // output image
-              10,         // low threshold
-              20,         // high threshold
-              3);
+    cv::Canny(imgBlurred, imgCanny, thresh, thresh * 2, 3);
 
     std::vector<Point2fVec> contours2;
     std::vector<cv::Vec4i> hier;
@@ -215,7 +312,7 @@ main() {
 
       std::cout << '#' << i << std::endl;
       out_points(std::cout, c);
-      std::cout << c << std::endl;
+      ///  std::cout << c << std::endl;
       out_hier(std::cout, h);
       std::cout << std::endl;
     }

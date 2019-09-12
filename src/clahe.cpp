@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include "opencv2/core.hpp"
 #include "opencv2/core/ocl.hpp"
@@ -15,7 +16,7 @@ int tilesize;
 int cliplimit;
 
 static void
-TSize_Callback(int pos) {
+TSize_Callback(int pos, void* /*data*/) {
   if(pos == 0)
     pFilter->setTilesGridSize(Size(1, 1));
   else
@@ -23,7 +24,7 @@ TSize_Callback(int pos) {
 }
 
 static void
-Clip_Callback(int) {
+Clip_Callback(int, void* /*data*/) {
   pFilter->setClipLimit(cliplimit);
 }
 
@@ -61,7 +62,8 @@ main(int argc, char** argv) {
   setTrackbarPos("Tile Size", "CLAHE", cur_tilesize.width);
   setTrackbarPos("Clip Limit", "CLAHE", cur_clip);
 
-  if(infile != "") {
+  if(!infile.empty()) {
+    infile = infile;
     imread(infile).copyTo(frame);
     if(frame.empty()) {
       cout << "error read image: " << infile << endl;
@@ -80,8 +82,10 @@ main(int argc, char** argv) {
       capture.read(frame);
     else
       imread(infile).copyTo(frame);
-    if(frame.empty())
-      continue;
+    if(frame.empty()) {
+      waitKey();
+      break;
+    }
 
     cvtColor(frame, frame, COLOR_BGR2GRAY);
     pFilter->apply(frame, outframe);
