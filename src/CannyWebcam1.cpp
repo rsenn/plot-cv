@@ -278,7 +278,7 @@ main(int argc, char* argv[]) {
       break;                                              // and jump out of while loop
     }
     // cv::normalize(imgOriginal,imgTemp,0,255,cv::NORM_L1);
-    applyCLAHE(imgRaw, imgOriginal);
+    imgRaw.copyTo(imgOriginal);
 
     cvtColor(imgOriginal, imgGrayscale, CV_BGR2GRAY); // convert to grayscale
 
@@ -288,6 +288,9 @@ main(int argc, char* argv[]) {
     cv::GaussianBlur(imgGrayscale, imgBlurred, cv::Size(5, 5), 1.75);
 
     cv::Canny(imgBlurred, imgCanny, thresh, thresh * 2, 3);
+    equalizeHist(imgGrayscale, imgGrayscale);
+
+    //  applyCLAHE(imgOriginal, imgOriginal);XY
 
     std::vector<Point2fVec> contours2;
     std::vector<cv::Vec4i> hier;
