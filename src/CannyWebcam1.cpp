@@ -10,25 +10,36 @@ typedef std::vector<cv::Point2f> Point2fVec;
 // Function that calculates the absolute value
 
 template <class T, class O>
-O&
-operator<<(O& os, const cv::Point_<T>& pt) {
+void
+out_point(O& os, const cv::Point_<T>& pt) {
   os << pt.x;
   os << ',';
   os << pt.y;
+}
+
+template <class O>
+void
+out_hier(O& os, const cv::Vec4i& v) {
+  os << '{';
+  os << "next:" << v[0];
+  os << ",prev:" << v[1];
+  os << ",children:" << v[2];
+  os << ",parent:" << v[3];
+  os << '}';
 }
 
 /**
  * @brief      Ôutput point list
  * @return     { description_of_the_return_value }
  */
-template <class P, class O>
-O&
-operator<<(O& os, const std::vector<P>& pl) {
+template <class O>
+void
+out_points(O& os, const std::vector<cv::Point>& pl) {
   size_t i, n = pl.size();
   for(i = 0; i < n; ++i) {
     if(i > 0)
       os << ' ';
-    os << pl[i];
+    out_point(os, pl[i]);
   }
 }
 
@@ -85,6 +96,15 @@ imageToBinary(cv::Mat start) {
   return thresh_image;
 }
 
+/**
+ * @brief      Gets the contours.
+ *
+ * @param[in]  start      The start
+ * @param      hierarchy  The hierarchy
+ * @param[in]  flag       The flag
+ *
+ * @return     The contours.
+ */
 std::vector<PointVec>
 getContours(cv::Mat start, std::vector<cv::Vec4i>& hierarchy, int flag = CV_RETR_EXTERNAL) {
 
@@ -175,42 +195,58 @@ main() {
     std::vector<Point2fVec> contours2;
     std::vector<cv::Vec4i> hier;
     std::vector<PointVec> contours = getContours(imgCanny, hier, CV_RETR_TREE);
-    std::string countourStr;
 
-    std::for_each(contours.cbegin(), contours.cend(), [&countourStr](const std::vector<cv::Point>& a) {
+    std::ostringstream contourStr;
+
+    std::for_each(contours.cbegin(), contours.cend(), [&](const std::vector<cv::Point>& a) {
       if(a.size() >= 3) {
-        std::string plstr = to_string(a);
-        if(countourStr.size())
-          countourStr += "\n";
-        countourStr += plstr;
-      }
-    });
-    std::cout << countourStr << std::endl;
 
-    std::for_each(contours.cbegin(), contours.cend(), [&contours2](const std::vector<cv::Point>& a) {
-      double area = polygonArea(a);
-      if(a.size() >= 3 && area > 8) {
-        Point2fVec b;
-        cv::approxPolyDP(a, b, 0.5, true);
-        contours2.push_back(b);
+        if(contourStr.str().size())
+          contourStr << "\n";
+        out_points(contourStr, a);
       }
     });
 
-    std::sort(contours2.begin(), contours2.end(), [](Point2fVec a, Point2fVec b) -> bool {
-      return polygonArea<cv::Point2f>(a) >= polygonArea<cv::Point2f>(b);
-    });
+    std::cout << contourStr.str() << std::endl;
 
-    for(size_t i = 0; i < std::min<size_t>(100, contours2.size()); ++i) {
-      int npts = contours2[i].size();
-      double area = polygonArea(contours2[i]);
-    //  std::cout << i << ": " << area << std::endl;
+    for(size_t i = 0; i < contours.size(); ++i) {
+      std::vector<cv::Point> c = contours[i];
+      cv::Vec4i h = hier[i];
 
-      if(npts > 0) {
-        std::vector<cv::Point> pl = ToPointVec(contours2[i]);
-        cv::polylines(imgOriginal, pl, true, cv::Scalar(0, 0, 255), 1);
-      }
+      std::cout << '#' << i << std::endl;
+      out_points(std::cout, c);
+      std::cout << c << std::endl;
+      out_hier(std::cout, h);
+      std::cout << std::endl;
     }
 
+    //       cv:: drawContours( imgOriginal, contours, -1, cv::Scalar(0,0,255), 1, cv::LINE_AA, hier );
+
+    /*
+        std::for_each(contours.cbegin(), contours.cend(), [&contours2](const std::vector<cv::Point>& a) {
+          double area = polygonArea(a);
+          if(a.size() >= 3 && area > 8) {
+            Point2fVec b;
+            cv::approxPolyDP(a, b, 0.5, true);
+            contours2.push_back(b);
+          }
+        });
+
+        std::sort(contours2.begin(), contours2.end(), [](Point2fVec a, Point2fVec b) -> bool {
+          return polygonArea<cv::Point2f>(a) >= polygonArea<cv::Point2f>(b);
+        });
+
+        for(size_t i = 0; i < std::min<size_t>(100, contours2.size()); ++i) {
+          int npts = contours2[i].size();
+          double area = polygonArea(contours2[i]);
+        //  std::cout << i << ": " << area << std::endl;
+
+          if(npts > 0) {
+            std::vector<cv::Point> pl = ToPointVec(contours2[i]);
+            cv::polylines(imgOriginal, pl, true, cv::Scalar(0, 0, 255), 1);
+          }
+        }
+    */
     // CV_WINDOW_AUTOSIZE is the default
     cv::imshow("imgOriginal", imgOriginal);   // show windows
     cv::imshow("imgCanny", imgCanny);         //
