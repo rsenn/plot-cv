@@ -28,6 +28,7 @@
 #include <cstdio>
 #include <iostream>
 #include <algorithm>
+#include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
 
 using namespace std;

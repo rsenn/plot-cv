@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "cv.h"
-#include "highgui.h"
+#include <opencv2/core/types_c.h>
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 #define IMAGE_WIDTH 640
 #define IMAGE_HEIGHT 480

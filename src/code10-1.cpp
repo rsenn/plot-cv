@@ -2,8 +2,11 @@
 // Author: Samarth Manoj Brahmbhatt, University of Pennsyalvania
 
 #include <iostream>
+#include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/videoio/legacy/constants_c.h>
+#include <opencv2/imgproc/types_c.h>
 
 using namespace std;
 using namespace cv;

@@ -8,7 +8,7 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 
-find_package(OpenCV 3.1 REQUIRED)
+find_package(OpenCV REQUIRED)
 
 
 include_directories(
@@ -313,6 +313,6 @@ add_prog(decompose_homography)
 add_prog(perspective_correction)
 #add_prog(homography_from_camera_displacement)
 add_prog(lab-contrast)
-add_prog(adaptiveThresholding)
+#add_prog(adaptiveThresholding)
 add_prog(homomorphicFilter)
 add_prog(basicscanner)

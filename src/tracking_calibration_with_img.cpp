@@ -6,7 +6,10 @@
 #include <yaml-cpp/yaml.h>
 
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/highgui/highgui_c.h>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/imgproc/types_c.h>
+#include <opencv2/imgcodecs/legacy/constants_c.h>
 
 using namespace cv;
 using namespace std;

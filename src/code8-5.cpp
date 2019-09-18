@@ -1,6 +1,7 @@
 // Program to illustrate BOW object categorization
 // Author: Samarth Manoj Brahmbhatt, University of Pennsylvania
 
+#include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/features2d/features2d.hpp>

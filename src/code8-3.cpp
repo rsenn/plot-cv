@@ -1,6 +1,7 @@
 // Program to illustrate SURF keypoint and descriptor extraction, and matching using FLANN
 // Author: Samarth Manoj Brahmbhatt, University of Pennsylvania
 
+#include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/nonfree/features2d.hpp>
