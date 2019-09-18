@@ -191,7 +191,7 @@ targetinginit() {
 
   outfile.open("bgrout.txt", ios::trunc);
 
-  std::string arg = "1";
+  std::string arg = "0";
   VideoCapture capture(arg);
   if(!capture.isOpened())
     capture.open(atoi(arg.c_str()));
