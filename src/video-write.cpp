@@ -3,6 +3,7 @@
 
 #include <opencv2/core/core.hpp>       // Basic OpenCV structures (cv::Mat)
 #include <opencv2/highgui/highgui.hpp> // Video write
+#include <opencv2/videoio/legacy/constants_c.h>
 
 using namespace std;
 using namespace cv;

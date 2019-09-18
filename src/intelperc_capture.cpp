@@ -2,6 +2,7 @@
 //
 
 #include "opencv2/highgui/highgui.hpp"
+#include <opencv2/videoio/legacy/constants_c.h>
 
 #include <iostream>
 

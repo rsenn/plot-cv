@@ -3,8 +3,8 @@
 // Written by  Kyle Hounslow, January 2014
 // modified by Brian Gravelle to track multiple objects - August 2016
 
-#include <opencv/cv.hpp>
-//#include <opencv/highgui.h>
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui.hpp>
 #include <stdio.h>
 #include <iostream>
 #include <stdlib.h>

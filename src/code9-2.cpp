@@ -3,6 +3,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/videoio/legacy/constants_c.h>
 
 using namespace cv;
 using namespace std;
