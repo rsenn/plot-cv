@@ -1,6 +1,7 @@
 // I dont know what to call this file
 
 #include <opencv2/imgproc.hpp>
+#include <opencv2/imgproc/types_c.h>
 #include <opencv2/opencv.hpp>
 #include <iostream>
 #include <stdio.h>

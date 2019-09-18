@@ -1,5 +1,6 @@
 // distance Measurement.cpp : Defines the entry point for the console application.
 //
+#include <opencv2/imgproc.hpp>
 #include <opencv2/imgproc/imgproc_c.h>
 #include <opencv2/highgui.hpp>
 

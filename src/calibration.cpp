@@ -210,7 +210,7 @@ saveCameraParams(const string& filename,
             flags & CV_CALIB_FIX_ASPECT_RATIO ? "+fix_aspectRatio" : "",
             flags & CV_CALIB_FIX_PRINCIPAL_POINT ? "+fix_principal_point" : "",
             flags & CV_CALIB_ZERO_TANGENT_DIST ? "+zero_tangent_dist" : "");
-    cvWriteComment(*fs, buf, 0);
+    //cvWriteComment(*fs, buf, 0);
   }
 
   fs << "flags" << flags;
@@ -235,7 +235,7 @@ saveCameraParams(const string& filename,
       r = rvecs[i].t();
       t = tvecs[i].t();
     }
-    cvWriteComment(*fs, "a set of 6-tuples (rotation vector + translation vector) for each view", 0);
+    //cvWriteComment(*fs, "a set of 6-tuples (rotation vector + translation vector) for each view", 0);
     fs << "extrinsic_parameters" << bigmat;
   }
 
