@@ -59,7 +59,7 @@
 			"file": "CMakeLists.txt",
 			"settings":
 			{
-				"buffer_size": 7621,
+				"buffer_size": 7508,
 				"line_ending": "Unix"
 			}
 		},
@@ -67,7 +67,7 @@
 			"file": "src/adaptiveThresholding.cpp",
 			"settings":
 			{
-				"buffer_size": 2144,
+				"buffer_size": 2242,
 				"line_ending": "Unix"
 			}
 		},
@@ -80,30 +80,11 @@
 			}
 		},
 		{
-			"file": "src/c",
-			"settings":
-			{
-				"buffer_size": 4968,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "o_angle.cpp",
-			"settings":
-			{
-				"buffer_size": 7645,
-				"encoding": "UTF-8 with BOM",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "// OpenCVWebcamTest.cpp\n\n#include <opencv2/core/core.hpp>\n#include <opencv2/highgui/highgui.hpp>\n#include <opencv2/imgproc/imgproc.hpp>\n\n#include <iostream>\ntypedef std::vector<cv::Point> PointVec;\ntypedef std::vector<cv::Point2f> Point2fVec;\n\nint thresh = 10;\nint max_thresh = 255;\n\n// Function that calculates the absolute value\n\ntemplate <class T, class O>\nvoid\nout_point(O& os, const cv::Point_<T>& pt) {\n  os << pt.x;\n  os << ',';\n  os << pt.y;\n}\n\ntemplate <class O>\nvoid\nout_hier(O& os, const cv::Vec4i& v) {\n  os << '{';\n  os << \"next:\" << v[0];\n  os << \",prev:\" << v[1];\n  os << \",children:\" << v[2];\n  os << \",parent:\" << v[3];\n  os << '}';\n}\n\n/**\n * @brief      Ôutput point list\n * @return     { description_of_the_return_value }\n */\ntemplate <class O>\nvoid\nout_points(O& os, const std::vector<cv::Point>& pl) {\n  size_t i, n = pl.size();\n  for(i = 0; i < n; ++i) {\n    if(i > 0)\n      os << ' ';\n    out_point(os, pl[i]);\n  }\n}\n\ntemplate <class T>\nstd::string\nto_string(const T& t) {\n  std::ostringstream oss;\n  oss << t;\n  return oss.str();\n}\n\n// of a double type.\ndouble\nnumAbs(double num) {\n  double inv = num * -1;\n  return (num <= 0) ? inv : num;\n}\n// Function that calculates the area given a\n// std::vector of vertices in the XY plane.\ntemplate <class P>\ndouble\npolygonArea(std::vector<P> list) {\n\n  if(list.size() < 3)\n    return 0;\n  double area = 0;                     // Total Area\n  double diff = 0;                     // Difference Of Y{i + 1} - Y{i - 1}\n  unsigned int last = list.size() - 1; // Size Of Vector - 1\n  /* Given vertices from 1 to n, we first loop through\n  the vertices 2 to n - 1. We will take into account\n  vertex 1 and vertex n sepereately */\n  for(unsigned int i = 1; i < last; i++) {\n    diff = list[i + 1].y - list[i - 1].y;\n    area += list[i].x * diff;\n  }\n  /* Now We Consider The Vertex 1 And The Vertex N */\n  diff = list[1].y - list[last].y;\n  area += list[0].x * diff; // Vertex 1\n  diff = list[0].y - list[last - 1].y;\n  area += list[last].x * diff; // Vertex N\n  /* Calculate The Final Answer */\n  area = 0.5 * numAbs(area);\n  return area; // Return The Area\n}\n\nvoid\napplyCLAHE(const cv::Mat& bgr_image, cv::Mat& image_clahe) {\n  cv::Mat lab_image;\n  cv::cvtColor(bgr_image, lab_image, CV_BGR2Lab);\n\n  // Extract the L channel\n  std::vector<cv::Mat> lab_planes(3);\n  cv::split(lab_image, lab_planes); // now we have the L image in lab_planes[0]\n\n  // apply the CLAHE algorithm to the L channel\n  cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();\n  clahe->setClipLimit(4);\n  cv::Mat dst;\n  clahe->apply(lab_planes[0], dst);\n\n  // Merge the the color planes back into an Lab image\n  dst.copyTo(lab_planes[0]);\n  cv::merge(lab_planes, lab_image);\n\n  // convert back to RGB\n  cv::cvtColor(lab_image, image_clahe, CV_Lab2BGR);\n}\n\n/**\n *  \\brief Automatic brightness and contrast optimization with optional histogram clipping\n *  \\param [in]src Input image GRAY or BGR or BGRA\n *  \\param [out]dst Destination image\n *  \\param clipHistPercent cut wings of histogram at given percent tipical=>1, 0=>Disabled\n *  \\note In case of BGRA image, we won't touch the transparency\n */\nvoid\nBrightnessAndContrastAuto(const cv::Mat& src, cv::Mat& dst, float clipHistPercent = 0) {\n\n  CV_Assert(clipHistPercent >= 0);\n  CV_Assert((src.type() == CV_8UC1) || (src.type() == CV_8UC3) || (src.type() == CV_8UC4));\n\n  int histSize = 256;\n  float alpha, beta;\n  double minGray = 0, maxGray = 0;\n\n  // to calculate grayscale histogram\n  cv::Mat gray;\n  if(src.type() == CV_8UC1)\n    gray = src;\n  else if(src.type() == CV_8UC3)\n    cvtColor(src, gray, CV_BGR2GRAY);\n  else if(src.type() == CV_8UC4)\n    cvtColor(src, gray, CV_BGRA2GRAY);\n  if(clipHistPercent == 0) {\n    // keep full available range\n    cv::minMaxLoc(gray, &minGray, &maxGray);\n  } else {\n    cv::Mat hist; // the grayscale histogram\n\n    float range[] = {0, 256};\n    const float* histRange = {range};\n    bool uniform = true;\n    bool accumulate = false;\n    calcHist(&gray, 1, 0, cv::Mat(), hist, 1, &histSize, &histRange, uniform, accumulate);\n\n    // calculate cumulative distribution from the histogram\n    std::vector<float> accumulator(histSize);\n    accumulator[0] = hist.at<float>(0);\n    for(int i = 1; i < histSize; i++) {\n      accumulator[i] = accumulator[i - 1] + hist.at<float>(i);\n    }\n\n    // locate points that cuts at required value\n    float max = accumulator.back();\n    clipHistPercent *= (max / 100.0); // make percent as absolute\n    clipHistPercent /= 2.0;           // left and right wings\n    // locate left cut\n    minGray = 0;\n    while(accumulator[minGray] < clipHistPercent) minGray++;\n\n    // locate right cut\n    maxGray = histSize - 1;\n    while(accumulator[maxGray] >= (max - clipHistPercent)) maxGray--;\n  }\n\n  // current range\n  float inputRange = maxGray - minGray;\n\n  alpha = (histSize - 1) / inputRange; // alpha expands current range to histsize range\n  beta = -minGray * alpha;             // beta shifts current range so that minGray will go to 0\n\n  // Apply brightness and contrast normalization\n  // convertTo operates with saurate_cast\n  src.convertTo(dst, -1, alpha, beta);\n\n  // restore alpha channel from source\n  if(dst.type() == CV_8UC4) {\n    int from_to[] = {3, 3};\n    cv::mixChannels(&src, 4, &dst, 1, from_to, 1);\n  }\n  return;\n}\ncv::Mat\nimageToBinary(cv::Mat start) {\n  cv::Mat gray_image, thresh_image;\n  cvtColor(start, gray_image, CV_BGR2GRAY);\n  threshold(gray_image, thresh_image, 100, 255, cv::THRESH_BINARY);\n\n  medianBlur(thresh_image, thresh_image, 5);\n\n  return thresh_image;\n}\n\n/**\n * @brief      Gets the contours.\n *\n * @param[in]  start      The start\n * @param      hierarchy  The hierarchy\n * @param[in]  flag       The flag\n *\n * @return     The contours.\n */\nstd::vector<PointVec>\ngetContours(cv::Mat start, std::vector<cv::Vec4i>& hierarchy, int flag = CV_RETR_EXTERNAL) {\n\n  cv::Mat dst = cv::Mat::zeros(start.rows, start.cols, CV_8UC3);\n  std::vector<PointVec> contours;\n\n  start = start > 1;\n\n  cv::findContours(start, contours, hierarchy, flag, CV_CHAIN_APPROX_SIMPLE);\n\n  return contours;\n}\n\nstd::vector<cv::Point2f>\ngetMassCenters(std::vector<std::vector<cv::Point>> contours) {\n\n  std::vector<cv::Moments> mu(contours.size());\n  std::vector<cv::Point2f> mc(contours.size());\n\n  for(size_t i = 0; i < contours.size(); i++) {\n    mu[i] = cv::moments(contours[i], false);\n  }\n\n  for(size_t i = 0; i < contours.size(); i++) {\n    mc[i] = cv::Point2f(mu[i].m10 / mu[i].m00, mu[i].m01 / mu[i].m00);\n  }\n\n  return mc;\n}\n\ntemplate <class InputType>\nstd::vector<cv::Point>\nToPointVec(const std::vector<InputType>& v) {\n  std::vector<cv::Point> ret;\n\n  std::for_each(v.cbegin(), v.cend(), [&ret](const InputType& pt) { ret.push_back(cv::Point(pt.x, pt.y)); });\n\n  return ret;\n}\n\n///////////////////////////////////////////////////////////////////////////////////////////////////\nint\nmain(int argc, char* argv[]) {\n  int camID = argc > 1 ? atoi(argv[1]) : 0;\n\n  cv::VideoCapture capWebcam(camID); // declare a VideoCapture object and associate to webcam, 0 => use 1st webcam\n\n  if(capWebcam.isOpened() == false) { // check if VideoCapture object was associated to webcam successfully\n    std::cout << \"error: capWebcam not accessed successfully\\n\\n\"; // if not, print error message to std out\n    getchar();                                                     // may have to modify this line if not using Windows\n    return (0);                                                    // and exit program\n  }\n\n  cv::Mat imgRaw, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny; // Canny edge image\n\n  char charCheckForEscKey = 0;\n\n  // declare windows\n  //  note: you can use CV_WINDOW_NORMAL which allows resizing the window\n  cv::namedWindow(\"imgOriginal\", CV_WINDOW_AUTOSIZE);\n  // or CV_WINDOW_AUTOSIZE for a fixed size window matching the resolution of the image\n  cv::namedWindow(\"imgCanny\", CV_WINDOW_AUTOSIZE);\n  cv::namedWindow(\"imgGrayscale\", CV_WINDOW_AUTOSIZE);\n\n  while(charCheckForEscKey != 27 && capWebcam.isOpened()) { // until the Esc key is pressed or webcam connection is lost\n    bool blnFrameReadSuccessfully = capWebcam.read(imgRaw); // get next frame\n\n    if(!blnFrameReadSuccessfully || imgRaw.empty()) {     // if frame not read successfully\n      std::cout << \"error: frame not read from webcam\\n\"; // print error message to std out\n      break;                                              // and jump out of while loop\n    }\n    // cv::normalize(imgOriginal,imgTemp,0,255,cv::NORM_L1);\n    imgRaw.copyTo(imgOriginal);\n\n    cvtColor(imgOriginal, imgGrayscale, CV_BGR2GRAY); // convert to grayscale\n\n    /// Apply Histogram Equalization\n    //  cv::equalizeHist(imgTemp, imgGrayscale);\n\n    cv::GaussianBlur(imgGrayscale, imgBlurred, cv::Size(5, 5), 1.75);\n\n    cv::Canny(imgBlurred, imgCanny, thresh, thresh * 2, 3);\n    equalizeHist(imgGrayscale, imgGrayscale);\n\n    //  applyCLAHE(imgOriginal, imgOriginal);XY\n\n    std::vector<Point2fVec> contours2;\n    std::vector<cv::Vec4i> hier;\n    std::vector<PointVec> contours = getContours(imgCanny, hier, CV_RETR_TREE);\n\n    std::ostringstream contourStr;\n\n    std::for_each(contours.cbegin(), contours.cend(), [&](const std::vector<cv::Point>& a) {\n      if(a.size() >= 3) {\n\n        if(contourStr.str().size())\n          contourStr << \"\\n\";\n        out_points(contourStr, a);\n      }\n    });\n\n    std::cout << contourStr.str() << std::endl;\n\n    for(size_t i = 0; i < contours.size(); ++i) {\n      std::vector<cv::Point> c = contours[i];\n      cv::Vec4i h = hier[i];\n\n      std::cout << '#' << i << std::endl;\n      out_points(std::cout, c);\n      ///  std::cout << c << std::endl;\n      out_hier(std::cout, h);\n      std::cout << std::endl;\n    }\n\n    //       cv:: drawContours( imgOriginal, contours, -1, cv::Scalar(0,0,255), 1, cv::LINE_AA, hier );\n\n    /*\n        std::for_each(contours.cbegin(), contours.cend(), [&contours2](const std::vector<cv::Point>& a) {\n          double area = polygonArea(a);\n          if(a.size() >= 3 && area > 8) {\n            Point2fVec b;\n            cv::approxPolyDP(a, b, 0.5, true);\n            contours2.push_back(b);\n          }\n        });\n\n        std::sort(contours2.begin(), contours2.end(), [](Point2fVec a, Point2fVec b) -> bool {\n          return polygonArea<cv::Point2f>(a) >= polygonArea<cv::Point2f>(b);\n        });\n\n        for(size_t i = 0; i < std::min<size_t>(100, contours2.size()); ++i) {\n          int npts = contours2[i].size();\n          double area = polygonArea(contours2[i]);\n        //  std::cout << i << \": \" << area << std::endl;\nh s\n          if(npts > 0) {\n            std::vector<cv::Point> pl = ToPointVec(contours2[i]);\n            cv::polylines(imgOriginal, pl, true, cv::Scalar(0, 0, 255), 1);\n          }\n        }\n    */\n    // CV_WINDOW_AUTOSIZE is the default\n    cv::imshow(\"imgOriginal\", imgOriginal);   // show windows\n    cv::imshow(\"imgCanny\", imgCanny);         //\n    cv::imshow(\"imgGrayscale\", imgGrayscale); //\n\n    charCheckForE bscKey = cv::waitKey(1); // delay (in ms) and get key press, if any\n  }                                      // end while\n\n  return (0);\n}\n",
 			"file": "src/CannyWebcam1.cpp",
-			"file_size": 11098,
-			"file_write_time": 132127441931602671,
 			"settings":
 			{
-				"buffer_size": 11102,
+				"buffer_size": 13186,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
@@ -119,7 +100,7 @@
 			"file": "src/Contour_detection.cpp",
 			"settings":
 			{
-				"buffer_size": 1660,
+				"buffer_size": 1736,
 				"line_ending": "Unix"
 			}
 		},
@@ -374,6 +355,8 @@
 	],
 	"file_history":
 	[
+		"/home/roman/Dokumente/Sources/contours/plot-cv/src/c",
+		"/home/roman/Dokumente/Sources/contours/plot-cv/o_angle.cpp",
 		"/home/roman/Dokumente/Sources/contours/plot-cv/VideoCapture.cpp",
 		"/home/roman/Dokumente/Sources/contours/plot-cv/src/CannyWebcam1.cpp",
 		"/home/roman/Dokumente/Sources/contours/plot-cv/CannyWebcam1",
@@ -499,9 +482,7 @@
 		"/home/roman/Dokumente/Sources/rpi-opencv/PiCar/Assets/opencv-3.2.0/modules/video/test/ocl/test_bgfg_mog2.cpp",
 		"/home/roman/Dokumente/Sources/rpi-opencv/PiCar/Assets/opencv-3.2.0/modules/cudabgsegm/perf/perf_bgsegm.cpp",
 		"/home/roman/Dokumente/Sources/rpi-opencv/PiCar/Assets/opencv-3.2.0/modules/cudabgsegm/test/test_bgsegm.cpp",
-		"/home/roman/Dokumente/Sources/rpi-opencv/PiCar/Assets/opencv-3.2.0/modules/calib3d/test/test_fisheye.cpp",
-		"/home/roman/Dokumente/Sources/rpi-opencv/PiCar/Assets/opencv-3.2.0/modules/superres/src/frame_source.cpp",
-		"/home/roman/Dokumente/Sources/rpi-opencv/PiCar/Assets/opencv-3.2.0/modules/cudalegacy/perf/perf_bgsegm.cpp"
+		"/home/roman/Dokumente/Sources/rpi-opencv/PiCar/Assets/opencv-3.2.0/modules/calib3d/test/test_fisheye.cpp"
 	],
 	"find":
 	{
@@ -552,7 +533,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -561,7 +542,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7621,
+						"buffer_size": 7508,
 						"regions":
 						{
 						},
@@ -580,7 +561,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -589,15 +570,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2144,
+						"buffer_size": 2242,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2073,
-								2073
+								0,
+								0
 							]
 						],
 						"settings":
@@ -638,86 +619,27 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1105.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "src/c",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4968,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 12,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "o_angle.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7645,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								376,
-								376
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Rainglow/rainglow/Azure Contrast (rainglow).tmTheme",
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 23.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
 					"file": "src/CannyWebcam1.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 11102,
+						"buffer_size": 13186,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								10105,
-								10102
+								8661,
+								8661
 							]
 						],
 						"settings":
@@ -728,14 +650,14 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 6262.0,
+						"translation.y": 5223.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 4,
 					"file": "src/simple_svg_writer.h",
 					"semi_transient": false,
 					"settings":
@@ -762,24 +684,24 @@
 						"translation.y": 2534.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
-					"buffer": 7,
+					"buffer": 5,
 					"file": "src/Contour_detection.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1660,
+						"buffer_size": 1736,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1118,
-								1118
+								0,
+								0
 							]
 						],
 						"settings":
@@ -796,7 +718,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 6,
 					"file": "src/warpPerspective_demo.cpp",
 					"semi_transient": false,
 					"settings":
@@ -815,7 +737,9 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Rainglow/rainglow/Azure Contrast (rainglow).tmTheme",
-							"syntax": "Packages/C++/C++.sublime-syntax"
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 1158.0,
@@ -825,7 +749,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 7,
 					"semi_transient": false,
 					"settings":
 					{
@@ -936,11 +860,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
-					"buffer": 10,
+					"buffer": 8,
 					"file": "camera_c.cpp",
 					"semi_transient": false,
 					"settings":
@@ -966,11 +890,11 @@
 						"translation.y": 133.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 11,
+					"buffer": 9,
 					"file": "capturecontroller.cpp",
 					"semi_transient": false,
 					"settings":
@@ -996,11 +920,11 @@
 						"translation.y": 418.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 10,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
-					"buffer": 12,
+					"buffer": 10,
 					"file": "cap_winrt_capture.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1026,7 +950,7 @@
 						"translation.y": 1937.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 11,
+					"stack_index": 10,
 					"type": "text"
 				}
 			]

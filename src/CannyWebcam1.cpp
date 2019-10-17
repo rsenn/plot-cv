@@ -57,12 +57,6 @@ to_string(const T& t) {
   return oss.str();
 }
 
-// of a double type.
-double
-numAbs(double num) {
-  double inv = num * -1;
-  return (num <= 0) ? inv : num;
-}
 // Function that calculates the area given a
 // std::vector of vertices in the XY plane.
 template <class P>
@@ -87,7 +81,7 @@ polygonArea(std::vector<P> list) {
   diff = list[0].y - list[last - 1].y;
   area += list[last].x * diff; // Vertex N
   /* Calculate The Final Answer */
-  area = 0.5 * numAbs(area);
+  area = 0.5 * fabs(area);
   return area; // Return The Area
 }
 
@@ -188,6 +182,7 @@ BrightnessAndContrastAuto(const cv::Mat& src, cv::Mat& dst, float clipHistPercen
   }
   return;
 }
+
 cv::Mat
 imageToBinary(cv::Mat start) {
   cv::Mat gray_image, thresh_image;
@@ -222,7 +217,7 @@ getContours(cv::Mat start, std::vector<cv::Vec4i>& hierarchy, int flag = CV_RETR
 }
 
 std::vector<cv::Point2f>
-getMassCenters(std::vector<std::vector<cv::Point>> contours) {
+getMassCenters(std::vector<PointVec> contours) {
 
   std::vector<cv::Moments> mu(contours.size());
   std::vector<cv::Point2f> mc(contours.size());
@@ -246,6 +241,65 @@ ToPointVec(const std::vector<InputType>& v) {
   std::for_each(v.cbegin(), v.cend(), [&ret](const InputType& pt) { ret.push_back(cv::Point(pt.x, pt.y)); });
 
   return ret;
+}
+
+// helper function:
+// finds a cosine of angle between vectors
+// from pt0->pt1 and from pt0->pt2
+static double
+angle(cv::Point pt1, cv::Point pt2, cv::Point pt0) {
+  double dx1 = pt1.x - pt0.x;
+  double dy1 = pt1.y - pt0.y;
+  double dx2 = pt2.x - pt0.x;
+  double dy2 = pt2.y - pt0.y;
+  return (dx1 * dx2 + dy1 * dy2) / sqrt((dx1 * dx1 + dy1 * dy1) * (dx2 * dx2 + dy2 * dy2) + 1e-10);
+}
+
+void
+findRectangles(const std::vector<PointVec>& contours, std::vector<PointVec>& squares) {
+
+  // test each contour
+  for(size_t i = 0; i < contours.size(); i++) {
+    PointVec approx;
+    double arcLen = cv::arcLength(cv::Mat(contours[i]), true);
+
+    // approximate contour with accuracy proportional
+    // to the contour perimeter
+    cv::approxPolyDP(cv::Mat(contours[i]), approx, arcLen * 0.02, true);
+
+    // square contours should have 4 vertices after approximation
+    // relatively large area (to filter out noisy contours)
+    // and be convex.
+    // Note: absolute value of an area is used because
+    // area may be positive or negative - in accordance with the
+    // contour orientation
+    if(arcLen > 80 || fabs(cv::contourArea(cv::Mat(approx))) > 200 /*|| cv::isContourConvex(cv::Mat(approx))*/) {
+      /*      double maxCosine = 0;
+
+            for(int j = 2; j < 5; j++) {
+              // find the maximum cosine of the angle between joint edges
+              double cosine = fabs(angle(approx[j % 4], approx[j - 2], approx[j - 1]));
+              maxCosine = MAX(maxCosine, cosine);
+            }*/
+
+      // if cosines of all angles are small
+      // (all angles are ~90 degree) then write quandrange
+      // vertices to resultant sequence
+
+      // if(maxCosine < 0.3)
+      squares.push_back(approx);
+    }
+  }
+}
+
+// the function draws all the squares in the image
+static void
+drawSquares(cv::Mat& image, const std::vector<PointVec>& squares) {
+  for(size_t i = 0; i < squares.size(); i++) {
+    const cv::Point* p = &squares[i][0];
+    int n = (int)squares[i].size();
+    cv::polylines(image, &p, &n, 1, true, cv::Scalar(0, 255, 0), 2, cv::LINE_AA);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -322,7 +376,11 @@ main(int argc, char* argv[]) {
       std::cout << std::endl;
     }
 
-    //       cv:: drawContours( imgOriginal, contours, -1, cv::Scalar(0,0,255), 1, cv::LINE_AA, hier );
+    std::vector<PointVec> squares;
+
+    findRectangles(contours, squares);
+
+    drawSquares(imgOriginal, squares);
 
     /*
         std::for_each(contours.cbegin(), contours.cend(), [&contours2](const std::vector<cv::Point>& a) {
@@ -349,6 +407,8 @@ main(int argc, char* argv[]) {
           }
         }
     */
+    imgCanny = cv::Scalar::all(255) - imgCanny;
+
     // CV_WINDOW_AUTOSIZE is the default
     cv::imshow("imgOriginal", imgOriginal);   // show windows
     cv::imshow("imgCanny", imgCanny);         //
