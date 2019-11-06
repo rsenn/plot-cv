@@ -141,14 +141,13 @@ HSVtoRGB(int H, double S, double V) {
   return svg::Color((Rs + m) * 255, (Gs + m) * 255, (Bs + m) * 255);
 }
 
-
 template <class FromT, class ToT>
 void
 convertPoints(const std::vector<cv::Point_<FromT>>& from, std::vector<cv::Point_<ToT>>& to) {
   std::transform(from.cbegin(), from.cend(), std::back_inserter(to), [](cv::Point_<FromT> p) -> cv::Point_<ToT> {
     return cv::Point_<ToT>(p.x, p.y);
   });
-} 
+}
 template <class FromT, class ToT>
 std::vector<cv::Point_<ToT>>
 transformPoints(const std::vector<cv::Point_<FromT>>& from) {
@@ -169,12 +168,12 @@ export_svg(const std::vector<std::vector<PointType>>& contours, std::string outp
                  contours.cend(),
                  std::back_inserter(areas),
                  [](const std::vector<PointType>& contour) -> double {
-                   return cv::contourArea(transformPoints<float,int>(contour));
+                   return cv::contourArea(transformPoints<float, int>(contour));
                  });
   const auto& it = std::max_element(areas.cbegin(), areas.cend());
   double max_area = 0;
   if(it != areas.cend()) {
-      max_area = *it;
+    max_area = *it;
   }
 
   std::cout << "Max area: " << max_area << std::endl;
@@ -455,7 +454,6 @@ drawLines(cv::Mat& target, const std::vector<cv::Vec4i>& lines) {
         target, cv::Point(lines[i][0], lines[i][1]), cv::Point(lines[i][2], lines[i][3]), cv::Scalar(0, 255, 255), 1);
 }
 
-
 void
 trackbar(int input, void* u) {
   thresholdValue = input;
@@ -486,7 +484,7 @@ main(int argc, char* argv[]) {
   cv::namedWindow("imgOriginal", CV_WINDOW_AUTOSIZE);
   // or CV_WINDOW_AUTOSIZE for a fixed size window matching the resolution of the image
   cv::namedWindow("imgCanny", CV_WINDOW_AUTOSIZE);
-  cv::namedWindow("imgGrayscale", CV_WINDOW_AUTOSIZE);
+  // cv::namedWindow("imgGrayscale", CV_WINDOW_AUTOSIZE);
   cv::createTrackbar("epsilon", "contours", &eps, 7, trackbar);
   cv::createTrackbar("blur", "contours", &blur, 7, trackbar);
   trackbar(0, 0);
@@ -503,13 +501,13 @@ main(int argc, char* argv[]) {
 
     cvtColor(imgOriginal, imgGrayscale, CV_BGR2GRAY); // convert to grayscale
     std::vector<cv::Vec3f> circles;
-/*    cv::Mat gray;
-    cvtColor(imgOriginal, gray, CV_BGR2GRAY);
+    /*    cv::Mat gray;
+        cvtColor(imgOriginal, gray, CV_BGR2GRAY);
 
-    cv::GaussianBlur(gray, gray, cv::Size(3, 3), 2, 2);
-    cv::Canny(gray, gray, 0, 50, 3);
-    cv::HoughCircles(gray, circles, CV_HOUGH_GRADIENT, 1, 30, 200, 50, 0, 0);
-*/
+        cv::GaussianBlur(gray, gray, cv::Size(3, 3), 2, 2);
+        cv::Canny(gray, gray, 0, 50, 3);
+        cv::HoughCircles(gray, circles, CV_HOUGH_GRADIENT, 1, 30, 200, 50, 0, 0);
+    */
     /// Apply Histogram Equalization
     //  cv::equalizeHist(imgTemp, imgGrayscale);
 
@@ -555,7 +553,7 @@ main(int argc, char* argv[]) {
       std::cout << std::endl;
     }
 
-    //filter_contours(contours2);
+    // filter_contours(contours2);
     export_svg<cv::Point2f>(contours2, "contour.svg");
 
     std::vector<PointVec> squares;
@@ -586,21 +584,21 @@ main(int argc, char* argv[]) {
       const double length = cv::arcLength(c, false);
       const double area = cv::contourArea(c, false);
       cv::Rect rect = cv::boundingRect(c);
-        std::vector<PointVec> list;
-        list.push_back(c);
-       // cv::drawContours(imgOriginal, list, -1, cv::Scalar(255, 255, 0), 1);
+      std::vector<PointVec> list;
+      list.push_back(c);
+      // cv::drawContours(imgOriginal, list, -1, cv::Scalar(255, 255, 0), 1);
     });
 
-        cv::drawContours(imgOriginal, contours, -1, cv::Scalar(255, 0, 255), 1);
+    cv::drawContours(imgOriginal, contours, -1, cv::Scalar(255, 0, 255), 1);
 
-/*
-    for(size_t i = 0; i < contours2.size() - 1; i++) {
-      const std::vector<cv::Point>& c = approxim[i];
+    /*
+        for(size_t i = 0; i < contours2.size() - 1; i++) {
+          const std::vector<cv::Point>& c = approxim[i];
 
-      if(cv::isContourConvex(c)) {
-        cv::drawContours(imgOriginal, approxim, i, cv::Scalar(255, 255, 0), 2, cv::LINE_AA);
-      }
-    }*/
+          if(cv::isContourConvex(c)) {
+            cv::drawContours(imgOriginal, approxim, i, cv::Scalar(255, 255, 0), 2, cv::LINE_AA);
+          }
+        }*/
     /*
         std::sort(contours2.begin(), contours2.end(), [](Point2fVec a, Point2fVec b) -> bool {
           return polygonArea<cv::Point2f>(a) >= polygonArea<cv::Point2f>(b);
