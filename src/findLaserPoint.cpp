@@ -56,7 +56,7 @@ brushSideWhite(cv::Mat& img) {
     for(int j = startj; j < endj; j++) img.at<uchar>(i, j) = 255;
 }
 cv::Point
-findBrightcv::Point(cv::Mat& img) {
+findBrightPoint(cv::Mat& img) {
   // imshow("tt",img);
   std::vector<std::vector<cv::Point>> contours;
   std::vector<Vec4i> hierarchy;
@@ -199,13 +199,13 @@ main() {
       cv::Mat transform = getPerspectiveTransform(corners, corners_trans);
       warpPerspective(imgRawCopy, imgToMap, transform, imgToMap.size());
 
-      cv::Mat imgcv::Point;
+      cv::Mat imgPoint;
 
       cvtColor(imgToMap, imgToMapProc, CV_BGR2GRAY);
-      threshold(imgToMapProc, imgcv::Point, 254, 255, 0);
+      threshold(imgToMapProc, imgPoint, 254, 255, 0);
       threshold(imgToMapProc, imgToMapProc, thresholdValue, 255, 0);
 
-      cv::Point brightcv::Point = findBrightcv::Point(imgcv::Point);
+      cv::Point brightcv::Point = findBrightPoint(imgPoint);
 
       brushSideWhite(imgToMapProc); //将边缘部分的噪点删除掉
 

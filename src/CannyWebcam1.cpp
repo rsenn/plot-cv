@@ -5,13 +5,22 @@
 #include <opencv2/highgui/highgui_c.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgproc/types_c.h>
+#include "simple_svg_1.0.0.hpp"
 
 #include <iostream>
+#include <functional>
 typedef std::vector<cv::Point> PointVec;
 typedef std::vector<cv::Point2f> Point2fVec;
 
 int thresh = 10;
 int max_thresh = 255;
+int largestContour = -1;
+double max_svg_width = 1200; // pixels
+double max_svg_height = 900; // pixels
+int thresholdValue = 155;
+bool showDiagnostics = false;
+std::vector<cv::Point2f> bigContour;
+double epsilon = 3;
 
 // Function that calculates the absolute value
 
@@ -56,6 +65,135 @@ to_string(const T& t) {
   oss << t;
   return oss.str();
 }
+
+// finds the largest contour and stores the bigContour and stores it index which are both global variables.
+
+void
+filter_contours(std::vector<std::vector<cv::Point2f>> contours_un) {
+  double maxArea = 0.0;
+  for(int i = 0; i < contours_un.size(); i++) {
+    double area = contourArea(contours_un[i]);
+    if(showDiagnostics) {
+      std::cout << "Area: " + to_string(area) + "Index: " + to_string(i) << std::endl;
+    }
+    if(area > maxArea) {
+      maxArea = area;
+      largestContour = i;
+    }
+  }
+  bigContour = contours_un.at(largestContour);
+}
+
+void
+polylineFromContour(svg::Document& doc,
+                    const std::vector<cv::Point2f>& contour_arg,
+                    std::function<svg::Color(const std::vector<cv::Point2f>&)> color_fn) {
+  svg::Polyline polyline(svg::Stroke(1, color_fn(contour_arg)));
+
+  for(int i = 0; i < contour_arg.size(); i++) {
+    svg::Point tmp = svg::Point(contour_arg.at(i).x, contour_arg.at(i).y);
+    polyline << tmp;
+  }
+
+  doc << polyline;
+}
+
+/*
+ * H(Hue): 0 - 360 degree (integer)
+ * S(Saturation): 0 - 1.00 (double)
+ * V(Value): 0 - 1.00 (double)
+ *
+ * output[3]: Output, array size 3, int
+ */
+svg::Color
+HSVtoRGB(int H, double S, double V) {
+  double C = S * V;
+  double X = C * (1 - abs(fmod(H / 60.0, 2) - 1));
+  double m = V - C;
+  double Rs, Gs, Bs;
+
+  if(H >= 0 && H < 60) {
+    Rs = C;
+    Gs = X;
+    Bs = 0;
+  } else if(H >= 60 && H < 120) {
+    Rs = X;
+    Gs = C;
+    Bs = 0;
+  } else if(H >= 120 && H < 180) {
+    Rs = 0;
+    Gs = C;
+    Bs = X;
+  } else if(H >= 180 && H < 240) {
+    Rs = 0;
+    Gs = X;
+    Bs = C;
+  } else if(H >= 240 && H < 300) {
+    Rs = X;
+    Gs = 0;
+    Bs = C;
+  } else {
+    Rs = C;
+    Gs = 0;
+    Bs = X;
+  }
+
+  return svg::Color((Rs + m) * 255, (Gs + m) * 255, (Bs + m) * 255);
+}
+
+
+template <class FromT, class ToT>
+void
+convertPoints(const std::vector<cv::Point_<FromT>>& from, std::vector<cv::Point_<ToT>>& to) {
+  std::transform(from.cbegin(), from.cend(), std::back_inserter(to), [](cv::Point_<FromT> p) -> cv::Point_<ToT> {
+    return cv::Point_<ToT>(p.x, p.y);
+  });
+} 
+template <class FromT, class ToT>
+std::vector<cv::Point_<ToT>>
+transformPoints(const std::vector<cv::Point_<FromT>>& from) {
+  std::vector<cv::Point_<ToT>> ret;
+  convertPoints<FromT, ToT>(from, ret);
+  return ret;
+}
+
+template <class PointType>
+void
+export_svg(const std::vector<std::vector<PointType>>& contours, std::string output_file) {
+
+  svg::Dimensions dimensions(max_svg_width, max_svg_height);
+  svg::Document doc(output_file, svg::Layout(dimensions, svg::Layout::TopLeft));
+  svg::LineChart chart(5.0);
+  std::vector<double> areas;
+  std::transform(contours.cbegin(),
+                 contours.cend(),
+                 std::back_inserter(areas),
+                 [](const std::vector<PointType>& contour) -> double {
+                   return cv::contourArea(transformPoints<float,int>(contour));
+                 });
+  const auto& it = std::max_element(areas.cbegin(), areas.cend());
+  double max_area = 0;
+  if(it != areas.cend()) {
+      max_area = *it;
+  }
+
+  std::cout << "Max area: " << max_area << std::endl;
+
+  const auto& cfn = [&](const std::vector<PointType>& contour) -> svg::Color {
+    const double area = cv::contourArea(contour);
+    return HSVtoRGB(area / max_area * 360, 1, 1);
+  };
+  std::for_each(contours.cbegin(),
+                contours.cend(),
+                std::bind(&polylineFromContour, std::ref(doc), std::placeholders::_1, cfn));
+  //  polylineFromContour(doc, contour_arg, svg::Color(255, 0, 0));
+
+  doc.save();
+
+  std::cout << "EXPORTED SVG" << std::endl;
+}
+
+/** @function main */
 
 // Function that calculates the area given a
 // std::vector of vertices in the XY plane.
@@ -205,31 +343,23 @@ imageToBinary(cv::Mat start) {
  */
 std::vector<PointVec>
 getContours(cv::Mat start, std::vector<cv::Vec4i>& hierarchy, int flag = CV_RETR_EXTERNAL) {
-
   cv::Mat dst = cv::Mat::zeros(start.rows, start.cols, CV_8UC3);
   std::vector<PointVec> contours;
-
   start = start > 1;
-
   cv::findContours(start, contours, hierarchy, flag, CV_CHAIN_APPROX_SIMPLE);
-
   return contours;
 }
 
 std::vector<cv::Point2f>
 getMassCenters(std::vector<PointVec> contours) {
-
   std::vector<cv::Moments> mu(contours.size());
   std::vector<cv::Point2f> mc(contours.size());
-
   for(size_t i = 0; i < contours.size(); i++) {
     mu[i] = cv::moments(contours[i], false);
   }
-
   for(size_t i = 0; i < contours.size(); i++) {
     mc[i] = cv::Point2f(mu[i].m10 / mu[i].m00, mu[i].m01 / mu[i].m00);
   }
-
   return mc;
 }
 
@@ -237,9 +367,7 @@ template <class InputType>
 std::vector<cv::Point>
 ToPointVec(const std::vector<InputType>& v) {
   std::vector<cv::Point> ret;
-
   std::for_each(v.cbegin(), v.cend(), [&ret](const InputType& pt) { ret.push_back(cv::Point(pt.x, pt.y)); });
-
   return ret;
 }
 
@@ -293,14 +421,45 @@ findRectangles(const std::vector<PointVec>& contours, std::vector<PointVec>& squ
 }
 
 // the function draws all the squares in the image
+
+template <class PointT>
 static void
-drawSquares(cv::Mat& image, const std::vector<PointVec>& squares) {
-  for(size_t i = 0; i < squares.size(); i++) {
-    const cv::Point* p = &squares[i][0];
-    int n = (int)squares[i].size();
-    cv::polylines(image, &p, &n, 1, true, cv::Scalar(0, 255, 0), 2, cv::LINE_AA);
-  }
+drawPolylines(cv::Mat& image,
+              const std::vector<std::vector<PointT>>& polylines,
+              const cv::Scalar& color = cv::Scalar(0, 255, 0)) {
+
+  cv::polylines(image, polylines, true, color, 2, cv::LINE_AA);
 }
+
+void
+invertColor(cv::Mat& img) {
+  for(int i = 0; i < img.rows; i++)
+    for(int j = 0; j < img.cols; j++) img.at<uchar>(i, j) = 255 - img.at<uchar>(i, j);
+}
+std::vector<cv::Vec4i>
+houghLines(cv::Mat& imgToMap) {
+  cv::Mat imgToMapProc;
+  cvtColor(imgToMap, imgToMapProc, CV_BGR2GRAY);
+  cv::threshold(imgToMapProc, imgToMapProc, thresholdValue, 255, 0);
+  std::vector<cv::Vec4i> lines;
+  invertColor(imgToMapProc);
+  cv::HoughLinesP(imgToMapProc, lines, 1, CV_PI / 180, 30, 30, 10);
+
+  return lines;
+}
+
+void
+drawLines(cv::Mat& target, const std::vector<cv::Vec4i>& lines) {
+  for(size_t i = 0; i < lines.size(); i++)
+    cv::line(
+        target, cv::Point(lines[i][0], lines[i][1]), cv::Point(lines[i][2], lines[i][3]), cv::Scalar(0, 255, 255), 1);
+}
+
+
+void
+trackbar(int input, void* u) {
+  thresholdValue = input;
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 int
@@ -318,6 +477,9 @@ main(int argc, char* argv[]) {
   cv::Mat imgRaw, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny; // Canny edge image
 
   char charCheckForEscKey = 0;
+  int levels = 3;
+  int eps = 8;
+  int blur = 4;
 
   // declare windows
   //  note: you can use CV_WINDOW_NORMAL which allows resizing the window
@@ -325,6 +487,9 @@ main(int argc, char* argv[]) {
   // or CV_WINDOW_AUTOSIZE for a fixed size window matching the resolution of the image
   cv::namedWindow("imgCanny", CV_WINDOW_AUTOSIZE);
   cv::namedWindow("imgGrayscale", CV_WINDOW_AUTOSIZE);
+  cv::createTrackbar("epsilon", "contours", &eps, 7, trackbar);
+  cv::createTrackbar("blur", "contours", &blur, 7, trackbar);
+  trackbar(0, 0);
 
   while(charCheckForEscKey != 27 && capWebcam.isOpened()) { // until the Esc key is pressed or webcam connection is lost
     bool blnFrameReadSuccessfully = capWebcam.read(imgRaw); // get next frame
@@ -337,14 +502,20 @@ main(int argc, char* argv[]) {
     imgRaw.copyTo(imgOriginal);
 
     cvtColor(imgOriginal, imgGrayscale, CV_BGR2GRAY); // convert to grayscale
+    std::vector<cv::Vec3f> circles;
+/*    cv::Mat gray;
+    cvtColor(imgOriginal, gray, CV_BGR2GRAY);
 
+    cv::GaussianBlur(gray, gray, cv::Size(3, 3), 2, 2);
+    cv::Canny(gray, gray, 0, 50, 3);
+    cv::HoughCircles(gray, circles, CV_HOUGH_GRADIENT, 1, 30, 200, 50, 0, 0);
+*/
     /// Apply Histogram Equalization
     //  cv::equalizeHist(imgTemp, imgGrayscale);
 
-    cv::GaussianBlur(imgGrayscale, imgBlurred, cv::Size(5, 5), 1.75);
+    cv::GaussianBlur(imgGrayscale, imgBlurred, cv::Size(5, 5), 1.75, 1.75);
 
     cv::Canny(imgBlurred, imgCanny, thresh, thresh * 2, 3);
-    equalizeHist(imgGrayscale, imgGrayscale);
 
     //  applyCLAHE(imgOriginal, imgOriginal);XY
 
@@ -353,9 +524,17 @@ main(int argc, char* argv[]) {
     std::vector<PointVec> contours = getContours(imgCanny, hier, CV_RETR_TREE);
 
     std::ostringstream contourStr;
+    double maxArea = 0;
 
     std::for_each(contours.cbegin(), contours.cend(), [&](const std::vector<cv::Point>& a) {
       if(a.size() >= 3) {
+
+        Point2fVec c;
+        cv::approxPolyDP(a, c, 8, true);
+        double area = cv::contourArea(a);
+        if(area > maxArea)
+          area = maxArea;
+        contours2.push_back(c);
 
         if(contourStr.str().size())
           contourStr << "\n";
@@ -376,22 +555,53 @@ main(int argc, char* argv[]) {
       std::cout << std::endl;
     }
 
+    //filter_contours(contours2);
+    export_svg<cv::Point2f>(contours2, "contour.svg");
+
     std::vector<PointVec> squares;
 
     findRectangles(contours, squares);
 
-    drawSquares(imgOriginal, squares);
+    // Draw the circles detected
+    for(size_t i = 0; i < circles.size(); i++) {
+      cv::Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+      int radius = cvRound(circles[i][2]);
+      cv::circle(imgOriginal, center, 3, cv::Scalar(255, 0, 0), -1, 8, 0);     // circle center
+      cv::circle(imgOriginal, center, radius, cv::Scalar(255, 0, 0), 3, 8, 0); // circle outline
+      std::cout << "center : " << center << "\nradius : " << radius << std::endl;
+    }
 
+    //   drawPolylines<cv::Point>(imgOriginal, contours, cv::Scalar(0, 255, 0));
+
+    std::vector<PointVec> approxim;
+
+    std::transform(contours2.cbegin(),
+                   contours2.cend(),
+                   std::back_inserter(approxim),
+                   [](const Point2fVec& p) -> PointVec { return transformPoints<float, int>(p); });
+
+    // [](const Point2fVec &p) -> cv::Point { return cv::Point(p.x, p.y); });
+
+    std::for_each(approxim.cbegin(), approxim.cend(), [&](const PointVec& c) {
+      const double length = cv::arcLength(c, false);
+      const double area = cv::contourArea(c, false);
+      cv::Rect rect = cv::boundingRect(c);
+        std::vector<PointVec> list;
+        list.push_back(c);
+       // cv::drawContours(imgOriginal, list, -1, cv::Scalar(255, 255, 0), 1);
+    });
+
+        cv::drawContours(imgOriginal, contours, -1, cv::Scalar(255, 0, 255), 1);
+
+/*
+    for(size_t i = 0; i < contours2.size() - 1; i++) {
+      const std::vector<cv::Point>& c = approxim[i];
+
+      if(cv::isContourConvex(c)) {
+        cv::drawContours(imgOriginal, approxim, i, cv::Scalar(255, 255, 0), 2, cv::LINE_AA);
+      }
+    }*/
     /*
-        std::for_each(contours.cbegin(), contours.cend(), [&contours2](const std::vector<cv::Point>& a) {
-          double area = polygonArea(a);
-          if(a.size() >= 3 && area > 8) {
-            Point2fVec b;
-            cv::approxPolyDP(a, b, 0.5, true);
-            contours2.push_back(b);
-          }
-        });
-
         std::sort(contours2.begin(), contours2.end(), [](Point2fVec a, Point2fVec b) -> bool {
           return polygonArea<cv::Point2f>(a) >= polygonArea<cv::Point2f>(b);
         });
@@ -410,9 +620,11 @@ main(int argc, char* argv[]) {
     imgCanny = cv::Scalar::all(255) - imgCanny;
 
     // CV_WINDOW_AUTOSIZE is the default
-    cv::imshow("imgOriginal", imgOriginal);   // show windows
-    cv::imshow("imgCanny", imgCanny);         //
-    cv::imshow("imgGrayscale", imgGrayscale); //
+    cv::imshow("imgOriginal", imgOriginal); // show windows
+    cv::imshow("imgCanny", imgCanny);       //
+                                            // cv::imshow("imgGrayscale", imgBlurred); //
+
+    // cv::createTrackbar("Thre", "demoProc", &thresholdValue, 255, &trackbar);
 
     charCheckForEscKey = cv::waitKey(1); // delay (in ms) and get key press, if any
   }                                      // end while

@@ -107,7 +107,7 @@ main() {
     dilate(binary, dil, Mat(), Point(-1, -1), 1);
     erode(dil, erod, Mat(), Point(-1, -1), 5);
     Canny(erod, cany, low, high);
-    HoughLinesP(cany, lines, 1, 3.14 / 180, thresholdp, linelength, maxlinegap);
+      HoughLinesP(cany, lines, 1, 3.14 / 180, thresholdp, linelength, maxli HoughLinesP(cany, lines, 1, 3.14 / 180, thresholdp, linelength, maxlinegap);
     if(lines.size()) {
       for(size_t i = 0; i < lines.size(); i++) {
         Vec4i l = lines[i];
