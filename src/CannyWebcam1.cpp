@@ -612,7 +612,8 @@ main(int argc, char* argv[]) {
       }
 
       std::ostringstream filename;
-      filename << "contour-" << ++count << ".svg";
+      filename << "contour.svg";
+      //filename << "contour-" << ++count << ".svg";
 
       // filter_contours(contours2);
       export_svg<cv::Point2f>(contours2, filename.str());
