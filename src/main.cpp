@@ -4,7 +4,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
 #include <iostream>
-#include <std::vector>
+#include <vector>
 #include <numeric>
 
 using namespace cv;

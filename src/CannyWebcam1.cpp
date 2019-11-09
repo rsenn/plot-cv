@@ -160,6 +160,8 @@ template <class PointType>
 void
 export_svg(const std::vector<std::vector<PointType>>& contours, std::string output_file) {
 
+  std::cout << "Saving '" << output_file << "'" << std::endl;
+
   svg::Dimensions dimensions(max_svg_width, max_svg_height);
   svg::Document doc(output_file, svg::Layout(dimensions, svg::Layout::TopLeft));
   svg::LineChart chart(5.0);
@@ -455,6 +457,31 @@ drawLines(cv::Mat& target, const std::vector<cv::Vec4i>& lines) {
 }
 
 void
+cornerHarrisDetection(cv::Mat& src, cv::Mat& src_gray) {
+  int thresh = 200;
+  int max_thresh = 255;
+  int blockSize = 2;
+  int apertureSize = 3;
+  double k = 0.04;
+  cv::Mat dst = cv::Mat::zeros(src.size(), CV_32FC1);
+  cv::Mat gray = cv::Mat::zeros(src.size(), CV_32FC1);
+  src_gray.convertTo(gray, CV_32FC1);
+  cv::cornerHarris(gray, dst, blockSize, apertureSize, k);
+  cv::Mat dst_norm, dst_norm_scaled;
+  cv::normalize(dst, dst_norm, 0, 255, cv::NORM_MINMAX, CV_32FC1, cv::Mat());
+  cv::convertScaleAbs(dst_norm, dst_norm_scaled);
+  for(int i = 0; i < dst_norm.rows; i++) {
+    for(int j = 0; j < dst_norm.cols; j++) {
+      if((int)dst_norm.at<float>(i, j) > thresh) {
+        cv::circle(dst_norm_scaled, cv::Point(j, i), 5, cv::Scalar(1), 2, 8, 0);
+      }
+    }
+  }
+  cv::namedWindow("corners");
+  cv::imshow("corners", dst_norm_scaled);
+}
+
+void
 trackbar(int input, void* u) {
   thresholdValue = input;
 };
@@ -463,8 +490,10 @@ trackbar(int input, void* u) {
 int
 main(int argc, char* argv[]) {
   int camID = argc > 1 ? atoi(argv[1]) : 0;
+  int count = 0;
 
-  cv::VideoCapture capWebcam(camID); // declare a VideoCapture object and associate to webcam, 0 => use 1st webcam
+  cv::VideoCapture capWebcam(
+      camID, cv::CAP_V4L2); // declare a VideoCapture object and associate to webcam, 0 => use 1st webcam
 
   if(capWebcam.isOpened() == false) { // check if VideoCapture object was associated to webcam successfully
     std::cout << "error: capWebcam not accessed successfully\n\n"; // if not, print error message to std out
@@ -484,11 +513,11 @@ main(int argc, char* argv[]) {
   cv::namedWindow("imgOriginal", CV_WINDOW_AUTOSIZE);
   // or CV_WINDOW_AUTOSIZE for a fixed size window matching the resolution of the image
   cv::namedWindow("imgCanny", CV_WINDOW_AUTOSIZE);
-  // cv::namedWindow("imgGrayscale", CV_WINDOW_AUTOSIZE);
-  cv::createTrackbar("epsilon", "contours", &eps, 7, trackbar);
+  cv::namedWindow("imgGrayscale", CV_WINDOW_AUTOSIZE);
+  /*cv::createTrackbar("epsilon", "contours", &eps, 7, trackbar);
   cv::createTrackbar("blur", "contours", &blur, 7, trackbar);
   trackbar(0, 0);
-
+*/
   while(charCheckForEscKey != 27 && capWebcam.isOpened()) { // until the Esc key is pressed or webcam connection is lost
     bool blnFrameReadSuccessfully = capWebcam.read(imgRaw); // get next frame
 
@@ -496,11 +525,15 @@ main(int argc, char* argv[]) {
       std::cout << "error: frame not read from webcam\n"; // print error message to std out
       break;                                              // and jump out of while loop
     }
+
+    std::cout << "got frame" << std::endl;
     // cv::normalize(imgOriginal,imgTemp,0,255,cv::NORM_L1);
     imgRaw.copyTo(imgOriginal);
 
     cvtColor(imgOriginal, imgGrayscale, CV_BGR2GRAY); // convert to grayscale
     std::vector<cv::Vec3f> circles;
+
+    //    cornerHarrisDetection(imgOriginal, imgGrayscale);
     /*    cv::Mat gray;
         cvtColor(imgOriginal, gray, CV_BGR2GRAY);
 
@@ -516,115 +549,142 @@ main(int argc, char* argv[]) {
     cv::Canny(imgBlurred, imgCanny, thresh, thresh * 2, 3);
 
     //  applyCLAHE(imgOriginal, imgOriginal);XY
+    {
 
-    std::vector<Point2fVec> contours2;
-    std::vector<cv::Vec4i> hier;
-    std::vector<PointVec> contours = getContours(imgCanny, hier, CV_RETR_TREE);
+      std::vector<Point2fVec> contours2;
+      std::vector<cv::Vec4i> hier;
+      std::vector<PointVec> contours = getContours(imgCanny, hier, CV_RETR_TREE);
 
-    std::ostringstream contourStr;
-    double maxArea = 0;
+      imgCanny = cv::Scalar::all(255) - imgCanny;
 
-    std::for_each(contours.cbegin(), contours.cend(), [&](const std::vector<cv::Point>& a) {
-      if(a.size() >= 3) {
+      // imgCanny.convertTo(imgCanny, CV_8UC3);
+      cv::cvtColor(imgCanny, imgCanny, cv::COLOR_GRAY2BGR);
 
-        Point2fVec c;
-        cv::approxPolyDP(a, c, 8, true);
-        double area = cv::contourArea(a);
-        if(area > maxArea)
-          area = maxArea;
-        contours2.push_back(c);
+      // cvtColor(imgOriginal, imgGrayscale, CV_GRAY);
+      cv::drawContours(imgCanny, contours, -1, cv::Scalar(0, 0, 255), 1);
 
-        if(contourStr.str().size())
-          contourStr << "\n";
-        out_points(contourStr, a);
+      cv::imshow("imgCanny", imgCanny); //
+
+      if(contours.empty()) {
+        std::cout << "No contours" << std::endl;
+        charCheckForEscKey = cv::waitKey(100);
+        continue;
       }
-    });
 
-    std::cout << contourStr.str() << std::endl;
+      std::ostringstream contourStr;
+      double maxArea = 0;
 
-    for(size_t i = 0; i < contours.size(); ++i) {
-      std::vector<cv::Point> c = contours[i];
-      cv::Vec4i h = hier[i];
+      std::for_each(contours.cbegin(), contours.cend(), [&](const std::vector<cv::Point>& a) {
+        if(a.size() >= 3) {
 
-      std::cout << '#' << i << std::endl;
-      out_points(std::cout, c);
-      ///  std::cout << c << std::endl;
-      out_hier(std::cout, h);
-      std::cout << std::endl;
-    }
+          Point2fVec c;
+          cv::approxPolyDP(a, c, 8, true);
+          double area = cv::contourArea(c);
+          if(area > maxArea)
+            maxArea = area;
+          contours2.push_back(c);
 
-    // filter_contours(contours2);
-    export_svg<cv::Point2f>(contours2, "contour.svg");
-
-    std::vector<PointVec> squares;
-
-    findRectangles(contours, squares);
-
-    // Draw the circles detected
-    for(size_t i = 0; i < circles.size(); i++) {
-      cv::Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
-      int radius = cvRound(circles[i][2]);
-      cv::circle(imgOriginal, center, 3, cv::Scalar(255, 0, 0), -1, 8, 0);     // circle center
-      cv::circle(imgOriginal, center, radius, cv::Scalar(255, 0, 0), 3, 8, 0); // circle outline
-      std::cout << "center : " << center << "\nradius : " << radius << std::endl;
-    }
-
-    //   drawPolylines<cv::Point>(imgOriginal, contours, cv::Scalar(0, 255, 0));
-
-    std::vector<PointVec> approxim;
-
-    std::transform(contours2.cbegin(),
-                   contours2.cend(),
-                   std::back_inserter(approxim),
-                   [](const Point2fVec& p) -> PointVec { return transformPoints<float, int>(p); });
-
-    // [](const Point2fVec &p) -> cv::Point { return cv::Point(p.x, p.y); });
-
-    std::for_each(approxim.cbegin(), approxim.cend(), [&](const PointVec& c) {
-      const double length = cv::arcLength(c, false);
-      const double area = cv::contourArea(c, false);
-      cv::Rect rect = cv::boundingRect(c);
-      std::vector<PointVec> list;
-      list.push_back(c);
-      // cv::drawContours(imgOriginal, list, -1, cv::Scalar(255, 255, 0), 1);
-    });
-
-    cv::drawContours(imgOriginal, contours, -1, cv::Scalar(255, 0, 255), 1);
-
-    /*
-        for(size_t i = 0; i < contours2.size() - 1; i++) {
-          const std::vector<cv::Point>& c = approxim[i];
-
-          if(cv::isContourConvex(c)) {
-            cv::drawContours(imgOriginal, approxim, i, cv::Scalar(255, 255, 0), 2, cv::LINE_AA);
-          }
-        }*/
-    /*
-        std::sort(contours2.begin(), contours2.end(), [](Point2fVec a, Point2fVec b) -> bool {
-          return polygonArea<cv::Point2f>(a) >= polygonArea<cv::Point2f>(b);
-        });
-
-        for(size_t i = 0; i < std::min<size_t>(100, contours2.size()); ++i) {
-          int npts = contours2[i].size();
-          double area = polygonArea(contours2[i]);
-        //  std::cout << i << ": " << area << std::endl;
-
-          if(npts > 0) {
-            std::vector<cv::Point> pl = ToPointVec(contours2[i]);
-            cv::polylines(imgOriginal, pl, true, cv::Scalar(0, 0, 255), 1);
-          }
+          if(contourStr.str().size())
+            contourStr << "\n";
+          out_points(contourStr, a);
         }
-    */
-    imgCanny = cv::Scalar::all(255) - imgCanny;
+      });
+
+      if(maxArea == 0) {
+        charCheckForEscKey = cv::waitKey(16);
+                std::cout << "No contour area" << std::endl;
+        continue;
+      }
+
+      std::cout << "Num contours: " << contours.size() << std::endl;
+
+      //  std::cout << contourStr.str() << std::endl;
+
+      for(size_t i = 0; i < contours.size(); ++i) {
+        std::vector<cv::Point> c = contours[i];
+        cv::Vec4i h = hier[i];
+
+        /*   std::cout << '#' << i << std::endl;
+           out_points(std::cout, c);
+           ///  std::cout << c << std::endl;
+           out_hier(std::cout, h);
+           std::cout << std::endl;*/
+      }
+
+      std::ostringstream filename;
+      filename << "contour-" << ++count << ".svg";
+
+      // filter_contours(contours2);
+      export_svg<cv::Point2f>(contours2, filename.str());
+
+      std::vector<PointVec> squares;
+
+      findRectangles(contours, squares);
+
+      // Draw the circles detected
+      for(size_t i = 0; i < circles.size(); i++) {
+        cv::Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+        int radius = cvRound(circles[i][2]);
+        cv::circle(imgOriginal, center, 3, cv::Scalar(255, 0, 0), -1, 8, 0);     // circle center
+        cv::circle(imgOriginal, center, radius, cv::Scalar(255, 0, 0), 3, 8, 0); // circle outline
+        std::cout << "center : " << center << "\nradius : " << radius << std::endl;
+      }
+
+      //   drawPolylines<cv::Point>(imgOriginal, contours, cv::Scalar(0, 255, 0));
+
+      std::vector<PointVec> approxim;
+
+      std::transform(contours2.cbegin(),
+                     contours2.cend(),
+                     std::back_inserter(approxim),
+                     [](const Point2fVec& p) -> PointVec { return transformPoints<float, int>(p); });
+
+      // [](const Point2fVec &p) -> cv::Point { return cv::Point(p.x, p.y); });
+
+      std::for_each(approxim.cbegin(), approxim.cend(), [&](const PointVec& c) {
+        const double length = cv::arcLength(c, false);
+        const double area = cv::contourArea(c, false);
+        cv::Rect rect = cv::boundingRect(c);
+        std::vector<PointVec> list;
+        list.push_back(c);
+        // cv::drawContours(imgOriginal, list, -1, cv::Scalar(255, 255, 0), 1);
+      });
+
+      cv::drawContours(imgOriginal, contours, -1, cv::Scalar(255, 0, 255), 1);
+
+      /*
+          for(size_t i = 0; i < contours2.size() - 1; i++) {
+            const std::vector<cv::Point>& c = approxim[i];
+
+            if(cv::isContourConvex(c)) {
+              cv::drawContours(imgOriginal, approxim, i, cv::Scalar(255, 255, 0), 2, cv::LINE_AA);
+            }
+          }*/
+      /*
+          std::sort(contours2.begin(), contours2.end(), [](Point2fVec a, Point2fVec b) -> bool {
+            return polygonArea<cv::Point2f>(a) >= polygonArea<cv::Point2f>(b);
+          });
+
+          for(size_t i = 0; i < std::min<size_t>(100, contours2.size()); ++i) {
+            int npts = contours2[i].size();
+            double area = polygonArea(contours2[i]);
+          //  std::cout << i << ": " << area << std::endl;
+
+            if(npts > 0) {
+              std::vector<cv::Point> pl = ToPointVec(contours2[i]);
+              cv::polylines(imgOriginal, pl, true, cv::Scalar(0, 0, 255), 1);
+            }
+          }
+      */
+    }
 
     // CV_WINDOW_AUTOSIZE is the default
     cv::imshow("imgOriginal", imgOriginal); // show windows
-    cv::imshow("imgCanny", imgCanny);       //
                                             // cv::imshow("imgGrayscale", imgBlurred); //
 
     // cv::createTrackbar("Thre", "demoProc", &thresholdValue, 255, &trackbar);
 
-    charCheckForEscKey = cv::waitKey(1); // delay (in ms) and get key press, if any
+    charCheckForEscKey = cv::waitKey(100); // delay (in ms) and get key press, if any
   }                                      // end while
 
   return (0);

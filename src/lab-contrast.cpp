@@ -10,7 +10,7 @@
 int
 main(int argc, char** argv) {
   int clim = 4;
-  if(argc = 3)
+  if(argc == 3)
     clim = atoi(argv[2]);
 
   // READ RGB color image and convert it to Lab
