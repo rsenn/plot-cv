@@ -5,6 +5,8 @@
 #include <opencv2/highgui/highgui_c.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgproc/types_c.h>
+#include <opencv2/imgcodecs.hpp>
+
 #include "simple_svg_1.0.0.hpp"
 
 #include <iostream>
@@ -148,6 +150,7 @@ convertPoints(const std::vector<cv::Point_<FromT>>& from, std::vector<cv::Point_
     return cv::Point_<ToT>(p.x, p.y);
   });
 }
+
 template <class FromT, class ToT>
 std::vector<cv::Point_<ToT>>
 transformPoints(const std::vector<cv::Point_<FromT>>& from) {
@@ -486,6 +489,17 @@ trackbar(int input, void* u) {
   thresholdValue = input;
 };
 
+void
+writeImage(const cv::Mat& img) {
+  static int count = 0;
+  std::ostringstream filename;
+  filename << "frame-";
+  filename << ++count;
+  filename << ".png";
+
+  cv::imwrite(cv::String(filename.str()), img);
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 int
 main(int argc, char* argv[]) {
@@ -526,14 +540,23 @@ main(int argc, char* argv[]) {
       break;                                              // and jump out of while loop
     }
 
+    writeImage(imgRaw);
+
     std::cout << "got frame" << std::endl;
     // cv::normalize(imgOriginal,imgTemp,0,255,cv::NORM_L1);
     imgRaw.copyTo(imgOriginal);
 
-    cvtColor(imgOriginal, imgGrayscale, CV_BGR2GRAY); // convert to grayscale
+    cv::Mat frameLab, frameLabCn[3];
+    cv::cvtColor(imgOriginal, frameLab, cv::COLOR_BGR2Lab);
+    cv::split(frameLab, frameLabCn);
+    frameLabCn[0].copyTo(imgGrayscale);
+    // cv::cvtColor(imgOriginal, imgOriginal, cv::COLOR_GRAY2BGR);
+    cv::imshow("imgGrayscale", imgGrayscale); //
+
+    // cvtColor(imgOriginal, imgGrayscale, CV_BGR2GRAY); // convert to grayscale
     std::vector<cv::Vec3f> circles;
 
-    //    cornerHarrisDetection(imgOriginal, imgGrayscale);
+    cornerHarrisDetection(imgOriginal, imgGrayscale);
     /*    cv::Mat gray;
         cvtColor(imgOriginal, gray, CV_BGR2GRAY);
 
@@ -592,7 +615,7 @@ main(int argc, char* argv[]) {
 
       if(maxArea == 0) {
         charCheckForEscKey = cv::waitKey(16);
-                std::cout << "No contour area" << std::endl;
+        std::cout << "No contour area" << std::endl;
         continue;
       }
 
@@ -613,7 +636,7 @@ main(int argc, char* argv[]) {
 
       std::ostringstream filename;
       filename << "contour.svg";
-      //filename << "contour-" << ++count << ".svg";
+      // filename << "contour-" << ++count << ".svg";
 
       // filter_contours(contours2);
       export_svg<cv::Point2f>(contours2, filename.str());
@@ -686,7 +709,7 @@ main(int argc, char* argv[]) {
     // cv::createTrackbar("Thre", "demoProc", &thresholdValue, 255, &trackbar);
 
     charCheckForEscKey = cv::waitKey(100); // delay (in ms) and get key press, if any
-  }                                      // end while
+  }                                        // end while
 
   return (0);
 }

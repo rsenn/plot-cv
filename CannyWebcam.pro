@@ -17,3 +17,4 @@ LIBS += -L/opt/opencv4/lib -lopencv_core \
         -lopencv_highgui \
         -lopencv_videoio \
         -lopencv_imgproc \
+        -lopencv_imgcodecs \
