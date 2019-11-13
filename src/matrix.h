@@ -31,9 +31,7 @@ public:
 
   static cv::Mat_<T>
   rotation(double angle) {
-    cv::Mat_<T> ret(3, 3, typeId);
-    ret = cv::getRotationMatrix2D(cv::Point2f(0, 0), angle, 1);
-    return ret;
+    return (cv::Mat_<T>(3, 3) << std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1);
   }
   static cv::Mat_<T>
   scale(double scale) {
