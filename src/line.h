@@ -138,7 +138,7 @@ public:
     point_type norm(moment());
     point_type mom;
     moment_from_angle(phi, mom);
-     std::cout << "angle " << phi << " x=" << norm.x << ",y=" << norm.y << " x=" << mom.x << ",y=" << mom.y << std::endl;
+     std::cout << "angle " << (phi *180/M_PI) << " x=" << norm.x << ",y=" << norm.y << " x=" << mom.x << ",y=" << mom.y << std::endl;
 
     return phi;
   }
