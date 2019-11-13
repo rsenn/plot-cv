@@ -113,7 +113,11 @@ public:
   double
   angle() const {
     point_type diff = a - b;
-    return std::atan2(diff.x, diff.y);
+    
+double phi = std::atan2(diff.x, diff.y);
+std::cout << "angle " << phi << " x=" << diff.x << ",y=" << diff.y << std::endl;
+
+return phi;
   }
 
   double
