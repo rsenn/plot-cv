@@ -586,8 +586,8 @@ filter_lines(const std::vector<T>& c, bool (&pred)(const Line<T>&, size_t)) {
 }
 
 template <class ValueT, class InputIterator>
-  std::vector<typename std::iterator_traits<InputIterator>::value_type::value_type>
-  angle_diffs(Line<ValueT>& line, InputIterator from, InputIterator to) {
+std::vector<typename std::iterator_traits<InputIterator>::value_type::value_type>
+angle_diffs(Line<ValueT>& line, InputIterator from, InputIterator to) {
   typedef InputIterator iterator_type;
   typedef typename std::iterator_traits<InputIterator>::value_type point_type;
   typedef typename point_type::value_type value_type;
