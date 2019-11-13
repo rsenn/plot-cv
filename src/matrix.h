@@ -50,7 +50,7 @@ public:
   }
   static Matrix<T>
   identity() {
-    cv::Mat ret = (cv::Mat_<T>(3, 2) << 1, 0, 0, 0, 1, 0);
+    cv::Mat ret = (cv::Mat_<T>(3, 3) << 1, 0, 0, 0, 1, 0, 0, 0, 0);
     return ret;
   }
 };
