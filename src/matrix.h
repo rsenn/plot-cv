@@ -69,11 +69,7 @@ public:
 */
   static Matrix<T>
   rotation(double angle) {
-    Matrix<T> ret;
-    ret.setRow(0, {std::cos(angle), std::sin(angle), 0});
-    ret.setRow(1, {-std::sin(angle), std::cos(angle), 0});
-    ret.setRow(2, {0, 0, 1});
-    return ret;
+    return Matrix<T> ({std::cos(angle), std::sin(angle), 0}, {-std::sin(angle), std::cos(angle), 0});
   }
 
   cv::Affine3<T>
