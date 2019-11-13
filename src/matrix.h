@@ -72,3 +72,12 @@ to_string(const cv::Mat_<T>& mat) {
 
   return oss.str();
 }
+
+
+template <class Char, class Value>
+inline std::basic_ostream<Char>&
+operator<<(std::basic_ostream<Char>& os, const Matrix<Value>& m) {
+
+  os << '(' << m[0] << ',' << m[1] << ',' << m[2] << ')' << std::endl;
+  os << '(' << m[3] << ',' << m[4] << ',' << m[5] << ')'<< std::endl;
+}
