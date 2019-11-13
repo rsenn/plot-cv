@@ -6,6 +6,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgproc/types_c.h>
 #include <opencv2/imgcodecs.hpp>
+#include <unistd.h>
 
 #include "simple_svg_1.0.0.hpp"
 #include "psimpl.h"
