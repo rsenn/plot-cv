@@ -9,13 +9,12 @@ public:
 
   static const int typeId = std::is_same<T, double>::value ? CV_64F : CV_32F;
 
-  Matrix() : base_type(typed_type(3,3)) {}
+  Matrix() : base_type(typed_type(3, 3)) {}
   Matrix(base_type m) : base_type(m) {}
- Matrix(const typed_type& m) : base_type(m) {}
- template<class OtherT>
- Matrix(const Matrix<OtherT>& m) : base_type(m) {}
+  Matrix(const typed_type& m) : base_type(m) {}
+  template <class OtherT> Matrix(const Matrix<OtherT>& m) : base_type(m) {}
 
-template<class OtherT>
+  template <class OtherT>
 
   /**
    * @brief      { function_description }
@@ -33,7 +32,7 @@ template<class OtherT>
     std::transform(out.cbegin(), out.cend(), pt.begin(), [](const cv::Point3_<OtherT>& pt3) -> cv::Point_<OtherT> { return cv::Point_<OtherT>(pt3.x, pt3.y); });
   }
 
-template<class OtherT>
+  template <class OtherT>
   static void
   transform_point(const cv::Mat& m, cv::Point_<OtherT>& pt) {
     std::vector<cv::Point_<OtherT>> v = {pt};
@@ -43,30 +42,30 @@ template<class OtherT>
 
   operator base_type() const { return *this; }
 
-  static  cv::Mat
+  static cv::Mat
   rotation(double angle) {
-    return (typed_type(3,3) << std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1);
+    return (typed_type(3, 3) << std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1);
   }
 
-
-  static  cv::Mat
+  static cv::Mat
   scale(double scale) {
-     return (cv::Mat_<T>(3,3) << scale, 0, 0, 0, scale, 0, 0, 0, 1);
+    return (cv::Mat_<T>(3, 3) << scale, 0, 0, 0, scale, 0, 0, 0, 1);
   }
 
   template <class OtherT>
-  static  cv::Mat
+  static cv::Mat
   translation(OtherT x, OtherT y) {
-    return (cv::Mat_<T>(3,3) << 1, 0, T(x), 0, 1, T(y), 0, 0, 1);
+    return (cv::Mat_<T>(3, 3) << 1, 0, T(x), 0, 1, T(y), 0, 0, 1);
   }
   static cv::Mat
   identity() {
-    return (cv::Mat_<T>(3,3) << 1, 0, 0, 0, 1, 0, 0, 0, 1);
+    return (cv::Mat_<T>(3, 3) << 1, 0, 0, 0, 1, 0, 0, 0, 1);
   }
 };
 
 inline std::string
-to_string(const cv::Mat& mat) {  std::ostringstream oss;
+to_string(const cv::Mat& mat) {
+  std::ostringstream oss;
   oss << "rows: " << mat.rows;
   oss << " cols: " << mat.cols;
   for(int i = 0; i < mat.rows; ++i) {

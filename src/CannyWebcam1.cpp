@@ -884,11 +884,11 @@ main(int argc, char* argv[]) {
         }
         Matrix<double> m = Matrix<double>::identity();
         Matrix<double> s = Matrix<double>::scale(0.5);
-        Matrix<double> r = Matrix<double>::rotation(M_PI);
-        Matrix<double> t = Matrix<double>::translation(3, 6);
+        cv::Mat r = Matrix<double>::rotation(M_PI);
+        cv::Mat t = Matrix<double>::translation(3, 6);
         cv::Mat mult;
 
-         cv::matmul(t , r, mult);
+        cv::matmul(t, r, mult);
 
         cout << "matrix x " << to_string(mult) << endl;
         cout << "matrix init " << to_string(m) << endl;
@@ -896,9 +896,10 @@ main(int argc, char* argv[]) {
         cout << "matrix rotate " << to_string(r) << endl;
         cout << "matrix translate " << to_string(t) << endl;
 
-cv::Point2f p(100,50);
-        Matrix<double>::transform_point(mult, p);
-        cout << "transformed point: "<< p << endl;
+        cv::Point2f p(100, 50);
+        std::vector<cv::Point2f> pl = {p};
+        cv::transform(pl, pl, mult);
+        cout << "transformed point: " << pl << endl;
       }
 
       cout << "histogram:";
