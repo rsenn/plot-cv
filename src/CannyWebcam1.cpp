@@ -895,7 +895,7 @@ main(int argc, char* argv[]) {
 
         Matrix<double> m = Matrix<double>::identity();
         Matrix<double> s = Matrix<double>::scale(3);
-        Matrix<double> r = Matrix<double>::rotation_around(M_PI / 4, cv::Point2f(50, 50));
+        Matrix<double> r = Matrix<double>::rotation(M_PI / 4, cv::Point2f(50, 50));
         Matrix<double> t = Matrix<double>::translation(120, -60);
         Matrix<double> mult;
 
