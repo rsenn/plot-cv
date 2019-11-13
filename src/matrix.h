@@ -57,6 +57,17 @@ public:
   rotation(double angle) {
     return (typed_type(3, 3) << std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1);
   }
+    template <class OtherT>
+
+  static cv::Mat
+  rotation_around(double angle, const cv::Point_<OtherT>& origin) {
+    cv::Mat torigin = Matrix<T>::translation(-origin.x, -origin.y);
+
+    cv::Mat rot = (typed_type(3, 3) << std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1);
+cv::Mat tback = Matrix<T>::translation(origin.x, origin.y);
+
+return torigin * rot * tback;
+  }
 
   static cv::Mat
   scale(double scale) {
