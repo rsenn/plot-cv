@@ -118,9 +118,7 @@ public:
   }
 
   T
-  get(int row, int col) const {
-    return *base_type::ptr();
-  }
+  get(int row, int col) const { return *base_type::ptr(); }
 
   const T&
   ref(int row, int col) const { return *ptr(row, col); }
