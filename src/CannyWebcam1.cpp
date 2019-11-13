@@ -517,7 +517,7 @@ writeImage(const cv::Mat& img) {
   static int count = 0;
   std::ostringstream filename;
   filename << "frame-";
-  filename << to_string((++count) % 100);
+  filename << to_string((++count) % 100, 3, '0');
   filename << ".png";
 
   cv::imwrite(cv::String(filename.str()), img);
