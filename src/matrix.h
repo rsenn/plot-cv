@@ -87,7 +87,7 @@ public:
       c = cv::Mat(cv::Mat_<T>(3, 3) << (1, 0, T(origin.x), 0, 1, T(origin.y), 0, 0, 1));
     }
 
-    return a * b * c;
+    return a.multiply(b).multiply(c);
   }
 
   static cv::Mat
