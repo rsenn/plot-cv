@@ -65,7 +65,7 @@ to_string(const cv::Mat_<T>& mat) {
     for(int j = 0; j < row.cols; ++j) {
       if(j) 
         oss << ",";
-      oss << row[j];
+      oss << *row[j];
     }
     oss << "} ";
   }
