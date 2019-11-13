@@ -122,9 +122,9 @@ public:
   Matrix<T>&
   init(const cv::Mat& other) {
     if(other.rows > 2)
-      init(other[0], other[1], other[2]);
+      init(other.ptr<T>(0,0), other.ptr<T>(1,0), other.ptr<T>(2,0));
     else
-      init(other[0], other[1], {0, 0, 1});
+      init(other.ptr<T>(0,0), other.ptr<T>(1,0), {0, 0, 1});
     return *this;
   }
 
