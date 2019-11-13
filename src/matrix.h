@@ -61,13 +61,13 @@ to_string(const cv::Mat_<T>& mat) {
 
   for(int i = 0; i < mat.rows; ++i)  {
     const auto& row = mat.row(i);
-    oss << " {";
+    oss << "(";
     for(int j = 0; j < row.cols; ++j) {
       if(j) 
-        oss << ",";
+        oss << ", ";
       oss << *row[j];
     }
-    oss << "} ";
+    oss << ")";
   }
 
   return oss.str();
