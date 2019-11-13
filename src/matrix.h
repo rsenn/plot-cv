@@ -128,9 +128,9 @@ public:
       for(j = 0; j < base_type::cols; j++) {
         product = 0;
         for(k = 0; k < base_type::cols; k++) {
-          product +=  at<T>(i, k) * other.at<T>(k, j);
+          product +=  at<T>(i, k) * other(k, j);
         }
-        ret.at<T>(i, j) = product;
+        ret(i, j) = product;
       }
     }
     return ret;
