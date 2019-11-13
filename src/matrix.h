@@ -115,7 +115,7 @@ public:
 
   T
   get(int row, int col) const {
-    return base_type::at<T>(row, col);
+    return *ptr();
   }
 
   const T&
