@@ -104,7 +104,7 @@ to_string(const cv::Mat& mat) {
       if(mat.type() == CV_64F)
         oss << mat.at<double>(i, j);
       else if(mat.type() == CV_32F)
-        oss << mat.at<float>(i, j);
+        oss << std::fixed << mat.at<float>(i, j);
     }
     oss << ")";
   }
