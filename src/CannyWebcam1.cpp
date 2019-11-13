@@ -887,8 +887,8 @@ main(int argc, char* argv[]) {
       auto s = Matrix<double>::scale(0.5);
       auto r = Matrix<double>::rotation(M_PI_2);
       //auto t = Matrix<double>::translation(M_PI_2);
-      cout << to_string(s) << endl;
-      cout << to_string(r) << endl;
+      cout << "matrix scale " << to_string(s) << endl;
+      cout << "matrix rotate " << to_string(r) << endl;
 
       cout << "histogram:";
 
