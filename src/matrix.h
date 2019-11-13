@@ -10,9 +10,9 @@ public:
   static const int typeId = std::is_same<T, double>::value ? CV_64F : CV_32F;
 
   Matrix() : base_type(cv::Mat::zeros(3,3, typeId)) { }
-  Matrix(const base_type& m) : base_type() { base_type::operator=(m); }
-  Matrix(const typed_type& m) : base_type() { base_type::operator=(m); }
-  template <class OtherT> Matrix(const Matrix<OtherT>& m) : base_type() { base_type::operator=(m); }
+  Matrix(const base_type& m) : base_type(3,3,typeId) { m.copyTo(*this); }
+  Matrix(const typed_type& m) : base_type(3,3,typeId) { m.copyTo(*this); }
+  template <class OtherT> Matrix(const Matrix<OtherT>& m) : base_type(3,3,typeId) { m.copyTo(*this); }
 
   /**
    * @brief      { function_description }
