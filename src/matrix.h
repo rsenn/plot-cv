@@ -32,18 +32,18 @@ public:
   transform_points(InputIterator from, InputIterator to) const {
     std::for_each(from, to, std::bind(&Matrix<T>::convert_point, this, std::placeholders::_1, std::placeholders::_1));
   }
-  /*
-    Matrix<T>&
-    operator=(const cv::MatExpr& expr) {
-      base_type::operator=(expr);
-      return *this;
-    }
 
-    Matrix<T>&
-    operator=(const Matrix<T>& other) {
-      other.copyTo(*this);
-      return *this;
-    }*/
+  Matrix<T>&
+  operator=(const cv::MatExpr& expr) {
+    init(cv::Mat(expr));
+    return *this;
+  }
+
+  Matrix<T>&
+  operator=(const Matrix<T>& other) {
+    init(other);
+    return *this;
+  }
 
   cv::Point_<T>
   transform_point(const cv::Point_<T>& pt) const {
@@ -160,8 +160,8 @@ public:
     return ret;
   }
 
-  T* operator[](int row) { return ptr(row, 0); }
-  T const* operator[](int row) const { return ptr(row, 0); }
+  std::array<T, 3>& operator[](int row) { return *reinterpret_cast<std::array<T, 3>*>(ptr(row, 0)); }
+  std::array<T, 3> const& operator[](int row) const { return *reinterpret_cast<std::array<T, 3> const*>(ptr(row, 0)); }
 
   Matrix<T>&
   multiplicate(const Matrix<T>& matrix2) {
