@@ -213,8 +213,11 @@ protected:
   }
   template <class R = std::array<T, 3>>
   Matrix<T>&
-  setRow(int row, R arr) {
-    for(int i = 0; i < base_type::cols; ++i) set(row, i, T(arr[i]));
+  setRow(int row, R arg) {
+    std::array<T,3>& arr = operator[](row);
+    for(int i = 0; i < base_type::cols; ++i)
+      arr[i] = arg[i];
+
     return *this;
   }
 
