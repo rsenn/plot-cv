@@ -156,7 +156,7 @@ public:
   }
 
   ValueT
-  min_distance(Line<ValueT>& l2, size_t* point_index = nullptr, size_t* endpoint_foreign = nullptr) const {
+  min_distance(Line<ValueT>& l2, size_t* point_index = nullptr) const {
     std::pair<ValueT, size_t> dist = endpoint_distances(l2);
     /* if(intersect(l2))
        return 0;*/
