@@ -63,14 +63,14 @@ public:
 
   /*static cv::Mat
   rotation(double angle) {
-    return (typed_type(3, 3) << std::cos(T(angle)), std::sin(T(angle)), 0, -std::sin(T(angle)), std::cos(T(angle)), 0, 0, 0, 1);
+    return (typed_type(3, 3) << std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1);
   }
 */
   static Matrix<T>
   rotation(double angle) {
     Matrix<T> ret;
-    ret.setRow(0, {std::cos(T(angle)), std::sin(T(T(angle))), 0});
-    ret.setRow(1, {-std::sin(T(T(angle))), std::cos(T(T(angle))), 0});
+    ret.setRow(0, {T(std::cos(angle)), T(std::sin(angle)), 0});
+    ret.setRow(1, {-T(std::sin(angle)), T(std::cos(angle)), 0});
     ret.setRow(2, {0, 0, 1});
     return ret;
   }
@@ -82,7 +82,9 @@ public:
 
   static Matrix<T>
   create(int xx, int xy, int yx, int yy, int tx, int ty) {
-    return (cv::Mat_<T>(3, 3) << (T(xx), T(xy), T(yx), T(yy), T(tx), T(ty)));
+    Matrix<T> ret;
+    ret.init(T(xx), T(xy), T(yx), T(yy), T(tx), T(ty));
+    return ret;
   }
 
   template <class R = std::array<T, 3>>
@@ -116,10 +118,11 @@ public:
     Matrix<T> c = Matrix<T>::identity();
 */
     if(origin != zero)
-      ret.multiplicate(Matrix<T>(1, 0, T(-origin.x), 0, 1, T(-origin.y)));
+      ret.multiplicate(Matrix<T>(1, 0, -T(origin.x), 0, 1, -T(origin.y)));
   
 
-   ret.multiplicate(Matrix<T>(std::cos(T(angle)), std::sin(T(angle)), 0, -std::sin(T(angle)), std::cos(T(angle)), 0));
+   ret.multiplicate(Matrix<T>(T(std::cos(angle)), T(std::sin(angle)), 0, -
+    T(std::sin(angle)), T(std::cos(angle)), 0));
 
     if(origin != zero)
       ret.multiplicate(Matrix<T>(1, 0, T(origin.x), 0, 1, T(origin.y)));
@@ -211,14 +214,12 @@ public:
   multiplicate(const Matrix<T>& matrix2) {
     Matrix<T> const & matrix1 = *this;
     Matrix<T> product;
-
     for(int x = 0; x < 3; ++x)
       for(int y = 0; y < 3; ++y) {
-        double sum = 0;
+        T sum = 0;
         for(int z = 0; z < 3; ++z) sum += matrix1[x][z] * matrix2[z][y];
         product.set(x, y, sum);
       }
-
     product.copyTo(*this);
     return *this;
   }
@@ -226,7 +227,7 @@ public:
   Matrix<T>
   product(const Matrix<T>& other) const {
     T product;
-    Matrix<T> ret(cv::Mat(cv::Mat::zeros(3, 3, typeId)));
+    Matrix<T> ret;
     int i, j, k;
     for(i = 0; i < base_type::rows; i++) {
       for(j = 0; j < base_type::cols; j++) {
@@ -234,7 +235,7 @@ public:
         for(k = 0; k < base_type::cols; k++) {
           product += get(i, k) * other.get(k, j);
         }
-        ret[i][j] += product;
+        ret.set(i,j,product);
       }
     }
     return ret;
