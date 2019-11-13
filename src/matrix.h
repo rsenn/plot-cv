@@ -118,6 +118,31 @@ cv::Affine3<T> affine() const {
                                          1));
   }*/
 
+
+  const T &operator()(int row, int col) const   {
+    return reinterpret_cast<base_type const *>(this)->at<T>(row, col);
+  }
+
+  T& operator()(int row, int col)   {
+    return reinterpret_cast<base_type *>(this)->at<T>(row, col);
+  }
+
+    Matrix<T>&
+        multiply(const Matrix<T>& other) {
+          T product;
+          int i,j,k;
+            for ( i = 0; i < 3; i++){
+                for ( j = 0; j < 3; j++){
+                     product = 0; 
+                     for ( k = 0; k < 3; k++){
+                        product += operator()(i, k) * other(k, j);
+                     }
+                     operator()(i, j, product);
+
+                }
+            }  
+        } 
+
   Matrix<T>
   operator*=(const Matrix<T>& other) {
     cv::Mat prod = (*this) * other;
