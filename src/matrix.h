@@ -10,6 +10,7 @@ public:
   static const int typeId = std::is_same<T, double>::value ? CV_64F : CV_32F;
 
   Matrix() : base_type(cv::Mat::zeros(3,3, typeId)) { }
+  Matrix(int xx, int xy, int yx, int yy, int tx, int ty) : base_type(3,3,typeId) {  }
   Matrix(const base_type& m) : base_type(3,3,typeId) { m.copyTo(*this); }
   Matrix(const typed_type& m) : base_type(3,3,typeId) { m.copyTo(*this); }
   template <class OtherT> Matrix(const Matrix<OtherT>& m) : base_type(3,3,typeId) { m.copyTo(*this); }
@@ -30,7 +31,7 @@ public:
   transform_points(InputIterator from, InputIterator to) const {
     std::for_each(from, to, std::bind(&Matrix<T>::convert_point, this, std::placeholders::_1, std::placeholders::_1));
   }
-
+/*
   Matrix<T>&
   operator=(const cv::MatExpr& expr) {
     base_type::operator=(expr);
@@ -41,7 +42,7 @@ public:
   operator=(const Matrix<T>& other) {
     other.copyTo(*this);
     return *this;
-  }
+  }*/
 
   cv::Point_<T>
   transform_point(const cv::Point_<T>& pt) const {
@@ -72,6 +73,18 @@ public:
   cv::Affine3<T>
   affine() const {
     return cv::Affine3<T>(*this);
+  }
+
+  static Matrix<T>
+  create(int xx, int xy, int yx, int yy, int tx, int  ty) {
+  return  cv::Mat(cv::Mat_<T>(3, 3) << (T(xx), T(xy), T(yx), T(yy), T(tx), T(ty)));
+
+  }
+
+  Matrix<T>&
+  init(int xx, int xy, int yx, int yy, int tx, int  ty) {
+    cv::Mat(cv::Mat_<T>(3, 3) << (T(xx), T(xy), T(yx), T(yy), T(tx), T(ty))).copyTo(*this);
+    return *this;
   }
 
   template <class OtherT = float>
