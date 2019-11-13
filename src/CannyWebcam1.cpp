@@ -912,7 +912,7 @@ main(int argc, char* argv[]) {
            std::vector<cv::Point2f> ol;
 
            mult.transform_points(pl.cbegin(), pl.cend(), std::back_inserter(ol));
-           cout << "transformed point: " << ol << endl;*/
+           cout << "transformed point: " << ol << endl;
       }
 
       cout << "histogram:";
