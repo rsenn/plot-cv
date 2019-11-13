@@ -217,8 +217,8 @@ protected:
   template <class R = std::array<T, 3>>
   Matrix<T>&
   setRow(int row, R arg) {
-    std::array<T,3>& arr = operator[](row);
-    std::copy(arg.cbegin(), arg.cend(), arr.begin());
+    T* arr = ptr(row, 0);
+    std::copy(arg.cbegin(), arg.cend(), arr);
     return *this;
   }
 
