@@ -13,6 +13,7 @@
 #include "line.h"
 
 #include <iostream>
+#include <algorithm>
 #include <list>
 #include <functional>
 typedef std::vector<cv::Point> PointVec;
@@ -558,17 +559,24 @@ drawAllContours(cv::Mat& out, std::vector<PointVec>& contours) {
   }
 }
 
+template <class Container>
 void
-drawAllLines(cv::Mat& out, std::vector<Line<float>>& lines) {
+drawAllLines(cv::Mat& out,
+             const Container& lines,
+             const std::function<int(int, size_t)>& hue = [](int index, size_t len) -> int {
+               return (index * 360 * 10 / len) % 360;
+             }) {
 
-  for(size_t i = 0; i < lines.size(); i++) {
-    const cv::Scalar color = HSVtoRGB((i * 360 * 10 / lines.size()) % 360, 1.0, 1.0);
+  typedef typename Container::const_iterator iterator_type;
+  for(iterator_type it = lines.cbegin(); it != lines.cend(); it++) {
+    size_t i = std::distance(lines.cbegin(), it);
+    const cv::Scalar color = HSVtoRGB(hue(i, lines.size()), 1.0, 1.0);
 
-    const double len = lines[i].length();
+    const double len = it->length();
     if(len < 8)
       continue;
 
-    cv::line(out, cv::Point(lines[i].a), cv::Point(lines[i].b), color, 1, cv::LINE_AA);
+    cv::line(out, cv::Point(it->a), cv::Point(it->b), color, 1, cv::LINE_AA);
   }
 }
 
@@ -627,8 +635,6 @@ main(int argc, char* argv[]) {
     cv::cvtColor(imgOriginal, frameLab, cv::COLOR_BGR2Lab);
     cv::split(frameLab, frameLabCn);
     frameLabCn[0].copyTo(imgGrayscale);
-    // cv::cvtColor(imgOriginal, imgOriginal, cv::COLOR_GRAY2BGR);
-    cv::imshow("imgGrayscale", imgGrayscale); //
 
     // cvtColor(imgOriginal, imgGrayscale, CV_BGR2GRAY); // convert to grayscale
     std::vector<cv::Vec3f> circles;
@@ -641,6 +647,7 @@ main(int argc, char* argv[]) {
     cv::GaussianBlur(imgGrayscale, imgBlurred, cv::Size(5, 5), 1.75, 1.75);
 
     cv::Canny(imgBlurred, imgCanny, thresh, thresh * 2, 3);
+    cv::cvtColor(imgGrayscale, imgGrayscale, cv::COLOR_GRAY2BGR);
 
     //  applyCLAHE(imgOriginal, imgOriginal);XY
     {
@@ -673,13 +680,6 @@ main(int argc, char* argv[]) {
       std::for_each(contours.cbegin(), contours.cend(), [&](const std::vector<cv::Point>& a) {
         size_t i;
 
-        for(i = 0; i + 2 < a.size(); i++) {
-          Line<float> l(a[i], a[i + 1]);
-
-          if(l.length() > 0)
-            lines.push_back(l);
-        }
-
         if(a.size() >= 3) {
 
           Point2fVec c;
@@ -701,38 +701,78 @@ main(int argc, char* argv[]) {
         continue;
       }
 
+      std::for_each(contours2.cbegin(), contours2.cend(), [&lines](const std::vector<cv::Point2f>& a) {
+        double len = cv::arcLength(a, false);
+        double area = cv::contourArea(a);
+
+        if(len >= 2) {
+
+          for(size_t i = 0; i + 1 < a.size(); i++) {
+
+            Line<float> l(a[i], a[i + 1]);
+
+            if(l.length() > 0)
+              lines.push_back(l);
+          }
+        }
+      });
+
       std::cout << "Num contours: " << contours.size() << std::endl;
       /*
             std::for_each(lines.begin(), lines.end(), [&](const Line<float>& l) {
               const Line<float>& nearest = findNearestLine(l, lines);
             });*/
       std::list<Line<float>> filteredLines;
+      std::vector<bool> takenLines;
+      std::vector<float> lineLengths;
+      takenLines.resize(lines.size());
 
-      std::copy_if(lines.cbegin(), lines.cend(), std::back_inserter(filteredLines), [&](const Line<float>& l) -> bool {
-        return true;
-      });
-      lines.clear();
+      //     std::sort(lines.begin(), lines.end());
 
-      typedef std::list<Line<float>>::iterator list_iterator;
-      list_iterator line = filteredLines.begin();
-      while(line != filteredLines.end()) {
-        list_iterator next(line);
-        ++next;
-        list_iterator it = std::find(filteredLines.begin(), filteredLines.end(), *line);
-        Line<float> nearest = findNearestLine(*line, filteredLines);
-        filteredLines.erase(line);
+      std::transform(lines.cbegin(), lines.cend(), std::back_inserter(lineLengths), [&](const Line<float>& l) -> float
+       { return l.length();
+       });
 
-        if((it = std::find(filteredLines.begin(), filteredLines.end(), nearest)) != filteredLines.end()) {
-          line = it;
-          continue;
-        }
-        std::cout << "line list: " << *line << std::endl;
-        line = next;
+      float avg = std::accumulate(lineLengths.cbegin(), lineLengths.cend(), 0) / lineLengths.size(); 
+
+
+
+      for(size_t i = 0; i < lines.size(); ++i) {
+        Line<float>& line = lines[i];
+
+        double length = line.length();
+
+double range = (length - avg) / 2;
+        if(length > (length - range))
+
+        filteredLines.push_back(line);
       }
 
-      std::for_each(filteredLines.begin(), filteredLines.end(), [&](Line<float>& l) {
-
+      drawAllLines(imgGrayscale, filteredLines, [&](int index, size_t len) -> int {
+        return lines[index].length() * 10;
       });
+      //   lines.clear();
+      /*
+            typedef std::list<Line<float>>::iterator list_iterator;
+            list_iterator line = filteredLines.begin();
+            while(line != filteredLines.end()) {
+              list_iterator next(line);
+              ++next;
+              list_iterator it = std::find(filteredLines.begin(), filteredLines.end(), *line);
+              Line<float> nearest = findNearestLine(*line, filteredLines);
+              filteredLines.erase(line);
+
+              if((it = std::find(filteredLines.begin(), filteredLines.end(), nearest)) != filteredLines.end()) {
+                line = it;
+                continue;
+              }
+              std::cout << "line list: " << *line << std::endl;
+              line = next;
+            }*/
+      /*
+            std::for_each(filteredLines.begin(), filteredLines.end(), [&](Line<float>& l) {
+
+            });*/
 
       std::cout << "Num lines: " << lines.size() << std::endl;
       std::cout << "Num filteredLines: " << filteredLines.size() << std::endl;
@@ -740,17 +780,11 @@ main(int argc, char* argv[]) {
       //   drawAllLines(imgOriginal, filteredLines);
 
       //  std::cout << contourStr.str() << std::endl;
-
-      for(size_t i = 0; i < contours.size(); ++i) {
-        std::vector<cv::Point> c = contours[i];
-        cv::Vec4i h = hier[i];
-
-        /*   std::cout << '#' << i << std::endl;
-           out_points(std::cout, c);
-           ///  std::cout << c << std::endl;
-           out_hier(std::cout, h);
-           std::cout << std::endl;*/
-      }
+      /*
+            for(size_t i = 0; i < contours.size(); ++i) {
+              std::vector<cv::Point> c = contours[i];
+              cv::Vec4i h = hier[i];
+      }*/
 
       std::ostringstream filename;
       filename << "contour.svg.tmp";
@@ -796,11 +830,15 @@ main(int argc, char* argv[]) {
         // cv::drawContours(imgOriginal, list, -1, cv::Scalar(255, 255, 0), 1);
       });
 
-      // drawAllContours(imgOriginal, contours);
+      drawAllContours(imgOriginal, contours);
 
       // CV_WINDOW_AUTOSIZE is the default
-      cv::imshow("imgOriginal", imgOriginal); // show windows
-                                              // cv::imshow("imgGrayscale", imgBlurred); //
+      cv::imshow("imgOriginal", imgOriginal);
+
+      cv::imshow("imgGrayscale", imgGrayscale); //
+
+      // show windows
+      // cv::imshow("imgGrayscale", imgBlurred); //
 
       // cv::createTrackbar("Thre", "demoProc", &thresholdValue, 255, &trackbar);
 
