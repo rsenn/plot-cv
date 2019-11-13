@@ -122,9 +122,9 @@ public:
   Matrix<T>&
   init(const cv::Mat& other) {
     if(other.rows > 2)
-      init({other.at<T>(0, 0), other.at<T>(0, 1), other.at<T>(0, 2)}, {other.at<T>(1, 0), other.at<T>(1, 1), other.at<T>(1, 2)}, {other.at<T>(2, 0), other.at<T>(2, 1), other.at<T>(2, 2)});
+      init(other[0], other[1], other[2]);
     else
-      init({other.at<T>(0, 0), other.at<T>(0, 1), other.at<T>(0, 2)}, {other.at<T>(1, 0), other.at<T>(1, 1), other.at<T>(1, 2)}, {0, 0, 1});
+      init(other[0], other[1], {0, 0, 1});
     return *this;
   }
 
