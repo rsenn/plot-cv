@@ -560,18 +560,31 @@ template <class InputIterator, class Pred>
 std::vector<int>
 filterLines(InputIterator from, InputIterator to, Pred predicate) {
   typedef InputIterator iterator_type;
-  typedef typename std::iterator_traits<InputIterator>::value_type lineType;
+  typedef typename std::iterator_traits<InputIterator>::value_type value_type;
   std::vector<int> ret;
-
+size_t index = 0;
   for(iterator_type it = from; it != to; ++it) {
 
-    if(predicate(*it)) {
+    if(predicate(*it, index++)) {
 
       std::size_t index = std::distance(from, it);
       ret.push_back(index);
     }
   }
   return ret;
+}
+
+
+template<class T>
+class PredicateTraits {
+public:
+typedef   bool type(const Line<T>&,size_t);
+typedef   std::function<bool(const Line<T>&,size_t)> function;
+};
+template <class T, class Pred>
+std::vector<int>
+filterLines(const std::vector<T>& c, bool (&pred)(const Line<T>&,size_t)) {
+  return filterLines< std::vector<Line<T>>::iterator, bool (Line<T>&,size_t) > (c.begin(), c.end(), pred);
 }
 
 template <class ValueT, class InputIterator>
@@ -813,7 +826,7 @@ main(int argc, char* argv[]) {
           vector<LineEnd<float>> line_ends;
           vector<Line<float>*> adjacent_lines;
 
-          vector<int> adjacent = filterLines(lines.begin(), lines.end(), [&](Line<float>& l2) -> bool {
+          vector<int> adjacent = filterLines(lines.begin(), lines.end(), [&](Line<float>& l2, size_t index)  -> bool {
             size_t point_index;
             double min_dist = line.min_distance(l2, &point_index);
             bool intersects = line.intersect(l2);
@@ -828,7 +841,7 @@ main(int argc, char* argv[]) {
 
           transform(adjacent.begin(), adjacent.end(), back_inserter(adjacent_lines), [&](int index) -> Line<float>* { return &lines[index]; });
 
-          vector<int> parallel = filterLines(lines.begin(), lines.end(), [&line](Line<float>& l2) -> bool { return fabs((line.angle() - l2.angle()) * 180 / M_PI) < 3; });
+          vector<int> parallel = filterLines(lines.begin(), lines.end(), [&line](Line<float>& l2, size_t)  { return fabs((line.angle() - l2.angle()) * 180 / M_PI) < 3; });
 
           std::cout << "adjacent " << adjacent << endl;
           std::cout << "parallel " << parallel << endl;
