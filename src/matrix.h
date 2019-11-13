@@ -208,8 +208,11 @@ public:
 protected:
   Matrix<T>&
   set(int row, int col, const T& value) {
-    std::array<T,3>& arr = operator[](row);
-    arr[col] = value;
+       if(base_type::type() == CV_64F)
+       *base_type::ptr<double>(row, col) = value;
+
+    else if(base_type::type() == CV_32F)
+      *base_type::ptr<float>(row, col) = value;
     return *this;
   }
 
@@ -224,7 +227,11 @@ protected:
 
   T
   get(int row, int col) const {
-    return *base_type::ptr();
+   if(base_type::type() == CV_64F)
+      return *base_type::ptr<double>(row, col);
+    if(base_type::type() == CV_32F)
+      return *base_type::ptr<float>(row, col);
+    return T();
   }
 
   const T&
