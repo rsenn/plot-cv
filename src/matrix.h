@@ -35,10 +35,11 @@ public:
   }
 
   template <class OtherT>
- void
-  transform_point(cv::Point_<OtherT>& pt) {
-    pt.x = at<T>(0,0) * pt.x + at<T>(0,1) * pt.y + at<T>(0,2);
-    pt.y = at<T>(1,0) * pt.x + at<T>(1,1) * pt.y + at<T>(1,2);
+   cv::Point_<OtherT>
+  transform_point(const cv::Point_<OtherT>& pt) const {
+    OtherT x = at<T>(0,0) * pt.x + at<T>(0,1) * pt.y + at<T>(0,2);
+    OtherT y = at<T>(1,0) * pt.x + at<T>(1,1) * pt.y + at<T>(1,2);
+    return cv::Point_<OtherT>(x,y);
   };
 
   operator base_type() const { return *this; }
