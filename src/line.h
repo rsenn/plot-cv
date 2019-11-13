@@ -115,8 +115,9 @@ public:
     point_type diff = a - b;
         
     double phi = std::atan2(diff.x, diff.y);
-    double len = length();
-    std::cout << "angle " << phi << " x=" << (diff.x / len) << ",y=" << (diff.y / len) << std::endl;
+double len = length();
+    point_type norm( diff.x / len, diff.y / len);
+    std::cout << "angle " << phi << " x=" << norm.x << ",y=" <<  norm.y  << std::endl;
 
     return phi;
   }
@@ -125,6 +126,7 @@ public:
   distance(const point_type& p) const {
     return std::sqrt(segment_distance2(&a.x, &b.x, &p.x));
   }
+
   std::pair<ValueT, size_t>
   endpoint_distances(const Line<ValueT>& l) const {
     size_t offs1, offs2;
