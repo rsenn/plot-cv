@@ -35,9 +35,7 @@ public:
   }
   static cv::Mat_<T>
   scale(double scale) {
-    cv::Mat_<T> ret(3, 3, typeId);
-    ret = cv::getRotationMatrix2D(cv::Point2f(0, 0), 0, scale);
-    return ret;
+     return (cv::Mat_<T>(3, 3) << scale, 0, 0, 0, scale, 0, 0, 0, 1);
   }
 
   template <class OtherT>
@@ -48,7 +46,7 @@ public:
   }
   static Matrix<T>
   identity() {
-    cv::Mat ret = (cv::Mat_<T>(3, 3) << 1, 0, 0, 0, 1, 0, 0, 0, 0);
+    cv::Mat ret = (cv::Mat_<T>(3, 3) << 1, 0, 0, 0, 1, 0, 0, 0, 1);
     return ret;
   }
 };
