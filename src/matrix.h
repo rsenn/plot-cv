@@ -128,9 +128,9 @@ public:
   }
 
   Matrix<T>
-  multiply(const Matrix<T>& other) {
+  product(const Matrix<T>& other) const {
     T product;
-    Matrix<T> ret;
+    Matrix<T> ret(Matrix<T>::identity());
     int i, j, k;
     for(i = 0; i < 3; i++) {
       for(j = 0; j < 3; j++) {
@@ -142,6 +142,11 @@ public:
       }
     }
     return ret;
+  }
+  Matrix<T>&
+  multiply(const Matrix<T>& other) {
+    *this = product(other);
+    return *this;
   }
 
   Matrix<T>
