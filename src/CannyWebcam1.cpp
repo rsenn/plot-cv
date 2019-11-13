@@ -8,6 +8,7 @@
 #include <opencv2/imgcodecs.hpp>
 
 #include "simple_svg_1.0.0.hpp"
+#include "psimpl.h"
 
 #include <iostream>
 #include <functional>
@@ -23,6 +24,38 @@ int thresholdValue = 155;
 bool showDiagnostics = false;
 std::vector<cv::Point2f> bigContour;
 double epsilon = 3;
+
+template <class ValueT>
+ValueT*
+coordPointer(cv::Point_<ValueT>* point_ptr) {
+  return reinterpret_cast<ValueT*>(point_ptr);
+}
+template <class ValueT>
+const ValueT*
+coordPointer(const cv::Point_<ValueT>* point_ptr) {
+  return reinterpret_cast<const ValueT*>(point_ptr);
+}
+
+template <class PointT>
+std::vector<PointT>
+simplifyPolyline(const std::vector<PointT>& points) {
+  typedef typename PointT::value_type coord_type;
+  std::vector<PointT> ret;
+  ret.resize(points.size());
+
+  psimpl::PolylineSimplification<2, const coord_type*, coord_type*> psimpl;
+  auto output = coordPointer(ret.data());
+
+  // auto end = psimpl.NthPoint(coordPointer(points.data()), coordPointer(&points.data()[points.size()]), 20, output);
+  // auto end = psimpl.RadialDistance(coordPointer(points.data()), coordPointer(&points.data()[points.size()]), 10,
+  // output);
+  auto end = psimpl.Opheim(coordPointer(points.data()), coordPointer(&points.data()[points.size()]), 4, 30, output);
+  size_t outn = std::distance(output, end) / 2;
+
+  std::cout << "simplification 1:" << ((double)points.size() / outn) << std::endl;
+  ret.resize(outn);
+  return ret;
+}
 
 // Function that calculates the absolute value
 
@@ -73,7 +106,7 @@ to_string(const T& t) {
 void
 filter_contours(std::vector<std::vector<cv::Point2f>> contours_un) {
   double maxArea = 0.0;
-  for(int i = 0; i < contours_un.size(); i++) {
+  for(size_t i = 0; i < contours_un.size(); i++) {
     double area = contourArea(contours_un[i]);
     if(showDiagnostics) {
       std::cout << "Area: " + to_string(area) + "Index: " + to_string(i) << std::endl;
@@ -92,7 +125,7 @@ polylineFromContour(svg::Document& doc,
                     std::function<svg::Color(const std::vector<cv::Point2f>&)> color_fn) {
   svg::Polyline polyline(svg::Stroke(1, color_fn(contour_arg)));
 
-  for(int i = 0; i < contour_arg.size(); i++) {
+  for(size_t i = 0; i < contour_arg.size(); i++) {
     svg::Point tmp = svg::Point(contour_arg.at(i).x, contour_arg.at(i).y);
     polyline << tmp;
   }
@@ -107,7 +140,7 @@ polylineFromContour(svg::Document& doc,
  *
  * output[3]: Output, array size 3, int
  */
-svg::Color
+cv::Scalar
 HSVtoRGB(int H, double S, double V) {
   double C = S * V;
   double X = C * (1 - abs(fmod(H / 60.0, 2) - 1));
@@ -140,7 +173,12 @@ HSVtoRGB(int H, double S, double V) {
     Bs = X;
   }
 
-  return svg::Color((Rs + m) * 255, (Gs + m) * 255, (Bs + m) * 255);
+  return cv::Scalar((int)((Rs + m) * 255), (int)((Gs + m) * 255), (int)((Bs + m) * 255));
+}
+
+svg::Color
+fromScalar(const cv::Scalar& s) {
+  return svg::Color(s[0], s[1], s[2]);
 }
 
 template <class FromT, class ToT>
@@ -185,7 +223,7 @@ export_svg(const std::vector<std::vector<PointType>>& contours, std::string outp
 
   const auto& cfn = [&](const std::vector<PointType>& contour) -> svg::Color {
     const double area = cv::contourArea(contour);
-    return HSVtoRGB(area / max_area * 360, 1, 1);
+    return fromScalar(HSVtoRGB(area / max_area * 360, 1, 1));
   };
   std::for_each(contours.cbegin(),
                 contours.cend(),
@@ -213,7 +251,7 @@ polygonArea(std::vector<P> list) {
   /* Given vertices from 1 to n, we first loop through
   the vertices 2 to n - 1. We will take into account
   vertex 1 and vertex n sepereately */
-  for(unsigned int i = 1; i < last; i++) {
+  for(size_t i = 1; i < last; i++) {
     diff = list[i + 1].y - list[i - 1].y;
     area += list[i].x * diff;
   }
@@ -440,6 +478,7 @@ invertColor(cv::Mat& img) {
   for(int i = 0; i < img.rows; i++)
     for(int j = 0; j < img.cols; j++) img.at<uchar>(i, j) = 255 - img.at<uchar>(i, j);
 }
+
 std::vector<cv::Vec4i>
 houghLines(cv::Mat& imgToMap) {
   cv::Mat imgToMapProc;
@@ -506,14 +545,16 @@ main(int argc, char* argv[]) {
   int camID = argc > 1 ? atoi(argv[1]) : 0;
   int count = 0;
 
-  cv::VideoCapture capWebcam(
-      camID, cv::CAP_V4L2); // declare a VideoCapture object and associate to webcam, 0 => use 1st webcam
+  cv::VideoCapture capWebcam;
+
+/*
+  capWebcam.open(camID, cv::CAP_V4L2); // declare a VideoCapture object and associate to webcam, 0 => use 1st webcam
 
   if(capWebcam.isOpened() == false) { // check if VideoCapture object was associated to webcam successfully
     std::cout << "error: capWebcam not accessed successfully\n\n"; // if not, print error message to std out
     getchar();                                                     // may have to modify this line if not using Windows
     return (0);                                                    // and exit program
-  }
+  }*/
 
   cv::Mat imgRaw, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny; // Canny edge image
 
@@ -527,13 +568,16 @@ main(int argc, char* argv[]) {
   cv::namedWindow("imgOriginal", CV_WINDOW_AUTOSIZE);
   // or CV_WINDOW_AUTOSIZE for a fixed size window matching the resolution of the image
   cv::namedWindow("imgCanny", CV_WINDOW_AUTOSIZE);
-  cv::namedWindow("imgGrayscale", CV_WINDOW_AUTOSIZE);
+ // cv::namedWindow("imgGrayscale", CV_WINDOW_AUTOSIZE);
   /*cv::createTrackbar("epsilon", "contours", &eps, 7, trackbar);
   cv::createTrackbar("blur", "contours", &blur, 7, trackbar);
   trackbar(0, 0);
 */
-  while(charCheckForEscKey != 27 && capWebcam.isOpened()) { // until the Esc key is pressed or webcam connection is lost
-    bool blnFrameReadSuccessfully = capWebcam.read(imgRaw); // get next frame
+  while(charCheckForEscKey != 27 /*&& capWebcam.isOpened()*/) { // until the Esc key is pressed or webcam connection is lost
+    bool blnFrameReadSuccessfully = true;
+
+    //    blnFrameReadSuccessfully = capWebcam.read(imgRaw); // get next frame
+    imgRaw = cv::imread("input.png");
 
     if(!blnFrameReadSuccessfully || imgRaw.empty()) {     // if frame not read successfully
       std::cout << "error: frame not read from webcam\n"; // print error message to std out
@@ -543,7 +587,7 @@ main(int argc, char* argv[]) {
     writeImage(imgRaw);
 
     std::cout << "got frame" << std::endl;
-    // cv::normalize(imgOriginal,imgTemp,0,255,cv::NORM_L1);
+    // cv::normalize(imgRaw,imgOriginal,0,255,cv::NORM_L1);
     imgRaw.copyTo(imgOriginal);
 
     cv::Mat frameLab, frameLabCn[3];
@@ -556,16 +600,10 @@ main(int argc, char* argv[]) {
     // cvtColor(imgOriginal, imgGrayscale, CV_BGR2GRAY); // convert to grayscale
     std::vector<cv::Vec3f> circles;
 
-    cornerHarrisDetection(imgOriginal, imgGrayscale);
-    /*    cv::Mat gray;
-        cvtColor(imgOriginal, gray, CV_BGR2GRAY);
+    //cornerHarrisDetection(imgOriginal, imgGrayscale);
 
-        cv::GaussianBlur(gray, gray, cv::Size(3, 3), 2, 2);
-        cv::Canny(gray, gray, 0, 50, 3);
-        cv::HoughCircles(gray, circles, CV_HOUGH_GRADIENT, 1, 30, 200, 50, 0, 0);
-    */
     /// Apply Histogram Equalization
-    //  cv::equalizeHist(imgTemp, imgGrayscale);
+    // cv::equalizeHist(imgGrayscale, imgGrayscale);
 
     cv::GaussianBlur(imgGrayscale, imgBlurred, cv::Size(5, 5), 1.75, 1.75);
 
@@ -584,7 +622,7 @@ main(int argc, char* argv[]) {
       cv::cvtColor(imgCanny, imgCanny, cv::COLOR_GRAY2BGR);
 
       // cvtColor(imgOriginal, imgGrayscale, CV_GRAY);
-      cv::drawContours(imgCanny, contours, -1, cv::Scalar(0, 0, 255), 1);
+      cv::drawContours(imgCanny, contours, -1, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
 
       cv::imshow("imgCanny", imgCanny); //
 
@@ -674,7 +712,13 @@ main(int argc, char* argv[]) {
         // cv::drawContours(imgOriginal, list, -1, cv::Scalar(255, 255, 0), 1);
       });
 
-      cv::drawContours(imgOriginal, contours, -1, cv::Scalar(255, 0, 255), 1);
+      for(size_t i = 0; i < contours.size(); i++) {
+        const cv::Scalar color = HSVtoRGB((i * 360 * 10 / contours.size()) % 360, 1.0, 1.0);
+        auto contour = simplifyPolyline(contours[i]);
+        contours[i] = contour;
+
+        cv::drawContours(imgOriginal, contours, i, color, 1, cv::LINE_AA);
+      }
 
       /*
           for(size_t i = 0; i < contours2.size() - 1; i++) {
