@@ -700,7 +700,7 @@ main(int argc, char* argv[]) {
       blnFrameReadSuccessfully = capWebcam.read(imgRaw); // get next frame
                                                          //
     else
-      imgRaw = cv::imread("input.png");
+      imgRaw = cv::imread(filename.empty() ? "input.png" : filename);
 
     if(!blnFrameReadSuccessfully || imgRaw.empty()) { // if frame not read successfully
       cout << "error: frame not read from webcam\n";  // print error message to std out
