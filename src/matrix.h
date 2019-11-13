@@ -208,9 +208,12 @@ public:
 protected:
   Matrix<T>&
   set(int row, int col, const T& value) {
-    *ptr(row, col) = value;
+    std::array<T,3>& arr = operator[](row);
+    arr[col] = value;
     return *this;
   }
+
+
   template <class R = std::array<T, 3>>
   Matrix<T>&
   setRow(int row, R arg) {
