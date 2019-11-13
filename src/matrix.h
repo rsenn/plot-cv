@@ -8,7 +8,7 @@ public:
 
   static const int typeId = std::is_same<T, double>::value ? CV_64F : CV_32F;
 
-  Matrix() : base_type(3,3, typeId) {}
+  Matrix() : base_type(3, 3, typeId) {}
   Matrix(cv::Mat m) : base_type(m) {}
 
   void
@@ -17,7 +17,7 @@ public:
     std::vector<cv::Point3_<T>> out;
     out.resize(in.size());
     cv::transform(in, out, *this);
-    std::transform(out.cbegin(), out.cend(), pt.begin(), [](const cv::Point3_<T>& pt3) -> cv::Point_<T> {  return cv::Point_<T>(pt3.x,pt3.y); });
+    std::transform(out.cbegin(), out.cend(), pt.begin(), [](const cv::Point3_<T>& pt3) -> cv::Point_<T> { return cv::Point_<T>(pt3.x, pt3.y); });
   }
 
   void
@@ -29,10 +29,10 @@ public:
 
   operator cv::Mat_<T>() const { return *this; }
 
-  static  cv::Mat_<T>
+  static cv::Mat_<T>
   rotation(double angle) {
     cv::Mat_<T> ret(3, 3, typeId);
-    ret =  cv::getRotationMatrix2D(cv::Point2f(0, 0), angle, 1);
+    ret = cv::getRotationMatrix2D(cv::Point2f(0, 0), angle, 1);
     return ret;
   }
   static cv::Mat_<T>
@@ -42,13 +42,11 @@ public:
     return ret;
   }
 
-template<class OtherT>
-    static Matrix<T>
+  template <class OtherT>
+  static Matrix<T>
   translation(OtherT x, OtherT y) {
-   cv::Mat ret = (cv::Mat_<T>(3,3) << 1, 0, T(x),
- 0, 1, T(y),
-  0, 0, 1);
-    return ret; 
+    cv::Mat ret = (cv::Mat_<T>(3, 3) << 1, 0, T(x), 0, 1, T(y), 0, 0, 1);
+    return ret;
   }
 };
 
@@ -58,12 +56,15 @@ to_string(const cv::Mat& mat) {
   oss << "rows: " << mat.rows;
   oss << " cols: " << mat.cols;
 
-  for(int i = 0; i < mat.cols; ++i)  {
+  for(int i = 0; i < mat.rows; ++i) {
     oss << "(";
-    for(int j = 0; j < mat.rows; ++j) {
-      if(j) 
+    for(int j = 0; j < mat.cols; ++j) {
+      if(j)
         oss << ", ";
-      oss << to_string(mat.at<double>(j, i));
+      if(mat.type() == CV_64F)
+        oss << mat.at<double>(j, i);
+      else if(mat.type() == CV_32F)
+        oss << mat.at<float>(j, i);
     }
     oss << ")";
   }
@@ -71,11 +72,10 @@ to_string(const cv::Mat& mat) {
   return oss.str();
 }
 
-
 template <class Char, class Value>
 inline std::basic_ostream<Char>&
 operator<<(std::basic_ostream<Char>& os, const Matrix<Value>& m) {
 
   os << '(' << m[0] << ", " << m[1] << ", " << m[2] << ')' << std::endl;
-  os << '(' << m[3] << ", " << m[4] << ", " << m[5] << ')'<< std::endl;
+  os << '(' << m[3] << ", " << m[4] << ", " << m[5] << ')' << std::endl;
 }

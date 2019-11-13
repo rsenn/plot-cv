@@ -872,7 +872,6 @@ main(int argc, char* argv[]) {
           std::cout << "distances(" << i << ")" << distances << endl;
           cout << "angleoffs(" << i << ")" << angleoffs_i << endl;
 
-
           int minIndex = distance(distances.begin(), it);
           adjacency_list.emplace(make_pair(i, adjacent));
 
@@ -882,14 +881,13 @@ main(int argc, char* argv[]) {
           histogram[angleIndex] += length - (length - range);
           angles[angleIndex] = double(angleIndex) / (histogram.size() - 1) * (M_PI);
           filteredLines.push_back(line);
-
         }
-      auto s = Matrix<double>::scale(0.5);
-      auto r = Matrix<double>::rotation(M_PI_2);
-      auto t = Matrix<double>::translation(10,50);
-      cout << "matrix scale " << to_string(s) << endl;
-      cout << "matrix rotate " << to_string(r) << endl;
-      cout << "matrix translate " << to_string(t) << endl;
+        auto s = Matrix<double>::scale(0.5);
+        auto r = Matrix<double>::rotation(M_PI_2);
+        auto t = Matrix<double>::translation(10, 50);
+        cout << "matrix scale " << to_string(s) << endl;
+        cout << "matrix rotate " << to_string(r) << endl;
+        cout << "matrix translate " << to_string(t) << endl;
       }
 
       cout << "histogram:";
