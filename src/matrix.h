@@ -63,15 +63,15 @@ public:
 
   /*static cv::Mat
   rotation(double angle) {
-    return (typed_type(3, 3) << std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1);
+    return (typed_type(3, 3) << std::cos(T(angle)), std::sin(T(angle)), 0, -std::sin(T(angle)), std::cos(T(angle)), 0, 0, 0, 1);
   }
 */
   static Matrix<T>
   rotation(double angle) {
     Matrix<T> ret;
-    ret.setRow(0, { std::cos(angle), std::sin(angle), 0 });
-    ret.setRow(1, {-std::sin(angle), std::cos(angle), 0 });
-    ret.setRow(2, { 0, 0, 1 });
+    ret.setRow(0, {std::cos(T(angle)), std::sin(T(T(angle))), 0});
+    ret.setRow(1, {-std::sin(T(T(angle))), std::cos(T(T(angle))), 0});
+    ret.setRow(2, {0, 0, 1});
     return ret;
   }
 
@@ -85,7 +85,7 @@ public:
     return (cv::Mat_<T>(3, 3) << (T(xx), T(xy), T(yx), T(yy), T(tx), T(ty)));
   }
 
-  template<class R = std::array<T,3> >
+  template <class R = std::array<T, 3>>
   Matrix<T>&
   init(const R& row0, const R& row1, const R& row2) {
     setRow(0, row0);
@@ -96,10 +96,10 @@ public:
 
   Matrix<T>&
   init(T xx, T xy, T yx, T yy, T tx, T ty) {
-    
-    setRpw(0, { xx,  xy, tx });
-    setRow(1, { yx, yy, ty });
-    setRow(2, { 0, 0, 1 });
+
+    setRpw(0, {xx, xy, tx});
+    setRow(1, {yx, yy, ty});
+    setRow(2, {0, 0, 1});
     return *this;
   }
 
@@ -117,7 +117,7 @@ public:
     if(origin != zero)
       a = cv::Mat(cv::Mat_<T>(3, 3) << (1, 0, T(-origin.x), 0, 1, T(-origin.y), 0, 0, 1));
 
-    b = cv::Mat(cv::Mat_<T>(3, 3) << (std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1));
+    b = cv::Mat(cv::Mat_<T>(3, 3) << (std::cos(T(angle)), std::sin(T(angle)), 0, -std::sin(T(angle)), std::cos(T(angle)), 0, 0, 0, 1));
 
     if(origin != zero)
       c = cv::Mat(cv::Mat_<T>(3, 3) << (1, 0, T(origin.x), 0, 1, T(origin.y), 0, 0, 1));
@@ -131,17 +131,29 @@ public:
 
   static Matrix<T>
   scale(double scale) {
-    return cv::Mat(cv::Mat_<T>(3, 3) << (scale, 0, 0, 0, scale, 0, 0, 0, 1));
+    cv::Mat ret(cv::Mat_<T>(3, 3));
+    ret.setRow(0, {scale, 0, 0});
+    ret.setRow(1, {0, scale, 0});
+    ret.setRow(1, {0, 0, 1});
+    return ret;
   }
 
   template <class OtherT>
   static Matrix<T>
   translation(OtherT x, OtherT y) {
-    return cv::Mat(cv::Mat_<T>(3, 3) << (1, 0, T(x), 0, 1, T(y), 0, 0, 1));
+    cv::Mat ret(cv::Mat_<T>(3, 3));
+    ret.setRow(0, {1, 0, T(x)});
+    ret.setRow(1, {0, 1, T(y)});
+    ret.setRow(1, {0, 0, 1});
+    return ret;
   }
   static Matrix<T>
   identity() {
-    return cv::Mat(cv::Mat_<T>(3, 3) << (1, 0, 0, 0, 1, 0, 0, 0, 1));
+    cv::Mat ret(cv::Mat_<T>(3, 3));
+    ret.setRow(0, {1, 0, 0});
+    ret.setRow(1, {0, 1, 0});
+    ret.setRow(1, {0, 0, 1});
+    return ret;
   }
 
   Matrix<T> operator*(const Matrix<T>& other) const { return product(other); }
@@ -151,11 +163,10 @@ public:
     *ptr(row, col) = value;
     return *this;
   }
-  template<class R = std::array<T,3> >
+  template <class R = std::array<T, 3>>
   Matrix<T>&
   setRow(int row, R arr) {
-    for(int i = 0; i < base_type::cols; ++i )
-      set(row, i, T(arr[i]));
+    for(int i = 0; i < base_type::cols; ++i) set(row, i, T(arr[i]));
     return *this;
   }
 
