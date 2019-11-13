@@ -729,23 +729,21 @@ main(int argc, char* argv[]) {
 
       //     std::sort(lines.begin(), lines.end());
 
-      std::transform(lines.cbegin(), lines.cend(), std::back_inserter(lineLengths), [&](const Line<float>& l) -> float
-       { return l.length();
-       });
+      std::transform(lines.cbegin(), lines.cend(), std::back_inserter(lineLengths), [&](const Line<float>& l) -> float {
+        return l.length();
+      });
 
-      float avg = std::accumulate(lineLengths.cbegin(), lineLengths.cend(), 0) / lineLengths.size(); 
-
-
+      float avg = std::accumulate(lineLengths.cbegin(), lineLengths.cend(), 0) / lineLengths.size();
 
       for(size_t i = 0; i < lines.size(); ++i) {
         Line<float>& line = lines[i];
 
         double length = line.length();
 
-double range = (length - avg) / 2;
+        double range = (length - avg) / 2;
         if(length > (length - range))
 
-        filteredLines.push_back(line);
+          filteredLines.push_back(line);
       }
 
       drawAllLines(imgGrayscale, filteredLines, [&](int index, size_t len) -> int {
