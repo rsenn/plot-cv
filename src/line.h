@@ -281,7 +281,7 @@ operator<<(std::basic_ostream<Char>& os, const std::vector<Line<Value>>& c) {
 template <class ContainerT>
 
 typename ContainerT::iterator
-findNearestLine(typename ContainerT::value_type& line, ContainerT& lines) {
+find_nearest_line(typename ContainerT::value_type& line, ContainerT& lines) {
   typedef typename ContainerT::iterator iterator_type;
   typedef typename ContainerT::value_type line_type;
   typedef typename line_type::value_type value_type;
@@ -302,7 +302,7 @@ findNearestLine(typename ContainerT::value_type& line, ContainerT& lines) {
 }
 template <class ContainerT>
 typename ContainerT::iterator
-findNearestLine(typename ContainerT::iterator& line, ContainerT& lines) {
+find_nearest_line(typename ContainerT::iterator& line, ContainerT& lines) {
   typedef typename ContainerT::iterator iterator_type;
   typedef typename ContainerT::value_type point_type;
   typedef typename point_type::value_type value_type;
@@ -324,7 +324,7 @@ findNearestLine(typename ContainerT::iterator& line, ContainerT& lines) {
 /*
 template <class InputIterator>
 InputIterator
-findNearestLine(const InputIterator& line, InputIterator from, InputIterator to) {
+find_nearest_line(const InputIterator& line, InputIterator from, InputIterator to) {
   typedef InputIterator iterator_type;
   typedef typename std::iterator_traits<InputIterator>::value_type point_type;
   typedef typename point_type::value_type value_type;
