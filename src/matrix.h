@@ -9,12 +9,12 @@ public:
 
   static const int typeId = std::is_same<T, double>::value ? CV_64F : CV_32F;
 
-  Matrix() : base_type(cv::Mat::zeros(3,3, typeId)) { init({ 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 }); }
-//  Matrix(const Matrix<T>& other) : base_type(3,3, typeId) { *this = other; }
-  Matrix(int xx, int xy, int yx, int yy, int tx, int ty) : base_type(3,3,typeId) { init(xx, xy, yx, yy, tx, ty);  }
-  Matrix(const base_type& m) : base_type(3,3,typeId) { m.copyTo(*this); }
-  Matrix(const typed_type& m) : base_type(3,3,typeId) { *this = m; }
-  template <class OtherT> Matrix(const Matrix<OtherT>& m) : base_type(3,3,typeId) { *this = m; }
+  Matrix() : base_type(cv::Mat::zeros(3, 3, typeId)) { init({1, 0, 0}, {0, 1, 0}, {0, 0, 1}); }
+  //  Matrix(const Matrix<T>& other) : base_type(3,3, typeId) { *this = other; }
+  Matrix(int xx, int xy, int yx, int yy, int tx, int ty) : base_type(3, 3, typeId) { init(xx, xy, yx, yy, tx, ty); }
+  Matrix(const base_type& m) : base_type(m) {}
+  Matrix(const typed_type& m) : base_type(cv::Mat(m)) {}
+  template <class OtherT> Matrix(const Matrix<OtherT>& m) : base_type(3, 3, typeId) { *this = m; }
 
   /**
    * @brief      { function_description }
@@ -32,18 +32,18 @@ public:
   transform_points(InputIterator from, InputIterator to) const {
     std::for_each(from, to, std::bind(&Matrix<T>::convert_point, this, std::placeholders::_1, std::placeholders::_1));
   }
-/*
-  Matrix<T>&
-  operator=(const cv::MatExpr& expr) {
-    base_type::operator=(expr);
-    return *this;
-  }
+  /*
+    Matrix<T>&
+    operator=(const cv::MatExpr& expr) {
+      base_type::operator=(expr);
+      return *this;
+    }
 
-  Matrix<T>&
-  operator=(const Matrix<T>& other) {
-    other.copyTo(*this);
-    return *this;
-  }*/
+    Matrix<T>&
+    operator=(const Matrix<T>& other) {
+      other.copyTo(*this);
+      return *this;
+    }*/
 
   cv::Point_<T>
   transform_point(const cv::Point_<T>& pt) const {
@@ -77,36 +77,35 @@ public:
   }
 
   static Matrix<T>
-  create(int xx, int xy, int yx, int yy, int tx, int  ty) {
-  return  cv::Mat(cv::Mat_<T>(3, 3) << (T(xx), T(xy), T(yx), T(yy), T(tx), T(ty)));
-
+  create(int xx, int xy, int yx, int yy, int tx, int ty) {
+    return cv::Mat(cv::Mat_<T>(3, 3) << (T(xx), T(xy), T(yx), T(yy), T(tx), T(ty)));
   }
 
   Matrix<T>&
-  init(std::array<T,3> row0, std::array<T,3> row1, std::array<T,3> row2 = std::array<T,3>{0,0,0}) {
-    *this = cv::Mat(cv::Mat::zeroes(3,3,typeId));
-    set(0,0,row0[0]);
-    set(0,1,row0[1]);
-    set(0,2,row0[2]);
-    set(1,0,row1[0]);
-    set(1,1,row1[1]);
-    set(1,2,row1[2]);
-    set(2,0,row2[0]);
-    set(2,1,row2[1]);
-    set(2,2,row2[2]);
+  init(std::array<T, 3> row0, std::array<T, 3> row1, std::array<T, 3> row2 = std::array<T, 3>{0, 0, 0}) {
+    *this = cv::Mat(cv::Mat::zeros(3, 3, typeId));
+    set(0, 0, row0[0]);
+    set(0, 1, row0[1]);
+    set(0, 2, row0[2]);
+    set(1, 0, row1[0]);
+    set(1, 1, row1[1]);
+    set(1, 2, row1[2]);
+    set(2, 0, row2[0]);
+    set(2, 1, row2[1]);
+    set(2, 2, row2[2]);
     return *this;
   }
 
   Matrix<T>&
-  init(T xx, T xy, T yx, T yy, T tx, T  ty) {
-        *this = cv::Mat(cv::Mat::zeroes(3,3,typeId));
+  init(T xx, T xy, T yx, T yy, T tx, T ty) {
+    *this = cv::Mat(cv::Mat::zeros(3, 3, typeId));
 
-    set(0,0,xx);
-    set(0,1,xy);
-    set(0,2,tx);
-    set(1,0,yx);
-    set(1,1,yy);
-    set(1,2,ty);
+    set(0, 0, xx);
+    set(0, 1, xy);
+    set(0, 2, tx);
+    set(1, 0, yx);
+    set(1, 1, yy);
+    set(1, 2, ty);
     return *this;
   }
 
@@ -131,9 +130,9 @@ public:
 
     if(origin != zero)
 
-    return a.multiply(b).multiply(c);
+      return a.multiply(b).multiply(c);
 
-  return b;
+    return b;
   }
 
   static Matrix<T>
@@ -160,18 +159,22 @@ public:
   }
 
   T
-  get(int row, int col) const { return *base_type::ptr(); }
+  get(int row, int col) const {
+    return *base_type::ptr();
+  }
 
-  T*
-  operator[](int row) { return ptr(row, 0); }
-  T const*
-  operator[](int row) const { return ptr(row, 0); }
+  T* operator[](int row) { return ptr(row, 0); }
+  T const* operator[](int row) const { return ptr(row, 0); }
 
   const T&
-  ref(int row, int col) const { return *ptr(row, col); }
+  ref(int row, int col) const {
+    return *ptr(row, col);
+  }
 
-   T&
-  ref(int row, int col) { return *ptr(row, col); }
+  T&
+  ref(int row, int col) {
+    return *ptr(row, col);
+  }
 
   const T*
   ptr(int row, int col) const {
@@ -193,31 +196,29 @@ public:
     return ptr;
   }
 
-  void multiplicate(const Matrix<T>& matrix2) const 
-{
-  Matrix< T>& matrix1 = *this;
-  Matrix< T> product();
+  void
+  multiplicate(const Matrix<T>& matrix2) const {
+    Matrix<T>& matrix1 = *this;
+    Matrix<T> product();
 
-  for (int x=0; x<3; ++x)
-    for (int y=0; y<3; ++y)
-    {
-      double sum = 0;
-      for (int z=0; z<3; ++z)
-        sum += matrix1[x][z] * matrix2[z][y];
-      product[x][y] = sum;
-    }
-}
+    for(int x = 0; x < 3; ++x)
+      for(int y = 0; y < 3; ++y) {
+        double sum = 0;
+        for(int z = 0; z < 3; ++z) sum += matrix1[x][z] * matrix2[z][y];
+        product[x][y] = sum;
+      }
+  }
 
   Matrix<T>
   product(const Matrix<T>& other) const {
     T product;
-    Matrix< T> ret(cv::Mat(cv::Mat::zeros(3,3, typeId)));
+    Matrix<T> ret(cv::Mat(cv::Mat::zeros(3, 3, typeId)));
     int i, j, k;
     for(i = 0; i < base_type::rows; i++) {
       for(j = 0; j < base_type::cols; j++) {
         product = 0;
         for(k = 0; k < base_type::cols; k++) {
-          product += get(i,k) * other.get(k,j);
+          product += get(i, k) * other.get(k, j);
         }
         ret[i][j] += product;
       }
