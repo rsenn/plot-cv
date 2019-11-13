@@ -149,7 +149,7 @@ public:
   Matrix<T>
   product(const Matrix<T>& other) const {
     T product;
-    cv::Mat ret(cv::Mat::zeros(3,3, typeId));
+    Matrix< T> ret(cv::Mat(cv::Mat::zeros(3,3, typeId)));
     int i, j, k;
     for(i = 0; i < base_type::rows; i++) {
       for(j = 0; j < base_type::cols; j++) {
@@ -157,7 +157,7 @@ public:
         for(k = 0; k < base_type::cols; k++) {
           product += get(i, k) * other.get(k, j);
         }
-        ret.at<T>(i, j) += product;
+        ret.ref(i, j) += product;
       }
     }
     return ret;
@@ -167,13 +167,6 @@ public:
     *this = product(other);
     return *this;
   }
-
-  Matrix<T>
-  operator*=(const Matrix<T>& other) {
-    cv::Mat prod = (*this) * other;
-    *this = prod;
-    return *this;
-  };
 };
 
 inline std::string
