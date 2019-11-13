@@ -12,14 +12,16 @@ public:
   void
   transform_points(std::vector<cv::Point_<T>>& pt) {
     std::vector<cv::Point3_<T>> in = pt;
-    cv::transform(in, in, *this);
-    pt = in;
+    std::vector<cv::Point3_<T>> out;
+    out.resize(in.size());
+    cv::transform(in, out, *this);
+    std::transform(out.cbegin(), out.cend(), pt.begin(), [](const cv::Point3_<T>& pt3) -> cv::Point_<T> {  return cv::Point_<T>(pt3.x,pt3.y); });
   }
 
   void
   transform_point(cv::Point_<T>& pt) {
     std::vector<cv::Point3_<T>> v = {pt};
-    cv::transform(v, v, *this);
+    transform_points(v);
     pt = v[0];
   }
 
