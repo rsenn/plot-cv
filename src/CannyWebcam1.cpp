@@ -521,8 +521,6 @@ trackbar(int input, void* u) {
     epsilon = input;
   if(!strcmp(name, "blur"))
     blur = input;
-
-
 };
 
 void
@@ -683,10 +681,10 @@ main(int argc, char* argv[]) {
   int eps = 8;
   int blur = 4;
 
-cv::namedWindow("imgOriginal", CV_WINDOW_AUTOSIZE);
+  cv::namedWindow("imgOriginal", CV_WINDOW_AUTOSIZE);
   cv::namedWindow("imgCanny", CV_WINDOW_AUTOSIZE);
   // cv::namedWindow("imgGrayscale", CV_WINDOW_AUTOSIZE);
-cv::createTrackbar("epsilon", "contours", &eps, 7, trackbar, ( void*)"eps");
+  cv::createTrackbar("epsilon", "contours", &eps, 7, trackbar, (void*)"eps");
   cv::createTrackbar("blur", "contours", &blur, 7, trackbar, (void*)"blur");
 
   while(charCheckForEscKey != 27 /*&& capWebcam.isOpened()*/) { // until the Esc key is pressed or webcam connection is lost
