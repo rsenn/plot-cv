@@ -4,7 +4,6 @@ CONFIG -= app_bundle
 CONFIG -= qt
 CONFIG += link_pkgconfig
 
-
 QMAKE_CXXFLAGS -= -Wall
 QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-variable  -Wno-unused-parameter
 
