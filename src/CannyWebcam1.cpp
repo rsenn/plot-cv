@@ -874,8 +874,8 @@ main(int argc, char* argv[]) {
           Line<float> l(line);
           cout << "angle: " << (line.angle() * 180 /M_PI) << std::endl;
           cout << "a: " << l.a << " b: " << l.b << std::endl;
-          rot.transform_point(l.a);
-          rot.transform_point(l.b);
+          l.a = rot.transform_point(l.a);
+          l.b = rot.transform_point(l.b);
           cout << "a: " << l.a << " b: " << l.b << std::endl;
 
           cout << "adjacent(" << i << ")" << adjacent << std::endl;
