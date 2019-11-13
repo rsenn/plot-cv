@@ -10,6 +10,7 @@
 
 #include "simple_svg_1.0.0.hpp"
 #include "psimpl.h"
+#include "line.h"
 
 #include <iostream>
 #include <functional>
@@ -568,16 +569,17 @@ main(int argc, char* argv[]) {
   cv::namedWindow("imgOriginal", CV_WINDOW_AUTOSIZE);
   // or CV_WINDOW_AUTOSIZE for a fixed size window matching the resolution of the image
   cv::namedWindow("imgCanny", CV_WINDOW_AUTOSIZE);
- // cv::namedWindow("imgGrayscale", CV_WINDOW_AUTOSIZE);
+  // cv::namedWindow("imgGrayscale", CV_WINDOW_AUTOSIZE);
   /*cv::createTrackbar("epsilon", "contours", &eps, 7, trackbar);
   cv::createTrackbar("blur", "contours", &blur, 7, trackbar);
   trackbar(0, 0);
 */
-  while(charCheckForEscKey != 27 /*&& capWebcam.isOpened()*/) { // until the Esc key is pressed or webcam connection is lost
+  while(charCheckForEscKey !=
+        27 /*&& capWebcam.isOpened()*/) { // until the Esc key is pressed or webcam connection is lost
     bool blnFrameReadSuccessfully = true;
 
-        blnFrameReadSuccessfully = capWebcam.read(imgRaw); // get next frame
-   // imgRaw = cv::imread("input.png");
+    blnFrameReadSuccessfully = capWebcam.read(imgRaw); // get next frame
+                                                       // imgRaw = cv::imread("input.png");
 
     if(!blnFrameReadSuccessfully || imgRaw.empty()) {     // if frame not read successfully
       std::cout << "error: frame not read from webcam\n"; // print error message to std out
@@ -600,7 +602,7 @@ main(int argc, char* argv[]) {
     // cvtColor(imgOriginal, imgGrayscale, CV_BGR2GRAY); // convert to grayscale
     std::vector<cv::Vec3f> circles;
 
-    //cornerHarrisDetection(imgOriginal, imgGrayscale);
+    // cornerHarrisDetection(imgOriginal, imgGrayscale);
 
     /// Apply Histogram Equalization
     // cv::equalizeHist(imgGrayscale, imgGrayscale);
@@ -635,7 +637,17 @@ main(int argc, char* argv[]) {
       std::ostringstream contourStr;
       double maxArea = 0;
 
+      std::vector<Line<float>> lines;
+
       std::for_each(contours.cbegin(), contours.cend(), [&](const std::vector<cv::Point>& a) {
+        size_t i;
+
+        for(i = 0; i < a.size() - 2; i++) {
+          Line<float> l(a[i], a[i + 1]);
+
+          lines.push_back(l);
+        }
+
         if(a.size() >= 3) {
 
           Point2fVec c;
@@ -675,14 +687,13 @@ main(int argc, char* argv[]) {
       std::ostringstream filename;
       filename << "contour.svg.tmp";
 
-          // filename << "contour-" << ++count << ".svg";
+      // filename << "contour-" << ++count << ".svg";
 
       // filter_contours(contours2);
       export_svg<cv::Point2f>(contours2, filename.str());
 
-//      unlink("contour.svg");
+      //      unlink("contour.svg");
       rename("contour.svg.tmp", "contour.svg");
-
 
       std::vector<PointVec> squares;
 
@@ -721,7 +732,6 @@ main(int argc, char* argv[]) {
         const cv::Scalar color = HSVtoRGB((i * 360 * 10 / contours.size()) % 360, 1.0, 1.0);
         auto contour = simplifyPolyline(contours[i]);
         contours[i] = contour;
-
 
         const double area = cv::contourArea(contours[i], false);
         if(area < 1)
