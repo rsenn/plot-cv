@@ -37,7 +37,7 @@ public:
   }
 
     static Matrix<T>
-  translate(T x, T y) {
+  translation(T x, T y) {
     Matrix<T> ret = { 0,0,0,0,0,0 };
     ret.at(0,2) = x;
     ret.at(1,2) = y;
