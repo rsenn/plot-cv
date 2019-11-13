@@ -31,11 +31,15 @@ public:
 
   static  cv::Mat_<T>
   rotation(double angle) {
-    return cv::getRotationMatrix2D(cv::Point2f(0, 0), angle, 1);
+    cv::Mat_<T> ret(3, 3, typeId);
+    ret =  cv::getRotationMatrix2D(cv::Point2f(0, 0), angle, 1);
+    return ret;
   }
   static cv::Mat_<T>
   scale(double scale) {
-    return cv::getRotationMatrix2D(cv::Point2f(0, 0), 0, scale);
+    cv::Mat_<T> ret(3, 3, typeId);
+    ret = cv::getRotationMatrix2D(cv::Point2f(0, 0), 0, scale);
+    return ret;
   }
 
 template<class OtherT>
