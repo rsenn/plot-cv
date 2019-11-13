@@ -57,14 +57,16 @@ to_string(const cv::Mat& mat) {
   oss << " cols: " << mat.cols;
 
   for(int i = 0; i < mat.rows; ++i) {
+    if(i)
+      oss << " ";
     oss << "(";
     for(int j = 0; j < mat.cols; ++j) {
       if(j)
         oss << ", ";
       if(mat.type() == CV_64F)
-        oss << mat.at<double>( i,j);
+        oss << mat.at<double>(i, j);
       else if(mat.type() == CV_32F)
-        oss << mat.at<float>(i,j);
+        oss << mat.at<float>(i, j);
     }
     oss << ")";
   }
