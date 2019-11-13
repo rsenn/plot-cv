@@ -70,22 +70,19 @@ public:
     cv::Mat ret;
     const cv::Point_<OtherT> zero(0, 0);
 
-   cv::Mat m;
+    Matrix<T> a, b, c;
 
     if(origin != zero) {
-      m = (cv::Mat_<T>(3, 3) << 1, 0, T(-origin.x), 0, 1, T(-origin.y), 0, 0, 1);
-      ret *= (m);
+      a = cv::Mat(cv::Mat_<T>(3, 3) << (1, 0, T(-origin.x), 0, 1, T(-origin.y), 0, 0, 1));
     }
 
-    m = (cv::Mat_<T>(3, 3) << std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1);
-      ret *= m;
+    b = cv::Mat(cv::Mat_<T>(3, 3) << (std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1));
 
     if(origin != zero) {
-      m = (cv::Mat_<T>(3, 3) << 1, 0, T(origin.x), 0, 1, T(origin.y), 0, 0, 1);
-      ret *= m;
+      c = cv::Mat(cv::Mat_<T>(3, 3) << (1, 0, T(origin.x), 0, 1, T(origin.y), 0, 0, 1));
     }
 
-    return ret;
+    return a * b * c;
   }
 
   static cv::Mat
@@ -103,18 +100,17 @@ public:
     return (cv::Mat_<T>(3, 3) << 1, 0, 0, 0, 1, 0, 0, 0, 1);
   }
 
-  cv::Mat operator*(const Matrix<T>& other) const { return *reinterpret_cast<const base_type*>(this) * *reinterpret_cast<const base_type*>(&other); }
-  /*    return (cv::Mat_<T>(3, 3) <<
-              (at<T>(0, 0) * other.at<T>(0, 0) + at<T>(1, 0) * other.at<T>(1, 0)),
-              (at<T>(0, 1) * other.at<T>(0, 0) + at<T>(1, 1) * other.at<T>(0, 1)),
-              (at<T>(0, 0) * other.at<T>(0, 2) + at<T>(1, 0) * other.at<T>(1, 2) + at<T>(0, 2)),
-              (at<T>(0, 0) * other.at<T>(1, 0) + at<T>(1, 0) * other.at<T>(1, 1)),
-              (at<T>(0, 1) * other.at<T>(1, 0) + at<T>(1, 1) * other.at<T>(1, 1)),
-              (at<T>(0, 1) * other.at<T>(0, 2) + at<T>(1, 1) * other.at<T>(1, 2) + at<T>(1, 2)),
-              0,
-              0,
-              1);
-  */
+  Matrix<T> operator*(const Matrix<T>& other) const { // return *reinterpret_cast<const base_type*>(this) * *reinterpret_cast<const base_type*>(&other); }
+    return cv::Mat(cv::Mat_<T>(3, 3) << ((at<T>(0, 0) * other.at<T>(0, 0) + at<T>(1, 0) * other.at<T>(1, 0)),
+                                         (at<T>(0, 1) * other.at<T>(0, 0) + at<T>(1, 1) * other.at<T>(0, 1)),
+                                         (at<T>(0, 0) * other.at<T>(0, 2) + at<T>(1, 0) * other.at<T>(1, 2) + at<T>(0, 2)),
+                                         (at<T>(0, 0) * other.at<T>(1, 0) + at<T>(1, 0) * other.at<T>(1, 1)),
+                                         (at<T>(0, 1) * other.at<T>(1, 0) + at<T>(1, 1) * other.at<T>(1, 1)),
+                                         (at<T>(0, 1) * other.at<T>(0, 2) + at<T>(1, 1) * other.at<T>(1, 2) + at<T>(1, 2)),
+                                         0,
+                                         0,
+                                         1));
+  }
 
   Matrix<T>
   operator*=(const Matrix<T>& other) {
