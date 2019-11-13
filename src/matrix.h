@@ -7,15 +7,17 @@ public:
   typedef cv::Mat_<T> typed_type;
   typedef cv::Mat base_type;
 
+  static const int dim = 3;
+
   static const int typeId = std::is_same<T, double>::value ? CV_64F : CV_32F;
 
-  Matrix() : base_type(cv::Mat::zeros(3, 3, typeId)) { init({1, 0, 0}, {0, 1, 0}, {0, 0, 1}); }
-  Matrix(int xx, int xy, int yx, int yy, int tx, int ty) : base_type(3, 3, typeId) { init(xx, xy, yx, yy, tx, ty); }
-  Matrix(const base_type& m) : base_type(3, 3, typeId) { init(m); }
-  Matrix(const typed_type& m) : base_type(3, 3, typeId) { init(m); }
-  template <class OtherT> Matrix(const OtherT& m) : base_type(3, 3, typeId) { init(m); }
+  Matrix() : base_type(cv::Mat::zeros(dim, dim, typeId)) { init({1, 0, 0}, {0, 1, 0}, {0, 0, 1}); }
+  Matrix(int xx, int xy, int yx, int yy, int tx, int ty) : base_type(dim, dim, typeId) { init(xx, xy, yx, yy, tx, ty); }
+  Matrix(const base_type& m) : base_type(dim, dim, typeId) { init(m); }
+  Matrix(const typed_type& m) : base_type(dim, dim, typeId) { init(m); }
+  template <class OtherT> Matrix(const OtherT& m) : base_type(dim, dim, typeId) { init(m); }
 
-  template <class R = std::array<T, 3>> Matrix(R row0, R row1, R row2 = {0, 0, 1}) : base_type(3, 3, typeId) { init(row0, row1, row2); }
+  template <class R = std::array<T, dim>> Matrix(R row0, R row1, R row2 = {0, 0, 1}) : base_type(dim, dim, typeId) { init(row0, row1, row2); }
   /**
    * @brief      { function_description }
    *
@@ -63,7 +65,7 @@ public:
 
   /*static cv::Mat
   rotation(double angle) {
-    return (typed_type(3, 3) << std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1);
+    return (typed_type(dim, dim) << std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1);
   }
 */
   static Matrix<T>
@@ -96,7 +98,7 @@ public:
     return Matrix<T>({xx, xy, yx}, {yy, tx, ty});
   }
 
-  template <class R = std::array<T, 3>>
+  template <class R = std::array<T, dim>>
   Matrix<T>&
   init(const R& row0, const R& row1, const R& row2) {
     setRow(0, row0);
@@ -165,17 +167,16 @@ public:
     return ret;
   }
 
-  std::array<T, 3>& operator[](int row) { return *reinterpret_cast<std::array<T, 3>*>(ptr(row, 0)); }
-  std::array<T, 3> const& operator[](int row) const { return *reinterpret_cast<std::array<T, 3> const*>(ptr(row, 0)); }
+  std::array<T, dim>& operator[](int row) { return *reinterpret_cast<std::array<T, dim>*>(ptr(row, 0)); }
+  std::array<T, dim> const& operator[](int row) const { return *reinterpret_cast<std::array<T, dim> const*>(ptr(row, 0)); }
 
   Matrix<T>&
   multiplicate(const Matrix<T>& matrix2) {
     Matrix<T> const& matrix1 = *this;
     Matrix<T> product;
-        const int dim = 3;
 
     for(int x = 0; x < dim; ++x) {
-      std::array<T,dim>& out = product[x];
+      std::array<T, dim>& out = product[x];
       for(int y = 0; y < dim; ++y) {
         T sum = 0;
         for(int z = 0; z < dim; ++z) sum += matrix1[x][z] * matrix2[z][y];
@@ -191,9 +192,8 @@ public:
     T product;
     Matrix<T> ret;
     int i, j, k;
-    const int dim = 3;
     for(i = 0; i < dim; i++) {
-      std::array<T,dim>& row = ret[i];
+      std::array<T, dim>& row = ret[i];
       for(j = 0; j < dim; j++) {
         product = 0;
         for(k = 0; k < dim; k++) {
@@ -220,11 +220,11 @@ protected:
     else if(base_type::type() == CV_32F)
       *base_type::ptr<float>(row, col) = value;
     else
-      throw  new std::runtime_error("test");
+      throw new std::runtime_error("test");
     return *this;
   }
 
-  template <class R = std::array<T, 3>>
+  template <class R = std::array<T, dim>>
   Matrix<T>&
   setRow(int row, R arg) {
     T* arr = ptr(row, 0);
