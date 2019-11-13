@@ -116,7 +116,7 @@ public:
 
   T&
   operator()(int row, int col) {
-    return base_type::at<T>(row, col);
+    return *base_type::ptr<T>(row, col);
   }
 
   Matrix<T>
