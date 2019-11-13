@@ -109,8 +109,8 @@ public:
 
   Matrix<T>&
   set(int row, int col, const T& value) {
-    base_type::at<T>(row, col) = value;
-    return this;
+    *ptr(row, col) = value;
+    return *this;
   }
 
   T
@@ -153,9 +153,9 @@ public:
       for(j = 0; j < base_type::cols; j++) {
         product = 0;
         for(k = 0; k < base_type::cols; k++) {
-          product += (*this)(i, k) * other(k, j);
+          product += ref(i, k) * other.ref(k, j);
         }
-        set(i, j, product);
+        ret.set(i, j, product);
       }
     }
     return ret;
