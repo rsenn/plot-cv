@@ -63,11 +63,10 @@ public:
     return cv::Mat(cv::Mat_<T>(3, 3) << (std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1));
   }
 
-
-cv::Affine3<T> affine() const {
-  return cv::Affine3<T>(*this);
-}
-
+  cv::Affine3<T>
+  affine() const {
+    return cv::Affine3<T>(*this);
+  }
 
   template <class OtherT = float>
   static Matrix<T>
@@ -106,42 +105,42 @@ cv::Affine3<T> affine() const {
     return (cv::Mat_<T>(3, 3) << 1, 0, 0, 0, 1, 0, 0, 0, 1);
   }
 
-  Matrix<T> operator*(const Matrix<T>& other) const {  return cv::Mat( *(const base_type*)(this) * *reinterpret_cast<const base_type*>(&other)); }
-/*    return cv::Mat(cv::Mat_<T>(3, 3) << ((at<T>(0, 0) * other.at<T>(0, 0) + at<T>(1, 0) * other.at<T>(1, 0)),
-                                         (at<T>(0, 1) * other.at<T>(0, 0) + at<T>(1, 1) * other.at<T>(0, 1)),
-                                         (at<T>(0, 0) * other.at<T>(0, 2) + at<T>(1, 0) * other.at<T>(1, 2) + at<T>(0, 2)),
-                                         (at<T>(0, 0) * other.at<T>(1, 0) + at<T>(1, 0) * other.at<T>(1, 1)),
-                                         (at<T>(0, 1) * other.at<T>(1, 0) + at<T>(1, 1) * other.at<T>(1, 1)),
-                                         (at<T>(0, 1) * other.at<T>(0, 2) + at<T>(1, 1) * other.at<T>(1, 2) + at<T>(1, 2)),
-                                         0,
-                                         0,
-                                         1));
-  }*/
+  Matrix<T> operator*(const Matrix<T>& other) const { return cv::Mat(*(const base_type*)(this) * *reinterpret_cast<const base_type*>(&other)); }
+  /*    return cv::Mat(cv::Mat_<T>(3, 3) << ((at<T>(0, 0) * other.at<T>(0, 0) + at<T>(1, 0) * other.at<T>(1, 0)),
+                                           (at<T>(0, 1) * other.at<T>(0, 0) + at<T>(1, 1) * other.at<T>(0, 1)),
+                                           (at<T>(0, 0) * other.at<T>(0, 2) + at<T>(1, 0) * other.at<T>(1, 2) + at<T>(0, 2)),
+                                           (at<T>(0, 0) * other.at<T>(1, 0) + at<T>(1, 0) * other.at<T>(1, 1)),
+                                           (at<T>(0, 1) * other.at<T>(1, 0) + at<T>(1, 1) * other.at<T>(1, 1)),
+                                           (at<T>(0, 1) * other.at<T>(0, 2) + at<T>(1, 1) * other.at<T>(1, 2) + at<T>(1, 2)),
+                                           0,
+                                           0,
+                                           1));
+    }*/
 
-
-  const T &operator()(int row, int col) const   {
-    return reinterpret_cast<base_type const *>(this)->at<T>(row, col);
+  const T&
+  operator()(int row, int col) const {
+    return reinterpret_cast<base_type const*>(this)->at<T>(row, col);
   }
 
-  T& operator()(int row, int col)   {
-    return reinterpret_cast<base_type *>(this)->at<T>(row, col);
+  T&
+  operator()(int row, int col) {
+    return reinterpret_cast<base_type*>(this)->at<T>(row, col);
   }
 
-    Matrix<T>&
-        multiply(const Matrix<T>& other) {
-          T product;
-          int i,j,k;
-            for ( i = 0; i < 3; i++){
-                for ( j = 0; j < 3; j++){
-                     product = 0; 
-                     for ( k = 0; k < 3; k++){
-                        product += operator()(i, k) * other(k, j);
-                     }
-                     operator()(i, j, product);
-
-                }
-            }  
-        } 
+  Matrix<T>&
+  multiply(const Matrix<T>& other) {
+    T product;
+    int i, j, k;
+    for(i = 0; i < 3; i++) {
+      for(j = 0; j < 3; j++) {
+        product = 0;
+        for(k = 0; k < 3; k++) {
+          product += operator()(i, k) * other(k, j);
+        }
+        operator()(i, j, product);
+      }
+    }
+  }
 
   Matrix<T>
   operator*=(const Matrix<T>& other) {
