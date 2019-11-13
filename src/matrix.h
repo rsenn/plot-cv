@@ -24,7 +24,7 @@ public:
    */
   void
   transform_points(std::vector<cv::Point_<OtherT>>& pt) {
-    std::for_each(pt.begin(), pt.end(),  [this](cv::Point_<OtherT>& p) { transform_point(*this, p); });
+    std::for_each(pt.begin(), pt.end(),  [this](cv::Point_<OtherT>& p) { transform_point(p); });
   }
 
 
