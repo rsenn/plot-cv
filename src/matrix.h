@@ -172,13 +172,17 @@ public:
   multiplicate(const Matrix<T>& matrix2) {
     Matrix<T> const& matrix1 = *this;
     Matrix<T> product;
-    for(int x = 0; x < 3; ++x)
-      for(int y = 0; y < 3; ++y) {
+        const int dim = 3;
+
+    for(int x = 0; x < dim; ++x) {
+      std::array<T,dim>& out = product[x];
+      for(int y = 0; y < dim; ++y) {
         T sum = 0;
-        for(int z = 0; z < 3; ++z) sum += matrix1[x][z] * matrix2[z][y];
-        product.set(x, y, sum);
+        for(int z = 0; z < dim; ++z) sum += matrix1[x][z] * matrix2[z][y];
+        out[y] = sum;
       }
-    product.copyTo(*this);
+    }
+    init(product[0], product[1], product[2]);
     return *this;
   }
 
