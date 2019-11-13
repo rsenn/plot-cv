@@ -32,6 +32,13 @@ public:
     std::transform(out.cbegin(), out.cend(), pt.begin(), [](const cv::Point3_<OtherT>& pt3) -> cv::Point_<OtherT> { return cv::Point_<OtherT>(pt3.x, pt3.y); });
   }
 
+
+  Matrix<T>&
+  operator=(const cv::MatExpr& expr) {
+    base_type::operator=(expr);
+    return *this;
+  }
+
   template <class OtherT>
   static void
   transform_point(const cv::Mat& m, cv::Point_<OtherT>& pt) {
