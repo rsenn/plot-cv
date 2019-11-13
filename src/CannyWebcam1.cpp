@@ -660,17 +660,24 @@ main(int argc, char* argv[]) {
   using std::transform;
   using std::vector;
 
-  int camID = argc > 1 ? atoi(argv[1]) : 0;
+  int camID = (argc > 1 && isdigit(argv[1][0])) ? strtol(argv[1], nullptr, 10) : -1;
   int count = 0;
+
+  std::string filename;
+
+  if(camID == -1 && argc > 1)
+    filename = argv[1];
 
   cv::VideoCapture capWebcam;
 
-  capWebcam.open(camID, cv::CAP_V4L2); // declare a VideoCapture object and associate to webcam, 0 => use 1st webcam
+  if(camID >= 0) {
+    capWebcam.open(camID, cv::CAP_V4L2); // declare a VideoCapture object and associate to webcam, 0 => use 1st webcam
 
-  if(capWebcam.isOpened() == false) {                         // check if VideoCapture object was associated to webcam successfully
-    cout << "error: capWebcam not accessed successfully\n\n"; // if not, print error message to std out
-    getchar();                                                // may have to modify this line if not using Windows
-    return (0);                                               // and exit program
+    if(capWebcam.isOpened() == false) {                         // check if VideoCapture object was associated to webcam successfully
+      cout << "error: capWebcam not accessed successfully\n\n"; // if not, print error message to std out
+      getchar();                                                // may have to modify this line if not using Windows
+      return (0);                                               // and exit program
+    }
   }
 
   cv::Mat imgRaw, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny; // Canny edge image
@@ -689,8 +696,11 @@ main(int argc, char* argv[]) {
   while(charCheckForEscKey != 27 /*&& capWebcam.isOpened()*/) { // until the Esc key is pressed or webcam connection is lost
     bool blnFrameReadSuccessfully = true;
 
-    blnFrameReadSuccessfully = capWebcam.read(imgRaw); // get next frame
-                                                       // imgRaw = cv::imread("input.png");
+    if(camID >= 0)
+      blnFrameReadSuccessfully = capWebcam.read(imgRaw); // get next frame
+                                                         //
+    else
+      imgRaw = cv::imread("input.png");
 
     if(!blnFrameReadSuccessfully || imgRaw.empty()) { // if frame not read successfully
       cout << "error: frame not read from webcam\n";  // print error message to std out
