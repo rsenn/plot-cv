@@ -187,11 +187,12 @@ public:
     T product;
     Matrix<T> ret;
     int i, j, k;
-    for(i = 0; i < base_type::rows; i++) {
-      T* row = &ret[i][0];
-      for(j = 0; j < base_type::cols; j++) {
+    const int dim = 3;
+    for(i = 0; i < dim; i++) {
+      std::array<T,dim>& row = ret[i];
+      for(j = 0; j < dim; j++) {
         product = 0;
-        for(k = 0; k < base_type::cols; k++) {
+        for(k = 0; k < dim; k++) {
           product += row[k] * other.get(k, j);
         }
         row[j] = product;
