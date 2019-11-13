@@ -54,5 +54,18 @@ to_string(const Matrix<T>& mat) {
   std::ostringstream oss;
   oss << "rows: " << mat.rows;
   oss << " cols: " << mat.cols;
+
+  for(int i = 0; i < mat.rows; ++i)  {
+    const auto row = mat.row(i);
+    oss << " {";
+    for(int j = 0; j < mat.cols; ++j) {
+      if(j) 
+        oss << ",";
+      oss << row[j];
+    }
+    oss << "} ";
+  }
+
+  oss << " cols: " << mat.cols;
   return oss.str();
 }
