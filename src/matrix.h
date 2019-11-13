@@ -84,30 +84,18 @@ public:
   template<class R = std::array<T,3> >
   Matrix<T>&
   init(const R& row0, const R& row1, const R& row2) {
-    set(0, 0, row0[0]);
-    set(0, 1, row0[1]);
-    set(0, 2, row0[2]);
-    set(1, 0, row1[0]);
-    set(1, 1, row1[1]);
-    set(1, 2, row1[2]);
-    set(2, 0, row2[0]);
-    set(2, 1, row2[1]);
-    set(2, 2, row2[2]);
+    setRow(0, row0);
+    setRow(1, row1);
+    setRow(2, row2);
     return *this;
   }
 
   Matrix<T>&
   init(T xx, T xy, T yx, T yy, T tx, T ty) {
     
-    set(0, 0, xx);
-    set(0, 1, xy);
-    set(0, 2, tx);
-    set(1, 0, yx);
-    set(1, 1, yy);
-    set(1, 2, ty);
-    set(2, 0, 0);
-    set(2, 1, 0);
-    set(2, 2, 1);
+    setRpw(0, { xx,  xy, tx });
+    setRow(1, { yx, yy, ty });
+    setRow(2, { 0, 0, 1 });
     return *this;
   }
 
@@ -162,7 +150,7 @@ public:
   template<class R = std::array<T,3> >
   Matrix<T>&
   setRow(int row, R arr) {
-    for(size_t i = 0; i < base_type::cols; ++i )
+    for(int i = 0; i < base_type::cols; ++i )
       set(row, i, arr[i]);
     return *this;
   }
