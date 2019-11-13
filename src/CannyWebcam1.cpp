@@ -882,11 +882,11 @@ main(int argc, char* argv[]) {
           angles[angleIndex] = double(angleIndex) / (histogram.size() - 1) * (M_PI);
           filteredLines.push_back(line);
         }
-        auto m = Matrix<double>::identity();
-        auto s = Matrix<double>::scale(0.5);
-        auto r = Matrix<double>::rotation(M_PI_2);
-        auto t = Matrix<double>::translation(10, 50);
-        auto mult = t * r;
+        Matrix<double> m = Matrix<double>::identity();
+        Matrix<double> s = Matrix<double>::scale(0.5);
+        Matrix<double> r = Matrix<double>::rotation(M_PI_2);
+        Matrix<double> t = Matrix<double>::translation(10, 50);
+        cv::Mat mult = t * r;
 
         cout << "matrix x " << to_string(mult) << endl;
         cout << "matrix init " << to_string(m) << endl;
@@ -895,7 +895,7 @@ main(int argc, char* argv[]) {
         cout << "matrix translate " << to_string(t) << endl;
 
 cv::Point2f p(100,50);
-        r.transform_point(p);
+        Matrix<double>::transform_point(mult, p);
         cout << "transformed point: "<< p << endl;
       }
 

@@ -2,52 +2,66 @@
 #include <opencv2/core/affine.hpp>
 #include <opencv2/imgproc/types_c.h>
 
-template <class T = double> class Matrix : public cv::Mat_<T> {
+template <class T = double> class Matrix : public cv::Mat {
 public:
-  typedef cv::Mat_<T> base_type;
+  typedef cv::Mat_<T> typed_type;
+  typedef cv::Mat base_type;
 
   static const int typeId = std::is_same<T, double>::value ? CV_64F : CV_32F;
 
-  Matrix() : base_type(3, 3, typeId) {}
-  Matrix(cv::Mat m) : base_type(m) {}
+  Matrix() : base_type(typed_type(3,3)) {}
+  Matrix(base_type m) : base_type(m) {}
+ Matrix(const typed_type& m) : base_type(m) {}
+ template<class OtherT>
+ Matrix(const Matrix<OtherT>& m) : base_type(m) {}
 
-  void
-  transform_points(std::vector<cv::Point_<T>>& pt) {
-    std::vector<cv::Point3_<T>> in = pt;
-    std::vector<cv::Point3_<T>> out;
+template<class OtherT>
+
+  /**
+   * @brief      { function_description }
+   *
+   * @param[in]  m     { parameter_description }
+   * @param      pt    The point
+   */
+  static void
+  transform_points(const cv::Mat& m, std::vector<cv::Point_<OtherT>>& pt) {
+    std::vector<cv::Point3_<OtherT>> in;
+    std::vector<cv::Point3_<OtherT>> out;
+    std::transform(pt.cbegin(), pt.cend(), std::back_inserter(in), [](const cv::Point_<OtherT>& p) -> cv::Point3_<OtherT> { return cv::Point3_<OtherT>(p.x, p.y, 0); });
     out.resize(in.size());
-    cv::transform(in, out, *this);
-    std::transform(out.cbegin(), out.cend(), pt.begin(), [](const cv::Point3_<T>& pt3) -> cv::Point_<T> { return cv::Point_<T>(pt3.x, pt3.y); });
+    cv::transform(in, out, m);
+    std::transform(out.cbegin(), out.cend(), pt.begin(), [](const cv::Point3_<OtherT>& pt3) -> cv::Point_<OtherT> { return cv::Point_<OtherT>(pt3.x, pt3.y); });
   }
 
-  void
-  transform_point(cv::Point_<T>& pt) {
-    std::vector<cv::Point3_<T>> v = {pt};
-    transform_points(v);
+template<class OtherT>
+  static void
+  transform_point(const cv::Mat& m, cv::Point_<OtherT>& pt) {
+    std::vector<cv::Point_<OtherT>> v = {pt};
+    transform_points(m, v);
     pt = v[0];
   }
 
-  operator cv::Mat_<T>() const { return *this; }
+  operator base_type() const { return *this; }
 
-  static cv::Mat_<T>
+  static  cv::Mat
   rotation(double angle) {
-    return (cv::Mat_<T>(3, 3) << std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1);
+    return (typed_type(3,3) << std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1);
   }
-  static cv::Mat_<T>
+
+
+  static  cv::Mat
   scale(double scale) {
-     return (cv::Mat_<T>(3, 3) << scale, 0, 0, 0, scale, 0, 0, 0, 1);
+     return (cv::Mat_<T>(3,3) << scale, 0, 0, 0, scale, 0, 0, 0, 1);
   }
 
   template <class OtherT>
-  static Matrix<T>
+  static  cv::Mat
   translation(OtherT x, OtherT y) {
-    cv::Mat ret = (cv::Mat_<T>(3, 3) << 1, 0, T(x), 0, 1, T(y), 0, 0, 1);
-    return ret;
+    return (cv::Mat_<T>(3,3) << 1, 0, T(x), 0, 1, T(y), 0, 0, 1);
   }
-  static Matrix<T>
+  static cv::Mat
   identity() {
-    cv::Mat ret = (cv::Mat_<T>(3, 3) << 1, 0, 0, 0, 1, 0, 0, 0, 1);
-    return ret;
+    return (cv::Mat_<T>(3,3) << 1, 0, 0, 0, 1, 0, 0, 0, 1);
   }
 };
 
