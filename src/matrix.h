@@ -82,8 +82,13 @@ public:
   }
 
   Matrix<T>&
-  init(int xx, int xy, int yx, int yy, int tx, int  ty) {
-    cv::Mat(cv::Mat_<T>(3, 3) << (T(xx), T(xy), T(yx), T(yy), T(tx), T(ty))).copyTo(*this);
+  init(T xx, T xy, T yx, T yy, T tx, T  ty) {
+    set(0,0,xx);
+    set(0,1,xy);
+    set(0,2,tx);
+    set(1,0,yx);
+    set(1,1,yy);
+    set(1,2,ty);
     return *this;
   }
 
