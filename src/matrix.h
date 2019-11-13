@@ -127,9 +127,9 @@ public:
   Matrix<T>&
   init(const cv::Mat& other) {
     if(other.rows > 2)
-      init(other.ptr<T>(0,0), other.ptr<T>(1,0), other.ptr<T>(2,0));
+      init(other.ptr<T>(0, 0), other.ptr<T>(1, 0), other.ptr<T>(2, 0));
     else
-      init(other.ptr<T>(0,0), other.ptr<T>(1,0), {0, 0, 1});
+      init(other.ptr<T>(0, 0), other.ptr<T>(1, 0), {0, 0, 1});
     return *this;
   }
 
@@ -208,14 +208,13 @@ public:
 protected:
   Matrix<T>&
   set(int row, int col, const T& value) {
-       if(base_type::type() == CV_64F)
-       *base_type::ptr<double>(row, col) = value;
+    if(base_type::type() == CV_64F)
+      *base_type::ptr<double>(row, col) = value;
 
     else if(base_type::type() == CV_32F)
       *base_type::ptr<float>(row, col) = value;
     return *this;
   }
-
 
   template <class R = std::array<T, 3>>
   Matrix<T>&
@@ -227,7 +226,7 @@ protected:
 
   T
   get(int row, int col) const {
-   if(base_type::type() == CV_64F)
+    if(base_type::type() == CV_64F)
       return *base_type::ptr<double>(row, col);
     if(base_type::type() == CV_32F)
       return *base_type::ptr<float>(row, col);
