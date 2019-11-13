@@ -213,6 +213,8 @@ protected:
 
     else if(base_type::type() == CV_32F)
       *base_type::ptr<float>(row, col) = value;
+    else
+      throw  new std::runtime_error("test");
     return *this;
   }
 
