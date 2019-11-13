@@ -54,6 +54,11 @@ moment_from_angle(double phi, cv::Point_<ValueT>& point) {
   point.x = -std::sin(phi);
   point.y = std::cos(phi);
 }
+template<class ValueT>
+double
+angle_from_moment(const cv::Point_<ValueT>& point) {
+  return std::atan2(point.x, point.y);
+}
 
 template <class ValueT> class Line {
 public:
