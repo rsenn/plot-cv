@@ -83,6 +83,7 @@ public:
 
   Matrix<T>&
   init(std::array<T,3> row0, std::array<T,3> row1, std::array<T,3> row2 = std::array<T,3>{0,0,0}) {
+    *this = cv::Mat(cv::Mat::zeros(3,3,typeId));
     set(0,0,row0[0]);
     set(0,1,row0[1]);
     set(0,2,row0[2]);
@@ -97,6 +98,8 @@ public:
 
   Matrix<T>&
   init(T xx, T xy, T yx, T yy, T tx, T  ty) {
+        *this = cv::Mat(cv::Mat::zeros(3,3,typeId));
+
     set(0,0,xx);
     set(0,1,xy);
     set(0,2,tx);
