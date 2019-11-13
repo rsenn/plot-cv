@@ -507,9 +507,22 @@ corner_harris_detection(cv::Mat& src, cv::Mat& src_gray) {
   cv::imshow("corners", dst_norm_scaled);
 }
 
+/**
+ * @brief      F
+ *
+ * @param[in]  input  The input
+ * @param      u      { parameter_description }
+ */
 void
 trackbar(int input, void* u) {
-  thresholdValue = input;
+  const char* name = reinterpret_cast<const char*>(const_cast<const void*>(u));
+  static int epsilon, blur;
+  if(!strcmp(name, "eps"))
+    epsilon = input;
+  if(!strcmp(name, "blur"))
+    blur = input;
+
+
 };
 
 void
@@ -670,16 +683,12 @@ main(int argc, char* argv[]) {
   int eps = 8;
   int blur = 4;
 
-  // declare windows
-  //  note: you can use CV_WINDOW_NORMAL which allows resizing the window
-  cv::namedWindow("imgOriginal", CV_WINDOW_AUTOSIZE);
-  // or CV_WINDOW_AUTOSIZE for a fixed size window matching the resolution of the image
+cv::namedWindow("imgOriginal", CV_WINDOW_AUTOSIZE);
   cv::namedWindow("imgCanny", CV_WINDOW_AUTOSIZE);
   // cv::namedWindow("imgGrayscale", CV_WINDOW_AUTOSIZE);
-  /*cv::createTrackbar("epsilon", "contours", &eps, 7, trackbar);
-  cv::createTrackbar("blur", "contours", &blur, 7, trackbar);
-  trackbar(0, 0);
-*/
+cv::createTrackbar("epsilon", "contours", &eps, 7, trackbar, ( void*)"eps");
+  cv::createTrackbar("blur", "contours", &blur, 7, trackbar, (void*)"blur");
+
   while(charCheckForEscKey != 27 /*&& capWebcam.isOpened()*/) { // until the Esc key is pressed or webcam connection is lost
     bool blnFrameReadSuccessfully = true;
 
