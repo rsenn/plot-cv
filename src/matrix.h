@@ -124,10 +124,10 @@ public:
     T product;
     Matrix<T> ret(Matrix<T>::identity());
     int i, j, k;
-    for(i = 0; i < 3; i++) {
-      for(j = 0; j < 3; j++) {
+    for(i = 0; i < base_type::rows; i++) {
+      for(j = 0; j < other.cols; j++) {
         product = 0;
-        for(k = 0; k < 3; k++) {
+        for(k = 0; k < base_type::cols; k++) {
           product += operator()(i, k) * other(k, j);
         }
         ret(i, j) = product;
