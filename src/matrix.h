@@ -288,11 +288,13 @@ to_string(const cv::Mat& mat) {
     oss << "(";
     for(int j = 0; j < mat.cols; ++j) {
       if(j)
-        oss << ", ";
+        oss << ",";
       if(mat.type() == CV_64F)
         oss << to_string(mat.at<double>(i, j));
       else if(mat.type() == CV_32F)
         oss << to_string(mat.at<float>(i, j));
+      else
+        throw std::runtime_error("to_string");
     }
     oss << ")";
   }
