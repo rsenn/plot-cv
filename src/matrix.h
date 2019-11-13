@@ -14,19 +14,17 @@ public:
   Matrix(const typed_type& m) : base_type(m) {}
   template <class OtherT> Matrix(const Matrix<OtherT>& m) : base_type(m) {}
 
-  template <class OtherT>
-
   /**
    * @brief      { function_description }
    *
    * @param[in]  m     { parameter_description }
    * @param      pt    The point
    */
+  template <class InputIterator, class OutputIterator>
   void
-  transform_points(std::vector<cv::Point_<OtherT>>& pt) {
-    std::for_each(pt.begin(), pt.end(), std::bind(&Matrix<T>::transform_point, this, std::placeholders::_1));
+  transform_points(InputIterator from, InputIterator to, OutputIterator out) const {
+    std::transform(from, to, out, std::bind(&Matrix<T>::transform_point, this, std::placeholders::_1));
   }
-
 
   Matrix<T>&
   operator=(const cv::MatExpr& expr) {
@@ -34,12 +32,11 @@ public:
     return *this;
   }
 
-  template <class OtherT>
-   cv::Point_<OtherT>
-  transform_point(const cv::Point_<OtherT>& pt) const {
-    OtherT x = at<T>(0,0) * pt.x + at<T>(0,1) * pt.y + at<T>(0,2);
-    OtherT y = at<T>(1,0) * pt.x + at<T>(1,1) * pt.y + at<T>(1,2);
-    return cv::Point_<OtherT>(x,y);
+  cv::Point_<T>
+  transform_point(const cv::Point_<T>& pt) const {
+    T x = at<T>(0, 0) * pt.x + at<T>(0, 1) * pt.y + at<T>(0, 2);
+    T y = at<T>(1, 0) * pt.x + at<T>(1, 1) * pt.y + at<T>(1, 2);
+    return cv::Point_<T>(x, y);
   };
 
   operator base_type() const { return *this; }
@@ -64,16 +61,13 @@ public:
     return (cv::Mat_<T>(3, 3) << 1, 0, 0, 0, 1, 0, 0, 0, 1);
   }
 
-  cv::Mat
-  operator*(const Matrix<T>& other) {
-    return (cv::Mat_<T>(3, 3) << 
-      (at<T>(0,0) * other.at<T>(0,0) + at<T>(1,0) * other.at<T>(1,0)),
-      (at<T>(0,1) * other.at<T>(0,0) + at<T>(1,1) * other.at<T>(0,1)),
-      (at<T>(0,0) * other.at<T>(0,2) + at<T>(1,0) * other.at<T>(1,2) + at<T>(0,2)),
-      (at<T>(0,0) * other.at<T>(1,0) + at<T>(1,0) * other.at<T>(1,1)),
-      (at<T>(0,1) * other.at<T>(1,0) + at<T>(1,1) * other.at<T>(1,1)),
-      (at<T>(0,1) * other.at<T>(0,2) + at<T>(1,1) * other.at<T>(1,2) + at<T>(1,2))
-    );
+  cv::Mat operator*(const Matrix<T>& other) {
+    return (cv::Mat_<T>(3, 3) << (at<T>(0, 0) * other.at<T>(0, 0) + at<T>(1, 0) * other.at<T>(1, 0)),
+            (at<T>(0, 1) * other.at<T>(0, 0) + at<T>(1, 1) * other.at<T>(0, 1)),
+            (at<T>(0, 0) * other.at<T>(0, 2) + at<T>(1, 0) * other.at<T>(1, 2) + at<T>(0, 2)),
+            (at<T>(0, 0) * other.at<T>(1, 0) + at<T>(1, 0) * other.at<T>(1, 1)),
+            (at<T>(0, 1) * other.at<T>(1, 0) + at<T>(1, 1) * other.at<T>(1, 1)),
+            (at<T>(0, 1) * other.at<T>(0, 2) + at<T>(1, 1) * other.at<T>(1, 2) + at<T>(1, 2)));
   };
   Matrix<T>
   operator*=(const Matrix<T>& other) {

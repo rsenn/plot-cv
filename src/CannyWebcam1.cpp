@@ -891,7 +891,6 @@ main(int argc, char* argv[]) {
 
         mult = t * r;
 
-
         cout << "matrix x " << to_string(mult) << endl;
         cout << "matrix init " << to_string(m) << endl;
         cout << "matrix scale " << to_string(s) << endl;
