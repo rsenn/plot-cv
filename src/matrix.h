@@ -45,9 +45,10 @@ public:
 template<class OtherT>
     static Matrix<T>
   translation(OtherT x, OtherT y) {
-    T m[3][2] = {{0,0},{0,0},{T(x),T(y)}};
+    cv::Mat ret( 3, 2, typeId);
 
-    cv::Mat ret( 3, 2, typeId, (void*)&m );
+    ret[2] = T(x);
+    ret[2+3] = T(y);
     return ret;
   }
 };
