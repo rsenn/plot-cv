@@ -16,6 +16,7 @@ public:
   Matrix(const typed_type& m) : base_type(cv::Mat(m)) {}
   template <class OtherT> Matrix(const Matrix<OtherT>& m) : base_type(3, 3, typeId) { *this = m; }
 
+  template <class R = std::array<T, 3>> Matrix(R row0, R row1, R row2 = {0, 0, 1}) : base_type(3, 3, typeId) { init(row0, row1, row2); }
   /**
    * @brief      { function_description }
    *
