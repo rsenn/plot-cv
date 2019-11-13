@@ -81,8 +81,9 @@ public:
     return cv::Mat(cv::Mat_<T>(3, 3) << (T(xx), T(xy), T(yx), T(yy), T(tx), T(ty)));
   }
 
+template<class R = std::array<T,3> >
   Matrix<T>&
-  init(std::array<T, 3> row0, std::array<T, 3> row1, std::array<T, 3> row2 = std::array<T, 3>{0, 0, 0}) {
+  init(const R& row0, const R& row1, const R& row2) {
     *this = cv::Mat(cv::Mat::zeros(3, 3, typeId));
     set(0, 0, row0[0]);
     set(0, 1, row0[1]);
