@@ -884,9 +884,9 @@ main(int argc, char* argv[]) {
           filteredLines.push_back(line);
         }
         Matrix<double> m = Matrix<double>::identity();
-        Matrix<double> s = Matrix<double>::scale(2);
+        Matrix<double> s = Matrix<double>::scale(3);
         Matrix<double> r = Matrix<double>::rotation(M_PI);
-        Matrix<double> t = Matrix<double>::translation(3, 6);
+        Matrix<double> t = Matrix<double>::translation(120, -60);
         Matrix<double> mult;
 
         mult = t * r * s;
