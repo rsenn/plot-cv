@@ -62,9 +62,15 @@ public:
   static Matrix<T> 
   rotation(double angle, const cv::Point_<OtherT>& origin = cv::Point_<OtherT>(0, 0)) {
 
-    Matrix<T> ret(cv::Mat_<T>(3, 3) << (1, 0, T(-origin.x), 0, 1, T(-origin.y), 0, 0, 1));
+    Matrix<T> ret;
+    const  cv::Point_<OtherT> zero(0, 0);
+
+
+if(origin != zero)
+    ret *=  (cv::Mat_<T>(3, 3) << (1, 0, T(-origin.x), 0, 1, T(-origin.y), 0, 0, 1));
     ret *=  (cv::Mat_<T>(3, 3) << (std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1));
-    ret *=  (cv::Mat_<T>(3, 3) << (1, 0, T(origin.x), 0, 1, T(origin.y), 0, 0, 1));
+if(origin != zero)
+      ret *=  (cv::Mat_<T>(3, 3) << (1, 0, T(origin.x), 0, 1, T(origin.y), 0, 0, 1));
 
     return ret;
   }
