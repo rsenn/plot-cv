@@ -69,7 +69,22 @@ public:
 */
   static Matrix<T>
   rotation(double angle) {
-    return Matrix<T> ({std::cos(angle), std::sin(angle), 0}, {-std::sin(angle), std::cos(angle), 0});
+    return Matrix<T>({std::cos(angle), std::sin(angle), 0}, {-std::sin(angle), std::cos(angle), 0});
+  }
+
+  static Matrix<T>
+  scale(double scale) {
+    return Matrix<T>({scale, 0, 0}, {0, scale, 0}, {0, 0, 1});
+  }
+
+  template <class OtherT>
+  static Matrix<T>
+  translation(OtherT x, OtherT y) {
+    return Matrix<T>({1, 0, T(x)}, {0, 1, T(y)}, {0, 0, 1});
+  }
+  static Matrix<T>
+  identity() {
+    return Matrix<T>({1, 0, 0}, {0, 1, 0}, {0, 0, 1});
   }
 
   cv::Affine3<T>
@@ -79,9 +94,7 @@ public:
 
   static Matrix<T>
   create(T xx, T xy, T yx, T yy, T tx, T ty) {
-    Matrix<T> ret;
-    ret.init({xx, xy, yx}, {yy, tx, ty});
-    return ret;
+    return Matrix<T>({xx, xy, yx}, {yy, tx, ty});
   }
 
   template <class R = std::array<T, 3>>
@@ -98,6 +111,12 @@ public:
     setRow(0, {xx, xy, tx});
     setRow(1, {yx, yy, ty});
     setRow(2, {0, 0, 1});
+    return *this;
+  }
+
+  Matrix<T>&
+  init() {
+    init({1, 0, 0}, {0, 1, 0}, {0, 0, 1});
     return *this;
   }
 
@@ -124,78 +143,8 @@ public:
     return ret;
   }
 
-  static Matrix<T>
-  scale(double scale) {
-    Matrix<T> ret;
-    ret.init({scale, 0, 0}, {0, scale, 0}, {0, 0, 1});
-    return ret;
-  }
-
-  template <class OtherT>
-  static Matrix<T>
-  translation(OtherT x, OtherT y) {
-    Matrix<T> ret;
-    ret.init({1, 0, T(x)}, {0, 1, T(y)}, {0, 0, 1});
-    return ret;
-  }
-  static Matrix<T>
-  identity() {
-    Matrix<T> ret;
-    ret.init({1, 0, 0}, {0, 1, 0}, {0, 0, 1});
-    return ret;
-  }
-
-  Matrix<T> operator*(const Matrix<T>& other) const { return product(other); }
-
-  Matrix<T>&
-  set(int row, int col, const T& value) {
-    *ptr(row, col) = value;
-    return *this;
-  }
-  template <class R = std::array<T, 3>>
-  Matrix<T>&
-  setRow(int row, R arr) {
-    for(int i = 0; i < base_type::cols; ++i) set(row, i, T(arr[i]));
-    return *this;
-  }
-
-  T
-  get(int row, int col) const {
-    return *base_type::ptr();
-  }
-
   T* operator[](int row) { return ptr(row, 0); }
   T const* operator[](int row) const { return ptr(row, 0); }
-
-  const T&
-  ref(int row, int col) const {
-    return *ptr(row, col);
-  }
-
-  T&
-  ref(int row, int col) {
-    return *ptr(row, col);
-  }
-
-  const T*
-  ptr(int row, int col) const {
-    const T* ptr = nullptr;
-    if(base_type::type() == CV_64F)
-      ptr = (T const*)base_type::ptr<double>(row, col);
-    if(base_type::type() == CV_32F)
-      ptr = (T const*)base_type::ptr<float>(row, col);
-    return ptr;
-  }
-
-  T*
-  ptr(int row, int col) {
-    T* ptr = nullptr;
-    if(base_type::type() == CV_64F)
-      ptr = (T*)base_type::ptr<double>(row, col);
-    if(base_type::type() == CV_32F)
-      ptr = (T*)base_type::ptr<float>(row, col);
-    return ptr;
-  }
 
   Matrix<T>&
   multiplicate(const Matrix<T>& matrix2) {
@@ -226,6 +175,60 @@ public:
       }
     }
     return ret;
+  }
+
+  Matrix<T> operator*(const Matrix<T>& other) const { return product(other); }
+  Matrix<T>&
+  operator*=(const Matrix<T>& other) {
+    return multiplicate(other);
+  }
+
+protected:
+  Matrix<T>&
+  set(int row, int col, const T& value) {
+    *ptr(row, col) = value;
+    return *this;
+  }
+  template <class R = std::array<T, 3>>
+  Matrix<T>&
+  setRow(int row, R arr) {
+    for(int i = 0; i < base_type::cols; ++i) set(row, i, T(arr[i]));
+    return *this;
+  }
+
+  T
+  get(int row, int col) const {
+    return *base_type::ptr();
+  }
+
+  const T&
+  ref(int row, int col) const {
+    return *ptr(row, col);
+  }
+
+  T&
+  ref(int row, int col) {
+    return *ptr(row, col);
+  }
+
+  const T*
+  ptr(int row, int col) const {
+    const T* ptr = nullptr;
+    if(base_type::type() == CV_64F)
+      ptr = (T const*)base_type::ptr<double>(row, col);
+    if(base_type::type() == CV_32F)
+      ptr = (T const*)base_type::ptr<float>(row, col);
+    return ptr;
+  }
+
+  T*
+  ptr(int row, int col) {
+    T* ptr = nullptr;
+    if(base_type::type() == CV_64F)
+      ptr = (T*)base_type::ptr<double>(row, col);
+    if(base_type::type() == CV_32F)
+      ptr = (T*)base_type::ptr<float>(row, col);
+    return ptr;
   }
 };
 
