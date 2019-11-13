@@ -10,8 +10,10 @@
 
 #include "simple_svg_1.0.0.hpp"
 #include "psimpl.h"
+#include "line.h"
 
 #include <iostream>
+#include <list>
 #include <functional>
 typedef std::vector<cv::Point> PointVec;
 typedef std::vector<cv::Point2f> Point2fVec;
@@ -53,7 +55,7 @@ simplifyPolyline(const std::vector<PointT>& points) {
   auto end = psimpl.Opheim(coordPointer(points.data()), coordPointer(&points.data()[points.size()]), 4, 30, output);
   size_t outn = std::distance(output, end) / 2;
 
-  std::cout << "simplification 1:" << ((double)points.size() / outn) << std::endl;
+  // std::cout << "simplification 1:" << ((double)points.size() / outn) << std::endl;
   ret.resize(outn);
   return ret;
 }
@@ -540,6 +542,36 @@ writeImage(const cv::Mat& img) {
   cv::imwrite(cv::String(filename.str()), img);
 }
 
+void
+drawAllContours(cv::Mat& out, std::vector<PointVec>& contours) {
+
+  for(size_t i = 0; i < contours.size(); i++) {
+    const cv::Scalar color = HSVtoRGB((i * 360 * 10 / contours.size()) % 360, 1.0, 1.0);
+    auto contour = simplifyPolyline(contours[i]);
+    contours[i] = contour;
+
+    const double area = cv::contourArea(contours[i], false);
+    if(area < 1)
+      continue;
+
+    cv::drawContours(out, contours, i, color, 1, cv::LINE_AA);
+  }
+}
+
+void
+drawAllLines(cv::Mat& out, std::vector<Line<float>>& lines) {
+
+  for(size_t i = 0; i < lines.size(); i++) {
+    const cv::Scalar color = HSVtoRGB((i * 360 * 10 / lines.size()) % 360, 1.0, 1.0);
+
+    const double len = lines[i].length();
+    if(len < 8)
+      continue;
+
+    cv::line(out, cv::Point(lines[i].a), cv::Point(lines[i].b), color, 1, cv::LINE_AA);
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 int
 main(int argc, char* argv[]) {
@@ -636,7 +668,18 @@ main(int argc, char* argv[]) {
       std::ostringstream contourStr;
       double maxArea = 0;
 
+      std::vector<Line<float>> lines;
+
       std::for_each(contours.cbegin(), contours.cend(), [&](const std::vector<cv::Point>& a) {
+        size_t i;
+
+        for(i = 0; i + 2 < a.size(); i++) {
+          Line<float> l(a[i], a[i + 1]);
+
+          if(l.length() > 0)
+            lines.push_back(l);
+        }
+
         if(a.size() >= 3) {
 
           Point2fVec c;
@@ -659,6 +702,42 @@ main(int argc, char* argv[]) {
       }
 
       std::cout << "Num contours: " << contours.size() << std::endl;
+      /*
+            std::for_each(lines.begin(), lines.end(), [&](const Line<float>& l) {
+              const Line<float>& nearest = findNearestLine(l, lines);
+            });*/
+      std::list<Line<float>> filteredLines;
+
+      std::copy_if(lines.cbegin(), lines.cend(), std::back_inserter(filteredLines), [&](const Line<float>& l) -> bool {
+        return true;
+      });
+      lines.clear();
+
+      typedef std::list<Line<float>>::iterator list_iterator;
+      list_iterator line = filteredLines.begin();
+      while(line != filteredLines.end()) {
+        list_iterator next(line);
+        ++next;
+        list_iterator it = std::find(filteredLines.begin(), filteredLines.end(), *line);
+        Line<float> nearest = findNearestLine(*line, filteredLines);
+        filteredLines.erase(line);
+
+        if((it = std::find(filteredLines.begin(), filteredLines.end(), nearest)) != filteredLines.end()) {
+          line = it;
+          continue;
+        }
+        std::cout << "line list: " << *line << std::endl;
+        line = next;
+      }
+
+      std::for_each(filteredLines.begin(), filteredLines.end(), [&](Line<float>& l) {
+
+      });
+
+      std::cout << "Num lines: " << lines.size() << std::endl;
+      std::cout << "Num filteredLines: " << filteredLines.size() << std::endl;
+
+      //   drawAllLines(imgOriginal, filteredLines);
 
       //  std::cout << contourStr.str() << std::endl;
 
@@ -717,52 +796,17 @@ main(int argc, char* argv[]) {
         // cv::drawContours(imgOriginal, list, -1, cv::Scalar(255, 255, 0), 1);
       });
 
-      for(size_t i = 0; i < contours.size(); i++) {
-        const cv::Scalar color = HSVtoRGB((i * 360 * 10 / contours.size()) % 360, 1.0, 1.0);
-        auto contour = simplifyPolyline(contours[i]);
-        contours[i] = contour;
+      // drawAllContours(imgOriginal, contours);
 
-        const double area = cv::contourArea(contours[i], false);
-        if(area < 20)
-          continue;
+      // CV_WINDOW_AUTOSIZE is the default
+      cv::imshow("imgOriginal", imgOriginal); // show windows
+                                              // cv::imshow("imgGrayscale", imgBlurred); //
 
-        cv::drawContours(imgOriginal, contours, i, color, 1, cv::LINE_AA);
-      }
+      // cv::createTrackbar("Thre", "demoProc", &thresholdValue, 255, &trackbar);
 
-      /*
-          for(size_t i = 0; i < contours2.size() - 1; i++) {
-            const std::vector<cv::Point>& c = approxim[i];
-
-            if(cv::isContourConvex(c)) {
-              cv::drawContours(imgOriginal, approxim, i, cv::Scalar(255, 255, 0), 2, cv::LINE_AA);
-            }
-          }*/
-      /*
-          std::sort(contours2.begin(), contours2.end(), [](Point2fVec a, Point2fVec b) -> bool {
-            return polygonArea<cv::Point2f>(a) >= polygonArea<cv::Point2f>(b);
-          });
-
-          for(size_t i = 0; i < std::min<size_t>(100, contours2.size()); ++i) {
-            int npts = contours2[i].size();
-            double area = polygonArea(contours2[i]);
-          //  std::cout << i << ": " << area << std::endl;
-
-            if(npts > 0) {
-              std::vector<cv::Point> pl = ToPointVec(contours2[i]);
-              cv::polylines(imgOriginal, pl, true, cv::Scalar(0, 0, 255), 1);
-            }
-          }
-      */
+      charCheckForEscKey = cv::waitKey(100); // delay (in ms) and get key press, if any
     }
-
-    // CV_WINDOW_AUTOSIZE is the default
-    cv::imshow("imgOriginal", imgOriginal); // show windows
-                                            // cv::imshow("imgGrayscale", imgBlurred); //
-
-    // cv::createTrackbar("Thre", "demoProc", &thresholdValue, 255, &trackbar);
-
-    charCheckForEscKey = cv::waitKey(100); // delay (in ms) and get key press, if any
-  }                                        // end while
+  } // end while
 
   return (0);
 }
