@@ -14,7 +14,7 @@ public:
   Matrix(int xx, int xy, int yx, int yy, int tx, int ty) : base_type(3, 3, typeId) { init(xx, xy, yx, yy, tx, ty); }
   Matrix(const base_type& m) : base_type(m) {}
   Matrix(const typed_type& m) : base_type(m) {}
-  template <class OtherT> Matrix(const Matrix<OtherT>& m) : base_type(3, 3, typeId) { init(m[0],m[1],m[2]); }
+  template <class OtherT> Matrix(const OtherT& m) : base_type(3, 3, typeId) { init(m); }
 
   template <class R = std::array<T, 3>> Matrix(R row0, R row1, R row2 = {0, 0, 1}) : base_type(3, 3, typeId) { init(row0, row1, row2); }
   /**
@@ -123,9 +123,18 @@ public:
   Matrix<T>&
   init(const cv::Mat& other) {
     if(other.rows > 2)
-    init({ other.at<T>(0,0), other.at<T>(0,1), other.at<T>(0,2) },{ other.at<T>(1,0), other.at<T>(1,1), other.at<T>(1,2) },{ other.at<T>(2,0), other.at<T>(2,1), other.at<T>(2,2) });
-  else 
-    init({ other.at<T>(0,0), other.at<T>(0,1), other.at<T>(0,2) },{ other.at<T>(1,0), other.at<T>(1,1), other.at<T>(1,2) },  { 0,0,1});
+      init({other.at<T>(0, 0), other.at<T>(0, 1), other.at<T>(0, 2)}, {other.at<T>(1, 0), other.at<T>(1, 1), other.at<T>(1, 2)}, {other.at<T>(2, 0), other.at<T>(2, 1), other.at<T>(2, 2)});
+    else
+      init({other.at<T>(0, 0), other.at<T>(0, 1), other.at<T>(0, 2)}, {other.at<T>(1, 0), other.at<T>(1, 1), other.at<T>(1, 2)}, {0, 0, 1});
+    return *this;
+  }
+
+  Matrix<T>&
+  init(const Matrix<T>& other) {
+    if(other.rows > 2)
+      init(other[0], other[1], other[2]);
+    else
+      init(other[0], other[1], {0, 0, 1});
     return *this;
   }
 
