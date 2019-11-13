@@ -10,6 +10,7 @@ public:
   static const int typeId = std::is_same<T, double>::value ? CV_64F : CV_32F;
 
   Matrix() : base_type(cv::Mat::zeros(3,3, typeId)) { init({ 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 }); }
+  Matrix(const cv::Mat& other) : base_type(3,3, typeId) { *this = other; }
   Matrix(int xx, int xy, int yx, int yy, int tx, int ty) : base_type(3,3,typeId) { init(xx, xy, yx, yy, tx, ty);  }
   Matrix(const base_type& m) : base_type(3,3,typeId) { *this = m; }
   Matrix(const typed_type& m) : base_type(3,3,typeId) { *this = m; }
@@ -83,7 +84,7 @@ public:
 
   Matrix<T>&
   init(std::array<T,3> row0, std::array<T,3> row1, std::array<T,3> row2 = std::array<T,3>{0,0,0}) {
-    *this = cv::Mat(cv::Mat::zeros(3,3,typeId));
+    *this = cv::Mat(cv::Mat::zeroes(3,3,typeId));
     set(0,0,row0[0]);
     set(0,1,row0[1]);
     set(0,2,row0[2]);
@@ -98,7 +99,7 @@ public:
 
   Matrix<T>&
   init(T xx, T xy, T yx, T yy, T tx, T  ty) {
-        *this = cv::Mat(cv::Mat::zeros(3,3,typeId));
+        *this = cv::Mat(cv::Mat::zeroes(3,3,typeId));
 
     set(0,0,xx);
     set(0,1,xy);
