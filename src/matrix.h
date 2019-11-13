@@ -160,9 +160,9 @@ public:
       for(j = 0; j < base_type::cols; j++) {
         product = 0;
         for(k = 0; k < base_type::cols; k++) {
-          product += get(i, k) * other.get(k, j);
+          product += (*this)[i][k] * other[k][j];
         }
-        *ret.ptr(i, j) += product;
+        ret[i][j] += product;
       }
     }
     return ret;
