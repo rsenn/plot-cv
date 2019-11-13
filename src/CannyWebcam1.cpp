@@ -680,7 +680,7 @@ main(int argc, char* argv[]) {
       // filter_contours(contours2);
       export_svg<cv::Point2f>(contours2, filename.str());
 
-      unlink("contour.svg");
+//      unlink("contour.svg");
       rename("contour.svg.tmp", "contour.svg");
 
 
