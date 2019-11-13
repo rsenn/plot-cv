@@ -122,15 +122,15 @@ public:
   Matrix<T>
   product(const Matrix<T>& other) const {
     T product;
-    Matrix<T> ret(Matrix<T>::identity());
+    Matrix<T> ret;
     int i, j, k;
     for(i = 0; i < base_type::rows; i++) {
-      for(j = 0; j < other.cols; j++) {
+      for(j = 0; j < base_type::cols; j++) {
         product = 0;
         for(k = 0; k < base_type::cols; k++) {
-          product += operator()(i, k) * other(k, j);
+          product +=  at<T>(i, k) * other.at<T>(k, j);
         }
-        ret(i, j) = product;
+        ret.at<T>(i, j) = product;
       }
     }
     return ret;
