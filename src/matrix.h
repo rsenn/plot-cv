@@ -35,6 +35,14 @@ public:
   scale(double scale) {
     return cv::getRotationMatrix2D(cv::Point2f(0, 0), 0, scale);
   }
+
+    static Matrix<T>
+  translate(T x, T y) {
+    Matrix<T> ret = { 0,0,0,0,0,0 };
+    ret.at(0,2) = x;
+    ret.at(1,2) = y;
+    return ret;
+  }
 };
 
 template <class T>
