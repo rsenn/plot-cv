@@ -286,8 +286,8 @@ to_string(const cv::Mat& mat) {
     if(i)
       oss << ".\n";
     else
-      oss << " ";
-    oss << "(";
+      oss << "[";
+    oss << "[";
     for(int j = 0; j < mat.cols; ++j) {
       if(j)
         oss << ",";
@@ -298,8 +298,9 @@ to_string(const cv::Mat& mat) {
       else
         throw std::runtime_error("to_string");
     }
-    oss << " )";
+    oss << " ]";
   }
+  oss << "]\n";
   return oss.str();
 }
 template <class Char, class Value>
