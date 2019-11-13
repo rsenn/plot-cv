@@ -136,7 +136,7 @@ public:
       for(j = 0; j < base_type::cols; j++) {
         product = 0;
         for(k = 0; k < base_type::cols; k++) {
-          product += at<T>(i, k) * other(k, j);
+          product += (*this)(i, k) * other(k, j);
         }
         ret(i, j) = product;
       }
