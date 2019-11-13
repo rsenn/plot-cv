@@ -11,6 +11,7 @@
 #include "simple_svg_1.0.0.hpp"
 #include "psimpl.h"
 #include "line.h"
+#include "matrix.h"
 
 #include <type_traits>
 #include <iostream>
@@ -882,6 +883,12 @@ main(int argc, char* argv[]) {
           filteredLines.push_back(line);
         }
       }
+
+      auto s = Matrix<double>::scale(0.5);
+      auto r = Matrix<double>::rotation(M_PI_2);
+      //auto t = Matrix<double>::translation(M_PI_2);
+      cout << to_string(s) << endl;
+      cout << to_string(r) << endl;
 
       cout << "histogram:";
 
