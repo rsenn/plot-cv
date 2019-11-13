@@ -102,19 +102,14 @@ to_string(const cv::Mat& mat) {
       if(j)
         oss << ", ";
       if(mat.type() == CV_64F)
-        oss << std::fixed << std::cout.precision(2) << mat.at<double>(i, j);
+        oss << to_string(mat.at<double>(i, j));
       else if(mat.type() == CV_32F)
-        oss << std::fixed << std::cout.precision(2) << mat.at<float>(i, j);
+        oss << to_string(mat.at<float>(i, j));
     }
     oss << ")";
   }
   std::string s = oss.str();
 
-  if(s.find('.') != std::string::npos) {
-    while(s.back() == '0') {
-      s.pop_back();
-    }
-  }
   return s;
 }
 template <class Char, class Value>

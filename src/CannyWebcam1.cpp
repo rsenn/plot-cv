@@ -889,7 +889,7 @@ main(int argc, char* argv[]) {
         Matrix<double> t = Matrix<double>::translation(3, 6);
         Matrix<double> mult;
 
-        mult =  t * r * s;
+        mult = t * r * s;
 
         cout << "matrix x " << to_string(mult) << endl;
         cout << "matrix init " << to_string(m) << endl;

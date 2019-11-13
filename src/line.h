@@ -12,7 +12,7 @@ template <class T, typename std::enable_if<std::is_integral<T>::value || std::is
 inline std::string
 to_string(const T& t, size_t n_pad = 3, char ch_pad = ' ') {
   std::ostringstream oss;
-  oss << std::fixed << std::cout.precision(3) <<  t;
+  oss << std::fixed << std::cout.precision(3) << t;
   std::string ret(oss.str());
 
   if(ret.length() < n_pad)
@@ -24,6 +24,13 @@ to_string(const T& t, size_t n_pad = 3, char ch_pad = ' ') {
       ret.resize(std::max(i, n_pad));
     }
   }
+
+  if(ret.find('.') != std::string::npos) {
+    while(ret.back() == '0') {
+      ret.pop_back();
+    }
+  }
+
   return ret;
 }
 
