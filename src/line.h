@@ -6,6 +6,7 @@
 #include <type_traits>
 #include <exception>
 #include <string>
+template <class T> class LineEnd;
 
 template <class T, typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type* = nullptr>
 inline std::string
@@ -144,13 +145,21 @@ public:
   }
 
   ValueT
-  min_distance(const Line<ValueT>& l2, size_t* point_index = nullptr) const {
+  min_distance(Line<ValueT>& l2, size_t* point_index = nullptr) const {
     std::pair<ValueT, ValueT> dist = endpoint_distance(l2);
     /* if(intersect(l2))
        return 0;*/
     if(point_index)
       *point_index = dist.first < dist.second ? 0 : 1;
     return dist.first < dist.second ? dist.first : dist.second;
+  }
+
+  ValueT
+    nearest_end(Line<ValueT>& l2, LineEnd<ValueT>& end) const {
+      size_t point_index;
+      ValueT dist = min_distance(l2, &point_index);
+      end = LineEnd<ValueT>(l2, point_index);
+      return dist;
   }
 
   ValueT
@@ -261,7 +270,7 @@ operator<<(std::basic_ostream<Char>& os, const std::vector<Line<Value>>& c) {
 template <class ContainerT>
 
 typename ContainerT::iterator
-findNearestLine(const typename ContainerT::value_type& line, ContainerT& lines) {
+findNearestLine(typename ContainerT::value_type& line, ContainerT& lines) {
   typedef typename ContainerT::iterator iterator_type;
   typedef typename ContainerT::value_type line_type;
   typedef typename line_type::value_type value_type;
@@ -282,7 +291,7 @@ findNearestLine(const typename ContainerT::value_type& line, ContainerT& lines) 
 }
 template <class ContainerT>
 typename ContainerT::iterator
-findNearestLine(const typename ContainerT::iterator& line, ContainerT& lines) {
+findNearestLine(typename ContainerT::iterator& line, ContainerT& lines) {
   typedef typename ContainerT::iterator iterator_type;
   typedef typename ContainerT::value_type point_type;
   typedef typename point_type::value_type value_type;
@@ -339,10 +348,25 @@ protected:
   }
 
 public:
+  LineEnd() {}
   LineEnd(Line<T>& l, size_t pt_i) : line(&l), point_index(pt_i) {}
+~LineEnd() {}
 
-  cv::Point_<T>& point() {return *ptr(); }
-  cv::Point_<T> const& point() const {return *const_ptr(); }
+  cv::Point_<T>&
+  point() {
+    return *ptr();
+  }
+  cv::Point_<T> const&
+  point() const {
+    return *const_ptr();
+  }
 
   operator cv::Point_<T>() const { return point(); }
+};
+
+struct LineHierarchy {
+  int prevSibling;
+  int nextSibling;
+  int prevParallel;
+  int nextParallel;
 };
