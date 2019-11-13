@@ -882,12 +882,12 @@ main(int argc, char* argv[]) {
           angles[angleIndex] = double(angleIndex) / (histogram.size() - 1) * (M_PI);
           filteredLines.push_back(line);
         }
-        auto i = Matrix<double>::identity();
+        auto m = Matrix<double>::identity();
         auto s = Matrix<double>::scale(0.5);
         auto r = Matrix<double>::rotation(M_PI_2);
         auto t = Matrix<double>::translation(10, 50);
 
-        cout << "matrix init " << to_string(i) << endl;
+        cout << "matrix init " << to_string(m) << endl;
         cout << "matrix scale " << to_string(s) << endl;
         cout << "matrix rotate " << to_string(r) << endl;
         cout << "matrix translate " << to_string(t) << endl;
