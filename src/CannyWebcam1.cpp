@@ -33,7 +33,7 @@ int thresholdValue = 155;
 bool showDiagnostics = false;
 std::vector<cv::Point2f> bigContour;
 double epsilon = 3;
-
+const int max_frames = 100000;
 template <class ValueT>
 ValueT*
 coord_pointer(cv::Point_<ValueT>* point_ptr) {
@@ -527,7 +527,7 @@ write_image(cv::Mat img) {
   static int count = 0;
   std::ostringstream filename;
   filename << "frame-";
-  filename << to_string((++count) % 100, 3, '0');
+  filename << to_string((++count) % max_frames, 3, '0');
   filename << ".png";
 
   cv::imwrite(cv::String(filename.str()), img);
