@@ -196,9 +196,8 @@ public:
       std::array<T, dim>& row = ret[i];
       for(j = 0; j < dim; j++) {
         product = 0;
-        for(k = 0; k < dim; k++) {
-          product += row[k] * other.get(k, j);
-        }
+        for(k = 0; k < dim; k++) product += row[k] * other.get(k, j);
+
         row[j] = product;
       }
     }
@@ -220,7 +219,7 @@ protected:
     else if(base_type::type() == CV_32F)
       *base_type::ptr<float>(row, col) = value;
     else
-      throw new std::runtime_error("test");
+      throw new std::runtime_error("set");
     return *this;
   }
 
@@ -236,8 +235,10 @@ protected:
   get(int row, int col) const {
     if(base_type::type() == CV_64F)
       return *base_type::ptr<double>(row, col);
-    if(base_type::type() == CV_32F)
+    else if(base_type::type() == CV_32F)
       return *base_type::ptr<float>(row, col);
+    else
+      throw new std::runtime_error("get");
     return T();
   }
 
@@ -256,8 +257,10 @@ protected:
     const T* ptr = nullptr;
     if(base_type::type() == CV_64F)
       ptr = (T const*)base_type::ptr<double>(row, col);
-    if(base_type::type() == CV_32F)
+    else if(base_type::type() == CV_32F)
       ptr = (T const*)base_type::ptr<float>(row, col);
+    else
+      throw std::runtime_error("ptr");
     return ptr;
   }
 
@@ -266,8 +269,10 @@ protected:
     T* ptr = nullptr;
     if(base_type::type() == CV_64F)
       ptr = (T*)base_type::ptr<double>(row, col);
-    if(base_type::type() == CV_32F)
+    else if(base_type::type() == CV_32F)
       ptr = (T*)base_type::ptr<float>(row, col);
+    else
+      throw std::runtime_error("ptr");
     return ptr;
   }
 };
