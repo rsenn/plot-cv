@@ -122,7 +122,7 @@ public:
   Matrix<T>
   product(const Matrix<T>& other) const {
     T product;
-    Matrix<T> ret;
+    Matrix<T> ret(Matrix<T>::identity());
     int i, j, k;
     for(i = 0; i < base_type::rows; i++) {
       for(j = 0; j < base_type::cols; j++) {
