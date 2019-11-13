@@ -29,11 +29,11 @@ public:
 
   operator cv::Mat_<T>() const { return *this; }
 
-  static Matrix<T>
+  static  cv::Mat_<T>
   rotation(double angle) {
     return cv::getRotationMatrix2D(cv::Point2f(0, 0), angle, 1);
   }
-  static Matrix<T>
+  static cv::Mat_<T>
   scale(double scale) {
     return cv::getRotationMatrix2D(cv::Point2f(0, 0), 0, scale);
   }
@@ -50,7 +50,7 @@ template<class OtherT>
 
 template <class T>
 inline std::string
-to_string(const Matrix<T>& mat) {
+to_string(const cv::Mat_<T>& mat) {
   std::ostringstream oss;
   oss << "rows: " << mat.rows;
   oss << " cols: " << mat.cols;
@@ -61,7 +61,7 @@ to_string(const Matrix<T>& mat) {
     for(int j = 0; j < row.cols; ++j) {
       if(j) 
         oss << ",";
-      oss << to_string(row[j]);
+      oss << to_string(row);
     }
     oss << "} ";
   }
