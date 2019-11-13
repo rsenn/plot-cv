@@ -51,8 +51,8 @@ point_distance(const cv::Point_<ValueT>& p1, const cv::Point_<ValueT>& p2) {
 template<class ValueT>
 void
 moment_from_angle(double phi, cv::Point_<ValueT>& point) {
-  point.x = std::cos(phi);
-  point.y = std::sin(phi);
+  point.x = std::sin(phi);
+  point.y = std::cos(phi);
 }
 
 template <class ValueT> class Line {
