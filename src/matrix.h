@@ -6,7 +6,9 @@ template <class T = double> class Matrix : public cv::Mat_<T> {
 public:
   typedef cv::Mat_<T> base_type;
 
-  Matrix() : base_type(3,3, std::is_same<T, double>::value ? CV_64F : CV_32F) {}
+  static const int typeId = std::is_same<T, double>::value ? CV_64F : CV_32F;
+
+  Matrix() : base_type(3,3, typeId) {}
   Matrix(cv::Mat m) : base_type(m) {}
 
   void
@@ -36,11 +38,12 @@ public:
     return cv::getRotationMatrix2D(cv::Point2f(0, 0), 0, scale);
   }
 
+template<class OtherT>
     static Matrix<T>
-  translation(T x, T y) {
-    Matrix<T> ret = { 0,0,0,0,0,0 };
-    ret.at(0,2) = x;
-    ret.at(1,2) = y;
+  translation(OtherT x, OtherT y) {
+    T m[3][2] = {{0,0},{0,0},{T(x),T(y)}};
+
+    cv::Mat ret( 3, 2, typeId, (void*)&m );
     return ret;
   }
 };
