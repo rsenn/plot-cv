@@ -899,8 +899,10 @@ main(int argc, char* argv[]) {
 
         cv::Point2f p(100, 50);
         std::vector<cv::Point2f> pl = {p};
-        cv::transform(pl, pl, mult);
-        cout << "transformed point: " << pl << endl;
+        std::vector<cv::Point2f> ol;
+
+        mult.transform_points(pl.cbegin(), pl.cend(), std::back_inserter(ol));
+        cout << "transformed point: " << ol << endl;
       }
 
       cout << "histogram:";
