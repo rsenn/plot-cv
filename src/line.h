@@ -48,6 +48,13 @@ point_distance(const cv::Point_<ValueT>& p1, const cv::Point_<ValueT>& p2) {
   return std::sqrt(psimpl::math::point_distance2<2>(&p1.x, &p2.x));
 }
 
+template<class ValueT>
+void
+moment_from_angle(double phi, cv::Point_<ValueT>& point) {
+  point.x = std::cos(phi);
+  point.y = std::sin(phi);
+}
+
 template <class ValueT> class Line {
 public:
   typedef cv::Point_<ValueT> point_type;
@@ -110,14 +117,23 @@ public:
     b = temp;
   }
 
+  point_type
+  moment() const {
+    point_type diff(slope());
+    double len = length();
+    return point_type(diff.x / len, diff.y / len);
+  }
+
   double
   angle() const {
-    point_type diff = a - b;
-        
+    point_type diff(slope());
+
     double phi = std::atan2(diff.x, diff.y);
-double len = length();
-    point_type norm( diff.x / len, diff.y / len);
-    std::cout << "angle " << phi << " x=" << norm.x << ",y=" <<  norm.y  << std::endl;
+    double len = length();
+    point_type norm(moment());
+    point_type mom;
+    moment_from_angle(phi, mom);
+     std::cout << "angle " << phi << " x=" << norm.x << ",y=" << norm.y << " x=" << mom.x << ",y=" << mom.y << std::endl;
 
     return phi;
   }
