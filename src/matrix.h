@@ -9,11 +9,11 @@ public:
 
   static const int typeId = std::is_same<T, double>::value ? CV_64F : CV_32F;
 
-  Matrix() : base_type(cv::Mat::zeros(3,3, typeId)) { }
-  Matrix(int xx, int xy, int yx, int yy, int tx, int ty) : base_type(3,3,typeId) {  }
-  Matrix(const base_type& m) : base_type(3,3,typeId) { m.copyTo(*this); }
-  Matrix(const typed_type& m) : base_type(3,3,typeId) { m.copyTo(*this); }
-  template <class OtherT> Matrix(const Matrix<OtherT>& m) : base_type(3,3,typeId) { m.copyTo(*this); }
+  Matrix() : base_type(cv::Mat::zeros(3,3, typeId)) { init({ 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 }); }
+  Matrix(int xx, int xy, int yx, int yy, int tx, int ty) : base_type(3,3,typeId) { init(xx, xy, yx, yy, tx, ty);  }
+  Matrix(const base_type& m) : base_type(3,3,typeId) { *this = m; }
+  Matrix(const typed_type& m) : base_type(3,3,typeId) { *this = m; }
+  template <class OtherT> Matrix(const Matrix<OtherT>& m) : base_type(3,3,typeId) { *this = m; }
 
   /**
    * @brief      { function_description }
@@ -79,6 +79,20 @@ public:
   create(int xx, int xy, int yx, int yy, int tx, int  ty) {
   return  cv::Mat(cv::Mat_<T>(3, 3) << (T(xx), T(xy), T(yx), T(yy), T(tx), T(ty)));
 
+  }
+
+  Matrix<T>&
+  init(std::array<T,3> row0, std::array<T,3> row1, std::array<T,3> row2 = std::array<T,3>{0,0,0}) {
+    set(0,0,row0[0]);
+    set(0,1,row0[1]);
+    set(0,2,row0[2]);
+    set(1,0,row1[0]);
+    set(1,1,row1[1]);
+    set(1,2,row1[2]);
+    set(2,0,row2[0]);
+    set(2,1,row2[1]);
+    set(2,2,row2[2]);
+    return *this;
   }
 
   Matrix<T>&
