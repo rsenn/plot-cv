@@ -12,10 +12,13 @@
 #include "psimpl.h"
 #include "line.h"
 
+#include <type_traits>
 #include <iostream>
 #include <algorithm>
 #include <list>
 #include <functional>
+#include <unordered_map>
+#include <map>
 typedef std::vector<cv::Point> PointVec;
 typedef std::vector<cv::Point2f> Point2fVec;
 
@@ -97,14 +100,6 @@ out_points(O& os, const std::vector<cv::Point>& pl) {
   }
 }
 
-template <class T>
-std::string
-to_string(const T& t) {
-  std::ostringstream oss;
-  oss << t;
-  return oss.str();
-}
-
 // finds the largest contour and stores the bigContour and stores it index which are both global variables.
 
 void
@@ -124,9 +119,7 @@ filter_contours(std::vector<std::vector<cv::Point2f>> contours_un) {
 }
 
 void
-polylineFromContour(svg::Document& doc,
-                    const std::vector<cv::Point2f>& contour_arg,
-                    std::function<svg::Color(const std::vector<cv::Point2f>&)> color_fn) {
+polylineFromContour(svg::Document& doc, const std::vector<cv::Point2f>& contour_arg, std::function<svg::Color(const std::vector<cv::Point2f>&)> color_fn) {
   svg::Polyline polyline(svg::Stroke(1, color_fn(contour_arg)));
 
   for(size_t i = 0; i < contour_arg.size(); i++) {
@@ -188,9 +181,7 @@ fromScalar(const cv::Scalar& s) {
 template <class FromT, class ToT>
 void
 convertPoints(const std::vector<cv::Point_<FromT>>& from, std::vector<cv::Point_<ToT>>& to) {
-  std::transform(from.cbegin(), from.cend(), std::back_inserter(to), [](cv::Point_<FromT> p) -> cv::Point_<ToT> {
-    return cv::Point_<ToT>(p.x, p.y);
-  });
+  std::transform(from.cbegin(), from.cend(), std::back_inserter(to), [](cv::Point_<FromT> p) -> cv::Point_<ToT> { return cv::Point_<ToT>(p.x, p.y); });
 }
 
 template <class FromT, class ToT>
@@ -211,12 +202,7 @@ export_svg(const std::vector<std::vector<PointType>>& contours, std::string outp
   svg::Document doc(output_file, svg::Layout(dimensions, svg::Layout::TopLeft));
   svg::LineChart chart(5.0);
   std::vector<double> areas;
-  std::transform(contours.cbegin(),
-                 contours.cend(),
-                 std::back_inserter(areas),
-                 [](const std::vector<PointType>& contour) -> double {
-                   return cv::contourArea(transformPoints<float, int>(contour));
-                 });
+  std::transform(contours.cbegin(), contours.cend(), std::back_inserter(areas), [](const std::vector<PointType>& contour) -> double { return cv::contourArea(transformPoints<float, int>(contour)); });
   const auto& it = std::max_element(areas.cbegin(), areas.cend());
   double max_area = 0;
   if(it != areas.cend()) {
@@ -229,9 +215,7 @@ export_svg(const std::vector<std::vector<PointType>>& contours, std::string outp
     const double area = cv::contourArea(contour);
     return fromScalar(HSVtoRGB(area / max_area * 360, 1, 1));
   };
-  std::for_each(contours.cbegin(),
-                contours.cend(),
-                std::bind(&polylineFromContour, std::ref(doc), std::placeholders::_1, cfn));
+  std::for_each(contours.cbegin(), contours.cend(), std::bind(&polylineFromContour, std::ref(doc), std::placeholders::_1, cfn));
   //  polylineFromContour(doc, contour_arg, svg::Color(255, 0, 0));
 
   doc.save();
@@ -470,9 +454,7 @@ findRectangles(const std::vector<PointVec>& contours, std::vector<PointVec>& squ
 
 template <class PointT>
 static void
-drawPolylines(cv::Mat& image,
-              const std::vector<std::vector<PointT>>& polylines,
-              const cv::Scalar& color = cv::Scalar(0, 255, 0)) {
+drawPolylines(cv::Mat& image, const std::vector<std::vector<PointT>>& polylines, const cv::Scalar& color = cv::Scalar(0, 255, 0)) {
 
   cv::polylines(image, polylines, true, color, 2, cv::LINE_AA);
 }
@@ -497,9 +479,7 @@ houghLines(cv::Mat& imgToMap) {
 
 void
 drawLines(cv::Mat& target, const std::vector<cv::Vec4i>& lines) {
-  for(size_t i = 0; i < lines.size(); i++)
-    cv::line(
-        target, cv::Point(lines[i][0], lines[i][1]), cv::Point(lines[i][2], lines[i][3]), cv::Scalar(0, 255, 255), 1);
+  for(size_t i = 0; i < lines.size(); i++) cv::line(target, cv::Point(lines[i][0], lines[i][1]), cv::Point(lines[i][2], lines[i][3]), cv::Scalar(0, 255, 255), 1);
 }
 
 void
@@ -561,11 +541,7 @@ drawAllContours(cv::Mat& out, std::vector<PointVec>& contours) {
 
 template <class Container>
 void
-drawAllLines(cv::Mat& out,
-             const Container& lines,
-             const std::function<int(int, size_t)>& hue = [](int index, size_t len) -> int {
-               return (index * 360 * 10 / len) % 360;
-             }) {
+drawAllLines(cv::Mat& out, const Container& lines, const std::function<int(int, size_t)>& hue = [](int index, size_t len) -> int { return (index * 360 * 10 / len) % 360; }) {
 
   typedef typename Container::const_iterator iterator_type;
   for(iterator_type it = lines.cbegin(); it != lines.cend(); it++) {
@@ -580,6 +556,75 @@ drawAllLines(cv::Mat& out,
   }
 }
 
+template <class InputIterator, class Pred>
+std::vector<typename std::iterator_traits<InputIterator>::value_type>
+filterLines(InputIterator from, InputIterator to, Pred predicate) {
+  typedef InputIterator iterator_type;
+  typedef typename std::iterator_traits<InputIterator>::value_type lineType;
+  std::vector<lineType> ret;
+
+  for(iterator_type it = from; it != to; ++it) {
+
+    if(predicate(*it)) {
+      //  std::size_t index = std::distance(from, it);
+      ret.push_back(*it);
+    }
+  }
+  return ret;
+}
+
+template <class ValueT, class InputIterator>
+std::vector<typename std::iterator_traits<InputIterator>::value_type::value_type>
+angle_diffs(const Line<ValueT>& line, InputIterator from, InputIterator to) {
+  typedef InputIterator iterator_type;
+  typedef typename std::iterator_traits<InputIterator>::value_type point_type;
+  typedef typename point_type::value_type value_type;
+  typedef std::vector<value_type> ret_type;
+
+  ret_type ret;
+  value_type distance = 1e10;
+  iterator_type index = to;
+
+  for(iterator_type it = from; it != to; ++it) {
+    value_type d;
+
+    ret.push_back((*it).angle_diff(line));
+  }
+  return ret;
+}
+
+template <class InputIterator>
+std::vector<float>
+lineDistances(typename std::iterator_traits<InputIterator>::value_type& line, InputIterator from, InputIterator to) {
+  typedef InputIterator iterator_type;
+  typedef typename std::iterator_traits<InputIterator>::value_type line_type;
+  typedef typename line_type::value_type value_type;
+  typedef std::vector<float> ret_type;
+
+  ret_type ret;
+  value_type distance = 1e10;
+  iterator_type index = to;
+
+  for(iterator_type it = from; it != to; ++it) {
+    /* if(line == *it)
+       continue;*/
+    ret.push_back(it->min_distance(line));
+  }
+  return ret;
+}
+
+template <class Char, class Value>
+std::basic_ostream<Char>&
+operator<<(std::basic_ostream<Char>& os, const std::vector<Value>& c) {
+  typedef typename std::vector<Value>::const_iterator iterator_type;
+  iterator_type end = c.cend();
+  for(iterator_type it = c.cbegin(); it != end; ++it) {
+    os << ' ';
+    os << to_string(*it);
+  }
+  return os;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 int
 main(int argc, char* argv[]) {
@@ -590,7 +635,7 @@ main(int argc, char* argv[]) {
 
   capWebcam.open(camID, cv::CAP_V4L2); // declare a VideoCapture object and associate to webcam, 0 => use 1st webcam
 
-  if(capWebcam.isOpened() == false) { // check if VideoCapture object was associated to webcam successfully
+  if(capWebcam.isOpened() == false) {                              // check if VideoCapture object was associated to webcam successfully
     std::cout << "error: capWebcam not accessed successfully\n\n"; // if not, print error message to std out
     getchar();                                                     // may have to modify this line if not using Windows
     return (0);                                                    // and exit program
@@ -613,8 +658,7 @@ main(int argc, char* argv[]) {
   cv::createTrackbar("blur", "contours", &blur, 7, trackbar);
   trackbar(0, 0);
 */
-  while(charCheckForEscKey !=
-        27 /*&& capWebcam.isOpened()*/) { // until the Esc key is pressed or webcam connection is lost
+  while(charCheckForEscKey != 27 /*&& capWebcam.isOpened()*/) { // until the Esc key is pressed or webcam connection is lost
     bool blnFrameReadSuccessfully = true;
 
     blnFrameReadSuccessfully = capWebcam.read(imgRaw); // get next frame
@@ -675,7 +719,11 @@ main(int argc, char* argv[]) {
       std::ostringstream contourStr;
       double maxArea = 0;
 
-      std::vector<Line<float>> lines;
+      typedef Line<float> line_type;
+      typedef std::vector<line_type> line_list;
+      typedef std::vector<line_type> ref_list;
+      std::vector<line_type> lines;
+      std::map<line_type, ref_list> adjacency_list;
 
       std::for_each(contours.cbegin(), contours.cend(), [&](const std::vector<cv::Point>& a) {
         size_t i;
@@ -725,52 +773,82 @@ main(int argc, char* argv[]) {
       std::list<Line<float>> filteredLines;
       std::vector<bool> takenLines;
       std::vector<float> lineLengths;
+
+      std::array<int, 8> histogram = {0, 0, 0, 0, 0, 0, 0, 0};
+      std::array<float, 8> angles = {0, 0, 0, 0, 0, 0, 0, 0};
+
+      std::vector<cv::Vec4i> linesHier;
+      linesHier.resize(lines.size());
       takenLines.resize(lines.size());
 
       //     std::sort(lines.begin(), lines.end());
 
-      std::transform(lines.cbegin(), lines.cend(), std::back_inserter(lineLengths), [&](const Line<float>& l) -> float {
-        return l.length();
-      });
+      std::transform(lines.cbegin(), lines.cend(), std::back_inserter(lineLengths), [&](const Line<float>& l) -> float { return l.length(); });
 
       float avg = std::accumulate(lineLengths.cbegin(), lineLengths.cend(), 0) / lineLengths.size();
 
+      const int binsize = 180;
       for(size_t i = 0; i < lines.size(); ++i) {
         Line<float>& line = lines[i];
-
         double length = line.length();
-
         double range = (length - avg) / 2;
-        if(length > (length - range))
+        if(length > (length - range)) {
+          double angle = line.angle() * (double)histogram.size() / M_PI;
+          float degrees = angle * 180 / M_PI;
+          int deg = (int)degrees % binsize;
 
+          std::vector<float> distances = lineDistances(line, lines.cbegin(), lines.cend());
+          std::vector<float> angleoffs = angle_diffs(line, lines.cbegin(), lines.cend());
+
+          auto it = std::min_element(distances.cbegin(), distances.cend());
+          int min = *it;
+
+          std::vector<Line<float>> adjacent;
+
+          std::copy_if(lines.cbegin(), lines.cend(), std::back_inserter(adjacent), [&](const Line<float>& l2) -> bool {
+            size_t point_index;
+            double min_dist = line.min_distance(l2, &point_index);
+            bool intersects = line.intersect(l2);
+            return (/*intersects ||*/ min_dist < 20);
+          });
+
+          distances.clear();
+          std::transform(adjacent.cbegin(), adjacent.cend(), std::back_inserter(distances), [&line](const Line<float>& l2) -> float { return line.min_distance(l2); });
+          angleoffs.clear();
+          std::transform(adjacent.cbegin(), adjacent.cend(), std::back_inserter(angleoffs), [&line](const Line<float>& l2) -> float { return line.angle_diff(l2); });
+          std::vector<int> angleoffs_i;
+
+          std::transform(angleoffs.cbegin(), angleoffs.cend(), std::back_inserter(angleoffs_i), [](const float ang) -> int { return int(ang * 180 / M_PI) % 180; });
+
+          std::vector<cv::Point> centers;
+          std::transform(adjacent.cbegin(), adjacent.cend(), std::back_inserter(centers), [](const Line<float>& line) -> cv::Point { return line.center(); });
+
+          // std::cout << "adjacent(" << i << ")" << adjacent << std::endl;
+          std::cout << "distances(" << i << ")" << distances << std::endl;
+          std::cout << "angleoffs(" << i << ")" << angleoffs_i << std::endl;
+
+          int minIndex = std::distance(distances.cbegin(), it);
+          adjacency_list.emplace(std::make_pair(line, adjacent));
+
+          float index = (float)degrees / (binsize - 1);
+
+          int angleIndex = (int)(index * double(histogram.size() - 1)) % histogram.size();
+          histogram[angleIndex] += length - (length - range);
+          angles[angleIndex] = double(angleIndex) / (histogram.size() - 1) * (M_PI);
           filteredLines.push_back(line);
+        }
       }
 
-      drawAllLines(imgGrayscale, filteredLines, [&](int index, size_t len) -> int {
-        return lines[index].length() * 10;
-      });
-      //   lines.clear();
-      /*
-            typedef std::list<Line<float>>::iterator list_iterator;
-            list_iterator line = filteredLines.begin();
-            while(line != filteredLines.end()) {
-              list_iterator next(line);
-              ++next;
-              list_iterator it = std::find(filteredLines.begin(), filteredLines.end(), *line);
-              Line<float> nearest = findNearestLine(*line, filteredLines);
-              filteredLines.erase(line);
+      std::cout << "histogram:";
 
-              if((it = std::find(filteredLines.begin(), filteredLines.end(), nearest)) != filteredLines.end()) {
-                line = it;
-                continue;
-              }
-              std::cout << "line list: " << *line << std::endl;
-              line = next;
-            }*/
-      /*
-            std::for_each(filteredLines.begin(), filteredLines.end(), [&](Line<float>& l) {
+      std::for_each(histogram.cbegin(), histogram.cend(), [](const int count) { std::cout << ' ' << count; });
+      std::cout << std::endl;
 
-            });*/
+      std::cout << "angles:";
+      std::for_each(angles.cbegin(), angles.cend(), [](const float a) { std::cout << ' ' << (int)(a * 180 / M_PI); });
+      std::cout << std::endl;
+
+      drawAllLines(imgGrayscale, filteredLines, [&](int index, size_t len) -> int { return lines[index].length() * 10; });
 
       std::cout << "Num lines: " << lines.size() << std::endl;
       std::cout << "Num filteredLines: " << filteredLines.size() << std::endl;
@@ -812,10 +890,7 @@ main(int argc, char* argv[]) {
 
       std::vector<PointVec> approxim;
 
-      std::transform(contours2.cbegin(),
-                     contours2.cend(),
-                     std::back_inserter(approxim),
-                     [](const Point2fVec& p) -> PointVec { return transformPoints<float, int>(p); });
+      std::transform(contours2.cbegin(), contours2.cend(), std::back_inserter(approxim), [](const Point2fVec& p) -> PointVec { return transformPoints<float, int>(p); });
 
       // [](const Point2fVec &p) -> cv::Point { return cv::Point(p.x, p.y); });
 
