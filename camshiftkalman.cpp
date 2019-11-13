@@ -7,8 +7,7 @@
 
 #include <stdlib.h>
 
-camShiftKalman::camShiftKalman(
-    const string videoName_, double start, const Mat target, const Rect targetWindow, featureType type_) {
+camShiftKalman::camShiftKalman(const string videoName_, double start, const Mat target, const Rect targetWindow, featureType type_) {
   videoName = videoName_;
   frameStart = start;
   currentFrame = target;
@@ -114,8 +113,7 @@ camShiftKalman::extractTargetModel() {
       step = 255.0 / histSize[1];
       for(int i = 0; i < histSize[1] + 1; i++) rangeS[i] = i * step;
 
-      float pattern36[] = {0,  1,  3,  5,  7,  9,  11, 13, 15, 17, 19, 21, 23, 25, 27,  29,  31,  37,
-                           39, 43, 45, 47, 51, 53, 55, 59, 61, 63, 85, 87, 91, 95, 111, 119, 127, 255};
+      float pattern36[] = {0, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 37, 39, 43, 45, 47, 51, 53, 55, 59, 61, 63, 85, 87, 91, 95, 111, 119, 127, 255};
       for(int i = 0; i < histSize[2]; i++) rangeLBP[i] = pattern36[i];
       rangeLBP[histSize[2]] = 256;
 
@@ -261,8 +259,7 @@ camShiftKalman::track() {
     camCenter = Point(box.center.x, box.center.y);
 
 #ifdef DEBUG
-    std::cout << "[ x : " << trackWindow.x << " y : " << trackWindow.y << " width : " << trackWindow.width
-              << " height : " << trackWindow.height << std::endl;
+    std::cout << "[ x : " << trackWindow.x << " y : " << trackWindow.y << " width : " << trackWindow.width << " height : " << trackWindow.height << std::endl;
 #endif
 
     /*
@@ -286,19 +283,12 @@ camShiftKalman::track() {
     if(isShowBackProject)
       imshow("back_projection", backProject);
 
-    if(norm_L2(KFCorrectCenter, lastCenter) > 350 || trackWindow.area() < 10 || trackWindow.width <= 0 ||
-       trackWindow.height <= 0) {
+    if(norm_L2(KFCorrectCenter, lastCenter) > 350 || trackWindow.area() < 10 || trackWindow.width <= 0 || trackWindow.height <= 0) {
       isLost = true;
 
       Mat image;
       currentFrame.copyTo(image);
-      putText(image,
-              "Target Lost",
-              Point(image.rows / 2, image.cols / 4),
-              cv::FONT_HERSHEY_PLAIN,
-              2.0,
-              Scalar(0, 0, 255),
-              2);
+      putText(image, "Target Lost", Point(image.rows / 2, image.cols / 4), cv::FONT_HERSHEY_PLAIN, 2.0, Scalar(0, 0, 255), 2);
       imshow(winName, image);
     } else
       drawTrackResult();
@@ -330,10 +320,7 @@ camShiftKalman::initKalman(double interval) {
   const int stateNum = 4;
   const int measureNum = 2;
 
-  Mat statePost = (Mat_<float>(stateNum, 1) << trackWindow.x + trackWindow.width / 2.0,
-                   trackWindow.y + trackWindow.height / 2.0,
-                   0,
-                   0);
+  Mat statePost = (Mat_<float>(stateNum, 1) << trackWindow.x + trackWindow.width / 2.0, trackWindow.y + trackWindow.height / 2.0, 0, 0);
   Mat transitionMatrix = (Mat_<float>(stateNum, stateNum) << 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1);
 
   KF.init(stateNum, measureNum);
@@ -430,12 +417,7 @@ camShiftKalman::drawHist1d(const Mat hist, int histSize) const {
 
   for(int i = 0; i < histSize; i++) {
     int val = saturate_cast<int>(hist.at<float>(i) * histimg.rows / 255);
-    rectangle(histimg,
-              Point(i * binW, histimg.rows),
-              Point((i + 1) * binW, histimg.rows - val),
-              Scalar(buf.at<Vec3b>(i)),
-              -1,
-              8);
+    rectangle(histimg, Point(i * binW, histimg.rows), Point((i + 1) * binW, histimg.rows - val), Scalar(buf.at<Vec3b>(i)), -1, 8);
   }
 
   return histimg;

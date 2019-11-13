@@ -170,8 +170,7 @@ Open(const FunctionCallbackInfo<Value>& args) {
 
   m_brk = 1;
   if(!args[0]->IsFunction()) {
-    isolate->ThrowException(
-        Exception::TypeError(String::NewFromUtf8(isolate, "First argument must be frame callback function")));
+    isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "First argument must be frame callback function")));
     return;
   }
 
@@ -251,8 +250,7 @@ init(Handle<Object> exports) {
   exports->Set(String::NewFromUtf8(isolate, "Open"), FunctionTemplate::New(isolate, Open)->GetFunction());
   exports->Set(String::NewFromUtf8(isolate, "Close"), FunctionTemplate::New(isolate, Close)->GetFunction());
   exports->Set(String::NewFromUtf8(isolate, "IsOpen"), FunctionTemplate::New(isolate, IsOpen)->GetFunction());
-  exports->Set(String::NewFromUtf8(isolate, "GetPreviewSize"),
-               FunctionTemplate::New(isolate, GetPreviewSize)->GetFunction());
+  exports->Set(String::NewFromUtf8(isolate, "GetPreviewSize"), FunctionTemplate::New(isolate, GetPreviewSize)->GetFunction());
 }
 
 std::string

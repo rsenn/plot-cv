@@ -96,9 +96,7 @@ RaspiCam_Still_Cv::get(int propId) {
     case CV_CAP_PROP_MODE: return 0;
     case CV_CAP_PROP_BRIGHTNESS: return _impl->getBrightness();
     case CV_CAP_PROP_CONTRAST: return Scaler::scale(-100, 100, 0, 100, _impl->getContrast());
-    case CV_CAP_PROP_SATURATION:
-      return Scaler::scale(-100, 100, 0, 100, _impl->getSaturation());
-      ;
+    case CV_CAP_PROP_SATURATION: return Scaler::scale(-100, 100, 0, 100, _impl->getSaturation()); ;
     //     case CV_CAP_PROP_HUE : return _cam_impl->getSharpness();
     case CV_CAP_PROP_GAIN: return Scaler::scale(0, 800, 0, 100, _impl->getISO());
     case CV_CAP_PROP_EXPOSURE:
@@ -106,8 +104,7 @@ RaspiCam_Still_Cv::get(int propId) {
       return -1; // not yet
       //             else return Scaler::scale (0,330000, 0,100, _impl->getShutterSpeed() )  ;
       break;
-    case CV_CAP_PROP_CONVERT_RGB:
-      return (true);
+    case CV_CAP_PROP_CONVERT_RGB: return (true);
     //     case CV_CAP_PROP_WHITE_BALANCE :return _cam_impl->getAWB();
     default: return -1;
   };
@@ -143,9 +140,7 @@ RaspiCam_Still_Cv::set(int propId, double value) {
       break;
     case CV_CAP_PROP_BRIGHTNESS: _impl->setBrightness(value); break;
     case CV_CAP_PROP_CONTRAST: _impl->setContrast(Scaler::scale(0, 100, -100, 100, value)); break;
-    case CV_CAP_PROP_SATURATION:
-      _impl->setSaturation(Scaler::scale(0, 100, -100, 100, value));
-      break;
+    case CV_CAP_PROP_SATURATION: _impl->setSaturation(Scaler::scale(0, 100, -100, 100, value)); break;
     //     case CV_CAP_PROP_HUE : return _cam_impl->getSharpness();
     case CV_CAP_PROP_GAIN: _impl->setISO(Scaler::scale(0, 100, 0, 800, value)); break;
     case CV_CAP_PROP_EXPOSURE:

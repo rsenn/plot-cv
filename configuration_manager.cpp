@@ -44,8 +44,7 @@ Configuration_Manager::init_scheduler() {
   cout << "Initializing camera at camera_index=" << camera_index << "...\n";
 
   if(!camera_uninit.open(camera_index)) {
-    cout << "Error: Configuration_Manager::init_scheduler() failed to open camera at camera_index=" << camera_index
-         << ".\n";
+    cout << "Error: Configuration_Manager::init_scheduler() failed to open camera at camera_index=" << camera_index << ".\n";
     cout << "Returning to main menu." << endl;
     return -1;
   } else {
@@ -53,8 +52,7 @@ Configuration_Manager::init_scheduler() {
   }
 
   cout << "Beginning initialization of Scheduler...\n";
-  Scheduler* new_scheduler = new Scheduler(
-      camera_index, event_save_dir, cascade_path, primary_cascade_name, secondary_cascade_name, camera_uninit);
+  Scheduler* new_scheduler = new Scheduler(camera_index, event_save_dir, cascade_path, primary_cascade_name, secondary_cascade_name, camera_uninit);
   this->scheduler_list.push_back(new_scheduler);
   camera_indexes_in_use.push_back(camera_index);
   cout << "Creation of Scheduler completed.\n";
@@ -374,8 +372,7 @@ Configuration_Manager::select_camera_feed() {
           selected_scheduler = this->get_scheduler(scheduler_index_selection);
 
           if(selected_scheduler == NULL) {
-            cout << "Configuration_Manager::select_camera_feed() failed to access scheduler_"
-                 << scheduler_index_selection << endl;
+            cout << "Configuration_Manager::select_camera_feed() failed to access scheduler_" << scheduler_index_selection << endl;
             return -1;
           } else {
             selected_scheduler->display_camera_feed();
@@ -419,8 +416,7 @@ Configuration_Manager::display_all_feeds() {
   while(1) {                                           // Read frames and update windows until exit signal
     for(unsigned int i = 0; i < cameras.size(); i++) { // Read frame from each camera and update it's window
       if(!cameras.at(i)->read(frame_temp)) {
-        cout << "Error: Configuration_Manager::display_all_feeds() could not read frame from Scheduler_" << i
-             << "'s camera. \n";
+        cout << "Error: Configuration_Manager::display_all_feeds() could not read frame from Scheduler_" << i << "'s camera. \n";
         return -1;
       } else {
         imshow(windows.at(i), frame_temp);

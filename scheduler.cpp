@@ -1,11 +1,6 @@
 #include </home/pi/surveillance_proj/scheduler.h>
 
-Scheduler::Scheduler(int input_camera_index,
-                     string save_directory,
-                     string cascade_path,
-                     string cascade_name,
-                     string nested_cascade_name,
-                     VideoCapture camera) {
+Scheduler::Scheduler(int input_camera_index, string save_directory, string cascade_path, string cascade_name, string nested_cascade_name, VideoCapture camera) {
 
   this->scheduler_resolution = 1000; // 1000ms default execution cycle delay.
   this->camera_index = input_camera_index;
@@ -28,8 +23,7 @@ Scheduler::add_event(Event* input_event) {
 
   bool element_inserted = false;
 
-  for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end(); iterator != end;
-      iterator++) {
+  for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end(); iterator != end; iterator++) {
     Event* temp = *iterator;
     if(temp->get_execution_deadline() >= input_event->get_execution_deadline()) {
       continue;
@@ -58,8 +52,7 @@ Scheduler::remove_event(long int eventID) {
 
   bool element_removed = false;
 
-  for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end(); iterator != end;
-      iterator++) {
+  for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end(); iterator != end; iterator++) {
     Event* temp = *iterator;
     if(temp->get_eventID() == eventID) {
       event_schedule.erase(iterator);
@@ -111,11 +104,7 @@ Scheduler::create_new_event() {
         cin >> event_execution_deadline;
         cout << endl;
         time(&event_creation_time);
-        temp_event = new SurveillanceVideo(video_length_sec,
-                                           (event_creation_time + event_execution_deadline),
-                                           event_creation_time,
-                                           event_name,
-                                           event_priority);
+        temp_event = new SurveillanceVideo(video_length_sec, (event_creation_time + event_execution_deadline), event_creation_time, event_name, event_priority);
         this->add_event(temp_event);
         break;
 
@@ -130,10 +119,7 @@ Scheduler::create_new_event() {
         cin >> event_execution_deadline;
         cout << endl;
         time(&event_creation_time);
-        temp_event = new SurveillancePhoto((event_creation_time + event_execution_deadline),
-                                           event_creation_time,
-                                           event_name,
-                                           event_priority);
+        temp_event = new SurveillancePhoto((event_creation_time + event_execution_deadline), event_creation_time, event_name, event_priority);
         this->add_event(temp_event);
         break;
 
@@ -163,8 +149,7 @@ Scheduler::print_event_schedule() {
   int event_num = 0;
   Event* temp = NULL;
 
-  for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end(); iterator != end;
-      iterator++) {
+  for(list<Event*>::const_iterator iterator = event_schedule.begin(), end = event_schedule.end(); iterator != end; iterator++) {
     temp = *iterator;
     cout << "E#" << event_num << endl;
     cout << "E_ADDR=" << temp << endl;
@@ -219,8 +204,7 @@ Event* Scheduler::check_overdueEvents() { // Scans event_schedule and returns th
   time_t current_time;
   Event* temp = NULL;
 
-  for(list<Event*>::const_reverse_iterator iterator = event_schedule.rbegin(); iterator != event_schedule.rend();
-      iterator++) {
+  for(list<Event*>::const_reverse_iterator iterator = event_schedule.rbegin(); iterator != event_schedule.rend(); iterator++) {
 
     time(&current_time);
 
@@ -247,22 +231,17 @@ Scheduler::process_overdueEvents(Event* input_event) {
   if(input_event != NULL) { // If overdue event found -> check if execution is valid
     time(&current_time);
 
-    if((current_time) - (input_event->get_execution_deadline()) > 1800 &&
-       input_event->get_event_priority() <
-           10) { // If Event is >= 30 mins past ED && Event priority < 10, discard without executing.
+    if((current_time) - (input_event->get_execution_deadline()) > 1800 && input_event->get_event_priority() < 10) { // If Event is >= 30 mins past ED && Event priority < 10, discard without executing.
       this->remove_event(input_event->get_eventID());
-      cout << "Discarding [" << input_event->get_eventName() << "] with eventID=" << input_event->get_eventID()
-           << " due to expiration && priority < 10.\n";
+      cout << "Discarding [" << input_event->get_eventName() << "] with eventID=" << input_event->get_eventID() << " due to expiration && priority < 10.\n";
 
       return 0; // Event not executed.
     } else {    // If Event not expired, execute.
       cout << "Removing event with eventID=" << input_event->get_eventID() << "..." << endl;
       this->remove_event(input_event->get_eventID());
-      cout << "Beginning execution of [" << input_event->get_eventName()
-           << "] with eventID=" << input_event->get_eventID() << "...\n";
+      cout << "Beginning execution of [" << input_event->get_eventName() << "] with eventID=" << input_event->get_eventID() << "...\n";
       input_event->execute_event(this->camera, this->camera_index, this->save_directory);
-      cout << "Execution of [" << input_event->get_eventName() << "] with eventID=" << input_event->get_eventID()
-           << " has completed.\n";
+      cout << "Execution of [" << input_event->get_eventName() << "] with eventID=" << input_event->get_eventID() << " has completed.\n";
 
       return 1; // Event executed.
     }
@@ -287,8 +266,7 @@ int
 Scheduler::display_camera_feed() {
 
   if(!this->camera.isOpened()) {
-    cout << "Error: Scheduler::display_camera_feed() could not access camera at camera_index= " << this->camera_index
-         << endl;
+    cout << "Error: Scheduler::display_camera_feed() could not access camera at camera_index= " << this->camera_index << endl;
     return -1;
   } else {
     Mat frame;
@@ -297,8 +275,7 @@ Scheduler::display_camera_feed() {
 
     while(1) {
       if(!this->camera.read(frame)) {
-        cout << "Error: Scheduler::display_camera_feed() could not read frame from camera at camera_index= "
-             << this->camera_index << endl;
+        cout << "Error: Scheduler::display_camera_feed() could not read frame from camera at camera_index= " << this->camera_index << endl;
         return -1;
       } else {
         imshow(window_name, frame);
@@ -336,8 +313,7 @@ Scheduler::scheduler_execution_cycle() {
   }
 
   /*Execution stage1: Check event_schedule for overdue events*/
-  this->process_overdueEvents(
-      this->check_overdueEvents()); // Check if any events are overdue and pass them to process_overdueEvents().
+  this->process_overdueEvents(this->check_overdueEvents()); // Check if any events are overdue and pass them to process_overdueEvents().
   /*Execution stage1: complete*/
 
   // Execution stage2: Run enabled frame analyzing functions
@@ -348,10 +324,7 @@ Scheduler::scheduler_execution_cycle() {
     this->responder->set_colour_detected(true);
   }
 
-  secondary_cascade_return_pkg pkg = this->frame_processor->frame_humanface_analysis(frame_temp,
-                                                                                     this->camera_index,
-                                                                                     this->save_directory,
-                                                                                     this->camera_index);
+  secondary_cascade_return_pkg pkg = this->frame_processor->frame_humanface_analysis(frame_temp, this->camera_index, this->save_directory, this->camera_index);
   int cascade_detection_code = pkg.ret_val;
 
   if(cascade_detection_code == 2) {

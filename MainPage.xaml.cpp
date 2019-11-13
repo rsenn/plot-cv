@@ -37,8 +37,7 @@ void cvMain();
 MainPage::MainPage() {
   InitializeComponent();
 
-  Window::Current->VisibilityChanged += ref new Windows::UI::Xaml::WindowVisibilityChangedEventHandler(
-      this, &video_capture_xaml::MainPage::OnVisibilityChanged);
+  Window::Current->VisibilityChanged += ref new Windows::UI::Xaml::WindowVisibilityChangedEventHandler(this, &video_capture_xaml::MainPage::OnVisibilityChanged);
 
   // attach XAML elements
   cv::winrt_setFrameContainer(cvImage);
@@ -54,7 +53,6 @@ MainPage::MainPage() {
 } // namespace video_capture_xaml
 
 void
-video_capture_xaml::MainPage::OnVisibilityChanged(Platform::Object ^ sender,
-                                                  Windows::UI::Core::VisibilityChangedEventArgs ^ e) {
+video_capture_xaml::MainPage::OnVisibilityChanged(Platform::Object ^ sender, Windows::UI::Core::VisibilityChangedEventArgs ^ e) {
   cv::winrt_onVisibilityChanged(e->Visible);
 }

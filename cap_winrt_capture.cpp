@@ -108,9 +108,7 @@ winrt_setFrameContainer(::Windows::UI::Xaml::Controls::Image ^ image) {
 
 /********************************* VideoCapture_WinRT class ****************************/
 
-VideoCapture_WinRT::VideoCapture_WinRT(int device) : started(false) {
-  VideoioBridge::getInstance().setDeviceIndex(device);
-}
+VideoCapture_WinRT::VideoCapture_WinRT(int device) : started(false) { VideoioBridge::getInstance().setDeviceIndex(device); }
 
 bool
 VideoCapture_WinRT::isOpened() const {

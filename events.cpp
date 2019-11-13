@@ -49,14 +49,7 @@ Event::get_event_priority() {
 
 // SurveillancePhoto member functions
 
-SurveillancePhoto::SurveillancePhoto(time_t execution_deadline,
-                                     time_t event_creation_time,
-                                     string event_name,
-                                     int priority)
-    : Event(execution_deadline, event_creation_time, event_name, priority) {
-
-  cout << "SurveillancePhoto Event successfully created...\n";
-}
+SurveillancePhoto::SurveillancePhoto(time_t execution_deadline, time_t event_creation_time, string event_name, int priority) : Event(execution_deadline, event_creation_time, event_name, priority) { cout << "SurveillancePhoto Event successfully created...\n"; }
 
 int
 SurveillancePhoto::execute_event(VideoCapture input_cap, int camera_index, string save_directory) {
@@ -93,9 +86,7 @@ SurveillancePhoto::execute_event(VideoCapture input_cap, int camera_index, strin
 
 // SurveillanceVideo member functions
 
-SurveillanceVideo::SurveillanceVideo(
-    time_t videoLen_s, time_t execution_deadline, time_t event_creation_time, string event_name, int priority)
-    : Event(execution_deadline, event_creation_time, event_name, priority) {
+SurveillanceVideo::SurveillanceVideo(time_t videoLen_s, time_t execution_deadline, time_t event_creation_time, string event_name, int priority) : Event(execution_deadline, event_creation_time, event_name, priority) {
 
   this->videoLen_s = videoLen_s;
   cout << "SurveillanceVideo Event successfully created...\n";
