@@ -108,7 +108,14 @@ to_string(const cv::Mat& mat) {
     }
     oss << ")";
   }
-  return oss.str();
+  std::string s = oss.str();
+
+  if(s.find('.') != std::string::npos) {
+    while(s.back() == '0') {
+      s.pop_back();
+    }
+  }
+  return s;
 }
 template <class Char, class Value>
 inline std::basic_ostream<Char>&
