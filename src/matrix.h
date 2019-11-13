@@ -147,7 +147,7 @@ public:
   Matrix<T>
   product(const Matrix<T>& other) const {
     T product;
-    Matrix<T> ret(Matrix<T>::identity());
+    cv::Mat ret = (cv::Mat_<T>(3, 3) << (1, 0, 0, 0, 1, 0, 0, 0, 1));
     int i, j, k;
     for(i = 0; i < base_type::rows; i++) {
       for(j = 0; j < base_type::cols; j++) {
@@ -155,7 +155,7 @@ public:
         for(k = 0; k < base_type::cols; k++) {
           product += ref(i, k) * other.ref(k, j);
         }
-        ret.set(i, j, product);
+        ret.at<T>(i, j) = product;
       }
     }
     return ret;
