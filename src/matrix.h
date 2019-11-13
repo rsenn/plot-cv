@@ -48,7 +48,6 @@ public:
     cv::Mat ret = (cv::Mat_<T>(3, 3) << 1, 0, T(x), 0, 1, T(y), 0, 0, 1);
     return ret;
   }
-  template <class OtherT>
   static Matrix<T>
   identity() {
     cv::Mat ret = (cv::Mat_<T>(3, 2) << 1, 0, 0, 0, 1, 0);
