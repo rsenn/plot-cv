@@ -893,6 +893,10 @@ main(int argc, char* argv[]) {
         cout << "matrix scale " << to_string(s) << endl;
         cout << "matrix rotate " << to_string(r) << endl;
         cout << "matrix translate " << to_string(t) << endl;
+
+cv::Point2f p(100,50);
+        r.transform_point(p);
+        cout << "transformed point: "<< p << endl;
       }
 
       cout << "histogram:";
