@@ -155,11 +155,11 @@ public:
   }
 
   ValueT
-    nearest_end(Line<ValueT>& l2, LineEnd<ValueT>& end) const {
-      size_t point_index;
-      ValueT dist = min_distance(l2, &point_index);
-      end = LineEnd<ValueT>(l2, point_index);
-      return dist;
+  nearest_end(Line<ValueT>& l2, LineEnd<ValueT>& end) const {
+    size_t point_index;
+    ValueT dist = min_distance(l2, &point_index);
+    end = LineEnd<ValueT>(l2, point_index);
+    return dist;
   }
 
   ValueT
@@ -350,7 +350,7 @@ protected:
 public:
   LineEnd() {}
   LineEnd(Line<T>& l, size_t pt_i) : line(&l), point_index(pt_i) {}
-~LineEnd() {}
+  ~LineEnd() {}
 
   cv::Point_<T>&
   point() {

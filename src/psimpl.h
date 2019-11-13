@@ -67,7 +67,7 @@
     interface that operates on input and output iterators. Polylines can be of any dimension, and
     defined using floating point or signed integer data types.
 </pre><br>
-    
+    
     \section sec_changelog changelog
 <pre>
     28-09-2010 - Initial version

@@ -557,17 +557,18 @@ drawAllLines(cv::Mat& out, const Container& lines, const std::function<int(int, 
 }
 
 template <class InputIterator, class Pred>
-std::vector<typename std::iterator_traits<InputIterator>::value_type>
+std::vector<int>
 filterLines(InputIterator from, InputIterator to, Pred predicate) {
   typedef InputIterator iterator_type;
   typedef typename std::iterator_traits<InputIterator>::value_type lineType;
-  std::vector<lineType> ret;
+  std::vector<int> ret;
 
   for(iterator_type it = from; it != to; ++it) {
 
     if(predicate(*it)) {
-      //  std::size_t index = std::distance(from, it);
-      ret.push_back(*it);
+
+      std::size_t index = std::distance(from, it);
+      ret.push_back(index);
     }
   }
   return ret;
@@ -731,9 +732,9 @@ main(int argc, char* argv[]) {
 
       typedef Line<float> line_type;
       typedef vector<line_type> line_list;
-      typedef vector<line_type> ref_list;
+      typedef vector<int> ref_list;
       vector<line_type> lines;
-      std::map<line_type, ref_list> adjacency_list;
+      std::map<int, ref_list> adjacency_list;
 
       for_each(contours.begin(), contours.end(), [&](const vector<cv::Point>& a) {
         size_t i;
@@ -810,37 +811,51 @@ main(int argc, char* argv[]) {
           vector<float> distances = lineDistances(line, lines.begin(), lines.end());
           vector<float> angleoffs = angle_diffs(line, lines.begin(), lines.end());
           vector<LineEnd<float>> line_ends;
+          vector<Line<float>*> adjacent_lines;
 
           auto it = min_element(distances.begin(), distances.end());
           int min = *it;
 
-          vector<Line<float>> adjacent;
-
-          copy_if(lines.begin(), lines.end(), back_inserter(adjacent), [&](Line<float>& l2) -> bool {
+          vector<int> adjacent = filterLines(lines.begin(), lines.end(),  [&](Line<float>& l2) -> bool {
             size_t point_index;
             double min_dist = line.min_distance(l2, &point_index);
             bool intersects = line.intersect(l2);
-            return (/*intersects ||*/ min_dist < 20);
+            return (/*intersects ||*/ min_dist < 10);
           });
 
+
+          transform(adjacent.begin(), adjacent.end(),  back_inserter(adjacent_lines), [&](int index) -> Line<float>* { return &lines[index]; });
+
+
+
+
+          vector<int> parallel = filterLines(lines.begin(), lines.end(), [&line](Line<float>& l2) -> bool { return fabs((line.angle() - l2.angle()) * 180 / M_PI) < 3; });
+
+          std::cout << "adjacent " << adjacent << endl;
+          std::cout << "parallel " << parallel << endl;
+
           distances.clear();
-          transform(adjacent.begin(), adjacent.end(), back_inserter(distances), [&line](Line<float>& l2) -> float { return  line.min_distance(l2); });
-          transform(adjacent.begin(), adjacent.end(), back_inserter(line_ends), [&line](Line<float>& l2) -> LineEnd<float> { LineEnd<float> end; line.nearest_end(l2, end); return end; });
+          transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(distances), [&line](Line<float>* l2) -> float { return line.min_distance(*l2); });
+          transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(line_ends), [&line](Line<float>* l2) -> LineEnd<float> {
+            LineEnd<float> end;
+            line.nearest_end(*l2, end);
+            return end;
+          });
           angleoffs.clear();
-          transform(adjacent.begin(), adjacent.end(), back_inserter(angleoffs), [&line](Line<float>& l2) -> float { return line.angle_diff(l2); });
+          transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(angleoffs), [&line](Line<float>* l2) -> float { return line.angle_diff(*l2); });
           vector<int> angleoffs_i;
 
           transform(angleoffs.begin(), angleoffs.end(), back_inserter(angleoffs_i), [](const float ang) -> int { return int(ang * 180 / M_PI) % 180; });
 
           vector<cv::Point> centers;
-          transform(adjacent.begin(), adjacent.end(), back_inserter(centers), [](Line<float>& line) -> cv::Point { return line.center(); });
+          transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(centers), [](Line<float>* line) -> cv::Point { return line->center(); });
 
           // cout << "adjacent(" << i << ")" << adjacent << std::endl;
           std::cout << "distances(" << i << ")" << distances << endl;
           cout << "angleoffs(" << i << ")" << angleoffs_i << endl;
 
           int minIndex = distance(distances.begin(), it);
-          adjacency_list.emplace(make_pair(line, adjacent));
+          adjacency_list.emplace(make_pair(i, adjacent));
 
           float index = (float)degrees / (binsize - 1);
 
