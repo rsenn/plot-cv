@@ -722,7 +722,8 @@ main(int argc, char* argv[]) {
 //    imgRaw.copyTo(imgOriginal);
 
     cv::Mat frameLab, frameLabCn[3];
-    cv::cvtColor(imgOriginal, frameLab, cv::COLOR_BGR2Lab);
+    imgOriginal.copyTo(frameLab);
+    cv::cvtColor(frameLab, frameLab, cv::COLOR_BGR2Lab);
     cv::split(frameLab, frameLabCn);
     frameLabCn[0].copyTo(imgGrayscale);
 
