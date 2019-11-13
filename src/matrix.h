@@ -87,7 +87,11 @@ public:
     if(origin != zero)
       c = cv::Mat(cv::Mat_<T>(3, 3) << (1, 0, T(origin.x), 0, 1, T(origin.y), 0, 0, 1));
 
+    if(origin != zero)
+
     return a.multiply(b).multiply(c);
+
+  return b;
   }
 
   static Matrix<T>
@@ -115,7 +119,7 @@ public:
 
   T
   get(int row, int col) const {
-    return *ptr();
+    return *base_type::ptr();
   }
 
   const T&
@@ -153,7 +157,7 @@ public:
       for(j = 0; j < base_type::cols; j++) {
         product = 0;
         for(k = 0; k < base_type::cols; k++) {
-          product += ref(i, k) * other.ref(k, j);
+          product += get(i, k) * other.get(k, j);
         }
         ret.at<T>(i, j) += product;
       }
