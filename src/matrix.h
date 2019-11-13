@@ -118,6 +118,11 @@ public:
     init({1, 0, 0}, {0, 1, 0}, {0, 0, 1});
     return *this;
   }
+  Matrix<T>&
+  init(T values[3][3]) {
+    init(values[0], values[1], values[2]);
+    return *this;
+  }
 
   Matrix<T>&
   init(const cv::Mat& other) {
