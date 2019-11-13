@@ -25,6 +25,11 @@ public:
   transform_points(InputIterator from, InputIterator to, OutputIterator out) const {
     std::transform(from, to, out, std::bind(&Matrix<T>::transform_point, this, std::placeholders::_1));
   }
+  template <class InputIterator>
+  void
+  transform_points(InputIterator from, InputIterator to) const {
+    std::for_each(from, to, std::bind(&Matrix<T>::convert_point, this, std::placeholders::_1, std::placeholders::_1));
+  }
 
   Matrix<T>&
   operator=(const cv::MatExpr& expr) {
@@ -37,6 +42,13 @@ public:
     T x = at<T>(0, 0) * pt.x + at<T>(0, 1) * pt.y + at<T>(0, 2);
     T y = at<T>(1, 0) * pt.x + at<T>(1, 1) * pt.y + at<T>(1, 2);
     return cv::Point_<T>(x, y);
+  };
+
+  cv::Point_<T>&
+  convert_point(const cv::Point_<T>& in, cv::Point_<T>& out) const {
+    out.x = at<T>(0, 0) * in.x + at<T>(0, 1) * in.y + at<T>(0, 2);
+    out.y = at<T>(1, 0) * in.x + at<T>(1, 1) * in.y + at<T>(1, 2);
+    return out;
   };
 
   operator base_type() const { return *this; }
@@ -61,7 +73,7 @@ public:
     return (cv::Mat_<T>(3, 3) << 1, 0, 0, 0, 1, 0, 0, 0, 1);
   }
 
-  cv::Mat operator*(const Matrix<T>& other) {
+  cv::Mat operator*(const Matrix<T>& other) const {
     return (cv::Mat_<T>(3, 3) << (at<T>(0, 0) * other.at<T>(0, 0) + at<T>(1, 0) * other.at<T>(1, 0)),
             (at<T>(0, 1) * other.at<T>(0, 0) + at<T>(1, 1) * other.at<T>(0, 1)),
             (at<T>(0, 0) * other.at<T>(0, 2) + at<T>(1, 0) * other.at<T>(1, 2) + at<T>(0, 2)),
