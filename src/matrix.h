@@ -85,7 +85,10 @@ public:
   }
 
   cv::Mat operator*(const Matrix<T>& other) const {
-    return (cv::Mat_<T>(3, 3) << (at<T>(0, 0) * other.at<T>(0, 0) + at<T>(1, 0) * other.at<T>(1, 0)),
+    return *reinterpret_cast<const base_type*>(this) * *reinterpret_cast<const base_type*>(&other);
+  }
+/*    return (cv::Mat_<T>(3, 3) << 
+            (at<T>(0, 0) * other.at<T>(0, 0) + at<T>(1, 0) * other.at<T>(1, 0)),
             (at<T>(0, 1) * other.at<T>(0, 0) + at<T>(1, 1) * other.at<T>(0, 1)),
             (at<T>(0, 0) * other.at<T>(0, 2) + at<T>(1, 0) * other.at<T>(1, 2) + at<T>(0, 2)),
             (at<T>(0, 0) * other.at<T>(1, 0) + at<T>(1, 0) * other.at<T>(1, 1)),
@@ -94,7 +97,7 @@ public:
             0,
             0,
             1);
-  };
+*/  };
   Matrix<T>
   operator*=(const Matrix<T>& other) {
     cv::Mat prod = (*this) * other;
