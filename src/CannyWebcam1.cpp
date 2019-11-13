@@ -884,12 +884,12 @@ main(int argc, char* argv[]) {
           filteredLines.push_back(line);
         }
         Matrix<double> m = Matrix<double>::identity();
-        Matrix<double> s = Matrix<double>::scale(0.5);
+        Matrix<double> s = Matrix<double>::scale(2);
         Matrix<double> r = Matrix<double>::rotation(M_PI);
         Matrix<double> t = Matrix<double>::translation(3, 6);
         Matrix<double> mult;
 
-        mult = t * r;
+        mult = s *  t * r;
 
         cout << "matrix x " << to_string(mult) << endl;
         cout << "matrix init " << to_string(m) << endl;
