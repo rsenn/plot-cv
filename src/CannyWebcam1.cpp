@@ -722,6 +722,11 @@ main(int argc, char* argv[]) {
         auto contour = simplifyPolyline(contours[i]);
         contours[i] = contour;
 
+
+        const double area = cv::contourArea(contours[i], false);
+        if(area < 1)
+          continue;
+
         cv::drawContours(imgOriginal, contours, i, color, 1, cv::LINE_AA);
       }
 
