@@ -872,7 +872,7 @@ main(int argc, char* argv[]) {
           Matrix<double> rot = Matrix<double>::rotation(-line.angle());
 
           Line<float> l(line);
-          cout << "angle: " << line.angle() << std::endl;
+          cout << "angle: " << (line.angle() * 180 /M_PI) << std::endl;
           cout << "a: " << l.a << " b: " << l.b << std::endl;
           rot.transform_point(l.a);
           rot.transform_point(l.b);
