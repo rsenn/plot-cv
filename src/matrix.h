@@ -107,24 +107,41 @@ public:
 
   Matrix<T> operator*(const Matrix<T>& other) const { return product(other); }
 
+  Matrix<T>&
+  set(int row, int col, const T& value) {
+    base_type::at<T>(row, col) = value;
+    return this;
+  }
+
+  T
+  get(int row, int col) const {
+    return base_type::at<T>(row, col);
+  }
+
   const T&
-  operator()(int row, int col) const {
+  ref(int row, int col) const { return *ptr(row, col); }
+
+   T&
+  ref(int row, int col) { return *ptr(row, col); }
+
+  const T*
+  ptr(int row, int col) const {
     const T* ptr = nullptr;
     if(base_type::type() == CV_64F)
       ptr = (T const*)base_type::ptr<double>(row, col);
     if(base_type::type() == CV_32F)
       ptr = (T const*)base_type::ptr<float>(row, col);
-    return *ptr;
+    return ptr;
   }
 
-  T&
-  operator()(int row, int col) {
+  T*
+  ptr(int row, int col) {
     T* ptr = nullptr;
     if(base_type::type() == CV_64F)
       ptr = (T*)base_type::ptr<double>(row, col);
     if(base_type::type() == CV_32F)
       ptr = (T*)base_type::ptr<float>(row, col);
-    return *ptr;
+    return ptr;
   }
 
   Matrix<T>
@@ -138,7 +155,7 @@ public:
         for(k = 0; k < base_type::cols; k++) {
           product += (*this)(i, k) * other(k, j);
         }
-        ret(i, j) = product;
+        set(i, j, product);
       }
     }
     return ret;
