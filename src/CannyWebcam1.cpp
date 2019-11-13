@@ -872,7 +872,7 @@ main(int argc, char* argv[]) {
           Matrix<double> rot = Matrix<double>::rotation(-line.angle());
 
           Line<float> l(line);
-          cout << "angle: " << (line.angle() * 180 /M_PI) << std::endl;
+          cout << "angle: " << (line.angle() * 180 / M_PI) << std::endl;
           cout << "a: " << l.a << " b: " << l.b << std::endl;
           l.a = rot.transform_point(l.a);
           l.b = rot.transform_point(l.b);
@@ -893,26 +893,26 @@ main(int argc, char* argv[]) {
           filteredLines.push_back(line);
         }
 
-         Matrix<double> m = Matrix<double>::identity();
-           Matrix<double> s = Matrix<double>::scale(3);
-           Matrix<double> r = Matrix<double>::rotation_around(M_PI/4, cv::Point2f(50,50) );
-           Matrix<double> t = Matrix<double>::translation(120, -60);
-           Matrix<double> mult;
+        Matrix<double> m = Matrix<double>::identity();
+        Matrix<double> s = Matrix<double>::scale(3);
+        Matrix<double> r = Matrix<double>::rotation_around(M_PI / 4, cv::Point2f(50, 50));
+        Matrix<double> t = Matrix<double>::translation(120, -60);
+        Matrix<double> mult;
 
-           mult = t * r * s;
+        mult = t * r * s;
 
-           cout << "matrix x " << to_string(mult) << endl;
-           cout << "matrix init " << to_string(m) << endl;
-           cout << "matrix scale " << to_string(s) << endl;
-           cout << "matrix rotate " << to_string(r) << endl;
-           cout << "matrix translate " << to_string(t) << endl;
+        cout << "matrix x " << to_string(mult) << endl;
+        cout << "matrix init " << to_string(m) << endl;
+        cout << "matrix scale " << to_string(s) << endl;
+        cout << "matrix rotate " << to_string(r) << endl;
+        cout << "matrix translate " << to_string(t) << endl;
 
-           cv::Point2f p(100, 50);
-           std::vector<cv::Point2f> pl = {p};
-           std::vector<cv::Point2f> ol;
+        cv::Point2f p(100, 50);
+        std::vector<cv::Point2f> pl = {p};
+        std::vector<cv::Point2f> ol;
 
-           mult.transform_points(pl.cbegin(), pl.cend(), std::back_inserter(ol));
-           cout << "transformed point: " << ol << endl;
+        mult.transform_points(pl.cbegin(), pl.cend(), std::back_inserter(ol));
+        cout << "transformed point: " << ol << endl;
       }
 
       cout << "histogram:";
