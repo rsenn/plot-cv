@@ -15,6 +15,14 @@ to_string(const T& t, size_t n_pad = 3, char ch_pad = ' ') {
   oss << std::fixed <<  t;
   std::string ret(oss.str());
 
+  if(ret.find('.') != std::string::npos) {
+    while(ret.back() == '0') 
+      ret.pop_back();
+    if(ret.back() == '.')
+      ret.pop_back();
+    
+  }
+
   if(ret.length() < n_pad)
     ret.insert(ret.begin(), n_pad - ret.length(), ch_pad);
   else if(ret.length() > n_pad) {
@@ -25,11 +33,6 @@ to_string(const T& t, size_t n_pad = 3, char ch_pad = ' ') {
     }
   }
 
-  if(ret.find('.') != std::string::npos) {
-    while(ret.back() == '0') {
-      ret.pop_back();
-    }
-  }
 
   return ret;
 }
