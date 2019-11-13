@@ -10,12 +10,14 @@ public:
 
   void
   transform_points(std::vector<cv::Point_<T>>& pt) {
-    cv::transform(pt, pt, *this);
+    std::vector<cv::Point3_<T>> in = pt;
+    cv::transform(in, in, *this);
+    pt = in;
   }
 
   void
   transform_point(cv::Point_<T>& pt) {
-    std::vector<cv::Point_<T>> v = {pt};
+    std::vector<cv::Point3_<T>> v = {pt};
     cv::transform(v, v, *this);
     pt = v[0];
   }
