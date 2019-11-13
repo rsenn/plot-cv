@@ -713,12 +713,13 @@ main(int argc, char* argv[]) {
     cv::Mat imgOutput;
 
     imgRaw.copyTo(imgOutput);
+    imgRaw.copyTo(imgOriginal);
 
     write_image(imgOutput);
 
     cout << "got frame" << endl;
     // cv::normalize(imgRaw,imgOriginal,0,255,cv::NORM_L1);
-    imgRaw.copyTo(imgOriginal);
+//    imgRaw.copyTo(imgOriginal);
 
     cv::Mat frameLab, frameLabCn[3];
     cv::cvtColor(imgOriginal, frameLab, cv::COLOR_BGR2Lab);
