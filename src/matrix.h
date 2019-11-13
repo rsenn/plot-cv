@@ -81,13 +81,11 @@ public:
 
     if(origin != zero)
       a = cv::Mat(cv::Mat_<T>(3, 3) << (1, 0, T(-origin.x), 0, 1, T(-origin.y), 0, 0, 1));
-  
 
     b = cv::Mat(cv::Mat_<T>(3, 3) << (std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1));
 
     if(origin != zero)
       c = cv::Mat(cv::Mat_<T>(3, 3) << (1, 0, T(origin.x), 0, 1, T(origin.y), 0, 0, 1));
-  
 
     return a.multiply(b).multiply(c);
   }
@@ -111,12 +109,22 @@ public:
 
   const T&
   operator()(int row, int col) const {
-    return base_type::at<T>(row, col);
+    const T* ptr = nullptr;
+    if(base_type::type() == CV_64F)
+      ptr = (T const*)base_type::ptr<double>(row, col);
+    if(base_type::type() == CV_32F)
+      ptr = (T const*)base_type::ptr<float>(row, col);
+    return *ptr;
   }
 
   T&
   operator()(int row, int col) {
-    return *base_type::ptr<T>(row, col);
+    T* ptr = nullptr;
+    if(base_type::type() == CV_64F)
+      ptr = (T*)base_type::ptr<double>(row, col);
+    if(base_type::type() == CV_32F)
+      ptr = (T*)base_type::ptr<float>(row, col);
+    return *ptr;
   }
 
   Matrix<T>
@@ -128,7 +136,7 @@ public:
       for(j = 0; j < base_type::cols; j++) {
         product = 0;
         for(k = 0; k < base_type::cols; k++) {
-          product +=  at<T>(i, k) * other(k, j);
+          product += at<T>(i, k) * other(k, j);
         }
         ret(i, j) = product;
       }
