@@ -127,9 +127,10 @@ public:
     return reinterpret_cast<base_type*>(this)->at<T>(row, col);
   }
 
-  Matrix<T>&
+  Matrix<T>
   multiply(const Matrix<T>& other) {
     T product;
+    Matrix<T> ret;
     int i, j, k;
     for(i = 0; i < 3; i++) {
       for(j = 0; j < 3; j++) {
@@ -137,9 +138,10 @@ public:
         for(k = 0; k < 3; k++) {
           product += operator()(i, k) * other(k, j);
         }
-        operator()(i, j, product);
+        ret(i, j) = product;
       }
     }
+    return ret;
   }
 
   Matrix<T>
