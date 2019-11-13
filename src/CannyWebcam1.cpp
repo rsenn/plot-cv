@@ -869,15 +869,14 @@ main(int argc, char* argv[]) {
           vector<cv::Point> centers;
           transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(centers), [](Line<float>* line) -> cv::Point { return line->center(); });
 
-          Matrix<double> rot = Matrix<double>::rotation(- line.angle() );
+          Matrix<double> rot = Matrix<double>::rotation(-line.angle());
 
           Line<float> l(line);
-cout << "angle: " << line.angle() << std::endl;
-cout << "a: " << l.a << " b: " << l.b << std::endl;
+          cout << "angle: " << line.angle() << std::endl;
+          cout << "a: " << l.a << " b: " << l.b << std::endl;
           rot.transform_point(l.a);
           rot.transform_point(l.b);
-cout << "a: " << l.a << " b: " << l.b << std::endl;
-          
+          cout << "a: " << l.a << " b: " << l.b << std::endl;
 
           cout << "adjacent(" << i << ")" << adjacent << std::endl;
           std::cout << "distances(" << i << ")" << distances << endl;
@@ -894,27 +893,26 @@ cout << "a: " << l.a << " b: " << l.b << std::endl;
           filteredLines.push_back(line);
         }
 
+        /*   Matrix<double> m = Matrix<double>::identity();
+           Matrix<double> s = Matrix<double>::scale(3);
+           Matrix<double> r = Matrix<double>::rotation(M_PI/4 );
+           Matrix<double> t = Matrix<double>::translation(120, -60);
+           Matrix<double> mult;
 
-     /*   Matrix<double> m = Matrix<double>::identity();
-        Matrix<double> s = Matrix<double>::scale(3);
-        Matrix<double> r = Matrix<double>::rotation(M_PI/4 );
-        Matrix<double> t = Matrix<double>::translation(120, -60);
-        Matrix<double> mult;
+           mult = t * r * s;
 
-        mult = t * r * s;
+           cout << "matrix x " << to_string(mult) << endl;
+           cout << "matrix init " << to_string(m) << endl;
+           cout << "matrix scale " << to_string(s) << endl;
+           cout << "matrix rotate " << to_string(r) << endl;
+           cout << "matrix translate " << to_string(t) << endl;
 
-        cout << "matrix x " << to_string(mult) << endl;
-        cout << "matrix init " << to_string(m) << endl;
-        cout << "matrix scale " << to_string(s) << endl;
-        cout << "matrix rotate " << to_string(r) << endl;
-        cout << "matrix translate " << to_string(t) << endl;
+           cv::Point2f p(100, 50);
+           std::vector<cv::Point2f> pl = {p};
+           std::vector<cv::Point2f> ol;
 
-        cv::Point2f p(100, 50);
-        std::vector<cv::Point2f> pl = {p};
-        std::vector<cv::Point2f> ol;
-
-        mult.transform_points(pl.cbegin(), pl.cend(), std::back_inserter(ol));
-        cout << "transformed point: " << ol << endl;*/
+           mult.transform_points(pl.cbegin(), pl.cend(), std::back_inserter(ol));
+           cout << "transformed point: " << ol << endl;*/
       }
 
       cout << "histogram:";

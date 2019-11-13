@@ -12,11 +12,11 @@ template <class T, typename std::enable_if<std::is_integral<T>::value || std::is
 inline std::string
 to_string(const T& t, size_t n_pad = 3, char ch_pad = ' ') {
   std::ostringstream oss;
-  oss << std::fixed <<  t;
+  oss << std::fixed << t;
   std::string ret(oss.str());
 
-  if(ret.find('.') != std::string::npos) {    while(ret.back() == '0') 
-      ret.pop_back();
+  if(ret.find('.') != std::string::npos) {
+    while(ret.back() == '0') ret.pop_back();
     if(ret.back() == '.')
       ret.pop_back();
   }
