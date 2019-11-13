@@ -151,6 +151,21 @@ public:
     return ptr;
   }
 
+  void multiplicate(const Matrix<T>& matrix2) const 
+{
+  Matrix< T>& matrix1 = *this;
+  Matrix< T> product();
+
+  for (int x=0; x<3; ++x)
+    for (int y=0; y<3; ++y)
+    {
+      double sum = 0;
+      for (int z=0; z<3; ++z)
+        sum += matrix1[x][z] * matrix2[z][y];
+      product[x][y] = sum;
+    }
+}
+
   Matrix<T>
   product(const Matrix<T>& other) const {
     T product;
@@ -160,7 +175,7 @@ public:
       for(j = 0; j < base_type::cols; j++) {
         product = 0;
         for(k = 0; k < base_type::cols; k++) {
-          product += (*this)[i][k] * other[k][j];
+          product += get(i,k) * other.get(k,j);
         }
         ret[i][j] += product;
       }
