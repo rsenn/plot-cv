@@ -698,16 +698,13 @@ main(int argc, char* argv[]) {
 
   while(charCheckForEscKey != 27) { // until the Esc key is pressed or webcam connection is lost
     bool blnFrameReadSuccessfully = false;
-
     if(capWebcam.isOpened()) {
       blnFrameReadSuccessfully = capWebcam.read(imgRaw); // get next frame
                                                          //
     } else {
-
       imgInput.copyTo(imgRaw);
       blnFrameReadSuccessfully = imgRaw.cols > 0 && imgRaw.rows > 0;
     }
-
     if(!blnFrameReadSuccessfully || imgRaw.empty()) { // if frame not read successfully
       cout << "error: frame not read from webcam\n";  // print error message to std out
       break;                                          // and jump out of while loop
@@ -816,10 +813,7 @@ main(int argc, char* argv[]) {
       });
 
       cout << "Num contours: " << contours.size() << endl;
-      /*
-            for_each(lines.begin(), lines.end(), [&](Line<float>& l) {
-              Line<float>& nearest = find_nearest_line(l, lines);
-            });*/
+
       std::list<Line<float>> filteredLines;
       vector<bool> takenLines;
       vector<float> lineLengths;
@@ -948,24 +942,14 @@ main(int argc, char* argv[]) {
       cout << "Num lines: " << lines.size() << endl;
       cout << "Num filteredLines: " << filteredLines.size() << endl;
 
-      //   draw_all_lines(imgOriginal, filteredLines);
-
-      //  cout << contourStr.str() << endl;
-      /*
-            for(size_t i = 0; i < contours.size(); ++i) {
-              vector<cv::Point> c = contours[i];
-              cv::Vec4i h = hier[i];
-      }*/
-
       std::ostringstream filename;
       filename << "contour.svg.tmp";
 
       // filename << "contour-" << ++count << ".svg";
 
-      // filter_contours(contours2);
       export_svg<cv::Point2f>(contours2, filename.str());
 
-      //      unlink("contour.svg");
+      unlink("contour.svg");
       rename("contour.svg.tmp", "contour.svg");
 
       vector<PointVec> squares;
@@ -981,13 +965,8 @@ main(int argc, char* argv[]) {
         cout << "center : " << center << "\nradius : " << radius << endl;
       }
 
-      //   draw_polylines<cv::Point>(imgOriginal, contours, cv::Scalar(0, 255, 0));
-
       vector<PointVec> approxim;
-
       transform(contours2.begin(), contours2.end(), back_inserter(approxim), [](const Point2fVec& p) -> PointVec { return transform_points<float, int>(p); });
-
-      // [](const Point2fVec &p) -> cv::Point { return cv::Point(p.x, p.y); });
 
       for_each(approxim.begin(), approxim.end(), [&](const PointVec& c) {
         const double length = cv::arcLength(c, false);
@@ -1000,17 +979,10 @@ main(int argc, char* argv[]) {
 
       draw_all_contours(imgOriginal, contours);
 
-      // CV_WINDOW_AUTOSIZE is the default
       cv::imshow("imgOriginal", imgOriginal);
+      cv::imshow("imgGrayscale", imgGrayscale); 
 
-      cv::imshow("imgGrayscale", imgGrayscale); //
-
-      // show windows
-      // cv::imshow("imgGrayscale", imgBlurred); //
-
-      // cv::createTrackbar("Thre", "demoProc", &thresholdValue, 255, &trackbar);
-
-      charCheckForEscKey = cv::waitKey(100); // delay (in ms) and get key press, if any
+      charCheckForEscKey = cv::waitKey(1); // delay (in ms) and get key press, if any
     }
   } // end while
 
