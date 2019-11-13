@@ -1,6 +1,7 @@
 // OpenCVWebcamTest.cpp
 
 #include <opencv2/core/core.hpp>
+#include <opencv2/core/mat.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/highgui/highgui_c.h>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -884,11 +885,12 @@ main(int argc, char* argv[]) {
         }
         Matrix<double> m = Matrix<double>::identity();
         Matrix<double> s = Matrix<double>::scale(0.5);
-        cv::Mat r = Matrix<double>::rotation(M_PI);
-        cv::Mat t = Matrix<double>::translation(3, 6);
+        Matrix<double> r = Matrix<double>::rotation(M_PI);
+        Matrix<double> t = Matrix<double>::translation(3, 6);
         Matrix<double> mult;
 
         mult = t * r;
+
 
         cout << "matrix x " << to_string(mult) << endl;
         cout << "matrix init " << to_string(m) << endl;

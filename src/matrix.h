@@ -68,6 +68,20 @@ public:
   identity() {
     return (cv::Mat_<T>(3, 3) << 1, 0, 0, 0, 1, 0, 0, 0, 1);
   }
+
+
+  cv::Mat
+  operator*(const Matrix<T>& other) {
+
+  return (cv::Mat_<T>(3, 3) << 
+    (at<T>(0,0) * other.at<T>(0,0) + at<T>(1,0) * other.at<T>(1,0)),
+    (at<T>(0,1) * other.at<T>(0,0) + at<T>(1,1) * other.at<T>(0,1)),
+    (at<T>(0,0) * other.at<T>(0,2) + at<T>(1,0) * other.at<T>(1,2) + at<T>(0,2)),
+    (at<T>(0,0) * other.at<T>(1,0) + at<T>(1,0) * other.at<T>(1,1)),
+    (at<T>(0,1) * other.at<T>(1,0) + at<T>(1,1) * other.at<T>(1,1)),
+    (at<T>(0,1) * other.at<T>(0,2) + at<T>(1,1) * other.at<T>(1,2) + at<T>(1,2))
+  );
+};
 };
 
 inline std::string
