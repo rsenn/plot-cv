@@ -69,8 +69,8 @@ public:
   static Matrix<T>
   rotation(double angle) {
     Matrix<T> ret;
-    ret.setRow(0, { std::cos(angle), std::sin(angle), 0});
-    ret.setRow(1, { -std::sin(angle), std::cos(angle), 0});
+    ret.setRow(0, {std::cos(angle), std::sin(angle), 0});
+    ret.setRow(1, {-std::sin(angle), std::cos(angle), 0});
     ret.setRow(2, {0, 0, 1});
     return ret;
   }
@@ -83,7 +83,7 @@ public:
   static Matrix<T>
   create(T xx, T xy, T yx, T yy, T tx, T ty) {
     Matrix<T> ret;
-    ret.init({ xx, xy, yx }, { yy, tx, ty });
+    ret.init({xx, xy, yx}, {yy, tx, ty});
     return ret;
   }
 
@@ -108,52 +108,43 @@ public:
   static Matrix<T>
   rotation(double angle, const cv::Point_<OtherT>& origin) {
 
- Matrix<T> ret = Matrix<T>::identity();
+    Matrix<T> ret = Matrix<T>::identity();
 
     const cv::Point_<OtherT> zero(0, 0);
-/*
-    Matrix<T> a = Matrix<T>::identity();
-    Matrix<T> b = Matrix<T>::identity();
-    Matrix<T> c = Matrix<T>::identity();
-*/
+    /*
+        Matrix<T> a = Matrix<T>::identity();
+        Matrix<T> b = Matrix<T>::identity();
+        Matrix<T> c = Matrix<T>::identity();
+    */
     if(origin != zero)
       ret.multiplicate(Matrix<T>(1, 0, -T(origin.x), 0, 1, -T(origin.y)));
-  
 
-   ret.multiplicate(Matrix<T>(T(std::cos(angle)), T(std::sin(angle)), 0, -
-    T(std::sin(angle)), T(std::cos(angle)), 0));
+    ret.multiplicate(Matrix<T>(T(std::cos(angle)), T(std::sin(angle)), 0, -T(std::sin(angle)), T(std::cos(angle)), 0));
 
     if(origin != zero)
       ret.multiplicate(Matrix<T>(1, 0, T(origin.x), 0, 1, T(origin.y)));
-
 
     return ret;
   }
 
   static Matrix<T>
   scale(double scale) {
-   Matrix<T> ret;
-    ret.setRow(0, {scale, 0, 0});
-    ret.setRow(1, {0, scale, 0});
-    ret.setRow(1, {0, 0, 1});
+    Matrix<T> ret;
+    ret.init({scale, 0, 0}, {0, scale, 0}, {0, 0, 1});
     return ret;
   }
 
   template <class OtherT>
   static Matrix<T>
   translation(OtherT x, OtherT y) {
-   Matrix<T> ret;
-    ret.setRow(0, {1, 0, T(x)});
-    ret.setRow(1, {0, 1, T(y)});
-    ret.setRow(1, {0, 0, 1});
+    Matrix<T> ret;
+    ret.init({1, 0, T(x)}, {0, 1, T(y)}, {0, 0, 1});
     return ret;
   }
   static Matrix<T>
   identity() {
-   Matrix<T> ret;
-    ret.setRow(0, {1, 0, 0});
-    ret.setRow(1, {0, 1, 0});
-    ret.setRow(1, {0, 0, 1});
+    Matrix<T> ret;
+    ret.init({1, 0, 0}, {0, 1, 0}, {0, 0, 1});
     return ret;
   }
 
@@ -211,7 +202,7 @@ public:
 
   Matrix<T>&
   multiplicate(const Matrix<T>& matrix2) {
-    Matrix<T> const & matrix1 = *this;
+    Matrix<T> const& matrix1 = *this;
     Matrix<T> product;
     for(int x = 0; x < 3; ++x)
       for(int y = 0; y < 3; ++y) {
@@ -234,12 +225,11 @@ public:
         for(k = 0; k < base_type::cols; k++) {
           product += get(i, k) * other.get(k, j);
         }
-        ret.set(i,j,product);
+        ret.set(i, j, product);
       }
     }
     return ret;
   }
-
 };
 
 inline std::string
