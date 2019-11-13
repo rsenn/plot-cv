@@ -27,7 +27,28 @@ public:
 
   ValueT
   length() const {
-    return point_distance(a, b);
+    point_type diff = a - b;
+    return std::sqrt(diff.x * diff.x + diff.y * diff.y);
+  }
+
+  point_type
+  at(double sigma) const {
+    point_type ret;
+    ret.x = (a.x + b.x) / 2;
+    ret.y = (a.y + b.y) / 2;
+    return ret;
+  }
+  point_type
+  center() const {
+    return point_type((a.x + b.x) / 2, (a.y + b.y) / 2);
+  }
+  point_type
+  start() const {
+    return a;
+  }
+  point_type
+  end() const {
+    return b;
   }
 
   point_type
@@ -78,6 +99,15 @@ public:
   point_type a, b;
 };
 
+template <class ValueT>
+bool
+operator<(const Line<ValueT>& l1, const Line<ValueT>& l2) {
+  cv::Point2f a, b;
+  a = l1.center();
+  b = l2.center();
+  return a.y < b.y ? true : a.x < b.x;
+}
+
 template <class Char, class ValueT>
 inline std::basic_ostream<Char>&
 operator<<(std::basic_ostream<Char>& os, const Line<ValueT>& line) {
@@ -87,15 +117,14 @@ operator<<(std::basic_ostream<Char>& os, const Line<ValueT>& line) {
 }
 
 template <class ContainerT>
-typename ContainerT::value_type&
-
+typename ContainerT::iterator
 findNearestLine(const typename ContainerT::value_type& line, ContainerT& lines) {
   typedef typename ContainerT::iterator iterator_type;
   typedef typename ContainerT::value_type line_type;
   typedef typename line_type::value_type value_type;
   value_type distance = 1e10;
-  line_type* ret;
   iterator_type end = lines.end();
+  iterator_type ret = end;
 
   for(iterator_type it = lines.begin(); it != end; ++it) {
     value_type d = (*it).min_distance(line);
@@ -103,10 +132,10 @@ findNearestLine(const typename ContainerT::value_type& line, ContainerT& lines) 
       continue;
     if(d < distance) {
       distance = d;
-      ret = &(*it);
+      ret = it;
     }
   }
-  return *ret;
+  return ret;
 }
 template <class ContainerT>
 typename ContainerT::iterator
@@ -115,10 +144,31 @@ findNearestLine(const typename ContainerT::iterator& line, ContainerT& lines) {
   typedef typename ContainerT::value_type point_type;
   typedef typename point_type::value_type value_type;
   value_type distance = 1e10;
-  iterator_type index;
+  iterator_type index = lines.end();
   iterator_type end = lines.end();
 
   for(iterator_type it = lines.begin(); it != end; ++it) {
+    value_type d = (*it).min_distance(*line);
+    if(std::distance(line, it) == 0)
+      continue;
+    if(d < distance) {
+      distance = d;
+      index = it;
+    }
+  }
+  return index;
+}
+
+template <class InputIterator>
+InputIterator
+findNearestLine(const InputIterator& line, InputIterator from, InputIterator to) {
+  typedef InputIterator iterator_type;
+  typedef typename std::iterator_traits<InputIterator>::value_type point_type;
+  typedef typename point_type::value_type value_type;
+  value_type distance = 1e10;
+  iterator_type index = to;
+
+  for(iterator_type it = from; it != to; ++it) {
     value_type d = (*it).min_distance(*line);
     if(std::distance(line, it) == 0)
       continue;
