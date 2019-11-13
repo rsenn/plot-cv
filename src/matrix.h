@@ -120,6 +120,12 @@ public:
     return *this;
   }
 
+  Matrix<T>&
+  init(const cv::Mat& other) {
+    init(other.ptr<T>(0,0), other.ptr<T>(1,0), other.ptr<T>(2,0));
+    return *this;
+  }
+
   template <class OtherT = float>
   static Matrix<T>
   rotation(double angle, const cv::Point_<OtherT>& origin) {
