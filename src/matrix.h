@@ -120,6 +120,11 @@ public:
   T
   get(int row, int col) const { return *base_type::ptr(); }
 
+  T*
+  operator[](int row) { return ptr(row, 0); }
+  T const*
+  operator[](int row) const { return ptr(row, 0); }
+
   const T&
   ref(int row, int col) const { return *ptr(row, col); }
 
