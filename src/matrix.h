@@ -52,20 +52,18 @@ template<class OtherT>
   }
 };
 
-template <class T>
 inline std::string
-to_string(const cv::Mat_<T>& mat) {
+to_string(const cv::Mat& mat) {
   std::ostringstream oss;
   oss << "rows: " << mat.rows;
   oss << " cols: " << mat.cols;
 
-  for(int i = 0; i < mat.rows; ++i)  {
-    const auto& row = mat.row(i);
+  for(int i = 0; i < mat.cols; ++i)  {
     oss << "(";
-    for(int j = 0; j < row.cols; ++j) {
+    for(int j = 0; j < mat.rows; ++j) {
       if(j) 
         oss << ", ";
-      oss << *row[j];
+      oss << to_string(mat.at<double>(j, i));
     }
     oss << ")";
   }
