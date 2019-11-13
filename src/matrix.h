@@ -47,9 +47,9 @@ template<class OtherT>
   translation(OtherT x, OtherT y) {
     cv::Mat ret = cv::Mat::zeros( 3, 3, typeId);
 
-    ret.at<T>(2, 0) = T(x);
-    ret.at<T>(2, 1) = T(y);
-    return ret;
+    ret.at<T>(0, 2) = T(x);
+    ret.at<T>(1, 2) = T(y);
+    return ret; 
   }
 };
 
