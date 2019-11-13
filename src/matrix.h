@@ -110,24 +110,22 @@ public:
  Matrix<T> ret = Matrix<T>::identity();
 
     const cv::Point_<OtherT> zero(0, 0);
-
+/*
     Matrix<T> a = Matrix<T>::identity();
     Matrix<T> b = Matrix<T>::identity();
     Matrix<T> c = Matrix<T>::identity();
-
+*/
     if(origin != zero)
-      a = Matrix<T>(1, 0, T(-origin.x), 0, 1, T(-origin.y));
+      ret.multiplicate(Matrix<T>(1, 0, T(-origin.x), 0, 1, T(-origin.y)));
   
 
-   b = Matrix<T>(std::cos(T(angle)), std::sin(T(angle)), 0, -std::sin(T(angle)), std::cos(T(angle)), 0);
+   ret.multiplicate(Matrix<T>(std::cos(T(angle)), std::sin(T(angle)), 0, -std::sin(T(angle)), std::cos(T(angle)), 0));
 
     if(origin != zero)
-      c = Matrix<T>(1, 0, T(origin.x), 0, 1, T(origin.y));
+      ret.multiplicate(Matrix<T>(1, 0, T(origin.x), 0, 1, T(origin.y)));
 
-    if(origin != zero)
-      return a.multiply(b).multiply(c);
 
-    return b;
+    return ret;
   }
 
   static Matrix<T>
@@ -209,17 +207,20 @@ public:
     return ptr;
   }
 
-  void
-  multiplicate(const Matrix<T>& matrix2) const {
-    Matrix<T>& matrix1 = *this;
-    Matrix<T> product();
+  Matrix<T>&
+  multiplicate(const Matrix<T>& matrix2) {
+    Matrix<T> const & matrix1 = *this;
+    Matrix<T> product;
 
     for(int x = 0; x < 3; ++x)
       for(int y = 0; y < 3; ++y) {
         double sum = 0;
         for(int z = 0; z < 3; ++z) sum += matrix1[x][z] * matrix2[z][y];
-        product[x][y] = sum;
+        product.set(x, y, sum);
       }
+
+    product.copyTo(*this);
+    return *this;
   }
 
   Matrix<T>
@@ -238,11 +239,7 @@ public:
     }
     return ret;
   }
-  Matrix<T>&
-  multiply(const Matrix<T>& other) {
-    *this = product(other);
-    return *this;
-  }
+
 };
 
 inline std::string
