@@ -78,13 +78,12 @@ public:
 
   static Matrix<T>
   create(int xx, int xy, int yx, int yy, int tx, int ty) {
-    return cv::Mat(cv::Mat_<T>(3, 3) << (T(xx), T(xy), T(yx), T(yy), T(tx), T(ty)));
+    return (cv::Mat_<T>(3, 3) << (T(xx), T(xy), T(yx), T(yy), T(tx), T(ty)));
   }
 
-template<class R = std::array<T,3> >
+  template<class R = std::array<T,3> >
   Matrix<T>&
   init(const R& row0, const R& row1, const R& row2) {
-    *this = cv::Mat(cv::Mat::zeros(3, 3, typeId));
     set(0, 0, row0[0]);
     set(0, 1, row0[1]);
     set(0, 2, row0[2]);
@@ -99,14 +98,16 @@ template<class R = std::array<T,3> >
 
   Matrix<T>&
   init(T xx, T xy, T yx, T yy, T tx, T ty) {
-    *this = cv::Mat(cv::Mat::zeros(3, 3, typeId));
-
+    
     set(0, 0, xx);
     set(0, 1, xy);
     set(0, 2, tx);
     set(1, 0, yx);
     set(1, 1, yy);
     set(1, 2, ty);
+    set(2, 0, 0);
+    set(2, 1, 0);
+    set(2, 2, 1);
     return *this;
   }
 
@@ -156,6 +157,13 @@ template<class R = std::array<T,3> >
   Matrix<T>&
   set(int row, int col, const T& value) {
     *ptr(row, col) = value;
+    return *this;
+  }
+  template<class R = std::array<T,3> >
+  Matrix<T>&
+  setRow(int row, R arr) {
+    for(size_t i = 0; i < base_type::cols; ++i )
+      set(row, i, arr[i]);
     return *this;
   }
 
