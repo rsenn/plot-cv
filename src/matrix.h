@@ -61,12 +61,12 @@ public:
   template <class OtherT = float>
   static cv::Mat
   rotation(double angle, const cv::Point_<OtherT>& origin = cv::Point_<OtherT>(0, 0)) {
-    Matrix<double> ret = Matrix<T>::translation(-origin.x, -origin.y);
 
-    ret *=  (cv::Mat_<T>(3, 3) << std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1);
-    ret *=  (cv::Mat_<T>(3, 3) << 1, 0, T(origin.x), 0, 1, T(origin.y), 0, 0, 1);
+    cv::Mat torigin =  (cv::Mat_<T>(3, 3) << 1, 0, T(-origin.x), 0, 1, T(-origin.y), 0, 0, 1);
+    cv::Mat rotate =  (cv::Mat_<T>(3, 3) << std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1);
+    cv::Mat tback =  (cv::Mat_<T>(3, 3) << 1, 0, T(origin.x), 0, 1, T(origin.y), 0, 0, 1);
 
-    return ret;
+    return torigin * rotate * tback;
   }
 
   static cv::Mat
