@@ -813,9 +813,6 @@ main(int argc, char* argv[]) {
           vector<LineEnd<float>> line_ends;
           vector<Line<float>*> adjacent_lines;
 
-          auto it = min_element(distances.begin(), distances.end());
-          int min = *it;
-
           vector<int> adjacent = filterLines(lines.begin(), lines.end(), [&](Line<float>& l2) -> bool {
             size_t point_index;
             double min_dist = line.min_distance(l2, &point_index);
@@ -825,6 +822,9 @@ main(int argc, char* argv[]) {
               distances.push_back(min_dist);
             return ok;
           });
+
+          auto it = min_element(distances.begin(), distances.end());
+          int min = *it;
 
           transform(adjacent.begin(), adjacent.end(), back_inserter(adjacent_lines), [&](int index) -> Line<float>* { return &lines[index]; });
 
