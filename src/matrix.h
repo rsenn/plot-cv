@@ -188,12 +188,13 @@ public:
     Matrix<T> ret;
     int i, j, k;
     for(i = 0; i < base_type::rows; i++) {
+      T* row = &ret[i][0];
       for(j = 0; j < base_type::cols; j++) {
         product = 0;
         for(k = 0; k < base_type::cols; k++) {
-          product += get(i, k) * other.get(k, j);
+          product += row[k] * other.get(k, j);
         }
-        ret.set(i, j, product);
+        row[j] = product;
       }
     }
     return ret;
