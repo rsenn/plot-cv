@@ -694,13 +694,16 @@ main(int argc, char* argv[]) {
   cv::createTrackbar("blur", "contours", &blur, 7, trackbar, (void*)"blur");
 
   while(charCheckForEscKey != 27 /*&& capWebcam.isOpened()*/) { // until the Esc key is pressed or webcam connection is lost
-    bool blnFrameReadSuccessfully = true;
+    bool blnFrameReadSuccessfully =false;
 
-    if(camID >= 0)
+    if(camID >= 0) {
       blnFrameReadSuccessfully = capWebcam.read(imgRaw); // get next frame
                                                          //
-    else
-      imgRaw = cv::imread(filename.empty() ? "input.png" : filename);
+ }    else {
+
+          imgRaw = cv::imread(filename.empty() ? "input.png" : filename)  ;
+          blnFrameReadSuccessfully = imgRaw.cols > 0 && imgRaw.rows > 0;
+    }
 
     if(!blnFrameReadSuccessfully || imgRaw.empty()) { // if frame not read successfully
       cout << "error: frame not read from webcam\n";  // print error message to std out
