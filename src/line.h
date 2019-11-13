@@ -133,7 +133,7 @@ public:
   angle() const {
     point_type diff(slope());
 
-    double phi = std::atan2(diff.x, diff.y);
+    double phi = angle_from_moment(diff);
     double len = length();
     point_type norm(moment());
     point_type mom;
