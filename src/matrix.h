@@ -26,7 +26,7 @@ public:
   transform_points(const cv::Mat& m, std::vector<cv::Point_<OtherT>>& pt) {
     std::vector<cv::Point3_<OtherT>> in;
     std::vector<cv::Point3_<OtherT>> out;
-    std::transform(pt.cbegin(), pt.cend(), std::back_inserter(in), [](const cv::Point_<OtherT>& p) -> cv::Point3_<OtherT> { return cv::Point3_<OtherT>(p.x, p.y, 0); });
+    std::transform(pt.cbegin(), pt.cend(), std::back_inserter(in), [](const cv::Point_<OtherT>& p) -> cv::Point3_<OtherT> { return cv::Point3_<OtherT>(p.x, pt.y, 0); });
     out.resize(in.size());
     cv::transform(in, out, m);
     std::transform(out.cbegin(), out.cend(), pt.begin(), [](const cv::Point3_<OtherT>& pt3) -> cv::Point_<OtherT> { return cv::Point_<OtherT>(pt3.x, pt3.y); });
@@ -42,10 +42,9 @@ public:
   template <class OtherT>
   static void
   transform_point(const cv::Mat& m, cv::Point_<OtherT>& pt) {
-    std::vector<cv::Point_<OtherT>> v = {pt};
-    transform_points(m, v);
-    pt = v[0];
-  }
+    pt.x = at<T>(0,0) * pt.x + at<T>(0,1) * pt.y + at<T>(0,2);
+    pt.y = at<T>(1,0) * pt.x + at<T>(1,1) * pt.y + at<T>(1,2);
+  };
 
   operator base_type() const { return *this; }
 
