@@ -108,9 +108,8 @@ to_string(const cv::Mat& mat) {
     }
     oss << ")";
   }
-  std::string s = oss.str();
+  return oss.str();
 
-  return s;
 }
 template <class Char, class Value>
 inline std::basic_ostream<Char>&
