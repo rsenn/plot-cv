@@ -886,7 +886,9 @@ main(int argc, char* argv[]) {
         Matrix<double> s = Matrix<double>::scale(0.5);
         cv::Mat r = Matrix<double>::rotation(M_PI);
         cv::Mat t = Matrix<double>::translation(3, 6);
-        Matrix<double> mult = cv::Mat(t * r);
+        Matrix<double> mult;
+
+        mult = t * r;
 
         cout << "matrix x " << to_string(mult) << endl;
         cout << "matrix init " << to_string(m) << endl;
