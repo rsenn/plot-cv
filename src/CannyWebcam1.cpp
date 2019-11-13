@@ -669,6 +669,7 @@ main(int argc, char* argv[]) {
     filename = argv[1];
 
   cv::VideoCapture capWebcam;
+  cv::Mat imgInput;
 
   if(camID >= 0) {
     capWebcam.open(camID, cv::CAP_V4L2); // declare a VideoCapture object and associate to webcam, 0 => use 1st webcam
@@ -678,6 +679,8 @@ main(int argc, char* argv[]) {
       getchar();                                                // may have to modify this line if not using Windows
       return (0);                                               // and exit program
     }
+  } else {
+    imgInput = cv::imread(filename.empty() ? "input.png" : filename);
   }
 
   cv::Mat imgRaw, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny; // Canny edge image
@@ -693,16 +696,16 @@ main(int argc, char* argv[]) {
   cv::createTrackbar("epsilon", "contours", &eps, 7, trackbar, (void*)"eps");
   cv::createTrackbar("blur", "contours", &blur, 7, trackbar, (void*)"blur");
 
-  while(charCheckForEscKey != 27 /*&& capWebcam.isOpened()*/) { // until the Esc key is pressed or webcam connection is lost
-    bool blnFrameReadSuccessfully =false;
+  while(charCheckForEscKey != 27) { // until the Esc key is pressed or webcam connection is lost
+    bool blnFrameReadSuccessfully = false;
 
-    if(camID >= 0) {
+    if(capWebcam.isOpened()) {
       blnFrameReadSuccessfully = capWebcam.read(imgRaw); // get next frame
                                                          //
- }    else {
+    } else {
 
-          imgRaw = cv::imread(filename.empty() ? "input.png" : filename)  ;
-          blnFrameReadSuccessfully = imgRaw.cols > 0 && imgRaw.rows > 0;
+      imgInput.copyTo(imgRaw);
+      blnFrameReadSuccessfully = imgRaw.cols > 0 && imgRaw.rows > 0;
     }
 
     if(!blnFrameReadSuccessfully || imgRaw.empty()) { // if frame not read successfully
@@ -719,7 +722,7 @@ main(int argc, char* argv[]) {
 
     cout << "got frame" << endl;
     // cv::normalize(imgRaw,imgOriginal,0,255,cv::NORM_L1);
-//    imgRaw.copyTo(imgOriginal);
+    //    imgRaw.copyTo(imgOriginal);
 
     cv::Mat frameLab, frameLabCn[3];
     imgOriginal.copyTo(frameLab);
