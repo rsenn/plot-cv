@@ -79,7 +79,8 @@ public:
             (at<T>(0, 0) * other.at<T>(0, 2) + at<T>(1, 0) * other.at<T>(1, 2) + at<T>(0, 2)),
             (at<T>(0, 0) * other.at<T>(1, 0) + at<T>(1, 0) * other.at<T>(1, 1)),
             (at<T>(0, 1) * other.at<T>(1, 0) + at<T>(1, 1) * other.at<T>(1, 1)),
-            (at<T>(0, 1) * other.at<T>(0, 2) + at<T>(1, 1) * other.at<T>(1, 2) + at<T>(1, 2)));
+            (at<T>(0, 1) * other.at<T>(0, 2) + at<T>(1, 1) * other.at<T>(1, 2) + at<T>(1, 2)),
+            0, 0, 1 );
   };
   Matrix<T>
   operator*=(const Matrix<T>& other) {
