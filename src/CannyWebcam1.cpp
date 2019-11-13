@@ -523,7 +523,7 @@ trackbar(int input, void* u) {
 };
 
 void
-write_image(const cv::Mat& img) {
+write_image(cv::Mat img) {
   static int count = 0;
   std::ostringstream filename;
   filename << "frame-";
@@ -710,7 +710,11 @@ main(int argc, char* argv[]) {
       break;                                          // and jump out of while loop
     }
 
-    write_image(imgRaw);
+    cv::Mat imgOutput;
+
+    imgRaw.copyTo(imgOutput);
+
+    write_image(imgOutput);
 
     cout << "got frame" << endl;
     // cv::normalize(imgRaw,imgOriginal,0,255,cv::NORM_L1);
