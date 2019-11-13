@@ -58,7 +58,7 @@ public:
     return (typed_type(3, 3) << std::cos(angle), std::sin(angle), 0, -std::sin(angle), std::cos(angle), 0, 0, 0, 1);
   }
 */
-  template <class OtherT>
+  template <class OtherT = float>
   static cv::Mat
   rotation(double angle, const cv::Point_<OtherT>& origin = cv::Point_<OtherT>(0, 0)) {
     cv::Mat torigin = Matrix<T>::translation(-origin.x, -origin.y);
