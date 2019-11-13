@@ -6,6 +6,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgproc/types_c.h>
 #include <opencv2/imgcodecs.hpp>
+#include <unistd.h>
 
 #include "simple_svg_1.0.0.hpp"
 #include "psimpl.h"
@@ -672,11 +673,16 @@ main(int argc, char* argv[]) {
       }
 
       std::ostringstream filename;
-      filename << "contour.svg";
-      // filename << "contour-" << ++count << ".svg";
+      filename << "contour.svg.tmp";
+
+          // filename << "contour-" << ++count << ".svg";
 
       // filter_contours(contours2);
       export_svg<cv::Point2f>(contours2, filename.str());
+
+      unlink("contour.svg");
+      rename("contour.svg.tmp", "contour.svg");
+
 
       std::vector<PointVec> squares;
 
