@@ -157,7 +157,7 @@ public:
         for(k = 0; k < base_type::cols; k++) {
           product += get(i, k) * other.get(k, j);
         }
-        ret.ref(i, j) += product;
+        base_type::at<T>(i, j) += product;
       }
     }
     return ret;
