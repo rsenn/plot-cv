@@ -292,13 +292,13 @@ to_string(const cv::Mat& mat) {
       if(j)
         oss << ",";
       if(mat.type() == CV_64F)
-        oss << to_string(mat.at<double>(i, j), 3);
+        oss << to_string(mat.at<double>(i, j), 4);
       else if(mat.type() == CV_32F)
-        oss << to_string(mat.at<float>(i, j), 3);
+        oss << to_string(mat.at<float>(i, j), 4);
       else
         throw std::runtime_error("to_string");
     }
-    oss << ")";
+    oss << " )";
   }
   return oss.str();
 }
