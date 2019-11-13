@@ -111,12 +111,12 @@ public:
 
   const T&
   operator()(int row, int col) const {
-    return reinterpret_cast<base_type const*>(this)->at<T>(row, col);
+    return base_type::at<T>(row, col);
   }
 
   T&
   operator()(int row, int col) {
-    return reinterpret_cast<base_type*>(this)->at<T>(row, col);
+    return base_type::at<T>(row, col);
   }
 
   Matrix<T>
