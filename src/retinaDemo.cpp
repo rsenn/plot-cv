@@ -21,14 +21,12 @@ help(std::string errorMessage) {
   std::cout << "\t -image : for still image processing" << std::endl;
   std::cout << "\t -video : for video stream processing" << std::endl;
   std::cout << "\t[Optional : media target] :" << std::endl;
-  std::cout << "\t if processing an image or video file, then, specify the path and filename of the target to process"
-            << std::endl;
+  std::cout << "\t if processing an image or video file, then, specify the path and filename of the target to process" << std::endl;
   std::cout << "\t leave empty if processing video stream coming from a connected video device" << std::endl;
   std::cout << "\t[Optional : activate retina log sampling] : an optional last parameter can be specified for retina "
                "spatial log sampling"
             << std::endl;
-  std::cout << "\t set \"log\" without quotes to activate this sampling, output frame size will be divided by 4"
-            << std::endl;
+  std::cout << "\t set \"log\" without quotes to activate this sampling, output frame size will be divided by 4" << std::endl;
   std::cout << "\nExamples:" << std::endl;
   std::cout << "\t-Image processing : ./retinaDemo -image lena.jpg" << std::endl;
   std::cout << "\t-Image processing with log sampling : ./retinaDemo -image lena.jpg log" << std::endl;
@@ -41,17 +39,13 @@ int
 main(int argc, char* argv[]) {
   // welcome message
   std::cout << "****************************************************" << std::endl;
-  std::cout
-      << "* Retina demonstration : demonstrates the use of is a wrapper class of the Gipsa/Listic Labs retina model."
-      << std::endl;
-  std::cout << "* This retina model allows spatio-temporal image processing (applied on still images, video sequences)."
-            << std::endl;
+  std::cout << "* Retina demonstration : demonstrates the use of is a wrapper class of the Gipsa/Listic Labs retina model." << std::endl;
+  std::cout << "* This retina model allows spatio-temporal image processing (applied on still images, video sequences)." << std::endl;
   std::cout << "* As a summary, these are the retina model properties:" << std::endl;
   std::cout << "* => It applies a spectral whithening (mid-frequency details enhancement)" << std::endl;
   std::cout << "* => high frequency spatio-temporal noise reduction" << std::endl;
   std::cout << "* => low frequency luminance to be reduced (luminance range compression)" << std::endl;
-  std::cout << "* => local logarithmic luminance compression allows details to be enhanced in low light conditions\n"
-            << std::endl;
+  std::cout << "* => local logarithmic luminance compression allows details to be enhanced in low light conditions\n" << std::endl;
   std::cout << "* for more information, reer to the following papers :" << std::endl;
   std::cout << "* Benoit A., Caplier A., Durette B., Herault, J., \"USING HUMAN VISUAL SYSTEM MODELING FOR "
                "BIO-INSPIRED LOW LEVEL IMAGE PROCESSING\", Elsevier, Computer Vision and Image Understanding 114 "
@@ -61,14 +55,10 @@ main(int argc, char* argv[]) {
                "(Progress in Neural Processing),By: Jeanny Herault, ISBN: 9814273686. WAPI (Tower ID): 113266891."
             << std::endl;
   std::cout << "* => reports comments/remarks at benoit.alexandre.vision@gmail.com" << std::endl;
-  std::cout << "* => more informations and papers at : http://sites.google.com/site/benoitalexandrevision/"
-            << std::endl;
+  std::cout << "* => more informations and papers at : http://sites.google.com/site/benoitalexandrevision/" << std::endl;
   std::cout << "****************************************************" << std::endl;
-  std::cout << " NOTE : this program generates the default retina parameters file 'RetinaDefaultParameters.xml'"
-            << std::endl;
-  std::cout
-      << " => you can use this to fine tune parameters and load them if you save to file 'RetinaSpecificParameters.xml'"
-      << std::endl;
+  std::cout << " NOTE : this program generates the default retina parameters file 'RetinaDefaultParameters.xml'" << std::endl;
+  std::cout << " => you can use this to fine tune parameters and load them if you save to file 'RetinaSpecificParameters.xml'" << std::endl;
 
   // basic input arguments checking
   if(argc < 2) {

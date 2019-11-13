@@ -41,7 +41,7 @@ main(int argc, char* argv[]) {
     printf("Cannot open camera\n");
     return 1;
   }
-    // We can try to set these, but the camera may ignore this anyway...
+  // We can try to set these, but the camera may ignore this anyway...
 #if(CV_MAJOR_VERSION < 3)
   capture.set(CV_CAP_PROP_FRAME_WIDTH, width);
   capture.set(CV_CAP_PROP_FRAME_HEIGHT, height);

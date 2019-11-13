@@ -14,10 +14,9 @@ static int imageQRCodeDetect(const string& in_file, const string& out_file);
 
 int
 main(int argc, char* argv[]) {
-  const string keys =
-      "{h help ? |        | print help messages }"
-      "{i in     |        | input  path to file for detect (with parameter - show image, otherwise - camera)}"
-      "{o out    |        | output path to file (save image, work with -i parameter) }";
+  const string keys = "{h help ? |        | print help messages }"
+                      "{i in     |        | input  path to file for detect (with parameter - show image, otherwise - camera)}"
+                      "{o out    |        | output path to file (save image, work with -i parameter) }";
   CommandLineParser cmd_parser(argc, argv, keys);
 
   cmd_parser.about("This program detects the QR-codes from camera or images using the OpenCV library.");
@@ -48,8 +47,7 @@ main(int argc, char* argv[]) {
 void
 drawQRCodeContour(cv::Mat& color_image, std::vector<cv::Point> transform) {
   if(!transform.empty()) {
-    double show_radius = (color_image.rows > color_image.cols) ? (2.813 * color_image.rows) / color_image.cols
-                                                               : (2.813 * color_image.cols) / color_image.rows;
+    double show_radius = (color_image.rows > color_image.cols) ? (2.813 * color_image.rows) / color_image.cols : (2.813 * color_image.cols) / color_image.rows;
     double contour_radius = show_radius * 0.4;
 
     std::vector<std::vector<cv::Point>> contours;

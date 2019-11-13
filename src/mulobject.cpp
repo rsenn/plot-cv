@@ -85,14 +85,8 @@ createTrackbars() {
 void
 drawObject(Entity anEntity, cv::Mat& frame) {
   cv::circle(frame, cv::Point(anEntity.getXPos(), anEntity.getYPos()), 10, cv::Scalar(0, 0, 255));
-  cv::putText(frame,
-              intToString(anEntity.getXPos()) + " , " + intToString(anEntity.getYPos()),
-              cv::Point(anEntity.getXPos(), anEntity.getYPos() + 20),
-              1,
-              1,
-              Scalar(0, 255, 0));
-  cv::putText(
-      frame, anEntity.getType(), cv::Point(anEntity.getXPos(), anEntity.getYPos() - 30), 1, 2, anEntity.getColor());
+  cv::putText(frame, intToString(anEntity.getXPos()) + " , " + intToString(anEntity.getYPos()), cv::Point(anEntity.getXPos(), anEntity.getYPos() + 20), 1, 1, Scalar(0, 255, 0));
+  cv::putText(frame, anEntity.getType(), cv::Point(anEntity.getXPos(), anEntity.getYPos() - 30), 1, 2, anEntity.getColor());
 }
 void
 morphOps(cv::Mat& thresh) {
@@ -261,8 +255,7 @@ main(int argc, char* argv[]) {
         capture.read(cameraFeed);
         imshow(windowName, cameraFeed);
       }
-      cout << "Ball X: " << ball.getXPos() << " Ball Y: " << ball.getYPos() << " Player X: " << playerfront.getXPos()
-           << " Player Y: " << playerfront.getYPos() << endl;
+      cout << "Ball X: " << ball.getXPos() << " Ball Y: " << ball.getYPos() << " Player X: " << playerfront.getXPos() << " Player Y: " << playerfront.getYPos() << endl;
       string balld = findDirection(playerrear, ball);
       int x, y;
       int mySentinel = true;
@@ -494,9 +487,7 @@ myFunc(cv::Mat& cameraFeed, Entity& playerfront, Entity& playerrear, Entity& bal
   cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
   inRange(HSV, playerfront.getHSVmin(), playerfront.getHSVmax(), threshold); // enter the range of hsv for the object
   morphOps(threshold);
-  trackFilteredObject(playerfront,
-                      threshold,
-                      HSV,
+  trackFilteredObject(playerfront, threshold, HSV,
                       cameraFeed); // passes the object to the tracking function //playerrear
   cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
   inRange(HSV, playerrear.getHSVmin(), playerrear.getHSVmax(), threshold); // enter the range of hsv for the object

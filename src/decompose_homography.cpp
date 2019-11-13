@@ -17,14 +17,12 @@ calcChessboardCorners(Size boardSize, float squareSize, vector<Point3f>& corners
     case CHESSBOARD:
     case CIRCLES_GRID:
       for(int i = 0; i < boardSize.height; i++)
-        for(int j = 0; j < boardSize.width; j++)
-          corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
+        for(int j = 0; j < boardSize.width; j++) corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
       break;
 
     case ASYMMETRIC_CIRCLES_GRID:
       for(int i = 0; i < boardSize.height; i++)
-        for(int j = 0; j < boardSize.width; j++)
-          corners.push_back(Point3f(float((2 * j + i % 2) * squareSize), float(i * squareSize), 0));
+        for(int j = 0; j < boardSize.width; j++) corners.push_back(Point3f(float((2 * j + i % 2) * squareSize), float(i * squareSize), 0));
       break;
 
     default: CV_Error(Error::StsBadArg, "Unknown pattern type\n");
@@ -45,11 +43,7 @@ computeC2MC1(const Mat& R1, const Mat& tvec1, const Mat& R2, const Mat& tvec2, M
 }
 
 void
-decomposeHomography(const string& img1Path,
-                    const string& img2Path,
-                    const Size& patternSize,
-                    const float squareSize,
-                    const string& intrinsicsPath) {
+decomposeHomography(const string& img1Path, const string& img2Path, const Size& patternSize, const float squareSize, const string& intrinsicsPath) {
   Mat img1 = imread(img1Path);
   Mat img2 = imread(img2Path);
 
@@ -118,8 +112,7 @@ decomposeHomography(const string& img1Path,
     cout << "Solution " << i << ":" << endl;
     cout << "rvec from homography decomposition: " << rvec_decomp.t() << endl;
     cout << "rvec from camera displacement: " << rvec_1to2.t() << endl;
-    cout << "tvec from homography decomposition: " << ts_decomp[i].t()
-         << " and scaled by d: " << factor_d1 * ts_decomp[i].t() << endl;
+    cout << "tvec from homography decomposition: " << ts_decomp[i].t() << " and scaled by d: " << factor_d1 * ts_decomp[i].t() << endl;
     cout << "tvec from camera displacement: " << t_1to2.t() << endl;
     cout << "plane normal from homography decomposition: " << normals_decomp[i].t() << endl;
     cout << "plane normal at camera 1 pose: " << normal1.t() << endl << endl;
@@ -140,8 +133,7 @@ decomposeHomography(const string& img1Path,
     cout << "Solution " << i << ":" << endl;
     cout << "rvec from homography decomposition: " << rvec_decomp.t() << endl;
     cout << "rvec from camera displacement: " << rvec_1to2.t() << endl;
-    cout << "tvec from homography decomposition: " << ts_decomp[i].t()
-         << " and scaled by d: " << factor_d1 * ts_decomp[i].t() << endl;
+    cout << "tvec from homography decomposition: " << ts_decomp[i].t() << " and scaled by d: " << factor_d1 * ts_decomp[i].t() << endl;
     cout << "tvec from camera displacement: " << t_1to2.t() << endl;
     cout << "plane normal from homography decomposition: " << normals_decomp[i].t() << endl;
     cout << "plane normal at camera 1 pose: " << normal1.t() << endl << endl;
@@ -171,11 +163,7 @@ main(int argc, char* argv[]) {
 
   Size patternSize(parser.get<int>("width"), parser.get<int>("height"));
   float squareSize = (float)parser.get<double>("square_size");
-  decomposeHomography(parser.get<String>("image1"),
-                      parser.get<String>("image2"),
-                      patternSize,
-                      squareSize,
-                      parser.get<String>("intrinsics"));
+  decomposeHomography(parser.get<String>("image1"), parser.get<String>("image2"), patternSize, squareSize, parser.get<String>("intrinsics"));
 
   return 0;
 }

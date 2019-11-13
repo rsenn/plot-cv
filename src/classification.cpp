@@ -7,23 +7,22 @@
 
 #include "common.hpp"
 
-std::string keys =
-    "{ help  h     | | Print help message. }"
-    "{ @alias      | | An alias name of model to extract preprocessing parameters from models.yml file. }"
-    "{ zoo         | models.yml | An optional path to file with preprocessing parameters }"
-    "{ input i     | | Path to input image or video file. Skip this argument to capture frames from a camera.}"
-    "{ framework f | | Optional name of an origin framework of the model. Detect it automatically if it does not set. }"
-    "{ classes     | | Optional path to a text file with names of classes. }"
-    "{ backend     | 0 | Choose one of computation backends: "
-    "0: automatically (by default), "
-    "1: Halide language (http://halide-lang.org/), "
-    "2: Intel's Deep Learning Inference Engine (https://software.intel.com/openvino-toolkit), "
-    "3: OpenCV implementation }"
-    "{ target      | 0 | Choose one of target computation devices: "
-    "0: CPU target (by default), "
-    "1: OpenCL, "
-    "2: OpenCL fp16 (half-float precision), "
-    "3: VPU }";
+std::string keys = "{ help  h     | | Print help message. }"
+                   "{ @alias      | | An alias name of model to extract preprocessing parameters from models.yml file. }"
+                   "{ zoo         | models.yml | An optional path to file with preprocessing parameters }"
+                   "{ input i     | | Path to input image or video file. Skip this argument to capture frames from a camera.}"
+                   "{ framework f | | Optional name of an origin framework of the model. Detect it automatically if it does not set. }"
+                   "{ classes     | | Optional path to a text file with names of classes. }"
+                   "{ backend     | 0 | Choose one of computation backends: "
+                   "0: automatically (by default), "
+                   "1: Halide language (http://halide-lang.org/), "
+                   "2: Intel's Deep Learning Inference Engine (https://software.intel.com/openvino-toolkit), "
+                   "3: OpenCV implementation }"
+                   "{ target      | 0 | Choose one of target computation devices: "
+                   "0: CPU target (by default), "
+                   "1: OpenCL, "
+                   "2: OpenCL fp16 (half-float precision), "
+                   "3: VPU }";
 
 using namespace cv;
 using namespace dnn;
@@ -128,9 +127,7 @@ main(int argc, char** argv) {
     putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
 
     // Print predicted class.
-    label = format("%s: %.4f",
-                   (classes.empty() ? format("Class #%d", classId).c_str() : classes[classId].c_str()),
-                   confidence);
+    label = format("%s: %.4f", (classes.empty() ? format("Class #%d", classId).c_str() : classes[classId].c_str()), confidence);
     putText(frame, label, Point(0, 40), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
 
     imshow(kWinName, frame);

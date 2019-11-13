@@ -18,12 +18,7 @@ static const Scalar gtColor = Scalar(0, 255, 0);
 static Scalar
 getNextColor() {
   const int num = 6;
-  static Scalar colors[num] = {Scalar(160, 0, 0),
-                               Scalar(0, 0, 160),
-                               Scalar(0, 160, 160),
-                               Scalar(160, 160, 0),
-                               Scalar(160, 0, 160),
-                               Scalar(20, 50, 160)};
+  static Scalar colors[num] = {Scalar(160, 0, 0), Scalar(0, 0, 160), Scalar(0, 160, 160), Scalar(160, 160, 0), Scalar(160, 0, 160), Scalar(20, 50, 160)};
   static int id = 0;
   return colors[id < num ? id++ : num - 1];
 }
@@ -76,11 +71,7 @@ isGoodBox(const Rect2d& box) {
 const int LTRC_COUNT = 100;
 
 struct AlgoWrap {
-  AlgoWrap(const string& name_)
-      : lastState(NotFound), name(name_), color(getNextColor()), numTotal(0), numResponse(0), numPresent(0),
-        numCorrect_0(0), numCorrect_0_5(0), timeTotal(0), auc(LTRC_COUNT + 1, 0) {
-    tracker = createTrackerByName(name);
-  }
+  AlgoWrap(const string& name_) : lastState(NotFound), name(name_), color(getNextColor()), numTotal(0), numResponse(0), numPresent(0), numCorrect_0(0), numCorrect_0_5(0), timeTotal(0), auc(LTRC_COUNT + 1, 0) { tracker = createTrackerByName(name); }
 
   enum State {
     NotFound,
@@ -178,10 +169,8 @@ struct AlgoWrap {
   void
   stat(ostream& out) const {
     out << name << endl;
-    out << setw(20) << "Overlap > 0  " << setw(20) << (double)numCorrect_0 / numTotal * 100 << "%" << setw(20)
-        << numCorrect_0 << endl;
-    out << setw(20) << "Overlap > 0.5" << setw(20) << (double)numCorrect_0_5 / numTotal * 100 << "%" << setw(20)
-        << numCorrect_0_5 << endl;
+    out << setw(20) << "Overlap > 0  " << setw(20) << (double)numCorrect_0 / numTotal * 100 << "%" << setw(20) << numCorrect_0 << endl;
+    out << setw(20) << "Overlap > 0.5" << setw(20) << (double)numCorrect_0_5 / numTotal * 100 << "%" << setw(20) << numCorrect_0_5 << endl;
 
     double p = (double)numCorrect_0_5 / numResponse;
     double r = (double)numCorrect_0_5 / numPresent;

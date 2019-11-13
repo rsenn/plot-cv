@@ -5,20 +5,15 @@
 using namespace cv;
 using namespace cv::dnn;
 
-const char* keys =
-    "{ help  h     | | Print help message. }"
-    "{ input i     | | Path to input image or video file. Skip this argument to capture frames from a camera.}"
-    "{ model m     | | Path to a binary .pb file contains trained network.}"
-    "{ width       | 320 | Preprocess input image by resizing to a specific width. It should be multiple by 32. }"
-    "{ height      | 320 | Preprocess input image by resizing to a specific height. It should be multiple by 32. }"
-    "{ thr         | 0.5 | Confidence threshold. }"
-    "{ nms         | 0.4 | Non-maximum suppression threshold. }";
+const char* keys = "{ help  h     | | Print help message. }"
+                   "{ input i     | | Path to input image or video file. Skip this argument to capture frames from a camera.}"
+                   "{ model m     | | Path to a binary .pb file contains trained network.}"
+                   "{ width       | 320 | Preprocess input image by resizing to a specific width. It should be multiple by 32. }"
+                   "{ height      | 320 | Preprocess input image by resizing to a specific height. It should be multiple by 32. }"
+                   "{ thr         | 0.5 | Confidence threshold. }"
+                   "{ nms         | 0.4 | Non-maximum suppression threshold. }";
 
-void decode(const Mat& scores,
-            const Mat& geometry,
-            float scoreThresh,
-            std::vector<RotatedRect>& detections,
-            std::vector<float>& confidences);
+void decode(const Mat& scores, const Mat& geometry, float scoreThresh, std::vector<RotatedRect>& detections, std::vector<float>& confidences);
 
 int
 main(int argc, char** argv) {
@@ -113,11 +108,7 @@ main(int argc, char** argv) {
 }
 
 void
-decode(const Mat& scores,
-       const Mat& geometry,
-       float scoreThresh,
-       std::vector<RotatedRect>& detections,
-       std::vector<float>& confidences) {
+decode(const Mat& scores, const Mat& geometry, float scoreThresh, std::vector<RotatedRect>& detections, std::vector<float>& confidences) {
   detections.clear();
   CV_Assert(scores.dims == 4);
   CV_Assert(geometry.dims == 4);

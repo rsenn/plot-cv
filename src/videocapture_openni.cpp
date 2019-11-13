@@ -56,10 +56,8 @@ getMaxDisparity(VideoCapture& capture) {
 
 static void
 printCommandLineParams() {
-  cout << "-cd=       Colorized disparity? (0 or 1; 1 by default) Ignored if disparity map is not selected to show."
-       << endl;
-  cout << "-fmd=      Fixed max disparity? (0 or 1; 0 by default) Ignored if disparity map is not colorized (-cd 0)."
-       << endl;
+  cout << "-cd=       Colorized disparity? (0 or 1; 1 by default) Ignored if disparity map is not selected to show." << endl;
+  cout << "-fmd=      Fixed max disparity? (0 or 1; 0 by default) Ignored if disparity map is not colorized (-cd 0)." << endl;
   cout << "-mode=     image mode: resolution and fps, supported three values:  0 - CAP_OPENNI_VGA_30HZ, 1 - "
           "CAP_OPENNI_SXGA_15HZ,"
        << endl;
@@ -77,14 +75,7 @@ printCommandLineParams() {
 }
 
 static void
-parseCommandLine(int argc,
-                 char* argv[],
-                 bool& isColorizeDisp,
-                 bool& isFixedMaxDisp,
-                 int& imageMode,
-                 bool retrievedImageFlags[],
-                 string& filename,
-                 bool& isFileReading) {
+parseCommandLine(int argc, char* argv[], bool& isColorizeDisp, bool& isFixedMaxDisp, int& imageMode, bool retrievedImageFlags[], string& filename, bool& isFileReading) {
   filename.clear();
   cv::CommandLineParser parser(argc, argv, "{h help||}{cd|1|}{fmd|0|}{mode|-1|}{m|010100|}{r||}");
   if(parser.has("h")) {
@@ -125,8 +116,7 @@ main(int argc, char* argv[]) {
   bool retrievedImageFlags[6];
   string filename;
   bool isVideoReading;
-  parseCommandLine(
-      argc, argv, isColorizeDisp, isFixedMaxDisp, imageMode, retrievedImageFlags, filename, isVideoReading);
+  parseCommandLine(argc, argv, isColorizeDisp, isFixedMaxDisp, imageMode, retrievedImageFlags, filename, isVideoReading);
 
   cout << "Device opening ..." << endl;
   VideoCapture capture;
@@ -150,9 +140,7 @@ main(int argc, char* argv[]) {
     switch(imageMode) {
       case 0: modeRes = capture.set(CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CAP_OPENNI_VGA_30HZ); break;
       case 1: modeRes = capture.set(CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CAP_OPENNI_SXGA_15HZ); break;
-      case 2:
-        modeRes = capture.set(CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CAP_OPENNI_SXGA_30HZ);
-        break;
+      case 2: modeRes = capture.set(CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CAP_OPENNI_SXGA_30HZ); break;
       // The following modes are only supported by the Xtion Pro Live
       case 3: modeRes = capture.set(CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CAP_OPENNI_QVGA_30HZ); break;
       case 4: modeRes = capture.set(CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CAP_OPENNI_QVGA_60HZ); break;

@@ -113,10 +113,7 @@ main(int argc, const char** argv) {
       if(trackObject) {
         int _vmin = vmin, _vmax = vmax;
 
-        cv::inRange(hsv,
-                    cv::Scalar(0, smin, std::min(_vmin, _vmax)),
-                    cv::Scalar(180, 256, std::max(_vmin, _vmax)),
-                    mask);
+        cv::inRange(hsv, cv::Scalar(0, smin, std::min(_vmin, _vmax)), cv::Scalar(180, 256, std::max(_vmin, _vmax)), mask);
 
         int fromTo[2] = {0, 0};
         hue.create(hsv.size(), hsv.depth());
@@ -124,12 +121,7 @@ main(int argc, const char** argv) {
 
         if(trackObject < 0) {
           cv::UMat roi(hue, selection), maskroi(mask, selection);
-          cv::calcHist(std::vector<cv::Mat>(1, roi.getMat(cv::ACCESS_READ)),
-                       std::vector<int>(1, 0),
-                       maskroi,
-                       hist,
-                       std::vector<int>(1, hsize),
-                       std::vector<float>(hranges, hranges + 2));
+          cv::calcHist(std::vector<cv::Mat>(1, roi.getMat(cv::ACCESS_READ)), std::vector<int>(1, 0), maskroi, hist, std::vector<int>(1, hsize), std::vector<float>(hranges, hranges + 2));
           cv::normalize(hist, hist, 0, 255, cv::NORM_MINMAX);
 
           trackWindow = selection;
@@ -138,40 +130,25 @@ main(int argc, const char** argv) {
           histimg = cv::Scalar::all(0);
           int binW = histimg.cols / hsize;
           cv::Mat buf(1, hsize, CV_8UC3);
-          for(int i = 0; i < hsize; i++)
-            buf.at<cv::Vec3b>(i) = cv::Vec3b(cv::saturate_cast<uchar>(i * 180. / hsize), 255, 255);
+          for(int i = 0; i < hsize; i++) buf.at<cv::Vec3b>(i) = cv::Vec3b(cv::saturate_cast<uchar>(i * 180. / hsize), 255, 255);
           cv::cvtColor(buf, buf, cv::COLOR_HSV2BGR);
 
           {
             cv::Mat _hist = hist.getMat(cv::ACCESS_READ);
             for(int i = 0; i < hsize; i++) {
               int val = cv::saturate_cast<int>(_hist.at<float>(i) * histimg.rows / 255);
-              cv::rectangle(histimg,
-                            cv::Point(i * binW, histimg.rows),
-                            cv::Point((i + 1) * binW, histimg.rows - val),
-                            cv::Scalar(buf.at<cv::Vec3b>(i)),
-                            -1,
-                            8);
+              cv::rectangle(histimg, cv::Point(i * binW, histimg.rows), cv::Point((i + 1) * binW, histimg.rows - val), cv::Scalar(buf.at<cv::Vec3b>(i)), -1, 8);
             }
           }
         }
 
-        cv::calcBackProject(std::vector<cv::UMat>(1, hue),
-                            std::vector<int>(1, 0),
-                            hist,
-                            backproj,
-                            std::vector<float>(hranges, hranges + 2),
-                            1.0);
+        cv::calcBackProject(std::vector<cv::UMat>(1, hue), std::vector<int>(1, 0), hist, backproj, std::vector<float>(hranges, hranges + 2), 1.0);
         cv::bitwise_and(backproj, mask, backproj);
 
-        cv::RotatedRect trackBox =
-            cv::CamShift(backproj,
-                         trackWindow,
-                         cv::TermCriteria(cv::TermCriteria::EPS | cv::TermCriteria::COUNT, 10, 1));
+        cv::RotatedRect trackBox = cv::CamShift(backproj, trackWindow, cv::TermCriteria(cv::TermCriteria::EPS | cv::TermCriteria::COUNT, 10, 1));
         if(trackWindow.area() <= 1) {
           int cols = backproj.cols, rows = backproj.rows, r = (std::min(cols, rows) + 5) / 6;
-          trackWindow = cv::Rect(trackWindow.x - r, trackWindow.y - r, trackWindow.x + r, trackWindow.y + r) &
-                        cv::Rect(0, 0, cols, rows);
+          trackWindow = cv::Rect(trackWindow.x - r, trackWindow.y - r, trackWindow.x + r, trackWindow.y + r) & cv::Rect(0, 0, cols, rows);
         }
 
         if(backprojMode)

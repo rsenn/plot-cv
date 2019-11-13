@@ -19,43 +19,42 @@
 
 using namespace cv;
 
-const char* helphelp =
-    "\nThis program's purpose is to collect data sets of an object and its segmentation mask.\n"
-    "\n"
-    "It shows how to use a calibrated camera together with a calibration pattern to\n"
-    "compute the homography of the plane the calibration pattern is on. It also shows grabCut\n"
-    "segmentation etc.\n"
-    "\n"
-    "select3dobj -w <board_width> -h <board_height> [-s <square_size>]\n"
-    "           -i <camera_intrinsics_filename> -o <output_prefix> [video_filename/cameraId]\n"
-    "\n"
-    " -w <board_width>          Number of chessboard corners wide\n"
-    " -h <board_height>         Number of chessboard corners width\n"
-    " [-s <square_size>]            Optional measure of chessboard squares in meters\n"
-    " -i <camera_intrinsics_filename> Camera matrix .yml file from calibration.cpp\n"
-    " -o <output_prefix>        Prefix the output segmentation images with this\n"
-    " [video_filename/cameraId]  If present, read from that video file or that ID\n"
-    "\n"
-    "Using a camera's intrinsics (from calibrating a camera -- see calibration.cpp) and an\n"
-    "image of the object sitting on a planar surface with a calibration pattern of\n"
-    "(board_width x board_height) on the surface, we draw a 3D box aroung the object. From\n"
-    "then on, we can move a camera and as long as it sees the chessboard calibration pattern,\n"
-    "it will store a mask of where the object is. We get succesive images using <output_prefix>\n"
-    "of the segmentation mask containing the object. This makes creating training sets easy.\n"
-    "It is best of the chessboard is odd x even in dimensions to avoid amiguous poses.\n"
-    "\n"
-    "The actions one can use while the program is running are:\n"
-    "\n"
-    "  Select object as 3D box with the mouse.\n"
-    "   First draw one line on the plane to outline the projection of that object on the plane\n"
-    "    Then extend that line into a box to encompass the projection of that object onto the plane\n"
-    "    The use the mouse again to extend the box upwards from the plane to encase the object.\n"
-    "  Then use the following commands\n"
-    "    ESC   - Reset the selection\n"
-    "    SPACE - Skip the frame; move to the next frame (not in video mode)\n"
-    "    ENTER - Confirm the selection. Grab next object in video mode.\n"
-    "    q     - Exit the program\n"
-    "\n\n";
+const char* helphelp = "\nThis program's purpose is to collect data sets of an object and its segmentation mask.\n"
+                       "\n"
+                       "It shows how to use a calibrated camera together with a calibration pattern to\n"
+                       "compute the homography of the plane the calibration pattern is on. It also shows grabCut\n"
+                       "segmentation etc.\n"
+                       "\n"
+                       "select3dobj -w <board_width> -h <board_height> [-s <square_size>]\n"
+                       "           -i <camera_intrinsics_filename> -o <output_prefix> [video_filename/cameraId]\n"
+                       "\n"
+                       " -w <board_width>          Number of chessboard corners wide\n"
+                       " -h <board_height>         Number of chessboard corners width\n"
+                       " [-s <square_size>]            Optional measure of chessboard squares in meters\n"
+                       " -i <camera_intrinsics_filename> Camera matrix .yml file from calibration.cpp\n"
+                       " -o <output_prefix>        Prefix the output segmentation images with this\n"
+                       " [video_filename/cameraId]  If present, read from that video file or that ID\n"
+                       "\n"
+                       "Using a camera's intrinsics (from calibrating a camera -- see calibration.cpp) and an\n"
+                       "image of the object sitting on a planar surface with a calibration pattern of\n"
+                       "(board_width x board_height) on the surface, we draw a 3D box aroung the object. From\n"
+                       "then on, we can move a camera and as long as it sees the chessboard calibration pattern,\n"
+                       "it will store a mask of where the object is. We get succesive images using <output_prefix>\n"
+                       "of the segmentation mask containing the object. This makes creating training sets easy.\n"
+                       "It is best of the chessboard is odd x even in dimensions to avoid amiguous poses.\n"
+                       "\n"
+                       "The actions one can use while the program is running are:\n"
+                       "\n"
+                       "  Select object as 3D box with the mouse.\n"
+                       "   First draw one line on the plane to outline the projection of that object on the plane\n"
+                       "    Then extend that line into a box to encompass the projection of that object onto the plane\n"
+                       "    The use the mouse again to extend the box upwards from the plane to encase the object.\n"
+                       "  Then use the following commands\n"
+                       "    ESC   - Reset the selection\n"
+                       "    SPACE - Skip the frame; move to the next frame (not in video mode)\n"
+                       "    ENTER - Confirm the selection. Grab next object in video mode.\n"
+                       "    q     - Exit the program\n"
+                       "\n\n";
 
 // static void help()
 // {
@@ -101,8 +100,7 @@ calcChessboardCorners(Size boardSize, float squareSize, vector<Point3f>& corners
   corners.resize(0);
 
   for(int i = 0; i < boardSize.height; i++)
-    for(int j = 0; j < boardSize.width; j++)
-      corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
+    for(int j = 0; j < boardSize.width; j++) corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
 }
 
 static Point3f
@@ -115,15 +113,7 @@ image2plane(Point2f imgpt, const Mat& R, const Mat& tvec, const Mat& cameraMatri
 }
 
 static Rect
-extract3DBox(const Mat& frame,
-             Mat& shownFrame,
-             Mat& selectedObjFrame,
-             const Mat& cameraMatrix,
-             const Mat& rvec,
-             const Mat& tvec,
-             const vector<Point3f>& box,
-             int nobjpt,
-             bool runExtraSegmentation) {
+extract3DBox(const Mat& frame, Mat& shownFrame, Mat& selectedObjFrame, const Mat& cameraMatrix, const Mat& rvec, const Mat& tvec, const vector<Point3f>& box, int nobjpt, bool runExtraSegmentation) {
   selectedObjFrame = Mat::zeros(frame.size(), frame.type());
   if(nobjpt == 0)
     return Rect();
@@ -183,13 +173,7 @@ extract3DBox(const Mat& frame,
 }
 
 static int
-select3DBox(const string& windowname,
-            const string& selWinName,
-            const Mat& frame,
-            const Mat& cameraMatrix,
-            const Mat& rvec,
-            const Mat& tvec,
-            vector<Point3f>& box) {
+select3DBox(const string& windowname, const string& selWinName, const Mat& frame, const Mat& cameraMatrix, const Mat& rvec, const Mat& tvec, vector<Point3f>& box) {
   const float eps = 1e-3f;
   MouseEvent mouse;
 
@@ -242,8 +226,7 @@ select3DBox(const string& windowname,
       }
       box[npt] = image2plane(imgpt[npt], R, tvec, cameraMatrix, npt < 3 ? 0 : Z);
 
-      if((npt == 0 && mouse.event == CV_EVENT_LBUTTONDOWN) ||
-         (npt > 0 && norm(box[npt] - box[npt - 1]) > eps && mouse.event == CV_EVENT_LBUTTONUP)) {
+      if((npt == 0 && mouse.event == CV_EVENT_LBUTTONDOWN) || (npt > 0 && norm(box[npt] - box[npt - 1]) > eps && mouse.event == CV_EVENT_LBUTTONUP)) {
         nobjpt++;
         if(nobjpt < 4) {
           imgpt[nobjpt] = imgpt[nobjpt - 1];
@@ -276,11 +259,7 @@ select3DBox(const string& windowname,
 }
 
 static bool
-readModelViews(const string& filename,
-               vector<Point3f>& box,
-               vector<string>& imagelist,
-               vector<Rect>& roiList,
-               vector<Vec6f>& poseList) {
+readModelViews(const string& filename, vector<Point3f>& box, vector<string>& imagelist, vector<Rect>& roiList, vector<Vec6f>& poseList) {
   imagelist.resize(0);
   roiList.resize(0);
   poseList.resize(0);
@@ -309,11 +288,7 @@ readModelViews(const string& filename,
 }
 
 static bool
-writeModelViews(const string& filename,
-                const vector<Point3f>& box,
-                const vector<string>& imagelist,
-                const vector<Rect>& roiList,
-                const vector<Vec6f>& poseList) {
+writeModelViews(const string& filename, const vector<Point3f>& box, const vector<string>& imagelist, const vector<Rect>& roiList, const vector<Vec6f>& poseList) {
   FileStorage fs(filename, FileStorage::WRITE);
   if(!fs.isOpened())
     return false;

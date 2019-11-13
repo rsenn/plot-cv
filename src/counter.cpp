@@ -52,14 +52,11 @@ static double MIN_OBJ_AREA = 1000;
 
 // TODO all of this is wrong and will need to change
 static KALMAN_TYPE dt = 0.25;
-static KALMAN_TYPE A_init[] = {1, dt, 0, 0, 0,  0, 0, 1, dt, 0, 0, 0,  0, 0, 1, 0, 0, 0,
-                               0, 0,  0, 1, dt, 0, 0, 0, 0,  0, 1, dt, 0, 0, 0, 0, 0, 1};
+static KALMAN_TYPE A_init[] = {1, dt, 0, 0, 0, 0, 0, 1, dt, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, dt, 0, 0, 0, 0, 0, 1, dt, 0, 0, 0, 0, 0, 1};
 static KALMAN_TYPE C_init[] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0};
-static KALMAN_TYPE Q_init[] = {1e-2, 0, 0, 0,    0, 0, 0, 5.0, 0, 0, 0,   0, 0, 0, 1e-2, 0, 0, 0,
-                               0,    0, 0, 1e-2, 0, 0, 0, 0,   0, 0, 5.0, 0, 0, 0, 0,    0, 0, 1e-2};
+static KALMAN_TYPE Q_init[] = {1e-2, 0, 0, 0, 0, 0, 0, 5.0, 0, 0, 0, 0, 0, 0, 1e-2, 0, 0, 0, 0, 0, 0, 1e-2, 0, 0, 0, 0, 0, 0, 5.0, 0, 0, 0, 0, 0, 0, 1e-2};
 static KALMAN_TYPE R_init[] = {5.0, 0, 0, 5.0};
-static KALMAN_TYPE P_init[] = {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
-                               0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1};
+static KALMAN_TYPE P_init[] = {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1};
 static KALMAN_TYPE x_hat_init[] = {0, 0, 0, 0, 0, 0};
 static int n = 6;
 static int m = 2;
@@ -68,28 +65,12 @@ static int m = 2;
 ImageOutput* video_out;
 
 void set_background(string back_name, bool background_is_video, cv::Mat& grayBackground, bool& use_static_back);
-void track_with_non_adaptive_BS(ImageInput* capture,
-                                cv::Mat& grayBackground,
-                                bool use_static_back,
-                                double& total_targets,
-                                int& count_LR,
-                                int& count_RL);
+void track_with_non_adaptive_BS(ImageInput* capture, cv::Mat& grayBackground, bool use_static_back, double& total_targets, int& count_LR, int& count_RL);
 void do_non_adaptive_BS(cv::Mat& grayImage1, cv::Mat& grayImage2, bool debugMode, cv::Mat& thresholdImage);
 
-void track_with_adaptive_BS(ImageInput* capture,
-                            cv::Mat& grayBackground,
-                            bool use_static_back,
-                            double& total_targets,
-                            int& count_LR,
-                            int& count_RL);
+void track_with_adaptive_BS(ImageInput* capture, cv::Mat& grayBackground, bool use_static_back, double& total_targets, int& count_LR, int& count_RL);
 void do_adaptive_BS(Ptr<BackgroundSubtractorMOG2> subtractor, cv::Mat& image, bool debugMode, cv::Mat& thresholdImage);
-void search_for_movement(cv::Mat& thresholdImage,
-                         cv::Mat& display,
-                         bool loop_switch,
-                         double& total_targets,
-                         int& count_LR,
-                         int& count_RL,
-                         std::vector<Target*>& targets);
+void search_for_movement(cv::Mat& thresholdImage, cv::Mat& display, bool loop_switch, double& total_targets, int& count_LR, int& count_RL, std::vector<Target*>& targets);
 void dynamic_threshold(cv::Mat& input_image, cv::Mat& threshold_image, float percent_peak, bool debugMode);
 
 char is_center_crossed(const cv::Point2d& a, const cv::Point2d& b, double middle);
@@ -216,12 +197,7 @@ set_background(string back_name, bool background_is_video, cv::Mat& grayBackgrou
 }
 
 void
-track_with_non_adaptive_BS(ImageInput* capture,
-                           cv::Mat& grayBackground,
-                           bool use_static_back,
-                           double& total_targets,
-                           int& count_LR,
-                           int& count_RL) {
+track_with_non_adaptive_BS(ImageInput* capture, cv::Mat& grayBackground, bool use_static_back, double& total_targets, int& count_LR, int& count_RL) {
   bool debugMode = false;
   bool trackingEnabled = false;
   bool pause = false;
@@ -314,12 +290,7 @@ do_non_adaptive_BS(cv::Mat& grayImage1, cv::Mat& grayImage2, bool debugMode, cv:
 // track objects through video using GMM background subtraction
 // TODO do we actually want gray images for this version?
 void
-track_with_adaptive_BS(ImageInput* capture,
-                       cv::Mat& grayBackground,
-                       bool use_static_back,
-                       double& total_targets,
-                       int& count_LR,
-                       int& count_RL) {
+track_with_adaptive_BS(ImageInput* capture, cv::Mat& grayBackground, bool use_static_back, double& total_targets, int& count_LR, int& count_RL) {
   bool debugMode = false;
   bool trackingEnabled = false;
   bool pause = false;
@@ -415,13 +386,7 @@ do_adaptive_BS(Ptr<BackgroundSubtractorMOG2> subtractor, cv::Mat& image, bool de
 //@identifies objects based on threshold image and previous objects
 //@
 void
-search_for_movement(cv::Mat& thresholdImage,
-                    cv::Mat& display,
-                    bool loop_switch,
-                    double& total_targets,
-                    int& count_LR,
-                    int& count_RL,
-                    std::vector<Target*>& targets) {
+search_for_movement(cv::Mat& thresholdImage, cv::Mat& display, bool loop_switch, double& total_targets, int& count_LR, int& count_RL, std::vector<Target*>& targets) {
 
   int obj_count = 0, i = 0;
   double mid_row = (double)(thresholdImage.cols >> 1); // half way across the screen
@@ -536,13 +501,7 @@ dynamic_threshold(cv::Mat& input_image, cv::Mat& threshold_image, float percent_
     cv::Mat histImage(hist_h, hist_w, CV_8UC3, Scalar(0, 0, 0));
     normalize(hist, hist, 0, histImage.rows, NORM_MINMAX, -1, cv::Mat());
     for(int i = 1; i < hist_size; i++) {
-      line(histImage,
-           cv::Point(bin_w * (i - 1), hist_h - cvRound(hist.at<float>(i - 1))),
-           cv::Point(bin_w * (i), hist_h - cvRound(hist.at<float>(i))),
-           Scalar(255, 0, 0),
-           2,
-           8,
-           0);
+      line(histImage, cv::Point(bin_w * (i - 1), hist_h - cvRound(hist.at<float>(i - 1))), cv::Point(bin_w * (i), hist_h - cvRound(hist.at<float>(i))), Scalar(255, 0, 0), 2, 8, 0);
     }
 
     namedWindow("Histogram", CV_WINDOW_NORMAL);

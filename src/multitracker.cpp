@@ -53,7 +53,7 @@ main(int argc, char** argv) {
     return 0;
   }
 
-    // timer
+  // timer
 #ifdef HAVE_OPENCV
   cvflann::StartStopTimer timer;
 #else
@@ -135,8 +135,7 @@ main(int argc, char** argv) {
 #endif
 
     // draw the tracked object
-    for(unsigned i = 0; i < trackers.getObjects().size(); i++)
-      rectangle(frame, trackers.getObjects()[i], Scalar(255, 0, 0), 2, 1);
+    for(unsigned i = 0; i < trackers.getObjects().size(); i++) rectangle(frame, trackers.getObjects()[i], Scalar(255, 0, 0), 2, 1);
 
     // draw the processing speed
     sprintf(buffer, "speed: %.0f fps", fps);

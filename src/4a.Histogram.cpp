@@ -46,8 +46,8 @@ main() {
              &histSize,      // The number of bins per each used dimension
              &histRange,     // The range of values to be measured per each dimension
              uniform,        // Flag indicating whether the histogram is uniform or not
-             accumulate // Accumulation flag. If it is set, the histogram is not cleared in the beginning when it is
-                        // allocated.
+             accumulate      // Accumulation flag. If it is set, the histogram is not cleared in the beginning when it is
+                             // allocated.
     );
     calcHist(&bgr_planes[1], 1, 0, Mat(), g_hist, 1, &histSize, &histRange, uniform, accumulate);
     calcHist(&bgr_planes[2], 1, 0, Mat(), r_hist, 1, &histSize, &histRange, uniform, accumulate);
@@ -68,27 +68,9 @@ main() {
     normalize(r_hist, r_hist, 0, histImage.rows, NORM_MINMAX, -1, Mat());
     // Draw lines of histogram
     for(int i = 1; i < histSize; i++) {
-      line(histImage,
-           Point(bin_w * (i - 1), hist_h - cvRound(b_hist.at<float>(i - 1))),
-           Point(bin_w * (i), hist_h - cvRound(b_hist.at<float>(i))),
-           Scalar(255, 0, 0),
-           2,
-           8,
-           0);
-      line(histImage,
-           Point(bin_w * (i - 1), hist_h - cvRound(g_hist.at<float>(i - 1))),
-           Point(bin_w * (i), hist_h - cvRound(g_hist.at<float>(i))),
-           Scalar(0, 255, 0),
-           2,
-           8,
-           0);
-      line(histImage,
-           Point(bin_w * (i - 1), hist_h - cvRound(r_hist.at<float>(i - 1))),
-           Point(bin_w * (i), hist_h - cvRound(r_hist.at<float>(i))),
-           Scalar(0, 0, 255),
-           2,
-           8,
-           0);
+      line(histImage, Point(bin_w * (i - 1), hist_h - cvRound(b_hist.at<float>(i - 1))), Point(bin_w * (i), hist_h - cvRound(b_hist.at<float>(i))), Scalar(255, 0, 0), 2, 8, 0);
+      line(histImage, Point(bin_w * (i - 1), hist_h - cvRound(g_hist.at<float>(i - 1))), Point(bin_w * (i), hist_h - cvRound(g_hist.at<float>(i))), Scalar(0, 255, 0), 2, 8, 0);
+      line(histImage, Point(bin_w * (i - 1), hist_h - cvRound(r_hist.at<float>(i - 1))), Point(bin_w * (i), hist_h - cvRound(r_hist.at<float>(i))), Scalar(0, 0, 255), 2, 8, 0);
     }
     /*-----------------------------------------------*/
     imshow("Camera", frame);

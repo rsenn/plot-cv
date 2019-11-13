@@ -231,8 +231,7 @@ detect(InputArray image, std::vector<Keycv::Point>& keypoints, InputArray mask) 
       bool isNew = true;
       for(size_t j = 0; j < centers.size(); j++) {
         double dist = norm(centers[j][centers[j].size() / 2].location - curCenters[i].location);
-        isNew = dist >= params.minDistBetweenBlobs && dist >= centers[j][centers[j].size() / 2].radius &&
-                dist >= curCenters[i].radius;
+        isNew = dist >= params.minDistBetweenBlobs && dist >= centers[j][centers[j].size() / 2].radius && dist >= curCenters[i].radius;
         if(!isNew) {
           centers[j].push_back(curCenters[i]);
           size_t k = centers[j].size() - 1;

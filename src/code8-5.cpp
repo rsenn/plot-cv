@@ -21,8 +21,8 @@ private:
   map<string, CvSVM> svms;                                           // trained SVMs, mapped by category name
   vector<string> category_names;                                     // names of the categories found in TRAIN_FOLDER
   int categories;                                                    // number of categories
-  int clusters; // number of clusters for SURF features to build vocabulary
-  Mat vocab;    // vocabulary
+  int clusters;                                                      // number of clusters for SURF features to build vocabulary
+  Mat vocab;                                                         // vocabulary
 
   // Feature detectors and descriptor extractors
   Ptr<FeatureDetector> featureDetector;
@@ -31,11 +31,10 @@ private:
   Ptr<BOWImgDescriptorExtractor> bowDescriptorExtractor;
   Ptr<FlannBasedMatcher> descriptorMatcher;
 
-  void make_train_set(); // function to build the training set multimap
-  void make_pos_neg();   // function to extract BOW features from training images and organize them into positive and
-                         // negative samples
-  string remove_extension(
-      string); // function to remove extension from file name, used for organizing templates into categories
+  void make_train_set();           // function to build the training set multimap
+  void make_pos_neg();             // function to extract BOW features from training images and organize them into positive and
+                                   // negative samples
+  string remove_extension(string); // function to remove extension from file name, used for organizing templates into categories
 public:
   categorizer(int);              // constructor
   void build_vocab();            // function to build the BOW vocabulary
@@ -132,8 +131,7 @@ categorizer::make_pos_neg() {
   // Debug message
   for(int i = 0; i < categories; i++) {
     string category = category_names[i];
-    cout << "Category " << category << ": " << positive_data[category].rows << " Positives, "
-         << negative_data[category].rows << " Negatives" << endl;
+    cout << "Category " << category << ": " << positive_data[category].rows << " Positives, " << negative_data[category].rows << " Negatives" << endl;
   }
 }
 

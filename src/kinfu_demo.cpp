@@ -96,9 +96,7 @@ public:
 
   DepthSource(String fileListName) : DepthSource(fileListName, -1) {}
 
-  DepthSource(String fileListName, int cam)
-      : depthFileList(fileListName.empty() ? vector<string>() : readDepth(fileListName)), frameIdx(0), undistortMap1(),
-        undistortMap2() {
+  DepthSource(String fileListName, int cam) : depthFileList(fileListName.empty() ? vector<string>() : readDepth(fileListName)), frameIdx(0), undistortMap1(), undistortMap2() {
     if(cam >= 0) {
       vc = VideoCapture(VideoCaptureAPIs::CAP_OPENNI2 + cam);
       if(vc.isOpened()) {
@@ -213,8 +211,7 @@ public:
         distCoeffs(1) = Kinect2Params::k2;
         distCoeffs(4) = Kinect2Params::k3;
 
-        initUndistortRectifyMap(
-            camMatrix, distCoeffs, cv::noArray(), camMatrix, frameSize, CV_16SC2, undistortMap1, undistortMap2);
+        initUndistortRectifyMap(camMatrix, distCoeffs, cv::noArray(), camMatrix, frameSize, CV_16SC2, undistortMap1, undistortMap2);
       }
     }
   }
@@ -238,8 +235,7 @@ struct PauseCallbackArgs {
 void pauseCallback(const viz::MouseEvent& me, void* args);
 void
 pauseCallback(const viz::MouseEvent& me, void* args) {
-  if(me.type == viz::MouseEvent::Type::MouseMove || me.type == viz::MouseEvent::Type::MouseScrollDown ||
-     me.type == viz::MouseEvent::Type::MouseScrollUp) {
+  if(me.type == viz::MouseEvent::Type::MouseMove || me.type == viz::MouseEvent::Type::MouseScrollDown || me.type == viz::MouseEvent::Type::MouseScrollUp) {
     PauseCallbackArgs pca = *((PauseCallbackArgs*)(args));
     viz::Viz3d window(vizWindowName);
     UMat rendered;
@@ -415,13 +411,7 @@ main(int argc, char** argv) {
     }
 
     int64 newTime = getTickCount();
-    putText(rendered,
-            cv::format("FPS: %2d press R to reset, P to pause, Q to quit",
-                       (int)(getTickFrequency() / (newTime - prevTime))),
-            Point(0, rendered.rows - 1),
-            FONT_HERSHEY_SIMPLEX,
-            0.5,
-            Scalar(0, 255, 255));
+    putText(rendered, cv::format("FPS: %2d press R to reset, P to pause, Q to quit", (int)(getTickFrequency() / (newTime - prevTime))), Point(0, rendered.rows - 1), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 255));
     prevTime = newTime;
 
     imshow("render", rendered);

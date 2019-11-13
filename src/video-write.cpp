@@ -42,8 +42,7 @@ main(int argc, char* argv[]) {
   int ex = static_cast<int>(inputVideo.get(CV_CAP_PROP_FOURCC));   // Get Codec Type- Int form
 
   // Transform from int to char via Bitwise operators
-  char EXT[] = {
-      (char)(ex & 0XFF), (char)((ex & 0XFF00) >> 8), (char)((ex & 0XFF0000) >> 16), (char)((ex & 0XFF000000) >> 24), 0};
+  char EXT[] = {(char)(ex & 0XFF), (char)((ex & 0XFF00) >> 8), (char)((ex & 0XFF0000) >> 16), (char)((ex & 0XFF000000) >> 24), 0};
 
   Size S = Size((int)inputVideo.get(CV_CAP_PROP_FRAME_WIDTH), // Acquire input size
                 (int)inputVideo.get(CV_CAP_PROP_FRAME_HEIGHT));
@@ -59,8 +58,7 @@ main(int argc, char* argv[]) {
     return -1;
   }
 
-  cout << "Input frame resolution: Width=" << S.width << "  Height=" << S.height
-       << " of nr#: " << inputVideo.get(CV_CAP_PROP_FRAME_COUNT) << endl;
+  cout << "Input frame resolution: Width=" << S.width << "  Height=" << S.height << " of nr#: " << inputVideo.get(CV_CAP_PROP_FRAME_COUNT) << endl;
   cout << "Input codec type: " << EXT << endl;
 
   int channel = 2; // Select the channel to save

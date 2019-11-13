@@ -108,8 +108,7 @@ Tracker::process(const Mat frame, Stats& stats) {
     drawBoundingBox(frame_with_bb, new_bb);
   }
   Mat res;
-  drawMatches(
-      first_frame, inliers1, frame_with_bb, inliers2, inlier_matches, res, Scalar(255, 0, 0), Scalar(255, 0, 0));
+  drawMatches(first_frame, inliers1, frame_with_bb, inliers2, inlier_matches, res, Scalar(255, 0, 0), Scalar(255, 0, 0));
   return res;
 }
 } // namespace example
@@ -117,9 +116,7 @@ Tracker::process(const Mat frame, Stats& stats) {
 int
 main(int argc, char** argv) {
   if(argc < 2) {
-    cerr << "Usage: " << endl
-         << "akaze_track input_path" << endl
-         << "  (input_path can be a camera id, like 0,1,2 or a video filename)" << endl;
+    cerr << "Usage: " << endl << "akaze_track input_path" << endl << "  (input_path can be a camera id, like 0,1,2 or a video filename)" << endl;
     return 1;
   }
 

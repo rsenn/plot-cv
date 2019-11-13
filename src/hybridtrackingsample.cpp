@@ -132,10 +132,7 @@ main(int argc, char** argv) {
       image = imread(img_file, CV_LOAD_IMAGE_COLOR);
       if(image.empty())
         break;
-      selection = Rect(cvRound(w[0] * image.cols),
-                       cvRound(w[1] * image.rows),
-                       cvRound(w[2] * image.cols),
-                       cvRound(w[3] * image.rows));
+      selection = Rect(cvRound(w[0] * image.cols), cvRound(w[1] * image.rows), cvRound(w[2] * image.cols), cvRound(w[3] * image.rows));
     }
 
     sprintf(img_file_num, "Frame: %d", i);
@@ -157,11 +154,7 @@ main(int argc, char** argv) {
         bitwise_not(roi, roi);
       }
 
-      drawRectangle(&image,
-                    Rect(cvRound(w[0] * image.cols),
-                         cvRound(w[1] * image.rows),
-                         cvRound(w[2] * image.cols),
-                         cvRound(w[3] * image.rows)));
+      drawRectangle(&image, Rect(cvRound(w[0] * image.cols), cvRound(w[1] * image.rows), cvRound(w[2] * image.cols), cvRound(w[3] * image.rows)));
       imshow("Win", image);
 
       waitKey(100);

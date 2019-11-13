@@ -115,8 +115,7 @@ main(int, char** argv) {
   cv::Mat markers = cv::Mat::zeros(dist.size(), CV_32SC1);
 
   // Draw the foreground markers
-  for(size_t i = 0; i < contours.size(); i++)
-    drawContours(markers, contours, static_cast<int>(i), Scalar::all(static_cast<int>(i) + 1), -1);
+  for(size_t i = 0; i < contours.size(); i++) drawContours(markers, contours, static_cast<int>(i), Scalar::all(static_cast<int>(i) + 1), -1);
 
   // Draw the background marker
   circle(markers, cv::Point(5, 5), 3, CV_RGB(255, 255, 255), -1);

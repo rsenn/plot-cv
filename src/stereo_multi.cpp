@@ -345,8 +345,7 @@ main(int argc, char** argv) {
   for(int i = 0; i < numDevices; ++i) {
     DeviceInfo devInfo(i);
     if(!devInfo.isCompatible()) {
-      cerr << "GPU module was't built for GPU #" << i << " (" << devInfo.name() << ", CC " << devInfo.majorVersion()
-           << devInfo.minorVersion() << endl;
+      cerr << "GPU module was't built for GPU #" << i << " (" << devInfo.name() << ", CC " << devInfo.majorVersion() << devInfo.minorVersion() << endl;
       return -1;
     }
 
@@ -441,9 +440,8 @@ main(int argc, char** argv) {
 
     const double multiStreamTime = tm.getTimeMilli();
 
-    cout << "| " << setw(5) << i << " | " << setw(8) << setprecision(1) << fixed << gpu0Time << " | " << setw(8)
-         << setprecision(1) << fixed << gpu1Time << " | " << setw(15) << setprecision(1) << fixed << multiThreadTime
-         << " | " << setw(15) << setprecision(1) << fixed << multiStreamTime << " |" << endl;
+    cout << "| " << setw(5) << i << " | " << setw(8) << setprecision(1) << fixed << gpu0Time << " | " << setw(8) << setprecision(1) << fixed << gpu1Time << " | " << setw(15) << setprecision(1) << fixed << multiThreadTime << " | " << setw(15) << setprecision(1) << fixed << multiStreamTime << " |"
+         << endl;
 
     resize(disparityGpu0, disparityGpu0Show, Size(1024, 768), 0, 0, INTER_AREA);
     resize(disparityGpu1, disparityGpu1Show, Size(1024, 768), 0, 0, INTER_AREA);

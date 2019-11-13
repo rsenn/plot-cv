@@ -190,8 +190,7 @@ inline Ptr<VideoWriter>
 createWriter(const string& backend, const string& file_name, const string& codec, Size sz, unsigned fps) {
   if(backend == "gst-default") {
     cout << "Created GStreamer writer ( " << file_name << ", FPS=" << fps << ", Size=" << sz << ")" << endl;
-    return makePtr<VideoWriter>(
-        file_name, CAP_GSTREAMER, getValue(fourccByCodec(), codec, "Invalid codec"), fps, sz, true);
+    return makePtr<VideoWriter>(file_name, CAP_GSTREAMER, getValue(fourccByCodec(), codec, "Invalid codec"), fps, sz, true);
   } else if(backend.find("gst") == 0) {
     ostringstream line;
     line << "appsrc ! videoconvert n-threads=" << getNumThreads() << " ! ";
@@ -213,8 +212,7 @@ createWriter(const string& backend, const string& file_name, const string& codec
     return makePtr<VideoWriter>(line.str(), CAP_GSTREAMER, 0, fps, sz, true);
   } else if(backend == "ffmpeg") {
     cout << "Created FFMpeg writer ( " << file_name << ", FPS=" << fps << ", Size=" << sz << " )" << endl;
-    return makePtr<VideoWriter>(
-        file_name, CAP_FFMPEG, getValue(fourccByCodec(), codec, "Invalid codec"), fps, sz, true);
+    return makePtr<VideoWriter>(file_name, CAP_FFMPEG, getValue(fourccByCodec(), codec, "Invalid codec"), fps, sz, true);
   }
   return Ptr<VideoWriter>();
 }
@@ -223,16 +221,15 @@ createWriter(const string& backend, const string& file_name, const string& codec
 
 int
 main(int argc, char* argv[]) {
-  const string keys =
-      "{h help usage ? |           | print help messages   }"
-      "{m mode         |decode     | coding mode (supported: encode, decode) }"
-      "{b backend      |default    | video backend (supported: 'gst-default', 'gst-basic', 'gst-vaapi', 'gst-libav', "
-      "'gst-mfx', 'ffmpeg') }"
-      "{c codec        |h264       | codec name     (supported: 'h264', 'h265', 'mpeg2', 'mpeg4', 'mjpeg', 'vp8') }"
-      "{f file path    |           | path to file }"
-      "{r resolution   |720p       | video resolution for encoding (supported: '720p', '1080p', '4k') }"
-      "{fps            |30         | fix frame per second for encoding (supported: fps > 0) }"
-      "{fast           |           | fast measure fps }";
+  const string keys = "{h help usage ? |           | print help messages   }"
+                      "{m mode         |decode     | coding mode (supported: encode, decode) }"
+                      "{b backend      |default    | video backend (supported: 'gst-default', 'gst-basic', 'gst-vaapi', 'gst-libav', "
+                      "'gst-mfx', 'ffmpeg') }"
+                      "{c codec        |h264       | codec name     (supported: 'h264', 'h265', 'mpeg2', 'mpeg4', 'mjpeg', 'vp8') }"
+                      "{f file path    |           | path to file }"
+                      "{r resolution   |720p       | video resolution for encoding (supported: '720p', '1080p', '4k') }"
+                      "{fps            |30         | fix frame per second for encoding (supported: fps > 0) }"
+                      "{fast           |           | fast measure fps }";
   CommandLineParser cmd_parser(argc, argv, keys);
   cmd_parser.about("This program measures performance of video encoding and decoding using different backends OpenCV.");
   if(cmd_parser.has("help")) {

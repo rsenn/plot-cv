@@ -7,11 +7,11 @@
 #include <opencv2/bgsegm.hpp>
 #include <QCoreApplication>
 using cv::BackgroundSubtractor;
+using cv::namedWindow;
 using cv::Ptr;
 using cv::VideoCapture;
 using cv::bgsegm::BackgroundSubtractorMOG;
 using cv::bgsegm::createBackgroundSubtractorMOG;
-using cv::namedWindow;
 using std::cerr;
 using std::make_unique;
 using std::unique_ptr;

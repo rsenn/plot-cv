@@ -176,8 +176,7 @@ main(int argc, char* argv[]) {
 
       int warpFlags = cv::INTER_LINEAR; //| cv::WARP_FILL_OUTLIERS;
 
-      cv::warpAffine(
-          diff, diffWarped, M, colorized_resized.size(), warpFlags, cv::BORDER_CONSTANT, cv::Scalar::all(128));
+      cv::warpAffine(diff, diffWarped, M, colorized_resized.size(), warpFlags, cv::BORDER_CONSTANT, cv::Scalar::all(128));
 
       cv::cvtColor(diffWarped, diffWarped, CV_GRAY2RGBA);
 
@@ -185,8 +184,7 @@ main(int argc, char* argv[]) {
 
       int ctr_x = gridEyePixels.cols / 2;
       int ctr_y = gridEyePixels.rows / 2;
-      float centerVal = gridEyePixels.at<float>(ctr_y, ctr_x) + gridEyePixels.at<float>(ctr_y + 1, ctr_x) +
-                        gridEyePixels.at<float>(ctr_y + 1, ctr_x + 1) + gridEyePixels.at<float>(ctr_y, ctr_x + 1);
+      float centerVal = gridEyePixels.at<float>(ctr_y, ctr_x) + gridEyePixels.at<float>(ctr_y + 1, ctr_x) + gridEyePixels.at<float>(ctr_y + 1, ctr_x + 1) + gridEyePixels.at<float>(ctr_y, ctr_x + 1);
 
       centerVal *= 1.0 / 4.0;
       std::string val_str = cv::format("% 4.1f°C", centerVal);

@@ -32,6 +32,16 @@
 	"buffers":
 	[
 		{
+			"contents": "PointVec\nPoint2fVec\ncoordPointer\ncoordPointer\nsimplifyPolyline\ncoord_type\nout_point\nout_hier\nout_points\nfilter_contours\npolylineFromContour\ncv::Scalar\nHSVtoRGB\nsvg::Color\nfromScalar\nconvertPoints\ntransformPoints\nexport_svg\npolygonArea\napplyCLAHE\nBrightnessAndContrastAuto\ncv::Mat\nimageToBinary\ngetContours\ngetMassCenters\nToPointVec\nangle\nfindRectangles\ndrawPolylines\ninvertColor\nhoughLines\ndrawLines\ncornerHarrisDetection\ntrackbar\nwriteImage\ndrawAllContours\ndrawAllLines\niterator_type\nfilterLines\niterator_type\nvalue_type\nPredicateTraits\n function\nfilterLines\nangle_diffs\niterator_type\npoint_type\nvalue_type\nret_type\nlineDistances\niterator_type\nline_type\nvalue_type\nret_type\noperator<<\niterator_type\nmain\nline_type\nline_list\nref_list",
+			"settings":
+			{
+				"buffer_size": 733,
+				"line_ending": "Unix",
+				"name": "𝌆 Outline",
+				"scratch": true
+			}
+		},
+		{
 			"file": "/home/roman/lotto/utils/dom.js",
 			"settings":
 			{
@@ -43,7 +53,7 @@
 			"file": "src/CannyWebcam1.cpp",
 			"settings":
 			{
-				"buffer_size": 30303,
+				"buffer_size": 31253,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -58,36 +68,20 @@
 			}
 		},
 		{
-			"contents": "/* ***** BEGIN LICENSE BLOCK *****\n * Version: MPL 1.1\n *\n * The contents of this file are subject to the Mozilla Public License Version\n * 1.1 (the \"License\"); you may not use this file except in compliance with\n * the License. You may obtain a copy of the License at\n * http://www.mozilla.org/MPL/\n *\n * Software distributed under the License is distributed on an \"AS IS\" basis,\n * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License\n * for the specific language governing rights and limitations under the\n * License.\n *\n * The Original Code is\n * 'psimpl - generic n-dimensional polyline simplification'.\n *\n * The Initial Developer of the Original Code is\n * Elmar de Koning.\n * Portions created by the Initial Developer are Copyright (C) 2010-2011\n * the Initial Developer. All Rights Reserved.\n *\n * Contributor(s):\n *\n * ***** END LICENSE BLOCK ***** */\n\n/*\n    psimpl - generic n-dimensional polyline simplification\n    Copyright (C) 2010-2011 Elmar de Koning, edekoning@gmail.com\n\n    This file is part of psimpl, and is hosted at SourceForge:\n    http://sourceforge.net/projects/psimpl/\n*/\n\n/*!\n    \\mainpage psimpl - generic n-dimensional polyline simplification\n\n<pre>\n    Author  - Elmar de Koning\n    Support - edekoning@gmail.com\n    Website - http://psimpl.sf.net\n    Article - http://www.codeproject.com/KB/recipes/PolylineSimplification.aspx\n    License - MPL 1.1\n</pre><br>\n\n    \\section sec_psimpl psimpl\n<pre>\n    'psimpl' is a c++ polyline simplification library that is generic, easy to use, and supports\n    the following algorithms:\n\n    Simplification\n    + Nth point - A naive algorithm that keeps only each nth point\n    + Distance between points - Removes successive points that are clustered together\n    + Perpendicular distance - Removes points based on their distance to the line segment defined\n      by their left and right neighbors\n    + Reumann-Witkam - Shifts a strip along the polyline and removes points that fall outside\n    + Opheim - A constrained version of Reumann-Witkam\n    + Lang - Similar to the Perpendicular distance routine, but instead of looking only at direct\n      neighbors, an entire search region is processed\n    + Douglas-Peucker - A classic simplification algorithm that provides an excellent approximation\n      of the original line\n    + A variation on the Douglas-Peucker algorithm - Slower, but yields better results at lower resolutions\n\n    Errors\n    + positional error - Distance of each polyline point to its simplification\n\n    All the algorithms have been implemented in a single standalone C++ header using an STL-style\n    interface that operates on input and output iterators. Polylines can be of any dimension, and\n    defined using floating point or signed integer data types.\n</pre><br>\n    \n\n\n\n\n\n\n\n\n    \\section sec_changelog changelog\n<pre>\n    28-09-2010 - Initial version\n    23-10-2010 - Changed license from CPOL to MPL\n    26-10-2010 - Clarified input (type) requirements, and changed the behavior of the algorithms\n                 under invalid input\n    01-12-2010 - Added the nth point, perpendicular distance and Reumann-Witkam routines; moved all\n                 functions related to distance calculations to the math namespace\n    10-12-2010 - Fixed a bug in the perpendicular distance routine\n    27-02-2011 - Added Opheim simplification, and functions for computing positional errors due to\n                 simplification; renamed simplify_douglas_peucker_alt to simplify_douglas_peucker_n\n    18-06-2011 - Added Lang simplification; fixed divide by zero bug when using integers; fixed a\n                 bug where incorrect output iterators were returned under invalid input; fixed a bug\n                 in douglas_peucker_n where an incorrect number of points could be returned; fixed a\n                 bug in compute_positional_errors2 that required the output and input iterator types\n                 to be the same; fixed a bug in compute_positional_error_statistics where invalid\n                 statistics could be returned under questionable input; documented input iterator\n                 requirements for each algorithm; miscellaneous refactoring of most algorithms.\n</pre>\n*/\n\n#ifndef PSIMPL_GENERIC\n#define PSIMPL_GENERIC\n\n#include <queue>\n#include <stack>\n#include <numeric>\n#include <algorithm>\n#include <cmath>\n\n/*!\n    \\brief Root namespace of the polyline simplification library.\n*/\nnamespace psimpl {\n/*!\n    \\brief Contains utility functions and classes.\n*/\nnamespace util {\n/*!\n    \\brief A smart pointer for holding a dynamically allocated array.\n\n    Similar to boost::scoped_array.\n*/\ntemplate <typename T> class scoped_array {\npublic:\n  scoped_array(unsigned n) { array = new T[n]; }\n\n  ~scoped_array() { delete[] array; }\n\n  T& operator[](int offset) { return array[offset]; }\n\n  const T& operator[](int offset) const { return array[offset]; }\n\n  T*\n  get() const {\n    return array;\n  }\n\n  void\n  swap(scoped_array& b) {\n    T* tmp = b.array;\n    b.array = array;\n    array = tmp;\n  }\n\nprivate:\n  scoped_array(const scoped_array&);\n  scoped_array& operator=(const scoped_array&);\n\nprivate:\n  T* array;\n};\n\ntemplate <typename T>\ninline void\nswap(scoped_array<T>& a, scoped_array<T>& b) {\n  a.swap(b);\n}\n} // namespace util\n\n/*!\n    \\brief Contains functions for calculating statistics and distances between various geometric entities.\n*/\nnamespace math {\n/*!\n    \\brief POD structure for storing several statistical values\n*/\nstruct Statistics {\n  Statistics() : max(0), sum(0), mean(0), std(0) {}\n\n  double max;\n  double sum;\n  double mean;\n  double std; //! standard deviation\n};\n\n/*!\n    \\brief Determines if two points have the exact same coordinates.\n\n    \\param[in] p1       the first coordinate of the first point\n    \\param[in] p2       the first coordinate of the second point\n    \\return             true when the points are equal; false otherwise\n*/\ntemplate <unsigned DIM, class InputIterator>\ninline bool\nequal(InputIterator p1, InputIterator p2) {\n  for(unsigned d = 0; d < DIM; ++d) {\n    if(*p1 != *p2) {\n      return false;\n    }\n    ++p1;\n    ++p2;\n  }\n  return true;\n}\n\n/*!\n    \\brief Creates a vector from two points.\n\n    \\param[in] p1       the first coordinate of the first point\n    \\param[in] p2       the first coordinate of the second point\n    \\param[in] result   the resulting vector (p2-p1)\n    \\return             one beyond the last coordinate of the resulting vector\n*/\ntemplate <unsigned DIM, class InputIterator, class OutputIterator>\ninline OutputIterator\nmake_vector(InputIterator p1, InputIterator p2, OutputIterator result) {\n  for(unsigned d = 0; d < DIM; ++d) {\n    *result = *p2 - *p1;\n    ++result;\n    ++p1;\n    ++p2;\n  }\n  return result;\n}\n\n/*!\n    \\brief Computes the dot product of two vectors.\n\n    \\param[in] v1   the first coordinate of the first vector\n    \\param[in] v2   the first coordinate of the second vector\n    \\return         the dot product (v1 * v2)\n*/\ntemplate <unsigned DIM, class InputIterator>\ninline typename std::iterator_traits<InputIterator>::value_type\ndot(InputIterator v1, InputIterator v2) {\n  typename std::iterator_traits<InputIterator>::value_type result = 0;\n  for(unsigned d = 0; d < DIM; ++d) {\n    result += (*v1) * (*v2);\n    ++v1;\n    ++v2;\n  }\n  return result;\n}\n\n/*!\n    \\brief Peforms linear interpolation between two points.\n\n    \\param[in] p1           the first coordinate of the first point\n    \\param[in] p2           the first coordinate of the second point\n    \\param[in] fraction     the fraction used during interpolation\n    \\param[in] result       the interpolation result (p1 + fraction * (p2 - p1))\n    \\return                 one beyond the last coordinate of the interpolated point\n*/\ntemplate <unsigned DIM, class InputIterator, class OutputIterator>\ninline OutputIterator\ninterpolate(InputIterator p1, InputIterator p2, float fraction, OutputIterator result) {\n  typedef typename std::iterator_traits<InputIterator>::value_type value_type;\n\n  for(unsigned d = 0; d < DIM; ++d) {\n    *result = *p1 + static_cast<value_type>(fraction * (*p2 - *p1));\n    ++result;\n    ++p1;\n    ++p2;\n  }\n  return result;\n}\n\n/*!\n    \\brief Computes the squared distance of two points\n\n    \\param[in] p1   the first coordinate of the first point\n    \\param[in] p2   the first coordinate of the second point\n    \\return         the squared distance\n*/\ntemplate <unsigned DIM, class InputIterator1, class InputIterator2>\ninline typename std::iterator_traits<InputIterator1>::value_type\npoint_distance2(InputIterator1 p1, InputIterator2 p2) {\n  typename std::iterator_traits<InputIterator1>::value_type result = 0;\n  for(unsigned d = 0; d < DIM; ++d) {\n    result += (*p1 - *p2) * (*p1 - *p2);\n    ++p1;\n    ++p2;\n  }\n  return result;\n}\n\n/*!\n    \\brief Computes the squared distance between an infinite line (l1, l2) and a point p\n\n    \\param[in] l1   the first coordinate of the first point on the line\n    \\param[in] l2   the first coordinate of the second point on the line\n    \\param[in] p    the first coordinate of the test point\n    \\return         the squared distance\n*/\ntemplate <unsigned DIM, class InputIterator>\ninline typename std::iterator_traits<InputIterator>::value_type\nline_distance2(InputIterator l1, InputIterator l2, InputIterator p) {\n  typedef typename std::iterator_traits<InputIterator>::value_type value_type;\n\n  value_type v[DIM]; // vector l1 --> l2\n  value_type w[DIM]; // vector l1 --> p\n\n  make_vector<DIM>(l1, l2, v);\n  make_vector<DIM>(l1, p, w);\n\n  value_type cv = dot<DIM>(v, v); // squared length of v\n  value_type cw = dot<DIM>(w, v); // project w onto v\n\n  // avoid problems with divisions when value_type is an integer type\n  float fraction = cv == 0 ? 0 : static_cast<float>(cw) / static_cast<float>(cv);\n\n  value_type proj[DIM]; // p projected onto line (l1, l2)\n  interpolate<DIM>(l1, l2, fraction, proj);\n\n  return point_distance2<DIM>(p, proj);\n}\n\n/*!\n    \\brief Computes the squared distance between a line segment (s1, s2) and a point p\n\n    \\param[in] s1   the first coordinate of the start point of the segment\n    \\param[in] s2   the first coordinate of the end point of the segment\n    \\param[in] p    the first coordinate of the test point\n    \\return         the squared distance\n*/\ntemplate <unsigned DIM, class InputIterator>\ninline typename std::iterator_traits<InputIterator>::value_type\n  segment_distance2(InputIterator s1, InputIterator s2, InputIterator p) {\n  typedef typename std::iterator_traits<InputIterator>::value_type value_type;\n\n  value_type v[DIM]; // vector s1 --> s2\n  value_type w[DIM]; // vector s1 --> p\n\n  make_vector<DIM>(s1, s2, v);\n  make_vector<DIM>(s1, p, w);\n\n  value_type cw = dot<DIM>(w, v); // project w onto v\n  if(cw <= 0) {\n    // projection of w lies to the left of s1\n    return point_distance2<DIM>(p, s1);\n  }\n\n  value_type cv = dot<DIM>(v, v); // squared length of v\n  if(cv <= cw) {\n    // projection of w lies to the right of s2\n    return point_distance2<DIM>(p, s2);\n  }\n\n  // avoid problems with divisions when value_type is an integer type\n  float fraction = cv == 0 ? 0 : static_cast<float>(cw) / static_cast<float>(cv);\n\n  value_type proj[DIM]; // p projected onto segement (s1, s2)\n  interpolate<DIM>(s1, s2, fraction, proj);\n\n  return point_distance2<DIM>(p, proj);\n}\n\n/*!\n    \\brief Computes the squared distance between a ray (r1, r2) and a point p\n\n    \\param[in] r1   the first coordinate of the start point of the ray\n    \\param[in] r2   the first coordinate of a point on the ray\n    \\param[in] p    the first coordinate of the test point\n    \\return         the squared distance\n*/\ntemplate <unsigned DIM, class InputIterator>\ninline typename std::iterator_traits<InputIterator>::value_type\nray_distance2(InputIterator r1, InputIterator r2, InputIterator p) {\n  typedef typename std::iterator_traits<InputIterator>::value_type value_type;\n\n  value_type v[DIM]; // vector r1 --> r2\n  value_type w[DIM]; // vector r1 --> p\n\n  make_vector<DIM>(r1, r2, v);\n  make_vector<DIM>(r1, p, w);\n\n  value_type cv = dot<DIM>(v, v); // squared length of v\n  value_type cw = dot<DIM>(w, v); // project w onto v\n\n  if(cw <= 0) {\n    // projection of w lies to the left of r1 (not on the ray)\n    return point_distance2<DIM>(p, r1);\n  }\n\n  // avoid problems with divisions when value_type is an integer type\n  float fraction = cv == 0 ? 0 : static_cast<float>(cw) / static_cast<float>(cv);\n\n  value_type proj[DIM]; // p projected onto ray (r1, r2)\n  interpolate<DIM>(r1, r2, fraction, proj);\n\n  return point_distance2<DIM>(p, proj);\n}\n\n/*!\n    \\brief Computes various statistics for the range [first, last)\n\n    \\param[in] first   the first value\n    \\param[in] last    one beyond the last value\n    \\return            the calculated statistics\n*/\ntemplate <class InputIterator>\ninline Statistics\ncompute_statistics(InputIterator first, InputIterator last) {\n  typedef typename std::iterator_traits<InputIterator>::value_type value_type;\n  typedef typename std::iterator_traits<InputIterator>::difference_type diff_type;\n\n  Statistics stats;\n\n  diff_type count = std::distance(first, last);\n  if(count == 0) {\n    return stats;\n  }\n\n  value_type init = 0;\n  stats.max = static_cast<double>(*std::max_element(first, last));\n  stats.sum = static_cast<double>(std::accumulate(first, last, init));\n  stats.mean = stats.sum / count;\n  std::transform(first, last, first, std::bind2nd(std::minus<value_type>(), stats.mean));\n  stats.std = std::sqrt(static_cast<double>(std::inner_product(first, last, first, init)) / count);\n  return stats;\n}\n} // namespace math\n\n/*!\n    \\brief Provides various simplification algorithms for n-dimensional simple polylines.\n\n    A polyline is simple when it is non-closed and non-selfintersecting. All algorithms\n    operate on input iterators and output iterators. Note that unisgned integer types are\n    NOT supported.\n*/\ntemplate <unsigned DIM, class InputIterator, class OutputIterator> class PolylineSimplification {\n  typedef typename std::iterator_traits<InputIterator>::difference_type diff_type;\n  typedef typename std::iterator_traits<InputIterator>::value_type value_type;\n  typedef typename std::iterator_traits<const value_type*>::difference_type ptr_diff_type;\n\npublic:\n  /*!\n      \\brief Performs the nth point routine (NP).\n\n      NP is an O(n) algorithm for polyline simplification. It keeps only the first, last and\n      each nth point. As an example, consider any random line of 8 points. Using n = 3 will\n      always yield a simplification consisting of points: 1, 4, 7, 8\n\n      \\image html psimpl_np.png\n\n      NP is applied to the range [first, last). The resulting simplified polyline is copied\n      to the output range [result, result + m*DIM), where m is the number of vertices of the\n      simplified polyline. The return value is the end of the output range: result + m*DIM.\n\n      Input (Type) requirements:\n      1- DIM is not 0, where DIM represents the dimension of the polyline\n      2- The InputIterator type models the concept of a forward iterator\n      3- The input iterator value type is convertible to a value type of the OutputIterator\n      4- The range [first, last) contains only vertex coordinates in multiples of DIM, f.e.:\n         x, y, z, x, y, z, x, y, z when DIM = 3\n      5- The range [first, last) contains at least 2 vertices\n      6- n is not 0\n\n      In case these requirements are not met, the entire input range [first, last) is copied\n      to the output range [result, result + (last - first)) OR compile errors may occur.\n\n      \\param[in] first    the first coordinate of the first polyline point\n      \\param[in] last     one beyond the last coordinate of the last polyline point\n      \\param[in] n        specifies 'each nth point'\n      \\param[in] result   destination of the simplified polyline\n      \\return             one beyond the last coordinate of the simplified polyline\n  */\n  OutputIterator\n  NthPoint(InputIterator first, InputIterator last, unsigned n, OutputIterator result) {\n    diff_type coordCount = std::distance(first, last);\n    diff_type pointCount = DIM // protect against zero DIM\n                               ? coordCount / DIM\n                               : 0;\n\n    // validate input and check if simplification required\n    if(coordCount % DIM || pointCount < 3 || n < 2) {\n      return std::copy(first, last, result);\n    }\n\n    unsigned remaining = pointCount - 1; // the number of points remaining after key\n    InputIterator key = first;           // indicates the current key\n\n    // the first point is always part of the simplification\n    CopyKey(key, result);\n\n    // copy each nth point\n    while(Forward(key, n, remaining)) {\n      CopyKey(key, result);\n    }\n\n    return result;\n  }\n\n  /*!\n      \\brief Performs the (radial) distance between points routine (RD).\n\n      RD is a brute-force O(n) algorithm for polyline simplification. It reduces successive\n      vertices that are clustered too closely to a single vertex, called a key. The resulting\n      keys form the simplified polyline.\n\n      \\image html psimpl_rd.png\n\n      RD is applied to the range [first, last) using the specified tolerance tol. The\n      resulting simplified polyline is copied to the output range [result, result + m*DIM),\n      where m is the number of vertices of the simplified polyline. The return value is the\n      end of the output range: result + m*DIM.\n\n      Input (Type) requirements:\n      1- DIM is not 0, where DIM represents the dimension of the polyline\n      2- The InputIterator type models the concept of a forward iterator\n      3- The input iterator value type is convertible to a value type of the output iterator\n      4- The range [first, last) contains only vertex coordinates in multiples of DIM, f.e.:\n         x, y, z, x, y, z, x, y, z when DIM = 3\n      5- The range [first, last) contains at least 2 vertices\n      6- tol is not 0\n\n      In case these requirements are not met, the entire input range [first, last) is copied\n      to the output range [result, result + (last - first)) OR compile errors may occur.\n\n      \\param[in] first    the first coordinate of the first polyline point\n      \\param[in] last     one beyond the last coordinate of the last polyline point\n      \\param[in] tol      radial (point-to-point) distance tolerance\n      \\param[in] result   destination of the simplified polyline\n      \\return             one beyond the last coordinate of the simplified polyline\n  */\n  OutputIterator\n  RadialDistance(InputIterator first, InputIterator last, value_type tol, OutputIterator result) {\n    diff_type coordCount = std::distance(first, last);\n    diff_type pointCount = DIM // protect against zero DIM\n                               ? coordCount / DIM\n                               : 0;\n    value_type tol2 = tol * tol; // squared distance tolerance\n\n    // validate input and check if simplification required\n    if(coordCount % DIM || pointCount < 3 || tol2 == 0) {\n      return std::copy(first, last, result);\n    }\n\n    InputIterator current = first; // indicates the current key\n    InputIterator next = first;    // used to find the next key\n\n    // the first point is always part of the simplification\n    CopyKeyAdvance(next, result);\n\n    // Skip first and last point, because they are always part of the simplification\n    for(diff_type index = 1; index < pointCount - 1; ++index) {\n      if(math::point_distance2<DIM>(current, next) < tol2) {\n        Advance(next);\n        continue;\n      }\n      current = next;\n      CopyKeyAdvance(next, result);\n    }\n    // the last point is always part of the simplification\n    CopyKeyAdvance(next, result);\n\n    return result;\n  }\n\n  /*!\n      \\brief Repeatedly performs the perpendicular distance routine (PD).\n\n      The algorithm stops after calling the PD routine 'repeat' times OR when the\n      simplification does not improve. Note that this algorithm will need to store\n      up to two intermediate simplification results.\n\n      \\sa PerpendicularDistance(InputIterator, InputIterator, value_type, OutputIterator)\n\n      \\param[in] first    the first coordinate of the first polyline point\n      \\param[in] last     one beyond the last coordinate of the last polyline point\n      \\param[in] tol      perpendicular (segment-to-point) distance tolerance\n      \\param[in] repeat   the number of times to successively apply the PD routine\n      \\param[in] result   destination of the simplified polyline\n      \\return             one beyond the last coordinate of the simplified polyline\n  */\n  OutputIterator\n  PerpendicularDistance(\n      InputIterator first, InputIterator last, value_type tol, unsigned repeat, OutputIterator result) {\n    if(repeat == 1) {\n      // single pass\n      return PerpendicularDistance(first, last, tol, result);\n    }\n    // only validate repeat; other input is validated by simplify_perpendicular_distance\n    if(repeat < 1) {\n      return std::copy(first, last, result);\n    }\n    diff_type coordCount = std::distance(first, last);\n\n    // first pass: [first, last) --> temporary array 'tempPoly'\n    util::scoped_array<value_type> tempPoly(coordCount);\n    PolylineSimplification<DIM, InputIterator, value_type*> psimpl_to_array;\n    diff_type tempCoordCount =\n        std::distance(tempPoly.get(), psimpl_to_array.PerpendicularDistance(first, last, tol, tempPoly.get()));\n\n    // check if simplification did not improved\n    if(coordCount == tempCoordCount) {\n      return std::copy(tempPoly.get(), tempPoly.get() + coordCount, result);\n    }\n    std::swap(coordCount, tempCoordCount);\n    --repeat;\n\n    // intermediate passes: temporary array 'tempPoly' --> temporary array 'tempResult'\n    if(1 < repeat) {\n      util::scoped_array<value_type> tempResult(coordCount);\n      PolylineSimplification<DIM, value_type*, value_type*> psimpl_arrays;\n\n      while(--repeat) {\n        tempCoordCount = std::distance(\n            tempResult.get(),\n            psimpl_arrays.PerpendicularDistance(tempPoly.get(), tempPoly.get() + coordCount, tol, tempResult.get()));\n\n        // check if simplification did not improved\n        if(coordCount == tempCoordCount) {\n          return std::copy(tempPoly.get(), tempPoly.get() + coordCount, result);\n        }\n        util::swap(tempPoly, tempResult);\n        std::swap(coordCount, tempCoordCount);\n      }\n    }\n\n    // final pass: temporary array 'tempPoly' --> result\n    PolylineSimplification<DIM, value_type*, OutputIterator> psimpl_from_array;\n    return psimpl_from_array.PerpendicularDistance(tempPoly.get(), tempPoly.get() + coordCount, tol, result);\n  }\n\n  /*!\n      \\brief Performs the perpendicular distance routine (PD).\n\n      PD is an O(n) algorithm for polyline simplification. It computes the perpendicular\n      distance of each point pi to the line segment S(pi-1, pi+1). Only when this distance is\n      larger than the given tolerance will pi be part of the simpification. Note that the\n      original polyline can only be reduced by a maximum of 50%. Multiple passes are required\n      to achieve higher points reductions.\n\n      \\image html psimpl_pd.png\n\n      PD is applied to the range [first, last) using the specified tolerance tol. The\n      resulting simplified polyline is copied to the output range [result, result + m*DIM),\n      where m is the number of vertices of the simplified polyline. The return value is the\n      end of the output range: result + m*DIM.\n\n      Input (Type) requirements:\n      1- DIM is not 0, where DIM represents the dimension of the polyline\n      2- The InputIterator type models the concept of a forward iterator\n      3- The input iterator value type is convertible to a value type of the output iterator\n      4- The range [first, last) contains only vertex coordinates in multiples of DIM, f.e.:\n         x, y, z, x, y, z, x, y, z when DIM = 3\n      5- The range [first, last) contains at least 2 vertices\n      6- tol is not 0\n\n      In case these requirements are not met, the entire input range [first, last) is copied\n      to the output range [result, result + (last - first)) OR compile errors may occur.\n\n      \\param[in] first    the first coordinate of the first polyline point\n      \\param[in] last     one beyond the last coordinate of the last polyline point\n      \\param[in] tol      perpendicular (segment-to-point) distance tolerance\n      \\param[in] result   destination of the simplified polyline\n      \\return             one beyond the last coordinate of the simplified polyline\n  */\n  OutputIterator\n  PerpendicularDistance(InputIterator first, InputIterator last, value_type tol, OutputIterator result) {\n    diff_type coordCount = std::distance(first, last);\n    diff_type pointCount = DIM // protect against zero DIM\n                               ? coordCount / DIM\n                               : 0;\n    value_type tol2 = tol * tol; // squared distance tolerance\n\n    // validate input and check if simplification required\n    if(coordCount % DIM || pointCount < 3 || tol2 == 0) {\n      return std::copy(first, last, result);\n    }\n\n    InputIterator p0 = first;\n    InputIterator p1 = AdvanceCopy(p0);\n    InputIterator p2 = AdvanceCopy(p1);\n\n    // the first point is always part of the simplification\n    CopyKey(p0, result);\n\n    while(p2 != last) {\n      // test p1 against line segment S(p0, p2)\n      if(math::segment_distance2<DIM>(p0, p2, p1) < tol2) {\n        CopyKey(p2, result);\n        // move up by two points\n        p0 = p2;\n        Advance(p1, 2);\n        if(p1 == last) {\n          // protect against advancing p2 beyond last\n          break;\n        }\n        Advance(p2, 2);\n      } else {\n        CopyKey(p1, result);\n        // move up by one point\n        p0 = p1;\n        p1 = p2;\n        Advance(p2);\n      }\n    }\n    // make sure the last point is part of the simplification\n    if(p1 != last) {\n      CopyKey(p1, result);\n    }\n    return result;\n  }\n\n  /*!\n      \\brief Performs Reumann-Witkam approximation (RW).\n\n      The O(n) RW routine uses a point-to-line (perpendicular) distance tolerance. It defines\n      a line through the first two vertices of the original polyline. For each successive\n      vertex vi its perpendicular distance to this line is calculated. A new key is found at\n      vi-1, when this distance exceeds the specified tolerance. The vertices vi and vi+1 are\n      then used to define a new line, and the process repeats itself.\n\n      \\image html psimpl_rw.png\n\n      RW routine is applied to the range [first, last) using the specified perpendicular\n      distance tolerance tol. The resulting simplified polyline is copied to the output range\n      [result, result + m*DIM), where m is the number of vertices of the simplified polyline.\n      The return value is the end of the output range: result + m*DIM.\n\n      Input (Type) Requirements:\n      1- DIM is not 0, where DIM represents the dimension of the polyline\n      2- The InputIterator type models the concept of a forward iterator\n      3- The input iterator value type is convertible to a value type of the output iterator\n      4- The range [first, last) contains vertex coordinates in multiples of DIM,\n         f.e.: x, y, z, x, y, z, x, y, z when DIM = 3\n      5- The range [first, last) contains at least 2 vertices\n      6- tol is not 0\n\n      In case these requirements are not met, the entire input range [first, last) is copied\n      to the output range [result, result + (last - first)) OR compile errors may occur.\n\n      \\param[in] first    the first coordinate of the first polyline point\n      \\param[in] last     one beyond the last coordinate of the last polyline point\n      \\param[in] tol      perpendicular (point-to-line) distance tolerance\n      \\param[in] result   destination of the simplified polyline\n      \\return             one beyond the last coordinate of the simplified polyline\n  */\n  OutputIterator\n  ReumannWitkam(InputIterator first, InputIterator last, value_type tol, OutputIterator result) {\n    diff_type coordCount = std::distance(first, last);\n    diff_type pointCount = DIM // protect against zero DIM\n                               ? coordCount / DIM\n                               : 0;\n    value_type tol2 = tol * tol; // squared distance tolerance\n\n    // validate input and check if simplification required\n    if(coordCount % DIM || pointCount < 3 || tol2 == 0) {\n      return std::copy(first, last, result);\n    }\n\n    // define the line L(p0, p1)\n    InputIterator p0 = first;              // indicates the current key\n    InputIterator p1 = AdvanceCopy(first); // indicates the next point after p0\n\n    // keep track of two test points\n    InputIterator pi = p1; // the previous test point\n    InputIterator pj = p1; // the current test point (pi+1)\n\n    // the first point is always part of the simplification\n    CopyKey(p0, result);\n\n    // check each point pj against L(p0, p1)\n    for(diff_type j = 2; j < pointCount; ++j) {\n      pi = pj;\n      Advance(pj);\n\n      if(math::line_distance2<DIM>(p0, p1, pj) < tol2) {\n        continue;\n      }\n      // found the next key at pi\n      CopyKey(pi, result);\n      // define new line L(pi, pj)\n      p0 = pi;\n      p1 = pj;\n    }\n    // the last point is always part of the simplification\n    CopyKey(pj, result);\n\n    return result;\n  }\n\n  /*!\n      \\brief Performs Opheim approximation (OP).\n\n      The O(n) OP routine is very similar to the Reumann-Witkam (RW) routine, and can be seen\n      as a constrained version of that RW routine. OP uses both a minimum and a maximum\n      distance tolerance to constrain the search area. For each successive vertex vi, its\n      radial distance to the current key vkey (initially v0) is calculated. The last point\n      within the minimum distance tolerance is used to define a ray R (vkey, vi). If no\n      such vi exists, the ray is defined as R(vkey, vkey+1). For each successive vertex vj\n      beyond vi its perpendicular distance to the ray R is calculated. A new key is found at\n      vj-1, when this distance exceeds the minimum tolerance Or when the radial distance\n      between vj and the vkey exceeds the maximum tolerance. After a new key is found, the\n      process repeats itself.\n\n      \\image html psimpl_op.png\n\n      OP routine is applied to the range [first, last) using the specified distance tolerances\n      min_tol and max_tol. The resulting simplified polyline is copied to the output range\n      [result, result + m*DIM), where m is the number of vertices of the simplified polyline.\n      The return value is the end of the output range: result + m*DIM.\n\n      Input (Type) Requirements:\n      1- DIM is not 0, where DIM represents the dimension of the polyline\n      2- The InputIterator type models the concept of a forward iterator\n      3- The input iterator value type is convertible to a value type of the output iterator\n      4- The range [first, last) contains vertex coordinates in multiples of DIM,\n         f.e.: x, y, z, x, y, z, x, y, z when DIM = 3\n      5- The range [first, last) contains at least 2 vertices\n      6- min_tol is not 0\n      7- max_tol is not 0\n\n      In case these requirements are not met, the entire input range [first, last) is copied\n      to the output range [result, result + (last - first)) OR compile errors may occur.\n\n      \\param[in] first    the first coordinate of the first polyline point\n      \\param[in] last     one beyond the last coordinate of the last polyline point\n      \\param[in] min_tol  radial and perpendicular (point-to-ray) distance tolerance\n      \\param[in] max_tol  radial distance tolerance\n      \\param[in] result   destination of the simplified polyline\n      \\return             one beyond the last coordinate of the simplified polyline\n  */\n  OutputIterator\n  Opheim(InputIterator first, InputIterator last, value_type min_tol, value_type max_tol, OutputIterator result) {\n    diff_type coordCount = std::distance(first, last);\n    diff_type pointCount = DIM // protect against zero DIM\n                               ? coordCount / DIM\n                               : 0;\n    value_type min_tol2 = min_tol * min_tol; // squared minimum distance tolerance\n    value_type max_tol2 = max_tol * max_tol; // squared maximum distance tolerance\n\n    // validate input and check if simplification required\n    if(coordCount % DIM || pointCount < 3 || min_tol2 == 0 || max_tol2 == 0) {\n      return std::copy(first, last, result);\n    }\n\n    // define the ray R(r0, r1)\n    InputIterator r0 = first; // indicates the current key and start of the ray\n    InputIterator r1 = first; // indicates a point on the ray\n    bool rayDefined = false;\n\n    // keep track of two test points\n    InputIterator pi = r0; // the previous test point\n    InputIterator pj =     // the current test point (pi+1)\n        AdvanceCopy(pi);\n\n    // the first point is always part of the simplification\n    CopyKey(r0, result);\n\n    for(diff_type j = 2; j < pointCount; ++j) {\n      pi = pj;\n      Advance(pj);\n\n      if(!rayDefined) {\n        // discard each point within minimum tolerance\n        if(math::point_distance2<DIM>(r0, pj) < min_tol2) {\n          continue;\n        }\n        // the last point within minimum tolerance pi defines the ray R(r0, r1)\n        r1 = pi;\n        rayDefined = true;\n      }\n\n      // check each point pj against R(r0, r1)\n      if(math::point_distance2<DIM>(r0, pj) < max_tol2 && math::ray_distance2<DIM>(r0, r1, pj) < min_tol2) {\n        continue;\n      }\n      // found the next key at pi\n      CopyKey(pi, result);\n      // define new ray R(pi, pj)\n      r0 = pi;\n      rayDefined = false;\n    }\n    // the last point is always part of the simplification\n    CopyKey(pj, result);\n\n    return result;\n  }\n\n  /*!\n      \\brief Performs Lang approximation (LA).\n\n      The LA routine defines a fixed size search-region. The first and last points of that\n      search region form a segment. This segment is used to calculate the perpendicular\n      distance to each intermediate point. If any calculated distance is larger than the\n      specified tolerance, the search region will be shrunk by excluding its last point. This\n      process will continue untill all calculated distances fall below the specified tolerance\n      , or there are no more intermediate points. At this point all intermediate points are\n      removed and a new search region is defined starting at the last point from old search\n      region.\n      Note that the size of the search region (look_ahead parameter) controls the maximum\n      amount of simplification, e.g.: a size of 20 will always result in a simplification that\n      contains at least 5% of the original points.\n\n      \\image html psimpl_la.png\n\n      LA routine is applied to the range [first, last) using the specified tolerance and\n      look ahead values. The resulting simplified polyline is copied to the output range\n      [result, result + m*DIM), where m is the number of vertices of the simplified polyline.\n      The return value is the end of the output range: result + m*DIM.\n\n      Input (Type) Requirements:\n      1- DIM is not 0, where DIM represents the dimension of the polyline\n      2- The InputIterator type models the concept of a bidirectional iterator\n      3- The InputIterator value type is convertible to a value type of the output iterator\n      4- The range [first, last) contains vertex coordinates in multiples of DIM,\n         f.e.: x, y, z, x, y, z, x, y, z when DIM = 3\n      5- The range [first, last) contains at least 2 vertices\n      6- tol is not 0\n      7- look_ahead is not zero\n\n      In case these requirements are not met, the entire input range [first, last) is copied\n      to the output range [result, result + (last - first)) OR compile errors may occur.\n\n      \\param[in] first      the first coordinate of the first polyline point\n      \\param[in] last       one beyond the last coordinate of the last polyline point\n      \\param[in] tol        perpendicular (point-to-segment) distance tolerance\n      \\param[in] look_ahead defines the size of the search region\n      \\param[in] result     destination of the simplified polyline\n      \\return               one beyond the last coordinate of the simplified polyline\n  */\n  OutputIterator\n  Lang(InputIterator first, InputIterator last, value_type tol, unsigned look_ahead, OutputIterator result) {\n    diff_type coordCount = std::distance(first, last);\n    diff_type pointCount = DIM // protect against zero DIM\n                               ? coordCount / DIM\n                               : 0;\n    value_type tol2 = tol * tol; // squared minimum distance tolerance\n\n    // validate input and check if simplification required\n    if(coordCount % DIM || pointCount < 3 || look_ahead < 2 || tol2 == 0) {\n      return std::copy(first, last, result);\n    }\n\n    InputIterator current = first; // indicates the current key\n    InputIterator next = first;    // used to find the next key\n\n    unsigned remaining = pointCount - 1; // the number of points remaining after current\n    unsigned moved = Forward(next, look_ahead, remaining);\n\n    // the first point is always part of the simplification\n    CopyKey(current, result);\n\n    while(moved) {\n      value_type d2 = 0;\n      InputIterator p = AdvanceCopy(current);\n\n      while(p != next) {\n        d2 = std::max(d2, math::segment_distance2<DIM>(current, next, p));\n        if(tol2 < d2) {\n          break;\n        }\n        Advance(p);\n      }\n      if(d2 < tol2) {\n        current = next;\n        CopyKey(current, result);\n        moved = Forward(next, look_ahead, remaining);\n      } else {\n        Backward(next, remaining);\n      }\n    }\n    return result;\n  }\n\n  /*!\n      \\brief Performs Douglas-Peucker approximation (DP).\n\n      The DP algorithm uses the RadialDistance (RD) routine O(n) as a preprocessing step.\n      After RD the algorithm is O (n m) in worst case and O(n log m) on average, where m < n\n      (m is the number of points after RD).\n\n      The DP algorithm starts with a simplification that is the single edge joining the first\n      and last vertices of the polyline. The distance of the remaining vertices to that edge\n      are computed. The vertex that is furthest away from theedge (called a key), and has a\n      computed distance that is larger than a specified tolerance, will be added to the\n      simplification. This process will recurse for each edge in the current simplification,\n      untill all vertices of the original polyline are within tolerance.\n\n      \\image html psimpl_dp.png\n\n      Note that this algorithm will create a copy of the input polyline during the vertex\n      reduction step.\n\n      RD followed by DP is applied to the range [first, last) using the specified tolerance\n      tol. The resulting simplified polyline is copied to the output range\n      [result, result + m*DIM), where m is the number of vertices of the simplified polyline.\n      The return value is the end of the output range: result + m*DIM.\n\n      Input (Type) requirements:\n      1- DIM is not 0, where DIM represents the dimension of the polyline\n      2- The InputIterator type models the concept of a forward iterator\n      3- The InputIterator value type is convertible to a value type of the output iterator\n      4- The range [first, last) contains vertex coordinates in multiples of DIM, f.e.:\n         x, y, z, x, y, z, x, y, z when DIM = 3\n      5- The range [first, last) contains at least 2 vertices\n      6- tol is not 0\n\n      In case these requirements are not met, the entire input range [first, last) is copied\n      to the output range [result, result + (last - first)) OR compile errors may occur.\n\n      \\param[in] first    the first coordinate of the first polyline point\n      \\param[in] last     one beyond the last coordinate of the last polyline point\n      \\param[in] tol      perpendicular (point-to-segment) distance tolerance\n      \\param[in] result   destination of the simplified polyline\n      \\return             one beyond the last coordinate of the simplified polyline\n  */\n  OutputIterator\n  DouglasPeucker(InputIterator first, InputIterator last, value_type tol, OutputIterator result) {\n    diff_type coordCount = std::distance(first, last);\n    diff_type pointCount = DIM // protect against zero DIM\n                               ? coordCount / DIM\n                               : 0;\n    // validate input and check if simplification required\n    if(coordCount % DIM || pointCount < 3 || tol == 0) {\n      return std::copy(first, last, result);\n    }\n    // radial distance routine as preprocessing\n    util::scoped_array<value_type> reduced(coordCount); // radial distance results\n    PolylineSimplification<DIM, InputIterator, value_type*> psimpl_to_array;\n    ptr_diff_type reducedCoordCount =\n        std::distance(reduced.get(), psimpl_to_array.RadialDistance(first, last, tol, reduced.get()));\n    ptr_diff_type reducedPointCount = reducedCoordCount / DIM;\n\n    // douglas-peucker approximation\n    util::scoped_array<unsigned char> keys(pointCount); // douglas-peucker results\n    DPHelper::Approximate(reduced.get(), reducedCoordCount, tol, keys.get());\n\n    // copy all keys\n    const value_type* current = reduced.get();\n    for(ptr_diff_type p = 0; p < reducedPointCount; ++p, current += DIM) {\n      if(keys[p]) {\n        for(unsigned d = 0; d < DIM; ++d) {\n          *result = current[d];\n          ++result;\n        }\n      }\n    }\n    return result;\n  }\n\n  /*!\n      \\brief Performs a Douglas-Peucker approximation variant (DPn).\n\n      This algorithm is a variation of the original implementation. Instead of considering\n      one polyline segment at a time, all segments of the current simplified polyline are\n      evaluated at each step. Only the vertex with the maximum distance from its edge is\n      added to the simplification. This process will recurse untill the the simplification\n      contains the desired amount of vertices.\n\n      The algorithm, which does not use the (radial) distance between points routine as a\n      preprocessing step, is O(n2) in worst case and O(n log n) on average.\n\n      Note that this algorithm will create a copy of the input polyline for performance\n      reasons.\n\n      DPn is applied to the range [first, last). The resulting simplified polyline consists\n      of count vertices and is copied to the output range [result, result + count). The\n      return value is the end of the output range: result + count.\n\n      Input (Type) requirements:\n      1- DIM is not 0, where DIM represents the dimension of the polyline\n      2- The InputIterator type models the concept of a forward iterator\n      3- The InputIterator value type is convertible to a value type of the output iterator\n      4- The range [first, last) contains vertex coordinates in multiples of DIM, f.e.:\n         x, y, z, x, y, z, x, y, z when DIM = 3\n      5- The range [first, last) contains a minimum of count vertices\n      6- count is at least 2\n\n      In case these requirements are not met, the entire input range [first, last) is copied\n      to the output range [result, result + (last - first)) OR compile errors may occur.\n\n      \\sa DouglasPeucker\n\n      \\param[in] first    the first coordinate of the first polyline point\n      \\param[in] last     one beyond the last coordinate of the last polyline point\n      \\param[in] count    the maximum number of points of the simplified polyline\n      \\param[in] result   destination of the simplified polyline\n      \\return             one beyond the last coordinate of the simplified polyline\n  */\n  OutputIterator\n  DouglasPeuckerN(InputIterator first, InputIterator last, unsigned count, OutputIterator result) {\n    diff_type coordCount = std::distance(first, last);\n    diff_type pointCount = DIM // protect against zero DIM\n                               ? coordCount / DIM\n                               : 0;\n    // validate input and check if simplification required\n    if(coordCount % DIM || pointCount <= static_cast<diff_type>(count) || count < 2) {\n      return std::copy(first, last, result);\n    }\n\n    // copy coords\n    util::scoped_array<value_type> coords(coordCount);\n    for(ptr_diff_type c = 0; c < coordCount; ++c) {\n      coords[c] = *first;\n      ++first;\n    }\n\n    // douglas-peucker approximation\n    util::scoped_array<unsigned char> keys(pointCount);\n    DPHelper::ApproximateN(coords.get(), coordCount, count, keys.get());\n\n    // copy keys\n    const value_type* current = coords.get();\n    for(ptr_diff_type p = 0; p < pointCount; ++p, current += DIM) {\n      if(keys[p]) {\n        for(unsigned d = 0; d < DIM; ++d) {\n          *result = current[d];\n          ++result;\n        }\n      }\n    }\n    return result;\n  }\n\n  /*!\n      \\brief Computes the squared positional error between a polyline and its simplification.\n\n      For each point in the range [original_first, original_last) the squared distance to the\n      simplification [simplified_first, simplified_last) is calculated. Each positional error\n      is copied to the output range [result, result + count), where count is the number of\n      points in the original polyline. The return value is the end of the output range:\n      result + count.\n\n      Note that both the original and simplified polyline must be defined using the same\n      value_type.\n\n      \\image html psimpl_pos_error.png\n\n      Input (Type) requirements:\n      1- DIM is not 0, where DIM represents the dimension of the polyline\n      2- The InputIterator type models the concept of a forward iterator\n      3- The InputIterator value type is convertible to a value type of the output iterator\n      4- The ranges [original_first, original_last) and [simplified_first, simplified_last)\n         contain vertex coordinates in multiples of DIM, f.e.: x, y, z, x, y, z, x, y, z\n         when DIM = 3\n      5- The ranges [original_first, original_last) and [simplified_first, simplified_last)\n         contain a minimum of 2 vertices\n      6- The range [simplified_first, simplified_last) represents a simplification of the\n         range [original_first, original_last), meaning each point in the simplification\n         has the exact same coordinates as some point from the original polyline\n\n      In case these requirements are not met, the valid flag is set to false OR\n      compile errors may occur.\n\n      \\param[in] original_first   the first coordinate of the first polyline point\n      \\param[in] original_last    one beyond the last coordinate of the last polyline point\n      \\param[in] simplified_first the first coordinate of the first simplified polyline point\n      \\param[in] simplified_last  one beyond the last coordinate of the last simplified polyline point\n      \\param[in] result           destination of the squared positional errors\n      \\param[out] valid           [optional] indicates if the computed positional errors are valid\n      \\return                     one beyond the last computed positional error\n  */\n  OutputIterator\n  ComputePositionalErrors2(InputIterator original_first,\n                           InputIterator original_last,\n                           InputIterator simplified_first,\n                           InputIterator simplified_last,\n                           OutputIterator result,\n                           bool* valid = 0) {\n    diff_type original_coordCount = std::distance(original_first, original_last);\n    diff_type original_pointCount = DIM // protect against zero DIM\n                                        ? original_coordCount / DIM\n                                        : 0;\n\n    diff_type simplified_coordCount = std::distance(simplified_first, simplified_last);\n    diff_type simplified_pointCount = DIM // protect against zero DIM\n                                          ? simplified_coordCount / DIM\n                                          : 0;\n\n    // validate input\n    if(original_coordCount % DIM || original_pointCount < 2 || simplified_coordCount % DIM ||\n       simplified_pointCount < 2 || original_pointCount < simplified_pointCount ||\n       !math::equal<DIM>(original_first, simplified_first)) {\n      if(valid) {\n        *valid = false;\n      }\n      return result;\n    }\n\n    // define (simplified) line segment S(simplified_prev, simplified_first)\n    InputIterator simplified_prev = simplified_first;\n    std::advance(simplified_first, DIM);\n\n    // process each simplified line segment\n    while(simplified_first != simplified_last) {\n      // process each original point until it equals the end of the line segment\n      while(original_first != original_last && !math::equal<DIM>(original_first, simplified_first)) {\n        *result = math::segment_distance2<DIM>(simplified_prev, simplified_first, original_first);\n        ++result;\n        std::advance(original_first, DIM);\n      }\n      // update line segment S\n      simplified_prev = simplified_first;\n      std::advance(simplified_first, DIM);\n    }\n    // check if last original point matched\n    if(original_first != original_last) {\n      *result = 0;\n      ++result;\n    }\n\n    if(valid) {\n      *valid = original_first != original_last;\n    }\n    return result;\n  }\n\n  /*!\n      \\brief Computes statistics for the positional errors between a polyline and its simplification.\n\n      Various statistics (mean, max, sum, std) are calculated for the positional errors\n      between the range [original_first, original_last) and its simplification the range\n      [simplified_first, simplified_last).\n\n      Input (Type) requirements:\n      1- DIM is not 0, where DIM represents the dimension of the polyline\n      2- The InputIterator type models the concept of a forward iterator\n      3- The InputIterator value type is convertible to double\n      4- The ranges [original_first, original_last) and [simplified_first, simplified_last)\n         contain vertex coordinates in multiples of DIM, f.e.: x, y, z, x, y, z, x, y, z\n         when DIM = 3\n      5- The ranges [original_first, original_last) and [simplified_first, simplified_last)\n         contain a minimum of 2 vertices\n      6- The range [simplified_first, simplified_last) represents a simplification of the\n         range [original_first, original_last), meaning each point in the simplification\n         has the exact same coordinates as some point from the original polyline\n\n      In case these requirements are not met, the valid flag is set to false OR\n      compile errors may occur.\n\n      \\sa ComputePositionalErrors2\n\n      \\param[in] original_first   the first coordinate of the first polyline point\n      \\param[in] original_last    one beyond the last coordinate of the last polyline point\n      \\param[in] simplified_first the first coordinate of the first simplified polyline point\n      \\param[in] simplified_last  one beyond the last coordinate of the last simplified polyline point\n      \\param[out] valid           [optional] indicates if the computed statistics are valid\n      \\return                     the computed statistics\n  */\n  math::Statistics\n  ComputePositionalErrorStatistics(InputIterator original_first,\n                                   InputIterator original_last,\n                                   InputIterator simplified_first,\n                                   InputIterator simplified_last,\n                                   bool* valid = 0) {\n    diff_type pointCount = std::distance(original_first, original_last) / DIM;\n    util::scoped_array<double> errors(pointCount);\n    PolylineSimplification<DIM, InputIterator, double*> ps;\n\n    diff_type errorCount =\n        std::distance(errors.get(),\n                      ps.ComputePositionalErrors2(\n                          original_first, original_last, simplified_first, simplified_last, errors.get(), valid));\n\n    std::transform(errors.get(), errors.get() + errorCount, errors.get(), std::ptr_fun<double, double>(std::sqrt));\n\n    return math::compute_statistics(errors.get(), errors.get() + errorCount);\n  }\n\nprivate:\n  /*!\n      \\brief Copies the key to the output destination, and increments the iterator.\n\n      \\sa CopyKey\n\n      \\param[in,out] key      the first coordinate of the key\n      \\param[in,out] result   destination of the copied key\n  */\n  inline void\n  CopyKeyAdvance(InputIterator& key, OutputIterator& result) {\n    for(unsigned d = 0; d < DIM; ++d) {\n      *result = *key;\n      ++result;\n      ++key;\n    }\n  }\n\n  /*!\n      \\brief Copies the key to the output destination.\n\n      \\sa CopyKeyAdvance\n\n      \\param[in]     key      the first coordinate of the key\n      \\param[in,out] result   destination of the copied key\n  */\n  inline void\n  CopyKey(InputIterator key, OutputIterator& result) {\n    CopyKeyAdvance(key, result);\n  }\n\n  /*!\n      \\brief Increments the iterator by n points.\n\n      \\sa AdvanceCopy\n\n      \\param[in,out] it  iterator to be advanced\n      \\param[in]     n   number of points to advance\n  */\n  inline void\n  Advance(InputIterator& it, diff_type n = 1) {\n    std::advance(it, n * static_cast<diff_type>(DIM));\n  }\n\n  /*!\n      \\brief Increments a copy of the iterator by n points.\n\n      \\sa Advance\n\n      \\param[in] it   iterator to be advanced\n      \\param[in] n    number of points to advance\n      \\return         an incremented copy of the input iterator\n  */\n  inline InputIterator\n  AdvanceCopy(InputIterator it, diff_type n = 1) {\n    Advance(it, n);\n    return it;\n  }\n\n  /*!\n      \\brief Increments the iterator by n points if possible.\n\n      If there are fewer than n point remaining the iterator will be incremented to the last\n      point.\n\n      \\sa Backward\n\n      \\param[in,out] it           iterator to be advanced\n      \\param[in]     n            number of points to advance\n      \\param[in,out] remaining    number of points remaining after it\n      \\return                     the actual amount of points that the iterator advanced\n  */\n  inline unsigned\n  Forward(InputIterator& it, unsigned n, unsigned& remaining) {\n    n = std::min(n, remaining);\n    Advance(it, n);\n    remaining -= n;\n    return n;\n  }\n\n  /*!\n      \\brief Decrements the iterator by 1 point.\n\n      \\sa Forward\n\n      \\param[in,out] it            iterator to be advanced\n      \\param[in,out] remaining     number of points remaining after it\n  */\n  inline void\n  Backward(InputIterator& it, unsigned& remaining) {\n    Advance(it, -1);\n    ++remaining;\n  }\n\nprivate:\n  /*!\n      \\brief Douglas-Peucker approximation helper class.\n\n      Contains helper implentations for Douglas-Peucker approximation that operate solely on\n      value_type arrays and value_type pointers. Note that the PolylineSimplification\n      class only operates on iterators.\n  */\n  class DPHelper {\n    //! \\brief Defines a sub polyline.\n    struct SubPoly {\n      SubPoly(ptr_diff_type first = 0, ptr_diff_type last = 0) : first(first), last(last) {}\n\n      ptr_diff_type first; //! coord index of the first point\n      ptr_diff_type last;  //! coord index of the last point\n    };\n\n    //! \\brief Defines the key of a polyline.\n    struct KeyInfo {\n      KeyInfo(ptr_diff_type index = 0, value_type dist2 = 0) : index(index), dist2(dist2) {}\n\n      ptr_diff_type index; //! coord index of the key\n      value_type dist2;    //! squared distance of the key to a segment\n    };\n\n    //! \\brief Defines a sub polyline including its key.\n    struct SubPolyAlt {\n      SubPolyAlt(ptr_diff_type first = 0, ptr_diff_type last = 0) : first(first), last(last) {}\n\n      ptr_diff_type first; //! coord index of the first point\n      ptr_diff_type last;  //! coord index of the last point\n      KeyInfo keyInfo;     //! key of this sub poly\n\n      bool\n      operator<(const SubPolyAlt& other) const {\n        return keyInfo.dist2 < other.keyInfo.dist2;\n      }\n    };\n\n  public:\n    /*!\n        \\brief Performs Douglas-Peucker approximation.\n\n        \\param[in] coords       array of polyline coordinates\n        \\param[in] coordCount   number of coordinates in coords []\n        \\param[in] tol          approximation tolerance\n        \\param[out] keys        indicates for each polyline point if it is a key\n    */\n    static void\n    Approximate(const value_type* coords, ptr_diff_type coordCount, value_type tol, unsigned char* keys) {\n      value_type tol2 = tol * tol; // squared distance tolerance\n      ptr_diff_type pointCount = coordCount / DIM;\n      // zero out keys\n      std::fill_n(keys, pointCount, 0);\n      keys[0] = 1;              // the first point is always a key\n      keys[pointCount - 1] = 1; // the last point is always a key\n\n      typedef std::stack<SubPoly> Stack;\n      Stack stack; // LIFO job-queue containing sub-polylines\n\n      SubPoly subPoly(0, coordCount - DIM);\n      stack.push(subPoly); // add complete poly\n\n      while(!stack.empty()) {\n        subPoly = stack.top(); // take a sub poly\n        stack.pop();           // and find its key\n        KeyInfo keyInfo = FindKey(coords, subPoly.first, subPoly.last);\n        if(keyInfo.index && tol2 < keyInfo.dist2) {\n          // store the key if valid\n          keys[keyInfo.index / DIM] = 1;\n          // split the polyline at the key and recurse\n          stack.push(SubPoly(keyInfo.index, subPoly.last));\n          stack.push(SubPoly(subPoly.first, keyInfo.index));\n        }\n      }\n    }\n\n    /*!\n        \\brief Performs Douglas-Peucker approximation.\n\n        \\param[in] coords       array of polyline coordinates\n        \\param[in] coordCount   number of coordinates in coords []\n        \\param[in] countTol     point count tolerance\n        \\param[out] keys        indicates for each polyline point if it is a key\n    */\n    static void\n    ApproximateN(const value_type* coords, ptr_diff_type coordCount, unsigned countTol, unsigned char* keys) {\n      ptr_diff_type pointCount = coordCount / DIM;\n      // zero out keys\n      std::fill_n(keys, pointCount, 0);\n      keys[0] = 1;              // the first point is always a key\n      keys[pointCount - 1] = 1; // the last point is always a key\n      unsigned keyCount = 2;\n\n      if(countTol == 2) {\n        return;\n      }\n\n      typedef std::priority_queue<SubPolyAlt> PriorityQueue;\n      PriorityQueue queue; // sorted (max dist2) job queue containing sub-polylines\n\n      SubPolyAlt subPoly(0, coordCount - DIM);\n      subPoly.keyInfo = FindKey(coords, subPoly.first, subPoly.last);\n      queue.push(subPoly); // add complete poly\n\n      while(!queue.empty()) {\n        subPoly = queue.top(); // take a sub poly\n        queue.pop();\n        // store the key\n        keys[subPoly.keyInfo.index / DIM] = 1;\n        // check point count tolerance\n        keyCount++;\n        if(keyCount == countTol) {\n          break;\n        }\n        // split the polyline at the key and recurse\n        SubPolyAlt left(subPoly.first, subPoly.keyInfo.index);\n        left.keyInfo = FindKey(coords, left.first, left.last);\n        if(left.keyInfo.index) {\n          queue.push(left);\n        }\n        SubPolyAlt right(subPoly.keyInfo.index, subPoly.last);\n        right.keyInfo = FindKey(coords, right.first, right.last);\n        if(right.keyInfo.index) {\n          queue.push(right);\n        }\n      }\n    }\n\n  private:\n    /*!\n        \\brief Finds the key for the given sub polyline.\n\n        Finds the point in the range [first, last] that is furthest away from the\n        segment (first, last). This point is called the key.\n\n        \\param[in] coords   array of polyline coordinates\n        \\param[in] first    the first coordinate of the first polyline point\n        \\param[in] last     the first coordinate of the last polyline point\n        \\return             the index of the key and its distance, or last when a key\n                            could not be found\n    */\n    static KeyInfo\n    FindKey(const value_type* coords, ptr_diff_type first, ptr_diff_type last) {\n      KeyInfo keyInfo;\n\n      for(ptr_diff_type current = first + DIM; current < last; current += DIM) {\n        value_type d2 = math::segment_distance2<DIM>(coords + first, coords + last, coords + current);\n        if(d2 < keyInfo.dist2) {\n          continue;\n        }\n        // update maximum squared distance and the point it belongs to\n        keyInfo.index = current;\n        keyInfo.dist2 = d2;\n      }\n      return keyInfo;\n    }\n  };\n};\n\n/*!\n    \\brief Performs the nth point routine (NP).\n\n    This is a convenience function that provides template type deduction for\n    PolylineSimplification::NthPoint.\n\n    \\param[in] first    the first coordinate of the first polyline point\n    \\param[in] last     one beyond the last coordinate of the last polyline point\n    \\param[in] n        specifies 'each nth point'\n    \\param[in] result   destination of the simplified polyline\n    \\return             one beyond the last coordinate of the simplified polyline\n*/\ntemplate <unsigned DIM, class ForwardIterator, class OutputIterator>\nOutputIterator\nsimplify_nth_point(ForwardIterator first, ForwardIterator last, unsigned n, OutputIterator result) {\n  PolylineSimplification<DIM, ForwardIterator, OutputIterator> ps;\n  return ps.NthPoint(first, last, n, result);\n}\n\n/*!\n    \\brief Performs the (radial) distance between points routine (RD).\n\n    This is a convenience function that provides template type deduction for\n    PolylineSimplification::RadialDistance.\n\n    \\param[in] first    the first coordinate of the first polyline point\n    \\param[in] last     one beyond the last coordinate of the last polyline point\n    \\param[in] tol      radial (point-to-point) distance tolerance\n    \\param[in] result   destination of the simplified polyline\n    \\return             one beyond the last coordinate of the simplified polyline\n*/\ntemplate <unsigned DIM, class ForwardIterator, class OutputIterator>\nOutputIterator\nsimplify_radial_distance(ForwardIterator first,\n                         ForwardIterator last,\n                         typename std::iterator_traits<ForwardIterator>::value_type tol,\n                         OutputIterator result) {\n  PolylineSimplification<DIM, ForwardIterator, OutputIterator> ps;\n  return ps.RadialDistance(first, last, tol, result);\n}\n\n/*!\n    \\brief Repeatedly performs the perpendicular distance routine (PD).\n\n    This is a convenience function that provides template type deduction for\n    PolylineSimplification::PerpendicularDistance.\n\n    \\param[in] first    the first coordinate of the first polyline point\n    \\param[in] last     one beyond the last coordinate of the last polyline point\n    \\param[in] tol      perpendicular (segment-to-point) distance tolerance\n    \\param[in] repeat   the number of times to successively apply the PD routine.\n    \\param[in] result   destination of the simplified polyline\n    \\return             one beyond the last coordinate of the simplified polyline\n*/\ntemplate <unsigned DIM, class ForwardIterator, class OutputIterator>\nOutputIterator\nsimplify_perpendicular_distance(ForwardIterator first,\n                                ForwardIterator last,\n                                typename std::iterator_traits<ForwardIterator>::value_type tol,\n                                unsigned repeat,\n                                OutputIterator result) {\n  PolylineSimplification<DIM, ForwardIterator, OutputIterator> ps;\n  return ps.PerpendicularDistance(first, last, tol, repeat, result);\n}\n\n/*!\n    \\brief Performs the perpendicular distance routine (PD).\n\n    This is a convenience function that provides template type deduction for\n    PolylineSimplification::PerpendicularDistance.\n\n    \\param[in] first    the first coordinate of the first polyline point\n    \\param[in] last     one beyond the last coordinate of the last polyline point\n    \\param[in] tol      perpendicular (segment-to-point) distance tolerance\n    \\param[in] result   destination of the simplified polyline\n    \\return             one beyond the last coordinate of the simplified polyline\n*/\ntemplate <unsigned DIM, class ForwardIterator, class OutputIterator>\nOutputIterator\nsimplify_perpendicular_distance(ForwardIterator first,\n                                ForwardIterator last,\n                                typename std::iterator_traits<ForwardIterator>::value_type tol,\n                                OutputIterator result) {\n  PolylineSimplification<DIM, ForwardIterator, OutputIterator> ps;\n  return ps.PerpendicularDistance(first, last, tol, result);\n}\n\n/*!\n    \\brief Performs Reumann-Witkam polyline simplification (RW).\n\n    This is a convenience function that provides template type deduction for\n    PolylineSimplification::ReumannWitkam.\n\n    \\param[in] first    the first coordinate of the first polyline point\n    \\param[in] last     one beyond the last coordinate of the last polyline point\n    \\param[in] tol      perpendicular (point-to-line) distance tolerance\n    \\param[in] result   destination of the simplified polyline\n    \\return             one beyond the last coordinate of the simplified polyline\n*/\ntemplate <unsigned DIM, class ForwardIterator, class OutputIterator>\nOutputIterator\nsimplify_reumann_witkam(ForwardIterator first,\n                        ForwardIterator last,\n                        typename std::iterator_traits<ForwardIterator>::value_type tol,\n                        OutputIterator result) {\n  PolylineSimplification<DIM, ForwardIterator, OutputIterator> ps;\n  return ps.ReumannWitkam(first, last, tol, result);\n}\n\n/*!\n    \\brief Performs Opheim polyline simplification (OP).\n\n    This is a convenience function that provides template type deduction for\n    PolylineSimplification::Opheim.\n\n    \\param[in] first    the first coordinate of the first polyline point\n    \\param[in] last     one beyond the last coordinate of the last polyline point\n    \\param[in] min_tol  minimum distance tolerance\n    \\param[in] max_tol  maximum distance tolerance\n    \\param[in] result   destination of the simplified polyline\n    \\return             one beyond the last coordinate of the simplified polyline\n*/\ntemplate <unsigned DIM, class ForwardIterator, class OutputIterator>\nOutputIterator\nsimplify_opheim(ForwardIterator first,\n                ForwardIterator last,\n                typename std::iterator_traits<ForwardIterator>::value_type min_tol,\n                typename std::iterator_traits<ForwardIterator>::value_type max_tol,\n                OutputIterator result) {\n  PolylineSimplification<DIM, ForwardIterator, OutputIterator> ps;\n  return ps.Opheim(first, last, min_tol, max_tol, result);\n}\n\n/*!\n    \\brief Performs Lang polyline simplification (LA).\n\n    This is a convenience function that provides template type deduction for\n    PolylineSimplification::Lang.\n\n    \\param[in] first      the first coordinate of the first polyline point\n    \\param[in] last       one beyond the last coordinate of the last polyline point\n    \\param[in] tol        perpendicular (point-to-segment) distance tolerance\n    \\param[in] look_ahead defines the size of the search region\n    \\param[in] result     destination of the simplified polyline\n    \\return               one beyond the last coordinate of the simplified polyline\n*/\ntemplate <unsigned DIM, class BidirectionalIterator, class OutputIterator>\nOutputIterator\nsimplify_lang(BidirectionalIterator first,\n              BidirectionalIterator last,\n              typename std::iterator_traits<BidirectionalIterator>::value_type tol,\n              unsigned look_ahead,\n              OutputIterator result) {\n  PolylineSimplification<DIM, BidirectionalIterator, OutputIterator> ps;\n  return ps.Lang(first, last, tol, look_ahead, result);\n}\n\n/*!\n    \\brief Performs Douglas-Peucker polyline simplification (DP).\n\n    This is a convenience function that provides template type deduction for\n    PolylineSimplification::DouglasPeucker.\n\n    \\param[in] first    the first coordinate of the first polyline point\n    \\param[in] last     one beyond the last coordinate of the last polyline point\n    \\param[in] tol      perpendicular (point-to-segment) distance tolerance\n    \\param[in] result   destination of the simplified polyline\n    \\return             one beyond the last coordinate of the simplified polyline\n*/\ntemplate <unsigned DIM, class ForwardIterator, class OutputIterator>\nOutputIterator\nsimplify_douglas_peucker(ForwardIterator first,\n                         ForwardIterator last,\n                         typename std::iterator_traits<ForwardIterator>::value_type tol,\n                         OutputIterator result) {\n  PolylineSimplification<DIM, ForwardIterator, OutputIterator> ps;\n  return ps.DouglasPeucker(first, last, tol, result);\n}\n\n/*!\n    \\brief Performs a variant of Douglas-Peucker polyline simplification (DPn).\n\n    This is a convenience function that provides template type deduction for\n    PolylineSimplification::DouglasPeuckerAlt.\n\n    \\param[in] first    the first coordinate of the first polyline point\n    \\param[in] last     one beyond the last coordinate of the last polyline point\n    \\param[in] count    the maximum number of points of the simplified polyline\n    \\param[in] result   destination of the simplified polyline\n    \\return             one beyond the last coordinate of the simplified polyline\n*/\ntemplate <unsigned DIM, class ForwardIterator, class OutputIterator>\nOutputIterator\nsimplify_douglas_peucker_n(ForwardIterator first, ForwardIterator last, unsigned count, OutputIterator result) {\n  PolylineSimplification<DIM, ForwardIterator, OutputIterator> ps;\n  return ps.DouglasPeuckerN(first, last, count, result);\n}\n\n/*!\n    \\brief Computes the squared positional error between a polyline and its simplification.\n\n    This is a convenience function that provides template type deduction for\n    PolylineSimplification::ComputePositionalErrors2.\n\n    \\param[in] original_first   the first coordinate of the first polyline point\n    \\param[in] original_last    one beyond the last coordinate of the last polyline point\n    \\param[in] simplified_first the first coordinate of the first simplified polyline point\n    \\param[in] simplified_last  one beyond the last coordinate of the last simplified polyline point\n    \\param[in] result           destination of the squared positional errors\n    \\param[out] valid           [optional] indicates if the computed positional errors are valid\n    \\return                     one beyond the last computed positional error\n*/\ntemplate <unsigned DIM, class ForwardIterator, class OutputIterator>\nOutputIterator\ncompute_positional_errors2(ForwardIterator original_first,\n                           ForwardIterator original_last,\n                           ForwardIterator simplified_first,\n                           ForwardIterator simplified_last,\n                           OutputIterator result,\n                           bool* valid = 0) {\n  PolylineSimplification<DIM, ForwardIterator, OutputIterator> ps;\n  return ps.ComputePositionalErrors2(original_first, original_last, simplified_first, simplified_last, result, valid);\n}\n\n/*!\n    \\brief Computes statistics for the positional errors between a polyline and its simplification.\n\n    This is a convenience function that provides template type deduction for\n    PolylineSimplification::ComputePositionalErrorStatistics.\n\n    \\param[in] original_first   the first coordinate of the first polyline point\n    \\param[in] original_last    one beyond the last coordinate of the last polyline point\n    \\param[in] simplified_first the first coordinate of the first simplified polyline point\n    \\param[in] simplified_last  one beyond the last coordinate of the last simplified polyline point\n    \\param[out] valid           [optional] indicates if the computed statistics are valid\n    \\return                     the computed statistics\n*/\ntemplate <unsigned DIM, class ForwardIterator>\nmath::Statistics\ncompute_positional_error_statistics(ForwardIterator original_first,\n                                    ForwardIterator original_last,\n                                    ForwardIterator simplified_first,\n                                    ForwardIterator simplified_last,\n                                    bool* valid = 0) {\n  PolylineSimplification<DIM, ForwardIterator, ForwardIterator> ps;\n  return ps.ComputePositionalErrorStatistics(original_first, original_last, simplified_first, simplified_last, valid);\n}\n} // namespace psimpl\n\n#endif // PSIMPL_GENERIC\n",
 			"file": "src/psimpl.h",
-			"file_size": 73980,
-			"file_write_time": 132180889133148608,
 			"settings":
 			{
-				"buffer_size": 72234,
+				"buffer_size": 70996,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"contents": "#include <opencv2/core/core.hpp>\n#include <opencv2/imgproc/imgproc.hpp>\n#include <cmath>\n#include \"psimpl.h\"\n#include <iostream>\n#include <type_traits>\n#include <exception>\n#include <string>\n\ntemplate <class T, typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type* = nullptr>\ninline std::string\nto_string(const T& t, size_t n_pad = 3, char ch_pad = ' ') {\n  std::ostringstream oss;\n  oss << t;\n  std::string ret(oss.str());\n\n  if(ret.length() < n_pad)\n    ret.insert(ret.begin(), n_pad - ret.length(), ch_pad);\n  else if(ret.length() > n_pad) {\n    size_t i = ret.find('.');\n\n    if(i != std::string::npos) {\n      ret.resize(std::max(i, n_pad));\n    }\n  }\n  return ret;\n}\n\ntemplate <class T>\ninline std::string\nto_string(const cv::Point_<T>& pt, size_t n_pad = 3, char ch_pad = '0') {\n  std::ostringstream oss;\n  oss << to_string(pt.x) << ',' << to_string(pt.y);\n  return oss.str();\n}\n\ntemplate <class InputIterator>\ninline typename std::iterator_traits<InputIterator>::value_type\nsegment_distance2(InputIterator s1, InputIterator s2, InputIterator p) {\n  typedef typename std::iterator_traits<InputIterator>::value_type value_type;\n  return psimpl::math::segment_distance2<2, InputIterator>(s1, s2, p);\n}\n\ntemplate <class ValueT>\ninline ValueT\npoint_distance(const cv::Point_<ValueT>& p1, const cv::Point_<ValueT>& p2) {\n  return std::sqrt(psimpl::math::point_distance2<2>(&p1.x, &p2.x));\n}\n\ntemplate <class ValueT> class Line {\npublic:\n  typedef cv::Point_<ValueT> point_type;\n  typedef Line<ValueT> line_type;\n  typedef ValueT value_type;\n\n  point_type a, b;\n\n  Line(const point_type& p1, const point_type& p2) : a(p1), b(p2) {}\n\n  Line(ValueT x1, ValueT y1, ValueT x2, ValueT y2) : a(x1, y1), b(x2, y2) {}\n\n  ValueT\n  length() const {\n    point_type diff = a - b;\n    return std::sqrt(diff.x * diff.x + diff.y * diff.y);\n  }\n\n  point_type\n  at(double sigma) const {\n    point_type ret;\n    ret.x = (a.x + b.x) / 2;\n    ret.y = (a.y + b.y) / 2;\n    return ret;\n  }\n\n  point_type\n  center() const {\n    return point_type((a.x + b.x) / 2, (a.y + b.y) / 2);\n  }\n  point_type\n  start() const {\n    return a;\n  }\n  point_type\n  end() const {\n    return b;\n  }\n\n  point_type\n  slope() const {\n    point_type diff = b - a;\n    return diff;\n  }\n\n  const point_type&\n  pivot() const {\n    return a;\n  }\n\n  const point_type&\n  to() const {\n    return b;\n  }\n\n  void\n  swap() {\n    point_type temp = a;\n    a = b;\n    b = temp;\n  }\n\n  double\n  angle() const {\n    point_type diff = a - b;\n    return std::atan2(diff.x, diff.y);\n  }\n\n  double\n  distance(const point_type& p) const {\n    return std::sqrt(segment_distance2(&a.x, &b.x, &p.x));\n  }\n  std::pair<ValueT, ValueT>\n  endpoint_distance(const Line<ValueT>& l) const {\n    std::pair<ValueT, ValueT> dist1 = endpoint_distance(l.a), dist2 = endpoint_distance(l.b);\n\n    return std::make_pair(dist1.first < dist1.second ? dist1.first : dist1.second, dist2.first < dist2.second ? dist2.first : dist2.second);\n  }\n\n  std::pair<ValueT, ValueT>\n  endpoint_distance(const cv::Point_<ValueT>& p) const {\n    return std::make_pair<ValueT, ValueT>(point_distance<ValueT>(a, p), point_distance<ValueT>(b, p));\n  }\n\n  template <class OtherT>\n  std::pair<line_type&, line_type&>\n  nearest(const Line<OtherT>& l) const {\n    return std::make_pair<ValueT, ValueT>(distance(l.a), distance(l.b));\n  }\n\n  template <class OtherT>\n  bool\n  operator==(const Line<OtherT>& other) const {\n    return other.a == this->a && other.b == this->b;\n  }\n\n  ValueT\n  min_distance(const Line<ValueT>& l2, size_t* point_index = nullptr) const {\n    std::pair<ValueT, ValueT> dist = endpoint_distance(l2);\n    /* if(intersect(l2))\n       return 0;*/\n    if(point_index)\n      *point_index = dist.first < dist.second ? 0 : 1;\n    return dist.first < dist.second ? dist.first : dist.second;\n  }\n\n  ValueT\n  angle_diff(const Line<ValueT>& l) const {\n    return l.angle() - angle();\n  }\n\n  /**\n   * Calculates intersect of two lines if exists.\n   *\n   * @param line1 First line.\n   * @param line2 Second line.\n   * @param intersect Result intersect.\n   * @return True if there is intersect of two lines, otherwise false.\n   */\n  inline bool\n  intersect(const Line<ValueT>& line2, cv::Point_<ValueT>* pt = nullptr) const {\n    point_type x = line2.pivot() - pivot();\n    point_type d1 = slope();\n    point_type d2 = line2.slope();\n\n    float inter = d1.x * d2.y - d1.y * d2.x;\n\n    if(fabs(inter) < 1e-8) {\n      return false;\n    }\n\n    double t1 = (x.x * d2.y - x.y * d2.x) / inter;\n    if(pt)\n      *pt = pivot() + d1 * t1;\n\n    return true;\n  }\n\n  template <class OtherValueT>\n  bool\n  operator<(const Line<OtherValueT>& l2) const {\n    cv::Point2f a, b;\n    a = center();\n    b = l2.center();\n    return a.y < b.y ? true : a.x < b.x;\n  }\n\n  template <class Char = char>\n  std::basic_string<Char>\n  str(const std::string& comma = \",\", const std::string& sep = \"|\") const {\n    point_type p = pivot(), s = slope();\n\n    std::basic_ostringstream<Char> os;\n    // os << '[';\n    os << to_string(a.x) << comma << to_string(a.y);\n    os << sep << to_string(b.x);\n    os << comma << to_string(b.y);\n    os << '=' << to_string(length());\n    // os << '@' << to_string(floor(angle()*180/ M_PI));\n    // os << ']';\n    return os.str();\n  }\n\n  /*template <class Char, class ValueT>\n  inline std::basic_ostream<Char>&\n  operator<<(std::basic_ostream<Char>& os, const Line<ValueT>& line) {\n    os << line.a.x << ',' << line.a.y;\n    os << \" -> \";\n    os << line.b.x << ',' << line.b.y;\n  }\n  */\n};\n\ntemplate <class T, class Char = char>\ninline std::basic_string<Char>\nto_string(const Line<T>& line) {\n  std::basic_string<Char> ret;\n  ret = line.str(\",\", \"|\");\n\n  return ret;\n}\n\ntemplate <class ValueT, template <typename> typename Container = std::vector, class Char = char>\ninline std::basic_string<Char>\nto_string(const Container<Line<ValueT>>& lines) {\n  typedef typename Container<Line<ValueT>>::const_iterator iterator_type;\n  typedef Line<ValueT> value_type;\n  std::basic_string<Char> ret;\n  iterator_type end = lines.cend();\n  for(iterator_type it = lines.cbegin(); it != end; ++it) {\n    if(ret.length())\n      ret += \" \";\n    ret += to_string<ValueT, Char>(*it);\n  }\n  return ret;\n}\n\ntemplate <class Char, class Value>\ninline std::basic_ostream<Char>&\noperator<<(std::basic_ostream<Char>& os, const std::vector<Line<Value>>& c) {\n  typedef typename std::vector<Line<Value>>::const_iterator iterator_type;\n  iterator_type end = c.cend();\n  int i = 0;\n  for(iterator_type it = c.cbegin(); it != end; ++it) {\n    if(i++ > 0)\n      os << \" \";\n    os << to_string(*it);\n  }\n  return os;\n}\n\ntemplate <class ContainerT>\n\ntypename ContainerT::iterator\nfindNearestLine(const typename ContainerT::value_type& line, ContainerT& lines) {\n  typedef typename ContainerT::iterator iterator_type;\n  typedef typename ContainerT::value_type line_type;\n  typedef typename line_type::value_type value_type;\n  value_type distance = 1e10;\n  iterator_type end = lines.end();\n  iterator_type ret = end;\n\n  for(iterator_type it = lines.begin(); it != end; ++it) {\n    value_type d = (*it).min_distance(line);\n    if(*it == line)\n      continue;\n    if(d < distance) {\n      distance = d;\n      ret = it;\n    }\n  }\n  return ret;\n}\ntemplate <class ContainerT>\ntypename ContainerT::iterator\nfindNearestLine(const typename ContainerT::iterator& line, ContainerT& lines) {\n  typedef typename ContainerT::iterator iterator_type;\n  typedef typename ContainerT::value_type point_type;\n  typedef typename point_type::value_type value_type;\n  value_type distance = 1e10;\n  iterator_type index = lines.end();\n  iterator_type end = lines.end();\n\n  for(iterator_type it = lines.begin(); it != end; ++it) {\n    value_type d = (*it).min_distance(*line);\n    if(std::distance(line, it) == 0)\n      continue;\n    if(d < distance) {\n      distance = d;\n      index = it;\n    }\n  }\n  return index;\n}\n/*\ntemplate <class InputIterator>\nInputIterator\nfindNearestLine(const InputIterator& line, InputIterator from, InputIterator to) {\n  typedef InputIterator iterator_type;\n  typedef typename std::iterator_traits<InputIterator>::value_type point_type;\n  typedef typename point_type::value_type value_type;\n  value_type distance = 1e10;\n  iterator_type index = to;\n\n  for(iterator_type it = from; it != to; ++it) {\n    value_type d = (*it).min_distance(*line);\n    if(std::distance(line, it) == 0)\n      continue;\n    if(d < distance) {\n      distance = d;\n      index = it;\n    }\n  }\n  return index;\n}\n*/\n\ntemplate <class T> class LineEnd {\n  Line<T>* line;\n  size_t point_index;\nx1\nprotected:\n  cv::Point_<T>*\n  ptr() {\n    return line == nullptr ? nullptr : point_index > 0 ? &line->b : &line->a;\n  }\n  const cv::Point_<T>*\n  const_ptr() const {\n    return line == nullptr ? nullptr : point_index > 0 ? &line->b : &line->a;\n  }\n\npublic:\n  LineEnd(Line<T>& l, size_t pt_i) : line(&l), point_index(pt_i) {}\n\n  cv::Point_<T>& point() {return *ptr(); }\n  cv::Point_<T> const& point() const {return *const_ptr(); }\n\n  operator cv::Point_<T>() const { return point(); }\n};",
 			"file": "src/line.h",
-			"file_size": 9071,
-			"file_write_time": 132181094562026765,
 			"settings":
 			{
-				"buffer_size": 9073,
+				"buffer_size": 9722,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "Searching 324 files for \"min_dist\" (regex)\n\n/home/roman/Dokumente/Sources/contours/plot-cv/src/CannyWebcam1.cpp:\n  609      /* if(line == *it)\n  610         continue;*/\n  611:     ret.push_back(it->min_distance(line));\n  612    }\n  613    return ret;\n  ...\n  808            std::copy_if(lines.cbegin(), lines.cend(), std::back_inserter(adjacent), [&](const Line<float>& l2) -> bool {\n  809              size_t point_index;\n  810:             double min_dist = line.min_distance(l2, &point_index);\n  811              bool intersects = line.intersect(l2);\n  812:             return (/*intersects ||*/ min_dist < 20);\n  813            });\n  814  \n  815            distances.clear();\n  816:           std::transform(adjacent.cbegin(), adjacent.cend(), std::back_inserter(distances), [&line](const Line<float>& l2) -> float { return line.min_distance(l2); });\n  817            angleoffs.clear();\n  818            std::transform(adjacent.cbegin(), adjacent.cend(), std::back_inserter(angleoffs), [&line](const Line<float>& l2) -> float { return line.angle_diff(l2); });\n\n/home/roman/Dokumente/Sources/contours/plot-cv/src/line.h:\n  145  \n  146    ValueT\n  147:   min_distance(const Line<ValueT>& l2, size_t* point_index = nullptr) const {\n  148      std::pair<ValueT, ValueT> dist = endpoint_distance(l2);\n  149      /* if(intersect(l2))\n  ...\n  271  \n  272    for(iterator_type it = lines.begin(); it != end; ++it) {\n  273:     value_type d = (*it).min_distance(line);\n  274      if(*it == line)\n  275        continue;\n  ...\n  292  \n  293    for(iterator_type it = lines.begin(); it != end; ++it) {\n  294:     value_type d = (*it).min_distance(*line);\n  295      if(std::distance(line, it) == 0)\n  296        continue;\n  ...\n  313  \n  314    for(iterator_type it = from; it != to; ++it) {\n  315:     value_type d = (*it).min_distance(*line);\n  316      if(std::distance(line, it) == 0)\n  317        continue;\n\n/home/roman/Dokumente/Sources/contours/plot-cv/src/pyrlk_optical_flow.cpp:\n   83        \"{ o output         | pyrlk_output.jpg| specify output save path when input is images }\"\n   84        \"{ points           | 1000            | specify points count [GoodFeatureToTrack] }\"\n   85:       \"{ min_dist         | 0               | specify minimal distance between points [GoodFeatureToTrack] }\"\n   86        \"{ m cpu_mode       | false           | run without OpenCL }\";\n   87  \n   ..\n  101    string outfile = cmd.get<string>(\"output\");\n  102    int points = cmd.get<int>(\"points\");\n  103:   double minDist = cmd.get<double>(\"min_dist\");\n  104    int inputName = cmd.get<int>(\"c\");\n  105  \n\n11 matches across 3 files\n",
-			"settings":
-			{
-				"buffer_size": 2620,
-				"line_ending": "Unix",
-				"name": "Find Results",
-				"scratch": true
 			}
 		},
 		{
@@ -139,12 +133,24 @@
 	"build_varint": "",
 	"command_palette":
 	{
-		"height": 0.0,
-		"last_filter": "",
+		"height": 126.0,
+		"last_filter": "install pa",
 		"selected_items":
 		[
+			[
+				"install pa",
+				"Package Control: Install Package"
+			],
+			[
+				"tags",
+				"CTags: Show Symbols (all)"
+			],
+			[
+				"outline",
+				"Browse Mode: Outline (Right)"
+			]
 		],
-		"width": 0.0
+		"width": 583.0
 	},
 	"console":
 	{
@@ -175,7 +181,7 @@
 	],
 	"find":
 	{
-		"height": 36.0
+		"height": 39.0
 	},
 	"find_in_files":
 	{
@@ -195,6 +201,67 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"lines.cbeg",
+			"filterLines",
+			"lineType",
+			"filterLin",
+			"-> bool",
+			"Pred",
+			"filterL",
+			"lINE<",
+			"filterLines",
+			"filterLine",
+			"ilterLine",
+			"filterLine",
+			"filterLines",
+			"filterLin",
+			"filterLines",
+			"filterLine",
+			"pair",
+			"adjacency_list",
+			"adjacent\\.",
+			"adjacent",
+			"filteredLines",
+			"adjacent",
+			"filterLine",
+			"filterLines",
+			"<< par",
+			"operator<<",
+			"parallel",
+			"<< para",
+			"<<",
+			"filterLines",
+			"adjacent",
+			"linesHier",
+			"lineHier",
+			"\\.cend",
+			"\\.cbegin",
+			"const Line",
+			"const.* Line",
+			"const.*Line",
+			"lines.cbegi",
+			"lines.cend",
+			"const Line<float>",
+			"min_dis",
+			"LineEnd",
+			"min_dis",
+			"LineEnd",
+			"min_dis",
+			"std::ssize_t",
+			"ssize_t",
+			"LineEnd",
+			"min_dis",
+			"lineDis",
+			"distances",
+			"Vec4i",
+			"ostr",
+			" list",
+			"list",
+			"std::vec",
+			"std::",
+			"main\\(",
+			"Vec4i",
+			"frame-",
 			"min_dist",
 			"dist.secon",
 			"point_dis",
@@ -261,68 +328,7 @@
 			"lineDistances",
 			"lineDis",
 			"interse",
-			"segment",
-			"intersect",
-			"EPSI",
-			"other.0",
-			"a\\[1]",
-			"a\\[0]",
-			"b\\[([0-9]+)]",
-			"intersec",
-			"intersect",
-			"angle_diff",
-			"lineDistances",
-			"lineDis",
-			"lineDistances",
-			"angle_diffs",
-			"lineDis",
-			"lineDistances",
-			"min_distance",
-			"other",
-			"lineDistances",
-			"cbeg",
-			"histogram",
-			"basic_os",
-			"<< ",
-			"lineDis",
-			"lineDistances",
-			"adja",
-			"802",
-			"filterLines",
-			"adjace",
-			"lineDistances",
-			"min_distance",
-			"lineDistances",
-			"find",
-			"Adja",
-			"iterator.*tra",
-			"lines;",
-			"lines;\t",
-			"accumulat",
-			"drawAllLines",
-			"HSVtoRGB",
-			"drawAllLines",
-			"sort",
-			"imgGrayscale",
-			"imgGray",
-			"graySca",
-			"drawAllLines",
-			"drawAllLinens",
-			"hsv",
-			"hue",
-			"length",
-			"iterator_tra",
-			"Line<floa",
-			"Container<Line<ValueT>>",
-			"template.*template",
-			"back_",
-			"filtered",
-			"length",
-			"length\\(",
-			"point_dis",
-			"length",
-			"drawAllC",
-			"um lin"
+			"segment"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -330,6 +336,15 @@
 		"regex": true,
 		"replace_history":
 		[
+			"value_type",
+			"adjacent_lines.",
+			".end",
+			".begin",
+			"Line",
+			"lines.begi",
+			"lines.end",
+			"Line<float>",
+			"int",
 			"",
 			"point_type",
 			"Line",
@@ -350,11 +365,337 @@
 	"groups":
 	[
 		{
-			"selected": 5,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 733,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								537,
+								537
+							]
+						],
+						"settings":
+						{
+							"current_file": "/home/roman/Dokumente/Sources/contours/plot-cv/src/CannyWebcam1.cpp",
+							"outline_rename_mode": false,
+							"symkeys":
+							[
+								[
+									510,
+									518
+								],
+								[
+									553,
+									563
+								],
+								[
+									854,
+									866
+								],
+								[
+									987,
+									999
+								],
+								[
+									1139,
+									1155
+								],
+								[
+									1231,
+									1241
+								],
+								[
+									2038,
+									2047
+								],
+								[
+									2150,
+									2158
+								],
+								[
+									2442,
+									2452
+								],
+								[
+									2728,
+									2743
+								],
+								[
+									3176,
+									3195
+								],
+								[
+									3725,
+									3744
+								],
+								[
+									4376,
+									4397
+								],
+								[
+									4502,
+									4515
+								],
+								[
+									4812,
+									4827
+								],
+								[
+									4999,
+									5009
+								],
+								[
+									6338,
+									6349
+								],
+								[
+									7175,
+									7185
+								],
+								[
+									8178,
+									8203
+								],
+								[
+									10334,
+									10355
+								],
+								[
+									10804,
+									10815
+								],
+								[
+									11142,
+									11156
+								],
+								[
+									11573,
+									11583
+								],
+								[
+									11886,
+									11891
+								],
+								[
+									12167,
+									12181
+								],
+								[
+									13595,
+									13608
+								],
+								[
+									13800,
+									13811
+								],
+								[
+									13977,
+									13987
+								],
+								[
+									14305,
+									14314
+								],
+								[
+									14542,
+									14563
+								],
+								[
+									15396,
+									15404
+								],
+								[
+									15462,
+									15472
+								],
+								[
+									15703,
+									15718
+								],
+								[
+									16181,
+									16193
+								],
+								[
+									16402,
+									16415
+								],
+								[
+									16820,
+									16831
+								],
+								[
+									16912,
+									16925
+								],
+								[
+									16994,
+									17004
+								],
+								[
+									17264,
+									17279
+								],
+								[
+									17387,
+									17395
+								],
+								[
+									17448,
+									17459
+								],
+								[
+									17761,
+									17772
+								],
+								[
+									17857,
+									17870
+								],
+								[
+									17939,
+									17949
+								],
+								[
+									17993,
+									18003
+								],
+								[
+									18039,
+									18047
+								],
+								[
+									18307,
+									18320
+								],
+								[
+									18449,
+									18462
+								],
+								[
+									18531,
+									18540
+								],
+								[
+									18583,
+									18593
+								],
+								[
+									18624,
+									18632
+								],
+								[
+									18926,
+									18936
+								],
+								[
+									19052,
+									19065
+								],
+								[
+									19318,
+									19322
+								],
+								[
+									23050,
+									23059
+								],
+								[
+									23093,
+									23102
+								],
+								[
+									23130,
+									23138
+								]
+							],
+							"symlist":
+							[
+								"PointVec",
+								"Point2fVec",
+								"coordPointer",
+								"coordPointer",
+								"simplifyPolyline",
+								"coord_type",
+								"out_point",
+								"out_hier",
+								"out_points",
+								"filter_contours",
+								"polylineFromContour",
+								"cv::Scalar\nHSVtoRGB",
+								"svg::Color\nfromScalar",
+								"convertPoints",
+								"transformPoints",
+								"export_svg",
+								"polygonArea",
+								"applyCLAHE",
+								"BrightnessAndContrastAuto",
+								"cv::Mat\nimageToBinary",
+								"getContours",
+								"getMassCenters",
+								"ToPointVec",
+								"angle",
+								"findRectangles",
+								"drawPolylines",
+								"invertColor",
+								"houghLines",
+								"drawLines",
+								"cornerHarrisDetection",
+								"trackbar",
+								"writeImage",
+								"drawAllContours",
+								"drawAllLines",
+								"iterator_type",
+								"filterLines",
+								"iterator_type",
+								"value_type",
+								"PredicateTraits",
+								" function",
+								"filterLines",
+								"angle_diffs",
+								"iterator_type",
+								"point_type",
+								"value_type",
+								"ret_type",
+								"lineDistances",
+								"iterator_type",
+								"line_type",
+								"value_type",
+								"ret_type",
+								"operator<<",
+								"iterator_type",
+								"main",
+								"line_type",
+								"line_list",
+								"ref_list"
+							],
+							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 1,
 					"file": "/home/roman/lotto/utils/dom.js",
 					"semi_transient": false,
 					"settings":
@@ -389,27 +730,27 @@
 							"use_tab_stops": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 51570.0,
+						"translation.y": 31314.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
-					"buffer": 1,
+					"buffer": 2,
 					"file": "src/CannyWebcam1.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 30303,
+						"buffer_size": 31253,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								25971,
-								25971
+								17761,
+								17772
 							]
 						],
 						"settings":
@@ -436,14 +777,14 @@
 							}
 						},
 						"translation.x": 0.0,
-						"translation.y": 21653.0,
+						"translation.y": 9629.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
+					"buffer": 3,
 					"file": "polygon.cpp",
 					"semi_transient": false,
 					"settings":
@@ -477,27 +818,27 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 5152.0,
+						"translation.y": 3128.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 4,
 					"file": "src/psimpl.h",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 72234,
+						"buffer_size": 70996,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								9695,
-								9695
+								13409,
+								13409
 							]
 						],
 						"settings":
@@ -518,27 +859,27 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 8344.0,
+						"translation.y": 6501.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 5,
 					"file": "src/line.h",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9073,
+						"buffer_size": 9722,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								8138,
-								8138
+								9722,
+								9722
 							]
 						],
 						"settings":
@@ -565,97 +906,10 @@
 							}
 						},
 						"translation.x": 0.0,
-						"translation.y": 8465.0,
+						"translation.y": 6088.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2620,
-						"regions":
-						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										198,
-										206
-									],
-									[
-										449,
-										457
-									],
-									[
-										465,
-										473
-									],
-									[
-										599,
-										607
-									],
-									[
-										833,
-										841
-									],
-									[
-										1157,
-										1165
-									],
-									[
-										1444,
-										1452
-									],
-									[
-										1626,
-										1634
-									],
-									[
-										1816,
-										1824
-									],
-									[
-										2196,
-										2204
-									],
-									[
-										2529,
-										2537
-									]
-								],
-								"scope": ""
-							}
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"detect_indentation": false,
-							"line_numbers": false,
-							"output_tag": 1,
-							"result_base_dir": "",
-							"result_file_regex": "^([^ \t].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -694,7 +948,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -771,10 +1025,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 32041.0,
+						"translation.y": 19457.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
@@ -812,7 +1066,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3276.0,
+						"translation.y": 1632.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 9,
@@ -823,7 +1077,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 36.0
+		"height": 25.0
 	},
 	"input":
 	{
@@ -834,20 +1088,29 @@
 		"cells":
 		[
 			[
+				2,
+				0,
+				3,
+				2
+			],
+			[
 				0,
 				0,
-				1,
-				1
+				2,
+				2
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.2,
+			0.8,
 			1.0
 		],
 		"rows":
 		[
 			0.0,
+			0.5,
 			1.0
 		]
 	},
@@ -868,7 +1131,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 68.0
+		"height": 74.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -914,7 +1177,7 @@
 		],
 		"width": 0.0
 	},
-	"selected_group": 0,
+	"selected_group": 1,
 	"settings":
 	{
 	},

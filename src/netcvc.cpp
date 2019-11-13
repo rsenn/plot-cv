@@ -76,8 +76,7 @@ main(int argc, char** argv) {
   cout << "\n--> Press 'q' to quit. \n\n" << endl;
 
   /* print the width and height of the frame, needed by the client */
-  cout << "\n--> Transferring  (" << img0.cols << "x" << img0.rows << ")  images to the:  " << server_ip << ":"
-       << server_port << endl;
+  cout << "\n--> Transferring  (" << img0.cols << "x" << img0.rows << ")  images to the:  " << server_ip << ":" << server_port << endl;
 
   namedWindow("stream_client", CV_WINDOW_AUTOSIZE);
   flip(img0, img0, 1);

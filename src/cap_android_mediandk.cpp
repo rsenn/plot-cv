@@ -76,12 +76,7 @@ public:
           }
           auto presentationTimeUs = AMediaExtractor_getSampleTime(mediaExtractor.get());
 
-          AMediaCodec_queueInputBuffer(mediaCodec.get(),
-                                       bufferIndex,
-                                       0,
-                                       sampleSize,
-                                       presentationTimeUs,
-                                       sawInputEOS ? AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM : 0);
+          AMediaCodec_queueInputBuffer(mediaCodec.get(), bufferIndex, 0, sampleSize, presentationTimeUs, sawInputEOS ? AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM : 0);
           AMediaExtractor_advance(mediaExtractor.get());
         }
       }
@@ -91,8 +86,7 @@ public:
         auto bufferIndex = AMediaCodec_dequeueOutputBuffer(mediaCodec.get(), &info, 0);
         if(bufferIndex >= 0) {
           size_t bufferSize = 0;
-          auto mediaFormat =
-              std::shared_ptr<AMediaFormat>(AMediaCodec_getOutputFormat(mediaCodec.get()), deleter_AMediaFormat);
+          auto mediaFormat = std::shared_ptr<AMediaFormat>(AMediaCodec_getOutputFormat(mediaCodec.get()), deleter_AMediaFormat);
           AMediaFormat_getInt32(mediaFormat.get(), AMEDIAFORMAT_KEY_WIDTH, &frameWidth);
           AMediaFormat_getInt32(mediaFormat.get(), AMEDIAFORMAT_KEY_HEIGHT, &frameHeight);
           AMediaFormat_getInt32(mediaFormat.get(), AMEDIAFORMAT_KEY_COLOR_FORMAT, &colorFormat);
@@ -202,8 +196,7 @@ public:
 
     LOGV("input has %d tracks", numtracks);
     for(int i = 0; i < numtracks; i++) {
-      auto format =
-          std::shared_ptr<AMediaFormat>(AMediaExtractor_getTrackFormat(mediaExtractor.get(), i), deleter_AMediaFormat);
+      auto format = std::shared_ptr<AMediaFormat>(AMediaExtractor_getTrackFormat(mediaExtractor.get(), i), deleter_AMediaFormat);
       if(!format) {
         continue;
       }

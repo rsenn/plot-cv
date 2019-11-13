@@ -34,14 +34,7 @@ on_mouse(int event, int x, int y, int, void*) {
 
   // make mask using floodFill
   mask = Scalar::all(0);
-  floodFill(frame,
-            mask,
-            p,
-            Scalar(255, 255, 255),
-            0,
-            Scalar(low_diff, low_diff, low_diff),
-            Scalar(high_diff, high_diff, high_diff),
-            flags);
+  floodFill(frame, mask, p, Scalar(255, 255, 255), 0, Scalar(low_diff, low_diff, low_diff), Scalar(high_diff, high_diff, high_diff), flags);
 
   // find the H and S range of piexels selected by floodFill
   Mat channels[3];

@@ -58,8 +58,7 @@ int col_count = 0;
 int grid_width = 0; //格子的宽高
 int grid_height = 0;
 
-int image_fliped_direc =
-    -2; //定义原始图像翻转的形式，默认不进行翻转，如果检测到位-2则不执行翻转处理，因为小于0都会进行翻转
+int image_fliped_direc = -2; //定义原始图像翻转的形式，默认不进行翻转，如果检测到位-2则不执行翻转处理，因为小于0都会进行翻转
 
 void DrawRectangle(cv::Mat& img, cv::Rect box);
 void on_MouseHandle(int event, int x, int y, int flags, void* param);
@@ -132,15 +131,11 @@ saveConfig() {
   cvWriteString(fs, "commit_gain", "洛日摄像头的增益设置0-100");
   cvWriteInt(fs, "camera_GAIN", camera_GAIN);
 
-  cvWriteString(fs,
-                "row_resolution_commit",
-                "定义格子的横向精度，是一个百分比值1-100，同时需要将modeScan设置为1，建议取可以被100整除的值");
+  cvWriteString(fs, "row_resolution_commit", "定义格子的横向精度，是一个百分比值1-100，同时需要将modeScan设置为1，建议取可以被100整除的值");
   cvWriteInt(fs, "row_resolution", row_resolution);
   cvWriteString(fs, "col_resolution_commit", "定义格子的竖向精度，是一个百分比值1-100");
   cvWriteInt(fs, "col_resolution", col_resolution);
-  cvWriteString(fs,
-                "image_fliped_direc_commit",
-                "定义原始图像翻转的形式，0: 沿横向x轴翻转, 1: 沿竖向y轴翻转, -1: x、y轴同时翻转, -2不进行翻转");
+  cvWriteString(fs, "image_fliped_direc_commit", "定义原始图像翻转的形式，0: 沿横向x轴翻转, 1: 沿竖向y轴翻转, -1: x、y轴同时翻转, -2不进行翻转");
   cvWriteInt(fs, "image_fliped_direc", image_fliped_direc);
   cvWriteString(fs, "g_medianBlurGridThresh_commit", "图像滤波因子，数值越大则过滤越好");
   cvWriteInt(fs, "g_medianBlurGridThresh", g_medianBlurGridThresh);
@@ -280,8 +275,7 @@ main(int argc, char** argv) {
       // 循环遍历所有的部分
       for(unsigned int i = 0; i < contours.size(); i++) {
         approxPolyDP(cv::Mat(contours[i]), contours_poly[i], 3, true); //用指定精度逼近多边形曲线
-        for(std::vector<cv::Point>::const_iterator itp = contours_poly[i].begin(); itp != contours_poly[i].end();
-            itp++) {
+        for(std::vector<cv::Point>::const_iterator itp = contours_poly[i].begin(); itp != contours_poly[i].end(); itp++) {
           setGridStatus(itp->x, itp->y, grid_array);
         }
       }
@@ -398,8 +392,7 @@ main(int argc, char** argv) {
       } else if(readPicCount == 100) {
         readPicCount++;
         cvtColor(g_srcImage, hsvImage_base, COLOR_BGR2HSV); //【3】 将图像由BGR色彩空间转换到 HSV色彩空间
-        hsvImage_halfDown =
-            hsvImage_base(Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
+        hsvImage_halfDown = hsvImage_base(Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
         if(showOutput) { //显示部分框选画面
           imshow("ROI", hsvImage_halfDown);
         }
@@ -410,21 +403,12 @@ main(int argc, char** argv) {
         cvtColor(g_srcImage, hsvImage_base, COLOR_BGR2HSV);
 
         //【4】创建包含基准图像下半部的半身图像(HSV格式)  从原始图像中提取感兴趣的区域，每帧图像与模板区域进行比较
-        hsvImage_halfDown =
-            hsvImage_base(Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
+        hsvImage_halfDown = hsvImage_base(Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
         if(showOutput) { //显示部分框选画面
           imshow("ROI", hsvImage_halfDown);
         }
         // 【5】分别计算基准图像，半身基准图像的HSV直方图:
-        calcHist(&hsvImage_base_template,
-                 1,
-                 channels,
-                 cv::Mat(),
-                 baseHist,
-                 2,
-                 histSize,
-                 ranges,
-                 true,
+        calcHist(&hsvImage_base_template, 1, channels, cv::Mat(), baseHist, 2, histSize, ranges, true,
                  false); //计算模板图像的直方图
         normalize(baseHist, baseHist, 0, 1, NORM_MINMAX, -1, cv::Mat());
 
@@ -491,10 +475,7 @@ setGridStatus(int x, int y, int grid_array[][100]) {
 //-----------------------------------------------------------------------------------------------
 void
 DrawRectangle(cv::Mat& img, cv::Rect box) {
-  cv::rectangle(img,
-                box.tl(),
-                box.br(),
-                cv::Scalar(g_rng.uniform(0, 255), g_rng.uniform(0, 255), g_rng.uniform(0, 255))); //随机颜色
+  cv::rectangle(img, box.tl(), box.br(), cv::Scalar(g_rng.uniform(0, 255), g_rng.uniform(0, 255), g_rng.uniform(0, 255))); //随机颜色
 }
 void
 on_MouseHandle(int event, int x, int y, int flags, void* param) {
@@ -548,8 +529,7 @@ on_MouseHandle(int event, int x, int y, int flags, void* param) {
       grid_height = (RIGHT_BOTTOM_Y - LEFT_TOP_Y) / row_count;
       saveConfig(); //写入文件
       if(showOutput) {
-        cout << "--起点x = " << g_rectangle.x << ", y = " << g_rectangle.y << "， 区域宽w = " << g_rectangle.width
-             << ", h = " << g_rectangle.height << endl;
+        cout << "--起点x = " << g_rectangle.x << ", y = " << g_rectangle.y << "， 区域宽w = " << g_rectangle.width << ", h = " << g_rectangle.height << endl;
       }
     } break;
   }

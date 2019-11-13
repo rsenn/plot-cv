@@ -163,8 +163,7 @@ main(int argc, char** argv) {
       // chekc the speed by calculating the mean speed of all iterations
       AvrgTime.first += ((double)getTickCount() - tick) / getTickFrequency();
       AvrgTime.second++;
-      cout << "\rTime detection=" << 1000 * AvrgTime.first / AvrgTime.second
-           << " milliseconds nmarkers=" << TheMarkers.size() << std::flush;
+      cout << "\rTime detection=" << 1000 * AvrgTime.first / AvrgTime.second << " milliseconds nmarkers=" << TheMarkers.size() << std::flush;
 
       // print marker info and draw the markers in image
       TheInputImage.copyTo(TheInputImageCopy);
@@ -287,8 +286,7 @@ cvTackBarEvents(int pos, void*) {
 
   // draw a 3d cube in each marker if there is 3d info
   if(TheCameraParameters.isValid())
-    for(unsigned int i = 0; i < TheMarkers.size(); i++)
-      CvDrawingUtils::draw3dCube(TheInputImageCopy, TheMarkers[i], TheCameraParameters);
+    for(unsigned int i = 0; i < TheMarkers.size(); i++) CvDrawingUtils::draw3dCube(TheInputImageCopy, TheMarkers[i], TheCameraParameters);
 
   cv::imshow("in", TheInputImageCopy);
   cv::imshow("thres", MDetector.getThresholdedImage());

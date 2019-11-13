@@ -316,7 +316,8 @@ createCookBook(cv::Mat staveReg, int rightIndex) {
 
     /*namedWindow( "Half Note", CV_WINDOW_AUTOSIZE );
     imshow( "Half Note", templateHalf);
-    waitKey()*/;
+    waitKey()*/
+    ;
   }
 
   if(rightIndex == 6) {
@@ -328,7 +329,8 @@ createCookBook(cv::Mat staveReg, int rightIndex) {
     templateHole = templateHole.colRange(startCol, endCol);
     /* namedWindow( "Whole Note", CV_WINDOW_AUTOSIZE );
     imshow( "Whole Note", templateHole);
-    waitKey()*/;
+    waitKey()*/
+    ;
   }
 }
 void
@@ -390,8 +392,7 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
     namedWindow(result_window, CV_WINDOW_AUTOSIZE);
     imshow(result_window, result);
     waitKey();
-    if(boundRect[i].area() >= templateQuarter.size[0] * templateQuarter.size[1] &&
-       boundRect[i].area() <= 3 * (templateQuarter.size[0] * templateQuarter.size[1])) {
+    if(boundRect[i].area() >= templateQuarter.size[0] * templateQuarter.size[1] && boundRect[i].area() <= 3 * (templateQuarter.size[0] * templateQuarter.size[1])) {
       // know you're in business
 
       // construct a new cv::Mat from boundRect coordinates in staveRegion
@@ -437,13 +438,7 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
 
       if(maxVal > NOTE_THRESHOLD) {
 
-        rectangle(staveReg,
-                  cv::Point(matchLoc.x + boundRect[i].tl().x, boundRect[i].tl().y + matchLoc.y),
-                  cv::Point(matchLoc.x + boundRect[i].br().x, boundRect[i].br().y + matchLoc.y),
-                  Scalar::all(0),
-                  2,
-                  8,
-                  0);
+        rectangle(staveReg, cv::Point(matchLoc.x + boundRect[i].tl().x, boundRect[i].tl().y + matchLoc.y), cv::Point(matchLoc.x + boundRect[i].br().x, boundRect[i].br().y + matchLoc.y), Scalar::all(0), 2, 8, 0);
       }
 
       imshow("stave section", staveReg);

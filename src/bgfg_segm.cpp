@@ -9,12 +9,11 @@ using namespace cv;
 
 static void
 help() {
-  printf(
-      "\nDo background segmentation, especially demonstrating the use of cvUpdateBGStatModel().\n"
-      "Learns the background at the start and then segments.\n"
-      "Learning is togged by the space key. Will read from file or camera\n"
-      "Usage: \n"
-      "			./bgfg_segm [--camera]=<use camera, if this key is present>, [--file_name]=<path to movie file> \n\n");
+  printf("\nDo background segmentation, especially demonstrating the use of cvUpdateBGStatModel().\n"
+         "Learns the background at the start and then segments.\n"
+         "Learning is togged by the space key. Will read from file or camera\n"
+         "Usage: \n"
+         "			./bgfg_segm [--camera]=<use camera, if this key is present>, [--file_name]=<path to movie file> \n\n");
 }
 
 const char* keys = {"{c |camera   |true    | use camera or not}"

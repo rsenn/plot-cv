@@ -108,10 +108,7 @@ main(int argc, char** argv) {
     rects_scaled.clear();
 
     for(int j = 0; j < (int)rects.size(); j++) {
-      rects_scaled.push_back(Rect((int)(rects[j].x / scale),
-                                  (int)(rects[j].y / scale),
-                                  (int)(rects[j].width / scale),
-                                  (int)(rects[j].height / scale)));
+      rects_scaled.push_back(Rect((int)(rects[j].x / scale), (int)(rects[j].y / scale), (int)(rects[j].width / scale), (int)(rects[j].height / scale)));
     }
     rects = rects_scaled;
     fittime = 0;

@@ -173,12 +173,8 @@ cvCreateCameraCapture(int index) {
 
   // try every possibly installed camera API
   for(int i = 0; domains[i] >= 0; i++) {
-#if defined(HAVE_DSHOW) || defined(HAVE_MSMF) || defined(HAVE_TYZX) || defined(HAVE_VFW) || defined(HAVE_LIBV4L) ||    \
-    defined(HAVE_CAMV4L) || defined(HAVE_CAMV4L2) || defined(HAVE_VIDEOIO) || defined(HAVE_GSTREAMER) ||               \
-    defined(HAVE_DC1394_2) || defined(HAVE_DC1394) || defined(HAVE_CMU1394) || defined(HAVE_MIL) ||                    \
-    defined(HAVE_QUICKTIME) || defined(HAVE_QTKIT) || defined(HAVE_UNICAP) || defined(HAVE_PVAPI) ||                   \
-    defined(HAVE_OPENNI) || defined(HAVE_XIMEA) || defined(HAVE_AVFOUNDATION) ||                                       \
-    defined(HAVE_ANDROID_NATIVE_CAMERA) || defined(HAVE_GIGE_API) || defined(HAVE_INTELPERC) || (0)
+#if defined(HAVE_DSHOW) || defined(HAVE_MSMF) || defined(HAVE_TYZX) || defined(HAVE_VFW) || defined(HAVE_LIBV4L) || defined(HAVE_CAMV4L) || defined(HAVE_CAMV4L2) || defined(HAVE_VIDEOIO) || defined(HAVE_GSTREAMER) || defined(HAVE_DC1394_2) || defined(HAVE_DC1394) || defined(HAVE_CMU1394) ||        \
+    defined(HAVE_MIL) || defined(HAVE_QUICKTIME) || defined(HAVE_QTKIT) || defined(HAVE_UNICAP) || defined(HAVE_PVAPI) || defined(HAVE_OPENNI) || defined(HAVE_XIMEA) || defined(HAVE_AVFOUNDATION) || defined(HAVE_ANDROID_NATIVE_CAMERA) || defined(HAVE_GIGE_API) || defined(HAVE_INTELPERC) || (0)
     // local variable to memorize the captured device
     CvCapture* capture;
 #endif
@@ -442,8 +438,7 @@ cvCreateVideoWriter(const char* filename, int fourcc, double fps, CvSize frameSi
     result = cvCreateVideoWriter_GStreamer(filename, fourcc, fps, frameSize, is_color);
 #endif
 
-#if !defined(HAVE_FFMPEG) && !defined(HAVE_VFW) && !defined(HAVE_MSMF) && !defined(HAVE_AVFOUNDATION) &&               \
-    !defined(HAVE_QUICKTIME) && !defined(HAVE_QTKIT) && !defined(HAVE_GSTREAMER)
+#if !defined(HAVE_FFMPEG) && !defined(HAVE_VFW) && !defined(HAVE_MSMF) && !defined(HAVE_AVFOUNDATION) && !defined(HAVE_QUICKTIME) && !defined(HAVE_QTKIT) && !defined(HAVE_GSTREAMER)
   // If none of the writers is used
   // these statements suppress 'unused parameter' warnings.
   (void)frameSize;
@@ -553,9 +548,7 @@ VideoCapture::get(int propId) {
 
 VideoWriter::VideoWriter() {}
 
-VideoWriter::VideoWriter(const string& filename, int fourcc, double fps, Size frameSize, bool isColor) {
-  open(filename, fourcc, fps, frameSize, isColor);
-}
+VideoWriter::VideoWriter(const string& filename, int fourcc, double fps, Size frameSize, bool isColor) { open(filename, fourcc, fps, frameSize, isColor); }
 
 void
 VideoWriter::release() {

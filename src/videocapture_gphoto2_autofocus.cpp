@@ -65,8 +65,7 @@ struct FocusState {
 
 static ostream&
 operator<<(ostream& os, FocusState& state) {
-  return os << "RATE=" << state.rate << "\tSTEP=" << state.step * state.direction
-            << "\tLast change=" << state.lastDirectionChange << "\tstepToLastMax=" << state.stepToLastMax;
+  return os << "RATE=" << state.rate << "\tSTEP=" << state.step * state.direction << "\tLast change=" << state.lastDirectionChange << "\tstepToLastMax=" << state.stepToLastMax;
 }
 
 static FocusState
@@ -165,9 +164,7 @@ correctFocus(bool lastSucceeded, FocusState& state, double rate) {
       state.direction *= -1;
       state.step = static_cast<int>(static_cast<double>(state.step) * 0.75);
       state.lastDirectionChange = 0;
-    } else if((rate + epsylon < state.rateMax) &&
-              ((state.lastDirectionChange > 3) ||
-               ((state.step < (state.minFocusStep * 1.5)) && state.stepToLastMax > state.step))) {
+    } else if((rate + epsylon < state.rateMax) && ((state.lastDirectionChange > 3) || ((state.step < (state.minFocusStep * 1.5)) && state.stepToLastMax > state.step))) {
       // I've done 3 steps (or I'm finishing) without improvement, go back to max.
       state.direction = state.stepToLastMax >= 0 ? 1 : -1;
       state.step = static_cast<int>(static_cast<double>(state.step) * 0.75);
@@ -283,8 +280,7 @@ main(int argc, char** argv) {
       cout << "This is not GPHOTO2 device." << endl;
       return -2;
     }
-    cout << "List of camera settings: " << endl
-         << (const char*)(intptr_t)cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) << endl;
+    cout << "List of camera settings: " << endl << (const char*)(intptr_t)cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) << endl;
     cap.set(CAP_PROP_GPHOTO2_COLLECT_MSGS, true);
   }
 
@@ -375,9 +371,7 @@ main(int argc, char** argv) {
   }
 
   if(GlobalArgs.verbose) {
-    cout << "Captured " << (int)cap.get(CAP_PROP_FRAME_COUNT) << " frames" << endl
-         << "in " << (int)(cap.get(CAP_PROP_POS_MSEC) / 1e2) << " seconds," << endl
-         << "at avg speed " << (cap.get(CAP_PROP_FPS)) << " fps." << endl;
+    cout << "Captured " << (int)cap.get(CAP_PROP_FRAME_COUNT) << " frames" << endl << "in " << (int)(cap.get(CAP_PROP_POS_MSEC) / 1e2) << " seconds," << endl << "at avg speed " << (cap.get(CAP_PROP_FPS)) << " fps." << endl;
   }
 
   return 0;

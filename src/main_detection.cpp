@@ -203,13 +203,7 @@ main(int argc, char* argv[]) {
     if(good_matches.size() > 0) { // None matches, then RANSAC crashes
 
       // -- Step 3: Estimate the pose using RANSAC approach
-      pnp_detection.estimatePoseRANSAC(list_points3d_model_match,
-                                       list_points2d_scene_match,
-                                       pnpMethod,
-                                       inliers_idx,
-                                       iterationsCount,
-                                       reprojectionError,
-                                       confidence);
+      pnp_detection.estimatePoseRANSAC(list_points3d_model_match, list_points2d_scene_match, pnpMethod, inliers_idx, iterationsCount, reprojectionError, confidence);
 
       // -- Step 4: Catch the inliers keypoints to draw
       for(int inliers_index = 0; inliers_index < inliers_idx.rows; ++inliers_index) {

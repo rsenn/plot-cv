@@ -56,20 +56,19 @@ public:
 // Class that deals with fitting an ellipse, RANSAC and drawing the ellipse in the image
 class ellipseFinder {
 private:
-  cv::Mat img;                                  // input image
-  std::vector<std::vector<cv::Point>> contours; // contours in image
-  cv::Mat Q;                                    // cv::Matrix representing conic section of detected ellipse
-  cv::Mat fit_ellipse(std::vector<cv::Point>);  // function to fit ellipse to a contour
-  cv::Mat RANSACellipse(std::vector<std::vector<cv::Point>>); // function to find ellipse in contours using RANSAC
-  bool is_good_ellipse(cv::Mat); // function that determines whether given conic section represents a valid ellipse
-  std::vector<std::vector<cv::Point>>
-      choose_random(std::vector<cv::Point>); // function to choose points at random from contour
+  cv::Mat img;                                                               // input image
+  std::vector<std::vector<cv::Point>> contours;                              // contours in image
+  cv::Mat Q;                                                                 // cv::Matrix representing conic section of detected ellipse
+  cv::Mat fit_ellipse(std::vector<cv::Point>);                               // function to fit ellipse to a contour
+  cv::Mat RANSACellipse(std::vector<std::vector<cv::Point>>);                // function to find ellipse in contours using RANSAC
+  bool is_good_ellipse(cv::Mat);                                             // function that determines whether given conic section represents a valid ellipse
+  std::vector<std::vector<cv::Point>> choose_random(std::vector<cv::Point>); // function to choose points at random from contour
   std::vector<float> distance(cv::Mat,
                               std::vector<cv::Point>); // function to return distance of points from the ellipse
-  float distance(cv::Mat, cv::Point); // overloaded function to return signed distance of point from ellipse
-  void draw_ellipse(cv::Mat);         // function to draw ellipse in an image
-  std::vector<cv::Point> ellipse_contour(cv::Mat);    // function to convert equation of ellipse to a contour of points
-  void draw_inliers(cv::Mat, std::vector<cv::Point>); // function to debug inliers
+  float distance(cv::Mat, cv::Point);                  // overloaded function to return signed distance of point from ellipse
+  void draw_ellipse(cv::Mat);                          // function to draw ellipse in an image
+  std::vector<cv::Point> ellipse_contour(cv::Mat);     // function to convert equation of ellipse to a contour of points
+  void draw_inliers(cv::Mat, std::vector<cv::Point>);  // function to debug inliers
 
   // RANSAC parameters
   int iter, min_inliers, N;
@@ -217,16 +216,13 @@ ellipseFinder::fit_ellipse(std::vector<cv::Point> c) {
 
 bool
 ellipseFinder::is_good_ellipse(cv::Mat Q) {
-  float a = Q.at<float>(0, 0), b = (Q.at<float>(1, 0)) / 2, c = Q.at<float>(2, 0), d = (Q.at<float>(3, 0)) / 2,
-        f = (Q.at<float>(4, 0)) / 2, g = Q.at<float>(5, 0);
+  float a = Q.at<float>(0, 0), b = (Q.at<float>(1, 0)) / 2, c = Q.at<float>(2, 0), d = (Q.at<float>(3, 0)) / 2, f = (Q.at<float>(4, 0)) / 2, g = Q.at<float>(5, 0);
 
   if(b * b - a * c == 0)
     return false;
 
-  float thresh = 0.09, num = 2 * (a * f * f + c * d * d + g * b * b - 2 * b * d * f - a * c * g),
-        den1 = (b * b - a * c) * (sqrt((a - c) * (a - c) + 4 * b * b) - (a + c)),
-        den2 = (b * b - a * c) * (-sqrt((a - c) * (a - c) + 4 * b * b) - (a + c)), a_len = sqrt(num / den1),
-        b_len = sqrt(num / den2), major_axis = max(a_len, b_len), minor_axis = min(a_len, b_len);
+  float thresh = 0.09, num = 2 * (a * f * f + c * d * d + g * b * b - 2 * b * d * f - a * c * g), den1 = (b * b - a * c) * (sqrt((a - c) * (a - c) + 4 * b * b) - (a + c)), den2 = (b * b - a * c) * (-sqrt((a - c) * (a - c) + 4 * b * b) - (a + c)), a_len = sqrt(num / den1), b_len = sqrt(num / den2),
+        major_axis = max(a_len, b_len), minor_axis = min(a_len, b_len);
 
   if(minor_axis < thresh * major_axis || num / den1 < 0.f || num / den2 < 0.f || major_axis > max(img.rows, img.cols))
     return false;
@@ -290,8 +286,7 @@ ellipseFinder::RANSACellipse(std::vector<std::vector<cv::Point>> contours) {
 
 std::vector<cv::Point>
 ellipseFinder::ellipse_contour(cv::Mat Q) {
-  float a = Q.at<float>(0, 0), b = (Q.at<float>(1, 0)) / 2, c = Q.at<float>(2, 0), d = (Q.at<float>(3, 0)) / 2,
-        f = (Q.at<float>(4, 0)) / 2, g = Q.at<float>(5, 0);
+  float a = Q.at<float>(0, 0), b = (Q.at<float>(1, 0)) / 2, c = Q.at<float>(2, 0), d = (Q.at<float>(3, 0)) / 2, f = (Q.at<float>(4, 0)) / 2, g = Q.at<float>(5, 0);
 
   std::vector<cv::Point> ellipse;
   if(b * b - a * c == 0) {
@@ -301,10 +296,8 @@ ellipseFinder::ellipse_contour(cv::Mat Q) {
 
   cv::Point2f center((c * d - b * f) / (b * b - a * c), (a * f - b * d) / (b * b - a * c));
 
-  float num = 2 * (a * f * f + c * d * d + g * b * b - 2 * b * d * f - a * c * g),
-        den1 = (b * b - a * c) * (sqrt((a - c) * (a - c) + 4 * b * b) - (a + c)),
-        den2 = (b * b - a * c) * (-sqrt((a - c) * (a - c) + 4 * b * b) - (a + c)), a_len = sqrt(num / den1),
-        b_len = sqrt(num / den2), major_axis = max(a_len, b_len), minor_axis = min(a_len, b_len);
+  float num = 2 * (a * f * f + c * d * d + g * b * b - 2 * b * d * f - a * c * g), den1 = (b * b - a * c) * (sqrt((a - c) * (a - c) + 4 * b * b) - (a + c)), den2 = (b * b - a * c) * (-sqrt((a - c) * (a - c) + 4 * b * b) - (a + c)), a_len = sqrt(num / den1), b_len = sqrt(num / den2),
+        major_axis = max(a_len, b_len), minor_axis = min(a_len, b_len);
 
   // angle of rotation of ellipse
   float alpha = 0.f;

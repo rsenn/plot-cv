@@ -885,8 +885,7 @@ App::run() {
       process_frame_with_open_cl(m_frameGray, useBuffer(), &m_mem_obj);
 
       if(useBuffer())
-        process_cl_buffer_with_opencv(
-            m_mem_obj, m_frameGray.step[0], m_frameGray.rows, m_frameGray.cols, m_frameGray.type(), uframe);
+        process_cl_buffer_with_opencv(m_mem_obj, m_frameGray.step[0], m_frameGray.rows, m_frameGray.cols, m_frameGray.type(), uframe);
       else
         process_cl_image_with_opencv(m_mem_obj, uframe);
     } else {
@@ -897,22 +896,12 @@ App::run() {
 
     uframe.copyTo(img_to_show);
 
-    putText(img_to_show,
-            "Version : " + m_platformInfo.Version(),
-            Point(5, 30),
-            FONT_HERSHEY_SIMPLEX,
-            1.,
-            Scalar(255, 100, 0),
-            2);
-    putText(
-        img_to_show, "Name : " + m_platformInfo.Name(), Point(5, 60), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
-    putText(
-        img_to_show, "Device : " + m_deviceInfo.Name(), Point(5, 90), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
+    putText(img_to_show, "Version : " + m_platformInfo.Version(), Point(5, 30), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
+    putText(img_to_show, "Name : " + m_platformInfo.Name(), Point(5, 60), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
+    putText(img_to_show, "Device : " + m_deviceInfo.Name(), Point(5, 90), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
     cv::String memtype = useBuffer() ? "buffer" : "image";
-    putText(
-        img_to_show, "interop with OpenCL " + memtype, Point(5, 120), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
-    putText(
-        img_to_show, "Time : " + timeStr() + " msec", Point(5, 150), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
+    putText(img_to_show, "interop with OpenCL " + memtype, Point(5, 120), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
+    putText(img_to_show, "Time : " + timeStr() + " msec", Point(5, 150), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
 
     imshow("opencl_interop", img_to_show);
 

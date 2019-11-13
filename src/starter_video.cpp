@@ -35,8 +35,7 @@ help(char** av) {
        << "\texample: " << av[0] << " 0" << endl
        << "\tYou may also pass a video file instead of a device number" << endl
        << "\texample: " << av[0] << " video.avi" << endl
-       << "\tYou can also pass the path to an image sequence and OpenCV will treat the sequence just like a video."
-       << endl
+       << "\tYou can also pass the path to an image sequence and OpenCV will treat the sequence just like a video." << endl
        << "\texample: " << av[0] << " right%%02d.jpg" << endl;
 }
 

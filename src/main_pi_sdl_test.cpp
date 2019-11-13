@@ -92,15 +92,7 @@ init_sdl() {
     exit(EXIT_FAILURE);
   }
 
-  result_img_surface = SDL_CreateRGBSurfaceFrom((void*)result_img.data,
-                                                result_img.cols,
-                                                result_img.rows,
-                                                24,
-                                                result_img.cols * 3,
-                                                0xff0000,
-                                                0x00ff00,
-                                                0x0000ff,
-                                                0);
+  result_img_surface = SDL_CreateRGBSurfaceFrom((void*)result_img.data, result_img.cols, result_img.rows, 24, result_img.cols * 3, 0xff0000, 0x00ff00, 0x0000ff, 0);
 
   if(result_img_surface == NULL) {
     std::cerr << "error: SDL_CreateRGBSurfaceFrom() failed..." << std::endl;

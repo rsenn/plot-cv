@@ -131,8 +131,7 @@ foundCorners(std::vector<Cvcv::Point2D32f>* srcImagecv::Points, const cv::Mat& s
 
       for(size_t j = 0; j < contours[i].size(); j++) p += contours[i][j];
 
-      srcImagecv::Points_temp.at(i) =
-          cvcv::Point2D32f(float(p.x) / contours[i].size(), float(p.y) / contours[i].size());
+      srcImagecv::Points_temp.at(i) = cvcv::Point2D32f(float(p.x) / contours[i].size(), float(p.y) / contours[i].size());
     }
 
     // Need to keep the same order
@@ -178,16 +177,13 @@ foundCorners(std::vector<Cvcv::Point2D32f>* srcImagecv::Points, const cv::Mat& s
       ss.str("");
 
       // new coordinate system in the middle of the frame and reversed (camera coordinate system)
-      srcImagecv::Points->at(i) = cvcv::Point2D32f(srcImagecv::Points_temp.at(i).x - source.cols / 2,
-                                                   source.rows / 2 - srcImagecv::Points_temp.at(i).y);
+      srcImagecv::Points->at(i) = cvcv::Point2D32f(srcImagecv::Points_temp.at(i).x - source.cols / 2, source.rows / 2 - srcImagecv::Points_temp.at(i).y);
     }
   }
 }
 
 static void
-createOpenGLcv::MatrixFrom(float* posePOSIT,
-                           const Cvcv::Matr32f& rotationcv::Matrix,
-                           const CvVect32f& translationVector) {
+createOpenGLcv::MatrixFrom(float* posePOSIT, const Cvcv::Matr32f& rotationcv::Matrix, const CvVect32f& translationVector) {
   // coordinate system returned is relative to the first 3D input point
   for(int f = 0; f < 3; f++)
     for(int c = 0; c < 3; c++) posePOSIT[c * 4 + f] = rotationcv::Matrix[f * 3 + c]; // transposed

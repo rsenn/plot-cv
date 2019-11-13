@@ -376,9 +376,8 @@ struct CvCaptureCAM_V4L CV_FINAL : public CvCapture {
 /***********************   Implementations  ***************************************/
 
 CvCaptureCAM_V4L::CvCaptureCAM_V4L()
-    : deviceHandle(-1), bufferIndex(-1), FirstCapture(true), palette(0), width(0), height(0), width_set(0),
-      height_set(0), bufferSize(DEFAULT_V4L_BUFFERS), fps(0), convert_rgb(0), frame_allocated(false),
-      returnFrame(false), channelNumber(-1), normalizePropRange(false), type(V4L2_BUF_TYPE_VIDEO_CAPTURE) {
+    : deviceHandle(-1), bufferIndex(-1), FirstCapture(true), palette(0), width(0), height(0), width_set(0), height_set(0), bufferSize(DEFAULT_V4L_BUFFERS), fps(0), convert_rgb(0), frame_allocated(false), returnFrame(false), channelNumber(-1), normalizePropRange(false),
+      type(V4L2_BUF_TYPE_VIDEO_CAPTURE) {
   frame = cvIplImage();
   memset(&timestamp, 0, sizeof(timestamp));
 }
@@ -572,8 +571,7 @@ CvCaptureCAM_V4L::v4l2_create_frame() {
         size.height = size.height * 3 / 2; // "1.5" channels
         break;
       case V4L2_PIX_FMT_Y16:
-      case V4L2_PIX_FMT_Y10:
-        depth = IPL_DEPTH_16U;
+      case V4L2_PIX_FMT_Y10: depth = IPL_DEPTH_16U;
       /* fallthru */
       case V4L2_PIX_FMT_GREY: channels = 1; break;
       case V4L2_PIX_FMT_MJPEG:
@@ -717,12 +715,7 @@ CvCaptureCAM_V4L::createBuffers() {
     }
 
     buffers[n_buffers].length = buf.length;
-    buffers[n_buffers].start = mmap(NULL /* start anywhere */,
-                                    buf.length,
-                                    PROT_READ /* required */,
-                                    MAP_SHARED /* recommended */,
-                                    deviceHandle,
-                                    buf.m.offset);
+    buffers[n_buffers].start = mmap(NULL /* start anywhere */, buf.length, PROT_READ /* required */, MAP_SHARED /* recommended */, deviceHandle, buf.m.offset);
 
     if(MAP_FAILED == buffers[n_buffers].start) {
       perror("mmap");
@@ -1044,10 +1037,9 @@ bayer2rgb24(long int WIDTH, long int HEIGHT, unsigned char* src, unsigned char* 
       if((i % 2) == 0) {
         /* B */
         if((i > WIDTH) && ((i % WIDTH) > 0)) {
-          *scanpt++ =
-              (*(rawpt - WIDTH - 1) + *(rawpt - WIDTH + 1) + *(rawpt + WIDTH - 1) + *(rawpt + WIDTH + 1)) / 4; /* R */
-          *scanpt++ = (*(rawpt - 1) + *(rawpt + 1) + *(rawpt + WIDTH) + *(rawpt - WIDTH)) / 4;                 /* G */
-          *scanpt++ = *rawpt;                                                                                  /* B */
+          *scanpt++ = (*(rawpt - WIDTH - 1) + *(rawpt - WIDTH + 1) + *(rawpt + WIDTH - 1) + *(rawpt + WIDTH + 1)) / 4; /* R */
+          *scanpt++ = (*(rawpt - 1) + *(rawpt + 1) + *(rawpt + WIDTH) + *(rawpt - WIDTH)) / 4;                         /* G */
+          *scanpt++ = *rawpt;                                                                                          /* B */
         } else {
           /* first line or left column */
           *scanpt++ = *(rawpt + WIDTH + 1);                  /* R */
@@ -1083,10 +1075,9 @@ bayer2rgb24(long int WIDTH, long int HEIGHT, unsigned char* src, unsigned char* 
       } else {
         /* R */
         if(i < (WIDTH * (HEIGHT - 1)) && ((i % WIDTH) < (WIDTH - 1))) {
-          *scanpt++ = *rawpt;                                                                  /* R */
-          *scanpt++ = (*(rawpt - 1) + *(rawpt + 1) + *(rawpt - WIDTH) + *(rawpt + WIDTH)) / 4; /* G */
-          *scanpt++ =
-              (*(rawpt - WIDTH - 1) + *(rawpt - WIDTH + 1) + *(rawpt + WIDTH - 1) + *(rawpt + WIDTH + 1)) / 4; /* B */
+          *scanpt++ = *rawpt;                                                                                          /* R */
+          *scanpt++ = (*(rawpt - 1) + *(rawpt + 1) + *(rawpt - WIDTH) + *(rawpt + WIDTH)) / 4;                         /* G */
+          *scanpt++ = (*(rawpt - WIDTH - 1) + *(rawpt - WIDTH + 1) + *(rawpt + WIDTH - 1) + *(rawpt + WIDTH + 1)) / 4; /* B */
         } else {
           /* bottom line or right column */
           *scanpt++ = *rawpt;                                /* R */
@@ -1130,10 +1121,9 @@ sgbrg2rgb24(long int WIDTH, long int HEIGHT, unsigned char* src, unsigned char* 
         }
       } else { // odd pixel
         if((i > WIDTH) && ((i % WIDTH) < (WIDTH - 1))) {
-          *scanpt++ = *(rawpt);                                                                /* R */
-          *scanpt++ = (*(rawpt - 1) + *(rawpt + 1) + *(rawpt - WIDTH) + *(rawpt + WIDTH)) / 4; /* G */
-          *scanpt++ =
-              (*(rawpt - WIDTH - 1) + *(rawpt - WIDTH + 1) + *(rawpt + WIDTH - 1) + *(rawpt + WIDTH + 1)) / 4; /* B */
+          *scanpt++ = *(rawpt);                                                                                        /* R */
+          *scanpt++ = (*(rawpt - 1) + *(rawpt + 1) + *(rawpt - WIDTH) + *(rawpt + WIDTH)) / 4;                         /* G */
+          *scanpt++ = (*(rawpt - WIDTH - 1) + *(rawpt - WIDTH + 1) + *(rawpt + WIDTH - 1) + *(rawpt + WIDTH + 1)) / 4; /* B */
         } else {
           /* first line or right column */
 
@@ -1146,10 +1136,9 @@ sgbrg2rgb24(long int WIDTH, long int HEIGHT, unsigned char* src, unsigned char* 
       // odd row
       if((i % 2) == 0) { // even pixel
         if((i < (WIDTH * (HEIGHT - 1))) && ((i % WIDTH) > 0)) {
-          *scanpt++ =
-              (*(rawpt - WIDTH - 1) + *(rawpt - WIDTH + 1) + *(rawpt + WIDTH - 1) + *(rawpt + WIDTH + 1)) / 4; /* R */
-          *scanpt++ = (*(rawpt - 1) + *(rawpt + 1) + *(rawpt - WIDTH) + *(rawpt + WIDTH)) / 4;                 /* G */
-          *scanpt++ = *(rawpt);                                                                                /* B */
+          *scanpt++ = (*(rawpt - WIDTH - 1) + *(rawpt - WIDTH + 1) + *(rawpt + WIDTH - 1) + *(rawpt + WIDTH + 1)) / 4; /* R */
+          *scanpt++ = (*(rawpt - 1) + *(rawpt + 1) + *(rawpt - WIDTH) + *(rawpt + WIDTH)) / 4;                         /* G */
+          *scanpt++ = *(rawpt);                                                                                        /* B */
         } else {
           /* bottom line or left column */
 
@@ -1337,77 +1326,32 @@ CvCaptureCAM_V4L::convertToRgb(const Buffer& currentBuffer) {
   cv::Size imageSize(form.fmt.pix.width, form.fmt.pix.height);
   // Not found conversion
   switch(palette) {
-    case V4L2_PIX_FMT_YUV411P:
-      yuv411p_to_rgb24(imageSize.width,
-                       imageSize.height,
-                       (unsigned char*)(currentBuffer.start),
-                       (unsigned char*)frame.imageData);
-      return;
-    case V4L2_PIX_FMT_SBGGR8:
-      bayer2rgb24(imageSize.width,
-                  imageSize.height,
-                  (unsigned char*)currentBuffer.start,
-                  (unsigned char*)frame.imageData);
-      return;
+    case V4L2_PIX_FMT_YUV411P: yuv411p_to_rgb24(imageSize.width, imageSize.height, (unsigned char*)(currentBuffer.start), (unsigned char*)frame.imageData); return;
+    case V4L2_PIX_FMT_SBGGR8: bayer2rgb24(imageSize.width, imageSize.height, (unsigned char*)currentBuffer.start, (unsigned char*)frame.imageData); return;
 
     case V4L2_PIX_FMT_SN9C10X:
       sonix_decompress_init();
-      sonix_decompress(imageSize.width,
-                       imageSize.height,
-                       (unsigned char*)currentBuffer.start,
-                       (unsigned char*)buffers[MAX_V4L_BUFFERS].start);
+      sonix_decompress(imageSize.width, imageSize.height, (unsigned char*)currentBuffer.start, (unsigned char*)buffers[MAX_V4L_BUFFERS].start);
 
-      bayer2rgb24(imageSize.width,
-                  imageSize.height,
-                  (unsigned char*)buffers[MAX_V4L_BUFFERS].start,
-                  (unsigned char*)frame.imageData);
+      bayer2rgb24(imageSize.width, imageSize.height, (unsigned char*)buffers[MAX_V4L_BUFFERS].start, (unsigned char*)frame.imageData);
       return;
-    case V4L2_PIX_FMT_SGBRG8:
-      sgbrg2rgb24(imageSize.width,
-                  imageSize.height,
-                  (unsigned char*)currentBuffer.start,
-                  (unsigned char*)frame.imageData);
-      return;
+    case V4L2_PIX_FMT_SGBRG8: sgbrg2rgb24(imageSize.width, imageSize.height, (unsigned char*)currentBuffer.start, (unsigned char*)frame.imageData); return;
     default: break;
   }
   // Converted by cvtColor or imdecode
   cv::Mat destination(imageSize, CV_8UC3, frame.imageData);
   switch(palette) {
-    case V4L2_PIX_FMT_YVU420:
-      cv::cvtColor(cv::Mat(imageSize.height * 3 / 2, imageSize.width, CV_8U, currentBuffer.start),
-                   destination,
-                   COLOR_YUV2BGR_YV12);
-      return;
-    case V4L2_PIX_FMT_YUV420:
-      cv::cvtColor(cv::Mat(imageSize.height * 3 / 2, imageSize.width, CV_8U, currentBuffer.start),
-                   destination,
-                   COLOR_YUV2BGR_IYUV);
-      return;
-    case V4L2_PIX_FMT_NV12:
-      cv::cvtColor(cv::Mat(imageSize.height * 3 / 2, imageSize.width, CV_8U, currentBuffer.start),
-                   destination,
-                   COLOR_YUV2RGB_NV12);
-      return;
-    case V4L2_PIX_FMT_NV21:
-      cv::cvtColor(cv::Mat(imageSize.height * 3 / 2, imageSize.width, CV_8U, currentBuffer.start),
-                   destination,
-                   COLOR_YUV2RGB_NV21);
-      return;
+    case V4L2_PIX_FMT_YVU420: cv::cvtColor(cv::Mat(imageSize.height * 3 / 2, imageSize.width, CV_8U, currentBuffer.start), destination, COLOR_YUV2BGR_YV12); return;
+    case V4L2_PIX_FMT_YUV420: cv::cvtColor(cv::Mat(imageSize.height * 3 / 2, imageSize.width, CV_8U, currentBuffer.start), destination, COLOR_YUV2BGR_IYUV); return;
+    case V4L2_PIX_FMT_NV12: cv::cvtColor(cv::Mat(imageSize.height * 3 / 2, imageSize.width, CV_8U, currentBuffer.start), destination, COLOR_YUV2RGB_NV12); return;
+    case V4L2_PIX_FMT_NV21: cv::cvtColor(cv::Mat(imageSize.height * 3 / 2, imageSize.width, CV_8U, currentBuffer.start), destination, COLOR_YUV2RGB_NV21); return;
 #ifdef HAVE_JPEG
     case V4L2_PIX_FMT_MJPEG:
-    case V4L2_PIX_FMT_JPEG:
-      cv::imdecode(Mat(1, currentBuffer.buffer.bytesused, CV_8U, currentBuffer.start), IMREAD_COLOR, &destination);
-      return;
+    case V4L2_PIX_FMT_JPEG: cv::imdecode(Mat(1, currentBuffer.buffer.bytesused, CV_8U, currentBuffer.start), IMREAD_COLOR, &destination); return;
 #endif
-    case V4L2_PIX_FMT_YUYV:
-      cv::cvtColor(cv::Mat(imageSize, CV_8UC2, currentBuffer.start), destination, COLOR_YUV2BGR_YUYV);
-      return;
-    case V4L2_PIX_FMT_UYVY:
-      cv::cvtColor(cv::Mat(imageSize, CV_8UC2, currentBuffer.start), destination, COLOR_YUV2BGR_UYVY);
-      return;
-    case V4L2_PIX_FMT_RGB24:
-      cv::cvtColor(cv::Mat(imageSize, CV_8UC3, currentBuffer.start), destination, COLOR_RGB2BGR);
-      return;
+    case V4L2_PIX_FMT_YUYV: cv::cvtColor(cv::Mat(imageSize, CV_8UC2, currentBuffer.start), destination, COLOR_YUV2BGR_YUYV); return;
+    case V4L2_PIX_FMT_UYVY: cv::cvtColor(cv::Mat(imageSize, CV_8UC2, currentBuffer.start), destination, COLOR_YUV2BGR_UYVY); return;
+    case V4L2_PIX_FMT_RGB24: cv::cvtColor(cv::Mat(imageSize, CV_8UC3, currentBuffer.start), destination, COLOR_RGB2BGR); return;
     case V4L2_PIX_FMT_Y16: {
       cv::Mat temp(imageSize, CV_8UC1, buffers[MAX_V4L_BUFFERS].start);
       cv::Mat(imageSize, CV_16UC1, currentBuffer.start).convertTo(temp, CV_8U, 1.0 / 256);
@@ -1420,15 +1364,9 @@ CvCaptureCAM_V4L::convertToRgb(const Buffer& currentBuffer) {
       cv::cvtColor(temp, destination, COLOR_GRAY2BGR);
       return;
     }
-    case V4L2_PIX_FMT_GREY:
-      cv::cvtColor(cv::Mat(imageSize, CV_8UC1, currentBuffer.start), destination, COLOR_GRAY2BGR);
-      break;
+    case V4L2_PIX_FMT_GREY: cv::cvtColor(cv::Mat(imageSize, CV_8UC1, currentBuffer.start), destination, COLOR_GRAY2BGR); break;
     case V4L2_PIX_FMT_BGR24:
-    default:
-      memcpy((char*)frame.imageData,
-             (char*)currentBuffer.start,
-             std::min(frame.imageSize, (int)currentBuffer.buffer.bytesused));
-      break;
+    default: memcpy((char*)frame.imageData, (char*)currentBuffer.start, std::min(frame.imageSize, (int)currentBuffer.buffer.bytesused)); break;
   }
 }
 
@@ -1799,9 +1737,7 @@ CvCaptureCAM_V4L::retrieveFrame(int) {
       v4l2_create_frame();
 
     frame.imageData = (char*)buffers[MAX_V4L_BUFFERS].start;
-    memcpy(buffers[MAX_V4L_BUFFERS].start,
-           currentBuffer.start,
-           std::min(buffers[MAX_V4L_BUFFERS].length, (size_t)currentBuffer.buffer.bytesused));
+    memcpy(buffers[MAX_V4L_BUFFERS].start, currentBuffer.start, std::min(buffers[MAX_V4L_BUFFERS].length, (size_t)currentBuffer.buffer.bytesused));
   }
   // Revert buffer to the queue
   if(!tryIoctl(VIDIOC_QBUF, &buffers[bufferIndex].buffer))

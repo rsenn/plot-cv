@@ -251,12 +251,8 @@ CvCaptureCAM_PvAPI::getProperty(int property_id) const {
         return 4.0;
       else
         return -1.0;
-    case CV_CAP_PROP_PVAPI_DECIMATIONHORIZONTAL:
-      PvAttrUint32Get(Camera.Handle, "DecimationHorizontal", &nTemp);
-      return (double)nTemp;
-    case CV_CAP_PROP_PVAPI_DECIMATIONVERTICAL:
-      PvAttrUint32Get(Camera.Handle, "DecimationVertical", &nTemp);
-      return (double)nTemp;
+    case CV_CAP_PROP_PVAPI_DECIMATIONHORIZONTAL: PvAttrUint32Get(Camera.Handle, "DecimationHorizontal", &nTemp); return (double)nTemp;
+    case CV_CAP_PROP_PVAPI_DECIMATIONVERTICAL: PvAttrUint32Get(Camera.Handle, "DecimationVertical", &nTemp); return (double)nTemp;
     case CV_CAP_PROP_PVAPI_BINNINGX: PvAttrUint32Get(Camera.Handle, "BinningX", &nTemp); return (double)nTemp;
     case CV_CAP_PROP_PVAPI_BINNINGY: PvAttrUint32Get(Camera.Handle, "BinningY", &nTemp); return (double)nTemp;
     case CV_CAP_PROP_PVAPI_PIXELFORMAT:
@@ -332,13 +328,8 @@ CvCaptureCAM_PvAPI::setProperty(int property_id, double value) {
         else
           return false;
       } else {
-        cv::String ip = cv::format("%d.%d.%d.%d",
-                                   ((unsigned int)value >> 24) & 255,
-                                   ((unsigned int)value >> 16) & 255,
-                                   ((unsigned int)value >> 8) & 255,
-                                   (unsigned int)value & 255);
-        if((PvAttrEnumSet(Camera.Handle, "MulticastEnable", "On") == ePvErrSuccess) &&
-           (PvAttrStringSet(Camera.Handle, "MulticastIPAddress", ip.c_str()) == ePvErrSuccess))
+        cv::String ip = cv::format("%d.%d.%d.%d", ((unsigned int)value >> 24) & 255, ((unsigned int)value >> 16) & 255, ((unsigned int)value >> 8) & 255, (unsigned int)value & 255);
+        if((PvAttrEnumSet(Camera.Handle, "MulticastEnable", "On") == ePvErrSuccess) && (PvAttrStringSet(Camera.Handle, "MulticastIPAddress", ip.c_str()) == ePvErrSuccess))
           break;
         else
           return false;

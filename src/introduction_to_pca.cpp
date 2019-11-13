@@ -61,15 +61,13 @@ getOrientation(const std::vector<cv::Point>& pts, cv::Mat& img) {
   PCA pca_analysis(data_pts, cv::Mat(), CV_PCA_DATA_AS_ROW);
 
   // Store the center of the object
-  cv::Point cntr = cv::Point(static_cast<int>(pca_analysis.mean.at<double>(0, 0)),
-                             static_cast<int>(pca_analysis.mean.at<double>(0, 1)));
+  cv::Point cntr = cv::Point(static_cast<int>(pca_analysis.mean.at<double>(0, 0)), static_cast<int>(pca_analysis.mean.at<double>(0, 1)));
 
   // Store the eigenvalues and eigenstd::vectors
   std::vector<cv::Point2d> eigen_vecs(2);
   std::vector<double> eigen_val(2);
   for(int i = 0; i < 2; ++i) {
-    eigen_vecs[i] =
-        cv::Point2d(pca_analysis.eigenstd::vectors.at<double>(i, 0), pca_analysis.eigenstd::vectors.at<double>(i, 1));
+    eigen_vecs[i] = cv::Point2d(pca_analysis.eigenstd::vectors.at<double>(i, 0), pca_analysis.eigenstd::vectors.at<double>(i, 1));
 
     eigen_val[i] = pca_analysis.eigenvalues.at<double>(0, i);
   }
@@ -78,10 +76,8 @@ getOrientation(const std::vector<cv::Point>& pts, cv::Mat& img) {
   //! [visualization]
   // Draw the principal components
   circle(img, cntr, 3, Scalar(255, 0, 255), 2);
-  cv::Point p1 = cntr + 0.02 * cv::Point(static_cast<int>(eigen_vecs[0].x * eigen_val[0]),
-                                         static_cast<int>(eigen_vecs[0].y * eigen_val[0]));
-  cv::Point p2 = cntr - 0.02 * cv::Point(static_cast<int>(eigen_vecs[1].x * eigen_val[1]),
-                                         static_cast<int>(eigen_vecs[1].y * eigen_val[1]));
+  cv::Point p1 = cntr + 0.02 * cv::Point(static_cast<int>(eigen_vecs[0].x * eigen_val[0]), static_cast<int>(eigen_vecs[0].y * eigen_val[0]));
+  cv::Point p2 = cntr - 0.02 * cv::Point(static_cast<int>(eigen_vecs[1].x * eigen_val[1]), static_cast<int>(eigen_vecs[1].y * eigen_val[1]));
   drawAxis(img, cntr, p1, Scalar(0, 255, 0), 1);
   drawAxis(img, cntr, p2, Scalar(255, 255, 0), 5);
 

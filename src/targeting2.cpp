@@ -109,8 +109,7 @@ blobfind(Mat& theimage, int b, int g, int r, float& x, float& y) {
 
       for(int j = 0; j < theimage.cols; j++) {
 
-        if(theimage.at<cv::Vec3b>(i, j)[0] == b && theimage.at<cv::Vec3b>(i, j)[1] == g &&
-           theimage.at<cv::Vec3b>(i, j)[2] == r) {
+        if(theimage.at<cv::Vec3b>(i, j)[0] == b && theimage.at<cv::Vec3b>(i, j)[1] == g && theimage.at<cv::Vec3b>(i, j)[2] == r) {
           for(int k = -1; k < 2; k++) {
 
             for(int l = -1; l < 2; l++) {
@@ -237,10 +236,8 @@ targetingprocess() {
         for(int h = 0; h <= currentpix; h++) {
 
           if(catnumx + catnumy != 0)
-            if((thisbee < bee[h] + thresh && thisbee > bee[h] - thresh) &&
-               (thisjee < jee[h] + thresh && thisjee > jee[h] - thresh) &&
-               (thisare < are[h] + thresh && thisare > are[h] - thresh)) { // if it's a match
-              newframe.at<cv::Vec3b>(i, j)[0] = 255;                       // set to white
+            if((thisbee < bee[h] + thresh && thisbee > bee[h] - thresh) && (thisjee < jee[h] + thresh && thisjee > jee[h] - thresh) && (thisare < are[h] + thresh && thisare > are[h] - thresh)) { // if it's a match
+              newframe.at<cv::Vec3b>(i, j)[0] = 255;                                                                                                                                               // set to white
               newframe.at<cv::Vec3b>(i, j)[1] = 255;
               newframe.at<cv::Vec3b>(i, j)[2] = 255;
 

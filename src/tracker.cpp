@@ -106,11 +106,7 @@ main(int argc, char** argv) {
     boundingBox.y = coords[1];
     boundingBox.width = std::abs(coords[2] - coords[0]);
     boundingBox.height = std::abs(coords[3] - coords[1]);
-    printf("bounding box with vertices (%d,%d) and (%d,%d) was given in command line\n",
-           coords[0],
-           coords[1],
-           coords[2],
-           coords[3]);
+    printf("bounding box with vertices (%d,%d) and (%d,%d) was given in command line\n", coords[0], coords[1], coords[2], coords[3]);
     rectangle(image, boundingBox, Scalar(255, 0, 0), 2, 1);
   } else
     boundingBox = selectROI("Tracking API", image);

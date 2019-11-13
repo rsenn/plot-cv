@@ -23,10 +23,8 @@ main(void) {
 
   /* Look-up table for linear interpolation. If you want to make your own version, you have to re-measure these values.
    */
-  static std::vector<double> pixel = {
-      42.0, 94.0, 122.0, 139.0, 150.0, 157.0, 163.0, 168.0, 171.0}; /**< Measured values of pixels. */
-  static std::vector<double> cm = {
-      20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0}; /**< Measured values of centimeters. */
+  static std::vector<double> pixel = {42.0, 94.0, 122.0, 139.0, 150.0, 157.0, 163.0, 168.0, 171.0}; /**< Measured values of pixels. */
+  static std::vector<double> cm = {20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0};          /**< Measured values of centimeters. */
 
   /* Initialize the video formats. */
   cv::Mat video;
@@ -85,13 +83,7 @@ main(void) {
 
             /* Draw a circle on the laser and put a text with the distance on it. */
             cv::circle(video, cv::Point(coord_x, coord_y), 5, cv::Scalar(0, 0, 0), 1, 8);
-            cv::putText(video,
-                        std::to_string(distance),
-                        cv::Point(coord_x, coord_y),
-                        cv::FONT_HERSHEY_SCRIPT_SIMPLEX,
-                        0.5,
-                        cv::Scalar(255, 0, 0),
-                        1);
+            cv::putText(video, std::to_string(distance), cv::Point(coord_x, coord_y), cv::FONT_HERSHEY_SCRIPT_SIMPLEX, 0.5, cv::Scalar(255, 0, 0), 1);
           }
         }
       }
