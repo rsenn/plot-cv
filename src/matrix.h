@@ -97,7 +97,8 @@ public:
             0,
             0,
             1);
-*/  };
+*/ 
+
   Matrix<T>
   operator*=(const Matrix<T>& other) {
     cv::Mat prod = (*this) * other;
