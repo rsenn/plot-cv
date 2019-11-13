@@ -56,9 +56,9 @@ to_string(const Matrix<T>& mat) {
   oss << " cols: " << mat.cols;
 
   for(int i = 0; i < mat.rows; ++i)  {
-    const auto row = mat.row(i);
+    const auto& row = mat.row(i);
     oss << " {";
-    for(int j = 0; j < mat.cols; ++j) {
+    for(int j = 0; j < row.cols; ++j) {
       if(j) 
         oss << ",";
       oss << row[j];
@@ -66,6 +66,5 @@ to_string(const Matrix<T>& mat) {
     oss << "} ";
   }
 
-  oss << " cols: " << mat.cols;
   return oss.str();
 }
