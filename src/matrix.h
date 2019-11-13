@@ -97,7 +97,7 @@ public:
   Matrix<T>&
   init(T xx, T xy, T yx, T yy, T tx, T ty) {
 
-    setRpw(0, {xx, xy, tx});
+    setRow(0, {xx, xy, tx});
     setRow(1, {yx, yy, ty});
     setRow(2, {0, 0, 1});
     return *this;
@@ -107,23 +107,24 @@ public:
   static Matrix<T>
   rotation(double angle, const cv::Point_<OtherT>& origin) {
 
-    cv::Mat ret;
+    cv::Mat ret(cv::Mat_<T>(3, 3));
+
+
     const cv::Point_<OtherT> zero(0, 0);
 
-    Matrix<T> a(Matrix<T>::identity());
-    Matrix<T> b(Matrix<T>::identity());
-    Matrix<T> c(Matrix<T>::identity());
+    Matrix<T> a = Matrix<T>::identity();
+    Matrix<T> b = Matrix<T>::identity();
+    Matrix<T> c = Matrix<T>::identity();
 
     if(origin != zero)
-      a = cv::Mat(cv::Mat_<T>(3, 3) << (1, 0, T(-origin.x), 0, 1, T(-origin.y), 0, 0, 1));
+      a.init(1, 0, T(-origin.x), 0, 1, T(-origin.y));
 
     b = cv::Mat(cv::Mat_<T>(3, 3) << (std::cos(T(angle)), std::sin(T(angle)), 0, -std::sin(T(angle)), std::cos(T(angle)), 0, 0, 0, 1));
 
     if(origin != zero)
-      c = cv::Mat(cv::Mat_<T>(3, 3) << (1, 0, T(origin.x), 0, 1, T(origin.y), 0, 0, 1));
+      c.init(1, 0, T(origin.x), 0, 1, T(origin.y));
 
     if(origin != zero)
-
       return a.multiply(b).multiply(c);
 
     return b;
@@ -131,7 +132,7 @@ public:
 
   static Matrix<T>
   scale(double scale) {
-    cv::Mat ret(cv::Mat_<T>(3, 3));
+   Matrix<T> ret;
     ret.setRow(0, {scale, 0, 0});
     ret.setRow(1, {0, scale, 0});
     ret.setRow(1, {0, 0, 1});
@@ -141,7 +142,7 @@ public:
   template <class OtherT>
   static Matrix<T>
   translation(OtherT x, OtherT y) {
-    cv::Mat ret(cv::Mat_<T>(3, 3));
+   Matrix<T> ret;
     ret.setRow(0, {1, 0, T(x)});
     ret.setRow(1, {0, 1, T(y)});
     ret.setRow(1, {0, 0, 1});
@@ -149,7 +150,7 @@ public:
   }
   static Matrix<T>
   identity() {
-    cv::Mat ret(cv::Mat_<T>(3, 3));
+   Matrix<T> ret;
     ret.setRow(0, {1, 0, 0});
     ret.setRow(1, {0, 1, 0});
     ret.setRow(1, {0, 0, 1});
