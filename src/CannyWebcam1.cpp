@@ -850,7 +850,7 @@ main(int argc, char* argv[]) {
           vector<cv::Point> centers;
           transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(centers), [](Line<float>* line) -> cv::Point { return line->center(); });
 
-          // cout << "adjacent(" << i << ")" << adjacent << std::endl;
+          cout << "adjacent(" << i << ")" << adjacent << std::endl;
           std::cout << "distances(" << i << ")" << distances << endl;
           cout << "angleoffs(" << i << ")" << angleoffs_i << endl;
 
