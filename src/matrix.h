@@ -48,14 +48,18 @@ public:
     cv::Mat ret = (cv::Mat_<T>(3, 3) << 1, 0, T(x), 0, 1, T(y), 0, 0, 1);
     return ret;
   }
+  template <class OtherT>
+  static Matrix<T>
+  identity() {
+    cv::Mat ret = (cv::Mat_<T>(3, 2) << 1, 0, 0, 0, 1, 0);
+    return ret;
+  }
 };
 
 inline std::string
-to_string(const cv::Mat& mat) {
-  std::ostringstream oss;
+to_string(const cv::Mat& mat) {  std::ostringstream oss;
   oss << "rows: " << mat.rows;
   oss << " cols: " << mat.cols;
-
   for(int i = 0; i < mat.rows; ++i) {
     if(i)
       oss << " ";
@@ -70,10 +74,8 @@ to_string(const cv::Mat& mat) {
     }
     oss << ")";
   }
-
   return oss.str();
 }
-
 template <class Char, class Value>
 inline std::basic_ostream<Char>&
 operator<<(std::basic_ostream<Char>& os, const Matrix<Value>& m) {
