@@ -37,6 +37,12 @@ public:
     return *this;
   }
 
+  Matrix<T>&
+  operator=(const Matrix<T>& other) {
+    other.copyTo(*this);
+    return *this;
+  }
+
   cv::Point_<T>
   transform_point(const cv::Point_<T>& pt) const {
     T x = at<T>(0, 0) * pt.x + at<T>(0, 1) * pt.y + at<T>(0, 2);
