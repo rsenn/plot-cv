@@ -120,16 +120,27 @@ public:
   distance(const point_type& p) const {
     return std::sqrt(segment_distance2(&a.x, &b.x, &p.x));
   }
-  std::pair<ValueT, ValueT>
-  endpoint_distance(const Line<ValueT>& l) const {
-    std::pair<ValueT, ValueT> dist1 = endpoint_distance(l.a), dist2 = endpoint_distance(l.b);
+  std::pair<ValueT, size_t>
+  endpoint_distances(const Line<ValueT>& l) const {
+    size_t offs1, offs2;
+    std::pair<ValueT, ValueT> dist(endpoint_distance(l.a, &offs1), endpoint_distance(l.b, &offs2));
 
-    return std::make_pair(dist1.first < dist1.second ? dist1.first : dist1.second, dist2.first < dist2.second ? dist2.first : dist2.second);
+    size_t offs = dist.first < dist.second ? offs1 : offs2;
+    return std::make_pair(dist.first < dist.second ? dist.first : dist.second, offs);
   }
 
   std::pair<ValueT, ValueT>
-  endpoint_distance(const cv::Point_<ValueT>& p) const {
+  endpoint_distances(const cv::Point_<ValueT>& p) const {
     return std::make_pair<ValueT, ValueT>(point_distance<ValueT>(a, p), point_distance<ValueT>(b, p));
+  }
+
+  ValueT
+  endpoint_distance(const cv::Point_<ValueT>& p, size_t* point_index = nullptr) const {
+    ValueT dist1 = point_distance<ValueT>(a, p), dist2 = point_distance<ValueT>(b, p);
+    ValueT ret = std::min(dist1, dist2);
+    if(point_index)
+      *point_index = ret;
+    return ret;
   }
 
   template <class OtherT>
@@ -145,13 +156,13 @@ public:
   }
 
   ValueT
-  min_distance(Line<ValueT>& l2, size_t* point_index = nullptr) const {
-    std::pair<ValueT, ValueT> dist = endpoint_distance(l2);
+  min_distance(Line<ValueT>& l2, size_t* point_index = nullptr, size_t* endpoint_foreign = nullptr) const {
+    std::pair<ValueT, size_t> dist = endpoint_distances(l2);
     /* if(intersect(l2))
        return 0;*/
     if(point_index)
-      *point_index = dist.first < dist.second ? 0 : 1;
-    return dist.first < dist.second ? dist.first : dist.second;
+      *point_index = dist.second;
+    return dist.first;
   }
 
   ValueT

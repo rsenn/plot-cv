@@ -808,7 +808,7 @@ main(int argc, char* argv[]) {
           float degrees = angle * 180 / M_PI;
           int deg = (int)degrees % binsize;
 
-          vector<float> distances = lineDistances(line, lines.begin(), lines.end());
+          vector<float> distances; // = lineDistances(line, lines.begin(), lines.end());
           vector<float> angleoffs = angle_diffs(line, lines.begin(), lines.end());
           vector<LineEnd<float>> line_ends;
           vector<Line<float>*> adjacent_lines;
@@ -816,18 +816,17 @@ main(int argc, char* argv[]) {
           auto it = min_element(distances.begin(), distances.end());
           int min = *it;
 
-          vector<int> adjacent = filterLines(lines.begin(), lines.end(),  [&](Line<float>& l2) -> bool {
+          vector<int> adjacent = filterLines(lines.begin(), lines.end(), [&](Line<float>& l2) -> bool {
             size_t point_index;
             double min_dist = line.min_distance(l2, &point_index);
             bool intersects = line.intersect(l2);
-            return (/*intersects ||*/ min_dist < 10);
+            bool ok = (/*intersects ||*/ min_dist < 10);
+            if(ok)
+              distances.push_back(min_dist);
+            return ok;
           });
 
-
-          transform(adjacent.begin(), adjacent.end(),  back_inserter(adjacent_lines), [&](int index) -> Line<float>* { return &lines[index]; });
-
-
-
+          transform(adjacent.begin(), adjacent.end(), back_inserter(adjacent_lines), [&](int index) -> Line<float>* { return &lines[index]; });
 
           vector<int> parallel = filterLines(lines.begin(), lines.end(), [&line](Line<float>& l2) -> bool { return fabs((line.angle() - l2.angle()) * 180 / M_PI) < 3; });
 
