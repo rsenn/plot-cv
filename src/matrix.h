@@ -175,7 +175,7 @@ public:
     Matrix<T> const& matrix1 = *this;
     Matrix<T> product;
 
-    for(int x = 0; x < dim; ++x) {
+    for(int x = 0; x < Matrix<T>::dim; ++x) {
       std::array<T, dim>& out = product[x];
       for(int y = 0; y < dim; ++y) {
         T sum = 0;

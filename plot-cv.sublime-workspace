@@ -36,10 +36,10 @@
 	"buffers":
 	[
 		{
-			"contents": "PointVec\nPoint2fVec\ncoord_pointer\ncoord_pointer\nsimplify_polyline\ncoord_type\nout_point\nout_hier\nout_points\nfilter_contours\npolyline_from_contour\ncv::Scalar\nhs_vto_rgb\nsvg::Color\nfrom_scalar\nconvert_points\ntransform_points\nexport_svg\npolygon_area\napply_clahe\nbrightness_and_contrast_auto\ncv::Mat\nimage_to_binary\nget_contours\nget_mass_centers\nto_point_vec\nangle\nfind_rectangles\ndraw_polylines\ninvert_color\nhough_lines\ndraw_lines\ncorner_harris_detection\ntrackbar\nwrite_image\ndraw_all_contours\ndraw_all_lines\niterator_type\nfilter_lines\niterator_type\nvalue_type\nPredicateTraits\n function\nfilter_lines\nangle_diffs\niterator_type\npoint_type\nvalue_type\nret_type\nline_distances\niterator_type\nline_type\nvalue_type\nret_type\noperator<<\niterator_type\nmain\nline_type\nline_list\nref_list",
+			"contents": "Matrix\n typed_type\n base_type\n Matrix\n Matrix\n Matrix\n Matrix\n Matrix\n Matrix\n transform_points\n transform_points\n operator=\n operator=\n transform_point\n convert_point\n base_type\n rotation\n scale\n translation\n identity\n affine\n create\n init\n init\n init\n init\n init\n init\n rotation\n operator[]\n operator[]\n multiplicate\n product\n operator*\n operator*=\n set\n setRow\n get\n ref\n ref\n ptr\n ptr\nstd::string\nto_string\noperator<<",
 			"settings":
 			{
-				"buffer_size": 770,
+				"buffer_size": 421,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
@@ -49,7 +49,7 @@
 			"file": "src/CannyWebcam1.cpp",
 			"settings":
 			{
-				"buffer_size": 33178,
+				"buffer_size": 32369,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -58,7 +58,8 @@
 			"file": "src/matrix.h",
 			"settings":
 			{
-				"buffer_size": 8345,
+				"buffer_size": 8356,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
@@ -94,7 +95,6 @@
 			"settings":
 			{
 				"buffer_size": 21525,
-				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
@@ -212,6 +212,10 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"dim",
+			"dim;",
+			"dim",
+			"imgInput",
 			"imgOr",
 			"imgOri",
 			"imgOr",
@@ -335,11 +339,7 @@
 			"transform",
 			"Matrix",
 			"matrix",
-			"angle\\(",
-			"moment_from_angle",
-			"norm\\.",
-			"norm\\(",
-			"norm"
+			"angle\\("
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -407,7 +407,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 770,
+						"buffer_size": 421,
 						"regions":
 						{
 						},
@@ -416,298 +416,233 @@
 						],
 						"settings":
 						{
-							"current_file": "/home/roman/Dokumente/Sources/contours/plot-cv/src/CannyWebcam1.cpp",
+							"current_file": "/home/roman/Dokumente/Sources/contours/plot-cv/src/matrix.h",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
 								[
-									562,
+									135,
+									141
+								],
+								[
+									191,
+									201
+								],
+								[
+									221,
+									230
+								],
+								[
+									343,
+									349
+								],
+								[
+									443,
+									449
+								],
+								[
+									564,
 									570
 								],
 								[
-									605,
-									615
+									636,
+									642
 								],
 								[
-									936,
-									949
+									733,
+									739
 								],
 								[
-									1070,
-									1083
+									843,
+									849
 								],
 								[
-									1223,
-									1240
+									1149,
+									1165
 								],
 								[
-									1316,
-									1326
+									1382,
+									1398
 								],
 								[
-									2130,
-									2139
+									1584,
+									1593
 								],
 								[
-									2242,
-									2250
+									1684,
+									1693
 								],
 								[
-									2534,
-									2544
+									1778,
+									1793
 								],
 								[
-									2820,
-									2835
+									2014,
+									2027
 								],
 								[
-									3268,
-									3289
+									2248,
+									2257
 								],
 								[
-									3819,
-									3840
+									2480,
+									2488
 								],
 								[
-									4472,
-									4494
+									2632,
+									2637
 								],
 								[
-									4599,
-									4613
+									2769,
+									2780
 								],
 								[
-									4910,
-									4926
+									2889,
+									2897
 								],
 								[
-									5099,
-									5109
+									2981,
+									2987
 								],
 								[
-									6446,
-									6458
+									3058,
+									3064
 								],
 								[
-									7284,
-									7295
+									3215,
+									3219
 								],
 								[
-									8288,
-									8316
+									3368,
+									3372
 								],
 								[
-									10447,
-									10470
+									3533,
+									3537
 								],
 								[
-									10919,
-									10931
+									3622,
+									3626
 								],
 								[
-									11258,
-									11274
+									3726,
+									3730
 								],
 								[
-									11672,
-									11684
+									3960,
+									3964
 								],
 								[
-									11987,
-									11992
+									4186,
+									4194
 								],
 								[
-									12268,
-									12283
+									4840,
+									4850
 								],
 								[
-									13697,
-									13711
+									4952,
+									4962
 								],
 								[
-									13903,
-									13915
+									5064,
+									5076
 								],
 								[
-									14081,
-									14092
+									5507,
+									5514
 								],
 								[
-									14411,
-									14421
+									5867,
+									5876
 								],
 								[
-									14649,
-									14672
+									5949,
+									5959
 								],
 								[
-									15613,
-									15621
+									6049,
+									6052
 								],
 								[
-									15855,
-									15866
+									6396,
+									6402
 								],
 								[
-									16097,
-									16114
+									6522,
+									6525
 								],
 								[
-									16580,
-									16594
+									6810,
+									6813
 								],
 								[
-									16803,
-									16816
+									6879,
+									6882
 								],
 								[
-									17223,
-									17235
+									6948,
+									6951
 								],
 								[
-									17316,
-									17329
+									7270,
+									7273
 								],
 								[
-									17398,
-									17408
+									7571,
+									7592
 								],
 								[
-									17670,
-									17685
-								],
-								[
-									17795,
-									17803
-								],
-								[
-									17856,
-									17868
-								],
-								[
-									18169,
-									18180
-								],
-								[
-									18265,
-									18278
-								],
-								[
-									18347,
-									18357
-								],
-								[
-									18401,
-									18411
-								],
-								[
-									18447,
-									18455
-								],
-								[
-									18715,
-									18729
-								],
-								[
-									18858,
-									18871
-								],
-								[
-									18940,
-									18949
-								],
-								[
-									18992,
-									19002
-								],
-								[
-									19033,
-									19041
-								],
-								[
-									19335,
-									19345
-								],
-								[
-									19461,
-									19474
-								],
-								[
-									19727,
-									19731
-								],
-								[
-									23727,
-									23736
-								],
-								[
-									23770,
-									23779
-								],
-								[
-									23807,
-									23815
+									8253,
+									8263
 								]
 							],
 							"symlist":
 							[
-								"PointVec",
-								"Point2fVec",
-								"coord_pointer",
-								"coord_pointer",
-								"simplify_polyline",
-								"coord_type",
-								"out_point",
-								"out_hier",
-								"out_points",
-								"filter_contours",
-								"polyline_from_contour",
-								"cv::Scalar\nhs_vto_rgb",
-								"svg::Color\nfrom_scalar",
-								"convert_points",
-								"transform_points",
-								"export_svg",
-								"polygon_area",
-								"apply_clahe",
-								"brightness_and_contrast_auto",
-								"cv::Mat\nimage_to_binary",
-								"get_contours",
-								"get_mass_centers",
-								"to_point_vec",
-								"angle",
-								"find_rectangles",
-								"draw_polylines",
-								"invert_color",
-								"hough_lines",
-								"draw_lines",
-								"corner_harris_detection",
-								"trackbar",
-								"write_image",
-								"draw_all_contours",
-								"draw_all_lines",
-								"iterator_type",
-								"filter_lines",
-								"iterator_type",
-								"value_type",
-								"PredicateTraits",
-								" function",
-								"filter_lines",
-								"angle_diffs",
-								"iterator_type",
-								"point_type",
-								"value_type",
-								"ret_type",
-								"line_distances",
-								"iterator_type",
-								"line_type",
-								"value_type",
-								"ret_type",
-								"operator<<",
-								"iterator_type",
-								"main",
-								"line_type",
-								"line_list",
-								"ref_list"
+								"Matrix",
+								" typed_type",
+								" base_type",
+								" Matrix",
+								" Matrix",
+								" Matrix",
+								" Matrix",
+								" Matrix",
+								" Matrix",
+								" transform_points",
+								" transform_points",
+								" operator=",
+								" operator=",
+								" transform_point",
+								" convert_point",
+								" base_type",
+								" rotation",
+								" scale",
+								" translation",
+								" identity",
+								" affine",
+								" create",
+								" init",
+								" init",
+								" init",
+								" init",
+								" init",
+								" init",
+								" rotation",
+								" operator[]",
+								" operator[]",
+								" multiplicate",
+								" product",
+								" operator*",
+								" operator*=",
+								" set",
+								" setRow",
+								" get",
+								" ref",
+								" ref",
+								" ptr",
+								" ptr",
+								"std::string\nto_string",
+								"operator<<"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -721,7 +656,7 @@
 			]
 		},
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -730,15 +665,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 33178,
+						"buffer_size": 32369,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								21485,
-								21485
+								32283,
+								32283
 							]
 						],
 						"settings":
@@ -765,10 +700,10 @@
 							}
 						},
 						"translation.x": 0.0,
-						"translation.y": 11219.0,
+						"translation.y": 16081.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -777,15 +712,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 8345,
+						"buffer_size": 8356,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								8134,
-								8134
+								7848,
+								7848
 							]
 						],
 						"settings":
@@ -812,10 +747,10 @@
 							}
 						},
 						"translation.x": 0.0,
-						"translation.y": 4686.0,
+						"translation.y": 3613.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
