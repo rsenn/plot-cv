@@ -738,6 +738,15 @@ main(int argc, char* argv[]) {
     cv::GaussianBlur(imgGrayscale, imgBlurred, cv::Size(5, 5), 1.75, 1.75);
 
     cv::Canny(imgBlurred, imgCanny, thresh, thresh * 2, 3);
+
+    // open and close to highlight objects
+    cv::Mat strel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(19, 19));
+    cv::Mat im_oc;
+    cv::morphologyEx(imgCanny, im_oc, cv::MORPH_OPEN, strel);
+    cv::morphologyEx(im_oc, im_oc, cv::MORPH_CLOSE, strel);
+
+    cv::imshow("imgOpenClose", im_oc);
+
     cv::cvtColor(imgGrayscale, imgGrayscale, cv::COLOR_GRAY2BGR);
 
     //  apply_clahe(imgOriginal, imgOriginal);XY
@@ -980,7 +989,7 @@ main(int argc, char* argv[]) {
       draw_all_contours(imgOriginal, contours);
 
       cv::imshow("imgOriginal", imgOriginal);
-      cv::imshow("imgGrayscale", imgGrayscale); 
+      cv::imshow("imgGrayscale", imgGrayscale);
 
       charCheckForEscKey = cv::waitKey(1); // delay (in ms) and get key press, if any
     }
