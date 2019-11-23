@@ -140,7 +140,7 @@ polyline_from_contour(svg::Document& doc, const std::vector<cv::Point2f>& contou
  * output[3]: Output, array size 3, int
  */
 cv::Scalar
-hs_vto_rgb(int H, double S, double V) {
+hsv_to_rgb(int H, double S, double V) {
   double C = S * V;
   double X = C * (1 - abs(fmod(H / 60.0, 2) - 1));
   double m = V - C;
@@ -215,8 +215,9 @@ export_svg(const std::vector<std::vector<PointType>>& contours, std::string outp
 
   const auto& cfn = [&](const std::vector<PointType>& contour) -> svg::Color {
     const double area = cv::contourArea(contour);
-    return from_scalar(hs_vto_rgb(area / max_area * 360, 1, 1));
+    return from_scalar(hsv_to_rgb(area / max_area * 360, 1, 1));
   };
+
   std::for_each(contours.begin(), contours.end(), std::bind(&polyline_from_contour, std::ref(doc), std::placeholders::_1, cfn));
   //  polyline_from_contour(doc, contour_arg, svg::Color(255, 0, 0));
 
@@ -537,7 +538,7 @@ void
 draw_all_contours(cv::Mat& out, std::vector<PointVec>& contours) {
 
   for(size_t i = 0; i < contours.size(); i++) {
-    const cv::Scalar color = hs_vto_rgb((i * 360 * 10 / contours.size()) % 360, 1.0, 1.0);
+    const cv::Scalar color = hsv_to_rgb((i * 360 * 10 / contours.size()) % 360, 1.0, 1.0);
     auto contour = simplify_polyline(contours[i]);
     contours[i] = contour;
 
@@ -556,7 +557,7 @@ draw_all_lines(cv::Mat& out, const Container& lines, const std::function<int(int
   typedef typename Container::const_iterator iterator_type;
   for(iterator_type it = lines.begin(); it != lines.end(); it++) {
     size_t i = std::distance(lines.begin(), it);
-    const cv::Scalar color = hs_vto_rgb(hue(i, lines.size()), 1.0, 1.0);
+    const cv::Scalar color = hsv_to_rgb(hue(i, lines.size()), 1.0, 1.0);
 
     const double len = it->length();
     if(len < 8)
@@ -762,6 +763,7 @@ main(int argc, char* argv[]) {
       cv::cvtColor(imgCanny, imgCanny, cv::COLOR_GRAY2BGR);
 
       // cvtColor(imgOriginal, imgGrayscale, CV_GRAY);
+
       cv::drawContours(imgCanny, contours, -1, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
 
       cv::imshow("imgCanny", imgCanny); //
@@ -780,15 +782,25 @@ main(int argc, char* argv[]) {
       typedef vector<int> ref_list;
       vector<line_type> lines;
       std::map<int, ref_list> adjacency_list;
+      int i = 0;
 
-      for_each(contours.begin(), contours.end(), [&](const vector<cv::Point>& a) {
-        size_t i;
+      const auto& contourDepth = [&hier](int i) {
+        size_t depth = 0;
+        while(i != -1) {
+          i = hier[i][3];
+          ++depth;
+        };
+        return depth;
+      };
+
+      for(std::vector<PointVec>::const_iterator it = contours.cbegin(); it != contours.cend(); ++i, ++it) {
+        const vector<cv::Point>& a = *it;
 
         if(a.size() >= 3) {
 
           Point2fVec c;
           cv::approxPolyDP(a, c, 8, true);
-          double area = cv::contourArea(c);
+          double area = cv::contourArea(c), depth = contourDepth(i);
           if(area > maxArea)
             maxArea = area;
           contours2.push_back(c);
@@ -796,8 +808,11 @@ main(int argc, char* argv[]) {
           if(contourStr.str().size())
             contourStr << "\n";
           out_points(contourStr, a);
+          std::cout << "contourDepth(i) = " << depth << std::endl;
+
+          cv::drawContours(imgGrayscale, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
         }
-      });
+      }
 
       if(maxArea == 0) {
         charCheckForEscKey = cv::waitKey(16);
@@ -868,7 +883,7 @@ main(int argc, char* argv[]) {
           auto it = min_element(distances.begin(), distances.end());
           int min = *it;
 
-          transform(adjacent.begin(), adjacent.end(), back_inserter(adjacent_lines), [&](int index) -> Line<float>* { return &lines[index]; });
+          std::transform(adjacent.begin(), adjacent.end(), back_inserter(adjacent_lines), [&](int index) -> Line<float>* { return &lines[index]; });
 
           vector<int> parallel = filter_lines(lines.begin(), lines.end(), [&line](Line<float>& l2, size_t) { return fabs((line.angle() - l2.angle()) * 180 / M_PI) < 3; });
 
@@ -876,20 +891,20 @@ main(int argc, char* argv[]) {
           std::cout << "parallel " << parallel << endl;
 
           distances.clear();
-          transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(distances), [&line](Line<float>* l2) -> float { return line.min_distance(*l2); });
-          transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(line_ends), [&line](Line<float>* l2) -> LineEnd<float> {
+          std::transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(distances), [&line](Line<float>* l2) -> float { return line.min_distance(*l2); });
+          std::transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(line_ends), [&line](Line<float>* l2) -> LineEnd<float> {
             LineEnd<float> end;
             line.nearest_end(*l2, end);
             return end;
           });
           angleoffs.clear();
-          transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(angleoffs), [&line](Line<float>* l2) -> float { return line.angle_diff(*l2); });
-          vector<int> angleoffs_i;
+          std::transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(angleoffs), [&line](Line<float>* l2) -> float { return line.angle_diff(*l2); });
+          std::vector<int> angleoffs_i;
 
-          transform(angleoffs.begin(), angleoffs.end(), back_inserter(angleoffs_i), [](const float ang) -> int { return int(ang * 180 / M_PI) % 180; });
+          std::transform(angleoffs.begin(), angleoffs.end(), back_inserter(angleoffs_i), [](const float ang) -> int { return int(ang * 180 / M_PI) % 180; });
 
-          vector<cv::Point> centers;
-          transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(centers), [](Line<float>* line) -> cv::Point { return line->center(); });
+          std::vector<cv::Point> centers;
+          std::transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(centers), [](Line<float>* line) -> cv::Point { return line->center(); });
 
           Matrix<double> rot = Matrix<double>::rotation(-line.angle());
 
