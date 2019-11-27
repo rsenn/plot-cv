@@ -743,8 +743,13 @@ main(int argc, char* argv[]) {
     // open and close to highlight objects
     cv::Mat strel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(19, 19));
     cv::Mat im_oc;
-    cv::morphologyEx(imgCanny, im_oc, cv::MORPH_OPEN, strel);
-    cv::morphologyEx(im_oc, im_oc, cv::MORPH_CLOSE, strel);
+
+    imgCanny.copyTo(im_oc);
+        cv::cvtColor(im_oc, im_oc, cv::COLOR_GRAY2BGR);
+
+ //   cv::morphologyEx(im_oc, im_oc, cv::MORPH_OPEN, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(2, 2)));
+    cv::morphologyEx(im_oc, im_oc, cv::MORPH_CLOSE, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(2, 2)));
+//    cv::morphologyEx(im_oc, im_oc, cv::MORPH_CLOSE, strel);
 
     cv::imshow("imgOpenClose", im_oc);
 
@@ -782,7 +787,6 @@ main(int argc, char* argv[]) {
       typedef vector<int> ref_list;
       vector<line_type> lines;
       std::map<int, ref_list> adjacency_list;
-      int i = 0;
 
       const auto& contourDepth = [&hier](int i) {
         size_t depth = 0;
@@ -793,6 +797,12 @@ main(int argc, char* argv[]) {
         return depth;
       };
 
+      int i = 0;
+      for(std::vector<PointVec>::const_iterator it = contours.cbegin(); it != contours.cend(); ++i, ++it) {
+        const vector<cv::Point>& a = *it;
+        int depth = contourDepth(i);
+      }
+      i = 0;
       for(std::vector<PointVec>::const_iterator it = contours.cbegin(); it != contours.cend(); ++i, ++it) {
         const vector<cv::Point>& a = *it;
 
@@ -800,7 +810,8 @@ main(int argc, char* argv[]) {
 
           Point2fVec c;
           cv::approxPolyDP(a, c, 8, true);
-          double area = cv::contourArea(c), depth = contourDepth(i);
+          double area = cv::contourArea(c);
+          int depth = contourDepth(i);
           if(area > maxArea)
             maxArea = area;
           contours2.push_back(c);
@@ -808,8 +819,10 @@ main(int argc, char* argv[]) {
           if(contourStr.str().size())
             contourStr << "\n";
           out_points(contourStr, a);
+      /*    std::cout << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] << ", " << hier[i][2] << ", " << hier[i][3] << ", "
+                    << "} " << std::endl;
           std::cout << "contourDepth(i) = " << depth << std::endl;
-
+*/
           cv::drawContours(imgGrayscale, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
         }
       }

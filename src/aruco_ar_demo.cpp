@@ -2,10 +2,11 @@
 #include <opencv2/calib3d.hpp>
 #include <opencv2/videoio.hpp>
 
-#include <opencv2/ovis.hpp>
+//#include <opencv2/ovis.hpp>
 #include <opencv2/aruco.hpp>
 
 #include <iostream>
+#include <sstream>
 
 #define KEY_ESCAPE 27
 
@@ -24,9 +25,23 @@ main() {
 
   // aruco
   Ptr<aruco::Dictionary> adict = aruco::getPredefinedDictionary(aruco::DICT_4X4_50);
-  // Mat out_img;
-  // aruco::drawMarker(adict, 0, 400, out_img);
-  // imshow("marker", out_img);
+  Mat marker_img(cv::Size(100,100), CV_8U);
+  Mat out_img(cv::Size(780, 780), CV_8U);
+
+  out_img ^= 0xff;
+
+  for(size_t i = 0; i < 49; i++) {
+    std::ostringstream os;
+    aruco::drawMarker(adict, i, 100, marker_img);
+    os << "marker-" << i << ".png";
+    //imshow("marker", out_img);
+    // imwrite(os.str(), out_img);
+    int row = i / 7;
+    int col = i % 7;
+    std::cout << "type: " << marker_img.type() << std::endl;
+    marker_img.copyTo(out_img(cv::Rect(row * 110 + 10, col * 110 + 10, 100, 100)));
+  }
+  imwrite("marker.png", out_img);
 
   // random calibration data, your mileage may vary
   Mat1d cm = Mat1d::zeros(3, 3);      // init empty matrix
@@ -36,12 +51,12 @@ main() {
   Mat K = getDefaultNewCameraMatrix(cm, imsize, true);
 
   // AR scene
-  ovis::addResourceLocation("packs/Sinbad.zip"); // shipped with Ogre
-
-  Ptr<ovis::WindowScene> win = ovis::createWindow(String("arucoAR"), imsize, ovis::SCENE_INTERACTIVE | ovis::SCENE_AA);
-  win->setCameraIntrinsics(K, imsize);
-  win->createEntity("sinbad", "Sinbad.mesh", Vec3i(0, 0, 5), Vec3f(1.57, 0.0, 0.0));
-  win->createLightEntity("sun", Vec3i(0, 0, 100));
+  //  ovis::addResourceLocation("packs/Sinbad.zip"); // shipped with Ogre
+  //
+  //  Ptr<ovis::WindowScene> win = ovis::createWindow(String("arucoAR"), imsize, ovis::SCENE_INTERACTIVE | ovis::SCENE_AA);
+  //  win->setCameraIntrinsics(K, imsize);
+  //  win->createEntity("sinbad", "Sinbad.mesh", Vec3i(0, 0, 5), Vec3f(1.57, 0.0, 0.0));
+  //  win->createLightEntity("sun", Vec3i(0, 0, 100));
 
   // video capture
   VideoCapture cap{0};
@@ -49,9 +64,9 @@ main() {
   cap.set(CAP_PROP_FRAME_HEIGHT, imsize.height);
 
   std::cout << "Press ESCAPE to exit demo" << std::endl;
-  while(ovis::waitKey(1) != KEY_ESCAPE) {
+  while(cv::waitKey(1) != KEY_ESCAPE) {
     cap.read(img);
-    win->setBackground(img);
+    // win->setBackground(img);
     aruco::detectMarkers(img, adict, corners, ids);
 
     waitKey(1);
@@ -60,7 +75,7 @@ main() {
       continue;
 
     aruco::estimatePoseSingleMarkers(corners, 5, K, noArray(), rvecs, tvecs);
-    win->setCameraPose(tvecs.at(0), rvecs.at(0), true);
+    // win->setCameraPose(tvecs.at(0), rvecs.at(0), true);
   }
 
   return 0;

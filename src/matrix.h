@@ -286,7 +286,7 @@ to_string(const cv::Mat& mat) {
     if(i)
       oss << ",\n ";
     else
-      oss << "\n[";
+      oss << " [";
     oss << "[";
     for(int j = 0; j < mat.cols; ++j) {
       if(j)
