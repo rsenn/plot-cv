@@ -34,17 +34,16 @@ cfg() {
       -DENABLE_PIC=OFF ;;
   esac
   : ${generator:="Unix Makefiles"}
-  : ${VERBOSE:="TRUE"}
 
  (mkdir -p $builddir
   : ${relsrcdir=`realpath --relative-to "$builddir" .`}
   set -x
   cd $builddir
   ${CMAKE:-cmake} -Wno-dev \
-    -DCMAKE_INSTALL_PREFIX="${prefix-/usr}" \
     -G "$generator" \
-    ${VERBOSE+:-DCMAKE_VERBOSE_MAKEFILE="$VERBOSE"} \
+    ${VERBOSE+:-DCMAKE_VERBOSE_MAKEFILE=TRUE} \
     -DCMAKE_BUILD_TYPE="${TYPE:-Debug}" \
+    -DBUILD_SHARED_LIBS=ON \
     ${CC:+-DCMAKE_C_COMPILER="$CC"} \
     ${CXX:+-DCMAKE_CXX_COMPILER="$CXX"} \
     ${PKG_CONFIG:+-DPKG_CONFIG_EXECUTABLE="$PKG_CONFIG"} \
@@ -52,7 +51,7 @@ cfg() {
     ${CC:+-DCMAKE_C_COMPILER="$CC"} \
     ${CXX:+-DCMAKE_CXX_COMPILER="$CXX"} \
     -DCMAKE_{C,CXX}_FLAGS_DEBUG="-g -ggdb3" \
-    -DCMAKE_{C,CXX}_FLAGS_RELWITHDEBINFO="-O2 -g -ggdb3 -DNDEBUG" \
+    -DCMAKE_{C,CXX}_FLAGS_RELWITHDEBINFO="-Os -g -ggdb3 -DNDEBUG" \
     ${MAKE:+-DCMAKE_MAKE_PROGRAM="$MAKE"} \
     "$@" \
     $relsrcdir 2>&1 ) |tee "${builddir##*/}.log"
@@ -62,6 +61,8 @@ cfg-android ()
 {
   (: ${builddir=build/android}
     cfg \
+  -DCMAKE_INSTALL_PREFIX=/opt/arm-linux-androideabi/sysroot/usr \
+  -DCMAKE_VERBOSE_MAKEFILE=TRUE \
   -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN:-/opt/android-cmake/android.cmake} \
   -DANDROID_NATIVE_API_LEVEL=21 \
   -DPKG_CONFIG_EXECUTABLE=arm-linux-androideabi-pkg-config \
@@ -76,17 +77,42 @@ cfg-android ()
 cfg-diet() {
  (build=$(${CC:-gcc} -dumpmachine)
   host=${build/-gnu/-dietlibc}
-  : ${builddir=build/$host}
+  : ${builddir=build/${host%-*}-diet}
   : ${prefix=/opt/diet}
   : ${libdir=/opt/diet/lib-${host%%-*}}
   : ${bindir=/opt/diet/bin-${host%%-*}}
   
-  CC="diet-gcc" \
-  PKG_CONFIG="$host-pkg-config" \
-  LIBS="${LIBS:+$LIBS }-liconv -lpthread" \
+  : ${CC="diet-gcc"}
+  export CC
+
+  PKG_CONFIG="PKG_CONFIG_PATH=$libdir/pkgconfig pkg-config" \
   cfg \
+    -DCMAKE_INSTALL_PREFIX="$prefix" \
+    -DENABLE_SHARED=OFF \
+    -DENABLE_STATIC=ON \
     -DSHARED_LIBS=OFF \
     -DBUILD_SHARED_LIBS=OFF \
+    -DCMAKE_VERBOSE_MAKEFILE=ON \
+    "$@")
+}
+
+cfg-emscripten() {
+ (build=$(${CC:-emcc} -dumpmachine)
+  host=${build/-gnu/-emscriptenlibc}
+  : ${builddir=build/${host%-*}-emscripten}
+  : ${prefix=/opt/emsdk/emscripten/incoming/system}
+  : ${libdir=/opt/emsdk/emscripten/incoming/system/lib}
+  : ${bindir=/opt/emsdk/emscripten/incoming/system/bin}
+  
+  CC="emcc" \
+  PKG_CONFIG="PKG_CONFIG_PATH=$libdir/pkgconfig pkg-config" \
+  cfg \
+    -DCMAKE_INSTALL_PREFIX="$prefix" \
+    -DENABLE_SHARED=OFF \
+    -DENABLE_STATIC=ON \
+    -DSHARED_LIBS=OFF \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DCMAKE_VERBOSE_MAKEFILE=ON \
     "$@")
 }
 
@@ -102,15 +128,20 @@ cfg-musl() {
   CC=musl-gcc \
   PKG_CONFIG=musl-pkg-config \
   cfg \
+    -DENABLE_SHARED=OFF \
+    -DENABLE_STATIC=ON \
     -DSHARED_LIBS=OFF \
     -DBUILD_SHARED_LIBS=OFF \
+    -DCMAKE_VERBOSE_MAKEFILE=ON \
     "$@")
 }
 
 cfg-mingw() {
  (build=$(gcc -dumpmachine)
-  host=${build%%-*}-w64-mingw32
-  prefix=/usr/$host/sys-root/mingw
+  : ${host=${build%%-*}-w64-mingw32}
+  : ${prefix=/usr/$host/sys-root/mingw}
+
+  test -s /usr/x86_64-w64-mingw32/sys-root/toolchain-mingw64.cmake &&
   TOOLCHAIN=/usr/x86_64-w64-mingw32/sys-root/toolchain-mingw64.cmake
   
   builddir=build/$host \
@@ -119,12 +150,42 @@ cfg-mingw() {
   cfg \
     "$@")
 }
+
+cfg-mingw32() {
+ (build=$(gcc -dumpmachine)
+  host=${build%%-*}-w64-mingw32
+  host=i686-${host#*-}
+  cfg-mingw "$@")
+}
+
+cfg-msys() {
+ (build=$(gcc -dumpmachine)
+  : ${host=${build%%-*}-pc-msys}
+  : ${prefix=/usr/$host/sys-root/msys}
+  
+  builddir=build/$host \
+  bindir=$prefix/bin \
+  libdir=$prefix/lib \
+  CC="$host-gcc" \
+  cfg \
+    -DCMAKE_CROSSCOMPILING=TRUE \
+    "$@")
+}
+
+cfg-msys32() {
+ (build=$(gcc -dumpmachine)
+  host=${build%%-*}-pc-msys
+  host=i686-${host#*-}
+  cfg-msys "$@")
+}
+
 cfg-termux() 
 {
   (builddir=build/termux
     cfg \
   -DCMAKE_INSTALL_PREFIX=/data/data/com.termux/files/usr \
-  -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN:-/opt/android-cmake/android.cmake} \//
+  -DCMAKE_VERBOSE_MAKEFILE=TRUE \
+  -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN:-/opt/android-cmake/android.cmake} \
   -DANDROID_NATIVE_API_LEVEL=21 \
   -DPKG_CONFIG_EXECUTABLE=arm-linux-androideabi-pkg-config \
   -DCMAKE_PREFIX_PATH=/data/data/com.termux/files/usr \

@@ -745,11 +745,11 @@ main(int argc, char* argv[]) {
     cv::Mat im_oc;
 
     imgCanny.copyTo(im_oc);
-        cv::cvtColor(im_oc, im_oc, cv::COLOR_GRAY2BGR);
+    cv::cvtColor(im_oc, im_oc, cv::COLOR_GRAY2BGR);
 
- //   cv::morphologyEx(im_oc, im_oc, cv::MORPH_OPEN, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(2, 2)));
+    //   cv::morphologyEx(im_oc, im_oc, cv::MORPH_OPEN, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(2, 2)));
     cv::morphologyEx(im_oc, im_oc, cv::MORPH_CLOSE, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(2, 2)));
-//    cv::morphologyEx(im_oc, im_oc, cv::MORPH_CLOSE, strel);
+    //    cv::morphologyEx(im_oc, im_oc, cv::MORPH_CLOSE, strel);
 
     cv::imshow("imgOpenClose", im_oc);
 
@@ -819,10 +819,10 @@ main(int argc, char* argv[]) {
           if(contourStr.str().size())
             contourStr << "\n";
           out_points(contourStr, a);
-      /*    std::cout << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] << ", " << hier[i][2] << ", " << hier[i][3] << ", "
-                    << "} " << std::endl;
-          std::cout << "contourDepth(i) = " << depth << std::endl;
-*/
+          /*    std::cout << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] << ", " << hier[i][2] << ", " << hier[i][3] << ", "
+                        << "} " << std::endl;
+              std::cout << "contourDepth(i) = " << depth << std::endl;
+    */
           cv::drawContours(imgGrayscale, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
         }
       }

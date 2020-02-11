@@ -25,7 +25,7 @@ main() {
 
   // aruco
   Ptr<aruco::Dictionary> adict = aruco::getPredefinedDictionary(aruco::DICT_4X4_50);
-  Mat marker_img(cv::Size(100,100), CV_8U);
+  Mat marker_img(cv::Size(100, 100), CV_8U);
   Mat out_img(cv::Size(780, 780), CV_8U);
 
   out_img ^= 0xff;
@@ -34,7 +34,7 @@ main() {
     std::ostringstream os;
     aruco::drawMarker(adict, i, 100, marker_img);
     os << "marker-" << i << ".png";
-    //imshow("marker", out_img);
+    // imshow("marker", out_img);
     // imwrite(os.str(), out_img);
     int row = i / 7;
     int col = i % 7;
