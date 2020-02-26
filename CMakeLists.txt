@@ -16,7 +16,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}
 )
 
-add_definitions(-std=c++11)
+#add_definitions(-std=c++11)
 
 macro(add_prog)
 
@@ -30,7 +30,12 @@ macro(add_prog)
   install(TARGETS ${name} DESTINATION bin )
 endmacro()
 
+add_library(quickjs quickjs/cutils.c quickjs/libbf.c quickjs/libunicode.c quickjs/quickjs.c)
+set_target_properties(quickjs PROPERTIES
+  COMPILE_DEFINITIONS "CONFIG_VERSION=\"2020-01-19\"")
+
 add_prog(CannyWebcam1)
+
 # add_prog(findLaserPoint)
 add_prog(mouth)
 
