@@ -55,19 +55,19 @@
 			}
 		},
 		{
-			"file": "include/detectLines.hpp",
+			"file": "CMakeLists.txt",
 			"settings":
 			{
-				"buffer_size": 1149,
+				"buffer_size": 4302,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "CMakeLists.txt",
+			"file": "camshiftkalman.cpp",
 			"settings":
 			{
-				"buffer_size": 4203,
-				"encoding": "UTF-8",
+				"buffer_size": 11363,
 				"line_ending": "Unix"
 			}
 		},
@@ -394,10 +394,6 @@
 						},
 						"selection":
 						[
-							[
-								0,
-								0
-							]
 						],
 						"settings":
 						{
@@ -436,7 +432,7 @@
 			]
 		},
 		{
-			"selected": 2,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -496,11 +492,40 @@
 				},
 				{
 					"buffer": 2,
-					"file": "include/detectLines.hpp",
+					"file": "CMakeLists.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4302,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								805,
+								805
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/JavaScriptNext - ES6 Syntax/Next.tmTheme",
+							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 558.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "camshiftkalman.cpp",
 					"semi_transient": true,
 					"settings":
 					{
-						"buffer_size": 1149,
+						"buffer_size": 11363,
 						"regions":
 						{
 						},
@@ -513,42 +538,15 @@
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/JavaScriptNext - ES6 Syntax/Next.tmTheme",
-							"syntax": "Packages/C++/C++.sublime-syntax"
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "CMakeLists.txt",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4203,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								747,
-								747
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
 					"type": "text"
 				},
 				{

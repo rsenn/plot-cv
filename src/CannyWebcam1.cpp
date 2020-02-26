@@ -13,6 +13,7 @@
 #include "psimpl.h"
 #include "line.h"
 #include "matrix.h"
+#include "../quickjs/quickjs.h"
 
 #include <type_traits>
 #include <iostream>
@@ -34,11 +35,13 @@ bool showDiagnostics = false;
 std::vector<cv::Point2f> bigContour;
 double epsilon = 3;
 const int max_frames = 100000;
+
 template <class ValueT>
 ValueT*
 coord_pointer(cv::Point_<ValueT>* point_ptr) {
   return reinterpret_cast<ValueT*>(point_ptr);
 }
+
 template <class ValueT>
 const ValueT*
 coord_pointer(const cv::Point_<ValueT>* point_ptr) {

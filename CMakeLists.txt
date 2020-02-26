@@ -13,10 +13,14 @@ find_package(OpenCV REQUIRED)
 
 include_directories(
     ${OPENCV_INCLUDE_DIRS}
-    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/quickjs
 )
 
-#add_definitions(-std=c++11)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+
 
 macro(add_prog)
 
@@ -29,10 +33,23 @@ macro(add_prog)
 
   install(TARGETS ${name} DESTINATION bin )
 endmacro()
+set(QUICKJS_DEFS CONFIG_VERSION=\"2020-01-19\" CONFIG_BIGNUM CONFIG_CHECK_JSVALUE=1 CONFIG_LTO=1 _GNU_SOURCE CONFIG_PREFIX=\"${CMAKE_INSTALL_PREFIX}\" )
+add_library(quickjs STATIC quickjs/cutils.c quickjs/libbf.c quickjs/quickjs-libc.c quickjs/libregexp.c quickjs/libunicode.c quickjs/quickjs.c)
+set_target_properties(quickjs PROPERTIES COMPILE_DEFINITIONS "${QUICKJS_DEFS}" )
+target_link_libraries(quickjs m dl)
 
-add_library(quickjs quickjs/cutils.c quickjs/libbf.c quickjs/libunicode.c quickjs/quickjs.c)
-set_target_properties(quickjs PROPERTIES
-  COMPILE_DEFINITIONS "CONFIG_VERSION=\"2020-01-19\"")
+add_executable(qjsc quickjs/qjsc.c)
+set_target_properties(qjsc PROPERTIES COMPILE_DEFINITIONS "${QUICKJS_DEFS}" )
+target_link_libraries(qjsc quickjs)
+
+add_executable(qjs quickjs/qjs.c quickjs/repl.c quickjs/qjscalc.c)
+set_target_properties(qjs PROPERTIES COMPILE_DEFINITIONS "${QUICKJS_DEFS}" )
+target_link_libraries(qjs quickjs)
+
+install(TARGETS quickjs qjsc qjs 
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin)
 
 add_prog(CannyWebcam1)
 
@@ -165,7 +182,7 @@ add_prog(filterdemo)
 #add_prog(gms_matcher)
 add_prog(kinfu_demo)
 add_prog(mace_webcam)
-add_prog(main)
+add_prog(main src/detectLines.cpp src/getExteriorContour.cpp)
 add_prog(oil)
 add_prog(optical_flow_dense)
 #add_prog(pct_webcam)

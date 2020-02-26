@@ -1,3 +1,4 @@
+#include <opencv/cv.h>
 #include "detectLines.hpp"
 #include "Measure_Origins.hpp"
 #include "getExteriorContour.hpp"

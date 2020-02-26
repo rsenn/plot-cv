@@ -289,8 +289,8 @@ targetingprocess() {
     capturen >> frame;
 
     imshow("Original Image", frame);
-    IplImage ipl = frame;
-    cvSetMouseCallback("Original Image", my_mouse_callback, (void*)&ipl); // get mouse input
+    auto ipl = frame;
+    cvSetMouseCallback("Original Image", my_mouse_callback, reinterpret_cast<void*>(&ipl)); // get mouse input
 
     char key = (char)waitKey(5); // get keyboard input
     if(key == 'q')
