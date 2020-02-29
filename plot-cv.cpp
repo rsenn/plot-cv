@@ -620,7 +620,7 @@ template<>
 
 JSValue
 int_vector_to_js(const cv::Vec4i& v) {
-   uint32_t i;
+  uint32_t i;
   JSValue ret = js.create_array(4);
   for(i = 0; i < 4; i++) {
     JSValue num = js.create_number(v[i]);
