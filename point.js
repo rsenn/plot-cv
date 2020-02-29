@@ -103,7 +103,12 @@ Point.prototype.neg = function() {
   this.y *= -1;
   return this;
 };
-Point.prototype.distance = function(other = { x: 0, y: 0 }) {
+Point.prototype.distance = function(
+  other = {
+    x: 0,
+    y: 0
+  }
+) {
   return Math.sqrt((other.y - this.y) * (other.y - this.y) + (other.x - this.x) * (other.x - this.x));
 };
 Point.prototype.equal = function(other) {
@@ -133,7 +138,12 @@ Point.prototype.fromAngle = function(angle, dist = 1.0) {
 Point.prototype.toAngle = function(deg = false) {
   return Math.atan2(this.x, this.y) * (deg ? 180 / Math.PI : 1);
 };
-Point.prototype.angle = function(p2 = { x: 0, y: 0 }) {
+Point.prototype.angle = function(
+  p2 = {
+    x: 0,
+    y: 0
+  }
+) {
   return Point.prototype.diff.call(p1, p2).toAngle();
 };
 Point.prototype.dimension = function() {
@@ -148,10 +158,7 @@ Point.prototype.toSource = function() {
   return "{x:" + this.x.toFixed(3) + ",y:" + this.y.toFixed(3) + "}";
 };
 Point.prototype.toCSS = function() {
-  return {
-    left: this.x + "px",
-    top: this.y + "px"
-  };
+  return { left: this.x + "px", top: this.y + "px" };
 };
 Point.prototype.inside = function(rect) {
   return this.x >= rect.x && this.x < rect.x + rect.width && this.y >= rect.y && this.y < rect.y + rect.height;

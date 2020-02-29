@@ -260,8 +260,8 @@ jsrt::call(const char* name, size_t argc, const_value* argv) {
 jsrt::value
 jsrt::call(const_value func, std::vector<const_value>& args) {
   value ret = call(func, args.size(), args.data());
-   dump_error();
-   return ret;
+  dump_error();
+  return ret;
 }
 
 jsrt::value

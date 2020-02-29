@@ -70,7 +70,11 @@ export function Rect(arg) {
     return ret;
   }
 }
-Rect.prototype = { ...Point.prototype, ...Size.prototype, ...Rect.prototype };
+Rect.prototype = {
+  ...Point.prototype,
+  ...Size.prototype,
+  ...Rect.prototype
+};
 Rect.prototype.clone = function() {
   return new Rect(this.x, this.y, this.width, this.height);
 };

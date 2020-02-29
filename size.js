@@ -41,7 +41,7 @@ export function Size(arg) {
   if (isNaN(obj.height)) obj.height = undefined;
   if (!(obj instanceof Size)) return obj;
 }
-Size.prototype.convertUnits = function(w = "window" in global ? window : null) => {
+Size.prototype.convertUnits = function(w = "window" in global ? window : null) {
   if (w === null) return this;
   const view = {
     vw: w.innerWidth,
@@ -61,7 +61,7 @@ Size.prototype.convertUnits = function(w = "window" in global ? window : null) =
 };
 
 Size.prototype.aspect = function() {
-  return  this.width / this.height;
+  return this.width / this.height;
 };
 Size.prototype.toCSS = function() {
   let ret = {};

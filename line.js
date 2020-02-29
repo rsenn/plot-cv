@@ -34,7 +34,7 @@ export function Line(x1, y1, x2, y2) {
   if (!(this instanceof Line)) return obj;
 }
 export const isLine = obj => ["x1", "y1", "x2", "y2"].every(prop => obj[prop] !== undefined);
-Line.prototype.intersect = function(other)  {
+Line.prototype.intersect = function(other) {
   const ma = (this[0].y - this[1].y) / (this[0].x - this[1].x);
   const mb = (other[0].y - other[1].y) / (other[0].x - other[1].x);
   if (ma - mb < Number.EPSILON) return undefined;
@@ -109,14 +109,13 @@ Line.prototype.bbox = function() {
     x1: x1 < x2 ? x1 : x2,
     x2: x1 > x2 ? x1 : x2,
     y1: y1 < y2 ? y1 : y2,
-    y2: y1 > y2 ? y1 : y2,
+    y2: y1 > y2 ? y1 : y2
   };
 };
 
 Line.prototype.points = function() {
-    const { a, b } = this;
+  const { a, b } = this;
   return [a, b];
-
 };
 Line.prototype.inspect = function() {
   const { x1, y1, x2, y2 } = this;
