@@ -44,7 +44,7 @@ jsrt js;
 image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny,
     im_oc; // Canny edge image
 
-static cv::Mat* mptr = &imgOriginal;
+cv::Mat* mptr = &imgOriginal;
 
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
 

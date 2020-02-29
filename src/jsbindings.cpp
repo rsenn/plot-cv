@@ -1,4 +1,9 @@
+#include "geometry.h"
 #include "jsbindings.h"
+#include "plot-cv.h"
+
+extern jsrt js;
+extern cv::Mat* mptr;
 
 extern "C" {
 
@@ -117,5 +122,4 @@ js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   }
   return js._true;
 }
-
 }

@@ -18,7 +18,7 @@ typedef std::vector<point2f_vector> contour2f_vector;
 // Function that calculates the area given a
 // std::vector of vertices in the XY plane.
 template<class P>
-double
+inline double
 polygon_area(std::vector<P> list) {
 
   if(list.size() < 3)
@@ -43,7 +43,7 @@ polygon_area(std::vector<P> list) {
   return area; // Return The Area
 }
 
-point2f_vector
+inline point2f_vector
 get_mass_centers(std::vector<point_vector> contours) {
   std::vector<cv::Moments> mu(contours.size());
   point2f_vector mc(contours.size());
@@ -166,7 +166,7 @@ coord_pointer(const cv::Point_<T>* point_ptr) {
 }
 
 template<class T>
-std::vector<cv::Point_<T>>
+inline std::vector<cv::Point_<T>>
 simplify_polyline(const std::vector<cv::Point_<T>>& points) {
   typedef T coord_type;
   typedef cv::Point_<T> point_type;

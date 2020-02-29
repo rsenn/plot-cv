@@ -5,6 +5,8 @@
 #include <opencv2/core/mat.hpp>
 #include <vector>
 #include <iomanip>
+#include <fstream>
+
 #include "line.h"
 
 typedef Line<float> line_type;
@@ -19,12 +21,12 @@ inline std::string
 to_string(const cv::Scalar& scalar) {
   const int pad = 3;
   std::ostringstream oss;
-  oss << '['
-   << std::setfill(' ') << std::setw(pad) << scalar[0] << ',' 
-   << std::setfill(' ') << std::setw(pad) << scalar[1] << ',' 
-   << std::setfill(' ') << std::setw(pad) << scalar[2] << ',' 
-   << std::setfill(' ') << std::setw(pad) << scalar[3] 
-   << ']';
+  oss << '[' << std::setfill(' ') << std::setw(pad) << scalar[0] << ',' << std::setfill(' ')
+      << std::setw(pad) << scalar[1] << ',' << std::setfill(' ') << std::setw(pad) << scalar[2]
+      << ',' << std::setfill(' ') << std::setw(pad) << scalar[3] << ']';
   return oss.str();
 }
+
+extern std::ofstream logfile;
+
 #endif
