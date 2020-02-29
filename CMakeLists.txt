@@ -1,6 +1,7 @@
 cmake_minimum_required (VERSION 2.8)
 project (plot-cv)
 
+include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(CheckLibraryExists)
 check_library_exists(json-cpp ZN4YAML6detail9node_data9reset_mapEv /usr JSON_CPP)
@@ -23,6 +24,23 @@ check_cxx_compiler_flag("-std=c++17" CXX_STD_CXX_17_FLAG)
 if(CXX_STD_CXX_17_FLAG)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 endif(CXX_STD_CXX_17_FLAG)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  option(USE_EFENCE "Enable electric fence" OFF)
+
+    check_cxx_compiler_flag("-O0" F_OPT_NONE)
+  if(F_OPT_NONE)
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
+  endif(F_OPT_NONE)
+
+endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+
+if(HAVE_EFENCE)
+  if(USE_EFENCE)
+    set(ELECTRICFENCE_LIBRARY efence)
+  endif(USE_EFENCE)
+endif(HAVE_EFENCE)
 
 
 macro(add_prog)
@@ -59,7 +77,7 @@ set(BUILD_SHARED_LIBS OFF)
 add_subdirectory(quickjs)
 
 add_executable(plot-cv data.cpp data.h geometry.h js.cpp js.h line.h matrix.h plot-cv.cpp polygon.cpp polygon.h psimpl.h simple_svg_1.0.0.hpp simple_svg_writer.h)
-target_link_libraries(plot-cv ${OpenCV_LIBS} quickjs-static)
+target_link_libraries(plot-cv ${OpenCV_LIBS} quickjs-static ${ELECTRICFENCE_LIBRARY})
 
 
 
@@ -208,3 +226,5 @@ add_prog(homography_from_camera_displacement)
 add_prog(aruco_ar_demo)
 target_link_libraries(tracking_calibration_with_img yaml-cpp roslib rospack roscpp )
 endif(ADDITIONAL_PROGS)
+
+

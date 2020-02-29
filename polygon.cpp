@@ -8,8 +8,7 @@ using namespace std;
 
 #include <vector>
 
-const int PIXEL_STEP =
-    15; // Ecart entre les points du polygone après ré-échantillonage.
+const int PIXEL_STEP = 15; // Ecart entre les points du polygone après ré-échantillonage.
 
 bool segmentCut(Point2d p1, Point2d p2, Point2d q1, Point2d q2);
 // Détermine si le segment p1 p2 coupt q1 q2.
@@ -98,8 +97,7 @@ Polygon::drawCurvatures(const Mat& Image) {
   for(int i = 0; i < curvature.size(); i++) {
     double x = normales[i](0);
     double y = normales[i](1);
-    Point2d p(600 * curvature[i] * x + regularPoints[i].x,
-              600 * curvature[i] * y + regularPoints[i].y);
+    Point2d p(600 * curvature[i] * x + regularPoints[i].x, 600 * curvature[i] * y + regularPoints[i].y);
     // std::cout << p.x <<", " << p.y << std::endl;
     line(Image, regularPoints[i], p, Scalar(255, 120, 255));
   }
@@ -107,8 +105,7 @@ Polygon::drawCurvatures(const Mat& Image) {
 
 Point
 convexPoint(Point beginPoint, Point endPoint, double t) {
-  return Point(t * endPoint.x + (1 - t) * beginPoint.x,
-               t * endPoint.y + (1 - t) * beginPoint.y);
+  return Point(t * endPoint.x + (1 - t) * beginPoint.x, t * endPoint.y + (1 - t) * beginPoint.y);
 }
 
 vector<Point2d>
@@ -180,8 +177,7 @@ Polygon::computeDeriv() {
     Point before = regularPoints[(i - 1) % L];
     Point current = regularPoints[i % L];
     Point after = regularPoints[(i + 1) % L];
-    Vec2d derivee(after.x - 2 * current.x + before.x,
-                  after.y - 2 * current.y + before.y);
+    Vec2d derivee(after.x - 2 * current.x + before.x, after.y - 2 * current.y + before.y);
     secondes[i % L] = derivee;
   }
   return secondes;

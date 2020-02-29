@@ -54,6 +54,11 @@ jsrt::init(int argc, char* argv[]) {
 
   global.get();
 
+  this->_undefined = get_undefined();
+  this->_null = get_null();
+  this->_true = get_true();
+  this->_false = get_false();
+
   return ctx != nullptr;
 }
 
@@ -107,21 +112,13 @@ jsrt::property_names(const_value obj, bool enum_only, bool recursive) const {
 }
 
 void
-jsrt::property_names(const_value obj,
-                     std::vector<const char*>& out,
-                     bool enum_only,
-                     bool recursive) const {
+jsrt::property_names(const_value obj, std::vector<const char*>& out, bool enum_only, bool recursive) const {
   JSPropertyEnum* props;
   uint32_t nprops;
   while(JS_IsObject(obj)) {
     props = nullptr;
     nprops = 0;
-    JS_GetOwnPropertyNames(ctx,
-                           &props,
-                           &nprops,
-                           obj,
-                           JS_GPN_STRING_MASK | JS_GPN_SYMBOL_MASK |
-                               (enum_only ? JS_GPN_ENUM_ONLY : 0));
+    JS_GetOwnPropertyNames(ctx, &props, &nprops, obj, JS_GPN_STRING_MASK | JS_GPN_SYMBOL_MASK | (enum_only ? JS_GPN_ENUM_ONLY : 0));
     for(uint32_t i = 0; i < nprops; i++) {
       const char* s = JS_AtomToCString(ctx, props[i].atom);
       out.push_back(s);
@@ -131,6 +128,40 @@ jsrt::property_names(const_value obj,
 
     obj = prototype(obj);
   }
+}
+
+bool
+jsrt::is_point(const_value val) const {
+  if(is_array(val)) {
+    int32_t length = -1;
+    get_number(get_property(val, "length"), length);
+    if(length == 2)
+      return true;
+  } else if(is_object(val)) {
+    JSValue x, y;
+    x = get_property(val, "x");
+    y = get_property(val, "y");
+    if(is_number(x) && is_number(y))
+      return true;
+  }
+
+  return false;
+}
+
+bool
+jsrt::is_rect(const_value val) const {
+  if(is_object(val)) {
+    JSValue x, y, w, h;
+    x = get_property(val, "x");
+    y = get_property(val, "y");
+    w = get_property(val, "width");
+    h = get_property(val, "height");
+    if(is_number(x) && is_number(y))
+      if(is_number(w) && is_number(h))
+        return true;
+  }
+
+  return false;
 }
 
 jsrt::global::global(jsrt& rt) : js(rt) { get(); }
@@ -185,15 +216,11 @@ jsrt::~jsrt() {
 }
 
 int
-jsrt::eval_buf(const char* buf,
-               int buf_len,
-               const char* filename,
-               int eval_flags) {
+jsrt::eval_buf(const char* buf, int buf_len, const char* filename, int eval_flags) {
   value val;
   int ret;
   if((eval_flags & JS_EVAL_TYPE_MASK) == JS_EVAL_TYPE_MODULE) {
-    val = JS_Eval(
-        ctx, buf, buf_len, filename, eval_flags | JS_EVAL_FLAG_COMPILE_ONLY);
+    val = JS_Eval(ctx, buf, buf_len, filename, eval_flags | JS_EVAL_FLAG_COMPILE_ONLY);
     if(!JS_IsException(val)) {
       js_module_set_import_meta(ctx, val, TRUE, TRUE);
       val = JS_EvalFunction(ctx, val);
@@ -222,8 +249,7 @@ jsrt::eval_file(const char* filename, int module) {
     exit(1);
   }
   if(module < 0)
-    module = (has_suffix(filename, ".mjs") ||
-              JS_DetectModule((const char*)buf, buf_len));
+    module = (has_suffix(filename, ".mjs") || JS_DetectModule((const char*)buf, buf_len));
 
   eval_flags = module ? JS_EVAL_TYPE_MODULE : JS_EVAL_TYPE_GLOBAL;
 
@@ -271,20 +297,18 @@ jsrt::call(const_value func, size_t argc, const_value* argv) {
 }
 
 char*
-jsrt::normalize_module(JSContext* ctx,
-                       const char* module_base_name,
-                       const char* module_name,
-                       void* opaque) {
+jsrt::normalize_module(JSContext* ctx, const char* module_base_name, const char* module_name, void* opaque) {
   jsrt* js = static_cast<jsrt*>(opaque);
-/*  std::cerr << "normalize_module module_base_name: " << module_base_name<< std::endl;
-  std::cerr << "normalize_module module_name: " << module_name << std::endl;*/
+  /*  std::cerr << "normalize_module module_base_name: " << module_base_name<<
+    std::endl; std::cerr << "normalize_module module_name: " << module_name <<
+    std::endl;*/
   char* name = static_cast<char*>(js_malloc(ctx, strlen(module_name) + 4 + 1));
   name[0] = '\0';
   if(!(module_name[0] == '.' && module_name[1] == '/'))
     strcpy(name, "./");
 
   strcat(name, module_name);
-  //std::cerr << "normalize_module name: " << name << std::endl;
+  // std::cerr << "normalize_module name: " << name << std::endl;
   return name;
 }
 

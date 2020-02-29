@@ -39,10 +39,8 @@ std::vector<cv::Point2f>
 get_mass_centers(std::vector<point_vector> contours) {
   std::vector<cv::Moments> mu(contours.size());
   std::vector<cv::Point2f> mc(contours.size());
-  for(size_t i = 0; i < contours.size(); i++)
-    mu[i] = cv::moments(contours[i], false);
-  for(size_t i = 0; i < contours.size(); i++)
-    mc[i] = cv::Point2f(mu[i].m10 / mu[i].m00, mu[i].m01 / mu[i].m00);
+  for(size_t i = 0; i < contours.size(); i++) mu[i] = cv::moments(contours[i], false);
+  for(size_t i = 0; i < contours.size(); i++) mc[i] = cv::Point2f(mu[i].m10 / mu[i].m00, mu[i].m01 / mu[i].m00);
 
   return mc;
 }
@@ -50,13 +48,11 @@ get_mass_centers(std::vector<point_vector> contours) {
 template<class T, class Pred>
 inline std::vector<int>
 filter_lines(const std::vector<T>& c, bool (&pred)(const Line<T>&, size_t)) {
-  return filter_lines<std::vector<Line<T>>::iterator, bool(Line<T>&, size_t)>(
-      c.begin(), c.end(), pred);
+  return filter_lines<std::vector<Line<T>>::iterator, bool(Line<T>&, size_t)>(c.begin(), c.end(), pred);
 }
 
 template<class ValueT, class InputIterator>
-inline std::vector<
-    typename std::iterator_traits<InputIterator>::value_type::value_type>
+inline std::vector<typename std::iterator_traits<InputIterator>::value_type::value_type>
 angle_diffs(Line<ValueT>& line, InputIterator from, InputIterator to) {
   typedef InputIterator iterator_type;
   typedef typename std::iterator_traits<InputIterator>::value_type point_type;
@@ -77,9 +73,7 @@ angle_diffs(Line<ValueT>& line, InputIterator from, InputIterator to) {
 
 template<class InputIterator>
 inline std::vector<float>
-line_distances(typename std::iterator_traits<InputIterator>::value_type& line,
-               InputIterator from,
-               InputIterator to) {
+line_distances(typename std::iterator_traits<InputIterator>::value_type& line, InputIterator from, InputIterator to) {
   typedef InputIterator iterator_type;
   typedef typename std::iterator_traits<InputIterator>::value_type line_type;
   typedef typename line_type::value_type value_type;

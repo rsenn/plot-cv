@@ -19,8 +19,25 @@ global.process = function(contours, hier) {
       continue;*/
 
     if(parent != -1) continue;
-       console.log(`contour #${i} length=${(contours[i].length+'').padStart(5,' ')} :`, bbox, " rect:", rect, " ", inspect({ next, prev, child, parent }));
+    console.log(
+      `contour #${i} length=${(contours[i].length + "").padStart(5, " ")} :`,
+      bbox,
+      " rect:",
+      rect,
+      " ",
+      inspect({ next, prev, child, parent })
+    );
+
+    list = list.map(p => {
+      p.x += 2;
+      p.y += 2;
+      return p;
+    });
+
+    drawContour(list, [255, 0, 255,  255], 8, false);
   }
+      drawPolygon(contours[0], [255, 0, 0,  255], false);
+
   console.log("Num contours:", contours.length);
   //  console.log("Num hier:", hier.length);
   //  if(do_log) {

@@ -11,10 +11,7 @@
 #include <string>
 template<class T> class LineEnd;
 
-template<class T,
-         typename std::enable_if<std::is_integral<T>::value ||
-                                     std::is_floating_point<T>::value,
-                                 T>::type* = nullptr>
+template<class T, typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type* = nullptr>
 inline std::string
 to_string(const T& t, size_t n_pad = 3, char ch_pad = ' ') {
   std::ostringstream oss;
@@ -163,25 +160,20 @@ public:
   std::pair<ValueT, size_t>
   endpoint_distances(const Line<ValueT>& l) const {
     size_t offs1, offs2;
-    std::pair<ValueT, ValueT> dist(endpoint_distance(l.a, &offs1),
-                                   endpoint_distance(l.b, &offs2));
+    std::pair<ValueT, ValueT> dist(endpoint_distance(l.a, &offs1), endpoint_distance(l.b, &offs2));
 
     size_t offs = dist.first < dist.second ? offs1 : offs2;
-    return std::make_pair(dist.first < dist.second ? dist.first : dist.second,
-                          offs);
+    return std::make_pair(dist.first < dist.second ? dist.first : dist.second, offs);
   }
 
   std::pair<ValueT, ValueT>
   endpoint_distances(const cv::Point_<ValueT>& p) const {
-    return std::make_pair<ValueT, ValueT>(point_distance<ValueT>(a, p),
-                                          point_distance<ValueT>(b, p));
+    return std::make_pair<ValueT, ValueT>(point_distance<ValueT>(a, p), point_distance<ValueT>(b, p));
   }
 
   ValueT
-  endpoint_distance(const cv::Point_<ValueT>& p,
-                    size_t* point_index = nullptr) const {
-    ValueT dist1 = point_distance<ValueT>(a, p),
-           dist2 = point_distance<ValueT>(b, p);
+  endpoint_distance(const cv::Point_<ValueT>& p, size_t* point_index = nullptr) const {
+    ValueT dist1 = point_distance<ValueT>(a, p), dist2 = point_distance<ValueT>(b, p);
     ValueT ret = std::min(dist1, dist2);
     if(point_index)
       *point_index = ret;
@@ -300,9 +292,7 @@ to_string(const Line<T>& line) {
   return ret;
 }
 
-template<class ValueT,
-         template<typename> typename Container = std::vector,
-         class Char = char>
+template<class ValueT, template<typename> typename Container = std::vector, class Char = char>
 inline std::basic_string<Char>
 to_string(const Container<Line<ValueT>>& lines) {
   typedef typename Container<Line<ValueT>>::const_iterator iterator_type;
