@@ -22,7 +22,7 @@ template<class T> struct vector_vector_traits {
   typedef std::vector<std::vector<T>> type;
 };
 
-enum { CANNY = 0, ORIGINAL, GRAYSCALE, OPEN_CLOSE, CORNERS };
+enum { CANNY = 0, ORIGINAL, GRAYSCALE, OPEN_CLOSE };
 
 std::string to_string(const cv::Scalar& scalar);
 

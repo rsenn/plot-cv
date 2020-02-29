@@ -68,11 +68,14 @@ global.process = function(contours, hier) {
   polygons.push(polygons[0].sum({ x: 320, y: 240 }));
   polygons.push(polygons[0].sum({ x: 0, y: 240 }));
 
-  /*
-  drawPolygon(polygons[0], [0, 255, 255, 255], false);
-  drawPolygon(polygons[1], [0, 255, 0, 255], false);
-  drawPolygon(polygons[2], [255, 0, 0, 255], false);
-  drawPolygon(polygons[3], [255, 0, 255, 255], false);*/
+  
+  drawPolygon(polygons[0], [0, 255, 255, 255], 3);
+  drawPolygon(polygons[1], [0, 255, 0, 255], 3);
+  drawPolygon(polygons[2], [255, 0, 0, 255], 3);
+  drawPolygon(polygons[3], [255, 0, 255, 255], 3);
+
+  drawCircle(new Point(300,150), 110, [1,1,1,255], -1);
+  drawCircle(new Point(300,150), 100, [0,255,255,255], -1);
 
   const do_log = false;
 

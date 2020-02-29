@@ -44,7 +44,7 @@ jsrt js;
 image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny,
     im_oc; // Canny edge image
 
-cv::Mat* mptr = &imgOriginal;
+cv::Mat *mptr = nullptr, *dptr = nullptr;
 
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
 
@@ -515,34 +515,29 @@ draw_all_lines(image_type& out,
 
 image_type
 get_alpha_channel(image_type m) {
-  image_type rgba;
-  std::vector<image_type> channels(4);
-
-  cv::cvtColor(m, rgba, CV_RGB2RGBA);
-  cv::split(rgba, channels);
-
-  return channels[3];
+  image_type mask;
+  cv::cvtColor(m, mask, CV_RGB2GRAY);
+  mask = (mask == 0);
+  return mask;
 }
 
 void
 display_image(image_type* m) {
   if(m == nullptr)
     return;
-  image_type in(cvSize(m->cols, m->rows), m->type());
   image_type out(cvSize(m->cols, m->rows), m->type());
-  image_type beta, alpha = get_alpha_channel(*m);
-
-  // alpha ^= 0xff;
-
-  m->copyTo(in);
-
-  beta = (1.0 - alpha);
-  addWeighted(in, 1, imgVector, 1, 0.0, out);
-  /*
-    out &= alpha;
-    out |= imgVector;*/
-  //  cv::addWeighted(m, 1, imgVector, 1, 0, out);
-
+  cv::rectangle(*dptr,
+                cv::Point(50, 50),
+                cv::Point(out.cols - 50, out.rows - 50),
+                cv::Scalar(255, 0, 255, 255));
+  cv::rectangle(*dptr,
+                cv::Point(51, 51),
+                cv::Point(out.cols - 51, out.rows - 51),
+                cv::Scalar(255, 0, 255, 255));
+  image_type mask = cv::Mat::zeros(m->size(), CV_8UC1);
+  image_type alpha = get_alpha_channel(*dptr);
+  dptr->copyTo(out);
+  cv::bitwise_and(*m, *m, out, alpha);
   cv::imshow("img", out);
 }
 
@@ -570,7 +565,7 @@ main(int argc, char* argv[]) {
   using std::iterator_traits;
   using std::transform;
   using std::vector;
-  int show_image = GRAYSCALE, ret;
+  unsigned int show_image = 0, ret;
   int32_t newmt, mt = -1;
   JSValue processFn;
 
@@ -603,6 +598,7 @@ main(int argc, char* argv[]) {
   js.add_function("drawLine", &js_draw_line, 2);
   js.add_function("drawRect", &js_draw_rect, 2);
   js.add_function("drawPolygon", &js_draw_polygon, 2);
+  js.add_function("drawCircle", &js_draw_circle, 2);
   /*
     std::cerr << "property names: " << js.property_names(glob) << std::endl;
     std::cerr << "'console' property names: " << js.property_names(js.get_property(glob, "console"))
@@ -665,36 +661,32 @@ main(int argc, char* argv[]) {
     switch(keycode) {
       case 27: return 0;
       case 'c':
-      case 'C': {
-        mptr = &imgCanny;
-        show_image = CANNY;
-        break;
-      }
+      case 'C': show_image = CANNY; break;
       case 'p':
-      case 'P': {
-        mptr = &im_oc;
-
-        show_image = OPEN_CLOSE;
-        break;
-      }
+      case 'P': show_image = OPEN_CLOSE; break;
       case 'o':
-      case 'O': {
-        mptr = &imgOriginal;
-        show_image = ORIGINAL;
-        break;
-      }
+      case 'O': show_image = ORIGINAL; break;
       case 'g':
-      case 'G': {
-        mptr = &imgGrayscale;
-        show_image = GRAYSCALE;
-        break;
-      }
-      default: {
-        /*        mptr = nullptr;
-                show_image = -1;*/
-        break;
-      }
+      case 'G': show_image = GRAYSCALE; break;
+      case 83:
+      case -106: show_image--; break;
+      case 81:
+      case -104: show_image++; break;
+      case -1: break;
+      default: std::cerr << "Unknown keycode: '" << (int)(char)keycode << "'" << std::endl; break;
     }
+    show_image %= 4;
+
+    std::cerr << "Show image: " << show_image << std::endl;
+
+    switch(show_image) {
+      case OPEN_CLOSE: mptr = &im_oc; break;
+      case ORIGINAL: mptr = &imgOriginal; break;
+      case GRAYSCALE: mptr = &imgGrayscale; break;
+      case CANNY:
+      default: mptr = &imgCanny; break;
+    }
+
     bool blnFrameReadSuccessfully = false;
     if(capWebcam.isOpened()) {
       blnFrameReadSuccessfully = capWebcam.read(imgRaw); // get next frame
@@ -703,6 +695,7 @@ main(int argc, char* argv[]) {
       imgInput.copyTo(imgRaw);
       blnFrameReadSuccessfully = imgRaw.cols > 0 && imgRaw.rows > 0;
     }
+
     if(!blnFrameReadSuccessfully || imgRaw.empty()) {   // if frame not read successfully
       logfile << "error: frame not read from webcam\n"; // print error message
                                                         // to std out
@@ -714,14 +707,16 @@ main(int argc, char* argv[]) {
     imgRaw.copyTo(imgOutput);
     imgRaw.copyTo(imgOriginal);
 
-    if(imgVector.cols == 0)
-      imgVector = image_type(cvSize(imgRaw.cols, imgRaw.rows), imgRaw.type());
-
     write_image(imgOutput);
 
     logfile << "got frame" << std::endl;
     // cv::normalize(imgRaw,imgOriginal,0,255,cv::NORM_L1);
     //    imgRaw.copyTo(imgOriginal);
+
+    if(dptr == nullptr) {
+      imgVector = cv::Mat::zeros(cvSize(imgOriginal.cols, imgOriginal.rows), imgOriginal.type());
+      dptr = &imgVector;
+    }
 
     image_type frameLab, frameLabCn[3];
     imgOriginal.copyTo(frameLab);
@@ -757,6 +752,7 @@ main(int argc, char* argv[]) {
     /*
         if(show_image == OPEN_CLOSE)
           display_image(im_oc);*/
+    display_image(mptr);
 
     cv::cvtColor(imgGrayscale, imgGrayscale, cv::COLOR_GRAY2BGR);
 
@@ -1076,7 +1072,7 @@ main(int argc, char* argv[]) {
         // cv::drawContours(imgOriginal, list, -1, color_type(255, 255, 0), 1);
       });
 
-      draw_all_contours(imgOriginal, contours);
+      //  draw_all_contours(imgOriginal, contours);
       display_image(mptr);
 
       /*
