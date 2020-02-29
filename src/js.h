@@ -1,7 +1,7 @@
 #ifndef JS_H
 #define JS_H
 
-#include "../quickjs/quickjs.h"
+#include "quickjs/quickjs.h"
 #include <unordered_map>
 #include <vector>
 #include <type_traits>

@@ -119,6 +119,15 @@ public:
   typedef std::function<bool(const Line<T>&, size_t)> function;
 };
 
+
+template<class T>
+inline std::string
+to_string(const cv::Point_<T>& pt, size_t n_pad = 3, char ch_pad = '0') {
+  std::ostringstream oss;
+  oss << to_string(pt.x) << ',' << to_string(pt.y);
+  return oss.str();
+}
+
 template<class T, class Char = char>
 inline std::basic_string<Char>
 to_string(const cv::Point_<T>& point) {

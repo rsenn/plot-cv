@@ -2,8 +2,8 @@
 #define LINE_H
 
 #include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
 #include <cmath>
+#include "line.h"
 #include "psimpl.h"
 #include <iostream>
 #include <type_traits>
@@ -138,6 +138,21 @@ angle_from_moment(const cv::Point_<T>& point) {
   return std::atan2(point.x, point.y);
 }
 
+template<class InputIterator>
+inline typename std::iterator_traits<InputIterator>::value_type
+segment_distance2(InputIterator s1, InputIterator s2, InputIterator p) {
+  typedef typename std::iterator_traits<InputIterator>::value_type value_type;
+  return psimpl::math::segment_distance2<2, InputIterator>(s1, s2, p);
+}
+
+template<class T>
+void
+moment_from_angle(double phi, cv::Point_<T>& point) {
+  point.x = std::sin(phi);
+  point.y = std::cos(phi);
+}
+
+
 template<class T,
          typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value,
                                  T>::type* = nullptr>
@@ -164,27 +179,6 @@ to_string(const T& t, size_t n_pad = 3, char ch_pad = ' ') {
   return ret;
 }
 
-template<class T>
-inline std::string
-to_string(const cv::Point_<T>& pt, size_t n_pad = 3, char ch_pad = '0') {
-  std::ostringstream oss;
-  oss << to_string(pt.x) << ',' << to_string(pt.y);
-  return oss.str();
-}
-
-template<class InputIterator>
-inline typename std::iterator_traits<InputIterator>::value_type
-segment_distance2(InputIterator s1, InputIterator s2, InputIterator p) {
-  typedef typename std::iterator_traits<InputIterator>::value_type value_type;
-  return psimpl::math::segment_distance2<2, InputIterator>(s1, s2, p);
-}
-
-template<class T>
-void
-moment_from_angle(double phi, cv::Point_<T>& point) {
-  point.x = std::sin(phi);
-  point.y = std::cos(phi);
-}
 
 template<class T, class Char = char>
 inline std::string
@@ -194,7 +188,6 @@ to_string(const Line<T>& line) {
 
   return ret;
 }
-/*
 
 template<class T, template<typename> typename Container = std::vector, class Char = char>
 inline std::string
@@ -210,7 +203,6 @@ to_string(const Container<Line<T>>& lines) {
   }
   return ret;
 }
-*/
 
 template<class Char, class Value>
 inline std::basic_ostream<Char>&

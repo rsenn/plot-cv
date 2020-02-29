@@ -1,4 +1,5 @@
 #include "geometry.h"
+#include <opencv2/imgproc/imgproc.hpp>
 
 point2f_vector
 get_mass_centers(std::vector<point_vector> contours) {

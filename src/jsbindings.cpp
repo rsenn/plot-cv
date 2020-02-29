@@ -2,6 +2,8 @@
 #include "geometry.h"
 #include "jsbindings.h"
 #include "plot-cv.h"
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 extern jsrt js;
 extern cv::Mat* mptr;
