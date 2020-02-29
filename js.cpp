@@ -259,15 +259,14 @@ jsrt::call(const char* name, size_t argc, const_value* argv) {
 
 jsrt::value
 jsrt::call(const_value func, std::vector<const_value>& args) {
-  value ret = call(func, args.size(), args.data());
-  dump_error();
-  return ret;
+  return call(func, args.size(), args.data());
 }
 
 jsrt::value
 jsrt::call(const_value func, size_t argc, const_value* argv) {
   value ret = JS_Call(ctx, func, global_object(), argc, argv);
-  dump_error();
+  if(JS_IsException(ret))
+    dump_error();
   return ret;
 }
 
@@ -277,16 +276,15 @@ jsrt::normalize_module(JSContext* ctx,
                        const char* module_name,
                        void* opaque) {
   jsrt* js = static_cast<jsrt*>(opaque);
-  std::cerr << "normalize_module module_base_name: " << module_base_name
-            << std::endl;
-  std::cerr << "normalize_module module_name: " << module_name << std::endl;
+/*  std::cerr << "normalize_module module_base_name: " << module_base_name<< std::endl;
+  std::cerr << "normalize_module module_name: " << module_name << std::endl;*/
   char* name = static_cast<char*>(js_malloc(ctx, strlen(module_name) + 4 + 1));
   name[0] = '\0';
   if(!(module_name[0] == '.' && module_name[1] == '/'))
     strcpy(name, "./");
 
   strcat(name, module_name);
-  std::cerr << "normalize_module name: " << name << std::endl;
+  //std::cerr << "normalize_module name: " << name << std::endl;
   return name;
 }
 
@@ -306,8 +304,8 @@ jsrt::dump_exception(JSValueConst exception_val, bool is_throw) {
   bool is_error;
 
   is_error = JS_IsError(ctx, exception_val);
-  if(is_throw && !is_error)
-    printf("Throw: ");
+  /*  if(is_throw && !is_error)
+      printf("Throw: ");*/
   js_print(ctx, JS_NULL, 1, (JSValueConst*)&exception_val);
   if(is_error) {
     val = JS_GetPropertyStr(ctx, exception_val, "stack");
