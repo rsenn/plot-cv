@@ -120,14 +120,6 @@ public:
 };
 
 
-template<class T>
-inline std::string
-to_string(const cv::Point_<T>& pt, size_t n_pad = 3, char ch_pad = '0') {
-  std::ostringstream oss;
-  oss << to_string(pt.x) << ',' << to_string(pt.y);
-  return oss.str();
-}
-
 template<class T, class Char = char>
 inline std::basic_string<Char>
 to_string(const cv::Point_<T>& point) {
@@ -204,20 +196,20 @@ angle(cv::Point_<T> pt1, cv::Point_<T> pt2, cv::Point_<T> pt0) {
   return (dx1 * dx2 + dy1 * dy2) / sqrt((dx1 * dx1 + dy1 * dy1) * (dx2 * dx2 + dy2 * dy2) + 1e-10);
 }
 
-template<class To, class From, template<class> class Container>
+template<class To, class From>
 inline void
-convert_points(const Container<cv::Point_<From>>& from, Container<cv::Point_<To>>& to) {
+convert_points(const std::vector<cv::Point_<From>>& from, std::vector<cv::Point_<To>>& to) {
   std::transform(from.cbegin(),
                  from.cend(),
                  std::back_inserter(to),
                  [](cv::Point_<From> p) -> cv::Point_<To> { return cv::Point_<To>(p.x, p.y); });
 }
 
-template<class To, class From, template<class> class Container>
-inline Container<cv::Point_<To>>
-transform_points(const Container<cv::Point_<From>>& from) {
-  Container<cv::Point_<To>> ret;
-  convert_points<To, From, Container>(from, ret);
+template<class To, class From>
+inline std::vector<cv::Point_<To>>
+transform_points(const std::vector<cv::Point_<From>>& from) {
+  std::vector<cv::Point_<To>> ret;
+  convert_points<To, From>(from, ret);
   return ret;
 }
 

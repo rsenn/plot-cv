@@ -118,8 +118,8 @@ public:
   std::string str(const std::string& comma = ",", const std::string& sep = "|") const;
 
   /*template <class Char, class T>
-  inline std::basic_ostream<Char>&
-  operator<<(std::basic_ostream<Char>& os, const Line<T>& line) {
+  inline std::ostream&
+  operator<<(std::ostream& os, const Line<T>& line) {
     os << line.a.x << ',' << line.a.y;
     os << " -> ";
     os << line.b.x << ',' << line.b.y;
@@ -180,6 +180,15 @@ to_string(const T& t, size_t n_pad = 3, char ch_pad = ' ') {
 }
 
 
+
+template<class T>
+inline std::string
+to_string(const cv::Point_<T>& pt, size_t n_pad = 3, char ch_pad = '0') {
+  std::ostringstream oss;
+  oss << to_string(pt.x) << ',' << to_string(pt.y);
+  return oss.str();
+}
+
 template<class T, class Char = char>
 inline std::string
 to_string(const Line<T>& line) {
@@ -205,8 +214,8 @@ to_string(const Container<Line<T>>& lines) {
 }
 
 template<class Char, class Value>
-inline std::basic_ostream<Char>&
-operator<<(std::basic_ostream<Char>& os, const std::vector<Line<Value>>& c) {
+inline std::ostream&
+operator<<(std::ostream& os, const std::vector<Line<Value>>& c) {
   typedef typename std::vector<Line<Value>>::const_iterator iterator_type;
   iterator_type end = c.cend();
   int i = 0;

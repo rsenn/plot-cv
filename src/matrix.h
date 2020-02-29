@@ -215,8 +215,8 @@ protected:
 std::string to_string(const cv::Mat& mat);
 
 template<class Char, class Value>
-inline std::basic_ostream<Char>&
-operator<<(std::basic_ostream<Char>& os, const Matrix<Value>& m) {
+inline std::ostream&
+operator<<(std::ostream& os, const Matrix<Value>& m) {
   os << to_string(m) << std::endl;
 }
 

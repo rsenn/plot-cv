@@ -4,8 +4,8 @@
 #include <cstring>
 #include <filesystem>
 extern "C" {
-#include "../quickjs/quickjs-libc.h"
-#include "../quickjs/cutils.h"
+#include "quickjs/quickjs-libc.h"
+#include "quickjs/cutils.h"
 };
 
 static JSValue

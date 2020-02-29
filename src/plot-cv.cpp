@@ -1,8 +1,3 @@
-
-#include "plot-cv.h"
-#include "geometry.h"
-#include "color.h"
-
 #include <opencv2/core/core.hpp>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -12,11 +7,7 @@
 #include <opencv2/imgcodecs.hpp>
 #include <unistd.h>
 
-#include "psimpl.h"
-#include "line.h"
-#include "matrix.h"
-#include "js.h"
-#include "jsbindings.h"
+
 
 #include <type_traits>
 #include <iostream>
@@ -28,6 +19,18 @@
 #include <filesystem>
 #include <sys/stat.h>
 #include <unistd.h>
+
+#include "color.h"
+#include "data.h"
+#include "geometry.h"
+#include "js.h"
+#include "jsbindings.h"
+#include "line.h"
+#include "matrix.h"
+#include "plot-cv.h"
+#include "polygon.h"
+#include "psimpl.h"
+
 
 int thresh = 10;
 int max_thresh = 255;
@@ -49,8 +52,8 @@ cv::Mat* mptr = &imgOriginal;
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
 
 template<class Char, class Value>
-inline std::basic_ostream<Char>&
-operator<<(std::basic_ostream<Char>& os, const std::vector<Value>& c) {
+inline std::ostream&
+operator<<(std::ostream& os, const std::vector<Value>& c) {
   typedef typename std::vector<Value>::const_iterator iterator_type;
   iterator_type end = c.end();
   for(iterator_type it = c.begin(); it != end; ++it) {
@@ -158,7 +161,7 @@ export_svg(const typename vector_vector_traits<PointType>::type& contours,
                  contours.end(),
                  std::back_inserter(areas),
                  [](const std::vector<PointType>& contour) -> double {
-                   return cv::contourArea(transform_points<int, float>(contour));
+                   return cv::contourArea(transform_points<int>(contour));
                  });
   const auto& it = std::max_element(areas.begin(), areas.end());
   double max_area = 0;
@@ -575,18 +578,18 @@ main(int argc, char* argv[]) {
   js.add_function("drawLine", &js_draw_line, 2);
   js.add_function("drawRect", &js_draw_rect, 2);
   js.add_function("drawPolygon", &js_draw_polygon, 2);
-
+/*
   std::cerr << "property names: " << js.property_names(glob) << std::endl;
   std::cerr << "'console' property names: " << js.property_names(js.get_property(glob, "console"))
             << std::endl;
-
+*/
   JSValue testFn = js.get_property(glob, "test");
   JSValue drawContourFn = js.get_property(js.global_object(), "drawContour");
   JSValue jsPoint = js.create_point(150, 100);
 
   std::cerr << "js.eval_file ret=" << ret << " globalObj=" << js.to_str(glob)
             << " testFn=" << js.to_str(testFn) << " processFn=" << js.to_str(processFn)
-            << " property_names=" << js.property_names(jsPoint, false, true) << std::endl;
+           /* << " property_names=" << js.property_names(jsPoint, false, true)*/ << std::endl;
   if(ret < 0)
     return ret;
 
@@ -887,10 +890,10 @@ main(int argc, char* argv[]) {
               filter_lines(lines.begin(), lines.end(), [&line](Line<float>& l2, size_t) {
                 return fabs((line.angle() - l2.angle()) * 180 / M_PI) < 3;
               });
-
+/*
           logfile << "adjacent " << adjacent << std::endl;
           logfile << "parallel " << parallel << std::endl;
-
+*/
           distances.clear();
           std::transform(adjacent_lines.begin(),
                          adjacent_lines.end(),
@@ -930,11 +933,11 @@ main(int argc, char* argv[]) {
           l.a = rot.transform_point(l.a);
           l.b = rot.transform_point(l.b);
           logfile << "a: " << l.a << " b: " << l.b << std::endl;
-
+/*
           logfile << "adjacent(" << i << ")" << adjacent << std::endl;
           logfile << "distances(" << i << ")" << distances << std::endl;
           logfile << "angleoffs(" << i << ")" << angleoffs_i << std::endl;
-
+*/
           int minIndex = distance(distances.begin(), it);
           adjacency_list.emplace(make_pair(i, adjacent));
 
