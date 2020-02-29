@@ -163,8 +163,8 @@ js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const
   if(dptr != nullptr) {
     int lineType = antialias ? cv::LINE_AA : cv::LINE_8;
 
-   logfile << "drawCircle() center: " << (point) << " radius: " << radius
-              << " color: " << to_string(color) << std::endl;
+    logfile << "drawCircle() center: " << (point) << " radius: " << radius
+            << " color: " << to_string(color) << std::endl;
 
     // cv::fillPoly(*dptr, points, color, antialias ? cv::LINE_AA : cv::LINE_8);
     cv::circle(*dptr, point, radius, color, thickness < 0 ? cv::FILLED : thickness, lineType);

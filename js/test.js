@@ -63,9 +63,9 @@ global.process = function(contours, hier) {
   drawPolygon(polygons[2], new RGBA(0, 0, 255), 3);
   drawPolygon(polygons[3], new RGBA(255, 0, 255), 3);
 */
-  drawCircle(new Point(300, 150), 110, new RGBA(1, 1, 1), -1);
+/*  drawCircle(new Point(300, 150), 110, new RGBA(1, 1, 1), -1);
   drawCircle(new Point(300, 150), 100, new RGBA(255, 255, 0), -1);
-
+*/
   const do_log = false;
 
   if(do_log) {

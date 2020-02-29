@@ -31,7 +31,7 @@
 
 using std::string;
 
-const char* image_names[] =  { "CANNY", "ORIGINAL", "GRAYSCALE", "OPEN_CLOSE" };
+const char* image_names[] = {"CANNY", "ORIGINAL", "GRAYSCALE", "MORPHOLOGY"};
 
 typedef Line<float> line_type;
 typedef std::vector<line_type> line_list;
@@ -41,14 +41,14 @@ int max_thresh = 255;
 double max_svg_width = 1200; // pixels
 double max_svg_height = 900; // pixels
 int thresholdValue = 155;
-bool showDiagnostics = false;
+bool show_diagnostics = false;
 double epsilon = 3;
 const int max_frames = 100000;
 static unsigned int show_image;
 jsrt js;
 
 image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny,
-    im_oc; // Canny edge image
+    imgMorphology; // Canny edge image
 
 image_type *mptr = nullptr, *dptr = nullptr;
 
@@ -120,20 +120,30 @@ out_points(O& os, const point2i_vector& pl) {
 
 template<class T>
 int
-get_largest_contour(const std::vector<  std::vector< cv::Point_<T> > >& contours_un, std::vector< cv::Point_<T> >& bigContour) {
+get_largest_contour(const std::vector<std::vector<cv::Point_<T>>>& contours_un,
+                    std::vector<cv::Point_<T>>& bigContour) {
   double maxArea = 0.0;
   int largestContour = -1;
   for(size_t i = 0; i < contours_un.size(); i++) {
-    double area = contourArea(contours_un[i]);
-    if(showDiagnostics) {
-      logfile << "Area: " + to_string(area) + "Index: " + to_string(i) << std::endl;
+    double area = cv::contourArea(contours_un[i]);
+    if(show_diagnostics) {
+      std::cerr << "Area: " + to_string(area) + "Index: " + to_string(i) << std::endl;
     }
     if(area > maxArea) {
       maxArea = area;
       largestContour = i;
     }
   }
-  bigContour = contours_un.at(largestContour);
+  if(largestContour != -1) {
+    if(show_diagnostics)
+      std::cerr << "largestContour:" << largestContour << std::endl;
+
+    auto largest = contours_un.at(largestContour);
+
+    bigContour.clear();
+    // bigContour.resize(largest.size());
+    std::copy(largest.cbegin(), largest.cend(), std::back_inserter(bigContour));
+  }
   return largestContour;
 }
 
@@ -530,7 +540,7 @@ display_image(image_type* m) {
   if(m == nullptr)
     return;
   image_type out(cvSize(m->cols, m->rows), m->type());
-  if(dptr != nullptr) {
+  if(dptr != nullptr && show_diagnostics) {
     cv::rectangle(*dptr,
                   point2i_type(50, 50),
                   point2i_type(out.cols - 50, out.rows - 50),
@@ -544,15 +554,28 @@ display_image(image_type* m) {
   image_type alpha = get_alpha_channel(*dptr);
   dptr->copyTo(out);
   cv::bitwise_and(*m, *m, out, alpha);
-int baseLine;
-cv::Size textSize = cv::getTextSize( image_names[show_image], cv::FONT_HERSHEY_PLAIN, 1.5, 2, &baseLine);
+  int baseLine;
+  cv::Size textSize =
+      cv::getTextSize(image_names[show_image], cv::FONT_HERSHEY_PLAIN, 1.5, 2, &baseLine);
 
-cv::Point origin(out.cols - 20 - textSize.width, out.rows - 20 - textSize.height + baseLine);
+  point2i_type origin(out.cols - 20 - textSize.width, out.rows - 20 - textSize.height + baseLine);
 
-cv::putText(out, image_names[show_image], origin, cv::FONT_HERSHEY_PLAIN, 1.5,
- cv::Scalar(0,255,0,255), 2, LINE_AA);
+  cv::putText(out,
+              image_names[show_image],
+              origin,
+              cv::FONT_HERSHEY_PLAIN,
+              1.5,
+              cv::Scalar(0, 255, 0, 255),
+              2,
+              LINE_AA);
 
   cv::imshow("img", out);
+}
+
+void
+image_info(image_type img) {
+  std::cerr << "image cols=" << img.cols << " rows=" << img.rows << " channels=" << img.channels()
+            << " depth=" << img.depth() << std::endl;
 }
 
 JSValue
@@ -598,7 +621,8 @@ main(int argc, char* argv[]) {
                   << " diff=" << (newmt - mt) << std::endl; */
     if(newmt > mt) {
       mt = newmt;
-      std::cerr << "js/test.js changed, reloading..." << std::endl;
+      if(show_diagnostics)
+        std::cerr << "js/test.js changed, reloading..." << std::endl;
 
       ret = js.eval_file("js/test.js");
       processFn = js.get_property(glob, "process");
@@ -622,11 +646,12 @@ main(int argc, char* argv[]) {
   JSValue drawContourFn = js.get_property(js.global_object(), "drawContour");
   JSValue jsPoint = js.create_point(150, 100);
 
-  std::cerr << "js.eval_file ret=" << ret << " globalObj=" << js.to_str(glob)
-            << " testFn=" << js.to_str(testFn) << " processFn="
-            << js.to_str(processFn)
-            /* << " property_names=" << js.property_names(jsPoint, false, true)*/
-            << std::endl;
+  if(show_diagnostics)
+    std::cerr << "js.eval_file ret=" << ret << " globalObj=" << js.to_str(glob)
+              << " testFn=" << js.to_str(testFn) << " processFn="
+              << js.to_str(processFn)
+              /* << " property_names=" << js.property_names(jsPoint, false, true)*/
+              << std::endl;
   if(ret < 0)
     return ret;
 
@@ -661,6 +686,7 @@ main(int argc, char* argv[]) {
   int levels = 3;
   int eps = 8;
   int blur = 4;
+  int morphology_operator = 0;
 
   cv::namedWindow("img", CV_WINDOW_AUTOSIZE);
 
@@ -676,8 +702,12 @@ main(int argc, char* argv[]) {
       case 27: return 0;
       case 'c':
       case 'C': show_image = CANNY; break;
+      case 'm':
+      case 'M': morphology_operator = !morphology_operator; break;
+      case 'd':
+      case 'D': show_diagnostics = !show_diagnostics; break;
       case 'p':
-      case 'P': show_image = OPEN_CLOSE; break;
+      case 'P': show_image = MORPHOLOGY; break;
       case 'o':
       case 'O': show_image = ORIGINAL; break;
       case 'g':
@@ -687,14 +717,17 @@ main(int argc, char* argv[]) {
       case 81:
       case -104: show_image++; break;
       case -1: break;
-      default: std::cerr << "Unknown keycode: '" << (int)(char)keycode << "'" << std::endl; break;
+      default:
+        if(show_diagnostics)
+          std::cerr << "Unknown keycode: '" << (int)(char)keycode << "'" << std::endl;
+        break;
     }
     show_image %= 4;
 
-    //std::cerr << "Show image: " << show_image << std::endl;
+    // std::cerr << "Show image: " << show_image << std::endl;
 
     switch(show_image) {
-      case OPEN_CLOSE: mptr = &im_oc; break;
+      case MORPHOLOGY: mptr = &imgMorphology; break;
       case ORIGINAL: mptr = &imgOriginal; break;
       case GRAYSCALE: mptr = &imgGrayscale; break;
       case CANNY:
@@ -724,8 +757,6 @@ main(int argc, char* argv[]) {
     write_image(imgOutput);
 
     logfile << "got frame" << std::endl;
-    // cv::normalize(imgRaw,imgOriginal,0,255,cv::NORM_L1);
-    //    imgRaw.copyTo(imgOriginal);
 
     if(dptr == nullptr) {
       imgVector = image_type::zeros(cvSize(imgOriginal.cols, imgOriginal.rows), imgOriginal.type());
@@ -738,60 +769,60 @@ main(int argc, char* argv[]) {
     cv::split(frameLab, frameLabCn);
     frameLabCn[0].copyTo(imgGrayscale);
 
-    // cvtColor(imgOriginal, imgGrayscale, CV_BGR2GRAY); // convert to grayscale
     vector<cv::Vec3f> circles;
 
-    // corner_harris_detection(imgOriginal, imgGrayscale);
-
-    /// Apply Histogram Equalization
-    // cv::equalizeHist(imgGrayscale, imgGrayscale);
-
     cv::GaussianBlur(imgGrayscale, imgBlurred, cv::Size(5, 5), 1.75, 1.75);
-
     cv::Canny(imgBlurred, imgCanny, thresh, thresh * 2, 3);
 
-    // open and close to highlight objects
     image_type strel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(19, 19));
 
-    imgCanny.copyTo(im_oc);
-    cv::cvtColor(im_oc, im_oc, cv::COLOR_GRAY2BGR);
+    imgCanny.copyTo(imgMorphology);
+    cv::cvtColor(imgMorphology, imgMorphology, cv::COLOR_GRAY2BGR);
 
-    //   cv::morphologyEx(im_oc, im_oc, cv::MORPH_OPEN,
-    //   cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(2, 2)));
-    cv::morphologyEx(im_oc,
-                     im_oc,
-                     cv::MORPH_CLOSE,
-                     cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3)));
-    //    cv::morphologyEx(im_oc, im_oc, cv::MORPH_CLOSE, strel);
-    /*
-        if(show_image == OPEN_CLOSE)
-          display_image(im_oc);*/
-    display_image(mptr);
+    cv::morphologyEx(imgMorphology,
+                     imgMorphology,
+                     morphology_operator ? cv::MORPH_DILATE : cv::MORPH_CLOSE,
+                     cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
 
     cv::cvtColor(imgGrayscale, imgGrayscale, cv::COLOR_GRAY2BGR);
+    cv::cvtColor(imgMorphology, imgMorphology, cv::COLOR_BGR2GRAY);
+
+    imgMorphology.convertTo(imgMorphology, CV_8UC1);
+
+    image_info(imgMorphology);
+
+    imgVector = cv::Scalar(0, 0, 0, 0);
+
+    // display_image(mptr);
 
     //  apply_clahe(imgOriginal, imgOriginal);XY
     {
 
       vector<point2f_vector> contours2;
       vector<cv::Vec4i> hier;
-      vector<point2i_vector> contours = get_contours(imgCanny, hier, CV_RETR_TREE);
+      vector<point2i_vector> contours = get_contours(imgMorphology, hier, CV_RETR_TREE);
 
       imgCanny = color_type::all(255) - imgCanny;
+      imgMorphology = color_type::all(255) - imgMorphology;
 
-
-      point2f_vector largestContour;
-
-      int largestIndex = get_largest_contour(contours2, largestContour);
-
-      // imgCanny.convertTo(imgCanny, CV_8UC3);
       cv::cvtColor(imgCanny, imgCanny, cv::COLOR_GRAY2BGR);
+      cv::cvtColor(imgMorphology, imgMorphology, cv::COLOR_GRAY2BGR);
 
-      // cvtColor(imgOriginal, imgGrayscale, CV_GRAY);
+      if(show_diagnostics)
+        std::cerr << "Num contours: " << contours.size() << std::endl;
 
-      /*     if(dptr != nullptr)
-             cv::drawContours(*dptr, contours, -1, color_type(0, 0, 255), 1, cv::LINE_AA);
-     */
+      point2i_vector largestContour;
+      int largestIndex = get_largest_contour(contours, largestContour);
+
+      if(largestIndex != -1) {
+        std::cerr << "largestIndex: " << largestIndex << std::endl;
+
+        cv::drawContours(*mptr, contours, largestIndex, cv::Scalar(0, 0, 255, 255), 1, cv::LINE_AA);
+      }
+
+      /* if(dptr != nullptr)
+         cv::drawContours(*dptr, contours, -1, color_type(0, 0, 255), 1, cv::LINE_AA);*/
+
       display_image(mptr);
 
       if(contours.empty()) {
@@ -1057,16 +1088,16 @@ main(int argc, char* argv[]) {
         auto after = std::chrono::high_resolution_clock::now();
         bool do_timing = false;
 
-if(do_timing) {
-        std::chrono::duration<double, std::milli> fp_ms = after - before;
-        auto int_ms = std::chrono::duration_cast<std::chrono::milliseconds>(after - before);
-        std::chrono::duration<long, std::micro> int_usec = int_ms;
+        if(do_timing) {
+          std::chrono::duration<double, std::milli> fp_ms = after - before;
+          auto int_ms = std::chrono::duration_cast<std::chrono::milliseconds>(after - before);
+          std::chrono::duration<long, std::micro> int_usec = int_ms;
 
-        std::cout << "f() took " << fp_ms.count() << " ms, "
-                  << "or " << int_ms.count() << " whole milliseconds "
-                  << "(which is " << int_usec.count() << " whole microseconds)" << std::endl;
+          std::cout << "f() took " << fp_ms.count() << " ms, "
+                    << "or " << int_ms.count() << " whole milliseconds "
+                    << "(which is " << int_usec.count() << " whole microseconds)" << std::endl;
+        }
       }
-  }
       {
         point2f_vector src = {point2f_type(50, 50),
                               point2f_type(100, 50),
@@ -1080,7 +1111,7 @@ if(do_timing) {
 
         image_type perspective = cv::getPerspectiveTransform(src, dst);
 
-       logfile << "perspective:" << perspective << std::endl;
+        logfile << "perspective:" << perspective << std::endl;
       }
 
       find_rectangles(contours, squares);
@@ -1113,7 +1144,7 @@ if(do_timing) {
         // cv::drawContours(imgOriginal, list, -1, color_type(255, 255, 0), 1);
       });
 
-      //  draw_all_contours(imgOriginal, contours);
+      draw_all_contours(imgGrayscale, contours);
       display_image(mptr);
 
       /*
