@@ -31,12 +31,10 @@
 
 int thresh = 10;
 int max_thresh = 255;
-int largestContour = -1;
 double max_svg_width = 1200; // pixels
 double max_svg_height = 900; // pixels
 int thresholdValue = 155;
 bool showDiagnostics = false;
-point2f_vector bigContour;
 double epsilon = 3;
 const int max_frames = 100000;
 jsrt js;
@@ -44,7 +42,7 @@ jsrt js;
 image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny,
     im_oc; // Canny edge image
 
-cv::Mat *mptr = nullptr, *dptr = nullptr;
+image_type *mptr = nullptr, *dptr = nullptr;
 
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
 
@@ -65,42 +63,6 @@ make_filename(const std::string& name, int count, const std::string& ext, const 
   filename << dir << "/" << name << "-" << buf << "." << std::setfill('0') << std::setw(3) << msecs
            << "-" << std::setfill('0') << std::setw(pad) << count << "." << ext;
   return filename.str();
-}
-
-std::string
-to_string(const cv::Scalar& scalar) {
-  const int pad = 3;
-  std::ostringstream oss;
-  oss << '[' << std::setfill(' ') << std::setw(pad) << scalar[0] << ',' << std::setfill(' ')
-      << std::setw(pad) << scalar[1] << ',' << std::setfill(' ') << std::setw(pad) << scalar[2]
-      << ',' << std::setfill(' ') << std::setw(pad) << scalar[3] << ']';
-  return oss.str();
-}
-
-template<class Char, class Value>
-inline std::ostream&
-operator<<(std::ostream& os, const std::vector<Value>& c) {
-  typedef typename std::vector<Value>::const_iterator iterator_type;
-  iterator_type end = c.end();
-  for(iterator_type it = c.begin(); it != end; ++it) {
-    os << ' ';
-    os << to_string(*it);
-  }
-  return os;
-}
-
-int32_t
-get_mtime(const char* filename) {
-#if __STDC_VERSION__ >= 201710L
-  return std::filesystem::last_write_time(filename);
-#else
-  struct stat st;
-  if(stat(filename, &st) != -1) {
-    uint32_t ret = st.st_mtime;
-    return ret;
-  }
-#endif
-  return -1;
 }
 
 // Function that calculates the absolute value
@@ -139,12 +101,18 @@ out_points(O& os, const point_vector& pl) {
   }
 }
 
-// finds the largest contour and stores the bigContour and stores it index which
-// are both global variables.
-
-void
-filter_contours(contour2f_vector contours_un) {
+/**
+ * @brief      finds the largest contour
+ *
+ * @param[in]  contours_un     The contours list
+ * @param      bigContour  Receives largest contour
+ *
+ * @return     Index of largest Contour
+ */
+int
+get_largest_contour(contour2f_vector contours_un, point2f_vector& bigContour) {
   double maxArea = 0.0;
+  int largestContour = -1;
   for(size_t i = 0; i < contours_un.size(); i++) {
     double area = contourArea(contours_un[i]);
     if(showDiagnostics) {
@@ -156,12 +124,13 @@ filter_contours(contour2f_vector contours_un) {
     }
   }
   bigContour = contours_un.at(largestContour);
+  return largestContour;
 }
 
 void
-polyline_from_contour(svg::Document& doc,
-                      const point2f_vector& contour_arg,
-                      std::function<svg::Color(const point2f_vector&)> color_fn) {
+svg_draw_polyline(svg::Document& doc,
+                  const point2f_vector& contour_arg,
+                  std::function<svg::Color(const point2f_vector&)> color_fn) {
   svg::Polyline polyline(svg::Stroke(1, color_fn(contour_arg)));
 
   for(size_t i = 0; i < contour_arg.size(); i++) {
@@ -174,8 +143,8 @@ polyline_from_contour(svg::Document& doc,
 
 template<class PointType>
 void
-export_svg(const typename vector_vector_traits<PointType>::type& contours,
-           std::string output_file) {
+svg_export_file(const typename vector_vector_traits<PointType>::type& contours,
+                std::string output_file) {
 
   logfile << "Saving '" << output_file << "'" << std::endl;
 
@@ -204,8 +173,8 @@ export_svg(const typename vector_vector_traits<PointType>::type& contours,
 
   std::for_each(contours.begin(),
                 contours.end(),
-                std::bind(&polyline_from_contour, std::ref(doc), std::placeholders::_1, cfn));
-  //  polyline_from_contour(doc, contour_arg, svg::Color(255, 0, 0));
+                std::bind(&svg_draw_polyline, std::ref(doc), std::placeholders::_1, cfn));
+  //  svg_draw_polyline(doc, contour_arg, svg::Color(255, 0, 0));
 
   doc.save();
 
@@ -316,7 +285,7 @@ image_type
 image_to_binary(image_type start) {
   image_type gray_image, thresh_image;
   cvtColor(start, gray_image, CV_BGR2GRAY);
-  threshold(gray_image, thresh_image, 100, 255, cv::THRESH_BINARY);
+  cv::threshold(gray_image, thresh_image, 100, 255, cv::THRESH_BINARY);
 
   medianBlur(thresh_image, thresh_image, 5);
 
@@ -346,7 +315,7 @@ point_vector
 to_point_vec(const std::vector<InputType>& v) {
   point_vector ret;
   std::for_each(v.begin(), v.end(), [&ret](const InputType& pt) {
-    ret.push_back(cv::Point(pt.x, pt.y));
+    ret.push_back(point2i_type(pt.x, pt.y));
   });
   return ret;
 }
@@ -422,8 +391,8 @@ void
 draw_lines(image_type& target, const std::vector<cv::Vec4i>& lines) {
   for(size_t i = 0; i < lines.size(); i++)
     cv::line(target,
-             cv::Point(lines[i][0], lines[i][1]),
-             cv::Point(lines[i][2], lines[i][3]),
+             point2i_type(lines[i][0], lines[i][1]),
+             point2i_type(lines[i][2], lines[i][3]),
              color_type(0, 255, 255),
              1);
 }
@@ -445,7 +414,7 @@ corner_harris_detection(image_type& src, image_type& src_gray) {
   for(int i = 0; i < dst_norm.rows; i++) {
     for(int j = 0; j < dst_norm.cols; j++) {
       if((int)dst_norm.at<float>(i, j) > thresh) {
-        cv::circle(dst_norm_scaled, cv::Point(j, i), 5, color_type(1), 2, 8, 0);
+        cv::circle(dst_norm_scaled, point2i_type(j, i), 5, color_type(1), 2, 8, 0);
       }
     }
   }
@@ -509,7 +478,7 @@ draw_all_lines(image_type& out,
     if(len < 8)
       continue;
 
-    cv::line(out, cv::Point(it->a), cv::Point(it->b), color, 1, cv::LINE_AA);
+    cv::line(out, point2i_type(it->a), point2i_type(it->b), color, 1, cv::LINE_AA);
   }
 }
 
@@ -518,6 +487,7 @@ get_alpha_channel(image_type m) {
   image_type mask;
   cv::cvtColor(m, mask, CV_RGB2GRAY);
   mask = (mask == 0);
+  cv::threshold(mask, mask, 100, 255, cv::THRESH_BINARY);
   return mask;
 }
 
@@ -527,14 +497,14 @@ display_image(image_type* m) {
     return;
   image_type out(cvSize(m->cols, m->rows), m->type());
   cv::rectangle(*dptr,
-                cv::Point(50, 50),
-                cv::Point(out.cols - 50, out.rows - 50),
+                point2i_type(50, 50),
+                point2i_type(out.cols - 50, out.rows - 50),
                 cv::Scalar(255, 0, 255, 255));
   cv::rectangle(*dptr,
-                cv::Point(51, 51),
-                cv::Point(out.cols - 51, out.rows - 51),
+                point2i_type(51, 51),
+                point2i_type(out.cols - 51, out.rows - 51),
                 cv::Scalar(255, 0, 255, 255));
-  image_type mask = cv::Mat::zeros(m->size(), CV_8UC1);
+  image_type mask = image_type::zeros(m->size(), CV_8UC1);
   image_type alpha = get_alpha_channel(*dptr);
   dptr->copyTo(out);
   cv::bitwise_and(*m, *m, out, alpha);
@@ -714,7 +684,7 @@ main(int argc, char* argv[]) {
     //    imgRaw.copyTo(imgOriginal);
 
     if(dptr == nullptr) {
-      imgVector = cv::Mat::zeros(cvSize(imgOriginal.cols, imgOriginal.rows), imgOriginal.type());
+      imgVector = image_type::zeros(cvSize(imgOriginal.cols, imgOriginal.rows), imgOriginal.type());
       dptr = &imgVector;
     }
 
@@ -799,12 +769,12 @@ main(int argc, char* argv[]) {
 
       int i = 0;
       for(contour_vector::const_iterator it = contours.cbegin(); it != contours.cend(); ++i, ++it) {
-        const vector<cv::Point>& a = *it;
+        const vector<point2i_type>& a = *it;
         int depth = contourDepth(i);
       }
       i = 0;
       for(contour_vector::const_iterator it = contours.cbegin(); it != contours.cend(); ++i, ++it) {
-        const vector<cv::Point>& a = *it;
+        const vector<point2i_type>& a = *it;
 
         if(a.size() >= 3) {
 
@@ -837,7 +807,7 @@ main(int argc, char* argv[]) {
         continue;
       }
 
-      for_each(contours2.begin(), contours2.end(), [&lines](const vector<cv::Point2f>& a) {
+      for_each(contours2.begin(), contours2.end(), [&lines](const vector<point2f_type>& a) {
         double len = cv::arcLength(a, false);
         double area = cv::contourArea(a);
 
@@ -946,7 +916,7 @@ main(int argc, char* argv[]) {
           std::transform(adjacent_lines.begin(),
                          adjacent_lines.end(),
                          back_inserter(centers),
-                         [](Line<float>* line) -> cv::Point { return line->center(); });
+                         [](Line<float>* line) -> point2i_type { return line->center(); });
 
           Matrix<double> rot = Matrix<double>::rotation(-line.angle());
 
@@ -974,7 +944,7 @@ main(int argc, char* argv[]) {
 
         Matrix<double> m = Matrix<double>::identity();
         Matrix<double> s = Matrix<double>::scale(3);
-        Matrix<double> r = Matrix<double>::rotation(M_PI / 4, cv::Point2f(50, 50));
+        Matrix<double> r = Matrix<double>::rotation(M_PI / 4, point2f_type(50, 50));
         Matrix<double> t = Matrix<double>::translation(120, -60);
         Matrix<double> mult;
 
@@ -986,7 +956,7 @@ main(int argc, char* argv[]) {
         logfile << "matrix rotate " << to_string(r) << std::endl;
         logfile << "matrix translate " << to_string(t) << std::endl;
 
-        cv::Point2f p(100, 50);
+        point2f_type p(100, 50);
         point2f_vector pl = {p};
         point2f_vector ol;
 
@@ -1017,7 +987,7 @@ main(int argc, char* argv[]) {
       std::string svg = make_filename("contour", ++count, "svg");
       // filename << "contour-" << ++count << ".svg";
 
-      export_svg<cv::Point2f>(contours2, svg);
+      svg_export_file<point2f_type>(contours2, svg);
 
       unlink("contour.svg");
       rename("contour.svg.tmp", "contour.svg");
@@ -1025,7 +995,7 @@ main(int argc, char* argv[]) {
       vector<point_vector> squares;
 
       {
-        JSValue args[2] = {vector_to_js(js, contours, &points_to_js<cv::Point>),
+        JSValue args[2] = {vector_to_js(js, contours, &points_to_js<point2i_type>),
                            vector_to_js(js, hier, &vec4i_to_js)};
 
         check_eval();
@@ -1045,17 +1015,17 @@ main(int argc, char* argv[]) {
       }
 
       {
-        point2f_vector src = {cv::Point2f(50, 50),
-                              cv::Point2f(100, 50),
-                              cv::Point2f(100, 100),
-                              cv::Point2f(50, 100)};
+        point2f_vector src = {point2f_type(50, 50),
+                              point2f_type(100, 50),
+                              point2f_type(100, 100),
+                              point2f_type(50, 100)};
 
-        point2f_vector dst = {cv::Point2f(100, 0),
-                              cv::Point2f(150, 0),
-                              cv::Point2f(150, 50),
-                              cv::Point2f(100, 50)};
+        point2f_vector dst = {point2f_type(100, 0),
+                              point2f_type(150, 0),
+                              point2f_type(150, 50),
+                              point2f_type(100, 50)};
 
-        cv::Mat perspective = cv::getPerspectiveTransform(src, dst);
+        image_type perspective = cv::getPerspectiveTransform(src, dst);
 
         std::cerr << "perspective:" << perspective << std::endl;
       }
@@ -1064,7 +1034,7 @@ main(int argc, char* argv[]) {
 
       // Draw the circles detected
       for(size_t i = 0; i < circles.size(); i++) {
-        cv::Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+        point2i_type center(cvRound(circles[i][0]), cvRound(circles[i][1]));
         int radius = cvRound(circles[i][2]);
         cv::circle(imgOriginal, center, 3, color_type(255, 0, 0), -1, 8,
                    0); // circle center

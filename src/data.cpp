@@ -1,4 +1,5 @@
 #include "data.h"
+#include "plot-cv.h"
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -36,7 +37,7 @@ checkValidity(const cv::Mat& I) {
 } // vérifie que la matrice est composée de float valides.
 
 bool
-Data::is_valid_point(cv::Point2d p) {
+Data::is_valid_point(point2d_type p) {
   int m = image.rows, n = image.cols;
   return (p.x >= 0 && p.x < n && p.y >= 0 && p.y < m);
 }
@@ -62,9 +63,9 @@ Data::draw_next_step(double step, const cv::Mat& Image, SegmentationMode mode) {
   // std::cout << "Drawing next step" << std::endl;
   polygon.draw_polygon(copyImage);
   int L = polygon.regular_points.size();
-  std::vector<cv::Point2d> nextPointss;
+  std::vector<point2d_type> nextPointss;
   for(int i = 0; i < L; i++) {
-    cv::Point2d p = polygon.get_point(i);
+    point2d_type p = polygon.get_point(i);
     r = (int)p.y;
     c = (int)p.x;
     float g = gGradient.at<float>(r, c);
@@ -85,19 +86,19 @@ Data::draw_next_step(double step, const cv::Mat& Image, SegmentationMode mode) {
         break;
     }
     // std::cout << scalar << std::endl;
-    cv::Point2d nextP(scalar * nx + p.x, scalar * ny + p.y);
+    point2d_type nextP(scalar * nx + p.x, scalar * ny + p.y);
     //	if (is_valid_point(nextP)) {
     line(copyImage, nextP, p, Scalar(0, 0, 255));
     //	cout << "Drawing line: " << i << std::endl;
     /*	} else {
-            std::cout << "cv::Point of polygon: " << (int)p.x << ", " << (int) p.y<<
+            std::cout << "point2i_type of polygon: " << (int)p.x << ", " << (int) p.y<<
        std::endl; std::cout << "Step: " << i << " is invalid." << std::endl;
             std::cout << "Scalaire: " << scalar << std::endl;
             std::cout << "Gradient: " << gradx << ", " << grady << std::endl;
             std::cout << "Normale: " << nx << ", " << ny << std::endl;
             std::cout << "Curvature: " <<curv << std::endl;
             std::cout << "g : " << g << std::endl;
-            std::cout << "cv::Point: " << nextP.x << ", " << nextP.y << std::endl;
+            std::cout << "point2i_type: " << nextP.x << ", " << nextP.y << std::endl;
         }*/
     // std::cout << "Step i: " <<p.x <<", " << p.y << std::endl;
   }
@@ -108,9 +109,9 @@ void
 Data::find_contour(double step, SegmentationMode mode) {
   int r, c;
   int L = polygon.get_regular_point_size();
-  std::vector<cv::Point2d> nextPointss(L);
+  std::vector<point2d_type> nextPointss(L);
   for(int i = 0; i < L; i++) {
-    cv::Point2d p = polygon.get_point(i);
+    point2d_type p = polygon.get_point(i);
     // std::cout << "i: " << i << " size: " << L << std::endl;
     r = (int)p.y;
     c = (int)p.x;
@@ -130,7 +131,7 @@ Data::find_contour(double step, SegmentationMode mode) {
         scalar = (gradx * nx + grady * ny - curv * g) * step;
         break;
     }
-    cv::Point2d nextP(scalar * nx + p.x, scalar * ny + p.y);
+    point2d_type nextP(scalar * nx + p.x, scalar * ny + p.y);
     if(is_valid_point(nextP)) {
       nextPointss.at(i) = nextP;
     } else {

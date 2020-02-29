@@ -13,7 +13,7 @@ extern "C" {
 JSValue
 js_draw_line(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
   int i = 0, ret = -1;
-  cv::Point2f points[2];
+  point2f_type points[2];
   color_type color;
   int thickness = 1;
   bool antialias = true;
@@ -41,7 +41,7 @@ JSValue
 js_draw_rect(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
   int i = 0, ret = -1;
   cv::Rect2f rect;
-  cv::Point2f points[2];
+  point2f_type points[2];
   color_type color;
   int thickness = 1;
   bool antialias = true;
@@ -122,7 +122,7 @@ js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   if(dptr != nullptr) {
     const int size = points.size();
     int lineType = antialias ? cv::LINE_AA : cv::LINE_8;
-    const cv::Point* pts = points.data();
+    const point2i_type* pts = points.data();
 
     std::cerr << "drawPolygon() points: " << (points) << " color: " << to_string(color)
               << std::endl;
@@ -138,7 +138,7 @@ JSValue
 js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
 
   int i = 0, ret = -1;
-  cv::Point point;
+  point2i_type point;
   int radius = 0;
   cv::Scalar color;
 
