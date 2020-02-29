@@ -27,6 +27,8 @@ extern "C" {
 #include <unordered_map>
 #include <map>
 
+enum { CANNY = 0, ORIGINAL, GRAYSCALE, OPEN_CLOSE, CORNERS };
+
 struct js {
 
   bool
@@ -40,8 +42,7 @@ struct js {
     return ctx != nullptr;
   }
 
-  void
-  destroy() {
+  ~js() {
     JS_FreeContext(ctx);
     JS_FreeRuntime(rt);
     ctx = nullptr;
@@ -52,10 +53,7 @@ struct js {
   eval_buf(const char* buf, int buf_len, const char* filename, int eval_flags) {
     JSValue val;
     int ret;
-
     if((eval_flags & JS_EVAL_TYPE_MASK) == JS_EVAL_TYPE_MODULE) {
-      /* for the modules, we compile then run to be able to set
-         import.meta */
       val = JS_Eval(ctx, buf, buf_len, filename, eval_flags | JS_EVAL_FLAG_COMPILE_ONLY);
       if(!JS_IsException(val)) {
         js_module_set_import_meta(ctx, val, TRUE, TRUE);
@@ -75,25 +73,20 @@ struct js {
   }
 
   int
-  eval_file(const char* filename, int module) {
-    uint8_t* buf;
+  eval_file(const char* filename, int module = -1) {
+    char* buf;
     int ret, eval_flags;
     size_t buf_len;
-
-    buf = js_load_file(ctx, &buf_len, filename);
+    buf = reinterpret_cast<char*>(js_load_file(ctx, &buf_len, filename));
     if(!buf) {
       perror(filename);
       exit(1);
     }
-
-    if(module < 0) {
+    if(module < 0)
       module = (has_suffix(filename, ".mjs") || JS_DetectModule((const char*)buf, buf_len));
-    }
-    if(module)
-      eval_flags = JS_EVAL_TYPE_MODULE;
-    else
-      eval_flags = JS_EVAL_TYPE_GLOBAL;
-    ret = eval_buf((const char*)buf, buf_len, filename, eval_flags);
+
+    eval_flags = module ? JS_EVAL_TYPE_MODULE : JS_EVAL_TYPE_GLOBAL;
+    ret = eval_buf(buf, buf_len, filename, eval_flags);
     js_free(ctx, buf);
     return ret;
   }
@@ -744,8 +737,11 @@ main(int argc, char* argv[]) {
   using std::iterator_traits;
   using std::transform;
   using std::vector;
+  int show_image = 0;
 
   js.init(argc, argv);
+
+  js.eval_file("test.js");
 
   int camID = (argc > 1 && isdigit(argv[1][0])) ? strtol(argv[1], nullptr, 10) : -1;
   int count = 0;
@@ -772,18 +768,43 @@ main(int argc, char* argv[]) {
 
   cv::Mat imgRaw, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny; // Canny edge image
 
-  char charCheckForEscKey = 0;
+  char keycode = 0;
   int levels = 3;
   int eps = 8;
   int blur = 4;
 
-  cv::namedWindow("imgOriginal", CV_WINDOW_AUTOSIZE);
-  cv::namedWindow("imgCanny", CV_WINDOW_AUTOSIZE);
+  cv::namedWindow("img", CV_WINDOW_AUTOSIZE);
+
   // cv::namedWindow("imgGrayscale", CV_WINDOW_AUTOSIZE);
   cv::createTrackbar("epsilon", "contours", &eps, 7, trackbar, (void*)"eps");
   cv::createTrackbar("blur", "contours", &blur, 7, trackbar, (void*)"blur");
 
-  while(charCheckForEscKey != 27) { // until the Esc key is pressed or webcam connection is lost
+  while(keycode != 27) { // until the Esc key is pressed or webcam connection is lost
+
+    switch(keycode) {
+      case 27: return 0;
+      case 'c':
+      case 'C': {
+        show_image = CANNY;
+        break;
+      }
+      case 'p':
+      case 'P': {
+        show_image = OPEN_CLOSE;
+        break;
+      }
+      case 'o':
+      case 'O': {
+        show_image = ORIGINAL;
+        break;
+      }
+      case 'g':
+      case 'G': {
+        show_image = GRAYSCALE;
+        break;
+      }
+      default: { break; }
+    }
     bool blnFrameReadSuccessfully = false;
     if(capWebcam.isOpened()) {
       blnFrameReadSuccessfully = capWebcam.read(imgRaw); // get next frame
@@ -837,7 +858,8 @@ main(int argc, char* argv[]) {
     cv::morphologyEx(im_oc, im_oc, cv::MORPH_CLOSE, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(2, 2)));
     //    cv::morphologyEx(im_oc, im_oc, cv::MORPH_CLOSE, strel);
 
-    cv::imshow("imgOpenClose", im_oc);
+    if(show_image == OPEN_CLOSE)
+      cv::imshow("img", im_oc);
 
     cv::cvtColor(imgGrayscale, imgGrayscale, cv::COLOR_GRAY2BGR);
 
@@ -857,11 +879,13 @@ main(int argc, char* argv[]) {
 
       cv::drawContours(imgCanny, contours, -1, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
 
-      cv::imshow("imgCanny", imgCanny); //
+      if(show_image == CANNY)
+
+        cv::imshow("img", imgCanny); //
 
       if(contours.empty()) {
         cout << "No contours" << endl;
-        charCheckForEscKey = cv::waitKey(100);
+        keycode = cv::waitKey(100);
         continue;
       }
 
@@ -914,7 +938,7 @@ main(int argc, char* argv[]) {
       }
 
       if(maxArea == 0) {
-        charCheckForEscKey = cv::waitKey(16);
+        keycode = cv::waitKey(16);
         cout << "No contour area" << endl;
         continue;
       }
@@ -1102,10 +1126,12 @@ main(int argc, char* argv[]) {
 
       draw_all_contours(imgOriginal, contours);
 
-      cv::imshow("imgOriginal", imgOriginal);
-      cv::imshow("imgGrayscale", imgGrayscale);
+      if(show_image == ORIGINAL)
+        cv::imshow("img", imgOriginal);
+      else if(show_image == GRAYSCALE)
+        cv::imshow("img", imgGrayscale);
 
-      charCheckForEscKey = cv::waitKey(1); // delay (in ms) and get key press, if any
+      keycode = cv::waitKey(1); // delay (in ms) and get key press, if any
     }
   } // end while
 

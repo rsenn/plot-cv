@@ -32,26 +32,31 @@ macro(add_prog)
 
   install(TARGETS ${name} DESTINATION bin )
 endmacro()
-set(QUICKJS_DEFS CONFIG_VERSION=\"2020-01-19\" CONFIG_BIGNUM CONFIG_CHECK_JSVALUE=1 CONFIG_LTO=1 _GNU_SOURCE CONFIG_PREFIX=\"${CMAKE_INSTALL_PREFIX}\" )
-add_library(quickjs STATIC quickjs/cutils.c quickjs/libbf.c quickjs/quickjs-libc.c quickjs/libregexp.c quickjs/libunicode.c quickjs/quickjs.c quickjs/quickjs-libc.c quickjs/cutils.c)
-set_target_properties(quickjs PROPERTIES COMPILE_DEFINITIONS "${QUICKJS_DEFS}" )
-target_link_libraries(quickjs m dl)
+#set(QUICKJS_DEFS CONFIG_VERSION=\"2020-01-19\" CONFIG_BIGNUM CONFIG_CHECK_JSVALUE=1 CONFIG_LTO=1 _GNU_SOURCE CONFIG_PREFIX=\"${CMAKE_INSTALL_PREFIX}\" )
+#add_library(quickjs STATIC quickjs/cutils.c quickjs/libbf.c quickjs/quickjs-libc.c quickjs/libregexp.c quickjs/libunicode.c quickjs/quickjs.c quickjs/quickjs-libc.c quickjs/cutils.c)
+#set_target_properties(quickjs PROPERTIES COMPILE_DEFINITIONS "${QUICKJS_DEFS}" )
+#target_link_libraries(quickjs m dl)
+#
+#add_executable(qjsc quickjs/qjsc.c)
+#set_target_properties(qjsc PROPERTIES COMPILE_DEFINITIONS "${QUICKJS_DEFS}" )
+#target_link_libraries(qjsc quickjs)
+#
+#add_executable(qjs quickjs/qjs.c quickjs/repl.c quickjs/qjscalc.c)
+#set_target_properties(qjs PROPERTIES COMPILE_DEFINITIONS "${QUICKJS_DEFS}" )
+#target_link_libraries(qjs quickjs)
+#
+#install(TARGETS quickjs qjsc qjs 
+#  LIBRARY DESTINATION lib
+#  ARCHIVE DESTINATION lib
+#  RUNTIME DESTINATION bin)
+#
 
-add_executable(qjsc quickjs/qjsc.c)
-set_target_properties(qjsc PROPERTIES COMPILE_DEFINITIONS "${QUICKJS_DEFS}" )
-target_link_libraries(qjsc quickjs)
+set(BUILD_SHARED_LIBS OFF)
 
-add_executable(qjs quickjs/qjs.c quickjs/repl.c quickjs/qjscalc.c)
-set_target_properties(qjs PROPERTIES COMPILE_DEFINITIONS "${QUICKJS_DEFS}" )
-target_link_libraries(qjs quickjs)
-
-install(TARGETS quickjs qjsc qjs 
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin)
+add_subdirectory(quickjs)
 
 add_executable(plot-cv plot-cv.cpp)
-  target_link_libraries(plot-cv ${OpenCV_LIBS} quickjs)
+target_link_libraries(plot-cv ${OpenCV_LIBS} quickjs-static)
 
 
 
