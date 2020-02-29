@@ -4,10 +4,11 @@
 #include <array>
 #include <functional>
 #include <opencv2/core.hpp>
+#include <opencv2/core/mat.hpp>
 #include <opencv2/core/affine.hpp>
 #include <opencv2/imgproc/types_c.h>
 
-template<class T = double> class Matrix : public cv::Mat {
+template<class T> class Matrix : public cv::Mat {
 public:
   typedef cv::Mat_<T> typed_type;
   typedef cv::Mat base_type;
@@ -16,7 +17,7 @@ public:
 
   static const int typeId = std::is_same<T, double>::value ? CV_64F : CV_32F;
 
-  Matrix() : base_type(cv::Mat::zeros(dim, dim, typeId)) { init({1, 0, 0}, {0, 1, 0}, {0, 0, 1}); }
+  Matrix() : cv::Mat(cv::Mat::zeros(dim, dim, typeId)) { init({1, 0, 0}, {0, 1, 0}, {0, 0, 1}); }
   Matrix(int xx, int xy, int yx, int yy, int tx, int ty) : base_type(dim, dim, typeId) {
     init(xx, xy, yx, yy, tx, ty);
   }
@@ -42,14 +43,8 @@ public:
                    out,
                    std::bind(&Matrix<T>::transform_point, this, std::placeholders::_1));
   }
-  template<class InputIterator>
-  void
-  transform_points(InputIterator from, InputIterator to) const {
-    std::for_each(
-        from,
-        to,
-        std::bind(&Matrix<T>::convert_point, this, std::placeholders::_1, std::placeholders::_1));
-  }
+
+  template<class InputIterator> void transform_points(InputIterator from, InputIterator to) const;
 
   Matrix<T>&
   operator=(const cv::MatExpr& expr) {
@@ -63,19 +58,11 @@ public:
     return *this;
   }
 
-  cv::Point_<T>
-  transform_point(const cv::Point_<T>& pt) const {
-    T x = at<T>(0, 0) * pt.x + at<T>(0, 1) * pt.y + at<T>(0, 2);
-    T y = at<T>(1, 0) * pt.x + at<T>(1, 1) * pt.y + at<T>(1, 2);
-    return cv::Point_<T>(x, y);
-  };
+  cv::Point_<T> transform_point(const cv::Point_<T>& pt) const;
+  ;
 
-  cv::Point_<T>&
-  convert_point(const cv::Point_<T>& in, cv::Point_<T>& out) const {
-    out.x = at<T>(0, 0) * in.x + at<T>(0, 1) * in.y + at<T>(0, 2);
-    out.y = at<T>(1, 0) * in.x + at<T>(1, 1) * in.y + at<T>(1, 2);
-    return out;
-  };
+  cv::Point_<T>& convert_point(const cv::Point_<T>& in, cv::Point_<T>& out) const;
+  ;
 
   // operator base_type() const { return *this; }
 
@@ -116,13 +103,7 @@ public:
   }
 
   template<class R = std::array<T, dim>>
-  Matrix<T>&
-  init(const R& row0, const R& row1, const R& row2) {
-    set_row(0, row0);
-    set_row(1, row1);
-    set_row(2, row2);
-    return *this;
-  }
+  Matrix<T>& init(const R& row0, const R& row1, const R& row2);
 
   Matrix<T>&
   init(T xx, T xy, T yx, T yy, T tx, T ty) {
@@ -164,21 +145,18 @@ public:
   template<class OtherT = float>
   static Matrix<T>
   rotation(double angle, const cv::Point_<OtherT>& origin) {
-
     Matrix<T> ret = Matrix<T>::identity();
-
     const cv::Point_<OtherT> zero(0, 0);
     /*
-        Matrix<T> a = Matrix<T>::identity();
-        Matrix<T> b = Matrix<T>::identity();
-        Matrix<T> c = Matrix<T>::identity();
-    */
+     Matrix<T> a = Matrix<T>::identity();
+     Matrix<T> b = Matrix<T>::identity();
+     Matrix<T> c = Matrix<T>::identity();
+     */
     if(origin != zero)
       ret.multiplicate(Matrix<T>(1, 0, -T(origin.x), 0, 1, -T(origin.y)));
 
     ret.multiplicate(Matrix<T>(
         T(std::cos(angle)), T(std::sin(angle)), 0, -T(std::sin(angle)), T(std::cos(angle)), 0));
-
     if(origin != zero)
       ret.multiplicate(Matrix<T>(1, 0, T(origin.x), 0, 1, T(origin.y)));
 
@@ -192,39 +170,9 @@ public:
     return *reinterpret_cast<std::array<T, dim> const*>(ptr(row, 0));
   }
 
-  Matrix<T>&
-  multiplicate(const Matrix<T>& matrix2) {
-    Matrix<T> const& matrix1 = *this;
-    Matrix<T> product;
+  Matrix<T>& multiplicate(const Matrix<T>& matrix2);
 
-    for(int x = 0; x < Matrix<T>::dim; ++x) {
-      std::array<T, dim>& out = product[x];
-      for(int y = 0; y < dim; ++y) {
-        T sum = 0;
-        for(int z = 0; z < dim; ++z) sum += matrix1[x][z] * matrix2[z][y];
-        out[y] = sum;
-      }
-    }
-    init(product[0], product[1], product[2]);
-    return *this;
-  }
-
-  Matrix<T>
-  product(const Matrix<T>& other) const {
-    T product;
-    Matrix<T> ret;
-    int i, j, k;
-    for(i = 0; i < dim; i++) {
-      std::array<T, dim>& row = ret[i];
-      for(j = 0; j < dim; j++) {
-        product = 0;
-        for(k = 0; k < dim; k++) product += row[k] * other.get(k, j);
-
-        row[j] = product;
-      }
-    }
-    return ret;
-  }
+  Matrix<T> product(const Matrix<T>& other) const;
 
   Matrix<T> operator*(const Matrix<T>& other) const { return product(other); }
   Matrix<T>&
@@ -245,24 +193,9 @@ protected:
     return *this;
   }
 
-  template<class R = std::array<T, dim>>
-  Matrix<T>&
-  set_row(int row, R arg) {
-    T* arr = ptr(row, 0);
-    std::copy(arg.cbegin(), arg.cend(), arr);
-    return *this;
-  }
+  template<class R = std::array<T, Matrix<T>::dim>> Matrix<T>& set_row(int row, R arg);
 
-  T
-  get(int row, int col) const {
-    if(base_type::type() == CV_64F)
-      return *base_type::ptr<double>(row, col);
-    else if(base_type::type() == CV_32F)
-      return *base_type::ptr<float>(row, col);
-    else
-      throw new std::runtime_error("get");
-    return T();
-  }
+  T get(int row, int col) const;
 
   const T&
   ref(int row, int col) const {
@@ -274,61 +207,137 @@ protected:
     return *ptr(row, col);
   }
 
-  const T*
-  ptr(int row, int col) const {
-    const T* ptr = nullptr;
-    if(base_type::type() == CV_64F)
-      ptr = (T const*)base_type::ptr<double>(row, col);
-    else if(base_type::type() == CV_32F)
-      ptr = (T const*)base_type::ptr<float>(row, col);
-    else
-      throw std::runtime_error("ptr");
-    return ptr;
-  }
+  const T* ptr(int row, int col) const;
 
-  T*
-  ptr(int row, int col) {
-    T* ptr = nullptr;
-    if(base_type::type() == CV_64F)
-      ptr = (T*)base_type::ptr<double>(row, col);
-    else if(base_type::type() == CV_32F)
-      ptr = (T*)base_type::ptr<float>(row, col);
-    else
-      throw std::runtime_error("ptr");
-    return ptr;
-  }
+  T* ptr(int row, int col);
 };
 
-inline std::string
-to_string(const cv::Mat& mat) {
-  std::ostringstream oss;
-  oss << "rows: " << mat.rows;
-  oss << " cols: " << mat.cols;
-  for(int i = 0; i < mat.rows; ++i) {
-    if(i)
-      oss << ",\n ";
-    else
-      oss << " [";
-    oss << "[";
-    for(int j = 0; j < mat.cols; ++j) {
-      if(j)
-        oss << "],[";
-      if(mat.type() == CV_64F)
-        oss << to_string(mat.at<double>(i, j), 4);
-      else if(mat.type() == CV_32F)
-        oss << to_string(mat.at<float>(i, j), 4);
-      else
-        throw std::runtime_error("to_string");
-    }
-    oss << " ]";
-  }
-  oss << "]\n";
-  return oss.str();
-}
+std::string to_string(const cv::Mat& mat);
+
 template<class Char, class Value>
 inline std::basic_ostream<Char>&
 operator<<(std::basic_ostream<Char>& os, const Matrix<Value>& m) {
   os << to_string(m) << std::endl;
+}
+
+template<class T>
+template<class InputIterator>
+inline void
+Matrix<T>::transform_points(InputIterator from, InputIterator to) const {
+  std::for_each(
+      from,
+      to,
+      std::bind(&Matrix<T>::convert_point, this, std::placeholders::_1, std::placeholders::_1));
+}
+
+template<class T>
+inline cv::Point_<T>
+Matrix<T>::transform_point(const cv::Point_<T>& pt) const {
+  T x = at<T>(0, 0) * pt.x + at<T>(0, 1) * pt.y + at<T>(0, 2);
+  T y = at<T>(1, 0) * pt.x + at<T>(1, 1) * pt.y + at<T>(1, 2);
+  return cv::Point_<T>(x, y);
+}
+
+template<class T>
+inline cv::Point_<T>&
+Matrix<T>::convert_point(const cv::Point_<T>& in, cv::Point_<T>& out) const {
+  out.x = at<T>(0, 0) * in.x + at<T>(0, 1) * in.y + at<T>(0, 2);
+  out.y = at<T>(1, 0) * in.x + at<T>(1, 1) * in.y + at<T>(1, 2);
+  return out;
+}
+
+template<class T>
+template<class R>
+inline Matrix<T>&
+Matrix<T>::init(const R& row0, const R& row1, const R& row2) {
+  set_row(0, row0);
+  set_row(1, row1);
+  set_row(2, row2);
+  return *this;
+}
+
+template<class T>
+inline Matrix<T>&
+Matrix<T>::multiplicate(const Matrix<T>& matrix2) {
+  const Matrix<T>& matrix1 = *this;
+  Matrix<T> product;
+  for(int x = 0; x < Matrix<T>::dim; ++x) {
+    std::array<T, dim>& out = product[x];
+    for(int y = 0; y < dim; ++y) {
+      T sum = 0;
+      for(int z = 0; z < dim; ++z) sum += matrix1[x][z] * matrix2[z][y];
+      out[y] = sum;
+    }
+  }
+  init(product[0], product[1], product[2]);
+  return *this;
+}
+
+template<class T>
+inline Matrix<T>
+Matrix<T>::product(const Matrix<T>& other) const {
+  T product;
+  Matrix<T> ret;
+  int i, j, k;
+  for(i = 0; i < dim; i++) {
+    std::array<T, dim>& row = ret[i];
+    for(j = 0; j < dim; j++) {
+      product = 0;
+      for(k = 0; k < dim; k++) product += row[k] * other.get(k, j);
+      row[j] = product;
+    }
+  }
+  return ret;
+}
+
+template<class T>
+template<class R /*= std::array<T, Matrix<T>::dim> */>
+inline Matrix<T>&
+Matrix<T>::set_row(int row, R arg) {
+  T* arr = ptr(row, 0);
+  std::copy(arg.cbegin(), arg.cend(), arr);
+  return *this;
+}
+
+template<class T>
+inline T
+Matrix<T>::get(int row, int col) const {
+  if(base_type::type() == CV_64F)
+    return *base_type::ptr<double>(row, col);
+  else if(base_type::type() == CV_32F)
+    return *base_type::ptr<float>(row, col);
+  else
+    throw new std::runtime_error("get");
+
+  return T();
+}
+
+template<class T>
+inline const T*
+Matrix<T>::ptr(int row, int col) const {
+  const T* ptr = nullptr;
+  if(base_type::type() == CV_64F)
+    ptr = (T const*)base_type::ptr<double>(row, col);
+  else if(base_type::type() == CV_32F)
+    ptr = (T const*)base_type::ptr<float>(row, col);
+  else
+    throw std::runtime_error("ptr");
+
+  return ptr;
+}
+
+template<class T>
+inline T*
+Matrix<T>::ptr(int row, int col) {
+  T* ptr = nullptr;
+  if(base_type::type() == CV_64F)
+    ptr = (T*)base_type::ptr<double>(row, col);
+  else if(base_type::type() == CV_32F)
+    ptr = (T*)base_type::ptr<float>(row, col);
+  else
+    throw std::runtime_error("ptr");
+
+  return ptr;
 }
 
 #endif // defined MATRIX_H
