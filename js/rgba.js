@@ -1,3 +1,5 @@
+import { HSLA } from "./hsla.js";
+
 /**
  * @brief [brief description]
  * @param r  red value 0-255
@@ -23,10 +25,7 @@ export function RGBA(r = 0, g = 0, b = 0, a = 255) {
     const arg = args[0];
     if(typeof arg === "string") {
       if(arg.startsWith("#")) {
-        c =
-          arg.length >= 7
-            ? /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?$/i.exec(arg)
-            : /^#?([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?$/i.exec(arg);
+        c = arg.length >= 7 ? /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?$/i.exec(arg) : /^#?([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?$/i.exec(arg);
 
         let mul = arg.length >= 7 ? 1 : 17;
 
@@ -64,10 +63,7 @@ export const isRGBA = obj => RGBA.properties.every(prop => obj.hasOwnProperty(pr
 
 RGBA.fromHex = (hex, alpha = 255) => {
   const matches =
-    hex &&
-    (hex.length >= 7
-      ? /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?$/i.exec(hex)
-      : /^#?([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?$/i.exec(hex));
+    hex && (hex.length >= 7 ? /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?$/i.exec(hex) : /^#?([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?$/i.exec(hex));
   if(matches === null) return null;
   let mul = hex.length >= 7 ? 1 : 17;
 
@@ -78,11 +74,7 @@ RGBA.fromHex = (hex, alpha = 255) => {
 
 RGBA.prototype.hex = function() {
   const { r, g, b, a } = RGBA.clamp(RGBA.round(this));
-  return (
-    "#" +
-    ("0000000" + ((r << 16) | (g << 8) | b).toString(16)).slice(-6) +
-    (a !== undefined && a != 255 ? ("0" + a.toString(16)).slice(-2) : "")
-  );
+  return "#" + ("0000000" + ((r << 16) | (g << 8) | b).toString(16)).slice(-6) + (a !== undefined && a != 255 ? ("0" + a.toString(16)).slice(-2) : "");
 };
 
 RGBA.prototype.toRGB = function() {
@@ -92,13 +84,7 @@ RGBA.prototype.toRGB = function() {
 
 RGBA.toHex = rgba => RGBA.prototype.hex.call(rgba);
 
-RGBA.clamp = rgba =>
-  RGBA(
-    Math.min(Math.max(rgba.r, 0), 255),
-    Math.min(Math.max(rgba.g, 0), 255),
-    Math.min(Math.max(rgba.b, 0), 255),
-    Math.min(Math.max(rgba.a, 0), 255)
-  );
+RGBA.clamp = rgba => RGBA(Math.min(Math.max(rgba.r, 0), 255), Math.min(Math.max(rgba.g, 0), 255), Math.min(Math.max(rgba.b, 0), 255), Math.min(Math.max(rgba.a, 0), 255));
 RGBA.round = rgba => RGBA.prototype.round.call(rgba);
 RGBA.prototype.round = function() {
   this.r = Math.round(this.r);
@@ -113,8 +99,7 @@ RGBA.normalize = (rgba, from = 255, to = 1.0) => ({
   b: (rgba.b * to) / from,
   a: (rgba.a * to) / from
 });
-RGBA.prototype.css = () => prop =>
-  (prop ? prop + ":" : "") + "rgba(" + this.r + ", " + this.g + ", " + this.b + ", " + (this.a / 255).toFixed(3) + ")";
+RGBA.prototype.css = () => prop => (prop ? prop + ":" : "") + "rgba(" + this.r + ", " + this.g + ", " + this.b + ", " + (this.a / 255).toFixed(3) + ")";
 
 RGBA.prototype.toString = function(a) {
   if(a === undefined) a = this.a;
@@ -134,12 +119,7 @@ RGBA.prototype.normalize = function(from = 255, to = 1.0) {
 RGBA.blend = (a, b, o = 0.5) => {
   a = new RGBA(a);
   b = new RGBA(b);
-  return new RGBA(
-    Math.round(a.r * o + b.r * (1 - o)),
-    Math.round(a.g * o + b.g * (1 - o)),
-    Math.round(a.b * o + b.b * (1 - o)),
-    Math.round(a.a * o + b.a * (1 - o))
-  );
+  return new RGBA(Math.round(a.r * o + b.r * (1 - o)), Math.round(a.g * o + b.g * (1 - o)), Math.round(a.b * o + b.b * (1 - o)), Math.round(a.a * o + b.a * (1 - o)));
 };
 
 RGBA.prototype.toAlpha = function(color) {

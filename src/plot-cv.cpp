@@ -1044,6 +1044,22 @@ main(int argc, char* argv[]) {
                   << "(which is " << int_usec.count() << " whole microseconds)" << std::endl;
       }
 
+      {
+        point2f_vector src = {cv::Point2f(50, 50),
+                              cv::Point2f(100, 50),
+                              cv::Point2f(100, 100),
+                              cv::Point2f(50, 100)};
+
+        point2f_vector dst = {cv::Point2f(100, 0),
+                              cv::Point2f(150, 0),
+                              cv::Point2f(150, 50),
+                              cv::Point2f(100, 50)};
+
+        cv::Mat perspective = cv::getPerspectiveTransform(src, dst);
+
+        std::cerr << "perspective:" << perspective << std::endl;
+      }
+
       find_rectangles(contours, squares);
 
       // Draw the circles detected

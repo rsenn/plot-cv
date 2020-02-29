@@ -65,10 +65,8 @@ Size.prototype.aspect = function() {
 };
 Size.prototype.toCSS = function() {
   let ret = {};
-  if(this.width !== undefined)
-    ret.width = this.width + (this.units && "width" in this.units ? this.units.width : "px");
-  if(this.height !== undefined)
-    ret.height = this.height + (this.units && "height" in this.units ? this.units.height : "px");
+  if(this.width !== undefined) ret.width = this.width + (this.units && "width" in this.units ? this.units.width : "px");
+  if(this.height !== undefined) ret.height = this.height + (this.units && "height" in this.units ? this.units.height : "px");
   return ret;
 };
 

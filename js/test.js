@@ -5,21 +5,17 @@ import { Rect } from "./rect.js";
 import { PointList } from "./pointList.js";
 import { RGBA } from "./rgba.js";
 import { HSLA } from "./hsla.js";
+import { Matrix } from "./matrix.js";
 
-const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA };
+const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };
 
 global.process = function(contours, hier) {
   var areas = [];
+
   function dumpContour(c) {
-    console.log(
-      `contour #${c.id} length=${(c.length + "").padStart(5, " ")} bbox=`,
-      c.bbox,
-      " rect:",
-      c.rect,
-      " area=",
-      c.area
-    );
+    console.log(`contour #${c.id} length=${(c.length + "").padStart(5, " ")} bbox=`, c.bbox, " rect:", c.rect, " area=", c.area);
   }
+
   function processContours(contours) {
     contours.sort((a, b) => a.length - b.length);
     contours = contours.filter(c => c.length >= 4);
@@ -28,29 +24,22 @@ global.process = function(contours, hier) {
       var list = new PointList(contours[i]);
       var bbox = list.bbox();
       var rect = new Rect(bbox);
-
       contours[i].area = rect.area;
       contours[i].id = i;
       contours[i].bbox = bbox;
       contours[i].rect = rect;
-
       areas.push(rect.area);
-
       list = list.map(p => {
         p.x += 2;
         p.y += 2;
         return p;
       });
-
-      drawContour(list, [255, 0, 255, 255], 8, false);
+      drawContour(list, new RGBA(255, 0, 255), 8, false);
     }
-
     contours.sort((a, b) => b.area - a.area);
     areas = contours.map(c => c.area);
-
     dumpContour(contours[0]);
-    drawContour(contours[0], [0, 0, 255, 255], 20, false);
-
+    drawContour(contours[0], new RGBA(255, 0, 0), 20, false);
     return contours;
   }
 
@@ -68,27 +57,24 @@ global.process = function(contours, hier) {
   polygons.push(polygons[0].sum({ x: 320, y: 240 }));
   polygons.push(polygons[0].sum({ x: 0, y: 240 }));
 
-  
-  drawPolygon(polygons[0], [0, 255, 255, 255], 3);
-  drawPolygon(polygons[1], [0, 255, 0, 255], 3);
-  drawPolygon(polygons[2], [255, 0, 0, 255], 3);
-  drawPolygon(polygons[3], [255, 0, 255, 255], 3);
+  drawPolygon(polygons[0], new RGBA(255, 255, 0), 3);
+  drawPolygon(polygons[1], new RGBA(0, 255, 0), 3);
+  drawPolygon(polygons[2], new RGBA(0, 0, 255), 3);
+  drawPolygon(polygons[3], new RGBA(255, 0, 255), 3);
 
-  drawCircle(new Point(300,150), 110, [1,1,1,255], -1);
-  drawCircle(new Point(300,150), 100, [0,255,255,255], -1);
+  drawCircle(new Point(300, 150), 110, new RGBA(1, 1, 1), -1);
+  drawCircle(new Point(300, 150), 100, new RGBA(255, 255, 0), -1);
 
   const do_log = false;
 
   if(do_log) {
     console.log(`polygons: [\n  ${polygons.join(",\n  ")}\n]`);
 
-    console.log(
-      "PROCESS contours: ",
-      contours.map(c => "[" + c.map(pt => `{x:${pt.x},y:${pt.y}}`).join(", ") + "]").join(", ")
-    );
+    console.log("PROCESS contours: ", contours.map(c => "[" + c.map(pt => `{x:${pt.x},y:${pt.y}}`).join(", ") + "]").join(", "));
     console.log("PROCESS hier: ", "[" + hier.map(h => `[${h.join(",")}]`).join(", "));
   }
 };
+
 global.inspect = function(obj) {
   return (
     "{" +
@@ -117,3 +103,5 @@ global.inspect = function(obj) {
     "}"
   );
 };
+
+console.log("Classes: ", inspect(lib));

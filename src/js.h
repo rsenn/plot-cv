@@ -37,6 +37,7 @@ struct jsrt {
   template<class T> void get_point(const_value val, T& ref) const;
   template<class T> void get_point_array(const_value val, std::vector<T>& ref) const;
   template<class T> void get_rect(const_value val, T& ref) const;
+  template<class T> void get_color(const_value val, T& ref) const;
 
   void
   get_boolean(const_value val, bool& ref) {
@@ -109,6 +110,7 @@ struct jsrt {
   bool is_boolean(const_value val) const;
   bool is_point(const_value val) const;
   bool is_rect(const_value val) const;
+  bool is_color(const_value val);
   bool is_array_like(const_value val) const;
 
 protected:
@@ -252,6 +254,34 @@ jsrt::get_rect(const_value val, T& ref) const {
     ref.width = vw;
     ref.height = vh;
   }
+}
+
+template<class T>
+inline void
+jsrt::get_color(const_value val, T& ref) const {
+  value vr = _undefined, vg = _undefined, vb = _undefined, va = _undefined;
+
+  if(is_object(val) && has_property(val, "r") && has_property(val, "g") && has_property(val, "b")) {
+    vr = get_property(val, "r");
+    vg = get_property(val, "g");
+    vb = get_property(val, "b");
+    va = get_property(val, "a");
+  } else if(is_array_like(val)) {
+    uint32_t length;
+    get_number(get_property(val, "length"), length);
+    if(length >= 3) {
+      vr = get_property<uint32_t>(val, 0);
+      vg = get_property<uint32_t>(val, 1);
+      vb = get_property<uint32_t>(val, 2);
+      va = get_property<uint32_t>(val, 3);
+    } else {
+      return;
+    }
+  }
+  get_number(vb, ref[0]);
+  get_number(vg, ref[1]);
+  get_number(vr, ref[2]);
+  get_number(va, ref[3]);
 }
 
 template<class T>

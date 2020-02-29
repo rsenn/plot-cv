@@ -173,6 +173,34 @@ jsrt::is_rect(const_value val) const {
   return false;
 }
 
+bool
+jsrt::is_color(const_value val) {
+  JSValue b = _undefined, g = _undefined, r = _undefined, a = _undefined;
+
+  if(is_array_like(val)) {
+    uint32_t length;
+    get_number(get_property(val, "length"), length);
+
+    if(length == 3 || length == 4) {
+      b = get_property<uint32_t>(val, 0);
+      g = get_property<uint32_t>(val, 1);
+      r = get_property<uint32_t>(val, 2);
+      a = length > 3 ? get_property<uint32_t>(val, 3) : create<int32_t>(255);
+    } else {
+      return false;
+    }
+  } else if(is_object(val)) {
+    b = get_property(val, "b");
+    g = get_property(val, "g");
+    r = get_property(val, "r");
+    a = get_property(val, "a");
+  }
+
+  if(is_number(b) && is_number(g) && is_number(r) && is_number(a))
+    return true;
+  return false;
+}
+
 jsrt::global::global(jsrt& rt) : js(rt) { get(); }
 
 bool

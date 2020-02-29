@@ -32,18 +32,10 @@ PointList.prototype.splice = function() {
   let args = [...arguments];
   const start = args.shift();
   const remove = args.shift();
-  return Array.prototype.splice.apply(this, [
-    start,
-    remove,
-    ...args.map(arg => (arg instanceof Point ? arg : new Point(arg)))
-  ]);
+  return Array.prototype.splice.apply(this, [start, remove, ...args.map(arg => (arg instanceof Point ? arg : new Point(arg)))]);
 };
 PointList.prototype.removeSegment = function(index) {
-  let indexes = [
-    PointList.prototype.getLineIndex.call(this, index - 1),
-    PointList.prototype.getLineIndex.call(this, index),
-    PointList.prototype.getLineIndex.call(this, index + 1)
-  ];
+  let indexes = [PointList.prototype.getLineIndex.call(this, index - 1), PointList.prototype.getLineIndex.call(this, index), PointList.prototype.getLineIndex.call(this, index + 1)];
   let lines = indexes.map(i => PointList.prototype.getLine.call(this, i));
   let point = Line.intersect(lines[0], lines[2]);
   if(point) {
@@ -143,10 +135,7 @@ PointList.prototype.bbox = function() {
     y1: this[0].y,
     y2: this[0].y,
     toString: function() {
-      return `{x1:${(this.x1 + "").padStart(4, " ")},x2:${(this.x2 + "").padStart(4, " ")},y1:${(this.y1 + "").padStart(
-        4,
-        " "
-      )},y2:${(this.y2 + "").padStart(4, " ")}}`;
+      return `{x1:${(this.x1 + "").padStart(4, " ")},x2:${(this.x2 + "").padStart(4, " ")},y1:${(this.y1 + "").padStart(4, " ")},y2:${(this.y2 + "").padStart(4, " ")}}`;
     }
   };
   for(let i = 1; i < this.length; i++) {

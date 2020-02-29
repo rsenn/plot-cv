@@ -1,3 +1,5 @@
+import { Point, isPoint } from "./point.js";
+
 export function Line(x1, y1, x2, y2) {
   let obj = this instanceof Line ? this : {};
   let arg;
