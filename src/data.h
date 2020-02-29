@@ -1,3 +1,6 @@
+#ifndef DATA_H
+#define DATA_H
+
 #pragma once
 #include <opencv2/highgui/highgui.hpp>
 
@@ -25,3 +28,5 @@ public:
   // Modigie le polygone en utilisant une descente de gradient et compris dans
   // les bords de l'image.
 };
+
+#endif // defined DATA_H

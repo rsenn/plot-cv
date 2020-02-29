@@ -1,3 +1,6 @@
+#ifndef MATRIX_H
+#define MATRIX_H
+
 #include <array>
 #include <functional>
 #include <opencv2/core.hpp>
@@ -327,3 +330,5 @@ inline std::basic_ostream<Char>&
 operator<<(std::basic_ostream<Char>& os, const Matrix<Value>& m) {
   os << to_string(m) << std::endl;
 }
+
+#endif // defined MATRIX_H

@@ -63,11 +63,11 @@ global.process = function(contours, hier) {
    polygons.push(polygons[0].sum({x:0,y:240}));
 
   console.log(`polygons: [\n  ${polygons.join(",\n  ")}\n]`);
-
+/*
   drawPolygon(polygons[0], [0, 255, 255, 255], false);
   drawPolygon(polygons[1], [0, 255, 0, 255], false);
   drawPolygon(polygons[2], [255, 0, 0, 255], false);
-  drawPolygon(polygons[3], [255, 0, 255, 255], false);
+  drawPolygon(polygons[3], [255, 0, 255, 255], false);*/
  
   const do_log = false;
 

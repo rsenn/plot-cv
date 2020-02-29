@@ -1,5 +1,5 @@
-#ifndef PLOT_CV_HPP
-#define PLOT_CV_HPP
+#ifndef PLOT_CV_H
+#define PLOT_CV_H
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/core/mat.hpp>
