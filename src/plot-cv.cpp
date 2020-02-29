@@ -1179,7 +1179,18 @@ main(int argc, char* argv[]) {
 
         check_eval();
 
+        auto before = std::chrono::high_resolution_clock::now();
+
         js.call(processFn, 2, args);
+        auto after = std::chrono::high_resolution_clock::now();
+
+        std::chrono::duration<double, std::milli> fp_ms = after - before;
+        auto int_ms = std::chrono::duration_cast<std::chrono::milliseconds>(after - before);
+        std::chrono::duration<long, std::micro> int_usec = int_ms;
+
+        std::cout << "f() took " << fp_ms.count() << " ms, "
+                  << "or " << int_ms.count() << " whole milliseconds "
+                  << "(which is " << int_usec.count() << " whole microseconds)" << std::endl;
       }
 
       find_rectangles(contours, squares);

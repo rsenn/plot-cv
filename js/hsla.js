@@ -1,4 +1,4 @@
-import { RGBA } from './rgba.js';
+import { RGBA } from "./rgba.js";
 
 /**
  * @brief [brief description]
@@ -22,8 +22,10 @@ export function HSLA(h = 0, s = 0, l = 0, a = 1.0) {
     ret.a = a;
   } else {
     const arg = args[0];
-    if(typeof arg === 'string') {
-      var matches = /hsla\(\s*([0-9.]+)\s*,\s*([0-9.]+%?)\s*,\s*([0-9.]+%?),\s*([0-9.]+)\s*\)/g.exec(arg) || /hsl\(\s*([0-9.]+)\s*,\s*([0-9.]+%?)\s*,\s*([0-9.]+%?)\s*\)/g.exec(arg);
+    if(typeof arg === "string") {
+      var matches =
+        /hsla\(\s*([0-9.]+)\s*,\s*([0-9.]+%?)\s*,\s*([0-9.]+%?),\s*([0-9.]+)\s*\)/g.exec(arg) ||
+        /hsl\(\s*([0-9.]+)\s*,\s*([0-9.]+%?)\s*,\s*([0-9.]+%?)\s*\)/g.exec(arg);
 
       if(matches != null) matches = [...matches].slice(1);
     }
@@ -32,8 +34,8 @@ export function HSLA(h = 0, s = 0, l = 0, a = 1.0) {
     ret.l = c[2];
     ret.a = c[3] !== undefined ? c[3] : 1.0;
 
-    ['h', 's', 'l', 'a'].forEach(channel => {
-      if(String(ret[channel]).endsWith('%')) ret[channel] = parseFloat(ret[channel].slice(0, ret[channel].length - 1));
+    ["h", "s", "l", "a"].forEach(channel => {
+      if(String(ret[channel]).endsWith("%")) ret[channel] = parseFloat(ret[channel].slice(0, ret[channel].length - 1));
       else ret[channel] = parseFloat(ret[channel]);
     });
   }
@@ -42,7 +44,7 @@ export function HSLA(h = 0, s = 0, l = 0, a = 1.0) {
   if(!(ret instanceof HSLA)) return ret;
 }
 
-HSLA.prototype.properties = ['h', 's', 'l', 'a'];
+HSLA.prototype.properties = ["h", "s", "l", "a"];
 
 //export const isHSLA = obj => HSLA.properties.every(prop => obj.hasOwnProperty(prop));
 
@@ -57,11 +59,11 @@ HSLA.prototype.toHSL = function() {
 
 HSLA.prototype.clamp = function() {
   this.h = this.h % 360;
-  this.s =  Math.min(Math.max(this.s, 0), 100);
+  this.s = Math.min(Math.max(this.s, 0), 100);
   this.l = Math.min(Math.max(this.l, 0), 100);
-  this.a =  Math.min(Math.max(this.a, 0), 1);
+  this.a = Math.min(Math.max(this.a, 0), 1);
   return this;
-}
+};
 HSLA.prototype.round = function() {
   this.h = Math.round(this.h);
   this.s = Math.round(this.s);
@@ -127,7 +129,6 @@ HSLA.prototype.toRGBA = function() {
 
   return new RGBA(r, g, b, a);
 };
-
 
 HSLA.prototype.toString = function() {
   if(this.a == 1) return `hsl(${this.h},${this.s}%,${this.l}%)`;

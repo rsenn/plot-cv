@@ -9,8 +9,6 @@ import { HSLA } from "./hsla.js";
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA };
 
 global.process = function(contours, hier) {
-  contours.sort((a, b) => a.length - b.length);
-  contours = contours.filter(c => c.length >= 4);
   var areas = [];
   function dumpContour(c) {
     console.log(
@@ -22,16 +20,15 @@ global.process = function(contours, hier) {
       c.area
     );
   }
-  for(var i = 0; i < contours.length; i++) {
+  /*
+   contours.sort((a, b) => a.length - b.length);
+  contours = contours.filter(c => c.length >= 4);
+for(var i = 0; i < contours.length; i++) {
     const [next, prev, child, parent] = hier[i];
     var list = new PointList(contours[i]);
     var bbox = list.bbox();
     var rect = new Rect(bbox);
-    /*
-    if(child == -1 && parent == -1)
-      continue;*/
 
-    //  if(parent != -1) continue;
 
     contours[i].area = rect.area;
     contours[i].id = i;
@@ -46,7 +43,7 @@ global.process = function(contours, hier) {
       return p;
     });
 
-    //drawContour(list, [255, 0, 255, 255], 8, false);
+    drawContour(list, [255, 0, 255, 255], 8, false);
   }
 
   contours.sort((a, b) => b.area - a.area);
@@ -54,7 +51,9 @@ global.process = function(contours, hier) {
 
   dumpContour(contours[0]);
   drawContour(contours[0], [0, 0, 255, 255], 20, false);
+  */
 
+  /*
   let poly = new PointList([
     [0, 0],
     [320, 0],
@@ -70,16 +69,21 @@ global.process = function(contours, hier) {
   poly.sub(320, 0);
   drawPolygon(poly, [0, 255, 0, 255], false);
   poly.sub(-320, 240);
-  drawPolygon(poly, [255, 0, 0, 255], false);
+  drawPolygon(poly, [255, 0, 0, 255], false);*/
 
-  // console.log("Num contours:", contours.length);
+  console.log("Num contours:", contours.length);
   //console.log("Areas:", areas);
 
-  //  console.log("Num hier:", hier.length);
-  //  if(do_log) {
-  //    console.log("PROCESS contours: ", contours.map(c => "[" + c.map(pt => `{x:${pt.x},y:${pt.y}}`).join(", ") + "]").join(", "));
-  //    console.log("PROCESS hier: ", "[" + hier.map(h => `[${h.join(",")}]`).join(", "));
-  //  }
+  console.log("Num hier:", hier.length);
+  const do_log = false;
+
+  if(do_log) {
+    console.log(
+      "PROCESS contours: ",
+      contours.map(c => "[" + c.map(pt => `{x:${pt.x},y:${pt.y}}`).join(", ") + "]").join(", ")
+    );
+    console.log("PROCESS hier: ", "[" + hier.map(h => `[${h.join(",")}]`).join(", "));
+  }
 };
 global.inspect = function(obj) {
   return (
