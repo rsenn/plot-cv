@@ -14,6 +14,11 @@ typedef std::vector<line_type> line_list;
 typedef std::vector<int> ref_list;
 typedef cv::Mat image_type;
 
+template<class T> struct vector_vector_traits {
+  typedef T value_type;
+  typedef std::vector<std::vector<T>> type;
+};
+
 enum { CANNY = 0, ORIGINAL, GRAYSCALE, OPEN_CLOSE, CORNERS };
 
 inline std::string

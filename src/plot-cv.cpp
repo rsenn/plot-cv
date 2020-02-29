@@ -145,7 +145,8 @@ polyline_from_contour(svg::Document& doc,
 
 template<class PointType>
 void
-export_svg(const std::vector<std::vector<PointType>>& contours, std::string output_file) {
+export_svg(const typename vector_vector_traits<PointType>::type& contours,
+           std::string output_file) {
 
   logfile << "Saving '" << output_file << "'" << std::endl;
 
@@ -364,7 +365,7 @@ find_rectangles(const contour_vector& contours, contour_vector& squares) {
 template<class PointT>
 static void
 draw_polylines(image_type& image,
-               const std::vector<std::vector<PointT>>& polylines,
+               const typename vector_vector_traits<PointT>::type& polylines,
                const color_type& color = color_type(0, 255, 0)) {
 
   cv::polylines(image, polylines, true, color, 2, cv::LINE_AA);
