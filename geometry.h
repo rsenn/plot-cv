@@ -7,7 +7,6 @@
 typedef std::vector<cv::Point> point_vector;
 typedef std::vector<cv::Point2f> point2f_vector;
 
-
 // Function that calculates the area given a
 // std::vector of vertices in the XY plane.
 template<class P>
@@ -45,7 +44,6 @@ get_mass_centers(std::vector<point_vector> contours) {
 
   return mc;
 }
-
 
 template<class T, class Pred>
 inline std::vector<int>

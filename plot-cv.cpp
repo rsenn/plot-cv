@@ -587,18 +587,74 @@ get_alpha_channel(image_type m) {
 
 void
 display_image(image_type& m) {
-  image_type out(cvSize(m.cols, m.rows), CV_8UC3);
-  image_type alpha = get_alpha_channel(m);
+  image_type in(cvSize(m.cols, m.rows), m.type());
+  image_type out(cvSize(m.cols, m.rows), m.type());
+  image_type beta, alpha = get_alpha_channel(m);
 
-  alpha ^= 0xff;
+  // alpha ^= 0xff;
 
-  m.copyTo(out);
-/*
-  out &= alpha;
-  out |= imgVector;*/
+  m.copyTo(in);
+
+  beta = (1.0 - alpha);
+  addWeighted(in, 1, imgVector, 1, 0.0, out);
+  /*
+    out &= alpha;
+    out |= imgVector;*/
   //  cv::addWeighted(m, 1, imgVector, 1, 0, out);
 
   cv::imshow("img", out);
+}
+
+template<class T>
+JSValue
+int_vector_to_js(const T& v) {
+  uint32_t i, n = v.size();
+  JSValue ret = js.create_array(n);
+  for(i = 0; i < n; i++) {
+    JSValue num = js.create_number(v[i]);
+    js.set_property(ret, i, num);
+  }
+  return ret;
+}
+template<>
+
+JSValue
+int_vector_to_js(const cv::Vec4i& v) {
+   uint32_t i;
+  JSValue ret = js.create_array(4);
+  for(i = 0; i < 4; i++) {
+    JSValue num = js.create_number(v[i]);
+    js.set_property(ret, i, num);
+  }
+  return ret;
+}
+
+template<class P>
+JSValue
+point_vector_to_js(const std::vector<P>& v) {
+  uint32_t i, n = v.size();
+  JSValue ret = js.create_array(n);
+
+  for(i = 0; i < n; i++) {
+    JSValue pt = js.create_point(v[i].x, v[i].y);
+
+    js.set_property(ret, i, pt);
+  }
+  return ret;
+}
+
+template<class P>
+JSValue
+vector_to_js(const std::vector<P>& contours, JSValue (*fn)(const P&)) {
+  uint32_t i, n = contours.size();
+  JSValue ret = js.create_array(n);
+
+  for(i = 0; i < n; i++) {
+    JSValue pt = fn(contours[i]);
+
+    js.set_property(ret, i, pt);
+  }
+  return ret;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -651,8 +707,6 @@ main(int argc, char* argv[]) {
 
   cv::namedWindow("img", CV_WINDOW_AUTOSIZE);
 
-  imgVector = image_type(cvSize(imgInput.cols, imgInput.rows), CV_8UC4);
-
   // cv::namedWindow("imgGrayscale", CV_WINDOW_AUTOSIZE);
   cv::createTrackbar("epsilon", "contours", &eps, 7, trackbar, (void*)"eps");
   cv::createTrackbar("blur", "contours", &blur, 7, trackbar, (void*)"blur");
@@ -700,6 +754,9 @@ main(int argc, char* argv[]) {
 
     imgRaw.copyTo(imgOutput);
     imgRaw.copyTo(imgOriginal);
+
+    if(imgVector.cols == 0)
+      imgVector = image_type(cvSize(imgRaw.cols, imgRaw.rows), imgRaw.type());
 
     write_image(imgOutput);
 
@@ -1000,6 +1057,15 @@ main(int argc, char* argv[]) {
 
       vector<point_vector> squares;
 
+      {
+        JSValue jscontours = vector_to_js(contours, &point_vector_to_js<cv::Point>);
+        JSValue jshier = vector_to_js(hier, &int_vector_to_js<cv::Vec4i>);
+
+        JSValue processFn = js.get_global_property("process");
+        std::vector<JSValue> args = {jscontours, jshier};
+
+        js.call(processFn, args);
+      }
       find_rectangles(contours, squares);
 
       // Draw the circles detected
@@ -1012,9 +1078,10 @@ main(int argc, char* argv[]) {
       }
 
       vector<point_vector> approxim;
-      transform(contours2.begin(), contours2.end(), back_inserter(approxim), [](const point2f_vector& p) -> point_vector {
-        return transform_points<float, int>(p);
-      });
+      transform(contours2.begin(),
+                contours2.end(),
+                back_inserter(approxim),
+                [](const point2f_vector& p) -> point_vector { return transform_points<float, int>(p); });
 
       for_each(approxim.begin(), approxim.end(), [&](const point_vector& c) {
         const double length = cv::arcLength(c, false);
