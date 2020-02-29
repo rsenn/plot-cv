@@ -7,6 +7,7 @@
 #include <type_traits>
 #include <exception>
 #include <string>
+#include <functional>
 #include "psimpl.h"
 
 template<class T> class LineEnd;
@@ -126,27 +127,9 @@ public:
   */
 };
 
-template<class T>
-inline T
-point_distance(const cv::Point_<T>& p1, const cv::Point_<T>& p2) {
-  return std::sqrt(psimpl::math::point_distance2<2>(&p1.x, &p2.x));
-}
-
-template<>
-inline float
-point_distance<float>(const cv::Point2f& p1, const cv::Point2f& p2) {
-  return std::sqrt(psimpl::math::point_distance2<2>(&p1.x, &p2.x));
-}
-template<>
-inline double
-point_distance<double>(const cv::Point2d& p1, const cv::Point2d& p2) {
-  return std::sqrt(psimpl::math::point_distance2<2>(&p1.x, &p2.x));
-}
-template<>
-inline int
-point_distance<int>(const cv::Point& p1, const cv::Point& p2) {
-  return std::sqrt(psimpl::math::point_distance2<2>(&p1.x, &p2.x));
-}
+float point_distance(const cv::Point2f& p1, const cv::Point2f& p2);
+double point_distance(const cv::Point2d& p1, const cv::Point2d& p2);
+int point_distance(const cv::Point& p1, const cv::Point& p2);
 
 template<class T>
 double
@@ -211,22 +194,22 @@ to_string(const Line<T>& line) {
   return ret;
 }
 
-template<class T, template<typename> typename Container = std::vector, class Char = char>
+template<class T>
 inline std::string
-to_string(const Container<Line<T>>& lines) {
-  typedef typename Container<Line<T>>::const_iterator iterator_type;
+to_string(const std::vector<Line<T>>& lines) {
+  typedef typename std::vector<Line<T>>::const_iterator iterator_type;
   typedef Line<T> value_type;
   std::string ret;
   iterator_type end = lines.cend();
   for(iterator_type it = lines.cbegin(); it != end; ++it) {
     if(ret.length())
       ret += " ";
-    ret += to_string<T, Char>(*it);
+    ret += to_string<T>(*it);
   }
   return ret;
 }
 
-template<class Char, class Value>
+template<class Value>
 inline std::ostream&
 operator<<(std::ostream& os, const std::vector<Line<Value>>& c) {
   typedef typename std::vector<Line<Value>>::const_iterator iterator_type;
@@ -390,7 +373,7 @@ Line<T>::angle() const {
 template<class T>
 inline std::pair<T, T>
 Line<T>::endpoint_distances(const cv::Point_<T>& p) const {
-  return std::make_pair<T, T>(point_distance<T>(a, p), point_distance<T>(b, p));
+  return std::make_pair<T, T>(point_distance(a, p), point_distance(b, p));
 }
 
 template<class T>
@@ -405,7 +388,7 @@ Line<T>::endpoint_distances(const Line<T>& l) const {
 template<class T>
 inline T
 Line<T>::endpoint_distance(const cv::Point_<T>& p, size_t* point_index) const {
-  T dist1 = point_distance<T>(a, p), dist2 = point_distance<T>(b, p);
+  T dist1 = point_distance(a, p), dist2 = point_distance(b, p);
   T ret = std::min(dist1, dist2);
   if(point_index)
     *point_index = ret;

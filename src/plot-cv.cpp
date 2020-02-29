@@ -144,9 +144,9 @@ svg_draw_polyline(svg::Document& doc,
   doc << polyline;
 }
 
-template<class PointType>
+template<class T>
 void
-svg_export_file(const typename vector_vector_traits<PointType>::type& contours,
+svg_export_file(const typename contour_list<T>::type& contours,
                 std::string output_file) {
 
   logfile << "Saving '" << output_file << "'" << std::endl;
@@ -158,8 +158,8 @@ svg_export_file(const typename vector_vector_traits<PointType>::type& contours,
   std::transform(contours.begin(),
                  contours.end(),
                  std::back_inserter(areas),
-                 [](const std::vector<PointType>& contour) -> double {
-                   return cv::contourArea(transform_points<int>(contour));
+                 [](const typename point_list<T>::type& contour) -> double {
+                   return cv::contourArea(transform_points<int, float>(contour));
                  });
   const auto& it = std::max_element(areas.begin(), areas.end());
   double max_area = 0;
@@ -169,7 +169,7 @@ svg_export_file(const typename vector_vector_traits<PointType>::type& contours,
 
   logfile << "Max area: " << max_area << std::endl;
 
-  const auto& cfn = [&](const std::vector<PointType>& contour) -> svg::Color {
+  const auto& cfn = [&](const typename point_list<T>::type& contour) -> svg::Color {
     const double area = cv::contourArea(contour);
     return from_scalar(hsv_to_rgb(area / max_area * 360, 1, 1));
   };
@@ -989,7 +989,7 @@ main(int argc, char* argv[]) {
       std::string svg = make_filename("contour", ++count, "svg");
       // filename << "contour-" << ++count << ".svg";
 
-      svg_export_file<point2f_type>(contours2, svg);
+      svg_export_file<float>(contours2, svg);
 
       unlink("contour.svg");
       rename("contour.svg.tmp", "contour.svg");
@@ -1049,7 +1049,7 @@ main(int argc, char* argv[]) {
       transform(contours2.begin(),
                 contours2.end(),
                 back_inserter(approxim),
-                [](const point2f_vector& p) -> point_vector { return transform_points<int>(p); });
+                [](const point2f_vector& p) -> point_vector { return transform_points<int, float>(p); });
 
       for_each(approxim.begin(), approxim.end(), [&](const point_vector& c) {
         const double length = cv::arcLength(c, false);

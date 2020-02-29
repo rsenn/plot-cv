@@ -7,13 +7,31 @@
 #include <vector>
 #include <sstream>
 #include <iomanip>
+
 #include "psimpl.h"
 
-typedef std::vector<cv::Point> point_vector;
-typedef std::vector<cv::Point2f> point2f_vector;
+template<class T>
+struct point_list {
+  typedef T coord_type;
+  typedef cv::Point_<T> point_type;
+  typedef std::vector<point_type> type;
+};
+template<class T>
+struct contour_list {
+  typedef T coord_type;
+  typedef cv::Point_<T> point_type;
+  typedef std::vector<point_type> vector_type;
+  typedef std::vector<vector_type> type;
+};
 
-typedef std::vector<point_vector> contour_vector;
-typedef std::vector<point2f_vector> contour2f_vector;
+typedef point_list<int>::type point_vector;
+typedef point_list<float>::type point2f_vector;
+typedef point_list<double>::type point2d_vector;
+
+typedef contour_list<int>::type contour_vector;
+typedef contour_list<float>::type contour2f_vector;
+typedef contour_list<double>::type contour2d_vector;
+
 
 // Function that calculates the area given a
 // std::vector of vertices in the XY plane.
@@ -123,7 +141,7 @@ angle(cv::Point_<T> pt1, cv::Point_<T> pt2, cv::Point_<T> pt0) {
 
 template<class To, class From>
 inline void
-convert_points(const std::vector<cv::Point_<From>>& from, std::vector<cv::Point_<To>>& to) {
+convert_points(const typename point_list<From>::type & from, typename point_list<To>::type & to) {
   std::transform(from.cbegin(),
                  from.cend(),
                  std::back_inserter(to),
@@ -131,9 +149,9 @@ convert_points(const std::vector<cv::Point_<From>>& from, std::vector<cv::Point_
 }
 
 template<class To, class From>
-inline std::vector<cv::Point_<To>>
-transform_points(const std::vector<cv::Point_<From>>& from) {
-  std::vector<cv::Point_<To>> ret;
+inline typename point_list<To>::type 
+transform_points(const typename point_list<From>::type & from) {
+  typename point_list<To>::type  ret;
   convert_points<To, From>(from, ret);
   return ret;
 }
