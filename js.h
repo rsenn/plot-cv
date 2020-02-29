@@ -61,6 +61,12 @@ struct jsrt {
   }
 
   template<class T>
+  bool
+  has_property(const_value obj, T prop) const {
+    return false;
+  }
+
+  template<class T>
   void
   set_property(const_value obj, T prop, value val) {}
   /*  void set_property(const_value obj, const char* name, value val);
@@ -98,6 +104,7 @@ struct jsrt {
   bool is_boolean(const_value val) const;
   bool is_point(const_value val) const;
   bool is_rect(const_value val) const;
+  bool is_array_like(const_value val) const;
 
 protected:
   struct global {
@@ -203,10 +210,9 @@ jsrt::get_int_array(const_value val, T& ref) const {
 template<class T>
 inline void
 jsrt::get_point(const_value val, T& ref) const {
-  bool arr = JS_IsArray(ctx, val);
   value vx = _undefined, vy = _undefined;
 
-  if(arr) {
+  if(is_array(val)) {
     uint32_t length;
     get_number(get_property(val, "length"), length);
     if(length >= 2) {
@@ -215,7 +221,7 @@ jsrt::get_point(const_value val, T& ref) const {
     } else {
       return;
     }
-  } else {
+  } else if(is_object(val) && has_property(val, "x") && has_property(val, "y")) {
     vx = get_property(val, "x");
     vy = get_property(val, "y");
   }
@@ -243,20 +249,16 @@ jsrt::get_rect(const_value val, T& ref) const {
 template<class T>
 inline void
 jsrt::get_point_array(const_value val, std::vector<T>& ref) const {
-  uint32_t i, n, length = 0, arr = JS_IsArray(ctx, val);
-  if(arr) {
+  if(is_array_like(val)) {
+    uint32_t i, length;
+
     get_number(get_property(val, "length"), length);
     ref.resize(length);
 
     for(i = 0; i < length; i++) {
-      JSValueConst prop = get_property<uint32_t>(val, i);
-      std::string s;
+      JSValueConst pt = get_property<uint32_t>(val, i);
 
-      get_string(prop, s);
-
-      std::cerr << "point prop: " << s << std::endl;
-
-      get_point(prop, ref[i]);
+      get_point(pt, ref[i]);
     }
   }
 }
@@ -399,6 +401,24 @@ to_string(const char* s) {
   return std::string(s);
 }
 
+template<>
+inline bool
+jsrt::has_property<const char*>(const_value obj, const char* name) const {
+  JSAtom atom = JS_NewAtom(ctx, name);
+  bool present = !!JS_HasProperty(ctx, obj, atom);
+  JS_FreeAtom(ctx, atom);
+  return present;
+}
+
+template<>
+inline bool
+jsrt::has_property<uint32_t>(const_value obj, uint32_t index) const {
+  JSAtom atom = JS_NewAtomUInt32(ctx, index);
+  bool present = !!JS_HasProperty(ctx, obj, atom);
+  JS_FreeAtom(ctx, atom);
+  return present;
+}
+
 inline bool
 jsrt::is_number(const_value val) const {
   return JS_IsNumber(val);
@@ -422,6 +442,11 @@ jsrt::is_object(const_value val) const {
 inline bool
 jsrt::is_boolean(const_value val) const {
   return JS_IsBool(val);
+}
+
+inline bool
+jsrt::is_array_like(const_value val) const {
+  return is_array(val) || has_property(val, "length");
 }
 
 #endif // defined JS_H

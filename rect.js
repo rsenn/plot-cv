@@ -94,7 +94,7 @@ if (Rect.prototype.isSquare === undefined) {
   };
 }
 Rect.prototype.constructor = Rect;
-Rect.prototype.area = function() {
+Rect.prototype.getArea = function() {
   return this.width * this.height;
 };
 Rect.prototype.toString = function() {
@@ -151,7 +151,7 @@ Object.defineProperty(Rect.prototype, "y2", {
 });
 Object.defineProperty(Rect.prototype, "area", {
   get: function() {
-    return Rect.area(this);
+    return Rect.prototype.getArea.call(this);
   }
 });
 Object.defineProperty(Rect.prototype, "center", {

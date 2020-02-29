@@ -242,3 +242,15 @@ PointList.prototype.toString = function(prec) {
 PointList.prototype.rotateRight = function(n) {
   return Util.rotateRight(this, n);
 };
+PointList.prototype.add = function(pt) {
+  let args = [...arguments];
+  if(!(pt instanceof Point)) pt = new Point(args);
+  for(let i = 0; i < this.length; i++) Point.prototype.add.call(this[i], pt);
+  return this;
+};
+PointList.prototype.sub = function(pt) {
+  let args = [...arguments];
+  if(!(pt instanceof Point)) pt = new Point(args);
+  for(let i = 0; i < this.length; i++) Point.prototype.sub.call(this[i], pt);
+  return this;
+};

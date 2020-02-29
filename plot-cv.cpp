@@ -666,11 +666,10 @@ draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
 
   int i = 0, ret = -1;
   point_vector points;
-  color_type color;
+  cv::Scalar color;
   bool antialias = true;
-  int size = 0;
 
-  if(argc > i && js.is_array(argv[i]))
+  if(argc > i && js.is_array_like(argv[i]))
     js.get_point_array(argv[i++], points);
 
   if(argc > i && js.is_array(argv[i]))
@@ -679,12 +678,15 @@ draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
   if(argc > i && js.is_boolean(argv[i]))
     js.get_boolean(argv[i++], antialias);
 
-  size = points.size();
-
   if(mptr != nullptr) {
-    logfile << "fillPoly() points: " << points.size() << " color: " << color << std::endl;
+    const int size = points.size();
+    int lineType = antialias ? cv::LINE_AA : cv::LINE_8;
+    const cv::Point* pts = points.data();
 
-    cv::fillPoly(*mptr, points, color, antialias ? cv::LINE_AA : cv::LINE_8);
+    std::cerr << "fillPoly() points: " << to_string(points) << " color: " << color << std::endl;
+
+    // cv::fillPoly(*mptr, points, color, antialias ? cv::LINE_AA : cv::LINE_8);
+    cv::fillPoly(*mptr, &pts, &size, 1, color, lineType);
   }
   return js._true;
 }

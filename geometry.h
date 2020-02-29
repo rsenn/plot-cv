@@ -1,7 +1,11 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/types_c.h>
+
 #include <vector>
+#include <sstream>
 #include "line.h"
 
 typedef std::vector<cv::Point> point_vector;
@@ -114,5 +118,28 @@ public:
   typedef bool type(const Line<T>&, size_t);
   typedef std::function<bool(const Line<T>&, size_t)> function;
 };
+
+template<class T, class Char = char>
+inline std::basic_string<Char>
+to_string(const cv::Point_<T>& point) {
+  std::basic_ostringstream<Char> os;
+  os << point.x << "," << point.y;
+  return os.str();
+}
+
+template<class ValueT, template<typename> typename Container = std::vector, class Char = char>
+inline std::basic_string<Char>
+to_string(const Container<cv::Point_<ValueT>>& points) {
+  typedef typename Container<cv::Point_<ValueT>>::const_iterator iterator_type;
+  typedef cv::Point_<ValueT> value_type;
+  std::basic_string<Char> ret;
+  iterator_type end = points.cend();
+  for(iterator_type it = points.cbegin(); it != end; ++it) {
+    if(ret.length())
+      ret += " ";
+    ret += to_string<ValueT, Char>(*it);
+  }
+  return ret;
+}
 
 #endif
