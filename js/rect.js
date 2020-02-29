@@ -1,5 +1,5 @@
-import { Point } from "point.js";
-import { Size } from "size.js";
+import { Point } from "./point.js";
+import { Size } from "./size.js";
 
 export function Rect(arg) {
   let obj = this instanceof Rect ? this : {};

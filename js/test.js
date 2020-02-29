@@ -1,10 +1,10 @@
-import { Point } from "point.js";
-import { Size } from "size.js";
-import { Line } from "line.js";
-import { Rect } from "rect.js";
-import { PointList } from "pointList.js";
-import { RGBA } from "rgba.js";
-import { hsla } from "hsla.js";
+import { Point } from "./point.js";
+import { Size } from "./size.js";
+import { Line } from "./line.js";
+import { Rect } from "./rect.js";
+import { PointList } from "./pointList.js";
+import { RGBA } from "./rgba.js";
+import { HSLA } from "./hsla.js";
 
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA };
 

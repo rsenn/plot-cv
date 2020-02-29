@@ -1,3 +1,4 @@
+import { RGBA } from './rgba.js';
 
 /**
  * @brief [brief description]
@@ -22,7 +23,7 @@ export function HSLA(h = 0, s = 0, l = 0, a = 1.0) {
   } else {
     const arg = args[0];
     if(typeof arg === 'string') {
-      const matches = /hsla\(\s*([0-9.]+)\s*,\s*([0-9.]+%?)\s*,\s*([0-9.]+%?),\s*([0-9.]+)\s*\)/g.exec(arg) || /hsl\(\s*([0-9.]+)\s*,\s*([0-9.]+%?)\s*,\s*([0-9.]+%?)\s*\)/g.exec(arg);
+      var matches = /hsla\(\s*([0-9.]+)\s*,\s*([0-9.]+%?)\s*,\s*([0-9.]+%?),\s*([0-9.]+)\s*\)/g.exec(arg) || /hsl\(\s*([0-9.]+)\s*,\s*([0-9.]+%?)\s*,\s*([0-9.]+%?)\s*\)/g.exec(arg);
 
       if(matches != null) matches = [...matches].slice(1);
     }
@@ -43,7 +44,7 @@ export function HSLA(h = 0, s = 0, l = 0, a = 1.0) {
 
 HSLA.prototype.properties = ['h', 's', 'l', 'a'];
 
-export const isHSLA = obj => HSLA.properties.every(prop => obj.hasOwnProperty(prop));
+//export const isHSLA = obj => HSLA.properties.every(prop => obj.hasOwnProperty(prop));
 
 HSLA.prototype.css = function() {
   const hsla = HSLA.clamp(HSLA.round(this));
@@ -58,29 +59,15 @@ HSLA.prototype.clamp = function() {
   this.h = this.h % 360;
   this.s =  Math.min(Math.max(this.s, 0), 100);
   this.l = Math.min(Math.max(this.l, 0), 100);
-  this.a =  Math.min(Math.max(this.a, 0), 1));
-return this;
+  this.a =  Math.min(Math.max(this.a, 0), 1);
+  return this;
 }
-HSLA.round = hsla => HSLA(Math.round(hsla.h), Math.round(hsla.s), Math.round(hsla.l), hsla.a);
-
-HSLA.random = function(rand = Math.random) {
-  return {
-    get hue() {
-      return Math.floor(rand() * 360);
-    },
-    get sat() {
-      return Math.floor(rand() * 50) + 50;
-    },
-    get light() {
-      return 50 + (25 - Math.floor(rand() * 50));
-    },
-    get alpha() {
-      return 1.0;
-    },
-    toString() {
-      return `hsla(${this.hue},${this.sat}%,${this.light}%,${this.alpha})`;
-    }
-  };
+HSLA.prototype.round = function() {
+  this.h = Math.round(this.h);
+  this.s = Math.round(this.s);
+  this.l = Math.round(this.l);
+  this.a = Math.round(this.a);
+  return this;
 };
 
 HSLA.prototype.hex = function() {

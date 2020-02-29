@@ -1,5 +1,5 @@
-import { Point, isPoint } from "point.js";
-import { Rect } from "rect.js";
+import { Point, isPoint } from "./point.js";
+import { Rect } from "./rect.js";
 
 export function PointList(points) {
   let args = [...arguments];

@@ -2,6 +2,7 @@
 #include <cstring>
 #include <iostream>
 #include <cstring>
+#include <filesystem>
 extern "C" {
 #include "../quickjs/quickjs-libc.h"
 #include "../quickjs/cutils.h"
@@ -299,16 +300,21 @@ jsrt::call(const_value func, size_t argc, const_value* argv) {
 char*
 jsrt::normalize_module(JSContext* ctx, const char* module_base_name, const char* module_name, void* opaque) {
   jsrt* js = static_cast<jsrt*>(opaque);
-  /*  std::cerr << "normalize_module module_base_name: " << module_base_name<<
-    std::endl; std::cerr << "normalize_module module_name: " << module_name <<
-    std::endl;*/
-  char* name = static_cast<char*>(js_malloc(ctx, strlen(module_name) + 4 + 1));
+  // std::cerr << "normalize_module module_base_name: " << module_base_name << std::endl;
+  // std::cerr << "normalize_module module_name: " << module_name << std::endl;
+  if(strlen(module_name) > 2 && (module_name[0] == '.' && module_name[1] == '/'))
+    module_name += 2;
+  bool exists = std::filesystem::exists(module_name);
+  char* name = static_cast<char*>(js_malloc(ctx, strlen(module_name) + 4 + (exists ? 2 : 5) + 1));
   name[0] = '\0';
   if(!(module_name[0] == '.' && module_name[1] == '/'))
     strcpy(name, "./");
-
+  if(!exists)
+    strcat(name, "js/");
   strcat(name, module_name);
-  // std::cerr << "normalize_module name: " << name << std::endl;
+  exists = std::filesystem::exists(name);
+  if(!exists)
+    std::cerr << "normalize_module name: " << name << " doesn't eist!" << std::endl;
   return name;
 }
 
