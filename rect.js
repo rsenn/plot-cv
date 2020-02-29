@@ -1,6 +1,6 @@
 import { Size } from './size.js';
-import { Point, isPoint } from './point.js';
 import { PointList } from './pointList.js';
+import Point from './rect.js';
 
 /**
  * Class for rectangle.

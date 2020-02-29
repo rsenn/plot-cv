@@ -112,22 +112,22 @@ Point.prototype.sub = function(other) {
 Point.sub = (p, other) => Point.prototype.sub.call(p, other);
 
 Point.prod = (p, f) => {
-  const o = isPoint(f) ? f : { x: f, y: f };
+  const o = Point.isPoint(f) ? f : { x: f, y: f };
   return Point({ x: p.x * o.x, y: p.y * o.y });
 };
 
 Point.prototype.prod = function(f) {
-  const o = isPoint(f) ? f : { x: f, y: f };
+  const o = Point.isPoint(f) ? f : { x: f, y: f };
   return new Point(this.x * o.x, this.y * o.y);
 };
 Point.mul = (p, f) => {
-  const o = isPoint(f) ? f : { x: f, y: f };
+  const o = Point.isPoint(f) ? f : { x: f, y: f };
   p.x *= o.x;
   p.y *= o.y;
   return p;
 };
 Point.prototype.mul = function(f) {
-  const o = isPoint(f) ? f : { x: f, y: f };
+  const o = Point.isPoint(f) ? f : { x: f, y: f };
   this.x *= o.x;
   this.y *= o.y;
   return this;
@@ -252,4 +252,5 @@ Point.prototype.normalize = function(minmax) {
   });
 };
 
-export const isPoint = o => o && ((o.x !== undefined && o.y !== undefined) || ((o.left !== undefined || o.right !== undefined) && (o.top !== undefined || o.bottom !== undefined)));
+Point.isPoint = o => o && ((o.x !== undefined && o.y !== undefined) || ((o.left !== undefined || o.right !== undefined) && (o.top !== undefined || o.bottom !== undefined)));
+

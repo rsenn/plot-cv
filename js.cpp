@@ -7,6 +7,24 @@ extern "C" {
 #include "../quickjs/cutils.h"
 };
 
+static JSValue
+js_print(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  int i;
+  const char* str;
+
+  for(i = 0; i < argc; i++) {
+    if(i != 0)
+      putchar(' ');
+    str = JS_ToCString(ctx, argv[i]);
+    if(!str)
+      return JS_EXCEPTION;
+    fputs(str, stdout);
+    JS_FreeCString(ctx, str);
+  }
+  putchar('\n');
+  return JS_UNDEFINED;
+}
+
 bool
 jsrt::init(int argc, char* argv[]) {
   int load_std = 0;
@@ -29,18 +47,8 @@ jsrt::init(int argc, char* argv[]) {
         eval_buf(str, strlen(str), "<input>", JS_EVAL_TYPE_MODULE);
       }
 
-      {
-        value global_obj = JS_GetGlobalObject(ctx);
-
-        JS_SetPropertyStr(ctx,
-                          global_obj,
-                          "global",
-                          JS_DupValue(ctx, global_obj));
-        JS_FreeValue(ctx, global_obj);
-      }
-
       /* loader for ES6 modules */
-      JS_SetModuleLoaderFunc(rt, NULL, js_module_loader, NULL);
+      JS_SetModuleLoaderFunc(rt, &normalize_module, js_module_loader, this);
     }
   }
 
@@ -125,10 +133,17 @@ jsrt::property_names(const_value obj,
   }
 }
 
-jsrt::global_object::global_object(jsrt& rt) : js(rt) { get(); }
+jsrt::global::global(jsrt& rt) : js(rt) { get(); }
 
 bool
-jsrt::global_object::get() {
+jsrt::global::get() {
+  if(js.ctx) {
+    value global = JS_GetGlobalObject(js.ctx);
+
+    JS_SetPropertyStr(js.ctx, global, "global", JS_DupValue(js.ctx, global));
+    JS_FreeValue(js.ctx, global);
+  }
+
   if(js.ctx) {
     val = JS_GetGlobalObject(js.ctx);
     return true;
@@ -136,10 +151,9 @@ jsrt::global_object::get() {
   return false;
 }
 
-jsrt::global_object::global_object(global_object&& o) noexcept
-    : val(std::move(o.val)), js(o.js) {}
+jsrt::global::global(global&& o) noexcept : val(std::move(o.val)), js(o.js) {}
 
-jsrt::global_object::~global_object() {
+jsrt::global::~global() {
   if(js.ctx)
     JS_FreeValue(js.ctx, val);
 }
@@ -223,19 +237,17 @@ jsrt::eval_file(const char* filename, int module) {
 
 jsrt::value
 jsrt::add_function(const char* name, JSCFunction* fn, int args) {
-  global_object& global = get_global_object();
   value function = JS_NewCFunction(ctx, fn, name, args);
 
   funcmap[name] = std::make_pair(fn, function);
 
-  JS_SetPropertyStr(ctx, global, name, function);
+  JS_SetPropertyStr(ctx, global_object(), name, function);
   return function;
 }
 
 jsrt::value
 jsrt::get_global(const char* name) {
-  const_value global = JS_GetGlobalObject(ctx);
-  value ret = JS_GetPropertyStr(ctx, global, name);
+  value ret = JS_GetPropertyStr(ctx, global_object(), name);
   return ret;
 }
 
@@ -252,7 +264,55 @@ jsrt::call(const_value func, std::vector<const_value>& args) {
 
 jsrt::value
 jsrt::call(const_value func, size_t argc, const_value* argv) {
-  global_object& global = get_global_object();
-  value ret = JS_Call(ctx, func, global, argc, argv);
+  value ret = JS_Call(ctx, func, global_object(), argc, argv);
   return ret;
+}
+
+char*
+jsrt::normalize_module(JSContext* ctx,
+                       const char* module_base_name,
+                       const char* module_name,
+                       void* opaque) {
+  jsrt* js = static_cast<jsrt*>(opaque);
+  std::cerr << "normalize_module module_base_name: " << module_base_name
+            << std::endl;
+  std::cerr << "normalize_module module_name: " << module_name << std::endl;
+  char* name = static_cast<char*>(js_malloc(ctx, strlen(module_name) + 4 + 1));
+  name[0] = '\0';
+  if(!(module_name[0] == '.' && module_name[1] == '/'))
+    strcpy(name, "./");
+
+  strcat(name, module_name);
+  std::cerr << "normalize_module name: " << name << std::endl;
+  return name;
+}
+
+void
+jsrt::dump_error() {
+  JSValue exception_val;
+
+  exception_val = JS_GetException(ctx);
+  dump_exception(exception_val, true);
+  JS_FreeValue(ctx, exception_val);
+}
+
+void
+jsrt::dump_exception(JSValueConst exception_val, bool is_throw) {
+  JSValue val;
+  const char* stack;
+  bool is_error;
+
+  is_error = JS_IsError(ctx, exception_val);
+  if(is_throw && !is_error)
+    printf("Throw: ");
+  js_print(ctx, JS_NULL, 1, (JSValueConst*)&exception_val);
+  if(is_error) {
+    val = JS_GetPropertyStr(ctx, exception_val, "stack");
+    if(!JS_IsUndefined(val)) {
+      stack = JS_ToCString(ctx, val);
+      printf("%s\n", stack);
+      JS_FreeCString(ctx, stack);
+    }
+    JS_FreeValue(ctx, val);
+  }
 }

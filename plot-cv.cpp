@@ -701,20 +701,23 @@ main(int argc, char* argv[]) {
   js.init(argc, argv);
 
   // JSValue* fn = js.get_function("drawContour");
-  jsrt::global_object& glob = js.get_global_object();
+  jsrt::value glob = js.global_object();
 
+  //ret = js.eval_file("point.js", 1);
+ // ret = js.eval_file("line.js", 1);
+ // ret = js.eval_file("size.js", 1);
+ // ret = js.eval_file("rect.js", 1);
   ret = js.eval_file("test.js");
 
   js.add_function("drawContour", &draw_contour, 2);
 
   std::cerr << "property names: " << js.property_names(glob) << std::endl;
-  std::cerr << "'global' property names: "
-            << js.property_names(js.get_property(glob, "global")) << std::endl;
+  std::cerr << "'console' property names: "
+            << js.property_names(js.get_property(glob, "console")) << std::endl;
 
   JSValue testFn = js.get_property(glob, "test");
   JSValue processFn = js.get_property(glob, "process");
-  JSValue drawContourFn =
-      js.get_property(js.get_global_object(), "drawContour");
+  JSValue drawContourFn = js.get_property(js.global_object(), "drawContour");
   JSValue jsPoint = js.create_point(150, 100);
 
   std::cerr << "js.eval_file ret=" << ret << " globalObj=" << js.to_str(glob)

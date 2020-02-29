@@ -1,8 +1,8 @@
-//import { Point } from "./point.js";
+import Point from "./point.js";
 //import { PointList } from "./pointList.js";
 //import { Size } from "./size.js";
 //import { Rect } from "./rect.js";
-//import { Line } from "./line.js";
+import Line from "./line.js";
 //const { Point } = require('./point.js');
 
 function process(contours, hier) {
@@ -53,4 +53,4 @@ function test() {
   //console.log("drawContour: ", drawContour);
 }
 
-//test();
+test();

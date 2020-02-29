@@ -10,6 +10,7 @@
 struct jsrt {
   typedef JSValue value;
   typedef JSValueConst const_value;
+  struct global;
 
   jsrt() : global(*this) {}
 
@@ -40,6 +41,11 @@ struct jsrt {
   void set_property(const_value obj, uint32_t index, value val);
 
   value get_global(const char* name);
+  value
+  global_object() {
+    global.get();
+    return global;
+  }
 
   value call(const_value func, size_t argc, const_value* argv);
   value call(const_value func, std::vector<const_value>& args);
@@ -60,11 +66,15 @@ struct jsrt {
                                           bool enum_only = true,
                                           bool recursive = true) const;
 
-public:
-  struct global_object {
-    global_object(jsrt& js);
-    global_object(global_object&& o) noexcept;
-    ~global_object();
+  void dump_error();
+
+  void dump_exception(JSValueConst exception_val, bool is_throw);
+
+protected:
+  struct global {
+    global(jsrt& js);
+    global(global&& o) noexcept;
+    ~global();
 
     operator const_value() const { return val; }
     operator value() { return val; }
@@ -77,13 +87,6 @@ public:
     jsrt& js;
   } global;
 
-public:
-  global_object&
-  get_global_object() {
-    global.get();
-    return global;
-  }
-
   value get_undefined() const;
   value get_null() const;
   value get_true() const;
@@ -92,6 +95,11 @@ public:
 private:
   JSRuntime* rt;
   JSContext* ctx;
+
+  static char* normalize_module(JSContext* ctx,
+                                const char* module_base_name,
+                                const char* module_name,
+                                void* opaque);
 
   std::unordered_map<const char*, std::pair<JSCFunction*, value>> funcmap;
 };

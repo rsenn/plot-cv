@@ -1,4 +1,3 @@
-import { Point, isPoint } from './point.js';
 
 export function PointList(points) {
   let args = [...arguments];
