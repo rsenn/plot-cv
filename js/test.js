@@ -77,7 +77,7 @@ global.process = function(contours, hier) {
   const do_log = false;
 
   if(do_log) {
-      console.log(`polygons: [\n  ${polygons.join(",\n  ")}\n]`);
+    console.log(`polygons: [\n  ${polygons.join(",\n  ")}\n]`);
 
     console.log(
       "PROCESS contours: ",
