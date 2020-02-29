@@ -753,15 +753,15 @@ main(int argc, char* argv[]) {
 
   auto check_eval = [&newmt, &mt, &processFn, &glob]() -> int {
     int ret = -1;
-    newmt = get_mtime("test.js");
+    newmt = get_mtime("js/test.js");
 
     /*    std::cerr << "test.js mtime new=" << newmt << " old=" << mt
                   << " diff=" << (newmt - mt) << std::endl; */
     if(newmt > mt) {
       mt = newmt;
-      std::cerr << "test.js changed, reloading..." << std::endl;
+      std::cerr << "js/test.js changed, reloading..." << std::endl;
 
-      ret = js.eval_file("test.js");
+      ret = js.eval_file("js/test.js");
       processFn = js.get_property(glob, "process");
     }
     return ret;
