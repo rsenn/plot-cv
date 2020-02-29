@@ -150,8 +150,8 @@ Point.prototype.dimension = function() {
   return [this.width, this.height];
 };
 Point.prototype.toString = function(asArray = false) {
-  let x = (this.x+'').padStart(4, ' ');
-  let y = (this.y+'').padStart(4, ' ');
+  let x = (this.x + "").padStart(4, " ");
+  let y = (this.y + "").padStart(4, " ");
 
   if(typeof this != "object" || this === null) return "";
   if(asArray) return `[${x},${y}]`;

@@ -117,8 +117,7 @@ js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
     int lineType = antialias ? cv::LINE_AA : cv::LINE_8;
     const cv::Point* pts = points.data();
 
-    std::cerr << "fillPoly() points: " << (points) << " color: " << to_string(color)
-              << std::endl;
+    std::cerr << "fillPoly() points: " << (points) << " color: " << to_string(color) << std::endl;
 
     // cv::fillPoly(*mptr, points, color, antialias ? cv::LINE_AA : cv::LINE_8);
     cv::fillPoly(*mptr, &pts, &size, 1, color, lineType);

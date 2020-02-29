@@ -237,7 +237,7 @@ PointList.prototype.lines = function(closed = false) {
   return iterableObj;
 };
 PointList.prototype.toString = function(prec) {
-  return 'PointList(['+this.map(point => Point.prototype.toString.call(point, prec)).join(",")+'])';
+  return "PointList([" + this.map(point => Point.prototype.toString.call(point, prec)).join(",") + "])";
 };
 PointList.prototype.rotateRight = function(n) {
   return Util.rotateRight(this, n);

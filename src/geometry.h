@@ -119,7 +119,6 @@ public:
   typedef std::function<bool(const Line<T>&, size_t)> function;
 };
 
-
 template<class T, class Char = char>
 inline std::basic_string<Char>
 to_string(const cv::Point_<T>& point) {

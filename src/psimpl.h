@@ -1,3 +1,6 @@
+#ifndef PSIMPL_H
+#define PSIMPL_H
+
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1
  *
@@ -71,7 +74,39 @@ using an STL-style interface that operates on input and output iterators.
 Polylines can be of any dimension, and defined using floating point or signed
 integer data types.
 </pre><br>
-    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     \section sec_changelog changelog
 <pre>
     28-09-2010 - Initial version
@@ -1843,3 +1878,4 @@ compute_positional_error_statistics(ForwardIterator original_first,
 } // namespace psimpl
 
 #endif // PSIMPL_GENERIC
+#endif // defined PSIMPL_H

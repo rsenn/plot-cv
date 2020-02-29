@@ -1,3 +1,6 @@
+#ifndef SIMPLE_SVG_WRITER_H
+#define SIMPLE_SVG_WRITER_H
+
 #pragma once
 #include <string>
 #include <vector>
@@ -481,3 +484,4 @@ public:
 };
 
 } // namespace simple_svg
+#endif // defined SIMPLE_SVG_WRITER_H

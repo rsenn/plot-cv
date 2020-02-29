@@ -13,7 +13,7 @@
 struct jsrt {
   typedef JSValue value;
   typedef JSValueConst const_value;
- 
+
   const_value _true, _false, _null, _undefined;
 
   jsrt() : global(*this) {}
