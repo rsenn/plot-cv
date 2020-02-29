@@ -11,7 +11,6 @@ struct jsrt {
   typedef JSValue value;
   typedef JSValueConst const_value;
 
-  
   jsrt() : global(*this) {}
 
   bool init(int argc, char* argv[]);
@@ -20,7 +19,8 @@ struct jsrt {
   typedef value
   c_function(jsrt* rt, const_value this_val, int argc, const_value* argv);
 
-  int eval_buf(const char* buf, int buf_len, const char* filename, int eval_flags);
+  int
+  eval_buf(const char* buf, int buf_len, const char* filename, int eval_flags);
   int eval_file(const char* filename, int module = -1);
 
   value add_function(const char* name, JSCFunction* fn, int args = 0);
@@ -154,7 +154,7 @@ jsrt::get_point_array(const_value val, std::vector<T>& ref) {
 }
 
 template<>
-  inline jsrt::value
+inline jsrt::value
 jsrt::create<double>(double num) {
   return JS_NewFloat64(ctx, num);
 }
@@ -226,10 +226,11 @@ jsrt::set_property(const_value obj, uint32_t index, value val) {
 
 template<class T>
 inline jsrt::value
-vector_to_js(jsrt& js,
-             const T& v,
-             size_t n,
-             const std::function<jsrt::value(const typename T::value_type&)>& fn) {
+vector_to_js(
+    jsrt& js,
+    const T& v,
+    size_t n,
+    const std::function<jsrt::value(const typename T::value_type&)>& fn) {
   using std::placeholders::_1;
   jsrt::value ret = js.create_array(n);
   for(uint32_t i = 0; i < n; i++) js.set_property(ret, i, fn(v[i]));
