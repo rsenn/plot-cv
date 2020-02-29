@@ -30,7 +30,7 @@ jsrt::init(int argc, char* argv[]) {
       }
 
       {
-        JSValue global_obj = JS_GetGlobalObject(ctx);
+        value global_obj = JS_GetGlobalObject(ctx);
 
         JS_SetPropertyStr(ctx,
                           global_obj,
@@ -49,18 +49,18 @@ jsrt::init(int argc, char* argv[]) {
   return ctx != nullptr;
 }
 
-JSValue*
+jsrt::value*
 jsrt::get_function(const char* name) {
   auto it = funcmap.find(name);
   if(it != funcmap.end()) {
-    std::pair<JSCFunction*, JSValue>& val = it->second;
+    std::pair<JSCFunction*, value>& val = it->second;
     return &val.second;
   }
   return nullptr;
 }
 
 std::string
-jsrt::to_str(JSValueConst val) {
+jsrt::to_str(const_value val) {
   std::string ret;
   if(JS_IsFunction(ctx, val))
     ret = "Function";
@@ -86,20 +86,20 @@ jsrt::to_str(JSValueConst val) {
   return ret;
 }
 
-JSValue
-jsrt::prototype(JSValueConst obj) const {
+jsrt::value
+jsrt::prototype(const_value obj) const {
   return JS_GetPrototype(ctx, obj);
 }
 
 std::vector<const char*>
-jsrt::property_names(JSValueConst obj, bool enum_only, bool recursive) const {
+jsrt::property_names(const_value obj, bool enum_only, bool recursive) const {
   std::vector<const char*> ret;
   property_names(obj, ret, enum_only);
   return ret;
 }
 
 void
-jsrt::property_names(JSValueConst obj,
+jsrt::property_names(const_value obj,
                      std::vector<const char*>& out,
                      bool enum_only,
                      bool recursive) const {
@@ -144,19 +144,19 @@ jsrt::global_object::~global_object() {
     JS_FreeValue(js.ctx, val);
 }
 
-JSValue
+jsrt::value
 jsrt::get_undefined() const {
   return JS_UNDEFINED;
 }
-JSValue
+jsrt::value
 jsrt::get_null() const {
   return JS_NULL;
 }
-JSValue
+jsrt::value
 jsrt::get_true() const {
   return JS_TRUE;
 }
-JSValue
+jsrt::value
 jsrt::get_false() const {
   return JS_FALSE;
 }
@@ -175,7 +175,7 @@ jsrt::eval_buf(const char* buf,
                int buf_len,
                const char* filename,
                int eval_flags) {
-  JSValue val;
+  value val;
   int ret;
   if((eval_flags & JS_EVAL_TYPE_MASK) == JS_EVAL_TYPE_MODULE) {
     val = JS_Eval(
@@ -221,10 +221,10 @@ jsrt::eval_file(const char* filename, int module) {
   return ret;
 }
 
-JSValue
+jsrt::value
 jsrt::add_function(const char* name, JSCFunction* fn, int args) {
   global_object& global = get_global_object();
-  JSValue function = JS_NewCFunction(ctx, fn, name, args);
+  value function = JS_NewCFunction(ctx, fn, name, args);
 
   funcmap[name] = std::make_pair(fn, function);
 
@@ -232,27 +232,27 @@ jsrt::add_function(const char* name, JSCFunction* fn, int args) {
   return function;
 }
 
-JSValue
+jsrt::value
 jsrt::get_global(const char* name) {
-  JSValueConst global = JS_GetGlobalObject(ctx);
-  JSValue ret = JS_GetPropertyStr(ctx, global, name);
+  const_value global = JS_GetGlobalObject(ctx);
+  value ret = JS_GetPropertyStr(ctx, global, name);
   return ret;
 }
 
-JSValue
-jsrt::call(const char* name, size_t argc, JSValueConst* argv) {
-  JSValueConst func = get_global(name);
+jsrt::value
+jsrt::call(const char* name, size_t argc, const_value* argv) {
+  const_value func = get_global(name);
   return call(func, argc, argv);
 }
 
-JSValue
-jsrt::call(JSValueConst func, std::vector<JSValueConst>& args) {
+jsrt::value
+jsrt::call(const_value func, std::vector<const_value>& args) {
   return call(func, args.size(), args.data());
 }
 
-JSValue
-jsrt::call(JSValueConst func, size_t argc, JSValueConst* argv) {
+jsrt::value
+jsrt::call(const_value func, size_t argc, const_value* argv) {
   global_object& global = get_global_object();
-  JSValue ret = JS_Call(ctx, func, global, argc, argv);
+  value ret = JS_Call(ctx, func, global, argc, argv);
   return ret;
 }

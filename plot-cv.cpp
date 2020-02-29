@@ -621,9 +621,9 @@ draw_all_lines(image_type& out,
 
 JSValue
 draw_contour(JSContext* ctx,
-             JSValueConst this_val,
+             jsrt::const_value this_val,
              int argc,
-             JSValueConst* argv) {
+             jsrt::const_value* argv) {
   std::vector<std::vector<cv::Point>> points;
 
   int ret, arr = JS_IsArray(ctx, argv[0]);
