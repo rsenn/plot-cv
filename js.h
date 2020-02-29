@@ -4,6 +4,7 @@
 #include "../quickjs/quickjs.h"
 #include <unordered_map>
 #include <vector>
+#include <type_traits>
 
 struct jsrt {
   bool init(int argc, char* argv[]);
@@ -20,54 +21,28 @@ struct jsrt {
   template<class T> void get_point(JSValueConst val, T& ref);
   template<class T> void get_point_array(JSValueConst val, std::vector<T>& ref);
 
+  JSValue create_array(int32_t size = -1);
+  template<class T>
   JSValue
-  create_array(int32_t size = -1) {
-    JSValue ret = JS_NewArray(ctx);
-    if(size >= 0)
-      JS_SetPropertyStr(ctx, ret, "length", JS_NewInt32(ctx, size));
-    return ret;
-  }
-  JSValue
-  create_number(double num) {
-    return JS_NewFloat64(ctx, num);
-  }
-  JSValue
-  create_number(int num) {
-    return JS_NewInt32(ctx, num);
+  create(T arg) {
+    return std::is_pointer<T>::value && arg == nullptr ? get_null() : get_undefined();
   }
 
   template<class T>
   JSValue
   create_point(T x, T y) {
     JSValue obj = JS_NewObject(ctx);
-
-    JS_SetPropertyStr(ctx, obj, "x", create_number(x));
-    JS_SetPropertyStr(ctx, obj, "y", create_number(y));
+    JS_SetPropertyStr(ctx, obj, "x", create(x));
+    JS_SetPropertyStr(ctx, obj, "y", create(y));
     return obj;
   }
 
-  void
-  set_property(JSValueConst obj, const char* name, JSValue val) {
-    JS_SetPropertyStr(ctx, obj, name, val);
-  }
-  void
-  set_property(JSValueConst obj, uint32_t index, JSValue val) {
-    JS_SetPropertyUint32(ctx, obj, index, val);
-  }
+  void set_property(JSValueConst obj, const char* name, JSValue val);
+  void set_property(JSValueConst obj, uint32_t index, JSValue val);
 
-  JSValue
-  get_global_property(const char* name) {
-    global_object global = get_global_object();
-    JSValue ret = JS_GetPropertyStr(ctx, global.val, name);
-    return ret;
-  }
+  JSValue get_global_property(const char* name);
 
-  JSValue
-  call(JSValueConst func, std::vector<JSValueConst>& args) {
-    global_object global = get_global_object();
-    JSValue ret = JS_Call(ctx, func, global.val, args.size(), args.data());
-    return ret;
-  }
+  JSValue call(JSValueConst func, std::vector<JSValueConst>& args);
 
 protected:
   struct global_object {
@@ -87,6 +62,11 @@ protected:
   get_global_object() {
     return global_object(ctx);
   }
+
+  JSValue get_undefined() const;
+  JSValue get_null() const;
+  JSValue get_true() const;
+  JSValue get_false() const;
 
 private:
   JSRuntime* rt;
@@ -150,6 +130,65 @@ jsrt::get_point_array(JSValueConst val, std::vector<T>& ref) {
       get_point(v, ref[i]);
     }
   }
+}
+
+template<>
+inline JSValue
+jsrt::create<double>(double num) {
+  return JS_NewFloat64(ctx, num);
+}
+template<>
+inline JSValue
+jsrt::create<float>(float num) {
+  return create(static_cast<double>(num));
+}
+template<>
+inline JSValue
+jsrt::create<int>(int num) {
+  return JS_NewInt32(ctx, num);
+}
+template<>
+inline JSValue
+jsrt::create<const char*>(const char* str) {
+  return JS_NewString(ctx, str);
+}
+template<>
+inline JSValue
+jsrt::create<bool>(bool b) {
+  return b ? get_true() : get_false();
+}
+
+inline JSValue
+jsrt::create_array(int32_t size) {
+  JSValue ret = JS_NewArray(ctx);
+  if(size >= 0)
+    JS_SetPropertyStr(ctx, ret, "length", JS_NewInt32(ctx, size));
+
+  return ret;
+}
+
+inline void
+jsrt::set_property(JSValueConst obj, const char* name, JSValue val) {
+  JS_SetPropertyStr(ctx, obj, name, val);
+}
+
+inline void
+jsrt::set_property(JSValueConst obj, uint32_t index, JSValue val) {
+  JS_SetPropertyUint32(ctx, obj, index, val);
+}
+
+inline JSValue
+jsrt::get_global_property(const char* name) {
+  global_object global = get_global_object();
+  JSValue ret = JS_GetPropertyStr(ctx, global.val, name);
+  return ret;
+}
+
+inline JSValue
+jsrt::call(JSValueConst func, std::vector<JSValueConst>& args) {
+  global_object global = get_global_object();
+  JSValue ret = JS_Call(ctx, func, global.val, args.size(), args.data());
+  return ret;
 }
 
 #endif // defined JS_H

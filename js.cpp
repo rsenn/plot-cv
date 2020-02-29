@@ -37,12 +37,32 @@ jsrt::init(int argc, char* argv[]) {
       }
     }
   }
+
   return ctx != nullptr;
 }
 
+JSValue
+jsrt::get_undefined() const {
+  return JS_UNDEFINED;
+}
+JSValue
+jsrt::get_null() const {
+  return JS_NULL;
+}
+JSValue
+jsrt::get_true() const {
+  return JS_TRUE;
+}
+JSValue
+jsrt::get_false() const {
+  return JS_FALSE;
+}
+
 jsrt::~jsrt() {
-  JS_FreeContext(ctx);
-  JS_FreeRuntime(rt);
+  if(ctx)
+    JS_FreeContext(ctx);
+  if(rt)
+    JS_FreeRuntime(rt);
   ctx = nullptr;
   rt = nullptr;
 }
