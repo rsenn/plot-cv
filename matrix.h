@@ -1,3 +1,5 @@
+#include <array>
+#include <functional>
 #include <opencv2/core.hpp>
 #include <opencv2/core/affine.hpp>
 #include <opencv2/imgproc/types_c.h>

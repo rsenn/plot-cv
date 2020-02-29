@@ -23,7 +23,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 
 macro(add_prog)
-
   set(ARGS ${ARGN})
   list(GET ARGS 0 name)
   list(REMOVE_AT ARGS 0)
@@ -34,7 +33,7 @@ macro(add_prog)
   install(TARGETS ${name} DESTINATION bin )
 endmacro()
 set(QUICKJS_DEFS CONFIG_VERSION=\"2020-01-19\" CONFIG_BIGNUM CONFIG_CHECK_JSVALUE=1 CONFIG_LTO=1 _GNU_SOURCE CONFIG_PREFIX=\"${CMAKE_INSTALL_PREFIX}\" )
-add_library(quickjs STATIC quickjs/cutils.c quickjs/libbf.c quickjs/quickjs-libc.c quickjs/libregexp.c quickjs/libunicode.c quickjs/quickjs.c)
+add_library(quickjs STATIC quickjs/cutils.c quickjs/libbf.c quickjs/quickjs-libc.c quickjs/libregexp.c quickjs/libunicode.c quickjs/quickjs.c quickjs/quickjs-libc.c quickjs/cutils.c)
 set_target_properties(quickjs PROPERTIES COMPILE_DEFINITIONS "${QUICKJS_DEFS}" )
 target_link_libraries(quickjs m dl)
 
@@ -51,12 +50,24 @@ install(TARGETS quickjs qjsc qjs
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin)
 
-add_prog(CannyWebcam1)
+add_executable(plot-cv plot-cv.cpp)
+  target_link_libraries(plot-cv ${OpenCV_LIBS} quickjs)
 
+
+
+
+#target_link_libraries(video roslib rospack rosconsole roscpp roscpp_serialization)
+
+
+
+
+
+#include("${CMAKE_SOURCE_DIR}/cm.txt")
+#add_prog(CannyWebcam1)
 # add_prog(findLaserPoint)
+
+if(ADDITIONAL_PROGS)
 add_prog(mouth)
-
-
 add_prog(canny)
 add_prog(contour)
 add_prog(Contour_detection)
@@ -81,12 +92,7 @@ add_prog(imgproc_drawContours)
 add_prog(moments_demo)
 add_prog(pointPolygonTest_demo)
 add_prog(tracking_calibration_with_img)
-target_link_libraries(tracking_calibration_with_img yaml-cpp roslib rospack roscpp )
-#target_link_libraries(video roslib rospack rosconsole roscpp roscpp_serialization)
 add_prog(watershed)
-
-
-
 add_prog(autofocus)
 add_prog(bg_sub)
 add_prog(bgsubtract2)
@@ -150,9 +156,6 @@ add_prog(perspective_correction)
 add_prog(lab-contrast)
 add_prog(homomorphicFilter)
 add_prog(basicscanner)
-
-
-#include("${CMAKE_SOURCE_DIR}/cm.txt")
 add_prog(1a.Test)
 add_prog(2d.Capture)
 add_prog(4a.Histogram)
@@ -195,3 +198,5 @@ add_prog(videocapture_gstreamer_pipeline)
 add_prog(webcam_demo)
 add_prog(homography_from_camera_displacement)
 add_prog(aruco_ar_demo)
+target_link_libraries(tracking_calibration_with_img yaml-cpp roslib rospack roscpp )
+endif(ADDITIONAL_PROGS)

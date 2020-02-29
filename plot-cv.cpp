@@ -14,6 +14,10 @@
 #include "line.h"
 #include "matrix.h"
 #include "../quickjs/quickjs.h"
+extern "C" {
+#include "../quickjs/quickjs-libc.h"
+#include "../quickjs/cutils.h"
+};
 
 #include <type_traits>
 #include <iostream>
@@ -22,6 +26,83 @@
 #include <functional>
 #include <unordered_map>
 #include <map>
+
+struct js {
+
+  bool
+  init(int argc, char* argv[]) {
+    if((rt = JS_NewRuntime())) {
+      if((ctx = JS_NewContextRaw(rt))) {
+        JS_AddIntrinsicBaseObjects(ctx);
+        js_std_add_helpers(ctx, argc, argv);
+      }
+    }
+    return ctx != nullptr;
+  }
+
+  void
+  destroy() {
+    JS_FreeContext(ctx);
+    JS_FreeRuntime(rt);
+    ctx = nullptr;
+    rt = nullptr;
+  }
+
+  int
+  eval_buf(const char* buf, int buf_len, const char* filename, int eval_flags) {
+    JSValue val;
+    int ret;
+
+    if((eval_flags & JS_EVAL_TYPE_MASK) == JS_EVAL_TYPE_MODULE) {
+      /* for the modules, we compile then run to be able to set
+         import.meta */
+      val = JS_Eval(ctx, buf, buf_len, filename, eval_flags | JS_EVAL_FLAG_COMPILE_ONLY);
+      if(!JS_IsException(val)) {
+        js_module_set_import_meta(ctx, val, TRUE, TRUE);
+        val = JS_EvalFunction(ctx, val);
+      }
+    } else {
+      val = JS_Eval(ctx, buf, buf_len, filename, eval_flags);
+    }
+    if(JS_IsException(val)) {
+      js_std_dump_error(ctx);
+      ret = -1;
+    } else {
+      ret = 0;
+    }
+    JS_FreeValue(ctx, val);
+    return ret;
+  }
+
+  int
+  eval_file(const char* filename, int module) {
+    uint8_t* buf;
+    int ret, eval_flags;
+    size_t buf_len;
+
+    buf = js_load_file(ctx, &buf_len, filename);
+    if(!buf) {
+      perror(filename);
+      exit(1);
+    }
+
+    if(module < 0) {
+      module = (has_suffix(filename, ".mjs") || JS_DetectModule((const char*)buf, buf_len));
+    }
+    if(module)
+      eval_flags = JS_EVAL_TYPE_MODULE;
+    else
+      eval_flags = JS_EVAL_TYPE_GLOBAL;
+    ret = eval_buf((const char*)buf, buf_len, filename, eval_flags);
+    js_free(ctx, buf);
+    return ret;
+  }
+
+private:
+  JSRuntime* rt;
+  JSContext* ctx;
+} js;
+
 typedef std::vector<cv::Point> PointVec;
 typedef std::vector<cv::Point2f> Point2fVec;
 
@@ -664,6 +745,8 @@ main(int argc, char* argv[]) {
   using std::transform;
   using std::vector;
 
+  js.init(argc, argv);
+
   int camID = (argc > 1 && isdigit(argv[1][0])) ? strtol(argv[1], nullptr, 10) : -1;
   int count = 0;
 
@@ -672,11 +755,11 @@ main(int argc, char* argv[]) {
   if(camID == -1 && argc > 1)
     filename = argv[1];
 
-  cv::VideoCapture capWebcam;
+  cv::VideoCapture capWebcam(camID);
   cv::Mat imgInput;
 
   if(camID >= 0) {
-    capWebcam.open(camID, cv::CAP_V4L2); // declare a VideoCapture object and associate to webcam, 0 => use 1st webcam
+    // capWebcam.open((int)camID, (int)cv::CAP_V4L2); // declare a VideoCapture object and associate to webcam, 0 => use 1st webcam
 
     if(capWebcam.isOpened() == false) {                         // check if VideoCapture object was associated to webcam successfully
       cout << "error: capWebcam not accessed successfully\n\n"; // if not, print error message to std out
