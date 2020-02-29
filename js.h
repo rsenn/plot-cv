@@ -8,12 +8,16 @@
 #include <functional>
 
 struct jsrt {
+  jsrt() : global(*this) {}
+
   bool init(int argc, char* argv[]);
   ~jsrt();
 
-  typedef JSValue c_function(jsrt* rt, JSValueConst this_val, int argc, JSValueConst* argv);
+  typedef JSValue
+  c_function(jsrt* rt, JSValueConst this_val, int argc, JSValueConst* argv);
 
-  int eval_buf(const char* buf, int buf_len, const char* filename, int eval_flags);
+  int
+  eval_buf(const char* buf, int buf_len, const char* filename, int eval_flags);
   int eval_file(const char* filename, int module = -1);
 
   JSValue add_function(const char* name, JSCFunction* fn, int args = 0);
@@ -28,10 +32,20 @@ struct jsrt {
 
   template<class T> JSValue create_point(T x, T y);
 
+  JSValue
+  get_property(JSValueConst obj, const char* name) {
+    return JS_GetPropertyStr(ctx, obj, name);
+  }
+
+  JSValue
+  get_property(JSValueConst obj, uint32_t index) {
+    return JS_GetPropertyUint32(ctx, obj, index);
+  }
+
   void set_property(JSValueConst obj, const char* name, JSValue val);
   void set_property(JSValueConst obj, uint32_t index, JSValue val);
 
-  JSValue get_global_property(const char* name);
+  JSValue get_global(const char* name);
 
   JSValue call(JSValueConst func, size_t argc, JSValueConst* argv);
   JSValue call(JSValueConst func, std::vector<JSValueConst>& args);
@@ -47,20 +61,97 @@ struct jsrt {
     return nullptr;
   }
 
-protected:
+  std::string
+  to_str(JSValueConst val) {
+    std::string ret;
+    if(JS_IsFunction(ctx, val))
+      ret = "Function";
+    else if(JS_IsNumber(val))
+      ret = "Number";
+    else if(JS_IsBool(val))
+      ret = "Boolean";
+    else if(JS_IsString(val))
+      ret = "String";
+    else if(JS_IsArray(ctx, val))
+      ret = "Array";
+    else if(JS_IsObject(val))
+      ret = "Object";
+    else if(JS_IsSymbol(val))
+      ret = "Symbol";
+    else if(JS_IsException(val))
+      ret = "Exception";
+    else if(JS_IsUninitialized(val))
+      ret = "Uninitialized";
+    else if(JS_IsUndefined(val))
+      ret = "undefined";
+    return ret;
+  }
+
+  JSValueConst
+  prototype(JSValueConst obj) const {
+    return JS_GetPrototype(ctx, obj);
+  }
+
+  void
+  property_names(JSValueConst obj,
+                 std::vector<const char*>& out,
+                 bool enum_only = false,
+                 bool recursive = false) const {
+    JSPropertyEnum* props;
+    uint32_t nprops;
+    while(JS_IsObject(obj)) {
+      props = nullptr;
+      nprops = 0;
+      JS_GetOwnPropertyNames(ctx,
+                             &props,
+                             &nprops,
+                             obj,
+                             JS_GPN_STRING_MASK | JS_GPN_SYMBOL_MASK |
+                                 (enum_only ? JS_GPN_ENUM_ONLY : 0));
+      for(uint32_t i = 0; i < nprops; i++) {
+        const char* s = JS_AtomToCString(ctx, props[i].atom);
+        out.push_back(s);
+      }
+      if(!recursive)
+        break;
+
+      obj = prototype(obj);
+    }
+  }
+
+  std::vector<const char*>
+  property_names(JSValueConst obj,
+                 bool enum_only = true,
+                 bool recursive = true) const {
+    std::vector<const char*> ret;
+    property_names(obj, ret, enum_only);
+    return ret;
+  }
+
+public:
   struct global_object {
-    global_object(JSContext* __ctx);
+    global_object(jsrt& js);
+    // global_object(const global_object& o)  : val(o.val), js(o.js) {};
     global_object(global_object&& o) noexcept;
 
     ~global_object();
 
-    JSValue val;
-    JSContext* ctx;
-  };
+    operator JSValueConst() const { return val; }
+    operator JSValue() { return val; }
 
-  global_object
+  private:
+    friend class jsrt;
+    bool get();
+
+    JSValue val;
+    jsrt& js;
+  } global;
+
+public:
+  global_object&
   get_global_object() {
-    return global_object(ctx);
+    global.get();
+    return global;
   }
 
   JSValue get_undefined() const;
@@ -170,7 +261,8 @@ jsrt::create_array(int32_t size) {
 template<class T>
 inline JSValue
 jsrt::create(T arg) {
-  return std::is_pointer<T>::value && arg == nullptr ? get_null() : get_undefined();
+  return std::is_pointer<T>::value && arg == nullptr ? get_null()
+                                                     : get_undefined();
 }
 
 template<class T>
@@ -193,15 +285,18 @@ jsrt::set_property(JSValueConst obj, uint32_t index, JSValue val) {
 }
 
 inline JSValue
-jsrt::get_global_property(const char* name) {
-  global_object global = get_global_object();
-  JSValue ret = JS_GetPropertyStr(ctx, global.val, name);
+jsrt::get_global(const char* name) {
+  JSValueConst global = JS_GetGlobalObject(ctx);
+  JSValue ret = JS_GetPropertyStr(ctx, global, name);
   return ret;
 }
 
 template<class T>
 inline JSValue
-vector_to_js(jsrt& js, const T& v, size_t n, const std::function<JSValue(const typename T::value_type&)>& fn) {
+vector_to_js(jsrt& js,
+             const T& v,
+             size_t n,
+             const std::function<JSValue(const typename T::value_type&)>& fn) {
   using std::placeholders::_1;
   JSValue ret = js.create_array(n);
   for(uint32_t i = 0; i < n; i++) js.set_property(ret, i, fn(v[i]));
@@ -211,7 +306,11 @@ vector_to_js(jsrt& js, const T& v, size_t n, const std::function<JSValue(const t
 template<class T>
 inline JSValue
 vector_to_js(jsrt& js, const T& v, size_t n) {
-  return vector_to_js(v, n, std::bind(&jsrt::create<typename T::value_type>, &js, std::placeholders::_1));
+  return vector_to_js(v,
+                      n,
+                      std::bind(&jsrt::create<typename T::value_type>,
+                                &js,
+                                std::placeholders::_1));
 }
 
 template<class T>
@@ -222,13 +321,18 @@ vector_to_js(jsrt& js, const T& v) {
 
 template<class P>
 inline JSValue
-vector_to_js(jsrt& js, const std::vector<P>& v, const std::function<JSValue(const P&)>& fn) {
+vector_to_js(jsrt& js,
+             const std::vector<P>& v,
+             const std::function<JSValue(const P&)>& fn) {
   return vector_to_js(js, v, v.size(), fn);
 }
 
 template<class P>
 inline JSValue
-pointer_to_js(jsrt& js, const P* v, size_t n, const std::function<JSValue(const P&)>& fn) {
+pointer_to_js(jsrt& js,
+              const P* v,
+              size_t n,
+              const std::function<JSValue(const P&)>& fn) {
   JSValue ret = js.create_array(n);
   for(uint32_t i = 0; i < n; i++) js.set_property(ret, i, fn(v[i]));
   return ret;
@@ -237,7 +341,8 @@ pointer_to_js(jsrt& js, const P* v, size_t n, const std::function<JSValue(const 
 template<class P>
 inline JSValue
 pointer_to_js(jsrt& js, const P* v, size_t n) {
-  std::function<JSValue(const P&)> fn([&](const P& v) -> JSValue { return js.create(v); });
+  std::function<JSValue(const P&)> fn(
+      [&](const P& v) -> JSValue { return js.create(v); });
 
   return pointer_to_js(js, v, n, fn);
 }
@@ -255,6 +360,10 @@ inline JSValue
 vector_to_js(jsrt& js, const std::vector<P>& v) {
   using std::placeholders::_1;
   return vector_to_js<P>(v, std::bind(&jsrt::create<P>, &js, _1));
+}
+inline std::string
+to_string(const char* s) {
+  return std::string(s);
 }
 
 #endif // defined JS_H

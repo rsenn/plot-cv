@@ -22,5 +22,6 @@ public:
   void drawNextStep(double step, const Mat& Image, SegmentationMode mode);
   void findContour(double step, SegmentationMode mode);
   bool isValidPoint(Point2d p);
-  // Modigie le polygone en utilisant une descente de gradient et compris dans les bords de l'image.
+  // Modigie le polygone en utilisant une descente de gradient et compris dans
+  // les bords de l'image.
 };

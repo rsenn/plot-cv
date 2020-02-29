@@ -252,3 +252,4 @@ Point.prototype.normalize = function(minmax) {
   });
 };
 
+export const isPoint = o => o && ((o.x !== undefined && o.y !== undefined) || ((o.left !== undefined || o.right !== undefined) && (o.top !== undefined || o.bottom !== undefined)));

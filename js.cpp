@@ -32,22 +32,40 @@ jsrt::init(int argc, char* argv[]) {
       {
         JSValue global_obj = JS_GetGlobalObject(ctx);
 
-        JS_SetPropertyStr(ctx, global_obj, "global", JS_DupValue(ctx, global_obj));
+        JS_SetPropertyStr(ctx,
+                          global_obj,
+                          "global",
+                          JS_DupValue(ctx, global_obj));
         JS_FreeValue(ctx, global_obj);
       }
+
+      /* loader for ES6 modules */
+      JS_SetModuleLoaderFunc(rt, NULL, js_module_loader, NULL);
     }
   }
+
+  global.get();
 
   return ctx != nullptr;
 }
 
-jsrt::global_object::global_object(JSContext* __ctx) : ctx(__ctx) { val = JS_GetGlobalObject(ctx); }
+jsrt::global_object::global_object(jsrt& rt) : js(rt) { get(); }
 
-jsrt::global_object::global_object(global_object&& o) noexcept : val(std::move(o.val)), ctx(std::move(o.ctx)) {}
+bool
+jsrt::global_object::get() {
+  if(js.ctx) {
+    val = JS_GetGlobalObject(js.ctx);
+    return true;
+  }
+  return false;
+}
+
+jsrt::global_object::global_object(global_object&& o) noexcept
+    : val(std::move(o.val)), js(o.js) {}
 
 jsrt::global_object::~global_object() {
-  if(ctx)
-    JS_FreeValue(ctx, val);
+  if(js.ctx)
+    JS_FreeValue(js.ctx, val);
 }
 
 JSValue
@@ -77,11 +95,15 @@ jsrt::~jsrt() {
 }
 
 int
-jsrt::eval_buf(const char* buf, int buf_len, const char* filename, int eval_flags) {
+jsrt::eval_buf(const char* buf,
+               int buf_len,
+               const char* filename,
+               int eval_flags) {
   JSValue val;
   int ret;
   if((eval_flags & JS_EVAL_TYPE_MASK) == JS_EVAL_TYPE_MODULE) {
-    val = JS_Eval(ctx, buf, buf_len, filename, eval_flags | JS_EVAL_FLAG_COMPILE_ONLY);
+    val = JS_Eval(
+        ctx, buf, buf_len, filename, eval_flags | JS_EVAL_FLAG_COMPILE_ONLY);
     if(!JS_IsException(val)) {
       js_module_set_import_meta(ctx, val, TRUE, TRUE);
       val = JS_EvalFunction(ctx, val);
@@ -110,7 +132,8 @@ jsrt::eval_file(const char* filename, int module) {
     exit(1);
   }
   if(module < 0)
-    module = (has_suffix(filename, ".mjs") || JS_DetectModule((const char*)buf, buf_len));
+    module = (has_suffix(filename, ".mjs") ||
+              JS_DetectModule((const char*)buf, buf_len));
 
   eval_flags = module ? JS_EVAL_TYPE_MODULE : JS_EVAL_TYPE_GLOBAL;
 
@@ -124,18 +147,18 @@ jsrt::eval_file(const char* filename, int module) {
 
 JSValue
 jsrt::add_function(const char* name, JSCFunction* fn, int args) {
-  global_object global = get_global_object();
+  global_object& global = get_global_object();
   JSValue function = JS_NewCFunction(ctx, fn, name, args);
 
   funcmap[name] = std::make_pair(fn, function);
 
-  JS_SetPropertyStr(ctx, global.val, name, function);
+  JS_SetPropertyStr(ctx, global, name, function);
   return function;
 }
 
 JSValue
 jsrt::call(const char* name, size_t argc, JSValueConst* argv) {
-  JSValueConst func = get_global_property(name);
+  JSValueConst func = get_global(name);
   return call(func, argc, argv);
 }
 
@@ -146,7 +169,7 @@ jsrt::call(JSValueConst func, std::vector<JSValueConst>& args) {
 
 JSValue
 jsrt::call(JSValueConst func, size_t argc, JSValueConst* argv) {
-  global_object global = get_global_object();
-  JSValue ret = JS_Call(ctx, func, global.val, argc, argv);
+  global_object& global = get_global_object();
+  JSValue ret = JS_Call(ctx, func, global, argc, argv);
   return ret;
 }

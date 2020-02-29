@@ -8,7 +8,8 @@ using namespace std;
 
 #include <vector>
 
-const int PIXEL_STEP = 15; // Ecart entre les points du polygone après ré-échantillonage.
+const int PIXEL_STEP =
+    15; // Ecart entre les points du polygone après ré-échantillonage.
 
 bool segmentCut(Point2d p1, Point2d p2, Point2d q1, Point2d q2);
 // Détermine si le segment p1 p2 coupt q1 q2.
@@ -25,7 +26,7 @@ Polygon::Polygon() {
 }
 
 Polygon::Polygon(vector<Point2d> pts) {
-  cout << "New polygon with " << pts.size() << " points." << endl;
+  std::cout << "New polygon with " << pts.size() << " points." << std::endl;
   points = pts;
   regularPoints = rechantillonage();
   tangentes = computeTangentes();
@@ -63,7 +64,7 @@ void
 Polygon::drawPolygon(const Mat& Image) {
   if(points.size() < 2)
     return;
-  // cout << "Drawing polygon with " << points.size() << endl;
+  // std::cout << "Drawing polygon with " << points.size() << std::endl;
   Point beginPoint = regularPoints[0];
   Point endPoint = beginPoint;
   for(int i = 1; i <= regularPoints.size(); i++) {
@@ -85,7 +86,7 @@ Polygon::drawNormales(const Mat& Image) {
     double x = normales[i](0);
     double y = normales[i](1);
     Point2d p(20 * x + regularPoints[i].x, 20 * y + regularPoints[i].y);
-    // cout << p.x <<", " << p.y << endl;
+    // std::cout << p.x <<", " << p.y << std::endl;
     line(Image, regularPoints[i], p, Scalar(0, 0, 255));
   }
 }
@@ -97,21 +98,23 @@ Polygon::drawCurvatures(const Mat& Image) {
   for(int i = 0; i < curvature.size(); i++) {
     double x = normales[i](0);
     double y = normales[i](1);
-    Point2d p(600 * curvature[i] * x + regularPoints[i].x, 600 * curvature[i] * y + regularPoints[i].y);
-    // cout << p.x <<", " << p.y << endl;
+    Point2d p(600 * curvature[i] * x + regularPoints[i].x,
+              600 * curvature[i] * y + regularPoints[i].y);
+    // std::cout << p.x <<", " << p.y << std::endl;
     line(Image, regularPoints[i], p, Scalar(255, 120, 255));
   }
 }
 
 Point
 convexPoint(Point beginPoint, Point endPoint, double t) {
-  return Point(t * endPoint.x + (1 - t) * beginPoint.x, t * endPoint.y + (1 - t) * beginPoint.y);
+  return Point(t * endPoint.x + (1 - t) * beginPoint.x,
+               t * endPoint.y + (1 - t) * beginPoint.y);
 }
 
 vector<Point2d>
 Polygon::rechantillonage() {
   int l = points.size();
-  // cout << "Initial points: " << l << endl;
+  // std::cout << "Initial points: " << l << std::endl;
   std::vector<Point2d> newPoints;
   Point beginPoint = points[0];
   Point endPoint = beginPoint;
@@ -132,7 +135,7 @@ Polygon::rechantillonage() {
     beginPoint = endPoint;
   }
 
-  // cout<< "Rechantillonage: " << newPoints.size() << " points." <<endl;
+  // std::cout<< "Rechantillonage: " << newPoints.size() << " points." <<endl;
   return newPoints;
 }
 
@@ -159,7 +162,7 @@ Polygon::computeNormales() {
   for(int i = 0; i < L; i++) {
     Vec2d normale(-tangentes[i](1), tangentes[i](0));
     if(norm(normale) == 0) {
-      // cout << i << " normale de norme nulle" << endl;
+      // std::cout << i << " normale de norme nulle" << std::endl;
       normales.push_back(normale);
     } else {
       Vec2d norme1 = (1 / norm(normale)) * normale;
@@ -177,7 +180,8 @@ Polygon::computeDeriv() {
     Point before = regularPoints[(i - 1) % L];
     Point current = regularPoints[i % L];
     Point after = regularPoints[(i + 1) % L];
-    Vec2d derivee(after.x - 2 * current.x + before.x, after.y - 2 * current.y + before.y);
+    Vec2d derivee(after.x - 2 * current.x + before.x,
+                  after.y - 2 * current.y + before.y);
     secondes[i % L] = derivee;
   }
   return secondes;
@@ -251,7 +255,7 @@ Polygon::deleteLoop() {
     }
   }
   if(found) {
-    cout << "Found loop: " << cut1 << ", " << cut2 << endl;
+    std::cout << "Found loop: " << cut1 << ", " << cut2 << std::endl;
     // waitKey();
     if(cut2 < cut1) {
       cut2 += L;
@@ -282,8 +286,8 @@ segmentCut(Point2d p1, Point2d p2, Point2d q1, Point2d q2) {
   double tq = (xintersect - q1.x) / (q2.x - q1.x);
   double tp = (xintersect - p1.x) / (p2.x - p1.x);
   if(tp > 0.01 && tp < 0.99 && tq > 0.01 && tq < 0.99) {
-    cout << "Tp: " << tp << endl;
-    cout << "Tq: " << tq << endl;
+    std::cout << "Tp: " << tp << std::endl;
+    std::cout << "Tq: " << tq << std::endl;
     return true;
   }
   return false;

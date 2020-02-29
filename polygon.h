@@ -29,7 +29,8 @@ public:
   getRegularPointSize() {
     return regularPoints.size();
   };
-  vector<Point2d> deleteLoop(); // détecte les boucles internes et supprime les points de la plus petite.
+  vector<Point2d> deleteLoop(); // détecte les boucles internes et supprime les
+                                // points de la plus petite.
   ~Polygon();                   // destructor
 
 private:

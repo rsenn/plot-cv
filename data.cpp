@@ -58,7 +58,7 @@ Data::drawNextStep(double step, const Mat& Image, SegmentationMode mode) {
   Mat copyImage = Image.clone();
   int m = Image.rows;
   int r, c;
-  // cout << "Drawing next step" << endl;
+  // std::cout << "Drawing next step" << std::endl;
   polygon.drawPolygon(copyImage);
   int L = polygon.regularPoints.size();
   vector<Point2d> nextPoints;
@@ -73,7 +73,7 @@ Data::drawNextStep(double step, const Mat& Image, SegmentationMode mode) {
     float grady = gy.at<float>(r, c);
     float nx = normale(0);
     float ny = normale(1);
-    // cout << "Step" << i << ": " << g * curv  * step<< endl;
+    // std::cout << "Step" << i << ": " << g * curv  * step<< std::endl;
     float scalar = 0.;
     switch(mode) {
       case BALLOON_MODE: scalar = -(curv + COEFF_BALL) * g * step; break;
@@ -83,22 +83,22 @@ Data::drawNextStep(double step, const Mat& Image, SegmentationMode mode) {
         scalar = (gradx * nx + grady * ny - (curv)*g) * step;
         break;
     }
-    // cout << scalar << endl;
+    // std::cout << scalar << std::endl;
     Point2d nextP(scalar * nx + p.x, scalar * ny + p.y);
     //	if (isValidPoint(nextP)) {
     line(copyImage, nextP, p, Scalar(0, 0, 255));
-    //	cout << "Drawing line: " << i << endl;
+    //	cout << "Drawing line: " << i << std::endl;
     /*	} else {
-            cout << "Point of polygon: " << (int)p.x << ", " << (int) p.y<< endl;
-            cout << "Step: " << i << " is invalid." << endl;
-            cout << "Scalaire: " << scalar << endl;
-            cout << "Gradient: " << gradx << ", " << grady << endl;
-            cout << "Normale: " << nx << ", " << ny << endl;
-            cout << "Curvature: " <<curv << endl;
-            cout << "g : " << g << endl;
-            cout << "Point: " << nextP.x << ", " << nextP.y << endl;
+            std::cout << "Point of polygon: " << (int)p.x << ", " << (int) p.y<<
+       std::endl; std::cout << "Step: " << i << " is invalid." << std::endl;
+            std::cout << "Scalaire: " << scalar << std::endl;
+            std::cout << "Gradient: " << gradx << ", " << grady << std::endl;
+            std::cout << "Normale: " << nx << ", " << ny << std::endl;
+            std::cout << "Curvature: " <<curv << std::endl;
+            std::cout << "g : " << g << std::endl;
+            std::cout << "Point: " << nextP.x << ", " << nextP.y << std::endl;
         }*/
-    // cout << "Step i: " <<p.x <<", " << p.y << endl;
+    // std::cout << "Step i: " <<p.x <<", " << p.y << std::endl;
   }
   imshow("images", copyImage);
 }
@@ -110,7 +110,7 @@ Data::findContour(double step, SegmentationMode mode) {
   vector<Point2d> nextPoints(L);
   for(int i = 0; i < L; i++) {
     Point2d p = polygon.getPoint(i);
-    // cout << "i: " << i << " size: " << L << endl;
+    // std::cout << "i: " << i << " size: " << L << std::endl;
     r = (int)p.y;
     c = (int)p.x;
     float g = gGradient.at<float>(r, c);
@@ -167,7 +167,7 @@ getGradient(const Mat& I) {
 Mat*
 computeGradient(const Mat& I) {
   int m = I.rows, n = I.cols;
-  cout << m << ", " << n << endl;
+  std::cout << m << ", " << n << std::endl;
   Mat Ix(m, n, CV_32F), Iy(m, n, CV_32F);
   for(int i = 0; i < m; i++) {
     for(int j = 0; j < n; j++) {
