@@ -76,7 +76,22 @@ set(BUILD_SHARED_LIBS OFF)
 
 add_subdirectory(quickjs)
 
-add_executable(plot-cv data.cpp data.h geometry.h js.cpp js.h line.h matrix.h plot-cv.cpp polygon.cpp polygon.h psimpl.h simple_svg_1.0.0.hpp simple_svg_writer.h)
+add_executable(plot-cv 
+  src/plot-cv.h
+  src/plot-cv.cpp
+  src/data.cpp
+  src/data.h
+  src/geometry.h
+  src/js.cpp
+  src/js.h
+  src/line.h
+  src/matrix.h
+  src/polygon.cpp
+  src/polygon.h
+  src/psimpl.h
+  src/simple_svg_1.0.0.hpp
+  src/simple_svg_writer.h
+)
 target_link_libraries(plot-cv ${OpenCV_LIBS} quickjs-static ${ELECTRICFENCE_LIBRARY})
 
 

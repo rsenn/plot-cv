@@ -71,7 +71,7 @@ using an STL-style interface that operates on input and output iterators.
 Polylines can be of any dimension, and defined using floating point or signed
 integer data types.
 </pre><br>
-    
+    
     \section sec_changelog changelog
 <pre>
     28-09-2010 - Initial version
@@ -572,7 +572,11 @@ public:
      polyline
   */
   OutputIterator
-  perpendicular_distance(InputIterator first, InputIterator last, value_type tol, unsigned repeat, OutputIterator result) {
+  perpendicular_distance(InputIterator first,
+                         InputIterator last,
+                         value_type tol,
+                         unsigned repeat,
+                         OutputIterator result) {
     if(repeat == 1) {
       // single pass
       return perpendicular_distance(first, last, tol, result);
@@ -587,7 +591,9 @@ public:
     // first pass: [first, last) --> temporary array 'temp_poly'
     util::scoped_array<value_type> temp_poly(coordCount);
     PolylineSimplification<DIM, InputIterator, value_type*> psimpl_to_array;
-    diff_type tempCoordCount = std::distance(temp_poly.get(), psimpl_to_array.perpendicular_distance(first, last, tol, temp_poly.get()));
+    diff_type tempCoordCount =
+        std::distance(temp_poly.get(),
+                      psimpl_to_array.perpendicular_distance(first, last, tol, temp_poly.get()));
 
     // check if simplification did not improved
     if(coordCount == tempCoordCount) {
@@ -603,7 +609,12 @@ public:
       PolylineSimplification<DIM, value_type*, value_type*> psimpl_arrays;
 
       while(--repeat) {
-        tempCoordCount = std::distance(temp_result.get(), psimpl_arrays.perpendicular_distance(temp_poly.get(), temp_poly.get() + coordCount, tol, temp_result.get()));
+        tempCoordCount =
+            std::distance(temp_result.get(),
+                          psimpl_arrays.perpendicular_distance(temp_poly.get(),
+                                                               temp_poly.get() + coordCount,
+                                                               tol,
+                                                               temp_result.get()));
 
         // check if simplification did not improved
         if(coordCount == tempCoordCount) {
@@ -616,7 +627,10 @@ public:
 
     // final pass: temporary array 'temp_poly' --> result
     PolylineSimplification<DIM, value_type*, OutputIterator> psimpl_from_array;
-    return psimpl_from_array.perpendicular_distance(temp_poly.get(), temp_poly.get() + coordCount, tol, result);
+    return psimpl_from_array.perpendicular_distance(temp_poly.get(),
+                                                    temp_poly.get() + coordCount,
+                                                    tol,
+                                                    result);
   }
 
   /*!
@@ -657,7 +671,10 @@ public:
      polyline
   */
   OutputIterator
-  perpendicular_distance(InputIterator first, InputIterator last, value_type tol, OutputIterator result) {
+  perpendicular_distance(InputIterator first,
+                         InputIterator last,
+                         value_type tol,
+                         OutputIterator result) {
     diff_type coordCount = std::distance(first, last);
     diff_type pointCount = DIM // protect against zero DIM
                                ? coordCount / DIM
@@ -828,7 +845,11 @@ public:
      last coordinate of the simplified polyline
   */
   OutputIterator
-  Opheim(InputIterator first, InputIterator last, value_type min_tol, value_type max_tol, OutputIterator result) {
+  Opheim(InputIterator first,
+         InputIterator last,
+         value_type min_tol,
+         value_type max_tol,
+         OutputIterator result) {
     diff_type coordCount = std::distance(first, last);
     diff_type pointCount = DIM // protect against zero DIM
                                ? coordCount / DIM
@@ -869,7 +890,8 @@ public:
       }
 
       // check each point pj against R(r0, r1)
-      if(math::point_distance2<DIM>(r0, pj) < max_tol2 && math::ray_distance2<DIM>(r0, r1, pj) < min_tol2) {
+      if(math::point_distance2<DIM>(r0, pj) < max_tol2 &&
+         math::ray_distance2<DIM>(r0, r1, pj) < min_tol2) {
         continue;
       }
       // found the next key at pi
@@ -930,7 +952,11 @@ public:
      polyline
   */
   OutputIterator
-  Lang(InputIterator first, InputIterator last, value_type tol, unsigned look_ahead, OutputIterator result) {
+  Lang(InputIterator first,
+       InputIterator last,
+       value_type tol,
+       unsigned look_ahead,
+       OutputIterator result) {
     diff_type coordCount = std::distance(first, last);
     diff_type pointCount = DIM // protect against zero DIM
                                ? coordCount / DIM
@@ -1031,7 +1057,9 @@ public:
     // radial distance routine as preprocessing
     util::scoped_array<value_type> reduced(coordCount); // radial distance results
     PolylineSimplification<DIM, InputIterator, value_type*> psimpl_to_array;
-    ptr_diff_type reducedCoordCount = std::distance(reduced.get(), psimpl_to_array.radial_distance(first, last, tol, reduced.get()));
+    ptr_diff_type reducedCoordCount =
+        std::distance(reduced.get(),
+                      psimpl_to_array.radial_distance(first, last, tol, reduced.get()));
     ptr_diff_type reducedPointCount = reducedCoordCount / DIM;
 
     // douglas-peucker approximation
@@ -1094,7 +1122,10 @@ public:
      one beyond the last coordinate of the simplified polyline
   */
   OutputIterator
-  douglas_peucker_n(InputIterator first, InputIterator last, unsigned count, OutputIterator result) {
+  douglas_peucker_n(InputIterator first,
+                    InputIterator last,
+                    unsigned count,
+                    OutputIterator result) {
     diff_type coordCount = std::distance(first, last);
     diff_type pointCount = DIM // protect against zero DIM
                                ? coordCount / DIM
@@ -1170,8 +1201,12 @@ public:
      the last computed positional error
   */
   OutputIterator
-  compute_positional_errors2(
-      InputIterator original_first, InputIterator original_last, InputIterator simplified_first, InputIterator simplified_last, OutputIterator result, bool* valid = 0) {
+  compute_positional_errors2(InputIterator original_first,
+                             InputIterator original_last,
+                             InputIterator simplified_first,
+                             InputIterator simplified_last,
+                             OutputIterator result,
+                             bool* valid = 0) {
     diff_type original_coordCount = std::distance(original_first, original_last);
     diff_type original_pointCount = DIM // protect against zero DIM
                                         ? original_coordCount / DIM
@@ -1183,7 +1218,8 @@ public:
                                           : 0;
 
     // validate input
-    if(original_coordCount % DIM || original_pointCount < 2 || simplified_coordCount % DIM || simplified_pointCount < 2 || original_pointCount < simplified_pointCount ||
+    if(original_coordCount % DIM || original_pointCount < 2 || simplified_coordCount % DIM ||
+       simplified_pointCount < 2 || original_pointCount < simplified_pointCount ||
        !math::equal<DIM>(original_first, simplified_first)) {
       if(valid) {
         *valid = false;
@@ -1198,7 +1234,8 @@ public:
     // process each simplified line segment
     while(simplified_first != simplified_last) {
       // process each original point until it equals the end of the line segment
-      while(original_first != original_last && !math::equal<DIM>(original_first, simplified_first)) {
+      while(original_first != original_last &&
+            !math::equal<DIM>(original_first, simplified_first)) {
         *result = math::segment_distance2<DIM>(simplified_prev, simplified_first, original_first);
         ++result;
         std::advance(original_first, DIM);
@@ -1254,14 +1291,27 @@ public:
      computed statistics
   */
   math::Statistics
-  compute_positional_error_statistics(InputIterator original_first, InputIterator original_last, InputIterator simplified_first, InputIterator simplified_last, bool* valid = 0) {
+  compute_positional_error_statistics(InputIterator original_first,
+                                      InputIterator original_last,
+                                      InputIterator simplified_first,
+                                      InputIterator simplified_last,
+                                      bool* valid = 0) {
     diff_type pointCount = std::distance(original_first, original_last) / DIM;
     util::scoped_array<double> errors(pointCount);
     PolylineSimplification<DIM, InputIterator, double*> ps;
 
-    diff_type errorCount = std::distance(errors.get(), ps.compute_positional_errors2(original_first, original_last, simplified_first, simplified_last, errors.get(), valid));
+    diff_type errorCount = std::distance(errors.get(),
+                                         ps.compute_positional_errors2(original_first,
+                                                                       original_last,
+                                                                       simplified_first,
+                                                                       simplified_last,
+                                                                       errors.get(),
+                                                                       valid));
 
-    std::transform(errors.get(), errors.get() + errorCount, errors.get(), std::ptr_fun<double, double>(std::sqrt));
+    std::transform(errors.get(),
+                   errors.get() + errorCount,
+                   errors.get(),
+                   std::ptr_fun<double, double>(std::sqrt));
 
     return math::compute_statistics(errors.get(), errors.get() + errorCount);
   }
@@ -1411,7 +1461,10 @@ private:
         \param[out] keys        indicates for each polyline point if it is a key
     */
     static void
-    Approximate(const value_type* coords, ptr_diff_type coordCount, value_type tol, unsigned char* keys) {
+    Approximate(const value_type* coords,
+                ptr_diff_type coordCount,
+                value_type tol,
+                unsigned char* keys) {
       value_type tol2 = tol * tol; // squared distance tolerance
       ptr_diff_type pointCount = coordCount / DIM;
       // zero out keys
@@ -1448,7 +1501,10 @@ private:
         \param[out] keys        indicates for each polyline point if it is a key
     */
     static void
-    approximate_n(const value_type* coords, ptr_diff_type coordCount, unsigned countTol, unsigned char* keys) {
+    approximate_n(const value_type* coords,
+                  ptr_diff_type coordCount,
+                  unsigned countTol,
+                  unsigned char* keys) {
       ptr_diff_type pointCount = coordCount / DIM;
       // zero out keys
       std::fill_n(keys, pointCount, 0);
@@ -1509,7 +1565,8 @@ private:
       KeyInfo keyInfo;
 
       for(ptr_diff_type current = first + DIM; current < last; current += DIM) {
-        value_type d2 = math::segment_distance2<DIM>(coords + first, coords + last, coords + current);
+        value_type d2 =
+            math::segment_distance2<DIM>(coords + first, coords + last, coords + current);
         if(d2 < keyInfo.dist2) {
           continue;
         }
@@ -1556,7 +1613,10 @@ simplify_nth_point(ForwardIterator first, ForwardIterator last, unsigned n, Outp
 */
 template<unsigned DIM, class ForwardIterator, class OutputIterator>
 OutputIterator
-simplify_radial_distance(ForwardIterator first, ForwardIterator last, typename std::iterator_traits<ForwardIterator>::value_type tol, OutputIterator result) {
+simplify_radial_distance(ForwardIterator first,
+                         ForwardIterator last,
+                         typename std::iterator_traits<ForwardIterator>::value_type tol,
+                         OutputIterator result) {
   PolylineSimplification<DIM, ForwardIterator, OutputIterator> ps;
   return ps.radial_distance(first, last, tol, result);
 }
@@ -1576,8 +1636,11 @@ simplify_radial_distance(ForwardIterator first, ForwardIterator last, typename s
 */
 template<unsigned DIM, class ForwardIterator, class OutputIterator>
 OutputIterator
-simplify_perpendicular_distance(
-    ForwardIterator first, ForwardIterator last, typename std::iterator_traits<ForwardIterator>::value_type tol, unsigned repeat, OutputIterator result) {
+simplify_perpendicular_distance(ForwardIterator first,
+                                ForwardIterator last,
+                                typename std::iterator_traits<ForwardIterator>::value_type tol,
+                                unsigned repeat,
+                                OutputIterator result) {
   PolylineSimplification<DIM, ForwardIterator, OutputIterator> ps;
   return ps.perpendicular_distance(first, last, tol, repeat, result);
 }
@@ -1597,7 +1660,10 @@ simplify_perpendicular_distance(
 */
 template<unsigned DIM, class ForwardIterator, class OutputIterator>
 OutputIterator
-simplify_perpendicular_distance(ForwardIterator first, ForwardIterator last, typename std::iterator_traits<ForwardIterator>::value_type tol, OutputIterator result) {
+simplify_perpendicular_distance(ForwardIterator first,
+                                ForwardIterator last,
+                                typename std::iterator_traits<ForwardIterator>::value_type tol,
+                                OutputIterator result) {
   PolylineSimplification<DIM, ForwardIterator, OutputIterator> ps;
   return ps.perpendicular_distance(first, last, tol, result);
 }
@@ -1617,7 +1683,10 @@ simplify_perpendicular_distance(ForwardIterator first, ForwardIterator last, typ
 */
 template<unsigned DIM, class ForwardIterator, class OutputIterator>
 OutputIterator
-simplify_reumann_witkam(ForwardIterator first, ForwardIterator last, typename std::iterator_traits<ForwardIterator>::value_type tol, OutputIterator result) {
+simplify_reumann_witkam(ForwardIterator first,
+                        ForwardIterator last,
+                        typename std::iterator_traits<ForwardIterator>::value_type tol,
+                        OutputIterator result) {
   PolylineSimplification<DIM, ForwardIterator, OutputIterator> ps;
   return ps.reumann_witkam(first, last, tol, result);
 }
@@ -1662,8 +1731,11 @@ simplify_opheim(ForwardIterator first,
 */
 template<unsigned DIM, class BidirectionalIterator, class OutputIterator>
 OutputIterator
-simplify_lang(
-    BidirectionalIterator first, BidirectionalIterator last, typename std::iterator_traits<BidirectionalIterator>::value_type tol, unsigned look_ahead, OutputIterator result) {
+simplify_lang(BidirectionalIterator first,
+              BidirectionalIterator last,
+              typename std::iterator_traits<BidirectionalIterator>::value_type tol,
+              unsigned look_ahead,
+              OutputIterator result) {
   PolylineSimplification<DIM, BidirectionalIterator, OutputIterator> ps;
   return ps.Lang(first, last, tol, look_ahead, result);
 }
@@ -1683,7 +1755,10 @@ simplify_lang(
 */
 template<unsigned DIM, class ForwardIterator, class OutputIterator>
 OutputIterator
-simplify_douglas_peucker(ForwardIterator first, ForwardIterator last, typename std::iterator_traits<ForwardIterator>::value_type tol, OutputIterator result) {
+simplify_douglas_peucker(ForwardIterator first,
+                         ForwardIterator last,
+                         typename std::iterator_traits<ForwardIterator>::value_type tol,
+                         OutputIterator result) {
   PolylineSimplification<DIM, ForwardIterator, OutputIterator> ps;
   return ps.douglas_peucker(first, last, tol, result);
 }
@@ -1702,7 +1777,10 @@ simplify_douglas_peucker(ForwardIterator first, ForwardIterator last, typename s
 */
 template<unsigned DIM, class ForwardIterator, class OutputIterator>
 OutputIterator
-simplify_douglas_peucker_n(ForwardIterator first, ForwardIterator last, unsigned count, OutputIterator result) {
+simplify_douglas_peucker_n(ForwardIterator first,
+                           ForwardIterator last,
+                           unsigned count,
+                           OutputIterator result) {
   PolylineSimplification<DIM, ForwardIterator, OutputIterator> ps;
   return ps.douglas_peucker_n(first, last, count, result);
 }
@@ -1725,10 +1803,15 @@ simplify_douglas_peucker_n(ForwardIterator first, ForwardIterator last, unsigned
 */
 template<unsigned DIM, class ForwardIterator, class OutputIterator>
 OutputIterator
-compute_positional_errors2(
-    ForwardIterator original_first, ForwardIterator original_last, ForwardIterator simplified_first, ForwardIterator simplified_last, OutputIterator result, bool* valid = 0) {
+compute_positional_errors2(ForwardIterator original_first,
+                           ForwardIterator original_last,
+                           ForwardIterator simplified_first,
+                           ForwardIterator simplified_last,
+                           OutputIterator result,
+                           bool* valid = 0) {
   PolylineSimplification<DIM, ForwardIterator, OutputIterator> ps;
-  return ps.compute_positional_errors2(original_first, original_last, simplified_first, simplified_last, result, valid);
+  return ps.compute_positional_errors2(
+      original_first, original_last, simplified_first, simplified_last, result, valid);
 }
 
 /*!
@@ -1748,10 +1831,14 @@ compute_positional_errors2(
 */
 template<unsigned DIM, class ForwardIterator>
 math::Statistics
-compute_positional_error_statistics(
-    ForwardIterator original_first, ForwardIterator original_last, ForwardIterator simplified_first, ForwardIterator simplified_last, bool* valid = 0) {
+compute_positional_error_statistics(ForwardIterator original_first,
+                                    ForwardIterator original_last,
+                                    ForwardIterator simplified_first,
+                                    ForwardIterator simplified_last,
+                                    bool* valid = 0) {
   PolylineSimplification<DIM, ForwardIterator, ForwardIterator> ps;
-  return ps.compute_positional_error_statistics(original_first, original_last, simplified_first, simplified_last, valid);
+  return ps.compute_positional_error_statistics(
+      original_first, original_last, simplified_first, simplified_last, valid);
 }
 } // namespace psimpl
 

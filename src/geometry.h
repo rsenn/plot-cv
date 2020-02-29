@@ -11,6 +11,9 @@
 typedef std::vector<cv::Point> point_vector;
 typedef std::vector<cv::Point2f> point2f_vector;
 
+typedef std::vector<point_vector> contour_vector;
+typedef std::vector<point2f_vector> contour2f_vector;
+
 // Function that calculates the area given a
 // std::vector of vertices in the XY plane.
 template<class P>
@@ -39,12 +42,13 @@ polygon_area(std::vector<P> list) {
   return area; // Return The Area
 }
 
-std::vector<cv::Point2f>
+point2f_vector
 get_mass_centers(std::vector<point_vector> contours) {
   std::vector<cv::Moments> mu(contours.size());
-  std::vector<cv::Point2f> mc(contours.size());
+  point2f_vector mc(contours.size());
   for(size_t i = 0; i < contours.size(); i++) mu[i] = cv::moments(contours[i], false);
-  for(size_t i = 0; i < contours.size(); i++) mc[i] = cv::Point2f(mu[i].m10 / mu[i].m00, mu[i].m01 / mu[i].m00);
+  for(size_t i = 0; i < contours.size(); i++)
+    mc[i] = cv::Point2f(mu[i].m10 / mu[i].m00, mu[i].m01 / mu[i].m00);
 
   return mc;
 }
@@ -52,7 +56,9 @@ get_mass_centers(std::vector<point_vector> contours) {
 template<class T, class Pred>
 inline std::vector<int>
 filter_lines(const std::vector<T>& c, bool (&pred)(const Line<T>&, size_t)) {
-  return filter_lines<std::vector<Line<T>>::iterator, bool(Line<T>&, size_t)>(c.begin(), c.end(), pred);
+  return filter_lines<std::vector<Line<T>>::iterator, bool(Line<T>&, size_t)>(c.begin(),
+                                                                              c.end(),
+                                                                              pred);
 }
 
 template<class ValueT, class InputIterator>
@@ -77,7 +83,9 @@ angle_diffs(Line<ValueT>& line, InputIterator from, InputIterator to) {
 
 template<class InputIterator>
 inline std::vector<float>
-line_distances(typename std::iterator_traits<InputIterator>::value_type& line, InputIterator from, InputIterator to) {
+line_distances(typename std::iterator_traits<InputIterator>::value_type& line,
+               InputIterator from,
+               InputIterator to) {
   typedef InputIterator iterator_type;
   typedef typename std::iterator_traits<InputIterator>::value_type line_type;
   typedef typename line_type::value_type value_type;
@@ -139,6 +147,74 @@ to_string(const Container<cv::Point_<ValueT>>& points) {
       ret += " ";
     ret += to_string<ValueT, Char>(*it);
   }
+  return ret;
+}
+
+template<class T>
+inline T*
+coord_pointer(cv::Point_<T>* point_ptr) {
+  return reinterpret_cast<T*>(point_ptr);
+}
+
+template<class T>
+inline const T*
+coord_pointer(const cv::Point_<T>* point_ptr) {
+  return reinterpret_cast<const T*>(point_ptr);
+}
+
+template<class T>
+std::vector<cv::Point_<T>>
+simplify_polyline(const std::vector<cv::Point_<T>>& points) {
+  typedef T coord_type;
+  typedef cv::Point_<T> point_type;
+  typedef std::vector<point_type> vector_type;
+  vector_type ret;
+  ret.resize(points.size());
+
+  psimpl::PolylineSimplification<2, const coord_type*, coord_type*> psimpl;
+  auto output = coord_pointer(ret.data());
+
+  // auto end = psimpl.nth_point(coord_pointer(points.data()),
+  // coord_pointer(&points.data()[points.size()]), 20, output); auto end =
+  // psimpl.radial_distance(coord_pointer(points.data()),
+  // coord_pointer(&points.data()[points.size()]), 10, output);
+  auto end = psimpl.Opheim(
+      coord_pointer(points.data()), coord_pointer(&points.data()[points.size()]), 4, 30, output);
+  size_t outn = std::distance(output, end) / 2;
+
+  // logfile << "simplification 1:" << ((double)points.size() / outn) <<
+  // std::endl;
+  ret.resize(outn);
+  return ret;
+}
+
+// helper function:
+// finds a cosine of angle between vectors
+// from pt0->pt1 and from pt0->pt2
+template<class T>
+inline double
+angle(cv::Point_<T> pt1, cv::Point_<T> pt2, cv::Point_<T> pt0) {
+  T dx1 = pt1.x - pt0.x;
+  T dy1 = pt1.y - pt0.y;
+  T dx2 = pt2.x - pt0.x;
+  T dy2 = pt2.y - pt0.y;
+  return (dx1 * dx2 + dy1 * dy2) / sqrt((dx1 * dx1 + dy1 * dy1) * (dx2 * dx2 + dy2 * dy2) + 1e-10);
+}
+
+template<class To, class From, template<class> class Container>
+inline void
+convert_points(const Container<cv::Point_<From>>& from, Container<cv::Point_<To>>& to) {
+  std::transform(from.cbegin(),
+                 from.cend(),
+                 std::back_inserter(to),
+                 [](cv::Point_<From> p) -> cv::Point_<To> { return cv::Point_<To>(p.x, p.y); });
+}
+
+template<class To, class From, template<class> class Container>
+inline Container<cv::Point_<To>>
+transform_points(const Container<cv::Point_<From>>& from) {
+  Container<cv::Point_<To>> ret;
+  convert_points<To, From, Container>(from, ret);
   return ret;
 }
 

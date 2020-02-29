@@ -14,12 +14,17 @@ public:
   static const int typeId = std::is_same<T, double>::value ? CV_64F : CV_32F;
 
   Matrix() : base_type(cv::Mat::zeros(dim, dim, typeId)) { init({1, 0, 0}, {0, 1, 0}, {0, 0, 1}); }
-  Matrix(int xx, int xy, int yx, int yy, int tx, int ty) : base_type(dim, dim, typeId) { init(xx, xy, yx, yy, tx, ty); }
+  Matrix(int xx, int xy, int yx, int yy, int tx, int ty) : base_type(dim, dim, typeId) {
+    init(xx, xy, yx, yy, tx, ty);
+  }
   Matrix(const base_type& m) : base_type(dim, dim, typeId) { init(m); }
   Matrix(const typed_type& m) : base_type(dim, dim, typeId) { init(m); }
   template<class OtherT> Matrix(const OtherT& m) : base_type(dim, dim, typeId) { init(m); }
 
-  template<class R = std::array<T, dim>> Matrix(R row0, R row1, R row2 = {0, 0, 1}) : base_type(dim, dim, typeId) { init(row0, row1, row2); }
+  template<class R = std::array<T, dim>>
+  Matrix(R row0, R row1, R row2 = {0, 0, 1}) : base_type(dim, dim, typeId) {
+    init(row0, row1, row2);
+  }
   /**
    * @brief      { function_description }
    *
@@ -29,12 +34,18 @@ public:
   template<class InputIterator, class OutputIterator>
   void
   transform_points(InputIterator from, InputIterator to, OutputIterator out) const {
-    std::transform(from, to, out, std::bind(&Matrix<T>::transform_point, this, std::placeholders::_1));
+    std::transform(from,
+                   to,
+                   out,
+                   std::bind(&Matrix<T>::transform_point, this, std::placeholders::_1));
   }
   template<class InputIterator>
   void
   transform_points(InputIterator from, InputIterator to) const {
-    std::for_each(from, to, std::bind(&Matrix<T>::convert_point, this, std::placeholders::_1, std::placeholders::_1));
+    std::for_each(
+        from,
+        to,
+        std::bind(&Matrix<T>::convert_point, this, std::placeholders::_1, std::placeholders::_1));
   }
 
   Matrix<T>&
@@ -162,7 +173,8 @@ public:
     if(origin != zero)
       ret.multiplicate(Matrix<T>(1, 0, -T(origin.x), 0, 1, -T(origin.y)));
 
-    ret.multiplicate(Matrix<T>(T(std::cos(angle)), T(std::sin(angle)), 0, -T(std::sin(angle)), T(std::cos(angle)), 0));
+    ret.multiplicate(Matrix<T>(
+        T(std::cos(angle)), T(std::sin(angle)), 0, -T(std::sin(angle)), T(std::cos(angle)), 0));
 
     if(origin != zero)
       ret.multiplicate(Matrix<T>(1, 0, T(origin.x), 0, 1, T(origin.y)));
@@ -170,8 +182,12 @@ public:
     return ret;
   }
 
-  std::array<T, dim>& operator[](int row) { return *reinterpret_cast<std::array<T, dim>*>(ptr(row, 0)); }
-  std::array<T, dim> const& operator[](int row) const { return *reinterpret_cast<std::array<T, dim> const*>(ptr(row, 0)); }
+  std::array<T, dim>& operator[](int row) {
+    return *reinterpret_cast<std::array<T, dim>*>(ptr(row, 0));
+  }
+  std::array<T, dim> const& operator[](int row) const {
+    return *reinterpret_cast<std::array<T, dim> const*>(ptr(row, 0));
+  }
 
   Matrix<T>&
   multiplicate(const Matrix<T>& matrix2) {
