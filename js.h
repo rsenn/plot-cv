@@ -37,13 +37,10 @@ struct jsrt {
 
 protected:
   struct global_object {
-    global_object(JSContext* __ctx) : ctx(__ctx) { val = JS_GetGlobalObject(ctx); }
-    global_object(global_object&& o) noexcept : val(std::move(o.val)), ctx(std::move(o.ctx)) {}
+    global_object(JSContext* __ctx);
+    global_object(global_object&& o) noexcept;
 
-    ~global_object() {
-      if(ctx)
-        JS_FreeValue(ctx, val);
-    }
+    ~global_object();
 
     JSValue val;
     JSContext* ctx;
@@ -214,7 +211,7 @@ vector_to_js(jsrt& js, const T& v, size_t n) {
 
 template<class T>
 inline JSValue
-vector_to_js(jsrt& js,const T& v) {
+vector_to_js(jsrt& js, const T& v) {
   return vector_to_js(js, v, v.size());
 }
 
@@ -232,15 +229,12 @@ pointer_to_js(jsrt& js, const P* v, size_t n, const std::function<JSValue(const 
   return ret;
 }
 
-
 template<class P>
 inline JSValue
 pointer_to_js(jsrt& js, const P* v, size_t n) {
-std::function<JSValue(const P&)> fn([&](const P& v) -> JSValue {
-  return js.create(v);
-});
+  std::function<JSValue(const P&)> fn([&](const P& v) -> JSValue { return js.create(v); });
 
- return pointer_to_js(js, v, n, fn);
+  return pointer_to_js(js, v, n, fn);
 }
 
 template<class P>

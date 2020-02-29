@@ -605,12 +605,10 @@ display_image(image_type& m) {
   cv::imshow("img", out);
 }
 
-
 JSValue
 vec4i_to_js(const cv::Vec4i& v) {
   return pointer_to_js(js, (const int*)&v[0], (int)4);
 }
-
 
 template<class P>
 JSValue

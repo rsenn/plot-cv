@@ -41,6 +41,15 @@ jsrt::init(int argc, char* argv[]) {
   return ctx != nullptr;
 }
 
+jsrt::global_object::global_object(JSContext* __ctx) : ctx(__ctx) { val = JS_GetGlobalObject(ctx); }
+
+jsrt::global_object::global_object(global_object&& o) noexcept : val(std::move(o.val)), ctx(std::move(o.ctx)) {}
+
+jsrt::global_object::~global_object() {
+  if(ctx)
+    JS_FreeValue(ctx, val);
+}
+
 JSValue
 jsrt::get_undefined() const {
   return JS_UNDEFINED;
