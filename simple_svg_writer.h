@@ -162,7 +162,9 @@ public:
 
   Base&
   AddAttribute(const Attribute& attribute) {
-    auto ii = std::find_if(attributes.begin(), attributes.end(), [attribute](const auto& a) { return a.Name().compare(attribute.Name()) == 0; });
+    auto ii = std::find_if(attributes.begin(), attributes.end(), [attribute](const auto& a) {
+      return a.Name().compare(attribute.Name()) == 0;
+    });
     if(ii != attributes.end()) {
       ii->Value(attribute.Value());
     } else {
@@ -300,21 +302,24 @@ public:
 class Line : public Base {
 public:
   Line() : Base("line") {}
-  Line(double from_x, double from_y, double to_x, double to_y) : Base("line", {{"x1", from_x}, {"y1", from_y}, {"x2", to_x}, {"y2", to_y}}) {}
+  Line(double from_x, double from_y, double to_x, double to_y)
+      : Base("line", {{"x1", from_x}, {"y1", from_y}, {"x2", to_x}, {"y2", to_y}}) {}
   virtual ~Line() override {}
 };
 
 class Circle : public Base {
 public:
   Circle() : Base("circle") {}
-  Circle(double center_x, double center_y, double radius) : Base("circle", {{"cx", center_x}, {"cy", center_y}, {"r", radius}}) {}
+  Circle(double center_x, double center_y, double radius)
+      : Base("circle", {{"cx", center_x}, {"cy", center_y}, {"r", radius}}) {}
   virtual ~Circle() override {}
 };
 
 class Ellipse : public Base {
 public:
   Ellipse() : Base("ellipse") {}
-  Ellipse(double center_x, double center_y, double radius_x, double radius_y) : Base("ellipse", {{"cx", center_x}, {"cy", center_y}, {"rx", radius_x}, {"ry", radius_y}}) {}
+  Ellipse(double center_x, double center_y, double radius_x, double radius_y)
+      : Base("ellipse", {{"cx", center_x}, {"cy", center_y}, {"rx", radius_x}, {"ry", radius_y}}) {}
   virtual ~Ellipse() override {}
 };
 
@@ -356,7 +361,7 @@ public:
   GroupBase(std::string group_tag, const std::vector<Attribute>& attributes) : Base(group_tag, attributes) {}
   virtual ~GroupBase() override {}
 
-  template <typename T>
+  template<typename T>
   GroupBase&
   Append(const T& object) {
     objects.push_back(std::make_shared<T>(object));
@@ -415,7 +420,8 @@ public:
 class Layer : public GroupBase {
 public:
   Layer() : GroupBase("g", {{"inkscape:groupmode", std::string("layer")}}) {}
-  Layer(const std::string& name) : GroupBase("g", {{"inkscape:label", name}, {"inkscape:groupmode", std::string("layer")}}) {}
+  Layer(const std::string& name)
+      : GroupBase("g", {{"inkscape:label", name}, {"inkscape:groupmode", std::string("layer")}}) {}
   virtual ~Layer() override {}
 
   friend std::ostream&
@@ -429,9 +435,18 @@ public:
   //<?xml version="1.0"?>
   //<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
   //</svg>
-  Document() : GroupBase("svg", {{"xmlns", std::string("http://www.w3.org/2000/svg")}, {"xmlns:xlink", std::string("http://www.w3.org/1999/xlink")}, {"xmlns:inkscape", std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
+  Document()
+      : GroupBase("svg",
+                  {{"xmlns", std::string("http://www.w3.org/2000/svg")},
+                   {"xmlns:xlink", std::string("http://www.w3.org/1999/xlink")},
+                   {"xmlns:inkscape", std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
   Document(double width, double height)
-      : GroupBase("svg", {{"width", to_string(width)}, {"height", to_string(height)}, {"xmlns", std::string("http://www.w3.org/2000/svg")}, {"xmlns:xlink", std::string("http://www.w3.org/1999/xlink")}, {"xmlns:inkscape", std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
+      : GroupBase("svg",
+                  {{"width", to_string(width)},
+                   {"height", to_string(height)},
+                   {"xmlns", std::string("http://www.w3.org/2000/svg")},
+                   {"xmlns:xlink", std::string("http://www.w3.org/1999/xlink")},
+                   {"xmlns:inkscape", std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
   virtual ~Document() override {}
 
   Document&

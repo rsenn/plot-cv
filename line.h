@@ -9,9 +9,10 @@
 #include <type_traits>
 #include <exception>
 #include <string>
-template <class T> class LineEnd;
+template<class T> class LineEnd;
 
-template <class T, typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type* = nullptr>
+template<class T,
+         typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type* = nullptr>
 inline std::string
 to_string(const T& t, size_t n_pad = 3, char ch_pad = ' ') {
   std::ostringstream oss;
@@ -35,7 +36,7 @@ to_string(const T& t, size_t n_pad = 3, char ch_pad = ' ') {
   return ret;
 }
 
-template <class T>
+template<class T>
 inline std::string
 to_string(const cv::Point_<T>& pt, size_t n_pad = 3, char ch_pad = '0') {
   std::ostringstream oss;
@@ -43,32 +44,32 @@ to_string(const cv::Point_<T>& pt, size_t n_pad = 3, char ch_pad = '0') {
   return oss.str();
 }
 
-template <class InputIterator>
+template<class InputIterator>
 inline typename std::iterator_traits<InputIterator>::value_type
 segment_distance2(InputIterator s1, InputIterator s2, InputIterator p) {
   typedef typename std::iterator_traits<InputIterator>::value_type value_type;
   return psimpl::math::segment_distance2<2, InputIterator>(s1, s2, p);
 }
 
-template <class ValueT>
+template<class ValueT>
 inline ValueT
 point_distance(const cv::Point_<ValueT>& p1, const cv::Point_<ValueT>& p2) {
   return std::sqrt(psimpl::math::point_distance2<2>(&p1.x, &p2.x));
 }
 
-template <class ValueT>
+template<class ValueT>
 void
 moment_from_angle(double phi, cv::Point_<ValueT>& point) {
   point.x = std::sin(phi);
   point.y = std::cos(phi);
 }
-template <class ValueT>
+template<class ValueT>
 double
 angle_from_moment(const cv::Point_<ValueT>& point) {
   return std::atan2(point.x, point.y);
 }
 
-template <class ValueT> class Line {
+template<class ValueT> class Line {
 public:
   typedef cv::Point_<ValueT> point_type;
   typedef Line<ValueT> line_type;
@@ -146,7 +147,8 @@ public:
     // point_type mom, norm(moment());
     //  point_type mom;
     // moment_from_angle(phi, mom);
-    // std::cout << "angle " << (phi *180/M_PI) << " x=" << norm.x << ",y=" << norm.y << " x=" << mom.x << ",y=" << mom.y << std::endl;
+    // std::cout << "angle " << (phi *180/M_PI) << " x=" << norm.x << ",y=" << norm.y << " x=" << mom.x << ",y=" <<
+    // mom.y << std::endl;
 
     return phi;
   }
@@ -179,13 +181,13 @@ public:
     return ret;
   }
 
-  template <class OtherT>
+  template<class OtherT>
   std::pair<line_type&, line_type&>
   nearest(const Line<OtherT>& l) const {
     return std::make_pair<ValueT, ValueT>(distance(l.a), distance(l.b));
   }
 
-  template <class OtherT>
+  template<class OtherT>
   bool
   operator==(const Line<OtherT>& other) const {
     return other.a == this->a && other.b == this->b;
@@ -247,7 +249,7 @@ public:
     return true;
   }
 
-  template <class OtherValueT>
+  template<class OtherValueT>
   bool
   operator<(const Line<OtherValueT>& l2) const {
     cv::Point2f a, b;
@@ -256,7 +258,7 @@ public:
     return a.y < b.y ? true : a.x < b.x;
   }
 
-  template <class Char = char>
+  template<class Char = char>
   std::basic_string<Char>
   str(const std::string& comma = ",", const std::string& sep = "|") const {
     point_type p = pivot(), s = slope();
@@ -282,7 +284,7 @@ public:
   */
 };
 
-template <class T, class Char = char>
+template<class T, class Char = char>
 inline std::basic_string<Char>
 to_string(const Line<T>& line) {
   std::basic_string<Char> ret;
@@ -291,7 +293,7 @@ to_string(const Line<T>& line) {
   return ret;
 }
 
-template <class ValueT, template <typename> typename Container = std::vector, class Char = char>
+template<class ValueT, template<typename> typename Container = std::vector, class Char = char>
 inline std::basic_string<Char>
 to_string(const Container<Line<ValueT>>& lines) {
   typedef typename Container<Line<ValueT>>::const_iterator iterator_type;
@@ -306,7 +308,7 @@ to_string(const Container<Line<ValueT>>& lines) {
   return ret;
 }
 
-template <class Char, class Value>
+template<class Char, class Value>
 inline std::basic_ostream<Char>&
 operator<<(std::basic_ostream<Char>& os, const std::vector<Line<Value>>& c) {
   typedef typename std::vector<Line<Value>>::const_iterator iterator_type;
@@ -320,7 +322,7 @@ operator<<(std::basic_ostream<Char>& os, const std::vector<Line<Value>>& c) {
   return os;
 }
 
-template <class ContainerT>
+template<class ContainerT>
 
 typename ContainerT::iterator
 find_nearest_line(typename ContainerT::value_type& line, ContainerT& lines) {
@@ -342,7 +344,7 @@ find_nearest_line(typename ContainerT::value_type& line, ContainerT& lines) {
   }
   return ret;
 }
-template <class ContainerT>
+template<class ContainerT>
 typename ContainerT::iterator
 find_nearest_line(typename ContainerT::iterator& line, ContainerT& lines) {
   typedef typename ContainerT::iterator iterator_type;
@@ -386,7 +388,7 @@ find_nearest_line(const InputIterator& line, InputIterator from, InputIterator t
 }
 */
 
-template <class T> class LineEnd {
+template<class T> class LineEnd {
   Line<T>* line;
   size_t point_index;
 

@@ -4,7 +4,7 @@
 #include <opencv2/core/affine.hpp>
 #include <opencv2/imgproc/types_c.h>
 
-template <class T = double> class Matrix : public cv::Mat {
+template<class T = double> class Matrix : public cv::Mat {
 public:
   typedef cv::Mat_<T> typed_type;
   typedef cv::Mat base_type;
@@ -17,21 +17,23 @@ public:
   Matrix(int xx, int xy, int yx, int yy, int tx, int ty) : base_type(dim, dim, typeId) { init(xx, xy, yx, yy, tx, ty); }
   Matrix(const base_type& m) : base_type(dim, dim, typeId) { init(m); }
   Matrix(const typed_type& m) : base_type(dim, dim, typeId) { init(m); }
-  template <class OtherT> Matrix(const OtherT& m) : base_type(dim, dim, typeId) { init(m); }
+  template<class OtherT> Matrix(const OtherT& m) : base_type(dim, dim, typeId) { init(m); }
 
-  template <class R = std::array<T, dim>> Matrix(R row0, R row1, R row2 = {0, 0, 1}) : base_type(dim, dim, typeId) { init(row0, row1, row2); }
+  template<class R = std::array<T, dim>> Matrix(R row0, R row1, R row2 = {0, 0, 1}) : base_type(dim, dim, typeId) {
+    init(row0, row1, row2);
+  }
   /**
    * @brief      { function_description }
    *
    * @param[in]  m     { parameter_description }
    * @param      pt    The point
    */
-  template <class InputIterator, class OutputIterator>
+  template<class InputIterator, class OutputIterator>
   void
   transform_points(InputIterator from, InputIterator to, OutputIterator out) const {
     std::transform(from, to, out, std::bind(&Matrix<T>::transform_point, this, std::placeholders::_1));
   }
-  template <class InputIterator>
+  template<class InputIterator>
   void
   transform_points(InputIterator from, InputIterator to) const {
     std::for_each(from, to, std::bind(&Matrix<T>::convert_point, this, std::placeholders::_1, std::placeholders::_1));
@@ -63,7 +65,7 @@ public:
     return out;
   };
 
-  operator base_type() const { return *this; }
+  // operator base_type() const { return *this; }
 
   /*static cv::Mat
   rotation(double angle) {
@@ -80,7 +82,7 @@ public:
     return Matrix<T>({scale, 0, 0}, {0, scale, 0}, {0, 0, 1});
   }
 
-  template <class OtherT>
+  template<class OtherT>
   static Matrix<T>
   translation(OtherT x, OtherT y) {
     return Matrix<T>({1, 0, T(x)}, {0, 1, T(y)}, {0, 0, 1});
@@ -100,7 +102,7 @@ public:
     return Matrix<T>({xx, xy, yx}, {yy, tx, ty});
   }
 
-  template <class R = std::array<T, dim>>
+  template<class R = std::array<T, dim>>
   Matrix<T>&
   init(const R& row0, const R& row1, const R& row2) {
     setRow(0, row0);
@@ -146,7 +148,7 @@ public:
     return *this;
   }
 
-  template <class OtherT = float>
+  template<class OtherT = float>
   static Matrix<T>
   rotation(double angle, const cv::Point_<OtherT>& origin) {
 
@@ -170,7 +172,9 @@ public:
   }
 
   std::array<T, dim>& operator[](int row) { return *reinterpret_cast<std::array<T, dim>*>(ptr(row, 0)); }
-  std::array<T, dim> const& operator[](int row) const { return *reinterpret_cast<std::array<T, dim> const*>(ptr(row, 0)); }
+  std::array<T, dim> const& operator[](int row) const {
+    return *reinterpret_cast<std::array<T, dim> const*>(ptr(row, 0));
+  }
 
   Matrix<T>&
   multiplicate(const Matrix<T>& matrix2) {
@@ -225,7 +229,7 @@ protected:
     return *this;
   }
 
-  template <class R = std::array<T, dim>>
+  template<class R = std::array<T, dim>>
   Matrix<T>&
   setRow(int row, R arg) {
     T* arr = ptr(row, 0);
@@ -305,7 +309,7 @@ to_string(const cv::Mat& mat) {
   oss << "]\n";
   return oss.str();
 }
-template <class Char, class Value>
+template<class Char, class Value>
 inline std::basic_ostream<Char>&
 operator<<(std::basic_ostream<Char>& os, const Matrix<Value>& m) {
   os << to_string(m) << std::endl;
