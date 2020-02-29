@@ -33,8 +33,9 @@ struct jsrt {
 
   JSValue get_global_property(const char* name);
 
+  JSValue call(JSValueConst func, size_t argc, JSValueConst* argv);
   JSValue call(JSValueConst func, std::vector<JSValueConst>& args);
-  JSValue call(const char* name, std::vector<JSValueConst>& args);
+  JSValue call(const char* name, size_t argc, JSValueConst* argv);
 
 protected:
   struct global_object {

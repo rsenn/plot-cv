@@ -114,15 +114,12 @@ jsrt::eval_file(const char* filename, int module) {
 
   eval_flags = module ? JS_EVAL_TYPE_MODULE : JS_EVAL_TYPE_GLOBAL;
 
-  {
-    std::string script(buf, buf_len);
+  /* std::string script(buf, buf_len);
+   std::cerr << "Script: " << script << std::endl;*/
 
-    std::cerr << "Script: " << script << std::endl;
-
-    ret = eval_buf(buf, buf_len, filename, eval_flags);
-    js_free(ctx, buf);
-    return ret;
-  }
+  ret = eval_buf(buf, buf_len, filename, eval_flags);
+  js_free(ctx, buf);
+  return ret;
 }
 
 JSValue
@@ -137,14 +134,19 @@ jsrt::add_function(const char* name, JSCFunction* fn, int args) {
 }
 
 JSValue
-jsrt::call(const char* name, std::vector<JSValueConst>& args) {
+jsrt::call(const char* name, size_t argc, JSValueConst* argv) {
   JSValueConst func = get_global_property(name);
-  return this->call(func, args);
+  return call(func, argc, argv);
 }
 
 JSValue
 jsrt::call(JSValueConst func, std::vector<JSValueConst>& args) {
+  return call(func, args.size(), args.data());
+}
+
+JSValue
+jsrt::call(JSValueConst func, size_t argc, JSValueConst* argv) {
   global_object global = get_global_object();
-  JSValue ret = JS_Call(ctx, func, global.val, args.size(), args.data());
+  JSValue ret = JS_Call(ctx, func, global.val, argc, argv);
   return ret;
 }

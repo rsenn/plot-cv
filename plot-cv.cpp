@@ -1018,10 +1018,11 @@ main(int argc, char* argv[]) {
       vector<point_vector> squares;
 
       {
-        std::vector<JSValue> args = {vector_to_js(js, contours, &points_to_js<cv::Point>),
-                                     vector_to_js(js, hier, &vec4i_to_js)};
+        JSValue args[2] = {vector_to_js(js, contours, &points_to_js<cv::Point>), vector_to_js(js, hier, &vec4i_to_js)};
 
-        js.call("process", args);
+        JSValue processFn = js.get_global_property("process");
+
+        js.call(processFn, 2, args);
       }
 
       find_rectangles(contours, squares);
