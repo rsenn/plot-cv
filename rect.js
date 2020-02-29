@@ -98,7 +98,7 @@ Rect.prototype.area = function() {
   return this.width * this.height;
 };
 Rect.prototype.toString = function() {
-  return this.x + "," + this.y + " " + this.width + "x" + this.height;
+  return (this.x+'').padStart(4,' ') + "," + (this.y+'').padEnd(4,' ') + " " + (this.width+'').padStart(4,' ') + "x" +(this.height+'').padEnd(4,' ');
 };
 Rect.prototype.toSource = function() {
   return "new Rect(" + (this ? this.x + "," + this.y + "," + this.width + "," + this.height : "") + ")";

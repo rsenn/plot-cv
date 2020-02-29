@@ -420,7 +420,7 @@ image_to_binary(image_type start) {
 std::vector<point_vector>
 get_contours(image_type start,
              std::vector<cv::Vec4i>& hierarchy,
-             int flag = CV_RETR_EXTERNAL) {
+             int flag = CV_RETR_TREE) {
   image_type dst = image_type::zeros(start.rows, start.cols, CV_8UC3);
   std::vector<point_vector> contours;
   start = start > 1;

@@ -6,12 +6,22 @@ import { PointList } from "pointList.js";
 const lib = { Point, Size, Line, Rect };
 
 global.process = function(contours, hier) {
+
+  contours.sort((a,b) => a.length - b.length);
+  contours = contours.filter(c => c.length  >= 4);
+
   for(var i = 0; i < contours.length; i++) {
+    const [ next, prev, child, parent ] = hier[i];
     var list = new PointList(contours[i]);
     var bbox = list.bbox();
     var rect = new Rect(bbox);
+/*
+    if(child == -1 && parent == -1)
+      continue;*/
 
-    console.log(`contour #${i}:`, bbox, " rect:", rect);
+      if(parent != -1)
+continue;
+    console.log(`contour #${i} length=${(contours[i].length+'').padStart(5,' ')} :`, bbox, " rect:", rect, " ", inspect({ next, prev, child, parent }));
   }
   // console.log("Num contours:", contours.length);
   //  console.log("Num hier:", hier.length);
