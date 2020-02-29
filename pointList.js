@@ -1,3 +1,6 @@
+import { Point, isPoint } from "point.js";
+import { Rect } from "rect.js";
+
 function PointList(points) {
   let args = [...arguments];
   let ret = this instanceof PointList ? this : [];
@@ -25,21 +28,11 @@ PointList.prototype.push = function() {
     Array.prototype.push.call(this, arg);
   });
 };
-PointList.push = (plist, points) => {
-  let args = [...arguments];
-  args.shift();
-  return PointList.prototype.push.apply(plist, args);
-};
 PointList.prototype.splice = function() {
   let args = [...arguments];
   const start = args.shift();
   const remove = args.shift();
   return Array.prototype.splice.apply(this, [start, remove, ...args.map(arg => (arg instanceof Point ? arg : new Point(arg)))]);
-};
-PointList.splice = (plist, start, remove, points) => {
-  let args = [...arguments];
-  args.shift();
-  return PointList.prototype.splice.apply(plist, args);
 };
 PointList.prototype.removeSegment = function(index) {
   let indexes = [PointList.prototype.getLineIndex.call(this, index - 1), PointList.prototype.getLineIndex.call(this, index), PointList.prototype.getLineIndex.call(this, index + 1)];
@@ -63,7 +56,6 @@ PointList.prototype.clone = function() {
   ret.splice.apply(ret, [0, ret.length, ...this.map(p => new Point(p.x, p.y))]);
   return ret;
 };
-PointList.copy = plist => PointList.prototype.clone.call(plist);
 PointList.prototype.toPolar = function(tfn) {
   let ret = new PointList();
   let t = typeof tfn == "function" ? tfn : (x, y) => ({ x: (x * 180) / Math.PI, y });
@@ -77,7 +69,6 @@ PointList.prototype.toPolar = function(tfn) {
   ]);
   return ret;
 };
-PointList.toPolar = plist => PointList.prototype.toPolar.call(plist);
 PointList.prototype.fromPolar = function(tfn) {
   let ret = new PointList();
   let t = typeof tfn == "function" ? tfn : (x, y) => ({ x: (x * Math.PI) / 180, y });
@@ -91,7 +82,6 @@ PointList.prototype.fromPolar = function(tfn) {
   ]);
   return ret;
 };
-PointList.fromPolar = plist => PointList.prototype.toPolar.call(plist);
 PointList.prototype.draw = function(ctx, close = false) {
   ctx.to(this[0].x, this[0].y);
   for (let i = 1; i < this.length; i++) {
@@ -158,10 +148,8 @@ PointList.prototype.minmax = function() {
   }
   return ret;
 };
-PointList.minmax = list => PointList.prototype.minmax.call(list);
-PointList.rect = list => new Rect(PointList.minmax(list));
 PointList.prototype.rect = function() {
-  return PointList.rect(this);
+  return new Rect(PointList.prototype.minmax.call(this));
 };
 PointList.prototype.xrange = function() {
   const minmax = this.minmax();
@@ -239,9 +227,6 @@ PointList.prototype.lines = function(closed = false) {
 };
 PointList.prototype.toString = function(prec) {
   return this.map(point => Point.prototype.toString.call(point, prec)).join(" ");
-};
-PointList.toString = pointList => {
-  return "[" + [...pointList].map(p => `[${p.x || p[0]},${p.y || p[1]}]`).join(",") + "]";
 };
 PointList.prototype.rotateRight = function(n) {
   return Util.rotateRight(this, n);

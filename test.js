@@ -8,7 +8,7 @@ global.process = function(contours, hier) {
   const do_log = false;
   const pt = new Point(contours[0][0]);
   console.log("process()");
-   console.log("Point:",pt);
+  console.log("Point:", pt);
   // console.log("Num contours:", contours.length);
   //  console.log("Num hier:", hier.length);
   //  if (do_log) {

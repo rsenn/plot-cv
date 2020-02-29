@@ -34,14 +34,13 @@ export function Line(x1, y1, x2, y2) {
   if (!(this instanceof Line)) return obj;
 }
 export const isLine = obj => ["x1", "y1", "x2", "y2"].every(prop => obj[prop] !== undefined);
-Line.isLine = isLine;
-Line.intersect = (a, b) => {
-  const ma = (a[0].y - a[1].y) / (a[0].x - a[1].x);
-  const mb = (b[0].y - b[1].y) / (b[0].x - b[1].x);
+Line.prototype.intersect = function(other)  {
+  const ma = (this[0].y - this[1].y) / (this[0].x - this[1].x);
+  const mb = (other[0].y - other[1].y) / (other[0].x - other[1].x);
   if (ma - mb < Number.EPSILON) return undefined;
   return new Point({
-    x: (ma * a[0].x - mb * b[0].x + b[0].y - a[0].y) / (ma - mb),
-    y: (ma * mb * (b[0].x - a[0].x) + mb * a[0].y - ma * b[0].y) / (mb - ma)
+    x: (ma * this[0].x - mb * other[0].x + other[0].y - this[0].y) / (ma - mb),
+    y: (ma * mb * (other[0].x - this[0].x) + mb * this[0].y - ma * other[0].y) / (mb - ma)
   });
 };
 Object.defineProperty(Line.prototype, "x1", {
@@ -105,26 +104,19 @@ Line.prototype.transform = function(m) {
   this.b = this.b.transform(m);
   return this;
 };
-Line.transform = (line, matrix) => {
-  const a = Point.transform({ x: line.x1, y: line.y1 }, matrix);
-  const b = Point.transform({ x: line.x2, y: line.y2 }, matrix);
+Line.prototype.bbox = function() {
   return {
-    x1: a.x,
-    y1: a.y,
-    x2: b.x,
-    y2: b.y
+    x1: x1 < x2 ? x1 : x2,
+    x2: x1 > x2 ? x1 : x2,
+    y1: y1 < y2 ? y1 : y2,
+    y2: y1 > y2 ? y1 : y2,
   };
 };
-Line.bbox = line => BBox.fromPoints(Line.points(line));
-Line.prototype.bbox = function() {
-  return BBox.fromPoints(this.points());
-};
-Line.points = line => {
-  const { a, b } = line;
-  return [a, b];
-};
+
 Line.prototype.points = function() {
-  return Line.points(this);
+    const { a, b } = this;
+  return [a, b];
+
 };
 Line.prototype.inspect = function() {
   const { x1, y1, x2, y2 } = this;

@@ -41,47 +41,38 @@ export function Size(arg) {
   if (isNaN(obj.height)) obj.height = undefined;
   if (!(obj instanceof Size)) return obj;
 }
-Size.convertUnits = (size, w = "window" in global ? window : null) => {
-  if (w === null) return size;
+Size.prototype.convertUnits = function(w = "window" in global ? window : null) => {
+  if (w === null) return this;
   const view = {
     vw: w.innerWidth,
     vh: w.innerHeight,
     vmin: w.innerWidth < w.innerHeight ? w.innerWidth : w.innerHeight,
     vmax: w.innerWidth > w.innerHeight ? w.innerWidth : w.innerHeight
   };
-  if (view[size.units.width] !== undefined) {
-    size.width = (size.width / 100) * view[size.units.width];
-    delete size.units.width;
+  if (view[this.units.width] !== undefined) {
+    this.width = (this.width / 100) * view[this.units.width];
+    delete this.units.width;
   }
-  if (view[size.units.height] !== undefined) {
-    size.height = (size.height / 100) * view[size.units.height];
-    delete size.units.height;
+  if (view[this.units.height] !== undefined) {
+    this.height = (this.height / 100) * view[this.units.height];
+    delete this.units.height;
   }
   return size;
 };
-Size.aspect = size => {
-  size = this instanceof Size ? this : size;
-  return size.width / size.height;
-};
+
 Size.prototype.aspect = function() {
-  return Size.aspect(this);
+  return  this.width / this.height;
 };
-Size.toCSS = function(arg) {
-  const size = arg && arg.width !== undefined ? arg : this;
+Size.prototype.toCSS = function() {
   let ret = {};
-  if (size.width !== undefined) ret.width = size.width + (size.units && "width" in size.units ? size.units.width : "px");
-  if (size.height !== undefined) ret.height = size.height + (size.units && "height" in size.units ? size.units.height : "px");
+  if (this.width !== undefined) ret.width = this.width + (this.units && "width" in this.units ? this.units.width : "px");
+  if (this.height !== undefined) ret.height = this.height + (this.units && "height" in this.units ? this.units.height : "px");
   return ret;
 };
-Size.prototype.toCSS = Size.toCSS;
-Size.transform = (s, m) => ({
-  width: m.xx * s.width + m.yx * s.height,
-  height: m.xy * s.width + m.yy * s.height
-});
+
 Size.prototype.transform = function(m) {
-  const t = Size.transform(this, m);
-  this.width = t.width;
-  this.height = t.height;
+  this.width = m.xx * this.width + m.yx * this.height;
+  this.height = m.xy * this.width + m.yy * this.height;
   return this;
 };
 Size.prototype.isSquare = function() {
@@ -89,7 +80,4 @@ Size.prototype.isSquare = function() {
 };
 Size.prototype.area = function() {
   return this.width * this.height;
-};
-Size.area = size => {
-  return size.width * size.height;
 };
