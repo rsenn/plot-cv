@@ -1,4 +1,5 @@
 
+#include "plot-cv.hpp"
 #include "geometry.h"
 
 #include <opencv2/core/core.hpp>
@@ -26,14 +27,6 @@
 #include <filesystem>
 #include <sys/stat.h>
 #include <unistd.h>
-
-typedef Line<float> line_type;
-typedef std::vector<line_type> line_list;
-typedef std::vector<int> ref_list;
-typedef cv::Scalar color_type;
-typedef cv::Mat image_type;
-
-enum { CANNY = 0, ORIGINAL, GRAYSCALE, OPEN_CLOSE, CORNERS };
 
 int thresh = 10;
 int max_thresh = 255;
@@ -101,9 +94,9 @@ simplify_polyline(const std::vector<PointT>& points) {
   psimpl::PolylineSimplification<2, const coord_type*, coord_type*> psimpl;
   auto output = coord_pointer(ret.data());
 
-  // auto end = psimpl.NthPoint(coord_pointer(points.data()),
+  // auto end = psimpl.nth_point(coord_pointer(points.data()),
   // coord_pointer(&points.data()[points.size()]), 20, output); auto end =
-  // psimpl.RadialDistance(coord_pointer(points.data()),
+  // psimpl.radial_distance(coord_pointer(points.data()),
   // coord_pointer(&points.data()[points.size()]), 10, output);
   auto end = psimpl.Opheim(coord_pointer(points.data()), coord_pointer(&points.data()[points.size()]), 4, 30, output);
   size_t outn = std::distance(output, end) / 2;

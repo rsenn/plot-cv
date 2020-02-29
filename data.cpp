@@ -35,7 +35,7 @@ checkValidity(const Mat& I) {
 } // vérifie que la matrice est composée de float valides.
 
 bool
-Data::isValidPoint(Point2d p) {
+Data::is_valid_point(Point2d p) {
   int m = image.rows, n = image.cols;
   return (p.x >= 0 && p.x < n && p.y >= 0 && p.y < m);
 }
@@ -54,7 +54,7 @@ Data::Data(Mat& A) {
 }
 
 void
-Data::drawNextStep(double step, const Mat& Image, SegmentationMode mode) {
+Data::draw_next_step(double step, const Mat& Image, SegmentationMode mode) {
   Mat copyImage = Image.clone();
   int m = Image.rows;
   int r, c;
@@ -85,7 +85,7 @@ Data::drawNextStep(double step, const Mat& Image, SegmentationMode mode) {
     }
     // std::cout << scalar << std::endl;
     Point2d nextP(scalar * nx + p.x, scalar * ny + p.y);
-    //	if (isValidPoint(nextP)) {
+    //	if (is_valid_point(nextP)) {
     line(copyImage, nextP, p, Scalar(0, 0, 255));
     //	cout << "Drawing line: " << i << std::endl;
     /*	} else {
@@ -104,7 +104,7 @@ Data::drawNextStep(double step, const Mat& Image, SegmentationMode mode) {
 }
 
 void
-Data::findContour(double step, SegmentationMode mode) {
+Data::find_contour(double step, SegmentationMode mode) {
   int r, c;
   int L = polygon.get_regular_point_size();
   vector<Point2d> nextPoints(L);
@@ -130,7 +130,7 @@ Data::findContour(double step, SegmentationMode mode) {
         break;
     }
     Point2d nextP(scalar * nx + p.x, scalar * ny + p.y);
-    if(isValidPoint(nextP)) {
+    if(is_valid_point(nextP)) {
       nextPoints.at(i) = nextP;
     } else {
       nextP.x = nx + p.x;

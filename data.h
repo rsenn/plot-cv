@@ -19,9 +19,9 @@ public:
   Mat gy;          // gradient en y de g
   Polygon polygon; // polygone lié à l'image
 
-  void drawNextStep(double step, const Mat& Image, SegmentationMode mode);
-  void findContour(double step, SegmentationMode mode);
-  bool isValidPoint(Point2d p);
+  void draw_next_step(double step, const Mat& Image, SegmentationMode mode);
+  void find_contour(double step, SegmentationMode mode);
+  bool is_valid_point(Point2d p);
   // Modigie le polygone en utilisant une descente de gradient et compris dans
   // les bords de l'image.
 };

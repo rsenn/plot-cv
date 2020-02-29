@@ -104,17 +104,17 @@ public:
   template<class R = std::array<T, dim>>
   Matrix<T>&
   init(const R& row0, const R& row1, const R& row2) {
-    setRow(0, row0);
-    setRow(1, row1);
-    setRow(2, row2);
+    set_row(0, row0);
+    set_row(1, row1);
+    set_row(2, row2);
     return *this;
   }
 
   Matrix<T>&
   init(T xx, T xy, T yx, T yy, T tx, T ty) {
-    setRow(0, {xx, xy, tx});
-    setRow(1, {yx, yy, ty});
-    setRow(2, {0, 0, 1});
+    set_row(0, {xx, xy, tx});
+    set_row(1, {yx, yy, ty});
+    set_row(2, {0, 0, 1});
     return *this;
   }
 
@@ -228,7 +228,7 @@ protected:
 
   template<class R = std::array<T, dim>>
   Matrix<T>&
-  setRow(int row, R arg) {
+  set_row(int row, R arg) {
     T* arr = ptr(row, 0);
     std::copy(arg.cbegin(), arg.cend(), arr);
     return *this;

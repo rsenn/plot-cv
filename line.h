@@ -9,7 +9,134 @@
 #include <type_traits>
 #include <exception>
 #include <string>
+
 template<class T> class LineEnd;
+
+template<class T> class Line {
+public:
+  typedef cv::Point_<T> point_type;
+  typedef Line<T> line_type;
+  typedef T value_type;
+
+  point_type a, b;
+
+  Line(const point_type& p1, const point_type& p2) : a(p1), b(p2) {}
+
+  Line(T x1, T y1, T x2, T y2) : a(x1, y1), b(x2, y2) {}
+
+  T length() const;
+
+  point_type at(double sigma) const;
+
+  point_type center() const;
+  point_type
+  start() const {
+    return a;
+  }
+  point_type
+  end() const {
+    return b;
+  }
+
+  point_type
+  slope() const {
+    point_type diff = b - a;
+    return diff;
+  }
+
+  const point_type&
+  pivot() const {
+    return a;
+  }
+
+  const point_type&
+  to() const {
+    return b;
+  }
+
+  void
+  swap() {
+    point_type temp = a;
+    a = b;
+    b = temp;
+  }
+
+  point_type moment() const;
+
+  double angle() const;
+
+  double
+  distance(const point_type& p) const {
+    return std::sqrt(segment_distance2(&a.x, &b.x, &p.x));
+  }
+
+  std::pair<T, size_t> endpoint_distances(const Line<T>& l) const;
+
+  std::pair<T, T> endpoint_distances(const cv::Point_<T>& p) const;
+
+  T endpoint_distance(const cv::Point_<T>& p, size_t* point_index = nullptr) const;
+
+  template<class OtherT>
+  std::pair<line_type&, line_type&>
+  nearest(const Line<OtherT>& l) const {
+    return std::make_pair<T, T>(distance(l.a), distance(l.b));
+  }
+
+  template<class OtherT>
+  bool
+  operator==(const Line<OtherT>& other) const {
+    return other.a == this->a && other.b == this->b;
+  }
+
+  T min_distance(Line<T>& l2, size_t* point_index = nullptr) const;
+
+  T nearest_end(Line<T>& l2, LineEnd<T>& end) const;
+
+  T
+  angle_diff(const Line<T>& l) const {
+    return l.angle() - angle();
+  }
+
+  std::vector<cv::Point_<T>>
+  points() const {
+    std::vector<cv::Point_<T>> ret = {a, b};
+    return ret;
+  }
+
+  /**
+   * Calculates intersect of two lines if exists.
+   *
+   * @param line1 First line.
+   * @param line2 Second line.
+   * @param intersect Result intersect.
+   * @return True if there is intersect of two lines, otherwise false.
+   */
+  bool intersect(const Line<T>& line2, cv::Point_<T>* pt = nullptr) const;
+
+  template<class OtherValueT> bool operator<(const Line<OtherValueT>& l2) const;
+
+  std::string str(const std::string& comma = ",", const std::string& sep = "|") const;
+
+  /*template <class Char, class T>
+  inline std::basic_ostream<Char>&
+  operator<<(std::basic_ostream<Char>& os, const Line<T>& line) {
+    os << line.a.x << ',' << line.a.y;
+    os << " -> ";
+    os << line.b.x << ',' << line.b.y;
+  }
+  */
+};
+
+template<class T>
+inline T
+point_distance(const cv::Point_<T>& p1, const cv::Point_<T>& p2) {
+  return std::sqrt(psimpl::math::point_distance2<2>(&p1.x, &p2.x));
+}
+template<class T>
+double
+angle_from_moment(const cv::Point_<T>& point) {
+  return std::atan2(point.x, point.y);
+}
 
 template<class T, typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type* = nullptr>
 inline std::string
@@ -50,262 +177,38 @@ segment_distance2(InputIterator s1, InputIterator s2, InputIterator p) {
   return psimpl::math::segment_distance2<2, InputIterator>(s1, s2, p);
 }
 
-template<class ValueT>
-inline ValueT
-point_distance(const cv::Point_<ValueT>& p1, const cv::Point_<ValueT>& p2) {
-  return std::sqrt(psimpl::math::point_distance2<2>(&p1.x, &p2.x));
-}
-
-template<class ValueT>
+template<class T>
 void
-moment_from_angle(double phi, cv::Point_<ValueT>& point) {
+moment_from_angle(double phi, cv::Point_<T>& point) {
   point.x = std::sin(phi);
   point.y = std::cos(phi);
 }
-template<class ValueT>
-double
-angle_from_moment(const cv::Point_<ValueT>& point) {
-  return std::atan2(point.x, point.y);
-}
-
-template<class ValueT> class Line {
-public:
-  typedef cv::Point_<ValueT> point_type;
-  typedef Line<ValueT> line_type;
-  typedef ValueT value_type;
-
-  point_type a, b;
-
-  Line(const point_type& p1, const point_type& p2) : a(p1), b(p2) {}
-
-  Line(ValueT x1, ValueT y1, ValueT x2, ValueT y2) : a(x1, y1), b(x2, y2) {}
-
-  ValueT
-  length() const {
-    point_type diff = a - b;
-    return std::sqrt(diff.x * diff.x + diff.y * diff.y);
-  }
-
-  point_type
-  at(double sigma) const {
-    point_type ret;
-    ret.x = (a.x + b.x) / 2;
-    ret.y = (a.y + b.y) / 2;
-    return ret;
-  }
-
-  point_type
-  center() const {
-    return point_type((a.x + b.x) / 2, (a.y + b.y) / 2);
-  }
-  point_type
-  start() const {
-    return a;
-  }
-  point_type
-  end() const {
-    return b;
-  }
-
-  point_type
-  slope() const {
-    point_type diff = b - a;
-    return diff;
-  }
-
-  const point_type&
-  pivot() const {
-    return a;
-  }
-
-  const point_type&
-  to() const {
-    return b;
-  }
-
-  void
-  swap() {
-    point_type temp = a;
-    a = b;
-    b = temp;
-  }
-
-  point_type
-  moment() const {
-    point_type diff(slope());
-    double len = length();
-    return point_type(diff.x / len, diff.y / len);
-  }
-
-  double
-  angle() const {
-    point_type diff(slope());
-
-    double phi = angle_from_moment(diff);
-    // double len = length();
-    // point_type mom, norm(moment());
-    //  point_type mom;
-    // moment_from_angle(phi, mom);
-    // std::cout << "angle " << (phi *180/M_PI) << " x=" << norm.x << ",y=" <<
-    // norm.y << " x=" << mom.x << ",y=" << mom.y << std::endl;
-
-    return phi;
-  }
-
-  double
-  distance(const point_type& p) const {
-    return std::sqrt(segment_distance2(&a.x, &b.x, &p.x));
-  }
-
-  std::pair<ValueT, size_t>
-  endpoint_distances(const Line<ValueT>& l) const {
-    size_t offs1, offs2;
-    std::pair<ValueT, ValueT> dist(endpoint_distance(l.a, &offs1), endpoint_distance(l.b, &offs2));
-
-    size_t offs = dist.first < dist.second ? offs1 : offs2;
-    return std::make_pair(dist.first < dist.second ? dist.first : dist.second, offs);
-  }
-
-  std::pair<ValueT, ValueT>
-  endpoint_distances(const cv::Point_<ValueT>& p) const {
-    return std::make_pair<ValueT, ValueT>(point_distance<ValueT>(a, p), point_distance<ValueT>(b, p));
-  }
-
-  ValueT
-  endpoint_distance(const cv::Point_<ValueT>& p, size_t* point_index = nullptr) const {
-    ValueT dist1 = point_distance<ValueT>(a, p), dist2 = point_distance<ValueT>(b, p);
-    ValueT ret = std::min(dist1, dist2);
-    if(point_index)
-      *point_index = ret;
-    return ret;
-  }
-
-  template<class OtherT>
-  std::pair<line_type&, line_type&>
-  nearest(const Line<OtherT>& l) const {
-    return std::make_pair<ValueT, ValueT>(distance(l.a), distance(l.b));
-  }
-
-  template<class OtherT>
-  bool
-  operator==(const Line<OtherT>& other) const {
-    return other.a == this->a && other.b == this->b;
-  }
-
-  ValueT
-  min_distance(Line<ValueT>& l2, size_t* point_index = nullptr) const {
-    std::pair<ValueT, size_t> dist = endpoint_distances(l2);
-    /* if(intersect(l2))
-       return 0;*/
-    if(point_index)
-      *point_index = dist.second;
-    return dist.first;
-  }
-
-  ValueT
-  nearest_end(Line<ValueT>& l2, LineEnd<ValueT>& end) const {
-    size_t point_index;
-    ValueT dist = min_distance(l2, &point_index);
-    end = LineEnd<ValueT>(l2, point_index);
-    return dist;
-  }
-
-  ValueT
-  angle_diff(const Line<ValueT>& l) const {
-    return l.angle() - angle();
-  }
-
-  std::vector<cv::Point_<ValueT>>
-  points() const {
-    std::vector<cv::Point_<ValueT>> ret = {a, b};
-    return ret;
-  }
-
-  /**
-   * Calculates intersect of two lines if exists.
-   *
-   * @param line1 First line.
-   * @param line2 Second line.
-   * @param intersect Result intersect.
-   * @return True if there is intersect of two lines, otherwise false.
-   */
-  inline bool
-  intersect(const Line<ValueT>& line2, cv::Point_<ValueT>* pt = nullptr) const {
-    point_type x = line2.pivot() - pivot();
-    point_type d1 = slope();
-    point_type d2 = line2.slope();
-
-    float inter = d1.x * d2.y - d1.y * d2.x;
-
-    if(fabs(inter) < 1e-8) {
-      return false;
-    }
-
-    double t1 = (x.x * d2.y - x.y * d2.x) / inter;
-    if(pt)
-      *pt = pivot() + d1 * t1;
-
-    return true;
-  }
-
-  template<class OtherValueT>
-  bool
-  operator<(const Line<OtherValueT>& l2) const {
-    cv::Point2f a, b;
-    a = center();
-    b = l2.center();
-    return a.y < b.y ? true : a.x < b.x;
-  }
-
-  template<class Char = char>
-  std::basic_string<Char>
-  str(const std::string& comma = ",", const std::string& sep = "|") const {
-    point_type p = pivot(), s = slope();
-
-    std::basic_ostringstream<Char> os;
-    // os << '[';
-    os << to_string(a.x) << comma << to_string(a.y);
-    os << sep << to_string(b.x);
-    os << comma << to_string(b.y);
-    os << '=' << to_string(length());
-    // os << '@' << to_string(floor(angle()*180/ M_PI));
-    // os << ']';
-    return os.str();
-  }
-
-  /*template <class Char, class ValueT>
-  inline std::basic_ostream<Char>&
-  operator<<(std::basic_ostream<Char>& os, const Line<ValueT>& line) {
-    os << line.a.x << ',' << line.a.y;
-    os << " -> ";
-    os << line.b.x << ',' << line.b.y;
-  }
-  */
-};
 
 template<class T, class Char = char>
-inline std::basic_string<Char>
+inline std::string
 to_string(const Line<T>& line) {
-  std::basic_string<Char> ret;
+  std::string ret;
   ret = line.str(",", "|");
 
   return ret;
 }
+/*
 
-template<class ValueT, template<typename> typename Container = std::vector, class Char = char>
-inline std::basic_string<Char>
-to_string(const Container<Line<ValueT>>& lines) {
-  typedef typename Container<Line<ValueT>>::const_iterator iterator_type;
-  typedef Line<ValueT> value_type;
-  std::basic_string<Char> ret;
+template<class T, template<typename> typename Container = std::vector, class Char = char>
+inline std::string
+to_string(const Container<Line<T>>& lines) {
+  typedef typename Container<Line<T>>::const_iterator iterator_type;
+  typedef Line<T> value_type;
+  std::string ret;
   iterator_type end = lines.cend();
   for(iterator_type it = lines.cbegin(); it != end; ++it) {
     if(ret.length())
       ret += " ";
-    ret += to_string<ValueT, Char>(*it);
+    ret += to_string<T, Char>(*it);
   }
   return ret;
 }
+*/
 
 template<class Char, class Value>
 inline std::basic_ostream<Char>&
@@ -423,5 +326,138 @@ struct LineHierarchy {
   int prevParallel;
   int nextParallel;
 };
+
+template<class T>
+inline T
+Line<T>::length() const {
+  point_type diff = a - b;
+  return std::sqrt(diff.x * diff.x + diff.y * diff.y);
+}
+
+template<class T>
+inline typename Line<T>::point_type
+Line<T>::at(double sigma) const {
+  point_type ret;
+  ret.x = (a.x + b.x) / 2;
+  ret.y = (a.y + b.y) / 2;
+  return ret;
+}
+
+template<class T>
+inline typename Line<T>::point_type
+Line<T>::center() const {
+  return point_type((a.x + b.x) / 2, (a.y + b.y) / 2);
+}
+
+template<class T>
+inline typename Line<T>::point_type
+Line<T>::moment() const {
+  point_type diff(slope());
+  double len = length();
+  return point_type(diff.x / len, diff.y / len);
+}
+
+template<class T>
+inline double
+Line<T>::angle() const {
+  point_type diff(slope());
+  double phi = angle_from_moment(diff);
+  // double len = length();
+  // point_type mom, norm(moment());
+  //  point_type mom;
+  // moment_from_angle(phi, mom);
+  // std::cout << "angle " << (phi *180/M_PI) << " x=" << norm.x << ",y=" <<
+  // norm.y << " x=" << mom.x << ",y=" << mom.y << std::endl;
+  return phi;
+}
+
+template<class T>
+inline std::pair<T, T>
+Line<T>::endpoint_distances(const cv::Point_<T>& p) const {
+  return std::make_pair<T, T>(point_distance<T>(a, p), point_distance<T>(b, p));
+}
+
+template<class T>
+inline std::pair<T, unsigned long int>
+Line<T>::endpoint_distances(const Line<T>& l) const {
+  size_t offs1, offs2;
+  std::pair<T, T> dist(endpoint_distance(l.a, &offs1), endpoint_distance(l.b, &offs2));
+  size_t offs = dist.first < dist.second ? offs1 : offs2;
+  return std::make_pair(dist.first < dist.second ? dist.first : dist.second, offs);
+}
+
+template<class T>
+inline T
+Line<T>::endpoint_distance(const cv::Point_<T>& p, size_t* point_index) const {
+  T dist1 = point_distance<T>(a, p), dist2 = point_distance<T>(b, p);
+  T ret = std::min(dist1, dist2);
+  if(point_index)
+    *point_index = ret;
+
+  return ret;
+}
+
+template<class T>
+inline T
+Line<T>::min_distance(Line<T>& l2, size_t* point_index) const {
+  std::pair<T, size_t> dist = endpoint_distances(l2);
+  /* if(intersect(l2))
+   return 0;*/
+  if(point_index)
+    *point_index = dist.second;
+
+  return dist.first;
+}
+
+template<class T>
+inline T
+Line<T>::nearest_end(Line<T>& l2, LineEnd<T>& end) const {
+  size_t point_index;
+  T dist = min_distance(l2, &point_index);
+  end = LineEnd<T>(l2, point_index);
+  return dist;
+}
+
+template<class T>
+inline bool
+Line<T>::intersect(const Line<T>& line2, cv::Point_<T>* pt) const {
+  point_type x = line2.pivot() - pivot();
+  point_type d1 = slope();
+  point_type d2 = line2.slope();
+  float inter = d1.x * d2.y - d1.y * d2.x;
+  if(fabs(inter) < 1e-8) {
+    return false;
+  }
+  double t1 = (x.x * d2.y - x.y * d2.x) / inter;
+  if(pt)
+    *pt = pivot() + d1 * t1;
+
+  return true;
+}
+
+template<class T>
+template<class OtherValueT>
+inline bool
+Line<T>::operator<(const Line<OtherValueT>& l2) const {
+  cv::Point2f a, b;
+  a = center();
+  b = l2.center();
+  return a.y < b.y ? true : a.x < b.x;
+}
+
+template<class T>
+inline std::string
+Line<T>::str(const std::string& comma, const std::string& sep) const {
+  point_type p = pivot(), s = slope();
+  std::ostringstream os;
+  // os << '[';
+  os << to_string(a.x) << comma << to_string(a.y);
+  os << sep << to_string(b.x);
+  os << comma << to_string(b.y);
+  os << '=' << to_string(length());
+  // os << '@' << to_string(floor(angle()*180/ M_PI));
+  // os << ']';
+  return os.str();
+}
 
 #endif // defined LINE_H
