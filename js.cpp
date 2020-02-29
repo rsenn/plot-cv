@@ -135,3 +135,16 @@ jsrt::add_function(const char* name, JSCFunction* fn, int args) {
   JS_SetPropertyStr(ctx, global.val, name, function);
   return function;
 }
+
+JSValue
+jsrt::call(const char* name, std::vector<JSValueConst>& args) {
+  JSValueConst func = get_global_property(name);
+  return this->call(func, args);
+}
+
+JSValue
+jsrt::call(JSValueConst func, std::vector<JSValueConst>& args) {
+  global_object global = get_global_object();
+  JSValue ret = JS_Call(ctx, func, global.val, args.size(), args.data());
+  return ret;
+}
