@@ -6,6 +6,7 @@ import { PointList } from "./pointList.js";
 import { RGBA } from "./rgba.js";
 import { HSLA } from "./hsla.js";
 import { Matrix } from "./matrix.js";
+import inspect from "./inspect.js";
 
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };
 
@@ -75,33 +76,5 @@ global.process = function(contours, hier) {
   }
 };
 
-global.inspect = function(obj) {
-  return (
-    "{" +
-    Object.entries(obj)
-      .map(([key, value]) => {
-        let out = value;
-        if(typeof out != "string") {
-          try {
-            if(typeof out == "object") out = inspect(out);
-            else out = out + "";
-          } catch(err) {
-            out = typeof out;
-          }
-          if(typeof value == "function") {
-            let idx = out.indexOf("{");
-            out = out.substring(0, idx).trim();
-          }
-        } else {
-          out = '"' + out + '"';
-        }
-        out = out.replace(/\n/g, "\\n");
-        if(out.length > 200) out = out.substring(0, 200) + "...";
-        return key + ": " + out;
-      })
-      .join(", ") +
-    "}"
-  );
-};
 
 console.log("Classes: ", inspect(lib));

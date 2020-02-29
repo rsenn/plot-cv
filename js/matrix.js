@@ -19,12 +19,12 @@ export function Matrix(arg) {
       ret[4] = arg.yy;
       ret[5] = arg.y0;
     } else if(arg.a !== undefined && arg.b !== undefined && arg.c !== undefined && arg.d !== undefined && arg.e !== undefined && arg.f !== undefined) {
-      ret[0] = arg.a;
-      ret[3] = arg.b;
-      ret[1] = arg.c;
-      ret[4] = arg.d;
-      ret[2] = arg.e;
-      ret[5] = arg.f;
+      ret[0] = arg.a; // xx
+      ret[3] = arg.b; // yx
+      ret[1] = arg.c; // xy
+      ret[4] = arg.d; // yy
+      ret[2] = arg.e; // x0
+      ret[5] = arg.f; // y0
     }
   } else {
     ret[0] = 1;
@@ -69,12 +69,12 @@ export const MatrixProps = Object.keys(Matrix.prototype.keyIndex).reduce((acc, k
 
 // prettier-ignore
 Object.defineProperties(Matrix.prototype, {
-  xx: {get: function() {return this[0]; }, set: function(v) {this[0] = v; }, enumerable: true },
-  xy: {get: function() {return this[1]; }, set: function(v) {this[1] = v; }, enumerable: true },
-  x0: {get: function() {return this[2]; }, set: function(v) {this[2] = v; }, enumerable: true },
-  yx: {get: function() {return this[3]; }, set: function(v) {this[3] = v; }, enumerable: true },
-  yy: {get: function() {return this[4]; }, set: function(v) {this[4] = v; }, enumerable: true },
-  y0: {get: function() {return this[5]; }, set: function(v) {this[5] = v; }, enumerable: true }
+  xx: {get: function() { return this[0]; }, set: function(v) {this[0] = v; }, enumerable: true },
+  xy: {get: function() { return this[1]; }, set: function(v) {this[1] = v; }, enumerable: true },
+  x0: {get: function() { return this[2]; }, set: function(v) {this[2] = v; }, enumerable: true },
+  yx: {get: function() { return this[3]; }, set: function(v) {this[3] = v; }, enumerable: true },
+  yy: {get: function() { return this[4]; }, set: function(v) {this[4] = v; }, enumerable: true },
+  y0: {get: function() { return this[5]; }, set: function(v) {this[5] = v; }, enumerable: true }
 });
 
 Matrix.prototype.row = function(row) {
@@ -154,7 +154,7 @@ Matrix.prototype.scale = function(sx, sy) {
 };
 
 Matrix.prototype.rotate = function(rad) {
-  let m = new Matrix({ xx: 1, xy: 0, x0: 0, yx: 0, yy: 1, y0: 0 });
+  let m = new Matrix();
   Matrix.prototype.init_rotate.call(m, rad);
   return Matrix.prototype.multiply.call(this, m);
 };
@@ -246,34 +246,59 @@ Matrix.prototype.point_transformer = function() {
   };
 };
 
-Matrix.prototype.decompose = function() {
-  let translate = {
-    toString: function() {
-      return `translate(${this.x.toFixed(3)} ${this.y.toFixed(3)})`;
-    },
-    x: this[2],
-    y: this[5]
-  };
-  let scale = {
-    toString: function() {
-      return `scale(${this.x.toFixed(6)} ${this.y.toFixed(6)})`;
-    },
-    x: Math.sign(this[0]) * Math.sqrt(Math.pow(this[0], 2) + Math.pow(this[3], 2)),
-    y: Math.sign(this[4]) * Math.sqrt(Math.pow(this[1], 2) + Math.pow(this[4], 2))
-  };
-  let rotate = {
-    toString() {
-      return `rotate(${this.deg.toFixed(2)}deg)`;
-    },
-    get deg() {
-      return (this.rad * 180) / Math.PI;
+Matrix.prototype.decompose = function(useLU = true) {
+  var a = this[0],
+    b = this[3],
+    c = this[1],
+    d = this[4];
+
+    var translate = { x: this[2], y: this[5] },
+    rotation = 0,
+    scale = { x: 1, y: 1 },
+    skew = { x: 0, y: 0 };
+
+    var determ = a * d - b * c, r, s;
+
+  if(useLU) {
+    if(a) {
+      skew = { x: Math.atan(c / a), y: Math.atan(b / a) };
+      scale = { x: a, y: determ / a };
+    } else if(b) {
+      rotation = Math.PI * 0.5;
+      scale = { x: b, y: determ / b };
+      skew.x = Math.atan(d / b);
+    } else {
+      // a = b = 0
+      scale = { x: c, y: d };
+      skew.x = Math.PI * 0.25;
     }
+  } else {
+    // Apply the QR-like decomposition.
+    if(a || b) {
+      r = Math.sqrt(a * a + b * b);
+      rotation = b > 0 ? Math.acos(a / r) : -Math.acos(a / r);
+      scale = { x: r, y: determ / r };
+      skew.x = Math.atan((a * c + b * d) / (r * r));
+    } else if(c || d) {
+      s = Math.sqrt(c * c + d * d);
+      rotation = Math.PI * 0.5 - (d > 0 ? Math.acos(-c / s) : -Math.acos(c / s));
+      scale = { x: determ / s, y: s };
+      skew.y = Math.atan((a * c + b * d) / (s * s));
+    } else {
+      // a = b = c = d = 0
+      scale = { x: 0, y: 0 };
+    }
+  }
+
+  return {
+    translate: translate,
+    rotation: rotation,
+    scale: scale,
+    skew: skew
   };
-  rotate.rad = Math.atan2(-this[1] / scale.y, this[0] / scale.x);
-  return { translate, scale, rotate };
 };
 
-Matrix.prototype.getAffineTransform = (a, b) => {
+Matrix.prototype.affine_transform = function(a, b) {
   var xx, yx, xy, yy, tx, ty;
   if(typeof a == "object" && a.toPoints !== undefined) a = a.toPoints();
   if(typeof b == "object" && b.toPoints !== undefined) b = b.toPoints();
