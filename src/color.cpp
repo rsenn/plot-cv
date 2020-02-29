@@ -5,7 +5,7 @@
  * S(Saturation): 0 - 1.00 (double)
  * V(Value): 0 - 1.00 (double)
  *
- * output[3]: Output, array size 3, int
+ * output[3]: Output, std::array size 3, int
  */
 color_type
 hsv_to_rgb(int H, double S, double V) {

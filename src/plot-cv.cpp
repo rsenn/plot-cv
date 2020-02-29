@@ -829,8 +829,8 @@ main(int argc, char* argv[]) {
       vector<bool> takenLines;
       vector<float> lineLengths;
 
-      array<int, 8> histogram = {0, 0, 0, 0, 0, 0, 0, 0};
-      array<float, 8> angles = {0, 0, 0, 0, 0, 0, 0, 0};
+      std::array<int, 8> histogram = {0, 0, 0, 0, 0, 0, 0, 0};
+      std::array<float, 8> angles = {0, 0, 0, 0, 0, 0, 0, 0};
 
       vector<cv::Vec4i> linesHier;
       linesHier.resize(lines.size());
