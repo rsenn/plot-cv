@@ -1,3 +1,6 @@
+#ifndef LINE_H
+#define LINE_H
+
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <cmath>
@@ -420,3 +423,5 @@ struct LineHierarchy {
   int prevParallel;
   int nextParallel;
 };
+
+#endif // defined LINE_H
