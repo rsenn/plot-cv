@@ -74,7 +74,7 @@ using an STL-style interface that operates on input and output iterators.
 Polylines can be of any dimension, and defined using floating point or signed
 integer data types.
 </pre><br>
-    
+
 
 
 
@@ -147,30 +147,30 @@ namespace psimpl {
 */
 namespace util {
 /*!
-    \brief A smart pointer for holding a dynamically allocated std::array.
+    \brief A smart pointer for holding a dynamically allocated array.
 
     Similar to boost::scoped_array.
 */
 template<typename T> class scoped_array {
 public:
-  scoped_array(unsigned n) { std::array = new T[n]; }
+  scoped_array(unsigned n) { array = new T[n]; }
 
-  ~scoped_array() { delete[] std::array; }
+  ~scoped_array() { delete[] array; }
 
-  T& operator[](int offset) { return std::array[offset]; }
+  T& operator[](int offset) { return array[offset]; }
 
-  const T& operator[](int offset) const { return std::array[offset]; }
+  const T& operator[](int offset) const { return array[offset]; }
 
   T*
   get() const {
-    return std::array;
+    return array;
   }
 
   void
   swap(scoped_array& b) {
     T* tmp = b.array;
-    b.array = std::array;
-    std::array = tmp;
+    b.array = array;
+    array = tmp;
   }
 
 private:
@@ -178,7 +178,7 @@ private:
   scoped_array& operator=(const scoped_array&);
 
 private:
-  T* std::array;
+  T* array;
 };
 
 template<typename T>
@@ -623,7 +623,7 @@ public:
     }
     diff_type coordCount = std::distance(first, last);
 
-    // first pass: [first, last) --> temporary std::array 'temp_poly'
+    // first pass: [first, last) --> temporary array 'temp_poly'
     util::scoped_array<value_type> temp_poly(coordCount);
     PolylineSimplification<DIM, InputIterator, value_type*> psimpl_to_array;
     diff_type tempCoordCount =
@@ -637,7 +637,7 @@ public:
     std::swap(coordCount, tempCoordCount);
     --repeat;
 
-    // intermediate passes: temporary std::array 'temp_poly' --> temporary std::array
+    // intermediate passes: temporary array 'temp_poly' --> temporary array
     // 'temp_result'
     if(1 < repeat) {
       util::scoped_array<value_type> temp_result(coordCount);
@@ -660,7 +660,7 @@ public:
       }
     }
 
-    // final pass: temporary std::array 'temp_poly' --> result
+    // final pass: temporary array 'temp_poly' --> result
     PolylineSimplification<DIM, value_type*, OutputIterator> psimpl_from_array;
     return psimpl_from_array.perpendicular_distance(temp_poly.get(),
                                                     temp_poly.get() + coordCount,
@@ -1452,7 +1452,7 @@ private:
       \brief Douglas-Peucker approximation helper class.
 
       Contains helper implentations for Douglas-Peucker approximation that
-     operate solely on value_type std::arrays and value_type pointers. Note that the
+     operate solely on value_type arrays and value_type pointers. Note that the
      PolylineSimplification class only operates on iterators.
   */
   class DPHelper {
@@ -1490,7 +1490,7 @@ private:
     /*!
         \brief Performs Douglas-Peucker approximation.
 
-        \param[in] coords       std::array of polyline coordinates
+        \param[in] coords       array of polyline coordinates
         \param[in] coordCount   number of coordinates in coords []
         \param[in] tol          approximation tolerance
         \param[out] keys        indicates for each polyline point if it is a key
@@ -1530,7 +1530,7 @@ private:
     /*!
         \brief Performs Douglas-Peucker approximation.
 
-        \param[in] coords       std::array of polyline coordinates
+        \param[in] coords       array of polyline coordinates
         \param[in] coordCount   number of coordinates in coords []
         \param[in] countTol     point count tolerance
         \param[out] keys        indicates for each polyline point if it is a key
@@ -1589,7 +1589,7 @@ private:
         Finds the point in the range [first, last] that is furthest away from
        the segment (first, last). This point is called the key.
 
-        \param[in] coords   std::array of polyline coordinates
+        \param[in] coords   array of polyline coordinates
         \param[in] first    the first coordinate of the first polyline point
         \param[in] last     the first coordinate of the last polyline point
         \return             the index of the key and its distance, or last when

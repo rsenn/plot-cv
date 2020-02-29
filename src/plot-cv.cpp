@@ -29,6 +29,9 @@
 #include "polygon.h"
 #include "psimpl.h"
 
+typedef Line<float> line_type;
+typedef std::vector<line_type> line_list;
+
 int thresh = 10;
 int max_thresh = 255;
 double max_svg_width = 1200; // pixels
@@ -527,14 +530,13 @@ points_to_js(const std::vector<P>& v) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 int
 main(int argc, char* argv[]) {
-  using std::array;
   using std::back_inserter;
   using std::distance;
   using std::endl;
   using std::for_each;
   using std::iterator_traits;
   using std::transform;
-  using std::vector;
+
   unsigned int show_image = 0, ret;
   int32_t newmt, mt = -1;
   JSValue processFn;

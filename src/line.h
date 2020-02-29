@@ -3,12 +3,11 @@
 
 #include <opencv2/core/core.hpp>
 #include <cmath>
-#include "line.h"
-#include "psimpl.h"
 #include <iostream>
 #include <type_traits>
 #include <exception>
 #include <string>
+#include "psimpl.h"
 
 template<class T> class LineEnd;
 
@@ -132,6 +131,23 @@ inline T
 point_distance(const cv::Point_<T>& p1, const cv::Point_<T>& p2) {
   return std::sqrt(psimpl::math::point_distance2<2>(&p1.x, &p2.x));
 }
+
+template<>
+inline float
+point_distance<float>(const cv::Point2f& p1, const cv::Point2f& p2) {
+  return std::sqrt(psimpl::math::point_distance2<2>(&p1.x, &p2.x));
+}
+template<>
+inline double
+point_distance<double>(const cv::Point2d& p1, const cv::Point2d& p2) {
+  return std::sqrt(psimpl::math::point_distance2<2>(&p1.x, &p2.x));
+}
+template<>
+inline int
+point_distance<int>(const cv::Point& p1, const cv::Point& p2) {
+  return std::sqrt(psimpl::math::point_distance2<2>(&p1.x, &p2.x));
+}
+
 template<class T>
 double
 angle_from_moment(const cv::Point_<T>& point) {
@@ -434,6 +450,80 @@ Line<T>::intersect(const Line<T>& line2, cv::Point_<T>* pt) const {
 
   return true;
 }
+
+template<class T, class Pred>
+inline std::vector<int>
+filter_lines(const std::vector<T>& c, bool (&pred)(const Line<T>&, size_t)) {
+  return filter_lines<std::vector<Line<T>>::iterator, bool(Line<T>&, size_t)>(c.begin(),
+                                                                              c.end(),
+                                                                              pred);
+}
+
+template<class ValueT, class InputIterator>
+inline std::vector<typename std::iterator_traits<InputIterator>::value_type::value_type>
+angle_diffs(Line<ValueT>& line, InputIterator from, InputIterator to) {
+  typedef InputIterator iterator_type;
+  typedef typename std::iterator_traits<InputIterator>::value_type point_type;
+  typedef typename point_type::value_type value_type;
+  typedef std::vector<value_type> ret_type;
+
+  ret_type ret;
+  value_type distance = 1e10;
+  iterator_type index = to;
+
+  for(iterator_type it = from; it != to; ++it) {
+    value_type d;
+
+    ret.push_back((*it).angle_diff(line));
+  }
+  return ret;
+}
+
+template<class InputIterator>
+inline std::vector<float>
+line_distances(typename std::iterator_traits<InputIterator>::value_type& line,
+               InputIterator from,
+               InputIterator to) {
+  typedef InputIterator iterator_type;
+  typedef typename std::iterator_traits<InputIterator>::value_type line_type;
+  typedef typename line_type::value_type value_type;
+  typedef std::vector<float> ret_type;
+
+  ret_type ret;
+  value_type distance = 1e10;
+  iterator_type index = to;
+
+  for(InputIterator it = from; it != to; ++it) {
+    /* if(line == *it)
+       continue;*/
+    ret.push_back(it->min_distance(line));
+  }
+  return ret;
+}
+
+template<class InputIterator, class Pred>
+inline std::vector<int>
+filter_lines(InputIterator from, InputIterator to, Pred predicate) {
+  typedef InputIterator iterator_type;
+  typedef typename std::iterator_traits<InputIterator>::value_type value_type;
+  std::vector<int> ret;
+  size_t index = 0;
+  for(iterator_type it = from; it != to; ++it) {
+
+    if(predicate(*it, index++)) {
+
+      std::size_t index = std::distance(from, it);
+      ret.push_back(index);
+    }
+  }
+  return ret;
+}
+
+template<class T> class PredicateTraits {
+public:
+  typedef bool type(const Line<T>&, size_t);
+  typedef std::function<bool(const Line<T>&, size_t)> function;
+};
 
 template<class T>
 template<class OtherValueT>

@@ -12,10 +12,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "line.h"
-
-typedef Line<float> line_type;
-typedef std::vector<line_type> line_list;
 typedef std::vector<int> ref_list;
 typedef cv::Mat image_type;
 typedef cv::Point point2i_type;
