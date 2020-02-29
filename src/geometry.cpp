@@ -2,7 +2,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 point2f_vector
-get_mass_centers(std::vector<point_vector> contours) {
+get_mass_centers(std::vector<point2i_vector> contours) {
   std::vector<cv::Moments> mu(contours.size());
   point2f_vector mc(contours.size());
   for(size_t i = 0; i < contours.size(); i++) mu[i] = cv::moments(contours[i], false);

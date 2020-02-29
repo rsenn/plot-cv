@@ -73,7 +73,7 @@ JSValue
 js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
 
   int i = 0, ret = -1;
-  contour_vector points;
+  contour2i_vector points;
   color_type color;
   int thickness = 1;
   bool antialias = true;
@@ -102,7 +102,7 @@ JSValue
 js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
 
   int i = 0, ret = -1;
-  point_vector points;
+  point2i_vector points;
   cv::Scalar color;
   bool antialias = true;
   int thickness = -1;
@@ -163,7 +163,7 @@ js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const
   if(dptr != nullptr) {
     int lineType = antialias ? cv::LINE_AA : cv::LINE_8;
 
-    std::cerr << "drawCircle() center: " << (point) << " radius: " << radius
+   logfile << "drawCircle() center: " << (point) << " radius: " << radius
               << " color: " << to_string(color) << std::endl;
 
     // cv::fillPoly(*dptr, points, color, antialias ? cv::LINE_AA : cv::LINE_8);

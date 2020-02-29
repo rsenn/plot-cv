@@ -10,28 +10,25 @@
 
 #include "psimpl.h"
 
-template<class T>
-struct point_list {
+template<class T> struct point_list {
   typedef T coord_type;
   typedef cv::Point_<T> point_type;
   typedef std::vector<point_type> type;
 };
-template<class T>
-struct contour_list {
+template<class T> struct contour_list {
   typedef T coord_type;
   typedef cv::Point_<T> point_type;
   typedef std::vector<point_type> vector_type;
   typedef std::vector<vector_type> type;
 };
 
-typedef point_list<int>::type point_vector;
+typedef point_list<int>::type point2i_vector;
 typedef point_list<float>::type point2f_vector;
 typedef point_list<double>::type point2d_vector;
 
-typedef contour_list<int>::type contour_vector;
+typedef contour_list<int>::type contour2i_vector;
 typedef contour_list<float>::type contour2f_vector;
 typedef contour_list<double>::type contour2d_vector;
-
 
 // Function that calculates the area given a
 // std::vector of vertices in the XY plane.
@@ -61,7 +58,7 @@ polygon_area(std::vector<P> list) {
   return area; // Return The Area
 }
 
-point2f_vector get_mass_centers(std::vector<point_vector> contours);
+point2f_vector get_mass_centers(std::vector<point2i_vector> contours);
 
 template<class T, class Char = char>
 inline std::basic_string<Char>
@@ -141,7 +138,7 @@ angle(cv::Point_<T> pt1, cv::Point_<T> pt2, cv::Point_<T> pt0) {
 
 template<class To, class From>
 inline void
-convert_points(const typename point_list<From>::type & from, typename point_list<To>::type & to) {
+convert_points(const typename point_list<From>::type& from, typename point_list<To>::type& to) {
   std::transform(from.cbegin(),
                  from.cend(),
                  std::back_inserter(to),
@@ -149,9 +146,9 @@ convert_points(const typename point_list<From>::type & from, typename point_list
 }
 
 template<class To, class From>
-inline typename point_list<To>::type 
-transform_points(const typename point_list<From>::type & from) {
-  typename point_list<To>::type  ret;
+inline typename point_list<To>::type
+transform_points(const typename point_list<From>::type& from) {
+  typename point_list<To>::type ret;
   convert_points<To, From>(from, ret);
   return ret;
 }

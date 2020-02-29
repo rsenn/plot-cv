@@ -258,7 +258,7 @@ public:
 };
 
 class PolyBase : public Base {
-  point_vector points;
+  point2i_vector points;
 
 protected:
   virtual std::string
@@ -274,7 +274,7 @@ protected:
 
 public:
   PolyBase(std::string tag) : Base(tag) {}
-  PolyBase(std::string tag, const point_vector& points) : Base(tag), points(points) {}
+  PolyBase(std::string tag, const point2i_vector& points) : Base(tag), points(points) {}
   virtual ~PolyBase() override {}
 
   PolyBase&
@@ -293,14 +293,14 @@ public:
 class Polyline : public PolyBase {
 public:
   Polyline() : PolyBase("polyline") {}
-  Polyline(const point_vector& points) : PolyBase("polyline", points) {}
+  Polyline(const point2i_vector& points) : PolyBase("polyline", points) {}
   virtual ~Polyline() override {}
 };
 
 class Polygon : public PolyBase {
 public:
   Polygon() : PolyBase("polygon") {}
-  Polygon(const point_vector& points) : PolyBase("polygon", points) {}
+  Polygon(const point2i_vector& points) : PolyBase("polygon", points) {}
   virtual ~Polygon() override {}
 };
 

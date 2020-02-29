@@ -29,6 +29,8 @@
 #include "polygon.h"
 #include "psimpl.h"
 
+using std::string;
+
 typedef Line<float> line_type;
 typedef std::vector<line_type> line_list;
 
@@ -49,8 +51,8 @@ image_type *mptr = nullptr, *dptr = nullptr;
 
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
 
-std::string
-make_filename(const std::string& name, int count, const std::string& ext, const std::string& dir) {
+string
+make_filename(const string& name, int count, const string& ext, const string& dir) {
   const int pad = 5;
   char buf[40];
   std::ostringstream filename;
@@ -95,7 +97,7 @@ out_hier(O& os, const cv::Vec4i& v) {
  */
 template<class O>
 void
-out_points(O& os, const point_vector& pl) {
+out_points(O& os, const point2i_vector& pl) {
   size_t i, n = pl.size();
   for(i = 0; i < n; ++i) {
     if(i > 0)
@@ -130,6 +132,13 @@ get_largest_contour(contour2f_vector contours_un, point2f_vector& bigContour) {
   return largestContour;
 }
 
+/**
+ * @brief      Draws contours as SVG polyline
+ *
+ * @param      doc          The document
+ * @param[in]  contour_arg  The contour argument
+ * @param[in]  color_fn     The color function
+ */
 void
 svg_draw_polyline(svg::Document& doc,
                   const point2f_vector& contour_arg,
@@ -146,8 +155,7 @@ svg_draw_polyline(svg::Document& doc,
 
 template<class T>
 void
-svg_export_file(const typename contour_list<T>::type& contours,
-                std::string output_file) {
+svg_export_file(const typename contour_list<T>::type& contours, string output_file) {
 
   logfile << "Saving '" << output_file << "'" << std::endl;
 
@@ -184,12 +192,16 @@ svg_export_file(const typename contour_list<T>::type& contours,
   logfile << "EXPORTED SVG" << std::endl;
 }
 
-/** @function main */
-
+/**
+ * @brief      Perform a "Contrast Limited Adaptive Histogram Equalization"
+ *
+ * @param[in]  src   The source image
+ * @param      dst   The destination image
+ */
 void
-apply_clahe(const image_type& bgr_image, image_type& image_clahe) {
+apply_clahe(const image_type& src, image_type& dst) {
   image_type lab_image;
-  cv::cvtColor(bgr_image, lab_image, CV_BGR2Lab);
+  cv::cvtColor(src, lab_image, CV_BGR2Lab);
 
   // Extract the L channel
   std::vector<image_type> lab_planes(3);
@@ -198,15 +210,15 @@ apply_clahe(const image_type& bgr_image, image_type& image_clahe) {
   // apply the CLAHE algorithm to the L channel
   cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
   clahe->setClipLimit(4);
-  image_type dst;
-  clahe->apply(lab_planes[0], dst);
+  image_type out;
+  clahe->apply(lab_planes[0], out);
 
   // Merge the the color planes back into an Lab image
-  dst.copyTo(lab_planes[0]);
+  out.copyTo(lab_planes[0]);
   cv::merge(lab_planes, lab_image);
 
   // convert back to RGB
-  cv::cvtColor(lab_image, image_clahe, CV_Lab2BGR);
+  cv::cvtColor(lab_image, dst, CV_Lab2BGR);
 }
 
 /**
@@ -284,6 +296,13 @@ brightness_and_contrast_auto(const image_type& src, image_type& dst, float clipH
   return;
 }
 
+/**
+ * @brief      Converts image to monochrome
+ *
+ * @param[in]  start  The start
+ *
+ * @return     The image type.
+ */
 image_type
 image_to_binary(image_type start) {
   image_type gray_image, thresh_image;
@@ -304,31 +323,38 @@ image_to_binary(image_type start) {
  *
  * @return     The contours.
  */
-contour_vector
-get_contours(image_type start, std::vector<cv::Vec4i>& hierarchy, int flag = CV_RETR_TREE) {
-  image_type dst = image_type::zeros(start.rows, start.cols, CV_8UC3);
-  contour_vector contours;
-  start = start > 1;
-  cv::findContours(start, contours, hierarchy, flag, CV_CHAIN_APPROX_SIMPLE);
+contour2i_vector
+get_contours(image_type src, std::vector<cv::Vec4i>& hierarchy, int flag = CV_RETR_TREE) {
+  image_type dst = image_type::zeros(src.rows, src.cols, CV_8UC3);
+  contour2i_vector contours;
+  src = src > 1;
+  cv::findContours(src, contours, hierarchy, flag, CV_CHAIN_APPROX_SIMPLE);
   return contours;
 }
 
-template<class InputType>
-point_vector
-to_point_vec(const std::vector<InputType>& v) {
-  point_vector ret;
-  std::for_each(v.begin(), v.end(), [&ret](const InputType& pt) {
+template<class InputIterator>
+point2i_vector
+to_point_vec(InputIterator start, InputIterator end) {
+  point2i_vector ret;
+  std::for_each(start, end, [&ret](const typename InputIterator::value_type& pt) {
     ret.push_back(point2i_type(pt.x, pt.y));
   });
   return ret;
 }
+/*
+template<class Container>
+point2i_vector
+to_point_vec(const Container& c) {
+  return to_point_vec(c.cbegin(), c.cend());
+}
+*/
 
 void
-find_rectangles(const contour_vector& contours, contour_vector& squares) {
+find_rectangles(const contour2i_vector& contours, contour2i_vector& squares) {
 
   // test each contour
   for(size_t i = 0; i < contours.size(); i++) {
-    point_vector approx;
+    point2i_vector approx;
     double arcLen = cv::arcLength(image_type(contours[i]), true);
 
     // approximate contour with accuracy proportional
@@ -363,10 +389,10 @@ find_rectangles(const contour_vector& contours, contour_vector& squares) {
 
 // the function draws all the squares in the image
 
-template<class PointT>
+template<class T>
 static void
 draw_polylines(image_type& image,
-               const typename vector_vector_traits<PointT>::type& polylines,
+               const typename contour_list<T>::type& polylines,
                const color_type& color = color_type(0, 255, 0)) {
 
   cv::polylines(image, polylines, true, color, 2, cv::LINE_AA);
@@ -445,13 +471,13 @@ write_image(image_type img) {
   static int count = 0;
 
   std::filesystem::create_directories("tmp");
-  std::string file = make_filename("frame", ((++count) % max_frames), "png");
+  string file = make_filename("frame", ((++count) % max_frames), "png");
 
   cv::imwrite(cv::String(file), img);
 }
 
 void
-draw_all_contours(image_type& out, contour_vector& contours) {
+draw_all_contours(image_type& out, contour2i_vector& contours) {
 
   for(size_t i = 0; i < contours.size(); i++) {
     const color_type color = hsv_to_rgb((i * 360 * 10 / contours.size()) % 360, 1.0, 1.0);
@@ -499,14 +525,16 @@ display_image(image_type* m) {
   if(m == nullptr)
     return;
   image_type out(cvSize(m->cols, m->rows), m->type());
-  cv::rectangle(*dptr,
-                point2i_type(50, 50),
-                point2i_type(out.cols - 50, out.rows - 50),
-                cv::Scalar(255, 0, 255, 255));
-  cv::rectangle(*dptr,
-                point2i_type(51, 51),
-                point2i_type(out.cols - 51, out.rows - 51),
-                cv::Scalar(255, 0, 255, 255));
+  if(dptr != nullptr) {
+    cv::rectangle(*dptr,
+                  point2i_type(50, 50),
+                  point2i_type(out.cols - 50, out.rows - 50),
+                  cv::Scalar(255, 0, 255, 255));
+    cv::rectangle(*dptr,
+                  point2i_type(51, 51),
+                  point2i_type(out.cols - 51, out.rows - 51),
+                  cv::Scalar(255, 0, 255, 255));
+  }
   image_type mask = image_type::zeros(m->size(), CV_8UC1);
   image_type alpha = get_alpha_channel(*dptr);
   dptr->copyTo(out);
@@ -591,7 +619,7 @@ main(int argc, char* argv[]) {
   int camID = (argc > 1 && isdigit(argv[1][0])) ? strtol(argv[1], nullptr, 10) : -1;
   int count = 0;
 
-  std::string filename;
+  string filename;
 
   if(camID == -1 && argc > 1)
     filename = argv[1];
@@ -649,7 +677,7 @@ main(int argc, char* argv[]) {
     }
     show_image %= 4;
 
-    std::cerr << "Show image: " << show_image << std::endl;
+    //std::cerr << "Show image: " << show_image << std::endl;
 
     switch(show_image) {
       case OPEN_CLOSE: mptr = &im_oc; break;
@@ -733,7 +761,7 @@ main(int argc, char* argv[]) {
 
       vector<point2f_vector> contours2;
       vector<cv::Vec4i> hier;
-      vector<point_vector> contours = get_contours(imgCanny, hier, CV_RETR_TREE);
+      vector<point2i_vector> contours = get_contours(imgCanny, hier, CV_RETR_TREE);
 
       imgCanny = color_type::all(255) - imgCanny;
 
@@ -742,10 +770,9 @@ main(int argc, char* argv[]) {
 
       // cvtColor(imgOriginal, imgGrayscale, CV_GRAY);
 
-      cv::drawContours(imgCanny, contours, -1, color_type(0, 0, 255), 1, cv::LINE_AA);
-      /*
-            if(show_image == CANNY)
-              /*/
+      /*     if(dptr != nullptr)
+             cv::drawContours(*dptr, contours, -1, color_type(0, 0, 255), 1, cv::LINE_AA);
+     */
       display_image(mptr);
 
       if(contours.empty()) {
@@ -770,12 +797,14 @@ main(int argc, char* argv[]) {
       };
 
       int i = 0;
-      for(contour_vector::const_iterator it = contours.cbegin(); it != contours.cend(); ++i, ++it) {
+      for(contour2i_vector::const_iterator it = contours.cbegin(); it != contours.cend();
+          ++i, ++it) {
         const vector<point2i_type>& a = *it;
         int depth = contourDepth(i);
       }
       i = 0;
-      for(contour_vector::const_iterator it = contours.cbegin(); it != contours.cend(); ++i, ++it) {
+      for(contour2i_vector::const_iterator it = contours.cbegin(); it != contours.cend();
+          ++i, ++it) {
         const vector<point2i_type>& a = *it;
 
         if(a.size() >= 3) {
@@ -796,9 +825,9 @@ main(int argc, char* argv[]) {
                         << "} " << std::endl;
               logfile << "contourDepth(i) = " << depth << std::endl;
     */
-          cv::drawContours(
-              imgGrayscale, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
-        }
+        /*  if(dptr != nullptr)
+            cv::drawContours(*dptr, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
+   */     }
       }
 
       display_image(mptr);
@@ -914,7 +943,7 @@ main(int argc, char* argv[]) {
                          back_inserter(angleoffs_i),
                          [](const float ang) -> int { return int(ang * 180 / M_PI) % 180; });
 
-          point_vector centers;
+          point2i_vector centers;
           std::transform(adjacent_lines.begin(),
                          adjacent_lines.end(),
                          back_inserter(centers),
@@ -986,7 +1015,7 @@ main(int argc, char* argv[]) {
       logfile << "Num lines: " << lines.size() << std::endl;
       logfile << "Num filteredLines: " << filteredLines.size() << std::endl;
 
-      std::string svg = make_filename("contour", ++count, "svg");
+      string svg = make_filename("contour", ++count, "svg");
       // filename << "contour-" << ++count << ".svg";
 
       svg_export_file<float>(contours2, svg);
@@ -994,7 +1023,7 @@ main(int argc, char* argv[]) {
       unlink("contour.svg");
       rename("contour.svg.tmp", "contour.svg");
 
-      vector<point_vector> squares;
+      vector<point2i_vector> squares;
 
       {
         JSValue args[2] = {vector_to_js(js, contours, &points_to_js<point2i_type>),
@@ -1029,7 +1058,7 @@ main(int argc, char* argv[]) {
 
         image_type perspective = cv::getPerspectiveTransform(src, dst);
 
-        std::cerr << "perspective:" << perspective << std::endl;
+       logfile << "perspective:" << perspective << std::endl;
       }
 
       find_rectangles(contours, squares);
@@ -1045,17 +1074,19 @@ main(int argc, char* argv[]) {
         logfile << "center : " << center << "\nradius : " << radius << std::endl;
       }
 
-      vector<point_vector> approxim;
+      vector<point2i_vector> approxim;
       transform(contours2.begin(),
                 contours2.end(),
                 back_inserter(approxim),
-                [](const point2f_vector& p) -> point_vector { return transform_points<int, float>(p); });
+                [](const point2f_vector& p) -> point2i_vector {
+                  return transform_points<int, float>(p);
+                });
 
-      for_each(approxim.begin(), approxim.end(), [&](const point_vector& c) {
+      for_each(approxim.begin(), approxim.end(), [&](const point2i_vector& c) {
         const double length = cv::arcLength(c, false);
         const double area = cv::contourArea(c, false);
         cv::Rect rect = cv::boundingRect(c);
-        vector<point_vector> list;
+        vector<point2i_vector> list;
         list.push_back(c);
         // cv::drawContours(imgOriginal, list, -1, color_type(255, 255, 0), 1);
       });

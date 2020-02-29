@@ -8,7 +8,6 @@ extern "C" {
 #include "quickjs/cutils.h"
 };
 
-
 static JSValue
 js_print(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   int i;

@@ -17,11 +17,11 @@ typedef cv::Mat image_type;
 typedef cv::Point point2i_type;
 typedef cv::Point2d point2d_type;
 typedef cv::Point2f point2f_type;
-
+/*
 template<class T> struct vector_vector_traits {
   typedef T value_type;
   typedef std::vector<std::vector<T>> type;
-};
+};*/
 
 enum { CANNY = 0, ORIGINAL, GRAYSCALE, OPEN_CLOSE };
 
