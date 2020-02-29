@@ -779,7 +779,7 @@ main(int argc, char* argv[]) {
   js.add_function("drawContour", &draw_contour, 2);
   js.add_function("drawLine", &draw_line, 2);
   js.add_function("drawRect", &draw_rect, 2);
-  js.add_function("drawPolygon", &draw_polygon, 2);
+  js.add_function("draw_polygon", &draw_polygon, 2);
 
   std::cerr << "property names: " << js.property_names(glob) << std::endl;
   std::cerr << "'console' property names: " << js.property_names(js.get_property(glob, "console")) << std::endl;

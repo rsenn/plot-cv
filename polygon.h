@@ -1,41 +1,55 @@
 #pragma once
 #include <opencv2/highgui/highgui.hpp>
 
-using namespace cv;
-using namespace std;
-
 #include <vector>
-class Polygon {
+
+template<class T> class Polygon_ {
 public:
-  vector<Point2d> points;             // Points du polygone.
-  vector<Point2d> regularPoints;      // Points du polygone reechantilloné.
-  Polygon();                          // ctor vide
-  Polygon(vector<Point2d> points);    // ctor avec les points du polygon.
-  void update(const Mat& G);          // Met à jour les tangentes etcs.
-  void addPoint(Point2d p);           // adds a point to the polygon.
-  void drawPolygon(const Mat& Image); // draws the polygon on a given image.
-  void drawNormales(const Mat& Image);
-  void drawCurvatures(const Mat& Image);
-  vector<Point2d> rechantillonage(); // adds regular points on the polygon.
-  vector<Vec2d> computeTangentes();
-  vector<Vec2d> computeNormales();
-  vector<Vec2d> computeDeriv();
-  vector<double> computeCurvature();
-  Vec2d getNormale(int i);
-  double getCurvature(int i);
-  Point2d getPoint(int i);
-  void replacePoint(int i, Point2d p);
+  typedef cv::Point_<T> point_type;
+  typedef std::vector<point_type> vector_type;
+  typedef T value_type;
+  typedef std::vector<T> values_type;
+  typedef cv::Vec<T, 2> vec2_type;
+  typedef std::vector<vec2_type> vec2vec_type;
+
+  vector_type points;         // cv::Points du polygone.
+  vector_type regular_points; // cv::Points du polygone reechantilloné.
+
+  Polygon_();                          // ctor vide
+  Polygon_(const vector_type& points); // ctor avec les points du polygon.
+
+  void update(const cv::Mat& G);           // Met à jour les tangentes etcs.
+  void add_point(point_type p);            // adds a point to the polygon.
+  void draw_polygon(const cv::Mat& Image); // draws the polygon on a given image.
+  void draw_normals(const cv::Mat& Image);
+  void draw_curvatures(const cv::Mat& Image);
+
+  vector_type resampling(); // adds regular points on the polygon.
+  vec2vec_type compute_tangents();
+  vec2vec_type compute_normals();
+  vec2vec_type compute_deriv();
+  values_type compute_curvature();
+  vec2_type get_normal(int i);
+  value_type get_curvature(int i);
+  point_type get_point(int i);
+  void replace_point(int i, point_type p);
   int
-  getRegularPointSize() {
-    return regularPoints.size();
+  get_regular_point_size() {
+    return regular_points.size();
   };
-  vector<Point2d> deleteLoop(); // détecte les boucles internes et supprime les
-                                // points de la plus petite.
-  ~Polygon();                   // destructor
+  vector_type delete_loop(); // détecte les boucles internes et supprime les
+                             // points de la plus petite.
+  ~Polygon_();               // destructor
 
 private:
-  vector<Vec2d> tangentes; // Tangentes au polygone rééchantillonné.
-  vector<Vec2d> normales;  // Normales au polygone rééchantillonné.
-  vector<Vec2d> deriveeseconde;
-  vector<double> curvature;
+  vec2vec_type tangentes; // Tangentes au polygone rééchantillonné.
+  vec2vec_type normals;   // Normales au polygone rééchantillonné.
+  vec2vec_type deriveeseconde;
+  values_type curvature;
 };
+
+typedef Polygon_<float> Polygon2f;
+typedef Polygon_<double> Polygon2d;
+typedef Polygon_<int> Polygon2i;
+
+typedef Polygon2d Polygon;

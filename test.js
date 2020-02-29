@@ -3,7 +3,10 @@ import { Size } from "size.js";
 import { Line } from "line.js";
 import { Rect } from "rect.js";
 import { PointList } from "pointList.js";
-const lib = { Point, Size, Line, Rect };
+import { RGBA } from "rgba.js";
+import { hsla } from "hsla.js";
+
+const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA };
 
 global.process = function(contours, hier) {
   contours.sort((a, b) => a.length - b.length);
@@ -60,6 +63,7 @@ global.process = function(contours, hier) {
     [0, 0]
   ]);
   console.log("poly: ", poly);
+
   drawPolygon(poly, [0, 255, 255, 255], false);
   poly.add(320, 240);
   drawPolygon(poly, [255, 0, 255, 255], false);

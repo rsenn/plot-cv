@@ -59,20 +59,20 @@ Data::drawNextStep(double step, const Mat& Image, SegmentationMode mode) {
   int m = Image.rows;
   int r, c;
   // std::cout << "Drawing next step" << std::endl;
-  polygon.drawPolygon(copyImage);
-  int L = polygon.regularPoints.size();
+  polygon.draw_polygon(copyImage);
+  int L = polygon.regular_points.size();
   vector<Point2d> nextPoints;
   for(int i = 0; i < L; i++) {
-    Point2d p = polygon.getPoint(i);
+    Point2d p = polygon.get_point(i);
     r = (int)p.y;
     c = (int)p.x;
     float g = gGradient.at<float>(r, c);
-    double curv = polygon.getCurvature(i);
-    Vec2d normale = polygon.getNormale(i);
+    double curv = polygon.get_curvature(i);
+    Vec2d normal = polygon.get_normal(i);
     float gradx = gx.at<float>(r, c);
     float grady = gy.at<float>(r, c);
-    float nx = normale(0);
-    float ny = normale(1);
+    float nx = normal(0);
+    float ny = normal(1);
     // std::cout << "Step" << i << ": " << g * curv  * step<< std::endl;
     float scalar = 0.;
     switch(mode) {
@@ -106,20 +106,20 @@ Data::drawNextStep(double step, const Mat& Image, SegmentationMode mode) {
 void
 Data::findContour(double step, SegmentationMode mode) {
   int r, c;
-  int L = polygon.getRegularPointSize();
+  int L = polygon.get_regular_point_size();
   vector<Point2d> nextPoints(L);
   for(int i = 0; i < L; i++) {
-    Point2d p = polygon.getPoint(i);
+    Point2d p = polygon.get_point(i);
     // std::cout << "i: " << i << " size: " << L << std::endl;
     r = (int)p.y;
     c = (int)p.x;
     float g = gGradient.at<float>(r, c);
-    double curv = polygon.getCurvature(i);
-    Vec2d normale = polygon.getNormale(i);
+    double curv = polygon.get_curvature(i);
+    Vec2d normal = polygon.get_normal(i);
     float gradx = gx.at<float>(r, c);
     float grady = gy.at<float>(r, c);
-    float nx = normale(0);
-    float ny = normale(1);
+    float nx = normal(0);
+    float ny = normal(1);
     float scalar = 0.;
     switch(mode) {
       case BALLOON_MODE: scalar = -(curv + COEFF_BALL) * g * step; break;
