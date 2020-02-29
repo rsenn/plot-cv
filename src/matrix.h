@@ -218,6 +218,7 @@ template<class Char, class Value>
 inline std::ostream&
 operator<<(std::ostream& os, const Matrix<Value>& m) {
   os << to_string(m) << std::endl;
+  return os;
 }
 
 template<class T>

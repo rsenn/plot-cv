@@ -48,6 +48,35 @@ cv::Mat* mptr = &imgOriginal;
 
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
 
+std::string
+make_filename(const std::string& name, int count, const std::string& ext, const std::string& dir) {
+  const int pad = 5;
+  char buf[40];
+  std::ostringstream filename;
+  time_t now = time(NULL);
+  struct tm lt;
+  struct timeval tv;
+  uint64_t msecs;
+  gettimeofday(&tv, NULL);
+  msecs = (tv.tv_usec / 1000) % 1000;
+
+  strftime(buf, sizeof(buf), "%Y%m%d-%H%M%S", localtime_r(&now, &lt));
+
+  filename << dir << "/" << name << "-" << buf << "." << std::setfill('0') << std::setw(3) << msecs
+           << "-" << std::setfill('0') << std::setw(pad) << count << "." << ext;
+  return filename.str();
+}
+
+std::string
+to_string(const cv::Scalar& scalar) {
+  const int pad = 3;
+  std::ostringstream oss;
+  oss << '[' << std::setfill(' ') << std::setw(pad) << scalar[0] << ',' << std::setfill(' ')
+      << std::setw(pad) << scalar[1] << ',' << std::setfill(' ') << std::setw(pad) << scalar[2]
+      << ',' << std::setfill(' ') << std::setw(pad) << scalar[3] << ']';
+  return oss.str();
+}
+
 template<class Char, class Value>
 inline std::ostream&
 operator<<(std::ostream& os, const std::vector<Value>& c) {
@@ -96,7 +125,7 @@ out_hier(O& os, const cv::Vec4i& v) {
 }
 
 /**
- * @brief      ��utput point list
+ * @brief      ������utput point list
  * @return     { description_of_the_return_value }
  */
 template<class O>
@@ -442,12 +471,11 @@ trackbar(int input, void* u) {
 void
 write_image(image_type img) {
   static int count = 0;
-  std::ostringstream filename;
-  filename << "frame-";
-  filename << to_string((++count) % max_frames, 3, '0');
-  filename << ".png";
 
-  cv::imwrite(cv::String(filename.str()), img);
+  std::filesystem::create_directories("tmp");
+  std::string file = make_filename("frame", ((++count) % max_frames), "png");
+
+  cv::imwrite(cv::String(file), img);
 }
 
 void
@@ -990,12 +1018,10 @@ main(int argc, char* argv[]) {
       logfile << "Num lines: " << lines.size() << std::endl;
       logfile << "Num filteredLines: " << filteredLines.size() << std::endl;
 
-      std::ostringstream filename;
-      filename << "contour.svg.tmp";
-
+      std::string svg = make_filename("contour", ++count, "svg");
       // filename << "contour-" << ++count << ".svg";
 
-      export_svg<cv::Point2f>(contours2, filename.str());
+      export_svg<cv::Point2f>(contours2, svg);
 
       unlink("contour.svg");
       rename("contour.svg.tmp", "contour.svg");

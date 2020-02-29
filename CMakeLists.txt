@@ -23,15 +23,19 @@ check_cxx_compiler_flag("-std=c++17" CXX_STD_CXX_17_FLAG)
 if(CXX_STD_CXX_17_FLAG)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 endif(CXX_STD_CXX_17_FLAG)
-
+check_cxx_compiler_flag("-fPIC" F_OPT_PIC)
+if(F_OPT_PIC)
+  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fPIC")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fPIC")
+endif(F_OPT_PIC)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   option(USE_EFENCE "Enable electric fence" OFF)
 
-    check_cxx_compiler_flag("-O0" F_OPT_NONE)
-  if(F_OPT_NONE)
+    check_cxx_compiler_flag("-O0" O_OPT_NONE)
+  if(O_OPT_NONE)
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
-  endif(F_OPT_NONE)
+  endif(O_OPT_NONE)
 
 endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
@@ -65,7 +69,7 @@ endmacro()
 #set_target_properties(qjs PROPERTIES COMPILE_DEFINITIONS "${QUICKJS_DEFS}" )
 #target_link_libraries(qjs quickjs)
 #
-#install(TARGETS quickjs qjsc qjs 
+#install(TARGETS quickjs qjsc qjs
 #  LIBRARY DESTINATION lib
 #  ARCHIVE DESTINATION lib
 #  RUNTIME DESTINATION bin)

@@ -68,7 +68,6 @@ global.process = function(contours, hier) {
   polygons.push(polygons[0].sum({ x: 320, y: 240 }));
   polygons.push(polygons[0].sum({ x: 0, y: 240 }));
 
-  console.log(`polygons: [\n  ${polygons.join(",\n  ")}\n]`);
   /*
   drawPolygon(polygons[0], [0, 255, 255, 255], false);
   drawPolygon(polygons[1], [0, 255, 0, 255], false);
@@ -78,6 +77,8 @@ global.process = function(contours, hier) {
   const do_log = false;
 
   if(do_log) {
+      console.log(`polygons: [\n  ${polygons.join(",\n  ")}\n]`);
+
     console.log(
       "PROCESS contours: ",
       contours.map(c => "[" + c.map(pt => `{x:${pt.x},y:${pt.y}}`).join(", ") + "]").join(", ")

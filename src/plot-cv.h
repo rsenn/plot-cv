@@ -6,6 +6,9 @@
 #include <vector>
 #include <iomanip>
 #include <fstream>
+#include <ctime>
+#include <unistd.h>
+#include <sys/time.h>
 
 #include "line.h"
 
@@ -21,15 +24,12 @@ template<class T> struct vector_vector_traits {
 
 enum { CANNY = 0, ORIGINAL, GRAYSCALE, OPEN_CLOSE, CORNERS };
 
-inline std::string
-to_string(const cv::Scalar& scalar) {
-  const int pad = 3;
-  std::ostringstream oss;
-  oss << '[' << std::setfill(' ') << std::setw(pad) << scalar[0] << ',' << std::setfill(' ')
-      << std::setw(pad) << scalar[1] << ',' << std::setfill(' ') << std::setw(pad) << scalar[2]
-      << ',' << std::setfill(' ') << std::setw(pad) << scalar[3] << ']';
-  return oss.str();
-}
+std::string to_string(const cv::Scalar& scalar);
+
+std::string make_filename(const std::string& name,
+                          int count,
+                          const std::string& ext,
+                          const std::string& dir = "tmp");
 
 extern std::ofstream logfile;
 
