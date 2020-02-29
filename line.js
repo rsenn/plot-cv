@@ -3,25 +3,25 @@ export function Line(x1, y1, x2, y2) {
   let arg;
   let args = [...arguments];
   let ret;
-  if (args.length >= 4 && args.every(arg => !isNaN(parseFloat(arg)))) {
+  if(args.length >= 4 && args.every(arg => !isNaN(parseFloat(arg)))) {
     arg = { x1, y1, x2, y2 };
-  } else if (args.length == 1) {
+  } else if(args.length == 1) {
     arg = args[0];
   }
-  if (arg && arg.x1 !== undefined && arg.y1 !== undefined && arg.x2 !== undefined && arg.y2 !== undefined) {
+  if(arg && arg.x1 !== undefined && arg.y1 !== undefined && arg.x2 !== undefined && arg.y2 !== undefined) {
     const { x1, y1, x2, y2 } = arg;
     obj.x1 = parseFloat(x1);
     obj.y1 = parseFloat(y1);
     obj.x2 = parseFloat(x2);
     obj.y2 = parseFloat(y2);
     ret = 1;
-  } else if (isPoint(args[0]) && isPoint(args[1])) {
+  } else if(isPoint(args[0]) && isPoint(args[1])) {
     obj.x1 = parseFloat(args[0].x);
     obj.y1 = parseFloat(args[0].y);
     obj.x2 = parseFloat(args[1].x);
     obj.y2 = parseFloat(args[1].y);
     ret = 2;
-  } else if (arg && arg.length >= 4 && arg.slice(0, 4).every(arg => !isNaN(parseFloat(arg)))) {
+  } else if(arg && arg.length >= 4 && arg.slice(0, 4).every(arg => !isNaN(parseFloat(arg)))) {
     obj.x1 = typeof x === "number" ? x : parseFloat(x);
     obj.y1 = typeof y === "number" ? y : parseFloat(y);
     obj.x2 = typeof w === "number" ? w : parseFloat(w);
@@ -30,14 +30,14 @@ export function Line(x1, y1, x2, y2) {
   } else {
     ret = 0;
   }
-  if (!isLine(obj)) console.log("ERROR: is not a line: ", [...arguments]);
-  if (!(this instanceof Line)) return obj;
+  if(!isLine(obj)) console.log("ERROR: is not a line: ", [...arguments]);
+  if(!(this instanceof Line)) return obj;
 }
 export const isLine = obj => ["x1", "y1", "x2", "y2"].every(prop => obj[prop] !== undefined);
 Line.prototype.intersect = function(other) {
   const ma = (this[0].y - this[1].y) / (this[0].x - this[1].x);
   const mb = (other[0].y - other[1].y) / (other[0].x - other[1].x);
-  if (ma - mb < Number.EPSILON) return undefined;
+  if(ma - mb < Number.EPSILON) return undefined;
   return new Point({
     x: (ma * this[0].x - mb * other[0].x + other[0].y - this[0].y) / (ma - mb),
     y: (ma * mb * (other[0].x - this[0].x) + mb * this[0].y - ma * other[0].y) / (mb - ma)
@@ -48,7 +48,7 @@ Object.defineProperty(Line.prototype, "x1", {
     return this.a && this.a.x;
   },
   set: function(v) {
-    if (!this.a) this.a = new Point();
+    if(!this.a) this.a = new Point();
     this.a.x = v;
   },
   enumerable: true
@@ -58,7 +58,7 @@ Object.defineProperty(Line.prototype, "y1", {
     return this.a && this.a.y;
   },
   set: function(v) {
-    if (!this.a) this.a = new Point();
+    if(!this.a) this.a = new Point();
     this.a.y = v;
   },
   enumerable: true
@@ -68,7 +68,7 @@ Object.defineProperty(Line.prototype, "x2", {
     return this.b && this.b.x;
   },
   set: function(v) {
-    if (!this.b) this.b = new Point();
+    if(!this.b) this.b = new Point();
     this.b.x = v;
   },
   enumerable: true
@@ -78,7 +78,7 @@ Object.defineProperty(Line.prototype, "y2", {
     return this.b && this.b.y;
   },
   set: function(v) {
-    if (!this.b) this.b = new Point();
+    if(!this.b) this.b = new Point();
     this.b.y = v;
   },
   enumerable: true
@@ -123,7 +123,7 @@ Line.prototype.inspect = function() {
 };
 Line.prototype.toString = function() {
   let { a, b } = this;
-  if (a.x > b.x) {
+  if(a.x > b.x) {
     let tmp = this.b;
     this.b = this.a;
     this.a = tmp;

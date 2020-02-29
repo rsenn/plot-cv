@@ -5,32 +5,32 @@ export function Rect(arg) {
   let obj = this instanceof Rect ? this : {};
   let args = arg instanceof Array ? arg : [...arguments];
   let ret;
-  if (typeof args[0] == "number") arg = args;
-  else if (args[0].length !== undefined) arg = args.shift();
+  if(typeof args[0] == "number") arg = args;
+  else if(args[0].length !== undefined) arg = args.shift();
   ["x", "y", "width", "height"].forEach(field => {
-    if (typeof obj[field] != "number") obj[field] = 0;
+    if(typeof obj[field] != "number") obj[field] = 0;
   });
-  if (arg && arg.x1 !== undefined && arg.y1 !== undefined && arg.x2 !== undefined && arg.y2 !== undefined) {
+  if(arg && arg.x1 !== undefined && arg.y1 !== undefined && arg.x2 !== undefined && arg.y2 !== undefined) {
     const { x1, y1, x2, y2 } = arg;
     obj.x = x1;
     obj.y = y1;
     obj.width = x2 - x1;
     obj.height = y2 - y1;
     ret = 1;
-  } else if (arg && arg.x !== undefined && arg.y !== undefined && arg.x2 !== undefined && arg.y2 !== undefined) {
+  } else if(arg && arg.x !== undefined && arg.y !== undefined && arg.x2 !== undefined && arg.y2 !== undefined) {
     const { x, y, x2, y2 } = arg;
     obj.x = x;
     obj.y = y;
     obj.width = x2 - x;
     obj.height = y2 - y;
     ret = 1;
-  } else if (isPoint(arg) && arg.y !== undefined && arg.width !== undefined && arg.height !== undefined) {
+  } else if(isPoint(arg) && arg.y !== undefined && arg.width !== undefined && arg.height !== undefined) {
     obj.x = parseFloat(arg.x);
     obj.y = parseFloat(arg.y);
     obj.width = parseFloat(arg.width);
     obj.height = parseFloat(arg.height);
     ret = 1;
-  } else if (arg && arg.length >= 4 && arg.slice(0, 4).every(arg => !isNaN(parseFloat(arg)))) {
+  } else if(arg && arg.length >= 4 && arg.slice(0, 4).every(arg => !isNaN(parseFloat(arg)))) {
     let x = arg.shift();
     let y = arg.shift();
     let w = arg.shift();
@@ -40,14 +40,14 @@ export function Rect(arg) {
     obj.width = typeof w === "number" ? w : parseFloat(w);
     obj.height = typeof h === "number" ? h : parseFloat(h);
     ret = 4;
-  } else if (arg && arg.length >= 2 && arg.slice(0, 2).every(arg => !isNaN(parseFloat(arg)))) {
+  } else if(arg && arg.length >= 2 && arg.slice(0, 2).every(arg => !isNaN(parseFloat(arg)))) {
     obj.width = typeof x === "number" ? x : parseFloat(x);
     obj.height = typeof y === "number" ? y : parseFloat(y);
     ret = 2;
-  } else if (arg instanceof Array) {
+  } else if(arg instanceof Array) {
     let argc;
     let argi = 0;
-    if (arg.length >= 4) {
+    if(arg.length >= 4) {
       argc = typeof x == "number" ? 2 : 1;
       Point.apply(obj, arg.slice(0, argc));
       argi = argc;
@@ -56,7 +56,7 @@ export function Rect(arg) {
     Size.apply(obj, arg.slice(argi, argc));
     ret = argi + argc;
   }
-  if (obj.round === undefined) {
+  if(obj.round === undefined) {
     Object.defineProperty(obj, "round", {
       value: function() {
         return Rect.round(this);
@@ -65,7 +65,7 @@ export function Rect(arg) {
       writable: false
     });
   }
-  if (!(this instanceof Rect)) {
+  if(!(this instanceof Rect)) {
     return obj;
     return ret;
   }
@@ -157,7 +157,7 @@ Rect.prototype.points = function() {
 };
 Rect.prototype.toCSS = Rect.toCSS;
 Rect.prototype.outset = function(trbl) {
-  if (typeof trbl == "number") trbl = new TRBL(trbl, trbl, trbl, trbl);
+  if(typeof trbl == "number") trbl = new TRBL(trbl, trbl, trbl, trbl);
   this.x -= trbl.left;
   this.y -= trbl.top;
   this.width += trbl.left + trbl.right;
@@ -165,8 +165,8 @@ Rect.prototype.outset = function(trbl) {
   return this;
 };
 Rect.prototype.inset = function(trbl) {
-  if (typeof trbl == "number") trbl = new TRBL(trbl, trbl, trbl, trbl);
-  if (trbl.left + trbl.right < this.width && trbl.top + trbl.bottom < this.height) {
+  if(typeof trbl == "number") trbl = new TRBL(trbl, trbl, trbl, trbl);
+  if(trbl.left + trbl.right < this.width && trbl.top + trbl.bottom < this.height) {
     this.x += trbl.left;
     this.y += trbl.top;
     this.width -= trbl.left + trbl.right;

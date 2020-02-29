@@ -2,20 +2,20 @@ export function Point(arg) {
   let args = arg instanceof Array ? arg : [...arguments];
   let p = !this || this === Point ? {} : this;
   arg = args.shift();
-  if (typeof arg === "number") {
+  if(typeof arg === "number") {
     p.x = parseFloat(arg);
     p.y = parseFloat(args.shift());
-  } else if (typeof arg === "string") {
+  } else if(typeof arg === "string") {
     const matches = [...arg.matchAll(new RegExp("/([-+]?d*.?d+)(?:[eE]([-+]?d+))?/g"))];
     p.x = parseFloat(matches[0]);
     p.y = parseFloat(matches[1]);
-  } else if (typeof arg == "object" && arg !== null && (arg.x !== undefined || arg.y !== undefined)) {
+  } else if(typeof arg == "object" && arg !== null && (arg.x !== undefined || arg.y !== undefined)) {
     p.x = arg.x;
     p.y = arg.y;
-  } else if (typeof arg == "object" && arg !== null && arg.length > 0 && x !== undefined && y !== undefined) {
+  } else if(typeof arg == "object" && arg !== null && arg.length > 0 && x !== undefined && y !== undefined) {
     p.x = parseFloat(arg.shift());
     p.y = parseFloat(arg.shift());
-  } else if (typeof args[0] === "number" && typeof args[1] === "number") {
+  } else if(typeof args[0] === "number" && typeof args[1] === "number") {
     p.x = args[0];
     p.y = args[1];
     args.shift(2);
@@ -23,10 +23,10 @@ export function Point(arg) {
     p.x = 0;
     p.y = 0;
   }
-  if (isNaN(p.x)) p.x = undefined;
-  if (isNaN(p.y)) p.y = undefined;
-  if (!this || this === Point) {
-    if (p.prototype == Object) p.prototype = Point.prototype;
+  if(isNaN(p.x)) p.x = undefined;
+  if(isNaN(p.y)) p.y = undefined;
+  if(!this || this === Point) {
+    if(p.prototype == Object) p.prototype = Point.prototype;
     else Object.assign(p, Point.prototype);
     return p;
   }
@@ -52,7 +52,7 @@ Point.prototype.move = function(x, y) {
   return this;
 };
 Point.prototype.set = function(fn) {
-  if (typeof fn != "function") {
+  if(typeof fn != "function") {
     Point.apply(this, [...arguments]);
     return this;
   }
@@ -150,8 +150,8 @@ Point.prototype.dimension = function() {
   return [this.width, this.height];
 };
 Point.prototype.toString = function(asArray = false) {
-  if (typeof this != "object" || this === null) return "";
-  if (asArray) return `[${this.x},${this.y}]`;
+  if(typeof this != "object" || this === null) return "";
+  if(asArray) return `[${this.x},${this.y}]`;
   return `{x:${this.x},y:${this.y}}`;
 };
 Point.prototype.toSource = function() {
@@ -173,5 +173,8 @@ Point.prototype.normalize = function(minmax) {
     y: (this.y - minmax.y1) / (minmax.y2 - minmax.y1)
   });
 };
-export const isPoint = o => o && ((o.x !== undefined && o.y !== undefined) || ((o.left !== undefined || o.right !== undefined) && (o.top !== undefined || o.bottom !== undefined)));
+export const isPoint = o =>
+  o &&
+  ((o.x !== undefined && o.y !== undefined) ||
+    ((o.left !== undefined || o.right !== undefined) && (o.top !== undefined || o.bottom !== undefined)));
 Point.isPoint = isPoint;

@@ -2,16 +2,20 @@ import { Point } from "point.js";
 import { Size } from "size.js";
 import { Line } from "line.js";
 import { Rect } from "rect.js";
+import { PointList } from "pointList.js";
 const lib = { Point, Size, Line, Rect };
 
 global.process = function(contours, hier) {
-  const do_log = false;
-  const pt = new Point(contours[0][0]);
-  console.log("process()");
-  console.log("Point:", pt);
+  for(var i = 0; i < contours.length; i++) {
+    var list = new PointList(contours[i]);
+    var bbox = list.bbox();
+    var rect = new Rect(bbox);
+
+    console.log(`contour #${i}:`, bbox, " rect:", rect);
+  }
   // console.log("Num contours:", contours.length);
   //  console.log("Num hier:", hier.length);
-  //  if (do_log) {
+  //  if(do_log) {
   //    console.log("PROCESS contours: ", contours.map(c => "[" + c.map(pt => `{x:${pt.x},y:${pt.y}}`).join(", ") + "]").join(", "));
   //    console.log("PROCESS hier: ", "[" + hier.map(h => `[${h.join(",")}]`).join(", "));
   //  }
@@ -22,14 +26,14 @@ global.inspect = function(obj) {
     Object.entries(obj)
       .map(([key, value]) => {
         let out = value;
-        if (typeof out != "string") {
+        if(typeof out != "string") {
           try {
-            if (typeof out == "object") out = inspect(out);
+            if(typeof out == "object") out = inspect(out);
             else out = out + "";
-          } catch (err) {
+          } catch(err) {
             out = typeof out;
           }
-          if (typeof value == "function") {
+          if(typeof value == "function") {
             let idx = out.indexOf("{");
             out = out.substring(0, idx).trim();
           }
@@ -37,7 +41,7 @@ global.inspect = function(obj) {
           out = '"' + out + '"';
         }
         out = out.replace(/\n/g, "\\n");
-        if (out.length > 200) out = out.substring(0, 200) + "...";
+        if(out.length > 200) out = out.substring(0, 200) + "...";
         return key + ": " + out;
       })
       .join(", ") +
@@ -54,7 +58,7 @@ global.inspect = function(obj) {
 //  var pt3 = pt2.diff(pt);
 //  var contour = [pt, pt, pt, pt, pt, pt, pt];
 //  var l = new Line(pt, pt2);
-//  if (this !== undefined && this.drawContour) this.drawContour(contour, [255, 0, 0]);
+//  if(this !== undefined && this.drawContour) this.drawContour(contour, [255, 0, 0]);
 //  console.log("contour: ", contour);
 //  console.log("args: ", scriptArgs);
 //  console.log("pt: ", pt.toString(true));
