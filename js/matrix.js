@@ -252,12 +252,14 @@ Matrix.prototype.decompose = function(useLU = true) {
     c = this[1],
     d = this[4];
 
-    var translate = { x: this[2], y: this[5] },
+  var translate = { x: this[2], y: this[5] },
     rotation = 0,
     scale = { x: 1, y: 1 },
     skew = { x: 0, y: 0 };
 
-    var determ = a * d - b * c, r, s;
+  var determ = a * d - b * c,
+    r,
+    s;
 
   if(useLU) {
     if(a) {

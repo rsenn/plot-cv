@@ -76,5 +76,4 @@ global.process = function(contours, hier) {
   }
 };
 
-
 console.log("Classes: ", inspect(lib));

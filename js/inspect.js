@@ -1,9 +1,8 @@
-export const inspect = (obj, pred = v => true) => (
+export const inspect = (obj, pred = v => true) =>
   "{\n  " +
   Object.entries(obj)
     .map(([key, value]) => {
-      if(pred(value,key) == false)
-        return '';
+      if(pred(value, key) == false) return "";
       let out = value;
       if(typeof out != "string") {
         try {
@@ -22,9 +21,9 @@ export const inspect = (obj, pred = v => true) => (
       out = out.replace(/\n\s*/g, " ");
       if(out.length > 200) out = out.substring(0, 200) + "...";
       return key + ": " + out;
-    }).filter(item => item != '')
+    })
+    .filter(item => item != "")
     .join(",\n  ") +
-  "\n}"
-);
+  "\n}";
 
 export default inspect;
