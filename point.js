@@ -197,9 +197,9 @@ Point.fromAngle = (angle, dist = 1.0) =>
     y: Math.sin(angle) * dist
   });
 
-Point.toAngle = p => Math.atan2(p.x, p.y);
-Point.prototype.toAngle = function() {
-  return Point.toAngle(this);
+Point.toAngle = (p, deg = false) => Math.atan2(p.x, p.y)  * (deg ? 180 / Math.PI : 1);
+Point.prototype.toAngle = function(deg = false) {
+  return Point.toAngle(this, deg);
 };
 
 Point.angle = (p1, p2 = { x: 0, y: 0 }) => Point.toAngle(Point.diff(p1, p2));
@@ -216,8 +216,10 @@ Point.toString = (point, prec) => {
   return `${point.x},${point.y}`;
   //  return Point.prototype.toString.call(point);
 };
-Point.prototype.toString = function(prec) {
-  return this.x /*.toFixed(prec)*/ + ' ' + this.y /*.toFixed(prec)*/;
+Point.prototype.toString = function(asArray = false) {
+  if(asArray)
+    return `[${this.x},${this.y}]`;
+  return `{x:${this.x},y:${this.y}}`;
 };
 Point.prototype.toSource = function() {
   return '{x:' + this.x.toFixed(3) + ',y:' + this.y.toFixed(3) + '}';

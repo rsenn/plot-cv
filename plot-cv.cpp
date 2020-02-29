@@ -629,12 +629,18 @@ main(int argc, char* argv[]) {
   using std::iterator_traits;
   using std::transform;
   using std::vector;
-  int show_image = 0;
+  int show_image = 0, ret;
 
   js.init(argc, argv);
   js.add_function("drawContour", &draw_contour, 2);
 
-  js.eval_file("test.js");
+  JSValue* fn = js.get_function("drawContour");
+
+  ret = js.eval_file("test.js");
+
+  std::cerr << "js.eval_file ret=" << ret << std::endl;
+  if(ret < 0)
+    return ret;
 
   int camID = (argc > 1 && isdigit(argv[1][0])) ? strtol(argv[1], nullptr, 10) : -1;
   int count = 0;

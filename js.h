@@ -37,6 +37,16 @@ struct jsrt {
   JSValue call(JSValueConst func, std::vector<JSValueConst>& args);
   JSValue call(const char* name, size_t argc, JSValueConst* argv);
 
+  JSValue*
+  get_function(const char* name) {
+    auto it = funcmap.find(name);
+    if(it != funcmap.end()) {
+      std::pair<JSCFunction*, JSValue>& val = it->second;
+      return &val.second;
+    }
+    return nullptr;
+  }
+
 protected:
   struct global_object {
     global_object(JSContext* __ctx);

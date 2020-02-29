@@ -2,12 +2,20 @@ import { Point } from './point.js';
 //import Util from './lib/util.js';
 
 function test() {
-  var contour = [ {x:100,y:50}, {x:100,y:50}, {x:100,y:50}, {x:100,y:50}, {x:100,y:50}, {x:100,y:50}, {x:100,y:50} ];
+  var pt = new Point(100,50);
+  var pt2 = new Point(150,230);
+  var pt3 = Point.diff(pt2, pt);
+  var contour = [ pt, pt, pt, pt, pt, pt, pt ];
 
   if(this !== undefined && this.drawContour)
     this.drawContour(contour, [255,0,0]);
   console.log("contour: ", contour);
   console.log("args: ", scriptArgs);
+  console.log("pt: ", pt.toString(true));
+  console.log("diff: ", pt3);
+  console.log("angle: ", pt3.toAngle(true));
+  console.log("distance: ", pt3.distance());
+
   //console.log("drawContour: ", drawContour);
 }
 
