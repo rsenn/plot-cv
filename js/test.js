@@ -20,61 +20,55 @@ global.process = function(contours, hier) {
       c.area
     );
   }
-  /*
-   contours.sort((a, b) => a.length - b.length);
-  contours = contours.filter(c => c.length >= 4);
-for(var i = 0; i < contours.length; i++) {
-    const [next, prev, child, parent] = hier[i];
-    var list = new PointList(contours[i]);
-    var bbox = list.bbox();
-    var rect = new Rect(bbox);
+  function processContours(contours) {
+    contours.sort((a, b) => a.length - b.length);
+    contours = contours.filter(c => c.length >= 4);
+    for(var i = 0; i < contours.length; i++) {
+      const [next, prev, child, parent] = hier[i];
+      var list = new PointList(contours[i]);
+      var bbox = list.bbox();
+      var rect = new Rect(bbox);
 
+      contours[i].area = rect.area;
+      contours[i].id = i;
+      contours[i].bbox = bbox;
+      contours[i].rect = rect;
 
-    contours[i].area = rect.area;
-    contours[i].id = i;
-    contours[i].bbox = bbox;
-    contours[i].rect = rect;
+      areas.push(rect.area);
 
-    areas.push(rect.area);
+      list = list.map(p => {
+        p.x += 2;
+        p.y += 2;
+        return p;
+      });
 
-    list = list.map(p => {
-      p.x += 2;
-      p.y += 2;
-      return p;
-    });
+      drawContour(list, [255, 0, 255, 255], 8, false);
+    }
 
-    drawContour(list, [255, 0, 255, 255], 8, false);
+    contours.sort((a, b) => b.area - a.area);
+    areas = contours.map(c => c.area);
+
+    dumpContour(contours[0]);
+    drawContour(contours[0], [0, 0, 255, 255], 20, false);
+
+    return contours;
   }
 
-  contours.sort((a, b) => b.area - a.area);
-  areas = contours.map(c => c.area);
+  let polygons = [
+  new PointList([{ x: 0, y: 0 }, { x: 320, y: 0 }, { x: 320, y: 240 }, { x: 0, y: 240 }, { x: 0, y: 0 } ]),
+   ];
 
-  dumpContour(contours[0]);
-  drawContour(contours[0], [0, 0, 255, 255], 20, false);
-  */
+   polygons.push(polygons[0].sum({x:320,y:0}));
+   polygons.push(polygons[0].sum({x:320,y:240}));
+   polygons.push(polygons[0].sum({x:0,y:240}));
 
-  /*
-  let poly = new PointList([
-    [0, 0],
-    [320, 0],
-    [320, 240],
-    [0, 240],
-    [0, 0]
-  ]);
-  console.log("poly: ", poly);
+  console.log(`polygons: [\n  ${polygons.join(",\n  ")}\n]`);
 
-  drawPolygon(poly, [0, 255, 255, 255], false);
-  poly.add(320, 240);
-  drawPolygon(poly, [255, 0, 255, 255], false);
-  poly.sub(320, 0);
-  drawPolygon(poly, [0, 255, 0, 255], false);
-  poly.sub(-320, 240);
-  drawPolygon(poly, [255, 0, 0, 255], false);*/
-
-  console.log("Num contours:", contours.length);
-  //console.log("Areas:", areas);
-
-  console.log("Num hier:", hier.length);
+  drawPolygon(polygons[0], [0, 255, 255, 255], false);
+  drawPolygon(polygons[1], [0, 255, 0, 255], false);
+  drawPolygon(polygons[2], [255, 0, 0, 255], false);
+  drawPolygon(polygons[3], [255, 0, 255, 255], false);
+ 
   const do_log = false;
 
   if(do_log) {

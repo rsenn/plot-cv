@@ -237,7 +237,7 @@ PointList.prototype.lines = function(closed = false) {
   return iterableObj;
 };
 PointList.prototype.toString = function(prec) {
-  return this.map(point => Point.prototype.toString.call(point, prec)).join(",");
+  return 'PointList(['+this.map(point => Point.prototype.toString.call(point, prec)).join(",")+'])';
 };
 PointList.prototype.rotateRight = function(n) {
   return Util.rotateRight(this, n);
@@ -248,9 +248,17 @@ PointList.prototype.add = function(pt) {
   for(let i = 0; i < this.length; i++) Point.prototype.add.call(this[i], pt);
   return this;
 };
+PointList.prototype.sum = function(pt) {
+  let ret = this.clone();
+  return PointList.prototype.add.apply(ret, arguments);
+};
 PointList.prototype.sub = function(pt) {
   let args = [...arguments];
   if(!(pt instanceof Point)) pt = new Point(args);
   for(let i = 0; i < this.length; i++) Point.prototype.sub.call(this[i], pt);
   return this;
+};
+PointList.prototype.diff = function(pt) {
+  let ret = this.clone();
+  return PointList.prototype.sub.apply(ret, arguments);
 };

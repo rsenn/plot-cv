@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <sstream>
+#include <iomanip>
 #include "line.h"
 
 typedef std::vector<cv::Point> point_vector;
@@ -130,8 +131,10 @@ public:
 template<class T, class Char = char>
 inline std::basic_string<Char>
 to_string(const cv::Point_<T>& point) {
+  const int pad = 3;
   std::basic_ostringstream<Char> os;
-  os << point.x << "," << point.y;
+  os << "{x:" << std::setfill(' ') << std::setw(pad) << point.x << ",y:" << std::setfill(' ')
+     << std::setw(pad) << point.y << "}";
   return os.str();
 }
 
@@ -144,10 +147,10 @@ to_string(const Container<cv::Point_<ValueT>>& points) {
   iterator_type end = points.cend();
   for(iterator_type it = points.cbegin(); it != end; ++it) {
     if(ret.length())
-      ret += " ";
+      ret += ",";
     ret += to_string<ValueT, Char>(*it);
   }
-  return ret;
+  return "[" + ret + "]";
 }
 
 template<class T>

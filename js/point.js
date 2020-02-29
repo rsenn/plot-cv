@@ -150,9 +150,12 @@ Point.prototype.dimension = function() {
   return [this.width, this.height];
 };
 Point.prototype.toString = function(asArray = false) {
+  let x = (this.x+'').padStart(4, ' ');
+  let y = (this.y+'').padStart(4, ' ');
+
   if(typeof this != "object" || this === null) return "";
-  if(asArray) return `[${this.x},${this.y}]`;
-  return `{x:${this.x},y:${this.y}}`;
+  if(asArray) return `[${x},${y}]`;
+  return `{x:${x},y:${y}}`;
 };
 Point.prototype.toSource = function() {
   return "{x:" + this.x.toFixed(3) + ",y:" + this.y.toFixed(3) + "}";
