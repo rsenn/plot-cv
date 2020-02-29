@@ -117,8 +117,10 @@ out_points(O& os, const point2i_vector& pl) {
  *
  * @return     Index of largest Contour
  */
+
+template<class T>
 int
-get_largest_contour(contour2f_vector contours_un, point2f_vector& bigContour) {
+get_largest_contour(const typename contour_list<T>::type contours_un, std::vector< cv::Point_<T> >& bigContour) {
   double maxArea = 0.0;
   int largestContour = -1;
   for(size_t i = 0; i < contours_un.size(); i++) {
@@ -759,7 +761,7 @@ main(int argc, char* argv[]) {
     cv::morphologyEx(im_oc,
                      im_oc,
                      cv::MORPH_CLOSE,
-                     cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(2, 2)));
+                     cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3)));
     //    cv::morphologyEx(im_oc, im_oc, cv::MORPH_CLOSE, strel);
     /*
         if(show_image == OPEN_CLOSE)
@@ -776,6 +778,11 @@ main(int argc, char* argv[]) {
       vector<point2i_vector> contours = get_contours(imgCanny, hier, CV_RETR_TREE);
 
       imgCanny = color_type::all(255) - imgCanny;
+
+
+      point2f_vector largestContour;
+
+      int largestIndex = get_largest_contour(contours2, largestContour);
 
       // imgCanny.convertTo(imgCanny, CV_8UC3);
       cv::cvtColor(imgCanny, imgCanny, cv::COLOR_GRAY2BGR);
