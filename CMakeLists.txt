@@ -1,6 +1,7 @@
 cmake_minimum_required (VERSION 2.8)
 project (plot-cv)
 
+include(CheckCXXCompilerFlag)
 include(CheckLibraryExists)
 check_library_exists(json-cpp ZN4YAML6detail9node_data9reset_mapEv /usr JSON_CPP)
 
@@ -18,8 +19,10 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/quickjs
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
+check_cxx_compiler_flag("-std=c++17" CXX_STD_CXX_17_FLAG)
+if(CXX_STD_CXX_17_FLAG)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+endif(CXX_STD_CXX_17_FLAG)
 
 
 macro(add_prog)

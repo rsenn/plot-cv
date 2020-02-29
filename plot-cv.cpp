@@ -23,6 +23,9 @@
 #include <functional>
 #include <unordered_map>
 #include <map>
+#include <filesystem>
+#include <sys/stat.h>
+#include <unistd.h>
 
 typedef Line<float> line_type;
 typedef std::vector<line_type> line_list;
@@ -57,6 +60,20 @@ operator<<(std::basic_ostream<Char>& os, const std::vector<Value>& c) {
     os << to_string(*it);
   }
   return os;
+}
+
+int32_t
+get_mtime(const char* filename) {
+#if __STDC_VERSION__ >= 201710L
+  return std::filesystem::last_write_time(filename);
+#else
+  struct stat st;
+  if(stat(filename, &st) != -1) {
+    uint32_t ret = st.st_mtime;
+    return ret;
+  }
+#endif
+  return -1;
 }
 
 template<class ValueT>
@@ -697,14 +714,33 @@ main(int argc, char* argv[]) {
   using std::transform;
   using std::vector;
   int show_image = 0, ret;
+  int32_t newmt, mt = -1;
+  JSValue processFn;
 
   js.init(argc, argv);
 
-  // JSValue* fn = js.get_function("drawContour");
+  JSValue* fn = js.get_function("drawContour");
   jsrt::value glob = js.global_object();
 
   // ret = js.eval_file("lib.js", 1);
-  ret = js.eval_file("test.js");
+
+  auto check_eval = [&newmt, &mt, &processFn, &glob]() -> int {
+    int ret = -1;
+    newmt = get_mtime("test.js");
+
+    /*    std::cerr << "test.js mtime new=" << newmt << " old=" << mt
+                  << " diff=" << (newmt - mt) << std::endl; */
+    if(newmt > mt) {
+      mt = newmt;
+      std::cerr << "test.js changed, reloading..." << std::endl;
+
+      ret = js.eval_file("test.js");
+      processFn = js.get_property(glob, "process");
+    }
+    return ret;
+  };
+
+  check_eval();
 
   js.add_function("drawContour", &draw_contour, 2);
 
@@ -713,7 +749,6 @@ main(int argc, char* argv[]) {
             << js.property_names(js.get_property(glob, "console")) << std::endl;
 
   JSValue testFn = js.get_property(glob, "test");
-  JSValue processFn = js.get_property(glob, "process");
   JSValue drawContourFn = js.get_property(js.global_object(), "drawContour");
   JSValue jsPoint = js.create_point(150, 100);
 
@@ -1165,6 +1200,8 @@ main(int argc, char* argv[]) {
       {
         JSValue args[2] = {vector_to_js(js, contours, &points_to_js<cv::Point>),
                            vector_to_js(js, hier, &vec4i_to_js)};
+
+        check_eval();
 
         js.call(processFn, 2, args);
       }
