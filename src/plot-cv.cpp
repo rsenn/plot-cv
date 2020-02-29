@@ -120,7 +120,7 @@ out_points(O& os, const point2i_vector& pl) {
 
 template<class T>
 int
-get_largest_contour(const typename contour_list<T>::type contours_un, std::vector< cv::Point_<T> >& bigContour) {
+get_largest_contour(const std::vector<  std::vector< cv::Point_<T> > >& contours_un, std::vector< cv::Point_<T> >& bigContour) {
   double maxArea = 0.0;
   int largestContour = -1;
   for(size_t i = 0; i < contours_un.size(); i++) {
