@@ -221,4 +221,4 @@ transform_points(const Container<cv::Point_<From>>& from) {
   return ret;
 }
 
-#endif
+#endif // defined GEOMETRY_H

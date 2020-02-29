@@ -1,3 +1,4 @@
+#include "color.h"
 #include "geometry.h"
 #include "jsbindings.h"
 #include "plot-cv.h"

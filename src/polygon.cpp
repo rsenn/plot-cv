@@ -3,13 +3,12 @@
 #include <iostream>
 #include <math.h>
 #include "polygon.h"
+#include "color.h"
 // using namespace cv;
 
 #include <vector>
 
 const int PIXEL_STEP = 15; // Ecart entre les points du polygone après ré-échantillonage.
-
-typedef cv::Scalar color_type;
 
 template<class T>
 static bool

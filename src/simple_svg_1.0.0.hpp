@@ -43,21 +43,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace svg {
 // Utility XML/String Functions.
 template<typename T>
-std::string
+inline std::string
 attribute(std::string const& attribute_name, T const& value, std::string const& unit = "") {
   std::stringstream ss;
   ss << attribute_name << "=\"" << value << unit << "\" ";
   return ss.str();
 }
-std::string
+inline std::string
 elemStart(std::string const& element_name) {
   return "\t<" + element_name + " ";
 }
-std::string
+inline std::string
 elemEnd(std::string const& element_name) {
   return "</" + element_name + ">\n";
 }
-std::string
+inline std::string
 emptyElemEnd() {
   return "/>\n";
 }
@@ -96,7 +96,8 @@ struct Point {
   double x;
   double y;
 };
-optional<Point>
+
+inline optional<Point>
 getMinPoint(std::vector<Point> const& points) {
   if(points.empty())
     return optional<Point>();
@@ -110,7 +111,8 @@ getMinPoint(std::vector<Point> const& points) {
   }
   return optional<Point>(min);
 }
-optional<Point>
+
+inline optional<Point>
 getMaxPoint(std::vector<Point> const& points) {
   if(points.empty())
     return optional<Point>();
@@ -141,7 +143,7 @@ struct Layout {
 };
 
 // Convert coordinates in user space to SVG native space.
-double
+inline double
 translateX(double x, Layout const& layout) {
   if(layout.origin == Layout::BottomRight || layout.origin == Layout::TopRight)
     return layout.dimensions.width - ((x + layout.origin_offset.x) * layout.scale);
@@ -149,14 +151,14 @@ translateX(double x, Layout const& layout) {
     return (layout.origin_offset.x + x) * layout.scale;
 }
 
-double
+inline double
 translateY(double y, Layout const& layout) {
   if(layout.origin == Layout::BottomLeft || layout.origin == Layout::BottomRight)
     return layout.dimensions.height - ((y + layout.origin_offset.y) * layout.scale);
   else
     return (layout.origin_offset.y + y) * layout.scale;
 }
-double
+inline double
 translateScale(double dimension, Layout const& layout) {
   return dimension * layout.scale;
 }

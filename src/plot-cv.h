@@ -12,7 +12,6 @@
 typedef Line<float> line_type;
 typedef std::vector<line_type> line_list;
 typedef std::vector<int> ref_list;
-typedef cv::Scalar color_type;
 typedef cv::Mat image_type;
 
 enum { CANNY = 0, ORIGINAL, GRAYSCALE, OPEN_CLOSE, CORNERS };
