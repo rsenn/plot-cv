@@ -31,6 +31,8 @@
 
 using std::string;
 
+const char* image_names[] =  { "CANNY", "ORIGINAL", "GRAYSCALE", "OPEN_CLOSE" };
+
 typedef Line<float> line_type;
 typedef std::vector<line_type> line_list;
 
@@ -42,6 +44,7 @@ int thresholdValue = 155;
 bool showDiagnostics = false;
 double epsilon = 3;
 const int max_frames = 100000;
+static unsigned int show_image;
 jsrt js;
 
 image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny,
@@ -539,6 +542,14 @@ display_image(image_type* m) {
   image_type alpha = get_alpha_channel(*dptr);
   dptr->copyTo(out);
   cv::bitwise_and(*m, *m, out, alpha);
+int baseLine;
+cv::Size textSize = cv::getTextSize( image_names[show_image], cv::FONT_HERSHEY_PLAIN, 1.5, 2, &baseLine);
+
+cv::Point origin(out.cols - 20 - textSize.width, out.rows - 20 - textSize.height + baseLine);
+
+cv::putText(out, image_names[show_image], origin, cv::FONT_HERSHEY_PLAIN, 1.5,
+ cv::Scalar(0,255,0,255), 2, LINE_AA);
+
   cv::imshow("img", out);
 }
 
@@ -565,9 +576,10 @@ main(int argc, char* argv[]) {
   using std::iterator_traits;
   using std::transform;
 
-  unsigned int show_image = 0, ret;
+  unsigned int ret;
   int32_t newmt, mt = -1;
   JSValue processFn;
+  show_image = 0;
 
   js.init(argc, argv);
 
@@ -1034,8 +1046,11 @@ main(int argc, char* argv[]) {
         auto before = std::chrono::high_resolution_clock::now();
 
         js.call(processFn, 2, args);
-        auto after = std::chrono::high_resolution_clock::now();
 
+        auto after = std::chrono::high_resolution_clock::now();
+        bool do_timing = false;
+
+if(do_timing) {
         std::chrono::duration<double, std::milli> fp_ms = after - before;
         auto int_ms = std::chrono::duration_cast<std::chrono::milliseconds>(after - before);
         std::chrono::duration<long, std::micro> int_usec = int_ms;
@@ -1044,7 +1059,7 @@ main(int argc, char* argv[]) {
                   << "or " << int_ms.count() << " whole milliseconds "
                   << "(which is " << int_usec.count() << " whole microseconds)" << std::endl;
       }
-
+  }
       {
         point2f_vector src = {point2f_type(50, 50),
                               point2f_type(100, 50),
