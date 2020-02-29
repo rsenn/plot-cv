@@ -605,59 +605,18 @@ display_image(image_type& m) {
   cv::imshow("img", out);
 }
 
-template<class T>
+
 JSValue
-vector_to_js(const T& v, size_t n, const std::function<JSValue(const typename T::value_type&)>& fn) {
-  using std::placeholders::_1;
-  JSValue ret = js.create_array(n);
-  for(uint32_t i = 0; i < n; i++) js.set_property(ret, i, fn(v[i]));
-  return ret;
+vec4i_to_js(const cv::Vec4i& v) {
+  return pointer_to_js(js, (const int*)&v[0], (int)4);
 }
 
-template<class T>
-JSValue
-vector_to_js(const T& v, size_t n) {
-  return vector_to_js(v, n, std::bind(&jsrt::create<typename T::value_type>, &js, std::placeholders::_1));
-}
-
-template<class T>
-JSValue
-vector_to_js(const T& v) {
-  return vector_to_js(v, v.size());
-}
-
-template<>
-JSValue
-vector_to_js<cv::Vec4i>(const cv::Vec4i& v) {
-  return vector_to_js(v, 4);
-}
-
-template<class P>
-JSValue
-vector_to_js(const std::vector<P>& v, const std::function<JSValue(const P&)>& fn) {
-  return vector_to_js(v, v.size(), fn);
-}
-
-template<class P>
-JSValue
-vector_to_js(const std::vector<P>& v, JSValue (*fn)(const P&)) {
-  uint32_t i, n = v.size();
-  JSValue ret = js.create_array(n);
-  for(i = 0; i < n; i++) js.set_property(ret, i, fn(v[i]));
-  return ret;
-}
-template<class P>
-JSValue
-vector_to_js(const std::vector<P>& v) {
-  using std::placeholders::_1;
-  return vector_to_js<P>(v, std::bind(&jsrt::create<P>, &js, _1));
-}
 
 template<class P>
 JSValue
 points_to_js(const std::vector<P>& v) {
   std::function<JSValue(const P&)> fn([](const P& point) -> JSValue { return js.create_point(point.x, point.y); });
-  return vector_to_js(v, fn);
+  return vector_to_js(js, v, fn);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1061,8 +1020,8 @@ main(int argc, char* argv[]) {
       vector<point_vector> squares;
 
       {
-        JSValue jscontours = vector_to_js(contours, &points_to_js<cv::Point>);
-        JSValue jshier = vector_to_js(hier, &vector_to_js<cv::Vec4i>);
+        JSValue jscontours = vector_to_js(js, contours, &points_to_js<cv::Point>);
+        JSValue jshier = vector_to_js(js, hier, &vec4i_to_js);
 
         JSValue processFn = js.get_global_property("process");
         std::vector<JSValue> args = {jscontours, jshier};
