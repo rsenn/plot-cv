@@ -259,12 +259,15 @@ jsrt::call(const char* name, size_t argc, const_value* argv) {
 
 jsrt::value
 jsrt::call(const_value func, std::vector<const_value>& args) {
-  return call(func, args.size(), args.data());
+  value ret = call(func, args.size(), args.data());
+   dump_error();
+   return ret;
 }
 
 jsrt::value
 jsrt::call(const_value func, size_t argc, const_value* argv) {
   value ret = JS_Call(ctx, func, global_object(), argc, argv);
+  dump_error();
   return ret;
 }
 

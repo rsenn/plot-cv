@@ -703,10 +703,8 @@ main(int argc, char* argv[]) {
   // JSValue* fn = js.get_function("drawContour");
   jsrt::value glob = js.global_object();
 
-  //ret = js.eval_file("point.js", 1);
- // ret = js.eval_file("line.js", 1);
- // ret = js.eval_file("size.js", 1);
- // ret = js.eval_file("rect.js", 1);
+
+ ret = js.eval_file("lib.js", 1);
   ret = js.eval_file("test.js");
 
   js.add_function("drawContour", &draw_contour, 2);
