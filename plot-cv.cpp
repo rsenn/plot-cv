@@ -707,12 +707,9 @@ main(int argc, char* argv[]) {
 
   js.add_function("drawContour", &draw_contour, 2);
 
-  std::cerr << "property names: " << js.property_names(glob)
-            << std::endl;
+  std::cerr << "property names: " << js.property_names(glob) << std::endl;
   std::cerr << "'global' property names: "
-            << js.property_names(
-                   js.get_property(glob, "global"))
-            << std::endl;
+            << js.property_names(js.get_property(glob, "global")) << std::endl;
 
   JSValue testFn = js.get_property(glob, "test");
   JSValue processFn = js.get_property(glob, "process");
@@ -720,8 +717,7 @@ main(int argc, char* argv[]) {
       js.get_property(js.get_global_object(), "drawContour");
   JSValue jsPoint = js.create_point(150, 100);
 
-  std::cerr << "js.eval_file ret=" << ret
-            << " globalObj=" << js.to_str(glob)
+  std::cerr << "js.eval_file ret=" << ret << " globalObj=" << js.to_str(glob)
             << " testFn=" << js.to_str(testFn)
             << " processFn=" << js.to_str(processFn)
             << " property_names=" << js.property_names(jsPoint, false, true)

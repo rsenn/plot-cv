@@ -6,8 +6,14 @@
 //const { Point } = require('./point.js');
 
 function process(contours, hier) {
-  console.log("PROCESS contours: ", contours.map(c => "[" + c.map(pt => `{x:${pt.x},y:${pt.y}}`).join(", ") + "]").join(", "));
-  console.log("PROCESS hier: ", "[" + hier.map(h => `[${h.join(",")}]`).join(", "));
+  const do_log = false;
+
+  console.log("Num contours:", contours.length);
+  console.log("Num hier:", hier.length);
+  if (do_log) {
+    console.log("PROCESS contours: ", contours.map(c => "[" + c.map(pt => `{x:${pt.x},y:${pt.y}}`).join(", ") + "]").join(", "));
+    console.log("PROCESS hier: ", "[" + hier.map(h => `[${h.join(",")}]`).join(", "));
+  }
 }
 
 function inspect(obj) {
@@ -16,9 +22,9 @@ function inspect(obj) {
     let value = obj[key];
     if (out.length > 0) out += ", ";
     out += key + ": ";
-    out += typeof(value) == 'object' ? inspect(value) : value;
+    out += typeof value == "object" ? inspect(value) : value;
   }
-  return '{ '+out+' }';
+  return "{ " + out + " }";
 }
 
 function test() {

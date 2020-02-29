@@ -49,6 +49,82 @@ jsrt::init(int argc, char* argv[]) {
   return ctx != nullptr;
 }
 
+JSValue*
+jsrt::get_function(const char* name) {
+  auto it = funcmap.find(name);
+  if(it != funcmap.end()) {
+    std::pair<JSCFunction*, JSValue>& val = it->second;
+    return &val.second;
+  }
+  return nullptr;
+}
+
+std::string
+jsrt::to_str(JSValueConst val) {
+  std::string ret;
+  if(JS_IsFunction(ctx, val))
+    ret = "Function";
+  else if(JS_IsNumber(val))
+    ret = "Number";
+  else if(JS_IsBool(val))
+    ret = "Boolean";
+  else if(JS_IsString(val))
+    ret = "String";
+  else if(JS_IsArray(ctx, val))
+    ret = "Array";
+  else if(JS_IsObject(val))
+    ret = "Object";
+  else if(JS_IsSymbol(val))
+    ret = "Symbol";
+  else if(JS_IsException(val))
+    ret = "Exception";
+  else if(JS_IsUninitialized(val))
+    ret = "Uninitialized";
+  else if(JS_IsUndefined(val))
+    ret = "undefined";
+
+  return ret;
+}
+
+JSValue
+jsrt::prototype(JSValueConst obj) const {
+  return JS_GetPrototype(ctx, obj);
+}
+
+std::vector<const char*>
+jsrt::property_names(JSValueConst obj, bool enum_only, bool recursive) const {
+  std::vector<const char*> ret;
+  property_names(obj, ret, enum_only);
+  return ret;
+}
+
+void
+jsrt::property_names(JSValueConst obj,
+                     std::vector<const char*>& out,
+                     bool enum_only,
+                     bool recursive) const {
+  JSPropertyEnum* props;
+  uint32_t nprops;
+  while(JS_IsObject(obj)) {
+    props = nullptr;
+    nprops = 0;
+    JS_GetOwnPropertyNames(ctx,
+                           &props,
+                           &nprops,
+                           obj,
+                           JS_GPN_STRING_MASK | JS_GPN_SYMBOL_MASK |
+                               (enum_only ? JS_GPN_ENUM_ONLY : 0));
+    for(uint32_t i = 0; i < nprops; i++) {
+      const char* s = JS_AtomToCString(ctx, props[i].atom);
+      out.push_back(s);
+    }
+    if(!recursive)
+      break;
+
+    obj = prototype(obj);
+  }
+}
+
 jsrt::global_object::global_object(jsrt& rt) : js(rt) { get(); }
 
 bool
@@ -154,6 +230,13 @@ jsrt::add_function(const char* name, JSCFunction* fn, int args) {
 
   JS_SetPropertyStr(ctx, global, name, function);
   return function;
+}
+
+JSValue
+jsrt::get_global(const char* name) {
+  JSValueConst global = JS_GetGlobalObject(ctx);
+  JSValue ret = JS_GetPropertyStr(ctx, global, name);
+  return ret;
 }
 
 JSValue
