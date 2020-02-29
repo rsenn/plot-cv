@@ -1,15 +1,20 @@
-import lib from "lib.js";
-const { Point, Size, Line, Rect } = lib;
+import { Point } from "point.js";
+import { Size } from "size.js";
+import { Line } from "line.js";
+import { Rect } from "rect.js";
+const lib = { Point, Size, Line, Rect };
 
 global.process = function(contours, hier) {
   const do_log = false;
- console.log("process()");
- // console.log("Num contours:", contours.length);
-//  console.log("Num hier:", hier.length);
-//  if (do_log) {
-//    console.log("PROCESS contours: ", contours.map(c => "[" + c.map(pt => `{x:${pt.x},y:${pt.y}}`).join(", ") + "]").join(", "));
-//    console.log("PROCESS hier: ", "[" + hier.map(h => `[${h.join(",")}]`).join(", "));
-//  }
+  const pt = new Point(contours[0][0]);
+  console.log("process()");
+   console.log("Point:",pt);
+  // console.log("Num contours:", contours.length);
+  //  console.log("Num hier:", hier.length);
+  //  if (do_log) {
+  //    console.log("PROCESS contours: ", contours.map(c => "[" + c.map(pt => `{x:${pt.x},y:${pt.y}}`).join(", ") + "]").join(", "));
+  //    console.log("PROCESS hier: ", "[" + hier.map(h => `[${h.join(",")}]`).join(", "));
+  //  }
 };
 global.inspect = function(obj) {
   return (
@@ -38,7 +43,7 @@ global.inspect = function(obj) {
       .join(", ") +
     "}"
   );
-}
+};
 //function test() {
 //  var classes = { Point_, Line, Size, Rect };
 //  console.log("point:", inspect(Point_));
@@ -66,5 +71,5 @@ global.inspect = function(obj) {
 //  //console.log("drawContour: ", drawContour);
 //}
 //test();
-console.log("classes:", Point, Size, Line, Rect );
+console.log("classes:", Point, Size, Line, Rect);
 //console.log("lib:", inspect(lib));
