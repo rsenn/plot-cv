@@ -9,8 +9,9 @@
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_sdl.h"
 
+#include <GL/gl.h>
 #include <GL/gl3w.h>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 using namespace std;
 
