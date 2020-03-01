@@ -1104,14 +1104,16 @@ main(int argc, char* argv[]) {
 
         JSValue val = js.get_global("test_array");
 
-        jsiter start = js.begin(val);
-        jsiter end = js.end(val);
+        std::vector<int32_t> num_vec;
 
-        std::for_each(start, end, [&](const JSValue& val) {
+        std::transform(js.begin(val), js.end(val), std::back_inserter(num_vec), [&](const JSValue& val) -> int32_t {
           int32_t num;
           js.get_number(val, num);
           std::cerr << "array member <" << js.typestr(val) << ">: " << num << std::endl;
+          return num;
         });
+
+          std::cerr << "array object <" << js.typestr(val) << ">: " << num_vec.size()<< " " /*<< to_string(num_vec)*/ << std::endl;
 
         auto after = std::chrono::high_resolution_clock::now();
         bool do_timing = false;
