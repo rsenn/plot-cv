@@ -10,6 +10,7 @@
 #include <string>
 #include <cstring>
 #include <iostream>
+
 struct jsiter;
 
 struct jsrt {
@@ -140,6 +141,11 @@ struct jsrt {
     return "unknown";
   }
 
+  std::string
+  to_string(const JSValueConst& arg) const {
+    return JS_ToCString(ctx, arg);
+  }
+
 protected:
   struct global {
     global(jsrt& js);
@@ -175,6 +181,12 @@ public:
   int32_t get_length(const const_value& v) const;
   jsiter begin(JSValue& v);
   jsiter end(JSValue& v);
+
+private:
+  friend class jsiter;
+
+  std::function<JSValue(JSValue, uint32_t)> index() const;
+  std::function<JSValue(uint32_t)> index(const JSValueConst&) const;
 };
 
 template<>
@@ -529,9 +541,9 @@ struct jsiter {
 
   JSValue operator*() const {
     if(p < n)
-      return r.get_property(a, (uint32_t)p);
+      return i((uint32_t)p);
     else
-      return r._undefined;
+      return JS_UNDEFINED;
   }
 
   jsiter
@@ -551,7 +563,7 @@ struct jsiter {
 
   bool
   operator==(const jsiter& o) const {
-    return &a == &o.a && p == o.p && n == o.n;
+    return p == o.p && n == o.n;
   }
   bool
   operator<(const jsiter& o) const {
@@ -575,16 +587,15 @@ struct jsiter {
   }
 
 protected:
-  jsrt& r;
-  const JSValue& a;
+  std::function<JSValue(uint32_t)> i;
   uint32_t n;
   int32_t p;
 
 private:
   friend class jsrt;
 
-  jsiter(jsrt& js, const JSValue& arr, size_t len) : r(js), a(arr), n(len), p(0) {}
-  jsiter(jsrt& js, const JSValue& arr, size_t len, size_t pos) : r(js), a(arr), n(len), p(pos) {}
+  jsiter(jsrt& js, const JSValue& arr, size_t len) : i(js.index(arr)), n(len), p(0) {}
+  jsiter(jsrt& js, const JSValue& arr, size_t len, size_t pos) : i(js.index(arr)), n(len), p(pos) {}
 };
 
 inline int32_t
@@ -607,6 +618,18 @@ inline jsiter
 jsrt::end(JSValue& v) {
   uint32_t n = get_length(v);
   return jsiter(*this, v, n, n);
+}
+
+inline std::function<JSValue(JSValue, uint32_t)>
+jsrt::index() const {
+  return std::bind(&jsrt::get_property<uint32_t>,
+                   this,
+                   std::placeholders::_1,
+                   std::placeholders::_2);
+}
+inline std::function<JSValue(uint32_t)>
+jsrt::index(const JSValue& a) const {
+  return std::bind(&jsrt::get_property<uint32_t>, this, a, std::placeholders::_1);
 }
 
 #endif // defined JS_H

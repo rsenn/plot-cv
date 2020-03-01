@@ -1102,18 +1102,24 @@ main(int argc, char* argv[]) {
 
         js.call(processFn, 2, args);
 
-        JSValue val = js.get_global("test_array");
+        JSValue test_arr = js.get_global("test_array");
 
         std::vector<int32_t> num_vec;
 
-        std::transform(js.begin(val), js.end(val), std::back_inserter(num_vec), [&](const JSValue& val) -> int32_t {
-          int32_t num;
-          js.get_number(val, num);
-          std::cerr << "array member <" << js.typestr(val) << ">: " << num << std::endl;
-          return num;
-        });
+        std::transform(js.begin(test_arr),
+                       js.end(test_arr),
+                       std::back_inserter(num_vec),
+                       [&](const JSValue& test_arr) -> int32_t {
+                         int32_t num;
+                         js.get_number(test_arr, num);
+                         std::cerr << "array member <" << js.typestr(test_arr) << ">: " << num
+                                   << std::endl;
+                         return num;
+                       });
 
-          std::cerr << "array object <" << js.typestr(val) << ">: " << num_vec.size()<< " " /*<< to_string(num_vec)*/ << std::endl;
+        std::string str = js.to_string(test_arr);
+
+        std::cerr << "array object <" << js.typestr(test_arr) << ">: " << str << std::endl;
 
         auto after = std::chrono::high_resolution_clock::now();
         bool do_timing = false;
