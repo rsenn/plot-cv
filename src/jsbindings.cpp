@@ -279,7 +279,7 @@ js_point_norm(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
 
 JSValue
 js_point_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSPointData * s = static_cast<JSPointData*>(JS_GetOpaque2(ctx, this_val, js_point_class_id));
+  JSPointData* s = static_cast<JSPointData*>(JS_GetOpaque2(ctx, this_val, js_point_class_id));
   std::ostringstream os;
   if(!s)
     return JS_EXCEPTION;

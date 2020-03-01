@@ -628,8 +628,8 @@ main(int argc, char* argv[]) {
     int ret = -1;
     newmt = get_mtime("js/test.js");
 
-    /*    std::cerr << "test.js mtime new=" << newmt << " old=" << mt
-                  << " diff=" << (newmt - mt) << std::endl; */
+    /* std::cerr << "test.js mtime new=" << newmt << " old=" << mt
+       << " diff=" << (newmt - mt) << std::endl; */
     if(newmt > mt) {
       mt = newmt;
       if(show_diagnostics)

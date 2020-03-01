@@ -85,7 +85,6 @@ struct jsrt {
 
   std::string function_name(const_value fn) const;
 
-
   value get_global(const char* name);
   value
   global_object() {
@@ -437,13 +436,10 @@ jsrt::has_prototype(jsrt::const_value obj) const {
   return !is_undefined(get_prototype(obj));
 }
 
-
 inline std::string
 jsrt::function_name(jsrt::const_value fn) const {
-return to_string(get_property(fn, "name"));
+  return to_string(get_property(fn, "name"));
 }
-
-
 
 template<>
 inline void
