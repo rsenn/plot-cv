@@ -32,9 +32,8 @@ struct jsrt {
   value add_function(const char* name, JSCFunction* fn, int args = 0);
 
   template<class T> void get_number(const_value val, T& ref) const;
-  template<class T>
-  void
-  get_string(const_value val, T& str) const {}
+ void get_string(const_value val, std::string& str) const;
+ void get_string(const_value val, const char*& cstr) const;
 
   template<class T> void get_int_array(const_value val, T& ref) const;
   template<class T> void get_point(const_value val, T& ref) const;
@@ -142,8 +141,10 @@ struct jsrt {
   }
 
   std::string
-  to_string(const JSValueConst& arg) const {
-    return JS_ToCString(ctx, arg);
+  to_string(const_value arg) const {
+    std::string ret;
+    get_string(arg, ret);
+    return ret;
   }
 
 protected:
@@ -189,17 +190,15 @@ private:
   std::function<JSValue(uint32_t)> index(const JSValueConst&) const;
 };
 
-template<>
 inline void
-jsrt::get_string<std::string>(const_value val, std::string& str) const {
+jsrt::get_string(const_value val, std::string& str) const {
   const char* s = JS_ToCString(ctx, val);
   str = std::string(s);
   JS_FreeCString(ctx, s);
 }
 
-template<>
 inline void
-jsrt::get_string<const char*>(const_value val, const char*& str) const {
+jsrt::get_string(const_value val, const char*& str) const {
   const char* s = JS_ToCString(ctx, val);
   str = strdup(s);
   JS_FreeCString(ctx, s);
