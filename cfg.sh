@@ -1,7 +1,7 @@
 cfg() {
   : ${build:=`gcc -dumpmachine`}
 
-  if false && [ -z "$host" ]; then
+  if [ -z "$builddir" ]; then
     host=$build
     case "$host" in
       x86_64-w64-mingw32) host="$host" builddir=build/$host prefix=/mingw64 ;;
