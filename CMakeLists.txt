@@ -99,63 +99,8 @@ file(GLOB PLOT_CV_SOURCES src/color.cpp src/color.h src/data.cpp src/data.h src/
 add_executable(plot-cv src/plot-cv.cpp ${PLOT_CV_SOURCES})
 target_link_libraries(plot-cv ${OpenCV_LIBS} quickjs-static ${ELECTRICFENCE_LIBRARY})
 
-pkg_check_modules(GLFW3 glfw3)
-pkg_check_modules(SDL sdl)
 
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/imgui ${CMAKE_CURRENT_SOURCE_DIR}/imgui/examples
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/examples/libs/gl3w/)
-file(GLOB IMGUI_VIEWER_SOURCES src/color.cpp src/color.h src/data.cpp src/data.h src/geometry.cpp src/geometry.h src/imgui-viewer.cpp src/js.cpp src/js.h src/jsbindings.cpp src/jsbindings.h src/line.cpp src/line.h src/matrix.cpp src/matrix.h src/imgui-viewer.h src/polygon.cpp src/polygon.h src/psimpl.h src/simple_svg_1.0.0.hpp src/simple_svg_writer.h)
-
-
-#[[add_executable(imgui-viewer ${IMGUI_VIEWER_SOURCES})]]
-
-#[[
-# Main
-add_executable(imgui-viewer
-  src/imgui-viewer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_draw.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_widgets.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/examples/imgui_impl_sdl.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/examples/imgui_impl_opengl3.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/examples/libs/gl3w/GL/gl3w.c
-)
-
-# include: OpenCV
-find_package(OpenCV REQUIRED)
-if(OpenCV_FOUND)
-    target_include_directories(imgui-viewer PUBLIC ${OpenCV_INCLUDE_DIRS})
-    target_link_libraries(imgui-viewer ${OpenCV_LIBS})
-endif()
-
-# include: SDL
-find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS})
-
-# include: ImGui(symbolic linked)
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/
-    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/examples
-    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/examples/libs/gl3w
-)
-
-# link
-target_link_libraries(imgui-viewer
-    ${SDL2_LIBRARIES}
-#    "-framework OpenGL"
-#    "-framework Cocoa"
-#    "-framework IOKit"
-#    "-framework CoreVideo"
-    dl
-    GL
-)
-
-target_link_libraries(imgui-viewer ${OpenCV_LIBS} quickjs-static ${ELECTRICFENCE_LIBRARY} ${pkgcfg_lib_GLFW3_glfw}
-${pkgcfg_lib_SDL_SDL})
-]]
 include(imgui-viewer.cmake)
-
 
 
 
