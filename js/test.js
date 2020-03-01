@@ -57,13 +57,13 @@ global.process = function(contours, hier) {
   polygons.push(polygons[0].sum({ x: 320, y: 0 }));
   polygons.push(polygons[0].sum({ x: 320, y: 240 }));
   polygons.push(polygons[0].sum({ x: 0, y: 240 }));
-/*
+  /*
   drawPolygon(polygons[0], new RGBA(255, 255, 0), 3);
   drawPolygon(polygons[1], new RGBA(0, 255, 0), 3);
   drawPolygon(polygons[2], new RGBA(0, 0, 255), 3);
   drawPolygon(polygons[3], new RGBA(255, 0, 255), 3);
 */
-/*  drawCircle(new Point(300, 150), 110, new RGBA(1, 1, 1), -1);
+  /*  drawCircle(new Point(300, 150), 110, new RGBA(1, 1, 1), -1);
   drawCircle(new Point(300, 150), 100, new RGBA(255, 255, 0), -1);
 */
   const do_log = false;
