@@ -56,7 +56,8 @@ struct config_values {
 image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny,
     imgMorphology; // Canny edge image
 
-image_type *mptr = nullptr;;
+image_type* mptr = nullptr;
+;
 extern "C" cv::Mat* dptr;
 
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);

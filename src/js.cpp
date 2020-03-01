@@ -10,7 +10,6 @@ extern "C" {
 
 jsrt js;
 
-
 static JSValue
 js_print(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   int i;
