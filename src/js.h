@@ -72,9 +72,7 @@ struct jsrt {
   template<class T>
   void
   set_property(const_value obj, T prop, value val) {}
-  /*  void set_property(const_value obj, const char* name, value val);
-    void set_property(const_value obj, uint32_t index, value val);
-  */
+
   value get_global(const char* name);
   value
   global_object() {
@@ -530,7 +528,13 @@ jsrt::is_boolean(const_value val) const {
 
 inline bool
 jsrt::is_array_like(const_value val) const {
-  return is_array(val) || has_property(val, "length");
+  if(is_array(val)) return true;
+
+  if(has_property(val, "length")) {
+    if(is_number(get_property(val, "length")))
+      return true;
+  }
+  return false;
 }
 
 /**
