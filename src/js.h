@@ -147,6 +147,7 @@ private:
   std::unordered_map<const char*, std::pair<JSCFunction*, value>> funcmap;
 
 public:
+  int32_t get_length(const const_value& v) const;
   jsiter begin(JSValue& v);
   jsiter end(JSValue& v);
 };
@@ -496,75 +497,91 @@ jsrt::is_array_like(const_value val) const {
   return is_array(val) || has_property(val, "length");
 }
 
+/**
+ * Array iterator
+ */
 struct jsiter {
-  jsiter(jsrt& js, const JSValue& a, size_t n) : rt(js), arr(a), len(n), pos(0) {}
-  jsiter(jsrt& js, const JSValue& a, size_t n, size_t pos) : rt(js), arr(a), len(n), pos(pos) {}
 
-  JSValue operator*() {
-    if(pos < len)
-      return rt.get_property(arr, (uint32_t)pos);
+  JSValue operator*() const {
+    if(p < n)
+      return r.get_property(a, (uint32_t)p);
     else
-      return rt._undefined;
+      return r._undefined;
   }
 
   jsiter
   operator++() {
     jsiter ret = *this;
-    if(pos < len)
-      pos++;
+    if(p < n)
+      p++;
     return ret;
   }
 
   jsiter&
   operator++(int) {
-    if(pos < len)
-      ++pos;
+    if(p < n)
+      ++p;
     return *this;
   }
 
   bool
-  operator==(const jsiter& other) const {
-    return &arr == &other.arr && pos == other.pos && len == other.len;
+  operator==(const jsiter& o) const {
+    return &a == &o.a && p == o.p && n == o.n;
   }
   bool
-  operator<(const jsiter& other) const {
-    return pos < other.pos;
+  operator<(const jsiter& o) const {
+    return p < o.p;
   }
   bool
-  operator>(const jsiter& other) const {
-    return pos > other.pos;
+  operator>(const jsiter& o) const {
+    return p > o.p;
   }
   bool
-  operator<=(const jsiter& other) const {
-    return !(*this > other);
+  operator<=(const jsiter& o) const {
+    return !(*this > o);
   }
   bool
-  operator>=(const jsiter& other) const {
-    return !(*this < other);
+  operator>=(const jsiter& o) const {
+    return !(*this < o);
   }
   bool
-  operator!=(const jsiter& other) const {
-    return !(*this == other);
+  operator!=(const jsiter& o) const {
+    return !(*this == o);
   }
 
+protected:
+  jsrt& r;
+  const JSValue& a;
+  uint32_t n;
+  int32_t p;
+
 private:
-  jsrt& rt;
-  const JSValue& arr;
-  uint32_t len;
-  int32_t pos;
+  friend class jsrt;
+
+  jsiter(jsrt& js, const JSValue& arr, size_t len) : r(js), a(arr), n(len), p(0) {}
+  jsiter(jsrt& js, const JSValue& arr, size_t len, size_t pos) : r(js), a(arr), n(len), p(pos) {}
 };
+
+inline int32_t
+jsrt::get_length(const jsrt::const_value& a) const {
+  uint32_t length;
+  JSValue v = get_property(a, "length");
+  if(is_undefined(v))
+    return -1;
+  get_number(v, length);
+  return length;
+}
 
 inline jsiter
 jsrt::begin(JSValue& v) {
-  uint32_t length;
-  get_number(get_property(v, "length"), length);
-  return jsiter(*this, v, length, 0);
+  uint32_t n = get_length(v);
+  return jsiter(*this, v, n, 0);
 }
+
 inline jsiter
 jsrt::end(JSValue& v) {
-  uint32_t length;
-  get_number(get_property(v, "length"), length);
-  return jsiter(*this, v, length, length);
+  uint32_t n = get_length(v);
+  return jsiter(*this, v, n, n);
 }
 
 #endif // defined JS_H
