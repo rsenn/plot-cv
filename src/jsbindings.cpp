@@ -277,6 +277,18 @@ js_point_norm(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
   return JS_NewFloat64(ctx, sqrt((double)s->x * s->x + (double)s->y * s->y));
 }
 
+JSValue
+js_point_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSPointData * s = static_cast<JSPointData*>(JS_GetOpaque2(ctx, this_val, js_point_class_id));
+  std::ostringstream os;
+  if(!s)
+    return JS_EXCEPTION;
+
+  os << "{x:" << s->x << ",y:" << s->y << "}" << std::endl;
+
+  return JS_NewString(ctx, os.str().c_str());
+}
+
 JSClassDef js_point_class = {
     "Point",
     .finalizer = js_point_finalizer,
@@ -286,6 +298,7 @@ const JSCFunctionListEntry js_point_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("x", js_point_get_xy, js_point_set_xy, 0),
     JS_CGETSET_MAGIC_DEF("y", js_point_get_xy, js_point_set_xy, 1),
     JS_CFUNC_DEF("norm", 0, js_point_norm),
+    JS_CFUNC_DEF("toString", 0, js_point_to_string),
 };
 
 int

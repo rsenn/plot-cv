@@ -26,6 +26,9 @@ js_print(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   return JS_UNDEFINED;
 }
 
+struct JSProperty;
+struct JSShapeProperty;
+
 bool
 jsrt::init(int argc, char* argv[]) {
   int load_std = 0;

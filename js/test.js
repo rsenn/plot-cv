@@ -75,12 +75,16 @@ global.process = function(contours, hier) {
     console.log("PROCESS hier: ", "[" + hier.map(h => `[${h.join(",")}]`).join(", "));
   }
 };
-
+var ctor = Point_.prototype.constructor;
 console.log("Classes: ", inspect(lib));
 console.log("Point_: ", inspect(Point_));
+console.log("typeof(Point_.prototype.constructor): ", typeof(Point_.prototype.constructor) == 'function');
 console.log("typeof(Point_): ", typeof Point_);
-console.log("Point_.prototype: ", Point_.prototype);
+console.log("ctor.name: ", ctor.name);
+/*console.log("Point_.prototype: ", Point_.prototype);
 console.log("Point_.prototype.constructor: ", Point_.prototype.constructor);
-
+*/
 let points = [new Point_(0, 0), new Point_(50, 0), new Point_(100, 0), new Point_(100, 50), new Point_(100, 100), new Point_(100, 200)];
+console.log("points[0]: ", points[0]);
+console.log("points[last]: ", points[points.length -1 ]);
 console.log("points: ", points.map(p => `{x:${p.x},y:${p.y}}`).join(", "));
