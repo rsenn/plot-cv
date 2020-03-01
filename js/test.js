@@ -77,3 +77,7 @@ global.process = function(contours, hier) {
 };
 
 console.log("Classes: ", inspect(lib));
+console.log("Point_: ", inspect(Point_));
+console.log("typeof(Point_): ", typeof(Point_));
+console.log("Point_.prototype: ", Point_.prototype);
+console.log("Point_.prototype.constructor: ", Point_.prototype.constructor);

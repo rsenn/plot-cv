@@ -3,6 +3,9 @@
 #define JS_H
 
 #include "quickjs/quickjs.h"
+extern "C" {
+#include "quickjs/quickjs-atom.h"
+}
 #include <unordered_map>
 #include <vector>
 #include <type_traits>
@@ -10,6 +13,7 @@
 #include <string>
 #include <cstring>
 #include <iostream>
+#include <iterator>
 
 struct jsiter;
 
@@ -72,6 +76,10 @@ struct jsrt {
   template<class T>
   void
   set_property(const_value obj, T prop, value val) {}
+
+  value get_constructor(const_value obj) const;
+
+  bool has_constructor(const_value obj) const;
 
   value get_global(const char* name);
   value
@@ -166,10 +174,12 @@ protected:
   value get_null() const;
   value get_true() const;
   value get_false() const;
+  
+public:
+  JSContext* ctx;
 
 private:
   JSRuntime* rt;
-  JSContext* ctx;
   static char* normalize_module(JSContext* ctx,
                                 const char* module_base_name,
                                 const char* module_name,
@@ -402,6 +412,16 @@ jsrt::get_property<const char*>(const_value obj, const char* name) const {
   return JS_GetPropertyStr(ctx, obj, name);
 }
 
+inline jsrt::value
+jsrt::get_constructor(jsrt::const_value obj) const {
+  return get_property(obj, "constructor");
+}
+
+inline bool
+jsrt::has_constructor(jsrt::const_value obj) const {
+  return !is_undefined(get_constructor(obj));
+}
+
 template<>
 inline void
 jsrt::set_property<const char*>(const_value obj, const char* name, value val) {
@@ -528,7 +548,8 @@ jsrt::is_boolean(const_value val) const {
 
 inline bool
 jsrt::is_array_like(const_value val) const {
-  if(is_array(val)) return true;
+  if(is_array(val))
+    return true;
 
   if(has_property(val, "length")) {
     if(is_number(get_property(val, "length")))
@@ -585,6 +606,21 @@ struct jsiter {
     return !(*this == o);
   }
 
+  ptrdiff_t
+  operator-(const jsiter& o) const {
+    return p - o.p;
+  }
+
+  jsiter
+  operator-(size_t o) const {
+    return jsiter(i, n, p - o);
+  }
+
+  jsiter
+  operator+(size_t o) const {
+    return jsiter(i, n, p + o);
+  }
+
 protected:
   std::function<JSValue(uint32_t)> i;
   uint32_t n;
@@ -593,6 +629,8 @@ protected:
 private:
   friend class jsrt;
 
+  jsiter(std::function<JSValue(uint32_t)> index, size_t len, size_t pos)
+      : i(index), n(len), p(pos) {}
   jsiter(jsrt& js, const JSValue& arr, size_t len) : i(js.index(arr)), n(len), p(0) {}
   jsiter(jsrt& js, const JSValue& arr, size_t len, size_t pos) : i(js.index(arr)), n(len), p(pos) {}
 };

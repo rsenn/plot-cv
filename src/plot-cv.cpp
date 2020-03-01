@@ -616,6 +616,9 @@ main(int argc, char* argv[]) {
   JSValue* fn = js.get_function("drawContour");
   jsrt::value glob = js.global_object();
 
+    js_point_init(js.ctx, &glob, "Point_", false);
+
+
   // ret = js.eval_file("lib.js", 1);
 
   auto check_eval = [&newmt, &mt, &processFn, &glob]() -> int {
@@ -642,6 +645,7 @@ main(int argc, char* argv[]) {
   js.add_function("drawRect", &js_draw_rect, 2);
   js.add_function("drawPolygon", &js_draw_polygon, 2);
   js.add_function("drawCircle", &js_draw_circle, 2);
+
   /*
     std::cerr << "property names: " << js.property_names(glob) << std::endl;
     std::cerr << "'console' property names: " << js.property_names(js.get_property(glob, "console"))
@@ -1112,14 +1116,13 @@ main(int argc, char* argv[]) {
                        [&](const JSValue& test_arr) -> int32_t {
                          int32_t num;
                          js.get_number(test_arr, num);
-                         std::cerr << "array member <" << js.typestr(test_arr) << ">: " << num
-                                   << std::endl;
+                       //  std::cerr << "array member <" << js.typestr(test_arr) << ">: " << num << std::endl;
                          return num;
                        });
 
         std::string str = js.to_string(test_arr);
 
-        std::cerr << "array object <" << js.typestr(test_arr) << ">: " << str << std::endl;
+     //   std::cerr << "array object <" << js.typestr(test_arr) << ">: " << str << std::endl;
 
         auto after = std::chrono::high_resolution_clock::now();
         bool do_timing = false;
