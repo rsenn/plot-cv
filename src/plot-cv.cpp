@@ -612,14 +612,10 @@ main(int argc, char* argv[]) {
   show_image = 0;
 
   js.init(argc, argv);
-
   JSValue* fn = js.get_function("drawContour");
   jsrt::value glob = js.global_object();
-
   js_point_init(js.ctx, &glob, "Point_", false);
-
   jsrt::value ctor = js.get_global("Point_");
-
   std::cerr << "function_name: " << js.function_name(ctor) << std::endl;
 
   // ret = js.eval_file("lib.js", 1);
@@ -671,13 +667,10 @@ main(int argc, char* argv[]) {
   int count = 0;
 
   string filename;
-
   if(camID == -1 && argc > 1)
     filename = argv[1];
-
   cv::VideoCapture capWebcam(camID);
   image_type imgInput;
-
   if(camID >= 0) {
     // capWebcam.open((int)camID, (int)cv::CAP_V4L2); // declare a VideoCapture
     // object and associate to webcam, 0 => use 1st webcam

@@ -39,6 +39,21 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
+
+check_c_compiler_flag("-flto" F_LTO)
+
+if(F_LTO)
+  option(ENABLE_LTO "Enable link-time optimization" OFF)
+
+endif(F_LTO)
+
+if(ENABLE_LTO)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -flto")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
+endif(ENABLE_LTO)
+
+
+
 if(HAVE_EFENCE)
   if(USE_EFENCE)
     set(ELECTRICFENCE_LIBRARY efence)
