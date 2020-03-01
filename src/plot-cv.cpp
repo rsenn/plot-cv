@@ -1102,6 +1102,17 @@ main(int argc, char* argv[]) {
 
         js.call(processFn, 2, args);
 
+        JSValue val = js.get_global("test_array");
+
+        jsiter start = js.begin(val);
+        jsiter end = js.end(val);
+
+        std::for_each(start, end, [&](const JSValue& val) {
+          int32_t num;
+          js.get_number(val, num);
+          std::cerr << "array member <" << js.typestr(val) << ">: " << num << std::endl;
+        });
+
         auto after = std::chrono::high_resolution_clock::now();
         bool do_timing = false;
 

@@ -9,7 +9,7 @@ import { Matrix } from "./matrix.js";
 import inspect from "./inspect.js";
 
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };
-
+global.test_array = [1,2,3,4,5,6];
 global.process = function(contours, hier) {
   var areas = [];
 

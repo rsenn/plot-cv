@@ -174,7 +174,7 @@ jsrt::is_rect(const_value val) const {
 }
 
 bool
-jsrt::is_color(const_value val) {
+jsrt::is_color(const_value val) const {
   JSValue b = _undefined, g = _undefined, r = _undefined, a = _undefined;
 
   if(is_array_like(val)) {
@@ -185,7 +185,8 @@ jsrt::is_color(const_value val) {
       b = get_property<uint32_t>(val, 0);
       g = get_property<uint32_t>(val, 1);
       r = get_property<uint32_t>(val, 2);
-      a = length > 3 ? get_property<uint32_t>(val, 3) : create<int32_t>(255);
+      a = length > 3 ? get_property<uint32_t>(val, 3)
+                     : const_cast<jsrt*>(this)->create<int32_t>(255);
     } else {
       return false;
     }

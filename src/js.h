@@ -112,8 +112,33 @@ struct jsrt {
   bool is_boolean(const_value val) const;
   bool is_point(const_value val) const;
   bool is_rect(const_value val) const;
-  bool is_color(const_value val);
+  bool is_color(const_value val) const;
   bool is_array_like(const_value val) const;
+
+  int
+  tag(const_value val) const {
+    return JS_VALUE_GET_TAG(val);
+  }
+  std::string
+  typestr(const_value val) const {
+    if(is_number(val))
+      return "number";
+    else if(is_undefined(val))
+      return "undefined";
+    else if(is_array(val))
+      return "array";
+    else if(is_object(val))
+      return "object";
+    else if(is_boolean(val))
+      return "boolean";
+    else if(is_point(val))
+      return "point";
+    else if(is_rect(val))
+      return "rect";
+    else if(is_color(val))
+      return "color";
+    return "unknown";
+  }
 
 protected:
   struct global {
