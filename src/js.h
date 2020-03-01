@@ -174,7 +174,7 @@ protected:
   value get_null() const;
   value get_true() const;
   value get_false() const;
-  
+
 public:
   JSContext* ctx;
 

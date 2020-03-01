@@ -15,7 +15,6 @@ JSValue js_point_get_xy(JSContext*, JSValueConst this_val, int magic);
 JSValue js_point_set_xy(JSContext*, JSValueConst this_val, JSValue val, int magic);
 JSValue js_point_norm(JSContext*, JSValueConst this_val, int argc, JSValueConst* argv);
 int js_point_init(JSContext*, void* m, const char* name, bool exp = true);
-
 };
 
 #endif

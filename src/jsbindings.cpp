@@ -249,18 +249,18 @@ js_point_get_xy(JSContext* ctx, JSValueConst this_val, int magic) {
   if(!s)
     return JS_EXCEPTION;
   if(magic == 0)
-    return JS_NewInt32(ctx, s->x);
+    return JS_NewFloat64(ctx, s->x);
   else
-    return JS_NewInt32(ctx, s->y);
+    return JS_NewFloat64(ctx, s->y);
 }
 
 JSValue
 js_point_set_xy(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
   JSPointData* s = static_cast<JSPointData*>(JS_GetOpaque2(ctx, this_val, js_point_class_id));
-  int v;
+  double v;
   if(!s)
     return JS_EXCEPTION;
-  if(JS_ToInt32(ctx, &v, val))
+  if(JS_ToFloat64(ctx, &v, val))
     return JS_EXCEPTION;
   if(magic == 0)
     s->x = v;

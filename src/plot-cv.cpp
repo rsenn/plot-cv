@@ -616,8 +616,7 @@ main(int argc, char* argv[]) {
   JSValue* fn = js.get_function("drawContour");
   jsrt::value glob = js.global_object();
 
-    js_point_init(js.ctx, &glob, "Point_", false);
-
+  js_point_init(js.ctx, &glob, "Point_", false);
 
   // ret = js.eval_file("lib.js", 1);
 
@@ -1116,13 +1115,14 @@ main(int argc, char* argv[]) {
                        [&](const JSValue& test_arr) -> int32_t {
                          int32_t num;
                          js.get_number(test_arr, num);
-                       //  std::cerr << "array member <" << js.typestr(test_arr) << ">: " << num << std::endl;
+                         //  std::cerr << "array member <" << js.typestr(test_arr) << ">: " << num
+                         //  << std::endl;
                          return num;
                        });
 
         std::string str = js.to_string(test_arr);
 
-     //   std::cerr << "array object <" << js.typestr(test_arr) << ">: " << str << std::endl;
+        //   std::cerr << "array object <" << js.typestr(test_arr) << ">: " << str << std::endl;
 
         auto after = std::chrono::high_resolution_clock::now();
         bool do_timing = false;

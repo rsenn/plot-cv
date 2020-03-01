@@ -9,7 +9,7 @@ import { Matrix } from "./matrix.js";
 import inspect from "./inspect.js";
 
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };
-global.test_array = [1,2,3,4,5,6];
+global.test_array = [1, 2, 3, 4, 5, 6];
 global.process = function(contours, hier) {
   var areas = [];
 
@@ -78,6 +78,9 @@ global.process = function(contours, hier) {
 
 console.log("Classes: ", inspect(lib));
 console.log("Point_: ", inspect(Point_));
-console.log("typeof(Point_): ", typeof(Point_));
+console.log("typeof(Point_): ", typeof Point_);
 console.log("Point_.prototype: ", Point_.prototype);
 console.log("Point_.prototype.constructor: ", Point_.prototype.constructor);
+
+let points = [new Point_(0, 0), new Point_(50, 0), new Point_(100, 0), new Point_(100, 50), new Point_(100, 100), new Point_(100, 200)];
+console.log("points: ", points.map(p => `{x:${p.x},y:${p.y}}`).join(", "));
