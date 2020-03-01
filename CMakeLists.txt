@@ -40,12 +40,12 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 
-check_c_compiler_flag("-flto" F_LTO)
+check_c_compiler_flag("-flto" HAS_F_LTO_FLAG)
 
-if(F_LTO)
+if(HAS_F_LTO_FLAG)
   option(ENABLE_LTO "Enable link-time optimization" OFF)
 
-endif(F_LTO)
+endif(HAS_F_LTO_FLAG)
 
 if(ENABLE_LTO)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -flto")
@@ -94,9 +94,14 @@ set(BUILD_SHARED_LIBS OFF)
 
 add_subdirectory(quickjs)
 
-file(GLOB SOURCES src/*.h src/*.cpp src/*.hpp src/*.c)
-add_executable(plot-cv ${SOURCES})
+file(GLOB PLOT_CV_SOURCES src/color.cpp src/color.h src/data.cpp src/data.h src/geometry.cpp src/geometry.h src/js.cpp src/js.h src/jsbindings.cpp src/jsbindings.h src/line.cpp src/line.h src/matrix.cpp src/matrix.h src/plot-cv.cpp src/plot-cv.h src/polygon.cpp src/polygon.h src/psimpl.h src/simple_svg_1.0.0.hpp src/simple_svg_writer.h)
+add_executable(plot-cv ${PLOT_CV_SOURCES})
 target_link_libraries(plot-cv ${OpenCV_LIBS} quickjs-static ${ELECTRICFENCE_LIBRARY})
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/imgui)
+file(GLOB IMGUI_VIEWER_SOURCES src/color.cpp src/color.h src/data.cpp src/data.h src/geometry.cpp src/geometry.h src/imgui-viewer.cpp src/js.cpp src/js.h src/jsbindings.cpp src/jsbindings.h src/line.cpp src/line.h src/matrix.cpp src/matrix.h src/imgui-viewer.h src/polygon.cpp src/polygon.h src/psimpl.h src/simple_svg_1.0.0.hpp src/simple_svg_writer.h)
+add_executable(imgui-viewer ${IMGUI_VIEWER_SOURCES})
+target_link_libraries(imgui-viewer ${OpenCV_LIBS} quickjs-static ${ELECTRICFENCE_LIBRARY})
 
 
 

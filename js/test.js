@@ -13,6 +13,9 @@ global.test_array = [1, 2, 3, 4, 5, 6];
 global.process = function(contours, hier) {
   var areas = [];
 
+  console.log("contours: ", global.contours[global.contours.length - 1]);
+  console.log("hier: ", global.hier[global.contours.length - 1]);
+
   function dumpContour(c) {
     console.log(`contour #${c.id} length=${(c.length + "").padStart(5, " ")} bbox=`, c.bbox, " rect:", c.rect, " area=", c.area);
   }

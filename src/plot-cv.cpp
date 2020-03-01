@@ -46,6 +46,14 @@ const int max_frames = 100000;
 static int show_image;
 jsrt js;
 
+struct config_values {
+  int morphology_kernel_size;
+  int blur_kernel_size;
+} config = {
+    .morphology_kernel_size = 2,
+    .blur_kernel_size = 2,
+};
+
 image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny,
     imgMorphology; // Canny edge image
 
@@ -606,6 +614,8 @@ main(int argc, char* argv[]) {
   using std::iterator_traits;
   using std::transform;
 
+  std::map<const char*, const char*> props = {{"name", "test"}, {"length", "4"}};
+
   unsigned int ret;
   int32_t newmt, mt = -1;
   JSValue processFn;
@@ -695,10 +705,22 @@ main(int argc, char* argv[]) {
 
   cv::namedWindow("img", CV_WINDOW_AUTOSIZE);
 
-  //  cv::namedWindow("config", CV_WINDOW_NORMAL);
-  cv::createTrackbar("epsilon", "contours", &eps, 7, trackbar, (void*)"eps");
-  cv::createTrackbar("blur", "contours", &blur, 7, trackbar, (void*)"blur");
-  cv::createTrackbar("Image", "Index", &show_image, 4, trackbar, (void*)"Image Index");
+  // cv::namedWindow("config", CV_WINDOW_AUTOSIZE);
+  cv::createTrackbar("epsilon", "img", &eps, 7, trackbar, (void*)"eps");
+  cv::createTrackbar("blur", "img", &blur, 7, trackbar, (void*)"blur");
+  cv::createTrackbar("Image", "img", &show_image, 4, trackbar, (void*)"Image Index");
+  cv::createTrackbar("morphology_kernel_size",
+                     "img",
+                     &config.morphology_kernel_size,
+                     2,
+                     trackbar,
+                     (void*)"Morphology kernel size");
+  cv::createTrackbar("blur_kernel_size",
+                     "img",
+                     &config.blur_kernel_size,
+                     5,
+                     trackbar,
+                     (void*)"Morphology kernel size");
 
   mptr = &imgOriginal;
 
@@ -782,7 +804,11 @@ main(int argc, char* argv[]) {
 
     vector<cv::Vec3f> circles;
 
-    cv::GaussianBlur(imgGrayscale, imgBlurred, cv::Size(5, 5), 1.75, 1.75);
+    cv::GaussianBlur(imgGrayscale,
+                     imgBlurred,
+                     cv::Size(config.blur_kernel_size + 1, config.blur_kernel_size + 1),
+                     1.75,
+                     1.75);
     cv::Canny(imgBlurred, imgCanny, thresh, thresh * 2, 3);
 
     image_type strel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(19, 19));
@@ -793,7 +819,9 @@ main(int argc, char* argv[]) {
     cv::morphologyEx(imgMorphology,
                      imgMorphology,
                      morphology_operator ? cv::MORPH_DILATE : cv::MORPH_CLOSE,
-                     cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
+                     cv::getStructuringElement(cv::MORPH_ELLIPSE,
+                                               cv::Size(config.morphology_kernel_size + 1,
+                                                        config.morphology_kernel_size + 1)));
 
     cv::cvtColor(imgGrayscale, imgGrayscale, cv::COLOR_GRAY2BGR);
     cv::cvtColor(imgMorphology, imgMorphology, cv::COLOR_BGR2GRAY);
@@ -1095,6 +1123,9 @@ main(int argc, char* argv[]) {
       {
         JSValue args[2] = {vector_to_js(js, contours, &points_to_js<point2i_type>),
                            vector_to_js(js, hier, &vec4i_to_js)};
+
+        js.set_global("contours", args[0]);
+        js.set_global("hier", args[1]);
 
         check_eval();
 
