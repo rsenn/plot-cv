@@ -127,7 +127,7 @@ get_largest_contour(const std::vector<std::vector<cv::Point_<T>>>& contours_un,
   for(size_t i = 0; i < contours_un.size(); i++) {
     double area = cv::contourArea(contours_un[i]);
     if(show_diagnostics) {
-      std::cerr << "Area: " + to_string(area) + "Index: " + to_string(i) << std::endl;
+      std::cerr << "Area: " + to_string(area) + " Index: " + to_string(i) << std::endl;
     }
     if(area > maxArea) {
       maxArea = area;
@@ -556,7 +556,8 @@ display_image(image_type* m) {
   cv::bitwise_and(*m, *m, out, alpha);
   int baseLine;
 
-  std::cerr << "show_image: " << show_image << std::endl;
+  if(show_diagnostics)
+    std::cerr << "show_image: " << show_image << std::endl;
 
   if(show_image != -1) {
     cv::Size textSize =
@@ -719,9 +720,15 @@ main(int argc, char* argv[]) {
       case 'g':
       case 'G': show_image = GRAYSCALE; break;
       case 83:
-      case -106: show_image--; show_image &= 0b11; break;
+      case -106:
+        show_image--;
+        show_image &= 0b11;
+        break;
       case 81:
-      case -104: show_image++;  show_image &= 0b11;break;
+      case -104:
+        show_image++;
+        show_image &= 0b11;
+        break;
       case -1: break;
       default:
         if(show_diagnostics)
@@ -794,7 +801,8 @@ main(int argc, char* argv[]) {
 
     imgMorphology.convertTo(imgMorphology, CV_8UC1);
 
-    image_info(imgMorphology);
+    if(show_diagnostics)
+      image_info(imgMorphology);
 
     imgVector = color_type(0, 0, 0, 0);
 
@@ -821,7 +829,8 @@ main(int argc, char* argv[]) {
       int largestIndex = get_largest_contour(contours, largestContour);
 
       if(largestIndex != -1) {
-        std::cerr << "largestIndex: " << largestIndex << std::endl;
+        if(show_diagnostics)
+          std::cerr << "largestIndex: " << largestIndex << std::endl;
 
         cv::drawContours(
             imgVector, contours, largestIndex, color_type(0, 0, 255, 255), 2, cv::LINE_8);
