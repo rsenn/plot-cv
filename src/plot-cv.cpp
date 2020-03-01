@@ -34,7 +34,6 @@ using std::string;
 const char* image_names[] = {"CANNY", "ORIGINAL", "GRAYSCALE", "MORPHOLOGY"};
 
 typedef Line<float> line_type;
-typedef std::vector<line_type> line_list;
 
 int thresh = 10;
 int max_thresh = 255;

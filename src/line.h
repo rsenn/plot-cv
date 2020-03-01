@@ -127,6 +127,15 @@ public:
   */
 };
 
+template<class T> struct line_list {
+  typedef T coord_type;
+  typedef Line<T> line_type;
+  typedef std::vector<line_type> type;
+};
+typedef line_list<float> line4f_list;
+typedef line_list<int> line4i_list;
+typedef line_list<double> line4d_list;
+
 float point_distance(const cv::Point2f& p1, const cv::Point2f& p2);
 double point_distance(const cv::Point2d& p1, const cv::Point2d& p2);
 int point_distance(const cv::Point& p1, const cv::Point& p2);
@@ -196,7 +205,7 @@ to_string(const Line<T>& line) {
 
 template<class T>
 inline std::string
-to_string(const std::vector<Line<T>>& lines) {
+to_string(const typename line_list<T>::type& lines) {
   typedef typename std::vector<Line<T>>::const_iterator iterator_type;
   typedef Line<T> value_type;
   std::string ret;
@@ -211,8 +220,8 @@ to_string(const std::vector<Line<T>>& lines) {
 
 template<class Value>
 inline std::ostream&
-operator<<(std::ostream& os, const std::vector<Line<Value>>& c) {
-  typedef typename std::vector<Line<Value>>::const_iterator iterator_type;
+operator<<(std::ostream& os, const typename line_list<Value>::type& c) {
+  typedef typename line_list<Value>::type::const_iterator iterator_type;
   iterator_type end = c.cend();
   int i = 0;
   for(iterator_type it = c.cbegin(); it != end; ++it) {
@@ -437,9 +446,9 @@ Line<T>::intersect(const Line<T>& line2, cv::Point_<T>* pt) const {
 template<class T, class Pred>
 inline std::vector<int>
 filter_lines(const std::vector<T>& c, bool (&pred)(const Line<T>&, size_t)) {
-  return filter_lines<std::vector<Line<T>>::iterator, bool(Line<T>&, size_t)>(c.begin(),
-                                                                              c.end(),
-                                                                              pred);
+  return filter_lines<typename line_list<T>::type::iterator, bool(Line<T>&, size_t)>(c.begin(),
+                                                                                     c.end(),
+                                                                                     pred);
 }
 
 template<class ValueT, class InputIterator>
