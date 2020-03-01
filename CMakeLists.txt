@@ -95,8 +95,8 @@ set(BUILD_SHARED_LIBS OFF)
 
 add_subdirectory(quickjs)
 
-file(GLOB PLOT_CV_SOURCES src/color.cpp src/color.h src/data.cpp src/data.h src/geometry.cpp src/geometry.h src/js.cpp src/js.h src/jsbindings.cpp src/jsbindings.h src/line.cpp src/line.h src/matrix.cpp src/matrix.h src/plot-cv.cpp src/plot-cv.h src/polygon.cpp src/polygon.h src/psimpl.h src/simple_svg_1.0.0.hpp src/simple_svg_writer.h)
-add_executable(plot-cv ${PLOT_CV_SOURCES})
+file(GLOB PLOT_CV_SOURCES src/color.cpp src/color.h src/data.cpp src/data.h src/geometry.cpp src/geometry.h src/js.cpp src/js.h src/jsbindings.cpp src/jsbindings.h src/line.cpp src/line.h src/matrix.cpp src/matrix.h src/plot-cv.h src/polygon.cpp src/polygon.h src/psimpl.h src/simple_svg_1.0.0.hpp src/simple_svg_writer.h)
+add_executable(plot-cv src/plot-cv.cpp ${PLOT_CV_SOURCES})
 target_link_libraries(plot-cv ${OpenCV_LIBS} quickjs-static ${ELECTRICFENCE_LIBRARY})
 
 pkg_check_modules(GLFW3 glfw3)
@@ -110,9 +110,10 @@ file(GLOB IMGUI_VIEWER_SOURCES src/color.cpp src/color.h src/data.cpp src/data.h
 
 #[[add_executable(imgui-viewer ${IMGUI_VIEWER_SOURCES})]]
 
-
+#[[
 # Main
 add_executable(imgui-viewer
+  src/imgui-viewer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_draw.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_widgets.cpp
@@ -150,9 +151,10 @@ target_link_libraries(imgui-viewer
     GL
 )
 
-
 target_link_libraries(imgui-viewer ${OpenCV_LIBS} quickjs-static ${ELECTRICFENCE_LIBRARY} ${pkgcfg_lib_GLFW3_glfw}
 ${pkgcfg_lib_SDL_SDL})
+]]
+include(imgui-viewer.cmake)
 
 
 

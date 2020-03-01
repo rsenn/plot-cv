@@ -44,7 +44,6 @@ bool show_diagnostics = false;
 double epsilon = 3;
 const int max_frames = 100000;
 static int show_image;
-jsrt js;
 
 struct config_values {
   int morphology_kernel_size;
@@ -57,7 +56,8 @@ struct config_values {
 image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny,
     imgMorphology; // Canny edge image
 
-image_type *mptr = nullptr, *dptr = nullptr;
+image_type *mptr = nullptr;;
+extern "C" cv::Mat* dptr;
 
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
 

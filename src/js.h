@@ -694,4 +694,7 @@ jsrt::set_global(const char* name, const_value v) {
   value g = global_object();
   set_property(g, name, v);
 }
+
+extern "C" jsrt js;
+
 #endif // defined JS_H

@@ -6,9 +6,9 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 extern jsrt js;
-extern cv::Mat* dptr;
 
 extern "C" {
+cv::Mat *dptr = nullptr;
 
 JSValue
 js_draw_line(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
