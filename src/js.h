@@ -1,3 +1,4 @@
+
 #ifndef JS_H
 #define JS_H
 
@@ -9,6 +10,7 @@
 #include <string>
 #include <cstring>
 #include <iostream>
+struct jsiter;
 
 struct jsrt {
   typedef JSValue value;
@@ -138,13 +140,15 @@ protected:
 private:
   JSRuntime* rt;
   JSContext* ctx;
-
   static char* normalize_module(JSContext* ctx,
                                 const char* module_base_name,
                                 const char* module_name,
                                 void* opaque);
-
   std::unordered_map<const char*, std::pair<JSCFunction*, value>> funcmap;
+
+public:
+  jsiter begin(JSValue& v);
+  jsiter end(JSValue& v);
 };
 
 template<>
@@ -490,6 +494,77 @@ jsrt::is_boolean(const_value val) const {
 inline bool
 jsrt::is_array_like(const_value val) const {
   return is_array(val) || has_property(val, "length");
+}
+
+struct jsiter {
+  jsiter(jsrt& js, const JSValue& a, size_t n) : rt(js), arr(a), len(n), pos(0) {}
+  jsiter(jsrt& js, const JSValue& a, size_t n, size_t pos) : rt(js), arr(a), len(n), pos(pos) {}
+
+  JSValue operator*() {
+    if(pos < len)
+      return rt.get_property(arr, (uint32_t)pos);
+    else
+      return rt._undefined;
+  }
+
+  jsiter
+  operator++() {
+    jsiter ret = *this;
+    if(pos < len)
+      pos++;
+    return ret;
+  }
+
+  jsiter&
+  operator++(int) {
+    if(pos < len)
+      ++pos;
+    return *this;
+  }
+
+  bool
+  operator==(const jsiter& other) const {
+    return &arr == &other.arr && pos == other.pos && len == other.len;
+  }
+  bool
+  operator<(const jsiter& other) const {
+    return pos < other.pos;
+  }
+  bool
+  operator>(const jsiter& other) const {
+    return pos > other.pos;
+  }
+  bool
+  operator<=(const jsiter& other) const {
+    return !(*this > other);
+  }
+  bool
+  operator>=(const jsiter& other) const {
+    return !(*this < other);
+  }
+  bool
+  operator!=(const jsiter& other) const {
+    return !(*this == other);
+  }
+
+private:
+  jsrt& rt;
+  const JSValue& arr;
+  uint32_t len;
+  int32_t pos;
+};
+
+inline jsiter
+jsrt::begin(JSValue& v) {
+  uint32_t length;
+  get_number(get_property(v, "length"), length);
+  return jsiter(*this, v, length, 0);
+}
+inline jsiter
+jsrt::end(JSValue& v) {
+  uint32_t length;
+  get_number(get_property(v, "length"), length);
+  return jsiter(*this, v, length, length);
 }
 
 #endif // defined JS_H
