@@ -44,7 +44,7 @@ int thresholdValue = 155;
 bool show_diagnostics = false;
 double epsilon = 3;
 const int max_frames = 100000;
-static unsigned int show_image;
+static int show_image;
 jsrt js;
 
 image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny,
@@ -492,7 +492,7 @@ write_image(image_type img) {
 }
 
 void
-draw_all_contours(image_type& out, contour2i_vector& contours) {
+draw_all_contours(image_type& out, contour2i_vector& contours, int thickness = 1) {
 
   for(size_t i = 0; i < contours.size(); i++) {
     const color_type color = hsv_to_rgb((i * 360 * 10 / contours.size()) % 360, 1.0, 1.0);
@@ -503,7 +503,7 @@ draw_all_contours(image_type& out, contour2i_vector& contours) {
     if(area < 1)
       continue;
 
-    cv::drawContours(out, contours, i, color, 1, cv::LINE_AA);
+    cv::drawContours(out, contours, i, color, thickness, cv::LINE_AA);
   }
 }
 
@@ -544,30 +544,35 @@ display_image(image_type* m) {
     cv::rectangle(*dptr,
                   point2i_type(50, 50),
                   point2i_type(out.cols - 50, out.rows - 50),
-                  cv::Scalar(255, 0, 255, 255));
+                  color_type(255, 0, 255, 255));
     cv::rectangle(*dptr,
                   point2i_type(51, 51),
                   point2i_type(out.cols - 51, out.rows - 51),
-                  cv::Scalar(255, 0, 255, 255));
+                  color_type(255, 0, 255, 255));
   }
   image_type mask = image_type::zeros(m->size(), CV_8UC1);
   image_type alpha = get_alpha_channel(*dptr);
   dptr->copyTo(out);
   cv::bitwise_and(*m, *m, out, alpha);
   int baseLine;
-  cv::Size textSize =
-      cv::getTextSize(image_names[show_image], cv::FONT_HERSHEY_PLAIN, 1.5, 2, &baseLine);
 
-  point2i_type origin(out.cols - 20 - textSize.width, out.rows - 20 - textSize.height + baseLine);
+  std::cerr << "show_image: " << show_image << std::endl;
 
-  cv::putText(out,
-              image_names[show_image],
-              origin,
-              cv::FONT_HERSHEY_PLAIN,
-              1.5,
-              cv::Scalar(0, 255, 0, 255),
-              2,
-              LINE_AA);
+  if(show_image != -1) {
+    cv::Size textSize =
+        cv::getTextSize(image_names[show_image], cv::FONT_HERSHEY_PLAIN, 1.5, 2, &baseLine);
+
+    point2i_type origin(out.cols - 20 - textSize.width, out.rows - 20 - textSize.height + baseLine);
+
+    cv::putText(out,
+                image_names[show_image],
+                origin,
+                cv::FONT_HERSHEY_PLAIN,
+                1.5,
+                color_type(0, 255, 0, 255),
+                2,
+                LINE_AA);
+  }
 
   cv::imshow("img", out);
 }
@@ -686,13 +691,14 @@ main(int argc, char* argv[]) {
   int levels = 3;
   int eps = 8;
   int blur = 4;
-  int morphology_operator = 0;
+  int morphology_operator = 0, morphology_enable = 0;
 
   cv::namedWindow("img", CV_WINDOW_AUTOSIZE);
 
-  // cv::namedWindow("imgGrayscale", CV_WINDOW_AUTOSIZE);
+  //  cv::namedWindow("config", CV_WINDOW_NORMAL);
   cv::createTrackbar("epsilon", "contours", &eps, 7, trackbar, (void*)"eps");
   cv::createTrackbar("blur", "contours", &blur, 7, trackbar, (void*)"blur");
+  cv::createTrackbar("Image", "Index", &show_image, 4, trackbar, (void*)"Image Index");
 
   mptr = &imgOriginal;
 
@@ -702,7 +708,7 @@ main(int argc, char* argv[]) {
       case 27: return 0;
       case 'c':
       case 'C': show_image = CANNY; break;
-      case 'm':
+      case 'm': morphology_enable = !morphology_enable; break;
       case 'M': morphology_operator = !morphology_operator; break;
       case 'd':
       case 'D': show_diagnostics = !show_diagnostics; break;
@@ -713,16 +719,15 @@ main(int argc, char* argv[]) {
       case 'g':
       case 'G': show_image = GRAYSCALE; break;
       case 83:
-      case -106: show_image--; break;
+      case -106: show_image--; show_image &= 0b11; break;
       case 81:
-      case -104: show_image++; break;
+      case -104: show_image++;  show_image &= 0b11;break;
       case -1: break;
       default:
         if(show_diagnostics)
           std::cerr << "Unknown keycode: '" << (int)(char)keycode << "'" << std::endl;
         break;
     }
-    show_image %= 4;
 
     // std::cerr << "Show image: " << show_image << std::endl;
 
@@ -791,7 +796,7 @@ main(int argc, char* argv[]) {
 
     image_info(imgMorphology);
 
-    imgVector = cv::Scalar(0, 0, 0, 0);
+    imgVector = color_type(0, 0, 0, 0);
 
     // display_image(mptr);
 
@@ -800,7 +805,8 @@ main(int argc, char* argv[]) {
 
       vector<point2f_vector> contours2;
       vector<cv::Vec4i> hier;
-      vector<point2i_vector> contours = get_contours(imgMorphology, hier, CV_RETR_TREE);
+      vector<point2i_vector> contours =
+          get_contours(morphology_enable ? imgMorphology : imgCanny, hier, CV_RETR_TREE);
 
       imgCanny = color_type::all(255) - imgCanny;
       imgMorphology = color_type::all(255) - imgMorphology;
@@ -817,8 +823,11 @@ main(int argc, char* argv[]) {
       if(largestIndex != -1) {
         std::cerr << "largestIndex: " << largestIndex << std::endl;
 
-        cv::drawContours(*mptr, contours, largestIndex, cv::Scalar(0, 0, 255, 255), 1, cv::LINE_AA);
+        cv::drawContours(
+            imgVector, contours, largestIndex, color_type(0, 0, 255, 255), 2, cv::LINE_8);
       }
+
+      draw_all_contours(imgVector, contours, 2);
 
       /* if(dptr != nullptr)
          cv::drawContours(*dptr, contours, -1, color_type(0, 0, 255), 1, cv::LINE_AA);*/
@@ -1144,7 +1153,7 @@ main(int argc, char* argv[]) {
         // cv::drawContours(imgOriginal, list, -1, color_type(255, 255, 0), 1);
       });
 
-      draw_all_contours(imgGrayscale, contours);
+      draw_all_contours(imgVector, contours);
       display_image(mptr);
 
       /*
