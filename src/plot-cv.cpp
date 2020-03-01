@@ -618,6 +618,10 @@ main(int argc, char* argv[]) {
 
   js_point_init(js.ctx, &glob, "Point_", false);
 
+  jsrt::value ctor = js.get_global("Point_");
+
+  std::cerr << "function_name: " << js.function_name(ctor) << std::endl;
+
   // ret = js.eval_file("lib.js", 1);
 
   auto check_eval = [&newmt, &mt, &processFn, &glob]() -> int {

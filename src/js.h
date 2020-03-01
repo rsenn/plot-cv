@@ -78,8 +78,13 @@ struct jsrt {
   set_property(const_value obj, T prop, value val) {}
 
   value get_constructor(const_value obj) const;
-
   bool has_constructor(const_value obj) const;
+
+  value get_prototype(const_value obj) const;
+  bool has_prototype(const_value obj) const;
+
+  std::string function_name(const_value fn) const;
+
 
   value get_global(const char* name);
   value
@@ -414,13 +419,31 @@ jsrt::get_property<const char*>(const_value obj, const char* name) const {
 
 inline jsrt::value
 jsrt::get_constructor(jsrt::const_value obj) const {
-  return get_property(obj, "constructor");
+  return get_property(get_prototype(obj), "constructor");
 }
 
 inline bool
 jsrt::has_constructor(jsrt::const_value obj) const {
   return !is_undefined(get_constructor(obj));
 }
+
+inline jsrt::value
+jsrt::get_prototype(jsrt::const_value obj) const {
+  return JS_GetPrototype(ctx, obj);
+}
+
+inline bool
+jsrt::has_prototype(jsrt::const_value obj) const {
+  return !is_undefined(get_prototype(obj));
+}
+
+
+inline std::string
+jsrt::function_name(jsrt::const_value fn) const {
+return to_string(get_property(fn, "name"));
+}
+
+
 
 template<>
 inline void
