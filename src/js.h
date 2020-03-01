@@ -536,16 +536,13 @@ jsrt::is_array_like(const_value val) const {
 
 /**
  * Array iterator
- */
-struct jsiter {
-
+ */struct jsiter {
   JSValue operator*() const {
     if(p < n)
       return i((uint32_t)p);
     else
       return JS_UNDEFINED;
   }
-
   jsiter
   operator++() {
     jsiter ret = *this;
@@ -553,14 +550,12 @@ struct jsiter {
       p++;
     return ret;
   }
-
   jsiter&
   operator++(int) {
     if(p < n)
       ++p;
     return *this;
   }
-
   bool
   operator==(const jsiter& o) const {
     return p == o.p && n == o.n;
@@ -585,7 +580,6 @@ struct jsiter {
   operator!=(const jsiter& o) const {
     return !(*this == o);
   }
-
 protected:
   std::function<JSValue(uint32_t)> i;
   uint32_t n;
