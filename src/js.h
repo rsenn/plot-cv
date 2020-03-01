@@ -32,8 +32,8 @@ struct jsrt {
   value add_function(const char* name, JSCFunction* fn, int args = 0);
 
   template<class T> void get_number(const_value val, T& ref) const;
- void get_string(const_value val, std::string& str) const;
- void get_string(const_value val, const char*& cstr) const;
+  void get_string(const_value val, std::string& str) const;
+  void get_string(const_value val, const char*& cstr) const;
 
   template<class T> void get_int_array(const_value val, T& ref) const;
   template<class T> void get_point(const_value val, T& ref) const;
@@ -535,7 +535,8 @@ jsrt::is_array_like(const_value val) const {
 
 /**
  * Array iterator
- */struct jsiter {
+ */
+struct jsiter {
   JSValue operator*() const {
     if(p < n)
       return i((uint32_t)p);
@@ -579,6 +580,7 @@ jsrt::is_array_like(const_value val) const {
   operator!=(const jsiter& o) const {
     return !(*this == o);
   }
+
 protected:
   std::function<JSValue(uint32_t)> i;
   uint32_t n;
