@@ -2,12 +2,10 @@
 #define IMGUI_VIEWER_HPP
 
 #include <string>
-
+#include <vector>
 
 #include <GL/gl3w.h>
 #include <SDL.h>
-
-using namespace std;
 
 class ImageTexture {
 private:
@@ -16,8 +14,8 @@ private:
 
 public:
   ~ImageTexture();
-  void setImage(cv::Mat* frame);  // from cv::Mat (BGR)
-  void setImage(string filename); // from file
+  void setImage(cv::Mat* frame);       // from cv::Mat (BGR)
+  void setImage(std::string filename); // from file
   void* getOpenglTexture();
   ImVec2 getSize();
 };
@@ -44,7 +42,7 @@ ImageTexture::setImage(cv::Mat* pframe) {
 }
 
 void
-ImageTexture::setImage(string filename) {
+ImageTexture::setImage(std::string filename) {
   cv::Mat frame = cv::imread(filename);
   setImage(&frame);
 }
@@ -71,8 +69,8 @@ private:
   ImVec4 clear_color;
 
   // dynamic contents
-  vector<string> frame_names;
-  vector<cv::Mat*> frames;
+  std::vector<std::string> frame_names;
+  std::vector<cv::Mat*> frames;
   float gain;
 
   void init();
@@ -83,7 +81,7 @@ private:
 public:
   ImageViewer();
   bool handleEvent();
-  void imshow(string, cv::Mat*);
+  void imshow(std::string, cv::Mat*);
   void imshow(cv::Mat*);
   void show();
   void exit();
