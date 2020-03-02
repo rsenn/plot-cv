@@ -1,14 +1,16 @@
+#include "../imgui/libs/gl3w/GL/gl3w.h"
+
 #include <cstdio>
 #include <fstream>
 #include <iostream>
 
 #include <opencv2/opencv.hpp>
 
-#include "imgui.h"
-#include "imgui_impl_opengl3.h"
-#include "imgui_impl_sdl.h"
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_impl_opengl3.h"
+#include "../imgui/imgui_impl_sdl.h"
 
-#include "imgui-viewer.hpp"
+#include "imgui-viewer.h"
 
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
 

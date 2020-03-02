@@ -4,7 +4,7 @@
 #pragma once
 #include <opencv2/highgui/highgui.hpp>
 
-using namespace cv;
+// using namespace cv;
 using namespace std;
 
 #include "polygon.h"
@@ -13,18 +13,18 @@ enum SegmentationMode { BALLOON_MODE, CURV_MODE, ALL_MODE };
 class Data {
 
 public:
-  Data(Mat& Image);
-  Mat image;       // Image originale
-  Mat bwImage;     // Image convertie en noir et blanc.
-  Mat gradient;    // Norme du gradient
-  Mat gGradient;   // g(Norme du gradient)
-  Mat gx;          // gradient en x de g
-  Mat gy;          // gradient en y de g
-  Polygon polygon; // polygone lié à l'image
+  Data(cv::Mat& Image);
+  cv::Mat image;     // Image originale
+  cv::Mat bwImage;   // Image convertie en noir et blanc.
+  cv::Mat gradient;  // Norme du gradient
+  cv::Mat gGradient; // g(Norme du gradient)
+  cv::Mat gx;        // gradient en x de g
+  cv::Mat gy;        // gradient en y de g
+  Polygon polygon;   // polygone lié à l'image
 
-  void draw_next_step(double step, const Mat& Image, SegmentationMode mode);
+  void draw_next_step(double step, const cv::Mat& Image, SegmentationMode mode);
   void find_contour(double step, SegmentationMode mode);
-  bool is_valid_point(Point2d p);
+  bool is_valid_point(cv::Point2d p);
   // Modigie le polygone en utilisant une descente de gradient et compris dans
   // les bords de l'image.
 };

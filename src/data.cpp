@@ -88,7 +88,7 @@ Data::draw_next_step(double step, const cv::Mat& Image, SegmentationMode mode) {
     // std::cout << scalar << std::endl;
     point2d_type nextP(scalar * nx + p.x, scalar * ny + p.y);
     //	if (is_valid_point(nextP)) {
-    line(copyImage, nextP, p, Scalar(0, 0, 255));
+    line(copyImage, nextP, p, cv::Scalar(0, 0, 255));
     //	cout << "Drawing line: " << i << std::endl;
     /*	} else {
             std::cout << "point2i_type of polygon: " << (int)p.x << ", " << (int) p.y<<

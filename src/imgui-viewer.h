@@ -1,10 +1,10 @@
-#ifndef IMGUI_VIEWER_HPP
-#define IMGUI_VIEWER_HPP
+#ifndef IMGUI_VIEWER_H
+#define IMGUI_VIEWER_H
 
 #include <string>
 #include <vector>
 
-#include <GL/gl3w.h>
+#include "../imgui/libs/gl3w/GL/gl3w.h"
 #include <SDL.h>
 
 class ImageTexture {
@@ -98,4 +98,4 @@ ImageViewer::ImageViewer() {
   // dynamic contents
   gain = 1.0f;
 }
-#endif
+#endif // defined IMGUI_VIEWER_H

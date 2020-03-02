@@ -8,9 +8,9 @@ add_executable(imgui-viewer
     imgui/imgui.cpp
     imgui/imgui_draw.cpp
     imgui/imgui_widgets.cpp
-    imgui/examples/imgui_impl_sdl.cpp
-    imgui/examples/imgui_impl_opengl3.cpp
-    imgui/examples/libs/gl3w/GL/gl3w.c
+    imgui/imgui_impl_sdl.cpp
+    imgui/imgui_impl_opengl3.cpp
+    imgui/libs/gl3w/GL/gl3w.c
     ${PLOT_CV_SOURCES}
 )
 
@@ -29,7 +29,7 @@ include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(
     imgui/
     imgui/examples
-    imgui/examples/libs/gl3w
+    imgui/libs/gl3w
 )
 
 # link
