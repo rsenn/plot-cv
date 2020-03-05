@@ -9,11 +9,41 @@ import { Matrix } from "./matrix.js";
 import inspect from "./inspect.js";
 
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };
+
+function testPointVector() {
+  let pv = new Contour();
+  let poly = new Contour();
+
+  pv.push(0,0);
+  pv.push({x: 10, y:0});
+  pv.push({x: 10, y:20});
+  pv.push({x: 0, y:20});
+  pv.push({x: 0, y:0});
+
+
+  pv.approxPolyDP(poly, 2.0, true);
+
+      console.log("poly.length: ", poly.length);
+      console.log("poly.boundingRect(): ", poly.boundingRect());
+      console.log("pv.length: ", pv.length);
+      console.log("pv.get(0): ", pv.get(0));
+      console.log("pv.get(1): ", pv.get(1));
+      console.log("pv.area: ", pv.area);
+
+/*
+  let it = pv[Symbol.iterator]();
+    console.log("it: ", it);
+
+  let arr = [...it];
+  console.log("arr: ", arr);
+*/
+}
+
 global.test_array = [1, 2, 3, 4, 5, 6];
 global.process = function(contours, hier) {
   var areas = [];
 
-/*  console.log("contours: ", global.contours[global.contours.length - 1]);
+  /*  console.log("contours: ", global.contours[global.contours.length - 1]);
   console.log("hier: ", global.hier[global.contours.length - 1]);*/
 
   function dumpContour(c) {
@@ -81,7 +111,7 @@ global.process = function(contours, hier) {
 var ctor = Point_.prototype.constructor;
 console.log("Classes: ", inspect(lib));
 console.log("Point_: ", inspect(Point_));
-console.log("typeof(Point_.prototype.constructor): ", typeof(Point_.prototype.constructor) == 'function');
+console.log("typeof(Point_.prototype.constructor): ", typeof Point_.prototype.constructor == "function");
 console.log("typeof(Point_): ", typeof Point_);
 console.log("ctor.name: ", ctor.name);
 /*console.log("Point_.prototype: ", Point_.prototype);
@@ -89,5 +119,7 @@ console.log("Point_.prototype.constructor: ", Point_.prototype.constructor);
 */
 let points = [new Point_(0, 0), new Point_(50, 0), new Point_(100, 0), new Point_(100, 50), new Point_(100, 100), new Point_(100, 200)];
 console.log("points[0]: ", points[0]);
-console.log("points[last]: ", points[points.length -1 ]);
+console.log("points[last]: ", points[points.length - 1]);
 console.log("points: ", points.map(p => `{x:${p.x},y:${p.y}}`).join(", "));
+
+testPointVector();
