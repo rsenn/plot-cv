@@ -110,10 +110,14 @@ global.process = function(contours, hier) {
   console.log("contour: ", c);
   console.log("convexHull: ", hull);
   console.log("convexityDefects: ", defects);
+  console.log("simplifyNthPoint: ", c.simplifyNthPoint(2));
+  console.log("simplifyRadialDistance: ", c.simplifyRadialDistance(10));
+  console.log("simplifyPerpendicularDistance: ", c.simplifyPerpendicularDistance(20));
   console.log("simplifyReumannWitkam: ", c.simplifyReumannWitkam());
   console.log("simplifyOpheim: ", c.simplifyOpheim());
   console.log("simplifyLang: ", c.simplifyLang());
   console.log("simplifyDouglasPeucker: ", c.simplifyDouglasPeucker());
+  console.log("center: ", c.center);
 
   let a = c.toArray();
   console.log("toArray: ", a);

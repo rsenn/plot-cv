@@ -1115,19 +1115,36 @@ js_contour_area(JSContext* ctx, JSValueConst this_val) {
   JSValue ret = JS_UNDEFINED;
   double area;
   std::vector<cv::Point2f> contour;
-
   v = js_contour_data(ctx, this_val);
   if(!v)
     return JS_EXCEPTION;
-
   std::transform(v->begin(),
                  v->end(),
                  std::back_inserter(contour),
                  [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
-
   area = cv::contourArea(contour);
-
   ret = JS_NewFloat64(ctx, area);
+  return ret;
+}
+
+JSValue
+js_contour_center(JSContext* ctx, JSValueConst this_val) {
+  JSContourData* v;
+  JSValue ret = JS_UNDEFINED;
+  double area;
+  v = js_contour_data(ctx, this_val);
+  if(!v)
+    return JS_EXCEPTION;
+  {
+    std::vector<cv::Point> points;
+    points.resize(v->size());
+    std::copy(v->begin(), v->end(), points.begin());
+    cv::Moments mu = cv::moments(points);
+    cv::Point centroid = cv::Point(mu.m10 / mu.m00, mu.m01 / mu.m00);
+
+    ret = js_point_new(ctx, centroid.x, centroid.y);
+  }
+
   return ret;
 }
 
@@ -1698,6 +1715,20 @@ js_contour_psimpl(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
     if(arg1 == 0)
       arg1 == 2;
     it = psimpl::simplify_douglas_peucker<2>((double*)start, (double*)end, arg1, it);
+  } else if(magic == 4) {
+    if(arg1 == 0)
+      arg1 == 2;
+    it = psimpl::simplify_nth_point<2>((double*)start, (double*)end, arg1, it);
+  } else if(magic == 5) {
+    if(arg1 == 0)
+      arg1 == 2;
+    it = psimpl::simplify_radial_distance<2>((double*)start, (double*)end, arg1, it);
+  } else if(magic == 6) {
+    if(arg1 == 0)
+      arg1 == 2;
+    if(arg2 == 0)
+      arg2 == 1;
+    it = psimpl::simplify_perpendicular_distance<2>((double*)start, (double*)end, arg1, arg2, it);
   }
   size = it - (double*)&r[0];
   r.resize(size / 2);
@@ -1825,6 +1856,7 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
     JS_CFUNC_DEF("get", 1, js_contour_get),
     JS_CGETSET_DEF("length", js_contour_length, NULL),
     JS_CGETSET_DEF("area", js_contour_area, NULL),
+    JS_CGETSET_DEF("center", js_contour_center, NULL),
     JS_CFUNC_DEF("approxPolyDP", 1, js_contour_approxpolydp),
     JS_CFUNC_DEF("convexHull", 1, js_contour_convexhull),
     JS_CFUNC_DEF("boundingRect", 0, js_contour_boundingrect),
@@ -1846,6 +1878,9 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("simplifyOpheim", 0, js_contour_psimpl, 1),
     JS_CFUNC_MAGIC_DEF("simplifyLang", 0, js_contour_psimpl, 2),
     JS_CFUNC_MAGIC_DEF("simplifyDouglasPeucker", 0, js_contour_psimpl, 3),
+    JS_CFUNC_MAGIC_DEF("simplifyNthPoint", 0, js_contour_psimpl, 4),
+    JS_CFUNC_MAGIC_DEF("simplifyRadialDistance", 0, js_contour_psimpl, 5),
+    JS_CFUNC_MAGIC_DEF("simplifyPerpendicularDistance", 0, js_contour_psimpl, 6),
     JS_CFUNC_DEF("toArray", 0, js_contour_toarray),
     JS_CFUNC_DEF("toString", 0, js_contour_tostring),
 
