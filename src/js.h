@@ -7,11 +7,11 @@ extern "C" {
 #include "quickjs/quickjs-atom.h"
 }
 enum {
-    JS_ATOM_NULL,
-#define DEF(name, str) JS_ATOM_ ## name,
+  JS_ATOM_NULL,
+#define DEF(name, str) JS_ATOM_##name,
 #include "quickjs-atom.h"
 #undef DEF
-    JS_ATOM_END,
+  JS_ATOM_END,
 };
 #include <unordered_map>
 #include <vector>

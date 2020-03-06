@@ -6,12 +6,63 @@
 #include "geometry.h"
 #include "js.h"
 #include "quickjs/cutils.h"
+#include "quickjs/quickjs.h"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iomanip>
 
 extern jsrt js;
+template<class T> class jsallocator {
+public:
+  typedef T value_type;
+  typedef T* pointer;
+  typedef const T* const_pointer;
+  typedef T& reference;
+  typedef const T& const_reference;
+  typedef std::size_t size_type;
+  typedef std::ptrdiff_t difference_type;
+  template<class U> struct rebind { typedef jsallocator<U> other; };
+  pointer
+  address(reference value) const {
+    return &value;
+  }
+  const_pointer
+  address(const_reference value) const {
+    return &value;
+  }
+  jsallocator() throw() {}
+  jsallocator(const jsallocator&) throw() {}
+  template<class U> jsallocator(const jsallocator<U>&) throw() {}
+  ~jsallocator() throw() {}
+  size_type
+  max_size() const throw() {
+    return std::numeric_limits<std::size_t>::max() / sizeof(T);
+  }
+  pointer
+  allocate(size_type num, const void* = 0) {
+    pointer ret;
+    std::cerr << "allocate " << num << " element(s)"
+              << " of size " << sizeof(T) << std::endl;
+    // ret = (pointer)(js_mallocz(num * sizeof(T)));
+    std::cerr << " allocated at: " << (void*)ret << std::endl;
+    return ret;
+  }
+  void
+  construct(pointer p, const T& value) {
+    p->T(value);
+  }
+  void
+  destroy(pointer p) {
+    p->~T();
+  }
+  void
+  deallocate(pointer p, size_type num) {
+    std::cerr << "deallocate " << num << " element(s)"
+              << " of size " << sizeof(T) << " at: " << (void*)p << std::endl;
+    js_free(p);
+  }
+};
 
 extern "C" {
 cv::Mat* dptr = nullptr;
@@ -226,7 +277,6 @@ js_vector_to_array(std::enable_if_t<std::is_same<Vector, cv::Vec4i>::value, JSCo
   return ret;
 }
 
-
 JSValue
 js_vector_to_array(JSContext* ctx, const std::vector<cv::Point_<float>>& vec) {
   JSValue ret = JS_NewArray(ctx);
@@ -277,7 +327,6 @@ JSValue js_mat_wrap(JSContext* ctx, const cv::Mat& mat);
 
 extern "C++" template<class Type>
 JSValue js_contour_new(JSContext* ctx, const std::vector<Type>& points);
-
 
 JSValue
 js_vector_vec4i_to_array(JSContext* ctx, const std::vector<cv::Vec4i>& vec) {
@@ -1124,15 +1173,15 @@ js_contour_new(JSContext* ctx, const std::vector<cv::Point_<float>>& points) {
   contour->resize(points.size());
 
   transform_points(points.cbegin(), points.cend(), contour->begin());
-/*
-  std::transform(points.cbegin(),
-                 points.cend(),
-                 std::back_inserter(*contour),
-                 [](const cv::Point2f& pt) -> cv::Point2d { return cv::Point2d(pt.x, pt.y); });
-*/
+  /*
+    std::transform(points.cbegin(),
+                   points.cend(),
+                   std::back_inserter(*contour),
+                   [](const cv::Point2f& pt) -> cv::Point2d { return cv::Point2d(pt.x, pt.y); });
+  */
   JS_SetOpaque(ret, contour);
   return ret;
-};  
+};
 
 JSValue
 js_contour_new(JSContext* ctx, const std::vector<cv::Point_<double>>& points) {
@@ -2297,9 +2346,9 @@ js_mat_init(JSContext* ctx, void* m, const char* name, bool exp) {
   JS_SetPropertyStr(ctx, mat_class, "CV_64FC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 2)));
   JS_SetPropertyStr(ctx, mat_class, "CV_64FC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 3)));
   JS_SetPropertyStr(ctx, mat_class, "CV_64FC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 4)));
-JSValue g = JS_GetGlobalObject(ctx);
- int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
- int32array_proto = JS_GetPrototype(ctx, int32array_ctor);
+  JSValue g = JS_GetGlobalObject(ctx);
+  int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
+  int32array_proto = JS_GetPrototype(ctx, int32array_ctor);
 
   if(exp)
     JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), name, mat_class);
