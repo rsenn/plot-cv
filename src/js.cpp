@@ -250,10 +250,12 @@ jsrt::get_false() const {
 }
 
 jsrt::~jsrt() {
-  if(ctx)
+  if(ctx) {
     JS_FreeContext(ctx);
-  if(rt)
-    JS_FreeRuntime(rt);
+
+    /*  if(rt)
+        JS_FreeRuntime(rt);*/
+  }
   ctx = nullptr;
   rt = nullptr;
 }

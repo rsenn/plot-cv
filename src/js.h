@@ -645,7 +645,7 @@ struct jsiter {
 protected:
   std::function<JSValue(uint32_t)> i;
   uint32_t n;
-  int32_t p;
+  uint32_t p;
 
 private:
   friend class jsrt;

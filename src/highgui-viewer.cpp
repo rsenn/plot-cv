@@ -167,6 +167,27 @@ main(int argc, char* argv[]) {
                      trackbar,
                      (void*)"Blur kernel size");
 
+  cv::createTrackbar("hough_rho", "imgCanny", &config.hough_rho, 10, trackbar, (void*)"Hough rho");
+  cv::createTrackbar(
+      "hough_theta", "imgCanny", &config.hough_theta, 360, trackbar, (void*)"Hough theta");
+  cv::createTrackbar("hough_threshold",
+                     "imgCanny",
+                     &config.hough_threshold,
+                     1000,
+                     trackbar,
+                     (void*)"Hough threshold");
+  cv::createTrackbar("hough_minlinelen",
+                     "imgCanny",
+                     &config.hough_minlinelen,
+                     1000,
+                     trackbar,
+                     (void*)"Hough minLineLen");
+  cv::createTrackbar("hough_maxlinega",
+                     "imgCanny",
+                     &config.hough_maxlinegap,
+                     1000,
+                     trackbar,
+                     (void*)"Hough maxLineGap");
   mptr = &imgOriginal;
 
   while(keycode != 27) { // until the Esc key is pressed or webcam connection is lost

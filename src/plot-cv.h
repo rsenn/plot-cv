@@ -104,6 +104,12 @@ void svg_draw_polyline(svg::Document& doc,
 struct config_values {
   int morphology_kernel_size;
   int blur_kernel_size;
+
+  int hough_rho;
+  int hough_theta;
+  int hough_threshold;
+  int hough_minlinelen;
+  int hough_maxlinegap;
 };
 
 /**

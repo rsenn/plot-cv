@@ -37,7 +37,7 @@ typedef Line<float> line_type;
 const char* image_names[] = {"CANNY", "ORIGINAL", "GRAYSCALE", "MORPHOLOGY"};
 int num_iterations = 0;
 
-int morphology_operator = 1, morphology_enable = 1;
+int morphology_operator = 2, morphology_enable = 2;
 image_type* mptr = nullptr;
 
 int thresh = 10, thresh2 = 20, apertureSize = 3;
@@ -49,10 +49,14 @@ bool show_diagnostics = false;
 double epsilon = 3;
 const int max_frames = 100000;
 
-config_values config = {
-    .morphology_kernel_size = 1,
-    .blur_kernel_size = 2,
-};
+config_values config = {.morphology_kernel_size = 2,
+                        .blur_kernel_size = 2,
+
+                        .hough_rho = 100,
+                        .hough_theta = 180,
+                        .hough_threshold = 300,
+                        .hough_minlinelen = 300,
+                        .hough_maxlinegap = 100};
 
 image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny,
     imgMorphology; // Canny edge image
@@ -329,45 +333,108 @@ invert_color(image_type& img) {
   for(int i = 0; i < img.rows; i++)
     for(int j = 0; j < img.cols; j++) img.at<uchar>(i, j) = 255 - img.at<uchar>(i, j);
 }
+/*
+void
+hough_lines(image_type& img, std::vector<point2i_vector>& ret) {
+
+  std::vector<cv::Vec2f> lines;
+
+  invert_color(img);
+  cv::HoughLines(img, lines, 1, CV_PI / 180, 30, 30, 10);
+
+  std::for_each(lines.cbegin(), lines.cend(), [&ret](const cv::Vec2f& v) {
+    float rho = v[0], theta = v[1];
+    cv::Point pt1, pt2;
+    double a = cos(theta), b = sin(theta);
+    double x0 = a * rho, y0 = b * rho;
+    point2i_vector l;
+    pt1.x = cvRound(x0 + 1000 * (-b));
+    pt1.y = cvRound(y0 + 1000 * (a));
+    pt2.x = cvRound(x0 - 1000 * (-b));
+    pt2.y = cvRound(y0 - 1000 * (a));
+
+    l.emplace_back(pt1.x, pt1.y);
+    l.emplace_back(pt2.x, pt2.y);
+
+    ret.push_back(l);
+  });
+}*/
 
 void
-hough_lines(image_type& img, std::vector<point2f_vector>& ret) {
-  cv::Mat pimg;
+hough_lines(image_type& img, std::vector<cv::Vec4i>& out) {
+  // invert_color(img);
+  cv::HoughLinesP(img,
+                  out,
+                  (double)(config.hough_rho + 1) / 10.0,
+                  CV_PI / (double)(config.hough_theta + 1),
+                  (double)(config.hough_threshold + 1) / 10.0,
+                  (double)(config.hough_minlinelen + 1) / 10,
+                  (double)(config.hough_maxlinegap + 1) / 10);
+}
 
-  if(img.channels() > 1)
-    cvtColor(img, img, CV_BGR2GRAY);
-  cv::threshold(img, pimg, thresholdValue, 255, 0);
+void
+hough_lines(image_type& img, const std::function<void(int, int, int, int)>& fn) {
+
   std::vector<cv::Vec4i> lines;
-  // std::vector<cv::Vec4f> lines;
-  // std::vector<cv::Vec2f> lines;
-  // cv::Mat lines(0, CV_32FC4);
 
-  invert_color(pimg);
-  cv::HoughLinesP(pimg, lines, 1, CV_PI / 180, 30, 30, 10);
+  hough_lines(img, lines);
+  std::for_each(lines.cbegin(), lines.cend(), [fn](const cv::Vec4i& vec) {
+    fn(vec[0], vec[1], vec[2], vec[3]);
+  });
+}
 
-  std::transform(lines.cbegin(),
-                 lines.cend(),
-                 std::back_inserter(ret),
-                 [](const cv::Vec4i& v) -> point2f_vector {
-                   std::vector<cv::Point2f> line;
-                   line.push_back(cv::Point2f(v[0], v[1]));
-                   line.push_back(cv::Point2f(v[2], v[3]));
-                   return line;
-                 });
+template<class InputIterator>
+void
+draw_lines(image_type& target,
+           InputIterator start,
+           InputIterator end,
+           const cv::Scalar& color,
+           int thickness = 1,
+           int lineType = cv::LINE_8) {
+
+  std::for_each(start, end, [target, color, thickness, lineType](const Line<int>& line) {
+    cv::line(target, line.a, line.b, color, thickness, lineType);
+  });
 }
 
 void
-draw_lines(image_type& target, const std::vector<cv::Vec4i>& lines) {
-  for(size_t i = 0; i < lines.size(); i++)
+draw_lines(image_type& target,
+           std::vector<cv::Vec4i>::const_iterator start,
+           std::vector<cv::Vec4i>::const_iterator end,
+           const cv::Scalar& color,
+           int thickness = 1,
+           int lineType = cv::LINE_8) {
+
+  std::for_each(start, end, [target, color, thickness, lineType](const cv::Vec4i& vec) {
     cv::line(target,
-             point2i_type(lines[i][0], lines[i][1]),
-             point2i_type(lines[i][2], lines[i][3]),
-             color_type(0, 255, 255),
-             1);
+             point2i_type(vec[0], vec[1]),
+             point2i_type(vec[2], vec[3]),
+             color,
+             thickness,
+             lineType);
+  });
 }
 
 void
-corner_harris_detection(image_type& src, image_type& src_gray) {
+draw_lines(image_type& target,
+           const std::vector<Line<int>>& lines,
+           const cv::Scalar& color,
+           int thickness = 1,
+           int lineType = cv::LINE_8) {
+  draw_lines(target, lines.cbegin(), lines.cend(), color, thickness, lineType);
+}
+
+void
+draw_lines(image_type& target,
+           const std::vector<cv::Vec4i>& lines,
+           const cv::Scalar& color,
+           int thickness = 1,
+           int lineType = cv::LINE_8) {
+  return draw_lines(target, lines.cbegin(), lines.cend(), color, thickness, lineType);
+}
+
+void
+corner_harris_detection(image_type& src, image_type& out) {
   int thresh = 200;
   int max_thresh = 255;
   int blockSize = 2;
@@ -375,15 +442,17 @@ corner_harris_detection(image_type& src, image_type& src_gray) {
   double k = 0.04;
   image_type dst = image_type::zeros(src.size(), CV_32FC1);
   image_type gray = image_type::zeros(src.size(), CV_32FC1);
-  src_gray.convertTo(gray, CV_32FC1);
+  src.convertTo(gray, CV_32FC1);
   cv::cornerHarris(gray, dst, blockSize, apertureSize, k);
   image_type dst_norm, dst_norm_scaled;
   cv::normalize(dst, dst_norm, 0, 255, cv::NORM_MINMAX, CV_32FC1, image_type());
   cv::convertScaleAbs(dst_norm, dst_norm_scaled);
+
+  
   for(int i = 0; i < dst_norm.rows; i++) {
     for(int j = 0; j < dst_norm.cols; j++) {
       if((int)dst_norm.at<float>(i, j) > thresh) {
-        cv::circle(dst_norm_scaled, point2i_type(j, i), 5, color_type(1), 2, 8, 0);
+        cv::circle(dst_norm_scaled, cv::Point(j, i), 20, cv::Scalar(0,255,0,255), 3, cv::LINE_8);
       }
     }
   }
@@ -446,10 +515,17 @@ points_to_js<cv::Point>(const std::vector<cv::Point>& v) {
   return vector_to_js(js, v, fn);
 }
 
+Line<int>
+lineFrom(const cv::Vec4i& vec) {
+  return Line<int>(vec[0], vec[1], vec[2], vec[3]);
+}
+
 void
 process_image(std::function<void(std::string, cv::Mat*)> display_image, int show_image) {
+  typedef std::vector<Line<int>> line_vector;
+  std::vector<cv::Vec4i> hough;
 
-  std::vector<point2f_vector> houghLines;
+  line_vector houghLines;
 
   std::vector<point2f_vector> contours2;
   std::vector<cv::Vec4i> hier;
@@ -498,10 +574,10 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
                    imgMorphology,
                    morphology_operator ? cv::MORPH_DILATE : cv::MORPH_CLOSE,
                    cv::getStructuringElement(cv::MORPH_ELLIPSE,
-                                             cv::Size(config.morphology_kernel_size,
-                                                      config.morphology_kernel_size)));
+                                             cv::Size(config.morphology_kernel_size+1,
+                                                      config.morphology_kernel_size+1)));
 
-  // cv::cvtColor(imgMorphology, imgMorphology, cv::COLOR_BGR2GRAY);
+  cv::cvtColor(imgBlurred, imgBlurred, cv::COLOR_GRAY2BGR);
 
   std::cerr << "imgOriginal ";
   image_info(imgOriginal);
@@ -515,7 +591,24 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
 
   image_info(imgCanny);
 
-  hough_lines(imgCanny, houghLines);
+  hough_lines(imgCanny, [&hough, &houghLines](int x1, int y1, int x2, int y2) {
+    cv::Vec4i vec(x1, y1, x2, y2);
+    hough.push_back(vec);
+    houghLines.push_back(Line<int>(x1, y1, x2, y2));
+  });
+
+  corner_harris_detection(imgGrayscale, imgCanny);
+
+  /*  std::transform(hough.cbegin(),
+                   hough.cend(),
+                   std::back_inserter(houghLines),
+                   [](const cv::Vec4i& v) -> Line<int> {
+                     return Line<int>(v[0], v[1], v[2], v[3]);
+                   });
+  */
+  //  cv::polylines(imgBlurred, polylines, true, color_type(0, 255, 0, 255), 1, cv::LINE_AA);
+
+  // draw_all_contours(imgBlurred, houghLines, 2);
   /*
     std::vector<Line<float>> lines2f;
 
@@ -526,9 +619,18 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
                      return Line<float>(v[0], v[1], v[2], v[3]);
                    });
   */
-  std::cerr << "lines2f: " << implode(houghLines.begin(), houghLines.end(), ",\n")
-            << " size=" << houghLines.size() << std::endl;
 
+  std::cerr << "hough: " << implode(hough.cbegin(), hough.cend(), ",\n");
+
+  /* std::cerr << "houghLines.size=" << houghLines.size() << std::endl;
+
+   std::cerr << "houghLines: "
+             << implode(houghLines.data(),
+                        (houghLines.size() > 10 ? houghLines.data() + 10
+                                                : houghLines.data() + houghLines.size()),
+                        ",\n")
+             << std::endl;
+ */
   if(show_diagnostics)
     image_info(imgMorphology);
 
@@ -572,6 +674,14 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
       cv::drawContours(
           imgVector, contours, largestIndex, color_type(0, 0, 255, 255), 2, cv::LINE_8);
     }
+
+
+
+    cv::cvtColor(imgCanny, imgCanny, cv::COLOR_GRAY2BGR);
+
+    draw_lines(imgCanny, houghLines, cv::Scalar(0, 0, 255, 255), 1, cv::LINE_8);
+
+    display_image("imgCanny", &imgCanny);
 
     draw_all_contours(imgVector, contours, 1);
 
