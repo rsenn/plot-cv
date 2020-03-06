@@ -1582,6 +1582,7 @@ js_contour_getaffinetransform(JSContext* ctx, JSValueConst this_val, int argc, J
   ret = js_mat_wrap(ctx, matrix);
   return ret;
 }
+
 JSValue
 js_contour_getperspectivetransform(JSContext* ctx,
                                    JSValueConst this_val,
@@ -1620,6 +1621,27 @@ js_contour_getperspectivetransform(JSContext* ctx,
 
   ret = js_mat_wrap(ctx, matrix);
   return ret;
+}
+
+JSValue
+js_contour_rotatepoints(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSContourData* s = js_contour_data(ctx, this_val);
+  int32_t shift = 1;
+  uint32_t size = s->size();
+  if(!s)
+    return JS_EXCEPTION;
+  if(argc > 0)
+    JS_ToInt32(ctx, &shift, argv[0]);
+
+  shift %= size;
+
+  if(shift > 0) {
+    std::rotate(s->begin(), s->begin() + shift, s->end());
+
+  } else if(shift < 0) {
+    std::rotate(s->rbegin(), s->rbegin() + (-shift), s->rend());
+  }
+  return JS_UNDEFINED;
 }
 
 JSValue
@@ -1667,6 +1689,7 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
     JS_CFUNC_DEF("arcLength", 0, js_contour_arclength),
     JS_CFUNC_DEF("getAffineTransform", 1, js_contour_getaffinetransform),
     JS_CFUNC_DEF("getPerspectiveTransform", 1, js_contour_getperspectivetransform),
+    JS_CFUNC_DEF("rotatePoints", 1, js_contour_rotatepoints),
     JS_CFUNC_DEF("toString", 0, js_contour_tostring),
 
     JS_CFUNC_MAGIC_DEF("entries", 0, js_create_point_iterator, 0),

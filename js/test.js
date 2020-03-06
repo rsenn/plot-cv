@@ -90,6 +90,10 @@ global.test_array = [1, 2, 3, 4, 5, 6];
 global.process = function(contours, hier) {
   var areas = [];
 
+  var outlines = {
+    contours, hier
+  };
+
   let orig = imgOriginal;
 
   console.log(typeof contours);
