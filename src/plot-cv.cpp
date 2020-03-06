@@ -3,6 +3,7 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgproc/types_c.h>
+#include <opencv2/photo.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <unistd.h>
 
@@ -36,7 +37,7 @@ typedef Line<float> line_type;
 const char* image_names[] = {"CANNY", "ORIGINAL", "GRAYSCALE", "MORPHOLOGY"};
 int num_iterations = 0;
 
-int morphology_operator = 0, morphology_enable = 0;
+int morphology_operator = 1, morphology_enable = 1;
 image_type* mptr = nullptr;
 
 int thresh = 10, thresh2 = 20, apertureSize = 3;
@@ -49,7 +50,7 @@ double epsilon = 3;
 const int max_frames = 100000;
 
 config_values config = {
-    .morphology_kernel_size = 2,
+    .morphology_kernel_size = 1,
     .blur_kernel_size = 2,
 };
 
@@ -432,6 +433,10 @@ points_to_js<cv::Point>(const std::vector<cv::Point>& v) {
 void
 process_image(std::function<void(std::string, cv::Mat*)> display_image, int show_image) {
 
+  std::vector<cv::Vec4i> houghLines;
+
+  std::vector<point2f_vector> contours2;
+  std::vector<cv::Vec4i> hier;
   switch(show_image) {
     case MORPHOLOGY: mptr = &imgMorphology; break;
     case ORIGINAL: mptr = &imgOriginal; break;
@@ -448,20 +453,27 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
   cv::split(frameLab, frameLabCn);
   frameLabCn[0].copyTo(imgGrayscale);
 
+  // frameLabCn[0].convertTo(imgGrayscale, CV_8UC4);
+  // cv::cvtColor(frameLabCn[0], imgGrayscale, cv::COLOR_BGR2GRAY);
   std::vector<cv::Vec3f> circles;
 
-  cv::normalize(frameLabCn[0], imgGrayscale, 0, 255, cv::NORM_MINMAX);
+  //  cv::normalize(frameLabCn[0], imgGrayscale, 0, 255, cv::NORM_MINMAX);
   display_image("imgGrayscale", &imgGrayscale);
+  /*
+    cv::GaussianBlur(imgGrayscale,
+                     imgBlurred,
+                     cv::Size(config.blur_kernel_size + 1, config.blur_kernel_size + 1),
+                     1.75,
+                     1.75);
+  */
+  cv::edgePreservingFilter(imgGrayscale, imgBlurred, cv::RECURS_FILTER, 30, 0.4);
+  cv::bilateralFilter(imgGrayscale, imgBlurred, -1, 30, config.blur_kernel_size);
 
-  cv::GaussianBlur(imgGrayscale,
-                   imgBlurred,
-                   cv::Size(config.blur_kernel_size + 1, config.blur_kernel_size + 1),
-                   1.75,
-                   1.75);
   display_image("imgBlurred", &imgBlurred);
 
   cv::Canny(imgBlurred, imgCanny, thresh, thresh2, apertureSize);
   display_image("imgCanny", &imgCanny);
+  //   cv::HoughLines(imgCanny, houghLines, 1, CV_PI/180, 100, 0, 0 );
 
   image_type strel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(19, 19));
 
@@ -485,28 +497,22 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
 
   imgVector = color_type(0, 0, 0, 0);
 
-
   display_image("imgMorphology", &imgMorphology);
 
   //  apply_clahe(imgOriginal, imgOriginal);XY
   {
-  std::vector<cv::Vec4i> houghLines;
 
-
-
-    std::vector<point2f_vector> contours2;
-    std::vector<cv::Vec4i> hier;
     std::vector<point2i_vector> contours =
         get_contours(morphology_enable ? imgMorphology : imgCanny, hier, CV_RETR_TREE);
 
-  cv::HoughLines(imgMorphology, houghLines, 1, CV_PI/180, 100, 0, 0 );
+    // imgMorphology.convertTo(imgMorphology, CV_32SC1);
 
-    imgCanny = color_type::all(255) - imgCanny;
-    imgMorphology = color_type::all(255) - imgMorphology;
+    /* imgCanny = color_type::all(255) - imgCanny;
+     imgMorphology = color_type::all(255) - imgMorphology;
 
-    cv::cvtColor(imgCanny, imgCanny, cv::COLOR_GRAY2BGR);
-    cv::cvtColor(imgMorphology, imgMorphology, cv::COLOR_GRAY2BGR);
-
+     cv::cvtColor(imgCanny, imgCanny, cv::COLOR_GRAY2BGR);
+     cv::cvtColor(imgMorphology, imgMorphology, cv::COLOR_GRAY2BGR);
+ */
     if(show_diagnostics)
       std::cerr << "Num contours: " << contours.size() << std::endl;
 

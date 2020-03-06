@@ -245,9 +245,9 @@ main(int argc, char* argv[]) {
       gui.imshow("imgOriginal", &imgOriginal);
       //  gui.imshow("imgTemp", &imgTemp);
       gui.imshow("imgGrayscale", &imgGrayscale);
-       gui.imshow("imgBlurred", &imgBlurred);
+      gui.imshow("imgBlurred", &imgBlurred);
       gui.imshow("imgCanny", &imgCanny);
-       gui.imshow("imgMorphology", &imgMorphology);
+      gui.imshow("imgMorphology", &imgMorphology);
 
       // make quartersize image and show
       //
