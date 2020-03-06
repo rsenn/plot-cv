@@ -52,11 +52,11 @@ const int max_frames = 100000;
 config_values config = {.morphology_kernel_size = 2,
                         .blur_kernel_size = 5,
 
-                        .hough_rho = 100,
-                        .hough_theta = 180,
-                        .hough_threshold = 300,
-                        .hough_minlinelen = 300,
-                        .hough_maxlinegap = 100};
+                        .hough_rho = 99,
+                        .hough_theta = 25,
+                        .hough_threshold = 900,
+                        .hough_minlinelen =  127,
+                        .hough_maxlinegap =   199};
 
 image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny,
     imgMorphology; // Canny edge image
@@ -434,7 +434,7 @@ draw_lines(image_type& target,
 }
 
 void
-corner_harris_detection(image_type& src, const std::function<void(const cv::Point &point)> &fn) {
+corner_harris_detection(image_type& src, const std::function<void(const cv::Point& point)>& fn) {
   int thresh = 200;
   int max_thresh = 255;
   int blockSize = 2;
@@ -447,7 +447,6 @@ corner_harris_detection(image_type& src, const std::function<void(const cv::Poin
   image_type dst_norm, dst_norm_scaled;
   cv::normalize(dst, dst_norm, 0, 255, cv::NORM_MINMAX, CV_32FC1, image_type());
   cv::convertScaleAbs(dst_norm, dst_norm_scaled);
-
 
   for(int i = 0; i < dst_norm.rows; i++) {
     for(int j = 0; j < dst_norm.cols; j++) {
@@ -551,15 +550,10 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
 
   //  cv::normalize(frameLabCn[0], imgGrayscale, 0, 255, cv::NORM_MINMAX);
   display_image("imgGrayscale", &imgGrayscale);
-  /*
-    cv::GaussianBlur(imgGrayscale,
-                     imgBlurred,
-                     cv::Size(config.blur_kernel_size + 1, config.blur_kernel_size + 1),
-                     1.75,
-                     1.75);
-  */
-  // cv::edgePreservingFilter(imgGrayscale, imgBlurred, cv::RECURS_FILTER, 30, 0.4);
-  cv::bilateralFilter(imgGrayscale, imgBlurred, -1, 30, config.blur_kernel_size);
+  //    cv::GaussianBlur(imgGrayscale, imgBlurred, cv::Size(config.blur_kernel_size + 1,
+  //    config.blur_kernel_size + 1), 1.75, 1.75);
+ // cv::edgePreservingFilter(imgGrayscale, imgBlurred, cv::RECURS_FILTER, 30, 0.4);
+  cv::bilateralFilter(imgGrayscale, imgBlurred, config.blur_kernel_size+1, 30, 1);
 
   cv::Canny(imgBlurred, imgCanny, thresh, thresh2, apertureSize);
 
@@ -574,8 +568,8 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
                    imgMorphology,
                    morphology_operator ? cv::MORPH_DILATE : cv::MORPH_CLOSE,
                    cv::getStructuringElement(cv::MORPH_ELLIPSE,
-                                             cv::Size(config.morphology_kernel_size+1,
-                                                      config.morphology_kernel_size+1)));
+                                             cv::Size(config.morphology_kernel_size + 1,
+                                                      config.morphology_kernel_size + 1)));
 
   cv::cvtColor(imgBlurred, imgBlurred, cv::COLOR_GRAY2BGR);
   /*
@@ -591,14 +585,14 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
 
     image_info(imgCanny);*/
 
-  hough_lines(imgCanny, [&hough, &houghLines](int x1, int y1, int x2, int y2) {
+  hough_lines((morphology_enable > 1) ? imgMorphology : imgCanny, [&hough, &houghLines](int x1, int y1, int x2, int y2) {
     cv::Vec4i vec(x1, y1, x2, y2);
     hough.push_back(vec);
     houghLines.push_back(Line<int>(x1, y1, x2, y2));
   });
 
   corner_harris_detection(imgGrayscale, [&](const cv::Point& pt) {
-    cv::circle(imgCanny, pt, 10, cv::Scalar(0,255,0,255), 2, cv::LINE_8);
+    cv::circle(imgCanny, pt, 10, cv::Scalar(0, 255, 0, 255), 2, cv::LINE_8);
   });
 
   /*  std::transform(hough.cbegin(),
@@ -622,7 +616,7 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
                    });
   */
 
-//  std::cerr << "hough: " << implode(hough.cbegin(), hough.cend(), ",\n");
+  //  std::cerr << "hough: " << implode(hough.cbegin(), hough.cend(), ",\n");
 
   /* std::cerr << "houghLines.size=" << houghLines.size() << std::endl;
 
@@ -644,7 +638,6 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
   display_image("imgBlurred", &imgBlurred);
   display_image("imgCanny", &imgCanny);
   display_image("imgMorphology", &imgMorphology);
-
 
   cv::cvtColor(imgGrayscale, imgGrayscale, cv::COLOR_GRAY2BGR);
 
@@ -674,14 +667,14 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
     int largestIndex = get_largest_contour(contours, largestContour);
 
     if(largestIndex != -1) {
+      draw_all_contours(imgVector, contours, 1);
+
       if(show_diagnostics)
         std::cerr << "largestIndex: " << largestIndex << std::endl;
 
       cv::drawContours(
           imgVector, contours, largestIndex, color_type(0, 0, 255, 255), 2, cv::LINE_8);
     }
-
-
 
     cv::cvtColor(imgCanny, imgCanny, cv::COLOR_GRAY2BGR);
 
@@ -739,11 +732,11 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
         if(contourStr.str().size())
           contourStr << "\n";
         out_points(contourStr, a);
-        /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
-           ", " << hier[i][2] << ", " << hier[i][3] << ", "
-                      << "} " << std::endl;
-            logfile << "contourDepth(i) = " << depth << std::endl;
-  */
+      /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
+         ", " << hier[i][2] << ", " << hier[i][3] << ", "
+                    << "} " << std::endl;
+          logfile << "contourDepth(i) = " << depth << std::endl;
+*/
         /*  if(dptr != nullptr)
             cv::drawContours(*dptr, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
    */     }
