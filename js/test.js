@@ -129,27 +129,19 @@ global.process = function(contours, hier) {
       index(i) {
         return i === -1 ? null : this.contours[i];
       },
-
-      ref(i) {
-        let inst = this;
-        const h = inst.hier[i];
-
-        return {
-          prev: inst.index(h[HIER_PREVIOUS])
-          next: inst.index(h[HIER_NEXT]),
-          parent: inst.index(h[HIER_PARENT]),
-          firstChild: inst.index(h[HIER_FIRSTCHILD]),
-        };
-      }
+      previous(i) {return this.index(this.hier[i][HIER_PREVIOUS]); },
+      next(i) {return this.index(this.hier[i][HIER_NEXT]); },
+      parent(i) {return this.index(this.hier[i][HIER_PARENT]); },
+      firstChild(i) {return this.index(this.hier[i][HIER_FIRSTCHILD]); }
     };
 
     console.log("contours.length=", contours.length);
     console.log("hier.length=", hier.length);
     console.log("hier=", hier);
-    console.log("obj=", obj);
-    console.log("obj.next=", obj.ref(0).next);
-    console.log("obj.parent=", obj.ref(0).parent);
-    console.log("obj.firstChild=", obj.ref(0).firstChild);
+    console.log("obj.prev=", obj.previous(1));
+    console.log("obj.next=", obj.next(1));
+    console.log("obj.parent=", obj.parent(1));
+    console.log("obj.firstChild=", obj.firstChild(1));
   }
 
   /*
