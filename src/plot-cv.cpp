@@ -330,10 +330,11 @@ invert_color(image_type& img) {
     for(int j = 0; j < img.cols; j++) img.at<uchar>(i, j) = 255 - img.at<uchar>(i, j);
 }
 
-std::vector<Line<float>>
-hough_lines(image_type& img) {
-  std::vector<Line<float>> ret;
-  image_type pimg;
+
+void
+hough_lines(image_type& img, std::vector<point2f_vector> &ret) {
+cv::Mat pimg;
+
   if(img.channels() > 1)
     cvtColor(img, img, CV_BGR2GRAY);
   cv::threshold(img, pimg, thresholdValue, 255, 0);
@@ -345,14 +346,18 @@ hough_lines(image_type& img) {
   invert_color(pimg);
   cv::HoughLinesP(pimg, lines, 1, CV_PI / 180, 30, 30, 10);
 
-  std::transform(lines.cbegin(),
-                 lines.cend(),
-                 std::back_inserter(ret),
-                 [](const cv::Vec4i& v) -> Line<float> {
-                   return Line<float>(v[0], v[1], v[2], v[3]);
-                 });
+  std::for_each(lines.cbegin(),
+                lines.cend(),
 
-  return ret;
+                [&ret](const cv::Vec4i& v) {
+                    std::vector<cv::Point2f> line;
+
+
+                  line.push_back(cv::Point2f(v[0], v[1]));
+                  line.push_back(cv::Point2f(v[2], v[3]));
+
+                  ret.push_back(line);
+                });
 }
 
 void
@@ -448,7 +453,7 @@ points_to_js<cv::Point>(const std::vector<cv::Point>& v) {
 void
 process_image(std::function<void(std::string, cv::Mat*)> display_image, int show_image) {
 
-  std::vector<Line<float>> houghLines;
+  std::vector<point2f_vector> houghLines;
 
   std::vector<point2f_vector> contours2;
   std::vector<cv::Vec4i> hier;
@@ -514,7 +519,7 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
 
   image_info(imgCanny);
 
-  houghLines = hough_lines(imgCanny);
+  hough_lines(imgCanny, houghLines);
   /*
     std::vector<Line<float>> lines2f;
 
@@ -525,8 +530,8 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
                      return Line<float>(v[0], v[1], v[2], v[3]);
                    });
   */
-  std::cerr << "lines2f: "
-            << implode(houghLines.begin(), houghLines.end(), ",\n") << " size=" << houghLines.size() << std::endl;
+  std::cerr << "lines2f: " << implode(houghLines.begin(), houghLines.end(), ",\n")
+            << " size=" << houghLines.size() << std::endl;
 
   if(show_diagnostics)
     image_info(imgMorphology);
@@ -622,11 +627,11 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
         if(contourStr.str().size())
           contourStr << "\n";
         out_points(contourStr, a);
-        /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
-           ", " << hier[i][2] << ", " << hier[i][3] << ", "
-                      << "} " << std::endl;
-            logfile << "contourDepth(i) = " << depth << std::endl;
-  */
+      /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
+         ", " << hier[i][2] << ", " << hier[i][3] << ", "
+                    << "} " << std::endl;
+          logfile << "contourDepth(i) = " << depth << std::endl;
+*/
         /*  if(dptr != nullptr)
             cv::drawContours(*dptr, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
    */     }

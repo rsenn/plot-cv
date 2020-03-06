@@ -100,13 +100,13 @@ public:
 
   std::array<cv::Point_<T>, 2>
   pointsArray() const {
-    std::array< cv::Point_<T>, 2> ret = {a, b};
+    std::array<cv::Point_<T>, 2> ret = {a, b};
     return ret;
   }
 
-  std::vector<cv::Point_<T> >
+  std::vector<cv::Point_<T>>
   points() const {
-    std::vector< cv::Point_<T> > ret {a, b};
+    std::vector<cv::Point_<T>> ret{a, b};
     return ret;
   }
 
