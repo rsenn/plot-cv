@@ -1653,6 +1653,19 @@ js_contour_rotatepoints(JSContext* ctx, JSValueConst this_val, int argc, JSValue
   }
   return this_val;
 }
+JSValue
+js_contour_psimpl(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSContourData* s = js_contour_data(ctx, this_val);
+  int32_t shift = 1;
+  uint32_t size = s->size();
+  JSValue ret = JS_UNDEFINED;
+  if(!s)
+    return JS_EXCEPTION;
+
+
+
+  return ret;
+}
 
 template<class Value>
 int64_t js_array_to_vector(JSContext* ctx, JSValue arr, std::vector<Value>& out);
@@ -1791,6 +1804,8 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
     JS_CFUNC_DEF("getPerspectiveTransform", 1, js_contour_getperspectivetransform),
     JS_CFUNC_DEF("rotatePoints", 1, js_contour_rotatepoints),
     JS_CFUNC_DEF("convexityDefects", 1, js_contour_convexitydefects),
+    JS_CFUNC_MAGIC_DEF("reumannWitkam", 0, js_contour_psimpl, 0),
+    JS_CFUNC_MAGIC_DEF("opheim", 0, js_contour_psimpl, 1),
     JS_CFUNC_DEF("toArray", 0, js_contour_toarray),
     JS_CFUNC_DEF("toString", 0, js_contour_tostring),
 
