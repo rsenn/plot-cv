@@ -4,7 +4,9 @@
 #include "plot-cv.h"
 #include "psimpl.h"
 #include "geometry.h"
+#include "js.h"
 #include "quickjs/cutils.h"
+
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iomanip>
@@ -113,7 +115,6 @@ js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
 
   if(argc > i && js.is_array_like(argv[i]))
     js.get_point_array(argv[i++], points);
-
   if(argc > i && js.is_color(argv[i]))
     js.get_color(argv[i++], color);
 
@@ -225,19 +226,6 @@ js_vector_to_array(std::enable_if_t<std::is_same<Vector, cv::Vec4i>::value, JSCo
   return ret;
 }
 
-JSValue
-js_vector_vec4i_to_array(JSContext* ctx, const std::vector<cv::Vec4i>& vec) {
-  JSValue ret = JS_NewArray(ctx);
-  uint32_t i, j, n = vec.size();
-  for(i = 0; i < n; i++) {
-    JSValue item = JS_NewArray(ctx);
-    for(j = 0; j < 4; j++) {
-      JS_SetPropertyUint32(ctx, item, j, JS_NewInt32(ctx, vec[i][j]));
-    }
-    JS_SetPropertyUint32(ctx, ret, i, item);
-  }
-  return ret;
-}
 
 JSValue
 js_vector_to_array(JSContext* ctx, const std::vector<cv::Point_<float>>& vec) {
@@ -280,12 +268,30 @@ JSValue point_iterator_proto, point_iterator_class;
 JSValue contour_proto, contour_class;
 JSValue mat_proto, mat_class;
 
+JSValue int32array_proto, int32array_ctor;
+JSClassID int32array_class_id;
+
 JSRectData* js_rect_data(JSContext* ctx, JSValue val);
 
 JSValue js_mat_wrap(JSContext* ctx, const cv::Mat& mat);
 
 extern "C++" template<class Type>
 JSValue js_contour_new(JSContext* ctx, const std::vector<Type>& points);
+
+
+JSValue
+js_vector_vec4i_to_array(JSContext* ctx, const std::vector<cv::Vec4i>& vec) {
+  JSValue ret = JS_NewArray(ctx);
+  uint32_t i, j, n = vec.size();
+  for(i = 0; i < n; i++) {
+    JSValue item = JS_NewObjectProto(ctx, int32array_proto);
+    for(j = 0; j < 4; j++) {
+      JS_SetPropertyUint32(ctx, item, j, JS_NewInt32(ctx, vec[i][j]));
+    }
+    JS_SetPropertyUint32(ctx, ret, i, item);
+  }
+  return ret;
+}
 
 void
 js_point_finalizer(JSRuntime* rt, JSValue val) {
@@ -1115,11 +1121,15 @@ js_contour_new(JSContext* ctx, const std::vector<cv::Point_<float>>& points) {
 
   contour = static_cast<JSContourData*>(js_mallocz(ctx, sizeof(JSContourData)));
 
+  contour->resize(points.size());
+
+  transform_points(points.cbegin(), points.cend(), contour->begin());
+/*
   std::transform(points.cbegin(),
                  points.cend(),
                  std::back_inserter(*contour),
                  [](const cv::Point2f& pt) -> cv::Point2d { return cv::Point2d(pt.x, pt.y); });
-
+*/
   JS_SetOpaque(ret, contour);
   return ret;
 };  
@@ -2287,6 +2297,9 @@ js_mat_init(JSContext* ctx, void* m, const char* name, bool exp) {
   JS_SetPropertyStr(ctx, mat_class, "CV_64FC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 2)));
   JS_SetPropertyStr(ctx, mat_class, "CV_64FC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 3)));
   JS_SetPropertyStr(ctx, mat_class, "CV_64FC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 4)));
+JSValue g = JS_GetGlobalObject(ctx);
+ int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
+ int32array_proto = JS_GetPrototype(ctx, int32array_ctor);
 
   if(exp)
     JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), name, mat_class);
