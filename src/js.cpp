@@ -314,6 +314,12 @@ jsrt::add_function(const char* name, JSCFunction* fn, int args) {
   return function;
 }
 
+void
+jsrt::set_global(const char* name, JSValue val) {
+
+  JS_SetPropertyStr(ctx, global_object(), name, val);
+}
+
 jsrt::value
 jsrt::get_global(const char* name) {
   value ret = JS_GetPropertyStr(ctx, global_object(), name);

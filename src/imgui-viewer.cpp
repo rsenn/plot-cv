@@ -11,6 +11,9 @@
 #include "../imgui/imgui_impl_sdl.h"
 
 #include "imgui-viewer.h"
+#include "color.h"
+#include "simple_svg_writer.h"
+#include "plot-cv.h"
 
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
 
@@ -104,12 +107,15 @@ ImageViewer::initContents() {
 
 void
 ImageViewer::imshow(string frame_name, cv::Mat* frame) {
+  if(frame->empty())
+    return;
+
   frame_names.push_back(frame_name);
   frames.push_back(frame);
 }
 
 void
-ImageViewer::imshow(cv::Mat* frame) {
+ImageViewer::show(cv::Mat* frame) {
   imshow("image:" + to_string(frames.size()), frame);
 }
 
@@ -127,6 +133,7 @@ ImageViewer::showMainContents() {
 
 void
 ImageViewer::show() {
+  int x = 0, y = 0;
   // Start the Dear ImGui frame
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplSDL2_NewFrame(window);
@@ -137,24 +144,44 @@ ImageViewer::show() {
   // initialize textures
   vector<ImageTexture*> my_textures;
   for(int i = 0; i < frames.size(); i++) {
-    my_textures.push_back(new ImageTexture());
+    ImageTexture* text = new ImageTexture();
+    cv::Size s = frames[i]->size();
+    if(s.width > 200)
+      cv::resize(
+          *frames[i], *frames[i], cv::Size(s.width / 2, s.height / 2), 0, 0, cv::INTER_LINEAR);
+
+    text->setImage(frames[i]);
+    my_textures.push_back(text);
   }
 
   // imshow windows
   for(int i = 0; i < frames.size(); i++) {
+    ImVec2 size, scaled;
     cv::Mat* frame = frames[i];
 
-    string window_name;
+    std::string window_name;
     if(frame_names.size() <= i) {
       window_name = "image:" + to_string(i);
     } else {
       window_name = frame_names[i];
     }
-    ImGui::Begin(window_name.c_str());
 
-    my_textures[i]->setImage(frame);
-    ImGui::Image(my_textures[i]->getOpenglTexture(), my_textures[i]->getSize());
+    size = my_textures[i]->getSize();
+
+    scaled = size;
+    /* scaled[0] /= 2;
+     scaled[1] /= 2;
+ */
+    ImGui::Begin(window_name.c_str());
+    ImGui::SetNextWindowPos(ImVec2(x, y));
+    ImGui::Image(my_textures[i]->getOpenglTexture(), scaled);
     ImGui::End();
+
+    x += size[0] + 40;
+    if(i % 2 == 1) {
+      x = 0;
+      y += size[1] + 40;
+    }
   }
 
   render();
@@ -187,7 +214,7 @@ ImageViewer::handleEvent() {
 //---------------------------------------------------------------------
 
 int
-main(int, char**) {
+main(int argc, char* argv[]) {
   ImageViewer gui;
 
   cv::VideoCapture cap(0);
@@ -196,24 +223,35 @@ main(int, char**) {
     return (-1);
   }
 
+  js_init(argc, argv);
+
   // Main loop
   while(!gui.handleEvent()) {
-    cv::Mat frame, frame2;
-    if(cap.read(frame)) {
+    if(cap.read(imgOriginal)) {
+      double scaleFactor = 200.0 / (double)imgOriginal.cols;
 
-      // make halfsize image
-      cv::resize(frame, frame, cv::Size(0, 0), 0.5, 0.5, cv::INTER_LINEAR);
+      process_image(
+          std::bind(&ImageViewer::imshow, &gui, std::placeholders::_1, std::placeholders::_2), 0);
 
-      // gain
-      float g = gui.getGain();
-      frame.convertTo(frame, CV_8U, g, 0);
+      /*      cv::resize(imgOriginal, imgOriginal, cv::Size(0, 0), scaleFactor, scaleFactor,
+         cv::INTER_LINEAR); cv::resize(imgGrayscale, imgGrayscale, cv::Size(0,
+         0),scaleFactor,scaleFactor, cv::INTER_LINEAR); cv::resize(imgCanny, imgCanny, cv::Size(0,
+         0), scaleFactor, scaleFactor, cv::INTER_LINEAR);
 
+      */
       // show halfsize image
-      gui.imshow("half", &frame);
+      //   gui.imshow("imgRaw", &imgRaw);
+      gui.imshow("imgVector", &imgVector);
+      gui.imshow("imgOriginal", &imgOriginal);
+      //  gui.imshow("imgTemp", &imgTemp);
+      gui.imshow("imgGrayscale", &imgGrayscale);
+       gui.imshow("imgBlurred", &imgBlurred);
+      gui.imshow("imgCanny", &imgCanny);
+       gui.imshow("imgMorphology", &imgMorphology);
 
       // make quartersize image and show
-      cv::resize(frame, frame2, cv::Size(0, 0), 0.5, 0.5, cv::INTER_LINEAR);
-      gui.imshow("quater", &frame2);
+      //
+      // gui.imshow("quater", &frame2);
 
       gui.show();
     }

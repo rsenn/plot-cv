@@ -82,7 +82,7 @@ public:
   ImageViewer();
   bool handleEvent();
   void imshow(std::string, cv::Mat*);
-  void imshow(cv::Mat*);
+  void show(cv::Mat*);
   void show();
   void exit();
   float getGain();

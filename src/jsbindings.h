@@ -17,6 +17,8 @@ JSValue js_point_norm(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
 JSValue js_point_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv);
 int js_point_init(JSContext* ctx, void* m, const char* name, bool exp = true);
 
+int js_size_init(JSContext* ctx, void* m, const char* name, bool exp = true);
+
 void js_rect_finalizer(JSRuntime* rt, JSValue val);
 JSValue js_rect_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
 JSValue js_rect_get_xy(JSContext* ctx, JSValueConst this_val, int magic);
@@ -35,6 +37,12 @@ void js_contour_finalizer(JSRuntime* rt, JSValue val);
 JSValue js_contour_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
 JSValue js_contour_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv);
 int js_contour_init(JSContext* ctx, void* m, const char* name, bool exp = true);
+
+JSValue js_mat_wrap(JSContext* ctx, const cv::Mat& mat);
+void js_mat_finalizer(JSRuntime* rt, JSValue val);
+JSValue js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
+JSValue js_mat_get_wh(JSContext* ctx, JSValueConst this_val, int magic);
+int js_mat_init(JSContext* ctx, void* m, const char* name, bool exp);
 };
 
 #endif

@@ -87,6 +87,7 @@ struct jsrt {
 
   value get_global(const char* name);
   void set_global(const char* name, const_value v);
+
   value
   global_object() {
     global.get();
@@ -687,12 +688,6 @@ jsrt::index() const {
 inline std::function<JSValue(uint32_t)>
 jsrt::index(const JSValue& a) const {
   return std::bind(&jsrt::get_property<uint32_t>, this, a, std::placeholders::_1);
-}
-
-inline void
-jsrt::set_global(const char* name, const_value v) {
-  value g = global_object();
-  set_property(g, name, v);
 }
 
 extern "C" jsrt js;
