@@ -145,13 +145,19 @@ main(int argc, char* argv[]) {
   cv::createTrackbar("morphology_kernel_size",
                      "imgMorphology",
                      &config.morphology_kernel_size,
-                     4,
+                     2,
                      trackbar,
                      (void*)"Morphology kernel size");
+  cv::createTrackbar("morphology_enable",
+                     "imgMorphology",
+                     &morphology_enable,
+                     2,
+                     trackbar,
+                     (void*)"Morphology enable");
   cv::createTrackbar("morphology_operator",
                      "imgMorphology",
                      &morphology_operator,
-                     2,
+                     3,
                      trackbar,
                      (void*)"Morphology operator");
   cv::createTrackbar("blur_kernel_size",
@@ -159,7 +165,7 @@ main(int argc, char* argv[]) {
                      &config.blur_kernel_size,
                      1,
                      trackbar,
-                     (void*)"Morphology kernel size");
+                     (void*)"Blur kernel size");
 
   mptr = &imgOriginal;
 

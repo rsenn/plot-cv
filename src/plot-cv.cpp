@@ -484,8 +484,8 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
                    imgMorphology,
                    morphology_operator ? cv::MORPH_DILATE : cv::MORPH_CLOSE,
                    cv::getStructuringElement(cv::MORPH_ELLIPSE,
-                                             cv::Size(config.morphology_kernel_size + 1,
-                                                      config.morphology_kernel_size + 1)));
+                                             cv::Size(config.morphology_kernel_size ,
+                                                      config.morphology_kernel_size)));
 
   cv::cvtColor(imgGrayscale, imgGrayscale, cv::COLOR_GRAY2BGR);
   cv::cvtColor(imgMorphology, imgMorphology, cv::COLOR_BGR2GRAY);
@@ -503,7 +503,12 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
   {
 
     std::vector<point2i_vector> contours =
-        get_contours(morphology_enable ? imgMorphology : imgCanny, hier, CV_RETR_TREE);
+        get_contours((morphology_enable>1) ? imgMorphology : imgCanny, hier, CV_RETR_TREE);
+
+    std::vector<point2i_vector> external =
+        get_contours(morphology_enable>1 ? imgMorphology : imgCanny, hier, CV_RETR_EXTERNAL);
+
+    draw_all_contours(imgGrayscale, external,1);
 
     // imgMorphology.convertTo(imgMorphology, CV_32SC1);
 
@@ -577,17 +582,17 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
         if(contourStr.str().size())
           contourStr << "\n";
         out_points(contourStr, a);
-        /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
-           ", " << hier[i][2] << ", " << hier[i][3] << ", "
-                      << "} " << std::endl;
-            logfile << "contourDepth(i) = " << depth << std::endl;
-  */
+      /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
+         ", " << hier[i][2] << ", " << hier[i][3] << ", "
+                    << "} " << std::endl;
+          logfile << "contourDepth(i) = " << depth << std::endl;
+*/
         /*  if(dptr != nullptr)
             cv::drawContours(*dptr, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
    */     }
     }
 
-    display_image("grayscale", &imgGrayscale);
+    display_image("imgGrayscale", &imgGrayscale);
 
     if(maxArea == 0) {
       // keycode = cv::waitKey(16);
