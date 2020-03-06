@@ -101,12 +101,18 @@ global.process = function(contours, hier) {
 
 
   let orig = imgOriginal;
+  let hull = c.convexHull(false, false);
+  let defects =  c.convexityDefects(hull);
 
   console.log(typeof c);
   console.log("contour: ", c);
   c.rotatePoints(2);
   console.log("contour: ", c);
-  console.log("convexHull: ", c.convexHull(false, false));
+  console.log("convexHull: ", hull);
+  console.log("convexityDefects: ", defects);
+
+  let a = c.toArray();
+  console.log("toArray: ", a);
 
 
   /*

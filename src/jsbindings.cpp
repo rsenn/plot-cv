@@ -1272,15 +1272,6 @@ js_contour_convexhull(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
 
   if(returnPoints) {
     ret = js_contour_new(ctx, hull);
-    /*
-        out = static_cast<JSContourData*>(JS_GetOpaque2(ctx, argv[0], js_contour_class_id));
-
-        std::transform(hull.begin(),
-                       hull.end(),
-                       std::back_inserter(*out),
-                       [](const cv::Point2f& pt) -> cv::Point2d { return cv::Point2d(pt.x, pt.y);
-       });
-    */
   } else {
     uint32_t i, size = hullIndices.size();
 
@@ -1662,6 +1653,79 @@ js_contour_rotatepoints(JSContext* ctx, JSValueConst this_val, int argc, JSValue
   }
   return this_val;
 }
+
+template<class Value>
+int64_t js_array_to_vector(JSContext* ctx, JSValue arr, std::vector<Value>& out);
+
+template<>
+int64_t
+js_array_to_vector(JSContext* ctx, JSValue arr, std::vector<int>& out) {
+  int64_t i, n;
+  JSValue len = JS_GetPropertyStr(ctx, arr, "length");
+  JS_ToInt64(ctx, &n, len);
+  out.resize(n);
+  for(i = 0; i < n; i++) {
+    int32_t value;
+    JSValue item = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
+    JS_ToInt32(ctx, &value, item);
+    out[i] = value;
+  }
+  return n;
+}
+
+template<class Value> JSValue js_vector_to_array(JSContext* ctx, const std::vector<Value>& vec);
+
+template<>
+JSValue
+js_vector_to_array(JSContext* ctx, const std::vector<int>& vec) {
+  JSValue ret = JS_NewArray(ctx);
+  uint32_t i, n = vec.size();
+  for(i = 0; i < n; i++) {
+    JS_SetPropertyUint32(ctx, ret, i, JS_NewInt32(ctx, vec[i]));
+  }
+  return ret;
+}
+
+template<class Vector>
+JSValue
+js_vector_to_array(JSContext* ctx, const std::vector<Vector>& vec) {
+  JSValue ret = JS_NewArray(ctx);
+  uint32_t i, j, n = vec.size();
+  for(i = 0; i < n; i++) {
+    JSValue item = JS_NewArray(ctx);
+    for(j = 0; j < 4; j++) {
+      JS_SetPropertyUint32(ctx, item, j, JS_NewInt32(ctx, vec[i][j]));
+    }
+    JS_SetPropertyUint32(ctx, ret, i, item);
+  }
+  return ret;
+}
+
+JSValue
+js_contour_convexitydefects(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSContourData* s = js_contour_data(ctx, this_val);
+  JSValue ret = JS_UNDEFINED;
+
+  std::vector<int> hullIndices;
+  std::vector<cv::Vec4i> defects;
+
+  if(argc > 0) {
+    int64_t n = js_array_to_vector(ctx, argv[0], hullIndices);
+    if(n == 0)
+      return JS_EXCEPTION;
+  }
+
+  if(s->size() == 0 || hullIndices.size() == 0)
+    return JS_EXCEPTION;
+
+  defects.resize(hullIndices.size());
+  cv::convexityDefects(*s, hullIndices, defects);
+
+  ret = js_vector_to_array(ctx, defects);
+
+  return ret;
+}
+
 JSValue
 js_contour_toarray(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData* s = js_contour_data(ctx, this_val);
@@ -1673,11 +1737,9 @@ js_contour_toarray(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
 
   ret = JS_NewArray(ctx);
 
-for(i = 0; i < size; i++) {
-  JS_SetPropertyUint32(ctx, ret, i, js_point_new(ctx, (*s)[i].x, (*s)[i].y));
-
-
-}
+  for(i = 0; i < size; i++) {
+    JS_SetPropertyUint32(ctx, ret, i, js_point_new(ctx, (*s)[i].x, (*s)[i].y));
+  }
 
   return ret;
 }
@@ -1728,6 +1790,7 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
     JS_CFUNC_DEF("getAffineTransform", 1, js_contour_getaffinetransform),
     JS_CFUNC_DEF("getPerspectiveTransform", 1, js_contour_getperspectivetransform),
     JS_CFUNC_DEF("rotatePoints", 1, js_contour_rotatepoints),
+    JS_CFUNC_DEF("convexityDefects", 1, js_contour_convexitydefects),
     JS_CFUNC_DEF("toArray", 0, js_contour_toarray),
     JS_CFUNC_DEF("toString", 0, js_contour_tostring),
 

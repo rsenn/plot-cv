@@ -699,11 +699,11 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
         if(contourStr.str().size())
           contourStr << "\n";
         out_points(contourStr, a);
-        /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
-           ", " << hier[i][2] << ", " << hier[i][3] << ", "
-                      << "} " << std::endl;
-            logfile << "contourDepth(i) = " << depth << std::endl;
-  */
+      /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
+         ", " << hier[i][2] << ", " << hier[i][3] << ", "
+                    << "} " << std::endl;
+          logfile << "contourDepth(i) = " << depth << std::endl;
+*/
         /*  if(dptr != nullptr)
             cv::drawContours(*dptr, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
    */     }
