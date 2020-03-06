@@ -252,7 +252,7 @@ main(int argc, char* argv[]) {
       dptr = &imgVector;
     }
     process_image(std::function<void(std::string, cv::Mat*)>(&display_image), show_image);
-    keycode = cv::waitKey(16);
+    keycode = cv::waitKey(200);
 
     /*
           if(show_image == ORIGINAL)

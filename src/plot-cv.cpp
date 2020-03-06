@@ -49,7 +49,7 @@ bool show_diagnostics = false;
 double epsilon = 3;
 const int max_frames = 100000;
 
-config_values config = {.morphology_kernel_size = 1,
+config_values config = {.morphology_kernel_size = 2,
                         .blur_kernel_size = 5,
 
                         .hough_rho = 100,
@@ -578,18 +578,18 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
                                                       config.morphology_kernel_size+1)));
 
   cv::cvtColor(imgBlurred, imgBlurred, cv::COLOR_GRAY2BGR);
+  /*
+    std::cerr << "imgOriginal ";
+    image_info(imgOriginal);
+    std::cerr << "imgGrayscale ";
+    image_info(imgGrayscale);
+    std::cerr << "imgBlurred ";
+    image_info(imgBlurred);
+    std::cerr << "imgMorphology ";
+    image_info(imgMorphology);
+    std::cerr << "imgCanny ";
 
-  std::cerr << "imgOriginal ";
-  image_info(imgOriginal);
-  std::cerr << "imgGrayscale ";
-  image_info(imgGrayscale);
-  std::cerr << "imgBlurred ";
-  image_info(imgBlurred);
-  std::cerr << "imgMorphology ";
-  image_info(imgMorphology);
-  std::cerr << "imgCanny ";
-
-  image_info(imgCanny);
+    image_info(imgCanny);*/
 
   hough_lines(imgCanny, [&hough, &houghLines](int x1, int y1, int x2, int y2) {
     cv::Vec4i vec(x1, y1, x2, y2);
@@ -622,7 +622,7 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
                    });
   */
 
-  std::cerr << "hough: " << implode(hough.cbegin(), hough.cend(), ",\n");
+//  std::cerr << "hough: " << implode(hough.cbegin(), hough.cend(), ",\n");
 
   /* std::cerr << "houghLines.size=" << houghLines.size() << std::endl;
 
