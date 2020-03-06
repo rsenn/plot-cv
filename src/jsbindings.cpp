@@ -1244,19 +1244,19 @@ js_contour_convexhull(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
   JSValue ret = JS_UNDEFINED;
   bool clockwise = false, returnPoints = true;
   std::vector<cv::Point2f> curve, hull;
+  std::vector<int> hullIndices;
   JSContourData *out, *v;
 
   v = js_contour_data(ctx, this_val);
 
   if(!v)
     return JS_EXCEPTION;
-  out = static_cast<JSContourData*>(JS_GetOpaque2(ctx, argv[0], js_contour_class_id));
 
-  if(argc > 1) {
-    clockwise = !!JS_ToBool(ctx, argv[1]);
+  if(argc > 0) {
+    clockwise = !!JS_ToBool(ctx, argv[0]);
 
-    if(argc > 2) {
-      returnPoints = !!JS_ToBool(ctx, argv[2]);
+    if(argc > 1) {
+      returnPoints = !!JS_ToBool(ctx, argv[1]);
     }
   }
 
@@ -1265,14 +1265,33 @@ js_contour_convexhull(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
                  std::back_inserter(curve),
                  [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
 
-  cv::convexHull(curve, hull, clockwise, returnPoints);
+  if(returnPoints)
+    cv::convexHull(curve, hull, clockwise, true);
+  else
+    cv::convexHull(curve, hullIndices, clockwise, false);
 
-  std::transform(hull.begin(),
-                 hull.end(),
-                 std::back_inserter(*out),
-                 [](const cv::Point2f& pt) -> cv::Point2d { return cv::Point2d(pt.x, pt.y); });
+  if(returnPoints) {
+    ret = js_contour_new(ctx, hull);
+    /*
+        out = static_cast<JSContourData*>(JS_GetOpaque2(ctx, argv[0], js_contour_class_id));
 
-  return JS_UNDEFINED;
+        std::transform(hull.begin(),
+                       hull.end(),
+                       std::back_inserter(*out),
+                       [](const cv::Point2f& pt) -> cv::Point2d { return cv::Point2d(pt.x, pt.y);
+       });
+    */
+  } else {
+    uint32_t i, size = hullIndices.size();
+
+    ret = JS_NewArray(ctx);
+
+    for(i = 0; i < size; i++) {
+      JS_SetPropertyUint32(ctx, ret, i, JS_NewInt32(ctx, hullIndices[i]));
+    }
+  }
+
+  return ret;
 }
 
 JSValue
@@ -1641,7 +1660,26 @@ js_contour_rotatepoints(JSContext* ctx, JSValueConst this_val, int argc, JSValue
   } else if(shift < 0) {
     std::rotate(s->rbegin(), s->rbegin() + (-shift), s->rend());
   }
-  return JS_UNDEFINED;
+  return this_val;
+}
+JSValue
+js_contour_toarray(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSContourData* s = js_contour_data(ctx, this_val);
+  uint32_t i, size = s->size();
+  JSValue ret = JS_UNDEFINED;
+
+  if(!s)
+    return JS_EXCEPTION;
+
+  ret = JS_NewArray(ctx);
+
+for(i = 0; i < size; i++) {
+  JS_SetPropertyUint32(ctx, ret, i, js_point_new(ctx, (*s)[i].x, (*s)[i].y));
+
+
+}
+
+  return ret;
 }
 
 JSValue
@@ -1690,6 +1728,7 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
     JS_CFUNC_DEF("getAffineTransform", 1, js_contour_getaffinetransform),
     JS_CFUNC_DEF("getPerspectiveTransform", 1, js_contour_getperspectivetransform),
     JS_CFUNC_DEF("rotatePoints", 1, js_contour_rotatepoints),
+    JS_CFUNC_DEF("toArray", 0, js_contour_toarray),
     JS_CFUNC_DEF("toString", 0, js_contour_tostring),
 
     JS_CFUNC_MAGIC_DEF("entries", 0, js_create_point_iterator, 0),

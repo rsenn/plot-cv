@@ -93,11 +93,21 @@ global.process = function(contours, hier) {
   var outlines = {
     contours, hier
   };
+  contours = contours.filter(c => c.length > 3);
+
+  let c = contours[0];
+
+
+
 
   let orig = imgOriginal;
 
-  console.log(typeof contours);
-  console.log("contours: ", contours);
+  console.log(typeof c);
+  console.log("contour: ", c);
+  c.rotatePoints(2);
+  console.log("contour: ", c);
+  console.log("convexHull: ", c.convexHull(false, false));
+
 
   /*
   console.log("orig.rows =", orig.rows);
