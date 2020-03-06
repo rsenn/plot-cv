@@ -1713,8 +1713,7 @@ simplify_perpendicular_distance(ForwardIterator first,
     \param[in] last     one beyond the last coordinate of the last polyline
    point \param[in] tol      perpendicular (point-to-line) distance tolerance
     \param[in] result   destination of the simplified polyline
-    \return             one beyond the last coordinate of the simplified
-   polyline
+    \return             one beyond the last coordinate of the simplified  polyline
 */
 template<unsigned DIM, class ForwardIterator, class OutputIterator>
 OutputIterator

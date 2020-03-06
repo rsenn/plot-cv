@@ -2,6 +2,7 @@
 #include "geometry.h"
 #include "jsbindings.h"
 #include "plot-cv.h"
+#include "psimpl.h"
 #include "quickjs/cutils.h"
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -1659,10 +1660,22 @@ js_contour_psimpl(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
   int32_t shift = 1;
   uint32_t size = s->size();
   JSValue ret = JS_UNDEFINED;
+  JSContourData r;
+  double* it;
+  cv::Point2d* start = &(*s)[0];
+  cv::Point2d* end = start + size;
+  r.resize(size);
+  it = (double*)&r[0];
+
   if(!s)
     return JS_EXCEPTION;
 
-
+  if(magic == 0) {
+    it = psimpl::simplify_reumann_witkam<2>((double*)start, (double*)end, 2.0, it);
+  } else if(magic == 1) {
+    it = psimpl::simplify_opheim<2>((double*)start, (double*)end, 2.0, 10.0, it);
+  }
+  r.resize(it - (double*)&r[0]);
 
   return ret;
 }
