@@ -102,7 +102,7 @@ global.process = function(contours, hier) {
 
   let orig = imgOriginal;
   let hull = c.convexHull(false, false);
-  let defects =  c.convexityDefects(hull);
+  let defects =  null; //c.convexityDefects(hull);
 
   console.log(typeof c);
   console.log("contour: ", c);
@@ -110,6 +110,10 @@ global.process = function(contours, hier) {
   console.log("contour: ", c);
   console.log("convexHull: ", hull);
   console.log("convexityDefects: ", defects);
+  console.log("simplifyReumannWitkam: ", c.simplifyReumannWitkam());
+  console.log("simplifyOpheim: ", c.simplifyOpheim());
+  console.log("simplifyLang: ", c.simplifyLang());
+  console.log("simplifyDouglasPeucker: ", c.simplifyDouglasPeucker());
 
   let a = c.toArray();
   console.log("toArray: ", a);

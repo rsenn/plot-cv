@@ -1661,6 +1661,7 @@ js_contour_psimpl(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
   uint32_t size = s->size();
   JSValue ret = JS_UNDEFINED;
   JSContourData r;
+  double arg1 = 0, arg2 = 0;
   double* it;
   cv::Point2d* start = &(*s)[0];
   cv::Point2d* end = start + size;
@@ -1670,13 +1671,37 @@ js_contour_psimpl(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
   if(!s)
     return JS_EXCEPTION;
 
-  if(magic == 0) {
-    it = psimpl::simplify_reumann_witkam<2>((double*)start, (double*)end, 2.0, it);
-  } else if(magic == 1) {
-    it = psimpl::simplify_opheim<2>((double*)start, (double*)end, 2.0, 10.0, it);
+  if(argc > 0) {
+    JS_ToFloat64(ctx, &arg1, argv[0]);
+    if(argc > 1) {
+      JS_ToFloat64(ctx, &arg2, argv[1]);
+    }
   }
-  r.resize(it - (double*)&r[0]);
 
+  if(magic == 0) {
+    if(arg1 == 0)
+      arg1 == 2;
+    it = psimpl::simplify_reumann_witkam<2>((double*)start, (double*)end, arg1, it);
+  } else if(magic == 1) {
+    if(arg1 == 0)
+      arg1 == 2;
+    if(arg2 == 0)
+      arg2 == 10;
+    it = psimpl::simplify_opheim<2>((double*)start, (double*)end, arg1, arg2, it);
+  } else if(magic == 2) {
+    if(arg1 == 0)
+      arg1 == 2;
+    if(arg2 == 0)
+      arg2 == 10;
+    it = psimpl::simplify_lang<2>((double*)start, (double*)end, arg1, arg2, it);
+  } else if(magic == 3) {
+    if(arg1 == 0)
+      arg1 == 2;
+    it = psimpl::simplify_douglas_peucker<2>((double*)start, (double*)end, arg1, it);
+  }
+  size = it - (double*)&r[0];
+  r.resize(size / 2);
+  ret = js_contour_new(ctx, r);
   return ret;
 }
 
@@ -1817,8 +1842,10 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
     JS_CFUNC_DEF("getPerspectiveTransform", 1, js_contour_getperspectivetransform),
     JS_CFUNC_DEF("rotatePoints", 1, js_contour_rotatepoints),
     JS_CFUNC_DEF("convexityDefects", 1, js_contour_convexitydefects),
-    JS_CFUNC_MAGIC_DEF("reumannWitkam", 0, js_contour_psimpl, 0),
-    JS_CFUNC_MAGIC_DEF("opheim", 0, js_contour_psimpl, 1),
+    JS_CFUNC_MAGIC_DEF("simplifyReumannWitkam", 0, js_contour_psimpl, 0),
+    JS_CFUNC_MAGIC_DEF("simplifyOpheim", 0, js_contour_psimpl, 1),
+    JS_CFUNC_MAGIC_DEF("simplifyLang", 0, js_contour_psimpl, 2),
+    JS_CFUNC_MAGIC_DEF("simplifyDouglasPeucker", 0, js_contour_psimpl, 3),
     JS_CFUNC_DEF("toArray", 0, js_contour_toarray),
     JS_CFUNC_DEF("toString", 0, js_contour_tostring),
 
