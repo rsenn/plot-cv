@@ -10,6 +10,8 @@ JSValue js_draw_polygon(JSContext*, jsrt::const_value, int, jsrt::const_value*);
 JSValue js_draw_circle(JSContext*, jsrt::const_value, int, jsrt::const_value*);
 
 void js_point_finalizer(JSRuntime* rt, JSValue val);
+
+JSValue js_point_new(JSContext* ctx, double x, double y);
 JSValue js_point_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
 JSValue js_point_get_xy(JSContext* ctx, JSValueConst this_val, int magic);
 JSValue js_point_set_xy(JSContext* ctx, JSValueConst this_val, JSValue val, int magic);
@@ -51,23 +53,8 @@ typedef cv::Point2d JSPointData;
 
 typedef std::vector<JSPointData> JSContourData;
 
-template<class T>
-inline JSValue
-js_contour_new(JSContext* ctx, const std::vector<cv::Point_<T>>& points) {
-  JSValue ret;
-  JSContourData* contour;
-
-  ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
-
-  contour = static_cast<JSContourData*>(js_mallocz(ctx, sizeof(JSContourData)));
-
-  std::transform(points.cbegin(),
-                 points.cend(),
-                 std::back_inserter(*contour),
-                 [](const cv::Point_<T>& pt) -> cv::Point2d { return cv::Point2d(pt.x, pt.y); });
-
-  JS_SetOpaque(ret, contour);
-  return ret;
-};
+JSValue js_contour2i_new(JSContext* ctx, const std::vector<cv::Point_<int>>& points);
+JSValue js_contour2f_new(JSContext* ctx, const std::vector<cv::Point_<float>>& points);
+JSValue js_contour_new(JSContext* ctx, const std::vector<cv::Point_<double>>& points);
 
 #endif

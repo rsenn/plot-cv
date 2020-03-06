@@ -524,7 +524,7 @@ contours_to_array(JSContext* ctx, const contour2i_vector& contours) {
   uint32_t i, n = contours.size();
   for(i = 0; i < n; i++) {
 
-    JS_SetPropertyUint32(ctx, ret, i, js_contour_new(ctx, contours[i]));
+    JS_SetPropertyUint32(ctx, ret, i, js_contour2i_new(ctx, contours[i]));
   }
 
   return ret;
@@ -610,6 +610,8 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
 
   //  apply_clahe(imgOriginal, imgOriginal);XY
   {
+
+    (morphology_enable > 1) ? imgMorphology.copyTo(imgRaw) : imgCanny.copyTo(imgRaw);
 
     std::vector<point2i_vector> contours =
         get_contours((morphology_enable > 1) ? imgMorphology : imgCanny, hier, CV_RETR_TREE);

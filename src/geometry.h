@@ -22,9 +22,9 @@ template<class T> struct contour_list {
   typedef std::vector<vector_type> type;
 };
 
-typedef point_list<int>::type point2i_vector;
-typedef point_list<float>::type point2f_vector;
-typedef point_list<double>::type point2d_vector;
+typedef std::vector<cv::Point> point2i_vector;
+typedef std::vector<cv::Point_<float>> point2f_vector;
+typedef std::vector<cv::Point_<double>> point2d_vector;
 
 typedef contour_list<int>::type contour2i_vector;
 typedef contour_list<float>::type contour2f_vector;
@@ -153,6 +153,33 @@ transform_points(const typename point_list<From>::type& from) {
   typename point_list<To>::type ret;
   convert_points<To, From>(from, ret);
   return ret;
+}
+
+template<class InputIterator, class OutputIterator>
+inline OutputIterator
+transform_points(InputIterator s, InputIterator e, OutputIterator o) {
+  typedef typename std::iterator_traits<InputIterator>::value_type input_type;
+  typedef typename std::iterator_traits<OutputIterator>::value_type output_type;
+  o = std::transform(s, e, o, [](const input_type& p) -> output_type {
+    return output_type(p.x, p.y);
+  });
+  return o;
+}
+
+template<class InputIterator, class OutputIterator>
+inline OutputIterator
+transform_contours(InputIterator s, InputIterator e, OutputIterator o) {
+  typedef typename std::iterator_traits<InputIterator>::value_type input_type;
+  typedef typename std::iterator_traits<OutputIterator>::value_type output_type;
+  o = std::transform(s, e, o, [](const input_type& p) -> output_type {
+    output_type ret;
+    ret.resize(p.size());
+
+    transform_points(p.cbegin(), p.cend(), ret.begin());
+
+    return ret;
+  });
+  return o;
 }
 
 #endif // defined GEOMETRY_H

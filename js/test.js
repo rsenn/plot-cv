@@ -91,18 +91,16 @@ global.process = function(contours, hier) {
   var areas = [];
 
   var outlines = {
-    contours, hier
+    contours,
+    hier
   };
   contours = contours.filter(c => c.length > 3);
 
   let c = contours[0];
 
-
-
-
   let orig = imgOriginal;
   let hull = c.convexHull(false, false);
-  let defects =  null; //c.convexityDefects(hull);
+  let defects = null; //c.convexityDefects(hull);
 
   console.log(typeof c);
   console.log("contour: ", c);
@@ -121,7 +119,12 @@ global.process = function(contours, hier) {
 
   let a = c.toArray();
   console.log("toArray: ", a);
-
+  {
+    let { contours, hier } = imgRaw.findContours();
+    console.log("contours.length=", contours.length);
+    console.log("hier.length=", hier.length);
+    console.log("hier=", hier);
+  }
 
   /*
   console.log("orig.rows =", orig.rows);
