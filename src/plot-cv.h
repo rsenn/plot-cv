@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <functional>
+#include <chrono>
 #include <iostream>
 
 #include "color.h"
@@ -304,4 +305,43 @@ extern int thresh, thresh2, apertureSize;
 int check_eval();
 
 int js_init(int argc, char* argv[]);
+
+class Timer {
+public:
+  void
+  start() {
+    start_time = std::chrono::system_clock::now();
+    running = true;
+  }
+
+  void
+  stop() {
+    end_time = std::chrono::system_clock::now();
+    running = false;
+  }
+
+  double
+  elapsedMilliseconds() {
+    std::chrono::time_point<std::chrono::system_clock> end;
+
+    if(running) {
+      end = std::chrono::system_clock::now();
+    } else {
+      end = end_time;
+    }
+
+    return std::chrono::duration_cast<std::chrono::milliseconds>(end - start_time).count();
+  }
+
+  double
+  elapsedSeconds() {
+    return elapsedMilliseconds() / 1000.0;
+  }
+
+private:
+  std::chrono::time_point<std::chrono::system_clock> start_time;
+  std::chrono::time_point<std::chrono::system_clock> end_time;
+  bool running = false;
+};
+
 #endif

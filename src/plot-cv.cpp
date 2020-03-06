@@ -40,6 +40,8 @@ int num_iterations = 0;
 int morphology_enable = 2;
 image_type* mptr = nullptr;
 
+Timer timer;
+
 int thresh = 10, thresh2 = 20, apertureSize = 3;
 int max_thresh = 255;
 double max_svg_width = 1200; // pixels
@@ -552,6 +554,8 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
     default: mptr = &imgCanny; break;
   }
 
+  timer.start();
+
   logfile << "got frame" << std::endl;
 
   image_type frameLab, frameLabCn[3];
@@ -701,11 +705,11 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
         if(contourStr.str().size())
           contourStr << "\n";
         out_points(contourStr, a);
-        /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
-           ", " << hier[i][2] << ", " << hier[i][3] << ", "
-                      << "} " << std::endl;
-            logfile << "contourDepth(i) = " << depth << std::endl;
-  */
+      /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
+         ", " << hier[i][2] << ", " << hier[i][3] << ", "
+                    << "} " << std::endl;
+          logfile << "contourDepth(i) = " << depth << std::endl;
+*/
         /*  if(dptr != nullptr)
             cv::drawContours(*dptr, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
    */     }
@@ -895,14 +899,16 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
     logfile << "Num lines: " << lines.size() << std::endl;
     logfile << "Num filteredLines: " << filteredLines.size() << std::endl;
 
-    std::string svg = make_filename("contour", ++num_iterations, "svg");
     // filename << "contour-" << ++count << ".svg";
 
-    svg_export_file<float>(contours2, svg);
+    if(0) {
+      std::string svg = make_filename("contour", ++num_iterations, "svg");
 
-    unlink("contour.svg");
-    rename("contour.svg.tmp", "contour.svg");
+      svg_export_file<float>(contours2, svg);
 
+      unlink("contour.svg");
+      rename("contour.svg.tmp", "contour.svg");
+    }
     std::vector<point2i_vector> squares;
 
     {
@@ -1010,7 +1016,32 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
 
     draw_all_contours(imgVector, contours);
     display_image("imgVector", &imgVector);
+
+    timer.stop();
+
+    std::cerr << "\033[1mTimer duration\033[0m " << (int)timer.elapsedSeconds() << "s "
+              << ((int)timer.elapsedMilliseconds() % 1000) << "ms" << std::endl;
   }
+}
+
+/**********************************************************/
+
+static JSValue
+js_print(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  int i;
+  const char* str;
+
+  for(i = 0; i < argc; i++) {
+    if(i != 0)
+      logfile << ' ';
+    str = JS_ToCString(ctx, argv[i]);
+    if(!str)
+      return JS_EXCEPTION;
+    logfile << str;
+    JS_FreeCString(ctx, str);
+  }
+  logfile << std::endl;
+  return JS_UNDEFINED;
 }
 
 int
@@ -1026,6 +1057,9 @@ js_init(int argc, char* argv[]) {
   js_point_iterator_init(js.ctx, &global_obj, "PointIterator", false);
   js_contour_init(js.ctx, &global_obj, "Contour", false);
   js_mat_init(js.ctx, &global_obj, "Mat", false);
+  jsrt::value console = js.get_global("console");
+
+  JS_SetPropertyStr(js.ctx, console, "log", JS_NewCFunction(js.ctx, js_print, "log", 1));
 
   jsrt::value ctor = js.get_global("Point");
   std::cerr << "function_name: " << js.function_name(ctor) << std::endl;

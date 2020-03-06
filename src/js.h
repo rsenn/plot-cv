@@ -395,6 +395,8 @@ jsrt::create_array(int32_t size) {
   if(size >= 0)
     JS_SetPropertyStr(ctx, ret, "length", JS_NewInt32(ctx, size));
 
+  
+
   return ret;
 }
 
