@@ -3,6 +3,7 @@
 #include "jsbindings.h"
 #include "plot-cv.h"
 #include "psimpl.h"
+#include "geometry.h"
 #include "quickjs/cutils.h"
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -1784,6 +1785,20 @@ js_vector_to_array(JSContext* ctx, const std::vector<Vector>& vec) {
 }
 
 JSValue
+js_vector_to_array(JSContext* ctx, const std::vector<cv::Vec4i>& vec) {
+  JSValue ret = JS_NewArray(ctx);
+  uint32_t i, j;
+  for(i = 0; i < 4; i++) {
+    JSValue item = JS_NewArray(ctx);
+    for(j = 0; j < 4; j++) {
+      JS_SetPropertyUint32(ctx, item, j, JS_NewInt32(ctx, vec[i][j]));
+    }
+    JS_SetPropertyUint32(ctx, ret, i, item);
+  }
+  return ret;
+}
+
+JSValue
 js_contour_convexitydefects(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData* s = js_contour_data(ctx, this_val);
   JSValue ret = JS_UNDEFINED;
@@ -2053,6 +2068,31 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
 }
 
 JSValue
+js_mat_findcontours(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSMatData* m = js_mat_data(ctx, this_val);
+  JSValue ret = JS_UNDEFINED;
+  int mode = cv::RETR_TREE;
+  int approx = cv::CHAIN_APPROX_SIMPLE;
+  cv::Point offset(0, 0);
+
+  point2f_list contours;
+  vec4i_vector hier;
+
+  cv::findContours(*m, contours, hier, mode, approx, offset);
+
+  {
+    JSValue hier_arr = js_vector_to_array(ctx, hier);
+    JSValue contours_obj = js_contour_new(ctx, contours);
+
+    ret = JS_NewObject(ctx);
+
+    JS_SetPropertyStr(ctx, ret, "hier", hier_arr);
+    JS_SetPropertyStr(ctx, ret, "contours", contours_obj);
+  }
+  return ret;
+}
+
+JSValue
 js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSMatData* m = js_mat_data(ctx, this_val);
   int x, y;
@@ -2099,6 +2139,7 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("at", 1, js_mat_funcs, 4),
     JS_CFUNC_MAGIC_DEF("clone", 0, js_mat_funcs, 5),
     JS_CFUNC_MAGIC_DEF("roi", 0, js_mat_funcs, 6),
+    JS_CFUNC_DEF("findContours", 0, js_mat_findcontours),
     JS_CFUNC_DEF("toString", 0, js_mat_tostring),
     //    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "cv::Mat", JS_PROP_CONFIGURABLE)
 

@@ -30,6 +30,8 @@ typedef contour_list<int>::type contour2i_vector;
 typedef contour_list<float>::type contour2f_vector;
 typedef contour_list<double>::type contour2d_vector;
 
+typedef std::vector<cv::Vec4i> vec4i_vector;
+
 // Function that calculates the area given a
 // std::vector of vertices in the XY plane.
 template<class P>

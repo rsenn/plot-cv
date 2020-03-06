@@ -16,7 +16,6 @@
 #include <functional>
 #include <iostream>
 
-#include "geometry.h"
 #include "color.h"
 #include "js.h"
 
@@ -25,6 +24,18 @@ typedef cv::Mat image_type;
 typedef cv::Point point2i_type;
 typedef cv::Point2d point2d_type;
 typedef cv::Point2f point2f_type;
+
+typedef std::vector<cv::Vec4i> vec4i_list;
+typedef std::vector<cv::Point> point2i_list;
+typedef std::vector<cv::Point> point2i_vector;
+typedef std::vector<cv::Point2f> point2f_list;
+typedef std::vector<cv::Point2f> point2f_vector;
+typedef std::vector<cv::Point2d> point2d_list;
+typedef std::vector<cv::Point2d> point2d_vector;
+
+typedef std::vector<point2i_vector> contour2i_vector;
+typedef std::vector<point2f_list> contour2f_vector;
+
 /*
 template<class T> struct vector_vector_traits {
   typedef T value_type;
@@ -93,13 +104,13 @@ extern image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlur
 extern const char* image_names[];
 
 void image_info(image_type img);
-contour2i_vector get_contours(image_type src,
-                              std::vector<cv::Vec4i>& hierarchy,
-                              int flag = CV_RETR_TREE);
+std::vector<point2i_list> get_contours(image_type src,
+                                       std::vector<cv::Vec4i>& hierarchy,
+                                       int flag = CV_RETR_TREE);
 
 void svg_draw_polyline(svg::Document& doc,
-                       const point2f_vector& contour_arg,
-                       std::function<svg::Color(const point2f_vector&)> color_fn);
+                       const point2f_list& contour_arg,
+                       std::function<svg::Color(const point2f_list&)> color_fn);
 
 struct config_values {
   int morphology_kernel_size;
@@ -156,7 +167,7 @@ get_largest_contour(const std::vector<std::vector<cv::Point_<T>>>& contours_un,
 }
 extern config_values config;
 
-void draw_all_contours(image_type& out, contour2i_vector& contours, int thickness = 1);
+void draw_all_contours(image_type& out, std::vector<point2i_list>& contours, int thickness = 1);
 
 // Function that calculates the absolute value
 
@@ -215,7 +226,7 @@ draw_all_lines(image_type& out,
 
 template<class T>
 inline void
-svg_export_file(const typename contour_list<T>::type& contours, std::string output_file) {
+svg_export_file(const std::vector<std::vector<cv::Point_<T>>>& contours, std::string output_file) {
 
   logfile << "Saving '" << output_file << "'" << std::endl;
 
@@ -226,8 +237,9 @@ svg_export_file(const typename contour_list<T>::type& contours, std::string outp
   std::transform(contours.begin(),
                  contours.end(),
                  std::back_inserter(areas),
-                 [](const typename point_list<T>::type& contour) -> double {
-                   return cv::contourArea(transform_points<int, float>(contour));
+                 [](const std::vector<cv::Point_<T>>& contour) -> double {
+                   point2f_vector vec = contour;
+                   return cv::contourArea(vec);
                  });
   const auto& it = std::max_element(areas.begin(), areas.end());
   double max_area = 0;
@@ -237,7 +249,7 @@ svg_export_file(const typename contour_list<T>::type& contours, std::string outp
 
   logfile << "Max area: " << max_area << std::endl;
 
-  const auto& cfn = [&](const typename point_list<T>::type& contour) -> svg::Color {
+  const auto& cfn = [&](const std::vector<cv::Point_<T>>& contour) -> svg::Color {
     const double area = cv::contourArea(contour);
     return from_scalar(hsv_to_rgb(area / max_area * 360, 1, 1));
   };
