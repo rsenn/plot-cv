@@ -54,7 +54,7 @@ typedef cv::Point2d JSPointData;
 typedef std::vector<JSPointData> JSContourData;
 
 JSValue js_contour2i_new(JSContext* ctx, const std::vector<cv::Point_<int>>& points);
-JSValue js_contour2f_new(JSContext* ctx, const std::vector<cv::Point_<float>>& points);
+JSValue js_contour_new(JSContext* ctx, const std::vector<cv::Point_<float>>& points);
 JSValue js_contour_new(JSContext* ctx, const std::vector<cv::Point_<double>>& points);
 
 #endif

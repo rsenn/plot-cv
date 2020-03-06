@@ -226,7 +226,7 @@ js_vector_to_array(std::enable_if_t<std::is_same<Vector, cv::Vec4i>::value, JSCo
 }
 
 JSValue
-js_vector_to_array(JSContext* ctx, const std::vector<cv::Vec4i>& vec) {
+js_vector_vec4i_to_array(JSContext* ctx, const std::vector<cv::Vec4i>& vec) {
   JSValue ret = JS_NewArray(ctx);
   uint32_t i, j, n = vec.size();
   for(i = 0; i < n; i++) {
@@ -1107,7 +1107,7 @@ js_contour2i_new(JSContext* ctx, const std::vector<cv::Point_<int>>& points) {
 };
 
 JSValue
-js_contour2f_new(JSContext* ctx, const std::vector<cv::Point_<float>>& points) {
+js_contour_new(JSContext* ctx, const std::vector<cv::Point_<float>>& points) {
   JSValue ret;
   JSContourData* contour;
 
@@ -1122,12 +1122,7 @@ js_contour2f_new(JSContext* ctx, const std::vector<cv::Point_<float>>& points) {
 
   JS_SetOpaque(ret, contour);
   return ret;
-};
-
-JSValue
-js_contour_new(JSContext* ctx, const std::vector<cv::Point_<float>>& points) {
-  return js_contour2f_new(ctx, points);
-}
+};  
 
 JSValue
 js_contour_new(JSContext* ctx, const std::vector<cv::Point_<double>>& points) {
@@ -1305,7 +1300,7 @@ js_contour_fitellipse(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
   ellipse.resize(5);
   rr.points(ellipse.data());
 
-  ret = js_contour2f_new(ctx, ellipse);
+  ret = js_contour_new(ctx, ellipse);
 
   return ret;
 }
@@ -1349,7 +1344,7 @@ js_contour_fitline(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   points.push_back(cv::Point2f(line[0], line[1]));
   points.push_back(cv::Point2f(line[2], line[3]));
 
-  ret = js_contour2f_new(ctx, points);
+  ret = js_contour_new(ctx, points);
 
   return ret;
 }
@@ -1424,7 +1419,7 @@ js_contour_convexhull(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
     cv::convexHull(curve, hullIndices, clockwise, false);
 
   if(returnPoints) {
-    ret = js_contour2f_new(ctx, hull);
+    ret = js_contour_new(ctx, hull);
   } else {
     uint32_t i, size = hullIndices.size();
 
@@ -1500,7 +1495,7 @@ js_contour_intersectconvex(JSContext* ctx, JSValueConst this_val, int argc, JSVa
 
   cv::intersectConvexConvex(a, b, intersection, handleNested);
 
-  ret = js_contour2f_new(ctx, intersection);
+  ret = js_contour_new(ctx, intersection);
   return ret;
 }
 
@@ -1545,7 +1540,7 @@ js_contour_minarearect(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
   minarea.resize(5);
   rr.points(minarea.data());
 
-  ret = js_contour2f_new(ctx, minarea);
+  ret = js_contour_new(ctx, minarea);
   return ret;
 }
 
@@ -1602,7 +1597,7 @@ js_contour_minenclosingtriangle(JSContext* ctx,
 
   cv::minEnclosingTriangle(contour, triangle);
 
-  ret = js_contour2f_new(ctx, triangle);
+  ret = js_contour_new(ctx, triangle);
 
   return ret;
 }
@@ -1679,7 +1674,7 @@ js_contour_rotatedrectangleintersection(JSContext* ctx,
 
     cv::rotatedRectangleIntersection(rra, rrb, intersection);
 
-    ret = js_contour2f_new(ctx, intersection);
+    ret = js_contour_new(ctx, intersection);
   }
   return ret;
 }
@@ -1891,7 +1886,7 @@ js_contour_convexitydefects(JSContext* ctx, JSValueConst this_val, int argc, JSV
   defects.resize(hullIndices.size());
   cv::convexityDefects(*s, hullIndices, defects);
 
-  ret = js_vector_to_array(ctx, defects);
+  ret = js_vector_vec4i_to_array(ctx, defects);
 
   return ret;
 }
@@ -2167,7 +2162,7 @@ js_mat_findcontours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   transform_contours(contours.cbegin(), contours.cend(), poly.begin());
 
   {
-    JSValue hier_arr = js_vector_to_array(ctx, hier);
+    JSValue hier_arr = js_vector_vec4i_to_array(ctx, hier);
     JSValue contours_obj = js_contours_new(ctx, poly);
 
     ret = JS_NewObject(ctx);
@@ -2188,7 +2183,7 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   if(!m)
     return JS_EXCEPTION;
 
-  if(m->rows > 1) {
+  if(m->rows * m->cols > 50) {
     os << "cv::Mat(" << m->rows << ", " << m->cols << ", ";
 
     const char* tstr = (m->type() == CV_8UC4)
