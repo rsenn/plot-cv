@@ -330,10 +330,9 @@ invert_color(image_type& img) {
     for(int j = 0; j < img.cols; j++) img.at<uchar>(i, j) = 255 - img.at<uchar>(i, j);
 }
 
-
 void
-hough_lines(image_type& img, std::vector<point2f_vector> &ret) {
-cv::Mat pimg;
+hough_lines(image_type& img, std::vector<point2f_vector>& ret) {
+  cv::Mat pimg;
 
   if(img.channels() > 1)
     cvtColor(img, img, CV_BGR2GRAY);
@@ -346,18 +345,15 @@ cv::Mat pimg;
   invert_color(pimg);
   cv::HoughLinesP(pimg, lines, 1, CV_PI / 180, 30, 30, 10);
 
-  std::for_each(lines.cbegin(),
-                lines.cend(),
-
-                [&ret](const cv::Vec4i& v) {
-                    std::vector<cv::Point2f> line;
-
-
-                  line.push_back(cv::Point2f(v[0], v[1]));
-                  line.push_back(cv::Point2f(v[2], v[3]));
-
-                  ret.push_back(line);
-                });
+  std::transform(lines.cbegin(),
+                 lines.cend(),
+                 std::back_inserter(ret),
+                 [](const cv::Vec4i& v) -> point2f_vector {
+                   std::vector<cv::Point2f> line;
+                   line.push_back(cv::Point2f(v[0], v[1]));
+                   line.push_back(cv::Point2f(v[2], v[3]));
+                   return line;
+                 });
 }
 
 void
@@ -627,11 +623,11 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
         if(contourStr.str().size())
           contourStr << "\n";
         out_points(contourStr, a);
-      /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
-         ", " << hier[i][2] << ", " << hier[i][3] << ", "
-                    << "} " << std::endl;
-          logfile << "contourDepth(i) = " << depth << std::endl;
-*/
+        /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
+           ", " << hier[i][2] << ", " << hier[i][3] << ", "
+                      << "} " << std::endl;
+            logfile << "contourDepth(i) = " << depth << std::endl;
+  */
         /*  if(dptr != nullptr)
             cv::drawContours(*dptr, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
    */     }
