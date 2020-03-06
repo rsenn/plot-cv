@@ -119,6 +119,7 @@ global.process = function(contours, hier) {
 
   let a = c.toArray();
   console.log("toArray: ", a);
+  console.log("imgRaw: ", imgRaw);
 
   {
     let { contours, hier } = imgRaw.findContours();
@@ -129,15 +130,23 @@ global.process = function(contours, hier) {
       index(i) {
         return i === -1 ? null : this.contours[i];
       },
-      previous(i) {return this.index(this.hier[i][HIER_PREVIOUS]); },
-      next(i) {return this.index(this.hier[i][HIER_NEXT]); },
-      parent(i) {return this.index(this.hier[i][HIER_PARENT]); },
-      firstChild(i) {return this.index(this.hier[i][HIER_FIRSTCHILD]); }
+      previous(i) {
+        return this.index(this.hier[i][HIER_PREVIOUS]);
+      },
+      next(i) {
+        return this.index(this.hier[i][HIER_NEXT]);
+      },
+      parent(i) {
+        return this.index(this.hier[i][HIER_PARENT]);
+      },
+      firstChild(i) {
+        return this.index(this.hier[i][HIER_FIRSTCHILD]);
+      }
     };
 
     console.log("contours.length=", contours.length);
     console.log("hier.length=", hier.length);
-    console.log("hier=", hier);
+    //console.log("hier=", hier);
     console.log("obj.prev=", obj.previous(1));
     console.log("obj.next=", obj.next(1));
     console.log("obj.parent=", obj.parent(1));

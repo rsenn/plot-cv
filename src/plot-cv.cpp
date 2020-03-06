@@ -908,8 +908,8 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
     {
       JSValue args[2] = {contours_to_array(js.ctx, contours), vector_to_js(js, hier, &vec4i_to_js)};
 
-      js.set_global("contours", args[0]);
-      js.set_global("hier", args[1]);
+      /*   js.set_global("contours", args[0]);
+         js.set_global("hier", args[1]);*/
       js.set_global("HIER_NEXT", js.create(0));
       js.set_global("HIER_PREVIOUS", js.create(1));
       js.set_global("HIER_FIRSTCHILD", js.create(2));

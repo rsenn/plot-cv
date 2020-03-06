@@ -7,6 +7,7 @@
 #include "quickjs/cutils.h"
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <iomanip>
 
 extern jsrt js;
 
@@ -1056,6 +1057,7 @@ void
 js_contour_finalizer(JSRuntime* rt, JSValue val) {
   JSContourData* s = static_cast<JSContourData*>(JS_GetOpaque(val, js_contour_class_id));
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
+
   js_free_rt(rt, s);
 }
 
@@ -1136,7 +1138,7 @@ js_contour_new(JSContext* ctx, const std::vector<cv::Point_<double>>& points) {
 
   contour = static_cast<JSContourData*>(js_mallocz(ctx, sizeof(JSContourData)));
 
-  std::copy(points.begin(), points.end(), std::back_inserter(*contour));
+  std::copy(points.cbegin(), points.cend(), std::back_inserter(*contour));
 
   JS_SetOpaque(ret, contour);
   return ret;
@@ -1150,7 +1152,6 @@ js_contours_new(JSContext* ctx, const std::vector<std::vector<cv::Point_<T>>>& c
   uint32_t i, size = contours.size();
 
   for(i = 0; i < size; i++) {
-
     JSValue contour = js_contour_new(ctx, contours[i]);
     JS_SetPropertyUint32(ctx, ret, i, contour);
   }
@@ -1831,37 +1832,37 @@ js_contour_psimpl(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 
   if(magic == 0) {
     if(arg1 == 0)
-      arg1 == 2;
+      arg1 = 2;
     it = psimpl::simplify_reumann_witkam<2>((double*)start, (double*)end, arg1, it);
   } else if(magic == 1) {
     if(arg1 == 0)
-      arg1 == 2;
+      arg1 = 2;
     if(arg2 == 0)
-      arg2 == 10;
+      arg2 = 10;
     it = psimpl::simplify_opheim<2>((double*)start, (double*)end, arg1, arg2, it);
   } else if(magic == 2) {
     if(arg1 == 0)
-      arg1 == 2;
+      arg1 = 2;
     if(arg2 == 0)
-      arg2 == 10;
+      arg2 = 10;
     it = psimpl::simplify_lang<2>((double*)start, (double*)end, arg1, arg2, it);
   } else if(magic == 3) {
     if(arg1 == 0)
-      arg1 == 2;
+      arg1 = 2;
     it = psimpl::simplify_douglas_peucker<2>((double*)start, (double*)end, arg1, it);
   } else if(magic == 4) {
     if(arg1 == 0)
-      arg1 == 2;
+      arg1 = 2;
     it = psimpl::simplify_nth_point<2>((double*)start, (double*)end, arg1, it);
   } else if(magic == 5) {
     if(arg1 == 0)
-      arg1 == 2;
+      arg1 = 2;
     it = psimpl::simplify_radial_distance<2>((double*)start, (double*)end, arg1, it);
   } else if(magic == 6) {
     if(arg1 == 0)
-      arg1 == 2;
+      arg1 = 2;
     if(arg2 == 0)
-      arg2 == 1;
+      arg2 = 1;
     it = psimpl::simplify_perpendicular_distance<2>((double*)start, (double*)end, arg1, arg2, it);
   }
   size = it - (double*)&r[0];
@@ -2007,7 +2008,8 @@ void
 js_mat_finalizer(JSRuntime* rt, JSValue val) {
   JSMatData* s = static_cast<JSMatData*>(JS_GetOpaque(val, js_mat_class_id));
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
-  js_free_rt(rt, s);
+
+  s->release();
 }
 
 JSValue
@@ -2016,7 +2018,9 @@ js_mat_new(JSContext* ctx, int cols = 0, int rows = 0, int type = CV_32FC1) {
   JSMatData* s;
   ret = JS_NewObjectProtoClass(ctx, mat_proto, js_mat_class_id);
   s = new cv::Mat(cv::Size(cols, rows), type);
+
   *s = cv::Mat::zeros(cv::Size(cols, rows), type);
+
   JS_SetOpaque(ret, s);
   return ret;
 }
@@ -2025,9 +2029,14 @@ JSValue
 js_mat_wrap(JSContext* ctx, const cv::Mat& mat) {
   JSValue ret;
   JSMatData* s;
+
   ret = JS_NewObjectProtoClass(ctx, mat_proto, js_mat_class_id);
-  s = new cv::Mat(mat);
+
+  s = new cv::Mat(cv::Size(mat.cols, mat.rows), mat.type());
+  *s = mat;
+
   JS_SetOpaque(ret, s);
+
   return ret;
 }
 
@@ -2178,21 +2187,40 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   int i = 0;
   if(!m)
     return JS_EXCEPTION;
-  os << "Mat[";
-  for(y = 0; y < m->rows; y++) {
-    os << "\n  ";
 
-    for(x = 0; x < m->cols; x++) {
-      if(x > 0)
-        os << ',';
-      if(m->type() == CV_32FC1)
-        os << m->at<float>(y, x);
-      else
-        os << m->at<int>(y, x);
+  if(m->rows > 1) {
+    os << "cv::Mat(" << m->rows << ", " << m->cols << ", ";
+
+    const char* tstr = (m->type() == CV_8UC4)
+                           ? "CV_8UC4"
+                           : (m->type() == CV_8UC2)
+                                 ? "CV_8UC2"
+                                 : (m->type() == CV_8UC3)
+                                       ? "CV_8UC3"
+                                       : (m->type() == CV_8UC1)
+                                             ? "CV_8UC1"
+                                             : (m->type() == CV_32FC1) ? "CV_32FC1" : "?";
+
+    os << tstr << ")" << std::endl;
+  } else {
+    os << "Mat[";
+    for(y = 0; y < m->rows; y++) {
+      os << "\n  ";
+
+      for(x = 0; x < m->cols; x++) {
+        if(x > 0)
+          os << ',';
+        if(m->type() == CV_32FC1)
+          os << m->at<float>(y, x);
+        else
+          os << std::setfill('0') << std::setbase(16)
+             << std::setw(m->type() == CV_8UC4 ? 8 : m->type() == CV_8UC1 ? 2 : 6)
+             << m->at<uint32_t>(y, x);
+      }
     }
-  }
 
-  os << ']' << std::endl;
+    os << ']' << std::endl;
+  }
 
   return JS_NewString(ctx, os.str().c_str());
 }
