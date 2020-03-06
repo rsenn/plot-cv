@@ -330,16 +330,29 @@ invert_color(image_type& img) {
     for(int j = 0; j < img.cols; j++) img.at<uchar>(i, j) = 255 - img.at<uchar>(i, j);
 }
 
-std::vector<cv::Vec4i>
-hough_lines(image_type& imgToMap) {
-  image_type imgToMapProc;
-  cvtColor(imgToMap, imgToMapProc, CV_BGR2GRAY);
-  cv::threshold(imgToMapProc, imgToMapProc, thresholdValue, 255, 0);
+std::vector<Line<float>>
+hough_lines(image_type& img) {
+  std::vector<Line<float>> ret;
+  image_type pimg;
+  if(img.channels() > 1)
+    cvtColor(img, img, CV_BGR2GRAY);
+  cv::threshold(img, pimg, thresholdValue, 255, 0);
   std::vector<cv::Vec4i> lines;
-  invert_color(imgToMapProc);
-  cv::HoughLinesP(imgToMapProc, lines, 1, CV_PI / 180, 30, 30, 10);
+  // std::vector<cv::Vec4f> lines;
+  // std::vector<cv::Vec2f> lines;
+  // cv::Mat lines(0, CV_32FC4);
 
-  return lines;
+  invert_color(pimg);
+  cv::HoughLinesP(pimg, lines, 1, CV_PI / 180, 30, 30, 10);
+
+  std::transform(lines.cbegin(),
+                 lines.cend(),
+                 std::back_inserter(ret),
+                 [](const cv::Vec4i& v) -> Line<float> {
+                   return Line<float>(v[0], v[1], v[2], v[3]);
+                 });
+
+  return ret;
 }
 
 void
@@ -414,7 +427,9 @@ get_alpha_channel(image_type m) {
 void
 image_info(image_type img) {
   std::cerr << "image cols=" << img.cols << " rows=" << img.rows << " channels=" << img.channels()
-            << " depth=" << img.depth() << std::endl;
+            << " depth="
+            << (img.depth() == CV_8U ? "CV_8U" : img.depth() == CV_32F ? "CV_32F" : "CV_??")
+            << std::endl;
 }
 
 JSValue
@@ -433,7 +448,7 @@ points_to_js<cv::Point>(const std::vector<cv::Point>& v) {
 void
 process_image(std::function<void(std::string, cv::Mat*)> display_image, int show_image) {
 
-  std::vector<cv::Vec4i> houghLines;
+  std::vector<Line<float>> houghLines;
 
   std::vector<point2f_vector> contours2;
   std::vector<cv::Vec4i> hier;
@@ -466,49 +481,74 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
                      1.75,
                      1.75);
   */
-  cv::edgePreservingFilter(imgGrayscale, imgBlurred, cv::RECURS_FILTER, 30, 0.4);
+  // cv::edgePreservingFilter(imgGrayscale, imgBlurred, cv::RECURS_FILTER, 30, 0.4);
   cv::bilateralFilter(imgGrayscale, imgBlurred, -1, 30, config.blur_kernel_size);
 
-  display_image("imgBlurred", &imgBlurred);
-
   cv::Canny(imgBlurred, imgCanny, thresh, thresh2, apertureSize);
-  display_image("imgCanny", &imgCanny);
-  //   cv::HoughLines(imgCanny, houghLines, 1, CV_PI/180, 100, 0, 0 );
+
+  // cv::cvtColor(imgCanny, imgCanny, CV_GRAY2BGR);
 
   image_type strel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(19, 19));
 
-  imgCanny.copyTo(imgMorphology);
-  cv::cvtColor(imgMorphology, imgMorphology, cv::COLOR_GRAY2BGR);
+  // imgCanny.copyTo(imgMorphology);
+  // cv::cvtColor(imgMorphology, imgMorphology, cv::COLOR_GRAY2BGR);
 
-  cv::morphologyEx(imgMorphology,
+  cv::morphologyEx(imgCanny,
                    imgMorphology,
                    morphology_operator ? cv::MORPH_DILATE : cv::MORPH_CLOSE,
                    cv::getStructuringElement(cv::MORPH_ELLIPSE,
-                                             cv::Size(config.morphology_kernel_size ,
+                                             cv::Size(config.morphology_kernel_size,
                                                       config.morphology_kernel_size)));
 
-  cv::cvtColor(imgGrayscale, imgGrayscale, cv::COLOR_GRAY2BGR);
-  cv::cvtColor(imgMorphology, imgMorphology, cv::COLOR_BGR2GRAY);
+  // cv::cvtColor(imgMorphology, imgMorphology, cv::COLOR_BGR2GRAY);
 
-  imgMorphology.convertTo(imgMorphology, CV_8UC1);
+  std::cerr << "imgOriginal ";
+  image_info(imgOriginal);
+  std::cerr << "imgGrayscale ";
+  image_info(imgGrayscale);
+  std::cerr << "imgBlurred ";
+  image_info(imgBlurred);
+  std::cerr << "imgMorphology ";
+  image_info(imgMorphology);
+  std::cerr << "imgCanny ";
+
+  image_info(imgCanny);
+
+  houghLines = hough_lines(imgCanny);
+  /*
+    std::vector<Line<float>> lines2f;
+
+    std::transform(houghLines.cbegin(),
+                   houghLines.cend(),
+                   std::back_inserter(lines2f),
+                   [](const cv::Vec4i& v) -> Line<float> {
+                     return Line<float>(v[0], v[1], v[2], v[3]);
+                   });
+  */
+  std::cerr << "lines2f: "
+            << implode(houghLines.begin(), houghLines.end(), ",\n") << " size=" << houghLines.size() << std::endl;
 
   if(show_diagnostics)
     image_info(imgMorphology);
 
   imgVector = color_type(0, 0, 0, 0);
 
+  display_image("imgBlurred", &imgBlurred);
+  display_image("imgCanny", &imgCanny);
   display_image("imgMorphology", &imgMorphology);
+
+  cv::cvtColor(imgGrayscale, imgGrayscale, cv::COLOR_GRAY2BGR);
 
   //  apply_clahe(imgOriginal, imgOriginal);XY
   {
 
     std::vector<point2i_vector> contours =
-        get_contours((morphology_enable>1) ? imgMorphology : imgCanny, hier, CV_RETR_TREE);
+        get_contours((morphology_enable > 1) ? imgMorphology : imgCanny, hier, CV_RETR_TREE);
 
     std::vector<point2i_vector> external =
-        get_contours(morphology_enable>1 ? imgMorphology : imgCanny, hier, CV_RETR_EXTERNAL);
+        get_contours(morphology_enable > 1 ? imgMorphology : imgCanny, hier, CV_RETR_EXTERNAL);
 
-    draw_all_contours(imgGrayscale, external,1);
+    draw_all_contours(imgGrayscale, external, 1);
 
     // imgMorphology.convertTo(imgMorphology, CV_32SC1);
 
@@ -582,11 +622,11 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
         if(contourStr.str().size())
           contourStr << "\n";
         out_points(contourStr, a);
-      /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
-         ", " << hier[i][2] << ", " << hier[i][3] << ", "
-                    << "} " << std::endl;
-          logfile << "contourDepth(i) = " << depth << std::endl;
-*/
+        /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
+           ", " << hier[i][2] << ", " << hier[i][3] << ", "
+                      << "} " << std::endl;
+            logfile << "contourDepth(i) = " << depth << std::endl;
+  */
         /*  if(dptr != nullptr)
             cv::drawContours(*dptr, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
    */     }

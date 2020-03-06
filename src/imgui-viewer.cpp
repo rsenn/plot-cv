@@ -111,9 +111,10 @@ ImageViewer::imshow(std::string frame_name, cv::Mat* frame) {
   if(frame->empty())
     return;
 
- if(std::any_of(frame_names.cbegin(), frame_names.cend(), [&frame_name](std::string str) -> bool { return frame_name == str; }))
-  return;
-  
+  if(std::any_of(frame_names.cbegin(), frame_names.cend(), [&frame_name](std::string str) -> bool {
+       return frame_name == str;
+     }))
+    return;
 
   frame_names.push_back(frame_name);
   frames.push_back(frame);

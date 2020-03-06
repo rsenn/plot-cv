@@ -8,6 +8,7 @@
 #include <exception>
 #include <string>
 #include <functional>
+#include <array>
 #include "psimpl.h"
 
 template<class T> class LineEnd;
@@ -97,9 +98,9 @@ public:
     return l.angle() - angle();
   }
 
-  std::vector<cv::Point_<T>>
+  std::array<cv::Point_<T>, 2>
   points() const {
-    std::vector<cv::Point_<T>> ret = {a, b};
+    std::array< cv::Point_<T>, 2> ret = {a, b};
     return ret;
   }
 
@@ -116,15 +117,6 @@ public:
   template<class OtherValueT> bool operator<(const Line<OtherValueT>& l2) const;
 
   std::string str(const std::string& comma = ",", const std::string& sep = "|") const;
-
-  /*template <class Char, class T>
-  inline std::ostream&
-  operator<<(std::ostream& os, const Line<T>& line) {
-    os << line.a.x << ',' << line.a.y;
-    os << " -> ";
-    os << line.b.x << ',' << line.b.y;
-  }
-  */
 };
 
 template<class T> struct line_list {
@@ -139,6 +131,15 @@ typedef line_list<double> line4d_list;
 float point_distance(const cv::Point2f& p1, const cv::Point2f& p2);
 double point_distance(const cv::Point2d& p1, const cv::Point2d& p2);
 int point_distance(const cv::Point& p1, const cv::Point& p2);
+
+template<class T>
+inline std::ostream&
+operator<<(std::ostream& os, const Line<T>& line) {
+  os << "Line(" << line.a << "," << line.b << ")";
+
+  // os << ' ';
+  return os;
+}
 
 template<class T>
 double
@@ -185,7 +186,7 @@ to_string(const T& t, size_t n_pad = 3, char ch_pad = ' ') {
 
   return ret;
 }
-
+/*
 template<class T>
 inline std::string
 to_string(const cv::Point_<T>& pt, size_t n_pad = 3, char ch_pad = '0') {
@@ -193,12 +194,17 @@ to_string(const cv::Point_<T>& pt, size_t n_pad = 3, char ch_pad = '0') {
   oss << to_string(pt.x) << ',' << to_string(pt.y);
   return oss.str();
 }
-
+*/
 template<class T, class Char = char>
 inline std::string
 to_string(const Line<T>& line) {
   std::string ret;
-  ret = line.str(",", "|");
+
+  ret += "Line(";
+  ret += to_string(line.a);
+  ret += ',';
+  ret += to_string(line.b);
+  ret += ")";
 
   return ret;
 }
@@ -231,6 +237,13 @@ operator<<(std::ostream& os, const typename line_list<Value>::type& c) {
   }
   return os;
 }
+/*
+template<class T>
+inline std::ostream&
+operator<<(std::ostream& os, const cv::Point_<T>& p) {
+  os << "{x:" << p.x << ",y:" << p.y << "}";
+  return os;
+}*/
 
 template<class ContainerT>
 

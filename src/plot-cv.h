@@ -256,6 +256,22 @@ JSValue vec4i_to_js(const cv::Vec4i& v);
 
 void write_image(image_type img);
 
+template<class InputIterator>
+std::string
+implode(InputIterator begin, InputIterator end, const std::string& separator) {
+  std::ostringstream os;
+  int i = 0;
+
+  while(begin != end) {
+    if(i > 0)
+      os << separator;
+    os << to_string(*begin);
+    i++;
+    ++begin;
+  }
+  return os.str();
+}
+
 void process_image(std::function<void(std::string, image_type*)> display, int show_image);
 extern image_type* mptr;
 extern int morphology_operator, morphology_enable;
