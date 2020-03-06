@@ -49,8 +49,8 @@ bool show_diagnostics = false;
 double epsilon = 3;
 const int max_frames = 100000;
 
-config_values config = {.morphology_kernel_size = 2,
-                        .blur_kernel_size = 2,
+config_values config = {.morphology_kernel_size = 1,
+                        .blur_kernel_size = 5,
 
                         .hough_rho = 100,
                         .hough_theta = 180,
@@ -434,7 +434,7 @@ draw_lines(image_type& target,
 }
 
 void
-corner_harris_detection(image_type& src, image_type& out) {
+corner_harris_detection(image_type& src, const std::function<void(const cv::Point &point)> &fn) {
   int thresh = 200;
   int max_thresh = 255;
   int blockSize = 2;
@@ -448,11 +448,11 @@ corner_harris_detection(image_type& src, image_type& out) {
   cv::normalize(dst, dst_norm, 0, 255, cv::NORM_MINMAX, CV_32FC1, image_type());
   cv::convertScaleAbs(dst_norm, dst_norm_scaled);
 
-  
+
   for(int i = 0; i < dst_norm.rows; i++) {
     for(int j = 0; j < dst_norm.cols; j++) {
       if((int)dst_norm.at<float>(i, j) > thresh) {
-        cv::circle(dst_norm_scaled, cv::Point(j, i), 20, cv::Scalar(0,255,0,255), 3, cv::LINE_8);
+        fn(cv::Point(j, i));
       }
     }
   }
@@ -597,7 +597,9 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
     houghLines.push_back(Line<int>(x1, y1, x2, y2));
   });
 
-  corner_harris_detection(imgGrayscale, imgCanny);
+  corner_harris_detection(imgGrayscale, [&](const cv::Point& pt) {
+    cv::circle(imgCanny, pt, 10, cv::Scalar(0,255,0,255), 2, cv::LINE_8);
+  });
 
   /*  std::transform(hough.cbegin(),
                    hough.cend(),
@@ -635,10 +637,14 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
     image_info(imgMorphology);
 
   imgVector = color_type(0, 0, 0, 0);
+  /*
+ invert_color(imgCanny);
+ invert_color(imgMorphology);*/
 
   display_image("imgBlurred", &imgBlurred);
   display_image("imgCanny", &imgCanny);
   display_image("imgMorphology", &imgMorphology);
+
 
   cv::cvtColor(imgGrayscale, imgGrayscale, cv::COLOR_GRAY2BGR);
 
