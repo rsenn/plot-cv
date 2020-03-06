@@ -103,7 +103,12 @@ void svg_draw_polyline(svg::Document& doc,
 
 struct config_values {
   int morphology_kernel_size;
+  int morphology_operator;
   int blur_kernel_size;
+  int blur_sigma;
+  int blur_sigma_s;
+
+  int blur_sigma_r;
 
   int hough_rho;
   int hough_theta;
@@ -280,7 +285,7 @@ implode(InputIterator begin, InputIterator end, const std::string& separator) {
 
 void process_image(std::function<void(std::string, image_type*)> display, int show_image);
 extern image_type* mptr;
-extern int morphology_operator, morphology_enable;
+extern int morphology_enable;
 extern JSValue processFn, global_obj;
 extern int thresh, thresh2, apertureSize;
 

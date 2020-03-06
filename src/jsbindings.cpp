@@ -203,7 +203,6 @@ js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const
 
 /* Point Class */
 
-typedef cv::Point2d JSPointData;
 typedef cv::Rect2d JSRectData;
 typedef cv::Mat JSMatData;
 typedef cv::Size2d JSSizeData;
@@ -830,7 +829,6 @@ js_rect_init(JSContext* ctx, void* m, const char* name, bool exp) {
 }
 
 /* PointIterator Class */
-typedef std::vector<JSPointData> JSContourData;
 
 JSClassID js_contour_class_id;
 
@@ -961,25 +959,6 @@ js_point_iterator_init(JSContext* ctx, void* m, const char* name, bool exp) {
 }
 
 /* Contour Class */
-
-template<class Type>
-JSValue
-js_contour_new(JSContext* ctx, const std::vector<Type>& points) {
-  JSValue ret;
-  JSContourData* contour;
-
-  ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
-
-  contour = static_cast<JSContourData*>(js_mallocz(ctx, sizeof(JSContourData)));
-
-  std::transform(points.cbegin(),
-                 points.cend(),
-                 std::back_inserter(*contour),
-                 [](const Type& pt) -> cv::Point2d { return cv::Point2d(pt.x, pt.y); });
-
-  JS_SetOpaque(ret, contour);
-  return ret;
-}
 
 JSContourData*
 js_contour_data(JSContext* ctx, JSValue val) {

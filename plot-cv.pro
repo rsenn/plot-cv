@@ -3,8 +3,10 @@ CONFIG += console c++11
 CONFIG -= app_bundle
 CONFIG -= qt
 CONFIG += link_pkgconfig
+#CONFIG += c++17
 
 QMAKE_CXXFLAGS -= -Wall
+QMAKE_CXXFLAGS += -std=c++17
 QMAKE_CXXFLAGS_WARN_ON -= -Wall
 QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-variable  -Wno-unused-parameter
 

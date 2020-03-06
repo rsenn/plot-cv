@@ -140,7 +140,6 @@ main(int argc, char* argv[]) {
   cv::namedWindow("imgCanny", CV_WINDOW_AUTOSIZE);
   cv::createTrackbar("threshold", "imgCanny", &thresh, 255, trackbar, (void*)"thres");
   cv::createTrackbar("threshold2", "imgCanny", &thresh2, 255, trackbar, (void*)"thres2");
-  cv::createTrackbar("blur", "imgBlurred", &blur, 7, trackbar, (void*)"blur");
   // cv::createTrackbar("Image", "img", &show_image, 4, trackbar, (void*)"Image Index");
   cv::createTrackbar("morphology_kernel_size",
                      "imgMorphology",
@@ -156,14 +155,17 @@ main(int argc, char* argv[]) {
                      (void*)"Morphology enable");
   cv::createTrackbar("morphology_operator",
                      "imgMorphology",
-                     &morphology_operator,
+                     &config.morphology_operator,
                      3,
                      trackbar,
                      (void*)"Morphology operator");
+  cv::createTrackbar(
+      "blur_sigma", "imgBlurred", &config.blur_sigma, 300, trackbar, (void*)"blur sigma");
+
   cv::createTrackbar("blur_kernel_size",
                      "imgBlurred",
                      &config.blur_kernel_size,
-                     1,
+                     2,
                      trackbar,
                      (void*)"Blur kernel size");
 
@@ -197,7 +199,7 @@ main(int argc, char* argv[]) {
       case 'c':
       case 'C': show_image = CANNY; break;
       case 'm': morphology_enable = !morphology_enable; break;
-      case 'M': morphology_operator = !morphology_operator; break;
+      case 'M': config.morphology_operator = !config.morphology_operator; break;
       case 'd':
       case 'D': show_diagnostics = !show_diagnostics; break;
       case 'p':

@@ -37,7 +37,7 @@ typedef Line<float> line_type;
 const char* image_names[] = {"CANNY", "ORIGINAL", "GRAYSCALE", "MORPHOLOGY"};
 int num_iterations = 0;
 
-int morphology_operator = 2, morphology_enable = 2;
+int morphology_enable = 2;
 image_type* mptr = nullptr;
 
 int thresh = 10, thresh2 = 20, apertureSize = 3;
@@ -49,14 +49,17 @@ bool show_diagnostics = false;
 double epsilon = 3;
 const int max_frames = 100000;
 
-config_values config = {.morphology_kernel_size = 2,
-                        .blur_kernel_size = 5,
-
+config_values config = {.morphology_kernel_size = 1,
+                        .morphology_operator = 0,
+                        .blur_kernel_size = 2,
+                        .blur_sigma = 175,
+                        .blur_sigma_s = 6000,
+                        .blur_sigma_r = 40,
                         .hough_rho = 99,
                         .hough_theta = 25,
                         .hough_threshold = 900,
-                        .hough_minlinelen =  127,
-                        .hough_maxlinegap =   199};
+                        .hough_minlinelen = 127,
+                        .hough_maxlinegap = 199};
 
 image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny,
     imgMorphology; // Canny edge image
@@ -514,6 +517,19 @@ points_to_js<cv::Point>(const std::vector<cv::Point>& v) {
   return vector_to_js(js, v, fn);
 }
 
+JSValueConst
+contours_to_array(JSContext* ctx, const contour2i_vector& contours) {
+  JSValue ret = JS_NewArray(ctx);
+
+  uint32_t i, n = contours.size();
+  for(i = 0; i < n; i++) {
+
+    JS_SetPropertyUint32(ctx, ret, i, js_contour_new(ctx, contours[i]));
+  }
+
+  return ret;
+}
+
 Line<int>
 lineFrom(const cv::Vec4i& vec) {
   return Line<int>(vec[0], vec[1], vec[2], vec[3]);
@@ -542,98 +558,49 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
   imgOriginal.copyTo(frameLab);
   cv::cvtColor(frameLab, frameLab, cv::COLOR_BGR2Lab);
   cv::split(frameLab, frameLabCn);
-  frameLabCn[0].copyTo(imgGrayscale);
 
-  // frameLabCn[0].convertTo(imgGrayscale, CV_8UC4);
-  // cv::cvtColor(frameLabCn[0], imgGrayscale, cv::COLOR_BGR2GRAY);
+  // cv::equalizeHist(frameLabCn[0], imgGrayscale);
+  cv::normalize(frameLabCn[0], imgGrayscale, 0, 255, cv::NORM_MINMAX);
+
   std::vector<cv::Vec3f> circles;
 
-  //  cv::normalize(frameLabCn[0], imgGrayscale, 0, 255, cv::NORM_MINMAX);
   display_image("imgGrayscale", &imgGrayscale);
-  //    cv::GaussianBlur(imgGrayscale, imgBlurred, cv::Size(config.blur_kernel_size + 1,
-  //    config.blur_kernel_size + 1), 1.75, 1.75);
- // cv::edgePreservingFilter(imgGrayscale, imgBlurred, cv::RECURS_FILTER, 30, 0.4);
-  cv::bilateralFilter(imgGrayscale, imgBlurred, config.blur_kernel_size+1, 30, 1);
+  // cv::GaussianBlur(imgGrayscale, imgBlurred, cv::Size(config.blur_kernel_size * 2 + 1,
+  // config.blur_kernel_size* 2 + 1), (double)config.blur_sigma * 0.01);
+  // cv::edgePreservingFilter(imgGrayscale, imgBlurred, cv::NORMCONV_FILTER,
+  // (double)config.blur_sigma_r * 0.01, (double)config.blur_sigma_s * 0.01);
+  cv::bilateralFilter(imgGrayscale,
+                      imgBlurred,
+                      -1,
+                      (double)config.blur_sigma_r * 0.01,
+                      config.blur_kernel_size * 2 + 1);
 
   cv::Canny(imgBlurred, imgCanny, thresh, thresh2, apertureSize);
 
-  // cv::cvtColor(imgCanny, imgCanny, CV_GRAY2BGR);
-
   image_type strel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(19, 19));
-
-  // imgCanny.copyTo(imgMorphology);
-  // cv::cvtColor(imgMorphology, imgMorphology, cv::COLOR_GRAY2BGR);
 
   cv::morphologyEx(imgCanny,
                    imgMorphology,
-                   morphology_operator ? cv::MORPH_DILATE : cv::MORPH_CLOSE,
+                   config.morphology_operator ? cv::MORPH_DILATE : cv::MORPH_CLOSE,
                    cv::getStructuringElement(cv::MORPH_ELLIPSE,
                                              cv::Size(config.morphology_kernel_size + 1,
                                                       config.morphology_kernel_size + 1)));
 
   cv::cvtColor(imgBlurred, imgBlurred, cv::COLOR_GRAY2BGR);
   /*
-    std::cerr << "imgOriginal ";
-    image_info(imgOriginal);
-    std::cerr << "imgGrayscale ";
-    image_info(imgGrayscale);
-    std::cerr << "imgBlurred ";
-    image_info(imgBlurred);
-    std::cerr << "imgMorphology ";
-    image_info(imgMorphology);
-    std::cerr << "imgCanny ";
-
-    image_info(imgCanny);*/
-
-  hough_lines((morphology_enable > 1) ? imgMorphology : imgCanny, [&hough, &houghLines](int x1, int y1, int x2, int y2) {
-    cv::Vec4i vec(x1, y1, x2, y2);
-    hough.push_back(vec);
-    houghLines.push_back(Line<int>(x1, y1, x2, y2));
-  });
+   hough_lines((morphology_enable > 1) ? imgMorphology : imgCanny, [&hough, &houghLines](int x1, int
+   y1, int x2, int y2) { cv::Vec4i vec(x1, y1, x2, y2); hough.push_back(vec);
+     houghLines.push_back(Line<int>(x1, y1, x2, y2));
+   });*/
 
   corner_harris_detection(imgGrayscale, [&](const cv::Point& pt) {
     cv::circle(imgCanny, pt, 10, cv::Scalar(0, 255, 0, 255), 2, cv::LINE_8);
   });
 
-  /*  std::transform(hough.cbegin(),
-                   hough.cend(),
-                   std::back_inserter(houghLines),
-                   [](const cv::Vec4i& v) -> Line<int> {
-                     return Line<int>(v[0], v[1], v[2], v[3]);
-                   });
-  */
-  //  cv::polylines(imgBlurred, polylines, true, color_type(0, 255, 0, 255), 1, cv::LINE_AA);
-
-  // draw_all_contours(imgBlurred, houghLines, 2);
-  /*
-    std::vector<Line<float>> lines2f;
-
-    std::transform(houghLines.cbegin(),
-                   houghLines.cend(),
-                   std::back_inserter(lines2f),
-                   [](const cv::Vec4i& v) -> Line<float> {
-                     return Line<float>(v[0], v[1], v[2], v[3]);
-                   });
-  */
-
-  //  std::cerr << "hough: " << implode(hough.cbegin(), hough.cend(), ",\n");
-
-  /* std::cerr << "houghLines.size=" << houghLines.size() << std::endl;
-
-   std::cerr << "houghLines: "
-             << implode(houghLines.data(),
-                        (houghLines.size() > 10 ? houghLines.data() + 10
-                                                : houghLines.data() + houghLines.size()),
-                        ",\n")
-             << std::endl;
- */
   if(show_diagnostics)
     image_info(imgMorphology);
 
   imgVector = color_type(0, 0, 0, 0);
-  /*
- invert_color(imgCanny);
- invert_color(imgMorphology);*/
 
   display_image("imgBlurred", &imgBlurred);
   display_image("imgCanny", &imgCanny);
@@ -937,8 +904,7 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
     std::vector<point2i_vector> squares;
 
     {
-      JSValue args[2] = {vector_to_js(js, contours, &points_to_js<point2i_type>),
-                         vector_to_js(js, hier, &vec4i_to_js)};
+      JSValue args[2] = {contours_to_array(js.ctx, contours), vector_to_js(js, hier, &vec4i_to_js)};
 
       js.set_global("contours", args[0]);
       js.set_global("hier", args[1]);

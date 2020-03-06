@@ -43,6 +43,31 @@ void js_mat_finalizer(JSRuntime* rt, JSValue val);
 JSValue js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
 JSValue js_mat_get_wh(JSContext* ctx, JSValueConst this_val, int magic);
 int js_mat_init(JSContext* ctx, void* m, const char* name, bool exp);
+}
+extern "C" JSValue contour_proto;
+extern "C" JSClassID js_contour_class_id;
+
+typedef cv::Point2d JSPointData;
+
+typedef std::vector<JSPointData> JSContourData;
+
+template<class T>
+inline JSValue
+js_contour_new(JSContext* ctx, const std::vector<cv::Point_<T>>& points) {
+  JSValue ret;
+  JSContourData* contour;
+
+  ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
+
+  contour = static_cast<JSContourData*>(js_mallocz(ctx, sizeof(JSContourData)));
+
+  std::transform(points.cbegin(),
+                 points.cend(),
+                 std::back_inserter(*contour),
+                 [](const cv::Point_<T>& pt) -> cv::Point2d { return cv::Point2d(pt.x, pt.y); });
+
+  JS_SetOpaque(ret, contour);
+  return ret;
 };
 
 #endif

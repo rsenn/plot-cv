@@ -91,7 +91,11 @@ global.process = function(contours, hier) {
   var areas = [];
 
   let orig = imgOriginal;
-/*
+
+  console.log(typeof contours);
+  console.log("contours: ", contours);
+
+  /*
   console.log("orig.rows =", orig.rows);
   console.log("orig.cols =", orig.cols);*/
 
