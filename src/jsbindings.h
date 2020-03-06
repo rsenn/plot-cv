@@ -16,6 +16,14 @@ JSValue js_point_set_xy(JSContext* ctx, JSValueConst this_val, JSValue val, int 
 JSValue js_point_norm(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv);
 JSValue js_point_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv);
 int js_point_init(JSContext* ctx, void* m, const char* name, bool exp = true);
+
+void js_rect_finalizer(JSRuntime* rt, JSValue val);
+JSValue js_rect_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
+JSValue js_rect_get_xy(JSContext* ctx, JSValueConst this_val, int magic);
+JSValue js_rect_set_xy(JSContext* ctx, JSValueConst this_val, JSValue val, int magic);
+JSValue js_rect_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv);
+int js_rect_init(JSContext* ctx, void* m, const char* name, bool exp = true);
+
 JSModuleDef* js_init_module(JSContext* ctx, const char* module_name);
 void js_point_iterator_finalizer(JSRuntime* rt, JSValue val);
 JSValue

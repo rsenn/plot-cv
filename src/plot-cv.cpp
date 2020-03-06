@@ -766,11 +766,11 @@ process_image() {
         if(contourStr.str().size())
           contourStr << "\n";
         out_points(contourStr, a);
-      /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
-         ", " << hier[i][2] << ", " << hier[i][3] << ", "
-                    << "} " << std::endl;
-          logfile << "contourDepth(i) = " << depth << std::endl;
-*/
+        /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
+           ", " << hier[i][2] << ", " << hier[i][3] << ", "
+                      << "} " << std::endl;
+            logfile << "contourDepth(i) = " << depth << std::endl;
+  */
         /*  if(dptr != nullptr)
             cv::drawContours(*dptr, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
    */     }
@@ -1085,6 +1085,8 @@ main(int argc, char* argv[]) {
   JSValue* fn = js.get_function("drawContour");
   global_obj = js.global_object();
   js_point_init(js.ctx, &global_obj, "Point_", false);
+  js_rect_init(js.ctx, &global_obj, "Rect", false);
+
   js_point_iterator_init(js.ctx, &global_obj, "PointIterator", false);
   js_contour_init(js.ctx, &global_obj, "Contour", false);
   jsrt::value ctor = js.get_global("Point_");

@@ -13,6 +13,7 @@ const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };
 function testPointVector() {
   let pv = new Contour();
   let poly = new Contour();
+  let hull = new Contour();
 
   pv.push(0,0);
   pv.push({x: 10, y:0});
@@ -22,9 +23,14 @@ function testPointVector() {
 
 
   pv.approxPolyDP(poly, 2.0, true);
+  poly.convexHull(hull, true, true);
 
       console.log("poly.length: ", poly.length);
+      console.log("hull.length: ", hull.length);
       console.log("poly.boundingRect(): ", poly.boundingRect());
+      console.log("pv.fitEllipse(): ", pv.fitEllipse());
+      console.log("pv.fitLine(): ", pv.fitLine());
+      console.log("hull.boundingRect(): ", hull.boundingRect());
       console.log("pv.length: ", pv.length);
       console.log("pv.get(0): ", pv.get(0));
       console.log("pv.get(1): ", pv.get(1));
