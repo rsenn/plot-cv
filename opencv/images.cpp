@@ -3,7 +3,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include <iostream>
-#include "polygon.h"
+#include "../src/polygon.h"
 #include "data.h"
 
 using namespace cv;
@@ -21,9 +21,9 @@ onMouse1(int event, int x, int y, int foo, void* p) {
     return;
   cv::Point m1(x, y);
   Data* D = (Data*)p;
-  D->polygon.addPoint(m1);
+  D->polygon.add_point(m1);
   cout << "Adding point: (" << x << ", " << y << ")" << endl;
-  D->polygon.drawPolygon(D->image.clone());
+  D->polygon.draw_polygon(D->image.clone());
 }
 
 int
@@ -49,11 +49,11 @@ main() {
   // force ballon:
   while(true) {
     cout << "Gradient descent ...";
-    D->drawNextStep(STEP, D->image.clone(), mode);
+    D->draw_next_step(STEP, D->image.clone(), mode);
     waitKey();
-    D->findContour(STEP, mode);
+    D->find_contour(STEP, mode);
     // cout << "found contour" << endl;
-    D->polygon.drawPolygon(D->image.clone());
+    D->polygon.draw_polygon(D->image.clone());
     waitKey();
     cout << "Done." << endl;
   }

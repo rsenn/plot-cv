@@ -16,6 +16,8 @@ find_package(OpenCV REQUIRED)
 include_directories(
     ${OPENCV_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/opencv
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/quickjs
 )
@@ -212,8 +214,8 @@ if(ADDITIONAL_PROGS)
   add_prog(webcam_demo)
   add_prog(homography_from_camera_displacement)
   add_prog(aruco_ar_demo)
-  add_prog(tracking_calibration_with_img)
-  target_link_libraries(tracking_calibration_with_img yaml-cpp roslib rospack roscpp )
+  #add_prog(tracking_calibration_with_img)
+  #target_link_libraries(tracking_calibration_with_img yaml-cpp roslib rospack roscpp )
 endif(ADDITIONAL_PROGS)
 
 
