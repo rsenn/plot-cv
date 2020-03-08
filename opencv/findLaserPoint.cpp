@@ -4,6 +4,7 @@
 #include <opencv/cvaux.h>
 #include <opencv/cxcore.h>
 #include <opencv2/highgui.hpp>
+#include <opencv2/highgui/highgui_c.h>
 #include <fstream>
 #include <string>
 #include <sstream>
@@ -14,7 +15,7 @@ int thresholdValue = 155;
 int thresholdValueHSV = 100;
 int mouseY = 100, mouseX = 100;
 cv::Point center(0, 0);
-cv::Point lasercv::Point(-1, -1);
+cv::Point laserPoint(-1, -1);
 void
 trackbar(int input, void* u) {
   thresholdValue = input;
@@ -97,7 +98,7 @@ main() {
   cv::Mat imgTemp;
   cv::Mat imgToMapProc;
   cv::Mat imgToMap(528, 459, CV_8UC3);
-  VideoCapture cap(1);
+  VideoCapture cap(0);
   cvNamedWindow("demoRaw", 1);
   // cvNamedWindow("demoProc",0);
   cvNamedWindow("demoMap", 1);
@@ -205,7 +206,7 @@ main() {
       threshold(imgToMapProc, imgPoint, 254, 255, 0);
       threshold(imgToMapProc, imgToMapProc, thresholdValue, 255, 0);
 
-      cv::Point brightcv::Point = findBrightPoint(imgPoint);
+      cv::Point brightPoint = findBrightPoint(imgPoint);
 
       brushSideWhite(imgToMapProc); //将边缘部分的噪点删除掉
 
@@ -251,24 +252,25 @@ main() {
           line(imgToMapProcCopy,cv::Point(lines[1][0],lines[1][1]),cv::Point(lines[1][2],lines[1][3]),Scalar(255));
       }
       */
-      if(brightcv::Point.x != -1) {
-        circle(imgToMapProcCopy, brightcv::Point, 3, Scalar(255));
-        lasercv::Point.x = (brightcv::Point.x - center.x) / 6;
-        lasercv::Point.y = (center.y - brightcv::Point.y) / 6;
+      if(brightPoint.x != -1) {
+        circle(imgToMapProcCopy, brightPoint, 3, Scalar(255));
+        laserPoint.x = (brightPoint.x - center.x) / 6;
+        laserPoint.y = (center.y - brightPoint.y) / 6;
         istringstream info;
+        ostringstream out;
         String coordInfo = "(";
         String tempStr;
         info.clear();
-        info << (int)lasercv::Point.x;
-        info >> tempStr;
+        out << (int)laserPoint.x;
+         tempStr = out.str();
         coordInfo += tempStr;
         coordInfo += ",";
-        info.clear();
-        info << (int)lasercv::Point.y;
-        info >> tempStr;
+        out.clear();
+        out << (int)laserPoint.y;
+        tempStr = out.str();
         coordInfo += tempStr;
         coordInfo += ")";
-        putText(imgToMapProcCopy, coordInfo, brightcv::Point - cv::Point(18, 10), 0, 0.3, Scalar(255));
+        putText(imgToMapProcCopy, coordInfo, brightPoint - cv::Point(18, 10), 0, 0.3, Scalar(255));
       }
 
       imshow("demoMap", imgToMapProcCopy);
