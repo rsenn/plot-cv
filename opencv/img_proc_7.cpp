@@ -64,7 +64,8 @@ Pointstack::pop() {
   if(current_point > 0)
     return point_array[current_point--];
   else {
-    // std::cout << "Error: attempted Pointstack::pop() with empty stack. Returning error_point (-1, -1).\n";
+    // std::cout << "Error: attempted Pointstack::pop() with empty stack. Returning error_point (-1,
+    // -1).\n";
     cv::Point2f error_point(-1, -1);
     return error_point;
   }
@@ -75,7 +76,8 @@ Pointstack::pop(cv::Point2f& point) {
   if(current_point > 0)
     point = point_array[current_point--];
   else {
-    // std::cout << "Error: attempted Pointstack::pop(cv::Point2f point) with empty stack. Returning 0. Point set to error_point, (-1, -1).\n";
+    // std::cout << "Error: attempted Pointstack::pop(cv::Point2f point) with empty stack. Returning
+    // 0. Point set to error_point, (-1, -1).\n";
     cv::Point2f error_point(-1, -1);
     point = error_point;
     return 0;
@@ -132,8 +134,12 @@ main(int argc, char* argv[]) {
   if(argc > 2)
     myOutput.open(argv[2], CV_FOURCC('M', 'J', 'P', 'G'), myVideo.get(CV_CAP_PROP_FPS), mySize);
   else
-    myOutput.open("output.avi", CV_FOURCC('M', 'J', 'P', 'G'), myVideo.get(CV_CAP_PROP_FPS), mySize);
-  // myOutput.open("F:/Documents/Visual Studio 2010/Projects/img_proc_7/Debug/img_proc_7_out.avi", CV_FOURCC('M','J','P','G'), myVideo.get(CV_CAP_PROP_FPS), mySize);
+    myOutput.open("output.avi",
+                  CV_FOURCC('M', 'J', 'P', 'G'),
+                  myVideo.get(CV_CAP_PROP_FPS),
+                  mySize);
+  // myOutput.open("F:/Documents/Visual Studio 2010/Projects/img_proc_7/Debug/img_proc_7_out.avi",
+  // CV_FOURCC('M','J','P','G'), myVideo.get(CV_CAP_PROP_FPS), mySize);
   if(!myOutput.isOpened()) {
     std::cout << "Unable to create file.";
     waitKey(0);
@@ -168,7 +174,8 @@ process_image(Mat& inputImage, Mat& outputImage) {
   Mat myMask[RANGES];
   Mat myKernel;
 
-  int lowHue[RANGES], highHue[RANGES], lowSat[RANGES], highSat[RANGES], lowVal[RANGES], highVal[RANGES];
+  int lowHue[RANGES], highHue[RANGES], lowSat[RANGES], highSat[RANGES], lowVal[RANGES],
+      highVal[RANGES];
   int elem_size_x;
   int elem_size_y;
 
@@ -194,7 +201,11 @@ process_image(Mat& inputImage, Mat& outputImage) {
   myKernel = getStructuringElement(MORPH_RECT, Size(elem_size_x, elem_size_y));
   cvtColor(inputImage, myCopy, COLOR_BGR2HSV);
 
-  for(i = 0; i < RANGES; i++) inRange(myCopy, Scalar(lowHue[i], lowSat[i], lowVal[i]), Scalar(highHue[i], highSat[i], highVal[i]), myMask[i]);
+  for(i = 0; i < RANGES; i++)
+    inRange(myCopy,
+            Scalar(lowHue[i], lowSat[i], lowVal[i]),
+            Scalar(highHue[i], highSat[i], highVal[i]),
+            myMask[i]);
 
   myMask[0].copyTo(outputImage);
   outputImage = Scalar(0);
@@ -242,7 +253,8 @@ add_tracking(Mat& inputImage, Mat& outputImage) {
 
     // Find center of mass.
     vecMoment[i] = moments(vecContours[i]);
-    vecMassCenter[i] = Point2f(vecMoment[i].m10 / vecMoment[i].m00, vecMoment[i].m01 / vecMoment[i].m00);
+    vecMassCenter[i] =
+        Point2f(vecMoment[i].m10 / vecMoment[i].m00, vecMoment[i].m01 / vecMoment[i].m00);
 
     // Draw bounding rectangle and push mass centers of larger objects on stack.
     if(vecContArea[i] >= minimum_area) {

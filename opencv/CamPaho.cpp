@@ -114,7 +114,8 @@ onConnect(void* context, MQTTAsync_successData* response) {
   }
 }
 
-#define HSVWEIGHT(x, y) (inputImage.at<Vec3b>(x, y)[0] + inputImage.at<Vec3b>(x, y)[1] + inputImage.at<Vec3b>(x, y)[2])
+#define HSVWEIGHT(x, y)                                                                            \
+  (inputImage.at<Vec3b>(x, y)[0] + inputImage.at<Vec3b>(x, y)[1] + inputImage.at<Vec3b>(x, y)[2])
 #define HSVCONDITION(x, y) (HSVWEIGHT(x, y) > 90)
 void
 floodFillStack(Mat& inputImage, int x, int y, vector<pair<int, int>>& domain) {
@@ -145,7 +146,10 @@ floodFillStack(Mat& inputImage, int x, int y, vector<pair<int, int>>& domain) {
 }
 
 void
-findCentroid(Mat& inputImage, vector<vector<pair<int, int>>>& domain, const int& domainNumber, vector<pair<double, double>>& centroid) {
+findCentroid(Mat& inputImage,
+             vector<vector<pair<int, int>>>& domain,
+             const int& domainNumber,
+             vector<pair<double, double>>& centroid) {
 
   int colNumber = inputImage.cols;
   int rowNumber = inputImage.rows;
@@ -174,7 +178,9 @@ findCentroid(Mat& inputImage, vector<vector<pair<int, int>>>& domain, const int&
     double nx = 0;
     double ny = 0;
     double sumValue = 0;
-    for(vector<pair<int, int>>::iterator vectPairIt = domain[i].begin(); vectPairIt != domain[i].end(); vectPairIt++) {
+    for(vector<pair<int, int>>::iterator vectPairIt = domain[i].begin();
+        vectPairIt != domain[i].end();
+        vectPairIt++) {
       // std::cout << "domain[i]:"<<domain[i].size() << std::endl;
       nx += vectPairIt->first * HSVWEIGHT(vectPairIt->first, vectPairIt->second);
       ny += vectPairIt->second * HSVWEIGHT(vectPairIt->first, vectPairIt->second);
@@ -293,12 +299,14 @@ main(int argc, char** argv) {
       if(centroid.size() > 0) {
         xString << centroid[0].first;
         yString << centroid[0].second;
-        // cout << thisNodeName<< " "<< "x: " << centroid[0].first << " " << "y: " << centroid[0].second << endl;
+        // cout << thisNodeName<< " "<< "x: " << centroid[0].first << " " << "y: " <<
+        // centroid[0].second << endl;
       } else {
         xString << -1.0;
         yString << -1.0;
       }
-      string message = timeString.str() + " " + thisNodeName + " " + xString.str() + " " + yString.str();
+      string message =
+          timeString.str() + " " + thisNodeName + " " + xString.str() + " " + yString.str();
 
       strcpy(buffer, message.c_str());
       int data_len = message.length();

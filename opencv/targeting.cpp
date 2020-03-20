@@ -16,8 +16,8 @@
 using namespace cv;
 using namespace std;
 
-bool editcurrent = false; // is true just after the user selects a pixel. when true, the program will get the rgb values
-                          // of the selected pixel
+bool editcurrent = false; // is true just after the user selects a pixel. when true, the program
+                          // will get the rgb values of the selected pixel
 
 int thresh = 30;
 int catnumx[99], catnumy[99];  // x and y of pixels selected by the user
@@ -25,7 +25,8 @@ int currentpix = 0;            // number of selected pixels
 int bee[99], jee[99], are[99]; // rgb values of selected pixels (at the time of selection)
 
 bool findcenter = true;
-int runningx, runningy, avrgx, avrgy; // for averaging; running total of x values, y values, and the calculated averages
+int runningx, runningy, avrgx,
+    avrgy; // for averaging; running total of x values, y values, and the calculated averages
 
 void my_mouse_callback(int event, int x, int y, int flags, void* param);
 
@@ -106,8 +107,10 @@ process(VideoCapture& capture) {
         for(int h = 0; h <= currentpix; h++) {
 
           if(catnumx[h] + catnumy[h] != 0)
-            if((thisbee < bee[h] + thresh && thisbee > bee[h] - thresh) && (thisjee < jee[h] + thresh && thisjee > jee[h] - thresh) && (thisare < are[h] + thresh && thisare > are[h] - thresh)) { // if it's a match
-              newframe.at<cv::Vec3b>(i, j)[0] = 255;                                                                                                                                               // set to white
+            if((thisbee < bee[h] + thresh && thisbee > bee[h] - thresh) &&
+               (thisjee < jee[h] + thresh && thisjee > jee[h] - thresh) &&
+               (thisare < are[h] + thresh && thisare > are[h] - thresh)) { // if it's a match
+              newframe.at<cv::Vec3b>(i, j)[0] = 255;                       // set to white
               newframe.at<cv::Vec3b>(i, j)[1] = 255;
               newframe.at<cv::Vec3b>(i, j)[2] = 255;
               if(findcenter && matches == 0) {
@@ -133,7 +136,8 @@ process(VideoCapture& capture) {
       runningx = 0;
       runningy = 0;
       Point thecenter = Point(avrgy, avrgx);
-      ellipse(newframe, thecenter, Size(20, 20), 0, 0, 360, Scalar(255, 0, 238), 2, 8); // draw circle
+      ellipse(
+          newframe, thecenter, Size(20, 20), 0, 0, 360, Scalar(255, 0, 238), 2, 8); // draw circle
     }
     imshow("Threshold Image", newframe);
     capture >> frame;
@@ -177,8 +181,9 @@ main(int ac, char** av) {
   VideoCapture capture(arg);
   if(!capture.isOpened())
     capture.open(atoi(arg.c_str()));
-  capture.set(CV_CAP_PROP_FRAME_WIDTH, 240); // this line and the following line is necessary only for the raspberry pi.
-                                             // if you were to delete these on the pi, you would get timeout errors
+  capture.set(CV_CAP_PROP_FRAME_WIDTH,
+              240); // this line and the following line is necessary only for the raspberry pi.
+                    // if you were to delete these on the pi, you would get timeout errors
   capture.set(CV_CAP_PROP_FRAME_HEIGHT, 320);
   if(!capture.isOpened()) {
     cerr << "Failed to open a video device or video file!\n" << endl;

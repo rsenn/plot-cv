@@ -37,9 +37,9 @@ main(int argc, char** argv) {
   // ros::init(argc, argv, "middlecv::Point_node");
   // ros::NodeHandle nh; //20170414
   // geometry_msgs::cv::Point msg_xy_angle; //20170414
-  // ros::Publisher pub_xy_angle = nh.advertise<geometry_msgs::cv::Point>("xy_angle", 1000); //20170409
-  // std_msgs::Int64 msg_area; //20170414
-  // ros::Publisher pub_area = nh.advertise<std_msgs::Int64>("area", 1000); //20170409
+  // ros::Publisher pub_xy_angle = nh.advertise<geometry_msgs::cv::Point>("xy_angle", 1000);
+  // //20170409 std_msgs::Int64 msg_area; //20170414 ros::Publisher pub_area =
+  // nh.advertise<std_msgs::Int64>("area", 1000); //20170409
 
   // std_msgs::Bool msg_if_image;
   // ros::Publisher pub_if_image = nh.advertise<std_msgs::Bool>("if_image", 1000);
@@ -57,7 +57,8 @@ main(int argc, char** argv) {
     cap >> src;
     src.copyTo(src_copy);
     // src.copyTo(src_HSV); //20170420  *************src_HSV ���ӷ�(�O�����m)�Msrc�@��
-    src_HSV = src.clone(); ////20170420*************** ����ƻs�@�Msrc�X�� ,output���ӷ�(�O�����m)�M���P
+    src_HSV =
+        src.clone(); ////20170420*************** ����ƻs�@�Msrc�X�� ,output���ӷ�(�O�����m)�M���P
     cvtColor(src_copy, src_copy, CV_BGR2GRAY);
     cvtColor(src_HSV, src_HSV, CV_BGR2HSV); // 20170420
     // threshold(src_copy, src_copy, 70, 255, THRESH_BINARY_INV); //20170420
@@ -72,7 +73,8 @@ main(int argc, char** argv) {
     add(src_HSV, src_HSV, src_add_mask, hsv_threshold);                           // 20170420
     int num = 0;
     if(!src_HSV.empty()) { // 20170420
-      findContours(hsv_threshold, contours_2, hierarchy_2, CV_RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
+      findContours(
+          hsv_threshold, contours_2, hierarchy_2, CV_RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
       if(!contours_2.empty()) {
         //#pragma omp parallel for
         for(int i = 0; i < contours_2.size(); i++) {
@@ -126,7 +128,9 @@ main(int argc, char** argv) {
         vec_center_minus_red = center_2 - center;                   // 20170420
         vec_horizontal = cv::Point(300, 240) - cv::Point(200, 240); // 20170420
         ///////////////////�|(��)��!!!!!!!!!!! 20170420
-        arc_theta = acos(vec_center_minus_red.dot(vec_horizontal) / (pow(vec_center_minus_red.dot(vec_center_minus_red), 0.5) * pow(vec_horizontal.dot(vec_horizontal), 0.5)));
+        arc_theta = acos(vec_center_minus_red.dot(vec_horizontal) /
+                         (pow(vec_center_minus_red.dot(vec_center_minus_red), 0.5) *
+                          pow(vec_horizontal.dot(vec_horizontal), 0.5)));
         theta = (arc_theta * 360) / (2 * pi); // 20170420
 
         if((center_2.x > center.x) && (center_2.y < center.y)) { // 20170420
@@ -151,9 +155,10 @@ main(int argc, char** argv) {
         if((resis_area - old_area > 200) && (num == 0) && (resis_area != 0)) {
           num = 1;
         } else if((old_area - resis_area > 200) && (num == 0) && (resis_area != 0)) {
-          // cout << "Too low" << "  old_area  " << old_area << "�@resis_area�@" << resis_area << " delta  " << old_area
-          // - resis_area << endl; //20170414  putText(src, "Too low", cv::Point(20, 50), 2, 1, Scalar(0, 0, 255));
-          // ReSharper disable once CppExpressionStatementsWithoudSideEffects
+          // cout << "Too low" << "  old_area  " << old_area << "�@resis_area�@" << resis_area << "
+          // delta  " << old_area
+          // - resis_area << endl; //20170414  putText(src, "Too low", cv::Point(20, 50), 2, 1,
+          // Scalar(0, 0, 255)); ReSharper disable once CppExpressionStatementsWithoudSideEffects
           num = 1;
         } else {
         }
@@ -165,8 +170,8 @@ main(int argc, char** argv) {
     // pub_xy_angle.publish(msg_xy_angle); //20170420
     // pub_area.publish(msg_area); //20170420
     // pub_if_image.publish(msg_if_image);
-    // ROS_INFO_STREAM("cv::Point (" << msg_xy_angle.x << ", " << msg_xy_angle.y << ")\tangle " << msg_xy_angle.z << "\t
-    // Area " << msg_area.data); //20170420
+    // ROS_INFO_STREAM("cv::Point (" << msg_xy_angle.x << ", " << msg_xy_angle.y << ")\tangle " <<
+    // msg_xy_angle.z << "\t Area " << msg_area.data); //20170420
     imshow("src", src);
     ////imshow("inRange_HSV", hsv_threshold);   //20170420
     ////imshow("add:  ", src_add_mask);//20170420

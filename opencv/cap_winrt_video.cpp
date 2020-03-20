@@ -5,24 +5,25 @@
 //
 // (3 - clause BSD License)
 //
-// Redistribution and use in source and binary forms, with or without modification, are permitted provided that
-// the following conditions are met:
+// Redistribution and use in source and binary forms, with or without modification, are permitted
+// provided that the following conditions are met:
 //
-// 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the
-// following disclaimer.
-// 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
-// following disclaimer in the documentation and/or other materials provided with the distribution.
-// 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or
-// promote products derived from this software without specific prior written permission.
+// 1. Redistributions of source code must retain the above copyright notice, this list of conditions
+// and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright notice, this list of
+// conditions and the following disclaimer in the documentation and/or other materials provided with
+// the distribution.
+// 3. Neither the name of the copyright holder nor the names of its contributors may be used to
+// endorse or promote products derived from this software without specific prior written permission.
 //
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
-// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-// PARTICULAR PURPOSE ARE DISCLAIMED.IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
-// DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES(INCLUDING, BUT NOT LIMITED TO,
-// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING
-// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-// POSSIBILITY OF SUCH DAMAGE.
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+// IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+// WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "cap_winrt_video.hpp"
 
@@ -95,54 +96,57 @@ Video::initGrabber(int device, int w, int h) {
 
   m_deviceID = device;
 
-  create_task(DeviceInformation::FindAllAsync(DeviceClass::VideoCapture)).then([this](task<DeviceInformationCollection ^> findTask) {
-    m_devices = findTask.get();
+  create_task(DeviceInformation::FindAllAsync(DeviceClass::VideoCapture))
+      .then([this](task<DeviceInformationCollection ^> findTask) {
+        m_devices = findTask.get();
 
-    // got selected device?
-    if((unsigned)m_deviceID >= m_devices.Get()->Size) {
-      OutputDebugStringA("Video::initGrabber - no video device found\n");
-      return false;
-    }
+        // got selected device?
+        if((unsigned)m_deviceID >= m_devices.Get()->Size) {
+          OutputDebugStringA("Video::initGrabber - no video device found\n");
+          return false;
+        }
 
-    auto devInfo = m_devices.Get()->GetAt(m_deviceID);
+        auto devInfo = m_devices.Get()->GetAt(m_deviceID);
 
-    auto settings = ref new MediaCaptureInitializationSettings();
-    settings->StreamingCaptureMode = StreamingCaptureMode::Video; // Video-only capture
-    settings->VideoDeviceId = devInfo->Id;
+        auto settings = ref new MediaCaptureInitializationSettings();
+        settings->StreamingCaptureMode = StreamingCaptureMode::Video; // Video-only capture
+        settings->VideoDeviceId = devInfo->Id;
 
-    auto location = devInfo->EnclosureLocation;
-    bFlipImageX = true;
-    if(location != nullptr && location->Panel == Windows::Devices::Enumeration::Panel::Back) {
-      bFlipImageX = false;
-    }
+        auto location = devInfo->EnclosureLocation;
+        bFlipImageX = true;
+        if(location != nullptr && location->Panel == Windows::Devices::Enumeration::Panel::Back) {
+          bFlipImageX = false;
+        }
 
-    m_capture = ref new MediaCapture();
-    create_task(m_capture->InitializeAsync(settings))
-        .then([this]() {
-          auto props = safe_cast<VideoEncodingProperties ^>(m_capture->VideoDeviceController->GetMediaStreamProperties(MediaStreamType::VideoPreview));
+        m_capture = ref new MediaCapture();
+        create_task(m_capture->InitializeAsync(settings))
+            .then([this]() {
+              auto props = safe_cast<VideoEncodingProperties ^>(
+                  m_capture->VideoDeviceController->GetMediaStreamProperties(
+                      MediaStreamType::VideoPreview));
 
-          // for 24 bpp
-          props->Subtype = MediaEncodingSubtypes::Rgb24;
-          bytesPerPixel = 3;
+              // for 24 bpp
+              props->Subtype = MediaEncodingSubtypes::Rgb24;
+              bytesPerPixel = 3;
 
-          // XAML & WBM use BGRA8, so it would look like
-          // props->Subtype = MediaEncodingSubtypes::Bgra8;   bytesPerPixel = 4;
+              // XAML & WBM use BGRA8, so it would look like
+              // props->Subtype = MediaEncodingSubtypes::Bgra8;   bytesPerPixel = 4;
 
-          props->Width = width;
-          props->Height = height;
+              props->Width = width;
+              props->Height = height;
 
-          return ::Media::CaptureFrameGrabber::CreateAsync(m_capture.Get(), props);
-        })
-        .then([this](::Media::CaptureFrameGrabber ^ frameGrabber) {
-          m_frameGrabber = frameGrabber;
-          bGrabberInited = true;
-          bGrabberInitInProgress = false;
-          // ready = true;
-          _GrabFrameAsync(frameGrabber);
-        });
+              return ::Media::CaptureFrameGrabber::CreateAsync(m_capture.Get(), props);
+            })
+            .then([this](::Media::CaptureFrameGrabber ^ frameGrabber) {
+              m_frameGrabber = frameGrabber;
+              bGrabberInited = true;
+              bGrabberInitInProgress = false;
+              // ready = true;
+              _GrabFrameAsync(frameGrabber);
+            });
 
-    return true;
-  });
+        return true;
+      });
 
   // nb. cannot block here - this will lock the UI thread:
 
@@ -275,21 +279,22 @@ Video::listDevicesTask() {
 
   auto settings = ref new MediaCaptureInitializationSettings();
 
-  create_task(DeviceInformation::FindAllAsync(DeviceClass::VideoCapture)).then([this, &ready](task<DeviceInformationCollection ^> findTask) {
-    m_devices = findTask.get();
+  create_task(DeviceInformation::FindAllAsync(DeviceClass::VideoCapture))
+      .then([this, &ready](task<DeviceInformationCollection ^> findTask) {
+        m_devices = findTask.get();
 
-    // TODO: collect device data
-    // for (size_t i = 0; i < m_devices->Size; i++)
-    // {
-    //   .. deviceInfo;
-    //   auto d = m_devices->GetAt(i);
-    //   deviceInfo.bAvailable = true;
-    //   deviceInfo.deviceName = PlatformStringToString(d->Name);
-    //   deviceInfo.hardwareName = deviceInfo.deviceName;
-    // }
+        // TODO: collect device data
+        // for (size_t i = 0; i < m_devices->Size; i++)
+        // {
+        //   .. deviceInfo;
+        //   auto d = m_devices->GetAt(i);
+        //   deviceInfo.bAvailable = true;
+        //   deviceInfo.deviceName = PlatformStringToString(d->Name);
+        //   deviceInfo.hardwareName = deviceInfo.deviceName;
+        // }
 
-    ready = true;
-  });
+        ready = true;
+      });
 
   // wait for async task to complete
   int count = 0;

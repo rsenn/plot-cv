@@ -38,7 +38,8 @@ main(int argc, char* argv[]) {
 
     std::vector<std::vector<Size>> contors;
     std::vector<Vec4i> heirarcy;
-    findContours(img_gray, contors, heirarcy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+    findContours(
+        img_gray, contors, heirarcy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
     std::vector<Rect> boundRect(contors.size());
     std::vector<std::vector<cv::Point>> contor_poly(contors.size());
@@ -58,20 +59,24 @@ main(int argc, char* argv[]) {
     }
     int confidence = 0;
     for(int i = 0; i < boundRect.size(); i++) {
-      if((boundRect[i].x < boundRect[max_index].x + boundRect[max_index].width && boundRect[i].x > boundRect[max_index].x - int(0.1 * boundRect[max_index].width)) && (boundRect[i].y > boundRect[max_index].y))
+      if((boundRect[i].x < boundRect[max_index].x + boundRect[max_index].width &&
+          boundRect[i].x > boundRect[max_index].x - int(0.1 * boundRect[max_index].width)) &&
+         (boundRect[i].y > boundRect[max_index].y))
         confidence += 45;
     }
     if(boundRect.size() > 0) {
       if(confidence > 99)
         confidence = 0;
       // try{
-      // cv::Mat sub_image = cv::Mat(img, Rect(max(boundRect[max_index].x-30, 0), max(boundRect[max_index].y-30, 0),
-      // min(int(boundRect[max_index].width*1.75), img.cols - boundRect[max_index].x+30),
-      // min(boundRect[max_index].height*3, img.rows - boundRect[max_index].y+30)));  imshow("Frame", sub_image);
+      // cv::Mat sub_image = cv::Mat(img, Rect(max(boundRect[max_index].x-30, 0),
+      // max(boundRect[max_index].y-30, 0), min(int(boundRect[max_index].width*1.75), img.cols -
+      // boundRect[max_index].x+30), min(boundRect[max_index].height*3, img.rows -
+      // boundRect[max_index].y+30)));  imshow("Frame", sub_image);
       //}catch(int e){
       //	cout<<"Error occured"<<endl;
       //}
-      rectangle(img, boundRect[max_index].tl(), boundRect[max_index].br(), Scalar(0, 255, 0), 2, 8, 0);
+      rectangle(
+          img, boundRect[max_index].tl(), boundRect[max_index].br(), Scalar(0, 255, 0), 2, 8, 0);
 
       // fprintf(data,"%d , %d , %d\n", boundRect[max_index].width, boundRect[max_index].height,
       // boundRect[max_index].area());

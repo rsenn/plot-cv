@@ -47,7 +47,8 @@ main(int argc, char** argv) {
   cap.set(CV_CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT);
   cap.set(CV_CAP_PROP_FPS, 30);
   cv::Point2f frameCenter(FRAME_WIDTH / 2, FRAME_HEIGHT / 2);
-  CascadeClassifier frontalface = CascadeClassifier("/home/pi/projects/git/cvtest/classifiers/haarcascade_frontalface_alt2.xml");
+  CascadeClassifier frontalface = CascadeClassifier(
+      "/home/pi/projects/git/cvtest/classifiers/haarcascade_frontalface_alt2.xml");
   // CascadeClassifier profileface =
   // CascadeClassifier("/home/pi/projects/git/cvtest/classifiers/haarcascade_profileface.xml");
 
@@ -71,7 +72,13 @@ main(int argc, char** argv) {
     bool bSuccess = cap.read(frame);
     if(bSuccess) {
       if(counter % 2 == 0) {
-        frontalface.detectMultiScale(frame, faces, 1.2, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(min_face_size, min_face_size), Size(max_face_size, max_face_size));
+        frontalface.detectMultiScale(frame,
+                                     faces,
+                                     1.2,
+                                     2,
+                                     0 | CV_HAAR_SCALE_IMAGE,
+                                     Size(min_face_size, min_face_size),
+                                     Size(max_face_size, max_face_size));
 
         if(!faces.empty()) {
           Rect face = faces[0];
@@ -84,9 +91,11 @@ main(int argc, char** argv) {
           difference[1] = (face.y + face.height / 2) - frameCenter.y;
           servoController->MovePanServoBy(difference[0] * 0.08);
           servoController->MoveTiltServoBy(-difference[1] * 0.08);
-          // putText(frame, boost::to_string(difference[0]) + ", " + boost::to_string(difference[1]), Point(50,50),
-          // FONT_HERSHEY_SIMPLEX, 1, Scalar(0,200,200), 4);  putText(frame, boost::to_string(frameCenter.x) + ", " +
-          // boost::to_string(frameCenter.y), Point(50,50), FONT_HERSHEY_SIMPLEX, 1, Scalar(0,200,200), 4);
+          // putText(frame, boost::to_string(difference[0]) + ", " +
+          // boost::to_string(difference[1]), Point(50,50), FONT_HERSHEY_SIMPLEX, 1,
+          // Scalar(0,200,200), 4);  putText(frame, boost::to_string(frameCenter.x) + ", " +
+          // boost::to_string(frameCenter.y), Point(50,50), FONT_HERSHEY_SIMPLEX, 1,
+          // Scalar(0,200,200), 4);
         }
         counter = 0;
       }

@@ -74,13 +74,17 @@ AdvancedCapture::OnNavigatedTo(NavigationEventArgs ^ e) {
   // as NotifyUser()
   rootPage = MainPage::Current;
 
-  m_orientationChangedEventToken = Windows::Graphics::Display::DisplayProperties::OrientationChanged += ref new Windows::Graphics::Display::DisplayPropertiesEventHandler(this, &AdvancedCapture::DisplayProperties_OrientationChanged);
+  m_orientationChangedEventToken =
+      Windows::Graphics::Display::DisplayProperties::OrientationChanged +=
+      ref new Windows::Graphics::Display::DisplayPropertiesEventHandler(
+          this, &AdvancedCapture::DisplayProperties_OrientationChanged);
 }
 
 void
 AdvancedCapture::OnNavigatedFrom(NavigationEventArgs ^ e) {
   Windows::Media::MediaControl::SoundLevelChanged -= m_eventRegistrationToken;
-  Windows::Graphics::Display::DisplayProperties::OrientationChanged -= m_orientationChangedEventToken;
+  Windows::Graphics::Display::DisplayProperties::OrientationChanged -=
+      m_orientationChangedEventToken;
 }
 
 void
@@ -106,13 +110,17 @@ AdvancedCapture::ScenarioReset() {
 }
 
 void
-AdvancedCapture::Failed(Windows::Media::Capture::MediaCapture ^ currentCaptureObject, Windows::Media::Capture::MediaCaptureFailedEventArgs ^ currentFailure) {
+AdvancedCapture::Failed(Windows::Media::Capture::MediaCapture ^ currentCaptureObject,
+                        Windows::Media::Capture::MediaCaptureFailedEventArgs ^ currentFailure) {
   String ^ message = "Fatal error" + currentFailure->Message;
-  create_task(Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::High, ref new Windows::UI::Core::DispatchedHandler([this, message]() { ShowStatusMessage(message); })));
+  create_task(Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::High,
+                                   ref new Windows::UI::Core::DispatchedHandler(
+                                       [this, message]() { ShowStatusMessage(message); })));
 }
 
 void
-AdvancedCapture::btnStartDevice_Click(Platform::Object ^ sender, Windows::UI::Xaml::RoutedEventArgs ^ e) {
+AdvancedCapture::btnStartDevice_Click(Platform::Object ^ sender,
+                                      Windows::UI::Xaml::RoutedEventArgs ^ e) {
   try {
     EnableButton(false, "StartDevice");
     ShowStatusMessage("Starting device");
@@ -121,10 +129,13 @@ AdvancedCapture::btnStartDevice_Click(Platform::Object ^ sender, Windows::UI::Xa
     auto settings = ref new Windows::Media::Capture::MediaCaptureInitializationSettings();
     auto chosenDevInfo = m_devInfoCollection->GetAt(EnumedDeviceList2->SelectedIndex);
     settings->VideoDeviceId = chosenDevInfo->Id;
-    if(chosenDevInfo->EnclosureLocation != nullptr && chosenDevInfo->EnclosureLocation->Panel == Windows::Devices::Enumeration::Panel::Back) {
+    if(chosenDevInfo->EnclosureLocation != nullptr &&
+       chosenDevInfo->EnclosureLocation->Panel == Windows::Devices::Enumeration::Panel::Back) {
       m_bRotateVideoOnOrientationChange = true;
       m_bReversePreviewRotation = false;
-    } else if(chosenDevInfo->EnclosureLocation != nullptr && chosenDevInfo->EnclosureLocation->Panel == Windows::Devices::Enumeration::Panel::Front) {
+    } else if(chosenDevInfo->EnclosureLocation != nullptr &&
+              chosenDevInfo->EnclosureLocation->Panel ==
+                  Windows::Devices::Enumeration::Panel::Front) {
       m_bRotateVideoOnOrientationChange = true;
       m_bReversePreviewRotation = true;
     } else {
@@ -144,7 +155,8 @@ AdvancedCapture::btnStartDevice_Click(Platform::Object ^ sender, Windows::UI::Xa
         EnableButton(true, "TakePhoto");
         ShowStatusMessage("Device initialized successful");
         EffectTypeCombo->IsEnabled = true;
-        mediaCapture->Failed += ref new Windows::Media::Capture::MediaCaptureFailedEventHandler(this, &AdvancedCapture::Failed);
+        mediaCapture->Failed += ref new Windows::Media::Capture::MediaCaptureFailedEventHandler(
+            this, &AdvancedCapture::Failed);
       } catch(Exception ^ e) {
         ShowExceptionMessage(e);
       }
@@ -155,7 +167,8 @@ AdvancedCapture::btnStartDevice_Click(Platform::Object ^ sender, Windows::UI::Xa
 }
 
 void
-AdvancedCapture::btnStartPreview_Click(Platform::Object ^ sender, Windows::UI::Xaml::RoutedEventArgs ^ e) {
+AdvancedCapture::btnStartPreview_Click(Platform::Object ^ sender,
+                                       Windows::UI::Xaml::RoutedEventArgs ^ e) {
   m_bPreviewing = false;
   try {
     ShowStatusMessage("Starting preview");
@@ -182,7 +195,8 @@ AdvancedCapture::btnStartPreview_Click(Platform::Object ^ sender, Windows::UI::X
 }
 
 void
-AdvancedCapture::lstEnumedDevices_SelectionChanged(Platform::Object ^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs ^ e) {
+AdvancedCapture::lstEnumedDevices_SelectionChanged(
+    Platform::Object ^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs ^ e) {
   if(m_bPreviewing) {
     create_task(m_mediaCaptureMgr->StopPreviewAsync()).then([this](task<void> previewTask) {
       try {
@@ -213,24 +227,25 @@ AdvancedCapture::EnumerateWebcamsAsync() {
 
     EnumedDeviceList2->Items->Clear();
 
-    task<DeviceInformationCollection ^>(DeviceInformation::FindAllAsync(DeviceClass::VideoCapture)).then([this](task<DeviceInformationCollection ^> findTask) {
-      try {
-        m_devInfoCollection = findTask.get();
-        if(m_devInfoCollection == nullptr || m_devInfoCollection->Size == 0) {
-          ShowStatusMessage("No WebCams found.");
-        } else {
-          for(unsigned int i = 0; i < m_devInfoCollection->Size; i++) {
-            auto devInfo = m_devInfoCollection->GetAt(i);
-            EnumedDeviceList2->Items->Append(devInfo->Name);
+    task<DeviceInformationCollection ^>(DeviceInformation::FindAllAsync(DeviceClass::VideoCapture))
+        .then([this](task<DeviceInformationCollection ^> findTask) {
+          try {
+            m_devInfoCollection = findTask.get();
+            if(m_devInfoCollection == nullptr || m_devInfoCollection->Size == 0) {
+              ShowStatusMessage("No WebCams found.");
+            } else {
+              for(unsigned int i = 0; i < m_devInfoCollection->Size; i++) {
+                auto devInfo = m_devInfoCollection->GetAt(i);
+                EnumedDeviceList2->Items->Append(devInfo->Name);
+              }
+              EnumedDeviceList2->SelectedIndex = 0;
+              ShowStatusMessage("Enumerating Webcams completed successfully.");
+              btnStartDevice2->IsEnabled = true;
+            }
+          } catch(Exception ^ e) {
+            ShowExceptionMessage(e);
           }
-          EnumedDeviceList2->SelectedIndex = 0;
-          ShowStatusMessage("Enumerating Webcams completed successfully.");
-          btnStartDevice2->IsEnabled = true;
-        }
-      } catch(Exception ^ e) {
-        ShowExceptionMessage(e);
-      }
-    });
+        });
   } catch(Platform::Exception ^ e) {
     ShowExceptionMessage(e);
   }
@@ -239,44 +254,61 @@ AdvancedCapture::EnumerateWebcamsAsync() {
 void
 AdvancedCapture::AddEffectToImageStream() {
   auto mediaCapture = m_mediaCaptureMgr.Get();
-  Windows::Media::Capture::VideoDeviceCharacteristic charecteristic = mediaCapture->MediaCaptureSettings->VideoDeviceCharacteristic;
+  Windows::Media::Capture::VideoDeviceCharacteristic charecteristic =
+      mediaCapture->MediaCaptureSettings->VideoDeviceCharacteristic;
 
-  if((charecteristic != Windows::Media::Capture::VideoDeviceCharacteristic::AllStreamsIdentical) && (charecteristic != Windows::Media::Capture::VideoDeviceCharacteristic::PreviewPhotoStreamsIdentical) &&
-     (charecteristic != Windows::Media::Capture::VideoDeviceCharacteristic::RecordPhotoStreamsIdentical)) {
-    Windows::Media::MediaProperties::IMediaEncodingProperties ^ props = mediaCapture->VideoDeviceController->GetMediaStreamProperties(Windows::Media::Capture::MediaStreamType::Photo);
+  if((charecteristic != Windows::Media::Capture::VideoDeviceCharacteristic::AllStreamsIdentical) &&
+     (charecteristic !=
+      Windows::Media::Capture::VideoDeviceCharacteristic::PreviewPhotoStreamsIdentical) &&
+     (charecteristic !=
+      Windows::Media::Capture::VideoDeviceCharacteristic::RecordPhotoStreamsIdentical)) {
+    Windows::Media::MediaProperties::IMediaEncodingProperties ^ props =
+        mediaCapture->VideoDeviceController->GetMediaStreamProperties(
+            Windows::Media::Capture::MediaStreamType::Photo);
     if(props->Type->Equals("Image")) {
       // Switch to a video media type instead since we can't add an effect to an image media type
-      Windows::Foundation::Collections::IVectorView<Windows::Media::MediaProperties::IMediaEncodingProperties ^> ^ supportedPropsList = mediaCapture->VideoDeviceController->GetAvailableMediaStreamProperties(Windows::Media::Capture::MediaStreamType::Photo);
+      Windows::Foundation::Collections::IVectorView<
+          Windows::Media::MediaProperties::IMediaEncodingProperties ^> ^
+          supportedPropsList =
+          mediaCapture->VideoDeviceController->GetAvailableMediaStreamProperties(
+              Windows::Media::Capture::MediaStreamType::Photo);
       {
         unsigned int i = 0;
         while(i < supportedPropsList->Size) {
-          Windows::Media::MediaProperties::IMediaEncodingProperties ^ props = supportedPropsList->GetAt(i);
+          Windows::Media::MediaProperties::IMediaEncodingProperties ^ props =
+              supportedPropsList->GetAt(i);
 
           String ^ s = props->Type;
           if(props->Type->Equals("Video")) {
-            task<void>(mediaCapture->VideoDeviceController->SetMediaStreamPropertiesAsync(Windows::Media::Capture::MediaStreamType::Photo, props)).then([this](task<void> changeTypeTask) {
-              try {
-                changeTypeTask.get();
-                ShowStatusMessage("Change type on photo stream successful");
-                // Now add the effect on the image pin
-                task<void>(m_mediaCaptureMgr->AddEffectAsync(Windows::Media::Capture::MediaStreamType::Photo, "OcvTransform.OcvImageManipulations", nullptr)).then([this](task<void> effectTask3) {
+            task<void>(mediaCapture->VideoDeviceController->SetMediaStreamPropertiesAsync(
+                           Windows::Media::Capture::MediaStreamType::Photo, props))
+                .then([this](task<void> changeTypeTask) {
                   try {
-                    effectTask3.get();
-                    m_bEffectAddedToPhoto = true;
-                    ShowStatusMessage("Adding effect to photo stream successful");
-                    EffectTypeCombo->IsEnabled = true;
+                    changeTypeTask.get();
+                    ShowStatusMessage("Change type on photo stream successful");
+                    // Now add the effect on the image pin
+                    task<void>(m_mediaCaptureMgr->AddEffectAsync(
+                                   Windows::Media::Capture::MediaStreamType::Photo,
+                                   "OcvTransform.OcvImageManipulations",
+                                   nullptr))
+                        .then([this](task<void> effectTask3) {
+                          try {
+                            effectTask3.get();
+                            m_bEffectAddedToPhoto = true;
+                            ShowStatusMessage("Adding effect to photo stream successful");
+                            EffectTypeCombo->IsEnabled = true;
+
+                          } catch(Exception ^ e) {
+                            ShowExceptionMessage(e);
+                            EffectTypeCombo->IsEnabled = true;
+                          }
+                        });
 
                   } catch(Exception ^ e) {
                     ShowExceptionMessage(e);
                     EffectTypeCombo->IsEnabled = true;
                   }
                 });
-
-              } catch(Exception ^ e) {
-                ShowExceptionMessage(e);
-                EffectTypeCombo->IsEnabled = true;
-              }
-            });
             break;
           }
           i++;
@@ -284,18 +316,21 @@ AdvancedCapture::AddEffectToImageStream() {
       }
     } else {
       // Add the effect to the image pin if the type is already "Video"
-      task<void>(mediaCapture->AddEffectAsync(Windows::Media::Capture::MediaStreamType::Photo, "OcvTransform.OcvImageManipulations", nullptr)).then([this](task<void> effectTask3) {
-        try {
-          effectTask3.get();
-          m_bEffectAddedToPhoto = true;
-          ShowStatusMessage("Adding effect to photo stream successful");
-          EffectTypeCombo->IsEnabled = true;
+      task<void>(mediaCapture->AddEffectAsync(Windows::Media::Capture::MediaStreamType::Photo,
+                                              "OcvTransform.OcvImageManipulations",
+                                              nullptr))
+          .then([this](task<void> effectTask3) {
+            try {
+              effectTask3.get();
+              m_bEffectAddedToPhoto = true;
+              ShowStatusMessage("Adding effect to photo stream successful");
+              EffectTypeCombo->IsEnabled = true;
 
-        } catch(Exception ^ e) {
-          ShowExceptionMessage(e);
-          EffectTypeCombo->IsEnabled = true;
-        }
-      });
+            } catch(Exception ^ e) {
+              ShowExceptionMessage(e);
+              EffectTypeCombo->IsEnabled = true;
+            }
+          });
     }
   }
 }
@@ -320,7 +355,9 @@ AdvancedCapture::EnableButton(bool enabled, String ^ name) {
 }
 
 task<Windows::Storage::StorageFile ^>
-AdvancedCapture::ReencodePhotoAsync(Windows::Storage::StorageFile ^ tempStorageFile, Windows::Storage::FileProperties::PhotoOrientation photoRotation) {
+AdvancedCapture::ReencodePhotoAsync(
+    Windows::Storage::StorageFile ^ tempStorageFile,
+    Windows::Storage::FileProperties::PhotoOrientation photoRotation) {
   ReencodeState ^ state = ref new ReencodeState();
 
   return create_task(tempStorageFile->OpenAsync(Windows::Storage::FileAccessMode::Read))
@@ -330,7 +367,8 @@ AdvancedCapture::ReencodePhotoAsync(Windows::Storage::StorageFile ^ tempStorageF
       })
       .then([state](Windows::Graphics::Imaging::BitmapDecoder ^ decoder) {
         state->Decoder = decoder;
-        return Windows::Storage::KnownFolders::PicturesLibrary->CreateFileAsync(PHOTO_FILE_NAME, Windows::Storage::CreationCollisionOption::GenerateUniqueName);
+        return Windows::Storage::KnownFolders::PicturesLibrary->CreateFileAsync(
+            PHOTO_FILE_NAME, Windows::Storage::CreationCollisionOption::GenerateUniqueName);
       })
       .then([state](Windows::Storage::StorageFile ^ storageFile) {
         state->PhotoStorage = storageFile;
@@ -339,12 +377,16 @@ AdvancedCapture::ReencodePhotoAsync(Windows::Storage::StorageFile ^ tempStorageF
       .then([state](Windows::Storage::Streams::IRandomAccessStream ^ stream) {
         state->OutputStream = stream;
         state->OutputStream->Size = 0;
-        return Windows::Graphics::Imaging::BitmapEncoder::CreateForTranscodingAsync(state->OutputStream, state->Decoder);
+        return Windows::Graphics::Imaging::BitmapEncoder::CreateForTranscodingAsync(
+            state->OutputStream, state->Decoder);
       })
       .then([state, photoRotation](Windows::Graphics::Imaging::BitmapEncoder ^ encoder) {
         state->Encoder = encoder;
         auto properties = ref new Windows::Graphics::Imaging::BitmapPropertySet();
-        properties->Insert("System.Photo.Orientation", ref new Windows::Graphics::Imaging::BitmapTypedValue((unsigned short)photoRotation, Windows::Foundation::PropertyType::UInt16));
+        properties->Insert("System.Photo.Orientation",
+                           ref new Windows::Graphics::Imaging::BitmapTypedValue(
+                               (unsigned short)photoRotation,
+                               Windows::Foundation::PropertyType::UInt16));
         return create_task(state->Encoder->BitmapProperties->SetPropertiesAsync(properties));
       })
       .then([state]() { return state->Encoder->FlushAsync(); })
@@ -365,7 +407,8 @@ AdvancedCapture::GetCurrentPhotoRotation() {
   bool counterclockwiseRotation = m_bReversePreviewRotation;
 
   if(m_bRotateVideoOnOrientationChange) {
-    return PhotoRotationLookup(Windows::Graphics::Display::DisplayProperties::CurrentOrientation, counterclockwiseRotation);
+    return PhotoRotationLookup(Windows::Graphics::Display::DisplayProperties::CurrentOrientation,
+                               counterclockwiseRotation);
   } else {
     return Windows::Storage::FileProperties::PhotoOrientation::Normal;
   }
@@ -381,7 +424,9 @@ AdvancedCapture::PrepareForVideoRecording() {
   bool counterclockwiseRotation = m_bReversePreviewRotation;
 
   if(m_bRotateVideoOnOrientationChange) {
-    mediaCapture->SetRecordRotation(VideoRotationLookup(Windows::Graphics::Display::DisplayProperties::CurrentOrientation, counterclockwiseRotation));
+    mediaCapture->SetRecordRotation(
+        VideoRotationLookup(Windows::Graphics::Display::DisplayProperties::CurrentOrientation,
+                            counterclockwiseRotation));
   } else {
     mediaCapture->SetRecordRotation(Windows::Media::Capture::VideoRotation::None);
   }
@@ -395,92 +440,131 @@ AdvancedCapture::DisplayProperties_OrientationChanged(Platform::Object ^ sender)
   }
 
   bool previewMirroring = mediaCapture->GetPreviewMirroring();
-  bool counterclockwiseRotation = (previewMirroring && !m_bReversePreviewRotation) || (!previewMirroring && m_bReversePreviewRotation);
+  bool counterclockwiseRotation = (previewMirroring && !m_bReversePreviewRotation) ||
+                                  (!previewMirroring && m_bReversePreviewRotation);
 
   if(m_bRotateVideoOnOrientationChange) {
-    mediaCapture->SetPreviewRotation(VideoRotationLookup(Windows::Graphics::Display::DisplayProperties::CurrentOrientation, counterclockwiseRotation));
+    mediaCapture->SetPreviewRotation(
+        VideoRotationLookup(Windows::Graphics::Display::DisplayProperties::CurrentOrientation,
+                            counterclockwiseRotation));
   } else {
     mediaCapture->SetPreviewRotation(Windows::Media::Capture::VideoRotation::None);
   }
 }
 
 Windows::Storage::FileProperties::PhotoOrientation
-AdvancedCapture::PhotoRotationLookup(Windows::Graphics::Display::DisplayOrientations displayOrientation, bool counterclockwise) {
+AdvancedCapture::PhotoRotationLookup(
+    Windows::Graphics::Display::DisplayOrientations displayOrientation, bool counterclockwise) {
   switch(displayOrientation) {
-    case Windows::Graphics::Display::DisplayOrientations::Landscape: return Windows::Storage::FileProperties::PhotoOrientation::Normal;
+    case Windows::Graphics::Display::DisplayOrientations::Landscape:
+      return Windows::Storage::FileProperties::PhotoOrientation::Normal;
 
-    case Windows::Graphics::Display::DisplayOrientations::Portrait: return (counterclockwise) ? Windows::Storage::FileProperties::PhotoOrientation::Rotate270 : Windows::Storage::FileProperties::PhotoOrientation::Rotate90;
+    case Windows::Graphics::Display::DisplayOrientations::Portrait:
+      return (counterclockwise) ? Windows::Storage::FileProperties::PhotoOrientation::Rotate270
+                                : Windows::Storage::FileProperties::PhotoOrientation::Rotate90;
 
-    case Windows::Graphics::Display::DisplayOrientations::LandscapeFlipped: return Windows::Storage::FileProperties::PhotoOrientation::Rotate180;
+    case Windows::Graphics::Display::DisplayOrientations::LandscapeFlipped:
+      return Windows::Storage::FileProperties::PhotoOrientation::Rotate180;
 
-    case Windows::Graphics::Display::DisplayOrientations::PortraitFlipped: return (counterclockwise) ? Windows::Storage::FileProperties::PhotoOrientation::Rotate90 : Windows::Storage::FileProperties::PhotoOrientation::Rotate270;
+    case Windows::Graphics::Display::DisplayOrientations::PortraitFlipped:
+      return (counterclockwise) ? Windows::Storage::FileProperties::PhotoOrientation::Rotate90
+                                : Windows::Storage::FileProperties::PhotoOrientation::Rotate270;
 
     default: return Windows::Storage::FileProperties::PhotoOrientation::Unspecified;
   }
 }
 
 Windows::Media::Capture::VideoRotation
-AdvancedCapture::VideoRotationLookup(Windows::Graphics::Display::DisplayOrientations displayOrientation, bool counterclockwise) {
+AdvancedCapture::VideoRotationLookup(
+    Windows::Graphics::Display::DisplayOrientations displayOrientation, bool counterclockwise) {
   switch(displayOrientation) {
-    case Windows::Graphics::Display::DisplayOrientations::Landscape: return Windows::Media::Capture::VideoRotation::None;
+    case Windows::Graphics::Display::DisplayOrientations::Landscape:
+      return Windows::Media::Capture::VideoRotation::None;
 
-    case Windows::Graphics::Display::DisplayOrientations::Portrait: return (counterclockwise) ? Windows::Media::Capture::VideoRotation::Clockwise270Degrees : Windows::Media::Capture::VideoRotation::Clockwise90Degrees;
+    case Windows::Graphics::Display::DisplayOrientations::Portrait:
+      return (counterclockwise) ? Windows::Media::Capture::VideoRotation::Clockwise270Degrees
+                                : Windows::Media::Capture::VideoRotation::Clockwise90Degrees;
 
-    case Windows::Graphics::Display::DisplayOrientations::LandscapeFlipped: return Windows::Media::Capture::VideoRotation::Clockwise180Degrees;
+    case Windows::Graphics::Display::DisplayOrientations::LandscapeFlipped:
+      return Windows::Media::Capture::VideoRotation::Clockwise180Degrees;
 
-    case Windows::Graphics::Display::DisplayOrientations::PortraitFlipped: return (counterclockwise) ? Windows::Media::Capture::VideoRotation::Clockwise90Degrees : Windows::Media::Capture::VideoRotation::Clockwise270Degrees;
+    case Windows::Graphics::Display::DisplayOrientations::PortraitFlipped:
+      return (counterclockwise) ? Windows::Media::Capture::VideoRotation::Clockwise90Degrees
+                                : Windows::Media::Capture::VideoRotation::Clockwise270Degrees;
 
     default: return Windows::Media::Capture::VideoRotation::None;
   }
 }
 
 void
-SDKSample::MediaCapture::AdvancedCapture::Button_Click(Platform::Object ^ sender, Windows::UI::Xaml::RoutedEventArgs ^ e) {
+SDKSample::MediaCapture::AdvancedCapture::Button_Click(Platform::Object ^ sender,
+                                                       Windows::UI::Xaml::RoutedEventArgs ^ e) {
   try {
-    create_task(m_mediaCaptureMgr->ClearEffectsAsync(Windows::Media::Capture::MediaStreamType::VideoPreview)).then([this](task<void> cleanTask) {
-      m_bEffectAdded = true;
-      int index = EffectTypeCombo->SelectedIndex;
-      PropertySet ^ props = ref new PropertySet();
-      props->Insert(L"{698649BE-8EAE-4551-A4CB-3EC98FBD3D86}", index);
-      create_task(m_mediaCaptureMgr->AddEffectAsync(Windows::Media::Capture::MediaStreamType::VideoPreview, "OcvTransform.OcvImageManipulations", props)).then([this](task<void> effectTask) {
-        try {
-          effectTask.get();
-
-          auto mediaCapture = m_mediaCaptureMgr.Get();
-          Windows::Media::Capture::VideoDeviceCharacteristic charecteristic = mediaCapture->MediaCaptureSettings->VideoDeviceCharacteristic;
-
-          ShowStatusMessage("Add effect successful to preview stream successful");
-          if((charecteristic != Windows::Media::Capture::VideoDeviceCharacteristic::AllStreamsIdentical) && (charecteristic != Windows::Media::Capture::VideoDeviceCharacteristic::PreviewRecordStreamsIdentical)) {
-            Windows::Media::MediaProperties::IMediaEncodingProperties ^ props = mediaCapture->VideoDeviceController->GetMediaStreamProperties(Windows::Media::Capture::MediaStreamType::VideoRecord);
-            Windows::Media::MediaProperties::VideoEncodingProperties ^ videoEncodingProperties = static_cast<Windows::Media::MediaProperties::VideoEncodingProperties ^>(props);
-            if(!videoEncodingProperties->Subtype->Equals("H264")) { // Can't add an effect to an H264 stream
-              task<void>(mediaCapture->AddEffectAsync(Windows::Media::Capture::MediaStreamType::VideoRecord, "OcvTransform.OcvImageManipulations", nullptr)).then([this](task<void> effectTask2) {
+    create_task(m_mediaCaptureMgr->ClearEffectsAsync(
+                    Windows::Media::Capture::MediaStreamType::VideoPreview))
+        .then([this](task<void> cleanTask) {
+          m_bEffectAdded = true;
+          int index = EffectTypeCombo->SelectedIndex;
+          PropertySet ^ props = ref new PropertySet();
+          props->Insert(L"{698649BE-8EAE-4551-A4CB-3EC98FBD3D86}", index);
+          create_task(m_mediaCaptureMgr->AddEffectAsync(
+                          Windows::Media::Capture::MediaStreamType::VideoPreview,
+                          "OcvTransform.OcvImageManipulations",
+                          props))
+              .then([this](task<void> effectTask) {
                 try {
-                  effectTask2.get();
-                  ShowStatusMessage("Add effect successful to record stream successful");
-                  m_bEffectAddedToRecord = true;
-                  AddEffectToImageStream();
-                  EffectTypeCombo->IsEnabled = true;
+                  effectTask.get();
+
+                  auto mediaCapture = m_mediaCaptureMgr.Get();
+                  Windows::Media::Capture::VideoDeviceCharacteristic charecteristic =
+                      mediaCapture->MediaCaptureSettings->VideoDeviceCharacteristic;
+
+                  ShowStatusMessage("Add effect successful to preview stream successful");
+                  if((charecteristic !=
+                      Windows::Media::Capture::VideoDeviceCharacteristic::AllStreamsIdentical) &&
+                     (charecteristic != Windows::Media::Capture::VideoDeviceCharacteristic::
+                                            PreviewRecordStreamsIdentical)) {
+                    Windows::Media::MediaProperties::IMediaEncodingProperties ^ props =
+                        mediaCapture->VideoDeviceController->GetMediaStreamProperties(
+                            Windows::Media::Capture::MediaStreamType::VideoRecord);
+                    Windows::Media::MediaProperties::VideoEncodingProperties ^
+                        videoEncodingProperties =
+                        static_cast<Windows::Media::MediaProperties::VideoEncodingProperties ^>(
+                            props);
+                    if(!videoEncodingProperties->Subtype->Equals(
+                           "H264")) { // Can't add an effect to an H264 stream
+                      task<void>(mediaCapture->AddEffectAsync(
+                                     Windows::Media::Capture::MediaStreamType::VideoRecord,
+                                     "OcvTransform.OcvImageManipulations",
+                                     nullptr))
+                          .then([this](task<void> effectTask2) {
+                            try {
+                              effectTask2.get();
+                              ShowStatusMessage(
+                                  "Add effect successful to record stream successful");
+                              m_bEffectAddedToRecord = true;
+                              AddEffectToImageStream();
+                              EffectTypeCombo->IsEnabled = true;
+                            } catch(Exception ^ e) {
+                              ShowExceptionMessage(e);
+                              EffectTypeCombo->IsEnabled = true;
+                            }
+                          });
+                    } else {
+                      AddEffectToImageStream();
+                      EffectTypeCombo->IsEnabled = true;
+                    }
+
+                  } else {
+                    AddEffectToImageStream();
+                    EffectTypeCombo->IsEnabled = true;
+                  }
                 } catch(Exception ^ e) {
                   ShowExceptionMessage(e);
                   EffectTypeCombo->IsEnabled = true;
                 }
               });
-            } else {
-              AddEffectToImageStream();
-              EffectTypeCombo->IsEnabled = true;
-            }
-
-          } else {
-            AddEffectToImageStream();
-            EffectTypeCombo->IsEnabled = true;
-          }
-        } catch(Exception ^ e) {
-          ShowExceptionMessage(e);
-          EffectTypeCombo->IsEnabled = true;
-        }
-      });
-    });
+        });
   } catch(Platform::Exception ^ e) {
     ShowExceptionMessage(e);
     EffectTypeCombo->IsEnabled = true;

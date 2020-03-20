@@ -53,8 +53,8 @@ main() {
   // AR scene
   //  ovis::addResourceLocation("packs/Sinbad.zip"); // shipped with Ogre
   //
-  //  Ptr<ovis::WindowScene> win = ovis::createWindow(String("arucoAR"), imsize, ovis::SCENE_INTERACTIVE | ovis::SCENE_AA);
-  //  win->setCameraIntrinsics(K, imsize);
+  //  Ptr<ovis::WindowScene> win = ovis::createWindow(String("arucoAR"), imsize,
+  //  ovis::SCENE_INTERACTIVE | ovis::SCENE_AA); win->setCameraIntrinsics(K, imsize);
   //  win->createEntity("sinbad", "Sinbad.mesh", Vec3i(0, 0, 5), Vec3f(1.57, 0.0, 0.0));
   //  win->createLightEntity("sun", Vec3i(0, 0, 100));
 

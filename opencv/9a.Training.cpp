@@ -4,11 +4,12 @@ find negative/rawdata/ -name '*.jpg' > negative/bg.txt
 mkdir xml
 opencv_createsamples -info positive/info.txt -vec vector.vec -num 200 -w 24 -h 24
 opencv_createsamples -vec vector.vec
-opencv_traincascade -data xml/ -vec vector.vec -bg negative/bg.txt -numPos 200 -numNeg 200 -numStages 20
--acceptanceRatioBreakValue 0.004 -precalcValBufSize 300 -precalcIdxBufSize 300 -mode ALL -w 24 -h 24
+opencv_traincascade -data xml/ -vec vector.vec -bg negative/bg.txt -numPos 200 -numNeg 200
+-numStages 20 -acceptanceRatioBreakValue 0.004 -precalcValBufSize 300 -precalcIdxBufSize 300 -mode
+ALL -w 24 -h 24
 
-Tri so acceptanceRatioBreakValue the hien so sai so chap nhan, phu thuoc vao so luong mau. VD: 200 mau, chap nhan sai 1
-mau -> ty le 0.005
+Tri so acceptanceRatioBreakValue the hien so sai so chap nhan, phu thuoc vao so luong mau. VD: 200
+mau, chap nhan sai 1 mau -> ty le 0.005
 */
 #include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
@@ -82,19 +83,34 @@ main() {
           bool fromCenter = false;
           Rect2d r = selectROI("Select", frame, fromCenter, showCrosshair);
           destroyWindow("Select"); // Dong cua so sau khi da chon
-          printf("[POS] Vat mau tai x=%.0f, y=%.0f, width=%.0f, heigth=%.0f\r\n", r.x, r.y, r.width, r.height);
+          printf("[POS] Vat mau tai x=%.0f, y=%.0f, width=%.0f, heigth=%.0f\r\n",
+                 r.x,
+                 r.y,
+                 r.width,
+                 r.height);
           if((w > r.width) && (h > r.height)) { // Get smallest
             w = r.width;
             h = r.height;
           }
           snprintf(path, 32, "./data/pos/pos_%d.jpg", count_pos);
-          if((r.x - 20 >= 0) && (r.y - 20 >= 0) && (r.x + 20 <= frame.cols) && (r.y + 20 <= frame.rows)) {
+          if((r.x - 20 >= 0) && (r.y - 20 >= 0) && (r.x + 20 <= frame.cols) &&
+             (r.y + 20 <= frame.rows)) {
             Rect2d cr(r.x - 20, r.y - 20, r.width + 40, r.height + 40);
             imageCrop = frame(cr);
-            snprintf(lineText, 256, "echo \"pos/pos_%d.jpg 1 20 20 %.0f %.0f\" >> ./data/info.txt", count_pos, r.width, r.height);
+            snprintf(lineText,
+                     256,
+                     "echo \"pos/pos_%d.jpg 1 20 20 %.0f %.0f\" >> ./data/info.txt",
+                     count_pos,
+                     r.width,
+                     r.height);
           } else {
             imageCrop = frame(r);
-            snprintf(lineText, 256, "echo \"pos/pos_%d.jpg 1 0 0 %.0f %.0f\" >> ./data/info.txt", count_pos, r.width, r.height);
+            snprintf(lineText,
+                     256,
+                     "echo \"pos/pos_%d.jpg 1 0 0 %.0f %.0f\" >> ./data/info.txt",
+                     count_pos,
+                     r.width,
+                     r.height);
           }
           imwrite(path, imageCrop);
           system(lineText);
@@ -118,7 +134,13 @@ main() {
   w = 24;
   h = 24;
   printf("[TRAIN] Tao vector tap mau bang opencv_createsamples....\r\n");
-  snprintf(lineText, 256, "opencv_createsamples -info ./data/info.txt -vec ./data/vector.vec -num %d -w %.0f -h %.0f", count_pos, w, h);
+  snprintf(
+      lineText,
+      256,
+      "opencv_createsamples -info ./data/info.txt -vec ./data/vector.vec -num %d -w %.0f -h %.0f",
+      count_pos,
+      w,
+      h);
   printf("%s\r\n", lineText);
   system(lineText);
   float acceptRate = 1.0 / count_neg;
@@ -126,8 +148,10 @@ main() {
   printf("[TRAIN] Train bang opencv_traincascade....\r\n");
   snprintf(lineText,
            256,
-           "opencv_traincascade -data ./data/xml/ -vec ./data/vector.vec -bg ./data/bg.txt -numPos %d -numNeg %d "
-           "-numStages 20 -acceptanceRatioBreakValue %.5f -precalcValBufSize 300 -precalcIdxBufSize 300 -featureType "
+           "opencv_traincascade -data ./data/xml/ -vec ./data/vector.vec -bg ./data/bg.txt -numPos "
+           "%d -numNeg %d "
+           "-numStages 20 -acceptanceRatioBreakValue %.5f -precalcValBufSize 300 "
+           "-precalcIdxBufSize 300 -featureType "
            "LBP -minHitRate 0.999 -maxFalseAlarmRate 0.5 -w %.0f -h %.0f",
            count_pos,
            count_neg,

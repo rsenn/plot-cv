@@ -50,7 +50,7 @@ main(int argc, char* argv[]) {
   // Close the video file
   capture.release();
 
-  cv::waitKey(); // Show our image inside it.                                        // Wait for a keystroke in the
-                 // window
+  cv::waitKey(); // Show our image inside it.                                        // Wait for a
+                 // keystroke in the window
   return 0;
 }

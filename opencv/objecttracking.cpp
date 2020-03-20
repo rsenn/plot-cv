@@ -66,22 +66,28 @@ Entity::setHSVmax(Scalar max) {
 
 string
 findDirection(Entity playerrear, Entity ball) {
-  if(playerrear.getXPos() >= ball.getXPos() && playerrear.getYPos() >= ball.getYPos()) // if ball is in the left top corner
+  if(playerrear.getXPos() >= ball.getXPos() &&
+     playerrear.getYPos() >= ball.getYPos()) // if ball is in the left top corner
     return "NORTHWEST";
-  if(playerrear.getXPos() >= ball.getXPos() && playerrear.getYPos() <= ball.getYPos()) // if the ball is in the left bottom corner
+  if(playerrear.getXPos() >= ball.getXPos() &&
+     playerrear.getYPos() <= ball.getYPos()) // if the ball is in the left bottom corner
     return "SOUTHWEST";
-  if(playerrear.getXPos() <= ball.getXPos() && playerrear.getYPos() <= ball.getYPos()) // if the ball is in the bottom right corner
+  if(playerrear.getXPos() <= ball.getXPos() &&
+     playerrear.getYPos() <= ball.getYPos()) // if the ball is in the bottom right corner
     return "SOUTHEAST";
-  if(playerrear.getXPos() <= ball.getXPos() && playerrear.getYPos() >= ball.getYPos()) // if the ball is in the top right corner
+  if(playerrear.getXPos() <= ball.getXPos() &&
+     playerrear.getYPos() >= ball.getYPos()) // if the ball is in the top right corner
     return "NORTHEAST";
 }
 //
-// void movePlayer(string balld, Entity playerfront, Entity playerrear, Entity ball,Serial &serial) {
+// void movePlayer(string balld, Entity playerfront, Entity playerrear, Entity ball,Serial &serial)
+// {
 //	int x, y;
 //	//if direction is northwest x and y both are decreased until they match
 //	if (balld == "NORTHWEST")
 //	{
-//		if (!((playerrear.getXPos() - playerfront.getXPos() > 0) && (playerfront.getYPos() == playerrear.getYPos())))
+//		if (!((playerrear.getXPos() - playerfront.getXPos() > 0) && (playerfront.getYPos() ==
+//playerrear.getYPos())))
 //		{
 //			myData("L",serial);
 //		}
@@ -89,7 +95,8 @@ findDirection(Entity playerrear, Entity ball) {
 //		{
 //			myData("F", serial);
 //		}
-//		if (!((playerrear.getYPos() - playerfront.getYPos() > 0) && (playerfront.getXPos() == playerrear.getXPos())))
+//		if (!((playerrear.getYPos() - playerfront.getYPos() > 0) && (playerfront.getXPos() ==
+//playerrear.getXPos())))
 //		{
 //			myData("R", serial);
 //		}
@@ -100,19 +107,21 @@ findDirection(Entity playerrear, Entity ball) {
 //	}
 //	//if direction is southwest x is decreased and y is increased until they match
 //	if (balld == "SOUTHWEST") {
-//		//turn left until car rear x - car front x >= whatever distance is between them && car's front y == car's rear y
+//		//turn left until car rear x - car front x >= whatever distance is between them && car's front
+//y == car's rear y
 //		//go forward until ball's x coordinate == car's x coordinate
-//		//turn left until car's front y - car rear y >= whatever distance between them && car's front x == car's rear x
+//		//turn left until car's front y - car rear y >= whatever distance between them && car's front
+//x == car's rear x
 //		//go forward until ball's y coordinate == car's y coordinate
 //		//stop
-//		if (!((playerrear.getXPos() - playerfront.getXPos() > 0) && (playerfront.getYPos() == playerrear.getYPos()))) {
-//			myData("L", serial);
+//		if (!((playerrear.getXPos() - playerfront.getXPos() > 0) && (playerfront.getYPos() ==
+//playerrear.getYPos()))) { 			myData("L", serial);
 //		}
 //		if (!(playerrear.getXPos() == ball.getXPos())) {
 //			myData("F", serial);
 //		}
-//		if (!((playerfront.getYPos() - playerrear.getYPos() > 0) && (playerfront.getXPos() == playerrear.getXPos()))) {
-//			myData("L", serial);
+//		if (!((playerfront.getYPos() - playerrear.getYPos() > 0) && (playerfront.getXPos() ==
+//playerrear.getXPos()))) { 			myData("L", serial);
 //		}
 //		if (!(playerfront.getYPos() == ball.getYPos()-5)) {
 //			myData("F", serial);
@@ -120,20 +129,22 @@ findDirection(Entity playerrear, Entity ball) {
 //	}
 //	//if direction is southeast x and y both are increased until they match
 //	if (balld == "SOUTHEAST") {
-//		//turn right until car front x - car rear x >= whatever distance is between them && car's front y == car's rear
+//		//turn right until car front x - car rear x >= whatever distance is between them && car's
+//front y == car's rear
 // y
 //		//go forward until ball's x coordinate == car's x coordinate
-//		//turn right until car's front y - car rear y >= whatever distance between them && car's front x == car's rear x
+//		//turn right until car's front y - car rear y >= whatever distance between them && car's front
+//x == car's rear x
 //		//go forward until ball's y coordinate == car's y coordinate
 //		//stop
-//		if (!((playerfront.getXPos() - playerrear.getXPos() > 0) && (playerfront.getYPos() == playerrear.getYPos()))) {
-//			myData("R", serial);
+//		if (!((playerfront.getXPos() - playerrear.getXPos() > 0) && (playerfront.getYPos() ==
+//playerrear.getYPos()))) { 			myData("R", serial);
 //		}
 //		if (!(playerrear.getXPos() == ball.getXPos())) {
 //			myData("F", serial);
 //		}
-//		if (!((playerfront.getYPos() - playerrear.getYPos() > 0) && (playerfront.getXPos() == playerrear.getXPos()))) {
-//			myData("R", serial);
+//		if (!((playerfront.getYPos() - playerrear.getYPos() > 0) && (playerfront.getXPos() ==
+//playerrear.getXPos()))) { 			myData("R", serial);
 //		}
 //		if (!(playerfront.getYPos() == ball.getYPos()-5)) {
 //			myData("F", serial);
@@ -141,20 +152,22 @@ findDirection(Entity playerrear, Entity ball) {
 //	}
 //	//if direction is northeast x is increased and y is decreased until they match
 //	if (balld == "NORTHEAST") {
-//		//turn right until car front x - car rear x >= whatever distance is between them && car's front y == car's rear
+//		//turn right until car front x - car rear x >= whatever distance is between them && car's
+//front y == car's rear
 // y
 //		//go forward until ball's x coordinate == car's x coordinate
-//		//turn left until car's rear y - car front y >= whatever distance between them && car's front x == car's rear x
+//		//turn left until car's rear y - car front y >= whatever distance between them && car's front
+//x == car's rear x
 //		//go forward until ball's y coordinate == car's y coordinate
 //		//stop
-//		if (!((playerfront.getXPos() - playerrear.getXPos() > 0) && (playerfront.getYPos() == playerrear.getYPos()))) {
-//			myData("R", serial);
+//		if (!((playerfront.getXPos() - playerrear.getXPos() > 0) && (playerfront.getYPos() ==
+//playerrear.getYPos()))) { 			myData("R", serial);
 //		}
 //		if (!(playerrear.getXPos() == ball.getXPos())) {
 //			myData("F", serial);
 //		}
-//		if (!((playerrear.getYPos() - playerfront.getYPos() > 0) && (playerfront.getXPos() == playerrear.getXPos()))) {
-//			myData("L", serial);
+//		if (!((playerrear.getYPos() - playerfront.getYPos() > 0) && (playerfront.getXPos() ==
+//playerrear.getXPos()))) { 			myData("L", serial);
 //		}
 //		if (!(playerfront.getYPos() == ball.getYPos() - 5)) {
 //			myData("F", serial);

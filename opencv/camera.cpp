@@ -57,7 +57,8 @@ updateAsync(uv_async_t* req, int status) {
 
   Local<Function> callBack = Local<Function>::New(isolate, message->callBack);
 
-  if(asyncMessage->window && asyncMessage->frame.size().height > 0 && asyncMessage->frame.size().width > 0) {
+  if(asyncMessage->window && asyncMessage->frame.size().height > 0 &&
+     asyncMessage->frame.size().width > 0) {
     cv::imshow("Preview", asyncMessage->frame);
     cv::waitKey(20);
   }
@@ -170,7 +171,8 @@ Open(const FunctionCallbackInfo<Value>& args) {
 
   m_brk = 1;
   if(!args[0]->IsFunction()) {
-    isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "First argument must be frame callback function")));
+    isolate->ThrowException(Exception::TypeError(
+        String::NewFromUtf8(isolate, "First argument must be frame callback function")));
     return;
   }
 
@@ -183,7 +185,8 @@ Open(const FunctionCallbackInfo<Value>& args) {
   if(args.Length() == 2) {
     // Second parameter is parameters, which contains on Json object having width and height
     if(!args[1]->IsObject()) {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Second argument must be object")));
+      isolate->ThrowException(
+          Exception::TypeError(String::NewFromUtf8(isolate, "Second argument must be object")));
       return;
     }
     Local<Object> params = args[1]->ToObject();
@@ -247,10 +250,14 @@ void
 init(Handle<Object> exports) {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
-  exports->Set(String::NewFromUtf8(isolate, "Open"), FunctionTemplate::New(isolate, Open)->GetFunction());
-  exports->Set(String::NewFromUtf8(isolate, "Close"), FunctionTemplate::New(isolate, Close)->GetFunction());
-  exports->Set(String::NewFromUtf8(isolate, "IsOpen"), FunctionTemplate::New(isolate, IsOpen)->GetFunction());
-  exports->Set(String::NewFromUtf8(isolate, "GetPreviewSize"), FunctionTemplate::New(isolate, GetPreviewSize)->GetFunction());
+  exports->Set(String::NewFromUtf8(isolate, "Open"),
+               FunctionTemplate::New(isolate, Open)->GetFunction());
+  exports->Set(String::NewFromUtf8(isolate, "Close"),
+               FunctionTemplate::New(isolate, Close)->GetFunction());
+  exports->Set(String::NewFromUtf8(isolate, "IsOpen"),
+               FunctionTemplate::New(isolate, IsOpen)->GetFunction());
+  exports->Set(String::NewFromUtf8(isolate, "GetPreviewSize"),
+               FunctionTemplate::New(isolate, GetPreviewSize)->GetFunction());
 }
 
 std::string

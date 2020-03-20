@@ -48,13 +48,15 @@
 using namespace cv;
 using namespace std;
 
-static const char* keys = {"{@path | | Path of the folder where the captured pattern images will be save }"
-                           "{@proj_width      | | Projector width            }"
-                           "{@proj_height     | | Projector height           }"};
+static const char* keys = {
+    "{@path | | Path of the folder where the captured pattern images will be save }"
+    "{@proj_width      | | Projector width            }"
+    "{@proj_height     | | Projector height           }"};
 
 static void
 help() {
-  cout << "\nThis example shows how to use the \"Structured Light module\" to acquire a graycode pattern"
+  cout << "\nThis example shows how to use the \"Structured Light module\" to acquire a graycode "
+          "pattern"
           "\nCall (with the two cams connected):\n"
           "./example_structured_light_cap_pattern <path> <proj_width> <proj_height> \n"
        << endl;
@@ -76,13 +78,16 @@ main(int argc, char** argv) {
   }
 
   // Set up GraycodePattern with params
-  Ptr<structured_light::GrayCodePattern> graycode = structured_light::GrayCodePattern::create(params);
+  Ptr<structured_light::GrayCodePattern> graycode =
+      structured_light::GrayCodePattern::create(params);
 
   // Storage for pattern
   vector<Mat> pattern;
   graycode->generate(pattern);
 
-  cout << pattern.size() << " pattern images + 2 images for shadows mask computation to acquire with both cameras" << endl;
+  cout << pattern.size()
+       << " pattern images + 2 images for shadows mask computation to acquire with both cameras"
+       << endl;
 
   // Generate the all-white and all-black images needed for shadows mask computation
   Mat white;
@@ -124,7 +129,8 @@ main(int argc, char** argv) {
 
   int i = 0;
   while(i < (int)pattern.size()) {
-    cout << "Waiting to save image number " << i + 1 << endl << "Press any key to acquire the photo" << endl;
+    cout << "Waiting to save image number " << i + 1 << endl
+         << "Press any key to acquire the photo" << endl;
     imshow("Pattern Window", pattern[i]);
 
     Mat frame1;
@@ -136,13 +142,19 @@ main(int argc, char** argv) {
     if((frame1.data) && (frame2.data)) {
 
       Mat tmp;
-      cout << "cam 1 size: " << Size((int)cap1.get(CAP_PROP_FRAME_WIDTH), (int)cap1.get(CAP_PROP_FRAME_HEIGHT)) << endl;
+      cout << "cam 1 size: "
+           << Size((int)cap1.get(CAP_PROP_FRAME_WIDTH), (int)cap1.get(CAP_PROP_FRAME_HEIGHT))
+           << endl;
 
-      cout << "cam 2 size: " << Size((int)cap2.get(CAP_PROP_FRAME_WIDTH), (int)cap2.get(CAP_PROP_FRAME_HEIGHT)) << endl;
+      cout << "cam 2 size: "
+           << Size((int)cap2.get(CAP_PROP_FRAME_WIDTH), (int)cap2.get(CAP_PROP_FRAME_HEIGHT))
+           << endl;
 
-      cout << "zoom cam 1: " << cap1.get(CAP_PROP_ZOOM) << endl << "zoom cam 2: " << cap2.get(CAP_PROP_ZOOM) << endl;
+      cout << "zoom cam 1: " << cap1.get(CAP_PROP_ZOOM) << endl
+           << "zoom cam 2: " << cap2.get(CAP_PROP_ZOOM) << endl;
 
-      cout << "focus cam 1: " << cap1.get(CAP_PROP_FOCUS) << endl << "focus cam 2: " << cap2.get(CAP_PROP_FOCUS) << endl;
+      cout << "focus cam 1: " << cap1.get(CAP_PROP_FOCUS) << endl
+           << "focus cam 2: " << cap2.get(CAP_PROP_FOCUS) << endl;
 
       cout << "Press enter to save the photo or an other key to re-acquire the photo" << endl;
 
@@ -180,7 +192,10 @@ main(int argc, char** argv) {
           cout << "pattern cam1 and cam2 images number " << i + 1 << " saved" << endl << endl;
           i++;
         } else {
-          cout << "pattern cam1 and cam2 images number " << i + 1 << " NOT saved" << endl << endl << "Retry, check the path" << endl << endl;
+          cout << "pattern cam1 and cam2 images number " << i + 1 << " NOT saved" << endl
+               << endl
+               << "Retry, check the path" << endl
+               << endl;
         }
       }
       // Pressing escape, the program closes

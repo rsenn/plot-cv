@@ -131,9 +131,11 @@ LineMarker::markLines() {
   // Wait until user press some key
   waitKey(0);
 
-  // cout<<"Top line: "<<markedLines.set[0].p1.y<<" Bottom line: "<<markedLines.set[1].p1.y<<endl; //debug purpose only
+  // cout<<"Top line: "<<markedLines.set[0].p1.y<<" Bottom line: "<<markedLines.set[1].p1.y<<endl;
+  // //debug purpose only
   destroyWindow(lineMarkerName);
-  return markedLines; // this index will be used to save different lineSets on the fiveLineSets calibration variable
+  return markedLines; // this index will be used to save different lineSets on the fiveLineSets
+                      // calibration variable
 }
 
 // Open camera to take picture by pressing any key. Picture is used for line marking
@@ -170,11 +172,11 @@ LineMarker::displayCamera(string windowName) {
       string text3 = "Left mouse button to mark a line.";
       cv::putText(messageFrame, text0, textOrg, fontFace, fontScale, Scalar::all(255), thickness,8);
       cv::Point textOrg1(20, 70);
-      cv::putText(messageFrame, text1, textOrg1, fontFace, fontScale, Scalar::all(255), thickness,8);
-      cv::Point textOrg2(20, 90);
-      cv::putText(messageFrame, text2, textOrg2, fontFace, fontScale, Scalar::all(255), thickness,8);
-      cv::Point textOrg3(20, 110);
-      cv::putText(messageFrame, text3, textOrg3, fontFace, fontScale, Scalar::all(255), thickness,8);
+      cv::putText(messageFrame, text1, textOrg1, fontFace, fontScale, Scalar::all(255),
+     thickness,8); cv::Point textOrg2(20, 90); cv::putText(messageFrame, text2, textOrg2, fontFace,
+     fontScale, Scalar::all(255), thickness,8); cv::Point textOrg3(20, 110);
+      cv::putText(messageFrame, text3, textOrg3, fontFace, fontScale, Scalar::all(255),
+     thickness,8);
   */
   imwrite(draft, frame); // saves image on disk
 

@@ -18,7 +18,12 @@ static const Scalar gtColor = Scalar(0, 255, 0);
 static Scalar
 getNextColor() {
   const int num = 6;
-  static Scalar colors[num] = {Scalar(160, 0, 0), Scalar(0, 0, 160), Scalar(0, 160, 160), Scalar(160, 160, 0), Scalar(160, 0, 160), Scalar(20, 50, 160)};
+  static Scalar colors[num] = {Scalar(160, 0, 0),
+                               Scalar(0, 0, 160),
+                               Scalar(0, 160, 160),
+                               Scalar(160, 160, 0),
+                               Scalar(160, 0, 160),
+                               Scalar(20, 50, 160)};
   static int id = 0;
   return colors[id < num ? id++ : num - 1];
 }
@@ -71,7 +76,11 @@ isGoodBox(const Rect2d& box) {
 const int LTRC_COUNT = 100;
 
 struct AlgoWrap {
-  AlgoWrap(const string& name_) : lastState(NotFound), name(name_), color(getNextColor()), numTotal(0), numResponse(0), numPresent(0), numCorrect_0(0), numCorrect_0_5(0), timeTotal(0), auc(LTRC_COUNT + 1, 0) { tracker = createTrackerByName(name); }
+  AlgoWrap(const string& name_)
+      : lastState(NotFound), name(name_), color(getNextColor()), numTotal(0), numResponse(0),
+        numPresent(0), numCorrect_0(0), numCorrect_0_5(0), timeTotal(0), auc(LTRC_COUNT + 1, 0) {
+    tracker = createTrackerByName(name);
+  }
 
   enum State {
     NotFound,
@@ -169,8 +178,10 @@ struct AlgoWrap {
   void
   stat(ostream& out) const {
     out << name << endl;
-    out << setw(20) << "Overlap > 0  " << setw(20) << (double)numCorrect_0 / numTotal * 100 << "%" << setw(20) << numCorrect_0 << endl;
-    out << setw(20) << "Overlap > 0.5" << setw(20) << (double)numCorrect_0_5 / numTotal * 100 << "%" << setw(20) << numCorrect_0_5 << endl;
+    out << setw(20) << "Overlap > 0  " << setw(20) << (double)numCorrect_0 / numTotal * 100 << "%"
+        << setw(20) << numCorrect_0 << endl;
+    out << setw(20) << "Overlap > 0.5" << setw(20) << (double)numCorrect_0_5 / numTotal * 100 << "%"
+        << setw(20) << numCorrect_0_5 << endl;
 
     double p = (double)numCorrect_0_5 / numResponse;
     double r = (double)numCorrect_0_5 / numPresent;
@@ -181,7 +192,8 @@ struct AlgoWrap {
     out << setw(20) << "AUC" << setw(20) << calcAUC() << endl;
 
     double s = (timeTotal / getTickFrequency()) / numTotal;
-    out << setw(20) << "Performance" << setw(20) << s * 1000 << " ms/frame" << setw(20) << 1 / s << " fps" << endl;
+    out << setw(20) << "Performance" << setw(20) << s * 1000 << " ms/frame" << setw(20) << 1 / s
+        << " fps" << endl;
   }
 };
 
@@ -217,15 +229,16 @@ static const string& window = "Tracking API";
 
 int
 main(int argc, char** argv) {
-  const string keys = "{help h||show help}"
-                      "{video||video file to process}"
-                      "{gt||ground truth file (each line describes rectangle in format: '<x>,<y>,<w>,<h>')}"
-                      "{start|0|starting frame}"
-                      "{num|0|frame number (0 for all)}"
-                      "{omit||file with omit ranges (each line describes occluded frames: '<start> <end>')}"
-                      "{plot|false|plot LTR curves at the end}"
-                      "{v|false|print each frame info}"
-                      "{@algos||comma-separated algorithm names}";
+  const string keys =
+      "{help h||show help}"
+      "{video||video file to process}"
+      "{gt||ground truth file (each line describes rectangle in format: '<x>,<y>,<w>,<h>')}"
+      "{start|0|starting frame}"
+      "{num|0|frame number (0 for all)}"
+      "{omit||file with omit ranges (each line describes occluded frames: '<start> <end>')}"
+      "{plot|false|plot LTR curves at the end}"
+      "{v|false|print each frame info}"
+      "{@algos||comma-separated algorithm names}";
   CommandLineParser p(argc, argv, keys);
   if(p.has("help")) {
     p.printMessage();
@@ -262,7 +275,8 @@ main(int argc, char** argv) {
   vector<AlgoWrap> algos = initAlgorithms(algList);
   Mat frame, image;
   cap >> frame;
-  for(vector<AlgoWrap>::iterator i = algos.begin(); i != algos.end(); ++i) i->tracker->init(frame, gt[0]);
+  for(vector<AlgoWrap>::iterator i = algos.begin(); i != algos.end(); ++i)
+    i->tracker->init(frame, gt[0]);
 
   // DRAW
   {
@@ -286,7 +300,8 @@ main(int argc, char** argv) {
       if(isVerbose)
         cout << endl << "Frame " << frameId << endl;
       // EVAL
-      for(vector<AlgoWrap>::iterator i = algos.begin(); i != algos.end(); ++i) i->eval(frame, gt[frameId], isVerbose);
+      for(vector<AlgoWrap>::iterator i = algos.begin(); i != algos.end(); ++i)
+        i->eval(frame, gt[frameId], isVerbose);
       // DRAW
       {
         Point textPoint(1, 16);
@@ -315,7 +330,8 @@ main(int argc, char** argv) {
   }
 
   // STAT
-  for(vector<AlgoWrap>::iterator i = algos.begin(); i != algos.end(); ++i) cout << "==========" << endl << *i << endl;
+  for(vector<AlgoWrap>::iterator i = algos.begin(); i != algos.end(); ++i)
+    cout << "==========" << endl << *i << endl;
 
   if(doPlot) {
     Mat img(300, 300, CV_8UC3);

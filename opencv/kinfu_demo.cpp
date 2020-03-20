@@ -2,7 +2,8 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution and at http://opencv.org/license.html
 
-// This code is also subject to the license terms in the LICENSE_KinectFusion.md file found in this module's directory
+// This code is also subject to the license terms in the LICENSE_KinectFusion.md file found in this
+// module's directory
 
 #include <iostream>
 #include <fstream>
@@ -96,7 +97,9 @@ public:
 
   DepthSource(String fileListName) : DepthSource(fileListName, -1) {}
 
-  DepthSource(String fileListName, int cam) : depthFileList(fileListName.empty() ? vector<string>() : readDepth(fileListName)), frameIdx(0), undistortMap1(), undistortMap2() {
+  DepthSource(String fileListName, int cam)
+      : depthFileList(fileListName.empty() ? vector<string>() : readDepth(fileListName)),
+        frameIdx(0), undistortMap1(), undistortMap2() {
     if(cam >= 0) {
       vc = VideoCapture(VideoCaptureAPIs::CAP_OPENNI2 + cam);
       if(vc.isOpened()) {
@@ -211,7 +214,14 @@ public:
         distCoeffs(1) = Kinect2Params::k2;
         distCoeffs(4) = Kinect2Params::k3;
 
-        initUndistortRectifyMap(camMatrix, distCoeffs, cv::noArray(), camMatrix, frameSize, CV_16SC2, undistortMap1, undistortMap2);
+        initUndistortRectifyMap(camMatrix,
+                                distCoeffs,
+                                cv::noArray(),
+                                camMatrix,
+                                frameSize,
+                                CV_16SC2,
+                                undistortMap1,
+                                undistortMap2);
       }
     }
   }
@@ -235,7 +245,9 @@ struct PauseCallbackArgs {
 void pauseCallback(const viz::MouseEvent& me, void* args);
 void
 pauseCallback(const viz::MouseEvent& me, void* args) {
-  if(me.type == viz::MouseEvent::Type::MouseMove || me.type == viz::MouseEvent::Type::MouseScrollDown || me.type == viz::MouseEvent::Type::MouseScrollUp) {
+  if(me.type == viz::MouseEvent::Type::MouseMove ||
+     me.type == viz::MouseEvent::Type::MouseScrollDown ||
+     me.type == viz::MouseEvent::Type::MouseScrollUp) {
     PauseCallbackArgs pca = *((PauseCallbackArgs*)(args));
     viz::Viz3d window(vizWindowName);
     UMat rendered;
@@ -246,14 +258,15 @@ pauseCallback(const viz::MouseEvent& me, void* args) {
 }
 #endif
 
-static const char* keys = {"{help h usage ? | | print this message   }"
-                           "{depth  | | Path to depth.txt file listing a set of depth images }"
-                           "{camera |0| Index of depth camera to be used as a depth source }"
-                           "{coarse | | Run on coarse settings (fast but ugly) or on default (slow but looks better),"
-                           " in coarse mode points and normals are displayed }"
-                           "{idle   | | Do not run KinFu, just display depth frames }"
-                           "{record | | Write depth frames to specified file list"
-                           " (the same format as for the 'depth' key) }"};
+static const char* keys = {
+    "{help h usage ? | | print this message   }"
+    "{depth  | | Path to depth.txt file listing a set of depth images }"
+    "{camera |0| Index of depth camera to be used as a depth source }"
+    "{coarse | | Run on coarse settings (fast but ugly) or on default (slow but looks better),"
+    " in coarse mode points and normals are displayed }"
+    "{idle   | | Do not run KinFu, just display depth frames }"
+    "{record | | Write depth frames to specified file list"
+    " (the same format as for the 'depth' key) }"};
 
 static const std::string message = "\nThis demo uses live depth input or RGB-D dataset taken from"
                                    "\nhttps://vision.in.tum.de/data/datasets/rgbd-dataset"
@@ -351,7 +364,8 @@ main(int argc, char** argv) {
       kf->getCloud(points, normals);
       if(!points.empty() && !normals.empty()) {
         viz::WCloud cloudWidget(points, viz::Color::white());
-        viz::WCloudNormals cloudNormals(points, normals, /*level*/ 1, /*scale*/ 0.05, viz::Color::gray());
+        viz::WCloudNormals cloudNormals(
+            points, normals, /*level*/ 1, /*scale*/ 0.05, viz::Color::gray());
         window.showWidget("cloud", cloudWidget);
         window.showWidget("normals", cloudNormals);
 
@@ -390,7 +404,8 @@ main(int argc, char** argv) {
             kf->getCloud(points, normals);
             if(!points.empty() && !normals.empty()) {
               viz::WCloud cloudWidget(points, viz::Color::white());
-              viz::WCloudNormals cloudNormals(points, normals, /*level*/ 1, /*scale*/ 0.05, viz::Color::gray());
+              viz::WCloudNormals cloudNormals(
+                  points, normals, /*level*/ 1, /*scale*/ 0.05, viz::Color::gray());
               window.showWidget("cloud", cloudWidget);
               window.showWidget("normals", cloudNormals);
             }
@@ -411,7 +426,13 @@ main(int argc, char** argv) {
     }
 
     int64 newTime = getTickCount();
-    putText(rendered, cv::format("FPS: %2d press R to reset, P to pause, Q to quit", (int)(getTickFrequency() / (newTime - prevTime))), Point(0, rendered.rows - 1), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 255));
+    putText(rendered,
+            cv::format("FPS: %2d press R to reset, P to pause, Q to quit",
+                       (int)(getTickFrequency() / (newTime - prevTime))),
+            Point(0, rendered.rows - 1),
+            FONT_HERSHEY_SIMPLEX,
+            0.5,
+            Scalar(0, 255, 255));
     prevTime = newTime;
 
     imshow("render", rendered);

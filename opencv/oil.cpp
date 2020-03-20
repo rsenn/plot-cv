@@ -9,7 +9,14 @@ using namespace cv;
 using namespace std;
 
 static void TrackSlider(int, void*);
-static void addSlider(String sliderName, String windowName, int minSlider, int maxSlider, int valDefault, int* valSlider, void (*f)(int, void*), void* r);
+static void addSlider(String sliderName,
+                      String windowName,
+                      int minSlider,
+                      int maxSlider,
+                      int valDefault,
+                      int* valSlider,
+                      void (*f)(int, void*),
+                      void* r);
 vector<int> colorSpace = {COLOR_BGR2GRAY, COLOR_BGR2HSV, COLOR_BGR2YUV, COLOR_BGR2XYZ};
 
 struct OilImage {
@@ -63,7 +70,14 @@ main(int argc, char* argv[]) {
   namedWindow(p.winName);
   addSlider("DynRatio", p.winName, 1, 127, p.dynRatio, &p.dynRatio, TrackSlider, &p);
   addSlider("Size", p.winName, 1, 100, p.size, &p.size, TrackSlider, &p);
-  addSlider("ColorSpace", p.winName, 0, static_cast<int>(colorSpace.size() - 1), p.colorSpace, &p.colorSpace, TrackSlider, &p);
+  addSlider("ColorSpace",
+            p.winName,
+            0,
+            static_cast<int>(colorSpace.size() - 1),
+            p.colorSpace,
+            &p.colorSpace,
+            TrackSlider,
+            &p);
   while(waitKey(20) != 27) {
     v >> p.img;
     imshow("Original", p.img);
@@ -74,7 +88,14 @@ main(int argc, char* argv[]) {
 }
 
 void
-addSlider(String sliderName, String windowName, int minSlider, int maxSlider, int valDefault, int* valSlider, void (*f)(int, void*), void* r) {
+addSlider(String sliderName,
+          String windowName,
+          int minSlider,
+          int maxSlider,
+          int valDefault,
+          int* valSlider,
+          void (*f)(int, void*),
+          void* r) {
   createTrackbar(sliderName, windowName, valSlider, 1, f, r);
   setTrackbarMin(sliderName, windowName, minSlider);
   setTrackbarMax(sliderName, windowName, maxSlider);

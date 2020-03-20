@@ -35,8 +35,9 @@ intToString(int number) {
 void
 searchForMovement(cv::Mat thresholdImage, cv::Mat& cameraFeed) {
   // notice how we use the '&' operator for the cameraFeed. This is because we wish
-  // to take the values passed into the function and manipulate them, rather than just working with a copy.
-  // eg. we draw to the cameraFeed in this function which is then displayed in the main() function.
+  // to take the values passed into the function and manipulate them, rather than just working with
+  // a copy. eg. we draw to the cameraFeed in this function which is then displayed in the main()
+  // function.
   bool objectDetected = false;
   cv::Mat temp;
   thresholdImage.copyTo(temp);
@@ -44,8 +45,13 @@ searchForMovement(cv::Mat thresholdImage, cv::Mat& cameraFeed) {
   std::vector<std::vector<cv::Point>> contours;
   std::vector<Vec4i> hierarchy;
   // find contours of filtered image using openCV findContours function
-  // findContours(temp,contours,hierarchy,CV_RETR_CCOMP,CV_CHAIN_APPROX_SIMPLE );// retrieves all contours
-  findContours(temp, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE); // retrieves external contours
+  // findContours(temp,contours,hierarchy,CV_RETR_CCOMP,CV_CHAIN_APPROX_SIMPLE );// retrieves all
+  // contours
+  findContours(temp,
+               contours,
+               hierarchy,
+               CV_RETR_EXTERNAL,
+               CV_CHAIN_APPROX_SIMPLE); // retrieves external contours
 
   // if contours std::vector is not empty, we have found some objects
   if(contours.size() > 0)
@@ -76,7 +82,13 @@ searchForMovement(cv::Mat thresholdImage, cv::Mat& cameraFeed) {
   line(cameraFeed, cv::Point(x, y), cv::Point(x, y + 25), Scalar(0, 255, 0), 2);
   line(cameraFeed, cv::Point(x, y), cv::Point(x - 25, y), Scalar(0, 255, 0), 2);
   line(cameraFeed, cv::Point(x, y), cv::Point(x + 25, y), Scalar(0, 255, 0), 2);
-  putText(cameraFeed, "Tracking object at (" + intToString(x) + "," + intToString(y) + ")", cv::Point(x, y), 1, 1, Scalar(255, 0, 0), 2);
+  putText(cameraFeed,
+          "Tracking object at (" + intToString(x) + "," + intToString(y) + ")",
+          cv::Point(x, y),
+          1,
+          1,
+          Scalar(255, 0, 0),
+          2);
 }
 int
 main() {
@@ -135,8 +147,9 @@ main() {
       // convert frame2 to gray scale for frame differencing
       cvtColor(frame2, grayImage2, COLOR_BGR2GRAY);
 
-      // perform frame differencing with the sequential images. This will output an "intensity image"
-      // do not confuse this with a threshold image, we will need to perform thresholding afterwards.
+      // perform frame differencing with the sequential images. This will output an "intensity
+      // image" do not confuse this with a threshold image, we will need to perform thresholding
+      // afterwards.
       absdiff(grayImage1, grayImage2, differenceImage);
       // threshold intensity image at a given sensitivity value
       threshold(differenceImage, thresholdImage, SENSITIVITY_VALUE, 255, THRESH_BINARY);

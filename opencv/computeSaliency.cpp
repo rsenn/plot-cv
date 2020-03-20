@@ -48,16 +48,19 @@ using namespace std;
 using namespace cv;
 using namespace saliency;
 
-static const char* keys = {"{@saliency_algorithm | | Saliency algorithm <saliencyAlgorithmType.[saliencyAlgorithmTypeSubType]> }"
-                           "{@video_name      | | video name            }"
-                           "{@start_frame     |1| Start frame           }"
-                           "{@training_path   |ObjectnessTrainedModel| Path of the folder containing the trained files}"};
+static const char* keys = {
+    "{@saliency_algorithm | | Saliency algorithm "
+    "<saliencyAlgorithmType.[saliencyAlgorithmTypeSubType]> }"
+    "{@video_name      | | video name            }"
+    "{@start_frame     |1| Start frame           }"
+    "{@training_path   |ObjectnessTrainedModel| Path of the folder containing the trained files}"};
 
 static void
 help() {
   cout << "\nThis example shows the functionality of \"Saliency \""
           "Call:\n"
-          "./example_saliency_computeSaliency <saliencyAlgorithmSubType> <video_name> <start_frame> \n"
+          "./example_saliency_computeSaliency <saliencyAlgorithmSubType> <video_name> "
+          "<start_frame> \n"
        << endl;
 }
 
@@ -149,7 +152,11 @@ main(int argc, char** argv) {
           Vec4i bb = saliencyMap[i];
           Scalar col = Scalar(((i * step) % 255), 50, 255 - ((i * step) % 255));
           Point off(theRNG().uniform(-jitter, jitter), theRNG().uniform(-jitter, jitter));
-          rectangle(draw, Point(bb[0] + off.x, bb[1] + off.y), Point(bb[2] + off.x, bb[3] + off.y), col, 2);
+          rectangle(draw,
+                    Point(bb[0] + off.x, bb[1] + off.y),
+                    Point(bb[2] + off.x, bb[3] + off.y),
+                    col,
+                    2);
           rectangle(draw, Rect(20, 20 + i * 10, 10, 10), col, -1); // mini temperature scale
         }
         imshow("BING", draw);
@@ -161,7 +168,8 @@ main(int argc, char** argv) {
 
   } else if(saliency_algorithm.find("BinWangApr2014") == 0) {
     saliencyAlgorithm = MotionSaliencyBinWangApr2014::create();
-    saliencyAlgorithm.dynamicCast<MotionSaliencyBinWangApr2014>()->setImagesize(image.cols, image.rows);
+    saliencyAlgorithm.dynamicCast<MotionSaliencyBinWangApr2014>()->setImagesize(image.cols,
+                                                                                image.rows);
     saliencyAlgorithm.dynamicCast<MotionSaliencyBinWangApr2014>()->init();
 
     bool paused = false;

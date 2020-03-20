@@ -102,13 +102,21 @@ main(int argc, char** argv) {
     double __time__ = (double)getTickCount();
 
     float scale = (float)(400.0 / frame.cols);
-    resize(frame, img, Size((int)(frame.cols * scale), (int)(frame.rows * scale)), 0, 0, INTER_LINEAR_EXACT);
+    resize(frame,
+           img,
+           Size((int)(frame.cols * scale), (int)(frame.rows * scale)),
+           0,
+           0,
+           INTER_LINEAR_EXACT);
 
     facemark->getFaces(img, rects);
     rects_scaled.clear();
 
     for(int j = 0; j < (int)rects.size(); j++) {
-      rects_scaled.push_back(Rect((int)(rects[j].x / scale), (int)(rects[j].y / scale), (int)(rects[j].width / scale), (int)(rects[j].height / scale)));
+      rects_scaled.push_back(Rect((int)(rects[j].x / scale),
+                                  (int)(rects[j].y / scale),
+                                  (int)(rects[j].width / scale),
+                                  (int)(rects[j].height / scale)));
     }
     rects = rects_scaled;
     fittime = 0;
@@ -155,11 +163,13 @@ myDetector(InputArray image, OutputArray faces, CascadeClassifier* face_cascade)
 
 bool
 parseArguments(int argc, char** argv, String& cascade, String& model, String& video) {
-  const String keys = "{ @c cascade         |      | (required) path to the cascade model file for the face detector }"
-                      "{ @m model           |      | (required) path to the trained model }"
-                      "{ @v video           |      | (required) path input video}"
-                      "{ help h usage ?     |      | facemark_lbf_fitting -cascade -model -video [-t]\n"
-                      " example: facemark_lbf_fitting ../face_cascade.xml ../LBF.model ../video.mp4}";
+  const String keys =
+      "{ @c cascade         |      | (required) path to the cascade model file for the face "
+      "detector }"
+      "{ @m model           |      | (required) path to the trained model }"
+      "{ @v video           |      | (required) path input video}"
+      "{ help h usage ?     |      | facemark_lbf_fitting -cascade -model -video [-t]\n"
+      " example: facemark_lbf_fitting ../face_cascade.xml ../LBF.model ../video.mp4}";
   CommandLineParser parser(argc, argv, keys);
   parser.about("hello");
 

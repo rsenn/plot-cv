@@ -12,7 +12,9 @@ int
 main(int argc, char** argv) {
   const string about = "This sample demonstrates Lucas-Kanade Optical Flow calculation.\n"
                        "The example file can be downloaded from:\n"
-                       "  https://www.bogotobogo.com/python/OpenCV_Python/images/mean_shift_tracking/slow_traffic_small.mp4";
+                       "  "
+                       "https://www.bogotobogo.com/python/OpenCV_Python/images/mean_shift_tracking/"
+                       "slow_traffic_small.mp4";
   const string keys = "{ h help |      | print this help message }"
                       "{ @image |<none>| path to image file }";
   CommandLineParser parser(argc, argv, keys);

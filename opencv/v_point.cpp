@@ -12,8 +12,8 @@ int
 main(int argc, char** argv) {
   VideoCapture cap(2);
   // VideoWriter writer;
-  // writer.open("VideoTest.avi", CV_FOURCC('M', 'J', 'P', 'G'), 15, Size((int)cap.get(CV_CAP_PROP_FRAME_WIDTH),
-  // (int)cap.get(CV_CAP_PROP_FRAME_HEIGHT)));
+  // writer.open("VideoTest.avi", CV_FOURCC('M', 'J', 'P', 'G'), 15,
+  // Size((int)cap.get(CV_CAP_PROP_FRAME_WIDTH), (int)cap.get(CV_CAP_PROP_FRAME_HEIGHT)));
   cv::Mat src, src_gray, hsv, threshold_blue;
   std::vector<std::vector<cv::Point>> contours;
   std::vector<Vec4i> hierarchy;
@@ -43,7 +43,8 @@ main(int argc, char** argv) {
       imshow("threshold_blue", threshold_blue);
 
       if(!threshold_blue.empty()) {
-        findContours(threshold_blue, contours, hierarchy, CV_RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
+        findContours(
+            threshold_blue, contours, hierarchy, CV_RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
         if(!contours.empty()) {
           for(int i = 0; i < contours.size(); i++) {
             if(hierarchy[i][0] == -1) {
@@ -103,7 +104,11 @@ main(int argc, char** argv) {
             // center = -center;
             // msg_xy.angular.x = contours[0][0].x; msg_xy.angular.y = contours[0][0].y;
             // msg_xy.linear.x = double(320.0); msg_xy.linear.y = double(240.0);
-            line(src, cv::Point(contours[0][0].x, contours[0][0].y), cv::Point(contours[0][0].x, contours[0][0].y), Scalar(0, 255, 0), 5);
+            line(src,
+                 cv::Point(contours[0][0].x, contours[0][0].y),
+                 cv::Point(contours[0][0].x, contours[0][0].y),
+                 Scalar(0, 255, 0),
+                 5);
           }
           line(src, center, center, Scalar(0, 0, 255), 10);
           // contours[0][0].x = 0; contours[0][0].y = 0;

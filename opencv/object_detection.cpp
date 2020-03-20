@@ -13,27 +13,32 @@
 
 #include "common.hpp"
 
-std::string keys = "{ help  h     | | Print help message. }"
-                   "{ @alias      | | An alias name of model to extract preprocessing parameters from models.yml file. }"
-                   "{ zoo         | models.yml | An optional path to file with preprocessing parameters }"
-                   "{ device      |  0 | camera device number. }"
-                   "{ input i     | | Path to input image or video file. Skip this argument to capture frames from a camera. }"
-                   "{ framework f | | Optional name of an origin framework of the model. Detect it automatically if it does not set. }"
-                   "{ classes     | | Optional path to a text file with names of classes to label detected objects. }"
-                   "{ thr         | .5 | Confidence threshold. }"
-                   "{ nms         | .4 | Non-maximum suppression threshold. }"
-                   "{ backend     |  0 | Choose one of computation backends: "
-                   "0: automatically (by default), "
-                   "1: Halide language (http://halide-lang.org/), "
-                   "2: Intel's Deep Learning Inference Engine (https://software.intel.com/openvino-toolkit), "
-                   "3: OpenCV implementation }"
-                   "{ target      | 0 | Choose one of target computation devices: "
-                   "0: CPU target (by default), "
-                   "1: OpenCL, "
-                   "2: OpenCL fp16 (half-float precision), "
-                   "3: VPU }"
-                   "{ async       | 0 | Number of asynchronous forwards at the same time. "
-                   "Choose 0 for synchronous mode }";
+std::string keys =
+    "{ help  h     | | Print help message. }"
+    "{ @alias      | | An alias name of model to extract preprocessing parameters from models.yml "
+    "file. }"
+    "{ zoo         | models.yml | An optional path to file with preprocessing parameters }"
+    "{ device      |  0 | camera device number. }"
+    "{ input i     | | Path to input image or video file. Skip this argument to capture frames "
+    "from a camera. }"
+    "{ framework f | | Optional name of an origin framework of the model. Detect it automatically "
+    "if it does not set. }"
+    "{ classes     | | Optional path to a text file with names of classes to label detected "
+    "objects. }"
+    "{ thr         | .5 | Confidence threshold. }"
+    "{ nms         | .4 | Non-maximum suppression threshold. }"
+    "{ backend     |  0 | Choose one of computation backends: "
+    "0: automatically (by default), "
+    "1: Halide language (http://halide-lang.org/), "
+    "2: Intel's Deep Learning Inference Engine (https://software.intel.com/openvino-toolkit), "
+    "3: OpenCV implementation }"
+    "{ target      | 0 | Choose one of target computation devices: "
+    "0: CPU target (by default), "
+    "1: OpenCL, "
+    "2: OpenCL fp16 (half-float precision), "
+    "3: VPU }"
+    "{ async       | 0 | Number of asynchronous forwards at the same time. "
+    "Choose 0 for synchronous mode }";
 
 using namespace cv;
 using namespace dnn;
@@ -41,7 +46,8 @@ using namespace dnn;
 float confThreshold, nmsThreshold;
 std::vector<std::string> classes;
 
-inline void preprocess(const Mat& frame, Net& net, Size inpSize, float scale, const Scalar& mean, bool swapRB);
+inline void
+preprocess(const Mat& frame, Net& net, Size inpSize, float scale, const Scalar& mean, bool swapRB);
 
 void postprocess(Mat& frame, const std::vector<Mat>& out, Net& net);
 
@@ -50,7 +56,7 @@ void drawPred(int classId, float conf, int left, int top, int right, int bottom,
 void callback(int pos, void* userdata);
 
 #ifdef CV_CXX11
-template <typename T> class QueueFPS : public std::queue<T> {
+template<typename T> class QueueFPS : public std::queue<T> {
 public:
   QueueFPS() : counter(0) {}
 
@@ -245,7 +251,8 @@ main(int argc, char** argv) {
 
 #else  // CV_CXX11
   if(async)
-    CV_Error(Error::StsNotImplemented, "Asynchronous forward is supported only with Inference Engine backend.");
+    CV_Error(Error::StsNotImplemented,
+             "Asynchronous forward is supported only with Inference Engine backend.");
 
   // Process frames.
   Mat frame, blob;
@@ -366,7 +373,13 @@ postprocess(Mat& frame, const std::vector<Mat>& outs, Net& net) {
   for(size_t i = 0; i < indices.size(); ++i) {
     int idx = indices[i];
     Rect box = boxes[idx];
-    drawPred(classIds[idx], confidences[idx], box.x, box.y, box.x + box.width, box.y + box.height, frame);
+    drawPred(classIds[idx],
+             confidences[idx],
+             box.x,
+             box.y,
+             box.x + box.width,
+             box.y + box.height,
+             frame);
   }
 }
 
@@ -384,7 +397,11 @@ drawPred(int classId, float conf, int left, int top, int right, int bottom, Mat&
   Size labelSize = getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
 
   top = max(top, labelSize.height);
-  rectangle(frame, Point(left, top - labelSize.height), Point(left + labelSize.width, top + baseLine), Scalar::all(255), FILLED);
+  rectangle(frame,
+            Point(left, top - labelSize.height),
+            Point(left + labelSize.width, top + baseLine),
+            Scalar::all(255),
+            FILLED);
   putText(frame, label, Point(left, top), FONT_HERSHEY_SIMPLEX, 0.5, Scalar());
 }
 

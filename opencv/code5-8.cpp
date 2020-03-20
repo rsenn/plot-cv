@@ -1,6 +1,6 @@
-// Program to display a video from attached default camera device and detect colored blobs using simple R G and B
-// thresholding Remove noise using opening and closing morphological operations Author: Samarth Manoj Brahmbhatt,
-// University of Pennsylvania
+// Program to display a video from attached default camera device and detect colored blobs using
+// simple R G and B thresholding Remove noise using opening and closing morphological operations
+// Author: Samarth Manoj Brahmbhatt, University of Pennsylvania
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>

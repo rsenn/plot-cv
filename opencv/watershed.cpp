@@ -11,7 +11,8 @@ using namespace std;
 
 static void
 help() {
-  cout << "\nThis program demonstrates the famous watershed segmentation algorithm in OpenCV: watershed()\n"
+  cout << "\nThis program demonstrates the famous watershed segmentation algorithm in OpenCV: "
+          "watershed()\n"
           "Usage:\n"
           "./watershed [image_name -- default is fruits.jpg]\n"
        << endl;
@@ -88,7 +89,8 @@ main(int argc, char** argv) {
       cv::Mat markers(markerMask.size(), CV_32S);
       markers = Scalar::all(0);
       int idx = 0;
-      for(; idx >= 0; idx = hierarchy[idx][0], compCount++) drawContours(markers, contours, idx, Scalar::all(compCount + 1), -1, 8, hierarchy, INT_MAX);
+      for(; idx >= 0; idx = hierarchy[idx][0], compCount++)
+        drawContours(markers, contours, idx, Scalar::all(compCount + 1), -1, 8, hierarchy, INT_MAX);
 
       if(compCount == 0)
         continue;

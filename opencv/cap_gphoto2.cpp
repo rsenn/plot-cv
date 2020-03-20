@@ -193,7 +193,8 @@ protected:
 
   // Messages / debug
   enum MsgType { ERROR = (int)'E', WARNING = (int)'W', STATUS = (int)'S', OTHER = (int)'O' };
-  template <typename OsstreamPrintable> void message(MsgType msgType, const char* msg, OsstreamPrintable& arg) const;
+  template<typename OsstreamPrintable>
+  void message(MsgType msgType, const char* msg, OsstreamPrintable& arg) const;
 
 private:
   // Instance
@@ -230,12 +231,12 @@ private:
 /**
  * \brief Check if gPhoto2 function ends successfully. If not, throw an exception.
  */
-#define CR(GPHOTO2_FUN)                                                                                                                                                                                                                                                                                    \
-  do {                                                                                                                                                                                                                                                                                                     \
-    int r_0629c47b758;                                                                                                                                                                                                                                                                                     \
-    if((r_0629c47b758 = (GPHOTO2_FUN)) < GP_OK) {                                                                                                                                                                                                                                                          \
-      throw GPhoto2Exception(#GPHOTO2_FUN, r_0629c47b758);                                                                                                                                                                                                                                                 \
-    };                                                                                                                                                                                                                                                                                                     \
+#define CR(GPHOTO2_FUN)                                                                            \
+  do {                                                                                             \
+    int r_0629c47b758;                                                                             \
+    if((r_0629c47b758 = (GPHOTO2_FUN)) < GP_OK) {                                                  \
+      throw GPhoto2Exception(#GPHOTO2_FUN, r_0629c47b758);                                         \
+    };                                                                                             \
   } while(0)
 
 /**
@@ -603,7 +604,9 @@ DigitalCameraCapture::getProperty(int propertyId) const {
  * @return widget, or 0 if output value was found (saved in argument),
  */
 CameraWidget*
-DigitalCameraCapture::setGenericProperty(int propertyId, double /*FUTURE: value*/, bool& output) const {
+DigitalCameraCapture::setGenericProperty(int propertyId,
+                                         double /*FUTURE: value*/,
+                                         bool& output) const {
   switch(propertyId) {
     case CV_CAP_PROP_POS_MSEC:
     case CV_CAP_PROP_POS_FRAMES:
@@ -721,7 +724,8 @@ DigitalCameraCapture::grabFrame() {
     } else {
       // Capture an image
       CR(gp_camera_capture(camera, GP_CAPTURE_IMAGE, &filePath, context));
-      CR(gp_camera_file_get(camera, filePath.folder, filePath.name, GP_FILE_TYPE_NORMAL, file, context));
+      CR(gp_camera_file_get(
+          camera, filePath.folder, filePath.name, GP_FILE_TYPE_NORMAL, file, context));
       CR(gp_camera_file_delete(camera, filePath.folder, filePath.name, context));
     }
     // State update
@@ -854,7 +858,8 @@ DigitalCameraCapture::findWidgetByName(const char* subName) const {
  * @FUTURE: RAW format reader.
  */
 void
-DigitalCameraCapture::readFrameFromFile(CameraFile* file, OutputArray outputFrame) throw(GPhoto2Exception) {
+DigitalCameraCapture::readFrameFromFile(CameraFile* file,
+                                        OutputArray outputFrame) throw(GPhoto2Exception) {
   // FUTURE: OpenCV cannot read RAW files right now.
   const char* data;
   unsigned long int size;
@@ -874,7 +879,8 @@ DigitalCameraCapture::readFrameFromFile(CameraFile* file, OutputArray outputFram
  *         then IDs won't be the same)
  */
 int
-DigitalCameraCapture::widgetDescription(std::ostream& os, CameraWidget* widget) const throw(GPhoto2Exception) {
+DigitalCameraCapture::widgetDescription(std::ostream& os, CameraWidget* widget) const
+    throw(GPhoto2Exception) {
   const char *label, *name, *info;
   int id, readonly;
   CameraWidgetType type;
@@ -889,7 +895,8 @@ DigitalCameraCapture::widgetDescription(std::ostream& os, CameraWidget* widget) 
   if((type == GP_WIDGET_WINDOW) || (type == GP_WIDGET_SECTION) || (type == GP_WIDGET_BUTTON)) {
     readonly = 1;
   }
-  os << (id - noOfWidgets) << separator << label << separator << name << separator << info << separator << readonly << separator;
+  os << (id - noOfWidgets) << separator << label << separator << name << separator << info
+     << separator << readonly << separator;
 
   switch(type) {
     case GP_WIDGET_WINDOW: {
@@ -971,7 +978,8 @@ DigitalCameraCapture::widgetDescription(std::ostream& os, CameraWidget* widget) 
  * @return maximum of widget ID
  */
 int
-DigitalCameraCapture::collectWidgets(std::ostream& os, CameraWidget* widget) throw(GPhoto2Exception) {
+DigitalCameraCapture::collectWidgets(std::ostream& os,
+                                     CameraWidget* widget) throw(GPhoto2Exception) {
   int id = widgetDescription(os, widget);
   os << lineDelimiter;
 
@@ -994,7 +1002,7 @@ DigitalCameraCapture::collectWidgets(std::ostream& os, CameraWidget* widget) thr
  * (@field collectMsgs).
  * Print debug informations on screen.
  */
-template <typename OsstreamPrintable>
+template<typename OsstreamPrintable>
 void
 DigitalCameraCapture::message(MsgType msgType, const char* msg, OsstreamPrintable& arg) const {
 #if defined(NDEBUG)

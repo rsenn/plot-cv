@@ -143,7 +143,13 @@ trackFiliteredObject::drawObject(int x, int y, cv::Mat& frame) {
   else
     line(frame, cv::Point(x, y), cv::Point(FRAME_WIDTH, y), Scalar(0, 255, 0), 2);
 
-  putText(frame, intToString(x) + "," + intToString(y), cv::Point(x, y + 30), 1, 1, Scalar(0, 255, 0), 2);
+  putText(frame,
+          intToString(x) + "," + intToString(y),
+          cv::Point(x, y + 30),
+          1,
+          1,
+          Scalar(0, 255, 0),
+          2);
 }
 void
 trackFiliteredObject::trackObjcet(int& x, int& y, cv::Mat threshold, cv::Mat& cameraFeed) {
@@ -194,7 +200,13 @@ trackFiliteredObject::trackObjcet(int& x, int& y, cv::Mat threshold, cv::Mat& ca
       }
 
     } else
-      putText(cameraFeed, "TOO MUCH NOISE! ADJUST FILTER", cv::Point(0, 50), 1, 2, Scalar(0, 0, 255), 2);
+      putText(cameraFeed,
+              "TOO MUCH NOISE! ADJUST FILTER",
+              cv::Point(0, 50),
+              1,
+              2,
+              Scalar(0, 0, 255),
+              2);
   }
 }
 void
@@ -211,9 +223,9 @@ trackFiliteredObject::createTrackbars() {
   sprintf(TrackbarName, "V_MIN", V_MIN);
   sprintf(TrackbarName, "V_MAX", V_MAX);
   // create trackbars and insert them into window
-  // 3 parameters are: the address of the variable that is changing when the trackbar is moved(eg.H_LOW),
-  // the max value the trackbar can move (eg. H_HIGH),
-  // and the function that is called whenever the trackbar is moved(eg. on_trackbar)
+  // 3 parameters are: the address of the variable that is changing when the trackbar is
+  // moved(eg.H_LOW), the max value the trackbar can move (eg. H_HIGH), and the function that is
+  // called whenever the trackbar is moved(eg. on_trackbar)
   //                                  ---->    ---->     ---->
   createTrackbar("H_MIN", trackbarWindowName, &H_MIN, H_MAX, on_trackbar);
   createTrackbar("H_MAX", trackbarWindowName, &H_MAX, H_MAX, on_trackbar);

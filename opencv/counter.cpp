@@ -41,7 +41,8 @@ using namespace std;
 using namespace cv;
 
 // our sensitivity value to be used in the threshold() function
-static double MAX_DIST_SQD = 6000000; // maximum distance between to centers to consider it one object
+static double MAX_DIST_SQD =
+    6000000; // maximum distance between to centers to consider it one object
 static int SENSITIVITY_VALUE_1 = 200; // values for cleaning noise out of difference images
 static int SENSITIVITY_VALUE_2 = 50;
 // size of blur used to smooth the image to remove possible noise and
@@ -52,11 +53,15 @@ static double MIN_OBJ_AREA = 1000;
 
 // TODO all of this is wrong and will need to change
 static KALMAN_TYPE dt = 0.25;
-static KALMAN_TYPE A_init[] = {1, dt, 0, 0, 0, 0, 0, 1, dt, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, dt, 0, 0, 0, 0, 0, 1, dt, 0, 0, 0, 0, 0, 1};
+static KALMAN_TYPE A_init[] = {1, dt, 0, 0, 0,  0, 0, 1, dt, 0, 0, 0,  0, 0, 1, 0, 0, 0,
+                               0, 0,  0, 1, dt, 0, 0, 0, 0,  0, 1, dt, 0, 0, 0, 0, 0, 1};
 static KALMAN_TYPE C_init[] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0};
-static KALMAN_TYPE Q_init[] = {1e-2, 0, 0, 0, 0, 0, 0, 5.0, 0, 0, 0, 0, 0, 0, 1e-2, 0, 0, 0, 0, 0, 0, 1e-2, 0, 0, 0, 0, 0, 0, 5.0, 0, 0, 0, 0, 0, 0, 1e-2};
+static KALMAN_TYPE Q_init[] = {1e-2, 0, 0,    0, 0,   0, 0, 5.0, 0, 0,    0, 0,
+                               0,    0, 1e-2, 0, 0,   0, 0, 0,   0, 1e-2, 0, 0,
+                               0,    0, 0,    0, 5.0, 0, 0, 0,   0, 0,    0, 1e-2};
 static KALMAN_TYPE R_init[] = {5.0, 0, 0, 5.0};
-static KALMAN_TYPE P_init[] = {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1};
+static KALMAN_TYPE P_init[] = {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+                               0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1};
 static KALMAN_TYPE x_hat_init[] = {0, 0, 0, 0, 0, 0};
 static int n = 6;
 static int m = 2;
@@ -64,14 +69,42 @@ static int m = 2;
 // TODO don't do this
 ImageOutput* video_out;
 
-void set_background(string back_name, bool background_is_video, cv::Mat& grayBackground, bool& use_static_back);
-void track_with_non_adaptive_BS(ImageInput* capture, cv::Mat& grayBackground, bool use_static_back, double& total_targets, int& count_LR, int& count_RL);
-void do_non_adaptive_BS(cv::Mat& grayImage1, cv::Mat& grayImage2, bool debugMode, cv::Mat& thresholdImage);
+void set_background(string back_name,
+                    bool background_is_video,
+                    cv::Mat& grayBackground,
+                    bool& use_static_back);
+void track_with_non_adaptive_BS(ImageInput* capture,
+                                cv::Mat& grayBackground,
+                                bool use_static_back,
+                                double& total_targets,
+                                int& count_LR,
+                                int& count_RL);
+void do_non_adaptive_BS(cv::Mat& grayImage1,
+                        cv::Mat& grayImage2,
+                        bool debugMode,
+                        cv::Mat& thresholdImage);
 
-void track_with_adaptive_BS(ImageInput* capture, cv::Mat& grayBackground, bool use_static_back, double& total_targets, int& count_LR, int& count_RL);
-void do_adaptive_BS(Ptr<BackgroundSubtractorMOG2> subtractor, cv::Mat& image, bool debugMode, cv::Mat& thresholdImage);
-void search_for_movement(cv::Mat& thresholdImage, cv::Mat& display, bool loop_switch, double& total_targets, int& count_LR, int& count_RL, std::vector<Target*>& targets);
-void dynamic_threshold(cv::Mat& input_image, cv::Mat& threshold_image, float percent_peak, bool debugMode);
+void track_with_adaptive_BS(ImageInput* capture,
+                            cv::Mat& grayBackground,
+                            bool use_static_back,
+                            double& total_targets,
+                            int& count_LR,
+                            int& count_RL);
+void do_adaptive_BS(Ptr<BackgroundSubtractorMOG2> subtractor,
+                    cv::Mat& image,
+                    bool debugMode,
+                    cv::Mat& thresholdImage);
+void search_for_movement(cv::Mat& thresholdImage,
+                         cv::Mat& display,
+                         bool loop_switch,
+                         double& total_targets,
+                         int& count_LR,
+                         int& count_RL,
+                         std::vector<Target*>& targets);
+void dynamic_threshold(cv::Mat& input_image,
+                       cv::Mat& threshold_image,
+                       float percent_peak,
+                       bool debugMode);
 
 char is_center_crossed(const cv::Point2d& a, const cv::Point2d& b, double middle);
 char is_center_crossed(const Object& obj_a, const Object& obj_b, double middle);
@@ -138,7 +171,8 @@ main(int argc, char** argv) {
     exit(1);
   }
 
-  Size S = Size((int)capture->get(CV_CAP_PROP_FRAME_WIDTH), (int)capture->get(CV_CAP_PROP_FRAME_HEIGHT));
+  Size S =
+      Size((int)capture->get(CV_CAP_PROP_FRAME_WIDTH), (int)capture->get(CV_CAP_PROP_FRAME_HEIGHT));
   video_out = new ImageOutput();
   if(!video_out->setup(REMOTE, name_list, S, num_videos))
     exit(1);
@@ -154,10 +188,12 @@ main(int argc, char** argv) {
 
     if(bs_type == 'M') {
       cout << endl << "Using adaptive (MOG2) Background subtraction" << endl;
-      track_with_adaptive_BS(capture, grayBackground, use_static_back, total_targets, count_LR, count_RL);
+      track_with_adaptive_BS(
+          capture, grayBackground, use_static_back, total_targets, count_LR, count_RL);
     } else {
       cout << endl << "Using non adaptive (Naive) Background subtraction" << endl;
-      track_with_non_adaptive_BS(capture, grayBackground, use_static_back, total_targets, count_LR, count_RL);
+      track_with_non_adaptive_BS(
+          capture, grayBackground, use_static_back, total_targets, count_LR, count_RL);
     }
 
     // release the capture before re-opening and looping again.
@@ -180,7 +216,10 @@ main(int argc, char** argv) {
 
 //@sets background image for static background subtraction based on input file
 void
-set_background(string back_name, bool background_is_video, cv::Mat& grayBackground, bool& use_static_back) {
+set_background(string back_name,
+               bool background_is_video,
+               cv::Mat& grayBackground,
+               bool& use_static_back) {
   if(back_name.compare("NONE") == 0)
     use_static_back = false;
   else if(background_is_video)
@@ -197,7 +236,12 @@ set_background(string back_name, bool background_is_video, cv::Mat& grayBackgrou
 }
 
 void
-track_with_non_adaptive_BS(ImageInput* capture, cv::Mat& grayBackground, bool use_static_back, double& total_targets, int& count_LR, int& count_RL) {
+track_with_non_adaptive_BS(ImageInput* capture,
+                           cv::Mat& grayBackground,
+                           bool use_static_back,
+                           double& total_targets,
+                           int& count_LR,
+                           int& count_RL) {
   bool debugMode = false;
   bool trackingEnabled = false;
   bool pause = false;
@@ -244,7 +288,8 @@ track_with_non_adaptive_BS(ImageInput* capture, cv::Mat& grayBackground, bool us
       do_non_adaptive_BS(grayImage1, grayImage2, debugMode, thresholdImage);
 
     if(trackingEnabled) {
-      search_for_movement(thresholdImage, frame2, loop_switch, total_targets, count_LR, count_RL, targets);
+      search_for_movement(
+          thresholdImage, frame2, loop_switch, total_targets, count_LR, count_RL, targets);
     }
 
     char c = video_out->output_track_frame(frame2);
@@ -266,7 +311,10 @@ track_with_non_adaptive_BS(ImageInput* capture, cv::Mat& grayBackground, bool us
 //@compares two grayscale images using simple background sutraction
 //	also displays the stages if requested
 void
-do_non_adaptive_BS(cv::Mat& grayImage1, cv::Mat& grayImage2, bool debugMode, cv::Mat& thresholdImage) {
+do_non_adaptive_BS(cv::Mat& grayImage1,
+                   cv::Mat& grayImage2,
+                   bool debugMode,
+                   cv::Mat& thresholdImage) {
   cv::Mat mat_list[3];
   cv::Mat differenceImage, blurImage, firstThreshold;
   int diff = 0, thresh = 1, final = 2; // TODO maybe define these more universally
@@ -290,7 +338,12 @@ do_non_adaptive_BS(cv::Mat& grayImage1, cv::Mat& grayImage2, bool debugMode, cv:
 // track objects through video using GMM background subtraction
 // TODO do we actually want gray images for this version?
 void
-track_with_adaptive_BS(ImageInput* capture, cv::Mat& grayBackground, bool use_static_back, double& total_targets, int& count_LR, int& count_RL) {
+track_with_adaptive_BS(ImageInput* capture,
+                       cv::Mat& grayBackground,
+                       bool use_static_back,
+                       double& total_targets,
+                       int& count_LR,
+                       int& count_RL) {
   bool debugMode = false;
   bool trackingEnabled = false;
   bool pause = false;
@@ -330,7 +383,8 @@ track_with_adaptive_BS(ImageInput* capture, cv::Mat& grayBackground, bool use_st
     do_adaptive_BS(subtractor, image, debugMode, thresholdImage);
 
     if(trackingEnabled) {
-      search_for_movement(thresholdImage, frame, loop_switch, total_targets, count_LR, count_RL, targets);
+      search_for_movement(
+          thresholdImage, frame, loop_switch, total_targets, count_LR, count_RL, targets);
     }
 
     char c = video_out->output_track_frame(frame);
@@ -353,7 +407,10 @@ track_with_adaptive_BS(ImageInput* capture, cv::Mat& grayBackground, bool use_st
 //@finds movement blobs based on GMM background subtraction
 //	also displays the stages if requested
 void
-do_adaptive_BS(Ptr<BackgroundSubtractorMOG2> subtractor, cv::Mat& image, bool debugMode, cv::Mat& thresholdImage) {
+do_adaptive_BS(Ptr<BackgroundSubtractorMOG2> subtractor,
+               cv::Mat& image,
+               bool debugMode,
+               cv::Mat& thresholdImage) {
   cv::Mat mat_list[3];
   cv::Mat differenceImage, blurImage, firstThreshold;
   int diff = 0, thresh = 1, final = 2; // TODO maybe define these more universally
@@ -386,7 +443,13 @@ do_adaptive_BS(Ptr<BackgroundSubtractorMOG2> subtractor, cv::Mat& image, bool de
 //@identifies objects based on threshold image and previous objects
 //@
 void
-search_for_movement(cv::Mat& thresholdImage, cv::Mat& display, bool loop_switch, double& total_targets, int& count_LR, int& count_RL, std::vector<Target*>& targets) {
+search_for_movement(cv::Mat& thresholdImage,
+                    cv::Mat& display,
+                    bool loop_switch,
+                    double& total_targets,
+                    int& count_LR,
+                    int& count_RL,
+                    std::vector<Target*>& targets) {
 
   int obj_count = 0, i = 0;
   double mid_row = (double)(thresholdImage.cols >> 1); // half way across the screen
@@ -406,7 +469,8 @@ search_for_movement(cv::Mat& thresholdImage, cv::Mat& display, bool loop_switch,
   thresholdImage.copyTo(temp);
 
   findContours(temp, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-  for(std::vector<std::vector<cv::Point>>::iterator it_0 = contours.begin(); it_0 != contours.end(); it_0++) {
+  for(std::vector<std::vector<cv::Point>>::iterator it_0 = contours.begin(); it_0 != contours.end();
+      it_0++) {
     temp_rect = boundingRect(*it_0);
     obj_area = temp_rect.area();
 
@@ -462,7 +526,10 @@ search_for_movement(cv::Mat& thresholdImage, cv::Mat& display, bool loop_switch,
 //@pre input_image is a grayscale image of type CV_8U
 // TODO probably not actually useful
 void
-dynamic_threshold(cv::Mat& input_image, cv::Mat& threshold_image, float percent_peak, bool debugMode) {
+dynamic_threshold(cv::Mat& input_image,
+                  cv::Mat& threshold_image,
+                  float percent_peak,
+                  bool debugMode) {
   int hist_size = 256;
   float range[] = {0, hist_size};
   const float* hist_range = {range};
@@ -501,7 +568,13 @@ dynamic_threshold(cv::Mat& input_image, cv::Mat& threshold_image, float percent_
     cv::Mat histImage(hist_h, hist_w, CV_8UC3, Scalar(0, 0, 0));
     normalize(hist, hist, 0, histImage.rows, NORM_MINMAX, -1, cv::Mat());
     for(int i = 1; i < hist_size; i++) {
-      line(histImage, cv::Point(bin_w * (i - 1), hist_h - cvRound(hist.at<float>(i - 1))), cv::Point(bin_w * (i), hist_h - cvRound(hist.at<float>(i))), Scalar(255, 0, 0), 2, 8, 0);
+      line(histImage,
+           cv::Point(bin_w * (i - 1), hist_h - cvRound(hist.at<float>(i - 1))),
+           cv::Point(bin_w * (i), hist_h - cvRound(hist.at<float>(i))),
+           Scalar(255, 0, 0),
+           2,
+           8,
+           0);
     }
 
     namedWindow("Histogram", CV_WINDOW_NORMAL);
@@ -682,27 +755,30 @@ draw_centers(std::vector<Target*>& targets, cv::Mat& display) {
     (*it)->prev_obj.get_center(temp_pt);
     circle(display, temp_pt, 5, Scalar(0, 0, 255), 2, 1);
     // circle( display, temp_pt, MAX_DIST_SQD, Scalar( 0, 255, 255 ), 2, 1 );
-    putText(display, "Object: " + int_to_str((*it)->get_id_num()), temp_pt, 1, 1, Scalar(255, 0, 0), 2);
+    putText(
+        display, "Object: " + int_to_str((*it)->get_id_num()), temp_pt, 1, 1, Scalar(255, 0, 0), 2);
   }
 }
 
 //@print instructions to standard output and crash program
 void
 show_help() {
-  cout << endl
-       << " Usage: ./counter.out <video_name> <gray background image> [MAX_DIST_SQD] [SENSITIVITY_VALUE] [BLUR_SIZE] "
-          "[MIN_OBJ_AREA]\n"
-          " examples:\n"
-          " ./counter.out /home/pi/test_videos/my_vid.h264 NONE\n"
-          " ./counter.out /home/pi/test_videos/my_vid.h264 /home/pi/test_videos/my_background.jpg \n"
-          " ./counter.out /home/pi/test_videos/my_vid.h264 NONE 50 20 10 10\n"
-          "\n"
-          "OR \n"
-          "\n"
-          " Usage: ./counter.out <configuration file>\n"
-          " example:\n"
-          " ./counter.out config_example.txt\n"
-       << endl
-       << endl;
+  cout
+      << endl
+      << " Usage: ./counter.out <video_name> <gray background image> [MAX_DIST_SQD] "
+         "[SENSITIVITY_VALUE] [BLUR_SIZE] "
+         "[MIN_OBJ_AREA]\n"
+         " examples:\n"
+         " ./counter.out /home/pi/test_videos/my_vid.h264 NONE\n"
+         " ./counter.out /home/pi/test_videos/my_vid.h264 /home/pi/test_videos/my_background.jpg \n"
+         " ./counter.out /home/pi/test_videos/my_vid.h264 NONE 50 20 10 10\n"
+         "\n"
+         "OR \n"
+         "\n"
+         " Usage: ./counter.out <configuration file>\n"
+         " example:\n"
+         " ./counter.out config_example.txt\n"
+      << endl
+      << endl;
   exit(1);
 }

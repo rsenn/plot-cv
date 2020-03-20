@@ -21,7 +21,8 @@ const int stats_update_period = 10; // On-screen statistics are updated every 10
 namespace example {
 class Tracker {
 public:
-  Tracker(Ptr<Feature2D> _detector, Ptr<DescriptorMatcher> _matcher) : detector(_detector), matcher(_matcher) {}
+  Tracker(Ptr<Feature2D> _detector, Ptr<DescriptorMatcher> _matcher)
+      : detector(_detector), matcher(_matcher) {}
 
   void setFirstFrame(const Mat frame, vector<Point2f> bb, string title, Stats& stats);
   Mat process(const Mat frame, Stats& stats);
@@ -80,7 +81,8 @@ Tracker::process(const Mat frame, Stats& stats) {
   vector<KeyPoint> inliers1, inliers2;
   vector<DMatch> inlier_matches;
   if(matched1.size() >= 4) {
-    homography = findHomography(Points(matched1), Points(matched2), RANSAC, ransac_thresh, inlier_mask);
+    homography =
+        findHomography(Points(matched1), Points(matched2), RANSAC, ransac_thresh, inlier_mask);
   }
 
   if(matched1.size() < 4 || homography.empty()) {
@@ -108,7 +110,14 @@ Tracker::process(const Mat frame, Stats& stats) {
     drawBoundingBox(frame_with_bb, new_bb);
   }
   Mat res;
-  drawMatches(first_frame, inliers1, frame_with_bb, inliers2, inlier_matches, res, Scalar(255, 0, 0), Scalar(255, 0, 0));
+  drawMatches(first_frame,
+              inliers1,
+              frame_with_bb,
+              inliers2,
+              inlier_matches,
+              res,
+              Scalar(255, 0, 0),
+              Scalar(255, 0, 0));
   return res;
 }
 } // namespace example
@@ -116,7 +125,9 @@ Tracker::process(const Mat frame, Stats& stats) {
 int
 main(int argc, char** argv) {
   if(argc < 2) {
-    cerr << "Usage: " << endl << "akaze_track input_path" << endl << "  (input_path can be a camera id, like 0,1,2 or a video filename)" << endl;
+    cerr << "Usage: " << endl
+         << "akaze_track input_path" << endl
+         << "  (input_path can be a camera id, like 0,1,2 or a video filename)" << endl;
     return 1;
   }
 
@@ -154,7 +165,8 @@ main(int argc, char** argv) {
   cv::Rect2d uBox = selectROI(video_name, frame);
   bb.push_back(cv::Point2f(static_cast<float>(uBox.x), static_cast<float>(uBox.y)));
   bb.push_back(cv::Point2f(static_cast<float>(uBox.x + uBox.width), static_cast<float>(uBox.y)));
-  bb.push_back(cv::Point2f(static_cast<float>(uBox.x + uBox.width), static_cast<float>(uBox.y + uBox.height)));
+  bb.push_back(cv::Point2f(static_cast<float>(uBox.x + uBox.width),
+                           static_cast<float>(uBox.y + uBox.height)));
   bb.push_back(cv::Point2f(static_cast<float>(uBox.x), static_cast<float>(uBox.y + uBox.height)));
 
   akaze_tracker.setFirstFrame(frame, bb, "AKAZE", stats);

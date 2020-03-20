@@ -3,8 +3,9 @@
 // Program runs with OPENCV 3.3.0 library!!!  not tested for versions greater or lower
 // Targeted for Windows platform
 
-// PURSUIT OF COLOR SILHOUETTE is a C++ program that allows user to play around with options that include object
-// tracking and identification,  contouring, all with their own windows computer webcam
+// PURSUIT OF COLOR SILHOUETTE is a C++ program that allows user to play around with options that
+// include object tracking and identification,  contouring, all with their own windows computer
+// webcam
 
 // including necessary libraries to access different algorithms in order to create our own code
 #include <opencv2/opencv.hpp>
@@ -30,7 +31,8 @@
 #include <math.h>
 
 using namespace cv;
-using namespace cv::dnn; // using opencv namespace and dnn module namespace to code the identification portion
+using namespace cv::dnn; // using opencv namespace and dnn module namespace to code the
+                         // identification portion
 using namespace std;
 
 // declaring variables for track and identify and trackbars
@@ -96,7 +98,8 @@ userMouse(int click, int x, int y, int, void*) {
     boundingbox.width = abs(x - origin.x);
     boundingbox.height = abs(y - origin.y);
 
-    boundingbox &= Rect(0, 0, image.cols, image.rows); // mouse function learned and modified from OpenCV book
+    boundingbox &=
+        Rect(0, 0, image.cols, image.rows); // mouse function learned and modified from OpenCV book
   }
 
   switch(click) {
@@ -168,11 +171,15 @@ track_and_identify(int argc, char** argv) {
   // instructions
   cout << "You will see three screen appear:" << endl;
   cout << "1.The Object Tracker with your current display" << endl;
-  cout << "2.The Trackbars where you can adjust the image saturation and lightness of color once selected" << endl;
+  cout << "2.The Trackbars where you can adjust the image saturation and lightness of color once "
+          "selected"
+       << endl;
   cout << "3.The histrogram that appears black until an image is selected" << endl << endl;
   cout << "First, adjust your object then pause your screen by pressing 'p'." << endl << endl;
   cout << "Select your object by click and dragging to make a rectangle" << endl << endl;
-  cout << "Once, the object begins tracking, user can adjust saturation and lightness of color on Trackbars" << endl;
+  cout << "Once, the object begins tracking, user can adjust saturation and lightness of color on "
+          "Trackbars"
+       << endl;
   cout << "Select image if necessary" << endl;
   cout << "To exit tracking, click on stream feed and hit 'ESC'" << endl << endl;
   cout << "Caffe Model begins to identify object" << endl;
@@ -191,12 +198,15 @@ track_and_identify(int argc, char** argv) {
     return -1;
   }
   createTrackbars();
-  namedWindow("Histogram", 0);                      // Histrogram box disaply name
-  namedWindow("Object Tracker", 0);                 // Object tracker box display name
-  setMouseCallback("Object Tracker", userMouse, 0); // User can draw inside of the Object tracker box display
+  namedWindow("Histogram", 0);      // Histrogram box disaply name
+  namedWindow("Object Tracker", 0); // Object tracker box display name
+  setMouseCallback("Object Tracker",
+                   userMouse,
+                   0); // User can draw inside of the Object tracker box display
 
-  cv::Mat frame, hsv, hue, mask, hist, histimg = cv::Mat::zeros(400, 640, CV_8UC3),
-                                       backproj; // setting up the matrix holding the colors and frames of histrogram image
+  cv::Mat frame, hsv, hue, mask, hist,
+      histimg = cv::Mat::zeros(400, 640, CV_8UC3),
+      backproj; // setting up the matrix holding the colors and frames of histrogram image
   bool pause = false;
 
   for(;;) {
@@ -214,7 +224,9 @@ track_and_identify(int argc, char** argv) {
       if(inputWindowSize) {
         int _vmin = vmin, _vmax = vmax;
 
-        inRange(hsv, Scalar(0, smin, MIN(_vmin, _vmax)), Scalar(180, 256, MAX(_vmin, _vmax)),
+        inRange(hsv,
+                Scalar(0, smin, MIN(_vmin, _vmax)),
+                Scalar(180, 256, MAX(_vmin, _vmax)),
                 mask); // takes range of trackbar values in order to adjust noise
         int ch[] = {0, 0};
         hue.create(hsv.size(), hsv.depth());
@@ -222,11 +234,13 @@ track_and_identify(int argc, char** argv) {
 
         if(inputWindowSize < 0) {
           // Object has been selected by user, set up CAMShift search properties once
-          cv::Mat roi(hue, boundingbox), maskroi(mask, boundingbox); // creating a matrix that will hold the bounding box
+          cv::Mat roi(hue, boundingbox),
+              maskroi(mask, boundingbox); // creating a matrix that will hold the bounding box
           calcHist(&roi, 1, 0, maskroi, hist, 1, &hue_size, &phranges);
           normalize(hist, hist, 0, 255, NORM_MINMAX);
-          cv::Mat image_save = image(boundingbox).clone(); // savind the image of the bounding box from the roi
-          imwrite("save.jpg", image_save);                 // saves boundingbox as an image
+          cv::Mat image_save =
+              image(boundingbox).clone();  // savind the image of the bounding box from the roi
+          imwrite("save.jpg", image_save); // saves boundingbox as an image
           //-------------------------
           //---------------------
           trackingBox = boundingbox;
@@ -236,14 +250,17 @@ track_and_identify(int argc, char** argv) {
           histimg = Scalar::all(0);
           int binW = histimg.cols / hue_size;
           cv::Mat buf(1, hue_size, CV_8UC3);
-          for(int i = 0; i < hue_size; i++) buf.at<Vec3b>(i) = Vec3b(saturate_cast<uchar>(i * 180. / hue_size), 255, 255);
+          for(int i = 0; i < hue_size; i++)
+            buf.at<Vec3b>(i) = Vec3b(saturate_cast<uchar>(i * 180. / hue_size), 255, 255);
           cvtColor(buf, buf, COLOR_HSV2BGR);
 
           for(int i = 0; i < hue_size; i++) {
-            int val = saturate_cast<int>(hist.at<float>(i) * histimg.rows / 255); // value of the histogram
+            int val = saturate_cast<int>(hist.at<float>(i) * histimg.rows /
+                                         255); // value of the histogram
             rectangle(histimg,
                       cv::Point(i * binW,
-                                histimg.rows), // value from the rectangle of selected object to convert into the
+                                histimg.rows), // value from the rectangle of selected object to
+                                               // convert into the
                       // colored histogram
                       cv::Point((i + 1) * binW, histimg.rows - val),
                       Scalar(buf.at<Vec3b>(i)),
@@ -255,11 +272,17 @@ track_and_identify(int argc, char** argv) {
         // Perform CAMShift algorithm
         calcBackProject(&hue, 1, 0, hist, backproj, &phranges);
         backproj &= mask;
-        RotatedRect trackBox = CamShift(backproj, trackingBox, TermCriteria(TermCriteria::EPS | TermCriteria::COUNT, 0,
-                                                                            1)); // using opencv's function criteria for tracking window
+        RotatedRect trackBox =
+            CamShift(backproj,
+                     trackingBox,
+                     TermCriteria(TermCriteria::EPS | TermCriteria::COUNT,
+                                  0,
+                                  1)); // using opencv's function criteria for tracking window
         if(trackingBox.area() <= 1) {
           int cols = backproj.cols, rows = backproj.rows, r = (MIN(cols, rows) + 5) / 6;
-          trackingBox = Rect(trackingBox.x - r, trackingBox.y - r, trackingBox.x + r, trackingBox.y + r) & Rect(0, 0, cols, rows);
+          trackingBox =
+              Rect(trackingBox.x - r, trackingBox.y - r, trackingBox.x + r, trackingBox.y + r) &
+              Rect(0, 0, cols, rows);
         }
 
         if(backprojMode)
@@ -288,12 +311,13 @@ track_and_identify(int argc, char** argv) {
     }
   }
 
-  // next few lines to access caffe model files and output errors are referenced from dnn module of OpenCV library
-  // rest of the code is created from scratch by learning OpenCV 3
-  CV_TRACE_FUNCTION();                                  // openCV function
-  String modelTxt = "bvlc_googlenet.prototxt";          // Accesing the caffe model files
-  String modelBin = "bvlc_googlenet.caffemodel";        // Accesing the caffe model files
-  String imageFile = (argc > 1) ? argv[1] : "save.jpg"; // calls boundingbox image instead of entire camera frame
+  // next few lines to access caffe model files and output errors are referenced from dnn module of
+  // OpenCV library rest of the code is created from scratch by learning OpenCV 3
+  CV_TRACE_FUNCTION();                           // openCV function
+  String modelTxt = "bvlc_googlenet.prototxt";   // Accesing the caffe model files
+  String modelBin = "bvlc_googlenet.caffemodel"; // Accesing the caffe model files
+  String imageFile =
+      (argc > 1) ? argv[1] : "save.jpg"; // calls boundingbox image instead of entire camera frame
   Net net = dnn::readNetFromCaffe(modelTxt, modelBin);
   if(net.empty()) { // if reading from caffe model is not successful
     std::cerr << "Can't load network by using the following files: " << std::endl;
@@ -310,7 +334,10 @@ track_and_identify(int argc, char** argv) {
     exit(-1);
   }
   // GoogLeNet accepts only specific sized RGB-images
-  cv::Mat inputBlob = blobFromImage(img, 1, Size(224, 224), Scalar(104, 117, 123)); // Convert cv::Mat to batch of images
+  cv::Mat inputBlob = blobFromImage(img,
+                                    1,
+                                    Size(224, 224),
+                                    Scalar(104, 117, 123)); // Convert cv::Mat to batch of images
   cv::Mat prob;
   cv::TickMeter t;
   for(int i = 0; i < 10; i++) { // setting # of iterations for blob dnn method recognition
@@ -326,11 +353,15 @@ track_and_identify(int argc, char** argv) {
 
   // Where caffe model detection begins
   std::vector<String> classNames = readClassNames();
-  // This is where caffe model will be used to determine the what the object is that is being tracked
-  cout << "Best class: #" << classId << " Object Identified as '" << classNames.at(classId) << "'" << endl;
-  cout << "Probability: " << classProb * 100 << "%" << endl; // It also determines the probability of that object being the detected correctly
+  // This is where caffe model will be used to determine the what the object is that is being
+  // tracked
+  cout << "Best class: #" << classId << " Object Identified as '" << classNames.at(classId) << "'"
+       << endl;
+  cout << "Probability: " << classProb * 100 << "%"
+       << endl; // It also determines the probability of that object being the detected correctly
   // The time it took to detected the correct item
-  cout << "Time: " << (double)t.getTimeMilli() / t.getCounter() << " ms (average from " << t.getCounter() << " iterations)" << endl;
+  cout << "Time: " << (double)t.getTimeMilli() / t.getCounter() << " ms (average from "
+       << t.getCounter() << " iterations)" << endl;
 }
 // Declearing variables for the contour program
 cv::Mat src;
@@ -344,9 +375,12 @@ int
 bg_sub_contour(int argc, char** argv) {
 
   cout << "A camera will be turned on that displays a user's threshold feed." << endl;
-  cout << "This feed lets the user adjust the lightness of the colour, saturation and hue using the provided trackbars." << endl;
+  cout << "This feed lets the user adjust the lightness of the colour, saturation and hue using "
+          "the provided trackbars."
+       << endl;
   cout << "After the user gets a satisfying frame, press ESC on the feed" << endl;
-  cout << "Use OpenCV's built in Canny algorithm to color the contours how the user prefers" << endl; // instructions
+  cout << "Use OpenCV's built in Canny algorithm to color the contours how the user prefers"
+       << endl; // instructions
   cout << "Press Enter on the Contour screen to exit the program" << endl << endl;
 
   cv::Mat streamFeed; // matrix storing frames from webcam feed
@@ -366,7 +400,9 @@ bg_sub_contour(int argc, char** argv) {
     stream.read(streamFeed); // stores image to matrix
 
     cvtColor(streamFeed, hsv, COLOR_BGR2HSV); // converting from BGR color space to HSV
-    inRange(hsv, Scalar(hueMin, smin, vmin), Scalar(hueMax, smax, vmax),
+    inRange(hsv,
+            Scalar(hueMin, smin, vmin),
+            Scalar(hueMax, smax, vmax),
             threshold); // takes range of min and max values and outputs into threshold matrix
 
     imshow("Threshold feed", threshold); // displays the produced thresh image very smoothly
@@ -384,7 +420,9 @@ bg_sub_contour(int argc, char** argv) {
     return -1;
   }
   cvtColor(src, src_gray, COLOR_BGR2GRAY);
-  blur(src_gray, src_gray, Size(3, 3)); // blurs saved image using a normalized filter -> openCV helper function
+  blur(src_gray,
+       src_gray,
+       Size(3, 3)); // blurs saved image using a normalized filter -> openCV helper function
   const char* source_window = "Source";
   namedWindow(source_window, WINDOW_AUTOSIZE); // using canny algorithm from openCV
   imshow(source_window, src);
@@ -399,14 +437,34 @@ contour_figure(int, void*) {
   cv::Mat canny_output; // stores canny output
   std::vector<std::vector<cv::Point>> contours;
   std::vector<Vec4i> hierarchy;
-  Canny(src_gray, canny_output, thresh, thresh * 2, 3);                                             // gathers the edges of the image, marks them in the output map
-  findContours(canny_output, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, cv::Point(0, 0)); // retrives the countour from the binary image
+  Canny(src_gray,
+        canny_output,
+        thresh,
+        thresh * 2,
+        3); // gathers the edges of the image, marks them in the output map
+  findContours(canny_output,
+               contours,
+               hierarchy,
+               RETR_TREE,
+               CHAIN_APPROX_SIMPLE,
+               cv::Point(0, 0)); // retrives the countour from the binary image
 
   // draw contours
-  cv::Mat drawing = cv::Mat::zeros(canny_output.size(), CV_8UC3); // stores the output of canny to the columns of cv::Mat
+  cv::Mat drawing = cv::Mat::zeros(canny_output.size(),
+                                   CV_8UC3); // stores the output of canny to the columns of cv::Mat
   for(size_t i = 0; i < contours.size(); i++) {
-    Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255)); // changes scalar colours based on various edges
-    drawContours(drawing, contours, (int)i, color, 2, 8, hierarchy, 0, cv::Point());      // adds colours while also drawing the
+    Scalar color = Scalar(rng.uniform(0, 255),
+                          rng.uniform(0, 255),
+                          rng.uniform(0, 255)); // changes scalar colours based on various edges
+    drawContours(drawing,
+                 contours,
+                 (int)i,
+                 color,
+                 2,
+                 8,
+                 hierarchy,
+                 0,
+                 cv::Point()); // adds colours while also drawing the
     // contour lines
   }
 
@@ -424,8 +482,13 @@ main() {
   centerstring("PURSUIT OF COLOR SILHOUETTE");
   cout << endl << endl;
   cout << "Welcome to Pursuit of Color Silhouette!" << endl << endl << endl;
-  cout << "An interactive program that lets users have with objects near their surroundings." << endl << endl;
-  cout << "Lets begin by selecting one of the following options:" << endl << endl << "(Instructions are provided after selecting an option)" << endl << endl;
+  cout << "An interactive program that lets users have with objects near their surroundings."
+       << endl
+       << endl;
+  cout << "Lets begin by selecting one of the following options:" << endl
+       << endl
+       << "(Instructions are provided after selecting an option)" << endl
+       << endl;
   cout << "1. Track a selected object based on its color! " << endl << endl;
   cout << "2. Create Abstract Art with your surrounding objects using contours! " << endl << endl;
   cout << "Press 1 or 2 and then ENTER" << endl << endl;

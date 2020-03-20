@@ -119,8 +119,9 @@ main(int argc, char** argv) {
     if(writeOut) {
 
       // DON'T mind the following warning
-      // OpenCV: FFMPEG: tag 0x47504a4d/'MJPG' is not supported with codec id 8 and format 'mjpeg / raw MJPEG video'
-      // it should work anyways = after running mjpg_streamer and show it on another pc via javascript
+      // OpenCV: FFMPEG: tag 0x47504a4d/'MJPG' is not supported with codec id 8 and format 'mjpeg /
+      // raw MJPEG video' it should work anyways = after running mjpg_streamer and show it on
+      // another pc via javascript
 
       VideoWriter outStream(outFile, codec_id, 2, Size(imgSizeX, imgSizeY), isOutputColored);
       if(outStream.isOpened()) {

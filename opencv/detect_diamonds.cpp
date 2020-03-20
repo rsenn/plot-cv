@@ -46,21 +46,22 @@ using namespace cv;
 
 namespace {
 const char* about = "Detect ChArUco markers";
-const char* keys = "{sl       |       | Square side length (in meters) }"
-                   "{ml       |       | Marker side length (in meters) }"
-                   "{d        |       | dictionary: DICT_4X4_50=0, DICT_4X4_100=1, DICT_4X4_250=2,"
-                   "DICT_4X4_1000=3, DICT_5X5_50=4, DICT_5X5_100=5, DICT_5X5_250=6, DICT_5X5_1000=7, "
-                   "DICT_6X6_50=8, DICT_6X6_100=9, DICT_6X6_250=10, DICT_6X6_1000=11, DICT_7X7_50=12,"
-                   "DICT_7X7_100=13, DICT_7X7_250=14, DICT_7X7_1000=15, DICT_ARUCO_ORIGINAL = 16}"
-                   "{c        |       | Output file with calibrated camera parameters }"
-                   "{as       |       | Automatic scale. The provided number is multiplied by the last"
-                   "diamond id becoming an indicator of the square length. In this case, the -sl and "
-                   "-ml are only used to know the relative length relation between squares and markers }"
-                   "{v        |       | Input from video file, if ommited, input comes from camera }"
-                   "{ci       | 0     | Camera id if input doesnt come from video (-v) }"
-                   "{dp       |       | File of marker detector parameters }"
-                   "{rs       |       | Apply refind strategy }"
-                   "{r        |       | show rejected candidates too }";
+const char* keys =
+    "{sl       |       | Square side length (in meters) }"
+    "{ml       |       | Marker side length (in meters) }"
+    "{d        |       | dictionary: DICT_4X4_50=0, DICT_4X4_100=1, DICT_4X4_250=2,"
+    "DICT_4X4_1000=3, DICT_5X5_50=4, DICT_5X5_100=5, DICT_5X5_250=6, DICT_5X5_1000=7, "
+    "DICT_6X6_50=8, DICT_6X6_100=9, DICT_6X6_250=10, DICT_6X6_1000=11, DICT_7X7_50=12,"
+    "DICT_7X7_100=13, DICT_7X7_250=14, DICT_7X7_1000=15, DICT_ARUCO_ORIGINAL = 16}"
+    "{c        |       | Output file with calibrated camera parameters }"
+    "{as       |       | Automatic scale. The provided number is multiplied by the last"
+    "diamond id becoming an indicator of the square length. In this case, the -sl and "
+    "-ml are only used to know the relative length relation between squares and markers }"
+    "{v        |       | Input from video file, if ommited, input comes from camera }"
+    "{ci       | 0     | Camera id if input doesnt come from video (-v) }"
+    "{dp       |       | File of marker detector parameters }"
+    "{rs       |       | Apply refind strategy }"
+    "{r        |       | show rejected candidates too }";
 } // namespace
 
 /**
@@ -146,7 +147,8 @@ main(int argc, char* argv[]) {
     return 0;
   }
 
-  Ptr<aruco::Dictionary> dictionary = aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
+  Ptr<aruco::Dictionary> dictionary =
+      aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
 
   Mat camMatrix, distCoeffs;
   if(estimatePose) {
@@ -182,16 +184,25 @@ main(int argc, char* argv[]) {
     vector<Vec3d> rvecs, tvecs;
 
     // detect markers
-    aruco::detectMarkers(image, dictionary, markerCorners, markerIds, detectorParams, rejectedMarkers);
+    aruco::detectMarkers(
+        image, dictionary, markerCorners, markerIds, detectorParams, rejectedMarkers);
 
     // detect diamonds
     if(markerIds.size() > 0)
-      aruco::detectCharucoDiamond(image, markerCorners, markerIds, squareLength / markerLength, diamondCorners, diamondIds, camMatrix, distCoeffs);
+      aruco::detectCharucoDiamond(image,
+                                  markerCorners,
+                                  markerIds,
+                                  squareLength / markerLength,
+                                  diamondCorners,
+                                  diamondIds,
+                                  camMatrix,
+                                  distCoeffs);
 
     // estimate diamond pose
     if(estimatePose && diamondIds.size() > 0) {
       if(!autoScale) {
-        aruco::estimatePoseSingleMarkers(diamondCorners, squareLength, camMatrix, distCoeffs, rvecs, tvecs);
+        aruco::estimatePoseSingleMarkers(
+            diamondCorners, squareLength, camMatrix, distCoeffs, rvecs, tvecs);
       } else {
         // if autoscale, extract square size from last diamond id
         for(unsigned int i = 0; i < diamondCorners.size(); i++) {
@@ -199,7 +210,8 @@ main(int argc, char* argv[]) {
           vector<vector<Point2f>> currentCorners;
           vector<Vec3d> currentRvec, currentTvec;
           currentCorners.push_back(diamondCorners[i]);
-          aruco::estimatePoseSingleMarkers(currentCorners, autoSquareLength, camMatrix, distCoeffs, currentRvec, currentTvec);
+          aruco::estimatePoseSingleMarkers(
+              currentCorners, autoSquareLength, camMatrix, distCoeffs, currentRvec, currentTvec);
           rvecs.push_back(currentRvec[0]);
           tvecs.push_back(currentTvec[0]);
         }
@@ -226,7 +238,9 @@ main(int argc, char* argv[]) {
       aruco::drawDetectedDiamonds(imageCopy, diamondCorners, diamondIds);
 
       if(estimatePose) {
-        for(unsigned int i = 0; i < diamondIds.size(); i++) aruco::drawAxis(imageCopy, camMatrix, distCoeffs, rvecs[i], tvecs[i], squareLength * 0.5f);
+        for(unsigned int i = 0; i < diamondIds.size(); i++)
+          aruco::drawAxis(
+              imageCopy, camMatrix, distCoeffs, rvecs[i], tvecs[i], squareLength * 0.5f);
       }
     }
 

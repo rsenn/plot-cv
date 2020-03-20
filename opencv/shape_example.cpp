@@ -17,7 +17,8 @@ static void
 help() {
   printf("\n"
          "This program demonstrates a method for shape comparisson based on Shape Context\n"
-         "You should run the program providing a number between 1 and 20 for selecting an image in the folder "
+         "You should run the program providing a number between 1 and 20 for selecting an image in "
+         "the folder "
          "../data/shape_sample.\n"
          "Call\n"
          "./shape_example [number between 1 and 20, 1 default]\n\n");
@@ -98,7 +99,8 @@ main(int argc, char** argv) {
       bestcv::Match = ii;
       bestDis = dis;
     }
-    std::cout << " distance between " << queryName.str() << " and " << iiname.str() << " is: " << dis << std::endl;
+    std::cout << " distance between " << queryName.str() << " and " << iiname.str()
+              << " is: " << dis << std::endl;
   }
   destroyWindow("TEST");
   stringstream bestname;

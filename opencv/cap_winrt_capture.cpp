@@ -5,24 +5,25 @@
 //
 // (3 - clause BSD License)
 //
-// Redistribution and use in source and binary forms, with or without modification, are permitted provided that
-// the following conditions are met:
+// Redistribution and use in source and binary forms, with or without modification, are permitted
+// provided that the following conditions are met:
 //
-// 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the
-// following disclaimer.
-// 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
-// following disclaimer in the documentation and/or other materials provided with the distribution.
-// 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or
-// promote products derived from this software without specific prior written permission.
+// 1. Redistributions of source code must retain the above copyright notice, this list of conditions
+// and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright notice, this list of
+// conditions and the following disclaimer in the documentation and/or other materials provided with
+// the distribution.
+// 3. Neither the name of the copyright holder nor the names of its contributors may be used to
+// endorse or promote products derived from this software without specific prior written permission.
 //
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
-// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-// PARTICULAR PURPOSE ARE DISCLAIMED.IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
-// DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES(INCLUDING, BUT NOT LIMITED TO,
-// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING
-// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-// POSSIBILITY OF SUCH DAMAGE.
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+// IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+// WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "precomp.hpp"
 #include "cap_winrt_capture.hpp"
@@ -46,7 +47,7 @@ namespace cv {
 
 /******************************* exported API functions **************************************/
 
-template <typename... Args>
+template<typename... Args>
 void
 winrt_startMessageLoop(std::function<void(Args...)>&& callback, Args... args) {
   auto asyncTask = ::concurrency::create_async([=](::concurrency::progress_reporter<int> reporter) {
@@ -56,19 +57,20 @@ winrt_startMessageLoop(std::function<void(Args...)>&& callback, Args... args) {
     callback(args...);
   });
 
-  asyncTask->Progress = ref new AsyncActionProgressHandler<int>([=](IAsyncActionWithProgress<int> ^ act, int progress) {
-    int action = progress;
+  asyncTask->Progress = ref new AsyncActionProgressHandler<int>(
+      [=](IAsyncActionWithProgress<int> ^ act, int progress) {
+        int action = progress;
 
-    // these actions will be processed on the UI thread asynchronously
-    switch(action) {
-      case OPEN_CAMERA: VideoioBridge::getInstance().openCamera(); break;
-      case CLOSE_CAMERA: Video::getInstance().closeGrabber(); break;
-      case UPDATE_IMAGE_ELEMENT: VideoioBridge::getInstance().updateFrameContainer(); break;
-    }
-  });
+        // these actions will be processed on the UI thread asynchronously
+        switch(action) {
+          case OPEN_CAMERA: VideoioBridge::getInstance().openCamera(); break;
+          case CLOSE_CAMERA: Video::getInstance().closeGrabber(); break;
+          case UPDATE_IMAGE_ELEMENT: VideoioBridge::getInstance().updateFrameContainer(); break;
+        }
+      });
 }
 
-template <typename... Args>
+template<typename... Args>
 void
 winrt_startMessageLoop(void callback(Args...), Args... args) {
   winrt_startMessageLoop(std::function<void(Args...)>(callback), args...);
@@ -108,7 +110,9 @@ winrt_setFrameContainer(::Windows::UI::Xaml::Controls::Image ^ image) {
 
 /********************************* VideoCapture_WinRT class ****************************/
 
-VideoCapture_WinRT::VideoCapture_WinRT(int device) : started(false) { VideoioBridge::getInstance().setDeviceIndex(device); }
+VideoCapture_WinRT::VideoCapture_WinRT(int device) : started(false) {
+  VideoioBridge::getInstance().setDeviceIndex(device);
+}
 
 bool
 VideoCapture_WinRT::isOpened() const {

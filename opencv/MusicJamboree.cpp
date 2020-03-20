@@ -73,8 +73,9 @@ main(int argc, char** argv) {
       if(i - last != 1) {
         if(first != -1) {
           avgrows.push_back(((float)last + (float)first) / 2.0);
-          staffbegins.push_back(first); // making a std::vector of all the beginning staffline locations
-          staffends.push_back(last);    // making a std::vector of all the end staffline locations
+          staffbegins.push_back(
+              first); // making a std::vector of all the beginning staffline locations
+          staffends.push_back(last); // making a std::vector of all the end staffline locations
         }
         first = i;
       }
@@ -128,9 +129,10 @@ main(int argc, char** argv) {
     barLineIndex += 5;
   }
 
-  // We find groups of staves (staves played together at the same time) by looking for vertical lines
-  // joining adjacent staves.  The number of staves in the first group is stored in "stavesInGroup".
-  // Right now we assume every group in the piece of music has the same number of staves.
+  // We find groups of staves (staves played together at the same time) by looking for vertical
+  // lines joining adjacent staves.  The number of staves in the first group is stored in
+  // "stavesInGroup". Right now we assume every group in the piece of music has the same number of
+  // staves.
 
   cout << "Staves in group: " << stavesInGroup << "\n";
   cout << "Total staves: " << avgrows.size() / 5 << "\n";
@@ -176,8 +178,8 @@ main(int argc, char** argv) {
     // avgrows is a std::vector with the approximate centers of all the staff lines.
     // avgrows[barLineIndex - barLineIndex+4] will have the centers of the region you're processing.
     // staffrows is like avgrows, but it has all the rows considered to be staff lines, in case
-    //   staff lines are more than a pixel thick.  You can do some magic to find all the lines you need
-    //   to erase.
+    //   staff lines are more than a pixel thick.  You can do some magic to find all the lines you
+    //   need to erase.
     // stavesInGroup has the number of staves grouped together, group has the current group index.
 
     // The next 3 lines show you an easy way to display an image using opencv.
@@ -230,8 +232,9 @@ main(int argc, char** argv) {
 void
 removeStaves(cv::Mat image, Vector<int> firstVec, Vector<int> endVec, cv::Mat resultImage) {
 
-  // loop through each first vec, make the lines white in result Image from firstVec value to endVec value if
-  // pixel preceding first vec in image is not black or image succeeding end vec in image is not black
+  // loop through each first vec, make the lines white in result Image from firstVec value to endVec
+  // value if pixel preceding first vec in image is not black or image succeeding end vec in image
+  // is not black
 
   for(int i = 0; i < firstVec.size(); i++) {
     int sb = firstVec[i]; // index of beginning of staff line area in image
@@ -268,7 +271,8 @@ createCookBook(cv::Mat staveReg, int rightIndex) {
 
   threshold(staveReg, threshold_output, thresh, 255, THRESH_BINARY);
   /// Find contours
-  findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+  findContours(
+      threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Approximate contours to polygons + get bounding rects and circles
   std::vector<std::vector<cv::Point>> contours_poly(contours.size());
@@ -349,7 +353,8 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
 
   threshold(staveReg, threshold_output, thresh, 255, THRESH_BINARY);
   /// Find contours
-  findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+  findContours(
+      threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Approximate contours to polygons + get bounding rects and circles
   std::vector<std::vector<cv::Point>> contours_poly(contours.size());
@@ -374,15 +379,14 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
   for(int i = 0; i < contours.size(); i++) {
     // now have all contours and all bounding rectangles for contours
     // screen for any rectangles that are of size smaller than the cookbook templates.
-    // if of appropriate size, run localmin max stuff for template matching withing window vs template to find matches.
-    // so for this
+    // if of appropriate size, run localmin max stuff for template matching withing window vs
+    // template to find matches. so for this
 
     // couple things to think about.
     // can continuously apply localminMax to the template until it falls below a certain threshold
 
-    // for any rectangle that you find a match above a certain threshold, record a rectangle with coded colors, but
-    // eventually
-    // a note struct @ that location.
+    // for any rectangle that you find a match above a certain threshold, record a rectangle with
+    // coded colors, but eventually a note struct @ that location.
     cv::Mat result;
     int match_method = CV_TM_SQDIFF;
 
@@ -392,7 +396,8 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
     namedWindow(result_window, CV_WINDOW_AUTOSIZE);
     imshow(result_window, result);
     waitKey();
-    if(boundRect[i].area() >= templateQuarter.size[0] * templateQuarter.size[1] && boundRect[i].area() <= 3 * (templateQuarter.size[0] * templateQuarter.size[1])) {
+    if(boundRect[i].area() >= templateQuarter.size[0] * templateQuarter.size[1] &&
+       boundRect[i].area() <= 3 * (templateQuarter.size[0] * templateQuarter.size[1])) {
       // know you're in business
 
       // construct a new cv::Mat from boundRect coordinates in staveRegion
@@ -426,8 +431,8 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
 
       minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc, cv::Mat());
 
-      /// For SQDIFF and SQDIFF_NORMED, the best matches are lower values. For all the other methods, the higher the
-      /// better
+      /// For SQDIFF and SQDIFF_NORMED, the best matches are lower values. For all the other
+      /// methods, the higher the better
       if(match_method == CV_TM_SQDIFF || match_method == CV_TM_SQDIFF_NORMED) {
         matchLoc = minLoc;
       } else {
@@ -438,7 +443,13 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
 
       if(maxVal > NOTE_THRESHOLD) {
 
-        rectangle(staveReg, cv::Point(matchLoc.x + boundRect[i].tl().x, boundRect[i].tl().y + matchLoc.y), cv::Point(matchLoc.x + boundRect[i].br().x, boundRect[i].br().y + matchLoc.y), Scalar::all(0), 2, 8, 0);
+        rectangle(staveReg,
+                  cv::Point(matchLoc.x + boundRect[i].tl().x, boundRect[i].tl().y + matchLoc.y),
+                  cv::Point(matchLoc.x + boundRect[i].br().x, boundRect[i].br().y + matchLoc.y),
+                  Scalar::all(0),
+                  2,
+                  8,
+                  0);
       }
 
       imshow("stave section", staveReg);

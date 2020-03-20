@@ -59,7 +59,8 @@ thresh_callback(int, void*) {
   /// Detect edges using Threshold
   threshold(src_gray, threshold_output, thresh, 255, THRESH_BINARY);
   /// Find contours
-  findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+  findContours(
+      threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Find the rotated rectangles and ellipses for each contour
   std::vector<RotatedRect> minRect(contours.size());

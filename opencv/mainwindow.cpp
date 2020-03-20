@@ -121,6 +121,6 @@ MainWindow::on_comboBox_currentIndexChanged(int index) {
 //    // Wait until user press some key
 //    waitKey(0);
 //    //Vai chamar o método de cálculo com markedLines como parâmetro
-//    cout<<"Linha inferior: "<<markedLines.set[0].p1.y<<" Linha superior: "<<markedLines.set[1].p1.y<<endl;
-//    destroyWindow(lineMarkerName);
+//    cout<<"Linha inferior: "<<markedLines.set[0].p1.y<<" Linha superior:
+//    "<<markedLines.set[1].p1.y<<endl; destroyWindow(lineMarkerName);
 //}

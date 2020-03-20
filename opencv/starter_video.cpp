@@ -7,8 +7,8 @@
  *  Modified on: April 17, 2013
  *      Author: Kevin Hughes
  *
- * A starter sample for using OpenCV VideoCapture with capture devices, video files or image sequences
- * easy as CV_PI right?
+ * A starter sample for using OpenCV VideoCapture with capture devices, video files or image
+ * sequences easy as CV_PI right?
  */
 
 #include <opencv2/highgui/highgui.hpp>
@@ -23,7 +23,8 @@ using namespace std;
 namespace {
 void
 help(char** av) {
-  cout << "The program captures frames from a video file, image sequence (01.jpg, 02.jpg ... 10.jpg) or camera "
+  cout << "The program captures frames from a video file, image sequence (01.jpg, 02.jpg ... "
+          "10.jpg) or camera "
           "connected to your computer."
        << endl
        << "Usage:\n"
@@ -31,11 +32,15 @@ help(char** av) {
        << "q,Q,esc -- quit" << endl
        << "space   -- save frame" << endl
        << endl
-       << "\tTo capture from a camera pass the device number. To find the device number, try ls /dev/video*" << endl
+       << "\tTo capture from a camera pass the device number. To find the device number, try ls "
+          "/dev/video*"
+       << endl
        << "\texample: " << av[0] << " 0" << endl
        << "\tYou may also pass a video file instead of a device number" << endl
        << "\texample: " << av[0] << " video.avi" << endl
-       << "\tYou can also pass the path to an image sequence and OpenCV will treat the sequence just like a video." << endl
+       << "\tYou can also pass the path to an image sequence and OpenCV will treat the sequence "
+          "just like a video."
+       << endl
        << "\texample: " << av[0] << " right%%02d.jpg" << endl;
 }
 
@@ -54,7 +59,8 @@ process(VideoCapture& capture) {
       break;
 
     imshow(window_name, frame);
-    char key = (char)waitKey(30); // delay N millis, usually long enough to display and capture input
+    char key =
+        (char)waitKey(30); // delay N millis, usually long enough to display and capture input
 
     switch(key) {
       case 'q':
@@ -81,8 +87,10 @@ main(int ac, char** av) {
     return 1;
   }
   std::string arg = av[1];
-  VideoCapture capture(arg); // try to open string, this will attempt to open it as a video file or image sequence
-  if(!capture.isOpened())    // if this fails, try to open as a video camera, through the use of an integer param
+  VideoCapture capture(
+      arg); // try to open string, this will attempt to open it as a video file or image sequence
+  if(!capture.isOpened()) // if this fails, try to open as a video camera, through the use of an
+                          // integer param
     capture.open(atoi(arg.c_str()));
   if(!capture.isOpened()) {
     cerr << "Failed to open the video device, video file or image sequence!\n" << endl;

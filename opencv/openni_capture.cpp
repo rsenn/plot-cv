@@ -17,7 +17,8 @@ help() {
           "   CV_CAP_OPENNI_POINT_CLOUD_MAP      - XYZ in meters (CV_32FC3)\n"
           "   CV_CAP_OPENNI_DISPARITY_MAP        - disparity in pixels (CV_8UC1)\n"
           "   CV_CAP_OPENNI_DISPARITY_MAP_32F    - disparity in pixels (CV_32FC1)\n"
-          "   CV_CAP_OPENNI_VALID_DEPTH_MASK     - mask of valid pixels (not ocluded, not shaded etc.) (CV_8UC1)\n"
+          "   CV_CAP_OPENNI_VALID_DEPTH_MASK     - mask of valid pixels (not ocluded, not shaded "
+          "etc.) (CV_8UC1)\n"
           "2.) Data given from RGB image generator\n"
           "   CV_CAP_OPENNI_BGR_IMAGE            - color image (CV_8UC3)\n"
           "   CV_CAP_OPENNI_GRAY_IMAGE           - gray image (CV_8UC1)\n"
@@ -84,18 +85,26 @@ getMaxDisparity(VideoCapture& capture) {
 
 static void
 printCommandLineParams() {
-  cout << "-cd       Colorized disparity? (0 or 1; 1 by default) Ignored if disparity map is not selected to show." << endl;
-  cout << "-fmd      Fixed max disparity? (0 or 1; 0 by default) Ignored if disparity map is not colorized (-cd 0)." << endl;
-  cout << "-mode     image mode: resolution and fps, supported three values:  0 - CV_CAP_OPENNI_VGA_30HZ, 1 - "
+  cout << "-cd       Colorized disparity? (0 or 1; 1 by default) Ignored if disparity map is not "
+          "selected to show."
+       << endl;
+  cout << "-fmd      Fixed max disparity? (0 or 1; 0 by default) Ignored if disparity map is not "
+          "colorized (-cd 0)."
+       << endl;
+  cout << "-mode     image mode: resolution and fps, supported three values:  0 - "
+          "CV_CAP_OPENNI_VGA_30HZ, 1 - "
           "CV_CAP_OPENNI_SXGA_15HZ,"
        << endl;
-  cout << "          2 - CV_CAP_OPENNI_SXGA_30HZ (0 by default). Ignored if rgb image or gray image are not selected "
+  cout << "          2 - CV_CAP_OPENNI_SXGA_30HZ (0 by default). Ignored if rgb image or gray "
+          "image are not selected "
           "to show."
        << endl;
-  cout << "-m        Mask to set which output images are need. It is a string of size 5. Each element of this is '0' "
+  cout << "-m        Mask to set which output images are need. It is a string of size 5. Each "
+          "element of this is '0' "
           "or '1' and"
        << endl;
-  cout << "          determine: is depth map, disparity map, valid pixels mask, rgb image, gray image need or not "
+  cout << "          determine: is depth map, disparity map, valid pixels mask, rgb image, gray "
+          "image need or not "
           "(correspondently)?"
        << endl;
   cout << "          By default -m 01010 i.e. disparity map and rgb image will be shown." << endl;
@@ -103,7 +112,14 @@ printCommandLineParams() {
 }
 
 static void
-parseCommandLine(int argc, char* argv[], bool& isColorizeDisp, bool& isFixedMaxDisp, int& imageMode, bool retrievedImageFlags[], string& filename, bool& isFileReading) {
+parseCommandLine(int argc,
+                 char* argv[],
+                 bool& isColorizeDisp,
+                 bool& isFixedMaxDisp,
+                 int& imageMode,
+                 bool retrievedImageFlags[],
+                 string& filename,
+                 bool& isFileReading) {
   // set defaut values
   isColorizeDisp = true;
   isFixedMaxDisp = false;
@@ -162,8 +178,8 @@ parseCommandLine(int argc, char* argv[], bool& isColorizeDisp, bool& isFixedMaxD
 }
 
 /*
- * To work with Kinect or XtionPRO the user must install OpenNI library and PrimeSensorModule for OpenNI and
- * configure OpenCV with WITH_OPENNI flag is ON (using CMake).
+ * To work with Kinect or XtionPRO the user must install OpenNI library and PrimeSensorModule for
+ * OpenNI and configure OpenCV with WITH_OPENNI flag is ON (using CMake).
  */
 int
 main(int argc, char* argv[]) {
@@ -172,7 +188,14 @@ main(int argc, char* argv[]) {
   bool retrievedImageFlags[5];
   string filename;
   bool isVideoReading;
-  parseCommandLine(argc, argv, isColorizeDisp, isFixedMaxDisp, imageMode, retrievedImageFlags, filename, isVideoReading);
+  parseCommandLine(argc,
+                   argv,
+                   isColorizeDisp,
+                   isFixedMaxDisp,
+                   imageMode,
+                   retrievedImageFlags,
+                   filename,
+                   isVideoReading);
 
   cout << "Device opening ..." << endl;
   VideoCapture capture;
@@ -191,16 +214,27 @@ main(int argc, char* argv[]) {
   if(!isVideoReading) {
     bool modeRes = false;
     switch(imageMode) {
-      case 0: modeRes = capture.set(CV_CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CV_CAP_OPENNI_VGA_30HZ); break;
-      case 1: modeRes = capture.set(CV_CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CV_CAP_OPENNI_SXGA_15HZ); break;
-      case 2: modeRes = capture.set(CV_CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CV_CAP_OPENNI_SXGA_30HZ); break;
+      case 0:
+        modeRes = capture.set(CV_CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CV_CAP_OPENNI_VGA_30HZ);
+        break;
+      case 1:
+        modeRes = capture.set(CV_CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CV_CAP_OPENNI_SXGA_15HZ);
+        break;
+      case 2:
+        modeRes = capture.set(CV_CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CV_CAP_OPENNI_SXGA_30HZ);
+        break;
       // The following modes are only supported by the Xtion Pro Live
-      case 3: modeRes = capture.set(CV_CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CV_CAP_OPENNI_QVGA_30HZ); break;
-      case 4: modeRes = capture.set(CV_CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CV_CAP_OPENNI_QVGA_60HZ); break;
+      case 3:
+        modeRes = capture.set(CV_CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CV_CAP_OPENNI_QVGA_30HZ);
+        break;
+      case 4:
+        modeRes = capture.set(CV_CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CV_CAP_OPENNI_QVGA_60HZ);
+        break;
       default: CV_Error(CV_StsBadArg, "Unsupported image mode property.\n");
     }
     if(!modeRes)
-      cout << "\nThis image mode is not supported by the device, the default value (CV_CAP_OPENNI_SXGA_15HZ) will be "
+      cout << "\nThis image mode is not supported by the device, the default value "
+              "(CV_CAP_OPENNI_SXGA_15HZ) will be "
               "used.\n"
            << endl;
   }
@@ -214,9 +248,12 @@ main(int argc, char* argv[]) {
        << "REGISTRATION     " << capture.get(CV_CAP_PROP_OPENNI_REGISTRATION) << endl;
   if(capture.get(CV_CAP_OPENNI_IMAGE_GENERATOR_PRESENT)) {
     cout << "\nImage generator output mode:" << endl
-         << "FRAME_WIDTH   " << capture.get(CV_CAP_OPENNI_IMAGE_GENERATOR + CV_CAP_PROP_FRAME_WIDTH) << endl
-         << "FRAME_HEIGHT  " << capture.get(CV_CAP_OPENNI_IMAGE_GENERATOR + CV_CAP_PROP_FRAME_HEIGHT) << endl
-         << "FPS           " << capture.get(CV_CAP_OPENNI_IMAGE_GENERATOR + CV_CAP_PROP_FPS) << endl;
+         << "FRAME_WIDTH   " << capture.get(CV_CAP_OPENNI_IMAGE_GENERATOR + CV_CAP_PROP_FRAME_WIDTH)
+         << endl
+         << "FRAME_HEIGHT  "
+         << capture.get(CV_CAP_OPENNI_IMAGE_GENERATOR + CV_CAP_PROP_FRAME_HEIGHT) << endl
+         << "FPS           " << capture.get(CV_CAP_OPENNI_IMAGE_GENERATOR + CV_CAP_PROP_FPS)
+         << endl;
   } else {
     cout << "\nDevice doesn't contain image generator." << endl;
     if(!retrievedImageFlags[0] && !retrievedImageFlags[1] && !retrievedImageFlags[2])
@@ -244,7 +281,9 @@ main(int argc, char* argv[]) {
       if(retrievedImageFlags[1] && capture.retrieve(disparityMap, CV_CAP_OPENNI_DISPARITY_MAP)) {
         if(isColorizeDisp) {
           Mat colorDisparityMap;
-          colorizeDisparity(disparityMap, colorDisparityMap, isFixedMaxDisp ? getMaxDisparity(capture) : -1);
+          colorizeDisparity(disparityMap,
+                            colorDisparityMap,
+                            isFixedMaxDisp ? getMaxDisparity(capture) : -1);
           Mat validColorDisparityMap;
           colorDisparityMap.copyTo(validColorDisparityMap, disparityMap != 0);
           imshow("colorized disparity map", validColorDisparityMap);

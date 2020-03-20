@@ -18,8 +18,10 @@ using namespace cv;
 
 static void
 help(char** av) {
-  cout << "\nThis program demonstrated the use of features2d with the Fast corner detector and brief descriptors\n"
-       << "to track planar objects by computing their homography from the key (training) image to the query (test) "
+  cout << "\nThis program demonstrated the use of features2d with the Fast corner detector and "
+          "brief descriptors\n"
+       << "to track planar objects by computing their homography from the key (training) image to "
+          "the query (test) "
           "image\n\n"
        << endl;
   cout << "usage: " << av[0] << " <video device number>\n" << endl;
@@ -31,7 +33,11 @@ help(char** av) {
 
 namespace {
 void
-drawMatchesRelative(const vector<KeyPoint>& train, const vector<KeyPoint>& query, std::vector<cv::DMatch>& matches, Mat& img, const vector<unsigned char>& mask = vector<unsigned char>()) {
+drawMatchesRelative(const vector<KeyPoint>& train,
+                    const vector<KeyPoint>& query,
+                    std::vector<cv::DMatch>& matches,
+                    Mat& img,
+                    const vector<unsigned char>& mask = vector<unsigned char>()) {
   for(int i = 0; i < (int)matches.size(); i++) {
     if(mask.empty() || mask[i]) {
       Point2f pt_new = query[matches[i].queryIdx].pt;
@@ -76,7 +82,11 @@ warpKeypoints(const Mat& H, const vector<KeyPoint>& in, vector<KeyPoint>& out) {
 
 // Converts matching indices to xy points
 void
-matches2points(const vector<KeyPoint>& train, const vector<KeyPoint>& query, const std::vector<cv::DMatch>& matches, std::vector<cv::Point2f>& pts_train, std::vector<Point2f>& pts_query) {
+matches2points(const vector<KeyPoint>& train,
+               const vector<KeyPoint>& query,
+               const std::vector<cv::DMatch>& matches,
+               std::vector<cv::Point2f>& pts_train,
+               std::vector<Point2f>& pts_query) {
 
   pts_train.clear();
   pts_query.clear();
@@ -151,7 +161,9 @@ main(int ac, char** av) {
 
     detector.detect(gray, query_kpts); // Find interest points
 
-    brief.compute(gray, query_kpts, query_desc); // Compute brief descriptors at each keypoint location
+    brief.compute(gray,
+                  query_kpts,
+                  query_desc); // Compute brief descriptors at each keypoint location
 
     if(!train_kpts.empty()) {
 

@@ -45,11 +45,12 @@ main() {
 
     Mat islenenFrame; // işlenecek frame'in yükleneceği nesne
 
-    // HSV'ye dönüştürülen frame Hmin-max,Smin-max,Vmin-max değer aralıklarına getirilerek isres nesnesine yüklendi
+    // HSV'ye dönüştürülen frame Hmin-max,Smin-max,Vmin-max değer aralıklarına getirilerek isres
+    // nesnesine yüklendi
     inRange(hsvFrame, Scalar(Hmin, Smin, Vmin), Scalar(Hmax, Smax, Vmax), islenenFrame);
 
-    // HSV değerlerine göre asıl almak istenilen görüntünün tamamına ulaşmak için görüntü üzerinde 5x5'lik matrisle
-    // nokta belirginleştirme işlemi yapılıyor
+    // HSV değerlerine göre asıl almak istenilen görüntünün tamamına ulaşmak için görüntü üzerinde
+    // 5x5'lik matrisle nokta belirginleştirme işlemi yapılıyor
     erode(islenenFrame, islenenFrame, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
     dilate(islenenFrame, islenenFrame, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 
@@ -69,14 +70,21 @@ main() {
       int yeniy = yeksen / alan;
 
       if(eskix >= 0 && eskiy >= 0 && yenix >= 0 && yeniy >= 0) { // lokasyonlar sıfırdan büyükse
-        stringstream convert, convert2;                          // ekrana basma için gerekli tür dönüşümleri yapılıyor
+        stringstream convert, convert2; // ekrana basma için gerekli tür dönüşümleri yapılıyor
         convert << yenix;
         string x = convert.str();
         convert2 << yeniy;
         string y = convert2.str();
 
         // görüntünün orta noktasına hesaplanan lokasyonlar yazdırılıyor
-        putText(yeniFrame, x + "," + y, cvPoint(yenix, yeniy), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0, 0, 0), 1, CV_AA);
+        putText(yeniFrame,
+                x + "," + y,
+                cvPoint(yenix, yeniy),
+                FONT_HERSHEY_COMPLEX_SMALL,
+                0.8,
+                cvScalar(0, 0, 0),
+                1,
+                CV_AA);
       }
 
       // yeni lokasyonlar güncelleniyor
@@ -84,7 +92,14 @@ main() {
       eskiy = yeniy;
     }
 
-    putText(yeniFrame, " MAHSERIN 3 ATLISI ", cvPoint(2, 20), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(255, 0, 0), 1, CV_AA);
+    putText(yeniFrame,
+            " MAHSERIN 3 ATLISI ",
+            cvPoint(2, 20),
+            FONT_HERSHEY_COMPLEX_SMALL,
+            0.8,
+            cvScalar(255, 0, 0),
+            1,
+            CV_AA);
 
     imshow("gomuluRenkAlgilama", yeniFrame);
 

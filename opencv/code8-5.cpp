@@ -16,13 +16,14 @@ using namespace boost::filesystem3;
 
 class categorizer {
 private:
-  map<string, Mat> templates, objects, positive_data, negative_data; // maps from category names to data
-  multimap<string, Mat> train_set;                                   // training images, mapped by category name
-  map<string, CvSVM> svms;                                           // trained SVMs, mapped by category name
-  vector<string> category_names;                                     // names of the categories found in TRAIN_FOLDER
-  int categories;                                                    // number of categories
-  int clusters;                                                      // number of clusters for SURF features to build vocabulary
-  Mat vocab;                                                         // vocabulary
+  map<string, Mat> templates, objects, positive_data,
+      negative_data;               // maps from category names to data
+  multimap<string, Mat> train_set; // training images, mapped by category name
+  map<string, CvSVM> svms;         // trained SVMs, mapped by category name
+  vector<string> category_names;   // names of the categories found in TRAIN_FOLDER
+  int categories;                  // number of categories
+  int clusters;                    // number of clusters for SURF features to build vocabulary
+  Mat vocab;                       // vocabulary
 
   // Feature detectors and descriptor extractors
   Ptr<FeatureDetector> featureDetector;
@@ -31,15 +32,17 @@ private:
   Ptr<BOWImgDescriptorExtractor> bowDescriptorExtractor;
   Ptr<FlannBasedMatcher> descriptorMatcher;
 
-  void make_train_set();           // function to build the training set multimap
-  void make_pos_neg();             // function to extract BOW features from training images and organize them into positive and
-                                   // negative samples
-  string remove_extension(string); // function to remove extension from file name, used for organizing templates into categories
+  void make_train_set(); // function to build the training set multimap
+  void make_pos_neg();   // function to extract BOW features from training images and organize them
+                       // into positive and negative samples
+  string remove_extension(string); // function to remove extension from file name, used for
+                                   // organizing templates into categories
 public:
-  categorizer(int);              // constructor
-  void build_vocab();            // function to build the BOW vocabulary
-  void train_classifiers();      // function to train the one-vs-all SVM classifiers for all categories
-  void categorize(VideoCapture); // function to perform real-time object categorization on camera frames
+  categorizer(int);         // constructor
+  void build_vocab();       // function to build the BOW vocabulary
+  void train_classifiers(); // function to train the one-vs-all SVM classifiers for all categories
+  void categorize(
+      VideoCapture); // function to perform real-time object categorization on camera frames
 };
 
 string
@@ -90,7 +93,8 @@ categorizer::make_train_set() {
     // Level 1 means a training image, map that by the current category
     else {
       // File name with path
-      string filename = string(TRAIN_FOLDER) + category + string("/") + (i->path()).filename().string();
+      string filename =
+          string(TRAIN_FOLDER) + category + string("/") + (i->path()).filename().string();
       // Make a pair of string and Mat to insert into multimap
       pair<string, Mat> p(category, imread(filename, CV_LOAD_IMAGE_GRAYSCALE));
       train_set.insert(p);
@@ -131,7 +135,8 @@ categorizer::make_pos_neg() {
   // Debug message
   for(int i = 0; i < categories; i++) {
     string category = category_names[i];
-    cout << "Category " << category << ": " << positive_data[category].rows << " Positives, " << negative_data[category].rows << " Negatives" << endl;
+    cout << "Category " << category << ": " << positive_data[category].rows << " Positives, "
+         << negative_data[category].rows << " Negatives" << endl;
   }
 }
 
@@ -165,8 +170,8 @@ void
 categorizer::train_classifiers() {
   // Set the vocabulary for the BOW descriptor extractor
   bowDescriptorExtractor->setVocabulary(vocab);
-  // Extract BOW descriptors for all training images and organize them into positive and negative samples for each
-  // category
+  // Extract BOW descriptors for all training images and organize them into positive and negative
+  // samples for each category
   make_pos_neg();
 
   for(int i = 0; i < categories; i++) {
@@ -208,7 +213,8 @@ categorizer::categorize(VideoCapture cap) {
     featureDetector->detect(frame_g, kp);
     bowDescriptorExtractor->compute(frame_g, kp, test);
 
-    // Predict using SVMs for all catgories, choose the prediction with the most negative signed distance measure
+    // Predict using SVMs for all catgories, choose the prediction with the most negative signed
+    // distance measure
     float best_score = 777;
     string predicted_category;
     for(int i = 0; i < categories; i++) {

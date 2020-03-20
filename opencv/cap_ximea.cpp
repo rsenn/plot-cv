@@ -124,8 +124,8 @@ CvCaptureCAM_XIMEA::open(const char* serialNumber) {
 
 bool
 CvCaptureCAM_XIMEA::_open() {
-#define HandleXiResult(res)                                                                                                                                                                                                                                                                                \
-  if(res != XI_OK)                                                                                                                                                                                                                                                                                         \
+#define HandleXiResult(res)                                                                        \
+  if(res != XI_OK)                                                                                 \
     goto error;
   int width = 0;
   int height = 0;
@@ -228,7 +228,9 @@ CvCaptureCAM_XIMEA::retrieveFrame(int) {
     case XI_MONO8:
     case XI_RAW8: memcpy(frame->imageData, image.bp, image.width * image.height); break;
     case XI_MONO16:
-    case XI_RAW16: memcpy(frame->imageData, image.bp, image.width * image.height * sizeof(WORD)); break;
+    case XI_RAW16:
+      memcpy(frame->imageData, image.bp, image.width * image.height * sizeof(WORD));
+      break;
     case XI_RGB24:
     case XI_RGB_PLANAR: memcpy(frame->imageData, image.bp, image.width * image.height * 3); break;
     case XI_RGB32: memcpy(frame->imageData, image.bp, image.width * image.height * 4); break;
@@ -268,7 +270,10 @@ CvCaptureCAM_XIMEA::resetCvImage() {
       if(frame->depth != IPL_DEPTH_8U || frame->nChannels != 4)
         do_reset = true;
     } break;
-    default: errMsg("CvCaptureCAM_XIMEA::resetCvImage ERROR: Unknown format.", XI_NOT_SUPPORTED_DATA_FORMAT); return;
+    default:
+      errMsg("CvCaptureCAM_XIMEA::resetCvImage ERROR: Unknown format.",
+             XI_NOT_SUPPORTED_DATA_FORMAT);
+      return;
   }
 
   if(do_reset) {
@@ -278,13 +283,24 @@ CvCaptureCAM_XIMEA::resetCvImage() {
 
     switch(image.frm) {
       case XI_MONO8:
-      case XI_RAW8: frame = cvCreateImage(cvSize(image.width, image.height), IPL_DEPTH_8U, 1); break;
+      case XI_RAW8:
+        frame = cvCreateImage(cvSize(image.width, image.height), IPL_DEPTH_8U, 1);
+        break;
       case XI_MONO16:
-      case XI_RAW16: frame = cvCreateImage(cvSize(image.width, image.height), IPL_DEPTH_16U, 1); break;
+      case XI_RAW16:
+        frame = cvCreateImage(cvSize(image.width, image.height), IPL_DEPTH_16U, 1);
+        break;
       case XI_RGB24:
-      case XI_RGB_PLANAR: frame = cvCreateImage(cvSize(image.width, image.height), IPL_DEPTH_8U, 3); break;
-      case XI_RGB32: frame = cvCreateImage(cvSize(image.width, image.height), IPL_DEPTH_8U, 4); break;
-      default: errMsg("CvCaptureCAM_XIMEA::resetCvImage ERROR: Unknown format.", XI_NOT_SUPPORTED_DATA_FORMAT); return;
+      case XI_RGB_PLANAR:
+        frame = cvCreateImage(cvSize(image.width, image.height), IPL_DEPTH_8U, 3);
+        break;
+      case XI_RGB32:
+        frame = cvCreateImage(cvSize(image.width, image.height), IPL_DEPTH_8U, 4);
+        break;
+      default:
+        errMsg("CvCaptureCAM_XIMEA::resetCvImage ERROR: Unknown format.",
+               XI_NOT_SUPPORTED_DATA_FORMAT);
+        return;
     }
   }
   cvZero(frame);
@@ -1708,26 +1724,52 @@ CvCaptureCAM_XIMEA::errMsg(const char* msg, int errNum) const {
     case XI_TGBUSY: error_message = "Timing generator is busy"; break;
     case XI_IO_WRONG: error_message = "Wrong operation open/write/read/close"; break;
     case XI_ACQUISITION_ALREADY_UP: error_message = "Acquisition already started"; break;
-    case XI_OLD_DRIVER_VERSION: error_message = "Old version of device driver installed to the system."; break;
-    case XI_GET_LAST_ERROR: error_message = "To get error code please call GetLastError function."; break;
+    case XI_OLD_DRIVER_VERSION:
+      error_message = "Old version of device driver installed to the system.";
+      break;
+    case XI_GET_LAST_ERROR:
+      error_message = "To get error code please call GetLastError function.";
+      break;
     case XI_CANT_PROCESS: error_message = "Data can't be processed"; break;
-    case XI_ACQUISITION_STOPED: error_message = "Acquisition has been stopped. It should be started before GetImage."; break;
-    case XI_ACQUISITION_STOPED_WERR: error_message = "Acquisition has been stopped with error."; break;
-    case XI_INVALID_INPUT_ICC_PROFILE: error_message = "Input ICC profile missed or corrupted"; break;
-    case XI_INVALID_OUTPUT_ICC_PROFILE: error_message = "Output ICC profile missed or corrupted"; break;
+    case XI_ACQUISITION_STOPED:
+      error_message = "Acquisition has been stopped. It should be started before GetImage.";
+      break;
+    case XI_ACQUISITION_STOPED_WERR:
+      error_message = "Acquisition has been stopped with error.";
+      break;
+    case XI_INVALID_INPUT_ICC_PROFILE:
+      error_message = "Input ICC profile missed or corrupted";
+      break;
+    case XI_INVALID_OUTPUT_ICC_PROFILE:
+      error_message = "Output ICC profile missed or corrupted";
+      break;
     case XI_DEVICE_NOT_READY: error_message = "Device not ready to operate"; break;
     case XI_SHADING_TOOCONTRAST: error_message = "Shading too contrast"; break;
     case XI_ALREADY_INITIALIZED: error_message = "Module already initialized"; break;
-    case XI_NOT_ENOUGH_PRIVILEGES: error_message = "Application doesn't enough privileges(one or more app"; break;
-    case XI_NOT_COMPATIBLE_DRIVER: error_message = "Installed driver not compatible with current software"; break;
-    case XI_TM_INVALID_RESOURCE: error_message = "TM file was not loaded successfully from resources"; break;
-    case XI_DEVICE_HAS_BEEN_RESETED: error_message = "Device has been reset, abnormal initial state"; break;
+    case XI_NOT_ENOUGH_PRIVILEGES:
+      error_message = "Application doesn't enough privileges(one or more app";
+      break;
+    case XI_NOT_COMPATIBLE_DRIVER:
+      error_message = "Installed driver not compatible with current software";
+      break;
+    case XI_TM_INVALID_RESOURCE:
+      error_message = "TM file was not loaded successfully from resources";
+      break;
+    case XI_DEVICE_HAS_BEEN_RESETED:
+      error_message = "Device has been reset, abnormal initial state";
+      break;
     case XI_NO_DEVICES_FOUND: error_message = "No Devices Found"; break;
-    case XI_RESOURCE_OR_FUNCTION_LOCKED: error_message = "Resource(device) or function locked by mutex"; break;
+    case XI_RESOURCE_OR_FUNCTION_LOCKED:
+      error_message = "Resource(device) or function locked by mutex";
+      break;
     case XI_BUFFER_SIZE_TOO_SMALL: error_message = "Buffer provided by user is too small"; break;
     case XI_COULDNT_INIT_PROCESSOR: error_message = "Couldn't initialize processor."; break;
-    case XI_NOT_INITIALIZED: error_message = "The object/module/procedure/process being referred to has not been started."; break;
-    case XI_RESOURCE_NOT_FOUND: error_message = "Resource not found(could be processor, file, item..)."; break;
+    case XI_NOT_INITIALIZED:
+      error_message = "The object/module/procedure/process being referred to has not been started.";
+      break;
+    case XI_RESOURCE_NOT_FOUND:
+      error_message = "Resource not found(could be processor, file, item..).";
+      break;
     case XI_UNKNOWN_PARAM: error_message = "Unknown parameter"; break;
     case XI_WRONG_PARAM_VALUE: error_message = "Wrong parameter value"; break;
     case XI_WRONG_PARAM_TYPE: error_message = "Wrong parameter type"; break;
@@ -1737,13 +1779,19 @@ CvCaptureCAM_XIMEA::errMsg(const char* msg, int errNum) const {
     case XI_NOT_SUPPORTED_PARAM_INFO: error_message = "Parameter info not supported"; break;
     case XI_NOT_SUPPORTED_DATA_FORMAT: error_message = "Data format not supported"; break;
     case XI_READ_ONLY_PARAM: error_message = "Read only parameter"; break;
-    case XI_BANDWIDTH_NOT_SUPPORTED: error_message = "This camera does not support currently available bandwidth"; break;
+    case XI_BANDWIDTH_NOT_SUPPORTED:
+      error_message = "This camera does not support currently available bandwidth";
+      break;
     case XI_INVALID_FFS_FILE_NAME: error_message = "FFS file selector is invalid or NULL"; break;
     case XI_FFS_FILE_NOT_FOUND: error_message = "FFS file not found"; break;
     case XI_PROC_OTHER_ERROR: error_message = "Processing error - other"; break;
     case XI_PROC_PROCESSING_ERROR: error_message = "Error while image processing."; break;
-    case XI_PROC_INPUT_FORMAT_UNSUPPORTED: error_message = "Input format is not supported for processing."; break;
-    case XI_PROC_OUTPUT_FORMAT_UNSUPPORTED: error_message = "Output format is not supported for processing."; break;
+    case XI_PROC_INPUT_FORMAT_UNSUPPORTED:
+      error_message = "Input format is not supported for processing.";
+      break;
+    case XI_PROC_OUTPUT_FORMAT_UNSUPPORTED:
+      error_message = "Output format is not supported for processing.";
+      break;
     default: error_message = "Unknown error value";
   }
 

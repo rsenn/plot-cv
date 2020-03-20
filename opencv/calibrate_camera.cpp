@@ -52,22 +52,23 @@ const char* about = "Calibration using a ArUco Planar Grid board\n"
                     "  To capture a frame for calibration, press 'c',\n"
                     "  If input comes from video, press any key for next frame\n"
                     "  To finish capturing, press 'ESC' key and calibration starts.\n";
-const char* keys = "{w        |       | Number of squares in X direction }"
-                   "{h        |       | Number of squares in Y direction }"
-                   "{l        |       | Marker side length (in meters) }"
-                   "{s        |       | Separation between two consecutive markers in the grid (in meters) }"
-                   "{d        |       | dictionary: DICT_4X4_50=0, DICT_4X4_100=1, DICT_4X4_250=2,"
-                   "DICT_4X4_1000=3, DICT_5X5_50=4, DICT_5X5_100=5, DICT_5X5_250=6, DICT_5X5_1000=7, "
-                   "DICT_6X6_50=8, DICT_6X6_100=9, DICT_6X6_250=10, DICT_6X6_1000=11, DICT_7X7_50=12,"
-                   "DICT_7X7_100=13, DICT_7X7_250=14, DICT_7X7_1000=15, DICT_ARUCO_ORIGINAL = 16}"
-                   "{@outfile |<none> | Output file with calibrated camera parameters }"
-                   "{v        |       | Input from video file, if ommited, input comes from camera }"
-                   "{ci       | 0     | Camera id if input doesnt come from video (-v) }"
-                   "{dp       |       | File of marker detector parameters }"
-                   "{rs       | false | Apply refind strategy }"
-                   "{zt       | false | Assume zero tangential distortion }"
-                   "{a        |       | Fix aspect ratio (fx/fy) to this value }"
-                   "{pc       | false | Fix the principal point at the center }";
+const char* keys =
+    "{w        |       | Number of squares in X direction }"
+    "{h        |       | Number of squares in Y direction }"
+    "{l        |       | Marker side length (in meters) }"
+    "{s        |       | Separation between two consecutive markers in the grid (in meters) }"
+    "{d        |       | dictionary: DICT_4X4_50=0, DICT_4X4_100=1, DICT_4X4_250=2,"
+    "DICT_4X4_1000=3, DICT_5X5_50=4, DICT_5X5_100=5, DICT_5X5_250=6, DICT_5X5_1000=7, "
+    "DICT_6X6_50=8, DICT_6X6_100=9, DICT_6X6_250=10, DICT_6X6_1000=11, DICT_7X7_50=12,"
+    "DICT_7X7_100=13, DICT_7X7_250=14, DICT_7X7_1000=15, DICT_ARUCO_ORIGINAL = 16}"
+    "{@outfile |<none> | Output file with calibrated camera parameters }"
+    "{v        |       | Input from video file, if ommited, input comes from camera }"
+    "{ci       | 0     | Camera id if input doesnt come from video (-v) }"
+    "{dp       |       | File of marker detector parameters }"
+    "{rs       | false | Apply refind strategy }"
+    "{zt       | false | Assume zero tangential distortion }"
+    "{a        |       | Fix aspect ratio (fx/fy) to this value }"
+    "{pc       | false | Fix the principal point at the center }";
 } // namespace
 
 /**
@@ -103,7 +104,13 @@ readDetectorParameters(string filename, Ptr<aruco::DetectorParameters>& params) 
 /**
  */
 static bool
-saveCameraParams(const string& filename, Size imageSize, float aspectRatio, int flags, const Mat& cameraMatrix, const Mat& distCoeffs, double totalAvgErr) {
+saveCameraParams(const string& filename,
+                 Size imageSize,
+                 float aspectRatio,
+                 int flags,
+                 const Mat& cameraMatrix,
+                 const Mat& distCoeffs,
+                 double totalAvgErr) {
   FileStorage fs(filename, FileStorage::WRITE);
   if(!fs.isOpened())
     return false;
@@ -123,7 +130,12 @@ saveCameraParams(const string& filename, Size imageSize, float aspectRatio, int 
     fs << "aspectRatio" << aspectRatio;
 
   if(flags != 0) {
-    sprintf(buf, "flags: %s%s%s%s", flags & CALIB_USE_INTRINSIC_GUESS ? "+use_intrinsic_guess" : "", flags & CALIB_FIX_ASPECT_RATIO ? "+fix_aspectRatio" : "", flags & CALIB_FIX_PRINCIPAL_POINT ? "+fix_principal_point" : "", flags & CALIB_ZERO_TANGENT_DIST ? "+zero_tangent_dist" : "");
+    sprintf(buf,
+            "flags: %s%s%s%s",
+            flags & CALIB_USE_INTRINSIC_GUESS ? "+use_intrinsic_guess" : "",
+            flags & CALIB_FIX_ASPECT_RATIO ? "+fix_aspectRatio" : "",
+            flags & CALIB_FIX_PRINCIPAL_POINT ? "+fix_principal_point" : "",
+            flags & CALIB_ZERO_TANGENT_DIST ? "+zero_tangent_dist" : "");
   }
 
   fs << "flags" << flags;
@@ -198,10 +210,12 @@ main(int argc, char* argv[]) {
     waitTime = 10;
   }
 
-  Ptr<aruco::Dictionary> dictionary = aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
+  Ptr<aruco::Dictionary> dictionary =
+      aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
 
   // create board object
-  Ptr<aruco::GridBoard> gridboard = aruco::GridBoard::create(markersX, markersY, markerLength, markerSeparation, dictionary);
+  Ptr<aruco::GridBoard> gridboard =
+      aruco::GridBoard::create(markersX, markersY, markerLength, markerSeparation, dictionary);
   Ptr<aruco::Board> board = gridboard.staticCast<aruco::Board>();
 
   // collected frames for calibration
@@ -227,7 +241,13 @@ main(int argc, char* argv[]) {
     image.copyTo(imageCopy);
     if(ids.size() > 0)
       aruco::drawDetectedMarkers(imageCopy, corners, ids);
-    putText(imageCopy, "Press 'c' to add current frame. 'ESC' to finish and calibrate", Point(10, 20), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 0, 0), 2);
+    putText(imageCopy,
+            "Press 'c' to add current frame. 'ESC' to finish and calibrate",
+            Point(10, 20),
+            FONT_HERSHEY_SIMPLEX,
+            0.5,
+            Scalar(255, 0, 0),
+            2);
 
     imshow("out", imageCopy);
     char key = (char)waitKey(waitTime);
@@ -268,9 +288,19 @@ main(int argc, char* argv[]) {
     }
   }
   // calibrate camera
-  repError = aruco::calibrateCameraAruco(allCornersConcatenated, allIdsConcatenated, markerCounterPerFrame, board, imgSize, cameraMatrix, distCoeffs, rvecs, tvecs, calibrationFlags);
+  repError = aruco::calibrateCameraAruco(allCornersConcatenated,
+                                         allIdsConcatenated,
+                                         markerCounterPerFrame,
+                                         board,
+                                         imgSize,
+                                         cameraMatrix,
+                                         distCoeffs,
+                                         rvecs,
+                                         tvecs,
+                                         calibrationFlags);
 
-  bool saveOk = saveCameraParams(outputFile, imgSize, aspectRatio, calibrationFlags, cameraMatrix, distCoeffs, repError);
+  bool saveOk = saveCameraParams(
+      outputFile, imgSize, aspectRatio, calibrationFlags, cameraMatrix, distCoeffs, repError);
 
   if(!saveOk) {
     cerr << "Cannot save output file" << endl;

@@ -42,7 +42,8 @@ public:
   void show_rectified(Size); // function to show live rectified feed from stereo camera
 };
 
-calibrator::calibrator(string _l_path, string _r_path, float _side_length, int _width, int _height) {
+calibrator::calibrator(
+    string _l_path, string _r_path, float _side_length, int _width, int _height) {
   side_length = _side_length;
   width = _width;
   height = _height;
@@ -82,15 +83,33 @@ calibrator::calc_image_points(bool show) {
   for(int i = 0; i < l_images.size(); i++) {
     Mat lim = l_images[i], rim = r_images[i];
     vector<Point2f> l_im_p, r_im_p;
-    bool l_pattern_found = findChessboardCorners(lim, Size(width, height), l_im_p, CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE + CALIB_CB_FAST_CHECK);
-    bool r_pattern_found = findChessboardCorners(rim, Size(width, height), r_im_p, CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE + CALIB_CB_FAST_CHECK);
+    bool l_pattern_found =
+        findChessboardCorners(lim,
+                              Size(width, height),
+                              l_im_p,
+                              CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE +
+                                  CALIB_CB_FAST_CHECK);
+    bool r_pattern_found =
+        findChessboardCorners(rim,
+                              Size(width, height),
+                              r_im_p,
+                              CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE +
+                                  CALIB_CB_FAST_CHECK);
     if(l_pattern_found && r_pattern_found) {
       object_points.push_back(ob_p);
       Mat gray;
       cvtColor(lim, gray, CV_BGR2GRAY);
-      cornerSubPix(gray, l_im_p, Size(5, 5), Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+      cornerSubPix(gray,
+                   l_im_p,
+                   Size(5, 5),
+                   Size(-1, -1),
+                   TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
       cvtColor(rim, gray, CV_BGR2GRAY);
-      cornerSubPix(gray, r_im_p, Size(5, 5), Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+      cornerSubPix(gray,
+                   r_im_p,
+                   Size(5, 5),
+                   Size(-1, -1),
+                   TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
       l_image_points.push_back(l_im_p);
       r_image_points.push_back(r_im_p);
       if(show) {
@@ -124,8 +143,20 @@ calibrator::calibrate() {
   fs["distCoeffs"] >> r_distCoeffs;
   fs.release();
 
-  if(!l_cameraMatrix.empty() && !l_distCoeffs.empty() && !r_cameraMatrix.empty() && !r_distCoeffs.empty()) {
-    double rms = stereoCalibrate(object_points, l_image_points, r_image_points, l_cameraMatrix, l_distCoeffs, r_cameraMatrix, r_distCoeffs, l_images[0].size(), R, T, E, F);
+  if(!l_cameraMatrix.empty() && !l_distCoeffs.empty() && !r_cameraMatrix.empty() &&
+     !r_distCoeffs.empty()) {
+    double rms = stereoCalibrate(object_points,
+                                 l_image_points,
+                                 r_image_points,
+                                 l_cameraMatrix,
+                                 l_distCoeffs,
+                                 r_cameraMatrix,
+                                 r_distCoeffs,
+                                 l_images[0].size(),
+                                 R,
+                                 T,
+                                 E,
+                                 F);
     cout << "Calibrated stereo camera with a RMS error of " << rms << endl;
     return true;
   } else
@@ -164,16 +195,30 @@ rectifier::rectifier(string filename, Size image_size) {
   fs["T"] >> T;
   fs.release();
 
-  if(l_cameraMatrix.empty() || r_cameraMatrix.empty() || l_distCoeffs.empty() || r_distCoeffs.empty() || R.empty() || T.empty())
+  if(l_cameraMatrix.empty() || r_cameraMatrix.empty() || l_distCoeffs.empty() ||
+     r_distCoeffs.empty() || R.empty() || T.empty())
     cout << "Rectifier: Loading of files not successful" << endl;
 
   // Calculate transforms for rectifying images
   Mat Rl, Rr, Pl, Pr, Q;
-  stereoRectify(l_cameraMatrix, l_distCoeffs, r_cameraMatrix, r_distCoeffs, image_size, R, T, Rl, Rr, Pl, Pr, Q);
+  stereoRectify(l_cameraMatrix,
+                l_distCoeffs,
+                r_cameraMatrix,
+                r_distCoeffs,
+                image_size,
+                R,
+                T,
+                Rl,
+                Rr,
+                Pl,
+                Pr,
+                Q);
 
   // Calculate pixel maps for efficient rectification of images via lookup tables
-  initUndistortRectifyMap(l_cameraMatrix, l_distCoeffs, Rl, Pl, image_size, CV_16SC2, map_l1, map_l2);
-  initUndistortRectifyMap(r_cameraMatrix, r_distCoeffs, Rr, Pr, image_size, CV_16SC2, map_r1, map_r2);
+  initUndistortRectifyMap(
+      l_cameraMatrix, l_distCoeffs, Rl, Pl, image_size, CV_16SC2, map_l1, map_l2);
+  initUndistortRectifyMap(
+      r_cameraMatrix, r_distCoeffs, Rr, Pr, image_size, CV_16SC2, map_r1, map_r2);
 
   fs.open(filename, FileStorage::APPEND);
   fs << "Rl" << Rl;
@@ -221,7 +266,8 @@ rectifier::show_rectified(Size image_size) {
     framer_rect.copyTo(combo(Range::all(), Range(image_size.width, 2 * image_size.width)));
 
     // Draw horizontal red lines in the combo image to make comparison easier
-    for(int y = 0; y < combo.rows; y += 20) line(combo, Point(0, y), Point(combo.cols, y), Scalar(0, 0, 255));
+    for(int y = 0; y < combo.rows; y += 20)
+      line(combo, Point(0, y), Point(combo.cols, y), Scalar(0, 0, 255));
 
     imshow("Combo", combo);
   }
@@ -236,8 +282,8 @@ main() {
   calibrator calib(LEFT_FOLDER, RIGHT_FOLDER, 25.f, 5, 4);
   calib.calc_image_points(true);
   bool done = calib.calibrate();
-  if(!done) cout << "Stereo Calibration not successful because individial calibration matrices could not be read" <<
-  endl; calib.save_info(filename); Size image_size = calib.get_image_size();
+  if(!done) cout << "Stereo Calibration not successful because individial calibration matrices could
+  not be read" << endl; calib.save_info(filename); Size image_size = calib.get_image_size();
   */
 
   Size image_size(320, 240);

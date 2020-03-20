@@ -21,7 +21,8 @@ help(char** argv) {
        << endl;
 }
 static void onMouse(int event, int x, int y, int, void*);
-Mat warping(Mat image, Size warped_image_size, vector<Point2f> srcPoints, vector<Point2f> dstPoints);
+Mat
+warping(Mat image, Size warped_image_size, vector<Point2f> srcPoints, vector<Point2f> dstPoints);
 String windowTitle = "Perspective Transformation Demo";
 String labels[4] = {"TL", "TR", "BR", "BL"};
 vector<Point2f> roi_corners;
@@ -39,10 +40,14 @@ main(int argc, char** argv) {
   Mat image;
   float original_image_cols = (float)original_image.cols;
   float original_image_rows = (float)original_image.rows;
-  roi_corners.push_back(Point2f((float)(original_image_cols / 1.70), (float)(original_image_rows / 4.20)));
-  roi_corners.push_back(Point2f((float)(original_image.cols / 1.15), (float)(original_image.rows / 3.32)));
-  roi_corners.push_back(Point2f((float)(original_image.cols / 1.33), (float)(original_image.rows / 1.10)));
-  roi_corners.push_back(Point2f((float)(original_image.cols / 1.93), (float)(original_image.rows / 1.36)));
+  roi_corners.push_back(
+      Point2f((float)(original_image_cols / 1.70), (float)(original_image_rows / 4.20)));
+  roi_corners.push_back(
+      Point2f((float)(original_image.cols / 1.15), (float)(original_image.rows / 3.32)));
+  roi_corners.push_back(
+      Point2f((float)(original_image.cols / 1.33), (float)(original_image.rows / 1.10)));
+  roi_corners.push_back(
+      Point2f((float)(original_image.cols / 1.93), (float)(original_image.rows / 1.36)));
   namedWindow(windowTitle, WINDOW_NORMAL);
   namedWindow("Warped Image", WINDOW_AUTOSIZE);
   moveWindow("Warped Image", 20, 20);
@@ -58,7 +63,13 @@ main(int argc, char** argv) {
         if(i > 0) {
           line(image, roi_corners[i - 1], roi_corners[(i)], Scalar(0, 0, 255), 2);
           circle(image, roi_corners[i], 5, Scalar(0, 255, 0), 3);
-          putText(image, labels[i].c_str(), roi_corners[i], FONT_HERSHEY_SIMPLEX, 0.8, Scalar(255, 0, 0), 2);
+          putText(image,
+                  labels[i].c_str(),
+                  roi_corners[i],
+                  FONT_HERSHEY_SIMPLEX,
+                  0.8,
+                  Scalar(255, 0, 0),
+                  2);
         }
       }
       imshow(windowTitle, image);
@@ -68,21 +79,34 @@ main(int argc, char** argv) {
       for(int i = 0; i < 4; ++i) {
         line(image, roi_corners[i], roi_corners[(i + 1) % 4], Scalar(0, 0, 255), 2);
         circle(image, roi_corners[i], 5, Scalar(0, 255, 0), 3);
-        putText(image, labels[i].c_str(), roi_corners[i], FONT_HERSHEY_SIMPLEX, 0.8, Scalar(255, 0, 0), 2);
+        putText(image,
+                labels[i].c_str(),
+                roi_corners[i],
+                FONT_HERSHEY_SIMPLEX,
+                0.8,
+                Scalar(255, 0, 0),
+                2);
       }
       imshow(windowTitle, image);
       dst_corners[0].x = 0;
       dst_corners[0].y = 0;
-      dst_corners[1].x = (float)std::max(norm(roi_corners[0] - roi_corners[1]), norm(roi_corners[2] - roi_corners[3]));
+      dst_corners[1].x = (float)std::max(norm(roi_corners[0] - roi_corners[1]),
+                                         norm(roi_corners[2] - roi_corners[3]));
       dst_corners[1].y = 0;
-      dst_corners[2].x = (float)std::max(norm(roi_corners[0] - roi_corners[1]), norm(roi_corners[2] - roi_corners[3]));
-      dst_corners[2].y = (float)std::max(norm(roi_corners[1] - roi_corners[2]), norm(roi_corners[3] - roi_corners[0]));
+      dst_corners[2].x = (float)std::max(norm(roi_corners[0] - roi_corners[1]),
+                                         norm(roi_corners[2] - roi_corners[3]));
+      dst_corners[2].y = (float)std::max(norm(roi_corners[1] - roi_corners[2]),
+                                         norm(roi_corners[3] - roi_corners[0]));
       dst_corners[3].x = 0;
-      dst_corners[3].y = (float)std::max(norm(roi_corners[1] - roi_corners[2]), norm(roi_corners[3] - roi_corners[0]));
+      dst_corners[3].y = (float)std::max(norm(roi_corners[1] - roi_corners[2]),
+                                         norm(roi_corners[3] - roi_corners[0]));
       Size warped_image_size = Size(cvRound(dst_corners[2].x), cvRound(dst_corners[2].y));
       Mat H = findHomography(roi_corners, dst_corners); // get homography
       Mat warped_image;
-      warpPerspective(original_image, warped_image, H, warped_image_size); // do perspective transformation
+      warpPerspective(original_image,
+                      warped_image,
+                      H,
+                      warped_image_size); // do perspective transformation
       imshow("Warped Image", warped_image);
     }
     char c = (char)waitKey(10);
@@ -108,7 +132,8 @@ onMouse(int event, int x, int y, int, void*) {
   // Action when left button is pressed
   if(roi_corners.size() == 4) {
     for(int i = 0; i < 4; ++i) {
-      if((event == EVENT_LBUTTONDOWN) & ((abs(roi_corners[i].x - x) < 10)) & (abs(roi_corners[i].y - y) < 10)) {
+      if((event == EVENT_LBUTTONDOWN) & ((abs(roi_corners[i].x - x) < 10)) &
+         (abs(roi_corners[i].y - y) < 10)) {
         selected_corner_index = i;
         dragging = true;
       }

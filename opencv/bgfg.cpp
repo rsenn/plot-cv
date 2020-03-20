@@ -7,7 +7,8 @@
 using namespace cv;
 using namespace cv::bgsegm;
 
-const String about = "\nA program demonstrating the use and capabilities of different background subtraction algrorithms\n"
+const String about = "\nA program demonstrating the use and capabilities of different background "
+                     "subtraction algrorithms\n"
                      "Using OpenCV version " +
                      String(CV_VERSION) + "\nPress q or ESC to exit\n";
 

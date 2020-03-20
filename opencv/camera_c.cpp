@@ -12,11 +12,17 @@ using namespace cv;
 
 QElapsedTimer telapsed;
 
-camera_c::camera_c(QObject* parent, int width, int height, int res, int threshold, int thresholdZone) : parent(parent), width(width), height(height), resolution(res), threshold(threshold), thresholdZone(thresholdZone) {
+camera_c::camera_c(
+    QObject* parent, int width, int height, int res, int threshold, int thresholdZone)
+    : parent(parent), width(width), height(height), resolution(res), threshold(threshold),
+      thresholdZone(thresholdZone) {
   isLearning = false;
   enabled = false;
   connect(parent, SIGNAL(snap()), this, SLOT(snap()));
-  connect(this, SIGNAL(setMarkerVisible(uint, uint, bool)), parent, SLOT(setMarkerVisible(uint, uint, bool)));
+  connect(this,
+          SIGNAL(setMarkerVisible(uint, uint, bool)),
+          parent,
+          SLOT(setMarkerVisible(uint, uint, bool)));
 
   dx = ((double)width / resolution);
   dy = ((double)height / resolution);
@@ -143,10 +149,19 @@ camera_c::shutdown(void) {
 
   enabled = false;
 
-  connect(((MainWindow*)parent)->lbl_imageDiff, SIGNAL(destroyed(QObject*)), ((MainWindow*)parent)->lbl_imageSnap, SLOT(deleteLater()));
+  connect(((MainWindow*)parent)->lbl_imageDiff,
+          SIGNAL(destroyed(QObject*)),
+          ((MainWindow*)parent)->lbl_imageSnap,
+          SLOT(deleteLater()));
   // connect(((MainWindow*)parent)->lbl_imageSnap,SIGNAL(destroyed(QObject*)),this,SLOT(deleteLater()));
-  connect(((MainWindow*)parent)->lbl_imageSnap, SIGNAL(destroyed(QObject*)), this->updTimer, SLOT(stop()));
-  connect(((MainWindow*)parent)->lbl_imageSnap, SIGNAL(destroyed(QObject*)), this->updTimer, SLOT(deleteLater()));
+  connect(((MainWindow*)parent)->lbl_imageSnap,
+          SIGNAL(destroyed(QObject*)),
+          this->updTimer,
+          SLOT(stop()));
+  connect(((MainWindow*)parent)->lbl_imageSnap,
+          SIGNAL(destroyed(QObject*)),
+          this->updTimer,
+          SLOT(deleteLater()));
   connect(this->updTimer, SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()));
 
   connect(this, SIGNAL(destroyed(QObject*)), ((MainWindow*)parent), SLOT(init()));
@@ -225,7 +240,8 @@ camera_c::enable(bool status) {
 
 camera_c::~camera_c(void) {
   for(unsigned int xi = 0; xi < ((MainWindow*)parent)->markers.size(); xi++)
-    for(unsigned int yi = 0; yi < ((MainWindow*)parent)->markers[0].size(); yi++) ((MainWindow*)parent)->markers[xi][yi]->deleteLater();
+    for(unsigned int yi = 0; yi < ((MainWindow*)parent)->markers[0].size(); yi++)
+      ((MainWindow*)parent)->markers[xi][yi]->deleteLater();
 
   ((MainWindow*)parent)->markers.clear();
 

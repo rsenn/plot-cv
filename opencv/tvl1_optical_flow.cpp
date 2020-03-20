@@ -30,13 +30,13 @@ getTime() {
   return work_end * 1000. / getTickFrequency();
 }
 
-template <typename T>
+template<typename T>
 inline T
 clamp(T x, T a, T b) {
   return ((x) > (a) ? ((x) < (b) ? (x) : (b)) : (a));
 }
 
-template <typename T>
+template<typename T>
 inline T
 mapValue(T x, T a, T b, T c, T d) {
   x = clamp(x, a, b);
@@ -69,8 +69,10 @@ getFlowField(const Mat& u, const Mat& v, Mat& flowField) {
 
     for(int j = 0; j < flowField.cols; ++j) {
       row[j][0] = 0;
-      row[j][1] = static_cast<unsigned char>(mapValue(-ptr_v[j], -maxDisplacement, maxDisplacement, 0.0f, 255.0f));
-      row[j][2] = static_cast<unsigned char>(mapValue(ptr_u[j], -maxDisplacement, maxDisplacement, 0.0f, 255.0f));
+      row[j][1] = static_cast<unsigned char>(
+          mapValue(-ptr_v[j], -maxDisplacement, maxDisplacement, 0.0f, 255.0f));
+      row[j][2] = static_cast<unsigned char>(
+          mapValue(ptr_u[j], -maxDisplacement, maxDisplacement, 0.0f, 255.0f));
       row[j][3] = 255;
     }
   }

@@ -53,7 +53,8 @@ main() {
   namedWindow("Camera", WINDOW_NORMAL);
   resizeWindow("Camera", 300, 300);
   // Tao Trackbar de chon ham lay nguong
-  createTrackbar("Kieu: \n 0: Binary \n 1: Binary dao \n 2: Cat ngon \n 3: To Zero \n 4: To Zero dao \n 5: Mau sac",
+  createTrackbar("Kieu: \n 0: Binary \n 1: Binary dao \n 2: Cat ngon \n 3: To Zero \n 4: To Zero "
+                 "dao \n 5: Mau sac",
                  "Camera",           // Cua so hien thi
                  &threshold_type,    // Bien chiu tac dong cua trackbar nay
                  5,                  // Gia tri toi da cua bien (cua thanh truot)
@@ -135,7 +136,8 @@ main() {
       for(int i = 0; i < pt_idx; i++) {
         circle(image, pt[i], 3, Scalar(0, 0, 255), -1);
       }
-      if((r.x >= 0) && (r.y >= 0) && (r.x + r.width <= image.cols) && (r.y + r.height <= image.rows)) {
+      if((r.x >= 0) && (r.y >= 0) && (r.x + r.width <= image.cols) &&
+         (r.y + r.height <= image.rows)) {
         if(threshold_type < 5)
           imageCrop = frame_gray(r); // Crop tu anh xam
         else

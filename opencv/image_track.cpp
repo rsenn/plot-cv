@@ -13,17 +13,19 @@ void static onMouse(int event, int x, int y, int, void*) {
   static cv::Point origin;
 
   if(selectObject) {
-    /* check mouse select area which The coordinates of the upper left corner and the length and width of the area */
+    /* check mouse select area which The coordinates of the upper left corner and the length and
+     * width of the area */
     selection.x = MIN(x, origin.x);
     selection.y = MIN(y, origin.y);
     selection.width = std::abs(x - origin.x);
     selection.height = std::abs(y - origin.y);
     // test
-    cout << "x=" << selection.x << "\ty=" << selection.y << "\t width=" << selection.width << "\t height" << selection.height << endl;
+    cout << "x=" << selection.x << "\ty=" << selection.y << "\t width=" << selection.width
+         << "\t height" << selection.height << endl;
     cout << selection << endl;
     // & is cv::Rect loaded
-    // That the two regions take the intersection, the main purpose is to deal with when the mouse in the selected area
-    // to remove the screen
+    // That the two regions take the intersection, the main purpose is to deal with when the mouse
+    // in the selected area to remove the screen
     /*Rect argument (x,y,width,height)*/
     selection &= cv::Rect(0, 0, image.cols, image.rows);
     // cout << "image.cols = " << image.cols << "\timage.rows" <<  image.rows << endl;
@@ -100,10 +102,15 @@ image_track::track_start(cv::VideoCapture video) {
 
         backproj &= mask;
         imshow("backproj", backproj);
-        cv::RotatedRect trackBox = CamShift(backproj, trackWindow, cv::TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 10, 1));
+        cv::RotatedRect trackBox =
+            CamShift(backproj,
+                     trackWindow,
+                     cv::TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 10, 1));
         if(trackWindow.area() <= 1) {
           int cols = backproj.cols, rows = backproj.rows, r = (MIN(cols, rows) + 5) / 6;
-          trackWindow = cv::Rect(trackWindow.x - r, trackWindow.y - r, trackWindow.x + r, trackWindow.y + r) & cv::Rect(0, 0, cols, rows);
+          trackWindow =
+              cv::Rect(trackWindow.x - r, trackWindow.y - r, trackWindow.x + r, trackWindow.y + r) &
+              cv::Rect(0, 0, cols, rows);
         }
         ellipse(image, trackBox, cv::Scalar(0, 0, 255), 3, CV_AA);
       }

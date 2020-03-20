@@ -12,7 +12,8 @@ using namespace std;
 
 static void
 help() {
-  cout << "\nThis program demonstrates Laplace point/edge detection using OpenCV function Laplacian()\n"
+  cout << "\nThis program demonstrates Laplace point/edge detection using OpenCV function "
+          "Laplacian()\n"
           "It captures from the camera of your choice: 0, 1, ... default 0\n"
           "Call:\n"
           "./laplace [camera #, default 0]\n"
@@ -32,7 +33,9 @@ main(int argc, char** argv) {
   else if(argc >= 2) {
     cap.open(argv[1]);
     if(cap.isOpened())
-      cout << "Video " << argv[1] << ": width=" << cap.get(CV_CAP_PROP_FRAME_WIDTH) << ", height=" << cap.get(CV_CAP_PROP_FRAME_HEIGHT) << ", nframes=" << cap.get(CV_CAP_PROP_FRAME_COUNT) << endl;
+      cout << "Video " << argv[1] << ": width=" << cap.get(CV_CAP_PROP_FRAME_WIDTH)
+           << ", height=" << cap.get(CV_CAP_PROP_FRAME_HEIGHT)
+           << ", nframes=" << cap.get(CV_CAP_PROP_FRAME_COUNT) << endl;
     if(argc > 2 && isdigit(argv[2][0])) {
       int pos;
       sscanf(argv[2], "%d", &pos);
@@ -71,7 +74,8 @@ main(int argc, char** argv) {
 
     int c = waitKey(30);
     if(c == ' ')
-      smoothType = smoothType == CV_GAUSSIAN ? CV_BLUR : smoothType == CV_BLUR ? CV_MEDIAN : CV_GAUSSIAN;
+      smoothType =
+          smoothType == CV_GAUSSIAN ? CV_BLUR : smoothType == CV_BLUR ? CV_MEDIAN : CV_GAUSSIAN;
     if(c == 'q' || c == 'Q' || (c & 255) == 27)
       break;
   }

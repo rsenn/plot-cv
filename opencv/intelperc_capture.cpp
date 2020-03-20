@@ -27,8 +27,12 @@ printUsage(const char* arg0) {
   while((arg0 <= filename) && ('\\' != *filename) && ('/' != *filename)) filename--;
   filename++;
 
-  cout << "This program demonstrates usage of camera supported\nby Intel Perceptual computing SDK." << endl << endl;
-  cout << "usage: " << filename << "[-ps] [-isp IDX] [-dsp IDX]\n [-ir] [-imb VAL] [-imc VAL]" << endl << endl;
+  cout << "This program demonstrates usage of camera supported\nby Intel Perceptual computing SDK."
+       << endl
+       << endl;
+  cout << "usage: " << filename << "[-ps] [-isp IDX] [-dsp IDX]\n [-ir] [-imb VAL] [-imc VAL]"
+       << endl
+       << endl;
   cout << "   -ps,            print streams setting and profiles" << endl;
   cout << "   -isp IDX,       set profile index of the image stream" << endl;
   cout << "   -dsp IDX,       set profile index of the depth stream" << endl;
@@ -79,38 +83,64 @@ parseCMDLine(int argc, char* argv[]) {
 
 static void
 printStreamProperties(VideoCapture& capture) {
-  size_t profilesCount = (size_t)capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_INTELPERC_PROFILE_COUNT);
+  size_t profilesCount =
+      (size_t)capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_INTELPERC_PROFILE_COUNT);
   cout << "Image stream." << endl;
-  cout << "  Brightness = " << capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_BRIGHTNESS) << endl;
-  cout << "  Contrast = " << capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_CONTRAST) << endl;
-  cout << "  Saturation = " << capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_SATURATION) << endl;
+  cout << "  Brightness = "
+       << capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_BRIGHTNESS) << endl;
+  cout << "  Contrast = " << capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_CONTRAST)
+       << endl;
+  cout << "  Saturation = "
+       << capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_SATURATION) << endl;
   cout << "  Hue = " << capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_HUE) << endl;
   cout << "  Gamma = " << capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_GAMMA) << endl;
-  cout << "  Sharpness = " << capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_SHARPNESS) << endl;
+  cout << "  Sharpness = " << capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_SHARPNESS)
+       << endl;
   cout << "  Gain = " << capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_GAIN) << endl;
-  cout << "  Backligh = " << capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_BACKLIGHT) << endl;
+  cout << "  Backligh = " << capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_BACKLIGHT)
+       << endl;
   cout << "Image streams profiles:" << endl;
   for(size_t i = 0; i < profilesCount; i++) {
     capture.set(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_INTELPERC_PROFILE_IDX, (double)i);
     cout << "  Profile[" << i << "]: ";
-    cout << "width = " << (int)capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_FRAME_WIDTH);
-    cout << ", height = " << (int)capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_FRAME_HEIGHT);
+    cout << "width = "
+         << (int)capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_FRAME_WIDTH);
+    cout << ", height = "
+         << (int)capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_FRAME_HEIGHT);
     cout << ", fps = " << capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_FPS);
     cout << endl;
   }
 
-  profilesCount = (size_t)capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_INTELPERC_PROFILE_COUNT);
+  profilesCount =
+      (size_t)capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_INTELPERC_PROFILE_COUNT);
   cout << "Depth stream." << endl;
-  cout << "  Low confidence value = " << capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_INTELPERC_DEPTH_LOW_CONFIDENCE_VALUE) << endl;
-  cout << "  Saturation value = " << capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_INTELPERC_DEPTH_SATURATION_VALUE) << endl;
-  cout << "  Confidence threshold = " << capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_INTELPERC_DEPTH_CONFIDENCE_THRESHOLD) << endl;
-  cout << "  Focal length = (" << capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_HORZ) << ", " << capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_VERT) << ")" << endl;
+  cout << "  Low confidence value = "
+       << capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR |
+                      CV_CAP_PROP_INTELPERC_DEPTH_LOW_CONFIDENCE_VALUE)
+       << endl;
+  cout << "  Saturation value = "
+       << capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR |
+                      CV_CAP_PROP_INTELPERC_DEPTH_SATURATION_VALUE)
+       << endl;
+  cout << "  Confidence threshold = "
+       << capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR |
+                      CV_CAP_PROP_INTELPERC_DEPTH_CONFIDENCE_THRESHOLD)
+       << endl;
+  cout << "  Focal length = ("
+       << capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR |
+                      CV_CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_HORZ)
+       << ", "
+       << capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR |
+                      CV_CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_VERT)
+       << ")" << endl;
   cout << "Depth streams profiles:" << endl;
   for(size_t i = 0; i < profilesCount; i++) {
     capture.set(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_INTELPERC_PROFILE_IDX, (double)i);
     cout << "  Profile[" << i << "]: ";
-    cout << "width = " << (int)capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_FRAME_WIDTH);
-    cout << ", height = " << (int)capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_FRAME_HEIGHT);
+    cout << "width = "
+         << (int)capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_FRAME_WIDTH);
+    cout << ", height = "
+         << (int)capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_FRAME_HEIGHT);
     cout << ", fps = " << capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_FPS);
     cout << endl;
   }
@@ -121,7 +151,8 @@ imshowImage(const char* winname, Mat& image, VideoCapture& capture) {
   if(g_showClosedPoint) {
     Mat uvMap;
     if(capture.retrieve(uvMap, CV_CAP_INTELPERC_UVDEPTH_MAP)) {
-      float* uvmap = (float*)uvMap.ptr() + 2 * (g_closedDepthPoint[0] * uvMap.cols + g_closedDepthPoint[1]);
+      float* uvmap =
+          (float*)uvMap.ptr() + 2 * (g_closedDepthPoint[0] * uvMap.cols + g_closedDepthPoint[1]);
       int x = (int)((*uvmap) * image.cols);
       uvmap++;
       int y = (int)((*uvmap) * image.rows);
@@ -159,9 +190,11 @@ imshowIR(const char* winname, Mat& ir) {
     }
 
     static const int pointSize = 4;
-    for(int row = g_closedDepthPoint[0]; row < min(g_closedDepthPoint[0] + pointSize, image.rows); row++) {
+    for(int row = g_closedDepthPoint[0]; row < min(g_closedDepthPoint[0] + pointSize, image.rows);
+        row++) {
       uchar* ptrDst = image.ptr(row) + g_closedDepthPoint[1] * 3 + 2; //+2 -> Red
-      for(int col = 0; col < min(pointSize, image.cols - g_closedDepthPoint[1]); col++, ptrDst += 3) {
+      for(int col = 0; col < min(pointSize, image.cols - g_closedDepthPoint[1]);
+          col++, ptrDst += 3) {
         *ptrDst = 255;
       }
     }
@@ -180,8 +213,10 @@ imshowIR(const char* winname, Mat& ir) {
 }
 static void
 imshowDepth(const char* winname, Mat& depth, VideoCapture& capture) {
-  short lowValue = (short)capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_INTELPERC_DEPTH_LOW_CONFIDENCE_VALUE);
-  short saturationValue = (short)capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_INTELPERC_DEPTH_SATURATION_VALUE);
+  short lowValue = (short)capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR |
+                                      CV_CAP_PROP_INTELPERC_DEPTH_LOW_CONFIDENCE_VALUE);
+  short saturationValue = (short)capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR |
+                                             CV_CAP_PROP_INTELPERC_DEPTH_SATURATION_VALUE);
 
   Mat image;
   if(g_showClosedPoint) {
@@ -210,9 +245,11 @@ imshowDepth(const char* winname, Mat& depth, VideoCapture& capture) {
     }
 
     static const int pointSize = 4;
-    for(int row = g_closedDepthPoint[0]; row < min(g_closedDepthPoint[0] + pointSize, image.rows); row++) {
+    for(int row = g_closedDepthPoint[0]; row < min(g_closedDepthPoint[0] + pointSize, image.rows);
+        row++) {
       uchar* ptrDst = image.ptr(row) + g_closedDepthPoint[1] * 3 + 2; //+2 -> Red
-      for(int col = 0; col < min(pointSize, image.cols - g_closedDepthPoint[1]); col++, ptrDst += 3) {
+      for(int col = 0; col < min(pointSize, image.cols - g_closedDepthPoint[1]);
+          col++, ptrDst += 3) {
         *ptrDst = 255;
       }
     }
@@ -247,13 +284,15 @@ main(int argc, char* argv[]) {
     printStreamProperties(capture);
 
   if(-1 != g_imageStreamProfileIdx) {
-    if(!capture.set(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_INTELPERC_PROFILE_IDX, (double)g_imageStreamProfileIdx)) {
+    if(!capture.set(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_INTELPERC_PROFILE_IDX,
+                    (double)g_imageStreamProfileIdx)) {
       cerr << "Can not setup a image stream." << endl;
       return -1;
     }
   }
   if(-1 != g_depthStreamProfileIdx) {
-    if(!capture.set(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_INTELPERC_PROFILE_IDX, (double)g_depthStreamProfileIdx)) {
+    if(!capture.set(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_INTELPERC_PROFILE_IDX,
+                    (double)g_depthStreamProfileIdx)) {
       cerr << "Can not setup a depth stream." << endl;
       return -1;
     }
@@ -284,7 +323,8 @@ main(int argc, char* argv[]) {
       return -1;
     }
 
-    if((-1 != g_depthStreamProfileIdx) && (capture.retrieve(depthImage, CV_CAP_INTELPERC_DEPTH_MAP))) {
+    if((-1 != g_depthStreamProfileIdx) &&
+       (capture.retrieve(depthImage, CV_CAP_INTELPERC_DEPTH_MAP))) {
       if(g_showClosedPoint) {
         double minVal = 0.0;
         double maxVal = 0.0;
@@ -298,8 +338,14 @@ main(int argc, char* argv[]) {
       imshowImage("color image", bgrImage, capture);
 
     if(g_printTiming) {
-      cout << "Image frame: " << capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_POS_FRAMES) << ", Depth(IR) frame: " << capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_POS_FRAMES) << endl;
-      cout << "Image frame: " << capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_POS_MSEC) << ", Depth(IR) frame: " << capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_POS_MSEC) << endl;
+      cout << "Image frame: "
+           << capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_POS_FRAMES)
+           << ", Depth(IR) frame: "
+           << capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_POS_FRAMES) << endl;
+      cout << "Image frame: "
+           << capture.get(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_POS_MSEC)
+           << ", Depth(IR) frame: "
+           << capture.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_POS_MSEC) << endl;
     }
     if(waitKey(30) >= 0)
       break;

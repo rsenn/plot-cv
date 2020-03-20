@@ -56,7 +56,8 @@ using namespace std;
 
 static void
 help() {
-  cout << "\nThis is a demo of \"Deformable Part-based Model (DPM) cascade detection API\" using web camera.\n"
+  cout << "\nThis is a demo of \"Deformable Part-based Model (DPM) cascade detection API\" using "
+          "web camera.\n"
           "Call:\n"
           "./example_dpm_cascade_detect_camera <model_path>\n"
        << endl;

@@ -99,8 +99,9 @@ main(int argc, char** argv) {
       // convert frame2 to gray scale for frame differencing
       cvtColor(frame2, grayImage2, COLOR_BGR2GRAY);
 
-      // perform frame differencing with the sequential images. This will output an "intensity image"
-      // do not confuse this with a threshold image, we will need to perform thresholding afterwards.
+      // perform frame differencing with the sequential images. This will output an "intensity
+      // image" do not confuse this with a threshold image, we will need to perform thresholding
+      // afterwards.
       absdiff(grayImage1, grayImage2, differenceImage);
       // threshold intensity image at a given sensitivity value
       threshold(differenceImage, thresholdImage, SENSITIVITY_VALUE, 255, THRESH_BINARY);
@@ -266,7 +267,8 @@ intToString(int number) {
 void
 show_help() {
   cout << endl
-       << " Usage: ./motionTracking_modified.out <video_name> [SENSITIVITY_VALUE] [BLUR_SIZE] [MIN_OBJ_AREA]\n"
+       << " Usage: ./motionTracking_modified.out <video_name> [SENSITIVITY_VALUE] [BLUR_SIZE] "
+          "[MIN_OBJ_AREA]\n"
           " examples:\n"
           " ./motionTracking_modified.out /home/pi/videos/my_vid.h264\n"
           " ./motionTracking_modified.out /home/pi/videos/my_vid.h264 20 10 10\n"
