@@ -1,19 +1,50 @@
 <html>
-<head>
-<!--     <script src="lib/autoplacer/autoplacer.js" type="module" />
+  <head>
+    <!--     <script src="lib/autoplacer/autoplacer.js" type="module" />
   <script src="lib/dom.js" type="module" /> -->
-  <script type="module">
-    import Autoplacer from "./lib/autoplacer/autoplacer.js";
-    import { Rect } from "./lib/dom/rect.js";
-    import { Element } from "./lib/dom/element.js";
-    console.log("running");
-    console.log("dom",{Rect,Element});
+    <script type="module">
+      import Autoplacer from "./lib/autoplacer/autoplacer.js";
+      import { Rect } from "./lib/dom/rect.js";
+      import { Element } from "./lib/dom/element.js";
+      import { inlineSVG } from "./lib/svg/load.js";
+      import Util from "./lib/util.js";
+      console.log("running");
+      console.log("dom", { Rect, Element });
 
-    window.onload = () => {
-    console.log("initialized");
-    };
+      window.onload = async () => {
+        window.Util = Util;
 
-    var Module = {
+        Util(globalThis);
+        console.log(Util.getGlobalObject());
+
+        const container = Element.find("#board");
+        console.log("initialized", container);
+
+        const svg = await inlineSVG("/static/LCmeter0-LCD-8pinlcd-PIC_COMP-board.svg", container);
+
+        container.setAttribute("style", "width: 100%; height: auto;");
+
+        const contours = Element.findAll('*[stroke="#7d7d7d"]');
+
+        const rects = contours.map(c => Element.rect(c).round(1));
+
+        rects.map(rect => {
+          let el = Element.create('div', { id: rect.toString() }, document.body)
+
+          Element.setCSS(el, {
+            position: 'absolute',
+            border: '2px solid #ff8000',
+            background: '#ff8000a0',
+            boxSizing: 'border-box',
+            ...rect.toCSS()
+          });
+
+        });
+
+        console.log(rects);
+      };
+
+      var Module = {
         // Don't run main() on page load
         noInitialRun: true, // When Wasm module is ready, ask user for a string
         onRuntimeInitialized: () => {
@@ -25,4 +56,9 @@
       };
     </script>
   </head>
-  </html>
+  <body>
+    <div style="width: 100vw;">
+      <svg id="board"></svg>
+    </div>
+  </body>
+</html>
