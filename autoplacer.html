@@ -6,42 +6,56 @@
       import Autoplacer from "./lib/autoplacer/autoplacer.js";
       import { Rect } from "./lib/dom/rect.js";
       import { Element } from "./lib/dom/element.js";
+      import { SVG } from "./lib/dom/svg.js";
       import { inlineSVG } from "./lib/svg/load.js";
+      import { parseSchematic } from "./lib/eagle/parser.js";
+      import { renderSchematic } from "./lib/eagle/renderer.js";
       import Util from "./lib/util.js";
+
       console.log("running");
-      console.log("dom", { Rect, Element });
+      console.log("dom", { Rect, Element, parseSchematic });
+
+      window.dom = { Element, SVG };
 
       window.onload = async () => {
         window.Util = Util;
-
         Util(globalThis);
         console.log(Util.getGlobalObject());
-
         const container = Element.find("#board");
-        console.log("initialized", container);
+        const brdXml = await fetch("/static/LCmeter0-LCD-8pinlcd-PIC_COMP.brd").then(async res => {return await (await res).text(); });
+        const schXml = await fetch("/static/LCmeter0-LCD-8pinlcd-PIC_COMP.sch").then(async res => {return await (await res).text(); });
+        const brdDom = new DOMParser().parseFromString(brdXml, 'application/xml');
+        const schDom = new DOMParser().parseFromString(schXml, 'application/xml');
 
-        const svg = await inlineSVG("/static/LCmeter0-LCD-8pinlcd-PIC_COMP-board.svg", container);
+        const schematic = parseSchematic(schDom, (eagle,schem) => {
+          console.log("eagle:", eagle);
+          console.log("schematic:", schem);
 
+          window.schem = schem; 
+
+
+renderSchematic(schem, SVG.factory(container));
+        });
+
+                console.log("initialized", schematic);
+/*        const svg = await inlineSVG("/static/LCmeter0-LCD-8pinlcd-PIC_COMP-board.svg", container);
         container.setAttribute("style", "width: 100%; height: auto;");
-
         const contours = Element.findAll('*[stroke="#7d7d7d"]');
-
         const rects = contours.map(c => Element.rect(c).round(1));
-
         rects.map(rect => {
           let el = Element.create('div', { id: rect.toString() }, document.body)
 
           Element.setCSS(el, {
             position: 'absolute',
             border: '2px solid #ff8000',
-            background: '#ff8000a0',
+            background: '#ff800000',
             boxSizing: 'border-box',
             ...rect.toCSS()
           });
 
         });
 
-        console.log(rects);
+        console.log(rects);*/
       };
 
       var Module = {
@@ -58,7 +72,7 @@
   </head>
   <body>
     <div style="width: 100vw;">
-      <svg id="board"></svg>
+      <svg id="board" viewBox="0 0 310 150" style="width: 100%; height: auto;"></svg>
     </div>
   </body>
 </html>
