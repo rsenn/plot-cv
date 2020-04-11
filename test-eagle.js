@@ -14,6 +14,10 @@ global.console = new Console({
 });
 
 function dump(obj, depth = 2, breakLength = 400) {
+  if(obj instanceof EagleEntity) {
+    obj = EagleEntity.toObject(obj);
+    depth *= 4;
+  }
   return util.inspect(obj, { depth, colors: true, breakLength });
 }
 
@@ -22,7 +26,8 @@ function xmlize(obj, depth = 2) {
 }
 
 function testLocator() {
-  let l = new EagleLocator([1, 2, 3, 4, 5, 6]);
+  let testobj = [0, 1, 2, { name: "roman", children: ["x", "y", { id: 1, items: ["a", "b", "c"] }] }];
+  let l = new EagleLocator([3, "children", 2, "items", -2]);
   let a = [l.slice(), l.slice()];
   console.log("l:", dump(l));
   console.log("a[0] == a[1]:", a[0] === a[1]);
@@ -31,6 +36,7 @@ function testLocator() {
   let b = [l.prevSibling, l.nextSibling, l.parent];
   console.log("b:", dump(b));
   console.log(b[2].parent.parent.up(3));
+  console.log("apply:", l.apply(testobj));
 }
 
 async function testEagle(filename) {
@@ -39,15 +45,24 @@ async function testEagle(filename) {
 
   /*console.log("libraries:", dump(proj.libraries));*/
 
-  let elements = [...board.getAll("element", (value, path, hier) => new EagleEntity(board, path, value))];
+  //let elements = [...board.getAll("element", (value, path, hier) => new EagleEntity(board, path, value))];
   let parts = [...schematic.getAll("part", (value, path, hier) => new EagleEntity(board, path, value))];
   let descriptions = [...schematic.getAll("description")];
 
   // console.log("descriptions:",descriptions.map(([value,path,hier]) => value));
-  console.log("elements:\n  " + elements.map((element, i) => `element #${i}: ` + xmlize(element, 0)).join("\n  "));
-  console.log("parts:\n  " + parts.map((part, i) => `part #${i}: ` + xmlize(part, 0)).join("\n  "));
-    //  console.log("devices:\n  "+dump([...schematic.getAll("device",  (value,path,hier) => value /*new EagleEntity(board, path, value)*/)], 10, 200));
-  console.log("devicesets:\n" + [...schematic.getAll("deviceset", (value, path, hier, doc) => (path))].join("\n"));
+  //  console.log("parts:\n  " + parts.map((part, i) => `part #${i}: ` + xmlize(part, 0)).join("\n  "));
+  //  console.log("devices:\n  "+dump([...schematic.getAll("device",  (value,path,hier) => value /*new EagleEntity(board, path, value)*/)], 10, 200));
+  //console.log("devicesets:\n" + [...schematic.getAll("deviceset", (value, path, hier, doc) => path)].join("\n"));
+
+  let [elements] = board.find(p => p.tagName == "elements");
+  console.log("elements:", dump((elements.children.map(EagleEntity.toObject)), 4));
+
+  let element0 = elements.children[0];
+  console.log("element0:", dump(EagleEntity.toObject(element0), 4));
+  console.log("element0.keys:", EagleEntity.keys(element0), 4);
+  console.log("element0.entries:", new Map(EagleEntity.entries(element0)), 4);
+  let [value, path, hier] = board.find(el => el === element0);
+  console.log("board.find:", { value, path, hier });
 
   return proj.saveTo(".", true);
 
@@ -81,6 +96,13 @@ async function testEagle(filename) {
     });
 }
 
-testEagle("../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3").then(result => console.log(result));
+(async () => {
+  try {
+    await testLocator();
+    await testEagle("../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3").then(result => console.log(result));
+  } catch(err) {
+    console.log("err:", err);
+  }
+})();
+
 //for(let elem of result) console.log(elem.join("\t"));
-testLocator();
