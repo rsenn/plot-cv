@@ -62,7 +62,7 @@ async function testEagle(filename) {
 
   let circles = ['🄌','❶➀①⓵','🅞🄋⓪'];
 
-  const dingbatCode = (digit) => (digit % 10 == 0 ? circles[0] : String.fromCharCode(digit + circles[1].charCodeAt(0)));
+  const dingbatCode = (digit) => (digit % 10 == 0 ? circles[0] : String.fromCharCode(digit % 10 + circles[1].charCodeAt(0) - 1));
 
     const ansi = (...args) => `\u001b[${[...args].join(";")}m`;
     const text = (text, ...color) => ansi(...color) + text + ansi(0);
