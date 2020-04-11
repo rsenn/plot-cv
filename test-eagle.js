@@ -66,7 +66,7 @@ async function testEagle(filename) {
 
     const ansi = (...args) => `\u001b[${[...args].join(";")}m`;
     const text = (text, ...color) => ansi(...color) + text + ansi(0);
-const number = (num) => (''+num).split('').map(ch => dingbatCode(ch.charCodeAt(0) & 0x0f)).join('');
+const number = (num) => (''+num).split('').map(ch => dingbatCode(ch.charCodeAt(0) & 0x0f)).join(' ');
 
   const dumpEntity = function *(doc, name) {
     let i = 0;
