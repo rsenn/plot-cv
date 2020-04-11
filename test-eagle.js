@@ -47,7 +47,7 @@ async function testEagle(filename) {
   console.log("elements:\n  " + elements.map((element, i) => `element #${i}: ` + xmlize(element, 0)).join("\n  "));
   console.log("parts:\n  " + parts.map((part, i) => `part #${i}: ` + xmlize(part, 0)).join("\n  "));
     //  console.log("devices:\n  "+dump([...schematic.getAll("device",  (value,path,hier) => value /*new EagleEntity(board, path, value)*/)], 10, 200));
-  console.log("devicesets:\n  " + [...schematic.getAll("deviceset", (value, path, hier, doc) => (path))].join("\n"));
+  console.log("devicesets:\n" + [...schematic.getAll("deviceset", (value, path, hier, doc) => (path))].join("\n"));
 
   return proj.saveTo(".", true);
 
