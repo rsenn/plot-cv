@@ -17,7 +17,7 @@ function dump(obj, depth = 2, breakLength = 400) {
 }
 
 function xmlize(obj, depth = 2) {
-  return obj.toXML ? obj.toXML().replace(/\s+/g, " ") : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
+  return obj.toXML ? obj.toXML().replace(/>\s*</g, ">\n    <") : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
 
 function* testEagle(filename) {
@@ -25,35 +25,38 @@ function* testEagle(filename) {
   let { board, schematic, libraries } = proj;
 
 
-
   /*console.log("libraries:", dump(proj.libraries));*/
 
   let elements = [...board.getAll("element", (value,path,hier) => new EagleEntity(board, path, value))];
   let parts = [...schematic.getAll("part",  (value,path,hier) => new EagleEntity(board, path, value))];
+  let descriptions = [...schematic.getAll("description")];
+
+
+   // console.log("descriptions:",descriptions.map(([value,path,hier]) => value));
     console.log("elements:\n  "+elements.map((element,i) => `element #${i}: `+xmlize(element, 0)).join("\n  "));
     console.log("parts:\n  "+parts.map((part,i) => `part #${i}: `+xmlize(part, 0)).join("\n  "));
 
   
 
-
+/*
 
   let named = [...board.findAll(e => e.attributes && "name" in e.attributes)];
   let withPackage = [...board.findAll(e => e.attributes && "device" in e.attributes)];
   let parents = [...board.findAll(e => e.children instanceof Array && e.children.length > 0)];
-  let tags = named.map(e => EagleDocument.toXML(e));
-  /*
- libraries = [
-    ...board.findAll(e => e.tagName == "library" && e.attributes && "name" in e.attributes)
-  ];
-*/
-  let nodes = EagleDocument.traverse(board.xml[0]);
+  let tags = named.map(e => E agleDocument.toXML(e));
 
+  let nodes = EagleDocument.traverse(board.xml[0]);
+*/
   //console.log("library", dump(libraries, 2));
 
   for(let [node, path, hier] of EagleDocument.traverse(board.xml[0])) {
     let pathstr = EagleDocument.nodeName(node, path, hier);
     yield [board.type + "/" + pathstr, EagleDocument.toXML(node, 0)];
   }
+
+  
+  fs.writeSync(process.stdout.fd, "board:\n"+ board.toString());
+
   return;
 
   elems.forEach(elem => {
