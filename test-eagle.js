@@ -74,7 +74,7 @@ const number = (num) => (''+num).split('').map(ch => dingbatCode(ch.charCodeAt(0
 
 
     for(let part of a) {
-        yield `${ Util.pad(''+i, 5, " ")}${text('-',38,5,92)}${text(number(i),38,5,252)} ` +part + "\n";
+        yield `${ Util.pad(''+i, 5, " ")}${text('-',38,5,92)}${text(number(i),38,5,252)}  ` +part + "\n";
         i++;
       }
 
