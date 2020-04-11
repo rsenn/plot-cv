@@ -25,9 +25,6 @@ function* testEagle(filename) {
 
   let elems = board.get("elements") || board.get("parts");
 
-  for(let elem of elems) {
-  }
-
   let named = [...board.findAll(e => e.attributes && "name" in e.attributes)];
   let withPackage = [...board.findAll(e => e.attributes && "device" in e.attributes)];
   let parents = [...board.findAll(e => e.children instanceof Array && e.children.length > 0)];
