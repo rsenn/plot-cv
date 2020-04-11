@@ -55,12 +55,21 @@ async function testEagle(filename) {
   //console.log("devicesets:\n" + [...schematic.getAll("deviceset", (value, path, hier, doc) => path)].join("\n"));
 
   let [elements] = board.find(p => p.tagName == "elements");
-  console.log("elements:", dump((elements.children.map(EagleEntity.toObject)), 4));
+  let reducer = fn => Util.transform(([v, l, h, p]) => (fn || EagleEntity.toObject)(v, l, h, p));
+  let factory = ctor => reducer((v, l, h, p) => new ctor(board, l, v));
+  let makeEntities = () => board.findAll(p => -1 < ["element", "part"].indexOf(p.tagName));
+  let entities = [...factory(EagleEntity)(makeEntities())];
+  let objects = [...reducer()(makeEntities())];
+
+  console.log("entities:", dump(entities, 1));
+  console.log("objects:", dump(objects, 2));
 
   let element0 = elements.children[0];
-  console.log("element0:", dump(EagleEntity.toObject(element0), 4));
+  console.log("element0.toArray:", dump(EagleEntity.toArray(element0), 4));
+  console.log("element0.toObject:", dump(EagleEntity.toObject(element0), 4));
   console.log("element0.keys:", EagleEntity.keys(element0), 4);
-  console.log("element0.entries:", new Map(EagleEntity.entries(element0)), 4);
+  console.log("element0.values:", EagleEntity.values(element0), 4);
+  console.log("element0.Map:", new Map(EagleEntity.entries(element0)), 4);
   let [value, path, hier] = board.find(el => el === element0);
   console.log("board.find:", { value, path, hier });
 
