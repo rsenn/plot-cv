@@ -17,7 +17,7 @@ function dump(obj, depth = 2, breakLength = 400) {
 }
 
 function xmlize(obj, depth = 2) {
-  return obj.toXML ? obj.toXML() : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
+  return obj.toXML ? obj.toXML().replace(/\s+/g, " ") : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
 
 function* testEagle(filename) {
