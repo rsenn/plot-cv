@@ -6,27 +6,32 @@ import { EagleLocator } from "./lib/eagle/locator.js";
 import Util from "./lib/util.js";
 import util from "util";
 import { Console } from "console";
-
 global.console = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
   inspectOptions: { depth: 2, colors: true }
 });
-
-function dump(obj, depth = 2, breakLength = 400) {
-  if(obj instanceof EagleEntity) {
-    obj = EagleEntity.toObject(obj);
+function dump(o, depth = 2, breakLength = 400) {
+  if(o instanceof EagleEntity) {
+    o = EagleEntity.dump(o);
     depth *= 4;
   }
-  return util.inspect(obj, { depth, colors: true, breakLength });
+  return util.inspect(o, { depth, colors: true, breakLength });
 }
 
 function xmlize(obj, depth = 2) {
-  return obj.toXML ? obj.toXML().replace(/>\s*</g, ">\n    <") : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
+  return obj.toXML
+    ? obj.toXML().replace(/>\s*</g, ">\n    <")
+    : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
 
 function testLocator() {
-  let testobj = [0, 1, 2, { name: "roman", children: ["x", "y", { id: 1, items: ["a", "b", "c"] }] }];
+  let testobj = [
+    0,
+    1,
+    2,
+    { name: "roman", children: ["x", "y", { id: 1, items: ["a", "b", "c"] }] }
+  ];
   let l = new EagleLocator([3, "children", 2, "items", -2]);
   let a = [l.slice(), l.slice()];
   console.log("l:", dump(l));
@@ -42,76 +47,43 @@ function testLocator() {
 async function testEagle(filename) {
   let proj = new EagleProject(filename);
   let { board, schematic, libraries } = proj;
+  const newEntity = ([v, l, h, d]) => {
+    let e;
+    let elem = d.index(l);
+    console.log("", elem);
+    e = new EagleEntity(d, l);
+    return e;
+  };
+  const getText = ([v, l, h, d]) => {
+    const { children, ...obj } = EagleEntity.toObject(v);
+    return { ...obj, text: v.children.join(" ") };
+  };
+  let descriptions = [...schematic.getAll("description", getText)];
 
-  /*console.log("libraries:", dump(proj.libraries));*/
+  const dumpEntity = (doc, name) => {
+    let a = [...doc.getAll(name, ([v, l, h, d]) => new EagleEntity(d, l, v))];
 
-  //let elements = [...board.getAll("element", (value, path, hier) => new EagleEntity(board, path, value))];
-  let parts = [...schematic.getAll("part", (value, path, hier) => new EagleEntity(board, path, value))];
-  let descriptions = [...schematic.getAll("description")];
+    console.log(
+      a.map((part, i) => `${name + Util.pad("" + i, 6, " ")} #${i + ":"} ` + part + "\n").join("")
+    );
+  };
 
-  // console.log("descriptions:",descriptions.map(([value,path,hier]) => value));
-  //  console.log("parts:\n  " + parts.map((part, i) => `part #${i}: ` + xmlize(part, 0)).join("\n  "));
-  //  console.log("devices:\n  "+dump([...schematic.getAll("device",  (value,path,hier) => value /*new EagleEntity(board, path, value)*/)], 10, 200));
-  //console.log("devicesets:\n" + [...schematic.getAll("deviceset", (value, path, hier, doc) => path)].join("\n"));
+  dumpEntity(schematic, "part");
+  dumpEntity(board, "element");
 
-  let [elements] = board.find(p => p.tagName == "elements");
-  let reducer = fn => Util.transform(([v, l, h, p]) => (fn || EagleEntity.toObject)(v, l, h, p));
-  let factory = ctor => reducer((v, l, h, p) => new ctor(board, l, v));
-  let makeEntities = () => board.findAll(p => -1 < ["element", "part"].indexOf(p.tagName));
-  let entities = [...factory(EagleEntity)(makeEntities())];
-  let objects = [...reducer()(makeEntities())];
-
-  console.log("entities:", dump(entities, 1));
-  console.log("objects:", dump(objects, 2));
-
-  let element0 = elements.children[0];
-  console.log("element0.toArray:", dump(EagleEntity.toArray(element0), 4));
-  console.log("element0.toObject:", dump(EagleEntity.toObject(element0), 4));
-  console.log("element0.keys:", EagleEntity.keys(element0), 4);
-  console.log("element0.values:", EagleEntity.values(element0), 4);
-  console.log("element0.Map:", new Map(EagleEntity.entries(element0)), 4);
-  let [value, path, hier] = board.find(el => el === element0);
-  console.log("board.find:", { value, path, hier });
-
-  return proj.saveTo(".", true);
-
-  /*
-
-  let named = [...board.findAll(e => e.attributes && "name" in e.attributes)];
-  let withPackage = [...board.findAll(e => e.attributes && "device" in e.attributes)];
-  let parents = [...board.findAll(e => e.children instanceof Array && e.children.length > 0)];
-  let tags = named.map(e => E agleDocument.toXML(e));
-
-  let nodes = EagleDocument.traverse(board.xml[0]);
+  /* let element0 = parts[0];
+  console.log("element0:" + element0);
 */
-  //console.log("library", dump(libraries, 2));
-  /*
-  for(let [node, path, hier] of EagleDocument.traverse(board.xml[0])) {
-    let pathstr = EagleDocument.nodeName(node, path, hier);
-    yield [board.type + "/" + pathstr, EagleDocument.toXML(node, 0)];
-  }
-  return;*/
-
-  fs.writeSync(process.stdout.fd, "board:\n" + board.toString());
-
-  elems.forEach(elem => {
-    //console.log(`${elem.tagName}:`, elem.toXML(0), elem.attributes.package);
-    if(elem.deviceset) console.log(`${elem.tagName}.deviceset:`, elem.deviceset.toXML(1), elem.attributes.deviceset);
-  });
-  false &&
-    named.forEach(([e, p]) => {
-      let elem = new EagleEntity(board, p);
-      //console.log("e:", elem.toXML(), elem.attributes.package);
-    });
+  return proj.saveTo(".", true);
 }
 
 (async () => {
   try {
     await testLocator();
-    await testEagle("../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3").then(result => console.log(result));
+    await testEagle("../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3").then(result =>
+      console.log(result)
+    );
   } catch(err) {
-    console.log("err:", err);
+    console.log("err:", err.toString());
   }
 })();
-
-//for(let elem of result) console.log(elem.join("\t"));

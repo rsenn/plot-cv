@@ -2,6 +2,7 @@ import fs from "fs";
 import { EagleEntity } from "./lib/eagle/entity.js";
 import { EagleDocument } from "./lib/eagle/document.js";
 import { EagleProject } from "./lib/eagle/project.js";
+import { EagleLocator } from "./lib/eagle/locator.js";
 import Util from "./lib/util.js";
 import util from "util";
 import { Console } from "console";
@@ -9,77 +10,105 @@ import { Console } from "console";
 global.console = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
-  inspectOptions: { depth: 20, colors: true }
+  inspectOptions: { depth: 2, colors: true }
 });
 
-function dump(obj, depth = 2) {
-  return util.inspect(obj, { depth, colors: true });
+function dump(o, depth = 2, breakLength = 400) {
+  if(o instanceof EagleEntity) {
+    o = EagleEntity.dump(o);
+    depth *= 4;
+  }
+  return util.inspect(o, { depth, colors: true, breakLength });
 }
 
-function* testEagle(filename) {
-  let children = fs.readFileSync(filename);
-  
+function xmlize(obj, depth = 2) {
+  return obj.toXML
+    ? obj.toXML().replace(/>\s*</g, ">\n    <")
+    : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
+}
 
-  let proj = new EagleProject(filename);
-  let model = proj.board;
-  let schematic = proj.schematic;
-
-  console.log("schematic:", schematic);
-  
-  let elems = model.get("elements") || model.get("parts");
-
-  for(let elem of elems) {
-    
-    
-    
-  }
-  let named = [...model.findAll(e => e.attributes && "name" in e.attributes)];
-  let withPackage = [...model.findAll(e => e.attributes && "device" in e.attributes)];
-  let parents = [...model.findAll(e => e.children instanceof Array && e.children.length > 0)];
-  let tags = named.map(e => EagleDocument.toXML(e));
-  let libraries = [
-    ...model.findAll(e => e.tagName == "library" && e.attributes && "name" in e.attributes)
+function testLocator() {
+  let testobj = [
+    0,
+    1,
+    2,
+    { name: "roman", children: ["x", "y", { id: 1, items: ["a", "b", "c"] }] }
   ];
+  let l = new EagleLocator([3, "children", 2, "items", -2]);
+  let a = [l.slice(), l.slice()];
+  console.log("l:", dump(l));
+  console.log("a[0] == a[1]:", a[0] === a[1]);
+  a[1][0] = "x";
+  console.log("a:", dump(a));
+  let b = [l.prevSibling, l.nextSibling, l.parent];
+  console.log("b:", dump(b));
+  console.log(b[2].parent.parent.up(3));
+  console.log("apply:", l.apply(testobj));
+}
 
-  let nodes = EagleDocument.traverse(model.xml[0]); 
-  console.log("library", dump(libraries, 2));
-  for(let [node, path, hier] of EagleDocument.traverse(model.xml[0])) {
-    
-    let pathstr = EagleDocument.nodeName(node, path, hier);
+async function testEagle(filename) {
+  let proj = new EagleProject(filename);
+  let { board, schematic, libraries } = proj;
 
-    yield model.type + "/" + pathstr + "\t" + EagleDocument.toXML(node, 0);
-  }
+  
 
-  return;
+  const newEntity = ([v, l, h, d]) => {
+    let e;
+
+    let elem = d.index(l);
+    console.log("", elem);
+    e = new EagleEntity(d, l);
+    return e;
+  };
+
+  const getText = ([v, l, h, d]) => {
+    const { children, ...obj } = EagleEntity.toObject(v);
+    return { ...obj, text: v.children.join(" ") };
+  };
+
+  let descriptions = [...schematic.getAll("description", getText)];
+  let parts = [...schematic.getAll("part", ([v, l, h, d]) => new EagleEntity(d, l, v))];
+
+
+  
+  
+  
+  
+
+  
+  
+  console.log("parts:", parts.map(part => part.toXML()));
+
+ let element0 = parts[0].children[0];
+  
+  return proj.saveTo(".", true);
+
   
   
   
 
-  
+  fs.writeSync(process.stdout.fd, "board:\n" + board.toString());
+
   elems.forEach(elem => {
-    console.log(`${elem.tagName}:`, elem.toXML(0), elem.attributes.package);
-
     if(elem.deviceset)
       console.log(`${elem.tagName}.deviceset:`, elem.deviceset.toXML(1), elem.attributes.deviceset);
   });
-
-  false &&
-    named.forEach(([e, p]) => {
-      let elem = new EagleEntity(model, p);
-
-      console.log("e:", elem.toXML(), elem.attributes.package);
-       
-      
-    });
-
-  
+  named.forEach(([e, p]) => {
+    let elem = new EagleEntity(board, p);
+    return elem;
+  });
 }
 
-let result = [
-  ...testEagle("/home/roman/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch"),
-  ...testEagle("/home/roman/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd")
-];
+(async () => {
+  try {
+    await testLocator();
+    await testEagle("../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3").then(result =>
+      console.log(result)
+    );
+  } catch(err) {
+    console.log("err:", err.toString());
+  }
+})();
 
-result = Util.unique(result.sort());
 
 
