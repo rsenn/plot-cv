@@ -61,7 +61,13 @@ async function testEagle(filename) {
   let descriptions = [...schematic.getAll("description", getText)];
 
   const dumpEntity = (doc, name) => {
-    let a = [...doc.getAll(name, ([v, l, h, d]) => new EagleEntity(d, l, v))];
+    let a = [
+      ...doc.getAll(name, ([v, l, h, d]) => {
+        let ret = new EagleEntity(d, l,v);
+        console.log("" + EagleEntity.dump(ret));
+        return ret;
+      })
+    ];
 
     console.log(
       a.map((part, i) => `${name + Util.pad("" + i, 6, " ")} #${i + ":"} ` + part + "\n").join("")
@@ -70,6 +76,7 @@ async function testEagle(filename) {
 
   dumpEntity(schematic, "part");
   dumpEntity(board, "element");
+  dumpEntity(board, "description");
 
   /* let element0 = parts[0];
   console.log("element0:" + element0);
@@ -85,5 +92,6 @@ async function testEagle(filename) {
     );
   } catch(err) {
     console.log("err:", err.toString());
+    throw err;
   }
 })();
