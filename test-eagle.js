@@ -60,23 +60,30 @@ async function testEagle(filename) {
   };
   let descriptions = [...schematic.getAll("description", getText)];
 
-  const dumpEntity = (doc, name) => {
-    let a = [
-      ...doc.getAll(name, ([v, l, h, d]) => {
-        let ret = new EagleEntity(d, l,v);
-        console.log("" + EagleEntity.dump(ret));
-        return ret;
-      })
-    ];
+  let circles = ['⓪','➀①','🄋'];
 
-    console.log(
-      a.map((part, i) => `${name + Util.pad("" + i, 6, " ")} #${i + ":"} ` + part + "\n").join("")
-    );
-  };
+  const dingbatCode = (digit) => (digit == 0 ? circles[0] : String.fromCharCode(digit + circles[1].charCodeAt(1)));
+
+    const ansi = (...args) => `\u001b[${[...args].join(";")}m`;
+    const text = (text, ...color) => ansi(...color) + text + ansi(0);
+const number = (num) => (''+num).split('').map(ch => dingbatCode(ch.charCodeAt(0) & 0x0f)).join('');
+
+  const dumpEntity = function *(doc, name) {
+    let i = 0;
+    let a = [...doc.getAll(name, ([v, l, h, d]) =>  new EagleEntity(d, l,v))];
+
+
+    for(let part of a) {
+        yield `${ Util.pad(''+i, 5, " ")}${text('-',38,5,92)}${text(number(i),38,5,252)} ` +part + "\n";
+        i++;
+      }
+
+  }  
 
   dumpEntity(schematic, "part");
   dumpEntity(board, "element");
   dumpEntity(board, "description");
+  console.log([...dumpEntity(board, a => true)].join(' '));
 
   /* let element0 = parts[0];
   console.log("element0:" + element0);
