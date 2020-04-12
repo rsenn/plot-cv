@@ -47,43 +47,45 @@ function testLocator() {
 async function testEagle(filename) {
   let proj = new EagleProject(filename);
   let { board, schematic, libraries } = proj;
-  const newEntity = ([v, l, h, d]) => {
-    let e;
-    let elem = d.index(l);
-    console.log("", elem);
-    e = new EagleEntity(d, l);
-    return e;
-  };
+
+  const newEntity = ([v, l, h, d]) => new EagleEntity(d, l);
+
   const getText = ([v, l, h, d]) => {
     const { children, ...obj } = EagleEntity.toObject(v);
     return { ...obj, text: v.children.join(" ") };
   };
+
   let descriptions = [...schematic.getAll("description", getText)];
 
-  let circles = ['🄌','❶➀①⓵','🅞🄋⓪'];
+  let circles = ["🄌", "❶➀①⓵", "🅞🄋⓪"];
 
-  const dingbatCode = (digit) => (digit % 10 == 0 ? circles[0] : String.fromCharCode(digit % 10 + circles[1].charCodeAt(0) - 1));
+  const dingbatCode = digit =>
+    digit % 10 == 0 ? circles[0] : String.fromCharCode((digit % 10) + circles[1].charCodeAt(0) - 1);
 
-    const ansi = (...args) => `\u001b[${[...args].join(";")}m`;
-    const text = (text, ...color) => ansi(...color) + text + ansi(0);
-const number = (num) => (''+num).split('').map(ch => dingbatCode(ch.charCodeAt(0) & 0x0f)).join(' ');
+  const ansi = (...args) => `\u001b[${[...args].join(";")}m`;
+  const text = (text, ...color) => ansi(...color) + text + ansi(0);
+  const number = num =>
+    ("" + num)
+      .split("")
+      .map(ch => dingbatCode(ch.charCodeAt(0) & 0x0f))
+      .join(" ");
 
-  const dumpEntity = function *(doc, name) {
-    let i = 0;
-    let a = [...doc.getAll(name, ([v, l, h, d]) =>  new EagleEntity(d, l,v))];
-
-
-    for(let part of a) {
-        yield `${ Util.pad(''+i, 5, " ")}${text('#',1,31)}${text(number(i),1,33  )}  ` +part + "\n";
-        i++;
-      }
-
-  }  
-
+  const dumpEntity = function*(doc, name, i = 0) {
+    for(let part of doc.getAll(name, ([v, l, h, d]) => new EagleEntity(d, l, v)))
+      yield `${Util.pad("" + i, 5, " ")}${text("#", 1, 31)}${text(number(i++), 1, 33)}  ` +
+        part +
+        "\n";
+  };
+  /*
   dumpEntity(schematic, "part");
   dumpEntity(board, "element");
   dumpEntity(board, "description");
-  console.log([...dumpEntity(board, a => true)].join(' '));
+  */
+  // console.log([...dumpEntity(schematic, a => true)].join(" "));
+
+  for(let e of schematic.entries()) console.log("" + e);
+
+  //  let nodes = [...schematic];
 
   /* let element0 = parts[0];
   console.log("element0:" + element0);
