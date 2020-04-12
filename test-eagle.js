@@ -20,18 +20,11 @@ function dump(o, depth = 2, breakLength = 400) {
 }
 
 function xmlize(obj, depth = 2) {
-  return obj.toXML
-    ? obj.toXML().replace(/>\s*</g, ">\n    <")
-    : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
+  return obj.toXML ? obj.toXML().replace(/>\s*</g, ">\n    <") : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
 
 function testLocator() {
-  let testobj = [
-    0,
-    1,
-    2,
-    { name: "roman", children: ["x", "y", { id: 1, items: ["a", "b", "c"] }] }
-  ];
+  let testobj = [0, 1, 2, { name: "roman", children: ["x", "y", { id: 1, items: ["a", "b", "c"] }] }];
   let l = new EagleLocator([3, "children", 2, "items", -2]);
   let a = [l.slice(), l.slice()];
   console.log("l:", dump(l));
@@ -59,8 +52,7 @@ async function testEagle(filename) {
 
   let circles = ["🄌", "❶➀①⓵", "🅞🄋⓪"];
 
-  const dingbatCode = digit =>
-    digit % 10 == 0 ? circles[0] : String.fromCharCode((digit % 10) + circles[1].charCodeAt(0) - 1);
+  const dingbatCode = digit => (digit % 10 == 0 ? circles[0] : String.fromCharCode((digit % 10) + circles[1].charCodeAt(0) - 1));
 
   const ansi = (...args) => `\u001b[${[...args].join(";")}m`;
   const text = (text, ...color) => ansi(...color) + text + ansi(0);
@@ -71,10 +63,7 @@ async function testEagle(filename) {
       .join(" ");
 
   const dumpEntity = function*(doc, name, i = 0) {
-    for(let part of doc.getAll(name, ([v, l, h, d]) => new EagleEntity(d, l, v)))
-      yield `${Util.pad("" + i, 5, " ")}${text("#", 1, 31)}${text(number(i++), 1, 33)}  ` +
-        part +
-        "\n";
+    for(let part of doc.getAll(name, ([v, l, h, d]) => new EagleEntity(d, l, v))) yield `${Util.pad("" + i, 5, " ")}${text("#", 1, 31)}${text(number(i++), 1, 33)}  ` + part + "\n";
   };
   /*
   dumpEntity(schematic, "part");
@@ -96,9 +85,7 @@ async function testEagle(filename) {
 (async () => {
   try {
     await testLocator();
-    await testEagle("../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3").then(result =>
-      console.log(result)
-    );
+    await testEagle("../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3").then(result => console.log(result));
   } catch(err) {
     console.log("err:", err.toString());
     throw err;
