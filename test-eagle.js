@@ -44,10 +44,10 @@ async function testEagle(filename) {
   let proj = new EagleProject(filename);
   let { board, schematic, libraries } = proj;
 
-  for(let [l,e] of proj.entries()) {
-    //console.log(e.toXML(0));
+  for(let e of proj.getAll(v => v.tagName == 'part'||v.tagName == 'element', ([v,l,h,d]) => new EagleEntity(d,l)))
     console.log("proj:", dump(e,1));
-  }
+
+
 
   const newEntity = ([v, l, h, d]) => new EagleEntity(d, l);
 
