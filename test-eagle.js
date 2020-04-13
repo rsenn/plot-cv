@@ -17,7 +17,7 @@ function dump(o, depth = 2, breakLength = 400) {
   let s;
   if(o instanceof EagleEntity) {
     s = inspect(o);
-    depth *= 4;
+    depth * 4;
   } else s = util.inspect(o, { depth, colors: true, breakLength });
   return s;
 }
@@ -44,11 +44,38 @@ async function testEagle(filename) {
   let proj = new EagleProject(filename);
   let { board, schematic, libraries } = proj;
 
-  for(let e of proj.getAll(v => v.tagName == 'part'||v.tagName == 'element', ([v,l,h,d]) => new EagleEntity(d,l)))
-    console.log("proj:", dump(e,1));
+  const getPackage = e => {
+    const { document } = e;
+    if(e.tagName == 'part'){
+      const device = e.deviceset.find(v => v.tagName == 'device' && v.attributes.name == e.attributes.device, ([v]) => v);
+  //console.log("device:",dump(device));
+      return device.package;
+    }
+    return e.package;
+  }
 
+  /*for(let [e,l,h,d] of proj.iterator()) {
+    console.log("l:", dump(l, 1));
+  }*/
+  console.log(schematic.children);
+try {
+  for(let e of proj.getAll(
+    v => v.tagName == "part" || v.tagName == "element",
+    ([v, l, h, d]) => new EagleEntity(d, l, v)
+  )) {
+    console.log("proj:", dump(e, 1));
+  //  console.log("library:", dump(e.library));
+    //console.log("package:", dump(getPackage(e)));
+    //console.log("project:", util.inspect(e.document,{depth:1,colors:true}));
+  }
+} catch(error) {
+  const { stack } = error;
+      console.log("error:", error.toString(), stack);
 
+}
+  return;
 
+  /*
   const newEntity = ([v, l, h, d]) => new EagleEntity(d, l);
 
   const getText = ([v, l, h, d]) => {
@@ -68,7 +95,7 @@ async function testEagle(filename) {
 
   const dumpEntity = function*(doc, name, i = 0) {
     for(let part of doc.getAll(name, ([v, l, h, d]) => new EagleEntity(d, l, v))) yield `${Util.pad("" + i, 5, " ")}${text("#", 1, 31)}${text(number(i++), 1, 33)}  ` + part + "\n";
-  };
+  };*/
   /*
   dumpEntity(schematic, "part");
   dumpEntity(board, "element");
@@ -91,7 +118,12 @@ async function testEagle(filename) {
     await testLocator();
     await testEagle("../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3").then(result => console.log(result));
   } catch(err) {
+    const stack = err.stack
+        /*.filter(frame => null !== frame.getFileName())
+        .map(frame => `${("" + frame.getFileName()).replace(/.*plot-cv\//, "")}:${frame.getLineNumber()}:${frame.getColumnNumber()}`)*/
+        ;
     console.log("err:", err.toString());
+    console.log("stack:", stack);
     throw err;
   }
 })();
