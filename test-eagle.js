@@ -44,7 +44,7 @@ async function testEagle(filename) {
   let proj = new EagleProject(filename);
   let { board, schematic, libraries } = proj;
 
-  for(let [e,l] of proj) {
+  for(let [e, l] of proj) {
     //console.log(e.toXML(0));
     console.log("proj:", e);
   }
