@@ -6,7 +6,7 @@ import { EagleLocator } from "./lib/eagle/locator.js";
 import Util from "./lib/util.js";
 import util from "util";
 import { Console } from "console";
-import { ansi, text, dingbatCode } from "./lib/eagle/common.js";
+import { ansi, text, dingbatCode, inspect, EagleNode } from "./lib/eagle/common.js";
 
 global.console = new Console({
   stdout: process.stdout,
@@ -14,11 +14,12 @@ global.console = new Console({
   inspectOptions: { depth: 2, colors: true }
 });
 function dump(o, depth = 2, breakLength = 400) {
+  let s;
   if(o instanceof EagleEntity) {
-    o = EagleEntity.dump(o);
+    s = inspect(o);
     depth *= 4;
-  }
-  return util.inspect(o, { depth, colors: true, breakLength });
+  }else s= util.inspect(o, { depth, colors: true, breakLength });
+  return s;
 }
 
 function xmlize(obj, depth = 2) {
@@ -42,6 +43,11 @@ function testLocator() {
 async function testEagle(filename) {
   let proj = new EagleProject(filename);
   let { board, schematic, libraries } = proj;
+
+  for(let e of proj) {
+    //console.log(e.toXML(0));
+    console.log("e:", e);
+  }
 
   const newEntity = ([v, l, h, d]) => new EagleEntity(d, l);
 
@@ -70,7 +76,7 @@ async function testEagle(filename) {
   */
   // console.log([...dumpEntity(schematic, a => true)].join(" "));
 
-  for(let e of schematic.entries()) console.log("" + e);
+  //  console.log(EagleNode.name( e));
 
   //  let nodes = [...schematic];
 
