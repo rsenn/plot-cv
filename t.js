@@ -22,18 +22,11 @@ function dump(o, depth = 2, breakLength = 400) {
 }
 
 function xmlize(obj, depth = 2) {
-  return obj.toXML
-    ? obj.toXML().replace(/>\s*</g, ">\n    <")
-    : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
+  return obj.toXML ? obj.toXML().replace(/>\s*</g, ">\n    <") : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
 
 function testLocator() {
-  let testobj = [
-    0,
-    1,
-    2,
-    { name: "roman", children: ["x", "y", { id: 1, items: ["a", "b", "c"] }] }
-  ];
+  let testobj = [0, 1, 2, { name: "roman", children: ["x", "y", { id: 1, items: ["a", "b", "c"] }] }];
   let l = new EagleLocator([3, "children", 2, "items", -2]);
   let a = [l.slice(), l.slice()];
   console.log("l:", dump(l));
@@ -49,8 +42,6 @@ function testLocator() {
 async function testEagle(filename) {
   let proj = new EagleProject(filename);
   let { board, schematic, libraries } = proj;
-
-  
 
   const newEntity = ([v, l, h, d]) => {
     let e;
@@ -69,29 +60,19 @@ async function testEagle(filename) {
   let descriptions = [...schematic.getAll("description", getText)];
   let parts = [...schematic.getAll("part", ([v, l, h, d]) => new EagleEntity(d, l, v))];
 
+  console.log(
+    "parts:",
+    parts.map(part => part.toXML())
+  );
 
-  
-  
-  
-  
+  let element0 = parts[0].children[0];
 
-  
-  
-  console.log("parts:", parts.map(part => part.toXML()));
-
- let element0 = parts[0].children[0];
-  
   return proj.saveTo(".", true);
-
-  
-  
-  
 
   fs.writeSync(process.stdout.fd, "board:\n" + board.toString());
 
   elems.forEach(elem => {
-    if(elem.deviceset)
-      console.log(`${elem.tagName}.deviceset:`, elem.deviceset.toXML(1), elem.attributes.deviceset);
+    if(elem.deviceset) console.log(`${elem.tagName}.deviceset:`, elem.deviceset.toXML(1), elem.attributes.deviceset);
   });
   named.forEach(([e, p]) => {
     let elem = new EagleEntity(board, p);
@@ -102,13 +83,8 @@ async function testEagle(filename) {
 (async () => {
   try {
     await testLocator();
-    await testEagle("../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3").then(result =>
-      console.log(result)
-    );
+    await testEagle("../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3").then(result => console.log(result));
   } catch(err) {
     console.log("err:", err.toString());
   }
 })();
-
-
-
