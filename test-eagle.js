@@ -18,7 +18,7 @@ function dump(o, depth = 2, breakLength = 400) {
   if(o instanceof EagleEntity) {
     s = inspect(o);
     depth *= 4;
-  }else s= util.inspect(o, { depth, colors: true, breakLength });
+  } else s = util.inspect(o, { depth, colors: true, breakLength });
   return s;
 }
 
@@ -44,9 +44,9 @@ async function testEagle(filename) {
   let proj = new EagleProject(filename);
   let { board, schematic, libraries } = proj;
 
-  for(let e of proj) {
+  for(let [e,l] of proj) {
     //console.log(e.toXML(0));
-    console.log("e:", e);
+    console.log("proj:", e);
   }
 
   const newEntity = ([v, l, h, d]) => new EagleEntity(d, l);
