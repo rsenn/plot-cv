@@ -87,9 +87,9 @@ async function testEagle(filename) {
       let index = res.indexOf(true);
 
       if(index != -1) {
-        instance.part.attributes.device = pkgs[index];
-        console.log(instance.part.attributes.device, pkgs[index]);
-        element.attributes.package = pkgs[index];
+        instance.part.device = pkgs[index];
+        console.log(instance.part.device, pkgs[index]);
+        element.package = pkgs[index];
       }
       console.log(res, index);
     }
