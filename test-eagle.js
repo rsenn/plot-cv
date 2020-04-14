@@ -150,7 +150,7 @@ async function testEagle(filename) {
   for(let key in layers) {
     console.log("key:", key, allLayers[key]);
     layers[key] = Util.unique(layers[key]);
-    const layerNames = layers[key].map(layerId => Util.find(allLayers[key], layerId, "number")); /*.map(layer => layer.name)*/
+    const layerNames = Object.fromEntries(layers[key].map(layerId => Util.find(allLayers[key], layerId, "number")).filter(layer => !!layer).map(layer => [parseInt(layer.number),layer.name]));
     console.log(`${key}.layer names:`, layerNames);
   }
   return;
