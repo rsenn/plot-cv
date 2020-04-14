@@ -57,18 +57,42 @@ async function testEagle(filename) {
 
   /*  console.log("board.location:", board.location);
   console.log("board.owner:", board.owner);*/
-  const pred = v => (v.tagName == "instance" || v.tagName == "element") && "attributes" in v;
-  const tran = ([v, l, d]) => new EagleEntity(d, l, v);
+  /* const pred = v => (v.tagName == "instance" || v.tagName == "element") && "attributes" in v;
+  const tran = ([v, l, d]) => new EagleEntity(d, l, v);*/
+  const packages = {
+    board: [...proj.board.getAll("package")],
+    schematic: [...proj.schematic.getAll("package")]
+  };
 
-  for(let element of proj.board.getAll(pred,tran)) {
-   let instance = proj.schematic.getByName('instance', element.attributes.name, 'part');
-   console.log(dump(element,1));
-   const packages = {
-    element: element.package.attributes.name,
-    instance: instance.part.device.package.attributes.name
-   }
-   console.log(dump(instance,1));
-   console.log(dump(packages,1));
+  for(let element of proj.board.getAll("element")) {
+    let instance = proj.schematic.getByName("instance", element.attributes.name, "part");
+    //console.log(dump(element,1));
+    const pkgs = [element.package.name, instance.part.device.package.name];
+
+    if(pkgs[0] != pkgs[1]) {
+          console.log(dump(element,1));
+          console.log(dump(instance.part,1));
+
+      console.log(dump(pkgs, 1));
+
+      const checkPkg = pkgName => {
+        let bpkg = board.getByName("package", pkgName);
+        let spkg = schematic.getByName("device", pkgName);
+
+if(!!(bpkg && spkg))
+        console.log(['board:     '+dump(bpkg, 1), 'schematic: '+dump(spkg, 1)].join("\n"));
+        return !!(bpkg && spkg);
+      };
+      let res = pkgs.map(pkg => checkPkg(pkg));
+
+      let index = res.indexOf(true);
+
+if(index != -1) {
+      instance.part.device = pkgs[index];
+      element.package = pkgs[index];
+    }
+      console.log(res, index);
+    }
   }
 
   /*try {
@@ -101,7 +125,6 @@ async function testEagle(filename) {
     );
     throw new Error("err");
   }*/
-  return;
   return proj.saveTo(".", true);
 }
 (async () => {
