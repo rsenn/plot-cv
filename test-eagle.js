@@ -16,16 +16,14 @@ global.console = new Console({
 function dump(o, depth = 2, breakLength = 400) {
   let s;
   if(o instanceof EagleEntity) {
-    s = inspect(o);
+    s = inspect(o, undefined, { depth, location: false });
     depth * 4;
   } else s = util.inspect(o, { depth, colors: true, breakLength });
   return s;
 }
-
 function xmlize(obj, depth = 2) {
   return obj.toXML ? obj.toXML().replace(/>\s*</g, ">\n    <") : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
-
 function testLocator() {
   let testobj = [0, 1, 2, { name: "roman", children: ["x", "y", { id: 1, items: ["a", "b", "c"] }] }];
   let l = new EagleLocator([3, "children", 2, "items", -2]);
@@ -44,84 +42,74 @@ async function testEagle(filename) {
   let proj = new EagleProject(filename);
   let { board, schematic, libraries } = proj;
 
-  const getPackage = e => {
-    const { document } = e;
-    if(e.tagName == 'part'){
-      const device = e.deviceset.find(v => v.tagName == 'device' && v.attributes.name == e.attributes.device, ([v]) => v);
-  //console.log("device:",dump(device));
+  const getPackage = (d, e) => {
+    let part;
+    if(e.tagName == "instance") {
+      part = e.part;
+      let deviceset = part.deviceset;
+      const device = deviceset.getByName("device", part.attributes.device);
       return device.package;
     }
     return e.package;
-  }
-
-  /*for(let [e,l,h,d] of proj.iterator()) {
-    console.log("l:", dump(l, 1));
-  }*/
-  console.log(schematic.children);
-try {
-  for(let e of proj.getAll(
-    v => v.tagName == "part" || v.tagName == "element",
-    ([v, l, h, d]) => new EagleEntity(d, l, v)
-  )) {
-    console.log("proj:", dump(e, 1));
-  //  console.log("library:", dump(e.library));
-    //console.log("package:", dump(getPackage(e)));
-    //console.log("project:", util.inspect(e.document,{depth:1,colors:true}));
-  }
-} catch(error) {
-  const { stack } = error;
-      console.log("error:", error.toString(), stack);
-
-}
-  return;
-
-  /*
-  const newEntity = ([v, l, h, d]) => new EagleEntity(d, l);
-
-  const getText = ([v, l, h, d]) => {
-    const { children, ...obj } = EagleEntity.toObject(v);
-    return { ...obj, text: v.children.join(" ") };
   };
 
-  let descriptions = [...schematic.getAll("description", getText)];
+  console.log("schematic:", schematic.getByName("instance", "T1", "part"));
 
-  let circles = ["🄌", "❶➀①⓵", "🅞🄋⓪"];
+  /*  console.log("board.location:", board.location);
+  console.log("board.owner:", board.owner);*/
+  const pred = v => (v.tagName == "instance" || v.tagName == "element") && "attributes" in v;
+  const tran = ([v, l, d]) => new EagleEntity(d, l, v);
 
-  const number = num =>
-    ("" + num)
-      .split("")
-      .map(ch => dingbatCode(ch.charCodeAt(0) & 0x0f))
-      .join(" ");
+  for(let element of proj.board.getAll(pred,tran)) {
+   let instance = proj.schematic.getByName('instance', element.attributes.name, 'part');
+   console.log(dump(element,1));
+   const packages = {
+    element: element.package.attributes.name,
+    instance: instance.part.device.package.attributes.name
+   }
+   console.log(dump(instance,1));
+   console.log(dump(packages,1));
+  }
 
-  const dumpEntity = function*(doc, name, i = 0) {
-    for(let part of doc.getAll(name, ([v, l, h, d]) => new EagleEntity(d, l, v))) yield `${Util.pad("" + i, 5, " ")}${text("#", 1, 31)}${text(number(i++), 1, 33)}  ` + part + "\n";
-  };*/
-  /*
-  dumpEntity(schematic, "part");
-  dumpEntity(board, "element");
-  dumpEntity(board, "description");
-  */
-  // console.log([...dumpEntity(schematic, a => true)].join(" "));
+  /*try {
+    for(let e of Util.concat(proj.board.getAll(pred, tran), proj.schematic.getAll(pred, tran))) {
+      const part = e.part;
+      const deviceset = part && part.deviceset;
+      const device = part && part.device;
+      const pkg = e.package || device.package; // = getPackage(schematic, e);
 
-  //  console.log(EagleNode.name( e));
-
-  //  let nodes = [...schematic];
-
-  /* let element0 = parts[0];
-    console.log("element0:" + element0);
-  */
+      if(part) {
+        console.log("device.attributes.package:", device.attributes.package);
+        if(device.attributes.package && !pkg) console.log(`Package ${device.attributes.package} not found!`);
+        console.log(dump(part, 1));
+        console.log(dump(deviceset, 1));
+        console.log(dump(device, 1));
+      } else {
+        console.log(dump(e, 1));
+      }
+      console.log(dump(pkg, 1));
+    }
+  } catch(error) {
+    const { stack } = error;
+    console.log(
+      "error:",
+      error
+        .toString()
+        .split(/\n/g)
+        .slice(0, 10),
+      stack
+    );
+    throw new Error("err");
+  }*/
+  return;
   return proj.saveTo(".", true);
 }
-
 (async () => {
   try {
     await testLocator();
     await testEagle("../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3").then(result => console.log(result));
   } catch(err) {
-    const stack = err.stack
-        /*.filter(frame => null !== frame.getFileName())
-        .map(frame => `${("" + frame.getFileName()).replace(/.*plot-cv\//, "")}:${frame.getLineNumber()}:${frame.getColumnNumber()}`)*/
-        ;
+    const stack = err.stack;
     console.log("err:", err.toString());
     console.log("stack:", stack);
     throw err;
