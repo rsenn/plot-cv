@@ -5,6 +5,7 @@ import { EagleLocator } from "./lib/eagle/locator.js";
 import Util from "./lib/util.js";
 import util from "util";
 import deep from "./lib/deep.js";
+import deepDiff from "deep-diff";
 import { Console } from "console";
 import { inspect } from "./lib/eagle/common.js";
 
@@ -101,8 +102,30 @@ async function testEagle(filename) {
     libraries.map(lib => lib.basename)
   );
 
+  for(let pkg of Util.concat(...libraries.map(lib => lib.findAll("package")))) {
+    console.log("pkg.name:", pkg.name);
+    let other = { board: board.find("package", pkg.name), schematic: schematic.find("package", pkg.name) };
+      
+
+      console.log("pkg:", dump(pkg.raw, 10));
+
+    for(let k in other) {
+      const o = other[k];
+      if(typeof o != "object" || !o) continue;
+      
+      console.log(`${k}:`, dump(o, 10));
+
+      if(k == 'schematic') {
+      let diff = deepDiff(pkg.raw, other.schematic.raw);
+        console.log(`diff:`, dump(diff, 10));
+      }
+    }
+
+  }
+
   console.log("found:", dump(schematic.find("part", "T1")));
-  console.log("found:", [...Util.concat(...libraries.map(lib => lib.findAll("package")))].map(e => [e.owner.basename, e.xpath()].join(": ")).join("\n"));
+  console.log("found:", [...Util.concat(...libraries.map(lib => lib.findAll("package")))].map(e => [e.owner.basename, e.xpath(), e.toXML()].join("\n  ")).join("\n   "));
+
   console.log("schematic:", schematic.changes);
   console.log("board:", board.changes);
 
