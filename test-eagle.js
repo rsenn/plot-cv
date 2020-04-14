@@ -100,52 +100,48 @@ async function testEagle(filename) {
   console.log("schematic:", schematic.changes);
   console.log("board:", board.changes);
 
-  //for(let it of schematic.iterator(["children", "0", "children", "0", "children", "0"], t => t)) console.log("elem:", it);
+ /* for(let it of schematic.iterator(["children", "0", "children", "0", "children", "0"], t => t)) console.log("elem:", it);
 
-  //  console.log("schematic:", schematic.getByName("instance", "T1", "part"));
+  console.log("schematic:", schematic.getByName("instance", "T1", "part"));
 
-  /*console.log("schematic:", schematic.changes);
-  console.log("board:", board.xml);*/
-  /*
-   for(let [value,path] of deep.iterate(schematic.xml, (v,p) => p.length > 1 ? p[p.length - 2] == 'children' : true)) {
-   
-    console.log("iterate: ",value,`[${path.map(p => typeof(p) == 'string'  ? `'${p}'`: p).join(',')}]`);
-   }*/
+  console.log("schematic:", schematic.changes);
+  console.log("board:", board.xml);
 
-  /* let elem=deep.get(schematic.xml, ['0','children','0','children','0','children','3','children','6','children','0','children','3','children','11','children','0','children','2']);
-    console.log("elem: ", elem);
+  for(let [value, path] of deep.iterate(schematic.xml, (v, p) => (p.length > 1 ? p[p.length - 2] == "children" : true))) console.log("iterate: ", value, `[${path.map(p => (typeof p == "string" ? `'${p}'` : p)).join(",")}]`);
 
-*/
-  /*try {
-    for(let e of Util.concat(proj.board.getAll(pred, tran), proj.schematic.getAll(pred, tran))) {
-      const part = e.part;
-      const deviceset = part && part.deviceset;
-      const device = part && part.device;
-      const pkg = e.package || device.package; // = getPackage(schematic, e);
+  let elem = deep.get(schematic.xml, ["0", "children", "0", "children", "0", "children", "3", "children", "6", "children", "0", "children", "3", "children", "11", "children", "0", "children", "2"]);
+  console.log("elem: ", elem);*/
 
-      if(part) {
-        console.log("device.attributes.package:", device.attributes.package);
-        if(device.attributes.package && !pkg) console.log(`Package ${device.attributes.package} not found!`);
-        console.log(dump(part, 1));
-        console.log(dump(deviceset, 1));
-        console.log(dump(device, 1));
-      } else {
-        console.log(dump(e, 1));
+/*    try {
+      for(let e of Util.concat(proj.board.getAll("element"), proj.schematic.getAll("instance"))) {
+        const part = e.part;
+        const deviceset = part && part.deviceset;
+        const device = part && part.device;
+        const pkg = e.package || device.package; // = getPackage(schematic, e);
+
+        if(part) {
+          console.log("device.attributes.package:", device.attributes.package);
+          if(device.attributes.package && !pkg) console.log(`Package ${device.attributes.package} not found!`);
+          console.log(dump(part, 1));
+          console.log(dump(deviceset, 1));
+          console.log(dump(device, 1));
+        } else {
+          console.log(dump(e, 1));
+        }
+        console.log(dump(pkg, 1));
       }
-      console.log(dump(pkg, 1));
-    }
-  } catch(error) {
-    const { stack } = error;
-    console.log(
-      "error:",
-      error
-        .toString()
-        .split(/\n/g)
-        .slice(0, 10),
-      stack
-    );
-    throw new Error("err");
-  }*/
+    } catch(error) {
+      const { stack } = error;
+      console.log(
+        "error:",
+        error
+          .toString()
+          .split(/\n/g)
+          .slice(0, 10),
+        stack
+      );
+      throw new Error("err");
+    }*/
   return proj.saveTo(".", true);
 }
 (async () => {
