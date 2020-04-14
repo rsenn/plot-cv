@@ -105,22 +105,20 @@ async function testEagle(filename) {
   for(let pkg of Util.concat(...libraries.map(lib => lib.findAll("package")))) {
     console.log("pkg.name:", pkg.name);
     let other = { board: board.find("package", pkg.name), schematic: schematic.find("package", pkg.name) };
-      
 
-      console.log("pkg:", dump(pkg.raw, 10));
+    console.log("pkg:", dump(pkg.raw, 10));
 
     for(let k in other) {
       const o = other[k];
       if(typeof o != "object" || !o) continue;
-      
+
       console.log(`${k}:`, dump(o, 10));
 
-      if(k == 'schematic') {
-      let diff = deepDiff(pkg.raw, other.schematic.raw);
+      if(k == "schematic") {
+        let diff = deepDiff(pkg.raw, other.schematic.raw);
         console.log(`diff:`, dump(diff, 10));
       }
     }
-
   }
 
   console.log("found:", dump(schematic.find("part", "T1")));
