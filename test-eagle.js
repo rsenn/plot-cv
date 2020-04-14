@@ -101,25 +101,46 @@ async function testEagle(filename) {
     "libs:",
     libraries.map(lib => lib.basename)
   );
+  let layers = { board: [], schematic: [] };
+ let allLayers = { schematic: [...schematic.findAll(v => v.tagName == 'layer', ([v,l,d]) => v.attributes)], schematic: [ ...schematic.findAll(v => v.tagName == 'layer', ([v,l,d]) => v.attributes)]};
+console.log(`allLayers:`,allLayers);
 
   for(let pkg of Util.concat(...libraries.map(lib => lib.findAll("package")))) {
     console.log("pkg.name:", pkg.name);
-    let other = { board: board.find("package", pkg.name), schematic: schematic.find("package", pkg.name) };
+    let other = { board: board.getByName("package", pkg.name), schematic: schematic.getByName("package", pkg.name) };
 
-    console.log("pkg:", dump(pkg.raw, 10));
+    //console.log("pkg:", dump(pkg.raw, 10));
 
     for(let k in other) {
       const o = other[k];
+
+      
       if(typeof o != "object" || !o) continue;
 
-      console.log(`${k}:`, dump(o, 10));
+       let ll = o.children.map(child => child.attributes.layer);
+     //  let ll2 = o.children.map(child => child.layer);
 
-      if(k == "schematic") {
+       layers[k] = Util.unique(layers[k].concat(ll)).sort();
+      console.log(`layers.${k}:`,layers[k].join(','));
+     // console.log(`layers.${k}:`,ll2.join(','));
+
+      let children = pkg.children.filter(child => [21,23,25,27,51].indexOf(child.layer) != -1);
+      console.log(`children:`, children);
+
+     // console.log(`${k}:`, dump(o, 10));
+
+    /*  if(k == "schematic") {
         let diff = deepDiff(pkg.raw, other.schematic.raw);
         console.log(`diff:`, dump(diff, 10));
-      }
+      }*/
     }
   }
+  for(let key in layers) {
+    console.log("key:",key, allLayers[key]);
+    const layerNames  = layers[key].map(layerId =>  Util.find( allLayers[key], layerId, 'number')) .map(layer => layer.name);
+console.log(`${key}.layer names:`,layerNames);
+  }
+  return;
 
   console.log("found:", dump(schematic.find("part", "T1")));
   console.log("found:", [...Util.concat(...libraries.map(lib => lib.findAll("package")))].map(e => [e.owner.basename, e.xpath(), e.toXML()].join("\n  ")).join("\n   "));
