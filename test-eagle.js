@@ -132,7 +132,7 @@ async function testEagle(filename) {
   console.log("schematic.cache.instances:", schematic.cache.instances);
   console.log("board.cache.elements:", board.cache.elements);
   let parts = schematic.parts;
- // console.log("schematic.parts:", parts);
+  // console.log("schematic.parts:", parts);
   console.log("schematic.parts.length:", parts.length);
   console.log("schematic.parts.keys:", Reflect.ownKeys(parts).join(", "));
   console.log("schematic.parts.has(T1):", Reflect.has(parts, "T1"));
