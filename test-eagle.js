@@ -96,10 +96,17 @@ async function testEagle(filename) {
       console.log(res, index);
     }
   }
+  console.log(
+    "libs:",
+    libraries.map(lib => lib.basename)
+  );
+
+  console.log("found:", dump(schematic.find("part", "T1")));
+  console.log("found:", [...Util.concat(...libraries.map(lib => lib.findAll("package")))].map(e => [e.owner.basename, e.xpath()].join(": ")).join("\n"));
   console.log("schematic:", schematic.changes);
   console.log("board:", board.changes);
 
- /* for(let it of schematic.iterator(["children", "0", "children", "0", "children", "0"], t => t)) console.log("elem:", it);
+  /* for(let it of schematic.iterator(["children", "0", "children", "0", "children", "0"], t => t)) console.log("elem:", it);
 
   console.log("schematic:", schematic.getByName("instance", "T1", "part"));
 
@@ -111,7 +118,7 @@ async function testEagle(filename) {
   let elem = deep.get(schematic.xml, ["0", "children", "0", "children", "0", "children", "3", "children", "6", "children", "0", "children", "3", "children", "11", "children", "0", "children", "2"]);
   console.log("elem: ", elem);*/
 
-/*    try {
+  /*    try {
       for(let e of Util.concat(proj.board.getAll("element"), proj.schematic.getAll("instance"))) {
         const part = e.part;
         const deviceset = part && part.deviceset;
