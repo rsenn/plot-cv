@@ -1,4 +1,3 @@
-import fs from "fs";
 import { EagleEntity } from "./lib/eagle/entity.js";
 import { EagleDocument } from "./lib/eagle/document.js";
 import { EagleProject } from "./lib/eagle/project.js";
@@ -7,7 +6,7 @@ import Util from "./lib/util.js";
 import util from "util";
 import deep from "./lib/deep.js";
 import { Console } from "console";
-import { ansi, text, dingbatCode, inspect, EagleNode } from "./lib/eagle/common.js";
+import { inspect } from "./lib/eagle/common.js";
 
 global.console = new Console({
   stdout: process.stdout,
