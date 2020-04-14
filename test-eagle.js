@@ -70,8 +70,8 @@ async function testEagle(filename) {
     const pkgs = [element.package.name, instance.part.device.package.name];
 
     if(pkgs[0] != pkgs[1]) {
-          console.log(dump(element,1));
-          console.log(dump(instance.part,1));
+      console.log(dump(element, 1));
+      console.log(dump(instance.part, 1));
 
       console.log(dump(pkgs, 1));
 
@@ -79,21 +79,24 @@ async function testEagle(filename) {
         let bpkg = board.getByName("package", pkgName);
         let spkg = schematic.getByName("device", pkgName);
 
-if(!!(bpkg && spkg))
-        console.log(['board:     '+dump(bpkg, 1), 'schematic: '+dump(spkg, 1)].join("\n"));
+        if(!!(bpkg && spkg)) console.log(["board:     " + dump(bpkg, 1), "schematic: " + dump(spkg, 1)].join("\n"));
         return !!(bpkg && spkg);
       };
       let res = pkgs.map(pkg => checkPkg(pkg));
 
       let index = res.indexOf(true);
 
-if(index != -1) {
-      instance.part.device = pkgs[index];
-      element.package = pkgs[index];
-    }
+      if(index != -1) {
+        instance.part.attributes.device = pkgs[index];
+        console.log(instance.part.attributes.device, pkgs[index]);
+        element.attributes.package = pkgs[index];
+      }
       console.log(res, index);
     }
   }
+
+  console.log("schematic:", schematic.changes);
+  console.log("board:", board.changes);
 
   /*try {
     for(let e of Util.concat(proj.board.getAll(pred, tran), proj.schematic.getAll(pred, tran))) {
