@@ -132,7 +132,7 @@ async function testEagle(filename) {
   console.log("schematic.cache.instances:", schematic.cache.instances);
   console.log("board.cache.elements:", board.cache.elements);
   let parts = schematic.parts;
-  console.log("schematic.parts:", parts);
+ // console.log("schematic.parts:", parts);
   console.log("schematic.parts.length:", parts.length);
   console.log("schematic.parts.keys:", Reflect.ownKeys(parts).join(", "));
   console.log("schematic.parts.has(T1):", Reflect.has(parts, "T1"));
@@ -199,8 +199,9 @@ async function testEagle(filename) {
     console.log(`${key}.layer names:`, [...layerMap.values()].join(","));
     console.log(`${key}.layer keys:`, layerMap.keys());
   }
+  proj.updateLibrary("c");
 
-  return;
+  return proj.saveTo(".", true);
 
   console.log("found:", dump(schematic.find("part", "T1")));
   console.log("found:", [...Util.concat(...libraries.map(lib => lib.findAll("package")))].map(e => [e.owner.basename, e.xpath(), e.toXML()].join("\n  ")).join("\n   "));
@@ -250,7 +251,6 @@ async function testEagle(filename) {
       );
       throw new Error("err");
     }*/
-  return proj.saveTo(".", true);
 }
 (async () => {
   try {
