@@ -48,7 +48,7 @@ async function testEagle(filename) {
     if(e.tagName == "instance") {
       part = e.part;
       let deviceset = part.deviceset;
-      const device = deviceset.getByName("device", part.attributes.device);
+      const device = deviceset.get("device", part.attributes.device);
       return device.package;
     }
     return e.package;
@@ -65,9 +65,10 @@ async function testEagle(filename) {
   };
 
   for(let element of proj.board.getAll("element")) {
-    let instance = proj.schematic.getByName("instance", element.attributes.name, "part");
-    //console.log(dump(element,1));
-    console.log("owner:", dump(instance.owner, 1));
+    console.log(dump(element, 1));
+    //console.log(([...schematic.getAll('instance')].map(i => dump(i))).join("\n"));
+    let instance = proj.schematic.get("instance", element.name, "part");
+    // console.log("instance:"+dump(instance));    console.log("owner:", dump(element.owner, 1));
 
     const pkgs = [element.package.name, instance.part.device.package.name];
     console.log("pkgs:", dump(pkgs, 1));
@@ -79,8 +80,8 @@ async function testEagle(filename) {
       console.log(dump(pkgs, 1));
 
       const checkPkg = pkgName => {
-        let bpkg = board.getByName("package", pkgName);
-        let spkg = schematic.getByName("device", pkgName);
+        let bpkg = board.get("package", pkgName);
+        let spkg = schematic.get("device", pkgName);
 
         if(!!(bpkg && spkg)) console.log(["board:     " + dump(bpkg, 1), "schematic: " + dump(spkg, 1)].join("\n"));
         return !!(bpkg && spkg);
@@ -116,11 +117,28 @@ async function testEagle(filename) {
       )
     ]
   };
-  console.log(`allLayers:`, dump(allLayers, 1));
+  console.log(`allLayers:`, dump(allLayers, 2));
+  console.log("schematic.layers:", schematic.get("layers"));
+  console.log("schematic.layers.all:\n" + [...schematic.getAll("layer", l => dump(l))].join("\n"));
+  console.log("schematic.layer:", schematic.get("layer", 8, "number").toXML(0));
+
+  console.log("schematic.cache.libraries:", schematic.cache.libraries);
+  console.log("schematic.cache.instances:", schematic.cache.instances);
+  console.log("board.cache.elements:", board.cache.elements);
+  let parts = schematic.get("parts");
+  console.log("schematic.parts:", parts);
+  let deviceset = parts.children[0].deviceset;
+  console.log("schematic.deviceset:", deviceset);
+  console.log("schematic.cache:", Object.keys(schematic.cache));
+  console.log("schematic.deviceset.cacheFields():", deviceset.cacheFields());
+  console.log("schematic.deviceset.gates:", [...deviceset.getAll('gate')]);
+  console.log("schematic.deviceset.devices:", dump(deviceset.get("device", "")));
+
+  //console.log("schematic.layers:", Util.map(schematic.getAll("layer", l => [l.number, l.name])));
 
   for(let pkg of Util.concat(...libraries.map(lib => lib.findAll("package")))) {
-    console.log("pkg.name:", pkg.name);
-    let other = { board: board.getByName("package", pkg.name), schematic: schematic.getByName("package", pkg.name) };
+    //console.log("pkg.name:", pkg.name);
+    let other = { board: board.get("package", pkg.name), schematic: schematic.get("package", pkg.name) };
 
     //console.log("pkg:", dump(pkg.raw, 10));
 
@@ -139,7 +157,7 @@ async function testEagle(filename) {
       let children = pkg.children.filter(child => [21, 23, 25, 27, 51].indexOf(child.layer) != -1);
       console.log(`children:`, children);
 
-      // console.log(`${k}:`, dump(o, 10));
+      console.log(`${k}:`, dump(o, 10));
 
       /*  if(k == "schematic") {
         let diff = deepDiff(pkg.raw, other.schematic.raw);
@@ -147,14 +165,20 @@ async function testEagle(filename) {
       }*/
     }
   }
+
   for(let key in layers) {
-    console.log("key:", key, allLayers[key]);
+    //  console.log("key:", key, allLayers[key]);
     layers[key] = Util.unique(layers[key]);
-    const layerMap = new Map(layers[key].map(layerId => Util.find(allLayers[key], layerId, "number")).filter(layer => !!layer).map(layer => [parseInt(layer.number),layer.name]).sort((a,b) => a[0] - b[0]  ));
-    console.log(`${key}.layer names:`, layerMap.values());
+    const layerMap = new Map(
+      layers[key]
+        .filter(layer => layer !== undefined)
+        .map(layerId => proj[key].get("layer", layerId, "number"))
+        .map(layer => [parseInt(layer.number), layer.name])
+        .sort((a, b) => a[0] - b[0])
+    );
+    console.log(`${key}.layer names:`, [...layerMap.values()].join(","));
     console.log(`${key}.layer keys:`, layerMap.keys());
   }
-
 
   return;
 
