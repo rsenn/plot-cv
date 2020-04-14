@@ -5,6 +5,7 @@ import { EagleProject } from "./lib/eagle/project.js";
 import { EagleLocator } from "./lib/eagle/locator.js";
 import Util from "./lib/util.js";
 import util from "util";
+import deep from "./lib/deep.js";
 import { Console } from "console";
 import { ansi, text, dingbatCode, inspect, EagleNode } from "./lib/eagle/common.js";
 
@@ -53,8 +54,7 @@ async function testEagle(filename) {
     return e.package;
   };
 
-  console.log("schematic:", schematic.getByName("instance", "T1", "part"));
-
+  //return;
   /*  console.log("board.location:", board.location);
   console.log("board.owner:", board.owner);*/
   /* const pred = v => (v.tagName == "instance" || v.tagName == "element") && "attributes" in v;
@@ -67,7 +67,10 @@ async function testEagle(filename) {
   for(let element of proj.board.getAll("element")) {
     let instance = proj.schematic.getByName("instance", element.attributes.name, "part");
     //console.log(dump(element,1));
+    console.log("owner:", dump(instance.owner, 1));
+
     const pkgs = [element.package.name, instance.part.device.package.name];
+    console.log("pkgs:", dump(pkgs, 1));
 
     if(pkgs[0] != pkgs[1]) {
       console.log(dump(element, 1));
@@ -94,10 +97,25 @@ async function testEagle(filename) {
       console.log(res, index);
     }
   }
-
   console.log("schematic:", schematic.changes);
   console.log("board:", board.changes);
 
+  //for(let it of schematic.iterator(["children", "0", "children", "0", "children", "0"], t => t)) console.log("elem:", it);
+
+  //  console.log("schematic:", schematic.getByName("instance", "T1", "part"));
+
+  /*console.log("schematic:", schematic.changes);
+  console.log("board:", board.xml);*/
+  /*
+   for(let [value,path] of deep.iterate(schematic.xml, (v,p) => p.length > 1 ? p[p.length - 2] == 'children' : true)) {
+   
+    console.log("iterate: ",value,`[${path.map(p => typeof(p) == 'string'  ? `'${p}'`: p).join(',')}]`);
+   }*/
+
+  /* let elem=deep.get(schematic.xml, ['0','children','0','children','0','children','3','children','6','children','0','children','3','children','11','children','0','children','2']);
+    console.log("elem: ", elem);
+
+*/
   /*try {
     for(let e of Util.concat(proj.board.getAll(pred, tran), proj.schematic.getAll(pred, tran))) {
       const part = e.part;
