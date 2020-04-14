@@ -16,7 +16,13 @@ global.console = new Console({
 });
 function dump(o, depth = 2, breakLength = 400) {
   let s;
-  if(o instanceof EagleEntity) {
+  if(o instanceof Array) {
+    s = "";
+    for(let i of o) {
+      if(s.length > 0) s += i instanceof EagleEntity ? ",\n" : ", ";
+      s += dump(i, depth - 1, breakLength);
+    }
+  } else if(o instanceof EagleEntity) {
     s = inspect(o, undefined, { depth, location: false });
     depth * 4;
   } else s = util.inspect(o, { depth, colors: true, breakLength });
@@ -125,16 +131,30 @@ async function testEagle(filename) {
   console.log("schematic.cache.libraries:", schematic.cache.libraries);
   console.log("schematic.cache.instances:", schematic.cache.instances);
   console.log("board.cache.elements:", board.cache.elements);
-  let parts = schematic.get("parts");
+  let parts = schematic.parts;
   console.log("schematic.parts:", parts);
-  let deviceset = parts.children[0].deviceset;
+  console.log("schematic.parts.length:", parts.length);
+  console.log("schematic.parts.keys:", Reflect.ownKeys(parts).join(", "));
+  console.log("schematic.parts.has(T1):", Reflect.has(parts, "T1"));
+  console.log("schematic.parts.has(1):", Reflect.has(parts, 1));
+  let firstPart = parts[1];
+  console.log("schematic.firstPart:" + firstPart);
+  let deviceset = firstPart.deviceset;
   console.log("schematic.deviceset:", deviceset);
+  console.log("schematic.deviceset.raw:", deviceset.raw);
+  /* console.log("schematic.deviceset.devices:", Util.className(deviceset.devices));
+  console.log("schematic.deviceset.devices:", deviceset.devices);*/
+  let device = firstPart.device;
+  console.log("schematic.device:", dump(device));
   console.log("schematic.cache:", Object.keys(schematic.cache));
   console.log("schematic.deviceset.cacheFields():", deviceset.cacheFields());
-  console.log("schematic.deviceset.gates:", [...deviceset.getAll('gate')]);
-  console.log("schematic.deviceset.devices:", dump(deviceset.get("device", "")));
+  console.log("schematic.deviceset.gates:", dump(deviceset.gates, 3));
+  console.log("board.layers:", dump(board.layers.filter(l => l.visible == "yes")));
+  console.log("schematic.layers:", dump(schematic.layers.filter(l => l.active == "yes")));
+  //  console.log("schematic.deviceset.devices:", dump(deviceset.devices, 3));
+  let proxy = Util.proxy(deviceset.devices);
 
-  //console.log("schematic.layers:", Util.map(schematic.getAll("layer", l => [l.number, l.name])));
+  console.log("get", proxy[0]);
 
   for(let pkg of Util.concat(...libraries.map(lib => lib.findAll("package")))) {
     //console.log("pkg.name:", pkg.name);
