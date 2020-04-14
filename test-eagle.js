@@ -150,9 +150,12 @@ async function testEagle(filename) {
   for(let key in layers) {
     console.log("key:", key, allLayers[key]);
     layers[key] = Util.unique(layers[key]);
-    const layerNames = Object.fromEntries(layers[key].map(layerId => Util.find(allLayers[key], layerId, "number")).filter(layer => !!layer).map(layer => [parseInt(layer.number),layer.name]));
-    console.log(`${key}.layer names:`, layerNames);
+    const layerMap = new Map(layers[key].map(layerId => Util.find(allLayers[key], layerId, "number")).filter(layer => !!layer).map(layer => [parseInt(layer.number),layer.name]).sort((a,b) => a[0] - b[0]  ));
+    console.log(`${key}.layer names:`, layerMap.values());
+    console.log(`${key}.layer keys:`, layerMap.keys());
   }
+
+
   return;
 
   console.log("found:", dump(schematic.find("part", "T1")));
