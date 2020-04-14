@@ -102,8 +102,21 @@ async function testEagle(filename) {
     libraries.map(lib => lib.basename)
   );
   let layers = { board: [], schematic: [] };
- let allLayers = { schematic: [...schematic.findAll(v => v.tagName == 'layer', ([v,l,d]) => v.attributes)], schematic: [ ...schematic.findAll(v => v.tagName == 'layer', ([v,l,d]) => v.attributes)]};
-console.log(`allLayers:`,allLayers);
+  let allLayers = {
+    schematic: [
+      ...schematic.findAll(
+        v => v.tagName == "layer",
+        ([v, l, d]) => v.attributes
+      )
+    ],
+    board: [
+      ...board.findAll(
+        v => v.tagName == "layer",
+        ([v, l, d]) => v.attributes
+      )
+    ]
+  };
+  console.log(`allLayers:`, dump(allLayers, 1));
 
   for(let pkg of Util.concat(...libraries.map(lib => lib.findAll("package")))) {
     console.log("pkg.name:", pkg.name);
@@ -114,31 +127,31 @@ console.log(`allLayers:`,allLayers);
     for(let k in other) {
       const o = other[k];
 
-      
       if(typeof o != "object" || !o) continue;
 
-       let ll = o.children.map(child => child.attributes.layer);
-     //  let ll2 = o.children.map(child => child.layer);
+      let ll = o.children.map(child => child.attributes.layer);
+      //  let ll2 = o.children.map(child => child.layer);
 
-       layers[k] = Util.unique(layers[k].concat(ll)).sort();
-      console.log(`layers.${k}:`,layers[k].join(','));
-     // console.log(`layers.${k}:`,ll2.join(','));
+      layers[k] = layers[k].concat(ll);
+      //console.log(`layers.${k}:`,layers[k].join(','));
+      // console.log(`layers.${k}:`,ll2.join(','));
 
-      let children = pkg.children.filter(child => [21,23,25,27,51].indexOf(child.layer) != -1);
+      let children = pkg.children.filter(child => [21, 23, 25, 27, 51].indexOf(child.layer) != -1);
       console.log(`children:`, children);
 
-     // console.log(`${k}:`, dump(o, 10));
+      // console.log(`${k}:`, dump(o, 10));
 
-    /*  if(k == "schematic") {
+      /*  if(k == "schematic") {
         let diff = deepDiff(pkg.raw, other.schematic.raw);
         console.log(`diff:`, dump(diff, 10));
       }*/
     }
   }
   for(let key in layers) {
-    console.log("key:",key, allLayers[key]);
-    const layerNames  = layers[key].map(layerId =>  Util.find( allLayers[key], layerId, 'number')) .map(layer => layer.name);
-console.log(`${key}.layer names:`,layerNames);
+    console.log("key:", key, allLayers[key]);
+    layers[key] = Util.unique(layers[key]);
+    const layerNames = layers[key].map(layerId => Util.find(allLayers[key], layerId, "number")); /*.map(layer => layer.name)*/
+    console.log(`${key}.layer names:`, layerNames);
   }
   return;
 
