@@ -139,7 +139,7 @@ async function testEagle(filename) {
   console.log("schematic.parts.has(1):", Reflect.has(parts, 1));
   let firstPart = parts[1];
   console.log("schematic.firstPart:" + firstPart);
-  console.log("schematic.firstPart.parentNode.parentNode:" + dump(firstPart.parentNode.parentNode, 3));
+  console.log("schematic.firstPart.parentNode.parentNode:" + dump(firstPart.parentNode, 3));
   let deviceset = firstPart.deviceset;
   console.log("schematic.deviceset:", deviceset);
   console.log("schematic.deviceset.raw:", deviceset.raw);
