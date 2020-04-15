@@ -1,7 +1,7 @@
 import { EagleEntity } from "./lib/eagle/entity.js";
 import { EagleDocument } from "./lib/eagle/document.js";
 import { EagleProject } from "./lib/eagle/project.js";
-import { EagleLocator } from "./lib/eagle/locator.js";
+import { EaglePath } from "./lib/eagle/locator.js";
 import Util from "./lib/util.js";
 import util from "util";
 import deep from "./lib/deep.js";
@@ -23,7 +23,7 @@ function dump(o, depth = 2, breakLength = 400) {
       s += dump(i, depth - 1, breakLength);
     }
   } else if(o instanceof EagleEntity) {
-    s = inspect(o, undefined, { depth, location: false });
+    s = inspect(o, undefined, { depth, path: false });
     depth * 4;
   } else s = util.inspect(o, { depth, colors: true, breakLength });
   return s;
@@ -33,7 +33,7 @@ function xmlize(obj, depth = 2) {
 }
 function testLocator() {
   let testobj = [0, 1, 2, { name: "roman", children: ["x", "y", { id: 1, items: ["a", "b", "c"] }] }];
-  let l = new EagleLocator([3, "children", 2, "items", -2]);
+  let l = new EaglePath([3, "children", 2, "items", -2]);
   let a = [l.slice(), l.slice()];
   console.log("l:", dump(l));
   console.log("a[0] == a[1]:", a[0] === a[1]);
@@ -61,7 +61,7 @@ async function testEagle(filename) {
   };
 
   //return;
-  /*  console.log("board.location:", board.location);
+  /*  console.log("board.path:", board.path);
   console.log("board.owner:", board.owner);*/
   /* const pred = v => (v.tagName == "instance" || v.tagName == "element") && "attributes" in v;
   const tran = ([v, l, d]) => new EagleEntity(d, l, v);*/
@@ -139,6 +139,7 @@ async function testEagle(filename) {
   console.log("schematic.parts.has(1):", Reflect.has(parts, 1));
   let firstPart = parts[1];
   console.log("schematic.firstPart:" + firstPart);
+  console.log("schematic.firstPart.parentNode.parentNode:" + dump(firstPart.parentNode.parentNode, 3));
   let deviceset = firstPart.deviceset;
   console.log("schematic.deviceset:", deviceset);
   console.log("schematic.deviceset.raw:", deviceset.raw);
@@ -146,6 +147,11 @@ async function testEagle(filename) {
   console.log("schematic.deviceset.devices:", deviceset.devices);*/
   let device = firstPart.device;
   console.log("schematic.device:", dump(device));
+  console.log("schematic.device.path:", device.path);
+  console.log("schematic.device.path.split(-2):", device.path.split(-2));
+  console.log("schematic.device.parentNode:", device.path.up());
+  return proj.saveTo(".", true);
+
   console.log("schematic.cache:", Object.keys(schematic.cache));
   console.log("schematic.deviceset.cacheFields():", deviceset.cacheFields());
   console.log("schematic.deviceset.gates:", dump(deviceset.gates, 3));
