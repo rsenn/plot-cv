@@ -150,7 +150,7 @@ async function testEagle(filename) {
   console.log("schematic.device.path:", device.path);
   console.log("schematic.device.path.split(-2):", device.path.split(-2));
   console.log("schematic.device.parentNode:", device.path.up());
- // return proj.saveTo(".", true);
+  // return proj.saveTo(".", true);
 
   console.log("schematic.cache:", Object.keys(schematic.cache));
   console.log("schematic.deviceset.cacheFields():", deviceset.cacheFields());
@@ -206,7 +206,6 @@ async function testEagle(filename) {
     console.log(`${key}.layer keys:`, layerMap.keys());
   }
   proj.updateLibrary("c");
-
 
   console.log("found:", dump(schematic.find("part", "T1")));
   console.log("found:", [...Util.concat(...libraries.map(lib => lib.findAll("package")))].map(e => [e.owner.basename, e.xpath(), e].join(" ")).join("\n   "));
