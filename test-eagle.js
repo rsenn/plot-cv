@@ -60,11 +60,7 @@ async function testEagle(filename) {
     return e.package;
   };
 
-  //return;
-  /*  console.log("board.path:", board.path);
-  console.log("board.owner:", board.owner);*/
-  /* const pred = v => (v.tagName == "instance" || v.tagName == "element") && "attributes" in v;
-  const tran = ([v, l, d]) => new EagleEntity(d, l, v);*/
+
   const packages = {
     board: [...proj.board.getAll("package")],
     schematic: [...proj.schematic.getAll("package")]
@@ -72,7 +68,7 @@ async function testEagle(filename) {
   let e = proj.board.getByName("element", "T1");
   console.log("e:", e);
   console.log("e.package:", e.package);
-  // console.log("elements:", [...proj.board.getAll("element")]);
+
 
   for(let element of proj.board.getAll("element", (v, p, o) => v)) {
     console.log("element:", dump(element, 1));
@@ -102,12 +98,10 @@ async function testEagle(filename) {
     console.log("part.library.parentNode: ", part.library.parentNode);
     console.log("part.deviceset.parentNode: ", part.deviceset.parentNode);
     console.log("part.device.parentNode: ", part.device.parentNode);
-    /*    console.log("part.library.devicesets: ",  part.library.devicesets);
-    console.log("deviceset: ",  part.deviceset);
-    console.log("device: ",  part.device);*/
-    //  console.log("instances: ", instances );
+
+
     let instance = instances.filter(e => e.attributes.part == packageName.substring(0, e.attributes.part.length));
-    console.log("instance:", instance); //console.log("owner:", dump(element.owner, 1));
+    console.log("instance:", instance);
 
     const pkgs = [element.package, part.device.package];
     console.log("pkgs:", dump(pkgs, 1));
@@ -159,7 +153,7 @@ async function testEagle(filename) {
   console.log(`allLayers:`, dump(allLayers, 2));
   console.log("schematic.layers:", schematic.get("layers"));
   console.log("schematic.layers.all:\n" + [...schematic.getAll("layer", l => dump(l))].join("\n"));
-  //  console.log("schematic.layer:", schematic.get("layer", 8, "number"));
+
 
   console.log("schematic.cache.libraries:", schematic.cache.libraries);
   console.log("schematic.cache.instances:", schematic.cache.instances);
@@ -170,13 +164,13 @@ async function testEagle(filename) {
   console.log("schematic.parts.length:", parts.length);
   console.log("schematic.parts[0]:", parts[0]);
   console.log("schematic.parts[1]:", parts[1]);
-  // console.log("schematic.get('library','r'):", schematic.getByName('library','r'));
+
   console.log("schematic.parts[1].library:", parts[1].library);
   let libraries = schematic.libraries;
   console.log("schematic.libraries:", libraries);
   console.log("schematic.libraries:", [...libraries]);
   console.log("schematic.libraries.length:", libraries.length);
-  //console.log("schematic.parts.keys:", Reflect.ownKeys(parts).join(", "));
+
   console.log("schematic.parts.has(T1):", Reflect.has(parts, "T1"));
   console.log("schematic.parts.has(1):", Reflect.has(parts, 1));
   let firstPart = parts[0];
@@ -186,12 +180,9 @@ async function testEagle(filename) {
   console.log("firstPart.chain:" + dump(firstPart.chain.map(Util.className), 1));
   console.log("firstPart.raw:" + dump(firstPart.raw, 1));
 
-  /* console.log("schematic.deviceset.devices:", Util.className(deviceset.devices));
-  console.log("schematic.deviceset.devices:", deviceset.devices);*/
-  /*  let device = firstPart.device;
-  let deviceset = firstPart.deviceset;*/
+
   console.log("firstPart.library:", firstPart.library);
-  //console.log("firstPart.library.getMap('deviceset') :", firstPart.getMap('deviceset'));
+
   console.log("firstPart.attributes.library:", firstPart.attributes.library);
   console.log("firstPart.attributes.device:", firstPart.attributes.device);
   console.log("firstPart.attributes.deviceset:", firstPart.attributes.deviceset);
@@ -200,85 +191,10 @@ async function testEagle(filename) {
   console.log("firstPart.library.devicesets:", [...firstPart.library.cache.devicesets.children]);
   console.log("firstPart.library.devicesets:", firstPart.library.devicesets.find(firstPart.attributes.deviceset));
 
-  /*  console.log("firstPart.library.get('devicesets') :", firstPart.library.getByName('deviceset', firstPart.attributes.deviceset));
-  console.log("firstPart.library.getByName('deviceset') :", firstPart.library.getByName('deviceset'));
-  //console.log("firstPart.library.devicesets:", firstPart.library.devicesets);
-  // return proj.saveTo(".", true);
-  /*
-  console.log("schematic.cache:", Object.keys(schematic.cache));
-  console.log("schematic.deviceset.cacheFields():", deviceset.cacheFields());
-  console.log("schematic.deviceset.gates:", dump(deviceset.gates, 3));
-  console.log("board.layers:", dump(board.layers.filter(l => l.visible == "yes")));
-  console.log("schematic.layers:", dump(schematic.layers.filter(l => l.active == "yes")));
-  //  console.log("schematic.deviceset.devices:", dump(deviceset.devices, 3));
-  let devices = deviceset.devices;
-
-  //console.log("get", devices.map(dev => ({ path: dev.path, name: dev.name })));
-
-  for(let pkg of Util.concat(...libraries.map(lib => lib.findAll("package")))) {
-    //console.log("pkg.name:", pkg.name);
-    let other = { board: board.get("package", pkg.name), schematic: schematic.get("package", pkg.name) };
-
-    //console.log("pkg:", dump(pkg.raw, 10));
-
-    for(let k in other) {
-      const o = other[k];
-
-      if(typeof o != "object" || !o) continue;
-
-      let ll = o.children.map(child => child.attributes.layer);
-      //  let ll2 = o.children.map(child => child.layer);
-
-      layers[k] = layers[k].concat(ll);
-      //console.log(`layers.${k}:`,layers[k].join(','));
-      // console.log(`layers.${k}:`,ll2.join(','));
-
-      let children = pkg.children.filter(child => [21, 23, 25, 27, 51].indexOf(child.layer) != -1);
-      console.log(`children:`, children);
-
-      console.log(`${k}:`, dump(o, 10));
-
-      /*  if(k == "schematic") {
-        let diff = deepDiff(pkg.raw, other.schematic.raw);
-        console.log(`diff:`, dump(diff, 10));
-      }*/
-
-  //  }
-
-  /* for(let key in layers) {
-    //  console.log("key:", key, allLayers[key]);
-    layers[key] = Util.unique(layers[key]);
-    const layerMap = new Map(
-      layers[key]
-        .filter(layer => layer !== undefined)
-        .map(layerId => proj[key].get("layer", layerId, "number"))
-        .map(layer => [parseInt(layer.number), layer.name])
-        .sort((a, b) => a[0] - b[0])
-    );
-    console.log(`${key}.layer names:`, [...layerMap.values()].join(","));
-    console.log(`${key}.layer keys:`, layerMap.keys());
-  }*/
   proj.updateLibrary("c");
 
-  //console.log("found:", [...Util.concat(...libraries.map(lib => lib.findAll("package")))].map(e => [e.owner.basename, e.xpath(), e].join(" ")).join("\n   "));
-
-/*  console.log("schematic.libraries:", schematic.libraries);
-  console.log("schematic.find(part,T1):", dump(schematic.find("part", "T1")));
-  // console.log("proj.library.c.getMap(packages):",proj.library.c.getMap('package'));
-  console.log("proj.library.c.packages:", proj.library.c.packages["E2,5-6/V"]);
-
-  console.log("schematic.parts.T1:", dump(schematic.parts.T1, 10));
-
-  const changes = DeepDiff.diff(schematic.orig, schematic.root);
-  console.log("schematic.orig:", dump(schematic.orig, 1));
-  console.log("schematic.root:", dump(schematic.root, 1));*/
- // console.log("diff:", dump(changes));
-console.log("board:", dump(board.changes, 10)); 
-/*const newXml = changes.reduce((acc,change) => { DeepDiff.applyChange(acc, change); return acc; }, board.root);
-  console.log("DeepDiff:", Object.keys(DeepDiff));  
-  console.log("DeepDiff.applyDiff:", DeepDiff.applyDiff);  
-  console.log("newXml:", toXML(board));  */
-
+ 
+console.log("board:", dump(board.changes, 10));
 
   return proj.saveTo(".", true);
 
