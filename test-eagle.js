@@ -45,6 +45,38 @@ function testLocator() {
   console.log("apply:", l.apply(testobj));
 }
 
+function testProxyTree() {
+  let tree = Util.proxyTree((path, key, value) => {
+    console.log(`: [${dump(path)}].set(`, key, value, `)`);
+    return true;
+  });
+  tree.a.b.c.d("test");
+  tree.a.b.c.d.e = 0;
+  tree.a.b.c.d.e[0] = 1;
+}
+
+function testProxyClone() {
+
+  let obj = {
+    blah: [1,2,3,4],
+    test: { text: 'eruoiewurew', name: 'haha'},
+    num: 41
+  };
+
+  let clone = Util.proxyClone(obj);
+
+  obj.addProp = '1234';
+  clone.newProp = 'test';
+
+console.log("obj:",obj);
+console.log("clone:",clone);
+console.log("clone.addProp:",clone.addProp);
+console.log("clone.newProp:",clone.newProp);
+console.log("clone.blah:",clone.blah);
+console.log("clone.blah[0]",clone.blah[0]);
+};
+
+
 async function testEagle(filename) {
   let proj = new EagleProject(filename);
   let { board, schematic } = proj;
@@ -200,6 +232,10 @@ async function testEagle(filename) {
   //console.log("board:", dump(board.changes, 10));
 
   console.log(`proj.library.c:`, proj.library.c);
+
+  testProxyTree();
+  testProxyClone();
+
   return proj.saveTo(".", true);
 
   /* for(let it of schematic.iterator(["children", "0", "children", "0", "children", "0"], t => t)) console.log("elem:", it);
@@ -247,7 +283,8 @@ async function testEagle(filename) {
 }
 (async () => {
   try {
-    await testLocator();
+    testLocator();
+
     await testEagle("../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3").then(result => console.log(result));
   } catch(err) {
     const stack = err.stack;
