@@ -8,6 +8,7 @@ import deep from "./lib/deep.js";
 import DeepDiff from "deep-diff";
 import { Console } from "console";
 import { inspect, toXML } from "./lib/eagle/common.js";
+import JsonPointer from "./lib/json-pointer.js";
 
 global.console = new Console({
   stdout: process.stdout,
@@ -73,6 +74,46 @@ function testProxyClone() {
   console.log("clone.newProp:", clone.newProp);
   console.log("clone.blah:", clone.blah);
   console.log("clone.blah[0]", clone.blah[0]);
+}
+
+function testJsonPointer() {
+  var data = {
+    legumes: [
+      {
+        name: "pinto beans",
+        unit: "lbs",
+        instock: 4
+      },
+      {
+        name: "lima beans",
+        unit: "lbs",
+        instock: 21
+      },
+      {
+        name: "black eyed peas",
+        unit: "lbs",
+        instock: 13
+      },
+      {
+        name: "plit peas",
+        unit: "lbs",
+        instock: 8
+      }
+    ]
+  };
+  var pointer =   JsonPointer.append(JsonPointer.nil,"legumes",0); 
+  var pointer2 =   JsonPointer.append(pointer, "name"); 
+  console.log("pointer:",pointer);
+  console.log("pointer2:",pointer2);
+  console.log("JsonPointer.get:",JsonPointer.get(pointer)(data));
+
+  
+  JsonPointer.assign(pointer2)(data, 'test name');
+
+  console.log("JsonPointer.get:",JsonPointer.get(pointer2)(data));
+/*
+  var ref = new JsonReference(JsonPointer.create("/legumes/3"));
+  console.log("ref.resolve:",ref.resolve(data));*/
 }
 
 async function testEagle(filename) {
@@ -233,7 +274,7 @@ async function testEagle(filename) {
 
   /*testProxyTree();
   testProxyClone();*/
-
+  testJsonPointer();
   return proj.saveTo(".", true);
 
   /* for(let it of schematic.iterator(["children", "0", "children", "0", "children", "0"], t => t)) console.log("elem:", it);
