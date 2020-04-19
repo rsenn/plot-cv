@@ -73,30 +73,30 @@ async function testEagle(filename) {
   console.log("e:", e);
   console.log("e.package:", e.package);
   console.log("e.package.path:", e.package.path);
- // console.log("elements:", [...proj.board.getAll("element")]);
+  // console.log("elements:", [...proj.board.getAll("element")]);
 
   for(let element of proj.board.getAll("element")) {
     console.log("element:", dump(element, 1));
     const packageName = element.attributes.package;
-       console.log("packageName:", packageName);
+    console.log("packageName:", packageName);
 
-    let instances = [...proj.schematic.getAll("instance")]; 
+    let instances = [...proj.schematic.getAll("instance")];
     let parts = proj.schematic.parts.filter(e => true);
     let part = proj.schematic.parts.find(e => e.attributes.device == packageName.substring(0, e.attributes.device.length));
-    console.log("parts: ",  parts);
-    console.log("part: ",  part);
-    console.log("part.library: ",  part.library);
-    console.log("part.deviceset: ",  part.deviceset);
-    console.log("part.device: ",  part.device);
-        console.log("part.library.parentNode: ",  part.library.parentNode);
-    console.log("part.deviceset.parentNode: ",  part.deviceset.parentNode);
-    console.log("part.device.parentNode: ",  part.device.parentNode);
-/*    console.log("part.library.devicesets: ",  part.library.devicesets);
+    console.log("parts: ", parts);
+    console.log("part: ", part);
+    console.log("part.library: ", part.library);
+    console.log("part.deviceset: ", part.deviceset);
+    console.log("part.device: ", part.device);
+    console.log("part.library.parentNode: ", part.library.parentNode);
+    console.log("part.deviceset.parentNode: ", part.deviceset.parentNode);
+    console.log("part.device.parentNode: ", part.device.parentNode);
+    /*    console.log("part.library.devicesets: ",  part.library.devicesets);
     console.log("deviceset: ",  part.deviceset);
     console.log("device: ",  part.device);*/
-  //  console.log("instances: ", instances );
- let instance = instances.filter(e => e.attributes.part== packageName.substring(0, e.attributes.part.length));
-     console.log("instance:", instance); //console.log("owner:", dump(element.owner, 1));
+    //  console.log("instances: ", instances );
+    let instance = instances.filter(e => e.attributes.part == packageName.substring(0, e.attributes.part.length));
+    console.log("instance:", instance); //console.log("owner:", dump(element.owner, 1));
 
     const pkgs = [element.package, part.device.package];
     console.log("pkgs:", dump(pkgs, 1));
@@ -180,7 +180,7 @@ async function testEagle(filename) {
   console.log("board.layers:", dump(board.layers.filter(l => l.visible == "yes")));
   console.log("schematic.layers:", dump(schematic.layers.filter(l => l.active == "yes")));
   //  console.log("schematic.deviceset.devices:", dump(deviceset.devices, 3));
-  let devices =  deviceset.devices;
+  let devices = deviceset.devices;
 
   //console.log("get", devices.map(dev => ({ path: dev.path, name: dev.name })));
 
