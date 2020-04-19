@@ -69,7 +69,7 @@ function testProxyClone() {
   clone.newProp = 'test';
 
 console.log("obj:",obj);
-console.log("clone:",clone);
+console.log("clone:",Object.keys(clone));
 console.log("clone.addProp:",clone.addProp);
 console.log("clone.newProp:",clone.newProp);
 console.log("clone.blah:",clone.blah);
