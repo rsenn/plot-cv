@@ -227,12 +227,12 @@ async function testEagle(filename) {
 
   proj.updateLibrary("c");
 
-  //console.log("board:", dump(board.changes, 10));
+  console.log("board:", dump(board.changes, 10));
 
   console.log(`proj.library.c:`, proj.library.c);
 
-  testProxyTree();
-  testProxyClone();
+  /*testProxyTree();
+  testProxyClone();*/
 
   return proj.saveTo(".", true);
 
