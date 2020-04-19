@@ -112,6 +112,9 @@ function testJsonPointer() {
   ptr.assign(pointer2)(data, 'test name');
 
   console.log("ptr.get:",ptr.get(pointer2)(data));
+
+  console.log("JsonPointer.flatten:",JsonPointer.flatten(data));
+  console.log("JsonPointer.map:",JsonPointer.map(data));
 /*
   var ref = new JsonReference(ptr.create("/legumes/3"));
   console.log("ref.resolve:",ref.resolve(data));*/
@@ -269,13 +272,13 @@ async function testEagle(filename) {
 
   proj.updateLibrary("c");
 
-  console.log("board:", dump(board.changes, 10));
+  //console.log("board:", dump(board.changes, 10));
 
   console.log(`proj.library.c:`, proj.library.c);
 
   /*testProxyTree();
   testProxyClone();*/
-  testJsonPointer();
+ // testJsonPointer();
   return proj.saveTo(".", true);
 
   /* for(let it of schematic.iterator(["children", "0", "children", "0", "children", "0"], t => t)) console.log("elem:", it);
