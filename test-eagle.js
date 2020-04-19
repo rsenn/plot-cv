@@ -56,26 +56,24 @@ function testProxyTree() {
 }
 
 function testProxyClone() {
-
   let obj = {
-    blah: [1,2,3,4],
-    test: { text: 'eruoiewurew', name: 'haha'},
+    blah: [1, 2, 3, 4],
+    test: { text: "eruoiewurew", name: "haha" },
     num: 41
   };
 
   let clone = Util.proxyClone(obj);
 
-  obj.addProp = '1234';
-  clone.newProp = 'test';
+  obj.addProp = "1234";
+  clone.newProp = "test";
 
-console.log("obj:",obj);
-console.log("clone:",Object.keys(clone));
-console.log("clone.addProp:",clone.addProp);
-console.log("clone.newProp:",clone.newProp);
-console.log("clone.blah:",clone.blah);
-console.log("clone.blah[0]",clone.blah[0]);
-};
-
+  console.log("obj:", obj);
+  console.log("clone:", Object.keys(clone));
+  console.log("clone.addProp:", clone.addProp);
+  console.log("clone.newProp:", clone.newProp);
+  console.log("clone.blah:", clone.blah);
+  console.log("clone.blah[0]", clone.blah[0]);
+}
 
 async function testEagle(filename) {
   let proj = new EagleProject(filename);
