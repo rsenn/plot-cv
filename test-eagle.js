@@ -7,7 +7,7 @@ import util from "util";
 import deep from "./lib/deep.js";
 import DeepDiff from "deep-diff";
 import { Console } from "console";
-import { inspect } from "./lib/eagle/common.js";
+import { inspect, toXML } from "./lib/eagle/common.js";
 
 global.console = new Console({
   stdout: process.stdout,
@@ -47,7 +47,7 @@ function testLocator() {
 
 async function testEagle(filename) {
   let proj = new EagleProject(filename);
-  let { board, schematic, libraries } = proj;
+  let { board, schematic } = proj;
 
   const getPackage = (d, e) => {
     let part;
@@ -72,22 +72,33 @@ async function testEagle(filename) {
   let e = proj.board.getByName("element", "T1");
   console.log("e:", e);
   console.log("e.package:", e.package);
-  console.log("e.package.path:", e.package.path);
   // console.log("elements:", [...proj.board.getAll("element")]);
 
-  for(let element of proj.board.getAll("element")) {
+  for(let element of proj.board.getAll("element", (v, p, o) => v)) {
     console.log("element:", dump(element, 1));
     const packageName = element.attributes.package;
     console.log("packageName:", packageName);
+    continue;
 
     let instances = [...proj.schematic.getAll("instance")];
-    let parts = proj.schematic.parts.filter(e => true);
-    let part = proj.schematic.parts.find(e => e.attributes.device == packageName.substring(0, e.attributes.device.length));
-    console.log("parts: ", parts);
+    let devices = [...proj.schematic.findAll("device")].map(device => ({ names: device.names, device, package: device.package }));
+    let parts = [...proj.schematic.getAll("part")];
+    console.log("parts: ", proj.schematic.parts);
+    console.log("libraries: ", proj.schematic.libraries);
+    console.log("parts.length: ", proj.schematic.parts.length);
+    console.log("parts.keys(): ", Object.keys(proj.schematic.parts));
+    console.log("[...parts]:", [...proj.schematic.parts]);
+
+    let part = parts.find(e => (e.attributes.device.length > 0 && e.attributes.device == packageName.substring(0, e.attributes.device.length)) || e.attributes.deviceset == packageName.substring(0, e.attributes.deviceset.length));
+    console.log(
+      "devices: ",
+      devices.filter(d => !d.package)
+    );
     console.log("part: ", part);
     console.log("part.library: ", part.library);
     console.log("part.deviceset: ", part.deviceset);
     console.log("part.device: ", part.device);
+    console.log("part.device.names: ", part.device.names);
     console.log("part.library.parentNode: ", part.library.parentNode);
     console.log("part.deviceset.parentNode: ", part.deviceset.parentNode);
     console.log("part.device.parentNode: ", part.device.parentNode);
@@ -128,7 +139,7 @@ async function testEagle(filename) {
   }
   console.log(
     "libs:",
-    libraries.map(lib => lib.basename)
+    proj.libraries.map(lib => lib.basename)
   );
   let layers = { board: [], schematic: [] };
   let allLayers = {
@@ -154,26 +165,46 @@ async function testEagle(filename) {
   console.log("schematic.cache.instances:", schematic.cache.instances);
   console.log("board.cache.elements:", board.cache.elements);
   let parts = schematic.parts;
-  // console.log("schematic.parts:", parts);
+  console.log("schematic.parts:", Util.className(parts));
+  console.log("schematic.parts:", [...parts]);
   console.log("schematic.parts.length:", parts.length);
-  console.log("schematic.parts.keys:", Reflect.ownKeys(parts).join(", "));
+  console.log("schematic.parts[0]:", parts[0]);
+  console.log("schematic.parts[1]:", parts[1]);
+  // console.log("schematic.get('library','r'):", schematic.getByName('library','r'));
+  console.log("schematic.parts[1].library:", parts[1].library);
+  let libraries = schematic.libraries;
+  console.log("schematic.libraries:", libraries);
+  console.log("schematic.libraries:", [...libraries]);
+  console.log("schematic.libraries.length:", libraries.length);
+  //console.log("schematic.parts.keys:", Reflect.ownKeys(parts).join(", "));
   console.log("schematic.parts.has(T1):", Reflect.has(parts, "T1"));
   console.log("schematic.parts.has(1):", Reflect.has(parts, 1));
-  let firstPart = parts[1];
-  console.log("schematic.firstPart:" + firstPart);
-  console.log("schematic.firstPart.parentNode.parentNode:" + dump(firstPart.parentNode, 3));
-  let deviceset = firstPart.deviceset;
-  console.log("schematic.deviceset:", deviceset);
-  console.log("schematic.deviceset.raw:", deviceset.raw);
+  let firstPart = parts[0];
+  console.log("firstPart:", firstPart);
+  console.log("firstPart.parentNode:" + dump(firstPart.parentNode, 3));
+  console.log("firstPart.parentNode.parentNode:" + dump(firstPart.parentNode.parentNode, 3));
+  console.log("firstPart.chain:" + dump(firstPart.chain.map(Util.className), 1));
+  console.log("firstPart.raw:" + dump(firstPart.raw, 1));
+
   /* console.log("schematic.deviceset.devices:", Util.className(deviceset.devices));
   console.log("schematic.deviceset.devices:", deviceset.devices);*/
-  let device = firstPart.device;
-  console.log("schematic.device:", dump(device));
-  console.log("schematic.device.path:", device.path);
-  console.log("schematic.device.path.split(-2):", device.path.split(-2));
-  console.log("schematic.device.parentNode:", device.path.up());
-  // return proj.saveTo(".", true);
+  /*  let device = firstPart.device;
+  let deviceset = firstPart.deviceset;*/
+  console.log("firstPart.library:", firstPart.library);
+  //console.log("firstPart.library.getMap('deviceset') :", firstPart.getMap('deviceset'));
+  console.log("firstPart.attributes.library:", firstPart.attributes.library);
+  console.log("firstPart.attributes.device:", firstPart.attributes.device);
+  console.log("firstPart.attributes.deviceset:", firstPart.attributes.deviceset);
+  console.log("firstPart.deviceset:", firstPart.deviceset);
+  console.log("firstPart.device:", firstPart.device);
+  console.log("firstPart.library.devicesets:", [...firstPart.library.cache.devicesets.children]);
+  console.log("firstPart.library.devicesets:", firstPart.library.devicesets.find(firstPart.attributes.deviceset));
 
+  /*  console.log("firstPart.library.get('devicesets') :", firstPart.library.getByName('deviceset', firstPart.attributes.deviceset));
+  console.log("firstPart.library.getByName('deviceset') :", firstPart.library.getByName('deviceset'));
+  //console.log("firstPart.library.devicesets:", firstPart.library.devicesets);
+  // return proj.saveTo(".", true);
+  /*
   console.log("schematic.cache:", Object.keys(schematic.cache));
   console.log("schematic.deviceset.cacheFields():", deviceset.cacheFields());
   console.log("schematic.deviceset.gates:", dump(deviceset.gates, 3));
@@ -211,10 +242,10 @@ async function testEagle(filename) {
         let diff = deepDiff(pkg.raw, other.schematic.raw);
         console.log(`diff:`, dump(diff, 10));
       }*/
-    }
-  }
 
-  for(let key in layers) {
+  //  }
+
+  /* for(let key in layers) {
     //  console.log("key:", key, allLayers[key]);
     layers[key] = Util.unique(layers[key]);
     const layerMap = new Map(
@@ -226,11 +257,12 @@ async function testEagle(filename) {
     );
     console.log(`${key}.layer names:`, [...layerMap.values()].join(","));
     console.log(`${key}.layer keys:`, layerMap.keys());
-  }
+  }*/
   proj.updateLibrary("c");
 
   //console.log("found:", [...Util.concat(...libraries.map(lib => lib.findAll("package")))].map(e => [e.owner.basename, e.xpath(), e].join(" ")).join("\n   "));
 
+/*  console.log("schematic.libraries:", schematic.libraries);
   console.log("schematic.find(part,T1):", dump(schematic.find("part", "T1")));
   // console.log("proj.library.c.getMap(packages):",proj.library.c.getMap('package'));
   console.log("proj.library.c.packages:", proj.library.c.packages["E2,5-6/V"]);
@@ -239,9 +271,15 @@ async function testEagle(filename) {
 
   const changes = DeepDiff.diff(schematic.orig, schematic.root);
   console.log("schematic.orig:", dump(schematic.orig, 1));
-  console.log("schematic.root:", dump(schematic.root, 1));
-  console.log("diff:", dump(changes));
-  console.log("board:", dump(board.changes, 10));
+  console.log("schematic.root:", dump(schematic.root, 1));*/
+ // console.log("diff:", dump(changes));
+console.log("board:", dump(board.changes, 10)); 
+/*const newXml = changes.reduce((acc,change) => { DeepDiff.applyChange(acc, change); return acc; }, board.root);
+  console.log("DeepDiff:", Object.keys(DeepDiff));  
+  console.log("DeepDiff.applyDiff:", DeepDiff.applyDiff);  
+  console.log("newXml:", toXML(board));  */
+
+
   return proj.saveTo(".", true);
 
   /* for(let it of schematic.iterator(["children", "0", "children", "0", "children", "0"], t => t)) console.log("elem:", it);
