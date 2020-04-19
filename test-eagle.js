@@ -60,7 +60,6 @@ async function testEagle(filename) {
     return e.package;
   };
 
-
   const packages = {
     board: [...proj.board.getAll("package")],
     schematic: [...proj.schematic.getAll("package")]
@@ -68,7 +67,6 @@ async function testEagle(filename) {
   let e = proj.board.getByName("element", "T1");
   console.log("e:", e);
   console.log("e.package:", e.package);
-
 
   for(let element of proj.board.getAll("element", (v, p, o) => v)) {
     console.log("element:", dump(element, 1));
@@ -98,7 +96,6 @@ async function testEagle(filename) {
     console.log("part.library.parentNode: ", part.library.parentNode);
     console.log("part.deviceset.parentNode: ", part.deviceset.parentNode);
     console.log("part.device.parentNode: ", part.device.parentNode);
-
 
     let instance = instances.filter(e => e.attributes.part == packageName.substring(0, e.attributes.part.length));
     console.log("instance:", instance);
@@ -154,13 +151,17 @@ async function testEagle(filename) {
   console.log("schematic.layers:", schematic.get("layers"));
   console.log("schematic.layers.all:\n" + [...schematic.getAll("layer", l => dump(l))].join("\n"));
 
-
   console.log("schematic.cache.libraries:", schematic.cache.libraries);
   console.log("schematic.cache.instances:", schematic.cache.instances);
   console.log("board.cache.elements:", board.cache.elements);
   let parts = schematic.parts;
   console.log("schematic.parts:", Util.className(parts));
-  console.log("schematic.parts:", [...parts]);
+  console.log("schematic.parts:", parts.entries());
+  /*  for(let p of parts[Symbol.iterator]())
+    console.log("schematic.parts #[]:", p);
+*/
+  for(let [i, p] of parts.entries()) console.log(`schematic.parts[${i}]:`, p);
+
   console.log("schematic.parts.length:", parts.length);
   console.log("schematic.parts[0]:", parts[0]);
   console.log("schematic.parts[1]:", parts[1]);
@@ -180,7 +181,6 @@ async function testEagle(filename) {
   console.log("firstPart.chain:" + dump(firstPart.chain.map(Util.className), 1));
   console.log("firstPart.raw:" + dump(firstPart.raw, 1));
 
-
   console.log("firstPart.library:", firstPart.library);
 
   console.log("firstPart.attributes.library:", firstPart.attributes.library);
@@ -191,11 +191,15 @@ async function testEagle(filename) {
   console.log("firstPart.library.devicesets:", [...firstPart.library.cache.devicesets.children]);
   console.log("firstPart.library.devicesets:", firstPart.library.devicesets.find(firstPart.attributes.deviceset));
 
+  console.log(`proj.library.c:`, proj.library.c);
+  console.log(`proj.library.c.packages:`, proj.library.c.packages);
+  console.log(`proj.library.c.packages[0]:`, proj.library.c.packages[0]);
+
   proj.updateLibrary("c");
 
- 
-console.log("board:", dump(board.changes, 10));
+  //console.log("board:", dump(board.changes, 10));
 
+  console.log(`proj.library.c:`, proj.library.c);
   return proj.saveTo(".", true);
 
   /* for(let it of schematic.iterator(["children", "0", "children", "0", "children", "0"], t => t)) console.log("elem:", it);
