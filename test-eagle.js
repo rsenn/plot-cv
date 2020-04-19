@@ -8,7 +8,8 @@ import deep from "./lib/deep.js";
 import DeepDiff from "deep-diff";
 import { Console } from "console";
 import { inspect, toXML } from "./lib/eagle/common.js";
-import JsonPointer from "./lib/json-pointer.js";
+import { JsonPointer, JsonReference } from "./lib/json-pointer.js";
+import ptr from "./lib/json-ptr.js";
 
 global.console = new Console({
   stdout: process.stdout,
@@ -101,18 +102,18 @@ function testJsonPointer() {
       }
     ]
   };
-  var pointer =   JsonPointer.append(JsonPointer.nil,"legumes",0); 
-  var pointer2 =   JsonPointer.append(pointer, "name"); 
+  var pointer =   ptr.append(ptr.nil,"legumes",0); 
+  var pointer2 =   ptr.append(pointer, "name"); 
   console.log("pointer:",pointer);
   console.log("pointer2:",pointer2);
-  console.log("JsonPointer.get:",JsonPointer.get(pointer)(data));
+  console.log("ptr.get:",ptr.get(pointer)(data));
 
-  
-  JsonPointer.assign(pointer2)(data, 'test name');
 
-  console.log("JsonPointer.get:",JsonPointer.get(pointer2)(data));
+  ptr.assign(pointer2)(data, 'test name');
+
+  console.log("ptr.get:",ptr.get(pointer2)(data));
 /*
-  var ref = new JsonReference(JsonPointer.create("/legumes/3"));
+  var ref = new JsonReference(ptr.create("/legumes/3"));
   console.log("ref.resolve:",ref.resolve(data));*/
 }
 
