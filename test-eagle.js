@@ -136,6 +136,8 @@ async function testEagle(filename) {
   };
   let e = proj.board.elements.T1;
   //("element", "T1");
+    console.log("proj.board.packages:", proj.board.cache);
+
   console.log("e:", e);
   console.log("e.package:", e.package);
 
