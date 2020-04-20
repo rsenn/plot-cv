@@ -4,6 +4,7 @@
   <script src="lib/dom.js" type="module" /> -->
     <script type="module">
       import Autoplacer from "./lib/autoplacer/autoplacer.js";
+      import { Point } from "./lib/geom/point.js";
       import { Rect } from "./lib/geom/rect.js";
       import { Element } from "./lib/dom/element.js";
       import { SVG } from "./lib/dom/svg.js";
@@ -21,8 +22,31 @@
       window.onload = async () => {
         window.Util = Util;
         Util(globalThis);
+
+        window.container = Element.find("#board");
+
+        var zoomVal = 0;
+        window.addEventListener("wheel", event => {
+          const clientArea = Element.rect("body > div");
+          clientArea.x += container.parentElement.scrollLeft;
+          const clientCenter = clientArea.center;
+          //  console.log("clientArea:", clientArea);
+
+          const { clientX, clientY } = event;
+          const pos = new Point(clientX, clientY);
+
+          const wheelPos = -event.deltaY.toFixed(2);
+          zoomVal = Util.clamp(-100, 100, zoomVal + wheelPos * 0.1);
+          const zoom = Math.pow(10, zoomVal / 100).toFixed(5);
+          const transform = ` scale(${zoom},${zoom}) `;
+          const origin = `${clientCenter.toString(1, "px")}`;
+
+        //  console.log("transform:", { transform, origin });
+Element.setCSS(container, { transform, transformOrigin: origin });
+/*          window.container.style.setProperty(`transform`, transform);
+          window.container.style.setProperty(`transform-origin`, origin);*/
+        });
         console.log(Util.getGlobalObject());
-        const container = Element.find("#board");
         const brdXml = await fetch("/static/LCmeter0-LCD-8pinlcd-PIC_COMP.brd").then(async res => {
           return await (await res).text();
         });
@@ -86,7 +110,7 @@
   </head>
   <body>
     <div style="overflow-y: hidden; overflow-x: scroll; height: 100%;">
-      <svg id="board" viewBox="0 0 310 150" style="width:auto; height: 100%;"></svg>
+      <svg id="board" viewBox="0 0 310 150" style="width:auto; height: 100%; transform-origin: 50vw 50vh;"></svg>
     </div>
   </body>
 </html>
