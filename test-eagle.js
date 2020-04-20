@@ -3,11 +3,11 @@ import { EagleDocument } from "./lib/eagle/document.js";
 import { EagleProject } from "./lib/eagle/project.js";
 import { EaglePath } from "./lib/eagle/locator.js";
 import Util from "./lib/util.js";
-//import util from "util";
+import fs, { promises as fsPromises } from "fs";
 import deep from "./lib/deep.js";
 import DeepDiff from "deep-diff";
 import { Console } from "console";
-import { inspect, toXML } from "./lib/eagle/common.js";
+import { inspect, toXML, dump } from "./lib/eagle/common.js";
 import { JsonPointer, JsonReference } from "./lib/json-pointer.js";
 import ptr from "./lib/json-ptr.js";
 
@@ -16,20 +16,7 @@ global.console = new Console({
   stderr: process.stderr,
   inspectOptions: { depth: 2, colors: true }
 });
-/*function dump(o, depth = 2, breakLength = 400) {
-  let s;
-  if(o instanceof Array) {
-    s = "";
-    for(let i of o) {
-      if(s.length > 0) s += i instanceof EagleElement ? ",\n" : ", ";
-      s += dump(i, depth - 1, breakLength);
-    }
-  } else if(o instanceof EagleElement) {
-    s = inspect(o, undefined, { depth, path: false });
-    depth * 4;
-  } else s = util.inspect(o, { depth, colors: true, breakLength });
-  return s;
-}*/
+/**/
 function xmlize(obj, depth = 2) {
   return obj.toXML ? obj.toXML().replace(/>\s*</g, ">\n    <") : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
@@ -120,7 +107,16 @@ function testJsonPointer() {
 }
 
 async function testEagle(filename) {
-  let proj = new EagleProject(filename);
+  const filesystem = {
+    readFile: filename => {
+      let data = fs.readFileSync(filename).toString();
+      console.log(`Read ${filename} ${data.length} bytes`);
+      return data;
+    },
+    writeFile: (filename,data,overwrite = true) => fs.writeFileSync(filename,data, { flag: overwrite ? "w" : "wx" }),
+    exists: fs.existsSync
+  };
+  let proj = new EagleProject(filename, filesystem);
   let { board, schematic } = proj;
 
   const getPackage = (d, e) => {
@@ -222,25 +218,38 @@ async function testEagle(filename) {
     ]
   };
   console.log(`allLayers:`, dump(allLayers, 2));
-  console.log("schematic.layers:", schematic.get("layers"));
-  console.log("schematic.layers.all:\n" + [...schematic.getAll("layer", l => dump(l))].join("\n"));
+  console.log("schematic.layers:", schematic.layers);
+//  console.log("schematic.layers.all:\n" + [...schematic.getAll("layer", l => dump(l))].join("\n"));
 
   console.log("schematic.cache.libraries:", schematic.cache.libraries);
+  console.log("schematic.cache.parts:", Util.className(schematic.cache.parts));
   console.log("schematic.cache.instances:", schematic.cache.instances);
+
+/*
+    console.log("schematic.cache.libraries.children:", schematic.cache.libraries.children);
+    console.log("schematic.cache.parts.children:", schematic.cache.parts.children);
+    console.log("schematic.cache.instances.children:", schematic.cache.instances.children);*/
+/*
   console.log("board.cache.elements:", board.cache.elements);
   let parts = schematic.parts;
-  console.log("schematic.parts:", Util.className(parts));
-  console.log("schematic.parts:", parts.entries());
-  /*  for(let p of parts[Symbol.iterator]())
-    console.log("schematic.parts #[]:", p);
-*/
-  for(let [i, p] of parts.entries()) console.log(`schematic.parts[${i}]:`, p);
+  console.log("schematic.parts.ref:", parts.ref);
+  console.log("schematic.parts.raw:", parts.raw);*/
+  console.log("schematic.parts:", Util.className(schematic.parts));
+  console.log("schematic.parts.keys():", schematic.parts.keys());
+  console.log("schematic.parts.entries():", schematic.parts.entries());
+  console.log("schematic.layers:", schematic.layers);
+  console.log("schematic.layers.list:", schematic.layers.list);
+  console.log("schematic.libraries:", schematic.libraries);
+  console.log("schematic.libraries.keys():", schematic.libraries.keys());
+  console.log("schematic.libraries.d:", schematic.libraries.d);
+  console.log("Util.isBrowser():", Util.isBrowser());
 
-  console.log("schematic.parts.length:", parts.length);
+/*
+  console.log("schematic.parts.size:", parts.size);
+  console.log("schematic.parts.keys():", parts.keys());
   console.log("schematic.parts[0]:", parts[0]);
   console.log("schematic.parts[1]:", parts[1]);
 
-  console.log("schematic.parts[1].library:", parts[1].library);
   let libraries = schematic.libraries;
   console.log("schematic.libraries:", libraries);
   console.log("schematic.libraries:", [...libraries]);
@@ -248,16 +257,22 @@ async function testEagle(filename) {
 
   console.log("schematic.parts.has(T1):", Reflect.has(parts, "T1"));
   console.log("schematic.parts.has(1):", Reflect.has(parts, 1));
-  let firstPart = parts[0];
-  console.log("firstPart:", firstPart);
-  console.log("firstPart.parentNode:" + dump(firstPart.parentNode, 3));
-  console.log("firstPart.parentNode.parentNode:" + dump(firstPart.parentNode.parentNode, 3));
-  console.log("firstPart.chain:" + dump(firstPart.chain.map(Util.className), 1));
-  console.log("firstPart.raw:" + dump(firstPart.raw, 1));
 
-  console.log("firstPart.library:", firstPart.library);
+  console.log("parts.keys():", parts.keys());
+  //console.log("parts.raw:", parts.raw);
+  console.log("parts.ref:", parts.ref);
+  console.log("parts.list:", parts.list);
 
-  console.log("firstPart.attributes.library:", firstPart.attributes.library);
+  let firstPart = parts[0];*/
+  /* console.log("firstPart:", firstPart);
+  console.log("firstPart:" + dump(firstPart, 3));*/
+  //console.log("firstPart.parentNode.parentNode:" + dump(firstPart.parentNode.parentNode, 3));*/
+  /* console.log("firstPart.chain:" + dump(firstPart.chain.map(Util.className), 1));
+  console.log("firstPart.raw:" + dump(firstPart.raw, 1));*/
+
+  // console.log("firstPart.raw:", firstPart.raw);
+
+  /* console.log("firstPart.attributes.library:", firstPart.raw.attributes.library);
   console.log("firstPart.attributes.device:", firstPart.attributes.device);
   console.log("firstPart.attributes.deviceset:", firstPart.attributes.deviceset);
   console.log("firstPart.deviceset:", firstPart.deviceset);
@@ -266,8 +281,8 @@ async function testEagle(filename) {
   console.log("firstPart.library.devicesets:", firstPart.library.devicesets.find(firstPart.attributes.deviceset));
 
   console.log(`proj.library.c:`, proj.library.c);
-  console.log(`proj.library.c.packages:`, proj.library.c.packages);
-  console.log(`proj.library.c.packages[0]:`, proj.library.c.packages[0]);
+  console.log(`proj.library.c.packages:`, proj.library.c.packages);*/
+  //console.log(`proj.library.c.packages[0]:`, proj.library.c.packages[0]);
 
   proj.updateLibrary("c");
 
