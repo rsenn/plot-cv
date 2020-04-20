@@ -1,0 +1,45 @@
+{
+  "presets": [
+    [
+      "next/babel",
+      {
+        "preset-env": {
+          "targets": {
+            "browsers": ["> 0.25%", "not dead", "node 10.16", "last 2 chrome versions", "last 2 firefox versions", "last 2 edge versions", "last 2 safari versions", "not ie 11", "not Explorer 11", "not ExplorerMobile 11"]
+            /*"esmodules": true"*/
+          },
+          "useBuiltIns": "usage",
+          "corejs": 2
+        }
+      }
+    ]
+  ],
+  "plugins": [
+    [
+      "@babel/plugin-proposal-decorators",
+      {
+        "legacy": true
+      }
+    ],
+    [
+      "@babel/plugin-proposal-class-properties",
+      {
+        "loose": true
+      }
+    ],
+    [
+      "@babel/plugin-proposal-export-default-from",
+      {
+        "loose": true
+      }
+    ] /*,
+    [
+      "styled-components",
+      {
+        "ssr": true,
+        "displayName": true,
+        "preprocess": false
+      }
+    ]*/
+  ]
+}
