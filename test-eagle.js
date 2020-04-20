@@ -102,20 +102,19 @@ function testJsonPointer() {
       }
     ]
   };
-  var pointer =   ptr.append(ptr.nil,"legumes",0); 
-  var pointer2 =   ptr.append(pointer, "name"); 
-  console.log("pointer:",pointer);
-  console.log("pointer2:",pointer2);
-  console.log("ptr.get:",ptr.get(pointer)(data));
+  var pointer = ptr.append(ptr.nil, "legumes", 0);
+  var pointer2 = ptr.append(pointer, "name");
+  console.log("pointer:", pointer);
+  console.log("pointer2:", pointer2);
+  console.log("ptr.get:", ptr.get(pointer)(data));
 
+  ptr.assign(pointer2)(data, "test name");
 
-  ptr.assign(pointer2)(data, 'test name');
+  console.log("ptr.get:", ptr.get(pointer2)(data));
 
-  console.log("ptr.get:",ptr.get(pointer2)(data));
-
-  console.log("JsonPointer.flatten:",JsonPointer.flatten(data));
-  console.log("JsonPointer.map:",JsonPointer.map(data));
-/*
+  console.log("JsonPointer.flatten:", JsonPointer.flatten(data));
+  console.log("JsonPointer.map:", JsonPointer.map(data));
+  /*
   var ref = new JsonReference(ptr.create("/legumes/3"));
   console.log("ref.resolve:",ref.resolve(data));*/
 }
@@ -278,7 +277,7 @@ async function testEagle(filename) {
 
   /*testProxyTree();
   testProxyClone();*/
- // testJsonPointer();
+  // testJsonPointer();
   return proj.saveTo(".", true);
 
   /* for(let it of schematic.iterator(["children", "0", "children", "0", "children", "0"], t => t)) console.log("elem:", it);
