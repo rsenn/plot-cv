@@ -41,9 +41,9 @@
           const transform = ` scale(${zoom},${zoom}) `;
           const origin = `${clientCenter.toString(1, "px")}`;
 
-        //  console.log("transform:", { transform, origin });
-Element.setCSS(container, { transform, transformOrigin: origin });
-/*          window.container.style.setProperty(`transform`, transform);
+          //  console.log("transform:", { transform, origin });
+          Element.setCSS(container, { transform, transformOrigin: origin });
+          /*          window.container.style.setProperty(`transform`, transform);
           window.container.style.setProperty(`transform-origin`, origin);*/
         });
         console.log(Util.getGlobalObject());
