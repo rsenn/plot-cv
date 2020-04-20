@@ -113,7 +113,7 @@ async function testEagle(filename) {
       console.log(`Read ${filename} ${data.length} bytes`);
       return data;
     },
-    writeFile: (filename,data,overwrite = true) => fs.writeFileSync(filename,data, { flag: overwrite ? "w" : "wx" }),
+    writeFile: (filename, data, overwrite = true) => fs.writeFileSync(filename, data, { flag: overwrite ? "w" : "wx" }),
     exists: fs.existsSync
   };
   let proj = new EagleProject(filename, filesystem);
@@ -217,34 +217,34 @@ async function testEagle(filename) {
       )
     ]
   };
-//  console.log("schematic.layers.all:\n" + [...schematic.getAll("layer", l => dump(l))].join("\n"));
+  //  console.log("schematic.layers.all:\n" + [...schematic.getAll("layer", l => dump(l))].join("\n"));
 
   console.log("schematic.cache.libraries:", schematic.cache.libraries);
   console.log("schematic.cache.parts:", Util.className(schematic.cache.parts));
   console.log("schematic.cache.instances:", schematic.cache.instances);
 
-/*
+  /*
     console.log("schematic.cache.libraries.children:", schematic.cache.libraries.children);
     console.log("schematic.cache.parts.children:", schematic.cache.parts.children);
     console.log("schematic.cache.instances.children:", schematic.cache.instances.children);*/
-/*
-  console.log("board.cache.elements:", board.cache.elements);
+  /*
+  console.log("board.cache.elements:", board.cache.elements);*/
   let parts = schematic.parts;
   console.log("schematic.parts.ref:", parts.ref);
-  console.log("schematic.parts.raw:", parts.raw);*/
+  console.log("schematic.parts.raw:", parts.raw);
   console.log("schematic.parts:", Util.className(schematic.parts));
   console.log("schematic.parts.keys():", schematic.parts.keys());
   console.log("schematic.parts.entries():", schematic.parts.entries());
   console.log("schematic.layers:", schematic.layers);
   /* console.log("schematic.layers.map():", schematic.layers.map());
    console.log("schematic.layers.map():", schematic.layers.map('name'));*/
- console.log("schematic.layers.list:", schematic.layers.list);
-  console.log("schematic.libraries:", schematic.libraries);
+  console.log("schematic.parts.list:", schematic.parts.list);
+  console.log("schematic.parts.list[0]:", schematic.parts.list[0]);
+/*  console.log("schematic.libraries:", schematic.libraries);
   console.log("schematic.libraries.keys():", schematic.libraries.keys());
   console.log("schematic.libraries.d:", schematic.libraries.d);
   console.log("Util.isBrowser():", Util.isBrowser());
 
-/*
   console.log("schematic.parts.size:", parts.size);
   console.log("schematic.parts.keys():", parts.keys());
   console.log("schematic.parts[0]:", parts[0]);
@@ -261,9 +261,9 @@ async function testEagle(filename) {
   console.log("parts.keys():", parts.keys());
   //console.log("parts.raw:", parts.raw);
   console.log("parts.ref:", parts.ref);
-  console.log("parts.list:", parts.list);
+  console.log("parts.list:", parts.list);*/
 
-  let firstPart = parts[0];*/
+  let firstPart = parts[0];
   /* console.log("firstPart:", firstPart);
   console.log("firstPart:" + dump(firstPart, 3));*/
   //console.log("firstPart.parentNode.parentNode:" + dump(firstPart.parentNode.parentNode, 3));*/
