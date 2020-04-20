@@ -105,17 +105,21 @@ function testJsonPointer() {
   var ref = new JsonReference(ptr.create("/legumes/3"));
   console.log("ref.resolve:",ref.resolve(data));*/
 }
+const filesystem = {
+  readFile(filename) {
+    let data = fs.readFileSync(filename).toString();
+    console.log(`Read ${filename} ${data.length} bytes`);
+    return data;
+  },
+  writeFile(filename, data, overwrite = true) {
+    return fs.writeFileSync(filename, data, { flag: overwrite ? "w" : "wx" });
+  },
+  exists(filename) {
+    return fs.existsSync(filename);
+  }
+};
 
 async function testEagle(filename) {
-  const filesystem = {
-    readFile: filename => {
-      let data = fs.readFileSync(filename).toString();
-      console.log(`Read ${filename} ${data.length} bytes`);
-      return data;
-    },
-    writeFile: (filename, data, overwrite = true) => fs.writeFileSync(filename, data, { flag: overwrite ? "w" : "wx" }),
-    exists: fs.existsSync
-  };
   let proj = new EagleProject(filename, filesystem);
   let { board, schematic } = proj;
 
@@ -140,7 +144,7 @@ async function testEagle(filename) {
 
   console.log("e:", e);
   console.log("e.package:", e.package);
-
+  /*
   for(let element of proj.board.getAll("element", (v, p, o) => v)) {
     console.log("element:", dump(element, 1));
     const packageName = element.attributes.package;
@@ -219,7 +223,7 @@ async function testEagle(filename) {
         ([v, l, d]) => v.attributes
       )
     ]
-  };
+  };*/
   //  console.log("schematic.layers.all:\n" + [...schematic.getAll("layer", l => dump(l))].join("\n"));
 
   console.log("schematic.cache.libraries:", schematic.cache.libraries);
