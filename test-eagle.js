@@ -134,7 +134,8 @@ async function testEagle(filename) {
     board: [...proj.board.getAll("package")],
     schematic: [...proj.schematic.getAll("package")]
   };
-  let e = proj.board.getByName("element", "T1");
+  let e = proj.board.elements.T1;
+  //("element", "T1");
   console.log("e:", e);
   console.log("e.package:", e.package);
 
@@ -240,7 +241,7 @@ async function testEagle(filename) {
    console.log("schematic.layers.map():", schematic.layers.map('name'));*/
   console.log("schematic.parts.list:", schematic.parts.list);
   console.log("schematic.parts.list[0]:", schematic.parts.list[0]);
-/*  console.log("schematic.libraries:", schematic.libraries);
+  /*  console.log("schematic.libraries:", schematic.libraries);
   console.log("schematic.libraries.keys():", schematic.libraries.keys());
   console.log("schematic.libraries.d:", schematic.libraries.d);
   console.log("Util.isBrowser():", Util.isBrowser());
@@ -340,7 +341,7 @@ async function testEagle(filename) {
 }
 (async () => {
   try {
-    testLocator();
+    //testLocator();
 
     await testEagle("../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3").then(result => console.log(result));
   } catch(err) {
