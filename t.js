@@ -1,5 +1,5 @@
 import fs from "fs";
-import { EagleEntity } from "./lib/eagle/element.js";
+import { EagleElement } from "./lib/eagle/element.js";
 import { EagleDocument } from "./lib/eagle/document.js";
 import { EagleProject } from "./lib/eagle/project.js";
 import { EagleLocator } from "./lib/eagle/locator.js";
@@ -14,7 +14,7 @@ global.console = new Console({
 });
 function dump(o, depth = 2, breakLength = 400) {
   let s;
-  if(o instanceof EagleEntity) {
+  if(o instanceof EagleElement) {
     s = inspect(o);
     depth * 4;
   } else s = util.inspect(o, { depth, colors: true, breakLength });
@@ -54,7 +54,7 @@ async function testEagle(filename) {
   try {
     for(let e of proj.getAll(
       v => v.tagName == "part" || v.tagName == "element",
-      ([v, l, h, d]) => new EagleEntity(d, l, v)
+      ([v, l, h, d]) => new EagleElement(d, l, v)
     )) {
       console.log("proj:", dump(e, 1));
     }

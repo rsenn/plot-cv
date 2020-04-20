@@ -1,4 +1,4 @@
-import { EagleEntity } from "./lib/eagle/element.js";
+import { EagleElement } from "./lib/eagle/element.js";
 import { EagleDocument } from "./lib/eagle/document.js";
 import { EagleProject } from "./lib/eagle/project.js";
 import { EaglePath } from "./lib/eagle/locator.js";
@@ -21,10 +21,10 @@ global.console = new Console({
   if(o instanceof Array) {
     s = "";
     for(let i of o) {
-      if(s.length > 0) s += i instanceof EagleEntity ? ",\n" : ", ";
+      if(s.length > 0) s += i instanceof EagleElement ? ",\n" : ", ";
       s += dump(i, depth - 1, breakLength);
     }
-  } else if(o instanceof EagleEntity) {
+  } else if(o instanceof EagleElement) {
     s = inspect(o, undefined, { depth, path: false });
     depth * 4;
   } else s = util.inspect(o, { depth, colors: true, breakLength });
