@@ -23,20 +23,24 @@
         Util(globalThis);
         console.log(Util.getGlobalObject());
         const container = Element.find("#board");
-        const brdXml = await fetch("/static/LCmeter0-LCD-8pinlcd-PIC_COMP.brd").then(async res => {return await (await res).text(); });
-        const schXml = await fetch("/static/LCmeter0-LCD-8pinlcd-PIC_COMP.sch").then(async res => {return await (await res).text(); });
-        const brdDom = new DOMParser().parseFromString(brdXml, 'application/xml');
-        const schDom = new DOMParser().parseFromString(schXml, 'application/xml');
+        const brdXml = await fetch("/static/LCmeter0-LCD-8pinlcd-PIC_COMP.brd").then(async res => {
+          return await (await res).text();
+        });
+        const schXml = await fetch("/static/LCmeter0-LCD-8pinlcd-PIC_COMP.sch").then(async res => {
+          return await (await res).text();
+        });
+        const brdDom = new DOMParser().parseFromString(brdXml, "application/xml");
+        const schDom = new DOMParser().parseFromString(schXml, "application/xml");
 
+        const schematic = new EagleDocument(schXml);
 
-
-        const schematic = new EagleDocument(schXml); 
-
-        const { layers, nets, parts, symbols, factory }  = schematic;
+        const { layers, nets, parts, symbols, factory } = schematic;
         window.schematic = schematic;
 
-          console.log("schematic:", { layers, nets, parts, symbols, factory
- });
+        console.log("schematic:", { layers, nets, parts, symbols, factory });
+        console.log("container:", container);
+
+        renderSchematic(schematic, SVG.factory(container));
 
         /* parseSchematic(schDom, (eagle,schem) => {
           console.log("eagle:", eagle);
@@ -45,11 +49,10 @@
           window.schem = schem; 
 
 
-renderSchematic(schem, SVG.factory(container));
         });*/
 
-                console.log("initialized", schematic);
-/*        const svg = await inlineSVG("/static/LCmeter0-LCD-8pinlcd-PIC_COMP-board.svg", container);
+        console.log("initialized", schematic);
+        /*        const svg = await inlineSVG("/static/LCmeter0-LCD-8pinlcd-PIC_COMP-board.svg", container);
         container.setAttribute("style", "width: 100%; height: auto;");
         const contours = Element.findAll('*[stroke="#7d7d7d"]');
         const rects = contours.map(c => Element.rect(c).round(1));
@@ -82,8 +85,8 @@ renderSchematic(schem, SVG.factory(container));
     </script>
   </head>
   <body>
-    <div style="width: 100vw;">
-      <svg id="board" viewBox="0 0 310 150" style="width: 100%; height: auto;"></svg>
+    <div style="overflow-y: hidden; overflow-x: scroll; height: 100%;">
+      <svg id="board" viewBox="0 0 310 150" style="width:auto; height: 100%;"></svg>
     </div>
   </body>
 </html>
