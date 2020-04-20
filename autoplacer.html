@@ -7,8 +7,9 @@
       import { Rect } from "./lib/dom/rect.js";
       import { Element } from "./lib/dom/element.js";
       import { SVG } from "./lib/dom/svg.js";
-      import { inlineSVG } from "./lib/svg/load.js";
+      //import { inlineSVG } from "./lib/svg/load.js";
       import { parseSchematic } from "./lib/eagle/parser.js";
+      import { EagleDocument } from "./lib/eagle/document.js";
       import { renderSchematic } from "./lib/eagle/renderer.js";
       import Util from "./lib/util.js";
 
@@ -27,7 +28,17 @@
         const brdDom = new DOMParser().parseFromString(brdXml, 'application/xml');
         const schDom = new DOMParser().parseFromString(schXml, 'application/xml');
 
-        const schematic = parseSchematic(schDom, (eagle,schem) => {
+
+
+        const schematic = new EagleDocument(schXml); 
+
+        const { layers, nets, parts, symbols, factory }  = schematic;
+        window.schematic = schematic;
+
+          console.log("schematic:", { layers, nets, parts, symbols, factory
+ });
+
+        /* parseSchematic(schDom, (eagle,schem) => {
           console.log("eagle:", eagle);
           console.log("schematic:", schem);
 
@@ -35,7 +46,7 @@
 
 
 renderSchematic(schem, SVG.factory(container));
-        });
+        });*/
 
                 console.log("initialized", schematic);
 /*        const svg = await inlineSVG("/static/LCmeter0-LCD-8pinlcd-PIC_COMP-board.svg", container);

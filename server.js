@@ -1,8 +1,9 @@
-var express = require("express");
-var path = require("path");
-var fs = require("fs");
+import express from "express";
+import path from "path";
+import fs from "fs";
+
 var app = express();
-const p = path.join(__dirname, ".");
+const p = path.join(path.dirname(process.argv[1]), ".");
 
 console.log("Serving from", p);
 

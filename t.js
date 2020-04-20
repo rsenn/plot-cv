@@ -1,5 +1,5 @@
 import fs from "fs";
-import { EagleEntity } from "./lib/eagle/entity.js";
+import { EagleEntity } from "./lib/eagle/element.js";
 import { EagleDocument } from "./lib/eagle/document.js";
 import { EagleProject } from "./lib/eagle/project.js";
 import { EagleLocator } from "./lib/eagle/locator.js";

@@ -1,9 +1,9 @@
-import { EagleEntity } from "./lib/eagle/entity.js";
+import { EagleEntity } from "./lib/eagle/element.js";
 import { EagleDocument } from "./lib/eagle/document.js";
 import { EagleProject } from "./lib/eagle/project.js";
 import { EaglePath } from "./lib/eagle/locator.js";
 import Util from "./lib/util.js";
-import util from "util";
+//import util from "util";
 import deep from "./lib/deep.js";
 import DeepDiff from "deep-diff";
 import { Console } from "console";
@@ -16,7 +16,7 @@ global.console = new Console({
   stderr: process.stderr,
   inspectOptions: { depth: 2, colors: true }
 });
-function dump(o, depth = 2, breakLength = 400) {
+/*function dump(o, depth = 2, breakLength = 400) {
   let s;
   if(o instanceof Array) {
     s = "";
@@ -29,7 +29,7 @@ function dump(o, depth = 2, breakLength = 400) {
     depth * 4;
   } else s = util.inspect(o, { depth, colors: true, breakLength });
   return s;
-}
+}*/
 function xmlize(obj, depth = 2) {
   return obj.toXML ? obj.toXML().replace(/>\s*</g, ">\n    <") : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
