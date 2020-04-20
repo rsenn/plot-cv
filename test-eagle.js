@@ -217,8 +217,6 @@ async function testEagle(filename) {
       )
     ]
   };
-  console.log(`allLayers:`, dump(allLayers, 2));
-  console.log("schematic.layers:", schematic.layers);
 //  console.log("schematic.layers.all:\n" + [...schematic.getAll("layer", l => dump(l))].join("\n"));
 
   console.log("schematic.cache.libraries:", schematic.cache.libraries);
@@ -238,7 +236,9 @@ async function testEagle(filename) {
   console.log("schematic.parts.keys():", schematic.parts.keys());
   console.log("schematic.parts.entries():", schematic.parts.entries());
   console.log("schematic.layers:", schematic.layers);
-  console.log("schematic.layers.list:", schematic.layers.list);
+  /* console.log("schematic.layers.map():", schematic.layers.map());
+   console.log("schematic.layers.map():", schematic.layers.map('name'));*/
+ console.log("schematic.layers.list:", schematic.layers.list);
   console.log("schematic.libraries:", schematic.libraries);
   console.log("schematic.libraries.keys():", schematic.libraries.keys());
   console.log("schematic.libraries.d:", schematic.libraries.d);
