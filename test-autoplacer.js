@@ -1,7 +1,7 @@
 import Autoplacer from "./lib/autoplacer/autoplacer.js";
 import { BBox } from "./lib/dom/bbox.js";
-import { TRBL } from "./lib/dom/trbl.js";
-import { Rect } from "./lib/dom/rect.js";
+import { TRBL } from "./lib/geom/trbl.js";
+import { Rect } from "./lib/geom/rect.js";
 import { Alea } from "./lib/alea.js";
 
 import { Console } from "console";
