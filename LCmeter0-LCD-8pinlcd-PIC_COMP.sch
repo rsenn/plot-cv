@@ -13735,7 +13735,7 @@ Source: &lt;a href="http://www.farnell.com/datasheets/391098.pdf"&gt; Data sheet
 <part name="R8" library="r" deviceset="R-H" device="0202/5" value="100"/>
 <part name="R9" library="r" deviceset="R-H" device="0202/5" value="100"/>
 <part name="J1" library="pinconn" deviceset="HD44780-4BIT" device="-8PIN" value="HD44780"/>
-<part name="R11" library="r" deviceset="R-H" device="0202/5" value="1k"/>
+<part name="R11" library="r" deviceset="R" device="0202/5" value="1k"/>
 <part name="LED" library="led" deviceset="TLLG4400" device="" value=""/>
 <part name="GND10" library="supply1" deviceset="GND" device=""/>
 <part name="P+8" library="supply1" deviceset="VCC" device=""/>
