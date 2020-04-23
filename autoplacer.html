@@ -11,13 +11,17 @@
       //import { inlineSVG } from "./lib/svg/load.js";
       import { parseSchematic } from "./lib/eagle/parser.js";
       import { EagleDocument } from "./lib/eagle/document.js";
-      import { renderSchematic } from "./lib/eagle/renderer.js";
+      import { EagleNode } from "./lib/eagle/node.js";
+      import { EagleElement } from "./lib/eagle/element.js";
+      import { EaglePath, EagleReference } from "./lib/eagle/locator.js";
+      import { renderDocument } from "./lib/eagle/renderer.js";
       import Util from "./lib/util.js";
 
       console.log("running");
       console.log("dom", { Rect, Element, parseSchematic });
 
       window.dom = { Element, SVG };
+      Object.assign(window, { EagleDocument, EagleElement, EagleNode, EaglePath, EagleReference });
 
       window.onload = async () => {
         window.Util = Util;
@@ -57,14 +61,18 @@
         const schDom = new DOMParser().parseFromString(schXml, "application/xml");
 
         const schematic = new EagleDocument(schXml);
+        const board = new EagleDocument(brdXml);
 
         const { layers, nets, parts, symbols, factory } = schematic;
         window.schematic = schematic;
+        window.board = board;
 
         console.log("schematic:", { layers, nets, parts, symbols, factory });
         console.log("container:", container);
+        console.log("type:", schematic.type);
 
-        renderSchematic(schematic, SVG.factory(container));
+        // renderDocument(schematic, SVG.factory(container));
+        renderDocument(board, SVG.factory(container));
 
         /* parseSchematic(schDom, (eagle,schem) => {
           console.log("eagle:", eagle);

@@ -14,7 +14,7 @@ var bb = new BBox();
 
 var rects = [];
 
-for (var i = 0; i < 10; i++) {
+for(var i = 0; i < 10; i++) {
   let r = new Rect(0, 0, Math.round(rg() * 100), Math.round(rg() * 100));
 
   rects.push(r);

@@ -18,7 +18,7 @@ let pathStr =
 let path = parseSVG(pathStr);
 
 let translate = (args.shift() + "").split(",").map(n => parseFloat(n));
-if (translate.length == 0 || isNaN(translate[0])) translate = [0, 0];
+if(translate.length == 0 || isNaN(translate[0])) translate = [0, 0];
 
 console.log("translate:", new Point([...translate]));
 makeAbsolute(path);
@@ -32,7 +32,7 @@ let t = new Matrix();
 t.init_translate(translate[0], translate[1]);
 console.log(`t:` + t.init_translate, translate);
 
-for (let i = 0; i < path.length; i++) {
+for(let i = 0; i < path.length; i++) {
   const c = path[i];
   let { code, command, relative } = c;
 
