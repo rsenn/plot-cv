@@ -51,10 +51,10 @@
           window.container.style.setProperty(`transform-origin`, origin);*/
         });
         console.log(Util.getGlobalObject());
-        const brdXml = await fetch("/static/LCmeter0-LCD-8pinlcd-PIC_COMP.brd").then(async res => {
+        const brdXml = await fetch("/static/Headphone-Amplifier-ClassAB-alt3.brd"  /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.brd"*/).then(async res => {
           return await (await res).text();
         });
-        const schXml = await fetch("/static/LCmeter0-LCD-8pinlcd-PIC_COMP.sch").then(async res => {
+        const schXml = await fetch("/static/Headphone-Amplifier-ClassAB-alt3.sch" /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.sch"*/).then(async res => {
           return await (await res).text();
         });
         const brdDom = new DOMParser().parseFromString(brdXml, "application/xml");
