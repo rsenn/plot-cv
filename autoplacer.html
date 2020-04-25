@@ -36,7 +36,9 @@
         RGBA,
         HSLA,
         toXML,
-        Point,PointList,Rect
+        Point,
+        PointList,
+        Rect
       });
 
       window.onload = async () => {
@@ -155,9 +157,9 @@
 
         for(let path of [...Element.findAll("path", svgElement)]) {
           let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
-        //  console.log("path:", path);
+          //  console.log("path:", path);
 
-          console.log("points:\n"+points.toSource());
+          console.log("points:\n" + points.toSource());
         }
       };
 
