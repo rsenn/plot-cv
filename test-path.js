@@ -1,8 +1,8 @@
-const SvgPath = require('./lib/svg/path.js');
-const { Point, Matrix, SVG, Line, PointList, Polygon } = require('./lib/dom.es5.js');
-const { parseSVG, makeAbsolute } = require('./lib/svg/path-parser.js');
-const { Console } = require('console');
-const PointAtLength = require('point-at-length');
+const SvgPath = require("./lib/svg/path.js");
+const { Point, Matrix, SVG, Line, PointList, Polygon } = require("./lib/dom.es5.js");
+const { parseSVG, makeAbsolute } = require("./lib/svg/path-parser.js");
+const { Console } = require("console");
+const PointAtLength = require("point-at-length");
 
 global.console = new Console({
   stdout: process.stdout,
@@ -14,13 +14,13 @@ let args = [...process.argv].slice(2);
 
 let pathStr =
   args.shift() ||
-  'M.1 494.1c-1.1 9.5 6.3 17.8 15.9 17.8l32.3.1c8.1 0 14.9-5.9 16-13.9.7-4.9 1.8-11.1 3.4-18.1H380c1.6 6.9 2.9 13.2 3.5 18.1 1.1 8 7.9 14 16 13.9l32.3-.1c9.6 0 17.1-8.3 15.9-17.8-4.6-37.9-25.6-129-118.9-207.7-17.6 12.4-37.1 24.2-58.5 35.4 6.2 4.6 11.4 9.4 17 14.2H159.7c21.3-18.1 47-35.6 78.7-51.4C410.5 199.1 442.1 65.8 447.9 17.9 449 8.4 441.6.1 432 .1L399.6 0c-8.1 0-14.9 5.9-16 13.9-.7 4.9-1.8 11.1-3.4 18.1H67.8c-1.6-7-2.7-13.1-3.4-18.1-1.1-8-7.9-14-16-13.9L16.1.1C6.5.1-1 8.4.1 17.9 5.3 60.8 31.4 171.8 160 256 31.5 340.2 5.3 451.2.1 494.1z';
+  "M.1 494.1c-1.1 9.5 6.3 17.8 15.9 17.8l32.3.1c8.1 0 14.9-5.9 16-13.9.7-4.9 1.8-11.1 3.4-18.1H380c1.6 6.9 2.9 13.2 3.5 18.1 1.1 8 7.9 14 16 13.9l32.3-.1c9.6 0 17.1-8.3 15.9-17.8-4.6-37.9-25.6-129-118.9-207.7-17.6 12.4-37.1 24.2-58.5 35.4 6.2 4.6 11.4 9.4 17 14.2H159.7c21.3-18.1 47-35.6 78.7-51.4C410.5 199.1 442.1 65.8 447.9 17.9 449 8.4 441.6.1 432 .1L399.6 0c-8.1 0-14.9 5.9-16 13.9-.7 4.9-1.8 11.1-3.4 18.1H67.8c-1.6-7-2.7-13.1-3.4-18.1-1.1-8-7.9-14-16-13.9L16.1.1C6.5.1-1 8.4.1 17.9 5.3 60.8 31.4 171.8 160 256 31.5 340.2 5.3 451.2.1 494.1z";
 let path = parseSVG(pathStr);
 
-let translate = (args.shift() + '').split(',').map(n => parseFloat(n));
+let translate = (args.shift() + "").split(",").map(n => parseFloat(n));
 if(translate.length == 0 || isNaN(translate[0])) translate = [0, 0];
 
-console.log('translate:', new Point([...translate]));
+console.log("translate:", new Point([...translate]));
 makeAbsolute(path);
 
 let newPath = new SvgPath();
@@ -59,9 +59,10 @@ for(let i = 0; i < path.length; i++) {
   let points = [new Point(x, y), new Point(x1, y1), new Point(x2, y2)];
   console.log(`path[${i}]:`, c);
 
-  if(!relative) points = points.map(p => (p.x !== undefined ? t.transform_point({ x: p.x, y: p.y }) : p));
+  if(!relative)
+    points = points.map(p => (p.x !== undefined ? t.transform_point({ x: p.x, y: p.y }) : p));
 
-  if(command == 'A') points[0] = new Point(x, y);
+  if(command == "A") points[0] = new Point(x, y);
 
   points.push(new Point(rx, ry));
 
@@ -69,38 +70,46 @@ for(let i = 0; i < path.length; i++) {
   points = points.map(p => (p.x !== undefined ? { x: p.x.toFixed(3), y: p.y.toFixed(3) } : p));
 
   switch (code) {
-    case 'M': {
+    case "M": {
       newPath.to(points[0].x, points[0].y);
       break;
     }
-    case 'A': {
+    case "A": {
       const { xAxisRotation, largeArc, sweep } = c;
-      newPath.arc(points[3].x, points[3].y, xAxisRotation, largeArc ? 1 : 0, sweep ? 1 : 0, points[0].x, points[0].y);
+      newPath.arc(
+        points[3].x,
+        points[3].y,
+        xAxisRotation,
+        largeArc ? 1 : 0,
+        sweep ? 1 : 0,
+        points[0].x,
+        points[0].y
+      );
       break;
     }
-    case 'H': {
+    case "H": {
       newPath.hline(points[0].x);
       break;
     }
-    case 'V': {
+    case "V": {
       newPath.hline(points[0].y);
       break;
     }
-    case 'L':
+    case "L":
       {
         newPath.line(points[0].x, points[0].y);
         break;
       }
-      '';
-    case 'C': {
+      "";
+    case "C": {
       newPath.bezier3(points[1].x, points[1].y, points[2].x, points[2].y, points[0].x, points[0].y);
       break;
     }
-    case 'Q': {
+    case "Q": {
       newPath.bezier2(points[1].x, points[1].y, points[0].x, points[0].y);
       break;
     }
-    case 'Z': {
+    case "Z": {
       newPath.close();
       break;
     }
@@ -109,7 +118,7 @@ for(let i = 0; i < path.length; i++) {
 const data = newPath.str().trim();
 
 console.log(`<path d="${data}" />`);
-process.stdout.write('\n' + data + '\n');
+process.stdout.write("\n" + data + "\n");
 
 function* dataToPoints(d, steps = 10) {
   const pointData = PointAtLength(d);
