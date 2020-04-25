@@ -8,20 +8,21 @@
       import { Rect } from "./lib/geom/rect.js";
       import { Element } from "./lib/dom/element.js";
       import { SVG } from "./lib/dom/svg.js";
+      import { RGBA, HSLA } from "./lib/dom.js";
       //import { inlineSVG } from "./lib/svg/load.js";
       import { parseSchematic } from "./lib/eagle/parser.js";
       import { EagleDocument } from "./lib/eagle/document.js";
       import { EagleNode } from "./lib/eagle/node.js";
       import { EagleElement } from "./lib/eagle/element.js";
       import { EaglePath, EagleReference } from "./lib/eagle/locator.js";
-      import { renderDocument } from "./lib/eagle/renderer.js";
+      import { renderDocument, EaglePalette } from "./lib/eagle/renderer.js";
       import Util from "./lib/util.js";
 
       console.log("running");
       console.log("dom", { Rect, Element, parseSchematic });
 
       window.dom = { Element, SVG };
-      Object.assign(window, { EagleDocument, EagleElement, EagleNode, EaglePath, EagleReference });
+      Object.assign(window, { EagleDocument, EagleElement, EagleNode, EaglePath, EagleReference, RGBA, HSLA });
 
       window.onload = async () => {
         window.Util = Util;
@@ -51,7 +52,7 @@
           window.container.style.setProperty(`transform-origin`, origin);*/
         });
         console.log(Util.getGlobalObject());
-        const brdXml = await fetch("/static/Headphone-Amplifier-ClassAB-alt3.brd"  /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.brd"*/).then(async res => {
+        const brdXml = await fetch("/static/Headphone-Amplifier-ClassAB-alt3.brd" /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.brd"*/).then(async res => {
           return await (await res).text();
         });
         const schXml = await fetch("/static/Headphone-Amplifier-ClassAB-alt3.sch" /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.sch"*/).then(async res => {

@@ -296,12 +296,12 @@ async function testEagle(filename) {
   //console.log("board:", dump(board.changes, 10));
 
   console.log(`proj.library.c:`, proj.library.c);
-/*
+  /*
   for(let pad of board.findAll('pad')) {
 
   }
 */
- /* for(let pad of board.iterator([], ([v,l,d]) => new EagleElement(board,l))) {
+  /* for(let pad of board.iterator([], ([v,l,d]) => new EagleElement(board,l))) {
     if(pad.tagName === 'pad')
     console.log("pad:", pad.toXML(0));
   }*/
@@ -309,30 +309,27 @@ async function testEagle(filename) {
   //console.log(board.toXML());
 
   for(let lib of board.libraries.list)
-  for(let pkg of lib.packages.list)
-  for(let pad of pkg.children) {
-    if(pad.tagName !== 'pad') continue;
+    for(let pkg of lib.packages.list)
+      for(let pad of pkg.children) {
+        if(pad.tagName !== "pad") continue;
 
-   pad.setAttribute('drill','0.7');
-    pad.setAttribute('diameter','1.778');
-    pad.removeAttribute('stop');
-    pad.removeAttribute('rot');
-    pad.removeAttribute('shape');
+        pad.setAttribute("drill", "0.7");
+        pad.setAttribute("diameter", "1.778");
+        pad.removeAttribute("stop");
+        pad.removeAttribute("rot");
+        pad.removeAttribute("shape");
 
-
-   console.log("pad():", pad.toXML());
- /*  console.log("pad:", pad.path.toString());
+        console.log("pad():", pad.toXML());
+        /*  console.log("pad:", pad.path.toString());
     console.log("pad:", pad.xpath().split(/\//g).slice(5).join("/"));*/
+      }
+  let cmds = [];
+  for(let elem of board.elements.list) {
+    cmds.push(`MOVE ${elem.name} ${elem.pos};`);
+    if(elem.rot) cmds.push(`ROTATE ${elem.rot} ${elem.name};`);
   }
-let cmds = [];
-    for(let elem of board.elements.list) {
-      cmds.push(`MOVE ${elem.name} ${elem.pos};`);
-      if(elem.rot)
-      cmds.push(`ROTATE ${elem.rot} ${elem.name};`);
-    }
 
-    console.log(cmds.join(" "));
-
+  console.log(cmds.join(" "));
 
   /*testProxyTree();
   testProxyClone();*/
@@ -383,14 +380,20 @@ let cmds = [];
     }*/
 }
 (async () => {
-  try {
-    //testLocator();
+  let args = process.argv.slice(2);
+  if(args.length == 0) args.unshift("../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3");
 
-    await testEagle("../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3").then(result => console.log(result));
-  } catch(err) {
-    const stack = err.stack;
-    console.log("err:", err);
-    console.log("stack:", stack);
-    throw err;
+  for(let arg of args) {
+    try {
+      //testLocator();
+
+      let r = await testEagle(arg).then(result => console.log(result));
+      console.log("r:", r);
+    } catch(err) {
+      const stack = err.stack;
+      console.log("err:", err);
+      console.log("stack:", stack);
+      throw err;
+    }
   }
 })();
