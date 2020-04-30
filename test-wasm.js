@@ -31,12 +31,7 @@ module: {},
     abort(_msg, _file, line, column) {
       console.error("abort called at main.ts:" + line + ":" + column);
     }, emscripten_resize_heap(b) {
-      console.error("Cannot enlarge memory arrays to size " +
-          b +
-          " bytes (OOM). Either (1) compile with  -s TOTAL_MEMORY=X  with X higher than the current value " +
-          C.length +
-          ", (2) compile with  -s ALLOW_MEMORY_GROWTH=1  which allows increasing the size at runtime, or (3) if you want malloc to return NULL (0) instead of this abort, compile with  -s ABORTING_MALLOC=0 "
-      );
+      console.error("Cannot enlarge memory arrays to size " + b + " bytes (OOM). Either (1) compile with  -s TOTAL_MEMORY=X  with X higher than the current value " + C.length + ", (2) compile with  -s ALLOW_MEMORY_GROWTH=1  which allows increasing the size at runtime, or (3) if you want malloc to return NULL (0) instead of this abort, compile with  -s ABORTING_MALLOC=0 ");
     }
   }
 };
