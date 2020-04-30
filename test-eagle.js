@@ -16,6 +16,7 @@ global.console = new Console({
   stderr: process.stderr,
   inspectOptions: { depth: 2, colors: true }
 });
+
 /**/
 function xmlize(obj, depth = 2) {
   return obj.toXML

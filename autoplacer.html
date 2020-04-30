@@ -4,11 +4,15 @@
   <script src="lib/dom.js" type="module" /> -->
     <script type="module">
       import Autoplacer from "./lib/autoplacer/autoplacer.js";
-      import { Point } from "./lib/geom/point.js";
+      import { isPoint, Point } from "./lib/geom/point.js";
       import { PointList } from "./lib/geom/pointList.js";
-      import { Rect } from "./lib/geom/rect.js";
+      import { isRect, Rect } from "./lib/geom/rect.js";
+      import { isLine, Line } from "./lib/geom/line.js";
+      import { Transformation, TransformationList } from "./lib/geom/transformation.js";
       import { Element } from "./lib/dom/element.js";
+      import { Matrix } from "./lib/dom/matrix.js";
       import { SVG } from "./lib/dom/svg.js";
+      import { ScrollDisabler } from "./lib/scrollHandler.js";
       import { RGBA, HSLA, CSS } from "./lib/dom.js";
       //import { inlineSVG } from "./lib/svg/load.js";
       import { parseSchematic } from "./lib/eagle/parser.js";
@@ -17,7 +21,7 @@
       import { EagleElement } from "./lib/eagle/element.js";
       import { EaglePath, EagleReference } from "./lib/eagle/locator.js";
       import { toXML } from "./lib/eagle/common.js";
-      import { renderDocument, EaglePalette } from "./lib/eagle/renderer.js";
+      import { renderDocument, EaglePalette, EagleRenderer } from "./lib/eagle/renderer.js";
       import Util from "./lib/util.js";
 
       console.log("running");
@@ -30,15 +34,23 @@
         EagleNode,
         EaglePath,
         EagleReference,
+        EagleRenderer,
         Element,
         SVG,
         CSS,
         RGBA,
         HSLA,
         toXML,
+        isPoint,
         Point,
         PointList,
-        Rect
+        isLine,
+        Line,
+        isRect,
+        Rect,
+        Matrix,
+        Transformation,
+        TransformationList
       });
 
       window.onload = async () => {
@@ -48,6 +60,8 @@
         window.container = Element.find("#board");
         window.styles = CSS.create("head");
 
+        new ScrollDisabler(() => true, window);
+
         styles.set("body", { background: "black" });
 
         var zoomVal = 0;
@@ -55,7 +69,7 @@
           const clientArea = Element.rect("body > div");
           clientArea.x += container.parentElement.scrollLeft;
           const clientCenter = clientArea.center;
-          //  console.log("clientArea:", clientArea);
+          // console.log("clientArea:", clientArea);
 
           const { clientX, clientY } = event;
           const pos = new Point(clientX, clientY);
@@ -64,12 +78,15 @@
           zoomVal = Util.clamp(-100, 100, zoomVal + wheelPos * 0.1);
           const zoom = Math.pow(10, zoomVal / 100).toFixed(5);
           const transform = ` scale(${zoom},${zoom}) `;
-          const origin = `${clientCenter.toString(1, "px")}`;
+          const origin = `${pos.toString(1, "px", " ")}`;
+          //          console.log("pos:", pos);
 
-          //  console.log("transform:", { transform, origin });
-          Element.setCSS(container, { transform, transformOrigin: origin });
+          // console.log("transform:", { transform, origin });
+          Element.setCSS(container, { transform });
+          //  container.style.setProperty('transform-origin', origin);
+          Element.setCSS(container, { "transform-origin": origin });
 
-          Element.create("pattern", {
+          /*   Element.create("pattern", {
             id: "grid",
             width: "10",
             height: "10",
@@ -84,7 +101,7 @@
                 ns: "http://www.w3.org/2000/svg"
               }
             ]
-          });
+          });*/
           /*          window.container.style.setProperty(`transform`, transform);
           window.container.style.setProperty(`transform-origin`, origin);*/
         });
@@ -123,7 +140,7 @@
         console.log("type:", schematic.type);
 
         // renderDocument(schematic, SVG.factory(container));
-        renderDocument(board, container);
+        window.renderer = renderDocument(board, container);
 
         /* parseSchematic(schDom, (eagle,schem) => {
           console.log("eagle:", eagle);
@@ -159,7 +176,7 @@
           let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
           //  console.log("path:", path);
 
-          console.log("points:\n" + points.toSource());
+          //console.log("points:\n" + points.toSource());
         }
       };
 
@@ -177,11 +194,7 @@
   </head>
   <body>
     <div style="overflow-y: hidden; overflow-x: scroll; height: 100%;">
-      <svg
-        id="board"
-        viewBox="0 0 310 150"
-        style="width:auto; height: 100%; transform-origin: 50vw 50vh;"
-      >
+      <svg id="board" viewBox="0 0 310 150" style="width:auto; height: 100%;">
         <defs />
       </svg>
     </div>
