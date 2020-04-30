@@ -79,18 +79,15 @@ function testJsonPointer() {
         name: "pinto beans",
         unit: "lbs",
         instock: 4
-      },
-      {
+      }, {
         name: "lima beans",
         unit: "lbs",
         instock: 21
-      },
-      {
+      }, {
         name: "black eyed peas",
         unit: "lbs",
         instock: 13
-      },
-      {
+      }, {
         name: "plit peas",
         unit: "lbs",
         instock: 8
@@ -118,11 +115,9 @@ const filesystem = {
     let data = fs.readFileSync(filename).toString();
     console.log(`Read ${filename} ${data.length} bytes`);
     return data;
-  },
-  writeFile(filename, data, overwrite = true) {
+  }, writeFile(filename, data, overwrite = true) {
     return fs.writeFileSync(filename, data, { flag: overwrite ? "w" : "wx" });
-  },
-  exists(filename) {
+  }, exists(filename) {
     return fs.existsSync(filename);
   }
 };
@@ -169,8 +164,7 @@ async function testEagle(filename) {
     console.log("[...parts]:", [...proj.schematic.parts]);
 
     let part = parts.find(e => (e.attributes.device.length > 0 && e.attributes.device == packageName.substring(0, e.attributes.device.length)) || e.attributes.deviceset == packageName.substring(0, e.attributes.deviceset.length));
-    console.log(
-      "devices: ",
+    console.log("devices: ",
       devices.filter(d => !d.package)
     );
     console.log("part: ", part);
@@ -213,21 +207,18 @@ async function testEagle(filename) {
       console.log(res, index);
     }
   }
-  console.log(
-    "libs:",
+  console.log("libs:",
     proj.libraries.map(lib => lib.basename)
   );
   let layers = { board: [], schematic: [] };
   let allLayers = {
     schematic: [
-      ...schematic.findAll(
-        v => v.tagName == "layer",
+      ...schematic.findAll(v => v.tagName == "layer",
         ([v, l, d]) => v.attributes
       )
     ],
     board: [
-      ...board.findAll(
-        v => v.tagName == "layer",
+      ...board.findAll(v => v.tagName == "layer",
         ([v, l, d]) => v.attributes
       )
     ]
@@ -376,8 +367,7 @@ async function testEagle(filename) {
       }
     } catch(error) {
       const { stack } = error;
-      console.log(
-        "error:",
+      console.log("error:",
         error
           .toString()
           .split(/\n/g)

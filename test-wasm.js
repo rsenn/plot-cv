@@ -30,10 +30,8 @@ module: {},
     }),
     abort(_msg, _file, line, column) {
       console.error("abort called at main.ts:" + line + ":" + column);
-    },
-    emscripten_resize_heap(b) {
-      console.error(
-        "Cannot enlarge memory arrays to size " +
+    }, emscripten_resize_heap(b) {
+      console.error("Cannot enlarge memory arrays to size " +
           b +
           " bytes (OOM). Either (1) compile with  -s TOTAL_MEMORY=X  with X higher than the current value " +
           C.length +

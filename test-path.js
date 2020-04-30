@@ -76,8 +76,7 @@ for(let i = 0; i < path.length; i++) {
     }
     case "A": {
       const { xAxisRotation, largeArc, sweep } = c;
-      newPath.arc(
-        points[3].x,
+      newPath.arc(points[3].x,
         points[3].y,
         xAxisRotation,
         largeArc ? 1 : 0,

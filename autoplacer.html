@@ -20,9 +20,10 @@
       import { EagleNode } from "./lib/eagle/node.js";
       import { EagleElement } from "./lib/eagle/element.js";
       import { EaglePath, EagleReference } from "./lib/eagle/locator.js";
-      import { toXML } from "./lib/eagle/common.js";
+      import { toXML, EagleInterface } from "./lib/eagle/common.js";
       import { renderDocument, EaglePalette, EagleRenderer } from "./lib/eagle/renderer.js";
       import Util from "./lib/util.js";
+      import tXml from "./lib/tXml.js";
 
       console.log("running");
       console.log("dom", { Rect, Element, parseSchematic });
@@ -35,6 +36,7 @@
         EaglePath,
         EagleReference,
         EagleRenderer,
+        EagleInterface,
         Element,
         SVG,
         CSS,
@@ -50,7 +52,8 @@
         Rect,
         Matrix,
         Transformation,
-        TransformationList
+        TransformationList,
+        tXml
       });
 
       window.onload = async () => {
@@ -87,32 +90,30 @@
           Element.setCSS(container, { "transform-origin": origin });
 
           /*   Element.create("pattern", {
-            id: "grid",
-            width: "10",
-            height: "10",
-            patternUnits: "userSpaceOnUse",
-            children: [
-              {
-                tagName: "path",
-                d: "M 10 0 L 0 0 0 10",
-                fill: "none",
-                stroke: "gray",
-                strokeWidth: "0.5",
-                ns: "http://www.w3.org/2000/svg"
-              }
-            ]
-          });*/
+                  id: "grid",
+                  width: "10",
+                  height: "10",
+                  patternUnits: "userSpaceOnUse",
+                  children: [
+                    {
+                      tagName: "path",
+                      d: "M 10 0 L 0 0 0 10",
+                      fill: "none",
+                      stroke: "gray",
+                      strokeWidth: "0.5",
+                      ns: "http://www.w3.org/2000/svg"
+                    }
+                  ]
+                });*/
           /*          window.container.style.setProperty(`transform`, transform);
-          window.container.style.setProperty(`transform-origin`, origin);*/
+                window.container.style.setProperty(`transform-origin`, origin);*/
         });
         console.log(Util.getGlobalObject());
-        const brdXml = await fetch(
-          "/static/Headphone-Amplifier-ClassAB-alt3.brd" /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.brd"*/
+        const brdXml = await fetch("/static/Headphone-Amplifier-ClassAB-alt3.brd" /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.brd"*/
         ).then(async res => {
           return await (await res).text();
         });
-        const schXml = await fetch(
-          "/static/Headphone-Amplifier-ClassAB-alt3.sch" /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.sch"*/
+        const schXml = await fetch("/static/Headphone-Amplifier-ClassAB-alt3.sch" /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.sch"*/
         ).then(async res => {
           return await (await res).text();
         });
@@ -143,33 +144,48 @@
         window.renderer = renderDocument(board, container);
 
         /* parseSchematic(schDom, (eagle,schem) => {
-          console.log("eagle:", eagle);
-          console.log("schematic:", schem);
+                console.log("eagle:", eagle);
+                console.log("schematic:", schem);
 
-          window.schem = schem; 
+                window.schem = schem;
 
 
-        });*/
+              });*/
 
-        console.log("initialized", schematic);
-        /*        const svg = await inlineSVG("/static/LCmeter0-LCD-8pinlcd-PIC_COMP-board.svg", container);
-        container.setAttribute("style", "width: 100%; height: auto;");
-        const contours = Element.findAll('*[stroke="#7d7d7d"]');
-        const rects = contours.map(c => Element.rect(c).round(1));
-        rects.map(rect => {
-          let el = Element.create('div', { id: rect.toString() }, document.body)
+        const SerializeXML = e => {
+          var serializer = new XMLSerializer();
+          return serializer.serializeToString(e);
+        };
+        const ElementToXML = e => toXML(Element.toObject(e));
 
-          Element.setCSS(el, {
-            position: 'absolute',
-            border: '2px solid #ff8000',
-            background: '#ff800000',
-            boxSizing: 'border-box',
-            ...rect.toCSS()
-          });
+        let body = SerializeXML(container);
 
+        let result = await fetch("/save", {
+          method: "post",
+          headers: {
+            "Content-Type": "application/xml"
+          }, body
         });
 
-        console.log(rects);*/
+        console.log("saved", result);
+        /*        const svg = await inlineSVG("/static/LCmeter0-LCD-8pinlcd-PIC_COMP-board.svg", container);
+              container.setAttribute("style", "width: 100%; height: auto;");
+              const contours = Element.findAll('*[stroke="#7d7d7d"]');
+              const rects = contours.map(c => Element.rect(c).round(1));
+              rects.map(rect => {
+                let el = Element.create('div', { id: rect.toString() }, document.body)
+
+                Element.setCSS(el, {
+                  position: 'absolute',
+                  border: '2px solid #ff8000',
+                  background: '#ff800000',
+                  boxSizing: 'border-box',
+                  ...rect.toCSS()
+                });
+
+              });
+
+              console.log(rects);*/
         svgElement = Element.findAll("svg")[1];
 
         for(let path of [...Element.findAll("path", svgElement)]) {
