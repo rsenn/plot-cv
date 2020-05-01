@@ -19,10 +19,17 @@ global.console = new Console({
 
 /**/
 function xmlize(obj, depth = 2) {
-  return obj.toXML ? obj.toXML().replace(/>\s*</g, ">\n    <") : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
+  return obj.toXML
+    ? obj.toXML().replace(/>\s*</g, ">\n    <")
+    : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
 function testLocator() {
-  let testobj = [0, 1, 2, { name: "roman", children: ["x", "y", { id: 1, items: ["a", "b", "c"] }] }];
+  let testobj = [
+    0,
+    1,
+    2,
+    { name: "roman", children: ["x", "y", { id: 1, items: ["a", "b", "c"] }] }
+  ];
   let l = new EaglePath([3, "children", 2, "items", -2]);
   let a = [l.slice(), l.slice()];
   console.log("l:", dump(l));

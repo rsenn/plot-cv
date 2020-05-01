@@ -17,6 +17,10 @@ app.use((req, res, next) => {
 app.use("/static", express.static(p));
 app.use("/lib", express.static(path.join(p, "lib")));
 
+app.get("/files.html", async (req, res) => {
+  let entries =  [...(await fs.promises.readdir("."))].filter(entry => /\.(brd|sch)$/.test(entry));
+  res.json(entries);
+});
 app.get("/autoplacer.html", (req, res) => {
   res.sendFile(path.join(p, "autoplacer.html"));
 });
