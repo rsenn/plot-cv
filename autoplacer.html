@@ -11,6 +11,7 @@
       import { Transformation, TransformationList } from "./lib/geom/transformation.js";
       import { Element } from "./lib/dom/element.js";
       import { Matrix } from "./lib/dom/matrix.js";
+      import { Select } from "./lib/dom/select.js";
       import { SVG } from "./lib/dom/svg.js";
       import { ScrollDisabler } from "./lib/scrollHandler.js";
       import { RGBA, HSLA, CSS } from "./lib/dom.js";
@@ -53,12 +54,30 @@
         Matrix,
         Transformation,
         TransformationList,
-        tXml
+        tXml,
+        Select
       });
+      const CreateSelect = (obj, node = document.body) => {
+        let elem = Select.create(Object.entries(obj));
+        node.insertBefore(elem, node.firstElementChild);
+      };
 
       window.onload = async () => {
         window.Util = Util;
         Util(globalThis);
+
+        const utf8Decoder = new TextDecoder("utf-8");
+
+        fetch("/files.html", { method: "get" }).then(async response => {
+          const reader = await (await response.body).getReader();
+          let { value: chunk, done: readerDone } = await reader.read();
+          chunk = chunk ? utf8Decoder.decode(chunk) : "";
+          let data = JSON.parse(chunk);
+          let { files } = data;
+         // console.log("result:", files);
+
+          CreateSelect(files);
+        });
 
         window.container = Element.find("#board");
         window.styles = CSS.create("head");
