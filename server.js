@@ -10,6 +10,7 @@ console.log("Serving from", p);
 app.use(express.text({ type: "application/xml" }));
 
 app.use((req, res, next) => {
+  if(!/\.lib/.test(req.url))
   console.log("Request:", req.url);
   next();
 });
@@ -37,5 +38,8 @@ app.post("/save", async (req, res) => {
 app.get("/", (req, res) => {
   res.redirect(302, "/autoplacer.html");
 });
+const port = process.env.PORT || 3000;
 
-app.listen(3000);
+app.listen(port, () => {
+  console.log(`Ready at http://127.0.0.1:${port}`)
+});
