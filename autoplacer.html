@@ -63,20 +63,18 @@
       };
       const utf8Decoder = new TextDecoder("utf-8");
 
-      
-        async function fetchData(url) {
-          let response = await fetch("/files.html", { method: "get" });
-          const reader = await (await response.body).getReader();
-          let { value: chunk, done: readerDone } = await reader.read();
-          chunk = chunk ? await utf8Decoder.decode(chunk) : "";
-          return chunk;
-        }
+      async function fetchData(url) {
+        let response = await fetch("/files.html", { method: "get" });
+        const reader = await (await response.body).getReader();
+        let { value: chunk, done: readerDone } = await reader.read();
+        chunk = chunk ? await utf8Decoder.decode(chunk) : "";
+        return chunk;
+      }
 
       window.onload = async () => {
         window.Util = Util;
         Util(globalThis);
 
-        
         fetchData("/files.html").then(response => {
           let data = JSON.parse(response);
           let { files } = data;
