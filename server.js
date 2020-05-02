@@ -10,8 +10,7 @@ console.log("Serving from", p);
 app.use(express.text({ type: "application/xml" }));
 
 app.use((req, res, next) => {
-  if(!/\.lib/.test(req.url))
-  console.log("Request:", req.url);
+  if(!/\.lib/.test(req.url)) console.log("Request:", req.url);
   next();
 });
 
@@ -41,5 +40,5 @@ app.get("/", (req, res) => {
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
-  console.log(`Ready at http://127.0.0.1:${port}`)
+  console.log(`Ready at http://127.0.0.1:${port}`);
 });
