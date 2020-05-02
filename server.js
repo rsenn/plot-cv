@@ -29,8 +29,7 @@ app.get("/autoplacer.html", (req, res) => {
 
 app.post("/save", async (req, res) => {
   const { body } = req;
-  console.log("request:", Object.keys(req));
-  console.log("save body:", body);
+  console.log("save body:", body.substring(0, 100), "...");
   let result = await fs.promises.writeFile("output.svg", body, { mode: 0o600, flag: "w" });
   res.json({ result });
 });
