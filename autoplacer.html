@@ -2,6 +2,7 @@
   <head>
     <!--     <script src="lib/autoplacer/autoplacer.js" type="module" />
   <script src="lib/dom.js" type="module" /> -->
+ <!--  <script src="modules/Crosskit/build/crosskit.js" />  -->
     <script type="module">
       import Autoplacer from "./lib/autoplacer/autoplacer.js";
       import { isPoint, Point } from "./lib/geom/point.js";
@@ -25,6 +26,7 @@
       import { renderDocument, EaglePalette, EagleRenderer } from "./lib/eagle/renderer.js";
       import Util from "./lib/util.js";
       import tXml from "./lib/tXml.js";
+      import {crosskit} from "./lib/crosskit.js";
 
       console.log("running");
       console.log("dom", { Rect, Element, parseSchematic });

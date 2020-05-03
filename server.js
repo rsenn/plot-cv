@@ -10,11 +10,12 @@ console.log("Serving from", p);
 app.use(express.text({ type: "application/xml" }));
 
 app.use((req, res, next) => {
-  if(!/\.lib/.test(req.url)) console.log("Request:", req.url);
+  if(!/lib\//.test(req.url)) console.log("Request:", req.url);
   next();
 });
 
 app.use("/static", express.static(p));
+app.use("/modules", express.static(path.join(p, "node_modules")));
 app.use("/lib", express.static(path.join(p, "lib")));
 
 app.get("/files.html", async (req, res) => {
