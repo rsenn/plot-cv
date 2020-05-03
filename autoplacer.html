@@ -14,6 +14,7 @@
       import { Matrix } from "./lib/dom/matrix.js";
       import { Select } from "./lib/dom/select.js";
       import { SVG } from "./lib/dom/svg.js";
+      import { BBox } from "./lib/dom/bbox.js";
       import { ScrollDisabler } from "./lib/scrollHandler.js";
       import { RGBA, HSLA, CSS } from "./lib/dom.js";
       //import { inlineSVG } from "./lib/svg/load.js";
@@ -58,7 +59,8 @@ import deep from './lib/deep.js';
         Transformation,
         TransformationList,
         tXml,
-        Select,deep
+        Select,deep,
+        BBox
       });
       const CreateSelect = (obj, node = document.body) => {
         let elem = Select.create(Object.entries(obj));
