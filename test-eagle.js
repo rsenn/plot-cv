@@ -195,8 +195,8 @@ async function testEagle(filename) {
   )) {
     //console.log("wire:", wire);
 
-    let line = Line.bind(wire.attributes);
-    let pointA = Point.bind(wire.attributes, { x: "x1", y: "y1" });
+    let line = Line.bind(wire.attributes, null, k => v => (v === undefined ? +wire.attributes[k] : (wire.attributes[k] = ''+v)));
+    let pointA = Point.bind(wire.attributes, [ "x1", "y1" ], k => v => (v === undefined ? +wire.attributes[k] : (wire.attributes[k] = ''+v)));
     let copy = line.clone();
 
     line.round(2.54);
@@ -212,7 +212,7 @@ async function testEagle(filename) {
   }
 
   for(let element of board.getAll("element")) {
-    let position = Point.bind(element.attributes);
+    let position = Point.bind(element.attributes, null, k => v => (v === undefined ? +element.attributes[k] : (element.attributes[k] = ''+v)));
     console.log("position:", position);
 
     let copy = position.clone();
