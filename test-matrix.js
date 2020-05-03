@@ -1,18 +1,18 @@
-import { Matrix } from "./js/matrix.js";
-import { PointList } from "./js/pointList.js";
-import inspect from "./js/inspect.js";
+import { Matrix } from './js/matrix.js';
+import { PointList } from './js/pointList.js';
+import inspect from './js/inspect.js';
 
 let m = new Matrix();
 
 let rows = m.rows();
 
-console.log("length: ", m.length);
+console.log('length: ', m.length);
 
 m.scale(2, 2);
 m.rotate(Math.PI / 2);
 m.translate(50, 50);
 
-console.log("m = ", m);
+console.log('m = ', m);
 let dec = m.decompose(false);
 
 let src = new PointList([
@@ -31,6 +31,6 @@ let dst = new PointList([
 m.affine_transform(src, dst);
 let affine = m.decompose(false);
 
-console.log("affine_transform = ",
-  inspect(affine, (v, k) => typeof v != "function" && k != "toString")
+console.log('affine_transform = ',
+  inspect(affine, (v, k) => typeof v != 'function' && k != 'toString')
 );

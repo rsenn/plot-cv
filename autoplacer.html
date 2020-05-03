@@ -27,6 +27,7 @@
       import Util from "./lib/util.js";
       import tXml from "./lib/tXml.js";
       import { crosskit } from "./lib/crosskit.js";
+import deep from './lib/deep.js';
 
       console.log("running");
       console.log("dom", { Rect, Element, parseSchematic });
@@ -57,7 +58,7 @@
         Transformation,
         TransformationList,
         tXml,
-        Select
+        Select,deep
       });
       const CreateSelect = (obj, node = document.body) => {
         let elem = Select.create(Object.entries(obj));
@@ -90,7 +91,7 @@
 
         new ScrollDisabler(() => true, window);
 
-        styles.set("body", { background: "black" });
+        //styles.set("body", { background: "black" });
 
         var zoomVal = 0;
         window.addEventListener("wheel", event => {
@@ -133,12 +134,13 @@
           /*          window.container.style.setProperty(`transform`, transform);
                 window.container.style.setProperty(`transform-origin`, origin);*/
         });
+        const projectName = "Headphone-Amplifier-ClassAB-alt3";
         console.log(Util.getGlobalObject());
-        const brdXml = await fetch("/static/Headphone-Amplifier-ClassAB-alt3.brd" /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.brd"*/
+        const brdXml = await fetch(`/static/${projectName}.brd` /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.brd"*/
         ).then(async res => {
           return await (await res).text();
         });
-        const schXml = await fetch("/static/Headphone-Amplifier-ClassAB-alt3.sch" /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.sch"*/
+        const schXml = await fetch(`/static/${projectName}.sch` /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.sch"*/
         ).then(async res => {
           return await (await res).text();
         });
@@ -177,18 +179,23 @@
 
               });*/
 
-        const SerializeXML = e => {
+       /* const SerializeXML = e => {
           var serializer = new XMLSerializer();
           return serializer.serializeToString(e);
+        };*/
+        const ElementToXML = e => {
+          const x = Element.toObject(e);
+          console.log("x:",x);
+          return toXML(x);
         };
-        const ElementToXML = e => toXML(Element.toObject(e));
 
-        let body = SerializeXML(container);
+        let body = ElementToXML(container);
 
         let result = await fetch("/save", {
           method: "post",
           headers: {
-            "Content-Type": "application/xml"
+            "Content-Type": "application/xml",
+            "Content-Disposition": `attachment; filename="${projectName}.svg"`
           }, body
         });
 
