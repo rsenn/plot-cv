@@ -319,7 +319,7 @@ async function testEagle(filename) {
         pad.removeAttribute("rot");
         pad.removeAttribute("shape");
 
-        console.log("pad():", pad.toXML());
+      // console.log("pad():", pad.toXML());
         /*  console.log("pad:", pad.path.toString());
     console.log("pad:", pad.xpath().split(/\//g).slice(5).join("/"));*/
       }
