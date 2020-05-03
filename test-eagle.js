@@ -2,6 +2,7 @@ import { EagleElement } from "./lib/eagle/element.js";
 import { EagleDocument } from "./lib/eagle/document.js";
 import { EagleProject } from "./lib/eagle/project.js";
 import { EaglePath } from "./lib/eagle/locator.js";
+import { Line,Point } from "./lib/geom.js";
 import Util from "./lib/util.js";
 import fs, { promises as fsPromises } from "fs";
 import deep from "./lib/deep.js";
@@ -329,6 +330,48 @@ async function testEagle(filename) {
   }
 
   console.log(cmds.join(" "));
+  const signals = board.find('signals');
+  console.log("signals.path:"+signals.path);
+ /* console.log("signals:",signals);
+  console.log("signals:",signals.root);
+  console.log("signals:",signals.raw);
+  const wires = signals.getAll('wire');
+  console.log("wires:",[...wires]);*/
+
+ for(let wire of signals.getAll(v => v.tagName == 'wire' && ['1','16'].includes(v.attributes.layer))) {
+  console.log("wire:",wire);
+
+  let line = Line.bind(wire.attributes); //Util.bindProperties(new Line(wire), wire, 'x1','y1','x2','y2');
+  let pointA = Point.bind(wire.attributes, { x: 'x1', y: 'y1' });
+  let copy = line.clone();
+
+
+/* 
+  console.log("pointA:",pointA);
+  console.log("pointA:",Object.getOwnPropertyDescriptors(pointA));
+  console.log("pointA.clone():",Object.getOwnPropertyDescriptors(pointA.clone()));
+  console.log("line:",Object.getOwnPropertyDescriptors(line));
+  console.log("line.a:",Object.getOwnPropertyDescriptors(line.a));
+*/
+
+line.round(2.54);
+
+  if(!line.equals(copy)) {
+
+  console.log("line:",line);
+  console.log("copy:",copy);
+  console.log("diff:",line.diff(copy));
+    console.log("save:",new Line(wire.attributes));
+
+  console.log("\n");
+
+
+  
+}
+
+
+}  
+
 
   /*testProxyTree();
   testProxyClone();*/
