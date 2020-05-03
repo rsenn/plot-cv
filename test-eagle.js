@@ -11,6 +11,7 @@ import { Console } from "console";
 import { inspect, toXML, dump } from "./lib/eagle/common.js";
 import { JsonPointer, JsonReference } from "./lib/json-pointer.js";
 import ptr from "./lib/json-ptr.js";
+import util from 'util';
 
 global.console = new Console({
   stdout: process.stdout,
@@ -195,8 +196,12 @@ async function testEagle(filename) {
   )) {
     //console.log("wire:", wire);
 
-    let line = Line.bind(wire.attributes, null, k => v => (v === undefined ? +wire.attributes[k] : (wire.attributes[k] = ''+v)));
-    let pointA = Point.bind(wire.attributes, [ "x1", "y1" ], k => v => (v === undefined ? +wire.attributes[k] : (wire.attributes[k] = ''+v)));
+    let line = Line.bind(wire.attributes, null, k => v =>
+      v === undefined ? +wire.attributes[k] : (wire.attributes[k] = "" + v)
+    );
+    let pointA = Point.bind(wire.attributes, ["x1", "y1"], k => v =>
+      v === undefined ? +wire.attributes[k] : (wire.attributes[k] = "" + v)
+    );
     let copy = line.clone();
 
     line.round(2.54);
@@ -212,17 +217,34 @@ async function testEagle(filename) {
   }
 
   for(let element of board.getAll("element")) {
-    let position = Point.bind(element.attributes, null, k => v => (v === undefined ? +element.attributes[k] : (element.attributes[k] = ''+v)));
+    let position = Point.bind(element.attributes, null, k => v =>
+      v === undefined ? +element.attributes[k] : (element.attributes[k] = "" + v)
+    );
 
     let copy = position.clone();
     position.round(2.54);
     if(!position.equals(copy)) {
-          console.log("position:", position);
+      console.log("position:", position);
 
       console.log("save:", Point.bind(element.attributes));
     }
   }
 
+  for(let change of board.changes) {
+    const { path, ...item } = change;
+   
+    console.log(`board change:`,util.inspect(item, {depth: 5  }));
+
+
+  } //[change.path.reverse()[0],change.rhs]));
+  // console.log("schematic changes:",schematic.changes);
+
+
+    for(let description of board.getAll("description")) {
+     // console.log("description:",description.raw);
+    }
+
+  //console.log("board.raw:", board.raw);
   return proj.saveTo(".", true);
 }
 
