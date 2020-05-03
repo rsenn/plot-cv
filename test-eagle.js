@@ -213,12 +213,13 @@ async function testEagle(filename) {
 
   for(let element of board.getAll("element")) {
     let position = Point.bind(element.attributes, null, k => v => (v === undefined ? +element.attributes[k] : (element.attributes[k] = ''+v)));
-    console.log("position:", position);
 
     let copy = position.clone();
     position.round(2.54);
     if(!position.equals(copy)) {
-      console.log("save:", new Point(element.attributes));
+          console.log("position:", position);
+
+      console.log("save:", Point.bind(element.attributes));
     }
   }
 
