@@ -1,0 +1,6 @@
+toksubst.sh -i js_contour_class contour_class "$@"
+toksubst.sh -i js_contour_proto contour_proto "$@"
+toksubst.sh -i js_point_iterator_class point_iterator_class "$@"
+toksubst.sh -i js_point_iterator_proto point_iterator_proto "$@"
+toksubst.sh -i js_point_class point_class "$@"
+toksubst.sh -i js_point_proto point_proto "$@"
