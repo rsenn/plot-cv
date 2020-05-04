@@ -17,7 +17,7 @@
       import { BBox } from "./lib/geom/bbox.js";
       import { ScrollDisabler } from "./lib/scrollHandler.js";
       import { RGBA, HSLA, CSS } from "./lib/dom.js";
-      //import { inlineSVG } from "./lib/svg/load.js";
+
       import { parseSchematic } from "./lib/eagle/parser.js";
       import { EagleDocument } from "./lib/eagle/document.js";
       import { EagleNode } from "./lib/eagle/node.js";
@@ -33,6 +33,8 @@
       const projectName = "Headphone-Amplifier-ClassAB-alt3";
       var palette = null;
       var svgElement;
+      var brdXml, schXml, brdDom, schDom;
+      var board, schematic;
 
       console.log("running");
       console.log("dom", { Rect, Element, parseSchematic });
@@ -112,19 +114,16 @@
           CreateSelect(files);
         });
 
-        window.container = Element.find("div");
+        window.container = Element.find("#container");
         window.styles = CSS.create("head");
 
         new ScrollDisabler(() => true, window);
-
-        //styles.set("body", { background: "black" });
 
         var zoomVal = 0;
         window.addEventListener("wheel", event => {
           const clientArea = Element.rect("body > div");
           clientArea.x += container.parentElement.scrollLeft;
           const clientCenter = clientArea.center;
-          // console.log("clientArea:", clientArea);
 
           const { clientX, clientY } = event;
           const pos = new Point(clientX, clientY);
@@ -134,140 +133,70 @@
           const zoom = Math.pow(10, zoomVal / 100).toFixed(5);
           const transform = ` scale(${zoom},${zoom}) `;
           const origin = `${pos.toString(1, "px", " ")}`;
-          //          console.log("pos:", pos);
 
-          // console.log("transform:", { transform, origin });
           Element.setCSS(container, { transform });
-          //  container.style.setProperty('transform-origin', origin);
-          Element.setCSS(container, { "transform-origin": origin });
 
-          /*   Element.create("pattern", {
-                  id: "grid",
-                  width: "10",
-                  height: "10",
-                  patternUnits: "userSpaceOnUse",
-                  children: [
-                    {
-                      tagName: "path",
-                      d: "M 10 0 L 0 0 0 10",
-                      fill: "none",
-                      stroke: "gray",
-                      strokeWidth: "0.5",
-                      ns: "http://www.w3.org/2000/svg"
-                    }
-                  ]
-                });*/
-          /*          window.container.style.setProperty(`transform`, transform);
-                window.container.style.setProperty(`transform-origin`, origin);*/
+          Element.setCSS(container, { "transform-origin": origin });
         });
         console.log(Util.getGlobalObject());
 
         window.load = async function(basename = projectName) {
-          const brdXml = await fetch(`/static/${basename}.brd` /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.brd"*/
-          ).then(async res => {
+          brdXml = await fetch(`/static/${basename}.brd`).then(async res => {
             return await (await res).text();
           });
-          const schXml = await fetch(`/static/${basename}.sch` /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.sch"*/
-          ).then(async res => {
+          schXml = await fetch(`/static/${basename}.sch`).then(async res => {
             return await (await res).text();
           });
-          /*
-        const svgXml = await fetch("/static/Plants-Eucalyptus-Hero.svg").then(async res => {
-          return await (await res).text();
-        });
 
+          brdDom = new DOMParser().parseFromString(brdXml, "application/xml");
+          schDom = new DOMParser().parseFromString(schXml, "application/xml");
 
-        svgElement.outerHTML = svgXml;*/
+          schematic = new EagleDocument(schXml);
+          board = new EagleDocument(brdXml);
 
-          const brdDom = new DOMParser().parseFromString(brdXml, "application/xml");
-          const schDom = new DOMParser().parseFromString(schXml, "application/xml");
-
-          const schematic = new EagleDocument(schXml);
-          const board = new EagleDocument(brdXml);
-
-          const { layers, nets, parts, symbols, factory } = schematic;
+          const { layers, nets, parts, symbols, sheets } = schematic;
           window.schematic = schematic;
           window.board = board;
 
-          window.svg = svgElement = Element.create("svg", {
+          /*   window.svg = svgElement = Element.create("svg", {
               className: "board",
               viewBox: "-6.931978 -51.774091 117.089548 58.225691",
-              style: "width: 1036px; height: auto; overflow: hidden;"
-            }, container);
+              style: {'' height: 'auto', overflow: 'auto' }
+            }, Element.find('div'));
 
-          Element.create("defs", {}, window.svg);
+          Element.create("defs", {}, window.svg);*/
 
-          window.renderer = renderDocument(board, window.svg);
+          window.renderer = renderDocument(board, Element.find("#container"));
 
-          console.log("schematic:", { layers, nets, parts, symbols, factory });
+          console.log("schematic:", { layers, nets, parts, symbols, sheets });
           console.log("container:", container);
           console.log("type:", schematic.type);
 
-          window.svgs = Element.findAll("svg")[1];
+          window.svgs = [...Element.findAll("svg")];
         };
 
         window.load(projectName);
 
-        // renderDocument(schematic, SVG.factory(container));
-
-        /* parseSchematic(schDom, (eagle,schem) => {
-                console.log("eagle:", eagle);
-                console.log("schematic:", schem);
-
-                window.schem = schem;
-
-
-              });*/
-
-        /* const SerializeXML = e => {
-          var serializer = new XMLSerializer();
-          return serializer.serializeToString(e);
-        };*/
-
-        /*        const svg = await inlineSVG("/static/LCmeter0-LCD-8pinlcd-PIC_COMP-board.svg", container);
-              container.setAttribute("style", "width: 100%; height: auto;");
-              const contours = Element.findAll('*[stroke="#7d7d7d"]');
-              const rects = contours.map(c => Element.rect(c).round(1));
-              rects.map(rect => {
-                let el = Element.create('div', { id: rect.toString() }, document.body)
-
-                Element.setCSS(el, {
-                  position: 'absolute',
-                  border: '2px solid #ff8000',
-                  background: '#ff800000',
-                  boxSizing: 'border-box',
-                  ...rect.toCSS()
-                });
-
-              });
-
-              console.log(rects);*/
-
         for(let path of [...Element.findAll("path")]) {
           let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
-          //  console.log("path:", path);
-
-          //console.log("points:\n" + points.toSource());
         }
       };
 
       var Module = {
-        // Don't run main() on page load
-        noInitialRun: true, // When Wasm module is ready, ask user for a string
+        noInitialRun: true,
         onRuntimeInitialized: () => {
           console.log("initialized");
           let myString = prompt("Enter a string:");
           Module.callMain([myString]);
-        }, // Redirect stdout to alert()
-        print: txt => alert(`The MD5 hash is: ${txt}`)
+        }, print: txt => alert(`The MD5 hash is: ${txt}`)
       };
     </script>
   </head>
   <body>
-    <div style="overflow-y: hidden; overflow-x: scroll; height: 100%;">
-      <svg id="board" viewBox="0 0 310 150" style="width:auto; height: 100%;">
+    <div id="container" style="overflow-y: auto; overflow-x: scroll; height: 100%;">
+      <!-- <svg id="board" viewBox="0 0 310 150" style="width:auto; height: 100%;">
         <defs />
-      </svg>
+      </svg> -->
     </div>
   </body>
 </html>
