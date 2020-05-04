@@ -28,7 +28,11 @@
       import Util from "./lib/util.js";
       import tXml from "./lib/tXml.js";
       import { crosskit } from "./lib/crosskit.js";
-import deep from './lib/deep.js';
+      import deep from "./lib/deep.js";
+
+      const projectName = "Headphone-Amplifier-ClassAB-alt3";
+      var palette = null;
+      var svgElement;
 
       console.log("running");
       console.log("dom", { Rect, Element, parseSchematic });
@@ -59,7 +63,8 @@ import deep from './lib/deep.js';
         Transformation,
         TransformationList,
         tXml,
-        Select,deep,
+        Select,
+        deep,
         BBox
       });
       const CreateSelect = (obj, node = document.body) => {
@@ -75,6 +80,25 @@ import deep from './lib/deep.js';
         chunk = chunk ? await utf8Decoder.decode(chunk) : "";
         return chunk;
       }
+      const ElementToXML = e => {
+        const x = Element.toObject(e);
+        console.log("x:", x);
+        return toXML(x);
+      };
+
+      window.save = async function save(filename = projectName) {
+        let body = ElementToXML(window.svg);
+
+        let result = await fetch("/save", {
+          method: "post",
+          headers: {
+            "Content-Type": "application/xml",
+            "Content-Disposition": `attachment; filename="${projectName}.svg"`
+          }, body
+        });
+
+        console.log("saved", result);
+      };
 
       window.onload = async () => {
         window.Util = Util;
@@ -88,7 +112,7 @@ import deep from './lib/deep.js';
           CreateSelect(files);
         });
 
-        window.container = Element.find("#board");
+        window.container = Element.find("div");
         window.styles = CSS.create("head");
 
         new ScrollDisabler(() => true, window);
@@ -136,41 +160,55 @@ import deep from './lib/deep.js';
           /*          window.container.style.setProperty(`transform`, transform);
                 window.container.style.setProperty(`transform-origin`, origin);*/
         });
-        const projectName = "Headphone-Amplifier-ClassAB-alt3";
         console.log(Util.getGlobalObject());
-        const brdXml = await fetch(`/static/${projectName}.brd` /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.brd"*/
-        ).then(async res => {
-          return await (await res).text();
-        });
-        const schXml = await fetch(`/static/${projectName}.sch` /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.sch"*/
-        ).then(async res => {
-          return await (await res).text();
-        });
 
+        window.load = async function(basename = projectName) {
+          const brdXml = await fetch(`/static/${basename}.brd` /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.brd"*/
+          ).then(async res => {
+            return await (await res).text();
+          });
+          const schXml = await fetch(`/static/${basename}.sch` /*"/static/LCmeter0-LCD-8pinlcd-PIC_COMP.sch"*/
+          ).then(async res => {
+            return await (await res).text();
+          });
+          /*
         const svgXml = await fetch("/static/Plants-Eucalyptus-Hero.svg").then(async res => {
           return await (await res).text();
         });
 
-        let svgElement = Element.create("svg", {}, document.body);
 
-        svgElement.outerHTML = svgXml;
+        svgElement.outerHTML = svgXml;*/
 
-        const brdDom = new DOMParser().parseFromString(brdXml, "application/xml");
-        const schDom = new DOMParser().parseFromString(schXml, "application/xml");
+          const brdDom = new DOMParser().parseFromString(brdXml, "application/xml");
+          const schDom = new DOMParser().parseFromString(schXml, "application/xml");
 
-        const schematic = new EagleDocument(schXml);
-        const board = new EagleDocument(brdXml);
+          const schematic = new EagleDocument(schXml);
+          const board = new EagleDocument(brdXml);
 
-        const { layers, nets, parts, symbols, factory } = schematic;
-        window.schematic = schematic;
-        window.board = board;
+          const { layers, nets, parts, symbols, factory } = schematic;
+          window.schematic = schematic;
+          window.board = board;
 
-        console.log("schematic:", { layers, nets, parts, symbols, factory });
-        console.log("container:", container);
-        console.log("type:", schematic.type);
+          window.svg = svgElement = Element.create("svg", {
+              className: "board",
+              viewBox: "-6.931978 -51.774091 117.089548 58.225691",
+              style: "width: 1036px; height: auto; overflow: hidden;"
+            }, container);
+
+          Element.create("defs", {}, window.svg);
+
+          window.renderer = renderDocument(board, window.svg);
+
+          console.log("schematic:", { layers, nets, parts, symbols, factory });
+          console.log("container:", container);
+          console.log("type:", schematic.type);
+
+          window.svgs = Element.findAll("svg")[1];
+        };
+
+        window.load(projectName);
 
         // renderDocument(schematic, SVG.factory(container));
-        window.renderer = renderDocument(board, container);
 
         /* parseSchematic(schDom, (eagle,schem) => {
                 console.log("eagle:", eagle);
@@ -181,27 +219,11 @@ import deep from './lib/deep.js';
 
               });*/
 
-       /* const SerializeXML = e => {
+        /* const SerializeXML = e => {
           var serializer = new XMLSerializer();
           return serializer.serializeToString(e);
         };*/
-        const ElementToXML = e => {
-          const x = Element.toObject(e);
-          console.log("x:",x);
-          return toXML(x);
-        };
 
-        let body = ElementToXML(container);
-
-        let result = await fetch("/save", {
-          method: "post",
-          headers: {
-            "Content-Type": "application/xml",
-            "Content-Disposition": `attachment; filename="${projectName}.svg"`
-          }, body
-        });
-
-        console.log("saved", result);
         /*        const svg = await inlineSVG("/static/LCmeter0-LCD-8pinlcd-PIC_COMP-board.svg", container);
               container.setAttribute("style", "width: 100%; height: auto;");
               const contours = Element.findAll('*[stroke="#7d7d7d"]');
@@ -220,9 +242,8 @@ import deep from './lib/deep.js';
               });
 
               console.log(rects);*/
-        svgElement = Element.findAll("svg")[1];
 
-        for(let path of [...Element.findAll("path", svgElement)]) {
+        for(let path of [...Element.findAll("path")]) {
           let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
           //  console.log("path:", path);
 
