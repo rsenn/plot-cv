@@ -157,7 +157,8 @@ for(let color of allColors) {
 const GeneratePalette = numColors => {
   let ret = [];
   let base = new HSLA(Util.randInt(0, 360), 100, 50).toRGBA();
-  let offsets = Util.shuffle(Util.range(1, numColors).reduce(
+  let offsets = Util.shuffle(
+    Util.range(1, numColors).reduce(
       (acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360],
       []
     )
@@ -187,7 +188,8 @@ for(let i = 0; i < keyList.length; i++) {
     s += `${key}: palette[${i}]`;
   }
 }
-console.log("const palette = " +
+console.log(
+  "const palette = " +
     Util.inspect(palette, { colors: false, newline: "" }) +
     ";\n renderer.colors = {" +
     s +

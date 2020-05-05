@@ -3,45 +3,54 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
-  "type": "module",
   "scripts": {
-    "dev": "env PORT=3444 node dev-server.js",
-    "server": "env PORT=3444 node --experimental-modules server.js",
+    "dev": "env PORT=3001 node dev-server.js",
+    "server": "env PORT=3000 node --experimental-modules server.js",
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --ext .js --ext .jsx --ignore-path .eslintignore --fix",
     "deploy": "now --target production",
     "now-build": "next build"
-  }, "author": "Roman Senn <roman.l.senn@gmail.com>",
+  },
+  "author": "Roman Senn <roman.l.senn@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "axios": "^0.19.0",
     "express": "^4.17.1",
-    "module-alias": "^2.2.0",
+    "htm": "^3.0.4",
+    "module-alias": "^2.2.2",
     "next": "^9.0.0",
     "next-compose-plugins": "^2.2.0",
     "next-offline": "^4.0.2",
-    "preact": "^10.0.0-rc.0",
+    "preact": "^10.4.1",
     "preact-render-to-string": "^5.0.6",
     "preact-ssr-prepass": "^1.0.0",
     "styled-components": "^4.3.2"
-  }, "_moduleAliases": {
+  },
+  "_moduleAliases": {
     "react": "node_modules/preact/compat",
     "react-dom": "node_modules/preact/compat",
     "react-ssr-prepass": "node_modules/preact-ssr-prepass"
-  }, "resolutions": {
+  },
+  "resolutions": {
     "lodash": "4.17.14"
-  }, "devDependencies": {
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.8.3",
+    "@babel/plugin-proposal-export-default-from": "^7.8.3",
     "http": "0.0.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
-  }, "husky": {
+  },
+  "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  }, "engines": {
+  },
+  "engines": {
     "node": ">= 10.16.0"
-  }, "lint-staged": {
+  },
+  "lint-staged": {
     "*.{js,jsx}": [
       "eslint . --ext .js --ext .jsx --ignore-path .eslintignore --fix",
       "git add"

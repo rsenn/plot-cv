@@ -11,7 +11,8 @@ global.console = new Console({
 
 let args = [...process.argv].slice(2);
 
-let points = new PointList([
+let points = new PointList(
+  [
     new Point(536, 478),
     new Point(516, 673),
     new Point(492, 606),
@@ -43,7 +44,8 @@ let points = new PointList([
 console.log("points:", points);
 
 console.log("points:", Util.className(points));
-console.log("Array.prototype getMethods:",
+console.log(
+  "Array.prototype getMethods:",
   Util.getMethods(Array.prototype, false, (key, value) =>
     typeof key == "string" && key.startsWith("_")
       ? undefined

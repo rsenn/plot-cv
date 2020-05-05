@@ -49,7 +49,8 @@ async function testEagle(filename) {
   const getPackage = e => {
     const { document } = e;
     if(e.tagName == "part") {
-      const device = e.deviceset.find(v => v.tagName == "device" && v.attributes.name == e.attributes.device,
+      const device = e.deviceset.find(
+        v => v.tagName == "device" && v.attributes.name == e.attributes.device,
         ([v]) => v
       );
       return device.package;
@@ -58,7 +59,8 @@ async function testEagle(filename) {
   };
   console.log(schematic.children);
   try {
-    for(let e of proj.getAll(v => v.tagName == "part" || v.tagName == "element",
+    for(let e of proj.getAll(
+      v => v.tagName == "part" || v.tagName == "element",
       ([v, l, h, d]) => new EagleElement(d, l, v)
     )) {
       console.log("proj:", dump(e, 1));

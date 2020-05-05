@@ -81,15 +81,18 @@ function testJsonPointer() {
         name: "pinto beans",
         unit: "lbs",
         instock: 4
-      }, {
+      },
+      {
         name: "lima beans",
         unit: "lbs",
         instock: 21
-      }, {
+      },
+      {
         name: "black eyed peas",
         unit: "lbs",
         instock: 13
-      }, {
+      },
+      {
         name: "plit peas",
         unit: "lbs",
         instock: 8
@@ -117,9 +120,11 @@ const filesystem = {
     let data = fs.readFileSync(filename).toString();
     //console.log(`Read ${filename} ${data.length} bytes`);
     return data;
-  }, writeFile(filename, data, overwrite = true) {
+  },
+  writeFile(filename, data, overwrite = true) {
     return fs.writeFileSync(filename, data, { flag: overwrite ? "w" : "wx" });
-  }, exists(filename) {
+  },
+  exists(filename) {
     return fs.existsSync(filename);
   }
 };
@@ -192,7 +197,8 @@ async function testEagle(filename) {
   const signals = board.find("signals");
   //console.log("signals.path:" + signals.path);
 
-  for(let wire of signals.getAll(v => v.tagName == "wire" && ["1", "16"].includes(v.attributes.layer)
+  for(let wire of signals.getAll(
+    v => v.tagName == "wire" && ["1", "16"].includes(v.attributes.layer)
   )) {
     //console.log("wire:", wire);
 

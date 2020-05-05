@@ -12,7 +12,8 @@ const testfn = () => true;
 const testtmpl = `this is
 a test`;
 
-const LoginIcon = ({ style }) => (<svg
+const LoginIcon = ({ style }) => (
+  <svg
     style={style}
     height='56'
     width='34'

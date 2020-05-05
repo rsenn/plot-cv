@@ -17,7 +17,7 @@
       import { BBox } from "./lib/geom/bbox.js";
       import { ScrollDisabler } from "./lib/scrollHandler.js";
       import { RGBA, HSLA, CSS } from "./lib/dom.js";
-
+      import { TouchHandler, TouchListener, MultitouchListener } from "./lib/touchHandler.js";
       import { parseSchematic } from "./lib/eagle/parser.js";
       import { EagleDocument } from "./lib/eagle/document.js";
       import { EagleNode } from "./lib/eagle/node.js";
@@ -29,12 +29,61 @@
       import tXml from "./lib/tXml.js";
       import { crosskit } from "./lib/crosskit.js";
       import deep from "./lib/deep.js";
+      import {
+        hydrate,
+        Fragment,
+        createRef,
+        isValidElement,
+        cloneElement,
+        toChildArray
+      } from "./modules/preact/dist/preact.mjs";
+      import {
+        h,
+        html,
+        render,
+        Component,
+        createContext,
+        useState,
+        useReducer,
+        useEffect,
+        useLayoutEffect,
+        useRef,
+        useImperativeHandle,
+        useMemo,
+        useCallback,
+        useContext,
+        useDebugValue
+      } from "./modules//htm/preact/standalone.mjs";
+      const React = {
+        cloneElement,
+        Component,
+        createContext,
+        createRef,
+        Fragment,
+        h,
+        html,
+        hydrate,
+        isValidElement,
+        render,
+        toChildArray,
+        useCallback,
+        useContext,
+        useDebugValue,
+        useEffect,
+        useImperativeHandle,
+        useLayoutEffect,
+        useMemo,
+        useReducer,
+        useRef,
+        useState
+      };
 
       const projectName = "Headphone-Amplifier-ClassAB-alt3";
       var palette = null;
       var svgElement;
       var brdXml, schXml, brdDom, schDom;
       var board, schematic;
+      var loadedProjects = [];
 
       console.log("running");
       console.log("dom", { Rect, Element, parseSchematic });
@@ -67,7 +116,10 @@
         tXml,
         Select,
         deep,
-        BBox
+        BBox,
+        React,
+        h,
+        html
       });
       const CreateSelect = (obj, node = document.body) => {
         let elem = Select.create(Object.entries(obj));
@@ -75,20 +127,56 @@
       };
       const utf8Decoder = new TextDecoder("utf-8");
 
-      async function fetchData(url) {
+      const ListProjects = (window.list = async function(url) {
         let response = await fetch("/files.html", { method: "get" });
         const reader = await (await response.body).getReader();
         let { value: chunk, done: readerDone } = await reader.read();
         chunk = chunk ? await utf8Decoder.decode(chunk) : "";
         return chunk;
-      }
+      });
       const ElementToXML = e => {
         const x = Element.toObject(e);
         console.log("x:", x);
         return toXML(x);
       };
+      const LoadProject = (window.load = async function(basename = projectName) {
+        brdXml = await fetch(`/static/${basename}.brd`).then(async res => {
+          return await (await res).text();
+        });
+        schXml = await fetch(`/static/${basename}.sch`).then(async res => {
+          return await (await res).text();
+        });
 
-      window.save = async function save(filename = projectName) {
+        brdDom = new DOMParser().parseFromString(brdXml, "application/xml");
+        schDom = new DOMParser().parseFromString(schXml, "application/xml");
+
+        schematic = new EagleDocument(schXml);
+        board = new EagleDocument(brdXml);
+
+        const { layers, nets, parts, symbols, sheets } = schematic;
+        window.schematic = schematic;
+        window.board = board;
+
+        /*   window.svg = svgElement = Element.create("svg", {
+              className: "board",
+              viewBox: "-6.931978 -51.774091 117.089548 58.225691",
+              style: {'' height: 'auto', overflow: 'auto' }
+            }, Element.find('div'));
+
+          Element.create("defs", {}, window.svg);*/
+
+        window.renderer = renderDocument(board, Element.find("#container"));
+
+        console.log("schematic:", { layers, nets, parts, symbols, sheets });
+        console.log("container:", container);
+        console.log("type:", schematic.type);
+
+        window.svgs = [...Element.findAll("svg")];
+
+        loadedProjects.push(basename);
+      });
+
+      const SaveSVG = (window.save = async function save(filename = projectName) {
         let body = ElementToXML(window.svg);
 
         let result = await fetch("/save", {
@@ -96,17 +184,25 @@
           headers: {
             "Content-Type": "application/xml",
             "Content-Disposition": `attachment; filename="${projectName}.svg"`
-          }, body
+          },
+          body
         });
 
         console.log("saved", result);
-      };
+      });
 
-      window.onload = async () => {
+      const AppStart = (window.onload = async () => {
         window.Util = Util;
         Util(globalThis);
 
-        fetchData("/files.html").then(response => {
+        TouchListener(
+          event => {
+            console.log("touch event:", event);
+          },
+          { listener: MultitouchListener, element: window }
+        );
+
+        ListProjects("/files.html").then(response => {
           let data = JSON.parse(response);
           let { files } = data;
           console.log("result:", files);
@@ -140,47 +236,12 @@
         });
         console.log(Util.getGlobalObject());
 
-        window.load = async function(basename = projectName) {
-          brdXml = await fetch(`/static/${basename}.brd`).then(async res => {
-            return await (await res).text();
-          });
-          schXml = await fetch(`/static/${basename}.sch`).then(async res => {
-            return await (await res).text();
-          });
-
-          brdDom = new DOMParser().parseFromString(brdXml, "application/xml");
-          schDom = new DOMParser().parseFromString(schXml, "application/xml");
-
-          schematic = new EagleDocument(schXml);
-          board = new EagleDocument(brdXml);
-
-          const { layers, nets, parts, symbols, sheets } = schematic;
-          window.schematic = schematic;
-          window.board = board;
-
-          /*   window.svg = svgElement = Element.create("svg", {
-              className: "board",
-              viewBox: "-6.931978 -51.774091 117.089548 58.225691",
-              style: {'' height: 'auto', overflow: 'auto' }
-            }, Element.find('div'));
-
-          Element.create("defs", {}, window.svg);*/
-
-          window.renderer = renderDocument(board, Element.find("#container"));
-
-          console.log("schematic:", { layers, nets, parts, symbols, sheets });
-          console.log("container:", container);
-          console.log("type:", schematic.type);
-
-          window.svgs = [...Element.findAll("svg")];
-        };
-
-        window.load(projectName);
+        LoadProject(projectName);
 
         for(let path of [...Element.findAll("path")]) {
           let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
         }
-      };
+      });
 
       var Module = {
         noInitialRun: true,
@@ -188,9 +249,16 @@
           console.log("initialized");
           let myString = prompt("Enter a string:");
           Module.callMain([myString]);
-        }, print: txt => alert(`The MD5 hash is: ${txt}`)
+        },
+        print: txt => alert(`The MD5 hash is: ${txt}`)
       };
     </script>
+    <style>
+      #container {
+        display: flex;
+        flex-flow: column nowrap;
+      }
+    </style>
   </head>
   <body>
     <div id="container" style="overflow-y: auto; overflow-x: scroll; height: 100%;">

@@ -1,13 +1,12 @@
-require("module-alias/register");
+import  "module-alias/register.js";
 
-const { createServer } = require("http");
-const { parse } = require("url");
-const next = require("next");
+import { createServer } from "http";
+import { parse } from "url";
+import next from "next";
 
 const app = next({ dev: "development" });
 const handle = app.getRequestHandler();
-const port = process.env.PORT || 3001;
-
+const port = process.env.PORT || 3000;
 app.prepare().then(() => {
   createServer((req, res) => {
     handle(req, res, parse(req.url, true));

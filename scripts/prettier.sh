@@ -23,11 +23,9 @@ for KW in "if" "for" "do" "while" "catch"; do
   EXPR="$EXPR; s|\s${KW}\s*(| ${KW}(|"
   EXPR="$EXPR; s|^${KW}\s*(|${KW}(|"
 done
-EXPR="$EXPR; /^\s*},$/ { N; s|},\n\s*|}, |; N; s|\n\s*);$|);| }"
-EXPR="$EXPR; /($/ { N; s|(\n\s*|(| }"
-EXPR="$EXPR; /[^ ],$/ { N; s|,\n *{$|, {|g ; s|,\n\s*\([^\n]*\);$|, \1;|g }"
-#EXPR="$EXPR; /[^}],$/ { N; s|,\n\s*{|, {|; N; s|\n\s*);$|);|  }"
-#EXPR="$EXPR; /[^;]$/ { N; s|\n\s*);$|);|  }"
+#EXPR="$EXPR; /^\s*},$/ { N; s|},\n\s*|}, |; N; s|\n\s*);$|);| }"
+#EXPR="$EXPR; /($/ { N; s|(\n\s*|(| }"
+#EXPR="$EXPR; /[^ ],$/ { N; s|,\n *{$|, {|g ; s|,\n\s*\([^\n]*\);$|, \1;|g }"
 
 while [ $# -gt 0 ]; do
   case "$1" in
