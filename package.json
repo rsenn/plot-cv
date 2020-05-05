@@ -1,37 +1,48 @@
 {
-  "type": "module",
+  "name": "plot-cv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
   "scripts": {
-    "dev": "env APP_ENV=development NODE_ENV=development PORT=3000 node --experimental-modules server.js"
-  }, "dependencies": {
-    "Crosskit": "https://github.com/Rabios/Crosskit.git",
-    "busywait": "^2.0.0",
-    "clone": "^2.1.2",
-    "core-js": "^3.6.5",
-    "deep-diff": "^1.0.2",
-    "express": "^4.17.1",
-    "htm": "^3.0.4",
-    "lune": "^0.4.0",
-    "meeussunmoon": "^2.1.2",
-    "mooncalc": "^1.0.7",
-    "moonphase-js": "^0.2.0",
-    "nerv": "^0.3.0",
-    "preact": "^10.4.1",
-    "solar-calc": "^1.1.0",
-    "suncalc": "^1.8.0",
-    "suncalc2": "^1.8.1",
-    "the-moon": "^1.1.0",
-    "xmlmapper": "^0.2.0"
+    "dev": "env PORT=3444 node dev-server.js",
+    "server": "env PORT=3444 node --experimental-modules server.js",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . --ext .js --ext .jsx --ignore-path .eslintignore --fix",
+    "deploy": "now --target production",
+    "now-build": "next build"
+  }, "author": "Roman Senn <roman.l.senn@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "module-alias": "^2.2.0",
+    "next": "^9.0.0",
+    "next-compose-plugins": "^2.2.0",
+    "next-offline": "^4.0.2",
+    "preact": "^10.0.0-rc.0",
+    "preact-render-to-string": "^5.0.6",
+    "preact-ssr-prepass": "^1.0.0",
+    "styled-components": "^4.3.2"
+  }, "_moduleAliases": {
+    "react": "node_modules/preact/compat",
+    "react-dom": "node_modules/preact/compat",
+    "react-ssr-prepass": "node_modules/preact-ssr-prepass"
+  }, "resolutions": {
+    "lodash": "4.17.14"
   }, "devDependencies": {
-    "@babel/core": "^7.9.0",
-    "@babel/helper-create-class-features-plugin": "^7.8.6",
-    "@babel/node": "^7.8.7",
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "@babel/plugin-proposal-decorators": "^7.8.3",
-    "@babel/plugin-proposal-export-default-from": "^7.8.3",
-    "@babel/preset-env": "^7.9.0",
-    "@babel/preset-react": "^7.9.4",
-    "esdoc": "^1.1.0",
-    "esdoc-standard-plugin": "^1.0.0",
-    "next": "^9.3.2"
+    "http": "0.0.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  }, "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }, "engines": {
+    "node": ">= 10.16.0"
+  }, "lint-staged": {
+    "*.{js,jsx}": [
+      "eslint . --ext .js --ext .jsx --ignore-path .eslintignore --fix",
+      "git add"
+    ]
   }
 }
