@@ -19,6 +19,7 @@
       import { parseSchematic } from './lib/eagle/parser.js';
       import { EagleDocument } from './lib/eagle/document.js';
       import { EagleNode } from './lib/eagle/node.js';
+      import { lazyInitializer } from './lib/lazyInitializer.js';
       import { trkl } from './lib/trkl.js';
       import { EagleElement } from './lib/eagle/element.js';
       import { EaglePath, EagleReference } from './lib/eagle/locator.js';
@@ -51,50 +52,59 @@
 
       const MouseEvents = h => ({
         onMouseDown: h,
-        onBlur: h,
+        /*  onBlur: h,*/
         onMouseOut: h,
         onMouseUp: h
       });
 
-      const Overlay = ({ className = 'overlay', active = false, onPush, text, ...props }) => {
+      const Overlay = ({ className = 'overlay', active = false, onPush, text, children, ...props }) => {
         const [pushed, setPushed] = useState(false);
         const events = MouseEvents(
           MouseHandler((e, state) => {
             const prev = pushed;
             setPushed(state);
-            console.log(`overlay pushed=${pushed} active=${active}:`, e.target);
-            return typeof onPush == 'function' ? onPush(state) : null;
+            //  console.log(`overlay pushed=${pushed} active=${active}:`, e.target);
+            return typeof onPush == 'function' ? onPush(e, state) : null;
           })
         );
 
         return html`
           <div className=${classNames(className, pushed && 'pushed', active ? 'active' : 'inactive')} ...${props} ...${events}>
-            ${text}
+            ${text} ${children}
           </div>
         `;
       };
 
-      const Panel = ({ className = '', children, ...props }) => {
+      const Container = ({ className = 'panel', children, ...props }) => {
         useCallback(() => console.log('re-render panel'));
         return html`
-          <div className=${'panel ' + className} ...${props}>${children}</div>
+          <div className=${className} ...${props}>${children}</div>
         `;
       };
-      const Chooser = ({ className = 'list', itemClass = 'item', itemComponent = Overlay, items, ...props }) => {
+
+      const Chooser = ({ className = 'list', itemClass = 'item', itemComponent = Overlay, items, onChange = () => {}, onPush = () => {}, ...props }) => {
         const [active, setActive] = useState(-1);
-        const pushHandler = i => state => {
+
+        const pushHandler = i => (e, state) => {
+          const prev = active;
+          //if(active != i && typeof onChange == 'function')
           state == true && setActive(i);
-          console.log('push:', active);
+
+          if(i != prev && e.type.endsWith('down')) onChange(e, items[i], i);
+          onPush(e, i, state);
+
+          //   console.log('push:', i, state);
         };
 
+        const bar = html``;
         const children = items.map(
-          (text, i) =>
+          ({ name, i, data, signal, ...item }, key) =>
             html`
-              <${itemComponent} className=${classNames(className + '-' + itemClass, itemClass)} active=${i == active} onPush=${pushHandler(i)} text="${text}" />
+              <${itemComponent} key=${key || i} className=${classNames(itemClass || className + '-item', name.replace(/.*\./, ''))} active=${i == active} onPush=${pushHandler(i)} text="${name}" ...${item} />
             `
         );
 
-        return html`<${Panel} className=${className} ...${props}>${children}</${Panel}>`;
+        return html`<${Container} className=${classNames('panel', className)} ...${props}>${children}</${Container}>`;
       };
 
       console.log('running');
@@ -150,6 +160,21 @@
         console.log('x:', x);
         return toXML(x);
       };
+      const LoadFile = (window.open = async function(filename) {
+        let xml = await fetch(`/static/${filename}`).then(async res => {
+          return await (await res).text();
+        });
+        //  console.log('xml: ', xml);
+        //let dom = new DOMParser().parseFromString(xml, 'application/xml');
+
+        let doc = new EagleDocument(xml);
+
+        if(/\.brd$/.test(filename)) window.board = doc;
+        if(/\.sch$/.test(filename)) window.schematic = doc;
+
+        return doc;
+      });
+      /*
       const LoadProject = (window.load = async function(basename = projectName) {
         brdXml = await fetch(`/static/${basename}.brd`).then(async res => {
           return await (await res).text();
@@ -168,14 +193,7 @@
         window.schematic = schematic;
         window.board = board;
 
-        /*   window.svg = svgElement = Element.create("svg", {
-                          className: "board",
-                          viewBox: "-6.931978 -51.774091 117.089548 58.225691",
-                          style: {'' height: 'auto', overflow: 'auto' }
-                        }, Element.find('div'));
-
-                      Element.create("defs", {}, window.svg);*/
-
+     
         window.renderer = renderDocument(board, Element.find('#container'));
 
         console.log('schematic:', { layers, nets, parts, symbols, sheets });
@@ -186,7 +204,7 @@
 
         loadedProjects.push(basename);
       });
-
+*/
       const SaveSVG = (window.save = async function save(filename = projectName) {
         let body = ElementToXML(window.svg);
 
@@ -212,12 +230,34 @@
         const Button = (caption, fn) => html`
           <${Overlay} className="button" text=${caption} onPush=${fn} />
         `;
-        const Item = ({ className = 'item', children, ...props }) => html`
-          <${Overlay} className=${className} text=${children} ...${props} />
+        const Item = ({ className = 'item', label, children, ...props }) => html`
+          <${Overlay} className=${className} text=${label} ...${props}>${children}</${Overlay}>
         `;
-        const File = (name, i, fn) => html`
-                        <${Item} className=file data-filename="${name}" onPush=${fn}>${name}</${Item}>
-                      `;
+
+        const Progress = ({ className, percent, ...props }) => html`
+              <${Overlay} className=${classNames('progress', 'center', className)} text=${percent + '%'} style=${{ position: 'relative', width: '100%', height: '1.5em', border: '1px solid black', textAlign: 'center', zIndex: '99' }}><div className=${classNames('progress-bar', 'fill')} style=${{
+          width: percent + '%',
+          position: 'absolute',
+          left: '0px',
+          top: '0px',
+          zIndex: '98'
+        }}></div></${Overlay}>`;
+
+        const File = ({ name, i, key, signal, data, ...props }) => {
+          const [loaded, setLoaded] = useState(NaN);
+
+          if(signal) signal.subscribe(data => setLoaded(data.percent));
+
+          const pushHandler = async state => {
+            console.log(`loading "${name}"...`);
+            await load(name);
+          };
+          let id = name || key || i;
+          if(id) id = (id + '').replace(/[^._A-Za-z0-9]/g, '-');
+          return html`
+            <${Item} className=file id=${id} data-filename="${name}" onPush=${pushHandler} ...${props}>${name}<${Progress} className=${!isNaN(loaded) ? 'visible' : 'hidden'} percent=${loaded} /></${Item}>
+          `;
+        };
 
         const ModifyColors = fn => e => {
           if(!window.c) window.c = SVG.allColors('svg');
@@ -235,18 +275,45 @@
           //  CreateSelect(files);
         });
 
-        const FileList = files =>
-          html`
-            <${Chooser} className="list" itemClass="file" items=${files} />
+        const FileList = ({ files, ...props }) => {
+          return html`
+            <${Chooser} className="list" itemComponent=${File} itemClass="file hcenter" items=${files} ...${props} />
           `;
+        };
 
-        const MakePanel = (name, children) => html`<${Panel} className="${name}">${children}</${Panel}>`;
-        /*
-                    .map((filename, i) => File(filename, i, state =>       state &&     console.log(`file #${i} "${filename}"`)));*/
+        const Panel = (name, children) => html`<${Container} className="${name}">${children}</${Container}>`;
 
+        var projects = (window.projects = projectFiles.map((name, i) => {
+          let signal = trkl({ percent: NaN });
+          let proj = { name, i, signal };
+          trkl.bind(proj, 'data', signal);
+
+          console.log('project:', proj);
+          return proj;
+        }));
+
+        const chooseProject = async (e, proj, i) => {
+          const { type } = e;
+          const box = Element.findAll('.file')[i];
+
+          let { data, signal, name } = proj;
+          console.log(`chose project ${i}:`, type, signal());
+
+          if(!data.loaded) {
+            const doc = await LoadFile(name);
+
+            let element = Element.create('div', { style: { position: 'relative', border: '1px dotted black' } }, box);
+            //let svg = Element.create('svg', { viewBox:  } , element);
+
+            window.renderer = renderDocument(doc, element);
+
+            signal({ ...data, loaded: true, element });
+            console.log('loaded:', signal());
+          }
+        };
         React.render(
           [
-            MakePanel('buttons', [
+            Panel('buttons', [
               Button(
                 'Random',
                 ModifyColors(c => c.replaceAll(c => HSLA.random()))
@@ -256,7 +323,9 @@
                 ModifyColors(c => c.replaceAll(c => c.invert()))
               )
             ]),
-            FileList(projectFiles)
+            html`
+              <${FileList} items=${projects} onChange=${chooseProject} />
+            `
           ],
 
           Element.find('#preact')
@@ -295,7 +364,7 @@
         });
         console.log(Util.getGlobalObject());
 
-        LoadProject(projectName);
+        //   LoadProject(projectName);
 
         for(let path of [...Element.findAll('path')]) {
           let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
@@ -346,9 +415,24 @@
         padding: 8px;
         flex: 1 1 auto;
       }
-      .overlay,
-      .button {
+      .hcenter {
+        justify-content: center;
+      }
+      .vcenter {
+        align-items: center;
+      }
+      .hidden {
+        display: none;
+      }
+      .visible {
         display: flex;
+      }
+      .transparent {
+        opacity: 0;
+      }
+      .overlay,
+      .button,
+      .center {
         justify-content: center;
         align-items: center;
         /*  border: 2px solid hsl(220,100%,50%);*/
@@ -364,43 +448,64 @@
       }
       .overlay,
       .button,
-      .panel {
+      .panel,
+      .list {
         font-family: Arial;
       }
-      .file  {
-          transition-timing-function: ease-in-out;
-          transition: all 0.5s;
-}
+      .list {
+        font-weight: normal;
+        font-size: 14px;
+      }
+      .file,
+      .file.active,
+      .file.inactive {
+        transition-timing-function: linear;
+        transition: height 1s, border 0.5s;
+      }
       .list {
         flex-flow: row wrap;
-        flex-basis: 50%;
+        flex-basis: 30%;
       }
       .panel,
       .list {
         box-sizing: border-box;
       }
-      .file.inactive {
-        background: white;
+      .file {
         color: black;
+      }
+      .file.sch {
+        background: hsl(60, 100%, 98%);
+      }
+      .file.brd {
+        background: hsl(120, 100%, 98%);
+      }
+      .file.none {
+        background: white;
       }
 
       .file.inactive {
-        border: 1px dashed hsla(230, 100%, 0%, 0.5);
-        margin: 5px;
+        border: 4px solid hsla(230, 100%, 0%, 0);
+        margin: 4px;
+        box-shadow: 1px 1px 3px hsl(180, 20%, 20%);
       }
       .file.active {
-        margin: 2px;
-height: 100px;
-        border: 4px solid hsl(50, 100%, 60%);
-        background-color: hsl(50, 50%, 95%);
-        box-shadow: 1px 1px 4px hsl(50, 80%, 30%);
+        margin: 4px;
+        min-height: 100px;
+        border: 4px solid hsla(250, 100%, 60%, 1);
+
+        box-shadow: 1px 1px 4px hsl(180, 20%, 20%);
       }
       .file {
         margin: 4px;
         padding: 6px 9px;
         flex: 1 1 auto;
+        display: flex;
+        flex-basis: 100%;
+
+        justify-content: space-between;
+        align-items: flex-start;
       }
-      .pushed {
+      .button.pushed {
         background: rgba(255, 0, 0, 1);
       }
 
@@ -410,7 +515,16 @@ height: 100px;
         margin: 4px 0px;
         display: flex;
         justify-content: space-evenly;
-        alignitems: stretch;
+        align-items: stretch;
+      }
+      .sch > .progress > .progress-bar {
+        background: hsla(60, 100%, 60%, 0.5);
+      }
+      .brd > .progress > .progress-bar {
+        background: hsla(120, 100%, 60%, 0.5);
+      }
+      .progress {
+        max-width: 200px;
       }
     </style>
   </head>
