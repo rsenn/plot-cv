@@ -39,7 +39,6 @@
     "@babel/plugin-proposal-decorators": "^7.8.3",
     "@babel/plugin-proposal-export-default-from": "^7.8.3",
     "http": "0.0.0",
-    "react": "^16.8.6",
     "react-dom": "^16.8.6"
   },
   "husky": {
