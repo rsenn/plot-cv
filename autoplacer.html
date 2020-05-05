@@ -7,7 +7,7 @@
       import { PointList } from './lib/geom/pointList.js';
       import { isRect, Rect } from './lib/geom/rect.js';
       import { isLine, Line } from './lib/geom/line.js';
-      import { Transformation, TransformationList } from './lib/geom/transformation.js';
+      import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
       import { Element } from './lib/dom/element.js';
       import { Matrix } from './lib/geom/matrix.js';
       //  import { Select } from './lib/dom/select.js';
@@ -134,6 +134,10 @@
         Rect,
         Matrix,
         Transformation,
+        Rotation,
+        Translation,
+        Scaling,
+        MatrixTransformation,
         TransformationList,
         tXml,
         deep,
@@ -160,20 +164,21 @@
         console.log('x:', x);
         return toXML(x);
       };
-      const LoadFile = (window.open = async function(filename) {
-        let xml = await fetch(`/static/${filename}`).then(async res => {
-          return await (await res).text();
+      const LoadFile = filename =>
+        new Promise(async (resolve, reject) => {
+          let xml = await fetch(`/static/${filename}`).then(async res => {
+            return await (await res).text();
+          });
+          console.log('xml: ', xml);
+          //let dom = new DOMParser().parseFromString(xml, 'application/xml');
+
+          let doc = new EagleDocument(xml);
+
+          if(/\.brd$/.test(filename)) window.board = doc;
+          if(/\.sch$/.test(filename)) window.schematic = doc;
+
+          resolve(doc);
         });
-        //  console.log('xml: ', xml);
-        //let dom = new DOMParser().parseFromString(xml, 'application/xml');
-
-        let doc = new EagleDocument(xml);
-
-        if(/\.brd$/.test(filename)) window.board = doc;
-        if(/\.sch$/.test(filename)) window.schematic = doc;
-
-        return doc;
-      });
       /*
       const LoadProject = (window.load = async function(basename = projectName) {
         brdXml = await fetch(`/static/${basename}.brd`).then(async res => {
@@ -291,25 +296,43 @@
           console.log('project:', proj);
           return proj;
         }));
+        const loadProject = (proj, parentElem) =>
+          new Promise(async (resolve, reject) => {
+            console.log(`load project:`, proj);
+            proj.signal.subscribe(project => resolve(project));
+            const { name } = proj;
+            let doc = await LoadFile(name);
+
+            window.eagle = doc;
+
+            console.log('document:', doc);
+
+            let element = Element.create('div', { style: { position: 'relative', border: '1px dotted black' } }, parentElem);
+            //let svg = Element.create('svg', { viewBox:  } , element);
+
+            window.renderer = renderDocument(doc, element);
+
+            let svg = Element.find('svg');
+            let grid = Element.find('g.grid', element);
+            let bbox = SVG.bbox(grid);
+            let bounds = doc.getBounds();
+            let rect = bounds.rect;
+            console.log('setRect', { svg, grid, bbox, bounds, rect });
+
+            Element.setRect(svg, bounds, { unit: 'mm', scale: 2.54 });
+            console.log('setRect', svg);
+
+            signal({ ...proj, loaded: true, bbox, element, svg });
+            return signal();
+          });
 
         const chooseProject = async (e, proj, i) => {
           const { type } = e;
           const box = Element.findAll('.file')[i];
 
-          let { data, signal, name } = proj;
-          console.log(`chose project ${i}:`, type, signal());
+          await loadProject(proj, box).then(project => console.log('loaded:', project));
 
-          if(!data.loaded) {
-            const doc = await LoadFile(name);
-
-            let element = Element.create('div', { style: { position: 'relative', border: '1px dotted black' } }, box);
-            //let svg = Element.create('svg', { viewBox:  } , element);
-
-            window.renderer = renderDocument(doc, element);
-
-            signal({ ...data, loaded: true, element });
-            console.log('loaded:', signal());
-          }
+          return proj.loaded;
         };
         React.render(
           [
@@ -395,6 +418,10 @@
         height: 100%;
       }
 
+            .button.pushed, .button-inactive {
+
+            }
+
       .button.pushed {
         transition-timing-function: ease-in-out;
         box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7);
@@ -413,7 +440,7 @@
         text-shadow: 1px 1px 1px black;
         margin: 10px;
         padding: 8px;
-        flex: 1 1 auto;
+              flex: 1 1 50%;
       }
       .hcenter {
         justify-content: center;
@@ -432,7 +459,8 @@
       }
       .overlay,
       .button,
-      .center {
+            .center,
+            .button {
         justify-content: center;
         align-items: center;
         /*  border: 2px solid hsl(220,100%,50%);*/
@@ -445,6 +473,10 @@
         font-weight: bold;
         user-select: none;
         font-size: 2em;
+            }
+                  .button {
+      }
+      display: inline-flex;
       }
       .overlay,
       .button,
@@ -509,7 +541,7 @@
         background: rgba(255, 0, 0, 1);
       }
 
-      .panel {
+            .panel, .buttons {
         background-color: hsla(230, 40%, 80%, 0.8);
         border: 1px solid hsla(230, 0%, 50%, 1);
         margin: 4px 0px;
