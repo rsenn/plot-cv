@@ -2,7 +2,7 @@ import { EagleElement } from "./lib/eagle/element.js";
 import { EagleDocument } from "./lib/eagle/document.js";
 import { EagleProject } from "./lib/eagle/project.js";
 import { EaglePath } from "./lib/eagle/locator.js";
-import { Line, Point } from "./lib/geom.js";
+import { Line, Point, BBox } from "./lib/geom.js";
 import Util from "./lib/util.js";
 import fs, { promises as fsPromises } from "fs";
 import deep from "./lib/deep.js";
@@ -20,7 +20,6 @@ global.console = new Console({
   inspectOptions: { depth: 2, colors: true }
 });
 
-
 function xmlize(obj, depth = 2) {
   return obj.toXML ? obj.toXML().replace(/>\s*</g, ">\n    <") : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
@@ -29,17 +28,13 @@ function testLocator() {
   let l = new EaglePath([3, "children", 2, "items", -2]);
   let a = [l.slice(), l.slice()];
 
-
   a[1][0] = "x";
 
   let b = [l.prevSibling, l.nextSibling, l.parent];
-
-
 }
 
 function testProxyTree() {
   let tree = Util.proxyTree((path, key, value) => {
-
     return true;
   });
   tree.a.b.c.d("test");
@@ -58,11 +53,20 @@ function testProxyClone() {
 
   obj.addProp = "1234";
   clone.newProp = "test";
-
-
 }
 
-function testJsonPointer() {var data = {legumes: [{name: "pinto beans", unit: "lbs", instock: 4 }, {name: "lima beans", unit: "lbs", instock: 21 }, {name: "black eyed peas", unit: "lbs", instock: 13 }, {name: "plit peas", unit: "lbs", instock: 8 } ] }; var pointer = ptr.append(ptr.nil, "legumes", 0); var pointer2 = ptr.append(pointer, "name"); ptr.assign(pointer2)(data, "test name");
+function testJsonPointer() {
+  var data = {
+    legumes: [
+      { name: "pinto beans", unit: "lbs", instock: 4 },
+      { name: "lima beans", unit: "lbs", instock: 21 },
+      { name: "black eyed peas", unit: "lbs", instock: 13 },
+      { name: "plit peas", unit: "lbs", instock: 8 }
+    ]
+  };
+  var pointer = ptr.append(ptr.nil, "legumes", 0);
+  var pointer2 = ptr.append(pointer, "name");
+  ptr.assign(pointer2)(data, "test name");
 }
 
 const filesystem = {
@@ -82,12 +86,51 @@ const filesystem = {
 var graph, project;
 
 async function testGraph(proj) {
-
   project = proj;
   graph = new Graph();
-  console.log("testGraph",{project,graph});
-};
 
+  for(let element of proj.board.getAll("element")) {
+    const { x, y } = element;
+    const pkg = element.package;
+    const bb = element.getBounds();
+    let rect = bb.rect;
+    let pos = rect.center;
+
+    pos = pos.round(0.254);
+
+    const n = graph.addNode(element.name);
+
+    Object.assign(n, { ...rect, ...pos });
+    n.width = rect.width;
+    n.height = rect.height;
+
+    console.log(`element ${n.label} GraphNode`, n);
+
+    let pads = [...pkg.getAll("pad")];
+    let padNames = pads.map(p => p.name);
+
+    for(let pad of pads) {
+      const { diameter, drill, name, rot, shape, stop, x, y } = pad;
+
+      console.log(`Package '${pkg.name}' Pad '${pad.name}'  ${pad.xpath()}`);
+    }
+    console.log(`Package '${pkg.name}' Pads: ${padNames}`);
+  }
+
+  for(let signal of proj.board.signals.list) {
+    console.log(`${signal} GraphNode`);
+
+    for(let contactref of signal.getAll("contactref")) {
+      const { element } = contactref;
+      const pad = contactref.attributes.pad;
+
+      console.log(`Signal '${signal.name}' ${element.name}.${pad}`);
+      console.log(`${element.name} ${element.attributes.pad} GraphEdge`);
+    }
+  }
+
+  //  console.log("testGraph", { project, graph });
+}
 
 async function testEagle(filename) {
   let proj = new EagleProject(filename, filesystem);
@@ -200,7 +243,9 @@ async function testEagle(filename) {
   }
 
   //console.log("board.raw:", board.raw);
-  return proj.saveTo(".", true);
+  proj.saveTo(".", true);
+  //  proj.board = board;proj.schematic = schematic;
+  return proj;
 }
 
 (async () => {
@@ -211,7 +256,8 @@ async function testEagle(filename) {
     try {
       //testLocator();
 
-      let project = await testEagle(arg).then(result => console.log(result));
+      let project = await testEagle(arg);
+      console.log(project);
 
       await testGraph(project);
       //console.log("r:", r);

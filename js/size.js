@@ -1,1 +1,1 @@
-../lib/dom/size.js
+../lib/geom/size.js

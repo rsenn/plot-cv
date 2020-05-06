@@ -1,1 +1,1 @@
-../lib/dom/rect.js
+../lib/geom/rect.js

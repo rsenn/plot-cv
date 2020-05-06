@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
+import Util from "./lib/util.js";
 
 var app = express();
 const p = path.join(path.dirname(process.argv[1]), ".");
@@ -21,6 +22,12 @@ app.use("/lib", express.static(path.join(p, "lib")));
 
 app.get("/files.html", async (req, res) => {
   let files = [...(await fs.promises.readdir("."))].filter(entry => /\.(brd|sch)$/.test(entry));
+
+  files = files.map(file => {
+    const stat = fs.statSync(file);
+    const { ctime, mtime, mode, size } = stat;
+    return { name: file, mtime: "" + Util.unixTime(mtime), time: "" + Util.unixTime(ctime), mode: `0${(mode & 0o4777).toString(8)}`, size: "" + size };
+  });
 
   res.type("json");
   res.json({ files });

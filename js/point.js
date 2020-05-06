@@ -1,1 +1,1 @@
-../lib/dom/point.js
+../lib/geom/point.js
