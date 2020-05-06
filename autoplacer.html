@@ -26,7 +26,7 @@
       import { EagleElement } from "./lib/eagle/element.js";
       import { EaglePath, EagleReference } from "./lib/eagle/locator.js";
       import { toXML, EagleInterface } from "./lib/eagle/common.js";
-      import { renderDocument, EagleRenderer } from "./lib/eagle/renderer.js";
+      import { renderDocument, EagleRenderer, SchematicRenderer, BoardRenderer } from "./lib/eagle/renderer.js";
       import { devtools } from "./lib/devtools.js";
       // import { devpane } from "./lib/devpane.js";
       import Util from "./lib/util.js";
@@ -298,7 +298,7 @@
         window.Util = Util;
         Util(globalThis);
 
-        let projects,projectFiles;
+        let projects, projectFiles;
         let activeFile;
 
         const ModifyColors = fn => e => {
@@ -309,13 +309,13 @@
 
         let response = await ListProjects("/files.html");
 
-          let data = JSON.parse(response);
-          let { files } = data;
-          console.log("result:", files);
+        let data = JSON.parse(response);
+        let { files } = data;
+        console.log("result:", files);
 
-          projectFiles = window.files = files;
+        projectFiles = window.files = files;
 
-          //  CreateSelect(files);
+        //  CreateSelect(files);
 
         const FileList = ({ files, ...props }) => {
           return html`
@@ -333,7 +333,7 @@
           console.log("project:", proj);
           return proj;
         });
-      window.projects = projects;
+        window.projects = projects;
 
         const loadDocument = (proj, parentElem) =>
           new Promise(async (resolve, reject) => {
@@ -350,6 +350,7 @@
             //let svg = Element.create('svg', { viewBox:  } , element);
 
             window.renderer = renderDocument(doc, element);
+
             if(!svg) svg = Element.find("svg", element);
 
             let grid = Element.find("g.grid", element);
@@ -379,12 +380,13 @@
           const box = Element.findAll(".file")[i];
           console.log("chooseDocument:", { e, proj, box, i });
 
-          let data  = await loadDocument(proj, box);
+          if(!proj.loaded) {
+            let data = await loadDocument(proj, box);
 
-          proj.loaded = true;
+            proj.loaded = true;
 
-           console.log("loaded:", proj);
-
+            console.log("loaded:", proj);
+          }
 
           return proj.loaded;
         };
@@ -408,13 +410,13 @@
           Element.find("#preact")
         );
 
-        /*TouchListener(
-                      event => {
-                        console.log('touch event:', event);
-                      },
-                      { listener: MultitouchListener, element: window }
-                    );
-            */
+        TouchListener(
+          event => {
+            console.log("touch event:", event);
+          },
+          { listener: MultitouchListener, element: window }
+        );
+
         window.container = Element.find("#container");
         window.styles = CSS.create("head");
 
@@ -627,8 +629,6 @@
   </head>
   <body style=" max-height: 100vh;">
     <div id="preact" style=" min-height: 100vh;"></div>
-    <div id="container" style="overflow-y: auto; overflow-x: visible; height: 100%;">
-   
-    </div>
+    <div id="container" style="overflow-y: auto; overflow-x: visible; height: 100%;"></div>
   </body>
 </html>
