@@ -28,13 +28,75 @@
       import { toXML, EagleInterface } from "./lib/eagle/common.js";
       import { renderDocument, EagleRenderer, SchematicRenderer, BoardRenderer } from "./lib/eagle/renderer.js";
       import { devtools } from "./lib/devtools.js";
-      // import { devpane } from "./lib/devpane.js";
+      //  import { devpane } from "./lib/devpane.js";
       import Util from "./lib/util.js";
       import tXml from "./lib/tXml.js";
       import { crosskit } from "./lib/crosskit.js";
       import deep from "./lib/deep.js";
       import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from "./modules/preact/dist/preact.mjs";
       import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from "./modules//htm/preact/standalone.mjs";
+      import {
+        ArrayBinding,
+        ArrayLiteral,
+        ArrowFunction,
+        AssignmentExpression,
+        AwaitExpression,
+        BinaryExpression,
+        BindingPattern,
+        BindingProperty,
+        BlockStatement,
+        BreakStatement,
+        CallExpression,
+        ClassDeclaration,
+        ConditionalExpression,
+        ContinueStatement,
+        CTORS,
+        Declaration,
+        DecoratorExpression,
+        DoStatement,
+        EmptyStatement,
+        estree,
+        Expression,
+        ExpressionStatement,
+        Factory,
+        ForInStatement,
+        ForStatement,
+        function,
+        FunctionDeclaration,
+        Identifier,
+        IfStatement,
+        ImportStatement,
+        InExpression,
+        JSXLiteral,
+        Lexer,
+        Literal,
+        LogicalExpression,
+        MemberExpression,
+        NewExpression,
+        Node,
+        ObjectBinding,
+        ObjectLiteral,
+        Parser,
+        Printer,
+        Program,
+        RestOfExpression,
+        ReturnStatement,
+        SequenceExpression,
+        Statement,
+        StatementList,
+        ThisExpression,
+        ThrowStatement,
+        Token,
+        tokenTypes,
+        TryStatement,
+        UnaryExpression,
+        UpdateExpression,
+        VariableDeclaration,
+        VariableDeclarator,
+        WhileStatement,
+        WithStatement
+      } from "./lib/ecmascript.js";
+
       const React = {
         cloneElement,
         Component,
@@ -112,18 +174,12 @@
 
       const Chooser = ({ className = "list", itemClass = "item", itemComponent = Overlay, items, onChange = () => {}, onPush = () => {}, ...props }) => {
         const [active, setActive] = useState(-1);
-
         const pushHandler = i => (e, state) => {
           const prev = active;
-          //if(active != i && typeof onChange == 'function')
           state == true && setActive(i);
-
           if(i != prev && e.type.endsWith("down")) onChange(e, items[i], i);
           onPush(e, i, state);
-
-          //   console.log('push:', i, state);
         };
-
         const bar = html``;
         const children = items.map(
           ({ name, i, data, signal, ...item }, key) =>
@@ -131,51 +187,13 @@
               <${itemComponent} key=${key || i} className=${classNames(itemClass || className + "-item", name.replace(/.*\./, ""))} active=${i == active} onPush=${pushHandler(i)} text="${name}" ...${item} />
             `
         );
-
         return html`<${Container} className=${classNames("panel", className)} ...${props}>${children}</${Container}>`;
       };
-
       console.log("running");
       console.log("dom", { Rect, Element, parseSchematic });
 
       window.dom = { Element, SVG };
-      Object.assign(window, {
-        EagleDocument,
-        EagleElement,
-        EagleNode,
-        EaglePath,
-        EagleReference,
-        EagleRenderer,
-        EagleInterface,
-        Element,
-        SVG,
-        CSS,
-        RGBA,
-        HSLA,
-        toXML,
-        isPoint,
-        Point,
-        PointList,
-        isLine,
-        Line,
-        isRect,
-        Rect,
-        isSize,
-        Size,
-        Matrix,
-        Transformation,
-        Rotation,
-        Translation,
-        Scaling,
-        MatrixTransformation,
-        TransformationList,
-        tXml,
-        deep,
-        BBox,
-        React,
-        h,
-        html
-      });
+      /* prettier-ignore */ Object.assign(window, {EagleDocument, EagleElement, EagleNode, EaglePath, EagleReference, EagleRenderer, EagleInterface, Element, SVG, CSS, RGBA, HSLA, toXML, isPoint, Point, PointList, isLine, Line, isRect, Rect, isSize, Size, Matrix, Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, tXml, deep, BBox, React, h, html });
       /*    const CreateSelect = (obj, node = document.body) => {
                     let elem = Select.create(Object.entries(obj));
                     node.insertBefore(elem, node.firstElementChild);
@@ -209,40 +227,9 @@
 
           resolve(doc);
         });
-      /*
-      const LoadProject = (window.load = async function(basename = projectName) {
-        brdXml = await fetch(`/static/${basename}.brd`).then(async res => {
-          return await (await res).text();
-        });
-        schXml = await fetch(`/static/${basename}.sch`).then(async res => {
-          return await (await res).text();
-        });
 
-        brdDom = new DOMParser().parseFromString(brdXml, 'application/xml');
-        schDom = new DOMParser().parseFromString(schXml, 'application/xml');
-
-        schematic = new EagleDocument(schXml);
-        board = new EagleDocument(brdXml);
-
-        const { layers, nets, parts, symbols, sheets } = schematic;
-        window.schematic = schematic;
-        window.board = board;
-
-     
-        window.renderer = renderDocument(board, Element.find('#container'));
-
-        console.log('schematic:', { layers, nets, parts, symbols, sheets });
-        console.log('container:', container);
-        console.log('type:', schematic.type);
-
-        window.svgs = [...Element.findAll('svg')];
-
-        loadedProjects.push(basename);
-      });
-*/
       const SaveSVG = (window.save = async function save(filename = projectName) {
         let body = ElementToXML(window.svg);
-
         let result = await fetch("/save", {
           method: "post",
           headers: {
@@ -251,7 +238,6 @@
           },
           body
         });
-
         console.log("saved", result);
       });
 
@@ -280,9 +266,7 @@
 
       const File = ({ name, i, key, signal, data, ...props }) => {
         const [loaded, setLoaded] = useState(NaN);
-
         if(signal) signal.subscribe(data => setLoaded(data.percent));
-
         const pushHandler = async state => {
           console.log(`loading "${name}"...`);
           await load(name);
@@ -297,39 +281,29 @@
       const AppStart = (window.onload = async () => {
         window.Util = Util;
         Util(globalThis);
-
         let projects, projectFiles;
         let activeFile;
-
         const ModifyColors = fn => e => {
           if(!window.c) window.c = SVG.allColors("svg");
           c.dump();
           fn(c);
         };
-
         let response = await ListProjects("/files.html");
-
         let data = JSON.parse(response);
         let { files } = data;
         console.log("result:", files);
-
         projectFiles = window.files = files;
-
         //  CreateSelect(files);
-
         const FileList = ({ files, ...props }) => {
           return html`
             <${Chooser} className="list" itemComponent=${File} itemClass="file hcenter" items=${files} ...${props} />
           `;
         };
-
         const Panel = (name, children) => html`<${Container} className="${name}">${children}</${Container}>`;
-
         projects = projectFiles.map((name, i) => {
           let signal = trkl({ percent: NaN });
           let proj = { name, i, signal };
           trkl.bind(proj, "data", signal);
-
           console.log("project:", proj);
           return proj;
         });
@@ -341,35 +315,24 @@
             let { name, signal, svg, element } = proj;
             signal.subscribe(project => resolve(project));
             let doc = await LoadFile(name);
-
             window.eagle = doc;
-
             //console.log('document:', doc);
-
             if(!element) element = Element.create("div", { style: { position: "relative", "data-name": name, border: "1px dotted black" } }, parentElem);
             //let svg = Element.create('svg', { viewBox:  } , element);
-
             window.renderer = renderDocument(doc, element);
-
             if(!svg) svg = Element.find("svg", element);
-
             let grid = Element.find("g.grid", element);
             let bbox = SVG.bbox(grid);
             let bounds = doc.getBounds();
             let rect = bounds.rect;
             let size = new Size(rect);
             console.log("setRect", { svg, grid, bbox, bounds, rect });
-
             let css = size.toCSS({ width: "mm", height: "mm" });
-
             console.log("size.toCSS", css);
-
             //Element.setCSS(svg, { ..., position: 'relative' });
             console.log("setRect", svg);
             console.log("setRect", css);
-
             Object.assign(svg.style, css);
-
             signal({ ...proj, loaded: true, bbox, element, svg });
             return signal();
           });
@@ -379,15 +342,11 @@
           const { type } = e;
           const box = Element.findAll(".file")[i];
           console.log("chooseDocument:", { e, proj, box, i });
-
           if(!proj.loaded) {
             let data = await loadDocument(proj, box);
-
             proj.loaded = true;
-
             console.log("loaded:", proj);
           }
-
           return proj.loaded;
         };
         React.render(
@@ -406,7 +365,6 @@
               <${FileList} items=${projects} onChange=${chooseDocument} />
             `
           ],
-
           Element.find("#preact")
         );
 
