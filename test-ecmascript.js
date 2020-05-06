@@ -54,8 +54,8 @@ Error.stackTraceLimit = 100;
     console.log(`lexer tokenIndex: ${lexer.tokenIndex}`);
     let toks = lexer.tokens.slice(start, end - start).map(({ type, value, pos }, i) => `#${i + start} TYPE ${type}${Util.pad(type, 20, " ")} VALUE ${value}${Util.pad(value, 15, " ")} ${pos.toString ? pos.toString() : pos}`);
     console.log(`ERROR ${Util.className(err)} `, err);
-    console.log(`nodeList`, util.inspect(Factory.nodeList.reverse()[0], { depth: 2 }));
-    console.log(`last tokens:\n  ` + toks.slice(-4).join("\n  "));
+    // console.log(`Factory.nodes`, util.inspect(Factory.nodes.reverse()[0], { depth: 2 }));
+    console.log(`last tokens:\n  ` + toks.slice(-(toks.length - lexer.tokenIndex)).join("\n  "));
   }
 
   console.log(ast);
