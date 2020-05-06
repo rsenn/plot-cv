@@ -6,6 +6,7 @@
       import { isPoint, Point } from './lib/geom/point.js';
       import { PointList } from './lib/geom/pointList.js';
       import { isRect, Rect } from './lib/geom/rect.js';
+      import { isSize, Size } from './lib/geom/size.js';
       import { isLine, Line } from './lib/geom/line.js';
       import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
       import { Element } from './lib/dom/element.js';
@@ -21,17 +22,41 @@
       import { EagleNode } from './lib/eagle/node.js';
       import { lazyInitializer } from './lib/lazyInitializer.js';
       import { trkl } from './lib/trkl.js';
+      import { ColorMap } from './lib/draw/colorMap.js';
       import { EagleElement } from './lib/eagle/element.js';
       import { EaglePath, EagleReference } from './lib/eagle/locator.js';
       import { toXML, EagleInterface } from './lib/eagle/common.js';
-      import { renderDocument, EaglePalette, EagleRenderer } from './lib/eagle/renderer.js';
+      import { renderDocument, EagleRenderer } from './lib/eagle/renderer.js';
       import Util from './lib/util.js';
       import tXml from './lib/tXml.js';
       import { crosskit } from './lib/crosskit.js';
       import deep from './lib/deep.js';
       import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
       import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './modules//htm/preact/standalone.mjs';
-      const React = { cloneElement, Component, createContext, createRef, Fragment, h, html, hydrate, isValidElement, render, toChildArray, useCallback, useContext, useDebugValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useReducer, useRef, useState };
+      const React = {
+        cloneElement,
+        Component,
+        createContext,
+        createRef,
+        Fragment,
+        h,
+        html,
+        hydrate,
+        isValidElement,
+        render,
+        toChildArray,
+        useCallback,
+        useContext,
+        useDebugValue,
+        useEffect,
+        useImperativeHandle,
+        useLayoutEffect,
+        useMemo,
+        useReducer,
+        useRef,
+        useState,
+        ColorMap
+      };
 
       const projectName = 'Headphone-Amplifier-ClassAB-alt3';
       var palette = null;
@@ -132,6 +157,8 @@
         Line,
         isRect,
         Rect,
+        isSize,
+        Size,
         Matrix,
         Transformation,
         Rotation,
@@ -169,7 +196,7 @@
           let xml = await fetch(`/static/${filename}`).then(async res => {
             return await (await res).text();
           });
-          console.log('xml: ', xml);
+          console.log('xml: ', xml.substring(0, 100));
           //let dom = new DOMParser().parseFromString(xml, 'application/xml');
 
           let doc = new EagleDocument(xml);
@@ -225,44 +252,51 @@
         console.log('saved', result);
       });
 
+      const Button = (caption, fn) => html`
+        <${Overlay} className="button" text=${caption} onPush=${fn} />
+      `;
+      const Item = ({ className = 'item', label, children, ...props }) => html`
+          <${Overlay} className=${className} text=${label} ...${props}>${children}</${Overlay}>
+        `;
+
+      const Progress = ({ className, percent, ...props }) => html`
+              <${Overlay} className=${classNames('progress', 'center', className)} text=${percent + '%'} style=${{
+        position: 'relative',
+        width: '100%',
+        height: '1.5em',
+        border: '1px solid black',
+        textAlign: 'center',
+        zIndex: '99'
+      }}><div className=${classNames('progress-bar', 'fill')} style=${{
+        width: percent + '%',
+        position: 'absolute',
+        left: '0px',
+        top: '0px',
+        zIndex: '98'
+      }}></div></${Overlay}>`;
+
+      const File = ({ name, i, key, signal, data, ...props }) => {
+        const [loaded, setLoaded] = useState(NaN);
+
+        if(signal) signal.subscribe(data => setLoaded(data.percent));
+
+        const pushHandler = async state => {
+          console.log(`loading "${name}"...`);
+          await load(name);
+        };
+        let id = name || key || i;
+        if(id) id = (id + '').replace(/[^._A-Za-z0-9]/g, '-');
+        return html`
+            <${Item} className=file id=${id} data-filename="${name}" onPush=${pushHandler} ...${props}>${name}<${Progress} className=${!isNaN(loaded) ? 'visible' : 'hidden'} percent=${loaded} /></${Item}>
+          `;
+      };
+
       const AppStart = (window.onload = async () => {
         window.Util = Util;
         Util(globalThis);
 
         let projectFiles;
         let activeFile;
-
-        const Button = (caption, fn) => html`
-          <${Overlay} className="button" text=${caption} onPush=${fn} />
-        `;
-        const Item = ({ className = 'item', label, children, ...props }) => html`
-          <${Overlay} className=${className} text=${label} ...${props}>${children}</${Overlay}>
-        `;
-
-        const Progress = ({ className, percent, ...props }) => html`
-              <${Overlay} className=${classNames('progress', 'center', className)} text=${percent + '%'} style=${{ position: 'relative', width: '100%', height: '1.5em', border: '1px solid black', textAlign: 'center', zIndex: '99' }}><div className=${classNames('progress-bar', 'fill')} style=${{
-          width: percent + '%',
-          position: 'absolute',
-          left: '0px',
-          top: '0px',
-          zIndex: '98'
-        }}></div></${Overlay}>`;
-
-        const File = ({ name, i, key, signal, data, ...props }) => {
-          const [loaded, setLoaded] = useState(NaN);
-
-          if(signal) signal.subscribe(data => setLoaded(data.percent));
-
-          const pushHandler = async state => {
-            console.log(`loading "${name}"...`);
-            await load(name);
-          };
-          let id = name || key || i;
-          if(id) id = (id + '').replace(/[^._A-Za-z0-9]/g, '-');
-          return html`
-            <${Item} className=file id=${id} data-filename="${name}" onPush=${pushHandler} ...${props}>${name}<${Progress} className=${!isNaN(loaded) ? 'visible' : 'hidden'} percent=${loaded} /></${Item}>
-          `;
-        };
 
         const ModifyColors = fn => e => {
           if(!window.c) window.c = SVG.allColors('svg');
@@ -296,41 +330,51 @@
           console.log('project:', proj);
           return proj;
         }));
-        const loadProject = (proj, parentElem) =>
+        const loadDocument = (proj, parentElem) =>
           new Promise(async (resolve, reject) => {
             console.log(`load project:`, proj);
-            proj.signal.subscribe(project => resolve(project));
-            const { name } = proj;
+            let { name, signal, svg, element } = proj;
+            signal.subscribe(project => resolve(project));
             let doc = await LoadFile(name);
 
             window.eagle = doc;
 
-            console.log('document:', doc);
+            //console.log('document:', doc);
 
-            let element = Element.create('div', { style: { position: 'relative', border: '1px dotted black' } }, parentElem);
+            if(!element) element = Element.create('div', { style: { position: 'relative', 'data-name': name, border: '1px dotted black' } }, parentElem);
             //let svg = Element.create('svg', { viewBox:  } , element);
 
             window.renderer = renderDocument(doc, element);
+            if(!svg) svg = Element.find('svg', element);
 
-            let svg = Element.find('svg');
             let grid = Element.find('g.grid', element);
             let bbox = SVG.bbox(grid);
             let bounds = doc.getBounds();
             let rect = bounds.rect;
+            let size = new Size(rect);
             console.log('setRect', { svg, grid, bbox, bounds, rect });
 
-            Element.setRect(svg, bounds, { unit: 'mm', scale: 2.54 });
+            let css = size.toCSS({ width: 'mm', height: 'mm' });
+
+            console.log('size.toCSS', css);
+
+            //Element.setCSS(svg, { ..., position: 'relative' });
             console.log('setRect', svg);
+            console.log('setRect', css);
+
+            Object.assign(svg.style, css);
 
             signal({ ...proj, loaded: true, bbox, element, svg });
             return signal();
           });
 
-        const chooseProject = async (e, proj, i) => {
+        const chooseDocument = async (...args) => {
+          const [e, proj, i] = args;
           const { type } = e;
           const box = Element.findAll('.file')[i];
+          console.log('chooseDocument:', { e, proj, box, i });
 
-          await loadProject(proj, box).then(project => console.log('loaded:', project));
+          await loadDocument(proj, box).then(project => console.log('loaded:', project));
 
           return proj.loaded;
         };
@@ -347,7 +391,7 @@
               )
             ]),
             html`
-              <${FileList} items=${projects} onChange=${chooseProject} />
+              <${FileList} items=${projects} onChange=${chooseDocument} />
             `
           ],
 
@@ -418,9 +462,9 @@
         height: 100%;
       }
 
-            .button.pushed, .button-inactive {
-
-            }
+      .button.pushed,
+      .button-inactive {
+      }
 
       .button.pushed {
         transition-timing-function: ease-in-out;
@@ -440,7 +484,7 @@
         text-shadow: 1px 1px 1px black;
         margin: 10px;
         padding: 8px;
-              flex: 1 1 50%;
+        flex: 1 1 50%;
       }
       .hcenter {
         justify-content: center;
@@ -459,8 +503,8 @@
       }
       .overlay,
       .button,
-            .center,
-            .button {
+      .center,
+      .button {
         justify-content: center;
         align-items: center;
         /*  border: 2px solid hsl(220,100%,50%);*/
@@ -473,11 +517,12 @@
         font-weight: bold;
         user-select: none;
         font-size: 2em;
-            }
-                  .button {
       }
-      display: inline-flex;
+      .button {
+        display: inline-flex;
       }
+      html,
+      body,
       .overlay,
       .button,
       .panel,
@@ -541,7 +586,8 @@
         background: rgba(255, 0, 0, 1);
       }
 
-            .panel, .buttons {
+      .panel,
+      .buttons {
         background-color: hsla(230, 40%, 80%, 0.8);
         border: 1px solid hsla(230, 0%, 50%, 1);
         margin: 4px 0px;
