@@ -41,22 +41,21 @@ Error.stackTraceLimit = 100;
   } catch(err) {
     //  console.log("ERROR:"+util.inspect(err, { color: false }));
     let lexer = Parser.instance.lexer;
-    let t=[];
+    let t = [];
 
-for(let k = 0; k < 20; k++) 
-    lexer.lex();
+    for(let k = 0; k < 20; k++) lexer.lex();
     const lexerPos = lexer.positionString();
-    const start = Math.min(0, lexer.tokenIndex-1);
-    const end = Math.max( lexer.tokenIndex, lexer.tokenIndex+2);
-        console.log(`parser tokens:`, Parser.instance.tokens);
+    const start = Math.min(0, lexer.tokenIndex - 1);
+    const end = Math.max(lexer.tokenIndex, lexer.tokenIndex + 2);
+    console.log(`parser tokens:`, Parser.instance.tokens);
 
     console.log(`lexer position: ${lexerPos}`);
     console.log(`lexer tokens: ${lexer.tokens.length}`);
     console.log(`lexer tokenIndex: ${lexer.tokenIndex}`);
-    let toks = lexer.tokens.slice(start, end-start).map(({ type, value, pos }, i) => `#${i+start} TYPE ${type}${Util.pad(type, 20, ' ')} VALUE ${value}${Util.pad(value, 15 , ' ')} ${pos.toString ? pos.toString() : pos}`);
+    let toks = lexer.tokens.slice(start, end - start).map(({ type, value, pos }, i) => `#${i + start} TYPE ${type}${Util.pad(type, 20, " ")} VALUE ${value}${Util.pad(value, 15, " ")} ${pos.toString ? pos.toString() : pos}`);
     console.log(`ERROR ${Util.className(err)} `, err);
     console.log(`nodeList`, util.inspect(Factory.nodeList.reverse()[0], { depth: 2 }));
-    console.log(`last tokens:\n  `+toks.slice(-4).join("\n  "));
+    console.log(`last tokens:\n  ` + toks.slice(-4).join("\n  "));
   }
 
   console.log(ast);
