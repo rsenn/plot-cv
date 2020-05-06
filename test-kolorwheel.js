@@ -1,6 +1,6 @@
-import KolorWheel from './lib/KolorWheel.js';
-import { RGBA, HSLA } from './lib/dom.js';
-import Util from './lib/util.js';
+import KolorWheel from "./lib/KolorWheel.js";
+import { RGBA, HSLA } from "./lib/dom.js";
+import Util from "./lib/util.js";
 
 const layerToColorIndex = {
   Top: 4,
@@ -67,68 +67,68 @@ const layerToColorIndex = {
   trash: 7
 };
 const layerColors = {
-  Top: 'rgb(0,23,185)',
-  Route2: 'rgb(3,0,5)',
-  Route3: 'rgb(0,23,185)',
-  Route4: 'rgb(3,0,5)',
-  Route5: 'rgb(0,23,185)',
-  Route6: 'rgb(3,0,5)',
-  Route7: 'rgb(0,23,185)',
-  Route8: 'rgb(3,0,5)',
-  Route9: 'rgb(0,23,185)',
-  Route10: 'rgb(3,0,5)',
-  Route11: 'rgb(0,23,185)',
-  Route12: 'rgb(3,0,5)',
-  Route13: 'rgb(0,23,185)',
-  Route14: 'rgb(3,0,5)',
-  Route15: 'rgb(0,23,185)',
-  Bottom: 'rgb(252,245,38)',
-  Pads: 'hsl(131,100%,24.7%)',
-  Vias: 'rgb(252,245,38)',
-  Unrouted: 'rgb(62,46,25)',
-  Dimension: 'rgb(175,175,175)',
-  tPlace: 'hsl(20,100%,60%)',
-  bPlace: 'rgb(255,180,83)',
-  tOrigins: 'rgb(178,27,0)',
-  bOrigins: 'rgb(178,27,0)',
-  tNames: 'rgb(255,38,0)',
-  bNames: 'rgb(189,133,64)',
-  tValues: 'rgb(255,38,0)',
-  bValues: 'rgb(189,133,64)',
-  tStop: 'rgb(189,133,64)',
-  bStop: 'rgb(189,133,64)',
-  tCream: 'rgb(189,133,64)',
-  bCream: 'rgb(189,133,64)',
-  tFinish: 'rgb(62,46,25)',
-  bFinish: 'rgb(62,46,25)',
-  tGlue: 'rgb(189,133,64)',
-  bGlue: 'rgb(189,133,64)',
-  tTest: 'rgb(189,133,64)',
-  bTest: 'rgb(189,133,64)',
-  tKeepout: 'rgb(0,23,185)',
-  bKeepout: 'rgb(3,0,5)',
-  tRestrict: 'rgb(0,23,185)',
-  bRestrict: 'rgb(3,0,5)',
-  vRestrict: 'rgb(252,245,38)',
-  Drills: 'rgb(189,133,64)',
-  Holes: 'rgb(0,255,255)',
-  Milling: 'rgb(0,126,24)',
-  Measures: 'rgb(189,133,64)',
-  Document: 'rgb(255,180,83)',
-  Reference: 'rgb(189,133,64)',
-  tDocu: 'rgb(255,180,83)',
-  bDocu: 'rgb(255,180,83)',
-  Modules: 'rgb(79,9,0)',
-  Nets: 'rgb(252,245,38)',
-  Busses: 'rgb(3,0,5)',
-  Pins: 'rgb(252,245,38)',
-  Symbols: 'rgb(0,23,185)',
-  Names: 'rgb(189,133,64)',
-  Values: 'rgb(189,133,64)',
-  Info: 'rgb(189,133,64)',
-  Guide: 'rgb(62,46,25)',
-  SpiceOrder: 'rgb(189,133,64)',
-  trash: 'rgb(189,133,64)'
+  Top: "rgb(0,23,185)",
+  Route2: "rgb(3,0,5)",
+  Route3: "rgb(0,23,185)",
+  Route4: "rgb(3,0,5)",
+  Route5: "rgb(0,23,185)",
+  Route6: "rgb(3,0,5)",
+  Route7: "rgb(0,23,185)",
+  Route8: "rgb(3,0,5)",
+  Route9: "rgb(0,23,185)",
+  Route10: "rgb(3,0,5)",
+  Route11: "rgb(0,23,185)",
+  Route12: "rgb(3,0,5)",
+  Route13: "rgb(0,23,185)",
+  Route14: "rgb(3,0,5)",
+  Route15: "rgb(0,23,185)",
+  Bottom: "rgb(252,245,38)",
+  Pads: "hsl(131,100%,24.7%)",
+  Vias: "rgb(252,245,38)",
+  Unrouted: "rgb(62,46,25)",
+  Dimension: "rgb(175,175,175)",
+  tPlace: "hsl(20,100%,60%)",
+  bPlace: "rgb(255,180,83)",
+  tOrigins: "rgb(178,27,0)",
+  bOrigins: "rgb(178,27,0)",
+  tNames: "rgb(255,38,0)",
+  bNames: "rgb(189,133,64)",
+  tValues: "rgb(255,38,0)",
+  bValues: "rgb(189,133,64)",
+  tStop: "rgb(189,133,64)",
+  bStop: "rgb(189,133,64)",
+  tCream: "rgb(189,133,64)",
+  bCream: "rgb(189,133,64)",
+  tFinish: "rgb(62,46,25)",
+  bFinish: "rgb(62,46,25)",
+  tGlue: "rgb(189,133,64)",
+  bGlue: "rgb(189,133,64)",
+  tTest: "rgb(189,133,64)",
+  bTest: "rgb(189,133,64)",
+  tKeepout: "rgb(0,23,185)",
+  bKeepout: "rgb(3,0,5)",
+  tRestrict: "rgb(0,23,185)",
+  bRestrict: "rgb(3,0,5)",
+  vRestrict: "rgb(252,245,38)",
+  Drills: "rgb(189,133,64)",
+  Holes: "rgb(0,255,255)",
+  Milling: "rgb(0,126,24)",
+  Measures: "rgb(189,133,64)",
+  Document: "rgb(255,180,83)",
+  Reference: "rgb(189,133,64)",
+  tDocu: "rgb(255,180,83)",
+  bDocu: "rgb(255,180,83)",
+  Modules: "rgb(79,9,0)",
+  Nets: "rgb(252,245,38)",
+  Busses: "rgb(3,0,5)",
+  Pins: "rgb(252,245,38)",
+  Symbols: "rgb(0,23,185)",
+  Names: "rgb(189,133,64)",
+  Values: "rgb(189,133,64)",
+  Info: "rgb(189,133,64)",
+  Guide: "rgb(62,46,25)",
+  SpiceOrder: "rgb(189,133,64)",
+  trash: "rgb(189,133,64)"
 };
 
 const findAllKeys = color => {
@@ -144,7 +144,7 @@ for(let name in layerColors) {
   layerColors[name] = c;
 }
 const allColors = Util.unique(Object.values(layerColors));
-console.log('allColors: ' + allColors);
+console.log("allColors: " + allColors);
 let keyList = [];
 
 for(let color of allColors) {
@@ -171,16 +171,16 @@ const GeneratePalette = numColors => {
 };
 
 const palette = GeneratePalette(16);
-console.log('palette.length:', palette.length);
-console.log('keyList.length:', keyList.length);
+console.log("palette.length:", palette.length);
+console.log("keyList.length:", keyList.length);
 
-let s = '';
+let s = "";
 for(let i = 0; i < keyList.length; i++) {
   console.log(`keys[${i}]:`, keyList[i]);
 
   for(let key of keyList[i]) {
-    if(s != '') s += ', ';
+    if(s != "") s += ", ";
     s += `${key}: palette[${i}]`;
   }
 }
-console.log('const palette = ' + Util.inspect(palette, { colors: false, newline: '' }) + ';\n renderer.colors = {' + s + '};');
+console.log("const palette = " + Util.inspect(palette, { colors: false, newline: "" }) + ";\n renderer.colors = {" + s + "};");

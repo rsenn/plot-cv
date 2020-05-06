@@ -1,6 +1,6 @@
-import Lexer from './lib/ecmascript/lexer.js';
-const fs = require('fs').promises;
-const { Console } = require('console');
+import Lexer from "./lib/ecmascript/lexer.js";
+const fs = require("fs").promises;
+const { Console } = require("console");
 
 global.console = new Console({
   stdout: process.stdout,
@@ -24,7 +24,7 @@ const LoginIcon = ({ style }) => (
 );
 
 (async arg => {
-  let data = await fs.readFile(arg || './lib/ecmascript/parser.js');
+  let data = await fs.readFile(arg || "./lib/ecmascript/parser.js");
   console.log(data);
 
   let lexer = new Lexer(data.toString());
@@ -33,9 +33,9 @@ const LoginIcon = ({ style }) => (
     do {
       token = lexer.lex();
 
-      console.log('tok:', token.value);
-    } while(token.type != 'eof');
+      console.log("tok:", token.value);
+    } while(token.type != "eof");
   } catch(err) {
-    console.log('ERROR:', err);
+    console.log("ERROR:", err);
   }
 })(...process.argv.slice(2));

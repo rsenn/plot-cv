@@ -1,10 +1,10 @@
-require('module-alias/register');
+require("module-alias/register");
 
-const { createServer } = require('http');
-const { parse } = require('url');
-const next = require('next');
+const { createServer } = require("http");
+const { parse } = require("url");
+const next = require("next");
 
-const app = next({ dev: 'development' });
+const app = next({ dev: "development" });
 const handle = app.getRequestHandler();
 const port = process.env.PORT || 3001;
 

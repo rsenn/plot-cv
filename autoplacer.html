@@ -2,37 +2,39 @@
   <head>
     <title>EAGLE renderer</title>
     <script type="module">
-      import Autoplacer from './lib/autoplacer/autoplacer.js';
-      import { isPoint, Point } from './lib/geom/point.js';
-      import { PointList } from './lib/geom/pointList.js';
-      import { isRect, Rect } from './lib/geom/rect.js';
-      import { isSize, Size } from './lib/geom/size.js';
-      import { isLine, Line } from './lib/geom/line.js';
-      import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
-      import { Element } from './lib/dom/element.js';
-      import { Matrix } from './lib/geom/matrix.js';
+      import Autoplacer from "./lib/autoplacer/autoplacer.js";
+      import { isPoint, Point } from "./lib/geom/point.js";
+      import { PointList } from "./lib/geom/pointList.js";
+      import { isRect, Rect } from "./lib/geom/rect.js";
+      import { isSize, Size } from "./lib/geom/size.js";
+      import { isLine, Line } from "./lib/geom/line.js";
+      import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from "./lib/geom/transformation.js";
+      import { Element } from "./lib/dom/element.js";
+      import { Matrix } from "./lib/geom/matrix.js";
       //  import { Select } from './lib/dom/select.js';
-      import { SVG } from './lib/dom/svg.js';
-      import { BBox } from './lib/geom/bbox.js';
-      import { ScrollDisabler } from './lib/scrollHandler.js';
-      import { RGBA, HSLA, CSS } from './lib/dom.js';
-      import { TouchHandler, TouchListener, MultitouchListener } from './lib/touchHandler.js';
-      import { parseSchematic } from './lib/eagle/parser.js';
-      import { EagleDocument } from './lib/eagle/document.js';
-      import { EagleNode } from './lib/eagle/node.js';
-      import { lazyInitializer } from './lib/lazyInitializer.js';
-      import { trkl } from './lib/trkl.js';
-      import { ColorMap } from './lib/draw/colorMap.js';
-      import { EagleElement } from './lib/eagle/element.js';
-      import { EaglePath, EagleReference } from './lib/eagle/locator.js';
-      import { toXML, EagleInterface } from './lib/eagle/common.js';
-      import { renderDocument, EagleRenderer } from './lib/eagle/renderer.js';
-      import Util from './lib/util.js';
-      import tXml from './lib/tXml.js';
-      import { crosskit } from './lib/crosskit.js';
-      import deep from './lib/deep.js';
-      import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
-      import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './modules//htm/preact/standalone.mjs';
+      import { SVG } from "./lib/dom/svg.js";
+      import { BBox } from "./lib/geom/bbox.js";
+      import { ScrollDisabler } from "./lib/scrollHandler.js";
+      import { RGBA, HSLA, CSS } from "./lib/dom.js";
+      import { TouchHandler, TouchListener, MultitouchListener } from "./lib/touchHandler.js";
+      import { parseSchematic } from "./lib/eagle/parser.js";
+      import { EagleDocument } from "./lib/eagle/document.js";
+      import { EagleNode } from "./lib/eagle/node.js";
+      import { lazyInitializer } from "./lib/lazyInitializer.js";
+      import { trkl } from "./lib/trkl.js";
+      import { ColorMap } from "./lib/draw/colorMap.js";
+      import { EagleElement } from "./lib/eagle/element.js";
+      import { EaglePath, EagleReference } from "./lib/eagle/locator.js";
+      import { toXML, EagleInterface } from "./lib/eagle/common.js";
+      import { renderDocument, EagleRenderer } from "./lib/eagle/renderer.js";
+      import { devtools } from "./lib/devtools.js";
+      // import { devpane } from "./lib/devpane.js";
+      import Util from "./lib/util.js";
+      import tXml from "./lib/tXml.js";
+      import { crosskit } from "./lib/crosskit.js";
+      import deep from "./lib/deep.js";
+      import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from "./modules/preact/dist/preact.mjs";
+      import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from "./modules//htm/preact/standalone.mjs";
       const React = {
         cloneElement,
         Component,
@@ -55,10 +57,11 @@
         useReducer,
         useRef,
         useState,
-        ColorMap
+        ColorMap,
+        devtools //, devpane
       };
 
-      const projectName = 'Headphone-Amplifier-ClassAB-alt3';
+      const projectName = "Headphone-Amplifier-ClassAB-alt3";
       var palette = null;
       var svgElement;
       var brdXml, schXml, brdDom, schDom;
@@ -67,13 +70,13 @@
 
       const MouseHandler = callback => e => {
         if(e.type) {
-          const pressed = e.type.endsWith('down');
+          const pressed = e.type.endsWith("down");
 
           callback(e, pressed);
         }
       };
 
-      const classNames = (...args) => args.filter(arg => typeof arg == 'string' && arg.length > 0).join(' ');
+      const classNames = (...args) => args.filter(arg => typeof arg == "string" && arg.length > 0).join(" ");
 
       const MouseEvents = h => ({
         onMouseDown: h,
@@ -82,32 +85,32 @@
         onMouseUp: h
       });
 
-      const Overlay = ({ className = 'overlay', active = false, onPush, text, children, ...props }) => {
+      const Overlay = ({ className = "overlay", active = false, onPush, text, children, ...props }) => {
         const [pushed, setPushed] = useState(false);
         const events = MouseEvents(
           MouseHandler((e, state) => {
             const prev = pushed;
             setPushed(state);
             //  console.log(`overlay pushed=${pushed} active=${active}:`, e.target);
-            return typeof onPush == 'function' ? onPush(e, state) : null;
+            return typeof onPush == "function" ? onPush(e, state) : null;
           })
         );
 
         return html`
-          <div className=${classNames(className, pushed && 'pushed', active ? 'active' : 'inactive')} ...${props} ...${events}>
+          <div className=${classNames(className, pushed && "pushed", active ? "active" : "inactive")} ...${props} ...${events}>
             ${text} ${children}
           </div>
         `;
       };
 
-      const Container = ({ className = 'panel', children, ...props }) => {
-        useCallback(() => console.log('re-render panel'));
+      const Container = ({ className = "panel", children, ...props }) => {
+        useCallback(() => console.log("re-render panel"));
         return html`
           <div className=${className} ...${props}>${children}</div>
         `;
       };
 
-      const Chooser = ({ className = 'list', itemClass = 'item', itemComponent = Overlay, items, onChange = () => {}, onPush = () => {}, ...props }) => {
+      const Chooser = ({ className = "list", itemClass = "item", itemComponent = Overlay, items, onChange = () => {}, onPush = () => {}, ...props }) => {
         const [active, setActive] = useState(-1);
 
         const pushHandler = i => (e, state) => {
@@ -115,7 +118,7 @@
           //if(active != i && typeof onChange == 'function')
           state == true && setActive(i);
 
-          if(i != prev && e.type.endsWith('down')) onChange(e, items[i], i);
+          if(i != prev && e.type.endsWith("down")) onChange(e, items[i], i);
           onPush(e, i, state);
 
           //   console.log('push:', i, state);
@@ -125,15 +128,15 @@
         const children = items.map(
           ({ name, i, data, signal, ...item }, key) =>
             html`
-              <${itemComponent} key=${key || i} className=${classNames(itemClass || className + '-item', name.replace(/.*\./, ''))} active=${i == active} onPush=${pushHandler(i)} text="${name}" ...${item} />
+              <${itemComponent} key=${key || i} className=${classNames(itemClass || className + "-item", name.replace(/.*\./, ""))} active=${i == active} onPush=${pushHandler(i)} text="${name}" ...${item} />
             `
         );
 
-        return html`<${Container} className=${classNames('panel', className)} ...${props}>${children}</${Container}>`;
+        return html`<${Container} className=${classNames("panel", className)} ...${props}>${children}</${Container}>`;
       };
 
-      console.log('running');
-      console.log('dom', { Rect, Element, parseSchematic });
+      console.log("running");
+      console.log("dom", { Rect, Element, parseSchematic });
 
       window.dom = { Element, SVG };
       Object.assign(window, {
@@ -177,18 +180,18 @@
                     let elem = Select.create(Object.entries(obj));
                     node.insertBefore(elem, node.firstElementChild);
                   };*/
-      const utf8Decoder = new TextDecoder('utf-8');
+      const utf8Decoder = new TextDecoder("utf-8");
 
       const ListProjects = (window.list = async function(url) {
-        let response = await fetch('/files.html', { method: 'get' });
+        let response = await fetch("/files.html", { method: "get" });
         const reader = await (await response.body).getReader();
         let { value: chunk, done: readerDone } = await reader.read();
-        chunk = chunk ? await utf8Decoder.decode(chunk) : '';
+        chunk = chunk ? await utf8Decoder.decode(chunk) : "";
         return chunk;
       });
       const ElementToXML = e => {
         const x = Element.toObject(e);
-        console.log('x:', x);
+        console.log("x:", x);
         return toXML(x);
       };
       const LoadFile = filename =>
@@ -196,7 +199,7 @@
           let xml = await fetch(`/static/${filename}`).then(async res => {
             return await (await res).text();
           });
-          console.log('xml: ', xml.substring(0, 100));
+          console.log("xml: ", xml.substring(0, 100));
           //let dom = new DOMParser().parseFromString(xml, 'application/xml');
 
           let doc = new EagleDocument(xml);
@@ -240,39 +243,39 @@
       const SaveSVG = (window.save = async function save(filename = projectName) {
         let body = ElementToXML(window.svg);
 
-        let result = await fetch('/save', {
-          method: 'post',
+        let result = await fetch("/save", {
+          method: "post",
           headers: {
-            'Content-Type': 'application/xml',
-            'Content-Disposition': `attachment; filename="${projectName}.svg"`
+            "Content-Type": "application/xml",
+            "Content-Disposition": `attachment; filename="${projectName}.svg"`
           },
           body
         });
 
-        console.log('saved', result);
+        console.log("saved", result);
       });
 
       const Button = (caption, fn) => html`
         <${Overlay} className="button" text=${caption} onPush=${fn} />
       `;
-      const Item = ({ className = 'item', label, children, ...props }) => html`
+      const Item = ({ className = "item", label, children, ...props }) => html`
           <${Overlay} className=${className} text=${label} ...${props}>${children}</${Overlay}>
         `;
 
       const Progress = ({ className, percent, ...props }) => html`
-              <${Overlay} className=${classNames('progress', 'center', className)} text=${percent + '%'} style=${{
-        position: 'relative',
-        width: '100%',
-        height: '1.5em',
-        border: '1px solid black',
-        textAlign: 'center',
-        zIndex: '99'
-      }}><div className=${classNames('progress-bar', 'fill')} style=${{
-        width: percent + '%',
-        position: 'absolute',
-        left: '0px',
-        top: '0px',
-        zIndex: '98'
+              <${Overlay} className=${classNames("progress", "center", className)} text=${percent + "%"} style=${{
+        position: "relative",
+        width: "100%",
+        height: "1.5em",
+        border: "1px solid black",
+        textAlign: "center",
+        zIndex: "99"
+      }}><div className=${classNames("progress-bar", "fill")} style=${{
+        width: percent + "%",
+        position: "absolute",
+        left: "0px",
+        top: "0px",
+        zIndex: "98"
       }}></div></${Overlay}>`;
 
       const File = ({ name, i, key, signal, data, ...props }) => {
@@ -285,9 +288,9 @@
           await load(name);
         };
         let id = name || key || i;
-        if(id) id = (id + '').replace(/[^._A-Za-z0-9]/g, '-');
+        if(id) id = (id + "").replace(/[^._A-Za-z0-9]/g, "-");
         return html`
-            <${Item} className=file id=${id} data-filename="${name}" onPush=${pushHandler} ...${props}>${name}<${Progress} className=${!isNaN(loaded) ? 'visible' : 'hidden'} percent=${loaded} /></${Item}>
+            <${Item} className=file id=${id} data-filename="${name}" onPush=${pushHandler} ...${props}>${name}<${Progress} className=${!isNaN(loaded) ? "visible" : "hidden"} percent=${loaded} /></${Item}>
           `;
       };
 
@@ -299,15 +302,15 @@
         let activeFile;
 
         const ModifyColors = fn => e => {
-          if(!window.c) window.c = SVG.allColors('svg');
+          if(!window.c) window.c = SVG.allColors("svg");
           c.dump();
           fn(c);
         };
 
-        await ListProjects('/files.html').then(response => {
+        await ListProjects("/files.html").then(response => {
           let data = JSON.parse(response);
           let { files } = data;
-          console.log('result:', files);
+          console.log("result:", files);
 
           projectFiles = window.files = files;
 
@@ -325,9 +328,9 @@
         var projects = (window.projects = projectFiles.map((name, i) => {
           let signal = trkl({ percent: NaN });
           let proj = { name, i, signal };
-          trkl.bind(proj, 'data', signal);
+          trkl.bind(proj, "data", signal);
 
-          console.log('project:', proj);
+          console.log("project:", proj);
           return proj;
         }));
         const loadDocument = (proj, parentElem) =>
@@ -341,26 +344,26 @@
 
             //console.log('document:', doc);
 
-            if(!element) element = Element.create('div', { style: { position: 'relative', 'data-name': name, border: '1px dotted black' } }, parentElem);
+            if(!element) element = Element.create("div", { style: { position: "relative", "data-name": name, border: "1px dotted black" } }, parentElem);
             //let svg = Element.create('svg', { viewBox:  } , element);
 
             window.renderer = renderDocument(doc, element);
-            if(!svg) svg = Element.find('svg', element);
+            if(!svg) svg = Element.find("svg", element);
 
-            let grid = Element.find('g.grid', element);
+            let grid = Element.find("g.grid", element);
             let bbox = SVG.bbox(grid);
             let bounds = doc.getBounds();
             let rect = bounds.rect;
             let size = new Size(rect);
-            console.log('setRect', { svg, grid, bbox, bounds, rect });
+            console.log("setRect", { svg, grid, bbox, bounds, rect });
 
-            let css = size.toCSS({ width: 'mm', height: 'mm' });
+            let css = size.toCSS({ width: "mm", height: "mm" });
 
-            console.log('size.toCSS', css);
+            console.log("size.toCSS", css);
 
             //Element.setCSS(svg, { ..., position: 'relative' });
-            console.log('setRect', svg);
-            console.log('setRect', css);
+            console.log("setRect", svg);
+            console.log("setRect", css);
 
             Object.assign(svg.style, css);
 
@@ -371,22 +374,22 @@
         const chooseDocument = async (...args) => {
           const [e, proj, i] = args;
           const { type } = e;
-          const box = Element.findAll('.file')[i];
-          console.log('chooseDocument:', { e, proj, box, i });
+          const box = Element.findAll(".file")[i];
+          console.log("chooseDocument:", { e, proj, box, i });
 
-          await loadDocument(proj, box).then(project => console.log('loaded:', project));
+          await loadDocument(proj, box).then(project => console.log("loaded:", project));
 
           return proj.loaded;
         };
         React.render(
           [
-            Panel('buttons', [
+            Panel("buttons", [
               Button(
-                'Random',
+                "Random",
                 ModifyColors(c => c.replaceAll(c => HSLA.random()))
               ),
               Button(
-                'Invert',
+                "Invert",
                 ModifyColors(c => c.replaceAll(c => c.invert()))
               )
             ]),
@@ -395,7 +398,7 @@
             `
           ],
 
-          Element.find('#preact')
+          Element.find("#preact")
         );
 
         /*TouchListener(
@@ -405,14 +408,14 @@
                       { listener: MultitouchListener, element: window }
                     );
             */
-        window.container = Element.find('#container');
-        window.styles = CSS.create('head');
+        window.container = Element.find("#container");
+        window.styles = CSS.create("head");
 
         // new ScrollDisabler(() => true, window);
 
         var zoomVal = 0;
-        window.addEventListener('wheel', event => {
-          const clientArea = Element.rect('body > div');
+        window.addEventListener("wheel", event => {
+          const clientArea = Element.rect("body > div");
           clientArea.x += container.parentElement.scrollLeft;
           const clientCenter = clientArea.center;
 
@@ -423,17 +426,17 @@
           zoomVal = Util.clamp(-100, 100, zoomVal + wheelPos * 0.1);
           const zoom = Math.pow(10, zoomVal / 100).toFixed(5);
           const transform = ` scale(${zoom},${zoom}) `;
-          const origin = `${pos.toString(1, 'px', ' ')}`;
+          const origin = `${pos.toString(1, "px", " ")}`;
 
           Element.setCSS(container, { transform });
 
-          Element.setCSS(container, { 'transform-origin': origin });
+          Element.setCSS(container, { "transform-origin": origin });
         });
         console.log(Util.getGlobalObject());
 
         //   LoadProject(projectName);
 
-        for(let path of [...Element.findAll('path')]) {
+        for(let path of [...Element.findAll("path")]) {
           let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
         }
       });
@@ -441,8 +444,8 @@
       var Module = {
         noInitialRun: true,
         onRuntimeInitialized: () => {
-          console.log('initialized');
-          let myString = prompt('Enter a string:');
+          console.log("initialized");
+          let myString = prompt("Enter a string:");
           Module.callMain([myString]);
         },
         print: txt => alert(`The MD5 hash is: ${txt}`)
@@ -509,6 +512,10 @@
         align-items: center;
         /*  border: 2px solid hsl(220,100%,50%);*/
       }
+      body {
+        background: linear-gradient(0deg, rgba(255, 255, 255, 1) 0%, rgba(0, 0, 0, 0.5) 80%);
+        background-attachment: fixed;
+      }
       .button {
         box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.7);
         border-radius: 4px;
@@ -540,8 +547,12 @@
         transition: height 1s, border 0.5s;
       }
       .list {
-        flex-flow: row wrap;
+        background: black;
         flex-basis: 30%;
+      }
+
+      .list {
+        flex-flow: row wrap;
       }
       .panel,
       .list {
@@ -549,6 +560,7 @@
       }
       .file {
         color: black;
+        flex-flow: column wrap;
       }
       .file.sch {
         background: hsl(60, 100%, 98%);
@@ -577,8 +589,8 @@
         padding: 6px 9px;
         flex: 1 1 auto;
         display: flex;
-        flex-basis: 100%;
-
+        /*        flex-basis: 100%;
+*/
         justify-content: space-between;
         align-items: flex-start;
       }
@@ -606,8 +618,8 @@
       }
     </style>
   </head>
-  <body>
-    <div id="preact" style=" height: 100px;"></div>
+  <body style=" max-height: 100vh;">
+    <div id="preact" style=" min-height: 100vh;"></div>
     <div id="container" style="overflow-y: auto; overflow-x: scroll; height: 100%;">
       <!-- <svg id="board" viewBox="0 0 310 150" style="width:auto; height: 100%;">
         <defs />
