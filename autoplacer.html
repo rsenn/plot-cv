@@ -298,7 +298,7 @@
         window.Util = Util;
         Util(globalThis);
 
-        let projectFiles;
+        let projects,projectFiles;
         let activeFile;
 
         const ModifyColors = fn => e => {
@@ -307,7 +307,8 @@
           fn(c);
         };
 
-        await ListProjects("/files.html").then(response => {
+        let response = await ListProjects("/files.html");
+
           let data = JSON.parse(response);
           let { files } = data;
           console.log("result:", files);
@@ -315,7 +316,6 @@
           projectFiles = window.files = files;
 
           //  CreateSelect(files);
-        });
 
         const FileList = ({ files, ...props }) => {
           return html`
@@ -325,14 +325,16 @@
 
         const Panel = (name, children) => html`<${Container} className="${name}">${children}</${Container}>`;
 
-        var projects = (window.projects = projectFiles.map((name, i) => {
+        projects = projectFiles.map((name, i) => {
           let signal = trkl({ percent: NaN });
           let proj = { name, i, signal };
           trkl.bind(proj, "data", signal);
 
           console.log("project:", proj);
           return proj;
-        }));
+        });
+      window.projects = projects;
+
         const loadDocument = (proj, parentElem) =>
           new Promise(async (resolve, reject) => {
             console.log(`load project:`, proj);
@@ -377,7 +379,12 @@
           const box = Element.findAll(".file")[i];
           console.log("chooseDocument:", { e, proj, box, i });
 
-          await loadDocument(proj, box).then(project => console.log("loaded:", project));
+          let data  = await loadDocument(proj, box);
+
+          proj.loaded = true;
+
+           console.log("loaded:", proj);
+
 
           return proj.loaded;
         };
@@ -487,7 +494,7 @@
         text-shadow: 1px 1px 1px black;
         margin: 10px;
         padding: 8px;
-        flex: 1 1 50%;
+        flex: 0 1 auto;
       }
       .hcenter {
         justify-content: center;
@@ -604,7 +611,7 @@
         border: 1px solid hsla(230, 0%, 50%, 1);
         margin: 4px 0px;
         display: flex;
-        justify-content: space-evenly;
+        justify-content: flex-start;
         align-items: stretch;
       }
       .sch > .progress > .progress-bar {
@@ -620,10 +627,8 @@
   </head>
   <body style=" max-height: 100vh;">
     <div id="preact" style=" min-height: 100vh;"></div>
-    <div id="container" style="overflow-y: auto; overflow-x: scroll; height: 100%;">
-      <!-- <svg id="board" viewBox="0 0 310 150" style="width:auto; height: 100%;">
-        <defs />
-      </svg> -->
+    <div id="container" style="overflow-y: auto; overflow-x: visible; height: 100%;">
+   
     </div>
   </body>
 </html>
