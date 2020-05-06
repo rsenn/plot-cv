@@ -16,6 +16,7 @@
   "author": "Roman Senn <roman.l.senn@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "deep-diff": "^1.0.2",
     "express": "^4.17.1",
     "htm": "^3.0.4",
     "module-alias": "^2.2.2",

@@ -10,6 +10,7 @@ import DeepDiff from "deep-diff";
 import { Console } from "console";
 import { inspect, toXML, dump } from "./lib/eagle/common.js";
 import { JsonPointer, JsonReference } from "./lib/json-pointer.js";
+import { Graph, Edge, Node } from "./lib/fd-graph.js";
 import ptr from "./lib/json-ptr.js";
 import util from "util";
 
@@ -19,7 +20,7 @@ global.console = new Console({
   inspectOptions: { depth: 2, colors: true }
 });
 
-/**/
+
 function xmlize(obj, depth = 2) {
   return obj.toXML ? obj.toXML().replace(/>\s*</g, ">\n    <") : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
@@ -27,19 +28,18 @@ function testLocator() {
   let testobj = [0, 1, 2, { name: "roman", children: ["x", "y", { id: 1, items: ["a", "b", "c"] }] }];
   let l = new EaglePath([3, "children", 2, "items", -2]);
   let a = [l.slice(), l.slice()];
-  //console.log("l:", dump(l));
-  //console.log("a[0] == a[1]:", a[0] === a[1]);
+
+
   a[1][0] = "x";
-  //console.log("a:", dump(a));
+
   let b = [l.prevSibling, l.nextSibling, l.parent];
-  //console.log("b:", dump(b));
-  //console.log(b[2].parent.parent.up(3));
-  //console.log("apply:", l.apply(testobj));
+
+
 }
 
 function testProxyTree() {
   let tree = Util.proxyTree((path, key, value) => {
-    //console.log(`: [${dump(path)}].set(`, key, value, `)`);
+
     return true;
   });
   tree.a.b.c.d("test");
@@ -59,55 +59,12 @@ function testProxyClone() {
   obj.addProp = "1234";
   clone.newProp = "test";
 
-  //console.log("obj:", obj);
-  //console.log("clone:", Object.keys(clone));
-  //console.log("clone.addProp:", clone.addProp);
-  //console.log("clone.newProp:", clone.newProp);
-  //console.log("clone.blah:", clone.blah);
-  //console.log("clone.blah[0]", clone.blah[0]);
+
 }
 
-function testJsonPointer() {
-  var data = {
-    legumes: [
-      {
-        name: "pinto beans",
-        unit: "lbs",
-        instock: 4
-      },
-      {
-        name: "lima beans",
-        unit: "lbs",
-        instock: 21
-      },
-      {
-        name: "black eyed peas",
-        unit: "lbs",
-        instock: 13
-      },
-      {
-        name: "plit peas",
-        unit: "lbs",
-        instock: 8
-      }
-    ]
-  };
-  var pointer = ptr.append(ptr.nil, "legumes", 0);
-  var pointer2 = ptr.append(pointer, "name");
-  //console.log("pointer:", pointer);
-  //console.log("pointer2:", pointer2);
-  //console.log("ptr.get:", ptr.get(pointer)(data));
-
-  ptr.assign(pointer2)(data, "test name");
-
-  //console.log("ptr.get:", ptr.get(pointer2)(data));
-
-  //console.log("JsonPointer.flatten:", JsonPointer.flatten(data));
-  //console.log("JsonPointer.map:", JsonPointer.map(data));
-  /*
-  var ref = new JsonReference(ptr.create("/legumes/3"));
-  //console.log("ref.resolve:",ref.resolve(data));*/
+function testJsonPointer() {var data = {legumes: [{name: "pinto beans", unit: "lbs", instock: 4 }, {name: "lima beans", unit: "lbs", instock: 21 }, {name: "black eyed peas", unit: "lbs", instock: 13 }, {name: "plit peas", unit: "lbs", instock: 8 } ] }; var pointer = ptr.append(ptr.nil, "legumes", 0); var pointer2 = ptr.append(pointer, "name"); ptr.assign(pointer2)(data, "test name");
 }
+
 const filesystem = {
   readFile(filename) {
     let data = fs.readFileSync(filename).toString();
@@ -121,6 +78,16 @@ const filesystem = {
     return fs.existsSync(filename);
   }
 };
+
+var graph, project;
+
+async function testGraph(proj) {
+
+  project = proj;
+  graph = new Graph();
+  console.log("testGraph",{project,graph});
+};
+
 
 async function testEagle(filename) {
   let proj = new EagleProject(filename, filesystem);
@@ -244,7 +211,9 @@ async function testEagle(filename) {
     try {
       //testLocator();
 
-      let r = await testEagle(arg).then(result => console.log(result));
+      let project = await testEagle(arg).then(result => console.log(result));
+
+      await testGraph(project);
       //console.log("r:", r);
     } catch(err) {
       const stack = err.stack;

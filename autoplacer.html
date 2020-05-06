@@ -228,7 +228,7 @@
           resolve(doc);
         });
 
-      const SaveSVG = (window.save = async function save(filename = projectName) {
+      const SaveSVG = window.save = async function save(filename = projectName) {
         let body = ElementToXML(window.svg);
         let result = await fetch("/save", {
           method: "post",
@@ -239,7 +239,7 @@
           body
         });
         console.log("saved", result);
-      });
+      };
 
       const Button = (caption, fn) => html`
         <${Overlay} className="button" text=${caption} onPush=${fn} />
