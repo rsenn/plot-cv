@@ -33,7 +33,12 @@ console.log(
   "solar:",
   solar // 2015-03-08T11:35:30.000Z
 );
-console.log([SunCalc.getTimes(/*Date*/ new Date(), /*Number*/ gps.lat, /*Number*/ gps.lon), SunCalc.getMoonPosition(/*Date*/ new Date(), /*Number*/ gps.lat, /*Number*/ gps.lon), SunCalc.getMoonIllumination(/*Date*/ new Date()), SunCalc.getMoonTimes(/*Date*/ new Date(), /*Number*/ gps.lat, /*Number*/ gps.lon)]);
+console.log([
+  SunCalc.getTimes(/*Date*/ new Date(), /*Number*/ gps.lat, /*Number*/ gps.lon),
+  SunCalc.getMoonPosition(/*Date*/ new Date(), /*Number*/ gps.lat, /*Number*/ gps.lon),
+  SunCalc.getMoonIllumination(/*Date*/ new Date()),
+  SunCalc.getMoonTimes(/*Date*/ new Date(), /*Number*/ gps.lat, /*Number*/ gps.lon)
+]);
 
 var current_phase = lune.phase();
 console.log(current_phase);

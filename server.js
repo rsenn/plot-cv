@@ -26,7 +26,13 @@ app.get("/files.html", async (req, res) => {
   files = files.map(file => {
     const stat = fs.statSync(file);
     const { ctime, mtime, mode, size } = stat;
-    return { name: file, mtime: "" + Util.unixTime(mtime), time: "" + Util.unixTime(ctime), mode: `0${(mode & 0o4777).toString(8)}`, size: "" + size };
+    return {
+      name: file,
+      mtime: "" + Util.unixTime(mtime),
+      time: "" + Util.unixTime(ctime),
+      mode: `0${(mode & 0o4777).toString(8)}`,
+      size: "" + size
+    };
   });
 
   console.log("files:", files);
@@ -42,7 +48,8 @@ app.post("/save", async (req, res) => {
   const { body } = req;
   console.log("req.headers:", req.headers);
   console.log("save body:", body.substring(0, 100), "...");
-  const filename = req.headers["content-disposition"].replace(/.*"([^"]*)".*/, "$1") || "output.svg";
+  const filename =
+    req.headers["content-disposition"].replace(/.*"([^"]*)".*/, "$1") || "output.svg";
   let result = await fs.promises.writeFile(filename, body, { mode: 0o600, flag: "w" });
   res.json({ result });
 });
