@@ -9,7 +9,7 @@ global.console = new Console({
   inspectOptions: { depth: 10 }
 });
 
-let args = [...process.argv].slice(2);
+let args = process.argv.slice(2);
 
 let colorStr = args.shift() || "#00f";
 let color = new RGBA(colorStr);

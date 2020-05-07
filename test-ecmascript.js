@@ -1,5 +1,5 @@
 import Parser from "./lib/ecmascript/parser.js";
-import Lexer, {Stack} from "./lib/ecmascript/lexer.js";
+import Lexer, { Stack } from "./lib/ecmascript/lexer.js";
 import Printer from "./lib/ecmascript/printer.js";
 import Util from "./lib/util.js";
 import fs from "fs";
@@ -18,6 +18,9 @@ const testtmpl = `this is
 a test`;
 let args = process.argv.slice(2);
 if(args.length == 0) args.push("-");
+
+let files = args.reduce((acc, arg) => ({ ...acc, [arg]: undefined }), {});
+
 /*
 const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg">
     <defs />
@@ -34,37 +37,48 @@ const dumpFile = (name, data) => {
 
 Error.stackTraceLimit = 100;
 
-(async arg => {
-  let data, b, ret;
-  if(arg == "-") arg = "/dev/stdin";
+(async (...args) => {
+  if(args.length == 0) args.push("./lib/ecmascript/parser.js");
 
-  arg = arg || "./lib/ecmascript/parser.js";
-  data = await fs.promises.readFile(arg);
-  console.log("opened:", data);
+  for(let arg of args) {
+    let data, b, ret;
+    if(arg == "-") arg = "/dev/stdin";
 
-  let ast;
-  console.log(estree.ArrayBindig);
+    data = await fs.promises.readFile(arg);
+    console.log("opened:", data);
 
-  console.log(Util.getCallerStack());
+    let ast, fail;
+    console.log(estree.ArrayBindig);
 
-  try {
-    ast = await Parser.parse(data.toString(), arg);
-  } catch(err) {
-    console.log(err.toString());
+    console.log(Util.getCallerStack());
 
-    let stack = err.stack && err.stack.length  ? err.stack[0] : err.stack;
-    console.log(err.stack);
+    try {
+      ast = await Parser.parse(data.toString(), arg);
+    } catch(err) {
+      console.log(err.toString());
 
-    console.log( Parser.instance.trace()|| err.stack);
-    let lexer = Parser.instance.lexer;
-    let t = [];
+      let stack = err.stack && err.stack.length ? err.stack[0] : err.stack;
+      console.log(err.stack);
 
-    // console.log("currentLine:", lexer.currentLine());
+      console.log(Parser.instance.trace() || err.stack);
+      let lexer = Parser.instance.lexer;
+      let t = [];
 
-    dumpFile("trace.log", Parser.instance.trace());
+      // console.log("currentLine:", lexer.currentLine());
+
+      dumpFile("trace.log", Parser.instance.trace());
+      fail = true;
+
+      files[arg] = !fail;
+
+      let printer = new Printer({ indent: 4 });
+
+      console.log("\nAST:\n   " + printer.print(ast).replace(/\n/g, "\n  "));
+
+      console.log("finish: " + (fail ? "error" : "success"));
+    }
+    console.log("files:", files);
+
+    process.exit(Number(files.length == 0));
   }
-
-  let printer = new Printer({ indent: 4 });
-
-  console.log("output:\n" + printer.print(ast));
 })(...args);
