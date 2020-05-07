@@ -95,6 +95,75 @@
 	},
 	"buffers":
 	[
+		{
+			"contents": "MouseHandler\nclassNames\narg =>\nMouseEvents\n(e, state) =>\nContainer\n() =>\nonChange\nonPush\npushHandler\n ({ name, i, data, signal, ...item }, key) =>\n.list\nElementToXML\nLoadFile\nasync (resolve, reject) =>\nasync res =>\n.save\nButton\nLabel\nItem\nIcon\nProgress\nFile\ndata =>\npushHandler\nModifyColors\nFileList\nPanel\nloadDocument\nasync (resolve, reject) =>\nproject =>\nchooseDocument\n.onload\n({ name }, i) =>\nc =>\nc =>\nc =>\nc =>\n event =>\n event =>\n p =>\nonRuntimeInitialized: ()\nprint: txt",
+			"settings":
+			{
+				"buffer_size": 478,
+				"line_ending": "Unix",
+				"name": "𝌆 Outline",
+				"scratch": true
+			}
+		},
+		{
+			"file": "index.html",
+			"settings":
+			{
+				"buffer_size": 18340,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "style.css",
+			"settings":
+			{
+				"buffer_size": 3306,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/renderer.js",
+			"settings":
+			{
+				"buffer_size": 30534,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/dom/container.js",
+			"settings":
+			{
+				"buffer_size": 484,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/element.js",
+			"settings":
+			{
+				"buffer_size": 8382,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/dom/element.js",
+			"settings":
+			{
+				"buffer_size": 26993,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/dom/svg.js",
+			"settings":
+			{
+				"buffer_size": 11582,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -107,6 +176,14 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"out",
+				"Browse Mode: Outline (Right)"
+			],
 			[
 				"remove",
 				"Package Control: Remove Package"
@@ -121,10 +198,6 @@
 			],
 			[
 				"install ",
-				"Package Control: Install Package"
-			],
-			[
-				"install",
 				"Package Control: Install Package"
 			],
 			[
@@ -293,7 +366,6 @@
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
 		"/home/roman/Dokumente/Sources/plot-cv/lib",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/svg"
 	],
 	"file_history":
@@ -429,13 +501,14 @@
 	],
 	"find":
 	{
-		"height": 43.0
+		"height": 47.0
 	},
 	"find_in_files":
 	{
 		"height": 295.0,
 		"where_history":
 		[
+			"/home/roman/Dokumente/Sources/plot-cv/src,*.c,*.cpp,*.h,/home/roman/Dokumente/Sources/plot-cv/lib,*.js,/home/roman/Dokumente/Sources/plot-cv,*.js,*.html,*.css,<open files>",
 			"/home/roman/Dokumente/Sources/plot-cv/src,*.c,*.cpp,*.h,/home/roman/Dokumente/Sources/plot-cv/lib,/home/roman/Dokumente/Sources/plot-cv/js,*.js,<open files>",
 			"/home/roman/Dokumente/Sources/plot-cv/src,*.c,*.cpp,*.h,/home/roman/Dokumente/Sources/plot-cv/quickjs,/home/roman/Dokumente/Sources/plot-cv/js,*.js,<open files>",
 			"/home/roman/Dokumente/Sources/plot-cv/src,*.c,*.cpp,*.h,/home/roman/Dokumente/Sources/plot-cv/quickjs,*.h,/home/roman/Dokumente/Sources/plot-cv/js,*.js,<open files>",
@@ -452,6 +525,56 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"Item =",
+			"0 1",
+			"between",
+			"^\\.file",
+			"flex:",
+			"container",
+			"black",
+			"4px",
+			"margin",
+			"4px;",
+			"sidebar",
+			"inactive",
+			"pushed",
+			"Overlay =",
+			"Overlay",
+			"Button\\(",
+			"Button =",
+			"Button\\(",
+			"Button =",
+			"setCSS",
+			"gridGr",
+			"gridWid",
+			"stroke.*widt",
+			"bgColor",
+			"rgb.0,0",
+			"allCol",
+			"black",
+			"ModifyColors",
+			"Button\\(",
+			"Button =",
+			"pushHandler",
+			"pushHand",
+			"onPush",
+			"Button",
+			"invert",
+			"class Sc",
+			"renderer",
+			"class Bo",
+			"BoardRe",
+			"palette",
+			"black",
+			"basis",
+			"flex:",
+			"justify-co",
+			"justify-c",
+			"\\.file",
+			"<style",
+			"</*style",
+			"</s",
+			"\\.file",
 			"index.html",
 			"json",
 			"makeLocalS",
@@ -529,57 +652,7 @@
 			"getBound",
 			"bbox",
 			"testGra",
-			"board",
-			"board ",
-			"board =",
-			"testGra",
-			"testEa",
-			"onRen",
-			"new Graph",
-			"class ",
-			"Edge",
-			"testGr",
-			"testEag",
-			"ret",
-			"lowerLimit",
-			"substring",
-			"\\.source",
-			" CALL ",
-			"parseNewOrCallOrMemberExpression",
-			"parsePrimary",
-			" parseFun",
-			" parseAssignmentExpression",
-			" parseConditionalExpression",
-			"parseAssignmentExpression",
-			"parseConditionalExpression()",
-			" parseFun",
-			" parseAss",
-			" parseFun",
-			" parseAssignmentExpression",
-			"parseAssignmentExpression",
-			" parseFunc",
-			"class [^ ]*function",
-			"class [^ ]*param",
-			"FunctionDec",
-			"argument",
-			"DefaultA",
-			"=\"",
-			" parse[^ ]*assign",
-			"parse[^ ]*assign",
-			"parse[^ ]*default",
-			" parse[^ ]*func",
-			" parseForStatement(insideFunc",
-			" parse[^ ]*func",
-			" parse[^ ]*assign",
-			"parse[^ ]*assign",
-			"assignment",
-			"1285",
-			"ors\\(\"=\"",
-			"parseBind",
-			"ArrayBin",
-			"estree.Array",
-			"estree",
-			"ArrayBind"
+			"board"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -715,19 +788,1987 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 478,
+						"regions":
+						{
+						},
+						"selection":
+						[
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/index.html",
+							"outline_rename_mode": false,
+							"symkeys":
+							[
+								[
+									4138,
+									4169
+								],
+								[
+									4309,
+									4334
+								],
+								[
+									4355,
+									4361
+								],
+								[
+									4428,
+									4446
+								],
+								[
+									4825,
+									4838
+								],
+								[
+									5366,
+									5426
+								],
+								[
+									5449,
+									5454
+								],
+								[
+									5735,
+									5751
+								],
+								[
+									5764,
+									5778
+								],
+								[
+									5878,
+									5910
+								],
+								[
+									6168,
+									6222
+								],
+								[
+									7641,
+									7668
+								],
+								[
+									7982,
+									8001
+								],
+								[
+									8120,
+									8142
+								],
+								[
+									8163,
+									8189
+								],
+								[
+									8252,
+									8264
+								],
+								[
+									8693,
+									8744
+								],
+								[
+									9110,
+									9139
+								],
+								[
+									9246,
+									9311
+								],
+								[
+									9401,
+									9462
+								],
+								[
+									9631,
+									9691
+								],
+								[
+									9814,
+									9862
+								],
+								[
+									10419,
+									10471
+								],
+								[
+									10561,
+									10568
+								],
+								[
+									10609,
+									10637
+								],
+								[
+									11109,
+									11134
+								],
+								[
+									11377,
+									11412
+								],
+								[
+									11716,
+									11743
+								],
+								[
+									11833,
+									11869
+								],
+								[
+									11890,
+									11916
+								],
+								[
+									12045,
+									12055
+								],
+								[
+									14321,
+									14356
+								],
+								[
+									14759,
+									14780
+								],
+								[
+									15570,
+									15586
+								],
+								[
+									15988,
+									15992
+								],
+								[
+									16006,
+									16010
+								],
+								[
+									16155,
+									16159
+								],
+								[
+									16173,
+									16177
+								],
+								[
+									16414,
+									16432
+								],
+								[
+									16785,
+									16794
+								],
+								[
+									17708,
+									17713
+								],
+								[
+									17809,
+									17836
+								],
+								[
+									17987,
+									18000
+								]
+							],
+							"symlist":
+							[
+								"MouseHandler",
+								"classNames",
+								"arg =>",
+								"MouseEvents",
+								"(e, state) =>",
+								"Container",
+								"() =>",
+								"onChange",
+								"onPush",
+								"pushHandler",
+								" ({ name, i, data, signal, ...item }, key) =>",
+								".list",
+								"ElementToXML",
+								"LoadFile",
+								"async (resolve, reject) =>",
+								"async res =>",
+								".save",
+								"Button",
+								"Label",
+								"Item",
+								"Icon",
+								"Progress",
+								"File",
+								"data =>",
+								"pushHandler",
+								"ModifyColors",
+								"FileList",
+								"Panel",
+								"loadDocument",
+								"async (resolve, reject) =>",
+								"project =>",
+								"chooseDocument",
+								".onload",
+								"({ name }, i) =>",
+								"c =>",
+								"c =>",
+								"c =>",
+								"c =>",
+								" event =>",
+								" event =>",
+								" p =>",
+								"onRuntimeInitialized: ()",
+								"print: txt"
+							],
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				}
 			]
 		},
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 1,
+					"file": "index.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 18340,
+						"regions":
+						{
+							"col_010101FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										10123,
+										10128
+									],
+									[
+										12358,
+										12363
+									]
+								],
+								"scope": "col_010101FF"
+							},
+							"col_010101FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_010101FF_circle.png",
+								"regions":
+								[
+									[
+										10096,
+										10096
+									],
+									[
+										12272,
+										12272
+									]
+								],
+								"scope": "col_gutter"
+							}
+						},
+						"selection":
+						[
+							[
+								9551,
+								9551
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/JavaScriptNext - ES6 Syntax/Next.tmTheme",
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 8067.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "style.css",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3306,
+						"regions":
+						{
+							"col_00000001":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										2106,
+										2128
+									]
+								],
+								"scope": "col_00000001"
+							},
+							"col_00000001_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_00000001_circle.png",
+								"regions":
+								[
+									[
+										2086,
+										2086
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_0000007F":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										1041,
+										1059
+									]
+								],
+								"scope": "col_0000007F"
+							},
+							"col_0000007F_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_0000007F_circle.png",
+								"regions":
+								[
+									[
+										978,
+										978
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_000000B2":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										270,
+										288
+									],
+									[
+										1136,
+										1154
+									]
+								],
+								"scope": "col_000000B2"
+							},
+							"col_000000B2_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_000000B2_circle.png",
+								"regions":
+								[
+									[
+										244,
+										244
+									],
+									[
+										1110,
+										1110
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_0043CCFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										1215,
+										1238
+									]
+								],
+								"scope": "col_0043CCFF"
+							},
+							"col_0043CCFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_0043CCFF_circle.png",
+								"regions":
+								[
+									[
+										1178,
+										1178
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_0054FFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										948,
+										965
+									],
+									[
+										1244,
+										1267
+									]
+								],
+								"scope": "col_0054FFFF"
+							},
+							"col_0054FFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_0054FFFF_circle.png",
+								"regions":
+								[
+									[
+										924,
+										924
+									],
+									[
+										1178,
+										1178
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_010101FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										562,
+										567
+									],
+									[
+										1926,
+										1931
+									]
+								],
+								"scope": "col_010101FF"
+							},
+							"col_010101FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_010101FF_circle.png",
+								"regions":
+								[
+									[
+										535,
+										535
+									],
+									[
+										1917,
+										1917
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_283D3DFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										2171,
+										2189
+									],
+									[
+										2316,
+										2334
+									]
+								],
+								"scope": "col_283D3DFF"
+							},
+							"col_283D3DFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_283D3DFF_circle.png",
+								"regions":
+								[
+									[
+										2145,
+										2145
+									],
+									[
+										2290,
+										2290
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_3276FFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										1273,
+										1296
+									]
+								],
+								"scope": "col_3276FFFF"
+							},
+							"col_3276FFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_3276FFFF_circle.png",
+								"regions":
+								[
+									[
+										1178,
+										1178
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_32FF327F":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										2925,
+										2950
+									]
+								],
+								"scope": "col_32FF327F"
+							},
+							"col_32FF327F_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_32FF327F_circle.png",
+								"regions":
+								[
+									[
+										2911,
+										2911
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_5432FFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										2264,
+										2287
+									]
+								],
+								"scope": "col_5432FFFF"
+							},
+							"col_5432FFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_5432FFFF_circle.png",
+								"regions":
+								[
+									[
+										2244,
+										2244
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_7F7F7FFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										2773,
+										2794
+									]
+								],
+								"scope": "col_7F7F7FFF"
+							},
+							"col_7F7F7FFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_7F7F7FFF_circle.png",
+								"regions":
+								[
+									[
+										2753,
+										2753
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_B7BEE0CC":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										2727,
+										2751
+									],
+									[
+										3230,
+										3254
+									]
+								],
+								"scope": "col_B7BEE0CC"
+							},
+							"col_B7BEE0CC_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_B7BEE0CC_circle.png",
+								"regions":
+								[
+									[
+										2705,
+										2705
+									],
+									[
+										3206,
+										3206
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_CCCCCCFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										1696,
+										1715
+									]
+								],
+								"scope": "col_CCCCCCFF"
+							},
+							"col_CCCCCCFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_CCCCCCFF_circle.png",
+								"regions":
+								[
+									[
+										1674,
+										1674
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_F4FFF4FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										2009,
+										2028
+									]
+								],
+								"scope": "col_F4FFF4FF"
+							},
+							"col_F4FFF4FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_F4FFF4FF_circle.png",
+								"regions":
+								[
+									[
+										1995,
+										1995
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FEFF327F":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										2848,
+										2872
+									]
+								],
+								"scope": "col_FEFF327F"
+							},
+							"col_FEFF327F_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FEFF327F_circle.png",
+								"regions":
+								[
+									[
+										2834,
+										2834
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF0000FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										2562,
+										2580
+									]
+								],
+								"scope": "col_FF0000FF"
+							},
+							"col_FF0000FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF0000FF_circle.png",
+								"regions":
+								[
+									[
+										2548,
+										2548
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFFF4FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										1961,
+										1979
+									]
+								],
+								"scope": "col_FFFFF4FF"
+							},
+							"col_FFFFF4FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFFF4FF_circle.png",
+								"regions":
+								[
+									[
+										1947,
+										1947
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										1014,
+										1036
+									],
+									[
+										1322,
+										1327
+									],
+									[
+										2059,
+										2064
+									]
+								],
+								"scope": "col_FFFFFFFF"
+							},
+							"col_FFFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										978,
+										978
+									],
+									[
+										1313,
+										1313
+									],
+									[
+										2045,
+										2045
+									]
+								],
+								"scope": "col_gutter"
+							}
+						},
+						"selection":
+						[
+							[
+								3304,
+								3304
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/JavaScriptNext - ES6 Syntax/Next.tmTheme",
+							"syntax": "Packages/CSS/CSS.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 6019.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "lib/eagle/renderer.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 30534,
+						"regions":
+						{
+							"col_0017B9FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										17903,
+										17916
+									]
+								],
+								"scope": "col_0017B9FF"
+							},
+							"col_0017B9FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_0017B9FF_circle.png",
+								"regions":
+								[
+									[
+										17898,
+										17898
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_0022CCFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										17834,
+										17851
+									]
+								],
+								"scope": "col_0022CCFF"
+							},
+							"col_0022CCFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_0022CCFF_circle.png",
+								"regions":
+								[
+									[
+										17829,
+										17829
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_007E18FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										17882,
+										17895
+									]
+								],
+								"scope": "col_007E18FF"
+							},
+							"col_007E18FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_007E18FF_circle.png",
+								"regions":
+								[
+									[
+										17877,
+										17877
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_010101FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										20821,
+										20826
+									],
+									[
+										25766,
+										25776
+									],
+									[
+										26770,
+										26777
+									]
+								],
+								"scope": "col_010101FF"
+							},
+							"col_010101FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_010101FF_circle.png",
+								"regions":
+								[
+									[
+										20796,
+										20796
+									],
+									[
+										25708,
+										25708
+									],
+									[
+										26746,
+										26746
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_10063DFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										18126,
+										18138
+									]
+								],
+								"scope": "col_10063DFF"
+							},
+							"col_10063DFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_10063DFF_circle.png",
+								"regions":
+								[
+									[
+										18121,
+										18121
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_3255FF4C":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										24710,
+										24732
+									]
+								],
+								"scope": "col_3255FF4C"
+							},
+							"col_3255FF4C_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_3255FF4C_circle.png",
+								"regions":
+								[
+									[
+										24689,
+										24689
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_32FEFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										20776,
+										20793
+									]
+								],
+								"scope": "col_32FEFFFF"
+							},
+							"col_32FEFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_32FEFFFF_circle.png",
+								"regions":
+								[
+									[
+										20753,
+										20753
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_3E2E19FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										17943,
+										17956
+									]
+								],
+								"scope": "col_3E2E19FF"
+							},
+							"col_3E2E19FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_3E2E19FF_circle.png",
+								"regions":
+								[
+									[
+										17938,
+										17938
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4B4B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										13904,
+										13911
+									]
+								],
+								"scope": "col_4B4B4BFF"
+							},
+							"col_4B4B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4B4BFF_circle.png",
+								"regions":
+								[
+									[
+										13899,
+										13899
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4B4BA5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										13709,
+										13716
+									]
+								],
+								"scope": "col_4B4BA5FF"
+							},
+							"col_4B4BA5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4BA5FF_circle.png",
+								"regions":
+								[
+									[
+										13704,
+										13704
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4B4BFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										13814,
+										13821
+									]
+								],
+								"scope": "col_4B4BFFFF"
+							},
+							"col_4B4BFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4BFFFF_circle.png",
+								"regions":
+								[
+									[
+										13809,
+										13809
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BA54BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										13724,
+										13731
+									],
+									[
+										14998,
+										15005
+									]
+								],
+								"scope": "col_4BA54BFF"
+							},
+							"col_4BA54BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BA54BFF_circle.png",
+								"regions":
+								[
+									[
+										13719,
+										13719
+									],
+									[
+										14979,
+										14979
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BA5A5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										13739,
+										13746
+									]
+								],
+								"scope": "col_4BA5A5FF"
+							},
+							"col_4BA5A5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BA5A5FF_circle.png",
+								"regions":
+								[
+									[
+										13734,
+										13734
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BFF4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										13829,
+										13836
+									]
+								],
+								"scope": "col_4BFF4BFF"
+							},
+							"col_4BFF4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BFF4BFF_circle.png",
+								"regions":
+								[
+									[
+										13824,
+										13824
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										13844,
+										13851
+									]
+								],
+								"scope": "col_4BFFFFFF"
+							},
+							"col_4BFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										13839,
+										13839
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4F0900FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										17924,
+										17935
+									]
+								],
+								"scope": "col_4F0900FF"
+							},
+							"col_4F0900FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4F0900FF_circle.png",
+								"regions":
+								[
+									[
+										17919,
+										17919
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_695221FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										18011,
+										18025
+									]
+								],
+								"scope": "col_695221FF"
+							},
+							"col_695221FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_695221FF_circle.png",
+								"regions":
+								[
+									[
+										18006,
+										18006
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_84946DFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										18079,
+										18095
+									]
+								],
+								"scope": "col_84946DFF"
+							},
+							"col_84946DFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_84946DFF_circle.png",
+								"regions":
+								[
+									[
+										18074,
+										18074
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_8C5F33FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										18057,
+										18071
+									]
+								],
+								"scope": "col_8C5F33FF"
+							},
+							"col_8C5F33FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_8C5F33FF_circle.png",
+								"regions":
+								[
+									[
+										18052,
+										18052
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A54B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										13754,
+										13761
+									],
+									[
+										15613,
+										15620
+									]
+								],
+								"scope": "col_A54B4BFF"
+							},
+							"col_A54B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A54B4BFF_circle.png",
+								"regions":
+								[
+									[
+										13749,
+										13749
+									],
+									[
+										15592,
+										15592
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A54BA5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										13769,
+										13776
+									]
+								],
+								"scope": "col_A54BA5FF"
+							},
+							"col_A54BA5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A54BA5FF_circle.png",
+								"regions":
+								[
+									[
+										13764,
+										13764
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A5A54BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										13784,
+										13791
+									]
+								],
+								"scope": "col_A5A54BFF"
+							},
+							"col_A5A54BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A5A54BFF_circle.png",
+								"regions":
+								[
+									[
+										13779,
+										13779
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A5A5A5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										13919,
+										13926
+									]
+								],
+								"scope": "col_A5A5A5FF"
+							},
+							"col_A5A5A5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A5A5A5FF_circle.png",
+								"regions":
+								[
+									[
+										13914,
+										13914
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A8A620FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										18103,
+										18118
+									]
+								],
+								"scope": "col_A8A620FF"
+							},
+							"col_A8A620FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A8A620FF_circle.png",
+								"regions":
+								[
+									[
+										18098,
+										18098
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_AFAFAFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										13799,
+										13806
+									]
+								],
+								"scope": "col_AFAFAFFF"
+							},
+							"col_AFAFAFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_AFAFAFFF_circle.png",
+								"regions":
+								[
+									[
+										13794,
+										13794
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_B21B00FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										18146,
+										18159
+									]
+								],
+								"scope": "col_B21B00FF"
+							},
+							"col_B21B00FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_B21B00FF_circle.png",
+								"regions":
+								[
+									[
+										18141,
+										18141
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_CCCCCCFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										18167,
+										18181
+									]
+								],
+								"scope": "col_CCCCCCFF"
+							},
+							"col_CCCCCCFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_CCCCCCFF_circle.png",
+								"regions":
+								[
+									[
+										18162,
+										18162
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FBFCF7FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										18033,
+										18049
+									]
+								],
+								"scope": "col_FBFCF7FF"
+							},
+							"col_FBFCF7FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FBFCF7FF_circle.png",
+								"regions":
+								[
+									[
+										18028,
+										18028
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FCF526FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										17859,
+										17874
+									]
+								],
+								"scope": "col_FCF526FF"
+							},
+							"col_FCF526FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FCF526FF_circle.png",
+								"regions":
+								[
+									[
+										17854,
+										17854
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF0000FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										5596,
+										5608
+									]
+								],
+								"scope": "col_FF0000FF"
+							},
+							"col_FF0000FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF0000FF_circle.png",
+								"regions":
+								[
+									[
+										5533,
+										5533
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF00FFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										8567,
+										8571
+									]
+								],
+								"scope": "col_FF00FFFF"
+							},
+							"col_FF00FFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF00FFFF_circle.png",
+								"regions":
+								[
+									[
+										8548,
+										8548
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF4B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										13859,
+										13866
+									]
+								],
+								"scope": "col_FF4B4BFF"
+							},
+							"col_FF4B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF4B4BFF_circle.png",
+								"regions":
+								[
+									[
+										13854,
+										13854
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF4BFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										13874,
+										13881
+									]
+								],
+								"scope": "col_FF4BFFFF"
+							},
+							"col_FF4BFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF4BFFFF_circle.png",
+								"regions":
+								[
+									[
+										13869,
+										13869
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF8C19FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										17964,
+										17980
+									]
+								],
+								"scope": "col_FF8C19FF"
+							},
+							"col_FF8C19FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF8C19FF_circle.png",
+								"regions":
+								[
+									[
+										17959,
+										17959
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFB453FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										17988,
+										18003
+									]
+								],
+								"scope": "col_FFB453FF"
+							},
+							"col_FFB453FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFB453FF_circle.png",
+								"regions":
+								[
+									[
+										17983,
+										17983
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFF4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										13889,
+										13896
+									]
+								],
+								"scope": "col_FFFF4BFF"
+							},
+							"col_FFFF4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFF4BFF_circle.png",
+								"regions":
+								[
+									[
+										13884,
+										13884
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										13694,
+										13701
+									],
+									[
+										25745,
+										25761
+									]
+								],
+								"scope": "col_FFFFFFFF"
+							},
+							"col_FFFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										13689,
+										13689
+									],
+									[
+										25708,
+										25708
+									]
+								],
+								"scope": "col_gutter"
+							}
+						},
+						"selection":
+						[
+							[
+								28026,
+								28026
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/JavaScriptNext - ES6 Syntax/Next.tmTheme",
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 32522.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "lib/dom/container.js",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 484,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/JavaScriptNext - ES6 Syntax/Next.tmTheme",
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "lib/eagle/element.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8382,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8382,
+								8382
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 8945.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "lib/dom/element.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 26993,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								14577,
+								14577
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 14321.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "lib/dom/svg.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11582,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3132,
+								3132
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/JavaScriptNext - ES6 Syntax/Next.tmTheme",
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2464.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 43.0
+		"height": 41.0
 	},
 	"input":
 	{
@@ -789,7 +2830,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 82.0
+		"height": 78.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -799,8 +2840,20 @@
 		"selected_items":
 		[
 			[
+				"dom/ele",
+				"lib/dom/element.js"
+			],
+			[
+				"eleme",
+				"lib/eagle/element.js"
+			],
+			[
 				"render",
 				"lib/eagle/renderer.js"
+			],
+			[
+				"index",
+				"index.html"
 			],
 			[
 				"server",
@@ -892,10 +2945,6 @@
 			],
 			[
 				"elemen",
-				"lib/eagle/element.js"
-			],
-			[
-				"eleme",
 				"lib/eagle/element.js"
 			],
 			[
@@ -1301,14 +3350,6 @@
 			[
 				"quickjs",
 				"quickjs/quickjs.h"
-			],
-			[
-				"dom",
-				"lib/dom.js"
-			],
-			[
-				"gl-ma",
-				"~/Dokumente/Sources/affine/gl-matrix/dist/gl-matrix.js"
 			]
 		],
 		"width": 0.0

@@ -2,23 +2,16 @@
   <head>
     <title>EAGLE renderer</title>
     <script type="module">
+      // prettier-ignore-start
       import Autoplacer from "./lib/autoplacer/autoplacer.js";
       import { isPoint, Point } from "./lib/geom/point.js";
       import { PointList } from "./lib/geom/pointList.js";
       import { isRect, Rect } from "./lib/geom/rect.js";
       import { isSize, Size } from "./lib/geom/size.js";
       import { isLine, Line } from "./lib/geom/line.js";
-      import {
-        Transformation,
-        Rotation,
-        Translation,
-        Scaling,
-        MatrixTransformation,
-        TransformationList
-      } from "./lib/geom/transformation.js";
+      import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from "./lib/geom/transformation.js";
       import { Element } from "./lib/dom/element.js";
       import { Matrix } from "./lib/geom/matrix.js";
-      //  import { Select } from './lib/dom/select.js';
       import { SVG } from "./lib/dom/svg.js";
       import { BBox } from "./lib/geom/bbox.js";
       import { ScrollDisabler } from "./lib/scrollHandler.js";
@@ -33,45 +26,41 @@
       import { EagleElement } from "./lib/eagle/element.js";
       import { EaglePath, EagleReference } from "./lib/eagle/locator.js";
       import { toXML, EagleInterface } from "./lib/eagle/common.js";
-      import {
-        renderDocument,
-        EagleRenderer,
-        SchematicRenderer,
-        BoardRenderer
-      } from "./lib/eagle/renderer.js";
+      import { renderDocument, EagleRenderer, SchematicRenderer, BoardRenderer } from "./lib/eagle/renderer.js";
       import { devtools } from "./lib/devtools.js";
-      //fd import { devpane } from "./lib/devpane.js";
       import Util from "./lib/util.js";
       import tXml from "./lib/tXml.js";
       import { crosskit } from "./lib/crosskit.js";
       import deep from "./lib/deep.js";
-      import {
-        hydrate,
-        Fragment,
-        createRef,
-        isValidElement,
+      import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from "./modules/preact/dist/preact.mjs";
+      import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from "./modules/htm/preact/standalone.mjs";
+      import { CTORS, estree } from "./lib/ecmascript.js"; // prettier-ignore-end
+
+      const React = {
         cloneElement,
-        toChildArray
-      } from "./modules/preact/dist/preact.mjs";
-      import {
-        h,
-        html,
-        render,
         Component,
         createContext,
-        useState,
-        useReducer,
-        useEffect,
-        useLayoutEffect,
-        useRef,
-        useImperativeHandle,
-        useMemo,
+        createRef,
+        Fragment,
+        h,
+        html,
+        hydrate,
+        isValidElement,
+        render,
+        toChildArray,
         useCallback,
         useContext,
-        useDebugValue
-      } from "./modules//htm/preact/standalone.mjs";
-      /* prettier-ignore */ import {ArrayBinding, ArrayLiteral, ArrowFunction, AssignmentExpression, AwaitExpression, BinaryExpression, BindingPattern, BindingProperty, BlockStatement, BreakStatement, CallExpression, ClassDeclaration, ConditionalExpression, ContinueStatement, CTORS, Declaration, DecoratorExpression, DoStatement, EmptyStatement, estree, Expression, ExpressionStatement, Factory, ForInStatement, ForStatement, FunctionDeclaration, Identifier, IfStatement, ImportStatement, InExpression, JSXLiteral, Lexer, Literal, LogicalExpression, MemberExpression, NewExpression, Node, ObjectBinding, ObjectLiteral, Parser, Printer, Program, RestOfExpression, ReturnStatement, SequenceExpression, Statement, StatementList, ThisExpression, ThrowStatement, Token, tokenTypes, TryStatement, UnaryExpression, UpdateExpression, VariableDeclaration, VariableDeclarator, WhileStatement, WithStatement } from "./lib/ecmascript.js";
-      /* prettier-ignore */ const React = {cloneElement, Component, createContext, createRef, Fragment, h, html, hydrate, isValidElement, render, toChildArray, useCallback, useContext, useDebugValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useReducer, useRef, useState, ColorMap, devtools };
+        useDebugValue,
+        useEffect,
+        useImperativeHandle,
+        useLayoutEffect,
+        useMemo,
+        useReducer,
+        useRef,
+        useState,
+        ColorMap,
+        devtools
+      };
 
       var projectName = "Headphone-Amplifier-ClassAB-alt3";
       var palette = null;
@@ -90,8 +79,7 @@
         }
       };
 
-      const classNames = (...args) =>
-        args.filter(arg => typeof arg == "string" && arg.length > 0).join(" ");
+      const classNames = (...args) => args.filter(arg => typeof arg == "string" && arg.length > 0).join(" ");
 
       const MouseEvents = h => ({
         onMouseDown: h,
@@ -100,14 +88,7 @@
         onMouseUp: h
       });
 
-      const Overlay = ({
-        className = "overlay",
-        active = false,
-        onPush,
-        text,
-        children,
-        ...props
-      }) => {
+      const Overlay = ({ className = "overlay", active = false, onPush, text, children, ...props }) => {
         const [pushed, setPushed] = useState(false);
         const events = MouseEvents(
           MouseHandler((e, state) => {
@@ -119,11 +100,7 @@
         );
 
         return html`
-          <div
-            className=${classNames(className, pushed && "pushed", active ? "active" : "inactive")}
-            ...${props}
-            ...${events}
-          >
+          <div className=${classNames(className, pushed && "pushed", active ? "active" : "inactive")} ...${props} ...${events}>
             ${text} ${children}
           </div>
         `;
@@ -136,15 +113,7 @@
         `;
       };
 
-      const Chooser = ({
-        className = "list",
-        itemClass = "item",
-        itemComponent = Overlay,
-        items,
-        onChange = () => {},
-        onPush = () => {},
-        ...props
-      }) => {
+      const Chooser = ({ className = "list", itemClass = "item", itemComponent = Overlay, items, onChange = () => {}, onPush = () => {}, ...props }) => {
         const [active, setActive] = useState(-1);
         const pushHandler = i => (e, state) => {
           const prev = active;
@@ -156,23 +125,10 @@
         const children = items.map(
           ({ name, i, data, signal, ...item }, key) =>
             html`
-              <${itemComponent}
-                key=${key || i}
-                className=${classNames(
-                  itemClass || className + "-item",
-                  (name + "").replace(/.*\./, "")
-                )}
-                active=${i == active}
-                onPush=${pushHandler(i)}
-                text="${name}"
-                ...${item}
-              />
+              <${itemComponent} key=${key || i} className=${classNames(itemClass || className + "-item", (name + "").replace(/.*\./, ""))} active=${i == active} onPush=${pushHandler(i)} text="${name}" ...${item} />
             `
         );
-        return html`<${Container} className=${classNames(
-          "panel",
-          className
-        )} ...${props}>${children}</${Container}>`;
+        return html`<${Container} className=${classNames("panel", className)} ...${props}>${children}</${Container}>`;
       };
       console.log("running");
       console.log("dom", { Rect, Element, parseSchematic });
@@ -192,11 +148,13 @@
         chunk = chunk ? await utf8Decoder.decode(chunk) : "";
         return chunk;
       });
+
       const ElementToXML = e => {
         const x = Element.toObject(e);
         console.log("x:", x);
         return toXML(x);
       };
+
       const LoadFile = filename =>
         new Promise(async (resolve, reject) => {
           let xml = await fetch(`/static/${filename}`).then(async res => {
@@ -226,19 +184,26 @@
         console.log("saved", result);
       });
 
-      const Button = (caption, fn) => html`
+      const Button = ({ caption, fn }) => html`
         <${Overlay} className="button" text=${caption} onPush=${fn} />
       `;
+
+      const Label = ({ className = "label", caption, children, ...props }) =>
+        html`
+          <div className=${className} ...${props}>${caption}${children}</div>
+        `;
+
       const Item = ({ className = "item", label, children, ...props }) => html`
-            <${Overlay} className=${className} text=${label} ...${props}>${children}</${Overlay}>
+            <${Overlay} className=${className} text=${label} ...${props}><${Label} caption=${label} />
+            </${Overlay}>
           `;
 
+      const Icon = ({ className = "icon", caption, image, ...props }) => html`
+        <div className=${className} ...${props}>${caption}<img src=${image} /></div>
+      `;
+
       const Progress = ({ className, percent, ...props }) => html`
-                <${Overlay} className=${classNames(
-        "progress",
-        "center",
-        className
-      )} text=${percent + "%"} style=${{
+                <${Overlay} className=${classNames("progress", "center", className)} text=${percent + "%"} style=${{
         position: "relative",
         width: "100%",
         height: "1.5em",
@@ -263,9 +228,7 @@
         let id = name || key || i;
         if(id) id = (id + "").replace(/[^._A-Za-z0-9]/g, "-");
         return html`
-              <${Item} className=file id=${id} data-filename="${name}" onPush=${pushHandler} ...${props}>${name}<${Progress} className=${
-          !isNaN(loaded) ? "visible" : "hidden"
-        } percent=${loaded} /></${Item}>
+              <${Item} className=file id=${id} data-filename="${name}" onPush=${pushHandler} ...${props}>${name}<${Progress} className=${!isNaN(loaded) ? "visible" : "hidden"} percent=${loaded} /></${Item}>
             `;
       };
 
@@ -280,17 +243,18 @@
       };
       const FileList = ({ files, ...props }) => {
         return html`
+        <${Overlay}
+        className="sidebar">
           <${Chooser}
             className="list"
             itemComponent=${File}
             itemClass="file hcenter"
             items=${files}
             ...${props}
-          />
+          /></${Overlay}>
         `;
       };
-      const Panel = (name, children) =>
-        html`<${Container} className="${name}">${children}</${Container}>`;
+      const Panel = (name, children) => html`<${Container} className="${name}">${children}</${Container}>`;
 
       const loadDocument = (proj, parentElem) =>
         new Promise(async (resolve, reject) => {
@@ -300,12 +264,7 @@
           let doc = await LoadFile(name);
           window.eagle = doc;
           //console.log('document:', doc);
-          if(!element)
-            element = Element.create(
-              "div",
-              { style: { position: "relative", "data-name": name, border: "1px dotted black" } },
-              parentElem
-            );
+          if(!element) element = Element.create("div", { style: { position: "relative", "data-name": name, border: "1px dotted black" } }, parentElem);
           //let svg = Element.create('svg', { viewBox:  } , element);
           window.renderer = renderDocument(doc, element);
           if(!svg) svg = Element.find("svg", element);
@@ -404,14 +363,14 @@
         if(response) {
           let data = JSON.parse(response);
           let { files } = data;
-          console.log("result:", files);
+          console.log(`Got ${files.length} files`);
           projectFiles = window.files = files;
           //  CreateSelect(files);
           projects = projectFiles.map(({ name }, i) => {
             let signal = trkl({ percent: NaN });
             let proj = { name, i, signal };
             trkl.bind(proj, "data", signal);
-            console.log("project:", proj);
+            //console.log("project:", proj);
             return proj;
           });
         }
@@ -421,14 +380,15 @@
         React.render(
           [
             Panel("buttons", [
-              Button(
-                "Random",
-                ModifyColors(c => c.replaceAll(c => HSLA.random()))
-              ),
-              Button(
-                "Invert",
-                ModifyColors(c => c.replaceAll(c => c.invert()))
-              )
+              h(Button, {
+                caption: "Random",
+                onPush: ModifyColors(c => c.replaceAll(c => HSLA.random()))
+              }),
+
+              h(Button, {
+                caption: "Invert",
+                fn: ModifyColors(c => c.replaceAll(c => c.invert()))
+              })
             ]),
             html`
               <${FileList} items=${projects} onChange=${chooseDocument} />

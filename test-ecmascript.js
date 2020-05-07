@@ -24,10 +24,14 @@ const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" view
 
 */
 const dumpFile = (name, data) => {
-  if(typeof data != "string") {
-    if(Util.isArray(data)) data = data.join("\n");
-  }
+
+    if(Util.isArray(data)) 
+      data = data.join("\n");
+  if(typeof data != "string")
+    data = ''+data;
+  
   fs.writeFileSync(name, data + "\n");
+
   console.log(`Wrote '${name}': ${data.length} bytes`);
 };
 
@@ -47,10 +51,12 @@ Error.stackTraceLimit = 100;
   console.log(Util.getCallerStack());
 
   try {
-    ast = await Parser.parse(data.toString());
+    ast = await Parser.parse(data.toString(), arg);
   } catch(err) {
-    console.log("ERROR: " + err.toString());
-    console.log("Stack:", err.stack);
+
+    console.log( err.toString());
+
+    console.log(err.stack.join("\n"));
     let lexer = Parser.instance.lexer;
     let t = [];
 
