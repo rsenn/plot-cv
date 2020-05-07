@@ -32,8 +32,8 @@ app.get("/files.html", async (req, res) => {
   res.type("json");
   res.json({ files });
 });
-app.get("/autoplacer.html", (req, res) => {
-  res.sendFile(path.join(p, "autoplacer.html"));
+app.get("/index.html", (req, res) => {
+  res.sendFile(path.join(p, "index.html"));
 });
 
 app.post("/save", async (req, res) => {
@@ -46,7 +46,7 @@ app.post("/save", async (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.redirect(302, "/autoplacer.html");
+  res.redirect(302, "/index.html");
 });
 const port = process.env.PORT || 3000;
 

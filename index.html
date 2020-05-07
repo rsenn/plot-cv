@@ -224,13 +224,42 @@
           let bounds = doc.getBounds();
           let rect = bounds.rect;
           let size = new Size(rect);
-          console.log("setRect", { svg, grid, bbox, bounds, rect });
+
+          size.mul(doc.type == "brd" ? 2 : 1.5);
+          //    let aspectRatios = [Element.rect(element).aspect(), ];
+
+          let svgrect = SVG.bbox(svg);
+          let aspectRatio = svgrect.aspect();
+
+          Element.attr(element, { "data-filename": name, "data-aspect": aspectRatio, "data-width": size.width + "mm", "data-height": size.height + "mm" });
+
+          svg.setAttribute("data-aspect", aspectRatio);
+
+          //  console.log("setRect", { svg, grid, bbox, bounds, rect });
+
           let css = size.toCSS({ width: "mm", height: "mm" });
-          console.log("size.toCSS", css);
-          //Element.setCSS(svg, { ..., position: 'relative' });
-          console.log("setRect", svg);
-          console.log("setRect", css);
-          Object.assign(svg.style, css);
+
+          //console.log("size.toCSS", css);
+          //  Element.move(svg, Point(0,0), 'relative');
+          //
+          //console.log("setRect", svg);
+          //console.log("setRect", css);
+          //
+
+          Object.assign(svg.style, { "min-width": `${size.width}mm`, "min-height": `${size.height}mm` });
+          Element.setCSS(svg, { left: 0, top: 0, position: "relative" });
+
+          let w, h;
+
+          //h = (100 / aspectRatio).toFixed(4)+'%';
+
+          //   let rect = Element.rect(element);
+
+          //let padding = (100 / aspect).toFixed(4)+'%';
+          //   Element.setCSS(element, { position: 'relative', width: '100%', height, padding: `0 0 0 0` });
+
+          Element.setCSS(Element.find("svg", svg), { left: 0, top: 0, position: "relative" });
+
           signal({ ...proj, loaded: true, bbox, element, svg });
           return signal();
         });
