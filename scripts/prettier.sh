@@ -7,7 +7,7 @@ if ! type prettier 2>/dev/null >/dev/null; then
 fi
 
 prettier() {
-  command prettier \
+ ( set -- ${PRETTIER:-prettier} \
     $OPTS \
     --jsx-single-quote \
     --trailing-comma none \
@@ -16,7 +16,7 @@ prettier() {
     --semi \
     --bracket-spacing \
     --no-insert-pragma \
-    "$@"
+    "$@"; ${DEBUG:-false} && echo "$@" 1>&2; command "$@")
 }
 EXPR='1 { /@format/ { N; /\n$/ { d } } }'
 for KW in "if" "for" "do" "while" "catch"; do

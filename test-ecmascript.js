@@ -1,5 +1,5 @@
 import Parser from "./lib/ecmascript/parser.js";
-import Lexer from "./lib/ecmascript/lexer.js";
+import Lexer, {Stack} from "./lib/ecmascript/lexer.js";
 import Printer from "./lib/ecmascript/printer.js";
 import Util from "./lib/util.js";
 import fs from "fs";
@@ -24,12 +24,9 @@ const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" view
 
 */
 const dumpFile = (name, data) => {
+  if(Util.isArray(data)) data = data.join("\n");
+  if(typeof data != "string") data = "" + data;
 
-    if(Util.isArray(data)) 
-      data = data.join("\n");
-  if(typeof data != "string")
-    data = ''+data;
-  
   fs.writeFileSync(name, data + "\n");
 
   console.log(`Wrote '${name}': ${data.length} bytes`);
@@ -53,16 +50,18 @@ Error.stackTraceLimit = 100;
   try {
     ast = await Parser.parse(data.toString(), arg);
   } catch(err) {
+    console.log(err.toString());
 
-    console.log( err.toString());
+    let stack = err.stack && err.stack.length  ? err.stack[0] : err.stack;
+    console.log(err.stack);
 
-    console.log(err.stack.join("\n"));
+    console.log( Parser.instance.trace()|| err.stack);
     let lexer = Parser.instance.lexer;
     let t = [];
 
     // console.log("currentLine:", lexer.currentLine());
 
-    dumpFile("trace.log", Parser.trace);
+    dumpFile("trace.log", Parser.instance.trace());
   }
 
   let printer = new Printer({ indent: 4 });

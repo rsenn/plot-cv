@@ -9,7 +9,14 @@
       import { isRect, Rect } from "./lib/geom/rect.js";
       import { isSize, Size } from "./lib/geom/size.js";
       import { isLine, Line } from "./lib/geom/line.js";
-      import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from "./lib/geom/transformation.js";
+      import {
+        Transformation,
+        Rotation,
+        Translation,
+        Scaling,
+        MatrixTransformation,
+        TransformationList
+      } from "./lib/geom/transformation.js";
       import { Element } from "./lib/dom/element.js";
       import { Matrix } from "./lib/geom/matrix.js";
       import { SVG } from "./lib/dom/svg.js";
@@ -26,14 +33,42 @@
       import { EagleElement } from "./lib/eagle/element.js";
       import { EaglePath, EagleReference } from "./lib/eagle/locator.js";
       import { toXML, EagleInterface } from "./lib/eagle/common.js";
-      import { renderDocument, EagleRenderer, SchematicRenderer, BoardRenderer } from "./lib/eagle/renderer.js";
+      import {
+        renderDocument,
+        EagleRenderer,
+        SchematicRenderer,
+        BoardRenderer
+      } from "./lib/eagle/renderer.js";
       import { devtools } from "./lib/devtools.js";
       import Util from "./lib/util.js";
       import tXml from "./lib/tXml.js";
       import { crosskit } from "./lib/crosskit.js";
       import deep from "./lib/deep.js";
-      import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from "./modules/preact/dist/preact.mjs";
-      import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from "./modules/htm/preact/standalone.mjs";
+      import {
+        hydrate,
+        Fragment,
+        createRef,
+        isValidElement,
+        cloneElement,
+        toChildArray
+      } from "./modules/preact/dist/preact.mjs";
+      import {
+        h,
+        html,
+        render,
+        Component,
+        createContext,
+        useState,
+        useReducer,
+        useEffect,
+        useLayoutEffect,
+        useRef,
+        useImperativeHandle,
+        useMemo,
+        useCallback,
+        useContext,
+        useDebugValue
+      } from "./modules/htm/preact/standalone.mjs";
       import { CTORS, estree } from "./lib/ecmascript.js"; // prettier-ignore-end
 
       const React = {
@@ -79,7 +114,8 @@
         }
       };
 
-      const classNames = (...args) => args.filter(arg => typeof arg == "string" && arg.length > 0).join(" ");
+      const classNames = (...args) =>
+        args.filter(arg => typeof arg == "string" && arg.length > 0).join(" ");
 
       const MouseEvents = h => ({
         onMouseDown: h,
@@ -88,7 +124,14 @@
         onMouseUp: h
       });
 
-      const Overlay = ({ className = "overlay", active = false, onPush, text, children, ...props }) => {
+      const Overlay = ({
+        className = "overlay",
+        active = false,
+        onPush,
+        text,
+        children,
+        ...props
+      }) => {
         const [pushed, setPushed] = useState(false);
         const events = MouseEvents(
           MouseHandler((e, state) => {
@@ -100,7 +143,11 @@
         );
 
         return html`
-          <div className=${classNames(className, pushed && "pushed", active ? "active" : "inactive")} ...${props} ...${events}>
+          <div
+            className=${classNames(className, pushed && "pushed", active ? "active" : "inactive")}
+            ...${props}
+            ...${events}
+          >
             ${text} ${children}
           </div>
         `;
@@ -113,7 +160,15 @@
         `;
       };
 
-      const Chooser = ({ className = "list", itemClass = "item", itemComponent = Overlay, items, onChange = () => {}, onPush = () => {}, ...props }) => {
+      const Chooser = ({
+        className = "list",
+        itemClass = "item",
+        itemComponent = Overlay,
+        items,
+        onChange = () => {},
+        onPush = () => {},
+        ...props
+      }) => {
         const [active, setActive] = useState(-1);
         const pushHandler = i => (e, state) => {
           const prev = active;
@@ -125,10 +180,23 @@
         const children = items.map(
           ({ name, i, data, signal, ...item }, key) =>
             html`
-              <${itemComponent} key=${key || i} className=${classNames(itemClass || className + "-item", (name + "").replace(/.*\./, ""))} active=${i == active} onPush=${pushHandler(i)} text="${name}" ...${item} />
+              <${itemComponent}
+                key=${key || i}
+                className=${classNames(
+                  itemClass || className + "-item",
+                  (name + "").replace(/.*\./, "")
+                )}
+                active=${i == active}
+                onPush=${pushHandler(i)}
+                text="${name}"
+                ...${item}
+              />
             `
         );
-        return html`<${Container} className=${classNames("panel", className)} ...${props}>${children}</${Container}>`;
+        return html`<${Container} className=${classNames(
+          "panel",
+          className
+        )} ...${props}>${children}</${Container}>`;
       };
       console.log("running");
       console.log("dom", { Rect, Element, parseSchematic });
@@ -203,7 +271,11 @@
       `;
 
       const Progress = ({ className, percent, ...props }) => html`
-                <${Overlay} className=${classNames("progress", "center", className)} text=${percent + "%"} style=${{
+                <${Overlay} className=${classNames(
+        "progress",
+        "center",
+        className
+      )} text=${percent + "%"} style=${{
         position: "relative",
         width: "100%",
         height: "1.5em",
@@ -228,7 +300,9 @@
         let id = name || key || i;
         if(id) id = (id + "").replace(/[^._A-Za-z0-9]/g, "-");
         return html`
-              <${Item} className=file id=${id} data-filename="${name}" onPush=${pushHandler} ...${props}>${name}<${Progress} className=${!isNaN(loaded) ? "visible" : "hidden"} percent=${loaded} /></${Item}>
+              <${Item} className=file id=${id} data-filename="${name}" onPush=${pushHandler} ...${props}>${name}<${Progress} className=${
+          !isNaN(loaded) ? "visible" : "hidden"
+        } percent=${loaded} /></${Item}>
             `;
       };
 
@@ -254,7 +328,8 @@
           /></${Overlay}>
         `;
       };
-      const Panel = (name, children) => html`<${Container} className="${name}">${children}</${Container}>`;
+      const Panel = (name, children) =>
+        html`<${Container} className="${name}">${children}</${Container}>`;
 
       const loadDocument = (proj, parentElem) =>
         new Promise(async (resolve, reject) => {
@@ -264,7 +339,12 @@
           let doc = await LoadFile(name);
           window.eagle = doc;
           //console.log('document:', doc);
-          if(!element) element = Element.create("div", { style: { position: "relative", "data-name": name, border: "1px dotted black" } }, parentElem);
+          if(!element)
+            element = Element.create(
+              "div",
+              { style: { position: "relative", "data-name": name, border: "1px dotted black" } },
+              parentElem
+            );
           //let svg = Element.create('svg', { viewBox:  } , element);
           window.renderer = renderDocument(doc, element);
           if(!svg) svg = Element.find("svg", element);
