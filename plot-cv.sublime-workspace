@@ -95,15 +95,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "lib/eagle/renderer.js",
-			"settings":
-			{
-				"buffer_size": 30061,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -117,8 +108,36 @@
 		"selected_items":
 		[
 			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"outline",
+				"Browse Mode: Outline (Right)"
+			],
+			[
+				"remove pac",
+				"Package Control: Remove Package"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
 				"install",
 				"Package Control: Install Package"
+			],
+			[
+				"extrat",
+				"PackageResourceViewer: Extract Package"
+			],
+			[
+				"color",
+				"Preferences: Color Highlight Settings"
+			],
+			[
+				"outl",
+				"Browse Mode: Outline (Right)"
 			],
 			[
 				"remove ",
@@ -127,14 +146,6 @@
 			[
 				"install pack",
 				"Package Control: Install Package"
-			],
-			[
-				"remove pac",
-				"Package Control: Remove Package"
-			],
-			[
-				"remove",
-				"Package Control: Remove Package"
 			],
 			[
 				"isntall ",
@@ -163,10 +174,6 @@
 			[
 				"add ",
 				"Package Control: Add Repository"
-			],
-			[
-				"outline",
-				"Browse Mode: Outline (Right)"
 			],
 			[
 				"schemee",
@@ -253,10 +260,6 @@
 				"Themr: Next theme"
 			],
 			[
-				"install ",
-				"Package Control: Install Package"
-			],
-			[
 				"add rep",
 				"Package Control: Add Repository"
 			],
@@ -289,22 +292,80 @@
 	"expanded_folders":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
-		"/home/roman/Dokumente/Sources/plot-cv/lib"
+		"/home/roman/Dokumente/Sources/plot-cv/lib",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/svg"
 	],
 	"file_history":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv/autoplacer.html",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/devpane.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/devtools.js",
-		"/home/roman/Dokumente/Sources/Scripts/sh/functions/list-recursive.sh",
-		"/home/roman/Dokumente/Sources/plot-cv/package.json",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/bundle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/index.html",
 		"/home/roman/Dokumente/Sources/plot-cv/server.js",
-		"/home/roman/Sources/plot-cv/dev-server.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/autoStore.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/devpane.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/jpeg.js",
+		"/home/roman/Dokumente/Sources/plot-cv/js/pointList.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/alea.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/devtools.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/autoplacer.html",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/graph.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/fd-graph.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-autoplacer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/Headphone-Amplifier-ClassAB-alt3.brd",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
+		"/home/roman/Dokumente/Sources/plot-cv/npm/mono/packages/handle-rejection/spec.js",
+		"/home/roman/wild-beauty/components/views/treeGraph.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript.js",
+		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/bbox.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/lua.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/project.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/draw/colorMap.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/rgba.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/overlay.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/align.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/load.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/locator.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/polygonFinder.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/lazyInitializer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/touchHandler.js",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/prop-types/factory.js",
+		"/home/roman/Dokumente/Sources/plot-cv/dev-server.mjs",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/htm/dist/htm.mjs",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/htm/preact/index.mjs",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/htm/preact/standalone.mjs",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/htm/src/integrations/preact/standalone.mjs",
+		"/home/roman/Dokumente/Sources/plot-cv/package.json",
+		"/home/roman/Dokumente/Sources/plot-cv/pages/index.jsx",
+		"/home/roman/Dokumente/Sources/plot-cv/dev-server.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/scrollController.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/scrollHandler.js",
+		"/home/roman/Dokumente/Sources/Scripts/sh/functions/list-recursive.sh",
+		"/home/roman/Sources/plot-cv/dev-server.js",
 		"/home/roman/Dokumente/Sources/plot-cv/node_modules/webpack/lib/ChunkRenderError.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
 		"/home/roman/Sources/js-vector/gl-matrix/src/mat3.js",
 		"/home/roman/Sources/js-geometry/node_modules/svgpath/lib/matrix.js",
 		"/home/roman/the-wild-beauty-company/node_modules/affinefit/lib/transformation.js",
@@ -320,34 +381,18 @@
 		"/home/roman/Sources/js-geometry/node_modules/geometry-interfaces/esmodule/DOMMatrix.js",
 		"/home/roman/Sources/js-geometry/node_modules/flatten-boolean-op/node_modules/flatten-js/classes/matrix.js",
 		"/home/roman/Dokumente/Sources/perspective/image-augment/lib/backend/tfjs/transform.js",
-		"/home/roman/Dokumente/Sources/plot-cv/Headphone-Amplifier-ClassAB-alt3.brd",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/bbox.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/matrix.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.es5.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/node.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/locator.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/path.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/project.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/rgba.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/hsla.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/nodeMap.js.sed",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
-		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd",
 		"/home/roman/Dokumente/Sources/plot-cv/js/matrix.js",
 		"/home/roman/Dokumente/Sources/lotto/lib/util.js",
 		"/home/roman/the-wild-beauty-company/lib/svg/overlay.js",
@@ -360,7 +405,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-kolorwheel.js",
 		"/home/roman/Dokumente/Sources/js-draw/draw.js/draw.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/alea.js",
 		"/home/roman/.pnpm-store/2/registry.npmjs.org/terminal-kit/1.35.1/node_modules/terminal-kit/lib/Palette.js",
 		"/home/roman/Dokumente/Sources/plot-cv/js/rgba.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/util.es5.js",
@@ -369,62 +413,23 @@
 		"/home/roman/Dokumente/Sources/lotto/test-admin/node_modules/@material-ui/core/esm/styles/createPalette.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/KolorWheel.js",
 		"/home/roman/.config/sublime-text-3/Packages/Babel/Next Roman.tmTheme",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/align.js",
 		"/home/roman/Dokumente/Sources/plot-cv/js/point.js",
 		"/home/roman/Dokumente/Sources/delaunay/delaunay/lib/matrix.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/intersection.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/polygonFinder.js",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/css.js",
 		"/home/roman/Dokumente/Sources/plot-cv/js/test.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/graph.js",
 		"/home/roman/Dokumente/Sources/plot-cv/5V-to-12V-Converter-alt.sch",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/clipper.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-pointlist.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/container/spatial-h.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom.js",
 		"/home/roman/Dokumente/Sources/js-geometry/node_modules/line2/line2.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/lineList.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/vector.js",
-		"/home/roman/Dokumente/Sources/plot-cv/js/line.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-autoplacer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-color.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/sweepLine.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/hashList.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/container/Shash.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/container/sortedMap.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/container/spatial-hash.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/container/spatialHash.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/container/DenseSpatialHash2D.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/container/spatialhash.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/container/indexMap.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/container/SpatialHash2D.js",
-		"/home/roman/Dokumente/Sources/plot-cv/LCmeter0-LCD-8pinlcd-PIC_COMP.brd",
-		"/home/roman/Dokumente/Sources/plot-cv/LCmeter0-LCD-8pinlcd-PIC_COMP.sch",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/autofillEvent.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/autoplacer/vector.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/compositeMap.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/busywait.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/autoplacer/autoplacer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/Headphone-Amplifier-ClassAB-alt3.sch",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/parser.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/align.es5.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/load.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/crosstab.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/deep-diff.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/clone.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/json-ptr.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/json-pointer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/entity.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/jsonPointer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/node_modules/deep-diff/index.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/compareVersions.js"
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/vector.js"
 	],
 	"find":
 	{
-		"height": 47.0
+		"height": 43.0
 	},
 	"find_in_files":
 	{
@@ -444,137 +449,137 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": false,
+		"case_sensitive": true,
 		"find_history":
 		[
-			"    ",
-			"\\t",
-			"^\\s*",
-			"\\$ARG/\\$ENTRY",
-			"    ",
-			"'defs'",
-			"container =",
-			"svg\"",
-			"\"svg\"",
-			"render",
-			"container",
-			"\"svg\"",
-			"'svg'",
-			"'svgh",
-			"'sbg",
-			"container",
-			"create",
-			"projectName",
-			"init_rotate",
-			"init =",
-			"rotate =",
-			"Rotation",
-			"transform_point =",
-			"transform_point",
-			"point",
-			"transformPoint",
-			"vector",
-			"transformPoint",
-			"transform",
-			"transform.*point",
-			"transform",
-			"Point",
-			"transformPoint",
-			"mult",
-			"vec",
-			"point",
-			"transform_point",
-			"matVecMult",
-			"point",
-			"init_rotate",
-			"self_",
-			"rotate",
-			"list",
-			"transform_distance",
-			"lib/dom/matrix",
-			"lib/dom",
-			"^Matrix\\.[^p]",
-			"point",
-			"rotate",
-			"\\.toPoints",
-			"_point\\.",
-			"_point",
-			"const { x, y, width",
-			"const { x, y",
-			"const {",
-			"\\.toPoints =",
-			"toPoints =",
-			"toPoints",
-			"BBox",
-			"adjac",
-			"geometry",
-			"this.raw\\.",
-			"bindProp",
-			"Line.bind",
-			"from",
-			"deep.iter",
-			"geometry",
-			"bind",
-			"Util.repeat",
-			"add =",
-			"replaceAll",
-			"range:",
-			"toString",
-			"CSS",
-			"%c",
-			"console.log",
-			"randInt",
-			"dump",
-			"randInt",
-			"random",
-			"fromString",
-			"toString",
-			"invert",
-			"walkUp",
-			"parentElement",
-			"path\\(",
-			"rootPath",
-			"walk\\(",
-			"iterator",
-			"push",
-			"push =",
-			"instance",
-			"keys",
-			"Util.[^ ]*method",
-			"Util.[^ ]*static",
-			"getMethods",
-			"children",
-			"wrap",
-			"dom.Element",
-			"dom\\.",
-			"walk",
-			"part",
-			"attributes = {}",
-			"\\.attributes",
-			"this.attributes",
-			"toObject",
-			"'g'",
-			"toXML",
-			"ElementToXML",
-			"attributes",
-			"toObject",
-			"pattern",
-			"camelize",
-			"decamelize",
-			"vector.*effect",
-			"vectorEff",
-			"strokeWidth",
-			"LinesToPath",
-			"'path'",
-			"'elements'",
-			"background",
-			"factory\\(",
-			"save",
-			"<description",
-			"util.inspect",
-			"dstMap.set",
-			"description:",
-			"changes"
+			"index.html",
+			"json",
+			"makeLocalS",
+			"autorun",
+			"mobx",
+			"basis",
+			"start",
+			"\\.file {",
+			"\\.file",
+			"width:",
+			"column",
+			"getMet",
+			"setRect",
+			"setRec",
+			"left",
+			"setCS",
+			"setCSY",
+			"^\\s*[^ ]*css",
+			"css",
+			"sbox",
+			"align",
+			"import",
+			"align",
+			"bb",
+			"b",
+			"getBounds",
+			"\"mm",
+			"mm\"",
+			"bbox",
+			" move",
+			"move",
+			"stroke.*width",
+			"stroke.*wqi",
+			"mul",
+			"scale",
+			"stack",
+			"stack.*join",
+			"css",
+			"style.*width",
+			"position",
+			"install",
+			"install\\(",
+			"pushHa",
+			"ListP",
+			"projectFiles",
+			"devpan",
+			"projectFiles",
+			"ListProj",
+			"/files.ht",
+			"projectFiles",
+			"loadDoc",
+			"LoadFile",
+			"pushHa",
+			"function",
+			"Variable",
+			"Varia",
+			"unix",
+			"name",
+			"<contact",
+			"<package",
+			"<contact",
+			"\"pad",
+			"isRelat",
+			"\"pad\"",
+			"Cache",
+			"A",
+			"<contact",
+			"Rect.[^ ]*toObject",
+			"Rect.[^ ]*set",
+			"addNode",
+			"bb.rec",
+			"rect",
+			"rect =",
+			"testGra",
+			"getBound",
+			"bbox",
+			"testGra",
+			"board",
+			"board ",
+			"board =",
+			"testGra",
+			"testEa",
+			"onRen",
+			"new Graph",
+			"class ",
+			"Edge",
+			"testGr",
+			"testEag",
+			"ret",
+			"lowerLimit",
+			"substring",
+			"\\.source",
+			" CALL ",
+			"parseNewOrCallOrMemberExpression",
+			"parsePrimary",
+			" parseFun",
+			" parseAssignmentExpression",
+			" parseConditionalExpression",
+			"parseAssignmentExpression",
+			"parseConditionalExpression()",
+			" parseFun",
+			" parseAss",
+			" parseFun",
+			" parseAssignmentExpression",
+			"parseAssignmentExpression",
+			" parseFunc",
+			"class [^ ]*function",
+			"class [^ ]*param",
+			"FunctionDec",
+			"argument",
+			"DefaultA",
+			"=\"",
+			" parse[^ ]*assign",
+			"parse[^ ]*assign",
+			"parse[^ ]*default",
+			" parse[^ ]*func",
+			" parseForStatement(insideFunc",
+			" parse[^ ]*func",
+			" parse[^ ]*assign",
+			"parse[^ ]*assign",
+			"assignment",
+			"1285",
+			"ors\\(\"=\"",
+			"parseBind",
+			"ArrayBin",
+			"estree.Array",
+			"estree",
+			"ArrayBind"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -582,6 +587,9 @@
 		"regex": true,
 		"replace_history":
 		[
+			"from \"./",
+			"this.skip(2)",
+			"",
 			"  ",
 			"",
 			"$F",
@@ -707,1959 +715,19 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "lib/eagle/renderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 30061,
-						"regions":
-						{
-							"col_0017B9FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										823,
-										836
-									],
-									[
-										24057,
-										24070
-									],
-									[
-										24112,
-										24125
-									],
-									[
-										24167,
-										24180
-									],
-									[
-										24222,
-										24235
-									],
-									[
-										24277,
-										24290
-									],
-									[
-										24334,
-										24347
-									],
-									[
-										24391,
-										24404
-									],
-									[
-										24448,
-										24461
-									],
-									[
-										25187,
-										25200
-									],
-									[
-										25247,
-										25260
-									],
-									[
-										25702,
-										25715
-									]
-								],
-								"scope": "col_0017B9FF"
-							},
-							"col_0017B9FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_0017B9FF_circle.png",
-								"regions":
-								[
-									[
-										736,
-										736
-									],
-									[
-										24047,
-										24047
-									],
-									[
-										24099,
-										24099
-									],
-									[
-										24154,
-										24154
-									],
-									[
-										24209,
-										24209
-									],
-									[
-										24264,
-										24264
-									],
-									[
-										24320,
-										24320
-									],
-									[
-										24377,
-										24377
-									],
-									[
-										24434,
-										24434
-									],
-									[
-										25172,
-										25172
-									],
-									[
-										25231,
-										25231
-									],
-									[
-										25688,
-										25688
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_0022CCFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										766,
-										783
-									]
-								],
-								"scope": "col_0022CCFF"
-							},
-							"col_0022CCFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_0022CCFF_circle.png",
-								"regions":
-								[
-									[
-										736,
-										736
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_007D17FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										24506,
-										24525
-									]
-								],
-								"scope": "col_007D17FF"
-							},
-							"col_007D17FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_007D17FF_circle.png",
-								"regions":
-								[
-									[
-										24495,
-										24495
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_007E18FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										806,
-										819
-									],
-									[
-										25400,
-										25413
-									]
-								],
-								"scope": "col_007E18FF"
-							},
-							"col_007E18FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_007E18FF_circle.png",
-								"regions":
-								[
-									[
-										736,
-										736
-									],
-									[
-										25386,
-										25386
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_00FFFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										25369,
-										25383
-									]
-								],
-								"scope": "col_00FFFFFF"
-							},
-							"col_00FFFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_00FFFFFF_circle.png",
-								"regions":
-								[
-									[
-										25357,
-										25357
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_010101FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										19566,
-										19571
-									],
-									[
-										27239,
-										27246
-									],
-									[
-										29796,
-										29801
-									],
-									[
-										29901,
-										29906
-									]
-								],
-								"scope": "col_010101FF"
-							},
-							"col_010101FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_010101FF_circle.png",
-								"regions":
-								[
-									[
-										19541,
-										19541
-									],
-									[
-										27215,
-										27215
-									],
-									[
-										29754,
-										29754
-									],
-									[
-										29807,
-										29807
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_0111FFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										26090,
-										26109
-									]
-								],
-								"scope": "col_0111FFFF"
-							},
-							"col_0111FFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_0111FFFF_circle.png",
-								"regions":
-								[
-									[
-										26007,
-										26007
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_016AFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										26315,
-										26334
-									]
-								],
-								"scope": "col_016AFFFF"
-							},
-							"col_016AFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_016AFFFF_circle.png",
-								"regions":
-								[
-									[
-										26007,
-										26007
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_01FF95FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										26021,
-										26040
-									]
-								],
-								"scope": "col_01FF95FF"
-							},
-							"col_01FF95FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_01FF95FF_circle.png",
-								"regions":
-								[
-									[
-										26007,
-										26007
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_01FFEEFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										26113,
-										26132
-									]
-								],
-								"scope": "col_01FFEEFF"
-							},
-							"col_01FFEEFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_01FFEEFF_circle.png",
-								"regions":
-								[
-									[
-										26007,
-										26007
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_030005FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										24086,
-										24096
-									],
-									[
-										24141,
-										24151
-									],
-									[
-										24196,
-										24206
-									],
-									[
-										24251,
-										24261
-									],
-									[
-										24307,
-										24317
-									],
-									[
-										24364,
-										24374
-									],
-									[
-										24421,
-										24431
-									],
-									[
-										25218,
-										25228
-									],
-									[
-										25279,
-										25289
-									],
-									[
-										25646,
-										25656
-									]
-								],
-								"scope": "col_030005FF"
-							},
-							"col_030005FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_030005FF_circle.png",
-								"regions":
-								[
-									[
-										24073,
-										24073
-									],
-									[
-										24128,
-										24128
-									],
-									[
-										24183,
-										24183
-									],
-									[
-										24238,
-										24238
-									],
-									[
-										24293,
-										24293
-									],
-									[
-										24350,
-										24350
-									],
-									[
-										24407,
-										24407
-									],
-									[
-										25203,
-										25203
-									],
-									[
-										25263,
-										25263
-									],
-									[
-										25633,
-										25633
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_10063DFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										1006,
-										1018
-									]
-								],
-								"scope": "col_10063DFF"
-							},
-							"col_10063DFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_10063DFF_circle.png",
-								"regions":
-								[
-									[
-										736,
-										736
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_2FFF01FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										26067,
-										26086
-									]
-								],
-								"scope": "col_2FFF01FF"
-							},
-							"col_2FFF01FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_2FFF01FF_circle.png",
-								"regions":
-								[
-									[
-										26007,
-										26007
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_3255FFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										23355,
-										23372
-									]
-								],
-								"scope": "col_3255FFFF"
-							},
-							"col_3255FFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_3255FFFF_circle.png",
-								"regions":
-								[
-									[
-										23334,
-										23334
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_32FEFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										19521,
-										19538
-									]
-								],
-								"scope": "col_32FEFFFF"
-							},
-							"col_32FEFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_32FEFFFF_circle.png",
-								"regions":
-								[
-									[
-										19498,
-										19498
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_3CFF01FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										26204,
-										26223
-									]
-								],
-								"scope": "col_3CFF01FF"
-							},
-							"col_3CFF01FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_3CFF01FF_circle.png",
-								"regions":
-								[
-									[
-										26007,
-										26007
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_3E2E19FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										855,
-										868
-									],
-									[
-										24572,
-										24585
-									],
-									[
-										25006,
-										25019
-									],
-									[
-										25036,
-										25049
-									],
-									[
-										25820,
-										25833
-									]
-								],
-								"scope": "col_3E2E19FF"
-							},
-							"col_3E2E19FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_3E2E19FF_circle.png",
-								"regions":
-								[
-									[
-										736,
-										736
-									],
-									[
-										24557,
-										24557
-									],
-									[
-										24992,
-										24992
-									],
-									[
-										25022,
-										25022
-									],
-									[
-										25808,
-										25808
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4B4B4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										698,
-										711
-									]
-								],
-								"scope": "col_4B4B4BFF"
-							},
-							"col_4B4B4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4B4B4BFF_circle.png",
-								"regions":
-								[
-									[
-										414,
-										414
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4B4BA5FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										456,
-										470
-									]
-								],
-								"scope": "col_4B4BA5FF"
-							},
-							"col_4B4BA5FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4B4BA5FF_circle.png",
-								"regions":
-								[
-									[
-										414,
-										414
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4B4BFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										587,
-										601
-									]
-								],
-								"scope": "col_4B4BFFFF"
-							},
-							"col_4B4BFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4B4BFFFF_circle.png",
-								"regions":
-								[
-									[
-										414,
-										414
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4BA54BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										474,
-										488
-									],
-									[
-										14528,
-										14535
-									]
-								],
-								"scope": "col_4BA54BFF"
-							},
-							"col_4BA54BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4BA54BFF_circle.png",
-								"regions":
-								[
-									[
-										414,
-										414
-									],
-									[
-										14509,
-										14509
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4BA5A5FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										492,
-										507
-									]
-								],
-								"scope": "col_4BA5A5FF"
-							},
-							"col_4BA5A5FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4BA5A5FF_circle.png",
-								"regions":
-								[
-									[
-										414,
-										414
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4BFF4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										605,
-										619
-									]
-								],
-								"scope": "col_4BFF4BFF"
-							},
-							"col_4BFF4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4BFF4BFF_circle.png",
-								"regions":
-								[
-									[
-										414,
-										414
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4BFFFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										623,
-										638
-									]
-								],
-								"scope": "col_4BFFFFFF"
-							},
-							"col_4BFFFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4BFFFFFF_circle.png",
-								"regions":
-								[
-									[
-										414,
-										414
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4F0900FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										840,
-										851
-									],
-									[
-										25590,
-										25601
-									]
-								],
-								"scope": "col_4F0900FF"
-							},
-							"col_4F0900FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4F0900FF_circle.png",
-								"regions":
-								[
-									[
-										736,
-										736
-									],
-									[
-										25576,
-										25576
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_6201FFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										26159,
-										26178
-									]
-								],
-								"scope": "col_6201FFFF"
-							},
-							"col_6201FFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_6201FFFF_circle.png",
-								"regions":
-								[
-									[
-										26007,
-										26007
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_695221FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										911,
-										925
-									]
-								],
-								"scope": "col_695221FF"
-							},
-							"col_695221FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_695221FF_circle.png",
-								"regions":
-								[
-									[
-										736,
-										736
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_7301FFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										26136,
-										26155
-									]
-								],
-								"scope": "col_7301FFFF"
-							},
-							"col_7301FFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_7301FFFF_circle.png",
-								"regions":
-								[
-									[
-										26007,
-										26007
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_84946DFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										967,
-										983
-									]
-								],
-								"scope": "col_84946DFF"
-							},
-							"col_84946DFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_84946DFF_circle.png",
-								"regions":
-								[
-									[
-										736,
-										736
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_8C5F33FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										949,
-										963
-									]
-								],
-								"scope": "col_8C5F33FF"
-							},
-							"col_8C5F33FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_8C5F33FF_circle.png",
-								"regions":
-								[
-									[
-										736,
-										736
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A54B4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										511,
-										525
-									],
-									[
-										15083,
-										15090
-									]
-								],
-								"scope": "col_A54B4BFF"
-							},
-							"col_A54B4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A54B4BFF_circle.png",
-								"regions":
-								[
-									[
-										414,
-										414
-									],
-									[
-										15062,
-										15062
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A54BA5FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										529,
-										544
-									]
-								],
-								"scope": "col_A54BA5FF"
-							},
-							"col_A54BA5FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A54BA5FF_circle.png",
-								"regions":
-								[
-									[
-										414,
-										414
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A5A54BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										548,
-										563
-									]
-								],
-								"scope": "col_A5A54BFF"
-							},
-							"col_A5A54BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A5A54BFF_circle.png",
-								"regions":
-								[
-									[
-										414,
-										414
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A5A5A5FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										715,
-										731
-									]
-								],
-								"scope": "col_A5A5A5FF"
-							},
-							"col_A5A5A5FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A5A5A5FF_circle.png",
-								"regions":
-								[
-									[
-										414,
-										414
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A8A620FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										987,
-										1002
-									]
-								],
-								"scope": "col_A8A620FF"
-							},
-							"col_A8A620FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A8A620FF_circle.png",
-								"regions":
-								[
-									[
-										736,
-										736
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_AFAFAFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										567,
-										583
-									],
-									[
-										24604,
-										24620
-									]
-								],
-								"scope": "col_AFAFAFFF"
-							},
-							"col_AFAFAFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_AFAFAFFF_circle.png",
-								"regions":
-								[
-									[
-										414,
-										414
-									],
-									[
-										24588,
-										24588
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_B21B00FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										1022,
-										1035
-									],
-									[
-										24701,
-										24714
-									],
-									[
-										24732,
-										24745
-									]
-								],
-								"scope": "col_B21B00FF"
-							},
-							"col_B21B00FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_B21B00FF_circle.png",
-								"regions":
-								[
-									[
-										736,
-										736
-									],
-									[
-										24686,
-										24686
-									],
-									[
-										24717,
-										24717
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_BD8540FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										24790,
-										24805
-									],
-									[
-										24852,
-										24867
-									],
-									[
-										24882,
-										24897
-									],
-									[
-										24912,
-										24927
-									],
-									[
-										24943,
-										24958
-									],
-									[
-										24974,
-										24989
-									],
-									[
-										25064,
-										25079
-									],
-									[
-										25094,
-										25109
-									],
-									[
-										25124,
-										25139
-									],
-									[
-										25154,
-										25169
-									],
-									[
-										25339,
-										25354
-									],
-									[
-										25431,
-										25446
-									],
-									[
-										25498,
-										25513
-									],
-									[
-										25730,
-										25745
-									],
-									[
-										25761,
-										25776
-									],
-									[
-										25790,
-										25805
-									],
-									[
-										25853,
-										25868
-									],
-									[
-										25883,
-										25898
-									]
-								],
-								"scope": "col_BD8540FF"
-							},
-							"col_BD8540FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_BD8540FF_circle.png",
-								"regions":
-								[
-									[
-										24777,
-										24777
-									],
-									[
-										24838,
-										24838
-									],
-									[
-										24870,
-										24870
-									],
-									[
-										24900,
-										24900
-									],
-									[
-										24930,
-										24930
-									],
-									[
-										24961,
-										24961
-									],
-									[
-										25052,
-										25052
-									],
-									[
-										25082,
-										25082
-									],
-									[
-										25112,
-										25112
-									],
-									[
-										25142,
-										25142
-									],
-									[
-										25326,
-										25326
-									],
-									[
-										25416,
-										25416
-									],
-									[
-										25482,
-										25482
-									],
-									[
-										25718,
-										25718
-									],
-									[
-										25748,
-										25748
-									],
-									[
-										25779,
-										25779
-									],
-									[
-										25836,
-										25836
-									],
-									[
-										25871,
-										25871
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_CCCCCCFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										1039,
-										1053
-									]
-								],
-								"scope": "col_CCCCCCFF"
-							},
-							"col_CCCCCCFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_CCCCCCFF_circle.png",
-								"regions":
-								[
-									[
-										736,
-										736
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_D0FF01FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										26270,
-										26288
-									]
-								],
-								"scope": "col_D0FF01FF"
-							},
-							"col_D0FF01FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_D0FF01FF_circle.png",
-								"regions":
-								[
-									[
-										26007,
-										26007
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FBFCF7FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										929,
-										945
-									]
-								],
-								"scope": "col_FBFCF7FF"
-							},
-							"col_FBFCF7FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FBFCF7FF_circle.png",
-								"regions":
-								[
-									[
-										736,
-										736
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FCF526FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										787,
-										802
-									],
-									[
-										24477,
-										24492
-									],
-									[
-										24539,
-										24554
-									],
-									[
-										25308,
-										25323
-									],
-									[
-										25615,
-										25630
-									],
-									[
-										25670,
-										25685
-									]
-								],
-								"scope": "col_FCF526FF"
-							},
-							"col_FCF526FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FCF526FF_circle.png",
-								"regions":
-								[
-									[
-										736,
-										736
-									],
-									[
-										24464,
-										24464
-									],
-									[
-										24528,
-										24528
-									],
-									[
-										25292,
-										25292
-									],
-									[
-										25604,
-										25604
-									],
-									[
-										25659,
-										25659
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF0000FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										6097,
-										6109
-									]
-								],
-								"scope": "col_FF0000FF"
-							},
-							"col_FF0000FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF0000FF_circle.png",
-								"regions":
-								[
-									[
-										6036,
-										6036
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF00FFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										8622,
-										8626
-									]
-								],
-								"scope": "col_FF00FFFF"
-							},
-							"col_FF00FFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF00FFFF_circle.png",
-								"regions":
-								[
-									[
-										8603,
-										8603
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF01B2FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										26044,
-										26063
-									]
-								],
-								"scope": "col_FF01B2FF"
-							},
-							"col_FF01B2FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF01B2FF_circle.png",
-								"regions":
-								[
-									[
-										26007,
-										26007
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF01E9FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										26292,
-										26311
-									]
-								],
-								"scope": "col_FF01E9FF"
-							},
-							"col_FF01E9FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF01E9FF_circle.png",
-								"regions":
-								[
-									[
-										26007,
-										26007
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF1101FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										26227,
-										26244
-									]
-								],
-								"scope": "col_FF1101FF"
-							},
-							"col_FF1101FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF1101FF_circle.png",
-								"regions":
-								[
-									[
-										26007,
-										26007
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF2600FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										24761,
-										24774
-									],
-									[
-										24822,
-										24835
-									]
-								],
-								"scope": "col_FF2600FF"
-							},
-							"col_FF2600FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF2600FF_circle.png",
-								"regions":
-								[
-									[
-										24748,
-										24748
-									],
-									[
-										24808,
-										24808
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF2B01FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										26248,
-										26266
-									]
-								],
-								"scope": "col_FF2B01FF"
-							},
-							"col_FF2B01FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF2B01FF_circle.png",
-								"regions":
-								[
-									[
-										26007,
-										26007
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF4B4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										642,
-										656
-									]
-								],
-								"scope": "col_FF4B4BFF"
-							},
-							"col_FF4B4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF4B4BFF_circle.png",
-								"regions":
-								[
-									[
-										414,
-										414
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF4BFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										660,
-										675
-									]
-								],
-								"scope": "col_FF4BFFFF"
-							},
-							"col_FF4BFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF4BFFFF_circle.png",
-								"regions":
-								[
-									[
-										414,
-										414
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF7632FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										24636,
-										24652
-									]
-								],
-								"scope": "col_FF7632FF"
-							},
-							"col_FF7632FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF7632FF_circle.png",
-								"regions":
-								[
-									[
-										24623,
-										24623
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF8C19FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										872,
-										888
-									]
-								],
-								"scope": "col_FF8C19FF"
-							},
-							"col_FF8C19FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF8C19FF_circle.png",
-								"regions":
-								[
-									[
-										736,
-										736
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FFB201FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										26182,
-										26200
-									]
-								],
-								"scope": "col_FFB201FF"
-							},
-							"col_FFB201FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FFB201FF_circle.png",
-								"regions":
-								[
-									[
-										26007,
-										26007
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FFB453FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										892,
-										907
-									],
-									[
-										24668,
-										24683
-									],
-									[
-										25464,
-										25479
-									],
-									[
-										25528,
-										25543
-									],
-									[
-										25558,
-										25573
-									]
-								],
-								"scope": "col_FFB453FF"
-							},
-							"col_FFB453FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FFB453FF_circle.png",
-								"regions":
-								[
-									[
-										736,
-										736
-									],
-									[
-										24655,
-										24655
-									],
-									[
-										25449,
-										25449
-									],
-									[
-										25516,
-										25516
-									],
-									[
-										25546,
-										25546
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FFFF4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										679,
-										694
-									]
-								],
-								"scope": "col_FFFF4BFF"
-							},
-							"col_FFFF4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FFFF4BFF_circle.png",
-								"regions":
-								[
-									[
-										414,
-										414
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FFFFFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										436,
-										452
-									]
-								],
-								"scope": "col_FFFFFFFF"
-							},
-							"col_FFFFFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
-								"regions":
-								[
-									[
-										414,
-										414
-									]
-								],
-								"scope": "col_gutter"
-							}
-						},
-						"selection":
-						[
-							[
-								29521,
-								29521
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Babel/Next Roman.tmTheme",
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 26463.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				}
+			]
+		},
+		{
+			"sheets":
+			[
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 41.0
+		"height": 43.0
 	},
 	"input":
 	{
@@ -2670,20 +738,29 @@
 		"cells":
 		[
 			[
+				2,
+				0,
+				3,
+				2
+			],
+			[
 				0,
 				0,
-				1,
-				1
+				2,
+				2
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.2,
+			0.8,
 			1.0
 		],
 		"rows":
 		[
 			0.0,
+			0.5,
 			1.0
 		]
 	},
@@ -2702,7 +779,7 @@
 	},
 	"output.find_results":
 	{
-		"height": 379.0
+		"height": 189.0
 	},
 	"output.unsaved_changes":
 	{
@@ -2712,7 +789,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 90.0
+		"height": 82.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -2726,8 +803,12 @@
 				"lib/eagle/renderer.js"
 			],
 			[
-				"package.js",
-				"package.json"
+				"server",
+				"server.js"
+			],
+			[
+				"autoSt",
+				"lib/autoStore.js"
 			],
 			[
 				"devtools",
@@ -2738,8 +819,284 @@
 				"lib/devpane.js"
 			],
 			[
+				"jpeg",
+				"lib/jpeg.js"
+			],
+			[
+				"inde.h",
+				"index.html"
+			],
+			[
+				"test-ea",
+				"test-eagle.js"
+			],
+			[
+				"pointlis",
+				"js/pointList.js"
+			],
+			[
+				"util.j",
+				"lib/util.js"
+			],
+			[
+				"devp",
+				"lib/devpane.js"
+			],
+			[
+				"element",
+				"lib/dom/element.js"
+			],
+			[
+				"rect",
+				"lib/geom/rect.js"
+			],
+			[
+				"elementj",
+				"lib/dom/element.js"
+			],
+			[
+				"size.j",
+				"lib/geom/size.js"
+			],
+			[
+				"parser",
+				"lib/ecmascript/parser.js"
+			],
+			[
+				"autot\t",
+				"autoplacer.html"
+			],
+			[
+				"lexe",
+				"lib/ecmascript/lexer.js"
+			],
+			[
+				"ecma",
+				"lib/ecmascript.js"
+			],
+			[
+				"auto",
+				"autoplacer.html"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				".brd",
+				"Headphone-Amplifier-ClassAB-alt3.brd"
+			],
+			[
+				"docum",
+				"lib/eagle/document.js"
+			],
+			[
+				"elemen",
+				"lib/eagle/element.js"
+			],
+			[
+				"eleme",
+				"lib/eagle/element.js"
+			],
+			[
+				"rect.",
+				"lib/geom/rect.js"
+			],
+			[
+				"bbox",
+				"lib/geom/bbox.js"
+			],
+			[
+				"element.",
+				"lib/eagle/element.js"
+			],
+			[
+				"ele",
+				"lib/eagle/element.js"
+			],
+			[
+				"geom.j",
+				"lib/geom.js"
+			],
+			[
+				"elem",
+				"lib/eagle/element.js"
+			],
+			[
+				"fd-gra",
+				"lib/fd-graph.js"
+			],
+			[
+				"test-eag",
+				"test-eagle.js"
+			],
+			[
+				"test-",
+				"test-autoplacer.js"
+			],
+			[
+				"parser.js",
+				"lib/ecmascript/parser.js"
+			],
+			[
+				"test-ec",
+				"test-ecmascript.js"
+			],
+			[
+				"test-e",
+				"test-eagle.js"
+			],
+			[
+				"autop",
+				"autoplacer.html"
+			],
+			[
+				"deep.j",
+				"lib/deep.js"
+			],
+			[
+				"estree",
+				"lib/ecmascript/estree.js"
+			],
+			[
+				"token.js",
+				"lib/ecmascript/token.js"
+			],
+			[
+				"lexer",
+				"lib/ecmascript/lexer.js"
+			],
+			[
+				"common.j",
+				"lib/eagle/common.js"
+			],
+			[
+				"common",
+				"lib/eagle/common.js"
+			],
+			[
+				"token",
+				"lib/ecmascript/token.js"
+			],
+			[
+				"estree.",
+				"lib/ecmascript/estree.js"
+			],
+			[
+				"rgba",
+				"lib/dom/rgba.js"
+			],
+			[
+				"util",
+				"lib/util.js"
+			],
+			[
+				"autopl",
+				"autoplacer.html"
+			],
+			[
+				"size.js",
+				"lib/geom/size.js"
+			],
+			[
+				"rect.js",
+				"lib/geom/rect.js"
+			],
+			[
+				"svg.",
+				"lib/dom/svg.js"
+			],
+			[
+				"renderer.js",
+				"lib/eagle/renderer.js"
+			],
+			[
+				"overla",
+				"lib/svg/overlay.js"
+			],
+			[
+				"colorma",
+				"lib/draw/colorMap.js"
+			],
+			[
+				"auopl",
+				"autoplacer.html"
+			],
+			[
+				"docu",
+				"lib/eagle/document.js"
+			],
+			[
 				"svg.js",
 				"lib/dom/svg.js"
+			],
+			[
+				"matrix.j",
+				"lib/geom/matrix.js"
+			],
+			[
+				"point.js",
+				"lib/geom/point.js"
+			],
+			[
+				"trkl",
+				"lib/trkl.js"
+			],
+			[
+				"documen",
+				"lib/eagle/document.js"
+			],
+			[
+				"factory",
+				"node_modules/prop-types/factory.js"
+			],
+			[
+				"lazy",
+				"lib/lazyInitializer.js"
+			],
+			[
+				"touchha",
+				"lib/touchHandler.js"
+			],
+			[
+				"server.js",
+				"server.js"
+			],
+			[
+				"dev-ser",
+				"dev-server.js"
+			],
+			[
+				"package",
+				"package.json"
+			],
+			[
+				"standal",
+				"node_modules/htm/src/integrations/preact/standalone.mjs"
+			],
+			[
+				"stand",
+				"node_modules/htm/preact/standalone.mjs"
+			],
+			[
+				"htm.mjs",
+				"node_modules/htm/preact/index.mjs"
+			],
+			[
+				"htm",
+				"node_modules/htm/dist/htm.mjs"
+			],
+			[
+				"scrollC",
+				"lib/scrollController.js"
+			],
+			[
+				"autopla",
+				"autoplacer.html"
+			],
+			[
+				"package.js",
+				"package.json"
 			],
 			[
 				"renderer",
@@ -2750,36 +1107,12 @@
 				"lib/geom/matrix.js"
 			],
 			[
-				"util.js",
-				"lib/util.js"
-			],
-			[
-				"rect.js",
-				"lib/geom/rect.js"
-			],
-			[
 				"line.js",
 				"lib/geom/line.js"
 			],
 			[
-				"bbox",
-				"lib/dom/bbox.js"
-			],
-			[
-				"autopl",
-				"autoplacer.html"
-			],
-			[
-				"point.js",
-				"lib/geom/point.js"
-			],
-			[
 				"size.",
 				"lib/geom/size.js"
-			],
-			[
-				"rect.",
-				"lib/geom/rect.js"
 			],
 			[
 				"line.",
@@ -2806,28 +1139,8 @@
 				"lib/eagle/nodeMap.js"
 			],
 			[
-				"element",
-				"lib/dom/element.js"
-			],
-			[
 				"trkl.js",
 				"lib/trkl.js"
-			],
-			[
-				"elem",
-				"lib/dom/element.js"
-			],
-			[
-				"server.js",
-				"server.js"
-			],
-			[
-				"autopla",
-				"autoplacer.html"
-			],
-			[
-				"test-ea",
-				"test-eagle.js"
 			],
 			[
 				"trkl.",
@@ -2836,10 +1149,6 @@
 			[
 				"projec",
 				"lib/eagle/project.js"
-			],
-			[
-				"docu",
-				"lib/eagle/document.js"
 			],
 			[
 				"point.j",
@@ -2854,16 +1163,8 @@
 				"test-eagle.js"
 			],
 			[
-				"matrix.j",
-				"js/matrix.js"
-			],
-			[
 				"transfo",
 				"lib/geom/transformation.js"
-			],
-			[
-				"autop",
-				"autoplacer.html"
 			],
 			[
 				"nodema",
@@ -2880,10 +1181,6 @@
 			[
 				"test-w",
 				"test-kolorwheel.js"
-			],
-			[
-				".brd",
-				"Headphone-Amplifier-ClassAB-alt3.brd"
 			],
 			[
 				"rgba.j",
@@ -2910,14 +1207,6 @@
 				"lib/geom/point.js"
 			],
 			[
-				"rgba",
-				"js/rgba.js"
-			],
-			[
-				"test-eag",
-				"test-eagle.js"
-			],
-			[
 				"clipper.",
 				"lib/clipper.js"
 			],
@@ -2928,22 +1217,6 @@
 			[
 				"geom.js",
 				"lib/geom.js"
-			],
-			[
-				"util",
-				"lib/util.js"
-			],
-			[
-				"common",
-				"lib/eagle/common.js"
-			],
-			[
-				"test-",
-				"test-color.js"
-			],
-			[
-				"trkl",
-				"lib/trkl.js"
 			],
 			[
 				"test-co",
@@ -2962,24 +1235,12 @@
 				"lib/jsonPointer.js"
 			],
 			[
-				"lazy",
-				"lib/lazyInitializer.js"
-			],
-			[
 				"project.js",
 				"lib/eagle/project.js"
 			],
 			[
 				"trkl.j",
 				"lib/trkl.js"
-			],
-			[
-				"util.j",
-				"lib/util.js"
-			],
-			[
-				"test-e",
-				"test-eagle.js"
 			],
 			[
 				"deep.js",
@@ -3008,10 +1269,6 @@
 			[
 				"point.",
 				"js/point.js"
-			],
-			[
-				"eleme",
-				"lib/dom/element.js"
 			],
 			[
 				"test.js",
@@ -3052,186 +1309,6 @@
 			[
 				"gl-ma",
 				"~/Dokumente/Sources/affine/gl-matrix/dist/gl-matrix.js"
-			],
-			[
-				"test.j",
-				"js/test.js"
-			],
-			[
-				"line.h",
-				"line.h"
-			],
-			[
-				"geometry.h",
-				"src/geometry.h"
-			],
-			[
-				"CMa",
-				"CMakeLists.txt"
-			],
-			[
-				"polygon.h",
-				"polygon.h"
-			],
-			[
-				"data.cpp",
-				"data.cpp"
-			],
-			[
-				"quic",
-				"quickjs/quickjs.h"
-			],
-			[
-				"geome",
-				"geometry.h"
-			],
-			[
-				"js.cpp",
-				"js.cpp"
-			],
-			[
-				"js.c",
-				"js.cpp"
-			],
-			[
-				"cmakel",
-				"CMakeLists.txt"
-			],
-			[
-				"test",
-				"test.js"
-			],
-			[
-				"size.js",
-				"size.js"
-			],
-			[
-				"Size",
-				"size.js"
-			],
-			[
-				"libc.h",
-				"quickjs/quickjs-libc.h"
-			],
-			[
-				"libc.c",
-				"quickjs/quickjs-libc.c"
-			],
-			[
-				"qjs.c",
-				"quickjs/qjs.c"
-			],
-			[
-				"jsc.c",
-				"quickjs/qjsc.c"
-			],
-			[
-				"line.j",
-				"line.js"
-			],
-			[
-				"dom.j",
-				"lib/dom.js"
-			],
-			[
-				"quickjs.c",
-				"quickjs/quickjs.c"
-			],
-			[
-				"money",
-				"components/simple/money.js"
-			],
-			[
-				"menu.",
-				"components/menu.js"
-			],
-			[
-				"menu",
-				"components/menu.js"
-			],
-			[
-				"layout",
-				"components/layout.js"
-			],
-			[
-				"layo",
-				"components/layout.js"
-			],
-			[
-				"api.",
-				"stores/api.js"
-			],
-			[
-				"rootst",
-				"stores/RootStore.js"
-			],
-			[
-				"adminSt",
-				"stores/AdminStore.js"
-			],
-			[
-				"adminS",
-				"stores/AdminStore.js"
-			],
-			[
-				"admin",
-				"pages/admin.js"
-			],
-			[
-				"rootSt",
-				"stores/RootStore.js"
-			],
-			[
-				"editf",
-				"components/admin/editForm.js"
-			],
-			[
-				"rootSto",
-				"stores/RootStore.js"
-			],
-			[
-				"table.js",
-				"components/simple/table.js"
-			],
-			[
-				"Util",
-				"util.js"
-			],
-			[
-				"userSto",
-				"stores/UserStore.js"
-			],
-			[
-				"money.js",
-				"components/simple/money.js"
-			],
-			[
-				"game",
-				"components/admin/games.js"
-			],
-			[
-				"calc",
-				"pages/calculator.js"
-			],
-			[
-				"lua.js",
-				"lib/lua.js"
-			],
-			[
-				"tra",
-				"transform-lua.js"
-			],
-			[
-				"comm",
-				"stores/commonStoreFunctions.js"
-			],
-			[
-				"userStore",
-				"stores/UserStore.js"
-			],
-			[
-				"curre",
-				"lib/currency.js"
 			]
 		],
 		"width": 0.0
@@ -3254,7 +1331,7 @@
 		],
 		"width": 907.0
 	},
-	"selected_group": 0,
+	"selected_group": 1,
 	"settings":
 	{
 	},

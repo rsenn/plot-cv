@@ -29,6 +29,8 @@ app.get("/files.html", async (req, res) => {
     return { name: file, mtime: "" + Util.unixTime(mtime), time: "" + Util.unixTime(ctime), mode: `0${(mode & 0o4777).toString(8)}`, size: "" + size };
   });
 
+  console.log("files:", files);
+
   res.type("json");
   res.json({ files });
 });

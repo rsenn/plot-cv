@@ -196,9 +196,13 @@
       };
 
       const ModifyColors = fn => e => {
+        const { type, buttons } = e;
+        if(type.endsWith('down')) {
+        console.log("ModifyColors",e);
         if(!window.c) window.c = SVG.allColors("svg");
         c.dump();
         fn(c);
+      }
       };
       const FileList = ({ files, ...props }) => {
         return html`
@@ -258,7 +262,7 @@
           //let padding = (100 / aspect).toFixed(4)+'%';
           //   Element.setCSS(element, { position: 'relative', width: '100%', height, padding: `0 0 0 0` });
 
-          Element.setCSS(Element.find("svg", svg), { left: 0, top: 0, position: "relative" });
+          Element.setCSS(svg, { left: 0, top: 0, position: "relative" });
 
           signal({ ...proj, loaded: true, bbox, element, svg });
           return signal();
@@ -370,172 +374,8 @@
         print: txt => alert(`The MD5 hash is: ${txt}`)
       };
     </script>
-    <style>
-      svg,
-      #container {
-        pointer-events: none;
-      }
-      #container {
-        display: flex;
-        flex-flow: column nowrap;
-      }
-      .fill {
-        width: 100%;
-        height: 100%;
-      }
-
-      .button.pushed,
-      .button-inactive {
-      }
-
-      .button.pushed {
-        transition-timing-function: ease-in-out;
-        box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7);
-
-        transition: filter 0.1s, transform 0.1s;
-      }
-      .button.inactive {
-        transition-timing-function: ease-in-out;
-        transition: filter 0.3s, transform 0.1s;
-      }
-      .button.pushed {
-        filter: hue-rotate(90deg);
-        transform: translate(1px, 1px);
-      }
-      .button {
-        text-shadow: 1px 1px 1px black;
-        margin: 10px;
-        padding: 8px;
-        flex: 0 1 auto;
-      }
-      .hcenter {
-        justify-content: center;
-      }
-      .vcenter {
-        align-items: center;
-      }
-      .hidden {
-        display: none;
-      }
-      .visible {
-        display: flex;
-      }
-      .transparent {
-        opacity: 0;
-      }
-      .overlay,
-      .button,
-      .center,
-      .button {
-        justify-content: center;
-        align-items: center;
-        /*  border: 2px solid hsl(220,100%,50%);*/
-      }
-      body {
-        background: linear-gradient(0deg, rgba(255, 255, 255, 1) 0%, rgba(0, 0, 0, 0.5) 80%);
-        background-attachment: fixed;
-      }
-      .button {
-        box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.7);
-        border-radius: 4px;
-        background: linear-gradient(30deg, hsla(220, 100%, 40%, 1) 20%, hsla(220, 100%, 50%, 1) 50%, hsla(220, 100%, 60%, 1) 80%); /* w3c */
-        color: white;
-        font-weight: bold;
-        user-select: none;
-        font-size: 2em;
-      }
-      .button {
-        display: inline-flex;
-      }
-      html,
-      body,
-      .overlay,
-      .button,
-      .panel,
-      .list {
-        font-family: Arial;
-      }
-      .list {
-        font-weight: normal;
-        font-size: 14px;
-      }
-      .file,
-      .file.active,
-      .file.inactive {
-        transition-timing-function: linear;
-        transition: height 1s, border 0.5s;
-      }
-      .list {
-        background: black;
-        flex-basis: 30%;
-      }
-
-      .list {
-        flex-flow: row wrap;
-      }
-      .panel,
-      .list {
-        box-sizing: border-box;
-      }
-      .file {
-        color: black;
-        flex-flow: column wrap;
-      }
-      .file.sch {
-        background: hsl(60, 100%, 98%);
-      }
-      .file.brd {
-        background: hsl(120, 100%, 98%);
-      }
-      .file.none {
-        background: white;
-      }
-
-      .file.inactive {
-        border: 4px solid hsla(230, 100%, 0%, 0);
-        margin: 4px;
-        box-shadow: 1px 1px 3px hsl(180, 20%, 20%);
-      }
-      .file.active {
-        margin: 4px;
-        min-height: 100px;
-        border: 4px solid hsla(250, 100%, 60%, 1);
-
-        box-shadow: 1px 1px 4px hsl(180, 20%, 20%);
-      }
-      .file {
-        margin: 4px;
-        padding: 6px 9px;
-        flex: 1 1 auto;
-        display: flex;
-        /*        flex-basis: 100%;
-*/
-        justify-content: space-between;
-        align-items: flex-start;
-      }
-      .button.pushed {
-        background: rgba(255, 0, 0, 1);
-      }
-
-      .panel,
-      .buttons {
-        background-color: hsla(230, 40%, 80%, 0.8);
-        border: 1px solid hsla(230, 0%, 50%, 1);
-        margin: 4px 0px;
-        display: flex;
-        justify-content: flex-start;
-        align-items: stretch;
-      }
-      .sch > .progress > .progress-bar {
-        background: hsla(60, 100%, 60%, 0.5);
-      }
-      .brd > .progress > .progress-bar {
-        background: hsla(120, 100%, 60%, 0.5);
-      }
-      .progress {
-        max-width: 200px;
-      }
-    </style>
+     <link rel="stylesheet" type="text/css" href="static/style.css" />
+   
   </head>
   <body style=" max-height: 100vh;">
     <div id="preact" style=" min-height: 100vh;"></div>
