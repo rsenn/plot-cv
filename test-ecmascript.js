@@ -1,4 +1,4 @@
-import Parser from "./lib/ecmascript/parser.js";
+import { ECMAScriptParser } from "./lib/ecmascript/parser.js";
 import Lexer, { Stack, PathReplacer } from "./lib/ecmascript/lexer.js";
 import Printer from "./lib/ecmascript/printer.js";
 import Util from "./lib/util.js";
@@ -62,6 +62,12 @@ function dumpFile(name, data) {
   console.log(`Wrote '${name}': ${data.length} bytes`);
 }
 
+function printAst(ast) {
+  let printer = new Printer({ indent: 4 });
+
+  return printer.print(ast);
+}
+
 Error.stackTraceLimit = 100;
 
 global.parser = null;
@@ -76,18 +82,25 @@ function main(args) {
     console.log("opened:", data);
     let ast, error;
 
-    global.parser = new Parser(data.toString(), arg);
+    global.parser = new ECMAScriptParser(data.toString(), arg);
     try {
       ast = parser.parseProgram();
     } catch(err) {
       error = err;
     }
     files[arg] = finish(error);
+
+    if(!error) {
+      //    console.log("ast:", ast);
+      dumpFile("output.es", printAst(ast));
+    }
+
     console.log("files:", files);
   }
   var success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
   process.exit(Number(files.length == 0));
 }
+
 function finish(err) {
   if(err) {
     console.log("ERROR: " + Util.className(err) + ": " + err.toString());
@@ -106,7 +119,6 @@ function finish(err) {
   dumpFile("trace.log", parser.trace());
   if(fail) {
     console.log("\nerror:", err.msg, "\n", parser.lexer.currentLine());
-  } else {
   }
   console.log("finish: " + (fail ? "error" : "success"));
   return !fail;
