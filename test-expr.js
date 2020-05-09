@@ -1,23 +1,9 @@
-function isPunctuator(word) {
-  switch (word.length) {
-    case 1:
-      return "=.-%}>,*[<!/]~&(;?|):+^{@".indexOf(word) >= 0;
+let p;
+class ce2 {}
+class ce {}
 
-    case 2:
-      return ["!=", "*=", "&&", "<<", "/=", "||", ">>", "&=", "==", "++", "|=", "<=", "--", "+=", "^=", ">=", "-=", "%=", "=>"].indexOf(word) >= 0;
-
-    case 3:
-      return ["!==", "===", ">>=", "-->>", "<<=", "..."].indexOf(word) >= 0;
-
-    case 4: {
-      return word === "-->>=";
-    }
-
-    default:
-      return false;
-  }
+for(p in ce2.prototype){
+  if(typeof ce.prototype.p === "undefined" || ce.prototype.p === Object.prototype.p) ce.prototype.p = ce2.prototype.p;
+  console.log("p:", p);
 }
 
-//console.log(testFn(">="));
-
-console.log(isPunctuator(process.argv[2] || ""));

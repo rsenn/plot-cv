@@ -95,77 +95,6 @@
 	},
 	"buffers":
 	[
-		{
-			"contents": "testfn\n(acc,arg) =>\ndumpFile\nasync (...args) =>",
-			"settings":
-			{
-				"buffer_size": 47,
-				"line_ending": "Unix",
-				"name": "𝌆 Outline",
-				"scratch": true
-			}
-		},
-		{
-			"file": "lib/ecmascript/parser.js",
-			"settings":
-			{
-				"buffer_size": 51283,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/ecmascript/lexer.js",
-			"settings":
-			{
-				"buffer_size": 17652,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/util.js",
-			"settings":
-			{
-				"buffer_size": 71666,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-ecmascript.js",
-			"settings":
-			{
-				"buffer_size": 2255,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "node_modules/object-path/test.js",
-			"settings":
-			{
-				"buffer_size": 29131,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/ecmascript/estree.js",
-			"settings":
-			{
-				"buffer_size": 12101,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/ecmascript/printer.js",
-			"settings":
-			{
-				"buffer_size": 9532,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -181,6 +110,18 @@
 			[
 				"schemeed",
 				"SchemeEditor: Edit Current Scheme"
+			],
+			[
+				"extract",
+				"PackageResourceViewer: Extract Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
 			],
 			[
 				"key",
@@ -199,20 +140,12 @@
 				"Browse Mode: FileBrowser Left, Outline Right"
 			],
 			[
-				"install",
-				"Package Control: Install Package"
-			],
-			[
 				"out",
 				"Browse Mode: Outline (Right)"
 			],
 			[
 				"remove pac",
 				"Package Control: Remove Package"
-			],
-			[
-				"install ",
-				"Package Control: Install Package"
 			],
 			[
 				"extrat",
@@ -311,10 +244,6 @@
 				"Package Control: Add Repository"
 			],
 			[
-				"extract",
-				"PackageResourceViewer: Extract Package"
-			],
-			[
 				"remove ac",
 				"Package Control: Remove Package"
 			],
@@ -378,12 +307,25 @@
 	},
 	"expanded_folders":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv",
-		"/home/roman/Dokumente/Sources/plot-cv/lib",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript"
+		"/home/roman/Dokumente/Sources/plot-cv"
 	],
 	"file_history":
 	[
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/lua.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/clipper.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-expr.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/es6.ebnf",
+		"/home/roman/Dokumente/Sources/plot-cv/output.es",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/busywait.js",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/@ampproject/toolbox-optimizer/lib/TreeParser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/object-path/test.js",
 		"/home/roman/Dokumente/Sources/plot-cv/style.css",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/container.js",
@@ -392,10 +334,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/project.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/css.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/node_modules/nth-check/parse.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
 		"/home/roman/Dokumente/Sources/plot-cv/index.html",
@@ -410,13 +349,11 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/devtools.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/autoplacer.html",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
 		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/graph.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/fd-graph.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-autoplacer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/Headphone-Amplifier-ClassAB-alt3.brd",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
@@ -425,10 +362,8 @@
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/bbox.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
 		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/lua.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/draw/colorMap.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/rgba.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/overlay.js",
@@ -503,19 +438,11 @@
 		"/home/roman/Dokumente/Sources/lotto/test-admin/node_modules/@material-ui/core/styles/createPalette.js",
 		"/home/roman/Dokumente/Sources/lotto/test-admin/node_modules/@material-ui/core/esm/styles/createPalette.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/KolorWheel.js",
-		"/home/roman/.config/sublime-text-3/Packages/Babel/Next Roman.tmTheme",
-		"/home/roman/Dokumente/Sources/plot-cv/js/point.js",
-		"/home/roman/Dokumente/Sources/delaunay/delaunay/lib/matrix.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/intersection.js",
-		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch",
-		"/home/roman/Dokumente/Sources/plot-cv/js/test.js",
-		"/home/roman/Dokumente/Sources/plot-cv/5V-to-12V-Converter-alt.sch",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/clipper.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-pointlist.js"
+		"/home/roman/.config/sublime-text-3/Packages/Babel/Next Roman.tmTheme"
 	],
 	"find":
 	{
-		"height": 39.0
+		"height": 44.0
 	},
 	"find_in_files":
 	{
@@ -539,134 +466,134 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"stateFn",
-			"\"export",
-			"parseVariableDeclaration",
-			"VariableDeclarator",
+			" parseExport",
+			"declarations",
+			"declarations:",
+			" printExport",
+			" printBind",
+			" parseAssign",
+			" parseExport",
+			"parseBinding",
+			" parseBinding",
+			"parseObjectBind",
+			" printExpoprt",
+			" printObject",
+			"instanceof Iden",
+			" printObject",
+			"\"{\"",
+			"printExport",
+			" parseExportStatement",
+			"parseExport",
+			" parseExport",
+			" parseSou",
+			" parseState",
+			" parseSou",
+			"exported = false",
+			"exported = fal",
+			" parseClass",
+			"exported =",
 			"exported",
-			"export",
-			"Import",
-			"Împort",
-			" parseImport",
-			"argv",
-			"RegExp",
-			"RegExpLiter",
-			"getCall",
-			"parsePrimaryExpression",
-			" parseAssignmentExpression",
-			"BindingProp",
-			"Assignmen",
-			"BindingProp",
-			"Expected",
-			"parseBindingPattern",
-			"onToke",
-			"this.onTok",
-			"onToken",
-			"trace =",
-			"this.parseBin",
-			"this.parseBind",
-			" parseBin",
-			"//  ",
-			" parseFunc",
-			" parseAss",
-			" parseAssignmenet",
-			" parseFunc",
-			"parseVariableDeclaration",
-			"\"=\"",
-			"parseRemainingMemberExpression",
-			"parseRemainingMemberExpression$",
-			"parseRemainingMemberExpression",
-			"parseAssignmentExpression",
-			"identifier",
-			"arseArg",
-			" parseFunc",
-			"parseFunc",
-			" parseFunc",
-			" parseBind",
-			" parseFunc",
-			"parseFunc",
-			" parseVariableDeclaration",
-			"parseVariableDeclaration",
-			"parseArg",
-			" parseArgument",
-			" parseArgumentList",
-			" parseArg",
-			" parseFun",
-			"parsearg",
-			"parseFun",
-			" parseArg",
-			"parseAss",
-			" parseAss",
-			" parseExpress",
-			" parseAss",
-			" parseFunc",
-			"parseVariableDeclaration",
-			"\"=\"",
-			"slice",
-			" parseFu",
-			"msg",
-			"this.log",
-			"instrumentate",
-			" CALL ",
-			"nodes",
-			"ret",
-			"newNod",
-			"parsed string",
-			" parseFunc",
-			"assignment",
-			"default",
-			" parseFun",
-			"with value: \\${token.value}",
-			"with value",
-			"with value ",
-			"with value",
-			"process..wd",
-			"process.pwd",
-			"return",
-			"getCallers =",
-			"expectPun",
-			"getCallers =",
-			"getCallers",
-			"getCallers =",
-			"getCallers",
-			"getCall",
-			"parseBind",
-			"getStack",
-			"err",
-			"ERROR:",
-			"Stack\\(",
-			"Stack\\(\\)",
-			"Stack\\(",
-			"with value",
-			"toString",
-			"scan err",
-			"parse er",
-			"Syntax",
-			"error\\(",
-			"console.log.*pos",
-			"console.log",
-			"new Sy",
-			"this.position\\(",
-			"this.error",
-			"position\\(",
-			"position =",
+			"exported =",
+			"exported\\)",
+			"exported",
+			"ast",
+			"printExport",
+			"defaultExpor",
+			"class Expo",
+			"VariableDecl",
+			" parseVariableDeclarationList",
+			" parseVar",
+			"this.parseVariableSt",
+			" parseVariableState",
+			" parseStatement",
+			"this.parseExport",
+			"this.parseEx",
+			" parseExport",
+			"parseExport",
+			" parseExport",
+			"parseExport",
+			"lexQuote",
+			"isQuote",
+			"\\\\\\\\",
+			"operatorPrecedence",
+			"lexReg",
+			" parseRem",
+			"parseArgument",
+			" parseTry",
+			" parseBlock",
+			"this.parseTry",
+			" parseTry",
+			"parseTry",
+			" parseTry",
+			"parseTry",
+			" parseBlock",
+			"TryState",
+			"parseTry",
+			"binaryEx",
+			"\"of\"",
+			"\"in\"",
+			" parseFor",
+			"matchStatement",
+			"parseSourceElement",
+			"parseFor",
 			"position",
-			"new Sy",
-			"position =",
+			"value.*positi",
+			"{.*value:",
+			"Property",
+			"{ .*value",
+			"value",
+			"printObject",
+			" parseFunc",
+			" matchIden",
+			"async",
+			"\"async",
+			"parsePrim",
+			"matchKeywords",
+			" parseFunc",
+			"parsePrimary",
+			"lexReg",
+			"accept.vali",
+			" acceptRun",
+			"validator",
+			" accept",
+			"lexReg",
+			"isReg",
+			"lexRegExp",
+			"isRegExpChar",
+			"parseAssignmentExp",
+			"parseReturn",
+			"matchPrimary",
+			"parseReturn",
+			"stack.shift",
+			"tokenTypes",
+			"tokenTypes\n",
+			"estree.Property",
+			"handleConstr",
+			"stack.unshift",
+			"positions:",
+			"nodes",
+			"padEnd",
+			"\\.instance",
+			"stack.unshift",
+			"stack",
 			"position\\(",
-			"reset",
-			"reset\\(",
-			"setInput",
-			"new Syntax",
-			"Parser.prototype",
-			"Parser.prototype\\.",
-			"Parser.prototype",
-			"Parser.proto",
-			"new Syntax",
+			" position",
+			" position\\(",
+			" position",
+			"Position",
+			"position",
+			"pos =",
 			"toString",
-			"throw ",
-			"throw",
-			"throw new SyntaxError"
+			"- 2",
+			" getRange",
+			"getRange",
+			"position\\(",
+			" ignore\\(",
+			"ignore\\(",
+			"positionn\\(",
+			"getLinerange",
+			"\"line",
+			"getRange"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -674,6 +601,12 @@
 		"regex": true,
 		"replace_history":
 		[
+			"Token.types",
+			"this.estree",
+			"this.getRange",
+			"}\n\n  match",
+			"}\n\n  expect",
+			"}\n\n  parse",
 			"with value '${token.value}'",
 			"throw this.error",
 			"from \"./",
@@ -804,431 +737,14 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 47,
-						"regions":
-						{
-						},
-						"selection":
-						[
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
-							"outline_rename_mode": false,
-							"symkeys":
-							[
-								[
-									476,
-									490
-								],
-								[
-									631,
-									643
-								],
-								[
-									849,
-									875
-								],
-								[
-									1107,
-									1125
-								]
-							],
-							"symlist":
-							[
-								"testfn",
-								"(acc,arg) =>",
-								"dumpFile",
-								"async (...args) =>"
-							],
-							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 3,
-			"sheets":
-			[
-				{
-					"buffer": 1,
-					"file": "lib/ecmascript/parser.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 51283,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								33069,
-								33069
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/SchemeEditorTemp/Next (Roman).tmTheme",
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 16663.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "lib/ecmascript/lexer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 17652,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								17255,
-								17255
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/SchemeEditorTemp/Next (Roman).tmTheme",
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 11495.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "lib/util.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 71666,
-						"regions":
-						{
-							"col_000000CC":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										24428,
-										24443
-									]
-								],
-								"scope": "col_000000CC"
-							},
-							"col_000000CC_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_000000CC_circle.png",
-								"regions":
-								[
-									[
-										24379,
-										24379
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_010101FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										24834,
-										24839
-									],
-									[
-										61197,
-										61202
-									]
-								],
-								"scope": "col_010101FF"
-							},
-							"col_010101FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_010101FF_circle.png",
-								"regions":
-								[
-									[
-										24820,
-										24820
-									],
-									[
-										61157,
-										61157
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4444DDFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										24479,
-										24486
-									]
-								],
-								"scope": "col_4444DDFF"
-							},
-							"col_4444DDFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4444DDFF_circle.png",
-								"regions":
-								[
-									[
-										24379,
-										24379
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_7FFFFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										57684,
-										57694
-									]
-								],
-								"scope": "col_7FFFFFFF"
-							},
-							"col_7FFFFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_7FFFFFFF_circle.png",
-								"regions":
-								[
-									[
-										57669,
-										57669
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FFFFFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										57448,
-										57458
-									],
-									[
-										61204,
-										61209
-									]
-								],
-								"scope": "col_FFFFFFFF"
-							},
-							"col_FFFFFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
-								"regions":
-								[
-									[
-										57395,
-										57395
-									],
-									[
-										61157,
-										61157
-									]
-								],
-								"scope": "col_gutter"
-							}
-						},
-						"selection":
-						[
-							[
-								211,
-								211
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/SchemeEditorTemp/Next (Roman).tmTheme",
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "test-ecmascript.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2255,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2089,
-								2089
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/SchemeEditorTemp/Next (Roman).tmTheme",
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 544.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "node_modules/object-path/test.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 29131,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								15968,
-								15968
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/SchemeEditorTemp/Next (Roman).tmTheme",
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 8240.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "lib/ecmascript/estree.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 12101,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7665,
-								7665
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/SchemeEditorTemp/Next (Roman).tmTheme",
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 4887.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "lib/ecmascript/printer.js",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 9532,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/SchemeEditorTemp/Next (Roman).tmTheme",
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 5376.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 25.0
+		"height": 38.0
 	},
 	"input":
 	{
@@ -1239,29 +755,20 @@
 		"cells":
 		[
 			[
-				2,
-				0,
-				3,
-				2
-			],
-			[
 				0,
 				0,
-				2,
-				2
+				1,
+				1
 			]
 		],
 		"cols":
 		[
 			0.0,
-			0.2,
-			0.8,
 			1.0
 		],
 		"rows":
 		[
 			0.0,
-			0.5,
 			1.0
 		]
 	},
@@ -1290,7 +797,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 46.0
+		"height": 84.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1300,16 +807,52 @@
 		"selected_items":
 		[
 			[
-				"lexer",
-				"lib/ecmascript/lexer.js"
+				"print",
+				"lib/ecmascript/printer.js"
+			],
+			[
+				"printer.js",
+				"lib/ecmascript/printer.js"
+			],
+			[
+				"luajs",
+				"lib/lua.js"
 			],
 			[
 				"test-ec",
 				"test-ecmascript.js"
 			],
 			[
+				"test-ex",
+				"test-expr.js"
+			],
+			[
+				"clipper",
+				"lib/clipper.js"
+			],
+			[
+				"parser",
+				"lib/ecmascript/parser.js"
+			],
+			[
+				"token",
+				"lib/ecmascript/token.js"
+			],
+			[
+				"printer",
+				"lib/ecmascript/printer.js"
+			],
+			[
 				"util.js",
 				"lib/util.js"
+			],
+			[
+				"estree",
+				"lib/ecmascript/estree.js"
+			],
+			[
+				"lexer",
+				"lib/ecmascript/lexer.js"
 			],
 			[
 				"util.j",
@@ -1404,10 +947,6 @@
 				"lib/geom/size.js"
 			],
 			[
-				"parser",
-				"lib/ecmascript/parser.js"
-			],
-			[
 				"autot\t",
 				"autoplacer.html"
 			],
@@ -1488,10 +1027,6 @@
 				"lib/deep.js"
 			],
 			[
-				"estree",
-				"lib/ecmascript/estree.js"
-			],
-			[
 				"token.js",
 				"lib/ecmascript/token.js"
 			],
@@ -1502,10 +1037,6 @@
 			[
 				"common",
 				"lib/eagle/common.js"
-			],
-			[
-				"token",
-				"lib/ecmascript/token.js"
 			],
 			[
 				"estree.",
@@ -1786,30 +1317,6 @@
 			[
 				"deep.",
 				"lib/deep.js"
-			],
-			[
-				"moon",
-				"test-moon.js"
-			],
-			[
-				"point.",
-				"js/point.js"
-			],
-			[
-				"test.js",
-				"js/test.js"
-			],
-			[
-				"plo",
-				"src/plot-cv.cpp"
-			],
-			[
-				"plot-cv",
-				"plot-cv"
-			],
-			[
-				"js.h",
-				"src/js.h"
 			]
 		],
 		"width": 0.0
@@ -1832,7 +1339,7 @@
 		],
 		"width": 907.0
 	},
-	"selected_group": 1,
+	"selected_group": 0,
 	"settings":
 	{
 	},

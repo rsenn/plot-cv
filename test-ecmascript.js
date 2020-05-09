@@ -5,8 +5,12 @@ import Util from "./lib/util.js";
 import fs from "fs";
 import util from "util";
 import { Console } from "console";
-import { estree, Factory } from "./lib/ecmascript/estree.js";
+import { estree, Factory, Node } from "./lib/ecmascript/estree.js";
+import deep from "./lib/deep.js";
+import { SortedMap } from "./lib/container/sortedMap.js";
+
 //import process from 'process';
+ Error.stackTraceLimit = 1000;
 
 global.console = new Console({
   stdout: process.stdout,
@@ -86,6 +90,11 @@ function main(args) {
     try {
       ast = parser.parseProgram();
 
+let flat =  deep.flatten(deep.iterate(ast, node => node instanceof Node), new SortedMap());
+
+     console.log("ast:", new SortedMap([...flat].map(([key,value]) => [key,value.position+''])));
+     console.log("ast:", Util.className(flat));
+
     //  console.log("nodes:", parser.nodes.map(n =>  [Util.className(n), n.position.toString()]));
     } catch(err) {
       error = err;
@@ -93,8 +102,9 @@ function main(args) {
     files[file] = finish(error);
 
     if(!error) {
-      const output_file = file.replace(/.*\/(.*)\.([^.]*)$/, "$1.es");
+      const output_file = file.replace(/.*\//, "").replace(/\.[^.]*$/, "")+".es";
 
+        //  console.log("ast:", ast);
           console.log("saving to:", output_file);
       dumpFile(output_file, printAst(ast));
     }
@@ -106,17 +116,20 @@ function main(args) {
 }
 
 function finish(err) {
-  if(err) {
-    console.log("ERROR: " + Util.className(err) + ": " + err.toString());
-  }
-  let fail = !!err;
+   let fail = !!err;
   if(fail) {
-    let stack = PathReplacer()("" + err.stack)
+    err.stack = PathReplacer()("" + err.stack)
       .split(/\n/g)
-      .slice(0, 10)
+      .filter(s => !/esfactory/.test(s))
       .join("\n");
-    console.log("STACK:\n" + stack);
   }
+
+
+   if(err) {
+    console.log(  parser.lexer.currentLine());
+    console.log( Util.className(err) + ": "+(err.msg||err) +"\n"+err.stack);
+  }
+
   let lexer = parser.lexer;
   let t = [];
   //console.log(parser.trace() );
