@@ -20,7 +20,7 @@ a test`;
 let args = process.argv.slice(2);
 if(args.length == 0) args.push("-");
 
-let files = args.reduce((acc, arg) => ({ ...acc, [arg]: undefined }), {});
+let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
 
 process.on("uncaughtException", (err, origin) => {
   fs.writeSync(
@@ -74,25 +74,29 @@ global.parser = null;
 
 function main(args) {
   if(args.length == 0) args.push("./lib/ecmascript/parser.js");
-  for(let arg of args) {
+  for(let file of args) {
     let data, b, ret;
-    if(arg == "-") arg = "/dev/stdin";
-    console.log("file:", arg);
-    data = fs.readFileSync(arg);
+    if(file == "-") file = "/dev/stdin";
+    console.log("file:", file);
+    data = fs.readFileSync(file);
     console.log("opened:", data);
     let ast, error;
 
-    global.parser = new ECMAScriptParser(data.toString(), arg);
+    global.parser = new ECMAScriptParser(data.toString(), file);
     try {
       ast = parser.parseProgram();
+
+    //  console.log("nodes:", parser.nodes.map(n =>  [Util.className(n), n.position.toString()]));
     } catch(err) {
       error = err;
     }
-    files[arg] = finish(error);
+    files[file] = finish(error);
 
     if(!error) {
-      //    console.log("ast:", ast);
-      dumpFile("output.es", printAst(ast));
+      const output_file = file.replace(/.*\/(.*)\.([^.]*)$/, "$1.es");
+
+          console.log("saving to:", output_file);
+      dumpFile(output_file, printAst(ast));
     }
 
     console.log("files:", files);
