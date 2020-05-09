@@ -10,7 +10,7 @@ import deep from "./lib/deep.js";
 import { SortedMap } from "./lib/container/sortedMap.js";
 
 //import process from 'process';
- Error.stackTraceLimit = 1000;
+Error.stackTraceLimit = 1000;
 
 global.console = new Console({
   stdout: process.stdout,
@@ -90,28 +90,37 @@ function main(args) {
     try {
       ast = parser.parseProgram();
 
-let flat =  deep.flatten(deep.iterate(ast, node => node instanceof Node), new SortedMap());
-let posMap = new SortedMap([...flat].map(([key,value]) => [value.position ? value.position.pos *10 : -1, value]), (a,b) => a - b);
+      let flat = deep.flatten(
+        deep.iterate(ast, node => node instanceof Node),
+        new SortedMap()
+      );
+      let posMap = new SortedMap(
+        [...flat].map(([key, value]) => [value.position ? value.position.pos * 10 : -1, value]),
+        (a, b) => a - b
+      );
 
-let commentMap = new SortedMap([...parser.comments].map(({ comment, node, pos, len, ...item }) => [ pos*10-1, { comment, pos, len, node: posMap.keyOf(node) }  ]), (a,b) => a - b);
+      let commentMap = new SortedMap(
+        [...parser.comments].map(({ comment, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node: posMap.keyOf(node) }]),
+        (a, b) => a - b
+      );
 
-posMap = new SortedMap([/*...posMap,*/ ...commentMap], (a,b) => a - b);
+      posMap = new SortedMap([/*...posMap,*/ ...commentMap], (a, b) => a - b);
 
-     //  console.log("ast:", [...posMap.keys()]);$
-    // console.log("ast:", Util.className(flat));
-     console.log("commentMap:", commentMap);
+      //  console.log("ast:", [...posMap.keys()]);$
+      // console.log("ast:", Util.className(flat));
+      console.log("commentMap:", commentMap);
 
-    //  console.log("nodes:", parser.nodes.map(n =>  [Util.className(n), n.position.toString()]));
+      //  console.log("nodes:", parser.nodes.map(n =>  [Util.className(n), n.position.toString()]));
     } catch(err) {
       error = err;
     }
     files[file] = finish(error);
 
     if(!error) {
-      const output_file = file.replace(/.*\//, "").replace(/\.[^.]*$/, "")+".es";
+      const output_file = file.replace(/.*\//, "").replace(/\.[^.]*$/, "") + ".es";
 
-        //  console.log("ast:", ast);
-          console.log("saving to:", output_file);
+      //  console.log("ast:", ast);
+      console.log("saving to:", output_file);
       dumpFile(output_file, printAst(ast, parser.comments));
     }
 
@@ -122,7 +131,7 @@ posMap = new SortedMap([/*...posMap,*/ ...commentMap], (a,b) => a - b);
 }
 
 function finish(err) {
-   let fail = !!err;
+  let fail = !!err;
   if(fail) {
     err.stack = PathReplacer()("" + err.stack)
       .split(/\n/g)
@@ -130,10 +139,9 @@ function finish(err) {
       .join("\n");
   }
 
-
-   if(err) {
-    console.log(  parser.lexer.currentLine());
-    console.log( Util.className(err) + ": "+(err.msg||err) +"\n"+err.stack);
+  if(err) {
+    console.log(parser.lexer.currentLine());
+    console.log(Util.className(err) + ": " + (err.msg || err) + "\n" + err.stack);
   }
 
   let lexer = parser.lexer;

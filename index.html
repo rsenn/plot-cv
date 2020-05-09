@@ -93,6 +93,7 @@
         const events = MouseEvents(
           MouseHandler((e, state) => {
             const prev = pushed;
+            if(!e.type.endsWith('down') && !e.type.endsWith('up')) return;
             setPushed(state);
             //  console.log(`overlay pushed=${pushed} active=${active}:`, e.target);
             return typeof onPush == "function" ? onPush(e, state) : null;
@@ -185,7 +186,7 @@
       });
 
       const Button = ({ caption, fn }) => html`
-        <${Overlay} className="button" text=${caption} onPush=${fn} />
+        <${Overlay} className="button" text=${caption} onPush=${state => state ? fn(state) : undefined} />
       `;
 
       const Label = ({ className = "label", caption, children, ...props }) =>
@@ -241,17 +242,24 @@
           fn(c);
         }
       };
-      const FileList = ({ files, ...props }) => {
+      const FileList = ({ files, onChange, onActive, ...props }) => {
+const [active,setActive] = useState(true);
+
+
+onActive.subscribe(value => setActive(value));
+
         return html`
-        <${Overlay}
-        className="sidebar">
+        <div
+        className=${classNames('sidebar', (active ? 'active' : 'inactive'))}
+        style=${{ transform: active ? 'none' : 'translateX(-100%)' }}>
           <${Chooser}
             className="list"
             itemComponent=${File}
             itemClass="file hcenter"
             items=${files}
+            onChange=${ (...args) => { onActive(false); onChange(...args); } }
             ...${props}
-          /></${Overlay}>
+          /></div>
         `;
       };
       const Panel = (name, children) => html`<${Container} className="${name}">${children}</${Container}>`;
@@ -264,7 +272,7 @@
           let doc = await LoadFile(name);
           window.eagle = doc;
           //console.log('document:', doc);
-          if(!element) element = Element.create("div", { style: { position: "relative", "data-name": name, border: "1px dotted black" } }, parentElem);
+          /*if(!element)*/ element = Element.create("div", { style: { position: "relative", "data-name": name, border: "1px dotted black" } }, Element.find('#container'));
           //let svg = Element.create('svg', { viewBox:  } , element);
           window.renderer = renderDocument(doc, element);
           if(!svg) svg = Element.find("svg", element);
@@ -377,12 +385,24 @@
 
         window.projects = projects;
 
+        let open = trkl();
+
         React.render(
           [
             Panel("buttons", [
               h(Button, {
+                caption: "📂", // 📁
+                fn: (e) => {
+                  if(e.type.endsWith('down')) {
+                  console.log("file list push",e);
+                  open(!open());
+                }
+                }
+              }), 
+
+              h(Button, {
                 caption: "Random",
-                onPush: ModifyColors(c => c.replaceAll(c => HSLA.random()))
+                fn: ModifyColors(c => c.replaceAll(c => HSLA.random()))
               }),
 
               h(Button, {
@@ -391,7 +411,7 @@
               })
             ]),
             html`
-              <${FileList} items=${projects} onChange=${chooseDocument} />
+              <${FileList} items=${projects} onActive=${open} onChange=${chooseDocument} />
             `
           ],
           Element.find("#preact")
@@ -451,6 +471,6 @@
   </head>
   <body style=" max-height: 100vh;">
     <div id="preact" style=" min-height: 100vh;"></div>
-    <div id="container" style="overflow-y: auto; overflow-x: visible; height: 100%;"></div>
+    <div id="container" style=""></div>
   </body>
 </html>
