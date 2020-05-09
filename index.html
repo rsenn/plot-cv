@@ -273,7 +273,11 @@
           let doc = await LoadFile(name);
           window.eagle = doc;
           //console.log('document:', doc);
-          /*if(!element)*/ element = Element.create("div", { style: { position: "relative", "data-name": name, border: "1px dotted black" } }, Element.find("#container"));
+          /*if(!element)*/
+
+          Element.remove("#fence");
+
+          element = Element.create("div", { id: "fence", style: { position: "relative", "data-name": name, border: "1px dotted black" } }, Element.find("#container"));
           //let svg = Element.create('svg', { viewBox:  } , element);
           window.renderer = renderDocument(doc, element);
           if(!svg) svg = Element.find("svg", element);
@@ -472,6 +476,6 @@
   </head>
   <body style=" max-height: 100vh;">
     <div id="preact" style=" min-height: 100vh;"></div>
-    <div id="container" style=""></div>
+    <div id="main"><div id="container" style=""></div></div>
   </body>
 </html>
