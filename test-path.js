@@ -59,8 +59,7 @@ for(let i = 0; i < path.length; i++) {
   let points = [new Point(x, y), new Point(x1, y1), new Point(x2, y2)];
   console.log(`path[${i}]:`, c);
 
-  if(!relative)
-    points = points.map(p => (p.x !== undefined ? t.transform_point({ x: p.x, y: p.y }) : p));
+  if(!relative) points = points.map(p => (p.x !== undefined ? t.transform_point({ x: p.x, y: p.y }) : p));
 
   if(command == "A") points[0] = new Point(x, y);
 
@@ -76,15 +75,7 @@ for(let i = 0; i < path.length; i++) {
     }
     case "A": {
       const { xAxisRotation, largeArc, sweep } = c;
-      newPath.arc(
-        points[3].x,
-        points[3].y,
-        xAxisRotation,
-        largeArc ? 1 : 0,
-        sweep ? 1 : 0,
-        points[0].x,
-        points[0].y
-      );
+      newPath.arc(points[3].x, points[3].y, xAxisRotation, largeArc ? 1 : 0, sweep ? 1 : 0, points[0].x, points[0].y);
       break;
     }
     case "H": {

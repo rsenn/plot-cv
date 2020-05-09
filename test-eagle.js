@@ -21,17 +21,10 @@ global.console = new Console({
 });
 
 function xmlize(obj, depth = 2) {
-  return obj.toXML
-    ? obj.toXML().replace(/>\s*</g, ">\n    <")
-    : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
+  return obj.toXML ? obj.toXML().replace(/>\s*</g, ">\n    <") : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
 function testLocator() {
-  let testobj = [
-    0,
-    1,
-    2,
-    { name: "roman", children: ["x", "y", { id: 1, items: ["a", "b", "c"] }] }
-  ];
+  let testobj = [0, 1, 2, { name: "roman", children: ["x", "y", { id: 1, items: ["a", "b", "c"] }] }];
   let l = new EaglePath([3, "children", 2, "items", -2]);
   let a = [l.slice(), l.slice()];
 
@@ -207,17 +200,11 @@ async function testEagle(filename) {
   const signals = board.find("signals");
   //console.log("signals.path:" + signals.path);
 
-  for(let wire of signals.getAll(
-    v => v.tagName == "wire" && ["1", "16"].includes(v.attributes.layer)
-  )) {
+  for(let wire of signals.getAll(v => v.tagName == "wire" && ["1", "16"].includes(v.attributes.layer))) {
     //console.log("wire:", wire);
 
-    let line = Line.bind(wire.attributes, null, k => v =>
-      v === undefined ? +wire.attributes[k] : (wire.attributes[k] = "" + v)
-    );
-    let pointA = Point.bind(wire.attributes, ["x1", "y1"], k => v =>
-      v === undefined ? +wire.attributes[k] : (wire.attributes[k] = "" + v)
-    );
+    let line = Line.bind(wire.attributes, null, k => v => (v === undefined ? +wire.attributes[k] : (wire.attributes[k] = "" + v)));
+    let pointA = Point.bind(wire.attributes, ["x1", "y1"], k => v => (v === undefined ? +wire.attributes[k] : (wire.attributes[k] = "" + v)));
     let copy = line.clone();
 
     line.round(2.54);
@@ -233,9 +220,7 @@ async function testEagle(filename) {
   }
 
   for(let element of board.getAll("element")) {
-    let position = Point.bind(element.attributes, null, k => v =>
-      v === undefined ? +element.attributes[k] : (element.attributes[k] = "" + v)
-    );
+    let position = Point.bind(element.attributes, null, k => v => (v === undefined ? +element.attributes[k] : (element.attributes[k] = "" + v)));
 
     let copy = position.clone();
     position.round(2.54);

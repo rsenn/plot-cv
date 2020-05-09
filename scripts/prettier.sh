@@ -16,7 +16,7 @@ prettier() {
     --semi \
     --bracket-spacing \
     --no-insert-pragma \
-    "$@"; ${DEBUG:-false} && echo "$@" 1>&2; command "$@")
+    "$@"; ${DEBUG:-false} && echo "$@" 1>&2; command "$@" 2>/dev/null; exit $?)
 }
 EXPR='1 { /@format/ { N; /\n$/ { d } } }'
 for KW in "if" "for" "do" "while" "catch"; do

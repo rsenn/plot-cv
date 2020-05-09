@@ -48,8 +48,7 @@ app.post("/save", async (req, res) => {
   const { body } = req;
   console.log("req.headers:", req.headers);
   console.log("save body:", body.substring(0, 100), "...");
-  const filename =
-    req.headers["content-disposition"].replace(/.*"([^"]*)".*/, "$1") || "output.svg";
+  const filename = req.headers["content-disposition"].replace(/.*"([^"]*)".*/, "$1") || "output.svg";
   let result = await fs.promises.writeFile(filename, body, { mode: 0o600, flag: "w" });
   res.json({ result });
 });
