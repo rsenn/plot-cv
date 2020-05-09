@@ -93,7 +93,7 @@
         const events = MouseEvents(
           MouseHandler((e, state) => {
             const prev = pushed;
-            if(!e.type.endsWith('down') && !e.type.endsWith('up')) return;
+            if(!e.type.endsWith("down") && !e.type.endsWith("up")) return;
             setPushed(state);
             //  console.log(`overlay pushed=${pushed} active=${active}:`, e.target);
             return typeof onPush == "function" ? onPush(e, state) : null;
@@ -186,7 +186,7 @@
       });
 
       const Button = ({ caption, fn }) => html`
-        <${Overlay} className="button" text=${caption} onPush=${state => state ? fn(state) : undefined} />
+        <${Overlay} className="button" text=${caption} onPush=${state => (state ? fn(state) : undefined)} />
       `;
 
       const Label = ({ className = "label", caption, children, ...props }) =>
@@ -243,23 +243,24 @@
         }
       };
       const FileList = ({ files, onChange, onActive, ...props }) => {
-const [active,setActive] = useState(true);
+        const [active, setActive] = useState(true);
 
-
-onActive.subscribe(value => setActive(value));
+        onActive.subscribe(value => setActive(value));
 
         return html`
-        <div
-        className=${classNames('sidebar', (active ? 'active' : 'inactive'))}
-        style=${{ transform: active ? 'none' : 'translateX(-100%)' }}>
-          <${Chooser}
-            className="list"
-            itemComponent=${File}
-            itemClass="file hcenter"
-            items=${files}
-            onChange=${ (...args) => { onActive(false); onChange(...args); } }
-            ...${props}
-          /></div>
+          <div className=${classNames("sidebar", active ? "active" : "inactive")} style=${{ transform: active ? "none" : "translateX(-100%)" }}>
+            <${Chooser}
+              className="list"
+              itemComponent=${File}
+              itemClass="file hcenter"
+              items=${files}
+              onChange=${(...args) => {
+                onActive(false);
+                onChange(...args);
+              }}
+              ...${props}
+            />
+          </div>
         `;
       };
       const Panel = (name, children) => html`<${Container} className="${name}">${children}</${Container}>`;
@@ -272,7 +273,7 @@ onActive.subscribe(value => setActive(value));
           let doc = await LoadFile(name);
           window.eagle = doc;
           //console.log('document:', doc);
-          /*if(!element)*/ element = Element.create("div", { style: { position: "relative", "data-name": name, border: "1px dotted black" } }, Element.find('#container'));
+          /*if(!element)*/ element = Element.create("div", { style: { position: "relative", "data-name": name, border: "1px dotted black" } }, Element.find("#container"));
           //let svg = Element.create('svg', { viewBox:  } , element);
           window.renderer = renderDocument(doc, element);
           if(!svg) svg = Element.find("svg", element);
@@ -392,13 +393,13 @@ onActive.subscribe(value => setActive(value));
             Panel("buttons", [
               h(Button, {
                 caption: "📂", // 📁
-                fn: (e) => {
-                  if(e.type.endsWith('down')) {
-                  console.log("file list push",e);
-                  open(!open());
+                fn: e => {
+                  if(e.type.endsWith("down")) {
+                    console.log("file list push", e);
+                    open(!open());
+                  }
                 }
-                }
-              }), 
+              }),
 
               h(Button, {
                 caption: "Random",
