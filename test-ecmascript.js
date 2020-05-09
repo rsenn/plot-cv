@@ -66,8 +66,8 @@ function dumpFile(name, data) {
   console.log(`Wrote '${name}': ${data.length} bytes`);
 }
 
-function printAst(ast) {
-  let printer = new Printer({ indent: 4 });
+function printAst(ast, comments) {
+  let printer = new Printer({ indent: 4 }, comments);
 
   return printer.print(ast);
 }
@@ -91,9 +91,15 @@ function main(args) {
       ast = parser.parseProgram();
 
 let flat =  deep.flatten(deep.iterate(ast, node => node instanceof Node), new SortedMap());
+let posMap = new SortedMap([...flat].map(([key,value]) => [value.position ? value.position.pos *10 : -1, value]), (a,b) => a - b);
 
-     console.log("ast:", new SortedMap([...flat].map(([key,value]) => [key,value.position+''])));
-     console.log("ast:", Util.className(flat));
+let commentMap = new SortedMap([...parser.comments].map(({ comment, node, pos, len, ...item }) => [ pos*10-1, { comment, pos, len, node: posMap.keyOf(node) }  ]), (a,b) => a - b);
+
+posMap = new SortedMap([/*...posMap,*/ ...commentMap], (a,b) => a - b);
+
+     //  console.log("ast:", [...posMap.keys()]);$
+    // console.log("ast:", Util.className(flat));
+     console.log("commentMap:", commentMap);
 
     //  console.log("nodes:", parser.nodes.map(n =>  [Util.className(n), n.position.toString()]));
     } catch(err) {
@@ -106,7 +112,7 @@ let flat =  deep.flatten(deep.iterate(ast, node => node instanceof Node), new So
 
         //  console.log("ast:", ast);
           console.log("saving to:", output_file);
-      dumpFile(output_file, printAst(ast));
+      dumpFile(output_file, printAst(ast, parser.comments));
     }
 
     console.log("files:", files);
