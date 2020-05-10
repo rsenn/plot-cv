@@ -95,6 +95,50 @@
 	},
 	"buffers":
 	[
+		{
+			"contents": "testfn\n(acc, file) =>\n (err, origin) =>\n () =>\n () =>\ndumpFile\nprintAst\nmain\n node =>\n([key, value]) =>\n (a, b) =>\n({ comment, node, pos, len, ...item }) =>\n (a, b) =>\n (a, b) =>\n([k, v]) =>\nfinish\ns =>",
+			"settings":
+			{
+				"buffer_size": 202,
+				"line_ending": "Unix",
+				"name": "𝌆 Outline",
+				"scratch": true
+			}
+		},
+		{
+			"file": "test-ecmascript.js",
+			"settings":
+			{
+				"buffer_size": 4281,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "index.html",
+			"settings":
+			{
+				"buffer_size": 17705,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/dom/element.js",
+			"settings":
+			{
+				"buffer_size": 27047,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "style.css",
+			"settings":
+			{
+				"buffer_size": 3722,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -107,6 +151,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"outline",
+				"Browse Mode: Outline (Right)"
+			],
 			[
 				"schemeed",
 				"SchemeEditor: Edit Current Scheme"
@@ -134,10 +182,6 @@
 			[
 				"remove",
 				"Package Control: Remove Package"
-			],
-			[
-				"outline",
-				"Browse Mode: FileBrowser Left, Outline Right"
 			],
 			[
 				"out",
@@ -307,19 +351,29 @@
 	},
 	"expanded_folders":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv"
+		"/home/roman/Dokumente/Sources/plot-cv",
+		"/home/roman/Dokumente/Sources/plot-cv/lib"
 	],
 	"file_history":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/lua.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/clipper.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/container/sortedMap.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/lua.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.es5.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/jsx.js",
+		"/home/roman/Dokumente/Sources/plot-cv/index.html",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript.js",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/@webassemblyjs/wast-parser/esm/tokenizer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/domhandler/coverage/lcov-report/index.ts.html",
+		"/home/roman/Dokumente/Sources/plot-cv/lexer.es",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/clipper.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-expr.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/es6.ebnf",
 		"/home/roman/Dokumente/Sources/plot-cv/output.es",
@@ -335,9 +389,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/project.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/css.js",
 		"/home/roman/Dokumente/Sources/plot-cv/node_modules/nth-check/parse.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
-		"/home/roman/Dokumente/Sources/plot-cv/index.html",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/bundle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/server.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/autoStore.js",
@@ -363,7 +415,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/bbox.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom.js",
 		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/draw/colorMap.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/rgba.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/overlay.js",
@@ -432,17 +483,11 @@
 		"/home/roman/Dokumente/Sources/plot-cv/test-kolorwheel.js",
 		"/home/roman/Dokumente/Sources/js-draw/draw.js/draw.js",
 		"/home/roman/.pnpm-store/2/registry.npmjs.org/terminal-kit/1.35.1/node_modules/terminal-kit/lib/Palette.js",
-		"/home/roman/Dokumente/Sources/plot-cv/js/rgba.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.es5.js",
-		"/home/roman/Dokumente/Sources/plot-cv/C/home/roman/Dokumente/Sources/lotto/test-admin/node_modules/@material-ui/core/styles/createPalette.js",
-		"/home/roman/Dokumente/Sources/lotto/test-admin/node_modules/@material-ui/core/styles/createPalette.js",
-		"/home/roman/Dokumente/Sources/lotto/test-admin/node_modules/@material-ui/core/esm/styles/createPalette.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/KolorWheel.js",
-		"/home/roman/.config/sublime-text-3/Packages/Babel/Next Roman.tmTheme"
+		"/home/roman/Dokumente/Sources/plot-cv/js/rgba.js"
 	],
 	"find":
 	{
-		"height": 44.0
+		"height": 39.0
 	},
 	"find_in_files":
 	{
@@ -466,6 +511,113 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"remove\\(",
+			"setCSS",
+			"display:flex",
+			"^\\.panel",
+			"\\^.panel",
+			"Button =",
+			"\"Random",
+			"chooseDocument",
+			"useState",
+			"\\.active",
+			"FileList",
+			"comments:",
+			"log.*object:",
+			"object:",
+			"position:",
+			"move =",
+			"comments:",
+			"handleCom",
+			"new Token",
+			" position\\(",
+			"Position\\(",
+			"new Position",
+			"line.*column",
+			" position\\(",
+			"comment:",
+			"()]));",
+			"callee",
+			"deep\\.",
+			"flatten",
+			"Property:",
+			"Property:\n",
+			"ast =",
+			"console.log.*className",
+			"Object:",
+			" parsePrimary",
+			"this.parsePrimary",
+			" parseBinary",
+			" parseCond",
+			"\"\\[\"",
+			" parseExp",
+			"this.parsePrim",
+			" parseNewOrCal",
+			" parseLeft",
+			" parsePosfix",
+			" parseUnary",
+			" parseBinary",
+			"parseCond",
+			"new Syntax",
+			"this.processed",
+			"throw new Sy",
+			"getCallerSta",
+			"ERROR:",
+			"join",
+			"slice",
+			"slice.*10",
+			"stack.*slice",
+			"0, 10",
+			"slice.*10",
+			"ast =",
+			"flatten",
+			"ast =",
+			"deep\\.",
+			"deep\\.[^ ]*flat",
+			"deep.*flat",
+			"tokenTypes",
+			"tokenTyprs",
+			"tokenTyp",
+			" consume",
+			" constructor\\(",
+			" lookahea",
+			"lookahead",
+			" parsePrim",
+			"\\\"\\.\\.\\.\\\"",
+			"expr = this.parseVar",
+			" parseVar",
+			"parseArguments",
+			"\"\\(\"",
+			"\"=\"",
+			" parseArray",
+			" parsePrim",
+			"expectLiteral",
+			" parseArgumen",
+			" parseBind",
+			" parseArgumen",
+			" parseArguments",
+			"=>\"",
+			" parseArg",
+			"\"=>\"",
+			" parseArgu",
+			" parseAss",
+			"this.parseCond",
+			" parseCond",
+			"this.parseBinary",
+			" parseReturnState",
+			"lexReg",
+			" parseObject",
+			" parsePrimt",
+			"default export:",
+			"parseFunc.*expoprt",
+			"exported",
+			"this.parseFunc",
+			"estree.*exported",
+			"parse.*exported",
+			", exported = false",
+			"exported[^,]*\\)",
+			", exported",
+			"exported",
 			" parseExport",
 			"declarations",
 			"declarations:",
@@ -486,114 +638,7 @@
 			"parseExport",
 			" parseExport",
 			" parseSou",
-			" parseState",
-			" parseSou",
-			"exported = false",
-			"exported = fal",
-			" parseClass",
-			"exported =",
-			"exported",
-			"exported =",
-			"exported\\)",
-			"exported",
-			"ast",
-			"printExport",
-			"defaultExpor",
-			"class Expo",
-			"VariableDecl",
-			" parseVariableDeclarationList",
-			" parseVar",
-			"this.parseVariableSt",
-			" parseVariableState",
-			" parseStatement",
-			"this.parseExport",
-			"this.parseEx",
-			" parseExport",
-			"parseExport",
-			" parseExport",
-			"parseExport",
-			"lexQuote",
-			"isQuote",
-			"\\\\\\\\",
-			"operatorPrecedence",
-			"lexReg",
-			" parseRem",
-			"parseArgument",
-			" parseTry",
-			" parseBlock",
-			"this.parseTry",
-			" parseTry",
-			"parseTry",
-			" parseTry",
-			"parseTry",
-			" parseBlock",
-			"TryState",
-			"parseTry",
-			"binaryEx",
-			"\"of\"",
-			"\"in\"",
-			" parseFor",
-			"matchStatement",
-			"parseSourceElement",
-			"parseFor",
-			"position",
-			"value.*positi",
-			"{.*value:",
-			"Property",
-			"{ .*value",
-			"value",
-			"printObject",
-			" parseFunc",
-			" matchIden",
-			"async",
-			"\"async",
-			"parsePrim",
-			"matchKeywords",
-			" parseFunc",
-			"parsePrimary",
-			"lexReg",
-			"accept.vali",
-			" acceptRun",
-			"validator",
-			" accept",
-			"lexReg",
-			"isReg",
-			"lexRegExp",
-			"isRegExpChar",
-			"parseAssignmentExp",
-			"parseReturn",
-			"matchPrimary",
-			"parseReturn",
-			"stack.shift",
-			"tokenTypes",
-			"tokenTypes\n",
-			"estree.Property",
-			"handleConstr",
-			"stack.unshift",
-			"positions:",
-			"nodes",
-			"padEnd",
-			"\\.instance",
-			"stack.unshift",
-			"stack",
-			"position\\(",
-			" position",
-			" position\\(",
-			" position",
-			"Position",
-			"position",
-			"pos =",
-			"toString",
-			"- 2",
-			" getRange",
-			"getRange",
-			"position\\(",
-			" ignore\\(",
-			"ignore\\(",
-			"positionn\\(",
-			"getLinerange",
-			"\"line",
-			"getRange"
+			" parseState"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -737,14 +782,291 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 202,
+						"regions":
+						{
+						},
+						"selection":
+						[
+						],
+						"settings":
+						{
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
+							"outline_rename_mode": false,
+							"symkeys":
+							[
+								[
+									666,
+									680
+								],
+								[
+									818,
+									832
+								],
+								[
+									903,
+									920
+								],
+								[
+									1093,
+									1099
+								],
+								[
+									1251,
+									1257
+								],
+								[
+									1535,
+									1564
+								],
+								[
+									1764,
+									1796
+								],
+								[
+									1939,
+									1958
+								],
+								[
+									2402,
+									2410
+								],
+								[
+									2523,
+									2540
+								],
+								[
+									2598,
+									2615
+								],
+								[
+									2703,
+									2744
+								],
+								[
+									2811,
+									2828
+								],
+								[
+									2905,
+									2915
+								],
+								[
+									3590,
+									3601
+								],
+								[
+									3666,
+									3686
+								],
+								[
+									3803,
+									3807
+								]
+							],
+							"symlist":
+							[
+								"testfn",
+								"(acc, file) =>",
+								" (err, origin) =>",
+								" () =>",
+								" () =>",
+								"dumpFile",
+								"printAst",
+								"main",
+								" node =>",
+								"([key, value]) =>",
+								" (a, b) =>",
+								"({ comment, node, pos, len, ...item }) =>",
+								" (a, b) =>",
+								" (a, b) =>",
+								"([k, v]) =>",
+								"finish",
+								"s =>"
+							],
+							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 1,
+					"file": "test-ecmascript.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4281,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2810,
+								2810
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1404.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "index.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 17705,
+						"regions":
+						{
+							"col_010101FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										8814,
+										8819
+									],
+									[
+										11413,
+										11418
+									]
+								],
+								"scope": "col_010101FF"
+							},
+							"col_010101FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_010101FF_circle.png",
+								"regions":
+								[
+									[
+										8787,
+										8787
+									],
+									[
+										11286,
+										11286
+									]
+								],
+								"scope": "col_gutter"
+							}
+						},
+						"selection":
+						[
+							[
+								11263,
+								11263
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4662.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "lib/dom/element.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 27047,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								22571,
+								22571
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 11726.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "style.css",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3722,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2294,
+								2294
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/User/Color Highlighter/themes/Next (Roman).tmTheme",
+							"syntax": "Packages/CSS/CSS.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2070.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 38.0
+		"height": 27.0
 	},
 	"input":
 	{
@@ -755,20 +1077,29 @@
 		"cells":
 		[
 			[
+				2,
+				0,
+				3,
+				2
+			],
+			[
 				0,
 				0,
-				1,
-				1
+				2,
+				2
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.2,
+			0.8,
 			1.0
 		],
 		"rows":
 		[
 			0.0,
+			0.5,
 			1.0
 		]
 	},
@@ -787,7 +1118,7 @@
 	},
 	"output.find_results":
 	{
-		"height": 521.0
+		"height": 379.0
 	},
 	"output.unsaved_changes":
 	{
@@ -797,7 +1128,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 84.0
+		"height": 74.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -807,8 +1138,68 @@
 		"selected_items":
 		[
 			[
+				"elemet",
+				"lib/dom/element.js"
+			],
+			[
+				"index.",
+				"index.html"
+			],
+			[
+				"test-ec",
+				"test-ecmascript.js"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"lexer",
+				"lib/ecmascript/lexer.js"
+			],
+			[
+				"deep.js",
+				"lib/deep.js"
+			],
+			[
+				"estree.",
+				"lib/ecmascript/estree.js"
+			],
+			[
+				"parser.js",
+				"lib/ecmascript/parser.js"
+			],
+			[
+				"deep",
+				"lib/deep.js"
+			],
+			[
+				"index.htm",
+				"index.html"
+			],
+			[
+				"index.th",
+				"node_modules/domhandler/coverage/lcov-report/index.ts.html"
+			],
+			[
+				"lexer.js",
+				"lib/ecmascript/lexer.js"
+			],
+			[
+				"lua.js",
+				"lib/lua.js"
+			],
+			[
 				"print",
 				"lib/ecmascript/printer.js"
+			],
+			[
+				"parser",
+				"lib/ecmascript/parser.js"
+			],
+			[
+				"estree",
+				"lib/ecmascript/estree.js"
 			],
 			[
 				"printer.js",
@@ -819,10 +1210,6 @@
 				"lib/lua.js"
 			],
 			[
-				"test-ec",
-				"test-ecmascript.js"
-			],
-			[
 				"test-ex",
 				"test-expr.js"
 			],
@@ -831,28 +1218,12 @@
 				"lib/clipper.js"
 			],
 			[
-				"parser",
-				"lib/ecmascript/parser.js"
-			],
-			[
 				"token",
 				"lib/ecmascript/token.js"
 			],
 			[
 				"printer",
 				"lib/ecmascript/printer.js"
-			],
-			[
-				"util.js",
-				"lib/util.js"
-			],
-			[
-				"estree",
-				"lib/ecmascript/estree.js"
-			],
-			[
-				"lexer",
-				"lib/ecmascript/lexer.js"
 			],
 			[
 				"util.j",
@@ -1011,10 +1382,6 @@
 				"test-autoplacer.js"
 			],
 			[
-				"parser.js",
-				"lib/ecmascript/parser.js"
-			],
-			[
 				"test-e",
 				"test-eagle.js"
 			],
@@ -1037,10 +1404,6 @@
 			[
 				"common",
 				"lib/eagle/common.js"
-			],
-			[
-				"estree.",
-				"lib/ecmascript/estree.js"
 			],
 			[
 				"rgba",
@@ -1211,10 +1574,6 @@
 				"lib/geom/point.js"
 			],
 			[
-				"deep",
-				"lib/deep.js"
-			],
-			[
 				"test-eagle",
 				"test-eagle.js"
 			],
@@ -1289,34 +1648,6 @@
 			[
 				"jsonPo",
 				"lib/jsonPointer.js"
-			],
-			[
-				"project.js",
-				"lib/eagle/project.js"
-			],
-			[
-				"trkl.j",
-				"lib/trkl.js"
-			],
-			[
-				"deep.js",
-				"lib/deep.js"
-			],
-			[
-				"proj",
-				"lib/eagle/project.js"
-			],
-			[
-				"project",
-				"lib/eagle/project.js"
-			],
-			[
-				"sorteda",
-				"lib/sortedMap.js"
-			],
-			[
-				"deep.",
-				"lib/deep.js"
 			]
 		],
 		"width": 0.0
@@ -1339,7 +1670,7 @@
 		],
 		"width": 907.0
 	},
-	"selected_group": 0,
+	"selected_group": 1,
 	"settings":
 	{
 	},
