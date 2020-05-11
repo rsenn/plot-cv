@@ -34,6 +34,8 @@ using std::string;
 
 typedef Line<float> line_type;
 
+extern "C" {
+
 const char* image_names[] = {"CANNY", "ORIGINAL", "GRAYSCALE", "MORPHOLOGY"};
 int num_iterations = 0;
 
@@ -65,7 +67,7 @@ config_values config = {.morphology_kernel_size = 1,
 
 image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny,
     imgMorphology; // Canny edge image
-
+}
 int32_t newmt, mt = -1;
 JSValue processFn, global_obj;
 
@@ -1043,6 +1045,7 @@ js_print(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   logfile << std::endl;
   return JS_UNDEFINED;
 }
+extern "C" {
 
 int
 js_init(int argc, char* argv[]) {
@@ -1090,4 +1093,5 @@ js_init(int argc, char* argv[]) {
                 << js.to_str(processFn)
                 << std::endl;*/
   return 0;
+}
 }

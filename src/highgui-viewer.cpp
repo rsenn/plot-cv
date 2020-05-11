@@ -1,4 +1,3 @@
-
 #include "plot-cv.h"
 #include "color.h"
 #include "js.h"
@@ -6,21 +5,22 @@
 #include "line.h"
 #include "geometry.h"
 #include "matrix.h"
+
 #include <opencv2/core.hpp>
-
 #include <opencv2/imgproc.hpp>
-
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/highgui/highgui_c.h>
+
 #include <iostream>
 #include <list>
 #include <map>
 #include <algorithm>
 #include <string>
 
-extern "C" cv::Mat* dptr;
-
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
+
+extern "C" {
+cv::Mat* dptr = 0;
 
 static int show_image;
 
@@ -266,4 +266,5 @@ main(int argc, char* argv[]) {
   } // end while
 
   return (0);
+}
 }

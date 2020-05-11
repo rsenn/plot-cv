@@ -2,6 +2,21 @@
 project(imgui-viewer)
 set(CMAKE_CXX_STANDARD 14)
 ]]
+
+file(GLOB HIGHGUI_VIEWER_SOURCES 
+    src/color.cpp
+    src/data.cpp
+    src/geometry.cpp
+    src/js.cpp
+    src/jsbindings.cpp
+    src/plot-cv.cpp
+    src/js_contour.cpp src/js_draw.cpp src/js_mat.cpp src/js_point.cpp src/js_rect.cpp src/js_size.cpp
+    src/line.cpp
+    src/matrix.cpp
+    src/polygon.cpp
+    src/*.h 
+    src/*.hpp 
+)
 # Main
 add_executable(imgui-viewer
     src/imgui-viewer.cpp
@@ -11,7 +26,7 @@ add_executable(imgui-viewer
     imgui/imgui_impl_sdl.cpp
     imgui/imgui_impl_opengl3.cpp
     imgui/libs/gl3w/GL/gl3w.c
-    ${PLOT_CV_SOURCES}
+    ${HIGHGUI_VIEWER_SOURCES}
 )
 
 # include: OpenCV

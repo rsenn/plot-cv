@@ -15,6 +15,7 @@
 #include "color.h"
 #include "simple_svg_writer.h"
 #include "plot-cv.h"
+#include "jsbindings.h"
 
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
 

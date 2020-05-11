@@ -89,6 +89,7 @@ to_string(const cv::Scalar& scalar) {
 }
 
 extern std::ofstream logfile;
+extern "C" {
 
 extern int thresh;
 extern int max_thresh;
@@ -97,12 +98,17 @@ extern double max_svg_height;
 extern int thresholdValue;
 extern bool show_diagnostics;
 extern double epsilon;
+extern const char* image_names[];
+extern image_type* mptr;
+extern int morphology_enable;
+extern JSValue processFn, global_obj;
+extern int thresh, thresh2, apertureSize;
+};
 
 image_type get_alpha_channel(image_type m);
 
-extern image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny,
+extern "C" image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny,
     imgMorphology; // Canny edge image
-extern const char* image_names[];
 
 void image_info(image_type img);
 std::vector<point2i_list> get_contours(image_type src,
@@ -128,6 +134,8 @@ struct config_values {
   int hough_minlinelen;
   int hough_maxlinegap;
 };
+
+extern "C" config_values config;
 
 /**
  * @brief      finds the largest contour
@@ -208,11 +216,12 @@ out_points(O& os, const point2i_vector& pl) {
 
 template<class Container>
 inline void
-draw_all_lines(image_type& out,
-               const Container& lines,
-               const std::function<int(int, size_t)>& hue = [](int index, size_t len) -> int {
-                 return (index * 360 * 10 / len) % 360;
-               }) {
+draw_all_lines(
+    image_type& out,
+    const Container& lines,
+    const std::function<int(int, size_t)>& hue = [](int index, size_t len) -> int {
+      return (index * 360 * 10 / len) % 360;
+    }) {
   for(typename Container::const_iterator it = lines.begin(); it != lines.end(); it++) {
     size_t i = std::distance(lines.begin(), it);
     const color_type color = hsv_to_rgb(hue(i, lines.size()), 1.0, 1.0);
@@ -297,14 +306,8 @@ implode(InputIterator begin, InputIterator end, const std::string& separator) {
 }
 
 void process_image(std::function<void(std::string, image_type*)> display, int show_image);
-extern image_type* mptr;
-extern int morphology_enable;
-extern JSValue processFn, global_obj;
-extern int thresh, thresh2, apertureSize;
 
 int check_eval();
-
-int js_init(int argc, char* argv[]);
 
 class Timer {
 public:

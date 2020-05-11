@@ -1,8 +1,5 @@
-#include "color.h"
-#include "geometry.h"
 #include "jsbindings.h"
 #include "plot-cv.h"
-#include "psimpl.h"
 #include "geometry.h"
 #include "js.h"
 #include "quickjs/cutils.h"
@@ -65,258 +62,12 @@ public:
 };
 
 extern "C" {
-cv::Mat* dptr = nullptr;
-
-JSValue
-js_draw_line(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
-  int i = 0, ret = -1;
-  point2f_type points[2];
-  color_type color;
-  int thickness = 1;
-  bool antialias = true;
-
-  if(argc > i && js.is_point(argv[i]))
-    js.get_point(argv[i++], points[0]);
-
-  if(argc > i && js.is_point(argv[1]))
-    js.get_point(argv[i++], points[1]);
-
-  if(argc > i && js.is_color(argv[i]))
-    js.get_color(argv[i++], color);
-
-  if(argc > i && js.is_number(argv[i]))
-    js.get_number(argv[i++], thickness);
-
-  if(argc > i && js.is_boolean(argv[i]))
-    js.get_boolean(argv[i++], antialias);
-
-  cv::line(*dptr, points[0], points[1], color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
-  return js._true;
+// cv::Mat* dptr = nullptr;
 }
-
-JSValue
-js_draw_rect(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
-  int i = 0, ret = -1;
-  cv::Rect2f rect;
-  point2f_type points[2];
-  color_type color;
-  int thickness = 1;
-  bool antialias = true;
-
-  if(argc > i && js.is_rect(argv[i]))
-    js.get_rect(argv[i++], rect);
-
-  if(argc > i && js.is_color(argv[i]))
-    js.get_color(argv[i++], color);
-
-  if(argc > i && js.is_number(argv[i]))
-    js.get_number(argv[i++], thickness);
-
-  if(argc > i && js.is_boolean(argv[i]))
-    js.get_boolean(argv[i++], antialias);
-
-  points[0].x = rect.x;
-  points[0].y = rect.y;
-  points[1].x = rect.x + rect.width;
-  points[1].y = rect.y + rect.height;
-
-  cv::rectangle(
-      *dptr, points[0], points[1], color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
-
-  return js._true;
-}
-
-JSValue
-js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
-
-  int i = 0, ret = -1;
-  contour2i_vector points;
-  color_type color;
-  int thickness = 1;
-  bool antialias = true;
-
-  points.resize(1);
-  if(argc > i && js.is_array(argv[i]))
-    js.get_point_array(argv[i++], points[0]);
-
-  if(argc > i && js.is_color(argv[i]))
-    js.get_color(argv[i++], color);
-
-  if(argc > i && js.is_number(argv[i]))
-    js.get_number(argv[i++], thickness);
-
-  if(argc > i && js.is_boolean(argv[i]))
-    js.get_boolean(argv[i++], antialias);
-
-  if(dptr != nullptr)
-    cv::drawContours(*dptr, points, -1, color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
-
-  logfile << "draw_contour() ret:" << ret << " color: " << color << std::endl;
-  return js._true;
-}
-
-JSValue
-js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
-
-  int i = 0, ret = -1;
-  point2i_vector points;
-  cv::Scalar color;
-  bool antialias = true;
-  int thickness = -1;
-
-  if(argc > i && js.is_array_like(argv[i]))
-    js.get_point_array(argv[i++], points);
-  if(argc > i && js.is_color(argv[i]))
-    js.get_color(argv[i++], color);
-
-  if(argc > i && js.is_number(argv[i]))
-    js.get_number(argv[i++], thickness);
-
-  if(argc > i && js.is_boolean(argv[i]))
-    js.get_boolean(argv[i++], antialias);
-
-  if(dptr != nullptr) {
-    const int size = points.size();
-    int lineType = antialias ? cv::LINE_AA : cv::LINE_8;
-    const point2i_type* pts = points.data();
-
-    std::cerr << "drawPolygon() points: " << (points) << " color: " << to_string(color)
-              << std::endl;
-
-    // cv::fillPoly(*dptr, points, color, antialias ? cv::LINE_AA : cv::LINE_8);
-    (thickness <= 0 ? cv::fillPoly(*dptr, &pts, &size, 1, color, lineType)
-                    : cv::polylines(*dptr, &pts, &size, 1, true, color, thickness, lineType));
-  }
-  return js._true;
-}
-
-JSValue
-js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
-
-  int i = 0, ret = -1;
-  point2i_type point;
-  int radius = 0;
-  cv::Scalar color;
-
-  bool antialias = true;
-  int thickness = -1;
-
-  if(argc > i && js.is_point(argv[i]))
-    js.get_point(argv[i++], point);
-
-  if(argc > i && js.is_number(argv[i]))
-    js.get_number(argv[i++], radius);
-
-  if(argc > i && js.is_color(argv[i]))
-    js.get_color(argv[i++], color);
-
-  if(argc > i && js.is_number(argv[i]))
-    js.get_number(argv[i++], thickness);
-
-  if(argc > i && js.is_boolean(argv[i]))
-    js.get_boolean(argv[i++], antialias);
-
-  if(dptr != nullptr) {
-    int lineType = antialias ? cv::LINE_AA : cv::LINE_8;
-
-    logfile << "drawCircle() center: " << (point) << " radius: " << radius
-            << " color: " << to_string(color) << std::endl;
-
-    // cv::fillPoly(*dptr, points, color, antialias ? cv::LINE_AA : cv::LINE_8);
-    cv::circle(*dptr, point, radius, color, thickness < 0 ? cv::FILLED : thickness, lineType);
-  }
-  return js._true;
-}
-}
-
-template<class Value>
-int64_t js_array_to_vector(JSContext* ctx, JSValue arr, std::vector<Value>& out);
-
-template<>
-int64_t
-js_array_to_vector(JSContext* ctx, JSValue arr, std::vector<int>& out) {
-  int64_t i, n;
-  JSValue len = JS_GetPropertyStr(ctx, arr, "length");
-  JS_ToInt64(ctx, &n, len);
-  out.resize(n);
-  for(i = 0; i < n; i++) {
-    int32_t value;
-    JSValue item = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
-    JS_ToInt32(ctx, &value, item);
-    out[i] = value;
-  }
-  return n;
-}
-
-template<class Value> JSValue js_vector_to_array(JSContext* ctx, const std::vector<Value>& vec);
-
-template<>
-JSValue
-js_vector_to_array(JSContext* ctx, const std::vector<int>& vec) {
-  JSValue ret = JS_NewArray(ctx);
-  uint32_t i, n = vec.size();
-  for(i = 0; i < n; i++) {
-    JS_SetPropertyUint32(ctx, ret, i, JS_NewInt32(ctx, vec[i]));
-  }
-  return ret;
-}
-
-template<class Vector>
-JSValue
-js_vector_to_array(std::enable_if_t<std::is_same<Vector, cv::Vec4i>::value, JSContext*> ctx,
-                   const std::vector<Vector>& vec) {
-  JSValue ret = JS_NewArray(ctx);
-  uint32_t i, j, n = vec.size();
-  for(i = 0; i < n; i++) {
-    JSValue item = JS_NewArray(ctx);
-    for(j = 0; j < 4; j++) {
-      JS_SetPropertyUint32(ctx, item, j, JS_NewInt32(ctx, vec[i][j]));
-    }
-    JS_SetPropertyUint32(ctx, ret, i, item);
-  }
-  return ret;
-}
-
-JSValue
-js_vector_to_array(JSContext* ctx, const std::vector<cv::Point_<float>>& vec) {
-  JSValue ret = JS_NewArray(ctx);
-  uint32_t i, n = vec.size();
-  for(i = 0; i < n; i++) {
-    JSValue item = js_point_new(ctx, vec[i].x, vec[i].y);
-
-    JS_SetPropertyUint32(ctx, ret, i, item);
-  }
-  return ret;
-}
-
-JSValue
-js_vector_to_array(JSContext* ctx, const std::vector<std::vector<cv::Point2d>>& contours) {
-  JSValue ret = JS_NewArray(ctx);
-  uint32_t i, size = contours.size();
-
-  for(i = 0; i < size; i++) {
-    JS_SetPropertyUint32(ctx, ret, i, js_contour_new(ctx, contours[i]));
-  }
-  return ret;
-}
-
-extern "C" {
-#define countof(x) (sizeof(x) / sizeof((x)[0]))
-
-/* Point Class */
-
-typedef cv::Rect2d JSRectData;
-typedef cv::Mat JSMatData;
-typedef cv::Size2d JSSizeData;
-
-JSClassID js_point_class_id, js_size_class_id, js_rect_class_id, js_mat_class_id;
-
-JSValue point_proto, point_class;
-JSValue rect_proto, rect_class;
-JSValue size_proto, size_class;
-JSValue point_iterator_proto, point_iterator_class;
-JSValue contour_proto, contour_class;
-JSValue mat_proto, mat_class;
+/*
+  template<class Value>
+  int64_t js_array_to_vector(JSContext* ctx, JSValue arr, std::vector<Value>& out);
+*/
 
 JSValue int32array_proto, int32array_ctor;
 JSClassID int32array_class_id;
@@ -341,28 +92,14 @@ js_vector_vec4i_to_array(JSContext* ctx, const std::vector<cv::Vec4i>& vec) {
   }
   return ret;
 }
-
+/*
 void
 js_point_finalizer(JSRuntime* rt, JSValue val) {
   JSPointData* s = static_cast<JSPointData*>(JS_GetOpaque(val, js_point_class_id));
-  /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
+
   js_free_rt(rt, s);
 }
 
-JSValue
-js_point_new(JSContext* ctx, double x, double y) {
-  JSValue ret;
-  JSPointData* s;
-
-  ret = JS_NewObjectProtoClass(ctx, point_proto, js_point_class_id);
-
-  s = static_cast<JSPointData*>(js_mallocz(ctx, sizeof(JSPointData)));
-  s->x = x;
-  s->y = y;
-
-  JS_SetOpaque(ret, s);
-  return ret;
-}
 
 JSPointData*
 js_point_data(JSContext* ctx, JSValue val) {
@@ -382,8 +119,7 @@ js_point_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* a
     goto fail;
   if(JS_ToFloat64(ctx, &s->y, argv[1]))
     goto fail;
-  /* using new_target to get the prototype is necessary when the
-     class is extended. */
+
   proto = JS_GetPropertyStr(ctx, new_target, "prototype");
   if(JS_IsException(proto))
     goto fail;
@@ -550,8 +286,7 @@ js_point_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   std::ostringstream os;
   JSValue xv, yv;
   double x = -1, y = -1;
-  /* if(!s)
-     return JS_EXCEPTION;*/
+
 
   xv = JS_GetPropertyStr(ctx, this_val, "x");
   yv = JS_GetPropertyStr(ctx, this_val, "y");
@@ -592,7 +327,7 @@ const JSCFunctionListEntry js_point_proto_funcs[] = {
 int
 js_point_init(JSContext* ctx, void* m, const char* name, bool exp) {
 
-  /* create the Point class */
+
   JS_NewClassID(&js_point_class_id);
   JS_NewClass(JS_GetRuntime(ctx), js_point_class_id, &js_point_class);
 
@@ -601,7 +336,7 @@ js_point_init(JSContext* ctx, void* m, const char* name, bool exp) {
   JS_SetClassProto(ctx, js_point_class_id, point_proto);
 
   point_class = JS_NewCFunction2(ctx, js_point_ctor, name, 2, JS_CFUNC_constructor, 0);
-  /* set proto.constructor and ctor.prototype */
+
   JS_SetConstructor(ctx, point_class, point_proto);
 
   if(exp)
@@ -610,11 +345,12 @@ js_point_init(JSContext* ctx, void* m, const char* name, bool exp) {
     JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, point_class);
   return 0;
 }
+*/
 
-void
+/*void
 js_size_finalizer(JSRuntime* rt, JSValue val) {
   JSSizeData* s = static_cast<JSSizeData*>(JS_GetOpaque(val, js_size_class_id));
-  /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
+
   js_free_rt(rt, s);
 }
 
@@ -651,8 +387,7 @@ js_size_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* ar
     goto fail;
   if(JS_ToFloat64(ctx, &s->height, argv[1]))
     goto fail;
-  /* using new_target to get the prototype is necessary when the
-     class is extended. */
+
   proto = JS_GetPropertyStr(ctx, new_target, "prototype");
   if(JS_IsException(proto))
     goto fail;
@@ -701,8 +436,7 @@ js_size_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
   std::ostringstream os;
   JSValue wv, hv;
   double width = -1, height = -1;
-  /* if(!s)
-     return JS_EXCEPTION;*/
+
 
   wv = JS_GetPropertyStr(ctx, this_val, "width");
   hv = JS_GetPropertyStr(ctx, this_val, "height");
@@ -734,7 +468,7 @@ const JSCFunctionListEntry js_size_proto_funcs[] = {
 int
 js_size_init(JSContext* ctx, void* m, const char* name, bool exp) {
 
-  /* create the Size class */
+
   JS_NewClassID(&js_size_class_id);
   JS_NewClass(JS_GetRuntime(ctx), js_size_class_id, &js_size_class);
 
@@ -743,7 +477,7 @@ js_size_init(JSContext* ctx, void* m, const char* name, bool exp) {
   JS_SetClassProto(ctx, js_size_class_id, size_proto);
 
   size_class = JS_NewCFunction2(ctx, js_size_ctor, name, 2, JS_CFUNC_constructor, 0);
-  /* set proto.constructor and ctor.prototype */
+
   JS_SetConstructor(ctx, size_class, size_proto);
 
   if(exp)
@@ -752,6 +486,7 @@ js_size_init(JSContext* ctx, void* m, const char* name, bool exp) {
     JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, size_class);
   return 0;
 }
+*/
 
 /*
 JSModuleDef*
@@ -763,8 +498,8 @@ js_init_module(JSContext* ctx, const char* module_name) {
   JS_AddModuleExport(ctx, m, "Point");
   return m;
 }*/
-}
 
+/*
 JSRectData*
 js_rect_data(JSContext* ctx, JSValue val) {
   return static_cast<JSRectData*>(JS_GetOpaque2(ctx, val, js_rect_class_id));
@@ -773,7 +508,7 @@ js_rect_data(JSContext* ctx, JSValue val) {
 void
 js_rect_finalizer(JSRuntime* rt, JSValue val) {
   JSRectData* s = static_cast<JSRectData*>(JS_GetOpaque(val, js_rect_class_id));
-  /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
+
   js_free_rt(rt, s);
 }
 
@@ -794,8 +529,7 @@ js_rect_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* ar
     goto fail;
   if(JS_ToFloat64(ctx, &s->height, argv[3]))
     goto fail;
-  /* using new_target to get the prototype is necessary when the
-     class is extended. */
+
   proto = JS_GetPropertyStr(ctx, new_target, "prototype");
   if(JS_IsException(proto))
     goto fail;
@@ -880,8 +614,7 @@ js_rect_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
   std::ostringstream os;
   JSValue xv, yv, wv, hv;
   double x = -1, y = -1, w = 0, h = 0;
-  /* if(!s)
-     return JS_EXCEPTION;*/
+
 
   if(s) {
     x = s->x;
@@ -928,7 +661,7 @@ const JSCFunctionListEntry js_rect_proto_funcs[] = {
 int
 js_rect_init(JSContext* ctx, void* m, const char* name, bool exp) {
 
-  /* create the Rect class */
+
   JS_NewClassID(&js_rect_class_id);
   JS_NewClass(JS_GetRuntime(ctx), js_rect_class_id, &js_rect_class);
 
@@ -937,7 +670,7 @@ js_rect_init(JSContext* ctx, void* m, const char* name, bool exp) {
   JS_SetClassProto(ctx, js_rect_class_id, rect_proto);
 
   rect_class = JS_NewCFunction2(ctx, js_rect_ctor, name, 2, JS_CFUNC_constructor, 0);
-  /* set proto.constructor and ctor.prototype */
+
   JS_SetConstructor(ctx, rect_class, rect_proto);
 
   if(exp)
@@ -946,9 +679,9 @@ js_rect_init(JSContext* ctx, void* m, const char* name, bool exp) {
     JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, rect_class);
   return 0;
 }
-
+*/
 /* PointIterator Class */
-
+/*
 JSClassID js_contour_class_id;
 
 struct JSPointIteratorData {
@@ -961,7 +694,7 @@ void
 js_point_iterator_finalizer(JSRuntime* rt, JSValue val) {
   JSPointIteratorData* s =
       static_cast<JSPointIteratorData*>(JS_GetOpaque(val, js_point_iterator_class_id));
-  /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
+
   js_free_rt(rt, s);
 }
 
@@ -981,12 +714,7 @@ js_point_iterator_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValu
   s->begin = &(*v)[0];
   s->end = s->begin + v->size();
 
-  /*  if(JS_ToFloat64(ctx, &s->x, argv[0]))
-      goto fail;
-    if(JS_ToFloat64(ctx, &s->y, argv[1]))
-      goto fail;*/
-  /* using new_target to get the prototype is necessary when the
-     class is extended. */
+
   proto = JS_GetPropertyStr(ctx, new_target, "prototype");
   if(JS_IsException(proto))
     goto fail;
@@ -1036,7 +764,6 @@ js_point_iterator_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSV
   if(!s)
     return JS_EXCEPTION;
 
-  // os << "{x:" << s->x << ",y:" << s->y << "}" << std::endl;
 
   return JS_NewString(ctx, os.str().c_str());
 }
@@ -1054,7 +781,7 @@ const JSCFunctionListEntry js_point_iterator_proto_funcs[] = {
 int
 js_point_iterator_init(JSContext* ctx, void* m, const char* name, bool exp) {
 
-  /* create the PointIterator class */
+
   JS_NewClassID(&js_point_iterator_class_id);
   JS_NewClass(JS_GetRuntime(ctx), js_point_iterator_class_id, &js_point_iterator_class);
 
@@ -1067,7 +794,7 @@ js_point_iterator_init(JSContext* ctx, void* m, const char* name, bool exp) {
 
   point_iterator_class =
       JS_NewCFunction2(ctx, js_point_iterator_ctor, name, 2, JS_CFUNC_constructor, 0);
-  /* set proto.constructor and ctor.prototype */
+
   JS_SetConstructor(ctx, point_iterator_class, point_iterator_proto);
 
   if(exp)
@@ -1076,9 +803,9 @@ js_point_iterator_init(JSContext* ctx, void* m, const char* name, bool exp) {
     JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, point_iterator_class);
   return 0;
 }
-
+*/
 /* Contour Class */
-
+/*
 JSContourData*
 js_contour_data(JSContext* ctx, JSValue val) {
   return static_cast<JSContourData*>(JS_GetOpaque2(ctx, val, js_contour_class_id));
@@ -1111,7 +838,7 @@ fail:
 void
 js_contour_finalizer(JSRuntime* rt, JSValue val) {
   JSContourData* s = static_cast<JSContourData*>(JS_GetOpaque(val, js_contour_class_id));
-  /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
+
 
   js_free_rt(rt, s);
 }
@@ -1126,8 +853,7 @@ js_contour_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst*
   if(!v)
     return JS_EXCEPTION;
 
-  /* using new_target to get the prototype is necessary when the
-     class is extended. */
+
   proto = JS_GetPropertyStr(ctx, new_target, "prototype");
   if(JS_IsException(proto))
     goto fail;
@@ -1143,23 +869,6 @@ fail:
   return JS_EXCEPTION;
 }
 
-JSValue
-js_contour2i_new(JSContext* ctx, const std::vector<cv::Point_<int>>& points) {
-  JSValue ret;
-  JSContourData* contour;
-
-  ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
-
-  contour = static_cast<JSContourData*>(js_mallocz(ctx, sizeof(JSContourData)));
-
-  std::transform(points.cbegin(),
-                 points.cend(),
-                 std::back_inserter(*contour),
-                 [](const cv::Point& pt) -> cv::Point2d { return cv::Point2d(pt.x, pt.y); });
-
-  JS_SetOpaque(ret, contour);
-  return ret;
-};
 
 JSValue
 js_contour_new(JSContext* ctx, const std::vector<cv::Point_<float>>& points) {
@@ -1173,12 +882,7 @@ js_contour_new(JSContext* ctx, const std::vector<cv::Point_<float>>& points) {
   contour->resize(points.size());
 
   transform_points(points.cbegin(), points.cend(), contour->begin());
-  /*
-    std::transform(points.cbegin(),
-                   points.cend(),
-                   std::back_inserter(*contour),
-                   [](const cv::Point2f& pt) -> cv::Point2d { return cv::Point2d(pt.x, pt.y); });
-  */
+
   JS_SetOpaque(ret, contour);
   return ret;
 };
@@ -1195,21 +899,6 @@ js_contour_new(JSContext* ctx, const std::vector<cv::Point_<double>>& points) {
   std::copy(points.cbegin(), points.cend(), std::back_inserter(*contour));
 
   JS_SetOpaque(ret, contour);
-  return ret;
-}
-
-template<class T>
-JSValue
-js_contours_new(JSContext* ctx, const std::vector<std::vector<cv::Point_<T>>>& contours) {
-
-  JSValue ret = JS_NewArray(ctx);
-  uint32_t i, size = contours.size();
-
-  for(i = 0; i < size; i++) {
-    JSValue contour = js_contour_new(ctx, contours[i]);
-    JS_SetPropertyUint32(ctx, ret, i, contour);
-  }
-
   return ret;
 }
 
@@ -1987,56 +1676,10 @@ js_contour_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   return JS_NewString(ctx, os.str().c_str());
 }
 
-JSClassDef js_contour_class = {
-    "Contour",
-    .finalizer = js_contour_finalizer,
-};
-
-const JSCFunctionListEntry js_contour_proto_funcs[] = {
-    JS_CFUNC_DEF("push", 1, js_contour_push),
-    JS_CFUNC_DEF("pop", 0, js_contour_pop),
-    JS_CFUNC_DEF("get", 1, js_contour_get),
-    JS_CGETSET_DEF("length", js_contour_length, NULL),
-    JS_CGETSET_DEF("area", js_contour_area, NULL),
-    JS_CGETSET_DEF("center", js_contour_center, NULL),
-    JS_CFUNC_DEF("approxPolyDP", 1, js_contour_approxpolydp),
-    JS_CFUNC_DEF("convexHull", 1, js_contour_convexhull),
-    JS_CFUNC_DEF("boundingRect", 0, js_contour_boundingrect),
-    JS_CFUNC_DEF("fitEllipse", 0, js_contour_fitellipse),
-    JS_CFUNC_DEF("fitLine", 0, js_contour_fitline),
-    JS_CFUNC_DEF("intersectConvex", 0, js_contour_intersectconvex),
-    JS_CFUNC_DEF("isConvex", 0, js_contour_isconvex),
-    JS_CFUNC_DEF("minAreaRect", 0, js_contour_minarearect),
-    JS_CFUNC_DEF("minEnclosingCircle", 0, js_contour_minenclosingcircle),
-    JS_CFUNC_DEF("minEnclosingTriangle", 0, js_contour_minenclosingtriangle),
-    JS_CFUNC_DEF("pointPolygonTest", 0, js_contour_pointpolygontest),
-    JS_CFUNC_DEF("rotatedRectangleIntersection", 0, js_contour_rotatedrectangleintersection),
-    JS_CFUNC_DEF("arcLength", 0, js_contour_arclength),
-    JS_CFUNC_DEF("getAffineTransform", 1, js_contour_getaffinetransform),
-    JS_CFUNC_DEF("getPerspectiveTransform", 1, js_contour_getperspectivetransform),
-    JS_CFUNC_DEF("rotatePoints", 1, js_contour_rotatepoints),
-    JS_CFUNC_DEF("convexityDefects", 1, js_contour_convexitydefects),
-    JS_CFUNC_MAGIC_DEF("simplifyReumannWitkam", 0, js_contour_psimpl, 0),
-    JS_CFUNC_MAGIC_DEF("simplifyOpheim", 0, js_contour_psimpl, 1),
-    JS_CFUNC_MAGIC_DEF("simplifyLang", 0, js_contour_psimpl, 2),
-    JS_CFUNC_MAGIC_DEF("simplifyDouglasPeucker", 0, js_contour_psimpl, 3),
-    JS_CFUNC_MAGIC_DEF("simplifyNthPoint", 0, js_contour_psimpl, 4),
-    JS_CFUNC_MAGIC_DEF("simplifyRadialDistance", 0, js_contour_psimpl, 5),
-    JS_CFUNC_MAGIC_DEF("simplifyPerpendicularDistance", 0, js_contour_psimpl, 6),
-    JS_CFUNC_DEF("toArray", 0, js_contour_toarray),
-    JS_CFUNC_DEF("toString", 0, js_contour_tostring),
-
-    JS_CFUNC_MAGIC_DEF("entries", 0, js_create_point_iterator, 0),
-    JS_ALIAS_DEF("[Symbol.iterator]", "entries"),
-
-    //  JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Contour", JS_PROP_CONFIGURABLE),
-
-};
-
 int
 js_contour_init(JSContext* ctx, void* m, const char* name, bool exp) {
 
-  /* create the Contour class */
+
   JS_NewClassID(&js_contour_class_id);
   JS_NewClass(JS_GetRuntime(ctx), js_contour_class_id, &js_contour_class);
 
@@ -2048,7 +1691,7 @@ js_contour_init(JSContext* ctx, void* m, const char* name, bool exp) {
   JS_SetClassProto(ctx, js_contour_class_id, contour_proto);
 
   contour_class = JS_NewCFunction2(ctx, js_contour_ctor, name, 2, JS_CFUNC_constructor, 0);
-  /* set proto.constructor and ctor.prototype */
+
   JS_SetConstructor(ctx, contour_class, contour_proto);
 
   if(exp)
@@ -2057,11 +1700,12 @@ js_contour_init(JSContext* ctx, void* m, const char* name, bool exp) {
     JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, contour_class);
   return 0;
 }
+*/
 
-void
+/*void
 js_mat_finalizer(JSRuntime* rt, JSValue val) {
   JSMatData* s = static_cast<JSMatData*>(JS_GetOpaque(val, js_mat_class_id));
-  /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
+
 
   s->release();
 }
@@ -2278,81 +1922,4 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 
   return JS_NewString(ctx, os.str().c_str());
 }
-
-JSClassDef js_mat_class = {
-    "Mat",
-    .finalizer = js_mat_finalizer,
-};
-
-const JSCFunctionListEntry js_mat_proto_funcs[] = {
-    JS_CGETSET_MAGIC_DEF("cols", js_mat_get_props, NULL, 0),
-    JS_CGETSET_MAGIC_DEF("rows", js_mat_get_props, NULL, 1),
-    JS_CGETSET_MAGIC_DEF("channels", js_mat_get_props, NULL, 2),
-    JS_CGETSET_MAGIC_DEF("type", js_mat_get_props, NULL, 3),
-    JS_CGETSET_MAGIC_DEF("depth", js_mat_get_props, NULL, 4),
-    JS_CGETSET_MAGIC_DEF("empty", js_mat_get_props, NULL, 5),
-    JS_CFUNC_MAGIC_DEF("col", 1, js_mat_funcs, 0),
-    JS_CFUNC_MAGIC_DEF("row", 1, js_mat_funcs, 1),
-    JS_CFUNC_MAGIC_DEF("colRange", 2, js_mat_funcs, 2),
-    JS_CFUNC_MAGIC_DEF("rowRange", 2, js_mat_funcs, 3),
-    JS_CFUNC_MAGIC_DEF("at", 1, js_mat_funcs, 4),
-    JS_CFUNC_MAGIC_DEF("clone", 0, js_mat_funcs, 5),
-    JS_CFUNC_MAGIC_DEF("roi", 0, js_mat_funcs, 6),
-    JS_CFUNC_DEF("findContours", 0, js_mat_findcontours),
-    JS_CFUNC_DEF("toString", 0, js_mat_tostring),
-    //    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "cv::Mat", JS_PROP_CONFIGURABLE)
-
-};
-
-int
-js_mat_init(JSContext* ctx, void* m, const char* name, bool exp) {
-  /* create the Mat class */
-  JS_NewClassID(&js_mat_class_id);
-  JS_NewClass(JS_GetRuntime(ctx), js_mat_class_id, &js_mat_class);
-
-  mat_proto = JS_NewObject(ctx);
-  JS_SetPropertyFunctionList(ctx, mat_proto, js_mat_proto_funcs, countof(js_mat_proto_funcs));
-  JS_SetClassProto(ctx, js_mat_class_id, mat_proto);
-
-  mat_class = JS_NewCFunction2(ctx, js_mat_ctor, name, 2, JS_CFUNC_constructor, 0);
-  /* set proto.constructor and ctor.prototype */
-  JS_SetConstructor(ctx, mat_class, mat_proto);
-
-  JS_SetPropertyStr(ctx, mat_class, "CV_8UC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_8U, 1)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_8UC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_8U, 2)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_8UC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_8U, 3)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_8UC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_8U, 4)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_8SC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_8S, 1)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_8SC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_8S, 2)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_8SC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_8S, 3)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_8SC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_8S, 4)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_16UC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_16U, 1)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_16UC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_16U, 2)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_16UC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_16U, 3)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_16UC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_16U, 4)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_16SC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_16S, 1)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_16SC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_16S, 2)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_16SC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_16S, 3)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_16SC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_16S, 4)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_32SC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_32S, 1)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_32SC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_32S, 2)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_32SC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_32S, 3)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_32SC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_32S, 4)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_32FC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_32F, 1)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_32FC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_32F, 2)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_32FC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_32F, 3)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_32FC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_32F, 4)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_64FC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 1)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_64FC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 2)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_64FC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 3)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_64FC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 4)));
-  JSValue g = JS_GetGlobalObject(ctx);
-  int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
-  int32array_proto = JS_GetPrototype(ctx, int32array_ctor);
-
-  if(exp)
-    JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), name, mat_class);
-  else
-    JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, mat_class);
-  return 0;
-}
+*/
