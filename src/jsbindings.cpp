@@ -96,6 +96,16 @@ js_vector_vec4i_to_array(JSContext* ctx, const std::vector<cv::Vec4i>& vec) {
 extern "C" JSModuleDef*
 js_init_module(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
+
+  js_init_point_module(ctx, module_name);
+  js_init_point_iterator_module(ctx, module_name);
+  js_init_size_module(ctx, module_name);
+  js_init_rect_module(ctx, module_name);
+  js_init_mat_module(ctx, module_name);
+  js_init_contour_module(ctx, module_name);
+
+  return m;
+  //  js_init_point_module(ctx, "Point");
 }
 
 /*

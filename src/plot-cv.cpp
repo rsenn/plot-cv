@@ -1054,14 +1054,19 @@ js_init(int argc, char* argv[]) {
   JSValue* fn = js.get_function("drawContour");
   global_obj = js.global_object();
 
-  js_point_init(js.ctx, &global_obj, "Point", false);
+  //  js_point_init(js.ctx, &global_obj/*, "Point", false*/);
+  js_init_module(js.ctx, "plot-cv");
+/*  js_init_point_module(js.ctx, "Point");
+  js_init_point_iterator_module(js.ctx, "PointIterator");
+  js_init_rect_module(js.ctx, "Rect");
+  js_init_size_module(js.ctx, "Size");
+*/
+ /* js_size_init(js.ctx, &global_obj, "Size", false);
+  js_rect_init(js.ctx, &global_obj, "Rect", false);*/
 
-  js_size_init(js.ctx, &global_obj, "Size", false);
-  js_rect_init(js.ctx, &global_obj, "Rect", false);
-
-  js_point_iterator_init(js.ctx, &global_obj, "PointIterator", false);
-  js_contour_init(js.ctx, &global_obj, "Contour", false);
-  js_mat_init(js.ctx, &global_obj, "Mat", false);
+//  js_point_iterator_init(js.ctx, &global_obj, "PointIterator", false);
+  // js_contour_init(js.ctx, &global_obj, "Contour", false);
+  // js_mat_init(js.ctx, &global_obj, "Mat", false);
   jsrt::value console = js.get_global("console");
 
   JS_SetPropertyStr(js.ctx, console, "log", JS_NewCFunction(js.ctx, js_print, "log", 1));

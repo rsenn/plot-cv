@@ -30,9 +30,10 @@ struct jsrt {
 
   const_value _true, _false, _null, _undefined;
 
-  jsrt() : global(*this) {}
-
   bool init(int argc, char* argv[]);
+  bool create(JSContext* ctx = 0);
+
+  jsrt() : global(*this) {}
   ~jsrt();
 
   typedef value c_function(jsrt* rt, const_value this_val, int argc, const_value* argv);

@@ -166,7 +166,7 @@ const JSCFunctionListEntry js_rect_proto_funcs[] = {
 };
 
 int
-js_rect_init(JSContext* ctx, void* m, const char* name, bool exp) {
+js_rect_init(JSContext* ctx, JSModuleDef* m) {
 
   /* create the Rect class */
   JS_NewClassID(&js_rect_class_id);
@@ -176,14 +176,24 @@ js_rect_init(JSContext* ctx, void* m, const char* name, bool exp) {
   JS_SetPropertyFunctionList(ctx, rect_proto, js_rect_proto_funcs, countof(js_rect_proto_funcs));
   JS_SetClassProto(ctx, js_rect_class_id, rect_proto);
 
-  rect_class = JS_NewCFunction2(ctx, js_rect_ctor, name, 2, JS_CFUNC_constructor, 0);
+  rect_class = JS_NewCFunction2(ctx, js_rect_ctor, "Rect", 2, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, rect_class, rect_proto);
 
-  if(exp)
-    JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), name, rect_class);
-  else
-    JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, rect_class);
+  // if(true)
+  JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m),  "Rect", rect_class);
+  /* else
+     JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, rect_class);*/
   return 0;
 }
-}
+
+
+JSModuleDef*
+js_init_rect_module(JSContext* ctx, const char* module_name) {
+  JSModuleDef* m;
+  m = JS_NewCModule(ctx, module_name, &js_rect_init);
+  if(!m)
+    return NULL;
+  JS_AddModuleExport(ctx, m, "Rect");
+  return m;
+}}

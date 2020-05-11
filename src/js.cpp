@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstring>
 #include <filesystem>
+#include <cassert>
 
 extern "C" {
 #include "quickjs/quickjs-libc.h"
@@ -40,28 +41,28 @@ bool
 jsrt::init(int argc, char* argv[]) {
   int load_std = 0;
 
-  if((rt = JS_NewRuntime())) {
-    if((ctx = JS_NewContext(rt))) {
-      // JS_AddIntrinsicBaseObjects(ctx);
-      js_std_add_helpers(ctx, argc, argv);
+  if(ctx == nullptr)
+    if(!create())
+      return false;
 
-      /* system modules */
-      js_init_module_std(ctx, "std");
-      js_init_module_os(ctx, "os");
+  // JS_AddIntrinsicBaseObjects(ctx);
+  js_std_add_helpers(ctx, argc, argv);
 
-      /* make 'std' and 'os' visible to non module code */
-      if(load_std) {
-        const char* str = "import * as std from 'std';\n"
-                          "import * as os from 'os';\n"
-                          "globalThis.std = std;\n"
-                          "globalThis.os = os;\n";
-        eval_buf(str, strlen(str), "<input>", JS_EVAL_TYPE_MODULE);
-      }
+  /* system modules */
+  js_init_module_std(ctx, "std");
+  js_init_module_os(ctx, "os");
 
-      /* loader for ES6 modules */
-      JS_SetModuleLoaderFunc(rt, &normalize_module, js_module_loader, this);
-    }
+  /* make 'std' and 'os' visible to non module code */
+  if(load_std) {
+    const char* str = "import * as std from 'std';\n"
+                      "import * as os from 'os';\n"
+                      "globalThis.std = std;\n"
+                      "globalThis.os = os;\n";
+    eval_buf(str, strlen(str), "<input>", JS_EVAL_TYPE_MODULE);
   }
+
+  /* loader for ES6 modules */
+  JS_SetModuleLoaderFunc(rt, &normalize_module, js_module_loader, this);
 
   global.get();
 
@@ -70,6 +71,18 @@ jsrt::init(int argc, char* argv[]) {
   this->_true = get_true();
   this->_false = get_false();
 
+  return ctx != nullptr;
+}
+
+bool
+jsrt::create(JSContext* _ctx) {
+  assert(ctx == nullptr);
+  if(_ctx) {
+    rt = JS_GetRuntime(ctx = _ctx);
+  } else {
+    if((rt = JS_NewRuntime()))
+      ctx = JS_NewContext(rt);
+  }
   return ctx != nullptr;
 }
 

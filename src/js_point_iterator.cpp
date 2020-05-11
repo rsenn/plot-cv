@@ -93,7 +93,7 @@ const JSCFunctionListEntry js_point_iterator_proto_funcs[] = {
 };
 
 int
-js_point_iterator_init(JSContext* ctx, void* m, const char* name, bool exp) {
+js_point_iterator_init(JSContext* ctx, JSModuleDef* m) {
 
   /* create the PointIterator class */
   JS_NewClassID(&js_point_iterator_class_id);
@@ -107,15 +107,26 @@ js_point_iterator_init(JSContext* ctx, void* m, const char* name, bool exp) {
   JS_SetClassProto(ctx, js_point_iterator_class_id, point_iterator_proto);
 
   point_iterator_class =
-      JS_NewCFunction2(ctx, js_point_iterator_ctor, name, 2, JS_CFUNC_constructor, 0);
+      JS_NewCFunction2(ctx, js_point_iterator_ctor, "PointIterator", 2, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, point_iterator_class, point_iterator_proto);
 
-  if(exp)
-    JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), name, point_iterator_class);
-  else
-    JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, point_iterator_class);
+  if(true)
+    JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), "PointIterator", point_iterator_class);
+ /* else
+    JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, point_iterator_class);*/
   return 0;
+}
+
+
+JSModuleDef*
+js_init_point_iterator_module(JSContext* ctx, const char* module_name) {
+  JSModuleDef* m;
+  m = JS_NewCModule(ctx, module_name, &js_point_iterator_init);
+  if(!m)
+    return NULL;
+  JS_AddModuleExport(ctx, m, "PointIterator");
+  return m;
 }
 
 JSValue

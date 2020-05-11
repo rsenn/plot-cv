@@ -259,7 +259,7 @@ const JSCFunctionListEntry js_point_proto_funcs[] = {
 };
 
 int
-js_point_init(JSContext* ctx, void* m, const char* name, bool exp) {
+js_point_init(JSContext* ctx, JSModuleDef* m) {
 
   /* create the Point class */
   JS_NewClassID(&js_point_class_id);
@@ -269,14 +269,24 @@ js_point_init(JSContext* ctx, void* m, const char* name, bool exp) {
   JS_SetPropertyFunctionList(ctx, point_proto, js_point_proto_funcs, countof(js_point_proto_funcs));
   JS_SetClassProto(ctx, js_point_class_id, point_proto);
 
-  point_class = JS_NewCFunction2(ctx, js_point_ctor, name, 2, JS_CFUNC_constructor, 0);
+  point_class = JS_NewCFunction2(ctx, js_point_ctor, "Point", 2, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, point_class, point_proto);
 
-  if(exp)
-    JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), name, point_class);
-  else
-    JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, point_class);
+  // if(true)
+  JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), "Point", point_class);
+  /* else
+     JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, point_class);*/
   return 0;
+}
+
+JSModuleDef*
+js_init_point_module(JSContext* ctx, const char* module_name) {
+  JSModuleDef* m;
+  m = JS_NewCModule(ctx, module_name, &js_point_init);
+  if(!m)
+    return NULL;
+  JS_AddModuleExport(ctx, m, "Point");
+  return m;
 }
 }

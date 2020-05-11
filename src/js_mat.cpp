@@ -3,7 +3,21 @@
 
 extern "C" {
 
-JSValue
+
+static JSValue
+js_mat_new(JSContext* ctx, int cols, int rows, int type) {
+  JSValue ret;
+  JSMatData* s;
+  ret = JS_NewObjectProtoClass(ctx, mat_proto, js_mat_class_id);
+  s = new cv::Mat(cv::Size(cols, rows), type);
+
+  *s = cv::Mat::zeros(cv::Size(cols, rows), type);
+
+  JS_SetOpaque(ret, s);
+  return ret;
+}
+
+static JSValue
 js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   JSMatData* s;
   JSValue obj = JS_UNDEFINED;
@@ -52,7 +66,7 @@ js_mat_finalizer(JSRuntime* rt, JSValue val) {
   s->release();
 }
 
-JSValue
+static JSValue
 js_mat_findcontours(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSMatData* m = js_mat_data(ctx, this_val);
   JSValue ret = JS_UNDEFINED;
@@ -82,7 +96,7 @@ js_mat_findcontours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   return ret;
 }
 
-JSValue
+static JSValue
 js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSValue ret = JS_UNDEFINED;
   int64_t i = -1, i2 = -1;
@@ -129,7 +143,7 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
   return JS_EXCEPTION;
 }
 
-JSValue
+static JSValue
 js_mat_get_props(JSContext* ctx, JSValueConst this_val, int magic) {
   JSMatData* s = js_mat_data(ctx, this_val);
   if(!s)
@@ -149,7 +163,7 @@ js_mat_get_props(JSContext* ctx, JSValueConst this_val, int magic) {
   return JS_UNDEFINED;
 }
 
-JSValue
+static JSValue
 js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSMatData* m = js_mat_data(ctx, this_val);
   int x, y;
@@ -240,7 +254,7 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
 };
 
 int
-js_mat_init(JSContext* ctx, void* m, const char* name, bool exp) {
+js_mat_init(JSContext* ctx, JSModuleDef* m) {
   /* create the Mat class */
   JS_NewClassID(&js_mat_class_id);
   JS_NewClass(JS_GetRuntime(ctx), js_mat_class_id, &js_mat_class);
@@ -249,7 +263,7 @@ js_mat_init(JSContext* ctx, void* m, const char* name, bool exp) {
   JS_SetPropertyFunctionList(ctx, mat_proto, js_mat_proto_funcs, countof(js_mat_proto_funcs));
   JS_SetClassProto(ctx, js_mat_class_id, mat_proto);
 
-  mat_class = JS_NewCFunction2(ctx, js_mat_ctor, name, 2, JS_CFUNC_constructor, 0);
+  mat_class = JS_NewCFunction2(ctx, js_mat_ctor, "Mat", 2, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, mat_class, mat_proto);
 
@@ -285,23 +299,22 @@ js_mat_init(JSContext* ctx, void* m, const char* name, bool exp) {
   int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
   int32array_proto = JS_GetPrototype(ctx, int32array_ctor);
 
-  if(exp)
-    JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), name, mat_class);
-  else
-    JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, mat_class);
+  if(true)
+    JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), "Mat", mat_class);
+  /*else
+    JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), "Mat", mat_class);*/
   return 0;
 }
 
-JSValue
-js_mat_new(JSContext* ctx, int cols, int rows, int type) {
-  JSValue ret;
-  JSMatData* s;
-  ret = JS_NewObjectProtoClass(ctx, mat_proto, js_mat_class_id);
-  s = new cv::Mat(cv::Size(cols, rows), type);
 
-  *s = cv::Mat::zeros(cv::Size(cols, rows), type);
-
-  JS_SetOpaque(ret, s);
-  return ret;
+JSModuleDef*
+js_init_mat_module(JSContext* ctx, const char* module_name) {
+  JSModuleDef* m;
+  m = JS_NewCModule(ctx, module_name, &js_mat_init);
+  if(!m)
+    return NULL;
+  JS_AddModuleExport(ctx, m, "Mat");
+  return m;
 }
+
 }

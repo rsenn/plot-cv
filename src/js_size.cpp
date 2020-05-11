@@ -125,7 +125,7 @@ const JSCFunctionListEntry js_size_proto_funcs[] = {
 };
 
 int
-js_size_init(JSContext* ctx, void* m, const char* name, bool exp) {
+js_size_init(JSContext* ctx, JSModuleDef* m) {
 
   /* create the Size class */
   JS_NewClassID(&js_size_class_id);
@@ -135,14 +135,28 @@ js_size_init(JSContext* ctx, void* m, const char* name, bool exp) {
   JS_SetPropertyFunctionList(ctx, size_proto, js_size_proto_funcs, countof(js_size_proto_funcs));
   JS_SetClassProto(ctx, js_size_class_id, size_proto);
 
-  size_class = JS_NewCFunction2(ctx, js_size_ctor, name, 2, JS_CFUNC_constructor, 0);
+  size_class = JS_NewCFunction2(ctx, js_size_ctor, "Size", 2, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, size_class, size_proto);
 
-  if(exp)
-    JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), name, size_class);
-  else
-    JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, size_class);
+  if(true)
+    JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), "Size", size_class);
+  /*else
+    JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, size_class);*/
   return 0;
 }
+
+JSModuleDef*
+js_init_size_module(JSContext* ctx, const char* module_name) {
+  JSModuleDef* m;
+  m = JS_NewCModule(ctx, module_name, &js_size_init);
+  if(!m)
+    return NULL;
+  JS_AddModuleExport(ctx, m, "Size");
+  return m;
 }
+
+}
+
+
+

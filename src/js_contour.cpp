@@ -909,7 +909,7 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
 };
 
 int
-js_contour_init(JSContext* ctx, void* m, const char* name, bool exp) {
+js_contour_init(JSContext* ctx, JSModuleDef* m) {
 
   /* create the Contour class */
   JS_NewClassID(&js_contour_class_id);
@@ -922,15 +922,25 @@ js_contour_init(JSContext* ctx, void* m, const char* name, bool exp) {
                              countof(js_contour_proto_funcs));
   JS_SetClassProto(ctx, js_contour_class_id, contour_proto);
 
-  contour_class = JS_NewCFunction2(ctx, js_contour_ctor, name, 2, JS_CFUNC_constructor, 0);
+  contour_class = JS_NewCFunction2(ctx, js_contour_ctor, "Contour", 2, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, contour_class, contour_proto);
 
-  if(exp)
-    JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), name, contour_class);
-  else
-    JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, contour_class);
+  if(true)
+    JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), "Contour", contour_class);
+/*  else
+    JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), "Contour", contour_class);*/
   return 0;
+}
+
+JSModuleDef*
+js_init_contour_module(JSContext* ctx, const char* module_name) {
+  JSModuleDef* m;
+  m = JS_NewCModule(ctx, module_name, &js_contour_init);
+  if(!m)
+    return NULL;
+  JS_AddModuleExport(ctx, m, "Contour");
+  return m;
 }
 }
 
@@ -1025,3 +1035,4 @@ js_vector_to_array(JSContext* ctx, const std::vector<std::vector<cv::Point2d>>& 
   }
   return ret;
 }
+
