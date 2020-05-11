@@ -35,7 +35,7 @@ app.get("/files.html", async (req, res) => {
     };
   });
 
-  console.log("files:", files);
+  //console.log("files:", files);
 
   res.type("json");
   res.json({ files });

@@ -2,7 +2,7 @@
 
 extern "C" {
 
-JSValue
+static JSValue
 js_size_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   JSSizeData* s;
   JSValue obj = JS_UNDEFINED;
@@ -44,7 +44,7 @@ js_size_finalizer(JSRuntime* rt, JSValue val) {
   js_free_rt(rt, s);
 }
 
-JSValue
+static JSValue
 js_size_get_wh(JSContext* ctx, JSValueConst this_val, int magic) {
   JSSizeData* s = js_size_data(ctx, this_val);
   if(!s)
@@ -55,7 +55,8 @@ js_size_get_wh(JSContext* ctx, JSValueConst this_val, int magic) {
     return JS_NewFloat64(ctx, s->height);
   return JS_UNDEFINED;
 }
-JSValue
+
+static JSValue
 js_size_new(JSContext* ctx, double w, double h) {
   JSValue ret;
   JSSizeData* s;
@@ -70,7 +71,7 @@ js_size_new(JSContext* ctx, double w, double h) {
   return ret;
 }
 
-JSValue
+static JSValue
 js_size_set_wh(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
   JSSizeData* s = js_size_data(ctx, this_val);
   double v;
@@ -85,7 +86,7 @@ js_size_set_wh(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
   return JS_UNDEFINED;
 }
 
-JSValue
+static JSValue
 js_size_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSSizeData* s = js_size_data(ctx, this_val);
   std::ostringstream os;
@@ -139,7 +140,7 @@ js_size_init(JSContext* ctx, JSModuleDef* m) {
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, size_class, size_proto);
 
-  if(true)
+  if(m)
     JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), "Size", size_class);
   /*else
     JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, size_class);*/
@@ -156,7 +157,11 @@ js_init_size_module(JSContext* ctx, const char* module_name) {
   return m;
 }
 
+void
+js_size_constructor(JSContext* ctx, JSValue parent, const char* name) {
+  if(JS_IsUndefined(size_class))
+    js_size_init(ctx, 0);
+
+  JS_SetPropertyStr(ctx, parent, name ? name : "Size", size_class);
 }
-
-
-
+}

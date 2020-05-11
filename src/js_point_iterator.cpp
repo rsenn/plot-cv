@@ -111,13 +111,12 @@ js_point_iterator_init(JSContext* ctx, JSModuleDef* m) {
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, point_iterator_class, point_iterator_proto);
 
-  if(true)
+  if(m)
     JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), "PointIterator", point_iterator_class);
- /* else
-    JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, point_iterator_class);*/
+  /* else
+     JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, point_iterator_class);*/
   return 0;
 }
-
 
 JSModuleDef*
 js_init_point_iterator_module(JSContext* ctx, const char* module_name) {
@@ -129,7 +128,15 @@ js_init_point_iterator_module(JSContext* ctx, const char* module_name) {
   return m;
 }
 
-JSValue
+void
+js_point_iterator_constructor(JSContext* ctx, JSValue parent, const char* name) {
+  if(JS_IsUndefined(point_iterator_class))
+    js_point_iterator_init(ctx, 0);
+
+  JS_SetPropertyStr(ctx, parent, name ? name : "PointIterator", point_iterator_class);
+}
+
+static JSValue
 js_point_iterator_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSPointIteratorData* s =
       static_cast<JSPointIteratorData*>(JS_GetOpaque2(ctx, this_val, js_point_iterator_class_id));

@@ -11,7 +11,7 @@ extern "C" {
 
 cv::Mat* dptr = 0;
 
-JSValue
+static JSValue
 js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
 
   int i = 0, ret = -1;
@@ -40,8 +40,8 @@ js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const
   if(dptr != nullptr) {
     int lineType = antialias ? cv::LINE_AA : cv::LINE_8;
 
-    logfile << "drawCircle() center: " << (point) << " radius: " << radius
-            << " color: " << to_string(color) << std::endl;
+    /* std::cerr << "drawCircle() center: " << (point) << " radius: " << radius
+             << " color: " << to_string(color) << std::endl;*/
 
     // cv::fillPoly(*dptr, points, color, antialias ? cv::LINE_AA : cv::LINE_8);
     cv::circle(*dptr, point, radius, color, thickness < 0 ? cv::FILLED : thickness, lineType);
@@ -49,7 +49,7 @@ js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const
   return js._true;
 }
 
-JSValue
+static JSValue
 js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
 
   int i = 0, ret = -1;
@@ -74,11 +74,11 @@ js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   if(dptr != nullptr)
     cv::drawContours(*dptr, points, -1, color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
 
-  logfile << "draw_contour() ret:" << ret << " color: " << color << std::endl;
+  std::cerr << "draw_contour() ret:" << ret << " color: " << color << std::endl;
   return js._true;
 }
 
-JSValue
+static JSValue
 js_draw_line(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
   int i = 0, ret = -1;
   point2f_type points[2];
@@ -105,7 +105,7 @@ js_draw_line(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
   return js._true;
 }
 
-JSValue
+static JSValue
 js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
 
   int i = 0, ret = -1;
@@ -140,7 +140,7 @@ js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   return js._true;
 }
 
-JSValue
+static JSValue
 js_draw_rect(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
   int i = 0, ret = -1;
   cv::Rect2f rect;
@@ -170,5 +170,59 @@ js_draw_rect(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
       *dptr, points[0], points[1], color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
 
   return js._true;
+}
+
+int
+js_draw_init(JSContext* ctx, JSModuleDef* m) {
+
+  if(m) {
+    JS_SetModuleExport(ctx,
+                       m,
+                       "drawCircle",
+                       JS_NewCFunction(ctx, &js_draw_circle, "drawCircle", 5));
+    JS_SetModuleExport(ctx,
+                       m,
+                       "drawContour",
+                       JS_NewCFunction(ctx, &js_draw_contour, "drawContour", 4));
+    JS_SetModuleExport(ctx, m, "drawLine", JS_NewCFunction(ctx, &js_draw_line, "drawLine", 5));
+    JS_SetModuleExport(ctx,
+                       m,
+                       "drawPolygon",
+                       JS_NewCFunction(ctx, &js_draw_polygon, "drawPolygon", 4));
+    JS_SetModuleExport(ctx, m, "drawRect", JS_NewCFunction(ctx, &js_draw_rect, "drawRect", 4));
+  }
+
+  return 0;
+}
+
+int
+js_draw_functions(JSContext* ctx, JSValue parent) {
+
+  JS_SetPropertyStr(ctx,
+                    parent,
+                    "drawCircle",
+                    JS_NewCFunction(ctx, &js_draw_circle, "drawCircle", 5));
+  JS_SetPropertyStr(ctx,
+                    parent,
+                    "drawContour",
+                    JS_NewCFunction(ctx, &js_draw_contour, "drawContour", 4));
+  JS_SetPropertyStr(ctx, parent, "drawLine", JS_NewCFunction(ctx, &js_draw_line, "drawLine", 5));
+  JS_SetPropertyStr(ctx,
+                    parent,
+                    "drawPolygon",
+                    JS_NewCFunction(ctx, &js_draw_polygon, "drawPolygon", 4));
+  JS_SetPropertyStr(ctx, parent, "drawRect", JS_NewCFunction(ctx, &js_draw_rect, "drawRect", 4));
+
+  return 0;
+}
+
+JSModuleDef*
+js_init_draw_module(JSContext* ctx, const char* module_name) {
+  JSModuleDef* m;
+  m = JS_NewCModule(ctx, module_name, &js_draw_init);
+  if(!m)
+    return NULL;
+  JS_AddModuleExport(ctx, m, "Draw");
+  return m;
 }
 }

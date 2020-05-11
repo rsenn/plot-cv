@@ -1,8 +1,8 @@
+
 #include "./jsbindings.h"
 #include "./geometry.h"
 
 extern "C" {
-
 
 static JSValue
 js_mat_new(JSContext* ctx, int cols, int rows, int type) {
@@ -299,13 +299,12 @@ js_mat_init(JSContext* ctx, JSModuleDef* m) {
   int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
   int32array_proto = JS_GetPrototype(ctx, int32array_ctor);
 
-  if(true)
+  if(m)
     JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), "Mat", mat_class);
   /*else
     JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), "Mat", mat_class);*/
   return 0;
 }
-
 
 JSModuleDef*
 js_init_mat_module(JSContext* ctx, const char* module_name) {
@@ -317,4 +316,11 @@ js_init_mat_module(JSContext* ctx, const char* module_name) {
   return m;
 }
 
+void
+js_mat_constructor(JSContext* ctx, JSValue parent, const char* name) {
+  if(JS_IsUndefined(mat_class))
+    js_mat_init(ctx, 0);
+
+  JS_SetPropertyStr(ctx, parent, name ? name : "Mat", mat_class);
+}
 }

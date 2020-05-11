@@ -707,11 +707,11 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
         if(contourStr.str().size())
           contourStr << "\n";
         out_points(contourStr, a);
-      /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
-         ", " << hier[i][2] << ", " << hier[i][3] << ", "
-                    << "} " << std::endl;
-          logfile << "contourDepth(i) = " << depth << std::endl;
-*/
+        /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
+           ", " << hier[i][2] << ", " << hier[i][3] << ", "
+                      << "} " << std::endl;
+            logfile << "contourDepth(i) = " << depth << std::endl;
+  */
         /*  if(dptr != nullptr)
             cv::drawContours(*dptr, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
    */     }
@@ -1055,16 +1055,23 @@ js_init(int argc, char* argv[]) {
   global_obj = js.global_object();
 
   //  js_point_init(js.ctx, &global_obj/*, "Point", false*/);
-  js_init_module(js.ctx, "plot-cv");
-/*  js_init_point_module(js.ctx, "Point");
-  js_init_point_iterator_module(js.ctx, "PointIterator");
-  js_init_rect_module(js.ctx, "Rect");
-  js_init_size_module(js.ctx, "Size");
-*/
- /* js_size_init(js.ctx, &global_obj, "Size", false);
-  js_rect_init(js.ctx, &global_obj, "Rect", false);*/
+  js_point_constructor(js.ctx, js.global_object(), nullptr);
+  js_rect_constructor(js.ctx, js.global_object(), nullptr);
+  js_size_constructor(js.ctx, js.global_object(), nullptr);
+  js_mat_constructor(js.ctx, js.global_object(), nullptr);
+  js_contour_constructor(js.ctx, js.global_object(), nullptr);
+  js_point_iterator_constructor(js.ctx, js.global_object(), nullptr);
 
-//  js_point_iterator_init(js.ctx, &global_obj, "PointIterator", false);
+  // js_init_module(js.ctx, "plot-cv");
+  /*  js_init_point_module(js.ctx, "Point");
+    js_init_point_iterator_module(js.ctx, "PointIterator");
+    js_init_rect_module(js.ctx, "Rect");
+    js_init_size_module(js.ctx, "Size");
+  */
+  /* js_size_init(js.ctx, &global_obj, "Size", false);
+   js_rect_init(js.ctx, &global_obj, "Rect", false);*/
+
+  //  js_point_iterator_init(js.ctx, &global_obj, "PointIterator", false);
   // js_contour_init(js.ctx, &global_obj, "Contour", false);
   // js_mat_init(js.ctx, &global_obj, "Mat", false);
   jsrt::value console = js.get_global("console");
@@ -1076,12 +1083,13 @@ js_init(int argc, char* argv[]) {
 
   // ret = js.eval_file("lib.js", 1);
 
-  js.add_function("drawContour", &js_draw_contour, 2);
-  js.add_function("drawLine", &js_draw_line, 2);
-  js.add_function("drawRect", &js_draw_rect, 2);
-  js.add_function("drawPolygon", &js_draw_polygon, 2);
-  js.add_function("drawCircle", &js_draw_circle, 2);
-
+  js_draw_functions(js.ctx, js.global_object());
+  /*  js.add_function("drawContour", &js_draw_contour, 2);
+    js.add_function("drawLine", &js_draw_line, 2);
+    js.add_function("drawRect", &js_draw_rect, 2);
+    js.add_function("drawPolygon", &js_draw_polygon, 2);
+    js.add_function("drawCircle", &js_draw_circle, 2);
+  */
   check_eval();
 
   /*

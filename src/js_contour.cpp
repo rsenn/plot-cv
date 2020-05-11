@@ -27,9 +27,101 @@ js_array_to_vector(JSContext* ctx, JSValue arr, std::vector<int>& out) {
   return n;
 }
 
-extern "C" {
+static JSValue
+js_contour_new(JSContext* ctx, const std::vector<cv::Point_<float>>& points) {
+  JSValue ret;
+  JSContourData* contour;
+
+  ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
+
+  contour = static_cast<JSContourData*>(js_mallocz(ctx, sizeof(JSContourData)));
+
+  contour->resize(points.size());
+
+  transform_points(points.cbegin(), points.cend(), contour->begin());
+  /*
+    std::transform(points.cbegin(),
+                   points.cend(),
+                   std::back_inserter(*contour),
+                   [](const cv::Point2f& pt) -> cv::Point2d { return cv::Point2d(pt.x, pt.y); });
+  */
+  JS_SetOpaque(ret, contour);
+  return ret;
+};
 
 JSValue
+js_contour2i_new(JSContext* ctx, const std::vector<cv::Point_<int>>& points) {
+  JSValue ret;
+  JSContourData* contour;
+
+  ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
+
+  contour = static_cast<JSContourData*>(js_mallocz(ctx, sizeof(JSContourData)));
+
+  std::transform(points.cbegin(),
+                 points.cend(),
+                 std::back_inserter(*contour),
+                 [](const cv::Point& pt) -> cv::Point2d { return cv::Point2d(pt.x, pt.y); });
+
+  JS_SetOpaque(ret, contour);
+  return ret;
+};
+
+template<class Value> JSValue js_vector_to_array(JSContext* ctx, const std::vector<Value>& vec);
+
+template<>
+JSValue
+js_vector_to_array(JSContext* ctx, const std::vector<int>& vec) {
+  JSValue ret = JS_NewArray(ctx);
+  uint32_t i, n = vec.size();
+  for(i = 0; i < n; i++) {
+    JS_SetPropertyUint32(ctx, ret, i, JS_NewInt32(ctx, vec[i]));
+  }
+  return ret;
+}
+
+template<class Vector>
+static JSValue
+js_vector_to_array(std::enable_if_t<std::is_same<Vector, cv::Vec4i>::value, JSContext*> ctx,
+                   const std::vector<Vector>& vec) {
+  JSValue ret = JS_NewArray(ctx);
+  uint32_t i, j, n = vec.size();
+  for(i = 0; i < n; i++) {
+    JSValue item = JS_NewArray(ctx);
+    for(j = 0; j < 4; j++) {
+      JS_SetPropertyUint32(ctx, item, j, JS_NewInt32(ctx, vec[i][j]));
+    }
+    JS_SetPropertyUint32(ctx, ret, i, item);
+  }
+  return ret;
+}
+
+static JSValue
+js_vector_to_array(JSContext* ctx, const std::vector<cv::Point_<float>>& vec) {
+  JSValue ret = JS_NewArray(ctx);
+  uint32_t i, n = vec.size();
+  for(i = 0; i < n; i++) {
+    JSValue item = js_point_new(ctx, vec[i].x, vec[i].y);
+
+    JS_SetPropertyUint32(ctx, ret, i, item);
+  }
+  return ret;
+}
+
+static JSValue
+js_vector_to_array(JSContext* ctx, const std::vector<std::vector<cv::Point2d>>& contours) {
+  JSValue ret = JS_NewArray(ctx);
+  uint32_t i, size = contours.size();
+
+  for(i = 0; i < size; i++) {
+    JS_SetPropertyUint32(ctx, ret, i, js_contour2d_new(ctx, contours[i]));
+  }
+  return ret;
+}
+
+extern "C" {
+
+static JSValue
 js_contour_approxpolydp(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSValue ret = JS_UNDEFINED;
   double epsilon;
@@ -67,7 +159,7 @@ js_contour_approxpolydp(JSContext* ctx, JSValueConst this_val, int argc, JSValue
   return JS_UNDEFINED;
 }
 
-JSValue
+static JSValue
 js_contour_arclength(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData *v, *other = nullptr, *ptr;
   JSValue ret = JS_UNDEFINED;
@@ -97,7 +189,7 @@ js_contour_arclength(JSContext* ctx, JSValueConst this_val, int argc, JSValueCon
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_area(JSContext* ctx, JSValueConst this_val) {
   JSContourData* v;
   JSValue ret = JS_UNDEFINED;
@@ -115,7 +207,7 @@ js_contour_area(JSContext* ctx, JSValueConst this_val) {
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_boundingrect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSValue ret = JS_UNDEFINED;
   cv::Rect2f rect;
@@ -146,7 +238,7 @@ js_contour_boundingrect(JSContext* ctx, JSValueConst this_val, int argc, JSValue
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_center(JSContext* ctx, JSValueConst this_val) {
   JSContourData* v;
   JSValue ret = JS_UNDEFINED;
@@ -167,7 +259,7 @@ js_contour_center(JSContext* ctx, JSValueConst this_val) {
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_convexhull(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSValue ret = JS_UNDEFINED;
   bool clockwise = false, returnPoints = true;
@@ -213,7 +305,7 @@ js_contour_convexhull(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_convexitydefects(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData* s = js_contour_data(ctx, this_val);
   JSValue ret = JS_UNDEFINED;
@@ -238,7 +330,7 @@ js_contour_convexitydefects(JSContext* ctx, JSValueConst this_val, int argc, JSV
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   JSContourData* v;
   JSValue obj = JS_UNDEFINED;
@@ -278,7 +370,7 @@ js_contour_finalizer(JSRuntime* rt, JSValue val) {
   js_free_rt(rt, s);
 }
 
-JSValue
+static JSValue
 js_contour_fitellipse(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData *v, *ptr;
   cv::RotatedRect rr;
@@ -305,7 +397,7 @@ js_contour_fitellipse(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_fitline(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData *v, *ptr;
   JSValue ret = JS_UNDEFINED;
@@ -349,7 +441,7 @@ js_contour_fitline(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_getaffinetransform(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData *v, *other = nullptr, *ptr;
   JSValue ret = JS_UNDEFINED;
@@ -381,7 +473,7 @@ js_contour_getaffinetransform(JSContext* ctx, JSValueConst this_val, int argc, J
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_get(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData* v;
   JSValue ret;
@@ -399,7 +491,7 @@ js_contour_get(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_getperspectivetransform(JSContext* ctx,
                                    JSValueConst this_val,
                                    int argc,
@@ -439,7 +531,7 @@ js_contour_getperspectivetransform(JSContext* ctx,
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_intersectconvex(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData *v, *other = nullptr, *ptr;
   JSValue ret = JS_UNDEFINED;
@@ -474,7 +566,7 @@ js_contour_intersectconvex(JSContext* ctx, JSValueConst this_val, int argc, JSVa
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_isconvex(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData *v, *other = nullptr, *ptr;
   JSValue ret = JS_UNDEFINED;
@@ -497,7 +589,7 @@ js_contour_isconvex(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_length(JSContext* ctx, JSValueConst this_val) {
   JSContourData* v;
   JSValue ret;
@@ -508,7 +600,7 @@ js_contour_length(JSContext* ctx, JSValueConst this_val) {
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_minarearect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData *v, *other = nullptr, *ptr;
   JSValue ret = JS_UNDEFINED;
@@ -530,7 +622,7 @@ js_contour_minarearect(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_minenclosingcircle(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData *v, *other = nullptr, *ptr;
   JSValue ret = JS_UNDEFINED;
@@ -559,7 +651,7 @@ js_contour_minenclosingcircle(JSContext* ctx, JSValueConst this_val, int argc, J
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_minenclosingtriangle(JSContext* ctx,
                                 JSValueConst this_val,
                                 int argc,
@@ -588,7 +680,7 @@ js_contour_minenclosingtriangle(JSContext* ctx,
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_pointpolygontest(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData *v, *other = nullptr, *ptr;
   JSValue ret = JS_UNDEFINED;
@@ -627,7 +719,7 @@ js_contour_pointpolygontest(JSContext* ctx, JSValueConst this_val, int argc, JSV
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_pop(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData* v;
   JSValue ret;
@@ -651,7 +743,7 @@ js_contour_pop(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_psimpl(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSContourData* s = js_contour_data(ctx, this_val);
   int32_t shift = 1;
@@ -716,7 +808,7 @@ js_contour_psimpl(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_push(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData* v;
   int i;
@@ -748,7 +840,7 @@ js_contour_push(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   return JS_UNDEFINED;
 }
 
-JSValue
+static JSValue
 js_contour_rotatedrectangleintersection(JSContext* ctx,
                                         JSValueConst this_val,
                                         int argc,
@@ -786,7 +878,7 @@ js_contour_rotatedrectangleintersection(JSContext* ctx,
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_rotatepoints(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData* s = js_contour_data(ctx, this_val);
   int32_t shift = 1;
@@ -807,7 +899,7 @@ js_contour_rotatepoints(JSContext* ctx, JSValueConst this_val, int argc, JSValue
   return this_val;
 }
 
-JSValue
+static JSValue
 js_contour_toarray(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData* s = js_contour_data(ctx, this_val);
   uint32_t i, size = s->size();
@@ -825,7 +917,7 @@ js_contour_toarray(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   return ret;
 }
 
-JSValue
+static JSValue
 js_contour_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData* s = js_contour_data(ctx, this_val);
   std::ostringstream os;
@@ -926,10 +1018,10 @@ js_contour_init(JSContext* ctx, JSModuleDef* m) {
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, contour_class, contour_proto);
 
-  if(true)
+  if(m)
     JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), "Contour", contour_class);
-/*  else
-    JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), "Contour", contour_class);*/
+  /*  else
+      JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), "Contour", contour_class);*/
   return 0;
 }
 
@@ -942,10 +1034,19 @@ js_init_contour_module(JSContext* ctx, const char* module_name) {
   JS_AddModuleExport(ctx, m, "Contour");
   return m;
 }
+
+void
+js_contour_constructor(JSContext* ctx, JSValue parent, const char* name) {
+  if(JS_IsUndefined(contour_class))
+    js_contour_init(ctx, 0);
+
+  JS_SetPropertyStr(ctx, parent, name ? name : "Contour", contour_class);
+}
 }
 
+template<>
 JSValue
-js_contour_new(JSContext* ctx, const std::vector<cv::Point_<float>>& points) {
+js_contour_new<float>(JSContext* ctx, const std::vector<cv::Point_<float>>& points) {
   JSValue ret;
   JSContourData* contour;
 
@@ -956,18 +1057,14 @@ js_contour_new(JSContext* ctx, const std::vector<cv::Point_<float>>& points) {
   contour->resize(points.size());
 
   transform_points(points.cbegin(), points.cend(), contour->begin());
-  /*
-    std::transform(points.cbegin(),
-                   points.cend(),
-                   std::back_inserter(*contour),
-                   [](const cv::Point2f& pt) -> cv::Point2d { return cv::Point2d(pt.x, pt.y); });
-  */
+
   JS_SetOpaque(ret, contour);
   return ret;
 };
 
+template<>
 JSValue
-js_contour2i_new(JSContext* ctx, const std::vector<cv::Point_<int>>& points) {
+js_contour_new<double>(JSContext* ctx, const std::vector<cv::Point_<double>>& points) {
   JSValue ret;
   JSContourData* contour;
 
@@ -975,64 +1072,8 @@ js_contour2i_new(JSContext* ctx, const std::vector<cv::Point_<int>>& points) {
 
   contour = static_cast<JSContourData*>(js_mallocz(ctx, sizeof(JSContourData)));
 
-  std::transform(points.cbegin(),
-                 points.cend(),
-                 std::back_inserter(*contour),
-                 [](const cv::Point& pt) -> cv::Point2d { return cv::Point2d(pt.x, pt.y); });
+  std::copy(points.cbegin(), points.cend(), std::back_inserter(*contour));
 
   JS_SetOpaque(ret, contour);
   return ret;
-};
-
-template<class Value> JSValue js_vector_to_array(JSContext* ctx, const std::vector<Value>& vec);
-
-template<>
-JSValue
-js_vector_to_array(JSContext* ctx, const std::vector<int>& vec) {
-  JSValue ret = JS_NewArray(ctx);
-  uint32_t i, n = vec.size();
-  for(i = 0; i < n; i++) {
-    JS_SetPropertyUint32(ctx, ret, i, JS_NewInt32(ctx, vec[i]));
-  }
-  return ret;
 }
-
-template<class Vector>
-JSValue
-js_vector_to_array(std::enable_if_t<std::is_same<Vector, cv::Vec4i>::value, JSContext*> ctx,
-                   const std::vector<Vector>& vec) {
-  JSValue ret = JS_NewArray(ctx);
-  uint32_t i, j, n = vec.size();
-  for(i = 0; i < n; i++) {
-    JSValue item = JS_NewArray(ctx);
-    for(j = 0; j < 4; j++) {
-      JS_SetPropertyUint32(ctx, item, j, JS_NewInt32(ctx, vec[i][j]));
-    }
-    JS_SetPropertyUint32(ctx, ret, i, item);
-  }
-  return ret;
-}
-
-JSValue
-js_vector_to_array(JSContext* ctx, const std::vector<cv::Point_<float>>& vec) {
-  JSValue ret = JS_NewArray(ctx);
-  uint32_t i, n = vec.size();
-  for(i = 0; i < n; i++) {
-    JSValue item = js_point_new(ctx, vec[i].x, vec[i].y);
-
-    JS_SetPropertyUint32(ctx, ret, i, item);
-  }
-  return ret;
-}
-
-JSValue
-js_vector_to_array(JSContext* ctx, const std::vector<std::vector<cv::Point2d>>& contours) {
-  JSValue ret = JS_NewArray(ctx);
-  uint32_t i, size = contours.size();
-
-  for(i = 0; i < size; i++) {
-    JS_SetPropertyUint32(ctx, ret, i, js_contour2d_new(ctx, contours[i]));
-  }
-  return ret;
-}
-

@@ -235,7 +235,7 @@ js_point_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   return JS_NewString(ctx, os.str().c_str());
 }
 
-JSValue point_proto, point_class;
+JSValue point_proto = JS_UNDEFINED, point_class = JS_UNDEFINED;
 JSClassID js_point_class_id;
 
 JSClassDef js_point_class = {
@@ -273,11 +273,19 @@ js_point_init(JSContext* ctx, JSModuleDef* m) {
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, point_class, point_proto);
 
-  // if(true)
-  JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), "Point", point_class);
+  if(m)
+    JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), "Point", point_class);
   /* else
      JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, point_class);*/
   return 0;
+}
+
+void
+js_point_constructor(JSContext* ctx, JSValue parent, const char* name) {
+  if(JS_IsUndefined(point_class))
+    js_point_init(ctx, 0);
+
+  JS_SetPropertyStr(ctx, parent, name ? name : "Point", point_class);
 }
 
 JSModuleDef*

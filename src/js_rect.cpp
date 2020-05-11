@@ -2,7 +2,7 @@
 
 extern "C" {
 
-JSValue
+static JSValue
 js_rect_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   JSRectData* s;
   JSValue obj = JS_UNDEFINED;
@@ -48,7 +48,7 @@ js_rect_finalizer(JSRuntime* rt, JSValue val) {
   js_free_rt(rt, s);
 }
 
-JSValue
+static JSValue
 js_rect_get_xywh(JSContext* ctx, JSValueConst this_val, int magic) {
   JSValue ret = JS_UNDEFINED;
   JSRectData* s = static_cast<JSRectData*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id));
@@ -69,7 +69,7 @@ js_rect_get_xywh(JSContext* ctx, JSValueConst this_val, int magic) {
   return ret;
 }
 
-JSValue
+static JSValue
 js_rect_points(JSContext* ctx, JSValueConst this_val) {
   JSValue ret = JS_UNDEFINED;
   std::vector<cv::Point2d> points;
@@ -87,7 +87,7 @@ js_rect_points(JSContext* ctx, JSValueConst this_val) {
   return ret;
 }
 
-JSValue
+static JSValue
 js_rect_set_xywh(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
   JSRectData* s = static_cast<JSRectData*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id));
   double v;
@@ -111,7 +111,7 @@ js_rect_set_xywh(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) 
   return JS_UNDEFINED;
 }
 
-JSValue
+static JSValue
 js_rect_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSRectData* s = static_cast<JSRectData*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id));
   std::ostringstream os;
@@ -144,7 +144,7 @@ js_rect_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
   return JS_NewString(ctx, os.str().c_str());
 }
 
-JSValue rect_proto, rect_class;
+JSValue rect_proto = JS_UNDEFINED, rect_class = JS_UNDEFINED;
 JSClassID js_rect_class_id;
 
 JSClassDef js_rect_class = {
@@ -180,13 +180,19 @@ js_rect_init(JSContext* ctx, JSModuleDef* m) {
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, rect_class, rect_proto);
 
-  // if(true)
-  JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m),  "Rect", rect_class);
-  /* else
-     JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, rect_class);*/
+  if(m)
+    JS_SetModuleExport(ctx, m, "Rect", rect_class);
+
   return 0;
 }
 
+void
+js_rect_constructor(JSContext* ctx, JSValue parent, const char* name) {
+  if(JS_IsUndefined(rect_class))
+    js_rect_init(ctx, 0);
+
+  JS_SetPropertyStr(ctx, parent, name ? name : "Rect", rect_class);
+}
 
 JSModuleDef*
 js_init_rect_module(JSContext* ctx, const char* module_name) {
@@ -196,4 +202,5 @@ js_init_rect_module(JSContext* ctx, const char* module_name) {
     return NULL;
   JS_AddModuleExport(ctx, m, "Rect");
   return m;
-}}
+}
+}

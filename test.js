@@ -6,7 +6,7 @@ import { PointList } from "./lib/geom/pointList.js";
 import { RGBA } from "./lib/dom/rgba.js";
 import { HSLA } from "./lib/dom/hsla.js";
 import { Matrix } from "./lib/geom/matrix.js";
-import inspect from "./inspect.js";
+import { Point, Size, Rect } from "./build//x86_64-linux-gnu/quickjs-opencv.so";
 
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };
 
@@ -225,6 +225,7 @@ global.process = function(contours, hier) {
 var ctor = Point.prototype.constructor;
 console.log("Classes: ", inspect(lib));
 console.log("Point: ", inspect(Point));
+console.log("Contour: "+inspect(Contour));
 console.log("typeof(Point.prototype.constructor): ", typeof Point.prototype.constructor == "function");
 console.log("typeof(Point): ", typeof Point);
 console.log("ctor.name: ", ctor.name);

@@ -385,10 +385,10 @@ normalize_module(JSContext* ctx,
   path module_path =
       path(module_base_name).replace_filename(path(module_name, module_name + strlen(module_name)));
 
-  std::cerr << "module_path: " << module_path.string() << std::endl;
+  // std::cerr << "module_path: " << module_path.string() << std::endl;
 
   bool exists = std::filesystem::exists(module_path);
-  std::cerr << "exists module_path: " << exists << std::endl;
+  // std::cerr << "exists module_path: " << exists << std::endl;
 
   if(!exists) {
     module_path = weakly_canonical(module_path);
@@ -406,7 +406,7 @@ normalize_module(JSContext* ctx,
     name = static_cast<char*>(js_malloc(ctx, module_pathstr.size() + 1));
     strcpy(name, module_pathstr.c_str());
 
-    std::cerr << "name: " << name << std::endl;
+    // std::cerr << "name: " << name << std::endl;
   }
   return name;
 }
