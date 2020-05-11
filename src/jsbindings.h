@@ -155,4 +155,19 @@ JSValue js_vector_vec4i_to_array(JSContext*, const std::vector<cv::Vec4i>& vec);
 
 template<class Value> int64_t js_array_to_vector(JSContext*, JSValue arr, std::vector<Value>& out);
 
+inline JSValueConst
+js_ctor(JSContext* ctx, const char* name) {
+  JSValue global = JS_GetGlobalObject(ctx);
+  JSValueConst ctor = JS_GetPropertyStr(ctx, global, name);
+  return ctor;
+}
+inline JSValueConst
+js_proto(JSContext* ctx, const char* name) {
+  return JS_GetPrototype(ctx, js_ctor(ctx, name));
+}
+inline JSValue
+js_new(JSContext* ctx, const char* name) {
+  return JS_NewObjectProto(ctx, js_proto(ctx, name));
+}
+
 #endif
