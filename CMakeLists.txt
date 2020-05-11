@@ -84,8 +84,7 @@ endmacro()
 
 set(BUILD_SHARED_LIBS OFF)
 
-add_subdirectory(quickjs)
-
+add_subdirectory(quickjs "${CMAKE_BINARY_DIR}/quickjs")
 
 
 
