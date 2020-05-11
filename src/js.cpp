@@ -6,6 +6,7 @@
 #include <cassert>
 
 extern "C" {
+#include "quickjs/quickjs.h"
 #include "quickjs/quickjs-libc.h"
 #include "quickjs/cutils.h"
 
@@ -370,31 +371,38 @@ normalize_module(JSContext* ctx, const char* module_base_name, const char* modul
     module_name += 2;
 
   path module_path = path(module_base_name).replace_filename(path(module_name, module_name + strlen(module_name)));
+    std::string module_pathstr;
 
   // std::cerr << "module_path: " << module_path.string() << std::endl;
 
   bool exists = std::filesystem::exists(module_path);
   // std::cerr << "exists module_path: " << exists << std::endl;
+    module_pathstr = module_path.string();
+
 
   if(!exists) {
     module_path = weakly_canonical(module_path);
+    module_pathstr = module_path.string();
 
     exists = std::filesystem::exists(module_path);
   }
+     std::cerr << "module_pathstr: " << module_pathstr << std::endl;
+     std::cerr << "module_base_name: " << module_base_name << std::endl;
+     std::cerr << "module_name: " << module_name << std::endl;
+     std::cerr << "exists: " << exists << std::endl;
 
-  if(exists) {
-    std::string module_pathstr;
+  if(true) {
 
-    module_pathstr = module_path.string();
     /*
     module_pathstr.resize(module_pathstr.size()+1);
     */
-    name = static_cast<char*>(js_malloc(ctx, module_pathstr.size() + 1));
-    strcpy(name, module_pathstr.c_str());
+    const char* s = module_pathstr.c_str();
+    name = static_cast<char*>(js_strdup(ctx, s));
 
-    // std::cerr << "name: " << name << std::endl;
+      return name;
+
   }
-  return name;
+  return 0;
 }
 
 void
