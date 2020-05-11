@@ -44,13 +44,16 @@
 				"*~",
 				"*.pro.user*",
 				"*cfg*.sh",
-				"*.es5.js"
+				"*.es5.js",
+				"*.sed"
 			],
 			"folder_exclude_patterns":
 			[
 				".*",
 				"build",
-				"inst"
+				"inst",
+				"node_modules",
+				"npm"
 			],
 			"path": "."
 		}

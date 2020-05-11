@@ -1,4 +1,4 @@
-import { html, render, Component, useState, useCallback } from "../modules/htm/preact/standalone.mjs";
+import { h, html, render, Component, useState, useCallback } from "../modules/htm/preact/standalone.mjs";
 
 export const Overlay = ({ className = "overlay", active = false, onPush, text, children, ...props }) => {
   const [pushed, setPushed] = useState(false);
