@@ -488,7 +488,7 @@ Rect.prototype.corners = function() {
 };
 Object.assign(Rect.prototype, Point.prototype);
 Object.assign(Rect.prototype, Size.prototype);
-if (Rect.prototype.isSquare === undefined) {
+if(Rect.prototype.isSquare === undefined) {
   Rect.prototype.isSquare = function() {
     return Math.abs(this.width - this.height) < 1;
   };

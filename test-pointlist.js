@@ -1,15 +1,15 @@
 import { Point, Rect, PointList, Line, Vector } from "./lib/geom.js";
 import Util from "./lib/util.js";
 
-import { Console } from "console";
+/*import { Console } from "console";
 
 global.console = new Console({
   stdout: process.stdout,
   stderr: process.stdout,
   inspectOptions: { depth: 10 }
-});
+});*/
 
-let args = [...process.argv].slice(2);
+//let args = [...process.argv].slice(2);
 
 let points = new PointList(
   [
@@ -41,7 +41,7 @@ let points = new PointList(
   ],
   Uint32Array
 );
-console.log("points:", points);
+//console.log("points:", points);
 
 console.log("points:", Util.className(points));
 console.log(
