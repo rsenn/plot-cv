@@ -237,16 +237,17 @@
       };
 
       const AppStart = (window.onload = async () => {
-        Util.extend(window, {
+        Object.assign(window, {
           AppStart,
-          Button,
+      
           chooseDocument,
           classNames,
           loadDocument,
           LoadFile,
           ModifyColors,
           MouseEvents,
-          MouseHandler
+          MouseHandler,
+          devtools
         });
 
         window.Util = Util;
@@ -293,6 +294,48 @@
               h(Button, {
                 caption: "Invert",
                 fn: ModifyColors(c => c.replaceAll(c => c.invert()))
+              }),
+
+              h(Button, {
+                caption: "↕",
+                fn: () => {
+                  let container = Element.find('#container');
+                  let parent = container.parentElement;
+                  let prect = Element.rect(parent);
+                  let rect = Element.rect(container);
+
+
+                  let svg = Element.find('svg', container);
+                  let srect = Element.rect(svg);
+
+
+
+
+                  /*let points = [rect.points(), prect.points() ];
+
+
+                  console.log("points:",points);
+
+                                    let matrix = Matrix.getAffineTransform(...points);
+
+
+                  console.log("Enlarge:",  { prect, rect });
+                  console.log("matrix:",  matrix);
+
+                  let t = matrix.decompose();
+                                    console.log("t:",  t);
+                                    console.log("m:",  matrix.toString());
+
+                                    Element.setCSS(container, { transform: matrix  });*/
+
+                }
+              }),
+
+              h(Button, {
+                caption: "↔",
+                fn: () => {
+                  
+                }
               })
             ]),
             html`

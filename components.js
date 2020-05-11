@@ -134,7 +134,7 @@ export const File = ({ name, i, key, signal, data, ...props }) => {
   icon = h("div", { style }, icon);
   if(id) id = (id + "").replace(/[^._A-Za-z0-9]/g, "-");
   //data = signal();
-  console.log(`File`, { id, data, ...props });
+  //console.log(`File`, { id, data, ...props });
 
   return html`
               <${Item} className=file id=${id} data-filename="${name}" onPush=${pushHandler} label=${name} icon=${icon} ...${props}>
