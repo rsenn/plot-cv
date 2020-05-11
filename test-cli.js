@@ -4,20 +4,18 @@ import { Size } from "size";
 import { Mat } from "mat";
 import { Contour } from "contour";
 import { Line } from "line";
-import { Draw  , drawLine, drawCircle  } from "draw";
+import { Draw, drawLine, drawCircle } from "draw";
 //import { PointIterator } from "point-iterator";
 import { inspect } from "./inspect.js";
 
 //import { Contour } from "contour";
 const { circle, contour, line, polygon, rect } = Draw;
 
-
-console.log("global:", inspect({drawLine, drawCircle }));
-console.log("static:", inspect({circle, contour, line, polygon, rect
- }));
+console.log("global:", inspect({ drawLine, drawCircle }));
+console.log("static:", inspect({ circle, contour, line, polygon, rect }));
 console.log("test:", inspect({ Point, Size, Rect, Mat, Contour, Line, Draw }));
 
-const ctors = [Point, Size, Rect, Mat, Contour, Line ];
+const ctors = [Point, Size, Rect, Mat, Contour, Line];
 
 let objs = [];
 
