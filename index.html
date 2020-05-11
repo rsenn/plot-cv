@@ -297,7 +297,7 @@
               }),
 
               h(Button, {
-                caption: "↕",
+                caption: "↕↔",
                 fn: () => {
                   let container = Element.find("#container");
                   let parent = container.parentElement;
@@ -306,6 +306,9 @@
 
                   let svg = Element.find("svg", container);
                   let srect = Element.rect(svg);
+
+                  let rects = [prect,rect, srect];
+                  console.log("resize rects", rects);
 
                   /*let points = [rect.points(), prect.points() ];
 
@@ -324,11 +327,6 @@
 
                                     Element.setCSS(container, { transform: matrix  });*/
                 }
-              }),
-
-              h(Button, {
-                caption: "↔",
-                fn: () => {}
               })
             ]),
             html`
