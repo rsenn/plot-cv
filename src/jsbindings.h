@@ -9,15 +9,11 @@
 typedef cv::Rect2d JSRectData;
 typedef cv::Mat JSMatData;
 typedef cv::Size2d JSSizeData;
-
 typedef cv::Point2d JSPointData;
-
 typedef std::vector<JSPointData> JSContourData;
-
 struct JSPointIteratorData {
   cv::Point2d *begin, *end;
 };
-
 extern "C" {
 
 int js_init(int argc, char*[]);
