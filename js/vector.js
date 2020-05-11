@@ -1,1 +1,0 @@
-../lib/autoplacer/vector.js
