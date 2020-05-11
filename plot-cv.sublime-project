@@ -26,6 +26,7 @@
 			"file_exclude_patterns":
 			[
 				"*.log*",
+				"*.brd","*.sch",
 				".*",
 				"*.tmp",
 				"*~",
