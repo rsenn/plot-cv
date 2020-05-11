@@ -6,12 +6,12 @@ find_package(OpenCV REQUIRED)
 
 function(make_shared_module FNAME)
   string(REGEX REPLACE "_" "-" NAME "${FNAME}")
+  string(TOUPPER "${NAME}" UNAME)
 
      message("Module: ${NAME}")
 
     add_library(quickjs-${NAME} MODULE src/js_${FNAME}.cpp src/jsbindings.cpp src/js.cpp)
 
-  string(TOUPPER "${NAME}" UNAME)
     target_link_libraries(quickjs-${NAME} ${OpenCV_LIBS} quickjs dl)
     set_target_properties(quickjs-${NAME} PROPERTIES
         PREFIX ""
@@ -49,7 +49,7 @@ add_dependencies(quickjs-rect quickjs-point quickjs-size)
 
 add_dependencies(quickjs-contour quickjs-mat)
 
-add_dependencies(quickjs-point-iterator quickjs-contour)
+add_dependencies(quickjs-point-iterator quickjs-contour quickjs-mat)
 
 file(GLOB JS_BINDINGS_SOURCES 
     src/color.cpp
