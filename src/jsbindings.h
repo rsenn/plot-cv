@@ -22,7 +22,6 @@ extern "C" {
 
 int js_init(int argc, char*[]);
 
-
 int js_draw_functions(JSContext* ctx, JSValue parent);
 
 JSValue js_point_new(JSContext*, double x, double y);
@@ -49,7 +48,6 @@ void js_rect_constructor(JSContext* ctx, JSValue parent, const char* name);
 int js_point_iterator_init(JSContext*, JSModuleDef* m);
 JSModuleDef* js_init_point_iterator_module(JSContext*, const char* module_name);
 void js_point_iterator_constructor(JSContext* ctx, JSValue parent, const char* name);
-
 
 JSContourData* js_contour_data(JSContext*, JSValue val);
 void js_contour_finalizer(JSRuntime* rt, JSValue val);
@@ -146,7 +144,6 @@ js_point_create(JSContext* ctx, double x, double y) {
   return point;
 }
 
-
 static inline int
 js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData* out) {
   int ret = 0;
@@ -164,7 +161,6 @@ js_rect_get(JSContext* ctx, JSValueConst rect) {
   return r;
 }
 
-
 static inline int
 js_size_read(JSContext* ctx, JSValueConst size, JSSizeData* out) {
   int ret = 0;
@@ -175,12 +171,10 @@ js_size_read(JSContext* ctx, JSValueConst size, JSSizeData* out) {
 
 static JSSizeData
 js_size_get(JSContext* ctx, JSValueConst size) {
-  JSSizeData r = {0, 0 };
+  JSSizeData r = {0, 0};
   js_size_read(ctx, size, &r);
   return r;
 }
-
-
 
 static inline int
 js_point_read(JSContext* ctx, JSValueConst point, JSPointData* out) {
@@ -192,11 +186,10 @@ js_point_read(JSContext* ctx, JSValueConst point, JSPointData* out) {
 
 static JSPointData
 js_point_get(JSContext* ctx, JSValueConst point) {
-  JSPointData r = {0, 0 };
+  JSPointData r = {0, 0};
   js_point_read(ctx, point, &r);
   return r;
 }
-
 
 static inline int
 js_contour_read(JSContext* ctx, JSValueConst contour, JSContourData* out) {

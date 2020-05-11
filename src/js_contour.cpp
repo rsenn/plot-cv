@@ -696,7 +696,7 @@ js_contour_pointpolygontest(JSContext* ctx, JSValueConst this_val, int argc, JSV
   cv::Point2f pt;
   bool measureDist = false;
   std::vector<cv::Point2f> contour, triangle;
-  JSPointData* point;
+  JSPointData point;
   double retval;
 
   v = js_contour_data(ctx, this_val);
@@ -704,12 +704,11 @@ js_contour_pointpolygontest(JSContext* ctx, JSValueConst this_val, int argc, JSV
     return JS_EXCEPTION;
 
   if(argc > 0) {
-    point = js_point_data(ctx, argv[0]);
+    point = js_point_get(ctx, argv[0]);
 
-    if(point) {
-      pt.x = point->x;
-      pt.y = point->y;
-    }
+    pt.x = point.x;
+    pt.y = point.y;
+
     if(argc > 1) {
       measureDist = !!JS_ToBool(ctx, argv[1]);
     }
@@ -944,6 +943,22 @@ js_contour_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   return JS_NewString(ctx, os.str().c_str());
 }
 
+static JSValue
+js_contour_rect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSValue ret = JS_UNDEFINED;
+  std::vector<cv::Point2d> points;
+  JSRectData s = js_rect_get(ctx, argv[0]);
+
+  points.push_back(cv::Point2d(s.x, s.y));
+  points.push_back(cv::Point2d(s.x + s.width, s.y));
+  points.push_back(cv::Point2d(s.x + s.width, s.y + s.height));
+  points.push_back(cv::Point2d(s.x, s.y + s.height));
+  points.push_back(cv::Point2d(s.x, s.y));
+
+  ret = js_contour2d_new(ctx, points);
+  return ret;
+}
+
 JSValue contour_proto, contour_class;
 JSClassID js_contour_class_id;
 
@@ -1007,6 +1022,9 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
     //  JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Contour", JS_PROP_CONFIGURABLE),
 
 };
+const JSCFunctionListEntry js_contour_static_funcs[] = {
+  JS_CFUNC_DEF("rect", 1, js_contour_rect)
+};
 
 int
 js_contour_init(JSContext* ctx, JSModuleDef* m) {
@@ -1025,6 +1043,10 @@ js_contour_init(JSContext* ctx, JSModuleDef* m) {
   contour_class = JS_NewCFunction2(ctx, js_contour_ctor, "Contour", 2, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, contour_class, contour_proto);
+  JS_SetPropertyFunctionList(ctx,
+                             contour_class,
+                             js_contour_static_funcs,
+                             countof(js_contour_static_funcs));
 
   if(m)
     JS_SetModuleExport(ctx, m, "Contour", contour_class);

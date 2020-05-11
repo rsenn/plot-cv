@@ -32,21 +32,21 @@ js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* arg
   JSMatData* s;
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
-  JSSizeData* size = nullptr;
+  JSSizeData size;
 
   int64_t cols = 0, rows = 0;
   int32_t type = CV_32FC1;
 
   if(argc > 0) {
     JS_ToInt64(ctx, &rows, argv[0]);
-    size = js_size_data(ctx, argv[0]);
-    if(size != nullptr) {
-      cols = size->width;
-      rows = size->height;
-    } else {
+    size = js_size_get(ctx, argv[0]);
+    if(argc > 1 && JS_IsNumber(argv[1])) {
       JS_ToInt64(ctx, &cols, argv[1]);
       argc--;
       argv++;
+    } else {
+      cols = size.width;
+      rows = size.height;
     }
     if(argc > 1) {
       type = JS_ToInt32(ctx, &type, argv[1]);
@@ -105,14 +105,14 @@ static JSValue
 js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSValue ret = JS_UNDEFINED;
   int64_t i = -1, i2 = -1;
-  JSPointData* pt = nullptr;
+  JSPointData pt;
   JSMatData* m = js_mat_data(ctx, this_val);
 
   if(argc > 0) {
     JS_ToInt64(ctx, &i, argv[0]);
-    pt = js_point_data(ctx, argv[0]);
-    if(argc > 2) {
-      JS_ToInt64(ctx, &i2, argv[2]);
+    pt = js_point_get(ctx, argv[0]);
+    if(argc > 1) {
+      JS_ToInt64(ctx, &i2, argv[1]);
     }
   }
 
@@ -127,11 +127,11 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
   else if(magic == 4) {
     cv::Point p;
 
-    if(pt != nullptr) {
-      p = *pt;
-    } else {
+    if(JS_IsNumber(argv[1])) {
       p.x = i;
       p.y = i2;
+    } else {
+      p = pt;
     }
     if(m->type() == CV_32FC1)
       ret = JS_NewFloat64(ctx, (*m).at<float>(p.y, p.x));
@@ -141,8 +141,12 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
   } else if(magic == 5) {
     ret = js_mat_wrap(ctx, m->clone());
   } else if(magic == 6) {
-    JSRectData* rect = argc > 0 ? js_rect_data(ctx, argv[0]) : nullptr;
-    ret = js_mat_wrap(ctx, (*m)(*rect));
+    JSRectData rect = {0, 0, 0, 0};
+
+    if(argc > 0)
+      rect = js_rect_get(ctx, argv[0]);
+
+    ret = js_mat_wrap(ctx, (*m)(rect));
   }
 
   return JS_EXCEPTION;
@@ -215,6 +219,33 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   return JS_NewString(ctx, os.str().c_str());
 }
 
+static JSValue
+js_mat_getrotationmatrix2d(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSPointData s;
+
+  double angle = 0, scale = 1;
+  JSMatData m;
+
+  JSValue ret;
+  if(argc == 0)
+    return JS_EXCEPTION;
+  if(argc > 0) {
+     s = js_point_get(ctx, argv[0]);
+    if(argc > 1) {
+    JS_ToFloat64(ctx, &angle, argv[1]);
+    if(argc > 2) {
+      JS_ToFloat64(ctx, &scale, argv[2]);
+    }
+  }
+}
+
+  m = cv::getRotationMatrix2D(s, angle, scale);
+
+  ret = js_mat_wrap(ctx, m);
+  return ret;
+}
+
+
 JSValue
 js_mat_wrap(JSContext* ctx, const cv::Mat& mat) {
   JSValue ret;
@@ -257,6 +288,9 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     //    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "cv::Mat", JS_PROP_CONFIGURABLE)
 
 };
+const JSCFunctionListEntry js_mat_static_funcs[] = {
+      JS_CFUNC_DEF("getRotationMatrix2D", 3, js_mat_getrotationmatrix2d),
+    };
 
 int
 js_mat_init(JSContext* ctx, JSModuleDef* m) {
@@ -271,6 +305,8 @@ js_mat_init(JSContext* ctx, JSModuleDef* m) {
   mat_class = JS_NewCFunction2(ctx, js_mat_ctor, "Mat", 2, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, mat_class, mat_proto);
+
+  JS_SetPropertyFunctionList(ctx, mat_class, js_mat_static_funcs, countof(js_mat_static_funcs));
 
   JS_SetPropertyStr(ctx, mat_class, "CV_8UC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_8U, 1)));
   JS_SetPropertyStr(ctx, mat_class, "CV_8UC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_8U, 2)));
@@ -300,6 +336,8 @@ js_mat_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetPropertyStr(ctx, mat_class, "CV_64FC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 2)));
   JS_SetPropertyStr(ctx, mat_class, "CV_64FC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 3)));
   JS_SetPropertyStr(ctx, mat_class, "CV_64FC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 4)));
+
+  
   JSValue g = JS_GetGlobalObject(ctx);
   int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
   int32array_proto = JS_GetPrototype(ctx, int32array_ctor);

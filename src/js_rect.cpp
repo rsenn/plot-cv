@@ -47,7 +47,6 @@ js_rect_data(JSContext* ctx, JSValue val) {
   return static_cast<JSRectData*>(JS_GetOpaque2(ctx, val, js_rect_class_id));
 }
 
-
 void
 js_rect_finalizer(JSRuntime* rt, JSValue val) {
   JSRectData* s = static_cast<JSRectData*>(JS_GetOpaque(val, js_rect_class_id));
@@ -73,24 +72,6 @@ js_rect_get_xywh(JSContext* ctx, JSValueConst this_val, int magic) {
     ret = JS_NewFloat64(ctx, s->x + s->width);
   else if(magic == 5)
     ret = JS_NewFloat64(ctx, s->y + s->height);
-  return ret;
-}
-
-static JSValue
-js_rect_points(JSContext* ctx, JSValueConst this_val) {
-  JSValue ret = JS_UNDEFINED;
-  std::vector<cv::Point2d> points;
-  JSRectData* s = static_cast<JSRectData*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id));
-  if(!s)
-    ret = JS_EXCEPTION;
-
-  points.push_back(cv::Point2d(s->x, s->y));
-  points.push_back(cv::Point2d(s->x + s->width, s->y));
-  points.push_back(cv::Point2d(s->x + s->width, s->y + s->height));
-  points.push_back(cv::Point2d(s->x, s->y + s->height));
-  points.push_back(cv::Point2d(s->x, s->y));
-
-  ret = js_contour2d_new(ctx, points);
   return ret;
 }
 
@@ -166,7 +147,6 @@ const JSCFunctionListEntry js_rect_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("height", js_rect_get_xywh, js_rect_set_xywh, 3),
     JS_CGETSET_MAGIC_DEF("x2", js_rect_get_xywh, js_rect_set_xywh, 4),
     JS_CGETSET_MAGIC_DEF("y2", js_rect_get_xywh, js_rect_set_xywh, 5),
-    JS_CGETSET_DEF("points", js_rect_points, NULL),
     JS_ALIAS_DEF("x1", "x"),
     JS_ALIAS_DEF("y1", "y"),
     JS_CFUNC_DEF("toString", 0, js_rect_to_string),

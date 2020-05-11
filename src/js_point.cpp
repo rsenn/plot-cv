@@ -144,12 +144,12 @@ js_point_get_xy(JSContext* ctx, JSValueConst this_val, int magic) {
 static JSValue
 js_point_inside(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSPointData* s = js_point_data(ctx, this_val);
-  JSRectData* r = js_rect_data(ctx, argv[0]);
+  JSRectData r = js_rect_get(ctx, argv[0]);
   bool retval;
-  if(!s || !r)
+  if(!s /*|| !r*/)
     return JS_EXCEPTION;
 
-  retval = s->inside(*r);
+  retval = s->inside(r);
 
   return JS_NewBool(ctx, retval);
 }
