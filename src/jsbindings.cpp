@@ -92,6 +92,12 @@ js_vector_vec4i_to_array(JSContext* ctx, const std::vector<cv::Vec4i>& vec) {
   }
   return ret;
 }
+
+extern "C" JSModuleDef*
+js_init_module(JSContext* ctx, const char* module_name) {
+  JSModuleDef* m;
+}
+
 /*
 void
 js_point_finalizer(JSRuntime* rt, JSValue val) {

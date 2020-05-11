@@ -10,7 +10,7 @@ file(GLOB HIGHGUI_VIEWER_SOURCES
     src/js.cpp
     src/jsbindings.cpp
     src/plot-cv.cpp
-    src/js_contour.cpp src/js_draw.cpp src/js_mat.cpp src/js_point.cpp src/js_rect.cpp src/js_size.cpp
+    src/js_*.cpp
     src/line.cpp
     src/matrix.cpp
     src/polygon.cpp

@@ -392,7 +392,7 @@ normalize_module(JSContext* ctx,
     */
     name = static_cast<char*>(js_malloc(ctx, module_pathstr.size() + 1));
     strcpy(name, module_pathstr.c_str());
-    
+
     std::cerr << "name: " << name << std::endl;
   }
   return name;

@@ -1053,7 +1053,9 @@ js_init(int argc, char* argv[]) {
   js.init(argc, argv);
   JSValue* fn = js.get_function("drawContour");
   global_obj = js.global_object();
+
   js_point_init(js.ctx, &global_obj, "Point", false);
+
   js_size_init(js.ctx, &global_obj, "Size", false);
   js_rect_init(js.ctx, &global_obj, "Rect", false);
 
