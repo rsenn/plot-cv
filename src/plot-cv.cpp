@@ -656,11 +656,11 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
         if(contourStr.str().size())
           contourStr << "\n";
         out_points(contourStr, a);
-      /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
-         ", " << hier[i][2] << ", " << hier[i][3] << ", "
-                    << "} " << std::endl;
-          logfile << "contourDepth(i) = " << depth << std::endl;
-*/
+        /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
+           ", " << hier[i][2] << ", " << hier[i][3] << ", "
+                      << "} " << std::endl;
+            logfile << "contourDepth(i) = " << depth << std::endl;
+  */
         /*  if(dptr != nullptr)
             cv::drawContours(*dptr, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
    */     }
@@ -956,23 +956,22 @@ js_init(int argc, char* argv[]) {
 
   js.init(argc, argv);
 
-
   JSValue* fn = js.get_function("drawContour");
   global_obj = js.global_object();
 
-/*  js_point_constructor(js.ctx, js.global_object(), nullptr);
-  js_rect_constructor(js.ctx, js.global_object(), nullptr);
-  js_size_constructor(js.ctx, js.global_object(), nullptr);
-  js_mat_constructor(js.ctx, js.global_object(), nullptr);
-  js_contour_constructor(js.ctx, js.global_object(), nullptr);
-  js_point_iterator_constructor(js.ctx, js.global_object(), nullptr);
-*/
- js_init_module_point(js.ctx, "point");
- js_init_module_size(js.ctx, "size");
- js_init_module_rect(js.ctx, "rect");
- js_init_module_mat(js.ctx, "mat");
- js_init_module_point_iterator(js.ctx, "point-iterator");
- js_init_module_contour(js.ctx, "contour");
+  /*  js_point_constructor(js.ctx, js.global_object(), nullptr);
+    js_rect_constructor(js.ctx, js.global_object(), nullptr);
+    js_size_constructor(js.ctx, js.global_object(), nullptr);
+    js_mat_constructor(js.ctx, js.global_object(), nullptr);
+    js_contour_constructor(js.ctx, js.global_object(), nullptr);
+    js_point_iterator_constructor(js.ctx, js.global_object(), nullptr);
+  */
+  js_init_module_point(js.ctx, "point");
+  js_init_module_size(js.ctx, "size");
+  js_init_module_rect(js.ctx, "rect");
+  js_init_module_mat(js.ctx, "mat");
+  js_init_module_point_iterator(js.ctx, "point-iterator");
+  js_init_module_contour(js.ctx, "contour");
   /*  js_init_point_module(js.ctx, "Point");
     js_init_point_iterator_module(js.ctx, "PointIterator");
     js_init_rect_module(js.ctx, "Rect");
@@ -989,7 +988,7 @@ js_init(int argc, char* argv[]) {
   JS_SetPropertyStr(js.ctx, console, "log", JS_NewCFunction(js.ctx, js_print, "log", 1));
 
   jsrt::value ctor = js.get_global("Point");
-//  std::cerr << "function_name: " << js.function_name(ctor) << std::endl;
+  //  std::cerr << "function_name: " << js.function_name(ctor) << std::endl;
 
   // ret = js.eval_file("lib.js", 1);
 
@@ -1000,9 +999,8 @@ js_init(int argc, char* argv[]) {
     js.add_function("drawPolygon", &js_draw_polygon, 2);
     js.add_function("drawCircle", &js_draw_circle, 2);
   */
-  
 
-  //check_eval();
+  // check_eval();
 
   /*
     std::cerr << "property names: " << js.property_names(global_obj) << std::endl;

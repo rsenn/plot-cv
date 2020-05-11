@@ -100,8 +100,7 @@ js_bindings_init(JSContext* ctx, JSModuleDef* m) {
 
 extern "C" JSModuleDef*
 
-__attribute__((visibility("default")))
-js_init_module(JSContext* ctx, const char* module_name) {
+    __attribute__((visibility("default"))) js_init_module(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
 
   m = JS_NewCModule(ctx, module_name, &js_bindings_init);

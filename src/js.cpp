@@ -12,7 +12,6 @@ extern "C" {
 
 jsrt js;
 
-
 char* normalize_module(JSContext* ctx, const char* module_base_name, const char* module_name, void* opaque);
 };
 
@@ -307,9 +306,9 @@ jsrt::eval_file(const char* filename, int module) {
 
   eval_flags = module ? JS_EVAL_TYPE_MODULE : JS_EVAL_TYPE_GLOBAL;
 
- /*  std::string script(buf, buf_len);
-   std::cerr << "Script: " << script << std::endl;
-*/
+  /*  std::string script(buf, buf_len);
+    std::cerr << "Script: " << script << std::endl;
+ */
   ret = eval_buf(buf, buf_len, filename, eval_flags);
   js_free(ctx, buf);
   return ret;
@@ -371,14 +370,13 @@ normalize_module(JSContext* ctx, const char* module_base_name, const char* modul
     module_name += 2;
 
   path module_path = path(module_base_name).replace_filename(path(module_name, module_name + strlen(module_name)));
-    std::string module_pathstr;
+  std::string module_pathstr;
 
   // std::cerr << "module_path: " << module_path.string() << std::endl;
 
   bool exists = std::filesystem::exists(module_path);
   // std::cerr << "exists module_path: " << exists << std::endl;
-    module_pathstr = module_path.string();
-
+  module_pathstr = module_path.string();
 
   if(!exists) {
     module_path = weakly_canonical(module_path);
@@ -386,10 +384,10 @@ normalize_module(JSContext* ctx, const char* module_base_name, const char* modul
 
     exists = std::filesystem::exists(module_path);
   }
-     std::cerr << "module_pathstr: " << module_pathstr << std::endl;
-     std::cerr << "module_base_name: " << module_base_name << std::endl;
-     std::cerr << "module_name: " << module_name << std::endl;
-     std::cerr << "exists: " << exists << std::endl;
+  std::cerr << "module_pathstr: " << module_pathstr << std::endl;
+  std::cerr << "module_base_name: " << module_base_name << std::endl;
+  std::cerr << "module_name: " << module_name << std::endl;
+  std::cerr << "exists: " << exists << std::endl;
 
   if(true) {
 
@@ -399,8 +397,7 @@ normalize_module(JSContext* ctx, const char* module_base_name, const char* modul
     const char* s = module_pathstr.c_str();
     name = static_cast<char*>(js_strdup(ctx, s));
 
-      return name;
-
+    return name;
   }
   return 0;
 }
