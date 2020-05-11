@@ -86,6 +86,25 @@ set(BUILD_SHARED_LIBS ON)
 
 add_subdirectory(quickjs "${CMAKE_BINARY_DIR}/quickjs")
 
+function(src_program NAME SOURCES )
+
+foreach(SRC ${SOURCES})
+file(GLOB "${NAME}_SOURCES" ${SRC})
+list(APPEND SRCS ${${NAME}_SOURCES})
+endforeach()
+
+#string(REGEX REPLACE   "src/" "" "${NAME}_SOURCES" "${SOURCES}")
+set("${NAME}_SOURCES" ${SRCS})
+#[[message("${NAME}_SOURCES:"  ${${NAME}SOURCES})
+list(TRANSFORM "${NAME}_SOURCES" REPLACE "\\(.*\\)" "\\1")
+]]
+
+message("${NAME}_SOURCES: ${${NAME}_SOURCES}")
+add_executable(${NAME} src/${NAME}.cpp ${${NAME}_SOURCES})
+target_link_libraries(${NAME} ${ARGN})
+
+install(TARGETS ${NAME} DESTINATION bin)
+endfunction()
 
 option(HIGHGUI_VIEWER ON)
 option(IMGUI_VIEWER OFF)
@@ -98,6 +117,8 @@ include(imgui-viewer.cmake)
 endif(IMGUI_VIEWER)
 
 include(js-bindings.cmake)
+
+src_program(cli "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/geometry.cpp;src/js*.cpp"  "${OpenCV_LIBS};quickjs")
 
 
 option(ADDITIONAL_PROGS FALSE)
