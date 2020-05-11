@@ -221,7 +221,7 @@ js_contour_boundingrect(JSContext* ctx, JSValueConst this_val, int argc, JSValue
   cv::Rect2f rect;
   std::vector<cv::Point2f> curve;
   JSContourData* v;
-  JSRectData* r;
+  JSRectData r;
 
   v = js_contour_data(ctx, this_val);
 
@@ -235,13 +235,15 @@ js_contour_boundingrect(JSContext* ctx, JSValueConst this_val, int argc, JSValue
 
   rect = cv::boundingRect(curve);
 
-  ret = JS_NewObjectProtoClass(ctx, rect_proto, js_rect_class_id);
+  ret = js_new(ctx, "Rect");
+//ret = JS_NewObject(ctx, rect_proto, js_rect_class_id);
+  //r = static_cast<JSRectData*>(js_mallocz(ctx, sizeof(*r)));
+  //*r = rect;
+  //JS_SetOpaque(ret, r);
+//
+  r = rect;
 
-  r = static_cast<JSRectData*>(js_mallocz(ctx, sizeof(*r)));
-
-  *r = rect;
-
-  JS_SetOpaque(ret, r);
+  js_rect_write(ctx, ret, r);
 
   return ret;
 }
@@ -990,6 +992,7 @@ js_contour_find(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   return ret;
 }
 
+
 JSValue contour_proto, contour_class;
 JSClassID js_contour_class_id;
 
@@ -1046,8 +1049,8 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("simplifyPerpendicularDistance", 0, js_contour_psimpl, 6),
     JS_CFUNC_DEF("toArray", 0, js_contour_toarray),
     JS_CFUNC_DEF("toString", 0, js_contour_tostring),
-
     JS_CFUNC_MAGIC_DEF("entries", 0, js_create_point_iterator, 0),
+
     JS_ALIAS_DEF("[Symbol.iterator]", "entries"),
 
     //  JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Contour", JS_PROP_CONFIGURABLE),

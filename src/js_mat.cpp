@@ -71,35 +71,6 @@ js_mat_finalizer(JSRuntime* rt, JSValue val) {
   s->release();
 }
 
-static JSValue
-js_mat_findcontours(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSMatData* m = js_mat_data(ctx, this_val);
-  JSValue ret = JS_UNDEFINED;
-  int mode = cv::RETR_TREE;
-  int approx = cv::CHAIN_APPROX_SIMPLE;
-  cv::Point offset(0, 0);
-
-  contour2i_vector contours;
-  vec4i_vector hier;
-  contour2f_vector poly;
-
-  cv::findContours(*m, contours, hier, mode, approx, offset);
-
-  poly.resize(contours.size());
-
-  transform_contours(contours.cbegin(), contours.cend(), poly.begin());
-
-  {
-    JSValue hier_arr = js_vector_vec4i_to_array(ctx, hier);
-    JSValue contours_obj = js_contours_new(ctx, poly);
-
-    ret = JS_NewObject(ctx);
-
-    JS_SetPropertyStr(ctx, ret, "hier", hier_arr);
-    JS_SetPropertyStr(ctx, ret, "contours", contours_obj);
-  }
-  return ret;
-}
 
 static JSValue
 js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
@@ -283,7 +254,7 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("at", 1, js_mat_funcs, 4),
     JS_CFUNC_MAGIC_DEF("clone", 0, js_mat_funcs, 5),
     JS_CFUNC_MAGIC_DEF("roi", 0, js_mat_funcs, 6),
-    JS_CFUNC_DEF("findContours", 0, js_mat_findcontours),
+   // JS_CFUNC_DEF("findContours", 0, js_mat_findcontours),
     JS_CFUNC_DEF("toString", 0, js_mat_tostring),
     //    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "cv::Mat", JS_PROP_CONFIGURABLE)
 
@@ -337,7 +308,7 @@ js_mat_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetPropertyStr(ctx, mat_class, "CV_64FC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 3)));
   JS_SetPropertyStr(ctx, mat_class, "CV_64FC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 4)));
 
-  
+
   JSValue g = JS_GetGlobalObject(ctx);
   int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
   int32array_proto = JS_GetPrototype(ctx, int32array_ctor);

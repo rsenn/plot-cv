@@ -63,6 +63,7 @@ int js_mat_init(JSContext*, JSModuleDef*);
 JSModuleDef* js_init_mat_module(JSContext* ctx, const char* module_name);
 void js_mat_constructor(JSContext* ctx, JSValue parent, const char* name);
 
+JSValue js_mat_wrap(JSContext* ctx, const cv::Mat& mat);
 JSMatData* js_mat_data(JSContext* ctx, JSValue val);
 
 JSModuleDef* js_init_module(JSContext* ctx, const char* module_name);
@@ -160,6 +161,23 @@ static JSRectData
 js_rect_get(JSContext* ctx, JSValueConst rect) {
   JSRectData r = {0, 0, 0, 0};
   js_rect_read(ctx, rect, &r);
+  return r;
+}
+
+static inline int
+js_rect_write(JSContext* ctx, JSValue out, JSRectData rect) {
+  int ret = 0;
+  ret += JS_SetPropertyStr(ctx, out, "x", JS_NewFloat64(ctx,rect.x));
+ret += JS_SetPropertyStr(ctx, out, "y", JS_NewFloat64(ctx,rect.y));
+ret += JS_SetPropertyStr(ctx, out, "width", JS_NewFloat64(ctx,rect.width));
+ret += JS_SetPropertyStr(ctx, out, "height", JS_NewFloat64(ctx,rect.height));
+  return ret;
+}
+
+static JSRectData
+js_rect_set(JSContext* ctx,  JSValue out, double x, double y, double w, double h) {
+  const JSRectData r = {x,y,w,h};
+  js_rect_write(ctx, out, r);
   return r;
 }
 

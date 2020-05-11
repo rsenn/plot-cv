@@ -4,16 +4,19 @@
 find_package(OpenCV REQUIRED)
 
 
-function(make_shared_module NAME)
+function(make_shared_module FNAME)
+  string(REGEX REPLACE "_" "-" NAME "${FNAME}")
+
      message("Module: ${NAME}")
 
-    add_library(quickjs-${NAME} MODULE src/js_${NAME}.cpp src/jsbindings.cpp src/js.cpp)
+    add_library(quickjs-${NAME} MODULE src/js_${FNAME}.cpp src/jsbindings.cpp src/js.cpp)
 
   string(TOUPPER "${NAME}" UNAME)
     target_link_libraries(quickjs-${NAME} ${OpenCV_LIBS} quickjs dl)
     set_target_properties(quickjs-${NAME} PROPERTIES
         PREFIX ""
         COMPILE_FLAGS "-fvisibility=hidden"
+        BUILD_RPATH "${CMAKE_BINARY_DIR};${CMAKE_CURRENT_BINARY_DIR};${CMAKE_BINARY_DIR}/quickjs;${CMAKE_CURRENT_BINARY_DIR}/quickjs"
     )
     target_compile_definitions(quickjs-${NAME} PRIVATE -DJS_${UNAME}_MODULE=1)
     install(TARGETS  quickjs-${NAME} DESTINATION bin)
@@ -41,6 +44,13 @@ foreach(JS_MODULE ${JS_BINDINGS_MODULES})
 
 endforeach()
 
+add_dependencies(quickjs-rect quickjs-point quickjs-size)
+#add_dependencies(quickjs-contour quickjs-mat quickjs-rect quickjs-point)
+
+add_dependencies(quickjs-contour quickjs-mat)
+
+add_dependencies(quickjs-point-iterator quickjs-contour)
+
 file(GLOB JS_BINDINGS_SOURCES 
     src/color.cpp
     src/data.cpp
@@ -56,6 +66,8 @@ file(GLOB JS_BINDINGS_SOURCES
     src/*.h 
     src/*.hpp 
 )
+
+
 # Main
 add_library(quickjs-opencv MODULE 
 
