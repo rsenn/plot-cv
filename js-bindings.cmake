@@ -6,7 +6,7 @@ find_package(OpenCV REQUIRED)
 
 function(make_shared_module FNAME)
   string(REGEX REPLACE "_" "-" NAME "${FNAME}")
-  string(TOUPPER "${NAME}" UNAME)
+  string(TOUPPER "${FNAME}" UNAME)
 
      message("Module: ${NAME}")
 
@@ -15,7 +15,7 @@ function(make_shared_module FNAME)
     target_link_libraries(quickjs-${NAME} ${OpenCV_LIBS} quickjs dl)
     set_target_properties(quickjs-${NAME} PROPERTIES
         PREFIX ""
-        COMPILE_FLAGS "-fvisibility=hidden"
+#        COMPILE_FLAGS "-fvisibility=hidden"
         BUILD_RPATH "${CMAKE_BINARY_DIR};${CMAKE_CURRENT_BINARY_DIR};${CMAKE_BINARY_DIR}/quickjs;${CMAKE_CURRENT_BINARY_DIR}/quickjs"
     )
     target_compile_definitions(quickjs-${NAME} PRIVATE -DJS_${UNAME}_MODULE=1)
@@ -71,8 +71,9 @@ file(GLOB JS_BINDINGS_SOURCES
 # Main
 add_library(quickjs-opencv MODULE  ${JS_BINDINGS_SOURCES} )
 set_target_properties(quickjs-opencv PROPERTIES
-    COMPILE_FLAGS "-fvisibility=hidden"
+  #  COMPILE_FLAGS "-fvisibility=hidden"
     PREFIX ""
 )
+target_compile_definitions(quickjs-opencv PRIVATE "-DJS_BINDINGS_INIT_MODULE=1")
 target_link_libraries(quickjs-opencv ${OpenCV_LIBS} quickjs-shared)
 # link

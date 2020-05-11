@@ -943,10 +943,10 @@ js_print(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
     str = JS_ToCString(ctx, argv[i]);
     if(!str)
       return JS_EXCEPTION;
-    logfile << str;
+    std::cerr << str;
     JS_FreeCString(ctx, str);
   }
-  logfile << std::endl;
+  std::cerr << std::endl;
   return JS_UNDEFINED;
 }
 extern "C" {
@@ -955,18 +955,24 @@ int
 js_init(int argc, char* argv[]) {
 
   js.init(argc, argv);
+
+
   JSValue* fn = js.get_function("drawContour");
   global_obj = js.global_object();
 
-  //  js_point_init(js.ctx, &global_obj/*, "Point", false*/);
-  js_point_constructor(js.ctx, js.global_object(), nullptr);
+/*  js_point_constructor(js.ctx, js.global_object(), nullptr);
   js_rect_constructor(js.ctx, js.global_object(), nullptr);
   js_size_constructor(js.ctx, js.global_object(), nullptr);
   js_mat_constructor(js.ctx, js.global_object(), nullptr);
   js_contour_constructor(js.ctx, js.global_object(), nullptr);
   js_point_iterator_constructor(js.ctx, js.global_object(), nullptr);
-
-  // js_init_module(js.ctx, "plot-cv");
+*/
+ js_init_module_point(js.ctx, "point");
+ js_init_module_size(js.ctx, "size");
+ js_init_module_rect(js.ctx, "rect");
+ js_init_module_mat(js.ctx, "mat");
+ js_init_module_point_iterator(js.ctx, "point-iterator");
+ js_init_module_contour(js.ctx, "contour");
   /*  js_init_point_module(js.ctx, "Point");
     js_init_point_iterator_module(js.ctx, "PointIterator");
     js_init_rect_module(js.ctx, "Rect");
@@ -983,7 +989,7 @@ js_init(int argc, char* argv[]) {
   JS_SetPropertyStr(js.ctx, console, "log", JS_NewCFunction(js.ctx, js_print, "log", 1));
 
   jsrt::value ctor = js.get_global("Point");
-  std::cerr << "function_name: " << js.function_name(ctor) << std::endl;
+//  std::cerr << "function_name: " << js.function_name(ctor) << std::endl;
 
   // ret = js.eval_file("lib.js", 1);
 

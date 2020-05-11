@@ -116,13 +116,16 @@ if(IMGUI_VIEWER)
 include(imgui-viewer.cmake)
 endif(IMGUI_VIEWER)
 
-include(js-bindings.cmake)
 
 src_program(cli "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/js*.cpp"  "${OpenCV_LIBS};quickjs;${ELECTRICFENCE_LIBRARY}")
 
 
-option(ADDITIONAL_PROGS FALSE)
+option(ADDITIONAL_PROGS "Build other OpenCV programs" FALSE)
+option(QUICKJS_MODULES  "Build .so modules for quickjs" FALSE)
 
+if(QUICKJS_MODULES)
+include(js-bindings.cmake)
+endif(QUICKJS_MODULES)
 
 if(ADDITIONAL_PROGS)
   add_prog(mouth)
