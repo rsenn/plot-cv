@@ -87,7 +87,10 @@ add_subdirectory(quickjs)
 include(highgui-viewer.cmake)
 include(imgui-viewer.cmake)
 
-set(ADDITIONAL_PROGS TRUE)
+
+option(ADDITIONAL_PROGS TRUE)
+
+
 if(ADDITIONAL_PROGS)
   add_prog(mouth)
   add_prog(canny)
