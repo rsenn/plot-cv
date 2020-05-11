@@ -1,8 +1,18 @@
-
 #include "./jsbindings.h"
 #include "./geometry.h"
 
+#if defined(JS_MAT_MODULE) || defined(quickjs_mat_EXPORTS)
+#define JS_INIT_MODULE js_init_module
+#else
+#define JS_INIT_MODULE js_init_module_mat
+#endif
+
 extern "C" {
+
+JSMatData*
+js_mat_data(JSContext* ctx, JSValue val) {
+  return static_cast<JSMatData*>(JS_GetOpaque2(ctx, val, js_mat_class_id));
+}
 
 static JSValue
 js_mat_new(JSContext* ctx, int cols, int rows, int type) {
@@ -51,11 +61,6 @@ fail:
 
   JS_FreeValue(ctx, obj);
   return JS_EXCEPTION;
-}
-
-JSMatData*
-js_mat_data(JSContext* ctx, JSValue val) {
-  return static_cast<JSMatData*>(JS_GetOpaque2(ctx, val, js_mat_class_id));
 }
 
 void
@@ -300,14 +305,14 @@ js_mat_init(JSContext* ctx, JSModuleDef* m) {
   int32array_proto = JS_GetPrototype(ctx, int32array_ctor);
 
   if(m)
-    JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), "Mat", mat_class);
+    JS_SetModuleExport(ctx, m, "Mat", mat_class);
   /*else
     JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), "Mat", mat_class);*/
   return 0;
 }
 
-JSModuleDef*
-js_init_mat_module(JSContext* ctx, const char* module_name) {
+JSModuleDef* __attribute__((visibility("default")))
+JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
   m = JS_NewCModule(ctx, module_name, &js_mat_init);
   if(!m)

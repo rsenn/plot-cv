@@ -8,6 +8,14 @@
 #include "geometry.h"
 #include "psimpl.h"
 
+#if defined(JS_CONTOUR_MODULE) || defined(quickjs_contour_EXPORTS)
+#define JS_INIT_MODULE js_init_module
+#else
+#define JS_INIT_MODULE js_init_module_contour
+#endif
+
+using namespace cv;
+
 template<class Value>
 int64_t js_array_to_vector(JSContext* ctx, JSValue arr, std::vector<Value>& out);
 
@@ -525,7 +533,7 @@ js_contour_getperspectivetransform(JSContext* ctx,
                  std::back_inserter(b),
                  [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
 
-  matrix = cv::getPerspectiveTransform(a, b, solveMethod);
+  matrix = cv::getPerspectiveTransform(a, b /*, solveMethod*/);
 
   ret = js_mat_wrap(ctx, matrix);
   return ret;
@@ -1019,14 +1027,14 @@ js_contour_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetConstructor(ctx, contour_class, contour_proto);
 
   if(m)
-    JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), "Contour", contour_class);
+    JS_SetModuleExport(ctx, m, "Contour", contour_class);
   /*  else
       JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), "Contour", contour_class);*/
   return 0;
 }
 
-JSModuleDef*
-js_init_contour_module(JSContext* ctx, const char* module_name) {
+JSModuleDef* __attribute__((visibility("default")))
+JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
   m = JS_NewCModule(ctx, module_name, &js_contour_init);
   if(!m)

@@ -1,5 +1,11 @@
 #include "./jsbindings.h"
 
+#if defined(JS_SIZE_MODULE) || defined(quickjs_size_EXPORTS)
+#define JS_INIT_MODULE js_init_module
+#else
+#define JS_INIT_MODULE js_init_module_size
+#endif
+
 extern "C" {
 
 static JSValue
@@ -141,14 +147,20 @@ js_size_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetConstructor(ctx, size_class, size_proto);
 
   if(m)
-    JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), "Size", size_class);
+    JS_SetModuleExport(ctx, m, "Size", size_class);
   /*else
     JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, size_class);*/
   return 0;
 }
 
-JSModuleDef*
-js_init_size_module(JSContext* ctx, const char* module_name) {
+#ifdef JS_SIZE_MODULE
+#define JS_INIT_MODULE js_init_module
+#else
+#define JS_INIT_MODULE js_init_module_size
+#endif
+
+JSModuleDef* __attribute__((visibility("default")))
+JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
   m = JS_NewCModule(ctx, module_name, &js_size_init);
   if(!m)

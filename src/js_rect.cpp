@@ -1,5 +1,11 @@
 #include "./jsbindings.h"
 
+#if defined(JS_RECT_MODULE) || defined(quickjs_rect_EXPORTS)
+#define JS_INIT_MODULE js_init_module
+#else
+#define JS_INIT_MODULE js_init_module_rect
+#endif
+
 extern "C" {
 
 static JSValue
@@ -193,9 +199,14 @@ js_rect_constructor(JSContext* ctx, JSValue parent, const char* name) {
 
   JS_SetPropertyStr(ctx, parent, name ? name : "Rect", rect_class);
 }
+#ifdef JS_RECT_MODULE
+#define JS_INIT_MODULE js_init_module
+#else
+#define JS_INIT_MODULE js_init_module_rect
+#endif
 
-JSModuleDef*
-js_init_rect_module(JSContext* ctx, const char* module_name) {
+JSModuleDef* __attribute__((visibility("default")))
+JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
   m = JS_NewCModule(ctx, module_name, &js_rect_init);
   if(!m)

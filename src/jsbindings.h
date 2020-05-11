@@ -33,6 +33,7 @@ int js_draw_functions(JSContext* ctx, JSValue parent);
 
 JSValue js_point_new(JSContext*, double x, double y);
 JSPointData* js_point_data(JSContext*, JSValue val);
+
 int js_point_init(JSContext*, JSModuleDef* m);
 void js_point_constructor(JSContext* ctx, JSValue parent, const char* name);
 

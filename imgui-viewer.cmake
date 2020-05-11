@@ -50,7 +50,7 @@ include_directories(
 # link
 target_link_libraries(imgui-viewer
     ${SDL2_LIBRARIES}
-    ${OpenCV_LIBS} ${GLEW_STATIC_LIBRARY_RELEASE} quickjs-static ${ELECTRICFENCE_LIBRARY}
+    ${OpenCV_LIBS} ${GLEW_SHARED_LIBRARY_RELEASE} quickjs ${ELECTRICFENCE_LIBRARY}
     dl
     GL
 )

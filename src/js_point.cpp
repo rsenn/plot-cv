@@ -6,6 +6,12 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#if defined(JS_POINT_MODULE) || defined(quickjs_point_EXPORTS)
+#define JS_INIT_MODULE js_init_module
+#else
+#define JS_INIT_MODULE js_init_module_point
+#endif
+
 extern "C" {
 
 JSValue
@@ -274,7 +280,7 @@ js_point_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetConstructor(ctx, point_class, point_proto);
 
   if(m)
-    JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), "Point", point_class);
+    JS_SetModuleExport(ctx, m, "Point", point_class);
   /* else
      JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, point_class);*/
   return 0;
@@ -288,8 +294,8 @@ js_point_constructor(JSContext* ctx, JSValue parent, const char* name) {
   JS_SetPropertyStr(ctx, parent, name ? name : "Point", point_class);
 }
 
-JSModuleDef*
-js_init_point_module(JSContext* ctx, const char* module_name) {
+JSModuleDef* __attribute__((visibility("default")))
+JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
   m = JS_NewCModule(ctx, module_name, &js_point_init);
   if(!m)

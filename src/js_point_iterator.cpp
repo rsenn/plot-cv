@@ -6,6 +6,12 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#if defined(JS_POINT_ITERATOR_MODULE) || defined(quickjs_point_iterator_EXPORTS)
+#define JS_INIT_MODULE js_init_module
+#else
+#define JS_INIT_MODULE js_init_module_point_iterator
+#endif
+
 extern "C" {
 
 JSValue point_iterator_proto, point_iterator_class;
@@ -112,14 +118,14 @@ js_point_iterator_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetConstructor(ctx, point_iterator_class, point_iterator_proto);
 
   if(m)
-    JS_SetModuleExport(ctx, static_cast<JSModuleDef*>(m), "PointIterator", point_iterator_class);
+    JS_SetModuleExport(ctx, m, "PointIterator", point_iterator_class);
   /* else
      JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), name, point_iterator_class);*/
   return 0;
 }
 
-JSModuleDef*
-js_init_point_iterator_module(JSContext* ctx, const char* module_name) {
+JSModuleDef* __attribute__((visibility("default")))
+JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
   m = JS_NewCModule(ctx, module_name, &js_point_iterator_init);
   if(!m)

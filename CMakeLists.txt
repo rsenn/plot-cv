@@ -82,14 +82,21 @@ macro(add_prog)
   install(TARGETS ${name} DESTINATION bin )
 endmacro()
 
-set(BUILD_SHARED_LIBS OFF)
+set(BUILD_SHARED_LIBS ON)
 
 add_subdirectory(quickjs "${CMAKE_BINARY_DIR}/quickjs")
 
 
+option(HIGHGUI_VIEWER ON)
+option(IMGUI_VIEWER OFF)
 
+if(HIGHGUI_VIEWER)
 include(highgui-viewer.cmake)
+endif(HIGHGUI_VIEWER)
+if(IMGUI_VIEWER)
 include(imgui-viewer.cmake)
+endif(IMGUI_VIEWER)
+
 include(js-bindings.cmake)
 
 

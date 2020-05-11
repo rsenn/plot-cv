@@ -7,6 +7,12 @@
 #include "color.h"
 #include "geometry.h"
 
+#if defined(JS_DRAW_MODULE) || defined(quickjs_draw_EXPORTS)
+#define JS_INIT_MODULE js_init_module
+#else
+#define JS_INIT_MODULE js_init_module_draw
+#endif
+
 extern "C" {
 
 cv::Mat* dptr = 0;
@@ -216,8 +222,8 @@ js_draw_functions(JSContext* ctx, JSValue parent) {
   return 0;
 }
 
-JSModuleDef*
-js_init_draw_module(JSContext* ctx, const char* module_name) {
+JSModuleDef* __attribute__((visibility("default")))
+JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
   m = JS_NewCModule(ctx, module_name, &js_draw_init);
   if(!m)
