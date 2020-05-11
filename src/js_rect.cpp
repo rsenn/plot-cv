@@ -47,6 +47,7 @@ js_rect_data(JSContext* ctx, JSValue val) {
   return static_cast<JSRectData*>(JS_GetOpaque2(ctx, val, js_rect_class_id));
 }
 
+
 void
 js_rect_finalizer(JSRuntime* rt, JSValue val) {
   JSRectData* s = static_cast<JSRectData*>(JS_GetOpaque(val, js_rect_class_id));

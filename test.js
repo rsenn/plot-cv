@@ -225,7 +225,7 @@ global.process = function(contours, hier) {
 var ctor = Point.prototype.constructor;
 console.log("Classes: ", inspect(lib));
 console.log("Point: ", inspect(Point));
-console.log("Contour: "+inspect(Contour));
+console.log("Contour: " + inspect(Contour));
 console.log("typeof(Point.prototype.constructor): ", typeof Point.prototype.constructor == "function");
 console.log("typeof(Point): ", typeof Point);
 console.log("ctor.name: ", ctor.name);

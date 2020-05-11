@@ -14,7 +14,6 @@
 
 extern "C" {
 
-
 JSValue
 js_point_new(JSContext* ctx, double x, double y) {
   JSValue ret;

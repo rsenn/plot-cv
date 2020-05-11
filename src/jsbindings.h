@@ -21,13 +21,7 @@ struct JSPointIteratorData {
 extern "C" {
 
 int js_init(int argc, char*[]);
-/*
-JSValue js_draw_line(JSContext*, jsrt::const_value, int, jsrt::const_value*);
-JSValue js_draw_rect(JSContext*, jsrt::const_value, int, jsrt::const_value*);
-JSValue js_draw_contour(JSContext*, jsrt::const_value, int, jsrt::const_value*);
-JSValue js_draw_polygon(JSContext*, jsrt::const_value, int, jsrt::const_value*);
-JSValue js_draw_circle(JSContext*, jsrt::const_value, int, jsrt::const_value*);
-*/
+
 
 int js_draw_functions(JSContext* ctx, JSValue parent);
 
@@ -39,32 +33,14 @@ void js_point_constructor(JSContext* ctx, JSValue parent, const char* name);
 
 JSModuleDef* js_init_point_module(JSContext*, const char* module_name);
 
-/*
-void js_point_finalizer(JSRuntime* rt, JSValue val);
-JSValue js_point_ctor(JSContext*, JSValueConst new_target, int argc, JSValueConst* argv);
-JSValue js_point_get_xy(JSContext*, JSValueConst this_val, int magic);
-JSValue js_point_set_xy(JSContext*, JSValueConst this_val, JSValue val, int magic);
-JSValue js_point_norm(JSContext*, JSValueConst this_val, int argc, JSValueConst* argv);
-JSValue js_point_to_string(JSContext*, JSValueConst this_val, int argc, JSValueConst* argv);*/
-
 JSSizeData* js_size_data(JSContext*, JSValue val);
-/*void js_size_finalizer(JSRuntime* rt, JSValue val);
-JSValue js_size_new(JSContext*, double w, double h);
-JSValue js_size_ctor(JSContext*, JSValueConst new_target, int argc, JSValueConst* argv);
-JSValue js_size_get_wh(JSContext*, JSValueConst this_val, int magic);
-JSValue js_size_set_wh(JSContext*, JSValueConst this_val, JSValue val, int magic);
-JSValue js_size_to_string(JSContext*, JSValueConst this_val, int argc, JSValueConst* argv);*/
+
 int js_size_init(JSContext*, JSModuleDef* m);
 JSModuleDef* js_init_size_module(JSContext*, const char* module_name);
 void js_size_constructor(JSContext* ctx, JSValue parent, const char* name);
 
 JSRectData* js_rect_data(JSContext*, JSValue val);
-/*
-void js_rect_finalizer(JSRuntime* rt, JSValue val);
-JSValue js_rect_ctor(JSContext*, JSValueConst new_target, int argc, JSValueConst* argv);
-JSValue js_rect_get_xy(JSContext*, JSValueConst this_val, int magic);
-JSValue js_rect_set_xy(JSContext*, JSValueConst this_val, JSValue val, int magic);
-JSValue js_rect_to_string(JSContext*, JSValueConst this_val, int argc, JSValueConst* argv);*/
+
 int js_rect_init(JSContext*, JSModuleDef*);
 JSModuleDef* js_init_rect_module(JSContext*, const char* module_name);
 
@@ -74,24 +50,17 @@ int js_point_iterator_init(JSContext*, JSModuleDef* m);
 JSModuleDef* js_init_point_iterator_module(JSContext*, const char* module_name);
 void js_point_iterator_constructor(JSContext* ctx, JSValue parent, const char* name);
 
-/*void js_point_iterator_finalizer(JSRuntime* rt, JSValue val);
-JSValue
-js_point_iterator_ctor(JSContext*, JSValueConst new_target, int argc, JSValueConst* argv);
-JSValue
-js_point_iterator_to_string(JSContext*, JSValueConst this_val, int argc, JSValueConst* argv);
-*/
+
 JSContourData* js_contour_data(JSContext*, JSValue val);
 void js_contour_finalizer(JSRuntime* rt, JSValue val);
-/*JSValue js_contour_ctor(JSContext*, JSValueConst new_target, int argc, JSValueConst* argv);*/
+
 JSValue js_contour_to_string(JSContext*, JSValueConst this_val, int argc, JSValueConst* argv);
 int js_contour_init(JSContext*, JSModuleDef*);
 JSModuleDef* js_init_contour_module(JSContext* ctx, const char* module_name);
 void js_contour_constructor(JSContext* ctx, JSValue parent, const char* name);
 
 JSValue js_mat_wrap(JSContext*, const cv::Mat& mat);
-/*void js_mat_finalizer(JSRuntime* rt, JSValue val);
-JSValue js_mat_ctor(JSContext*, JSValueConst new_target, int argc, JSValueConst* argv);
-JSValue js_mat_get_wh(JSContext*, JSValueConst this_val, int magic);*/
+
 int js_mat_init(JSContext*, JSModuleDef*);
 JSModuleDef* js_init_mat_module(JSContext* ctx, const char* module_name);
 void js_mat_constructor(JSContext* ctx, JSValue parent, const char* name);
@@ -114,7 +83,6 @@ extern "C" JSClassID js_point_iterator_class_id;
 
 extern "C" const JSCFunctionListEntry js_rect_proto_funcs[];
 
-// extern "C" JSCFunctionListEntry js_contour_proto_funcs[];
 extern "C" JSClassID js_point_class_id, js_size_class_id, js_rect_class_id, js_mat_class_id;
 
 extern "C" JSValue js_contour2d_new(JSContext*, const std::vector<cv::Point_<double>>& points);
@@ -132,8 +100,6 @@ JSValue js_contour_new<float>(JSContext* ctx, const std::vector<cv::Point_<float
 
 template<> JSValue js_contour_new<int>(JSContext* ctx, const std::vector<cv::Point_<int>>& points);
 
-/*
- */
 #define countof(x) (sizeof(x) / sizeof((x)[0]))
 
 template<class T>
@@ -180,4 +146,68 @@ js_point_create(JSContext* ctx, double x, double y) {
   return point;
 }
 
+
+static inline int
+js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData* out) {
+  int ret = 0;
+  ret += JS_ToFloat64(ctx, &out->x, JS_GetPropertyStr(ctx, rect, "x"));
+  ret += JS_ToFloat64(ctx, &out->y, JS_GetPropertyStr(ctx, rect, "y"));
+  ret += JS_ToFloat64(ctx, &out->width, JS_GetPropertyStr(ctx, rect, "width"));
+  ret += JS_ToFloat64(ctx, &out->height, JS_GetPropertyStr(ctx, rect, "height"));
+  return ret;
+}
+
+static JSRectData
+js_rect_get(JSContext* ctx, JSValueConst rect) {
+  JSRectData r = {0, 0, 0, 0};
+  js_rect_read(ctx, rect, &r);
+  return r;
+}
+
+
+static inline int
+js_size_read(JSContext* ctx, JSValueConst size, JSSizeData* out) {
+  int ret = 0;
+  ret += JS_ToFloat64(ctx, &out->width, JS_GetPropertyStr(ctx, size, "width"));
+  ret += JS_ToFloat64(ctx, &out->height, JS_GetPropertyStr(ctx, size, "height"));
+  return ret;
+}
+
+static JSSizeData
+js_size_get(JSContext* ctx, JSValueConst size) {
+  JSSizeData r = {0, 0 };
+  js_size_read(ctx, size, &r);
+  return r;
+}
+
+
+
+static inline int
+js_point_read(JSContext* ctx, JSValueConst point, JSPointData* out) {
+  int ret = 0;
+  ret += JS_ToFloat64(ctx, &out->x, JS_GetPropertyStr(ctx, point, "x"));
+  ret += JS_ToFloat64(ctx, &out->y, JS_GetPropertyStr(ctx, point, "y"));
+  return ret;
+}
+
+static JSPointData
+js_point_get(JSContext* ctx, JSValueConst point) {
+  JSPointData r = {0, 0 };
+  js_point_read(ctx, point, &r);
+  return r;
+}
+
+
+static inline int
+js_contour_read(JSContext* ctx, JSValueConst contour, JSContourData* out) {
+  int ret = 0;
+  return ret;
+}
+
+static JSContourData
+js_contour_get(JSContext* ctx, JSValueConst contour) {
+  JSContourData r = {};
+  js_contour_read(ctx, contour, &r);
+  return r;
+}
 #endif
