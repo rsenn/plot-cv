@@ -3,11 +3,16 @@
 #include <iostream>
 #include <cstring>
 #include <filesystem>
+
 extern "C" {
 #include "quickjs/quickjs-libc.h"
 #include "quickjs/cutils.h"
 
 jsrt js;
+char* normalize_module(JSContext* ctx,
+                       const char* module_base_name,
+                       const char* module_name,
+                       void* opaque);
 };
 
 static JSValue
@@ -347,27 +352,49 @@ jsrt::call(const_value func, size_t argc, const_value* argv) {
   return ret;
 }
 
-char*
-jsrt::normalize_module(JSContext* ctx,
-                       const char* module_base_name,
-                       const char* module_name,
-                       void* opaque) {
+extern "C" char*
+normalize_module(JSContext* ctx,
+                 const char* module_base_name,
+                 const char* module_name,
+                 void* opaque) {
+  using std::filesystem::path;
+  using std::filesystem::weakly_canonical;
+
+  char* name;
   jsrt* js = static_cast<jsrt*>(opaque);
-  // std::cerr << "normalize_module module_base_name: " << module_base_name << std::endl;
-  // std::cerr << "normalize_module module_name: " << module_name << std::endl;
-  if(strlen(module_name) > 2 && (module_name[0] == '.' && module_name[1] == '/'))
+  /*
+    std::cerr << "module_base_name: " << module_base_name << std::endl;
+    std::cerr << "module_name: " << module_name << std::endl;
+  */
+  if(module_name[0] == '.' && module_name[1] == '/')
     module_name += 2;
-  bool exists = std::filesystem::exists(module_name);
-  char* name = static_cast<char*>(js_malloc(ctx, strlen(module_name) + 4 + (exists ? 2 : 5) + 1));
-  name[0] = '\0';
-  if(!(module_name[0] == '.' && module_name[1] == '/'))
-    strcpy(name, "./");
-  if(!exists)
-    strcat(name, "js/");
-  strcat(name, module_name);
-  exists = std::filesystem::exists(name);
-  if(!exists)
-    std::cerr << "normalize_module name: " << name << " doesn't eist!" << std::endl;
+
+  path module_path =
+      path(module_base_name).replace_filename(path(module_name, module_name + strlen(module_name)));
+
+  std::cerr << "module_path: " << module_path.string() << std::endl;
+
+  bool exists = std::filesystem::exists(module_path);
+  std::cerr << "exists module_path: " << exists << std::endl;
+
+  if(!exists) {
+    module_path = weakly_canonical(module_path);
+
+    exists = std::filesystem::exists(module_path);
+  }
+
+  if(exists) {
+    std::string module_pathstr;
+
+    module_pathstr = module_path.string();
+    /*
+    module_pathstr.resize(module_pathstr.size()+1);
+    */
+    name = static_cast<char*>(js_malloc(ctx, module_pathstr.size() + 1));
+    strcpy(name, module_pathstr.c_str());
+    
+    std::cerr << "name: " << name << std::endl;
+  }
   return name;
 }
 

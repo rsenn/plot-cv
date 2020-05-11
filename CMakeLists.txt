@@ -91,6 +91,7 @@ add_subdirectory(quickjs)
 
 include(highgui-viewer.cmake)
 include(imgui-viewer.cmake)
+include(js-bindings.cmake)
 
 
 option(ADDITIONAL_PROGS FALSE)

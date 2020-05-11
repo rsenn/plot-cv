@@ -20,7 +20,6 @@
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
 
 extern "C" {
-cv::Mat* dptr = 0;
 
 static int show_image;
 

@@ -193,10 +193,7 @@ public:
 
 private:
   JSRuntime* rt;
-  static char* normalize_module(JSContext* ctx,
-                                const char* module_base_name,
-                                const char* module_name,
-                                void* opaque);
+
   std::unordered_map<const char*, std::pair<JSCFunction*, value>> funcmap;
 
 public:

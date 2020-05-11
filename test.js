@@ -1,11 +1,11 @@
-import { Point as Point_ } from "./point.js";
-import { Size as Size_ } from "./size.js";
-import { Line } from "./line.js";
-import { Rect as Rect_ } from "./rect.js";
-import { PointList } from "./pointList.js";
-import { RGBA } from "./rgba.js";
-import { HSLA } from "./hsla.js";
-import { Matrix } from "./matrix.js";
+import { Point as Point_ } from "./lib/geom/point.js";
+import { Size as Size_ } from "./lib/geom/size.js";
+import { Line } from "./lib/geom/line.js";
+import { Rect as Rect_ } from "./lib/geom/rect.js";
+import { PointList } from "./lib/geom/pointList.js";
+import { RGBA } from "./lib/dom/rgba.js";
+import { HSLA } from "./lib/dom/hsla.js";
+import { Matrix } from "./lib/geom/matrix.js";
 import inspect from "./inspect.js";
 
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };

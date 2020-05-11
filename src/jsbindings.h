@@ -93,6 +93,8 @@ extern JSValue contour_class, contour_proto, int32array_ctor, int32array_proto, 
 
 JSValue js_create_point_iterator(
     JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic);
+
+extern cv::Mat* dptr;
 }
 extern "C" JSValue contour_proto;
 extern "C" JSClassDef js_contour_class, js_size_class, js_point_class, js_mat_class, js_rect_class;

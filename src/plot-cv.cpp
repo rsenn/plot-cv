@@ -74,16 +74,16 @@ JSValue processFn, global_obj;
 int
 check_eval() {
   int ret = -1;
-  newmt = get_mtime("js/test.js");
+  newmt = get_mtime("test.js");
 
   /* std::cerr << "test.js mtime new=" << newmt << " old=" << mt
      << " diff=" << (newmt - mt) << std::endl; */
   if(newmt > mt) {
     mt = newmt;
     if(show_diagnostics)
-      std::cerr << "js/test.js changed, reloading..." << std::endl;
+      std::cerr << "test.js changed, reloading..." << std::endl;
 
-    ret = js.eval_file("js/test.js");
+    ret = js.eval_file("test.js");
     processFn = js.get_property(global_obj, "process");
   }
   return ret;
