@@ -183,36 +183,31 @@ JSClassDef js_draw_class = {
     .finalizer = 0,
 };
 
-
 const JSCFunctionListEntry js_draw_proto_funcs[] = {
- 
 
     //  JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Draw", JS_PROP_CONFIGURABLE),
 
 };
 const JSCFunctionListEntry js_draw_static_funcs[] = {
-            JS_CFUNC_DEF("circle", 1, &js_draw_circle),
-            JS_CFUNC_DEF("contour", 1, &js_draw_contour),
-            JS_CFUNC_DEF("line", 1, &js_draw_line),
-            JS_CFUNC_DEF("polygon", 1, &js_draw_polygon),
-            JS_CFUNC_DEF("rect", 1, &js_draw_rect),
+    JS_CFUNC_DEF("circle", 1, &js_draw_circle),
+    JS_CFUNC_DEF("contour", 1, &js_draw_contour),
+    JS_CFUNC_DEF("line", 1, &js_draw_line),
+    JS_CFUNC_DEF("polygon", 1, &js_draw_polygon),
+    JS_CFUNC_DEF("rect", 1, &js_draw_rect),
 };
-
 
 const JSCFunctionListEntry js_draw_global_funcs[] = {
-            JS_CFUNC_DEF("drawCircle", 1, &js_draw_circle),
-            JS_CFUNC_DEF("drawContour", 1, &js_draw_contour),
-            JS_CFUNC_DEF("drawLine", 1, &js_draw_line),
-            JS_CFUNC_DEF("drawPolygon", 1, &js_draw_polygon),
-            JS_CFUNC_DEF("drawRect", 1, &js_draw_rect),
+    JS_CFUNC_DEF("drawCircle", 1, &js_draw_circle),
+    JS_CFUNC_DEF("drawContour", 1, &js_draw_contour),
+    JS_CFUNC_DEF("drawLine", 1, &js_draw_line),
+    JS_CFUNC_DEF("drawPolygon", 1, &js_draw_polygon),
+    JS_CFUNC_DEF("drawRect", 1, &js_draw_rect),
 };
-
 
 static JSValue
 js_draw_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
-
 
   /* using new_target to get the prototype is necessary when the
      class is extended. */
@@ -229,7 +224,6 @@ fail:
   return JS_EXCEPTION;
 }
 
-
 int
 js_draw_init(JSContext* ctx, JSModuleDef* m) {
 
@@ -242,7 +236,6 @@ js_draw_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetClassProto(ctx, js_draw_class_id, draw_proto);
 
   draw_class = JS_NewCFunction2(ctx, js_draw_ctor, "Draw", 2, JS_CFUNC_constructor, 0);
-
 
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, draw_class, draw_proto);
@@ -275,4 +268,3 @@ js_draw_constructor(JSContext* ctx, JSValue parent, const char* name) {
   JS_SetPropertyStr(ctx, parent, name ? name : "Draw", draw_class);
 }
 }
-

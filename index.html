@@ -94,9 +94,9 @@
       window.dom = { Element, SVG };
       /* prettier-ignore */ Object.assign(window, {EagleDocument, EagleElement, EagleNode, EaglePath, EagleReference, EagleRenderer, EagleInterface, Element, SVG, CSS, RGBA, HSLA, toXML, isPoint, Point, PointList, isLine, Line, isRect, Rect, isSize, Size, Matrix, Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, tXml, deep, BBox, React, h, html });
       /*    const CreateSelect = (obj, node = document.body) => {
-                      let elem = Select.create(Object.entries(obj));
-                      node.insertBefore(elem, node.firstElementChild);
-                    };*/
+                            let elem = Select.create(Object.entries(obj));
+                            node.insertBefore(elem, node.firstElementChild);
+                          };*/
       const utf8Decoder = new TextDecoder("utf-8");
 
       const ListProjects = (window.list = async function(url) {
@@ -273,6 +273,24 @@
 
         let open = trkl();
 
+        const MakeFitAction = index => () => {
+          let container = Element.find("#container");
+          let parent = container.parentElement;
+          let prect = Element.rect(parent);
+          let rect = Element.rect(container);
+
+          let svg = Element.find("svg", container);
+          let srect = Element.rect(svg);
+
+          let rects = [prect, rect, srect];
+          console.log("resize rects", rects);
+
+          let f = srect.fit(prect);
+          console.log("fitted:", f);
+
+          Element.setRect(container, f[index], "absolute");
+        };
+
         React.render(
           [
             Panel("buttons", [
@@ -297,37 +315,49 @@
               }),
 
               h(Button, {
-                caption: "↕↔",
-                fn: () => {
-                  let container = Element.find("#container");
-                  let parent = container.parentElement;
-                  let prect = Element.rect(parent);
-                  let rect = Element.rect(container);
+                caption: "↔",
+                fn: MakeFitAction(0)
+              }),
 
-                  let svg = Element.find("svg", container);
-                  let srect = Element.rect(svg);
-
-                  let rects = [prect,rect, srect];
-                  console.log("resize rects", rects);
-
-                  /*let points = [rect.points(), prect.points() ];
-
-
-                  console.log("points:",points);
-
-                                    let matrix = Matrix.getAffineTransform(...points);
-
-
-                  console.log("Enlarge:",  { prect, rect });
-                  console.log("matrix:",  matrix);
-
-                  let t = matrix.decompose();
-                                    console.log("t:",  t);
-                                    console.log("m:",  matrix.toString());
-
-                                    Element.setCSS(container, { transform: matrix  });*/
-                }
+              h(Button, {
+                caption: "↕",
+                fn: MakeFitAction(1)
               })
+
+              /*() => {
+                        let container = Element.find("#container");
+                        let parent = container.parentElement;
+                        let prect = Element.rect(parent);
+                        let rect = Element.rect(container);
+
+                        let svg = Element.find("svg", container);
+                        let srect = Element.rect(svg);
+
+                        let rects = [prect,rect, srect];
+                        console.log("resize rects", rects);
+
+                        let f =rect.fit(prect);
+                        console.log("fitted:",f);
+
+
+                        Element.setRect(container, f[0]);
+      */
+              /*let points = [rect.points(), prect.points() ];
+
+
+                        console.log("points:",points);
+
+                                          let matrix = Matrix.getAffineTransform(...points);
+
+
+                        console.log("Enlarge:",  { prect, rect });
+                        console.log("matrix:",  matrix);
+
+                        let t = matrix.decompose();
+                                          console.log("t:",  t);
+                                          console.log("m:",  matrix.toString());
+
+                                          Element.setCSS(container, { transform: matrix  });*/
             ]),
             html`
               <${FileList} items=${projects} onActive=${open} onChange=${chooseDocument} />
@@ -335,12 +365,25 @@
           ],
           Element.find("#preact")
         );
+        var move;
 
         TouchListener(
           event => {
-            console.log("touch event:", event);
+            let container = Element.wrap("#container");
+            if(!move) {
+              move = Element.move_relative(container);
+            } else if(event.index > 0) {
+              let rel = new Point(event);
+              console.log("touch x/y:", event);
+
+              if(move) {
+                console.log("move pos:", move.pos);
+                if(event.buttons > 0) move(rel.x, rel.y);
+                else move = move.jump();
+              }
+            }
           },
-          { listener: MultitouchListener, element: window }
+          { element: window }
         );
 
         window.container = Element.find("#container");
