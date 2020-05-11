@@ -118,7 +118,7 @@ endif(IMGUI_VIEWER)
 
 include(js-bindings.cmake)
 
-src_program(cli "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/js*.cpp"  "${OpenCV_LIBS};quickjs")
+src_program(cli "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/js*.cpp"  "${OpenCV_LIBS};quickjs;${ELECTRICFENCE_LIBRARY}")
 
 
 option(ADDITIONAL_PROGS FALSE)

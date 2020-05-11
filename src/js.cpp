@@ -10,6 +10,8 @@ extern "C" {
 #include "quickjs/cutils.h"
 
 jsrt js;
+
+
 char* normalize_module(JSContext* ctx, const char* module_base_name, const char* module_name, void* opaque);
 };
 
@@ -304,9 +306,9 @@ jsrt::eval_file(const char* filename, int module) {
 
   eval_flags = module ? JS_EVAL_TYPE_MODULE : JS_EVAL_TYPE_GLOBAL;
 
-  /* std::string script(buf, buf_len);
-   std::cerr << "Script: " << script << std::endl;*/
-
+ /*  std::string script(buf, buf_len);
+   std::cerr << "Script: " << script << std::endl;
+*/
   ret = eval_buf(buf, buf_len, filename, eval_flags);
   js_free(ctx, buf);
   return ret;

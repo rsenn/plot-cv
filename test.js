@@ -1,5 +1,5 @@
-import { Point as Point_ } from "./lib/geom/point.js";
-import { Size as Size_ } from "./lib/geom/size.js";
+/*import { Point as Point_ } from "./lib/geom/point.js";
+import { Size as Size_ } from "./lib/geom/size.js";*/
 import { Line } from "./lib/geom/line.js";
 import { Rect as Rect_ } from "./lib/geom/rect.js";
 import { PointList } from "./lib/geom/pointList.js";
