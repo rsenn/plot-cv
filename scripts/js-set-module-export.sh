@@ -5,7 +5,7 @@ xx ()
         y=$(str_camelize "${x#js_draw_}");
         z=draw$y
         cat  <<EOF
-            JS_CFUNC_DEF("draw$y", 1, &draw_$x),
+            JS_CFUNC_DEF("draw$y", 1, &js_draw_$x),
 EOF
 
     done
