@@ -1,4 +1,10 @@
 
+
+
+set(GLEW_USE_STATIC_LIBS TRUE)
+set(GLEW_VERBOSE TRUE)
+
+
 file(GLOB PLOT_CV_SOURCES 
     src/color.cpp
     src/data.cpp
@@ -13,5 +19,6 @@ file(GLOB PLOT_CV_SOURCES
     src/*.hpp 
 )
 add_executable(highgui-viewer src/highgui-viewer.cpp ${PLOT_CV_SOURCES})
-target_link_libraries(highgui-viewer ${OpenCV_LIBS} quickjs-static ${ELECTRICFENCE_LIBRARY})
+target_link_libraries(highgui-viewer ${OpenCV_LIBS} ${GLEW_STATIC_LIBRARIES} quickjs-static ${ELECTRICFENCE_LIBRARY})
 
+install(TARGETS highgui-viewer DESTINATION bin)

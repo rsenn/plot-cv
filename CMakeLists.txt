@@ -5,6 +5,7 @@ include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(CheckLibraryExists)
 include(FindPkgConfig)
+
 check_library_exists(json-cpp ZN4YAML6detail9node_data9reset_mapEv /usr JSON_CPP)
 
 set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
@@ -12,6 +13,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 
 find_package(OpenCV REQUIRED)
+find_package(GLEW)
 
 add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLEW=1 -DIMGUI_DEBUG_LOG=1 -DIMGUI_IMPL_OPENGL_LOADER_GLEW=1)
 if(ANDROID)
@@ -84,11 +86,12 @@ set(BUILD_SHARED_LIBS OFF)
 
 add_subdirectory(quickjs)
 
+
 include(highgui-viewer.cmake)
 include(imgui-viewer.cmake)
 
 
-option(ADDITIONAL_PROGS TRUE)
+option(ADDITIONAL_PROGS FALSE)
 
 
 if(ADDITIONAL_PROGS)

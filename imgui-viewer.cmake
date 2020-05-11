@@ -35,7 +35,9 @@ include_directories(
 # link
 target_link_libraries(imgui-viewer
     ${SDL2_LIBRARIES}
-    ${OpenCV_LIBS} quickjs-static ${ELECTRICFENCE_LIBRARY}
+    ${OpenCV_LIBS} ${GLEW_STATIC_LIBRARY_RELEASE} quickjs-static ${ELECTRICFENCE_LIBRARY}
     dl
     GL
 )
+
+install(TARGETS imgui-viewer DESTINATION bin)
