@@ -374,10 +374,10 @@
               move = Element.move_relative(container);
             } else if(event.index > 0) {
               let rel = new Point(event);
-              console.log("touch x/y:", event);
+              //console.log("touch x/y:", event);
 
               if(move) {
-                console.log("move pos:", move.pos);
+                //console.log("move pos:", move.pos);
                 if(event.buttons > 0) move(rel.x, rel.y);
                 else move = move.jump();
               }
