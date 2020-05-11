@@ -959,6 +959,37 @@ js_contour_rect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   return ret;
 }
 
+
+static JSValue
+js_contour_find(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSMatData* m = js_mat_data(ctx, this_val);
+  JSValue ret = JS_UNDEFINED;
+  int mode = cv::RETR_TREE;
+  int approx = cv::CHAIN_APPROX_SIMPLE;
+  cv::Point offset(0, 0);
+
+  contour2i_vector contours;
+  vec4i_vector hier;
+  contour2f_vector poly;
+
+  cv::findContours(*m, contours, hier, mode, approx, offset);
+
+  poly.resize(contours.size());
+
+  transform_contours(contours.cbegin(), contours.cend(), poly.begin());
+
+  {
+    JSValue hier_arr = js_vector_vec4i_to_array(ctx, hier);
+    JSValue contours_obj = js_contours_new(ctx, poly);
+
+    ret = JS_NewObject(ctx);
+
+    JS_SetPropertyStr(ctx, ret, "hier", hier_arr);
+    JS_SetPropertyStr(ctx, ret, "contours", contours_obj);
+  }
+  return ret;
+}
+
 JSValue contour_proto, contour_class;
 JSClassID js_contour_class_id;
 
@@ -1023,7 +1054,8 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
 
 };
 const JSCFunctionListEntry js_contour_static_funcs[] = {
-  JS_CFUNC_DEF("rect", 1, js_contour_rect)
+  JS_CFUNC_DEF("fromRect", 1, js_contour_rect),
+  JS_CFUNC_DEF("find", 1, js_contour_find)
 };
 
 int

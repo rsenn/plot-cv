@@ -107,29 +107,6 @@ js_point_finalizer(JSRuntime* rt, JSValue val) {
 }
 
 static JSValue
-js_point_getrotationmatrix2d(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSPointData* s = js_point_data(ctx, this_val);
-
-  double angle = 0, scale = 1;
-  JSMatData m;
-
-  JSValue ret;
-  if(!s)
-    return JS_EXCEPTION;
-  if(argc > 0) {
-    JS_ToFloat64(ctx, &angle, argv[0]);
-    if(argc > 1) {
-      JS_ToFloat64(ctx, &scale, argv[1]);
-    }
-  }
-
-  m = cv::getRotationMatrix2D(*s, angle, scale);
-
-  ret = js_mat_wrap(ctx, m);
-  return ret;
-}
-
-static JSValue
 js_point_get_xy(JSContext* ctx, JSValueConst this_val, int magic) {
   JSPointData* s = js_point_data(ctx, this_val);
   if(!s)
@@ -260,7 +237,7 @@ const JSCFunctionListEntry js_point_proto_funcs[] = {
     JS_CFUNC_DEF("prod", 1, js_point_prod),
     JS_CFUNC_DEF("quot", 1, js_point_quot),
     JS_CFUNC_DEF("norm", 0, js_point_norm),
-    JS_CFUNC_DEF("getRotationMatrix2D", 0, js_point_getrotationmatrix2d),
+    //JS_CFUNC_DEF("getRotationMatrix2D", 0, js_point_getrotationmatrix2d),
     JS_CFUNC_DEF("toString", 0, js_point_to_string),
 };
 

@@ -63,6 +63,8 @@ int js_mat_init(JSContext*, JSModuleDef*);
 JSModuleDef* js_init_mat_module(JSContext* ctx, const char* module_name);
 void js_mat_constructor(JSContext* ctx, JSValue parent, const char* name);
 
+JSMatData* js_mat_data(JSContext* ctx, JSValue val);
+
 JSModuleDef* js_init_module(JSContext* ctx, const char* module_name);
 
 extern JSValue contour_class, contour_proto, int32array_ctor, int32array_proto, mat_class,
