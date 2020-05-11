@@ -170,4 +170,14 @@ js_new(JSContext* ctx, const char* name) {
   return JS_NewObjectProto(ctx, js_proto(ctx, name));
 }
 
+static inline JSValue
+js_point_create(JSContext* ctx, double x, double y) {
+
+  JSValue point = js_new(ctx, "Point");
+
+  JS_SetPropertyStr(ctx, point, "x", JS_NewFloat64(ctx, x));
+  JS_SetPropertyStr(ctx, point, "y", JS_NewFloat64(ctx, y));
+  return point;
+}
+
 #endif

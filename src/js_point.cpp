@@ -14,15 +14,6 @@
 
 extern "C" {
 
-JSValue
-js_point_create(JSContext* ctx, double x, double y) {
-
-  JSValue point = js_new(ctx, "Point");
-
-  JS_SetPropertyStr(ctx, point, "x", JS_NewFloat64(ctx, x));
-  JS_SetPropertyStr(ctx, point, "y", JS_NewFloat64(ctx, y));
-  return point;
-}
 
 JSValue
 js_point_new(JSContext* ctx, double x, double y) {

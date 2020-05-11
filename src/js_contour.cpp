@@ -109,7 +109,7 @@ js_vector_to_array(JSContext* ctx, const std::vector<cv::Point_<float>>& vec) {
   JSValue ret = JS_NewArray(ctx);
   uint32_t i, n = vec.size();
   for(i = 0; i < n; i++) {
-    JSValue item = js_point_new(ctx, vec[i].x, vec[i].y);
+    JSValue item = js_point_create(ctx, vec[i].x, vec[i].y);
 
     JS_SetPropertyUint32(ctx, ret, i, item);
   }
@@ -261,7 +261,7 @@ js_contour_center(JSContext* ctx, JSValueConst this_val) {
     cv::Moments mu = cv::moments(points);
     cv::Point centroid = cv::Point(mu.m10 / mu.m00, mu.m01 / mu.m00);
 
-    ret = js_point_new(ctx, centroid.x, centroid.y);
+    ret = js_point_create(ctx, centroid.x, centroid.y);
   }
 
   return ret;
@@ -495,7 +495,7 @@ js_contour_get(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
 
   JS_ToInt64(ctx, &i, argv[0]);
 
-  ret = js_point_new(ctx, (*v)[i].x, (*v)[i].y);
+  ret = js_point_create(ctx, (*v)[i].x, (*v)[i].y);
   return ret;
 }
 
@@ -653,7 +653,7 @@ js_contour_minenclosingcircle(JSContext* ctx, JSValueConst this_val, int argc, J
 
   ret = JS_NewObject(ctx);
 
-  JS_SetPropertyStr(ctx, ret, "center", js_point_new(ctx, center.x, center.y));
+  JS_SetPropertyStr(ctx, ret, "center", js_point_create(ctx, center.x, center.y));
   JS_SetPropertyStr(ctx, ret, "radius", JS_NewFloat64(ctx, radius));
 
   return ret;
@@ -746,7 +746,7 @@ js_contour_pop(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
     return JS_EXCEPTION;
   }
 
-  ret = js_point_new(ctx, point.x, point.y);
+  ret = js_point_create(ctx, point.x, point.y);
 
   return ret;
 }
@@ -919,7 +919,7 @@ js_contour_toarray(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   ret = JS_NewArray(ctx);
 
   for(i = 0; i < size; i++) {
-    JS_SetPropertyUint32(ctx, ret, i, js_point_new(ctx, (*s)[i].x, (*s)[i].y));
+    JS_SetPropertyUint32(ctx, ret, i, js_point_create(ctx, (*s)[i].x, (*s)[i].y));
   }
 
   return ret;
