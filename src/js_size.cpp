@@ -1,9 +1,9 @@
 #include "./jsbindings.h"
 
 #if defined(JS_SIZE_MODULE) || defined(quickjs_size_EXPORTS)
-#define JS_INIT_MODULE js_init_module
+#define JS_INIT_MODULE VISIBLE js_init_module
 #else
-#define JS_INIT_MODULE js_init_module_size
+#define JS_INIT_MODULE VISIBLE js_init_module_size
 #endif
 
 extern "C" {
@@ -154,9 +154,9 @@ js_size_init(JSContext* ctx, JSModuleDef* m) {
 }
 
 #ifdef JS_SIZE_MODULE
-#define JS_INIT_MODULE js_init_module
+#define JS_INIT_MODULE VISIBLE js_init_module
 #else
-#define JS_INIT_MODULE js_init_module_size
+#define JS_INIT_MODULE VISIBLE js_init_module_size
 #endif
 
 JSModuleDef* __attribute__((visibility("default"))) JS_INIT_MODULE(JSContext* ctx, const char* module_name) {

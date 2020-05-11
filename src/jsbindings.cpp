@@ -95,6 +95,7 @@ js_bindings_init(JSContext* ctx, JSModuleDef* m) {
   js_rect_init(ctx, m);
   js_mat_init(ctx, m);
   js_contour_init(ctx, m);
+  js_draw_init(ctx, m);
   return 0;
 }
 

@@ -13,6 +13,9 @@ typedef cv::Point2d JSPointData;
 typedef cv::Vec4d JSLineData;
 typedef std::vector<JSPointData> JSContourData;
 
+#define VISIBLE __attribute__((visibility("default")))
+#define HIDDEN __attribute__((visibility("hidden")))
+
 struct JSPointIteratorData {
   cv::Point2d *begin, *end;
 };
@@ -72,9 +75,10 @@ JSModuleDef* js_init_module_rect(JSContext*, const char*);
 JSModuleDef* js_init_module_mat(JSContext*, const char*);
 JSModuleDef* js_init_module_contour(JSContext*, const char*);
 JSModuleDef* js_init_module_line(JSContext*, const char*);
+JSModuleDef* js_init_module_draw(JSContext*, const char*);
 
-extern JSValue contour_class, contour_proto, int32array_ctor, int32array_proto, mat_class, mat_proto, point_class, line_class, point_iterator_class, point_iterator_proto, point_proto, rect_class,
-    rect_proto, size_class, size_proto, line_proto;
+extern JSValue contour_class, contour_proto, int32array_ctor, int32array_proto, mat_class, mat_proto, point_class, line_class, point_iterator_class, draw_class, point_iterator_proto, point_proto,
+    rect_class, rect_proto, size_class, size_proto, line_proto, draw_proto;
 
 JSValue js_create_point_iterator(JSContext*, JSValueConst this_val, int argc, JSValueConst* argv, int magic);
 
@@ -83,7 +87,7 @@ extern cv::Mat* dptr;
 extern "C" JSValue contour_proto;
 extern "C" JSClassDef js_contour_class, js_size_class, js_point_class, js_mat_class, js_rect_class;
 extern "C" JSClassID js_contour_class_id;
-extern "C" JSClassID js_point_iterator_class_id, js_line_class_id;
+extern "C" JSClassID js_point_iterator_class_id, js_line_class_id, js_draw_class_id;
 
 extern "C" const JSCFunctionListEntry js_rect_proto_funcs[];
 

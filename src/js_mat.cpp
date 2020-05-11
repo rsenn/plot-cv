@@ -2,9 +2,9 @@
 #include "./geometry.h"
 
 #if defined(JS_MAT_MODULE) || defined(quickjs_mat_EXPORTS)
-#define JS_INIT_MODULE js_init_module
+#define JS_INIT_MODULE VISIBLE js_init_module
 #else
-#define JS_INIT_MODULE js_init_module_mat
+#define JS_INIT_MODULE VISIBLE js_init_module_mat
 #endif
 
 extern "C" {

@@ -8,9 +8,9 @@
 #include "geometry.h"
 
 #if defined(JS_DRAW_MODULE) || defined(quickjs_draw_EXPORTS)
-#define JS_INIT_MODULE js_init_module
+#define JS_INIT_MODULE VISIBLE js_init_module
 #else
-#define JS_INIT_MODULE js_init_module_draw
+#define JS_INIT_MODULE VISIBLE js_init_module_draw
 #endif
 
 extern "C" {
@@ -175,29 +175,85 @@ js_draw_rect(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
   return js._true;
 }
 
+JSValue draw_proto, draw_class;
+JSClassID js_draw_class_id;
+
+JSClassDef js_draw_class = {
+    "Draw",
+    .finalizer = 0,
+};
+
+
+const JSCFunctionListEntry js_draw_proto_funcs[] = {
+ 
+
+    //  JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Draw", JS_PROP_CONFIGURABLE),
+
+};
+const JSCFunctionListEntry js_draw_static_funcs[] = {
+            JS_CFUNC_DEF("circle", 1, &js_draw_circle),
+            JS_CFUNC_DEF("contour", 1, &js_draw_contour),
+            JS_CFUNC_DEF("line", 1, &js_draw_line),
+            JS_CFUNC_DEF("polygon", 1, &js_draw_polygon),
+            JS_CFUNC_DEF("rect", 1, &js_draw_rect),
+};
+
+
+const JSCFunctionListEntry js_draw_global_funcs[] = {
+            JS_CFUNC_DEF("drawCircle", 1, &js_draw_circle),
+            JS_CFUNC_DEF("drawContour", 1, &js_draw_contour),
+            JS_CFUNC_DEF("drawLine", 1, &js_draw_line),
+            JS_CFUNC_DEF("drawPolygon", 1, &js_draw_polygon),
+            JS_CFUNC_DEF("drawRect", 1, &js_draw_rect),
+};
+
+
+static JSValue
+js_draw_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
+  JSValue obj = JS_UNDEFINED;
+  JSValue proto;
+
+
+  /* using new_target to get the prototype is necessary when the
+     class is extended. */
+  proto = JS_GetPropertyStr(ctx, new_target, "prototype");
+  if(JS_IsException(proto))
+    goto fail;
+  obj = JS_NewObjectProtoClass(ctx, proto, js_draw_class_id);
+  JS_FreeValue(ctx, proto);
+  if(JS_IsException(obj))
+    goto fail;
+  return obj;
+fail:
+  JS_FreeValue(ctx, obj);
+  return JS_EXCEPTION;
+}
+
+
 int
 js_draw_init(JSContext* ctx, JSModuleDef* m) {
 
+  /* create the Draw class */
+  JS_NewClassID(&js_draw_class_id);
+  JS_NewClass(JS_GetRuntime(ctx), js_draw_class_id, &js_draw_class);
+
+  draw_proto = JS_NewObject(ctx);
+  JS_SetPropertyFunctionList(ctx, draw_proto, js_draw_proto_funcs, countof(js_draw_proto_funcs));
+  JS_SetClassProto(ctx, js_draw_class_id, draw_proto);
+
+  draw_class = JS_NewCFunction2(ctx, js_draw_ctor, "Draw", 2, JS_CFUNC_constructor, 0);
+
+
+  /* set proto.constructor and ctor.prototype */
+  JS_SetConstructor(ctx, draw_class, draw_proto);
+  JS_SetPropertyFunctionList(ctx, draw_class, js_draw_static_funcs, countof(js_draw_static_funcs));
+
   if(m) {
-    JS_SetModuleExport(ctx, m, "drawCircle", JS_NewCFunction(ctx, &js_draw_circle, "drawCircle", 5));
-    JS_SetModuleExport(ctx, m, "drawContour", JS_NewCFunction(ctx, &js_draw_contour, "drawContour", 4));
-    JS_SetModuleExport(ctx, m, "drawLine", JS_NewCFunction(ctx, &js_draw_line, "drawLine", 5));
-    JS_SetModuleExport(ctx, m, "drawPolygon", JS_NewCFunction(ctx, &js_draw_polygon, "drawPolygon", 4));
-    JS_SetModuleExport(ctx, m, "drawRect", JS_NewCFunction(ctx, &js_draw_rect, "drawRect", 4));
+    JS_SetModuleExportList(ctx, m, js_draw_global_funcs, countof(js_draw_global_funcs));
+    JS_SetModuleExport(ctx, m, "Draw", draw_class);
   }
-
-  return 0;
-}
-
-int
-js_draw_functions(JSContext* ctx, JSValue parent) {
-
-  JS_SetPropertyStr(ctx, parent, "drawCircle", JS_NewCFunction(ctx, &js_draw_circle, "drawCircle", 5));
-  JS_SetPropertyStr(ctx, parent, "drawContour", JS_NewCFunction(ctx, &js_draw_contour, "drawContour", 4));
-  JS_SetPropertyStr(ctx, parent, "drawLine", JS_NewCFunction(ctx, &js_draw_line, "drawLine", 5));
-  JS_SetPropertyStr(ctx, parent, "drawPolygon", JS_NewCFunction(ctx, &js_draw_polygon, "drawPolygon", 4));
-  JS_SetPropertyStr(ctx, parent, "drawRect", JS_NewCFunction(ctx, &js_draw_rect, "drawRect", 4));
-
+  /*  else
+      JS_SetPropertyStr(ctx, *static_cast<JSValue*>(m), "Draw", draw_class);*/
   return 0;
 }
 
@@ -207,6 +263,16 @@ JSModuleDef* __attribute__((visibility("default"))) JS_INIT_MODULE(JSContext* ct
   if(!m)
     return NULL;
   JS_AddModuleExport(ctx, m, "Draw");
+  JS_AddModuleExportList(ctx, m, js_draw_global_funcs, countof(js_draw_global_funcs));
   return m;
 }
+
+void
+js_draw_constructor(JSContext* ctx, JSValue parent, const char* name) {
+  if(JS_IsUndefined(draw_class))
+    js_draw_init(ctx, 0);
+
+  JS_SetPropertyStr(ctx, parent, name ? name : "Draw", draw_class);
 }
+}
+

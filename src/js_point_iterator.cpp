@@ -7,9 +7,9 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #if defined(JS_POINT_ITERATOR_MODULE) || defined(quickjs_point_iterator_EXPORTS)
-#define JS_INIT_MODULE js_init_module
+#define JS_INIT_MODULE VISIBLE js_init_module
 #else
-#define JS_INIT_MODULE js_init_module_point_iterator
+#define JS_INIT_MODULE VISIBLE js_init_module_point_iterator
 #endif
 
 extern "C" {

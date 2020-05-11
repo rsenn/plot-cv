@@ -1,11 +1,11 @@
 xx () 
 { 
-    for x in "$@";
+    for x in  circle contour line polygon rect;
     do
         y=$(str_camelize "${x#js_draw_}");
         z=draw$y
         cat  <<EOF
-JS_SetModuleExport(ctx, m, "$z", JS_NewCFunction(ctx, &$x, "$z", 4));
+            JS_CFUNC_DEF("draw$y", 1, &draw_$x),
 EOF
 
     done

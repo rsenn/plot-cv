@@ -384,10 +384,10 @@ normalize_module(JSContext* ctx, const char* module_base_name, const char* modul
 
     exists = std::filesystem::exists(module_path);
   }
-  std::cerr << "module_pathstr: " << module_pathstr << std::endl;
-  std::cerr << "module_base_name: " << module_base_name << std::endl;
-  std::cerr << "module_name: " << module_name << std::endl;
-  std::cerr << "exists: " << exists << std::endl;
+  /* std::cerr << "module_pathstr: " << module_pathstr << std::endl;
+   std::cerr << "module_base_name: " << module_base_name << std::endl;
+   std::cerr << "module_name: " << module_name << std::endl;
+   std::cerr << "exists: " << exists << std::endl;*/
 
   if(true) {
 

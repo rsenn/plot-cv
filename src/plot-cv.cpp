@@ -656,11 +656,11 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
         if(contourStr.str().size())
           contourStr << "\n";
         out_points(contourStr, a);
-        /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
-           ", " << hier[i][2] << ", " << hier[i][3] << ", "
-                      << "} " << std::endl;
-            logfile << "contourDepth(i) = " << depth << std::endl;
-  */
+      /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
+         ", " << hier[i][2] << ", " << hier[i][3] << ", "
+                    << "} " << std::endl;
+          logfile << "contourDepth(i) = " << depth << std::endl;
+*/
         /*  if(dptr != nullptr)
             cv::drawContours(*dptr, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
    */     }
@@ -973,6 +973,7 @@ js_init(int argc, char* argv[]) {
   js_init_module_point_iterator(js.ctx, "point-iterator");
   js_init_module_contour(js.ctx, "contour");
   js_init_module_line(js.ctx, "line");
+  js_init_module_draw(js.ctx, "draw");
   /*  js_init_point_module(js.ctx, "Point");
     js_init_point_iterator_module(js.ctx, "PointIterator");
     js_init_rect_module(js.ctx, "Rect");
@@ -993,7 +994,7 @@ js_init(int argc, char* argv[]) {
 
   // ret = js.eval_file("lib.js", 1);
 
-  js_draw_functions(js.ctx, js.global_object());
+  // js_draw_functions(js.ctx, js.global_object());
   /*  js.add_function("drawContour", &js_draw_contour, 2);
     js.add_function("drawLine", &js_draw_line, 2);
     js.add_function("drawRect", &js_draw_rect, 2);
@@ -1009,10 +1010,10 @@ js_init(int argc, char* argv[]) {
     "console"))
               << std::endl;
   */
-  JSValue testFn = js.get_property(global_obj, "test");
-  JSValue drawContourFn = js.get_property(js.global_object(), "drawContour");
-  JSValue jsPoint = js.create_point(150, 100);
-  /*
+  /*  JSValue testFn = js.get_property(global_obj, "test");
+    JSValue drawContourFn = js.get_property(js.global_object(), "drawContour");
+    JSValue jsPoint = js.create_point(150, 100);
+   */ /*
     if(show_diagnostics)
       std::cerr << "js.eval_file ret=" << ret << " globalObj=" << js.to_str(global_obj)
                 << " testFn=" << js.to_str(testFn) << " processFn="

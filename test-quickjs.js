@@ -6,6 +6,4 @@ import { PointIterator } from "./build/x86_64-linux-gnu/quickjs-point-iterator.s
 import { inspect } from "./inspect.js";
 //import { Contour } from "./build/x86_64-linux-gnu/quickjs-contour.so";
 
-console.log("test:", inspect({Point,Size,Rect,Mat}));
-
-
+console.log("test:", inspect({ Point, Size, Rect, Mat }));
