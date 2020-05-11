@@ -239,7 +239,7 @@
       const AppStart = (window.onload = async () => {
         Object.assign(window, {
           AppStart,
-      
+
           chooseDocument,
           classNames,
           loadDocument,
@@ -299,17 +299,13 @@
               h(Button, {
                 caption: "↕",
                 fn: () => {
-                  let container = Element.find('#container');
+                  let container = Element.find("#container");
                   let parent = container.parentElement;
                   let prect = Element.rect(parent);
                   let rect = Element.rect(container);
 
-
-                  let svg = Element.find('svg', container);
+                  let svg = Element.find("svg", container);
                   let srect = Element.rect(svg);
-
-
-
 
                   /*let points = [rect.points(), prect.points() ];
 
@@ -327,15 +323,12 @@
                                     console.log("m:",  matrix.toString());
 
                                     Element.setCSS(container, { transform: matrix  });*/
-
                 }
               }),
 
               h(Button, {
                 caption: "↔",
-                fn: () => {
-                  
-                }
+                fn: () => {}
               })
             ]),
             html`
@@ -363,18 +356,34 @@
           clientArea.x += container.parentElement.scrollLeft;
           const clientCenter = clientArea.center;
 
-          const { clientX, clientY } = event;
+          const { clientX, clientY, target, currentTarget } = event;
           const pos = new Point(clientX, clientY);
-
+          console.log("zoom:", { target, currentTarget });
           const wheelPos = -event.deltaY.toFixed(2);
           zoomVal = Util.clamp(-100, 100, zoomVal + wheelPos * 0.1);
           const zoom = Math.pow(10, zoomVal / 100).toFixed(5);
           const transform = ` scale(${zoom},${zoom}) `;
           const origin = `${pos.toString(1, "px", " ")}`;
 
-          Element.setCSS(container, { transform });
+          let list = [...Element.skip(target)].find(p => p.classList.contains("list"));
 
-          Element.setCSS(container, { "transform-origin": origin });
+          if(list) {
+            let parent = list.parentElement;
+            let rects = [Element.rect(parent), Element.rect(list)];
+            let screen = new Rect(0, 0, window.innerWidth, window.innerHeight);
+
+            rects[0].y2 = screen.y2;
+            rects[1].y2 = screen.y2;
+
+            Element.setRect(list, rects[1]);
+
+            console.log("rects:", [...rects, screen]);
+            console.log("list:", { pos, wheelPos, zoomVal, zoom });
+          } else {
+            Element.setCSS(container, { transform });
+
+            Element.setCSS(container, { "transform-origin": origin });
+          }
         });
         console.log(Util.getGlobalObject());
 

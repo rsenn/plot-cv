@@ -106,7 +106,10 @@ body,
 .list {
     background-color: hsla(0, 0%, 80%, 1);
 }
-
+.list {
+  overflow: scroll;
+  max-height: 100vh;
+}
 .list {
   flex-flow: row wrap;
 }
@@ -208,6 +211,10 @@ left: -100%;
 }
 .sidebar > .list {
   padding: 10px;
+}
+
+.sidebar > .list {
+ overflow: scroll;
 }
 
 body {
