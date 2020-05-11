@@ -68,12 +68,10 @@ JSMatData* js_mat_data(JSContext* ctx, JSValue val);
 
 JSModuleDef* js_init_module(JSContext* ctx, const char* module_name);
 
-extern JSValue contour_class, contour_proto, int32array_ctor, int32array_proto, mat_class,
-    mat_proto, point_class, point_iterator_class, point_iterator_proto, point_proto, rect_class,
-    rect_proto, size_class, size_proto;
+extern JSValue contour_class, contour_proto, int32array_ctor, int32array_proto, mat_class, mat_proto, point_class, point_iterator_class, point_iterator_proto, point_proto, rect_class, rect_proto,
+    size_class, size_proto;
 
-JSValue js_create_point_iterator(
-    JSContext*, JSValueConst this_val, int argc, JSValueConst* argv, int magic);
+JSValue js_create_point_iterator(JSContext*, JSValueConst this_val, int argc, JSValueConst* argv, int magic);
 
 extern cv::Mat* dptr;
 }
@@ -90,14 +88,11 @@ extern "C" JSValue js_contour2d_new(JSContext*, const std::vector<cv::Point_<dou
 extern "C" JSValue js_contour2f_new(JSContext*, const std::vector<cv::Point_<float>>& points);
 extern "C" JSValue js_contour2i_new(JSContext*, const std::vector<cv::Point_<int>>& points);
 
-template<class Type>
-JSValue js_contour_new(JSContext* ctx, const std::vector<cv::Point_<Type>>& points);
+template<class Type> JSValue js_contour_new(JSContext* ctx, const std::vector<cv::Point_<Type>>& points);
 
-template<>
-JSValue js_contour_new<double>(JSContext* ctx, const std::vector<cv::Point_<double>>& points);
+template<> JSValue js_contour_new<double>(JSContext* ctx, const std::vector<cv::Point_<double>>& points);
 
-template<>
-JSValue js_contour_new<float>(JSContext* ctx, const std::vector<cv::Point_<float>>& points);
+template<> JSValue js_contour_new<float>(JSContext* ctx, const std::vector<cv::Point_<float>>& points);
 
 template<> JSValue js_contour_new<int>(JSContext* ctx, const std::vector<cv::Point_<int>>& points);
 
@@ -167,16 +162,16 @@ js_rect_get(JSContext* ctx, JSValueConst rect) {
 static inline int
 js_rect_write(JSContext* ctx, JSValue out, JSRectData rect) {
   int ret = 0;
-  ret += JS_SetPropertyStr(ctx, out, "x", JS_NewFloat64(ctx,rect.x));
-ret += JS_SetPropertyStr(ctx, out, "y", JS_NewFloat64(ctx,rect.y));
-ret += JS_SetPropertyStr(ctx, out, "width", JS_NewFloat64(ctx,rect.width));
-ret += JS_SetPropertyStr(ctx, out, "height", JS_NewFloat64(ctx,rect.height));
+  ret += JS_SetPropertyStr(ctx, out, "x", JS_NewFloat64(ctx, rect.x));
+  ret += JS_SetPropertyStr(ctx, out, "y", JS_NewFloat64(ctx, rect.y));
+  ret += JS_SetPropertyStr(ctx, out, "width", JS_NewFloat64(ctx, rect.width));
+  ret += JS_SetPropertyStr(ctx, out, "height", JS_NewFloat64(ctx, rect.height));
   return ret;
 }
 
 static JSRectData
-js_rect_set(JSContext* ctx,  JSValue out, double x, double y, double w, double h) {
-  const JSRectData r = {x,y,w,h};
+js_rect_set(JSContext* ctx, JSValue out, double x, double y, double w, double h) {
+  const JSRectData r = {x, y, w, h};
   js_rect_write(ctx, out, r);
   return r;
 }

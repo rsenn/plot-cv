@@ -237,7 +237,7 @@ const JSCFunctionListEntry js_point_proto_funcs[] = {
     JS_CFUNC_DEF("prod", 1, js_point_prod),
     JS_CFUNC_DEF("quot", 1, js_point_quot),
     JS_CFUNC_DEF("norm", 0, js_point_norm),
-    //JS_CFUNC_DEF("getRotationMatrix2D", 0, js_point_getrotationmatrix2d),
+    // JS_CFUNC_DEF("getRotationMatrix2D", 0, js_point_getrotationmatrix2d),
     JS_CFUNC_DEF("toString", 0, js_point_to_string),
 };
 
@@ -271,8 +271,7 @@ js_point_constructor(JSContext* ctx, JSValue parent, const char* name) {
   JS_SetPropertyStr(ctx, parent, name ? name : "Point", point_class);
 }
 
-JSModuleDef* __attribute__((visibility("default")))
-JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
+JSModuleDef* __attribute__((visibility("default"))) JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
   m = JS_NewCModule(ctx, module_name, &js_point_init);
   if(!m)

@@ -71,7 +71,6 @@ js_mat_finalizer(JSRuntime* rt, JSValue val) {
   s->release();
 }
 
-
 static JSValue
 js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSValue ret = JS_UNDEFINED;
@@ -156,15 +155,8 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   if(m->rows * m->cols > 50) {
     os << "cv::Mat(" << m->rows << ", " << m->cols << ", ";
 
-    const char* tstr = (m->type() == CV_8UC4)
-                           ? "CV_8UC4"
-                           : (m->type() == CV_8UC2)
-                                 ? "CV_8UC2"
-                                 : (m->type() == CV_8UC3)
-                                       ? "CV_8UC3"
-                                       : (m->type() == CV_8UC1)
-                                             ? "CV_8UC1"
-                                             : (m->type() == CV_32FC1) ? "CV_32FC1" : "?";
+    const char* tstr =
+        (m->type() == CV_8UC4) ? "CV_8UC4" : (m->type() == CV_8UC2) ? "CV_8UC2" : (m->type() == CV_8UC3) ? "CV_8UC3" : (m->type() == CV_8UC1) ? "CV_8UC1" : (m->type() == CV_32FC1) ? "CV_32FC1" : "?";
 
     os << tstr << ")" << std::endl;
   } else {
@@ -178,9 +170,7 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
         if(m->type() == CV_32FC1)
           os << m->at<float>(y, x);
         else
-          os << std::setfill('0') << std::setbase(16)
-             << std::setw(m->type() == CV_8UC4 ? 8 : m->type() == CV_8UC1 ? 2 : 6)
-             << m->at<uint32_t>(y, x);
+          os << std::setfill('0') << std::setbase(16) << std::setw(m->type() == CV_8UC4 ? 8 : m->type() == CV_8UC1 ? 2 : 6) << m->at<uint32_t>(y, x);
       }
     }
 
@@ -201,21 +191,20 @@ js_mat_getrotationmatrix2d(JSContext* ctx, JSValueConst this_val, int argc, JSVa
   if(argc == 0)
     return JS_EXCEPTION;
   if(argc > 0) {
-     s = js_point_get(ctx, argv[0]);
+    s = js_point_get(ctx, argv[0]);
     if(argc > 1) {
-    JS_ToFloat64(ctx, &angle, argv[1]);
-    if(argc > 2) {
-      JS_ToFloat64(ctx, &scale, argv[2]);
+      JS_ToFloat64(ctx, &angle, argv[1]);
+      if(argc > 2) {
+        JS_ToFloat64(ctx, &scale, argv[2]);
+      }
     }
   }
-}
 
   m = cv::getRotationMatrix2D(s, angle, scale);
 
   ret = js_mat_wrap(ctx, m);
   return ret;
 }
-
 
 JSValue
 js_mat_wrap(JSContext* ctx, const cv::Mat& mat) {
@@ -254,14 +243,14 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("at", 1, js_mat_funcs, 4),
     JS_CFUNC_MAGIC_DEF("clone", 0, js_mat_funcs, 5),
     JS_CFUNC_MAGIC_DEF("roi", 0, js_mat_funcs, 6),
-   // JS_CFUNC_DEF("findContours", 0, js_mat_findcontours),
+    // JS_CFUNC_DEF("findContours", 0, js_mat_findcontours),
     JS_CFUNC_DEF("toString", 0, js_mat_tostring),
     //    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "cv::Mat", JS_PROP_CONFIGURABLE)
 
 };
 const JSCFunctionListEntry js_mat_static_funcs[] = {
-      JS_CFUNC_DEF("getRotationMatrix2D", 3, js_mat_getrotationmatrix2d),
-    };
+    JS_CFUNC_DEF("getRotationMatrix2D", 3, js_mat_getrotationmatrix2d),
+};
 
 int
 js_mat_init(JSContext* ctx, JSModuleDef* m) {
@@ -308,7 +297,6 @@ js_mat_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetPropertyStr(ctx, mat_class, "CV_64FC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 3)));
   JS_SetPropertyStr(ctx, mat_class, "CV_64FC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 4)));
 
-
   JSValue g = JS_GetGlobalObject(ctx);
   int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
   int32array_proto = JS_GetPrototype(ctx, int32array_ctor);
@@ -320,8 +308,7 @@ js_mat_init(JSContext* ctx, JSModuleDef* m) {
   return 0;
 }
 
-JSModuleDef* __attribute__((visibility("default")))
-JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
+JSModuleDef* __attribute__((visibility("default"))) JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
   m = JS_NewCModule(ctx, module_name, &js_mat_init);
   if(!m)

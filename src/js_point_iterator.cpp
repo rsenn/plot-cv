@@ -18,10 +18,8 @@ JSValue point_iterator_proto, point_iterator_class;
 JSClassID js_point_iterator_class_id;
 
 static JSValue
-js_point_iterator_next(
-    JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, BOOL* pdone, int magic) {
-  JSPointIteratorData* it =
-      static_cast<JSPointIteratorData*>(JS_GetOpaque(this_val, js_point_iterator_class_id));
+js_point_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, BOOL* pdone, int magic) {
+  JSPointIteratorData* it = static_cast<JSPointIteratorData*>(JS_GetOpaque(this_val, js_point_iterator_class_id));
   JSPointData* ptr;
   JSValue point;
 
@@ -43,15 +41,12 @@ fail:
   return JS_EXCEPTION;
 }
 
-
 static void
 js_point_iterator_finalizer(JSRuntime* rt, JSValue val) {
-  JSPointIteratorData* s =
-      static_cast<JSPointIteratorData*>(JS_GetOpaque(val, js_point_iterator_class_id));
+  JSPointIteratorData* s = static_cast<JSPointIteratorData*>(JS_GetOpaque(val, js_point_iterator_class_id));
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
   js_free_rt(rt, s);
 }
-
 
 static JSValue
 js_point_iterator_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
@@ -91,8 +86,7 @@ fail:
 }
 
 JSValue
-js_create_point_iterator(
-    JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+js_create_point_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSContourData* s = js_contour_data(ctx, this_val);
   JSPointIteratorData* it;
   JSValue iterator;
@@ -114,7 +108,6 @@ fail:
   return JS_EXCEPTION;
 }
 
-
 JSClassDef js_point_iterator_class = {
     "PointIterator",
     .finalizer = js_point_iterator_finalizer,
@@ -124,10 +117,7 @@ const JSCFunctionListEntry js_point_iterator_proto_funcs[] = {
     JS_ITERATOR_NEXT_DEF("next", 0, js_point_iterator_next, 0),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "PointIterator", JS_PROP_CONFIGURABLE),
 };
-const JSCFunctionListEntry js_point_iterator_static_funcs[] = {
-    JS_CFUNC_MAGIC_DEF("create", 0, js_create_point_iterator, 0)
-  };
-
+const JSCFunctionListEntry js_point_iterator_static_funcs[] = {JS_CFUNC_MAGIC_DEF("create", 0, js_create_point_iterator, 0)};
 
 int
 js_point_iterator_init(JSContext* ctx, JSModuleDef* m) {
@@ -137,21 +127,13 @@ js_point_iterator_init(JSContext* ctx, JSModuleDef* m) {
   JS_NewClass(JS_GetRuntime(ctx), js_point_iterator_class_id, &js_point_iterator_class);
 
   point_iterator_proto = JS_NewObject(ctx);
-  JS_SetPropertyFunctionList(ctx,
-                             point_iterator_proto,
-                             js_point_iterator_proto_funcs,
-                             countof(js_point_iterator_proto_funcs));
+  JS_SetPropertyFunctionList(ctx, point_iterator_proto, js_point_iterator_proto_funcs, countof(js_point_iterator_proto_funcs));
   JS_SetClassProto(ctx, js_point_iterator_class_id, point_iterator_proto);
 
-  point_iterator_class =
-      JS_NewCFunction2(ctx, js_point_iterator_ctor, "PointIterator", 2, JS_CFUNC_constructor, 0);
+  point_iterator_class = JS_NewCFunction2(ctx, js_point_iterator_ctor, "PointIterator", 2, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, point_iterator_class, point_iterator_proto);
-   JS_SetPropertyFunctionList(ctx,
-                             point_iterator_class,
-                             js_point_iterator_static_funcs,
-                             countof(js_point_iterator_static_funcs));
- 
+  JS_SetPropertyFunctionList(ctx, point_iterator_class, js_point_iterator_static_funcs, countof(js_point_iterator_static_funcs));
 
   if(m)
     JS_SetModuleExport(ctx, m, "PointIterator", point_iterator_class);
@@ -160,8 +142,7 @@ js_point_iterator_init(JSContext* ctx, JSModuleDef* m) {
   return 0;
 }
 
-JSModuleDef* __attribute__((visibility("default")))
-JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
+JSModuleDef* __attribute__((visibility("default"))) JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
   m = JS_NewCModule(ctx, module_name, &js_point_iterator_init);
   if(!m)
@@ -180,8 +161,7 @@ js_point_iterator_constructor(JSContext* ctx, JSValue parent, const char* name) 
 
 static JSValue
 js_point_iterator_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSPointIteratorData* s =
-      static_cast<JSPointIteratorData*>(JS_GetOpaque2(ctx, this_val, js_point_iterator_class_id));
+  JSPointIteratorData* s = static_cast<JSPointIteratorData*>(JS_GetOpaque2(ctx, this_val, js_point_iterator_class_id));
   std::ostringstream os;
   if(!s)
     return JS_EXCEPTION;
@@ -190,5 +170,4 @@ js_point_iterator_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSV
 
   return JS_NewString(ctx, os.str().c_str());
 }
-
 }

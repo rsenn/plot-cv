@@ -47,10 +47,7 @@ enum { CANNY = 0, ORIGINAL, GRAYSCALE, MORPHOLOGY };
 
 std::string to_string(const cv::Scalar& scalar);
 
-std::string make_filename(const std::string& name,
-                          int count,
-                          const std::string& ext,
-                          const std::string& dir = "tmp");
+std::string make_filename(const std::string& name, int count, const std::string& ext, const std::string& dir = "tmp");
 
 inline int32_t
 get_mtime(const char* filename) {
@@ -82,9 +79,8 @@ inline std::string
 to_string(const cv::Scalar& scalar) {
   const int pad = 3;
   std::ostringstream oss;
-  oss << '[' << std::setfill(' ') << std::setw(pad) << scalar[0] << ',' << std::setfill(' ')
-      << std::setw(pad) << scalar[1] << ',' << std::setfill(' ') << std::setw(pad) << scalar[2]
-      << ',' << std::setfill(' ') << std::setw(pad) << scalar[3] << ']';
+  oss << '[' << std::setfill(' ') << std::setw(pad) << scalar[0] << ',' << std::setfill(' ') << std::setw(pad) << scalar[1] << ',' << std::setfill(' ') << std::setw(pad) << scalar[2] << ','
+      << std::setfill(' ') << std::setw(pad) << scalar[3] << ']';
   return oss.str();
 }
 
@@ -111,13 +107,9 @@ extern "C" image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, img
     imgMorphology; // Canny edge image
 
 void image_info(image_type img);
-std::vector<point2i_list> get_contours(image_type src,
-                                       std::vector<cv::Vec4i>& hierarchy,
-                                       int flag = CV_RETR_TREE);
+std::vector<point2i_list> get_contours(image_type src, std::vector<cv::Vec4i>& hierarchy, int flag = CV_RETR_TREE);
 
-void svg_draw_polyline(svg::Document& doc,
-                       const point2f_list& contour_arg,
-                       std::function<svg::Color(const point2f_list&)> color_fn);
+void svg_draw_polyline(svg::Document& doc, const point2f_list& contour_arg, std::function<svg::Color(const point2f_list&)> color_fn);
 
 struct config_values {
   int morphology_kernel_size;
@@ -148,8 +140,7 @@ extern "C" config_values config;
 
 template<class T>
 inline int
-get_largest_contour(const std::vector<std::vector<cv::Point_<T>>>& contours_un,
-                    std::vector<cv::Point_<T>>& bigContour) {
+get_largest_contour(const std::vector<std::vector<cv::Point_<T>>>& contours_un, std::vector<cv::Point_<T>>& bigContour) {
   double maxArea = 0.0;
   int largestContour = -1;
   for(size_t i = 0; i < contours_un.size(); i++) {
@@ -217,11 +208,7 @@ out_points(O& os, const point2i_vector& pl) {
 template<class Container>
 inline void
 draw_all_lines(
-    image_type& out,
-    const Container& lines,
-    const std::function<int(int, size_t)>& hue = [](int index, size_t len) -> int {
-      return (index * 360 * 10 / len) % 360;
-    }) {
+    image_type& out, const Container& lines, const std::function<int(int, size_t)>& hue = [](int index, size_t len) -> int { return (index * 360 * 10 / len) % 360; }) {
   for(typename Container::const_iterator it = lines.begin(); it != lines.end(); it++) {
     size_t i = std::distance(lines.begin(), it);
     const color_type color = hsv_to_rgb(hue(i, lines.size()), 1.0, 1.0);
@@ -244,13 +231,10 @@ svg_export_file(const std::vector<std::vector<cv::Point_<T>>>& contours, std::st
   svg::Document doc(output_file, svg::Layout(dimensions, svg::Layout::TopLeft));
   svg::LineChart chart(5.0);
   std::vector<double> areas;
-  std::transform(contours.begin(),
-                 contours.end(),
-                 std::back_inserter(areas),
-                 [](const std::vector<cv::Point_<T>>& contour) -> double {
-                   point2f_vector vec = contour;
-                   return cv::contourArea(vec);
-                 });
+  std::transform(contours.begin(), contours.end(), std::back_inserter(areas), [](const std::vector<cv::Point_<T>>& contour) -> double {
+    point2f_vector vec = contour;
+    return cv::contourArea(vec);
+  });
   const auto& it = std::max_element(areas.begin(), areas.end());
   double max_area = 0;
   if(it != areas.end()) {
@@ -264,9 +248,7 @@ svg_export_file(const std::vector<std::vector<cv::Point_<T>>>& contours, std::st
     return from_scalar(hsv_to_rgb(area / max_area * 360, 1, 1));
   };
 
-  std::for_each(contours.begin(),
-                contours.end(),
-                std::bind(&svg_draw_polyline, std::ref(doc), std::placeholders::_1, cfn));
+  std::for_each(contours.begin(), contours.end(), std::bind(&svg_draw_polyline, std::ref(doc), std::placeholders::_1, cfn));
   //  svg_draw_polyline(doc, contour_arg, svg::Color(255, 0, 0));
 
   doc.save();
@@ -277,8 +259,7 @@ svg_export_file(const std::vector<std::vector<cv::Point_<T>>>& contours, std::st
 template<class P>
 inline JSValue
 points_to_js(const std::vector<P>& v) {
-  std::function<JSValue(const P&)> fn(
-      [](const P& point) -> JSValue { return js.create_point(point.x, point.y); });
+  std::function<JSValue(const P&)> fn([](const P& point) -> JSValue { return js.create_point(point.x, point.y); });
   return vector_to_js(js, v, fn);
 }
 

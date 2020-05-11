@@ -122,13 +122,13 @@ main(int argc, char* argv[]) {
     // capWebcam.open((int)camID, (int)cv::CAP_V4L2); // declare a VideoCapture
     // object and associate to webcam, 0 => use 1st webcam
 
-    if(capWebcam.isOpened() == false) { // check if VideoCapture object was
-                                        // associated to webcam successfully
+    if(capWebcam.isOpened() == false) {                            // check if VideoCapture object was
+                                                                   // associated to webcam successfully
       logfile << "error: capWebcam not accessed successfully\n\n"; // if not, print
                                                                    // error message
                                                                    // to std out
-      getchar();  // may have to modify this line if not using Windows
-      return (0); // and exit program
+      getchar();                                                   // may have to modify this line if not using Windows
+      return (0);                                                  // and exit program
     }
   } else {
     imgInput = cv::imread(filename.empty() ? "input.png" : filename);
@@ -140,55 +140,18 @@ main(int argc, char* argv[]) {
   cv::createTrackbar("threshold", "imgCanny", &thresh, 255, trackbar, (void*)"thres");
   cv::createTrackbar("threshold2", "imgCanny", &thresh2, 255, trackbar, (void*)"thres2");
   // cv::createTrackbar("Image", "img", &show_image, 4, trackbar, (void*)"Image Index");
-  cv::createTrackbar("morphology_kernel_size",
-                     "imgMorphology",
-                     &config.morphology_kernel_size,
-                     2,
-                     trackbar,
-                     (void*)"Morphology kernel size");
-  cv::createTrackbar("morphology_enable",
-                     "imgMorphology",
-                     &morphology_enable,
-                     2,
-                     trackbar,
-                     (void*)"Morphology enable");
-  cv::createTrackbar("morphology_operator",
-                     "imgMorphology",
-                     &config.morphology_operator,
-                     3,
-                     trackbar,
-                     (void*)"Morphology operator");
-  cv::createTrackbar(
-      "blur_sigma", "imgBlurred", &config.blur_sigma, 300, trackbar, (void*)"blur sigma");
+  cv::createTrackbar("morphology_kernel_size", "imgMorphology", &config.morphology_kernel_size, 2, trackbar, (void*)"Morphology kernel size");
+  cv::createTrackbar("morphology_enable", "imgMorphology", &morphology_enable, 2, trackbar, (void*)"Morphology enable");
+  cv::createTrackbar("morphology_operator", "imgMorphology", &config.morphology_operator, 3, trackbar, (void*)"Morphology operator");
+  cv::createTrackbar("blur_sigma", "imgBlurred", &config.blur_sigma, 300, trackbar, (void*)"blur sigma");
 
-  cv::createTrackbar("blur_kernel_size",
-                     "imgBlurred",
-                     &config.blur_kernel_size,
-                     2,
-                     trackbar,
-                     (void*)"Blur kernel size");
+  cv::createTrackbar("blur_kernel_size", "imgBlurred", &config.blur_kernel_size, 2, trackbar, (void*)"Blur kernel size");
 
   cv::createTrackbar("hough_rho", "imgCanny", &config.hough_rho, 10, trackbar, (void*)"Hough rho");
-  cv::createTrackbar(
-      "hough_theta", "imgCanny", &config.hough_theta, 360, trackbar, (void*)"Hough theta");
-  cv::createTrackbar("hough_threshold",
-                     "imgCanny",
-                     &config.hough_threshold,
-                     1000,
-                     trackbar,
-                     (void*)"Hough threshold");
-  cv::createTrackbar("hough_minlinelen",
-                     "imgCanny",
-                     &config.hough_minlinelen,
-                     1000,
-                     trackbar,
-                     (void*)"Hough minLineLen");
-  cv::createTrackbar("hough_maxlinega",
-                     "imgCanny",
-                     &config.hough_maxlinegap,
-                     1000,
-                     trackbar,
-                     (void*)"Hough maxLineGap");
+  cv::createTrackbar("hough_theta", "imgCanny", &config.hough_theta, 360, trackbar, (void*)"Hough theta");
+  cv::createTrackbar("hough_threshold", "imgCanny", &config.hough_threshold, 1000, trackbar, (void*)"Hough threshold");
+  cv::createTrackbar("hough_minlinelen", "imgCanny", &config.hough_minlinelen, 1000, trackbar, (void*)"Hough minLineLen");
+  cv::createTrackbar("hough_maxlinega", "imgCanny", &config.hough_maxlinegap, 1000, trackbar, (void*)"Hough maxLineGap");
   mptr = &imgOriginal;
 
   while(keycode != 27) { // until the Esc key is pressed or webcam connection is lost

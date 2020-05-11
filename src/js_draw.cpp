@@ -136,12 +136,10 @@ js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
     int lineType = antialias ? cv::LINE_AA : cv::LINE_8;
     const point2i_type* pts = points.data();
 
-    std::cerr << "drawPolygon() points: " << (points) << " color: " << to_string(color)
-              << std::endl;
+    std::cerr << "drawPolygon() points: " << (points) << " color: " << to_string(color) << std::endl;
 
     // cv::fillPoly(*dptr, points, color, antialias ? cv::LINE_AA : cv::LINE_8);
-    (thickness <= 0 ? cv::fillPoly(*dptr, &pts, &size, 1, color, lineType)
-                    : cv::polylines(*dptr, &pts, &size, 1, true, color, thickness, lineType));
+    (thickness <= 0 ? cv::fillPoly(*dptr, &pts, &size, 1, color, lineType) : cv::polylines(*dptr, &pts, &size, 1, true, color, thickness, lineType));
   }
   return js._true;
 }
@@ -172,8 +170,7 @@ js_draw_rect(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
   points[1].x = rect.x + rect.width;
   points[1].y = rect.y + rect.height;
 
-  cv::rectangle(
-      *dptr, points[0], points[1], color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
+  cv::rectangle(*dptr, points[0], points[1], color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
 
   return js._true;
 }
@@ -182,19 +179,10 @@ int
 js_draw_init(JSContext* ctx, JSModuleDef* m) {
 
   if(m) {
-    JS_SetModuleExport(ctx,
-                       m,
-                       "drawCircle",
-                       JS_NewCFunction(ctx, &js_draw_circle, "drawCircle", 5));
-    JS_SetModuleExport(ctx,
-                       m,
-                       "drawContour",
-                       JS_NewCFunction(ctx, &js_draw_contour, "drawContour", 4));
+    JS_SetModuleExport(ctx, m, "drawCircle", JS_NewCFunction(ctx, &js_draw_circle, "drawCircle", 5));
+    JS_SetModuleExport(ctx, m, "drawContour", JS_NewCFunction(ctx, &js_draw_contour, "drawContour", 4));
     JS_SetModuleExport(ctx, m, "drawLine", JS_NewCFunction(ctx, &js_draw_line, "drawLine", 5));
-    JS_SetModuleExport(ctx,
-                       m,
-                       "drawPolygon",
-                       JS_NewCFunction(ctx, &js_draw_polygon, "drawPolygon", 4));
+    JS_SetModuleExport(ctx, m, "drawPolygon", JS_NewCFunction(ctx, &js_draw_polygon, "drawPolygon", 4));
     JS_SetModuleExport(ctx, m, "drawRect", JS_NewCFunction(ctx, &js_draw_rect, "drawRect", 4));
   }
 
@@ -204,26 +192,16 @@ js_draw_init(JSContext* ctx, JSModuleDef* m) {
 int
 js_draw_functions(JSContext* ctx, JSValue parent) {
 
-  JS_SetPropertyStr(ctx,
-                    parent,
-                    "drawCircle",
-                    JS_NewCFunction(ctx, &js_draw_circle, "drawCircle", 5));
-  JS_SetPropertyStr(ctx,
-                    parent,
-                    "drawContour",
-                    JS_NewCFunction(ctx, &js_draw_contour, "drawContour", 4));
+  JS_SetPropertyStr(ctx, parent, "drawCircle", JS_NewCFunction(ctx, &js_draw_circle, "drawCircle", 5));
+  JS_SetPropertyStr(ctx, parent, "drawContour", JS_NewCFunction(ctx, &js_draw_contour, "drawContour", 4));
   JS_SetPropertyStr(ctx, parent, "drawLine", JS_NewCFunction(ctx, &js_draw_line, "drawLine", 5));
-  JS_SetPropertyStr(ctx,
-                    parent,
-                    "drawPolygon",
-                    JS_NewCFunction(ctx, &js_draw_polygon, "drawPolygon", 4));
+  JS_SetPropertyStr(ctx, parent, "drawPolygon", JS_NewCFunction(ctx, &js_draw_polygon, "drawPolygon", 4));
   JS_SetPropertyStr(ctx, parent, "drawRect", JS_NewCFunction(ctx, &js_draw_rect, "drawRect", 4));
 
   return 0;
 }
 
-JSModuleDef* __attribute__((visibility("default")))
-JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
+JSModuleDef* __attribute__((visibility("default"))) JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
   m = JS_NewCModule(ctx, module_name, &js_draw_init);
   if(!m)
