@@ -1,0 +1,229 @@
+svg,
+#container {
+  pointer-events: none;
+}
+/*#container {
+  display: flex;
+  flex-flow: column nowrap;
+}*/
+.fill {
+  width: 100%;
+  height: 100%;
+}
+
+.button.pushed,
+.button-inactive {
+}
+
+.button.pushed {
+  transition-timing-function: ease-in-out;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7);
+
+  transition: filter 0.1s, transform 0.1s;
+}
+.button.inactive {
+  transition-timing-function: ease-in-out;
+  transition: filter 0.3s, transform 0.1s;
+}
+.button.pushed {
+  filter: hue-rotate(90deg);
+  transform: translate(1px, 1px);
+}
+.button {
+  text-shadow: 1px 1px 1px black;
+  margin: 10px;
+  padding: 8px;
+  flex: 0 1 auto;
+}
+.hcenter {
+  justify-content: center;
+}
+.hstart, .label {
+  justify-content: flex-start;
+}
+.vcenter, .label {
+  align-items: center;
+}
+.hidden {
+  display: none;
+}
+.visible {
+  display: flex;
+}
+.transparent {
+  opacity: 0;
+}
+.button,
+.center,
+.button {
+  justify-content: center;
+  align-items: center;
+  /*  border: 2px solid hsl(220,100%,50%);*/
+}
+body {
+  background: linear-gradient(0deg, rgba(255, 255, 255, 1) 0%, rgba(0, 0, 0, 0.5) 80%);
+  background-attachment: fixed;
+}
+.button {
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.7);
+  border-radius: 4px;
+  background: linear-gradient(30deg, hsla(220, 100%, 40%, 1) 20%, hsla(220, 100%, 50%, 1) 50%, hsla(220, 100%, 60%, 1) 80%); /* w3c */
+  color: white;
+  font-weight: bold;
+  user-select: none;
+  font-size: 2em;
+}
+.button {
+  display: inline-flex;
+}
+html,
+body,
+.overlay,
+.button,
+.panel,
+.list {
+  font-family: Arial;
+}
+.list {
+  font-weight: normal;
+  font-size: 14px;
+}
+.file,
+.file.active,
+.file.inactive {
+  transition-timing-function: linear;
+  transition: height 1s, border 0.5s;
+}
+.list {
+    background-color: hsla(0, 0%, 80%, 1);
+}
+
+.list {
+  flex-flow: row wrap;
+}
+.panel,
+.list {
+  box-sizing: border-box;
+}
+.list {
+  flex-flow: row wrap;
+
+}
+.list .file {
+  flex-basis: 47%;
+  flex: 1 1 1;
+  flex-flow: column nowrap;
+}
+.file {
+  color: black;
+}
+.file.sch {
+  background: hsl(60, 100%, 98%);
+}
+.file.brd {
+  background: hsl(120, 100%, 98%);
+}
+.file.none {
+  background: white;
+}
+
+.file.inactive {
+  border: 4px solid hsla(230, 100%, 0%, 0);
+  margin: 4px;
+  box-shadow: 1px 1px 3px hsl(180, 20%, 20%);
+}
+.list > .file.active {
+  margin: 4px;
+  background: linear-gradient(0deg, rgba(255,255,12,0.8) 0%,  rgba(255,210,12,0.8) 100%);
+  border: 4px solid hsla(250, 100%, 60%, 1);
+
+  box-shadow: 1px 1px 4px hsl(180, 20%, 20%);
+}
+.list {
+  justify-content: stretch;
+  align-items: center;
+}
+.file {
+  margin: 4px;
+  display: flex;
+  /*        flex-basis: 100%;
+*/
+  justify-content: space-between;
+  align-items: center;
+}
+.button.pushed {
+  background: rgba(255, 0, 0, 1);
+}
+
+.panel, .buttons {
+    display: flex;
+
+}
+.buttons {
+  justify-content: flex-start;
+  align-items: stretch;
+}
+.buttons {
+    background-color: hsla(230, 40%, 80%, 0.8);
+  border: 1px solid hsla(230, 0%, 50%, 1);
+    z-index: 100000;
+
+}
+.sch > .progress > .progress-bar {
+  background: hsla(60, 100%, 60%, 0.5);
+}
+.brd > .progress > .progress-bar {
+  background: hsla(120, 100%, 60%, 0.5);
+}
+.progress {
+  max-width: 200px;
+}
+
+.sidebar {
+  position: absolute;
+  transition: transform 1s linear;
+  max-width: 50%;
+  z-index:  10000;
+}
+.active {
+  transform: none;
+}
+.înactive {
+    transform: translateX(-100%);
+}
+.sidebar > .list {
+  padding: 10px;
+}
+
+body {
+  padding: 0px;
+  margin: 0px;
+      background-color: hsla(230, 40%, 80%, 0.8);
+
+}
+
+label {
+  display: flex;
+  padding: 2px 4px;
+}
+
+#main {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+#main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#container {
+  display: inline-block;
+}
+
+body, #main, #container {
+  overflow: hidden;
+}
