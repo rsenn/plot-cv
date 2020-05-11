@@ -69,9 +69,10 @@ file(GLOB JS_BINDINGS_SOURCES
 
 
 # Main
-add_library(quickjs-opencv MODULE 
-
-    ${JS_BINDINGS_SOURCES}
+add_library(quickjs-opencv MODULE  ${JS_BINDINGS_SOURCES} )
+set_target_properties(quickjs-opencv PROPERTIES
+    COMPILE_FLAGS "-fvisibility=hidden"
+    PREFIX ""
 )
-
+target_link_libraries(quickjs-opencv ${OpenCV_LIBS} quickjs-shared)
 # link
