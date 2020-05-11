@@ -71,6 +71,7 @@ JSModuleDef* js_init_module_size(JSContext*, const char*);
 JSModuleDef* js_init_module_rect(JSContext*, const char*);
 JSModuleDef* js_init_module_mat(JSContext*, const char*);
 JSModuleDef* js_init_module_contour(JSContext*, const char*);
+JSModuleDef* js_init_module_line(JSContext*, const char*);
 
 extern JSValue contour_class, contour_proto, int32array_ctor, int32array_proto, mat_class, mat_proto, point_class, line_class, point_iterator_class, point_iterator_proto, point_proto, rect_class,
     rect_proto, size_class, size_proto, line_proto;

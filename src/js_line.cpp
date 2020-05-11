@@ -72,6 +72,20 @@ js_line_get_xy12(JSContext* ctx, JSValueConst this_val, int magic) {
 }
 
 static JSValue
+js_line_get_ab(JSContext* ctx, JSValueConst this_val, int magic) {
+  JSValue ret = JS_UNDEFINED;
+  JSLineData* s = static_cast<JSLineData*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
+  if(!s)
+    ret = JS_EXCEPTION;
+  else if(magic == 0)
+    ret = js_point_new(ctx, s->operator[](0), s->operator[](1));
+  else if(magic == 1)
+    ret = js_point_new(ctx, s->operator[](2), s->operator[](3));
+
+  return ret;
+}
+
+static JSValue
 js_line_set_xy12(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
   JSLineData* s = static_cast<JSLineData*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
   double v;
@@ -87,6 +101,26 @@ js_line_set_xy12(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) 
     s->operator[](2) = v;
   else if(magic == 3)
     s->operator[](3) = v;
+
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_line_set_ab(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
+  JSLineData* s = static_cast<JSLineData*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
+  JSPointData pt = js_point_get(ctx, val);
+
+  if(!s)
+    return JS_EXCEPTION;
+
+  if(magic == 0) {
+    s->operator[](0) = pt.x;
+    s->operator[](1) = pt.y;
+
+  } else if(magic == 1) {
+    s->operator[](2) = pt.x;
+    s->operator[](3) = pt.y;
+  }
 
   return JS_UNDEFINED;
 }
@@ -137,6 +171,8 @@ const JSCFunctionListEntry js_line_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("y1", js_line_get_xy12, js_line_set_xy12, 1),
     JS_CGETSET_MAGIC_DEF("x2", js_line_get_xy12, js_line_set_xy12, 2),
     JS_CGETSET_MAGIC_DEF("y2", js_line_get_xy12, js_line_set_xy12, 3),
+    JS_CGETSET_MAGIC_DEF("a", js_line_get_ab, js_line_set_ab, 0),
+    JS_CGETSET_MAGIC_DEF("b", js_line_get_ab, js_line_set_ab, 1),
     /*  JS_CGETSET_MAGIC_DEF("x2", js_line_get_xy12, js_line_set_xy12, 2),
        JS_CGETSET_MAGIC_DEF("y2", js_line_get_xy12, js_line_set_xy12, 3),
         JS_ALIAS_DEF("x1", "x1"),

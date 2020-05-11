@@ -972,6 +972,7 @@ js_init(int argc, char* argv[]) {
   js_init_module_mat(js.ctx, "mat");
   js_init_module_point_iterator(js.ctx, "point-iterator");
   js_init_module_contour(js.ctx, "contour");
+  js_init_module_line(js.ctx, "line");
   /*  js_init_point_module(js.ctx, "Point");
     js_init_point_iterator_module(js.ctx, "PointIterator");
     js_init_rect_module(js.ctx, "Rect");
