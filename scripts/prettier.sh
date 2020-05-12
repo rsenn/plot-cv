@@ -16,7 +16,7 @@ prettier() {
     --semi \
     --bracket-spacing \
     --no-insert-pragma \
-    "$@"; ${DEBUG:-false} && echo "$@" 1>&2; command "$@" 2>&1; exit $?)
+    "$@"; ${DEBUG:-false} && echo "$@" 1>&2; command "$@" 2>&1 | grep -v 'ExperimentalWarning:'; exit $?)
 }
 EXPR='1 { /@format/ { N; /\n$/ { d } } }'
 for KW in "if" "for" "do" "while" "catch"; do
