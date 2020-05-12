@@ -145,6 +145,9 @@ export const File = ({ name, i, key, signal, data, ...props }) => {
 
 export const FileList = ({ files, onChange, onActive, ...props }) => {
   const [active, setActive] = useState(true);
+  const [items, setItems] = useState(files());
+
+  files.subscribe(value => setItems(value));
 
   onActive.subscribe(value => setActive(value));
 
@@ -154,7 +157,7 @@ export const FileList = ({ files, onChange, onActive, ...props }) => {
         className="list"
         itemComponent=${File}
         itemClass="file hcenter"
-        items=${files}
+        items=${items}
         onChange=${(...args) => {
           onActive(false);
           onChange(...args);
@@ -164,3 +167,5 @@ export const FileList = ({ files, onChange, onActive, ...props }) => {
     </div>
   `;
 };
+
+export default { Overlay, Container, Chooser, Button, Label, Item, Icon, Progress, BoardIcon, File, FileList };

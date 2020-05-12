@@ -1,41 +1,40 @@
 <html>
   <head>
     <title>EAGLE renderer</title>
+    <link rel="shortcut icon" type="image/x-icon" sizes="16x16 48x48" href="favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="static/style.css" />
     <script type="module">
       // prettier-ignore-start
-      import Autoplacer from "./lib/autoplacer/autoplacer.js";
       import { isPoint, Point } from "./lib/geom/point.js";
       import { PointList } from "./lib/geom/pointList.js";
       import { isRect, Rect } from "./lib/geom/rect.js";
       import { isSize, Size } from "./lib/geom/size.js";
       import { isLine, Line } from "./lib/geom/line.js";
       import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from "./lib/geom/transformation.js";
-      import { Element } from "./lib/dom/element.js";
+      import dom, { Element, isElement } from "./lib/dom.js";
       import { Matrix } from "./lib/geom/matrix.js";
       import { SVG } from "./lib/dom/svg.js";
+      import { iterator, eventIterator } from "./lib/dom/iterator.js";
       import { BBox } from "./lib/geom/bbox.js";
       import { ScrollDisabler } from "./lib/scrollHandler.js";
       import { RGBA, HSLA, CSS } from "./lib/dom.js";
-      import { TouchHandler, TouchListener, MultitouchListener } from "./lib/touchHandler.js";
+      import { TouchListener } from "./lib/touchHandler.js";
       import { parseSchematic } from "./lib/eagle/parser.js";
       import { EagleDocument } from "./lib/eagle/document.js";
       import { EagleNode } from "./lib/eagle/node.js";
-      import { lazyInitializer } from "./lib/lazyInitializer.js";
       import { trkl } from "./lib/trkl.js";
       import { ColorMap } from "./lib/draw/colorMap.js";
       import { EagleElement } from "./lib/eagle/element.js";
       import { EaglePath, EagleReference } from "./lib/eagle/locator.js";
       import { toXML, EagleInterface } from "./lib/eagle/common.js";
-      import { renderDocument, EagleRenderer, SchematicRenderer, BoardRenderer } from "./lib/eagle/renderer.js";
+      import { renderDocument, EagleRenderer } from "./lib/eagle/renderer.js";
       import { devtools } from "./lib/devtools.js";
       import Util from "./lib/util.js";
       import tXml from "./lib/tXml.js";
-      import { crosskit } from "./lib/crosskit.js";
       import deep from "./lib/deep.js";
       import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from "./modules/preact/dist/preact.mjs";
       import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from "./modules/htm/preact/standalone.mjs";
-      import { CTORS, estree } from "./lib/ecmascript.js"; // prettier-ignore-end
-      import { Overlay, Container, Chooser, Button, Label, Item, Icon, Progress, File, FileList } from "./static/components.js";
+      import components, { Container, Button, FileList } from "./static/components.js";
 
       const React = {
         cloneElement,
@@ -58,9 +57,7 @@
         useMemo,
         useReducer,
         useRef,
-        useState,
-        ColorMap,
-        devtools
+        useState
       };
 
       var projectName = "Headphone-Amplifier-ClassAB-alt3";
@@ -92,7 +89,7 @@
       console.log("dom", { Rect, Element, parseSchematic });
 
       window.dom = { Element, SVG };
-      /* prettier-ignore */ Object.assign(window, {EagleDocument, EagleElement, EagleNode, EaglePath, EagleReference, EagleRenderer, EagleInterface, Element, SVG, CSS, RGBA, HSLA, toXML, isPoint, Point, PointList, isLine, Line, isRect, Rect, isSize, Size, Matrix, Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, tXml, deep, BBox, React, h, html });
+      /* prettier-ignore */
       /*    const CreateSelect = (obj, node = document.body) => {
                             let elem = Select.create(Object.entries(obj));
                             node.insertBefore(elem, node.firstElementChild);
@@ -237,39 +234,77 @@
       };
 
       const AppStart = (window.onload = async () => {
-        Object.assign(window, {
-          AppStart,
+        Util(globalThis);
 
+        Util.extend(window, {
+          BBox,
           chooseDocument,
           classNames,
+          ColorMap,
+          components,
+          CSS,
+          deep,
+          EagleDocument,
+          EagleElement,
+          EagleInterface,
+          EagleNode,
+          EaglePath,
+          EagleReference,
+          EagleRenderer,
+          eventIterator,
+          h,
+          HSLA,
+          html,
+          isLine,
+          isPoint,
+          isRect,
+          isSize,
+          iterator,
+          Line,
           loadDocument,
           LoadFile,
+          Matrix,
+          MatrixTransformation,
           ModifyColors,
           MouseEvents,
           MouseHandler,
-          devtools
+          Point,
+          PointList,
+          React,
+          Rect,
+          RGBA,
+          Rotation,
+          Scaling,
+          Size,
+          SVG,
+          toXML,
+          Transformation,
+          TransformationList,
+          Translation,
+          tXml,
+          Util
         });
+        Object.assign(window, { Element, devtools, dom });
 
-        window.Util = Util;
-        Util(globalThis);
+        let projects = trkl([]);
 
-        let response = await ListProjects("/files.html");
-        if(response) {
+        ListProjects("/files.html").then(response => {
+          //console.log("files", response);
           let data = JSON.parse(response);
           let { files } = data;
           console.log(`Got ${files.length} files`);
           projectFiles = window.files = files;
           //  CreateSelect(files);
-          projects = projectFiles.map(({ name }, i) => {
-            let signal = trkl({ percent: NaN });
-            let proj = { name, i, signal };
-            trkl.bind(proj, "data", signal);
-            //console.log("project:", proj);
-            return proj;
-          });
-        }
-
-        window.projects = projects;
+          projects(
+            projectFiles.map(({ name }, i) => {
+              let signal = trkl({ percent: NaN });
+              let proj = { name, i, signal };
+              trkl.bind(proj, "data", signal);
+              //console.log("project:", proj);
+              return proj;
+            })
+          );
+        });
 
         let open = trkl();
 
@@ -303,64 +338,25 @@
                   }
                 }
               }),
-
               h(Button, {
                 caption: "Random",
                 fn: ModifyColors(c => c.replaceAll(c => HSLA.random()))
               }),
-
               h(Button, {
                 caption: "Invert",
                 fn: ModifyColors(c => c.replaceAll(c => c.invert()))
               }),
-
               h(Button, {
                 caption: "↔",
                 fn: MakeFitAction(0)
               }),
-
               h(Button, {
                 caption: "↕",
                 fn: MakeFitAction(1)
               })
-
-              /*() => {
-                        let container = Element.find("#container");
-                        let parent = container.parentElement;
-                        let prect = Element.rect(parent);
-                        let rect = Element.rect(container);
-
-                        let svg = Element.find("svg", container);
-                        let srect = Element.rect(svg);
-
-                        let rects = [prect,rect, srect];
-                        console.log("resize rects", rects);
-
-                        let f =rect.fit(prect);
-                        console.log("fitted:",f);
-
-
-                        Element.setRect(container, f[0]);
-      */
-              /*let points = [rect.points(), prect.points() ];
-
-
-                        console.log("points:",points);
-
-                                          let matrix = Matrix.getAffineTransform(...points);
-
-
-                        console.log("Enlarge:",  { prect, rect });
-                        console.log("matrix:",  matrix);
-
-                        let t = matrix.decompose();
-                                          console.log("t:",  t);
-                                          console.log("m:",  matrix.toString());
-
-                                          Element.setCSS(container, { transform: matrix  });*/
             ]),
             html`
-              <${FileList} items=${projects} onActive=${open} onChange=${chooseDocument} />
+              <${FileList} files=${projects} onActive=${open} onChange=${chooseDocument} />
             `
           ],
           Element.find("#preact")
@@ -399,7 +395,7 @@
 
           const { clientX, clientY, target, currentTarget } = event;
           const pos = new Point(clientX, clientY);
-          console.log("zoom:", { target, currentTarget });
+          //console.log("zoom:", { target, currentTarget });
           const wheelPos = -event.deltaY.toFixed(2);
           zoomVal = Util.clamp(-100, 100, zoomVal + wheelPos * 0.1);
           const zoom = Math.pow(10, zoomVal / 100).toFixed(5);
@@ -445,7 +441,6 @@
         print: txt => alert(`The MD5 hash is: ${txt}`)
       };
     </script>
-    <link rel="stylesheet" type="text/css" href="static/style.css" />
   </head>
   <body style=" max-height: 100vh;">
     <div id="preact" style=" min-height: 100vh;"></div>

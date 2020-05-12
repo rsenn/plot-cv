@@ -31,7 +31,7 @@ svg,
 }
 .button {
   text-shadow: 1px 1px 1px black;
-  margin: 10px;
+  margin: 4px 4px 6px 4px;
   padding: 8px;
   flex: 0 1 auto;
 }
@@ -80,7 +80,9 @@ body {
   color: white;
   font-weight: bold;
   user-select: none;
-  font-size: 2em;
+  font-size: 1em;
+  min-width: 1.4em;
+  min-height: 1.4em;
 }
 .button {
   display: inline-flex;
@@ -122,7 +124,7 @@ body,
 
 }
 .list .file {
-  flex-basis: 47%;
+  flex-basis: 45%;
   flex: 1 1 1;
   flex-flow: column nowrap;
 }

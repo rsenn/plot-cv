@@ -5,8 +5,8 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "dev": "env PORT=3001 node --experimental-modules dev-server.js",
-    "server": "env PORT=3000 node --experimental-modules server.js",
+    "dev": "env PORT=3001 nodemon --experimental-modules -w dev-server.js dev-server.js",
+    "server": "env PORT=3000 nodemon --experimental-modules -w server.js server.js",
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --ext .js --ext .jsx --ignore-path .eslintignore --fix",

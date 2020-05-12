@@ -20,6 +20,14 @@ app.use("/modules", express.static(path.join(p, "node_modules")));
 app.use("/components", express.static(path.join(p, "components")));
 app.use("/lib", express.static(path.join(p, "lib")));
 
+app.get("/favicon.ico", (req, res) =>
+  res.sendFile(path.join(p, "lib/eagle/eagleicon.ico"), {
+    headers: {
+      ["Content-Type"]: "image/x-icon"
+    }
+  })
+);
+
 app.get("/files.html", async (req, res) => {
   let files = [...(await fs.promises.readdir("."))].filter(entry => /\.(brd|sch)$/.test(entry));
 
