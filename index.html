@@ -27,7 +27,7 @@
       import { EagleElement } from "./lib/eagle/element.js";
       import { EaglePath, EagleReference } from "./lib/eagle/locator.js";
       import { toXML, EagleInterface } from "./lib/eagle/common.js";
-      import { renderDocument, EagleRenderer } from "./lib/eagle/renderer.js";
+      import { renderDocument, EagleRenderer, SchematicRenderer, BoardRenderer } from "./lib/eagle/renderer.js";
       import { devtools } from "./lib/devtools.js";
       import Util from "./lib/util.js";
       import tXml from "./lib/tXml.js";
@@ -36,13 +36,13 @@
       import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from "./modules/htm/preact/standalone.mjs";
       import components, { Container, Button, FileList } from "./static/components.js";
 
-      const React = {
+      const React = window.React = {
         cloneElement,
         Component,
         createContext,
         createRef,
         Fragment,
-        h,
+        create: h,
         html,
         hydrate,
         isValidElement,
@@ -60,6 +60,9 @@
         useState
       };
 
+              let currentProj = trkl.property(window, "project");
+
+
       var projectName = "Headphone-Amplifier-ClassAB-alt3";
       var palette = null;
       var svgElement;
@@ -69,13 +72,9 @@
       let projects, projectFiles;
       let activeFile;
 
-      const MouseHandler = callback => e => {
-        if(e.type) {
-          const pressed = e.type.endsWith("down");
-
-          callback(e, pressed);
-        }
-      };
+      const useSlot = (arr, i) => [() => arr[i], v => (arr[i] = v)];
+      const trklGetSet = (get, set) => value => (value !== undefined ? set(value) : get());
+      const useTrkl = trkl => [() => trkl(), value => trkl(value)];
 
       const classNames = (...args) => args.filter(arg => typeof arg == "string" && arg.length > 0).join(" ");
 
@@ -110,8 +109,7 @@
         return toXML(x);
       };
 
-      const LoadFile = filename =>
-        new Promise(async (resolve, reject) => {
+      const LoadFile = async (filename) => {
           let xml = await fetch(`/static/${filename}`).then(async res => {
             return await (await res).text();
           });
@@ -123,8 +121,8 @@
           if(/\.brd$/.test(filename)) window.board = doc;
           if(/\.sch$/.test(filename)) window.schematic = doc;
 
-          resolve(doc);
-        });
+          return doc;
+        };
 
       const SaveSVG = (window.save = async function save(filename = projectName) {
         let body = ElementToXML(window.svg);
@@ -151,80 +149,79 @@
 
       const Panel = (name, children) => html`<${Container} className="${name}">${children}</${Container}>`;
 
-      const loadDocument = (proj, parentElem) =>
-        new Promise(async (resolve, reject) => {
-          console.log(`load project:`, proj);
-          let { name, signal, svg, element } = proj;
-          signal.subscribe(project => resolve(project));
-          let doc = await LoadFile(name);
-          window.eagle = doc;
-          //console.log('document:', doc);
-          /*if(!element)*/
+      const loadDocument = async (proj, parentElem) => {
+        console.log(`load project #${proj.i}:`, proj);
+        proj.doc = await LoadFile(proj.name);
+        window.eagle = proj.doc;
+        Element.remove("#fence");
+        proj.element = Element.create("div", { id: "fence", style: { position: "relative", "data-name": proj.name, border: "1px dotted black" } }, Element.find("#container"));
+        //let svg = Element.create('svg', { viewBox:  } , element);
 
-          Element.remove("#fence");
+let testRender = new EagleRenderer(proj.doc, React.create);
 
-          element = Element.create("div", { id: "fence", style: { position: "relative", "data-name": name, border: "1px dotted black" } }, Element.find("#container"));
-          //let svg = Element.create('svg', { viewBox:  } , element);
-          window.renderer = renderDocument(doc, element);
-          if(!svg) svg = Element.find("svg", element);
-          let grid = Element.find("g.grid", element);
-          let bbox = SVG.bbox(grid);
-          let bounds = doc.getBounds();
-          let rect = bounds.rect;
-          let size = new Size(rect);
+ let svgXml = testRender.render();
+console.log("testRender:",svgXml);
 
-          size.mul(doc.type == "brd" ? 2 : 1.5);
-          //    let aspectRatios = [Element.rect(element).aspect(), ];
+        window.renderer = renderDocument(proj.doc, proj.element);
 
-          let svgrect = SVG.bbox(svg);
-          let aspectRatio = svgrect.aspect();
 
-          Element.attr(element, {
-            "data-filename": name,
-            "data-aspect": aspectRatio,
-            "data-width": size.width + "mm",
-            "data-height": size.height + "mm"
-          });
+    proj.svg = Element.find("svg", proj.element);
+        proj.grid = Element.find("g.grid", proj.element);
+        proj.bbox = SVG.bbox(proj.grid);
+                let { name, data, element, doc, svg, bbox } = proj;
 
-          svg.setAttribute("data-aspect", aspectRatio);
+        let bounds = doc.getBounds();
+        let rect = bounds.rect;
+        let size = new Size(rect);
 
-          //  console.log("setRect", { svg, grid, bbox, bounds, rect });
+currentProj(proj);
 
-          let css = size.toCSS({ width: "mm", height: "mm" });
+        size.mul(doc.type == "brd" ? 2 : 1.5);
+        //    let aspectRatios = [Element.rect(element).aspect(), ];
 
-          //console.log("size.toCSS", css);
-          //  Element.move(svg, Point(0,0), 'relative');
-          //
-          //console.log("setRect", svg);
-          //console.log("setRect", css);
-          //
+        let svgrect = SVG.bbox(proj.svg);
+        proj.aspectRatio = svgrect.aspect();
 
-          Object.assign(svg.style, {
-            "min-width": `${size.width}mm`,
-            "min-height": `${size.height}mm`
-          });
-          Element.setCSS(svg, { left: 0, top: 0, position: "relative" });
-
-          let w, h;
-
-          //h = (100 / aspectRatio).toFixed(4)+'%';
-
-          //   let rect = Element.rect(element);
-
-          //let padding = (100 / aspect).toFixed(4)+'%';
-          //   Element.setCSS(element, { position: 'relative', width: '100%', height, padding: `0 0 0 0` });
-
-          Element.setCSS(svg, { left: 0, top: 0, position: "relative" });
-
-          signal({ ...proj, loaded: true, bbox, element, svg });
-          return signal();
+        Element.attr(element, {
+          "data-filename": proj.name,
+          "data-aspect": proj.aspectRatio,
+          "data-width": size.width + "mm",
+          "data-height": size.height + "mm"
         });
+
+        proj.svg.setAttribute("data-aspect", proj.aspectRatio);
+
+        //  console.log("setRect", { svg, grid, bbox, bounds, rect });
+
+        let css = size.toCSS({ width: "mm", height: "mm" });
+
+        //console.log("size.toCSS", css);
+        //  Element.move(svg, Point(0,0), 'relative');
+        //
+        //console.log("setRect", svg);
+        //console.log("setRect", css);
+        //
+
+        Object.assign(proj.svg.style, {
+          "min-width": `${size.width}mm`,
+          "min-height": `${size.height}mm`
+        });
+        Element.setCSS(proj.svg, { left: 0, top: 0, position: "relative" });
+
+        let w, h;
+
+        Element.setCSS(proj.svg, { left: 0, top: 0, position: "relative" });
+
+        console.log("loadDocument:", proj.svg);
+
+        return proj;
+      };
 
       const chooseDocument = async (...args) => {
         const [e, proj, i] = args;
         const { type } = e;
         const box = Element.findAll(".file")[i];
-        console.log("chooseDocument:", { e, proj, box, i });
+        console.log(" :", { e, proj, box, i });
         if(!proj.loaded) {
           let data = await loadDocument(proj, box);
           proj.loaded = true;
@@ -236,7 +233,7 @@
       const AppStart = (window.onload = async () => {
         Util(globalThis);
 
-        Util.extend(window, {
+        Object.assign(window, {
           BBox,
           chooseDocument,
           classNames,
@@ -266,8 +263,6 @@
           Matrix,
           MatrixTransformation,
           ModifyColors,
-          MouseEvents,
-          MouseHandler,
           Point,
           PointList,
           React,
@@ -288,6 +283,8 @@
 
         let projects = trkl([]);
 
+        trkl.bind(window, { projects });
+
         ListProjects("/files.html").then(response => {
           //console.log("files", response);
           let data = JSON.parse(response);
@@ -297,9 +294,9 @@
           //  CreateSelect(files);
           projects(
             projectFiles.map(({ name }, i) => {
-              let signal = trkl({ percent: NaN });
-              let proj = { name, i, signal };
-              trkl.bind(proj, "data", signal);
+              let data = trkl({ percent: NaN });
+              let proj = { name, i };
+              trkl.bind(proj, { data });
               //console.log("project:", proj);
               return proj;
             })
@@ -358,6 +355,7 @@
             html`
               <${FileList} files=${projects} onActive=${open} onChange=${chooseDocument} />
             `
+
           ],
           Element.find("#preact")
         );

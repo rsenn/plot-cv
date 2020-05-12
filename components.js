@@ -1,5 +1,47 @@
 import { h, html, render, Component, useState, useCallback } from "../modules/htm/preact/standalone.mjs";
 
+export function classNames() {
+  var classes = [];
+
+  for(var i = 0; i < arguments.length; i++) {
+    var arg = arguments[i];
+    if(!arg) continue;
+
+    var argType = typeof arg;
+
+    if(argType === "string" || argType === "number") {
+      classes.push(arg);
+    } else if(Array.isArray(arg) && arg.length) {
+      var inner = classNames.apply(null, arg);
+      if(inner) {
+        classes.push(inner);
+      }
+    } else if(argType === "object") {
+      for(var key in arg) {
+        if(hasOwn.call(arg, key) && arg[key]) {
+          classes.push(key);
+        }
+      }
+    }
+  }
+
+  return classes.join(" ");
+}
+
+export const MouseHandler = callback => e => {
+  if(e.type) {
+    const pressed = e.type.endsWith("down");
+    callback(e, pressed);
+  }
+};
+
+export const MouseEvents = h => ({
+  onMouseDown: h,
+  /*  onBlur: h,*/
+  onMouseOut: h,
+  onMouseUp: h
+});
+
 export const Overlay = ({ className = "overlay", active = false, onPush, text, children, ...props }) => {
   const [pushed, setPushed] = useState(false);
   const events = MouseEvents(
@@ -121,23 +163,24 @@ export const BoardIcon = props => html`
   </svg>
 `;
 
-export const File = ({ name, i, key, signal, data, ...props }) => {
+export const File = ({ name, label, i, key, signal, data, ...props }) => {
   const [loaded, setLoaded] = useState(NaN);
   if(signal) signal.subscribe(data => setLoaded(data.percent));
   const pushHandler = async state => {
     console.log(`loading "${name}"...`);
     await load(name);
   };
-  let id = name || key || i;
-  let style = { width: "20px", height: "20px" };
-  let icon = /brd$/i.test(props.className) ? h(BoardIcon, { style }) : h(SchematicIcon, { style });
+  let id = name || label || key || i;
+  let style = { minWidth: "40px", width: "40px", height: "40px" };
+  let icon = /brd$/i.test(props.className) ? h(BoardIcon, { style }) : h(SchematicIcon, {});
   icon = h("div", { style }, icon);
   if(id) id = (id + "").replace(/[^._A-Za-z0-9]/g, "-");
+  label = label.replace(/\.[^.]*$/, "").replace(/([^\s])-([^\s])/g, "$1 $2");
   //data = signal();
-  //console.log(`File`, { id, data, ...props });
+  // console.log(`File`, { id, data, ...props });
 
   return html`
-              <${Item} className=file id=${id} data-filename="${name}" onPush=${pushHandler} label=${name} icon=${icon} ...${props}>
+              <${Item} className=file id=${id} data-filename="${name}" onPush=${pushHandler} label=${label} icon=${icon} ...${props}>
               <${Progress} className=${!isNaN(loaded) ? "visible" : "hidden"} percent=${loaded} />
               </${Item}>
             `;

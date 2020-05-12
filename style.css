@@ -41,7 +41,7 @@ svg,
 
 .label {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   flex-flow: row nowrap;
 width: 100%;
@@ -50,7 +50,7 @@ width: 100%;
 .hstart, .label {
   justify-content: flex-start;
 }
-.vcenter, .label {
+.vcenter {
   align-items: center;
 }
 .hidden {
