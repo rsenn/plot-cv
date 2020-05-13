@@ -17,8 +17,10 @@
   "author": "Roman Senn <roman.l.senn@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "async-ws": "^0.0.3",
     "deep-diff": "^1.0.2",
     "express": "^4.17.1",
+    "express-ws": "^4.0.0",
     "htm": "^3.0.4",
     "module-alias": "^2.2.2",
     "next": "^9.0.0",
@@ -27,7 +29,8 @@
     "preact": "^10.4.1",
     "preact-render-to-string": "^5.0.6",
     "preact-ssr-prepass": "^1.0.0",
-    "styled-components": "^4.3.2"
+    "styled-components": "^4.3.2",
+    "universal-websocket-client": "^1.0.2"
   },
   "_moduleAliases": {
     "react": "node_modules/preact/compat",
@@ -40,6 +43,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "^7.8.3",
     "@babel/plugin-proposal-export-default-from": "^7.8.3",
+    "@babel/plugin-transform-react-jsx": "^7.9.4",
     "http": "0.0.0",
     "react-dom": "^16.8.6"
   },

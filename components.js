@@ -202,7 +202,6 @@ export const FileList = ({ files, onChange, onActive, ...props }) => {
         itemClass="file hcenter"
         items=${items}
         onChange=${(...args) => {
-          onActive(false);
           onChange(...args);
         }}
         ...${props}

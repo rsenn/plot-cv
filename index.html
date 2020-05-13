@@ -3,9 +3,18 @@
     <title>EAGLE renderer</title>
     <link rel="shortcut icon" type="image/x-icon" sizes="16x16 48x48" href="favicon.ico" />
     <link rel="stylesheet" type="text/css" href="static/style.css" />
-    <script type="module">
-      // prettier-ignore-start
+    <!-- <script type="module" src="./modules/preact/debug/src/debug.js"></script> -->
 
+    <script type="module">
+      /*// Must be the first import
+      let debug = true;
+      if(debug || (!window && process.env.NODE_ENV === "development")) {
+        // Must use require here as import statements are only allowed
+        // to exist at the top of a file.
+        require("preact/debug");
+      }*/
+
+      // prettier-ignore-start
       import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from "./lib/geom/transformation.js";
       import dom from "./lib/dom.js";
       import { iterator, eventIterator } from "./lib/dom/iterator.js";
@@ -95,9 +104,10 @@
         TRBL,
         Tree
       } = { ...dom, ...geom };
-      Object.assign(window, React, dom, geom);
+      Object.assign(window, React, ReactComponent, dom, geom);
 
       let currentProj = trkl.property(window, "project");
+      let open = trkl();
 
       var projectName = "Headphone-Amplifier-ClassAB-alt3";
       var palette = null;
@@ -260,6 +270,9 @@
         if(!proj.loaded) {
           let data = await loadDocument(proj, box);
           proj.loaded = true;
+
+          open(false);
+
           console.log("loaded:", proj);
         }
         return proj.loaded;
@@ -337,8 +350,6 @@
             })
           );
         });
-
-        let open = trkl();
 
         const MakeFitAction = index => () => {
           let container = Element.find("#container");
@@ -446,8 +457,8 @@
 
             Element.setRect(list, rects[1]);
 
-            console.log("rects:", [...rects, screen]);
-            console.log("list:", { pos, wheelPos, zoomVal, zoom });
+            /*   console.log("rects:", [...rects, screen]);
+            console.log("list:", { pos, wheelPos, zoomVal, zoom });*/
           } else {
             Element.setCSS(container, { transform });
 

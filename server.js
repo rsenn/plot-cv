@@ -3,12 +3,21 @@ import path from "path";
 import fs from "fs";
 import Util from "./lib/util.js";
 
+import expressWs from "express-ws";
+
 var app = express();
+expressWs(app);
 const p = path.join(path.dirname(process.argv[1]), ".");
 
 console.log("Serving from", p);
 
 app.use(express.text({ type: "application/xml" }));
+
+app.ws("/", function(ws, req) {
+  ws.on("message", function(msg) {
+    ws.send(msg);
+  });
+});
 
 app.use((req, res, next) => {
   if(!/lib\//.test(req.url)) console.log("Request:", req.url);
