@@ -9,6 +9,7 @@
       import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from "./lib/geom/transformation.js";
       import dom from "./lib/dom.js";
       import { iterator, eventIterator } from "./lib/dom/iterator.js";
+      import geom from "./lib/geom.js";
       import { BBox } from "./lib/geom/bbox.js";
       import { ScrollDisabler } from "./lib/scrollHandler.js";
       import { TouchListener } from "./lib/touchHandler.js";
@@ -77,7 +78,6 @@
         isSize,
         Line,
         Matrix,
-        MatrixProps,
         Node,
         Point,
         PointList,
@@ -94,8 +94,8 @@
         TransitionList,
         TRBL,
         Tree
-      } = dom;
-      Object.assign(window, React, dom);
+      } = { ...dom, ...geom };
+      Object.assign(window, React, dom, geom);
 
       let currentProj = trkl.property(window, "project");
 
