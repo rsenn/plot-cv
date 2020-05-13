@@ -13,8 +13,14 @@ console.log("Serving from", p);
 
 app.use(express.text({ type: "application/xml" }));
 
-app.ws("/", function(ws, req) {
+app.ws("/ws", function(ws, req) {
+  const { connection, client, upgrade, query, socket } = req;
+  const { path, protocol, ip, route, cookies } = req;
+
+  console.log("WebSocket connected:", { path, protocol, ip, query });
+
   ws.on("message", function(msg) {
+    console.log("WebSocket message:", msg);
     ws.send(msg);
   });
 });

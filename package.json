@@ -30,7 +30,8 @@
     "preact-render-to-string": "^5.0.6",
     "preact-ssr-prepass": "^1.0.0",
     "styled-components": "^4.3.2",
-    "universal-websocket-client": "^1.0.2"
+    "universal-websocket-client": "^1.0.2",
+    "websocket-async": "https://github.com/jcao219/websocket-async"
   },
   "_moduleAliases": {
     "react": "node_modules/preact/compat",

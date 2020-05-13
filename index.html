@@ -38,6 +38,7 @@
       import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from "./modules/preact/dist/preact.mjs";
       import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from "./modules/htm/preact/standalone.mjs";
       import components, { Container, Button, FileList } from "./static/components.js";
+      import { WebSocketClient } from "./lib/websocket-client.js";
 
       const React = {
         cloneElement,
@@ -104,7 +105,7 @@
         TRBL,
         Tree
       } = { ...dom, ...geom };
-      Object.assign(window, React, ReactComponent, dom, geom);
+      Object.assign(window, { React, ReactComponent, WebSocketClient }, dom, geom);
 
       let currentProj = trkl.property(window, "project");
       let open = trkl();
@@ -330,8 +331,9 @@
         Object.assign(window, { Element, devtools, dom });
 
         let projects = trkl([]);
+        let socket = trkl();
 
-        trkl.bind(window, { projects });
+        trkl.bind(window, { projects, socket });
 
         ListProjects("/files.html").then(response => {
           //console.log("files", response);
@@ -350,6 +352,34 @@
             })
           );
         });
+
+        let socketURL = Util.makeURL({ location: "/ws", protocol: "ws" });
+
+        (async () => {
+          let ws = (window.socket = new WebSocketClient());
+
+          console.log("New WebSocket:", ws);
+
+          await ws.connect(socketURL);
+          console.log("Connected:", ws.connected);
+
+          ws.send("hello!");
+
+          let data;
+
+          for await (data of  ws) {
+
+            console.log("WebSocket data:", data);
+            // See if there are any more messages received.
+        ws.dataAvailable !== 0;
+        }
+
+          // Close the connection.
+          await ws.disconnect();
+
+                      console.log("WebSocket connected: ", ws.connected);
+
+        })();
 
         const MakeFitAction = index => () => {
           let container = Element.find("#container");
