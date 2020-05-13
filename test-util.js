@@ -1,3 +1,3 @@
-const Util = require("./lib/util.es5.js");
+const Util = require("./lib/util.cjs");
 
-console.log(require("./lib/util.es5.js").default);
+console.log(require("./lib/util.cjs").default);

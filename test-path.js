@@ -1,5 +1,5 @@
 const SvgPath = require("./lib/svg/path.js");
-const { Point, Matrix, SVG, Line, PointList, Polygon } = require("./lib/dom.es5.js");
+const { Point, Matrix, SVG, Line, PointList, Polygon } = require("./lib/dom.cjs");
 const { parseSVG, makeAbsolute } = require("./lib/svg/path-parser.js");
 const { Console } = require("console");
 const PointAtLength = require("point-at-length");

@@ -1,73 +1,120 @@
 {
-	"build_systems":
-	[
-		{
-			"name": "List",
-			"shell_cmd": "ls -l"
-		},
-		{
-			"name": "Build debug",
-			"shell_cmd": "make DEBUG=1 SELECT=1 CC=clang",
-			"working_dir": "${project_path:${folder:${file_path}}}"
-		},
-		{
-			"name": "Rebuild CTags",
-			"shell_cmd": "make .tags"
-		},
-		{
-			"name": "clang-format",
-			"shell_cmd": "clang-format -verbose -style=file -i `find . -name '*.c' -or -name '*.h'`",
-			"working_dir": "${project_path:${folder:${file_path}}}"
-		}
-	],
-	"folders":
-	[
-		{
-			"file_exclude_patterns":
-			[
-				"*.log*",
-				"*.brd","*.sch",
-				".*",
-				"*.tmp",
-				"*~",
-				"*.png",
-				"*.??make",
-				"*.orig",
-				"*.jom",
-				"*.gnu",
-				"*.ninja",
-				"*.stackdump",
-				"*.3",
-				"*.o",
-				"*.lo",
-				"*.d",
-				"*.m4",
-				"*~",
-				"*.pro.user*",
-				"*cfg*.sh",
-				"*.es5.js",
-				"*.sed"
-			],
-			"folder_exclude_patterns":
-			[
-				".*",
-				"build",
-				"inst",
-				"node_modules",
-				"npm"
-			],
-			"path": "."
-		}
-	],
-	"settings":
-	{
-		"debug.configurations":
-		[
-		],
-		"sublimegdb_commandline": "gdb --interpreter=mi ${file}",
-		"sublimegdb_exec_cmd": "-exec-run",
-		"sublimegdb_i_know_how_to_use_gdb_thank_you_very_much": true,
-		"sublimegdb_workingdir": "${folder:${project_path:${file}}}",
-		"tab_size": 2
-	}
+  "build_systems": [
+    {
+      "name": "List",
+      "shell_cmd": "ls -l"
+    },
+    {
+      "name": "Build debug",
+      "shell_cmd": ". ./cfg.sh; TYPE=Debug cfg && make -C \\$builddir",
+      "working_dir": "${project_path}"
+    },
+    {
+      "name": "Rebuild CTags",
+      "shell_cmd": "make .tags"
+    },
+    {
+      "name": "clang-format",
+      "shell_cmd": "clang-format -verbose -style=file -i `find . -name '*.c' -or -name '*.h'`",
+      "working_dir": "${project_path:${folder:${file_path}}}"
+    },
+    {
+      "name": "prettier",
+      "shell_cmd": "yarn run format",
+      "working_dir": "${project_path:${folder:${file_path}}}"
+    },
+    { "name": "prettier ${file_path}", "shell_cmd": "WIDTH=400 bash scripts/prettier.sh '${file}'", "working_dir": "${project_path:${folder:${file_path}}}" }
+  ],
+  "folders": [
+    {
+      "file_exclude_patterns": [
+        //"*.so", "*.orig", "*.log", "*.jshintrc",
+        "*.vcxproj",
+        "*.filters",
+        //  "*.json",
+        "*.tsbuildinfo",
+        "*.cjs",
+        "*.lbr",
+        "*.flow",
+        "*.o",
+        "*.yml",
+        //"*.markdown",
+        //"*.mjs",
+        //"*.txt",
+        "*.map",
+        //"*.jsx", "*.d",
+        //"*.wasm",
+        "*.texi",
+        "*.plist",
+        "*.pdf",
+        "*.pbxproj",
+        "*.patch",
+        "*.pack",
+        "*.opts",
+        "*.nvmrc",
+        "*.md~",
+        "*.m",
+        "*.ls",
+        "*.lib",
+        "*.idx",
+        "*.gitattributes",
+        "*.git",
+        "*.conf",
+        "*.check_cache",
+        //"*.svg",
+        "*.sample",
+        //"*.css", 
+        //"*.sh", "*.jst",
+        //"*.cmake",
+        "*.tsx",
+        "*.storyboard",
+        "*.sed",
+        "*.nycrc",
+        "*.marks",
+        "*.gitignore",
+        "*.editorconfig",
+        //"*.html", "*.eslintrc",
+        "*.cpp",
+        "*.un~",
+        "*.out",
+        "*.hpp",
+        "*.gitkeep",
+        "*.DS_Store",
+        "*.diff",
+        "*.coffee",
+        "*.BSD",
+        "*.a",
+        "*.internal",
+        "*.includecache",
+        "*.pem",
+        "*.mm",
+        "*.lock",
+        "*.def",
+        "*.bnf",
+        "*.bin",
+        "*.1",
+        "*.png",
+        "*.make",
+        "*.npmignore",
+        "*.c",
+        //"*.h",
+        //"*.ttf", "*.tmp", "*.snap", "*.pub", "*.babelrc",
+        "*.sch",
+        "*.brd",
+        "*.priv",
+        "*.eslintignore",
+        "*.ts"
+      ],
+      "folder_exclude_patterns": [".*", "build", "inst", "node_modules", "npm", ".next", "*.next/*"],
+      "path": "."
+    }
+  ],
+  "settings": {
+    "debug.configurations": [],
+    "sublimegdb_commandline": "gdb --interpreter=mi ${file}",
+    "sublimegdb_exec_cmd": "-exec-run",
+    "sublimegdb_i_know_how_to_use_gdb_thank_you_very_much": true,
+    "sublimegdb_workingdir": "${folder:${project_path:${file}}}",
+    "tab_size": 2
+  }
 }

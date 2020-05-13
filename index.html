@@ -5,19 +5,12 @@
     <link rel="stylesheet" type="text/css" href="static/style.css" />
     <script type="module">
       // prettier-ignore-start
-      import { isPoint, Point } from "./lib/geom/point.js";
-      import { PointList } from "./lib/geom/pointList.js";
-      import { isRect, Rect } from "./lib/geom/rect.js";
-      import { isSize, Size } from "./lib/geom/size.js";
-      import { isLine, Line } from "./lib/geom/line.js";
+
       import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from "./lib/geom/transformation.js";
-      import dom, { Element, isElement } from "./lib/dom.js";
-      import { Matrix } from "./lib/geom/matrix.js";
-      import { SVG } from "./lib/dom/svg.js";
+      import dom from "./lib/dom.js";
       import { iterator, eventIterator } from "./lib/dom/iterator.js";
       import { BBox } from "./lib/geom/bbox.js";
       import { ScrollDisabler } from "./lib/scrollHandler.js";
-      import { RGBA, HSLA, CSS } from "./lib/dom.js";
       import { TouchListener } from "./lib/touchHandler.js";
       import { parseSchematic } from "./lib/eagle/parser.js";
       import { EagleDocument } from "./lib/eagle/document.js";
@@ -36,7 +29,7 @@
       import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from "./modules/htm/preact/standalone.mjs";
       import components, { Container, Button, FileList } from "./static/components.js";
 
-      const React = window.React = {
+      const React = {
         cloneElement,
         Component,
         createContext,
@@ -59,9 +52,52 @@
         useRef,
         useState
       };
+      const {
+        Align,
+        Anchor,
+        CSS,
+        CSSTransformSetters,
+        Element,
+        ElementPosProps,
+        ElementRectProps,
+        ElementRectProxy,
+        ElementSizeProps,
+        ElementTransformation,
+        ElementWHProps,
+        ElementXYProps,
+        HSLA,
+        isElement,
+        isHSLA,
+        isLine,
+        isMatrix,
+        isNumber,
+        isPoint,
+        isRect,
+        isRGBA,
+        isSize,
+        Line,
+        Matrix,
+        MatrixProps,
+        Node,
+        Point,
+        PointList,
+        Polyline,
+        ReactComponent,
+        Rect,
+        Renderer,
+        RGBA,
+        Select,
+        Size,
+        SVG,
+        Timer,
+        Transition,
+        TransitionList,
+        TRBL,
+        Tree
+      } = dom;
+      Object.assign(window, React, dom);
 
-              let currentProj = trkl.property(window, "project");
-
+      let currentProj = trkl.property(window, "project");
 
       var projectName = "Headphone-Amplifier-ClassAB-alt3";
       var palette = null;
@@ -109,20 +145,20 @@
         return toXML(x);
       };
 
-      const LoadFile = async (filename) => {
-          let xml = await fetch(`/static/${filename}`).then(async res => {
-            return await (await res).text();
-          });
-          console.log("xml: ", xml.substring(0, 100));
-          //let dom = new DOMParser().parseFromString(xml, 'application/xml');
+      const LoadFile = async filename => {
+        let xml = await fetch(`/static/${filename}`).then(async res => {
+          return await (await res).text();
+        });
+        console.log("xml: ", xml.substring(0, 100));
+        //let dom = new DOMParser().parseFromString(xml, 'application/xml');
 
-          let doc = new EagleDocument(xml);
+        let doc = new EagleDocument(xml);
 
-          if(/\.brd$/.test(filename)) window.board = doc;
-          if(/\.sch$/.test(filename)) window.schematic = doc;
+        if(/\.brd$/.test(filename)) window.board = doc;
+        if(/\.sch$/.test(filename)) window.schematic = doc;
 
-          return doc;
-        };
+        return doc;
+      };
 
       const SaveSVG = (window.save = async function save(filename = projectName) {
         let body = ElementToXML(window.svg);
@@ -157,24 +193,23 @@
         proj.element = Element.create("div", { id: "fence", style: { position: "relative", "data-name": proj.name, border: "1px dotted black" } }, Element.find("#container"));
         //let svg = Element.create('svg', { viewBox:  } , element);
 
-let testRender = new EagleRenderer(proj.doc, React.create);
+        proj.renderer = EagleRenderer.create(proj.doc, React.create);
 
- let svgXml = testRender.render();
-console.log("testRender:",svgXml);
+        let svgXml = proj.renderer.render(proj.doc);
+        console.log("testRender:", svgXml);
 
         window.renderer = renderDocument(proj.doc, proj.element);
 
-
-    proj.svg = Element.find("svg", proj.element);
+        proj.svg = Element.find("svg", proj.element);
         proj.grid = Element.find("g.grid", proj.element);
         proj.bbox = SVG.bbox(proj.grid);
-                let { name, data, element, doc, svg, bbox } = proj;
+        let { name, data, element, doc, svg, bbox } = proj;
 
         let bounds = doc.getBounds();
         let rect = bounds.rect;
         let size = new Size(rect);
 
-currentProj(proj);
+        currentProj(proj);
 
         size.mul(doc.type == "brd" ? 2 : 1.5);
         //    let aspectRatios = [Element.rect(element).aspect(), ];
@@ -355,7 +390,6 @@ currentProj(proj);
             html`
               <${FileList} files=${projects} onActive=${open} onChange=${chooseDocument} />
             `
-
           ],
           Element.find("#preact")
         );

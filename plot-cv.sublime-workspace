@@ -96,29 +96,29 @@
 	"buffers":
 	[
 		{
-			"contents": "testfn\n(acc, file) =>\n (err, origin) =>\n () =>\n () =>\ndumpFile\nprintAst\nmain\n node =>\n([key, value]) =>\n (a, b) =>\n({ comment, node, pos, len, ...item }) =>\n (a, b) =>\n (a, b) =>\n([k, v]) =>\nfinish\ns =>",
+			"contents": "Element\nstatic wrap(e)\n (k, fn) =>\nstatic create()\nobj =>\nstatic walkUp(elem, pred = e => true)\npred\nfn\nemit\nstatic walk(elem, fn, accu = {})\npredicate\nstatic *childIterator(elem)\nstatic toObject(elem, opts = { children: true })\nc =>\nstatic toCommand(elem, opts = {})\nk =>\ne =>\nstatic findAll(arg, parent)\nstatic attr(e, attrs_or_name)\n(acc, name) =>\nstatic getRect(elem)\nstatic rect(elem, options = {})\nstatic setRect(element, rect, opts = {})\nstatic position(element, pos = \"absolute\")\nstatic move(element, point, pos)\ngetValue\nstatic move_relative(element, to)\n    move\n.cancel\n.jump\nstatic resize(element, ...dimensions)\nstatic getEdgesXYWH({ x, y, w, h })\nstatic getEdge({ x, y, w, h }, which)\nstatic getPointsXYWH({ x, y, w, h })\nstatic cumulativeOffset(element, relative_to = null)\nstatic getTRBL(element, prefix = \"\")\npos =>\nstatic setTRBL(element, trbl, prefix = \"margin\")\n(acc, pos) =>\nstatic setCSS(element, prop, value)\n.subscribe\nstatic getCSS(element, property = undefined, receiver = null)\nk =>\nreceiver\nget: function()\n([k, v]) =>\n(ret, key) =>\nstatic xpath(elt, relative_to = null)\nstatic selector(elt, opts = {})\nstatic depth(elem, relative_to = document.body)\nstatic dump(elem)\n    dumpElem\nattr =>\nname =>\n (e, a, r, d) =>\npred\n function(elem)\nstatic prev_sibling(sib)\nstatic next_sibling(sib)\nstatic idx(elt)\nstatic name(elem)\nstatic unique(elem, opts = {})\nstatic factory(delegate = {}, parent = null)\n.append_to\n.create\n.setattr\n.setcss\n.bound_factory\nstatic remove(element)\nstatic isat(e, x, y, options)\nstatic at(x, y, options)\n e =>\n (e, depth) =>\n(resolve, reject) =>\n (e, accu, root, depth) =>\nstatic transition(element, css, time, easing = \"linear\", callback = null)\n(resolve, reject) =>\ntrun\ntend\ncancel\nElement.children\nElement.recurse\nElement.edges\nElement.margin\nElement.padding\nElement.border\n isElement",
 			"settings":
 			{
-				"buffer_size": 202,
+				"buffer_size": 1837,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "test-ecmascript.js",
+			"file": "index.html",
 			"settings":
 			{
-				"buffer_size": 4281,
+				"buffer_size": 14948,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "index.html",
+			"file": "components.js",
 			"settings":
 			{
-				"buffer_size": 17705,
-				"encoding": "UTF-8",
+				"buffer_size": 9837,
 				"line_ending": "Unix"
 			}
 		},
@@ -126,15 +126,103 @@
 			"file": "lib/dom/element.js",
 			"settings":
 			{
-				"buffer_size": 27047,
+				"buffer_size": 27977,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "style.css",
+			"file": "lib/eagle/element.js",
 			"settings":
 			{
-				"buffer_size": 3722,
+				"buffer_size": 8094,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/common.js",
+			"settings":
+			{
+				"buffer_size": 9610,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "import Util from \"../util.js\";\n\nexport function EagleNodeMap(list, key) {\n  this.list = list;\n  this.key = key;\n}\n\nObject.defineProperties(EagleNodeMap.prototype, {\n  list: { writable: true, configurable: true, enumerable: false, value: null },\n  key: { writable: true, configurable: true, enumerable: false, value: null }\n});\n\nObject.assign(EagleNodeMap.prototype, {\n  at(pos) {\n    return this.list[pos];\n  },\n  get(name, key = this.key) {\n    const list = this.list.raw;\n    const idx = list.findIndex(item => item.attributes[key] == name);\n    return idx == -1 ? null : this.list[idx];\n  },\n  set(name, value) {\n    const list = this.list.raw;\n    const idx = list.findIndex(item => item.attributes[this.key] == name);\n\n    if(\"raw\" in value) value = value.raw;\n    //console.log(\"write map property:\", idx, value);\n\n    if(idx != -1) list[idx] = value;\n    else list.push(value);\n  },\n  keys(key = this.key) {\n    return (this.list.raw || this.list).map(item => item.attributes[key]);\n  },\n  size(key = this.key) {\n    return (this.list.raw || this.list).length;\n  },\n  values() {\n    return [...this.list];\n  },\n  entries(key = this.key) {\n    return this.keys(key).map((key, i) => [key + \"\", this.list[i]]);\n  },\n  map(key = this.key) {\n    return new Map(this.entries(key));\n  },\n  toObject(key = this.key) {\n    return Object.fromEntries(this.entries(key));\n  }\n});\n\nexport function makeEagleNodeMap(list, key = \"name\") {\n  const Ctor = EagleNodeMap;\n\n  const instance = new Ctor(list, key);\n\n  return new Proxy(instance, {\n    get(target, prop, receiver) {\n      let index;\n\n      if(typeof prop == \"string\") {\n        if(Util.isNumeric(prop)) return instance.list[prop];\n        if(prop == \"ref\" || prop == \"raw\") return instance.list[prop];\n        if(prop == \"instance\") return instance;\n        if(prop == \"length\" || prop == \"size\") return (instance.list.raw || instance.list).length;\n      }\n      if(prop == Symbol.iterator) return instance.entries()[Symbol.iterator];\n\n      if((index = instance.keys().indexOf(prop)) != -1) return instance.list[index];\n      if(typeof instance[prop] == \"function\") return instance[prop].bind(instance);\n\n      return Reflect.get(target, prop, receiver);\n    },\n    getPrototypeOf(target) {\n      return Reflect.getPrototypeOf(instance);\n    } /*,\n    ownKeys(target) {\n      let keys = instance.keys();\n\n      return keys;\n    }*/\n  });\n}\n",
+			"file": "lib/eagle/nodeMap.js",
+			"file_size": 2392,
+			"file_write_time": 132337974847088767,
+			"settings":
+			{
+				"buffer_size": 2392,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/nodeList.js",
+			"settings":
+			{
+				"buffer_size": 4268,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/document.js",
+			"settings":
+			{
+				"buffer_size": 2938,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/renderer.js",
+			"settings":
+			{
+				"buffer_size": 31969,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "l#ifndef LINE_H\n#define LINE_H\n\n#include <opencv2/core/core.hpp>\n#include <cmath>\n#include <iostream>\n#include <type_traits>\n#include <exception>\n#include <string>\n#include <functional>\n#include <array>\n#include \"psimpl.h\"\n\ntemplate<class T> class LineEnd;\n\ntemplate<class T> class Line {\npublic:\n  typedef cv::Point_<T> point_type;\n  typedef Line<T> line_type;\n  typedef T value_type;\n\n  point_type a, b;\n\n  Line(const point_type& p1, const point_type& p2) : a(p1), b(p2) {}\n\n  Line(T x1, T y1, T x2, T y2) : a(x1, y1), b(x2, y2) {}\n\n  T length() const;\n\n  point_type at(double sigma) const;\n\n  point_type center() const;\n  point_type\n  start() const {\n    return a;\n  }\n  point_type\n  end() const {\n    return b;\n  }\n\n  point_type\n  slope() const {\n    point_type diff = b - a;\n    return diff;\n  }\n\n  const point_type&\n  pivot() const {\n    return a;\n  }\n\n  const point_type&\n  to() const {\n    return b;\n  }\n\n  void\n  swap() {\n    point_type temp = a;\n    a = b;\n    b = temp;\n  }\n\n  point_type moment() const;\n\n  double angle() const;\n\n  double\n  distance(const point_type& p) const {\n    return std::sqrt(segment_distance2(&a.x, &b.x, &p.x));\n  }\n\n  std::pair<T, size_t> endpoint_distances(const Line<T>& l) const;\n\n  std::pair<T, T> endpoint_distances(const cv::Point_<T>& p) const;\n\n  T endpoint_distance(const cv::Point_<T>& p, size_t* point_index = nullptr) const;\n\n  template<class OtherT>\n  std::pair<line_type&, line_type&>\n  nearest(const Line<OtherT>& l) const {\n    return std::make_pair<T, T>(distance(l.a), distance(l.b));\n  }\n\n  template<class OtherT>\n  bool\n  operator==(const Line<OtherT>& other) const {\n    return other.a == this->a && other.b == this->b;\n  }\n\n  T min_distance(Line<T>& l2, size_t* point_index = nullptr) const;\n\n  T nearest_end(Line<T>& l2, LineEnd<T>& end) const;\n\n  T\n  angle_diff(const Line<T>& l) const {\n    return l.angle() - angle();\n  }\n\n  std::array<cv::Point_<T>, 2>\n  pointsArray() const {\n    std::array<cv::Point_<T>, 2> ret = {a, b};\n    return ret;\n  }\n\n  std::vector<cv::Point_<T>>\n  points() const {\n    std::vector<cv::Point_<T>> ret{a, b};\n    return ret;\n  }\n\n  /**\n   * Calculates intersect of two lines if exists.\n   *\n   * @param line1 First line.\n   * @param line2 Second line.\n   * @param intersect Result intersect.\n   * @return True if there is intersect of two lines, otherwise false.\n   */\n  bool intersect(const Line<T>& line2, cv::Point_<T>* pt = nullptr) const;\n\n  template<class OtherValueT> bool operator<(const Line<OtherValueT>& l2) const;\n\n  std::string str(const std::string& comma = \",\", const std::string& sep = \"|\") const;\n};\n\ntemplate<class T> struct line_list {\n  typedef T coord_type;\n  typedef Line<T> line_type;\n  typedef std::vector<line_type> type;\n};\ntypedef line_list<float> line4f_list;\ntypedef line_list<int> line4i_list;\ntypedef line_list<double> line4d_list;\n\nfloat point_distance(const cv::Point2f& p1, const cv::Point2f& p2);\ndouble point_distance(const cv::Point2d& p1, const cv::Point2d& p2);\nint point_distance(const cv::Point& p1, const cv::Point& p2);\n\ntemplate<class T>\ninline std::ostream&\noperator<<(std::ostream& os, const Line<T>& line) {\n  os << \"Line(\" << line.a << \",\" << line.b << \")\";\n\n  // os << ' ';\n  return os;\n}\n\ntemplate<class T>\ndouble\nangle_from_moment(const cv::Point_<T>& point) {\n  return std::atan2(point.x, point.y);\n}\n\ntemplate<class InputIterator>\ninline typename std::iterator_traits<InputIterator>::value_type\nsegment_distance2(InputIterator s1, InputIterator s2, InputIterator p) {\n  typedef typename std::iterator_traits<InputIterator>::value_type value_type;\n  return psimpl::math::segment_distance2<2, InputIterator>(s1, s2, p);\n}\n\ntemplate<class T>\nvoid\nmoment_from_angle(double phi, cv::Point_<T>& point) {\n  point.x = std::sin(phi);\n  point.y = std::cos(phi);\n}\n\ntemplate<class T, typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type* = nullptr>\ninline std::string\nto_string(const T& t, size_t n_pad = 3, char ch_pad = ' ') {\n  std::ostringstream oss;\n  oss << std::fixed << t;\n  std::string ret(oss.str());\n\n  if(ret.find('.') != std::string::npos) {\n    while(ret.back() == '0') ret.pop_back();\n    if(ret.back() == '.')\n      ret.pop_back();\n  }\n  if(ret.length() < n_pad)\n    ret.insert(ret.begin(), n_pad - ret.length(), ch_pad);\n  else if(ret.length() > n_pad) {\n    size_t i = ret.find('.');\n    if(i != std::string::npos) {\n      ret.resize(std::max(i, n_pad));\n    }\n  }\n\n  return ret;\n}\n/*\ntemplate<class T>\ninline std::string\nto_string(const cv::Point_<T>& pt, size_t n_pad = 3, char ch_pad = '0') {\n  std::ostringstream oss;\n  oss << to_string(pt.x) << ',' << to_string(pt.y);\n  return oss.str();\n}\n*/\ntemplate<class T, class Char = char>\ninline std::string\nto_string(const Line<T>& line) {\n  std::string ret;\n\n  ret += \"Line(\";\n  ret += to_string(line.a);\n  ret += ',';\n  ret += to_string(line.b);\n  ret += \")\";\n\n  return ret;\n}\n\ntemplate<class T>\ninline std::string\nto_string(const typename line_list<T>::type& lines) {\n  typedef typename std::vector<Line<T>>::const_iterator iterator_type;\n  typedef Line<T> value_type;\n  std::string ret;\n  iterator_type end = lines.cend();\n  for(iterator_type it = lines.cbegin(); it != end; ++it) {\n    if(ret.length())\n      ret += \" \";\n    ret += to_string<T>(*it);\n  }\n  return ret;\n}\n\ntemplate<class Value>\ninline std::ostream&\noperator<<(std::ostream& os, const typename line_list<Value>::type& c) {\n  typedef typename line_list<Value>::type::const_iterator iterator_type;\n  iterator_type end = c.cend();\n  int i = 0;\n  for(iterator_type it = c.cbegin(); it != end; ++it) {\n    if(i++ > 0)\n      os << \" \";\n    os << to_string(*it);\n  }\n  return os;\n}\n/*\ntemplate<class T>\ninline std::ostream&\noperator<<(std::ostream& os, const cv::Point_<T>& p) {\n  os << \"{x:\" << p.x << \",y:\" << p.y << \"}\";\n  return os;\n}*/\n\ntemplate<class ContainerT>\n\ntypename ContainerT::iterator\nfind_nearest_line(typename ContainerT::value_type& line, ContainerT& lines) {\n  typedef typename ContainerT::iterator iterator_type;\n  typedef typename ContainerT::value_type line_type;\n  typedef typename line_type::value_type value_type;\n  value_type distance = 1e10;\n  iterator_type end = lines.end();\n  iterator_type ret = end;\n\n  for(iterator_type it = lines.begin(); it != end; ++it) {\n    value_type d = (*it).min_distance(line);\n    if(*it == line)\n      continue;\n    if(d < distance) {\n      distance = d;\n      ret = it;\n    }\n  }\n  return ret;\n}\ntemplate<class ContainerT>\ntypename ContainerT::iterator\nfind_nearest_line(typename ContainerT::iterator& line, ContainerT& lines) {\n  typedef typename ContainerT::iterator iterator_type;\n  typedef typename ContainerT::value_type point_type;\n  typedef typename point_type::value_type value_type;\n  value_type distance = 1e10;\n  iterator_type index = lines.end();\n  iterator_type end = lines.end();\n\n  for(iterator_type it = lines.begin(); it != end; ++it) {\n    value_type d = (*it).min_distance(*line);\n    if(std::distance(line, it) == 0)\n      continue;\n    if(d < distance) {\n      distance = d;\n      index = it;\n    }\n  }\n  return index;\n}\n/*\ntemplate <class InputIterator>\nInputIterator\nfind_nearest_line(const InputIterator& line, InputIterator from, InputIterator\nto) { typedef InputIterator iterator_type; typedef typename\nstd::iterator_traits<InputIterator>::value_type point_type; typedef typename\npoint_type::value_type value_type; value_type distance = 1e10; iterator_type\nindex = to;\n\n  for(iterator_type it = from; it != to; ++it) {\n    value_type d = (*it).min_distance(*line);\n    if(std::distance(line, it) == 0)\n      continue;\n    if(d < distance) {\n      distance = d;\n      index = it;\n    }\n  }\n  return index;\n}\n*/\n\ntemplate<class T> class LineEnd {\n  Line<T>* line;\n  size_t point_index;\n\nprotected:\n  cv::Point_<T>*\n  ptr() {\n    return line == nullptr ? nullptr : point_index > 0 ? &line->b : &line->a;\n  }\n  const cv::Point_<T>*\n  const_ptr() const {\n    return line == nullptr ? nullptr : point_index > 0 ? &line->b : &line->a;\n  }\n\npublic:\n  LineEnd() {}\n  LineEnd(Line<T>& l, size_t pt_i) : line(&l), point_index(pt_i) {}\n  ~LineEnd() {}\n\n  cv::Point_<T>&\n  point() {\n    return *ptr();\n  }\n  cv::Point_<T> const&\n  point() const {\n    return *const_ptr();\n  }\n\n  operator cv::Point_<T>() const { return point(); }\n};\n\nstruct LineHierarchy {\n  int prevSibling;\n  int nextSibling;\n  int prevParallel;\n  int nextParallel;\n};\n\ntemplate<class T>\ninline T\nLine<T>::length() const {\n  point_type diff = a - b;\n  return std::sqrt(diff.x * diff.x + diff.y * diff.y);\n}\n\ntemplate<class T>\ninline typename Line<T>::point_type\nLine<T>::at(double sigma) const {\n  point_type ret;\n  ret.x = (a.x + b.x) / 2;\n  ret.y = (a.y + b.y) / 2;\n  return ret;\n}\n\ntemplate<class T>\ninline typename Line<T>::point_type\nLine<T>::center() const {\n  return point_type((a.x + b.x) / 2, (a.y + b.y) / 2);\n}\n\ntemplate<class T>\ninline typename Line<T>::point_type\nLine<T>::moment() const {\n  point_type diff(slope());\n  double len = length();\n  return point_type(diff.x / len, diff.y / len);\n}\n\ntemplate<class T>\ninline double\nLine<T>::angle() const {\n  point_type diff(slope());\n  double phi = angle_from_moment(diff);\n  // double len = length();\n  // point_type mom, norm(moment());\n  //  point_type mom;\n  // moment_from_angle(phi, mom);\n  // std::cout << \"angle \" << (phi *180/M_PI) << \" x=\" << norm.x << \",y=\" <<\n  // norm.y << \" x=\" << mom.x << \",y=\" << mom.y << std::endl;\n  return phi;\n}\n\ntemplate<class T>\ninline std::pair<T, T>\nLine<T>::endpoint_distances(const cv::Point_<T>& p) const {\n  return std::make_pair<T, T>(point_distance(a, p), point_distance(b, p));\n}\n\ntemplate<class T>\ninline std::pair<T, unsigned long int>\nLine<T>::endpoint_distances(const Line<T>& l) const {\n  size_t offs1, offs2;\n  std::pair<T, T> dist(endpoint_distance(l.a, &offs1), endpoint_distance(l.b, &offs2));\n  size_t offs = dist.first < dist.second ? offs1 : offs2;\n  return std::make_pair(dist.first < dist.second ? dist.first : dist.second, offs);\n}\n\ntemplate<class T>\ninline T\nLine<T>::endpoint_distance(const cv::Point_<T>& p, size_t* point_index) const {\n  T dist1 = point_distance(a, p), dist2 = point_distance(b, p);\n  T ret = std::min(dist1, dist2);\n  if(point_index)\n    *point_index = ret;\n\n  return ret;\n}\n\ntemplate<class T>\ninline T\nLine<T>::min_distance(Line<T>& l2, size_t* point_index) const {\n  std::pair<T, size_t> dist = endpoint_distances(l2);\n  /* if(intersect(l2))\n   return 0;*/\n  if(point_index)\n    *point_index = dist.second;\n\n  return dist.first;\n}\n\ntemplate<class T>\ninline T\nLine<T>::nearest_end(Line<T>& l2, LineEnd<T>& end) const {\n  size_t point_index;\n  T dist = min_distance(l2, &point_index);\n  end = LineEnd<T>(l2, point_index);\n  return dist;\n}\n\ntemplate<class T>\ninline bool\nLine<T>::intersect(const Line<T>& line2, cv::Point_<T>* pt) const {\n  point_type x = line2.pivot() - pivot();\n  point_type d1 = slope();\n  point_type d2 = line2.slope();\n  float inter = d1.x * d2.y - d1.y * d2.x;\n  if(fabs(inter) < 1e-8) {\n    return false;\n  }\n  double t1 = (x.x * d2.y - x.y * d2.x) / inter;\n  if(pt)\n    *pt = pivot() + d1 * t1;\n\n  return true;\n}\n\ntemplate<class T, class Pred>\ninline std::vector<int>\nfilter_lines(const std::vector<T>& c, bool (&pred)(const Line<T>&, size_t)) {\n  return filter_lines<typename line_list<T>::type::iterator, bool(Line<T>&, size_t)>(c.begin(), c.end(), pred);\n}\n\ntemplate<class ValueT, class InputIterator>\ninline std::vector<typename std::iterator_traits<InputIterator>::value_type::value_type>\nangle_diffs(Line<ValueT>& line, InputIterator from, InputIterator to) {\n  typedef InputIterator iterator_type;\n  typedef typename std::iterator_traits<InputIterator>::value_type point_type;\n  typedef typename point_type::value_type value_type;\n  typedef std::vector<value_type> ret_type;\n\n  ret_type ret;\n  value_type distance = 1e10;\n  iterator_type index = to;\n\n  for(iterator_type it = from; it != to; ++it) {\n    value_type d;\n\n    ret.push_back((*it).angle_diff(line));\n  }\n  return ret;\n}\n\ntemplate<class InputIterator>\ninline std::vector<float>\nline_distances(typename std::iterator_traits<InputIterator>::value_type& line, InputIterator from, InputIterator to) {\n  typedef InputIterator iterator_type;\n  typedef typename std::iterator_traits<InputIterator>::value_type line_type;\n  typedef typename line_type::value_type value_type;\n  typedef std::vector<float> ret_type;\n\n  ret_type ret;\n  value_type distance = 1e10;\n  iterator_type index = to;\n\n  for(InputIterator it = from; it != to; ++it) {\n    /* if(line == *it)\n       continue;*/\n    ret.push_back(it->min_distance(line));\n  }\n  return ret;\n}\n\ntemplate<class InputIterator, class Pred>\ninline std::vector<int>\nfilter_lines(InputIterator from, InputIterator to, Pred predicate) {\n  typedef InputIterator iterator_type;\n  typedef typename std::iterator_traits<InputIterator>::value_type value_type;\n  std::vector<int> ret;\n  size_t index = 0;\n  for(iterator_type it = from; it != to; ++it) {\n\n    if(predicate(*it, index++)) {\n\n      std::size_t index = std::distance(from, it);\n      ret.push_back(index);\n    }\n  }\n  return ret;\n}\n\ntemplate<class T> class PredicateTraits {\npublic:\n  typedef bool type(const Line<T>&, size_t);\n  typedef std::function<bool(const Line<T>&, size_t)> function;\n};\n\ntemplate<class T>\ntemplate<class OtherValueT>\ninline bool\nLine<T>::operator<(const Line<OtherValueT>& l2) const {\n  cv::Point2f a, b;\n  a = center();\n  b = l2.center();\n  return a.y < b.y ? true : a.x < b.x;\n}\n\ntemplate<class T>\ninline std::string\nLine<T>::str(const std::string& comma, const std::string& sep) const {\n  point_type p = pivot(), s = slope();\n  std::ostringstream os;\n  // os << '[';\n  os << to_string(a.x) << comma << to_string(a.y);\n  os << sep << to_string(b.x);\n  os << comma << to_string(b.y);\n  os << '=' << to_string(length());\n  // os << '@' << to_string(floor(angle()*180/ M_PI));\n  // os << ']';\n  return os.str();\n}\n\n#endif // defined LINE_H\n",
+			"file": "src/line.h",
+			"file_size": 13941,
+			"file_write_time": 132336864831623614,
+			"settings":
+			{
+				"buffer_size": 13942,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "import { Point, isPoint } from \"./point.js\";\nimport { Rect } from \"./rect.js\";\nimport Util from \"../util.js\";\n\nexport function Line(x1, y1, x2, y2) {\n  let obj;\n  let arg;\n  let args = [...arguments];\n  let ret;\n  if(args.length >= 4 && args.every(arg => !isNaN(parseFloat(arg)))) {\n    arg = { x1, y1, x2, y2 };\n  } else if(args.length == 1) {\n    arg = args[0];\n  }\n   obj = this || { ...arg };\n\n  if(obj === null) \n      obj = Object.create(Line.prototype);\n    \n    if(Object.getPrototypeOf(obj) !== Line.prototype)\n      Object.setPrototypeOf(obj, Line.prototype);\n\n    if(!('a' in obj) || !('b' in obj))\n      throw new Error(\"no a/b prop\");\n\n\n  if(arg && arg.x1 !== undefined && arg.y1 !== undefined && arg.x2 !== undefined && arg.y2 !== undefined) {\n    const { x1, y1, x2, y2 } = arg;\n    obj.x1 = parseFloat(x1);\n    obj.y1 = parseFloat(y1);\n    obj.x2 = parseFloat(x2);\n    obj.y2 = parseFloat(y2);\n    ret = 1;\n  } else if(isPoint(args[0]) && isPoint(args[1])) {\n    obj.x1 = args[0].x;\n    obj.y1 = args[0].y;\n    obj.x2 = args[1].x;\n    obj.y2 = args[1].y;\n\n    /*    obj.x1 = parseFloat(args[0].x);\n    obj.y1 = parseFloat(args[0].y);\n    obj.x2 = parseFloat(args[1].x);\n    obj.y2 = parseFloat(args[1].y);*/\n    ret = 2;\n  } else if(arg && arg.length >= 4 && arg.slice(0, 4).every(arg => !isNaN(parseFloat(arg)))) {\n    obj.x1 = typeof x === \"number\" ? x : parseFloat(x);\n    obj.y1 = typeof y === \"number\" ? y : parseFloat(y);\n    obj.x2 = typeof w === \"number\" ? w : parseFloat(w);\n    obj.y2 = typeof h === \"number\" ? h : parseFloat(h);\n    ret = 4;\n  } else {\n    ret = 0;\n  }\n  if(!isLine(obj)) console.log(\"ERROR: is not a line: \", [...arguments]);\n\n  if(this !== obj) return obj;\n}\n\nexport const isLine = obj => [\"x1\", \"y1\", \"x2\", \"y2\"].every(prop => obj[prop] !== undefined);\n\nObject.defineProperty(Line.prototype, \"a\", { value: new Point(), enumerable: true });\nObject.defineProperty(Line.prototype, \"b\", { value: new Point(), enumerable: true });\n\nLine.prototype.intersect = function(other) {\n  const ma = (this[0].y - this[1].y) / (this[0].x - this[1].x);\n  const mb = (other[0].y - other[1].y) / (other[0].x - other[1].x);\n  if(ma - mb < Number.EPSILON) return undefined;\n  return new Point({\n    x: (ma * this[0].x - mb * other[0].x + other[0].y - this[0].y) / (ma - mb),\n    y: (ma * mb * (other[0].x - this[0].x) + mb * this[0].y - ma * other[0].y) / (mb - ma)\n  });\n};\nObject.defineProperty(Line.prototype, 0, {\n  get: function() {\n    return this.a;\n  },\n  set: function(v) {\n    this.a.x = v.x;\n    this.a.y = v.y;\n  },\n  enumerable: false\n});\nObject.defineProperty(Line.prototype, 1, {\n  get: function() {\n    return this.b;\n  },\n  set: function(v) {\n    this.b.x = v.x;\n    this.b.y = v.y;\n  },\n  enumerable: false\n});\nObject.defineProperty(Line.prototype, \"x1\", {\n  get: function() {\n    return this.a && this.a.x;\n  },\n  set: function(v) {\n    if(!this.a)\n      Object.defineProperty(this, \"a\", {\n        value: new Point(),\n        enumerable: false\n      });\n    this.a.x = v;\n  },\n  enumerable: true\n});\nObject.defineProperty(Line.prototype, \"y1\", {\n  get: function() {\n    return this.a && this.a.y;\n  },\n  set: function(v) {\n    if(!this.a)\n      Object.defineProperty(this, \"a\", {\n        value: new Point(),\n        enumerable: false\n      });\n    this.a.y = v;\n  },\n  enumerable: true\n});\nObject.defineProperty(Line.prototype, \"x2\", {\n  get: function() {\n    return this.b && this.b.x;\n  },\n  set: function(v) {\n    if(!this.b)\n      Object.defineProperty(this, \"b\", {\n        value: new Point(),\n        enumerable: false\n      });\n    this.b.x = v;\n  },\n  enumerable: true\n});\nObject.defineProperty(Line.prototype, \"y2\", {\n  get: function() {\n    return this.b && this.b.y;\n  },\n  set: function(v) {\n    if(!this.b)\n      Object.defineProperty(this, \"b\", {\n        value: new Point(),\n        enumerable: false\n      });\n    this.b.y = v;\n  },\n  enumerable: true\n});\nLine.prototype.direction = function() {\n  var dist = Point.prototype.distance.call(this.a, this.b);\n  return Point.prototype.quot.call(Line.prototype.getSlope.call(this), dist);\n};\nLine.prototype.getVector = function() {\n  return { x: this.x2 - this.x1, y: this.y2 - this.y1 };\n};\nObject.defineProperty(Line.prototype, \"vector\", {\n  get: Line.prototype.getVector\n});\nLine.prototype.getSlope = function() {\n  return (this.y2 - this.y1) / (this.x2 - this.x1);\n};\nObject.defineProperty(Line.prototype, \"slope\", {\n  get: Line.prototype.getSlope\n});\nLine.prototype.yIntercept = function() {\n  let v = Line.prototype.getVector.call(this);\n  if(v.x !== 0) {\n    let slope = v.y / v.x;\n    return [this.a.y - this.a.x * slope, slope || 0];\n  }\n};\nLine.prototype.xIntercept = function() {\n  let v = Line.prototype.getVector.call(this);\n  if(v.y !== 0) {\n    let slope = v.x / v.y;\n    return [this.a.x - this.a.y * slope, slope || 0];\n  }\n};\nLine.prototype.isHorizontal = function() {\n  return Line.prototype.getVector.call(this).y === 0;\n};\nLine.prototype.isVertical = function() {\n  return Line.prototype.getVector.call(this).x === 0;\n};\n\nLine.prototype.equations = function() {\n  let intercept = {\n    y: Line.prototype.yIntercept.call(this),\n    x: Line.prototype.xIntercept.call(this)\n  };\n  let equations = [];\n  for(let axis in intercept) {\n    if(intercept[axis]) {\n      let [c0, m] = intercept[axis];\n      let rhs = `${c0}`;\n      if(m !== 0) rhs += ` + ${m} * ${axis == \"y\" ? \"x\" : \"y\"}`;\n      equations.push(`${axis} = ${rhs}`);\n    }\n  }\n  return equations;\n};\nLine.prototype.functions = function() {\n  let i;\n  let fns = {};\n  if((i = Line.prototype.yIntercept.call(this))) {\n    let [y0, myx] = i;\n    fns.y = x => y0 + myx * x;\n  } else {\n    let { y } = this.a;\n    fns.y = new Function(\"x\", `return ${y}`);\n  }\n  if((i = Line.prototype.xIntercept.call(this))) {\n    let [x0, mxy] = i;\n    fns.x = y => x0 + mxy * y;\n  } else {\n    let { x } = this.a;\n    fns.x = new Function(\"y\", `return ${x}`); //y => x;\n  }\n  return fns;\n};\nLine.prototype.angle = function() {\n  return Point.prototype.angle.call(Line.prototype.getSlope.call(this));\n};\nLine.prototype.getLength = function() {\n  return Point.prototype.distance.call(this.a, this.b);\n};\nLine.prototype.endpointDist = function(point) {\n  return Math.min(point.distance(this.a), point.distance(this.b));\n};\nLine.prototype.matchEndpoints = function(arr) {\n  const { a, b } = this;\n  return [...arr.entries()].filter(([i, otherLine]) => !Line.prototype.equals.call(this, otherLine) && (Point.prototype.equals.call(a, otherLine.a) || Point.prototype.equals.call(b, otherLine.b) || Point.prototype.equals.call(b, otherLine.a) || Point.prototype.equals.call(a, otherLine.b)));\n};\n\nLine.prototype.distanceToPointSquared = function(p) {\n  const { a, b } = this;\n  var l2 = Point.prototype.distanceSquared.call(a, b);\n  if(l2 === 0) return Point.prototype.distanceSquared.call(p, a);\n  var t = ((p.x - a.x) * (b.x - a.x) + (p.y - a.y) * (b.y - a.y)) / l2;\n  t = Math.max(0, Math.min(1, t));\n  return Point.prototype.distanceSquared.call(p, new Point(a.x + t * (b.x - a.x), a.y + t * (b.y - a.y)));\n};\nLine.prototype.distanceToPoint = function(p) {\n  return Math.sqrt(Line.prototype.distanceToPointSquared.call(this, p));\n};\n\nObject.defineProperty(Line.prototype, \"length\", {\n  get: Line.prototype.getLength\n});\nObject.defineProperty(Line.prototype, \"cross\", {\n  get: function() {\n    const { x1, x2, y1, y2 } = this;\n    return x1 * y2 - y1 * x2;\n  }\n});\nObject.defineProperty(Line.prototype, \"dot\", {\n  get: function() {\n    const { x1, x2, y1, y2 } = this;\n    return x1 * x2 + y1 * y2;\n  }\n});\n\nLine.prototype.pointAt = function(pos) {\n  return new Point(pos * (this.x2 - this.x1) + this.x1, pos * (this.y2 - this.y1) + this.y1);\n};\nLine.prototype.transform = function(m) {\n  this.a = this.a.transform(m);\n  this.b = this.b.transform(m);\n  return this;\n};\nLine.prototype.bbox = function() {\n  return new Rect({\n    x1: this.x1 < this.x2 ? this.x1 : this.x2,\n    x2: this.x1 > this.x2 ? this.x1 : this.x2,\n    y1: this.y1 < this.y2 ? this.y1 : this.y2,\n    y2: this.y1 > this.y2 ? this.y1 : this.y2\n  });\n};\n\nLine.prototype.points = function() {\n  const { a, b } = this;\n  return [a, b];\n};\nLine.prototype.diff = function(other) {\n  other = Line(...arguments);\n  return new Line(Point.diff(this.a, other.a), Point.diff(this.b, other.b));\n};\nLine.prototype.inspect = function() {\n  const { x1, y1, x2, y2 } = this;\n  return \"Line{ \" + inspect({ x1, y1, x2, y2 }) + \" }\";\n};\nLine.prototype.toString = function() {\n  const { x1, y1, x2, y2 } = this;\n  return Point.toString(this.a || Point(x1, y1)) + \" -> \" + Point.toString(this.b || Point(x2, y2));\n};\nLine.prototype.toSource = function() {\n  let { a, b } = this;\n  return `new Line(${a.x},${a.y},${b.x},${b.y})`;\n};\n  Line.prototype.reverse = function() {\n  const { a, b } = this;\n  return new Line(b, a);\n};\nLine.prototype.toObject = function() {\n  const { x1, y1, x2, y2 } = this;\n  const obj = { x1, y1, x2, y2 };\n  Object.setPrototypeOf(obj, Line.prototype);\n  return obj;\n};\nLine.prototype.clone = function() {\n  const { x1, y1, x2, y2 } = this;\n  return new Line(x1, y1, x2, y2);\n};\n\nLine.prototype.round = function(precision = 0.001) {\n  let { x1, y1, x2, y2 } = this;\n  this.a.x = Util.roundTo(x1, precision);\n  this.a.y = Util.roundTo(y1, precision);\n  this.b.x = Util.roundTo(x2, precision);\n  this.b.y = Util.roundTo(y2, precision);\n  return this;\n};\n\nLine.prototype.some = function(pred) {\n  return pred(this.a) || pred(this.b);\n};\nLine.prototype.every = function(pred) {\n  return pred(this.a) && pred(this.b);\n};\nLine.prototype.includes = function(point) {\n  return Point.prototype.equals.call(this.a, point) || Point.prototype.equals.call(this.b, point);\n};\nLine.prototype.equals = function(other) {\n  //console.log('Line.equals', this, other);\n  other = Line(other);\n  if(Point.equals(this.a, other.a) && Point.equals(this.b, other.b)) return 1;\n  if(Point.equals(this.a, other.b) && Point.equals(this.b, other.a)) return -1;\n  return false;\n};\nLine.prototype.indexOf = function(point) {\n  let i = 0;\n  for(let p of [this.a, this.b]) {\n    if(Point.prototype.equals.call(p, point)) return i;\n    i++;\n  }\n  return -1;\n};\nLine.prototype.lastIndexOf = function(point) {\n  let i = 0;\n  for(let p of [this.b, this.a]) {\n    if(Point.prototype.equals.call(p, point)) return i;\n    i++;\n  }\n  return -1;\n};\nLine.prototype.map = function(fn) {\n  let i = 0;\n  let r = [];\n  for(let p of [this.a, this.b]) {\n    r.push(fn(p, i, this));\n    i++;\n  }\n  return new Line(...r);\n};\nLine.prototype.swap = function(fn) {\n  return new Line(this.a, this.b).reverse();\n};\nLine.prototype.toPoints = function() {\n  const { x1, y1, x2, y2 } = this;\n  var list = new PointList();\n  list.push(new Point(x1, y1));\n  list.push(new Point(x2, y1));\n  list.push(new Point(x2, y2));\n  list.push(new Point(x1, y2));\n  return list;\n};\n\nfor(let name of [\"direction\", \"round\", \"slope\", \"angle\", \"bbox\", \"points\", \"inspect\", \"toString\", \"toObject\", \"toSource\", \"distanceToPointSquared\", \"distanceToPoint\"]) {\n  Line[name] = (line, ...args) => Line.prototype[name].call(line || new Line(line), ...args);\n}\n\nUtil.defineInspect(Line.prototype, \"x1\", \"y1\", \"x2\", \"y2\");\n\nLine.bind = (o, p, gen) => {\n  const [x1, y1, x2, y2] = p || [\"x1\", \"y1\", \"x2\", \"y2\"];\n  if(!gen) gen = k => v => (v === undefined ? o[k] : (o[k] = v));\n  let a = Point.bind(o, [x1, y1], gen);\n  let b = Point.bind(o, [x2, y2], gen);\n  let proxy = new Line(a, b);\n  return proxy;\n};\n",
+			"file": "lib/geom/line.js",
+			"file_size": 11447,
+			"file_write_time": 132338019129892588,
+			"settings":
+			{
+				"buffer_size": 11449,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/dom/node.js",
+			"settings":
+			{
+				"buffer_size": 1016,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/node.js",
+			"settings":
+			{
+				"buffer_size": 7555,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -352,23 +440,111 @@
 	"expanded_folders":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
-		"/home/roman/Dokumente/Sources/plot-cv/lib"
+		"/home/roman/Dokumente/Sources/plot-cv/lib",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle",
+		"/home/roman/Dokumente/Sources/plot-cv/scripts"
 	],
 	"file_history":
 	[
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/iterator.js",
+		"/home/roman/Dokumente/Sources/plot-cv/components.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/draw/colorMap.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
+		"/home/roman/Dokumente/Sources/plot-cv/style.css",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/css.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/iterator.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/devtools.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/rgba.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_contour.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_rect.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/index.html",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/node.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/hsla.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-matrix.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
+		"/home/roman/Dokumente/Sources/plot-cv/server.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-queue.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-events.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/asynciterify.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/elementRect.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/align.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.es5.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_line.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/cli.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_draw.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/scripts/js-set-module-export.sh",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-libc.c",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_mat.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/test-quickjs.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-cli.js",
+		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.h",
+		"/home/roman/Dokumente/Sources/plot-cv/src/plot-cv.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.h",
+		"/home/roman/Dokumente/Sources/plot-cv/src/line.h",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js.h",
+		"/home/roman/Dokumente/Sources/plot-cv/src/polygon.h",
+		"/home/roman/Dokumente/Sources/plot-cv/js-bindings.cmake",
+		"/home/roman/Dokumente/Sources/plot-cv/src/highgui-viewer.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/test.js",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-libc.h",
+		"/home/roman/Dokumente/Sources/plot-cv/src/imgui-bezier-widget.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/imgui-viewer.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.cmake",
+		"/home/roman/Dokumente/Sources/plot-cv/highgui-viewer.cmake",
+		"/home/roman/Dokumente/Sources/plot-cv/src/matrix.h",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_point.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_point_iterator.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_size.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/geometry.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/opencv/contour.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/examples/fib.c",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_contour_init.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/plot-cv.h",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/qjs.c",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/qjsc.c",
+		"/home/roman/Dokumente/Sources/plot-cv/imgui-viewer.cmake",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_mat_init.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_point_iterator_init.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_rect_init.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_size_init.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/examples/point.c",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_point_init.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_point_new.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_contours_new.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs.c",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/geometry.h",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_contour_area.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-lex.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/swipeTracker.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/htmlparser2/lib/Parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/live-dom/test/Parser.test.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/container/sortedMap.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/lua.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/util.es5.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/jsx.js",
-		"/home/roman/Dokumente/Sources/plot-cv/index.html",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript.js",
 		"/home/roman/Dokumente/Sources/plot-cv/node_modules/@webassemblyjs/wast-parser/esm/tokenizer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/node_modules/domhandler/coverage/lcov-report/index.ts.html",
@@ -380,114 +556,28 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/busywait.js",
 		"/home/roman/Dokumente/Sources/plot-cv/node_modules/@ampproject/toolbox-optimizer/lib/TreeParser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/node_modules/object-path/test.js",
-		"/home/roman/Dokumente/Sources/plot-cv/style.css",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/container.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/reactComponent.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/project.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/css.js",
 		"/home/roman/Dokumente/Sources/plot-cv/node_modules/nth-check/parse.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/bundle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/server.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/autoStore.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/devpane.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/jpeg.js",
 		"/home/roman/Dokumente/Sources/plot-cv/js/pointList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/alea.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/devtools.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/autoplacer.html",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
-		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/graph.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/fd-graph.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-autoplacer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/Headphone-Amplifier-ClassAB-alt3.brd",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/Dokumente/Sources/plot-cv/npm/mono/packages/handle-rejection/spec.js",
-		"/home/roman/wild-beauty/components/views/treeGraph.js",
-		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/bbox.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom.js",
-		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/draw/colorMap.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/rgba.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/overlay.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/align.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/load.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/locator.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/polygonFinder.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/lazyInitializer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/touchHandler.js",
-		"/home/roman/Dokumente/Sources/plot-cv/node_modules/prop-types/factory.js",
-		"/home/roman/Dokumente/Sources/plot-cv/dev-server.mjs",
-		"/home/roman/Dokumente/Sources/plot-cv/node_modules/htm/dist/htm.mjs",
-		"/home/roman/Dokumente/Sources/plot-cv/node_modules/htm/preact/index.mjs",
-		"/home/roman/Dokumente/Sources/plot-cv/node_modules/htm/preact/standalone.mjs",
-		"/home/roman/Dokumente/Sources/plot-cv/node_modules/htm/src/integrations/preact/standalone.mjs",
-		"/home/roman/Dokumente/Sources/plot-cv/package.json",
-		"/home/roman/Dokumente/Sources/plot-cv/pages/index.jsx",
-		"/home/roman/Dokumente/Sources/plot-cv/dev-server.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/scrollController.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/scrollHandler.js",
-		"/home/roman/Dokumente/Sources/Scripts/sh/functions/list-recursive.sh",
-		"/home/roman/Sources/plot-cv/dev-server.js",
-		"/home/roman/Dokumente/Sources/plot-cv/node_modules/webpack/lib/ChunkRenderError.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
-		"/home/roman/Sources/js-vector/gl-matrix/src/mat3.js",
-		"/home/roman/Sources/js-geometry/node_modules/svgpath/lib/matrix.js",
-		"/home/roman/the-wild-beauty-company/node_modules/affinefit/lib/transformation.js",
-		"/home/roman/Dokumente/Sources/js-svg/jsxgraph/src/base/transformation.js",
-		"/home/roman/Sources/js-vector/node-canvas/lib/DOMMatrix.js",
-		"/home/roman/Sources/js-draw/two.js/node_modules/canvas/lib/DOMMatrix.js",
-		"/home/roman/Sources/js-geometry/node_modules/geometry-interfaces/esmodule/DOMMatrixReadOnly.js",
-		"/home/roman/Sources/js-geometry/node_modules/geometry-interfaces/DOMMatrix.js",
-		"/home/roman/Dokumente/Sources/genetic/genemo/src/mutation/transformRandomGene.js",
-		"/home/roman/Dokumente/Sources/perspective/image-augment/lib/augmenters/perspective-transform.js",
-		"/home/roman/Dokumente/Sources/perspective/maze-motion/packages/backend/deprecated/getTransformationMatrixMatNew.js",
-		"/home/roman/Sources/js-geometry/node_modules/svg-path/test/matrix.js",
-		"/home/roman/Sources/js-geometry/node_modules/geometry-interfaces/esmodule/DOMMatrix.js",
-		"/home/roman/Sources/js-geometry/node_modules/flatten-boolean-op/node_modules/flatten-js/classes/matrix.js",
-		"/home/roman/Dokumente/Sources/perspective/image-augment/lib/backend/tfjs/transform.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/bbox.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/matrix.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.es5.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/node.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/path.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/hsla.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
-		"/home/roman/Dokumente/Sources/plot-cv/nodeMap.js.sed",
-		"/home/roman/Dokumente/Sources/plot-cv/js/matrix.js",
-		"/home/roman/Dokumente/Sources/lotto/lib/util.js",
-		"/home/roman/the-wild-beauty-company/lib/svg/overlay.js",
-		"/home/roman/the-wild-beauty-company/lib/dom/element.js",
-		"/home/roman/the-wild-beauty-company/lib/dom/svg.js",
-		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
-		"/home/roman/Dokumente/Sources/plot-cv/node_modules/Crosskit/build/crosskit.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/crosskit.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/select.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-kolorwheel.js",
-		"/home/roman/Dokumente/Sources/js-draw/draw.js/draw.js",
-		"/home/roman/.pnpm-store/2/registry.npmjs.org/terminal-kit/1.35.1/node_modules/terminal-kit/lib/Palette.js",
-		"/home/roman/Dokumente/Sources/plot-cv/js/rgba.js"
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js"
 	],
 	"find":
 	{
-		"height": 39.0
+		"height": 42.0
 	},
 	"find_in_files":
 	{
@@ -508,137 +598,137 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": false,
+		"case_sensitive": true,
 		"find_history":
 		[
-			"remove\\(",
-			"setCSS",
-			"display:flex",
-			"^\\.panel",
-			"\\^.panel",
+			"log.*style:",
+			"list",
+			"coordFn",
+			"renderColl",
+			" renderColl",
+			"renderColl",
+			"Util.class",
+			"\"a\"",
+			"new .*Renderer",
+			"new EagleRend",
+			"\\.signals",
+			"signals",
+			"elements =",
+			"renderDoc",
+			"LoadFile",
+			"loadDoc",
+			"list",
+			"^\\s*render[^ ]*\\(.*{",
+			"^\\s*render",
+			"h",
+			"components",
+			"loadDoc",
+			"renderDoc",
+			"EagleRenderer",
+			"Renderer",
+			"^  render[^ ]*\\(.*{",
+			"log",
+			"currentProj",
+			"renderDoc",
+			"doc",
+			"project =",
+			"aspect",
+			"loaded",
+			"loadDoc",
+			"property",
+			"loadDocument",
+			"walkUp",
+			"loadDocum",
+			"import.*isPoint",
+			"log",
+			"push",
+			"ColorMap",
+			"import.*RGBA",
+			"MouseHa",
+			"import.*RGBA",
+			"classNames",
+			"MouseHandler",
+			"MouseEvents",
 			"Button =",
-			"\"Random",
-			"chooseDocument",
-			"useState",
-			"\\.active",
+			"Chooser =",
+			"Overlay",
+			"MouseEvents",
+			"check =",
+			"tryPred",
+			"Util.try",
+			"\\.label",
+			"16px",
+			"^Util.is",
+			"Util.isOb",
+			"Util.is",
+			"Util.is[A-Z]",
+			"unique",
+			"random =",
+			"Element.find\\(",
+			"Element.find",
+			"Element, ",
+			"isElement",
+			"devtool",
+			"sort",
+			"sort =",
+			"random",
+			" rect\\(",
+			"rect\\(",
+			"constructor",
+			"console.log",
+			" isEmpty",
+			"isObject =",
+			"is =",
+			"decamelize",
+			"predicate =",
+			"predicate",
+			"isSet =",
+			" Util.array\\(\\);",
+			"Util.array",
+			"match =",
+			"isNativeF",
+			"getConstructor =",
+			"getPrototypeChain",
+			"getProto",
+			"toString =",
+			"toString",
+			"predicate =",
+			"isConstructor",
+			"getMembers",
+			"getMem",
+			"isGenerator =",
+			"entries =",
+			"receiver",
+			"\n    ",
+			"removeEqual",
+			"same",
+			"Util.keys",
+			"diff",
+			"getProto",
+			"static getCSS",
+			"getCSS",
+			"\\.list {",
+			"margin",
 			"FileList",
-			"comments:",
-			"log.*object:",
-			"object:",
-			"position:",
-			"move =",
-			"comments:",
-			"handleCom",
-			"new Token",
-			" position\\(",
-			"Position\\(",
-			"new Position",
-			"line.*column",
-			" position\\(",
-			"comment:",
-			"()]));",
-			"callee",
-			"deep\\.",
-			"flatten",
-			"Property:",
-			"Property:\n",
-			"ast =",
-			"console.log.*className",
-			"Object:",
-			" parsePrimary",
-			"this.parsePrimary",
-			" parseBinary",
-			" parseCond",
-			"\"\\[\"",
-			" parseExp",
-			"this.parsePrim",
-			" parseNewOrCal",
-			" parseLeft",
-			" parsePosfix",
-			" parseUnary",
-			" parseBinary",
-			"parseCond",
-			"new Syntax",
-			"this.processed",
-			"throw new Sy",
-			"getCallerSta",
-			"ERROR:",
-			"join",
-			"slice",
-			"slice.*10",
-			"stack.*slice",
-			"0, 10",
-			"slice.*10",
-			"ast =",
-			"flatten",
-			"ast =",
-			"deep\\.",
-			"deep\\.[^ ]*flat",
-			"deep.*flat",
-			"tokenTypes",
-			"tokenTyprs",
-			"tokenTyp",
-			" consume",
-			" constructor\\(",
-			" lookahea",
-			"lookahead",
-			" parsePrim",
-			"\\\"\\.\\.\\.\\\"",
-			"expr = this.parseVar",
-			" parseVar",
-			"parseArguments",
-			"\"\\(\"",
-			"\"=\"",
-			" parseArray",
-			" parsePrim",
-			"expectLiteral",
-			" parseArgumen",
-			" parseBind",
-			" parseArgumen",
-			" parseArguments",
-			"=>\"",
-			" parseArg",
-			"\"=>\"",
-			" parseArgu",
-			" parseAss",
-			"this.parseCond",
-			" parseCond",
-			"this.parseBinary",
-			" parseReturnState",
-			"lexReg",
-			" parseObject",
-			" parsePrimt",
-			"default export:",
-			"parseFunc.*expoprt",
-			"exported",
-			"this.parseFunc",
-			"estree.*exported",
-			"parse.*exported",
-			", exported = false",
-			"exported[^,]*\\)",
-			", exported",
-			"exported",
-			" parseExport",
-			"declarations",
-			"declarations:",
-			" printExport",
-			" printBind",
-			" parseAssign",
-			" parseExport",
-			"parseBinding",
-			" parseBinding",
-			"parseObjectBind",
-			" printExpoprt",
-			" printObject",
-			"instanceof Iden",
-			" printObject",
-			"\"{\"",
-			"printExport",
-			" parseExportStatement",
-			"parseExport",
-			" parseExport",
-			" parseSou",
-			" parseState"
+			"Chooser",
+			"load",
+			"Object.ass",
+			"style.css",
+			"drawing",
+			"relative",
+			"_relative",
+			"rect",
+			"move",
+			"move_to",
+			"pos",
+			" move\\(",
+			"MouseEvents",
+			"align_to",
+			"align",
+			"aspect",
+			"fit",
+			"div",
+			"align"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -646,6 +736,17 @@
 		"regex": true,
 		"replace_history":
 		[
+			" [];",
+			"operator[](\\1)",
+			"xy12",
+			"",
+			"m",
+			"(ctx, m);",
+			"static JSValue",
+			", JSModuleDef* m",
+			", JSModuleDef*",
+			"parseTemplateLiteral",
+			"this.errorRange()",
 			"Token.types",
 			"this.estree",
 			"this.getRange",
@@ -762,16 +863,7 @@
 			"Vec<T, 2>",
 			"<T> >",
 			"Point_<T>",
-			"get_property(",
-			"' '",
-			"global_obj::",
-			"= global_object",
-			"<jsrt::value(",
-			"jsrt::value",
-			"inline jsrt::value",
-			"template<>\ninline JSValue",
-			"showImage(",
-			"T"
+			"get_property("
 		],
 		"reverse": false,
 		"show_context": false,
@@ -790,7 +882,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 202,
+						"buffer_size": 1837,
 						"regions":
 						{
 						},
@@ -799,98 +891,448 @@
 						],
 						"settings":
 						{
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
 								[
-									666,
-									680
+									435,
+									442
 								],
 								[
-									818,
-									832
+									460,
+									474
 								],
 								[
-									903,
-									920
+									541,
+									552
 								],
 								[
-									1093,
-									1099
+									683,
+									698
 								],
 								[
-									1251,
-									1257
+									1575,
+									1581
 								],
 								[
-									1535,
-									1564
+									1689,
+									1726
 								],
 								[
-									1764,
-									1796
+									1867,
+									1883
 								],
 								[
-									1939,
-									1958
+									2093,
+									2110
 								],
 								[
-									2402,
-									2410
+									2249,
+									2265
 								],
 								[
-									2523,
-									2540
+									2350,
+									2382
 								],
 								[
-									2598,
-									2615
+									3033,
+									3057
 								],
 								[
-									2703,
-									2744
+									3638,
+									3665
 								],
 								[
-									2811,
-									2828
+									3838,
+									3886
 								],
 								[
-									2905,
-									2915
+									4011,
+									4015
 								],
 								[
-									3590,
-									3601
+									4634,
+									4667
 								],
 								[
-									3666,
-									3686
+									4981,
+									4985
 								],
 								[
-									3803,
-									3807
+									5158,
+									5162
+								],
+								[
+									5681,
+									5708
+								],
+								[
+									6088,
+									6117
+								],
+								[
+									7200,
+									7214
+								],
+								[
+									7547,
+									7567
+								],
+								[
+									8266,
+									8297
+								],
+								[
+									9399,
+									9439
+								],
+								[
+									11427,
+									11469
+								],
+								[
+									11633,
+									11665
+								],
+								[
+									11998,
+									12016
+								],
+								[
+									12856,
+									12889
+								],
+								[
+									12990,
+									13013
+								],
+								[
+									13194,
+									13209
+								],
+								[
+									13230,
+									13243
+								],
+								[
+									13295,
+									13332
+								],
+								[
+									13550,
+									13585
+								],
+								[
+									13706,
+									13743
+								],
+								[
+									14009,
+									14045
+								],
+								[
+									14120,
+									14172
+								],
+								[
+									14449,
+									14485
+								],
+								[
+									14545,
+									14551
+								],
+								[
+									14702,
+									14750
+								],
+								[
+									14813,
+									14826
+								],
+								[
+									15065,
+									15100
+								],
+								[
+									15507,
+									15529
+								],
+								[
+									15830,
+									15891
+								],
+								[
+									16704,
+									16708
+								],
+								[
+									16858,
+									16878
+								],
+								[
+									17006,
+									17021
+								],
+								[
+									17091,
+									17102
+								],
+								[
+									17448,
+									17461
+								],
+								[
+									17855,
+									17892
+								],
+								[
+									18200,
+									18231
+								],
+								[
+									18622,
+									18669
+								],
+								[
+									18784,
+									18801
+								],
+								[
+									18822,
+									18869
+								],
+								[
+									19058,
+									19065
+								],
+								[
+									19231,
+									19238
+								],
+								[
+									19476,
+									19497
+								],
+								[
+									19655,
+									19671
+								],
+								[
+									19708,
+									19723
+								],
+								[
+									19855,
+									19879
+								],
+								[
+									19927,
+									19951
+								],
+								[
+									19996,
+									20011
+								],
+								[
+									20203,
+									20220
+								],
+								[
+									20418,
+									20448
+								],
+								[
+									21074,
+									21118
+								],
+								[
+									21531,
+									21566
+								],
+								[
+									21738,
+									21754
+								],
+								[
+									21826,
+									21859
+								],
+								[
+									22003,
+									22027
+								],
+								[
+									22103,
+									22154
+								],
+								[
+									23488,
+									23510
+								],
+								[
+									23732,
+									23761
+								],
+								[
+									23986,
+									24010
+								],
+								[
+									24229,
+									24234
+								],
+								[
+									24313,
+									24327
+								],
+								[
+									24469,
+									24489
+								],
+								[
+									24544,
+									24570
+								],
+								[
+									25078,
+									25151
+								],
+								[
+									25900,
+									25920
+								],
+								[
+									25933,
+									25951
+								],
+								[
+									26081,
+									26099
+								],
+								[
+									26545,
+									26559
+								],
+								[
+									26789,
+									26837
+								],
+								[
+									26982,
+									27029
+								],
+								[
+									27619,
+									27641
+								],
+								[
+									27715,
+									27742
+								],
+								[
+									27779,
+									27807
+								],
+								[
+									27845,
+									27872
+								],
+								[
+									27916,
+									27938
 								]
 							],
 							"symlist":
 							[
-								"testfn",
-								"(acc, file) =>",
-								" (err, origin) =>",
-								" () =>",
-								" () =>",
-								"dumpFile",
-								"printAst",
-								"main",
-								" node =>",
-								"([key, value]) =>",
-								" (a, b) =>",
-								"({ comment, node, pos, len, ...item }) =>",
-								" (a, b) =>",
-								" (a, b) =>",
+								"Element",
+								"static wrap(e)",
+								" (k, fn) =>",
+								"static create()",
+								"obj =>",
+								"static walkUp(elem, pred = e => true)",
+								"pred",
+								"fn",
+								"emit",
+								"static walk(elem, fn, accu = {})",
+								"predicate",
+								"static *childIterator(elem)",
+								"static toObject(elem, opts = { children: true })",
+								"c =>",
+								"static toCommand(elem, opts = {})",
+								"k =>",
+								"e =>",
+								"static findAll(arg, parent)",
+								"static attr(e, attrs_or_name)",
+								"(acc, name) =>",
+								"static getRect(elem)",
+								"static rect(elem, options = {})",
+								"static setRect(element, rect, opts = {})",
+								"static position(element, pos = \"absolute\")",
+								"static move(element, point, pos)",
+								"getValue",
+								"static move_relative(element, to)",
+								"    move",
+								".cancel",
+								".jump",
+								"static resize(element, ...dimensions)",
+								"static getEdgesXYWH({ x, y, w, h })",
+								"static getEdge({ x, y, w, h }, which)",
+								"static getPointsXYWH({ x, y, w, h })",
+								"static cumulativeOffset(element, relative_to = null)",
+								"static getTRBL(element, prefix = \"\")",
+								"pos =>",
+								"static setTRBL(element, trbl, prefix = \"margin\")",
+								"(acc, pos) =>",
+								"static setCSS(element, prop, value)",
+								".subscribe",
+								"static getCSS(element, property = undefined, receiver = null)",
+								"k =>",
+								"receiver",
+								"get: function()",
 								"([k, v]) =>",
-								"finish",
-								"s =>"
+								"(ret, key) =>",
+								"static xpath(elt, relative_to = null)",
+								"static selector(elt, opts = {})",
+								"static depth(elem, relative_to = document.body)",
+								"static dump(elem)",
+								"    dumpElem",
+								"attr =>",
+								"name =>",
+								" (e, a, r, d) =>",
+								"pred",
+								" function(elem)",
+								"static prev_sibling(sib)",
+								"static next_sibling(sib)",
+								"static idx(elt)",
+								"static name(elem)",
+								"static unique(elem, opts = {})",
+								"static factory(delegate = {}, parent = null)",
+								".append_to",
+								".create",
+								".setattr",
+								".setcss",
+								".bound_factory",
+								"static remove(element)",
+								"static isat(e, x, y, options)",
+								"static at(x, y, options)",
+								" e =>",
+								" (e, depth) =>",
+								"(resolve, reject) =>",
+								" (e, accu, root, depth) =>",
+								"static transition(element, css, time, easing = \"linear\", callback = null)",
+								"(resolve, reject) =>",
+								"trun",
+								"tend",
+								"cancel",
+								"Element.children",
+								"Element.recurse",
+								"Element.edges",
+								"Element.margin",
+								"Element.padding",
+								"Element.border",
+								" isElement"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -898,30 +1340,60 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 13,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 0,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "test-ecmascript.js",
+					"file": "index.html",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4281,
+						"buffer_size": 14948,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2810,
-								2810
+								6722,
+								6722
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4199.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 11,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "components.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9837,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1005,
+								1005
 							]
 						],
 						"settings":
@@ -931,33 +1403,313 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1404.0,
+						"translation.y": 797.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 12,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "lib/dom/element.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 27977,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								16726,
+								16726
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 13683.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "index.html",
+					"buffer": 4,
+					"file": "lib/eagle/element.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 17705,
+						"buffer_size": 8094,
 						"regions":
 						{
+						},
+						"selection":
+						[
+							[
+								5808,
+								5808
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4415.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "lib/eagle/common.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9610,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6752,
+								6752
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 5805.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "lib/eagle/nodeMap.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2392,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1685,
+								1685
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1460.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "lib/eagle/nodeList.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4268,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								728,
+								728
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 162.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "lib/eagle/document.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2938,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "lib/eagle/renderer.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 31969,
+						"regions":
+						{
+							"col_00000001":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										27188,
+										27203
+									]
+								],
+								"scope": "col_00000001"
+							},
+							"col_00000001_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_00000001_circle.png",
+								"regions":
+								[
+									[
+										27130,
+										27130
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_0017B9FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										19152,
+										19165
+									]
+								],
+								"scope": "col_0017B9FF"
+							},
+							"col_0017B9FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_0017B9FF_circle.png",
+								"regions":
+								[
+									[
+										19074,
+										19074
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_0022CCFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										19095,
+										19112
+									]
+								],
+								"scope": "col_0022CCFF"
+							},
+							"col_0022CCFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_0022CCFF_circle.png",
+								"regions":
+								[
+									[
+										19074,
+										19074
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_007E18FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										19135,
+										19148
+									]
+								],
+								"scope": "col_007E18FF"
+							},
+							"col_007E18FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_007E18FF_circle.png",
+								"regions":
+								[
+									[
+										19074,
+										19074
+									]
+								],
+								"scope": "col_gutter"
+							},
 							"col_010101FF":
 							{
 								"flags": 16,
 								"regions":
 								[
 									[
-										8814,
-										8819
+										21902,
+										21907
 									],
 									[
-										11413,
-										11418
+										28188,
+										28195
 									]
 								],
 								"scope": "col_010101FF"
@@ -969,12 +1721,861 @@
 								"regions":
 								[
 									[
-										8787,
-										8787
+										21877,
+										21877
 									],
 									[
-										11286,
-										11286
+										28164,
+										28164
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_10063DFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										19335,
+										19347
+									]
+								],
+								"scope": "col_10063DFF"
+							},
+							"col_10063DFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_10063DFF_circle.png",
+								"regions":
+								[
+									[
+										19074,
+										19074
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_3255FF4C":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										26132,
+										26154
+									]
+								],
+								"scope": "col_3255FF4C"
+							},
+							"col_3255FF4C_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_3255FF4C_circle.png",
+								"regions":
+								[
+									[
+										26111,
+										26111
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_32FEFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										21857,
+										21874
+									]
+								],
+								"scope": "col_32FEFFFF"
+							},
+							"col_32FEFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_32FEFFFF_circle.png",
+								"regions":
+								[
+									[
+										21834,
+										21834
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_3E2E19FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										19184,
+										19197
+									]
+								],
+								"scope": "col_3E2E19FF"
+							},
+							"col_3E2E19FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_3E2E19FF_circle.png",
+								"regions":
+								[
+									[
+										19074,
+										19074
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4B4B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										14807,
+										14814
+									]
+								],
+								"scope": "col_4B4B4BFF"
+							},
+							"col_4B4B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4B4BFF_circle.png",
+								"regions":
+								[
+									[
+										14632,
+										14632
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4B4BA5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										14664,
+										14671
+									]
+								],
+								"scope": "col_4B4BA5FF"
+							},
+							"col_4B4BA5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4BA5FF_circle.png",
+								"regions":
+								[
+									[
+										14632,
+										14632
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4B4BFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										14741,
+										14748
+									]
+								],
+								"scope": "col_4B4BFFFF"
+							},
+							"col_4B4BFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4BFFFF_circle.png",
+								"regions":
+								[
+									[
+										14632,
+										14632
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BA54BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										14675,
+										14682
+									],
+									[
+										16040,
+										16047
+									]
+								],
+								"scope": "col_4BA54BFF"
+							},
+							"col_4BA54BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BA54BFF_circle.png",
+								"regions":
+								[
+									[
+										14632,
+										14632
+									],
+									[
+										16021,
+										16021
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BA5A5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										14686,
+										14693
+									]
+								],
+								"scope": "col_4BA5A5FF"
+							},
+							"col_4BA5A5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BA5A5FF_circle.png",
+								"regions":
+								[
+									[
+										14632,
+										14632
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BFF4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										14752,
+										14759
+									]
+								],
+								"scope": "col_4BFF4BFF"
+							},
+							"col_4BFF4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BFF4BFF_circle.png",
+								"regions":
+								[
+									[
+										14632,
+										14632
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										14763,
+										14770
+									]
+								],
+								"scope": "col_4BFFFFFF"
+							},
+							"col_4BFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										14632,
+										14632
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4F0900FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										19169,
+										19180
+									]
+								],
+								"scope": "col_4F0900FF"
+							},
+							"col_4F0900FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4F0900FF_circle.png",
+								"regions":
+								[
+									[
+										19074,
+										19074
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_695221FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										19240,
+										19254
+									]
+								],
+								"scope": "col_695221FF"
+							},
+							"col_695221FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_695221FF_circle.png",
+								"regions":
+								[
+									[
+										19074,
+										19074
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_84946DFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										19296,
+										19312
+									]
+								],
+								"scope": "col_84946DFF"
+							},
+							"col_84946DFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_84946DFF_circle.png",
+								"regions":
+								[
+									[
+										19074,
+										19074
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_8C5F33FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										19278,
+										19292
+									]
+								],
+								"scope": "col_8C5F33FF"
+							},
+							"col_8C5F33FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_8C5F33FF_circle.png",
+								"regions":
+								[
+									[
+										19074,
+										19074
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A54B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										14697,
+										14704
+									],
+									[
+										16635,
+										16642
+									]
+								],
+								"scope": "col_A54B4BFF"
+							},
+							"col_A54B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A54B4BFF_circle.png",
+								"regions":
+								[
+									[
+										14632,
+										14632
+									],
+									[
+										16614,
+										16614
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A54BA5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										14708,
+										14715
+									]
+								],
+								"scope": "col_A54BA5FF"
+							},
+							"col_A54BA5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A54BA5FF_circle.png",
+								"regions":
+								[
+									[
+										14632,
+										14632
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A5A54BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										14719,
+										14726
+									]
+								],
+								"scope": "col_A5A54BFF"
+							},
+							"col_A5A54BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A5A54BFF_circle.png",
+								"regions":
+								[
+									[
+										14632,
+										14632
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A5A5A5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										14818,
+										14825
+									]
+								],
+								"scope": "col_A5A5A5FF"
+							},
+							"col_A5A5A5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A5A5A5FF_circle.png",
+								"regions":
+								[
+									[
+										14632,
+										14632
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A8A620FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										19316,
+										19331
+									]
+								],
+								"scope": "col_A8A620FF"
+							},
+							"col_A8A620FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A8A620FF_circle.png",
+								"regions":
+								[
+									[
+										19074,
+										19074
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_AFAFAFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										14730,
+										14737
+									]
+								],
+								"scope": "col_AFAFAFFF"
+							},
+							"col_AFAFAFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_AFAFAFFF_circle.png",
+								"regions":
+								[
+									[
+										14632,
+										14632
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_B21B00FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										19351,
+										19364
+									]
+								],
+								"scope": "col_B21B00FF"
+							},
+							"col_B21B00FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_B21B00FF_circle.png",
+								"regions":
+								[
+									[
+										19074,
+										19074
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_CCCCCCFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										19368,
+										19382
+									]
+								],
+								"scope": "col_CCCCCCFF"
+							},
+							"col_CCCCCCFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_CCCCCCFF_circle.png",
+								"regions":
+								[
+									[
+										19074,
+										19074
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FBFCF7FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										19258,
+										19274
+									]
+								],
+								"scope": "col_FBFCF7FF"
+							},
+							"col_FBFCF7FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FBFCF7FF_circle.png",
+								"regions":
+								[
+									[
+										19074,
+										19074
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FCF526FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										19116,
+										19131
+									]
+								],
+								"scope": "col_FCF526FF"
+							},
+							"col_FCF526FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FCF526FF_circle.png",
+								"regions":
+								[
+									[
+										19074,
+										19074
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF0000FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										6507,
+										6519
+									]
+								],
+								"scope": "col_FF0000FF"
+							},
+							"col_FF0000FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF0000FF_circle.png",
+								"regions":
+								[
+									[
+										6444,
+										6444
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF00FFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										9583,
+										9587
+									]
+								],
+								"scope": "col_FF00FFFF"
+							},
+							"col_FF00FFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF00FFFF_circle.png",
+								"regions":
+								[
+									[
+										9564,
+										9564
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF4B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										14774,
+										14781
+									]
+								],
+								"scope": "col_FF4B4BFF"
+							},
+							"col_FF4B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF4B4BFF_circle.png",
+								"regions":
+								[
+									[
+										14632,
+										14632
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF4BFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										14785,
+										14792
+									]
+								],
+								"scope": "col_FF4BFFFF"
+							},
+							"col_FF4BFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF4BFFFF_circle.png",
+								"regions":
+								[
+									[
+										14632,
+										14632
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF8C19FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										19201,
+										19217
+									]
+								],
+								"scope": "col_FF8C19FF"
+							},
+							"col_FF8C19FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF8C19FF_circle.png",
+								"regions":
+								[
+									[
+										19074,
+										19074
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFB453FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										19221,
+										19236
+									]
+								],
+								"scope": "col_FFB453FF"
+							},
+							"col_FFB453FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFB453FF_circle.png",
+								"regions":
+								[
+									[
+										19074,
+										19074
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFF4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										14796,
+										14803
+									]
+								],
+								"scope": "col_FFFF4BFF"
+							},
+							"col_FFFF4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFF4BFF_circle.png",
+								"regions":
+								[
+									[
+										14632,
+										14632
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										14653,
+										14660
+									],
+									[
+										27167,
+										27183
+									]
+								],
+								"scope": "col_FFFFFFFF"
+							},
+							"col_FFFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										14632,
+										14632
+									],
+									[
+										27130,
+										27130
 									]
 								],
 								"scope": "col_gutter"
@@ -983,38 +2584,8 @@
 						"selection":
 						[
 							[
-								11263,
-								11263
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 4662.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "lib/dom/element.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 27047,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								22571,
-								22571
+								25941,
+								25941
 							]
 						],
 						"settings":
@@ -1024,41 +2595,130 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 11726.0,
+						"translation.y": 23099.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "style.css",
+					"buffer": 10,
+					"file": "src/line.h",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3722,
+						"buffer_size": 13942,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2294,
-								2294
+								1,
+								1
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Next (Roman).tmTheme",
-							"syntax": "Packages/CSS/CSS.sublime-syntax",
+							"syntax": "Packages/C++/C++.sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2070.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "lib/geom/line.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11449,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9769,
+								9769
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 8870.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "lib/dom/node.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1016,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 13,
+					"file": "lib/eagle/node.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7555,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4963,
+								4963
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4307.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
 					"type": "text"
 				}
 			]
@@ -1066,7 +2726,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 27.0
+		"height": 36.0
 	},
 	"input":
 	{
@@ -1128,7 +2788,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 74.0
+		"height": 80.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1137,6 +2797,466 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"rend",
+				"lib/eagle/renderer.js"
+			],
+			[
+				"node",
+				"lib/eagle/node.js"
+			],
+			[
+				"eleme",
+				"lib/eagle/element.js"
+			],
+			[
+				"line.js",
+				"lib/geom/line.js"
+			],
+			[
+				"line",
+				"src/line.h"
+			],
+			[
+				"Line.js",
+				"lib/geom/line.js"
+			],
+			[
+				"util",
+				"lib/util.js"
+			],
+			[
+				"compo",
+				"components.js"
+			],
+			[
+				"element",
+				"lib/dom/element.js"
+			],
+			[
+				"common",
+				"lib/eagle/common.js"
+			],
+			[
+				"render",
+				"lib/eagle/renderer.js"
+			],
+			[
+				"trkl",
+				"lib/trkl.js"
+			],
+			[
+				"iter",
+				"lib/dom/iterator.js"
+			],
+			[
+				"ele",
+				"lib/dom/element.js"
+			],
+			[
+				"size.",
+				"lib/geom/size.js"
+			],
+			[
+				"colorMa",
+				"lib/draw/colorMap.js"
+			],
+			[
+				"index",
+				"index.html"
+			],
+			[
+				"css.",
+				"lib/dom/css.js"
+			],
+			[
+				"style",
+				"style.css"
+			],
+			[
+				"compon",
+				"components.js"
+			],
+			[
+				"rgba",
+				"lib/dom/rgba.js"
+			],
+			[
+				"devtoo",
+				"lib/devtools.js"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"rect.cpp",
+				"src/js_rect.cpp"
+			],
+			[
+				"js_con",
+				"src/js_contour.cpp"
+			],
+			[
+				"dom.j",
+				"lib/dom.js"
+			],
+			[
+				"matrix.j",
+				"lib/geom/matrix.js"
+			],
+			[
+				"matrix.js",
+				"test-matrix.js"
+			],
+			[
+				"size.j",
+				"lib/geom/size.js"
+			],
+			[
+				"rect.j",
+				"lib/geom/rect.js"
+			],
+			[
+				"point.j",
+				"lib/geom/point.js"
+			],
+			[
+				"hsla",
+				"lib/dom/hsla.js"
+			],
+			[
+				"server",
+				"server.js"
+			],
+			[
+				"align",
+				"lib/geom/align.js"
+			],
+			[
+				"devto",
+				"lib/devtools.js"
+			],
+			[
+				"rect",
+				"lib/geom/rect.js"
+			],
+			[
+				"inde.",
+				"index.html"
+			],
+			[
+				"cmake",
+				"CMakeLists.txt"
+			],
+			[
+				"test-cli",
+				"test-cli.js"
+			],
+			[
+				".sh",
+				"scripts/js-set-module-export.sh"
+			],
+			[
+				"js.cpp",
+				"src/js.cpp"
+			],
+			[
+				"test-q",
+				"test-quickjs.js"
+			],
+			[
+				"jsbin",
+				"src/jsbindings.h"
+			],
+			[
+				"line.h",
+				"src/line.h"
+			],
+			[
+				"quickjs",
+				"quickjs/quickjs.h"
+			],
+			[
+				"test-cl",
+				"test-cli.js"
+			],
+			[
+				"cli.cpp",
+				"src/cli.cpp"
+			],
+			[
+				"plot-cv",
+				"src/plot-cv.cpp"
+			],
+			[
+				"test-qui",
+				"test-quickjs.js"
+			],
+			[
+				"js_",
+				"src/js_rect.cpp"
+			],
+			[
+				"libc.h",
+				"quickjs/quickjs-libc.h"
+			],
+			[
+				"libc",
+				"quickjs/quickjs-libc.c"
+			],
+			[
+				"test-",
+				"test-quickjs.js"
+			],
+			[
+				".cmake",
+				"js-bindings.cmake"
+			],
+			[
+				"jsbid",
+				"src/jsbindings.cpp"
+			],
+			[
+				"test.js",
+				"test.js"
+			],
+			[
+				"libc.",
+				"quickjs/quickjs-libc.c"
+			],
+			[
+				"js.h",
+				"src/js.h"
+			],
+			[
+				"cake",
+				"CMakeLists.txt"
+			],
+			[
+				".cake",
+				"plot-cv.cmake"
+			],
+			[
+				"matrix",
+				"src/matrix.h"
+			],
+			[
+				"cmakeLists",
+				"CMakeLists.txt"
+			],
+			[
+				"js_cont",
+				"src/js_contour.cpp"
+			],
+			[
+				"-bi",
+				"js-bindings.cmake"
+			],
+			[
+				"js-b",
+				"js-bindings.cmake"
+			],
+			[
+				"jsbind",
+				"src/jsbindings.h"
+			],
+			[
+				"contour",
+				"opencv/contour.cpp"
+			],
+			[
+				"quickjs.h",
+				"quickjs/quickjs.h"
+			],
+			[
+				"js_point",
+				"src/js_point.cpp"
+			],
+			[
+				"js-bind",
+				"js-bindings.cmake"
+			],
+			[
+				"fib",
+				"quickjs/examples/fib.c"
+			],
+			[
+				"point.c",
+				"quickjs/examples/point.c"
+			],
+			[
+				"js_poin",
+				"src/js_point.cpp"
+			],
+			[
+				"qjs.c",
+				"quickjs/qjs.c"
+			],
+			[
+				"imgui",
+				"imgui-viewer.cmake"
+			],
+			[
+				"high",
+				"highgui-viewer.cmake"
+			],
+			[
+				"qjs",
+				"quickjs/qjs.c"
+			],
+			[
+				"server.js",
+				"server.js"
+			],
+			[
+				"js-",
+				"js-bindings.cmake"
+			],
+			[
+				"js_draw",
+				"src/js_draw.cpp"
+			],
+			[
+				"js_point_it",
+				"src/js_point_iterator.cpp"
+			],
+			[
+				"js_rec",
+				"src/js_rect.cpp"
+			],
+			[
+				"estree",
+				"lib/ecmascript/estree.js"
+			],
+			[
+				"js_mat",
+				"src/js_mat.cpp"
+			],
+			[
+				"js_si",
+				"src/js_size.cpp"
+			],
+			[
+				"js_po",
+				"src/js_point.cpp"
+			],
+			[
+				"js_pon",
+				"tmp/js_point_new.cpp"
+			],
+			[
+				"contou",
+				"src/js_contour.cpp"
+			],
+			[
+				"plot",
+				"src/plot-cv.cpp"
+			],
+			[
+				"js_size",
+				"src/js_size.cpp"
+			],
+			[
+				"js_rect",
+				"src/js_rect.cpp"
+			],
+			[
+				"point_iter",
+				"src/js_point_iterator.cpp"
+			],
+			[
+				"js_point.cpp",
+				"src/js_point.cpp"
+			],
+			[
+				"js_pointn",
+				"tmp/js_point_new.cpp"
+			],
+			[
+				"plot-cv.cpp",
+				"src/plot-cv.cpp"
+			],
+			[
+				"js-bin",
+				"js-bindings.cmake"
+			],
+			[
+				"_iter",
+				"src/js_point_iterator.cpp"
+			],
+			[
+				"js_contou",
+				"src/js_contour.cpp"
+			],
+			[
+				"bind",
+				"js-bindings.cmake"
+			],
+			[
+				"jsbindings.h",
+				"src/jsbindings.h"
+			],
+			[
+				"point.cpp",
+				"src/js_point.cpp"
+			],
+			[
+				"quickjs.c",
+				"quickjs.c"
+			],
+			[
+				"imgui-vie",
+				"src/imgui-viewer.cpp"
+			],
+			[
+				"js_point.c",
+				"src/js_point.cpp"
+			],
+			[
+				"js.c",
+				"src/js.cpp"
+			],
+			[
+				"highgui",
+				"src/highgui-viewer.cpp"
+			],
+			[
+				"imgui-v",
+				"src/imgui-viewer.cpp"
+			],
+			[
+				"geom",
+				"src/geometry.h"
+			],
+			[
+				"cmakeLi",
+				"CMakeLists.txt"
+			],
+			[
+				"cmakelist",
+				"CMakeLists.txt"
+			],
+			[
+				"print.",
+				"lib/ecmascript/printer.js"
+			],
+			[
+				"util.",
+				"lib/util.js"
+			],
+			[
+				"token",
+				"lib/ecmascript/token.js"
+			],
+			[
+				"lexer",
+				"lib/ecmascript/lexer.js"
+			],
+			[
+				"parser",
+				"lib/ecmascript/parser.js"
+			],
 			[
 				"elemet",
 				"lib/dom/element.js"
@@ -1148,14 +3268,6 @@
 			[
 				"test-ec",
 				"test-ecmascript.js"
-			],
-			[
-				"util.js",
-				"lib/util.js"
-			],
-			[
-				"lexer",
-				"lib/ecmascript/lexer.js"
 			],
 			[
 				"deep.js",
@@ -1194,460 +3306,8 @@
 				"lib/ecmascript/printer.js"
 			],
 			[
-				"parser",
-				"lib/ecmascript/parser.js"
-			],
-			[
-				"estree",
-				"lib/ecmascript/estree.js"
-			],
-			[
 				"printer.js",
 				"lib/ecmascript/printer.js"
-			],
-			[
-				"luajs",
-				"lib/lua.js"
-			],
-			[
-				"test-ex",
-				"test-expr.js"
-			],
-			[
-				"clipper",
-				"lib/clipper.js"
-			],
-			[
-				"token",
-				"lib/ecmascript/token.js"
-			],
-			[
-				"printer",
-				"lib/ecmascript/printer.js"
-			],
-			[
-				"util.j",
-				"lib/util.js"
-			],
-			[
-				"parser.",
-				"lib/ecmascript/parser.js"
-			],
-			[
-				"parse.j",
-				"node_modules/nth-check/parse.js"
-			],
-			[
-				"arser.",
-				"lib/ecmascript/parser.js"
-			],
-			[
-				"util",
-				"lib/util.js"
-			],
-			[
-				"css",
-				"lib/dom/css.js"
-			],
-			[
-				"element",
-				"lib/dom/element.js"
-			],
-			[
-				"dom/ele",
-				"lib/dom/element.js"
-			],
-			[
-				"eleme",
-				"lib/eagle/element.js"
-			],
-			[
-				"render",
-				"lib/eagle/renderer.js"
-			],
-			[
-				"index",
-				"index.html"
-			],
-			[
-				"server",
-				"server.js"
-			],
-			[
-				"autoSt",
-				"lib/autoStore.js"
-			],
-			[
-				"devtools",
-				"lib/devtools.js"
-			],
-			[
-				"devpa",
-				"lib/devpane.js"
-			],
-			[
-				"jpeg",
-				"lib/jpeg.js"
-			],
-			[
-				"inde.h",
-				"index.html"
-			],
-			[
-				"test-ea",
-				"test-eagle.js"
-			],
-			[
-				"pointlis",
-				"js/pointList.js"
-			],
-			[
-				"devp",
-				"lib/devpane.js"
-			],
-			[
-				"rect",
-				"lib/geom/rect.js"
-			],
-			[
-				"elementj",
-				"lib/dom/element.js"
-			],
-			[
-				"size.j",
-				"lib/geom/size.js"
-			],
-			[
-				"autot\t",
-				"autoplacer.html"
-			],
-			[
-				"lexe",
-				"lib/ecmascript/lexer.js"
-			],
-			[
-				"ecma",
-				"lib/ecmascript.js"
-			],
-			[
-				"auto",
-				"autoplacer.html"
-			],
-			[
-				".brd",
-				"Headphone-Amplifier-ClassAB-alt3.brd"
-			],
-			[
-				"docum",
-				"lib/eagle/document.js"
-			],
-			[
-				"elemen",
-				"lib/eagle/element.js"
-			],
-			[
-				"rect.",
-				"lib/geom/rect.js"
-			],
-			[
-				"bbox",
-				"lib/geom/bbox.js"
-			],
-			[
-				"element.",
-				"lib/eagle/element.js"
-			],
-			[
-				"ele",
-				"lib/eagle/element.js"
-			],
-			[
-				"geom.j",
-				"lib/geom.js"
-			],
-			[
-				"elem",
-				"lib/eagle/element.js"
-			],
-			[
-				"fd-gra",
-				"lib/fd-graph.js"
-			],
-			[
-				"test-eag",
-				"test-eagle.js"
-			],
-			[
-				"test-",
-				"test-autoplacer.js"
-			],
-			[
-				"test-e",
-				"test-eagle.js"
-			],
-			[
-				"autop",
-				"autoplacer.html"
-			],
-			[
-				"deep.j",
-				"lib/deep.js"
-			],
-			[
-				"token.js",
-				"lib/ecmascript/token.js"
-			],
-			[
-				"common.j",
-				"lib/eagle/common.js"
-			],
-			[
-				"common",
-				"lib/eagle/common.js"
-			],
-			[
-				"rgba",
-				"lib/dom/rgba.js"
-			],
-			[
-				"autopl",
-				"autoplacer.html"
-			],
-			[
-				"size.js",
-				"lib/geom/size.js"
-			],
-			[
-				"rect.js",
-				"lib/geom/rect.js"
-			],
-			[
-				"svg.",
-				"lib/dom/svg.js"
-			],
-			[
-				"renderer.js",
-				"lib/eagle/renderer.js"
-			],
-			[
-				"overla",
-				"lib/svg/overlay.js"
-			],
-			[
-				"colorma",
-				"lib/draw/colorMap.js"
-			],
-			[
-				"auopl",
-				"autoplacer.html"
-			],
-			[
-				"docu",
-				"lib/eagle/document.js"
-			],
-			[
-				"svg.js",
-				"lib/dom/svg.js"
-			],
-			[
-				"matrix.j",
-				"lib/geom/matrix.js"
-			],
-			[
-				"point.js",
-				"lib/geom/point.js"
-			],
-			[
-				"trkl",
-				"lib/trkl.js"
-			],
-			[
-				"documen",
-				"lib/eagle/document.js"
-			],
-			[
-				"factory",
-				"node_modules/prop-types/factory.js"
-			],
-			[
-				"lazy",
-				"lib/lazyInitializer.js"
-			],
-			[
-				"touchha",
-				"lib/touchHandler.js"
-			],
-			[
-				"server.js",
-				"server.js"
-			],
-			[
-				"dev-ser",
-				"dev-server.js"
-			],
-			[
-				"package",
-				"package.json"
-			],
-			[
-				"standal",
-				"node_modules/htm/src/integrations/preact/standalone.mjs"
-			],
-			[
-				"stand",
-				"node_modules/htm/preact/standalone.mjs"
-			],
-			[
-				"htm.mjs",
-				"node_modules/htm/preact/index.mjs"
-			],
-			[
-				"htm",
-				"node_modules/htm/dist/htm.mjs"
-			],
-			[
-				"scrollC",
-				"lib/scrollController.js"
-			],
-			[
-				"autopla",
-				"autoplacer.html"
-			],
-			[
-				"package.js",
-				"package.json"
-			],
-			[
-				"renderer",
-				"lib/eagle/renderer.js"
-			],
-			[
-				"matrix.js",
-				"lib/geom/matrix.js"
-			],
-			[
-				"line.js",
-				"lib/geom/line.js"
-			],
-			[
-				"size.",
-				"lib/geom/size.js"
-			],
-			[
-				"line.",
-				"lib/geom/line.js"
-			],
-			[
-				"hsla",
-				"lib/dom/hsla.js"
-			],
-			[
-				"pointList",
-				"lib/geom/pointList.js"
-			],
-			[
-				"nodeMap",
-				"lib/eagle/nodeMap.js"
-			],
-			[
-				"nodeLi",
-				"lib/eagle/nodeList.js"
-			],
-			[
-				"nodeM",
-				"lib/eagle/nodeMap.js"
-			],
-			[
-				"trkl.js",
-				"lib/trkl.js"
-			],
-			[
-				"trkl.",
-				"lib/trkl.js"
-			],
-			[
-				"projec",
-				"lib/eagle/project.js"
-			],
-			[
-				"point.j",
-				"lib/geom/point.js"
-			],
-			[
-				"test-eagle",
-				"test-eagle.js"
-			],
-			[
-				"transfo",
-				"lib/geom/transformation.js"
-			],
-			[
-				"nodema",
-				"lib/eagle/nodeMap.js"
-			],
-			[
-				"matrix",
-				"js/matrix.js"
-			],
-			[
-				"dom.js",
-				"lib/dom.js"
-			],
-			[
-				"test-w",
-				"test-kolorwheel.js"
-			],
-			[
-				"rgba.j",
-				"js/rgba.js"
-			],
-			[
-				"rgba.js",
-				"js/rgba.js"
-			],
-			[
-				"kolo",
-				"lib/KolorWheel.js"
-			],
-			[
-				"test-ko",
-				"test-kolorwheel.js"
-			],
-			[
-				"element.js",
-				"lib/dom/element.js"
-			],
-			[
-				"point",
-				"lib/geom/point.js"
-			],
-			[
-				"clipper.",
-				"lib/clipper.js"
-			],
-			[
-				"",
-				"5V-to-12V-Converter-alt.sch"
-			],
-			[
-				"geom.js",
-				"lib/geom.js"
-			],
-			[
-				"test-co",
-				"test-color.js"
-			],
-			[
-				"placer.h",
-				"autoplacer.html"
-			],
-			[
-				"load",
-				"lib/svg/load.js"
-			],
-			[
-				"jsonPo",
-				"lib/jsonPointer.js"
 			]
 		],
 		"width": 0.0
@@ -1678,7 +3338,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 198.0,
+	"side_bar_width": 274.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
