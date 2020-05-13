@@ -367,18 +367,16 @@
 
           let data;
 
-          for await (data of  ws) {
-
+          for await (data of ws) {
             console.log("WebSocket data:", data);
             // See if there are any more messages received.
-        ws.dataAvailable !== 0;
-        }
+            ws.dataAvailable !== 0;
+          }
 
           // Close the connection.
           await ws.disconnect();
 
-                      console.log("WebSocket connected: ", ws.connected);
-
+          console.log("WebSocket connected: ", ws.connected);
         })();
 
         const MakeFitAction = index => () => {

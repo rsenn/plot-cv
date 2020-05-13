@@ -16,11 +16,14 @@ app.use(express.text({ type: "application/xml" }));
 app.ws("/ws", function(ws, req) {
   const { connection, client, upgrade, query, socket } = req;
   const { path, protocol, ip, route, cookies } = req;
+  const { _host, _peername } = connection;
+  let { address, port } = _peername;
 
-  console.log("WebSocket connected:", { path, protocol, ip, query });
+  console.log("WebSocket connected:", path);
+  if(address == "::1") address = "localhost";
 
   ws.on("message", function(msg) {
-    console.log("WebSocket message:", msg);
+    console.log(`message from ${address}/${port}:`, msg);
     ws.send(msg);
   });
 });
