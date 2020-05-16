@@ -153,13 +153,16 @@ http://www.electronics-diy.com/4x4.php</description>
               <wire x1="1.778" y1="1.778" x2="1.524" y2="2.159" width="0.254" layer="94" />
               <wire x1="1.524" y1="2.159" x2="1.143" y2="1.905" width="0.254" layer="94" />
               <wire x1="1.143" y1="1.905" x2="1.524" y2="1.905" width="0.254" layer="94" />
-              <text x="3.81" y="2.54" size="1.27" layer="95" ratio="10">&gt;NAME</text>
-              <text x="3.81" y="-2.54" size="1.27" layer="96" ratio="10" align="top-left">&gt;VALUE</text>
+              <text x="5.08" y="2.54" size="1.27" layer="95" ratio="10">&gt;NAME</text>
+              <text x="5.08" y="-2.54" size="1.27" layer="96" ratio="10" align="top-left">&gt;VALUE</text>
               <rectangle x1="-0.254" y1="-2.54" x2="0.508" y2="2.54" layer="94" />
               <pin name="B" x="-2.54" y="0" visible="off" length="short" direction="pas" />
               <pin name="E" x="2.54" y="5.08" visible="off" length="short" direction="pas" rot="R270" />
               <pin name="C" x="2.54" y="-5.08" visible="off" length="short" direction="pas" rot="R90" />
               <circle x="1.27" y="0" radius="3.5921" width="0.381" layer="94" />
+              <text x="3.81" y="-3.81" size="0.6096" layer="94" font="vector" align="center">C</text>
+              <text x="3.81" y="3.81" size="0.6096" layer="94" font="vector" align="center">E</text>
+              <text x="-3.81" y="-1.27" size="0.6096" layer="94" font="vector" align="center">B</text>
             </symbol>
           </symbols>
           <devicesets>

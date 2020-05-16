@@ -96,7 +96,7 @@ async function testGraph(proj) {
     let rect = bb.rect;
     let pos = rect.center;
 
-    pos = pos.round(0.254);
+    pos = pos.round(0.127);
 
     const n = graph.addNode(element.name);
 
@@ -207,7 +207,7 @@ async function testEagle(filename) {
     let pointA = Point.bind(wire.attributes, ["x1", "y1"], k => v => (v === undefined ? +wire.attributes[k] : (wire.attributes[k] = "" + v)));
     let copy = line.clone();
 
-    line.round(2.54);
+    line.round(1.27);
 
     if(!line.equals(copy)) {
       //console.log("line:", line);
@@ -223,7 +223,7 @@ async function testEagle(filename) {
     let position = Point.bind(element.attributes, null, k => v => (v === undefined ? +element.attributes[k] : (element.attributes[k] = "" + v)));
 
     let copy = position.clone();
-    position.round(2.54);
+    position.round(1.27);
     if(!position.equals(copy)) {
       console.log("position:", position);
 
