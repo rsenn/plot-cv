@@ -78,7 +78,7 @@ export const Chooser = ({ className = "list", itemClass = "item", itemComponent 
   };
   const bar = html``;
   const children = items.map(({ name, i, data, ...item }, key) => {
-    console.log(`Chooser item #${i}:`, { name, data, item });
+    //console.log(`Chooser item #${i}:`, { name, data, item });
     return h(itemComponent, {
       key: key || i,
       className: classNames(itemClass || className + "-item", (name + "").replace(/.*\./, "")),
