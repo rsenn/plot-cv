@@ -116,6 +116,9 @@
       var brdXml, schXml, brdDom, schDom;
       var board, schematic;
       var loadedProjects = [];
+      var zoomVal = 0;
+      var container;
+
       let projects, projectFiles;
       let activeFile;
 
@@ -375,18 +378,24 @@
 
         const MakeFitAction = index => () => {
           let container = Element.find("#container");
-          let parent = container.parentElement;
+          let parent = Element.find("#main");
           let prect = Element.rect(parent);
           let rect = Element.rect(container);
 
           let svg = Element.find("svg", container);
+          let brect = Element.rect(".buttons");
           let srect = Element.rect(svg);
+
+          prect.y += brect.height;
+          prect.height -= brect.height;
 
           let rects = [prect, rect, srect];
           console.log("resize rects", rects);
 
           let f = srect.fit(prect);
           console.log("fitted:", f);
+
+          Element.setCSS(container, { transform: "", position: "absolute" });
 
           Element.setRect(container, f[index], "absolute");
         };
@@ -447,12 +456,11 @@
           { element: window }
         );
 
-        window.container = Element.find("#container");
+        container = Element.find("#container");
         window.styles = CSS.create("head");
 
         // new ScrollDisabler(() => true, window);
 
-        var zoomVal = 0;
         window.addEventListener("wheel", event => {
           const clientArea = Element.rect("body > div");
           clientArea.x += container.parentElement.scrollLeft;
