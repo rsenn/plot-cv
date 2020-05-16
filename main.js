@@ -20,7 +20,7 @@ import { ColorMap } from "./lib/draw/colorMap.js";
 import { EagleElement } from "./lib/eagle/element.js";
 import { EaglePath, EagleReference } from "./lib/eagle/locator.js";
 import { toXML, EagleInterface } from "./lib/eagle/common.js";
-import { renderDocument, EagleRenderer } from "./lib/eagle/renderer.js";
+import { renderDocument, EagleSVGRenderer } from "./lib/eagle/renderer.js";
 import { devtools } from "./lib/devtools.js";
 import Util from "./lib/util.js";
 import tXml from "./lib/tXml.js";
@@ -82,7 +82,7 @@ console.log("running");
 console.log("dom", { Rect, Element, parseSchematic });
 
 window.dom = { Element, SVG };
-/* prettier-ignore */ Object.assign(window, {EagleDocument, EagleElement, EagleNode, EaglePath, EagleReference, EagleRenderer, EagleInterface, Element, SVG, CSS, RGBA, HSLA, toXML, isPoint, Point, PointList, isLine, Line, isRect, Rect, isSize, Size, Matrix, Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, tXml, deep, BBox, React, h, html,
+/* prettier-ignore */ Object.assign(window, {EagleDocument, EagleElement, EagleNode, EaglePath, EagleReference, EagleSVGRenderer, EagleInterface, Element, SVG, CSS, RGBA, HSLA, toXML, isPoint, Point, PointList, isLine, Line, isRect, Rect, isSize, Size, Matrix, Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, tXml, deep, BBox, React, h, html,
         ColorMap,
         devtools,
         components, dom  });
@@ -327,7 +327,7 @@ const AppStart = (window.onload = async () => {
     event => {
       let container = Element.wrap("#container");
       if(!move) {
-        move = Element.move_relative(container);
+        move = Element.moveRelative(container);
       } else if(event.index > 0) {
         let rel = new Point(event);
         //console.log("touch x/y:", event);

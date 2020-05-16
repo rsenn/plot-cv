@@ -77,12 +77,17 @@ export const Chooser = ({ className = "list", itemClass = "item", itemComponent 
     onPush(e, i, state);
   };
   const bar = html``;
-  const children = items.map(
-    ({ name, i, data, signal, ...item }, key) =>
-      html`
-        <${itemComponent} key=${key || i} className=${classNames(itemClass || className + "-item", (name + "").replace(/.*\./, ""))} active=${i == active} onPush=${pushHandler(i)} label="${name}" ...${item} />
-      `
-  );
+  const children = items.map(({ name, i, data, ...item }, key) => {
+    console.log(`Chooser item #${i}:`, { name, data, item });
+    return h(itemComponent, {
+      key: key || i,
+      className: classNames(itemClass || className + "-item", (name + "").replace(/.*\./, "")),
+      active: i == active,
+      onPush: pushHandler(i),
+      label: name /*,
+      ...item*/
+    });
+  });
   return html`<${Container} className=${classNames("panel", className)} ...${props}>${children}</${Container}>`;
 };
 
@@ -163,24 +168,31 @@ export const BoardIcon = props => html`
   </svg>
 `;
 
-export const File = ({ name, label, i, key, signal, data, ...props }) => {
+export const File = ({ label, i, key, className = "file", onPush, signal, data, doc, ...props }) => {
   const [loaded, setLoaded] = useState(NaN);
   if(signal) signal.subscribe(data => setLoaded(data.percent));
-  const pushHandler = async state => {
-    console.log(`loading "${name}"...`);
-    await load(name);
-  };
-  let id = name || label || key || i;
+  onPush =
+    onPush ||
+    (async state => {
+      console.log(`loading "${name}"...`);
+      await load(name);
+    });
+  let name;
+  let id = label || key || i;
   let style = { minWidth: "40px", width: "40px", height: "40px" };
-  let icon = /brd$/i.test(props.className) ? h(BoardIcon, { style }) : h(SchematicIcon, {});
+  let icon = /brd$/i.test(id || className) ? h(BoardIcon, { style }) : h(SchematicIcon, {});
   icon = h("div", { style }, icon);
-  if(id) id = (id + "").replace(/[^._A-Za-z0-9]/g, "-");
+  if(id) {
+    name = id;
+    id = (id + "").replace(/[^._A-Za-z0-9]/g, "-");
+  }
   label = label.replace(/\.[^.]*$/, "").replace(/([^\s])-([^\s])/g, "$1 $2");
   //data = signal();
-  // console.log(`File`, { id, data, ...props });
+  /*console.log(`File`, { name, id,  label });
+  console.log(`File`, props);*/
 
   return html`
-              <${Item} className=file id=${id} data-filename="${name}" onPush=${pushHandler} label=${label} icon=${icon} ...${props}>
+              <${Item} className=${className} id=${id} data-filename="${name}" onPush=${onPush} label=${label} icon=${icon} ...${props}>
               <${Progress} className=${!isNaN(loaded) ? "visible" : "hidden"} percent=${loaded} />
               </${Item}>
             `;
@@ -210,4 +222,16 @@ export const FileList = ({ files, onChange, onActive, ...props }) => {
   `;
 };
 
-export default { Overlay, Container, Chooser, Button, Label, Item, Icon, Progress, BoardIcon, File, FileList };
+export default {
+  Overlay,
+  Container,
+  Chooser,
+  Button,
+  Label,
+  Item,
+  Icon,
+  Progress,
+  BoardIcon,
+  File,
+  FileList
+};

@@ -1,11 +1,12 @@
 import { ECMAScriptParser } from "./lib/ecmascript/parser.js";
 import Lexer, { Stack, PathReplacer } from "./lib/ecmascript/lexer.js";
 import Printer from "./lib/ecmascript/printer.js";
+import { estree, Factory, ESNode } from "./lib/ecmascript/estree.js";
+
 import Util from "./lib/util.js";
 import fs from "fs";
 import util from "util";
 import { Console } from "console";
-import { estree, Factory, Node } from "./lib/ecmascript/estree.js";
 import deep from "./lib/deep.js";
 import { SortedMap } from "./lib/container/sortedMap.js";
 
@@ -91,7 +92,7 @@ function main(args) {
       ast = parser.parseProgram();
 
       let flat = deep.flatten(
-        deep.iterate(ast, node => node instanceof Node),
+        deep.iterate(ast, node => node instanceof ESNode),
         new SortedMap()
       );
       let posMap = new SortedMap(

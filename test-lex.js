@@ -5,7 +5,7 @@ import Util from "./lib/util.js";
 import fs from "fs";
 import util from "util";
 import { Console } from "console";
-import { estree, Factory, Node } from "./lib/ecmascript/estree.js";
+import { estree, Factory, ESNode } from "./lib/ecmascript/estree.js";
 import deep from "./lib/deep.js";
 import { SortedMap } from "./lib/container/sortedMap.js";
 

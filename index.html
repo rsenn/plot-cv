@@ -30,16 +30,16 @@
       import { EagleElement } from "./lib/eagle/element.js";
       import { EaglePath, EagleReference } from "./lib/eagle/locator.js";
       import { toXML, EagleInterface } from "./lib/eagle/common.js";
-      import { renderDocument, EagleRenderer, SchematicRenderer, BoardRenderer } from "./lib/eagle/renderer.js";
+      import { renderDocument, EagleSVGRenderer, SchematicRenderer, BoardRenderer } from "./lib/eagle/renderer.js";
       import { devtools } from "./lib/devtools.js";
       import Util from "./lib/util.js";
       import tXml from "./lib/tXml.js";
       import deep from "./lib/deep.js";
       import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from "./modules/preact/dist/preact.mjs";
       import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from "./modules/htm/preact/standalone.mjs";
-      import components, { Container, Button, FileList } from "./static/components.js";
+      import components, { Chooser, Container, Button, FileList } from "./static/components.js";
       import { WebSocketClient } from "./lib/websocket-client.js";
-
+      import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from "./lib/ecmascript.js";
       const React = {
         cloneElement,
         Component,
@@ -105,7 +105,7 @@
         TRBL,
         Tree
       } = { ...dom, ...geom };
-      Object.assign(window, { React, ReactComponent, WebSocketClient }, dom, geom);
+      Object.assign(window, { React, ReactComponent, WebSocketClient, html }, dom, geom, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token }, { Chooser });
 
       let currentProj = trkl.property(window, "project");
       let open = trkl();
@@ -198,13 +198,15 @@
 
       const loadDocument = async (proj, parentElem) => {
         console.log(`load project #${proj.i}:`, proj);
+
         proj.doc = await LoadFile(proj.name);
         window.eagle = proj.doc;
+
         Element.remove("#fence");
         proj.element = Element.create("div", { id: "fence", style: { position: "relative", "data-name": proj.name, border: "1px dotted black" } }, Element.find("#container"));
         //let svg = Element.create('svg', { viewBox:  } , element);
 
-        proj.renderer = EagleRenderer.create(proj.doc, React.create);
+        proj.renderer = EagleSVGRenderer.create(proj.doc, React.create);
 
         let svgXml = proj.renderer.render(proj.doc);
         console.log("testRender:", svgXml);
@@ -249,8 +251,8 @@
         //
 
         Object.assign(proj.svg.style, {
-          "min-width": `${size.width}mm`,
-          "min-height": `${size.height}mm`
+          "min-width": `${size.width}mm`
+          // "min-height": `${size.height}mm`
         });
         Element.setCSS(proj.svg, { left: 0, top: 0, position: "relative" });
 
@@ -263,11 +265,10 @@
         return proj;
       };
 
-      const chooseDocument = async (...args) => {
-        const [e, proj, i] = args;
+      const chooseDocument = async (e, proj, i) => {
         const { type } = e;
         const box = Element.findAll(".file")[i];
-        console.log(" :", { e, proj, box, i });
+        console.log("chooseDocument:", { e, proj, i, box });
         if(!proj.loaded) {
           let data = await loadDocument(proj, box);
           proj.loaded = true;
@@ -296,7 +297,7 @@
           EagleNode,
           EaglePath,
           EagleReference,
-          EagleRenderer,
+          EagleSVGRenderer,
           eventIterator,
           h,
           HSLA,
@@ -357,25 +358,18 @@
 
         (async () => {
           let ws = (window.socket = new WebSocketClient());
-
           console.log("New WebSocket:", ws);
-
           await ws.connect(socketURL);
           console.log("Connected:", ws.connected);
-
           ws.send("hello!");
-
           let data;
-
           for await (data of ws) {
             console.log("WebSocket data:", data);
             // See if there are any more messages received.
             ws.dataAvailable !== 0;
           }
-
           // Close the connection.
           await ws.disconnect();
-
           console.log("WebSocket connected: ", ws.connected);
         })();
 
@@ -436,9 +430,9 @@
 
         TouchListener(
           event => {
-            let container = Element.wrap("#container");
+            let container = Element.find("#container");
             if(!move) {
-              move = Element.move_relative(container);
+              move = Element.moveRelative(container);
             } else if(event.index > 0) {
               let rel = new Point(event);
               //console.log("touch x/y:", event);

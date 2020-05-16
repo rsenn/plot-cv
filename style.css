@@ -41,13 +41,17 @@ svg,
 
 .label {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  flex-flow: row nowrap;
-width: 100%;
+  flex-flow: row wrap;
+  width: 100%;
+}
+.file {
+  border-radius: 5px;
 }
 
-.hstart, .label {
+.hstart,
+.label {
   justify-content: flex-start;
 }
 .vcenter {
@@ -106,7 +110,7 @@ body,
   transition: height 1s, border 0.5s;
 }
 .list {
-    background-color: hsla(0, 0%, 80%, 1);
+  background-color: hsla(0, 0%, 80%, 1);
 }
 .list {
   overflow: scroll;
@@ -121,11 +125,10 @@ body,
 }
 .list {
   flex-flow: row wrap;
-
 }
 .list .file {
   flex-basis: 45%;
-  flex: 1 1 1;
+  flex: 1 1 auto;
   flex-flow: column nowrap;
 }
 .file {
@@ -148,7 +151,7 @@ body,
 }
 .list > .file.active {
   margin: 4px;
-  background: linear-gradient(0deg, rgba(255,255,12,0.8) 0%,  rgba(255,210,12,0.8) 100%);
+  background: linear-gradient(0deg, rgba(255, 255, 12, 0.8) 0%, rgba(255, 210, 12, 0.8) 100%);
   border: 4px solid hsla(250, 100%, 60%, 1);
 
   box-shadow: 1px 1px 4px hsl(180, 20%, 20%);
@@ -169,19 +172,18 @@ body,
   background: rgba(255, 0, 0, 1);
 }
 
-.panel, .buttons {
-    display: flex;
-
+.panel,
+.buttons {
+  display: flex;
 }
 .buttons {
   justify-content: flex-start;
   align-items: stretch;
 }
 .buttons {
-    background-color: hsla(230, 40%, 80%, 0.8);
+  background-color: hsla(230, 40%, 80%, 0.8);
   border: 1px solid hsla(230, 0%, 50%, 1);
-    z-index: 100000;
-
+  z-index: 100000;
 }
 .sch > .progress > .progress-bar {
   background: hsla(60, 100%, 60%, 0.5);
@@ -196,34 +198,32 @@ body,
 .sidebar {
   position: absolute;
   max-width: 50%;
-  z-index:  10000;
-      transition: left 1s linear, transform 0.1s linear;
-left: 0;
-    transform: translateX(0);
+  z-index: 10000;
+  left: 0;
+  transform: translateX(0);
 }
 .sidebar.active {
- background: hsla(0, 0%, 80%, 1);
-
+  background: hsla(0, 0%, 80%, 1);
+  transition: left 0.2s linear, transform 0.2s linear;
 }
- .sidebar.inactive {
-    transition: left 1s linear, transform 1s linear;
- background: hsla(0, 0%, 80%, 0.2);
-left: -100%;
- /*   transform: translate(-100%,0);*/
+.sidebar.inactive {
+  background: hsla(0, 0%, 80%, 0.2);
+  left: -100%;
+  /*   transform: translate(-100%,0);*/
+  transition: left 1s linear, transform 0.1s linear;
 }
 .sidebar > .list {
   padding: 10px;
 }
 
 .sidebar > .list {
- overflow: scroll;
+  overflow: scroll;
 }
 
 body {
   padding: 0px;
   margin: 0px;
-      background-color: hsla(230, 40%, 80%, 0.8);
-
+  background-color: hsla(230, 40%, 80%, 0.8);
 }
 
 label {
@@ -248,6 +248,8 @@ label {
   display: inline-block;
 }
 
-body, #main, #container {
+body,
+#main,
+#container {
   overflow: hidden;
 }
