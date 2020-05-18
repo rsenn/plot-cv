@@ -191,12 +191,14 @@ async function testEagle(filename) {
         pad.removeAttribute("shape");
       }
   let cmds = [];
+
+
   for(let elem of board.elements.list) {
     cmds.push(`MOVE ${elem.name} ${elem.pos};`);
     if(elem.rot) cmds.push(`ROTATE ${elem.rot} ${elem.name};`);
   }
-
-  //console.log(cmds.join(" "));
+  console.log(cmds.join(" "));
+/*
   const signals = board.find("signals");
   //console.log("signals.path:" + signals.path);
 
@@ -235,7 +237,9 @@ async function testEagle(filename) {
     const { path, ...item } = change;
 
     console.log(`board change:`, util.inspect(item, { depth: 5 }));
-  } //[change.path.reverse()[0],change.rhs]));
+  } 
+*/  
+  //[change.path.reverse()[0],change.rhs]));
   // console.log("schematic changes:",schematic.changes);
 
   for(let description of board.getAll("description")) {
