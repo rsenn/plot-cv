@@ -35,6 +35,7 @@ app.use((req, res, next) => {
 
 app.use("/static", express.static(p));
 app.use("/modules", express.static(path.join(p, "node_modules")));
+app.use("/node_modules", express.static(path.join(p, "node_modules")));
 app.use("/components", express.static(path.join(p, "components")));
 app.use("/lib", express.static(path.join(p, "lib")));
 

@@ -40,8 +40,49 @@
       import components, { Chooser, Container, Button, FileList } from "./static/components.js";
       import { WebSocketClient } from "./lib/websocket-client.js";
       import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from "./lib/ecmascript.js";
-      const React = {cloneElement, Component, createContext, createRef, Fragment, create: h, html, hydrate, isValidElement, render, toChildArray, useCallback, useContext, useDebugValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useReducer, useRef, useState };
-      const {Align, Anchor, CSS, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, HSLA, isElement, isHSLA, isLine, isMatrix, isNumber, isPoint, isRect, isRGBA, isSize, Line, Matrix, Node, Point, PointList, Polyline, ReactComponent, Rect, Renderer, RGBA, Select, Size, SVG, Timer, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
+      const React = { cloneElement, Component, createContext, createRef, Fragment, create: h, html, hydrate, isValidElement, render, toChildArray, useCallback, useContext, useDebugValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useReducer, useRef, useState };
+      const {
+        Align,
+        Anchor,
+        CSS,
+        CSSTransformSetters,
+        Element,
+        ElementPosProps,
+        ElementRectProps,
+        ElementRectProxy,
+        ElementSizeProps,
+        ElementTransformation,
+        ElementWHProps,
+        ElementXYProps,
+        HSLA,
+        isElement,
+        isHSLA,
+        isLine,
+        isMatrix,
+        isNumber,
+        isPoint,
+        isRect,
+        isRGBA,
+        isSize,
+        Line,
+        Matrix,
+        Node,
+        Point,
+        PointList,
+        Polyline,
+        ReactComponent,
+        Rect,
+        Renderer,
+        RGBA,
+        Select,
+        Size,
+        SVG,
+        Timer,
+        Transition,
+        TransitionList,
+        TRBL,
+        Tree
+      } = { ...dom, ...geom };
       Object.assign(window, { React, ReactComponent, WebSocketClient, html }, dom, geom, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token }, { Chooser });
 
       let currentProj = trkl.property(window, "project");
@@ -331,7 +372,6 @@
 
           let f = srect.fit(prect);
           console.log("fitted:", f);
-
 
           Element.setRect(container, f[index], "absolute");
           Element.setCSS(container, { transform: "", position: "absolute" });
