@@ -6,7 +6,10 @@ import { PointList } from "./lib/geom/pointList.js";
 import { RGBA } from "./lib/dom/rgba.js";
 import { HSLA } from "./lib/dom/hsla.js";
 import { Matrix } from "./lib/geom/matrix.js";
-import { Point, Size, Rect } from "./build//x86_64-linux-gnu/quickjs-opencv.so";
+//import { Point, Size, Rect } from "./build//x86_64-linux-gnu/quickjs-opencv.so";
+import { Point } from "point";
+import { Size } from "size";
+import { Rect } from "rect";
 
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };
 
