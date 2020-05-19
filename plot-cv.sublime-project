@@ -23,6 +23,12 @@
       "shell_cmd": "yarn run format",
       "working_dir": "${project_path:${folder:${file_path}}}"
     },
+        {
+      "name": "antlr4 - Build current .g4 file",
+      "shell_cmd": "(set -x; {  ARG='${file}'; NAME=\\${ARG##*/}; NAME=\\${NAME%.g4}; DIR=\\$(echo \"\\$NAME\" |  tr '[[:upper:]]' '[[:lower:]]'); DIR=\\${DIR%parser*}; DIR=\\${DIR%lexer*}; mkdir -p lib/antlr/\\$DIR; java -Xmx500M -cp '/usr/local/lib/antlr-4.8-complete.jar:$CLASSPATH' org.antlr.v4.Tool  -Dlanguage=JavaScript -lib lib/grammars -o lib/antlr/\\$DIR -visitor -Xexact-output-dir \\${ARG:-lib/grammars/C.g4}; } 0<>1 || echo failed) 2>&1",
+      "working_dir": "${project_path:${folder:${file_path}}}"
+    },
+    
     { "name": "prettier ${file_path}", "shell_cmd": "WIDTH=400 bash scripts/prettier.sh '${file}'", "working_dir": "${project_path:${folder:${file_path}}}" }
   ],
   "folders": [

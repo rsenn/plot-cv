@@ -1,18 +1,17 @@
 /*import { Point as Point_ } from "./lib/geom/point.js";
 import { Size as Size_ } from "./lib/geom/size.js";*/
-import { Line } from "./lib/geom/line.js";
-import { Rect as Rect_ } from "./lib/geom/rect.js";
-import { PointList } from "./lib/geom/pointList.js";
-import { RGBA } from "./lib/dom/rgba.js";
+import { Contour } from "contour";
 import { HSLA } from "./lib/dom/hsla.js";
+import { Line } from "./lib/geom/line.js";
+import { Mat } from "mat";
 import { Matrix } from "./lib/geom/matrix.js";
-import { inspect } from "./inspect.js";
 //import { Point, Size, Rect } from "./build//x86_64-linux-gnu/quickjs-opencv.so";
 import { Point } from "point";
-import { Size } from "size";
+import { PointList } from "./lib/geom/pointList.js";
+import { RGBA } from "./lib/dom/rgba.js";
 import { Rect } from "rect";
-import { Contour } from "contour";
-import { Mat } from "mat";
+import { Size } from "size";
+import { inspect } from "./inspect.js";
 
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };
 
