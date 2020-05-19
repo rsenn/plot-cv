@@ -96,7 +96,6 @@ endforeach()
 #string(REGEX REPLACE   "src/" "" "${NAME}_SOURCES" "${SOURCES}")
 set("${NAME}_SOURCES" ${SRCS})
 #[[message("${NAME}_SOURCES:"  ${${NAME}SOURCES})
-list(TRANSFORM "${NAME}_SOURCES" REPLACE "\\(.*\\)" "\\1")
 ]]
 
 message("${NAME}_SOURCES: ${${NAME}_SOURCES}")

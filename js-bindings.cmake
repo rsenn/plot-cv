@@ -28,10 +28,14 @@ endif()
 endfunction()
 
 file(GLOB JS_BINDINGS_SOURCES ${CMAKE_SOURCE_DIR}/src/js_*.cpp)
-list(APPEND JS_BINDINGS_MODULES ${JS_BINDINGS_SOURCES})
 
-  list(TRANSFORM JS_BINDINGS_MODULES REPLACE  "\\.cpp$" "")
-  list(TRANSFORM JS_BINDINGS_MODULES REPLACE  ".*/js_" "")
+foreach(MOD ${JS_BINDINGS_SOURCES})
+  string(REGEX REPLACE "\\.cpp" "" MOD "${MOD}")
+  string(REGEX REPLACE ".*/js_" "" MOD "${MOD}")
+  list(APPEND JS_BINDINGS_MODULES ${MOD})
+
+endforeach(MOD ${JS_BINDINGS_SOURCES})
+
 
   message("JS_BINDINGS_MODULES: ${JS_BINDINGS_MODULES}")
 
