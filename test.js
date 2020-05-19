@@ -72,15 +72,15 @@ function testPointVector() {
 
   console.log("poly.length: ", poly.length);
   console.log("hull.length: ", hull.length);
-  console.log("poly.boundingRect(): ", poly.boundingRect());
-  console.log("pv.minAreaRect(): ", pv.minAreaRect());
-  console.log("pv.fitEllipse(): ", pv.fitEllipse());
-  console.log("pv.fitLine(): ", pv.fitLine());
-  console.log("hull.boundingRect(): ", hull.boundingRect());
-  console.log("pv.length: ", pv.length);
-  console.log("pv.get(0): ", pv.get(0));
-  console.log("pv.get(1): ", pv.get(1));
-  console.log("pv.area: ", pv.area);
+//  console.log("poly.boundingRect(): ", poly.boundingRect());
+//  console.log("pv.minAreaRect(): ", pv.minAreaRect());
+//  console.log("pv.fitEllipse(): ", pv.fitEllipse());
+//  console.log("pv.fitLine(): ", pv.fitLine());
+//  console.log("hull.boundingRect(): ", hull.boundingRect());
+//  console.log("pv.length: ", pv.length);
+//  console.log("pv.get(0): ", pv.get(0));
+//  console.log("pv.get(1): ", pv.get(1));
+//  console.log("pv.area: ", pv.area);
 
   /*
   let it = pv[Symbol.iterator]();
@@ -104,7 +104,7 @@ global.process = function(contours, hier) {
   let c = contours[0];
 
   let orig = imgOriginal;
-  let hull = c.convexHull(false, false);
+/*  let hull = c.convexHull(false, false);
   let defects = null; //c.convexityDefects(hull);
 
   console.log(typeof c);
@@ -120,9 +120,10 @@ global.process = function(contours, hier) {
   console.log("simplifyOpheim: ", c.simplifyOpheim());
   console.log("simplifyLang: ", c.simplifyLang());
   console.log("simplifyDouglasPeucker: ", c.simplifyDouglasPeucker());
+  */
 //  console.log("center: ", c.center);
 
-  let a = c.toArray();
+/*  let a = c.toArray();
   console.log("toArray: ", a);
   console.log("imgRaw: ", imgRaw);
 
@@ -157,7 +158,7 @@ global.process = function(contours, hier) {
     console.log("obj.parent=", obj.parent(1));
     console.log("obj.firstChild=", obj.firstChild(1));
   }
-
+*/
   /*
   console.log("orig.rows =", orig.rows);
   console.log("orig.cols =", orig.cols);*/
