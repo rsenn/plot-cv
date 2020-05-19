@@ -6,10 +6,13 @@ import { PointList } from "./lib/geom/pointList.js";
 import { RGBA } from "./lib/dom/rgba.js";
 import { HSLA } from "./lib/dom/hsla.js";
 import { Matrix } from "./lib/geom/matrix.js";
+import { inspect } from "./inspect.js";
 //import { Point, Size, Rect } from "./build//x86_64-linux-gnu/quickjs-opencv.so";
 import { Point } from "point";
 import { Size } from "size";
 import { Rect } from "rect";
+import { Contour } from "contour";
+import { Mat } from "mat";
 
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };
 
@@ -30,7 +33,6 @@ function testPointVector() {
   let s = new Size(320, 200);
   let mat = new Mat(s, Mat.CV_32FC2);
   let mat2 = new Mat(200, 320, Mat.CV_32FC2);
-
   console.log("s =", s);
   console.log("mat.rows =", mat.rows);
   console.log("mat.cols =", mat.cols);
@@ -49,7 +51,7 @@ function testPointVector() {
 
   let circle = pv.minEnclosingCircle();
   let triangle = pv.minEnclosingTriangle();
-  console.log("circle.center: ", circle.center);
+  //console.log("circle.center: ", circle.center);
   console.log("circle.radius: ", circle.radius);
   console.log("triangle: ", triangle);
   console.log("Mat.CV_8UC4 ", Mat.CV_8UC4);
@@ -57,10 +59,10 @@ function testPointVector() {
   let a = pv.get(1);
   let b = pv.get(2);
 
-  console.log("a.cross(b): ", a.cross(b));
-  console.log("a.dot(b): ", a.dot(b));
-  console.log("a.atan2(): ", a.atan2());
-  console.log("a.length(): ", a.distance);
+  //console.log("a.cross(b): ", a.cross(b));
+//  console.log("a.dot(b): ", a.dot(b));
+  //console.log("a.atan2(): ", a.atan2());
+  //console.log("a.length(): ", a.distance);
 
   console.log("pv.pointPolygonTest: ", pv.pointPolygonTest(new Point(10, 10)));
   console.log("pv.pointPolygonTest: ", pv.pointPolygonTest(new Point(200, 200)));
@@ -118,7 +120,7 @@ global.process = function(contours, hier) {
   console.log("simplifyOpheim: ", c.simplifyOpheim());
   console.log("simplifyLang: ", c.simplifyLang());
   console.log("simplifyDouglasPeucker: ", c.simplifyDouglasPeucker());
-  console.log("center: ", c.center);
+//  console.log("center: ", c.center);
 
   let a = c.toArray();
   console.log("toArray: ", a);
