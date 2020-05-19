@@ -24,6 +24,7 @@ extern "C" {
 int js_init(int argc, char*[]);
 
 int js_draw_functions(JSContext* ctx, JSValue parent);
+int js_draw_init(JSContext*, JSModuleDef*);
 
 JSValue js_point_new(JSContext*, double x, double y);
 JSPointData* js_point_data(JSContext*, JSValue val);

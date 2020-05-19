@@ -270,19 +270,23 @@ cfg-rpi4()
   : ${host=aarch64-linux-gnu}
   : ${build=aarch64-linux-gnu}
   : ${CC=aarch64-linux-gnu-gcc}
-  : ${CXX=aarch64-linux-gnu-g++}
+  : ${CXX=aarch64-linux-gnu-g++-8}
   
   prefix=/usr/aarch64-linux-gnu/sysroot/usr
+  CC=aarch64-linux-gnu-gcc-8 CXX=aarch64-linux-gnu-g++-8 \
     cfg \
   -DCMAKE_INSTALL_PREFIX=$prefix \
   -DCMAKE_VERBOSE_MAKEFILE=TRUE \
-  -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN:-/opt/cmake-toolchains/aarch64-linux-gnu.toolchain.cmake} \
   -DANDROID_NATIVE_API_LEVEL=21 \
   -DPKG_CONFIG_EXECUTABLE=/usr/bin/aarch64-linux-gnu-pkg-config \
   -DCMAKE_PREFIX_PATH=$prefix \
   -DCMAKE_SYSROOT=${prefix%/usr} \
   -DCMAKE_MAKE_PROGRAM=/usr/bin/make \
    -DCMAKE_MODULE_PATH="$prefix/lib/cmake" \
+    -DCMAKE_CROSSCOMPILING=True \
+  -DLLVM_TARGET_ARCH=AArch64 \
+  -DLLVM_DEFAULT_TARGET_TRIPLE=aarch64-linux-gnueabihf \
+  -DCMAKE_CXX_FLAGS='-march=armv8-a -mtune=cortex-a72' \
    "$@"
     )
 }
