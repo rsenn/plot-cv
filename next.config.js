@@ -1,21 +1,21 @@
-const withPlugins = require("next-compose-plugins");
-const withOffline = require("next-offline");
+const withPlugins = require('next-compose-plugins');
+const withOffline = require('next-offline');
 
 const nextConfig = {
-  target: "serverless",
+  target: 'serverless',
   webpack(config) {
-    config.resolve.alias["react"] = "preact/compat";
-    config.resolve.alias["react-dom"] = "preact/compat";
+    config.resolve.alias['react'] = 'preact/compat';
+    config.resolve.alias['react-dom'] = 'preact/compat';
     return config;
   },
   workboxOpts: {
-    swDest: "static/service-worker.js",
+    swDest: 'static/service-worker.js',
     runtimeCaching: [
       {
         urlPattern: /^https?.*/,
-        handler: "NetworkFirst",
+        handler: 'NetworkFirst',
         options: {
-          cacheName: "https-calls",
+          cacheName: 'https-calls',
           networkTimeoutSeconds: 15,
           expiration: {
             maxEntries: 150,

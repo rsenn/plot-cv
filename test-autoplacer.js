@@ -1,10 +1,10 @@
-import Autoplacer from "./lib/autoplacer/autoplacer.js";
-import { BBox } from "./lib/geom/bbox.js";
-import { TRBL } from "./lib/geom/trbl.js";
-import { Rect } from "./lib/geom/rect.js";
-import { Alea } from "./lib/alea.js";
+import Autoplacer from './lib/autoplacer/autoplacer.js';
+import { BBox } from './lib/geom/bbox.js';
+import { TRBL } from './lib/geom/trbl.js';
+import { Rect } from './lib/geom/rect.js';
+import { Alea } from './lib/alea.js';
 
-import { Console } from "console";
+import { Console } from 'console';
 
 global.console = new Console({
   stdout: process.stdout,
@@ -31,14 +31,14 @@ var bl = rects.map(rect => {
   return [left, top, width, height];
 });
 
-console.log("rg:", rg());
-console.log("bb:", bb);
-console.log("bl:", bl);
+console.log('rg:', rg());
+console.log('bb:', bb);
+console.log('bl:', bl);
 
 var ap = new Autoplacer({ bodies: bl });
 
-console.log("ap.next():", ap.next());
+console.log('ap.next():', ap.next());
 
 ap.next();
 
-console.log("ap:", ap.bodies_);
+console.log('ap:', ap.bodies_);

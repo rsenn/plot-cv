@@ -1,24 +1,24 @@
 /*import { Point as Point_ } from "./lib/geom/point.js";
 import { Size as Size_ } from "./lib/geom/size.js";*/
-import { Contour } from "contour";
-import { HSLA } from "./lib/dom/hsla.js";
-import { Line } from "./lib/geom/line.js";
-import { Mat } from "mat";
-import { Matrix } from "./lib/geom/matrix.js";
+import { Contour } from 'contour';
+import { HSLA } from './lib/dom/hsla.js';
+import { Line } from './lib/geom/line.js';
+import { Mat } from 'mat';
+import { Matrix } from './lib/geom/matrix.js';
 //import { Point, Size, Rect } from "./build//x86_64-linux-gnu/quickjs-opencv.so";
-import { Point } from "point";
-import { PointList } from "./lib/geom/pointList.js";
-import { RGBA } from "./lib/dom/rgba.js";
-import { Rect } from "rect";
-import { Size } from "size";
-import { inspect } from "./inspect.js";
+import { Point } from 'point';
+import { PointList } from './lib/geom/pointList.js';
+import { RGBA } from './lib/dom/rgba.js';
+import { Rect } from 'rect';
+import { Size } from 'size';
+import { inspect } from './inspect.js';
 
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };
 
 Point.prototype.atan2 = function() {
   return Math.atan2(this.x, this.y);
 };
-Object.defineProperty(Point.prototype, "distance", {
+Object.defineProperty(Point.prototype, 'distance', {
   get: function() {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   },
@@ -32,13 +32,13 @@ function testPointVector() {
   let s = new Size(320, 200);
   let mat = new Mat(s, Mat.CV_32FC2);
   let mat2 = new Mat(200, 320, Mat.CV_32FC2);
-  console.log("s =", s);
-  console.log("mat.rows =", mat.rows);
-  console.log("mat.cols =", mat.cols);
-  console.log("mat.type =", mat.type);
-  console.log("mat.channels =", mat.channels);
-  console.log("mat2.rows =", mat2.rows);
-  console.log("mat2.cols =", mat2.cols);
+  console.log('s =', s);
+  console.log('mat.rows =', mat.rows);
+  console.log('mat.cols =', mat.cols);
+  console.log('mat.type =', mat.type);
+  console.log('mat.channels =', mat.channels);
+  console.log('mat2.rows =', mat2.rows);
+  console.log('mat2.cols =', mat2.cols);
   pv.push(0, 0);
   pv.push({ x: 10, y: 0 });
   pv.push({ x: 10, y: 20 });
@@ -51,10 +51,10 @@ function testPointVector() {
   let circle = pv.minEnclosingCircle();
   let triangle = pv.minEnclosingTriangle();
   //console.log("circle.center: ", circle.center);
-  console.log("circle.radius: ", circle.radius);
-  console.log("triangle: ", triangle);
-  console.log("Mat.CV_8UC4 ", Mat.CV_8UC4);
-  console.log("Mat.CV_32FC1 ", Mat.CV_32FC1);
+  console.log('circle.radius: ', circle.radius);
+  console.log('triangle: ', triangle);
+  console.log('Mat.CV_8UC4 ', Mat.CV_8UC4);
+  console.log('Mat.CV_32FC1 ', Mat.CV_32FC1);
   let a = pv.get(1);
   let b = pv.get(2);
 
@@ -63,14 +63,14 @@ function testPointVector() {
   //console.log("a.atan2(): ", a.atan2());
   //console.log("a.length(): ", a.distance);
 
-  console.log("pv.pointPolygonTest: ", pv.pointPolygonTest(new Point(10, 10)));
-  console.log("pv.pointPolygonTest: ", pv.pointPolygonTest(new Point(200, 200)));
+  console.log('pv.pointPolygonTest: ', pv.pointPolygonTest(new Point(10, 10)));
+  console.log('pv.pointPolygonTest: ', pv.pointPolygonTest(new Point(200, 200)));
 
-  console.log("pv.pointPolygonTest: ", pv.pointPolygonTest(new Point(10, 10), true));
-  console.log("pv.pointPolygonTest: ", pv.pointPolygonTest(new Point(200, 200), true));
+  console.log('pv.pointPolygonTest: ', pv.pointPolygonTest(new Point(10, 10), true));
+  console.log('pv.pointPolygonTest: ', pv.pointPolygonTest(new Point(200, 200), true));
 
-  console.log("poly.length: ", poly.length);
-  console.log("hull.length: ", hull.length);
+  console.log('poly.length: ', poly.length);
+  console.log('hull.length: ', hull.length);
   //  console.log("poly.boundingRect(): ", poly.boundingRect());
   //  console.log("pv.minAreaRect(): ", pv.minAreaRect());
   //  console.log("pv.fitEllipse(): ", pv.fitEllipse());
@@ -166,7 +166,14 @@ global.process = function(contours, hier) {
   console.log("hier: ", global.hier[global.contours.length - 1]);*/
 
   function dumpContour(c) {
-    console.log(`contour #${c.id} length=${(c.length + "").padStart(5, " ")} bbox=`, c.bbox, " rect:", c.rect, " area=", c.area);
+    console.log(
+      `contour #${c.id} length=${(c.length + '').padStart(5, ' ')} bbox=`,
+      c.bbox,
+      ' rect:',
+      c.rect,
+      ' area=',
+      c.area
+    );
   }
 
   function processContours(contours) {
@@ -221,25 +228,38 @@ global.process = function(contours, hier) {
   const do_log = false;
 
   if(do_log) {
-    console.log(`polygons: [\n  ${polygons.join(",\n  ")}\n]`);
+    console.log(`polygons: [\n  ${polygons.join(',\n  ')}\n]`);
 
-    console.log("PROCESS contours: ", contours.map(c => "[" + c.map(pt => `{x:${pt.x},y:${pt.y}}`).join(", ") + "]").join(", "));
-    console.log("PROCESS hier: ", "[" + hier.map(h => `[${h.join(",")}]`).join(", "));
+    console.log(
+      'PROCESS contours: ',
+      contours.map(c => '[' + c.map(pt => `{x:${pt.x},y:${pt.y}}`).join(', ') + ']').join(', ')
+    );
+    console.log('PROCESS hier: ', '[' + hier.map(h => `[${h.join(',')}]`).join(', '));
   }
 };
 var ctor = Point.prototype.constructor;
-console.log("Classes: ", inspect(lib));
-console.log("Point: ", inspect(Point));
-console.log("Contour: " + inspect(Contour));
-console.log("typeof(Point.prototype.constructor): ", typeof Point.prototype.constructor == "function");
-console.log("typeof(Point): ", typeof Point);
-console.log("ctor.name: ", ctor.name);
+console.log('Classes: ', inspect(lib));
+console.log('Point: ', inspect(Point));
+console.log('Contour: ' + inspect(Contour));
+console.log(
+  'typeof(Point.prototype.constructor): ',
+  typeof Point.prototype.constructor == 'function'
+);
+console.log('typeof(Point): ', typeof Point);
+console.log('ctor.name: ', ctor.name);
 /*console.log("Point.prototype: ", Point.prototype);
 console.log("Point.prototype.constructor: ", Point.prototype.constructor);
 */
-let points = [new Point(0, 0), new Point(50, 0), new Point(100, 0), new Point(100, 50), new Point(100, 100), new Point(100, 200)];
-console.log("points[0]: ", points[0]);
-console.log("points[last]: ", points[points.length - 1]);
-console.log("points: ", points.map(p => `{x:${p.x},y:${p.y}}`).join(", "));
+let points = [
+  new Point(0, 0),
+  new Point(50, 0),
+  new Point(100, 0),
+  new Point(100, 50),
+  new Point(100, 100),
+  new Point(100, 200)
+];
+console.log('points[0]: ', points[0]);
+console.log('points[last]: ', points[points.length - 1]);
+console.log('points: ', points.map(p => `{x:${p.x},y:${p.y}}`).join(', '));
 
 testPointVector();

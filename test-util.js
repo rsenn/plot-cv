@@ -1,3 +1,3 @@
-const Util = require("./lib/util.cjs");
+const Util = require('./lib/util.cjs');
 
-console.log(require("./lib/util.cjs").default);
+console.log(require('./lib/util.cjs').default);

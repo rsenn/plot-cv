@@ -1,5 +1,5 @@
-const Alea = require("./lib/alea.js");
-const Util = require("./lib/util.cjs").Util;
+const Alea = require('./lib/alea.js');
+const Util = require('./lib/util.cjs').Util;
 
 let rng = new Alea(1337);
 

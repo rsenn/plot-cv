@@ -1,18 +1,18 @@
-import { EagleElement } from "./lib/eagle/element.js";
-import { EagleDocument } from "./lib/eagle/document.js";
-import { EagleProject } from "./lib/eagle/project.js";
-import { EaglePath } from "./lib/eagle/locator.js";
-import { Line, Point, BBox } from "./lib/geom.js";
-import Util from "./lib/util.js";
-import fs, { promises as fsPromises } from "fs";
-import deep from "./lib/deep.js";
-import DeepDiff from "deep-diff";
-import { Console } from "console";
-import { inspect, toXML, dump } from "./lib/eagle/common.js";
-import { JsonPointer, JsonReference } from "./lib/json-pointer.js";
-import { Graph, Edge, Node } from "./lib/fd-graph.js";
-import ptr from "./lib/json-ptr.js";
-import util from "util";
+import { EagleElement } from './lib/eagle/element.js';
+import { EagleDocument } from './lib/eagle/document.js';
+import { EagleProject } from './lib/eagle/project.js';
+import { EaglePath } from './lib/eagle/locator.js';
+import { Line, Point, BBox } from './lib/geom.js';
+import Util from './lib/util.js';
+import fs, { promises as fsPromises } from 'fs';
+import deep from './lib/deep.js';
+import DeepDiff from 'deep-diff';
+import { Console } from 'console';
+import { inspect, toXML, dump } from './lib/eagle/common.js';
+import { JsonPointer, JsonReference } from './lib/json-pointer.js';
+import { Graph, Edge, Node } from './lib/fd-graph.js';
+import ptr from './lib/json-ptr.js';
+import util from 'util';
 
 global.console = new Console({
   stdout: process.stdout,
@@ -21,14 +21,21 @@ global.console = new Console({
 });
 
 function xmlize(obj, depth = 2) {
-  return obj.toXML ? obj.toXML().replace(/>\s*</g, ">\n    <") : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
+  return obj.toXML
+    ? obj.toXML().replace(/>\s*</g, '>\n    <')
+    : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
 function testLocator() {
-  let testobj = [0, 1, 2, { name: "roman", children: ["x", "y", { id: 1, items: ["a", "b", "c"] }] }];
-  let l = new EaglePath([3, "children", 2, "items", -2]);
+  let testobj = [
+    0,
+    1,
+    2,
+    { name: 'roman', children: ['x', 'y', { id: 1, items: ['a', 'b', 'c'] }] }
+  ];
+  let l = new EaglePath([3, 'children', 2, 'items', -2]);
   let a = [l.slice(), l.slice()];
 
-  a[1][0] = "x";
+  a[1][0] = 'x';
 
   let b = [l.prevSibling, l.nextSibling, l.parent];
 }
@@ -37,7 +44,7 @@ function testProxyTree() {
   let tree = Util.proxyTree((path, key, value) => {
     return true;
   });
-  tree.a.b.c.d("test");
+  tree.a.b.c.d('test');
   tree.a.b.c.d.e = 0;
   tree.a.b.c.d.e[0] = 1;
 }
@@ -45,28 +52,28 @@ function testProxyTree() {
 function testProxyClone() {
   let obj = {
     blah: [1, 2, 3, 4],
-    test: { text: "eruoiewurew", name: "haha" },
+    test: { text: 'eruoiewurew', name: 'haha' },
     num: 41
   };
 
   let clone = Util.proxyClone(obj);
 
-  obj.addProp = "1234";
-  clone.newProp = "test";
+  obj.addProp = '1234';
+  clone.newProp = 'test';
 }
 
 function testJsonPointer() {
   var data = {
     legumes: [
-      { name: "pinto beans", unit: "lbs", instock: 4 },
-      { name: "lima beans", unit: "lbs", instock: 21 },
-      { name: "black eyed peas", unit: "lbs", instock: 13 },
-      { name: "plit peas", unit: "lbs", instock: 8 }
+      { name: 'pinto beans', unit: 'lbs', instock: 4 },
+      { name: 'lima beans', unit: 'lbs', instock: 21 },
+      { name: 'black eyed peas', unit: 'lbs', instock: 13 },
+      { name: 'plit peas', unit: 'lbs', instock: 8 }
     ]
   };
-  var pointer = ptr.append(ptr.nil, "legumes", 0);
-  var pointer2 = ptr.append(pointer, "name");
-  ptr.assign(pointer2)(data, "test name");
+  var pointer = ptr.append(ptr.nil, 'legumes', 0);
+  var pointer2 = ptr.append(pointer, 'name');
+  ptr.assign(pointer2)(data, 'test name');
 }
 
 const filesystem = {
@@ -76,7 +83,7 @@ const filesystem = {
     return data;
   },
   writeFile(filename, data, overwrite = true) {
-    return fs.writeFileSync(filename, data, { flag: overwrite ? "w" : "wx" });
+    return fs.writeFileSync(filename, data, { flag: overwrite ? 'w' : 'wx' });
   },
   exists(filename) {
     return fs.existsSync(filename);
@@ -89,7 +96,7 @@ async function testGraph(proj) {
   project = proj;
   graph = new Graph();
 
-  for(let element of proj.board.getAll("element")) {
+  for(let element of proj.board.getAll('element')) {
     const { x, y } = element;
     const pkg = element.package;
     const bb = element.getBounds();
@@ -106,7 +113,7 @@ async function testGraph(proj) {
 
     console.log(`element ${n.label} GraphNode`, n);
 
-    let pads = [...pkg.getAll("pad")];
+    let pads = [...pkg.getAll('pad')];
     let padNames = pads.map(p => p.name);
 
     for(let pad of pads) {
@@ -120,7 +127,7 @@ async function testGraph(proj) {
   for(let signal of proj.board.signals.list) {
     console.log(`${signal} GraphNode`);
 
-    for(let contactref of signal.getAll("contactref")) {
+    for(let contactref of signal.getAll('contactref')) {
       const { element } = contactref;
       const pad = contactref.attributes.pad;
 
@@ -138,18 +145,18 @@ async function testEagle(filename) {
 
   const getPackage = (d, e) => {
     let part;
-    if(e.tagName == "instance") {
+    if(e.tagName == 'instance') {
       part = e.part;
       let deviceset = part.deviceset;
-      const device = deviceset.get("device", part.attributes.device);
+      const device = deviceset.get('device', part.attributes.device);
       return device.package;
     }
     return e.package;
   };
 
   const packages = {
-    board: [...proj.board.getAll("package")],
-    schematic: [...proj.schematic.getAll("package")]
+    board: [...proj.board.getAll('package')],
+    schematic: [...proj.schematic.getAll('package')]
   };
   let e = proj.board.elements.T1;
 
@@ -175,20 +182,20 @@ async function testEagle(filename) {
 
   let firstPart = parts[0];
 
-  proj.updateLibrary("c");
+  proj.updateLibrary('c');
 
   //console.log(`proj.library.c:`, proj.library.c);
 
   for(let lib of board.libraries.list)
     for(let pkg of lib.packages.list)
       for(let pad of pkg.children) {
-        if(pad.tagName !== "pad") continue;
+        if(pad.tagName !== 'pad') continue;
 
-        pad.setAttribute("drill", "0.7");
-        pad.setAttribute("diameter", "1.778");
-        pad.removeAttribute("stop");
-        pad.removeAttribute("rot");
-        pad.removeAttribute("shape");
+        pad.setAttribute('drill', '0.7');
+        pad.setAttribute('diameter', '1.778');
+        pad.removeAttribute('stop');
+        pad.removeAttribute('rot');
+        pad.removeAttribute('shape');
       }
   let cmds = [];
 
@@ -196,7 +203,7 @@ async function testEagle(filename) {
     cmds.push(`MOVE ${elem.name} ${elem.pos};`);
     if(elem.rot) cmds.push(`ROTATE ${elem.rot} ${elem.name};`);
   }
-  console.log(cmds.join(" "));
+  console.log(cmds.join(' '));
   /*
   const signals = board.find("signals");
   //console.log("signals.path:" + signals.path);
@@ -242,19 +249,19 @@ async function testEagle(filename) {
   //[change.path.reverse()[0],change.rhs]));
   // console.log("schematic changes:",schematic.changes);
 
-  for(let description of board.getAll("description")) {
+  for(let description of board.getAll('description')) {
     // console.log("description:",description.raw);
   }
 
   //console.log("board.raw:", board.raw);
-  proj.saveTo(".", true);
+  proj.saveTo('.', true);
   //  proj.board = board;proj.schematic = schematic;
   return proj;
 }
 
 (async () => {
   let args = process.argv.slice(2);
-  if(args.length == 0) args.unshift("../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3");
+  if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
 
   for(let arg of args) {
     try {

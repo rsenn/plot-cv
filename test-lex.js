@@ -1,13 +1,13 @@
-import { ECMAScriptParser } from "./lib/ecmascript/parser.js";
-import Lexer, { Stack, PathReplacer } from "./lib/ecmascript/lexer.js";
-import Printer from "./lib/ecmascript/printer.js";
-import Util from "./lib/util.js";
-import fs from "fs";
-import util from "util";
-import { Console } from "console";
-import { estree, Factory, ESNode } from "./lib/ecmascript/estree.js";
-import deep from "./lib/deep.js";
-import { SortedMap } from "./lib/container/sortedMap.js";
+import { ECMAScriptParser } from './lib/ecmascript/parser.js';
+import Lexer, { Stack, PathReplacer } from './lib/ecmascript/lexer.js';
+import Printer from './lib/ecmascript/printer.js';
+import Util from './lib/util.js';
+import fs from 'fs';
+import util from 'util';
+import { Console } from 'console';
+import { estree, Factory, ESNode } from './lib/ecmascript/estree.js';
+import deep from './lib/deep.js';
+import { SortedMap } from './lib/container/sortedMap.js';
 
 //import process from 'process';
 Error.stackTraceLimit = 1000;
@@ -19,7 +19,7 @@ global.console = new Console({
 });
 
 let args = process.argv.slice(2);
-if(args.length == 0) args.push("-");
+if(args.length == 0) args.push('-');
 
 let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
 
@@ -30,14 +30,14 @@ Error.stackTraceLimit = 100;
 global.lexer = null;
 
 function main(args) {
-  if(args.length == 0) args.push("./components.js");
+  if(args.length == 0) args.push('./components.js');
 
   for(let file of args) {
     let data, b, ret;
-    if(file == "-") file = "/dev/stdin";
-    console.log("file:", file);
+    if(file == '-') file = '/dev/stdin';
+    console.log('file:', file);
     data = fs.readFileSync(file);
-    console.log("opened:", data);
+    console.log('opened:', data);
     let token, error;
 
     global.lexer = new Lexer(data.toString(), file);
@@ -54,8 +54,8 @@ function main(args) {
     } catch(err) {
       error = err;
       const { msg } = error;
-      console.log("ERROR:", error);
-      console.log("stack:\n" + err.stack);
+      console.log('ERROR:', error);
+      console.log('stack:\n' + err.stack);
     }
     files[file] = error;
   }

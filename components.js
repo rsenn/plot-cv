@@ -1,4 +1,11 @@
-import { h, html, render, Component, useState, useCallback } from "../modules/htm/preact/standalone.mjs";
+import {
+  h,
+  html,
+  render,
+  Component,
+  useState,
+  useCallback
+} from '../modules/htm/preact/standalone.mjs';
 
 export function classNames() {
   var classes = [];
@@ -9,14 +16,14 @@ export function classNames() {
 
     var argType = typeof arg;
 
-    if(argType === "string" || argType === "number") {
+    if(argType === 'string' || argType === 'number') {
       classes.push(arg);
     } else if(Array.isArray(arg) && arg.length) {
       var inner = classNames.apply(null, arg);
       if(inner) {
         classes.push(inner);
       }
-    } else if(argType === "object") {
+    } else if(argType === 'object') {
       for(var key in arg) {
         if(hasOwn.call(arg, key) && arg[key]) {
           classes.push(key);
@@ -25,12 +32,12 @@ export function classNames() {
     }
   }
 
-  return classes.join(" ");
+  return classes.join(' ');
 }
 
 export const MouseHandler = callback => e => {
   if(e.type) {
-    const pressed = e.type.endsWith("down");
+    const pressed = e.type.endsWith('down');
     callback(e, pressed);
   }
 };
@@ -42,38 +49,57 @@ export const MouseEvents = h => ({
   onMouseUp: h
 });
 
-export const Overlay = ({ className = "overlay", active = false, onPush, text, children, ...props }) => {
+export const Overlay = ({
+  className = 'overlay',
+  active = false,
+  onPush,
+  text,
+  children,
+  ...props
+}) => {
   const [pushed, setPushed] = useState(false);
   const events = MouseEvents(
     MouseHandler((e, state) => {
       const prev = pushed;
-      if(!e.type.endsWith("down") && !e.type.endsWith("up")) return;
+      if(!e.type.endsWith('down') && !e.type.endsWith('up')) return;
       setPushed(state);
       //  console.log(`overlay pushed=${pushed} active=${active}:`, e.target);
-      return typeof onPush == "function" ? onPush(e, state) : null;
+      return typeof onPush == 'function' ? onPush(e, state) : null;
     })
   );
 
   return html`
-    <div className=${classNames(className, pushed && "pushed", active ? "active" : "inactive")} ...${props} ...${events}>
+    <div
+      className=${classNames(className, pushed && 'pushed', active ? 'active' : 'inactive')}
+      ...${props}
+      ...${events}
+    >
       ${text} ${children}
     </div>
   `;
 };
 
-export const Container = ({ className = "panel", children, ...props }) => {
-  useCallback(() => console.log("re-render panel"));
+export const Container = ({ className = 'panel', children, ...props }) => {
+  useCallback(() => console.log('re-render panel'));
   return html`
     <div className=${className} ...${props}>${children}</div>
   `;
 };
 
-export const Chooser = ({ className = "list", itemClass = "item", itemComponent = Overlay, items, onChange = () => {}, onPush = () => {}, ...props }) => {
+export const Chooser = ({
+  className = 'list',
+  itemClass = 'item',
+  itemComponent = Overlay,
+  items,
+  onChange = () => {},
+  onPush = () => {},
+  ...props
+}) => {
   const [active, setActive] = useState(-1);
   const pushHandler = i => (e, state) => {
     const prev = active;
     state == true && setActive(i);
-    if(i != prev && e.type.endsWith("down")) onChange(e, items[i], i);
+    if(i != prev && e.type.endsWith('down')) onChange(e, items[i], i);
     onPush(e, i, state);
   };
   const bar = html``;
@@ -81,49 +107,60 @@ export const Chooser = ({ className = "list", itemClass = "item", itemComponent 
     //console.log(`Chooser item #${i}:`, { name, data, item });
     return h(itemComponent, {
       key: key || i,
-      className: classNames(itemClass || className + "-item", (name + "").replace(/.*\./, "")),
+      className: classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
       active: i == active,
       onPush: pushHandler(i),
       label: name /*,
       ...item*/
     });
   });
-  return html`<${Container} className=${classNames("panel", className)} ...${props}>${children}</${Container}>`;
+  return html`<${Container} className=${classNames(
+    'panel',
+    className
+  )} ...${props}>${children}</${Container}>`;
 };
 
 export const Button = ({ caption, fn }) => html`
-  <${Overlay} className="button" text=${caption} onPush=${state => (state ? fn(state) : undefined)} />
+  <${Overlay}
+    className="button"
+    text=${caption}
+    onPush=${state => (state ? fn(state) : undefined)}
+  />
 `;
 
-export const Label = ({ className = "label", text, children, ...props }) =>
+export const Label = ({ className = 'label', text, children, ...props }) =>
   html`
     <div className=${className} ...${props}>${text}${children}</div>
   `;
 
-export const Item = ({ className = "item", label, icon, children, ...props }) => html`
+export const Item = ({ className = 'item', label, icon, children, ...props }) => html`
             <${Overlay} className=${className}  ...${props}>
                 <${Label} text=${icon} ...${props}>${label}</${Label}>
             </${Overlay}>
           `;
 
-export const Icon = ({ className = "icon", caption, image, ...props }) => html`
+export const Icon = ({ className = 'icon', caption, image, ...props }) => html`
   <div className=${className} ...${props}>${caption}<img src=${image} /></div>
 `;
 
 export const Progress = ({ className, percent, ...props }) => html`
-                <${Overlay} className=${classNames("progress", "center", className)} text=${percent + "%"} style=${{
-  position: "relative",
-  width: "100%",
-  height: "1.5em",
-  border: "1px solid black",
-  textAlign: "center",
-  zIndex: "99"
-}}><div className=${classNames("progress-bar", "fill")} style=${{
-  width: percent + "%",
-  position: "absolute",
-  left: "0px",
-  top: "0px",
-  zIndex: "98"
+                <${Overlay} className=${classNames(
+  'progress',
+  'center',
+  className
+)} text=${percent + '%'} style=${{
+  position: 'relative',
+  width: '100%',
+  height: '1.5em',
+  border: '1px solid black',
+  textAlign: 'center',
+  zIndex: '99'
+}}><div className=${classNames('progress-bar', 'fill')} style=${{
+  width: percent + '%',
+  position: 'absolute',
+  left: '0px',
+  top: '0px',
+  zIndex: '98'
 }}></div></${Overlay}>`;
 
 const SchematicIcon = props => html`
@@ -168,7 +205,17 @@ export const BoardIcon = props => html`
   </svg>
 `;
 
-export const File = ({ label, i, key, className = "file", onPush, signal, data, doc, ...props }) => {
+export const File = ({
+  label,
+  i,
+  key,
+  className = 'file',
+  onPush,
+  signal,
+  data,
+  doc,
+  ...props
+}) => {
   const [loaded, setLoaded] = useState(NaN);
   if(signal) signal.subscribe(data => setLoaded(data.percent));
   onPush =
@@ -179,21 +226,21 @@ export const File = ({ label, i, key, className = "file", onPush, signal, data, 
     });
   let name;
   let id = label || key || i;
-  let style = { minWidth: "40px", width: "40px", height: "40px" };
+  let style = { minWidth: '40px', width: '40px', height: '40px' };
   let icon = /brd$/i.test(id || className) ? h(BoardIcon, { style }) : h(SchematicIcon, {});
-  icon = h("div", { style }, icon);
+  icon = h('div', { style }, icon);
   if(id) {
     name = id;
-    id = (id + "").replace(/[^._A-Za-z0-9]/g, "-");
+    id = (id + '').replace(/[^._A-Za-z0-9]/g, '-');
   }
-  label = label.replace(/\.[^.]*$/, "").replace(/([^\s])-([^\s])/g, "$1 $2");
+  label = label.replace(/\.[^.]*$/, '').replace(/([^\s])-([^\s])/g, '$1 $2');
   //data = signal();
   /*console.log(`File`, { name, id,  label });
   console.log(`File`, props);*/
 
   return html`
               <${Item} className=${className} id=${id} data-filename="${name}" onPush=${onPush} label=${label} icon=${icon} ...${props}>
-              <${Progress} className=${!isNaN(loaded) ? "visible" : "hidden"} percent=${loaded} />
+              <${Progress} className=${!isNaN(loaded) ? 'visible' : 'hidden'} percent=${loaded} />
               </${Item}>
             `;
 };
@@ -207,7 +254,7 @@ export const FileList = ({ files, onChange, onActive, ...props }) => {
   onActive.subscribe(value => setActive(value));
 
   return html`
-    <div className=${classNames("sidebar", active ? "active" : "inactive")}>
+    <div className=${classNames('sidebar', active ? 'active' : 'inactive')}>
       <${Chooser}
         className="list"
         itemComponent=${File}
