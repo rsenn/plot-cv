@@ -4,6 +4,22 @@
 		"selected_items":
 		[
 			[
+				"parseBin",
+				"parseBindingPattern"
+			],
+			[
+				"generator",
+				"generator"
+			],
+			[
+				"parseRem",
+				"parseRemainingMemberExpression"
+			],
+			[
+				"mem",
+				"member_expression"
+			],
+			[
 				"HORI",
 				"HORIZONTAL_VERTICAL"
 			],
@@ -96,10 +112,10 @@
 	"buffers":
 	[
 		{
-			"contents": "EagleDocument\nconstructor(xmlStr, project, filename, type)\nget filename()\nget dirname()\nget basename()\nget changes()\ncacheFields()\ntoString()\nsaveTo(path, overwrite = false)\n(resolve, reject) =>\ntransform\n*getAll(name)\n (v, l, p) =>\ngetBounds()\n(e, p) =>",
+			"contents": "Inherit\nClipperLib.Path\nClipperLib.Paths\nClipperLib.PolyNode\nPolyNode.prototype.IsHoleNode\nPolyNode.prototype.ChildCount\nPolyNode.prototype.Contour\nPolyNode.prototype.AddChild\nPolyNode.prototype.GetNext\nPolyNode.prototype.GetNextSiblingUp\nPolyNode.prototype.Childs\nPolyNode.prototype.Parent\nPolyNode.prototype.IsHole\nClipperLib.PolyTree\nPolyTree.prototype.Clear\nPolyTree.prototype.GetFirst\nPolyTree.prototype.Total\nClipperLib.Clear\nClipperLib.FPoint\nFPoint.op_Equality\nFPoint.op_Inequality\nClipperLib.FPoint0\nClipperLib.FPoint1\nClipperLib.FPoint1dp\nClipperLib.FPoint2\nClipperLib.FRect\nClipperLib.FRect0\nClipperLib.FRect1\nClipperLib.FRect4\nClipperLib.TEdge\nClipperLib.IntersectNode\nClipperLib.MyIntersectNodeSort\nMyIntersectNodeSort.Compare\nClipperLib.LocalMinima\nClipperLib.Scanbeam\nClipperLib.Maxima\nClipperLib.OutRec\nClipperLib.OutPt\nClipperLib.Join\nClipperLib.ClipperBase\nClipperBase.near_zero\nClipperBase.IsHorizontal\nClipperBase.prototype.PointIsVertex\nClipperBase.prototype.PointOnLineSegment\nClipperBase.prototype.PointOnPolygon\nClipperBase.SlopesEqual\nClipperBase.SlopesEqual3\nClipperBase.SlopesEqual4\nClipperBase.SlopesEqual5\nClipperBase.prototype.Clear\nClipperBase.prototype.DisposeLocalMinimaList\nClipperBase.prototype.RangeTest\nClipperBase.prototype.InitEdge\nClipperBase.prototype.InitEdge2\nClipperBase.prototype.FindNextLocMin\nClipperBase.prototype.ProcessBound\nClipperBase.prototype.AddPath\nClipperBase.prototype.AddPaths\nClipperBase.prototype.Pt2IsBetweenPt1AndPt3\nClipperBase.prototype.RemoveEdge\nClipperBase.prototype.SetDx\nClipperBase.prototype.InsertLocalMinima\nClipperBase.prototype.PopLocalMinima\nClipperBase.prototype.ReverseHorizontal\nClipperBase.prototype.Reset\nClipperBase.prototype.InsertScanbeam\nClipperBase.prototype.PopScanbeam\nClipperBase.prototype.LocalMinimaPending\nClipperBase.prototype.CreateOutRec\nClipperBase.prototype.DisposeOutRec\nClipperBase.prototype.UpdateEdgeIntoAEL\nClipperBase.prototype.SwapPositionsInAEL\nClipperBase.prototype.DeleteFromAEL\nClipperLib.Clipper\nClipper.prototype.Clear\nClipper.prototype.InsertMaxima\nClipper.prototype.Execute\nClipper.prototype.FixHoleLinkage\nClipper.prototype.ExecuteInternal\nClipper.prototype.DisposeAllPolyPts\nClipper.prototype.AddJoin\nClipper.prototype.AddGhostJoin\nClipper.prototype.SetZ\nClipper.prototype.InsertLocalMinimaIntoAEL\nClipper.prototype.InsertEdgeIntoAEL\nClipper.prototype.E2InsertsBeforeE1\nClipper.prototype.IsEvenOddFillType\nClipper.prototype.IsEvenOddAltFillType\nClipper.prototype.IsContributing\nClipper.prototype.SetWindingCount\nClipper.prototype.AddEdgeToSEL\nClipper.prototype.PopEdgeFromSEL\nClipper.prototype.CopyAELToSEL\nClipper.prototype.SwapPositionsInSEL\nClipper.prototype.AddLocalMaxPoly\nClipper.prototype.AddLocalMinPoly\nClipper.prototype.AddOutPt\nClipper.prototype.GetLastOutPt\nClipper.prototype.SwapPoints\nClipper.prototype.HorzSegmentsOverlap\nClipper.prototype.SetHoleState\nClipper.prototype.GetDx\nClipper.prototype.FirstIsBottomPt\nClipper.prototype.GetBottomPt\nClipper.prototype.GetLowermostRec\nClipper.prototype.OutRec1RightOfOutRec2\nClipper.prototype.GetOutRec\nClipper.prototype.AppendPolygon\nClipper.prototype.ReversePolyPtLinks\nClipper.SwapSides\nClipper.SwapPolyIndexes\nClipper.prototype.IntersectEdges\nClipper.prototype.DeleteFromSEL\nClipper.prototype.ProcessHorizontals\nClipper.prototype.GetHorzDirection\nClipper.prototype.ProcessHorizontal\nClipper.prototype.GetNextInAEL\nClipper.prototype.IsMinima\nClipper.prototype.IsMaxima\nClipper.prototype.IsIntermediate\nClipper.prototype.GetMaximaPair\nClipper.prototype.GetMaximaPairEx\nClipper.prototype.ProcessIntersections\nClipper.prototype.BuildIntersectList\nClipper.prototype.EdgesAdjacent\nClipper.IntersectNodeSort\nClipper.prototype.FixupIntersectionOrder\nClipper.prototype.ProcessIntersectList\nClipper.TopX\nClipper.prototype.IntersectPoint\nClipper.prototype.ProcessEdgesAtTopOfScanbeam\nClipper.prototype.DoMaxima\nClipper.ReversePaths\nClipper.Orientation\nClipper.prototype.PointCount\nClipper.prototype.BuildResult\nClipper.prototype.BuildResult2\nClipper.prototype.FixupOutPolyline\nClipper.prototype.FixupOutPolygon\nClipper.prototype.DupOutPt\nClipper.prototype.GetOverlap\nClipper.prototype.JoinHorz\nClipper.prototype.JoinPoints\nClipper.GetBounds\nClipper.prototype.GetBounds2\nClipper.PointInPolygon\nClipper.prototype.PointInPolygon\nClipper.prototype.Poly2ContainsPoly1\nClipper.prototype.FixupFirstLefts1\nClipper.prototype.FixupFirstLefts2\nClipper.prototype.FixupFirstLefts3\nClipper.ParseFirstLeft\nClipper.prototype.JoinCommonEdges\nClipper.prototype.UpdateOutPtIdxs\nClipper.prototype.DoSimplePolygons\nClipper.Area\nClipper.prototype.Area\nClipper.prototype.Area$1\nClipper.SimplifyPolygon\nClipper.SimplifyPolygons\nClipper.DistanceSqrd\nClipper.DistanceFromLineSqrd\nClipper.SlopesNearCollinear\nClipper.PointsAreClose\nClipper.ExcludeOp\nClipper.CleanPolygon\nClipper.CleanPolygons\nClipper.Minkowski\nClipper.MinkowskiSum\nClipper.TranslatePath\nClipper.MinkowskiDiff\nClipper.PolyTreeToPaths\nClipper.AddPolyNodeToPaths\nClipper.OpenPathsFromPolyTree\nClipper.ClosedPathsFromPolyTree\nClipperLib.ClipperOffset\nClipperOffset.prototype.Clear\nClipperOffset.prototype.AddPath\nClipperOffset.prototype.AddPaths\nClipperOffset.prototype.FixOrientations\nClipperOffset.GetUnitNormal\nClipperOffset.prototype.DoOffset\nClipperOffset.prototype.Execute\nClipperOffset.prototype.OffsetPoint\nClipperOffset.prototype.DoSquare\nClipperOffset.prototype.DoMiter\nClipperOffset.prototype.DoRound\nClipperLib.Error\nJS.AreaOfPolygon\nJS.AreaOfPolygons\nJS.BoundsOfPath\nJS.BoundsOfPaths\nJS.Clean\nJS.Clone\nJS.Lighten\nJS.PerimeterOfPath\nJS.PerimeterOfPaths\nClipperLib.ExPolygons\nClipperLib.ExPolygon\nJS.AddOuterPolyNodeToExPolygons\nJS.ExPolygonsToPaths\nJS.PolyTreeToExPolygons",
 			"settings":
 			{
-				"buffer_size": 254,
+				"buffer_size": 5682,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
@@ -109,24 +125,26 @@
 			"file": "lib/ecmascript/parser.js",
 			"settings":
 			{
-				"buffer_size": 65991,
+				"buffer_size": 69771,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/container/enum.js",
+			"file": "test-clipper.js",
 			"settings":
 			{
-				"buffer_size": 3364,
-				"line_ending": "Unix"
+				"buffer_size": 84,
+				"encoding": "UTF-8",
+				"line_ending": "Unix",
+				"name": "import ClipperLib from './lib/clipper.js';"
 			}
 		},
 		{
-			"file": "document.es",
+			"file": "test-ecmascript.js",
 			"settings":
 			{
-				"buffer_size": 4279,
+				"buffer_size": 5172,
 				"line_ending": "Unix"
 			}
 		},
@@ -134,17 +152,40 @@
 			"file": "lib/ecmascript/printer.js",
 			"settings":
 			{
-				"buffer_size": 20659,
+				"buffer_size": 25420,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "autoStore.es",
+			"settings":
+			{
+				"buffer_size": 2802,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/autoStore.js",
+			"settings":
+			{
+				"buffer_size": 2733,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/clipper.js",
+			"settings":
+			{
+				"buffer_size": 148780,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/ecmascript/lexer.js",
+			"file": "axios.es",
 			"settings":
 			{
-				"buffer_size": 27737,
-				"encoding": "UTF-8",
+				"buffer_size": 1303,
 				"line_ending": "Unix"
 			}
 		},
@@ -152,32 +193,67 @@
 			"file": "lib/ecmascript/estree.js",
 			"settings":
 			{
-				"buffer_size": 13738,
+				"buffer_size": 14332,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "alea.es",
+			"settings":
+			{
+				"buffer_size": 2436,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/eagle/document.js",
+			"file": "lib/axios.js",
 			"settings":
 			{
-				"buffer_size": 4573,
+				"buffer_size": 1300,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "test-color.es",
+			"file": "test-export.js",
 			"settings":
 			{
-				"buffer_size": 791,
+				"buffer_size": 47,
+				"line_ending": "Unix",
+				"name": "const blah = 'test';"
+			}
+		},
+		{
+			"file": "lib/ecmascript/lexer.js",
+			"settings":
+			{
+				"buffer_size": 28177,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "test-pointlist.es",
+			"file": "lib/alea.js",
 			"settings":
 			{
-				"buffer_size": 41835,
+				"buffer_size": 2327,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/geom/pointList.js",
+			"settings":
+			{
+				"buffer_size": 13756,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/geom/point.js",
+			"settings":
+			{
+				"buffer_size": 8393,
 				"line_ending": "Unix"
 			}
 		}
@@ -410,36 +486,60 @@
 	"expanded_folders":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
-		"/home/roman/Dokumente/Sources/plot-cv/lib",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript"
+		"/home/roman/Dokumente/Sources/plot-cv/lib"
 	],
 	"file_history":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/clipper.es",
+		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
+		"/home/roman/Dokumente/Sources/plot-cv/point.es",
+		"/home/roman/Dokumente/Sources/plot-cv/pointList.es",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-export.es",
+		"/home/roman/Dokumente/Sources/plot-cv/axios.es",
+		"/home/roman/Dokumente/Sources/plot-cv/rect.es",
+		"/home/roman/Dokumente/Sources/plot-cv/matrix3d.es",
+		"/home/roman/Dokumente/Sources/plot-cv/matrix.es",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix3d.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/trbl.js",
+		"/home/roman/Dokumente/Sources/plot-cv/renderer.es",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/graph.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/locator.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
+		"/home/roman/Dokumente/Sources/plot-cv/document.es",
+		"/home/roman/Dokumente/Sources/plot-cv/printer.es",
+		"/home/roman/Dokumente/Sources/plot-cv/token.es",
+		"/home/roman/Dokumente/Sources/plot-cv/common.es",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-color.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-pointlist.es",
+		"/home/roman/Dokumente/Sources/plot-cv/parser.es",
+		"/home/roman/Dokumente/Sources/plot-cv/estree.es",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/colorscheme.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/container/enum.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lexer.es",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-template.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-color.es",
+		"/home/roman/Dokumente/Sources/plot-cv/test-pointlist.es",
+		"/home/roman/Dokumente/Sources/plot-cv/test-template.es",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-color.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/container/multiMap.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/container/spatial-h.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/container/sortedMap.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-pointlist.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-color.es",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/locator.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/project.js",
 		"/home/roman/Dokumente/Sources/plot-cv/src/plot-cv.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/test-antlr.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/ECMAScript.g4",
 		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.cpp",
@@ -477,7 +577,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/Headphone-Amplifier-ClassAB-alt3.sch",
 		"/home/roman/Downloads/rtttl.c",
 		"/home/roman/Dokumente/Sources/plot-cv/Headphone-Amplifier-ClassAB-alt3.brd",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
@@ -509,7 +608,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/container/componentMap.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/node.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
 		"/home/roman/Dokumente/Sources/plot-cv/.next/static/development/pages/_app.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/iterator.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
@@ -519,30 +617,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/src/js_contour.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/src/js_rect.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/hsla.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-matrix.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-queue.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-events.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/asynciterify.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/elementRect.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.es5.js",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_line.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/cli.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_draw.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/scripts/js-set-module-export.sh",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-libc.c",
-		"/home/roman/Dokumente/Sources/plot-cv/test-quickjs.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-cli.js",
-		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.h",
-		"/home/roman/Dokumente/Sources/plot-cv/src/polygon.h",
-		"/home/roman/Dokumente/Sources/plot-cv/js-bindings.cmake",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-libc.h",
-		"/home/roman/Dokumente/Sources/plot-cv/src/imgui-bezier-widget.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/imgui-viewer.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/highgui-viewer.cmake",
-		"/home/roman/Dokumente/Sources/plot-cv/src/matrix.h",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_point_iterator.cpp"
+		"/home/roman/Dokumente/Sources/plot-cv/test-matrix.js"
 	],
 	"find":
 	{
@@ -571,134 +646,134 @@
 		"case_sensitive": true,
 		"find_history":
 		[
-			"GETTER",
-			"FunctionLiteral",
-			"getter",
-			"FunctionLiteral",
-			"class Func",
-			"declarations",
-			"isWhite",
-			"skipComm",
-			"this.peek",
-			"isWhite",
-			"comment",
-			"Comment",
-			"isSpace",
-			"comment",
-			" parseObject",
-			"class Objec",
-			"super\\(",
-			"class ObjectLiteral",
-			"ObjectLiter",
-			"ObjectLiteral",
-			"class ObjectLiteral",
-			"printNode",
-			"instanceof Func",
-			"log.*member:",
-			"log.*skipped",
-			"log.*properties",
-			"printObjectLi",
-			"estree.ExportStatement",
-			"ExportStatement",
-			"'get'",
-			"printFunc",
-			"class ObjectLiteral",
-			"this.parseObject",
-			" parseObj",
-			"types",
-			"gate",
-			"FunctionLiteral",
-			"FunctionDecl",
-			"printFunc",
-			"getAll",
-			"class PropertyDef",
-			"keywords",
-			"isGen",
-			" parseFunc",
-			"class Func",
-			"this.parseFunc",
-			"matchFunction",
-			"parseFunc",
-			"PropertyDefinition",
+			"FPoint1dp",
+			"FPoint1dp =",
+			"FPoint2 =",
+			"FPoint2",
+			"\\.x",
+			"var y",
+			"\\.X",
+			"Area =",
+			"AreaOfPoly",
+			"JS\\.",
+			"use_lines",
+			"version",
+			"^export ",
+			"MaxSteps",
+			"JS =",
+			"ClipperLib\\..*function",
+			"ClipperLib\\.FPoint",
+			"ClipperLib\\..*function",
+			"ClipperLib\\.Error",
+			"ClipperLib\\..*function",
+			"ClipperLib\\.Clear",
+			"ClipperLib\\..*function",
+			"ClipperLib.PolyTree",
+			"ClipperLib.PolyNode",
+			"ClipperLib\\.Path",
+			"ClipperLib.Clipper",
+			"ClipperLib.ClipperBase",
+			"ClipperBase",
+			"browser\\.",
+			"navigator_appName",
+			"self",
+			"import.*clipper",
+			"handleComment",
 			"skipComment",
-			"'/'",
-			"lex",
-			"'/'",
-			"comment",
-			"printNode",
+			"Multi",
+			"' '",
+			"skipComment",
+			"lexMulti",
+			"skipComm",
 			"Comment",
-			"onReturn",
-			"parseRemaining",
-			"onReturn",
-			"parseNewOrCallOrMemberExpression",
-			"parseRemainingMemberExpression",
-			", tokens",
-			"tokens",
-			"Symbol.toString",
-			"\\[Symbol\\..*terator",
-			"\\[Symbol\\.species",
-			"\\[Symbol\\.",
-			"range =",
-			"onReturn",
-			",\n",
-			"printToks",
-			"types",
-			"this.type",
-			"methods:",
-			"length",
-			"length\", ",
-			"onRet",
-			"quoteList\\(",
-			"quoteList",
-			"end =",
-			"getMethod",
-			"onReturn",
-			"Boolean",
-			"onReturn",
-			"log.*instr",
-			"log.*result:",
-			"instrumentate",
-			"Instrumentate",
-			"onReturnNode",
-			"handleConstr",
-			"Array",
-			"printArray",
-			"printAst",
-			"printAst(",
-			"Rect.bb",
-			"log.*matchLiter",
-			"Comment",
-			"comment",
-			"operator =",
-			"ForInState",
-			"ForState",
-			"lastTok =",
-			"lastTok",
-			"imports ",
-			"Util.tail",
-			"tail =",
-			"deep.iter",
-			"printASt",
-			"toStringTag",
-			"Proxy",
-			"consume",
-			"Token",
-			"addToken",
-			"functionDe",
-			"functionDef",
-			"asterisk",
-			"generator",
-			"async",
-			"Async",
-			"initialize",
-			"current",
-			"curent",
-			"^\\s*3.10",
-			"^3.10",
-			"grammar",
-			"\\-4.7.1-",
-			"-4.7.1-",
-			"track"
+			"'\\('",
+			"'function'",
+			"store =",
+			"' as '",
+			"'as'",
+			"'as",
+			" as ",
+			"expression:",
+			"identifier:",
+			"console.log.*result.ast",
+			"log.*Identifier",
+			"console.log.*parse",
+			"log.*parse",
+			"couldBeNwe",
+			"'const'",
+			"'connst'",
+			"parseExpression",
+			"'\\('",
+			" parseExpress",
+			"ObjectBin",
+			"class Export",
+			"'export'",
+			"this.parseExpress",
+			" parseExpress",
+			" parseBinding",
+			"console.log(\"parseExportStatement\", { token: this.token.value });\n",
+			"result.ast",
+			" parseBindingPatter",
+			"'{'",
+			"parseVariableStatement",
+			"'function'",
+			"this.parseFunc",
+			" parseFunc",
+			"this.parseFunc",
+			" parseFunc",
+			"this.parseFunc",
+			" parseFunc",
+			"'async'",
+			"'await'",
+			"parseBinary",
+			"no ast",
+			" parseCond",
+			"parseCond",
+			"'await'",
+			"no ast",
+			"825",
+			"'await'",
+			" parseExpress",
+			"'await'",
+			"await",
+			"'await'",
+			"parseCond",
+			"parseConnd",
+			"await err",
+			"operatorPrecedence",
+			"parseAssign",
+			" match",
+			">>=",
+			"'>>>'",
+			"h =",
+			"h = n",
+			">>=",
+			"-->",
+			">>>=",
+			">>>",
+			"at =",
+			"div =",
+			"expectPunctuators\\(",
+			"'\\*='",
+			"'*='",
+			" parseExpress",
+			" parseExp",
+			" parseState",
+			" parseAssignment",
+			" parseExpression",
+			"matchAssignmentExpression",
+			"matchLeftHandSideExpression",
+			"matchMember",
+			"this.matchMember",
+			"'this'",
+			"Util",
+			" printExpress",
+			" printSequ",
+			"xx = ",
+			"'\\('",
+			" parseExpression\\(",
+			"parseExpression\\(",
+			" parseExpression\\("
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -706,6 +781,14 @@
 		"regex": true,
 		"replace_history":
 		[
+			"FPoint",
+			"Error",
+			"Clear",
+			"PolyTree",
+			"PolyNode",
+			"Path",
+			"Clipper",
+			"ClipperBase",
 			"-4.8-",
 			".IDENTITY",
 			"new this\\.constructor[Symbol.species]",
@@ -825,15 +908,7 @@
 			"vector_type",
 			"Polygon_<double>::vec2vec_type",
 			"vec2vec_type",
-			"vector_type",
-			"Polygon_<double>::vector_type",
-			"",
-			"point_type ",
-			"",
-			"Polygon_<double>::vec2_type",
-			"Polygon_<double>::point_type",
-			"vec2_type",
-			"point_type"
+			"vector_type"
 		],
 		"reverse": false,
 		"show_context": false,
@@ -852,7 +927,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 254,
+						"buffer_size": 5682,
 						"regions":
 						{
 						},
@@ -862,88 +937,1023 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/document.es",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/clipper.js",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
 								[
-									378,
-									391
+									5586,
+									5613
 								],
 								[
-									501,
-									545
+									6435,
+									6463
 								],
 								[
-									1406,
-									1420
+									6573,
+									6602
 								],
 								[
-									1486,
-									1499
+									6818,
+									6850
 								],
 								[
-									1602,
-									1616
+									7022,
+									7064
 								],
 								[
-									1700,
-									1713
+									7214,
+									7256
 								],
 								[
-									1765,
-									1778
+									7294,
+									7333
 								],
 								[
-									2197,
-									2207
+									7365,
+									7410
 								],
 								[
-									2400,
-									2431
+									7528,
+									7567
 								],
 								[
-									2538,
-									2558
+									7669,
+									7717
 								],
 								[
-									2658,
-									2678
+									7929,
+									7967
 								],
 								[
-									2796,
-									2809
+									7998,
+									8036
 								],
 								[
-									2842,
-									2855
+									8067,
+									8105
 								],
 								[
-									2891,
-									2902
+									8244,
+									8276
 								],
 								[
-									3299,
-									3308
+									8330,
+									8367
+								],
+								[
+									8522,
+									8562
+								],
+								[
+									8645,
+									8682
+								],
+								[
+									8957,
+									8987
+								],
+								[
+									9255,
+									9285
+								],
+								[
+									10655,
+									10690
+								],
+								[
+									10753,
+									10790
+								],
+								[
+									11164,
+									11195
+								],
+								[
+									11342,
+									11375
+								],
+								[
+									11596,
+									11631
+								],
+								[
+									11786,
+									11824
+								],
+								[
+									12029,
+									12058
+								],
+								[
+									12571,
+									12601
+								],
+								[
+									12761,
+									12793
+								],
+								[
+									12979,
+									13019
+								],
+								[
+									13911,
+									13940
+								],
+								[
+									14622,
+									14659
+								],
+								[
+									14770,
+									14813
+								],
+								[
+									14819,
+									14871
+								],
+								[
+									15031,
+									15066
+								],
+								[
+									15206,
+									15238
+								],
+								[
+									15325,
+									15355
+								],
+								[
+									15612,
+									15642
+								],
+								[
+									15878,
+									15907
+								],
+								[
+									16041,
+									16069
+								],
+								[
+									16177,
+									16212
+								],
+								[
+									16959,
+									16996
+								],
+								[
+									17073,
+									17111
+								],
+								[
+									17144,
+									17198
+								],
+								[
+									17339,
+									17412
+								],
+								[
+									17729,
+									17784
+								],
+								[
+									17995,
+									18031
+								],
+								[
+									18648,
+									18691
+								],
+								[
+									18760,
+									18810
+								],
+								[
+									18903,
+									18958
+								],
+								[
+									19051,
+									19091
+								],
+								[
+									19371,
+									19428
+								],
+								[
+									19605,
+									19651
+								],
+								[
+									20068,
+									20130
+								],
+								[
+									20276,
+									20331
+								],
+								[
+									20892,
+									20942
+								],
+								[
+									21479,
+									21547
+								],
+								[
+									25139,
+									25201
+								],
+								[
+									30420,
+									30484
+								],
+								[
+									30749,
+									30818
+								],
+								[
+									31128,
+									31174
+								],
+								[
+									31401,
+									31442
+								],
+								[
+									31605,
+									31662
+								],
+								[
+									32028,
+									32087
+								],
+								[
+									32271,
+									32324
+								],
+								[
+									32685,
+									32725
+								],
+								[
+									33442,
+									33492
+								],
+								[
+									34129,
+									34176
+								],
+								[
+									34335,
+									34388
+								],
+								[
+									34431,
+									34478
+								],
+								[
+									34795,
+									34848
+								],
+								[
+									34965,
+									35018
+								],
+								[
+									35716,
+									35781
+								],
+								[
+									37342,
+									37391
+								],
+								[
+									37879,
+									37921
+								],
+								[
+									39296,
+									39332
+								],
+								[
+									39497,
+									39541
+								],
+								[
+									40306,
+									40344
+								],
+								[
+									42423,
+									42474
+								],
+								[
+									42873,
+									42919
+								],
+								[
+									44302,
+									44350
+								],
+								[
+									44469,
+									44522
+								],
+								[
+									44713,
+									44765
+								],
+								[
+									44961,
+									45006
+								],
+								[
+									45424,
+									45483
+								],
+								[
+									48372,
+									48435
+								],
+								[
+									49177,
+									49231
+								],
+								[
+									49438,
+									49490
+								],
+								[
+									49662,
+									49717
+								],
+								[
+									49889,
+									49938
+								],
+								[
+									52241,
+									52291
+								],
+								[
+									54928,
+									54975
+								],
+								[
+									55460,
+									55506
+								],
+								[
+									55841,
+									55884
+								],
+								[
+									56056,
+									56117
+								],
+								[
+									57481,
+									57537
+								],
+								[
+									57787,
+									57843
+								],
+								[
+									58894,
+									58938
+								],
+								[
+									60059,
+									60103
+								],
+								[
+									60253,
+									60302
+								],
+								[
+									60573,
+									60649
+								],
+								[
+									60866,
+									60918
+								],
+								[
+									61362,
+									61406
+								],
+								[
+									61515,
+									61575
+								],
+								[
+									62445,
+									62489
+								],
+								[
+									63117,
+									63179
+								],
+								[
+									63845,
+									63913
+								],
+								[
+									64046,
+									64089
+								],
+								[
+									64236,
+									64286
+								],
+								[
+									66387,
+									66438
+								],
+								[
+									66615,
+									66657
+								],
+								[
+									66737,
+									66785
+								],
+								[
+									66877,
+									66932
+								],
+								[
+									72556,
+									72601
+								],
+								[
+									72950,
+									72999
+								],
+								[
+									73129,
+									73190
+								],
+								[
+									73460,
+									73516
+								],
+								[
+									80078,
+									80133
+								],
+								[
+									80215,
+									80255
+								],
+								[
+									80335,
+									80378
+								],
+								[
+									80447,
+									80496
+								],
+								[
+									80551,
+									80596
+								],
+								[
+									80848,
+									80895
+								],
+								[
+									81215,
+									81270
+								],
+								[
+									81730,
+									81783
+								],
+								[
+									83089,
+									83138
+								],
+								[
+									83234,
+									83284
+								],
+								[
+									83443,
+									83496
+								],
+								[
+									84307,
+									84358
+								],
+								[
+									84631,
+									84670
+								],
+								[
+									84907,
+									84968
+								],
+								[
+									86687,
+									86749
+								],
+								[
+									90059,
+									90099
+								],
+								[
+									91104,
+									91142
+								],
+								[
+									91220,
+									91256
+								],
+								[
+									91297,
+									91341
+								],
+								[
+									91486,
+									91533
+								],
+								[
+									91917,
+									91968
+								],
+								[
+									93142,
+									93195
+								],
+								[
+									93561,
+									93613
+								],
+								[
+									94543,
+									94600
+								],
+								[
+									95055,
+									95116
+								],
+								[
+									95553,
+									95629
+								],
+								[
+									98277,
+									98337
+								],
+								[
+									104075,
+									104110
+								],
+								[
+									104782,
+									104826
+								],
+								[
+									105298,
+									105341
+								],
+								[
+									106501,
+									106552
+								],
+								[
+									107585,
+									107648
+								],
+								[
+									107900,
+									107967
+								],
+								[
+									108313,
+									108384
+								],
+								[
+									109415,
+									109482
+								],
+								[
+									109832,
+									109876
+								],
+								[
+									109990,
+									110036
+								],
+								[
+									112814,
+									112866
+								],
+								[
+									112976,
+									113023
+								],
+								[
+									114819,
+									114848
+								],
+								[
+									115094,
+									115131
+								],
+								[
+									115368,
+									115411
+								],
+								[
+									115450,
+									115500
+								],
+								[
+									115709,
+									115761
+								],
+								[
+									116046,
+									116087
+								],
+								[
+									116174,
+									116227
+								],
+								[
+									116749,
+									116812
+								],
+								[
+									117703,
+									117756
+								],
+								[
+									117855,
+									117887
+								],
+								[
+									118003,
+									118050
+								],
+								[
+									119415,
+									119464
+								],
+								[
+									119639,
+									119699
+								],
+								[
+									120832,
+									120901
+								],
+								[
+									121834,
+									121879
+								],
+								[
+									122044,
+									122090
+								],
+								[
+									122353,
+									122397
+								],
+								[
+									122568,
+									122626
+								],
+								[
+									123078,
+									123128
+								],
+								[
+									123371,
+									123423
+								],
+								[
+									123741,
+									123802
+								],
+								[
+									124455,
+									124497
+								],
+								[
+									124564,
+									124631
+								],
+								[
+									126063,
+									126132
+								],
+								[
+									126235,
+									126287
+								],
+								[
+									127133,
+									127181
+								],
+								[
+									127390,
+									127440
+								],
+								[
+									133222,
+									133266
+								],
+								[
+									135941,
+									136003
+								],
+								[
+									137799,
+									137848
+								],
+								[
+									138492,
+									138543
+								],
+								[
+									138783,
+									138831
+								],
+								[
+									139604,
+									139640
+								],
+								[
+									139848,
+									139881
+								],
+								[
+									139917,
+									139951
+								],
+								[
+									140069,
+									140101
+								],
+								[
+									140143,
+									140177
+								],
+								[
+									140361,
+									140396
+								],
+								[
+									141966,
+									141994
+								],
+								[
+									142850,
+									142891
+								],
+								[
+									146181,
+									146224
+								],
+								[
+									146742,
+									146787
+								],
+								[
+									146986,
+									147020
+								],
+								[
+									147088,
+									147121
+								],
+								[
+									147170,
+									147234
+								],
+								[
+									147769,
+									147812
+								],
+								[
+									148097,
+									148141
 								]
 							],
 							"symlist":
 							[
-								"EagleDocument",
-								"constructor(xmlStr, project, filename, type)",
-								"get filename()",
-								"get dirname()",
-								"get basename()",
-								"get changes()",
-								"cacheFields()",
-								"toString()",
-								"saveTo(path, overwrite = false)",
-								"(resolve, reject) =>",
-								"transform",
-								"*getAll(name)",
-								" (v, l, p) =>",
-								"getBounds()",
-								"(e, p) =>"
+								"Inherit",
+								"ClipperLib.Path",
+								"ClipperLib.Paths",
+								"ClipperLib.PolyNode",
+								"PolyNode.prototype.IsHoleNode",
+								"PolyNode.prototype.ChildCount",
+								"PolyNode.prototype.Contour",
+								"PolyNode.prototype.AddChild",
+								"PolyNode.prototype.GetNext",
+								"PolyNode.prototype.GetNextSiblingUp",
+								"PolyNode.prototype.Childs",
+								"PolyNode.prototype.Parent",
+								"PolyNode.prototype.IsHole",
+								"ClipperLib.PolyTree",
+								"PolyTree.prototype.Clear",
+								"PolyTree.prototype.GetFirst",
+								"PolyTree.prototype.Total",
+								"ClipperLib.Clear",
+								"ClipperLib.FPoint",
+								"FPoint.op_Equality",
+								"FPoint.op_Inequality",
+								"ClipperLib.FPoint0",
+								"ClipperLib.FPoint1",
+								"ClipperLib.FPoint1dp",
+								"ClipperLib.FPoint2",
+								"ClipperLib.FRect",
+								"ClipperLib.FRect0",
+								"ClipperLib.FRect1",
+								"ClipperLib.FRect4",
+								"ClipperLib.TEdge",
+								"ClipperLib.IntersectNode",
+								"ClipperLib.MyIntersectNodeSort",
+								"MyIntersectNodeSort.Compare",
+								"ClipperLib.LocalMinima",
+								"ClipperLib.Scanbeam",
+								"ClipperLib.Maxima",
+								"ClipperLib.OutRec",
+								"ClipperLib.OutPt",
+								"ClipperLib.Join",
+								"ClipperLib.ClipperBase",
+								"ClipperBase.near_zero",
+								"ClipperBase.IsHorizontal",
+								"ClipperBase.prototype.PointIsVertex",
+								"ClipperBase.prototype.PointOnLineSegment",
+								"ClipperBase.prototype.PointOnPolygon",
+								"ClipperBase.SlopesEqual",
+								"ClipperBase.SlopesEqual3",
+								"ClipperBase.SlopesEqual4",
+								"ClipperBase.SlopesEqual5",
+								"ClipperBase.prototype.Clear",
+								"ClipperBase.prototype.DisposeLocalMinimaList",
+								"ClipperBase.prototype.RangeTest",
+								"ClipperBase.prototype.InitEdge",
+								"ClipperBase.prototype.InitEdge2",
+								"ClipperBase.prototype.FindNextLocMin",
+								"ClipperBase.prototype.ProcessBound",
+								"ClipperBase.prototype.AddPath",
+								"ClipperBase.prototype.AddPaths",
+								"ClipperBase.prototype.Pt2IsBetweenPt1AndPt3",
+								"ClipperBase.prototype.RemoveEdge",
+								"ClipperBase.prototype.SetDx",
+								"ClipperBase.prototype.InsertLocalMinima",
+								"ClipperBase.prototype.PopLocalMinima",
+								"ClipperBase.prototype.ReverseHorizontal",
+								"ClipperBase.prototype.Reset",
+								"ClipperBase.prototype.InsertScanbeam",
+								"ClipperBase.prototype.PopScanbeam",
+								"ClipperBase.prototype.LocalMinimaPending",
+								"ClipperBase.prototype.CreateOutRec",
+								"ClipperBase.prototype.DisposeOutRec",
+								"ClipperBase.prototype.UpdateEdgeIntoAEL",
+								"ClipperBase.prototype.SwapPositionsInAEL",
+								"ClipperBase.prototype.DeleteFromAEL",
+								"ClipperLib.Clipper",
+								"Clipper.prototype.Clear",
+								"Clipper.prototype.InsertMaxima",
+								"Clipper.prototype.Execute",
+								"Clipper.prototype.FixHoleLinkage",
+								"Clipper.prototype.ExecuteInternal",
+								"Clipper.prototype.DisposeAllPolyPts",
+								"Clipper.prototype.AddJoin",
+								"Clipper.prototype.AddGhostJoin",
+								"Clipper.prototype.SetZ",
+								"Clipper.prototype.InsertLocalMinimaIntoAEL",
+								"Clipper.prototype.InsertEdgeIntoAEL",
+								"Clipper.prototype.E2InsertsBeforeE1",
+								"Clipper.prototype.IsEvenOddFillType",
+								"Clipper.prototype.IsEvenOddAltFillType",
+								"Clipper.prototype.IsContributing",
+								"Clipper.prototype.SetWindingCount",
+								"Clipper.prototype.AddEdgeToSEL",
+								"Clipper.prototype.PopEdgeFromSEL",
+								"Clipper.prototype.CopyAELToSEL",
+								"Clipper.prototype.SwapPositionsInSEL",
+								"Clipper.prototype.AddLocalMaxPoly",
+								"Clipper.prototype.AddLocalMinPoly",
+								"Clipper.prototype.AddOutPt",
+								"Clipper.prototype.GetLastOutPt",
+								"Clipper.prototype.SwapPoints",
+								"Clipper.prototype.HorzSegmentsOverlap",
+								"Clipper.prototype.SetHoleState",
+								"Clipper.prototype.GetDx",
+								"Clipper.prototype.FirstIsBottomPt",
+								"Clipper.prototype.GetBottomPt",
+								"Clipper.prototype.GetLowermostRec",
+								"Clipper.prototype.OutRec1RightOfOutRec2",
+								"Clipper.prototype.GetOutRec",
+								"Clipper.prototype.AppendPolygon",
+								"Clipper.prototype.ReversePolyPtLinks",
+								"Clipper.SwapSides",
+								"Clipper.SwapPolyIndexes",
+								"Clipper.prototype.IntersectEdges",
+								"Clipper.prototype.DeleteFromSEL",
+								"Clipper.prototype.ProcessHorizontals",
+								"Clipper.prototype.GetHorzDirection",
+								"Clipper.prototype.ProcessHorizontal",
+								"Clipper.prototype.GetNextInAEL",
+								"Clipper.prototype.IsMinima",
+								"Clipper.prototype.IsMaxima",
+								"Clipper.prototype.IsIntermediate",
+								"Clipper.prototype.GetMaximaPair",
+								"Clipper.prototype.GetMaximaPairEx",
+								"Clipper.prototype.ProcessIntersections",
+								"Clipper.prototype.BuildIntersectList",
+								"Clipper.prototype.EdgesAdjacent",
+								"Clipper.IntersectNodeSort",
+								"Clipper.prototype.FixupIntersectionOrder",
+								"Clipper.prototype.ProcessIntersectList",
+								"Clipper.TopX",
+								"Clipper.prototype.IntersectPoint",
+								"Clipper.prototype.ProcessEdgesAtTopOfScanbeam",
+								"Clipper.prototype.DoMaxima",
+								"Clipper.ReversePaths",
+								"Clipper.Orientation",
+								"Clipper.prototype.PointCount",
+								"Clipper.prototype.BuildResult",
+								"Clipper.prototype.BuildResult2",
+								"Clipper.prototype.FixupOutPolyline",
+								"Clipper.prototype.FixupOutPolygon",
+								"Clipper.prototype.DupOutPt",
+								"Clipper.prototype.GetOverlap",
+								"Clipper.prototype.JoinHorz",
+								"Clipper.prototype.JoinPoints",
+								"Clipper.GetBounds",
+								"Clipper.prototype.GetBounds2",
+								"Clipper.PointInPolygon",
+								"Clipper.prototype.PointInPolygon",
+								"Clipper.prototype.Poly2ContainsPoly1",
+								"Clipper.prototype.FixupFirstLefts1",
+								"Clipper.prototype.FixupFirstLefts2",
+								"Clipper.prototype.FixupFirstLefts3",
+								"Clipper.ParseFirstLeft",
+								"Clipper.prototype.JoinCommonEdges",
+								"Clipper.prototype.UpdateOutPtIdxs",
+								"Clipper.prototype.DoSimplePolygons",
+								"Clipper.Area",
+								"Clipper.prototype.Area",
+								"Clipper.prototype.Area$1",
+								"Clipper.SimplifyPolygon",
+								"Clipper.SimplifyPolygons",
+								"Clipper.DistanceSqrd",
+								"Clipper.DistanceFromLineSqrd",
+								"Clipper.SlopesNearCollinear",
+								"Clipper.PointsAreClose",
+								"Clipper.ExcludeOp",
+								"Clipper.CleanPolygon",
+								"Clipper.CleanPolygons",
+								"Clipper.Minkowski",
+								"Clipper.MinkowskiSum",
+								"Clipper.TranslatePath",
+								"Clipper.MinkowskiDiff",
+								"Clipper.PolyTreeToPaths",
+								"Clipper.AddPolyNodeToPaths",
+								"Clipper.OpenPathsFromPolyTree",
+								"Clipper.ClosedPathsFromPolyTree",
+								"ClipperLib.ClipperOffset",
+								"ClipperOffset.prototype.Clear",
+								"ClipperOffset.prototype.AddPath",
+								"ClipperOffset.prototype.AddPaths",
+								"ClipperOffset.prototype.FixOrientations",
+								"ClipperOffset.GetUnitNormal",
+								"ClipperOffset.prototype.DoOffset",
+								"ClipperOffset.prototype.Execute",
+								"ClipperOffset.prototype.OffsetPoint",
+								"ClipperOffset.prototype.DoSquare",
+								"ClipperOffset.prototype.DoMiter",
+								"ClipperOffset.prototype.DoRound",
+								"ClipperLib.Error",
+								"JS.AreaOfPolygon",
+								"JS.AreaOfPolygons",
+								"JS.BoundsOfPath",
+								"JS.BoundsOfPaths",
+								"JS.Clean",
+								"JS.Clone",
+								"JS.Lighten",
+								"JS.PerimeterOfPath",
+								"JS.PerimeterOfPaths",
+								"ClipperLib.ExPolygons",
+								"ClipperLib.ExPolygon",
+								"JS.AddOuterPolyNodeToExPolygons",
+								"JS.ExPolygonsToPaths",
+								"JS.PolyTreeToExPolygons"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -951,7 +1961,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 16,
 					"type": "text"
 				}
 			]
@@ -966,57 +1976,54 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 65991,
+						"buffer_size": 69771,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								38473,
-								38473
+								2060,
+								2060
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/User/SchemeEditorTemp/Next (Roman).tmTheme",
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 26227.0,
+						"translation.y": 1440.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "lib/container/enum.js",
+					"file": "test-clipper.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3364,
+						"buffer_size": 84,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1035,
-								1035
+								84,
+								84
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/User/SchemeEditorTemp/Next (Roman).tmTheme",
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
+							"auto_name": "import ClipperLib from './lib/clipper.js';",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 1197.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
@@ -1024,33 +2031,32 @@
 				},
 				{
 					"buffer": 3,
-					"file": "document.es",
+					"file": "test-ecmascript.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4279,
+						"buffer_size": 5172,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								781,
-								781
+								4041,
+								4041
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/User/SchemeEditorTemp/Next (Roman).tmTheme",
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1575.0,
+						"translation.y": 2867.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
@@ -1059,131 +2065,37 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 20659,
+						"buffer_size": 25420,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								18455,
-								18455
+								13864,
+								13864
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/User/SchemeEditorTemp/Next (Roman).tmTheme",
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 12493.0,
+						"translation.y": 11435.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
 					"buffer": 5,
-					"file": "lib/ecmascript/lexer.js",
+					"file": "autoStore.es",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 27737,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6378,
-								6378
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/SchemeEditorTemp/Next (Roman).tmTheme",
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 4828.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "lib/ecmascript/estree.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 13738,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								8621,
-								8621
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/SchemeEditorTemp/Next (Roman).tmTheme",
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 8125.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "lib/eagle/document.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4573,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1621,
-								1621
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/SchemeEditorTemp/Next (Roman).tmTheme",
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 567.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "test-color.es",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 791,
+						"buffer_size": 2802,
 						"regions":
 						{
 						},
@@ -1196,43 +2108,344 @@
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/User/SchemeEditorTemp/Next (Roman).tmTheme",
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage"
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 72.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 11,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
-					"file": "test-pointlist.es",
+					"buffer": 6,
+					"file": "lib/autoStore.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 41835,
+						"buffer_size": 2733,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								40683,
-								40683
+								1406,
+								1406
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Babel/Next Roman.tmTheme",
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage"
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 899.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "lib/clipper.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 148780,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								11707,
+								11707
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 8435.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "axios.es",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1303,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								396,
+								396
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 505.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "lib/ecmascript/estree.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 14332,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10365,
+								10365
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 11112.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "alea.es",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2436,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2335,
+								2335
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2544.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "lib/axios.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1300,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1300,
+								1300
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
+					"stack_index": 12,
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "test-export.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 47,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								22,
+								22
+							]
+						],
+						"settings":
+						{
+							"auto_name": "const blah = 'test';",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 13,
+					"type": "text"
+				},
+				{
+					"buffer": 13,
+					"file": "lib/ecmascript/lexer.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 28177,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6061,
+								6061
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 5459.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 14,
+					"file": "lib/alea.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2327,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1961,
+								1961
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1824.0,
+						"zoom_level": 1.0
+					},
 					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 15,
+					"file": "lib/geom/pointList.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 13756,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2572,
+								2572
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1868.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 14,
+					"type": "text"
+				},
+				{
+					"buffer": 16,
+					"file": "lib/geom/point.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8393,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3099,
+								3099
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2396.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 15,
 					"type": "text"
 				}
 			]
@@ -1240,7 +2453,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 30.0
+		"height": 33.0
 	},
 	"input":
 	{
@@ -1316,8 +2529,196 @@
 		"selected_items":
 		[
 			[
+				"clipper.js",
+				"lib/clipper.js"
+			],
+			[
+				"clipper.es",
+				"clipper.es"
+			],
+			[
+				"lexer",
+				"lib/ecmascript/lexer.js"
+			],
+			[
+				"parser.js",
+				"lib/ecmascript/parser.js"
+			],
+			[
+				"print",
+				"lib/ecmascript/printer.js"
+			],
+			[
+				"test-ec",
+				"test-ecmascript.js"
+			],
+			[
+				"clipper",
+				"clipper.es"
+			],
+			[
+				"alea.js",
+				"lib/alea.js"
+			],
+			[
+				"alea.es",
+				"alea.es"
+			],
+			[
+				"autoStore.js",
+				"lib/autoStore.js"
+			],
+			[
+				"autoSt",
+				"autoStore.es"
+			],
+			[
+				"axios.es",
+				"axios.es"
+			],
+			[
+				"axios.",
+				"axios.es"
+			],
+			[
+				"axis.e",
+				"axios.es"
+			],
+			[
+				"printer",
+				"lib/ecmascript/printer.js"
+			],
+			[
 				"estree",
 				"lib/ecmascript/estree.js"
+			],
+			[
+				"test-ex",
+				"test-export.es"
+			],
+			[
+				"test-expo",
+				"test-export.js"
+			],
+			[
+				"axios.js",
+				"lib/axios.js"
+			],
+			[
+				"alea",
+				"lib/alea.js"
+			],
+			[
+				"pointList",
+				"lib/geom/pointList.js"
+			],
+			[
+				"point.es",
+				"point.es"
+			],
+			[
+				"point.js",
+				"lib/geom/point.js"
+			],
+			[
+				"matrix.js",
+				"lib/geom/matrix.js"
+			],
+			[
+				"matrix.es",
+				"matrix.es"
+			],
+			[
+				"matrix3d",
+				"lib/geom/matrix3d.js"
+			],
+			[
+				"matrix",
+				"matrix3d.es"
+			],
+			[
+				"rect.es",
+				"rect.es"
+			],
+			[
+				"matrix3d.es",
+				"matrix3d.es"
+			],
+			[
+				"trbl",
+				"lib/geom/trbl.js"
+			],
+			[
+				"graph.j",
+				"lib/geom/graph.js"
+			],
+			[
+				"renderer.es",
+				"renderer.es"
+			],
+			[
+				"document.es",
+				"document.es"
+			],
+			[
+				"locato",
+				"lib/eagle/locator.js"
+			],
+			[
+				"common.js",
+				"lib/eagle/common.js"
+			],
+			[
+				"common.es",
+				"common.es"
+			],
+			[
+				"estree.es",
+				"estree.es"
+			],
+			[
+				"printer.es",
+				"printer.es"
+			],
+			[
+				"parser.es",
+				"parser.es"
+			],
+			[
+				"token.es",
+				"token.es"
+			],
+			[
+				"tok",
+				"lib/ecmascript/token.js"
+			],
+			[
+				"lexer.es",
+				"lexer.es"
+			],
+			[
+				"test-te ",
+				"test-template.js"
+			],
+			[
+				"test-tem",
+				"test-template.es"
+			],
+			[
+				"test-templ",
+				"test-template.es"
+			],
+			[
+				"util.",
+				"lib/util.js"
+			],
+			[
+				"docum",
+				"document.es"
+			],
+			[
+				"document",
+				"document.es"
 			],
 			[
 				"test-color",
@@ -1330,10 +2731,6 @@
 			[
 				"util.js",
 				"lib/util.js"
-			],
-			[
-				"test-ec",
-				"test-ecmascript.js"
 			],
 			[
 				"plot",
@@ -1520,10 +2917,6 @@
 				"lib/geom/pointList.js"
 			],
 			[
-				"matrix",
-				"lib/geom/matrix.js"
-			],
-			[
 				"dom.js",
 				"lib/dom.js"
 			],
@@ -1632,10 +3025,6 @@
 				"lib/geom/matrix.js"
 			],
 			[
-				"matrix.js",
-				"test-matrix.js"
-			],
-			[
 				"size.j",
 				"lib/geom/size.js"
 			],
@@ -1650,182 +3039,6 @@
 			[
 				"hsla",
 				"lib/dom/hsla.js"
-			],
-			[
-				"align",
-				"lib/geom/align.js"
-			],
-			[
-				"devto",
-				"lib/devtools.js"
-			],
-			[
-				"rect",
-				"lib/geom/rect.js"
-			],
-			[
-				"inde.",
-				"index.html"
-			],
-			[
-				"cmake",
-				"CMakeLists.txt"
-			],
-			[
-				"test-cli",
-				"test-cli.js"
-			],
-			[
-				".sh",
-				"scripts/js-set-module-export.sh"
-			],
-			[
-				"js.cpp",
-				"src/js.cpp"
-			],
-			[
-				"test-q",
-				"test-quickjs.js"
-			],
-			[
-				"quickjs",
-				"quickjs/quickjs.h"
-			],
-			[
-				"test-cl",
-				"test-cli.js"
-			],
-			[
-				"cli.cpp",
-				"src/cli.cpp"
-			],
-			[
-				"plot-cv",
-				"src/plot-cv.cpp"
-			],
-			[
-				"test-qui",
-				"test-quickjs.js"
-			],
-			[
-				"js_",
-				"src/js_rect.cpp"
-			],
-			[
-				"libc.h",
-				"quickjs/quickjs-libc.h"
-			],
-			[
-				"libc",
-				"quickjs/quickjs-libc.c"
-			],
-			[
-				"test-",
-				"test-quickjs.js"
-			],
-			[
-				".cmake",
-				"js-bindings.cmake"
-			],
-			[
-				"jsbid",
-				"src/jsbindings.cpp"
-			],
-			[
-				"libc.",
-				"quickjs/quickjs-libc.c"
-			],
-			[
-				"js.h",
-				"src/js.h"
-			],
-			[
-				"cake",
-				"CMakeLists.txt"
-			],
-			[
-				".cake",
-				"plot-cv.cmake"
-			],
-			[
-				"cmakeLists",
-				"CMakeLists.txt"
-			],
-			[
-				"js_cont",
-				"src/js_contour.cpp"
-			],
-			[
-				"-bi",
-				"js-bindings.cmake"
-			],
-			[
-				"js-b",
-				"js-bindings.cmake"
-			],
-			[
-				"contour",
-				"opencv/contour.cpp"
-			],
-			[
-				"quickjs.h",
-				"quickjs/quickjs.h"
-			],
-			[
-				"js_point",
-				"src/js_point.cpp"
-			],
-			[
-				"js-bind",
-				"js-bindings.cmake"
-			],
-			[
-				"fib",
-				"quickjs/examples/fib.c"
-			],
-			[
-				"point.c",
-				"quickjs/examples/point.c"
-			],
-			[
-				"js_poin",
-				"src/js_point.cpp"
-			],
-			[
-				"qjs.c",
-				"quickjs/qjs.c"
-			],
-			[
-				"imgui",
-				"imgui-viewer.cmake"
-			],
-			[
-				"high",
-				"highgui-viewer.cmake"
-			],
-			[
-				"qjs",
-				"quickjs/qjs.c"
-			],
-			[
-				"server.js",
-				"server.js"
-			],
-			[
-				"js-",
-				"js-bindings.cmake"
-			],
-			[
-				"js_draw",
-				"src/js_draw.cpp"
-			],
-			[
-				"js_point_it",
-				"src/js_point_iterator.cpp"
-			],
-			[
-				"js_rec",
-				"src/js_rect.cpp"
 			]
 		],
 		"width": 0.0
