@@ -24,7 +24,7 @@ Error.stackTraceLimit = 1000;
 global.console = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
-  inspectOptions: { depth: 5, colors: true }
+  inspectOptions: { depth: 7, colors: true }
 });
 
 const testfn = () => true;
@@ -136,7 +136,7 @@ function main(args) {
       //  console.log("ast:", [...posMap.keys()]);$
       console.log('commentMap:', commentMap);
       console.log('posMap:', [...posMap.keys()]);
-      //     console.log('ast:', ast);
+          console.log('ast:', ast);
 
       //  console.log("nodes:", parser.nodes.map(n =>  [Util.className(n), n.position.toString()]));
     } catch(err) {
