@@ -106,121 +106,39 @@
 			}
 		},
 		{
-			"file": "src/jsbindings.cpp",
+			"file": "src/plot-cv.cpp",
 			"settings":
 			{
-				"buffer_size": 2828,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/geometry.cpp",
-			"settings":
-			{
-				"buffer_size": 436,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/geometry.h",
-			"settings":
-			{
-				"buffer_size": 5855,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/highgui-viewer.cpp",
-			"settings":
-			{
-				"buffer_size": 7933,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "/*\n * The MIT License (MIT)\n *\n * Copyright (c) 2014 by Bart Kiers (original author) and Alexandre Vitorelli (contributor -> ported to CSharp)\n * Copyright (c) 2017-2020 by Ivan Kochurkin (Positive Technologies):\n    added ECMAScript 6 support, cleared and transformed to the universal grammar.\n * Copyright (c) 2018 by Juan Alvarez (contributor -> ported to Go)\n * Copyright (c) 2019 by Student Main (contributor -> ES2020)\n *\n * Permission is hereby granted, free of charge, to any person\n * obtaining a copy of this software and associated documentation\n * files (the \"Software\"), to deal in the Software without\n * restriction, including without limitation the rights to use,\n * copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the\n * Software is furnished to do so, subject to the following\n * conditions:\n *\n * The above copyright notice and this permission notice shall be\n * included in all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND,\n * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES\n * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND\n * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT\n * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,\n * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING\n * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR\n * OTHER DEALINGS IN THE SOFTWARE.\n */\nlexer grammar JavaScriptLexer;\n\nchannels { ERROR }\n\noptions { superClass=JavaScriptLexerBase; }\n\nHashBangLine:                   { this.IsStartOfFile()}? '#!' ~[\\r\\n\\u2028\\u2029]*; // only allowed at start\nMultiLineComment:               '/*' .*? '*/'             -> channel(HIDDEN);\nSingleLineComment:              '//' ~[\\r\\n\\u2028\\u2029]* -> channel(HIDDEN);\nRegularExpressionLiteral:       '/' RegularExpressionFirstChar RegularExpressionChar* {this.IsRegexPossible()}? '/' IdentifierPart*;\n\nOpenBracket:                    '[';\nCloseBracket:                   ']';\nOpenParen:                      '(';\nCloseParen:                     ')';\nOpenBrace:                      '{' {this.ProcessOpenBrace();};\nCloseBrace:                     '}' {this.ProcessCloseBrace();};\nSemiColon:                      ';';\nComma:                          ',';\nAssign:                         '=';\nQuestionMark:                   '?';\nColon:                          ':';\nEllipsis:                       '...';\nDot:                            '.';\nPlusPlus:                       '++';\nMinusMinus:                     '--';\nPlus:                           '+';\nMinus:                          '-';\nBitNot:                         '~';\nNot:                            '!';\nMultiply:                       '*';\nDivide:                         '/';\nModulus:                        '%';\nPower:                          '**';\nNullCoalesce:                   '??';\nHashtag:                        '#';\nRightShiftArithmetic:           '>>';\nLeftShiftArithmetic:            '<<';\nRightShiftLogical:              '>>>';\nLessThan:                       '<';\nMoreThan:                       '>';\nLessThanEquals:                 '<=';\nGreaterThanEquals:              '>=';\nEquals_:                        '==';\nNotEquals:                      '!=';\nIdentityEquals:                 '===';\nIdentityNotEquals:              '!==';\nBitAnd:                         '&';\nBitXOr:                         '^';\nBitOr:                          '|';\nAnd:                            '&&';\nOr:                             '||';\nMultiplyAssign:                 '*=';\nDivideAssign:                   '/=';\nModulusAssign:                  '%=';\nPlusAssign:                     '+=';\nMinusAssign:                    '-=';\nLeftShiftArithmeticAssign:      '<<=';\nRightShiftArithmeticAssign:     '>>=';\nRightShiftLogicalAssign:        '>>>=';\nBitAndAssign:                   '&=';\nBitXorAssign:                   '^=';\nBitOrAssign:                    '|=';\nPowerAssign:                    '**=';\nARROW:                          '=>';\n\n/// Null Literals\n\nNullLiteral:                    'null';\n\n/// Boolean Literals\n\nBooleanLiteral:                 'true'\n              |                 'false';\n\n/// Numeric Literals\n\nDecimalLiteral:                 DecimalIntegerLiteral '.' [0-9] [0-9_]* ExponentPart?\n              |                 '.' [0-9] [0-9_]* ExponentPart?\n              |                 DecimalIntegerLiteral ExponentPart?\n              ;\n\n/// Numeric Literals\n\nHexIntegerLiteral:              '0' [xX] [0-9a-fA-F] HexDigit*;\nOctalIntegerLiteral:            '0' [0-7]+ {!this.IsStrictMode()}?;\nOctalIntegerLiteral2:           '0' [oO] [0-7] [_0-7]*;\nBinaryIntegerLiteral:           '0' [bB] [01] [_01]*;\n\nBigHexIntegerLiteral:           '0' [xX] [0-9a-fA-F] HexDigit* 'n';\nBigOctalIntegerLiteral:         '0' [oO] [0-7] [_0-7]* 'n';\nBigBinaryIntegerLiteral:        '0' [bB] [01] [_01]* 'n';\nBigDecimalIntegerLiteral:       DecimalIntegerLiteral 'n';\n\n/// Keywords\n\nBreak:                          'break';\nDo:                             'do';\nInstanceof:                     'instanceof';\nTypeof:                         'typeof';\nCase:                           'case';\nElse:                           'else';\nNew:                            'new';\nVar:                            'var';\nCatch:                          'catch';\nFinally:                        'finally';\nReturn:                         'return';\nVoid:                           'void';\nContinue:                       'continue';\nFor:                            'for';\nSwitch:                         'switch';\nWhile:                          'while';\nDebugger:                       'debugger';\nFunction:                       'function';\nThis:                           'this';\nWith:                           'with';\nDefault:                        'default';\nIf:                             'if';\nThrow:                          'throw';\nDelete:                         'delete';\nIn:                             'in';\nTry:                            'try';\nAs:                             'as';\nFrom:                           'from';\n\n/// Future Reserved Words\n\nClass:                          'class';\nEnum:                           'enum';\nExtends:                        'extends';\nSuper:                          'super';\nConst:                          'const';\nExport:                         'export';\nImport:                         'import';\n\nAsync:                          'async';\nAwait:                          'await';\n\n/// The following tokens are also considered to be FutureReservedWords\n/// when parsing strict mode\n\nImplements:                     'implements' {this.IsStrictMode()}?;\nStrictLet:                      'let' {this.IsStrictMode()}?;\nNonStrictLet:                   'let' {!this.IsStrictMode()}?;\nPrivate:                        'private' {this.IsStrictMode()}?;\nPublic:                         'public' {this.IsStrictMode()}?;\nInterface:                      'interface' {this.IsStrictMode()}?;\nPackage:                        'package' {this.IsStrictMode()}?;\nProtected:                      'protected' {this.IsStrictMode()}?;\nStatic:                         'static' {this.IsStrictMode()}?;\nYield:                          'yield' {this.IsStrictMode()}?;\n\n/// Identifier Names and Identifiers\n\nIdentifier:                     IdentifierStart IdentifierPart*;\n/// String Literals\nStringLiteral:                 ('\"' DoubleStringCharacter* '\"'\n             |                  '\\'' SingleStringCharacter* '\\'') {this.ProcessStringLiteral();}\n             ;\n\n// TODO: `${`tmp`}`\nTemplateStringLiteral:          '`' ('\\\\`' | ~'`')* '`';\n\nWhiteSpaces:                    [\\t\\u000B\\u000C\\u0020\\u00A0]+ -> channel(HIDDEN);\n\nLineTerminator:                 [\\r\\n\\u2028\\u2029] -> channel(HIDDEN);\n\n/// Comments\n\n\nHtmlComment:                    '<!--' .*? '-->' -> channel(HIDDEN);\nCDataComment:                   '<![CDATA[' .*? ']]>' -> channel(HIDDEN);\nUnexpectedCharacter:            . -> channel(ERROR);\n\n// Fragment rules\n\nfragment DoubleStringCharacter\n    : ~[\"\\\\\\r\\n]\n    | '\\\\' EscapeSequence\n    | LineContinuation\n    ;\n\nfragment SingleStringCharacter\n    : ~['\\\\\\r\\n]\n    | '\\\\' EscapeSequence\n    | LineContinuation\n    ;\n\nfragment EscapeSequence\n    : CharacterEscapeSequence\n    | '0' // no digit ahead! TODO\n    | HexEscapeSequence\n    | UnicodeEscapeSequence\n    | ExtendedUnicodeEscapeSequence\n    ;\n\nfragment CharacterEscapeSequence\n    : SingleEscapeCharacter\n    | NonEscapeCharacter\n    ;\n\nfragment HexEscapeSequence\n    : 'x' HexDigit HexDigit\n    ;\n\nfragment UnicodeEscapeSequence\n    : 'u' HexDigit HexDigit HexDigit HexDigit\n    | 'u' '{' HexDigit HexDigit+ '}'\n    ;\n\nfragment ExtendedUnicodeEscapeSequence\n    : 'u' '{' HexDigit+ '}'\n    ;\n\nfragment SingleEscapeCharacter\n    : ['\"\\\\bfnrtv]\n    ;\n\nfragment NonEscapeCharacter\n    : ~['\"\\\\bfnrtv0-9xu\\r\\n]\n    ;\n\nfragment EscapeCharacter\n    : SingleEscapeCharacter\n    | [0-9]\n    | [xu]\n    ;\n\nfragment LineContinuation\n    : '\\\\' [\\r\\n\\u2028\\u2029]\n    ;\n\nfragment HexDigit\n    : [_0-9a-fA-F]\n    ;\n\nfragment DecimalIntegerLiteral\n    : '0'\n    | [1-9] [0-9_]*\n    ;\n\nfragment ExponentPart\n    : [eE] [+-]? [0-9_]+\n    ;\n\nfragment IdentifierPart\n    : IdentifierStart\n    | UnicodeCombiningMark\n    | UnicodeDigit\n    | UnicodeConnectorPunctuation\n    | '\\u200C'\n    | '\\u200D'\n    ;\n\nfragment IdentifierStart\n    : UnicodeLetter\n    | [$_]\n    | '\\\\' UnicodeEscapeSequence\n    ;\n\nfragment UnicodeLetter\n    : [\\u0041-\\u005A]\n    | [\\u0061-\\u007A]\n    | [\\u00AA]\n    | [\\u00B5]\n    | [\\u00BA]\n    | [\\u00C0-\\u00D6]\n    | [\\u00D8-\\u00F6]\n    | [\\u00F8-\\u021F]\n    | [\\u0222-\\u0233]\n    | [\\u0250-\\u02AD]\n    | [\\u02B0-\\u02B8]\n    | [\\u02BB-\\u02C1]\n    | [\\u02D0-\\u02D1]\n    | [\\u02E0-\\u02E4]\n    | [\\u02EE]\n    | [\\u037A]\n    | [\\u0386]\n    | [\\u0388-\\u038A]\n    | [\\u038C]\n    | [\\u038E-\\u03A1]\n    | [\\u03A3-\\u03CE]\n    | [\\u03D0-\\u03D7]\n    | [\\u03DA-\\u03F3]\n    | [\\u0400-\\u0481]\n    | [\\u048C-\\u04C4]\n    | [\\u04C7-\\u04C8]\n    | [\\u04CB-\\u04CC]\n    | [\\u04D0-\\u04F5]\n    | [\\u04F8-\\u04F9]\n    | [\\u0531-\\u0556]\n    | [\\u0559]\n    | [\\u0561-\\u0587]\n    | [\\u05D0-\\u05EA]\n    | [\\u05F0-\\u05F2]\n    | [\\u0621-\\u063A]\n    | [\\u0640-\\u064A]\n    | [\\u0671-\\u06D3]\n    | [\\u06D5]\n    | [\\u06E5-\\u06E6]\n    | [\\u06FA-\\u06FC]\n    | [\\u0710]\n    | [\\u0712-\\u072C]\n    | [\\u0780-\\u07A5]\n    | [\\u0905-\\u0939]\n    | [\\u093D]\n    | [\\u0950]\n    | [\\u0958-\\u0961]\n    | [\\u0985-\\u098C]\n    | [\\u098F-\\u0990]\n    | [\\u0993-\\u09A8]\n    | [\\u09AA-\\u09B0]\n    | [\\u09B2]\n    | [\\u09B6-\\u09B9]\n    | [\\u09DC-\\u09DD]\n    | [\\u09DF-\\u09E1]\n    | [\\u09F0-\\u09F1]\n    | [\\u0A05-\\u0A0A]\n    | [\\u0A0F-\\u0A10]\n    | [\\u0A13-\\u0A28]\n    | [\\u0A2A-\\u0A30]\n    | [\\u0A32-\\u0A33]\n    | [\\u0A35-\\u0A36]\n    | [\\u0A38-\\u0A39]\n    | [\\u0A59-\\u0A5C]\n    | [\\u0A5E]\n    | [\\u0A72-\\u0A74]\n    | [\\u0A85-\\u0A8B]\n    | [\\u0A8D]\n    | [\\u0A8F-\\u0A91]\n    | [\\u0A93-\\u0AA8]\n    | [\\u0AAA-\\u0AB0]\n    | [\\u0AB2-\\u0AB3]\n    | [\\u0AB5-\\u0AB9]\n    | [\\u0ABD]\n    | [\\u0AD0]\n    | [\\u0AE0]\n    | [\\u0B05-\\u0B0C]\n    | [\\u0B0F-\\u0B10]\n    | [\\u0B13-\\u0B28]\n    | [\\u0B2A-\\u0B30]\n    | [\\u0B32-\\u0B33]\n    | [\\u0B36-\\u0B39]\n    | [\\u0B3D]\n    | [\\u0B5C-\\u0B5D]\n    | [\\u0B5F-\\u0B61]\n    | [\\u0B85-\\u0B8A]\n    | [\\u0B8E-\\u0B90]\n    | [\\u0B92-\\u0B95]\n    | [\\u0B99-\\u0B9A]\n    | [\\u0B9C]\n    | [\\u0B9E-\\u0B9F]\n    | [\\u0BA3-\\u0BA4]\n    | [\\u0BA8-\\u0BAA]\n    | [\\u0BAE-\\u0BB5]\n    | [\\u0BB7-\\u0BB9]\n    | [\\u0C05-\\u0C0C]\n    | [\\u0C0E-\\u0C10]\n    | [\\u0C12-\\u0C28]\n    | [\\u0C2A-\\u0C33]\n    | [\\u0C35-\\u0C39]\n    | [\\u0C60-\\u0C61]\n    | [\\u0C85-\\u0C8C]\n    | [\\u0C8E-\\u0C90]\n    | [\\u0C92-\\u0CA8]\n    | [\\u0CAA-\\u0CB3]\n    | [\\u0CB5-\\u0CB9]\n    | [\\u0CDE]\n    | [\\u0CE0-\\u0CE1]\n    | [\\u0D05-\\u0D0C]\n    | [\\u0D0E-\\u0D10]\n    | [\\u0D12-\\u0D28]\n    | [\\u0D2A-\\u0D39]\n    | [\\u0D60-\\u0D61]\n    | [\\u0D85-\\u0D96]\n    | [\\u0D9A-\\u0DB1]\n    | [\\u0DB3-\\u0DBB]\n    | [\\u0DBD]\n    | [\\u0DC0-\\u0DC6]\n    | [\\u0E01-\\u0E30]\n    | [\\u0E32-\\u0E33]\n    | [\\u0E40-\\u0E46]\n    | [\\u0E81-\\u0E82]\n    | [\\u0E84]\n    | [\\u0E87-\\u0E88]\n    | [\\u0E8A]\n    | [\\u0E8D]\n    | [\\u0E94-\\u0E97]\n    | [\\u0E99-\\u0E9F]\n    | [\\u0EA1-\\u0EA3]\n    | [\\u0EA5]\n    | [\\u0EA7]\n    | [\\u0EAA-\\u0EAB]\n    | [\\u0EAD-\\u0EB0]\n    | [\\u0EB2-\\u0EB3]\n    | [\\u0EBD-\\u0EC4]\n    | [\\u0EC6]\n    | [\\u0EDC-\\u0EDD]\n    | [\\u0F00]\n    | [\\u0F40-\\u0F6A]\n    | [\\u0F88-\\u0F8B]\n    | [\\u1000-\\u1021]\n    | [\\u1023-\\u1027]\n    | [\\u1029-\\u102A]\n    | [\\u1050-\\u1055]\n    | [\\u10A0-\\u10C5]\n    | [\\u10D0-\\u10F6]\n    | [\\u1100-\\u1159]\n    | [\\u115F-\\u11A2]\n    | [\\u11A8-\\u11F9]\n    | [\\u1200-\\u1206]\n    | [\\u1208-\\u1246]\n    | [\\u1248]\n    | [\\u124A-\\u124D]\n    | [\\u1250-\\u1256]\n    | [\\u1258]\n    | [\\u125A-\\u125D]\n    | [\\u1260-\\u1286]\n    | [\\u1288]\n    | [\\u128A-\\u128D]\n    | [\\u1290-\\u12AE]\n    | [\\u12B0]\n    | [\\u12B2-\\u12B5]\n    | [\\u12B8-\\u12BE]\n    | [\\u12C0]\n    | [\\u12C2-\\u12C5]\n    | [\\u12C8-\\u12CE]\n    | [\\u12D0-\\u12D6]\n    | [\\u12D8-\\u12EE]\n    | [\\u12F0-\\u130E]\n    | [\\u1310]\n    | [\\u1312-\\u1315]\n    | [\\u1318-\\u131E]\n    | [\\u1320-\\u1346]\n    | [\\u1348-\\u135A]\n    | [\\u13A0-\\u13B0]\n    | [\\u13B1-\\u13F4]\n    | [\\u1401-\\u1676]\n    | [\\u1681-\\u169A]\n    | [\\u16A0-\\u16EA]\n    | [\\u1780-\\u17B3]\n    | [\\u1820-\\u1877]\n    | [\\u1880-\\u18A8]\n    | [\\u1E00-\\u1E9B]\n    | [\\u1EA0-\\u1EE0]\n    | [\\u1EE1-\\u1EF9]\n    | [\\u1F00-\\u1F15]\n    | [\\u1F18-\\u1F1D]\n    | [\\u1F20-\\u1F39]\n    | [\\u1F3A-\\u1F45]\n    | [\\u1F48-\\u1F4D]\n    | [\\u1F50-\\u1F57]\n    | [\\u1F59]\n    | [\\u1F5B]\n    | [\\u1F5D]\n    | [\\u1F5F-\\u1F7D]\n    | [\\u1F80-\\u1FB4]\n    | [\\u1FB6-\\u1FBC]\n    | [\\u1FBE]\n    | [\\u1FC2-\\u1FC4]\n    | [\\u1FC6-\\u1FCC]\n    | [\\u1FD0-\\u1FD3]\n    | [\\u1FD6-\\u1FDB]\n    | [\\u1FE0-\\u1FEC]\n    | [\\u1FF2-\\u1FF4]\n    | [\\u1FF6-\\u1FFC]\n    | [\\u207F]\n    | [\\u2102]\n    | [\\u2107]\n    | [\\u210A-\\u2113]\n    | [\\u2115]\n    | [\\u2119-\\u211D]\n    | [\\u2124]\n    | [\\u2126]\n    | [\\u2128]\n    | [\\u212A-\\u212D]\n    | [\\u212F-\\u2131]\n    | [\\u2133-\\u2139]\n    | [\\u2160-\\u2183]\n    | [\\u3005-\\u3007]\n    | [\\u3021-\\u3029]\n    | [\\u3031-\\u3035]\n    | [\\u3038-\\u303A]\n    | [\\u3041-\\u3094]\n    | [\\u309D-\\u309E]\n    | [\\u30A1-\\u30FA]\n    | [\\u30FC-\\u30FE]\n    | [\\u3105-\\u312C]\n    | [\\u3131-\\u318E]\n    | [\\u31A0-\\u31B7]\n    | [\\u3400-\\u4DBF]\n    | [\\u4E00-\\u9FFF]\n    | [\\uA000-\\uA48C]\n    | [\\uAC00]\n    | [\\uD7A3]\n    | [\\uF900-\\uFA2D]\n    | [\\uFB00-\\uFB06]\n    | [\\uFB13-\\uFB17]\n    | [\\uFB1D]\n    | [\\uFB1F-\\uFB28]\n    | [\\uFB2A-\\uFB36]\n    | [\\uFB38-\\uFB3C]\n    | [\\uFB3E]\n    | [\\uFB40-\\uFB41]\n    | [\\uFB43-\\uFB44]\n    | [\\uFB46-\\uFBB1]\n    | [\\uFBD3-\\uFD3D]\n    | [\\uFD50-\\uFD8F]\n    | [\\uFD92-\\uFDC7]\n    | [\\uFDF0-\\uFDFB]\n    | [\\uFE70-\\uFE72]\n    | [\\uFE74]\n    | [\\uFE76-\\uFEFC]\n    | [\\uFF21-\\uFF3A]\n    | [\\uFF41-\\uFF5A]\n    | [\\uFF66-\\uFFBE]\n    | [\\uFFC2-\\uFFC7]\n    | [\\uFFCA-\\uFFCF]\n    | [\\uFFD2-\\uFFD7]\n    | [\\uFFDA-\\uFFDC]\n    ;\n\nfragment UnicodeCombiningMark\n    : [\\u0300-\\u034E]\n    | [\\u0360-\\u0362]\n    | [\\u0483-\\u0486]\n    | [\\u0591-\\u05A1]\n    | [\\u05A3-\\u05B9]\n    | [\\u05BB-\\u05BD]\n    | [\\u05BF]\n    | [\\u05C1-\\u05C2]\n    | [\\u05C4]\n    | [\\u064B-\\u0655]\n    | [\\u0670]\n    | [\\u06D6-\\u06DC]\n    | [\\u06DF-\\u06E4]\n    | [\\u06E7-\\u06E8]\n    | [\\u06EA-\\u06ED]\n    | [\\u0711]\n    | [\\u0730-\\u074A]\n    | [\\u07A6-\\u07B0]\n    | [\\u0901-\\u0903]\n    | [\\u093C]\n    | [\\u093E-\\u094D]\n    | [\\u0951-\\u0954]\n    | [\\u0962-\\u0963]\n    | [\\u0981-\\u0983]\n    | [\\u09BC-\\u09C4]\n    | [\\u09C7-\\u09C8]\n    | [\\u09CB-\\u09CD]\n    | [\\u09D7]\n    | [\\u09E2-\\u09E3]\n    | [\\u0A02]\n    | [\\u0A3C]\n    | [\\u0A3E-\\u0A42]\n    | [\\u0A47-\\u0A48]\n    | [\\u0A4B-\\u0A4D]\n    | [\\u0A70-\\u0A71]\n    | [\\u0A81-\\u0A83]\n    | [\\u0ABC]\n    | [\\u0ABE-\\u0AC5]\n    | [\\u0AC7-\\u0AC9]\n    | [\\u0ACB-\\u0ACD]\n    | [\\u0B01-\\u0B03]\n    | [\\u0B3C]\n    | [\\u0B3E-\\u0B43]\n    | [\\u0B47-\\u0B48]\n    | [\\u0B4B-\\u0B4D]\n    | [\\u0B56-\\u0B57]\n    | [\\u0B82-\\u0B83]\n    | [\\u0BBE-\\u0BC2]\n    | [\\u0BC6-\\u0BC8]\n    | [\\u0BCA-\\u0BCD]\n    | [\\u0BD7]\n    | [\\u0C01-\\u0C03]\n    | [\\u0C3E-\\u0C44]\n    | [\\u0C46-\\u0C48]\n    | [\\u0C4A-\\u0C4D]\n    | [\\u0C55-\\u0C56]\n    | [\\u0C82-\\u0C83]\n    | [\\u0CBE-\\u0CC4]\n    | [\\u0CC6-\\u0CC8]\n    | [\\u0CCA-\\u0CCD]\n    | [\\u0CD5-\\u0CD6]\n    | [\\u0D02-\\u0D03]\n    | [\\u0D3E-\\u0D43]\n    | [\\u0D46-\\u0D48]\n    | [\\u0D4A-\\u0D4D]\n    | [\\u0D57]\n    | [\\u0D82-\\u0D83]\n    | [\\u0DCA]\n    | [\\u0DCF-\\u0DD4]\n    | [\\u0DD6]\n    | [\\u0DD8-\\u0DDF]\n    | [\\u0DF2-\\u0DF3]\n    | [\\u0E31]\n    | [\\u0E34-\\u0E3A]\n    | [\\u0E47-\\u0E4E]\n    | [\\u0EB1]\n    | [\\u0EB4-\\u0EB9]\n    | [\\u0EBB-\\u0EBC]\n    | [\\u0EC8-\\u0ECD]\n    | [\\u0F18-\\u0F19]\n    | [\\u0F35]\n    | [\\u0F37]\n    | [\\u0F39]\n    | [\\u0F3E-\\u0F3F]\n    | [\\u0F71-\\u0F84]\n    | [\\u0F86-\\u0F87]\n    | [\\u0F90-\\u0F97]\n    | [\\u0F99-\\u0FBC]\n    | [\\u0FC6]\n    | [\\u102C-\\u1032]\n    | [\\u1036-\\u1039]\n    | [\\u1056-\\u1059]\n    | [\\u17B4-\\u17D3]\n    | [\\u18A9]\n    | [\\u20D0-\\u20DC]\n    | [\\u20E1]\n    | [\\u302A-\\u302F]\n    | [\\u3099-\\u309A]\n    | [\\uFB1E]\n    | [\\uFE20-\\uFE23]\n    ;\n\nfragment UnicodeDigit\n    : [\\u0030-\\u0039]\n    | [\\u0660-\\u0669]\n    | [\\u06F0-\\u06F9]\n    | [\\u0966-\\u096F]\n    | [\\u09E6-\\u09EF]\n    | [\\u0A66-\\u0A6F]\n    | [\\u0AE6-\\u0AEF]\n    | [\\u0B66-\\u0B6F]\n    | [\\u0BE7-\\u0BEF]\n    | [\\u0C66-\\u0C6F]\n    | [\\u0CE6-\\u0CEF]\n    | [\\u0D66-\\u0D6F]\n    | [\\u0E50-\\u0E59]\n    | [\\u0ED0-\\u0ED9]\n    | [\\u0F20-\\u0F29]\n    | [\\u1040-\\u1049]\n    | [\\u1369-\\u1371]\n    | [\\u17E0-\\u17E9]\n    | [\\u1810-\\u1819]\n    | [\\uFF10-\\uFF19]\n    ;\n\nfragment UnicodeConnectorPunctuation\n    : [\\u005F]\n    | [\\u203F-\\u2040]\n    | [\\u30FB]\n    | [\\uFE33-\\uFE34]\n    | [\\uFE4D-\\uFE4F]\n    | [\\uFF3F]\n    | [\\uFF65]\n    ;\n\nfragment RegularExpressionFirstChar\n    : ~[*\\r\\n\\u2028\\u2029\\\\/[]\n    | RegularExpressionBackslashSequence\n    | '[' RegularExpressionClassChar* ']'\n    ;\n\nfragment RegularExpressionChar\n    : ~[\\r\\n\\u2028\\u2029\\\\/[]\n    | RegularExpressionBackslashSequence\n    | '[' RegularExpressionClassChar* ']'\n    ;\n\nfragment RegularExpressionClassChar\n    : ~[\\r\\n\\u2028\\u2029\\]\\\\]\n    | RegularExpressionBackslashSequence\n    ;\n\nfragment RegularExpressionBackslashSequence\n    : '\\\\' ~[\\r\\n\\u2028\\u2029]\n    ;[\\u0F71-\\u0F84]\n    | [\\u0F86-\\u0F87]\n    | [\\u0F90-\\u0F97]\n    | [\\u0F99-\\u0FBC]\n    | [\\u0FC6]\n    | [\\u102C-\\u1032]\n    | [\\u1036-\\u1039]\n    | [\\u1056-\\u1059]\n    | [\\u17B4-\\u17D3]\n    | [\\u18A9]\n    | [\\u20D0-\\u20DC]\n    | [\\u20E1]\n    | [\\u302A-\\u302F]\n    | [\\u3099-\\u309A]\n    | [\\uFB1E]\n    | [\\uFE20-\\uFE23]\n    ;\n\nfragment UnicodeDigit\n    : [\\u0030-\\u0039]\n    | [\\u0660-\\u0669]\n    | [\\u06F0-\\u06F9]\n    | [\\u0966-\\u096F]\n    | [\\u09E6-\\u09EF]\n    | [\\u0A66-\\u0A6F]\n    | [\\u0AE6-\\u0AEF]\n    | [\\u0B66-\\u0B6F]\n    | [\\u0BE7-\\u0BEF]\n    | [\\u0C66-\\u0C6F]\n    | [\\u0CE6-\\u0CEF]\n    | [\\u0D66-\\u0D6F]\n    | [\\u0E50-\\u0E59]\n    | [\\u0ED0-\\u0ED9]\n    | [\\u0F20-\\u0F29]\n    | [\\u1040-\\u1049]\n    | [\\u1369-\\u1371]\n    | [\\u17E0-\\u17E9]\n    | [\\u1810-\\u1819]\n    | [\\uFF10-\\uFF19]\n    ;\n\nfragment UnicodeConnectorPunctuation\n    : [\\u005F]\n    | [\\u203F-\\u2040]\n    | [\\u30FB]\n    | [\\uFE33-\\uFE34]\n    | [\\uFE4D-\\uFE4F]\n    | [\\uFF3F]\n    | [\\uFF65]\n    ;\n\nfragment RegularExpressionFirstChar\n    : ~[*\\r\\n\\u2028\\u2029\\\\/[]\n    | RegularExpressionBackslashSequence\n    | '[' RegularExpressionClassChar* ']'\n    ;\n\nfragment RegularExpressionChar\n    : ~[\\r\\n\\u2028\\u2029\\\\/[]\n    | RegularExpressionBackslashSequence\n    | '[' RegularExpressionClassChar* ']'\n    ;\n\nfragment RegularExpressionClassChar\n    : ~[\\r\\n\\u2028\\u2029\\]\\\\]\n    | RegularExpressionBackslashSequence\n    ;\n\nfragment RegularExpressionBackslashSequence\n    : '\\\\' ~[\\r\\n\\u2028\\u2029]\n    ;\n",
-			"file": "lib/ecmascript/antlr/JavaScriptLexer.g4",
-			"file_size": 19601,
-			"file_write_time": 132343849840971756,
-			"settings":
-			{
-				"buffer_size": 19601,
+				"buffer_size": 34854,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/grammars/Lua.g4",
+			"file": "lib/grammars/ECMAScript.g4",
 			"settings":
 			{
-				"buffer_size": 6290,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/grammars/bnf.g4",
-			"settings":
-			{
-				"buffer_size": 2294,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/roman/Dokumente/Sources/shish/doc/posix/ieee-p1003.2-d11.2-s3.txt",
-			"settings":
-			{
-				"buffer_size": 242496,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "plot-cv.sublime-project",
-			"settings":
-			{
-				"buffer_size": 3403,
+				"buffer_size": 36251,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/grammars/JavaScriptParser.g4",
+			"file": "lib/grammars/JavaScript/JavaScriptParserBase.js",
 			"settings":
 			{
-				"buffer_size": 15803,
+				"buffer_size": 2235,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"contents": "Package Control Messages\n========================\n\nFlowType\n--------\n\n  \n          ______ _       _    _ _\n          |  ___| |     | |  | | |\n          | |_  | | ___ | |  | | |_ _   _ _ __   ___\n          |  _| | |/ _ \\| |/\\| | __| | | | '_ \\ / _ \\\n          | |   | | (_) \\  /\\  / |_| |_| | |_) |  __/\n          \\_|   |_|\\___/ \\/  \\/ \\__|\\__, | .__/ \\___|\n                                     __/ | |\n                                    |___/|_|\n  \n  \n  Welcome fellow Flow user,\n  \n  This plugin was made due to the fact that the few existing\n  plugins weren't maintained much, and as an everyday user I needed\n  something that simply works.\n  \n  So let's keep this plugin up to date together!\n  \n  For a complete guide of the plugin's usage and configuration:\n  \n          https://github.com/Pegase745/sublime-flowtype\n",
+			"file": "test-antlr.js",
 			"settings":
 			{
-				"buffer_size": 822,
+				"buffer_size": 1152,
+				"encoding": "UTF-8",
 				"line_ending": "Unix",
-				"name": "Package Control Messages",
-				"read_only": true,
-				"scratch": true
-			}
-		},
-		{
-			"contents": "",
-			"file": "/tmp/xa-584TK0/%F",
-			"file_size": -1,
-			"file_write_time": -1,
-			"settings":
-			{
-				"buffer_size": 0,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "diff -uNr djbdns-1.05/FILES djbdns-1.05-ipv6/FILES\n--- djbdns-1.05/FILES\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/FILES\t2017-01-07 13:34:48.960745102 +0100\n@@ -135,6 +135,7 @@\n exit.h\n fmt.hä\n fmt_ulong.c\n+fmt_xlong.c\n gen_alloc.h\n gen_allocdefs.h\n getln.c\n@@ -151,6 +152,9 @@\n ip4.h\n ip4_fmt.c\n ip4_scan.c\n+ip6.h\n+ip6_fmt.c\n+ip6_scan.c\n ndelay.h\n ndelay_off.c\n ndelay_on.c\n@@ -164,6 +168,7 @@\n readclose.c\n readclose.h\n scan.h\n+scan_0x.c\n scan_ulong.c\n seek.h\n seek_set.c\n@@ -241,3 +246,9 @@\n warn-shsgr\n buffer_read.c\n buffer_write.c\n+dns_nd6.c\n+socket_udp6.c\n+socket_getifidx.c\n+tryn2i.c\n+haven2i.h1\n+haven2i.h2\ndiff -uNr djbdns-1.05/Makefile djbdns-1.05-ipv6/Makefile\n--- djbdns-1.05/Makefile\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/Makefile\t2017-01-07 13:34:48.960745102 +0100\n@@ -52,10 +52,10 @@\n \n axfrdns: \\\n load axfrdns.o iopause.o droproot.o tdlookup.o response.o qlog.o \\\n-prot.o timeoutread.o timeoutwrite.o dns.a libtai.a alloc.a env.a \\\n+prot.o timeoutread.o timeoutwrite.o clientloc.o dns.a libtai.a alloc.a env.a \\\n cdb.a buffer.a unix.a byte.a\n \t./load axfrdns iopause.o droproot.o tdlookup.o response.o \\\n-\tqlog.o prot.o timeoutread.o timeoutwrite.o dns.a libtai.a \\\n+\tqlog.o prot.o timeoutread.o timeoutwrite.o clientloc.o dns.a libtai.a \\\n \talloc.a env.a cdb.a buffer.a unix.a byte.a \n \n axfrdns-conf: \\\n@@ -73,7 +73,7 @@\n tai.h uint64.h buffer.h timeoutread.h timeoutwrite.h open.h seek.h \\\n cdb.h uint32.h stralloc.h gen_alloc.h strerr.h str.h byte.h case.h \\\n dns.h stralloc.h iopause.h taia.h tai.h taia.h scan.h qlog.h uint16.h \\\n-response.h uint32.h\n+response.h uint32.h clientloc.h\n \t./compile axfrdns.c\n \n buffer.a: \\\n@@ -120,12 +120,14 @@\n case_diffb.o case_diffs.o case_lowerb.o fmt_ulong.o ip4_fmt.o \\\n ip4_scan.o scan_ulong.o str_chr.o str_diff.o str_len.o str_rchr.o \\\n str_start.o uint16_pack.o uint16_unpack.o uint32_pack.o \\\n-uint32_unpack.o\n+uint32_unpack.o ip6_fmt.o ip6_scan.o fmt_xlong.o \\\n+scan_xlong.o\n \t./makelib byte.a byte_chr.o byte_copy.o byte_cr.o \\\n \tbyte_diff.o byte_zero.o case_diffb.o case_diffs.o \\\n \tcase_lowerb.o fmt_ulong.o ip4_fmt.o ip4_scan.o scan_ulong.o \\\n \tstr_chr.o str_diff.o str_len.o str_rchr.o str_start.o \\\n-\tuint16_pack.o uint16_unpack.o uint32_pack.o uint32_unpack.o\n+\tuint16_pack.o uint16_unpack.o uint32_pack.o uint32_unpack.o \\\n+\tip6_fmt.o ip6_scan.o fmt_xlong.o scan_xlong.o\n \n byte_chr.o: \\\n compile byte_chr.c byte.h\n@@ -209,6 +211,10 @@\n \t> choose\n \tchmod 755 choose\n \n+clientloc.o: \\\n+compile clientloc.c open.h byte.h cdb.h ip6.h\n+\t./compile clientloc.c\n+\n compile: \\\n warn-auto.sh conf-cc\n \t( cat warn-auto.sh; \\\n@@ -228,11 +234,13 @@\n dns.a: \\\n makelib dns_dfd.o dns_domain.o dns_dtda.o dns_ip.o dns_ipq.o dns_mx.o \\\n dns_name.o dns_nd.o dns_packet.o dns_random.o dns_rcip.o dns_rcrw.o \\\n-dns_resolve.o dns_sortip.o dns_transmit.o dns_txt.o\n+dns_resolve.o dns_sortip.o dns_transmit.o dns_txt.o dns_ip6.o \\\n+dns_sortip6.o dns_nd6.o dns_ipq6.o\n \t./makelib dns.a dns_dfd.o dns_domain.o dns_dtda.o dns_ip.o \\\n \tdns_ipq.o dns_mx.o dns_name.o dns_nd.o dns_packet.o \\\n \tdns_random.o dns_rcip.o dns_rcrw.o dns_resolve.o \\\n-\tdns_sortip.o dns_transmit.o dns_txt.o\n+\tdns_sortip.o dns_transmit.o dns_txt.o dns_ip6.o dns_sortip6.o \\\n+\tdns_nd6.o dns_ipq6.o\n \n dns_dfd.o: \\\n compile dns_dfd.c error.h alloc.h byte.h dns.h stralloc.h gen_alloc.h \\\n@@ -254,11 +262,21 @@\n stralloc.h iopause.h taia.h tai.h uint64.h taia.h\n \t./compile dns_ip.c\n \n+dns_ip6.o: \\\n+compile dns_ip6.c stralloc.h gen_alloc.h uint16.h byte.h dns.h \\\n+stralloc.h iopause.h taia.h tai.h uint64.h taia.h\n+\t./compile dns_ip6.c\n+\n dns_ipq.o: \\\n compile dns_ipq.c stralloc.h gen_alloc.h case.h byte.h str.h dns.h \\\n stralloc.h iopause.h taia.h tai.h uint64.h taia.h\n \t./compile dns_ipq.c\n \n+dns_ipq6.o: \\\n+compile dns_ipq6.c stralloc.h gen_alloc.h case.h byte.h str.h dns.h \\\n+stralloc.h iopause.h taia.h tai.h uint64.h taia.h\n+\t./compile dns_ipq6.c\n+\n dns_mx.o: \\\n compile dns_mx.c stralloc.h gen_alloc.h byte.h uint16.h dns.h \\\n stralloc.h iopause.h taia.h tai.h uint64.h taia.h\n@@ -274,6 +292,11 @@\n taia.h tai.h uint64.h taia.h\n \t./compile dns_nd.c\n \n+dns_nd6.o: \\\n+compile dns_nd6.c byte.h fmt.h dns.h stralloc.h gen_alloc.h iopause.h \\\n+taia.h tai.h uint64.h taia.h\n+\t./compile dns_nd6.c\n+\n dns_packet.o: \\\n compile dns_packet.c error.h dns.h stralloc.h gen_alloc.h iopause.h \\\n taia.h tai.h uint64.h taia.h\n@@ -306,6 +329,11 @@\n taia.h tai.h uint64.h taia.h\n \t./compile dns_sortip.c\n \n+dns_sortip6.o: \\\n+compile dns_sortip6.c byte.h dns.h stralloc.h gen_alloc.h iopause.h \\\n+taia.h tai.h uint64.h taia.h\n+\t./compile dns_sortip6.c\n+\n dns_transmit.o: \\\n compile dns_transmit.c socket.h uint16.h alloc.h error.h byte.h \\\n uint16.h dns.h stralloc.h gen_alloc.h iopause.h taia.h tai.h uint64.h \\\n@@ -369,6 +397,17 @@\n gen_alloc.h iopause.h taia.h tai.h uint64.h taia.h\n \t./compile dnsip.c\n \n+dnsip6: \\\n+load dnsip6.o iopause.o dns.a env.a libtai.a alloc.a buffer.a unix.a \\\n+byte.a socket.lib\n+\t./load dnsip6 iopause.o dns.a env.a libtai.a alloc.a \\\n+\tbuffer.a unix.a byte.a  `cat socket.lib`\n+\n+dnsip6.o: \\\n+compile dnsip6.c buffer.h exit.h strerr.h ip6.h dns.h stralloc.h \\\n+gen_alloc.h iopause.h taia.h tai.h uint64.h\n+\t./compile dnsip6.c\n+\n dnsipq: \\\n load dnsipq.o iopause.o dns.a env.a libtai.a alloc.a buffer.a unix.a \\\n byte.a socket.lib\n@@ -380,6 +419,17 @@\n gen_alloc.h iopause.h taia.h tai.h uint64.h taia.h\n \t./compile dnsipq.c\n \n+dnsip6q: \\\n+load dnsip6q.o iopause.o dns.a env.a libtai.a alloc.a buffer.a unix.a \\\n+byte.a socket.lib\n+\t./load dnsip6q iopause.o dns.a env.a libtai.a alloc.a \\\n+\tbuffer.a unix.a byte.a  `cat socket.lib`\n+\n+dnsip6q.o: \\\n+compile dnsip6q.c buffer.h exit.h strerr.h ip4.h dns.h stralloc.h \\\n+gen_alloc.h iopause.h taia.h tai.h uint64.h taia.h\n+\t./compile dnsip6q.c\n+\n dnsmx: \\\n load dnsmx.o iopause.o dns.a env.a libtai.a alloc.a buffer.a unix.a \\\n byte.a socket.lib\n@@ -399,7 +449,7 @@\n \n dnsname.o: \\\n compile dnsname.c buffer.h exit.h strerr.h ip4.h dns.h stralloc.h \\\n-gen_alloc.h iopause.h taia.h tai.h uint64.h taia.h\n+gen_alloc.h iopause.h taia.h tai.h uint64.h taia.h ip6.h\n \t./compile dnsname.c\n \n dnsq: \\\n@@ -484,6 +534,10 @@\n compile fmt_ulong.c fmt.h\n \t./compile fmt_ulong.c\n \n+fmt_xlong.o: \\\n+compile fmt_xlong.c scan.h\n+\t./compile fmt_xlong.c\n+\n generic-conf.o: \\\n compile generic-conf.c strerr.h buffer.h open.h generic-conf.h \\\n buffer.h\n@@ -546,10 +600,18 @@\n compile ip4_fmt.c fmt.h ip4.h\n \t./compile ip4_fmt.c\n \n+ip6_fmt.o: \\\n+compile ip6_fmt.c fmt.h ip6.h\n+\t./compile ip6_fmt.c\n+\n ip4_scan.o: \\\n compile ip4_scan.c scan.h ip4.h\n \t./compile ip4_scan.c\n \n+ip6_scan.o: \\\n+compile ip6_scan.c scan.h ip6.h\n+\t./compile ip6_scan.c\n+\n it: \\\n prog install instcheck\n \n@@ -626,9 +688,9 @@\n \t./compile parsetype.c\n \n pickdns: \\\n-load pickdns.o server.o response.o droproot.o qlog.o prot.o dns.a \\\n+load pickdns.o server.o iopause.o response.o droproot.o qlog.o prot.o dns.a \\\n env.a libtai.a cdb.a alloc.a buffer.a unix.a byte.a socket.lib\n-\t./load pickdns server.o response.o droproot.o qlog.o \\\n+\t./load pickdns server.o iopause.o response.o droproot.o qlog.o \\\n \tprot.o dns.a env.a libtai.a cdb.a alloc.a buffer.a unix.a \\\n \tbyte.a  `cat socket.lib`\n \n@@ -677,7 +739,7 @@\n rbldns-data pickdns-conf pickdns pickdns-data tinydns-conf tinydns \\\n tinydns-data tinydns-get tinydns-edit axfr-get axfrdns-conf axfrdns \\\n dnsip dnsipq dnsname dnstxt dnsmx dnsfilter random-ip dnsqr dnsq \\\n-dnstrace dnstracesort cachetest utime rts\n+dnstrace dnstracesort cachetest utime rts dnsip6 dnsip6q\n \n prot.o: \\\n compile prot.c hasshsgr.h prot.h\n@@ -704,9 +766,9 @@\n \t./compile random-ip.c\n \n rbldns: \\\n-load rbldns.o server.o response.o dd.o droproot.o qlog.o prot.o dns.a \\\n+load rbldns.o server.o iopause.o response.o dd.o droproot.o qlog.o prot.o dns.a \\\n env.a libtai.a cdb.a alloc.a buffer.a unix.a byte.a socket.lib\n-\t./load rbldns server.o response.o dd.o droproot.o qlog.o \\\n+\t./load rbldns server.o iopause.o response.o dd.o droproot.o qlog.o \\\n \tprot.o dns.a env.a libtai.a cdb.a alloc.a buffer.a unix.a \\\n \tbyte.a  `cat socket.lib`\n \n@@ -762,6 +824,10 @@\n compile scan_ulong.c scan.h\n \t./compile scan_ulong.c\n \n+scan_xlong.o: \\\n+compile scan_xlong.c scan.h\n+\t./compile scan_xlong.c\n+\n seek_set.o: \\\n compile seek_set.c seek.h\n \t./compile seek_set.c\n@@ -774,7 +840,7 @@\n compile server.c byte.h case.h env.h buffer.h strerr.h ip4.h uint16.h \\\n ndelay.h socket.h uint16.h droproot.h qlog.h uint16.h response.h \\\n uint32.h dns.h stralloc.h gen_alloc.h iopause.h taia.h tai.h uint64.h \\\n-taia.h\n+taia.h iopause.h alloc.h str.h\n \t./compile server.c\n \n setup: \\\n@@ -796,14 +862,26 @@\n compile socket_accept.c byte.h socket.h uint16.h\n \t./compile socket_accept.c\n \n+socket_accept6.o: \\\n+compile socket_accept6.c byte.h socket.h uint16.h\n+\t./compile socket_accept6.c\n+\n socket_bind.o: \\\n compile socket_bind.c byte.h socket.h uint16.h\n \t./compile socket_bind.c\n \n+socket_bind6.o: \\\n+compile socket_bind6.c sockaddr_in6.h haveip6.h byte.h socket.h uint16.h uint32.h ip6.h error.h\n+\t./compile socket_bind6.c\n+\n socket_conn.o: \\\n compile socket_conn.c byte.h socket.h uint16.h\n \t./compile socket_conn.c\n \n+socket_connect6.o: \\\n+compile socket_connect6.c byte.h socket.h uint16.h uint32.h\n+\t./compile socket_connect6.c\n+\n socket_listen.o: \\\n compile socket_listen.c socket.h uint16.h\n \t./compile socket_listen.c\n@@ -812,18 +890,47 @@\n compile socket_recv.c byte.h socket.h uint16.h\n \t./compile socket_recv.c\n \n+socket_recv6.o: \\\n+compile socket_recv6.c sockaddr_in6.h haveip6.h byte.h socket.h uint16.h uint32.h ip6.h error.h\n+\t./compile socket_recv6.c\n+\n socket_send.o: \\\n compile socket_send.c byte.h socket.h uint16.h\n \t./compile socket_send.c\n \n+socket_send6.o: \\\n+compile socket_send6.c byte.h socket.h uint16.h uint32.h ip6.h haveip6.h error.h\n+\t./compile socket_send6.c\n+\n socket_tcp.o: \\\n compile socket_tcp.c ndelay.h socket.h uint16.h\n \t./compile socket_tcp.c\n \n+socket_tcp6.o: \\\n+compile socket_tcp6.c ndelay.h socket.h uint16.h uint32.h haveip6.h\n+\t./compile socket_tcp6.c\n+\n socket_udp.o: \\\n compile socket_udp.c ndelay.h socket.h uint16.h\n \t./compile socket_udp.c\n \n+socket_udp6.o: \\\n+compile socket_udp6.c ndelay.h socket.h uint16.h uint32.h haveip6.h\n+\t./compile socket_udp6.c\n+\n+socket_noipv6.o: \\\n+compile socket_noipv6.c haveip6.h\n+\t./compile socket_noipv6.c\n+\n+socket_getifidx.o: \\\n+compile socket_getifidx.c socket.h uint16.h uint32.h haven2i.h\n+\t./compile socket_getifidx.c\n+\n+haven2i.h: \\\n+tryn2i.c choose compile load socket.lib haven2i.h1 haven2i.h2\n+\tcp /dev/null haven2i.h\n+\t./choose cL tryn2i haven2i.h1 haven2i.h2 socket > haven2i.h\n+\n str_chr.o: \\\n compile str_chr.c str.h\n \t./compile str_chr.c\n@@ -965,7 +1072,7 @@\n tdlookup.o: \\\n compile tdlookup.c uint16.h open.h tai.h uint64.h cdb.h uint32.h \\\n byte.h case.h dns.h stralloc.h gen_alloc.h iopause.h taia.h tai.h \\\n-taia.h seek.h response.h uint32.h\n+taia.h seek.h response.h uint32.h ip6.h clientloc.h\n \t./compile tdlookup.c\n \n timeoutread.o: \\\n@@ -979,11 +1086,11 @@\n \t./compile timeoutwrite.c\n \n tinydns: \\\n-load tinydns.o server.o droproot.o tdlookup.o response.o qlog.o \\\n-prot.o dns.a libtai.a env.a cdb.a alloc.a buffer.a unix.a byte.a \\\n+load tinydns.o server.o iopause.o droproot.o tdlookup.o response.o qlog.o \\\n+prot.o clientloc.o dns.a libtai.a env.a cdb.a alloc.a buffer.a unix.a byte.a \\\n socket.lib\n-\t./load tinydns server.o droproot.o tdlookup.o response.o \\\n-\tqlog.o prot.o dns.a libtai.a env.a cdb.a alloc.a buffer.a \\\n+\t./load tinydns server.o iopause.o droproot.o tdlookup.o response.o \\\n+\tqlog.o prot.o clientloc.o dns.a libtai.a env.a cdb.a alloc.a buffer.a \\\n \tunix.a byte.a  `cat socket.lib`\n \n tinydns-conf: \\\n@@ -1005,7 +1112,7 @@\n compile tinydns-data.c uint16.h uint32.h str.h byte.h fmt.h ip4.h \\\n exit.h case.h scan.h buffer.h strerr.h getln.h buffer.h stralloc.h \\\n gen_alloc.h cdb_make.h buffer.h uint32.h stralloc.h open.h dns.h \\\n-stralloc.h iopause.h taia.h tai.h uint64.h taia.h\n+stralloc.h iopause.h taia.h tai.h uint64.h taia.h ip6.h\n \t./compile tinydns-data.c\n \n tinydns-edit: \\\n@@ -1020,9 +1127,9 @@\n \n tinydns-get: \\\n load tinydns-get.o tdlookup.o response.o printpacket.o printrecord.o \\\n-parsetype.o dns.a libtai.a cdb.a buffer.a alloc.a unix.a byte.a\n+parsetype.o clientloc.o dns.a libtai.a cdb.a buffer.a alloc.a unix.a byte.a\n \t./load tinydns-get tdlookup.o response.o printpacket.o \\\n-\tprintrecord.o parsetype.o dns.a libtai.a cdb.a buffer.a \\\n+\tprintrecord.o parsetype.o clientloc.o dns.a libtai.a cdb.a buffer.a \\\n \talloc.a unix.a byte.a \n \n tinydns-get.o: \\\n@@ -1068,12 +1175,18 @@\n makelib buffer_read.o buffer_write.o error.o error_str.o ndelay_off.o \\\n ndelay_on.o open_read.o open_trunc.o openreadclose.o readclose.o \\\n seek_set.o socket_accept.o socket_bind.o socket_conn.o \\\n-socket_listen.o socket_recv.o socket_send.o socket_tcp.o socket_udp.o\n+socket_listen.o socket_recv.o socket_send.o socket_tcp.o socket_udp.o \\\n+socket_udp6.o socket_getifidx.o socket_recv6.o socket_send6.o \\\n+socket_bind6.o socket_noipv6.o socket_tcp6.o socket_connect6.o \\\n+socket_accept6.o\n \t./makelib unix.a buffer_read.o buffer_write.o error.o \\\n \terror_str.o ndelay_off.o ndelay_on.o open_read.o \\\n \topen_trunc.o openreadclose.o readclose.o seek_set.o \\\n \tsocket_accept.o socket_bind.o socket_conn.o socket_listen.o \\\n-\tsocket_recv.o socket_send.o socket_tcp.o socket_udp.o\n+\tsocket_recv.o socket_send.o socket_tcp.o socket_udp.o \\\n+\tsocket_udp6.o socket_getifidx.o socket_recv6.o socket_send6.o \\\n+\tsocket_bind6.o socket_noipv6.o socket_tcp6.o socket_connect6.o \\\n+\tsocket_accept6.o\n \n utime: \\\n load utime.o byte.a\n@@ -1084,10 +1197,10 @@\n \t./compile utime.c\n \n walldns: \\\n-load walldns.o server.o response.o droproot.o qlog.o prot.o dd.o \\\n+load walldns.o server.o iopause.o response.o droproot.o qlog.o prot.o dd.o \\\n dns.a env.a cdb.a alloc.a buffer.a unix.a byte.a socket.lib\n-\t./load walldns server.o response.o droproot.o qlog.o \\\n-\tprot.o dd.o dns.a env.a cdb.a alloc.a buffer.a unix.a \\\n+\t./load walldns server.o iopause.o response.o droproot.o qlog.o \\\n+\tprot.o dd.o dns.a libtai.a env.a cdb.a alloc.a buffer.a unix.a \\\n \tbyte.a  `cat socket.lib`\n \n walldns-conf: \\\n@@ -1104,3 +1217,14 @@\n compile walldns.c byte.h dns.h stralloc.h gen_alloc.h iopause.h \\\n taia.h tai.h uint64.h taia.h dd.h response.h uint32.h\n \t./compile walldns.c\n+\n+haveip6.h: \\\n+tryip6.c choose compile haveip6.h1 haveip6.h2\n+\t./choose c tryip6 haveip6.h1 haveip6.h2 > haveip6.h\n+\n+sockaddr_in6.h: \\\n+trysa6.c choose compile sockaddr_in6.h1 sockaddr_in6.h2 haveip6.h\n+\t./choose c trysa6 sockaddr_in6.h1 sockaddr_in6.h2 > sockaddr_in6.h\n+\n+clean:\n+\trm -f `cat TARGETS`\ndiff -uNr djbdns-1.05/README.ipv6 djbdns-1.05-ipv6/README.ipv6\n--- djbdns-1.05/README.ipv6\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/README.ipv6\t2017-01-07 13:34:48.960745102 +0100\n@@ -0,0 +1,23 @@\n+The patch adds ipv6 transport support for djbdns.  It would work for\n+tinydns and dnscache.  It requires IPv4 mapped addresses support enabled\n+in the operating system (which is true for Linux and can be enabled for\n+the BSDs except OpenBSD).\n+\n+The log format changes to log the full IPv6 addresses in a non-standard,\n+\"flat\" form, for example 00000000000000000000ffffc7fe1f01 (this is\n+analogous to ::ffff:199.254.31.1).\n+\n+The localization format of dnscache-data was amended to support IPv6.\n+Instead of\n+\n+  %in:192.168\n+\n+you need to use the above flat form with a prepended s for IPv6.  The\n+IPv4 form should still work unchanged.  Note that the \"data.cdb\" file\n+format changes for this and is not compatible.  If you run an unpatched\n+tinydns on it, it will not recognize any of the localization data.\n+\n+dnscache will only try to lookup AAAA records for finding nameservers if\n+the A record lookup failed.  So IPv4 is default and stays like that, to\n+not slow down DNS lookups by looking up all name servers as IPv6 and\n+failing for all of them.\ndiff -uNr djbdns-1.05/TARGETS djbdns-1.05-ipv6/TARGETS\n--- djbdns-1.05/TARGETS\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/TARGETS\t2017-01-07 13:34:48.961745102 +0100\n@@ -20,6 +20,7 @@\n buffer.a\n buffer_read.o\n buffer_write.o\n+clientloc.o\n error.o\n error_str.o\n ndelay_off.o\n@@ -102,6 +103,7 @@\n dns_dtda.o\n dns_ip.o\n dns_ipq.o\n+dns_ipq6.o\n dns_mx.o\n dns_name.o\n dns_nd.o\n@@ -180,6 +182,8 @@\n dnsip\n dnsipq.o\n dnsipq\n+dnsip6q.o\n+dnsip6q\n dnsname.o\n dnsname\n dnstxt.o\n@@ -214,3 +218,25 @@\n it\n setup\n check\n+scan_0x.o\n+fmt_xlong.o\n+ip6_scan.o\n+ip6_fmt.o\n+dnsip6.o\n+dns_ip6.o\n+dns_sortip6.o\n+dnsip6\n+dns_nd6.o\n+socket_udp6.o\n+socket_getifidx.o\n+socket_bind6.o\n+socket_noipv6.o\n+socket_recv6.o\n+socket_send6.o\n+haveip6.h\n+haven2i.h\n+sockaddr_in6.h\n+scan_xlong.o\n+socket_accept6.o\n+socket_connect6.o\n+socket_tcp6.o\ndiff -uNr djbdns-1.05/auto-str.c djbdns-1.05-ipv6/auto-str.c\n--- djbdns-1.05/auto-str.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/auto-str.c\t2017-01-07 13:54:25.159690277 +0100\n@@ -4,9 +4,10 @@\n char bspace[256];\n buffer b = BUFFER_INIT(buffer_unixwrite,1,bspace,sizeof bspace);\n \n-void puts(const char *s)\n+int puts(const char *s)\n {\n   if (buffer_puts(&b,s) == -1) _exit(111);\n+  return 0;\n }\n \n int main(int argc,char **argv)\ndiff -uNr djbdns-1.05/axfr-get.c djbdns-1.05-ipv6/axfr-get.c\n--- djbdns-1.05/axfr-get.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/axfr-get.c\t2017-01-07 13:34:48.961745102 +0100\n@@ -13,6 +13,7 @@\n #include \"byte.h\"\n #include \"str.h\"\n #include \"ip4.h\"\n+#include \"ip6.h\"\n #include \"timeoutread.h\"\n #include \"timeoutwrite.h\"\n #include \"dns.h\"\n@@ -217,6 +218,14 @@\n     x_copy(buf,len,pos,data,4);\n     if (!stralloc_catb(&line,ipstr,ip4_fmt(ipstr,data))) return 0;\n   }\n+  else if (byte_equal(data,2,DNS_T_AAAA)) {\n+    char ipstr[IP6_FMT];\n+    if (!stralloc_copys(&line,\"3\")) return 0;\n+    if (!dns_domain_todot_cat(&line,d1)) return 0;\n+    if (!stralloc_cats(&line,\":\")) return 0;\n+    x_copy(buf,len,pos,data,16);\n+    if (!stralloc_catb(&line,ipstr,ip6_fmt_flat(ipstr,data))) return 0;\n+  }\n   else {\n     unsigned char ch;\n     unsigned char ch2;\ndiff -uNr djbdns-1.05/axfrdns.c djbdns-1.05-ipv6/axfrdns.c\n--- djbdns-1.05/axfrdns.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/axfrdns.c\t2017-01-07 13:34:48.961745102 +0100\n@@ -21,6 +21,8 @@\n #include \"scan.h\"\n #include \"qlog.h\"\n #include \"response.h\"\n+#include \"ip6.h\"\n+#include \"clientloc.h\"\n \n extern int respond(char *,char *,char *);\n \n@@ -123,7 +125,7 @@\n   }\n }\n \n-char ip[4];\n+char ip[16];\n unsigned long port;\n char clientloc[2];\n \n@@ -231,22 +233,11 @@\n \n   axfrcheck(zone);\n \n+  find_client_loc(clientloc, ip);\n+\n   tai_now(&now);\n   cdb_init(&c,fdcdb);\n \n-  byte_zero(clientloc,2);\n-  key[0] = 0;\n-  key[1] = '%';\n-  byte_copy(key + 2,4,ip);\n-  r = cdb_find(&c,key,6);\n-  if (!r) r = cdb_find(&c,key,5);\n-  if (!r) r = cdb_find(&c,key,4);\n-  if (!r) r = cdb_find(&c,key,3);\n-  if (!r) r = cdb_find(&c,key,2);\n-  if (r == -1) die_cdbread();\n-  if (r && (cdb_datalen(&c) == 2))\n-    if (cdb_read(&c,clientloc,2,cdb_datapos(&c)) == -1) die_cdbread();\n-\n   cdb_findstart(&c);\n   for (;;) {\n     r = cdb_findnext(&c,zone,zonelen);\n@@ -328,10 +319,10 @@\n   axfr = env_get(\"AXFR\");\n   \n   x = env_get(\"TCPREMOTEIP\");\n-  if (x && ip4_scan(x,ip))\n+  if (x && ip6_scan(x,ip))\n     ;\n   else\n-    byte_zero(ip,4);\n+    byte_zero(ip,16);\n \n   x = env_get(\"TCPREMOTEPORT\");\n   if (!x) x = \"0\";\ndiff -uNr djbdns-1.05/chkshsgr.c djbdns-1.05-ipv6/chkshsgr.c\n--- djbdns-1.05/chkshsgr.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/chkshsgr.c\t2017-01-07 13:55:13.391688029 +0100\n@@ -1,8 +1,11 @@\n+#include <sys/types.h>\n+#include <unistd.h>\n+#include <grp.h>\n #include \"exit.h\"\n \n int main()\n {\n-  short x[4];\n+  gid_t x[4];\n \n   x[0] = x[1] = 0;\n   if (getgroups(1,x) == 0) if (setgroups(1,x) == -1) _exit(1);\ndiff -uNr djbdns-1.05/clientloc.c djbdns-1.05-ipv6/clientloc.c\n--- djbdns-1.05/clientloc.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/clientloc.c\t2017-01-07 13:43:11.150721694 +0100\n@@ -0,0 +1,49 @@\n+#include \"open.h\"\n+#include \"byte.h\"\n+#include \"cdb.h\"\n+#include \"ip6.h\"\n+\n+#include <sys/types.h>\n+#include <unistd.h>\n+\n+int find_client_loc(char loc[2],const char ip[16])\n+{\n+  int r, fd;\n+  char key[32+3];\n+  static struct cdb c;\n+\n+  fd = open_read(\"data.cdb\");\n+  if (fd == -1) return 0;\n+  cdb_init(&c,fd);\n+\n+  byte_zero(loc,2);\n+  key[0] = 0;\n+  key[1] = '%';\n+  if (byte_equal(ip,12,V4mappedprefix)) {\n+    key[2] = 'f';\n+    byte_copy(key + 3,4,ip+12);\n+    r = cdb_find(&c,key,7);\n+    if (!r) r = cdb_find(&c,key,6);\n+    if (!r) r = cdb_find(&c,key,5);\n+    if (!r) r = cdb_find(&c,key,4);\n+    if (!r) r = cdb_find(&c,key,3);\n+    if (r == -1) return 0;\n+    if (r && (cdb_datalen(&c) == 2))\n+      if (cdb_read(&c,loc,2,cdb_datapos(&c)) == -1) return 0;\n+  } else {\n+    unsigned int n;\n+    key[2] = 's';\n+    ip6_fmt_flat(key+3,ip);\n+    for (n=19; n>3; --n) {\n+      r = cdb_find(&c,key,n);\n+      if (r) break;\n+    }\n+    if (r == -1) return 0;\n+    if (r && (cdb_datalen(&c) == 2))\n+      if (cdb_read(&c,loc,2,cdb_datapos(&c)) == -1) return 0;\n+  }\n+\n+  cdb_free(&c);\n+  close(fd);\n+  return r;\n+}\ndiff -uNr djbdns-1.05/clientloc.h djbdns-1.05-ipv6/clientloc.h\n--- djbdns-1.05/clientloc.h\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/clientloc.h\t2017-01-07 13:34:48.961745102 +0100\n@@ -0,0 +1,6 @@\n+#ifndef CLIENTLOC_H\n+#define CLIENTLOC_H\n+\n+extern int find_client_loc(char loc[2],const char ip[16]);\n+\n+#endif\ndiff -uNr djbdns-1.05/dns.h djbdns-1.05-ipv6/dns.h\n--- djbdns-1.05/dns.h\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/dns.h\t2017-01-07 13:34:48.961745102 +0100\n@@ -35,7 +35,8 @@\n   struct taia deadline;\n   unsigned int pos;\n   const char *servers;\n-  char localip[4];\n+  char localip[16];\n+  unsigned int scope_id;\n   char qtype[2];\n } ;\n \n@@ -43,6 +44,7 @@\n extern unsigned int dns_random(unsigned int);\n \n extern void dns_sortip(char *,unsigned int);\n+extern void dns_sortip6(char *,unsigned int);\n \n extern void dns_domain_free(char **);\n extern int dns_domain_copy(char **,const char *);\n@@ -68,10 +70,13 @@\n \n extern int dns_ip4_packet(stralloc *,const char *,unsigned int);\n extern int dns_ip4(stralloc *,const stralloc *);\n+extern int dns_ip6_packet(stralloc *,char *,unsigned int);\n+extern int dns_ip6(stralloc *,stralloc *);\n extern int dns_name_packet(stralloc *,const char *,unsigned int);\n extern void dns_name4_domain(char *,const char *);\n #define DNS_NAME4_DOMAIN 31\n extern int dns_name4(stralloc *,const char *);\n+extern int dns_name6(stralloc *,const char *);\n extern int dns_txt_packet(stralloc *,const char *,unsigned int);\n extern int dns_txt(stralloc *,const stralloc *);\n extern int dns_mx_packet(stralloc *,const char *,unsigned int);\n@@ -80,5 +85,13 @@\n extern int dns_resolvconfrewrite(stralloc *);\n extern int dns_ip4_qualify_rules(stralloc *,stralloc *,const stralloc *,const stralloc *);\n extern int dns_ip4_qualify(stralloc *,stralloc *,const stralloc *);\n+extern int dns_ip6_qualify_rules(stralloc *,stralloc *,const stralloc *,const stralloc *);\n+extern int dns_ip6_qualify(stralloc *,stralloc *,const stralloc *);\n+\n+#define DNS_IP6_INT 0\n+#define DNS_IP6_ARPA 1\n+\n+extern int dns_name6_domain(char *,const char *,int);\n+#define DNS_NAME6_DOMAIN (4*16+11)\n \n #endif\ndiff -uNr djbdns-1.05/dns_ip6.c djbdns-1.05-ipv6/dns_ip6.c\n--- djbdns-1.05/dns_ip6.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/dns_ip6.c\t2017-01-07 13:34:48.961745102 +0100\n@@ -0,0 +1,103 @@\n+#include \"stralloc.h\"\n+#include \"uint16.h\"\n+#include \"byte.h\"\n+#include \"dns.h\"\n+#include \"ip4.h\"\n+#include \"ip6.h\"\n+\n+static int dns_ip6_packet_add(stralloc *out,char *buf,unsigned int len)\n+{\n+  unsigned int pos;\n+  char header[16];\n+  uint16 numanswers;\n+  uint16 datalen;\n+\n+  pos = dns_packet_copy(buf,len,0,header,12); if (!pos) return -1;\n+  uint16_unpack_big(header + 6,&numanswers);\n+  pos = dns_packet_skipname(buf,len,pos); if (!pos) return -1;\n+  pos += 4;\n+\n+  while (numanswers--) {\n+    pos = dns_packet_skipname(buf,len,pos); if (!pos) return -1;\n+    pos = dns_packet_copy(buf,len,pos,header,10); if (!pos) return -1;\n+    uint16_unpack_big(header + 8,&datalen);\n+    if (byte_equal(header,2,DNS_T_AAAA)) {\n+      if (byte_equal(header + 2,2,DNS_C_IN))\n+        if (datalen == 16) {\n+\t  if (!dns_packet_copy(buf,len,pos,header,16)) return -1;\n+\t  if (!stralloc_catb(out,header,16)) return -1;\n+\t}\n+    } else if (byte_equal(header,2,DNS_T_A))\n+      if (byte_equal(header + 2,2,DNS_C_IN))\n+        if (datalen == 4) {\n+\t  byte_copy(header,12,V4mappedprefix);\n+\t  if (!dns_packet_copy(buf,len,pos,header+12,4)) return -1;\n+\t  if (!stralloc_catb(out,header,16)) return -1;\n+\t}\n+    pos += datalen;\n+  }\n+\n+  dns_sortip6(out->s,out->len);\n+  return 0;\n+}\n+\n+int dns_ip6_packet(stralloc *out,char *buf,unsigned int len) {\n+  if (!stralloc_copys(out,\"\")) return -1;\n+  return dns_ip6_packet_add(out,buf,len);\n+}\n+\n+static char *q = 0;\n+\n+int dns_ip6(stralloc *out,stralloc *fqdn)\n+{\n+  unsigned int i;\n+  char code;\n+  char ch;\n+  char ip[16];\n+\n+  if (!stralloc_copys(out,\"\")) return -1;\n+  if (!stralloc_readyplus(fqdn,1)) return -1;\n+  fqdn->s[fqdn->len]=0;\n+  if ((i=ip6_scan(fqdn->s,ip))) {\n+    if (fqdn->s[i]) return -1;\n+    stralloc_copyb(out,ip,16);\n+    return 0;\n+  }\n+  code = 0;\n+  for (i = 0;i <= fqdn->len;++i) {\n+    if (i < fqdn->len)\n+      ch = fqdn->s[i];\n+    else\n+      ch = '.';\n+\n+    if ((ch == '[') || (ch == ']')) continue;\n+    if (ch == '.') {\n+      if (!stralloc_append(out,&code)) return -1;\n+      code = 0;\n+      continue;\n+    }\n+    if ((ch >= '0') && (ch <= '9')) {\n+      code *= 10;\n+      code += ch - '0';\n+      continue;\n+    }\n+\n+    if (!dns_domain_fromdot(&q,fqdn->s,fqdn->len)) return -1;\n+    if (!stralloc_copys(out,\"\")) return -1;\n+    if (dns_resolve(q,DNS_T_AAAA) != -1)\n+      if (dns_ip6_packet_add(out,dns_resolve_tx.packet,dns_resolve_tx.packetlen) != -1) {\n+\tdns_transmit_free(&dns_resolve_tx);\n+\tdns_domain_free(&q);\n+      }\n+    if (!dns_domain_fromdot(&q,fqdn->s,fqdn->len)) return -1;\n+    if (dns_resolve(q,DNS_T_A) != -1)\n+      if (dns_ip6_packet_add(out,dns_resolve_tx.packet,dns_resolve_tx.packetlen) != -1) {\n+\tdns_transmit_free(&dns_resolve_tx);\n+\tdns_domain_free(&q);\n+      }\n+    return out->a>0?0:-1;\n+  }\n+\n+  out->len &= ~3;\n+  return 0;\n+}\ndiff -uNr djbdns-1.05/dns_ipq6.c djbdns-1.05-ipv6/dns_ipq6.c\n--- djbdns-1.05/dns_ipq6.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/dns_ipq6.c\t2017-01-07 13:34:48.961745102 +0100\n@@ -0,0 +1,72 @@\n+#include \"stralloc.h\"\n+#include \"case.h\"\n+#include \"byte.h\"\n+#include \"str.h\"\n+#include \"dns.h\"\n+\n+static int doit(stralloc *work,const char *rule)\n+{\n+  char ch;\n+  unsigned int colon;\n+  unsigned int prefixlen;\n+\n+  ch = *rule++;\n+  if ((ch != '?') && (ch != '=') && (ch != '*') && (ch != '-')) return 1;\n+  colon = str_chr(rule,':');\n+  if (!rule[colon]) return 1;\n+\n+  if (work->len < colon) return 1;\n+  prefixlen = work->len - colon;\n+  if ((ch == '=') && prefixlen) return 1;\n+  if (case_diffb(rule,colon,work->s + prefixlen)) return 1;\n+  if (ch == '?') {\n+    if (byte_chr(work->s,prefixlen,'.') < prefixlen) return 1;\n+    if (byte_chr(work->s,prefixlen,':') < prefixlen) return 1;\n+    if (byte_chr(work->s,prefixlen,'[') < prefixlen) return 1;\n+    if (byte_chr(work->s,prefixlen,']') < prefixlen) return 1;\n+  }\n+\n+  work->len = prefixlen;\n+  if (ch == '-') work->len = 0;\n+  return stralloc_cats(work,rule + colon + 1);\n+}\n+\n+int dns_ip6_qualify_rules(stralloc *out,stralloc *fqdn,const stralloc *in,const stralloc *rules)\n+{\n+  unsigned int i;\n+  unsigned int j;\n+  unsigned int plus;\n+  unsigned int fqdnlen;\n+\n+  if (!stralloc_copy(fqdn,in)) return -1;\n+\n+  for (j = i = 0;j < rules->len;++j)\n+    if (!rules->s[j]) {\n+      if (!doit(fqdn,rules->s + i)) return -1;\n+      i = j + 1;\n+    }\n+\n+  fqdnlen = fqdn->len;\n+  plus = byte_chr(fqdn->s,fqdnlen,'+');\n+  if (plus >= fqdnlen)\n+    return dns_ip6(out,fqdn);\n+\n+  i = plus + 1;\n+  for (;;) {\n+    j = byte_chr(fqdn->s + i,fqdnlen - i,'+');\n+    byte_copy(fqdn->s + plus,j,fqdn->s + i);\n+    fqdn->len = plus + j;\n+    if (dns_ip6(out,fqdn) == -1) return -1;\n+    if (out->len) return 0;\n+    i += j;\n+    if (i >= fqdnlen) return 0;\n+    ++i;\n+  }\n+}\n+\n+int dns_ip6_qualify(stralloc *out,stralloc *fqdn,const stralloc *in)\n+{\n+  static stralloc rules;\n+  if (dns_resolvconfrewrite(&rules) == -1) return -1;\n+  return dns_ip6_qualify_rules(out,fqdn,in,&rules);\n+}\ndiff -uNr djbdns-1.05/dns_name.c djbdns-1.05-ipv6/dns_name.c\n--- djbdns-1.05/dns_name.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/dns_name.c\t2017-01-07 13:34:48.961745102 +0100\n@@ -2,6 +2,7 @@\n #include \"uint16.h\"\n #include \"byte.h\"\n #include \"dns.h\"\n+#include \"ip6.h\"\n \n static char *q = 0;\n \n@@ -46,3 +47,24 @@\n   dns_domain_free(&q);\n   return 0;\n }\n+\n+int dns_name6_inner(stralloc *out,const char ip[16],int t)\n+{\n+  char name[DNS_NAME6_DOMAIN];\n+\n+  dns_name6_domain(name,ip,t);\n+  if (dns_resolve(name,DNS_T_PTR) == -1) return -1;\n+  if (dns_name_packet(out,dns_resolve_tx.packet,dns_resolve_tx.packetlen) == -1) return -1;\n+  dns_transmit_free(&dns_resolve_tx);\n+  dns_domain_free(&q);\n+  return 0;\n+}\n+\n+int dns_name6(stralloc *out,const char ip[16])\n+{\n+  if (ip6_isv4mapped(ip))\n+    return dns_name4(out,ip+12);\n+  if (dns_name6_inner(out,ip,DNS_IP6_ARPA)) return -1;\n+  if (!out->len) return dns_name6_inner(out,ip,DNS_IP6_INT);\n+  return 0;\n+}\ndiff -uNr djbdns-1.05/dns_nd6.c djbdns-1.05-ipv6/dns_nd6.c\n--- djbdns-1.05/dns_nd6.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/dns_nd6.c\t2017-01-07 13:34:48.961745102 +0100\n@@ -0,0 +1,35 @@\n+#include \"byte.h\"\n+#include \"fmt.h\"\n+#include \"dns.h\"\n+\n+/* RFC1886:\n+ *   4321:0:1:2:3:4:567:89ab\n+ * ->\n+ *   b.a.9.8.7.6.5.0.4.0.0.0.3.0.0.0.2.0.0.0.1.0.0.0.0.0.0.0.1.2.3.4.IP6.INT.\n+ *   b.a.9.8.7.6.5.0.4.0.0.0.3.0.0.0.2.0.0.0.1.0.0.0.0.0.0.0.1.2.3.4.IP6.ARPA.\n+ */\n+\n+extern char tohex(char num);\n+\n+unsigned int mkint(unsigned char a,unsigned char b) {\n+  return ((unsigned int)a << 8) + (unsigned int)b;\n+}\n+\n+int dns_name6_domain(char name[DNS_NAME6_DOMAIN],const char ip[16],int t)\n+{\n+  unsigned int j;\n+\n+  for (j=0; j<16; j++) {\n+    name[j*4]=1;\n+    name[j*4+1]=tohex(ip[15-j] & 15);\n+    name[j*4+2]=1;\n+    name[j*4+3]=tohex((unsigned char)ip[15-j] >> 4);\n+  }\n+  if (t==DNS_IP6_INT)\n+    byte_copy(name + 4*16,9,\"\\3ip6\\3int\\0\");\n+  else if (t==DNS_IP6_ARPA)\n+    byte_copy(name + 4*16,10,\"\\3ip6\\4arpa\\0\");\n+  else return 0;\n+  return 4*16+9+t;\n+}\n+\ndiff -uNr djbdns-1.05/dns_rcip.c djbdns-1.05-ipv6/dns_rcip.c\n--- djbdns-1.05/dns_rcip.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/dns_rcip.c\t2017-01-07 13:34:48.961745102 +0100\n@@ -2,12 +2,13 @@\n #include \"openreadclose.h\"\n #include \"byte.h\"\n #include \"ip4.h\"\n+#include \"ip6.h\"\n #include \"env.h\"\n #include \"dns.h\"\n \n static stralloc data = {0};\n \n-static int init(char ip[64])\n+static int init(char ip[256])\n {\n   int i;\n   int j;\n@@ -20,10 +21,10 @@\n       if (*x == '.')\n \t++x;\n       else {\n-        i = ip4_scan(x,ip + iplen);\n+        i = ip6_scan(x,ip + iplen);\n \tif (!i) break;\n \tx += i;\n-\tiplen += 4;\n+\tiplen += 16;\n       }\n     }\n \n@@ -40,10 +41,8 @@\n             while ((data.s[i] == ' ') || (data.s[i] == '\\t'))\n               ++i;\n             if (iplen <= 60)\n-              if (ip4_scan(data.s + i,ip + iplen)) {\n-\t\tif (byte_equal(ip + iplen,4,\"\\0\\0\\0\\0\"))\n-\t\t  byte_copy(ip + iplen,4,\"\\177\\0\\0\\1\");\n-                iplen += 4;\n+              if (ip6_scan(data.s + i,ip + iplen)) {\n+                iplen += 16;\n \t      }\n           }\n           i = j + 1;\n@@ -52,19 +51,19 @@\n   }\n \n   if (!iplen) {\n-    byte_copy(ip,4,\"\\177\\0\\0\\1\");\n-    iplen = 4;\n+    byte_copy(ip,16,\"\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\1\");\n+    iplen = 16;\n   }\n-  byte_zero(ip + iplen,64 - iplen);\n+  byte_zero(ip + iplen,256 - iplen);\n   return 0;\n }\n \n static int ok = 0;\n static unsigned int uses;\n static struct taia deadline;\n-static char ip[64]; /* defined if ok */\n+static char ip[256]; /* defined if ok */\n \n-int dns_resolvconfip(char s[64])\n+int dns_resolvconfip(char s[256])\n {\n   struct taia now;\n \n@@ -81,6 +80,6 @@\n   }\n \n   --uses;\n-  byte_copy(s,64,ip);\n+  byte_copy(s,256,ip);\n   return 0;\n }\ndiff -uNr djbdns-1.05/dns_resolve.c djbdns-1.05-ipv6/dns_resolve.c\n--- djbdns-1.05/dns_resolve.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/dns_resolve.c\t2017-01-07 13:34:48.961745102 +0100\n@@ -2,6 +2,7 @@\n #include \"taia.h\"\n #include \"byte.h\"\n #include \"dns.h\"\n+#include \"ip6.h\"\n \n struct dns_transmit dns_resolve_tx = {0};\n \n@@ -9,12 +10,12 @@\n {\n   struct taia stamp;\n   struct taia deadline;\n-  char servers[64];\n+  char servers[256];\n   iopause_fd x[1];\n   int r;\n \n   if (dns_resolvconfip(servers) == -1) return -1;\n-  if (dns_transmit_start(&dns_resolve_tx,servers,1,q,qtype,\"\\0\\0\\0\\0\") == -1) return -1;\n+  if (dns_transmit_start(&dns_resolve_tx,servers,1,q,qtype,V6any) == -1) return -1;\n \n   for (;;) {\n     taia_now(&stamp);\ndiff -uNr djbdns-1.05/dns_sortip6.c djbdns-1.05-ipv6/dns_sortip6.c\n--- djbdns-1.05/dns_sortip6.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/dns_sortip6.c\t2017-01-07 13:34:48.961745102 +0100\n@@ -0,0 +1,20 @@\n+#include \"byte.h\"\n+#include \"dns.h\"\n+\n+/* XXX: sort servers by configurable notion of closeness? */\n+/* XXX: pay attention to competence of each server? */\n+\n+void dns_sortip6(char *s,unsigned int n)\n+{\n+  unsigned int i;\n+  char tmp[16];\n+\n+  n >>= 4;\n+  while (n > 1) {\n+    i = dns_random(n);\n+    --n;\n+    byte_copy(tmp,16,s + (i << 4));\n+    byte_copy(s + (i << 4),16,s + (n << 4));\n+    byte_copy(s + (n << 4),16,tmp);\n+  }\n+}\ndiff -uNr djbdns-1.05/dns_transmit.c djbdns-1.05-ipv6/dns_transmit.c\n--- djbdns-1.05/dns_transmit.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/dns_transmit.c\t2017-01-07 13:34:48.961745102 +0100\n@@ -7,6 +7,7 @@\n #include \"byte.h\"\n #include \"uint16.h\"\n #include \"dns.h\"\n+#include \"ip6.h\"\n \n static int serverwantstcp(const char *buf,unsigned int len)\n {\n@@ -85,9 +86,9 @@\n   int j;\n \n   for (j = 0;j < 10;++j)\n-    if (socket_bind4(d->s1 - 1,d->localip,1025 + dns_random(64510)) == 0)\n+    if (socket_bind6(d->s1 - 1,d->localip,1025 + dns_random(64510),d->scope_id) == 0)\n       return 0;\n-  if (socket_bind4(d->s1 - 1,d->localip,0) == 0)\n+  if (socket_bind6(d->s1 - 1,d->localip,0,d->scope_id) == 0)\n     return 0;\n   return -1;\n }\n@@ -102,16 +103,16 @@\n \n   while (d->udploop < 4) {\n     for (;d->curserver < 16;++d->curserver) {\n-      ip = d->servers + 4 * d->curserver;\n-      if (byte_diff(ip,4,\"\\0\\0\\0\\0\")) {\n+      ip = d->servers + 16 * d->curserver;\n+      if (byte_diff(ip,16,V6any)) {\n \td->query[2] = dns_random(256);\n \td->query[3] = dns_random(256);\n   \n-        d->s1 = 1 + socket_udp();\n+        d->s1 = 1 + socket_udp6();\n         if (!d->s1) { dns_transmit_free(d); return -1; }\n \tif (randombind(d) == -1) { dns_transmit_free(d); return -1; }\n \n-        if (socket_connect4(d->s1 - 1,ip,53) == 0)\n+        if (socket_connect6(d->s1 - 1,ip,53,d->scope_id) == 0)\n           if (send(d->s1 - 1,d->query + 2,d->querylen - 2,0) == d->querylen - 2) {\n             struct taia now;\n             taia_now(&now);\n@@ -153,19 +154,19 @@\n   packetfree(d);\n \n   for (;d->curserver < 16;++d->curserver) {\n-    ip = d->servers + 4 * d->curserver;\n-    if (byte_diff(ip,4,\"\\0\\0\\0\\0\")) {\n+    ip = d->servers + 16 * d->curserver;\n+    if (byte_diff(ip,16,V6any)) {\n       d->query[2] = dns_random(256);\n       d->query[3] = dns_random(256);\n \n-      d->s1 = 1 + socket_tcp();\n+      d->s1 = 1 + socket_tcp6();\n       if (!d->s1) { dns_transmit_free(d); return -1; }\n       if (randombind(d) == -1) { dns_transmit_free(d); return -1; }\n   \n       taia_now(&now);\n       taia_uint(&d->deadline,10);\n       taia_add(&d->deadline,&d->deadline,&now);\n-      if (socket_connect4(d->s1 - 1,ip,53) == 0) {\n+      if (socket_connect6(d->s1 - 1,ip,53,d->scope_id) == 0) {\n         d->tcpstate = 2;\n         return 0;\n       }\n@@ -193,7 +194,7 @@\n   return thistcp(d);\n }\n \n-int dns_transmit_start(struct dns_transmit *d,const char servers[64],int flagrecursive,const char *q,const char qtype[2],const char localip[4])\n+int dns_transmit_start(struct dns_transmit *d,const char servers[256],int flagrecursive,const char *q,const char qtype[2],const char localip[16])\n {\n   unsigned int len;\n \n@@ -213,7 +214,7 @@\n \n   byte_copy(d->qtype,2,qtype);\n   d->servers = servers;\n-  byte_copy(d->localip,4,localip);\n+  byte_copy(d->localip,16,localip);\n \n   d->udploop = flagrecursive ? 1 : 0;\n \ndiff -uNr djbdns-1.05/dnscache.c djbdns-1.05-ipv6/dnscache.c\n--- djbdns-1.05/dnscache.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/dnscache.c\t2017-01-07 13:41:19.342726906 +0100\n@@ -5,6 +5,7 @@\n #include \"strerr.h\"\n #include \"error.h\"\n #include \"ip4.h\"\n+#include \"ip6.h\"\n #include \"uint16.h\"\n #include \"uint64.h\"\n #include \"socket.h\"\n@@ -22,6 +23,11 @@\n #include \"log.h\"\n #include \"okclient.h\"\n #include \"droproot.h\"\n+#include \"openreadclose.h\"\n+\n+long interface;\n+\n+stralloc ignoreip = {0};\n \n static int packetquery(char *buf,unsigned int len,char **q,char qtype[2],char qclass[2],char id[2])\n {\n@@ -46,8 +52,8 @@\n }\n \n \n-static char myipoutgoing[4];\n-static char myipincoming[4];\n+static char myipoutgoing[16];\n+static char myipincoming[16];\n static char buf[1024];\n uint64 numqueries = 0;\n \n@@ -60,9 +66,10 @@\n   struct taia start;\n   uint64 active; /* query number, if active; otherwise 0 */\n   iopause_fd *io;\n-  char ip[4];\n+  char ip[16];\n   uint16 port;\n   char id[2];\n+  uint32 scope_id;\n } u[MAXUDP];\n int uactive = 0;\n \n@@ -78,7 +85,7 @@\n   if (!u[j].active) return;\n   response_id(u[j].id);\n   if (response_len > 512) response_tc();\n-  socket_send4(udp53,response,response_len,u[j].ip,u[j].port);\n+  socket_send6(udp53,response,response_len,u[j].ip,u[j].port,u[j].scope_id);\n   log_querydone(&u[j].active,response_len);\n   u[j].active = 0; --uactive;\n }\n@@ -109,7 +116,7 @@\n   x = u + j;\n   taia_now(&x->start);\n \n-  len = socket_recv4(udp53,buf,sizeof buf,x->ip,&x->port);\n+  len = socket_recv6(udp53,buf,sizeof buf,x->ip,&x->port,&x->scope_id);\n   if (len == -1) return;\n   if (len >= sizeof buf) return;\n   if (x->port < 1024) if (x->port != 53) return;\n@@ -119,7 +126,7 @@\n \n   x->active = ++numqueries; ++uactive;\n   log_query(&x->active,x->ip,x->port,x->id,q,qtype);\n-  switch(query_start(&x->q,q,qtype,qclass,myipoutgoing)) {\n+  switch(query_start(&x->q,q,qtype,qclass,myipoutgoing,interface)) {\n     case -1:\n       u_drop(j);\n       return;\n@@ -128,7 +135,6 @@\n   }\n }\n \n-\n static int tcp53;\n \n #define MAXTCP 20\n@@ -138,7 +144,7 @@\n   struct taia timeout;\n   uint64 active; /* query number or 1, if active; otherwise 0 */\n   iopause_fd *io;\n-  char ip[4]; /* send response to this address */\n+  char ip[16]; /* send response to this address */\n   uint16 port; /* send response to this port */\n   char id[2];\n   int tcp; /* open TCP socket, if active */\n@@ -146,6 +152,7 @@\n   char *buf; /* 0, or dynamically allocated of length len */\n   unsigned int len;\n   unsigned int pos;\n+  uint32 scope_id;\n } t[MAXTCP];\n int tactive = 0;\n \n@@ -254,7 +261,7 @@\n \n   x->active = ++numqueries;\n   log_query(&x->active,x->ip,x->port,x->id,q,qtype);\n-  switch(query_start(&x->q,q,qtype,qclass,myipoutgoing)) {\n+  switch(query_start(&x->q,q,qtype,qclass,myipoutgoing,interface)) {\n     case -1:\n       t_drop(j);\n       return;\n@@ -291,7 +298,7 @@\n   x = t + j;\n   taia_now(&x->start);\n \n-  x->tcp = socket_accept4(tcp53,x->ip,&x->port);\n+  x->tcp = socket_accept6(tcp53,x->ip,&x->port,&x->scope_id);\n   if (x->tcp == -1) return;\n   if (x->port < 1024) if (x->port != 53) { close(x->tcp); return; }\n   if (!okclient(x->ip)) { close(x->tcp); return; }\n@@ -389,24 +396,36 @@\n int main()\n {\n   char *x;\n+  unsigned int i, j, k;\n   unsigned long cachesize;\n+  static stralloc sa = {0};\n+\n+  x = env_get(\"INTERFACE\");\n+  if (x) scan_ulong(x,&interface);\n \n   x = env_get(\"IP\");\n   if (!x)\n     strerr_die2x(111,FATAL,\"$IP not set\");\n-  if (!ip4_scan(x,myipincoming))\n+  if (!ip6_scan(x,myipincoming))\n     strerr_die3x(111,FATAL,\"unable to parse IP address \",x);\n \n-  udp53 = socket_udp();\n+#if 0\n+  /* if if IP is a mapped-IPv4 address, disable IPv6 functionality */\n+  /* this is actually a bad idea */\n+  if (ip6_isv4mapped(myipincoming))\n+    noipv6 = 1;\n+#endif\n+\n+  udp53 = socket_udp6();\n   if (udp53 == -1)\n     strerr_die2sys(111,FATAL,\"unable to create UDP socket: \");\n-  if (socket_bind4_reuse(udp53,myipincoming,53) == -1)\n+  if (socket_bind6_reuse(udp53,myipincoming,53,interface) == -1)\n     strerr_die2sys(111,FATAL,\"unable to bind UDP socket: \");\n \n-  tcp53 = socket_tcp();\n+  tcp53 = socket_tcp6();\n   if (tcp53 == -1)\n     strerr_die2sys(111,FATAL,\"unable to create TCP socket: \");\n-  if (socket_bind4_reuse(tcp53,myipincoming,53) == -1)\n+  if (socket_bind6_reuse(tcp53,myipincoming,53,interface) == -1)\n     strerr_die2sys(111,FATAL,\"unable to bind TCP socket: \");\n \n   droproot(FATAL);\n@@ -421,7 +440,7 @@\n   x = env_get(\"IPSEND\");\n   if (!x)\n     strerr_die2x(111,FATAL,\"$IPSEND not set\");\n-  if (!ip4_scan(x,myipoutgoing))\n+  if (!ip6_scan(x,myipoutgoing))\n     strerr_die3x(111,FATAL,\"unable to parse IP address \",x);\n \n   x = env_get(\"CACHESIZE\");\n@@ -431,6 +450,20 @@\n   if (!cache_init(cachesize))\n     strerr_die3x(111,FATAL,\"not enough memory for cache of size \",x);\n \n+  if (openreadclose(\"ignoreip\",&sa,64) < 0) \n+    strerr_die2x(111,FATAL,\"trouble reading ignoreip\");\n+  for(j = k = i = 0; i < sa.len; i++)\n+    if (sa.s[i] == '\\n')  {\n+      sa.s[i] = '\\0';\n+      if (!stralloc_readyplus(&ignoreip,16))\n+\tstrerr_die2x(111,FATAL,\"out of memory parsing ignoreip\");\n+      if (!ip6_scan(sa.s+k,ignoreip.s+j))\n+        strerr_die3x(111,FATAL,\"unable to parse address in ignoreip \",ignoreip.s+k);\n+      j += 16;\n+      k = i + 1;\n+    }\n+  ignoreip.len = j;\n+\n   if (env_get(\"HIDETTL\"))\n     response_hidettl();\n   if (env_get(\"FORWARDONLY\"))\ndiff -uNr djbdns-1.05/dnsfilter.c djbdns-1.05-ipv6/dnsfilter.c\n--- djbdns-1.05/dnsfilter.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/dnsfilter.c\t2017-01-07 13:34:48.962745102 +0100\n@@ -12,6 +12,7 @@\n #include \"iopause.h\"\n #include \"error.h\"\n #include \"exit.h\"\n+#include \"ip6.h\"\n \n #define FATAL \"dnsfilter: fatal: \"\n \n@@ -44,7 +45,7 @@\n iopause_fd *io;\n int iolen;\n \n-char servers[64];\n+char servers[256];\n char ip[4];\n char name[DNS_NAME4_DOMAIN];\n \n@@ -191,7 +192,7 @@\n \t      dns_name4_domain(name,ip);\n \t      if (dns_resolvconfip(servers) == -1)\n \t        strerr_die2sys(111,FATAL,\"unable to read /etc/resolv.conf: \");\n-\t      if (dns_transmit_start(&x[xnum].dt,servers,1,name,DNS_T_PTR,\"\\0\\0\\0\\0\") == -1)\n+\t      if (dns_transmit_start(&x[xnum].dt,servers,1,name,DNS_T_PTR,V6any) == -1)\n \t        errout(xnum);\n \t      else {\n \t        x[xnum].flagactive = 1;\ndiff -uNr djbdns-1.05/dnsip6.c djbdns-1.05-ipv6/dnsip6.c\n--- djbdns-1.05/dnsip6.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/dnsip6.c\t2017-01-07 13:50:46.831700454 +0100\n@@ -0,0 +1,40 @@\n+#include \"buffer.h\"\n+#include \"exit.h\"\n+#include \"strerr.h\"\n+#include \"ip6.h\"\n+#include \"dns.h\"\n+\n+#define FATAL \"dnsip: fatal: \"\n+\n+static char seed[128];\n+\n+static stralloc fqdn;\n+static stralloc out;\n+char str[IP6_FMT];\n+\n+int main(int argc,char **argv)\n+{\n+  int i;\n+\n+  dns_random_init(seed);\n+\n+  if (*argv) ++argv;\n+\n+  while (*argv) {\n+    if (!stralloc_copys(&fqdn,*argv))\n+      strerr_die2x(111,FATAL,\"out of memory\");\n+    if (dns_ip6(&out,&fqdn) == -1)\n+      strerr_die4sys(111,FATAL,\"unable to find IPv6 address for \",*argv,\": \");\n+\n+    for (i = 0;i + 16 <= out.len;i += 16) {\n+      buffer_put(buffer_1,str,ip6_fmt(str,out.s + i));\n+      buffer_puts(buffer_1,\" \");\n+    }\n+    buffer_puts(buffer_1,\"\\n\");\n+\n+    ++argv;\n+  }\n+\n+  buffer_flush(buffer_1);\n+  _exit(0);\n+}\ndiff -uNr djbdns-1.05/dnsip6q.c djbdns-1.05-ipv6/dnsip6q.c\n--- djbdns-1.05/dnsip6q.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/dnsip6q.c\t2017-01-07 13:34:48.962745102 +0100\n@@ -0,0 +1,43 @@\n+#include \"buffer.h\"\n+#include \"exit.h\"\n+#include \"strerr.h\"\n+#include \"ip6.h\"\n+#include \"dns.h\"\n+\n+#define FATAL \"dnsipq: fatal: \"\n+\n+static char seed[128];\n+\n+static stralloc in;\n+static stralloc fqdn;\n+static stralloc out;\n+char str[IP6_FMT];\n+\n+int main(int argc,char **argv)\n+{\n+  int i;\n+\n+  dns_random_init(seed);\n+\n+  if (*argv) ++argv;\n+\n+  while (*argv) {\n+    if (!stralloc_copys(&in,*argv))\n+      strerr_die2x(111,FATAL,\"out of memory\");\n+    if (dns_ip6_qualify(&out,&fqdn,&in) == -1)\n+      strerr_die4sys(111,FATAL,\"unable to find IP6 address for \",*argv,\": \");\n+\n+    buffer_put(buffer_1,fqdn.s,fqdn.len);\n+    buffer_puts(buffer_1,\" \");\n+    for (i = 0;i + 16 <= out.len;i += 16) {\n+      buffer_put(buffer_1,str,ip6_fmt(str,out.s + i));\n+      buffer_puts(buffer_1,\" \");\n+    }\n+    buffer_puts(buffer_1,\"\\n\");\n+\n+    ++argv;\n+  }\n+\n+  buffer_flush(buffer_1);\n+  _exit(0);\n+}\ndiff -uNr djbdns-1.05/dnsname.c djbdns-1.05-ipv6/dnsname.c\n--- djbdns-1.05/dnsname.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/dnsname.c\t2017-01-07 13:34:48.962745102 +0100\n@@ -2,6 +2,7 @@\n #include \"exit.h\"\n #include \"strerr.h\"\n #include \"ip4.h\"\n+#include \"ip6.h\"\n #include \"dns.h\"\n \n #define FATAL \"dnsname: fatal: \"\n@@ -9,6 +10,7 @@\n static char seed[128];\n \n char ip[4];\n+char ip6[16];\n static stralloc out;\n \n int main(int argc,char **argv)\n@@ -18,10 +20,15 @@\n   if (*argv) ++argv;\n \n   while (*argv) {\n-    if (!ip4_scan(*argv,ip))\n-      strerr_die3x(111,FATAL,\"unable to parse IP address \",*argv);\n-    if (dns_name4(&out,ip) == -1)\n-      strerr_die4sys(111,FATAL,\"unable to find host name for \",*argv,\": \");\n+    if (ip6_scan(*argv,ip6)) {\n+      if (dns_name6(&out,ip6) == -1)\n+\tstrerr_die4sys(111,FATAL,\"unable to find host name for \",*argv,\": \");\n+    } else {\n+      if (!ip4_scan(*argv,ip))\n+\tstrerr_die3x(111,FATAL,\"unable to parse IP address \",*argv);\n+      if (dns_name4(&out,ip) == -1)\n+\tstrerr_die4sys(111,FATAL,\"unable to find host name for \",*argv,\": \");\n+    }\n \n     buffer_put(buffer_1,out.s,out.len);\n     buffer_puts(buffer_1,\"\\n\");\ndiff -uNr djbdns-1.05/dnsq.c djbdns-1.05-ipv6/dnsq.c\n--- djbdns-1.05/dnsq.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/dnsq.c\t2017-01-07 13:56:39.399684020 +0100\n@@ -10,6 +10,8 @@\n #include \"printpacket.h\"\n #include \"parsetype.h\"\n #include \"dns.h\"\n+#include \"ip6.h\"\n+#include \"exit.h\"\n \n #define FATAL \"dnsq: fatal: \"\n \n@@ -24,14 +26,14 @@\n \n static struct dns_transmit tx;\n \n-int resolve(char *q,char qtype[2],char servers[64])\n+int resolve(char *q,char qtype[2],char servers[256])\n {\n   struct taia stamp;\n   struct taia deadline;\n   iopause_fd x[1];\n   int r;\n \n-  if (dns_transmit_start(&tx,servers,0,q,qtype,\"\\0\\0\\0\\0\") == -1) return -1;\n+  if (dns_transmit_start(&tx,servers,0,q,qtype,V6any) == -1) return -1;\n \n   for (;;) {\n     taia_now(&stamp);\n@@ -47,7 +49,7 @@\n   return 0;\n }\n \n-char servers[64];\n+char servers[256];\n static stralloc ip;\n static stralloc fqdn;\n \n@@ -73,9 +75,9 @@\n \n   if (!*++argv) usage();\n   if (!stralloc_copys(&out,*argv)) oops();\n-  if (dns_ip4_qualify(&ip,&fqdn,&out) == -1) oops();\n-  if (ip.len >= 64) ip.len = 64;\n-  byte_zero(servers,64);\n+  if (dns_ip6_qualify(&ip,&fqdn,&out) == -1) oops();\n+  if (ip.len >= 256) ip.len = 256;\n+  byte_zero(servers,256);\n   byte_copy(servers,ip.len,ip.s);\n \n   if (!stralloc_copys(&out,\"\")) oops();\ndiff -uNr djbdns-1.05/dnsqr.c djbdns-1.05-ipv6/dnsqr.c\n--- djbdns-1.05/dnsqr.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/dnsqr.c\t2017-01-07 13:56:33.511684294 +0100\n@@ -9,6 +9,7 @@\n #include \"printpacket.h\"\n #include \"parsetype.h\"\n #include \"dns.h\"\n+#include \"exit.h\"\n \n #define FATAL \"dnsqr: fatal: \"\n \ndiff -uNr djbdns-1.05/dnstrace.c djbdns-1.05-ipv6/dnstrace.c\n--- djbdns-1.05/dnstrace.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/dnstrace.c\t2017-01-07 13:50:02.183702535 +0100\n@@ -4,6 +4,7 @@\n #include \"str.h\"\n #include \"byte.h\"\n #include \"ip4.h\"\n+#include \"ip6.h\"\n #include \"gen_alloc.h\"\n #include \"gen_allocdefs.h\"\n #include \"exit.h\"\n@@ -30,7 +31,7 @@\n }\n \n static stralloc querystr;\n-char ipstr[IP4_FMT];\n+char ipstr[IP6_FMT];\n static stralloc tmp;\n \n void printdomain(const char *d)\n@@ -42,21 +43,21 @@\n \n static struct dns_transmit tx;\n \n-int resolve(char *q,char qtype[2],char ip[4])\n+int resolve(char *q,char qtype[2],char ip[16])\n {\n   struct taia start;\n   struct taia stamp;\n   struct taia deadline;\n-  char servers[64];\n+  char servers[256];\n   iopause_fd x[1];\n   int r;\n \n   taia_now(&start);\n \n-  byte_zero(servers,64);\n-  byte_copy(servers,4,ip);\n+  byte_zero(servers,256);\n+  byte_copy(servers,16,ip);\n \n-  if (dns_transmit_start(&tx,servers,0,q,qtype,\"\\0\\0\\0\\0\") == -1) return -1;\n+  if (dns_transmit_start(&tx,servers,0,q,qtype,V6any) == -1) return -1;\n \n   for (;;) {\n     taia_now(&stamp);\n@@ -82,7 +83,7 @@\n \n struct address {\n   char *owner;\n-  char ip[4];\n+  char ip[16];\n } ;\n \n GEN_ALLOC_typedef(address_alloc,struct address,s,len,a)\n@@ -117,7 +118,7 @@\n   char *owner;\n   char type[2];\n   char *control;\n-  char ip[4];\n+  char ip[16];\n } ;\n \n GEN_ALLOC_typedef(qt_alloc,struct qt,s,len,a)\n@@ -126,7 +127,7 @@\n \n static qt_alloc qt;\n \n-void qt_add(const char *q,const char type[2],const char *control,const char ip[4])\n+void qt_add(const char *q,const char type[2],const char *control,const char ip[16])\n {\n   struct qt x;\n   int i;\n@@ -137,14 +138,14 @@\n     if (dns_domain_equal(qt.s[i].owner,q))\n       if (dns_domain_equal(qt.s[i].control,control))\n         if (byte_equal(qt.s[i].type,2,type))\n-\t  if (byte_equal(qt.s[i].ip,4,ip))\n+\t  if (byte_equal(qt.s[i].ip,16,ip))\n \t    return;\n \n   byte_zero(&x,sizeof x);\n   if (!dns_domain_copy(&x.owner,q)) nomem();\n   if (!dns_domain_copy(&x.control,control)) nomem();\n   byte_copy(x.type,2,type);\n-  byte_copy(x.ip,4,ip);\n+  byte_copy(x.ip,16,ip);\n   if (!qt_alloc_append(&qt,&x)) nomem();\n }\n \n@@ -203,7 +204,7 @@\n \t  qt_add(query.s[i].owner,query.s[i].type,owner,address.s[j].ip);\n }\n \n-void address_add(const char *owner,const char ip[4])\n+void address_add(const char *owner,const char ip[16])\n {\n   struct address x;\n   int i;\n@@ -213,17 +214,20 @@\n   buffer_puts(buffer_1,\"A:\");\n   printdomain(owner);\n   buffer_puts(buffer_1,\":\");\n-  buffer_put(buffer_1,ipstr,ip4_fmt(ipstr,ip));\n+  if (ip6_isv4mapped(ip))\n+    buffer_put(buffer_1,ipstr,ip4_fmt(ipstr,ip+12));\n+  else\n+    buffer_put(buffer_1,ipstr,ip6_fmt(ipstr,ip));\n   buffer_puts(buffer_1,\"\\n\");\n \n   for (i = 0;i < address.len;++i)\n     if (dns_domain_equal(address.s[i].owner,owner))\n-      if (byte_equal(address.s[i].ip,4,ip))\n+      if (byte_equal(address.s[i].ip,16,ip))\n \treturn;\n \n   byte_zero(&x,sizeof x);\n   if (!dns_domain_copy(&x.owner,owner)) nomem();\n-  byte_copy(x.ip,4,ip);\n+  byte_copy(x.ip,16,ip);\n   if (!address_alloc_append(&address,&x)) nomem();\n \n   for (i = 0;i < ns.len;++i)\n@@ -253,9 +257,7 @@\n   uint16 numanswers;\n   unsigned int posanswers;\n   uint16 numauthority;\n-  unsigned int posauthority;\n   uint16 numglue;\n-  unsigned int posglue;\n   uint16 datalen;\n   unsigned int rcode;\n   int flagout;\n@@ -295,7 +297,6 @@\n     uint16_unpack_big(header + 8,&datalen);\n     pos += datalen;\n   }\n-  posauthority = pos;\n   for (j = 0;j < numauthority;++j) {\n     pos = dns_packet_getname(buf,len,pos,&t1); if (!pos) goto DIE;\n     pos = dns_packet_copy(buf,len,pos,header,10); if (!pos) goto DIE;\n@@ -308,7 +309,6 @@\n     uint16_unpack_big(header + 8,&datalen);\n     pos += datalen;\n   }\n-  posglue = pos;\n \n   if (!flagcname && !rcode && !flagout && flagreferral && !flagsoa)\n     if (dns_domain_equal(referral,control) || !dns_domain_suffix(referral,control)) {\n@@ -331,7 +331,12 @@\n \t  ns_add(t1,t2);\n         }\n         else if (typematch(header,DNS_T_A) && datalen == 4) {\n-\t  if (!dns_packet_copy(buf,len,pos,misc,4)) goto DIE;\n+\t  if (!dns_packet_copy(buf,len,pos,misc+12,4)) goto DIE;\n+\t  byte_copy(misc,12,V4mappedprefix);\n+\t  address_add(t1,misc);\n+        }\n+        else if (typematch(header,DNS_T_AAAA) && datalen == 16) {\n+\t  if (!dns_packet_copy(buf,len,pos,misc,16)) goto DIE;\n \t  address_add(t1,misc);\n         }\n       }\n@@ -419,8 +424,8 @@\n \n   while (*++argv) {\n     if (!stralloc_copys(&udn,*argv)) nomem();\n-    if (dns_ip4_qualify(&out,&fqdn,&udn) == -1) nomem(); /* XXX */\n-    for (i = 0;i + 4 <= out.len;i += 4)\n+    if (dns_ip6_qualify(&out,&fqdn,&udn) == -1) nomem(); /* XXX */\n+    for (i = 0;i + 16 <= out.len;i += 16)\n       address_add(\"\",out.s + i);\n   }\n \n@@ -429,7 +434,7 @@\n     control = qt.s[i].control;\n     if (!dns_domain_suffix(q,control)) continue;\n     byte_copy(type,2,qt.s[i].type);\n-    byte_copy(ip,4,qt.s[i].ip);\n+    byte_copy(ip,16,qt.s[i].ip);\n \n     if (!stralloc_copys(&querystr,\"\")) nomem();\n     uint16_unpack_big(type,&u16);\n@@ -439,7 +444,10 @@\n     if (!stralloc_cats(&querystr,\":\")) nomem();\n     if (!dns_domain_todot_cat(&querystr,control)) nomem();\n     if (!stralloc_cats(&querystr,\":\")) nomem();\n-    if (!stralloc_catb(&querystr,ipstr,ip4_fmt(ipstr,ip))) nomem();\n+    if (ip6_isv4mapped(ip)) {\n+      if (!stralloc_catb(&querystr,ipstr,ip4_fmt(ipstr,ip+12))) nomem();\n+    } else\n+      if (!stralloc_catb(&querystr,ipstr,ip6_fmt(ipstr,ip))) nomem();\n     if (!stralloc_cats(&querystr,\":\")) nomem();\n \n     buffer_put(buffer_1,querystr.s,querystr.len);\ndiff -uNr djbdns-1.05/error.h djbdns-1.05-ipv6/error.h\n--- djbdns-1.05/error.h\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/error.h\t2017-01-07 13:34:48.962745102 +0100\n@@ -1,7 +1,7 @@\n #ifndef ERROR_H\n #define ERROR_H\n \n-extern int errno;\n+#include <errno.h>\n \n extern int error_intr;\n extern int error_nomem;\ndiff -uNr djbdns-1.05/exit.h djbdns-1.05-ipv6/exit.h\n--- djbdns-1.05/exit.h\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/exit.h\t2017-01-07 13:49:44.471703361 +0100\n@@ -1,6 +1,6 @@\n #ifndef EXIT_H\n #define EXIT_H\n \n-extern void _exit();\n+extern void _exit(int status);\n \n #endif\ndiff -uNr djbdns-1.05/fmt_xlong.c djbdns-1.05-ipv6/fmt_xlong.c\n--- djbdns-1.05/fmt_xlong.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/fmt_xlong.c\t2017-01-07 13:34:48.962745102 +0100\n@@ -0,0 +1,22 @@\n+#include \"fmt.h\"\n+\n+char tohex(char num) {\n+  if (num<10)\n+    return num+'0';\n+  else if (num<16)\n+    return num-10+'a';\n+  else\n+    return -1;\n+}\n+\n+unsigned int fmt_xlong(register char *s,register unsigned long u)\n+{\n+  register unsigned int len; register unsigned long q;\n+  len = 1; q = u;\n+  while (q > 15) { ++len; q /= 16; }\n+  if (s) {\n+    s += len;\n+    do { *--s = tohex(u % 16); u /= 16; } while(u); /* handles u == 0 */\n+  }\n+  return len;\n+}\ndiff -uNr djbdns-1.05/haveip6.h1 djbdns-1.05-ipv6/haveip6.h1\n--- djbdns-1.05/haveip6.h1\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/haveip6.h1\t2017-01-07 13:34:48.962745102 +0100\n@@ -0,0 +1 @@\n+\ndiff -uNr djbdns-1.05/haveip6.h2 djbdns-1.05-ipv6/haveip6.h2\n--- djbdns-1.05/haveip6.h2\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/haveip6.h2\t2017-01-07 13:34:48.962745102 +0100\n@@ -0,0 +1 @@\n+#define LIBC_HAS_IP6 1\ndiff -uNr djbdns-1.05/haven2i.h1 djbdns-1.05-ipv6/haven2i.h1\n--- djbdns-1.05/haven2i.h1\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/haven2i.h1\t2017-01-07 13:34:48.962745102 +0100\n@@ -0,0 +1 @@\n+#undef HAVE_N2I\ndiff -uNr djbdns-1.05/haven2i.h2 djbdns-1.05-ipv6/haven2i.h2\n--- djbdns-1.05/haven2i.h2\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/haven2i.h2\t2017-01-07 13:34:48.962745102 +0100\n@@ -0,0 +1 @@\n+#define HAVE_N2I\ndiff -uNr djbdns-1.05/hier.c djbdns-1.05-ipv6/hier.c\n--- djbdns-1.05/hier.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/hier.c\t2017-01-07 13:53:17.559693428 +0100\n@@ -1,5 +1,9 @@\n #include \"auto_home.h\"\n \n+extern void h(const char* home,int uid,int gid,int mode);\n+extern void d(const char* home,const char* subdir,int uid,int gid,int mode);\n+extern void c(const char* home,const char* subdir,const char* file,int uid,int gid,int mode);\n+\n void hier()\n {\n   c(\"/\",\"etc\",\"dnsroots.global\",-1,-1,0644);\n@@ -29,7 +33,9 @@\n   c(auto_home,\"bin\",\"axfr-get\",-1,-1,0755);\n \n   c(auto_home,\"bin\",\"dnsip\",-1,-1,0755);\n+  c(auto_home,\"bin\",\"dnsip6\",-1,-1,0755);\n   c(auto_home,\"bin\",\"dnsipq\",-1,-1,0755);\n+  c(auto_home,\"bin\",\"dnsip6q\",-1,-1,0755);\n   c(auto_home,\"bin\",\"dnsname\",-1,-1,0755);\n   c(auto_home,\"bin\",\"dnstxt\",-1,-1,0755);\n   c(auto_home,\"bin\",\"dnsmx\",-1,-1,0755);\ndiff -uNr djbdns-1.05/ip6.h djbdns-1.05-ipv6/ip6.h\n--- djbdns-1.05/ip6.h\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/ip6.h\t2017-01-07 13:34:48.962745102 +0100\n@@ -0,0 +1,28 @@\n+#ifndef IP6_H\n+#define IP6_H\n+\n+extern unsigned int ip6_scan(const char *,char *);\n+extern unsigned int ip6_fmt(char *,const char *);\n+\n+extern unsigned int ip6_scan_flat(const char *,char *);\n+extern unsigned int ip6_fmt_flat(char *,const char *);\n+\n+/*\n+ ip6 address syntax: (h = hex digit), no leading '0' required\n+   1. hhhh:hhhh:hhhh:hhhh:hhhh:hhhh:hhhh:hhhh\n+   2. any number of 0000 may be abbreviated as \"::\", but only once\n+ flat ip6 address syntax:\n+   hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh\n+ */\n+\n+#define IP6_FMT 40\n+\n+const static unsigned char V4mappedprefix[12]={0,0,0,0,0,0,0,0,0,0,0xff,0xff};\n+const static unsigned char V6loopback[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};\n+const static unsigned char V6any[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};\n+\n+#define ip6_isv4mapped(ip) (byte_equal(ip,12,V4mappedprefix))\n+\n+const static char ip4loopback[4] = {127,0,0,1};\n+\n+#endif\ndiff -uNr djbdns-1.05/ip6_fmt.c djbdns-1.05-ipv6/ip6_fmt.c\n--- djbdns-1.05/ip6_fmt.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/ip6_fmt.c\t2017-01-07 13:34:48.962745102 +0100\n@@ -0,0 +1,60 @@\n+#include \"fmt.h\"\n+#include \"byte.h\"\n+#include \"ip4.h\"\n+#include \"ip6.h\"\n+#include <stdio.h>\n+\n+extern char tohex(char num);\n+\n+unsigned int ip6_fmt(char *s,const char ip[16])\n+{\n+  unsigned int len;\n+  unsigned int i;\n+  unsigned int temp;\n+  unsigned int compressing;\n+  unsigned int compressed;\n+  int j;\n+\n+  len = 0; compressing = 0; compressed = 0;\n+  for (j=0; j<16; j+=2) {\n+    if (j==12 && ip6_isv4mapped(ip)) {\n+      temp=ip4_fmt(s,ip+12);\n+      len+=temp;\n+      break;\n+    }\n+    temp = ((unsigned long) (unsigned char) ip[j] << 8) +\n+            (unsigned long) (unsigned char) ip[j+1];\n+    if (temp == 0 && !compressed) {\n+      if (!compressing) {\n+\tcompressing=1;\n+\tif (j==0) {\n+\t  if (s) *s++=':'; ++len;\n+\t}\n+      }\n+    } else {\n+      if (compressing) {\n+\tcompressing=0; ++compressed;\n+\tif (s) *s++=':'; ++len;\n+      }\n+      i = fmt_xlong(s,temp); len += i; if (s) s += i;\n+      if (j<14) {\n+\tif (s) *s++ = ':';\n+\t++len;\n+      }\n+    }\n+  }\n+  if (compressing) { *s++=':'; ++len; }\n+\n+/*  if (s) *s=0; */\n+  return len;\n+}\n+\n+unsigned int ip6_fmt_flat(char *s,const char ip[16])\n+{\n+  int i;\n+  for (i=0; i<16; i++) {\n+    *s++=tohex((unsigned char)ip[i] >> 4);\n+    *s++=tohex((unsigned char)ip[i] & 15);\n+  }\n+  return 32;\n+}\ndiff -uNr djbdns-1.05/ip6_scan.c djbdns-1.05-ipv6/ip6_scan.c\n--- djbdns-1.05/ip6_scan.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/ip6_scan.c\t2017-01-07 13:34:48.962745102 +0100\n@@ -0,0 +1,115 @@\n+#include \"scan.h\"\n+#include \"ip4.h\"\n+#include \"ip6.h\"\n+#include \"byte.h\"\n+\n+/*\n+ * IPv6 addresses are really ugly to parse.\n+ * Syntax: (h = hex digit)\n+ *   1. hhhh:hhhh:hhhh:hhhh:hhhh:hhhh:hhhh:hhhh\n+ *   2. any number of 0000 may be abbreviated as \"::\", but only once\n+ *   3. The last two words may be written as IPv4 address\n+ */\n+\n+unsigned int ip6_scan(const char *s,char ip[16])\n+{\n+  unsigned int i;\n+  unsigned int len=0;\n+  unsigned long u;\n+\n+  char suffix[16];\n+  int prefixlen=0;\n+  int suffixlen=0;\n+\n+  if ((i=ip4_scan(s,ip+12))) {\n+    const char *c=V4mappedprefix;\n+    if (byte_equal(ip+12,4,V6any)) c=V6any;\n+    for (len=0; len<12; ++len) ip[len]=c[len];\n+    return i;\n+  }\n+  for (i=0; i<16; i++) ip[i]=0;\n+  for (;;) {\n+    if (*s == ':') {\n+      len++;\n+      if (s[1] == ':') {\t/* Found \"::\", skip to part 2 */\n+\ts+=2;\n+\tlen++;\n+\tbreak;\n+      }\n+      s++;\n+    }\n+    i = scan_xlong(s,&u);\n+    if (!i) return 0;\n+    if (prefixlen==12 && s[i]=='.') {\n+      /* the last 4 bytes may be written as IPv4 address */\n+      i=ip4_scan(s,ip+12);\n+      if (i)\n+\treturn i+len;\n+      else\n+\treturn 0;\n+    }\n+    ip[prefixlen++] = (u >> 8);\n+    ip[prefixlen++] = (u & 255);\n+    s += i; len += i;\n+    if (prefixlen==16)\n+      return len;\n+  }\n+\n+/* part 2, after \"::\" */\n+  for (;;) {\n+    if (*s == ':') {\n+      if (suffixlen==0)\n+\tbreak;\n+      s++;\n+      len++;\n+    } else if (suffixlen!=0)\n+      break;\n+    i = scan_xlong(s,&u);\n+    if (!i) {\n+      len--;\n+      break;\n+    }\n+    if (suffixlen+prefixlen<=12 && s[i]=='.') {\n+      int j=ip4_scan(s,suffix+suffixlen);\n+      if (j) {\n+\tsuffixlen+=4;\n+\tlen+=j;\n+\tbreak;\n+      } else\n+\tprefixlen=12-suffixlen;\t/* make end-of-loop test true */\n+    }\n+    suffix[suffixlen++] = (u >> 8);\n+    suffix[suffixlen++] = (u & 255);\n+    s += i; len += i;\n+    if (prefixlen+suffixlen==16)\n+      break;\n+  }\n+  for (i=0; i<suffixlen; i++)\n+    ip[16-suffixlen+i] = suffix[i];\n+  return len;\n+}\n+\n+static long int fromhex(unsigned char c) {\n+  if (c>='0' && c<='9')\n+    return c-'0';\n+  else if (c>='A' && c<='F')\n+    return c-'A'+10;\n+  else if (c>='a' && c<='f')\n+    return c-'a'+10;\n+  return -1;\n+}\n+\n+unsigned int ip6_scan_flat(const char *s,char ip[16])\n+{\n+  int i;\n+  for (i=0; i<16; i++) {\n+    int tmp;\n+    tmp=fromhex(*s++);\n+    if (tmp<0) return 0;\n+    ip[i]=tmp << 4;\n+    tmp=fromhex(*s++);\n+    if (tmp<0) return 0;\n+    ip[i]+=tmp;\n+  }\n+  return 32;\n+}\ndiff -uNr djbdns-1.05/log.c djbdns-1.05-ipv6/log.c\n--- djbdns-1.05/log.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/log.c\t2017-01-07 13:34:48.962745102 +0100\n@@ -3,6 +3,7 @@\n #include \"uint16.h\"\n #include \"error.h\"\n #include \"byte.h\"\n+#include \"ip6.h\"\n #include \"log.h\"\n \n /* work around gcc 2.95.2 bug */\n@@ -45,12 +46,10 @@\n   string(\" \");\n }\n \n-static void ip(const char i[4])\n+static void ip(const char i[16])\n {\n-  hex(i[0]);\n-  hex(i[1]);\n-  hex(i[2]);\n-  hex(i[3]);\n+  int j;\n+  for (j=0; j<16; ++j) hex(i[j]);\n }\n \n static void logid(const char id[2])\n@@ -94,7 +93,7 @@\n   line();\n }\n \n-void log_query(uint64 *qnum,const char client[4],unsigned int port,const char id[2],const char *q,const char qtype[2])\n+void log_query(uint64 *qnum,const char client[16],unsigned int port,const char id[2],const char *q,const char qtype[2])\n {\n   string(\"query \"); number(*qnum); space();\n   ip(client); string(\":\"); hex(port >> 8); hex(port & 255);\n@@ -119,14 +118,14 @@\n   line();\n }\n \n-void log_tcpopen(const char client[4],unsigned int port)\n+void log_tcpopen(const char client[16],unsigned int port)\n {\n   string(\"tcpopen \");\n   ip(client); string(\":\"); hex(port >> 8); hex(port & 255);\n   line();\n }\n \n-void log_tcpclose(const char client[4],unsigned int port)\n+void log_tcpclose(const char client[16],unsigned int port)\n {\n   const char *x = error_str(errno);\n   string(\"tcpclose \");\n@@ -135,15 +134,15 @@\n   line();\n }\n \n-void log_tx(const char *q,const char qtype[2],const char *control,const char servers[64],unsigned int gluelessness)\n+void log_tx(const char *q,const char qtype[2],const char *control,const char servers[256],unsigned int gluelessness)\n {\n   int i;\n \n   string(\"tx \"); number(gluelessness); space();\n   logtype(qtype); space(); name(q); space();\n   name(control);\n-  for (i = 0;i < 64;i += 4)\n-    if (byte_diff(servers + i,4,\"\\0\\0\\0\\0\")) {\n+  for (i = 0;i < 256;i += 16)\n+    if (byte_diff(servers + i,16,V6any)) {\n       space();\n       ip(servers + i);\n     }\n@@ -175,21 +174,21 @@\n   line();\n }\n \n-void log_nxdomain(const char server[4],const char *q,unsigned int ttl)\n+void log_nxdomain(const char server[16],const char *q,unsigned int ttl)\n {\n   string(\"nxdomain \"); ip(server); space(); number(ttl); space();\n   name(q);\n   line();\n }\n \n-void log_nodata(const char server[4],const char *q,const char qtype[2],unsigned int ttl)\n+void log_nodata(const char server[16],const char *q,const char qtype[2],unsigned int ttl)\n {\n   string(\"nodata \"); ip(server); space(); number(ttl); space();\n   logtype(qtype); space(); name(q);\n   line();\n }\n \n-void log_lame(const char server[4],const char *control,const char *referral)\n+void log_lame(const char server[16],const char *control,const char *referral)\n {\n   string(\"lame \"); ip(server); space();\n   name(control); space(); name(referral);\n@@ -205,7 +204,7 @@\n   line();\n }\n \n-void log_rr(const char server[4],const char *q,const char type[2],const char *buf,unsigned int len,unsigned int ttl)\n+void log_rr(const char server[16],const char *q,const char type[2],const char *buf,unsigned int len,unsigned int ttl)\n {\n   int i;\n \n@@ -222,7 +221,7 @@\n   line();\n }\n \n-void log_rrns(const char server[4],const char *q,const char *data,unsigned int ttl)\n+void log_rrns(const char server[16],const char *q,const char *data,unsigned int ttl)\n {\n   string(\"rr \"); ip(server); space(); number(ttl);\n   string(\" ns \"); name(q); space();\n@@ -230,7 +229,7 @@\n   line();\n }\n \n-void log_rrcname(const char server[4],const char *q,const char *data,unsigned int ttl)\n+void log_rrcname(const char server[16],const char *q,const char *data,unsigned int ttl)\n {\n   string(\"rr \"); ip(server); space(); number(ttl);\n   string(\" cname \"); name(q); space();\n@@ -238,7 +237,7 @@\n   line();\n }\n \n-void log_rrptr(const char server[4],const char *q,const char *data,unsigned int ttl)\n+void log_rrptr(const char server[16],const char *q,const char *data,unsigned int ttl)\n {\n   string(\"rr \"); ip(server); space(); number(ttl);\n   string(\" ptr \"); name(q); space();\n@@ -246,7 +245,7 @@\n   line();\n }\n \n-void log_rrmx(const char server[4],const char *q,const char *mx,const char pref[2],unsigned int ttl)\n+void log_rrmx(const char server[16],const char *q,const char *mx,const char pref[2],unsigned int ttl)\n {\n   uint16 u;\n \n@@ -257,7 +256,7 @@\n   line();\n }\n \n-void log_rrsoa(const char server[4],const char *q,const char *n1,const char *n2,const char misc[20],unsigned int ttl)\n+void log_rrsoa(const char server[16],const char *q,const char *n1,const char *n2,const char misc[20],unsigned int ttl)\n {\n   uint32 u;\n   int i;\ndiff -uNr djbdns-1.05/okclient.c djbdns-1.05-ipv6/okclient.c\n--- djbdns-1.05/okclient.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/okclient.c\t2017-01-07 13:34:48.962745102 +0100\n@@ -2,24 +2,34 @@\n #include <sys/stat.h>\n #include \"str.h\"\n #include \"ip4.h\"\n+#include \"ip6.h\"\n+#include \"byte.h\"\n #include \"okclient.h\"\n \n-static char fn[3 + IP4_FMT];\n+static char fn[3 + IP6_FMT];\n \n-int okclient(char ip[4])\n+int okclient(char ip[16])\n {\n   struct stat st;\n   int i;\n+  char sep;\n \n   fn[0] = 'i';\n   fn[1] = 'p';\n   fn[2] = '/';\n-  fn[3 + ip4_fmt(fn + 3,ip)] = 0;\n+  if (byte_equal(ip,12,V4mappedprefix)) {\n+    fn[3 + ip4_fmt(fn + 3,ip+12)] = 0;\n+    sep='.';\n+  } else {\n+    fn[3 + ip6_fmt(fn + 3,ip)] = 0;\n+    sep=':';\n+  }\n \n   for (;;) {\n+    if (!fn[3]) return 0;\n     if (stat(fn,&st) == 0) return 1;\n     /* treat temporary error as rejection */\n-    i = str_rchr(fn,'.');\n+    i = str_rchr(fn,sep);\n     if (!fn[i]) return 0;\n     fn[i] = 0;\n   }\ndiff -uNr djbdns-1.05/pickdns.c djbdns-1.05-ipv6/pickdns.c\n--- djbdns-1.05/pickdns.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/pickdns.c\t2017-01-07 13:34:48.962745102 +0100\n@@ -20,7 +20,7 @@\n static char key[258];\n static char data[512];\n \n-static int doit(char *q,char qtype[2],char ip[4])\n+static int doit(char *q,char qtype[2],char ip[16])\n {\n   int r;\n   uint32 dlen;\n@@ -37,7 +37,7 @@\n   if (!flaga && !flagmx) goto REFUSE;\n \n   key[0] = '%';\n-  byte_copy(key + 1,4,ip);\n+  byte_copy(key + 1,4,ip+12);\n \n   r = cdb_find(&c,key,5);\n   if (!r) r = cdb_find(&c,key,4);\n@@ -86,7 +86,7 @@\n   return 1;\n }\n \n-int respond(char *q,char qtype[2],char ip[4])\n+int respond(char *q,char qtype[2],char ip[16])\n {\n   int fd;\n   int result;\ndiff -uNr djbdns-1.05/printrecord.c djbdns-1.05-ipv6/printrecord.c\n--- djbdns-1.05/printrecord.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/printrecord.c\t2017-01-07 13:34:48.963745102 +0100\n@@ -4,6 +4,7 @@\n #include \"byte.h\"\n #include \"dns.h\"\n #include \"printrecord.h\"\n+#include \"ip6.h\"\n \n static char *d;\n \n@@ -82,6 +83,15 @@\n       if (!stralloc_catulong0(out,ch,0)) return 0;\n     }\n   }\n+  else if (byte_equal(misc,2,DNS_T_AAAA)) {\n+    char ip6str[IP6_FMT];\n+    int stringlen;\n+    if (datalen != 16) { errno = error_proto; return 0; }\n+    if (!stralloc_cats(out,\" AAAA \")) return 0;\n+    pos = dns_packet_copy(buf,len,pos,misc,16); if (!pos) return 0;\n+    stringlen=ip6_fmt(ip6str,misc);\n+    if (!stralloc_catb(out,ip6str,stringlen)) return 0;\n+  }\n   else {\n     if (!stralloc_cats(out,\" \")) return 0;\n     uint16_unpack_big(misc,&u16);\ndiff -uNr djbdns-1.05/prot.c djbdns-1.05-ipv6/prot.c\n--- djbdns-1.05/prot.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/prot.c\t2017-01-07 13:42:51.526722609 +0100\n@@ -1,6 +1,10 @@\n #include \"hasshsgr.h\"\n #include \"prot.h\"\n \n+#include <sys/types.h>\n+#include <unistd.h>\n+#include <grp.h>\n+\n int prot_gid(int gid)\n {\n #ifdef HASSHORTSETGROUPS\ndiff -uNr djbdns-1.05/qlog.c djbdns-1.05-ipv6/qlog.c\n--- djbdns-1.05/qlog.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/qlog.c\t2017-01-07 13:34:48.963745102 +0100\n@@ -20,15 +20,15 @@\n   put('0' + (c & 7));\n }\n \n-void qlog(const char ip[4],uint16 port,const char id[2],const char *q,const char qtype[2],const char *result)\n+void qlog(const char ip[16],uint16 port,const char id[2],const char *q,const char qtype[2],const char *result)\n {\n   char ch;\n   char ch2;\n \n-  hex(ip[0]);\n-  hex(ip[1]);\n-  hex(ip[2]);\n-  hex(ip[3]);\n+  {\n+    int i;\n+    for (i=0; i<16; ++i) hex(ip[i]);\n+  }\n   put(':');\n   hex(port >> 8);\n   hex(port & 255);\ndiff -uNr djbdns-1.05/query.c djbdns-1.05-ipv6/query.c\n--- djbdns-1.05/query.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/query.c\t2017-01-07 13:41:37.878726042 +0100\n@@ -12,6 +12,9 @@\n #include \"alloc.h\"\n #include \"response.h\"\n #include \"query.h\"\n+#include \"ip6.h\"\n+\n+extern stralloc ignoreip;\n \n static int flagforwardonly = 0;\n \n@@ -110,7 +113,7 @@\n   return 1;\n }\n \n-static int globalip(char *d,char ip[4])\n+static int globalip(char *d,char ip[16])\n {\n   if (dns_domain_equal(d,\"\\011localhost\\0\")) {\n     byte_copy(ip,4,\"\\177\\0\\0\\1\");\n@@ -165,14 +168,13 @@\n   char *buf;\n   unsigned int len;\n   const char *whichserver;\n-  char header[12];\n+  char header[24];\n   char misc[20];\n   unsigned int rcode;\n   unsigned int posanswers;\n   uint16 numanswers;\n   unsigned int posauthority;\n   uint16 numauthority;\n-  unsigned int posglue;\n   uint16 numglue;\n   unsigned int pos;\n   unsigned int pos2;\n@@ -193,6 +195,7 @@\n   int k;\n   int p;\n   int q;\n+  unsigned int ii;\n \n   errno = error_io;\n   if (state == 1) goto HAVEPACKET;\n@@ -205,14 +208,15 @@\n   NEWNAME:\n   if (++z->loop == 100) goto DIE;\n   d = z->name[z->level];\n-  dtype = z->level ? DNS_T_A : z->type;\n+  dtype = z->level ? (z->ipv6[z->level] ? DNS_T_AAAA : DNS_T_A) : z->type;\n   dlen = dns_domain_length(d);\n \n   if (globalip(d,misc)) {\n     if (z->level) {\n-      for (k = 0;k < 64;k += 4)\n-        if (byte_equal(z->servers[z->level - 1] + k,4,\"\\0\\0\\0\\0\")) {\n-\t  byte_copy(z->servers[z->level - 1] + k,4,misc);\n+      for (k = 0;k < 256;k += 16)\n+        if (byte_equal(z->servers[z->level - 1] + k,16,V6any)) {\n+\t  byte_copy(z->servers[z->level - 1] + k,12,V4mappedprefix);\n+\t  byte_copy(z->servers[z->level - 1] + k + 12,4,misc);\n \t  break;\n \t}\n       goto LOWERLEVEL;\n@@ -227,6 +231,158 @@\n     return 1;\n   }\n \n+  if (dns_domain_equal(d,\"\\0011\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\003ip6\\003int\\0\")) {\n+    if (z->level) goto LOWERLEVEL;\n+    if (!rqa(z)) goto DIE;\n+    if (typematch(DNS_T_PTR,dtype)) {\n+      if (!response_rstart(d,DNS_T_PTR,655360)) goto DIE;\n+      if (!response_addname(\"\\016ipv6-localhost\\0\")) goto DIE;\n+      if (!response_addname(\"\\015ipv6-loopback\\0\")) goto DIE;\n+      response_rfinish(RESPONSE_ANSWER);\n+    }\n+    cleanup(z);\n+    return 1;\n+  }\n+\n+  if (dns_domain_equal(d,\"\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\001e\\001f\\003ip6\\003int\\0\")) {\n+    if (z->level) goto LOWERLEVEL;\n+    if (!rqa(z)) goto DIE;\n+    if (typematch(DNS_T_PTR,dtype)) {\n+      if (!response_rstart(d,DNS_T_PTR,655360)) goto DIE;\n+      if (!response_addname(\"\\015ipv6-localnet\\0\")) goto DIE;\n+      response_rfinish(RESPONSE_ANSWER);\n+    }\n+    cleanup(z);\n+    return 1;\n+  }\n+\n+  if (dns_domain_equal(d,\"\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\001f\\001f\\003ip6\\003int\\0\")) {\n+    if (z->level) goto LOWERLEVEL;\n+    if (!rqa(z)) goto DIE;\n+    if (typematch(DNS_T_PTR,dtype)) {\n+      if (!response_rstart(d,DNS_T_PTR,655360)) goto DIE;\n+      if (!response_addname(\"\\020ipv6-mcastprefix\\0\")) goto DIE;\n+      response_rfinish(RESPONSE_ANSWER);\n+    }\n+    cleanup(z);\n+    return 1;\n+  }\n+\n+  if (dns_domain_equal(d,\"\\0011\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0012\\0010\\001f\\001f\\003ip6\\003int\\0\")) {\n+    if (z->level) goto LOWERLEVEL;\n+    if (!rqa(z)) goto DIE;\n+    if (typematch(DNS_T_PTR,dtype)) {\n+      if (!response_rstart(d,DNS_T_PTR,655360)) goto DIE;\n+      if (!response_addname(\"\\015ipv6-allnodes\\0\")) goto DIE;\n+      response_rfinish(RESPONSE_ANSWER);\n+    }\n+    cleanup(z);\n+    return 1;\n+  }\n+\n+  if (dns_domain_equal(d,\"\\0012\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0012\\0010\\001f\\001f\\003ip6\\003int\\0\")) {\n+    if (z->level) goto LOWERLEVEL;\n+    if (!rqa(z)) goto DIE;\n+    if (typematch(DNS_T_PTR,dtype)) {\n+      if (!response_rstart(d,DNS_T_PTR,655360)) goto DIE;\n+      if (!response_addname(\"\\017ipv6-allrouters\\0\")) goto DIE;\n+      response_rfinish(RESPONSE_ANSWER);\n+    }\n+    cleanup(z);\n+    return 1;\n+  }\n+\n+  if (dns_domain_equal(d,\"\\0011\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0010\\0012\\0010\\001f\\001f\\003ip6\\003int\\0\")) {\n+    if (z->level) goto LOWERLEVEL;\n+    if (!rqa(z)) goto DIE;\n+    if (typematch(DNS_T_PTR,dtype)) {\n+      if (!response_rstart(d,DNS_T_PTR,655360)) goto DIE;\n+      if (!response_addname(\"\\015ipv6-allhosts\\0\")) goto DIE;\n+      response_rfinish(RESPONSE_ANSWER);\n+    }\n+    cleanup(z);\n+    return 1;\n+  }\n+\n+  if (dns_domain_equal(d,\"\\016ipv6-localhost\\0\") ||\n+      dns_domain_equal(d,\"\\015ipv6-loopback\\0\"))\n+    {\n+      if (z->level) goto LOWERLEVEL;\n+      if (!rqa(z)) goto DIE;\n+      if (typematch(DNS_T_AAAA,dtype)) {\n+\tif (!response_rstart(d,DNS_T_AAAA,655360)) goto DIE;\n+\tif (!response_addbytes(\"\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\001\",16)) goto DIE;\n+\tresponse_rfinish(RESPONSE_ANSWER);\n+      }\n+      cleanup(z);\n+      return 1;\n+    }\n+\n+  if (dns_domain_equal(d,\"\\015ipv6-localnet\\0\"))\n+    {\n+      if (z->level) goto LOWERLEVEL;\n+      if (!rqa(z)) goto DIE;\n+      if (typematch(DNS_T_AAAA,dtype)) {\n+\tif (!response_rstart(d,DNS_T_AAAA,655360)) goto DIE;\n+\tif (!response_addbytes(\"\\376\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\",16)) goto DIE;\n+\tresponse_rfinish(RESPONSE_ANSWER);\n+      }\n+      cleanup(z);\n+      return 1;\n+    }\n+\n+  if (dns_domain_equal(d,\"\\020ipv6-mcastprefix\\0\"))\n+    {\n+      if (z->level) goto LOWERLEVEL;\n+      if (!rqa(z)) goto DIE;\n+      if (typematch(DNS_T_AAAA,dtype)) {\n+\tif (!response_rstart(d,DNS_T_AAAA,655360)) goto DIE;\n+\tif (!response_addbytes(\"\\377\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\",16)) goto DIE;\n+\tresponse_rfinish(RESPONSE_ANSWER);\n+      }\n+      cleanup(z);\n+      return 1;\n+    }\n+\n+  if (dns_domain_equal(d,\"\\15ipv6-allnodes\\0\"))\n+    {\n+      if (z->level) goto LOWERLEVEL;\n+      if (!rqa(z)) goto DIE;\n+      if (typematch(DNS_T_AAAA,dtype)) {\n+\tif (!response_rstart(d,DNS_T_AAAA,655360)) goto DIE;\n+\tif (!response_addbytes(\"\\377\\002\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\001\",16)) goto DIE;\n+\tresponse_rfinish(RESPONSE_ANSWER);\n+      }\n+      cleanup(z);\n+      return 1;\n+    }\n+\n+  if (dns_domain_equal(d,\"\\17ipv6-allrouters\\0\"))\n+    {\n+      if (z->level) goto LOWERLEVEL;\n+      if (!rqa(z)) goto DIE;\n+      if (typematch(DNS_T_AAAA,dtype)) {\n+\tif (!response_rstart(d,DNS_T_AAAA,655360)) goto DIE;\n+\tif (!response_addbytes(\"\\377\\002\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\002\",16)) goto DIE;\n+\tresponse_rfinish(RESPONSE_ANSWER);\n+      }\n+      cleanup(z);\n+      return 1;\n+    }\n+\n+  if (dns_domain_equal(d,\"\\15ipv6-allhosts\\0\"))\n+    {\n+      if (z->level) goto LOWERLEVEL;\n+      if (!rqa(z)) goto DIE;\n+      if (typematch(DNS_T_AAAA,dtype)) {\n+\tif (!response_rstart(d,DNS_T_AAAA,655360)) goto DIE;\n+\tif (!response_addbytes(\"\\377\\002\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\003\",16)) goto DIE;\n+\tresponse_rfinish(RESPONSE_ANSWER);\n+      }\n+      cleanup(z);\n+      return 1;\n+    }\n+\n   if (dns_domain_equal(d,\"\\0011\\0010\\0010\\003127\\7in-addr\\4arpa\\0\")) {\n     if (z->level) goto LOWERLEVEL;\n     if (!rqa(z)) goto DIE;\n@@ -322,13 +478,18 @@\n     if (typematch(DNS_T_A,dtype)) {\n       byte_copy(key,2,DNS_T_A);\n       cached = cache_get(key,dlen + 2,&cachedlen,&ttl);\n+      if (cached && !cachedlen && z->level) {\t/* if we were looking the A record up to find an NS, try IPv6 too */\n+\tz->ipv6[z->level]=1;\n+\tgoto NEWNAME;\n+      }\n       if (cached && (cachedlen || byte_diff(dtype,2,DNS_T_ANY))) {\n \tif (z->level) {\n \t  log_cachedanswer(d,DNS_T_A);\n \t  while (cachedlen >= 4) {\n-\t    for (k = 0;k < 64;k += 4)\n-\t      if (byte_equal(z->servers[z->level - 1] + k,4,\"\\0\\0\\0\\0\")) {\n-\t\tbyte_copy(z->servers[z->level - 1] + k,4,cached);\n+\t    for (k = 0;k < 256;k += 16)\n+\t      if (byte_equal(z->servers[z->level - 1] + k,16,V6any)) {\n+\t\tbyte_copy(z->servers[z->level - 1] + k,12,V4mappedprefix);\n+\t\tbyte_copy(z->servers[z->level - 1] + k + 12,4,cached);\n \t\tbreak;\n \t      }\n \t    cached += 4;\n@@ -351,7 +512,39 @@\n       }\n     }\n \n-    if (!typematch(DNS_T_ANY,dtype) && !typematch(DNS_T_AXFR,dtype) && !typematch(DNS_T_CNAME,dtype) && !typematch(DNS_T_NS,dtype) && !typematch(DNS_T_PTR,dtype) && !typematch(DNS_T_A,dtype) && !typematch(DNS_T_MX,dtype)) {\n+    if (typematch(DNS_T_AAAA,dtype)) {\n+      byte_copy(key,2,DNS_T_AAAA);\n+      cached = cache_get(key,dlen + 2,&cachedlen,&ttl);\n+      if (cached && (cachedlen || byte_diff(dtype,2,DNS_T_ANY))) {\n+\tif (z->level) {\n+\t  log_cachedanswer(d,DNS_T_AAAA);\n+\t  while (cachedlen >= 16) {\n+\t    for (k = 0;k < 256;k += 16)\n+\t      if (byte_equal(z->servers[z->level - 1] + k,16,V6any)) {\n+\t\tbyte_copy(z->servers[z->level - 1] + k,16,cached);\n+\t\tbreak;\n+\t      }\n+\t    cached += 16;\n+\t    cachedlen -= 16;\n+\t  }\n+\t  goto LOWERLEVEL;\n+\t}\n+\n+\tlog_cachedanswer(d,DNS_T_AAAA);\n+\tif (!rqa(z)) goto DIE;\n+\twhile (cachedlen >= 16) {\n+\t  if (!response_rstart(d,DNS_T_AAAA,ttl)) goto DIE;\n+\t  if (!response_addbytes(cached,16)) goto DIE;\n+\t  response_rfinish(RESPONSE_ANSWER);\n+\t  cached += 16;\n+\t  cachedlen -= 16;\n+\t}\n+\tcleanup(z);\n+\treturn 1;\n+      }\n+    }\n+\n+    if (!typematch(DNS_T_ANY,dtype) && !typematch(DNS_T_AXFR,dtype) && !typematch(DNS_T_CNAME,dtype) && !typematch(DNS_T_NS,dtype) && !typematch(DNS_T_PTR,dtype) && !typematch(DNS_T_A,dtype) && !typematch(DNS_T_MX,dtype) && !typematch(DNS_T_AAAA,dtype)) {\n       byte_copy(key,2,dtype);\n       cached = cache_get(key,dlen + 2,&cachedlen,&ttl);\n       if (cached && (cachedlen || byte_diff(dtype,2,DNS_T_ANY))) {\n@@ -390,7 +583,7 @@\n         cached = cache_get(key,dlen + 2,&cachedlen,&ttl);\n         if (cached && cachedlen) {\n \t  z->control[z->level] = d;\n-          byte_zero(z->servers[z->level],64);\n+          byte_zero(z->servers[z->level],256);\n           for (j = 0;j < QUERY_MAXNS;++j)\n             dns_domain_free(&z->ns[z->level][j]);\n           pos = 0;\n@@ -418,20 +611,22 @@\n         if (!dns_domain_copy(&z->name[z->level + 1],z->ns[z->level][j])) goto DIE;\n         dns_domain_free(&z->ns[z->level][j]);\n         ++z->level;\n+\tz->ipv6[z->level]=0;\n         goto NEWNAME;\n       }\n       dns_domain_free(&z->ns[z->level][j]);\n     }\n \n-  for (j = 0;j < 64;j += 4)\n-    if (byte_diff(z->servers[z->level] + j,4,\"\\0\\0\\0\\0\"))\n+  for (j = 0;j < 256;j += 16)\n+    if (byte_diff(z->servers[z->level] + j,16,V6any))\n       break;\n-  if (j == 64) goto SERVFAIL;\n+  if (j == 256) goto SERVFAIL;\n \n-  dns_sortip(z->servers[z->level],64);\n+  dns_sortip6(z->servers[z->level],256);\n   if (z->level) {\n-    log_tx(z->name[z->level],DNS_T_A,z->control[z->level],z->servers[z->level],z->level);\n-    if (dns_transmit_start(&z->dt,z->servers[z->level],flagforwardonly,z->name[z->level],DNS_T_A,z->localip) == -1) goto DIE;\n+    dtype = z->ipv6[z->level] ? DNS_T_AAAA : DNS_T_A;\n+    log_tx(z->name[z->level],dtype,z->control[z->level],z->servers[z->level],z->level);\n+    if (dns_transmit_start(&z->dt,z->servers[z->level],flagforwardonly,z->name[z->level],dtype,z->localip) == -1) goto DIE;\n   }\n   else {\n     log_tx(z->name[0],z->type,z->control[0],z->servers[0],0);\n@@ -453,10 +648,11 @@\n   buf = z->dt.packet;\n   len = z->dt.packetlen;\n \n-  whichserver = z->dt.servers + 4 * z->dt.curserver;\n+  whichserver = z->dt.servers + 16 * z->dt.curserver;\n   control = z->control[z->level];\n   d = z->name[z->level];\n-  dtype = z->level ? DNS_T_A : z->type;\n+/*  dtype = z->level ? DNS_T_A : z->type; */\n+  dtype = z->level ? (z->ipv6[z->level] ? DNS_T_AAAA : DNS_T_A) : z->type;\n \n   pos = dns_packet_copy(buf,len,0,header,12); if (!pos) goto DIE;\n   pos = dns_packet_skipname(buf,len,pos); if (!pos) goto DIE;\n@@ -513,13 +709,11 @@\n     uint16_unpack_big(header + 8,&datalen);\n     pos += datalen;\n   }\n-  posglue = pos;\n-\n \n   if (!flagcname && !rcode && !flagout && flagreferral && !flagsoa)\n     if (dns_domain_equal(referral,control) || !dns_domain_suffix(referral,control)) {\n       log_lame(whichserver,control,referral);\n-      byte_zero(whichserver,4);\n+      byte_zero(whichserver,16);\n       goto HAVENS;\n     }\n \n@@ -643,6 +837,11 @@\n         pos = dns_packet_copy(buf,len,pos,header,10); if (!pos) goto DIE;\n         if (byte_equal(header + 8,2,\"\\0\\4\")) {\n           pos = dns_packet_copy(buf,len,pos,header,4); if (!pos) goto DIE;\n+          if (ignoreip.len)\n+\t    for(ii = 0; ii < ignoreip.len; ii+= 16) {\n+\t      if (byte_equal(ignoreip.s+ii,12,V4mappedprefix) &&\n+\t          byte_equal(header,4,ignoreip.s+ii+12)) goto NXDOMAIN;\n+\t    }\n           save_data(header,4);\n           log_rr(whichserver,t1,DNS_T_A,header,4,ttl);\n         }\n@@ -650,6 +849,23 @@\n       }\n       save_finish(DNS_T_A,t1,ttl);\n     }\n+    else if (byte_equal(type,2,DNS_T_AAAA)) {\n+      save_start();\n+      while (i < j) {\n+        pos = dns_packet_skipname(buf,len,records[i]); if (!pos) goto DIE;\n+        pos = dns_packet_copy(buf,len,pos,header,10); if (!pos) goto DIE;\n+        if (byte_equal(header + 8,2,\"\\0\\20\")) {\n+          pos = dns_packet_copy(buf,len,pos,header,16); if (!pos) goto DIE;\n+          if (ignoreip.len)\n+\t    for(ii = 0; ii < ignoreip.len; ii+= 16)\n+\t      if (byte_equal(header,16,ignoreip.s+ii)) goto NXDOMAIN;\n+          save_data(header,16);\n+          log_rr(whichserver,t1,DNS_T_AAAA,header,16,ttl);\n+        }\n+        ++i;\n+      }\n+      save_finish(DNS_T_AAAA,t1,ttl);\n+    }\n     else {\n       save_start();\n       while (i < j) {\n@@ -707,6 +923,11 @@\n           save_start();\n           save_finish(dtype,d,soattl);\n \t  log_nodata(whichserver,d,dtype,soattl);\n+\t  if (z->level && !byte_diff(DNS_T_A,2,dtype)) {\n+\t    d = z->name[z->level];\n+\t    z->ipv6[z->level] = 1;\n+\t    goto NEWNAME; /* retry, will ask for AAAA next */\n+\t  }\n         }\n \n   log_stats();\n@@ -723,9 +944,18 @@\n           if (typematch(header,DNS_T_A))\n             if (byte_equal(header + 2,2,DNS_C_IN)) /* should always be true */\n               if (datalen == 4)\n-                for (k = 0;k < 64;k += 4)\n-                  if (byte_equal(z->servers[z->level - 1] + k,4,\"\\0\\0\\0\\0\")) {\n-                    if (!dns_packet_copy(buf,len,pos,z->servers[z->level - 1] + k,4)) goto DIE;\n+                for (k = 0;k < 256;k += 16)\n+                  if (byte_equal(z->servers[z->level - 1] + k,16,V6any)) {\n+\t\t    byte_copy(z->servers[z->level - 1] + k,12,V4mappedprefix);\n+                    if (!dns_packet_copy(buf,len,pos,z->servers[z->level - 1] + k + 12,4)) goto DIE;\n+                    break;\n+                  }\n+          if (typematch(header,DNS_T_AAAA))\n+            if (byte_equal(header + 2,2,DNS_C_IN)) /* should always be true */\n+              if (datalen == 16)\n+                for (k = 0;k < 256;k += 16)\n+                  if (byte_equal(z->servers[z->level - 1] + k,16,V6any)) {\n+                    if (!dns_packet_copy(buf,len,pos,z->servers[z->level - 1] + k,16)) goto DIE;\n                     break;\n                   }\n         pos += datalen;\n@@ -783,7 +1013,7 @@\n   if (!dns_domain_suffix(d,referral)) goto DIE;\n   control = d + dns_domain_suffixpos(d,referral);\n   z->control[z->level] = control;\n-  byte_zero(z->servers[z->level],64);\n+  byte_zero(z->servers[z->level],256);\n   for (j = 0;j < QUERY_MAXNS;++j)\n     dns_domain_free(&z->ns[z->level][j]);\n   k = 0;\n@@ -818,7 +1048,7 @@\n   return -1;\n }\n \n-int query_start(struct query *z,char *dn,char type[2],char class[2],char localip[4])\n+int query_start(struct query *z,char *dn,char type[2],char class[2],char localip[16],unsigned int scope_id)\n {\n   if (byte_equal(type,2,DNS_T_AXFR)) { errno = error_perm; return -1; }\n \n@@ -829,7 +1059,9 @@\n   if (!dns_domain_copy(&z->name[0],dn)) return -1;\n   byte_copy(z->type,2,type);\n   byte_copy(z->class,2,class);\n-  byte_copy(z->localip,4,localip);\n+  byte_copy(z->localip,16,localip);\n+  z->scope_id=scope_id;\n+  z->ipv6[0]=0;\n \n   return doit(z,0);\n }\ndiff -uNr djbdns-1.05/query.h djbdns-1.05-ipv6/query.h\n--- djbdns-1.05/query.h\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/query.h\t2017-01-07 13:34:48.963745102 +0100\n@@ -14,16 +14,18 @@\n   char *name[QUERY_MAXLEVEL];\n   char *control[QUERY_MAXLEVEL]; /* pointing inside name */\n   char *ns[QUERY_MAXLEVEL][QUERY_MAXNS];\n-  char servers[QUERY_MAXLEVEL][64];\n+  char servers[QUERY_MAXLEVEL][256];\n   char *alias[QUERY_MAXALIAS];\n   uint32 aliasttl[QUERY_MAXALIAS];\n-  char localip[4];\n+  char ipv6[QUERY_MAXLEVEL];\n+  char localip[16];\n+  uint32 scope_id;\n   char type[2];\n   char class[2];\n   struct dns_transmit dt;\n } ;\n \n-extern int query_start(struct query *,char *,char *,char *,char *);\n+extern int query_start(struct query *,char *,char *,char *,char *,unsigned int);\n extern void query_io(struct query *,iopause_fd *,struct taia *);\n extern int query_get(struct query *,iopause_fd *,struct taia *);\n \ndiff -uNr djbdns-1.05/roots.c djbdns-1.05-ipv6/roots.c\n--- djbdns-1.05/roots.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/roots.c\t2017-01-07 13:34:48.963745102 +0100\n@@ -6,6 +6,7 @@\n #include \"error.h\"\n #include \"direntry.h\"\n #include \"ip4.h\"\n+#include \"ip6.h\"\n #include \"dns.h\"\n #include \"openreadclose.h\"\n #include \"roots.h\"\n@@ -22,7 +23,7 @@\n     j = dns_domain_length(data.s + i);\n     if (dns_domain_equal(data.s + i,q)) return i + j;\n     i += j;\n-    i += 64;\n+    i += 256;\n   }\n   return -1;\n }\n@@ -40,12 +41,12 @@\n   }\n }\n \n-int roots(char servers[64],char *q)\n+int roots(char servers[256],char *q)\n {\n   int r;\n   r = roots_find(q);\n   if (r == -1) return 0;\n-  byte_copy(servers,64,data.s + r);\n+  byte_copy(servers,256,data.s + r);\n   return 1;\n }\n \n@@ -60,7 +61,7 @@\n   const char *fqdn;\n   static char *q;\n   static stralloc text;\n-  char servers[64];\n+  char servers[256];\n   int serverslen;\n   int i;\n   int j;\n@@ -86,14 +87,14 @@\n       for (i = 0;i < text.len;++i)\n \tif (text.s[i] == '\\n') {\n \t  if (serverslen <= 60)\n-\t    if (ip4_scan(text.s + j,servers + serverslen))\n-\t      serverslen += 4;\n+\t    if (ip6_scan(text.s + j,servers + serverslen))\n+\t      serverslen += 16;\n \t  j = i + 1;\n \t}\n-      byte_zero(servers + serverslen,64 - serverslen);\n+      byte_zero(servers + serverslen,256 - serverslen);\n \n       if (!stralloc_catb(&data,q,dns_domain_length(q))) return 0;\n-      if (!stralloc_catb(&data,servers,64)) return 0;\n+      if (!stralloc_catb(&data,servers,256)) return 0;\n     }\n   }\n }\ndiff -uNr djbdns-1.05/scan_xlong.c djbdns-1.05-ipv6/scan_xlong.c\n--- djbdns-1.05/scan_xlong.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/scan_xlong.c\t2017-01-07 13:34:48.963745102 +0100\n@@ -0,0 +1,23 @@\n+#include \"scan.h\"\n+\n+static inline int fromhex(unsigned char c) {\n+  if (c>='0' && c<='9')\n+    return c-'0';\n+  else if (c>='A' && c<='F')\n+    return c-'A'+10;\n+  else if (c>='a' && c<='f')\n+    return c-'a'+10;\n+  return -1;\n+}\n+\n+unsigned int scan_xlong(const char *src,unsigned long *dest) {\n+  register const char *tmp=src;\n+  register int l=0;\n+  register unsigned char c;\n+  while ((c=fromhex(*tmp))<16) {\n+    l=(l<<4)+c;\n+    ++tmp;\n+  }\n+  *dest=l;\n+  return tmp-src;\n+}\ndiff -uNr djbdns-1.05/seek_set.c djbdns-1.05-ipv6/seek_set.c\n--- djbdns-1.05/seek_set.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/seek_set.c\t2017-01-07 13:54:44.911689356 +0100\n@@ -1,4 +1,5 @@\n #include <sys/types.h>\n+#include <unistd.h>\n #include \"seek.h\"\n \n #define SET 0 /* sigh */\ndiff -uNr djbdns-1.05/server.c djbdns-1.05-ipv6/server.c\n--- djbdns-1.05/server.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/server.c\t2017-01-07 13:34:48.963745102 +0100\n@@ -4,6 +4,7 @@\n #include \"buffer.h\"\n #include \"strerr.h\"\n #include \"ip4.h\"\n+#include \"ip6.h\"\n #include \"uint16.h\"\n #include \"ndelay.h\"\n #include \"socket.h\"\n@@ -11,13 +12,16 @@\n #include \"qlog.h\"\n #include \"response.h\"\n #include \"dns.h\"\n+#include \"alloc.h\"\n+#include \"iopause.h\"\n+#include \"str.h\"\n \n extern char *fatal;\n extern char *starting;\n extern int respond(char *,char *,char *);\n extern void initialize(void);\n \n-static char ip[4];\n+static char ip[16];\n static uint16 port;\n \n static char buf[513];\n@@ -25,6 +29,11 @@\n \n static char *q;\n \n+void nomem()\n+{\n+  strerr_die2x(111,fatal,\"out of memory\");\n+}\n+\n static int doit(void)\n {\n   unsigned int pos;\n@@ -82,35 +91,86 @@\n int main()\n {\n   char *x;\n-  int udp53;\n+  int *udp53;\n+  unsigned int off;\n+  unsigned int cnt;\n+  iopause_fd *iop;\n \n   x = env_get(\"IP\");\n   if (!x)\n     strerr_die2x(111,fatal,\"$IP not set\");\n-  if (!ip4_scan(x,ip))\n-    strerr_die3x(111,fatal,\"unable to parse IP address \",x);\n-\n-  udp53 = socket_udp();\n-  if (udp53 == -1)\n-    strerr_die2sys(111,fatal,\"unable to create UDP socket: \");\n-  if (socket_bind4_reuse(udp53,ip,53) == -1)\n-    strerr_die2sys(111,fatal,\"unable to bind UDP socket: \");\n-\n+  off=cnt=0;\n+  while (x[off]) {\n+    unsigned int l;\n+    char dummy[16];\n+    l=ip6_scan(x+off,dummy);\n+    if (!l)\n+      strerr_die3x(111,fatal,\"unable to parse IP address \",x+off);\n+    cnt++;\n+    if (!x[off+l]) break;\n+    if (x[off+l]=='%')\n+      while (x[off+l] && x[off+l]!=',') ++l;\n+    if (x[off+l]!=',')\n+      strerr_die3x(111,fatal,\"unable to parse IP address \",x+off);\n+    off+=l+1;\n+  }\n+  udp53=(int *) alloc(sizeof(int) *cnt);\n+  if (!udp53) nomem();\n+  iop=(iopause_fd *) alloc(sizeof(*iop) * cnt);\n+  if (!iop) nomem();\n+\n+  off=cnt=0;\n+  while (x[off]) {\n+    unsigned int l;\n+    uint32 ifid=0;\n+    l=ip6_scan(x+off,ip);\n+    udp53[cnt] = socket_udp6();\n+    if (udp53[cnt] == -1)\n+      strerr_die2sys(111,fatal,\"unable to create UDP socket: \");\n+    if (x[off+l]=='%') {\n+      char* interface=x+off+l+1;\n+      int Len=str_chr(interface,',');\n+      if (interface[Len]) {\n+\tinterface[Len]=0;\n+\tifid=socket_getifidx(interface);\n+\tinterface[Len]=',';\n+      } else\n+\tifid=socket_getifidx(interface);\n+      l+=Len;\n+    }\n+    if (socket_bind6_reuse(udp53[cnt],ip,53,ifid) == -1)\n+      strerr_die2sys(111,fatal,\"unable to bind UDP socket: \");\n+    ndelay_off(udp53[cnt]);\n+    socket_tryreservein(udp53[cnt],65536);\n+    iop[cnt].fd=udp53[cnt];\n+    iop[cnt].events=IOPAUSE_READ;\n+    cnt++;\n+    if (!x[off+l]) break;\n+    off+=l+1;\n+  }\n   droproot(fatal);\n \n   initialize();\n-  \n-  ndelay_off(udp53);\n-  socket_tryreservein(udp53,65536);\n \n   buffer_putsflush(buffer_2,starting);\n \n   for (;;) {\n-    len = socket_recv4(udp53,buf,sizeof buf,ip,&port);\n-    if (len < 0) continue;\n-    if (!doit()) continue;\n-    if (response_len > 512) response_tc();\n-    socket_send4(udp53,response,response_len,ip,port);\n-    /* may block for buffer space; if it fails, too bad */\n+    struct taia stamp;\n+    struct taia deadline;\n+    unsigned int i;\n+    uint32 ifid;\n+    taia_now(&stamp);\n+    taia_uint(&deadline,300);\n+    taia_add(&deadline,&deadline,&stamp);\n+    iopause(iop,cnt,&deadline,&stamp);\n+    for (i=0;i<cnt;i++)\n+      if (iop[i].revents) {\n+\tlen = socket_recv6(udp53[i],buf,sizeof buf,ip,&port,&ifid);\n+\tif (len < 0) continue;\n+\tif (!doit()) continue;\n+\tif (response_len > 512) response_tc();\n+\tsocket_send6(udp53[i],response,response_len,ip,port,ifid);\n+\t/* may block for buffer space; if it fails, too bad */\n+      }\n   }\n }\ndiff -uNr djbdns-1.05/sockaddr_in6.h1 djbdns-1.05-ipv6/sockaddr_in6.h1\n--- djbdns-1.05/sockaddr_in6.h1\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/sockaddr_in6.h1\t2017-01-07 13:34:48.963745102 +0100\n@@ -0,0 +1,21 @@\n+#include \"haveip6.h\"\n+#ifdef LIBC_HAS_IP6\n+#include <sys/types.h>\n+#include <sys/socket.h>\n+#define sockaddr_in6 blub\n+#include <netinet/in.h>\n+#undef sockaddr_in6\n+\n+struct sockaddr_in6 {\n+  sa_family_t     sin6_family;    /* AF_INET6 */\n+  unsigned short  sin6_port;      /* transport layer port # */\n+  uint32_t        sin6_flowinfo;  /* IPv6 traffic class & flow info */\n+  struct in6_addr sin6_addr;      /* IPv6 address */\n+  uint32_t        sin6_scope_id;  /* set of interfaces for a scope */\n+};\n+\n+#else\n+#include <sys/types.h>\n+#include <sys/socket.h>\n+#include <netinet/in.h>\n+#endif\ndiff -uNr djbdns-1.05/sockaddr_in6.h2 djbdns-1.05-ipv6/sockaddr_in6.h2\n--- djbdns-1.05/sockaddr_in6.h2\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/sockaddr_in6.h2\t2017-01-07 13:34:48.963745102 +0100\n@@ -0,0 +1,4 @@\n+#include <sys/types.h>\n+#include <sys/socket.h>\n+#include <netinet/in.h>\n+\ndiff -uNr djbdns-1.05/socket.h djbdns-1.05-ipv6/socket.h\n--- djbdns-1.05/socket.h\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/socket.h\t2017-01-07 13:34:48.963745102 +0100\n@@ -2,21 +2,37 @@\n #define SOCKET_H\n \n #include \"uint16.h\"\n+#include \"uint32.h\"\n \n extern int socket_tcp(void);\n extern int socket_udp(void);\n+extern int socket_tcp6(void);\n+extern int socket_udp6(void);\n \n extern int socket_connect4(int,const char *,uint16);\n+extern int socket_connect6(int s,const char ip[16],uint16 port,uint32 scope_id);\n extern int socket_connected(int);\n-extern int socket_bind4(int,char *,uint16);\n+extern int socket_bind4(int,const char *,uint16);\n extern int socket_bind4_reuse(int,char *,uint16);\n+extern int socket_bind6(int s,const char *ip,uint16 port,uint32 scope_id);\n+extern int socket_bind6_reuse(int s,const char *ip,uint16 port,uint32 scope_id);\n extern int socket_listen(int,int);\n extern int socket_accept4(int,char *,uint16 *);\n+extern int socket_accept6(int s,char *ip,uint16 *port,uint32 *scope_id);\n extern int socket_recv4(int,char *,int,char *,uint16 *);\n extern int socket_send4(int,const char *,int,const char *,uint16);\n+extern int socket_recv6(int s,char *buf,unsigned int len,char *ip,uint16 *port,uint32 *scope_id);\n+extern int socket_send6(int s,const char *buf,unsigned int len,const char *ip,uint16 port,uint32 scope_id);\n extern int socket_local4(int,char *,uint16 *);\n extern int socket_remote4(int,char *,uint16 *);\n+extern int socket_local6(int s,char *ip,uint16 *port,uint32 *scope_id);\n+extern int socket_remote6(int s,char *ip,uint16 *port,uint32 *scope_id);\n \n extern void socket_tryreservein(int,int);\n \n+extern const char* socket_getifname(uint32 interface);\n+extern uint32 socket_getifidx(const char *ifname);\n+\n+extern int noipv6;\n+\n #endif\ndiff -uNr djbdns-1.05/socket_accept6.c djbdns-1.05-ipv6/socket_accept6.c\n--- djbdns-1.05/socket_accept6.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/socket_accept6.c\t2017-01-07 13:34:48.963745102 +0100\n@@ -0,0 +1,43 @@\n+#include <sys/param.h>\n+#include <sys/socket.h>\n+#include <netinet/in.h>\n+#include \"byte.h\"\n+#include \"socket.h\"\n+#include \"ip6.h\"\n+#include \"haveip6.h\"\n+#include \"error.h\"\n+\n+int socket_accept6(int s,char ip[16],uint16 *port,uint32 *scope_id)\n+{\n+#ifdef LIBC_HAS_IP6\n+  struct sockaddr_in6 sa;\n+#else\n+  struct sockaddr_in sa;\n+#endif\n+  unsigned int dummy = sizeof sa;\n+  int fd;\n+\n+  fd = accept(s,(struct sockaddr *) &sa,&dummy);\n+  if (fd == -1) return -1;\n+\n+#ifdef LIBC_HAS_IP6\n+  if (sa.sin6_family==AF_INET) {\n+    struct sockaddr_in *sa4=(struct sockaddr_in*)&sa;\n+    byte_copy(ip,12,V4mappedprefix);\n+    byte_copy(ip+12,4,(char *) &sa4->sin_addr);\n+    uint16_unpack_big((char *) &sa4->sin_port,port);\n+    return fd;\n+  }\n+  byte_copy(ip,16,(char *) &sa.sin6_addr);\n+  uint16_unpack_big((char *) &sa.sin6_port,port);\n+  if (scope_id) *scope_id=sa.sin6_scope_id;\n+\n+  return fd;\n+#else\n+  byte_copy(ip,12,V4mappedprefix);\n+  byte_copy(ip+12,4,(char *) &sa.sin_addr);\n+  uint16_unpack_big((char *) &sa.sin_port,port);\n+  if (scope_id) *scope_id=0;\n+  return fd;\n+#endif\n+}\ndiff -uNr djbdns-1.05/socket_bind.c djbdns-1.05-ipv6/socket_bind.c\n--- djbdns-1.05/socket_bind.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/socket_bind.c\t2017-01-07 13:34:48.963745102 +0100\n@@ -5,7 +5,7 @@\n #include \"byte.h\"\n #include \"socket.h\"\n \n-int socket_bind4(int s,char ip[4],uint16 port)\n+int socket_bind4(int s,const char ip[4],uint16 port)\n {\n   struct sockaddr_in sa;\n \ndiff -uNr djbdns-1.05/socket_bind6.c djbdns-1.05-ipv6/socket_bind6.c\n--- djbdns-1.05/socket_bind6.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/socket_bind6.c\t2017-01-07 13:34:48.963745102 +0100\n@@ -0,0 +1,43 @@\n+#include <sys/param.h>\n+#include \"sockaddr_in6.h\"\n+#include \"byte.h\"\n+#include \"socket.h\"\n+#include \"ip6.h\"\n+#include \"haveip6.h\"\n+#include \"error.h\"\n+\n+int socket_bind6(int s,const char ip[16],uint16 port,uint32 scope_id)\n+{\n+#ifdef LIBC_HAS_IP6\n+  struct sockaddr_in6 sa;\n+\n+  if (noipv6) {\n+#endif\n+    int i;\n+    for (i=0; i<16; i++)\n+      if (ip[i]!=0) break;\n+    if (i==16 || ip6_isv4mapped(ip))\n+      return socket_bind4(s,ip+12,port);\n+#ifdef LIBC_HAS_IP6\n+  }\n+  byte_zero(&sa,sizeof sa);\n+  sa.sin6_family = AF_INET6;\n+  uint16_pack_big((char *) &sa.sin6_port,port);\n+/*  implicit: sa.sin6_flowinfo = 0; */\n+  byte_copy((char *) &sa.sin6_addr,16,ip);\n+  sa.sin6_scope_id=scope_id;\n+\n+  return bind(s,(struct sockaddr *) &sa,sizeof sa);\n+#else\n+  errno=error_proto;\n+  return -1;\n+#endif\n+}\n+\n+int socket_bind6_reuse(int s,const char ip[16],uint16 port,uint32 scope_id)\n+{\n+  int opt = 1;\n+  setsockopt(s,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof opt);\n+  return socket_bind6(s,ip,port,scope_id);\n+}\n+\ndiff -uNr djbdns-1.05/socket_connect6.c djbdns-1.05-ipv6/socket_connect6.c\n--- djbdns-1.05/socket_connect6.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/socket_connect6.c\t2017-01-07 13:34:48.963745102 +0100\n@@ -0,0 +1,39 @@\n+#include <sys/param.h>\n+#include <sys/types.h>\n+#include <sys/socket.h>\n+#include <netinet/in.h>\n+#include <errno.h>\n+#include \"byte.h\"\n+#include \"socket.h\"\n+#include \"ip6.h\"\n+#include \"haveip6.h\"\n+#include \"error.h\"\n+#include \"uint32.h\"\n+#include \"ip4.h\"\n+\n+int socket_connect6(int s,const char ip[16],uint16 port,uint32 scope_id)\n+{\n+#ifdef LIBC_HAS_IP6\n+  struct sockaddr_in6 sa;\n+\n+  if (noipv6) {\n+#endif\n+    if (ip6_isv4mapped(ip))\n+      return socket_connect4(s,ip+12,port);\n+    if (byte_equal(ip,16,V6loopback))\n+      return socket_connect4(s,ip4loopback,port);\n+#ifdef LIBC_HAS_IP6\n+  }\n+  byte_zero(&sa,sizeof sa);\n+  sa.sin6_family = PF_INET6;\n+  uint16_pack_big((char *) &sa.sin6_port,port);\n+  sa.sin6_flowinfo = 0;\n+  sa.sin6_scope_id = scope_id;\n+  byte_copy((char *) &sa.sin6_addr,16,ip);\n+\n+  return connect(s,(struct sockaddr *) &sa,sizeof sa);\n+#else\n+  errno=error_proto;\n+  return -1;\n+#endif\n+}\ndiff -uNr djbdns-1.05/socket_getifidx.c djbdns-1.05-ipv6/socket_getifidx.c\n--- djbdns-1.05/socket_getifidx.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/socket_getifidx.c\t2017-01-07 13:34:48.963745102 +0100\n@@ -0,0 +1,13 @@\n+#include <sys/types.h>\n+#include <sys/socket.h>\n+#include <net/if.h>\n+#include \"socket.h\"\n+#include \"haven2i.h\"\n+\n+uint32 socket_getifidx(const char* ifname) {\n+#ifdef HAVE_N2I\n+  return if_nametoindex(ifname);\n+#else\n+  return 0;\n+#endif\n+}\ndiff -uNr djbdns-1.05/socket_noipv6.c djbdns-1.05-ipv6/socket_noipv6.c\n--- djbdns-1.05/socket_noipv6.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/socket_noipv6.c\t2017-01-07 13:34:48.963745102 +0100\n@@ -0,0 +1,7 @@\n+#include \"haveip6.h\"\n+\n+#ifdef LIBC_HAS_IP6\n+int noipv6=0;\n+#else\n+int noipv6=1;\n+#endif\ndiff -uNr djbdns-1.05/socket_recv6.c djbdns-1.05-ipv6/socket_recv6.c\n--- djbdns-1.05/socket_recv6.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/socket_recv6.c\t2017-01-07 13:34:48.963745102 +0100\n@@ -0,0 +1,42 @@\n+#include <sys/param.h>\n+#include \"sockaddr_in6.h\"\n+#include \"byte.h\"\n+#include \"socket.h\"\n+#include \"ip6.h\"\n+#include \"haveip6.h\"\n+#include \"error.h\"\n+\n+int socket_recv6(int s,char *buf,unsigned int len,char ip[16],uint16 *port,uint32 *scope_id)\n+{\n+#ifdef LIBC_HAS_IP6\n+  struct sockaddr_in6 sa;\n+#else\n+  struct sockaddr_in sa;\n+#endif\n+  unsigned int dummy = sizeof sa;\n+  int r;\n+\n+  byte_zero(&sa,dummy);\n+  r = recvfrom(s,buf,len,0,(struct sockaddr *) &sa,&dummy);\n+  if (r == -1) return -1;\n+\n+#ifdef LIBC_HAS_IP6\n+  if (noipv6 || sa.sin6_family==AF_INET || sa.sin6_family==PF_INET) {\n+    struct sockaddr_in *sa4=(struct sockaddr_in *)&sa;\n+    byte_copy(ip,12,V4mappedprefix);\n+    byte_copy(ip+12,4,(char *) &sa4->sin_addr);\n+    uint16_unpack_big((char *) &sa4->sin_port,port);\n+    return r;\n+  }\n+  byte_copy(ip,16,(char *) &sa.sin6_addr);\n+  uint16_unpack_big((char *) &sa.sin6_port,port);\n+  if (scope_id) *scope_id=sa.sin6_scope_id;\n+#else\n+  byte_copy(ip,12,(char *)V4mappedprefix);\n+  byte_copy(ip+12,4,(char *) &sa.sin_addr);\n+  uint16_unpack_big((char *) &sa.sin_port,port);\n+  if (scope_id) *scope_id=0;\n+#endif\n+\n+  return r;\n+}\ndiff -uNr djbdns-1.05/socket_send6.c djbdns-1.05-ipv6/socket_send6.c\n--- djbdns-1.05/socket_send6.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/socket_send6.c\t2017-01-07 13:34:48.963745102 +0100\n@@ -0,0 +1,39 @@\n+#include <sys/types.h>\n+#include <sys/param.h>\n+#include <sys/socket.h>\n+#include <netinet/in.h>\n+#include \"byte.h\"\n+#include \"socket.h\"\n+#include \"ip6.h\"\n+#include \"haveip6.h\"\n+#include \"error.h\"\n+\n+int socket_send6(int s,const char *buf,unsigned int len,const char ip[16],uint16 port,uint32 scope_id)\n+{\n+#ifdef LIBC_HAS_IP6\n+  struct sockaddr_in6 sa;\n+#else\n+  struct sockaddr_in sa;\n+#endif\n+\n+  byte_zero(&sa,sizeof sa);\n+#ifdef LIBC_HAS_IP6\n+  if (noipv6) {\n+#endif\n+    if (ip6_isv4mapped(ip))\n+      return socket_send4(s,buf,len,ip+12,port);\n+    if (byte_equal(ip,16,V6loopback))\n+      return socket_send4(s,buf,len,ip4loopback,port);\n+#ifdef LIBC_HAS_IP6\n+    errno=error_proto;\n+    return -1;\n+  }\n+  sa.sin6_family = AF_INET6;\n+  uint16_pack_big((char *) &sa.sin6_port,port);\n+  byte_copy((char *) &sa.sin6_addr,16,ip);\n+  return sendto(s,buf,len,0,(struct sockaddr *) &sa,sizeof sa);\n+#else\n+  errno=error_proto;\n+  return -1;\n+#endif\n+}\ndiff -uNr djbdns-1.05/socket_tcp6.c djbdns-1.05-ipv6/socket_tcp6.c\n--- djbdns-1.05/socket_tcp6.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/socket_tcp6.c\t2017-01-07 13:34:48.963745102 +0100\n@@ -0,0 +1,50 @@\n+#include <sys/types.h>\n+#include <sys/param.h>\n+#include <sys/socket.h>\n+#include <netinet/in.h>\n+#include <errno.h>\n+#include <unistd.h>\n+#include \"ndelay.h\"\n+#include \"socket.h\"\n+#include \"haveip6.h\"\n+#include \"error.h\"\n+\n+#ifndef EAFNOSUPPORT\n+#define EAFNOSUPPORT EINVAL\n+#endif\n+#ifndef EPFNOSUPPORT\n+#define EPFNOSUPPORT EAFNOSUPPORT\n+#endif\n+#ifndef EPROTONOSUPPORT\n+#define EPROTONOSUPPORT EAFNOSUPPORT\n+#endif\n+\n+int socket_tcp6(void)\n+{\n+#ifdef LIBC_HAS_IP6\n+  int s;\n+\n+  if (noipv6) goto compat;\n+  s = socket(PF_INET6,SOCK_STREAM,0);\n+  if (s == -1) {\n+    if (errno == EINVAL || errno == EAFNOSUPPORT || errno == EPROTONOSUPPORT || errno == EPFNOSUPPORT) {\n+compat:\n+      s=socket(AF_INET,SOCK_STREAM,0);\n+      noipv6=1;\n+      if (s==-1) return -1;\n+    } else\n+    return -1;\n+  }\n+  if (ndelay_on(s) == -1) { close(s); return -1; }\n+#ifdef IPV6_V6ONLY\n+  {\n+    int zero=0;\n+    setsockopt(s,IPPROTO_IPV6,IPV6_V6ONLY,(void*)&zero,sizeof(zero));\n+  }\n+#endif\n+  return s;\n+#else\n+  return socket_tcp();\n+#endif\n+}\n+\ndiff -uNr djbdns-1.05/socket_udp6.c djbdns-1.05-ipv6/socket_udp6.c\n--- djbdns-1.05/socket_udp6.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/socket_udp6.c\t2017-01-07 13:34:48.963745102 +0100\n@@ -0,0 +1,49 @@\n+#include <sys/types.h>\n+#include <sys/param.h>\n+#include <sys/socket.h>\n+#include <netinet/in.h>\n+#include <errno.h>\n+#include <unistd.h>\n+#include \"ndelay.h\"\n+#include \"socket.h\"\n+#include \"haveip6.h\"\n+#include \"error.h\"\n+\n+#ifndef EAFNOSUPPORT\n+#define EAFNOSUPPORT EINVAL\n+#endif\n+#ifndef EPFNOSUPPORT\n+#define EPFNOSUPPORT EAFNOSUPPORT\n+#endif\n+#ifndef EPROTONOSUPPORT\n+#define EPROTONOSUPPORT EAFNOSUPPORT\n+#endif\n+\n+int socket_udp6(void)\n+{\n+#ifdef LIBC_HAS_IP6\n+  int s;\n+\n+  if (noipv6) goto compat;\n+  s = socket(PF_INET6,SOCK_DGRAM,0);\n+  if (s == -1) {\n+    if (errno == EINVAL || errno == EAFNOSUPPORT || errno == EPFNOSUPPORT || errno == EPROTONOSUPPORT) {\n+compat:\n+      s=socket(AF_INET,SOCK_DGRAM,0);\n+      noipv6=1;\n+      if (s==-1) return -1;\n+    } else\n+    return -1;\n+  }\n+  if (ndelay_on(s) == -1) { close(s); return -1; }\n+#ifdef IPV6_V6ONLY\n+  {\n+    int zero=0;\n+    setsockopt(s,IPPROTO_IPV6,IPV6_V6ONLY,(void*)&zero,sizeof(zero));\n+  }\n+#endif\n+  return s;\n+#else\n+  return socket_udp();\n+#endif\n+}\ndiff -uNr djbdns-1.05/tdlookup.c djbdns-1.05-ipv6/tdlookup.c\n--- djbdns-1.05/tdlookup.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/tdlookup.c\t2017-01-07 13:34:48.964745102 +0100\n@@ -8,6 +8,8 @@\n #include \"dns.h\"\n #include \"seek.h\"\n #include \"response.h\"\n+#include \"ip6.h\"\n+#include \"clientloc.h\"\n \n static int want(const char *owner,const char type[2])\n {\n@@ -61,7 +63,7 @@\n     if (cdb_read(&c,data,dlen,cdb_datapos(&c)) == -1) return -1;\n     dpos = dns_packet_copy(data,dlen,0,type,2); if (!dpos) return -1;\n     dpos = dns_packet_copy(data,dlen,dpos,&ch,1); if (!dpos) return -1;\n-    if ((ch == '=' + 1) || (ch == '*' + 1)) {\n+    if ((ch == '=' + 1) || (ch == '*' + 1) || (ch == '6' + 1)) {\n       --ch;\n       dpos = dns_packet_copy(data,dlen,dpos,recordloc,2); if (!dpos) return -1;\n       if (byte_diff(recordloc,2,clientloc)) continue;\n@@ -119,8 +121,9 @@\n   char x[20];\n   uint16 u16;\n   char addr[8][4];\n-  int addrnum;\n-  uint32 addrttl;\n+  char addr6[8][16];\n+  int addrnum,addr6num;\n+  uint32 addrttl,addr6ttl;\n   int i;\n \n   anpos = response_len;\n@@ -152,8 +155,8 @@\n   wild = q;\n \n   for (;;) {\n-    addrnum = 0;\n-    addrttl = 0;\n+    addrnum = addr6num = 0;\n+    addrttl = addr6ttl = 0;\n     cdb_findstart(&c);\n     while (r = find(wild,wild != q)) {\n       if (r == -1) return 0;\n@@ -171,6 +174,17 @@\n \tif (addrnum < 1000000) ++addrnum;\n \tcontinue;\n       }\n+      if (byte_equal(type,2,DNS_T_AAAA) && (dlen - dpos == 16)) {\n+\taddr6ttl = ttl;\n+\ti = dns_random(addr6num + 1);\n+\tif (i < 8) {\n+\t  if ((i < addr6num) && (addr6num < 8))\n+\t    byte_copy(addr6[addr6num],16,addr6[i]);\n+\t  byte_copy(addr6[i],16,data + dpos);\n+\t}\n+\tif (addr6num < 1000000) ++addr6num;\n+\tcontinue;\n+      }\n       if (!response_rstart(q,type,ttl)) return 0;\n       if (byte_equal(type,2,DNS_T_NS) || byte_equal(type,2,DNS_T_CNAME) || byte_equal(type,2,DNS_T_PTR)) {\n \tif (!doname()) return 0;\n@@ -195,6 +209,12 @@\n \tif (!response_addbytes(addr[i],4)) return 0;\n \tresponse_rfinish(RESPONSE_ANSWER);\n       }\n+    for (i = 0;i < addr6num;++i)\n+      if (i < 8) {\n+\tif (!response_rstart(q,DNS_T_AAAA,addr6ttl)) return 0;\n+\tif (!response_addbytes(addr6[i],16)) return 0;\n+\tresponse_rfinish(RESPONSE_ANSWER);\n+      }\n \n     if (flagfound) break;\n     if (wild == control) break;\n@@ -259,6 +279,11 @@\n \t    if (!dobytes(4)) return 0;\n             response_rfinish(RESPONSE_ADDITIONAL);\n \t  }\n+\t  else if (byte_equal(type,2,DNS_T_AAAA)) {\n+            if (!response_rstart(d1,DNS_T_AAAA,ttl)) return 0;\n+\t    if (!dobytes(16)) return 0;\n+            response_rfinish(RESPONSE_ADDITIONAL);\n+\t  }\n         }\n       }\n     }\n@@ -278,30 +303,18 @@\n   return 1;\n }\n \n-int respond(char *q,char qtype[2],char ip[4])\n+int respond(char *q,char qtype[2],char ip[16])\n {\n   int fd;\n   int r;\n-  char key[6];\n+\n+  find_client_loc(clientloc, ip);\n \n   tai_now(&now);\n   fd = open_read(\"data.cdb\");\n   if (fd == -1) return 0;\n   cdb_init(&c,fd);\n \n-  byte_zero(clientloc,2);\n-  key[0] = 0;\n-  key[1] = '%';\n-  byte_copy(key + 2,4,ip);\n-  r = cdb_find(&c,key,6);\n-  if (!r) r = cdb_find(&c,key,5);\n-  if (!r) r = cdb_find(&c,key,4);\n-  if (!r) r = cdb_find(&c,key,3);\n-  if (!r) r = cdb_find(&c,key,2);\n-  if (r == -1) return 0;\n-  if (r && (cdb_datalen(&c) == 2))\n-    if (cdb_read(&c,clientloc,2,cdb_datapos(&c)) == -1) return 0;\n-\n   r = doit(q,qtype);\n \n   cdb_free(&c);\ndiff -uNr djbdns-1.05/tinydns-conf.c djbdns-1.05-ipv6/tinydns-conf.c\n--- djbdns-1.05/tinydns-conf.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/tinydns-conf.c\t2017-01-07 13:34:48.964745102 +0100\n@@ -82,6 +82,18 @@\n   finish();\n   perm(0755);\n \n+  start(\"root/add-host6\");\n+  outs(\"#!/bin/sh\\nexec \");\n+  outs(auto_home); outs(\"/bin/tinydns-edit data data.new add host6 ${1+\\\"$@\\\"}\\n\");\n+  finish();\n+  perm(0755);\n+\n+  start(\"root/add-alias6\");\n+  outs(\"#!/bin/sh\\nexec \");\n+  outs(auto_home); outs(\"/bin/tinydns-edit data data.new add alias6 ${1+\\\"$@\\\"}\\n\");\n+  finish();\n+  perm(0755);\n+\n   start(\"root/add-mx\");\n   outs(\"#!/bin/sh\\nexec \");\n   outs(auto_home); outs(\"/bin/tinydns-edit data data.new add mx ${1+\\\"$@\\\"}\\n\");\ndiff -uNr djbdns-1.05/tinydns-data.c djbdns-1.05-ipv6/tinydns-data.c\n--- djbdns-1.05/tinydns-data.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/tinydns-data.c\t2017-01-07 13:47:57.183708361 +0100\n@@ -8,6 +8,7 @@\n #include \"byte.h\"\n #include \"fmt.h\"\n #include \"ip4.h\"\n+#include \"ip6.h\"\n #include \"exit.h\"\n #include \"case.h\"\n #include \"scan.h\"\n@@ -65,16 +66,23 @@\n   char ch;\n   unsigned int j;\n \n-  for (;;)\n-    if (*s == '.')\n-      ++s;\n-    else {\n-      j = scan_ulong(s,&u);\n-      if (!j) return;\n-      s += j;\n-      ch = u;\n-      if (!stralloc_catb(out,&ch,1)) nomem();\n-    }\n+  if (*s=='s') {\n+    ++s;\n+    if (!stralloc_catb(out,\"s\",1) || !stralloc_cats(out,s)) nomem();\n+  } else {\n+    if (*s=='f') ++s;\n+    if (!stralloc_catb(out,\"f\",1)) nomem();\n+    for (;;)\n+      if (*s == '.')\n+\t++s;\n+      else {\n+\tj = scan_ulong(s,&u);\n+\tif (!j) return;\n+\ts += j;\n+\tch = u;\n+\tif (!stralloc_catb(out,&ch,1)) nomem();\n+      }\n+  }\n }\n \n void txtparse(stralloc *sa)\n@@ -172,6 +180,7 @@\n static char *d1;\n static char *d2;\n char dptr[DNS_NAME4_DOMAIN];\n+char d6ptr[DNS_NAME6_DOMAIN];\n \n char strnum[FMT_ULONG];\n \n@@ -181,6 +190,14 @@\n   strerr_die4x(111,FATAL,\"unable to parse data line \",strnum,why);\n }\n \n+static unsigned int scan_u32(const char *s,uint32 *u) {\n+  unsigned long l;\n+  unsigned int r=scan_ulong(s,&l);\n+  if ((uint32)l != l) return 0;\n+  if (r) *u=l;\n+  return r;\n+}\n+\n int main()\n {\n   int fddata;\n@@ -191,8 +208,9 @@\n   unsigned long ttl;\n   char ttd[8];\n   char loc[2];\n-  unsigned long u;\n+  uint32 u;\n   char ip[4];\n+  char ip6[16];\n   char type[2];\n   char soa[20];\n   char buf[4];\n@@ -251,19 +269,19 @@\n \tif (!dns_domain_fromdot(&d1,f[0].s,f[0].len)) nomem();\n \n \tif (!stralloc_0(&f[3])) nomem();\n-\tif (!scan_ulong(f[3].s,&u)) uint32_unpack_big(defaultsoa,&u);\n+\tif (!scan_u32(f[3].s,&u)) uint32_unpack_big(defaultsoa,&u);\n \tuint32_pack_big(soa,u);\n \tif (!stralloc_0(&f[4])) nomem();\n-\tif (!scan_ulong(f[4].s,&u)) uint32_unpack_big(defaultsoa + 4,&u);\n+\tif (!scan_u32(f[4].s,&u)) uint32_unpack_big(defaultsoa + 4,&u);\n \tuint32_pack_big(soa + 4,u);\n \tif (!stralloc_0(&f[5])) nomem();\n-\tif (!scan_ulong(f[5].s,&u)) uint32_unpack_big(defaultsoa + 8,&u);\n+\tif (!scan_u32(f[5].s,&u)) uint32_unpack_big(defaultsoa + 8,&u);\n \tuint32_pack_big(soa + 8,u);\n \tif (!stralloc_0(&f[6])) nomem();\n-\tif (!scan_ulong(f[6].s,&u)) uint32_unpack_big(defaultsoa + 12,&u);\n+\tif (!scan_u32(f[6].s,&u)) uint32_unpack_big(defaultsoa + 12,&u);\n \tuint32_pack_big(soa + 12,u);\n \tif (!stralloc_0(&f[7])) nomem();\n-\tif (!scan_ulong(f[7].s,&u)) uint32_unpack_big(defaultsoa + 16,&u);\n+\tif (!scan_u32(f[7].s,&u)) uint32_unpack_big(defaultsoa + 16,&u);\n \tuint32_pack_big(soa + 16,u);\n \n \tif (!stralloc_0(&f[8])) nomem();\n@@ -339,6 +357,33 @@\n \t}\n \tbreak;\n \n+      case '6': case '3':\n+\tif (!dns_domain_fromdot(&d1,f[0].s,f[0].len)) nomem();\n+\tif (!stralloc_0(&f[2])) nomem();\n+\tif (!scan_ulong(f[2].s,&ttl)) ttl = TTL_POSITIVE;\n+\tttdparse(&f[3],ttd);\n+\tlocparse(&f[4],loc);\n+\n+\tif (!stralloc_0(&f[1])) nomem();\n+\tif (ip6_scan_flat(f[1].s,ip6)) {\n+\t  rr_start(DNS_T_AAAA,ttl,ttd,loc);\n+\t  rr_add(ip6,16);\n+\t  rr_finish(d1);\n+\n+\t  if (line.s[0] == '6') {\t/* emit both .ip6.arpa and .ip6.int */\n+\t    dns_name6_domain(d6ptr,ip6,DNS_IP6_ARPA);\n+\t    rr_start(DNS_T_PTR,ttl,ttd,loc);\n+\t    rr_addname(d1);\n+\t    rr_finish(d6ptr);\n+\n+\t    dns_name6_domain(d6ptr,ip6,DNS_IP6_INT);\n+\t    rr_start(DNS_T_PTR,ttl,ttd,loc);\n+\t    rr_addname(d1);\n+\t    rr_finish(d6ptr);\n+\t  }\n+\t}\n+\tbreak;\n+\n       case '@':\n \tif (!dns_domain_fromdot(&d1,f[0].s,f[0].len)) nomem();\n \tif (!stralloc_0(&f[4])) nomem();\n@@ -355,7 +400,7 @@\n \tif (!dns_domain_fromdot(&d2,f[2].s,f[2].len)) nomem();\n \n \tif (!stralloc_0(&f[3])) nomem();\n-\tif (!scan_ulong(f[3].s,&u)) u = 0;\n+\tif (!scan_u32(f[3].s,&u)) u = 0;\n \n \trr_start(DNS_T_MX,ttl,ttd,loc);\n \tuint16_pack_big(buf,u);\n@@ -417,7 +462,7 @@\n \tlocparse(&f[5],loc);\n \n \tif (!stralloc_0(&f[1])) nomem();\n-\tscan_ulong(f[1].s,&u);\n+\tscan_u32(f[1].s,&u);\n \tuint16_pack_big(type,u);\n \tif (byte_equal(type,2,DNS_T_AXFR))\n \t  syntaxerror(\": type AXFR prohibited\");\ndiff -uNr djbdns-1.05/tinydns-edit.c djbdns-1.05-ipv6/tinydns-edit.c\n--- djbdns-1.05/tinydns-edit.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/tinydns-edit.c\t2017-01-07 13:34:48.964745102 +0100\n@@ -13,6 +13,7 @@\n #include \"str.h\"\n #include \"fmt.h\"\n #include \"ip4.h\"\n+#include \"ip6.h\"\n #include \"dns.h\"\n \n #define FATAL \"tinydns-edit: fatal: \"\n@@ -25,7 +26,8 @@\n \n void die_usage()\n {\n-  strerr_die1x(100,\"tinydns-edit: usage: tinydns-edit data data.new add [ns|childns|host|alias|mx] domain a.b.c.d\");\n+  strerr_die1x(100,\"tinydns-edit: usage: tinydns-edit data data.new add [ns|childns|host|alias|mx] domain a.b.c.d\\n\"\n+                   \"tinydns-edit: usage: tinydns-edit data data.new add [host6|alias6] domain a:b:c:d:e:f:g:h\");\n }\n void nomem()\n {\n@@ -43,6 +45,7 @@\n char mode;\n static char *target;\n char targetip[4];\n+char targetip6[16];\n \n int fd;\n buffer b;\n@@ -61,7 +64,9 @@\n static char *d1;\n static char *d2;\n char ip[4];\n+char ip6[16];\n char ipstr[IP4_FMT];\n+char ip6str[IP6_FMT];\n char strnum[FMT_ULONG];\n \n static char *names[26];\n@@ -96,7 +101,9 @@\n   if (str_equal(*argv,\"ns\")) mode = '.';\n   else if (str_equal(*argv,\"childns\")) mode = '&';\n   else if (str_equal(*argv,\"host\")) mode = '=';\n+  else if (str_equal(*argv,\"host6\")) mode = '6';\n   else if (str_equal(*argv,\"alias\")) mode = '+';\n+  else if (str_equal(*argv,\"alias6\")) mode = '3';\n   else if (str_equal(*argv,\"mx\")) mode = '@';\n   else die_usage();\n \n@@ -104,7 +111,11 @@\n   if (!dns_domain_fromdot(&target,*argv,str_len(*argv))) nomem();\n \n   if (!*++argv) die_usage();\n-  if (!ip4_scan(*argv,targetip)) die_usage();\n+  if (mode == '6' || mode == '3') {\n+    if (!ip6_scan(*argv,targetip6)) die_usage();\n+  } else {\n+    if (!ip4_scan(*argv,targetip)) die_usage();\n+  }\n \n   umask(077);\n \n@@ -129,7 +140,7 @@\n \tif (!dns_domain_fromdot(&names[i],f[0].s,f[0].len)) nomem();\n       }\n       break;\n-    case '+': case '=':\n+    case '+': case '=': case '6': case '3':\n       ttl = TTL_POSITIVE;\n       break;\n     case '@':\n@@ -203,6 +214,18 @@\n \t}\n \tbreak;\n \n+      case '6':\n+\tif (line.s[0] == '6') {\n+\t  if (!dns_domain_fromdot(&d1,f[0].s,f[0].len)) nomem();\n+\t  if (dns_domain_equal(d1,target))\n+\t    strerr_die2x(100,FATAL,\"host name already used\");\n+\t  if (!stralloc_0(&f[1])) nomem();\n+\t  if (ip6_scan(f[1].s,ip6))\n+\t    if (byte_equal(ip,16,targetip6))\n+\t      strerr_die2x(100,FATAL,\"IPv6 address already used\");\n+\t}\n+\tbreak;\n+\n       case '@':\n \tif (line.s[0] == '@') {\n           if (!dns_domain_fromdot(&d1,f[0].s,f[0].len)) nomem();\n@@ -228,7 +251,11 @@\n   if (!stralloc_copyb(&f[0],&mode,1)) nomem();\n   if (!dns_domain_todot_cat(&f[0],target)) nomem();\n   if (!stralloc_cats(&f[0],\":\")) nomem();\n-  if (!stralloc_catb(&f[0],ipstr,ip4_fmt(ipstr,targetip))) nomem();\n+  if (mode == '6' || mode == '3') {\n+    if (!stralloc_catb(&f[0],ip6str,ip6_fmt_flat(ip6str,targetip6))) nomem();\n+  } else {\n+    if (!stralloc_catb(&f[0],ipstr,ip4_fmt(ipstr,targetip))) nomem();\n+  }\n   switch(mode) {\n     case '.': case '&': case '@':\n       for (i = 0;i < 26;++i)\ndiff -uNr djbdns-1.05/tinydns-get.c djbdns-1.05-ipv6/tinydns-get.c\n--- djbdns-1.05/tinydns-get.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/tinydns-get.c\t2017-01-07 13:34:48.964745102 +0100\n@@ -11,6 +11,7 @@\n #include \"printpacket.h\"\n #include \"parsetype.h\"\n #include \"ip4.h\"\n+#include \"ip6.h\"\n #include \"dns.h\"\n \n extern int respond(char *,char *,char *);\n@@ -26,7 +27,7 @@\n   strerr_die2sys(111,FATAL,\"unable to parse: \");\n }\n \n-static char ip[4];\n+static char ip[16];\n static char type[2];\n static char *q;\n \n@@ -45,7 +46,7 @@\n   if (!dns_domain_fromdot(&q,*argv,str_len(*argv))) oops();\n \n   if (*++argv) {\n-    if (!ip4_scan(*argv,ip)) usage();\n+    if (!ip6_scan(*argv,ip)) usage();\n   }\n \n   if (!stralloc_copys(&out,\"\")) oops();\ndiff -uNr djbdns-1.05/tryip6.c djbdns-1.05-ipv6/tryip6.c\n--- djbdns-1.05/tryip6.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/tryip6.c\t2017-01-07 13:34:48.964745102 +0100\n@@ -0,0 +1,8 @@\n+#include <sys/types.h>\n+#include <sys/socket.h>\n+#include <netinet/in.h>\n+\n+main() {\n+  struct sockaddr_in6 sa;\n+  sa.sin6_family = PF_INET6;\n+}\ndiff -uNr djbdns-1.05/tryn2i.c djbdns-1.05-ipv6/tryn2i.c\n--- djbdns-1.05/tryn2i.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/tryn2i.c\t2017-01-07 13:34:48.964745102 +0100\n@@ -0,0 +1,8 @@\n+#include <sys/types.h>\n+#include <sys/socket.h>\n+#include <net/if.h>\n+\n+int main() {\n+  static char ifname[IFNAMSIZ];\n+  char *tmp=if_indextoname(0,ifname);\n+}\ndiff -uNr djbdns-1.05/trysa6.c djbdns-1.05-ipv6/trysa6.c\n--- djbdns-1.05/trysa6.c\t1970-01-01 01:00:00.000000000 +0100\n+++ djbdns-1.05-ipv6/trysa6.c\t2017-01-07 13:34:48.964745102 +0100\n@@ -0,0 +1,8 @@\n+#include <sys/types.h>\n+#include <sys/socket.h>\n+#include <netinet/in.h>\n+\n+main() {\n+  struct sockaddr_in6 sa;\n+  sa.sin6_scope_id = 1;\n+}\ndiff -uNr djbdns-1.05/tryshsgr.c djbdns-1.05-ipv6/tryshsgr.c\n--- djbdns-1.05/tryshsgr.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/tryshsgr.c\t2017-01-07 13:56:13.159685243 +0100\n@@ -1,6 +1,10 @@\n+#include <sys/types.h>\n+#include <unistd.h>\n+#include <grp.h>\n+\n int main()\n {\n-  short x[4];\n+  gid_t x[4];\n  \n   x[0] = x[1] = 1;\n   if (getgroups(1,x) == 0) if (setgroups(1,x) == -1) _exit(1);\ndiff -uNr djbdns-1.05/utime.c djbdns-1.05-ipv6/utime.c\n--- djbdns-1.05/utime.c\t2001-02-11 22:11:45.000000000 +0100\n+++ djbdns-1.05-ipv6/utime.c\t2017-01-07 13:58:11.607679722 +0100\n@@ -1,5 +1,6 @@\n #include <sys/types.h>\n #include <sys/time.h>\n+#include <utime.h>\n #include \"scan.h\"\n #include \"exit.h\"\n \n@@ -7,7 +8,7 @@\n \n char *ustr;\n unsigned long u;\n-time_t ut[2];\n+struct utimbuf ut;\n \n int main(int argc,char **argv)\n {\n@@ -18,7 +19,7 @@\n   if (!ustr) _exit(100);\n   scan_ulong(ustr,&u);\n \n-  ut[0] = ut[1] = u;\n-  if (utime(fn,ut) == -1) _exit(111);\n+  ut.actime = ut.modtime = u;\n+  if (utime(fn,&ut) == -1) _exit(111);\n   _exit(0);\n }\n",
-			"file": "/tmp/xa-584TK0/djbdns-1.05-test28.diff",
-			"file_size": 120118,
-			"file_write_time": 132343842897422894,
-			"settings":
-			{
-				"buffer_size": 120117,
-				"line_ending": "Unix"
+				"name": "const antlr4 = require('antlr4');"
 			}
 		}
 	],
@@ -236,6 +154,14 @@
 		"selected_items":
 		[
 			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"outline",
+				"Browse Mode: Outline (Right)"
+			],
+			[
 				"build",
 				"Build With: antlr4 - Build current "
 			],
@@ -250,10 +176,6 @@
 			[
 				"adv",
 				"Package Control: Advanced Install Package"
-			],
-			[
-				"install",
-				"Package Control: Install Package"
 			],
 			[
 				"outli",
@@ -278,10 +200,6 @@
 			[
 				"remove pac",
 				"Package Control: Remove Package"
-			],
-			[
-				"outline",
-				"Browse Mode: Outline (Right)"
 			],
 			[
 				"extract",
@@ -457,6 +375,20 @@
 	],
 	"file_history":
 	[
+		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/geometry.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/geometry.h",
+		"/home/roman/Dokumente/Sources/plot-cv/src/highgui-viewer.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/antlr/JavaScriptLexer.g4",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/Lua.g4",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/bnf.g4",
+		"/home/roman/Dokumente/Sources/shish/doc/posix/ieee-p1003.2-d11.2-s3.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/JavaScriptParser.g4",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/JavaScriptLexer.g4",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/JSXLexer.g4",
+		"/tmp/xa-584TK0/%F",
+		"/tmp/xa-584TK0/djbdns-1.05-test28.diff",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/antlr/ECMAScript.g4",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/HTMLLexer.g4",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/antlr/JavaScriptParser.g4",
@@ -470,7 +402,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/src/js.h",
 		"/home/roman/Dokumente/Sources/plot-cv/src/plot-cv.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/test.js",
-		"/tmp/xa-584TK0/djbdns-1.05-test28.diff",
 		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.h",
 		"/home/roman/Dokumente/Sources/c-utils/defiance.html",
 		"/home/roman/Dokumente/Sources/c-utils/tmp.json",
@@ -484,7 +415,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/Headphone-Amplifier-ClassAB-alt3.sch",
-		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
 		"/home/roman/Downloads/rtttl.c",
 		"/home/roman/Dokumente/Sources/plot-cv/Headphone-Amplifier-ClassAB-alt3.brd",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
@@ -553,11 +483,9 @@
 		"/home/roman/Dokumente/Sources/plot-cv/test-cli.js",
 		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
 		"/home/roman/Dokumente/Sources/plot-cv/src/js.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.h",
 		"/home/roman/Dokumente/Sources/plot-cv/src/polygon.h",
 		"/home/roman/Dokumente/Sources/plot-cv/js-bindings.cmake",
-		"/home/roman/Dokumente/Sources/plot-cv/src/highgui-viewer.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-libc.h",
 		"/home/roman/Dokumente/Sources/plot-cv/src/imgui-bezier-widget.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/src/imgui-viewer.cpp",
@@ -565,7 +493,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/src/matrix.h",
 		"/home/roman/Dokumente/Sources/plot-cv/src/js_point_iterator.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/src/js_size.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/geometry.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/opencv/contour.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/examples/fib.c",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_contour_init.cpp",
@@ -575,20 +502,11 @@
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/qjsc.c",
 		"/home/roman/Dokumente/Sources/plot-cv/imgui-viewer.cmake",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_mat_init.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_point_iterator_init.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_rect_init.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_size_init.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/examples/point.c",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_point_init.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_point_new.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_contours_new.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs.c",
-		"/home/roman/Dokumente/Sources/plot-cv/src/geometry.h",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_contour_area.cpp"
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/js_point_iterator_init.cpp"
 	],
 	"find":
 	{
-		"height": 40.0
+		"height": 39.0
 	},
 	"find_in_files":
 	{
@@ -610,9 +528,16 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": true,
+		"case_sensitive": false,
 		"find_history":
 		[
+			"functionDe",
+			"functionDef",
+			"asterisk",
+			"generator",
+			"async",
+			"Async",
+			"initialize",
 			"current",
 			"curent",
 			"^\\s*3.10",
@@ -733,14 +658,7 @@
 			"init",
 			"TransformationLi",
 			"isConcatSpreadable",
-			"\\.identity\\(\\)",
-			"deg2rad",
-			"rad2deg",
-			"DEG2RAD",
-			"this.constru",
-			"species",
-			"clone",
-			"clone ="
+			"\\.identity\\(\\)"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -903,7 +821,8 @@
 						],
 						"settings":
 						{
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/grammars/Lua.g4",
+							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/test-antlr.js",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
@@ -917,442 +836,109 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 4,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 5,
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "src/jsbindings.cpp",
+					"file": "src/plot-cv.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2828,
+						"buffer_size": 34854,
 						"regions":
 						{
-						},
-						"selection":
-						[
-							[
-								248,
-								248
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Rainglow/rainglow/Horizon Contrast (rainglow).tmTheme",
-							"syntax": "Packages/C++11/C++11.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 11,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "src/geometry.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 436,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Rainglow/rainglow/Horizon Contrast (rainglow).tmTheme",
-							"syntax": "Packages/C++11/C++11.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "src/geometry.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5855,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Rainglow/rainglow/Horizon Contrast (rainglow).tmTheme",
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 12,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "src/highgui-viewer.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7933,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Rainglow/rainglow/Horizon Contrast (rainglow).tmTheme",
-							"syntax": "Packages/C++11/C++11.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "lib/ecmascript/antlr/JavaScriptLexer.g4",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 19601,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3335,
-								3335
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Rainglow/rainglow/Horizon Contrast (rainglow).tmTheme",
-							"syntax": "Packages/ANTLR syntax highlight/Antlr.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 5422.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "lib/grammars/Lua.g4",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6290,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1783,
-								1783
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Rainglow/rainglow/Horizon Contrast (rainglow).tmTheme",
-							"syntax": "Packages/ANTLR syntax highlight/Antlr.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "lib/grammars/bnf.g4",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2294,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2,
-								2
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Rainglow/rainglow/Horizon Contrast (rainglow).tmTheme",
-							"syntax": "Packages/ANTLR syntax highlight/Antlr.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "/home/roman/Dokumente/Sources/shish/doc/posix/ieee-p1003.2-d11.2-s3.txt",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 242496,
-						"regions":
-						{
-							"col_0000FFFF":
+							"col_808080FF":
 							{
 								"flags": 16,
 								"regions":
 								[
 									[
-										88049,
-										88053
+										4955,
+										4959
 									],
 									[
-										115976,
-										115980
+										4993,
+										4997
 									],
 									[
-										116004,
-										116008
+										5056,
+										5060
+									],
+									[
+										5127,
+										5131
+									],
+									[
+										5228,
+										5232
+									],
+									[
+										5451,
+										5455
+									],
+									[
+										12733,
+										12737
+									],
+									[
+										12797,
+										12801
+									],
+									[
+										12833,
+										12837
 									]
 								],
-								"scope": "col_0000FFFF"
+								"scope": "col_808080FF"
 							},
-							"col_0000FFFF_icon":
+							"col_808080FF_icon":
 							{
 								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_0000FFFF_circle.png",
+								"icon": "Packages/User/Color Highlight.cache/col_808080FF_circle.png",
 								"regions":
 								[
 									[
-										87991,
-										87991
+										4942,
+										4942
 									],
 									[
-										115965,
-										115965
+										4989,
+										4989
 									],
 									[
-										115997,
-										115997
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF0000FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										64801,
-										64804
+										5038,
+										5038
 									],
 									[
-										88012,
-										88015
+										5109,
+										5109
 									],
 									[
-										115879,
-										115882
+										5210,
+										5210
 									],
 									[
-										115907,
-										115910
+										5437,
+										5437
 									],
 									[
-										115961,
-										115964
+										12720,
+										12720
 									],
 									[
-										116033,
-										116036
-									]
-								],
-								"scope": "col_FF0000FF"
-							},
-							"col_FF0000FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF0000FF_circle.png",
-								"regions":
-								[
-									[
-										64758,
-										64758
+										12781,
+										12781
 									],
 									[
-										87991,
-										87991
-									],
-									[
-										115868,
-										115868
-									],
-									[
-										115900,
-										115900
-									],
-									[
-										115954,
-										115954
-									],
-									[
-										116026,
-										116026
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FFFFFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										20350,
-										20355
-									],
-									[
-										73514,
-										73519
-									],
-									[
-										84123,
-										84128
-									],
-									[
-										85629,
-										85634
-									],
-									[
-										85898,
-										85903
-									],
-									[
-										85937,
-										85942
-									],
-									[
-										86176,
-										86181
-									],
-									[
-										86217,
-										86222
-									],
-									[
-										86344,
-										86349
-									],
-									[
-										87769,
-										87774
-									],
-									[
-										88037,
-										88042
-									]
-								],
-								"scope": "col_FFFFFFFF"
-							},
-							"col_FFFFFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
-								"regions":
-								[
-									[
-										20312,
-										20312
-									],
-									[
-										73487,
-										73487
-									],
-									[
-										84092,
-										84092
-									],
-									[
-										85604,
-										85604
-									],
-									[
-										85838,
-										85838
-									],
-									[
-										85917,
-										85917
-									],
-									[
-										86152,
-										86152
-									],
-									[
-										86309,
-										86309
-									],
-									[
-										87756,
-										87756
-									],
-									[
-										87991,
-										87991
+										12814,
+										12814
 									]
 								],
 								"scope": "col_gutter"
@@ -1361,76 +947,44 @@
 						"selection":
 						[
 							[
-								170715,
-								170715
+								66,
+								66
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Rainglow/rainglow/Horizon Contrast (rainglow).tmTheme",
-							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"color_scheme": "Packages/Babel/Next (Roman).tmTheme",
+							"syntax": "Packages/C++/C++.sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 96085.0,
+						"translation.y": 1512.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
-					"file": "plot-cv.sublime-project",
+					"buffer": 2,
+					"file": "lib/grammars/ECMAScript.g4",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3403,
+						"buffer_size": 36251,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1136,
-								1136
+								956,
+								956
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Rainglow/rainglow/Horizon Contrast (rainglow).tmTheme",
-							"syntax": "Packages/sublime-better-javascript/JSON.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"word_wrap": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 382.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "lib/grammars/JavaScriptParser.g4",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 15803,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Rainglow/rainglow/Horizon Contrast (rainglow).tmTheme",
+							"color_scheme": "Packages/Babel/Next (Roman).tmTheme",
 							"syntax": "Packages/ANTLR syntax highlight/Antlr.tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
@@ -1439,97 +993,68 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "lib/grammars/JavaScript/JavaScriptParserBase.js",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 2235,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								331,
+								331
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Babel/Next (Roman).tmTheme",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 567.0,
+						"zoom_level": 1.0
+					},
 					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 11,
+					"buffer": 4,
+					"file": "test-antlr.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 822,
+						"buffer_size": 1152,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								822,
-								822
+								859,
+								859
 							]
 						],
 						"settings":
 						{
-							"auto_indent": false,
-							"color_scheme": "Packages/Rainglow/rainglow/Horizon Contrast (rainglow).tmTheme",
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"tab_size": 2,
-							"tab_width": 2,
-							"translate_tabs_to_spaces": true,
-							"word_wrap": true
+							"auto_name": "const antlr4 = require('antlr4');",
+							"color_scheme": "Packages/Babel/Next (Roman).tmTheme",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 12,
-					"file": "/tmp/xa-584TK0/%F",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 0,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 13,
-					"type": "text"
-				},
-				{
-					"buffer": 13,
-					"file": "/tmp/xa-584TK0/djbdns-1.05-test28.diff",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 120117,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								207,
-								207
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Rainglow/rainglow/Horizon Contrast (rainglow).tmTheme",
-							"syntax": "Packages/Diff/Diff.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 67.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -1612,6 +1137,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"plot",
+				"plot-cv.sublime-project"
+			],
 			[
 				"plot-cv.si",
 				"plot-cv.sublime-project"
@@ -2119,10 +1648,6 @@
 			[
 				"js_pon",
 				"tmp/js_point_new.cpp"
-			],
-			[
-				"contou",
-				"src/js_contour.cpp"
 			]
 		],
 		"width": 0.0
