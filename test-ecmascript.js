@@ -136,7 +136,7 @@ function main(args) {
       //  console.log("ast:", [...posMap.keys()]);$
       console.log('commentMap:', commentMap);
       console.log('posMap:', [...posMap.keys()]);
-          console.log('ast:', ast);
+      console.log('ast:', ast);
 
       //  console.log("nodes:", parser.nodes.map(n =>  [Util.className(n), n.position.toString()]));
     } catch(err) {
