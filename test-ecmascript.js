@@ -24,7 +24,7 @@ Error.stackTraceLimit = 1000;
 global.console = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
-  inspectOptions: { depth: 3, colors: true }
+  inspectOptions: { depth: 5, colors: true }
 });
 
 const testfn = () => true;
@@ -150,6 +150,8 @@ function main(args) {
       //  console.log("ast:", ast);
       console.log('saving to:', output_file);
       dumpFile(output_file, printAst(ast, parser.comments, printer));
+    } else {
+      process.exit(1);
     }
 
     console.log('files:', files);
