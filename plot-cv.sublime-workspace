@@ -112,10 +112,10 @@
 	"buffers":
 	[
 		{
-			"contents": "Inherit\nClipperLib.Path\nClipperLib.Paths\nClipperLib.PolyNode\nPolyNode.prototype.IsHoleNode\nPolyNode.prototype.ChildCount\nPolyNode.prototype.Contour\nPolyNode.prototype.AddChild\nPolyNode.prototype.GetNext\nPolyNode.prototype.GetNextSiblingUp\nPolyNode.prototype.Childs\nPolyNode.prototype.Parent\nPolyNode.prototype.IsHole\nClipperLib.PolyTree\nPolyTree.prototype.Clear\nPolyTree.prototype.GetFirst\nPolyTree.prototype.Total\nClipperLib.Clear\nClipperLib.FPoint\nFPoint.op_Equality\nFPoint.op_Inequality\nClipperLib.FPoint0\nClipperLib.FPoint1\nClipperLib.FPoint1dp\nClipperLib.FPoint2\nClipperLib.FRect\nClipperLib.FRect0\nClipperLib.FRect1\nClipperLib.FRect4\nClipperLib.TEdge\nClipperLib.IntersectNode\nClipperLib.MyIntersectNodeSort\nMyIntersectNodeSort.Compare\nClipperLib.LocalMinima\nClipperLib.Scanbeam\nClipperLib.Maxima\nClipperLib.OutRec\nClipperLib.OutPt\nClipperLib.Join\nClipperLib.ClipperBase\nClipperBase.near_zero\nClipperBase.IsHorizontal\nClipperBase.prototype.PointIsVertex\nClipperBase.prototype.PointOnLineSegment\nClipperBase.prototype.PointOnPolygon\nClipperBase.SlopesEqual\nClipperBase.SlopesEqual3\nClipperBase.SlopesEqual4\nClipperBase.SlopesEqual5\nClipperBase.prototype.Clear\nClipperBase.prototype.DisposeLocalMinimaList\nClipperBase.prototype.RangeTest\nClipperBase.prototype.InitEdge\nClipperBase.prototype.InitEdge2\nClipperBase.prototype.FindNextLocMin\nClipperBase.prototype.ProcessBound\nClipperBase.prototype.AddPath\nClipperBase.prototype.AddPaths\nClipperBase.prototype.Pt2IsBetweenPt1AndPt3\nClipperBase.prototype.RemoveEdge\nClipperBase.prototype.SetDx\nClipperBase.prototype.InsertLocalMinima\nClipperBase.prototype.PopLocalMinima\nClipperBase.prototype.ReverseHorizontal\nClipperBase.prototype.Reset\nClipperBase.prototype.InsertScanbeam\nClipperBase.prototype.PopScanbeam\nClipperBase.prototype.LocalMinimaPending\nClipperBase.prototype.CreateOutRec\nClipperBase.prototype.DisposeOutRec\nClipperBase.prototype.UpdateEdgeIntoAEL\nClipperBase.prototype.SwapPositionsInAEL\nClipperBase.prototype.DeleteFromAEL\nClipperLib.Clipper\nClipper.prototype.Clear\nClipper.prototype.InsertMaxima\nClipper.prototype.Execute\nClipper.prototype.FixHoleLinkage\nClipper.prototype.ExecuteInternal\nClipper.prototype.DisposeAllPolyPts\nClipper.prototype.AddJoin\nClipper.prototype.AddGhostJoin\nClipper.prototype.SetZ\nClipper.prototype.InsertLocalMinimaIntoAEL\nClipper.prototype.InsertEdgeIntoAEL\nClipper.prototype.E2InsertsBeforeE1\nClipper.prototype.IsEvenOddFillType\nClipper.prototype.IsEvenOddAltFillType\nClipper.prototype.IsContributing\nClipper.prototype.SetWindingCount\nClipper.prototype.AddEdgeToSEL\nClipper.prototype.PopEdgeFromSEL\nClipper.prototype.CopyAELToSEL\nClipper.prototype.SwapPositionsInSEL\nClipper.prototype.AddLocalMaxPoly\nClipper.prototype.AddLocalMinPoly\nClipper.prototype.AddOutPt\nClipper.prototype.GetLastOutPt\nClipper.prototype.SwapPoints\nClipper.prototype.HorzSegmentsOverlap\nClipper.prototype.SetHoleState\nClipper.prototype.GetDx\nClipper.prototype.FirstIsBottomPt\nClipper.prototype.GetBottomPt\nClipper.prototype.GetLowermostRec\nClipper.prototype.OutRec1RightOfOutRec2\nClipper.prototype.GetOutRec\nClipper.prototype.AppendPolygon\nClipper.prototype.ReversePolyPtLinks\nClipper.SwapSides\nClipper.SwapPolyIndexes\nClipper.prototype.IntersectEdges\nClipper.prototype.DeleteFromSEL\nClipper.prototype.ProcessHorizontals\nClipper.prototype.GetHorzDirection\nClipper.prototype.ProcessHorizontal\nClipper.prototype.GetNextInAEL\nClipper.prototype.IsMinima\nClipper.prototype.IsMaxima\nClipper.prototype.IsIntermediate\nClipper.prototype.GetMaximaPair\nClipper.prototype.GetMaximaPairEx\nClipper.prototype.ProcessIntersections\nClipper.prototype.BuildIntersectList\nClipper.prototype.EdgesAdjacent\nClipper.IntersectNodeSort\nClipper.prototype.FixupIntersectionOrder\nClipper.prototype.ProcessIntersectList\nClipper.TopX\nClipper.prototype.IntersectPoint\nClipper.prototype.ProcessEdgesAtTopOfScanbeam\nClipper.prototype.DoMaxima\nClipper.ReversePaths\nClipper.Orientation\nClipper.prototype.PointCount\nClipper.prototype.BuildResult\nClipper.prototype.BuildResult2\nClipper.prototype.FixupOutPolyline\nClipper.prototype.FixupOutPolygon\nClipper.prototype.DupOutPt\nClipper.prototype.GetOverlap\nClipper.prototype.JoinHorz\nClipper.prototype.JoinPoints\nClipper.GetBounds\nClipper.prototype.GetBounds2\nClipper.PointInPolygon\nClipper.prototype.PointInPolygon\nClipper.prototype.Poly2ContainsPoly1\nClipper.prototype.FixupFirstLefts1\nClipper.prototype.FixupFirstLefts2\nClipper.prototype.FixupFirstLefts3\nClipper.ParseFirstLeft\nClipper.prototype.JoinCommonEdges\nClipper.prototype.UpdateOutPtIdxs\nClipper.prototype.DoSimplePolygons\nClipper.Area\nClipper.prototype.Area\nClipper.prototype.Area$1\nClipper.SimplifyPolygon\nClipper.SimplifyPolygons\nClipper.DistanceSqrd\nClipper.DistanceFromLineSqrd\nClipper.SlopesNearCollinear\nClipper.PointsAreClose\nClipper.ExcludeOp\nClipper.CleanPolygon\nClipper.CleanPolygons\nClipper.Minkowski\nClipper.MinkowskiSum\nClipper.TranslatePath\nClipper.MinkowskiDiff\nClipper.PolyTreeToPaths\nClipper.AddPolyNodeToPaths\nClipper.OpenPathsFromPolyTree\nClipper.ClosedPathsFromPolyTree\nClipperLib.ClipperOffset\nClipperOffset.prototype.Clear\nClipperOffset.prototype.AddPath\nClipperOffset.prototype.AddPaths\nClipperOffset.prototype.FixOrientations\nClipperOffset.GetUnitNormal\nClipperOffset.prototype.DoOffset\nClipperOffset.prototype.Execute\nClipperOffset.prototype.OffsetPoint\nClipperOffset.prototype.DoSquare\nClipperOffset.prototype.DoMiter\nClipperOffset.prototype.DoRound\nClipperLib.Error\nJS.AreaOfPolygon\nJS.AreaOfPolygons\nJS.BoundsOfPath\nJS.BoundsOfPaths\nJS.Clean\nJS.Clone\nJS.Lighten\nJS.PerimeterOfPath\nJS.PerimeterOfPaths\nClipperLib.ExPolygons\nClipperLib.ExPolygon\nJS.AddOuterPolyNodeToExPolygons\nJS.ExPolygonsToPaths\nJS.PolyTreeToExPolygons",
+			"contents": "({ x, y }) =>\ntestOffset\n({ x, y }) =>\ntestClipper\ntestShape",
 			"settings":
 			{
-				"buffer_size": 5682,
+				"buffer_size": 60,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
@@ -134,10 +134,27 @@
 			"file": "test-clipper.js",
 			"settings":
 			{
-				"buffer_size": 84,
+				"buffer_size": 2536,
 				"encoding": "UTF-8",
 				"line_ending": "Unix",
 				"name": "import ClipperLib from './lib/clipper.js';"
+			}
+		},
+		{
+			"file": "lib/clipper.js",
+			"settings":
+			{
+				"buffer_size": 8046,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/clipper-lib.js",
+			"settings":
+			{
+				"buffer_size": 205628,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
 			}
 		},
 		{
@@ -173,11 +190,34 @@
 			}
 		},
 		{
-			"file": "lib/clipper.js",
+			"file": "lib/svg/path-parser.js",
 			"settings":
 			{
-				"buffer_size": 148780,
-				"encoding": "UTF-8",
+				"buffer_size": 50758,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/svg/path.js",
+			"settings":
+			{
+				"buffer_size": 5528,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/svg/overlay.js",
+			"settings":
+			{
+				"buffer_size": 3449,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "test-antlr.js",
+			"settings":
+			{
+				"buffer_size": 1151,
 				"line_ending": "Unix"
 			}
 		},
@@ -486,10 +526,12 @@
 	"expanded_folders":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
-		"/home/roman/Dokumente/Sources/plot-cv/lib"
+		"/home/roman/Dokumente/Sources/plot-cv/lib",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/svg"
 	],
 	"file_history":
 	[
+		"/home/roman/Dokumente/Sources/plot-cv/lib/clipper.js",
 		"/home/roman/Dokumente/Sources/plot-cv/clipper.es",
 		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
 		"/home/roman/Dokumente/Sources/plot-cv/point.es",
@@ -616,8 +658,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/rgba.js",
 		"/home/roman/Dokumente/Sources/plot-cv/src/js_contour.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/src/js_rect.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/hsla.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-matrix.js"
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/hsla.js"
 	],
 	"find":
 	{
@@ -643,9 +684,59 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": true,
+		"case_sensitive": false,
 		"find_history":
 		[
+			"offset\\(",
+			"offset =",
+			"DoOffset =",
+			"Point =",
+			"Path",
+			"Shape",
+			"convert",
+			"lower",
+			"lowercase",
+			"uppercase",
+			"upper",
+			"case",
+			"Point",
+			"APp_",
+			"naviga",
+			"self",
+			"ClipType =",
+			"Union",
+			"this.Execute\\(",
+			"this.DoOff",
+			"this.Do",
+			"DoOffset",
+			"DoOFfset =",
+			"Offset.prototype\\..",
+			"join",
+			"offset",
+			"OutSet",
+			"ClipperBase",
+			"LocalMinima",
+			" LocalMinima",
+			"LocalMinima",
+			"Error\\(",
+			" Error\\(",
+			"Error\\(",
+			"new .Point",
+			"1dp",
+			"Point",
+			"Polygon = function",
+			"Polygon",
+			"function.*path",
+			"function(pt, path",
+			"function.*path",
+			"path",
+			"\\.Path =",
+			"Path =",
+			"PolyNode =",
+			"Polygon",
+			" \n",
+			"parse",
+			"Path",
 			"FPoint1dp",
 			"FPoint1dp =",
 			"FPoint2 =",
@@ -723,57 +814,7 @@
 			" parseFunc",
 			"this.parseFunc",
 			" parseFunc",
-			"'async'",
-			"'await'",
-			"parseBinary",
-			"no ast",
-			" parseCond",
-			"parseCond",
-			"'await'",
-			"no ast",
-			"825",
-			"'await'",
-			" parseExpress",
-			"'await'",
-			"await",
-			"'await'",
-			"parseCond",
-			"parseConnd",
-			"await err",
-			"operatorPrecedence",
-			"parseAssign",
-			" match",
-			">>=",
-			"'>>>'",
-			"h =",
-			"h = n",
-			">>=",
-			"-->",
-			">>>=",
-			">>>",
-			"at =",
-			"div =",
-			"expectPunctuators\\(",
-			"'\\*='",
-			"'*='",
-			" parseExpress",
-			" parseExp",
-			" parseState",
-			" parseAssignment",
-			" parseExpression",
-			"matchAssignmentExpression",
-			"matchLeftHandSideExpression",
-			"matchMember",
-			"this.matchMember",
-			"'this'",
-			"Util",
-			" printExpress",
-			" printSequ",
-			"xx = ",
-			"'\\('",
-			" parseExpression\\(",
-			"parseExpression\\(",
-			" parseExpression\\("
+			"'async'"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -781,6 +822,7 @@
 		"regex": true,
 		"replace_history":
 		[
+			" ClipperLib.Error(",
 			"FPoint",
 			"Error",
 			"Clear",
@@ -907,8 +949,7 @@
 			"cv::Point_<T>",
 			"vector_type",
 			"Polygon_<double>::vec2vec_type",
-			"vec2vec_type",
-			"vector_type"
+			"vec2vec_type"
 		],
 		"reverse": false,
 		"show_context": false,
@@ -927,7 +968,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5682,
+						"buffer_size": 60,
 						"regions":
 						{
 						},
@@ -937,1023 +978,38 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/clipper.js",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/test-clipper.js",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
 								[
-									5586,
-									5613
+									607,
+									620
 								],
 								[
-									6435,
-									6463
+									640,
+									661
 								],
 								[
-									6573,
-									6602
+									695,
+									708
 								],
 								[
-									6818,
-									6850
+									1278,
+									1300
 								],
 								[
-									7022,
-									7064
-								],
-								[
-									7214,
-									7256
-								],
-								[
-									7294,
-									7333
-								],
-								[
-									7365,
-									7410
-								],
-								[
-									7528,
-									7567
-								],
-								[
-									7669,
-									7717
-								],
-								[
-									7929,
-									7967
-								],
-								[
-									7998,
-									8036
-								],
-								[
-									8067,
-									8105
-								],
-								[
-									8244,
-									8276
-								],
-								[
-									8330,
-									8367
-								],
-								[
-									8522,
-									8562
-								],
-								[
-									8645,
-									8682
-								],
-								[
-									8957,
-									8987
-								],
-								[
-									9255,
-									9285
-								],
-								[
-									10655,
-									10690
-								],
-								[
-									10753,
-									10790
-								],
-								[
-									11164,
-									11195
-								],
-								[
-									11342,
-									11375
-								],
-								[
-									11596,
-									11631
-								],
-								[
-									11786,
-									11824
-								],
-								[
-									12029,
-									12058
-								],
-								[
-									12571,
-									12601
-								],
-								[
-									12761,
-									12793
-								],
-								[
-									12979,
-									13019
-								],
-								[
-									13911,
-									13940
-								],
-								[
-									14622,
-									14659
-								],
-								[
-									14770,
-									14813
-								],
-								[
-									14819,
-									14871
-								],
-								[
-									15031,
-									15066
-								],
-								[
-									15206,
-									15238
-								],
-								[
-									15325,
-									15355
-								],
-								[
-									15612,
-									15642
-								],
-								[
-									15878,
-									15907
-								],
-								[
-									16041,
-									16069
-								],
-								[
-									16177,
-									16212
-								],
-								[
-									16959,
-									16996
-								],
-								[
-									17073,
-									17111
-								],
-								[
-									17144,
-									17198
-								],
-								[
-									17339,
-									17412
-								],
-								[
-									17729,
-									17784
-								],
-								[
-									17995,
-									18031
-								],
-								[
-									18648,
-									18691
-								],
-								[
-									18760,
-									18810
-								],
-								[
-									18903,
-									18958
-								],
-								[
-									19051,
-									19091
-								],
-								[
-									19371,
-									19428
-								],
-								[
-									19605,
-									19651
-								],
-								[
-									20068,
-									20130
-								],
-								[
-									20276,
-									20331
-								],
-								[
-									20892,
-									20942
-								],
-								[
-									21479,
-									21547
-								],
-								[
-									25139,
-									25201
-								],
-								[
-									30420,
-									30484
-								],
-								[
-									30749,
-									30818
-								],
-								[
-									31128,
-									31174
-								],
-								[
-									31401,
-									31442
-								],
-								[
-									31605,
-									31662
-								],
-								[
-									32028,
-									32087
-								],
-								[
-									32271,
-									32324
-								],
-								[
-									32685,
-									32725
-								],
-								[
-									33442,
-									33492
-								],
-								[
-									34129,
-									34176
-								],
-								[
-									34335,
-									34388
-								],
-								[
-									34431,
-									34478
-								],
-								[
-									34795,
-									34848
-								],
-								[
-									34965,
-									35018
-								],
-								[
-									35716,
-									35781
-								],
-								[
-									37342,
-									37391
-								],
-								[
-									37879,
-									37921
-								],
-								[
-									39296,
-									39332
-								],
-								[
-									39497,
-									39541
-								],
-								[
-									40306,
-									40344
-								],
-								[
-									42423,
-									42474
-								],
-								[
-									42873,
-									42919
-								],
-								[
-									44302,
-									44350
-								],
-								[
-									44469,
-									44522
-								],
-								[
-									44713,
-									44765
-								],
-								[
-									44961,
-									45006
-								],
-								[
-									45424,
-									45483
-								],
-								[
-									48372,
-									48435
-								],
-								[
-									49177,
-									49231
-								],
-								[
-									49438,
-									49490
-								],
-								[
-									49662,
-									49717
-								],
-								[
-									49889,
-									49938
-								],
-								[
-									52241,
-									52291
-								],
-								[
-									54928,
-									54975
-								],
-								[
-									55460,
-									55506
-								],
-								[
-									55841,
-									55884
-								],
-								[
-									56056,
-									56117
-								],
-								[
-									57481,
-									57537
-								],
-								[
-									57787,
-									57843
-								],
-								[
-									58894,
-									58938
-								],
-								[
-									60059,
-									60103
-								],
-								[
-									60253,
-									60302
-								],
-								[
-									60573,
-									60649
-								],
-								[
-									60866,
-									60918
-								],
-								[
-									61362,
-									61406
-								],
-								[
-									61515,
-									61575
-								],
-								[
-									62445,
-									62489
-								],
-								[
-									63117,
-									63179
-								],
-								[
-									63845,
-									63913
-								],
-								[
-									64046,
-									64089
-								],
-								[
-									64236,
-									64286
-								],
-								[
-									66387,
-									66438
-								],
-								[
-									66615,
-									66657
-								],
-								[
-									66737,
-									66785
-								],
-								[
-									66877,
-									66932
-								],
-								[
-									72556,
-									72601
-								],
-								[
-									72950,
-									72999
-								],
-								[
-									73129,
-									73190
-								],
-								[
-									73460,
-									73516
-								],
-								[
-									80078,
-									80133
-								],
-								[
-									80215,
-									80255
-								],
-								[
-									80335,
-									80378
-								],
-								[
-									80447,
-									80496
-								],
-								[
-									80551,
-									80596
-								],
-								[
-									80848,
-									80895
-								],
-								[
-									81215,
-									81270
-								],
-								[
-									81730,
-									81783
-								],
-								[
-									83089,
-									83138
-								],
-								[
-									83234,
-									83284
-								],
-								[
-									83443,
-									83496
-								],
-								[
-									84307,
-									84358
-								],
-								[
-									84631,
-									84670
-								],
-								[
-									84907,
-									84968
-								],
-								[
-									86687,
-									86749
-								],
-								[
-									90059,
-									90099
-								],
-								[
-									91104,
-									91142
-								],
-								[
-									91220,
-									91256
-								],
-								[
-									91297,
-									91341
-								],
-								[
-									91486,
-									91533
-								],
-								[
-									91917,
-									91968
-								],
-								[
-									93142,
-									93195
-								],
-								[
-									93561,
-									93613
-								],
-								[
-									94543,
-									94600
-								],
-								[
-									95055,
-									95116
-								],
-								[
-									95553,
-									95629
-								],
-								[
-									98277,
-									98337
-								],
-								[
-									104075,
-									104110
-								],
-								[
-									104782,
-									104826
-								],
-								[
-									105298,
-									105341
-								],
-								[
-									106501,
-									106552
-								],
-								[
-									107585,
-									107648
-								],
-								[
-									107900,
-									107967
-								],
-								[
-									108313,
-									108384
-								],
-								[
-									109415,
-									109482
-								],
-								[
-									109832,
-									109876
-								],
-								[
-									109990,
-									110036
-								],
-								[
-									112814,
-									112866
-								],
-								[
-									112976,
-									113023
-								],
-								[
-									114819,
-									114848
-								],
-								[
-									115094,
-									115131
-								],
-								[
-									115368,
-									115411
-								],
-								[
-									115450,
-									115500
-								],
-								[
-									115709,
-									115761
-								],
-								[
-									116046,
-									116087
-								],
-								[
-									116174,
-									116227
-								],
-								[
-									116749,
-									116812
-								],
-								[
-									117703,
-									117756
-								],
-								[
-									117855,
-									117887
-								],
-								[
-									118003,
-									118050
-								],
-								[
-									119415,
-									119464
-								],
-								[
-									119639,
-									119699
-								],
-								[
-									120832,
-									120901
-								],
-								[
-									121834,
-									121879
-								],
-								[
-									122044,
-									122090
-								],
-								[
-									122353,
-									122397
-								],
-								[
-									122568,
-									122626
-								],
-								[
-									123078,
-									123128
-								],
-								[
-									123371,
-									123423
-								],
-								[
-									123741,
-									123802
-								],
-								[
-									124455,
-									124497
-								],
-								[
-									124564,
-									124631
-								],
-								[
-									126063,
-									126132
-								],
-								[
-									126235,
-									126287
-								],
-								[
-									127133,
-									127181
-								],
-								[
-									127390,
-									127440
-								],
-								[
-									133222,
-									133266
-								],
-								[
-									135941,
-									136003
-								],
-								[
-									137799,
-									137848
-								],
-								[
-									138492,
-									138543
-								],
-								[
-									138783,
-									138831
-								],
-								[
-									139604,
-									139640
-								],
-								[
-									139848,
-									139881
-								],
-								[
-									139917,
-									139951
-								],
-								[
-									140069,
-									140101
-								],
-								[
-									140143,
-									140177
-								],
-								[
-									140361,
-									140396
-								],
-								[
-									141966,
-									141994
-								],
-								[
-									142850,
-									142891
-								],
-								[
-									146181,
-									146224
-								],
-								[
-									146742,
-									146787
-								],
-								[
-									146986,
-									147020
-								],
-								[
-									147088,
-									147121
-								],
-								[
-									147170,
-									147234
-								],
-								[
-									147769,
-									147812
-								],
-								[
-									148097,
-									148141
+									1898,
+									1918
 								]
 							],
 							"symlist":
 							[
-								"Inherit",
-								"ClipperLib.Path",
-								"ClipperLib.Paths",
-								"ClipperLib.PolyNode",
-								"PolyNode.prototype.IsHoleNode",
-								"PolyNode.prototype.ChildCount",
-								"PolyNode.prototype.Contour",
-								"PolyNode.prototype.AddChild",
-								"PolyNode.prototype.GetNext",
-								"PolyNode.prototype.GetNextSiblingUp",
-								"PolyNode.prototype.Childs",
-								"PolyNode.prototype.Parent",
-								"PolyNode.prototype.IsHole",
-								"ClipperLib.PolyTree",
-								"PolyTree.prototype.Clear",
-								"PolyTree.prototype.GetFirst",
-								"PolyTree.prototype.Total",
-								"ClipperLib.Clear",
-								"ClipperLib.FPoint",
-								"FPoint.op_Equality",
-								"FPoint.op_Inequality",
-								"ClipperLib.FPoint0",
-								"ClipperLib.FPoint1",
-								"ClipperLib.FPoint1dp",
-								"ClipperLib.FPoint2",
-								"ClipperLib.FRect",
-								"ClipperLib.FRect0",
-								"ClipperLib.FRect1",
-								"ClipperLib.FRect4",
-								"ClipperLib.TEdge",
-								"ClipperLib.IntersectNode",
-								"ClipperLib.MyIntersectNodeSort",
-								"MyIntersectNodeSort.Compare",
-								"ClipperLib.LocalMinima",
-								"ClipperLib.Scanbeam",
-								"ClipperLib.Maxima",
-								"ClipperLib.OutRec",
-								"ClipperLib.OutPt",
-								"ClipperLib.Join",
-								"ClipperLib.ClipperBase",
-								"ClipperBase.near_zero",
-								"ClipperBase.IsHorizontal",
-								"ClipperBase.prototype.PointIsVertex",
-								"ClipperBase.prototype.PointOnLineSegment",
-								"ClipperBase.prototype.PointOnPolygon",
-								"ClipperBase.SlopesEqual",
-								"ClipperBase.SlopesEqual3",
-								"ClipperBase.SlopesEqual4",
-								"ClipperBase.SlopesEqual5",
-								"ClipperBase.prototype.Clear",
-								"ClipperBase.prototype.DisposeLocalMinimaList",
-								"ClipperBase.prototype.RangeTest",
-								"ClipperBase.prototype.InitEdge",
-								"ClipperBase.prototype.InitEdge2",
-								"ClipperBase.prototype.FindNextLocMin",
-								"ClipperBase.prototype.ProcessBound",
-								"ClipperBase.prototype.AddPath",
-								"ClipperBase.prototype.AddPaths",
-								"ClipperBase.prototype.Pt2IsBetweenPt1AndPt3",
-								"ClipperBase.prototype.RemoveEdge",
-								"ClipperBase.prototype.SetDx",
-								"ClipperBase.prototype.InsertLocalMinima",
-								"ClipperBase.prototype.PopLocalMinima",
-								"ClipperBase.prototype.ReverseHorizontal",
-								"ClipperBase.prototype.Reset",
-								"ClipperBase.prototype.InsertScanbeam",
-								"ClipperBase.prototype.PopScanbeam",
-								"ClipperBase.prototype.LocalMinimaPending",
-								"ClipperBase.prototype.CreateOutRec",
-								"ClipperBase.prototype.DisposeOutRec",
-								"ClipperBase.prototype.UpdateEdgeIntoAEL",
-								"ClipperBase.prototype.SwapPositionsInAEL",
-								"ClipperBase.prototype.DeleteFromAEL",
-								"ClipperLib.Clipper",
-								"Clipper.prototype.Clear",
-								"Clipper.prototype.InsertMaxima",
-								"Clipper.prototype.Execute",
-								"Clipper.prototype.FixHoleLinkage",
-								"Clipper.prototype.ExecuteInternal",
-								"Clipper.prototype.DisposeAllPolyPts",
-								"Clipper.prototype.AddJoin",
-								"Clipper.prototype.AddGhostJoin",
-								"Clipper.prototype.SetZ",
-								"Clipper.prototype.InsertLocalMinimaIntoAEL",
-								"Clipper.prototype.InsertEdgeIntoAEL",
-								"Clipper.prototype.E2InsertsBeforeE1",
-								"Clipper.prototype.IsEvenOddFillType",
-								"Clipper.prototype.IsEvenOddAltFillType",
-								"Clipper.prototype.IsContributing",
-								"Clipper.prototype.SetWindingCount",
-								"Clipper.prototype.AddEdgeToSEL",
-								"Clipper.prototype.PopEdgeFromSEL",
-								"Clipper.prototype.CopyAELToSEL",
-								"Clipper.prototype.SwapPositionsInSEL",
-								"Clipper.prototype.AddLocalMaxPoly",
-								"Clipper.prototype.AddLocalMinPoly",
-								"Clipper.prototype.AddOutPt",
-								"Clipper.prototype.GetLastOutPt",
-								"Clipper.prototype.SwapPoints",
-								"Clipper.prototype.HorzSegmentsOverlap",
-								"Clipper.prototype.SetHoleState",
-								"Clipper.prototype.GetDx",
-								"Clipper.prototype.FirstIsBottomPt",
-								"Clipper.prototype.GetBottomPt",
-								"Clipper.prototype.GetLowermostRec",
-								"Clipper.prototype.OutRec1RightOfOutRec2",
-								"Clipper.prototype.GetOutRec",
-								"Clipper.prototype.AppendPolygon",
-								"Clipper.prototype.ReversePolyPtLinks",
-								"Clipper.SwapSides",
-								"Clipper.SwapPolyIndexes",
-								"Clipper.prototype.IntersectEdges",
-								"Clipper.prototype.DeleteFromSEL",
-								"Clipper.prototype.ProcessHorizontals",
-								"Clipper.prototype.GetHorzDirection",
-								"Clipper.prototype.ProcessHorizontal",
-								"Clipper.prototype.GetNextInAEL",
-								"Clipper.prototype.IsMinima",
-								"Clipper.prototype.IsMaxima",
-								"Clipper.prototype.IsIntermediate",
-								"Clipper.prototype.GetMaximaPair",
-								"Clipper.prototype.GetMaximaPairEx",
-								"Clipper.prototype.ProcessIntersections",
-								"Clipper.prototype.BuildIntersectList",
-								"Clipper.prototype.EdgesAdjacent",
-								"Clipper.IntersectNodeSort",
-								"Clipper.prototype.FixupIntersectionOrder",
-								"Clipper.prototype.ProcessIntersectList",
-								"Clipper.TopX",
-								"Clipper.prototype.IntersectPoint",
-								"Clipper.prototype.ProcessEdgesAtTopOfScanbeam",
-								"Clipper.prototype.DoMaxima",
-								"Clipper.ReversePaths",
-								"Clipper.Orientation",
-								"Clipper.prototype.PointCount",
-								"Clipper.prototype.BuildResult",
-								"Clipper.prototype.BuildResult2",
-								"Clipper.prototype.FixupOutPolyline",
-								"Clipper.prototype.FixupOutPolygon",
-								"Clipper.prototype.DupOutPt",
-								"Clipper.prototype.GetOverlap",
-								"Clipper.prototype.JoinHorz",
-								"Clipper.prototype.JoinPoints",
-								"Clipper.GetBounds",
-								"Clipper.prototype.GetBounds2",
-								"Clipper.PointInPolygon",
-								"Clipper.prototype.PointInPolygon",
-								"Clipper.prototype.Poly2ContainsPoly1",
-								"Clipper.prototype.FixupFirstLefts1",
-								"Clipper.prototype.FixupFirstLefts2",
-								"Clipper.prototype.FixupFirstLefts3",
-								"Clipper.ParseFirstLeft",
-								"Clipper.prototype.JoinCommonEdges",
-								"Clipper.prototype.UpdateOutPtIdxs",
-								"Clipper.prototype.DoSimplePolygons",
-								"Clipper.Area",
-								"Clipper.prototype.Area",
-								"Clipper.prototype.Area$1",
-								"Clipper.SimplifyPolygon",
-								"Clipper.SimplifyPolygons",
-								"Clipper.DistanceSqrd",
-								"Clipper.DistanceFromLineSqrd",
-								"Clipper.SlopesNearCollinear",
-								"Clipper.PointsAreClose",
-								"Clipper.ExcludeOp",
-								"Clipper.CleanPolygon",
-								"Clipper.CleanPolygons",
-								"Clipper.Minkowski",
-								"Clipper.MinkowskiSum",
-								"Clipper.TranslatePath",
-								"Clipper.MinkowskiDiff",
-								"Clipper.PolyTreeToPaths",
-								"Clipper.AddPolyNodeToPaths",
-								"Clipper.OpenPathsFromPolyTree",
-								"Clipper.ClosedPathsFromPolyTree",
-								"ClipperLib.ClipperOffset",
-								"ClipperOffset.prototype.Clear",
-								"ClipperOffset.prototype.AddPath",
-								"ClipperOffset.prototype.AddPaths",
-								"ClipperOffset.prototype.FixOrientations",
-								"ClipperOffset.GetUnitNormal",
-								"ClipperOffset.prototype.DoOffset",
-								"ClipperOffset.prototype.Execute",
-								"ClipperOffset.prototype.OffsetPoint",
-								"ClipperOffset.prototype.DoSquare",
-								"ClipperOffset.prototype.DoMiter",
-								"ClipperOffset.prototype.DoRound",
-								"ClipperLib.Error",
-								"JS.AreaOfPolygon",
-								"JS.AreaOfPolygons",
-								"JS.BoundsOfPath",
-								"JS.BoundsOfPaths",
-								"JS.Clean",
-								"JS.Clone",
-								"JS.Lighten",
-								"JS.PerimeterOfPath",
-								"JS.PerimeterOfPaths",
-								"ClipperLib.ExPolygons",
-								"ClipperLib.ExPolygon",
-								"JS.AddOuterPolyNodeToExPolygons",
-								"JS.ExPolygonsToPaths",
-								"JS.PolyTreeToExPolygons"
+								"({ x, y }) =>",
+								"testOffset",
+								"({ x, y }) =>",
+								"testClipper",
+								"testShape"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -1961,13 +1017,13 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 16,
+					"stack_index": 21,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 6,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -1983,8 +1039,8 @@
 						"selection":
 						[
 							[
-								2060,
-								2060
+								384,
+								384
 							]
 						],
 						"settings":
@@ -1994,10 +1050,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1440.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
@@ -2006,15 +1062,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 84,
+						"buffer_size": 2536,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								84,
-								84
+								2495,
+								2495
 							]
 						],
 						"settings":
@@ -2023,14 +1079,74 @@
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1463.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "lib/clipper.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8046,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1747,
+								1747
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 995.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "lib/clipper-lib.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 205628,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								57013,
+								57013
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 53555.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 5,
 					"file": "test-ecmascript.js",
 					"semi_transient": false,
 					"settings":
@@ -2042,8 +1158,8 @@
 						"selection":
 						[
 							[
-								4041,
-								4041
+								433,
+								433
 							]
 						],
 						"settings":
@@ -2053,14 +1169,14 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2867.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 6,
 					"file": "lib/ecmascript/printer.js",
 					"semi_transient": false,
 					"settings":
@@ -2083,14 +1199,14 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 11435.0,
+						"translation.y": 947.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 7,
 					"file": "autoStore.es",
 					"semi_transient": false,
 					"settings":
@@ -2116,11 +1232,11 @@
 						"translation.y": 72.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 11,
+					"stack_index": 16,
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 8,
 					"file": "lib/autoStore.js",
 					"semi_transient": false,
 					"settings":
@@ -2146,24 +1262,24 @@
 						"translation.y": 899.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 10,
+					"stack_index": 15,
 					"type": "text"
 				},
 				{
-					"buffer": 7,
-					"file": "lib/clipper.js",
+					"buffer": 9,
+					"file": "lib/svg/path-parser.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 148780,
+						"buffer_size": 50758,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								11707,
-								11707
+								49985,
+								49985
 							]
 						],
 						"settings":
@@ -2173,14 +1289,102 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 8435.0,
+						"translation.y": 52932.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 10,
+					"file": "lib/svg/path.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5528,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4122,
+								4122
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 72.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "lib/svg/overlay.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3449,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "test-antlr.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1151,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 13,
 					"file": "axios.es",
 					"semi_transient": false,
 					"settings":
@@ -2206,11 +1410,11 @@
 						"translation.y": 505.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 12,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 14,
 					"file": "lib/ecmascript/estree.js",
 					"semi_transient": false,
 					"settings":
@@ -2236,11 +1440,11 @@
 						"translation.y": 11112.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 10,
 					"type": "text"
 				},
 				{
-					"buffer": 10,
+					"buffer": 15,
 					"file": "alea.es",
 					"semi_transient": false,
 					"settings":
@@ -2266,11 +1470,11 @@
 						"translation.y": 2544.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 14,
 					"type": "text"
 				},
 				{
-					"buffer": 11,
+					"buffer": 16,
 					"file": "lib/axios.js",
 					"semi_transient": false,
 					"settings":
@@ -2296,11 +1500,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 12,
+					"stack_index": 17,
 					"type": "text"
 				},
 				{
-					"buffer": 12,
+					"buffer": 17,
 					"file": "test-export.js",
 					"semi_transient": false,
 					"settings":
@@ -2325,11 +1529,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 13,
+					"stack_index": 18,
 					"type": "text"
 				},
 				{
-					"buffer": 13,
+					"buffer": 18,
 					"file": "lib/ecmascript/lexer.js",
 					"semi_transient": false,
 					"settings":
@@ -2355,11 +1559,11 @@
 						"translation.y": 5459.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 11,
 					"type": "text"
 				},
 				{
-					"buffer": 14,
+					"buffer": 19,
 					"file": "lib/alea.js",
 					"semi_transient": false,
 					"settings":
@@ -2385,11 +1589,11 @@
 						"translation.y": 1824.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 13,
 					"type": "text"
 				},
 				{
-					"buffer": 15,
+					"buffer": 20,
 					"file": "lib/geom/pointList.js",
 					"semi_transient": false,
 					"settings":
@@ -2415,11 +1619,11 @@
 						"translation.y": 1868.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 14,
+					"stack_index": 19,
 					"type": "text"
 				},
 				{
-					"buffer": 16,
+					"buffer": 21,
 					"file": "lib/geom/point.js",
 					"semi_transient": false,
 					"settings":
@@ -2445,7 +1649,7 @@
 						"translation.y": 2396.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 15,
+					"stack_index": 20,
 					"type": "text"
 				}
 			]
@@ -2529,8 +1733,24 @@
 		"selected_items":
 		[
 			[
+				"clipper-lib",
+				"lib/clipper-lib.js"
+			],
+			[
+				"test-ec",
+				"test-ecmascript.js"
+			],
+			[
 				"clipper.js",
 				"lib/clipper.js"
+			],
+			[
+				"test-",
+				"test-clipper.js"
+			],
+			[
+				"test",
+				"test-antlr.js"
 			],
 			[
 				"clipper.es",
@@ -2547,10 +1767,6 @@
 			[
 				"print",
 				"lib/ecmascript/printer.js"
-			],
-			[
-				"test-ec",
-				"test-ecmascript.js"
 			],
 			[
 				"clipper",
@@ -3027,18 +2243,6 @@
 			[
 				"size.j",
 				"lib/geom/size.js"
-			],
-			[
-				"rect.j",
-				"lib/geom/rect.js"
-			],
-			[
-				"point.j",
-				"lib/geom/point.js"
-			],
-			[
-				"hsla",
-				"lib/dom/hsla.js"
 			]
 		],
 		"width": 0.0
