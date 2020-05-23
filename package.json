@@ -50,7 +50,8 @@
     "@babel/plugin-transform-react-jsx": "^7.9.4",
     "antlr4": "^4.8.0",
     "http": "0.0.0",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "svg-path-outline": "^1.0.1"
   },
   "husky": {
     "hooks": {
