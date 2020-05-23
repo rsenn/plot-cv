@@ -18,4 +18,4 @@ const d2 =
 const data = SVG.parsePath(d).str();
 const data2 = SVG.parsePath(d2).str();
 
-console.log("test-svgpath:",{data, data2});
+console.log('test-svgpath:', { data, data2 });
