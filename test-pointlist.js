@@ -46,11 +46,7 @@ let points = new PointList(
 console.log('points:', Util.className(points));
 console.log(
   'Array.prototype getMethods:',
-  Util.getMethods(Array.prototype, false, (key, value) =>
-    typeof key == 'string' && key.startsWith('_')
-      ? undefined
-      : [key == 'length' ? 'size' : key, value]
-  )
+  Util.getMethods(Array.prototype, false, (key, value) => (typeof key == 'string' && key.startsWith('_') ? undefined : [key == 'length' ? 'size' : key, value]))
 );
 
 // prettier-ignore
