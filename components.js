@@ -1,11 +1,4 @@
-import {
-  h,
-  html,
-  render,
-  Component,
-  useState,
-  useCallback
-} from '../modules/htm/preact/standalone.mjs';
+import { h, html, render, Component, useState, useCallback } from '../modules/htm/preact/standalone.mjs';
 
 export function classNames() {
   var classes = [];
@@ -49,14 +42,7 @@ export const MouseEvents = h => ({
   onMouseUp: h
 });
 
-export const Overlay = ({
-  className = 'overlay',
-  active = false,
-  onPush,
-  text,
-  children,
-  ...props
-}) => {
+export const Overlay = ({ className = 'overlay', active = false, onPush, text, children, ...props }) => {
   const [pushed, setPushed] = useState(false);
   const events = MouseEvents(
     MouseHandler((e, state) => {
@@ -69,11 +55,7 @@ export const Overlay = ({
   );
 
   return html`
-    <div
-      className=${classNames(className, pushed && 'pushed', active ? 'active' : 'inactive')}
-      ...${props}
-      ...${events}
-    >
+    <div className=${classNames(className, pushed && 'pushed', active ? 'active' : 'inactive')} ...${props} ...${events}>
       ${text} ${children}
     </div>
   `;
@@ -86,15 +68,7 @@ export const Container = ({ className = 'panel', children, ...props }) => {
   `;
 };
 
-export const Chooser = ({
-  className = 'list',
-  itemClass = 'item',
-  itemComponent = Overlay,
-  items,
-  onChange = () => {},
-  onPush = () => {},
-  ...props
-}) => {
+export const Chooser = ({ className = 'list', itemClass = 'item', itemComponent = Overlay, items, onChange = () => {}, onPush = () => {}, ...props }) => {
   const [active, setActive] = useState(-1);
   const pushHandler = i => (e, state) => {
     const prev = active;
@@ -114,18 +88,11 @@ export const Chooser = ({
       ...item*/
     });
   });
-  return html`<${Container} className=${classNames(
-    'panel',
-    className
-  )} ...${props}>${children}</${Container}>`;
+  return html`<${Container} className=${classNames('panel', className)} ...${props}>${children}</${Container}>`;
 };
 
 export const Button = ({ caption, fn }) => html`
-  <${Overlay}
-    className="button"
-    text=${caption}
-    onPush=${state => (state ? fn(state) : undefined)}
-  />
+  <${Overlay} className="button" text=${caption} onPush=${state => (state ? fn(state) : undefined)} />
 `;
 
 export const Label = ({ className = 'label', text, children, ...props }) =>
@@ -144,11 +111,7 @@ export const Icon = ({ className = 'icon', caption, image, ...props }) => html`
 `;
 
 export const Progress = ({ className, percent, ...props }) => html`
-                <${Overlay} className=${classNames(
-  'progress',
-  'center',
-  className
-)} text=${percent + '%'} style=${{
+                <${Overlay} className=${classNames('progress', 'center', className)} text=${percent + '%'} style=${{
   position: 'relative',
   width: '100%',
   height: '1.5em',
@@ -205,17 +168,7 @@ export const BoardIcon = props => html`
   </svg>
 `;
 
-export const File = ({
-  label,
-  i,
-  key,
-  className = 'file',
-  onPush,
-  signal,
-  data,
-  doc,
-  ...props
-}) => {
+export const File = ({ label, i, key, className = 'file', onPush, signal, data, doc, ...props }) => {
   const [loaded, setLoaded] = useState(NaN);
   if(signal) signal.subscribe(data => setLoaded(data.percent));
   onPush =

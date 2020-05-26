@@ -4,14 +4,7 @@ import { PointList } from './lib/geom/pointList.js';
 import { isRect, Rect } from './lib/geom/rect.js';
 import { isSize, Size } from './lib/geom/size.js';
 import { isLine, Line } from './lib/geom/line.js';
-import {
-  Transformation,
-  Rotation,
-  Translation,
-  Scaling,
-  MatrixTransformation,
-  TransformationList
-} from './lib/geom/transformation.js';
+import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import dom, { Element } from './lib/dom.js';
 import { Matrix } from './lib/geom/matrix.js';
 import { SVG } from './lib/dom/svg.js';
@@ -32,31 +25,8 @@ import { devtools } from './lib/devtools.js';
 import Util from './lib/util.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
-import {
-  hydrate,
-  Fragment,
-  createRef,
-  isValidElement,
-  cloneElement,
-  toChildArray
-} from './modules/preact/dist/preact.mjs';
-import {
-  h,
-  html,
-  render,
-  Component,
-  createContext,
-  useState,
-  useReducer,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useImperativeHandle,
-  useMemo,
-  useCallback,
-  useContext,
-  useDebugValue
-} from './modules/htm/preact/standalone.mjs';
+import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
+import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './modules/htm/preact/standalone.mjs';
 import components, { Container, Button, FileList } from './static/components.js';
 
 const React = {
@@ -100,8 +70,7 @@ const MouseHandler = callback => e => {
   }
 };
 
-const classNames = (...args) =>
-  args.filter(arg => typeof arg == 'string' && arg.length > 0).join(' ');
+const classNames = (...args) => args.filter(arg => typeof arg == 'string' && arg.length > 0).join(' ');
 
 const MouseEvents = h => ({
   onMouseDown: h,
@@ -176,8 +145,7 @@ const ModifyColors = fn => e => {
   }
 };
 
-const Panel = (name, children) =>
-  html`<${Container} className="${name}">${children}</${Container}>`;
+const Panel = (name, children) => html`<${Container} className="${name}">${children}</${Container}>`;
 
 const loadDocument = (proj, parentElem) =>
   new Promise(async (resolve, reject) => {
