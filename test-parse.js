@@ -1,13 +1,17 @@
 import { Lexer } from './lib/parse/lexer.js';
-import { Grammar, Parser } from './lib/parse/grammar.js';
+import { Grammar } from './lib/parse/grammar.js';
+import { Parser } from './lib/parse/parser.js';
+import Ebnf2Parser from './lib/parse/ebnf2.js';
 import fs from 'fs';
 import { Console } from 'console';
+import { literal, optional, seq, or, param, exhaustive } from './lib/parse/expr.js';
 
 global.console = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
   inspectOptions: { depth: 10, colors: true }
 });
+
 let filename = './lib/grammars/C.g4';
 let src = fs.readFileSync(filename).toString();
 
@@ -43,3 +47,20 @@ for(let { tok, str } of lex) {
 */
 let rule = grammar.getRule('typeSpecifier');
 console.log('rule:', rule);
+
+let buffer = fs.readFileSync('./lib/ecmascript/es6.ebnf');
+
+let parser = new Ebnf2Parser(buffer.toString());
+
+grammar = parser.parseGrammar();
+console.log('grammar:', grammar);
+//console.log('grammar.nodeLength():', grammar.nodeLength());
+
+if(grammar != null) parser.state.advance(grammar.nodeLength());
+if(parser.state.current == '') {
+  grammar.print(0);
+  process.exit(0);
+} else {
+  console.log('incomplete parse: lineNumber=' + parser.state.lineNumber + ' input=' + parser.state.buffer.substring(parser.state.offset, parser.state.offset + 50));
+  process.exit(-1);
+}
