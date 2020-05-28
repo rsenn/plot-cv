@@ -5,6 +5,7 @@ import Ebnf2Parser from './lib/parse/ebnf2.js';
 import fs from 'fs';
 import { Console } from 'console';
 import { literal, optional, seq, or, param, exhaustive } from './lib/parse/expr.js';
+import CGrammar from './test-grammar.js';
 
 global.console = new Console({
   stdout: process.stdout,
@@ -19,10 +20,19 @@ let src = fs.readFileSync(filename).toString();
 let grammar = new Grammar(src, filename);
 
 grammar.parse();
+//console.log('grammar:', grammar);
+//console.log('grammar:', grammar.generate());
+fs.writeFileSync('test-grammar.js', grammar.generate());
 //grammar.resolveRules();
+
+//console.log("CGrammar", CGrammar);
+console.log('CGrammar.compilationUnit', CGrammar.compilationUnit);
 
 filename = './seek_set.c';
 src = fs.readFileSync(filename).toString();
+let result = CGrammar.compilationUnit(`int seek_set(int fd, seek_pos pos) {if(lseek(fd, (off_t)pos, SET) == -1) return -1; return 0; } `, 0);
+console.log('parsed:' + result);
+
 let clex = new Lexer(src, filename);
 let cparse = new Parser(clex);
 
@@ -38,7 +48,6 @@ for(let [name, rule] of grammar.rules.entries()) {
 }
 
 console.log('cparse:', cparse);
-
 /*
 for(let { tok, str } of lex) {
   tok = (tok + '').replace(/([\n\r\t])/g, '\\$1');
@@ -50,6 +59,7 @@ console.log('rule:', rule);
 
 let buffer = fs.readFileSync('./lib/ecmascript/es6.ebnf');
 
+process.exit(0);
 let parser = new Ebnf2Parser(buffer.toString());
 
 grammar = parser.parseGrammar();
