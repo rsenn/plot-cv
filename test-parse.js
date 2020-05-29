@@ -13,7 +13,7 @@ global.console = new Console({
   inspectOptions: { depth: 10, colors: true }
 });
 
-let filename = './lib/grammars/C.g4';
+let filename = './lib/grammars/INI.g4';
 let src = fs.readFileSync(filename).toString();
 
 //let lex = new Lexer(src, filename);
@@ -29,9 +29,11 @@ fs.writeFileSync('test-grammar.js', grammar.generate());
 console.log('CGrammar.compilationUnit', CGrammar.compilationUnit);
 
 filename = './seek_set.c';
+filename = '../pictest/build/mplab/7segtest-16f876a-xc8-debug.mcp';
 src = fs.readFileSync(filename).toString();
-let result = CGrammar.compilationUnit(`int seek_set(int fd, seek_pos pos) {if(lseek(fd, (off_t)pos, SET) == -1) return -1; return 0; } `, 0);
-console.log('parsed:' + result);
+//let result = CGrammar.compilationUnit(`int seek_set(int fd, seek_pos pos) {if(lseek(fd, (off_t)pos, SET) == -1) return -1; return 0; } `, 0);
+let result = CGrammar.ini(src, 0);
+console.log('parsed:', result);
 
 let clex = new Lexer(src, filename);
 let cparse = new Parser(clex);

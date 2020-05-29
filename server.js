@@ -40,7 +40,7 @@ app.use('/components', express.static(path.join(p, 'components')));
 app.use('/lib', express.static(path.join(p, 'lib')));
 
 app.get('/favicon.ico', (req, res) =>
-  res.sendFile(path.join(p, 'lib/eagle/eagleicon.ico'), {
+  res.sendFile(path.join(p, 'lib/eagle/icon/eagleicon.ico'), {
     headers: {
       ['Content-Type']: 'image/x-icon'
     }

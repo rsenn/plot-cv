@@ -868,10 +868,14 @@
 						},
 						"selection":
 						[
+							[
+								0,
+								0
+							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
+							"color_scheme": "Packages/Babel/Next (Roman).tmTheme",
 							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/parse/grammar.js",
 							"outline_rename_mode": false,
 							"symkeys":
@@ -1986,7 +1990,7 @@
 		],
 		"width": 907.0
 	},
-	"selected_group": 1,
+	"selected_group": 0,
 	"settings":
 	{
 	},
