@@ -17,6 +17,7 @@
       // prettier-ignore-start
       import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from "./lib/geom/transformation.js";
       import dom from "./lib/dom.js";
+      import { ReactComponent } from "./lib/dom/preactComponent.js";
       import { iterator, eventIterator } from "./lib/dom/iterator.js";
       import geom from "./lib/geom.js";
       import { BBox } from "./lib/geom/bbox.js";
@@ -70,7 +71,6 @@
         Point,
         PointList,
         Polyline,
-        ReactComponent,
         Rect,
         Renderer,
         RGBA,
@@ -187,12 +187,17 @@
         proj.element = Element.create("div", { id: "fence", style: { position: "relative", "data-name": proj.name, border: "1px dotted black" } }, Element.find("#container"));
         //let svg = Element.create('svg', { viewBox:  } , element);
 
-        proj.renderer = EagleSVGRenderer.create(proj.doc, React.create);
+        proj.renderer = EagleSVGRenderer.create(proj.doc, ReactComponent.append);
 
         let svgXml = proj.renderer.render(proj.doc);
         console.log("testRender:", svgXml);
 
-        window.renderer = renderDocument(proj.doc, proj.element);
+   let component =proj.renderer.render(proj.doc, null);
+
+  window.component = component;
+   window.rendered = React.render(component, proj.element);
+
+        console.log("window.rendered",window.rendered); 
 
         proj.svg = Element.find("svg", proj.element);
         proj.grid = Element.find("g.grid", proj.element);

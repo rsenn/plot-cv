@@ -9,16 +9,7 @@ let doc = new EagleDocument(fs.readFileSync('../an-tronics/eagle/Headphone-Ampli
 
 //console.log('bounds:', doc.getBounds());
 
-let renderer = new SchematicRenderer(doc, (tag, attrs, parent) => {
-  let elem = h(tag, attrs);
-  if(parent) {
-    const { props } = parent;
-    if(props.children instanceof Array) props.children.push(elem);
-    else if(props.children) props.children = [props.children, elem];
-    else props.children = elem;
-  }
-  return elem;
-});
+let renderer = new SchematicRenderer(doc, ReactComponent.append);
 
 let output = renderer.render(null, null, 0);
 
