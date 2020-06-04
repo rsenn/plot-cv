@@ -1,16 +1,11 @@
 // prettier-ignore-start
-import { isPoint, Point } from './lib/geom/point.js';
-import { PointList } from './lib/geom/pointList.js';
-import { isRect, Rect } from './lib/geom/rect.js';
-import { isSize, Size } from './lib/geom/size.js';
-import { isLine, Line } from './lib/geom/line.js';
 import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
-import dom, { Element } from './lib/dom.js';
-import { Matrix } from './lib/geom/matrix.js';
-import { SVG } from './lib/dom/svg.js';
+import dom from './lib/dom.js';
+import { ReactComponent } from './lib/dom/preactComponent.js';
+import { iterator, eventIterator } from './lib/dom/iterator.js';
+import geom from './lib/geom.js';
 import { BBox } from './lib/geom/bbox.js';
 import { ScrollDisabler } from './lib/scrollHandler.js';
-import { RGBA, HSLA, CSS } from './lib/dom.js';
 import { TouchListener } from './lib/touchHandler.js';
 import { parseSchematic } from './lib/eagle/parser.js';
 import { EagleDocument } from './lib/eagle/document.js';
@@ -20,55 +15,77 @@ import { ColorMap } from './lib/draw/colorMap.js';
 import { EagleElement } from './lib/eagle/element.js';
 import { EaglePath, EagleReference } from './lib/eagle/locator.js';
 import { toXML, EagleInterface } from './lib/eagle/common.js';
-import { renderDocument, EagleSVGRenderer } from './lib/eagle/renderer.js';
+import { Renderer } from './lib/eagle/renderer.js';
 import { devtools } from './lib/devtools.js';
 import Util from './lib/util.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
 import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './modules/htm/preact/standalone.mjs';
-import components, { Container, Button, FileList } from './static/components.js';
+import components, { Chooser, Container, Button, FileList } from './static/components.js';
+import { WebSocketClient } from './lib/websocket-client.js';
+import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
+const React = { cloneElement, Component, createContext, createRef, Fragment, create: h, html, hydrate, isValidElement, render, toChildArray, useCallback, useContext, useDebugValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useReducer, useRef, useState };
+const {
+  Align,
+  Anchor,
+  CSS,
+  CSSTransformSetters,
+  Element,
+  ElementPosProps,
+  ElementRectProps,
+  ElementRectProxy,
+  ElementSizeProps,
+  ElementTransformation,
+  ElementWHProps,
+  ElementXYProps,
+  HSLA,
+  isElement,
+  isHSLA,
+  isLine,
+  isMatrix,
+  isNumber,
+  isPoint,
+  isRect,
+  isRGBA,
+  isSize,
+  Line,
+  Matrix,
+  Node,
+  Point,
+  PointList,
+  Polyline,
+  Rect,
+  RGBA,
+  Select,
+  Size,
+  SVG,
+  Timer,
+  Transition,
+  TransitionList,
+  TRBL,
+  Tree
+} = { ...dom, ...geom };
+Object.assign(window, { React, ReactComponent, WebSocketClient, html }, dom, geom, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token }, { Chooser });
 
-const React = {
-  cloneElement,
-  Component,
-  createContext,
-  createRef,
-  Fragment,
-  h,
-  html,
-  hydrate,
-  isValidElement,
-  render,
-  toChildArray,
-  useCallback,
-  useContext,
-  useDebugValue,
-  useEffect,
-  useImperativeHandle,
-  useLayoutEffect,
-  useMemo,
-  useReducer,
-  useRef,
-  useState
-};
+let currentProj = trkl.property(window, 'project');
+let open = trkl();
 
-var projectName = 'Headphone-Amplifier-ClassAB-alt3';
-var palette = null;
-var svgElement;
-var brdXml, schXml, brdDom, schDom;
-var board, schematic;
-var loadedProjects = [];
+let projectName = 'Headphone-Amplifier-ClassAB-alt3';
+let palette = null;
+let svgElement;
+let brdXml, schXml, brdDom, schDom;
+let board, schematic;
+let loadedProjects = [];
+let zoomVal = 0;
+let container;
+
 let projects, projectFiles;
 let activeFile;
 
-const MouseHandler = callback => e => {
-  if(e.type) {
-    const pressed = e.type.endsWith('down');
-
-    callback(e, pressed);
-  }
-};
+const useSlot = (arr, i) => [() => arr[i], v => (arr[i] = v)];
+const trklGetSet = (get, set) => value => (value !== undefined ? set(value) : get());
+const useTrkl = trkl => [() => trkl(), value => trkl(value)];
 
 const classNames = (...args) => args.filter(arg => typeof arg == 'string' && arg.length > 0).join(' ');
 
@@ -79,18 +96,15 @@ const MouseEvents = h => ({
   onMouseUp: h
 });
 console.log('running');
-console.log('dom', { Rect, Element, parseSchematic });
+//console.log("dom", { Rect, Element, parseSchematic });
 
 window.dom = { Element, SVG };
-/* prettier-ignore */ Object.assign(window, {EagleDocument, EagleElement, EagleNode, EaglePath, EagleReference, EagleSVGRenderer, EagleInterface, Element, SVG, CSS, RGBA, HSLA, toXML, isPoint, Point, PointList, isLine, Line, isRect, Rect, isSize, Size, Matrix, Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, tXml, deep, BBox, React, h, html,
-        ColorMap,
-        devtools,
-        components, dom  });
+/* prettier-ignore */
 /*    const CreateSelect = (obj, node = document.body) => {
                             let elem = Select.create(Object.entries(obj));
                             node.insertBefore(elem, node.firstElementChild);
                           };*/
-const utf8Decoder = new TextDecoder('utf-8');
+const utf8Decoder = new TextDecoder("utf-8");
 
 const ListProjects = (window.list = async function(url) {
   let response = await fetch('/files.html', { method: 'get' });
@@ -106,21 +120,20 @@ const ElementToXML = e => {
   return toXML(x);
 };
 
-const LoadFile = filename =>
-  new Promise(async (resolve, reject) => {
-    let xml = await fetch(`/static/${filename}`).then(async res => {
-      return await (await res).text();
-    });
-    console.log('xml: ', xml.substring(0, 100));
-    //let dom = new DOMParser().parseFromString(xml, 'application/xml');
-
-    let doc = new EagleDocument(xml);
-
-    if(/\.brd$/.test(filename)) window.board = doc;
-    if(/\.sch$/.test(filename)) window.schematic = doc;
-
-    resolve(doc);
+const LoadFile = async filename => {
+  let xml = await fetch(`/static/${filename}`).then(async res => {
+    return await (await res).text();
   });
+  console.log('xml: ', xml.substring(0, 100));
+  //let dom = new DOMParser().parseFromString(xml, 'application/xml');
+
+  let doc = new EagleDocument(xml);
+
+  if(/\.brd$/.test(filename)) window.board = doc;
+  if(/\.sch$/.test(filename)) window.schematic = doc;
+
+  return doc;
+};
 
 const SaveSVG = (window.save = async function save(filename = projectName) {
   let body = ElementToXML(window.svg);
@@ -147,116 +160,154 @@ const ModifyColors = fn => e => {
 
 const Panel = (name, children) => html`<${Container} className="${name}">${children}</${Container}>`;
 
-const loadDocument = (proj, parentElem) =>
-  new Promise(async (resolve, reject) => {
-    console.log(`load project:`, proj);
-    let { name, signal, svg, element } = proj;
-    signal.subscribe(project => resolve(project));
-    let doc = await LoadFile(name);
-    window.eagle = doc;
-    //console.log('document:', doc);
-    /*if(!element)*/
+const loadDocument = async (proj, parentElem) => {
+  console.log(`load project #${proj.i}:`, proj);
 
-    Element.remove('#fence');
+  proj.doc = await LoadFile(proj.name);
+  window.eagle = proj.doc;
 
-    element = Element.create(
-      'div',
-      {
-        id: 'fence',
-        style: { position: 'relative', 'data-name': name, border: '1px dotted black' }
-      },
-      Element.find('#container')
-    );
-    //let svg = Element.create('svg', { viewBox:  } , element);
-    window.renderer = renderDocument(doc, element);
-    if(!svg) svg = Element.find('svg', element);
-    let grid = Element.find('g.grid', element);
-    let bbox = SVG.bbox(grid);
-    let bounds = doc.getBounds();
-    let rect = bounds.rect;
-    let size = new Size(rect);
+  Element.remove('#fence');
+  proj.element = Element.create('div', { id: 'fence', style: { position: 'relative', 'data-name': proj.name, border: '1px dotted black' } }, Element.find('#container'));
+  //let svg = Element.create('svg', { viewBox:  } , element);
 
-    size.mul(doc.type == 'brd' ? 2 : 1.5);
-    //    let aspectRatios = [Element.rect(element).aspect(), ];
 
-    let svgrect = SVG.bbox(svg);
-    let aspectRatio = svgrect.aspect();
 
-    Element.attr(element, {
-      'data-filename': name,
-      'data-aspect': aspectRatio,
-      'data-width': size.width + 'mm',
-      'data-height': size.height + 'mm'
-    });
+    proj.renderer = new Renderer(proj.doc, ReactComponent.append);
 
-    svg.setAttribute('data-aspect', aspectRatio);
+  let svgXml = proj.renderer.render(proj.doc);
+  console.log('testRender:', svgXml);
 
-    //  console.log("setRect", { svg, grid, bbox, bounds, rect });
+  let component = proj.renderer.render(proj.doc, null);
 
-    let css = size.toCSS({ width: 'mm', height: 'mm' });
+  window.component = component;
+  window.rendered = React.render(component, proj.element);
 
-    //console.log("size.toCSS", css);
-    //  Element.move(svg, Point(0,0), 'relative');
-    //
-    //console.log("setRect", svg);
-    //console.log("setRect", css);
-    //
+  console.log('window.rendered', window.rendered);
 
-    Object.assign(svg.style, {
-      'min-width': `${size.width}mm`,
-      'min-height': `${size.height}mm`
-    });
-    Element.setCSS(svg, { left: 0, top: 0, position: 'relative' });
+  proj.svg = Element.find('svg', proj.element);
+  proj.grid = Element.find('g.grid', proj.element);
+  proj.bbox = SVG.bbox(proj.grid);
+  let { name, data, element, doc, svg, bbox } = proj;
 
-    let w, h;
+  let bounds = doc.getBounds();
+  let rect = bounds.rect;
+  let size = new Size(rect);
 
-    //h = (100 / aspectRatio).toFixed(4)+'%';
+  currentProj(proj);
 
-    //   let rect = Element.rect(element);
+  size.mul(doc.type == 'brd' ? 2 : 1.5);
+  //    let aspectRatios = [Element.rect(element).aspect(), ];
 
-    //let padding = (100 / aspect).toFixed(4)+'%';
-    //   Element.setCSS(element, { position: 'relative', width: '100%', height, padding: `0 0 0 0` });
+  let svgrect = SVG.bbox(proj.svg);
+  proj.aspectRatio = svgrect.aspect();
 
-    Element.setCSS(svg, { left: 0, top: 0, position: 'relative' });
-
-    signal({ ...proj, loaded: true, bbox, element, svg });
-    return signal();
+  Element.attr(element, {
+    'data-filename': proj.name,
+    'data-aspect': proj.aspectRatio,
+    'data-width': size.width + 'mm',
+    'data-height': size.height + 'mm'
   });
 
-const chooseDocument = async (...args) => {
-  const [e, proj, i] = args;
+  proj.svg.setAttribute('data-aspect', proj.aspectRatio);
+
+  //  console.log("setRect", { svg, grid, bbox, bounds, rect });
+
+  let css = size.toCSS({ width: 'mm', height: 'mm' });
+
+  //console.log("size.toCSS", css);
+  //  Element.move(svg, Point(0,0), 'relative');
+  //
+  //console.log("setRect", svg);
+  //console.log("setRect", css);
+  //
+
+  Object.assign(proj.svg.style, {
+    'min-width': `${size.width}mm`
+    // "min-height": `${size.height}mm`
+  });
+  Element.setCSS(proj.svg, { left: 0, top: 0, position: 'relative' });
+
+  let w, h;
+
+  Element.setCSS(proj.svg, { left: 0, top: 0, position: 'relative' });
+
+  console.log('loadDocument:', proj.svg);
+
+  return proj;
+};
+
+const chooseDocument = async (e, proj, i) => {
   const { type } = e;
   const box = Element.findAll('.file')[i];
-  console.log('chooseDocument:', { e, proj, box, i });
+  console.log('chooseDocument:', { e, proj, i, box });
   if(!proj.loaded) {
     let data = await loadDocument(proj, box);
     proj.loaded = true;
+
+    open(false);
+
     console.log('loaded:', proj);
   }
   return proj.loaded;
 };
 
 const AppStart = (window.onload = async () => {
-  Object.assign(window, {
-    AppStart,
-
-    chooseDocument,
-    classNames,
-    loadDocument,
-    LoadFile,
-    ModifyColors,
-    MouseEvents,
-    MouseHandler,
-    devtools
-  });
-
-  window.Util = Util;
   Util(globalThis);
 
+  Object.assign(window, {
+    BBox,
+    chooseDocument,
+    classNames,
+    ColorMap,
+    components,
+    CSS,
+    deep,
+    EagleDocument,
+    EagleElement,
+    EagleInterface,
+    EagleNode,
+    EaglePath,
+    EagleReference,
+    eventIterator,
+    h,
+    HSLA,
+    html,
+    isLine,
+    isPoint,
+    isRect,
+    isSize,
+    iterator,
+    Line,
+    loadDocument,
+    LoadFile,
+    Matrix,
+    MatrixTransformation,
+    ModifyColors,
+    Point,
+    PointList,
+    React,
+    Rect,
+    RGBA,
+    Rotation,
+    Scaling,
+    Size,
+    SVG,
+    toXML,
+    Transformation,
+    TransformationList,
+    Translation,
+    tXml,
+    Util
+  });
+  Object.assign(window, { Element, devtools, dom });
+
   let projects = trkl([]);
+  let socket = trkl();
+
+  trkl.bind(window, { projects, socket });
 
   ListProjects('/files.html').then(response => {
-    console.log('files', response);
+    //console.log("files", response);
     let data = JSON.parse(response);
     let { files } = data;
     console.log(`Got ${files.length} files`);
@@ -264,25 +315,46 @@ const AppStart = (window.onload = async () => {
     //  CreateSelect(files);
     projects(
       projectFiles.map(({ name }, i) => {
-        let signal = trkl({ percent: NaN });
-        let proj = { name, i, signal };
-        trkl.bind(proj, 'data', signal);
+        let data = trkl({ percent: NaN });
+        let proj = { name, i };
+        trkl.bind(proj, { data });
         //console.log("project:", proj);
         return proj;
       })
     );
   });
 
-  let open = trkl();
+  let socketURL = Util.makeURL({ location: '/ws', protocol: 'ws' });
+
+  (async () => {
+    let ws = (window.socket = new WebSocketClient());
+    console.log('New WebSocket:', ws);
+    await ws.connect(socketURL);
+    console.log('Connected:', ws.connected);
+    ws.send('hello!');
+    let data;
+    for await (data of ws) {
+      console.log('WebSocket data:', data);
+      // See if there are any more messages received.
+      ws.dataAvailable !== 0;
+    }
+    // Close the connection.
+    await ws.disconnect();
+    console.log('WebSocket connected: ', ws.connected);
+  })();
 
   const MakeFitAction = index => () => {
     let container = Element.find('#container');
-    let parent = container.parentElement;
+    let parent = Element.find('#main');
     let prect = Element.rect(parent);
     let rect = Element.rect(container);
 
     let svg = Element.find('svg', container);
+    let brect = Element.rect('.buttons');
     let srect = Element.rect(svg);
+
+    prect.y += brect.height;
+    prect.height -= brect.height;
 
     let rects = [prect, rect, srect];
     console.log('resize rects', rects);
@@ -291,6 +363,7 @@ const AppStart = (window.onload = async () => {
     console.log('fitted:', f);
 
     Element.setRect(container, f[index], 'absolute');
+    Element.setCSS(container, { transform: '', position: 'absolute' });
   };
 
   React.render(
@@ -328,11 +401,11 @@ const AppStart = (window.onload = async () => {
     ],
     Element.find('#preact')
   );
-  var move;
+  let move;
 
   TouchListener(
     event => {
-      let container = Element.wrap('#container');
+      let container = Element.find('#container');
       if(!move) {
         move = Element.moveRelative(container);
       } else if(event.index > 0) {
@@ -349,12 +422,11 @@ const AppStart = (window.onload = async () => {
     { element: window }
   );
 
-  window.container = Element.find('#container');
+  container = Element.find('#container');
   window.styles = CSS.create('head');
 
   // new ScrollDisabler(() => true, window);
 
-  var zoomVal = 0;
   window.addEventListener('wheel', event => {
     const clientArea = Element.rect('body > div');
     clientArea.x += container.parentElement.scrollLeft;
@@ -381,8 +453,8 @@ const AppStart = (window.onload = async () => {
 
       Element.setRect(list, rects[1]);
 
-      console.log('rects:', [...rects, screen]);
-      console.log('list:', { pos, wheelPos, zoomVal, zoom });
+      /*   console.log("rects:", [...rects, screen]);
+            console.log("list:", { pos, wheelPos, zoomVal, zoom });*/
     } else {
       Element.setCSS(container, { transform });
 
@@ -397,3 +469,13 @@ const AppStart = (window.onload = async () => {
     let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
   }
 });
+
+const Module = {
+  noInitialRun: true,
+  onRuntimeInitialized: () => {
+    console.log('initialized');
+    let myString = prompt('Enter a string:');
+    Module.callMain([myString]);
+  },
+  print: txt => alert(`The MD5 hash is: ${txt}`)
+};

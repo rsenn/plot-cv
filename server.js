@@ -33,6 +33,7 @@ app.use((req, res, next) => {
   next();
 });
 
+
 app.use('/static', express.static(p));
 app.use('/modules', express.static(path.join(p, 'node_modules')));
 app.use('/node_modules', express.static(path.join(p, 'node_modules')));
@@ -46,6 +47,7 @@ app.get('/favicon.ico', (req, res) =>
     }
   })
 );
+app.get('/main.js', async (req, res) => res.sendFile(path.join(p, 'main.js')));
 
 app.get('/files.html', async (req, res) => {
   let files = [...(await fs.promises.readdir('.'))].filter(entry => /\.(brd|sch)$/.test(entry));

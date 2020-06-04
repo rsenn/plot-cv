@@ -3,8 +3,8 @@
     <title>EAGLE renderer</title>
     <link rel="shortcut icon" type="image/x-icon" sizes="16x16 48x48" href="favicon.ico" />
     <link rel="stylesheet" type="text/css" href="static/style.css" />
-    <!-- <script type="module" src="./modules/preact/debug/src/debug.js"></script> -->
-
+     <script type="module" src="./main.js"></script>
+<!---
     <script type="module">
       /*// Must be the first import
       let debug = true;
@@ -31,7 +31,10 @@
       import { EagleElement } from "./lib/eagle/element.js";
       import { EaglePath, EagleReference } from "./lib/eagle/locator.js";
       import { toXML, EagleInterface } from "./lib/eagle/common.js";
-      import { renderDocument, EagleSVGRenderer, SchematicRenderer, BoardRenderer } from "./lib/eagle/renderer.js";
+      import { renderDocument } from "./lib/eagle/renderer.js";
+      import {  SchematicRenderer } from "./lib/eagle/schematicRenderer.js";
+      import {  EagleSVGRenderer } from "./lib/eagle/svgRenderer.js";
+      import {  BoardRenderer } from "./lib/eagle/boardRenderer.js";
       import { devtools } from "./lib/devtools.js";
       import Util from "./lib/util.js";
       import tXml from "./lib/tXml.js";
@@ -43,7 +46,7 @@
       import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from "./lib/ecmascript.js";
       const React = { cloneElement, Component, createContext, createRef, Fragment, create: h, html, hydrate, isValidElement, render, toChildArray, useCallback, useContext, useDebugValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useReducer, useRef, useState };
       const {
-        Align,
+        Align,  
         Anchor,
         CSS,
         CSSTransformSetters,
@@ -495,7 +498,7 @@
         },
         print: txt => alert(`The MD5 hash is: ${txt}`)
       };
-    </script>
+    </script> //-->
   </head>
   <body style=" max-height: 100vh;">
     <div id="preact" style=" min-height: 100vh;"></div>
