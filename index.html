@@ -269,7 +269,7 @@
         return proj.loaded;
       };
 
-      const AppStart = (window.onload = async () => {
+      const AppMain = (window.onload = async () => {
         Util(globalThis);
 
         Object.assign(window, {
@@ -502,6 +502,6 @@
   </head>
   <body style=" max-height: 100vh;">
     <div id="preact" style=" min-height: 100vh;"></div>
-    <div id="main"><div id="container" style=""></div></div>
+    <div id="main"></div>
   </body>
 </html>

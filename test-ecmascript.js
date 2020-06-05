@@ -1,4 +1,4 @@
-import { ECMAScriptParser } from './lib/ecmascript/parser.js';
+import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { Stack, PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
 import { estree, Factory, ESNode, ImportStatement, ForInStatement, CallExpression } from './lib/ecmascript/estree.js';
@@ -17,7 +17,7 @@ Error.stackTraceLimit = 1000;
 global.console = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
-  inspectOptions: { depth: 7, colors: true }
+  inspectOptions: { depth: 20, colors: true }
 });
 
 const testfn = () => true;

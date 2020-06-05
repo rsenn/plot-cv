@@ -33,7 +33,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.use('/static', express.static(p));
 app.use('/modules', express.static(path.join(p, 'node_modules')));
 app.use('/node_modules', express.static(path.join(p, 'node_modules')));

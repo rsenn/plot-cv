@@ -22,50 +22,14 @@ import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
 import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './modules/htm/preact/standalone.mjs';
-import components, { Chooser, Container, Button, FileList } from './static/components.js';
+import components, { Chooser, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement } from './static/components.js';
 import { WebSocketClient } from './lib/websocket-client.js';
 import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
 const React = { cloneElement, Component, createContext, createRef, Fragment, create: h, html, hydrate, isValidElement, render, toChildArray, useCallback, useContext, useDebugValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useReducer, useRef, useState };
-const {
-  Align,
-  Anchor,
-  CSS,
-  CSSTransformSetters,
-  Element,
-  ElementPosProps,
-  ElementRectProps,
-  ElementRectProxy,
-  ElementSizeProps,
-  ElementTransformation,
-  ElementWHProps,
-  ElementXYProps,
-  HSLA,
-  isElement,
-  isHSLA,
-  isLine,
-  isMatrix,
-  isNumber,
-  isPoint,
-  isRect,
-  isRGBA,
-  isSize,
-  Line,
-  Matrix,
-  Node,
-  Point,
-  PointList,
-  Polyline,
-  Rect,
-  RGBA,
-  Select,
-  Size,
-  SVG,
-  Timer,
-  Transition,
-  TransitionList,
-  TRBL,
-  Tree
-} = { ...dom, ...geom };
+const { Align, Anchor, CSS, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, HSLA, isElement, isHSLA, isLine, isMatrix, isNumber, isPoint, isRect, isRGBA, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, RGBA, Select, Size, SVG, Timer, Transition, TransitionList, TRBL, Tree } = {
+  ...dom,
+  ...geom
+};
 Object.assign(window, { React, ReactComponent, WebSocketClient, html }, dom, geom, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token }, { Chooser });
 
 let currentProj = trkl.property(window, 'project');
@@ -82,6 +46,7 @@ let container;
 
 let projects, projectFiles;
 let activeFile;
+let transform = trkl(new TransformationList());
 
 const useSlot = (arr, i) => [() => arr[i], v => (arr[i] = v)];
 const trklGetSet = (get, set) => value => (value !== undefined ? set(value) : get());
@@ -124,7 +89,7 @@ const LoadFile = async filename => {
   let xml = await fetch(`/static/${filename}`).then(async res => {
     return await (await res).text();
   });
-  console.log('xml: ', xml.substring(0, 100));
+  //console.log('xml: ', xml.substring(0, 100));
   //let dom = new DOMParser().parseFromString(xml, 'application/xml');
 
   let doc = new EagleDocument(xml);
@@ -158,81 +123,73 @@ const ModifyColors = fn => e => {
   }
 };
 
-const Panel = (name, children) => html`<${Container} className="${name}">${children}</${Container}>`;
-
 const loadDocument = async (proj, parentElem) => {
   console.log(`load project #${proj.i}:`, proj);
-
   proj.doc = await LoadFile(proj.name);
   window.eagle = proj.doc;
 
   Element.remove('#fence');
-  proj.element = Element.create('div', { id: 'fence', style: { position: 'relative', 'data-name': proj.name, border: '1px dotted black' } }, Element.find('#container'));
-  //let svg = Element.create('svg', { viewBox:  } , element);
 
-
-
-    proj.renderer = new Renderer(proj.doc, ReactComponent.append);
-
-  let svgXml = proj.renderer.render(proj.doc);
+  proj.renderer = new Renderer(proj.doc, ReactComponent.append);
+  let style = { width: '100%', height: '100%', position: 'relative' };
+  let svgXml = proj.renderer.render(proj.doc, null, { style });
   console.log('testRender:', svgXml);
-
-  let component = proj.renderer.render(proj.doc, null);
-
+  let component = proj.renderer.render(proj.doc, null, { style });
   window.component = component;
-  window.rendered = React.render(component, proj.element);
 
+  let element = Element.find('#main');
+  console.log('h', h);
+  console.log('component', component);
+
+  let r = proj.renderer.rect || proj.renderer.bounds;
+  console.log('r', r);
+  let aspect = r.width / r.height;
+  console.log('aspect', aspect);
+
+  const Fence = ({ children, style = {}, ...props }) => h(TransformedElement, { id: 'fence', type: SizedAspectRatioBox, aspect, listener: transform, style: { position: 'relative', minWidth: '100px', 'data-name': proj.name, border: '1px dotted black', ...style }, ...props }, children);
+
+
+  component = h(Fence, {  style: { border: '1px dashed red' } }, [component]);
+
+  React.render(component /*html`<${Fence}>${component}</${Fence}>`*/, element);
+
+  let rendered = [...element.children];
+
+  window.rendered = rendered;
   console.log('window.rendered', window.rendered);
-
-  proj.svg = Element.find('svg', proj.element);
+  proj.element = rendered[0];
+  proj.svg = Element.find('svg', '#main');
   proj.grid = Element.find('g.grid', proj.element);
   proj.bbox = SVG.bbox(proj.grid);
-  let { name, data, element, doc, svg, bbox } = proj;
+  proj.aspectRatio = aspect;
+  console.log('proj.svg', proj.svg);
+  console.log('project', proj);
 
+  let { name, data, doc, svg, bbox } = proj;
   let bounds = doc.getBounds();
   let rect = bounds.rect;
   let size = new Size(rect);
-
   currentProj(proj);
-
   size.mul(doc.type == 'brd' ? 2 : 1.5);
-  //    let aspectRatios = [Element.rect(element).aspect(), ];
-
   let svgrect = SVG.bbox(proj.svg);
-  proj.aspectRatio = svgrect.aspect();
 
-  Element.attr(element, {
+  //  proj.aspectRatio = svgrect.aspect();
+
+  Element.attr(proj.svg, {
     'data-filename': proj.name,
     'data-aspect': proj.aspectRatio,
     'data-width': size.width + 'mm',
     'data-height': size.height + 'mm'
   });
 
-  proj.svg.setAttribute('data-aspect', proj.aspectRatio);
-
-  //  console.log("setRect", { svg, grid, bbox, bounds, rect });
-
+  // proj.svg.setAttribute('data-aspect', proj.aspectRatio);
   let css = size.toCSS({ width: 'mm', height: 'mm' });
-
-  //console.log("size.toCSS", css);
-  //  Element.move(svg, Point(0,0), 'relative');
-  //
-  //console.log("setRect", svg);
-  //console.log("setRect", css);
-  //
-
-  Object.assign(proj.svg.style, {
+  /*  Object.assign(proj.svg.style, {
     'min-width': `${size.width}mm`
-    // "min-height": `${size.height}mm`
   });
   Element.setCSS(proj.svg, { left: 0, top: 0, position: 'relative' });
-
-  let w, h;
-
   Element.setCSS(proj.svg, { left: 0, top: 0, position: 'relative' });
-
-  console.log('loadDocument:', proj.svg);
-
+  console.log('loadDocument:', proj.svg);*/
   return proj;
 };
 
@@ -251,9 +208,34 @@ const chooseDocument = async (e, proj, i) => {
   return proj.loaded;
 };
 
-const AppStart = (window.onload = async () => {
-  Util(globalThis);
+const MakeFitAction = index => async () => {
+  let parent = Element.find('#main');
+  let prect = Element.rect(parent);
+  let svg = Element.find('svg', parent);
+  let container = [...Element.findAll('.aspect-ratio-box-size', parent)].reverse()[0];
+  console.log('container:', container);
+  let oldSize = Element.rect(container);
+  let brect = Element.rect('.buttons');
+  let srect = Element.rect(svg);
+  prect.y += brect.height;
+  prect.height -= brect.height;
+  let rects = [prect, oldSize, srect];
+  prect.scale(0.8);
+  console.log('resize rects', { oldSize, prect, srect });
+  let f = srect.fit(prect);
+  let newSize = f[index].round(0.0001);
+  let affineTransform = Matrix.getAffineTransform(oldSize.toPoints(), newSize.toPoints());
+  let transform = affineTransform.decompose();
+  console.log(`fitAction(${index})`, { oldSize, newSize, transform });
+  let factor = transform.scale.x;
+  console.log('zoom factor:', factor);
+  let delay = Math.abs(Math.log(factor) * 1000);
+  console.log('transition delay:', delay);
+  await Element.transition(container, { ...newSize.toCSS(), transform: '', position: 'absolute' }, delay + 'ms', 'linear');
+};
 
+const AppMain = (window.onload = async () => {
+  Util(globalThis);
   Object.assign(window, {
     BBox,
     chooseDocument,
@@ -299,33 +281,28 @@ const AppStart = (window.onload = async () => {
     tXml,
     Util
   });
-  Object.assign(window, { Element, devtools, dom });
 
+  Object.assign(window, { Element, devtools, dom });
   let projects = trkl([]);
   let socket = trkl();
-
-  trkl.bind(window, { projects, socket });
+  trkl.bind(window, { projects, socket, transform });
 
   ListProjects('/files.html').then(response => {
-    //console.log("files", response);
     let data = JSON.parse(response);
     let { files } = data;
     console.log(`Got ${files.length} files`);
     projectFiles = window.files = files;
-    //  CreateSelect(files);
     projects(
       projectFiles.map(({ name }, i) => {
         let data = trkl({ percent: NaN });
         let proj = { name, i };
         trkl.bind(proj, { data });
-        //console.log("project:", proj);
         return proj;
       })
     );
   });
 
   let socketURL = Util.makeURL({ location: '/ws', protocol: 'ws' });
-
   (async () => {
     let ws = (window.socket = new WebSocketClient());
     console.log('New WebSocket:', ws);
@@ -335,42 +312,17 @@ const AppStart = (window.onload = async () => {
     let data;
     for await (data of ws) {
       console.log('WebSocket data:', data);
-      // See if there are any more messages received.
       ws.dataAvailable !== 0;
     }
-    // Close the connection.
     await ws.disconnect();
     console.log('WebSocket connected: ', ws.connected);
   })();
-
-  const MakeFitAction = index => () => {
-    let container = Element.find('#container');
-    let parent = Element.find('#main');
-    let prect = Element.rect(parent);
-    let rect = Element.rect(container);
-
-    let svg = Element.find('svg', container);
-    let brect = Element.rect('.buttons');
-    let srect = Element.rect(svg);
-
-    prect.y += brect.height;
-    prect.height -= brect.height;
-
-    let rects = [prect, rect, srect];
-    console.log('resize rects', rects);
-
-    let f = srect.fit(prect);
-    console.log('fitted:', f);
-
-    Element.setRect(container, f[index], 'absolute');
-    Element.setCSS(container, { transform: '', position: 'absolute' });
-  };
 
   React.render(
     [
       Panel('buttons', [
         h(Button, {
-          caption: '📂', // 📁
+          caption: '📂',
           fn: e => {
             if(e.type.endsWith('down')) {
               console.log('file list push', e);
@@ -402,18 +354,20 @@ const AppStart = (window.onload = async () => {
     Element.find('#preact')
   );
   let move;
+  container = Element.find('#main');
 
   TouchListener(
     event => {
-      let container = Element.find('#container');
+
+    if(event.index > 0 && event.buttons > 0)
+      console.log("touch", event, container);
       if(!move) {
+             let container = Element.find('#main');
+
         move = Element.moveRelative(container);
       } else if(event.index > 0) {
         let rel = new Point(event);
-        //console.log("touch x/y:", event);
-
         if(move) {
-          //console.log("move pos:", move.pos);
           if(event.buttons > 0) move(rel.x, rel.y);
           else move = move.jump();
         }
@@ -422,48 +376,43 @@ const AppStart = (window.onload = async () => {
     { element: window }
   );
 
-  container = Element.find('#container');
-  window.styles = CSS.create('head');
 
-  // new ScrollDisabler(() => true, window);
+  window.styles = CSS.create('head');
 
   window.addEventListener('wheel', event => {
     const clientArea = Element.rect('body > div');
     clientArea.x += container.parentElement.scrollLeft;
     const clientCenter = clientArea.center;
-
     const { clientX, clientY, target, currentTarget } = event;
     const pos = new Point(clientX, clientY);
-    //console.log("zoom:", { target, currentTarget });
     const wheelPos = -event.deltaY.toFixed(2);
     zoomVal = Util.clamp(-100, 100, zoomVal + wheelPos * 0.1);
     const zoom = Math.pow(10, zoomVal / 100).toFixed(5);
-    const transform = ` scale(${zoom},${zoom}) `;
+
+    if(!window.transform.scaling) window.transform.scale(zoom, zoom);
+    else {
+      window.transform.scaling.x = zoom;
+      window.transform.scaling.y = zoom;
+    }
+    window.transform = new TransformationList(window.transform);
+    /*    const transform = ` scale(${zoom},${zoom}) `;
     const origin = `${pos.toString(1, 'px', ' ')}`;
-
     let list = [...Element.skip(target)].find(p => p.classList.contains('list'));
-
-    if(list) {
+    if(false && list) {
       let parent = list.parentElement;
       let rects = [Element.rect(parent), Element.rect(list)];
       let screen = new Rect(0, 0, window.innerWidth, window.innerHeight);
-
       rects[0].y2 = screen.y2;
       rects[1].y2 = screen.y2;
-
       Element.setRect(list, rects[1]);
-
-      /*   console.log("rects:", [...rects, screen]);
-            console.log("list:", { pos, wheelPos, zoomVal, zoom });*/
     } else {
+      window.transform;
       Element.setCSS(container, { transform });
-
       Element.setCSS(container, { 'transform-origin': origin });
-    }
+    }*/
   });
-  console.log(Util.getGlobalObject());
 
-  //   LoadProject(projectName);
+  console.log(Util.getGlobalObject());
 
   for(let path of [...Element.findAll('path')]) {
     let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);

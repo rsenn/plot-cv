@@ -222,6 +222,92 @@ export const FileList = ({ files, onChange, onActive, ...props }) => {
   `;
 };
 
+export const Panel = (name, children) => html`<${Container} className="${name}">${children}</${Container}>`;
+
+export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className }, children) =>
+  enable
+    ? h(
+        SizedAspectRatioBox,
+        {
+          className,
+          width,
+          aspect,
+          style: { overflow: 'visible' }
+        },
+        children
+      )
+    : h(
+        'div',
+        {
+          className,
+          style: { width }
+        },
+        children
+      );
+
+export const AspectRatioBox = ({ aspect = 1.0, children, insideClassName, outsideClassName, outsideProps = {}, style, ...props } /* console.log('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/) =>
+  h(React.Fragment, {}, [
+    h(
+      'div',
+      {
+        className: classNames('aspect-ratio-box', outsideClassName),
+        style: { height: 0, paddingBottom: (1.0 / aspect) * 100 + '%', ...style }
+      },
+      [
+        h(
+          'div',
+          {
+            className: classNames('aspect-ratio-box-inside', insideClassName)
+          },
+          children
+        )
+      ]
+    )
+  ]);
+
+export const SizedAspectRatioBox = ({ width, height, style, className, children, outsideClassName, insideClassName, insideProps, outsideProps = {}, sizeClassName, sizeProps = {}, onClick, ...props }) =>
+  h(
+    'div',
+    {
+      className: classNames('aspect-ratio-box-size', className && className + '-size', sizeClassName),
+      style: { position: 'relative', width, height, ...style },
+      onClick
+    },
+    [
+      h(
+        AspectRatioBox,
+        {
+          outsideClassName: classNames('aspect-ratio-box-outside', className && className + '-outside', outsideClassName),
+          outsideProps,
+          insideClassName: insideClassName || className,
+          onClick,
+          ...props
+        },
+        children
+      )
+    ]
+  );
+
+export const TransformedElement = ({ type = 'div', listener, style = { position: 'relative' }, className, children = [], ...props }) => {
+  const [transform, setTransform] = useState(new TransformationList());
+
+  //console.log('listener:', listener);
+  if(listener && listener.subscribe)
+    listener.subscribe(value => {
+      // console.log('TransformedElement setValue', value+'');
+      if(value !== undefined) setTransform(value);
+    });
+
+  return h(
+    type,
+    {
+      className: classNames('transformed-element', className && className + '-size'),
+      style: { position: 'relative', ...style, transform }
+    },
+    children
+  );
+};
+
 export default {
   Overlay,
   Container,
@@ -233,5 +319,9 @@ export default {
   Progress,
   BoardIcon,
   File,
-  FileList
+  FileList,
+  Panel,
+  AspectRatioBox,
+  WrapInAspectBox,
+  SizedAspectRatioBox
 };

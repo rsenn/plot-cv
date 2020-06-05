@@ -9,7 +9,7 @@ import { Console } from 'console';
 global.console = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
-  inspectOptions: { depth: 10, colors: true }
+  inspectOptions: { depth: 20, colors: true }
 });
 
 let filename = './lib/grammars/INI.g4';
