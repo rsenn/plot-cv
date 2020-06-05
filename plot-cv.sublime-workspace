@@ -112,81 +112,36 @@
 	"buffers":
 	[
 		{
-			"contents": "ClampAngle\nAlignmentAngle\nRotateTransformation\nLayerAttributes\nInvertY\nPolarToCartesian\nArc\nCalculateArcRadius\nLinesToPath\nlineTo\nMakeCoordTransformer\nobj =>\n(acc, k) =>\n(acc, k) =>\nrenderDocument\nappend_to(elem, parent)\nit =>\narg =>\nit =>\narg =>\n.dump\ngetLayersForColor\nl =>\n(color, i) =>\ne =>\ne =>\ne =>\n(c, n) =>",
+			"contents": "",
 			"settings":
 			{
-				"buffer_size": 314,
+				"buffer_size": 0,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "lib/eagle/renderer.js",
+			"file": "components.js",
 			"settings":
 			{
-				"buffer_size": 10629,
-				"encoding": "UTF-8",
+				"buffer_size": 12637,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/eagle/renderUtils.js",
+			"file": "lib/geom/transformation.js",
 			"settings":
 			{
-				"buffer_size": 10643,
-				"encoding": "UTF-8",
+				"buffer_size": 15455,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/eagle/svgRenderer.js",
+			"file": "lib/trkl.js",
 			"settings":
 			{
-				"buffer_size": 12890,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/schematicRenderer.js",
-			"settings":
-			{
-				"buffer_size": 7882,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/boardRenderer.js",
-			"settings":
-			{
-				"buffer_size": 8049,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "output.svg",
-			"settings":
-			{
-				"buffer_size": 53198,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "index.html",
-			"settings":
-			{
-				"buffer_size": 17209,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "server.js",
-			"settings":
-			{
-				"buffer_size": 2631,
-				"encoding": "UTF-8",
+				"buffer_size": 4481,
 				"line_ending": "Unix"
 			}
 		},
@@ -194,16 +149,99 @@
 			"file": "main.js",
 			"settings":
 			{
-				"buffer_size": 13791,
+				"buffer_size": 14318,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/aop.js",
+			"file": "/home/roman/the-wild-beauty-company/stores/RootStore.js",
 			"settings":
 			{
-				"buffer_size": 821,
+				"buffer_size": 12706,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/grammars/C.g4",
+			"settings":
+			{
+				"buffer_size": 19996,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/util.js",
+			"settings":
+			{
+				"buffer_size": 75460,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "index.html",
+			"settings":
+			{
+				"buffer_size": 17173,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/roman/the-wild-beauty-company/stores/api.js",
+			"settings":
+			{
+				"buffer_size": 5826,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/geom/rect.js",
+			"settings":
+			{
+				"buffer_size": 11857,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/geom/polygonFinder.js",
+			"settings":
+			{
+				"buffer_size": 5012,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/geom/matrix.js",
+			"settings":
+			{
+				"buffer_size": 18117,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/svgRenderer.js",
+			"settings":
+			{
+				"buffer_size": 13178,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/schematicRenderer.js",
+			"settings":
+			{
+				"buffer_size": 8040,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/boardRenderer.js",
+			"settings":
+			{
+				"buffer_size": 8386,
 				"line_ending": "Unix"
 			}
 		},
@@ -211,15 +249,15 @@
 			"file": "test-renderer.js",
 			"settings":
 			{
-				"buffer_size": 920,
+				"buffer_size": 1120,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/dom/preactComponent.js",
+			"file": "lib/dom/element.js",
 			"settings":
 			{
-				"buffer_size": 4089,
+				"buffer_size": 28254,
 				"line_ending": "Unix"
 			}
 		}
@@ -235,6 +273,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"install  p",
+				"Package Control: Install Package"
+			],
 			[
 				"out",
 				"Browse Mode: Outline (Right)"
@@ -457,11 +499,39 @@
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
 		"/home/roman/Dokumente/Sources/plot-cv/lib",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle",
-		"/home/roman/Dokumente/Sources/plot-cv/Patchwoman"
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom"
 	],
 	"file_history":
 	[
+		"/home/roman/the-wild-beauty-company/components/simple/aspectBox.js",
+		"/home/roman/Dokumente/Sources/plot-cv/style.css",
+		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/aspectBox.es",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-parse.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/ECMAScript.g4",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript.js",
+		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/board.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
+		"/home/roman/Dokumente/Sources/plot-cv/index.html",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/devtools.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
+		"/home/roman/Dokumente/Sources/plot-cv/output.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/server.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/aop.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
 		"/home/roman/Dokumente/Sources/Arduino-Projects/Inductance_Meter/Inductance_Meter.ino",
 		"/home/roman/Dokumente/Sources/Arduino-Projects/ArduinoAdcAndFrequencyEstimation/Arduino/ADC_Streamer.ino",
@@ -484,17 +554,11 @@
 		"/home/roman/Dokumente/Sources/Arduino-Projects/ArduinoFunctionGenerator/ArduinoFunctionGenerator.ino",
 		"/home/roman/Dokumente/Sources/Arduino-Projects/scope/scope.ino",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
-		"/home/roman/Dokumente/Sources/plot-cv/output.svg",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/expr.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/grammar.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/INI.g4",
@@ -503,7 +567,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/test-ini.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/lexer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/C.g4",
-		"/home/roman/Dokumente/Sources/plot-cv/test-parse.js",
 		"/home/roman/Dokumente/Sources/plot-cv/seek_set.c",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/devpane.js",
@@ -516,7 +579,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/es6.ebnf",
 		"/home/roman/Dokumente/Sources/plot-cv/test-clipper.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
 		"/home/roman/Dokumente/jonesforth.f.txt",
 		"/home/roman/Dokumente/Sources/plot-cv/test-svgpath.js",
 		"/home/roman/Dokumente/Sources/plot-cv/line.svg",
@@ -532,12 +594,10 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/bbox.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/clipper-lib.js",
 		"/home/roman/Dokumente/Sources/plot-cv/cross.svg",
-		"/home/roman/Dokumente/Sources/plot-cv/index.html",
 		"/home/roman/Dokumente/Sources/plot-cv/output.orig.svg",
 		"/home/roman/Dokumente/Sources/plot-cv/line.js",
 		"/home/roman/Dokumente/Sources/plot-cv/Headphone-Amplifier-ClassAB-alt3.sch",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/circle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
@@ -547,18 +607,14 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/opencv/polar_transforms.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/clipper.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/autoStore.es",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/autoStore.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/overlay.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-antlr.js",
 		"/home/roman/Dokumente/Sources/plot-cv/axios.es",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
 		"/home/roman/Dokumente/Sources/plot-cv/alea.es",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/axios.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-export.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/alea.js",
 		"/home/roman/Dokumente/Sources/plot-cv/Headphone-Amplifier-ClassAB",
 		"/home/roman/Dokumente/Sources/plot-cv/clipper.es",
@@ -572,24 +628,9 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/trbl.js",
 		"/home/roman/Dokumente/Sources/plot-cv/renderer.es",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/graph.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
 		"/home/roman/Dokumente/Sources/plot-cv/document.es",
 		"/home/roman/Dokumente/Sources/plot-cv/printer.es",
-		"/home/roman/Dokumente/Sources/plot-cv/token.es",
-		"/home/roman/Dokumente/Sources/plot-cv/common.es",
-		"/home/roman/Dokumente/Sources/plot-cv/parser.es",
-		"/home/roman/Dokumente/Sources/plot-cv/estree.es",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/colorscheme.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/container/enum.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lexer.es",
-		"/home/roman/Dokumente/Sources/plot-cv/test-template.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-color.es",
-		"/home/roman/Dokumente/Sources/plot-cv/test-pointlist.es",
-		"/home/roman/Dokumente/Sources/plot-cv/test-template.es",
-		"/home/roman/Dokumente/Sources/plot-cv/test-color.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/container/multiMap.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/container/spatial-h.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/container/sortedMap.js"
+		"/home/roman/Dokumente/Sources/plot-cv/token.es"
 	],
 	"find":
 	{
@@ -600,6 +641,11 @@
 		"height": 346.0,
 		"where_history":
 		[
+			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.html,*.css,/home/roman/Dokumente/Sources/plot-cv/main.js,/home/roman/Dokumente/Sources/plot-cv/index.html,<open files>",
+			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.html,*.css,/home/roman/Dokumente/Sources/plot-cv/main.js,/home/roman/Dokumente/Sources/plot-cv/index.html",
+			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.js,*.html,*.css,/home/roman/Dokumente/Sources/plot-cv/main.js,/home/roman/Dokumente/Sources/plot-cv/index.html",
+			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.js,*.html,*.css,/home/roman/Dokumente/Sources/plot-cv/*.js,/home/roman/Dokumente/Sources/plot-cv/*.html",
+			"/home/roman/Dokumente/Sources/plot-cv,*.js,*.js,*.html,*.css",
 			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.js,*.html,*.css",
 			"/home/roman/Dokumente/Sources/plot-cv/lib/parse,*.js,*.js,*.html,*.css",
 			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.js,*.html,*.css",
@@ -622,134 +668,134 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"var ",
-			"^var",
-			"\\.js",
-			"BoardRen",
-			"BoardRender",
-			");\n",
-			"grid'",
-			"grid",
-			"());",
-			"create =",
-			"ReactC",
-			"renderer",
-			"renderDoc",
-			"render",
-			"count",
-			"rotate\\(",
-			"renderColl",
-			" renderInstance",
-			"renderInstance",
-			"defaultY",
-			"pos\\.",
-			"renderColl",
-			"renderCollection",
-			"SchematicRenderer.render",
-			"renderCol",
-			"renderItem",
-			"let",
-			"renderItem",
+			"'for'",
+			"keyword",
+			"      \n",
+			"Element",
+			"#ma",
+			"setRect",
+			"scaling\\(",
+			"factor",
+			"window, ",
 			"transform",
-			"renderItem",
-			"renderInstance",
-			"className",
-			"renderItem",
-			"rot",
-			"renderCollection",
-			"ros",
-			"renderInstance",
-			"renderItem",
-			"';\n",
-			"renderCollection",
-			"<path",
-			"renderInstance",
-			"renderInstance\\(",
-			"coordFn",
-			"renderInstance\\(",
-			"'wire'",
-			"<rect",
-			"'rect'",
-			"transform=",
-			"renderColl",
-			"MakeCoordTransformer",
-			"transformation.con",
-			"coordFn\\(",
-			"MakeCoord",
-			"coordFn\\(",
-			"MakeCoordTra",
-			"MakeCoordTransformer",
-			"clone",
-			"'text",
-			"<text",
-			"'text'",
-			"<path",
-			"instance\\.",
-			"<path",
-			"transform",
-			"transform=",
-			"transform:",
-			"'g'",
-			" renderInstance",
-			"renderInstance",
-			"this.renderC",
-			"transform:",
-			"toMatrix",
-			"coordFn =",
-			" = i =>",
-			"transform",
-			"coordFn",
-			"renderCollection",
+			"transformm",
+			"trkl\\(",
+			"zoomVal",
+			" fromString\\(",
+			" toString\\(",
+			"toString\\(",
+			"toString",
+			"}\n",
+			" fromString",
+			"fromString",
+			"Transformed",
+			"listener",
+			"listener:",
+			"listener",
+			"AspectR",
+			"SizedAsp",
+			"data-width",
+			"Transformed",
+			"trkl.sub",
+			"Transformed",
+			"absolute",
+			"'absolute",
+			"absolute",
+			"absolute'",
+			"fence",
+			"zoom",
+			"mul =",
+			"resize =",
+			" \n",
+			"Matrix",
+			"affine",
+			"Element.oldSize",
+			"add",
 			"parent",
-			" renderColl",
-			"renderInstance",
-			"coordFn",
-			"renderInstances",
-			"coordFn",
-			"let",
-			"MakeCoordTransformer",
-			"coordFn =",
-			"coordFn",
-			"MakeCoordTransformer",
-			"tr =",
-			"MakeCoordTransformer",
-			"coordFn",
-			"coord",
-			"Coord",
-			"CoordFn",
-			"renderColl",
-			"renderItem",
-			"renderItems",
-			"new new",
-			"CTOR\\(this\\)",
+			"f =",
+			"MakeFitAction",
+			"min.*width",
+			"min.width",
+			"style",
+			"null",
+			"getBounds",
+			"getBound",
+			"firstElem",
+			"  \n",
+			"element",
+			"let .* h;",
+			"let .* h",
+			"let h",
+			"h =",
+			"h",
+			"from.*preact",
+			"fence",
+			"\\[children]",
+			"estree.Literal",
+			"`: `",
 			";\n",
-			"new\\s*\\(",
-			"new Point",
-			"clone",
-			"species",
-			"CTOR",
-			"Point.prototype.sub",
-			"Symbol.species",
-			"species",
-			"'text'",
-			"RotateTransformation",
-			"coordFn =",
-			"coordFn",
-			"\"CONN-3P\"",
-			"\"-3P\"",
-			"rot=\"M",
-			"'rect'",
-			"Rect",
-			"move",
-			"parsed:",
-			"parsed`",
-			"parsed^",
-			"parsed'",
-			"parsed:",
-			"parsed",
+			"': '",
+			"printObj",
+			"width",
+			"`<${",
+			"isBool",
+			"JSX",
+			"class Object",
+			"estree.Object",
+			"ArrowFunction",
+			"rrow",
+			"Arrow",
+			"default",
+			"class Prop",
+			"class FunctionLi",
+			"class Obj",
+			"ObjectBindingPattern",
+			"class Obj",
+			"args",
+			"class ObjectBin",
+			"^ *console.log.*token",
+			"log.*token",
+			"console.log(\"last:\", last);\n    console.log(\"last.position:\", last.position);",
+			"log.*last",
+			" parseArrow",
+			" parseFunc",
+			" parseArg",
+			"class Func",
+			"Param",
+			"parseArrowFunction",
+			"parseArrow",
+			" parseArrow",
+			" = undefined",
+			"log.*msg",
+			"as",
+			"ast",
+			"new Range",
+			"function Range",
+			"new Token",
+			"this.source.length",
 			"eof",
-			"Rule.Match",
-			"addRule"
+			"F",
+			"React.Fragment",
+			"returned",
+			"lexed",
+			"quoteLi",
+			"\\\\n/g",
+			"lexed",
+			"file",
+			"line",
+			"^ *pos[^ ]*\\(",
+			"^ *pos",
+			" positio",
+			"log.*getRange",
+			"getRange",
+			" matchLiteral",
+			"matchLiteral",
+			"isLiteral",
+			" matchLiteral",
+			"matchLiteral",
+			"'`'",
+			"matchLiteral",
+			"  \n"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -757,6 +803,11 @@
 		"regex": true,
 		"replace_history":
 		[
+			"Element.rect",
+			"children",
+			"",
+			"Fragment",
+			"",
 			"new",
 			"new Point",
 			"new",
@@ -879,12 +930,7 @@
 			"\\\\.",
 			"argc > i",
 			"",
-			", ",
-			"",
-			"int,",
-			"to_string",
-			"ostream",
-			"ostringstream"
+			", "
 		],
 		"reverse": false,
 		"show_context": false,
@@ -903,7 +949,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 314,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
@@ -912,153 +958,14 @@
 						],
 						"settings":
 						{
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
+							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/grammars/C.g4",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
-								[
-									762,
-									792
-								],
-								[
-									880,
-									901
-								],
-								[
-									967,
-									1005
-								],
-								[
-									1079,
-									1105
-								],
-								[
-									1230,
-									1247
-								],
-								[
-									1449,
-									1494
-								],
-								[
-									1641,
-									1686
-								],
-								[
-									1985,
-									2024
-								],
-								[
-									2342,
-									2364
-								],
-								[
-									2567,
-									2593
-								],
-								[
-									3830,
-									3867
-								],
-								[
-									4082,
-									4088
-								],
-								[
-									4645,
-									4656
-								],
-								[
-									4736,
-									4747
-								],
-								[
-									4972,
-									5011
-								],
-								[
-									5128,
-									5151
-								],
-								[
-									6968,
-									6973
-								],
-								[
-									7034,
-									7040
-								],
-								[
-									7230,
-									7235
-								],
-								[
-									7265,
-									7271
-								],
-								[
-									8060,
-									8073
-								],
-								[
-									8197,
-									8226
-								],
-								[
-									8286,
-									8290
-								],
-								[
-									8636,
-									8649
-								],
-								[
-									8914,
-									8918
-								],
-								[
-									8938,
-									8942
-								],
-								[
-									8956,
-									8960
-								],
-								[
-									9004,
-									9013
-								]
 							],
 							"symlist":
 							[
-								"ClampAngle",
-								"AlignmentAngle",
-								"RotateTransformation",
-								"LayerAttributes",
-								"InvertY",
-								"PolarToCartesian",
-								"Arc",
-								"CalculateArcRadius",
-								"LinesToPath",
-								"lineTo",
-								"MakeCoordTransformer",
-								"obj =>",
-								"(acc, k) =>",
-								"(acc, k) =>",
-								"renderDocument",
-								"append_to(elem, parent)",
-								"it =>",
-								"arg =>",
-								"it =>",
-								"arg =>",
-								".dump",
-								"getLayersForColor",
-								"l =>",
-								"(color, i) =>",
-								"e =>",
-								"e =>",
-								"e =>",
-								"(c, n) =>"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -1066,88 +973,32 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 17,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 1,
+			"selected": 5,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "lib/eagle/renderer.js",
+					"file": "components.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 10629,
+						"buffer_size": 12637,
 						"regions":
 						{
-						},
-						"selection":
-						[
-							[
-								10629,
-								10629
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Babel/Next Roman.tmTheme",
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "lib/eagle/renderUtils.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 10643,
-						"regions":
-						{
-							"col_00000001":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										6095,
-										6110
-									]
-								],
-								"scope": "col_00000001"
-							},
-							"col_00000001_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_00000001_circle.png",
-								"regions":
-								[
-									[
-										6037,
-										6037
-									]
-								],
-								"scope": "col_gutter"
-							},
 							"col_010101FF":
 							{
 								"flags": 16,
 								"regions":
 								[
 									[
-										6704,
-										6711
+										3800,
+										3805
 									]
 								],
 								"scope": "col_010101FF"
@@ -1159,58 +1010,124 @@
 								"regions":
 								[
 									[
-										6680,
-										6680
+										3779,
+										3779
 									]
 								],
 								"scope": "col_gutter"
 							},
-							"col_3255FF4C":
+							"col_42AB3DFF":
 							{
 								"flags": 16,
 								"regions":
 								[
 									[
-										5035,
-										5057
+										8103,
+										8110
 									]
 								],
-								"scope": "col_3255FF4C"
+								"scope": "col_42AB3DFF"
 							},
-							"col_3255FF4C_icon":
+							"col_42AB3DFF_icon":
 							{
 								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_3255FF4C_circle.png",
+								"icon": "Packages/User/Color Highlight.cache/col_42AB3DFF_circle.png",
 								"regions":
 								[
 									[
-										5014,
-										5014
+										8089,
+										8089
 									]
 								],
 								"scope": "col_gutter"
 							},
-							"col_FFFFFFFF":
+							"col_444443FF":
 							{
 								"flags": 16,
 								"regions":
 								[
 									[
-										6074,
-										6090
+										4777,
+										4784
+									],
+									[
+										6898,
+										6905
 									]
 								],
-								"scope": "col_FFFFFFFF"
+								"scope": "col_444443FF"
 							},
-							"col_FFFFFFFF_icon":
+							"col_444443FF_icon":
 							{
 								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
+								"icon": "Packages/User/Color Highlight.cache/col_444443FF_circle.png",
 								"regions":
 								[
 									[
-										6037,
-										6037
+										4763,
+										4763
+									],
+									[
+										6884,
+										6884
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_B4B3B3FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										4853,
+										4860
+									],
+									[
+										6973,
+										6980
+									]
+								],
+								"scope": "col_B4B3B3FF"
+							},
+							"col_B4B3B3FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_B4B3B3FF_circle.png",
+								"regions":
+								[
+									[
+										4795,
+										4795
+									],
+									[
+										6916,
+										6916
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_BF272FFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										6108,
+										6115
+									]
+								],
+								"scope": "col_BF272FFF"
+							},
+							"col_BF272FFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_BF272FFF_circle.png",
+								"regions":
+								[
+									[
+										6094,
+										6094
 									]
 								],
 								"scope": "col_gutter"
@@ -1219,8 +1136,8 @@
 						"selection":
 						[
 							[
-								667,
-								672
+								12002,
+								12002
 							]
 						],
 						"settings":
@@ -1230,157 +1147,27 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "lib/eagle/svgRenderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 12890,
-						"regions":
-						{
-							"col_0000AAFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										12075,
-										12082
-									]
-								],
-								"scope": "col_0000AAFF"
-							},
-							"col_0000AAFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_0000AAFF_circle.png",
-								"regions":
-								[
-									[
-										12052,
-										12052
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF0000FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										2633,
-										2645
-									]
-								],
-								"scope": "col_FF0000FF"
-							},
-							"col_FF0000FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF0000FF_circle.png",
-								"regions":
-								[
-									[
-										2570,
-										2570
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF00FFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										6196,
-										6200
-									]
-								],
-								"scope": "col_FF00FFFF"
-							},
-							"col_FF00FFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF00FFFF_circle.png",
-								"regions":
-								[
-									[
-										6177,
-										6177
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FFFFFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										12608,
-										12613
-									]
-								],
-								"scope": "col_FFFFFFFF"
-							},
-							"col_FFFFFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
-								"regions":
-								[
-									[
-										12553,
-										12553
-									]
-								],
-								"scope": "col_gutter"
-							}
-						},
-						"selection":
-						[
-							[
-								1629,
-								1629
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 517.0,
+						"translation.y": 6678.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 4,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "lib/eagle/schematicRenderer.js",
+					"buffer": 2,
+					"file": "lib/geom/transformation.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7882,
+						"buffer_size": 15455,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								7856,
-								7856
+								13659,
+								13659
 							]
 						],
 						"settings":
@@ -1390,92 +1177,32 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 5040.0,
+						"translation.y": 11359.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
-					"buffer": 5,
-					"file": "lib/eagle/boardRenderer.js",
+					"buffer": 3,
+					"file": "lib/trkl.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 8049,
+						"buffer_size": 4481,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								7790,
-								7790
+								3,
+								3
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 4780.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "output.svg",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 53198,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								428,
-								428
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/XML/XML.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "index.html",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 17209,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								246,
-								246
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
@@ -1487,42 +1214,12 @@
 					"type": "text"
 				},
 				{
-					"buffer": 8,
-					"file": "server.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2631,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1433,
-								1433
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 780.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
+					"buffer": 4,
 					"file": "main.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 13791,
+						"buffer_size": 14318,
 						"regions":
 						{
 							"col_010101FF":
@@ -1531,8 +1228,8 @@
 								"regions":
 								[
 									[
-										5811,
-										5816
+										6427,
+										6432
 									]
 								],
 								"scope": "col_010101FF"
@@ -1544,8 +1241,33 @@
 								"regions":
 								[
 									[
-										5682,
-										5682
+										6184,
+										6184
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF0000FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										6527,
+										6530
+									]
+								],
+								"scope": "col_FF0000FF"
+							},
+							"col_FF0000FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF0000FF_circle.png",
+								"regions":
+								[
+									[
+										6472,
+										6472
 									]
 								],
 								"scope": "col_gutter"
@@ -1554,8 +1276,8 @@
 						"selection":
 						[
 							[
-								5916,
-								5916
+								6310,
+								6310
 							]
 						],
 						"settings":
@@ -1565,19 +1287,342 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3177.0,
+						"translation.y": 2707.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 10,
-					"file": "lib/aop.js",
+					"buffer": 5,
+					"file": "/home/roman/the-wild-beauty-company/stores/RootStore.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 821,
+						"buffer_size": 12706,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5630,
+								5630
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/JavaScriptNext - ES6 Syntax/Next.tmTheme",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3316.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "lib/grammars/C.g4",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 19996,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								13782,
+								13782
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Neon Color Scheme/Neon.tmTheme",
+							"syntax": "Packages/ANTLR syntax highlight/Antlr.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 12351.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "lib/util.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 75460,
+						"regions":
+						{
+							"col_000000CC":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										24968,
+										24983
+									]
+								],
+								"scope": "col_000000CC"
+							},
+							"col_000000CC_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_000000CC_circle.png",
+								"regions":
+								[
+									[
+										24905,
+										24905
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_010101FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										25349,
+										25354
+									],
+									[
+										63960,
+										63965
+									]
+								],
+								"scope": "col_010101FF"
+							},
+							"col_010101FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_010101FF_circle.png",
+								"regions":
+								[
+									[
+										25156,
+										25156
+									],
+									[
+										63920,
+										63920
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4444DDFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										25019,
+										25026
+									]
+								],
+								"scope": "col_4444DDFF"
+							},
+							"col_4444DDFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4444DDFF_circle.png",
+								"regions":
+								[
+									[
+										24905,
+										24905
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_7FFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										60518,
+										60528
+									]
+								],
+								"scope": "col_7FFFFFFF"
+							},
+							"col_7FFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_7FFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										60503,
+										60503
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										60282,
+										60292
+									],
+									[
+										63967,
+										63972
+									]
+								],
+								"scope": "col_FFFFFFFF"
+							},
+							"col_FFFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										60229,
+										60229
+									],
+									[
+										63920,
+										63920
+									]
+								],
+								"scope": "col_gutter"
+							}
+						},
+						"selection":
+						[
+							[
+								37193,
+								37193
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 26101.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "index.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 17173,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								13138,
+								13138
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 7626.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "/home/roman/the-wild-beauty-company/stores/api.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5826,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								789,
+								789
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "lib/geom/rect.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11857,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5819,
+								5819
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3697.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "lib/geom/polygonFinder.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5012,
 						"regions":
 						{
 						},
@@ -1598,52 +1643,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "test-renderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 920,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								556,
-								556
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
 					"stack_index": 11,
 					"type": "text"
 				},
 				{
 					"buffer": 12,
-					"file": "lib/dom/preactComponent.js",
+					"file": "lib/geom/matrix.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4089,
+						"buffer_size": 18117,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1415,
-								1415
+								13485,
+								13485
 							]
 						],
 						"settings":
@@ -1653,10 +1670,1134 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 375.0,
+						"translation.y": 7750.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 12,
+					"type": "text"
+				},
+				{
+					"buffer": 13,
+					"file": "lib/eagle/svgRenderer.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 13178,
+						"regions":
+						{
+							"col_0000AAFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										12356,
+										12363
+									]
+								],
+								"scope": "col_0000AAFF"
+							},
+							"col_0000AAFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_0000AAFF_circle.png",
+								"regions":
+								[
+									[
+										12333,
+										12333
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF0000FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										2636,
+										2648
+									]
+								],
+								"scope": "col_FF0000FF"
+							},
+							"col_FF0000FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF0000FF_circle.png",
+								"regions":
+								[
+									[
+										2573,
+										2573
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF00FFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										6353,
+										6357
+									]
+								],
+								"scope": "col_FF00FFFF"
+							},
+							"col_FF00FFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF00FFFF_circle.png",
+								"regions":
+								[
+									[
+										6334,
+										6334
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										12887,
+										12903
+									]
+								],
+								"scope": "col_FFFFFFFF"
+							},
+							"col_FFFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										12834,
+										12834
+									]
+								],
+								"scope": "col_gutter"
+							}
+						},
+						"selection":
+						[
+							[
+								12952,
+								12952
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 7750.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 13,
+					"type": "text"
+				},
+				{
+					"buffer": 14,
+					"file": "lib/eagle/schematicRenderer.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8040,
+						"regions":
+						{
+							"col_4B4B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										891,
+										904
+									]
+								],
+								"scope": "col_4B4B4BFF"
+							},
+							"col_4B4B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4B4BFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4B4BA5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										649,
+										663
+									]
+								],
+								"scope": "col_4B4BA5FF"
+							},
+							"col_4B4BA5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4BA5FF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4B4BFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										780,
+										794
+									]
+								],
+								"scope": "col_4B4BFFFF"
+							},
+							"col_4B4BFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4BFFFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BA54BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										667,
+										681
+									],
+									[
+										2643,
+										2650
+									]
+								],
+								"scope": "col_4BA54BFF"
+							},
+							"col_4BA54BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BA54BFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									],
+									[
+										2624,
+										2624
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BA5A5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										685,
+										700
+									]
+								],
+								"scope": "col_4BA5A5FF"
+							},
+							"col_4BA5A5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BA5A5FF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BFF4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										798,
+										812
+									]
+								],
+								"scope": "col_4BFF4BFF"
+							},
+							"col_4BFF4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BFF4BFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										816,
+										831
+									]
+								],
+								"scope": "col_4BFFFFFF"
+							},
+							"col_4BFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A54B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										704,
+										718
+									],
+									[
+										3493,
+										3500
+									],
+									[
+										3784,
+										3791
+									]
+								],
+								"scope": "col_A54B4BFF"
+							},
+							"col_A54B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A54B4BFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									],
+									[
+										3470,
+										3470
+									],
+									[
+										3763,
+										3763
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A54BA5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										722,
+										737
+									]
+								],
+								"scope": "col_A54BA5FF"
+							},
+							"col_A54BA5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A54BA5FF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A5A54BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										741,
+										756
+									]
+								],
+								"scope": "col_A5A54BFF"
+							},
+							"col_A5A54BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A5A54BFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A5A5A5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										908,
+										924
+									]
+								],
+								"scope": "col_A5A5A5FF"
+							},
+							"col_A5A5A5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A5A5A5FF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_AFAFAFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										760,
+										776
+									]
+								],
+								"scope": "col_AFAFAFFF"
+							},
+							"col_AFAFAFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_AFAFAFFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF4B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										835,
+										849
+									]
+								],
+								"scope": "col_FF4B4BFF"
+							},
+							"col_FF4B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF4B4BFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF4BFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										853,
+										868
+									]
+								],
+								"scope": "col_FF4BFFFF"
+							},
+							"col_FF4BFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF4BFFFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFF4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										872,
+										887
+									]
+								],
+								"scope": "col_FFFF4BFF"
+							},
+							"col_FFFF4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFF4BFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										629,
+										645
+									]
+								],
+								"scope": "col_FFFFFFFF"
+							},
+							"col_FFFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							}
+						},
+						"selection":
+						[
+							[
+								5349,
+								5349
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3193.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 15,
+					"type": "text"
+				},
+				{
+					"buffer": 15,
+					"file": "lib/eagle/boardRenderer.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8386,
+						"regions":
+						{
+							"col_010101FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										3526,
+										3531
+									]
+								],
+								"scope": "col_010101FF"
+							},
+							"col_010101FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_010101FF_circle.png",
+								"regions":
+								[
+									[
+										3501,
+										3501
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_32FEFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										3481,
+										3498
+									]
+								],
+								"scope": "col_32FEFFFF"
+							},
+							"col_32FEFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_32FEFFFF_circle.png",
+								"regions":
+								[
+									[
+										3458,
+										3458
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4B4B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										813,
+										826
+									]
+								],
+								"scope": "col_4B4B4BFF"
+							},
+							"col_4B4B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4B4BFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4B4BA5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										554,
+										568
+									]
+								],
+								"scope": "col_4B4BA5FF"
+							},
+							"col_4B4BA5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4BA5FF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4B4BFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										693,
+										707
+									]
+								],
+								"scope": "col_4B4BFFFF"
+							},
+							"col_4B4BFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4BFFFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BA54BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										572,
+										586
+									]
+								],
+								"scope": "col_4BA54BFF"
+							},
+							"col_4BA54BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BA54BFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BA5A5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										590,
+										605
+									]
+								],
+								"scope": "col_4BA5A5FF"
+							},
+							"col_4BA5A5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BA5A5FF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BFF4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										711,
+										725
+									]
+								],
+								"scope": "col_4BFF4BFF"
+							},
+							"col_4BFF4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BFF4BFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										729,
+										744
+									]
+								],
+								"scope": "col_4BFFFFFF"
+							},
+							"col_4BFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A54B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										617,
+										631
+									]
+								],
+								"scope": "col_A54B4BFF"
+							},
+							"col_A54B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A54B4BFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A54BA5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										635,
+										650
+									]
+								],
+								"scope": "col_A54BA5FF"
+							},
+							"col_A54BA5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A54BA5FF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A5A54BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										654,
+										669
+									]
+								],
+								"scope": "col_A5A54BFF"
+							},
+							"col_A5A54BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A5A54BFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A5A5A5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										830,
+										846
+									]
+								],
+								"scope": "col_A5A5A5FF"
+							},
+							"col_A5A5A5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A5A5A5FF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_AFAFAFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										673,
+										689
+									]
+								],
+								"scope": "col_AFAFAFFF"
+							},
+							"col_AFAFAFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_AFAFAFFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF4B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										757,
+										771
+									]
+								],
+								"scope": "col_FF4B4BFF"
+							},
+							"col_FF4B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF4B4BFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF4BFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										775,
+										790
+									]
+								],
+								"scope": "col_FF4BFFFF"
+							},
+							"col_FF4BFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF4BFFFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFF4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										794,
+										809
+									]
+								],
+								"scope": "col_FFFF4BFF"
+							},
+							"col_FFFF4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFF4BFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										534,
+										550
+									]
+								],
+								"scope": "col_FFFFFFFF"
+							},
+							"col_FFFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							}
+						},
+						"selection":
+						[
+							[
+								7215,
+								7215
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4726.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 16,
+					"type": "text"
+				},
+				{
+					"buffer": 16,
+					"file": "test-renderer.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1120,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								354,
+								354
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 14,
+					"type": "text"
+				},
+				{
+					"buffer": 17,
+					"file": "lib/dom/element.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 28254,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								11247,
+								11247
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 6697.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
 					"type": "text"
 				}
 			]
@@ -1664,7 +2805,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 29.0
+		"height": 30.0
 	},
 	"input":
 	{
@@ -1730,7 +2871,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 54.0
+		"height": 74.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1739,6 +2880,110 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"C.",
+				"lib/grammars/C.g4"
+			],
+			[
+				"util.",
+				"lib/util.js"
+			],
+			[
+				"trkl.",
+				"lib/trkl.js"
+			],
+			[
+				"index",
+				"index.html"
+			],
+			[
+				"rect.",
+				"lib/geom/rect.js"
+			],
+			[
+				"elem",
+				"lib/dom/element.js"
+			],
+			[
+				"test-re",
+				"test-renderer.js"
+			],
+			[
+				"elemen",
+				"lib/dom/element.js"
+			],
+			[
+				"main",
+				"main.js"
+			],
+			[
+				"sty",
+				"style.css"
+			],
+			[
+				"aspec",
+				"aspectBox.es"
+			],
+			[
+				"util",
+				"lib/util.js"
+			],
+			[
+				"ecma",
+				"lib/grammars/ECMAScript.g4"
+			],
+			[
+				"printer",
+				"lib/ecmascript/printer.js"
+			],
+			[
+				"test-ec",
+				"test-ecmascript.js"
+			],
+			[
+				"test-par",
+				"test-parse.js"
+			],
+			[
+				"token",
+				"lib/ecmascript/token.js"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"lexer",
+				"lib/ecmascript/lexer.js"
+			],
+			[
+				"estree",
+				"lib/ecmascript/estree.js"
+			],
+			[
+				"toke",
+				"lib/ecmascript/token.js"
+			],
+			[
+				"parser.js",
+				"lib/ecmascript/parser.js"
+			],
+			[
+				"main.js",
+				"main.js"
+			],
+			[
+				"style.cs",
+				"style.css"
+			],
+			[
+				"compon",
+				"components.js"
+			],
+			[
+				"boardRe",
+				"lib/eagle/boardRenderer.js"
+			],
 			[
 				"server.",
 				"server.js"
@@ -1756,10 +3001,6 @@
 				"test-renderer.js"
 			],
 			[
-				"index",
-				"index.html"
-			],
-			[
 				"output.sv",
 				"output.svg"
 			],
@@ -1768,16 +3009,8 @@
 				"lib/eagle/renderer.js"
 			],
 			[
-				"elemen",
-				"lib/dom/element.js"
-			],
-			[
 				"point.js",
 				"lib/geom/point.js"
-			],
-			[
-				"test-re",
-				"test-renderer.js"
 			],
 			[
 				"test-ini",
@@ -1800,10 +3033,6 @@
 				"lib/eagle/renderer.js"
 			],
 			[
-				"util.js",
-				"lib/util.js"
-			],
-			[
 				"fn.js",
 				"lib/parse/fn.js"
 			],
@@ -1816,24 +3045,12 @@
 				"test-grammar.js"
 			],
 			[
-				"lexer",
-				"lib/parse/lexer.js"
-			],
-			[
-				"test-par",
-				"test-parse.js"
-			],
-			[
 				"C.g",
 				"lib/grammars/C.g4"
 			],
 			[
 				"gramma",
 				"lib/parse/grammar.js"
-			],
-			[
-				"C.",
-				"lib/grammars/C.g4"
 			],
 			[
 				"test-pa",
@@ -1960,10 +3177,6 @@
 				"lib/clipper-lib.js"
 			],
 			[
-				"test-ec",
-				"test-ecmascript.js"
-			],
-			[
 				"clipper.js",
 				"lib/clipper.js"
 			],
@@ -1978,10 +3191,6 @@
 			[
 				"clipper.es",
 				"clipper.es"
-			],
-			[
-				"parser.js",
-				"lib/ecmascript/parser.js"
 			],
 			[
 				"print",
@@ -2018,14 +3227,6 @@
 			[
 				"axis.e",
 				"axios.es"
-			],
-			[
-				"printer",
-				"lib/ecmascript/printer.js"
-			],
-			[
-				"estree",
-				"lib/ecmascript/estree.js"
 			],
 			[
 				"test-ex",
@@ -2132,10 +3333,6 @@
 				"test-template.es"
 			],
 			[
-				"util.",
-				"lib/util.js"
-			],
-			[
 				"docum",
 				"document.es"
 			],
@@ -2172,10 +3369,6 @@
 				"src/jsbindings.h"
 			],
 			[
-				"main.js",
-				"main.js"
-			],
-			[
 				"jsbind",
 				"src/jsbindings.cpp"
 			],
@@ -2198,58 +3391,6 @@
 			[
 				"Util.js",
 				"lib/util.js"
-			],
-			[
-				"reactCom",
-				"lib/dom/reactComponent.js"
-			],
-			[
-				"test-eagle",
-				"test-eagle.js"
-			],
-			[
-				"rendere",
-				"lib/eagle/renderer.js"
-			],
-			[
-				"compon",
-				"components.js"
-			],
-			[
-				"index.ht",
-				"index.html"
-			],
-			[
-				"svg.js",
-				"lib/dom/svg.js"
-			],
-			[
-				"color",
-				"lib/draw/colorMap.js"
-			],
-			[
-				"svg",
-				"lib/dom/svg.js"
-			],
-			[
-				"util.j",
-				"lib/util.js"
-			],
-			[
-				"react",
-				"lib/dom/reactComponent.js"
-			],
-			[
-				"compo",
-				"components.js"
-			],
-			[
-				"reactC",
-				"lib/dom/reactComponent.js"
-			],
-			[
-				"style.",
-				"style.css"
 			]
 		],
 		"width": 0.0
