@@ -112,10 +112,10 @@
 	"buffers":
 	[
 		{
-			"contents": "",
+			"contents": "ID: preact\nID: main",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 19,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
@@ -135,6 +135,58 @@
 			"settings":
 			{
 				"buffer_size": 6895,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "index.html",
+			"settings":
+			{
+				"buffer_size": 17173,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "main.js",
+			"settings":
+			{
+				"buffer_size": 14466,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/websocket-client.js",
+			"settings":
+			{
+				"buffer_size": 5363,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "server.js",
+			"settings":
+			{
+				"buffer_size": 3862,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/highgui-viewer.cpp",
+			"settings":
+			{
+				"buffer_size": 7933,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/util.js",
+			"settings":
+			{
+				"buffer_size": 75756,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -549,6 +601,11 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"WebSocketClient",
+			"Util.keys",
+			"tryCatch =",
+			"tryCa",
+			"websock",
 			"cli_SOURCES",
 			"link_dir",
 			"add_sub",
@@ -671,12 +728,7 @@
 			"React.Fragment",
 			"returned",
 			"lexed",
-			"quoteLi",
-			"\\\\n/g",
-			"lexed",
-			"file",
-			"line",
-			"^ *pos[^ ]*\\("
+			"quoteLi"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -830,7 +882,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 0,
+						"buffer_size": 19,
 						"regions":
 						{
 						},
@@ -840,13 +892,23 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/index.html",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
+								[
+									17086,
+									17092
+								],
+								[
+									17142,
+									17146
+								]
 							],
 							"symlist":
 							[
+								"ID: preact",
+								"ID: main"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -854,13 +916,13 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 8,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 1,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -890,7 +952,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
@@ -920,7 +982,213 @@
 						"translation.y": 1522.0,
 						"zoom_level": 1.0
 					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "index.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 17173,
+						"regions":
+						{
+							"col_010101FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										7506,
+										7511
+									]
+								],
+								"scope": "col_010101FF"
+							},
+							"col_010101FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_010101FF_circle.png",
+								"regions":
+								[
+									[
+										7371,
+										7371
+									]
+								],
+								"scope": "col_gutter"
+							}
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3780.0,
+						"zoom_level": 1.0
+					},
 					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "main.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 14466,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9854,
+								9854
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 6137.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "lib/websocket-client.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5363,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "server.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3862,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2005,
+								2005
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/User/Color Highlighter/themes/Next Roman.tmTheme",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1260.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "src/highgui-viewer.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7933,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5958,
+								5958
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++11/C++11.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "lib/util.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 75756,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3327,
+								3327
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1740.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
@@ -928,7 +1196,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 30.0
+		"height": 29.0
 	},
 	"input":
 	{
@@ -994,7 +1262,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 74.0
+		"height": 54.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1003,6 +1271,34 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"high",
+				"src/highgui-viewer.cpp"
+			],
+			[
+				"server.js",
+				"server.js"
+			],
+			[
+				"websocket-cli",
+				"lib/websocket-client.js"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"server",
+				"server.js"
+			],
+			[
+				"main.js",
+				"main.js"
+			],
+			[
+				"index.",
+				"index.html"
+			],
 			[
 				"cmake",
 				"CMakeLists.txt"
@@ -1084,10 +1380,6 @@
 				"lib/ecmascript/token.js"
 			],
 			[
-				"util.js",
-				"lib/util.js"
-			],
-			[
 				"lexer",
 				"lib/ecmascript/lexer.js"
 			],
@@ -1102,10 +1394,6 @@
 			[
 				"parser.js",
 				"lib/ecmascript/parser.js"
-			],
-			[
-				"main.js",
-				"main.js"
 			],
 			[
 				"style.cs",
@@ -1494,26 +1782,6 @@
 			[
 				".g4",
 				"lib/grammars/Lua.g4"
-			],
-			[
-				"test.js",
-				"test.js"
-			],
-			[
-				"jsbin",
-				"src/jsbindings.h"
-			],
-			[
-				"jsbind",
-				"src/jsbindings.cpp"
-			],
-			[
-				"js_mat",
-				"src/js_mat.cpp"
-			],
-			[
-				"js_po",
-				"src/js_point.cpp"
 			]
 		],
 		"width": 0.0
