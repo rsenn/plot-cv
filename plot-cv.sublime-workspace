@@ -122,142 +122,20 @@
 			}
 		},
 		{
-			"file": "components.js",
+			"file": "src/jsbindings.cpp",
 			"settings":
 			{
-				"buffer_size": 12637,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/geom/transformation.js",
-			"settings":
-			{
-				"buffer_size": 15455,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/trkl.js",
-			"settings":
-			{
-				"buffer_size": 4481,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "main.js",
-			"settings":
-			{
-				"buffer_size": 14318,
+				"buffer_size": 2789,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/home/roman/the-wild-beauty-company/stores/RootStore.js",
+			"file": "CMakeLists.txt",
 			"settings":
 			{
-				"buffer_size": 12706,
+				"buffer_size": 6895,
 				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/grammars/C.g4",
-			"settings":
-			{
-				"buffer_size": 19996,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/util.js",
-			"settings":
-			{
-				"buffer_size": 75460,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "index.html",
-			"settings":
-			{
-				"buffer_size": 17173,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/roman/the-wild-beauty-company/stores/api.js",
-			"settings":
-			{
-				"buffer_size": 5826,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/geom/rect.js",
-			"settings":
-			{
-				"buffer_size": 11857,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/geom/polygonFinder.js",
-			"settings":
-			{
-				"buffer_size": 5012,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/geom/matrix.js",
-			"settings":
-			{
-				"buffer_size": 18117,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/svgRenderer.js",
-			"settings":
-			{
-				"buffer_size": 13178,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/schematicRenderer.js",
-			"settings":
-			{
-				"buffer_size": 8040,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/boardRenderer.js",
-			"settings":
-			{
-				"buffer_size": 8386,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-renderer.js",
-			"settings":
-			{
-				"buffer_size": 1120,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/dom/element.js",
-			"settings":
-			{
-				"buffer_size": 28254,
 				"line_ending": "Unix"
 			}
 		}
@@ -498,41 +376,60 @@
 	"expanded_folders":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
-		"/home/roman/Dokumente/Sources/plot-cv/lib",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom"
+		"/home/roman/Dokumente/Sources/plot-cv/src"
 	],
 	"file_history":
 	[
+		"/home/roman/the-wild-beauty-company/stores/RootStore.js",
+		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/src/psimpl.h",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_mat.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/imgui/libs/glfw/include/GLFW/glfw3.h",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_contour.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_draw.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_line.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_point.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_point_iterator.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_rect.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_size.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/imgui-viewer.cmake",
+		"/home/roman/Dokumente/Sources/plot-cv/components.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
+		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/C.g4",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/index.html",
+		"/home/roman/the-wild-beauty-company/stores/api.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/polygonFinder.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
 		"/home/roman/the-wild-beauty-company/components/simple/aspectBox.js",
 		"/home/roman/Dokumente/Sources/plot-cv/style.css",
 		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/aspectBox.es",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-parse.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/ECMAScript.g4",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript.js",
-		"/home/roman/Dokumente/Sources/plot-cv/main.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/board.svg",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/Dokumente/Sources/plot-cv/index.html",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/devtools.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/output.svg",
 		"/home/roman/Dokumente/Sources/plot-cv/server.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/aop.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
 		"/home/roman/Dokumente/Sources/Arduino-Projects/Inductance_Meter/Inductance_Meter.ino",
 		"/home/roman/Dokumente/Sources/Arduino-Projects/ArduinoAdcAndFrequencyEstimation/Arduino/ADC_Streamer.ino",
 		"/home/roman/Dokumente/Sources/Arduino-Projects/BlinkWithoutDelay/BlinkWithoutDelay.ino",
@@ -553,8 +450,6 @@
 		"/home/roman/Dokumente/Sources/Arduino-Projects/FunctionGeneratorABMS/Arduino_Frequency_Counter_Duty_Cycle_Meter.ino",
 		"/home/roman/Dokumente/Sources/Arduino-Projects/ArduinoFunctionGenerator/ArduinoFunctionGenerator.ino",
 		"/home/roman/Dokumente/Sources/Arduino-Projects/scope/scope.ino",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
@@ -566,7 +461,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/ini-grammar.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-ini.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/lexer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/C.g4",
 		"/home/roman/Dokumente/Sources/plot-cv/seek_set.c",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/devpane.js",
@@ -602,7 +496,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/intersection.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/polygonFinder.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/lazyInitializer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/opencv/polar_transforms.cpp",
@@ -614,23 +507,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/axios.es",
 		"/home/roman/Dokumente/Sources/plot-cv/alea.es",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/axios.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-export.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/alea.js",
-		"/home/roman/Dokumente/Sources/plot-cv/Headphone-Amplifier-ClassAB",
-		"/home/roman/Dokumente/Sources/plot-cv/clipper.es",
-		"/home/roman/Dokumente/Sources/plot-cv/point.es",
-		"/home/roman/Dokumente/Sources/plot-cv/pointList.es",
-		"/home/roman/Dokumente/Sources/plot-cv/test-export.es",
-		"/home/roman/Dokumente/Sources/plot-cv/rect.es",
-		"/home/roman/Dokumente/Sources/plot-cv/matrix3d.es",
-		"/home/roman/Dokumente/Sources/plot-cv/matrix.es",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix3d.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/trbl.js",
-		"/home/roman/Dokumente/Sources/plot-cv/renderer.es",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/graph.js",
-		"/home/roman/Dokumente/Sources/plot-cv/document.es",
-		"/home/roman/Dokumente/Sources/plot-cv/printer.es",
-		"/home/roman/Dokumente/Sources/plot-cv/token.es"
+		"/home/roman/Dokumente/Sources/plot-cv/test-export.js"
 	],
 	"find":
 	{
@@ -641,6 +518,10 @@
 		"height": 346.0,
 		"where_history":
 		[
+			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.html,*.css,/home/roman/Dokumente/Sources/plot-cv/main.js,/home/roman/Dokumente/Sources/plot-cv/index.html,<open files>,/home/roman/Dokumente/Sources/plot-cv,*.cpp,*.h,*.hpp,*.txt",
+			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.html,*.css,/home/roman/Dokumente/Sources/plot-cv/main.js,/home/roman/Dokumente/Sources/plot-cv/index.html,<open files>,/home/roman/Dokumente/Sources/plot-cv,*.cpp,*.h,*.hpp,CMakeLists.txt",
+			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.html,*.css,/home/roman/Dokumente/Sources/plot-cv/main.js,/home/roman/Dokumente/Sources/plot-cv/index.html,<open files>,/home/roman/Dokumente/Sources/plot-cv,*.cpp,*.h,*.hpp",
+			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.html,*.css,/home/roman/Dokumente/Sources/plot-cv/main.js,/home/roman/Dokumente/Sources/plot-cv/index.html,<open files>,/home/roman/Dokumente/Sources/plot-cv,*.cpp,*.h",
 			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.html,*.css,/home/roman/Dokumente/Sources/plot-cv/main.js,/home/roman/Dokumente/Sources/plot-cv/index.html,<open files>",
 			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.html,*.css,/home/roman/Dokumente/Sources/plot-cv/main.js,/home/roman/Dokumente/Sources/plot-cv/index.html",
 			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.js,*.html,*.css,/home/roman/Dokumente/Sources/plot-cv/main.js,/home/roman/Dokumente/Sources/plot-cv/index.html",
@@ -668,6 +549,18 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"cli_SOURCES",
+			"link_dir",
+			"add_sub",
+			"quickjs",
+			"src_program",
+			"quickjs",
+			" __attribute__((visibility(\"default\")))",
+			"visibilit",
+			"ptr_fun",
+			"bind2nd",
+			"imgui",
+			"glew",
 			"'for'",
 			"keyword",
 			"      \n",
@@ -783,19 +676,7 @@
 			"lexed",
 			"file",
 			"line",
-			"^ *pos[^ ]*\\(",
-			"^ *pos",
-			" positio",
-			"log.*getRange",
-			"getRange",
-			" matchLiteral",
-			"matchLiteral",
-			"isLiteral",
-			" matchLiteral",
-			"matchLiteral",
-			"'`'",
-			"matchLiteral",
-			"  \n"
+			"^ *pos[^ ]*\\("
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -803,6 +684,7 @@
 		"regex": true,
 		"replace_history":
 		[
+			"",
 			"Element.rect",
 			"children",
 			"",
@@ -929,8 +811,7 @@
 			"\\\\\\\\",
 			"\\\\.",
 			"argc > i",
-			"",
-			", "
+			""
 		],
 		"reverse": false,
 		"show_context": false,
@@ -959,7 +840,7 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/grammars/C.g4",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
@@ -973,656 +854,22 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 17,
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 5,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "components.js",
+					"file": "src/jsbindings.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 12637,
-						"regions":
-						{
-							"col_010101FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										3800,
-										3805
-									]
-								],
-								"scope": "col_010101FF"
-							},
-							"col_010101FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_010101FF_circle.png",
-								"regions":
-								[
-									[
-										3779,
-										3779
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_42AB3DFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										8103,
-										8110
-									]
-								],
-								"scope": "col_42AB3DFF"
-							},
-							"col_42AB3DFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_42AB3DFF_circle.png",
-								"regions":
-								[
-									[
-										8089,
-										8089
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_444443FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										4777,
-										4784
-									],
-									[
-										6898,
-										6905
-									]
-								],
-								"scope": "col_444443FF"
-							},
-							"col_444443FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_444443FF_circle.png",
-								"regions":
-								[
-									[
-										4763,
-										4763
-									],
-									[
-										6884,
-										6884
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_B4B3B3FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										4853,
-										4860
-									],
-									[
-										6973,
-										6980
-									]
-								],
-								"scope": "col_B4B3B3FF"
-							},
-							"col_B4B3B3FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_B4B3B3FF_circle.png",
-								"regions":
-								[
-									[
-										4795,
-										4795
-									],
-									[
-										6916,
-										6916
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_BF272FFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										6108,
-										6115
-									]
-								],
-								"scope": "col_BF272FFF"
-							},
-							"col_BF272FFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_BF272FFF_circle.png",
-								"regions":
-								[
-									[
-										6094,
-										6094
-									]
-								],
-								"scope": "col_gutter"
-							}
-						},
-						"selection":
-						[
-							[
-								12002,
-								12002
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 6678.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "lib/geom/transformation.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 15455,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								13659,
-								13659
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 11359.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "lib/trkl.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4481,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3,
-								3
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "main.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 14318,
-						"regions":
-						{
-							"col_010101FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										6427,
-										6432
-									]
-								],
-								"scope": "col_010101FF"
-							},
-							"col_010101FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_010101FF_circle.png",
-								"regions":
-								[
-									[
-										6184,
-										6184
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF0000FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										6527,
-										6530
-									]
-								],
-								"scope": "col_FF0000FF"
-							},
-							"col_FF0000FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF0000FF_circle.png",
-								"regions":
-								[
-									[
-										6472,
-										6472
-									]
-								],
-								"scope": "col_gutter"
-							}
-						},
-						"selection":
-						[
-							[
-								6310,
-								6310
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2707.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "/home/roman/the-wild-beauty-company/stores/RootStore.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 12706,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5630,
-								5630
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/JavaScriptNext - ES6 Syntax/Next.tmTheme",
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 3316.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "lib/grammars/C.g4",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 19996,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								13782,
-								13782
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Neon Color Scheme/Neon.tmTheme",
-							"syntax": "Packages/ANTLR syntax highlight/Antlr.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 12351.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "lib/util.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 75460,
-						"regions":
-						{
-							"col_000000CC":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										24968,
-										24983
-									]
-								],
-								"scope": "col_000000CC"
-							},
-							"col_000000CC_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_000000CC_circle.png",
-								"regions":
-								[
-									[
-										24905,
-										24905
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_010101FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										25349,
-										25354
-									],
-									[
-										63960,
-										63965
-									]
-								],
-								"scope": "col_010101FF"
-							},
-							"col_010101FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_010101FF_circle.png",
-								"regions":
-								[
-									[
-										25156,
-										25156
-									],
-									[
-										63920,
-										63920
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4444DDFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										25019,
-										25026
-									]
-								],
-								"scope": "col_4444DDFF"
-							},
-							"col_4444DDFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4444DDFF_circle.png",
-								"regions":
-								[
-									[
-										24905,
-										24905
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_7FFFFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										60518,
-										60528
-									]
-								],
-								"scope": "col_7FFFFFFF"
-							},
-							"col_7FFFFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_7FFFFFFF_circle.png",
-								"regions":
-								[
-									[
-										60503,
-										60503
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FFFFFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										60282,
-										60292
-									],
-									[
-										63967,
-										63972
-									]
-								],
-								"scope": "col_FFFFFFFF"
-							},
-							"col_FFFFFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
-								"regions":
-								[
-									[
-										60229,
-										60229
-									],
-									[
-										63920,
-										63920
-									]
-								],
-								"scope": "col_gutter"
-							}
-						},
-						"selection":
-						[
-							[
-								37193,
-								37193
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 26101.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "index.html",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 17173,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								13138,
-								13138
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 7626.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "/home/roman/the-wild-beauty-company/stores/api.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5826,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								789,
-								789
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "lib/geom/rect.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 11857,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5819,
-								5819
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 3697.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "lib/geom/polygonFinder.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5012,
+						"buffer_size": 2789,
 						"regions":
 						{
 						},
@@ -1635,7 +882,7 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"syntax": "Packages/C++/C++.sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
@@ -1643,1161 +890,37 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 11,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 12,
-					"file": "lib/geom/matrix.js",
+					"buffer": 2,
+					"file": "CMakeLists.txt",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 18117,
+						"buffer_size": 6895,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								13485,
-								13485
+								2509,
+								2509
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 7750.0,
+						"translation.y": 1522.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 12,
-					"type": "text"
-				},
-				{
-					"buffer": 13,
-					"file": "lib/eagle/svgRenderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 13178,
-						"regions":
-						{
-							"col_0000AAFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										12356,
-										12363
-									]
-								],
-								"scope": "col_0000AAFF"
-							},
-							"col_0000AAFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_0000AAFF_circle.png",
-								"regions":
-								[
-									[
-										12333,
-										12333
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF0000FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										2636,
-										2648
-									]
-								],
-								"scope": "col_FF0000FF"
-							},
-							"col_FF0000FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF0000FF_circle.png",
-								"regions":
-								[
-									[
-										2573,
-										2573
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF00FFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										6353,
-										6357
-									]
-								],
-								"scope": "col_FF00FFFF"
-							},
-							"col_FF00FFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF00FFFF_circle.png",
-								"regions":
-								[
-									[
-										6334,
-										6334
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FFFFFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										12887,
-										12903
-									]
-								],
-								"scope": "col_FFFFFFFF"
-							},
-							"col_FFFFFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
-								"regions":
-								[
-									[
-										12834,
-										12834
-									]
-								],
-								"scope": "col_gutter"
-							}
-						},
-						"selection":
-						[
-							[
-								12952,
-								12952
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 7750.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 13,
-					"type": "text"
-				},
-				{
-					"buffer": 14,
-					"file": "lib/eagle/schematicRenderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8040,
-						"regions":
-						{
-							"col_4B4B4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										891,
-										904
-									]
-								],
-								"scope": "col_4B4B4BFF"
-							},
-							"col_4B4B4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4B4B4BFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4B4BA5FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										649,
-										663
-									]
-								],
-								"scope": "col_4B4BA5FF"
-							},
-							"col_4B4BA5FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4B4BA5FF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4B4BFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										780,
-										794
-									]
-								],
-								"scope": "col_4B4BFFFF"
-							},
-							"col_4B4BFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4B4BFFFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4BA54BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										667,
-										681
-									],
-									[
-										2643,
-										2650
-									]
-								],
-								"scope": "col_4BA54BFF"
-							},
-							"col_4BA54BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4BA54BFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									],
-									[
-										2624,
-										2624
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4BA5A5FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										685,
-										700
-									]
-								],
-								"scope": "col_4BA5A5FF"
-							},
-							"col_4BA5A5FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4BA5A5FF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4BFF4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										798,
-										812
-									]
-								],
-								"scope": "col_4BFF4BFF"
-							},
-							"col_4BFF4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4BFF4BFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4BFFFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										816,
-										831
-									]
-								],
-								"scope": "col_4BFFFFFF"
-							},
-							"col_4BFFFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4BFFFFFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A54B4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										704,
-										718
-									],
-									[
-										3493,
-										3500
-									],
-									[
-										3784,
-										3791
-									]
-								],
-								"scope": "col_A54B4BFF"
-							},
-							"col_A54B4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A54B4BFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									],
-									[
-										3470,
-										3470
-									],
-									[
-										3763,
-										3763
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A54BA5FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										722,
-										737
-									]
-								],
-								"scope": "col_A54BA5FF"
-							},
-							"col_A54BA5FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A54BA5FF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A5A54BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										741,
-										756
-									]
-								],
-								"scope": "col_A5A54BFF"
-							},
-							"col_A5A54BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A5A54BFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A5A5A5FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										908,
-										924
-									]
-								],
-								"scope": "col_A5A5A5FF"
-							},
-							"col_A5A5A5FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A5A5A5FF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_AFAFAFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										760,
-										776
-									]
-								],
-								"scope": "col_AFAFAFFF"
-							},
-							"col_AFAFAFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_AFAFAFFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF4B4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										835,
-										849
-									]
-								],
-								"scope": "col_FF4B4BFF"
-							},
-							"col_FF4B4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF4B4BFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF4BFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										853,
-										868
-									]
-								],
-								"scope": "col_FF4BFFFF"
-							},
-							"col_FF4BFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF4BFFFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FFFF4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										872,
-										887
-									]
-								],
-								"scope": "col_FFFF4BFF"
-							},
-							"col_FFFF4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FFFF4BFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FFFFFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										629,
-										645
-									]
-								],
-								"scope": "col_FFFFFFFF"
-							},
-							"col_FFFFFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							}
-						},
-						"selection":
-						[
-							[
-								5349,
-								5349
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 3193.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 15,
-					"type": "text"
-				},
-				{
-					"buffer": 15,
-					"file": "lib/eagle/boardRenderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8386,
-						"regions":
-						{
-							"col_010101FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										3526,
-										3531
-									]
-								],
-								"scope": "col_010101FF"
-							},
-							"col_010101FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_010101FF_circle.png",
-								"regions":
-								[
-									[
-										3501,
-										3501
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_32FEFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										3481,
-										3498
-									]
-								],
-								"scope": "col_32FEFFFF"
-							},
-							"col_32FEFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_32FEFFFF_circle.png",
-								"regions":
-								[
-									[
-										3458,
-										3458
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4B4B4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										813,
-										826
-									]
-								],
-								"scope": "col_4B4B4BFF"
-							},
-							"col_4B4B4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4B4B4BFF_circle.png",
-								"regions":
-								[
-									[
-										505,
-										505
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4B4BA5FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										554,
-										568
-									]
-								],
-								"scope": "col_4B4BA5FF"
-							},
-							"col_4B4BA5FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4B4BA5FF_circle.png",
-								"regions":
-								[
-									[
-										505,
-										505
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4B4BFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										693,
-										707
-									]
-								],
-								"scope": "col_4B4BFFFF"
-							},
-							"col_4B4BFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4B4BFFFF_circle.png",
-								"regions":
-								[
-									[
-										505,
-										505
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4BA54BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										572,
-										586
-									]
-								],
-								"scope": "col_4BA54BFF"
-							},
-							"col_4BA54BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4BA54BFF_circle.png",
-								"regions":
-								[
-									[
-										505,
-										505
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4BA5A5FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										590,
-										605
-									]
-								],
-								"scope": "col_4BA5A5FF"
-							},
-							"col_4BA5A5FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4BA5A5FF_circle.png",
-								"regions":
-								[
-									[
-										505,
-										505
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4BFF4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										711,
-										725
-									]
-								],
-								"scope": "col_4BFF4BFF"
-							},
-							"col_4BFF4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4BFF4BFF_circle.png",
-								"regions":
-								[
-									[
-										505,
-										505
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4BFFFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										729,
-										744
-									]
-								],
-								"scope": "col_4BFFFFFF"
-							},
-							"col_4BFFFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4BFFFFFF_circle.png",
-								"regions":
-								[
-									[
-										505,
-										505
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A54B4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										617,
-										631
-									]
-								],
-								"scope": "col_A54B4BFF"
-							},
-							"col_A54B4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A54B4BFF_circle.png",
-								"regions":
-								[
-									[
-										505,
-										505
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A54BA5FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										635,
-										650
-									]
-								],
-								"scope": "col_A54BA5FF"
-							},
-							"col_A54BA5FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A54BA5FF_circle.png",
-								"regions":
-								[
-									[
-										505,
-										505
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A5A54BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										654,
-										669
-									]
-								],
-								"scope": "col_A5A54BFF"
-							},
-							"col_A5A54BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A5A54BFF_circle.png",
-								"regions":
-								[
-									[
-										505,
-										505
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A5A5A5FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										830,
-										846
-									]
-								],
-								"scope": "col_A5A5A5FF"
-							},
-							"col_A5A5A5FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A5A5A5FF_circle.png",
-								"regions":
-								[
-									[
-										505,
-										505
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_AFAFAFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										673,
-										689
-									]
-								],
-								"scope": "col_AFAFAFFF"
-							},
-							"col_AFAFAFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_AFAFAFFF_circle.png",
-								"regions":
-								[
-									[
-										505,
-										505
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF4B4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										757,
-										771
-									]
-								],
-								"scope": "col_FF4B4BFF"
-							},
-							"col_FF4B4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF4B4BFF_circle.png",
-								"regions":
-								[
-									[
-										505,
-										505
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF4BFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										775,
-										790
-									]
-								],
-								"scope": "col_FF4BFFFF"
-							},
-							"col_FF4BFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF4BFFFF_circle.png",
-								"regions":
-								[
-									[
-										505,
-										505
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FFFF4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										794,
-										809
-									]
-								],
-								"scope": "col_FFFF4BFF"
-							},
-							"col_FFFF4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FFFF4BFF_circle.png",
-								"regions":
-								[
-									[
-										505,
-										505
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FFFFFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										534,
-										550
-									]
-								],
-								"scope": "col_FFFFFFFF"
-							},
-							"col_FFFFFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
-								"regions":
-								[
-									[
-										505,
-										505
-									]
-								],
-								"scope": "col_gutter"
-							}
-						},
-						"selection":
-						[
-							[
-								7215,
-								7215
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 4726.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 16,
-					"type": "text"
-				},
-				{
-					"buffer": 16,
-					"file": "test-renderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1120,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								354,
-								354
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 14,
-					"type": "text"
-				},
-				{
-					"buffer": 17,
-					"file": "lib/dom/element.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 28254,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								11247,
-								11247
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 6697.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -2880,6 +1003,18 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"cmake",
+				"CMakeLists.txt"
+			],
+			[
+				"imgui",
+				"imgui-viewer.cmake"
+			],
+			[
+				"cmakelists",
+				"CMakeLists.txt"
+			],
 			[
 				"C.",
 				"lib/grammars/C.g4"
@@ -3379,18 +1514,6 @@
 			[
 				"js_po",
 				"src/js_point.cpp"
-			],
-			[
-				"server",
-				"server.js"
-			],
-			[
-				"size.",
-				"lib/geom/size.js"
-			],
-			[
-				"Util.js",
-				"lib/util.js"
 			]
 		],
 		"width": 0.0

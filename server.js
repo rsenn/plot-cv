@@ -13,18 +13,67 @@ console.log('Serving from', p);
 
 app.use(express.text({ type: 'application/xml' }));
 
-app.ws('/ws', function(ws, req) {
-  const { connection, client, upgrade, query, socket } = req;
-  const { path, protocol, ip, route, cookies } = req;
+let sockets = [];
+
+const removeItem = (arr, item) => {
+  let i = arr.indexOf(item);
+  if(i != -1) arr.splice(i, 1);
+  return arr;
+};
+
+function Socket(ws, info) {
+  Object.assign(this, { ...info, ws });
+  return this;
+}
+
+Socket.prototype.toString = function() {
+  return `${this.address}:${this.port}`;
+};
+
+app.ws('/ws', async (ws, req) => {
+  const { connection, client, upgrade, query, socket, headers, trailers, params, res, route, body } = req;
+  const { path, protocol, ip, cookies, hostname, host } = req;
+  const { remoteAddress, remotePort, localAddress, localPort } = client;
   const { _host, _peername } = connection;
   let { address, port } = _peername;
+  const { cookie } = headers;
 
   console.log('WebSocket connected:', path);
   if(address == '::1') address = 'localhost';
 
-  ws.on('message', function(msg) {
-    console.log(`message from ${address}/${port}:`, msg);
-    ws.send(msg);
+  address = address.replace(/^::ffff:/, '');
+  let s = new Socket(ws, { address, port, /*remoteAddress, remotePort,*/ localAddress, localPort, cookie });
+  sockets.push(s);
+
+  console.log('headers:', headers);
+  console.log('cookie:', cookie);
+
+  console.log(
+    's:',
+    Util.filterKeys(s, k => k != 'ws')
+  );
+
+  ws.on('message', msg => {
+    console.log(`message from ${s.toString()}:`, msg);
+
+    for(let sock of sockets) {
+      if(sock.ws === ws) continue;
+
+      console.log('sock:', Util.filterKeys(sock, /^(address|port|cookies)/));
+
+      let r =
+        client.writable &&
+        Util.tryCatch(
+          ws => ws.send(msg),
+          true,
+          err => {
+            console.log('socket:', sock.info, ' error:', (err + '').replace(/\n.*/g, ''));
+            return false;
+          },
+          sock.ws
+        );
+      if(!r) removeItem(sockets, sock);
+    }
   });
 });
 

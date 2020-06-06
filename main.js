@@ -148,8 +148,7 @@ const loadDocument = async (proj, parentElem) => {
 
   const Fence = ({ children, style = {}, ...props }) => h(TransformedElement, { id: 'fence', type: SizedAspectRatioBox, aspect, listener: transform, style: { position: 'relative', minWidth: '100px', 'data-name': proj.name, border: '1px dotted black', ...style }, ...props }, children);
 
-
-  component = h(Fence, {  style: { border: '1px dashed red' } }, [component]);
+  component = h(Fence, { style: { border: '1px dashed red' } }, [component]);
 
   React.render(component /*html`<${Fence}>${component}</${Fence}>`*/, element);
 
@@ -234,6 +233,23 @@ const MakeFitAction = index => async () => {
   await Element.transition(container, { ...newSize.toCSS(), transform: '', position: 'absolute' }, delay + 'ms', 'linear');
 };
 
+const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
+  log = log || ((...args) => console.log(...args));
+  socketURL = socketURL || Util.makeURL({ location: '/ws', protocol: 'ws' });
+  let ws = new WebSocketClient();
+  log('New WebSocket:', ws);
+  await ws.connect(socketURL);
+  log('Connected:', ws.connected);
+  socketFn(ws);
+  ws.send('hello!');
+  let data;
+  for await (data of ws) {
+    log('WebSocket data:', data);
+    ws.dataAvailable !== 0;
+  }
+  await ws.disconnect();
+};
+
 const AppMain = (window.onload = async () => {
   Util(globalThis);
   Object.assign(window, {
@@ -279,7 +295,9 @@ const AppMain = (window.onload = async () => {
     TransformationList,
     Translation,
     tXml,
-    Util
+    Util,
+MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain
+
   });
 
   Object.assign(window, { Element, devtools, dom });
@@ -302,21 +320,7 @@ const AppMain = (window.onload = async () => {
     );
   });
 
-  let socketURL = Util.makeURL({ location: '/ws', protocol: 'ws' });
-  (async () => {
-    let ws = (window.socket = new WebSocketClient());
-    console.log('New WebSocket:', ws);
-    await ws.connect(socketURL);
-    console.log('Connected:', ws.connected);
-    ws.send('hello!');
-    let data;
-    for await (data of ws) {
-      console.log('WebSocket data:', data);
-      ws.dataAvailable !== 0;
-    }
-    await ws.disconnect();
-    console.log('WebSocket connected: ', ws.connected);
-  })();
+  CreateWebSocket(null, null, ws => (window.socket = ws));
 
   React.render(
     [
@@ -358,11 +362,9 @@ const AppMain = (window.onload = async () => {
 
   TouchListener(
     event => {
-
-    if(event.index > 0 && event.buttons > 0)
-      console.log("touch", event, container);
+      if(event.index > 0 && event.buttons > 0) console.log('touch', event, container);
       if(!move) {
-             let container = Element.find('#main');
+        let container = Element.find('#main');
 
         move = Element.moveRelative(container);
       } else if(event.index > 0) {
@@ -375,7 +377,6 @@ const AppMain = (window.onload = async () => {
     },
     { element: window }
   );
-
 
   window.styles = CSS.create('head');
 
