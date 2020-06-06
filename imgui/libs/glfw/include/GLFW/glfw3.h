@@ -192,7 +192,7 @@ extern "C" {
 #define GLFWAPI __declspec(dllimport)
 #elif defined(__GNUC__) && defined(_GLFW_BUILD_DLL)
 /* We are building GLFW as a shared / dynamic library */
-#define GLFWAPI __attribute__((visibility("default")))
+#define GLFWAPI
 #else
 /* We are building or calling GLFW as a static library */
 #define GLFWAPI

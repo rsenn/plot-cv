@@ -1295,7 +1295,7 @@ public:
 
     diff_type errorCount = std::distance(errors.get(), ps.compute_positional_errors2(original_first, original_last, simplified_first, simplified_last, errors.get(), valid));
 
-    std::transform(errors.get(), errors.get() + errorCount, errors.get(), std::ptr_fun<double, double>(std::sqrt));
+    std::transform(errors.get(), errors.get() + errorCount, errors.get(), std::function(&std::sqrt));
 
     return math::compute_statistics(errors.get(), errors.get() + errorCount);
   }

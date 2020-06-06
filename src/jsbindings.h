@@ -13,7 +13,7 @@ typedef cv::Point2d JSPointData;
 typedef cv::Vec4d JSLineData;
 typedef std::vector<JSPointData> JSContourData;
 
-#define VISIBLE __attribute__((visibility("default")))
+#define VISIBLE
 #define HIDDEN __attribute__((visibility("hidden")))
 
 struct JSPointIteratorData {
