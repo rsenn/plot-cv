@@ -3,6 +3,15 @@ project(imgui-viewer)
 set(CMAKE_CXX_STANDARD 14)
 ]]
 
+if(ANDROID)
+  add_definitions(-DIMGUI_IMPL_OPENGL_ES2=1)
+else(ANDROID)
+  find_package(GLEW)
+
+  add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLEW=1 -DIMGUI_DEBUG_LOG=1 -DIMGUI_IMPL_OPENGL_LOADER_GLEW=1)
+endif(ANDROID)
+
+
 file(GLOB HIGHGUI_VIEWER_SOURCES 
     src/color.cpp
     src/data.cpp

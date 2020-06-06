@@ -13,12 +13,6 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 
 find_package(OpenCV REQUIRED)
-find_package(GLEW)
-
-add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLEW=1 -DIMGUI_DEBUG_LOG=1 -DIMGUI_IMPL_OPENGL_LOADER_GLEW=1)
-if(ANDROID)
-add_definitions(-DIMGUI_IMPL_OPENGL_ES2=1)
-endif(ANDROID)
 
 include_directories(
     ${OPENCV_INCLUDE_DIRS}
