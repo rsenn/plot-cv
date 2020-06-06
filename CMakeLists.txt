@@ -93,7 +93,7 @@ function(src_program NAME SOURCES )
   #[[message("${NAME}_SOURCES:"  ${${NAME}SOURCES})
   ]]
 
-  message("${NAME}_SOURCES: ${${NAME}_SOURCES}")
+  #message("${NAME}_SOURCES: ${${NAME}_SOURCES}")
   add_executable(${NAME} src/${NAME}.cpp ${${NAME}_SOURCES})
   target_link_libraries(${NAME} ${ARGN})
 
