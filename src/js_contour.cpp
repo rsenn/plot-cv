@@ -1002,7 +1002,7 @@ js_contour_init(JSContext* ctx, JSModuleDef* m) {
   return 0;
 }
 
-JSModuleDef* __attribute__((visibility("default"))) JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
+JSModuleDef* JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
   m = JS_NewCModule(ctx, module_name, &js_contour_init);
   if(!m)

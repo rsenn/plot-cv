@@ -103,10 +103,11 @@ option(HIGHGUI_VIEWER ON)
 option(IMGUI_VIEWER OFF)
 
 if(HIGHGUI_VIEWER)
-include(highgui-viewer.cmake)
+  include(highgui-viewer.cmake)
 endif(HIGHGUI_VIEWER)
+
 if(IMGUI_VIEWER)
-include(imgui-viewer.cmake)
+  include(imgui-viewer.cmake)
 endif(IMGUI_VIEWER)
 
 
