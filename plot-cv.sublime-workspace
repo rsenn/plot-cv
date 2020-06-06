@@ -112,82 +112,55 @@
 	"buffers":
 	[
 		{
-			"contents": "ID: preact\nID: main",
+			"contents": "ReactComponent\ncreate\nfactory\nrender_to\nret\nappend\ntoObject\ndummy\nstringify",
 			"settings":
 			{
-				"buffer_size": 19,
+				"buffer_size": 75,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "src/jsbindings.cpp",
+			"file": "lib/dom/preactComponent.js",
 			"settings":
 			{
-				"buffer_size": 2789,
+				"buffer_size": 4222,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "CMakeLists.txt",
+			"file": "lib/eagle/document.js",
 			"settings":
 			{
-				"buffer_size": 6895,
+				"buffer_size": 3994,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/boardRenderer.js",
+			"settings":
+			{
+				"buffer_size": 8386,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "index.html",
+			"file": "lib/eagle/schematicRenderer.js",
 			"settings":
 			{
-				"buffer_size": 17173,
+				"buffer_size": 8040,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "main.js",
+			"file": "lib/devpane.js",
 			"settings":
 			{
-				"buffer_size": 14466,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/websocket-client.js",
-			"settings":
-			{
-				"buffer_size": 5363,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "server.js",
-			"settings":
-			{
-				"buffer_size": 3862,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/highgui-viewer.cpp",
-			"settings":
-			{
-				"buffer_size": 7933,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/util.js",
-			"settings":
-			{
-				"buffer_size": 75756,
-				"encoding": "UTF-8",
+				"buffer_size": 27643,
 				"line_ending": "Unix"
 			}
 		}
@@ -428,12 +401,35 @@
 	"expanded_folders":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
+		"/home/roman/Dokumente/Sources/plot-cv/lib",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle",
 		"/home/roman/Dokumente/Sources/plot-cv/src"
 	],
 	"file_history":
 	[
-		"/home/roman/the-wild-beauty-company/stores/RootStore.js",
+		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/index.html",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/websocket-client.js",
+		"/home/roman/Dokumente/Sources/plot-cv/server.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/highgui-viewer.cpp",
+		"/home/roman/Dokumente/Sources/an-tronics/eagle/40106-4069-Synth.b",
+		"/home/roman/Dokumente/Sources/an-tronics/eagle/40106-4069-Synth.brd",
+		"/home/roman/the-wild-beauty-company/stores/RootStore.js",
 		"/home/roman/Dokumente/Sources/plot-cv/src/psimpl.h",
 		"/home/roman/Dokumente/Sources/plot-cv/src/js_mat.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/imgui/libs/glfw/include/GLFW/glfw3.h",
@@ -448,19 +444,13 @@
 		"/home/roman/Dokumente/Sources/plot-cv/components.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
-		"/home/roman/Dokumente/Sources/plot-cv/main.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/C.g4",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
-		"/home/roman/Dokumente/Sources/plot-cv/index.html",
 		"/home/roman/the-wild-beauty-company/stores/api.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/polygonFinder.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
 		"/home/roman/the-wild-beauty-company/components/simple/aspectBox.js",
 		"/home/roman/Dokumente/Sources/plot-cv/style.css",
 		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
@@ -473,14 +463,10 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/ECMAScript.g4",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/board.svg",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/devtools.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/output.svg",
-		"/home/roman/Dokumente/Sources/plot-cv/server.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/aop.js",
 		"/home/roman/Dokumente/Sources/Arduino-Projects/Inductance_Meter/Inductance_Meter.ino",
 		"/home/roman/Dokumente/Sources/Arduino-Projects/ArduinoAdcAndFrequencyEstimation/Arduino/ADC_Streamer.ino",
@@ -503,7 +489,6 @@
 		"/home/roman/Dokumente/Sources/Arduino-Projects/ArduinoFunctionGenerator/ArduinoFunctionGenerator.ino",
 		"/home/roman/Dokumente/Sources/Arduino-Projects/scope/scope.ino",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/expr.js",
@@ -524,7 +509,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/pattern.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/es6.ebnf",
 		"/home/roman/Dokumente/Sources/plot-cv/test-clipper.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
 		"/home/roman/Dokumente/jonesforth.f.txt",
 		"/home/roman/Dokumente/Sources/plot-cv/test-svgpath.js",
 		"/home/roman/Dokumente/Sources/plot-cv/line.svg",
@@ -534,7 +518,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/splinePoints.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/path-parser.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/locator.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/bbox.js",
@@ -544,7 +527,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/line.js",
 		"/home/roman/Dokumente/Sources/plot-cv/Headphone-Amplifier-ClassAB-alt3.sch",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/circle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/intersection.js",
@@ -552,14 +534,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/opencv/polar_transforms.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/clipper.js",
-		"/home/roman/Dokumente/Sources/plot-cv/autoStore.es",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/autoStore.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/overlay.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-antlr.js",
-		"/home/roman/Dokumente/Sources/plot-cv/axios.es",
-		"/home/roman/Dokumente/Sources/plot-cv/alea.es",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/axios.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-export.js"
+		"/home/roman/Dokumente/Sources/plot-cv/autoStore.es"
 	],
 	"find":
 	{
@@ -570,6 +545,7 @@
 		"height": 346.0,
 		"where_history":
 		[
+			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.html,*.css,/home/roman/Dokumente/Sources/plot-cv/main.js,/home/roman/Dokumente/Sources/plot-cv/index.html,<open files>,/home/roman/Dokumente/Sourfces/plot-cv,*.cpp,*.h,*.hpp,*.txt",
 			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.html,*.css,/home/roman/Dokumente/Sources/plot-cv/main.js,/home/roman/Dokumente/Sources/plot-cv/index.html,<open files>,/home/roman/Dokumente/Sources/plot-cv,*.cpp,*.h,*.hpp,*.txt",
 			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.html,*.css,/home/roman/Dokumente/Sources/plot-cv/main.js,/home/roman/Dokumente/Sources/plot-cv/index.html,<open files>,/home/roman/Dokumente/Sources/plot-cv,*.cpp,*.h,*.hpp,CMakeLists.txt",
 			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.html,*.css,/home/roman/Dokumente/Sources/plot-cv/main.js,/home/roman/Dokumente/Sources/plot-cv/index.html,<open files>,/home/roman/Dokumente/Sources/plot-cv,*.cpp,*.h,*.hpp",
@@ -601,6 +577,37 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"stroke.*dash",
+			"append",
+			"= .*Renderer",
+			"innerHTML:",
+			"innerHTML",
+			"getCall",
+			"Util\\.[^ ]*color",
+			"color",
+			"getColor\\(",
+			" getColor",
+			"getColor",
+			"palette",
+			"palette =",
+			"nodemap",
+			"makenodemap",
+			"[^a-z]layers[^a-z]",
+			"layers",
+			"get layers",
+			"layers",
+			"layers =",
+			"log.*touch",
+			"});\n",
+			"curve",
+			"name=\"IC2",
+			"=\"IC2",
+			"name=\"IC2",
+			"IC2",
+			"Util\\.keys =",
+			"\\.keys =",
+			"keys =",
+			"getCSS",
 			"WebSocketClient",
 			"Util.keys",
 			"tryCatch =",
@@ -697,38 +704,7 @@
 			"Arrow",
 			"default",
 			"class Prop",
-			"class FunctionLi",
-			"class Obj",
-			"ObjectBindingPattern",
-			"class Obj",
-			"args",
-			"class ObjectBin",
-			"^ *console.log.*token",
-			"log.*token",
-			"console.log(\"last:\", last);\n    console.log(\"last.position:\", last.position);",
-			"log.*last",
-			" parseArrow",
-			" parseFunc",
-			" parseArg",
-			"class Func",
-			"Param",
-			"parseArrowFunction",
-			"parseArrow",
-			" parseArrow",
-			" = undefined",
-			"log.*msg",
-			"as",
-			"ast",
-			"new Range",
-			"function Range",
-			"new Token",
-			"this.source.length",
-			"eof",
-			"F",
-			"React.Fragment",
-			"returned",
-			"lexed",
-			"quoteLi"
+			"class FunctionLi"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -882,7 +858,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 19,
+						"buffer_size": 75,
 						"regions":
 						{
 						},
@@ -892,23 +868,58 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/index.html",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
 								[
-									17086,
-									17092
+									547,
+									561
 								],
 								[
-									17142,
-									17146
+									573,
+									579
+								],
+								[
+									924,
+									931
+								],
+								[
+									1106,
+									1130
+								],
+								[
+									1204,
+									1220
+								],
+								[
+									1409,
+									1415
+								],
+								[
+									1778,
+									1786
+								],
+								[
+									2645,
+									2650
+								],
+								[
+									2847,
+									2856
 								]
 							],
 							"symlist":
 							[
-								"ID: preact",
-								"ID: main"
+								"ReactComponent",
+								"create",
+								"factory",
+								"render_to",
+								"ret",
+								"append",
+								"toObject",
+								"dummy",
+								"stringify"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -916,22 +927,52 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 5,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 2,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "src/jsbindings.cpp",
+					"file": "lib/dom/preactComponent.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2789,
+						"buffer_size": 4222,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1518,
+								1518
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 342.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "lib/eagle/document.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3994,
 						"regions":
 						{
 						},
@@ -944,7 +985,7 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
@@ -956,42 +997,12 @@
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "CMakeLists.txt",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6895,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2509,
-								2509
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1522.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
 					"buffer": 3,
-					"file": "index.html",
+					"file": "lib/eagle/boardRenderer.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 17173,
+						"buffer_size": 8386,
 						"regions":
 						{
 							"col_010101FF":
@@ -1000,8 +1011,8 @@
 								"regions":
 								[
 									[
-										7506,
-										7511
+										3526,
+										3531
 									]
 								],
 								"scope": "col_010101FF"
@@ -1013,8 +1024,433 @@
 								"regions":
 								[
 									[
-										7371,
-										7371
+										3501,
+										3501
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_32FEFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										3481,
+										3498
+									]
+								],
+								"scope": "col_32FEFFFF"
+							},
+							"col_32FEFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_32FEFFFF_circle.png",
+								"regions":
+								[
+									[
+										3458,
+										3458
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4B4B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										813,
+										826
+									]
+								],
+								"scope": "col_4B4B4BFF"
+							},
+							"col_4B4B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4B4BFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4B4BA5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										554,
+										568
+									]
+								],
+								"scope": "col_4B4BA5FF"
+							},
+							"col_4B4BA5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4BA5FF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4B4BFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										693,
+										707
+									]
+								],
+								"scope": "col_4B4BFFFF"
+							},
+							"col_4B4BFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4BFFFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BA54BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										572,
+										586
+									]
+								],
+								"scope": "col_4BA54BFF"
+							},
+							"col_4BA54BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BA54BFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BA5A5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										590,
+										605
+									]
+								],
+								"scope": "col_4BA5A5FF"
+							},
+							"col_4BA5A5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BA5A5FF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BFF4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										711,
+										725
+									]
+								],
+								"scope": "col_4BFF4BFF"
+							},
+							"col_4BFF4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BFF4BFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										729,
+										744
+									]
+								],
+								"scope": "col_4BFFFFFF"
+							},
+							"col_4BFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A54B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										617,
+										631
+									]
+								],
+								"scope": "col_A54B4BFF"
+							},
+							"col_A54B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A54B4BFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A54BA5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										635,
+										650
+									]
+								],
+								"scope": "col_A54BA5FF"
+							},
+							"col_A54BA5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A54BA5FF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A5A54BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										654,
+										669
+									]
+								],
+								"scope": "col_A5A54BFF"
+							},
+							"col_A5A54BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A5A54BFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A5A5A5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										830,
+										846
+									]
+								],
+								"scope": "col_A5A5A5FF"
+							},
+							"col_A5A5A5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A5A5A5FF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_AFAFAFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										673,
+										689
+									]
+								],
+								"scope": "col_AFAFAFFF"
+							},
+							"col_AFAFAFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_AFAFAFFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF4B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										757,
+										771
+									]
+								],
+								"scope": "col_FF4B4BFF"
+							},
+							"col_FF4B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF4B4BFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF4BFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										775,
+										790
+									]
+								],
+								"scope": "col_FF4BFFFF"
+							},
+							"col_FF4BFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF4BFFFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFF4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										794,
+										809
+									]
+								],
+								"scope": "col_FFFF4BFF"
+							},
+							"col_FFFF4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFF4BFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										534,
+										550
+									]
+								],
+								"scope": "col_FFFFFFFF"
+							},
+							"col_FFFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										505,
+										505
 									]
 								],
 								"scope": "col_gutter"
@@ -1023,38 +1459,8 @@
 						"selection":
 						[
 							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 3780.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "main.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 14466,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								9854,
-								9854
+								3561,
+								3561
 							]
 						],
 						"settings":
@@ -1064,118 +1470,451 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 6137.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "lib/websocket-client.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5363,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "server.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3862,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2005,
-								2005
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Next Roman.tmTheme",
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1260.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "src/highgui-viewer.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7933,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5958,
-								5958
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++11/C++11.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1325.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 8,
-					"file": "lib/util.js",
+					"buffer": 4,
+					"file": "lib/eagle/schematicRenderer.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 75756,
+						"buffer_size": 8040,
 						"regions":
 						{
+							"col_4B4B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										891,
+										904
+									]
+								],
+								"scope": "col_4B4B4BFF"
+							},
+							"col_4B4B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4B4BFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4B4BA5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										649,
+										663
+									]
+								],
+								"scope": "col_4B4BA5FF"
+							},
+							"col_4B4BA5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4BA5FF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4B4BFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										780,
+										794
+									]
+								],
+								"scope": "col_4B4BFFFF"
+							},
+							"col_4B4BFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4BFFFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BA54BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										667,
+										681
+									],
+									[
+										2643,
+										2650
+									]
+								],
+								"scope": "col_4BA54BFF"
+							},
+							"col_4BA54BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BA54BFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									],
+									[
+										2624,
+										2624
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BA5A5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										685,
+										700
+									]
+								],
+								"scope": "col_4BA5A5FF"
+							},
+							"col_4BA5A5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BA5A5FF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BFF4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										798,
+										812
+									]
+								],
+								"scope": "col_4BFF4BFF"
+							},
+							"col_4BFF4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BFF4BFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										816,
+										831
+									]
+								],
+								"scope": "col_4BFFFFFF"
+							},
+							"col_4BFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A54B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										704,
+										718
+									],
+									[
+										3493,
+										3500
+									],
+									[
+										3784,
+										3791
+									]
+								],
+								"scope": "col_A54B4BFF"
+							},
+							"col_A54B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A54B4BFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									],
+									[
+										3470,
+										3470
+									],
+									[
+										3763,
+										3763
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A54BA5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										722,
+										737
+									]
+								],
+								"scope": "col_A54BA5FF"
+							},
+							"col_A54BA5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A54BA5FF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A5A54BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										741,
+										756
+									]
+								],
+								"scope": "col_A5A54BFF"
+							},
+							"col_A5A54BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A5A54BFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A5A5A5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										908,
+										924
+									]
+								],
+								"scope": "col_A5A5A5FF"
+							},
+							"col_A5A5A5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A5A5A5FF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_AFAFAFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										760,
+										776
+									]
+								],
+								"scope": "col_AFAFAFFF"
+							},
+							"col_AFAFAFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_AFAFAFFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF4B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										835,
+										849
+									]
+								],
+								"scope": "col_FF4B4BFF"
+							},
+							"col_FF4B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF4B4BFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF4BFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										853,
+										868
+									]
+								],
+								"scope": "col_FF4BFFFF"
+							},
+							"col_FF4BFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF4BFFFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFF4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										872,
+										887
+									]
+								],
+								"scope": "col_FFFF4BFF"
+							},
+							"col_FFFF4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFF4BFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										629,
+										645
+									]
+								],
+								"scope": "col_FFFFFFFF"
+							},
+							"col_FFFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										608,
+										608
+									]
+								],
+								"scope": "col_gutter"
+							}
 						},
 						"selection":
 						[
 							[
-								3327,
-								3327
+								6560,
+								6560
 							]
 						],
 						"settings":
@@ -1185,10 +1924,40 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1740.0,
+						"translation.y": 3923.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "lib/devpane.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 27643,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6748,
+								6748
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3733.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -1272,6 +2041,26 @@
 		"selected_items":
 		[
 			[
+				"preact",
+				"lib/dom/preactComponent.js"
+			],
+			[
+				"util",
+				"lib/util.js"
+			],
+			[
+				"main",
+				"main.js"
+			],
+			[
+				"render",
+				"lib/eagle/renderer.js"
+			],
+			[
+				"element",
+				"lib/dom/element.js"
+			],
+			[
 				"high",
 				"src/highgui-viewer.cpp"
 			],
@@ -1344,20 +2133,12 @@
 				"lib/dom/element.js"
 			],
 			[
-				"main",
-				"main.js"
-			],
-			[
 				"sty",
 				"style.css"
 			],
 			[
 				"aspec",
 				"aspectBox.es"
-			],
-			[
-				"util",
-				"lib/util.js"
 			],
 			[
 				"ecma",
@@ -1426,10 +2207,6 @@
 			[
 				"output.sv",
 				"output.svg"
-			],
-			[
-				"render",
-				"lib/eagle/renderer.js"
 			],
 			[
 				"point.js",
@@ -1774,14 +2551,6 @@
 			[
 				"plot",
 				"plot-cv.sublime-project"
-			],
-			[
-				"plot-cv.si",
-				"plot-cv.sublime-project"
-			],
-			[
-				".g4",
-				"lib/grammars/Lua.g4"
 			]
 		],
 		"width": 0.0

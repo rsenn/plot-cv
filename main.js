@@ -7,7 +7,7 @@ import geom from './lib/geom.js';
 import { BBox } from './lib/geom/bbox.js';
 import { ScrollDisabler } from './lib/scrollHandler.js';
 import { TouchListener } from './lib/touchHandler.js';
-  import { EagleDocument } from './lib/eagle/document.js';
+import { EagleDocument } from './lib/eagle/document.js';
 import { EagleNode } from './lib/eagle/node.js';
 import { trkl } from './lib/trkl.js';
 import { ColorMap } from './lib/draw/colorMap.js';
@@ -130,7 +130,7 @@ const loadDocument = async (proj, parentElem) => {
   Element.remove('#fence');
 
   proj.renderer = new Renderer(proj.doc, ReactComponent.append);
-  
+
   let style = { width: '100%', height: '100%', position: 'relative' };
   let svgXml = proj.renderer.render(proj.doc, null, { style });
   console.log('testRender:', svgXml);
@@ -296,8 +296,13 @@ const AppMain = (window.onload = async () => {
     Translation,
     tXml,
     Util,
-MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain
-
+    MouseEvents,
+    ElementToXML,
+    LoadFile,
+    ModifyColors,
+    MakeFitAction,
+    CreateWebSocket,
+    AppMain
   });
 
   Object.assign(window, { Element, devtools, dom });
@@ -362,7 +367,7 @@ MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocke
 
   TouchListener(
     event => {
-    //  if(event.index > 0 && event.buttons > 0) console.log('touch', event, container);
+      //  if(event.index > 0 && event.buttons > 0) console.log('touch', event, container);
       if(!move) {
         let container = Element.find('#main');
 
