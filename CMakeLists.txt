@@ -80,23 +80,24 @@ set(BUILD_SHARED_LIBS ON)
 
 add_subdirectory(quickjs "${CMAKE_BINARY_DIR}/quickjs")
 
+link_directories("${CMAKE_BINARY_DIR}/quickjs")
+
 function(src_program NAME SOURCES )
+  foreach(SRC ${SOURCES})
+    file(GLOB "${NAME}_SOURCES" ${SRC})
+    list(APPEND SRCS ${${NAME}_SOURCES})
+  endforeach()
 
-foreach(SRC ${SOURCES})
-file(GLOB "${NAME}_SOURCES" ${SRC})
-list(APPEND SRCS ${${NAME}_SOURCES})
-endforeach()
+  #string(REGEX REPLACE   "src/" "" "${NAME}_SOURCES" "${SOURCES}")
+  set("${NAME}_SOURCES" ${SRCS})
+  #[[message("${NAME}_SOURCES:"  ${${NAME}SOURCES})
+  ]]
 
-#string(REGEX REPLACE   "src/" "" "${NAME}_SOURCES" "${SOURCES}")
-set("${NAME}_SOURCES" ${SRCS})
-#[[message("${NAME}_SOURCES:"  ${${NAME}SOURCES})
-]]
+  message("${NAME}_SOURCES: ${${NAME}_SOURCES}")
+  add_executable(${NAME} src/${NAME}.cpp ${${NAME}_SOURCES})
+  target_link_libraries(${NAME} ${ARGN})
 
-message("${NAME}_SOURCES: ${${NAME}_SOURCES}")
-add_executable(${NAME} src/${NAME}.cpp ${${NAME}_SOURCES})
-target_link_libraries(${NAME} ${ARGN})
-
-install(TARGETS ${NAME} DESTINATION bin)
+  install(TARGETS ${NAME} DESTINATION bin)
 endfunction()
 
 option(HIGHGUI_VIEWER ON)
@@ -111,14 +112,14 @@ if(IMGUI_VIEWER)
 endif(IMGUI_VIEWER)
 
 
-src_program(cli "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/js*.cpp"  "${OpenCV_LIBS};quickjs;${ELECTRICFENCE_LIBRARY}")
+src_program(cli "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/js*.cpp"  ${OpenCV_LIBS} quickjs ${ELECTRICFENCE_LIBRARY})
 
 
 option(ADDITIONAL_PROGS "Build other OpenCV programs" FALSE)
 option(QUICKJS_MODULES  "Build .so modules for quickjs" FALSE)
 
 if(QUICKJS_MODULES)
-include(js-bindings.cmake)
+  include(js-bindings.cmake)
 endif(QUICKJS_MODULES)
 
 if(ADDITIONAL_PROGS)
