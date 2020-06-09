@@ -193,18 +193,25 @@ const loadDocument = async (proj, parentElem) => {
 };
 
 const chooseDocument = async (e, proj, i) => {
-  const { type } = e;
-  const box = Element.findAll('.file')[i];
-  console.log('chooseDocument:', { e, proj, i, box });
-  if(!proj.loaded) {
-    let data = await loadDocument(proj, box);
-    proj.loaded = true;
+  let r;
+  try {
+    const { type } = e;
+    const box = Element.findAll('.file')[i];
+    console.log('chooseDocument:', { e, proj, i, box });
+    if(!proj.loaded) {
+      let data = await loadDocument(proj, box);
+      proj.loaded = true;
 
-    open(false);
+      open(false);
 
-    console.log('loaded:', proj);
+      console.log('loaded:', proj);
+    }
+    r = proj.loaded;
+  } catch(err) {
+    console.log('err:', err.message, err.stack);
   }
-  return proj.loaded;
+
+  return r;
 };
 
 const MakeFitAction = index => async () => {

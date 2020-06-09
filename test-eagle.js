@@ -114,8 +114,8 @@ async function testGraph(proj) {
   for(let [name, signal] of board.signals) {
     console.log(`Signal ${name}:`, signal);
     for(let contactref of signal.getAll('contactref')) {
-      const { attributes } = contactref.raw;
-      const element = board.get(e => e.tagName == 'element' && e.attributes['name'] == attributes['element']);
+      const elementName = contactref.attributes['element'];
+      const element = board.get({ tagName: 'element', name: elementName });
       const { name, library, package: pkg, value, x, y } = element.raw.attributes;
       console.log(`Element '${name}' ${library} ${pkg} ${value} ${Util.toString({ x, y })}`);
       {
@@ -176,6 +176,14 @@ async function testEagle(filename) {
   }
 
   proj.saveTo('.', true);
+
+  console.log('board:', board);
+
+  for(let instance of schematic.getAll(e => e.tagName == 'instance')) {
+    const { part } = instance;
+    //  console.log("instance:",{instance, part});
+  }
+
   return proj;
 }
 
@@ -186,9 +194,10 @@ async function testEagle(filename) {
     try {
       let project = await testEagle(arg);
       //console.log(project);
-      await testGraph(project);
+      // await testGraph(project);
     } catch(err) {
       const stack = err.stack;
+      console.log('err:' + err.message);
       throw err;
     }
   }
