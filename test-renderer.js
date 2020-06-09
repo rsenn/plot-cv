@@ -9,7 +9,7 @@ function testRenderSchematic() {
   let doc = new EagleDocument(fs.readFileSync('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch').toString());
   let renderer = new Renderer(doc, ReactComponent.append);
   let output = renderer.render(doc, null, 0);
-  console.log('output:', output);
+  // console.log('output:', output);
   fs.writeFileSync('schematic.svg', ReactComponent.stringify(output));
 }
 
@@ -18,7 +18,7 @@ function testRenderBoard() {
   let renderer = new Renderer(doc, ReactComponent.append);
   let output = renderer.render(doc, null, 0);
 
-  console.log('output:', output);
+  //console.log('output:', output);
 
   fs.writeFileSync('board.svg', ReactComponent.stringify(output));
 }
