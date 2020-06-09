@@ -179,10 +179,16 @@ async function testEagle(filename) {
 
   console.log('board:', board);
 
+  for(let element of board.getAll('element')) {
+    console.log('\nelement.library:', element.library, '\nelement.package:', element.package, '\n');
+    console.log('element:', element);
+  }
+
   for(let instance of schematic.getAll(e => e.tagName == 'instance')) {
-    const { part } = instance;
-    console.log("instance:",{instance, part});
-    console.log("package:",part.package);
+    const { part, gate, document } = instance;
+    console.log('instance:', { instance, part, gate, document });
+    console.log(`instance: ${instance.xpath()}\npart: ${part.xpath()}\ngate: ${gate.xpath()}`);
+    //   console.log("package:",part.deviceset);
   }
 
   return proj;
