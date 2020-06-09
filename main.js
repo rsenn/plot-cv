@@ -13,7 +13,7 @@ import { trkl } from './lib/trkl.js';
 import { ColorMap } from './lib/draw/colorMap.js';
 import { EagleElement } from './lib/eagle/element.js';
 import { EaglePath, EagleReference } from './lib/eagle/locator.js';
-import { toXML, EagleInterface } from './lib/eagle/common.js';
+import { toXML, EagleInterface, concat, text, ansi } from './lib/eagle/common.js';
 import { Renderer } from './lib/eagle/renderer.js';
 import { devtools } from './lib/devtools.js';
 import Util from './lib/util.js';
@@ -312,6 +312,33 @@ const AppMain = (window.onload = async () => {
     CreateWebSocket,
     AppMain
   });
+
+  const inspectSym = Symbol.for('nodejs.util.inspect.custom');
+
+  console.realLog = console.log;
+  console.log = function(...args) {
+    let out = [''];
+    for(let arg of args) {
+      if(typeof arg != 'string') {
+        if(arg[inspectSym]) {
+          out = concat(out, arg[inspectSym]());
+          continue;
+        } else if(arg.toString && !Util.isNativeFunction(arg.toString)) {
+          //  console.realLog("toString: "+arg.toString);
+          out = concat(out, [arg.toString()]);
+        } else if(Util.isObject(arg)) {
+
+          out.push(arg);
+          continue;
+          out[0] += Util.inspect(arg, { indent: '', newline: '', depth: 2, spacing: '' });
+        }
+      }
+      out[0] += arg;
+    }
+    //  for(let i in out)
+  //  console.realLog("out:",out);
+    this.realLog(...out);
+  };
 
   Object.assign(window, { Element, devtools, dom });
   let projects = trkl([]);
