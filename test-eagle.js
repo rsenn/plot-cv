@@ -120,7 +120,7 @@ async function testGraph(proj) {
       console.log(`Element '${name}' ${library} ${pkg} ${value} ${Util.toString({ x, y })}`);
       {
         const { name, children } = element.package;
-   //     console.log(`Package '${name}'`, children);
+        //     console.log(`Package '${name}'`, children);
       }
       console.log(`${name} ${pkg} GraphEdge`);
     }

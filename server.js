@@ -96,7 +96,7 @@ app.get('/favicon.ico', (req, res) =>
   })
 );
 app.get('/main.js', async (req, res) => res.sendFile(path.join(p, 'main.js')));
-app.get('/style.css', async (req, res) => res.sendFile(path.join(p, 'style.css'), { headers: { 'Content-Type': 'text/css' }}));
+app.get('/style.css', async (req, res) => res.sendFile(path.join(p, 'style.css'), { headers: { 'Content-Type': 'text/css' } }));
 
 app.get('/files.html', async (req, res) => {
   let files = [...(await fs.promises.readdir('.'))].filter(entry => /\.(brd|sch)$/.test(entry));
