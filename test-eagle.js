@@ -181,7 +181,8 @@ async function testEagle(filename) {
 
   for(let instance of schematic.getAll(e => e.tagName == 'instance')) {
     const { part } = instance;
-    //  console.log("instance:",{instance, part});
+    console.log("instance:",{instance, part});
+    console.log("package:",part.package);
   }
 
   return proj;
