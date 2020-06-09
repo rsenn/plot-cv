@@ -101,28 +101,28 @@ async function testGraph(proj) {
     Object.assign(n, { ...rect, ...pos, label: element.name });
     n.width = rect.width;
     n.height = rect.height;
-    console.log(`element ${n.label} GraphNode`, n);
+    //console.log(`element ${n.label} GraphNode`, n);
     let pads = [...pkg.getAll('pad')];
     let padNames = pads.map(p => p.name);
     for(let pad of pads) {
       const { diameter, drill, name, rot, shape, stop, x, y } = pad.raw.attributes;
-      console.log(`Package '${pkg.name}' Pad '${name}'  ${pad.xpath()}`);
+      //console.log(`Package '${pkg.name}' Pad '${name}'  ${pad.xpath()}`);
     }
-    console.log(`Package '${pkg.name}' Pads: ${padNames}`);
+    //console.log(`Package '${pkg.name}' Pads: ${padNames}`);
   }
 
   for(let [name, signal] of board.signals) {
-    console.log(`Signal ${name}:`, signal);
+    //console.log(`Signal ${name}:`, signal);
     for(let contactref of signal.getAll('contactref')) {
       const elementName = contactref.attributes['element'];
       const element = board.get({ tagName: 'element', name: elementName });
       const { name, library, package: pkg, value, x, y } = element.raw.attributes;
-      console.log(`Element '${name}' ${library} ${pkg} ${value} ${Util.toString({ x, y })}`);
+      //console.log(`Element '${name}' ${library} ${pkg} ${value} ${Util.toString({ x, y })}`);
       {
         const { name, children } = element.package;
         //     console.log(`Package '${name}'`, children);
       }
-      console.log(`${name} ${pkg} GraphEdge`);
+      //console.log(`${name} ${pkg} GraphEdge`);
     }
   }
 }
@@ -177,18 +177,30 @@ async function testEagle(filename) {
 
   proj.saveTo('.', true);
 
-  console.log('board:', board);
+  //console.log('board:', board);
 
   for(let element of board.getAll('element')) {
-    console.log('\nelement.library:', element.library, '\nelement.package:', element.package, '\n');
+    //console.log('\nelement.library:', element.library, '\nelement.package:', element.package, '\n');
     console.log('element:', element);
   }
 
   for(let instance of schematic.getAll(e => e.tagName == 'instance')) {
-    const { part, gate, document } = instance;
-    console.log('instance:', { instance, part, gate, document });
-    console.log(`instance: ${instance.xpath()}\npart: ${part.xpath()}\ngate: ${gate.xpath()}`);
+    const { part, gate } = instance;
+    const { deviceset, device } = part;
+    console.log('instance:', instance, { gate, deviceset, device });
+    console.log('part:', { deviceset, device });
+    //console.log(`instance: ${instance.xpath()}\npart: ${part.xpath()}\ngate: ${gate.xpath()}`);
     //   console.log("package:",part.deviceset);
+  }
+
+  let gates = [...schematic.getAll('gate')];
+
+  let p = gates[0];
+
+  while(p) {
+    //console.log("p:", p);
+
+    p = p.parentNode;
   }
 
   return proj;
@@ -204,10 +216,10 @@ async function testEagle(filename) {
       // await testGraph(project);
     } catch(err) {
       const stack = err.stack;
-      console.log('err:' + err.message);
+      //console.log('err:' + err.message);
       throw err;
     }
   }
 
-  console.log('palette:');
+  //console.log('palette:');
 })();
