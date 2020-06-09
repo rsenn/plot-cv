@@ -53,8 +53,6 @@ const useTrkl = trkl => [() => trkl(), value => trkl(value)];
 
 const classNames = (...args) => args.filter(arg => typeof arg == 'string' && arg.length > 0).join(' ');
 
-Util.assignGlobal();
-
 const MouseEvents = h => ({
   onMouseDown: h,
   /*  onBlur: h,*/
@@ -254,6 +252,7 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
 
 const AppMain = (window.onload = async () => {
   Util(globalThis);
+
   Object.assign(window, {
     BBox,
     chooseDocument,

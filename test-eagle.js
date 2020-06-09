@@ -10,6 +10,7 @@ import DeepDiff from 'deep-diff';
 import { Console } from 'console';
 import { inspect, toXML, dump } from './lib/eagle/common.js';
 import { JsonPointer, JsonReference } from './lib/json-pointer.js';
+import { RGBA } from './lib/dom.js';
 import { Graph, Edge, Node } from './lib/fd-graph.js';
 import ptr from './lib/json-ptr.js';
 import util from 'util';
@@ -119,7 +120,7 @@ async function testGraph(proj) {
       console.log(`Element '${name}' ${library} ${pkg} ${value} ${Util.toString({ x, y })}`);
       {
         const { name, children } = element.package;
-        console.log(`Package '${name}'`, children);
+   //     console.log(`Package '${name}'`, children);
       }
       console.log(`${name} ${pkg} GraphEdge`);
     }
@@ -191,4 +192,6 @@ async function testEagle(filename) {
       throw err;
     }
   }
+
+  console.log('palette:');
 })();
