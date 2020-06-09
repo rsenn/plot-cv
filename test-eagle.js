@@ -8,7 +8,7 @@ import fs, { promises as fsPromises } from 'fs';
 import deep from './lib/deep.js';
 import DeepDiff from 'deep-diff';
 import { Console } from 'console';
-import { inspect, toXML, dump } from './lib/eagle/common.js';
+import { EagleInterface, toXML, dump } from './lib/eagle/common.js';
 import { JsonPointer, JsonReference } from './lib/json-pointer.js';
 import { RGBA } from './lib/dom.js';
 import { Graph, Edge, Node } from './lib/fd-graph.js';
@@ -198,7 +198,7 @@ async function testEagle(filename) {
   let p = gates[0];
 
   while(p) {
-    //console.log("p:", p);
+    console.log('p:', p);
 
     p = p.parentNode;
   }
