@@ -112,10 +112,10 @@
 	"buffers":
 	[
 		{
-			"contents": "ReactComponent\ncreate\nfactory\nrender_to\nret\nappend\ntoObject\ndummy\nstringify",
+			"contents": "",
 			"settings":
 			{
-				"buffer_size": 75,
+				"buffer_size": 0,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
@@ -131,10 +131,18 @@
 			}
 		},
 		{
+			"file": "CMakeLists.txt",
+			"settings":
+			{
+				"buffer_size": 6895,
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "lib/eagle/document.js",
 			"settings":
 			{
-				"buffer_size": 3994,
+				"buffer_size": 3996,
 				"line_ending": "Unix"
 			}
 		},
@@ -400,10 +408,7 @@
 	},
 	"expanded_folders":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv",
-		"/home/roman/Dokumente/Sources/plot-cv/lib",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle",
-		"/home/roman/Dokumente/Sources/plot-cv/src"
+		"/home/roman/Dokumente/Sources/plot-cv"
 	],
 	"file_history":
 	[
@@ -858,7 +863,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 75,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
@@ -868,58 +873,13 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
-								[
-									547,
-									561
-								],
-								[
-									573,
-									579
-								],
-								[
-									924,
-									931
-								],
-								[
-									1106,
-									1130
-								],
-								[
-									1204,
-									1220
-								],
-								[
-									1409,
-									1415
-								],
-								[
-									1778,
-									1786
-								],
-								[
-									2645,
-									2650
-								],
-								[
-									2847,
-									2856
-								]
 							],
 							"symlist":
 							[
-								"ReactComponent",
-								"create",
-								"factory",
-								"render_to",
-								"ret",
-								"append",
-								"toObject",
-								"dummy",
-								"stringify"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -927,13 +887,13 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 6,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -963,16 +923,46 @@
 						"translation.y": 342.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
 					"buffer": 2,
+					"file": "CMakeLists.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6895,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2658,
+								2658
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1425.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
 					"file": "lib/eagle/document.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3994,
+						"buffer_size": 3996,
 						"regions":
 						{
 						},
@@ -993,11 +983,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 4,
 					"file": "lib/eagle/boardRenderer.js",
 					"semi_transient": false,
 					"settings":
@@ -1473,11 +1463,11 @@
 						"translation.y": 1325.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 5,
 					"file": "lib/eagle/schematicRenderer.js",
 					"semi_transient": false,
 					"settings":
@@ -1927,11 +1917,11 @@
 						"translation.y": 3923.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 6,
 					"file": "lib/devpane.js",
 					"semi_transient": false,
 					"settings":
@@ -1957,7 +1947,7 @@
 						"translation.y": 3733.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 4,
 					"type": "text"
 				}
 			]
