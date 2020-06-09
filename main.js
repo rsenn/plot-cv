@@ -260,60 +260,19 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
 const AppMain = (window.onload = async () => {
   Util(globalThis);
 
-  Object.assign(window, {
-    BBox,
-    chooseDocument,
-    classNames,
-    ColorMap,
-    components,
-    CSS,
-    deep,
-    EagleDocument,
-    EagleElement,
-    EagleInterface,
-    EagleNode,
-    EaglePath,
-    EagleReference,
-    eventIterator,
-    h,
-    HSLA,
-    html,
-    isLine,
-    isPoint,
-    isRect,
-    isSize,
-    iterator,
-    Line,
-    loadDocument,
-    LoadFile,
-    Matrix,
-    MatrixTransformation,
-    ModifyColors,
-    Point,
-    PointList,
-    React,
-    Rect,
-    RGBA,
-    Rotation,
-    Scaling,
-    Size,
-    SVG,
-    toXML,
-    Transformation,
-    TransformationList,
-    Translation,
-    tXml,
-    Util,
-    MouseEvents,
-    ElementToXML,
-    LoadFile,
-    ModifyColors,
-    MakeFitAction,
-    CreateWebSocket,
-    AppMain
-  });
+  // prettier-ignore
+  Object.assign(window, {BBox, chooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleInterface, EagleNode, EaglePath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, loadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect, RGBA, Rotation, Scaling, Size, SVG, toXML, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain });
 
   const inspectSym = Symbol.for('nodejs.util.inspect.custom');
+
+  const testComponent = props =>
+    html`
+      <div>This is a test</div>
+    `;
+
+  let c = testComponent({});
+  window.testComponent = c;
+  console.log('testComponent', ReactComponent.toObject(c));
 
   console.realLog = console.log;
   console.log = function(...args) {
@@ -327,7 +286,6 @@ const AppMain = (window.onload = async () => {
           //  console.realLog("toString: "+arg.toString);
           out = concat(out, [arg.toString()]);
         } else if(Util.isObject(arg)) {
-
           out.push(arg);
           continue;
           out[0] += Util.inspect(arg, { indent: '', newline: '', depth: 2, spacing: '' });
@@ -336,7 +294,7 @@ const AppMain = (window.onload = async () => {
       out[0] += arg;
     }
     //  for(let i in out)
-  //  console.realLog("out:",out);
+    //  console.realLog("out:",out);
     this.realLog(...out);
   };
 
