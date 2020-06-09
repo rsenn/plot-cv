@@ -274,7 +274,7 @@ const AppMain = (window.onload = async () => {
   window.testComponent = c;
   console.log('testComponent', ReactComponent.toObject(c));
 
-  console.realLog = console.log;
+  /*console.realLog = console.log;
   console.log = function(...args) {
     let out = [''];
     for(let arg of args) {
@@ -291,12 +291,12 @@ const AppMain = (window.onload = async () => {
           out[0] += Util.inspect(arg, { indent: '', newline: '', depth: 2, spacing: '' });
         }
       }
-      out[0] += arg;
+      out[0] += ' ' + arg;
     }
     //  for(let i in out)
     //  console.realLog("out:",out);
     this.realLog(...out);
-  };
+  };*/
 
   Object.assign(window, { Element, devtools, dom });
   let projects = trkl([]);
