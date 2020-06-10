@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"init",
+				"initialProto"
+			],
+			[
+				"EagleRef",
+				"EagleReference"
+			],
+			[
+				"subst",
+				"substitutions"
+			],
+			[
 				"parseBin",
 				"parseBindingPattern"
 			],
@@ -112,29 +124,135 @@
 	"buffers":
 	[
 		{
-			"contents": "",
+			"contents": "EagleElement\nget\nconstructor\nEagleNode\nv =>\nv =>\nv =>\nv =>\nv =>\nv =>\nvalue =>\nv =>\nname =>\nfn\ne =>\ne =>\ne =>\nfn\ne =>\ne =>\ne =>\nfn\ne =>\ne =>\ne =>\ne =>\nfn\ne =>\nvalue =>\n() =>\ne =>\ne =>\ne =>\ne =>\ne =>\n() =>\ne =>\n() =>\n() =>\ne =>\ntext\nattributes\nAttributes\nEagleAttributes\nconstructor\nEagleAttributes\nentries: ()\nkey =>\nkeys: ()\nhas: key\nvalues: ()\nkey =>\nEagleAttributes\n(acc, key) =>\n(acc, key) =>\ngetLayer\ngetBounds\ne =>\ne =>\nv =>\ne =>\ntransformation\ngeometry\nmakeGetterSetter\nv =>\nprop =>\nprop =>\nprop =>\nisRelation\nelementChain\nnames\n(acc, entry) =>\nkeys\nvalues\nentries\ntoObject\nchild =>\nchild =>\ntoArray\ntoString\ngetAll\n(v, l, p) =>\nfind\n(v, l, p) =>\nsetAttribute\nremoveAttribute\npos\nmakeEagleElement",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 702,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "lib/dom/preactComponent.js",
+			"file": "lib/eagle/nodeMap.js",
 			"settings":
 			{
-				"buffer_size": 4222,
+				"buffer_size": 2759,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/roman/plot-cv/lib/dom/preactComponent.js",
+			"settings":
+			{
+				"buffer_size": 4519,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/roman/plot-cv/test-renderer.js",
+			"settings":
+			{
+				"buffer_size": 1127,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/element.js",
+			"settings":
+			{
+				"buffer_size": 13994,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "main.js",
+			"settings":
+			{
+				"buffer_size": 15417,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "CMakeLists.txt",
+			"file": "schematic.svg",
 			"settings":
 			{
-				"buffer_size": 6895,
+				"buffer_size": 58382,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "board.svg",
+			"settings":
+			{
+				"buffer_size": 59545,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/roman/plot-cv/lib/eagle/boardRenderer.js",
+			"settings":
+			{
+				"buffer_size": 8412,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/renderer.js",
+			"settings":
+			{
+				"buffer_size": 6482,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/roman/plot-cv/lib/eagle/svgRenderer.js",
+			"settings":
+			{
+				"buffer_size": 13383,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/node.js",
+			"settings":
+			{
+				"buffer_size": 8607,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/locator.js",
+			"settings":
+			{
+				"buffer_size": 11284,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/common.js",
+			"settings":
+			{
+				"buffer_size": 10715,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/nodeList.js",
+			"settings":
+			{
+				"buffer_size": 4175,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt.sch",
+			"settings":
+			{
+				"buffer_size": 385959,
 				"line_ending": "Unix"
 			}
 		},
@@ -142,33 +260,16 @@
 			"file": "lib/eagle/document.js",
 			"settings":
 			{
-				"buffer_size": 3996,
+				"buffer_size": 3912,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/eagle/boardRenderer.js",
+			"file": "lib/util.js",
 			"settings":
 			{
-				"buffer_size": 8386,
+				"buffer_size": 80993,
 				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/schematicRenderer.js",
-			"settings":
-			{
-				"buffer_size": 8040,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/devpane.js",
-			"settings":
-			{
-				"buffer_size": 27643,
 				"line_ending": "Unix"
 			}
 		}
@@ -184,6 +285,14 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"outli",
+				"Browse Mode: Outline (Right)"
+			],
+			[
+				"install pac",
+				"Package Control: Install Package"
+			],
 			[
 				"install  p",
 				"Package Control: Install Package"
@@ -227,10 +336,6 @@
 			[
 				"adv",
 				"Package Control: Advanced Install Package"
-			],
-			[
-				"outli",
-				"Browse Mode: Outline (Right)"
 			],
 			[
 				"adva",
@@ -295,10 +400,6 @@
 			[
 				"outlin",
 				"Browse Mode: Outline (Right)"
-			],
-			[
-				"install pac",
-				"Package Control: Install Package"
 			],
 			[
 				"add ",
@@ -408,29 +509,84 @@
 	},
 	"expanded_folders":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv"
+		"/home/roman/Dokumente/Sources/plot-cv",
+		"/home/roman/Dokumente/Sources/plot-cv/include",
+		"/home/roman/Dokumente/Sources/plot-cv/lib",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/draw",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle"
 	],
 	"file_history":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv/main.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
+		"/home/roman/plot-cv/test-eagle.js",
+		"/home/roman/plot-cv/lib/eagle/node.js",
+		"/home/roman/plot-cv/lib/eagle/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/plot-cv/.next/cache/autodll-webpack-plugin/development_instance_0_c2d168c2d52545f184d14f51cf772091/dll_dc52956c0b09bcd9c072.js",
+		"/home/roman/plot-cv/lib/eagle/document.js",
+		"/home/roman/plot-cv/lib/eagle/common.js",
+		"/home/roman/plot-cv/lib/eagle/locator.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
+		"/home/roman/plot-cv/lib/eagle/nodeList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/locator.js",
+		"/home/roman/Dokumente/Sources/plot-cv/opencv/projectorcalibration.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/project.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-wasm.js",
+		"/home/roman/plot-cv/lib/dom/element.js",
+		"/home/roman/plot-cv/lib/dom/iterator.js",
+		"/home/roman/plot-cv/lib/eagle/project.js",
+		"/home/roman/Dokumente/Sources/diffsplit.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/a_deep.diff",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/a_eagle_node.diff",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/a_eagle_nodeList.diff",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/a_eagle_nodeMap.diff",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/a_eagle_project.diff",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/a_ecmascript_printer.diff",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/a_util.diff",
+		"/home/roman/plot-cv/test-renderer.js",
+		"/home/roman/plot-cv/lib/dom/preactComponent.js",
+		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt.sch",
+		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt.brd",
+		"/home/roman/plot-cv/40106-4069-Synth.brd",
+		"/home/roman/plot-cv/lib/util.js",
+		"/home/roman/plot-cv/lib/ecmascript/printer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.cpp",
+		"/home/roman/plot-cv/main.js",
+		"/home/roman/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
+		"/home/roman/plot-cv/lib/eagle/nodeMap.js",
+		"/home/roman/plot-cv/lib/ecmascript/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/board.svg",
+		"/home/roman/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/schematic.svg",
+		"/home/roman/plot-cv/lib/dom/reactComponent.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
+		"/home/roman/plot-cv/index.html",
+		"/home/roman/Dokumente/Sources/plot-cv/server.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/asyncHelpers.js",
 		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/devpane.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/index.html",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/websocket-client.js",
-		"/home/roman/Dokumente/Sources/plot-cv/server.js",
 		"/home/roman/Dokumente/Sources/plot-cv/src/highgui-viewer.cpp",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/40106-4069-Synth.b",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/40106-4069-Synth.brd",
@@ -448,19 +604,14 @@
 		"/home/roman/Dokumente/Sources/plot-cv/imgui-viewer.cmake",
 		"/home/roman/Dokumente/Sources/plot-cv/components.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/C.g4",
 		"/home/roman/the-wild-beauty-company/stores/api.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/polygonFinder.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
 		"/home/roman/the-wild-beauty-company/components/simple/aspectBox.js",
 		"/home/roman/Dokumente/Sources/plot-cv/style.css",
 		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/aspectBox.es",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-parse.js",
@@ -468,8 +619,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/ECMAScript.g4",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript.js",
-		"/home/roman/Dokumente/Sources/plot-cv/board.svg",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/devtools.js",
 		"/home/roman/Dokumente/Sources/plot-cv/output.svg",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/aop.js",
@@ -495,51 +644,7 @@
 		"/home/roman/Dokumente/Sources/Arduino-Projects/scope/scope.ino",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
-		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/expr.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/grammar.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/INI.g4",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/fn.js",
-		"/home/roman/Dokumente/Sources/plot-cv/ini-grammar.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-ini.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/lexer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/seek_set.c",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/parser.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/devpane.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/ebnf2.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/functions.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/rule.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/match.js",
-		"/home/roman/Sources/plot-cv/lib/parse/expr.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/pattern.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/es6.ebnf",
-		"/home/roman/Dokumente/Sources/plot-cv/test-clipper.js",
-		"/home/roman/Dokumente/jonesforth.f.txt",
-		"/home/roman/Dokumente/Sources/plot-cv/test-svgpath.js",
-		"/home/roman/Dokumente/Sources/plot-cv/line.svg",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/path.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-path.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/splinePoints.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/path-parser.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/locator.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/bbox.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/clipper-lib.js",
-		"/home/roman/Dokumente/Sources/plot-cv/cross.svg",
-		"/home/roman/Dokumente/Sources/plot-cv/output.orig.svg",
-		"/home/roman/Dokumente/Sources/plot-cv/line.js",
-		"/home/roman/Dokumente/Sources/plot-cv/Headphone-Amplifier-ClassAB-alt3.sch",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/circle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/intersection.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/lazyInitializer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
-		"/home/roman/Dokumente/Sources/plot-cv/opencv/polar_transforms.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/clipper.js",
-		"/home/roman/Dokumente/Sources/plot-cv/autoStore.es"
+		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/expr.js"
 	],
 	"find":
 	{
@@ -550,6 +655,22 @@
 		"height": 346.0,
 		"where_history":
 		[
+			"/home/roman/plot-cv/lib,*.js,/home/roman/plot-cv/test-renderer.js,/home/roman/plot-cv/test-eagle.js",
+			"/home/roman/plot-cv/lib,*.js,/home/roman/plot-cv/,*.js,-*node_modules*",
+			"/home/roman/plot-cv/lib,*.js,/home/roman/plot-cv/,*.js,-*node_modules",
+			"/home/roman/plot-cv/lib,*.js,/home/roman/plot-cv/,*.js",
+			"/home/roman/plot-cv/lib,*.js,/home/roman/plot-cv/*.js",
+			"/home/roman/plot-cv/lib,*.js,/home/roman/plot-cv/test-eagle.js",
+			"/home/roman/plot-cv/lib/eagle,*.js,/home/roman/plot-cv/test-eagle.js",
+			"/home/roman/plot-cv/lib/eagle,*.js,/home/roman/plot-cv/test-eagle.js,/home/roman/plot-cv/index.html,/home/roman/plot-cv,*.sch,*.brd",
+			"/home/roman/plot-cv/lib/eagle,*.js,/home/roman/plot-cv/test-eagle.js,/home/roman/plot-cv/index.html,/home/roman/plot-cv,*.js,*.sch,*.brd",
+			"/home/roman/plot-cv/lib,*.js,/home/roman/plot-cv/test-eagle.js,/home/roman/plot-cv/index.html,/home/roman/plot-cv,*.js,*.sch,*.brd",
+			"/home/roman/plot-cv/lib,*.js,/home/roman/plot-cv/test-eagle.js,/home/roman/plot-cv/index.html,/home/roman/plot-cv,*.js",
+			"/home/roman/plot-cv/lib,*.js,/home/roman/plot-cv/test-eagle.js,/home/roman/plot-cv/index.html,/home/roman/plot-cv/main.js",
+			"/home/roman/plot-cv/lib,*.js,/home/roman/plot-cv/test-eagle.js,/home/roman/plot-cv/index.html",
+			"/home/roman/plot-cv/lib/eagle,*.js,/home/roman/plot-cv/test-eagle.js,/home/roman/plot-cv/index.html",
+			"/home/roman/plot-cv/lib/eagle,*.js,/home/roman/plot-cv/test-eagle.js",
+			"/home/roman/Dokumente/Sources/plot-cv/lib/eagle,*.js",
 			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.html,*.css,/home/roman/Dokumente/Sources/plot-cv/main.js,/home/roman/Dokumente/Sources/plot-cv/index.html,<open files>,/home/roman/Dokumente/Sourfces/plot-cv,*.cpp,*.h,*.hpp,*.txt",
 			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.html,*.css,/home/roman/Dokumente/Sources/plot-cv/main.js,/home/roman/Dokumente/Sources/plot-cv/index.html,<open files>,/home/roman/Dokumente/Sources/plot-cv,*.cpp,*.h,*.hpp,*.txt",
 			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,*.html,*.css,/home/roman/Dokumente/Sources/plot-cv/main.js,/home/roman/Dokumente/Sources/plot-cv/index.html,<open files>,/home/roman/Dokumente/Sources/plot-cv,*.cpp,*.h,*.hpp,CMakeLists.txt",
@@ -582,134 +703,134 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"stroke.*dash",
-			"append",
-			"= .*Renderer",
-			"innerHTML:",
-			"innerHTML",
-			"getCall",
-			"Util\\.[^ ]*color",
-			"color",
-			"getColor\\(",
-			" getColor",
-			"getColor",
-			"palette",
-			"palette =",
-			"nodemap",
-			"makenodemap",
-			"[^a-z]layers[^a-z]",
-			"layers",
-			"get layers",
-			"layers",
-			"layers =",
-			"log.*touch",
-			"});\n",
-			"curve",
-			"name=\"IC2",
-			"=\"IC2",
-			"name=\"IC2",
-			"IC2",
-			"Util\\.keys =",
-			"\\.keys =",
-			"keys =",
-			"getCSS",
-			"WebSocketClient",
-			"Util.keys",
-			"tryCatch =",
-			"tryCa",
-			"websock",
-			"cli_SOURCES",
-			"link_dir",
-			"add_sub",
-			"quickjs",
-			"src_program",
-			"quickjs",
-			" __attribute__((visibility(\"default\")))",
-			"visibilit",
-			"ptr_fun",
-			"bind2nd",
-			"imgui",
-			"glew",
-			"'for'",
-			"keyword",
-			"      \n",
-			"Element",
-			"#ma",
-			"setRect",
-			"scaling\\(",
-			"factor",
-			"window, ",
-			"transform",
-			"transformm",
-			"trkl\\(",
-			"zoomVal",
-			" fromString\\(",
-			" toString\\(",
-			"toString\\(",
+			"log.*output:",
+			"^\\s*console.log.*output",
+			"^\\s*console.log.*output:",
+			"^\\s*console.log.*a:",
+			"log.*a:",
+			"log..a:",
+			"log..a",
+			"inspect",
+			"String",
+			"case 'pad'",
+			"<tspan",
+			"data-active",
+			"+'',",
+			"parentNode",
+			"log.*, raw ",
+			", raw ",
+			"makeEagleEl",
+			"toSource =",
+			"^\\s*document",
+			"^\\s*document\\(",
+			"let doc",
+			" find\\(",
+			"find\\(",
+			"find",
+			"log..p:",
+			"log.*p:",
+			"console",
+			"^\\s*console",
+			"makeEagleNode[A-Za-z]*\\(",
+			"makeEagle",
+			"'children'\\s*\\]",
+			"'children'",
+			"        ",
+			"'dereference' in",
+			"tagName",
+			"childList =",
+			"childList",
+			"child",
+			"children =.*trkl",
+			"children =",
+			"^\\s*inspect\\(",
+			"^\\s*inspect",
+			"import.*inspect",
+			"inspect",
+			"import.*inspect",
+			"inspect",
+			" \"\\",
+			"makeEagle",
+			"keys",
+			"make",
 			"toString",
-			"}\n",
-			" fromString",
-			"fromString",
-			"Transformed",
-			"listener",
-			"listener:",
-			"listener",
-			"AspectR",
-			"SizedAsp",
-			"data-width",
-			"Transformed",
-			"trkl.sub",
-			"Transformed",
-			"absolute",
-			"'absolute",
-			"absolute",
-			"absolute'",
-			"fence",
-			"zoom",
-			"mul =",
-			"resize =",
-			" \n",
-			"Matrix",
-			"affine",
-			"Element.oldSize",
-			"add",
-			"parent",
-			"f =",
-			"MakeFitAction",
-			"min.*width",
-			"min.width",
-			"style",
-			"null",
-			"getBounds",
-			"getBound",
-			"firstElem",
-			"  \n",
-			"element",
-			"let .* h;",
-			"let .* h",
-			"let h",
-			"h =",
-			"h",
-			"from.*preact",
-			"fence",
-			"\\[children]",
-			"estree.Literal",
-			"`: `",
-			";\n",
-			"': '",
-			"printObj",
-			"width",
-			"`<${",
-			"isBool",
-			"JSX",
-			"class Object",
-			"estree.Object",
-			"ArrowFunction",
-			"rrow",
-			"Arrow",
-			"default",
-			"class Prop",
-			"class FunctionLi"
+			"toStringTag",
+			"inspect",
+			" toString",
+			"Symbol.*inspect",
+			"inspect",
+			"path",
+			" toString",
+			"path",
+			"getAll",
+			"log.*makeEagle",
+			"makeEagle",
+			"makeEaglel",
+			"owner",
+			"getAll",
+			"log.*getAll",
+			"isObject",
+			"isObject =",
+			"Util.walk",
+			"deep.iter",
+			" iterator\\(",
+			"iterator\\(",
+			"iterator",
+			"^\\s*iterat",
+			"iterate",
+			"log.*c:",
+			"getAll",
+			"Wimport",
+			"new EagleDoc",
+			"makeEagleRef",
+			"makeEagleNodeList\\(",
+			"EagleRef[a-z]*\\(owner",
+			"EagleReference\\(",
+			"EagleReference",
+			"listRef",
+			"makeEagleNodeList\\(",
+			" EagleRef\\(",
+			"root",
+			"this",
+			"makeEagleNodeList\\(",
+			"let root",
+			"makeEagleNodeList\\(",
+			"EagleRef[^e]",
+			"EagleRef",
+			"makeEagleNodeList",
+			"makeNodeList\\(",
+			"makeNode",
+			"make",
+			"makeNode",
+			"makeEagleNodeList\\(",
+			"makeEagleNodeList",
+			"isObject",
+			"owner.raw",
+			"log.*Symbol.iter",
+			"Symbol.iter",
+			"makeEagle",
+			"part:",
+			"getCallers =",
+			"ion makeEagle",
+			"makeEagle",
+			"EagleRef\\(",
+			"<gate ",
+			"log.*children:",
+			"log.*a:",
+			"log.*output:",
+			"output:",
+			"Processing",
+			"toIndex",
+			"ArrowFunc",
+			"isArrow",
+			"hasProps =",
+			"pred",
+			"getAll",
+			"cacheFields",
+			"getLib",
+			"getLibraryNames",
+			"<librarîes",
+			"getAll"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -717,6 +838,8 @@
 		"regex": true,
 		"replace_history":
 		[
+			"Util.coloring(",
+			"1",
 			"",
 			"Element.rect",
 			"children",
@@ -842,9 +965,7 @@
 			"0",
 			"1",
 			"\\\\\\\\",
-			"\\\\.",
-			"argc > i",
-			""
+			"\\\\."
 		],
 		"reverse": false,
 		"show_context": false,
@@ -863,7 +984,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 0,
+						"buffer_size": 702,
 						"regions":
 						{
 						},
@@ -872,14 +993,453 @@
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
+								[
+									432,
+									444
+								],
+								[
+									522,
+									525
+								],
+								[
+									1418,
+									1429
+								],
+								[
+									2075,
+									2084
+								],
+								[
+									2543,
+									2547
+								],
+								[
+									2579,
+									2583
+								],
+								[
+									2612,
+									2616
+								],
+								[
+									2686,
+									2690
+								],
+								[
+									2722,
+									2726
+								],
+								[
+									2750,
+									2754
+								],
+								[
+									2886,
+									2894
+								],
+								[
+									3145,
+									3149
+								],
+								[
+									3171,
+									3178
+								],
+								[
+									3316,
+									3325
+								],
+								[
+									3673,
+									3677
+								],
+								[
+									3796,
+									3800
+								],
+								[
+									3919,
+									3923
+								],
+								[
+									4251,
+									4264
+								],
+								[
+									4417,
+									4421
+								],
+								[
+									4524,
+									4528
+								],
+								[
+									4558,
+									4562
+								],
+								[
+									4713,
+									4726
+								],
+								[
+									4764,
+									4768
+								],
+								[
+									4909,
+									4913
+								],
+								[
+									5029,
+									5033
+								],
+								[
+									5150,
+									5154
+								],
+								[
+									5445,
+									5455
+								],
+								[
+									5548,
+									5552
+								],
+								[
+									5971,
+									5979
+								],
+								[
+									6267,
+									6272
+								],
+								[
+									6317,
+									6321
+								],
+								[
+									6550,
+									6554
+								],
+								[
+									6653,
+									6657
+								],
+								[
+									6769,
+									6773
+								],
+								[
+									6887,
+									6891
+								],
+								[
+									6997,
+									7002
+								],
+								[
+									7018,
+									7022
+								],
+								[
+									7132,
+									7137
+								],
+								[
+									7230,
+									7235
+								],
+								[
+									7333,
+									7337
+								],
+								[
+									7492,
+									7496
+								],
+								[
+									7619,
+									7629
+								],
+								[
+									7744,
+									7762
+								],
+								[
+									7777,
+									7792
+								],
+								[
+									7803,
+									7814
+								],
+								[
+									8029,
+									8044
+								],
+								[
+									8066,
+									8080
+								],
+								[
+									8100,
+									8106
+								],
+								[
+									8149,
+									8160
+								],
+								[
+									8185,
+									8196
+								],
+								[
+									8235,
+									8248
+								],
+								[
+									8268,
+									8274
+								],
+								[
+									8340,
+									8355
+								],
+								[
+									8397,
+									8410
+								],
+								[
+									8553,
+									8566
+								],
+								[
+									8770,
+									8778
+								],
+								[
+									8968,
+									8977
+								],
+								[
+									8985,
+									8989
+								],
+								[
+									9234,
+									9238
+								],
+								[
+									9423,
+									9427
+								],
+								[
+									9753,
+									9757
+								],
+								[
+									10179,
+									10193
+								],
+								[
+									10558,
+									10566
+								],
+								[
+									10660,
+									10683
+								],
+								[
+									10684,
+									10688
+								],
+								[
+									10772,
+									10779
+								],
+								[
+									10889,
+									10896
+								],
+								[
+									11076,
+									11083
+								],
+								[
+									11234,
+									11244
+								],
+								[
+									11423,
+									11435
+								],
+								[
+									11758,
+									11763
+								],
+								[
+									11822,
+									11837
+								],
+								[
+									11909,
+									11913
+								],
+								[
+									11992,
+									11998
+								],
+								[
+									12079,
+									12086
+								],
+								[
+									12169,
+									12177
+								],
+								[
+									12545,
+									12553
+								],
+								[
+									12614,
+									12622
+								],
+								[
+									12900,
+									12907
+								],
+								[
+									13013,
+									13021
+								],
+								[
+									13139,
+									13145
+								],
+								[
+									13209,
+									13221
+								],
+								[
+									13261,
+									13265
+								],
+								[
+									13327,
+									13339
+								],
+								[
+									13379,
+									13391
+								],
+								[
+									13534,
+									13549
+								],
+								[
+									13607,
+									13610
+								],
+								[
+									13905,
+									13944
+								]
 							],
 							"symlist":
 							[
+								"EagleElement",
+								"get",
+								"constructor",
+								"EagleNode",
+								"v =>",
+								"v =>",
+								"v =>",
+								"v =>",
+								"v =>",
+								"v =>",
+								"value =>",
+								"v =>",
+								"name =>",
+								"fn",
+								"e =>",
+								"e =>",
+								"e =>",
+								"fn",
+								"e =>",
+								"e =>",
+								"e =>",
+								"fn",
+								"e =>",
+								"e =>",
+								"e =>",
+								"e =>",
+								"fn",
+								"e =>",
+								"value =>",
+								"() =>",
+								"e =>",
+								"e =>",
+								"e =>",
+								"e =>",
+								"e =>",
+								"() =>",
+								"e =>",
+								"() =>",
+								"() =>",
+								"e =>",
+								"text",
+								"attributes",
+								"Attributes",
+								"EagleAttributes",
+								"constructor",
+								"EagleAttributes",
+								"entries: ()",
+								"key =>",
+								"keys: ()",
+								"has: key",
+								"values: ()",
+								"key =>",
+								"EagleAttributes",
+								"(acc, key) =>",
+								"(acc, key) =>",
+								"getLayer",
+								"getBounds",
+								"e =>",
+								"e =>",
+								"v =>",
+								"e =>",
+								"transformation",
+								"geometry",
+								"makeGetterSetter",
+								"v =>",
+								"prop =>",
+								"prop =>",
+								"prop =>",
+								"isRelation",
+								"elementChain",
+								"names",
+								"(acc, entry) =>",
+								"keys",
+								"values",
+								"entries",
+								"toObject",
+								"child =>",
+								"child =>",
+								"toArray",
+								"toString",
+								"getAll",
+								"(v, l, p) =>",
+								"find",
+								"(v, l, p) =>",
+								"setAttribute",
+								"removeAttribute",
+								"pos",
+								"makeEagleElement"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -887,30 +1447,30 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 17,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 1,
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "lib/dom/preactComponent.js",
+					"file": "lib/eagle/nodeMap.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4222,
+						"buffer_size": 2759,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1518,
-								1518
+								1695,
+								1695
 							]
 						],
 						"settings":
@@ -920,57 +1480,57 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 342.0,
+						"translation.y": 1011.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "CMakeLists.txt",
+					"file": "/home/roman/plot-cv/lib/dom/preactComponent.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6895,
+						"buffer_size": 4519,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2658,
-								2658
+								2544,
+								2544
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1425.0,
+						"translation.y": 1430.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "lib/eagle/document.js",
+					"file": "/home/roman/plot-cv/test-renderer.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3996,
+						"buffer_size": 1127,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								616,
+								616
 							]
 						],
 						"settings":
@@ -983,16 +1543,46 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
 					"buffer": 4,
-					"file": "lib/eagle/boardRenderer.js",
+					"file": "lib/eagle/element.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 8386,
+						"buffer_size": 13994,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								13437,
+								13437
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3022.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "main.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 15417,
 						"regions":
 						{
 							"col_010101FF":
@@ -1001,8 +1591,8 @@
 								"regions":
 								[
 									[
-										3526,
-										3531
+										6392,
+										6397
 									]
 								],
 								"scope": "col_010101FF"
@@ -1014,8 +1604,3087 @@
 								"regions":
 								[
 									[
-										3501,
-										3501
+										6149,
+										6149
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF0000FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										6490,
+										6493
+									]
+								],
+								"scope": "col_FF0000FF"
+							},
+							"col_FF0000FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF0000FF_circle.png",
+								"regions":
+								[
+									[
+										6436,
+										6436
+									]
+								],
+								"scope": "col_gutter"
+							}
+						},
+						"selection":
+						[
+							[
+								11595,
+								11595
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 5920.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 11,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "schematic.svg",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 58382,
+						"regions":
+						{
+							"col_0000AAFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										221,
+										228
+									]
+								],
+								"scope": "col_0000AAFF"
+							},
+							"col_0000AAFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_0000AAFF_circle.png",
+								"regions":
+								[
+									[
+										161,
+										161
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_0155FFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										52095,
+										52114
+									]
+								],
+								"scope": "col_0155FFFF"
+							},
+							"col_0155FFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_0155FFFF_circle.png",
+								"regions":
+								[
+									[
+										52080,
+										52080
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BA54BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										606,
+										620
+									],
+									[
+										769,
+										783
+									],
+									[
+										932,
+										946
+									],
+									[
+										1094,
+										1108
+									],
+									[
+										1257,
+										1264
+									],
+									[
+										1389,
+										1403
+									],
+									[
+										1552,
+										1566
+									],
+									[
+										1716,
+										1730
+									],
+									[
+										1880,
+										1894
+									],
+									[
+										2044,
+										2051
+									],
+									[
+										2176,
+										2190
+									],
+									[
+										2377,
+										2391
+									],
+									[
+										2541,
+										2555
+									],
+									[
+										2704,
+										2718
+									],
+									[
+										2868,
+										2875
+									],
+									[
+										2963,
+										2977
+									],
+									[
+										3164,
+										3178
+									],
+									[
+										3328,
+										3342
+									],
+									[
+										3529,
+										3543
+									],
+									[
+										3727,
+										3741
+									],
+									[
+										3889,
+										3903
+									],
+									[
+										4050,
+										4064
+									],
+									[
+										4213,
+										4227
+									],
+									[
+										4376,
+										4383
+									],
+									[
+										4507,
+										4521
+									],
+									[
+										4671,
+										4685
+									],
+									[
+										4835,
+										4849
+									],
+									[
+										4999,
+										5013
+									],
+									[
+										5162,
+										5176
+									],
+									[
+										5326,
+										5340
+									],
+									[
+										5490,
+										5497
+									],
+									[
+										5585,
+										5592
+									],
+									[
+										5680,
+										5694
+									],
+									[
+										5844,
+										5858
+									],
+									[
+										6009,
+										6023
+									],
+									[
+										6173,
+										6187
+									],
+									[
+										6336,
+										6343
+									],
+									[
+										6468,
+										6482
+									],
+									[
+										6630,
+										6644
+									],
+									[
+										6793,
+										6807
+									],
+									[
+										6957,
+										6964
+									],
+									[
+										7052,
+										7066
+									],
+									[
+										7215,
+										7229
+									],
+									[
+										7379,
+										7393
+									],
+									[
+										7541,
+										7548
+									],
+									[
+										7672,
+										7686
+									],
+									[
+										7836,
+										7850
+									],
+									[
+										7999,
+										8013
+									],
+									[
+										8162,
+										8176
+									],
+									[
+										8326,
+										8333
+									],
+									[
+										8421,
+										8428
+									],
+									[
+										8515,
+										8529
+									],
+									[
+										8676,
+										8690
+									],
+									[
+										8838,
+										8852
+									],
+									[
+										8999,
+										9006
+									],
+									[
+										9128,
+										9142
+									],
+									[
+										9294,
+										9308
+									],
+									[
+										9459,
+										9473
+									],
+									[
+										9625,
+										9632
+									],
+									[
+										9759,
+										9773
+									]
+								],
+								"scope": "col_4BA54BFF"
+							},
+							"col_4BA54BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BA54BFF_circle.png",
+								"regions":
+								[
+									[
+										584,
+										584
+									],
+									[
+										747,
+										747
+									],
+									[
+										910,
+										910
+									],
+									[
+										1072,
+										1072
+									],
+									[
+										1235,
+										1235
+									],
+									[
+										1367,
+										1367
+									],
+									[
+										1530,
+										1530
+									],
+									[
+										1694,
+										1694
+									],
+									[
+										1858,
+										1858
+									],
+									[
+										2022,
+										2022
+									],
+									[
+										2154,
+										2154
+									],
+									[
+										2355,
+										2355
+									],
+									[
+										2519,
+										2519
+									],
+									[
+										2682,
+										2682
+									],
+									[
+										2846,
+										2846
+									],
+									[
+										2941,
+										2941
+									],
+									[
+										3142,
+										3142
+									],
+									[
+										3306,
+										3306
+									],
+									[
+										3507,
+										3507
+									],
+									[
+										3705,
+										3705
+									],
+									[
+										3867,
+										3867
+									],
+									[
+										4028,
+										4028
+									],
+									[
+										4191,
+										4191
+									],
+									[
+										4354,
+										4354
+									],
+									[
+										4485,
+										4485
+									],
+									[
+										4649,
+										4649
+									],
+									[
+										4813,
+										4813
+									],
+									[
+										4977,
+										4977
+									],
+									[
+										5140,
+										5140
+									],
+									[
+										5304,
+										5304
+									],
+									[
+										5468,
+										5468
+									],
+									[
+										5563,
+										5563
+									],
+									[
+										5658,
+										5658
+									],
+									[
+										5822,
+										5822
+									],
+									[
+										5987,
+										5987
+									],
+									[
+										6151,
+										6151
+									],
+									[
+										6314,
+										6314
+									],
+									[
+										6446,
+										6446
+									],
+									[
+										6608,
+										6608
+									],
+									[
+										6771,
+										6771
+									],
+									[
+										6935,
+										6935
+									],
+									[
+										7030,
+										7030
+									],
+									[
+										7193,
+										7193
+									],
+									[
+										7357,
+										7357
+									],
+									[
+										7519,
+										7519
+									],
+									[
+										7650,
+										7650
+									],
+									[
+										7814,
+										7814
+									],
+									[
+										7977,
+										7977
+									],
+									[
+										8140,
+										8140
+									],
+									[
+										8304,
+										8304
+									],
+									[
+										8399,
+										8399
+									],
+									[
+										8493,
+										8493
+									],
+									[
+										8654,
+										8654
+									],
+									[
+										8816,
+										8816
+									],
+									[
+										8977,
+										8977
+									],
+									[
+										9106,
+										9106
+									],
+									[
+										9272,
+										9272
+									],
+									[
+										9437,
+										9437
+									],
+									[
+										9603,
+										9603
+									],
+									[
+										9737,
+										9737
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A54B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										10029,
+										10043
+									],
+									[
+										10197,
+										10211
+									],
+									[
+										10372,
+										10386
+									],
+									[
+										10547,
+										10561
+									],
+									[
+										10722,
+										10736
+									],
+									[
+										10892,
+										10906
+									],
+									[
+										11064,
+										11078
+									],
+									[
+										11238,
+										11252
+									],
+									[
+										11412,
+										11426
+									],
+									[
+										11587,
+										11601
+									],
+									[
+										11762,
+										11776
+									],
+									[
+										11949,
+										11963
+									],
+									[
+										12069,
+										12076
+									],
+									[
+										12167,
+										12174
+									],
+									[
+										12275,
+										12282
+									],
+									[
+										12385,
+										12399
+									],
+									[
+										13046,
+										13060
+									],
+									[
+										13328,
+										13342
+									],
+									[
+										13609,
+										13623
+									],
+									[
+										13992,
+										13999
+									],
+									[
+										14111,
+										14118
+									],
+									[
+										14218,
+										14232
+									],
+									[
+										14379,
+										14393
+									],
+									[
+										14541,
+										14555
+									],
+									[
+										14702,
+										14716
+									],
+									[
+										14868,
+										14882
+									],
+									[
+										15697,
+										15704
+									],
+									[
+										15816,
+										15823
+									],
+									[
+										15923,
+										15937
+									],
+									[
+										16084,
+										16098
+									],
+									[
+										16246,
+										16260
+									],
+									[
+										16407,
+										16421
+									],
+									[
+										16573,
+										16587
+									],
+									[
+										17390,
+										17397
+									],
+									[
+										17510,
+										17517
+									],
+									[
+										17600,
+										17614
+									],
+									[
+										17768,
+										17782
+									],
+									[
+										17934,
+										17948
+									],
+									[
+										18100,
+										18114
+									],
+									[
+										18921,
+										18928
+									],
+									[
+										19041,
+										19048
+									],
+									[
+										19131,
+										19145
+									],
+									[
+										19299,
+										19313
+									],
+									[
+										19465,
+										19479
+									],
+									[
+										19631,
+										19645
+									],
+									[
+										20477,
+										20484
+									],
+									[
+										20597,
+										20604
+									],
+									[
+										20687,
+										20701
+									],
+									[
+										20855,
+										20869
+									],
+									[
+										21021,
+										21035
+									],
+									[
+										21187,
+										21201
+									],
+									[
+										22008,
+										22015
+									],
+									[
+										22128,
+										22135
+									],
+									[
+										22218,
+										22232
+									],
+									[
+										22386,
+										22400
+									],
+									[
+										22552,
+										22566
+									],
+									[
+										22718,
+										22732
+									],
+									[
+										23552,
+										23559
+									],
+									[
+										23652,
+										23659
+									],
+									[
+										23742,
+										23756
+									],
+									[
+										23900,
+										23914
+									],
+									[
+										24072,
+										24086
+									],
+									[
+										24184,
+										24198
+									],
+									[
+										24357,
+										24371
+									],
+									[
+										24529,
+										24543
+									],
+									[
+										24700,
+										24714
+									],
+									[
+										24866,
+										24880
+									],
+									[
+										25031,
+										25045
+									],
+									[
+										25909,
+										25923
+									],
+									[
+										26077,
+										26091
+									],
+									[
+										26243,
+										26257
+									],
+									[
+										26401,
+										26415
+									],
+									[
+										26567,
+										26581
+									],
+									[
+										26735,
+										26749
+									],
+									[
+										26903,
+										26917
+									],
+									[
+										27073,
+										27087
+									],
+									[
+										27255,
+										27262
+									],
+									[
+										27378,
+										27385
+									],
+									[
+										27500,
+										27507
+									],
+									[
+										27588,
+										27602
+									],
+									[
+										27754,
+										27768
+									],
+									[
+										27927,
+										27941
+									],
+									[
+										28100,
+										28114
+									],
+									[
+										29505,
+										29512
+									],
+									[
+										29605,
+										29612
+									],
+									[
+										29695,
+										29709
+									],
+									[
+										29853,
+										29867
+									],
+									[
+										30025,
+										30039
+									],
+									[
+										30137,
+										30151
+									],
+									[
+										30310,
+										30324
+									],
+									[
+										30482,
+										30496
+									],
+									[
+										30653,
+										30667
+									],
+									[
+										30819,
+										30833
+									],
+									[
+										30984,
+										30998
+									],
+									[
+										31862,
+										31876
+									],
+									[
+										32038,
+										32045
+									],
+									[
+										32120,
+										32134
+									],
+									[
+										32283,
+										32297
+									],
+									[
+										32453,
+										32467
+									],
+									[
+										32623,
+										32637
+									],
+									[
+										32851,
+										32865
+									],
+									[
+										33027,
+										33034
+									],
+									[
+										33109,
+										33123
+									],
+									[
+										33272,
+										33286
+									],
+									[
+										33442,
+										33456
+									],
+									[
+										33612,
+										33626
+									],
+									[
+										33865,
+										33872
+									],
+									[
+										33965,
+										33972
+									],
+									[
+										34055,
+										34069
+									],
+									[
+										34213,
+										34227
+									],
+									[
+										34385,
+										34399
+									],
+									[
+										34497,
+										34511
+									],
+									[
+										34670,
+										34684
+									],
+									[
+										34842,
+										34856
+									],
+									[
+										35013,
+										35027
+									],
+									[
+										35179,
+										35193
+									],
+									[
+										35344,
+										35358
+									],
+									[
+										36247,
+										36254
+									],
+									[
+										36347,
+										36354
+									],
+									[
+										36437,
+										36451
+									],
+									[
+										36595,
+										36609
+									],
+									[
+										36767,
+										36781
+									],
+									[
+										36879,
+										36893
+									],
+									[
+										37052,
+										37066
+									],
+									[
+										37224,
+										37238
+									],
+									[
+										37395,
+										37409
+									],
+									[
+										37561,
+										37575
+									],
+									[
+										37726,
+										37740
+									],
+									[
+										38616,
+										38623
+									],
+									[
+										38698,
+										38712
+									],
+									[
+										38855,
+										38869
+									],
+									[
+										39353,
+										39360
+									],
+									[
+										39435,
+										39449
+									],
+									[
+										39592,
+										39606
+									],
+									[
+										40105,
+										40112
+									],
+									[
+										40187,
+										40201
+									],
+									[
+										40344,
+										40358
+									],
+									[
+										40857,
+										40864
+									],
+									[
+										40939,
+										40953
+									],
+									[
+										41096,
+										41110
+									],
+									[
+										41596,
+										41603
+									],
+									[
+										41678,
+										41692
+									],
+									[
+										41839,
+										41853
+									],
+									[
+										42000,
+										42014
+									],
+									[
+										42160,
+										42174
+									],
+									[
+										42320,
+										42334
+									],
+									[
+										42863,
+										42870
+									],
+									[
+										42945,
+										42959
+									],
+									[
+										43102,
+										43116
+									],
+									[
+										43615,
+										43622
+									],
+									[
+										43697,
+										43711
+									],
+									[
+										43854,
+										43868
+									],
+									[
+										44341,
+										44355
+									],
+									[
+										44509,
+										44523
+									],
+									[
+										44684,
+										44698
+									],
+									[
+										44859,
+										44873
+									],
+									[
+										45034,
+										45048
+									],
+									[
+										45204,
+										45218
+									],
+									[
+										45376,
+										45390
+									],
+									[
+										45550,
+										45564
+									],
+									[
+										45724,
+										45738
+									],
+									[
+										45899,
+										45913
+									],
+									[
+										46074,
+										46088
+									],
+									[
+										46261,
+										46275
+									],
+									[
+										46381,
+										46388
+									],
+									[
+										46479,
+										46486
+									],
+									[
+										46587,
+										46594
+									],
+									[
+										46697,
+										46711
+									],
+									[
+										47358,
+										47372
+									],
+									[
+										47640,
+										47654
+									],
+									[
+										47921,
+										47935
+									],
+									[
+										48279,
+										48293
+									],
+									[
+										48450,
+										48464
+									],
+									[
+										48620,
+										48634
+									],
+									[
+										48790,
+										48804
+									],
+									[
+										48956,
+										48970
+									],
+									[
+										49123,
+										49137
+									],
+									[
+										49290,
+										49304
+									],
+									[
+										49457,
+										49471
+									],
+									[
+										49624,
+										49638
+									],
+									[
+										49791,
+										49805
+									],
+									[
+										49958,
+										49972
+									],
+									[
+										50137,
+										50151
+									],
+									[
+										50257,
+										50264
+									],
+									[
+										50355,
+										50362
+									],
+									[
+										50475,
+										50482
+									],
+									[
+										50573,
+										50587
+									],
+									[
+										51234,
+										51248
+									],
+									[
+										51516,
+										51530
+									],
+									[
+										51797,
+										51811
+									]
+								],
+								"scope": "col_A54B4BFF"
+							},
+							"col_A54B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A54B4BFF_circle.png",
+								"regions":
+								[
+									[
+										10007,
+										10007
+									],
+									[
+										10175,
+										10175
+									],
+									[
+										10350,
+										10350
+									],
+									[
+										10525,
+										10525
+									],
+									[
+										10700,
+										10700
+									],
+									[
+										10870,
+										10870
+									],
+									[
+										11042,
+										11042
+									],
+									[
+										11216,
+										11216
+									],
+									[
+										11390,
+										11390
+									],
+									[
+										11565,
+										11565
+									],
+									[
+										11740,
+										11740
+									],
+									[
+										11915,
+										11915
+									],
+									[
+										12035,
+										12035
+									],
+									[
+										12133,
+										12133
+									],
+									[
+										12241,
+										12241
+									],
+									[
+										12361,
+										12361
+									],
+									[
+										13026,
+										13026
+									],
+									[
+										13308,
+										13308
+									],
+									[
+										13589,
+										13589
+									],
+									[
+										13958,
+										13958
+									],
+									[
+										14077,
+										14077
+									],
+									[
+										14196,
+										14196
+									],
+									[
+										14357,
+										14357
+									],
+									[
+										14519,
+										14519
+									],
+									[
+										14680,
+										14680
+									],
+									[
+										14846,
+										14846
+									],
+									[
+										15663,
+										15663
+									],
+									[
+										15782,
+										15782
+									],
+									[
+										15901,
+										15901
+									],
+									[
+										16062,
+										16062
+									],
+									[
+										16224,
+										16224
+									],
+									[
+										16385,
+										16385
+									],
+									[
+										16551,
+										16551
+									],
+									[
+										17356,
+										17356
+									],
+									[
+										17476,
+										17476
+									],
+									[
+										17578,
+										17578
+									],
+									[
+										17746,
+										17746
+									],
+									[
+										17912,
+										17912
+									],
+									[
+										18078,
+										18078
+									],
+									[
+										18887,
+										18887
+									],
+									[
+										19007,
+										19007
+									],
+									[
+										19109,
+										19109
+									],
+									[
+										19277,
+										19277
+									],
+									[
+										19443,
+										19443
+									],
+									[
+										19609,
+										19609
+									],
+									[
+										20443,
+										20443
+									],
+									[
+										20563,
+										20563
+									],
+									[
+										20665,
+										20665
+									],
+									[
+										20833,
+										20833
+									],
+									[
+										20999,
+										20999
+									],
+									[
+										21165,
+										21165
+									],
+									[
+										21974,
+										21974
+									],
+									[
+										22094,
+										22094
+									],
+									[
+										22196,
+										22196
+									],
+									[
+										22364,
+										22364
+									],
+									[
+										22530,
+										22530
+									],
+									[
+										22696,
+										22696
+									],
+									[
+										23518,
+										23518
+									],
+									[
+										23618,
+										23618
+									],
+									[
+										23720,
+										23720
+									],
+									[
+										23878,
+										23878
+									],
+									[
+										24038,
+										24038
+									],
+									[
+										24162,
+										24162
+									],
+									[
+										24335,
+										24335
+									],
+									[
+										24507,
+										24507
+									],
+									[
+										24678,
+										24678
+									],
+									[
+										24844,
+										24844
+									],
+									[
+										25011,
+										25011
+									],
+									[
+										25887,
+										25887
+									],
+									[
+										26055,
+										26055
+									],
+									[
+										26221,
+										26221
+									],
+									[
+										26379,
+										26379
+									],
+									[
+										26545,
+										26545
+									],
+									[
+										26713,
+										26713
+									],
+									[
+										26881,
+										26881
+									],
+									[
+										27051,
+										27051
+									],
+									[
+										27221,
+										27221
+									],
+									[
+										27344,
+										27344
+									],
+									[
+										27466,
+										27466
+									],
+									[
+										27566,
+										27566
+									],
+									[
+										27732,
+										27732
+									],
+									[
+										27905,
+										27905
+									],
+									[
+										28078,
+										28078
+									],
+									[
+										29471,
+										29471
+									],
+									[
+										29571,
+										29571
+									],
+									[
+										29673,
+										29673
+									],
+									[
+										29831,
+										29831
+									],
+									[
+										29991,
+										29991
+									],
+									[
+										30115,
+										30115
+									],
+									[
+										30288,
+										30288
+									],
+									[
+										30460,
+										30460
+									],
+									[
+										30631,
+										30631
+									],
+									[
+										30797,
+										30797
+									],
+									[
+										30964,
+										30964
+									],
+									[
+										31840,
+										31840
+									],
+									[
+										32004,
+										32004
+									],
+									[
+										32098,
+										32098
+									],
+									[
+										32261,
+										32261
+									],
+									[
+										32431,
+										32431
+									],
+									[
+										32601,
+										32601
+									],
+									[
+										32829,
+										32829
+									],
+									[
+										32993,
+										32993
+									],
+									[
+										33087,
+										33087
+									],
+									[
+										33250,
+										33250
+									],
+									[
+										33420,
+										33420
+									],
+									[
+										33590,
+										33590
+									],
+									[
+										33831,
+										33831
+									],
+									[
+										33931,
+										33931
+									],
+									[
+										34033,
+										34033
+									],
+									[
+										34191,
+										34191
+									],
+									[
+										34351,
+										34351
+									],
+									[
+										34475,
+										34475
+									],
+									[
+										34648,
+										34648
+									],
+									[
+										34820,
+										34820
+									],
+									[
+										34991,
+										34991
+									],
+									[
+										35157,
+										35157
+									],
+									[
+										35324,
+										35324
+									],
+									[
+										36213,
+										36213
+									],
+									[
+										36313,
+										36313
+									],
+									[
+										36415,
+										36415
+									],
+									[
+										36573,
+										36573
+									],
+									[
+										36733,
+										36733
+									],
+									[
+										36857,
+										36857
+									],
+									[
+										37030,
+										37030
+									],
+									[
+										37202,
+										37202
+									],
+									[
+										37373,
+										37373
+									],
+									[
+										37539,
+										37539
+									],
+									[
+										37706,
+										37706
+									],
+									[
+										38582,
+										38582
+									],
+									[
+										38676,
+										38676
+									],
+									[
+										38831,
+										38831
+									],
+									[
+										39319,
+										39319
+									],
+									[
+										39413,
+										39413
+									],
+									[
+										39568,
+										39568
+									],
+									[
+										40071,
+										40071
+									],
+									[
+										40165,
+										40165
+									],
+									[
+										40320,
+										40320
+									],
+									[
+										40823,
+										40823
+									],
+									[
+										40917,
+										40917
+									],
+									[
+										41072,
+										41072
+									],
+									[
+										41562,
+										41562
+									],
+									[
+										41656,
+										41656
+									],
+									[
+										41817,
+										41817
+									],
+									[
+										41978,
+										41978
+									],
+									[
+										42138,
+										42138
+									],
+									[
+										42298,
+										42298
+									],
+									[
+										42829,
+										42829
+									],
+									[
+										42923,
+										42923
+									],
+									[
+										43078,
+										43078
+									],
+									[
+										43581,
+										43581
+									],
+									[
+										43675,
+										43675
+									],
+									[
+										43830,
+										43830
+									],
+									[
+										44319,
+										44319
+									],
+									[
+										44487,
+										44487
+									],
+									[
+										44662,
+										44662
+									],
+									[
+										44837,
+										44837
+									],
+									[
+										45012,
+										45012
+									],
+									[
+										45182,
+										45182
+									],
+									[
+										45354,
+										45354
+									],
+									[
+										45528,
+										45528
+									],
+									[
+										45702,
+										45702
+									],
+									[
+										45877,
+										45877
+									],
+									[
+										46052,
+										46052
+									],
+									[
+										46227,
+										46227
+									],
+									[
+										46347,
+										46347
+									],
+									[
+										46445,
+										46445
+									],
+									[
+										46553,
+										46553
+									],
+									[
+										46673,
+										46673
+									],
+									[
+										47338,
+										47338
+									],
+									[
+										47620,
+										47620
+									],
+									[
+										47901,
+										47901
+									],
+									[
+										48257,
+										48257
+									],
+									[
+										48428,
+										48428
+									],
+									[
+										48598,
+										48598
+									],
+									[
+										48768,
+										48768
+									],
+									[
+										48934,
+										48934
+									],
+									[
+										49101,
+										49101
+									],
+									[
+										49268,
+										49268
+									],
+									[
+										49435,
+										49435
+									],
+									[
+										49602,
+										49602
+									],
+									[
+										49769,
+										49769
+									],
+									[
+										49936,
+										49936
+									],
+									[
+										50103,
+										50103
+									],
+									[
+										50223,
+										50223
+									],
+									[
+										50321,
+										50321
+									],
+									[
+										50441,
+										50441
+									],
+									[
+										50549,
+										50549
+									],
+									[
+										51214,
+										51214
+									],
+									[
+										51496,
+										51496
+									],
+									[
+										51777,
+										51777
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_AFAFAFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										12501,
+										12517
+									],
+									[
+										12759,
+										12775
+									],
+									[
+										15026,
+										15042
+									],
+									[
+										15306,
+										15322
+									],
+									[
+										16731,
+										16747
+									],
+									[
+										17011,
+										17027
+									],
+									[
+										18266,
+										18282
+									],
+									[
+										18551,
+										18567
+									],
+									[
+										19797,
+										19813
+									],
+									[
+										20082,
+										20098
+									],
+									[
+										21353,
+										21369
+									],
+									[
+										21635,
+										21651
+									],
+									[
+										22884,
+										22900
+									],
+									[
+										23169,
+										23185
+									],
+									[
+										25287,
+										25303
+									],
+									[
+										25570,
+										25586
+									],
+									[
+										28271,
+										28287
+									],
+									[
+										28554,
+										28570
+									],
+									[
+										28841,
+										28857
+									],
+									[
+										29123,
+										29139
+									],
+									[
+										31240,
+										31256
+									],
+									[
+										31523,
+										31539
+									],
+									[
+										35600,
+										35616
+									],
+									[
+										35883,
+										35899
+									],
+									[
+										37982,
+										37998
+									],
+									[
+										38265,
+										38281
+									],
+									[
+										38983,
+										38999
+									],
+									[
+										39720,
+										39736
+									],
+									[
+										40472,
+										40488
+									],
+									[
+										41224,
+										41240
+									],
+									[
+										42472,
+										42488
+									],
+									[
+										43230,
+										43246
+									],
+									[
+										43982,
+										43998
+									],
+									[
+										46813,
+										46829
+									],
+									[
+										47071,
+										47087
+									],
+									[
+										50689,
+										50705
+									],
+									[
+										50947,
+										50963
+									]
+								],
+								"scope": "col_AFAFAFFF"
+							},
+							"col_AFAFAFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_AFAFAFFF_circle.png",
+								"regions":
+								[
+									[
+										12481,
+										12481
+									],
+									[
+										12739,
+										12739
+									],
+									[
+										15006,
+										15006
+									],
+									[
+										15286,
+										15286
+									],
+									[
+										16711,
+										16711
+									],
+									[
+										16991,
+										16991
+									],
+									[
+										18246,
+										18246
+									],
+									[
+										18531,
+										18531
+									],
+									[
+										19777,
+										19777
+									],
+									[
+										20062,
+										20062
+									],
+									[
+										21333,
+										21333
+									],
+									[
+										21615,
+										21615
+									],
+									[
+										22864,
+										22864
+									],
+									[
+										23149,
+										23149
+									],
+									[
+										25267,
+										25267
+									],
+									[
+										25550,
+										25550
+									],
+									[
+										28251,
+										28251
+									],
+									[
+										28534,
+										28534
+									],
+									[
+										28821,
+										28821
+									],
+									[
+										29103,
+										29103
+									],
+									[
+										31220,
+										31220
+									],
+									[
+										31503,
+										31503
+									],
+									[
+										35580,
+										35580
+									],
+									[
+										35863,
+										35863
+									],
+									[
+										37962,
+										37962
+									],
+									[
+										38245,
+										38245
+									],
+									[
+										38963,
+										38963
+									],
+									[
+										39700,
+										39700
+									],
+									[
+										40452,
+										40452
+									],
+									[
+										41204,
+										41204
+									],
+									[
+										42452,
+										42452
+									],
+									[
+										43210,
+										43210
+									],
+									[
+										43962,
+										43962
+									],
+									[
+										46793,
+										46793
+									],
+									[
+										47051,
+										47051
+									],
+									[
+										50669,
+										50669
+									],
+									[
+										50927,
+										50927
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_D001FFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										58287,
+										58306
+									]
+								],
+								"scope": "col_D001FFFF"
+							},
+							"col_D001FFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_D001FFFF_circle.png",
+								"regions":
+								[
+									[
+										58220,
+										58220
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFF00FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										52400,
+										52414
+									],
+									[
+										52661,
+										52675
+									],
+									[
+										52921,
+										52935
+									],
+									[
+										53184,
+										53198
+									],
+									[
+										53447,
+										53461
+									],
+									[
+										53710,
+										53724
+									],
+									[
+										53974,
+										53988
+									],
+									[
+										54240,
+										54254
+									],
+									[
+										54503,
+										54517
+									],
+									[
+										54769,
+										54783
+									],
+									[
+										55032,
+										55046
+									],
+									[
+										55297,
+										55311
+									],
+									[
+										55562,
+										55576
+									],
+									[
+										55827,
+										55841
+									],
+									[
+										56070,
+										56084
+									],
+									[
+										56313,
+										56327
+									],
+									[
+										56576,
+										56590
+									],
+									[
+										56839,
+										56853
+									],
+									[
+										57103,
+										57117
+									],
+									[
+										57365,
+										57379
+									],
+									[
+										57628,
+										57642
+									],
+									[
+										57889,
+										57903
+									],
+									[
+										58150,
+										58164
+									]
+								],
+								"scope": "col_FFFF00FF"
+							},
+							"col_FFFF00FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFF00FF_circle.png",
+								"regions":
+								[
+									[
+										52304,
+										52304
+									],
+									[
+										52564,
+										52564
+									],
+									[
+										52825,
+										52825
+									],
+									[
+										53087,
+										53087
+									],
+									[
+										53351,
+										53351
+									],
+									[
+										53614,
+										53614
+									],
+									[
+										53877,
+										53877
+									],
+									[
+										54144,
+										54144
+									],
+									[
+										54407,
+										54407
+									],
+									[
+										54673,
+										54673
+									],
+									[
+										54936,
+										54936
+									],
+									[
+										55200,
+										55200
+									],
+									[
+										55465,
+										55465
+									],
+									[
+										55731,
+										55731
+									],
+									[
+										55974,
+										55974
+									],
+									[
+										56217,
+										56217
+									],
+									[
+										56478,
+										56478
+									],
+									[
+										56741,
+										56741
+									],
+									[
+										57005,
+										57005
+									],
+									[
+										57268,
+										57268
+									],
+									[
+										57530,
+										57530
+									],
+									[
+										57792,
+										57792
+									],
+									[
+										58053,
+										58053
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										414,
+										430
+									]
+								],
+								"scope": "col_FFFFFFFF"
+							},
+							"col_FFFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										346,
+										346
+									]
+								],
+								"scope": "col_gutter"
+							}
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "board.svg",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 59545,
+						"regions":
+						{
+							"col_000000FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										14255,
+										14260
+									],
+									[
+										14797,
+										14802
+									],
+									[
+										16441,
+										16446
+									],
+									[
+										17005,
+										17010
+									],
+									[
+										18951,
+										18956
+									],
+									[
+										19515,
+										19520
+									],
+									[
+										21463,
+										21468
+									],
+									[
+										22027,
+										22032
+									],
+									[
+										23884,
+										23889
+									],
+									[
+										24426,
+										24431
+									],
+									[
+										26554,
+										26559
+									],
+									[
+										27084,
+										27089
+									],
+									[
+										29186,
+										29191
+									],
+									[
+										29716,
+										29721
+									],
+									[
+										31939,
+										31944
+									],
+									[
+										32493,
+										32498
+									],
+									[
+										34119,
+										34124
+									],
+									[
+										34661,
+										34666
+									],
+									[
+										36168,
+										36173
+									],
+									[
+										36710,
+										36715
+									],
+									[
+										39113,
+										39118
+									],
+									[
+										39655,
+										39660
+									],
+									[
+										42068,
+										42073
+									],
+									[
+										42610,
+										42615
+									],
+									[
+										45022,
+										45027
+									],
+									[
+										45564,
+										45569
+									],
+									[
+										47976,
+										47981
+									],
+									[
+										48514,
+										48519
+									],
+									[
+										49163,
+										49168
+									],
+									[
+										50871,
+										50876
+									],
+									[
+										51424,
+										51429
+									],
+									[
+										51973,
+										51978
+									],
+									[
+										53923,
+										53928
+									],
+									[
+										54477,
+										54482
+									],
+									[
+										55027,
+										55032
+									],
+									[
+										56946,
+										56951
+									],
+									[
+										57488,
+										57493
+									],
+									[
+										58026,
+										58031
+									]
+								],
+								"scope": "col_000000FF"
+							},
+							"col_000000FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_000000FF_circle.png",
+								"regions":
+								[
+									[
+										14212,
+										14212
+									],
+									[
+										14754,
+										14754
+									],
+									[
+										16398,
+										16398
+									],
+									[
+										16962,
+										16962
+									],
+									[
+										18908,
+										18908
+									],
+									[
+										19472,
+										19472
+									],
+									[
+										21420,
+										21420
+									],
+									[
+										21984,
+										21984
+									],
+									[
+										23841,
+										23841
+									],
+									[
+										24383,
+										24383
+									],
+									[
+										26511,
+										26511
+									],
+									[
+										27041,
+										27041
+									],
+									[
+										29143,
+										29143
+									],
+									[
+										29673,
+										29673
+									],
+									[
+										31896,
+										31896
+									],
+									[
+										32450,
+										32450
+									],
+									[
+										34076,
+										34076
+									],
+									[
+										34618,
+										34618
+									],
+									[
+										36125,
+										36125
+									],
+									[
+										36667,
+										36667
+									],
+									[
+										39070,
+										39070
+									],
+									[
+										39612,
+										39612
+									],
+									[
+										42025,
+										42025
+									],
+									[
+										42567,
+										42567
+									],
+									[
+										44979,
+										44979
+									],
+									[
+										45521,
+										45521
+									],
+									[
+										47933,
+										47933
+									],
+									[
+										48471,
+										48471
+									],
+									[
+										49120,
+										49120
+									],
+									[
+										50828,
+										50828
+									],
+									[
+										51381,
+										51381
+									],
+									[
+										51930,
+										51930
+									],
+									[
+										53880,
+										53880
+									],
+									[
+										54434,
+										54434
+									],
+									[
+										54984,
+										54984
+									],
+									[
+										56903,
+										56903
+									],
+									[
+										57445,
+										57445
+									],
+									[
+										57983,
+										57983
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_0000AAFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										228,
+										235
+									]
+								],
+								"scope": "col_0000AAFF"
+							},
+							"col_0000AAFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_0000AAFF_circle.png",
+								"regions":
+								[
+									[
+										168,
+										168
 									]
 								],
 								"scope": "col_gutter"
@@ -1026,8 +4695,156 @@
 								"regions":
 								[
 									[
-										3481,
-										3498
+										14228,
+										14245
+									],
+									[
+										14770,
+										14787
+									],
+									[
+										16414,
+										16431
+									],
+									[
+										16978,
+										16995
+									],
+									[
+										18924,
+										18941
+									],
+									[
+										19488,
+										19505
+									],
+									[
+										21436,
+										21453
+									],
+									[
+										22000,
+										22017
+									],
+									[
+										23857,
+										23874
+									],
+									[
+										24399,
+										24416
+									],
+									[
+										26527,
+										26544
+									],
+									[
+										27057,
+										27074
+									],
+									[
+										29159,
+										29176
+									],
+									[
+										29689,
+										29706
+									],
+									[
+										31912,
+										31929
+									],
+									[
+										32466,
+										32483
+									],
+									[
+										34092,
+										34109
+									],
+									[
+										34634,
+										34651
+									],
+									[
+										36141,
+										36158
+									],
+									[
+										36683,
+										36700
+									],
+									[
+										39086,
+										39103
+									],
+									[
+										39628,
+										39645
+									],
+									[
+										42041,
+										42058
+									],
+									[
+										42583,
+										42600
+									],
+									[
+										44995,
+										45012
+									],
+									[
+										45537,
+										45554
+									],
+									[
+										47949,
+										47966
+									],
+									[
+										48487,
+										48504
+									],
+									[
+										49136,
+										49153
+									],
+									[
+										50844,
+										50861
+									],
+									[
+										51397,
+										51414
+									],
+									[
+										51946,
+										51963
+									],
+									[
+										53896,
+										53913
+									],
+									[
+										54450,
+										54467
+									],
+									[
+										55000,
+										55017
+									],
+									[
+										56919,
+										56936
+									],
+									[
+										57461,
+										57478
+									],
+									[
+										57999,
+										58016
 									]
 								],
 								"scope": "col_32FEFFFF"
@@ -1039,8 +4856,1965 @@
 								"regions":
 								[
 									[
-										3458,
-										3458
+										14212,
+										14212
+									],
+									[
+										14754,
+										14754
+									],
+									[
+										16398,
+										16398
+									],
+									[
+										16962,
+										16962
+									],
+									[
+										18908,
+										18908
+									],
+									[
+										19472,
+										19472
+									],
+									[
+										21420,
+										21420
+									],
+									[
+										21984,
+										21984
+									],
+									[
+										23841,
+										23841
+									],
+									[
+										24383,
+										24383
+									],
+									[
+										26511,
+										26511
+									],
+									[
+										27041,
+										27041
+									],
+									[
+										29143,
+										29143
+									],
+									[
+										29673,
+										29673
+									],
+									[
+										31896,
+										31896
+									],
+									[
+										32450,
+										32450
+									],
+									[
+										34076,
+										34076
+									],
+									[
+										34618,
+										34618
+									],
+									[
+										36125,
+										36125
+									],
+									[
+										36667,
+										36667
+									],
+									[
+										39070,
+										39070
+									],
+									[
+										39612,
+										39612
+									],
+									[
+										42025,
+										42025
+									],
+									[
+										42567,
+										42567
+									],
+									[
+										44979,
+										44979
+									],
+									[
+										45521,
+										45521
+									],
+									[
+										47933,
+										47933
+									],
+									[
+										48471,
+										48471
+									],
+									[
+										49120,
+										49120
+									],
+									[
+										50828,
+										50828
+									],
+									[
+										51381,
+										51381
+									],
+									[
+										51930,
+										51930
+									],
+									[
+										53880,
+										53880
+									],
+									[
+										54434,
+										54434
+									],
+									[
+										54984,
+										54984
+									],
+									[
+										56903,
+										56903
+									],
+									[
+										57445,
+										57445
+									],
+									[
+										57983,
+										57983
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4B4B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										1410,
+										1423
+									]
+								],
+								"scope": "col_4B4B4BFF"
+							},
+							"col_4B4B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4B4BFF_circle.png",
+								"regions":
+								[
+									[
+										1381,
+										1381
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4B4BA5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										696,
+										710
+									],
+									[
+										3358,
+										3372
+									],
+									[
+										3561,
+										3575
+									],
+									[
+										4994,
+										5008
+									],
+									[
+										5217,
+										5231
+									],
+									[
+										5429,
+										5443
+									],
+									[
+										5693,
+										5707
+									],
+									[
+										5917,
+										5931
+									],
+									[
+										6128,
+										6142
+									],
+									[
+										6378,
+										6392
+									],
+									[
+										6698,
+										6712
+									],
+									[
+										6963,
+										6977
+									],
+									[
+										7280,
+										7294
+									],
+									[
+										7489,
+										7503
+									],
+									[
+										7713,
+										7727
+									],
+									[
+										7951,
+										7965
+									],
+									[
+										8174,
+										8188
+									],
+									[
+										8386,
+										8400
+									],
+									[
+										8650,
+										8664
+									],
+									[
+										8874,
+										8888
+									],
+									[
+										9085,
+										9099
+									],
+									[
+										9335,
+										9349
+									],
+									[
+										9655,
+										9669
+									],
+									[
+										9920,
+										9934
+									],
+									[
+										10237,
+										10251
+									],
+									[
+										10446,
+										10460
+									],
+									[
+										10670,
+										10684
+									],
+									[
+										10908,
+										10922
+									],
+									[
+										11131,
+										11145
+									],
+									[
+										11343,
+										11357
+									],
+									[
+										11607,
+										11621
+									],
+									[
+										11831,
+										11845
+									],
+									[
+										12042,
+										12056
+									],
+									[
+										12292,
+										12306
+									],
+									[
+										12612,
+										12626
+									],
+									[
+										12877,
+										12891
+									],
+									[
+										13194,
+										13208
+									],
+									[
+										13403,
+										13417
+									],
+									[
+										13627,
+										13641
+									],
+									[
+										15360,
+										15374
+									]
+								],
+								"scope": "col_4B4BA5FF"
+							},
+							"col_4B4BA5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4B4BA5FF_circle.png",
+								"regions":
+								[
+									[
+										667,
+										667
+									],
+									[
+										3329,
+										3329
+									],
+									[
+										3532,
+										3532
+									],
+									[
+										4919,
+										4919
+									],
+									[
+										5157,
+										5157
+									],
+									[
+										5380,
+										5380
+									],
+									[
+										5592,
+										5592
+									],
+									[
+										5856,
+										5856
+									],
+									[
+										6080,
+										6080
+									],
+									[
+										6291,
+										6291
+									],
+									[
+										6541,
+										6541
+									],
+									[
+										6861,
+										6861
+									],
+									[
+										7126,
+										7126
+									],
+									[
+										7442,
+										7442
+									],
+									[
+										7653,
+										7653
+									],
+									[
+										7876,
+										7876
+									],
+									[
+										8114,
+										8114
+									],
+									[
+										8337,
+										8337
+									],
+									[
+										8549,
+										8549
+									],
+									[
+										8813,
+										8813
+									],
+									[
+										9037,
+										9037
+									],
+									[
+										9248,
+										9248
+									],
+									[
+										9498,
+										9498
+									],
+									[
+										9818,
+										9818
+									],
+									[
+										10083,
+										10083
+									],
+									[
+										10399,
+										10399
+									],
+									[
+										10610,
+										10610
+									],
+									[
+										10833,
+										10833
+									],
+									[
+										11071,
+										11071
+									],
+									[
+										11294,
+										11294
+									],
+									[
+										11506,
+										11506
+									],
+									[
+										11770,
+										11770
+									],
+									[
+										11994,
+										11994
+									],
+									[
+										12205,
+										12205
+									],
+									[
+										12455,
+										12455
+									],
+									[
+										12775,
+										12775
+									],
+									[
+										13040,
+										13040
+									],
+									[
+										13356,
+										13356
+									],
+									[
+										13567,
+										13567
+									],
+									[
+										15340,
+										15340
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BA54BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										814,
+										828
+									],
+									[
+										930,
+										944
+									],
+									[
+										3663,
+										3677
+									],
+									[
+										13925,
+										13939
+									],
+									[
+										14578,
+										14592
+									],
+									[
+										16222,
+										16236
+									],
+									[
+										16763,
+										16777
+									],
+									[
+										18732,
+										18746
+									],
+									[
+										19273,
+										19287
+									],
+									[
+										21244,
+										21258
+									],
+									[
+										21785,
+										21799
+									],
+									[
+										23642,
+										23656
+									],
+									[
+										24207,
+										24221
+									],
+									[
+										26335,
+										26349
+									],
+									[
+										26864,
+										26878
+									],
+									[
+										28966,
+										28980
+									],
+									[
+										29497,
+										29511
+									],
+									[
+										31609,
+										31623
+									],
+									[
+										32274,
+										32288
+									],
+									[
+										33789,
+										33803
+									],
+									[
+										34442,
+										34456
+									],
+									[
+										35948,
+										35962
+									],
+									[
+										36491,
+										36505
+									],
+									[
+										38893,
+										38907
+									],
+									[
+										39436,
+										39450
+									],
+									[
+										41848,
+										41862
+									],
+									[
+										42391,
+										42405
+									],
+									[
+										44802,
+										44816
+									],
+									[
+										45345,
+										45359
+									],
+									[
+										47757,
+										47771
+									],
+									[
+										48298,
+										48312
+									],
+									[
+										48833,
+										48847
+									],
+									[
+										50651,
+										50665
+									],
+									[
+										51205,
+										51219
+									],
+									[
+										51757,
+										51771
+									],
+									[
+										53703,
+										53717
+									],
+									[
+										54258,
+										54272
+									],
+									[
+										54811,
+										54825
+									],
+									[
+										56726,
+										56740
+									],
+									[
+										57269,
+										57283
+									],
+									[
+										57810,
+										57824
+									]
+								],
+								"scope": "col_4BA54BFF"
+							},
+							"col_4BA54BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BA54BFF_circle.png",
+								"regions":
+								[
+									[
+										785,
+										785
+									],
+									[
+										901,
+										901
+									],
+									[
+										3634,
+										3634
+									],
+									[
+										13909,
+										13909
+									],
+									[
+										14562,
+										14562
+									],
+									[
+										16206,
+										16206
+									],
+									[
+										16747,
+										16747
+									],
+									[
+										18716,
+										18716
+									],
+									[
+										19257,
+										19257
+									],
+									[
+										21228,
+										21228
+									],
+									[
+										21769,
+										21769
+									],
+									[
+										23626,
+										23626
+									],
+									[
+										24191,
+										24191
+									],
+									[
+										26319,
+										26319
+									],
+									[
+										26848,
+										26848
+									],
+									[
+										28950,
+										28950
+									],
+									[
+										29481,
+										29481
+									],
+									[
+										31593,
+										31593
+									],
+									[
+										32258,
+										32258
+									],
+									[
+										33773,
+										33773
+									],
+									[
+										34426,
+										34426
+									],
+									[
+										35932,
+										35932
+									],
+									[
+										36475,
+										36475
+									],
+									[
+										38877,
+										38877
+									],
+									[
+										39420,
+										39420
+									],
+									[
+										41832,
+										41832
+									],
+									[
+										42375,
+										42375
+									],
+									[
+										44786,
+										44786
+									],
+									[
+										45329,
+										45329
+									],
+									[
+										47741,
+										47741
+									],
+									[
+										48282,
+										48282
+									],
+									[
+										48817,
+										48817
+									],
+									[
+										50635,
+										50635
+									],
+									[
+										51189,
+										51189
+									],
+									[
+										51741,
+										51741
+									],
+									[
+										53687,
+										53687
+									],
+									[
+										54242,
+										54242
+									],
+									[
+										54795,
+										54795
+									],
+									[
+										56710,
+										56710
+									],
+									[
+										57253,
+										57253
+									],
+									[
+										57794,
+										57794
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4BA5A5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										3985,
+										4000
+									]
+								],
+								"scope": "col_4BA5A5FF"
+							},
+							"col_4BA5A5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4BA5A5FF_circle.png",
+								"regions":
+								[
+									[
+										3956,
+										3956
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A54B4BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										581,
+										595
+									],
+									[
+										3257,
+										3271
+									],
+									[
+										3459,
+										3473
+									]
+								],
+								"scope": "col_A54B4BFF"
+							},
+							"col_A54B4BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A54B4BFF_circle.png",
+								"regions":
+								[
+									[
+										553,
+										553
+									],
+									[
+										3228,
+										3228
+									],
+									[
+										3430,
+										3430
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A5A54BFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										1046,
+										1061
+									],
+									[
+										2655,
+										2670
+									],
+									[
+										2756,
+										2771
+									],
+									[
+										4472,
+										4487
+									]
+								],
+								"scope": "col_A5A54BFF"
+							},
+							"col_A5A54BFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A5A54BFF_circle.png",
+								"regions":
+								[
+									[
+										1017,
+										1017
+									],
+									[
+										2626,
+										2626
+									],
+									[
+										2727,
+										2727
+									],
+									[
+										4443,
+										4443
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A5A5A5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										1167,
+										1183
+									],
+									[
+										1290,
+										1306
+									],
+									[
+										1527,
+										1543
+									],
+									[
+										1649,
+										1665
+									],
+									[
+										4752,
+										4768
+									],
+									[
+										15906,
+										15922
+									],
+									[
+										17332,
+										17348
+									],
+									[
+										17996,
+										18012
+									],
+									[
+										18416,
+										18432
+									],
+									[
+										19842,
+										19858
+									],
+									[
+										20506,
+										20522
+									],
+									[
+										20926,
+										20942
+									],
+									[
+										22354,
+										22370
+									],
+									[
+										23020,
+										23036
+									],
+									[
+										23329,
+										23345
+									],
+									[
+										25278,
+										25294
+									],
+									[
+										25415,
+										25431
+									],
+									[
+										25552,
+										25568
+									],
+									[
+										25675,
+										25691
+									],
+									[
+										26029,
+										26045
+									],
+									[
+										27939,
+										27955
+									],
+									[
+										28058,
+										28074
+									],
+									[
+										28194,
+										28210
+									],
+									[
+										28662,
+										28678
+									],
+									[
+										30573,
+										30589
+									],
+									[
+										30693,
+										30709
+									],
+									[
+										30830,
+										30846
+									],
+									[
+										31292,
+										31308
+									],
+									[
+										33490,
+										33506
+									],
+									[
+										35646,
+										35662
+									],
+									[
+										37305,
+										37321
+									],
+									[
+										37685,
+										37701
+									],
+									[
+										37819,
+										37835
+									],
+									[
+										38591,
+										38607
+									],
+									[
+										40259,
+										40275
+									],
+									[
+										40639,
+										40655
+									],
+									[
+										40773,
+										40789
+									],
+									[
+										41545,
+										41561
+									],
+									[
+										43214,
+										43230
+									],
+									[
+										43594,
+										43610
+									],
+									[
+										43728,
+										43744
+									],
+									[
+										44500,
+										44516
+									],
+									[
+										46168,
+										46184
+									],
+									[
+										46548,
+										46564
+									],
+									[
+										46682,
+										46698
+									],
+									[
+										47454,
+										47470
+									],
+									[
+										49486,
+										49502
+									],
+									[
+										50337,
+										50353
+									],
+									[
+										52831,
+										52847
+									],
+									[
+										53389,
+										53405
+									],
+									[
+										55885,
+										55901
+									],
+									[
+										56430,
+										56446
+									],
+									[
+										58845,
+										58861
+									],
+									[
+										59398,
+										59414
+									]
+								],
+								"scope": "col_A5A5A5FF"
+							},
+							"col_A5A5A5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A5A5A5FF_circle.png",
+								"regions":
+								[
+									[
+										1138,
+										1138
+									],
+									[
+										1261,
+										1261
+									],
+									[
+										1498,
+										1498
+									],
+									[
+										1620,
+										1620
+									],
+									[
+										4688,
+										4688
+									],
+									[
+										15732,
+										15732
+									],
+									[
+										17312,
+										17312
+									],
+									[
+										17966,
+										17966
+									],
+									[
+										18102,
+										18102
+									],
+									[
+										19822,
+										19822
+									],
+									[
+										20476,
+										20476
+									],
+									[
+										20612,
+										20612
+									],
+									[
+										22334,
+										22334
+									],
+									[
+										22990,
+										22990
+									],
+									[
+										23109,
+										23109
+									],
+									[
+										25258,
+										25258
+									],
+									[
+										25385,
+										25385
+									],
+									[
+										25522,
+										25522
+									],
+									[
+										25645,
+										25645
+									],
+									[
+										25769,
+										25769
+									],
+									[
+										27909,
+										27909
+									],
+									[
+										28028,
+										28028
+									],
+									[
+										28164,
+										28164
+									],
+									[
+										28301,
+										28301
+									],
+									[
+										30543,
+										30543
+									],
+									[
+										30663,
+										30663
+									],
+									[
+										30800,
+										30800
+									],
+									[
+										30936,
+										30936
+									],
+									[
+										33314,
+										33314
+									],
+									[
+										35468,
+										35468
+									],
+									[
+										37275,
+										37275
+									],
+									[
+										37655,
+										37655
+									],
+									[
+										37789,
+										37789
+									],
+									[
+										37925,
+										37925
+									],
+									[
+										40229,
+										40229
+									],
+									[
+										40609,
+										40609
+									],
+									[
+										40743,
+										40743
+									],
+									[
+										40879,
+										40879
+									],
+									[
+										43184,
+										43184
+									],
+									[
+										43564,
+										43564
+									],
+									[
+										43698,
+										43698
+									],
+									[
+										43834,
+										43834
+									],
+									[
+										46138,
+										46138
+									],
+									[
+										46518,
+										46518
+									],
+									[
+										46652,
+										46652
+									],
+									[
+										46788,
+										46788
+									],
+									[
+										49470,
+										49470
+									],
+									[
+										50261,
+										50261
+									],
+									[
+										52815,
+										52815
+									],
+									[
+										53052,
+										53052
+									],
+									[
+										55869,
+										55869
+									],
+									[
+										56106,
+										56106
+									],
+									[
+										58829,
+										58829
+									],
+									[
+										59066,
+										59066
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_AFAFAFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										1771,
+										1787
+									],
+									[
+										1891,
+										1907
+									],
+									[
+										2011,
+										2027
+									],
+									[
+										2132,
+										2148
+									],
+									[
+										2253,
+										2269
+									],
+									[
+										2353,
+										2369
+									],
+									[
+										2453,
+										2469
+									],
+									[
+										2554,
+										2570
+									],
+									[
+										2857,
+										2873
+									],
+									[
+										2957,
+										2973
+									],
+									[
+										3057,
+										3073
+									],
+									[
+										3157,
+										3173
+									],
+									[
+										3765,
+										3781
+									],
+									[
+										3866,
+										3882
+									],
+									[
+										4105,
+										4121
+									],
+									[
+										4227,
+										4243
+									],
+									[
+										4349,
+										4365
+									],
+									[
+										4590,
+										4606
+									],
+									[
+										15119,
+										15135
+									],
+									[
+										15484,
+										15500
+									],
+									[
+										17455,
+										17471
+									],
+									[
+										17717,
+										17733
+									],
+									[
+										19965,
+										19981
+									],
+									[
+										20227,
+										20243
+									],
+									[
+										22476,
+										22492
+									],
+									[
+										22741,
+										22757
+									],
+									[
+										24748,
+										24764
+									],
+									[
+										25010,
+										25026
+									],
+									[
+										27395,
+										27411
+									],
+									[
+										27660,
+										27676
+									],
+									[
+										30026,
+										30042
+									],
+									[
+										30291,
+										30307
+									],
+									[
+										32827,
+										32843
+									],
+									[
+										33064,
+										33080
+									],
+									[
+										34983,
+										34999
+									],
+									[
+										35220,
+										35236
+									],
+									[
+										37032,
+										37048
+									],
+									[
+										37427,
+										37443
+									],
+									[
+										39977,
+										39993
+									],
+									[
+										40381,
+										40397
+									],
+									[
+										42932,
+										42948
+									],
+									[
+										43336,
+										43352
+									],
+									[
+										45886,
+										45902
+									],
+									[
+										46290,
+										46306
+									],
+									[
+										49750,
+										49766
+									],
+									[
+										50014,
+										50030
+									],
+									[
+										52303,
+										52319
+									],
+									[
+										52565,
+										52581
+									],
+									[
+										55358,
+										55374
+									],
+									[
+										55620,
+										55636
+									],
+									[
+										58345,
+										58361
+									],
+									[
+										58607,
+										58623
+									]
+								],
+								"scope": "col_AFAFAFFF"
+							},
+							"col_AFAFAFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_AFAFAFFF_circle.png",
+								"regions":
+								[
+									[
+										1742,
+										1742
+									],
+									[
+										1862,
+										1862
+									],
+									[
+										1982,
+										1982
+									],
+									[
+										2103,
+										2103
+									],
+									[
+										2224,
+										2224
+									],
+									[
+										2324,
+										2324
+									],
+									[
+										2424,
+										2424
+									],
+									[
+										2525,
+										2525
+									],
+									[
+										2828,
+										2828
+									],
+									[
+										2928,
+										2928
+									],
+									[
+										3028,
+										3028
+									],
+									[
+										3128,
+										3128
+									],
+									[
+										3736,
+										3736
+									],
+									[
+										3837,
+										3837
+									],
+									[
+										4076,
+										4076
+									],
+									[
+										4198,
+										4198
+									],
+									[
+										4320,
+										4320
+									],
+									[
+										4561,
+										4561
+									],
+									[
+										15103,
+										15103
+									],
+									[
+										15468,
+										15468
+									],
+									[
+										17439,
+										17439
+									],
+									[
+										17701,
+										17701
+									],
+									[
+										19949,
+										19949
+									],
+									[
+										20211,
+										20211
+									],
+									[
+										22460,
+										22460
+									],
+									[
+										22725,
+										22725
+									],
+									[
+										24732,
+										24732
+									],
+									[
+										24994,
+										24994
+									],
+									[
+										27379,
+										27379
+									],
+									[
+										27644,
+										27644
+									],
+									[
+										30010,
+										30010
+									],
+									[
+										30275,
+										30275
+									],
+									[
+										32811,
+										32811
+									],
+									[
+										33048,
+										33048
+									],
+									[
+										34967,
+										34967
+									],
+									[
+										35204,
+										35204
+									],
+									[
+										37016,
+										37016
+									],
+									[
+										37411,
+										37411
+									],
+									[
+										39961,
+										39961
+									],
+									[
+										40365,
+										40365
+									],
+									[
+										42916,
+										42916
+									],
+									[
+										43320,
+										43320
+									],
+									[
+										45870,
+										45870
+									],
+									[
+										46274,
+										46274
+									],
+									[
+										49734,
+										49734
+									],
+									[
+										49998,
+										49998
+									],
+									[
+										52287,
+										52287
+									],
+									[
+										52549,
+										52549
+									],
+									[
+										55342,
+										55342
+									],
+									[
+										55604,
+										55604
+									],
+									[
+										58329,
+										58329
+									],
+									[
+										58591,
+										58591
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										411,
+										427
+									]
+								],
+								"scope": "col_FFFFFFFF"
+							},
+							"col_FFFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										352,
+										352
+									]
+								],
+								"scope": "col_gutter"
+							}
+						},
+						"selection":
+						[
+							[
+								15279,
+								15279
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3027.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "/home/roman/plot-cv/lib/eagle/boardRenderer.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8412,
+						"regions":
+						{
+							"col_010101FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										3550,
+										3555
+									]
+								],
+								"scope": "col_010101FF"
+							},
+							"col_010101FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_010101FF_circle.png",
+								"regions":
+								[
+									[
+										3525,
+										3525
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_32FEFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										3505,
+										3522
+									]
+								],
+								"scope": "col_32FEFFFF"
+							},
+							"col_32FEFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_32FEFFFF_circle.png",
+								"regions":
+								[
+									[
+										3482,
+										3482
 									]
 								],
 								"scope": "col_gutter"
@@ -1449,8 +7223,8 @@
 						"selection":
 						[
 							[
-								3561,
-								3561
+								3233,
+								3233
 							]
 						],
 						"settings":
@@ -1460,416 +7234,92 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1325.0,
+						"translation.y": 1598.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
-					"buffer": 5,
-					"file": "lib/eagle/schematicRenderer.js",
+					"buffer": 9,
+					"file": "lib/eagle/renderer.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 8040,
+						"buffer_size": 6482,
 						"regions":
 						{
-							"col_4B4B4BFF":
+							"col_00000001":
 							{
 								"flags": 16,
 								"regions":
 								[
 									[
-										891,
-										904
+										1934,
+										1949
 									]
 								],
-								"scope": "col_4B4B4BFF"
+								"scope": "col_00000001"
 							},
-							"col_4B4B4BFF_icon":
+							"col_00000001_icon":
 							{
 								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4B4B4BFF_circle.png",
+								"icon": "Packages/User/Color Highlight.cache/col_00000001_circle.png",
 								"regions":
 								[
 									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4B4BA5FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										649,
-										663
-									]
-								],
-								"scope": "col_4B4BA5FF"
-							},
-							"col_4B4BA5FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4B4BA5FF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
+										1876,
+										1876
 									]
 								],
 								"scope": "col_gutter"
 							},
-							"col_4B4BFFFF":
+							"col_010101FF":
 							{
 								"flags": 16,
 								"regions":
 								[
 									[
-										780,
-										794
+										2543,
+										2550
 									]
 								],
-								"scope": "col_4B4BFFFF"
+								"scope": "col_010101FF"
 							},
-							"col_4B4BFFFF_icon":
+							"col_010101FF_icon":
 							{
 								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4B4BFFFF_circle.png",
+								"icon": "Packages/User/Color Highlight.cache/col_010101FF_circle.png",
 								"regions":
 								[
 									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4BA54BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										667,
-										681
-									],
-									[
-										2643,
-										2650
-									]
-								],
-								"scope": "col_4BA54BFF"
-							},
-							"col_4BA54BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4BA54BFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									],
-									[
-										2624,
-										2624
+										2519,
+										2519
 									]
 								],
 								"scope": "col_gutter"
 							},
-							"col_4BA5A5FF":
+							"col_3255FF4C":
 							{
 								"flags": 16,
 								"regions":
 								[
 									[
-										685,
-										700
+										905,
+										927
 									]
 								],
-								"scope": "col_4BA5A5FF"
+								"scope": "col_3255FF4C"
 							},
-							"col_4BA5A5FF_icon":
+							"col_3255FF4C_icon":
 							{
 								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4BA5A5FF_circle.png",
+								"icon": "Packages/User/Color Highlight.cache/col_3255FF4C_circle.png",
 								"regions":
 								[
 									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4BFF4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										798,
-										812
-									]
-								],
-								"scope": "col_4BFF4BFF"
-							},
-							"col_4BFF4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4BFF4BFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4BFFFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										816,
-										831
-									]
-								],
-								"scope": "col_4BFFFFFF"
-							},
-							"col_4BFFFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4BFFFFFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A54B4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										704,
-										718
-									],
-									[
-										3493,
-										3500
-									],
-									[
-										3784,
-										3791
-									]
-								],
-								"scope": "col_A54B4BFF"
-							},
-							"col_A54B4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A54B4BFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									],
-									[
-										3470,
-										3470
-									],
-									[
-										3763,
-										3763
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A54BA5FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										722,
-										737
-									]
-								],
-								"scope": "col_A54BA5FF"
-							},
-							"col_A54BA5FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A54BA5FF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A5A54BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										741,
-										756
-									]
-								],
-								"scope": "col_A5A54BFF"
-							},
-							"col_A5A54BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A5A54BFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A5A5A5FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										908,
-										924
-									]
-								],
-								"scope": "col_A5A5A5FF"
-							},
-							"col_A5A5A5FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A5A5A5FF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_AFAFAFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										760,
-										776
-									]
-								],
-								"scope": "col_AFAFAFFF"
-							},
-							"col_AFAFAFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_AFAFAFFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF4B4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										835,
-										849
-									]
-								],
-								"scope": "col_FF4B4BFF"
-							},
-							"col_FF4B4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF4B4BFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FF4BFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										853,
-										868
-									]
-								],
-								"scope": "col_FF4BFFFF"
-							},
-							"col_FF4BFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FF4BFFFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FFFF4BFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										872,
-										887
-									]
-								],
-								"scope": "col_FFFF4BFF"
-							},
-							"col_FFFF4BFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FFFF4BFF_circle.png",
-								"regions":
-								[
-									[
-										608,
-										608
+										884,
+										884
 									]
 								],
 								"scope": "col_gutter"
@@ -1880,8 +7330,8 @@
 								"regions":
 								[
 									[
-										629,
-										645
+										1913,
+										1929
 									]
 								],
 								"scope": "col_FFFFFFFF"
@@ -1893,8 +7343,8 @@
 								"regions":
 								[
 									[
-										608,
-										608
+										1876,
+										1876
 									]
 								],
 								"scope": "col_gutter"
@@ -1903,8 +7353,8 @@
 						"selection":
 						[
 							[
-								6560,
-								6560
+								6426,
+								6426
 							]
 						],
 						"settings":
@@ -1914,27 +7364,157 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3923.0,
+						"translation.y": 3862.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
-					"buffer": 6,
-					"file": "lib/devpane.js",
+					"buffer": 10,
+					"file": "/home/roman/plot-cv/lib/eagle/svgRenderer.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 27643,
+						"buffer_size": 13383,
+						"regions":
+						{
+							"col_0000AAFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										12561,
+										12568
+									]
+								],
+								"scope": "col_0000AAFF"
+							},
+							"col_0000AAFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_0000AAFF_circle.png",
+								"regions":
+								[
+									[
+										12538,
+										12538
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A5A5A5FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										2625,
+										2641
+									]
+								],
+								"scope": "col_A5A5A5FF"
+							},
+							"col_A5A5A5FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A5A5A5FF_circle.png",
+								"regions":
+								[
+									[
+										2562,
+										2562
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF00FFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										6474,
+										6478
+									]
+								],
+								"scope": "col_FF00FFFF"
+							},
+							"col_FF00FFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF00FFFF_circle.png",
+								"regions":
+								[
+									[
+										6455,
+										6455
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										13092,
+										13108
+									]
+								],
+								"scope": "col_FFFFFFFF"
+							},
+							"col_FFFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										13039,
+										13039
+									]
+								],
+								"scope": "col_gutter"
+							}
+						},
+						"selection":
+						[
+							[
+								4008,
+								4008
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2333.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "lib/eagle/node.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8607,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6748,
-								6748
+								8248,
+								8248
 							]
 						],
 						"settings":
@@ -1944,10 +7524,693 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3733.0,
+						"translation.y": 5605.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "lib/eagle/locator.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11284,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6411,
+								6411
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3780.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 13,
+					"type": "text"
+				},
+				{
+					"buffer": 13,
+					"file": "lib/eagle/common.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 10715,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								300,
+								300
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 12,
+					"type": "text"
+				},
+				{
+					"buffer": 14,
+					"file": "lib/eagle/nodeList.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4175,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1235,
+								1235
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 378.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 15,
+					"type": "text"
+				},
+				{
+					"buffer": 15,
+					"file": "/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt.sch",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 385959,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								372493,
+								372493
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 102798.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 16,
+					"type": "text"
+				},
+				{
+					"buffer": 16,
+					"file": "lib/eagle/document.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3912,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 14,
+					"type": "text"
+				},
+				{
+					"buffer": 17,
+					"file": "lib/util.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 80993,
+						"regions":
+						{
+							"col_000000CC":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										27096,
+										27111
+									]
+								],
+								"scope": "col_000000CC"
+							},
+							"col_000000CC_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_000000CC_circle.png",
+								"regions":
+								[
+									[
+										27033,
+										27033
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_000050FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										76473,
+										76484
+									]
+								],
+								"scope": "col_000050FF"
+							},
+							"col_000050FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_000050FF_circle.png",
+								"regions":
+								[
+									[
+										76394,
+										76394
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_0000A0FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										76601,
+										76613
+									]
+								],
+								"scope": "col_0000A0FF"
+							},
+							"col_0000A0FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_0000A0FF_circle.png",
+								"regions":
+								[
+									[
+										76394,
+										76394
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_005000FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										76442,
+										76453
+									]
+								],
+								"scope": "col_005000FF"
+							},
+							"col_005000FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_005000FF_circle.png",
+								"regions":
+								[
+									[
+										76394,
+										76394
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_005050FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										76504,
+										76516
+									]
+								],
+								"scope": "col_005050FF"
+							},
+							"col_005050FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_005050FF_circle.png",
+								"regions":
+								[
+									[
+										76394,
+										76394
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_00A000FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										76567,
+										76579
+									]
+								],
+								"scope": "col_00A000FF"
+							},
+							"col_00A000FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_00A000FF_circle.png",
+								"regions":
+								[
+									[
+										76394,
+										76394
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_00A0A0FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										76635,
+										76649
+									]
+								],
+								"scope": "col_00A0A0FF"
+							},
+							"col_00A0A0FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_00A0A0FF_circle.png",
+								"regions":
+								[
+									[
+										76394,
+										76394
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_010101FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										27534,
+										27539
+									],
+									[
+										67098,
+										67103
+									],
+									[
+										76413,
+										76423
+									],
+									[
+										76537,
+										76547
+									]
+								],
+								"scope": "col_010101FF"
+							},
+							"col_010101FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_010101FF_circle.png",
+								"regions":
+								[
+									[
+										27341,
+										27341
+									],
+									[
+										67058,
+										67058
+									],
+									[
+										76394,
+										76394
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_4444DDFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										27147,
+										27154
+									]
+								],
+								"scope": "col_4444DDFF"
+							},
+							"col_4444DDFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_4444DDFF_circle.png",
+								"regions":
+								[
+									[
+										27033,
+										27033
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_500000FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										76427,
+										76438
+									]
+								],
+								"scope": "col_500000FF"
+							},
+							"col_500000FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_500000FF_circle.png",
+								"regions":
+								[
+									[
+										76394,
+										76394
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_500050FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										76488,
+										76500
+									]
+								],
+								"scope": "col_500050FF"
+							},
+							"col_500050FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_500050FF_circle.png",
+								"regions":
+								[
+									[
+										76394,
+										76394
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_505000FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										76457,
+										76469
+									]
+								],
+								"scope": "col_505000FF"
+							},
+							"col_505000FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_505000FF_circle.png",
+								"regions":
+								[
+									[
+										76394,
+										76394
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_505050FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										76520,
+										76533
+									]
+								],
+								"scope": "col_505050FF"
+							},
+							"col_505050FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_505050FF_circle.png",
+								"regions":
+								[
+									[
+										76394,
+										76394
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_7FFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										63889,
+										63899
+									]
+								],
+								"scope": "col_7FFFFFFF"
+							},
+							"col_7FFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_7FFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										63874,
+										63874
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A00000FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										76551,
+										76563
+									]
+								],
+								"scope": "col_A00000FF"
+							},
+							"col_A00000FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A00000FF_circle.png",
+								"regions":
+								[
+									[
+										76394,
+										76394
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A000A0FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										76617,
+										76631
+									]
+								],
+								"scope": "col_A000A0FF"
+							},
+							"col_A000A0FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A000A0FF_circle.png",
+								"regions":
+								[
+									[
+										76394,
+										76394
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A0A000FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										76583,
+										76597
+									]
+								],
+								"scope": "col_A0A000FF"
+							},
+							"col_A0A000FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A0A000FF_circle.png",
+								"regions":
+								[
+									[
+										76394,
+										76394
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_A0A0A0FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										76653,
+										76669
+									]
+								],
+								"scope": "col_A0A0A0FF"
+							},
+							"col_A0A0A0FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_A0A0A0FF_circle.png",
+								"regions":
+								[
+									[
+										76394,
+										76394
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FFFFFFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										63653,
+										63663
+									],
+									[
+										67105,
+										67110
+									]
+								],
+								"scope": "col_FFFFFFFF"
+							},
+							"col_FFFFFFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
+								"regions":
+								[
+									[
+										63600,
+										63600
+									],
+									[
+										67058,
+										67058
+									]
+								],
+								"scope": "col_gutter"
+							}
+						},
+						"selection":
+						[
+							[
+								76341,
+								76341
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 53296.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
 					"type": "text"
 				}
 			]
@@ -1955,7 +8218,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 29.0
+		"height": 30.0
 	},
 	"input":
 	{
@@ -2021,7 +8284,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 54.0
+		"height": 56.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -2031,16 +8294,108 @@
 		"selected_items":
 		[
 			[
-				"preact",
-				"lib/dom/preactComponent.js"
-			],
-			[
 				"util",
 				"lib/util.js"
 			],
 			[
+				"main.js",
+				"main.js"
+			],
+			[
+				"deep.",
+				"lib/deep.js"
+			],
+			[
+				"test-ea",
+				"test-eagle.js"
+			],
+			[
+				"util.j",
+				"lib/util.js"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"",
+				"test-eagle.js"
+			],
+			[
+				"test-w",
+				"test-wasm.js"
+			],
+			[
+				"test-e",
+				"test-eagle.js"
+			],
+			[
+				"project.js",
+				"lib/eagle/project.js"
+			],
+			[
+				"projec",
+				"opencv/projectorcalibration.cpp"
+			],
+			[
+				"test-eag",
+				"test-eagle.js"
+			],
+			[
+				"deep",
+				"lib/deep.js"
+			],
+			[
+				"reactcom",
+				"lib/dom/preactComponent.js"
+			],
+			[
+				"test-ren",
+				"test-renderer.js"
+			],
+			[
+				"rect.js",
+				"lib/geom/rect.js"
+			],
+			[
+				"printer",
+				"lib/ecmascript/printer.js"
+			],
+			[
+				"main.j",
+				"main.js"
+			],
+			[
+				"test-eagle",
+				"test-eagle.js"
+			],
+			[
 				"main",
 				"main.js"
+			],
+			[
+				"test-eagle.js",
+				"test-eagle.js"
+			],
+			[
+				"server.",
+				"server.js"
+			],
+			[
+				"loca",
+				"lib/eagle/locator.js"
+			],
+			[
+				"util.",
+				"lib/util.js"
+			],
+			[
+				"Util",
+				"lib/util.js"
+			],
+			[
+				"preact",
+				"lib/dom/preactComponent.js"
 			],
 			[
 				"render",
@@ -2063,16 +8418,8 @@
 				"lib/websocket-client.js"
 			],
 			[
-				"util.js",
-				"lib/util.js"
-			],
-			[
 				"server",
 				"server.js"
-			],
-			[
-				"main.js",
-				"main.js"
 			],
 			[
 				"index.",
@@ -2093,10 +8440,6 @@
 			[
 				"C.",
 				"lib/grammars/C.g4"
-			],
-			[
-				"util.",
-				"lib/util.js"
 			],
 			[
 				"trkl.",
@@ -2133,10 +8476,6 @@
 			[
 				"ecma",
 				"lib/grammars/ECMAScript.g4"
-			],
-			[
-				"printer",
-				"lib/ecmascript/printer.js"
 			],
 			[
 				"test-ec",
@@ -2179,20 +8518,8 @@
 				"lib/eagle/boardRenderer.js"
 			],
 			[
-				"server.",
-				"server.js"
-			],
-			[
-				"main.j",
-				"main.js"
-			],
-			[
 				"output",
 				"output.svg"
-			],
-			[
-				"test-ren",
-				"test-renderer.js"
 			],
 			[
 				"output.sv",
@@ -2261,10 +8588,6 @@
 			[
 				"size.js",
 				"lib/geom/size.js"
-			],
-			[
-				"rect.js",
-				"lib/geom/rect.js"
 			],
 			[
 				"test-render",
@@ -2481,66 +8804,6 @@
 			[
 				"common.js",
 				"lib/eagle/common.js"
-			],
-			[
-				"common.es",
-				"common.es"
-			],
-			[
-				"estree.es",
-				"estree.es"
-			],
-			[
-				"printer.es",
-				"printer.es"
-			],
-			[
-				"parser.es",
-				"parser.es"
-			],
-			[
-				"token.es",
-				"token.es"
-			],
-			[
-				"tok",
-				"lib/ecmascript/token.js"
-			],
-			[
-				"lexer.es",
-				"lexer.es"
-			],
-			[
-				"test-te ",
-				"test-template.js"
-			],
-			[
-				"test-tem",
-				"test-template.es"
-			],
-			[
-				"test-templ",
-				"test-template.es"
-			],
-			[
-				"docum",
-				"document.es"
-			],
-			[
-				"document",
-				"document.es"
-			],
-			[
-				"test-color",
-				"test-color.es"
-			],
-			[
-				"test-po",
-				"test-pointlist.es"
-			],
-			[
-				"plot",
-				"plot-cv.sublime-project"
 			]
 		],
 		"width": 0.0
