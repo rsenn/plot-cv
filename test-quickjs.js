@@ -29,6 +29,6 @@ console.log('contour:', inspect(c));
 
 for(let point of c) {
   let {x,y} = point;
-  console.log('point:', Object.keys(point), x,y);
+  console.log('point:', point, x,y);
 
 }
