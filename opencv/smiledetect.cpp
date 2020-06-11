@@ -25,11 +25,7 @@ help() {
        << endl;
 }
 
-void detectAndDraw(Mat& img,
-                   CascadeClassifier& cascade,
-                   CascadeClassifier& nestedCascade,
-                   double scale,
-                   bool tryflip);
+void detectAndDraw(Mat& img, CascadeClassifier& cascade, CascadeClassifier& nestedCascade, double scale, bool tryflip);
 
 string cascadeName;
 string nestedCascadeName;
@@ -87,9 +83,7 @@ main(int argc, const char** argv) {
 
   if(capture.isOpened()) {
     cout << "Video capturing has been started ..." << endl;
-    cout << endl
-         << "NOTE: Smile intensity will only be valid after a first smile has been detected"
-         << endl;
+    cout << endl << "NOTE: Smile intensity will only be valid after a first smile has been detected" << endl;
 
     for(;;) {
       capture >> frame;
@@ -113,20 +107,9 @@ main(int argc, const char** argv) {
 }
 
 void
-detectAndDraw(Mat& img,
-              CascadeClassifier& cascade,
-              CascadeClassifier& nestedCascade,
-              double scale,
-              bool tryflip) {
+detectAndDraw(Mat& img, CascadeClassifier& cascade, CascadeClassifier& nestedCascade, double scale, bool tryflip) {
   vector<Rect> faces, faces2;
-  const static Scalar colors[] = {Scalar(255, 0, 0),
-                                  Scalar(255, 128, 0),
-                                  Scalar(255, 255, 0),
-                                  Scalar(0, 255, 0),
-                                  Scalar(0, 128, 255),
-                                  Scalar(0, 255, 255),
-                                  Scalar(0, 0, 255),
-                                  Scalar(255, 0, 255)};
+  const static Scalar colors[] = {Scalar(255, 0, 0), Scalar(255, 128, 0), Scalar(255, 255, 0), Scalar(0, 255, 0), Scalar(0, 128, 255), Scalar(0, 255, 255), Scalar(0, 0, 255), Scalar(255, 0, 255)};
   Mat gray, smallImg;
 
   cvtColor(img, gray, COLOR_BGR2GRAY);
@@ -175,14 +158,7 @@ detectAndDraw(Mat& img,
       radius = cvRound((r.width + r.height) * 0.25 * scale);
       circle(img, center, radius, color, 3, 8, 0);
     } else
-      rectangle(img,
-                cvPoint(cvRound(r.x * scale), cvRound(r.y * scale)),
-                cvPoint(cvRound((r.x + r.width - 1) * scale),
-                        cvRound((r.y + r.height - 1) * scale)),
-                color,
-                3,
-                8,
-                0);
+      rectangle(img, cvPoint(cvRound(r.x * scale), cvRound(r.y * scale)), cvPoint(cvRound((r.x + r.width - 1) * scale), cvRound((r.y + r.height - 1) * scale)), color, 3, 8, 0);
 
     const int half_height = cvRound((float)r.height / 2);
     r.y = r.y + half_height;
@@ -210,8 +186,7 @@ detectAndDraw(Mat& img,
     max_neighbors = MAX(max_neighbors, smile_neighbors);
 
     // Draw rectangle on the left side of the image reflecting smile intensity
-    float intensityZeroOne =
-        ((float)smile_neighbors - min_neighbors) / (max_neighbors - min_neighbors + 1);
+    float intensityZeroOne = ((float)smile_neighbors - min_neighbors) / (max_neighbors - min_neighbors + 1);
     int rect_height = cvRound((float)img.rows * intensityZeroOne);
     Scalar col = Scalar((float)255 * intensityZeroOne, 0, 0);
     rectangle(img, cvPoint(0, img.rows), cvPoint(img.cols / 10, img.rows - rect_height), col, -1);

@@ -222,7 +222,8 @@ trackObjectloop() {
   }
 }
 
-void on_trackbar(int, void*) { // This function gets called whenever a
+void
+on_trackbar(int, void*) { // This function gets called whenever a
   // trackbar position is changed
 }
 string
@@ -285,13 +286,7 @@ drawObject(int x, int y, cv::Mat& frame) {
   else
     line(frame, cv::Point(x, y), cv::Point(FRAME_WIDTH, y), Scalar(0, 255, 0), 2);
 
-  putText(frame,
-          intToString(x) + "," + intToString(y),
-          cv::Point(x, y + 30),
-          1,
-          1,
-          Scalar(0, 255, 0),
-          2);
+  putText(frame, intToString(x) + "," + intToString(y), cv::Point(x, y + 30), 1, 1, Scalar(0, 255, 0), 2);
 }
 void
 morphOps(cv::Mat& thresh) {
@@ -351,13 +346,7 @@ trackFilteredObject(int& x, int& y, cv::Mat threshold, cv::Mat& cameraFeed) {
       }
 
     } else
-      putText(cameraFeed,
-              "TOO MUCH NOISE! ADJUST FILTER",
-              cv::Point(0, 50),
-              1,
-              2,
-              Scalar(0, 0, 255),
-              2);
+      putText(cameraFeed, "TOO MUCH NOISE! ADJUST FILTER", cv::Point(0, 50), 1, 2, Scalar(0, 0, 255), 2);
   }
 }
 /**
@@ -387,12 +376,7 @@ processVideoBg(char* videoFilename) {
     rectangle(frame, cv::Point(10, 2), cv::Point(100, 20), cv::Scalar(255, 255, 255), -1);
     ss << capture.get(CAP_PROP_POS_FRAMES);
     string frameNumberString = ss.str();
-    putText(frame,
-            frameNumberString.c_str(),
-            cv::Point(15, 15),
-            FONT_HERSHEY_SIMPLEX,
-            0.5,
-            cv::Scalar(0, 0, 0));
+    putText(frame, frameNumberString.c_str(), cv::Point(15, 15), FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
     // show the current frame and the fg masks
     imshow("Frame", frame);
     imshow("FG Mask MOG 2", fgMaskMOG2);

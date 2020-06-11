@@ -186,7 +186,8 @@ js_rect_constructor(JSContext* ctx, JSValue parent, const char* name) {
 #define JS_INIT_MODULE VISIBLE js_init_module_rect
 #endif
 
-JSModuleDef* JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
+JSModuleDef*
+JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
   m = JS_NewCModule(ctx, module_name, &js_rect_init);
   if(!m)

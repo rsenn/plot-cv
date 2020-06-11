@@ -1,5 +1,4 @@
-#if defined(__linux__) || defined(LINUX) || defined(__APPLE__) || defined(ANDROID) ||              \
-    (defined(_MSC_VER) && _MSC_VER >= 1800)
+#if defined(__linux__) || defined(LINUX) || defined(__APPLE__) || defined(ANDROID) || (defined(_MSC_VER) && _MSC_VER >= 1800)
 
 #include <opencv2/imgproc.hpp> // Gaussian Blur
 #include <opencv2/core.hpp>    // Basic OpenCV structures (cv::Mat, Scalar)
@@ -19,15 +18,11 @@ const string WindowName = "Face Detection example";
 
 class CascadeDetectorAdapter : public DetectionBasedTracker::IDetector {
 public:
-  CascadeDetectorAdapter(cv::Ptr<cv::CascadeClassifier> detector)
-      : IDetector(), Detector(detector) {
-    CV_Assert(detector);
-  }
+  CascadeDetectorAdapter(cv::Ptr<cv::CascadeClassifier> detector) : IDetector(), Detector(detector) { CV_Assert(detector); }
 
   void
   detect(const cv::Mat& Image, std::vector<cv::Rect>& objects) {
-    Detector->detectMultiScale(
-        Image, objects, scaleFactor, minNeighbours, 0, minObjSize, maxObjSize);
+    Detector->detectMultiScale(Image, objects, scaleFactor, minNeighbours, 0, minObjSize, maxObjSize);
   }
 
   virtual ~CascadeDetectorAdapter() {}
@@ -57,8 +52,7 @@ main(int, char**) {
   }
 
   cascade = makePtr<cv::CascadeClassifier>(cascadeFrontalfilename);
-  cv::Ptr<DetectionBasedTracker::IDetector> TrackingDetector =
-      makePtr<CascadeDetectorAdapter>(cascade);
+  cv::Ptr<DetectionBasedTracker::IDetector> TrackingDetector = makePtr<CascadeDetectorAdapter>(cascade);
   if(cascade->empty()) {
     printf("Error: Cannot load %s\n", cascadeFrontalfilename.c_str());
     return 2;

@@ -29,10 +29,10 @@ js_point_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
   ptr = static_cast<JSPointData*>(js_malloc(ctx, sizeof(*ptr)));
   if(!ptr)
     goto fail1;
-  ptr = it->begin;
+  ptr = it->first;
 
-  *pdone = (it->begin == it->end);
-  it->begin++;
+  *pdone = (it->first == it->second);
+  it->first++;
   JS_SetOpaque(point, ptr);
   return point;
 fail1:
@@ -61,8 +61,8 @@ js_point_iterator_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValu
 
   v = static_cast<JSContourData*>(JS_GetOpaque(argv[0], js_contour_class_id));
 
-  s->begin = &(*v)[0];
-  s->end = s->begin + v->size();
+  s->first = &(*v)[0];
+  s->second = s->first + v->size();
 
   /*  if(JS_ToFloat64(ctx, &s->x, argv[0]))
       goto fail;
@@ -98,8 +98,8 @@ js_create_point_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValu
   it = static_cast<JSPointIteratorData*>(js_malloc(ctx, sizeof(*it)));
   if(!it)
     goto fail1;
-  it->begin = &(*s)[0];
-  it->end = it->begin + s->size();
+  it->first = &(*s)[0];
+  it->second = it->first + s->size();
   JS_SetOpaque(iterator, it);
   return iterator;
 fail1:
@@ -142,7 +142,8 @@ js_point_iterator_init(JSContext* ctx, JSModuleDef* m) {
   return 0;
 }
 
-JSModuleDef* JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
+JSModuleDef*
+JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
   m = JS_NewCModule(ctx, module_name, &js_point_iterator_init);
   if(!m)

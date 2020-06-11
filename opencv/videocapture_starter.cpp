@@ -60,8 +60,7 @@ process(VideoCapture& capture) {
       break;
 
     imshow(window_name, frame);
-    char key =
-        (char)waitKey(30); // delay N millis, usually long enough to display and capture input
+    char key = (char)waitKey(30); // delay N millis, usually long enough to display and capture input
 
     switch(key) {
       case 'q':
@@ -92,10 +91,9 @@ main(int ac, char** av) {
     help(av);
     return 1;
   }
-  VideoCapture capture(
-      arg); // try to open string, this will attempt to open it as a video file or image sequence
-  if(!capture.isOpened()) // if this fails, try to open as a video camera, through the use of an
-                          // integer param
+  VideoCapture capture(arg); // try to open string, this will attempt to open it as a video file or image sequence
+  if(!capture.isOpened())    // if this fails, try to open as a video camera, through the use of an
+                             // integer param
     capture.open(atoi(arg.c_str()));
   if(!capture.isOpened()) {
     cerr << "Failed to open the video device, video file or image sequence!\n" << endl;

@@ -5,7 +5,7 @@
 using namespace cv;
 
 int
-main(int, char* []) {
+main(int, char*[]) {
   VideoCapture video(0);
   Mat frame, curr, prev, curr64f, prev64f, hann;
   int key = 0;
@@ -29,12 +29,7 @@ main(int, char* []) {
       // draw a circle and line indicating the shift direction...
       Point center(curr.cols >> 1, curr.rows >> 1);
       cv::circle(frame, center, (int)radius, cv::Scalar(0, 255, 0), 3, CV_AA);
-      cv::line(frame,
-               center,
-               Point(center.x + (int)shift.x, center.y + (int)shift.y),
-               cv::Scalar(0, 255, 0),
-               3,
-               CV_AA);
+      cv::line(frame, center, Point(center.x + (int)shift.x, center.y + (int)shift.y), cv::Scalar(0, 255, 0), 3, CV_AA);
     }
 
     imshow("phase shift", frame);

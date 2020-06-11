@@ -45,8 +45,7 @@ class GLWinApp : public WinApp {
 public:
   enum MODE { MODE_CPU = 0, MODE_GPU };
 
-  GLWinApp(int width, int height, std::string& window_name, cv::VideoCapture& cap)
-      : WinApp(width, height, window_name) {
+  GLWinApp(int width, int height, std::string& window_name, cv::VideoCapture& cap) : WinApp(width, height, window_name) {
     m_shutdown = false;
     m_use_buffer = false;
     m_demo_processing = true;
@@ -158,8 +157,7 @@ public:
       (void)cv::ogl::ocl::initializeContextFromGL();
     }
 
-    m_oclDevName = cv::ocl::useOpenCL() ? cv::ocl::Context::getDefault().device(0).name()
-                                        : (char*)"No OpenCL device";
+    m_oclDevName = cv::ocl::useOpenCL() ? cv::ocl::Context::getDefault().device(0).name() : (char*)"No OpenCL device";
 
     return 0;
   } // init()
@@ -196,11 +194,7 @@ public:
       int y = 0;
 
       buf[0] = 0;
-      sprintf_s(buf,
-                sizeof(buf) - 1,
-                "Mode: %s OpenGL %s",
-                m_modeStr[mode].c_str(),
-                use_buffer() ? "buffer" : "texture");
+      sprintf_s(buf, sizeof(buf) - 1, "Mode: %s OpenGL %s", m_modeStr[mode].c_str(), use_buffer() ? "buffer" : "texture");
       ::TextOut(hDC, 0, y, buf, (int)strlen(buf));
 
       y += tm.tmHeight;
@@ -218,13 +212,7 @@ public:
 #elif defined(__linux__)
 
     char buf[256 + 1];
-    snprintf(buf,
-             sizeof(buf) - 1,
-             "Time, msec: %2.1f, Mode: %s OpenGL %s, Device: %s",
-             time,
-             m_modeStr[mode].c_str(),
-             use_buffer() ? "buffer" : "texture",
-             oclDevName.c_str());
+    snprintf(buf, sizeof(buf) - 1, "Time, msec: %2.1f, Mode: %s OpenGL %s, Device: %s", time, m_modeStr[mode].c_str(), use_buffer() ? "buffer" : "texture", oclDevName.c_str());
     XStoreName(m_display, m_window, buf);
 #endif
   }

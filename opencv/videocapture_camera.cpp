@@ -40,13 +40,9 @@ main(int, char**) {
     if(nFrames % 10 == 0) {
       const int N = 10;
       int64 t1 = cv::getTickCount();
-      cout << "Frames captured: " << cv::format("%5lld", (long long int)nFrames)
-           << "    Average FPS: " << cv::format("%9.1f", (double)getTickFrequency() * N / (t1 - t0))
-           << "    Average time per frame: "
-           << cv::format("%9.2f ms", (double)(t1 - t0) * 1000.0f / (N * getTickFrequency()))
-           << "    Average processing time: "
-           << cv::format("%9.2f ms", (double)(processingTime)*1000.0f / (N * getTickFrequency()))
-           << std::endl;
+      cout << "Frames captured: " << cv::format("%5lld", (long long int)nFrames) << "    Average FPS: " << cv::format("%9.1f", (double)getTickFrequency() * N / (t1 - t0))
+           << "    Average time per frame: " << cv::format("%9.2f ms", (double)(t1 - t0) * 1000.0f / (N * getTickFrequency()))
+           << "    Average processing time: " << cv::format("%9.2f ms", (double)(processingTime)*1000.0f / (N * getTickFrequency())) << std::endl;
       t0 = t1;
       processingTime = 0;
     }

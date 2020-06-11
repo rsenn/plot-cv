@@ -142,9 +142,7 @@ CvCapture_Images::getProperty(int id) const {
     case CV_CAP_PROP_FRAME_WIDTH: return frame.cols;
     case CV_CAP_PROP_FRAME_HEIGHT: return frame.rows;
     case CV_CAP_PROP_FPS: CV_WARN("collections of images don't have framerates"); return 1;
-    case CV_CAP_PROP_FOURCC:
-      CV_WARN("collections of images don't have 4-character codes");
-      return 0;
+    case CV_CAP_PROP_FOURCC: CV_WARN("collections of images don't have 4-character codes"); return 0;
   }
   return 0;
 }
@@ -200,8 +198,7 @@ icvExtractPattern(const std::string& filename, unsigned* offset) {
       pos++;
       CV_Assert(pos < len);
     }
-    if(filename[pos] >= '1' &&
-       filename[pos] <= '9') { // optional numeric size (1..9) (one symbol only)
+    if(filename[pos] >= '1' && filename[pos] <= '9') { // optional numeric size (1..9) (one symbol only)
       pos++;
       CV_Assert(pos < len);
     }
@@ -214,8 +211,7 @@ icvExtractPattern(const std::string& filename, unsigned* offset) {
         return filename; // no more patterns
       CV_Error_(Error::StsBadArg, ("CAP_IMAGES: invalid multiple patterns: %s", filename.c_str()));
     }
-    CV_Error_(Error::StsBadArg,
-              ("CAP_IMAGES: error, expected '0?[1-9][du]' pattern, got: %s", filename.c_str()));
+    CV_Error_(Error::StsBadArg, ("CAP_IMAGES: error, expected '0?[1-9][du]' pattern, got: %s", filename.c_str()));
   } else { // no pattern filename was given - extract the pattern
     pos = filename.rfind('/');
 #ifdef _WIN32
@@ -230,9 +226,7 @@ icvExtractPattern(const std::string& filename, unsigned* offset) {
     while(pos < len && !isdigit(filename[pos])) pos++;
 
     if(pos == len) {
-      CV_Error_(Error::StsBadArg,
-                ("CAP_IMAGES: can't find starting number (in the name of file): %s",
-                 filename.c_str()));
+      CV_Error_(Error::StsBadArg, ("CAP_IMAGES: can't find starting number (in the name of file): %s", filename.c_str()));
     }
 
     std::string::size_type pos0 = pos;

@@ -65,9 +65,7 @@ struct FocusState {
 
 static ostream&
 operator<<(ostream& os, FocusState& state) {
-  return os << "RATE=" << state.rate << "\tSTEP=" << state.step * state.direction
-            << "\tLast change=" << state.lastDirectionChange
-            << "\tstepToLastMax=" << state.stepToLastMax;
+  return os << "RATE=" << state.rate << "\tSTEP=" << state.step * state.direction << "\tLast change=" << state.lastDirectionChange << "\tstepToLastMax=" << state.stepToLastMax;
 }
 
 static FocusState
@@ -166,9 +164,7 @@ correctFocus(bool lastSucceeded, FocusState& state, double rate) {
       state.direction *= -1;
       state.step = static_cast<int>(static_cast<double>(state.step) * 0.75);
       state.lastDirectionChange = 0;
-    } else if((rate + epsylon < state.rateMax) &&
-              ((state.lastDirectionChange > 3) ||
-               ((state.step < (state.minFocusStep * 1.5)) && state.stepToLastMax > state.step))) {
+    } else if((rate + epsylon < state.rateMax) && ((state.lastDirectionChange > 3) || ((state.step < (state.minFocusStep * 1.5)) && state.stepToLastMax > state.step))) {
       // I've done 3 steps (or I'm finishing) without improvement, go back to max.
       state.direction = state.stepToLastMax >= 0 ? 1 : -1;
       state.step = static_cast<int>(static_cast<double>(state.step) * 0.75);
@@ -279,14 +275,12 @@ main(int argc, char** argv) {
 
   // Get settings:
   if(GlobalArgs.verbose) {
-    if((cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) == 0) ||
-       (cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) == -1)) {
+    if((cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) == 0) || (cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) == -1)) {
       // Some VideoCapture implementations can return -1, 0.
       cout << "This is not GPHOTO2 device." << endl;
       return -2;
     }
-    cout << "List of camera settings: " << endl
-         << (const char*)(intptr_t)cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) << endl;
+    cout << "List of camera settings: " << endl << (const char*)(intptr_t)cap.get(CAP_PROP_GPHOTO2_WIDGET_ENUMERATE) << endl;
     cap.set(CAP_PROP_GPHOTO2_COLLECT_MSGS, true);
   }
 
@@ -324,8 +318,7 @@ main(int argc, char** argv) {
 
     if(focus && !GlobalArgs.measure) {
       int stepToCorrect = correctFocus(lastSucceeded, state, rateFrame(frame));
-      lastSucceeded =
-          cap.set(CAP_PROP_ZOOM, max(stepToCorrect, state.minFocusStep) * state.direction);
+      lastSucceeded = cap.set(CAP_PROP_ZOOM, max(stepToCorrect, state.minFocusStep) * state.direction);
       if((!lastSucceeded) || (stepToCorrect < state.minFocusStep)) {
         if(--GlobalArgs.breakLimit <= 0) {
           focus = false;
@@ -350,8 +343,7 @@ main(int argc, char** argv) {
 
     if((focus || GlobalArgs.measure) && GlobalArgs.verbose) {
       cout << "STATE\t" << state << endl;
-      cout << "Output from camera: " << endl
-           << (const char*)(intptr_t)cap.get(CAP_PROP_GPHOTO2_FLUSH_MSGS) << endl;
+      cout << "Output from camera: " << endl << (const char*)(intptr_t)cap.get(CAP_PROP_GPHOTO2_FLUSH_MSGS) << endl;
     }
 
     imshow(windowOriginal, frame);

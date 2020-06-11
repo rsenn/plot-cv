@@ -26,15 +26,18 @@ public:
   string
   getType() {
     return type;
-  }                        // get type of the object
-  void setType(string t) { // to set type of the object
+  } // get type of the object
+  void
+  setType(string t) { // to set type of the object
     type = t;
   }
-  Scalar getColor() { // to get color for the string to display type of object
+  Scalar
+  getColor() { // to get color for the string to display type of object
     return Color;
   }
 
-  void setColor(Scalar c) { // to set color for the string to display type of object
+  void
+  setColor(Scalar c) { // to set color for the string to display type of object
     Color = c;
   }
 

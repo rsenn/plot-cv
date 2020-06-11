@@ -17,7 +17,12 @@ main(int argc, char* argv[]) {
   int i;
   js_init(argc, argv);
 
-  for(i = optind; i < argc; i++) {
+  if(argc < 2) {
+    std::cerr << "Usage: " << basename(argv[0]) << " <script.js>" << std::endl;
+    return 1;
+  }
+
+  for(i = 1; i < argc; i++) {
     int ret;
 
     std::cerr << "eval file: " << argv[i] << std::endl;

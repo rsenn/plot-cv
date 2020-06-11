@@ -26,11 +26,9 @@ function xmlize(obj, depth = 2) {
 }
 
 function testLocator() {
-  let testobj = [0, 1, 2, { name: 'roman', children: ['x', 'y', { id: 1, items: ['a', 'b', 'c'] }] }];
   let l = new EaglePath([3, 'children', 2, 'items', -2]);
   let a = [l.slice(), l.slice()];
   a[1][0] = 'x';
-  let b = [l.prevSibling, l.nextSibling, l.parent];
 }
 
 function testProxyTree() {
@@ -105,8 +103,6 @@ async function testGraph(proj) {
     let pads = [...pkg.getAll('pad')];
     let padNames = pads.map(p => p.name);
     for(let pad of pads) {
-      const { diameter, drill, name, rot, shape, stop, x, y } = pad.raw.attributes;
-      //console.log(`Package '${pkg.name}' Pad '${name}'  ${pad.xpath()}`);
     }
     //console.log(`Package '${pkg.name}' Pads: ${padNames}`);
   }
@@ -116,11 +112,9 @@ async function testGraph(proj) {
     for(let contactref of signal.getAll('contactref')) {
       const elementName = contactref.attributes['element'];
       const element = board.get({ tagName: 'element', name: elementName });
-      const { name, library, package: pkg, value, x, y } = element.raw.attributes;
+      const { name } = element.raw.attributes;
       //console.log(`Element '${name}' ${library} ${pkg} ${value} ${Util.toString({ x, y })}`);
       {
-        const { name, children } = element.package;
-        //     console.log(`Package '${name}'`, children);
       }
       //console.log(`${name} ${pkg} GraphEdge`);
     }
@@ -130,24 +124,11 @@ async function testGraph(proj) {
 async function testEagle(filename) {
   let proj = new EagleProject(filename, filesystem);
   let { board, schematic } = proj;
-  const getPackage = (d, e) => {
-    let part;
-    if(e.tagName == 'instance') {
-      part = e.part;
-      let deviceset = part.deviceset;
-      const device = deviceset.get('device', part.attributes.device);
-      return device.package;
-    }
-
-    return e.package;
-  };
   const packages = {
     board: [...board.getAll('package')],
     schematic: [...schematic.getAll('package')]
   };
-  let e = board.elements.T1;
   let parts = schematic.parts;
-  let firstPart = parts[0];
   proj.updateLibrary('c');
   //console.log('board.libraries.list:', board.libraries.list);
   //console.log('[...board.libraries]:', [...board.libraries]);
@@ -215,7 +196,6 @@ async function testEagle(filename) {
       //console.log(project);
       // await testGraph(project);
     } catch(err) {
-      const stack = err.stack;
       //console.log('err:' + err.message);
       throw err;
     }

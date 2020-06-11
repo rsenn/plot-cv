@@ -86,24 +86,13 @@ init_sdl() {
   }
   SDL_ShowCursor(SDL_DISABLE);
 
-  screen = SDL_SetVideoMode(WINDOW_WIDTH,
-                            WINDOW_HEIGHT,
-                            24,
-                            SDL_FULLSCREEN | SDL_DOUBLEBUF | SDL_HWSURFACE);
+  screen = SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 24, SDL_FULLSCREEN | SDL_DOUBLEBUF | SDL_HWSURFACE);
   if(screen == NULL) {
     std::cerr << "error: SDL_SetVideoMode() failed..." << std::endl;
     exit(EXIT_FAILURE);
   }
 
-  result_img_surface = SDL_CreateRGBSurfaceFrom((void*)result_img.data,
-                                                result_img.cols,
-                                                result_img.rows,
-                                                24,
-                                                result_img.cols * 3,
-                                                0xff0000,
-                                                0x00ff00,
-                                                0x0000ff,
-                                                0);
+  result_img_surface = SDL_CreateRGBSurfaceFrom((void*)result_img.data, result_img.cols, result_img.rows, 24, result_img.cols * 3, 0xff0000, 0x00ff00, 0x0000ff, 0);
 
   if(result_img_surface == NULL) {
     std::cerr << "error: SDL_CreateRGBSurfaceFrom() failed..." << std::endl;

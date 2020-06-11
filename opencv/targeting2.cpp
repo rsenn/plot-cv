@@ -109,8 +109,7 @@ blobfind(Mat& theimage, int b, int g, int r, float& x, float& y) {
 
       for(int j = 0; j < theimage.cols; j++) {
 
-        if(theimage.at<cv::Vec3b>(i, j)[0] == b && theimage.at<cv::Vec3b>(i, j)[1] == g &&
-           theimage.at<cv::Vec3b>(i, j)[2] == r) {
+        if(theimage.at<cv::Vec3b>(i, j)[0] == b && theimage.at<cv::Vec3b>(i, j)[1] == g && theimage.at<cv::Vec3b>(i, j)[2] == r) {
           for(int k = -1; k < 2; k++) {
 
             for(int l = -1; l < 2; l++) {
@@ -238,8 +237,7 @@ targetingprocess() {
         for(int h = 0; h <= currentpix; h++) {
 
           if(catnumx + catnumy != 0)
-            if((thisbee < bee[h] + thresh && thisbee > bee[h] - thresh) &&
-               (thisjee < jee[h] + thresh && thisjee > jee[h] - thresh) &&
+            if((thisbee < bee[h] + thresh && thisbee > bee[h] - thresh) && (thisjee < jee[h] + thresh && thisjee > jee[h] - thresh) &&
                (thisare < are[h] + thresh && thisare > are[h] - thresh)) { // if it's a match
               newframe.at<cv::Vec3b>(i, j)[0] = 255;                       // set to white
               newframe.at<cv::Vec3b>(i, j)[1] = 255;
@@ -280,31 +278,13 @@ targetingprocess() {
 
       ellipse(frame, Point(topy, topx), Size(22, 22), 360, 0, 360, Scalar(102, 0, 255), 5, 2);
 
-      ellipse(newerframe,
-              Point(bottomy1, bottomx1),
-              Size(22, 22),
-              360,
-              0,
-              360,
-              Scalar(0, 208, 255),
-              5,
-              2);
+      ellipse(newerframe, Point(bottomy1, bottomx1), Size(22, 22), 360, 0, 360, Scalar(0, 208, 255), 5, 2);
 
-      ellipse(
-          frame, Point(bottomy1, bottomx1), Size(22, 22), 360, 0, 360, Scalar(0, 208, 255), 5, 2);
+      ellipse(frame, Point(bottomy1, bottomx1), Size(22, 22), 360, 0, 360, Scalar(0, 208, 255), 5, 2);
 
-      ellipse(newerframe,
-              Point(bottomy2, bottomx2),
-              Size(22, 22),
-              360,
-              0,
-              360,
-              Scalar(0, 55, 255),
-              5,
-              2);
+      ellipse(newerframe, Point(bottomy2, bottomx2), Size(22, 22), 360, 0, 360, Scalar(0, 55, 255), 5, 2);
 
-      ellipse(
-          frame, Point(bottomy2, bottomx2), Size(22, 22), 360, 0, 360, Scalar(0, 55, 255), 5, 2);
+      ellipse(frame, Point(bottomy2, bottomx2), Size(22, 22), 360, 0, 360, Scalar(0, 55, 255), 5, 2);
     }
 
     imshow("Threshold Image", newerframe);
@@ -312,8 +292,7 @@ targetingprocess() {
 
     imshow("Original Image", frame);
     auto ipl = frame;
-    cvSetMouseCallback("Original Image",
-                       my_mouse_callback,
+    cvSetMouseCallback("Original Image", my_mouse_callback,
                        reinterpret_cast<void*>(&ipl)); // get mouse input
 
     char key = (char)waitKey(5); // get keyboard input

@@ -5,6 +5,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iomanip>
+#include <map>
 
 typedef cv::Rect2d JSRectData;
 typedef cv::Mat JSMatData;
@@ -12,13 +13,11 @@ typedef cv::Size2d JSSizeData;
 typedef cv::Point2d JSPointData;
 typedef cv::Vec4d JSLineData;
 typedef std::vector<JSPointData> JSContourData;
+typedef std::pair<JSPointData*, JSPointData*> JSPointIteratorData;
 
 #define VISIBLE
 #define HIDDEN __attribute__((visibility("hidden")))
 
-struct JSPointIteratorData {
-  cv::Point2d *begin, *end;
-};
 extern "C" {
 
 int js_init(int argc, char*[]);

@@ -845,31 +845,11 @@ TEST(solvePnPRansac) {
     vector<int> inliers_cpu, inliers_gpu;
 
     CPU_ON;
-    solvePnPRansac(object,
-                   image,
-                   camera_mat,
-                   Mat::zeros(1, 8, CV_32F),
-                   rvec,
-                   tvec,
-                   false,
-                   num_iters,
-                   max_dist,
-                   int(num_points * 0.05),
-                   inliers_cpu);
+    solvePnPRansac(object, image, camera_mat, Mat::zeros(1, 8, CV_32F), rvec, tvec, false, num_iters, max_dist, int(num_points * 0.05), inliers_cpu);
     CPU_OFF;
 
     GPU_ON;
-    gpu::solvePnPRansac(object,
-                        image,
-                        camera_mat,
-                        Mat::zeros(1, 8, CV_32F),
-                        rvec,
-                        tvec,
-                        false,
-                        num_iters,
-                        max_dist,
-                        int(num_points * 0.05),
-                        &inliers_gpu);
+    gpu::solvePnPRansac(object, image, camera_mat, Mat::zeros(1, 8, CV_32F), rvec, tvec, false, num_iters, max_dist, int(num_points * 0.05), &inliers_gpu);
     GPU_OFF;
   }
 }
@@ -1181,8 +1161,7 @@ TEST(FarnebackOpticalFlow) {
     for(int fastPyramids = 0; fastPyramids < 2; ++fastPyramids) {
       for(int useGaussianBlur = 0; useGaussianBlur < 2; ++useGaussianBlur) {
 
-        SUBTEST << "dataset=" << datasets[i] << ", fastPyramids=" << fastPyramids
-                << ", useGaussianBlur=" << useGaussianBlur;
+        SUBTEST << "dataset=" << datasets[i] << ", fastPyramids=" << fastPyramids << ", useGaussianBlur=" << useGaussianBlur;
         Mat frame0 = imread(abspath(datasets[i] + "1.png"), IMREAD_GRAYSCALE);
         Mat frame1 = imread(abspath(datasets[i] + "2.png"), IMREAD_GRAYSCALE);
         if(frame0.empty())
@@ -1201,16 +1180,7 @@ TEST(FarnebackOpticalFlow) {
 
         Mat flow;
         CPU_ON;
-        calcOpticalFlowFarneback(frame0,
-                                 frame1,
-                                 flow,
-                                 calc.pyrScale,
-                                 calc.numLevels,
-                                 calc.winSize,
-                                 calc.numIters,
-                                 calc.polyN,
-                                 calc.polySigma,
-                                 calc.flags);
+        calcOpticalFlowFarneback(frame0, frame1, flow, calc.pyrScale, calc.numLevels, calc.winSize, calc.numIters, calc.polyN, calc.polySigma, calc.flags);
         CPU_OFF;
       }
     }

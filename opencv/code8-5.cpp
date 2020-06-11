@@ -32,17 +32,16 @@ private:
   Ptr<BOWImgDescriptorExtractor> bowDescriptorExtractor;
   Ptr<FlannBasedMatcher> descriptorMatcher;
 
-  void make_train_set(); // function to build the training set multimap
-  void make_pos_neg();   // function to extract BOW features from training images and organize them
-                       // into positive and negative samples
+  void make_train_set();           // function to build the training set multimap
+  void make_pos_neg();             // function to extract BOW features from training images and organize them
+                                   // into positive and negative samples
   string remove_extension(string); // function to remove extension from file name, used for
                                    // organizing templates into categories
 public:
-  categorizer(int);         // constructor
-  void build_vocab();       // function to build the BOW vocabulary
-  void train_classifiers(); // function to train the one-vs-all SVM classifiers for all categories
-  void categorize(
-      VideoCapture); // function to perform real-time object categorization on camera frames
+  categorizer(int);              // constructor
+  void build_vocab();            // function to build the BOW vocabulary
+  void train_classifiers();      // function to train the one-vs-all SVM classifiers for all categories
+  void categorize(VideoCapture); // function to perform real-time object categorization on camera frames
 };
 
 string
@@ -93,8 +92,7 @@ categorizer::make_train_set() {
     // Level 1 means a training image, map that by the current category
     else {
       // File name with path
-      string filename =
-          string(TRAIN_FOLDER) + category + string("/") + (i->path()).filename().string();
+      string filename = string(TRAIN_FOLDER) + category + string("/") + (i->path()).filename().string();
       // Make a pair of string and Mat to insert into multimap
       pair<string, Mat> p(category, imread(filename, CV_LOAD_IMAGE_GRAYSCALE));
       train_set.insert(p);
@@ -135,8 +133,7 @@ categorizer::make_pos_neg() {
   // Debug message
   for(int i = 0; i < categories; i++) {
     string category = category_names[i];
-    cout << "Category " << category << ": " << positive_data[category].rows << " Positives, "
-         << negative_data[category].rows << " Negatives" << endl;
+    cout << "Category " << category << ": " << positive_data[category].rows << " Positives, " << negative_data[category].rows << " Negatives" << endl;
   }
 }
 
