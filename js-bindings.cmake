@@ -56,7 +56,7 @@ add_dependencies(quickjs-rect quickjs-point quickjs-size)
 
 add_dependencies(quickjs-contour quickjs-mat)
 
-target_link_libraries(quickjs-point-iterator quickjs-contour quickjs-mat)
+target_link_libraries(quickjs-point-iterator quickjs-contour quickjs-point quickjs-mat)
 #add_dependencies(quickjs-point-iterator quickjs-contour quickjs-mat)
 
 file(GLOB JS_BINDINGS_SOURCES 

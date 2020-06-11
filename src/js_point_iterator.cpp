@@ -17,26 +17,37 @@ extern "C" {
 JSValue point_iterator_proto, point_iterator_class;
 JSClassID js_point_iterator_class_id;
 
+
+
+JSValue
+js_point_iterator_result(JSContext* ctx, JSValue val, BOOL done) {
+  JSValue obj;
+  obj = JS_NewObject(ctx);
+  if(JS_IsException(obj)) {
+    JS_FreeValue(ctx, val);
+    return obj;
+  }
+  if(JS_DefinePropertyValue(ctx, obj, JS_ATOM_value, val, JS_PROP_C_W_E) < 0) {
+    goto fail;
+  }
+  if(JS_DefinePropertyValue(ctx, obj, JS_ATOM_done, JS_NewBool(ctx, done), JS_PROP_C_W_E) < 0) {
+  fail:
+    JS_FreeValue(ctx, obj);
+    return JS_EXCEPTION;
+  }
+  return obj;
+}
+
 static JSValue
 js_point_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, BOOL* pdone, int magic) {
   JSPointIteratorData* it = static_cast<JSPointIteratorData*>(JS_GetOpaque(this_val, js_point_iterator_class_id));
   JSPointData* ptr;
-  JSValue point;
-
-  point = JS_NewObjectClass(ctx, js_point_iterator_class_id);
-  if(JS_IsException(point))
-    goto fail;
-  ptr = static_cast<JSPointData*>(js_malloc(ctx, sizeof(*ptr)));
-  if(!ptr)
-    goto fail1;
+  JSValue result;
   ptr = it->first;
-
   *pdone = (it->first == it->second);
+  result =  js_point_new(ctx, it->first->x, it->first->y);
   it->first++;
-  JS_SetOpaque(point, ptr);
-  return point;
-fail1:
-  JS_FreeValue(ctx, point);
+  return result;
 fail:
   return JS_EXCEPTION;
 }
@@ -45,6 +56,7 @@ static void
 js_point_iterator_finalizer(JSRuntime* rt, JSValue val) {
   JSPointIteratorData* s = static_cast<JSPointIteratorData*>(JS_GetOpaque(val, js_point_iterator_class_id));
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
+  
   js_free_rt(rt, s);
 }
 
