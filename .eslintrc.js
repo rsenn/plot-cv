@@ -22,7 +22,7 @@ module.exports = {
       pragma: 'h'
     }
   },
-  plugins: ['react'],
+  plugins: ['react','no-unused-code'],
   rules: {
     'no-unused-vars': ['error', { varsIgnorePattern: 'h' }],
     'no-console': 'warn',

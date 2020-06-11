@@ -1,8 +1,8 @@
 #include <iostream>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
-#include <opencv/cvaux.h>
-#include <opencv/cxcore.h>
+//#include <opencv/cvaux.h>
+//#include <opencv/cxcore.h>
 #include <opencv2/highgui.hpp>
 #include <opencv2/highgui/highgui_c.h>
 #include <fstream>
