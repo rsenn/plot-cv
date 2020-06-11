@@ -49,6 +49,12 @@
     "@babel/plugin-proposal-export-default-from": "^7.8.3",
     "@babel/plugin-transform-react-jsx": "^7.9.4",
     "antlr4": "^4.8.0",
+    "eslint": "^7.2.0",
+    "eslint-plugin-class-property": "^1.1.0",
+    "eslint-plugin-no-unused-code": "^0.0.2",
+    "eslint-plugin-preact": "^0.1.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "eslint-plugin-proposal": "^2.3.0",
     "http": "0.0.0",
     "react-dom": "^16.8.6",
     "svg-path-outline": "^1.0.1"
