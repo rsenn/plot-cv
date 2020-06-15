@@ -49,6 +49,7 @@
     "@babel/plugin-proposal-export-default-from": "^7.8.3",
     "@babel/plugin-transform-react-jsx": "^7.9.4",
     "antlr4": "^4.8.0",
+    "clarify": "^2.1.0",
     "eslint": "^7.2.0",
     "eslint-plugin-class-property": "^1.1.0",
     "eslint-plugin-no-unused-code": "^0.0.2",
@@ -57,7 +58,10 @@
     "eslint-plugin-proposal": "^2.3.0",
     "http": "0.0.0",
     "react-dom": "^16.8.6",
-    "svg-path-outline": "^1.0.1"
+    "svg-path-outline": "^1.0.1",
+    "trace": "^3.1.1",
+    "uffoptimizer": "^1.0.16",
+    "uffremover": "^1.0.0"
   },
   "husky": {
     "hooks": {
