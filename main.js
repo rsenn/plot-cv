@@ -7,14 +7,8 @@ import geom from './lib/geom.js';
 import { BBox } from './lib/geom/bbox.js';
 import { ScrollDisabler } from './lib/scrollHandler.js';
 import { TouchListener } from './lib/touchHandler.js';
-import { EagleDocument } from './lib/eagle/document.js';
-import { EagleNode } from './lib/eagle/node.js';
 import { trkl } from './lib/trkl.js';
 import { ColorMap } from './lib/draw/colorMap.js';
-import { EagleElement } from './lib/eagle/element.js';
-import { EaglePath, EagleReference } from './lib/eagle/locator.js';
-import { toXML, EagleInterface, concat, text, ansi } from './lib/eagle/common.js';
-import { Renderer } from './lib/eagle/renderer.js';
 import { devtools } from './lib/devtools.js';
 import Util from './lib/util.js';
 import tXml from './lib/tXml.js';
@@ -24,6 +18,42 @@ import { h, html, render, Component, createContext, useState, useReducer, useEff
 import components, { Chooser, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement } from './static/components.js';
 import { WebSocketClient } from './lib/websocket-client.js';
 import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
+import {
+  AlignmentAngle,
+  Arc,
+  BoardRenderer,
+  CalculateArcRadius,
+  ClampAngle,
+  DereferenceError,
+  EagleDocument,
+  EagleElement,
+  EagleInterface,
+  EagleNode,
+  EagleNodeList,
+  EagleNodeMap,
+  EaglePath,
+  EagleProject,
+  EagleRef,
+  EagleReference,
+  EagleSVGRenderer,
+  HORIZONTAL,
+  HORIZONTAL_VERTICAL,
+  InvertY,
+  LayerAttributes,
+  LinesToPath,
+  MakeCoordTransformer,
+  PolarToCartesian,
+  Renderer,
+  RotateTransformation,
+  SchematicRenderer,
+  VERTICAL,
+  makeEagleElement,
+  makeEagleNode,
+  makeEagleNodeList,
+  makeEagleNodeMap,
+  renderDocument
+} from './lib/eagle.js';
+
 const React = { cloneElement, Component, createContext, createRef, Fragment, create: h, html, hydrate, isValidElement, render, toChildArray, useCallback, useContext, useDebugValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useReducer, useRef, useState };
 const { Align, Anchor, CSS, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, HSLA, isElement, isHSLA, isLine, isMatrix, isNumber, isPoint, isRect, isRGBA, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, RGBA, Select, Size, SVG, Timer, Transition, TransitionList, TRBL, Tree } = {
   ...dom,
@@ -81,7 +111,7 @@ const ListProjects = (window.list = async function(url) {
 const ElementToXML = e => {
   const x = Element.toObject(e);
   console.log('x:', x);
-  return toXML(x);
+  return Element.toString(x);
 };
 
 const LoadFile = async filename => {
@@ -148,7 +178,7 @@ const loadDocument = async (proj, parentElem) => {
 
   const Fence = ({ children, style = {}, ...props }) => h(TransformedElement, { id: 'fence', type: SizedAspectRatioBox, aspect, listener: transform, style: { position: 'relative', minWidth: '100px', 'data-name': proj.name, border: '1px dotted black', ...style }, ...props }, children);
 
-  component = h(Fence, { style: { border: '1px dashed red' } }, [component]);
+  component = h(Fence, { style: { border: '0.001em dashed red' } }, [component]);
 
   React.render(component /*html`<${Fence}>${component}</${Fence}>`*/, element);
 
@@ -261,7 +291,7 @@ const AppMain = (window.onload = async () => {
   Util(globalThis);
 
   // prettier-ignore
-  Object.assign(window, {BBox, chooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleInterface, EagleNode, EaglePath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, loadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect, RGBA, Rotation, Scaling, Size, SVG, toXML, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain });
+  Object.assign(window, {BBox, chooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleInterface, EagleNode, EaglePath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, loadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect, RGBA, Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain });
 
   const inspectSym = Symbol.for('nodejs.util.inspect.custom');
 
