@@ -76,6 +76,8 @@ let container;
 let projects, projectFiles;
 let activeFile;
 let transform = trkl(new TransformationList());
+let sizeListener = trkl({});
+let aspectListener = trkl(1);
 
 const useSlot = (arr, i) => [() => arr[i], v => (arr[i] = v)];
 const trklGetSet = (get, set) => value => (value !== undefined ? set(value) : get());
@@ -156,10 +158,14 @@ const loadDocument = async (proj, parentElem) => {
   console.log(`load project #${proj.i}:`, proj);
   proj.doc = await LoadFile(proj.name);
   window.eagle = proj.doc;
+  window.project = proj;
 
   Element.remove('#fence');
 
   proj.renderer = new Renderer(proj.doc, ReactComponent.append);
+
+  if(!proj.renderer || !proj.renderer.render)
+    return;
 
   let style = { width: '100%', height: '100%', position: 'relative' };
   let svgXml = proj.renderer.render(proj.doc, null, { style });
@@ -173,12 +179,26 @@ const loadDocument = async (proj, parentElem) => {
 
   let r = proj.renderer.rect || proj.renderer.bounds;
   console.log('r', r);
-  let aspect = r.width / r.height;
-  console.log('aspect', aspect);
+  let aspectRatio = r.width / r.height;
+  console.log('aspectRatio', aspectRatio);
 
-  const Fence = ({ children, style = {}, ...props }) => h(TransformedElement, { id: 'fence', type: SizedAspectRatioBox, aspect, listener: transform, style: { position: 'relative', minWidth: '100px', 'data-name': proj.name, border: '1px dotted black', ...style }, ...props }, children);
+  aspectListener(aspectRatio);
 
-  component = h(Fence, { style: { border: '0.001em dashed red' } }, [component]);
+  const Fence = ({ children, style = {}, sizeListener, aspectListener, ...props }) => {
+    const [dimensions,setDimensions] = useState(sizeListener());
+    const [aspect,setAspect] = useState(aspectListener());
+
+if(sizeListener && sizeListener.subscribe)
+  sizeListener.subscribe(value => setDimensions(value));
+if(aspectListener && aspectListener.subscribe)
+  aspectListener.subscribe(value => setAspect(value));
+
+console.log("Fence.render", {dimensions,aspect});
+
+   return h(TransformedElement, { id: 'fence', type: SizedAspectRatioBox, aspect, listener: transform, style: { position: 'relative', minWidth: '100px', 'data-name': proj.name, ...style, ...dimensions }, ...props }, children);
+  }
+
+  component = h(Fence, { style: { /*border: '0.001em dashed red'*/ }, sizeListener, aspectListener }, [component]);
 
   React.render(component /*html`<${Fence}>${component}</${Fence}>`*/, element);
 
@@ -288,6 +308,12 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
 };
 
 const AppMain = (window.onload = async () => {
+   Object.assign(window, { Element, devtools, dom });
+  let projects = trkl([]);
+  let socket = trkl();
+  trkl.bind(window, { projects, socket, transform, size: sizeListener, aspect: aspectListener });
+
+
   Util(globalThis);
 
   // prettier-ignore
@@ -328,11 +354,7 @@ const AppMain = (window.onload = async () => {
     this.realLog(...out);
   };*/
 
-  Object.assign(window, { Element, devtools, dom });
-  let projects = trkl([]);
-  let socket = trkl();
-  trkl.bind(window, { projects, socket, transform });
-
+ 
   ListProjects('/files.html').then(response => {
     let data = JSON.parse(response);
     let { files } = data;
@@ -409,21 +431,27 @@ const AppMain = (window.onload = async () => {
   window.styles = CSS.create('head');
 
   window.addEventListener('wheel', event => {
+//console.log("event:",event);
     const clientArea = Element.rect('body > div');
     clientArea.x += container.parentElement.scrollLeft;
     const clientCenter = clientArea.center;
-    const { clientX, clientY, target, currentTarget } = event;
+    const { clientX, clientY, target, currentTarget, buttons, altKey, ctrlKey, shiftKey } = event;
     const pos = new Point(clientX, clientY);
     const wheelPos = -event.deltaY.toFixed(2);
-    zoomVal = Util.clamp(-100, 100, zoomVal + wheelPos * 0.1);
-    const zoom = Math.pow(10, zoomVal / 100).toFixed(5);
+    zoomVal = (altKey||ctrlKey||shiftKey) ? 0 : Util.clamp(-100, 100, zoomVal + wheelPos * 0.1);
+    const zoom =  Math.pow(10, zoomVal / 100).toFixed(5);
 
-    if(!window.transform.scaling) window.transform.scale(zoom, zoom);
+    let t = window.transform;
+
+
+
+    if(!t.scaling) t.scale(zoom, zoom);
     else {
-      window.transform.scaling.x = zoom;
-      window.transform.scaling.y = zoom;
+     t.scaling.x = zoom;
+      t.scaling.y = zoom;
     }
-    window.transform = new TransformationList(window.transform);
+
+    window.transform = new TransformationList(t);
     /*    const transform = ` scale(${zoom},${zoom}) `;
     const origin = `${pos.toString(1, 'px', ' ')}`;
     let list = [...Element.skip(target)].find(p => p.classList.contains('list'));

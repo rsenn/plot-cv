@@ -288,10 +288,10 @@ export const SizedAspectRatioBox = ({ width, height, style, className, children,
     ]
   );
 
-export const TransformedElement = ({ type = 'div', listener, style = { position: 'relative' }, className, children = [], ...props }) => {
+export const TransformedElement = ({ type = 'div', aspect, listener, style = { position: 'relative' }, className, children = [], ...props }) => {
   const [transform, setTransform] = useState(new TransformationList());
 
-  //console.log('listener:', listener);
+  //console.log('TransformedElement:', { aspect });
   if(listener && listener.subscribe)
     listener.subscribe(value => {
       // console.log('TransformedElement setValue', value+'');
@@ -302,7 +302,8 @@ export const TransformedElement = ({ type = 'div', listener, style = { position:
     type,
     {
       className: classNames('transformed-element', className && className + '-size'),
-      style: { position: 'relative', ...style, transform }
+      style: { position: 'relative', ...style, transform }, 
+      aspect
     },
     children
   );
