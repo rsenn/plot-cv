@@ -280,6 +280,9 @@ body,
   position: relative;
   overflow: hidden;
 }
+input[type='number'] {
+  border-width: 1px;
+}
 
 input[type='number']::-webkit-outer-spin-button,
 input[type='number']::-webkit-inner-spin-button {

@@ -246,17 +246,7 @@ export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className 
         children
       );
 
-export const AspectRatioBox = (
-  {
-    aspect = 1.0,
-    children,
-    insideClassName,
-    outsideClassName,
-    outsideProps = {},
-    style,
-    ...props
-  } /* console.log('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/
-) =>
+export const AspectRatioBox = ({ aspect = 1.0, children, insideClassName, outsideClassName, outsideProps = {}, style, ...props } /* console.log('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/) =>
   h(React.Fragment, {}, [
     h(
       'div',
@@ -276,21 +266,7 @@ export const AspectRatioBox = (
     )
   ]);
 
-export const SizedAspectRatioBox = ({
-  width,
-  height,
-  style,
-  className,
-  children,
-  outsideClassName,
-  insideClassName,
-  insideProps,
-  outsideProps = {},
-  sizeClassName,
-  sizeProps = {},
-  onClick,
-  ...props
-}) =>
+export const SizedAspectRatioBox = ({ width, height, style, className, children, outsideClassName, insideClassName, insideProps, outsideProps = {}, sizeClassName, sizeProps = {}, onClick, ...props }) =>
   h(
     'div',
     {
@@ -345,36 +321,33 @@ export const Slider = ({ min = 0, max = 100, value: initialValue = 0, step = 1, 
   label = label || name;
   let dim = length ? { [orient == 'horizontal' ? 'width' : 'height']: length } : {};
 
-  return h(
-    'div',
-    { style: { display: 'inline-flex', flexBasis: '100%', flexFlow: orient == 'horizontal' ? 'row' : 'column', justifyContent: 'stretch', alignItems: 'stretch', fontSize: '0.8em', ...style } },
-    [
-      //h('label', { for: name }, label),
-      label,
-      h('input', {
-        name,
-        type: 'range',
-        min,
-        max,
-        orient,
-        style: { WebkitAppearance: `slider-${orient}`, display: 'inline', width: 40, flex: '1 1 auto', ...dim },
-        ...props,
-        value,
-        onInput
-      }),
-      h('input', {
-        name,
-        type: 'number',
-        min,
-        max,
-        orient,
-        style: { MozAppearance: `textfield`, WebkitAppearance: 'none', margin: 0, display: 'inline', width: 40, textAlign: 'right' },
-        ...props,
-        value,
-        onInput
-      })
-    ]
-  );
+  return h('div', { style: { display: 'inline-flex', flexBasis: '100%', flexFlow: orient == 'horizontal' ? 'row' : 'column', justifyContent: 'stretch', alignItems: 'center', fontSize: '0.8em', ...style } }, [
+    //h('label', { for: name }, label),
+    label,
+    h('input', {
+      name,
+      type: 'range',
+      min,
+      max,
+      orient,
+      style: { WebkitAppearance: `slider-${orient}`, display: 'inline', width: 40, flex: '1 1 auto', ...dim },
+      ...props,
+      value,
+      onInput
+    }),
+    h('input', {
+      name,
+      type: 'number',
+      min,
+      max,
+
+      orient,
+      style: { width: (+max + '').length * 10 + 'px', MozAppearance: `textfield`, WebkitAppearance: 'none', margin: 0, display: 'inline', textAlign: 'center', flex: '0 1 auto' },
+      ...props,
+      value,
+      onInput
+    })
+  ]);
 };
 
 export const Canvas = ({ onInit, ...props }) => {
@@ -452,9 +425,9 @@ export const ColorWheel = ({ radius = 50, ...props }) => {
       top = size.y;
 
       drawCircle();
-      ctx.lineWidth = 0.5;
+      ctx.lineWidth = 0.75;
       ctx.beginPath();
-      ctx.arc(50, 50, 49, 0, Math.ceil(2 * Math.PI));
+      ctx.arc(50, 50, 50 - ctx.lineWidth / 2, 0, Math.ceil(2 * Math.PI));
       ctx.stroke();
 
       function drawCircle() {
