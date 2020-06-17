@@ -6,7 +6,7 @@ import { Circle } from './lib/geom/circle.js';
 import { h, render, Component } from './node_modules/htm/preact/standalone.mjs';
 
 function testRenderSchematic() {
-  let doc = new EagleDocument(fs.readFileSync('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch').toString());
+  let doc = (global.doc = new EagleDocument(fs.readFileSync('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch').toString()));
   let renderer = new Renderer(doc, ReactComponent.append);
   let output = renderer.render(doc, null, 0);
   // console.log('output:', output);
@@ -14,7 +14,7 @@ function testRenderSchematic() {
 }
 
 function testRenderBoard() {
-  let doc = new EagleDocument(fs.readFileSync('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString());
+  let doc = (global.doc = new EagleDocument(fs.readFileSync('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString()));
   let renderer = new Renderer(doc, ReactComponent.append);
   let output = renderer.render(doc, null, 0);
 
