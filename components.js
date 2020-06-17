@@ -302,7 +302,7 @@ export const TransformedElement = ({ type = 'div', aspect, listener, style = { p
     type,
     {
       className: classNames('transformed-element', className && className + '-size'),
-      style: { position: 'relative', ...style, transform }, 
+      style: { position: 'relative', ...style, transform },
       aspect
     },
     children
