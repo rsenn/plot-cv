@@ -125,8 +125,8 @@ const LoadFile = async filename => {
 
   let doc = new EagleDocument(xml);
 
-  if (/\.brd$/.test(filename)) window.board = doc;
-  if (/\.sch$/.test(filename)) window.schematic = doc;
+  if(/\.brd$/.test(filename)) window.board = doc;
+  if(/\.sch$/.test(filename)) window.schematic = doc;
 
   return doc;
 };
@@ -146,8 +146,8 @@ const SaveSVG = (window.save = async function save(filename = projectName) {
 
 const ModifyColors = fn => e => {
   const { type, buttons } = e;
-  if (type.endsWith('down')) {
-    if (!window.c) window.c = SVG.allColors(project.svg);
+  if(type.endsWith('down')) {
+    if(!window.c) window.c = SVG.allColors(project.svg);
     let { c } = window;
     console.log('ModifyColors', fn);
 
@@ -166,7 +166,7 @@ const loadDocument = async (proj, parentElem) => {
 
   proj.renderer = new Renderer(proj.doc, ReactComponent.append);
 
-  if (!proj.renderer || !proj.renderer.render) return;
+  if(!proj.renderer || !proj.renderer.render) return;
 
   let style = { width: '100%', height: '100%', position: 'relative' };
   let svgXml = proj.renderer.render(proj.doc, null, { style });
@@ -189,8 +189,8 @@ const loadDocument = async (proj, parentElem) => {
     const [dimensions, setDimensions] = useState(sizeListener());
     const [aspect, setAspect] = useState(aspectListener());
 
-    if (sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
-    if (aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
+    if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
+    if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
 
     console.log('Fence.render', { dimensions, aspect });
 
@@ -201,7 +201,6 @@ const loadDocument = async (proj, parentElem) => {
     Fence,
     {
       style: {
-
         /*border: '0.001em dashed red'*/
       },
       sizeListener,
@@ -261,7 +260,7 @@ const chooseDocument = async (e, proj, i) => {
     const { type } = e;
     const box = Element.findAll('.file')[i];
     console.log('chooseDocument:', { e, proj, i, box });
-    if (!proj.loaded) {
+    if(!proj.loaded) {
       let data = await loadDocument(proj, box);
       proj.loaded = true;
 
@@ -270,8 +269,7 @@ const chooseDocument = async (e, proj, i) => {
       console.log('loaded:', proj);
     }
     r = proj.loaded;
-  }
-  catch (err) {
+  } catch(err) {
     console.log('err:', err.message, err.stack);
   }
 
@@ -390,7 +388,7 @@ const AppMain = (window.onload = async () => {
         h(Button, {
           caption: '📂',
           fn: e => {
-            if (e.type.endsWith('down')) {
+            if(e.type.endsWith('down')) {
               console.log('file list push', e);
               open(!open());
             }
@@ -453,15 +451,14 @@ const AppMain = (window.onload = async () => {
   TouchListener(
     event => {
       //  if(event.index > 0 && event.buttons > 0) console.log('touch', event, container);
-      if (!move) {
+      if(!move) {
         let container = Element.find('#main');
 
         move = Element.moveRelative(container);
-      }
-      else if (event.index > 0) {
+      } else if(event.index > 0) {
         let rel = new Point(event);
-        if (move) {
-          if (event.buttons > 0) move(rel.x, rel.y);
+        if(move) {
+          if(event.buttons > 0) move(rel.x, rel.y);
           else move = move.jump();
         }
       }
@@ -484,7 +481,7 @@ const AppMain = (window.onload = async () => {
 
     let t = window.transform;
 
-    if (!t.scaling) t.scale(zoom, zoom);
+    if(!t.scaling) t.scale(zoom, zoom);
     else {
       t.scaling.x = zoom;
       t.scaling.y = zoom;
@@ -511,7 +508,7 @@ const AppMain = (window.onload = async () => {
 
   console.log(Util.getGlobalObject());
 
-  for (let path of [...Element.findAll('path')]) {
+  for(let path of [...Element.findAll('path')]) {
     let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
   }
 });

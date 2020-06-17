@@ -83,7 +83,7 @@ async function testGraph(proj) {
   const { board } = proj;
   graph = new Graph();
 
-  for (let element of board.getAll('element')) {
+  for(let element of board.getAll('element')) {
     const { x, y } = element;
     const { attributes } = element.raw;
     let lib = board.get(e => e.tagName == 'library' && e.attributes.name == attributes.library);
@@ -100,14 +100,14 @@ async function testGraph(proj) {
     //console.log(`element ${n.label} GraphNode`, n);
     let pads = [...pkg.getAll('pad')];
     let padNames = pads.map(p => p.name);
-    for (let pad of pads) {
+    for(let pad of pads) {
     }
     //console.log(`Package '${pkg.name}' Pads: ${padNames}`);
   }
 
-  for (let [name, signal] of board.signals) {
+  for(let [name, signal] of board.signals) {
     //console.log(`Signal ${name}:`, signal);
-    for (let contactref of signal.getAll('contactref')) {
+    for(let contactref of signal.getAll('contactref')) {
       const elementName = contactref.attributes.element;
       const element = board.get({ tagName: 'element', name: elementName });
       const { name } = element.raw.attributes;
@@ -131,11 +131,11 @@ async function testEagle(filename) {
   //console.log('board.libraries.list:', board.libraries.list);
   //console.log('[...board.libraries]:', [...board.libraries]);
   //console.log('board.libraries:', board.libraries);
-  for (let [libName, lib] of board.libraries) {
+  for(let [libName, lib] of board.libraries) {
     //console.log('lib:', lib);
-    for (let [pkgName, pkg] of lib.packages)
-      for (let pad of pkg.children) {
-        if (pad.tagName !== 'pad') continue;
+    for(let [pkgName, pkg] of lib.packages)
+      for(let pad of pkg.children) {
+        if(pad.tagName !== 'pad') continue;
         pad.setAttribute('drill', '0.7');
         pad.setAttribute('diameter', '1.778');
         pad.removeAttribute('stop');
@@ -145,25 +145,25 @@ async function testEagle(filename) {
   }
 
   let cmds = [];
-  for (let elem of board.elements.list) {
+  for(let elem of board.elements.list) {
     cmds.push(`MOVE ${elem.name} ${elem.pos};`);
-    if (elem.rot) cmds.push(`ROTATE ${elem.rot} ${elem.name};`);
+    if(elem.rot) cmds.push(`ROTATE ${elem.rot} ${elem.name};`);
   }
 
   //console.log(cmds.join(' '));
-  for (let description of board.getAll('description')) {
+  for(let description of board.getAll('description')) {
   }
 
   proj.saveTo('.', true);
 
   //console.log('board:', board);
 
-  for (let element of board.getAll('element')) {
+  for(let element of board.getAll('element')) {
     //console.log('\nelement.library:', element.library, '\nelement.package:', element.package, '\n');
     console.log('element:', element);
   }
 
-  for (let instance of schematic.getAll(e => e.tagName == 'instance')) {
+  for(let instance of schematic.getAll(e => e.tagName == 'instance')) {
     const { part, gate } = instance;
     const { deviceset, device } = part;
     console.log('instance:', instance, { gate, deviceset, device });
@@ -176,7 +176,7 @@ async function testEagle(filename) {
 
   let p = gates[0];
 
-  while (p) {
+  while(p) {
     console.log('p:', p);
 
     p = p.parentNode;
@@ -187,14 +187,13 @@ async function testEagle(filename) {
 
 (async () => {
   let args = process.argv.slice(2);
-  if (args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
-  for (let arg of args) {
+  if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
+  for(let arg of args) {
     try {
       let project = await testEagle(arg);
       //console.log(project);
       // await testGraph(project);
-    }
-    catch (err) {
+    } catch(err) {
       //console.log('err:' + err.message);
       throw err;
     }

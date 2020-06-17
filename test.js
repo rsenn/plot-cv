@@ -173,7 +173,7 @@ global.process = function(contours, hier) {
   function processContours(contours) {
     contours.sort((a, b) => a.length - b.length);
     contours = contours.filter(c => c.length >= 4);
-    for (let i = 0; i < contours.length; i++) {
+    for(let i = 0; i < contours.length; i++) {
       const [next, prev, child, parent] = hier[i];
       let list = new PointList(contours[i]);
       let bbox = list.bbox();
@@ -222,7 +222,7 @@ global.process = function(contours, hier) {
 */
   const do_log = false;
 
-  if (do_log) {
+  if(do_log) {
     console.log(`polygons: [\n  ${polygons.join(',\n  ')}\n]`);
 
     console.log('PROCESS contours: ', contours.map(c => '[' + c.map(pt => `{x:${pt.x},y:${pt.y}}`).join(', ') + ']').join(', '));

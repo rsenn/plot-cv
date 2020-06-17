@@ -25,7 +25,7 @@ c.push(new Point(0, 0));
 
 console.log('contour:', inspect(c));
 
-for (let point of c) {
+for(let point of c) {
   let { x, y } = point;
   console.log('point:', point, x, y);
 }

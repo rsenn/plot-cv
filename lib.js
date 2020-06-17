@@ -2,36 +2,31 @@ export function Point(arg) {
   let args = arg instanceof Array ? arg : [...arguments];
   let p = !this || this === Point ? {} : this;
   arg = args.shift();
-  if (typeof arg === 'number') {
+  if(typeof arg === 'number') {
     p.x = parseFloat(arg);
     p.y = parseFloat(args.shift());
-  }
-  else if (typeof arg === 'string') {
+  } else if(typeof arg === 'string') {
     const matches = [...arg.matchAll(new RegExp('/([-+]?d*.?d+)(?:[eE]([-+]?d+))?/g'))];
     p.x = parseFloat(matches[0]);
     p.y = parseFloat(matches[1]);
-  }
-  else if (typeof arg == 'object' && arg !== null && (arg.x !== undefined || arg.y !== undefined)) {
+  } else if(typeof arg == 'object' && arg !== null && (arg.x !== undefined || arg.y !== undefined)) {
     p.x = arg.x;
     p.y = arg.y;
-  }
-  else if (typeof arg == 'object' && arg !== null && arg.length > 0 && x !== undefined && y !== undefined) {
+  } else if(typeof arg == 'object' && arg !== null && arg.length > 0 && x !== undefined && y !== undefined) {
     p.x = parseFloat(arg.shift());
     p.y = parseFloat(arg.shift());
-  }
-  else if (typeof args[0] === 'number' && typeof args[1] === 'number') {
+  } else if(typeof args[0] === 'number' && typeof args[1] === 'number') {
     p.x = args[0];
     p.y = args[1];
     args.shift(2);
-  }
-  else {
+  } else {
     p.x = 0;
     p.y = 0;
   }
-  if (isNaN(p.x)) p.x = undefined;
-  if (isNaN(p.y)) p.y = undefined;
-  if (!this || this === Point) {
-    if (p.prototype == Object) p.prototype = Point.prototype;
+  if(isNaN(p.x)) p.x = undefined;
+  if(isNaN(p.y)) p.y = undefined;
+  if(!this || this === Point) {
+    if(p.prototype == Object) p.prototype = Point.prototype;
     else Object.assign(p, Point.prototype);
     return p;
   }
@@ -57,7 +52,7 @@ Point.prototype.move = function(x, y) {
   return this;
 };
 Point.prototype.set = function(fn) {
-  if (typeof fn != 'function') {
+  if(typeof fn != 'function') {
     Point.apply(this, [...arguments]);
     return this;
   }
@@ -145,8 +140,8 @@ Point.prototype.dimension = function() {
   return [this.width, this.height];
 };
 Point.prototype.toString = function(asArray = false) {
-  if (typeof this != 'object' || this === null) return '';
-  if (asArray) return `[${this.x},${this.y}]`;
+  if(typeof this != 'object' || this === null) return '';
+  if(asArray) return `[${this.x},${this.y}]`;
   return `{x:${this.x},y:${this.y}}`;
 };
 Point.prototype.toSource = function() {
@@ -177,37 +172,34 @@ Point.isPoint = isPoint;
 export function Size(arg) {
   let obj = this instanceof Size ? this : {};
   let args = [...arguments];
-  if (args.length == 1 && args[0].length !== undefined) {
+  if(args.length == 1 && args[0].length !== undefined) {
     args = args[0];
     arg = args[0];
   }
-  if (typeof arg == 'object') {
-    if (arg.width !== undefined || arg.height !== undefined) {
+  if(typeof arg == 'object') {
+    if(arg.width !== undefined || arg.height !== undefined) {
       arg = args.shift();
       obj.width = arg.width;
       obj.height = arg.height;
-    }
-    else if (arg.x2 !== undefined && arg.y2 !== undefined) {
+    } else if(arg.x2 !== undefined && arg.y2 !== undefined) {
       arg = args.shift();
       obj.width = arg.x2 - arg.x;
       obj.height = arg.y2 - arg.y;
-    }
-    else if (arg.bottom !== undefined && arg.right !== undefined) {
+    } else if(arg.bottom !== undefined && arg.right !== undefined) {
       arg = args.shift();
       obj.width = arg.right - arg.left;
       obj.height = arg.bottom - arg.top;
     }
-  }
-  else {
-    while (typeof arg == 'object' && (arg instanceof Array || 'length' in arg)) {
+  } else {
+    while(typeof arg == 'object' && (arg instanceof Array || 'length' in arg)) {
       args = [...arg];
       arg = args[0];
     }
-    if (args && args.length >= 2) {
+    if(args && args.length >= 2) {
       let w = args.shift();
       let h = args.shift();
-      if (typeof w == 'object' && 'baseVal' in w) w = w.baseVal.value;
-      if (typeof h == 'object' && 'baseVal' in h) h = h.baseVal.value;
+      if(typeof w == 'object' && 'baseVal' in w) w = w.baseVal.value;
+      if(typeof h == 'object' && 'baseVal' in h) h = h.baseVal.value;
       obj.width = typeof w == 'number' ? w : parseFloat(w.replace(/[^-.0-9]*$/, ''));
       obj.height = typeof h == 'number' ? h : parseFloat(h.replace(/[^-.0-9]*$/, ''));
       obj.units = {
@@ -216,23 +208,23 @@ export function Size(arg) {
       };
     }
   }
-  if (isNaN(obj.width)) obj.width = undefined;
-  if (isNaN(obj.height)) obj.height = undefined;
-  if (!(obj instanceof Size)) return obj;
+  if(isNaN(obj.width)) obj.width = undefined;
+  if(isNaN(obj.height)) obj.height = undefined;
+  if(!(obj instanceof Size)) return obj;
 }
 Size.convertUnits = (size, w = 'window' in global ? window : null) => {
-  if (w === null) return size;
+  if(w === null) return size;
   const view = {
     vw: w.innerWidth,
     vh: w.innerHeight,
     vmin: w.innerWidth < w.innerHeight ? w.innerWidth : w.innerHeight,
     vmax: w.innerWidth > w.innerHeight ? w.innerWidth : w.innerHeight
   };
-  if (view[size.units.width] !== undefined) {
+  if(view[size.units.width] !== undefined) {
     size.width = (size.width / 100) * view[size.units.width];
     delete size.units.width;
   }
-  if (view[size.units.height] !== undefined) {
+  if(view[size.units.height] !== undefined) {
     size.height = (size.height / 100) * view[size.units.height];
     delete size.units.height;
   }
@@ -248,8 +240,8 @@ Size.prototype.aspect = function() {
 Size.toCSS = function(arg) {
   const size = arg && arg.width !== undefined ? arg : this;
   let ret = {};
-  if (size.width !== undefined) ret.width = size.width + (size.units && 'width' in size.units ? size.units.width : 'px');
-  if (size.height !== undefined) ret.height = size.height + (size.units && 'height' in size.units ? size.units.height : 'px');
+  if(size.width !== undefined) ret.width = size.width + (size.units && 'width' in size.units ? size.units.width : 'px');
+  if(size.height !== undefined) ret.height = size.height + (size.units && 'height' in size.units ? size.units.height : 'px');
   return ret;
 };
 Size.prototype.toCSS = Size.toCSS;
@@ -275,46 +267,42 @@ export function Line(x1, y1, x2, y2) {
   let arg;
   let args = [...arguments];
   let ret;
-  if (args.length >= 4 && args.every(arg => !isNaN(parseFloat(arg)))) {
+  if(args.length >= 4 && args.every(arg => !isNaN(parseFloat(arg)))) {
     arg = { x1, y1, x2, y2 };
-  }
-  else if (args.length == 1) {
+  } else if(args.length == 1) {
     arg = args[0];
   }
-  if (arg && arg.x1 !== undefined && arg.y1 !== undefined && arg.x2 !== undefined && arg.y2 !== undefined) {
+  if(arg && arg.x1 !== undefined && arg.y1 !== undefined && arg.x2 !== undefined && arg.y2 !== undefined) {
     const { x1, y1, x2, y2 } = arg;
     obj.x1 = parseFloat(x1);
     obj.y1 = parseFloat(y1);
     obj.x2 = parseFloat(x2);
     obj.y2 = parseFloat(y2);
     ret = 1;
-  }
-  else if (isPoint(args[0]) && isPoint(args[1])) {
+  } else if(isPoint(args[0]) && isPoint(args[1])) {
     obj.x1 = parseFloat(args[0].x);
     obj.y1 = parseFloat(args[0].y);
     obj.x2 = parseFloat(args[1].x);
     obj.y2 = parseFloat(args[1].y);
     ret = 2;
-  }
-  else if (arg && arg.length >= 4 && arg.slice(0, 4).every(arg => !isNaN(parseFloat(arg)))) {
+  } else if(arg && arg.length >= 4 && arg.slice(0, 4).every(arg => !isNaN(parseFloat(arg)))) {
     obj.x1 = typeof x === 'number' ? x : parseFloat(x);
     obj.y1 = typeof y === 'number' ? y : parseFloat(y);
     obj.x2 = typeof w === 'number' ? w : parseFloat(w);
     obj.y2 = typeof h === 'number' ? h : parseFloat(h);
     ret = 4;
-  }
-  else {
+  } else {
     ret = 0;
   }
-  if (!isLine(obj)) console.log('ERROR: is not a line: ', [...arguments]);
-  if (!(this instanceof Line)) return obj;
+  if(!isLine(obj)) console.log('ERROR: is not a line: ', [...arguments]);
+  if(!(this instanceof Line)) return obj;
 }
 export const isLine = obj => ['x1', 'y1', 'x2', 'y2'].every(prop => obj[prop] !== undefined);
 Line.isLine = isLine;
 Line.intersect = (a, b) => {
   const ma = (a[0].y - a[1].y) / (a[0].x - a[1].x);
   const mb = (b[0].y - b[1].y) / (b[0].x - b[1].x);
-  if (ma - mb < Number.EPSILON) return undefined;
+  if(ma - mb < Number.EPSILON) return undefined;
   return new Point({
     x: (ma * a[0].x - mb * b[0].x + b[0].y - a[0].y) / (ma - mb),
     y: (ma * mb * (b[0].x - a[0].x) + mb * a[0].y - ma * b[0].y) / (mb - ma)
@@ -325,7 +313,7 @@ Object.defineProperty(Line.prototype, 'x1', {
     return this.a && this.a.x;
   },
   set(v) {
-    if (!this.a) this.a = new Point();
+    if(!this.a) this.a = new Point();
     this.a.x = v;
   },
   enumerable: true
@@ -335,7 +323,7 @@ Object.defineProperty(Line.prototype, 'y1', {
     return this.a && this.a.y;
   },
   set(v) {
-    if (!this.a) this.a = new Point();
+    if(!this.a) this.a = new Point();
     this.a.y = v;
   },
   enumerable: true
@@ -345,7 +333,7 @@ Object.defineProperty(Line.prototype, 'x2', {
     return this.b && this.b.x;
   },
   set(v) {
-    if (!this.b) this.b = new Point();
+    if(!this.b) this.b = new Point();
     this.b.x = v;
   },
   enumerable: true
@@ -355,7 +343,7 @@ Object.defineProperty(Line.prototype, 'y2', {
     return this.b && this.b.y;
   },
   set(v) {
-    if (!this.b) this.b = new Point();
+    if(!this.b) this.b = new Point();
     this.b.y = v;
   },
   enumerable: true
@@ -408,7 +396,7 @@ Line.prototype.inspect = function() {
 };
 Line.prototype.toString = function() {
   let { a, b } = this;
-  if (a.x > b.x) {
+  if(a.x > b.x) {
     let tmp = this.b;
     this.b = this.a;
     this.a = tmp;
@@ -419,35 +407,32 @@ export function Rect(arg) {
   let obj = this instanceof Rect ? this : {};
   let args = arg instanceof Array ? arg : [...arguments];
   let ret;
-  if (typeof args[0] == 'number') arg = args;
-  else if (args[0].length !== undefined) arg = args.shift();
+  if(typeof args[0] == 'number') arg = args;
+  else if(args[0].length !== undefined) arg = args.shift();
   ['x', 'y', 'width', 'height'].forEach(field => {
-    if (typeof obj[field] != 'number') obj[field] = 0;
+    if(typeof obj[field] != 'number') obj[field] = 0;
   });
-  if (arg && arg.x1 !== undefined && arg.y1 !== undefined && arg.x2 !== undefined && arg.y2 !== undefined) {
+  if(arg && arg.x1 !== undefined && arg.y1 !== undefined && arg.x2 !== undefined && arg.y2 !== undefined) {
     const { x1, y1, x2, y2 } = arg;
     obj.x = x1;
     obj.y = y1;
     obj.width = x2 - x1;
     obj.height = y2 - y1;
     ret = 1;
-  }
-  else if (arg && arg.x !== undefined && arg.y !== undefined && arg.x2 !== undefined && arg.y2 !== undefined) {
+  } else if(arg && arg.x !== undefined && arg.y !== undefined && arg.x2 !== undefined && arg.y2 !== undefined) {
     const { x, y, x2, y2 } = arg;
     obj.x = x;
     obj.y = y;
     obj.width = x2 - x;
     obj.height = y2 - y;
     ret = 1;
-  }
-  else if (isPoint(arg) && arg.y !== undefined && arg.width !== undefined && arg.height !== undefined) {
+  } else if(isPoint(arg) && arg.y !== undefined && arg.width !== undefined && arg.height !== undefined) {
     obj.x = parseFloat(arg.x);
     obj.y = parseFloat(arg.y);
     obj.width = parseFloat(arg.width);
     obj.height = parseFloat(arg.height);
     ret = 1;
-  }
-  else if (arg && arg.length >= 4 && arg.slice(0, 4).every(arg => !isNaN(parseFloat(arg)))) {
+  } else if(arg && arg.length >= 4 && arg.slice(0, 4).every(arg => !isNaN(parseFloat(arg)))) {
     let x = arg.shift();
     let y = arg.shift();
     let w = arg.shift();
@@ -457,16 +442,14 @@ export function Rect(arg) {
     obj.width = typeof w === 'number' ? w : parseFloat(w);
     obj.height = typeof h === 'number' ? h : parseFloat(h);
     ret = 4;
-  }
-  else if (arg && arg.length >= 2 && arg.slice(0, 2).every(arg => !isNaN(parseFloat(arg)))) {
+  } else if(arg && arg.length >= 2 && arg.slice(0, 2).every(arg => !isNaN(parseFloat(arg)))) {
     obj.width = typeof x === 'number' ? x : parseFloat(x);
     obj.height = typeof y === 'number' ? y : parseFloat(y);
     ret = 2;
-  }
-  else if (arg instanceof Array) {
+  } else if(arg instanceof Array) {
     let argc;
     let argi = 0;
-    if (arg.length >= 4) {
+    if(arg.length >= 4) {
       argc = typeof x == 'number' ? 2 : 1;
       Point.apply(obj, arg.slice(0, argc));
       argi = argc;
@@ -475,7 +458,7 @@ export function Rect(arg) {
     Size.apply(obj, arg.slice(argi, argc));
     ret = argi + argc;
   }
-  if (obj.round === undefined) {
+  if(obj.round === undefined) {
     Object.defineProperty(obj, 'round', {
       value() {
         return Rect.round(this);
@@ -484,7 +467,7 @@ export function Rect(arg) {
       writable: false
     });
   }
-  if (!(this instanceof Rect)) {
+  if(!(this instanceof Rect)) {
     return obj;
     return ret;
   }
@@ -503,7 +486,7 @@ Rect.prototype.corners = function() {
 };
 Object.assign(Rect.prototype, Point.prototype);
 Object.assign(Rect.prototype, Size.prototype);
-if (Rect.prototype.isSquare === undefined) {
+if(Rect.prototype.isSquare === undefined) {
   Rect.prototype.isSquare = function() {
     return Math.abs(this.width - this.height) < 1;
   };
@@ -572,7 +555,7 @@ Rect.prototype.points = function() {
 };
 Rect.prototype.toCSS = Rect.toCSS;
 Rect.prototype.outset = function(trbl) {
-  if (typeof trbl == 'number') trbl = new TRBL(trbl, trbl, trbl, trbl);
+  if(typeof trbl == 'number') trbl = new TRBL(trbl, trbl, trbl, trbl);
   this.x -= trbl.left;
   this.y -= trbl.top;
   this.width += trbl.left + trbl.right;
@@ -580,8 +563,8 @@ Rect.prototype.outset = function(trbl) {
   return this;
 };
 Rect.prototype.inset = function(trbl) {
-  if (typeof trbl == 'number') trbl = new TRBL(trbl, trbl, trbl, trbl);
-  if (trbl.left + trbl.right < this.width && trbl.top + trbl.bottom < this.height) {
+  if(typeof trbl == 'number') trbl = new TRBL(trbl, trbl, trbl, trbl);
+  if(trbl.left + trbl.right < this.width && trbl.top + trbl.bottom < this.height) {
     this.x += trbl.left;
     this.y += trbl.top;
     this.width -= trbl.left + trbl.right;
@@ -601,21 +584,19 @@ Rect.prototype.pointFromCenter = function(point) {
 function PointList(points) {
   let args = [...arguments];
   let ret = this instanceof PointList ? this : [];
-  if (args.length == 1 && args[0] instanceof Array) args = args[0];
-  if (typeof points === 'string') {
+  if(args.length == 1 && args[0] instanceof Array) args = args[0];
+  if(typeof points === 'string') {
     const matches = [...points.matchAll(/[-.0-9,]+/g)];
-    for (let i = 0; i < matches.length; i++) {
+    for(let i = 0; i < matches.length; i++) {
       const coords = String(matches[i]).split(',');
       ret.push(Point(coords));
     }
+  } else if(args[0] && args[0].length == 2) {
+    for(let i = 0; i < args.length; i++) ret.push(this instanceof PointList ? new Point(args[i]) : Point(args[i]));
+  } else if(isPoint(args[0])) {
+    for(let i = 0; i < args.length; i++) ret.push(this instanceof PointList ? new Point(args[i]) : Point(args[i]));
   }
-  else if (args[0] && args[0].length == 2) {
-    for (let i = 0; i < args.length; i++) ret.push(this instanceof PointList ? new Point(args[i]) : Point(args[i]));
-  }
-  else if (isPoint(args[0])) {
-    for (let i = 0; i < args.length; i++) ret.push(this instanceof PointList ? new Point(args[i]) : Point(args[i]));
-  }
-  if (!(this instanceof PointList)) {
+  if(!(this instanceof PointList)) {
     return ret;
   }
 }
@@ -623,7 +604,7 @@ PointList.prototype = new Array();
 PointList.prototype.push = function() {
   const args = [...arguments];
   args.forEach(arg => {
-    if (!(arg instanceof Point)) arg = new Point(arg);
+    if(!(arg instanceof Point)) arg = new Point(arg);
     Array.prototype.push.call(this, arg);
   });
 };
@@ -647,17 +628,17 @@ PointList.prototype.removeSegment = function(index) {
   let indexes = [PointList.prototype.getLineIndex.call(this, index - 1), PointList.prototype.getLineIndex.call(this, index), PointList.prototype.getLineIndex.call(this, index + 1)];
   let lines = indexes.map(i => PointList.prototype.getLine.call(this, i));
   let point = Line.intersect(lines[0], lines[2]);
-  if (point) {
+  if(point) {
     PointList.prototype.splice.call(this, 0, 2, new Point(point));
   }
 };
 PointList.prototype.toPath = function(options = {}) {
   const { relative = false, close = false } = options;
   let out = '';
-  for (let i = 0; i < this.length; i++) {
+  for(let i = 0; i < this.length; i++) {
     out += (i == 0 ? 'M' : 'L') + this[i].x.toFixed(3) + ',' + this[i].y.toFixed(3) + ' ';
   }
-  if (close) out += 'Z';
+  if(close) out += 'Z';
   return out;
 };
 PointList.prototype.clone = function() {
@@ -696,10 +677,10 @@ PointList.prototype.fromPolar = function(tfn) {
 PointList.fromPolar = plist => PointList.prototype.toPolar.call(plist);
 PointList.prototype.draw = function(ctx, close = false) {
   ctx.to(this[0].x, this[0].y);
-  for (let i = 1; i < this.length; i++) {
+  for(let i = 1; i < this.length; i++) {
     ctx.line(this[i].x, this[i].y);
   }
-  if (close) ctx.line(this[0].x, this[0].y);
+  if(close) ctx.line(this[0].x, this[0].y);
   return this;
 };
 PointList.prototype.area = function() {
@@ -708,7 +689,7 @@ PointList.prototype.area = function() {
   let j;
   let point1;
   let point2;
-  for (i = 0, j = this.length - 1; i < this.length; j = i, i += 1) {
+  for(i = 0, j = this.length - 1; i < this.length; j = i, i += 1) {
     point1 = this[i];
     point2 = this[j];
     area += point1.x * point2.y;
@@ -725,7 +706,7 @@ PointList.prototype.centroid = function() {
   let f;
   let point1;
   let point2;
-  for (i = 0, j = this.length - 1; i < this.length; j = i, i += 1) {
+  for(i = 0, j = this.length - 1; i < this.length; j = i, i += 1) {
     point1 = this[i];
     point2 = this[j];
     f = point1.x * point2.y - point2.x * point1.y;
@@ -740,7 +721,7 @@ PointList.prototype.avg = function() {
   return ret.div(this.length);
 };
 PointList.prototype.minmax = function() {
-  if (!this.length) return {};
+  if(!this.length) return {};
   let ret = {
     x1: this[0].x,
     x2: this[0].x,
@@ -750,13 +731,13 @@ PointList.prototype.minmax = function() {
       return `x ${this.x1.toFixed(3)}->${this.x2.toFixed(3)} y ${this.y1.toFixed(3)}->${this.y2.toFixed(3)}`;
     }
   };
-  for (let i = 1; i < this.length; i++) {
+  for(let i = 1; i < this.length; i++) {
     const x = this[i].x;
     const y = this[i].y;
-    if (x < ret.x1) ret.x1 = x;
-    if (x > ret.x2) ret.x2 = x;
-    if (y < ret.y1) ret.y1 = y;
-    if (y > ret.y2) ret.y2 = y;
+    if(x < ret.x1) ret.x1 = x;
+    if(x > ret.x2) ret.x2 = x;
+    if(y < ret.y1) ret.y1 = y;
+    if(y > ret.y2) ret.y2 = y;
   }
   return ret;
 };
@@ -793,12 +774,12 @@ PointList.prototype.boundingRect = function() {
   return new Rect(this.minmax());
 };
 PointList.prototype.translate = function(x, y) {
-  for (let i = 0; i < this.length; i++) Point.prototype.move.call(this[i], x, y);
+  for(let i = 0; i < this.length; i++) Point.prototype.move.call(this[i], x, y);
   return this;
 };
 PointList.prototype.transform = function(arg) {
   const fn = typeof arg == 'function' ? arg : p => Point.prototype.transform.call(p, arg);
-  for (let i = 0; i < this.length; i++) {
+  for(let i = 0; i < this.length; i++) {
     const p = fn(this[i]);
     this[i].x = p.x;
     this[i].y = p.y;
@@ -828,7 +809,7 @@ PointList.prototype.lines = function(closed = false) {
         next() {
           let value;
           let done = step >= n;
-          if (!done) {
+          if(!done) {
             value = new Line(points[step], points[(step + 1) % points.length]);
             step++;
           }

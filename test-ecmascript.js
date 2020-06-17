@@ -23,7 +23,7 @@ global.console = new Console({
 const testfn = () => true;
 const testtmpl = `this is\na test`;
 let args = process.argv.slice(2);
-if (args.length == 0) args.push('-');
+if(args.length == 0) args.push('-');
 
 let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
 
@@ -54,8 +54,8 @@ const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" view
 
 */
 function dumpFile(name, data) {
-  if (Util.isArray(data)) data = data.join('\n');
-  if (typeof data != 'string') data = '' + data;
+  if(Util.isArray(data)) data = data.join('\n');
+  if(typeof data != 'string') data = '' + data;
 
   fs.writeFileSync(name, data + '\n');
 
@@ -71,10 +71,10 @@ Error.stackTraceLimit = 100;
 global.parser = null;
 
 function main(args) {
-  if (args.length == 0) args.push('./lib/ecmascript/parser.js');
-  for (let file of args) {
+  if(args.length == 0) args.push('./lib/ecmascript/parser.js');
+  for(let file of args) {
     let data, b, ret;
-    if (file == '-') file = '/dev/stdin';
+    if(file == '-') file = '/dev/stdin';
     console.log('file:', file);
     data = fs.readFileSync(file);
     console.log('opened:', data);
@@ -121,20 +121,18 @@ function main(args) {
       console.log('ast:', ast);
 
       //  console.log("nodes:", parser.nodes.map(n =>  [Util.className(n), n.position.toString()]));
-    }
-    catch (err) {
+    } catch(err) {
       error = err;
     }
     files[file] = finish(error);
 
-    if (!error) {
+    if(!error) {
       const output_file = file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
 
       //  console.log("ast:", ast);
       console.log('saving to:', output_file);
       dumpFile(output_file, printAst(ast, parser.comments, printer));
-    }
-    else {
+    } else {
       process.exit(1);
     }
 
@@ -146,14 +144,14 @@ function main(args) {
 
 function finish(err) {
   let fail = !!err;
-  if (fail) {
+  if(fail) {
     err.stack = PathReplacer()('' + err.stack)
       .split(/\n/g)
       .filter(s => !/esfactory/.test(s))
       .join('\n');
   }
 
-  if (err) {
+  if(err) {
     console.log(parser.lexer.currentLine());
     console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
@@ -162,7 +160,7 @@ function finish(err) {
   let t = [];
   //console.log(parser.trace() );
   dumpFile('trace.log', parser.trace());
-  if (fail) {
+  if(fail) {
     console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
   }
   console.log('finish: ' + (fail ? 'error' : 'success'));

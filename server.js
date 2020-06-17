@@ -17,7 +17,7 @@ let sockets = [];
 
 const removeItem = (arr, item) => {
   let i = arr.indexOf(item);
-  if (i != -1) arr.splice(i, 1);
+  if(i != -1) arr.splice(i, 1);
   return arr;
 };
 
@@ -39,7 +39,7 @@ app.ws('/ws', async (ws, req) => {
   const { cookie } = headers;
 
   console.log('WebSocket connected:', path);
-  if (address == '::1') address = 'localhost';
+  if(address == '::1') address = 'localhost';
 
   address = address.replace(/^::ffff:/, '');
   let s = new Socket(ws, { address, port, /*remoteAddress, remotePort,*/ localAddress, localPort, cookie });
@@ -56,8 +56,8 @@ app.ws('/ws', async (ws, req) => {
   ws.on('message', msg => {
     console.log(`message from ${s.toString()}:`, msg);
 
-    for (let sock of sockets) {
-      if (sock.ws === ws) continue;
+    for(let sock of sockets) {
+      if(sock.ws === ws) continue;
 
       console.log('sock:', Util.filterKeys(sock, /^(address|port|cookies)/));
 
@@ -72,13 +72,13 @@ app.ws('/ws', async (ws, req) => {
           },
           sock.ws
         );
-      if (!r) removeItem(sockets, sock);
+      if(!r) removeItem(sockets, sock);
     }
   });
 });
 
 app.use((req, res, next) => {
-  if (!/lib\//.test(req.url)) console.log('Request:', req.url);
+  if(!/lib\//.test(req.url)) console.log('Request:', req.url);
   next();
 });
 
