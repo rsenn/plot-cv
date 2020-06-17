@@ -411,7 +411,7 @@ const AppMain = (window.onload = async () => {
           fn: MakeFitAction(1)
         })
       ]),
-      h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [
+    /*  h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [
         h(ColorWheel, {}),
         h(Slider, {
           min: 0,
@@ -436,7 +436,7 @@ const AppMain = (window.onload = async () => {
             console.log('value:', value);
           }
         })
-      ]),
+      ]),*/
       html`
         <${FileList} files=${projects} onActive=${open} onChange=${chooseDocument} />
       `
