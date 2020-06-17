@@ -87,6 +87,7 @@ const classNames = (...args) => args.filter(arg => typeof arg == 'string' && arg
 
 const MouseEvents = h => ({
   onMouseDown: h,
+
   /*  onBlur: h,*/
   onMouseOut: h,
   onMouseUp: h
@@ -95,12 +96,13 @@ console.log('running');
 //console.log("dom", { Rect, Element, parseSchematic });
 
 window.dom = { Element, SVG };
+
 /* prettier-ignore */
 /*    const CreateSelect = (obj, node = document.body) => {
                             let elem = Select.create(Object.entries(obj));
                             node.insertBefore(elem, node.firstElementChild);
                           };*/
-const utf8Decoder = new TextDecoder("utf-8");
+const utf8Decoder = new TextDecoder('utf-8');
 
 const ListProjects = (window.list = async function(url) {
   let response = await fetch('/files.html', { method: 'get' });
@@ -117,16 +119,14 @@ const ElementToXML = e => {
 };
 
 const LoadFile = async filename => {
-  let xml = await fetch(`/static/${filename}`).then(async res => {
-    return await (await res).text();
-  });
+  let xml = await fetch(`/static/${filename}`).then(async res => await (await res).text());
   //console.log('xml: ', xml.substring(0, 100));
   //let dom = new DOMParser().parseFromString(xml, 'application/xml');
 
   let doc = new EagleDocument(xml);
 
-  if(/\.brd$/.test(filename)) window.board = doc;
-  if(/\.sch$/.test(filename)) window.schematic = doc;
+  if (/\.brd$/.test(filename)) window.board = doc;
+  if (/\.sch$/.test(filename)) window.schematic = doc;
 
   return doc;
 };
@@ -146,8 +146,8 @@ const SaveSVG = (window.save = async function save(filename = projectName) {
 
 const ModifyColors = fn => e => {
   const { type, buttons } = e;
-  if(type.endsWith('down')) {
-    if(!window.c) window.c = SVG.allColors(project.svg);
+  if (type.endsWith('down')) {
+    if (!window.c) window.c = SVG.allColors(project.svg);
     let { c } = window;
     console.log('ModifyColors', fn);
 
@@ -166,7 +166,7 @@ const loadDocument = async (proj, parentElem) => {
 
   proj.renderer = new Renderer(proj.doc, ReactComponent.append);
 
-  if(!proj.renderer || !proj.renderer.render) return;
+  if (!proj.renderer || !proj.renderer.render) return;
 
   let style = { width: '100%', height: '100%', position: 'relative' };
   let svgXml = proj.renderer.render(proj.doc, null, { style });
@@ -189,8 +189,8 @@ const loadDocument = async (proj, parentElem) => {
     const [dimensions, setDimensions] = useState(sizeListener());
     const [aspect, setAspect] = useState(aspectListener());
 
-    if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
-    if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
+    if (sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
+    if (aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
 
     console.log('Fence.render', { dimensions, aspect });
 
@@ -201,6 +201,7 @@ const loadDocument = async (proj, parentElem) => {
     Fence,
     {
       style: {
+
         /*border: '0.001em dashed red'*/
       },
       sizeListener,
@@ -260,7 +261,7 @@ const chooseDocument = async (e, proj, i) => {
     const { type } = e;
     const box = Element.findAll('.file')[i];
     console.log('chooseDocument:', { e, proj, i, box });
-    if(!proj.loaded) {
+    if (!proj.loaded) {
       let data = await loadDocument(proj, box);
       proj.loaded = true;
 
@@ -269,7 +270,8 @@ const chooseDocument = async (e, proj, i) => {
       console.log('loaded:', proj);
     }
     r = proj.loaded;
-  } catch(err) {
+  }
+  catch (err) {
     console.log('err:', err.message, err.stack);
   }
 
@@ -328,7 +330,7 @@ const AppMain = (window.onload = async () => {
   Util(globalThis);
 
   // prettier-ignore
-  Object.assign(window, {BBox, chooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleInterface, EagleNode, EaglePath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, loadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect, RGBA, Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
+  Object.assign(window, { BBox, chooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleInterface, EagleNode, EaglePath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, loadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect, RGBA, Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
 
   const inspectSym = Symbol.for('nodejs.util.inspect.custom');
 
@@ -388,7 +390,7 @@ const AppMain = (window.onload = async () => {
         h(Button, {
           caption: '📂',
           fn: e => {
-            if(e.type.endsWith('down')) {
+            if (e.type.endsWith('down')) {
               console.log('file list push', e);
               open(!open());
             }
@@ -411,7 +413,8 @@ const AppMain = (window.onload = async () => {
           fn: MakeFitAction(1)
         })
       ]),
-    /*  h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [
+
+      /*  h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [
         h(ColorWheel, {}),
         h(Slider, {
           min: 0,
@@ -450,14 +453,15 @@ const AppMain = (window.onload = async () => {
   TouchListener(
     event => {
       //  if(event.index > 0 && event.buttons > 0) console.log('touch', event, container);
-      if(!move) {
+      if (!move) {
         let container = Element.find('#main');
 
         move = Element.moveRelative(container);
-      } else if(event.index > 0) {
+      }
+      else if (event.index > 0) {
         let rel = new Point(event);
-        if(move) {
-          if(event.buttons > 0) move(rel.x, rel.y);
+        if (move) {
+          if (event.buttons > 0) move(rel.x, rel.y);
           else move = move.jump();
         }
       }
@@ -480,13 +484,14 @@ const AppMain = (window.onload = async () => {
 
     let t = window.transform;
 
-    if(!t.scaling) t.scale(zoom, zoom);
+    if (!t.scaling) t.scale(zoom, zoom);
     else {
       t.scaling.x = zoom;
       t.scaling.y = zoom;
     }
 
     window.transform = new TransformationList(t);
+
     /*    const transform = ` scale(${zoom},${zoom}) `;
     const origin = `${pos.toString(1, 'px', ' ')}`;
     let list = [...Element.skip(target)].find(p => p.classList.contains('list'));
@@ -506,7 +511,7 @@ const AppMain = (window.onload = async () => {
 
   console.log(Util.getGlobalObject());
 
-  for(let path of [...Element.findAll('path')]) {
+  for (let path of [...Element.findAll('path')]) {
     let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
   }
 });
