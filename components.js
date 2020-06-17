@@ -1,4 +1,5 @@
-import { h, html, render, Component, useState, useCallback } from '../modules/htm/preact/standalone.mjs';
+import { h, html, render, Component, useState, useCallback, useRef, useEffect, useLayoutEffect } from '../modules/htm/preact/standalone.mjs';
+//import React from '../modules/preact/dist/preact.mjs';
 
 export function classNames() {
   var classes = [];
@@ -245,7 +246,17 @@ export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className 
         children
       );
 
-export const AspectRatioBox = ({ aspect = 1.0, children, insideClassName, outsideClassName, outsideProps = {}, style, ...props } /* console.log('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/) =>
+export const AspectRatioBox = (
+  {
+    aspect = 1.0,
+    children,
+    insideClassName,
+    outsideClassName,
+    outsideProps = {},
+    style,
+    ...props
+  } /* console.log('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/
+) =>
   h(React.Fragment, {}, [
     h(
       'div',
@@ -265,7 +276,21 @@ export const AspectRatioBox = ({ aspect = 1.0, children, insideClassName, outsid
     )
   ]);
 
-export const SizedAspectRatioBox = ({ width, height, style, className, children, outsideClassName, insideClassName, insideProps, outsideProps = {}, sizeClassName, sizeProps = {}, onClick, ...props }) =>
+export const SizedAspectRatioBox = ({
+  width,
+  height,
+  style,
+  className,
+  children,
+  outsideClassName,
+  insideClassName,
+  insideProps,
+  outsideProps = {},
+  sizeClassName,
+  sizeProps = {},
+  onClick,
+  ...props
+}) =>
   h(
     'div',
     {
@@ -309,6 +334,214 @@ export const TransformedElement = ({ type = 'div', aspect, listener, style = { p
   );
 };
 
+export const Slider = ({ min = 0, max = 100, value: initialValue = 0, step = 1, name = 'slider', orient = 'horizontal', label, onChange = value => {}, style = {}, length, ...props }) => {
+  const [value, setValue] = useState(initialValue);
+  const onInput = e => {
+    const { target } = e;
+
+    setValue(target.value);
+    onChange(target.value);
+  };
+  label = label || name;
+  let dim = length ? { [orient == 'horizontal' ? 'width' : 'height']: length } : {};
+
+  return h(
+    'div',
+    { style: { display: 'inline-flex', flexBasis: '100%', flexFlow: orient == 'horizontal' ? 'row' : 'column', justifyContent: 'stretch', alignItems: 'stretch', fontSize: '0.8em', ...style } },
+    [
+      //h('label', { for: name }, label),
+      label,
+      h('input', {
+        name,
+        type: 'range',
+        min,
+        max,
+        orient,
+        style: { WebkitAppearance: `slider-${orient}`, display: 'inline', width: 40, flex: '1 1 auto', ...dim },
+        ...props,
+        value,
+        onInput
+      }),
+      h('input', {
+        name,
+        type: 'number',
+        min,
+        max,
+        orient,
+        style: { MozAppearance: `textfield`, WebkitAppearance: 'none', margin: 0, display: 'inline', width: 40, textAlign: 'right' },
+        ...props,
+        value,
+        onInput
+      })
+    ]
+  );
+};
+
+export const Canvas = ({ onInit, ...props }) => {
+  const [drawing, setDrawing] = useState(false);
+  const [width, setWidth] = useState(props.width);
+  const [height, setHeight] = useState(props.height);
+  const canvasRef = useRef();
+  const ctx = useRef();
+
+  useEffect(() => {
+    console.log('canvasRef.current', canvasRef.current);
+    ctx.current = canvasRef.current.getContext('2d');
+    console.log('ctx.current', ctx.current);
+    const { offsetLeft: x, offsetTop: y } = canvasRef.current;
+
+    if(typeof onInit == 'function') onInit(ctx.current, canvasRef.current, { width, height, x, y });
+  }, []);
+
+  /*  const [windowWidth, windowHeight] = useWindowSize(() => {
+    setWidth(window.innerWidth)
+    setHeight(window.innerHeight)
+  })*/
+
+  function handleMouseMove(e) {
+    // actual coordinates
+    const coords = [e.clientX - canvasRef.current.offsetLeft, e.clientY - canvasRef.current.offsetTop];
+    if(drawing) {
+      ctx.current.lineTo(...coords);
+      ctx.current.stroke();
+    }
+    if(props.handleMouseMove) {
+      props.handleMouseMove(...coords);
+    }
+  }
+
+  function startDrawing(e) {
+    ctx.current.lineJoin = 'round';
+    ctx.current.lineCap = 'round';
+    ctx.current.lineWidth = 1;
+    ctx.current.strokeStyle = props.color;
+    ctx.current.beginPath();
+    // actual coordinates
+    ctx.current.moveTo(e.clientX - canvasRef.current.offsetLeft, e.clientY - canvasRef.current.offsetTop);
+    setDrawing(true);
+  }
+
+  function stopDrawing() {
+    ctx.current.closePath();
+    setDrawing(false);
+  }
+
+  return h(
+    'canvas',
+    {
+      ref: canvasRef,
+      width,
+      height,
+      onMouseDown: startDrawing,
+      onMouseUp: stopDrawing,
+      onMouseOut: stopDrawing,
+      onMouseMove: handleMouseMove
+    },
+    []
+  );
+};
+
+export const ColorWheel = ({ radius = 50, ...props }) => {
+  let data;
+  let left, top;
+  return h(Canvas, {
+    width: radius * 2,
+    height: radius * 2,
+    onInit: (ctx, canvas, size) => {
+      left = size.x;
+      top = size.y;
+
+      drawCircle();
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.arc(50, 50, 49, 0, Math.ceil(2 * Math.PI));
+      ctx.stroke();
+
+      function drawCircle() {
+        let radius = 50;
+        let image = ctx.createImageData(2 * radius, 2 * radius);
+        data = image.data;
+
+        for(let x = -radius; x < radius; x++) {
+          for(let y = -radius; y < radius; y++) {
+            let [r, phi] = xy2polar(x, y);
+
+            if(r > radius) {
+              // skip all (x,y) coordinates that are outside of the circle
+              continue;
+            }
+
+            let deg = rad2deg(phi);
+
+            // Figure out the starting index of this pixel in the image data array.
+            let rowLength = 2 * radius;
+            let adjustedX = x + radius; // convert x from [-50, 50] to [0, 100] (the coordinates of the image data array)
+            let adjustedY = y + radius; // convert y from [-50, 50] to [0, 100] (the coordinates of the image data array)
+            let pixelWidth = 4; // each pixel requires 4 slots in the data array
+            let index = (adjustedX + adjustedY * rowLength) * pixelWidth;
+
+            let hue = deg;
+            let saturation = r / radius;
+            let value = 1.0;
+
+            let [red, green, blue] = hsv2rgb(hue, saturation, value);
+            let alpha = 255;
+
+            data[index] = red;
+            data[index + 1] = green;
+            data[index + 2] = blue;
+            data[index + 3] = alpha;
+          }
+        }
+
+        ctx.putImageData(image, 0, 0);
+      }
+
+      function xy2polar(x, y) {
+        let r = Math.sqrt(x * x + y * y);
+        let phi = Math.atan2(y, x);
+        return [r, phi];
+      }
+
+      // rad in [-π, π] range
+      // return degree in [0, 360] range
+      function rad2deg(rad) {
+        return ((rad + Math.PI) / (2 * Math.PI)) * 360;
+      }
+
+      // hue in range [0, 360]
+      // saturation, value in range [0,1]
+      // return [r,g,b] each in range [0,255]
+      // See: https://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV
+      function hsv2rgb(hue, saturation, value) {
+        let chroma = value * saturation;
+        let hue1 = hue / 60;
+        let x = chroma * (1 - Math.abs((hue1 % 2) - 1));
+        let r1, g1, b1;
+        if(hue1 >= 0 && hue1 <= 1) {
+          [r1, g1, b1] = [chroma, x, 0];
+        } else if(hue1 >= 1 && hue1 <= 2) {
+          [r1, g1, b1] = [x, chroma, 0];
+        } else if(hue1 >= 2 && hue1 <= 3) {
+          [r1, g1, b1] = [0, chroma, x];
+        } else if(hue1 >= 3 && hue1 <= 4) {
+          [r1, g1, b1] = [0, x, chroma];
+        } else if(hue1 >= 4 && hue1 <= 5) {
+          [r1, g1, b1] = [x, 0, chroma];
+        } else if(hue1 >= 5 && hue1 <= 6) {
+          [r1, g1, b1] = [chroma, 0, x];
+        }
+
+        let m = value - chroma;
+        let [r, g, b] = [r1 + m, g1 + m, b1 + m];
+
+        // Change r,g,b values from [0,1] to [0,255]
+        return [255 * r, 255 * g, 255 * b];
+      }
+    }
+  });
+};
+
 export default {
   Overlay,
   Container,
@@ -324,5 +557,8 @@ export default {
   Panel,
   AspectRatioBox,
   WrapInAspectBox,
-  SizedAspectRatioBox
+  SizedAspectRatioBox,
+  Canvas,
+  ColorWheel,
+  Slider
 };

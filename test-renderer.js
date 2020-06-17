@@ -10,7 +10,7 @@ function testRenderSchematic() {
   let renderer = new Renderer(doc, ReactComponent.append);
   let output = renderer.render(doc, null, 0);
   // console.log('output:', output);
-  fs.writeFileSync('schematic.svg', ReactComponent.stringify(output));
+  fs.writeFileSync('schematic.svg', ReactComponent.toString(output));
 }
 
 function testRenderBoard() {
@@ -20,7 +20,7 @@ function testRenderBoard() {
 
   //console.log('output:', output);
 
-  fs.writeFileSync('board.svg', ReactComponent.stringify(output));
+  fs.writeFileSync('board.svg', ReactComponent.toString(output));
 }
 
 testRenderSchematic();

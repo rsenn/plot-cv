@@ -15,7 +15,7 @@ import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
 import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './modules/htm/preact/standalone.mjs';
-import components, { Chooser, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement } from './static/components.js';
+import components, { Chooser, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider } from './static/components.js';
 import { WebSocketClient } from './lib/websocket-client.js';
 import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
 import {
@@ -59,7 +59,7 @@ const { Align, Anchor, CSS, CSSTransformSetters, Element, ElementPosProps, Eleme
   ...dom,
   ...geom
 };
-Object.assign(window, { React, ReactComponent, WebSocketClient, html }, dom, geom, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token }, { Chooser });
+Object.assign(window, { React, ReactComponent, WebSocketClient, html }, dom, geom, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent }, { Chooser });
 
 let currentProj = trkl.property(window, 'project');
 let open = trkl();
@@ -147,8 +147,10 @@ const SaveSVG = (window.save = async function save(filename = projectName) {
 const ModifyColors = fn => e => {
   const { type, buttons } = e;
   if(type.endsWith('down')) {
-    console.log('ModifyColors', e);
-    if(!window.c) window.c = SVG.allColors('svg');
+    if(!window.c) window.c = SVG.allColors(project.svg);
+    let { c } = window;
+    console.log('ModifyColors', fn);
+
     c.dump();
     fn(c);
   }
@@ -239,7 +241,10 @@ const loadDocument = async (proj, parentElem) => {
   });
 
   // proj.svg.setAttribute('data-aspect', proj.aspectRatio);
-  let css = size.toCSS({ width: 'mm', height: 'mm' });
+  let css = size.div(0.26458333333719).toCSS({ width: 'px', height: 'px' });
+
+  window.size = css;
+  //  console.log("css:", css);
   /*  Object.assign(proj.svg.style, {
     'min-width': `${size.width}mm`
   });
@@ -323,7 +328,7 @@ const AppMain = (window.onload = async () => {
   Util(globalThis);
 
   // prettier-ignore
-  Object.assign(window, {BBox, chooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleInterface, EagleNode, EaglePath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, loadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect, RGBA, Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain });
+  Object.assign(window, {BBox, chooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleInterface, EagleNode, EaglePath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, loadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect, RGBA, Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
 
   const inspectSym = Symbol.for('nodejs.util.inspect.custom');
 
@@ -406,12 +411,16 @@ const AppMain = (window.onload = async () => {
           fn: MakeFitAction(1)
         })
       ]),
+      h(ColorWheel, {}),
+      h(Slider, { min: 0, max: 100, orient: 'horizontal', name: 'saturation', length: '100px',  onChange: value => { console.log("value:", value); } }),
+      h(Slider, { min: 0, max: 100, orient: 'vertical', name: 'lightness',  length: '100px', onChange: value => { console.log("value:", value); } }),
       html`
         <${FileList} files=${projects} onActive=${open} onChange=${chooseDocument} />
       `
     ],
     Element.find('#preact')
   );
+
   let move;
   container = Element.find('#main');
 
