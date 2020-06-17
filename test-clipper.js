@@ -80,6 +80,7 @@ function testShape() {
     roundPrecision: 0.25
   });
   let points = new PointList(outset.paths[0].map(({ X, Y }) => new Point(X, Y)));
+
   /*  let inset = shape.offset(-10, {
     jointType: 'jtSquare',
     endType: 'etOpenSquare',

@@ -18,7 +18,7 @@ let pathStr =
 let path = parseSVG(pathStr);
 
 let translate = (args.shift() + '').split(',').map(n => parseFloat(n));
-if(translate.length == 0 || isNaN(translate[0])) translate = [0, 0];
+if (translate.length == 0 || isNaN(translate[0])) translate = [0, 0];
 
 console.log('translate:', new Point([...translate]));
 makeAbsolute(path);
@@ -32,26 +32,26 @@ let t = new Matrix();
 t.init_translate(translate[0], translate[1]);
 console.log(`t:` + t.init_translate, translate);
 
-for(let i = 0; i < path.length; i++) {
+for (let i = 0; i < path.length; i++) {
   const c = path[i];
   let { code, command, relative } = c;
 
-  if(relative && i == 0) relative = false;
+  if (relative && i == 0) relative = false;
 
   let { x, y, x0, y0, x1, y1, x2, y2, rx, ry } = c;
   const prec = 5;
 
-  if(!relative) {
+  if (!relative) {
     x0 = 0;
     y0 = 0;
   }
 
-  if(x !== undefined) x = +(x - x0).toFixed(prec);
-  if(y !== undefined) y = +(y - y0).toFixed(prec);
-  if(x1 !== undefined) x1 = +(x1 - x0).toFixed(prec);
-  if(x2 !== undefined) x2 = +(x2 - x0).toFixed(prec);
-  if(y1 !== undefined) y1 = +(y1 - y0).toFixed(prec);
-  if(y2 !== undefined) y2 = +(y2 - y0).toFixed(prec);
+  if (x !== undefined) x = +(x - x0).toFixed(prec);
+  if (y !== undefined) y = +(y - y0).toFixed(prec);
+  if (x1 !== undefined) x1 = +(x1 - x0).toFixed(prec);
+  if (x2 !== undefined) x2 = +(x2 - x0).toFixed(prec);
+  if (y1 !== undefined) y1 = +(y1 - y0).toFixed(prec);
+  if (y2 !== undefined) y2 = +(y2 - y0).toFixed(prec);
 
   console.log(`x:`, { x, x1, x2, rx });
   console.log(`y:`, { y, y1, y2, ry });
@@ -59,9 +59,9 @@ for(let i = 0; i < path.length; i++) {
   let points = [new Point(x, y), new Point(x1, y1), new Point(x2, y2)];
   console.log(`path[${i}]:`, c);
 
-  if(!relative) points = points.map(p => (p.x !== undefined ? t.transform_point({ x: p.x, y: p.y }) : p));
+  if (!relative) points = points.map(p => (p.x !== undefined ? t.transform_point({ x: p.x, y: p.y }) : p));
 
-  if(command == 'A') points[0] = new Point(x, y);
+  if (command == 'A') points[0] = new Point(x, y);
 
   points.push(new Point(rx, ry));
 
@@ -69,41 +69,41 @@ for(let i = 0; i < path.length; i++) {
   points = points.map(p => (p.x !== undefined ? { x: p.x.toFixed(3), y: p.y.toFixed(3) } : p));
 
   switch (code) {
-    case 'M': {
-      newPath.to(points[0].x, points[0].y);
+  case 'M': {
+    newPath.to(points[0].x, points[0].y);
+    break;
+  }
+  case 'A': {
+    const { xAxisRotation, largeArc, sweep } = c;
+    newPath.arc(points[3].x, points[3].y, xAxisRotation, largeArc ? 1 : 0, sweep ? 1 : 0, points[0].x, points[0].y);
+    break;
+  }
+  case 'H': {
+    newPath.hline(points[0].x);
+    break;
+  }
+  case 'V': {
+    newPath.hline(points[0].y);
+    break;
+  }
+  case 'L':
+    {
+      newPath.line(points[0].x, points[0].y);
       break;
     }
-    case 'A': {
-      const { xAxisRotation, largeArc, sweep } = c;
-      newPath.arc(points[3].x, points[3].y, xAxisRotation, largeArc ? 1 : 0, sweep ? 1 : 0, points[0].x, points[0].y);
-      break;
-    }
-    case 'H': {
-      newPath.hline(points[0].x);
-      break;
-    }
-    case 'V': {
-      newPath.hline(points[0].y);
-      break;
-    }
-    case 'L':
-      {
-        newPath.line(points[0].x, points[0].y);
-        break;
-      }
-      '';
-    case 'C': {
-      newPath.bezier3(points[1].x, points[1].y, points[2].x, points[2].y, points[0].x, points[0].y);
-      break;
-    }
-    case 'Q': {
-      newPath.bezier2(points[1].x, points[1].y, points[0].x, points[0].y);
-      break;
-    }
-    case 'Z': {
-      newPath.close();
-      break;
-    }
+    '';
+  case 'C': {
+    newPath.bezier3(points[1].x, points[1].y, points[2].x, points[2].y, points[0].x, points[0].y);
+    break;
+  }
+  case 'Q': {
+    newPath.bezier2(points[1].x, points[1].y, points[0].x, points[0].y);
+    break;
+  }
+  case 'Z': {
+    newPath.close();
+    break;
+  }
   }
 }
 const data = newPath.str().trim();
@@ -113,9 +113,9 @@ process.stdout.write('\n' + data + '\n');
 
 function* dataToPoints(d, steps = 10) {
   const pointData = PointAtLength(d);
-  var len = pointData.length();
+  let len = pointData.length();
 
-  for(var i = 0; i <= steps; i++) {
+  for (let i = 0; i <= steps; i++) {
     const point = new Point(pointData.at((i / steps) * len));
 
     yield point.round(0.001);

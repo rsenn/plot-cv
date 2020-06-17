@@ -19,7 +19,7 @@ global.console = new Console({
 });
 
 let args = process.argv.slice(2);
-if(args.length == 0) args.push('-');
+if (args.length == 0) args.push('-');
 
 let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
 
@@ -30,11 +30,11 @@ Error.stackTraceLimit = 100;
 global.lexer = null;
 
 function main(args) {
-  if(args.length == 0) args.push('./components.js');
+  if (args.length == 0) args.push('./components.js');
 
-  for(let file of args) {
+  for (let file of args) {
     let data, b, ret;
-    if(file == '-') file = '/dev/stdin';
+    if (file == '-') file = '/dev/stdin';
     console.log('file:', file);
     data = fs.readFileSync(file);
     console.log('opened:', data);
@@ -42,7 +42,7 @@ function main(args) {
 
     global.lexer = new Lexer(data.toString(), file);
     try {
-      while((token = lexer.lex())) {
+      while ((token = lexer.lex())) {
         //      const { type, value, length, start, end } = token;
         //        const position = token.position.start.toString();
 
@@ -51,7 +51,8 @@ function main(args) {
         //console.log(token.position.start.toString());
       }
       //  console.log("nodes:", parser.nodes.map(n =>  [Util.className(n), n.position.toString()]));
-    } catch(err) {
+    }
+    catch (err) {
       error = err;
       const { msg } = error;
       console.log('ERROR:', error);
@@ -61,6 +62,6 @@ function main(args) {
   }
 
   //console.log("files:", files);
-  var success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
+  let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
   process.exit(Number(files.length == 0));
 }

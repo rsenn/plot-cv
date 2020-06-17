@@ -12,6 +12,7 @@ global.console = new Console({
   stderr: process.stderr,
   inspectOptions: { depth: 3, colors: true }
 });
+
 /*
 class Node extends (Util.proxyObject) {
   constructor(root, handler) {
@@ -43,14 +44,14 @@ const proxyObject = (root, handler) => {
 
           console.log('get ', { key, prop });
 
-          if(key == 'attributes') return prop;
+          if (key == 'attributes') return prop;
 
-          if(key !== 'attributes' && (Util.isObject(prop) || Util.isArray(prop))) return new node([...path, key]);
+          if (key !== 'attributes' && (Util.isObject(prop) || Util.isArray(prop))) return new node([...path, key]);
 
           return handler && handler.get ? handler.get(prop, key) : prop;
         },
         ownKeys(target) {
-          if('attributes' in value) {
+          if ('attributes' in value) {
             console.log('ownKeys', Object.keys(value.attributes));
 
             return Object.keys(value.attributes);
@@ -97,7 +98,7 @@ async function main() {
   });
   console.log('result:', result);
 
-  for(let { path, value } of result) {
+  for (let { path, value } of result) {
     const {
       tagName: type,
       attributes: { name }

@@ -133,13 +133,13 @@ const layerColors = {
 
 const findAllKeys = color => {
   let keys = [];
-  for(let name in layerColors) {
+  for (let name in layerColors) {
     const c = layerColors[name];
-    if(c == color) keys.push(name);
+    if (c == color) keys.push(name);
   }
   return keys;
 };
-for(let name in layerColors) {
+for (let name in layerColors) {
   const c = RGBA.fromString(layerColors[name]).hex();
   layerColors[name] = c;
 }
@@ -147,7 +147,7 @@ const allColors = Util.unique(Object.values(layerColors));
 console.log('allColors: ' + allColors);
 let keyList = [];
 
-for(let color of allColors) {
+for (let color of allColors) {
   let keys = findAllKeys(color);
   keyList.push(keys);
   //
@@ -175,11 +175,11 @@ console.log('palette.length:', palette.length);
 console.log('keyList.length:', keyList.length);
 
 let s = '';
-for(let i = 0; i < keyList.length; i++) {
+for (let i = 0; i < keyList.length; i++) {
   console.log(`keys[${i}]:`, keyList[i]);
 
-  for(let key of keyList[i]) {
-    if(s != '') s += ', ';
+  for (let key of keyList[i]) {
+    if (s != '') s += ', ';
     s += `${key}: palette[${i}]`;
   }
 }

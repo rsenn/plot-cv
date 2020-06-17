@@ -5,12 +5,13 @@ const bpgdec = require("./static/wasm/bpgdec.js");
 console.error("bpgdec: ", bpgdec);
 
 */
-'use strict';
+
 const fs = require('fs');
 const bytes = fs.readFileSync('./static/wasm/bpgdec.wasm');
 console.log('bytes: ', bytes);
 
-var importObject = {
+let importObject = {
+
   /* imports: { imported_func: arg => console.log(arg) },
 module: {},
  instance: {},

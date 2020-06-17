@@ -4,24 +4,22 @@ import { h, html, render, Component, useState, useCallback, useRef, useEffect, u
 export function classNames() {
   let classes = [];
 
-  for (let i = 0; i < arguments.length; i++) {
+  for(let i = 0; i < arguments.length; i++) {
     let arg = arguments[i];
-    if (!arg) continue;
+    if(!arg) continue;
 
     let argType = typeof arg;
 
-    if (argType === 'string' || argType === 'number') {
+    if(argType === 'string' || argType === 'number') {
       classes.push(arg);
-    }
-    else if (Array.isArray(arg) && arg.length) {
+    } else if(Array.isArray(arg) && arg.length) {
       let inner = classNames.apply(null, arg);
-      if (inner) {
+      if(inner) {
         classes.push(inner);
       }
-    }
-    else if (argType === 'object') {
-      for (let key in arg) {
-        if (hasOwn.call(arg, key) && arg[key]) {
+    } else if(argType === 'object') {
+      for(let key in arg) {
+        if(hasOwn.call(arg, key) && arg[key]) {
           classes.push(key);
         }
       }
@@ -32,7 +30,7 @@ export function classNames() {
 }
 
 export const MouseHandler = callback => e => {
-  if (e.type) {
+  if(e.type) {
     const pressed = e.type.endsWith('down');
     callback(e, pressed);
   }
@@ -51,7 +49,7 @@ export const Overlay = ({ className = 'overlay', active = false, onPush, text, c
   const events = MouseEvents(
     MouseHandler((e, state) => {
       const prev = pushed;
-      if (!e.type.endsWith('down') && !e.type.endsWith('up')) return;
+      if(!e.type.endsWith('down') && !e.type.endsWith('up')) return;
       setPushed(state);
       //  console.log(`overlay pushed=${pushed} active=${active}:`, e.target);
       return typeof onPush == 'function' ? onPush(e, state) : null;
@@ -77,7 +75,7 @@ export const Chooser = ({ className = 'list', itemClass = 'item', itemComponent 
   const pushHandler = i => (e, state) => {
     const prev = active;
     state == true && setActive(i);
-    if (i != prev && e.type.endsWith('down')) onChange(e, items[i], i);
+    if(i != prev && e.type.endsWith('down')) onChange(e, items[i], i);
     onPush(e, i, state);
   };
   const bar = html``;
@@ -174,7 +172,7 @@ export const BoardIcon = props => html`
 
 export const File = ({ label, i, key, className = 'file', onPush, signal, data, doc, ...props }) => {
   const [loaded, setLoaded] = useState(NaN);
-  if (signal) signal.subscribe(data => setLoaded(data.percent));
+  if(signal) signal.subscribe(data => setLoaded(data.percent));
   onPush =
     onPush ||
     (async state => {
@@ -186,7 +184,7 @@ export const File = ({ label, i, key, className = 'file', onPush, signal, data, 
   let style = { minWidth: '40px', width: '40px', height: '40px' };
   let icon = /brd$/i.test(id || className) ? h(BoardIcon, { style }) : h(SchematicIcon, {});
   icon = h('div', { style }, icon);
-  if (id) {
+  if(id) {
     name = id;
     id = (id + '').replace(/[^._A-Za-z0-9]/g, '-');
   }
@@ -218,8 +216,8 @@ export const FileList = ({ files, onChange, onActive, ...props }) => {
         itemClass="file hcenter"
         items=${items}
         onChange=${(...args) => {
-    onChange(...args);
-  }}
+          onChange(...args);
+        }}
         ...${props}
       />
     </div>
@@ -231,23 +229,23 @@ export const Panel = (name, children) => html`<${Container} className="${name}">
 export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className }, children) =>
   enable
     ? h(
-      SizedAspectRatioBox,
-      {
-        className,
-        width,
-        aspect,
-        style: { overflow: 'visible' }
-      },
-      children
-    )
+        SizedAspectRatioBox,
+        {
+          className,
+          width,
+          aspect,
+          style: { overflow: 'visible' }
+        },
+        children
+      )
     : h(
-      'div',
-      {
-        className,
-        style: { width }
-      },
-      children
-    );
+        'div',
+        {
+          className,
+          style: { width }
+        },
+        children
+      );
 
 export const AspectRatioBox = (
   {
@@ -320,10 +318,10 @@ export const TransformedElement = ({ type = 'div', aspect, listener, style = { p
   const [transform, setTransform] = useState(new TransformationList());
 
   //console.log('TransformedElement:', { aspect });
-  if (listener && listener.subscribe)
+  if(listener && listener.subscribe)
     listener.subscribe(value => {
       // console.log('TransformedElement setValue', value+'');
-      if (value !== undefined) setTransform(value);
+      if(value !== undefined) setTransform(value);
     });
 
   return h(
@@ -394,7 +392,7 @@ export const Canvas = ({ onInit, ...props }) => {
     console.log('ctx.current', ctx.current);
     const { offsetLeft: x, offsetTop: y } = canvasRef.current;
 
-    if (typeof onInit == 'function') onInit(ctx.current, canvasRef.current, { width, height, x, y });
+    if(typeof onInit == 'function') onInit(ctx.current, canvasRef.current, { width, height, x, y });
   }, []);
 
   /*  const [windowWidth, windowHeight] = useWindowSize(() => {
@@ -405,11 +403,11 @@ export const Canvas = ({ onInit, ...props }) => {
   function handleMouseMove(e) {
     // actual coordinates
     const coords = [e.clientX - canvasRef.current.offsetLeft, e.clientY - canvasRef.current.offsetTop];
-    if (drawing) {
+    if(drawing) {
       ctx.current.lineTo(...coords);
       ctx.current.stroke();
     }
-    if (props.handleMouseMove) {
+    if(props.handleMouseMove) {
       props.handleMouseMove(...coords);
     }
   }
@@ -466,11 +464,11 @@ export const ColorWheel = ({ radius = 50, ...props }) => {
         let image = ctx.createImageData(2 * radius, 2 * radius);
         data = image.data;
 
-        for (let x = -radius; x < radius; x++) {
-          for (let y = -radius; y < radius; y++) {
+        for(let x = -radius; x < radius; x++) {
+          for(let y = -radius; y < radius; y++) {
             let [r, phi] = xy2polar(x, y);
 
-            if (r > radius) {
+            if(r > radius) {
               // skip all (x,y) coordinates that are outside of the circle
               continue;
             }
@@ -522,22 +520,17 @@ export const ColorWheel = ({ radius = 50, ...props }) => {
         let hue1 = hue / 60;
         let x = chroma * (1 - Math.abs((hue1 % 2) - 1));
         let r1, g1, b1;
-        if (hue1 >= 0 && hue1 <= 1) {
+        if(hue1 >= 0 && hue1 <= 1) {
           [r1, g1, b1] = [chroma, x, 0];
-        }
-        else if (hue1 >= 1 && hue1 <= 2) {
+        } else if(hue1 >= 1 && hue1 <= 2) {
           [r1, g1, b1] = [x, chroma, 0];
-        }
-        else if (hue1 >= 2 && hue1 <= 3) {
+        } else if(hue1 >= 2 && hue1 <= 3) {
           [r1, g1, b1] = [0, chroma, x];
-        }
-        else if (hue1 >= 3 && hue1 <= 4) {
+        } else if(hue1 >= 3 && hue1 <= 4) {
           [r1, g1, b1] = [0, x, chroma];
-        }
-        else if (hue1 >= 4 && hue1 <= 5) {
+        } else if(hue1 >= 4 && hue1 <= 5) {
           [r1, g1, b1] = [x, 0, chroma];
-        }
-        else if (hue1 >= 5 && hue1 <= 6) {
+        } else if(hue1 >= 5 && hue1 <= 6) {
           [r1, g1, b1] = [chroma, 0, x];
         }
 

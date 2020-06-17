@@ -19,7 +19,7 @@ Point.prototype.atan2 = function() {
   return Math.atan2(this.x, this.y);
 };
 Object.defineProperty(Point.prototype, 'distance', {
-  get: function() {
+  get() {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   },
   enumerable: true
@@ -92,9 +92,9 @@ function testPointVector() {
 
 global.test_array = [1, 2, 3, 4, 5, 6];
 global.process = function(contours, hier) {
-  var areas = [];
+  let areas = [];
 
-  var outlines = {
+  let outlines = {
     contours,
     hier
   };
@@ -103,6 +103,7 @@ global.process = function(contours, hier) {
   let c = contours[0];
 
   let orig = imgOriginal;
+
   /*  let hull = c.convexHull(false, false);
   let defects = null; //c.convexityDefects(hull);
 
@@ -172,11 +173,11 @@ global.process = function(contours, hier) {
   function processContours(contours) {
     contours.sort((a, b) => a.length - b.length);
     contours = contours.filter(c => c.length >= 4);
-    for(var i = 0; i < contours.length; i++) {
+    for (let i = 0; i < contours.length; i++) {
       const [next, prev, child, parent] = hier[i];
-      var list = new PointList(contours[i]);
-      var bbox = list.bbox();
-      var rect = new Rect(bbox);
+      let list = new PointList(contours[i]);
+      let bbox = list.bbox();
+      let rect = new Rect(bbox);
       contours[i].area = rect.area;
       contours[i].id = i;
       contours[i].bbox = bbox;
@@ -209,6 +210,7 @@ global.process = function(contours, hier) {
   polygons.push(polygons[0].sum({ x: 320, y: 0 }));
   polygons.push(polygons[0].sum({ x: 320, y: 240 }));
   polygons.push(polygons[0].sum({ x: 0, y: 240 }));
+
   /*
   drawPolygon(polygons[0], new RGBA(255, 255, 0), 3);
   drawPolygon(polygons[1], new RGBA(0, 255, 0), 3);
@@ -220,20 +222,21 @@ global.process = function(contours, hier) {
 */
   const do_log = false;
 
-  if(do_log) {
+  if (do_log) {
     console.log(`polygons: [\n  ${polygons.join(',\n  ')}\n]`);
 
     console.log('PROCESS contours: ', contours.map(c => '[' + c.map(pt => `{x:${pt.x},y:${pt.y}}`).join(', ') + ']').join(', '));
     console.log('PROCESS hier: ', '[' + hier.map(h => `[${h.join(',')}]`).join(', '));
   }
 };
-var ctor = Point.prototype.constructor;
+let ctor = Point.prototype.constructor;
 console.log('Classes: ', inspect(lib));
 console.log('Point: ', inspect(Point));
 console.log('Contour: ' + inspect(Contour));
 console.log('typeof(Point.prototype.constructor): ', typeof Point.prototype.constructor == 'function');
 console.log('typeof(Point): ', typeof Point);
 console.log('ctor.name: ', ctor.name);
+
 /*console.log("Point.prototype: ", Point.prototype);
 console.log("Point.prototype.constructor: ", Point.prototype.constructor);
 */

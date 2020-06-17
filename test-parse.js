@@ -37,10 +37,10 @@ console.log('parsed:', result);
 let clex = new Lexer(src, filename);
 let cparse = new Parser(clex);
 
-for(let [name, rule] of grammar.rules.entries()) {
+for (let [name, rule] of grammar.rules.entries()) {
   let ok = rule.match(cparse);
 
-  if(ok != -1 && ok) {
+  if (ok != -1 && ok) {
     console.log('ok:', ok);
     console.log(`rule[${ok}]:`, rule[ok]);
 
@@ -49,6 +49,7 @@ for(let [name, rule] of grammar.rules.entries()) {
 }
 
 console.log('cparse:', cparse);
+
 /*
 for(let { tok, str } of lex) {
   tok = (tok + '').replace(/([\n\r\t])/g, '\\$1');
@@ -67,11 +68,12 @@ grammar = parser.parseGrammar();
 console.log('grammar:', grammar);
 //console.log('grammar.nodeLength():', grammar.nodeLength());
 
-if(grammar != null) parser.state.advance(grammar.nodeLength());
-if(parser.state.current == '') {
+if (grammar != null) parser.state.advance(grammar.nodeLength());
+if (parser.state.current == '') {
   grammar.print(0);
   process.exit(0);
-} else {
+}
+else {
   console.log('incomplete parse: lineNumber=' + parser.state.lineNumber + ' input=' + parser.state.buffer.substring(parser.state.offset, parser.state.offset + 50));
   process.exit(-1);
 }
