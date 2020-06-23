@@ -128,186 +128,21 @@
 	"buffers":
 	[
 		{
-			"contents": "",
+			"contents": "SchematicRenderer\nconstructor\nrenderCollection\nitem =>\nitem =>\nrenderItem\ni =>\nsvg\nrenderNet\nrenderSheet\nrender\nrenderInstance\nrenderInstances",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 142,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "lib/util.js",
+			"file": "/home/roman/plot-cv/lib/eagle/schematicRenderer.js",
 			"settings":
 			{
-				"buffer_size": 78812,
+				"buffer_size": 7983,
 				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "export const proxyDelegate = (target, origin) => {\n  return new Proxy(target, {\n    get(target, key, receiver) {\n      if(key in target) return Reflect.get(target, key, receiver);\n      const value = origin[key];\n      return typeof value === 'function' ? (...args) => value.apply(origin, args) : value;\n    },\n    set(target, key, value, receiver) {\n      if(key in target) return Reflect.set(target, key, value, receiver);\n      origin[key] = value;\n      return true;\n    }\n  });\n};\n\nexport default proxyDelegate;\n",
-			"file": "lib/delegate.js",
-			"file_size": 517,
-			"file_write_time": 132363181352254419,
-			"settings":
-			{
-				"buffer_size": 517,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "export const proxyClone = obj => {\n  const override = Object.create(null);\n  const deleted = Object.create(null);\n\n  const debug = (...args) => console.log('DEBUG proxyClone', ...args); //Util.debug(\"proxy-clone\");\n\n  const get = name => {\n    let value;\n    if(!deleted[name]) value = override[name] || obj[name];\n    if(Util.isObject(value)) {\n      value = Util.proxyClone(value);\n      override[name] = value;\n    }\n    if(typeof value === 'function') {\n      value = value.bind(obj);\n    }\n    return value;\n  };\n\n  return new Proxy(Object.prototype, {\n    getPrototypeOf: () => Object.getPrototypeOf(obj),\n    setPrototypeOf: () => {\n      throw new Error('Not yet implemented: setPrototypeOf');\n    },\n    isExtensible: () => {\n      throw new Error('Not yet implemented: isExtensible');\n    },\n    preventExtensions: () => {\n      throw new Error('Not yet implemented: preventExtensions');\n    },\n    getOwnPropertyDescriptor: (target, name) => {\n      let desc;\n      if(!deleted[name]) {\n        desc = Object.getOwnPropertyDescriptor(override, name) || Object.getOwnPropertyDescriptor(obj, name);\n      }\n      if(desc) desc.configurable = true;\n      debug(`getOwnPropertyDescriptor ${name} =`, desc);\n      return desc;\n    },\n    defineProperty: () => {\n      throw new Error('Not yet implemented: defineProperty');\n    },\n    has: (_, name) => {\n      const has = !deleted[name] && (name in override || name in obj);\n      debug(`has ${name} = ${has}`);\n      return has;\n    },\n    get: (receiver, name) => {\n      const value = get(name);\n      debug(`get ${name} =`, value);\n      return value;\n    },\n    set: (_, name, val) => {\n      delete deleted[name];\n      override[name] = val;\n      debug(`set ${name} = ${val}`, name, val);\n      return true;\n    },\n    deleteProperty: (_, name) => {\n      debug(`deleteProperty ${name}`);\n      deleted[name] = true;\n      delete override[name];\n    },\n    ownKeys: () => {\n      const keys = Object.keys(obj)\n        .concat(Object.keys(override))\n        .filter(Util.uniquePred)\n        .filter(key => !deleted[key]);\n      debug(`ownKeys`, keys);\n      return keys;\n    },\n    apply: () => {\n      throw new Error('Not yet implemented: apply');\n    },\n    construct: () => {\n      throw new Error('Not yet implemented: construct');\n    },\n    enumerate: () => {\n      throw new Error('Not yet implemented: enumerate');\n    }\n  });\n};\n\nexport default proxyClone;\n",
-			"file": "lib/proxy/proxyClone.js",
-			"file_size": 2430,
-			"file_write_time": 132363181054332329,
-			"settings":
-			{
-				"buffer_size": 2430,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/node.js",
-			"settings":
-			{
-				"buffer_size": 8569,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/js_point_iterator.cpp",
-			"settings":
-			{
-				"buffer_size": 5738,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/js_point.cpp",
-			"settings":
-			{
-				"buffer_size": 7762,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "quickjs.c",
-			"settings":
-			{
-				"buffer_size": 1434832,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "CMakeLists.txt",
-			"settings":
-			{
-				"buffer_size": 7049,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "js-bindings.cmake",
-			"settings":
-			{
-				"buffer_size": 2406,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/js_contour.cpp",
-			"settings":
-			{
-				"buffer_size": 30103,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-quickjs.js",
-			"settings":
-			{
-				"buffer_size": 1029,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/cli.cpp",
-			"settings":
-			{
-				"buffer_size": 632,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/jsbindings.h",
-			"settings":
-			{
-				"buffer_size": 8061,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/usr/lib/node_modules/npm/node_modules/figgy-pudding/index.js",
-			"settings":
-			{
-				"buffer_size": 4681,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/proxy/deepProxy.js",
-			"settings":
-			{
-				"buffer_size": 2402,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/proxy/clone.js",
-			"settings":
-			{
-				"buffer_size": 2430,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-eagle.js",
-			"settings":
-			{
-				"buffer_size": 6238,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/deep.js",
-			"settings":
-			{
-				"buffer_size": 4149,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "plot-cv.sublime-project",
-			"settings":
-			{
-				"buffer_size": 3444,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-proxy.js",
-			"settings":
-			{
-				"buffer_size": 1124,
 				"line_ending": "Unix"
 			}
 		}
@@ -323,6 +158,26 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"web",
+				"Web Inspector"
+			],
+			[
+				"inspect",
+				"Web Inspector"
+			],
+			[
+				"inspector",
+				"Web Inspector"
+			],
+			[
+				"adv",
+				"Package Control: Advanced Install Package"
+			],
+			[
+				"install p",
+				"Package Control: Install Package"
+			],
 			[
 				"outli",
 				"Browse Mode: Outline (Right)"
@@ -348,10 +203,6 @@
 				"CTags: Rebuild Tags"
 			],
 			[
-				"install p",
-				"Package Control: Install Package"
-			],
-			[
 				"schemeed",
 				"SchemeEditor: Edit Current Scheme"
 			],
@@ -370,10 +221,6 @@
 			[
 				"insta",
 				"Package Control: Install Package"
-			],
-			[
-				"adv",
-				"Package Control: Advanced Install Package"
 			],
 			[
 				"adva",
@@ -547,23 +394,104 @@
 	},
 	"expanded_folders":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv"
+		"/home/roman/Dokumente/Sources/plot-cv",
+		"/home/roman/Dokumente/Sources/plot-cv/lib",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle",
+		"/home/roman/Dokumente/Sources/plot-cv/opencv"
 	],
 	"file_history":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.c",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
-		"/home/roman/Dokumente/Sources/js-lib/domz/index.js",
 		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/components.js",
+		"/home/roman/Dokumente/Sources/plot-cv/style.css",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/clipper-lib.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/clipper.js",
+		"/home/roman/Dokumente/Sources/plot-cv/package.json",
+		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/project.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
+		"/home/roman/Dokumente/Sources/plot-cv/Javascript_Clipper_6.4.2.2_fpoint/clipper_unminified.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/centroid.js",
+		"/home/roman/plot-cv/lib/dom/svg.js",
+		"/home/roman/Dokumente/Sources/plot-cv/index.html",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeProxy.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
+		"/home/roman/plot-cv/test-eagle.js",
+		"/home/roman/plot-cv/lib/lazyInitializer.js",
+		"/home/roman/plot-cv/lib/dom/preactComponent.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/locator.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
+		"/home/roman/plot-cv/lib/eagle/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
+		"/home/roman/plot-cv/lib/ecmascript/estree.js",
+		"/home/roman/plot-cv/lib/swipeTracker.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
+		"/home/roman/.config/sublime-text-3/Packages/User/swi.sublime-settings",
+		"/home/roman/.config/sublime-text-3/Packages/Web Inspector/swi.sublime-settings",
+		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch",
+		"/home/roman/plot-cv/lib/eagle/node.js",
+		"/home/roman/plot-cv/lib/eagle/renderer.js",
+		"/home/roman/plot-cv/lib/eagle/common.js",
+		"/home/roman/plot-cv/lib/eagle/nodeList.js",
+		"/home/roman/plot-cv/lib/eagle/project.js",
+		"/home/roman/plot-cv/lib/eagle/document.js",
+		"/home/roman/plot-cv/lib/eagle/schematicRenderer.js",
+		"/home/roman/plot-cv/lib/eagle/locator.js",
+		"/home/roman/plot-cv/lib/eagle/nodeMap.js",
+		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js.rej",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
+		"/home/roman/Dokumente/Sources/plot-cv/usb.lbr",
+		"/home/roman/Dokumente/Sources/plot-cv/test-coverage.js",
+		"/home/roman/Dokumente/Sources/plot-cv/Coverage-20200616T225435.json",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
+		"/home/roman/Dokumente/Sources/plot-cv/scripts/re-export.sh",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/proxy/proxyClone.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-proxy.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/delegate.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_point_iterator.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_point.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs.c",
+		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/js-bindings.cmake",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_contour.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/test-quickjs.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/cli.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.h",
+		"/usr/lib/node_modules/npm/node_modules/figgy-pudding/index.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/proxy/deepProxy.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/proxy/clone.js",
+		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.c",
+		"/home/roman/Dokumente/Sources/js-lib/domz/index.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/proxy/recursiveObjectProxy.js",
 		"/home/roman/Dokumente/Sources/js-proxy/nested-proxies/lib/DeepProxy.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
 		"/home/roman/plot-cv/lib/eagle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
-		"/home/roman/plot-cv/lib/dom/preactComponent.js",
 		"/home/roman/plot-cv/test-renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/autoBindProxy.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/recursiveObjectProxy.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/relationManager.js",
@@ -571,30 +499,12 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/proxyExtend.js",
 		"/home/roman/Dokumente/Sources/plot-cv/schematic.svg",
 		"/home/roman/Dokumente/Sources/plot-cv/board.svg",
-		"/home/roman/plot-cv/lib/eagle/boardRenderer.js",
-		"/home/roman/plot-cv/lib/eagle/svgRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/locator.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt.sch",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/plot-cv/test-eagle.js",
-		"/home/roman/plot-cv/lib/eagle/node.js",
-		"/home/roman/plot-cv/lib/eagle/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
 		"/home/roman/plot-cv/.next/cache/autodll-webpack-plugin/development_instance_0_c2d168c2d52545f184d14f51cf772091/dll_dc52956c0b09bcd9c072.js",
-		"/home/roman/plot-cv/lib/eagle/document.js",
-		"/home/roman/plot-cv/lib/eagle/common.js",
-		"/home/roman/plot-cv/lib/eagle/locator.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
-		"/home/roman/plot-cv/lib/eagle/nodeList.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/opencv/projectorcalibration.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/project.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-wasm.js",
 		"/home/roman/plot-cv/lib/dom/element.js",
 		"/home/roman/plot-cv/lib/dom/iterator.js",
-		"/home/roman/plot-cv/lib/eagle/project.js",
 		"/home/roman/Dokumente/Sources/diffsplit.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/a_deep.diff",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/a_eagle_node.diff",
@@ -608,87 +518,30 @@
 		"/home/roman/plot-cv/lib/util.js",
 		"/home/roman/plot-cv/lib/ecmascript/printer.js",
 		"/home/roman/plot-cv/main.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
-		"/home/roman/plot-cv/lib/eagle/nodeMap.js",
 		"/home/roman/plot-cv/lib/ecmascript/parser.js",
 		"/home/roman/plot-cv/lib/dom/reactComponent.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
 		"/home/roman/plot-cv/index.html",
 		"/home/roman/Dokumente/Sources/plot-cv/server.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
-		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/asyncHelpers.js",
-		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/devpane.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/index.html",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/websocket-client.js",
-		"/home/roman/Dokumente/Sources/plot-cv/src/highgui-viewer.cpp",
-		"/home/roman/Dokumente/Sources/an-tronics/eagle/40106-4069-Synth.b",
-		"/home/roman/Dokumente/Sources/an-tronics/eagle/40106-4069-Synth.brd",
-		"/home/roman/the-wild-beauty-company/stores/RootStore.js",
-		"/home/roman/Dokumente/Sources/plot-cv/src/psimpl.h",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_mat.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/imgui/libs/glfw/include/GLFW/glfw3.h",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_contour.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_draw.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_line.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_point.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_point_iterator.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_rect.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_size.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/imgui-viewer.cmake",
-		"/home/roman/Dokumente/Sources/plot-cv/components.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/C.g4",
-		"/home/roman/the-wild-beauty-company/stores/api.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/polygonFinder.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
-		"/home/roman/the-wild-beauty-company/components/simple/aspectBox.js",
-		"/home/roman/Dokumente/Sources/plot-cv/style.css",
-		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
-		"/home/roman/Dokumente/Sources/plot-cv/aspectBox.es",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-parse.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/ECMAScript.g4",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/devtools.js",
-		"/home/roman/Dokumente/Sources/plot-cv/output.svg",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/aop.js",
-		"/home/roman/Dokumente/Sources/Arduino-Projects/Inductance_Meter/Inductance_Meter.ino",
-		"/home/roman/Dokumente/Sources/Arduino-Projects/ArduinoAdcAndFrequencyEstimation/Arduino/ADC_Streamer.ino",
-		"/home/roman/Dokumente/Sources/Arduino-Projects/BlinkWithoutDelay/BlinkWithoutDelay.ino",
-		"/home/roman/Dokumente/Sources/Arduino-Projects/small-scope/small-scope.ino",
-		"/home/roman/Dokumente/Sources/Arduino-Projects/FunctionGenerator/FunctionGenerator.ino",
-		"/home/roman/Dokumente/Sources/Arduino-Projects/function_generator/function_generator.ino",
-		"/home/roman/Dokumente/Sources/Arduino-Projects/Simple-Arduino-Frequency-Counter/frequency_counter.ino",
-		"/home/roman/Dokumente/Sources/Arduino-Projects/HB100/HB100.ino",
-		"/home/roman/Dokumente/Sources/Arduino-Projects/HB100-Filtering/HB100-Filtering.ino",
-		"/home/roman/Dokumente/Sources/Arduino-Projects/Frequency_counter_arduino/Frequency_counter_arduino.ino",
-		"/home/roman/Dokumente/Sources/Arduino-Projects/Inductance_Capacitance_Meter/Inductance_Capacitance_Meter.ino",
-		"/home/roman/Dokumente/Sources/Arduino-Projects/libraries/TimerOne/examples/ATTiny85/ATTiny85.ino",
-		"/home/roman/Dokumente/Sources/Arduino-Projects/ArduPIC32/ArduPIC32.ino"
+		"/home/roman/Dokumente/Sources/plot-cv/src/highgui-viewer.cpp"
 	],
 	"find":
 	{
-		"height": 39.0
+		"height": 45.0
 	},
 	"find_in_files":
 	{
 		"height": 346.0,
 		"where_history":
 		[
+			"/home/roman/plot-cv/lib,**.js,/home/roman/plot-cv/test-renderer.js,/home/roman/plot-cv/test-eagle.js",
+			"/home/roman/plot-cv/lib/eagle,**.js,/home/roman/plot-cv/test-renderer.js,/home/roman/plot-cv/test-eagle.js",
+			"/home/roman/plot-cv/lib,**.js,/home/roman/plot-cv/test-renderer.js,/home/roman/plot-cv/test-eagle.js",
 			"/home/roman/plot-cv/lib,*.js,/home/roman/plot-cv/test-renderer.js,/home/roman/plot-cv/test-eagle.js",
 			"/home/roman/plot-cv/lib,*.js,/home/roman/plot-cv/,*.js,-*node_modules*",
 			"/home/roman/plot-cv/lib,*.js,/home/roman/plot-cv/,*.js,-*node_modules",
@@ -734,137 +587,137 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": false,
+		"case_sensitive": true,
 		"find_history":
 		[
-			"js_point_iterator_next",
-			"JS_.etOpa",
-			"JS_SetOpaque",
-			"JS_NewObjectClass",
-			"SetOpa",
-			"js_point_iterator_finalizer",
-			"js_create_iterator_result",
-			"js_point_iterator_next",
-			"js_create_point_iterator",
-			"entries",
-			"js_contour_push",
-			"Contout",
-			"point.iter",
-			"point.iterator",
-			"iterator",
-			"js_contour",
-			"contour_data",
-			"->end",
-			"->begin",
-			"->end",
-			"JSContourData",
-			"contour_da",
-			"^js_contour_data",
-			"contour_data",
-			"new Proxy",
-			"isObject =",
-			"= search",
-			"filter =",
-			"target",
+			"'pin'",
+			"box-sha",
+			"sizeListener",
+			"viewBox",
+			"svg'",
+			"'svg'",
+			"renderLayers",
+			"layerGroup",
+			"id:.*bg",
+			"'signal",
+			"id:.*signal",
+			"id.*net",
+			"id:.*element",
+			"id:",
+			"toString =",
+			"SizedAs",
+			"fromObject",
+			"concat ",
+			"species",
+			"Object.defineProperty(PointList, Symbol.species, {\n  get: function() {\n    return PointList;\n  }\n});\n",
+			"species",
+			"slice =",
+			"concat =",
+			"PointList.prototype.rotateRight = function(n) {\n  return Util.rotateRight(this, n);\n};",
+			"Array.prototype",
+			"element\\.",
+			"isElement",
+			"signal\\.",
+			"duplicate",
+			"CleanPolygons",
+			"Shape",
+			"clipper-lib",
+			"forEach",
+			"class",
+			"{\n",
+			"path-parser",
 			"path",
-			"Util.get",
-			"Util.def",
-			"get =",
-			"updateValue",
-			"update\\(",
-			"name:",
-			"log.*name:",
-			"name:",
-			"\\$msg",
-			"log.*output:",
-			"^\\s*console.log.*output",
-			"^\\s*console.log.*output:",
-			"^\\s*console.log.*a:",
-			"log.*a:",
-			"log..a:",
-			"log..a",
-			"inspect",
-			"String",
-			"case 'pad'",
-			"<tspan",
-			"data-active",
-			"+'',",
-			"parentNode",
-			"log.*, raw ",
-			", raw ",
-			"makeEagleEl",
-			"toSource =",
-			"^\\s*document",
-			"^\\s*document\\(",
-			"let doc",
-			" find\\(",
-			"find\\(",
-			"find",
-			"log..p:",
+			"^export",
+			"writeFile",
+			"inside",
+			"console.log",
 			"log.*p:",
+			" inst.subscribe(newVal => {\n    if(newVal) console.log('new instance: ', value);\n  });",
+			"log.*instance:",
+			"filesystem",
+			"filesystewwm",
+			"filesystem",
+			"Util.try",
+			"import\\(",
+			"fs.readdir",
+			"last",
+			"lazyInit",
+			"lazy",
+			"layers\\.",
+			"writeFile",
+			"}\n",
+			"Slider =",
+			"Fragment",
+			"type",
+			"TransformedEl",
+			"Object.ass",
+			"tryCatch\\(",
+			"tryCatch",
+			"tryCatch =",
+			"tryPredi",
+			"tryPredicate",
+			"tryFunc",
+			"start",
+			"comments",
+			"mergeObjects =",
+			"=\n",
+			"weakAssign",
+			"position = null",
+			"position =",
+			"tokenRange",
+			");\n",
+			"\\.tokenRange",
+			"tokenRange",
+			"\\.position =",
+			"position",
+			"parseJSX",
+			"getMethodNames",
+			"windowWi",
+			"ModifyCol",
+			"replaceAll",
+			"ModifyColor",
+			"ModifyColo",
+			"\\.button",
+			"'mm'",
+			"']];",
+			"lib\\.get",
+			"^\\s*console.log.*this",
+			"gate'",
+			"\\.getAll",
+			"getAll",
+			"this.xpath",
+			"log.*this",
+			"// ",
+			"log.*lookup",
 			"console",
-			"^\\s*console",
-			"makeEagleNode[A-Za-z]*\\(",
-			"makeEagle",
-			"'children'\\s*\\]",
-			"'children'",
-			"        ",
-			"'dereference' in",
-			"tagName",
-			"childList =",
-			"childList",
-			"child",
-			"children =.*trkl",
-			"children =",
-			"^\\s*inspect\\(",
-			"^\\s*inspect",
-			"import.*inspect",
+			"to parent",
+			"node to parent",
+			"WeakMap",
+			"dereference",
+			"ref:",
+			"Element.get",
+			"initCache",
+			"instances",
+			"instances'",
+			"log.*elem:",
+			"children",
+			"ctor",
+			"children",
+			"childrenn",
+			"this.children",
+			"log.*instance",
+			"EagleElement",
 			"inspect",
-			"import.*inspect",
+			"inspect =",
+			"lookup",
+			"'instances'",
 			"inspect",
-			" \"\\",
-			"makeEagle",
-			"keys",
-			"make",
-			"toString",
-			"toStringTag",
-			"inspect",
-			" toString",
-			"Symbol.*inspect",
-			"inspect",
-			"path",
-			" toString",
-			"path",
-			"getAll",
-			"log.*makeEagle",
-			"makeEagle",
-			"makeEaglel",
-			"owner",
-			"getAll",
-			"log.*getAll",
-			"isObject",
-			"isObject =",
-			"Util.walk",
-			"deep.iter",
-			" iterator\\(",
-			"iterator\\(",
-			"iterator",
-			"^\\s*iterat",
-			"iterate",
-			"log.*c:",
-			"getAll",
-			"Wimport",
-			"new EagleDoc",
-			"makeEagleRef",
-			"makeEagleNodeList\\(",
-			"EagleRef[a-z]*\\(owner",
-			"EagleReference\\(",
-			"EagleReference",
-			"listRef",
-			"makeEagleNodeList\\(",
-			" EagleRef\\(",
-			"root",
-			"this"
+			"Derefere",
+			"no member",
+			"'), ",
+			"'),",
+			"caller",
+			"derefer"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -872,6 +725,7 @@
 		"regex": true,
 		"replace_history":
 		[
+			"/",
 			"->second",
 			"->first",
 			"",
@@ -998,8 +852,7 @@
 			"array",
 			"image_type",
 			"{ return",
-			"4",
-			"0"
+			"4"
 		],
 		"reverse": false,
 		"show_context": false,
@@ -1018,7 +871,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 0,
+						"buffer_size": 142,
 						"regions":
 						{
 						},
@@ -1028,13 +881,78 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/test-quickjs.js",
+							"current_file": "/home/roman/plot-cv/lib/eagle/schematicRenderer.js",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
+								[
+									480,
+									497
+								],
+								[
+									931,
+									942
+								],
+								[
+									1160,
+									1176
+								],
+								[
+									1463,
+									1470
+								],
+								[
+									1582,
+									1589
+								],
+								[
+									1870,
+									1880
+								],
+								[
+									2005,
+									2009
+								],
+								[
+									2235,
+									2264
+								],
+								[
+									4523,
+									4532
+								],
+								[
+									4806,
+									4817
+								],
+								[
+									5277,
+									5283
+								],
+								[
+									5771,
+									5785
+								],
+								[
+									6538,
+									6553
+								]
 							],
 							"symlist":
 							[
+								"SchematicRenderer",
+								"constructor",
+								"renderCollection",
+								"item =>",
+								"item =>",
+								"renderItem",
+								"i =>",
+								"svg",
+								"renderNet",
+								"renderSheet",
+								"render",
+								"renderInstance",
+								"renderInstances"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -1042,533 +960,30 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 20,
+					"stack_index": 1,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 10,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "lib/util.js",
+					"file": "/home/roman/plot-cv/lib/eagle/schematicRenderer.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 78812,
+						"buffer_size": 7983,
 						"regions":
 						{
-							"col_000000CC":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										27096,
-										27111
-									]
-								],
-								"scope": "col_000000CC"
-							},
-							"col_000000CC_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_000000CC_circle.png",
-								"regions":
-								[
-									[
-										27033,
-										27033
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_000050FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										73606,
-										73617
-									]
-								],
-								"scope": "col_000050FF"
-							},
-							"col_000050FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_000050FF_circle.png",
-								"regions":
-								[
-									[
-										73527,
-										73527
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_0000A0FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										73734,
-										73746
-									]
-								],
-								"scope": "col_0000A0FF"
-							},
-							"col_0000A0FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_0000A0FF_circle.png",
-								"regions":
-								[
-									[
-										73527,
-										73527
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_005000FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										73575,
-										73586
-									]
-								],
-								"scope": "col_005000FF"
-							},
-							"col_005000FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_005000FF_circle.png",
-								"regions":
-								[
-									[
-										73527,
-										73527
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_005050FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										73637,
-										73649
-									]
-								],
-								"scope": "col_005050FF"
-							},
-							"col_005050FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_005050FF_circle.png",
-								"regions":
-								[
-									[
-										73527,
-										73527
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_00A000FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										73700,
-										73712
-									]
-								],
-								"scope": "col_00A000FF"
-							},
-							"col_00A000FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_00A000FF_circle.png",
-								"regions":
-								[
-									[
-										73527,
-										73527
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_00A0A0FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										73768,
-										73782
-									]
-								],
-								"scope": "col_00A0A0FF"
-							},
-							"col_00A0A0FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_00A0A0FF_circle.png",
-								"regions":
-								[
-									[
-										73527,
-										73527
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_010101FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										27534,
-										27539
-									],
-									[
-										67102,
-										67107
-									],
-									[
-										73546,
-										73556
-									],
-									[
-										73670,
-										73680
-									]
-								],
-								"scope": "col_010101FF"
-							},
-							"col_010101FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_010101FF_circle.png",
-								"regions":
-								[
-									[
-										27341,
-										27341
-									],
-									[
-										67062,
-										67062
-									],
-									[
-										73527,
-										73527
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_4444DDFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										27147,
-										27154
-									]
-								],
-								"scope": "col_4444DDFF"
-							},
-							"col_4444DDFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_4444DDFF_circle.png",
-								"regions":
-								[
-									[
-										27033,
-										27033
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_500000FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										73560,
-										73571
-									]
-								],
-								"scope": "col_500000FF"
-							},
-							"col_500000FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_500000FF_circle.png",
-								"regions":
-								[
-									[
-										73527,
-										73527
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_500050FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										73621,
-										73633
-									]
-								],
-								"scope": "col_500050FF"
-							},
-							"col_500050FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_500050FF_circle.png",
-								"regions":
-								[
-									[
-										73527,
-										73527
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_505000FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										73590,
-										73602
-									]
-								],
-								"scope": "col_505000FF"
-							},
-							"col_505000FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_505000FF_circle.png",
-								"regions":
-								[
-									[
-										73527,
-										73527
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_505050FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										73653,
-										73666
-									]
-								],
-								"scope": "col_505050FF"
-							},
-							"col_505050FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_505050FF_circle.png",
-								"regions":
-								[
-									[
-										73527,
-										73527
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_7FFFFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										63893,
-										63903
-									]
-								],
-								"scope": "col_7FFFFFFF"
-							},
-							"col_7FFFFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_7FFFFFFF_circle.png",
-								"regions":
-								[
-									[
-										63878,
-										63878
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A00000FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										73684,
-										73696
-									]
-								],
-								"scope": "col_A00000FF"
-							},
-							"col_A00000FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A00000FF_circle.png",
-								"regions":
-								[
-									[
-										73527,
-										73527
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A000A0FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										73750,
-										73764
-									]
-								],
-								"scope": "col_A000A0FF"
-							},
-							"col_A000A0FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A000A0FF_circle.png",
-								"regions":
-								[
-									[
-										73527,
-										73527
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A0A000FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										73716,
-										73730
-									]
-								],
-								"scope": "col_A0A000FF"
-							},
-							"col_A0A000FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A0A000FF_circle.png",
-								"regions":
-								[
-									[
-										73527,
-										73527
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_A0A0A0FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										73786,
-										73802
-									]
-								],
-								"scope": "col_A0A0A0FF"
-							},
-							"col_A0A0A0FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_A0A0A0FF_circle.png",
-								"regions":
-								[
-									[
-										73527,
-										73527
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_FFFFFFFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										63657,
-										63667
-									],
-									[
-										67109,
-										67114
-									]
-								],
-								"scope": "col_FFFFFFFF"
-							},
-							"col_FFFFFFFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_FFFFFFFF_circle.png",
-								"regions":
-								[
-									[
-										63604,
-										63604
-									],
-									[
-										67062,
-										67062
-									]
-								],
-								"scope": "col_gutter"
-							}
 						},
 						"selection":
 						[
 							[
-								52508,
-								52508
+								2815,
+								2815
 							]
 						],
 						"settings":
@@ -1578,574 +993,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 36731.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "lib/delegate.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 517,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								517,
-								517
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 19,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "lib/proxy/proxyClone.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2430,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2430,
-								2430
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1076.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "lib/eagle/node.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8569,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3753,
-								3765
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 6049.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 14,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "src/js_point_iterator.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5738,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								374,
-								374
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++11/C++11.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "src/js_point.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7762,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								382,
-								382
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++11/C++11.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "quickjs.c",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1434832,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								400979,
-								400979
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C99/C99.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 289884.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "CMakeLists.txt",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7049,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								441,
-								441
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "js-bindings.cmake",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2406,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1738,
-								1738
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 882.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "src/js_contour.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 30103,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								27575,
-								27575
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++11/C++11.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 19995.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "test-quickjs.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1029,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1005,
-								1005
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2667.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 12,
-					"file": "src/cli.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 632,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								20,
-								20
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++11/C++11.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 13,
-					"file": "src/jsbindings.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8061,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								349,
-								349
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C99/C99.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 14,
-					"file": "/usr/lib/node_modules/npm/node_modules/figgy-pudding/index.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4681,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4425,
-								4425
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 3446.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 15,
-					"type": "text"
-				},
-				{
-					"buffer": 15,
-					"file": "lib/proxy/deepProxy.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2402,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								47,
-								47
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1450.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 17,
-					"type": "text"
-				},
-				{
-					"buffer": 16,
-					"file": "lib/proxy/clone.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2430,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 16,
-					"type": "text"
-				},
-				{
-					"buffer": 17,
-					"file": "test-eagle.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6238,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								21,
-								21
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 11,
-					"type": "text"
-				},
-				{
-					"buffer": 18,
-					"file": "lib/deep.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4149,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2326,
-								2326
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1384.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 12,
-					"type": "text"
-				},
-				{
-					"buffer": 19,
-					"file": "plot-cv.sublime-project",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3444,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1610,
-								1610
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/sublime-better-javascript/JSON.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 630.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 13,
-					"type": "text"
-				},
-				{
-					"buffer": 20,
-					"file": "test-proxy.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1124,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1062,
-								1062
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 316.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 18,
 					"type": "text"
 				}
 			]
@@ -2153,7 +1004,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 30.0
+		"height": 39.0
 	},
 	"input":
 	{
@@ -2229,6 +1080,158 @@
 		"selected_items":
 		[
 			[
+				"main.js",
+				"main.js"
+			],
+			[
+				"components",
+				"components.js"
+			],
+			[
+				"rect.",
+				"lib/geom/rect.js"
+			],
+			[
+				"Util",
+				"lib/util.js"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"eleme",
+				"lib/dom/element.js"
+			],
+			[
+				"clipper-lib",
+				"lib/clipper-lib.js"
+			],
+			[
+				"main.j",
+				"main.js"
+			],
+			[
+				"PointList",
+				"lib/geom/pointList.js"
+			],
+			[
+				"project",
+				"lib/eagle/project.js"
+			],
+			[
+				"test-eagle",
+				"test-eagle.js"
+			],
+			[
+				"style.css",
+				"style.css"
+			],
+			[
+				"point.js",
+				"lib/geom/point.js"
+			],
+			[
+				"test-eag",
+				"test-eagle.js"
+			],
+			[
+				"index.",
+				"index.html"
+			],
+			[
+				"util",
+				"lib/util.js"
+			],
+			[
+				"test-render",
+				"test-renderer.js"
+			],
+			[
+				"style",
+				"style.css"
+			],
+			[
+				"com",
+				"components.js"
+			],
+			[
+				"elem",
+				"lib/dom/element.js"
+			],
+			[
+				"main",
+				"main.js"
+			],
+			[
+				"test-ec",
+				"test-ecmascript.js"
+			],
+			[
+				"parser",
+				"lib/ecmascript/parser.js"
+			],
+			[
+				"react",
+				"lib/dom/preactComponent.js"
+			],
+			[
+				"compo",
+				"components.js"
+			],
+			[
+				"style.cs",
+				"style.css"
+			],
+			[
+				"test-re",
+				"test-renderer.js"
+			],
+			[
+				".sch",
+				"~/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch"
+			],
+			[
+				"test-rende",
+				"test-renderer.js"
+			],
+			[
+				"transform",
+				"lib/geom/transformation.js"
+			],
+			[
+				"compon",
+				"components.js"
+			],
+			[
+				"test-cov",
+				"test-coverage.js"
+			],
+			[
+				"deep.js",
+				"lib/deep.js"
+			],
+			[
+				"element",
+				"lib/dom/element.js"
+			],
+			[
+				"re-ex",
+				"scripts/re-export.sh"
+			],
+			[
+				"estree",
+				"lib/ecmascript/estree.js"
+			],
+			[
+				"deep.j",
+				"lib/deep.js"
+			],
+			[
+				"test-proxy",
+				"test-proxy.js"
+			],
+			[
 				"js_poin",
 				"src/js_point.cpp"
 			],
@@ -2247,10 +1250,6 @@
 			[
 				"test-qui",
 				"test-quickjs.js"
-			],
-			[
-				"deep.j",
-				"lib/deep.js"
 			],
 			[
 				"s-bi",
@@ -2273,10 +1272,6 @@
 				"lib/eagle/node.js"
 			],
 			[
-				"util",
-				"lib/util.js"
-			],
-			[
 				"deep",
 				"lib/deep.js"
 			],
@@ -2285,16 +1280,8 @@
 				"test-eagle.js"
 			],
 			[
-				"test-proxy",
-				"test-proxy.js"
-			],
-			[
 				"boare",
 				"lib/eagle/boardRenderer.js"
-			],
-			[
-				"main.js",
-				"main.js"
 			],
 			[
 				"deep.",
@@ -2302,10 +1289,6 @@
 			],
 			[
 				"util.j",
-				"lib/util.js"
-			],
-			[
-				"util.js",
 				"lib/util.js"
 			],
 			[
@@ -2329,10 +1312,6 @@
 				"opencv/projectorcalibration.cpp"
 			],
 			[
-				"test-eag",
-				"test-eagle.js"
-			],
-			[
 				"reactcom",
 				"lib/dom/preactComponent.js"
 			],
@@ -2347,18 +1326,6 @@
 			[
 				"printer",
 				"lib/ecmascript/printer.js"
-			],
-			[
-				"main.j",
-				"main.js"
-			],
-			[
-				"test-eagle",
-				"test-eagle.js"
-			],
-			[
-				"main",
-				"main.js"
 			],
 			[
 				"test-eagle.js",
@@ -2377,20 +1344,12 @@
 				"lib/util.js"
 			],
 			[
-				"Util",
-				"lib/util.js"
-			],
-			[
 				"preact",
 				"lib/dom/preactComponent.js"
 			],
 			[
 				"render",
 				"lib/eagle/renderer.js"
-			],
-			[
-				"element",
-				"lib/dom/element.js"
 			],
 			[
 				"high",
@@ -2407,10 +1366,6 @@
 			[
 				"server",
 				"server.js"
-			],
-			[
-				"index.",
-				"index.html"
 			],
 			[
 				"cmake",
@@ -2437,18 +1392,6 @@
 				"index.html"
 			],
 			[
-				"rect.",
-				"lib/geom/rect.js"
-			],
-			[
-				"elem",
-				"lib/dom/element.js"
-			],
-			[
-				"test-re",
-				"test-renderer.js"
-			],
-			[
 				"elemen",
 				"lib/dom/element.js"
 			],
@@ -2465,10 +1408,6 @@
 				"lib/grammars/ECMAScript.g4"
 			],
 			[
-				"test-ec",
-				"test-ecmascript.js"
-			],
-			[
 				"test-par",
 				"test-parse.js"
 			],
@@ -2481,24 +1420,12 @@
 				"lib/ecmascript/lexer.js"
 			],
 			[
-				"estree",
-				"lib/ecmascript/estree.js"
-			],
-			[
 				"toke",
 				"lib/ecmascript/token.js"
 			],
 			[
 				"parser.js",
 				"lib/ecmascript/parser.js"
-			],
-			[
-				"style.cs",
-				"style.css"
-			],
-			[
-				"compon",
-				"components.js"
 			],
 			[
 				"boardRe",
@@ -2511,10 +1438,6 @@
 			[
 				"output.sv",
 				"output.svg"
-			],
-			[
-				"point.js",
-				"lib/geom/point.js"
 			],
 			[
 				"test-ini",
@@ -2577,10 +1500,6 @@
 				"lib/geom/size.js"
 			],
 			[
-				"test-render",
-				"test-renderer.js"
-			],
-			[
 				"line.svg",
 				"line.svg"
 			],
@@ -2633,10 +1552,6 @@
 				"lib/geom/matrix.js"
 			],
 			[
-				"transform",
-				"lib/geom/transformation.js"
-			],
-			[
 				"circle",
 				"lib/geom/circle.js"
 			],
@@ -2673,72 +1588,8 @@
 				"lib/dom/preactComponent.js"
 			],
 			[
-				"clipper-lib",
-				"lib/clipper-lib.js"
-			],
-			[
 				"clipper.js",
 				"lib/clipper.js"
-			],
-			[
-				"test-",
-				"test-clipper.js"
-			],
-			[
-				"test",
-				"test-antlr.js"
-			],
-			[
-				"clipper.es",
-				"clipper.es"
-			],
-			[
-				"print",
-				"lib/ecmascript/printer.js"
-			],
-			[
-				"clipper",
-				"clipper.es"
-			],
-			[
-				"alea.js",
-				"lib/alea.js"
-			],
-			[
-				"alea.es",
-				"alea.es"
-			],
-			[
-				"autoStore.js",
-				"lib/autoStore.js"
-			],
-			[
-				"autoSt",
-				"autoStore.es"
-			],
-			[
-				"axios.es",
-				"axios.es"
-			],
-			[
-				"axios.",
-				"axios.es"
-			],
-			[
-				"axis.e",
-				"axios.es"
-			],
-			[
-				"test-ex",
-				"test-export.es"
-			],
-			[
-				"test-expo",
-				"test-export.js"
-			],
-			[
-				"axios.js",
-				"lib/axios.js"
 			]
 		],
 		"width": 0.0

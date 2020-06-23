@@ -9,6 +9,8 @@ import { ScrollDisabler } from './lib/scrollHandler.js';
 import { TouchListener } from './lib/touchHandler.js';
 import { trkl } from './lib/trkl.js';
 import { ColorMap } from './lib/draw/colorMap.js';
+import { ClipperLib } from './lib/clipper-lib.js';
+import Shape from './lib/clipper.js';
 import { devtools } from './lib/devtools.js';
 import Util from './lib/util.js';
 import tXml from './lib/tXml.js';
@@ -59,7 +61,7 @@ const { Align, Anchor, CSS, CSSTransformSetters, Element, ElementPosProps, Eleme
   ...dom,
   ...geom
 };
-Object.assign(window, { React, ReactComponent, WebSocketClient, html }, dom, geom, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent }, { Chooser });
+Object.assign(window, { React, ReactComponent, WebSocketClient, html }, dom, geom, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape }, { Chooser, useState, useLayoutEffect, useRef });
 
 let currentProj = trkl.property(window, 'project');
 let open = trkl();
@@ -169,9 +171,13 @@ const loadDocument = async (proj, parentElem) => {
   if(!proj.renderer || !proj.renderer.render) return;
 
   let style = { width: '100%', height: '100%', position: 'relative' };
-  let svgXml = proj.renderer.render(proj.doc, null, { style });
+  let svgXml = proj.renderer.render(proj.doc, null, {
+    /* style*/
+  });
   console.log('testRender:', svgXml);
-  let component = proj.renderer.render(proj.doc, null, { style });
+  let component = proj.renderer.render(proj.doc, null, {
+    /*style */
+  });
   window.component = component;
 
   let element = Element.find('#main');
@@ -183,6 +189,7 @@ const loadDocument = async (proj, parentElem) => {
   let aspectRatio = r.width / r.height;
   console.log('aspectRatio', aspectRatio);
 
+  sizeListener({ width: r.width });
   aspectListener(aspectRatio);
 
   const Fence = ({ children, style = {}, sizeListener, aspectListener, ...props }) => {
@@ -226,7 +233,7 @@ const loadDocument = async (proj, parentElem) => {
   let { name, data, doc, svg, bbox } = proj;
   let bounds = doc.getBounds();
   let rect = bounds.rect;
-  let size = new Size(rect);
+  let size = new Size(r);
   currentProj(proj);
   size.mul(doc.type == 'brd' ? 2 : 1.5);
   let svgrect = SVG.bbox(proj.svg);
@@ -450,11 +457,14 @@ const AppMain = (window.onload = async () => {
 
   TouchListener(
     event => {
-      //  if(event.index > 0 && event.buttons > 0) console.log('touch', event, container);
+      if(event.index > 0 && event.buttons > 0) console.log('touch', event, container);
       if(!move) {
-        let container = Element.find('#main');
+        let box = Element.find('#main').firstElementChild;
+        //  console.log("box:", box);
 
-        move = Element.moveRelative(container);
+        move = Element.moveRelative(box);
+      } else if(move && event.buttons == 0) {
+        move = null;
       } else if(event.index > 0) {
         let rel = new Point(event);
         if(move) {
@@ -471,10 +481,26 @@ const AppMain = (window.onload = async () => {
   window.addEventListener('wheel', event => {
     //console.log("event:",event);
     const clientArea = Element.rect('body > div');
+    const sideBar = Element.rect('.sidebar');
+
+    if(sideBar.x2 > clientArea.x1) {
+      clientArea.width -= sideBar.x2;
+
+      clientArea.x = sideBar.x2;
+      clientArea.width = window.innerWidth - clientArea.x;
+    }
+    clientArea.height = window.innerHeight;
+
     clientArea.x += container.parentElement.scrollLeft;
+
+    //  console.log("wheel:",{ sideBar, clientArea });
+
     const clientCenter = clientArea.center;
     const { clientX, clientY, target, currentTarget, buttons, altKey, ctrlKey, shiftKey } = event;
     const pos = new Point(clientX, clientY);
+
+    if(!pos.inside(clientArea)) return;
+
     const wheelPos = -event.deltaY.toFixed(2);
     zoomVal = altKey || ctrlKey || shiftKey ? 0 : Util.clamp(-100, 100, zoomVal + wheelPos * 0.1);
     const zoom = Math.pow(10, zoomVal / 100).toFixed(5);

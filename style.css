@@ -2,6 +2,12 @@ svg,
 #container {
   pointer-events: none;
 }
+body {
+  pointer-events: none;
+}
+#preact, svg {
+  pointer-events: all;
+}
 /*#container {
   display: flex;
   flex-flow: column nowrap;
@@ -235,6 +241,7 @@ body {
   padding: 0px;
   margin: 0px;
   background-color: hsla(230, 40%, 80%, 0.8);
+  pointer-events: none;
 }
 
 label {
@@ -262,7 +269,7 @@ label {
 body,
 #main,
 #container {
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .aspect-ratio-box {
@@ -275,8 +282,9 @@ body,
   height: 100%;
 }
 .aspect-ratio-box-size {
-  position: relative;
-  overflow: hidden;
+  /* position: relative; */
+  /* overflow: hidden; */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.75);
 }
 input[type='number'] {
   border-width: 1px;

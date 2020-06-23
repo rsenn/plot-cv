@@ -73,6 +73,9 @@ const filesystem = {
   },
   exists(filename) {
     return fs.existsSync(filename);
+  },
+  realpath(filename) {
+    return fs.realpathSync(filename);
   }
 };
 
@@ -121,12 +124,16 @@ async function testGraph(proj) {
 
 async function testEagle(filename) {
   let proj = new EagleProject(filename, filesystem);
+
+  if(proj.failed) return false;
+
   let { board, schematic } = proj;
   const packages = {
     board: [...board.getAll('package')],
     schematic: [...schematic.getAll('package')]
   };
   let parts = schematic.parts;
+
   proj.updateLibrary('c');
   //console.log('board.libraries.list:', board.libraries.list);
   //console.log('[...board.libraries]:', [...board.libraries]);
@@ -154,7 +161,7 @@ async function testEagle(filename) {
   for(let description of board.getAll('description')) {
   }
 
-  proj.saveTo('.', true);
+  proj.saveTo('./tmp/', true);
 
   //console.log('board:', board);
 
@@ -166,10 +173,8 @@ async function testEagle(filename) {
   for(let instance of schematic.getAll(e => e.tagName == 'instance')) {
     const { part, gate } = instance;
     const { deviceset, device } = part;
-    console.log('instance:', instance, { gate, deviceset, device });
-    console.log('part:', { deviceset, device });
-    //console.log(`instance: ${instance.xpath()}\npart: ${part.xpath()}\ngate: ${gate.xpath()}`);
-    //   console.log("package:",part.deviceset);
+    /* console.log('instance:', instance, { gate, deviceset, device });
+    console.log('part:', { deviceset, device });*/
   }
 
   let gates = [...schematic.getAll('gate')];
@@ -177,7 +182,7 @@ async function testEagle(filename) {
   let p = gates[0];
 
   while(p) {
-    console.log('p:', p);
+    // console.log('p:', p);
 
     p = p.parentNode;
   }
@@ -189,12 +194,14 @@ async function testEagle(filename) {
   let args = process.argv.slice(2);
   if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
   for(let arg of args) {
+    arg = arg.replace(/\.(brd|sch)$/i, '');
     try {
+      console.log(`processing ${arg}...`);
+
       let project = await testEagle(arg);
-      //console.log(project);
       // await testGraph(project);
     } catch(err) {
-      //console.log('err:' + err.message);
+      console.log('err:' + err.message);
       throw err;
     }
   }
