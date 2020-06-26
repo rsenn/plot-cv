@@ -5,6 +5,7 @@ import { ReactComponent } from './lib/dom/preactComponent.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
 import geom from './lib/geom.js';
 import { BBox } from './lib/geom/bbox.js';
+import { Polygon } from './lib/geom/polygon.js';
 import { ScrollDisabler } from './lib/scrollHandler.js';
 import { TouchListener } from './lib/touchHandler.js';
 import { trkl } from './lib/trkl.js';
@@ -61,7 +62,7 @@ const { Align, Anchor, CSS, CSSTransformSetters, Element, ElementPosProps, Eleme
   ...dom,
   ...geom
 };
-Object.assign(window, { React, ReactComponent, WebSocketClient, html }, dom, geom, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape }, { Chooser, useState, useLayoutEffect, useRef });
+Object.assign(window, { React, ReactComponent, WebSocketClient, html }, dom, geom, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape }, { Chooser, useState, useLayoutEffect, useRef, Polygon });
 
 let currentProj = trkl.property(window, 'project');
 let open = trkl();
