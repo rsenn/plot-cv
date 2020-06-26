@@ -3,12 +3,22 @@ import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Util from './lib/util.js';
 import fs from 'fs';
-import { Path, PathMapper, toXML, TreeObserver, findXPath } from './lib/json.js';
+import { Path, PathMapper, toXML, TreeObserver, findXPath, XmlIterator } from './lib/json.js';
 import { Console } from 'console';
 
 const printNode = node => {
   let s = toXML(node).replace(/\n.*/g, '');
   return s;
+};
+// prettier-ignore
+Util.toString.defaultOpts = {
+  spacing: '',
+  separator: '\x1b[1;36m, ',
+  stringColor: [1, 36],
+  colon: '܃',
+  padding: ' ',
+  quote: '',
+  depth: 1
 };
 
 const CH = 'children';
@@ -16,7 +26,7 @@ const CH = 'children';
 global.console = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
-  inspectOptions: { depth: 0, colors: true }
+  inspectOptions: { depth: 1, colors: true }
 });
 
 Error.stackTraceLimit = 100;
@@ -90,16 +100,29 @@ try {
     let node = p;
     let unwrapped, type, path;
 
-    treeObserve.subscribe((what, target, key, p, value) => {
+    treeObserve.subscribe((what, target, path, value) => {
       if(what == 'access') return;
-      if(target[key] === undefined) return;
-      let [path, k] = p;
-      path = new Path(path);
+      //  if(target[key] === undefined) return;
+      // let [path, k] = p;
+      //
+      //      path = new Path(path);
       let targetType = treeObserve.getType(target);
       let targetKeys = Object.keys(target).join(',');
       let valueType = typeof value;
-      console.log(`event`, Util.toString({ what,/* targetType, key, targetKeys, */ valueType, 
-        xpath: path.xpath(xml)+'', string: typeof value == 'string' ? value : '' }));
+
+      //console.log("path:", path);
+      let xpath = path.xpath(xml).slice(-2) + '';
+      path = path.slice(-2) + '';
+      let string = typeof value == 'string' ? value : '';
+      console.log(
+        `event`,
+        Util.toString({
+          what,
+          /* targetType, key, targetKeys, */ valueType,
+          path,
+          /*xpath,*/ string
+        })
+      );
     });
     mapper.set(treeObserve.unwrap(node), []);
 
@@ -127,15 +150,28 @@ try {
       let o = p[str];
       if(o === undefined) continue;
       let keys = Object.keys(o);
+      let u = treeObserve.unwrap(o);
       if(o.attributes) o.attributes.test = 'AAA';
+      //   if(o.children) o.children = [...o.children, 'test text' ];
+      o = Util.filterKeys(u, k => k != 'children');
+      //if(o.children) o.children = o.children.filter(c => typeof(c) == 'string').map(s => `"${s}"`).join(", ");
+
+      console.log('o:', Util.toString(o));
     }
-    let found = deep.find(xml, (node, path) => node.tagName !== undefined && ['parts', 'instances', 'elements'].indexOf(node.tagName) != -1);
+    let found = deep.find(xml, (node, path) => !!node.tagName && ['parts', 'instances', 'elements', 'plain', 'drawing', 'wire'].indexOf(node.tagName) != -1, []);
+    let selected = deep.select(xml, (node, path) => !!node.tagName || node instanceof Array || path[path.length - 1] == 'children');
+
+    console.log(
+      'iterated:',
+      [...XmlIterator(xml, (v, p) => true)].map(([v, p]) => [Util.typeOf(v), new Path(p).toString(), typeof v == 'string' ? Util.decodeHTMLEntities(v) : toXML(v, 0)])
+    );
+
+    /*  console.log('found:', found);
     node = flat.get(found.path);
-    console.log('found:', found);
     console.log('node:', node);
     let xpath;
     xpath = mapper.xpath(unwrapped);
-    let r = Path.parseXPath('[0]');
+    let r = Path.parseXPath('[0]');*/
   }
   main(...process.argv.slice(2));
 } catch(err) {
