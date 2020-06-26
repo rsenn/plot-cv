@@ -59,22 +59,16 @@ try {
       (p, v) => obj2path(v, p),
       (v, p) => v
     );
-
-    //    let flat = path2obj instanceof Map ? path2obj : new Map(Object.entries(path2obj));
-
     let rel,
       prev = new Path([], true),
       prevParent,
       relTo = [];
     const mk = ([path, value]) => {
-      path = [...path].join('/').replace(/\/\[/g, '[');
-
-      let p = new Path(path, true);
-      console.log('mk=', { path, p });
-
+      let p = new Path(path);
+      path = p.toArray();
+      console.log('mk=', { path, value });
       let thisParent = p.parent;
       if(thisParent.equal(prev)) path = p.relativeTo(thisParent);
-
       if(prev.equal(thisParent)) {
         relTo = prev;
         path = p.relativeTo(relTo);
@@ -85,32 +79,22 @@ try {
         prev = p.makeAbsolute(relTo);
         relTo = [];
       }
-
       if(prevParent && !prevParent.equal(thisParent)) {
         relTo = [];
       }
-
       prevParent = thisParent;
       return path;
     };
     console.log('drawing:', findXPath('//drawing', flat, { root: xml, entries: true, recursive: false }).map(mk));
-
-    //process.exit(0);
+    
     let p = treeObserve.get(Object.fromEntries(flat.entries()));
     let node = p;
     let unwrapped, type, path;
-
     treeObserve.subscribe((what, target, path, value) => {
       if(what == 'access') return;
-      //  if(target[key] === undefined) return;
-      // let [path, k] = p;
-      //
-      //      path = new Path(path);
       let targetType = treeObserve.getType(target);
       let targetKeys = Object.keys(target).join(',');
       let valueType = typeof value;
-
-      //console.log("path:", path);
       let xpath = path.xpath(xml).slice(-2) + '';
       path = path.slice(-2) + '';
       let string = typeof value == 'string' ? value : '';
@@ -118,61 +102,26 @@ try {
         `event`,
         Util.toString({
           what,
-          /* targetType, key, targetKeys, */ valueType,
+           valueType,
           path,
-          /*xpath,*/ string
+           string
         })
       );
     });
+
     mapper.set(treeObserve.unwrap(node), []);
-
     for(let [path, obj] of path2obj) {
-      //   console.log('path2obj:', { path, obj });
-
       let [tagName, attributes, children] = obj;
       if(path == '0') path = '';
       path = new Path(path, true);
-
       obj.attributes;
-
       if(Object.keys(attributes).length == 0) continue;
-
       let xpath = path2xpath(obj2path(path.apply(xml)));
     }
-    for(let path in p) {
-      let obj = p[path];
-      let { tagName, attributes, children } = obj;
-      path = new Path(path, true);
-      let str = path.toString('/');
-      if(str == '0') str = '';
-      else if(str.length > 0 && /[0-9]/.test(str[0])) str = '/children/' + str;
-      else if(str.length > 0 && !str.startsWith('/')) str = '/' + str;
-      let o = p[str];
-      if(o === undefined) continue;
-      let keys = Object.keys(o);
-      let u = treeObserve.unwrap(o);
-      if(o.attributes) o.attributes.test = 'AAA';
-      //   if(o.children) o.children = [...o.children, 'test text' ];
-      o = Util.filterKeys(u, k => k != 'children');
-      //if(o.children) o.children = o.children.filter(c => typeof(c) == 'string').map(s => `"${s}"`).join(", ");
-
-      console.log('o:', Util.toString(o));
-    }
-    let found = deep.find(xml, (node, path) => !!node.tagName && ['parts', 'instances', 'elements', 'plain', 'drawing', 'wire'].indexOf(node.tagName) != -1, []);
-    let selected = deep.select(xml, (node, path) => !!node.tagName || node instanceof Array || path[path.length - 1] == 'children');
-
-    console.log(
-      'iterated:',
-      [...XmlIterator(xml, (v, p) => true)].map(([v, p]) => [Util.typeOf(v), new Path(p).toString(), typeof v == 'string' ? Util.decodeHTMLEntities(v) : toXML(v, 0)])
-    );
-
-    /*  console.log('found:', found);
-    node = flat.get(found.path);
-    console.log('node:', node);
-    let xpath;
-    xpath = mapper.xpath(unwrapped);
-    let r = Path.parseXPath('[0]');*/
+    let iterated = new Map([...XmlIterator(xml, (v, p) => true)].map(([v, p]) => [new Path(p, true).xpath(xml), v]));
+    console.log('iterated:', iterated);
   }
+
   main(...process.argv.slice(2));
 } catch(err) {
   console.log('err:', err);
