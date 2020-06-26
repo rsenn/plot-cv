@@ -26,7 +26,7 @@ const CH = 'children';
 global.console = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
-  inspectOptions: { depth: 1, colors: true }
+  inspectOptions: { depth: 2, colors: true }
 });
 
 Error.stackTraceLimit = 100;
@@ -86,7 +86,7 @@ try {
       return path;
     };
     console.log('drawing:', findXPath('//drawing', flat, { root: xml, entries: true, recursive: false }).map(mk));
-    
+
     let p = treeObserve.get(Object.fromEntries(flat.entries()));
     let node = p;
     let unwrapped, type, path;
@@ -102,9 +102,9 @@ try {
         `event`,
         Util.toString({
           what,
-           valueType,
+          valueType,
           path,
-           string
+          string
         })
       );
     });
