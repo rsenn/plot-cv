@@ -6,6 +6,11 @@ import fs from 'fs';
 import { Path, PathMapper, toXML, TreeObserver } from './lib/json.js';
 import { Console } from 'console';
 
+const printNode = node => {
+  let s = toXML(node).replace(/\n.*/g, '');
+  return s;
+};
+
 const CH = 'children'; //Path.CHILDREN;
 
 global.console = new Console({
@@ -55,24 +60,24 @@ try {
         console.log('x1,x2,y1,y2', { x1, x2, y1, y2 });
       //console.log('xpath', r.toString());
       console.log('tagName:', node.tagName);
-      console.log('node:', node);
+      console.log('node:', printNode(node));
       console.log('type:', type, path);
 
       if(node.children === undefined || !node.children.length) break;
       node = node.children[node.children.length - 1];
     }
 
-    console.log('node:', mapper.at([]));
+    console.log('node:', printNode(mapper.at([])));
 
-    console.log('node:', mapper.parent(mapper.at([CH, 0])));
-    console.log('node:', mapper.nextSibling(mapper.at([CH, 0, CH, 0, CH, 0])));
-    console.log('node:', mapper.firstChild(mapper.at([CH, 0, CH, 0])));
-    console.log('node:', mapper.nextSibling(mapper.firstChild(mapper.at([CH, 0, CH, 0]))));
-    //    console.log('node:', mapper.xpath(mapper.firstChild(mapper.at([CH, 0, CH, 0]))).toString());
+    console.log('node:', printNode(mapper.parent(mapper.at([CH, 0]))));
+    console.log('node:', printNode(mapper.nextSibling(mapper.at([CH, 0, CH, 0, CH, 0]))));
+    console.log('node:', printNode(mapper.firstChild(mapper.at([CH, 0, CH, 0]))));
+    console.log('node:', printNode(mapper.nextSibling(mapper.firstChild(mapper.at([CH, 0, CH, 0])))));
+    //    console.log('node:',  printNode(mapper.xpath(mapper.firstChild(mapper.at([CH, 0, CH, 0]))).toString());
     let xpath;
 
     xpath = mapper.xpath(unwrapped);
-    console.log('node:', xpath);
+    console.log('node:', printNode(xpath));
     let r = Path.parseXPath('[0]'); //Path.parseXPath('/eagle');
     console.log('xpath', [...r]);
     console.log('xpath', r.toString());
@@ -80,13 +85,13 @@ try {
     //  process.exit(0);
 
     console.log('result', r);
-    console.log('node', mapper.at('/eagle/drawing/board'));
+    console.log('node:', printNode(mapper.at('/eagle/drawing/board')));
     p = Path.parseXPath('/eagle/drawing/board/signals');
     console.log('mapper', p);
-    console.log('node', mapper.at(p));
+    console.log('node:', printNode(mapper.at(p)));
     p = Path.parseXPath("/eagle/drawing/board/signals/signal[@name='N$10']");
     console.log('mapper', p);
-    console.log('node', toXML(mapper.at(p)));
+    console.log('node:', printNode(toXML(mapper.at(p))));
   }
 
   main(process.argv.slice(2));
