@@ -26,7 +26,7 @@ const CH = 'children';
 global.console = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
-  inspectOptions: { depth: 2, colors: true }
+  inspectOptions: { depth: 1, colors: true }
 });
 
 Error.stackTraceLimit = 100;
@@ -118,7 +118,12 @@ try {
       if(Object.keys(attributes).length == 0) continue;
       let xpath = path2xpath(obj2path(path.apply(xml)));
     }
-    let iterated = new Map([...XmlIterator(xml, (v, p) => true)].map(([v, p]) => [new Path(p, true).xpath(xml), v]));
+    let iterated = new Map([...XmlIterator(xml, (v, p) => true)].map(([v, p]) => [
+'/'+p.join('/')      
+      //new Path(p, true)
+      //.xpath(xml)
+      , v
+      ]));
     console.log('iterated:', iterated);
   }
 
