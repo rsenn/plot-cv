@@ -1,6 +1,10 @@
 {
   "build_systems": [
     {
+      "name": "Run with Node.JS",
+      "shell_cmd": "(. ~/.nvm/nvm.sh; nvm use 14;  set -x;  node '${file}') 2>&1"
+    },
+      {
       "name": "List",
       "shell_cmd": "ls -l"
     },

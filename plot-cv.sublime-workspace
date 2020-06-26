@@ -1,1 +1,1487 @@
-{}
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"CFLAGS_O",
+				"CFLAGS_ONLY_OTHER"
+			],
+			[
+				"CFLA",
+				"CFLAGS_ONLY_I"
+			],
+			[
+				"CFLAGS_ONL",
+				"CFLAGS_ONLY_OTHER"
+			],
+			[
+				"CFL",
+				"CFLAGS_ONLY_I"
+			],
+			[
+				"LIBS",
+				"LIBS_ONLY_OTHER"
+			],
+			[
+				"CF",
+				"CFLAGS_ONLY_OTHER"
+			],
+			[
+				"CFLAGS",
+				"CFLAGS_ONLY_I"
+			],
+			[
+				"LIBS_",
+				"LIBS_ONLY_L"
+			],
+			[
+				"strlist_push",
+				"strlist_push_unique"
+			],
+			[
+				"strlist_pushb",
+				"strlist_pushb"
+			],
+			[
+				"endf",
+				"endfunction"
+			],
+			[
+				"SSL_",
+				"SSL_ERROR_WANT_READ"
+			],
+			[
+				"cha",
+				"chained_attributes"
+			],
+			[
+				"cfg",
+				"cfgdata"
+			],
+			[
+				"Con",
+				"ContactRef\tclass"
+			],
+			[
+				"pre",
+				"preprocess_command"
+			],
+			[
+				"BUILD_TYPE",
+				"BUILD_TYPE_RELWITHDEBINFO"
+			],
+			[
+				"Parsigr",
+				"ParsigramBalances"
+			],
+			[
+				"require_",
+				"require_parsigram"
+			],
+			[
+				"capture_",
+				"capture_api_errors"
+			],
+			[
+				"acti",
+				"activate_token"
+			],
+			[
+				"encode",
+				"encode_query_string"
+			],
+			[
+				"getaddres",
+				"getaddressesbylabel\tabc"
+			],
+			[
+				"split",
+				"split_string\tabc"
+			],
+			[
+				"capture",
+				"capture_api_errors\tabc"
+			],
+			[
+				"Trans",
+				"TransactionEndpoint\tabc"
+			],
+			[
+				"capture_er",
+				"capture_errors_json"
+			],
+			[
+				"cap",
+				"capture_errors_json"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "",
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Unix",
+				"name": "𝌆 Outline",
+				"scratch": true
+			}
+		},
+		{
+			"file": "test-membrane.js",
+			"settings":
+			{
+				"buffer_size": 3442,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/json/treeObserver.js",
+			"settings":
+			{
+				"buffer_size": 3987,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "plot-cv.sublime-project",
+			"settings":
+			{
+				"buffer_size": 3566,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/json/pathMapper.js",
+			"settings":
+			{
+				"buffer_size": 1528,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 400.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"outli",
+				"Browse Mode: Outline (Right)"
+			],
+			[
+				"outlin",
+				"Browse Mode: Outline (Right)"
+			],
+			[
+				"ctags",
+				"CTags: Rebuild Tags"
+			],
+			[
+				"outline",
+				"Browse Mode: Outline (Right)"
+			],
+			[
+				"remove ",
+				"Package Control: Remove Package"
+			],
+			[
+				"c99",
+				"Set Syntax: C99"
+			],
+			[
+				"toks",
+				"Toks: Full report any occurrences of symbol (prompt)"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"ctag",
+				"CTags: Rebuild Tags"
+			],
+			[
+				"adv",
+				"Package Control: Advanced Install Package"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			],
+			[
+				"add rep",
+				"Package Control: Add Repository"
+			],
+			[
+				"format",
+				"Clang Format: Format Selection"
+			],
+			[
+				"random",
+				"Schemr: Random scheme"
+			],
+			[
+				"adva",
+				"Package Control: Advanced Install Package"
+			],
+			[
+				"schemee",
+				"SchemeEditor: Edit installed scheme"
+			],
+			[
+				"schemeed",
+				"SchemeEditor: Edit Current Scheme"
+			],
+			[
+				"schemed",
+				"SchemeEditor: Edit Current Scheme"
+			],
+			[
+				"package",
+				"Package Control: Upgrade/Overwrite All Packages"
+			],
+			[
+				"install p",
+				"Package Control: Install Package"
+			],
+			[
+				"colorsche",
+				"Color Scheme Editor: Edit current color scheme"
+			],
+			[
+				"install pac",
+				"Package Control: Install Package"
+			],
+			[
+				"add repo",
+				"Package Control: Add Repository"
+			],
+			[
+				"index",
+				"Indexing Status"
+			],
+			[
+				"install pack",
+				"Package Control: Install Package"
+			],
+			[
+				"remove pac",
+				"Package Control: Remove Package"
+			],
+			[
+				"add re",
+				"Package Control: Add Repository"
+			],
+			[
+				"schheme",
+				"SchemeEditor: Edit Current Scheme"
+			],
+			[
+				"TOKS",
+				"Toks: Quick search for definitions of symbol under cursor"
+			],
+			[
+				"cscope",
+				"Cscope: Look up symbol"
+			],
+			[
+				"utline",
+				"Browse Mode: Outline (Right)"
+			],
+			[
+				"out",
+				"Browse Mode: Outline (Right)"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"install pa",
+				"Package Control: Install Package"
+			],
+			[
+				"remove pa",
+				"Package Control: Remove Package"
+			],
+			[
+				"scheme",
+				"SchemeEditor: Edit Current Scheme"
+			],
+			[
+				"gdb",
+				"SublimeGDB: Stop Debugging"
+			],
+			[
+				"instal pa",
+				"Package Control: Install Package"
+			],
+			[
+				"schemd",
+				"SchemeEditor: Edit Current Scheme"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"instalp",
+				"Package Control: Install Package"
+			],
+			[
+				"html",
+				"HTMLPrettify"
+			],
+			[
+				"Package Control: install",
+				"Package Control: Install Package"
+			],
+			[
+				"edit ",
+				"Color Scheme Editor: Edit current color scheme"
+			],
+			[
+				"INSTALL",
+				"Package Control: Install Package"
+			],
+			[
+				"INST",
+				"Package Control: Install Package"
+			],
+			[
+				"REMOVE",
+				"Package Control: Remove Package"
+			],
+			[
+				"SCHEMED",
+				"Color Scheme Editor: Edit current color scheme"
+			],
+			[
+				"edit",
+				"SchemeEditor: Edit installed scheme"
+			],
+			[
+				"color",
+				"Color Scheme Editor: Edit current color scheme"
+			],
+			[
+				"install p$",
+				"Package Control: Install Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"DELETE",
+				"Delete Blank Lines"
+			],
+			[
+				"moon",
+				"Browse Mode: Outline (Left)"
+			],
+			[
+				"lua",
+				"Set Syntax: Lua"
+			],
+			[
+				"moonscr",
+				"Build With: Compile MoonScript"
+			],
+			[
+				"moons",
+				"Set Syntax: MoonScript"
+			],
+			[
+				"repository",
+				"Package Control: Remove Repository"
+			],
+			[
+				"REPOS",
+				"Package Control: Add Repository"
+			]
+		],
+		"width": 736.0
+	},
+	"console":
+	{
+		"height": 265.0,
+		"history":
+		[
+			"sublime.log_commands(True)",
+			"sublime.log_commands(False)",
+			"sublime.log_commands(True)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/roman/Dokumente/Sources/plot-cv",
+		"/home/roman/Dokumente/Sources/plot-cv/lib",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json"
+	],
+	"file_history":
+	[
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/pathMapper.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/treeObserver.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/grammar.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-membrane.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/observableMembrane.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/ebnf2.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/xml2json.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/json2xml.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/locator.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-proxy.js",
+		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Arduino/libraries/slight_RotaryEncoder/examples/slight_RotaryEncoder_minimal/slight_RotaryEncoder_minimal.ino",
+		"/home/roman/Arduino/libraries/Infrared/examples/MicroGirs/MicroGirs.ino",
+		"/home/roman/Arduino/libraries/Infrared/examples/IrWidgetAggregating/IrWidgetAggregating.ino",
+		"/home/roman/Arduino/libraries/Infrared/examples/allreaders/allreaders.ino",
+		"/home/roman/Arduino/libraries/CaptureTimer/examples/CaptureToAnalogic/CaptureToAnalogic.ino",
+		"/home/roman/Arduino/libraries/CaptureTimer/examples/TriggeredTickCapture/TriggeredTickCapture.ino",
+		"/home/roman/Arduino/libraries/CaptureTimer/examples/SimpleCapture/SimpleCapture.ino",
+		"/home/roman/Arduino/libraries/SoftTimers/ci/appveyor/arduino_build_sketch.bat",
+		"/home/roman/Arduino/libraries/slight_RotaryEncoder/examples/slight_RotaryEncoder_test/slight_RotaryEncoder_test.ino",
+		"/home/roman/Arduino/libraries/MD_REncoder/src/MD_REncoder.cpp",
+		"/home/roman/Arduino/libraries/MD_REncoder/src/MD_REncoder.h",
+		"/home/roman/Arduino/libraries/MD_REncoder/examples/Polling/Polling.ino",
+		"/home/roman/Arduino/libraries/HID-Project/examples/SurfaceDial/SurfaceDial.ino",
+		"/home/roman/Arduino/libraries/Itty_Bitty/IttyBitty_UI_nav_adapters.cpp",
+		"/home/roman/Arduino/libraries/Itty_Bitty/IttyBitty_UI_nav_adapters.h",
+		"/home/roman/Arduino/libraries/MIDI_Library/src/MIDI.cpp",
+		"/home/roman/Arduino/libraries/MIDI_Library/test/unit-tests/tests/unit-tests_SysExCodec.cpp",
+		"/home/roman/Arduino/libraries/Adafruit_seesaw_Library/Adafruit_seesaw.cpp",
+		"/home/roman/Arduino/libraries/Adafruit_seesaw_Library/Adafruit_seesaw.h",
+		"/home/roman/Arduino/libraries/Adafruit_seesaw_Library/examples/encoder/rgb_encoder/rgb_encoder.ino",
+		"/home/roman/Arduino/libraries/Adafruit_seesaw_Library/examples/encoder/encoder_basic/encoder_basic.ino",
+		"/home/roman/Arduino/libraries/Encoder/Encoder.cpp",
+		"/home/roman/Arduino/libraries/Encoder/utility/interrupt_config.h",
+		"/home/roman/Arduino/libraries/Encoder/utility/interrupt_pins.h",
+		"/home/roman/Arduino/libraries/Encoder/examples/Basic/Basic.pde",
+		"/home/roman/Arduino/libraries/Encoder/examples/SpeedTest/SpeedTest.pde",
+		"/home/roman/Arduino/libraries/Encoder/examples/NoInterrupts/NoInterrupts.pde",
+		"/home/roman/Arduino/libraries/Encoder/examples/TwoKnobs/TwoKnobs.pde",
+		"/home/roman/Arduino/libraries/Encoder/Encoder.h",
+		"/home/roman/Arduino/libraries/EncoderStepCounter/EncoderStepCounter.cpp",
+		"/home/roman/Arduino/libraries/EncoderStepCounter/examples/BasicExample/BasicExample.ino",
+		"/home/roman/Arduino/libraries/EncoderStepCounter/examples/InterruptExample/InterruptExample.ino",
+		"/home/roman/Arduino/libraries/EncoderStepCounter/EncoderStepCounter.h",
+		"/home/roman/Arduino/libraries/SimpleRotary/src/SimpleRotary.cpp",
+		"/home/roman/Arduino/libraries/SimpleRotary/src/SimpleRotary.h",
+		"/home/roman/Arduino/libraries/SimpleRotary/examples/push/push.ino",
+		"/home/roman/Arduino/libraries/SimpleRotary/examples/pushType/pushType.ino",
+		"/home/roman/Arduino/libraries/SimpleRotary/examples/pushReset/pushReset.ino",
+		"/home/roman/Arduino/libraries/SimpleRotary/examples/pushLong/pushLong.ino",
+		"/home/roman/Arduino/libraries/SimpleRotary/examples/pushTime/pushTime.ino",
+		"/home/roman/Arduino/libraries/SimpleRotary/examples/options/options.ino",
+		"/home/roman/Arduino/libraries/SimpleRotary/examples/rotate/rotate.ino",
+		"/home/roman/Arduino/libraries/IRMP/src/irsndSelectAllProtocols.h",
+		"/home/roman/Arduino/libraries/IRMP/src/irsndSelectMain15Protocols.h",
+		"/home/roman/Arduino/libraries/QDEC/src/qdec.h",
+		"/home/roman/Arduino/libraries/QDEC/examples/01.BareLoop/01.BareLoop.ino",
+		"/home/roman/Arduino/libraries/QDEC/examples/22.InterruptsLearn/22.InterruptsLearn.ino",
+		"/home/roman/Arduino/libraries/QDEC/examples/04.LoopTemplate/04.LoopTemplate.ino",
+		"/home/roman/Arduino/libraries/QDEC/examples/03.LoopNamespace/03.LoopNamespace.ino",
+		"/home/roman/Arduino/libraries/QDEC/examples/21.BareInterrupts/21.BareInterrupts.ino",
+		"/home/roman/Arduino/libraries/QDEC/examples/05.LoopTemplateFun/05.LoopTemplateFun.ino",
+		"/home/roman/Arduino/libraries/QDEC/examples/02.LoopLearn/02.LoopLearn.ino",
+		"/home/roman/Arduino/libraries/ESP_Rotary/src/ESPRotary.h",
+		"/home/roman/Arduino/libraries/ESP_Rotary/src/ESPRotary.cpp",
+		"/home/roman/Arduino/libraries/ESP_Rotary/examples/SimpleCounterWithButton/SimpleCounterWithButton.ino",
+		"/home/roman/Arduino/libraries/ESP_Rotary/examples/SimpleCounter/SimpleCounter.ino",
+		"/home/roman/Arduino/libraries/IRremote/ir_Lego_PF.cpp",
+		"/home/roman/Arduino/libraries/IRremote/examples/LegoPowerFunctionsTests/LegoPowerFunctionsTests.ino",
+		"/home/roman/Arduino/libraries/IRremote/ir_Lego_PF_BitStreamEncoder.h",
+		"/home/roman/Arduino/libraries/SoftTimer/src/Rotary.h",
+		"/home/roman/Arduino/libraries/SoftTimer/src/Rotary.cpp",
+		"/home/roman/Arduino/libraries/SoftTimer/examples/SoftTimer6Rotary/SoftTimer6Rotary.ino",
+		"/home/roman/Arduino/libraries/Accessories/src/Accessory.hpp",
+		"/home/roman/Arduino/libraries/QuadratureEncoder/QuadratureEncoder.cpp",
+		"/home/roman/Arduino/libraries/QuadratureEncoder/examples/SimpleEncoderExample/SimpleEncoderExample.ino",
+		"/home/roman/Arduino/libraries/QuadratureEncoder/QuadratureEncoder.h",
+		"/home/roman/Arduino/libraries/RotaryDial/src/RotaryDial.cpp",
+		"/home/roman/Arduino/libraries/RotaryDial/src/RotaryDial.h",
+		"/home/roman/Arduino/libraries/RotaryDial/examples/dial_read/dial_read.ino",
+		"/home/roman/Arduino/libraries/RotaryEncoder/RotaryEncoder.h",
+		"/home/roman/Arduino/libraries/RotaryEncoder/examples/SimplePollRotator/SimplePollRotator.ino",
+		"/home/roman/Arduino/libraries/RotaryEncoder/examples/SimplePollRotatorLCD/SimplePollRotatorLCD.ino",
+		"/home/roman/Arduino/libraries/RotaryEncoder/examples/AcceleratedRotator/AcceleratedRotator.ino",
+		"/home/roman/Arduino/libraries/RotaryEncoder/examples/LimitedRotator/LimitedRotator.ino",
+		"/home/roman/Arduino/libraries/RotaryEncoder/examples/InterruptRotator/InterruptRotator.ino",
+		"/home/roman/Arduino/libraries/RotaryEncoder/RotaryEncoder.cpp",
+		"/home/roman/Arduino/libraries/slight_RotaryEncoder/src/slight_RotaryEncoder.h",
+		"/home/roman/Arduino/libraries/slight_RotaryEncoder/src/slight_RotaryEncoder.cpp",
+		"/home/roman/Arduino/libraries/slight_RotaryEncoder/examples/slight_RotaryEncoder__advanced2/myinput.h",
+		"/home/roman/Arduino/libraries/slight_RotaryEncoder/examples/slight_RotaryEncoder__advanced2/slight_RotaryEncoder__advanced2.ino",
+		"/home/roman/Arduino/libraries/slight_RotaryEncoder/examples/slight_RotaryEncoder__advanced2/myinput.cpp",
+		"/home/roman/Dokumente/Sources/Arduino-Projects/Arduino-Frequency-Counter-Library/FreqCounter.cpp",
+		"/home/roman/Dokumente/Sources/Arduino-Projects/Inductance_Capacitance_Meter/Inductance_Capacitance_Meter.",
+		"/home/roman/Dokumente/Sources/Arduino-Projects/Inductance_Capacitance_Meter/Inductance_Capacitance_Meter.ino",
+		"/home/roman/Dokumente/Sources/Arduino-Projects/FunctionGeneratorABMS/Arduino_Frequency_Counter_Duty_Cycle_Meter_4.ino",
+		"/home/roman/Dokumente/Sources/Arduino-Projects/Simple-Arduino-Frequency-Counter/frequency_counter.ino",
+		"/home/roman/Sources/c-utils/lib/strarray.h",
+		"/home/roman/Sources/c-utils/lib/str.h",
+		"/home/roman/Sources/c-utils/lib/uint32/uint32_seed.c",
+		"/home/roman/Sources/c-utils/lib/uint32.h",
+		"/home/roman/Sources/c-utils/lib/strlist/strlist_unshift.c",
+		"/home/roman/Sources/c-utils/lib/strlist/strlist_unshiftb.c",
+		"/home/roman/Sources/c-utils/lib/strlist/strlist_pushb.c",
+		"/home/roman/Sources/c-utils/lib/strlist/strlist_diff.c",
+		"/home/roman/Sources/c-utils/lib/path/path_canonical.c",
+		"/home/roman/Sources/c-utils/lib/strlist/strlist_contains.c",
+		"/home/roman/Sources/c-utils/lib/strlist/strlist_remove_all.c",
+		"/home/roman/Sources/c-utils/lib/strlist.h",
+		"/home/roman/Sources/c-utils/lib/strlist/strlist_containsb.c",
+		"/home/roman/Sources/c-utils/lib/slist.h",
+		"/home/roman/Sources/c-utils/map.h",
+		"/home/roman/Sources/c-utils/genmakefile.h",
+		"/home/roman/Sources/c-utils/lib/strarray/strarray_pushb.c",
+		"/home/roman/Sources/c-utils/lib/strarray/strarray_index_of.c",
+		"/home/roman/Sources/c-utils/lib/stralloc/stralloc_remove.c",
+		"/home/roman/Sources/c-utils/lib/path/path_is_directory.c",
+		"/home/roman/Sources/c-utils/lib/path/path_realpath.c",
+		"/home/roman/Sources/c-utils/lib/path/path_relative.c",
+		"/home/roman/Sources/c-utils/lib/strarray/strarray_push_unique.c",
+		"/home/roman/Sources/c-utils/lib/fmt/fmt_escapecharjson.c",
+		"/home/roman/Sources/c-utils/lib/path/path_collapse.c",
+		"/home/roman/Sources/c-utils/mplab.c",
+		"/home/roman/Sources/c-utils/lib/rdir/rdir_read.c"
+	],
+	"find":
+	{
+		"height": 39.0
+	},
+	"find_in_files":
+	{
+		"height": 258.0,
+		"where_history":
+		[
+			"/home/roman/Dokumente/Sources/plot-cv,*.js,/home/roman/Dokumente/Sources/plot-cv/lib,**.js",
+			"/home/roman/Dokumente/Sources/plot-cv/*.js,/home/roman/Dokumente/Sources/plot-cv/lib,**.js",
+			"/home/roman/Dokumente/Sources/plot-cv/*.js,,/home/roman/Dokumente/Sources/plot-cv/lib,**.js",
+			"/home/roman/Dokumente/Sources/plot-cv,*.js,,/home/roman/Dokumente/Sources/plot-cv/lib,**.js",
+			"/home/roman/Dokumente/Sources/plot-cv,**.js",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"isObjecst",
+			"isObj",
+			"log\\('xpath'",
+			"node', ",
+			"node:', ",
+			"node:",
+			"toString",
+			"root =",
+			"getPath",
+			"() ",
+			"getType",
+			" = last",
+			"down",
+			"toString",
+			"down",
+			"'children'",
+			"toString",
+			"'children'",
+			"childre",
+			"'children'",
+			"toString",
+			"for",
+			"for ",
+			"getProxy",
+			"this",
+			"constructor",
+			"\\.unwrap",
+			"unwrap",
+			"unwrapProxy",
+			"unwrap",
+			"path",
+			"/\\*.*\\*/",
+			"/\\*",
+			"inspect",
+			"toString",
+			"Symbol.*inspect",
+			"part'",
+			"'children'",
+			"ent",
+			"DereferenceError",
+			"apply",
+			"ChildrenSym",
+			"Children",
+			"dump",
+			"Symbol",
+			"'children'",
+			"ChildrenSym",
+			"2xml",
+			"</",
+			"jsonString",
+			"toXML",
+			"/lib/",
+			"EaglePath",
+			"Eagle",
+			";\n",
+			"EaglePath",
+			"text",
+			"down",
+			"}\\n\\n(\\s*)}",
+			"\\n\\n\\n",
+			"EaglePath.CHILDREN",
+			" apply\\(",
+			"apply\\(",
+			"'children'",
+			"},$",
+			"last\\(",
+			"last",
+			"}\\n\\n(\\s*)}",
+			"\\n\\n\\n",
+			"xpath",
+			"z =",
+			"toXML",
+			"^import.*common",
+			"import.*common",
+			"( ",
+			"valueDistortion\\(",
+			"valueDis",
+			"unwrap",
+			"getRead",
+			"reactiveHandler",
+			"tXml\\(",
+			"tXml",
+			"^import.*Xml",
+			"import.*Xml",
+			"import.*tXml",
+			"new Proxy"
+		],
+		"highlight": false,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+			"log('xpath:'",
+			"node:',  printNode(",
+			"CH",
+			"",
+			"CH",
+			"Path.CHILDREN",
+			"/",
+			"}\\n$1}",
+			"\\n\\n",
+			"'children'",
+			"EaglePath.CHILDREN",
+			"}",
+			"}\\n$1}",
+			"\\n\\n"
+		],
+		"reverse": false,
+		"show_context": false,
+		"use_buffer2": false,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+						],
+						"settings":
+						{
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
+							"outline_rename_mode": false,
+							"symkeys":
+							[
+							],
+							"symlist":
+							[
+							],
+							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 1,
+					"file": "test-membrane.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3442,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1492,
+								1492
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 413.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "lib/json/treeObserver.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3987,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1330,
+								1330
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 267.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "plot-cv.sublime-project",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3566,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								775,
+								2259
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/sublime-better-javascript/JSON.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1008.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "lib/json/pathMapper.js",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 1528,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 33.0
+	},
+	"input":
+	{
+		"height": 79.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				2,
+				0,
+				3,
+				2
+			],
+			[
+				0,
+				0,
+				2,
+				2
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.2,
+			0.8,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			0.5,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 158.0
+	},
+	"output.find_results":
+	{
+		"height": 140.0
+	},
+	"pinned_build_system": "Run with Node.JS",
+	"project": "plot-cv.sublime-project",
+	"replace":
+	{
+		"height": 74.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"test-me",
+				"test-membrane.js"
+			],
+			[
+				"obser",
+				"lib/observableMembrane.js"
+			],
+			[
+				"json.js",
+				"lib/json.js"
+			],
+			[
+				"observa",
+				"lib/observableMembrane.js"
+			],
+			[
+				"Induc",
+				"Inductance_Capacitance_Meter/Inductance_Capacitance_Meter.ino"
+			],
+			[
+				"rota",
+				"~/Arduino/libraries/RotaryEncoder/RotaryEncoder.h"
+			],
+			[
+				"cmakeli",
+				"CMakeLists.txt"
+			],
+			[
+				"slist.h",
+				"lib/slist.h"
+			],
+			[
+				"containsb",
+				"lib/strlist/strlist_containsb.c"
+			],
+			[
+				"strlist.h",
+				"lib/strlist.h"
+			],
+			[
+				"contains",
+				"lib/strlist/strlist_contains.c"
+			],
+			[
+				"strlist_diff",
+				"lib/strlist/strlist_diff.c"
+			],
+			[
+				"strlist_",
+				"lib/strlist/strlist_pushb.c"
+			],
+			[
+				"genma",
+				"genmakefile.h"
+			],
+			[
+				"genm",
+				"genmakefile.h"
+			],
+			[
+				"genmakefile",
+				"genmakefile.h"
+			],
+			[
+				"strarray.h",
+				"lib/strarray.h"
+			],
+			[
+				"str.h",
+				"lib/str.h"
+			],
+			[
+				"seed.c",
+				"lib/uint32/uint32_seed.c"
+			],
+			[
+				"uint32",
+				"lib/uint32.h"
+			],
+			[
+				"list.h",
+				"lib/strlist.h"
+			],
+			[
+				"unshift",
+				"lib/strlist/strlist_unshift.c"
+			],
+			[
+				"map.h",
+				"map.h"
+			],
+			[
+				"genmake",
+				"genmakefile.h"
+			],
+			[
+				"strarray_push",
+				"lib/strarray/strarray_pushb.c"
+			],
+			[
+				"index_of",
+				"lib/strarray/strarray_index_of.c"
+			],
+			[
+				"stralloc_remove",
+				"lib/stralloc/stralloc_remove.c"
+			],
+			[
+				"mplab.c",
+				"mplab.c"
+			],
+			[
+				"fmt_esca",
+				"lib/fmt/fmt_escapecharjson.c"
+			],
+			[
+				"genmakefile.h",
+				"genmakefile.h"
+			],
+			[
+				"rdir_rea",
+				"lib/rdir/rdir_read.c"
+			],
+			[
+				"canoni",
+				"lib/path/path_canonical.c"
+			],
+			[
+				"path.h",
+				"lib/path.h"
+			],
+			[
+				"path_relative",
+				"lib/path/path_relative.c"
+			],
+			[
+				"byte.h",
+				"lib/byte.h"
+			],
+			[
+				"pushb",
+				"lib/strlist/strlist_pushb.c"
+			],
+			[
+				"strlist_pushb",
+				"lib/strlist/strlist_pushb_unique.c"
+			],
+			[
+				"path.",
+				"lib/path.h"
+			],
+			[
+				"path_ex",
+				"lib/path/path_exists.c"
+			],
+			[
+				"path_bas",
+				"lib/path/path_basename.c"
+			],
+			[
+				"path_concat",
+				"lib/path/path_concat.c"
+			],
+			[
+				"stralloc.h",
+				"lib/stralloc.h"
+			],
+			[
+				"slist_pushb",
+				"lib/slist/slist_pushb.c"
+			],
+			[
+				"unshiftb",
+				"lib/slist/slist_unshiftb.c"
+			],
+			[
+				"slist_shift",
+				"lib/slist/slist_shift.c"
+			],
+			[
+				"pushs",
+				"lib/slist/slist_pushs.c"
+			],
+			[
+				"slist_",
+				"lib/slist/slist_init.c"
+			],
+			[
+				"collapse",
+				"lib/path/path_collapse.c"
+			],
+			[
+				"path_",
+				"lib/path/path_num.c"
+			],
+			[
+				"ini.c",
+				"ini.c"
+			],
+			[
+				"mplab",
+				"mplab.c"
+			],
+			[
+				"ini.h",
+				"ini.h"
+			],
+			[
+				"buffer_write_fd",
+				"lib/buffer/buffer_write_fd.c"
+			],
+			[
+				"buffer_wr",
+				"lib/buffer/buffer_write.c"
+			],
+			[
+				"uint16.h",
+				"lib/uint16.h"
+			],
+			[
+				"scan_utf",
+				"lib/scan/scan_utf8.c"
+			],
+			[
+				"buffer.h",
+				"lib/buffer.h"
+			],
+			[
+				"stralloc_fm",
+				"lib/stralloc/stralloc_fmt_call.c"
+			],
+			[
+				"utf8.c",
+				"lib/fmt/fmt_utf8.c"
+			],
+			[
+				"skip",
+				"lib/buffer/buffer_skipn.c"
+			],
+			[
+				"hmap_dump",
+				"lib/hmap/hmap_dump.c"
+			],
+			[
+				"mult.c",
+				"examples/mult.c"
+			],
+			[
+				"list-r",
+				"list-r.c"
+			],
+			[
+				"pkgcfg.c",
+				"pkgcfg.c"
+			],
+			[
+				"umul",
+				"lib/safemult/umult64.c"
+			],
+			[
+				"taia",
+				"lib/taia.h"
+			],
+			[
+				"tcping",
+				"tcping.c"
+			],
+			[
+				"strip-c",
+				"strip-comments.c"
+			],
+			[
+				"setuid",
+				"setuidgid.c"
+			],
+			[
+				"buffer_get",
+				"lib/buffer/buffer_get.c"
+			],
+			[
+				"buffer_peek",
+				"lib/buffer/buffer_peek.c"
+			],
+			[
+				"testini",
+				"testini.c"
+			],
+			[
+				"cmake",
+				"CMakeLists.txt"
+			],
+			[
+				"umult",
+				"lib/safemult/umult64.c"
+			],
+			[
+				"tcpin",
+				"tcping.c"
+			],
+			[
+				"stralloc_",
+				"lib/stralloc/stralloc_trimr.c"
+			],
+			[
+				"sttr_dup",
+				"lib/str/str_dup.c"
+			],
+			[
+				"slist_pu",
+				"lib/slist/slist_push.c"
+			],
+			[
+				"GNU",
+				"GNUmakefile"
+			],
+			[
+				"pkgcf",
+				"pkgcfg.c"
+			],
+			[
+				"cmakelists",
+				"CMakeLists.txt"
+			],
+			[
+				"piccfg",
+				"piccfg.c"
+			],
+			[
+				"getopt.h",
+				"lib/getopt.h"
+			],
+			[
+				"getopt",
+				"lib/unix/getopt.c"
+			],
+			[
+				"cmakeLi",
+				"CMakeLists.txt"
+			],
+			[
+				"slist_add",
+				"lib/slist/slist_add_before.c"
+			],
+			[
+				"strlist_sort",
+				"lib/strlist/strlist_sort.c"
+			],
+			[
+				"case_diffs",
+				"lib/case/case_diffs.c"
+			],
+			[
+				"stsrlist_sort",
+				"lib/strlist/strlist_sort.c"
+			],
+			[
+				"filter",
+				"build/x86_64-linux-musl/CMakeFiles/regfilter.dir/cmake_clean.cmake"
+			],
+			[
+				"hashmap.h",
+				"lib/hashmap.h"
+			],
+			[
+				"linked",
+				"lib/linked_list.h"
+			],
+			[
+				"to-cir",
+				"eagle-to-circuit.c"
+			],
+			[
+				"append.c",
+				"lib/hashmap/linked_list_append.c"
+			],
+			[
+				"to-circ",
+				"eagle-to-circuit.c"
+			],
+			[
+				"weak",
+				"build/x86_64-linux-musl/CMakeFiles/elfwrsec.dir/cmake_clean.cmake"
+			],
+			[
+				"dir_read.c",
+				"lib/dir/dir_read.c"
+			],
+			[
+				"dir_open",
+				"lib/dir/dir_open.c"
+			],
+			[
+				"rdir_read",
+				"lib/rdir/rdir_read.c"
+			],
+			[
+				"rdir_",
+				"lib/dir/dir_open.c"
+			],
+			[
+				"rdir.h",
+				"lib/rdir.h"
+			],
+			[
+				"dir_close",
+				"lib/dir/dir_close.c"
+			],
+			[
+				"rdir_ope",
+				"lib/rdir/rdir_open.c"
+			],
+			[
+				"read.c",
+				"lib/dir/dir_read.c"
+			],
+			[
+				"mplab.h",
+				"mplab.h"
+			],
+			[
+				"hmap.h",
+				"lib/hmap.h"
+			],
+			[
+				"gnuma",
+				"GNUmakefile"
+			],
+			[
+				"gnumake",
+				"GNUmakefile"
+			],
+			[
+				"getdelim",
+				"lib/unix/getdelim.c"
+			],
+			[
+				"Werror",
+				"build/cmake/Werror.cmake"
+			],
+			[
+				"xml.h",
+				"lib/xml.h"
+			],
+			[
+				"gen-cmd",
+				"eagle-gen-cmds.c"
+			],
+			[
+				"eagle-to-svg",
+				"eagle-to-svg.c"
+			],
+			[
+				"eagle-to-c",
+				"eagle-to-circuit.c"
+			],
+			[
+				"msys-shell",
+				"msys-shell.c"
+			],
+			[
+				"xml2moon.c",
+				"xml2moon.c"
+			],
+			[
+				"xml2json.c",
+				"xml2json.c"
+			],
+			[
+				"hmap.j",
+				"build/.cmake/api/v1/reply/target-hmap-618dc598ca6c474cbfbf.json"
+			],
+			[
+				"cc-wrap",
+				"cc-wrap.c"
+			],
+			[
+				"skip_pred",
+				"lib/buffer/buffer_skip_pred.c"
+			],
+			[
+				"skipspace",
+				"lib/buffer/buffer_skipspace.c"
+			],
+			[
+				"xml_read",
+				"lib/xml/xml_read_tree.c"
+			],
+			[
+				"xml_print",
+				"lib/xml/xml_print.c"
+			],
+			[
+				"xmlpp.c",
+				"xmlpp.c"
+			],
+			[
+				"_erase",
+				"lib/stralloc/stralloc_erase.c"
+			],
+			[
+				"unshifts",
+				"lib/slist/slist_unshifts.c"
+			],
+			[
+				"pushs.c",
+				"lib/slist/slist_pushs.c"
+			],
+			[
+				"errmsg.h",
+				"lib/errmsg.h"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 1,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 363.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
