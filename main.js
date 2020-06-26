@@ -1,5 +1,12 @@
 // prettier-ignore-start
-import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
+import {
+  Transformation,
+  Rotation,
+  Translation,
+  Scaling,
+  MatrixTransformation,
+  TransformationList
+} from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
@@ -16,11 +23,58 @@ import { devtools } from './lib/devtools.js';
 import Util from './lib/util.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
-import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
-import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './modules/htm/preact/standalone.mjs';
-import components, { Chooser, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider } from './static/components.js';
+import {
+  hydrate,
+  Fragment,
+  createRef,
+  isValidElement,
+  cloneElement,
+  toChildArray
+} from './modules/preact/dist/preact.mjs';
+import {
+  h,
+  html,
+  render,
+  Component,
+  createContext,
+  useState,
+  useReducer,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useImperativeHandle,
+  useMemo,
+  useCallback,
+  useContext,
+  useDebugValue
+} from './modules/htm/preact/standalone.mjs';
+import components, {
+  Chooser,
+  Container,
+  Button,
+  FileList,
+  Panel,
+  AspectRatioBox,
+  SizedAspectRatioBox,
+  TransformedElement,
+  Canvas,
+  ColorWheel,
+  Slider
+} from './static/components.js';
 import { WebSocketClient } from './lib/websocket-client.js';
-import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
+import {
+  CTORS,
+  ECMAScriptParser,
+  estree,
+  Factory,
+  Lexer,
+  ESNode,
+  Parser,
+  PathReplacer,
+  Printer,
+  Stack,
+  Token
+} from './lib/ecmascript.js';
 import {
   AlignmentAngle,
   Arc,
@@ -57,12 +111,95 @@ import {
   renderDocument
 } from './lib/eagle.js';
 
-const React = { cloneElement, Component, createContext, createRef, Fragment, create: h, html, hydrate, isValidElement, render, toChildArray, useCallback, useContext, useDebugValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useReducer, useRef, useState };
-const { Align, Anchor, CSS, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, HSLA, isElement, isHSLA, isLine, isMatrix, isNumber, isPoint, isRect, isRGBA, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, RGBA, Select, Size, SVG, Timer, Transition, TransitionList, TRBL, Tree } = {
+const React = {
+  cloneElement,
+  Component,
+  createContext,
+  createRef,
+  Fragment,
+  create: h,
+  html,
+  hydrate,
+  isValidElement,
+  render,
+  toChildArray,
+  useCallback,
+  useContext,
+  useDebugValue,
+  useEffect,
+  useImperativeHandle,
+  useLayoutEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState
+};
+const {
+  Align,
+  Anchor,
+  CSS,
+  CSSTransformSetters,
+  Element,
+  ElementPosProps,
+  ElementRectProps,
+  ElementRectProxy,
+  ElementSizeProps,
+  ElementTransformation,
+  ElementWHProps,
+  ElementXYProps,
+  HSLA,
+  isElement,
+  isHSLA,
+  isLine,
+  isMatrix,
+  isNumber,
+  isPoint,
+  isRect,
+  isRGBA,
+  isSize,
+  Line,
+  Matrix,
+  Node,
+  Point,
+  PointList,
+  Polyline,
+  Rect,
+  RGBA,
+  Select,
+  Size,
+  SVG,
+  Timer,
+  Transition,
+  TransitionList,
+  TRBL,
+  Tree
+} = {
   ...dom,
   ...geom
 };
-Object.assign(window, { React, ReactComponent, WebSocketClient, html }, dom, geom, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape }, { Chooser, useState, useLayoutEffect, useRef, Polygon });
+Object.assign(
+  window,
+  { React, ReactComponent, WebSocketClient, html },
+  dom,
+  geom,
+  {
+    CTORS,
+    ECMAScriptParser,
+    ESNode,
+    estree,
+    Factory,
+    Lexer,
+    Parser,
+    PathReplacer,
+    Printer,
+    Stack,
+    Token,
+    ReactComponent,
+    ClipperLib,
+    Shape
+  },
+  { Chooser, useState, useLayoutEffect, useRef, Polygon }
+);
 
 let currentProj = trkl.property(window, 'project');
 let open = trkl();
@@ -86,7 +223,8 @@ const useSlot = (arr, i) => [() => arr[i], v => (arr[i] = v)];
 const trklGetSet = (get, set) => value => (value !== undefined ? set(value) : get());
 const useTrkl = trkl => [() => trkl(), value => trkl(value)];
 
-const classNames = (...args) => args.filter(arg => typeof arg == 'string' && arg.length > 0).join(' ');
+const classNames = (...args) =>
+  args.filter(arg => typeof arg == 'string' && arg.length > 0).join(' ');
 
 const MouseEvents = h => ({
   onMouseDown: h,
@@ -197,12 +335,31 @@ const loadDocument = async (proj, parentElem) => {
     const [dimensions, setDimensions] = useState(sizeListener());
     const [aspect, setAspect] = useState(aspectListener());
 
-    if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
-    if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
+    if(sizeListener && sizeListener.subscribe)
+      sizeListener.subscribe(value => setDimensions(value));
+    if(aspectListener && aspectListener.subscribe)
+      aspectListener.subscribe(value => setAspect(value));
 
     console.log('Fence.render', { dimensions, aspect });
 
-    return h(TransformedElement, { id: 'fence', type: SizedAspectRatioBox, aspect, listener: transform, style: { position: 'relative', minWidth: '100px', 'data-name': proj.name, ...style, ...dimensions }, ...props }, children);
+    return h(
+      TransformedElement,
+      {
+        id: 'fence',
+        type: SizedAspectRatioBox,
+        aspect,
+        listener: transform,
+        style: {
+          position: 'relative',
+          minWidth: '100px',
+          'data-name': proj.name,
+          ...style,
+          ...dimensions
+        },
+        ...props
+      },
+      children
+    );
   };
 
   component = h(
@@ -307,7 +464,12 @@ const MakeFitAction = index => async () => {
   console.log('zoom factor:', factor);
   let delay = Math.abs(Math.log(factor) * 1000);
   console.log('transition delay:', delay);
-  await Element.transition(container, { ...newSize.toCSS(), transform: '', position: 'absolute' }, delay + 'ms', 'linear');
+  await Element.transition(
+    container,
+    { ...newSize.toCSS(), transform: '', position: 'absolute' },
+    delay + 'ms',
+    'linear'
+  );
 };
 
 const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {

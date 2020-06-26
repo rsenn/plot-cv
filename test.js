@@ -167,7 +167,14 @@ global.process = function(contours, hier) {
   console.log("hier: ", global.hier[global.contours.length - 1]);*/
 
   function dumpContour(c) {
-    console.log(`contour #${c.id} length=${(c.length + '').padStart(5, ' ')} bbox=`, c.bbox, ' rect:', c.rect, ' area=', c.area);
+    console.log(
+      `contour #${c.id} length=${(c.length + '').padStart(5, ' ')} bbox=`,
+      c.bbox,
+      ' rect:',
+      c.rect,
+      ' area=',
+      c.area
+    );
   }
 
   function processContours(contours) {
@@ -225,7 +232,10 @@ global.process = function(contours, hier) {
   if(do_log) {
     console.log(`polygons: [\n  ${polygons.join(',\n  ')}\n]`);
 
-    console.log('PROCESS contours: ', contours.map(c => '[' + c.map(pt => `{x:${pt.x},y:${pt.y}}`).join(', ') + ']').join(', '));
+    console.log(
+      'PROCESS contours: ',
+      contours.map(c => '[' + c.map(pt => `{x:${pt.x},y:${pt.y}}`).join(', ') + ']').join(', ')
+    );
     console.log('PROCESS hier: ', '[' + hier.map(h => `[${h.join(',')}]`).join(', '));
   }
 };
@@ -233,14 +243,24 @@ let ctor = Point.prototype.constructor;
 console.log('Classes: ', inspect(lib));
 console.log('Point: ', inspect(Point));
 console.log('Contour: ' + inspect(Contour));
-console.log('typeof(Point.prototype.constructor): ', typeof Point.prototype.constructor == 'function');
+console.log(
+  'typeof(Point.prototype.constructor): ',
+  typeof Point.prototype.constructor == 'function'
+);
 console.log('typeof(Point): ', typeof Point);
 console.log('ctor.name: ', ctor.name);
 
 /*console.log("Point.prototype: ", Point.prototype);
 console.log("Point.prototype.constructor: ", Point.prototype.constructor);
 */
-let points = [new Point(0, 0), new Point(50, 0), new Point(100, 0), new Point(100, 50), new Point(100, 100), new Point(100, 200)];
+let points = [
+  new Point(0, 0),
+  new Point(50, 0),
+  new Point(100, 0),
+  new Point(100, 50),
+  new Point(100, 100),
+  new Point(100, 200)
+];
 console.log('points[0]: ', points[0]);
 console.log('points[last]: ', points[points.length - 1]);
 console.log('points: ', points.map(p => `{x:${p.x},y:${p.y}}`).join(', '));

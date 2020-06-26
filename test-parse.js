@@ -73,6 +73,11 @@ if(parser.state.current == '') {
   grammar.print(0);
   process.exit(0);
 } else {
-  console.log('incomplete parse: lineNumber=' + parser.state.lineNumber + ' input=' + parser.state.buffer.substring(parser.state.offset, parser.state.offset + 50));
+  console.log(
+    'incomplete parse: lineNumber=' +
+      parser.state.lineNumber +
+      ' input=' +
+      parser.state.buffer.substring(parser.state.offset, parser.state.offset + 50)
+  );
   process.exit(-1);
 }

@@ -31,7 +31,19 @@ Socket.prototype.toString = function() {
 };
 
 app.ws('/ws', async (ws, req) => {
-  const { connection, client, upgrade, query, socket, headers, trailers, params, res, route, body } = req;
+  const {
+    connection,
+    client,
+    upgrade,
+    query,
+    socket,
+    headers,
+    trailers,
+    params,
+    res,
+    route,
+    body
+  } = req;
   const { path, protocol, ip, cookies, hostname, host } = req;
   const { remoteAddress, remotePort, localAddress, localPort } = client;
   const { _host, _peername } = connection;
@@ -42,7 +54,13 @@ app.ws('/ws', async (ws, req) => {
   if(address == '::1') address = 'localhost';
 
   address = address.replace(/^::ffff:/, '');
-  let s = new Socket(ws, { address, port, /*remoteAddress, remotePort,*/ localAddress, localPort, cookie });
+  let s = new Socket(ws, {
+    address,
+    port,
+    /*remoteAddress, remotePort,*/ localAddress,
+    localPort,
+    cookie
+  });
   sockets.push(s);
 
   console.log('headers:', headers);
@@ -96,7 +114,9 @@ app.get('/favicon.ico', (req, res) =>
   })
 );
 app.get('/main.js', async (req, res) => res.sendFile(path.join(p, 'main.js')));
-app.get('/style.css', async (req, res) => res.sendFile(path.join(p, 'style.css'), { headers: { 'Content-Type': 'text/css' } }));
+app.get('/style.css', async (req, res) =>
+  res.sendFile(path.join(p, 'style.css'), { headers: { 'Content-Type': 'text/css' } })
+);
 
 app.get('/files.html', async (req, res) => {
   let files = [...(await fs.promises.readdir('.'))].filter(entry => /\.(brd|sch)$/.test(entry));
@@ -126,7 +146,8 @@ app.post('/save', async (req, res) => {
   const { body } = req;
   console.log('req.headers:', req.headers);
   console.log('save body:', body.substring(0, 100), '...');
-  const filename = req.headers['content-disposition'].replace(/.*"([^"]*)".*/, '$1') || 'output.svg';
+  const filename =
+    req.headers['content-disposition'].replace(/.*"([^"]*)".*/, '$1') || 'output.svg';
   let result = await fs.promises.writeFile(filename, body, { mode: 0o600, flag: 'w' });
   res.json({ result });
 });

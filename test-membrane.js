@@ -34,7 +34,11 @@ try {
   const mapper = new PathMapper();
   let treeObserve = new TreeObserver(mapper, false);
   function main(...args) {
-    let str = fs.readFileSync(args.length ? args[0] : '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
+    let str = fs
+      .readFileSync(
+        args.length ? args[0] : '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd'
+      )
+      .toString();
 
     let xml = tXml(str)[0];
 
@@ -49,7 +53,8 @@ try {
       new Map(),
       (v, p, r) => typeof v == 'object' && v !== null && v.tagName !== undefined,
       (p, v) => obj2path(v, p),
-      ({ tagName, attributes, children, ...value }) => (children.length ? [tagName, attributes, children] : [tagName, attributes])
+      ({ tagName, attributes, children, ...value }) =>
+        children.length ? [tagName, attributes, children] : [tagName, attributes]
     );
 
     let flat = deep.flatten(
@@ -85,7 +90,10 @@ try {
       prevParent = thisParent;
       return path;
     };
-    console.log('drawing:', findXPath('//drawing', flat, { root: xml, entries: true, recursive: false }).map(mk));
+    console.log(
+      'drawing:',
+      findXPath('//drawing', flat, { root: xml, entries: true, recursive: false }).map(mk)
+    );
 
     let p = treeObserve.get(Object.fromEntries(flat.entries()));
     let node = p;
@@ -98,15 +106,7 @@ try {
       let xpath = path.xpath(xml).slice(-2) + '';
       path = path.slice(-2) + '';
       let string = typeof value == 'string' ? value : '';
-      console.log(
-        `event`,
-        Util.toString({
-          what,
-          valueType,
-          path,
-          string
-        })
-      );
+      console.log(`event`, Util.toString({ what, valueType, path, string }));
     });
 
     mapper.set(treeObserve.unwrap(node), []);
@@ -118,13 +118,16 @@ try {
       if(Object.keys(attributes).length == 0) continue;
       let xpath = path2xpath(obj2path(path.apply(xml)));
     }
-    let iterated = new Map([...XmlIterator(xml, (v, p) => true)].map(([v, p]) => [
-'/'+p.join('/')      
-      //new Path(p, true)
-      //.xpath(xml)
-      , v
-      ]));
-    console.log('iterated:', iterated);
+    let iterated = new Map(
+      [...XmlIterator(xml, (value, path) => true)].map(([value, path]) => [
+        new Path(path, true)[Symbol.toStringTag]() /*.xpath(xml)*/,
+        value
+      ])
+    );
+    for(let [path, value] of iterated) {
+      path = new Path(path, true);
+      console.log(path.xpath(xml) + ' =', value);
+    }
   }
 
   main(...process.argv.slice(2));

@@ -1,4 +1,14 @@
-import { h, html, render, Component, useState, useCallback, useRef, useEffect, useLayoutEffect } from '../modules/htm/preact/standalone.mjs';
+import {
+  h,
+  html,
+  render,
+  Component,
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  useLayoutEffect
+} from '../modules/htm/preact/standalone.mjs';
 //import React from '../modules/preact/dist/preact.mjs';
 
 export function classNames() {
@@ -44,7 +54,14 @@ export const MouseEvents = h => ({
   onMouseUp: h
 });
 
-export const Overlay = ({ className = 'overlay', active = false, onPush, text, children, ...props }) => {
+export const Overlay = ({
+  className = 'overlay',
+  active = false,
+  onPush,
+  text,
+  children,
+  ...props
+}) => {
   const [pushed, setPushed] = useState(false);
   const events = MouseEvents(
     MouseHandler((e, state) => {
@@ -57,7 +74,11 @@ export const Overlay = ({ className = 'overlay', active = false, onPush, text, c
   );
 
   return html`
-    <div className=${classNames(className, pushed && 'pushed', active ? 'active' : 'inactive')} ...${props} ...${events}>
+    <div
+      className=${classNames(className, pushed && 'pushed', active ? 'active' : 'inactive')}
+      ...${props}
+      ...${events}
+    >
       ${text} ${children}
     </div>
   `;
@@ -70,7 +91,15 @@ export const Container = ({ className = 'panel', children, ...props }) => {
   `;
 };
 
-export const Chooser = ({ className = 'list', itemClass = 'item', itemComponent = Overlay, items, onChange = () => {}, onPush = () => {}, ...props }) => {
+export const Chooser = ({
+  className = 'list',
+  itemClass = 'item',
+  itemComponent = Overlay,
+  items,
+  onChange = () => {},
+  onPush = () => {},
+  ...props
+}) => {
   const [active, setActive] = useState(-1);
   const pushHandler = i => (e, state) => {
     const prev = active;
@@ -90,11 +119,18 @@ export const Chooser = ({ className = 'list', itemClass = 'item', itemComponent 
       ...item*/
     })
   );
-  return html`<${Container} className=${classNames('panel', className)} ...${props}>${children}</${Container}>`;
+  return html`<${Container} className=${classNames(
+    'panel',
+    className
+  )} ...${props}>${children}</${Container}>`;
 };
 
 export const Button = ({ caption, fn }) => html`
-  <${Overlay} className="button" text=${caption} onPush=${state => (state ? fn(state) : undefined)} />
+  <${Overlay}
+    className="button"
+    text=${caption}
+    onPush=${state => (state ? fn(state) : undefined)}
+  />
 `;
 
 export const Label = ({ className = 'label', text, children, ...props }) =>
@@ -113,7 +149,11 @@ export const Icon = ({ className = 'icon', caption, image, ...props }) => html`
 `;
 
 export const Progress = ({ className, percent, ...props }) => html`
-                <${Overlay} className=${classNames('progress', 'center', className)} text=${percent + '%'} style=${{
+                <${Overlay} className=${classNames(
+  'progress',
+  'center',
+  className
+)} text=${percent + '%'} style=${{
   position: 'relative',
   width: '100%',
   height: '1.5em',
@@ -170,7 +210,17 @@ export const BoardIcon = props => html`
   </svg>
 `;
 
-export const File = ({ label, i, key, className = 'file', onPush, signal, data, doc, ...props }) => {
+export const File = ({
+  label,
+  i,
+  key,
+  className = 'file',
+  onPush,
+  signal,
+  data,
+  doc,
+  ...props
+}) => {
   const [loaded, setLoaded] = useState(NaN);
   if(signal) signal.subscribe(data => setLoaded(data.percent));
   onPush =
@@ -224,7 +274,8 @@ export const FileList = ({ files, onChange, onActive, ...props }) => {
   `;
 };
 
-export const Panel = (name, children) => html`<${Container} className="${name}">${children}</${Container}>`;
+export const Panel = (name, children) =>
+  html`<${Container} className="${name}">${children}</${Container}>`;
 
 export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className }, children) =>
   enable
@@ -247,7 +298,17 @@ export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className 
         children
       );
 
-export const AspectRatioBox = ({ aspect = 1.0, children, insideClassName, outsideClassName, outsideProps = {}, style, ...props } /* console.log('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/) =>
+export const AspectRatioBox = (
+  {
+    aspect = 1.0,
+    children,
+    insideClassName,
+    outsideClassName,
+    outsideProps = {},
+    style,
+    ...props
+  } /* console.log('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/
+) =>
   h(React.Fragment, {}, [
     h(
       'div',
@@ -267,11 +328,29 @@ export const AspectRatioBox = ({ aspect = 1.0, children, insideClassName, outsid
     )
   ]);
 
-export const SizedAspectRatioBox = ({ width, height, style, className, children, outsideClassName, insideClassName, insideProps, outsideProps = {}, sizeClassName, sizeProps = {}, onClick, ...props }) =>
+export const SizedAspectRatioBox = ({
+  width,
+  height,
+  style,
+  className,
+  children,
+  outsideClassName,
+  insideClassName,
+  insideProps,
+  outsideProps = {},
+  sizeClassName,
+  sizeProps = {},
+  onClick,
+  ...props
+}) =>
   h(
     'div',
     {
-      className: classNames('aspect-ratio-box-size', className && className + '-size', sizeClassName),
+      className: classNames(
+        'aspect-ratio-box-size',
+        className && className + '-size',
+        sizeClassName
+      ),
       style: { position: 'relative', width, height, ...style },
       onClick
     },
@@ -279,7 +358,11 @@ export const SizedAspectRatioBox = ({ width, height, style, className, children,
       h(
         AspectRatioBox,
         {
-          outsideClassName: classNames('aspect-ratio-box-outside', className && className + '-outside', outsideClassName),
+          outsideClassName: classNames(
+            'aspect-ratio-box-outside',
+            className && className + '-outside',
+            outsideClassName
+          ),
           outsideProps,
           insideClassName: insideClassName || className,
           onClick,
@@ -290,7 +373,15 @@ export const SizedAspectRatioBox = ({ width, height, style, className, children,
     ]
   );
 
-export const TransformedElement = ({ type = 'div', aspect, listener, style = { position: 'relative' }, className, children = [], ...props }) => {
+export const TransformedElement = ({
+  type = 'div',
+  aspect,
+  listener,
+  style = { position: 'relative' },
+  className,
+  children = [],
+  ...props
+}) => {
   const [transform, setTransform] = useState(new TransformationList());
 
   //console.log('TransformedElement:', { aspect });
@@ -311,7 +402,19 @@ export const TransformedElement = ({ type = 'div', aspect, listener, style = { p
   );
 };
 
-export const Slider = ({ min = 0, max = 100, value: initialValue = 0, step = 1, name = 'slider', orient = 'horizontal', label, onChange = value => {}, style = {}, length, ...props }) => {
+export const Slider = ({
+  min = 0,
+  max = 100,
+  value: initialValue = 0,
+  step = 1,
+  name = 'slider',
+  orient = 'horizontal',
+  label,
+  onChange = value => {},
+  style = {},
+  length,
+  ...props
+}) => {
   const [value, setValue] = useState(initialValue);
   const onInput = e => {
     const { target } = e;
@@ -322,33 +425,61 @@ export const Slider = ({ min = 0, max = 100, value: initialValue = 0, step = 1, 
   label = label || name;
   let dim = length ? { [orient == 'horizontal' ? 'width' : 'height']: length } : {};
 
-  return h('div', { style: { display: 'inline-flex', flexBasis: '100%', flexFlow: orient == 'horizontal' ? 'row' : 'column', justifyContent: 'stretch', alignItems: 'center', fontSize: '0.8em', ...style } }, [
-    //h('label', { for: name }, label),
-    label,
-    h('input', {
-      name,
-      type: 'range',
-      min,
-      max,
-      orient,
-      style: { WebkitAppearance: `slider-${orient}`, display: 'inline', width: 40, flex: '1 1 auto', ...dim },
-      ...props,
-      value,
-      onInput
-    }),
-    h('input', {
-      name,
-      type: 'number',
-      min,
-      max,
+  return h(
+    'div',
+    {
+      style: {
+        display: 'inline-flex',
+        flexBasis: '100%',
+        flexFlow: orient == 'horizontal' ? 'row' : 'column',
+        justifyContent: 'stretch',
+        alignItems: 'center',
+        fontSize: '0.8em',
+        ...style
+      }
+    },
+    [
+      //h('label', { for: name }, label),
+      label,
+      h('input', {
+        name,
+        type: 'range',
+        min,
+        max,
+        orient,
+        style: {
+          WebkitAppearance: `slider-${orient}`,
+          display: 'inline',
+          width: 40,
+          flex: '1 1 auto',
+          ...dim
+        },
+        ...props,
+        value,
+        onInput
+      }),
+      h('input', {
+        name,
+        type: 'number',
+        min,
+        max,
 
-      orient,
-      style: { width: (+max + '').length * 10 + 'px', MozAppearance: `textfield`, WebkitAppearance: 'none', margin: 0, display: 'inline', textAlign: 'center', flex: '0 1 auto' },
-      ...props,
-      value,
-      onInput
-    })
-  ]);
+        orient,
+        style: {
+          width: (+max + '').length * 10 + 'px',
+          MozAppearance: `textfield`,
+          WebkitAppearance: 'none',
+          margin: 0,
+          display: 'inline',
+          textAlign: 'center',
+          flex: '0 1 auto'
+        },
+        ...props,
+        value,
+        onInput
+      })
+    ]
+  );
 };
 
 export const Canvas = ({ onInit, ...props }) => {
@@ -364,7 +495,8 @@ export const Canvas = ({ onInit, ...props }) => {
     console.log('ctx.current', ctx.current);
     const { offsetLeft: x, offsetTop: y } = canvasRef.current;
 
-    if(typeof onInit == 'function') onInit(ctx.current, canvasRef.current, { width, height, x, y });
+    if(typeof onInit == 'function')
+      onInit(ctx.current, canvasRef.current, { width, height, x, y });
   }, []);
 
   /*  const [windowWidth, windowHeight] = useWindowSize(() => {
@@ -374,7 +506,10 @@ export const Canvas = ({ onInit, ...props }) => {
 
   function handleMouseMove(e) {
     // actual coordinates
-    const coords = [e.clientX - canvasRef.current.offsetLeft, e.clientY - canvasRef.current.offsetTop];
+    const coords = [
+      e.clientX - canvasRef.current.offsetLeft,
+      e.clientY - canvasRef.current.offsetTop
+    ];
     if(drawing) {
       ctx.current.lineTo(...coords);
       ctx.current.stroke();
@@ -391,7 +526,10 @@ export const Canvas = ({ onInit, ...props }) => {
     ctx.current.strokeStyle = props.color;
     ctx.current.beginPath();
     // actual coordinates
-    ctx.current.moveTo(e.clientX - canvasRef.current.offsetLeft, e.clientY - canvasRef.current.offsetTop);
+    ctx.current.moveTo(
+      e.clientX - canvasRef.current.offsetLeft,
+      e.clientY - canvasRef.current.offsetTop
+    );
     setDrawing(true);
   }
 
