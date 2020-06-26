@@ -13,10 +13,11 @@ global.console = new Console({
   stderr: process.stderr,
   inspectOptions: { depth: 1, colors: true }
 });
+Error.stackTraceLimit = 100;
 
 try {
-  const path = new PathMapper();
-  let membrane = new TreeObserver(path);
+  const mapper = new PathMapper();
+  let treeObserve = new TreeObserver(mapper, false);
 
   function main() {
     let str = fs.readFileSync('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
@@ -24,44 +25,68 @@ try {
     let xml = tXml(str)[0];
     //console.log('xml:', xml);
 
-    let p = membrane.getProxy(xml);
+    let p = treeObserve.get(xml);
     let node = p;
-    let unwrapped;
+    let unwrapped, type, path;
 
-    path.set(membrane.unwrapProxy(node), []);
+    treeObserve.subscribe((what, target, key, path) => {
+      if(what == 'access') return;
+      console.log('event', what, key, path);
+      //   console.log('target.attributes', target.attributes);
+      if(mapper === null) process.exit(1);
+    });
+
+    mapper.set(treeObserve.unwrap(node), []);
 
     while(node) {
-      unwrapped = membrane.unwrapProxy(node);
-      console.log('unwrapped:', toXML(unwrapped, false).replace(/\n.*/g, ''));
-      console.log('path:', path.get(unwrapped) + '');
+      unwrapped = treeObserve.unwrap(node);
+      type = treeObserve.getType(node);
+      path = treeObserve.getXPath(node).toString();
+
+      //  node['test'] = true;
+      if(Util.isObject(node)) {
+        if(!Util.isObject(node.attributes)) node.attributes = {};
+
+        node['test'] = true;
+      }
+      const { x1, x2, y1, y2 } = node.attributes;
+      if(x1 !== undefined)
+        //  console.log('unwrapped:', toXML(unwrapped, false).replace(/\n.*/g, ''));
+        console.log('x1,x2,y1,y2', { x1, x2, y1, y2 });
+      //console.log('xpath', r.toString());
       console.log('tagName:', node.tagName);
+      console.log('node:', node);
+      console.log('type:', type, path);
 
       if(node.children === undefined || !node.children.length) break;
       node = node.children[node.children.length - 1];
     }
 
-    console.log('node:', path.at([]));
+    console.log('node:', mapper.at([]));
 
-    console.log('node:', path.parent(path.at([CH, 0])));
-    console.log('node:', path.nextSibling(path.at([CH, 0, CH, 0, CH, 0])));
-    console.log('node:', path.firstChild(path.at([CH, 0, CH, 0])));
-    console.log('node:', path.nextSibling(path.firstChild(path.at([CH, 0, CH, 0]))));
-//    console.log('node:', path.xpath(path.firstChild(path.at([CH, 0, CH, 0]))).toString());
+    console.log('node:', mapper.parent(mapper.at([CH, 0])));
+    console.log('node:', mapper.nextSibling(mapper.at([CH, 0, CH, 0, CH, 0])));
+    console.log('node:', mapper.firstChild(mapper.at([CH, 0, CH, 0])));
+    console.log('node:', mapper.nextSibling(mapper.firstChild(mapper.at([CH, 0, CH, 0]))));
+    //    console.log('node:', mapper.xpath(mapper.firstChild(mapper.at([CH, 0, CH, 0]))).toString());
     let xpath;
 
-xpath = path.xpath(unwrapped);
+    xpath = mapper.xpath(unwrapped);
     console.log('node:', xpath);
-    let r = Path.parseXPath('/eagle');
-    console.log('xpath', xpath);
+    let r = Path.parseXPath('[0]'); //Path.parseXPath('/eagle');
+    console.log('xpath', [...r]);
+    console.log('xpath', r.toString());
+    console.log('xpath r', mapper.xpath(unwrapped).toString());
+    //  process.exit(0);
 
     console.log('result', r);
-    console.log('node', path.at('/eagle/drawing/board'));
+    console.log('node', mapper.at('/eagle/drawing/board'));
     p = Path.parseXPath('/eagle/drawing/board/signals');
-    console.log('path', p);
-    console.log('node', path.at(p));
+    console.log('mapper', p);
+    console.log('node', mapper.at(p));
     p = Path.parseXPath("/eagle/drawing/board/signals/signal[@name='N$10']");
-    console.log('path', p);
-    console.log('node', toXML(path.at(p)));
+    console.log('mapper', p);
+    console.log('node', toXML(mapper.at(p)));
   }
 
   main(process.argv.slice(2));
