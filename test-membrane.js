@@ -3,87 +3,22 @@ import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Util from './lib/util.js';
 import fs from 'fs';
-import { text, EagleInterface, toXML, dump } from './lib/eagle/common.js';
-import { EaglePath } from './lib/eagle/locator.js';
+import { Path, PathMapper, toXML, TreeObserver } from './lib/json.js';
 import { Console } from 'console';
+
+const CH = 'children'; //Path.CHILDREN;
 
 global.console = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
   inspectOptions: { depth: 1, colors: true }
 });
+
 try {
-  class PathMapper {
-    map = null;
-    root = null;
-
-    constructor() {
-      this.map = new WeakMap();
-    }
-    at(path) {
-      if(!(path instanceof EaglePath)) path = new EaglePath(path);
-      return path.apply(this.root);
-    }
-    set(obj, path) {
-      if(!(path instanceof EaglePath)) path = new EaglePath(path);
-      if(path.length === 0) this.root = obj;
-      this.map.set(obj, path);
-    }
-    get(obj) {
-      let path = this.map.get(obj) || null;
-      return path;
-    }
-    walk(obj, fn = path => path) {
-      let path = this.get(obj);
-      path = fn(path);
-      if(!(path instanceof EaglePath)) path = new EaglePath(path);
-      return this.at(path);
-    }
-    parent(obj) {
-      return this.walk(obj, path => path.slice(0, typeof path.last == 'number' ? -2 : -1));
-    }
-    firstChild(obj) {
-      return this.walk(obj, path => [...path, 'children', 0]);
-    }
-    lastChild(obj) {
-      return this.walk(obj, path => [...path, 'children', -1]);
-    }
-    nextSibling(obj) {
-      return this.walk(obj, path => [...path.slice(0, -1), path.last + 1]);
-    }
-    previousSibling(obj) {
-      return this.walk(obj, path => [...path.slice(0, -1), path.last - 1]);
-    }
-  }
-
   const path = new PathMapper();
-  let membrane = new ObservableMembrane({
-    valueObserved(target, key) {
-      let p = path.get(membrane.unwrapProxy(target) || target);
-      let value;
-      if(Util.isObject(p)) {
-        value = p[key] || target[key];
-        if(Util.isObject(value)) {
-          for(let prop in value)
-            if(Util.isObject(value[prop])) {
-              path.set(value[prop], Util.isNumeric(prop) ? [...p, 'children', +prop] : [...p, prop]);
-            }
-        }
-        p = [...p, key];
-      }
-    },
-    valueMutated(target, key) {},
-    valueDistortion(value) {
-      if(!Util.isObject(value)) return value;
-      let proto = typeof value == 'object' ? Object.getPrototypeOf(value) : Object.prototype;
-      let p = path.get(value);
-      const args = [...arguments];
-      if(proto === Proxy.prototype) value = membrane.getReadOnlyProxy(value);
-      return value;
-    }
-  });
+  let membrane = new TreeObserver(path);
 
-   function main() {
+  function main() {
     let str = fs.readFileSync('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
 
     let xml = tXml(str)[0];
@@ -91,11 +26,12 @@ try {
 
     let p = membrane.getProxy(xml);
     let node = p;
+    let unwrapped;
 
     path.set(membrane.unwrapProxy(node), []);
 
     while(node) {
-      let unwrapped = membrane.unwrapProxy(node);
+      unwrapped = membrane.unwrapProxy(node);
       console.log('unwrapped:', toXML(unwrapped, false).replace(/\n.*/g, ''));
       console.log('path:', path.get(unwrapped) + '');
       console.log('tagName:', node.tagName);
@@ -103,13 +39,32 @@ try {
       if(node.children === undefined || !node.children.length) break;
       node = node.children[node.children.length - 1];
     }
+
     console.log('node:', path.at([]));
-    console.log('node:', path.parent(path.at(['children', 0])));
-    console.log('node:', path.nextSibling(path.at(['children', 0, 'children', 0, 'children', 0])));
-    console.log('node:', path.firstChild(path.at(['children', 0, 'children', 0])));
-    console.log('node:', path.nextSibling(path.firstChild(path.at(['children', 0, 'children', 0]))));
+
+    console.log('node:', path.parent(path.at([CH, 0])));
+    console.log('node:', path.nextSibling(path.at([CH, 0, CH, 0, CH, 0])));
+    console.log('node:', path.firstChild(path.at([CH, 0, CH, 0])));
+    console.log('node:', path.nextSibling(path.firstChild(path.at([CH, 0, CH, 0]))));
+//    console.log('node:', path.xpath(path.firstChild(path.at([CH, 0, CH, 0]))).toString());
+    let xpath;
+
+xpath = path.xpath(unwrapped);
+    console.log('node:', xpath);
+    let r = Path.parseXPath('/eagle');
+    console.log('xpath', xpath);
+
+    console.log('result', r);
+    console.log('node', path.at('/eagle/drawing/board'));
+    p = Path.parseXPath('/eagle/drawing/board/signals');
+    console.log('path', p);
+    console.log('node', path.at(p));
+    p = Path.parseXPath("/eagle/drawing/board/signals/signal[@name='N$10']");
+    console.log('path', p);
+    console.log('node', toXML(path.at(p)));
   }
-   main(process.argv.slice(2));
+
+  main(process.argv.slice(2));
 } catch(err) {
   console.log('err:', err);
 }
