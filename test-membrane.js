@@ -1,11 +1,10 @@
-import ObservableMembrane from './lib/observableMembrane.js';
+import ObservableMembrane from './lib/proxy/observableMembrane.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Util from './lib/util.js';
 import fs from 'fs';
 import { text, EagleInterface, toXML, dump } from './lib/eagle/common.js';
 import { EaglePath } from './lib/eagle/locator.js';
-
 import { Console } from 'console';
 
 global.console = new Console({
@@ -14,28 +13,49 @@ global.console = new Console({
   inspectOptions: { depth: 1, colors: true }
 });
 
+class PathMapper {
+  map = null;
+  root = null;
 
-function PathMapper() {
-  let pathMap = new WeakMap();
-  let locationMap = new Map();
-
-  return {
-    pathMap,
-    locationMap,
-    at(path) {
-      return locationMap.get(path.join('.'));
-    },
-    set(obj, path) {
-      if(!(path instanceof EaglePath)) path = new EaglePath(path);
-      locationMap.set(path.join('.'), obj);
-      pathMap.set(obj, path);
-    },
-    get(obj) {
-      let r = pathMap.get(obj) || null;
-      return r;
-    }
-  };
+  constructor() {
+    this.map = new WeakMap();
+  }
+  at(path) {
+    if(!(path instanceof EaglePath)) path = new EaglePath(path);
+    return path.apply(this.root);
+  }
+  set(obj, path) {
+    if(!(path instanceof EaglePath)) path = new EaglePath(path);
+    if(path.length === 0) this.root = obj;
+    this.map.set(obj, path);
+  }
+  get(obj) {
+    let path = this.map.get(obj) || null;
+    return path;
+  }
+  walk(obj, fn = path => path) {
+    let path = this.get(obj);
+    path = fn(path);
+    if(!(path instanceof EaglePath)) path = new EaglePath(path);
+    return this.at(path);
+  }
+  parent(obj) {
+    return this.walk(obj, path => path.slice(0, typeof path.last == 'number' ? -2 : -1));
+  }
+  firstChild(obj) {
+    return this.walk(obj, path => [...path, 'children', 0]);
+  }
+  lastChild(obj) {
+    return this.walk(obj, path => [...path, 'children', -1]);
+  }
+  nextSibling(obj) {
+    return this.walk(obj, path => [...path.slice(0, -1), path.last + 1]);
+  }
+  previousSibling(obj) {
+    return this.walk(obj, path => [...path.slice(0, -1), path.last - 1]);
+  }
 }
+
 const path = new PathMapper();
 
 let membrane = new ObservableMembrane({
@@ -100,7 +120,10 @@ async function main() {
     node = node.children[node.children.length - 1];
   }
   console.log('root:', path.at([]));
-  console.log('root:', path.at(['children', 0]));
+  console.log('root:', path.parent(path.at(['children', 0])));
+  console.log('root:', path.nextSibling(path.at(['children', 0, 'children', 0, 'children', 0])));
+  console.log('root:', path.firstChild(path.at(['children', 0, 'children', 0])));
+  console.log('root:', path.nextSibling(path.firstChild(path.at(['children', 0, 'children', 0]))));
 }
 
 main(process.argv.slice(2));
