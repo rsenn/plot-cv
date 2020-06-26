@@ -110,14 +110,14 @@ try {
     });
 
     mapper.set(treeObserve.unwrap(node), []);
-    for(let [path, obj] of path2obj) {
+    /*    for(let [path, obj] of path2obj) {
       let [tagName, attributes, children] = obj;
       if(path == '0') path = '';
       path = new Path(path, true);
       obj.attributes;
       if(Object.keys(attributes).length == 0) continue;
       let xpath = path2xpath(obj2path(path.apply(xml)));
-    }
+    }*/
     let iterated = new Map(
       [...XmlIterator(xml, (value, path) => true)].map(([value, path]) => [
         new Path(path, true)[Symbol.toStringTag]() /*.xpath(xml)*/,
