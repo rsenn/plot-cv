@@ -207,7 +207,8 @@ cfg-musl() {
  : ${libdir=/usr/lib/$host}
  : ${bindir=/usr/bin/$host}
 
-  builddir=build/$host \
+  : ${builddir=build/$host} 
+
   CC=musl-gcc \
   PKG_CONFIG=musl-pkg-config \
   cfg \
