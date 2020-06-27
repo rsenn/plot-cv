@@ -155,7 +155,7 @@ try {
         return [t, xpath.slice(-4)];
       });
     tags = new Map(tags);
-   // console.log('tags', tags);
+    // console.log('tags', tags);
 
     let x = new MutableXPath('/eagle/drawing/board');
     //console.log('x:', x);
