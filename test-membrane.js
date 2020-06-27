@@ -159,12 +159,13 @@ try {
             .join('\n  |')
         );
         //.map((a, i) => '\n' + i + ':\n  ' + a.join('\n  ')) .join('\n') )
-        return [xpath, new Map(selected.map(({ path, value }) => [path2xpath(path).down('*'), value.children]))];
+        return [xpath, new Map(selected.map(({ path, value }) => [path2xpath(path).down('*'), value]))];
       });
     tags = Object.fromEntries(tags);
-    for(let [search, children] of Object.entries(tags)) {
-      console.log('tags', inspect(search), children);
+    for(let [search, value] of Object.entries(tags)) {
+      console.log('tags', inspect(search), inspect(value,0, true,80));
     }
+    
 
     console.log(XPath + '');
     let x = new XPath('/eagle/drawing/board');

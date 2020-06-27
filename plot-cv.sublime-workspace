@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"immu",
+				"immutableClass"
+			],
+			[
 				"CFLAGS_O",
 				"CFLAGS_ONLY_OTHER"
 			],
@@ -120,13 +124,22 @@
 	"buffers":
 	[
 		{
-			"contents": "",
+			"contents": "inspect\nprintNode\nmain\n(v, p) =>\npath2xpath\n(v, p, r) =>\n(p, v) =>\n({ tagName, attributes, children, ...value }) =>\n(v, p, r) =>\n(p, v) =>\n(v, p) =>\nmk\n(what, target, path, value) =>\nincr\n(v, p) =>\n(a, b) =>\nt =>\n(v, p) =>\n(v, p) =>\n({ path, value }) =>\n([p, v]) =>\n([p, v]) =>\n(o, i, p) =>\n([p, v, o]) =>\n([p, s, v, o]) =>\n([p, s, v, o]) =>\n([p, s, v, r]) =>\n([p, s, ...rest]) =>\ni =>\n([p]) =>\n({ path, value }) =>\nv =>\nv =>",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 425,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
+			}
+		},
+		{
+			"file": "test-membrane.js",
+			"settings":
+			{
+				"buffer_size": 6301,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
 			}
 		}
 	],
@@ -406,6 +419,7 @@
 	"expanded_folders":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
+		"/home/roman/Dokumente/Sources/plot-cv/examples",
 		"/home/roman/Dokumente/Sources/plot-cv/lib",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/draw",
@@ -413,16 +427,27 @@
 	],
 	"file_history":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv/test-membrane.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-membrane.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/pathMapper.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/common.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/locator.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/node.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/nodeList.js",
+		"/home/roman/Sources/plot-cv/lib/json/path.js",
+		"/home/roman/Sources/plot-cv/lib/json/pathMapper.js",
+		"/home/roman/Sources/plot-cv/lib/json/treeObserver.js",
+		"/home/roman/.local/share/applications/xfce4-terminal.desktop",
+		"/home/roman/Sources/plot-cv/lib/devtools.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/path.js.001.patch",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/mainboard2.brd",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/util.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/xml2json.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json.js",
 		"/home/roman/Sources/plot-cv/lib/json-pointer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/json/pathMapper.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/treeObserver.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/proxy/observableMembrane.js",
 		"/home/roman/Dokumente/Sources/plot-cv/deep-storage/node_modules/jest-haste-map/build/index.js",
@@ -440,11 +465,9 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/observableMembrane.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
 		"/home/roman/Dokumente/Sources/plot-cv/inspect.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/devtools.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-expr.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
-		"/home/roman/.local/share/applications/xfce4-terminal.desktop",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/frame-20200511-150844.472-00061.png~",
 		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
 		"/home/roman/Dokumente/Sources/plot-cv/test-util.js",
@@ -531,20 +554,11 @@
 		"/home/roman/Arduino/libraries/RotaryEncoder/RotaryEncoder.cpp",
 		"/home/roman/Arduino/libraries/slight_RotaryEncoder/src/slight_RotaryEncoder.h",
 		"/home/roman/Arduino/libraries/slight_RotaryEncoder/src/slight_RotaryEncoder.cpp",
-		"/home/roman/Arduino/libraries/slight_RotaryEncoder/examples/slight_RotaryEncoder__advanced2/myinput.h",
-		"/home/roman/Arduino/libraries/slight_RotaryEncoder/examples/slight_RotaryEncoder__advanced2/slight_RotaryEncoder__advanced2.ino",
-		"/home/roman/Arduino/libraries/slight_RotaryEncoder/examples/slight_RotaryEncoder__advanced2/myinput.cpp",
-		"/home/roman/Dokumente/Sources/Arduino-Projects/Arduino-Frequency-Counter-Library/FreqCounter.cpp",
-		"/home/roman/Dokumente/Sources/Arduino-Projects/Inductance_Capacitance_Meter/Inductance_Capacitance_Meter.",
-		"/home/roman/Dokumente/Sources/Arduino-Projects/Inductance_Capacitance_Meter/Inductance_Capacitance_Meter.ino",
-		"/home/roman/Dokumente/Sources/Arduino-Projects/FunctionGeneratorABMS/Arduino_Frequency_Counter_Duty_Cycle_Meter_4.ino",
-		"/home/roman/Dokumente/Sources/Arduino-Projects/Simple-Arduino-Frequency-Counter/frequency_counter.ino",
-		"/home/roman/Sources/c-utils/lib/strarray.h",
-		"/home/roman/Sources/c-utils/lib/str.h"
+		"/home/roman/Arduino/libraries/slight_RotaryEncoder/examples/slight_RotaryEncoder__advanced2/myinput.h"
 	],
 	"find":
 	{
-		"height": 49.0
+		"height": 39.0
 	},
 	"find_in_files":
 	{
@@ -581,6 +595,63 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"log..tags",
+			"inspect\\(",
+			"inspect =",
+			".concat\\(\\[",
+			"\\.concat",
+			"\\.down\\(([^)]*)\\)",
+			"\\.down\\(",
+			"down",
+			"CHILDREN_STR",
+			"value",
+			"depth:",
+			"obj2xpath",
+			" q.test(p),",
+			"itera",
+			"walk",
+			"toRegExp",
+			"offset",
+			"toReg",
+			" toStr",
+			"offset",
+			"unwrap",
+			"offset",
+			" offset",
+			"inspect.*cust",
+			"inspect",
+			"select",
+			"r:",
+			"^\\s*console.log\\([^a-z]*r['\"`:]",
+			"^\\s*console.log..r['\"`:]",
+			"log..r",
+			"tags =",
+			"^\\s*console.log..c['\"`:]",
+			"^\\s*console.log..c['\":]",
+			"^\\s*console.log..c['\"']",
+			"^\\s*console.log..c",
+			"^\\s*console.loglog..c",
+			"log..c",
+			"1;31",
+			"Immutable\\${name}",
+			"Immutable",
+			"^export",
+			"^export ",
+			"export class",
+			"MutableXPath",
+			"immutab",
+			"thisPath",
+			"class XP",
+			"obj2path",
+			"mapper",
+			"log..slice",
+			"slice",
+			"log..slice",
+			"console.log.*splice",
+			" toStr",
+			"log..slice",
+			"log..s,ice",
+			"log..slice",
 			"map tag",
 			"log..tags",
 			"tags:",
@@ -651,64 +722,7 @@
 			"e:",
 			"389",
 			"// ",
-			"log..s:",
-			"log..s['\"`]",
-			"log..x['\"`]",
-			"log..x[`'\"]",
-			"log..x",
-			"partTo",
-			"if",
-			"log..r:",
-			"inspect",
-			"join\\(",
-			"join",
-			"partToString",
-			" toStr",
-			"10",
-			" toStr",
-			"_STR",
-			"log..r:",
-			"_STR",
-			"partToString",
-			"`\\${",
-			"\\${",
-			"`\\${[^}]*} ",
-			"`\\${[^}]*} \\$",
-			"`\\${.*} \\$",
-			"`\\${.*} ",
-			"`\\${.*}",
-			"`\\${.*} ",
-			"`${",
-			"`${ ",
-			"`\\${[^}]*} ",
-			"`\\${",
-			"`\\${[^}]*} ",
-			"`\\${",
-			"`",
-			"' '",
-			"' ' +",
-			"' ' \\+",
-			"' '",
-			"partToStr",
-			"partToString",
-			" toStr",
-			"toStr",
-			"''",
-			"''\\]",
-			"''",
-			"\\[.*'', ''",
-			"'', ''",
-			"'/',",
-			"'/'",
-			"''",
-			"'', ''",
-			"''",
-			"parseX",
-			"thisPath:",
-			"<layers>",
-			"<board",
-			"<libraries>",
-			"<class"
+			"log..s:"
 		],
 		"highlight": false,
 		"in_selection": false,
@@ -716,6 +730,8 @@
 		"regex": true,
 		"replace_history":
 		[
+			".concat([\\1])",
+			"${imName}",
 			"r[1]",
 			"r[0]",
 			"//&",
@@ -756,7 +772,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 0,
+						"buffer_size": 425,
 						"regions":
 						{
 						},
@@ -765,13 +781,178 @@
 						],
 						"settings":
 						{
-							"current_file": null,
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/test-membrane.js",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
+								[
+									398,
+									474
+								],
+								[
+									565,
+									584
+								],
+								[
+									1200,
+									1222
+								],
+								[
+									1418,
+									1427
+								],
+								[
+									1458,
+									1478
+								],
+								[
+									1704,
+									1716
+								],
+								[
+									1786,
+									1795
+								],
+								[
+									1818,
+									1866
+								],
+								[
+									2014,
+									2026
+								],
+								[
+									2096,
+									2105
+								],
+								[
+									2128,
+									2137
+								],
+								[
+									2239,
+									2262
+								],
+								[
+									3150,
+									3180
+								],
+								[
+									3604,
+									3632
+								],
+								[
+									3856,
+									3865
+								],
+								[
+									4233,
+									4242
+								],
+								[
+									4357,
+									4361
+								],
+								[
+									4409,
+									4418
+								],
+								[
+									4476,
+									4485
+								],
+								[
+									4700,
+									4720
+								],
+								[
+									4767,
+									4778
+								],
+								[
+									4813,
+									4824
+								],
+								[
+									4841,
+									4853
+								],
+								[
+									4933,
+									4947
+								],
+								[
+									5006,
+									5023
+								],
+								[
+									5097,
+									5114
+								],
+								[
+									5211,
+									5228
+								],
+								[
+									5332,
+									5352
+								],
+								[
+									5460,
+									5464
+								],
+								[
+									5502,
+									5510
+								],
+								[
+									5677,
+									5697
+								],
+								[
+									6032,
+									6036
+								],
+								[
+									6093,
+									6097
+								]
 							],
 							"symlist":
 							[
+								"inspect",
+								"printNode",
+								"main",
+								"(v, p) =>",
+								"path2xpath",
+								"(v, p, r) =>",
+								"(p, v) =>",
+								"({ tagName, attributes, children, ...value }) =>",
+								"(v, p, r) =>",
+								"(p, v) =>",
+								"(v, p) =>",
+								"mk",
+								"(what, target, path, value) =>",
+								"incr",
+								"(v, p) =>",
+								"(a, b) =>",
+								"t =>",
+								"(v, p) =>",
+								"(v, p) =>",
+								"({ path, value }) =>",
+								"([p, v]) =>",
+								"([p, v]) =>",
+								"(o, i, p) =>",
+								"([p, v, o]) =>",
+								"([p, s, v, o]) =>",
+								"([p, s, v, o]) =>",
+								"([p, s, v, r]) =>",
+								"([p, s, ...rest]) =>",
+								"i =>",
+								"([p]) =>",
+								"({ path, value }) =>",
+								"v =>",
+								"v =>"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -779,20 +960,81 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				}
 			]
 		},
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 1,
+					"file": "test-membrane.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6301,
+						"regions":
+						{
+							"col_00DDDDFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										724,
+										734
+									]
+								],
+								"scope": "col_00DDDDFF"
+							},
+							"col_00DDDDFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_00DDDDFF_circle.png",
+								"regions":
+								[
+									[
+										710,
+										710
+									]
+								],
+								"scope": "col_gutter"
+							}
+						},
+						"selection":
+						[
+							[
+								5916,
+								5916
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"terminal_view_scroll":
+							[
+								"page",
+								"up"
+							],
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2008.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 43.0
+		"height": 26.0
 	},
 	"input":
 	{
@@ -842,7 +1084,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 94.0
+		"height": 74.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -852,6 +1094,30 @@
 		"selected_items":
 		[
 			[
+				"test-me",
+				"test-membrane.js"
+			],
+			[
+				"path.js",
+				"lib/json/path.js"
+			],
+			[
+				"deep",
+				"lib/deep.js"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"util",
+				"lib/util.js"
+			],
+			[
+				"pat",
+				"lib/json/path.js"
+			],
+			[
 				"test-m",
 				"test-membrane.js"
 			],
@@ -860,19 +1126,11 @@
 				"lib/util.js"
 			],
 			[
-				"util",
-				"lib/json/util.js"
-			],
-			[
 				"json.",
 				"lib/json.js"
 			],
 			[
 				"path.j",
-				"lib/json/path.js"
-			],
-			[
-				"path.js",
 				"lib/json/path.js"
 			],
 			[
@@ -898,10 +1156,6 @@
 			[
 				"ath.js",
 				"test-svgpath.js"
-			],
-			[
-				"test-me",
-				"test-membrane.js"
 			],
 			[
 				"test-mem",
@@ -930,14 +1184,6 @@
 			[
 				"json.js",
 				"lib/json.js"
-			],
-			[
-				"util.js",
-				"lib/util.js"
-			],
-			[
-				"deep",
-				"lib/deep.js"
 			],
 			[
 				"json.j",
@@ -1358,10 +1604,6 @@
 			[
 				"dir_close",
 				"lib/dir/dir_close.c"
-			],
-			[
-				"rdir_ope",
-				"lib/rdir/rdir_open.c"
 			]
 		],
 		"width": 0.0
