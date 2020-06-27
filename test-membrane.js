@@ -147,8 +147,17 @@ try {
           selected
             .map(({ path, value }) => [new Path(path, true), value])
             .map(([p, v]) => [p.xpath(xml), v])
-            .map(([p, v]) => [p[Symbol.for('nodejs.util.inspect.custom')](), v])
-            .map(([p, v]) => `${p} ${v.children.length}`)
+            .map(([p, v]) => [
+              p,
+              v,
+              p.offset((o, i) => {
+                let r = !/\[/.test(o);
+                /* console.log("o:",o,i,r); */ return r;
+              }) - 2
+            ])
+            .map(([p, v, o]) => [p.shift(o).unshift('/'), p.slice(0, o), v])
+            .map(([p, o, v]) => [p[Symbol.for('nodejs.util.inspect.custom')](), o, v.children.length])
+            .map(a => a.join(' '))
             .join('\n')
         );
         return [t, selected];
