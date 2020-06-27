@@ -30,7 +30,7 @@ global.console = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
   inspectOptions: {
-    depth: 0,
+    depth: 4,
     colors: true,
     breakLength: 200,
     compact: true,
@@ -140,30 +140,38 @@ try {
         let selected = deep.select(xml, (v, p) => v.tagName == t);
         let xpath = new Path(path, true).xpath(xml);
         xpath = xpath.slice(-2);
+        let q = xpath.toRegExp();
+
         path = obj2path(value);
+        let dumps = selected
+          .map(({ path, value }) => [new Path(path, true), value])
+          .map(([p, v]) => [p.xpath(xml), v])
+          .map(([p, v]) => [p, v, p.offset((o, i, p) => !(/(\[|board$|sheets$)/.test(o) || p[i + 1] == 'attributes'))])
+          .map(([p, v, o]) => [p.slice(o - 2), p.slice(0, o - 2), v, o])
+          .map(([p, s, v, o]) => [p, s, `children: ${v.children.length}`, `offset: ${o}`])
+          .map(([p, s, v, o]) => [p, s, v, p.toRegExp()]);
+
         console.log(
           'r:',
 
-          selected
-            .map(({ path, value }) => [new Path(path, true), value])
-            .map(([p, v]) => [p.xpath(xml), v])
-            .map(([p, v]) => [
-              p,
-              v,
-              p.offset((o, i) => {
-                let r = !/\[/.test(o);
-                /* console.log("o:",o,i,r); */ return r;
-              }) - 2
-            ])
-            .map(([p, v, o]) => [p.shift(o).unshift('/'), p.slice(0, o), v])
-            .map(([p, o, v]) => [p[Symbol.for('nodejs.util.inspect.custom')](), o, v.children.length])
-            .map(a => a.join(' '))
-            .join('\n')
+          dumps
+            .map(([p, s, v, r]) => [p, s, v, r.test(p), r.test(s), [...p.toString().match(q)], [...q.exec(p)].slice(1)])
+            .map(([p, s, ...rest]) => [p[Symbol.for('nodejs.util.inspect.custom')](), s[Symbol.for('nodejs.util.inspect.custom')](), ...rest.map(i => Util.toSource(i))])
+            .map(([p]) => p + '')
+            .join('\n  |')
         );
-        return [t, selected];
+        //.map((a, i) => '\n' + i + ':\n  ' + a.join('\n  ')) .join('\n') )
+
+        return [xpath, new Map(selected.map(({ path, value }) => [path2xpath(path).concat(['*']), value.children]))];
       });
     tags = new Map(tags);
     console.log('tags', tags);
+    let childListPaths = [...tags.keys()];
+    console.log(`keys:`, childListPaths);
+
+    for(let [search, value] of tags) {
+      for(let [path, obj] of value) console.log(`tags:`, search, path, Util.className(obj), obj.length);
+    }
 
     console.log(XPath + '');
     let x = new XPath('/eagle/drawing/board');
