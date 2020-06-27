@@ -54,7 +54,7 @@ app.ws('/ws', async (ws, req) => {
   //console.log('headers:', headers);
   //console.log('cookie:', cookie);
 
-  //console.log(
+  console.log(
     's:',
     Util.filterKeys(s, k => k != 'ws')
   );

@@ -29,7 +29,7 @@ moon({ format: 'name' }); // 'Last Quarter Moon'
 // SolarCalc(date,lat,long)
 const gps = { lat: 46.9480896, lon: 7.4474401 };
 let solar = new SolarCalc(new Date(), gps.lat, gps.lon);
-//console.log(
+console.log(
   'solar:',
   solar // 2015-03-08T11:35:30.000Z
 );
