@@ -144,7 +144,7 @@ for(let name in layerColors) {
   layerColors[name] = c;
 }
 const allColors = Util.unique(Object.values(layerColors));
-console.log('allColors: ' + allColors);
+//console.log('allColors: ' + allColors);
 let keyList = [];
 
 for(let color of allColors) {
@@ -157,41 +157,30 @@ for(let color of allColors) {
 const GeneratePalette = numColors => {
   let ret = [];
   let base = new HSLA(Util.randInt(0, 360), 100, 50).toRGBA();
-  let offsets = Util.shuffle(
-    Util.range(1, numColors).reduce(
-      (acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360],
-      []
-    )
-  );
-  // console.log("offsets:", offsets);
+  let offsets = Util.shuffle(Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360], []));
+  //console.log("offsets:", offsets);
 
   new KolorWheel(base.hex()).rel(offsets, 0, 0).each(function() {
     const hex = this.getHex();
     const rgba = new RGBA(hex);
     const hsla = rgba.toHSLA();
-    //  console.log(hex, rgba.toString(), hsla.toString());
+    //console.log(hex, rgba.toString(), hsla.toString());
     ret.push(hsla.toString());
   });
   return ret;
 };
 
 const palette = GeneratePalette(16);
-console.log('palette.length:', palette.length);
-console.log('keyList.length:', keyList.length);
+//console.log('palette.length:', palette.length);
+//console.log('keyList.length:', keyList.length);
 
 let s = '';
 for(let i = 0; i < keyList.length; i++) {
-  console.log(`keys[${i}]:`, keyList[i]);
+  //console.log(`keys[${i}]:`, keyList[i]);
 
   for(let key of keyList[i]) {
     if(s != '') s += ', ';
     s += `${key}: palette[${i}]`;
   }
 }
-console.log(
-  'const palette = ' +
-    Util.inspect(palette, { colors: false, newline: '' }) +
-    ';\n renderer.colors = {' +
-    s +
-    '};'
-);
+//console.log('const palette = ' + Util.inspect(palette, { colors: false, newline: '' }) + ';\n renderer.colors = {' + s + '};');

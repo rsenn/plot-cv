@@ -5,7 +5,7 @@ import { Mat } from './build/x86_64-linux-gnu/quickjs-mat.so';
 import { PointIterator } from './build/x86_64-linux-gnu/quickjs-point-iterator.so';
 import { inspect } from './inspect.js';
 import { Contour } from './build/x86_64-linux-gnu/quickjs-contour.so';
-console.log('test:', inspect({ Point, Size, Rect, Mat, PointIterator, Contour }));
+//console.log('test:', inspect({ Point, Size, Rect, Mat, PointIterator, Contour }));
 
 let c = new Contour();
 
@@ -23,9 +23,9 @@ c.push(new Point(0, 20));
 c.push(new Point(0, 10));
 c.push(new Point(0, 0));
 
-console.log('contour:', inspect(c));
+//console.log('contour:', inspect(c));
 
 for(let point of c) {
   let { x, y } = point;
-  console.log('point:', point, x, y);
+  //console.log('point:', point, x, y);
 }

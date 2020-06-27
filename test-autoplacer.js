@@ -27,18 +27,18 @@ for(let i = 0; i < 10; i++) {
 let bl = rects.map(rect => {
   const { left, top } = new TRBL(...rect.points());
   const { width, height } = rect;
-  console.log({ left, top });
+  //console.log({ left, top });
   return [left, top, width, height];
 });
 
-console.log('rg:', rg());
-console.log('bb:', bb);
-console.log('bl:', bl);
+//console.log('rg:', rg());
+//console.log('bb:', bb);
+//console.log('bl:', bl);
 
 let ap = new Autoplacer({ bodies: bl });
 
-console.log('ap.next():', ap.next());
+//console.log('ap.next():', ap.next());
 
 ap.next();
 
-console.log('ap:', ap.bodies_);
+//console.log('ap:', ap.bodies_);

@@ -35,9 +35,9 @@ function main(args) {
   for(let file of args) {
     let data, b, ret;
     if(file == '-') file = '/dev/stdin';
-    console.log('file:', file);
+    //console.log('file:', file);
     data = fs.readFileSync(file);
-    console.log('opened:', data);
+    //console.log('opened:', data);
     let token, error;
 
     global.lexer = new Lexer(data.toString(), file);
@@ -45,17 +45,16 @@ function main(args) {
       while((token = lexer.lex())) {
         //      const { type, value, length, start, end } = token;
         //        const position = token.position.start.toString();
-
         //console.log("position:", position);
-        console.log(`Token`, token.toString());
+        //console.log(`Token`, token.toString());
         //console.log(token.position.start.toString());
       }
-      //  console.log("nodes:", parser.nodes.map(n =>  [Util.className(n), n.position.toString()]));
+      //console.log("nodes:", parser.nodes.map(n =>  [Util.className(n), n.position.toString()]));
     } catch(err) {
       error = err;
       const { msg } = error;
-      console.log('ERROR:', error);
-      console.log('stack:\n' + err.stack);
+      //console.log('ERROR:', error);
+      //console.log('stack:\n' + err.stack);
     }
     files[file] = error;
   }

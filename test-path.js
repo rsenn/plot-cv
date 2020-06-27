@@ -20,7 +20,7 @@ let path = parseSVG(pathStr);
 let translate = (args.shift() + '').split(',').map(n => parseFloat(n));
 if(translate.length == 0 || isNaN(translate[0])) translate = [0, 0];
 
-console.log('translate:', new Point([...translate]));
+//console.log('translate:', new Point([...translate]));
 makeAbsolute(path);
 
 let newPath = new SvgPath();
@@ -30,7 +30,7 @@ newPath.rel();
 let t = new Matrix();
 
 t.init_translate(translate[0], translate[1]);
-console.log(`t:` + t.init_translate, translate);
+//console.log(`t:` + t.init_translate, translate);
 
 for(let i = 0; i < path.length; i++) {
   const c = path[i];
@@ -53,14 +53,13 @@ for(let i = 0; i < path.length; i++) {
   if(y1 !== undefined) y1 = +(y1 - y0).toFixed(prec);
   if(y2 !== undefined) y2 = +(y2 - y0).toFixed(prec);
 
-  console.log(`x:`, { x, x1, x2, rx });
-  console.log(`y:`, { y, y1, y2, ry });
+  //console.log(`x:`, { x, x1, x2, rx });
+  //console.log(`y:`, { y, y1, y2, ry });
 
   let points = [new Point(x, y), new Point(x1, y1), new Point(x2, y2)];
-  console.log(`path[${i}]:`, c);
+  //console.log(`path[${i}]:`, c);
 
-  if(!relative)
-    points = points.map(p => (p.x !== undefined ? t.transform_point({ x: p.x, y: p.y }) : p));
+  if(!relative) points = points.map(p => (p.x !== undefined ? t.transform_point({ x: p.x, y: p.y }) : p));
 
   if(command == 'A') points[0] = new Point(x, y);
 
@@ -76,15 +75,7 @@ for(let i = 0; i < path.length; i++) {
     }
     case 'A': {
       const { xAxisRotation, largeArc, sweep } = c;
-      newPath.arc(
-        points[3].x,
-        points[3].y,
-        xAxisRotation,
-        largeArc ? 1 : 0,
-        sweep ? 1 : 0,
-        points[0].x,
-        points[0].y
-      );
+      newPath.arc(points[3].x, points[3].y, xAxisRotation, largeArc ? 1 : 0, sweep ? 1 : 0, points[0].x, points[0].y);
       break;
     }
     case 'H': {
@@ -117,7 +108,7 @@ for(let i = 0; i < path.length; i++) {
 }
 const data = newPath.str().trim();
 
-console.log(`<path d="${data}" />`);
+//console.log(`<path d="${data}" />`);
 process.stdout.write('\n' + data + '\n');
 
 function* dataToPoints(d, steps = 10) {
@@ -131,4 +122,4 @@ function* dataToPoints(d, steps = 10) {
   }
 }
 
-console.log([...dataToPoints(data)]);
+//console.log([...dataToPoints(data)]);

@@ -5,4 +5,4 @@ let data = fs.readFileSync('1072.jpg');
 
 let props = jpegProps(data);
 
-console.log('props:', props);
+//console.log('props:', props);

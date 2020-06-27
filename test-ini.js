@@ -9,11 +9,11 @@ global.console = new Console({
 let filename = '../pictest/build/mplab/7segtest-16f876a-xc8-debug.mcp';
 let src = fs.readFileSync(filename).toString();
 
-console.log('src:', src);
+//console.log('src:', src);
 let [done, data, pos] = INIGrammar.ini(src, 0);
 
 let sections = data[0].reduce((acc, sdata) => ({ ...acc, [sdata[0]]: new Map(sdata[1]) }), {});
-console.log('data:', sections);
+//console.log('data:', sections);
 
 let file_keys = sections.FILE_INFO.keys();
 let file_sections = Object.keys(sections).filter(name => /FILE/.test(name));
@@ -34,12 +34,10 @@ for(let sect of file_sections) {
 
 let filenames = files.map(f => f.FILE_INFO);
 
-files = files.filter(
-  file => !/.*(buffer|comparator|lcd|format|ds18b20|hd44).*/.test(file.FILE_INFO)
-);
+files = files.filter(file => !/.*(buffer|comparator|lcd|format|ds18b20|hd44).*/.test(file.FILE_INFO));
 
-console.log('data:', file_sections);
-console.log('files:', filenames);
+//console.log('data:', file_sections);
+//console.log('files:', filenames);
 let i = 0;
 for(let file of files) {
   for(let field in file) {
@@ -57,6 +55,6 @@ for(let section in sections) {
   }
 }
 
-console.log('out:', out);
+//console.log('out:', out);
 
 fs.writeFileSync(filename, out);

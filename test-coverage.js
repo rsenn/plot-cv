@@ -50,12 +50,10 @@ function lineColumn(pos, text) {
 function processFile(arg, re) {
   let json = JSON.parse(fs.readFileSync(arg).toString());
   re = typeof re == 'string' ? new RegExp(re) : /.*/;
-  console.log('re:', re);
+  //console.log('re:', re);
   if(!(json instanceof Array)) return 1;
 
-  let scripts = json
-    .map(({ url, ...item }) => [url.replace(/.*:\/\/[^/]*\//g, ''), item])
-    .filter(([file]) => re.test(file));
+  let scripts = json.map(({ url, ...item }) => [url.replace(/.*:\/\/[^/]*\//g, ''), item]).filter(([file]) => re.test(file));
 
   for(let [file, obj] of scripts) {
     let { ranges, text } = obj;
@@ -67,12 +65,12 @@ function processFile(arg, re) {
       let unused = extractRanges(inverted, text);
 
       /* console.log('file:', file);
-      console.log('obj:', Object.keys(obj));
-      console.log('text.length:', text.length);
-      console.log('ranges:', ranges);
-      console.log('inverted:', inverted);*/
-      // console.log('used:', used);
-      console.log('unused:', unused.map(u => u.toString(file)).join('\n\n'));
+      //console.log('obj:', Object.keys(obj));
+      //console.log('text.length:', text.length);
+      //console.log('ranges:', ranges);
+      //console.log('inverted:', inverted);*/
+      //console.log('used:', used);
+      //console.log('unused:', unused.map(u => u.toString(file)).join('\n\n'));
     } catch(err) {}
   }
 }

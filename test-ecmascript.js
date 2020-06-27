@@ -1,14 +1,7 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { Stack, PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
-import {
-  estree,
-  Factory,
-  ESNode,
-  ImportStatement,
-  ForInStatement,
-  CallExpression
-} from './lib/ecmascript/estree.js';
+import { estree, Factory, ESNode, ImportStatement, ForInStatement, CallExpression } from './lib/ecmascript/estree.js';
 
 import Util from './lib/util.js';
 import fs from 'fs';
@@ -35,16 +28,13 @@ if(args.length == 0) args.push('-');
 let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
 
 process.on('uncaughtException', (err, origin) => {
-  fs.writeSync(
-    process.stderr.fd,
-    `Caught exception: ${err}\nException origin: ${origin}\nStack: ${err.stack}`
-  );
+  fs.writeSync(process.stderr.fd, `Caught exception: ${err}\nException origin: ${origin}\nStack: ${err.stack}`);
   process.exit();
 });
 
 process.on('SIGINT', () => {
   //fs.writeSync(process.stderr.fd, "\nSIGINT - Exit\n");
-  console.log('\nSIGINT - Exit\n');
+  //console.log('\nSIGINT - Exit\n');
 
   finish();
   process.exit(3);
@@ -52,7 +42,7 @@ process.on('SIGINT', () => {
 
 process.on('exit', () => {
   //fs.writeSync(process.stderr.fd, "\nexited\n");
-  console.log('\nexited\n');
+  //console.log('\nexited\n');
   process.exit();
 });
 
@@ -69,7 +59,7 @@ function dumpFile(name, data) {
 
   fs.writeFileSync(name, data + '\n');
 
-  console.log(`Wrote ${name}: ${data.length} bytes`);
+  //console.log(`Wrote ${name}: ${data.length} bytes`);
 }
 
 function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments)) {
@@ -85,9 +75,9 @@ function main(args) {
   for(let file of args) {
     let data, b, ret;
     if(file == '-') file = '/dev/stdin';
-    console.log('file:', file);
+    //console.log('file:', file);
     data = fs.readFileSync(file);
-    console.log('opened:', data);
+    //console.log('opened:', data);
     let ast, error;
 
     global.parser = new ECMAScriptParser(data.toString(), file);
@@ -96,20 +86,15 @@ function main(args) {
     //console.log("prototypeChain:",Object.keys(Object.getPrototypeOf(parser)));
     //console.log("methodNames:",Util.getMethodNames(parser, 2));
 
-    console.log(new parser.estree.Identifier());
+    //console.log(new parser.estree.Identifier());
     try {
       ast = parser.parseProgram();
 
       parser.addCommentsToNodes(ast);
 
-      let imports = [
-        ...deep.iterate(
-          ast,
-          node => node instanceof CallExpression && /console.log/.test(printer.print(node))
-        )
-      ].map(([node, path]) => node);
+      let imports = [...deep.iterate(ast, node => node instanceof CallExpression && /console.log/.test(printer.print(node)))].map(([node, path]) => node);
 
-      //  console.log('imports:', imports.map(node => ({ str: printer.print(node), toks: ECMAScriptParser.printToks( parser.tokensForNode(node))  })));
+      //console.log('imports:', imports.map(node => ({ str: printer.print(node), toks: ECMAScriptParser.printToks( parser.tokensForNode(node))  })));
 
       //  for(let imp of imports) console.log('tokens:', parser.tokensForNode(imp));
 
@@ -124,21 +109,18 @@ function main(args) {
       );
 
       let commentMap = new SortedMap(
-        [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
-          pos * 10 - 1,
-          { comment, pos, len, node: posMap.keyOf(node) }
-        ]),
+        [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node: posMap.keyOf(node) }]),
         (a, b) => a - b
       );
 
       // posMap = new SortedMap([/*...posMap,*/ ...commentMap], (a, b) => a - b);
 
-      //  console.log("ast:", [...posMap.keys()]);$
-      console.log('commentMap:', commentMap);
-      console.log('posMap:', [...posMap.keys()]);
-      console.log('ast:', ast);
+      //console.log("ast:", [...posMap.keys()]);$
+      //console.log('commentMap:', commentMap);
+      //console.log('posMap:', [...posMap.keys()]);
+      //console.log('ast:', ast);
 
-      //  console.log("nodes:", parser.nodes.map(n =>  [Util.className(n), n.position.toString()]));
+      //console.log("nodes:", parser.nodes.map(n =>  [Util.className(n), n.position.toString()]));
     } catch(err) {
       error = err;
     }
@@ -147,14 +129,14 @@ function main(args) {
     if(!error) {
       const output_file = file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
 
-      //  console.log("ast:", ast);
-      console.log('saving to:', output_file);
+      //console.log("ast:", ast);
+      //console.log('saving to:', output_file);
       dumpFile(output_file, printAst(ast, parser.comments, printer));
     } else {
       process.exit(1);
     }
 
-    console.log('files:', files);
+    //console.log('files:', files);
   }
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
   process.exit(Number(files.length == 0));
@@ -170,8 +152,8 @@ function finish(err) {
   }
 
   if(err) {
-    console.log(parser.lexer.currentLine());
-    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
+    //console.log(parser.lexer.currentLine());
+    //console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
 
   let lexer = parser.lexer;
@@ -179,8 +161,8 @@ function finish(err) {
   //console.log(parser.trace() );
   dumpFile('trace.log', parser.trace());
   if(fail) {
-    console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
+    //console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
   }
-  console.log('finish: ' + (fail ? 'error' : 'success'));
+  //console.log('finish: ' + (fail ? 'error' : 'success'));
   return !fail;
 }

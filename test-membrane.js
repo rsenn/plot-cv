@@ -2,17 +2,12 @@ import ObservableMembrane from './lib/proxy/observableMembrane.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Util from './lib/util.js';
+import util from 'util';
 import fs from 'fs';
-import {
-  Path,
-  XmlObject,
-  PathMapper,
-  toXML,
-  TreeObserver,
-  findXPath,
-  XmlIterator
-} from './lib/json.js';
+import { Path, XPath, MutablePath, MutableXPath, XmlObject, PathMapper, toXML, TreeObserver, findXPath, XmlIterator } from './lib/json.js';
 import { Console } from 'console';
+
+const inspect = (arg, depth = 10) => util.inspect(arg, { depth, breakLength: 80, compact: true, showProxy: true, color: true });
 
 const printNode = node => {
   let s = toXML(node).replace(/\n.*/g, '');
@@ -34,7 +29,14 @@ const CH = 'children';
 global.console = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
-  inspectOptions: { depth: 1, colors: true }
+  inspectOptions: {
+    depth: 0,
+    colors: true,
+    breakLength: 200,
+    compact: true,
+    showProxy: true,
+    customInspect: true
+  }
 });
 
 Error.stackTraceLimit = 100;
@@ -42,11 +44,7 @@ try {
   const mapper = new PathMapper();
   let treeObserve = new TreeObserver(mapper, false);
   function main(...args) {
-    let str = fs
-      .readFileSync(
-        args.length ? args[0] : '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd'
-      )
-      .toString();
+    let str = fs.readFileSync(args.length ? args[0] : '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
 
     let xml = tXml(str)[0];
 
@@ -61,8 +59,7 @@ try {
       new Map(),
       (v, p, r) => typeof v == 'object' && v !== null && v.tagName !== undefined,
       (p, v) => obj2path(v, p),
-      ({ tagName, attributes, children, ...value }) =>
-        children.length ? [tagName, attributes, children] : [tagName, attributes]
+      ({ tagName, attributes, children, ...value }) => (children.length ? [tagName, attributes, children] : [tagName, attributes])
     );
 
     let flat = deep.flatten(
@@ -79,7 +76,7 @@ try {
     const mk = ([path, value]) => {
       let p = new Path(path);
       path = p.toArray();
-      console.log('mk=', { path, value });
+      //console.log('mk=', { path, value });
       let thisParent = p.parent;
       if(thisParent.equal(prev)) path = p.relativeTo(thisParent);
       if(prev.equal(thisParent)) {
@@ -98,10 +95,7 @@ try {
       prevParent = thisParent;
       return path;
     };
-    console.log(
-      'drawing:',
-      findXPath('//drawing', flat, { root: xml, entries: true, recursive: false }).map(mk)
-    );
+    //console.log('drawing:', findXPath('//drawing', flat, { root: xml, entries: true, recursive: false }).map(mk));
 
     let p = treeObserve.get(Object.fromEntries(flat.entries()));
     let node = p;
@@ -114,7 +108,7 @@ try {
       let xpath = path.xpath(xml).slice(-2) + '';
       path = path.slice(-2) + '';
       let string = typeof value == 'string' ? value : '';
-      console.log(`event`, Util.toString({ what, valueType, path, string }));
+      //console.log(`event`, Util.toString({ what, valueType, path, string }));
     });
 
     mapper.set(treeObserve.unwrap(node), []);
@@ -128,21 +122,71 @@ try {
     }*/
     let tree = treeObserve.get(xml);
 
-    let iterated = new Map(
-      [...XmlIterator(tree, (value, path) => true)].map(([value, path]) => [
-        new Path(path, true)[Symbol.toStringTag]() /*.xpath(xml)*/,
+    /*  let iterated = new Map(
+      [...].map(([value, path]) => [
+        new Path(path, true)[Symbol.toStringTag]() ,
         value
-      ])
-    );
-    for(let [path, value] of iterated) {
-      path = new Path(path, true);
-      //value = ;
-      let obj = new XmlObject(treeObserve.unwrap(value));
-      console.log(path.xpath(xml) + ' =', obj);
+      ])o
+    );*/
+
+    const incr = (obj, prop, i = 1) => {
+      if(!obj) obj = {};
+      return { ...obj, [prop]: (obj[prop] || 0) + i };
+    };
+
+    let tags = {};
+    for(let [v, p] of XmlIterator({ children: xml.children, tagName: tree.tagName, attributes: tree.attributes }, (v, p) => true)) {
+      if(!(p instanceof Path)) p = new Path(p, true);
+
+      tags = incr(tags, v.tagName);
+
+      //v = treeObserve.unwrap(v);
+      //console.log('iterate', p.xpath(xml), ' =', v);
     }
+    //e.log('tags', tags);
+
+    tags = Object.entries(tags).sort((a, b) => a[1] - b[1]);
+    tags = tags
+      .filter(([k, v]) => v == 1)
+      .map(([t]) => {
+        const { path, value } = deep.find(xml, (v, p) => v.tagName == t);
+        //console.log('map tags', path);
+        let xpath = new Path(path, true).xpath(xml);
+        return [t, xpath.slice(-4)];
+      });
+    tags = new Map(tags);
+   // console.log('tags', tags);
+
+    let x = new MutableXPath('/eagle/drawing/board');
+    //console.log('x:', x);
+    //console.log('x:', ...[...x]);
+
+    let drawing = deep.find(xml, v => v.tagName == 'drawing');
+    let board = deep.find(xml, v => v.tagName == 'board');
+    // let designrules = deep.find(xml, v => v.tagName == 'designrules');
+    //console.log('board.path', board.path, 'board.value', toXML(board.value, 0));
+    let w = new Path(board.path);
+    //console.log('w:', w);
+
+    /* console.log('drawing.path', w, 'drawing.value', toXML(drawing.value, 0));
+  //console.log('board.path', w, 'board.value', toXML(board.value, 0));*/
+
+    let y = w.xpath(xml);
+
+    //console.log('y:', y);
+    //console.log('y:', ...[...y]);
+
+    //console.log('x.equal(y):', x.equal(y));
+
+    let z = x.apply(board.value);
+    //console.log('z:', z);
+
+    //console.log('y:', Util.className(y));
+    //console.log('y:', inspect(y.toArray()));
+    //console.log('z:', inspect(z, 2));
   }
 
   main(...process.argv.slice(2));
 } catch(err) {
-  console.log('err:', err);
+  //console.log('err:', err);
 }

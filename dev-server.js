@@ -13,6 +13,6 @@ app.prepare().then(() => {
     handle(req, res, parse(req.url, true));
   }).listen(port, err => {
     if(err) throw err;
-    console.log(`> Ready on http://localhost:${port}`);
+    //console.log(`> Ready on http://localhost:${port}`);
   });
 });

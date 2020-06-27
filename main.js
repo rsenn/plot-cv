@@ -1,12 +1,5 @@
 // prettier-ignore-start
-import {
-  Transformation,
-  Rotation,
-  Translation,
-  Scaling,
-  MatrixTransformation,
-  TransformationList
-} from './lib/geom/transformation.js';
+import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
@@ -24,58 +17,11 @@ import Util from './lib/util.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import { XmlObject, XmlAttr } from './lib/json.js';
-import {
-  hydrate,
-  Fragment,
-  createRef,
-  isValidElement,
-  cloneElement,
-  toChildArray
-} from './modules/preact/dist/preact.mjs';
-import {
-  h,
-  html,
-  render,
-  Component,
-  createContext,
-  useState,
-  useReducer,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useImperativeHandle,
-  useMemo,
-  useCallback,
-  useContext,
-  useDebugValue
-} from './modules/htm/preact/standalone.mjs';
-import components, {
-  Chooser,
-  Container,
-  Button,
-  FileList,
-  Panel,
-  AspectRatioBox,
-  SizedAspectRatioBox,
-  TransformedElement,
-  Canvas,
-  ColorWheel,
-  Slider
-} from './static/components.js';
+import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
+import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './modules/htm/preact/standalone.mjs';
+import components, { Chooser, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider } from './static/components.js';
 import { WebSocketClient } from './lib/websocket-client.js';
-import {
-  CTORS,
-  ECMAScriptParser,
-  estree,
-  Factory,
-  Lexer,
-  ESNode,
-  Parser,
-  PathReplacer,
-  Printer,
-  Stack,
-  Token
-} from './lib/ecmascript.js';
+import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
 import {
   AlignmentAngle,
   Arc,
@@ -135,46 +81,7 @@ const React = {
   useRef,
   useState
 };
-const {
-  Align,
-  Anchor,
-  CSS,
-  CSSTransformSetters,
-  Element,
-  ElementPosProps,
-  ElementRectProps,
-  ElementRectProxy,
-  ElementSizeProps,
-  ElementTransformation,
-  ElementWHProps,
-  ElementXYProps,
-  HSLA,
-  isElement,
-  isHSLA,
-  isLine,
-  isMatrix,
-  isNumber,
-  isPoint,
-  isRect,
-  isRGBA,
-  isSize,
-  Line,
-  Matrix,
-  Node,
-  Point,
-  PointList,
-  Polyline,
-  Rect,
-  RGBA,
-  Select,
-  Size,
-  SVG,
-  Timer,
-  Transition,
-  TransitionList,
-  TRBL,
-  Tree
-} = {
+const { Align, Anchor, CSS, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, HSLA, isElement, isHSLA, isLine, isMatrix, isNumber, isPoint, isRect, isRGBA, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, RGBA, Select, Size, SVG, Timer, Transition, TransitionList, TRBL, Tree } = {
   ...dom,
   ...geom
 };
@@ -183,7 +90,7 @@ Object.assign(
   { React, ReactComponent, WebSocketClient, html },
   dom,
   geom,
-  { XmlObject, XmlAttr},
+  { XmlObject, XmlAttr },
   {
     CTORS,
     ECMAScriptParser,
@@ -225,8 +132,7 @@ const useSlot = (arr, i) => [() => arr[i], v => (arr[i] = v)];
 const trklGetSet = (get, set) => value => (value !== undefined ? set(value) : get());
 const useTrkl = trkl => [() => trkl(), value => trkl(value)];
 
-const classNames = (...args) =>
-  args.filter(arg => typeof arg == 'string' && arg.length > 0).join(' ');
+const classNames = (...args) => args.filter(arg => typeof arg == 'string' && arg.length > 0).join(' ');
 
 const MouseEvents = h => ({
   onMouseDown: h,
@@ -235,7 +141,7 @@ const MouseEvents = h => ({
   onMouseOut: h,
   onMouseUp: h
 });
-console.log('running');
+//console.log('running');
 //console.log("dom", { Rect, Element, parseSchematic });
 
 window.dom = { Element, SVG };
@@ -257,7 +163,7 @@ const ListProjects = (window.list = async function(url) {
 
 const ElementToXML = e => {
   const x = Element.toObject(e);
-  console.log('x:', x);
+  //console.log('x:', x);
   return Element.toString(x);
 };
 
@@ -284,7 +190,7 @@ const SaveSVG = (window.save = async function save(filename = projectName) {
     },
     body
   });
-  console.log('saved', result);
+  //console.log('saved', result);
 });
 
 const ModifyColors = fn => e => {
@@ -292,7 +198,7 @@ const ModifyColors = fn => e => {
   if(type.endsWith('down')) {
     if(!window.c) window.c = SVG.allColors(project.svg);
     let { c } = window;
-    console.log('ModifyColors', fn);
+    //console.log('ModifyColors', fn);
 
     c.dump();
     fn(c);
@@ -300,7 +206,7 @@ const ModifyColors = fn => e => {
 };
 
 const loadDocument = async (proj, parentElem) => {
-  console.log(`load project #${proj.i}:`, proj);
+  //console.log(`load project #${proj.i}:`, proj);
   proj.doc = await LoadFile(proj.name);
   window.eagle = proj.doc;
   window.project = proj;
@@ -315,20 +221,20 @@ const loadDocument = async (proj, parentElem) => {
   let svgXml = proj.renderer.render(proj.doc, null, {
     /* style*/
   });
-  console.log('testRender:', svgXml);
+  //console.log('testRender:', svgXml);
   let component = proj.renderer.render(proj.doc, null, {
     /*style */
   });
   window.component = component;
 
   let element = Element.find('#main');
-  console.log('h', h);
-  console.log('component', component);
+  //console.log('h', h);
+  //console.log('component', component);
 
   let r = proj.renderer.rect || proj.renderer.bounds;
-  console.log('r', r);
+  //console.log('r', r);
   let aspectRatio = r.width / r.height;
-  console.log('aspectRatio', aspectRatio);
+  //console.log('aspectRatio', aspectRatio);
 
   sizeListener({ width: r.width });
   aspectListener(aspectRatio);
@@ -337,12 +243,10 @@ const loadDocument = async (proj, parentElem) => {
     const [dimensions, setDimensions] = useState(sizeListener());
     const [aspect, setAspect] = useState(aspectListener());
 
-    if(sizeListener && sizeListener.subscribe)
-      sizeListener.subscribe(value => setDimensions(value));
-    if(aspectListener && aspectListener.subscribe)
-      aspectListener.subscribe(value => setAspect(value));
+    if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
+    if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
 
-    console.log('Fence.render', { dimensions, aspect });
+    //console.log('Fence.render', { dimensions, aspect });
 
     return h(
       TransformedElement,
@@ -381,14 +285,14 @@ const loadDocument = async (proj, parentElem) => {
   let rendered = [...element.children];
 
   window.rendered = rendered;
-  console.log('window.rendered', window.rendered);
+  //console.log('window.rendered', window.rendered);
   proj.element = rendered[0];
   proj.svg = Element.find('svg', '#main');
   proj.grid = Element.find('g.grid', proj.element);
   proj.bbox = SVG.bbox(proj.grid);
   proj.aspectRatio = aspect;
-  console.log('proj.svg', proj.svg);
-  console.log('project', proj);
+  //console.log('proj.svg', proj.svg);
+  //console.log('project', proj);
 
   let { name, data, doc, svg, bbox } = proj;
   let bounds = doc.getBounds();
@@ -411,13 +315,13 @@ const loadDocument = async (proj, parentElem) => {
   let css = size.div(0.26458333333719).toCSS({ width: 'px', height: 'px' });
 
   window.size = css;
-  //  console.log("css:", css);
+  //console.log("css:", css);
   /*  Object.assign(proj.svg.style, {
     'min-width': `${size.width}mm`
   });
   Element.setCSS(proj.svg, { left: 0, top: 0, position: 'relative' });
   Element.setCSS(proj.svg, { left: 0, top: 0, position: 'relative' });
-  console.log('loadDocument:', proj.svg);*/
+  //console.log('loadDocument:', proj.svg);*/
   return proj;
 };
 
@@ -426,18 +330,18 @@ const chooseDocument = async (e, proj, i) => {
   try {
     const { type } = e;
     const box = Element.findAll('.file')[i];
-    console.log('chooseDocument:', { e, proj, i, box });
+    //console.log('chooseDocument:', { e, proj, i, box });
     if(!proj.loaded) {
       let data = await loadDocument(proj, box);
       proj.loaded = true;
 
       open(false);
 
-      console.log('loaded:', proj);
+      //console.log('loaded:', proj);
     }
     r = proj.loaded;
   } catch(err) {
-    console.log('err:', err.message, err.stack);
+    //console.log('err:', err.message, err.stack);
   }
 
   return r;
@@ -448,7 +352,7 @@ const MakeFitAction = index => async () => {
   let prect = Element.rect(parent);
   let svg = Element.find('svg', parent);
   let container = [...Element.findAll('.aspect-ratio-box-size', parent)].reverse()[0];
-  console.log('container:', container);
+  //console.log('container:', container);
   let oldSize = Element.rect(container);
   let brect = Element.rect('.buttons');
   let srect = Element.rect(svg);
@@ -456,22 +360,17 @@ const MakeFitAction = index => async () => {
   prect.height -= brect.height;
   let rects = [prect, oldSize, srect];
   prect.scale(0.8);
-  console.log('resize rects', { oldSize, prect, srect });
+  //console.log('resize rects', { oldSize, prect, srect });
   let f = srect.fit(prect);
   let newSize = f[index].round(0.0001);
   let affineTransform = Matrix.getAffineTransform(oldSize.toPoints(), newSize.toPoints());
   let transform = affineTransform.decompose();
-  console.log(`fitAction(${index})`, { oldSize, newSize, transform });
+  //console.log(`fitAction(${index})`, { oldSize, newSize, transform });
   let factor = transform.scale.x;
-  console.log('zoom factor:', factor);
+  //console.log('zoom factor:', factor);
   let delay = Math.abs(Math.log(factor) * 1000);
-  console.log('transition delay:', delay);
-  await Element.transition(
-    container,
-    { ...newSize.toCSS(), transform: '', position: 'absolute' },
-    delay + 'ms',
-    'linear'
-  );
+  //console.log('transition delay:', delay);
+  await Element.transition(container, { ...newSize.toCSS(), transform: '', position: 'absolute' }, delay + 'ms', 'linear');
 };
 
 const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
@@ -511,10 +410,10 @@ const AppMain = (window.onload = async () => {
 
   let c = testComponent({});
   window.testComponent = c;
-  console.log('testComponent', ReactComponent.toObject(c));
+  //console.log('testComponent', ReactComponent.toObject(c));
 
   /*console.realLog = console.log;
-  console.log = function(...args) {
+  //console.log = function(...args) {
     let out = [''];
     for(let arg of args) {
       if(typeof arg != 'string') {
@@ -540,7 +439,7 @@ const AppMain = (window.onload = async () => {
   ListProjects('/files.html').then(response => {
     let data = JSON.parse(response);
     let { files } = data;
-    console.log(`Got ${files.length} files`);
+    //console.log(`Got ${files.length} files`);
     projectFiles = window.files = files;
     projects(
       projectFiles.map(({ name }, i) => {
@@ -561,7 +460,7 @@ const AppMain = (window.onload = async () => {
           caption: '📂',
           fn: e => {
             if(e.type.endsWith('down')) {
-              console.log('file list push', e);
+              //console.log('file list push', e);
               open(!open());
             }
           }
@@ -595,7 +494,7 @@ const AppMain = (window.onload = async () => {
           length: '10px',
           style: { flex: '0 1 auto' },
           onChange: value => {
-            console.log('value:', value);
+            //console.log('value:', value);
           }
         }),
         h(Slider, {
@@ -606,7 +505,7 @@ const AppMain = (window.onload = async () => {
           length: '10px',
           style: { flex: '0 1 auto' },
           onChange: value => {
-            console.log('value:', value);
+            //console.log('value:', value);
           }
         })
       ]),*/
@@ -625,7 +524,7 @@ const AppMain = (window.onload = async () => {
       if(event.index > 0 && event.buttons > 0) console.log('touch', event, container);
       if(!move) {
         let box = Element.find('#main').firstElementChild;
-        //  console.log("box:", box);
+        //console.log("box:", box);
 
         move = Element.moveRelative(box);
       } else if(move && event.buttons == 0) {
@@ -658,7 +557,7 @@ const AppMain = (window.onload = async () => {
 
     clientArea.x += container.parentElement.scrollLeft;
 
-    //  console.log("wheel:",{ sideBar, clientArea });
+    //console.log("wheel:",{ sideBar, clientArea });
 
     const clientCenter = clientArea.center;
     const { clientX, clientY, target, currentTarget, buttons, altKey, ctrlKey, shiftKey } = event;
@@ -697,7 +596,7 @@ const AppMain = (window.onload = async () => {
     }*/
   });
 
-  console.log(Util.getGlobalObject());
+  //console.log(Util.getGlobalObject());
 
   for(let path of [...Element.findAll('path')]) {
     let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
@@ -707,7 +606,7 @@ const AppMain = (window.onload = async () => {
 const Module = {
   noInitialRun: true,
   onRuntimeInitialized: () => {
-    console.log('initialized');
+    //console.log('initialized');
     let myString = prompt('Enter a string:');
     Module.callMain([myString]);
   },

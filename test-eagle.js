@@ -22,9 +22,7 @@ global.console = new Console({
 });
 
 function xmlize(obj, depth = 2) {
-  return obj.toXML
-    ? obj.toXML().replace(/>\s*</g, '>\n    <')
-    : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
+  return obj.toXML ? obj.toXML().replace(/>\s*</g, '>\n    <') : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
 
 function testLocator() {
@@ -169,14 +167,14 @@ async function testEagle(filename) {
 
   for(let element of board.getAll('element')) {
     //console.log('\nelement.library:', element.library, '\nelement.package:', element.package, '\n');
-    console.log('element:', element);
+    //console.log('element:', element);
   }
 
   for(let instance of schematic.getAll(e => e.tagName == 'instance')) {
     const { part, gate } = instance;
     const { deviceset, device } = part;
     /* console.log('instance:', instance, { gate, deviceset, device });
-    console.log('part:', { deviceset, device });*/
+    //console.log('part:', { deviceset, device });*/
   }
 
   let gates = [...schematic.getAll('gate')];
@@ -184,7 +182,7 @@ async function testEagle(filename) {
   let p = gates[0];
 
   while(p) {
-    // console.log('p:', p);
+    //console.log('p:', p);
 
     p = p.parentNode;
   }
@@ -198,12 +196,12 @@ async function testEagle(filename) {
   for(let arg of args) {
     arg = arg.replace(/\.(brd|sch)$/i, '');
     try {
-      console.log(`processing ${arg}...`);
+      //console.log(`processing ${arg}...`);
 
       let project = await testEagle(arg);
       // await testGraph(project);
     } catch(err) {
-      console.log('err:' + err.message);
+      //console.log('err:' + err.message);
       throw err;
     }
   }

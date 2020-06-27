@@ -9,7 +9,7 @@ function testRenderSchematic(file) {
   let doc = (global.doc = new EagleDocument(fs.readFileSync(`${file}.sch`).toString()));
   let renderer = new Renderer(doc, ReactComponent.append);
   let output = renderer.render(doc, null, 0);
-  // console.log('output:', output);
+  //console.log('output:', output);
   let outFile = file.replace(/.*\//g, '').replace(/\.[a-z]+$/, '');
 
   fs.writeFileSync(`tmp/${outFile}.schematic.svg`, ReactComponent.toString(output));

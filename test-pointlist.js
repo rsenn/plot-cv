@@ -43,14 +43,10 @@ let points = new PointList(
 );
 //console.log("points:", points);
 
-console.log('points:', Util.className(points));
-console.log(
+//console.log('points:', Util.className(points));
+//console.log(
   'Array.prototype getMethods:',
-  Util.getMethods(Array.prototype, false, (key, value) =>
-    typeof key == 'string' && key.startsWith('_')
-      ? undefined
-      : [key == 'length' ? 'size' : key, value]
-  )
+  Util.getMethods(Array.prototype, false, (key, value) => (typeof key == 'string' && key.startsWith('_') ? undefined : [key == 'length' ? 'size' : key, value]))
 );
 
 // prettier-ignore
@@ -67,8 +63,8 @@ for(let point of points) point.round(0.1);
 for(let list of lists) {
   let bb = list.boundingRect().round(0.1);
   let br = new Rect(bb);
-  console.log('size:', list.size);
-  console.log('bb:', br);
+  //console.log('size:', list.size);
+  //console.log('bb:', br);
   let prevPoint, line;
 
   let lineList = [...list.lines()];
@@ -82,38 +78,38 @@ for(let list of lists) {
   let l2 = lineList[3].swap();
   l2.y2 = l2.y1 + 3;
 
-  console.log('lineList:', lineList);
-  console.log('l:', l);
-  console.log('l2:', l2);
-  console.log('equals:', l.equals(lineList[1].swap()));
-  console.log('equals:', l.equals(lineList[1]));
-  console.log('direction:', l.direction());
+  //console.log('lineList:', lineList);
+  //console.log('l:', l);
+  //console.log('l2:', l2);
+  //console.log('equals:', l.equals(lineList[1].swap()));
+  //console.log('equals:', l.equals(lineList[1]));
+  //console.log('direction:', l.direction());
 
-  console.log('l.yIntercept:', l.yIntercept());
-  console.log('l.xIntercept:', l.xIntercept());
-  console.log('l2.yIntercept:', l2.yIntercept());
-  console.log('l2.xIntercept:', l2.xIntercept());
-  console.log('l.functions:' + Util.toString(l.functions(), { multiline: false }));
-  console.log('l.functions:', l.functions());
-  console.log('l.dot:', l.dot);
-  console.log('l.cross:', l.cross);
-  console.log('l2.equations:', l2.equations());
+  //console.log('l.yIntercept:', l.yIntercept());
+  //console.log('l.xIntercept:', l.xIntercept());
+  //console.log('l2.yIntercept:', l2.yIntercept());
+  //console.log('l2.xIntercept:', l2.xIntercept());
+  //console.log('l.functions:' + Util.toString(l.functions(), { multiline: false }));
+  //console.log('l.functions:', l.functions());
+  //console.log('l.dot:', l.dot);
+  //console.log('l.cross:', l.cross);
+  //console.log('l2.equations:', l2.equations());
   let fns = l2.functions();
-  console.log('fns.x(y1):', fns.x(l2.y1));
-  console.log('fns.x(y2):', fns.x(l2.y2));
-  console.log('fns.y(x1):', fns.y(l2.x1));
-  console.log('fns.y(x2):', fns.y(l2.x2));
+  //console.log('fns.x(y1):', fns.x(l2.y1));
+  //console.log('fns.x(y2):', fns.x(l2.y2));
+  //console.log('fns.y(x1):', fns.y(l2.x1));
+  //console.log('fns.y(x2):', fns.y(l2.x2));
 
-  console.log('slope:', l.slope);
-  console.log('angle:', l.angle);
+  //console.log('slope:', l.slope);
+  //console.log('angle:', l.angle);
 
-  console.log('distances:', l2.matchEndpoints(lineList));
+  //console.log('distances:', l2.matchEndpoints(lineList));
 
   /*
   for(let point of list) {
     if(prevPoint)
       line = new Line(prevPoint,point);
-    console.log("point:", point);
+    //console.log("point:", point);
 
     prevPoint = point;
   }*/
@@ -121,6 +117,6 @@ for(let list of lists) {
 
 /*
 let v = new Vector([1,2]);
-console.log("vec:", v.slice(1));
-console.log("vec:", Util.getMethods(Object.getPrototypeOf(v), 1));
+//console.log("vec:", v.slice(1));
+//console.log("vec:", Util.getMethods(Object.getPrototypeOf(v), 1));
 */

@@ -6,11 +6,11 @@ import lune from 'lune';
 
 const m = new MoonPhase(new Date(2018, 9, 23));
 
-console.log(m.illum * 100 + ' %');
+//console.log(m.illum * 100 + ' %');
 
 function moon() {
   let ret = the_moon.apply(the_moon, [...arguments]);
-  console.log('ret:', ret);
+  //console.log('ret:', ret);
   return ret;
 }
 
@@ -29,16 +29,11 @@ moon({ format: 'name' }); // 'Last Quarter Moon'
 // SolarCalc(date,lat,long)
 const gps = { lat: 46.9480896, lon: 7.4474401 };
 let solar = new SolarCalc(new Date(), gps.lat, gps.lon);
-console.log(
+//console.log(
   'solar:',
   solar // 2015-03-08T11:35:30.000Z
 );
-console.log([
-  SunCalc.getTimes(/*Date*/ new Date(), /*Number*/ gps.lat, /*Number*/ gps.lon),
-  SunCalc.getMoonPosition(/*Date*/ new Date(), /*Number*/ gps.lat, /*Number*/ gps.lon),
-  SunCalc.getMoonIllumination(/*Date*/ new Date()),
-  SunCalc.getMoonTimes(/*Date*/ new Date(), /*Number*/ gps.lat, /*Number*/ gps.lon)
-]);
+//console.log([SunCalc.getTimes(/*Date*/ new Date(), /*Number*/ gps.lat, /*Number*/ gps.lon), SunCalc.getMoonPosition(/*Date*/ new Date(), /*Number*/ gps.lat, /*Number*/ gps.lon), SunCalc.getMoonIllumination(/*Date*/ new Date()), SunCalc.getMoonTimes(/*Date*/ new Date(), /*Number*/ gps.lat, /*Number*/ gps.lon)]);
 
 let current_phase = lune.phase();
-console.log(current_phase);
+//console.log(current_phase);
