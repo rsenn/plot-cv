@@ -23,6 +23,7 @@ import { devtools } from './lib/devtools.js';
 import Util from './lib/util.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
+import { XmlObject } from './lib/json.js';
 import {
   hydrate,
   Fragment,
@@ -182,6 +183,7 @@ Object.assign(
   { React, ReactComponent, WebSocketClient, html },
   dom,
   geom,
+  { XmlObject },
   {
     CTORS,
     ECMAScriptParser,

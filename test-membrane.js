@@ -3,7 +3,15 @@ import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Util from './lib/util.js';
 import fs from 'fs';
-import { Path, PathMapper, toXML, TreeObserver, findXPath, XmlIterator } from './lib/json.js';
+import {
+  Path,
+  XmlObject,
+  PathMapper,
+  toXML,
+  TreeObserver,
+  findXPath,
+  XmlIterator
+} from './lib/json.js';
 import { Console } from 'console';
 
 const printNode = node => {
@@ -118,15 +126,19 @@ try {
       if(Object.keys(attributes).length == 0) continue;
       let xpath = path2xpath(obj2path(path.apply(xml)));
     }*/
+    let tree = treeObserve.get(xml);
+
     let iterated = new Map(
-      [...XmlIterator(xml, (value, path) => true)].map(([value, path]) => [
+      [...XmlIterator(tree, (value, path) => true)].map(([value, path]) => [
         new Path(path, true)[Symbol.toStringTag]() /*.xpath(xml)*/,
         value
       ])
     );
     for(let [path, value] of iterated) {
       path = new Path(path, true);
-      console.log(path.xpath(xml) + ' =', value);
+      //value = ;
+      let obj = new XmlObject(treeObserve.unwrap(value));
+      console.log(path.xpath(xml) + ' =', obj);
     }
   }
 
