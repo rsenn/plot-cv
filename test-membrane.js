@@ -108,26 +108,10 @@ try {
       let xpath = path.xpath(xml).slice(-2) + '';
       path = path.slice(-2) + '';
       let string = typeof value == 'string' ? value : '';
-      //console.log(`event`, Util.toString({ what, valueType, path, string }));
     });
-
     mapper.set(treeObserve.unwrap(node), []);
-    /*    for(let [path, obj] of path2obj) {
-      let [tagName, attributes, children] = obj;
-      if(path == '0') path = '';
-      path = new Path(path, true);
-      obj.attributes;
-      if(Object.keys(attributes).length == 0) continue;
-      let xpath = path2xpath(obj2path(path.apply(xml)));
-    }*/
     let tree = treeObserve.get(xml);
 
-    /*  let iterated = new Map(
-      [...].map(([value, path]) => [
-        new Path(path, true)[Symbol.toStringTag]() ,
-        value
-      ])o
-    );*/
 
     const incr = (obj, prop, i = 1) => {
       if(!obj) obj = {};
@@ -137,53 +121,26 @@ try {
     let tags = {};
     for(let [v, p] of XmlIterator({ children: xml.children, tagName: tree.tagName, attributes: tree.attributes }, (v, p) => true)) {
       if(!(p instanceof Path)) p = new Path(p, true);
-
       tags = incr(tags, v.tagName);
-
-      //v = treeObserve.unwrap(v);
-      //console.log('iterate', p.xpath(xml), ' =', v);
     }
-    //e.log('tags', tags);
-
     tags = Object.entries(tags).sort((a, b) => a[1] - b[1]);
     tags = tags
       .filter(([k, v]) => v == 1)
       .map(([t]) => {
         const { path, value } = deep.find(xml, (v, p) => v.tagName == t);
-        //console.log('map tags', path);
         let xpath = new Path(path, true).xpath(xml);
-        return [t, xpath.slice(-4)];
+        xpath = xpath.slice(-4);
+        let r = [t,xpath ];
+       console.log("r:",xpath, inspect(value, 0));
+        return r;
       });
     tags = new Map(tags);
-    // console.log('tags', tags);
-
     let x = new MutableXPath('/eagle/drawing/board');
-    //console.log('x:', x);
-    //console.log('x:', ...[...x]);
-
     let drawing = deep.find(xml, v => v.tagName == 'drawing');
     let board = deep.find(xml, v => v.tagName == 'board');
-    // let designrules = deep.find(xml, v => v.tagName == 'designrules');
-    //console.log('board.path', board.path, 'board.value', toXML(board.value, 0));
     let w = new Path(board.path);
-    //console.log('w:', w);
-
-    /* console.log('drawing.path', w, 'drawing.value', toXML(drawing.value, 0));
-  //console.log('board.path', w, 'board.value', toXML(board.value, 0));*/
-
     let y = w.xpath(xml);
-
-    //console.log('y:', y);
-    //console.log('y:', ...[...y]);
-
-    //console.log('x.equal(y):', x.equal(y));
-
     let z = x.apply(board.value);
-    //console.log('z:', z);
-
-    //console.log('y:', Util.className(y));
-    //console.log('y:', inspect(y.toArray()));
-    //console.log('z:', inspect(z, 2));
   }
 
   main(...process.argv.slice(2));
