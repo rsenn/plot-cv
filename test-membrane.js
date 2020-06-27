@@ -112,7 +112,6 @@ try {
     mapper.set(treeObserve.unwrap(node), []);
     let tree = treeObserve.get(xml);
 
-
     const incr = (obj, prop, i = 1) => {
       if(!obj) obj = {};
       return { ...obj, [prop]: (obj[prop] || 0) + i };
@@ -123,19 +122,42 @@ try {
       if(!(p instanceof Path)) p = new Path(p, true);
       tags = incr(tags, v.tagName);
     }
+    let lists = [];
+    for(let key in tags) {
+      let lkey = key == 'library' ? 'libraries' : key + 's';
+      if(tags[lkey] !== undefined) lists.push(lkey);
+    }
+
+    // tags = tags.filter(([k,v]) => console.log(k,v));
+
     tags = Object.entries(tags).sort((a, b) => a[1] - b[1]);
-    tags = tags
-      .filter(([k, v]) => v == 1)
-      .map(([t]) => {
-        const { path, value } = deep.find(xml, (v, p) => v.tagName == t);
+    console.log('lists', lists);
+
+    tags = lists
+      //  .filter(([k, v]) => v == 1)
+      .map(t => {
+        let { path, value } = deep.find(xml, (v, p) => v.tagName == t);
+        let selected = deep.select(xml, (v, p) => v.tagName == t);
         let xpath = new Path(path, true).xpath(xml);
-        xpath = xpath.slice(-4);
-        let r = [t,xpath ];
-       console.log("r:",xpath, inspect(value, 0));
-        return r;
+        xpath = xpath.slice(-2);
+        path = obj2path(value);
+        console.log(
+          'r:',
+
+          selected
+            .map(({ path, value }) => [new Path(path, true), value])
+            .map(([p, v]) => [p.xpath(xml), v])
+            .map(([p, v]) => [p[Symbol.for('nodejs.util.inspect.custom')](), v])
+            .map(([p, v]) => `${p} ${v.children.length}`)
+            .join('\n')
+        );
+        return [t, selected];
       });
     tags = new Map(tags);
-    let x = new MutableXPath('/eagle/drawing/board');
+    console.log('tags', tags);
+
+    console.log(XPath + '');
+    let x = new XPath('/eagle/drawing/board');
     let drawing = deep.find(xml, v => v.tagName == 'drawing');
     let board = deep.find(xml, v => v.tagName == 'board');
     let w = new Path(board.path);
