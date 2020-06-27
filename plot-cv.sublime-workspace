@@ -120,30 +120,13 @@
 	"buffers":
 	[
 		{
-			"contents": "DereferenceError\nframe =>\nframe =>\nDereferenceError.prototype.toString\nPath\nSymToString\nStringToSym\nisChildren\nconstructor\np =>\nparseXPath\npartToString\n([name, value]) =>\nclone\nsize\nright\nleft\nup\ndown\nnthChild\ndiff\nlastId\nlast\nfirst\nnextSibling\nprevSibling\nparent\nparentNode\nfirstChild\nlastChild\ndepth\ncompare\napply\n(a, i) =>\nchild =>\ntoString\ninspect\nPath\ntoSource\nitem =>\nabsolute\nmakeAbsolute\nxpath\nXPath\nconstructor\ndescendand\nv =>\nabsolute\nv =>\nslice\ntoString\np =>\nsib =>\nexistsIn\nsplit\npred\nrelativeTo\n(part, i) =>\nslice\npush\npop\nunshift\nshift\nconcat\nmap\nfilter\noffset\n(p, i) =>\ntoArray\nequal\nparent\nMutableXPath\nconstructor\nMutableXPath",
+			"contents": "",
 			"settings":
 			{
-				"buffer_size": 643,
+				"buffer_size": 0,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
-			}
-		},
-		{
-			"file": "lib/json/path.js",
-			"settings":
-			{
-				"buffer_size": 16144,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-membrane.js",
-			"settings":
-			{
-				"buffer_size": 6041,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
 			}
 		}
 	],
@@ -431,13 +414,13 @@
 	"file_history":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv/test-membrane.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/path.js.001.patch",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/mainboard2.brd",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/xml2json.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
 		"/home/roman/Sources/plot-cv/lib/json-pointer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/pathMapper.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/treeObserver.js",
@@ -773,7 +756,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 643,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
@@ -782,383 +765,13 @@
 						],
 						"settings":
 						{
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
+							"current_file": null,
 							"outline_rename_mode": false,
 							"symkeys":
 							[
-								[
-									74,
-									129
-								],
-								[
-									272,
-									280
-								],
-								[
-									320,
-									328
-								],
-								[
-									990,
-									1038
-								],
-								[
-									1226,
-									1230
-								],
-								[
-									1331,
-									1342
-								],
-								[
-									1465,
-									1476
-								],
-								[
-									1554,
-									1564
-								],
-								[
-									1656,
-									1667
-								],
-								[
-									1964,
-									1968
-								],
-								[
-									2412,
-									2422
-								],
-								[
-									3267,
-									3279
-								],
-								[
-									3476,
-									3494
-								],
-								[
-									4076,
-									4081
-								],
-								[
-									4151,
-									4155
-								],
-								[
-									4341,
-									4346
-								],
-								[
-									4626,
-									4630
-								],
-								[
-									4914,
-									4916
-								],
-								[
-									5023,
-									5027
-								],
-								[
-									5396,
-									5404
-								],
-								[
-									5454,
-									5458
-								],
-								[
-									5682,
-									5688
-								],
-								[
-									5746,
-									5750
-								],
-								[
-									5814,
-									5819
-								],
-								[
-									5870,
-									5881
-								],
-								[
-									5937,
-									5948
-								],
-								[
-									6003,
-									6009
-								],
-								[
-									6063,
-									6073
-								],
-								[
-									6127,
-									6137
-								],
-								[
-									6197,
-									6206
-								],
-								[
-									6267,
-									6272
-								],
-								[
-									6309,
-									6316
-								],
-								[
-									6653,
-									6658
-								],
-								[
-									6977,
-									6986
-								],
-								[
-									7239,
-									7247
-								],
-								[
-									7869,
-									7877
-								],
-								[
-									8449,
-									8456
-								],
-								[
-									8472,
-									8476
-								],
-								[
-									8560,
-									8568
-								],
-								[
-									8609,
-									8616
-								],
-								[
-									8662,
-									8670
-								],
-								[
-									8709,
-									8721
-								],
-								[
-									8896,
-									8901
-								],
-								[
-									9139,
-									9144
-								],
-								[
-									9249,
-									9260
-								],
-								[
-									9495,
-									9505
-								],
-								[
-									9540,
-									9544
-								],
-								[
-									9657,
-									9665
-								],
-								[
-									9700,
-									9704
-								],
-								[
-									9814,
-									9819
-								],
-								[
-									10625,
-									10633
-								],
-								[
-									10708,
-									10712
-								],
-								[
-									11513,
-									11519
-								],
-								[
-									12310,
-									12318
-								],
-								[
-									12580,
-									12585
-								],
-								[
-									12738,
-									12761
-								],
-								[
-									12926,
-									12936
-								],
-								[
-									12975,
-									12987
-								],
-								[
-									13296,
-									13301
-								],
-								[
-									13551,
-									13555
-								],
-								[
-									13688,
-									13691
-								],
-								[
-									13750,
-									13757
-								],
-								[
-									13906,
-									13911
-								],
-								[
-									14047,
-									14053
-								],
-								[
-									14315,
-									14318
-								],
-								[
-									14438,
-									14444
-								],
-								[
-									14577,
-									14583
-								],
-								[
-									14596,
-									14605
-								],
-								[
-									14733,
-									14740
-								],
-								[
-									14960,
-									14965
-								],
-								[
-									15512,
-									15518
-								],
-								[
-									15744,
-									15756
-								],
-								[
-									15781,
-									15792
-								],
-								[
-									15953,
-									15965
-								]
 							],
 							"symlist":
 							[
-								"DereferenceError",
-								"frame =>",
-								"frame =>",
-								"DereferenceError.prototype.toString",
-								"Path",
-								"SymToString",
-								"StringToSym",
-								"isChildren",
-								"constructor",
-								"p =>",
-								"parseXPath",
-								"partToString",
-								"([name, value]) =>",
-								"clone",
-								"size",
-								"right",
-								"left",
-								"up",
-								"down",
-								"nthChild",
-								"diff",
-								"lastId",
-								"last",
-								"first",
-								"nextSibling",
-								"prevSibling",
-								"parent",
-								"parentNode",
-								"firstChild",
-								"lastChild",
-								"depth",
-								"compare",
-								"apply",
-								"(a, i) =>",
-								"child =>",
-								"toString",
-								"inspect",
-								"Path",
-								"toSource",
-								"item =>",
-								"absolute",
-								"makeAbsolute",
-								"xpath",
-								"XPath",
-								"constructor",
-								"descendand",
-								"v =>",
-								"absolute",
-								"v =>",
-								"slice",
-								"toString",
-								"p =>",
-								"sib =>",
-								"existsIn",
-								"split",
-								"pred",
-								"relativeTo",
-								"(part, i) =>",
-								"slice",
-								"push",
-								"pop",
-								"unshift",
-								"shift",
-								"concat",
-								"map",
-								"filter",
-								"offset",
-								"(p, i) =>",
-								"toArray",
-								"equal",
-								"parent",
-								"MutableXPath",
-								"constructor",
-								"MutableXPath"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -1166,125 +779,14 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 1,
-					"file": "lib/json/path.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 16144,
-						"regions":
-						{
-							"col_0000DDFF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										12199,
-										12209
-									]
-								],
-								"scope": "col_0000DDFF"
-							},
-							"col_0000DDFF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_0000DDFF_circle.png",
-								"regions":
-								[
-									[
-										12173,
-										12173
-									]
-								],
-								"scope": "col_gutter"
-							},
-							"col_DD0000FF":
-							{
-								"flags": 16,
-								"regions":
-								[
-									[
-										12185,
-										12195
-									]
-								],
-								"scope": "col_DD0000FF"
-							},
-							"col_DD0000FF_icon":
-							{
-								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_DD0000FF_circle.png",
-								"regions":
-								[
-									[
-										12173,
-										12173
-									]
-								],
-								"scope": "col_gutter"
-							}
-						},
-						"selection":
-						[
-							[
-								10060,
-								10060
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 11561.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "test-membrane.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6041,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4813,
-								4813
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 4875.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				}
 			]
 		}
 	],
