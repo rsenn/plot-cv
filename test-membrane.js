@@ -7,7 +7,7 @@ import fs from 'fs';
 import { Path, XPath, MutablePath, MutableXPath, XmlObject, PathMapper, toXML, TreeObserver, findXPath, XmlIterator } from './lib/json.js';
 import { Console } from 'console';
 
-const inspect = (arg, depth = 10) => util.inspect(arg, { depth, breakLength: 80, compact: true, showProxy: true, color: true });
+const inspect = (arg, depth = 10, colors = true, breakLength = Number.Infinity) => util.inspect(arg, { depth, breakLength, compact: true, showProxy: true, colors });
 
 const printNode = node => {
   let s = toXML(node).replace(/\n.*/g, '');
@@ -150,10 +150,8 @@ try {
           .map(([p, v, o]) => [p.slice(o - 2), p.slice(0, o - 2), v, o])
           .map(([p, s, v, o]) => [p, s, `children: ${v.children.length}`, `offset: ${o}`])
           .map(([p, s, v, o]) => [p, s, v, p.toRegExp()]);
-
         console.log(
           'r:',
-
           dumps
             .map(([p, s, v, r]) => [p, s, v, r.test(p), r.test(s), [...p.toString().match(q)], [...q.exec(p)].slice(1)])
             .map(([p, s, ...rest]) => [p[Symbol.for('nodejs.util.inspect.custom')](), s[Symbol.for('nodejs.util.inspect.custom')](), ...rest.map(i => Util.toSource(i))])
@@ -161,16 +159,11 @@ try {
             .join('\n  |')
         );
         //.map((a, i) => '\n' + i + ':\n  ' + a.join('\n  ')) .join('\n') )
-
-        return [xpath, new Map(selected.map(({ path, value }) => [path2xpath(path).concat(['*']), value.children]))];
+        return [xpath, new Map(selected.map(({ path, value }) => [path2xpath(path).down('*'), value.children]))];
       });
-    tags = new Map(tags);
-    console.log('tags', tags);
-    let childListPaths = [...tags.keys()];
-    console.log(`keys:`, childListPaths);
-
-    for(let [search, value] of tags) {
-      for(let [path, obj] of value) console.log(`tags:`, search, path, Util.className(obj), obj.length);
+    tags = Object.fromEntries(tags);
+    for(let [search, children] of Object.entries(tags)) {
+      console.log('tags', inspect(search), children);
     }
 
     console.log(XPath + '');
