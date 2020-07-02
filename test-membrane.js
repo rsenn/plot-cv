@@ -193,9 +193,14 @@ try {
 
     let z = w.apply(xml); // path2obj.get(w+'');
     let u = observer.get(z); // path2obj.get(w+'');
+    console.log('observer.getType(u):', observer.getType(z, w));
+    console.log('observer.get(z):', observer.get(z, w));
+    console.log('observer.type(z):', observer.type(z));
+    console.log('observer.path(z):', observer.path(z));
+  //    console.log('u:', u);
     console.log('z:', z);
-    //  console.log('u:', u);
-    console.log('observer.getType(u):', observer.getType(u));
+    console.log('w:', w);
+    console.log('xml:', xml);
 
     u.attributes['name'] = 'test';
   }
