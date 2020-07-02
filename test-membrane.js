@@ -107,11 +107,12 @@ try {
     observer.subscribe((what, target, path, value) => {
       if(what == 'access') return;
       //S  let target = {type: observer.getType(target), keys: Object.keys(target).join(',') };
-      let valueType = typeof value;
+      let valueType = Util.typeOf(value);
+      let targetType = Util.typeOf(target);
       let xpath = path.xpath(xml).slice(-2) + '';
-      path = path.slice(-2) + '';
+      path = path.slice(-2);
       let string = typeof value == 'string' ? value : '';
-      console.log('handler', what, path, /*target,*/ /*string,*/ value);
+      console.log('handler', what, path, { targetType, valueType, value }, target);
     });
     mapper.set(observer.unwrap(node), []);
     let tree = observer.get(xml);
@@ -127,7 +128,7 @@ try {
     for(let [v, p] of iter) {
       if(!(p instanceof ImmutablePath)) p = new ImmutablePath(p, true);
 
-      console.log('p:', p);
+      // console.log('p:', p);
       tags = incr(tags, v.tagName);
     }
     let lists = [];
@@ -193,7 +194,7 @@ try {
     let z = w.apply(xml); // path2obj.get(w+'');
     let u = observer.get(z); // path2obj.get(w+'');
     console.log('z:', z);
-    console.log('u:', u);
+    //  console.log('u:', u);
     console.log('observer.getType(u):', observer.getType(u));
 
     u.attributes['name'] = 'test';
