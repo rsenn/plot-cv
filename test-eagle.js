@@ -137,7 +137,7 @@ async function testEagle(filename) {
   let sheets = proj.schematic.sheets;
   console.log('sheets', sheets);
 
-//proj.updateLibrary('c');
+  //proj.updateLibrary('c');
   console.log('board.libraries.list:', board.libraries.list);
   console.log('[...board.libraries]:', [...board.libraries]);
   console.log('board.libraries:', board.libraries);
@@ -176,8 +176,8 @@ async function testEagle(filename) {
   for(let instance of schematic.getAll(e => e.tagName == 'instance')) {
     const { part, gate } = instance;
     //const { deviceset, device } = part;
-    /* console.log('instance:', instance, { gate, deviceset, device });
-    //console.log('part:', { deviceset, device });*/
+    /* console.log('instance:', instance, { gate, deviceset, device });*/
+    console.log('part:', part);
   }
 
   let gates = [...schematic.getAll('gate')];
