@@ -58,7 +58,7 @@ try {
       xml,
       new Map(),
       (v, p, r) => typeof v == 'object' && v !== null && v.tagName !== undefined,
-      (p, v) => obj2path(v, p),
+      (p, v) => obj2path(v, p) + '',
       ({ tagName, attributes, children, ...value }) => (children.length ? [tagName, attributes, children] : [tagName, attributes])
     );
 
@@ -111,6 +111,7 @@ try {
       let xpath = path.xpath(xml).slice(-2) + '';
       path = path.slice(-2) + '';
       let string = typeof value == 'string' ? value : '';
+      console.log('handler', what, path, /*target,*/ /*string,*/ value);
     });
     mapper.set(observer.unwrap(node), []);
     let tree = observer.get(xml);
@@ -174,14 +175,28 @@ try {
     for(let [search, value] of Object.entries(tags)) console.log('tags', search, inspect(value, 1, true, 80));
 
     let x = new ImmutableXPath('/eagle/drawing/board');
+    /*
+  let o = x.apply(xml, true);
+      console.log('o:', o);
+
+
+  o*/
+
     let drawing = deep.find(xml, v => v.tagName == 'drawing');
     let board = deep.find(xml, v => v.tagName == 'board');
-    let w = new ImmutablePath(board.path);
-    console.log('w:', w);
+    let w = new ImmutablePath(board.path, false);
+    console.log('w:', w + '');
     let y = w.xpath(xml);
     console.log('y:', y);
+    // console.log('path2obj.keys:', [...path2obj.keys()]);
 
-    let z = x.apply(board.value);
+    let z = w.apply(xml); // path2obj.get(w+'');
+    let u = observer.get(z); // path2obj.get(w+'');
+    console.log('z:', z);
+    console.log('u:', u);
+    console.log('observer.getType(u):', observer.getType(u));
+
+    u.attributes['name'] = 'test';
   }
 
   main(...process.argv.slice(2));
