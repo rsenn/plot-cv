@@ -58,7 +58,7 @@ try {
     const path2xpath = path => {
       if(!(path instanceof ImmutablePath)) path = new ImmutablePath(path, true);
       // path = ImmutableXPath.from(path, xml);
-      console.log('path:', path);
+      // console.log('path:', path);
       return path;
     };
     /*  let path2obj = deep.flatten(
@@ -125,12 +125,12 @@ try {
 
       /*if(!(path instanceof ImmutablePath))*/ path = new ImmutablePath(path, true);
 
-      console.log('observer.handle', what, '\n  path:', path, '\n  target:', Util.toString(target), '\n  value:', Util.toString(value));
+      console.log('\nobserver.handle', what, '\n  path:', path, '\n  target:', Util.toString(target), '\n  value:', Util.toString(value));
       //S  let target = {type: observer.getType(target), keys: Object.keys(target).join(',') };
 
       let parentPath = path.parentNode;
       let parent = path2obj(parentPath);
-      console.log('observer.handle', { basePath, path, parentPath, parent });
+      console.log('\nobserver.handle', { basePath, path, parentPath, parent });
 
       let valueType = Util.typeOf(value);
       let targetType = observer.type(target);
@@ -140,7 +140,7 @@ try {
       //   if(Util.isArray(targetPath)  path = path.unshift(... targetPath);
       let xpath = ImmutableXPath.from(path, target);
       let string = typeof value == 'string' ? value : '';
-      console.log('handler\n  what:', what, '\n  key:', path.last, '\n  xpath:', xpath + '', '\n  path:', [...path], '\n  target type=' + targetType + ' path=' + targetPath + ' xpath=' + targetXPath, '\n  value:', observer.getType(value), '\n  target:', Util.toString(target, 2));
+      console.log('\n  handler\n  what:', what, '\n  key:', path.last, '\n  xpath:', xpath + '', '\n  path:', [...path], '\n  target type=' + targetType + ' path=' + targetPath + ' xpath=' + targetXPath, '\n  value:', observer.getType(value), '\n  target:', Util.toString(target, 2), '\n');
     });
     mapper.set(observer.unwrap(node), []);
     let tree = observer.get(xml);
@@ -173,7 +173,7 @@ try {
       if(tags[lkey] !== undefined) lists.push(lkey);
     }
 
-    console.log('lists:', lists);
+    //console.log('lists:', lists);
 
     // tags = tags.filter(([k,v]) => console.log(k,v));
 
@@ -198,7 +198,7 @@ try {
           .map(([p, s, v, o]) => [p, s, `children: ${v.children.length}`, `offset: ${o}`])
           .map(([p, s, v, o]) => [p, s, v, p.toRegExp()]);
         console.log(
-          'r:',
+          'result:\n  ',
           dumps
             .map(([p, s, v, r]) => [p, s, v, r.test(p), r.test(s), [...(p.toString() + '').match(q)], [...q.exec(p)].slice(1)])
             .map(([p, s, ...rest]) => [p[Symbol.for('nodejs.util.inspect.custom')](), s[Symbol.for('nodejs.util.inspect.custom')](), ...rest.map(i => Util.toSource(i))])
@@ -211,8 +211,8 @@ try {
     tags = Object.fromEntries(tags);
     for(let [search, value] of Object.entries(tags)) {
       let path = new ImmutablePath(search);
-      console.log('path:', path);
-      console.log('tags:\n', search, path, inspect(value, 1, true, 80));
+      // console.log('path:', path);
+      //console.log('tags:\n', search, path, inspect(value, 1, true, 80));
     }
 
     let x = new ImmutableXPath('/eagle/drawing/board');
@@ -230,7 +230,7 @@ try {
     let w = new ImmutablePath('children/0/children/0/children/3', true);
     console.log('w:', w + '');
     let y = ImmutableXPath.from(w, xml);
-    console.log('y:', y);
+    console.log('y:', y, [...y]);
     // console.log('path2obj.keys:', [...path2obj.keys()]);
 
     let z = w.apply(xml); // path2obj.get(w+'');
@@ -243,7 +243,7 @@ try {
     console.log('w:', w);
     console.log('xml:', xml);
 
-    u['name'] = 'test';
+    //   u['name'] = 'test';
   }
 
   main(...process.argv.slice(2));
