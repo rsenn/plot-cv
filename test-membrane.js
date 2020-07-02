@@ -42,19 +42,18 @@ global.console = new Console({
 
 Error.stackTraceLimit = 100;
 try {
-  const mapper = new PathMapper(parseXPath);
-  let observer = new TreeObserver(mapper, false);
-
   function main(...args) {
     let str = fs.readFileSync(args.length ? args[0] : '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
 
     let xml = tXml(str)[0];
+    const mapper = new PathMapper(xml, parseXPath);
+    let observer = new TreeObserver(mapper, false);
 
-    const obj2path = Util.weakMapper((v, p) => {
-      let r = new ImmutablePath(p, true);
-      //  console.log('obj2path', /*r, */ [...r], '\n   ', v /*,Util.className(r)*/);
-      return r;
-    });
+    //mapper.setFactory((v, p) => observer.get(v, p));
+
+    const path2obj = path => mapper.get(path);
+    const obj2path = observer.getField('path');
+    const obj2type = observer.getField('type');
 
     const path2xpath = path => {
       if(!(path instanceof ImmutablePath)) path = new ImmutablePath(path, true);
@@ -117,19 +116,43 @@ try {
     let node = p;
     let unwrapped, type, path;
 
-    observer.subscribe((what, target, path, value) => {
-      if(what == 'access') return;
+    observer.subscribe((...args) => {
+      let [what, target, path, value] = args;
+
+      let basePath = obj2path(target);
+      //   if(what == 'access') return;
+      //      console.log('observer.handle\n', args.shift(), Util.toString(args, { depth: 1, multiline: true, newline: '', spacing: '' }));
+
+      /*if(!(path instanceof ImmutablePath))*/ path = new ImmutablePath(path, true);
+
+      console.log('observer.handle', what, '\n  path:', path, '\n  target:', Util.toString(target), '\n  value:', Util.toString(value));
       //S  let target = {type: observer.getType(target), keys: Object.keys(target).join(',') };
+
+      let parentPath = path.parentNode;
+      let parent = path2obj(parentPath);
+      console.log('observer.handle', { basePath, path, parentPath, parent });
+
       let valueType = Util.typeOf(value);
-      let targetType = Util.typeOf(target);
-      let xpath = ImmutableXPath.from(path, xml).slice(-2) + '';
-      path = path.slice(-2);
+      let targetType = observer.type(target);
+      let targetPath = obj2path(target);
+      let targetXPath = path2xpath(targetPath);
+
+      //   if(Util.isArray(targetPath)  path = path.unshift(... targetPath);
+      let xpath = ImmutableXPath.from(path, target);
       let string = typeof value == 'string' ? value : '';
-      console.log('handler', what, path, { targetType, valueType, value }, target);
+      console.log('handler\n  what:', what, '\n  key:', path.last, '\n  xpath:', xpath + '', '\n  path:', [...path], '\n  target type=' + targetType + ' path=' + targetPath + ' xpath=' + targetXPath, '\n  value:', observer.getType(value), '\n  target:', Util.toString(target, 2));
     });
     mapper.set(observer.unwrap(node), []);
     let tree = observer.get(xml);
 
+    /**
+     * { function_description }
+     *
+     * @param      {<type>}  obj     The object
+     * @param      {<type>}  prop    The property
+     * @param      {number}  [i=1]   { parameter_description }
+     * @return     {Object}  { description_of_the_return_value }
+     */
     const incr = (obj, prop, i = 1) => {
       if(!obj) obj = {};
       return { ...obj, [prop]: (obj[prop] || 0) + i };
@@ -186,7 +209,11 @@ try {
         return [xpath, new Map(selected.map(({ path, value }) => [path2xpath(path).down('*'), value]))];
       });
     tags = Object.fromEntries(tags);
-    for(let [search, value] of Object.entries(tags)) console.log('tags', search, inspect(value, 1, true, 80));
+    for(let [search, value] of Object.entries(tags)) {
+      let path = new ImmutablePath(search);
+      console.log('path:', path);
+      console.log('tags:\n', search, path, inspect(value, 1, true, 80));
+    }
 
     let x = new ImmutableXPath('/eagle/drawing/board');
     /*
@@ -216,7 +243,7 @@ try {
     console.log('w:', w);
     console.log('xml:', xml);
 
-    u.attributes['name'] = 'test';
+    u['name'] = 'test';
   }
 
   main(...process.argv.slice(2));
