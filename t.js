@@ -2,7 +2,7 @@ import fs from 'fs';
 import { EagleElement } from './lib/eagle/element.js';
 import { EagleDocument } from './lib/eagle/document.js';
 import { EagleProject } from './lib/eagle/project.js';
-import { EagleLocator } from './lib/eagle/locator.js';
+import { EagleLocator } from './lib/eagle/reference.js';
 import Util from './lib/util.js';
 import util from 'util';
 import { Console } from 'console';

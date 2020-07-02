@@ -1,7 +1,4 @@
-import { EagleElement } from './lib/eagle/element.js';
-import { EagleDocument } from './lib/eagle/document.js';
-import { EagleProject } from './lib/eagle/project.js';
-import { EaglePath } from './lib/eagle/locator.js';
+import { EagleElement, EagleDocument, EagleProject } from './lib/eagle.js';
 import { Line, Point, BBox } from './lib/geom.js';
 import Util from './lib/util.js';
 import fs, { promises as fsPromises } from 'fs';
@@ -176,7 +173,7 @@ async function testEagle(filename) {
   for(let instance of schematic.getAll(e => e.tagName == 'instance')) {
     const { part, gate } = instance;
     //const { deviceset, device } = part;
-    /* console.log('instance:', instance, { gate, deviceset, device });*/
+    console.log('instance:', instance);
     console.log('part:', part);
   }
 

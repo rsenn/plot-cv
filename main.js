@@ -35,7 +35,7 @@ import {
   EagleNode,
   EagleNodeList,
   EagleNodeMap,
-  EaglePath,
+  ImmutablePath,
   EagleProject,
   EagleRef,
   EagleReference,
@@ -399,7 +399,7 @@ const AppMain = (window.onload = async () => {
   Util(globalThis);
 
   // prettier-ignore
-  Object.assign(window, { BBox, chooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleInterface, EagleNode, EaglePath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, loadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect, RGBA, Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
+  Object.assign(window, { BBox, chooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleInterface, EagleNode, ImmutablePath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, loadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect, RGBA, Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
 
   const inspectSym = Symbol.for('nodejs.util.inspect.custom');
 
