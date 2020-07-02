@@ -228,9 +228,9 @@ try {
     //console.log('board:', board + '');*/
 
     let w = new ImmutablePath('children/0/children/0/children/3', true);
-    //console.log('w:', w + '');
+    console.log('w:', w + '');
     let y = ImmutableXPath.from(w, xml);
-    //console.log('y:', y, [...y]);
+    console.log('y:', y, [...y]);
     //console.log('path2obj.keys:', [...path2obj.keys()]);
 
     let z = w.apply(xml); // path2obj.get(w+'');
