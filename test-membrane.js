@@ -4,7 +4,8 @@ import deep from './lib/deep.js';
 import Util from './lib/util.js';
 import util from 'util';
 import fs from 'fs';
-import { Path, MutablePath, ImmutablePath, XPath, MutableXPath, ImmutableXPath, XmlObject, PathMapper, toXML, TreeObserver, findXPath, XMLIterator, XmlIterator } from './lib/json.js';
+import { Path, MutablePath, ImmutablePath,  XmlObject, PathMapper, toXML, TreeObserver  , XMLIterator, XmlIterator } from './lib/json.js';
+import {XPath, MutableXPath, ImmutableXPath, findXPath, parseXPath} from './lib/xml/xpath.js';
 import { Console } from 'console';
 
 const inspect = (arg, depth = 10, colors = true, breakLength = Number.Infinity) => util.inspect(arg, { depth, breakLength, compact: true, showProxy: true, colors });
@@ -41,34 +42,41 @@ global.console = new Console({
 
 Error.stackTraceLimit = 100;
 try {
-  const mapper = new PathMapper();
+  const mapper = new PathMapper(parseXPath);
   let observer = new TreeObserver(mapper, false);
-  function main(...args) {
+
+ function main(...args) {
     let str = fs.readFileSync(args.length ? args[0] : '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
 
     let xml = tXml(str)[0];
 
-    const obj2path = Util.weakMapper((v, p) => new ImmutablePath(p, true));
-    const path2xpath = path => {
-      //console.log('path:', path.xpath(xml));
-      return new ImmutablePath(path, true).xpath(xml);
-    }; // Util.weakMapper((v, p) => obj2xpath(v).xpath(xml));
+    const obj2path = Util.weakMapper((v, p) => {
+       let r= new ImmutablePath(p, true);
+    console.log("obj2path",/*r, */[...r],"\n   ",v/*,Util.className(r)*/);
+return  r;    });
 
-    let path2obj = deep.flatten(
+    const path2xpath = path => {
+      if(!(path instanceof ImmutablePath)) path = new ImmutablePath(path, true);
+     // path = ImmutableXPath.from(path, xml);
+      console.log('path:', path);
+      return path;
+    }; 
+  /*  let path2obj = deep.flatten(
       xml,
       new Map(),
       (v, p, r) => typeof v == 'object' && v !== null && v.tagName !== undefined,
       (p, v) => obj2path(v, p) + '',
-      ({ tagName, attributes, children, ...value }) => (children.length ? [tagName, attributes, children] : [tagName, attributes])
-    );
-
-    let flat = deep.flatten(
+      ({ tagName, attributes, children, ...value }) => (children.length ? [tagName, attributes, children] : [tagName, attributes])$
+    );*/
+    let flat = new Map(); /*deep.flatten(
       xml,
       new Map(),
       (v, p, r) => typeof v == 'object' && v !== null && v.tagName !== undefined,
-      (p, v) => obj2path(v, p),
+      (p, v) => obj2path(v, p)+'',
       (v, p) => v
-    );
+    );*/
+          console.log('flat:', flat);
+
     let rel,
       prev = new ImmutablePath([], true),
       prevParent,
@@ -99,8 +107,12 @@ try {
       return path;
     };
     //console.log('drawing:', findXPath('//drawing', flat, { root: xml, entries: true, recursive: false }).map(mk));
-
-    let p = observer.get(Object.fromEntries(flat.entries()));
+flat.set('A',0);
+flat.set('B',1);
+let k = flat.entries();
+let o = Object.fromEntries(k);
+console.log("o:",o);
+    let p = observer.get(o);
     let node = p;
     let unwrapped, type, path;
 
@@ -109,7 +121,7 @@ try {
       //S  let target = {type: observer.getType(target), keys: Object.keys(target).join(',') };
       let valueType = Util.typeOf(value);
       let targetType = Util.typeOf(target);
-      let xpath = path.xpath(xml).slice(-2) + '';
+      let xpath = ImmutableXPath.from(path,xml).slice(-2) + '';
       path = path.slice(-2);
       let string = typeof value == 'string' ? value : '';
       console.log('handler', what, path, { targetType, valueType, value }, target);
@@ -142,21 +154,21 @@ try {
     // tags = tags.filter(([k,v]) => console.log(k,v));
 
     tags = Object.entries(tags).sort((a, b) => a[1] - b[1]);
-    //console.log('lists', lists);
+    console.log('lists', lists);
 
     tags = lists
       //  .filter(([k, v]) => v == 1)
       .map(t => {
         let { path, value } = deep.find(xml, (v, p) => v.tagName == t);
         let selected = deep.select(xml, (v, p) => v.tagName == t);
-        let xpath = new ImmutablePath(path, true).xpath(xml);
+        let xpath =  ImmutableXPath.from(path, xml);
         xpath = xpath.slice(-2);
         let q = xpath.toRegExp();
 
         path = obj2path(value);
         let dumps = selected
           .map(({ path, value }) => [new ImmutablePath(path, true), value])
-          .map(([p, v]) => [p.xpath(xml), v])
+          .map(([p, v]) => [ImmutableXPath.from(p, xml), v])
           .map(([p, v]) => [p, v, p.offset((o, i, p) => !(/(\[|board$|sheets$)/.test(o) || p[i + 1] == 'attributes'))])
           .map(([p, v, o]) => [p.slice(o - 2), p.slice(0, o - 2), v, o])
           .map(([p, s, v, o]) => [p, s, `children: ${v.children.length}`, `offset: ${o}`])
@@ -184,10 +196,13 @@ try {
   o*/
 
     let drawing = deep.find(xml, v => v.tagName == 'drawing');
-    let board = deep.find(xml, v => v.tagName == 'board');
-    let w = new ImmutablePath(board.path, false);
-    console.log('w:', w + '');
-    let y = w.xpath(xml);
+    /*let board = deep.find(xml, v => v.tagName == 'board');
+    console.log('board:', board + '');*/
+
+    
+    let w = new ImmutablePath("children/0/children/0/children/3", true);
+    console.log('w:', w+'');
+    let y = ImmutableXPath.from(w,xml);
     console.log('y:', y);
     // console.log('path2obj.keys:', [...path2obj.keys()]);
 
@@ -206,5 +221,6 @@ try {
 
   main(...process.argv.slice(2));
 } catch(err) {
-  //console.log('err:', err);
+ console.log('err:', err);
 }
+
