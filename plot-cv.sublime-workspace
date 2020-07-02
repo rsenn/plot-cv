@@ -138,11 +138,28 @@
 			}
 		},
 		{
+			"file": "/home/roman/Sources/plot-cv/quickjs/tests/test_builtin.js",
+			"settings":
+			{
+				"buffer_size": 16339,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "lib/json/path.js",
 			"settings":
 			{
-				"buffer_size": 13240,
+				"buffer_size": 13425,
 				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/xml/xpath.js",
+			"settings":
+			{
+				"buffer_size": 5557,
 				"line_ending": "Unix"
 			}
 		}
@@ -433,12 +450,12 @@
 	],
 	"file_history":
 	[
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch",
 		"/home/roman/Sources/plot-cv/test-membrane.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/treeObserver.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
 		"/home/roman/Sources/plot-cv/lib/ecmascript/printer.js",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.b",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/ref.js",
@@ -564,7 +581,7 @@
 	],
 	"find":
 	{
-		"height": 59.0
+		"height": 45.0
 	},
 	"find_in_files":
 	{
@@ -603,6 +620,17 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"'||'\\",
+			"\\\\u",
+			"sep",
+			" toStr",
+			"toStr",
+			"toString\\(",
+			"toString",
+			"node.*inspe",
+			"inspect",
+			"toStr",
+			"'/'",
 			"\\\\u",
 			"\\\\u22",
 			"\\\\u",
@@ -719,18 +747,7 @@
 			"p:",
 			"weakMapp",
 			"\n  get = (...args) => this.entry(...args).proxy;\n  type = (...args) => this.entry(...args).type;",
-			"self\\.",
-			"weakMapper",
-			"types\\(",
-			"types",
-			"unwrap",
-			"types =",
-			"types=",
-			"getType",
-			"types",
-			"types =",
-			"getTy",
-			"AttributeMap"
+			"self\\."
 		],
 		"highlight": false,
 		"in_selection": false,
@@ -799,10 +816,6 @@
 						},
 						"selection":
 						[
-							[
-								193,
-								193
-							]
 						],
 						"settings":
 						{
@@ -863,196 +876,196 @@
 									3686
 								],
 								[
-									4414,
-									4424
+									4546,
+									4556
 								],
 								[
-									4645,
-									4650
+									4777,
+									4782
 								],
 								[
-									4744,
-									4748
+									4876,
+									4880
 								],
 								[
-									4934,
-									4939
+									5066,
+									5071
 								],
 								[
-									5243,
-									5247
+									5375,
+									5379
 								],
 								[
-									5531,
-									5533
+									5663,
+									5665
 								],
 								[
-									5593,
-									5597
+									5725,
+									5729
 								],
 								[
-									5781,
-									5789
+									5913,
+									5921
 								],
 								[
-									5839,
-									5843
-								],
-								[
-									6091,
-									6097
-								],
-								[
-									6155,
-									6159
+									5971,
+									5975
 								],
 								[
 									6223,
-									6228
+									6229
 								],
 								[
-									6279,
-									6290
+									6287,
+									6291
 								],
 								[
-									6346,
-									6357
+									6355,
+									6360
 								],
 								[
-									6412,
-									6418
+									6411,
+									6422
 								],
 								[
-									6472,
-									6482
+									6478,
+									6489
 								],
 								[
-									6536,
-									6546
+									6544,
+									6550
 								],
 								[
-									6606,
-									6615
+									6604,
+									6614
 								],
 								[
-									6676,
-									6681
+									6668,
+									6678
 								],
 								[
-									6718,
-									6725
+									6738,
+									6747
 								],
 								[
-									7062,
-									7067
+									6808,
+									6813
 								],
 								[
-									7386,
-									7395
+									6850,
+									6857
 								],
 								[
-									7648,
-									7656
+									7194,
+									7199
 								],
 								[
-									8278,
-									8286
+									7518,
+									7527
 								],
 								[
-									8904,
-									8912
+									7780,
+									7788
 								],
 								[
-									8953,
-									8960
+									8410,
+									8418
 								],
 								[
-									9006,
-									9014
+									9072,
+									9080
 								],
 								[
-									9053,
-									9065
+									9121,
+									9128
 								],
 								[
-									9676,
-									9684
+									9174,
+									9182
 								],
 								[
-									9946,
-									9951
+									9221,
+									9233
 								],
 								[
-									10100,
-									10123
+									9861,
+									9869
 								],
 								[
-									10288,
-									10298
+									10131,
+									10136
 								],
 								[
-									10337,
-									10349
+									10285,
+									10308
 								],
 								[
-									10658,
-									10663
+									10473,
+									10483
 								],
 								[
-									10937,
-									10941
+									10522,
+									10534
 								],
 								[
-									11061,
-									11064
+									10843,
+									10848
 								],
 								[
-									11123,
-									11130
+									11122,
+									11126
 								],
 								[
-									11250,
-									11255
+									11246,
+									11249
 								],
 								[
-									11378,
-									11384
+									11308,
+									11315
 								],
 								[
-									11633,
-									11636
+									11435,
+									11440
 								],
 								[
-									11756,
-									11762
+									11563,
+									11569
 								],
 								[
-									11895,
-									11901
+									11818,
+									11821
 								],
 								[
-									11914,
-									11923
+									11941,
+									11947
 								],
 								[
-									12057,
-									12064
+									12080,
+									12086
 								],
 								[
-									12284,
-									12289
+									12099,
+									12108
 								],
 								[
-									12836,
-									12842
+									12242,
+									12249
 								],
 								[
-									12996,
-									13000
+									12469,
+									12474
 								],
 								[
-									13005,
-									13009
+									13021,
+									13027
+								],
+								[
+									13181,
+									13185
+								],
+								[
+									13190,
+									13194
 								]
 							],
 							"symlist":
@@ -1125,22 +1138,52 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 1,
+					"file": "/home/roman/Sources/plot-cv/quickjs/tests/test_builtin.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 16339,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								109,
+								109
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
 					"file": "lib/json/path.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 13240,
+						"buffer_size": 13425,
 						"regions":
 						{
 							"col_0000DDFF":
@@ -1149,12 +1192,12 @@
 								"regions":
 								[
 									[
-										3969,
-										3979
+										4101,
+										4111
 									],
 									[
-										9565,
-										9575
+										9750,
+										9760
 									]
 								],
 								"scope": "col_0000DDFF"
@@ -1166,12 +1209,12 @@
 								"regions":
 								[
 									[
-										3953,
-										3953
+										4085,
+										4085
 									],
 									[
-										9537,
-										9537
+										9722,
+										9722
 									]
 								],
 								"scope": "col_gutter"
@@ -1180,8 +1223,8 @@
 						"selection":
 						[
 							[
-								4677,
-								4566
+								3785,
+								3785
 							]
 						],
 						"settings":
@@ -1191,10 +1234,40 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 6028.0,
+						"translation.y": 2391.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "lib/xml/xpath.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5557,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2889,
+								2889
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2783.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
 					"type": "text"
 				}
 			]
@@ -1202,7 +1275,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 53.0
+		"height": 39.0
 	},
 	"input":
 	{
@@ -1252,7 +1325,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 114.0
+		"height": 74.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1262,12 +1335,16 @@
 		"selected_items":
 		[
 			[
-				"path.js",
+				"xpath",
+				"lib/xml/xpath.js"
+			],
+			[
+				"path.j",
 				"lib/json/path.js"
 			],
 			[
-				"xpath",
-				"lib/xml/xpath.js"
+				"path.js",
+				"lib/json/path.js"
 			],
 			[
 				"treeO",
@@ -1276,10 +1353,6 @@
 			[
 				"test-me",
 				"test-membrane.js"
-			],
-			[
-				"path.j",
-				"lib/json/path.js"
 			],
 			[
 				"test-m",
