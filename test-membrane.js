@@ -197,7 +197,6 @@ try {
     console.log('observer.get(z):', observer.get(z, w));
     console.log('observer.type(z):', observer.type(z));
     console.log('observer.path(z):', observer.path(z));
-  //    console.log('u:', u);
     console.log('z:', z);
     console.log('w:', w);
     console.log('xml:', xml);
