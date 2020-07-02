@@ -133,6 +133,9 @@ async function testEagle(filename) {
     schematic: [...schematic.getAll('package')]
   };
   let parts = schematic.parts;
+  console.log("proj.schematic",proj.schematic);
+  let sheets = proj.schematic.sheets;
+  console.log("sheets",sheets);
 
   proj.updateLibrary('c');
   //console.log('board.libraries.list:', board.libraries.list);
