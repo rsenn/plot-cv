@@ -48,7 +48,9 @@ endif()
 # include: SDL
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
-
+if(NOT SDL2_LIBRARIES)
+set(SDL2_LIBRARIES SDL2)
+endif(NOT SDL2_LIBRARIES)
 # include: ImGui(symbolic linked)
 include_directories(
     imgui/

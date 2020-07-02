@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "../imgui/libs/gl3w/GL/gl3w.h"
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 class ImageTexture {
 private:
