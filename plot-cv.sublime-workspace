@@ -128,30 +128,20 @@
 	"buffers":
 	[
 		{
-			"contents": "DereferenceError\nframe =>\nframe =>\nDereferenceError.prototype.toString\nIsChildren\nMutablePath\nargs =>\nisChildren\nconstructor\n(acc, p) =>\npartToString\n([name, value]) =>\nc\ngetSpecies\nclone\nsize\nright\nleft\nup\ndown\nnthChild\ndiff\nlastId\nlast\nfirst\nnextSibling\nprevSibling\nparent\nparentNode\nfirstChild\nlastChild\ndepth\ncompare\napply\n(a, i) =>\nchild =>\ntoString\ntoSource\nitem =>\nabsolute\nmakeAbsolute\nexistsIn\nsplit\npred\nrelativeTo\n(part, i) =>\nslice\npush\npop\nunshift\nshift\nconcat\nmap\nfilter\noffset\n(p, i) =>\ntoArray\nequal\nparent\nwalk\np =>",
+			"contents": "",
 			"settings":
 			{
-				"buffer_size": 532,
+				"buffer_size": 0,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "/home/roman/Sources/plot-cv/quickjs/tests/test_builtin.js",
+			"file": "/home/roman/.config/sublime-text-3/Packages/Babel/Next Roman.tmTheme",
 			"settings":
 			{
-				"buffer_size": 16339,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/json/path.js",
-			"settings":
-			{
-				"buffer_size": 13425,
-				"encoding": "UTF-8",
+				"buffer_size": 222908,
 				"line_ending": "Unix"
 			}
 		},
@@ -159,7 +149,42 @@
 			"file": "lib/xml/xpath.js",
 			"settings":
 			{
-				"buffer_size": 5557,
+				"buffer_size": 8713,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "CMakeLists.txt",
+			"settings":
+			{
+				"buffer_size": 7049,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "imgui-viewer.cmake",
+			"settings":
+			{
+				"buffer_size": 1586,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "test-membrane.js",
+			"settings":
+			{
+				"buffer_size": 9137,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/roman/Sources/plot-cv/lib/dom/rgba.js",
+			"settings":
+			{
+				"buffer_size": 11234,
 				"line_ending": "Unix"
 			}
 		}
@@ -175,6 +200,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"install",
+				"Package Control: Install Package"
+			],
 			[
 				"outli",
 				"Browse Mode: Outline (Right)"
@@ -202,10 +231,6 @@
 			[
 				"toks",
 				"Toks: Full report any occurrences of symbol (prompt)"
-			],
-			[
-				"install",
-				"Package Control: Install Package"
 			],
 			[
 				"ctag",
@@ -442,40 +467,49 @@
 		"/home/roman/Dokumente/Sources/plot-cv",
 		"/home/roman/Dokumente/Sources/plot-cv/examples",
 		"/home/roman/Dokumente/Sources/plot-cv/lib",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/draw",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/icon",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/xml"
 	],
 	"file_history":
 	[
+		"/home/roman/Sources/plot-cv/lib/xml/xpath.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-membrane.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
-		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd",
-		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/fd-graph.js",
+		"/home/roman/Sources/plot-cv/lib/json/path.js",
+		"/home/roman/Sources/plot-cv/lib/devtools.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/proxy/observableMembrane.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
+		"/home/roman/Sources/plot-cv/lib/json/treeObserver.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Sources/plot-cv/lib/json/pathMapper.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Sources/plot-cv/lib/parse/ebnf2.js",
+		"/home/roman/Sources/plot-cv/lib/util.js",
 		"/home/roman/Sources/plot-cv/test-membrane.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/treeObserver.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/common.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/node.js",
+		"/home/roman/Sources/plot-cv/test-cli.js",
+		"/home/roman/Sources/plot-cv/lib/json/util.js",
+		"/home/roman/Sources/plot-cv/test-ecmascript.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/pathMapper.js",
+		"/home/roman/Sources/plot-cv/quickjs/tests/test_builtin.js",
+		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd",
+		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch",
 		"/home/roman/Sources/plot-cv/lib/ecmascript/printer.js",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.b",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/ref.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/json/pathMapper.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
-		"/home/roman/Sources/plot-cv/lib/json/path.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
-		"/home/roman/Sources/plot-cv/lib/xml/xpath.js",
-		"/home/roman/Sources/plot-cv/lib/json/treeObserver.js",
-		"/home/roman/Sources/plot-cv/lib/json/util.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/proxy/observableMembrane.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/element.js",
 		"/home/roman/Sources/plot-cv/lib/devpane.js",
 		"/home/roman/Sources/plot-cv/lib/dom/layer.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/common.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-membrane.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/json2xml.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
@@ -494,15 +528,12 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/project.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/locator.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/node.js",
-		"/home/roman/Sources/plot-cv/lib/devtools.js",
 		"/home/roman/Dokumente/Sources/plot-cv/opencv/cap_gphoto2.cpp",
 		"/home/roman/Sources/plot-cv/babel.js",
 		"/usr/share/applications/MariaMole.desktop",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/locator.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/node.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/nodeList.js",
-		"/home/roman/Sources/plot-cv/lib/json/pathMapper.js",
 		"/home/roman/.local/share/applications/xfce4-terminal.desktop",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/path.js.001.patch",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/mainboard2.brd",
@@ -571,17 +602,11 @@
 		"/home/roman/Arduino/libraries/SimpleRotary/examples/rotate/rotate.ino",
 		"/home/roman/Arduino/libraries/IRMP/src/irsndSelectAllProtocols.h",
 		"/home/roman/Arduino/libraries/IRMP/src/irsndSelectMain15Protocols.h",
-		"/home/roman/Arduino/libraries/QDEC/src/qdec.h",
-		"/home/roman/Arduino/libraries/QDEC/examples/01.BareLoop/01.BareLoop.ino",
-		"/home/roman/Arduino/libraries/QDEC/examples/22.InterruptsLearn/22.InterruptsLearn.ino",
-		"/home/roman/Arduino/libraries/QDEC/examples/04.LoopTemplate/04.LoopTemplate.ino",
-		"/home/roman/Arduino/libraries/QDEC/examples/03.LoopNamespace/03.LoopNamespace.ino",
-		"/home/roman/Arduino/libraries/QDEC/examples/21.BareInterrupts/21.BareInterrupts.ino",
-		"/home/roman/Arduino/libraries/QDEC/examples/05.LoopTemplateFun/05.LoopTemplateFun.ino"
+		"/home/roman/Arduino/libraries/QDEC/src/qdec.h"
 	],
 	"find":
 	{
-		"height": 45.0
+		"height": 40.0
 	},
 	"find_in_files":
 	{
@@ -617,137 +642,137 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": true,
+		"case_sensitive": false,
 		"find_history":
 		[
-			"'||'\\",
-			"\\\\u",
-			"sep",
-			" toStr",
+			"sdl",
+			"classNa",
+			"1, 32",
+			"));",
+			"log.*matches",
+			"partToString",
+			"tagNam",
+			"total",
+			"tag",
+			"]);",
+			"tagName",
+			"console.log(\"\",{acc,p});",
+			"exe",
+			"c\\(",
+			"33",
+			"^\\s*consol",
+			"ImmutableXPath",
+			"\\.const",
+			"^\\s*consol",
+			"//   ",
+			"^\\s*consol",
+			"parseXPath",
+			"ImmutableXPath",
+			"1",
+			"tagName.*=",
+			"tagName",
+			"tagName\\]",
+			"tagName:",
+			"parseXPath",
+			"constru",
+			"s=",
+			"parseXPath\\(",
+			"parseXPath",
+			"s=",
+			"^\\s*consol",
+			"^\\s*cons",
+			"constr",
+			"#47",
+			"\\[[./\\\\]*,",
+			"\\[,[./\\\\]",
+			",[./\\\\]",
+			",[.,/\\\\]+\\]",
+			"[.,/\\\\]+\\]",
+			"\\[[.,/\\\\]+\\]",
+			"\\[[.,/\\\\]+[^]]*\\]",
+			"\\[[.,/\\\\]+.*\\]",
+			"\\[[.,/\\\\]+\\]",
+			"\\[[.,/]+\\]",
+			"\\[[.,/]*\\]",
+			"\\[[.,/]\\]",
+			"\\[\\\\.",
+			"\\[\\\\.,",
+			"\\[/,",
+			"\\[.*,",
+			"name",
+			"XPath.from",
+			"r===",
+			"concat",
+			"unshift",
 			"toStr",
-			"toString\\(",
-			"toString",
-			"node.*inspe",
+			"y:",
+			"log..path:",
+			"from",
+			"\\\\n\\s*\\|",
+			"\\\\n\\s*|",
+			"\\\\n  |",
+			"\\n  |",
+			"\\n  ",
+			"tags:",
+			"tags",
+			"log.*s =",
+			"s =",
+			"''",
+			"absolute",
+			"absolut",
+			"partTo",
+			"log.*partTo",
+			"item",
 			"inspect",
+			"partTo",
+			"part",
+			"toString",
+			"r ='",
+			"r =",
+			"log.*toStr",
 			"toStr",
-			"'/'",
-			"\\\\u",
-			"\\\\u22",
-			"\\\\u",
-			"\\\\x1b",
-			"\\.colorTe",
-			"\\.color",
-			"color",
-			"log..toStr",
-			"STR =",
-			"STR;",
+			" toStr",
+			"log.*obser",
+			"log.*toStr",
+			"r=",
+			"log.*lists:",
+			"r=",
+			"^\\s*console",
+			"partToStr",
+			"log.*parts:",
+			"i=\\${",
+			"i=",
+			"r=",
+			"r:",
+			"r=",
+			" push",
+			"push",
+			" toStr",
+			" slice\\(",
+			"\\.slice\\(",
+			"\\.slice",
+			" slice\\(",
+			" slice",
+			"\\.slice\\(",
+			"\\.slice",
+			".slice",
+			"\\.slice",
 			"partToString",
-			"toStr",
+			" toStr",
+			"pathTo",
+			"pathToStr",
+			"r===",
+			"partToString",
+			"\\.partToString",
 			"partToString",
 			"partTo",
-			"partToString",
-			"CHILDREN_FN",
-			"_FN",
-			"log..Path:",
-			"CHILDREN_",
 			"toStr",
-			"toReg",
-			"matchAll",
-			"q =",
-			"partTo",
-			"obj2path",
-			"server.get",
-			"log..a:",
-			"slice.0,",
-			"slice",
-			"shift",
-			"toReg",
-			"47",
-			"w:",
-			"<board",
-			"drawing",
-			"</lay",
-			"<board",
-			"^\\s*-",
-			"transform =",
-			"transform",
-			" get =",
-			"get =",
-			"get\\(",
-			"flat.en",
-			"flat =",
-			"flat",
-			"fromEntr",
-			"path2obj",
-			"path2obj\\(",
-			"path2obj",
-			"obj2path",
-			"main",
-			"\\.xpath\\(",
-			".xpath(",
-			"\\.xpath\\(",
-			"\\.xpath",
-			"XPath",
-			"parseXPath",
-			"ImmutablePath",
-			"Immut",
-			"IsChild",
-			"[A-Za-z]*\\.isChildren",
-			"IsChild",
-			"[A-Za-z]*\\.isChildren",
-			"\\.isChildren",
+			"r===",
+			"partToString",
 			"isChild",
-			"[^a-z]Path\\.isChild",
-			"isChild",
-			" from\\(",
-			"from\\(",
-			"\\.xpath\\(",
-			".xpath(",
-			"\\.xpath\\(",
-			"lists",
-			"toXML",
-			"XPath\\(",
-			"XPath",
-			"lists",
-			"new PathMapper",
-			"parseXPath",
-			"XPath",
-			"import.*findXP",
-			"findXP",
-			"import.*XPath",
-			"class ",
-			"const ctor = this.constructor.*;",
-			"this\\.constr",
-			"let ctor",
-			"this\\[Symbol.species...;",
-			"new ctor",
-			"\\(this.constructor\\[Symbol.species\\] \\|\\| this.constructor\\)",
-			"ctorctor",
-			"\\(this.constructor[Symbol.species] || this.constructor\\)",
-			"DereferenceError",
-			"EaglePath",
-			"'part'",
-			"part:",
-			"{ .*deviceset",
-			"\\.deviceset",
-			"removeEq",
-			"tryCatch =",
-			"isElement",
-			"getCom",
-			"isElement",
-			"isElem",
-			"<parts",
-			"<sheets",
-			"getPath",
-			"Util\\..*fn",
-			"log.*u:",
-			"log..u:",
-			"u:",
-			"u;",
-			"p:",
-			"weakMapp",
-			"\n  get = (...args) => this.entry(...args).proxy;\n  type = (...args) => this.entry(...args).type;",
-			"self\\."
+			"toStr",
+			"constr",
+			"this\\.toStr"
 		],
 		"highlight": false,
 		"in_selection": false,
@@ -755,6 +780,9 @@
 		"regex": true,
 		"replace_history":
 		[
+			"'children',",
+			"push('children')",
+			" ImmutablePath",
 			"",
 			"IsChildren",
 			"const ctor = this.getSpecies();",
@@ -802,7 +830,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -810,7 +838,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 532,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
@@ -819,318 +847,13 @@
 						],
 						"settings":
 						{
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/imgui-viewer.cmake",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
-								[
-									74,
-									129
-								],
-								[
-									272,
-									280
-								],
-								[
-									320,
-									328
-								],
-								[
-									990,
-									1038
-								],
-								[
-									1207,
-									1224
-								],
-								[
-									1321,
-									1332
-								],
-								[
-									1406,
-									1413
-								],
-								[
-									1717,
-									1727
-								],
-								[
-									1967,
-									1978
-								],
-								[
-									2310,
-									2321
-								],
-								[
-									3121,
-									3133
-								],
-								[
-									3371,
-									3389
-								],
-								[
-									3658,
-									3686
-								],
-								[
-									4546,
-									4556
-								],
-								[
-									4777,
-									4782
-								],
-								[
-									4876,
-									4880
-								],
-								[
-									5066,
-									5071
-								],
-								[
-									5375,
-									5379
-								],
-								[
-									5663,
-									5665
-								],
-								[
-									5725,
-									5729
-								],
-								[
-									5913,
-									5921
-								],
-								[
-									5971,
-									5975
-								],
-								[
-									6223,
-									6229
-								],
-								[
-									6287,
-									6291
-								],
-								[
-									6355,
-									6360
-								],
-								[
-									6411,
-									6422
-								],
-								[
-									6478,
-									6489
-								],
-								[
-									6544,
-									6550
-								],
-								[
-									6604,
-									6614
-								],
-								[
-									6668,
-									6678
-								],
-								[
-									6738,
-									6747
-								],
-								[
-									6808,
-									6813
-								],
-								[
-									6850,
-									6857
-								],
-								[
-									7194,
-									7199
-								],
-								[
-									7518,
-									7527
-								],
-								[
-									7780,
-									7788
-								],
-								[
-									8410,
-									8418
-								],
-								[
-									9072,
-									9080
-								],
-								[
-									9121,
-									9128
-								],
-								[
-									9174,
-									9182
-								],
-								[
-									9221,
-									9233
-								],
-								[
-									9861,
-									9869
-								],
-								[
-									10131,
-									10136
-								],
-								[
-									10285,
-									10308
-								],
-								[
-									10473,
-									10483
-								],
-								[
-									10522,
-									10534
-								],
-								[
-									10843,
-									10848
-								],
-								[
-									11122,
-									11126
-								],
-								[
-									11246,
-									11249
-								],
-								[
-									11308,
-									11315
-								],
-								[
-									11435,
-									11440
-								],
-								[
-									11563,
-									11569
-								],
-								[
-									11818,
-									11821
-								],
-								[
-									11941,
-									11947
-								],
-								[
-									12080,
-									12086
-								],
-								[
-									12099,
-									12108
-								],
-								[
-									12242,
-									12249
-								],
-								[
-									12469,
-									12474
-								],
-								[
-									13021,
-									13027
-								],
-								[
-									13181,
-									13185
-								],
-								[
-									13190,
-									13194
-								]
 							],
 							"symlist":
 							[
-								"DereferenceError",
-								"frame =>",
-								"frame =>",
-								"DereferenceError.prototype.toString",
-								"IsChildren",
-								"MutablePath",
-								"args =>",
-								"isChildren",
-								"constructor",
-								"(acc, p) =>",
-								"partToString",
-								"([name, value]) =>",
-								"c",
-								"getSpecies",
-								"clone",
-								"size",
-								"right",
-								"left",
-								"up",
-								"down",
-								"nthChild",
-								"diff",
-								"lastId",
-								"last",
-								"first",
-								"nextSibling",
-								"prevSibling",
-								"parent",
-								"parentNode",
-								"firstChild",
-								"lastChild",
-								"depth",
-								"compare",
-								"apply",
-								"(a, i) =>",
-								"child =>",
-								"toString",
-								"toSource",
-								"item =>",
-								"absolute",
-								"makeAbsolute",
-								"existsIn",
-								"split",
-								"pred",
-								"relativeTo",
-								"(part, i) =>",
-								"slice",
-								"push",
-								"pop",
-								"unshift",
-								"shift",
-								"concat",
-								"map",
-								"filter",
-								"offset",
-								"(p, i) =>",
-								"toArray",
-								"equal",
-								"parent",
-								"walk",
-								"p =>"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -1138,83 +861,164 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 6,
 					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 1,
-			"sheets":
-			[
+				},
 				{
 					"buffer": 1,
-					"file": "/home/roman/Sources/plot-cv/quickjs/tests/test_builtin.js",
+					"file": "/home/roman/.config/sublime-text-3/Packages/Babel/Next Roman.tmTheme",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 16339,
+						"buffer_size": 222908,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								109,
-								109
+								3408,
+								3415
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 231.0,
+						"translation.y": 3386.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 2,
+					"file": "lib/xml/xpath.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8713,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8713,
+								8713
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 4,
+							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 6575.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "lib/json/path.js",
+					"buffer": 3,
+					"file": "CMakeLists.txt",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 13425,
+						"buffer_size": 7049,
 						"regions":
 						{
-							"col_0000DDFF":
+						},
+						"selection":
+						[
+							[
+								1744,
+								1744
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 723.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "imgui-viewer.cmake",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1586,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1436,
+								1436
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 900.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "test-membrane.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9137,
+						"regions":
+						{
+							"col_00DDDDFF":
 							{
 								"flags": 16,
 								"regions":
 								[
 									[
-										4101,
-										4111
-									],
-									[
-										9750,
-										9760
+										817,
+										827
 									]
 								],
-								"scope": "col_0000DDFF"
+								"scope": "col_00DDDDFF"
 							},
-							"col_0000DDFF_icon":
+							"col_00DDDDFF_icon":
 							{
 								"flags": 16,
-								"icon": "Packages/User/Color Highlight.cache/col_0000DDFF_circle.png",
+								"icon": "Packages/User/Color Highlight.cache/col_00DDDDFF_circle.png",
 								"regions":
 								[
 									[
-										4085,
-										4085
-									],
-									[
-										9722,
-										9722
+										803,
+										803
 									]
 								],
 								"scope": "col_gutter"
@@ -1223,8 +1027,8 @@
 						"selection":
 						[
 							[
-								3785,
-								3785
+								8881,
+								8881
 							]
 						],
 						"settings":
@@ -1234,27 +1038,174 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2391.0,
+						"translation.y": 3334.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "lib/xml/xpath.js",
+					"buffer": 6,
+					"file": "/home/roman/Sources/plot-cv/lib/dom/rgba.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5557,
+						"buffer_size": 11234,
 						"regions":
 						{
+							"col_0000FFFF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										173,
+										177
+									],
+									[
+										9398,
+										9402
+									],
+									[
+										9582,
+										9586
+									],
+									[
+										9812,
+										9816
+									]
+								],
+								"scope": "col_0000FFFF"
+							},
+							"col_0000FFFF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_0000FFFF_circle.png",
+								"regions":
+								[
+									[
+										160,
+										160
+									],
+									[
+										9369,
+										9369
+									],
+									[
+										9543,
+										9543
+									],
+									[
+										9783,
+										9783
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_008000FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										142,
+										147
+									],
+									[
+										9347,
+										9352
+									],
+									[
+										9537,
+										9542
+									],
+									[
+										9769,
+										9774
+									]
+								],
+								"scope": "col_008000FF"
+							},
+							"col_008000FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_008000FF_circle.png",
+								"regions":
+								[
+									[
+										129,
+										129
+									],
+									[
+										9318,
+										9318
+									],
+									[
+										9498,
+										9498
+									],
+									[
+										9740,
+										9740
+									]
+								],
+								"scope": "col_gutter"
+							},
+							"col_FF0000FF":
+							{
+								"flags": 16,
+								"regions":
+								[
+									[
+										113,
+										116
+									],
+									[
+										9298,
+										9301
+									],
+									[
+										9494,
+										9497
+									],
+									[
+										9728,
+										9731
+									]
+								],
+								"scope": "col_FF0000FF"
+							},
+							"col_FF0000FF_icon":
+							{
+								"flags": 16,
+								"icon": "Packages/User/Color Highlight.cache/col_FF0000FF_circle.png",
+								"regions":
+								[
+									[
+										100,
+										100
+									],
+									[
+										9269,
+										9269
+									],
+									[
+										9455,
+										9455
+									],
+									[
+										9699,
+										9699
+									]
+								],
+								"scope": "col_gutter"
+							}
 						},
 						"selection":
 						[
 							[
-								2889,
-								2889
+								2704,
+								2704
 							]
 						],
 						"settings":
@@ -1264,10 +1215,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2783.0,
+						"translation.y": 1955.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 4,
 					"type": "text"
 				}
 			]
@@ -1275,7 +1226,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 39.0
+		"height": 34.0
 	},
 	"input":
 	{
@@ -1313,6 +1264,14 @@
 		]
 	},
 	"menu_visible": true,
+	"output.CppBuilder":
+	{
+		"height": 164.0
+	},
+	"output.Debugger":
+	{
+		"height": 164.0
+	},
 	"output.exec":
 	{
 		"height": 397.0
@@ -1325,7 +1284,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 74.0
+		"height": 76.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1335,24 +1294,56 @@
 		"selected_items":
 		[
 			[
-				"xpath",
+				"test-mem",
+				"test-membrane.js"
+			],
+			[
+				"xpath.j",
 				"lib/xml/xpath.js"
 			],
 			[
-				"path.j",
-				"lib/json/path.js"
+				"xpath",
+				"lib/xml/xpath.js"
 			],
 			[
 				"path.js",
 				"lib/json/path.js"
 			],
 			[
-				"treeO",
-				"lib/json/treeObserver.js"
+				"path.j",
+				"lib/json/path.js"
+			],
+			[
+				"path",
+				"lib/json/path.js"
 			],
 			[
 				"test-me",
 				"test-membrane.js"
+			],
+			[
+				"observ",
+				"lib/proxy/observableMembrane.js"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"xpa",
+				"lib/xml/xpath.js"
+			],
+			[
+				"obser",
+				"lib/proxy/observableMembrane.js"
+			],
+			[
+				"path.",
+				"lib/json/path.js"
+			],
+			[
+				"treeO",
+				"lib/json/treeObserver.js"
 			],
 			[
 				"test-m",
@@ -1363,16 +1354,8 @@
 				"lib/util.js"
 			],
 			[
-				"obser",
-				"lib/proxy/observableMembrane.js"
-			],
-			[
 				"xml",
 				"lib/json/json2xml.js"
-			],
-			[
-				"test-mem",
-				"test-membrane.js"
 			],
 			[
 				"treeObs",
@@ -1439,16 +1422,8 @@
 				"lib/json/treeObserver.js"
 			],
 			[
-				"util.js",
-				"lib/util.js"
-			],
-			[
 				"json.",
 				"lib/json.js"
-			],
-			[
-				"path.",
-				"lib/json/path.js"
 			],
 			[
 				"deep",
@@ -1487,10 +1462,6 @@
 				"lib/dom/element.js"
 			],
 			[
-				"path",
-				"lib/json/path.js"
-			],
-			[
 				"json.j",
 				"lib/json.js"
 			],
@@ -1501,10 +1472,6 @@
 			[
 				"deep.",
 				"lib/deep.js"
-			],
-			[
-				"observ",
-				"lib/observableMembrane.js"
 			],
 			[
 				"test-",
@@ -1837,14 +1804,6 @@
 			[
 				"cmakeLi",
 				"CMakeLists.txt"
-			],
-			[
-				"slist_add",
-				"lib/slist/slist_add_before.c"
-			],
-			[
-				"strlist_sort",
-				"lib/strlist/strlist_sort.c"
 			]
 		],
 		"width": 0.0
@@ -1875,7 +1834,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 363.0,
+	"side_bar_width": 310.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
