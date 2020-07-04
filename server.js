@@ -32,7 +32,7 @@ Socket.prototype.toString = function() {
 
 app.ws('/ws', async (ws, req) => {
   const { connection, client, upgrade, query, socket, headers, trailers, params, res, route, body } = req;
-  const { path, protocol, ip, cookies, hostname, host } = req;
+  const { path, protocol, ip, cookies, hostname } = req;
   const { remoteAddress, remotePort, localAddress, localPort } = client;
   const { _host, _peername } = connection;
   let { address, port } = _peername;
@@ -105,7 +105,7 @@ app.get('/main.js', async (req, res) => res.sendFile(path.join(p, 'main.js')));
 app.get('/style.css', async (req, res) => res.sendFile(path.join(p, 'style.css'), { headers: { 'Content-Type': 'text/css' } }));
 
 app.get('/files.html', async (req, res) => {
-  let files = [...(await fs.promises.readdir('.'))].filter(entry => /\.(brd|sch)$/.test(entry));
+  let files = [...(await fs.promises.readdir('./tmp'))].filter(entry => /\.(brd|sch)$/.test(entry)).map(entry => `tmp/${entry}`);
 
   files = files.map(file => {
     const stat = fs.statSync(file);
@@ -119,7 +119,7 @@ app.get('/files.html', async (req, res) => {
     };
   });
 
-  //console.log("files:", files);
+  console.log('files:', files);
 
   res.type('json');
   res.json({ files });

@@ -86,7 +86,7 @@ export const Chooser = ({ className = 'list', itemClass = 'item', itemComponent 
       className: classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
       active: i == active,
       onPush: pushHandler(i),
-      label: name /*,
+      label: name.replace(/.*\//, '') /*,
       ...item*/
     })
   );
