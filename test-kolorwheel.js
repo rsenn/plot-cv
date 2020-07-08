@@ -1,5 +1,5 @@
 import KolorWheel from './lib/KolorWheel.js';
-import { RGBA, HSLA } from './lib/dom.js';
+import { RGBA, HSLA } from './lib/color.js';
 import Util from './lib/util.js';
 
 const layerToColorIndex = {

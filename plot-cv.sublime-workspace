@@ -8,100 +8,91 @@
 	"buffers":
 	[
 		{
-			"contents": "BBox\nfromPoints\nconstructor\nupdateList\nupdate\nname =>\nname =>\nname =>\nupdateXY\n() =>\ncenter\nrelative_to\nx\nwidth\ny\nheight\nx\nwidth\ny\nheight\nrect\ntoString\ntransform\narg =>\nround\narg =>\nmove\nfrom\np =>",
+			"contents": "",
 			"settings":
 			{
-				"buffer_size": 196,
+				"buffer_size": 0,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "server.js",
-			"settings":
-			{
-				"buffer_size": 4064,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "main.js",
-			"settings":
-			{
-				"buffer_size": 18353,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "components.js",
-			"settings":
-			{
-				"buffer_size": 19365,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/svgRenderer.js",
-			"settings":
-			{
-				"buffer_size": 13329,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "lib/eagle/schematicRenderer.js",
 			"settings":
 			{
-				"buffer_size": 8042,
+				"buffer_size": 8274,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/json/pathMapper.js",
+			"settings":
+			{
+				"buffer_size": 1608,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "{\n\t// A list of URLs that each contain a JSON file with a list of repositories.\n\t// The repositories from these channels are placed in order after the\n\t// repositories from the \"repositories\" setting\n\t\"channels\": [\n\t\t\"https://packagecontrol.io/channel_v3.json\"\n\t],\n\n\t// A list of URLs that contain a packages JSON file. These repositories\n\t// are placed in order before repositories from the \"channels\"\n\t// setting\n\t\"repositories\": [],\n\n\t// A list of packages to install pre-release versions for. Versions\n\t// under 1.0.0 are not considered pre-release, only those using the SemVer\n\t// -prerelease suffixes will be ignored if the package is not in this\n\t// list.\n\t\"install_prereleases\": [],\n\n\t// If debugging information for HTTP/HTTPS connections should be printed\n\t// to the Sublime Text console\n\t\"debug\": false,\n\n\t// This helps solve naming issues where a repository it not named the\n\t// same as the package should be. This is primarily only useful for\n\t// GitHub and BitBucket repositories. This mapping will override the\n\t// mapping that is retrieved from the repository channels.\n\t\"package_name_map\": {},\n\n\t// If package install, upgrade and removal info should be submitted to\n\t// the channel for aggregated statistics\n\t\"submit_usage\": true,\n\n\t// The URL to post install, upgrade and removal notices to\n\t\"submit_url\": \"https://packagecontrol.io/submit\",\n\n\t// If packages should be automatically upgraded when ST starts\n\t\"auto_upgrade\": true,\n\n\t// If missing packages should be automatically installed when ST starts\n\t\"install_missing\": true,\n\n\t// If a package was installed by Package Control (has a\n\t// package-metadata.json file) but is not in installed_packages, remove it\n\t// based upon the assumption that it was removed on another machine and\n\t// the Package Control.sublime-settings file was synced to this machine.\n\t\"remove_orphaned\": true,\n\n\t// The minimum frequency in hours in which to check for automatic upgrades,\n\t// setting this to 0 will always check for automatic upgrades\n\t\"auto_upgrade_frequency\": 1,\n\n\t// Packages to not auto upgrade\n\t\"auto_upgrade_ignore\": [],\n\n\t// Timeout for downloading channels, repositories and packages. Doesn't\n\t// have an effect on Windows due to a bug in WinINet.\n\t\"timeout\": 30,\n\n\t// The number of seconds to cache repository and package info for\n\t\"cache_length\": 300,\n\n\t// An HTTP proxy server to use for requests. Not normally used on Windows\n\t// since the system proxy configuration is utilized via WinINet. However,\n\t// if WinINet is not working properly, this will be used by the Urllib\n\t// downloader, which acts as a fallback.\n\t\"http_proxy\": \"\",\n\t// An HTTPS proxy server to use for requests - this will inherit from\n\t// http_proxy if it is set to \"\" or null and http_proxy has a value. You\n\t// can set this to false to prevent inheriting from http_proxy. Not\n\t// normally used on Windows since the system proxy configuration is\n\t// utilized via WinINet. However, if WinINet is not working properly, this\n\t// will be used by the Urllib downloader, which acts as a fallback.\n\t\"https_proxy\": \"\",\n\n\t// Username and password for both http_proxy and https_proxy. May be used\n\t// with WinINet to set credentials for system-level proxy config.\n\t\"proxy_username\": \"\",\n\t\"proxy_password\": \"\",\n\n\t// If HTTP responses should be cached to disk\n\t\"http_cache\": true,\n\n\t// Number of seconds to cache HTTP responses for, defaults to one week\n\t\"http_cache_length\": 604800,\n\n\t// User agent for HTTP requests. If \"%s\" is present, will be replaced\n\t// with the current version.\n\t\"user_agent\": \"Package Control v%s\",\n\n\t// A list of package names to ignore when performing operations. This will\n\t// only affect packages that appear to be a git or hg repository, but will\n\t// be especially useful for package developers who manually deal with the\n\t// repository and don't want Package Control touching it.\n\t//\n\t// It can help if trying to list packages to install hangs, possibly due\n\t// to an interactive prompt.\n\t//\n\t// The setting can also be set to the boolean true to ignore all git and hg\n\t// repositories, no matter what the name.\n\t\"ignore_vcs_packages\": [],\n\n\t// Custom path(s) to \"git\" binary for when it can't be automatically\n\t// found on the system and a package includes a .git metadata directory.\n\t// Supports more than one path to allow users to sync settings across\n\t// operating systems.\n\t\"git_binary\": [],\n\n\t// This should NOT contain the name of the remote or branch - that will\n\t// be automatically determined.\n\t\"git_update_command\": [\"pull\", \"--ff\", \"--commit\"],\n\n\t// Custom path(s) to \"hg\" binary for when it can't be automatically\n\t// found on the system and a package includes a .hg metadata directory.\n\t// Supports more than one path to allow users to sync settings across\n\t// operating systems.\n\t\"hg_binary\": [],\n\n\t// For HG repositories, be sure to use \"default\" as the remote URL.\n\t// This is the default behavior when cloning an HG repo.\n\t\"hg_update_command\": [\"pull\", \"--update\"],\n\n\t// Additional packages to ignore when listing unmanaged packages.\n\t\"unmanaged_packages_ignore\": [],\n\n\t// The downloader backends that should be used for HTTP(S) requests, split\n\t// by operating system to allow for configuration to be shared.\n\t//\n\t// Valid options include: \"urllib\", \"curl\", \"wget\", (Windows-only) \"wininet\"\n\t//\n\t// This setting allows Windows users to bypass wininet and use urllib\n\t// instead if they machine or network presents trouble to wininet. Some\n\t// OS X and Linux users have also reported better luck with certain proxies\n\t// using curl or wget instead of urllib.\n\t//\n\t// The \"curl\" and \"wget\" options require the command line \"curl\" or \"wget\"\n\t// program installed and present in the PATH.\n\t\"downloader_precedence\": {\n\t\t\"windows\": [\"wininet\"],\n\t\t\"osx\": [\"urllib\"],\n\t\t\"linux\": [\"urllib\", \"curl\", \"wget\"]\n\t},\n\n\t// Directories to ignore when creating a package\n\t\"dirs_to_ignore\": [\n\t\t\".hg\", \".git\", \".svn\", \"_darcs\", \"CVS\"\n\t],\n\n\t// Files to ignore when creating a package\n\t\"files_to_ignore\": [\n\t\t\"*.pyc\", \".hgignore\", \".gitignore\", \".bzrignore\",\n\t\t\"*.sublime-project\", \"*.sublime-workspace\", \"*.tmTheme.cache\"\n\t],\n\n\t// Files to include, even if they match a pattern in files_to_ignore\n\t\"files_to_include\": [],\n\n\t// When a package is created, copy it to this folder - defaults to Desktop\n\t\"package_destination\": \"\",\n\n\t// A way to create different packaging profiles for different types of\n\t// package releases, such as for different platforms or binary-only\n\t// releases.\n\t//\n\t// The key of the object will be the profile name and a list of them will\n\t// be presenting when running the \"Create Package File\" command. The\n\t// profile \"Default\" will use the top-level version on the following\n\t// settings:\n\t//\n\t// - \"dirs_to_ignore\"\n\t// - \"files_to_ignore\"\n\t// - \"files_to_include\"\n\t// - \"package_destination\"\n\t//\n\t// If a profile does not include one of those three setting, it will fall\n\t// back to the top-level settings.\n\t\"package_profiles\": {\n\t\t\"Binaries Only\": {\n\t\t\t// Exclude all .py files, but consequently include all .pyc files\n\t\t\t\"files_to_ignore\": [\n\t\t\t\t\"*.py\", \".hgignore\", \".gitignore\", \".bzrignore\",\n\t\t\t\t\"*.sublime-project\", \"*.sublime-workspace\", \"*.tmTheme.cache\"\n\t\t\t],\n\n\t\t\t// Include __init__.py so Sublime Text will load the package\n\t\t\t\"files_to_include\": [\n\t\t\t\t\"__init__.py\"\n\t\t\t]\n\t\t}\n\t},\n\n\t// Enable the ability to run the tests - this is only for development\n\t\"enable_tests\": false\n}\n",
+			"file": "/home/roman/.config/sublime-text-3/Packages/Package Control/Package Control.sublime-settings",
+			"file_size": 7379,
+			"file_write_time": 132383102880564406,
+			"settings":
+			{
+				"buffer_size": 7379,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/json.js",
+			"settings":
+			{
+				"buffer_size": 352,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "test-membrane.js",
+			"settings":
+			{
+				"buffer_size": 6262,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/eagle/boardRenderer.js",
+			"file": "lib/json/path.js",
 			"settings":
 			{
-				"buffer_size": 8521,
-				"encoding": "UTF-8",
+				"buffer_size": 14906,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/geom/bbox.js",
+			"contents": "Searching 196 files for \"2208\" (regex, case sensitive)\n\n0 matches\n\nSearching 196 files for \"\\\\u\" (regex, case sensitive)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js:\n   35  \n   36  export class MutablePath extends Array {\n   37:   static CHILDREN_STR = '\\u220a';\n   38    static CHILDREN_FN = args => {\n   39      //console.log(\"args\",args);\n   40      for(let i = 0; i < args.length; i++) args[i] = (args[i] + '').replace(/children/g, this.CHILDREN_STR);\n   41:     //  args[0] = args[0].replace(/children/g, \"\\u220d\"); // args[0] = '[' + args[0] + ']';\n   42      return '';\n   43    };\n   ..\n  341    }\n  342  \n  343:   [Symbol.for('nodejs.util.inspect.custom')](sep = '/', childrenStr = '\\u220a\\u220d', color = true) {\n  344:     let p = MutablePath.prototype.toString.call(this, sep || '\\u2571' || '\\u29f8', childrenStr, text => text);\n  345      let n = Util.className(this);\n  346      //n = n.startsWith('Immutable') ? (n = n.replace(/Immutable/g, '')) : 'Mutable' + n.replace(/Mutable/g, '');\n  ...\n  350  \n  351    [Symbol.toStringTag]() {\n  352:     return MutablePath.prototype.toString.call('.', '\\u220a\\u220d' /*, 'CHILDREN_STR'*/);\n  353    }\n  354  \n\n/home/roman/Sources/plot-cv/lib/eagle/common.js:\n   10  export const coloring = Util.coloring(false);\n   11  //console.log('coloring: ', coloring);\n   12: export const ansi = coloring.code.bind(coloring); //Util.isBrowser() ? () => '' : (...args) => `\\u001b[${[...args].join(';')}m`;\n   13  \n   14  export const text = coloring.text.bind(coloring); //? (text, ...color) => (color.indexOf(1) != -1 ? `${text}` : text) : (text, ...color) => ansi(...color) + text + ansi(0);\n\n/home/roman/Sources/plot-cv/lib/ecmascript/lexer.js:\n  876  // Whitespace characters as specified by ES1\n  877  function isWhitespace(c) {\n  878:   if(c === '\\u0009' || c === '\\u000B' || c === '\\u000C' || c === '\\u0020') {\n  879      return true;\n  880    }\n\n/home/roman/Sources/plot-cv/lib/json/path.js:\n   35  \n   36  export class MutablePath extends Array {\n   37:   static CHILDREN_STR = '\\u220a';\n   38    static CHILDREN_FN = args => {\n   39      //console.log(\"args\",args);\n   40      for(let i = 0; i < args.length; i++) args[i] = (args[i] + '').replace(/children/g, this.CHILDREN_STR);\n   41:     //  args[0] = args[0].replace(/children/g, \"\\u220d\"); // args[0] = '[' + args[0] + ']';\n   42      return '';\n   43    };\n   ..\n  341    }\n  342  \n  343:   [Symbol.for('nodejs.util.inspect.custom')](sep = '/', childrenStr = '\\u220a\\u220d', color = true) {\n  344:     let p = MutablePath.prototype.toString.call(this, sep || '\\u2571' || '\\u29f8', childrenStr, text => text);\n  345      let n = Util.className(this);\n  346      //n = n.startsWith('Immutable') ? (n = n.replace(/Immutable/g, '')) : 'Mutable' + n.replace(/Mutable/g, '');\n  ...\n  350  \n  351    [Symbol.toStringTag]() {\n  352:     return MutablePath.prototype.toString.call('.', '\\u220a\\u220d' /*, 'CHILDREN_STR'*/);\n  353    }\n  354  \n\n/home/roman/Sources/plot-cv/lib/util.js:\n 2484      : {\n 2485          code(...args) {\n 2486:           return `\\u001b[${[...args].join(';')}m`;\n 2487          },\n 2488          text(text, ...color) {\n\n22 matches across 5 files\n",
 			"settings":
 			{
-				"buffer_size": 3626,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "Searching 4 files for \"items\"\n\n0 matches\n\nSearching 4 files for \"console.log\"\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js:\n   85          );\n   86  \n   87:         //console.log('name:', name);\n   88          if(name) {\n   89            svg(\n   ..\n  123    renderCollection(coll, parent, opts = {}) {\n  124      const { predicate = i => true, transform } = opts;\n  125:     //console.log(`BoardRenderer.renderCollection`, { transform, pos, rot });\n  126  \n  127      let coordFn = transform ? MakeCoordTransformer(transform) : i => i;\n  ...\n  158        });\n  159  \n  160:       //console.log('Lines:', [...lines]);\n  161  \n  162        const path = LinesToPath(lines);\n  ...\n  164        const width = widths[layerId];\n  165  \n  166:       //console.log(\"layerId:\", layerId);\n  167:       //console.log(\"layers:\", layers);\n  168        const color = this.getColor(layer.color);\n  169  \n  ...\n  244      let elementsGroup = this.create('g', { className: 'elements', transform }, parent);\n  245  \n  246:     //console.log('bounds: ', bounds);\n  247  \n  248      for(let signal of this.signals.list)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js:\n   49      container = container.parentElement;\n   50    }\n   51:   //console.log(\"renderer:\", { container, svg });\n   52:   //console.log('doc:', doc);\n   53    const ctor = doc.type == 'sch' ? SchematicRenderer : BoardRenderer;\n   54    const renderer = new ctor(doc, factory);\n   ..\n   60    rng = new Alea(1340);\n   61    let bgColor = doc.type == 'sch' ? 'rgb(255,255,255)' : 'rgba(0,0,0,0.0)';\n   62:   //console.log(`${Util.className(renderer)} palette=${renderer.palette}`);\n   63:   //console.log(`doc type=${doc.type} path=${doc.path}`);\n   64    renderer.colors = {};\n   65    let first = svg.firstElementChild;\n   ..\n  140        const { color, number, name, active, fill, visible } = layer.attributes;\n  141        if(active == 'no') continue;\n  142:       //console.log(\"layer:,\", layer.attributes);\n  143        insert([color, { number, name, color, active, fill, visible }]);\n  144      }\n  145      const rgba1 = renderer.palette.map((color, i) => RGBA.fromString(color));\n  146      const cmap = (window.colormap = new ColorMap(renderer.palette));\n  147:     //console.log('cmap:', cmap);\n  148:     //console.log('cmap:', [...cmap.toScalar({ fmt: n => `0b${n.toString(2)}` })]);\n  149      const layerNames = Util.unique([...eagle.getAll(e => e.tagName)].filter(e => e.layer).map(e => e.layer.name));\n  150  \n  ...\n  182    sbox.outset(2.54 * 2.54);\n  183    Object.assign(renderer, { sbox, obox, gbox, aspects });\n  184:   //console.log(\"render\", { sbox, obox, gbox, aspects });\n  185    let srect = new Rect(sbox);\n  186:   //console.log('sbox:', srect.toString());\n  187:   //console.log('obox:', obox.toString());\n  188  \n  189    obox.outset(2.54 * 2.54);\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js:\n   36      //  let coordFn = transform ? MakeCoordTransformer(transform) : i => i;\n   37  \n   38:     //console.log(`SchematicRenderer.renderCollection`, { transform, pos, rot });\n   39  \n   40      const arr = [...collection];\n   ..\n   56      let coordFn = transform ? MakeCoordTransformer(transform) : i => i;\n   57  \n   58:     //if(rot)    console.log(`SchematicRenderer.renderItem`, {labelText, pos ,transform,   rot });\n   59  \n   60      const layer = item.layer;\n   ..\n  154  \n  155    renderNet(net, parent) {\n  156:     //console.log(`${Util.className(this)}.renderNet`, { net, parent });\n  157      let g = this.create('g', { className: `net.${net.name}` }, parent);\n  158      for(let segment of net.children) this.renderCollection(segment.children, g, { labelText: net.name });\n  ...\n  161    renderSheet(sheet, parent) {\n  162      let instances = sheet.instances;\n  163:     //console.log(`${Util.className(this)}.renderSheet`, { sheet, parent, instances });\n  164  \n  165      let netsGroup = this.create('g', { className: 'nets' }, parent);\n  ...\n  183      rect.round(2.54);\n  184  \n  185:     //console.log('bounds:', rect);\n  186      parent = super.render(doc, parent, props);\n  187  \n  ...\n  203        t = t.concat(rot);\n  204      }\n  205:     //console.log(`SchematicRenderer.renderPart`, { x, y, pos, rot, t });\n  206      const g = this.create('g', { className: `part.${part.name}`, transform: t }, parent);\n  207      if(!value) value = deviceset.name;\n  ...\n  215  \n  216    renderInstances(parent, sheetNo = 0, b) {\n  217:     //console.log('b:', b);\n  218      let g = this.create(\n  219        'g',\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js:\n   19  \n   20    constructor(doc, factory) {\n   21:     //console.log(Util.className(this), Util.fnName(new.target));\n   22      if(new.target === EagleSVGRenderer) throw new Error('Use SchematicRenderer or BoardRenderer');\n   23      let ctor = EagleSVGRenderer.rendererTypes[doc.type];\n   ..\n   78    getColor(color) {\n   79      let c = this.palette[color] || /*this.colors[color] || */ 'rgb(165,165,165)';\n   80:     //console.log('getColor', color, c);\n   81  \n   82      /* if(c)\n   83      Util.colorDump([c]);*/\n   84:     //console.log(Util.getCallers());\n   85      return c;\n   86    }\n   ..\n   98  \n   99    renderLayers(parent) {\n  100:     //console.log(`${Util.className(this)}.renderLayers`);\n  101  \n  102      // const layerGroup = this.create('g', { className: 'layers' }, parent);\n  ...\n  138      let { labelText, pos, rot } = opts;\n  139  \n  140:     //console.log(`EagleSVGRenderer.renderItem`, {  labelText, pos, rot });\n  141      const layer = item.layer;\n  142      const color = (opts && opts.color) || (layer && this.getColor(layer.color));\n  ...\n  229          let text = innerText || labelText || children.join('\\n');\n  230          let { x, y } = coordFn(item);\n  231:         //console.log(\"text\", {text});\n  232  \n  233          if(text.startsWith('&gt;')) {\n  234            const prop = text.slice(4).toLowerCase();\n  235:           //console.log(\"text\", {text, prop, opts});\n  236            text = prop in opts ? opts[prop] : text;\n  237          }\n  ...\n  240          const translation = new TransformationList(`translate(${x},${y})`);\n  241  \n  242:         //console.log(\"translation:\", Util.className(translation));\n  243          const rotation = translation.concat(Rotation(rot));\n  244:         //console.log(\"rotation:\", Util.className(rotation));\n  245          let wholeTransform = transform.concat(Rotation(rot));\n  246          let wholeAngle = ClampAngle(wholeTransform.decompose().rotate);\n  ...\n  256            .collapseAll();\n  257  \n  258:         //console.log(`wholeAngle ${text}`, wholeAngle);\n  259:         /*console.log(`undoAngle ${text}`, undoAngle);\n  260:         //console.log(`angle ${text}`, angle);*/\n  261:         //console.log(`finalTransformation ${text}`, finalTransformation.toString());\n  262:         //console.log(`finalTransformation ${text}`, finalTransformation.translation, finalTransformation.rotation, finalTransformation.scaling);\n  263  \n  264          if(finalTransformation.rotation) {\n  ...\n  274            .round(0.5);\n  275  \n  276:         //console.log(`render alignment ${text}`, Util.map({ baseAlignment, rotateAlignment, alignment }, (k, v) => [k, v + '']), EagleSVGRenderer.alignmentAttrs(alignment, VERTICAL) );\n  277  \n  278          const e = svg(\n  ...\n  380      this.bounds = new BBox().update(rect);\n  381  \n  382:     //console.log('bounds:', bounds.toString({ separator: ' ' }));\n  383  \n  384      const { width, height } = new Size(bounds).toCSS('mm');\n  ...\n  389  \n  390      const transform = this.transform + ''; //` translate(0,${(bounds.height+bounds.y)}) scale(1,-1) `;\n  391:     //console.log(bounds);\n  392:     //console.log(bounds.clone(r => (r.y = 0)));\n  393      if(!parent)\n  394        parent = this.create(\n\n41 matches across 4 files\n\n\nSearching 4 files for \"console.log\"\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js:\n   85          );\n   86  \n   87:         //console.log('name:', name);\n   88          if(name) {\n   89            svg(\n   ..\n  123    renderCollection(coll, parent, opts = {}) {\n  124      const { predicate = i => true, transform } = opts;\n  125:     //console.log(`BoardRenderer.renderCollection`, { transform, pos, rot });\n  126  \n  127      let coordFn = transform ? MakeCoordTransformer(transform) : i => i;\n  ...\n  158        });\n  159  \n  160:       //console.log('Lines:', [...lines]);\n  161  \n  162        const path = LinesToPath(lines);\n  ...\n  164        const width = widths[layerId];\n  165  \n  166:       //console.log(\"layerId:\", layerId);\n  167:       //console.log(\"layers:\", layers);\n  168        const color = this.getColor(layer.color);\n  169  \n  ...\n  244      let elementsGroup = this.create('g', { className: 'elements', transform }, parent);\n  245  \n  246:     //console.log('bounds: ', bounds);\n  247  \n  248      for(let signal of this.signals.list)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js:\n   49      container = container.parentElement;\n   50    }\n   51:   //console.log(\"renderer:\", { container, svg });\n   52:   //console.log('doc:', doc);\n   53    const ctor = doc.type == 'sch' ? SchematicRenderer : BoardRenderer;\n   54    const renderer = new ctor(doc, factory);\n   ..\n   60    rng = new Alea(1340);\n   61    let bgColor = doc.type == 'sch' ? 'rgb(255,255,255)' : 'rgba(0,0,0,0.0)';\n   62:   console.log(`${Util.className(renderer)} palette=${renderer.palette}`);\n   63:   //console.log(`doc type=${doc.type} path=${doc.path}`);\n   64    renderer.colors = {};\n   65    let first = svg.firstElementChild;\n   ..\n  140        const { color, number, name, active, fill, visible } = layer.attributes;\n  141        if(active == 'no') continue;\n  142:       //console.log(\"layer:,\", layer.attributes);\n  143        insert([color, { number, name, color, active, fill, visible }]);\n  144      }\n  145      const rgba1 = renderer.palette.map((color, i) => RGBA.fromString(color));\n  146      const cmap = (window.colormap = new ColorMap(renderer.palette));\n  147:     //console.log('cmap:', cmap);\n  148:     //console.log('cmap:', [...cmap.toScalar({ fmt: n => `0b${n.toString(2)}` })]);\n  149      const layerNames = Util.unique([...eagle.getAll(e => e.tagName)].filter(e => e.layer).map(e => e.layer.name));\n  150  \n  ...\n  182    sbox.outset(2.54 * 2.54);\n  183    Object.assign(renderer, { sbox, obox, gbox, aspects });\n  184:   //console.log(\"render\", { sbox, obox, gbox, aspects });\n  185    let srect = new Rect(sbox);\n  186:   //console.log('sbox:', srect.toString());\n  187:   //console.log('obox:', obox.toString());\n  188  \n  189    obox.outset(2.54 * 2.54);\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js:\n   36      //  let coordFn = transform ? MakeCoordTransformer(transform) : i => i;\n   37  \n   38:     //console.log(`SchematicRenderer.renderCollection`, { transform, pos, rot });\n   39  \n   40      const arr = [...collection];\n   ..\n   56      let coordFn = transform ? MakeCoordTransformer(transform) : i => i;\n   57  \n   58:     //if(rot)    console.log(`SchematicRenderer.renderItem`, {labelText, pos ,transform,   rot });\n   59  \n   60      const layer = item.layer;\n   ..\n  154  \n  155    renderNet(net, parent) {\n  156:     console.log(`${Util.className(this)}.renderNet`, { net, parent });\n  157      let g = this.create('g', { className: `net.${net.name}` }, parent);\n  158      for(let segment of net.children) this.renderCollection(segment.children, g, { labelText: net.name });\n  ...\n  161    renderSheet(sheet, parent) {\n  162      let instances = sheet.instances;\n  163:     console.log(`${Util.className(this)}.renderSheet`, { sheet, parent, instances });\n  164  \n  165      let netsGroup = this.create('g', { className: 'nets' }, parent);\n  ...\n  183      rect.round(2.54);\n  184  \n  185:     //console.log('bounds:', rect);\n  186      parent = super.render(doc, parent, props);\n  187  \n  ...\n  203        t = t.concat(rot);\n  204      }\n  205:     //console.log(`SchematicRenderer.renderPart`, { x, y, pos, rot, t });\n  206      const g = this.create('g', { className: `part.${part.name}`, transform: t }, parent);\n  207      if(!value) value = deviceset.name;\n  ...\n  215  \n  216    renderInstances(parent, sheetNo = 0, b) {\n  217:     //console.log('b:', b);\n  218      let g = this.create(\n  219        'g',\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js:\n   19  \n   20    constructor(doc, factory) {\n   21:     console.log(Util.className(this), Util.fnName(new.target));\n   22      if(new.target === EagleSVGRenderer) throw new Error('Use SchematicRenderer or BoardRenderer');\n   23      let ctor = EagleSVGRenderer.rendererTypes[doc.type];\n   ..\n   78    getColor(color) {\n   79      let c = this.palette[color] || /*this.colors[color] || */ 'rgb(165,165,165)';\n   80:     //console.log('getColor', color, c);\n   81  \n   82      /* if(c)\n   83      Util.colorDump([c]);*/\n   84:     //console.log(Util.getCallers());\n   85      return c;\n   86    }\n   ..\n   98  \n   99    renderLayers(parent) {\n  100:     console.log(`${Util.className(this)}.renderLayers`);\n  101  \n  102      // const layerGroup = this.create('g', { className: 'layers' }, parent);\n  ...\n  138      let { labelText, pos, rot } = opts;\n  139  \n  140:     //console.log(`EagleSVGRenderer.renderItem`, {  labelText, pos, rot });\n  141      const layer = item.layer;\n  142      const color = (opts && opts.color) || (layer && this.getColor(layer.color));\n  ...\n  229          let text = innerText || labelText || children.join('\\n');\n  230          let { x, y } = coordFn(item);\n  231:         //console.log(\"text\", {text});\n  232  \n  233          if(text.startsWith('&gt;')) {\n  234            const prop = text.slice(4).toLowerCase();\n  235:           //console.log(\"text\", {text, prop, opts});\n  236            text = prop in opts ? opts[prop] : text;\n  237          }\n  ...\n  240          const translation = new TransformationList(`translate(${x},${y})`);\n  241  \n  242:         console.log(\"translation:\", Util.className(translation));\n  243          const rotation = translation.concat(Rotation(rot));\n  244:         console.log(\"rotation:\", Util.className(rotation));\n  245          let wholeTransform = transform.concat(Rotation(rot));\n  246          let wholeAngle = ClampAngle(wholeTransform.decompose().rotate);\n  ...\n  256            .collapseAll();\n  257  \n  258:         //console.log(`wholeAngle ${text}`, wholeAngle);\n  259:         /*console.log(`undoAngle ${text}`, undoAngle);\n  260:         //console.log(`angle ${text}`, angle);*/\n  261:         //console.log(`finalTransformation ${text}`, finalTransformation.toString());\n  262:         //console.log(`finalTransformation ${text}`, finalTransformation.translation, finalTransformation.rotation, finalTransformation.scaling);\n  263  \n  264          if(finalTransformation.rotation) {\n  ...\n  274            .round(0.5);\n  275  \n  276:         //console.log(`render alignment ${text}`, Util.map({ baseAlignment, rotateAlignment, alignment }, (k, v) => [k, v + '']), EagleSVGRenderer.alignmentAttrs(alignment, VERTICAL) );\n  277  \n  278          const e = svg(\n  ...\n  380      this.bounds = new BBox().update(rect);\n  381  \n  382:     //console.log('bounds:', bounds.toString({ separator: ' ' }));\n  383  \n  384      const { width, height } = new Size(bounds).toCSS('mm');\n  ...\n  389  \n  390      const transform = this.transform + ''; //` translate(0,${(bounds.height+bounds.y)}) scale(1,-1) `;\n  391:     //console.log(bounds);\n  392:     //console.log(bounds.clone(r => (r.y = 0)));\n  393      if(!parent)\n  394        parent = this.create(\n\n41 matches across 4 files\n\n\nSearching 4 files for \"console.log\"\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js:\n   85          );\n   86  \n   87:         console.log('name:', name);\n   88          if(name) {\n   89            svg(\n   ..\n  123    renderCollection(coll, parent, opts = {}) {\n  124      const { predicate = i => true, transform } = opts;\n  125:     console.log(`BoardRenderer.renderCollection`, { transform, pos, rot });\n  126  \n  127      let coordFn = transform ? MakeCoordTransformer(transform) : i => i;\n  ...\n  158        });\n  159  \n  160:       console.log('Lines:', [...lines]);\n  161  \n  162        const path = LinesToPath(lines);\n  ...\n  164        const width = widths[layerId];\n  165  \n  166:       console.log(\"layerId:\", layerId);\n  167:       console.log(\"layers:\", layers);\n  168        const color = this.getColor(layer.color);\n  169  \n  ...\n  244      let elementsGroup = this.create('g', { className: 'elements', transform }, parent);\n  245  \n  246:     console.log('bounds: ', bounds);\n  247  \n  248      for(let signal of this.signals.list)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js:\n   49      container = container.parentElement;\n   50    }\n   51:   console.log(\"renderer:\", { container, svg });\n   52:   console.log('doc:', doc);\n   53    const ctor = doc.type == 'sch' ? SchematicRenderer : BoardRenderer;\n   54    const renderer = new ctor(doc, factory);\n   ..\n   60    rng = new Alea(1340);\n   61    let bgColor = doc.type == 'sch' ? 'rgb(255,255,255)' : 'rgba(0,0,0,0.0)';\n   62:   console.log(`${Util.className(renderer)} palette=${renderer.palette}`);\n   63:   console.log(`doc type=${doc.type} path=${doc.path}`);\n   64    renderer.colors = {};\n   65    let first = svg.firstElementChild;\n   ..\n  140        const { color, number, name, active, fill, visible } = layer.attributes;\n  141        if(active == 'no') continue;\n  142:       console.log(\"layer:,\", layer.attributes);\n  143        insert([color, { number, name, color, active, fill, visible }]);\n  144      }\n  145      const rgba1 = renderer.palette.map((color, i) => RGBA.fromString(color));\n  146      const cmap = (window.colormap = new ColorMap(renderer.palette));\n  147:     console.log('cmap:', cmap);\n  148:     console.log('cmap:', [...cmap.toScalar({ fmt: n => `0b${n.toString(2)}` })]);\n  149      const layerNames = Util.unique([...eagle.getAll(e => e.tagName)].filter(e => e.layer).map(e => e.layer.name));\n  150  \n  ...\n  182    sbox.outset(2.54 * 2.54);\n  183    Object.assign(renderer, { sbox, obox, gbox, aspects });\n  184:   console.log(\"render\", { sbox, obox, gbox, aspects });\n  185    let srect = new Rect(sbox);\n  186:   console.log('sbox:', srect.toString());\n  187:   console.log('obox:', obox.toString());\n  188  \n  189    obox.outset(2.54 * 2.54);\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js:\n   36      //  let coordFn = transform ? MakeCoordTransformer(transform) : i => i;\n   37  \n   38:     console.log(`SchematicRenderer.renderCollection`, { transform, pos, rot });\n   39  \n   40      const arr = [...collection];\n   ..\n   56      let coordFn = transform ? MakeCoordTransformer(transform) : i => i;\n   57  \n   58:     if(rot)    console.log(`SchematicRenderer.renderItem`, {labelText, pos ,transform,   rot });\n   59  \n   60      const layer = item.layer;\n   ..\n  154  \n  155    renderNet(net, parent) {\n  156:     console.log(`${Util.className(this)}.renderNet`, { net, parent });\n  157      let g = this.create('g', { className: `net.${net.name}` }, parent);\n  158      for(let segment of net.children) this.renderCollection(segment.children, g, { labelText: net.name });\n  ...\n  161    renderSheet(sheet, parent) {\n  162      let instances = sheet.instances;\n  163:     console.log(`${Util.className(this)}.renderSheet`, { sheet, parent, instances });\n  164  \n  165      let netsGroup = this.create('g', { className: 'nets' }, parent);\n  ...\n  183      rect.round(2.54);\n  184  \n  185:     console.log('bounds:', rect);\n  186      parent = super.render(doc, parent, props);\n  187  \n  ...\n  203        t = t.concat(rot);\n  204      }\n  205:     console.log(`SchematicRenderer.renderPart`, { x, y, pos, rot, t });\n  206      const g = this.create('g', { className: `part.${part.name}`, transform: t }, parent);\n  207      if(!value) value = deviceset.name;\n  ...\n  215  \n  216    renderInstances(parent, sheetNo = 0, b) {\n  217:     console.log('b:', b);\n  218      let g = this.create(\n  219        'g',\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js:\n   19  \n   20    constructor(doc, factory) {\n   21:     console.log(Util.className(this), Util.fnName(new.target));\n   22      if(new.target === EagleSVGRenderer) throw new Error('Use SchematicRenderer or BoardRenderer');\n   23      let ctor = EagleSVGRenderer.rendererTypes[doc.type];\n   ..\n   78    getColor(color) {\n   79      let c = this.palette[color] || /*this.colors[color] || */ 'rgb(165,165,165)';\n   80:     console.log('getColor', color, c);\n   81  \n   82      /* if(c)\n   83      Util.colorDump([c]);*/\n   84:     console.log(Util.getCallers());\n   85      return c;\n   86    }\n   ..\n   98  \n   99    renderLayers(parent) {\n  100:     console.log(`${Util.className(this)}.renderLayers`);\n  101  \n  102      // const layerGroup = this.create('g', { className: 'layers' }, parent);\n  ...\n  138      let { labelText, pos, rot } = opts;\n  139  \n  140:     console.log(`EagleSVGRenderer.renderItem`, {  labelText, pos, rot });\n  141      const layer = item.layer;\n  142      const color = (opts && opts.color) || (layer && this.getColor(layer.color));\n  ...\n  229          let text = innerText || labelText || children.join('\\n');\n  230          let { x, y } = coordFn(item);\n  231:         console.log(\"text\", {text});\n  232  \n  233          if(text.startsWith('&gt;')) {\n  234            const prop = text.slice(4).toLowerCase();\n  235:           console.log(\"text\", {text, prop, opts});\n  236            text = prop in opts ? opts[prop] : text;\n  237          }\n  ...\n  240          const translation = new TransformationList(`translate(${x},${y})`);\n  241  \n  242:         console.log(\"translation:\", Util.className(translation));\n  243          const rotation = translation.concat(Rotation(rot));\n  244:         console.log(\"rotation:\", Util.className(rotation));\n  245          let wholeTransform = transform.concat(Rotation(rot));\n  246          let wholeAngle = ClampAngle(wholeTransform.decompose().rotate);\n  ...\n  256            .collapseAll();\n  257  \n  258:         console.log(`wholeAngle ${text}`, wholeAngle);\n  259:         /*console.log(`undoAngle ${text}`, undoAngle);\n  260:         console.log(`angle ${text}`, angle);*/\n  261:         console.log(`finalTransformation ${text}`, finalTransformation.toString());\n  262:         console.log(`finalTransformation ${text}`, finalTransformation.translation, finalTransformation.rotation, finalTransformation.scaling);\n  263  \n  264          if(finalTransformation.rotation) {\n  ...\n  274            .round(0.5);\n  275  \n  276:         console.log(`render alignment ${text}`, Util.map({ baseAlignment, rotateAlignment, alignment }, (k, v) => [k, v + '']), EagleSVGRenderer.alignmentAttrs(alignment, VERTICAL) );\n  277  \n  278          const e = svg(\n  ...\n  380      this.bounds = new BBox().update(rect);\n  381  \n  382:     console.log('bounds:', bounds.toString({ separator: ' ' }));\n  383  \n  384      const { width, height } = new Size(bounds).toCSS('mm');\n  ...\n  389  \n  390      const transform = this.transform + ''; //` translate(0,${(bounds.height+bounds.y)}) scale(1,-1) `;\n  391:     console.log(bounds);\n  392:     console.log(bounds.clone(r => (r.y = 0)));\n  393      if(!parent)\n  394        parent = this.create(\n\n41 matches across 4 files\n\n\nSearching 4 files for \"console.log\"\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js:\n   85          );\n   86  \n   87:         console.log('name:', name);\n   88          if(name) {\n   89            svg(\n   ..\n  123    renderCollection(coll, parent, opts = {}) {\n  124      const { predicate = i => true, transform } = opts;\n  125:     console.log(`BoardRenderer.renderCollection`, { transform, pos, rot });\n  126  \n  127      let coordFn = transform ? MakeCoordTransformer(transform) : i => i;\n  ...\n  158        });\n  159  \n  160:       console.log('Lines:', [...lines]);\n  161  \n  162        const path = LinesToPath(lines);\n  ...\n  164        const width = widths[layerId];\n  165  \n  166:       console.log(\"layerId:\", layerId);\n  167:       console.log(\"layers:\", layers);\n  168        const color = this.getColor(layer.color);\n  169  \n  ...\n  244      let elementsGroup = this.create('g', { className: 'elements', transform }, parent);\n  245  \n  246:     console.log('bounds: ', bounds);\n  247  \n  248      for(let signal of this.signals.list)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js:\n   49      container = container.parentElement;\n   50    }\n   51:   console.log(\"renderer:\", { container, svg });\n   52:   console.log('doc:', doc);\n   53    const ctor = doc.type == 'sch' ? SchematicRenderer : BoardRenderer;\n   54    const renderer = new ctor(doc, factory);\n   ..\n   60    rng = new Alea(1340);\n   61    let bgColor = doc.type == 'sch' ? 'rgb(255,255,255)' : 'rgba(0,0,0,0.0)';\n   62:   console.log(`${Util.className(renderer)} palette=${renderer.palette}`);\n   63:   console.log(`doc type=${doc.type} path=${doc.path}`);\n   64    renderer.colors = {};\n   65    let first = svg.firstElementChild;\n   ..\n  140        const { color, number, name, active, fill, visible } = layer.attributes;\n  141        if(active == 'no') continue;\n  142:       console.log(\"layer:,\", layer.attributes);\n  143        insert([color, { number, name, color, active, fill, visible }]);\n  144      }\n  145      const rgba1 = renderer.palette.map((color, i) => RGBA.fromString(color));\n  146      const cmap = (window.colormap = new ColorMap(renderer.palette));\n  147:     console.log('cmap:', cmap);\n  148:     console.log('cmap:', [...cmap.toScalar({ fmt: n => `0b${n.toString(2)}` })]);\n  149      const layerNames = Util.unique([...eagle.getAll(e => e.tagName)].filter(e => e.layer).map(e => e.layer.name));\n  150  \n  ...\n  182    sbox.outset(2.54 * 2.54);\n  183    Object.assign(renderer, { sbox, obox, gbox, aspects });\n  184:   console.log(\"render\", { sbox, obox, gbox, aspects });\n  185    let srect = new Rect(sbox);\n  186:   console.log('sbox:', srect.toString());\n  187:   console.log('obox:', obox.toString());\n  188  \n  189    obox.outset(2.54 * 2.54);\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js:\n   36      //  let coordFn = transform ? MakeCoordTransformer(transform) : i => i;\n   37  \n   38:     console.log(`SchematicRenderer.renderCollection`, { transform, pos, rot });\n   39  \n   40      const arr = [...collection];\n   ..\n   56      let coordFn = transform ? MakeCoordTransformer(transform) : i => i;\n   57  \n   58:     if(rot)    console.log(`SchematicRenderer.renderItem`, {labelText, pos ,transform,   rot });\n   59  \n   60      const layer = item.layer;\n   ..\n  154  \n  155    renderNet(net, parent) {\n  156:     console.log(`${Util.className(this)}.renderNet`, { net, parent });\n  157      let g = this.create('g', { className: `net.${net.name}` }, parent);\n  158      for(let segment of net.children) this.renderCollection(segment.children, g, { labelText: net.name });\n  ...\n  161    renderSheet(sheet, parent) {\n  162      let instances = sheet.instances;\n  163:     console.log(`${Util.className(this)}.renderSheet`, { sheet, parent, instances });\n  164  \n  165      let netsGroup = this.create('g', { className: 'nets' }, parent);\n  ...\n  183      rect.round(2.54);\n  184  \n  185:     console.log('bounds:', rect);\n  186      parent = super.render(doc, parent, props);\n  187  \n  ...\n  203        t = t.concat(rot);\n  204      }\n  205:     console.log(`SchematicRenderer.renderPart`, { x, y, pos, rot, t });\n  206      const g = this.create('g', { className: `part.${part.name}`, transform: t }, parent);\n  207      if(!value) value = deviceset.name;\n  ...\n  215  \n  216    renderInstances(parent, sheetNo = 0, b) {\n  217:     console.log('b:', b);\n  218      let g = this.create(\n  219        'g',\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js:\n   19  \n   20    constructor(doc, factory) {\n   21:     console.log(Util.className(this), Util.fnName(new.target));\n   22      if(new.target === EagleSVGRenderer) throw new Error('Use SchematicRenderer or BoardRenderer');\n   23      let ctor = EagleSVGRenderer.rendererTypes[doc.type];\n   ..\n   78    getColor(color) {\n   79      let c = this.palette[color] || /*this.colors[color] || */ 'rgb(165,165,165)';\n   80:     console.log('getColor', color, c);\n   81  \n   82      /* if(c)\n   83      Util.colorDump([c]);*/\n   84:     console.log(Util.getCallers());\n   85      return c;\n   86    }\n   ..\n   98  \n   99    renderLayers(parent) {\n  100:     console.log(`${Util.className(this)}.renderLayers`);\n  101  \n  102      // const layerGroup = this.create('g', { className: 'layers' }, parent);\n  ...\n  138      let { labelText, pos, rot } = opts;\n  139  \n  140:     console.log(`EagleSVGRenderer.renderItem`, {  labelText, pos, rot });\n  141      const layer = item.layer;\n  142      const color = (opts && opts.color) || (layer && this.getColor(layer.color));\n  ...\n  229          let text = innerText || labelText || children.join('\\n');\n  230          let { x, y } = coordFn(item);\n  231:         console.log(\"text\", {text});\n  232  \n  233          if(text.startsWith('&gt;')) {\n  234            const prop = text.slice(4).toLowerCase();\n  235:           console.log(\"text\", {text, prop, opts});\n  236            text = prop in opts ? opts[prop] : text;\n  237          }\n  ...\n  240          const translation = new TransformationList(`translate(${x},${y})`);\n  241  \n  242:         console.log(\"translation:\", Util.className(translation));\n  243          const rotation = translation.concat(Rotation(rot));\n  244:         console.log(\"rotation:\", Util.className(rotation));\n  245          let wholeTransform = transform.concat(Rotation(rot));\n  246          let wholeAngle = ClampAngle(wholeTransform.decompose().rotate);\n  ...\n  256            .collapseAll();\n  257  \n  258:         console.log(`wholeAngle ${text}`, wholeAngle);\n  259:         /*console.log(`undoAngle ${text}`, undoAngle);\n  260:         console.log(`angle ${text}`, angle);*/\n  261:         console.log(`finalTransformation ${text}`, finalTransformation.toString());\n  262:         console.log(`finalTransformation ${text}`, finalTransformation.translation, finalTransformation.rotation, finalTransformation.scaling);\n  263  \n  264          if(finalTransformation.rotation) {\n  ...\n  274            .round(0.5);\n  275  \n  276:         console.log(`render alignment ${text}`, Util.map({ baseAlignment, rotateAlignment, alignment }, (k, v) => [k, v + '']), EagleSVGRenderer.alignmentAttrs(alignment, VERTICAL) );\n  277  \n  278          const e = svg(\n  ...\n  380      this.bounds = new BBox().update(rect);\n  381  \n  382:     console.log('bounds:', bounds.toString({ separator: ' ' }));\n  383  \n  384      const { width, height } = new Size(bounds).toCSS('mm');\n  ...\n  389  \n  390      const transform = this.transform + ''; //` translate(0,${(bounds.height+bounds.y)}) scale(1,-1) `;\n  391:     console.log(bounds);\n  392:     console.log(bounds.clone(r => (r.y = 0)));\n  393      if(!parent)\n  394        parent = this.create(\n\n41 matches across 4 files\n\n\nSearching 4 files for \"log.*touh\"\n\n0 matches\n\nSearching 4 files for \"log.*touch\"\n\n0 matches\n\nSearching 21 files for \"\\.render\" (regex)\n\n/home/roman/Dokumente/Sources/plot-cv/main.js:\n  214    Element.remove('#fence');\n  215  \n  216:   proj.renderer = new Renderer(proj.doc, ReactComponent.append);\n  217  \n  218:   if(!proj.renderer || !proj.renderer.render) return;\n  219  \n  220    let style = { width: '100%', height: '100%', position: 'relative' };\n  221:   let svgXml = proj.renderer.render(proj.doc, null, {\n  222      /* style*/\n  223    });\n  224    //console.log('testRender:', svgXml);\n  225:   let component = proj.renderer.render(proj.doc, null, {\n  226      /*style */\n  227    });\n  ...\n  232    //console.log('component', component);\n  233  \n  234:   let r = proj.renderer.rect || proj.renderer.bounds;\n  235    //console.log('r', r);\n  236    let aspectRatio = r.width / r.height;\n  ...\n  247      if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));\n  248  \n  249:     //console.log('Fence.render', { dimensions, aspect });\n  250  \n  251      return h(\n  ...\n  281    );\n  282  \n  283:   React.render(component /*html`<${Fence}>${component}</${Fence}>`*/, element);\n  284  \n  285    let rendered = [...element.children];\n  286  \n  287:   window.rendered = rendered;\n  288:   //console.log('window.rendered', window.rendered);\n  289    proj.element = rendered[0];\n  290    proj.svg = Element.find('svg', '#main');\n  ...\n  454    CreateWebSocket(null, null, ws => (window.socket = ws));\n  455  \n  456:   React.render(\n  457      [\n  458        Panel('buttons', [\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js:\n  115        }\n  116        default: {\n  117:         super.renderItem(item, parent, { ...opts, color });\n  118          break;\n  119        }\n  ...\n  123    renderCollection(coll, parent, opts = {}) {\n  124      const { predicate = i => true, transform } = opts;\n  125:     console.log(`BoardRenderer.renderCollection`, { transform, pos, rot });\n  126  \n  127      let coordFn = transform ? MakeCoordTransformer(transform) : i => i;\n  ...\n  144      }\n  145  \n  146:     for(let item of other) if(predicate(item) && item.tagName == 'pad') this.renderItem(item, parent, { ...opts });\n  147  \n  148:     for(let item of other) if(predicate(item) && item.tagName != 'pad') this.renderItem(item, parent, { ...opts });\n  149  \n  150      for(let [layerId, wires] of wireMap) {\n  ...\n  207        parent\n  208      );\n  209:     this.renderCollection(element.package.children, g, {\n  210        name,\n  211        value,\n  ...\n  218      let signalGroup = this.create('g', { id: `signal.${signal.name}`, className: `signal ${signal.name}` }, parent);\n  219  \n  220:     return this.renderCollection(signal.children, signalGroup, options);\n  221    }\n  222  \n  ...\n  231      rect.round(2.54);\n  232  */\n  233:     parent = super.render(doc, parent, props);\n  234  \n  235      const { bounds, rect } = this;\n  236  \n  237:     console.log(`BoardRenderer.render`, {  bounds, rect });\n  238  \n  239:     //  this.renderLayers(parent);\n  240  \n  241      let transform = this.transform + '';\n  ...\n  249  \n  250      for(let signal of this.signals.list)\n  251:       this.renderSignal(signal, signalsGroup, {\n  252          predicate: i => i.attributes.layer == '16'\n  253        });\n  254      for(let signal of this.signals.list)\n  255:       this.renderSignal(signal, signalsGroup, {\n  256          predicate: i => i.attributes.layer == '1'\n  257        });\n  258      for(let signal of this.signals.list)\n  259:       this.renderSignal(signal, signalsGroup, {\n  260          predicate: i => i.attributes.layer === undefined\n  261        });\n  262  \n  263:     for(let element of this.elements.list) this.renderElement(element, elementsGroup);\n  264  \n  265      let plain = [...this.doc.plain];\n  266  \n  267:     this.renderCollection(plain, plainGroup);\n  268      this.bounds = bounds;\n  269      this.rect = bounds.rect;\n  ...\n  272  }\n  273  \n  274: EagleSVGRenderer.rendererTypes.brd = BoardRenderer;\n  275  \n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js:\n   36      //  let coordFn = transform ? MakeCoordTransformer(transform) : i => i;\n   37  \n   38:     console.log(`SchematicRenderer.renderCollection`, { transform, pos, rot });\n   39  \n   40      const arr = [...collection];\n   41  \n   42:     for(let item of arr.filter(item => item.tagName != 'text')) this.renderItem(item, parent, { ...opts, transform });\n   43:     for(let item of arr.filter(item => item.tagName == 'text')) this.renderItem(item, parent, { ...opts, transform });\n   44    }\n   45  \n   ..\n   56      let coordFn = transform ? MakeCoordTransformer(transform) : i => i;\n   57  \n   58:     if(rot)    console.log(`SchematicRenderer.renderItem`, {labelText, pos ,transform,   rot });\n   59  \n   60      const layer = item.layer;\n   ..\n  147        }\n  148        default: {\n  149:         super.renderItem(item, parent, opts);\n  150          break;\n  151        }\n  ...\n  154  \n  155    renderNet(net, parent) {\n  156:     console.log(`${Util.className(this)}.renderNet`, { net, parent });\n  157      let g = this.create('g', { className: `net.${net.name}` }, parent);\n  158:     for(let segment of net.children) this.renderCollection(segment.children, g, { labelText: net.name });\n  159    }\n  160  \n  161    renderSheet(sheet, parent) {\n  162      let instances = sheet.instances;\n  163:     console.log(`${Util.className(this)}.renderSheet`, { sheet, parent, instances });\n  164  \n  165      let netsGroup = this.create('g', { className: 'nets' }, parent);\n  166      let instancesGroup = this.create('g', { className: 'instances' }, parent);\n  167  \n  168:     for(let instance of sheet.instances.list) this.renderInstance(instance, instancesGroup);\n  169  \n  170:     for(let net of sheet.nets.list) this.renderNet(net, netsGroup);\n  171    }\n  172  \n  ...\n  183      rect.round(2.54);\n  184  \n  185:     console.log(`SchematicRenderer.render`, { sheetNo, bounds, rect });\n  186  \n  187      console.log('bounds:', rect);\n  188:     parent = super.render(doc, parent, props);\n  189  \n  190:     this.renderSheet(sheet, this.group);\n  191  \n  192:     this.renderInstances(this.group, sheetNo, rect);\n  193  \n  194      return parent;\n  ...\n  205        t = t.concat(rot);\n  206      }\n  207:     console.log(`SchematicRenderer.renderPart`, { x, y, pos, rot, t });\n  208      const g = this.create('g', { className: `part.${part.name}`, transform: t }, parent);\n  209      if(!value) value = deviceset.name;\n  210      opts = deviceset.uservalue == 'yes' || true ? { name, value } : { name, value: '' };\n  211:     this.renderCollection(symbol.children, g, {\n  212        ...opts,\n  213        rot /*pos: new Point(x, y), transform: t.slice()*/\n  ...\n  277  }\n  278  \n  279: EagleSVGRenderer.rendererTypes.sch = SchematicRenderer;\n  280  \n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js:\n   21      console.log(Util.className(this), Util.fnName(new.target));\n   22      if(new.target === EagleSVGRenderer) throw new Error('Use SchematicRenderer or BoardRenderer');\n   23:     let ctor = EagleSVGRenderer.rendererTypes[doc.type];\n   24      Object.setPrototypeOf(this, ctor.prototype);\n   25      this.doc = doc;\n   ..\n   45  \n   46    static create(doc, factory) {\n   47:     let renderer = new EagleSVGRenderer.rendererTypes[doc.type](doc, factory);\n   48      return renderer;\n   49    }\n   ..\n   98  \n   99    renderLayers(parent) {\n  100:     console.log(`${Util.className(this)}.renderLayers`);\n  101  \n  102      // const layerGroup = this.create('g', { className: 'layers' }, parent);\n  ...\n  138      let { labelText, pos, rot } = opts;\n  139  \n  140:     console.log(`EagleSVGRenderer.renderItem`, {  labelText, pos, rot });\n  141      const layer = item.layer;\n  142      const color = (opts && opts.color) || (layer && this.getColor(layer.color));\n  ...\n  402          parent\n  403        );\n  404:     //this.renderLayers(parent);\n  405      const step = 2.54;\n  406      const gridColor = '#0000aa';\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js:\n  115        }\n  116        default: {\n  117:         super.renderItem(item, parent, { ...opts, color });\n  118          break;\n  119        }\n  ...\n  123    renderCollection(coll, parent, opts = {}) {\n  124      const { predicate = i => true, transform } = opts;\n  125:     console.log(`BoardRenderer.renderCollection`, { transform, pos, rot });\n  126  \n  127      let coordFn = transform ? MakeCoordTransformer(transform) : i => i;\n  ...\n  144      }\n  145  \n  146:     for(let item of other) if(predicate(item) && item.tagName == 'pad') this.renderItem(item, parent, { ...opts });\n  147  \n  148:     for(let item of other) if(predicate(item) && item.tagName != 'pad') this.renderItem(item, parent, { ...opts });\n  149  \n  150      for(let [layerId, wires] of wireMap) {\n  ...\n  207        parent\n  208      );\n  209:     this.renderCollection(element.package.children, g, {\n  210        name,\n  211        value,\n  ...\n  218      let signalGroup = this.create('g', { id: `signal.${signal.name}`, className: `signal ${signal.name}` }, parent);\n  219  \n  220:     return this.renderCollection(signal.children, signalGroup, options);\n  221    }\n  222  \n  ...\n  231      rect.round(2.54);\n  232  */\n  233:     parent = super.render(doc, parent, props);\n  234  \n  235      const { bounds, rect } = this;\n  236  \n  237:     console.log(`BoardRenderer.render`, {  bounds, rect });\n  238  \n  239:     //  this.renderLayers(parent);\n  240  \n  241      let transform = this.transform + '';\n  ...\n  249  \n  250      for(let signal of this.signals.list)\n  251:       this.renderSignal(signal, signalsGroup, {\n  252          predicate: i => i.attributes.layer == '16'\n  253        });\n  254      for(let signal of this.signals.list)\n  255:       this.renderSignal(signal, signalsGroup, {\n  256          predicate: i => i.attributes.layer == '1'\n  257        });\n  258      for(let signal of this.signals.list)\n  259:       this.renderSignal(signal, signalsGroup, {\n  260          predicate: i => i.attributes.layer === undefined\n  261        });\n  262  \n  263:     for(let element of this.elements.list) this.renderElement(element, elementsGroup);\n  264  \n  265      let plain = [...this.doc.plain];\n  266  \n  267:     this.renderCollection(plain, plainGroup);\n  268      this.bounds = bounds;\n  269      this.rect = bounds.rect;\n  ...\n  272  }\n  273  \n  274: EagleSVGRenderer.rendererTypes.brd = BoardRenderer;\n  275  \n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js:\n  130      'stroke-linejoin': 'miter'\n  131    });\n  132:   renderer.render(doc, g);\n  133    let colors = SVG.allColors(svg);\n  134    window.c = colors;\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js:\n   36      //  let coordFn = transform ? MakeCoordTransformer(transform) : i => i;\n   37  \n   38:     console.log(`SchematicRenderer.renderCollection`, { transform, pos, rot });\n   39  \n   40      const arr = [...collection];\n   41  \n   42:     for(let item of arr.filter(item => item.tagName != 'text')) this.renderItem(item, parent, { ...opts, transform });\n   43:     for(let item of arr.filter(item => item.tagName == 'text')) this.renderItem(item, parent, { ...opts, transform });\n   44    }\n   45  \n   ..\n   56      let coordFn = transform ? MakeCoordTransformer(transform) : i => i;\n   57  \n   58:     if(rot)    console.log(`SchematicRenderer.renderItem`, {labelText, pos ,transform,   rot });\n   59  \n   60      const layer = item.layer;\n   ..\n  147        }\n  148        default: {\n  149:         super.renderItem(item, parent, opts);\n  150          break;\n  151        }\n  ...\n  154  \n  155    renderNet(net, parent) {\n  156:     console.log(`${Util.className(this)}.renderNet`, { net, parent });\n  157      let g = this.create('g', { className: `net.${net.name}` }, parent);\n  158:     for(let segment of net.children) this.renderCollection(segment.children, g, { labelText: net.name });\n  159    }\n  160  \n  161    renderSheet(sheet, parent) {\n  162      let instances = sheet.instances;\n  163:     console.log(`${Util.className(this)}.renderSheet`, { sheet, parent, instances });\n  164  \n  165      let netsGroup = this.create('g', { className: 'nets' }, parent);\n  166      let instancesGroup = this.create('g', { className: 'instances' }, parent);\n  167  \n  168:     for(let instance of sheet.instances.list) this.renderInstance(instance, instancesGroup);\n  169  \n  170:     for(let net of sheet.nets.list) this.renderNet(net, netsGroup);\n  171    }\n  172  \n  ...\n  183      rect.round(2.54);\n  184  \n  185:     console.log(`SchematicRenderer.render`, { sheetNo, bounds, rect });\n  186  \n  187      console.log('bounds:', rect);\n  188:     parent = super.render(doc, parent, props);\n  189  \n  190:     this.renderSheet(sheet, this.group);\n  191  \n  192:     this.renderInstances(this.group, sheetNo, rect);\n  193  \n  194      return parent;\n  ...\n  205        t = t.concat(rot);\n  206      }\n  207:     console.log(`SchematicRenderer.renderPart`, { x, y, pos, rot, t });\n  208      const g = this.create('g', { className: `part.${part.name}`, transform: t }, parent);\n  209      if(!value) value = deviceset.name;\n  210      opts = deviceset.uservalue == 'yes' || true ? { name, value } : { name, value: '' };\n  211:     this.renderCollection(symbol.children, g, {\n  212        ...opts,\n  213        rot /*pos: new Point(x, y), transform: t.slice()*/\n  ...\n  277  }\n  278  \n  279: EagleSVGRenderer.rendererTypes.sch = SchematicRenderer;\n  280  \n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js:\n   21      console.log(Util.className(this), Util.fnName(new.target));\n   22      if(new.target === EagleSVGRenderer) throw new Error('Use SchematicRenderer or BoardRenderer');\n   23:     let ctor = EagleSVGRenderer.rendererTypes[doc.type];\n   24      Object.setPrototypeOf(this, ctor.prototype);\n   25      this.doc = doc;\n   ..\n   45  \n   46    static create(doc, factory) {\n   47:     let renderer = new EagleSVGRenderer.rendererTypes[doc.type](doc, factory);\n   48      return renderer;\n   49    }\n   ..\n   98  \n   99    renderLayers(parent) {\n  100:     console.log(`${Util.className(this)}.renderLayers`);\n  101  \n  102      // const layerGroup = this.create('g', { className: 'layers' }, parent);\n  ...\n  138      let { labelText, pos, rot } = opts;\n  139  \n  140:     console.log(`EagleSVGRenderer.renderItem`, {  labelText, pos, rot });\n  141      const layer = item.layer;\n  142      const color = (opts && opts.color) || (layer && this.getColor(layer.color));\n  ...\n  402          parent\n  403        );\n  404:     //this.renderLayers(parent);\n  405      const step = 2.54;\n  406      const gridColor = '#0000aa';\n\n91 matches across 8 files\n\n\nSearching 22 files for \"\\.render\\(\" (regex)\n\n<untitled 252>:\n    ERROR: Unable to open file\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js:\n  231      rect.round(2.54);\n  232  */\n  233:     parent = super.render(doc, parent, props);\n  234  \n  235      const { bounds, rect } = this;\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js:\n  186  \n  187      console.log('bounds:', rect);\n  188:     parent = super.render(doc, parent, props);\n  189  \n  190      this.renderSheet(sheet, this.group);\n\n/home/roman/Dokumente/Sources/plot-cv/main.js:\n  219  \n  220    let style = { width: '100%', height: '100%', position: 'relative' };\n  221:   let svgXml = proj.renderer.render(proj.doc, null, {\n  222      /* style*/\n  223    });\n  224    //console.log('testRender:', svgXml);\n  225:   let component = proj.renderer.render(proj.doc, null, {\n  226      /*style */\n  227    });\n  ...\n  281    );\n  282  \n  283:   React.render(component /*html`<${Fence}>${component}</${Fence}>`*/, element);\n  284  \n  285    let rendered = [...element.children];\n  ...\n  454    CreateWebSocket(null, null, ws => (window.socket = ws));\n  455  \n  456:   React.render(\n  457      [\n  458        Panel('buttons', [\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js:\n  231      rect.round(2.54);\n  232  */\n  233:     parent = super.render(doc, parent, props);\n  234  \n  235      const { bounds, rect } = this;\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js:\n  130      'stroke-linejoin': 'miter'\n  131    });\n  132:   renderer.render(doc, g);\n  133    let colors = SVG.allColors(svg);\n  134    window.c = colors;\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js:\n  186  \n  187      console.log('bounds:', rect);\n  188:     parent = super.render(doc, parent, props);\n  189  \n  190      this.renderSheet(sheet, this.group);\n\n9 matches across 6 files\n\n\nSearching 21 files for \"log.*box:\" (regex)\n\n/home/roman/Dokumente/Sources/plot-cv/main.js:\n  525        if(!move) {\n  526          let box = Element.find('#main').firstElementChild;\n  527:         console.log(\"box:\", box);\n  528  \n  529          move = Element.moveRelative(box);\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js:\n  184    console.log(\"render\", { sbox, obox, gbox, aspects });\n  185    let srect = new Rect(sbox);\n  186:   console.log('sbox:', srect.toString());\n  187:   console.log('obox:', obox.toString());\n  188  \n  189    obox.outset(2.54 * 2.54);\n\n3 matches across 2 files\n",
-			"settings":
-			{
-				"buffer_size": 48666,
+				"buffer_size": 3186,
 				"line_ending": "Unix",
 				"name": "Find Results",
 				"scratch": true
 			}
 		},
 		{
-			"file": ".clang-format",
+			"file": "lib/util.js",
 			"settings":
 			{
-				"buffer_size": 2030,
+				"buffer_size": 81179,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
+			"file": "lib/proxy/observableMembrane.js",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 20126,
 				"line_ending": "Unix"
 			}
 		}
@@ -117,6 +108,22 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"",
+				"Preferences: Package Control Settings – Default"
+			],
+			[
+				"package",
+				"Preferences: Browse Packages"
+			],
+			[
+				"cscope",
+				"Cscope: Rebuild database"
+			],
+			[
+				"schemeed",
+				"SchemeEditor: Edit Current Scheme"
+			],
 			[
 				"out",
 				"Browse Mode: Outline (Right)"
@@ -166,30 +173,162 @@
 	},
 	"expanded_folders":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv"
+		"/home/roman/Dokumente/Sources/plot-cv",
+		"/home/roman/Dokumente/Sources/plot-cv/Javascript_Clipper_6.4.2.2",
+		"/home/roman/Dokumente/Sources/plot-cv/lib",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/xml"
 	],
 	"file_history":
 	[
+		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/5V-to-12V-Converter-ManyDiodes.sch",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/index.html",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Sources/plot-cv/lib/tXml.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/ref.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/document.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json.js",
+		"/home/roman/Sources/plot-cv/lib/geom/bbox.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/bbox.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/ref.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/xml.js",
+		"/static/tmp/5V-to-12V-Converter-ManyDiodes.sch",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
+		"/home/roman/Dokumente/Sources/plot-cv/server.js",
+		"/home/roman/Dokumente/Sources/plot-cv/components.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-membrane.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
 		"/home/roman/Dokumente/Sources/c-utils/cfg.sh"
 	],
 	"find":
 	{
-		"height": 41.0
+		"height": 42.0
 	},
 	"find_in_files":
 	{
-		"height": 107.0,
+		"height": 110.0,
 		"where_history":
 		[
+			"\\\\u200a",
+			"/home/roman/Sources/plot-cv/lib,*.js,<open files>",
+			"/home/roman/Sources/plot-cv/lib/eagle,*.js,<open files>",
+			"/home/roman/Dokumente/Sources/plot-cv/lib/eagle,*.js,<open files>",
 			"/home/roman/Dokumente/Sources/plot-cv/lib/eagle,*.js,<current file>,<open files>",
 			"/home/roman/Dokumente/Sources/plot-cv/lib/eagle,*enderer*.js"
 		]
 	},
 	"find_state":
 	{
-		"case_sensitive": false,
+		"case_sensitive": true,
 		"find_history":
 		[
+			"this\\[i\\]",
+			"this[i]",
+			"this\\[i\\]",
+			" at\\(",
+			"species",
+			"'children'",
+			"MutablePath",
+			"'children'",
+			"toString.call",
+			"getCallers =",
+			"toString",
+			"');",
+			"toString",
+			"CHILDREN_STR",
+			"\\\\u200[0-9a-f]",
+			"partToString",
+			"childrenStr",
+			"'\\.'",
+			"'.'",
+			"\\\\u",
+			"childrenVar",
+			"2208",
+			"Util.parse",
+			"DOMParser",
+			"loadDocument =",
+			"loadDoc",
+			"main",
+			"toXML.*common",
+			"toXML",
+			"^\\s*toXML",
+			"toXML",
+			"loadDocument",
+			"toXML",
+			"loadDoc",
+			".round(2.54, 5)",
+			"Rect",
+			"toObject",
+			"Rect",
+			"lines",
+			"round =",
+			"TransformationList",
+			"coordFn",
+			"coordFn =",
+			"coordFn",
+			"renderInstance",
+			"rects",
+			"component",
+			"svgXml",
+			"\\.render",
+			"'bg'",
+			"rot=",
+			"equals =",
+			"renderItem\\(",
+			"console",
+			"^\\s*console.log",
+			"log.*BBox.update",
+			"log.*BBox.update ",
+			"labelText",
+			"IteratorAdapter",
+			"toXML",
+			"ImmutablePath",
+			"xml.js",
+			"ImmutablePath",
+			"'instance'",
+			"  if(r[r.length - 1] != 'children') \n        r.push('children');\n        p= o;\n      }",
+			"\\.lookup\\(",
+			"\\.lookup",
+			" gate=\"",
+			"isRelation",
+			"\\.find",
+			" xpath\\(",
+			" xpath",
+			"xpath",
+			"{\n",
+			"Inspect =",
+			".split(/\\//g)",
+			"partToString",
+			"Util\\.",
+			"Util.inspect",
+			"define =",
+			"makeEagleNodeList\\(",
+			"children",
+			"flat",
+			"host",
+			"host$",
+			"host",
 			"update",
 			"log.*box:",
 			"touch",
@@ -214,6 +353,7 @@
 		"regex": true,
 		"replace_history":
 		[
+			"\\\\u200a",
 			""
 		],
 		"reverse": false,
@@ -233,1543 +373,6 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 196,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/geom/bbox.js",
-							"outline_rename_mode": false,
-							"symkeys":
-							[
-								[
-									85,
-									89
-								],
-								[
-									101,
-									111
-								],
-								[
-									234,
-									245
-								],
-								[
-									644,
-									654
-								],
-								[
-									752,
-									758
-								],
-								[
-									991,
-									998
-								],
-								[
-									1119,
-									1126
-								],
-								[
-									1247,
-									1254
-								],
-								[
-									1314,
-									1322
-								],
-								[
-									1347,
-									1352
-								],
-								[
-									1917,
-									1923
-								],
-								[
-									2034,
-									2045
-								],
-								[
-									2138,
-									2139
-								],
-								[
-									2174,
-									2179
-								],
-								[
-									2237,
-									2238
-								],
-								[
-									2303,
-									2309
-								],
-								[
-									2367,
-									2368
-								],
-								[
-									2448,
-									2453
-								],
-								[
-									2496,
-									2497
-								],
-								[
-									2577,
-									2583
-								],
-								[
-									2626,
-									2630
-								],
-								[
-									2668,
-									2676
-								],
-								[
-									2745,
-									2754
-								],
-								[
-									2760,
-									2766
-								],
-								[
-									2934,
-									2939
-								],
-								[
-									2945,
-									2951
-								],
-								[
-									3049,
-									3053
-								],
-								[
-									3165,
-									3169
-								],
-								[
-									3181,
-									3185
-								]
-							],
-							"symlist":
-							[
-								"BBox",
-								"fromPoints",
-								"constructor",
-								"updateList",
-								"update",
-								"name =>",
-								"name =>",
-								"name =>",
-								"updateXY",
-								"() =>",
-								"center",
-								"relative_to",
-								"x",
-								"width",
-								"y",
-								"height",
-								"x",
-								"width",
-								"y",
-								"height",
-								"rect",
-								"toString",
-								"transform",
-								"arg =>",
-								"round",
-								"arg =>",
-								"move",
-								"from",
-								"p =>"
-							],
-							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 6,
-			"sheets":
-			[
-				{
-					"buffer": 1,
-					"file": "server.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4064,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2120,
-								2120
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1720.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "main.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 18353,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								9869,
-								9869
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 6427.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "components.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 19365,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2745,
-								2745
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1460.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "lib/eagle/svgRenderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 13329,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								12452,
-								12452
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 7407.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "lib/eagle/schematicRenderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8042,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5593,
-								5593
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 3007.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "lib/eagle/boardRenderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8521,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4212,
-								4212
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2047.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "lib/geom/bbox.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3626,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								840,
-								840
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 523.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 48666,
-						"regions":
-						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										188,
-										199
-									],
-									[
-										398,
-										409
-									],
-									[
-										603,
-										614
-									],
-									[
-										765,
-										776
-									],
-									[
-										814,
-										825
-									],
-									[
-										1031,
-										1042
-									],
-									[
-										1252,
-										1263
-									],
-									[
-										1309,
-										1320
-									],
-									[
-										1593,
-										1604
-									],
-									[
-										1676,
-										1687
-									],
-									[
-										1954,
-										1965
-									],
-									[
-										2261,
-										2272
-									],
-									[
-										2302,
-										2313
-									],
-									[
-										2627,
-										2638
-									],
-									[
-										2729,
-										2740
-									],
-									[
-										2780,
-										2791
-									],
-									[
-										3037,
-										3048
-									],
-									[
-										3278,
-										3289
-									],
-									[
-										3466,
-										3477
-									],
-									[
-										3826,
-										3837
-									],
-									[
-										4048,
-										4059
-									],
-									[
-										4204,
-										4215
-									],
-									[
-										4493,
-										4504
-									],
-									[
-										4688,
-										4699
-									],
-									[
-										5053,
-										5064
-									],
-									[
-										5163,
-										5174
-									],
-									[
-										5286,
-										5297
-									],
-									[
-										5505,
-										5516
-									],
-									[
-										5841,
-										5852
-									],
-									[
-										6001,
-										6012
-									],
-									[
-										6231,
-										6242
-									],
-									[
-										6373,
-										6384
-									],
-									[
-										6637,
-										6648
-									],
-									[
-										6701,
-										6712
-									],
-									[
-										6763,
-										6774
-									],
-									[
-										6819,
-										6830
-									],
-									[
-										6912,
-										6923
-									],
-									[
-										7167,
-										7178
-									],
-									[
-										7458,
-										7469
-									],
-									[
-										7731,
-										7742
-									],
-									[
-										7765,
-										7776
-									],
-									[
-										8041,
-										8052
-									],
-									[
-										8251,
-										8262
-									],
-									[
-										8456,
-										8467
-									],
-									[
-										8618,
-										8629
-									],
-									[
-										8667,
-										8678
-									],
-									[
-										8884,
-										8895
-									],
-									[
-										9105,
-										9116
-									],
-									[
-										9162,
-										9173
-									],
-									[
-										9444,
-										9455
-									],
-									[
-										9527,
-										9538
-									],
-									[
-										9805,
-										9816
-									],
-									[
-										10112,
-										10123
-									],
-									[
-										10153,
-										10164
-									],
-									[
-										10478,
-										10489
-									],
-									[
-										10580,
-										10591
-									],
-									[
-										10631,
-										10642
-									],
-									[
-										10888,
-										10899
-									],
-									[
-										11129,
-										11140
-									],
-									[
-										11315,
-										11326
-									],
-									[
-										11673,
-										11684
-									],
-									[
-										11895,
-										11906
-									],
-									[
-										12051,
-										12062
-									],
-									[
-										12340,
-										12351
-									],
-									[
-										12533,
-										12544
-									],
-									[
-										12898,
-										12909
-									],
-									[
-										13008,
-										13019
-									],
-									[
-										13129,
-										13140
-									],
-									[
-										13348,
-										13359
-									],
-									[
-										13684,
-										13695
-									],
-									[
-										13844,
-										13855
-									],
-									[
-										14072,
-										14083
-									],
-									[
-										14212,
-										14223
-									],
-									[
-										14476,
-										14487
-									],
-									[
-										14540,
-										14551
-									],
-									[
-										14602,
-										14613
-									],
-									[
-										14658,
-										14669
-									],
-									[
-										14751,
-										14762
-									],
-									[
-										15006,
-										15017
-									],
-									[
-										15297,
-										15308
-									],
-									[
-										15570,
-										15581
-									],
-									[
-										15604,
-										15615
-									],
-									[
-										15878,
-										15889
-									],
-									[
-										16086,
-										16097
-									],
-									[
-										16289,
-										16300
-									],
-									[
-										16449,
-										16460
-									],
-									[
-										16496,
-										16507
-									],
-									[
-										16711,
-										16722
-									],
-									[
-										16930,
-										16941
-									],
-									[
-										16985,
-										16996
-									],
-									[
-										17267,
-										17278
-									],
-									[
-										17348,
-										17359
-									],
-									[
-										17624,
-										17635
-									],
-									[
-										17929,
-										17940
-									],
-									[
-										17968,
-										17979
-									],
-									[
-										18291,
-										18302
-									],
-									[
-										18391,
-										18402
-									],
-									[
-										18440,
-										18451
-									],
-									[
-										18695,
-										18706
-									],
-									[
-										18934,
-										18945
-									],
-									[
-										19120,
-										19131
-									],
-									[
-										19478,
-										19489
-									],
-									[
-										19698,
-										19709
-									],
-									[
-										19852,
-										19863
-									],
-									[
-										20139,
-										20150
-									],
-									[
-										20332,
-										20343
-									],
-									[
-										20695,
-										20706
-									],
-									[
-										20803,
-										20814
-									],
-									[
-										20924,
-										20935
-									],
-									[
-										21141,
-										21152
-									],
-									[
-										21475,
-										21486
-									],
-									[
-										21633,
-										21644
-									],
-									[
-										21861,
-										21872
-									],
-									[
-										22001,
-										22012
-									],
-									[
-										22263,
-										22274
-									],
-									[
-										22327,
-										22338
-									],
-									[
-										22387,
-										22398
-									],
-									[
-										22441,
-										22452
-									],
-									[
-										22532,
-										22543
-									],
-									[
-										22785,
-										22796
-									],
-									[
-										23074,
-										23085
-									],
-									[
-										23345,
-										23356
-									],
-									[
-										23377,
-										23388
-									],
-									[
-										23651,
-										23662
-									],
-									[
-										23859,
-										23870
-									],
-									[
-										24062,
-										24073
-									],
-									[
-										24222,
-										24233
-									],
-									[
-										24269,
-										24280
-									],
-									[
-										24484,
-										24495
-									],
-									[
-										24703,
-										24714
-									],
-									[
-										24758,
-										24769
-									],
-									[
-										25040,
-										25051
-									],
-									[
-										25121,
-										25132
-									],
-									[
-										25397,
-										25408
-									],
-									[
-										25702,
-										25713
-									],
-									[
-										25741,
-										25752
-									],
-									[
-										26064,
-										26075
-									],
-									[
-										26164,
-										26175
-									],
-									[
-										26213,
-										26224
-									],
-									[
-										26468,
-										26479
-									],
-									[
-										26707,
-										26718
-									],
-									[
-										26893,
-										26904
-									],
-									[
-										27251,
-										27262
-									],
-									[
-										27471,
-										27482
-									],
-									[
-										27625,
-										27636
-									],
-									[
-										27912,
-										27923
-									],
-									[
-										28105,
-										28116
-									],
-									[
-										28468,
-										28479
-									],
-									[
-										28576,
-										28587
-									],
-									[
-										28697,
-										28708
-									],
-									[
-										28914,
-										28925
-									],
-									[
-										29248,
-										29259
-									],
-									[
-										29406,
-										29417
-									],
-									[
-										29634,
-										29645
-									],
-									[
-										29774,
-										29785
-									],
-									[
-										30036,
-										30047
-									],
-									[
-										30100,
-										30111
-									],
-									[
-										30160,
-										30171
-									],
-									[
-										30214,
-										30225
-									],
-									[
-										30305,
-										30316
-									],
-									[
-										30558,
-										30569
-									],
-									[
-										30847,
-										30858
-									],
-									[
-										31118,
-										31129
-									],
-									[
-										31150,
-										31161
-									],
-									[
-										31519,
-										31526
-									],
-									[
-										31603,
-										31610
-									],
-									[
-										31621,
-										31628
-									],
-									[
-										31630,
-										31637
-									],
-									[
-										31759,
-										31766
-									],
-									[
-										31768,
-										31775
-									],
-									[
-										31905,
-										31912
-									],
-									[
-										31914,
-										31921
-									],
-									[
-										32058,
-										32065
-									],
-									[
-										32080,
-										32087
-									],
-									[
-										32333,
-										32340
-									],
-									[
-										32437,
-										32444
-									],
-									[
-										32588,
-										32595
-									],
-									[
-										32640,
-										32647
-									],
-									[
-										32658,
-										32665
-									],
-									[
-										32851,
-										32858
-									],
-									[
-										33031,
-										33038
-									],
-									[
-										33273,
-										33280
-									],
-									[
-										33516,
-										33523
-									],
-									[
-										33647,
-										33654
-									],
-									[
-										33800,
-										33807
-									],
-									[
-										34048,
-										34055
-									],
-									[
-										34195,
-										34202
-									],
-									[
-										34319,
-										34326
-									],
-									[
-										34376,
-										34383
-									],
-									[
-										34534,
-										34541
-									],
-									[
-										34712,
-										34719
-									],
-									[
-										34889,
-										34896
-									],
-									[
-										35070,
-										35077
-									],
-									[
-										35185,
-										35192
-									],
-									[
-										35338,
-										35345
-									],
-									[
-										35585,
-										35592
-									],
-									[
-										35762,
-										35769
-									],
-									[
-										35888,
-										35895
-									],
-									[
-										36103,
-										36110
-									],
-									[
-										36265,
-										36272
-									],
-									[
-										36430,
-										36437
-									],
-									[
-										36588,
-										36595
-									],
-									[
-										36801,
-										36808
-									],
-									[
-										37082,
-										37089
-									],
-									[
-										37180,
-										37187
-									],
-									[
-										37311,
-										37318
-									],
-									[
-										37423,
-										37430
-									],
-									[
-										37475,
-										37482
-									],
-									[
-										37531,
-										37538
-									],
-									[
-										37702,
-										37709
-									],
-									[
-										37994,
-										38001
-									],
-									[
-										38166,
-										38173
-									],
-									[
-										38494,
-										38501
-									],
-									[
-										38702,
-										38709
-									],
-									[
-										38874,
-										38881
-									],
-									[
-										39084,
-										39091
-									],
-									[
-										39311,
-										39318
-									],
-									[
-										39530,
-										39537
-									],
-									[
-										39772,
-										39779
-									],
-									[
-										40015,
-										40022
-									],
-									[
-										40146,
-										40153
-									],
-									[
-										40299,
-										40306
-									],
-									[
-										40547,
-										40554
-									],
-									[
-										40694,
-										40701
-									],
-									[
-										40818,
-										40825
-									],
-									[
-										40875,
-										40882
-									],
-									[
-										41033,
-										41040
-									],
-									[
-										41211,
-										41218
-									],
-									[
-										41388,
-										41395
-									],
-									[
-										41569,
-										41576
-									],
-									[
-										41684,
-										41691
-									],
-									[
-										41837,
-										41844
-									],
-									[
-										42011,
-										42018
-									],
-									[
-										42301,
-										42308
-									],
-									[
-										42478,
-										42485
-									],
-									[
-										42604,
-										42611
-									],
-									[
-										42819,
-										42826
-									],
-									[
-										42981,
-										42988
-									],
-									[
-										43146,
-										43153
-									],
-									[
-										43304,
-										43311
-									],
-									[
-										43517,
-										43524
-									],
-									[
-										43798,
-										43805
-									],
-									[
-										43896,
-										43903
-									],
-									[
-										44027,
-										44034
-									],
-									[
-										44139,
-										44146
-									],
-									[
-										44191,
-										44198
-									],
-									[
-										44247,
-										44254
-									],
-									[
-										44418,
-										44425
-									],
-									[
-										44710,
-										44717
-									],
-									[
-										44882,
-										44889
-									],
-									[
-										45210,
-										45217
-									],
-									[
-										45418,
-										45425
-									],
-									[
-										45590,
-										45597
-									],
-									[
-										45800,
-										45807
-									],
-									[
-										46027,
-										46034
-									],
-									[
-										46372,
-										46380
-									],
-									[
-										46596,
-										46604
-									],
-									[
-										46850,
-										46858
-									],
-									[
-										46996,
-										47004
-									],
-									[
-										47097,
-										47105
-									],
-									[
-										47319,
-										47327
-									],
-									[
-										47504,
-										47512
-									],
-									[
-										47713,
-										47721
-									],
-									[
-										47945,
-										47953
-									],
-									[
-										48263,
-										48272
-									],
-									[
-										48517,
-										48527
-									],
-									[
-										48566,
-										48576
-									]
-								],
-								"scope": ""
-							}
-						},
-						"selection":
-						[
-							[
-								48266,
-								48266
-							]
-						],
-						"settings":
-						{
-							"detect_indentation": false,
-							"line_numbers": false,
-							"output_tag": 10,
-							"result_base_dir": "",
-							"result_file_regex": "^([^ \t].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 25280.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": ".clang-format",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 2030,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"semi_transient": false,
-					"settings":
-					{
 						"buffer_size": 0,
 						"regions":
 						{
@@ -1783,13 +386,396 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
+							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
+							"current_file": "/home/roman/.config/sublime-text-3/Packages/Package Control/Package Control.sublime-settings",
+							"outline_rename_mode": false,
+							"symkeys":
+							[
+							],
+							"symlist":
+							[
+							],
+							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
+					"stack_index": 9,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 1,
+					"file": "lib/eagle/schematicRenderer.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8274,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6525,
+								6525
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 14.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "lib/json/pathMapper.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1608,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								444,
+								444
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/home/roman/.config/sublime-text-3/Packages/Package Control/Package Control.sublime-settings",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7379,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								661,
+								663
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JSON (JavaScriptNext).tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "lib/json.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 352,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								352,
+								352
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "test-membrane.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6262,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4236,
+								4236
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2482.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "lib/json/path.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 14906,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								13907,
+								13907
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 10006.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3186,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										266,
+										268
+									],
+									[
+										523,
+										525
+									],
+									[
+										704,
+										706
+									],
+									[
+										710,
+										712
+									],
+									[
+										804,
+										806
+									],
+									[
+										816,
+										818
+									],
+									[
+										1122,
+										1124
+									],
+									[
+										1128,
+										1130
+									],
+									[
+										1430,
+										1432
+									],
+									[
+										1810,
+										1812
+									],
+									[
+										1828,
+										1830
+									],
+									[
+										1846,
+										1848
+									],
+									[
+										1864,
+										1866
+									],
+									[
+										2045,
+										2047
+									],
+									[
+										2302,
+										2304
+									],
+									[
+										2483,
+										2485
+									],
+									[
+										2489,
+										2491
+									],
+									[
+										2583,
+										2585
+									],
+									[
+										2595,
+										2597
+									],
+									[
+										2901,
+										2903
+									],
+									[
+										2907,
+										2909
+									],
+									[
+										3070,
+										3072
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								67,
+								67
+							]
+						],
+						"settings":
+						{
+							"detect_indentation": false,
+							"line_numbers": false,
+							"output_tag": 2,
+							"result_base_dir": "",
+							"result_file_regex": "^([^ \t].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 955.0,
+						"zoom_level": 1.0
+					},
 					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "lib/util.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 81179,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								64556,
+								64556
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 43518.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "lib/proxy/observableMembrane.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 20126,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4651.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
 					"type": "text"
 				}
 			]
@@ -1797,7 +783,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 0.0
+		"height": 30.0
 	},
 	"input":
 	{
@@ -1843,7 +829,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 0.0
+		"height": 76.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1853,16 +839,112 @@
 		"selected_items":
 		[
 			[
+				"util.j",
+				"lib/util.js"
+			],
+			[
+				"obser",
+				"lib/proxy/observableMembrane.js"
+			],
+			[
+				"test-mem",
+				"test-membrane.js"
+			],
+			[
+				"json.j",
+				"lib/json.js"
+			],
+			[
+				"index.html",
+				"index.html"
+			],
+			[
+				"element",
+				"lib/eagle/element.js"
+			],
+			[
+				"common",
+				"lib/eagle/common.js"
+			],
+			[
+				"node.j",
+				"lib/eagle/node.js"
+			],
+			[
+				"json",
+				"lib/json.js"
+			],
+			[
+				"main.j",
+				"main.js"
+			],
+			[
+				"elemen",
+				"lib/eagle/element.js"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"rect.js",
+				"lib/geom/rect.js"
+			],
+			[
+				"util",
+				"lib/util.js"
+			],
+			[
+				"deep",
+				"lib/deep.js"
+			],
+			[
+				"matrix",
+				"lib/geom/matrix.js"
+			],
+			[
+				"transform",
+				"lib/geom/transformation.js"
+			],
+			[
+				"path.js",
+				"lib/json/path.js"
+			],
+			[
+				"main",
+				"main.js"
+			],
+			[
+				"xmljs",
+				"lib/xml.js"
+			],
+			[
+				"serevr.j",
+				"server.js"
+			],
+			[
+				"test-eag",
+				"test-eagle.js"
+			],
+			[
+				"document",
+				"lib/eagle/document.js"
+			],
+			[
+				"comm",
+				"lib/eagle/common.js"
+			],
+			[
+				"node",
+				"lib/eagle/node.js"
+			],
+			[
 				"bbox",
 				"lib/geom/bbox.js"
 			],
 			[
 				"board",
 				"lib/eagle/boardRenderer.js"
-			],
-			[
-				"main",
-				"main.js"
 			],
 			[
 				"schemt",

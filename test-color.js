@@ -1,5 +1,5 @@
-import { RGBA } from './lib/dom/rgba.js';
-import { HSLA } from './lib/dom/hsla.js';
+import { RGBA } from './lib/color/rgba.js';
+import { HSLA } from './lib/color/hsla.js';
 
 import { Console } from 'console';
 

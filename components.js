@@ -1,4 +1,6 @@
-import { h, html, render, Component, useState, useCallback, useRef, useEffect, useLayoutEffect } from '../modules/htm/preact/standalone.mjs';
+import { h, html, render, Component, useState, useCallback, useRef, useEffect, useLayoutEffect } from '/modules/htm/preact/standalone.module.js';
+import { trkl } from './lib/trkl.js';
+
 //import React from '../modules/preact/dist/preact.mjs';
 
 export function classNames() {
@@ -68,29 +70,6 @@ export const Container = ({ className = 'panel', children, ...props }) => {
   return html`
     <div className=${className} ...${props}>${children}</div>
   `;
-};
-
-export const Chooser = ({ className = 'list', itemClass = 'item', itemComponent = Overlay, items, onChange = () => {}, onPush = () => {}, ...props }) => {
-  const [active, setActive] = useState(-1);
-  const pushHandler = i => (e, state) => {
-    const prev = active;
-    state == true && setActive(i);
-    if(i != prev && e.type.endsWith('down')) onChange(e, items[i], i);
-    onPush(e, i, state);
-  };
-  const bar = html``;
-  const children = items.map(({ name, i, data, ...item }, key) =>
-    //console.log(`Chooser item #${i}:`, { name, data, item });
-    h(itemComponent, {
-      key: key || i,
-      className: classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
-      active: i == active,
-      onPush: pushHandler(i),
-      label: name.replace(/.*\//, '') /*,
-      ...item*/
-    })
-  );
-  return html`<${Container} className=${classNames('panel', className)} ...${props}>${children}</${Container}>`;
 };
 
 export const Button = ({ caption, fn }) => html`
@@ -170,6 +149,32 @@ export const BoardIcon = props => html`
   </svg>
 `;
 
+export const Conditional = ({ initialState, component, className, children, signal, ...props }) => {
+  const [show, setShown] = useState(initialState !== undefined ? initialState : signal());
+
+  if(signal) signal.subscribe(value => setShown(value));
+
+  return show ? h(component, { className, ...props }, children) : [];
+};
+
+export const ShowHide = ({ initialState, component, className, children, signal, ...props }) => {
+  const [hidden, setHidden] = useState(initialState !== undefined ? initialState : !signal());
+
+  if(signal) signal.subscribe(value => setHidden(!value));
+
+  return h(component, { className: classNames(className, hidden && 'hidden'), ...props }, children);
+};
+
+export const EditBox = ({ value = '', type = 'div', className, hidden = false, current, focus, ...props }) => {
+  if(typeof current == 'function') props.ref = input => current(input);
+
+  const outerProps = { className: classNames(className, hidden && 'hidden') };
+
+  if(type == 'form') outerProps.onSubmit = event => event.preventDefault();
+
+  return h(type, outerProps, h('input', { type: 'text', value, className: classNames(className, hidden && 'hidden'), ...props }));
+};
+
 export const File = ({ label, i, key, className = 'file', onPush, signal, data, doc, ...props }) => {
   const [loaded, setLoaded] = useState(NaN);
   if(signal) signal.subscribe(data => setLoaded(data.percent));
@@ -200,7 +205,46 @@ export const File = ({ label, i, key, className = 'file', onPush, signal, data, 
             `;
 };
 
-export const FileList = ({ files, onChange, onActive, ...props }) => {
+export const Chooser = ({ className = 'list', itemClass = 'item', itemComponent = Overlay, itemFilter, items, onChange = () => {}, onPush = () => {}, ...props }) => {
+  const [active, setActive] = useState(-1);
+  const [filter, setFilter] = useState('.*');
+  const pushHandler = i => (e, state) => {
+    const prev = active;
+    state == true && setActive(i);
+    if(i != prev && e.type.endsWith('down')) onChange(e, items[i], i);
+    onPush(e, i, state);
+  };
+
+  if(itemFilter) {
+    setFilter(itemFilter());
+    itemFilter.subscribe(value => setFilter(value));
+  }
+
+  const bar = html``;
+  const reList = filter
+    .split(/\s\s*/g)
+    .map(part => Util.tryCatch(() => new RegExp(part.replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i')))
+    .filter(r => r !== null);
+  const pred = name => reList.every(re => re.test(name));
+  const other = items.filter(({ name }) => !pred(name)).map(i => i.name);
+  console.log(reList);
+  const children = items
+    .filter(({ name }) => pred(name))
+    .map(({ name, i, data, ...item }, key) =>
+      //console.log(`Chooser item #${i}:`, { name, data, item });
+      h(itemComponent, {
+        key: key || i,
+        className: classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
+        active: i == active,
+        onPush: pushHandler(i),
+        label: name.replace(/.*\//, '') /*,
+      ...item*/
+      })
+    );
+  return html`<${Container} className=${classNames('panel', className)} ...${props}>${children}</${Container}>`;
+};
+
+export const FileList = ({ files, onChange, onActive, filter, showSearch, focusSearch, currentInput, changeInput, ...props }) => {
   const [active, setActive] = useState(true);
   const [items, setItems] = useState(files());
 
@@ -210,10 +254,12 @@ export const FileList = ({ files, onChange, onActive, ...props }) => {
 
   return html`
     <div className=${classNames('sidebar', active ? 'active' : 'inactive')}>
+      <${Conditional} component=${EditBox} type="form" className="search" autofocus name=${'query'} id="search" placeholder="Search" signal=${showSearch} focus=${focusSearch} current=${currentInput} onChange=${changeInput} onInput=${changeInput} value=${filter()} />
       <${Chooser}
         className="list"
         itemComponent=${File}
         itemClass="file hcenter"
+        itemFilter=${filter}
         items=${items}
         onChange=${(...args) => {
           onChange(...args);

@@ -124,7 +124,7 @@ body,
 }
 .list {
   font-weight: normal;
-  font-size: 14px;
+  font-size: 13px;
 }
 .file,
 .file.active,
@@ -294,4 +294,20 @@ input[type='number']::-webkit-outer-spin-button,
 input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+div.search, form.search {
+ display:block;
+ margin: 4px;
+  height: 1.5em;
+}
+
+.search.hidden {
+display: none;
+}
+
+input.search {
+
+  width: 100%;
+  height: 100%;
 }

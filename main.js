@@ -3,6 +3,7 @@ import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, T
 import dom from './lib/dom.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
+import keysim from './lib/dom/keysim.js';
 import geom from './lib/geom.js';
 import { BBox } from './lib/geom/bbox.js';
 import { Polygon } from './lib/geom/polygon.js';
@@ -16,9 +17,13 @@ import { devtools } from './lib/devtools.js';
 import Util from './lib/util.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
-import { XmlObject, XmlAttr } from './lib/json.js';
+import { makeLocalStorage } from './lib/autoStore.js';
+
+import { toXML, ImmutablePath } from './lib/json.js';
+import { XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';
+import { RGBA, isRGBA, HSLA, isHSLA } from './lib/color.js';
 import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
-import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './modules/htm/preact/standalone.mjs';
+import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './modules/htm/preact/standalone.module.js';
 import components, { Chooser, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider } from './static/components.js';
 import { WebSocketClient } from './lib/websocket-client.js';
 import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
@@ -35,7 +40,6 @@ import {
   EagleNode,
   EagleNodeList,
   EagleNodeMap,
-  ImmutablePath,
   EagleProject,
   EagleRef,
   EagleReference,
@@ -52,10 +56,7 @@ import {
   SchematicRenderer,
   VERTICAL,
   makeEagleElement,
-  makeEagleNode,
-  makeEagleNodeList,
-  makeEagleNodeMap,
-  renderDocument
+  makeEagleNode
 } from './lib/eagle.js';
 
 const React = {
@@ -81,16 +82,17 @@ const React = {
   useRef,
   useState
 };
-const { Align, Anchor, CSS, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, HSLA, isElement, isHSLA, isLine, isMatrix, isNumber, isPoint, isRect, isRGBA, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, RGBA, Select, Size, SVG, Timer, Transition, TransitionList, TRBL, Tree } = {
+const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG, Timer, Transition, TransitionList, TRBL, Tree } = {
   ...dom,
   ...geom
 };
-Object.assign(
+Util.extend(
   window,
   { React, ReactComponent, WebSocketClient, html },
-  dom,
+  { dom, keysim },
   geom,
-  { XmlObject, XmlAttr },
+  { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement },
+  { toXML, XmlObject, XmlAttr },
   {
     CTORS,
     ECMAScriptParser,
@@ -105,13 +107,16 @@ Object.assign(
     Token,
     ReactComponent,
     ClipperLib,
-    Shape
+    Shape,
+    RGBA,
+    isHSLA
   },
   { Chooser, useState, useLayoutEffect, useRef, Polygon }
 );
 
 let currentProj = trkl.property(window, 'project');
 let open = trkl();
+let showSearch = trkl(true);
 
 let projectName = 'Headphone-Amplifier-ClassAB-alt3';
 let palette = null;
@@ -122,11 +127,13 @@ let loadedProjects = [];
 let zoomVal = 0;
 let container;
 
-let projects, projectFiles;
+let projectFiles;
 let activeFile;
 let transform = trkl(new TransformationList());
 let sizeListener = trkl({});
 let aspectListener = trkl(1);
+
+let store = (window.store = makeLocalStorage());
 
 const useSlot = (arr, i) => [() => arr[i], v => (arr[i] = v)];
 const trklGetSet = (get, set) => value => (value !== undefined ? set(value) : get());
@@ -205,33 +212,37 @@ const ModifyColors = fn => e => {
   }
 };
 
-const loadDocument = async (proj, parentElem) => {
-  console.log(`load project #${proj.i}:`, proj);
-  proj.doc = await LoadFile(proj.name);
-  window.eagle = proj.doc;
-  window.project = proj;
+const loadDocument = async (project, parentElem) => {
+  console.log(`load project #${project.i}:`, project);
+  project.doc = await LoadFile(project.name);
+  window.eagle = project.doc;
+  window.project = project;
 
   Element.remove('#fence');
 
-  proj.renderer = new Renderer(proj.doc, ReactComponent.append);
+  let docElem = Element.find('#doc');
+  docElem.innerHTML = '';
 
-  if(!proj.renderer || !proj.renderer.render) return;
+  let docNode = Util.parseXML(project.doc.toXML());
+  let eagleNode = docNode.firstElementChild;
+  docNode.removeChild(eagleNode);
+  docElem.appendChild(eagleNode);
+
+  project.renderer = new Renderer(project.doc, ReactComponent.append);
+
+  if(!project.renderer || !project.renderer.render) return;
 
   let style = { width: '100%', height: '100%', position: 'relative' };
-  let svgXml = proj.renderer.render(proj.doc, null, {
-    /* style*/
-  });
-  console.log('testRender:', svgXml);
-  let component = proj.renderer.render(proj.doc, null, {
-    /*style */
-  });
+  /*  let svgXml = project.renderer.render(project.doc, null, {});
+  console.log('testRender:', svgXml);*/
+  let component = project.renderer.render(project.doc, null, {});
   window.component = component;
 
   let element = Element.find('#main');
   console.log('h', h);
   console.log('component', component);
 
-  let r = proj.renderer.rect || proj.renderer.bounds;
+  let r = project.renderer.rect || project.renderer.bounds;
   console.log('r', r);
   let aspectRatio = r.width / r.height;
   console.log('aspectRatio', aspectRatio);
@@ -258,7 +269,7 @@ const loadDocument = async (proj, parentElem) => {
         style: {
           position: 'relative',
           minWidth: '100px',
-          'data-name': proj.name,
+          'data-name': project.name,
           ...style,
           ...dimensions
         },
@@ -286,43 +297,43 @@ const loadDocument = async (proj, parentElem) => {
 
   window.rendered = rendered;
   console.log('window.rendered', window.rendered);
-  proj.element = rendered[0];
-  proj.svg = Element.find('svg', '#main');
-  proj.grid = Element.find('g.grid', proj.element);
-  proj.bbox = SVG.bbox(proj.grid);
-  proj.aspectRatio = aspect;
-  console.log('proj.svg', proj.svg);
-  console.log('project', proj);
+  project.element = rendered[0];
+  project.svg = Element.find('svg', '#main');
+  project.grid = Element.find('g.grid', project.element);
+  project.bbox = SVG.bbox(project.grid);
+  project.aspectRatio = aspect;
+  console.log('project.svg', project.svg);
+  console.log('project', project);
 
-  let { name, data, doc, svg, bbox } = proj;
+  let { name, data, doc, svg, bbox } = project;
   let bounds = doc.getBounds();
   let rect = bounds.rect;
   let size = new Size(r);
-  currentProj(proj);
+  currentProj(project);
   size.mul(doc.type == 'brd' ? 2 : 1.5);
-  let svgrect = SVG.bbox(proj.svg);
+  let svgrect = SVG.bbox(project.svg);
 
-  //  proj.aspectRatio = svgrect.aspect();
+  //  project.aspectRatio = svgrect.aspect();
 
-  Element.attr(proj.svg, {
-    'data-filename': proj.name,
-    'data-aspect': proj.aspectRatio,
+  Element.attr(project.svg, {
+    'data-filename': project.name,
+    'data-aspect': project.aspectRatio,
     'data-width': size.width + 'mm',
     'data-height': size.height + 'mm'
   });
 
-  // proj.svg.setAttribute('data-aspect', proj.aspectRatio);
+  // project.svg.setAttribute('data-aspect', project.aspectRatio);
   let css = size.div(0.26458333333719).toCSS({ width: 'px', height: 'px' });
 
   window.size = css;
   console.log('css:', css);
-  /*  Object.assign(proj.svg.style, {
+  /*  Object.assign(project.svg.style, {
     'min-width': `${size.width}mm`
   });
-  Element.setCSS(proj.svg, { left: 0, top: 0, position: 'relative' });
-  Element.setCSS(proj.svg, { left: 0, top: 0, position: 'relative' });
-  console.log('loadDocument:', proj.svg);*/
-  return proj;
+  Element.setCSS(project.svg, { left: 0, top: 0, position: 'relative' });
+  Element.setCSS(project.svg, { left: 0, top: 0, position: 'relative' });
+  console.log('loadDocument:', project.svg);*/
+  return project;
 };
 
 const chooseDocument = async (e, proj, i) => {
@@ -341,7 +352,8 @@ const chooseDocument = async (e, proj, i) => {
     }
     r = proj.loaded;
   } catch(err) {
-    console.log('err:', err.message, err.stack);
+    console.log('err:', err.message);
+    console.log('stack:', err.stack.map(f => f + '').join('\n'));
   }
 
   return r;
@@ -390,16 +402,42 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
   await ws.disconnect();
 };
 
+let projects = trkl([]);
+let socket = trkl();
+
+const BindGlobal = Util.once(arg => trkl.bind(window, arg));
+
 const AppMain = (window.onload = async () => {
   Object.assign(window, { Element, devtools, dom });
-  let projects = trkl([]);
-  let socket = trkl();
-  trkl.bind(window, { projects, socket, transform, size: sizeListener, aspect: aspectListener });
+
+  // window.focusSearch = trkl();
+  window.currentSearch = trkl(null);
+
+  window.keystroke = target => (key, modifiers = 0) => keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key), target);
+
+  window.focusSearch = state => {
+    const input = currentSearch();
+    console.log('focusSearch', input.tagName, state);
+    input[state ? 'focus' : 'blur']();
+  };
+
+  BindGlobal({ projects, socket, transform, size: sizeListener, aspect: aspectListener, showSearch });
+
+  currentSearch.subscribe(value => {
+    if(value) {
+      focusSearch(false);
+
+      setTimeout(() => {
+        //   console.log('currentSearch:', value);
+        focusSearch(true);
+      }, 1000);
+    }
+  });
 
   Util(globalThis);
 
   // prettier-ignore
-  Object.assign(window, { BBox, chooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleInterface, EagleNode, ImmutablePath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, loadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect, RGBA, Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
+  Object.assign(window, { BBox, chooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleInterface, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, loadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
 
   const inspectSym = Symbol.for('nodejs.util.inspect.custom');
 
@@ -452,6 +490,21 @@ const AppMain = (window.onload = async () => {
   });
 
   CreateWebSocket(null, null, ws => (window.socket = ws));
+
+  const searchFilter = trkl(store.get('filter') || '.*');
+
+  console.log('searchFilter is ', searchFilter());
+
+  searchFilter.subscribe(value => {
+    store.set('filter', value);
+  });
+
+  const changeInput = e => {
+    const { target } = e;
+    console.log('changeInput:', target.value);
+
+    searchFilter(target.value);
+  };
 
   React.render(
     [
@@ -510,7 +563,7 @@ const AppMain = (window.onload = async () => {
         })
       ]),*/
       html`
-        <${FileList} files=${projects} onActive=${open} onChange=${chooseDocument} />
+        <${FileList} files=${projects} onActive=${open} onChange=${chooseDocument} filter=${searchFilter} showSearch=${showSearch} changeInput=${changeInput} focusSearch=${focusSearch} currentInput=${currentSearch} />
       `
     ],
     Element.find('#preact')
@@ -540,9 +593,18 @@ const AppMain = (window.onload = async () => {
   );
 
   window.styles = CSS.create('head');
+  /* document.addEventListener('keydown', event => {
+    const { ctrlKey, shiftKey, altKey, metaKey } = event;
+
+    if(true || ctrlKey || shiftKey || altKey || metaKey) {
+      const { key, code, keyCode } = event;
+      const { target, currentTarget } = event;
+      console.log('keydown: ', (window.keyEvent = event));
+    }
+  });*/
 
   window.addEventListener('wheel', event => {
-    console.log('event:', event);
+    //    console.log('event:', event);
     const clientArea = Element.rect('body > div');
     const sideBar = Element.rect('.sidebar');
 
@@ -556,7 +618,7 @@ const AppMain = (window.onload = async () => {
 
     clientArea.x += container.parentElement.scrollLeft;
 
-    console.log('wheel:', { sideBar, clientArea });
+    //    console.log('wheel:', { sideBar, clientArea });
 
     const clientCenter = clientArea.center;
     const { clientX, clientY, target, currentTarget, buttons, altKey, ctrlKey, shiftKey } = event;
@@ -597,9 +659,9 @@ const AppMain = (window.onload = async () => {
 
   console.log(Util.getGlobalObject());
 
-  for(let path of [...Element.findAll('path')]) {
+  /*  for(let path of [...Element.findAll('path')]) {
     let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
-  }
+  }*/
 });
 
 const Module = {
