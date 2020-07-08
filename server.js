@@ -54,10 +54,7 @@ app.ws('/ws', async (ws, req) => {
   //console.log('headers:', headers);
   //console.log('cookie:', cookie);
 
-  console.log(
-    's:',
-    Util.filterKeys(s, k => k != 'ws')
-  );
+  //console.log('s:', Util.filterKeys(s, k => k != 'ws'));
 
   ws.on('message', msg => {
     //console.log(`message from ${s.toString()}:`, msg);
@@ -119,7 +116,7 @@ app.get('/files.html', async (req, res) => {
     };
   });
 
-  console.log('files:', files);
+  //console.log('files:', files);
 
   res.type('json');
   res.json({ files });

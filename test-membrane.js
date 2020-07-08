@@ -145,7 +145,7 @@ try {
       dumps = dumps.map(([p, s, v, o]) => [p, s, `children: ${v.children.length}`, `offset: ${o}`]);
       dumps = dumps.map(([p, s, v, o]) => [p, s, v, p.toRegExp()]);
 
-      console.log(
+      //console.log(
         'result:\n  ',
         dumps
           .map(([p, s, v, r]) => [p, s, v, r.test(p), r.test(s), [...(p.toString() + '').match(q)], [...q.exec(p)].slice(1)])
@@ -163,12 +163,12 @@ try {
     let x = new ImmutableXPath('/eagle/drawing/board');
     let drawing = deep.find(xml, v => v.tagName == 'drawing');
     let w = new ImmutablePath('children/0/children/0/children/3', true);
-    console.log('w:', w.toString());
+    //console.log('w:', w.toString());
     let y = ImmutableXPath.from(w, xml);
-    console.log('y:', y, [...y]);
+    //console.log('y:', y, [...y]);
     let z = w.apply(xml);
     let u = observer.get(z);
-    console.log('z:', z);
+    //console.log('z:', z);
   }
   main(...process.argv.slice(2));
 } catch(err) {}

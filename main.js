@@ -15,6 +15,7 @@ import { ClipperLib } from './lib/clipper-lib.js';
 import Shape from './lib/clipper.js';
 import { devtools } from './lib/devtools.js';
 import Util from './lib/util.js';
+import Iterator from './lib/iterator.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import { makeLocalStorage } from './lib/autoStore.js';
@@ -91,6 +92,7 @@ Util.extend(
   { React, ReactComponent, WebSocketClient, html },
   { dom, keysim },
   geom,
+  { Iterator },
   { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement },
   { toXML, XmlObject, XmlAttr },
   {
@@ -148,7 +150,7 @@ const MouseEvents = h => ({
   onMouseOut: h,
   onMouseUp: h
 });
-console.log('running');
+//console.log('running');
 //console.log("dom", { Rect, Element });
 
 window.dom = { Element, SVG };
@@ -170,13 +172,13 @@ const ListProjects = (window.list = async function(url) {
 
 const ElementToXML = e => {
   const x = Element.toObject(e);
-  console.log('x:', x);
+  //console.log('x:', x);
   return Element.toString(x);
 };
 
 const LoadFile = async filename => {
   let xml = await fetch(`/static/${filename}`).then(async res => await (await res).text());
-  console.log('xml: ', xml.substring(0, 100));
+  //console.log('xml: ', xml.substring(0, 100));
   //let dom = new DOMParser().parseFromString(xml, 'application/xml');
 
   let doc = new EagleDocument(xml);
@@ -228,24 +230,25 @@ const loadDocument = async (project, parentElem) => {
   docNode.removeChild(eagleNode);
   docElem.appendChild(eagleNode);
 
-  project.renderer = new Renderer(project.doc, ReactComponent.append);
+  project.renderer = new Renderer(project.doc, ReactComponent.append, false);
 
   if(!project.renderer || !project.renderer.render) return;
 
   let style = { width: '100%', height: '100%', position: 'relative' };
   /*  let svgXml = project.renderer.render(project.doc, null, {});
-  console.log('testRender:', svgXml);*/
+  //console.log('testRender:', svgXml);*/
   let component = project.renderer.render(project.doc, null, {});
   window.component = component;
+  project.component = component;
 
   let element = Element.find('#main');
-  console.log('h', h);
-  console.log('component', component);
+  //console.log('h', h);
+  //console.log('component', component);
 
   let r = project.renderer.rect || project.renderer.bounds;
-  console.log('r', r);
+  //console.log('r', r);
   let aspectRatio = r.width / r.height;
-  console.log('aspectRatio', aspectRatio);
+  //console.log('aspectRatio', aspectRatio);
 
   sizeListener({ width: r.width });
   aspectListener(aspectRatio);
@@ -257,7 +260,7 @@ const loadDocument = async (project, parentElem) => {
     if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
     if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
 
-    console.log('Fence.render', { dimensions, aspect });
+    //console.log('Fence.render', { dimensions, aspect });
 
     return h(
       TransformedElement,
@@ -291,19 +294,19 @@ const loadDocument = async (project, parentElem) => {
     [component]
   );
 
-  React.render(component /*html`<${Fence}>${component}</${Fence}>`*/, element);
+  React.render(component, element);
 
   let rendered = [...element.children];
 
   window.rendered = rendered;
-  console.log('window.rendered', window.rendered);
+  //console.log('window.rendered', window.rendered);
   project.element = rendered[0];
   project.svg = Element.find('svg', '#main');
   project.grid = Element.find('g.grid', project.element);
   project.bbox = SVG.bbox(project.grid);
   project.aspectRatio = aspect;
-  console.log('project.svg', project.svg);
-  console.log('project', project);
+  //console.log('project.svg', project.svg);
+  //console.log('project', project);
 
   let { name, data, doc, svg, bbox } = project;
   let bounds = doc.getBounds();
@@ -326,13 +329,13 @@ const loadDocument = async (project, parentElem) => {
   let css = size.div(0.26458333333719).toCSS({ width: 'px', height: 'px' });
 
   window.size = css;
-  console.log('css:', css);
+  //console.log('css:', css);
   /*  Object.assign(project.svg.style, {
     'min-width': `${size.width}mm`
   });
   Element.setCSS(project.svg, { left: 0, top: 0, position: 'relative' });
   Element.setCSS(project.svg, { left: 0, top: 0, position: 'relative' });
-  console.log('loadDocument:', project.svg);*/
+  //console.log('loadDocument:', project.svg);*/
   return project;
 };
 
@@ -352,8 +355,8 @@ const chooseDocument = async (e, proj, i) => {
     }
     r = proj.loaded;
   } catch(err) {
-    console.log('err:', err.message);
-    console.log('stack:', err.stack.map(f => f + '').join('\n'));
+    //console.log('err:', err.message);
+    //console.log('stack:', [...err.stack].map(f => f + '').join('\n'));
   }
 
   return r;
@@ -364,7 +367,7 @@ const MakeFitAction = index => async () => {
   let prect = Element.rect(parent);
   let svg = Element.find('svg', parent);
   let container = [...Element.findAll('.aspect-ratio-box-size', parent)].reverse()[0];
-  console.log('container:', container);
+  //console.log('container:', container);
   let oldSize = Element.rect(container);
   let brect = Element.rect('.buttons');
   let srect = Element.rect(svg);
@@ -372,16 +375,16 @@ const MakeFitAction = index => async () => {
   prect.height -= brect.height;
   let rects = [prect, oldSize, srect];
   prect.scale(0.8);
-  console.log('resize rects', { oldSize, prect, srect });
+  //console.log('resize rects', { oldSize, prect, srect });
   let f = srect.fit(prect);
   let newSize = f[index].round(0.0001);
   let affineTransform = Matrix.getAffineTransform(oldSize.toPoints(), newSize.toPoints());
   let transform = affineTransform.decompose();
-  console.log(`fitAction(${index})`, { oldSize, newSize, transform });
+  //console.log(`fitAction(${index})`, { oldSize, newSize, transform });
   let factor = transform.scale.x;
-  console.log('zoom factor:', factor);
+  //console.log('zoom factor:', factor);
   let delay = Math.abs(Math.log(factor) * 1000);
-  console.log('transition delay:', delay);
+  //console.log('transition delay:', delay);
   await Element.transition(container, { ...newSize.toCSS(), transform: '', position: 'absolute' }, delay + 'ms', 'linear');
 };
 
@@ -417,7 +420,7 @@ const AppMain = (window.onload = async () => {
 
   window.focusSearch = state => {
     const input = currentSearch();
-    console.log('focusSearch', input.tagName, state);
+    //console.log('focusSearch', input.tagName, state);
     input[state ? 'focus' : 'blur']();
   };
 
@@ -448,7 +451,7 @@ const AppMain = (window.onload = async () => {
 
   let c = testComponent({});
   window.testComponent = c;
-  console.log('testComponent', ReactComponent.toObject(c));
+  //console.log('testComponent', ReactComponent.toObject(c));
 
   /*console.realLog = console.log;
   //console.log = function(...args) {
@@ -477,7 +480,7 @@ const AppMain = (window.onload = async () => {
   ListProjects('/files.html').then(response => {
     let data = JSON.parse(response);
     let { files } = data;
-    console.log(`Got ${files.length} files`);
+    //console.log(`Got ${files.length} files`);
     projectFiles = window.files = files;
     projects(
       projectFiles.map(({ name }, i) => {
@@ -493,7 +496,7 @@ const AppMain = (window.onload = async () => {
 
   const searchFilter = trkl(store.get('filter') || '.*');
 
-  console.log('searchFilter is ', searchFilter());
+  //console.log('searchFilter is ', searchFilter());
 
   searchFilter.subscribe(value => {
     store.set('filter', value);
@@ -501,7 +504,7 @@ const AppMain = (window.onload = async () => {
 
   const changeInput = e => {
     const { target } = e;
-    console.log('changeInput:', target.value);
+    //console.log('changeInput:', target.value);
 
     searchFilter(target.value);
   };
@@ -513,7 +516,7 @@ const AppMain = (window.onload = async () => {
           caption: '📂',
           fn: e => {
             if(e.type.endsWith('down')) {
-              console.log('file list push', e);
+              //console.log('file list push', e);
               open(!open());
             }
           }
@@ -547,7 +550,7 @@ const AppMain = (window.onload = async () => {
           length: '10px',
           style: { flex: '0 1 auto' },
           onChange: value => {
-            console.log('value:', value);
+            //console.log('value:', value);
           }
         }),
         h(Slider, {
@@ -558,7 +561,7 @@ const AppMain = (window.onload = async () => {
           length: '10px',
           style: { flex: '0 1 auto' },
           onChange: value => {
-            console.log('value:', value);
+            //console.log('value:', value);
           }
         })
       ]),*/
@@ -599,7 +602,7 @@ const AppMain = (window.onload = async () => {
     if(true || ctrlKey || shiftKey || altKey || metaKey) {
       const { key, code, keyCode } = event;
       const { target, currentTarget } = event;
-      console.log('keydown: ', (window.keyEvent = event));
+      //console.log('keydown: ', (window.keyEvent = event));
     }
   });*/
 
@@ -657,7 +660,7 @@ const AppMain = (window.onload = async () => {
     }*/
   });
 
-  console.log(Util.getGlobalObject());
+  //console.log(Util.getGlobalObject());
 
   /*  for(let path of [...Element.findAll('path')]) {
     let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
@@ -667,7 +670,7 @@ const AppMain = (window.onload = async () => {
 const Module = {
   noInitialRun: true,
   onRuntimeInitialized: () => {
-    console.log('initialized');
+    //console.log('initialized');
     let myString = prompt('Enter a string:');
     Module.callMain([myString]);
   },

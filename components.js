@@ -227,7 +227,7 @@ export const Chooser = ({ className = 'list', itemClass = 'item', itemComponent 
     .filter(r => r !== null);
   const pred = name => reList.every(re => re.test(name));
   const other = items.filter(({ name }) => !pred(name)).map(i => i.name);
-  console.log(reList);
+  //console.log(reList);
   const children = items
     .filter(({ name }) => pred(name))
     .map(({ name, i, data, ...item }, key) =>

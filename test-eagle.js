@@ -118,14 +118,14 @@ function updateMeasures(board) {
   let measures = board.getMeasures();
 
   if(measures) {
-    console.log('got measures:', measures);
+    //console.log('got measures:', measures);
   } else {
     let rect = new Rect(bounds.rect);
     let lines = rect.toLines(lines => new LineList(lines));
     let { plain } = board;
     plain.remove(e => e.tagName == 'wire' && e.attributes.layer == '47');
     plain.append(...lines.map(line => ({ tagName: 'wire', attributes: { ...line.toObject(), layer: 47, width: 0 } })));
-    console.log('no measures:', { bounds, lines }, [...plain]);
+    //console.log('no measures:', { bounds, lines }, [...plain]);
     //plain.remove(e => e.attributes.layer == '51');
   }
   /// console.log('board.plain:', board.plain);
@@ -151,10 +151,10 @@ function alignItem(item) {
   let changed = !diff.isNull();
 
   if(changed) {
-    console.log('before:', before);
-    console.log('after:', item.parentNode.toXML());
-    console.log('geometry:', geometry);
-    console.log('align\n', item.xpath(), '\n newPos:', newPos, '\n diff:', diff, '\n attr:', item.raw.attributes);
+    //console.log('before:', before);
+    //console.log('after:', item.parentNode.toXML());
+    //console.log('geometry:', geometry);
+    //console.log('align\n', item.xpath(), '\n newPos:', newPos, '\n diff:', diff, '\n attr:', item.raw.attributes);
   }
   return changed;
 }
@@ -202,7 +202,7 @@ async function testEagle(filename) {
 
   if(updateMeasures(proj.board) | alignAll(board) | alignAll(schematic)) console.log('Saved:', await proj.board.saveTo(null, true));
 
-  console.log('saved:', await proj.saveTo('tmp', true));
+  //console.log('saved:', await proj.saveTo('tmp', true));
   for(let element of board.getAll('element')) {
   }
   for(let instance of schematic.getAll(e => e.tagName == 'instance')) {
