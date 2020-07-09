@@ -13,18 +13,23 @@ const filesystem = {
   realpath(filename) {return fs.realpathSync(filename); }
 };
 
-function main(...args) {
+function readXML(filename) {
   let data = filesystem.readFile('HoerMalWerDaHaemmert.html');
 
   let xml = tXml(data);
   console.log('xml:', xml);
 
+  return xml;
+}
+// TODO: Test with tmScheme (XML) and ColorMap
+
+function main(...args) {
+  const filename = 'HoerMalWerDaHaemmert.html';
+  let xml = readXML(filename);
   let json = JSON.stringify(xml);
-  let js = toSource(xml);
-
+  //  let js = toSource(xml);
   filesystem.writeFile('HoerMalWerDaHaemmert.json', json);
-  filesystem.writeFile('HoerMalWerDaHaemmert.js', js);
-
+  //filesystem.writeFile('HoerMalWerDaHaemmert.js', js);
   let flat = deep.flatten(
     xml[0],
     new Map(),
@@ -41,5 +46,4 @@ function main(...args) {
   );
   console.log('flat:', flat);
 }
-
 main(process.argv.slice(2));

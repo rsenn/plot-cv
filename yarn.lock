@@ -2,6 +2,14 @@
 # yarn lockfile v1
 
 
+"@app-elements/use-store-path@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@app-elements/use-store-path/-/use-store-path-1.0.1.tgz#ef5df7da33f9502749bf751a79bd40a9a1b9c912"
+  integrity sha512-HOGuKvcFfZrw/GsswC0corcX6SWvrBIC3PaXzJeXj5KPqCydGxunb5e6Pc/Av0IfTcD85LcF9aEVobaf8L1vyQ==
+  dependencies:
+    "@wasmuth/path" "^2.1.1"
+    "@wasmuth/path-set" "^2.1.3"
+
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.1":
   version "7.10.1"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.10.1.tgz#d5481c5095daa1c57e16e54c6f9198443afb49ff"
@@ -197,6 +205,56 @@
     lodash "^4.17.15"
     semver "^7.3.2"
     tsutils "^3.17.1"
+
+"@wasmuth/deep-clone@2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@wasmuth/deep-clone/-/deep-clone-2.1.1.tgz#0570e9277395ead64c1f8f7e2aad4048165b3b82"
+  integrity sha512-qnL3cgsXRxHBF+KRrjY4FD+FCY8uFRZ5Lc5z45j/H2AcTU+t1joRe4Ii/DospNbtimK1/2cOwbCYq3QGbPK8zA==
+  dependencies:
+    "@wasmuth/partial" "2.1.0"
+    check-arg-types "1.1.2"
+
+"@wasmuth/merge@2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@wasmuth/merge/-/merge-2.1.1.tgz#6f7349847ac977055bbfe4a9549fa1104fde8422"
+  integrity sha512-66vx8hA+1H+Dc2KlEaNfMYxyIoX/nFi/3YVb8L/PqCXYDjphhxkdANEOQwnfLNn0r/6oyQ3zNFTRYm050SYs2w==
+  dependencies:
+    "@wasmuth/partial" "2.1.0"
+    check-arg-types "1.1.2"
+
+"@wasmuth/partial@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@wasmuth/partial/-/partial-2.1.0.tgz#9ad608ca5bfb362c25b747fa4eae4a4ef5a023eb"
+  integrity sha512-ITLf654V5g2VJEduxfSp+hiAlZGgaRkVO0ZPkF0w2zRupQVswBTycrGSdxFn9NE5r9xcaYK0szTrhfhaA5LcNw==
+  dependencies:
+    check-arg-types "1.1.2"
+
+"@wasmuth/path-set@^2.1.3":
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/@wasmuth/path-set/-/path-set-2.1.3.tgz#0899a2d040541a06496fe3869ae0f5c86db9e1b8"
+  integrity sha512-jL7gpN4/tGckK0n5olJQVJG+4VUa8VgQT5Qqw8esA4WNeMuFBgdxe6EVVyxhxsXxd+VRk755KR1wM0ST5hpoYg==
+  dependencies:
+    "@wasmuth/deep-clone" "2.1.1"
+    "@wasmuth/merge" "2.1.1"
+    "@wasmuth/partial" "2.1.0"
+    "@wasmuth/reduce" "2.1.1"
+    check-arg-types "1.1.2"
+
+"@wasmuth/path@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@wasmuth/path/-/path-2.1.1.tgz#463c0f9739999608c905e497f6247de86aca96da"
+  integrity sha512-O72/hJByGqw46ZpW+RVOm5oZPTjdnnQHVAreth4I/TF+6s+MDJe6FVyiBpUmRHp5YMg6PuYN7IcOC2SpOvY3Aw==
+  dependencies:
+    "@wasmuth/partial" "2.1.0"
+    check-arg-types "1.1.2"
+
+"@wasmuth/reduce@2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@wasmuth/reduce/-/reduce-2.1.1.tgz#85f9311c29518c9ec28e30e4ccae85c9c50f0fc8"
+  integrity sha512-XxUWWkR6jV7YHR7Z+y9f6WQhHJHGIsJ07oh0GHZr/VD3p+CCEyOniqIl20iXt9xU+emNIAI72l+6jYCuEue4qg==
+  dependencies:
+    "@wasmuth/partial" "2.1.0"
+    check-arg-types "1.1.2"
 
 abbrev@1:
   version "1.1.1"
@@ -529,6 +587,11 @@ chardet@^0.7.0:
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/chardet/-/chardet-0.7.0.tgz#90094849f0937f2eedc2425d0d28a9e5f0cbad9e"
   integrity sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==
+
+check-arg-types@1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/check-arg-types/-/check-arg-types-1.1.2.tgz#2ca6aadb88e806c0a6242bcf7ab3c62069564fe0"
+  integrity sha512-JlPlbqz/TcRGJYR0rSe/YhuqjOP1VoIePuaQHKHPM+GoxsLbjSCFc3N93Iiar+KNs9KcmLTYhmR15Mlhl4OgfA==
 
 circular-json@^0.3.1:
   version "0.3.3"
