@@ -202,7 +202,8 @@ async function testEagle(filename) {
 
   if(updateMeasures(proj.board) | alignAll(board) | alignAll(schematic)) console.log('Saved:', await proj.board.saveTo(null, true));
 
-  //console.log('saved:', await proj.saveTo('tmp', true));
+  console.log('saved:', await proj.saveTo('tmp', true));
+
   for(let element of board.getAll('element')) {
   }
   for(let instance of schematic.getAll(e => e.tagName == 'instance')) {
@@ -223,6 +224,7 @@ async function testEagle(filename) {
     try {
       let project = await testEagle(arg);
     } catch(err) {
+      console.log("Err:", err);
       throw err;
     }
   }
