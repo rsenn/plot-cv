@@ -3,6 +3,7 @@ import { XPath } from './lib/xml.js';
 import fs, { promises as fsPromises } from 'fs';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
+import toSource from './lib/tosource.js';
 
 // prettier-ignore
 const filesystem = {
@@ -19,19 +20,21 @@ function main(...args) {
   console.log('xml:', xml);
 
   let json = JSON.stringify(xml);
+  let js = toSource(xml);
 
   filesystem.writeFile('HoerMalWerDaHaemmert.json', json);
+  filesystem.writeFile('HoerMalWerDaHaemmert.js', js);
 
   let flat = deep.flatten(
     xml[0],
     new Map(),
-    (v, p) => p.findIndex(part => /^(attributes|tagName)$/.test(part))== -1 && p[p.length-1] != 'children', // Util.isObject(v) && v.tagName !== undefined,
-p => p.join('.'),
+    (v, p) => p.findIndex(part => /^(attributes|tagName)$/.test(part)) == -1 && p[p.length - 1] != 'children', // Util.isObject(v) && v.tagName !== undefined,
+    p => p.join('.'),
     e => {
       if(e.tagName !== undefined) {
         const { tagName, attributes = {}, children } = e;
         const { style, ...rest } = attributes;
-        return { tagName, attributes: rest/*, children*/ };
+        return { tagName, attributes: rest /*, children*/ };
       }
       return e;
     }
