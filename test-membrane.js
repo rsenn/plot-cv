@@ -145,14 +145,13 @@ try {
       dumps = dumps.map(([p, s, v, o]) => [p, s, `children: ${v.children.length}`, `offset: ${o}`]);
       dumps = dumps.map(([p, s, v, o]) => [p, s, v, p.toRegExp()]);
 
-      //console.log(
-        'result:\n  ',
-        dumps
-          .map(([p, s, v, r]) => [p, s, v, r.test(p), r.test(s), [...(p.toString() + '').match(q)], [...q.exec(p)].slice(1)])
-          .map(([p, s, ...rest]) => [p[Symbol.for('nodejs.util.inspect.custom')](), s[Symbol.for('nodejs.util.inspect.custom')](), ...rest.map(i => Util.toSource(i))])
-          .map(([p]) => p + '')
-          .join('\n  |')
-      );
+      dumps = dumps
+        .map(([p, s, v, r]) => [p, s, v, r.test(p), r.test(s), [...(p.toString() + '').match(q)], [...q.exec(p)].slice(1)])
+        .map(([p, s, ...rest]) => [p[Symbol.for('nodejs.util.inspect.custom')](), s[Symbol.for('nodejs.util.inspect.custom')](), ...rest.map(i => Util.toSource(i))])
+        .map(([p]) => p + '')
+        .join('\n  |');
+
+      console.log('result:\n  ', dumps);
       return [xpath, new Map(selected.map(({ path, value }) => [path2xpath(path).down('*'), value]))];
     });
 

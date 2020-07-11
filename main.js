@@ -15,9 +15,9 @@ import { ClipperLib } from './lib/clipper-lib.js';
 import Shape from './lib/clipper.js';
 import { devtools } from './lib/devtools.js';
 import Util from './lib/util.js';
-import Iterator from './lib/iterator.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
+import { Iterator } from './lib/iterator.js';
 import { makeLocalStorage } from './lib/autoStore.js';
 
 import { toXML, ImmutablePath } from './lib/json.js';
@@ -199,7 +199,7 @@ const SaveSVG = (window.save = async function save(filename = projectName) {
     },
     body
   });
-  console.log('saved', result);
+  //console.log('saved', result);
 });
 
 const ModifyColors = fn => e => {
@@ -207,7 +207,7 @@ const ModifyColors = fn => e => {
   if(type.endsWith('down')) {
     if(!window.c) window.c = SVG.allColors(project.svg);
     let { c } = window;
-    console.log('ModifyColors', fn);
+    //console.log('ModifyColors', fn);
 
     c.dump();
     fn(c);
@@ -215,7 +215,7 @@ const ModifyColors = fn => e => {
 };
 
 const loadDocument = async (project, parentElem) => {
-  console.log(`load project #${project.i}:`, project);
+  //console.log(`load project #${project.i}:`, project);
   project.doc = await LoadFile(project.name);
   window.eagle = project.doc;
   window.project = project;
@@ -344,14 +344,14 @@ const chooseDocument = async (e, proj, i) => {
   try {
     const { type } = e;
     const box = Element.findAll('.file')[i];
-    console.log('chooseDocument:', { e, proj, i, box });
+    //console.log('chooseDocument:', { e, proj, i, box });
     if(!proj.loaded) {
       let data = await loadDocument(proj, box);
       proj.loaded = true;
 
       open(false);
 
-      console.log('loaded:', proj);
+      //console.log('loaded:', proj);
     }
     r = proj.loaded;
   } catch(err) {
