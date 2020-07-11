@@ -38,67 +38,42 @@ function readXML(filename) {
 
 function main(...args) {
   console.log('main', args);
-
   if(args.length == 0) args = ['/home/roman/.config/sublime-text-3/Packages/Babel/Next.tmTheme' /*  */];
-
   for(let filename of args)
     try {
       let xml = readXML(filename);
       let json = JSON.stringify(xml);
       let basename = filename.replace(/.*\//g, '').replace(/\.[^.]*$/, '');
       console.log('basename ', basename);
-
       //  let js = toSource(xml);
       filesystem.writeFile(basename + '.json', json);
       //filesystem.writeFile('HoerMalWerDaHaemmert.js', js);
-
       let flat = deep.flatten(
         xml[0],
         new Map(),
         (v, p) => typeof v != 'object',
         (p, v) => [new Path(p), v]
       );
-
       let colors = new Map([...Iterator.filter(flat, ([path, value]) => /^#[0-9A-Fa-f]*$/.test(value))].map(([path, value]) => [path, new RGBA(value)]));
       console.log('colors:', colors);
-
-      //let str = [...flat.entries()].map(([path, value]) => `${path} ${Util.toString(value)}`).join('\n');
-
-      //     [...flat.entries()].forEach(([path, value]) => console.log(path + ': ', value));
-
       let obj = {};
       for(let [path, value] of flat) {
         //        console.log('path:', path, ' value:', value);
-
         deep.set(obj, path, value);
       }
-
-      //   console.log('flat:', flat);
-
       filesystem.writeFile(basename + '.xml', toXML(obj));
-
       console.log('methods:', Util.getMethodNames(Iterator));
       let it = new IteratorForwarder(colors.entries());
-      /*      console.log('it:', it);
-      console.log('[...it]:', [...it]);*/
       console.log('it.map', it.map + '');
-
       let paths = it.map(([path, value]) => [XPath.from(path, xml[0]), path]);
-      // console.log('paths:', [...paths]);
-      //  throw new Error();
-
       let o = it.map(([path, value]) => {
-        ///    console.log(':', { path, value });
         const key = path.up(2).prevSibling;
-
         let paths = [
           ...key.walk(p => {
             if(p[p.length - 1] > 0) return p.up(1).down(0);
-
             return p.length > 2 && p.up(2);
           })
         ];
-
         return [
           paths
             .map(p => {
