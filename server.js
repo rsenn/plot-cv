@@ -31,7 +31,19 @@ Socket.prototype.toString = function() {
 };
 
 app.ws('/ws', async (ws, req) => {
-  const { connection, client, upgrade, query, socket, headers, trailers, params, res, route, body } = req;
+  const {
+    connection,
+    client,
+    upgrade,
+    query,
+    socket,
+    headers,
+    trailers,
+    params,
+    res,
+    route,
+    body
+  } = req;
   const { path, protocol, ip, cookies, hostname } = req;
   const { remoteAddress, remotePort, localAddress, localPort } = client;
   const { _host, _peername } = connection;
@@ -99,10 +111,14 @@ app.get('/favicon.ico', (req, res) =>
   })
 );
 app.get('/main.js', async (req, res) => res.sendFile(path.join(p, 'main.js')));
-app.get('/style.css', async (req, res) => res.sendFile(path.join(p, 'style.css'), { headers: { 'Content-Type': 'text/css' } }));
+app.get('/style.css', async (req, res) =>
+  res.sendFile(path.join(p, 'style.css'), { headers: { 'Content-Type': 'text/css' } })
+);
 
 app.get('/files.html', async (req, res) => {
-  let files = [...(await fs.promises.readdir('./tmp'))].filter(entry => /\.(brd|sch)$/.test(entry)).map(entry => `tmp/${entry}`);
+  let files = [...(await fs.promises.readdir('./tmp'))]
+    .filter(entry => /\.(brd|sch)$/.test(entry))
+    .map(entry => `tmp/${entry}`);
 
   files = files.map(file => {
     const stat = fs.statSync(file);
@@ -129,7 +145,8 @@ app.post('/save', async (req, res) => {
   const { body } = req;
   //console.log('req.headers:', req.headers);
   //console.log('save body:', body.substring(0, 100), '...');
-  const filename = req.headers['content-disposition'].replace(/.*"([^"]*)".*/, '$1') || 'output.svg';
+  const filename =
+    req.headers['content-disposition'].replace(/.*"([^"]*)".*/, '$1') || 'output.svg';
   let result = await fs.promises.writeFile(filename, body, { mode: 0o600, flag: 'w' });
   res.json({ result });
 });

@@ -19,7 +19,9 @@ global.console = new Console({
 });
 
 function xmlize(obj, depth = 2) {
-  return obj.toXML ? obj.toXML().replace(/>\s*</g, '>\n    <') : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
+  return obj.toXML
+    ? obj.toXML().replace(/>\s*</g, '>\n    <')
+    : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
 
 function testLocator() {
@@ -124,7 +126,12 @@ function updateMeasures(board) {
     let lines = rect.toLines(lines => new LineList(lines));
     let { plain } = board;
     plain.remove(e => e.tagName == 'wire' && e.attributes.layer == '47');
-    plain.append(...lines.map(line => ({ tagName: 'wire', attributes: { ...line.toObject(), layer: 47, width: 0 } })));
+    plain.append(
+      ...lines.map(line => ({
+        tagName: 'wire',
+        attributes: { ...line.toObject(), layer: 47, width: 0 }
+      }))
+    );
     //console.log('no measures:', { bounds, lines }, [...plain]);
     //plain.remove(e => e.attributes.layer == '51');
   }
@@ -200,7 +207,8 @@ async function testEagle(filename) {
   for(let description of board.getAll('description')) {
   }
 
-  if(updateMeasures(proj.board) | alignAll(board) | alignAll(schematic)) console.log('Saved:', await proj.board.saveTo(null, true));
+  if(updateMeasures(proj.board) | alignAll(board) | alignAll(schematic))
+    console.log('Saved:', await proj.board.saveTo(null, true));
 
   //console.log('saved:', await proj.saveTo('tmp', true));
 
@@ -224,8 +232,8 @@ async function testEagle(filename) {
     try {
       let project = await testEagle(arg);
     } catch(err) {
-      //console.log('Err:', err);
-      throw err;
+      console.log('Err:', err.message, err.stack);
+      //throw err;
     }
   }
 })();

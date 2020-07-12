@@ -1,7 +1,14 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { Stack, PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
-import { estree, Factory, ESNode, ImportStatement, ForInStatement, CallExpression } from './lib/ecmascript/estree.js';
+import {
+  estree,
+  Factory,
+  ESNode,
+  ImportStatement,
+  ForInStatement,
+  CallExpression
+} from './lib/ecmascript/estree.js';
 
 import Util from './lib/util.js';
 import fs from 'fs';
@@ -28,7 +35,10 @@ if(args.length == 0) args.push('-');
 let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
 
 process.on('uncaughtException', (err, origin) => {
-  fs.writeSync(process.stderr.fd, `Caught exception: ${err}\nException origin: ${origin}\nStack: ${err.stack}`);
+  fs.writeSync(
+    process.stderr.fd,
+    `Caught exception: ${err}\nException origin: ${origin}\nStack: ${err.stack}`
+  );
   process.exit();
 });
 
@@ -92,7 +102,12 @@ function main(args) {
 
       parser.addCommentsToNodes(ast);
 
-      let imports = [...deep.iterate(ast, node => node instanceof CallExpression && /console.log/.test(printer.print(node)))].map(([node, path]) => node);
+      let imports = [
+        ...deep.iterate(
+          ast,
+          node => node instanceof CallExpression && /console.log/.test(printer.print(node))
+        )
+      ].map(([node, path]) => node);
 
       //console.log('imports:', imports.map(node => ({ str: printer.print(node), toks: ECMAScriptParser.printToks( parser.tokensForNode(node))  })));
 
@@ -109,7 +124,10 @@ function main(args) {
       );
 
       let commentMap = new SortedMap(
-        [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node: posMap.keyOf(node) }]),
+        [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
+          pos * 10 - 1,
+          { comment, pos, len, node: posMap.keyOf(node) }
+        ]),
         (a, b) => a - b
       );
 
