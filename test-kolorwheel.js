@@ -1,6 +1,9 @@
 import KolorWheel from './lib/KolorWheel.js';
 import { RGBA, HSLA } from './lib/color.js';
 import Util from './lib/util.js';
+import Alea from './lib/alea.js';
+
+const prng = new Alea(Date.now());
 
 const layerToColorIndex = {
   Top: 4,
@@ -139,12 +142,15 @@ const findAllKeys = color => {
   }
   return keys;
 };
+
 for(let name in layerColors) {
   const c = RGBA.fromString(layerColors[name]).hex();
   layerColors[name] = c;
 }
+
 const allColors = Util.unique(Object.values(layerColors));
-//console.log('allColors: ' + allColors);
+console.log('allColors: ' + allColors);
+
 let keyList = [];
 
 for(let color of allColors) {
@@ -156,22 +162,24 @@ for(let color of allColors) {
 
 const GeneratePalette = numColors => {
   let ret = [];
-  let base = new HSLA(Util.randInt(0, 360), 100, 50).toRGBA();
-  let offsets = Util.shuffle(Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360], []));
-  //console.log("offsets:", offsets);
+  let base = new HSLA(Util.randInt(0, 360, prng), 100, 50).toRGBA();
+  let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360], []);
+  offsets = offsets.sort((a, b) => a - b);
+  //offsets = Util.shuffle(offsets, prng);
+  console.log('offsets:', offsets);
 
   new KolorWheel(base.hex()).rel(offsets, 0, 0).each(function() {
     const hex = this.getHex();
     const rgba = new RGBA(hex);
     const hsla = rgba.toHSLA();
     //console.log(hex, rgba.toString(), hsla.toString());
-    ret.push(hsla.toString());
+    ret.push(hsla);
   });
   return ret;
 };
 
-const palette = GeneratePalette(16);
-//console.log('palette.length:', palette.length);
+const palette = GeneratePalette(5);
+console.log('palette:', palette);
 //console.log('keyList.length:', keyList.length);
 
 let s = '';
@@ -183,4 +191,4 @@ for(let i = 0; i < keyList.length; i++) {
     s += `${key}: palette[${i}]`;
   }
 }
-//console.log('const palette = ' + Util.inspect(palette, { colors: false, newline: '' }) + ';\n renderer.colors = {' + s + '};');
+//  console.log('const palette = ' + Util.inspect(palette, { colors: false, newline: '' }) + ';\n renderer.colors = {' + s + '};');

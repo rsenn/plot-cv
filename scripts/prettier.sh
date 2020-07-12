@@ -15,6 +15,8 @@ prettier() {
     --print-width ${WIDTH:-120} \
     --semi \
     --bracket-spacing \
+    ${CONFIG:+--config
+"$CONFIG"} \
     --no-insert-pragma \
     "$@"; ${DEBUG:-false} && echo "$@" 1>&2; command "$@" 2>&1 | grep -v 'ExperimentalWarning:'; exit $?)
 }
@@ -34,6 +36,8 @@ while [ $# -gt 0 ]; do
     *) break ;;
   esac
 done
+
+[ -f .prettierrc ] && CONFIG=.prettierrc
 
 for SOURCE in  ${@:-$(find components utils stores pages -name "*.js")}; do
   case "$SOURCE" in
