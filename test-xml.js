@@ -70,7 +70,7 @@ function main(...args) {
         const key = path.up(2).prevSibling;
         let paths = [
           ...key.walk(p => {
-            if(p[p.length - 1] > 0) return p.up(1).down(0);
+            if(p.at(-1) > 0) return p.up(1).down(0);
             return p.length > 2 && p.up(2);
           })
         ];
