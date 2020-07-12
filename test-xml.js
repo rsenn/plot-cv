@@ -1,3 +1,4 @@
+
 import fs, { promises as fsPromises } from 'fs';
 
 import Util from './lib/util.js';
@@ -55,16 +56,16 @@ function main(...args) {
         (p, v) => [new Path(p), v]
       );
       let colors = new Map([...Iterator.filter(flat, ([path, value]) => /^#[0-9A-Fa-f]*$/.test(value))].map(([path, value]) => [path, new RGBA(value)]));
-      console.log('colors:', colors);
+      //console.log('colors:', colors);
       let obj = {};
       for(let [path, value] of flat) {
         //        console.log('path:', path, ' value:', value);
         deep.set(obj, path, value);
       }
       filesystem.writeFile(basename + '.xml', toXML(obj));
-      console.log('methods:', Util.getMethodNames(Iterator));
+      //console.log('methods:', Util.getMethodNames(Iterator));
       let it = new IteratorForwarder(colors.entries());
-      console.log('it.map', it.map + '');
+     // console.log('it.map', it.map + '');
       let paths = it.map(([path, value]) => [XPath.from(path, xml[0]), path]);
       let o = it.map(([path, value]) => {
         const key = path.up(2).prevSibling;
@@ -87,14 +88,15 @@ function main(...args) {
             .filter(Util.uniquePred(Path.equal))
             .map(p => deep.get(xml[0], p.down('children', 0)))
             .filter(key => ['settings', 'name'].indexOf(key) == -1),
+            path,
           value
         ];
       });
       console.log('o:', o);
-      colors = [...o].map(([name, value]) => value);
+      colors = new Map([...o].map(([paths,path, value]) => [path,value]  ));
       console.log('colors:', colors);
-      console.log('colors:', colors.values());
-      let palette = new ColorMap([...colors.values()]);
+    //  console.log('colors:', colors.values());
+      let palette = new ColorMap(colors);
       console.log('palette:', palette);
     } catch(err) {
       console.log('err:', err);

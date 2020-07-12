@@ -67,5 +67,14 @@
       "eslint . --ext .js --ext .jsx --ignore-path .eslintignore --fix",
       "git add"
     ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "./node_modules/@s-ui/lint/eslintrc.js"
+    ]
+  },
+  "prettier": "./node_modules/@s-ui/lint/.prettierrc.js",
+  "stylelint": {
+    "extends": "./node_modules/@s-ui/lint/stylelint.config.js"
   }
 }
