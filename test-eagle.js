@@ -19,9 +19,7 @@ global.console = new Console({
 });
 
 function xmlize(obj, depth = 2) {
-  return obj.toXML
-    ? obj.toXML().replace(/>\s*</g, '>\n    <')
-    : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
+  return obj.toXML ? obj.toXML().replace(/>\s*</g, '>\n    <') : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
 
 function testLocator() {
@@ -207,8 +205,7 @@ async function testEagle(filename) {
   for(let description of board.getAll('description')) {
   }
 
-  if(updateMeasures(proj.board) | alignAll(board) | alignAll(schematic))
-    console.log('Saved:', await proj.board.saveTo(null, true));
+  if(updateMeasures(proj.board) | alignAll(board) | alignAll(schematic)) console.log('Saved:', await proj.board.saveTo(null, true));
 
   //console.log('saved:', await proj.saveTo('tmp', true));
 

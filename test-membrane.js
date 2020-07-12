@@ -5,20 +5,10 @@ import Util from './lib/util.js';
 import util from 'util';
 import fs from 'fs';
 import { Path, MutablePath, ImmutablePath, PathMapper, toXML, TreeObserver } from './lib/json.js';
-import {
-  XPath,
-  MutableXPath,
-  ImmutableXPath,
-  findXPath,
-  parseXPath,
-  XmlObject,
-  XMLIterator,
-  XmlIterator
-} from './lib/xml.js';
+import { XPath, MutableXPath, ImmutableXPath, findXPath, parseXPath, XmlObject, XMLIterator, XmlIterator } from './lib/xml.js';
 import { Console } from 'console';
 
-const inspect = (arg, depth = 10, colors = true, breakLength = Number.Infinity) =>
-  util.inspect(arg, { depth, breakLength, compact: true, showProxy: true, colors });
+const inspect = (arg, depth = 10, colors = true, breakLength = Number.Infinity) => util.inspect(arg, { depth, breakLength, compact: true, showProxy: true, colors });
 const printNode = node => {
   let s = toXML(node).replace(/\n.*/g, '');
   return s;
@@ -51,11 +41,7 @@ global.console = new Console({
 Error.stackTraceLimit = 100;
 try {
   function main(...args) {
-    let str = fs
-      .readFileSync(
-        args.length ? args[0] : '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd'
-      )
-      .toString();
+    let str = fs.readFileSync(args.length ? args[0] : '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
     let xml = tXml(str)[0];
     const mapper = new PathMapper(xml, parseXPath);
     let observer = new TreeObserver(mapper, false);
@@ -130,10 +116,7 @@ try {
     };
 
     let tags = {};
-    let iter = new XMLIterator(
-      { children: xml.children, tagName: tree.tagName, attributes: tree.attributes },
-      (v, p) => true
-    );
+    let iter = new XMLIterator({ children: xml.children, tagName: tree.tagName, attributes: tree.attributes }, (v, p) => true);
     for(let [v, p] of iter) {
       if(!(p instanceof ImmutablePath)) p = new ImmutablePath(p, true);
       tags = incr(tags, v.tagName);
@@ -156,39 +139,20 @@ try {
 
       dumps = dumps.map(([p, v]) => [ImmutableXPath.from(p, xml), v]);
 
-      dumps = dumps.map(([p, v]) => [
-        p,
-        v,
-        p.offset((o, i, p) => !(/(\[|board$|sheets$)/.test(o) || p[i + 1] == 'attributes'))
-      ]);
+      dumps = dumps.map(([p, v]) => [p, v, p.offset((o, i, p) => !(/(\[|board$|sheets$)/.test(o) || p[i + 1] == 'attributes'))]);
 
       dumps = dumps.map(([p, v, o]) => [p.slice(o - 2), p.slice(0, o - 2), v, o]);
       dumps = dumps.map(([p, s, v, o]) => [p, s, `children: ${v.children.length}`, `offset: ${o}`]);
       dumps = dumps.map(([p, s, v, o]) => [p, s, v, p.toRegExp()]);
 
       dumps = dumps
-        .map(([p, s, v, r]) => [
-          p,
-          s,
-          v,
-          r.test(p),
-          r.test(s),
-          [...(p.toString() + '').match(q)],
-          [...q.exec(p)].slice(1)
-        ])
-        .map(([p, s, ...rest]) => [
-          p[Symbol.for('nodejs.util.inspect.custom')](),
-          s[Symbol.for('nodejs.util.inspect.custom')](),
-          ...rest.map(i => Util.toSource(i))
-        ])
+        .map(([p, s, v, r]) => [p, s, v, r.test(p), r.test(s), [...(p.toString() + '').match(q)], [...q.exec(p)].slice(1)])
+        .map(([p, s, ...rest]) => [p[Symbol.for('nodejs.util.inspect.custom')](), s[Symbol.for('nodejs.util.inspect.custom')](), ...rest.map(i => Util.toSource(i))])
         .map(([p]) => p + '')
         .join('\n  |');
 
       console.log('result:\n  ', dumps);
-      return [
-        xpath,
-        new Map(selected.map(({ path, value }) => [path2xpath(path).down('*'), value]))
-      ];
+      return [xpath, new Map(selected.map(({ path, value }) => [path2xpath(path).down('*'), value]))];
     });
 
     tags = Object.fromEntries(tags);

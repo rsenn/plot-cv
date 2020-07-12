@@ -1,12 +1,5 @@
 // prettier-ignore-start
-import {
-  Transformation,
-  Rotation,
-  Translation,
-  Scaling,
-  MatrixTransformation,
-  TransformationList
-} from './lib/geom/transformation.js';
+import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
@@ -30,58 +23,11 @@ import { makeLocalStorage } from './lib/autoStore.js';
 import { toXML, ImmutablePath } from './lib/json.js';
 import { XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';
 import { RGBA, isRGBA, HSLA, isHSLA } from './lib/color.js';
-import {
-  hydrate,
-  Fragment,
-  createRef,
-  isValidElement,
-  cloneElement,
-  toChildArray
-} from './modules/preact/dist/preact.mjs';
-import {
-  h,
-  html,
-  render,
-  Component,
-  createContext,
-  useState,
-  useReducer,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useImperativeHandle,
-  useMemo,
-  useCallback,
-  useContext,
-  useDebugValue
-} from './modules/htm/preact/standalone.module.js';
-import components, {
-  Chooser,
-  Container,
-  Button,
-  FileList,
-  Panel,
-  AspectRatioBox,
-  SizedAspectRatioBox,
-  TransformedElement,
-  Canvas,
-  ColorWheel,
-  Slider
-} from './static/components.js';
+import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
+import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './modules/htm/preact/standalone.module.js';
+import components, { Chooser, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider } from './static/components.js';
 import { WebSocketClient } from './lib/websocket-client.js';
-import {
-  CTORS,
-  ECMAScriptParser,
-  estree,
-  Factory,
-  Lexer,
-  ESNode,
-  Parser,
-  PathReplacer,
-  Printer,
-  Stack,
-  Token
-} from './lib/ecmascript.js';
+import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
 import {
   AlignmentAngle,
   Arc,
@@ -137,43 +83,7 @@ const React = {
   useRef,
   useState
 };
-const {
-  Align,
-  Anchor,
-  CSS,
-  Event,
-  CSSTransformSetters,
-  Element,
-  ElementPosProps,
-  ElementRectProps,
-  ElementRectProxy,
-  ElementSizeProps,
-  ElementTransformation,
-  ElementWHProps,
-  ElementXYProps,
-  isElement,
-  isLine,
-  isMatrix,
-  isNumber,
-  isPoint,
-  isRect,
-  isSize,
-  Line,
-  Matrix,
-  Node,
-  Point,
-  PointList,
-  Polyline,
-  Rect,
-  Select,
-  Size,
-  SVG,
-  Timer,
-  Transition,
-  TransitionList,
-  TRBL,
-  Tree
-} = {
+const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG, Timer, Transition, TransitionList, TRBL, Tree } = {
   ...dom,
   ...geom
 };
@@ -231,8 +141,7 @@ const useSlot = (arr, i) => [() => arr[i], v => (arr[i] = v)];
 const trklGetSet = (get, set) => value => (value !== undefined ? set(value) : get());
 const useTrkl = trkl => [() => trkl(), value => trkl(value)];
 
-const classNames = (...args) =>
-  args.filter(arg => typeof arg == 'string' && arg.length > 0).join(' ');
+const classNames = (...args) => args.filter(arg => typeof arg == 'string' && arg.length > 0).join(' ');
 
 const MouseEvents = h => ({
   onMouseDown: h,
@@ -348,10 +257,8 @@ const loadDocument = async (project, parentElem) => {
     const [dimensions, setDimensions] = useState(sizeListener());
     const [aspect, setAspect] = useState(aspectListener());
 
-    if(sizeListener && sizeListener.subscribe)
-      sizeListener.subscribe(value => setDimensions(value));
-    if(aspectListener && aspectListener.subscribe)
-      aspectListener.subscribe(value => setAspect(value));
+    if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
+    if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
 
     //console.log('Fence.render', { dimensions, aspect });
 
@@ -478,12 +385,7 @@ const MakeFitAction = index => async () => {
   //console.log('zoom factor:', factor);
   let delay = Math.abs(Math.log(factor) * 1000);
   //console.log('transition delay:', delay);
-  await Element.transition(
-    container,
-    { ...newSize.toCSS(), transform: '', position: 'absolute' },
-    delay + 'ms',
-    'linear'
-  );
+  await Element.transition(container, { ...newSize.toCSS(), transform: '', position: 'absolute' }, delay + 'ms', 'linear');
 };
 
 const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
@@ -514,11 +416,7 @@ const AppMain = (window.onload = async () => {
   // window.focusSearch = trkl();
   window.currentSearch = trkl(null);
 
-  window.keystroke = target => (key, modifiers = 0) =>
-    keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(
-      new keysim.Keystroke(modifiers, key),
-      target
-    );
+  window.keystroke = target => (key, modifiers = 0) => keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key), target);
 
   window.focusSearch = state => {
     const input = currentSearch();
@@ -675,16 +573,7 @@ const AppMain = (window.onload = async () => {
         })
       ]),*/
       html`
-        <${FileList}
-          files=${projects}
-          onActive=${open}
-          onChange=${chooseDocument}
-          filter=${searchFilter}
-          showSearch=${showSearch}
-          changeInput=${changeInput}
-          focusSearch=${focusSearch}
-          currentInput=${currentSearch}
-        />
+        <${FileList} files=${projects} onActive=${open} onChange=${chooseDocument} filter=${searchFilter} showSearch=${showSearch} changeInput=${changeInput} focusSearch=${focusSearch} currentInput=${currentSearch} />
       `
     ],
     Element.find('#preact')

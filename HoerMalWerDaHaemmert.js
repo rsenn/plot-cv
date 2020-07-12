@@ -16,17 +16,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_0');", style: 'display: block;' },
-            children: [
-              '1. Das Heimwerker-As',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['1. Das Heimwerker-As', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_0',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -45,17 +41,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_1');", style: 'display: block;' },
-            children: [
-              '2. Klein und verstoßen',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['2. Klein und verstoßen', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_1',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -74,17 +66,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_2');", style: 'display: block;' },
-            children: [
-              '3. Das große Spiel',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['3. Das große Spiel', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_2',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -103,17 +91,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_3');", style: 'display: block;' },
-            children: [
-              '4. Eifersucht am Nachmittag',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['4. Eifersucht am Nachmittag', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_3',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -132,17 +116,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_4');", style: 'display: block;' },
-            children: [
-              '5. Schlängeleien',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['5. Schlängeleien', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_4',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -161,17 +141,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_5');", style: 'display: block;' },
-            children: [
-              '6. Tischmanieren',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['6. Tischmanieren', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_5',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -187,17 +163,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_6');", style: 'display: block;' },
-            children: [
-              '7. Macho-Festival',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['7. Macho-Festival', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_6',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -216,17 +188,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_7');", style: 'display: block;' },
-            children: [
-              '8. Rächer aus dem All',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['8. Rächer aus dem All', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_7',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -245,17 +213,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_8');", style: 'display: block;' },
-            children: [
-              '9. Wirbel im Whirlpool',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['9. Wirbel im Whirlpool', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_8',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -273,17 +237,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_9');", style: 'display: block;' },
-            children: [
-              '10. Die Frau im Haus...',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['10. Die Frau im Haus...', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_9',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -302,17 +262,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_10');", style: 'display: block;' },
-            children: [
-              '11. Die Putzmänner',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['11. Die Putzmänner', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_10',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -331,17 +287,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_11');", style: 'display: block;' },
-            children: [
-              '12. Die Rückkehr vom toten Weihnachtsmann',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['12. Die Rückkehr vom toten Weihnachtsmann', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_11',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -360,17 +312,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_12');", style: 'display: block;' },
-            children: [
-              '13. Frauenpower',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['13. Frauenpower', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_12',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -389,17 +337,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_13');", style: 'display: block;' },
-            children: [
-              '14. Auch Machos werden älter',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['14. Auch Machos werden älter', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_13',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -418,17 +362,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_14');", style: 'display: block;' },
-            children: [
-              '15. Brett vorm Kopf',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['15. Brett vorm Kopf', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_14',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -447,17 +387,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_15');", style: 'display: block;' },
-            children: [
-              '16. Der Geschenke-Stress',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['16. Der Geschenke-Stress', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_15',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -476,17 +412,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_16');", style: 'display: block;' },
-            children: [
-              '17. Der Guru',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['17. Der Guru', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_16',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -504,17 +436,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_17');", style: 'display: block;' },
-            children: [
-              '18. Der Camping-King',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['18. Der Camping-King', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_17',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -529,17 +457,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_18');", style: 'display: block;' },
-            children: [
-              '19. Die Pechsträhne',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['19. Die Pechsträhne', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_18',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -554,17 +478,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_19');", style: 'display: block;' },
-            children: [
-              '20. Typisch Frau',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['20. Typisch Frau', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_19',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -579,17 +499,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_20');", style: 'display: block;' },
-            children: [
-              '21. Der Garagenkrieg',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['21. Der Garagenkrieg', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_20',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -604,17 +520,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_21');", style: 'display: block;' },
-            children: [
-              '22. Frauen und Poker',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['22. Frauen und Poker', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_21',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -629,17 +541,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_22');", style: 'display: block;' },
-            children: [
-              '23. Al, der Aufreißer',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['23. Al, der Aufreißer', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_22',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -654,17 +562,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_23');", style: 'display: block;' },
-            children: [
-              '24. Die neue Anlage',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['24. Die neue Anlage', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_23',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -690,17 +594,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_24');", style: 'display: block;' },
-            children: [
-              '25. Die Überraschung',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['25. Die Überraschung', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_24',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -715,17 +615,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_25');", style: 'display: block;' },
-            children: [
-              '26. Wahre Männer',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['26. Wahre Männer', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_25',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -743,17 +639,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_26');", style: 'display: block;' },
-            children: [
-              '27. Einmal Mann, immer Mann',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['27. Einmal Mann, immer Mann', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_26',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -771,17 +663,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_27');", style: 'display: block;' },
-            children: [
-              '28. Schwellende Muskeln',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['28. Schwellende Muskeln', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_27',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               { tagName: 'b', attributes: { style: 'display: block;' }, children: ['Groin Pains'] },
@@ -795,17 +683,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_28');", style: 'display: block;' },
-            children: [
-              '29. Heimspiel',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['29. Heimspiel', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_28',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -820,17 +704,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_29');", style: 'display: block;' },
-            children: [
-              '30. Halloween',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['30. Halloween', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_29',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -848,17 +728,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_30');", style: 'display: block;' },
-            children: [
-              '31. Der Umzug',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['31. Der Umzug', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_30',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -876,17 +752,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_31');", style: 'display: block;' },
-            children: [
-              '32. Die Zeiten ändern sich',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['32. Die Zeiten ändern sich', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_31',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -908,17 +780,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_32');", style: 'display: block;' },
-            children: [
-              '33. Das Testament',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['33. Das Testament', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_32',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -933,17 +801,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_33');", style: 'display: block;' },
-            children: [
-              '34. Der Holzschnüffler',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['34. Der Holzschnüffler', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_33',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -958,17 +822,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_34');", style: 'display: block;' },
-            children: [
-              '35. Der Hausmann',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['35. Der Hausmann', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_34',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -983,17 +843,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_35');", style: 'display: block;' },
-            children: [
-              '36. Sammeln für einen...',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['36. Sammeln für einen...', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_35',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1011,17 +867,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_36');", style: 'display: block;' },
-            children: [
-              '37. Ein Schrank mit Raffinesse',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['37. Ein Schrank mit Raffinesse', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_36',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1039,17 +891,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_37');", style: 'display: block;' },
-            children: [
-              '38. Jill will es wissen',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['38. Jill will es wissen', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_37',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1064,17 +912,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_38');", style: 'display: block;' },
-            children: [
-              '39. Gegensätze ziehen sich an',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['39. Gegensätze ziehen sich an', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_38',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1092,17 +936,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_39');", style: 'display: block;' },
-            children: [
-              '40. Tanzstunde mit...',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['40. Tanzstunde mit...', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_39',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1117,17 +957,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_40');", style: 'display: block;' },
-            children: [
-              '41. Umleitung',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['41. Umleitung', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_40',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1142,17 +978,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_41');", style: 'display: block;' },
-            children: [
-              '42. Der Specht',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['42. Der Specht', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_41',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1176,17 +1008,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_42');", style: 'display: block;' },
-            children: [
-              '43. Aggressionen',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['43. Aggressionen', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_42',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1201,17 +1029,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_43');", style: 'display: block;' },
-            children: [
-              '44. Ein genialer Plan',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['44. Ein genialer Plan', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_43',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1226,17 +1050,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_44');", style: 'display: block;' },
-            children: [
-              '45. Schwiegermutter-Alarm!',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['45. Schwiegermutter-Alarm!', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_44',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1251,17 +1071,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_45');", style: 'display: block;' },
-            children: [
-              '46. Ein peinliches Wiedersehen',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['46. Ein peinliches Wiedersehen', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_45',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1276,17 +1092,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_46');", style: 'display: block;' },
-            children: [
-              '47. Muttertag',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['47. Muttertag', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_46',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1301,17 +1113,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_47');", style: 'display: block;' },
-            children: [
-              '48. Springt er an?',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['48. Springt er an?', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_47',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1326,17 +1134,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_48');", style: 'display: block;' },
-            children: [
-              '49. Das große Rennen',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['49. Das große Rennen', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_48',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1362,17 +1166,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_49');", style: 'display: block;' },
-            children: [
-              '50. Grüße vom Klapperstorch',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['50. Grüße vom Klapperstorch', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_49',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               { tagName: 'b', attributes: { style: 'display: block;' }, children: ['Maybe, Baby'] },
@@ -1383,17 +1183,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_50');", style: 'display: block;' },
-            children: [
-              '51. Liebeshorror',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['51. Liebeshorror', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_50',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1411,17 +1207,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_51');", style: 'display: block;' },
-            children: [
-              '52. Die Witzfigur',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['52. Die Witzfigur', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_51',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1436,17 +1228,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_52');", style: 'display: block;' },
-            children: [
-              '53. Die Nervensäge',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['53. Die Nervensäge', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_52',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1461,17 +1249,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_53');", style: 'display: block;' },
-            children: [
-              '54. Tim trauert',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['54. Tim trauert', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_53',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1486,17 +1270,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_54');", style: 'display: block;' },
-            children: [
-              '55. Reingelegt',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['55. Reingelegt', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_54',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1511,17 +1291,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_55');", style: 'display: block;' },
-            children: [
-              '56. Der Idealgatte',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['56. Der Idealgatte', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_55',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               { tagName: 'b', attributes: { style: 'display: block;' }, children: ['Blow Up'] },
@@ -1532,17 +1308,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_56');", style: 'display: block;' },
-            children: [
-              '57. Schrottwerkzeug',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['57. Schrottwerkzeug', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_56',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1557,17 +1329,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_57');", style: 'display: block;' },
-            children: [
-              '58. Die Wertanlage',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['58. Die Wertanlage', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_57',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1582,17 +1350,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_58');", style: 'display: block;' },
-            children: [
-              '59. Die Weihnachtsfotokarte',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['59. Die Weihnachtsfotokarte', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_58',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1607,17 +1371,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_59');", style: 'display: block;' },
-            children: [
-              '60. Das Klassentreffen',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['60. Das Klassentreffen', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_59',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1632,17 +1392,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_60');", style: 'display: block;' },
-            children: [
-              '61. Oh, du schreckliche Weihnachten!',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['61. Oh, du schreckliche Weihnachten!', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_60',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1657,17 +1413,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_61');", style: 'display: block;' },
-            children: [
-              '62. Die Herausforderung',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['62. Die Herausforderung', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_61',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1682,17 +1434,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_62');", style: 'display: block;' },
-            children: [
-              '63. Träume sind Schäume',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['63. Träume sind Schäume', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_62',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               { tagName: 'b', attributes: { style: 'display: block;' }, children: ['Dream On'] },
@@ -1703,17 +1451,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_63');", style: 'display: block;' },
-            children: [
-              '64. Eisfischen',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['64. Eisfischen', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_63',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               { tagName: 'b', attributes: { style: 'display: block;' }, children: ['Reel Men'] },
@@ -1724,17 +1468,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_64');", style: 'display: block;' },
-            children: [
-              '65. Wie sag ich’s meinem Opa',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['65. Wie sag ich’s meinem Opa', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_64',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               { tagName: 'b', attributes: { style: 'display: block;' }, children: ['The Colonel'] },
@@ -1745,17 +1485,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_65');", style: 'display: block;' },
-            children: [
-              '66. Der Zimmerwechsel',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['66. Der Zimmerwechsel', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_65',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1770,17 +1506,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_66');", style: 'display: block;' },
-            children: [
-              '67. Teamgeist',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['67. Teamgeist', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_66',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1798,17 +1530,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_67');", style: 'display: block;' },
-            children: [
-              '68. Viele Köche verderben den Brei',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['68. Viele Köche verderben den Brei', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_67',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1823,17 +1551,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_68');", style: 'display: block;' },
-            children: [
-              '69. Bilanz einer Ehe',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['69. Bilanz einer Ehe', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_68',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1848,17 +1572,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_69');", style: 'display: block;' },
-            children: [
-              '70. Geldprobleme',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['70. Geldprobleme', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_69',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1873,17 +1593,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_70');", style: 'display: block;' },
-            children: [
-              '71. Verschaukelt',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['71. Verschaukelt', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_70',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               { tagName: 'b', attributes: { style: 'display: block;' }, children: ['Swing Time'] },
@@ -1894,17 +1610,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_71');", style: 'display: block;' },
-            children: [
-              '72. Einsichten',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['72. Einsichten', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_71',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1919,17 +1631,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_72');", style: 'display: block;' },
-            children: [
-              '73. Der Computer-Casanova',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['73. Der Computer-Casanova', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_72',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1944,17 +1652,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_73');", style: 'display: block;' },
-            children: [
-              '74. Das große Rennen II',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['74. Das große Rennen II', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_73',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -1980,17 +1684,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_74');", style: 'display: block;' },
-            children: [
-              '75. Komplexe',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['75. Komplexe', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_74',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2005,17 +1705,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_75');", style: 'display: block;' },
-            children: [
-              '76. Ein läppischer Kratzer',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['76. Ein läppischer Kratzer', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_75',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2030,17 +1726,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_76');", style: 'display: block;' },
-            children: [
-              '77. Tims Geburtstag',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['77. Tims Geburtstag', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_76',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2055,17 +1747,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_77');", style: 'display: block;' },
-            children: [
-              '78. Das Sorgenkind',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['78. Das Sorgenkind', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_77',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2080,17 +1768,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_78');", style: 'display: block;' },
-            children: [
-              '79. Männer wie wir',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['79. Männer wie wir', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_78',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2105,17 +1789,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_79');", style: 'display: block;' },
-            children: [
-              '80. Geld stinkt nicht',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['80. Geld stinkt nicht', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_79',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2130,17 +1810,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_80');", style: 'display: block;' },
-            children: [
-              '81. Vorsicht Kamera',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['81. Vorsicht Kamera', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_80',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2155,17 +1831,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_81');", style: 'display: block;' },
-            children: [
-              '82. Rivalitäten',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['82. Rivalitäten', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_81',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2180,17 +1852,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_82');", style: 'display: block;' },
-            children: [
-              '83. Der Ruf der Ferne',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['83. Der Ruf der Ferne', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_82',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2205,17 +1873,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_83');", style: 'display: block;' },
-            children: [
-              '84. Das pensionierte Idol',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['84. Das pensionierte Idol', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_83',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2230,17 +1894,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_84');", style: 'display: block;' },
-            children: [
-              '85. Das Schneemobil',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['85. Das Schneemobil', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_84',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2255,17 +1915,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_85');", style: 'display: block;' },
-            children: [
-              '86. Ehekrach unterm Christbaum',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['86. Ehekrach unterm Christbaum', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_85',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2280,17 +1936,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_86');", style: 'display: block;' },
-            children: [
-              '87. Brads neuer Job',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['87. Brads neuer Job', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_86',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2305,17 +1957,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_87');", style: 'display: block;' },
-            children: [
-              '88. Aus neu macht alt',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['88. Aus neu macht alt', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_87',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2330,17 +1978,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_88');", style: 'display: block;' },
-            children: [
-              '89. Football-Fieber',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['89. Football-Fieber', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_88',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2355,17 +1999,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_89');", style: 'display: block;' },
-            children: [
-              '90. Al und die Frauen',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['90. Al und die Frauen', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_89',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2380,17 +2020,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_90');", style: 'display: block;' },
-            children: [
-              '91. Tim, der Partykiller',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['91. Tim, der Partykiller', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_90',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2405,17 +2041,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_91');", style: 'display: block;' },
-            children: [
-              '92. Tool Time lässt es krachen',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['92. Tool Time lässt es krachen', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_91',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2430,17 +2062,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_92');", style: 'display: block;' },
-            children: [
-              '93. Die nackte Wahrheit',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['93. Die nackte Wahrheit', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_92',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2458,17 +2086,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_93');", style: 'display: block;' },
-            children: [
-              '94. Die Uniprüfung',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['94. Die Uniprüfung', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_93',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               { tagName: 'b', attributes: { style: 'display: block;' }, children: ['Talk To Me'] },
@@ -2479,17 +2103,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_94');", style: 'display: block;' },
-            children: [
-              '95. Das fidele Gefängnis',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['95. Das fidele Gefängnis', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_94',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2504,17 +2124,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_95');", style: 'display: block;' },
-            children: [
-              '96. Pleiten, Pech und Pannen, Teil 1',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['96. Pleiten, Pech und Pannen, Teil 1', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_95',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2529,17 +2145,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_96');", style: 'display: block;' },
-            children: [
-              '97. Pleiten, Pech und Pannen, Teil 2',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['97. Pleiten, Pech und Pannen, Teil 2', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_96',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2554,17 +2166,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_97');", style: 'display: block;' },
-            children: [
-              '98. Geschwisterliebe',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['98. Geschwisterliebe', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_97',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2582,17 +2190,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_98');", style: 'display: block;' },
-            children: [
-              '99. Das Messer',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['99. Das Messer', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_98',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2607,17 +2211,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_99');", style: 'display: block;' },
-            children: [
-              '100. Abgeschminkt',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['100. Abgeschminkt', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_99',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2646,17 +2246,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_100');", style: 'display: block;' },
-            children: [
-              '101. Action vor dem Traualtar',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['101. Action vor dem Traualtar', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_100',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2671,17 +2267,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_101');", style: 'display: block;' },
-            children: [
-              '102. Ein echter Freund',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['102. Ein echter Freund', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_101',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2696,17 +2288,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_102');", style: 'display: block;' },
-            children: [
-              '103. Seelenverwandte',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['103. Seelenverwandte', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_102',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2721,17 +2309,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_103');", style: 'display: block;' },
-            children: [
-              '104. Jills Überraschungsparty',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['104. Jills Überraschungsparty', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_103',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2746,17 +2330,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_104');", style: 'display: block;' },
-            children: [
-              '105. Guter Rat ist teuer',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['105. Guter Rat ist teuer', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_104',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2771,17 +2351,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_105');", style: 'display: block;' },
-            children: [
-              '106. Der Fernsehpreis',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['106. Der Fernsehpreis', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_105',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2796,17 +2372,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_106');", style: 'display: block;' },
-            children: [
-              '107. Mit den Waffen der Frauen',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['107. Mit den Waffen der Frauen', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_106',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               { tagName: 'b', attributes: { style: 'display: block;' }, children: ['The Look'] },
@@ -2817,17 +2389,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_107');", style: 'display: block;' },
-            children: [
-              '108. Zimmer ohne Aussicht',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['108. Zimmer ohne Aussicht', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_107',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2842,17 +2410,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_108');", style: 'display: block;' },
-            children: [
-              '109. Das Karaoke-Chaos',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['109. Das Karaoke-Chaos', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_108',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2867,17 +2431,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_109');", style: 'display: block;' },
-            children: [
-              '110. Der Ehrendoktor',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['110. Der Ehrendoktor', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_109',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2892,17 +2452,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_110');", style: 'display: block;' },
-            children: [
-              '111. Tims Mutter',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['111. Tims Mutter', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_110',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2917,17 +2473,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_111');", style: 'display: block;' },
-            children: [
-              '112. Die Elfenparade',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['112. Die Elfenparade', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_111',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2945,17 +2497,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_112');", style: 'display: block;' },
-            children: [
-              '113. Bruderherz',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['113. Bruderherz', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_112',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               { tagName: 'b', attributes: { style: 'display: block;' }, children: ['Oh, Brother'] },
@@ -2966,17 +2514,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_113');", style: 'display: block;' },
-            children: [
-              '114. Ein Bett für harte Männer',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['114. Ein Bett für harte Männer', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_113',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -2991,17 +2535,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_114');", style: 'display: block;' },
-            children: [
-              '115. Der Kindheitstraum',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['115. Der Kindheitstraum', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_114',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3016,17 +2556,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_115');", style: 'display: block;' },
-            children: [
-              '116. Familienplanung',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['116. Familienplanung', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_115',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3044,17 +2580,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_116');", style: 'display: block;' },
-            children: [
-              '117. Angst vorm Fliegen',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['117. Angst vorm Fliegen', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_116',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3069,17 +2601,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_117');", style: 'display: block;' },
-            children: [
-              '118. Zwei wie Pech und Schwefel',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['118. Zwei wie Pech und Schwefel', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_117',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3094,17 +2622,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_118');", style: 'display: block;' },
-            children: [
-              '119. Eine steile Sache',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['119. Eine steile Sache', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_118',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               { tagName: 'b', attributes: { style: 'display: block;' }, children: ['Eye On Tim'] },
@@ -3115,17 +2639,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_119');", style: 'display: block;' },
-            children: [
-              '120. Die Marionettenfrau',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['120. Die Marionettenfrau', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_119',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3140,17 +2660,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_120');", style: 'display: block;' },
-            children: [
-              '121. Ein verrückter Haarschnitt',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['121. Ein verrückter Haarschnitt', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_120',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3165,17 +2681,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_121');", style: 'display: block;' },
-            children: [
-              '122. Eine Pille für Randy',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['122. Eine Pille für Randy', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_121',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3193,17 +2705,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_122');", style: 'display: block;' },
-            children: [
-              '123. Tim und das Theater',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['123. Tim und das Theater', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_122',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3218,17 +2726,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_123');", style: 'display: block;' },
-            children: [
-              '124. Späte Liebe',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['124. Späte Liebe', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_123',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3243,17 +2747,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_124');", style: 'display: block;' },
-            children: [
-              '125. Schlaflose Nächte',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['125. Schlaflose Nächte', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_124',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3268,17 +2768,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_125');", style: 'display: block;' },
-            children: [
-              '126. Man spielt nicht mit dem Feuer',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['126. Man spielt nicht mit dem Feuer', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_125',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3304,17 +2800,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_126');", style: 'display: block;' },
-            children: [
-              '127. Stürmische See',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['127. Stürmische See', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_126',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               { tagName: 'b', attributes: { style: 'display: block;' }, children: ['At Sea'] },
@@ -3325,17 +2817,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_127');", style: 'display: block;' },
-            children: [
-              '128. Macht der Gewohnheit',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['128. Macht der Gewohnheit', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_127',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3350,17 +2838,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_128');", style: 'display: block;' },
-            children: [
-              '129. Workshop für zwei',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['129. Workshop für zwei', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_128',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3375,17 +2859,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_129');", style: 'display: block;' },
-            children: [
-              '130. Brennende Herzen',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['130. Brennende Herzen', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_129',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3400,17 +2880,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_130');", style: 'display: block;' },
-            children: [
-              '131. Der große Regisseur',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['131. Der große Regisseur', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_130',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               { tagName: 'b', attributes: { style: 'display: block;' }, children: ["Al's Video"] },
@@ -3421,17 +2897,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_131');", style: 'display: block;' },
-            children: [
-              '132. Das ist mein Auto!',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['132. Das ist mein Auto!', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_131',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3446,17 +2918,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_132');", style: 'display: block;' },
-            children: [
-              '133. Wer zuletzt lacht…',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['133. Wer zuletzt lacht…', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_132',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3471,17 +2939,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_133');", style: 'display: block;' },
-            children: [
-              '134. Geliebte Schwestern',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['134. Geliebte Schwestern', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_133',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3496,17 +2960,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_134');", style: 'display: block;' },
-            children: [
-              '135. Der Autokönig des Jahres',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['135. Der Autokönig des Jahres', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_134',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3521,17 +2981,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_135');", style: 'display: block;' },
-            children: [
-              '136. Ein Herz aus Gold',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['136. Ein Herz aus Gold', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_135',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3546,17 +3002,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_136');", style: 'display: block;' },
-            children: [
-              '137. Brad macht Karriere',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['137. Brad macht Karriere', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_136',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3571,17 +3023,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_137');", style: 'display: block;' },
-            children: [
-              '138. Ein Haus voller Erinnerungen',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['138. Ein Haus voller Erinnerungen', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_137',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3596,17 +3044,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_138');", style: 'display: block;' },
-            children: [
-              '139. Flirten macht blind',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['139. Flirten macht blind', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_138',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3621,17 +3065,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_139');", style: 'display: block;' },
-            children: [
-              '140. Karate Kid kehrt zurück',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['140. Karate Kid kehrt zurück', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_139',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3651,17 +3091,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_140');", style: 'display: block;' },
-            children: [
-              '141. Tool Time total',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['141. Tool Time total', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_140',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3676,17 +3112,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_141');", style: 'display: block;' },
-            children: [
-              '142. Aus heiterem Himmel',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['142. Aus heiterem Himmel', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_141',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3701,17 +3133,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_142');", style: 'display: block;' },
-            children: [
-              '143. Der Außenseiter',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['143. Der Außenseiter', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_142',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3726,17 +3154,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_143');", style: 'display: block;' },
-            children: [
-              '144. Hochzeit hin, Hochzeit her',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['144. Hochzeit hin, Hochzeit her', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_143',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3751,17 +3175,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_144');", style: 'display: block;' },
-            children: [
-              '145. Das automatisierte Haus',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['145. Das automatisierte Haus', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_144',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3776,17 +3196,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_145');", style: 'display: block;' },
-            children: [
-              '146. Der verhängnisvolle Unfall',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['146. Der verhängnisvolle Unfall', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_145',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3801,17 +3217,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_146');", style: 'display: block;' },
-            children: [
-              '147. Schadenfreude',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['147. Schadenfreude', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_146',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3826,17 +3238,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_147');", style: 'display: block;' },
-            children: [
-              '148. Aus Kindern werden Leute',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['148. Aus Kindern werden Leute', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_147',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3851,17 +3259,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_148');", style: 'display: block;' },
-            children: [
-              '149. Der Sandwich-Tick',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['149. Der Sandwich-Tick', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_148',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3876,17 +3280,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_149');", style: 'display: block;' },
-            children: [
-              '150. Ein Colonel tritt ab',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['150. Ein Colonel tritt ab', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_149',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               { tagName: 'b', attributes: { style: 'display: block;' }, children: ['Taps'] },
@@ -3897,17 +3297,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_150');", style: 'display: block;' },
-            children: [
-              '151. Liebe und Eifersucht',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['151. Liebe und Eifersucht', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_150',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3936,17 +3332,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_151');", style: 'display: block;' },
-            children: [
-              '152. Midlife-Crisis',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['152. Midlife-Crisis', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_151',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3961,17 +3353,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_152');", style: 'display: block;' },
-            children: [
-              '153. Im Namen der Wahrheit',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['153. Im Namen der Wahrheit', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_152',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -3986,17 +3374,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_153');", style: 'display: block;' },
-            children: [
-              '154. Tim im Arbeitsrausch',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['154. Tim im Arbeitsrausch', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_153',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -4011,17 +3395,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_154');", style: 'display: block;' },
-            children: [
-              '155. Wunderkind Brad',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['155. Wunderkind Brad', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_154',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               { tagName: 'b', attributes: { style: 'display: block;' }, children: ['Pump You Up'] },
@@ -4032,17 +3412,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_155');", style: 'display: block;' },
-            children: [
-              '156. In Angst und Schrecken',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['156. In Angst und Schrecken', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_155',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -4057,17 +3433,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_156');", style: 'display: block;' },
-            children: [
-              '157. Wilsons Nichte',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['157. Wilsons Nichte', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_156',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               { tagName: 'b', attributes: { style: 'display: block;' }, children: ['The Niece'] },
@@ -4078,17 +3450,13 @@
           {
             tagName: 'span',
             attributes: { onclick: "wechsel_anzeige('folge_0_157');", style: 'display: block;' },
-            children: [
-              '158. Heimliche Leidenschaft',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['158. Heimliche Leidenschaft', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_157',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               {
@@ -4103,17 +3471,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '159. Der ungläubige Sohn',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['159. Der ungläubige Sohn', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_158',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Bei seiner Arbeit im Sterbehospiz lernt Randy die alte Dame Elaine kennen, die trotz des nahenden Todes voller Lebenslust ist. Sie ermuntert ihn, sich über das Leben eigene Gedanken zu machen.\n      Daraufhin erklärt Randy seinen Eltern, dass er nicht mehr in die Kirche gehen wird, weil er die Institutionalisierung des Glaubens nicht akzeptieren könne.',
@@ -4125,17 +3489,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '160. Thanksgiving einmal anders',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['160. Thanksgiving einmal anders', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_159',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Die Taylors können ihr Glück kaum fassen: Der ganze Clan ist eingeladen, das Thanksgiving-Fest in einer privaten Luxus-Loge des Football-Stadions zu verbringen, dem Spiel der Detroit Lions\n      zuzuschauen und sich kulinarisch einmal so richtig verwöhnen zu lassen.',
@@ -4147,17 +3507,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '161. Lohn der Angst',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['161. Lohn der Angst', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_160',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Al hat Depressionen: Seine Exfreun din Ilene will heiraten! Frustriert erkennt er, dass sein Leben seit der Trennung in Stillstand geraten ist. Tim versucht ihn aufzubauen und zu ermuntern,\n      wieder mehr zu unternehmen. Das hat jedoch zur Folge, dass Al allabendlich bei den Taylors auftaucht und Jill auf die Nerven geht.',
@@ -4169,17 +3525,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '162. Strahlende Weihnacht',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['162. Strahlende Weihnacht', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_161',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Wie jedes Jahr zur Weihnachtszeit ist Tim mit seinen Nachbarn in einen Konkurrenzkampf um die schönste Weihnachtsbeleuchtung von Haus und Garten getreten. Zu dumm, dass die Auflagen für die\n      maximal zulässige Elektrizitätsmenge für die Weihnachtsbeleuchtung von Privathäusern in diesem Jahr sehr strikt sind.',
@@ -4191,17 +3543,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '163. Zurück im College',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['163. Zurück im College', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_162',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Tim soll eine Klasse College-Studenten im Reparieren von Autos unterrichten und merkt, dass seine Schüler alle begeisterte Autobastler sind. Dagegen wirkt die bisher heiß geliebte Pokerrunde mit\n      Al, Harry und Benny wie der reinste Seniorenabend. So fällt es Tim auch nicht schwer, die nächste Runde abzusagen und seine Schüler mit Freundinnen zum Abendessen zu sich einzuladen.',
@@ -4213,17 +3561,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '164. Brads neue Freundin',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['164. Brads neue Freundin', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_163',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Brad lernt auf einer Party die um einiges ältere Samantha kennen und verliebt sich Hals über Kopf. Tim und Jill freuen sich zunächst über diese Entwicklung, macht Samantha aus ihrem Sohn doch\n      einen ganz neuen Menschen: rücksichtsvoll, ernsthaft und voller Verantwortung für seine Mitmenschen.',
@@ -4235,17 +3579,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '165. Der perfekte Mieter',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['165. Der perfekte Mieter', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_164',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Tim und Jill haben als Geldanlage ein Haus gekauft. Um die Instandsetzungskosten möglichst gering zu halten, macht Tim aus der Renovierung ein "Tool Time"-Special - und findet dabei den\n      perfekten Mieter: seinen Freund und Kollegen Al.',
@@ -4257,17 +3597,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '166. Vater werden ist nicht schwer',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['166. Vater werden ist nicht schwer', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_165',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Die 4-jährige Gracie verbringt das Wochenende bei den Taylors, damit ihre Eltern in Ruhe ihren Hochzeitstag feiern können. Doch dann muss Jill für eine Kollegin einspringen, und Tim bleibt\n      allein mit dem Kind. Überraschenderweise findet er Gefallen an der fantasievollen Gracie.',
@@ -4279,17 +3615,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '167. Brad auf Abwegen',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['167. Brad auf Abwegen', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_166',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Durch Zufall entdeckt Tim, dass unter einem der Taylorschen Gartenstühle ein geheimnisvolles Päckchen befestigt ist. Nach Überprüfung des Inhalts weicht seine Freude jedoch Sorge und Zorn, denn\n      das Päcken enthält Marihuana, das nur einem seiner Söhne gehören kann. ',
@@ -4301,17 +3633,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '168. Szenen einer Ehe',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['168. Szenen einer Ehe', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_167',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Tim hat für Jill neue Küchenschränke gebaut. Nun fehlt nur noch die Granit-Arbeitsplatte, die er zu seinem Leidwesen aber nicht selbst installieren kann. Ganz gegen seine Heimwerkerehre\n      beauftragt er deshalb einen Spezialisten mit dem Einbau der Platte.',
@@ -4323,17 +3651,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '169. Die Schöne und der Bär',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['169. Die Schöne und der Bär', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_168',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Tim ist aufgefallen, daß Heidi Eheprobleme hat. Deshalb beauftragt er Al, die schöne Assistentin bei einem Essen aufzumuntern. Das scheint Wunder zu wirken, denn nach diesem Dinner ist Heidi\n      wieder gewohnt heiter.',
@@ -4345,17 +3669,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '170. Willow verzweifelt gesucht',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['170. Willow verzweifelt gesucht', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_169',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Wilson möchte für einige Tage einen Freund besuchen und bittet die Taylors für diese Zeit, seine Nichte Willow aufzunehmen. Natürlich sind die Taylors hocherfreut, denn Willow ist ein gern\n      gesehener Gast, der die Familie gleich am ersten Abend mit marokkanischem Essen überrascht. Danach leiht sie sich Tims Sprotwagen, um in die Disco zu gehen.',
@@ -4367,17 +3687,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '171. Reporterkampf',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['171. Reporterkampf', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_170',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Seit geraumer Zeit arbeitet Randy an einem anspruchsvollen Schülserzeitungsartikel zum Thema Genmutation. Jill platzt fast vor Stolz und ist überzeugt, daß er dieses Talent nur von ihr geerbt\n      haben kann.',
@@ -4389,17 +3705,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '172. Bruderzwist',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['172. Bruderzwist', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_171',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Tims Bruder Jeff ist wieder mit einer seiner Geschäftsideen pleite gegangen und kommt mittellos nach Detroit, um für die nächste Zeit bei seiner und Tims Mutter Lucille zu wohnen. Kurz darauf\n      taucht er bei tim auf und verblüfft diesen, indem er all seine Schulden bezahlt.',
@@ -4411,17 +3723,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '173. Glaub es oder glaub es nicht',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['173. Glaub es oder glaub es nicht', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_172',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Tim erfährt, daß Nachbar Wilson seit einer Ufo-Sichtung an Außerirdische glaubt. Obwohl Wilson ihn bittet, das für sich zu behalten, kann Tim seinen Mund nicht halten und macht Wilson in\n      kürzester Zeit zum Gespött der Nachbarschaft.',
@@ -4433,17 +3741,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '174. Das Nachtfahrverbot',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['174. Das Nachtfahrverbot', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_173',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Randy hat seine Führerscheinprüfung bestanden. Aus Angst um ihn, überredet Jill ihren Mann, ihm im ersten Monat keine Nachtfahrten zu erlauben. . Randy ist alles andere als begeistert - zumal\n      auch seine Ausflüge mit Lauren vor Einbruch der Dunkelheit beendet sein müssen.',
@@ -4455,17 +3759,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '175. Das Weltall ruft',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['175. Das Weltall ruft', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_174',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Während Jill versucht, ein Fotoalbum für die Familie zusammenzustellen und Mark sein Aussehen drastisch verändert, um ein Mädchen zu beeindrucken, steht bei "Tool Time" hoher Besuch ins Haus:',
@@ -4476,17 +3776,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '176. Frauen ganz oben',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['176. Frauen ganz oben', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_175',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Jill nimmt an der Talkshow "Frauen an der Spitze"teil. Die Damenrunde in der Show hat jedoch schnell nur noch ein Thema: die Unzulänglichkeiten der Ehemänner. Allein Jill zeigt Verständnis für\n      die Midlifecrisis des männlichen Geschlechts und insbesondere ihres Mannes.',
@@ -4509,17 +3805,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '177. Der Raftingtrip',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['177. Der Raftingtrip', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_176',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Jill hat sich zu Tims Geburtstag etwas ganz besonderes einfallen lassen und ihren Gatten mit einem Wildwasser-Rafting-Trip auf dem Whitewaterfulß überrascht. Eigentlich hatte Tim sich den\n      Verlauf seines Ehrentages etwas entspannender vorgestellt, aber um Jill nicht zu enttäuschen, zeigt er sich begeistert.',
@@ -4530,17 +3822,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '178. Der Nestflüchter',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['178. Der Nestflüchter', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_177',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Gemeinsam mit seiner Freundin Lauren hat Randy sich für die Teilnahme an einem zwölfmonatigen Umweltschutzprojekt in Costa Rica beworben. Als zunächst nur Lauren eine Zusage bekommt, ist Randy\n      am Boden zerstört.',
@@ -4552,17 +3840,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '179. Familienbande',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['179. Familienbande', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_178',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Endlich haben Jill und Tim wieder ein wenig Zeit für sich, denn die Jungs sind außer Haus. Von romantischen Fantasien beflügelt versucht Tim seine Frau zu einem Schäferstündchen auf der Couch zu\n      überreden, doch gerade, als die beiden ein wenig in Fahrt kommen, klingelt das Telefon: Tims Bruder Jeff kündigt einen spontanen Besuch an.',
@@ -4573,17 +3857,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '180. Fußball ist unser Leben',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['180. Fußball ist unser Leben', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_179',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Brad hat Probleme mit den Vorbereitungen für die Aufnahmeprüfung am College. Während er sich mit dem Lernstoff quaält, bekomt Wilson Besuch von Simon Downing-Chubb, einem seiner ehemaligen\n      Studenten, der inzwischen Karriere als Softwarespezialist und Sportmäzen gemacht hat.',
@@ -4594,17 +3874,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '181. Die Schwächen des Mannes',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['181. Die Schwächen des Mannes', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_180',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Die Taylors sind bei Als Freundin Trudy eingeladen. Tim ist wenig begeistert, er hält Trudy für häßlich und überdreht. Dann zeigt sich: Turdy gehört eine riesige Luxusvilla. Und zum einmonatigen\n      Jubiläum ihrer Beziehung, bekommt Al von ihr einen Ferrari-Klassiker geschenkt.',
@@ -4615,17 +3891,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '182. Der Halloweenkönig',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['182. Der Halloweenkönig', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_181',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Halloween steht vor der Tür und Tim setzt wie in jedem Jahr alles daran, mit allerlei gruseligen Streichen zum Halloween-König zu werden. In diesem Jahr wollen seine Gags jedoch nicht so richtig\n      zünden, und zudem stiehlt ihm Nachbar Wilson die Show:',
@@ -4636,17 +3908,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '183. Eine kleine Affäre',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['183. Eine kleine Affäre', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_182',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Jills neue Patientin Wendy berichtet in einer Therapiesitzung von einer Affäre mit einem gewissen Scott von Tims Sender Channel Eight. Jill traut ihren Ohren kaum, kann es sich bei diesem Scott\n      doch nur um Heidis Mann handelt.',
@@ -4658,17 +3926,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '184. Tims erstes Auto',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['184. Tims erstes Auto', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_183',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Bei der Aufzeichnung einer Sendung entdeckt Tim auf einem Schrottplatz seinen allerersten Wagen wieder, einen alten Austin. Total begeistert will er das Auto nun unbedingt kaufen, jedoch Jill\n      ist dagegen.',
@@ -4680,17 +3944,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '185. Hollywood ruft',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['185. Hollywood ruft', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_184',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Neueste "Tool-Time"-Meinungsumfragen haben ergeben, daß Al bei den Zuschauern erstmals beliebter ist als Tim. Während Tim noch seinen Popularitätsschwund noch zu verkraften versucht, beginnt Al\n      im Zuge seines wachsenden Selbstbewußtseins mit Autogrammstunden in Werkzeugläden.',
@@ -4702,17 +3962,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '186. Zwei Töchter für Tim',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['186. Zwei Töchter für Tim', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_185',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Tims Bruder Marty und seine Frau haben sich endgültig getrennt. Für den Übergang wohnt Marty in Harrys Werkzeugladen, doch dieser Zustand ist untragbar - zumal ihn seine Zwillinge Claire und\n      Gracie alle zwei Wochen übers Wochenende besuchen.',
@@ -4724,17 +3980,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '187. Ein Fest der Liebe?',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['187. Ein Fest der Liebe?', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_186',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Zu Weihnachten kehrt Randy für einige Tage aus Costa-Rica in den Schoß der Familie zurück. Entsetzt stellt er jedoch fest, daß im Hause Taylor die Zeit nicht stehengeblieben ist und sich einiges\n      verändert hat:',
@@ -4745,17 +3997,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '188. Die Zwillingskrise',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['188. Die Zwillingskrise', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_187',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Das Zusammenleben mit Marty und den Zwillingen für Probleme im Hause Taylor. Marty praktiziert einen antiautoritären, mit dem Tim und vor allem Jill sich überhaupt nicht anfreunden können.',
@@ -4767,25 +4015,18 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '189. Die Donut-Detektive',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['189. Die Donut-Detektive', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '190. Die Schreibblockade',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['190. Die Schreibblockade', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_189',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Um den Anfang seines lange geplanten Heimwerkerbuchs verfassen zu können, bittet Tim seine Familie um ein ungestörtes Wochenende. Also machen Jill und die Kinder einen Ausflug.',
@@ -4797,17 +4038,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '191. Ein Sportlerschicksal',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['191. Ein Sportlerschicksal', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_190',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Im Hause Taylor ist eine Toilette übergelaufen. Das bietet Tim endlich mal wieder die Gelegenheit, eine "Tool-Time"-Sendung im eigenen Haus zu produzieren. Trotz massiver Proteste seitens seiner\n      Gattin, erscheint Tim mit dem gesamten Produktionsteam, um vor laufender Kamera das WC zu reparieren.',
@@ -4819,17 +4056,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '192. Videokunst',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['192. Videokunst', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_191',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Mehr als drei Jahre lang hat Tim seinen 46er Ford restauriert und in jeder denkbaren Hinsicht auf Vordermann gebracht. Nun ist er endlich fertig und soll in der nächsten Sendung präsentiert\n      werden. Den richtigen Rahmen soll ein Video bilden, in dem der Restaurierungsprozeß dokumentiert wird und alle Beteiligten interviewt werden sollen.',
@@ -4841,17 +4074,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '193. Tims Traumfrau',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['193. Tims Traumfrau', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_192',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Jill freut sich auf den bevorstehenden Hochzeitstag und winkt mit zahlreichen Zaunpfählen, damit Tim den Ehrentag nicht wieder vergißt.',
@@ -4863,17 +4092,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '194. Schock für Jill',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['194. Schock für Jill', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_193',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Jill erhält von ihrem Gynäkologen eine erschütternde Diagnose: Sie hat einen Tumor in der Gebärmutter. Da eine sofortige Operation von nöten ist und Jill direkt ins Krankenhaus eingeliefert\n      wird, muss Tim die Aufgabe übernehmen, seinen Söhnen die Krankheit ihrer Mutter zu erklären.',
@@ -4885,17 +4110,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '195. Schock für Jill',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['195. Schock für Jill', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_194',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Trotz der Komplikationen hat Jill die Operation gut überstanden. Zu ihrem Entsetzen erfährt sie jedoch, einige Tage später von ihrem behandlenden Arzt, dass bei ihr eine Totaloperation\n      vorgenommen wurde und sie nun mit einer vorzeitigen Menopause rechnen muß.',
@@ -4907,17 +4128,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '196. Das Gewächshaus',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['196. Das Gewächshaus', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_195',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Bei einem Hockeyspiel, zu dem Tim ihn eingeladen hat, gewinnt Wilson mit seinem Sitzplatz 10.000 Dollar. Damit möchte er sich einen Traum erfüllen und ein Gewächshaus in seinem Garten bauen\n      lassen.',
@@ -4929,17 +4146,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '197. Heimwerker-Hotline',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['197. Heimwerker-Hotline', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_196',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Harry will seinen Eisenwarenladen verkaufen, findet aber geeigneten Käufer. Da beschließt Tim - sehr zu Jills Leidwesen - Den Laden einfach selbst zu übernehmen.',
@@ -4951,17 +4164,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '198. Eine Haarige Sache',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['198. Eine Haarige Sache', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_197',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Um ihre Abschlußarbeit in Psychologie zu Ende zu bringen, muss Jill sich der strengen Prüfung ihrer Arbeit durch ihren Mentor stellen. Prof. Dr. Hanover ist zwar ein äußerst kluger Kopf, für\n      Jill aber gerät seine Autorität durch eine kuriose Einzelhaarsträne immer wieder ins Wanken.',
@@ -4973,17 +4182,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '199. Brads große Chance',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['199. Brads große Chance', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_198',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Brads Knie ist wieder soweit verheilt, daß er mit leichtem Training beginnen kann. Da trifft ein Brief von der Uni ein, bei der sich Brad um ein Fußball-Stipendium beworben hat. Darin teilt man\n      ihm mit, daß man sich bei einem Fußballtunier seine Fähigkeiten ansehen wolle. Brad trainiert daraufhin wie besessen.',
@@ -4995,17 +4200,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '200. Das große Fressen',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['200. Das große Fressen', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_199',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Al will Trudy um ihre Hand bitten, muß jedoch noch seine Mutter informieren. Er lädt sie zum Essen ein, um ihr sein Vorhaben zu erzählen. Aber gerade als er den entscheidenden Satz sagt, stürzt\n      seine Mutter vom Stuhl: tödlicher Herzinfarkt.',
@@ -5017,17 +4218,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '201. Abschied vom Heimwerkerkönig',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['201. Abschied vom Heimwerkerkönig', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_200',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Tim neuer Boss treibt es immer bunter: Die Show verkommt mehr und mehr zu einer Krawallnummer mit der sich Tim nicht mehr identifizieren kann. ',
@@ -5039,17 +4236,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '202. Abschied vom Heimwerkerkönig',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['202. Abschied vom Heimwerkerkönig', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_201',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Tim steht für die letzte Tool-Time-Sendung vor der Kamera. Jill bereitet Als und Trudys Hochzeit vor, Sie ist jedoch nicht ganz bei der Sache - der Gedanke, Detroit für immer zu verlassen, macht\n      ihr Kopfschmerzen.',
@@ -5061,17 +4254,13 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '203. Abschied vom Heimwerkerkönig',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['203. Abschied vom Heimwerkerkönig', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_202',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
             children: [
               '\n      Tim blickt auf sein Leben zurück. er erinnert sich an das Heranwachsen seiner Söhne, an seine große Liebe Jill und seine einzigartige Weise, mit ihr zu kommunizieren, an ein turbulentes und\n      dennoch harmonisches Familienleben und an die Freundschaft mit Nachbar Wilson.',
@@ -5083,24 +4272,15 @@
           {
             tagName: 'span',
             attributes: { style: 'display: block;' },
-            children: [
-              '204. Backstage Spezial',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }
-            ]
+            children: ['204. Backstage Spezial', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }]
           },
           {
             tagName: 'div',
             attributes: {
               id: 'folge_0_203',
-              style:
-                'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
+              style: 'display: block; padding-left: 5pt; margin-left: 5pt; border-left: 1pt solid black;'
             },
-            children: [
-              '\n      Diese Folge gewährt Einblicke in die Proben der Darsteller, zeigt mißglückte Aufnahmen sowie nicht gesendete Höhepunkte der Home-Improveement-Geschichte.',
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] },
-              { tagName: 'br', attributes: { style: 'display: block;' }, children: [] },
-              'Und als absolutes Highlight: Wilsons ganzes Gesicht.\n    '
-            ]
+            children: ['\n      Diese Folge gewährt Einblicke in die Proben der Darsteller, zeigt mißglückte Aufnahmen sowie nicht gesendete Höhepunkte der Home-Improveement-Geschichte.', { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }, { tagName: 'br', attributes: { style: 'display: block;' }, children: [] }, 'Und als absolutes Highlight: Wilsons ganzes Gesicht.\n    ']
           }
         ]
       }

@@ -10,13 +10,14 @@ import { toXML, Path } from './lib/json.js';
 import { ColorMap } from './lib/draw/colorMap.js';
 import { Console } from 'console';
 import Alea from './lib/alea.js';
+
 const prng = new Alea(Date.now());
 global.console = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
   inspectOptions: { depth: 8, colors: true }
 });
-// prettier-ignore
+//prettier-ignore
 const filesystem = {
   readFile(filename) {let data = fs.readFileSync(filename).toString(); return data; },
   writeFile(filename, data, overwrite = true) {return fs.writeFileSync(filename, data, { flag: overwrite ? 'w' : 'wx' }); },
@@ -30,53 +31,45 @@ function readXML(filename) {
   /// console.log('xml:', xml);
   return xml;
 }
-// TODO: Test with tmScheme (XML) and ColorMap
+//TODO: Test with tmScheme (XML) and ColorMap
+
 const push_back = (arr, ...items) => [...(arr || []), ...items];
 const push_front = (arr, ...items) => [...items, ...(arr || [])];
+
 function main(...args) {
+  let colors, keys;
+
   console.log('main', args);
-  if(args.length == 0)
-    args = ['/home/roman/.config/sublime-text-3/Packages/Babel/Next.tmTheme' /*  */];
+  if(args.length == 0) args = ['/home/roman/.config/sublime-text-3/Packages/Babel/Next.tmTheme' /*  */];
   for(let filename of args)
     try {
       let xml = readXML(filename);
       let json = JSON.stringify(xml);
       let basename = filename.replace(/.*\//g, '').replace(/\.[^.]*$/, '');
       console.log('basename ', basename);
-      //  let js = toSource(xml);
+      //let js = toSource(xml);
       filesystem.writeFile(basename + '.json', json);
       //filesystem.writeFile('HoerMalWerDaHaemmert.js', js);
       let flat = deep.flatten(
         xml[0],
         new Map(),
-        (v, p) =>
-          (typeof v != 'object' && p.indexOf('attributes') == -1) ||
-          (p.length && p.indexOf('attributes') == p.length - 1),
+        (v, p) => (typeof v != 'object' && p.indexOf('attributes') == -1) || (p.length && p.indexOf('attributes') == p.length - 1),
         (p, v) => [new Path(p), v]
       );
-      console.log('flat:', flat);
 
-      let colors = new Map(
-        [
-          ...Iterator.filter(flat, ([path, value]) => /^#[0-9A-Fa-f]*$/.test(value))
-        ].map(([path, value]) => [path, new RGBA(value)])
-      );
-      console.log('colors:', colors);
+      colors = new Map([...Iterator.filter(flat, ([path, value]) => /^#[0-9A-Fa-f]*$/.test(value))].map(([path, value]) => [path, new RGBA(value)]));
+      //console.log('colors:', colors); //[...colors].map(([path,value ]) => [path, value]));
       let obj = {};
       //console.log('methods:', Util.getMethodNames(Iterator));
       let it = new IteratorForwarder(colors.entries());
-      // console.log('it.map', it.map + '');
-      let paths = Iterator.map(colors, ([path, value]) => [
-        XPath.from(path, xml[0]),
-        deep.get(xml[0], path),
-        path
-      ]);
+      //console.log('it.map', it.map + '');
+      let paths = Iterator.map(colors, ([path, value]) => [XPath.from(path, xml[0]), deep.get(xml[0], path), path]);
       let o = it.map(([path, value]) => {
         const key = path.up(0);
         let prev = new Path([]),
           prevValue = {},
           list = [];
-        // console.log('paths:', path);
+        //console.log('paths:', path);
         let paths = [
           ...key.walk((p, i, abort, skip) => {
             let r;
@@ -96,7 +89,7 @@ function main(...args) {
               if(value.tagName == 'dict' || value.tagName == 'array') skip();
               const text = value.children && value.children[0];
               if(text == 'settings') skip();
-              // if(value.tagName == 'string' && text == 'Next') skip();
+              //if(value.tagName == 'string' && text == 'Next') skip();
               if((text + '').startsWith('#')) skip();
               if(prev.length == p.length && i > 0) {
                 if(value.tagName == 'key') {
@@ -122,51 +115,49 @@ function main(...args) {
             : Util.filterOutKeys(value, ['children', 'attributes'])
         ]);*/
         //paths = paths.filter(item => !((item[1].tagName == 'key' && item[1].children[0] == 'settings') || item[1].children[0].startsWith('#') ) );
-        //       paths = paths.reduce((acc, [path, value]) => [...(acc || []), [path, value]]);
-        //  paths = paths.map(([path, value]) => [path, value]);
-        //paths = paths.map(([path, value]) =>  value);
-        paths = paths.filter(
-          ([path, value]) => value.tagName == 'key' && value.children[0] != 'settings'
-        );
-        //paths = paths.map(([path, value]) =>  value);
+        //paths = paths.reduce((acc, [path, value]) => [...(acc || []), [path, value]]);
+
+        paths = paths.filter(([path, value]) => value.tagName == 'key' && value.children[0] != 'settings');
         paths = paths.map(([path, value]) => value.children[0]);
-        //paths = paths.map(([path, value]) =>  value);
-        return [paths.reverse().join(' / '), path, value];
+        return [path, paths.reverse().join(' / '), value];
       });
       o = [...o];
-      //console.log('o: ', o);
-      o = o.filter(([paths, path, value]) => !/background/i.test(paths));
-      colors = new Map([...o].map(([h, p, v]) => [p, h]));
-      console.log('colors:', colors);
-      //  console.log('colors:', colors.values());
-      let palette = new ColorMap(
-        HSLA,
-        [...o].map(([k, [h, v]]) => [k, v])
-      );
-      for(let [path, color] of [...palette]) {
-        console.log('path:', path);
+      o = [...o.filter(([path, key, value]) => !/background/i.test(key))];
+      //console.log('o: ',o);
 
-        let key = colors.get(path);
+      colors = new Map(o.map(([p, k, v]) => [p, v]));
+      keys = new Map(o.map(([p, k, v]) => [p, k]));
+      console.log('colors:', [...colors].slice(0, 10));
+      console.log('keys:', keys);
 
-        console.log(`palette[${key}] =`, color);
-        color = HSLA.random(
-          [0, 360],
-          [color.s, 255 - (255 - color.s) / 2],
-          [(color.l * 2) / 3, 255 - ((255 - color.l) * 3) / 4],
-          [color.a, color.a],
-          prng
-        );
+      let palette = new ColorMap(HSLA, colors);
+      //console.log('palette:', palette);
+      //console.log('flat:', flat);
+
+      for(let item of palette) {
+        //console.log('item:', item);
+        let [path, color] = item;
+        let key = keys.get(path);
+        //console.log('item:', {path,color});
+        //console.log('item: ',path, `[${key}] =`, color);
+
+        const { s, l, a } = color;
+        let la = [l * 0.75, 255 - (255 - color.l) * 0.75];
+
+        // la = [45,55];
+
+        color = HSLA.random([0, 360], [s, 255 - (255 - s) / 2], la, [a, a], prng);
         flat.set(path, color.toRGBA().hex());
-        console.log('new:', key, color);
+        //   console.log('new:', key, color);
       }
       const newObj = {};
-      console.log('palette:', palette);
-      //   console.log('paths:', [...paths]);
+      //console.log('palette:', palette);
+      console.log('flat:', flat);
       for(let [path, value] of flat) {
-        console.log('path:', path, ' value:', value);
+        //console.log('path:', path, ' value:', value);
         deep.set(newObj, path, value);
       }
-      // console.log('newObj:', newObj);
+      console.log('values:', palette.values());
       filesystem.writeFile(basename + '.xml', toXML(newObj));
     } catch(err) {
       console.log('err:', err);

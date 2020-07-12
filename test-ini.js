@@ -34,9 +34,7 @@ for(let sect of file_sections) {
 
 let filenames = files.map(f => f.FILE_INFO);
 
-files = files.filter(
-  file => !/.*(buffer|comparator|lcd|format|ds18b20|hd44).*/.test(file.FILE_INFO)
-);
+files = files.filter(file => !/.*(buffer|comparator|lcd|format|ds18b20|hd44).*/.test(file.FILE_INFO));
 
 //console.log('data:', file_sections);
 //console.log('files:', filenames);
