@@ -168,8 +168,10 @@ function alignAll(doc) {
   let items = doc.getAll(doc.type == 'brd' ? 'element' : 'instance');
   let changed = false;
   for(let item of items) changed |= alignItem(item);
+let signals_nets = doc.find(/(signals|nets)/);
 
-  for(let item of doc.find(/(signals|nets)/).getAll('wire')) changed |= alignItem(item);
+console.log("signals_nets:",signals_nets);
+  for(let item of signals_nets.getAll('wire')) changed |= alignItem(item);
   return !!changed;
 }
 
