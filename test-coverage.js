@@ -48,10 +48,11 @@ function lineColumn(pos, text) {
 }
 
 function processFile(arg, re) {
-  let json = JSON.parse(fs.readFileSync(arg).toString());
+  let str = fs.readFileSync(arg).toString();
+  let json = JSON.parse(str);
+  //console.log('json:', json);
   re = typeof re == 'string' ? new RegExp(re) : /.*/;
-  //console.log('re:', re);
-  if(!(json instanceof Array)) return 1;
+  // if(!(json instanceof Array)) return 1;
 
   let scripts = json.map(({ url, ...item }) => [url.replace(/.*:\/\/[^/]*\//g, ''), item]).filter(([file]) => re.test(file));
 
@@ -68,9 +69,9 @@ function processFile(arg, re) {
       //console.log('obj:', Object.keys(obj));
       //console.log('text.length:', text.length);
       //console.log('ranges:', ranges);
-      //console.log('inverted:', inverted);*/
-      //console.log('used:', used);
-      //console.log('unused:', unused.map(u => u.toString(file)).join('\n\n'));
+      console.log('inverted:', inverted);*/
+      console.log('used:', used.map(u => u.toString(file).replace(/\n/g, '\\n')).join('\n'));
+      //   console.log('unused:', unused.map(u => u.toString(file)).join('\n\n'));
     } catch(err) {}
   }
 }
