@@ -10,6 +10,7 @@ import { JsonPointer, JsonReference } from './lib/json-pointer.js';
 import { RGBA } from './lib/color/rgba.js';
 import { Graph, Edge, Node } from './lib/fd-graph.js';
 import ptr from './lib/json-ptr.js';
+import LogJS from './lib/log.js';
 import util from 'util';
 
 global.console = new Console({
@@ -168,15 +169,24 @@ function alignAll(doc) {
   let items = doc.getAll(doc.type == 'brd' ? 'element' : 'instance');
   let changed = false;
   for(let item of items) changed |= alignItem(item);
-let signals_nets = doc.find(/(signals|nets)/);
+  let signals_nets = doc.find(/(signals|nets)/);
 
-console.log("signals_nets:",signals_nets);
+  console.log('signals_nets:', signals_nets);
   for(let item of signals_nets.getAll('wire')) changed |= alignItem(item);
   return !!changed;
 }
 
 async function testEagle(filename) {
   let proj = new EagleProject(filename, filesystem);
+
+  LogJS.addAppender(
+    class extends LogJS.BaseAppender {
+      log(type, time, msg) {
+        console.log(msg);
+      }
+    }
+  );
+  LogJS.info('Project loaded: ' + !proj.failed);
 
   if(proj.failed) return false;
 
