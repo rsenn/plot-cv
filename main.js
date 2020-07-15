@@ -214,10 +214,10 @@ const ModifyColors = fn => e => {
 };
 
 const loadDocument = async (project, parentElem) => {
-  console.log(`load project #${project.i}:`, project);
+  //console.log(`load project #${project.i}:`, project);
   project.doc = await LoadFile(project.name);
 
-  console.log('project.doc', project.doc);
+  //console.log('project.doc', project.doc);
 
   window.eagle = project.doc;
   window.project = project;
@@ -233,7 +233,7 @@ const loadDocument = async (project, parentElem) => {
   docElem.appendChild(eagleNode);*/
 
   project.renderer = new Renderer(project.doc, ReactComponent.append, false);
-  console.log('project.renderer', project.renderer);
+  //console.log('project.renderer', project.renderer);
 
   // if(!project.renderer || !project.renderer.render) return;
 
@@ -440,7 +440,7 @@ const AppMain = (window.onload = async () => {
       focusSearch(false);
 
       setTimeout(() => {
-        //   console.log('currentSearch:', value);
+        //console.log('currentSearch:', value);
         focusSearch(true);
       }, 1000);
     }
@@ -616,7 +616,7 @@ const AppMain = (window.onload = async () => {
   });*/
 
   window.addEventListener('wheel', event => {
-    //    console.log('event:', event);
+    //console.log('event:', event);
     const clientArea = Element.rect('body > div');
     const sideBar = Element.rect('.sidebar');
 
@@ -630,7 +630,7 @@ const AppMain = (window.onload = async () => {
 
     clientArea.x += container.parentElement.scrollLeft;
 
-    //    console.log('wheel:', { sideBar, clientArea });
+    //console.log('wheel:', { sideBar, clientArea });
 
     const clientCenter = clientArea.center;
     const { clientX, clientY, target, currentTarget, buttons, altKey, ctrlKey, shiftKey } = event;

@@ -149,7 +149,7 @@ for(let name in layerColors) {
 }
 
 const allColors = Util.unique(Object.values(layerColors));
-console.log('allColors: ' + allColors);
+//console.log('allColors: ' + allColors);
 
 let keyList = [];
 
@@ -166,7 +166,7 @@ const GeneratePalette = numColors => {
   let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360], []);
   offsets = offsets.sort((a, b) => a - b);
   //offsets = Util.shuffle(offsets, prng);
-  console.log('offsets:', offsets);
+  //console.log('offsets:', offsets);
 
   new KolorWheel(base.hex()).rel(offsets, 0, 0).each(function() {
     const hex = this.getHex();
@@ -179,7 +179,7 @@ const GeneratePalette = numColors => {
 };
 
 const palette = GeneratePalette(5);
-console.log('palette:', palette);
+//console.log('palette:', palette);
 //console.log('keyList.length:', keyList.length);
 
 let s = '';
@@ -191,4 +191,4 @@ for(let i = 0; i < keyList.length; i++) {
     s += `${key}: palette[${i}]`;
   }
 }
-//  console.log('const palette = ' + Util.inspect(palette, { colors: false, newline: '' }) + ';\n renderer.colors = {' + s + '};');
+//console.log('const palette = ' + Util.inspect(palette, { colors: false, newline: '' }) + ';\n renderer.colors = {' + s + '};');

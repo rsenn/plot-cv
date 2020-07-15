@@ -134,7 +134,7 @@ function updateMeasures(board) {
     //console.log('no measures:', { bounds, lines }, [...plain]);
     //plain.remove(e => e.attributes.layer == '51');
   }
-  /// console.log('board.plain:', board.plain);
+  //console.log('board.plain:', board.plain);
   return !measures;
 }
 
@@ -171,7 +171,7 @@ function alignAll(doc) {
   for(let item of items) changed |= alignItem(item);
   let signals_nets = doc.find(/(signals|nets)/);
 
-  console.log('signals_nets:', signals_nets);
+  //console.log('signals_nets:', signals_nets);
   for(let item of signals_nets.getAll('wire')) changed |= alignItem(item);
   return !!changed;
 }
@@ -182,7 +182,7 @@ async function testEagle(filename) {
   LogJS.addAppender(
     class extends LogJS.BaseAppender {
       log(type, time, msg) {
-        console.log(msg);
+        //console.log(msg);
       }
     }
   );
@@ -241,7 +241,7 @@ async function testEagle(filename) {
     try {
       let project = await testEagle(arg);
     } catch(err) {
-      console.log('Err:', err.message, err.stack);
+      //console.log('Err:', err.message, err.stack);
       //throw err;
     }
   }

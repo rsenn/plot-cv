@@ -151,7 +151,7 @@ try {
         .map(([p]) => p + '')
         .join('\n  |');
 
-      console.log('result:\n  ', dumps);
+      //console.log('result:\n  ', dumps);
       return [xpath, new Map(selected.map(({ path, value }) => [path2xpath(path).down('*'), value]))];
     });
 
