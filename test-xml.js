@@ -11,6 +11,7 @@ import { toXML, Path } from './lib/json.js';
 import { ColorMap } from './lib/draw/colorMap.js';
 import { Console } from 'console';
 import Alea from './lib/alea.js';
+import { Functional } from './lib/functional.js';
 
 const prng = new Alea(Date.now());
 global.console = new Console({
@@ -190,7 +191,7 @@ function main(...args) {
       //flat = [...shuffled.entries()];
       console.log('flat:', flat);
 
-  let generated = ColorMap.generate(10, 3, prng);
+      let generated = ColorMap.generate(10, 3, prng);
       console.log('generated:', generated);
 
       const newObj = {};
@@ -198,6 +199,13 @@ function main(...args) {
         deep.set(newObj, path, value);
       }
       filesystem.writeFile(basename + '.xml', toXML(newObj));
+
+      let c = Functional.curry(function(a, b, c) {
+        return a * b * c;
+      });
+      let arity = Functional.arityof(c);
+      console.log('arity:', arity, c(2)(3)(4));
+      Functional.compose(Functional.trim, Functional.split(/\//g))('test/blah');
     } catch(err) {
       console.log('err:', err);
     }

@@ -18,6 +18,7 @@ import Util from './lib/util.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import { Iterator } from './lib/iterator.js';
+import { Functional } from './lib/functional.js';
 import { makeLocalStorage } from './lib/autoStore.js';
 
 import { toXML, ImmutablePath } from './lib/json.js';
@@ -91,7 +92,7 @@ Util.extend(
   { React, ReactComponent, WebSocketClient, html },
   { dom, keysim },
   geom,
-  { Iterator },
+  { Iterator, Functional },
   { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement },
   { toXML, XmlObject, XmlAttr },
   {

@@ -78,8 +78,5 @@
   "eslintConfig": {
     "extends": "preact"
   },
-  "prettier": "./node_modules/@s-ui/lint/.prettierrc.js",
-  "stylelint": {
-    "extends": "./node_modules/@s-ui/lint/stylelint.config.js"
-  }
+  "prettier": ".prettierrc.js"
 }
