@@ -18,7 +18,7 @@ module.exports = {
     sourceType: "module"
   },
   settings: {
-    react: {
+    preact: {
       pragma: "h"
     }
   },
@@ -31,8 +31,6 @@ module.exports = {
     "no-unused-vars": ["error", { varsIgnorePattern: "h" }],
     "no-mixed-spaces-and-tabs": "off",
     "no-console": "warn",
-    indent: ["error", 2],
-    "react/react-in-jsx-scope": "off",
-    "react/prop-types": "off"
+    indent: ["error", 2]
   }
 };

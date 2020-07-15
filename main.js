@@ -37,7 +37,6 @@ import {
   DereferenceError,
   EagleDocument,
   EagleElement,
-  EagleInterface,
   EagleNode,
   EagleNodeList,
   EagleNodeMap,
@@ -215,8 +214,11 @@ const ModifyColors = fn => e => {
 };
 
 const loadDocument = async (project, parentElem) => {
-  //console.log(`load project #${project.i}:`, project);
+  console.log(`load project #${project.i}:`, project);
   project.doc = await LoadFile(project.name);
+
+  console.log('project.doc', project.doc);
+
   window.eagle = project.doc;
   window.project = project;
 
@@ -225,14 +227,15 @@ const loadDocument = async (project, parentElem) => {
   let docElem = Element.find('#doc');
   docElem.innerHTML = '';
 
-  let docNode = Util.parseXML(project.doc.toXML());
+  /*  let docNode = Util.parseXML(project.doc.toXML());
   let eagleNode = docNode.firstElementChild;
   docNode.removeChild(eagleNode);
-  docElem.appendChild(eagleNode);
+  docElem.appendChild(eagleNode);*/
 
-  project.renderer = new Renderer(project.doc, ReactComponent.append, false);
+  project.renderer = new Renderer(project.doc, ReactComponent.append, true);
+  console.log('project.renderer', project.renderer);
 
-  if(!project.renderer || !project.renderer.render) return;
+  // if(!project.renderer || !project.renderer.render) return;
 
   let style = { width: '100%', height: '100%', position: 'relative' };
   /*  let svgXml = project.renderer.render(project.doc, null, {});
@@ -243,8 +246,7 @@ const loadDocument = async (project, parentElem) => {
 
   let element = Element.find('#main');
   //console.log('h', h);
-  //console.log('component', component);
-
+  //
   let r = project.renderer.rect || project.renderer.bounds;
   //console.log('r', r);
   let aspectRatio = r.width / r.height;
@@ -447,7 +449,7 @@ const AppMain = (window.onload = async () => {
   Util(globalThis);
 
   // prettier-ignore
-  Object.assign(window, { BBox, chooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleInterface, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, loadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
+  Object.assign(window, { BBox, chooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, loadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
 
   const inspectSym = Symbol.for('nodejs.util.inspect.custom');
 

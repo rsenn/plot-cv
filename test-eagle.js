@@ -1,4 +1,4 @@
-import { EagleElement, EagleDocument, EagleProject, EagleInterface } from './lib/eagle.js';
+import { EagleElement, EagleDocument, EagleProject } from './lib/eagle.js';
 import { Line, Point, BBox, LineList, Rect } from './lib/geom.js';
 import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
