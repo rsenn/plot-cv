@@ -1,5 +1,3 @@
-import SvgPath from './lib/svg/path.js';
-import { Point, PointList } from './lib/geom.js';
 import { SVG } from './lib/dom.js';
 import { Console } from 'console';
 

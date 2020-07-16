@@ -1,11 +1,10 @@
-import ObservableMembrane from './lib/proxy/observableMembrane.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Util from './lib/util.js';
 import util from 'util';
 import fs from 'fs';
-import { Path, MutablePath, ImmutablePath, PathMapper, toXML, TreeObserver } from './lib/json.js';
-import { XPath, MutableXPath, ImmutableXPath, findXPath, parseXPath, XmlObject, XMLIterator, XmlIterator } from './lib/xml.js';
+import { ImmutablePath, PathMapper, toXML, TreeObserver } from './lib/json.js';
+import { ImmutableXPath, parseXPath, XMLIterator } from './lib/xml.js';
 import { Console } from 'console';
 
 const inspect = (arg, depth = 10, colors = true, breakLength = Number.Infinity) => util.inspect(arg, { depth, breakLength, compact: true, showProxy: true, colors });

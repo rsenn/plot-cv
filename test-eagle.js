@@ -1,17 +1,14 @@
-import { EagleElement, EagleDocument, EagleProject } from './lib/eagle.js';
-import { Line, Point, BBox, LineList, Rect } from './lib/geom.js';
+import { EagleDocument, EagleProject } from './lib/eagle.js';
+import { LineList, Rect } from './lib/geom.js';
 import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
 import fs, { promises as fsPromises } from 'fs';
 import deep from './lib/deep.js';
 import DeepDiff from 'deep-diff';
 import { Console } from 'console';
-import { JsonPointer, JsonReference } from './lib/json-pointer.js';
-import { RGBA } from './lib/color/rgba.js';
-import { Graph, Edge, Node } from './lib/fd-graph.js';
+import { Graph } from './lib/fd-graph.js';
 import ptr from './lib/json-ptr.js';
 import LogJS from './lib/log.js';
-import util from 'util';
 
 global.console = new Console({
   stdout: process.stdout,

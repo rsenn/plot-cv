@@ -1,8 +1,7 @@
 import ClipperLib from './lib/clipper-lib.js';
-import SvgPath from './lib/svg/path.js';
 import { Point, PointList } from './lib/geom.js';
 import { SVG } from './lib/dom.js';
-import { parse, parseSVG } from './lib/svg/path-parser.js';
+import { parse } from './lib/svg/path-parser.js';
 import { Console } from 'console';
 import Shape from './lib/clipper.js';
 

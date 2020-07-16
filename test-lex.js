@@ -1,13 +1,7 @@
-import { ECMAScriptParser } from './lib/ecmascript/parser.js';
-import Lexer, { Stack, PathReplacer } from './lib/ecmascript/lexer.js';
-import Printer from './lib/ecmascript/printer.js';
+import Lexer from './lib/ecmascript/lexer.js';
 import Util from './lib/util.js';
 import fs from 'fs';
-import util from 'util';
 import { Console } from 'console';
-import { estree, Factory, ESNode } from './lib/ecmascript/estree.js';
-import deep from './lib/deep.js';
-import { SortedMap } from './lib/container/sortedMap.js';
 
 //import process from 'process';
 Error.stackTraceLimit = 1000;

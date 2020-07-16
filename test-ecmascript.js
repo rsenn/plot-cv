@@ -1,11 +1,10 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
-import Lexer, { Stack, PathReplacer } from './lib/ecmascript/lexer.js';
+import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
-import { estree, Factory, ESNode, ImportStatement, ForInStatement, CallExpression } from './lib/ecmascript/estree.js';
+import { estree, ESNode, CallExpression } from './lib/ecmascript/estree.js';
 
 import Util from './lib/util.js';
 import fs from 'fs';
-import util from 'util';
 import { Console } from 'console';
 import deep from './lib/deep.js';
 import { SortedMap } from './lib/container/sortedMap.js';

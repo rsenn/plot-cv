@@ -3,7 +3,6 @@ import { Grammar } from './lib/parse/grammar.js';
 import { Parser } from './lib/parse/parser.js';
 import Ebnf2Parser from './lib/parse/ebnf2.js';
 import fs from 'fs';
-import { literal, optional, seq, or, param, exhaustive } from './lib/parse/expr.js';
 import CGrammar from './test-grammar.js';
 import { Console } from 'console';
 global.console = new Console({
