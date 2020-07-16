@@ -60,7 +60,7 @@ function main(...args) {
       );
 
       colors = new Map([...Iterator.filter(flat, ([path, value]) => /^#[0-9A-Fa-f]*$/.test(value))].map(([path, value]) => [path, new RGBA(value)]));
-      console.log('colors:', colors); //[...colors].map(([path,value ]) => [path, value]));
+      //console.log('colors:', colors); //[...colors].map(([path,value ]) => [path, value]));
       let obj = {};
       //console.log('methods:', Util.getMethodNames(Iterator));
       let it = new IteratorForwarder(colors.entries());
@@ -189,10 +189,10 @@ function main(...args) {
       }
 
       //flat = [...shuffled.entries()];
-      console.log('flat:', flat);
+      //console.log('flat:', flat);
 
       let generated = ColorMap.generate(10, 3, prng);
-      console.log('generated:', generated);
+      //console.log('generated:', generated);
 
       const newObj = {};
       for(let [path, value] of flat) {
@@ -204,10 +204,10 @@ function main(...args) {
         return a * b * c;
       });
       let arity = Functional.arityof(c);
-      console.log('arity:', arity, c(2)(3)(4));
+      //console.log('arity:', arity, c(2)(3)(4));
       Functional.compose(Functional.trim, Functional.split(/\//g))('test/blah');
     } catch(err) {
-      console.log('err:', err);
+      //console.log('err:', err);
     }
 }
 main(...process.argv.slice(2));

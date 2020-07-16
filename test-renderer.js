@@ -6,7 +6,7 @@ import { h, render, Component } from './node_modules/htm/preact/standalone.mjs';
 
 Error.stackTraceLimit = 100;
 
-const debug = true; //process.env.APP_ENV.startsWith('devel'); /*||process.env.NODE_ENV.startsWith('devel')*/
+const debug = process.env.APP_ENV.startsWith('devel'); /*||process.env.NODE_ENV.startsWith('devel')*/
 
 function testRenderSchematic(file) {
   let doc = new EagleDocument(fs.readFileSync(`${file}.sch`).toString());
@@ -15,7 +15,8 @@ function testRenderSchematic(file) {
   // console.log('renderer:', renderer);
   let output = renderer.render(doc, null, 0);
 
-  console.log('output:', output);
+  //console.log('output:', output);
+  console.log('bounds:', doc.getBounds());
 
   let outFile = file.replace(/.*\//g, '').replace(/\.[a-z]+$/, '');
 
@@ -25,10 +26,11 @@ function testRenderSchematic(file) {
 function testRenderBoard(file) {
   let doc = new EagleDocument(fs.readFileSync(`${file}.brd`).toString());
   let renderer = new Renderer(doc, ReactComponent.append, debug);
-  console.log('renderer:', renderer);
+  //console.log('renderer:', renderer);
   let output = renderer.render(doc, null, 0);
 
-  console.log('output:', output);
+  //console.log('output:', output);
+  console.log('bounds:', doc.getBounds());
 
   let outFile = file.replace(/.*\//g, '').replace(/\.[a-z]+$/, '');
 

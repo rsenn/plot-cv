@@ -233,8 +233,8 @@ const loadDocument = async (project, parentElem) => {
   docNode.removeChild(eagleNode);
   docElem.appendChild(eagleNode);*/
 
-  project.renderer = new Renderer(project.doc, ReactComponent.append, true);
-  console.log('project.renderer', project.renderer);
+  project.renderer = new Renderer(project.doc, ReactComponent.append, false);
+  //console.log('project.renderer', project.renderer);
 
   // if(!project.renderer || !project.renderer.render) return;
 
@@ -358,8 +358,8 @@ const chooseDocument = async (e, proj, i) => {
     }
     r = proj.loaded;
   } catch(err) {
-    //console.log('err:', err.message);
-    console.log('stack:', [...err.stack].map(f => f + '').join('\n'));
+    console.log('err:', err.message);
+    console.log('stack:', err.stack);
   }
 
   return r;
