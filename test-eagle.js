@@ -178,17 +178,20 @@ function alignAll(doc) {
 
 async function testEagle(filename) {
   let proj = new EagleProject(filename, filesystem);
-
+  /*
   LogJS.addAppender(
     class extends LogJS.BaseAppender {
       log(type, time, msg) {
         //console.log(msg);
       }
     }
-  );
-  LogJS.info('Project loaded: ' + !proj.failed);
+  );*/
+  console.log('Project loaded: ' + !proj.failed);
 
-  if(proj.failed) return false;
+  //  if(proj.failed) return false;
+
+  //console.log('failed  :', failed);
+  console.log('proj.documents', proj.documents);
 
   let { board, schematic } = proj;
 
@@ -219,10 +222,12 @@ async function testEagle(filename) {
 
   if(updateMeasures(proj.board) | alignAll(board) | alignAll(schematic)) console.log('Saved:', await proj.board.saveTo(null, true));
 
-  //console.log('saved:', await proj.saveTo('tmp', true));
+  console.log('saved:', await proj.saveTo('tmp', true));
 
-  for(let element of board.getAll('element')) {
+  for(let sheet of board.get('sheet')) {
+    console.log('sheet', sheet, sheet.xpath());
   }
+
   for(let instance of schematic.getAll(e => e.tagName == 'instance')) {
     const { part, gate } = instance;
   }

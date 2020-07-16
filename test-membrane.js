@@ -151,7 +151,7 @@ try {
         .map(([p]) => p + '')
         .join('\n  |');
 
-      //console.log('result:\n  ', dumps);
+      console.log('result:\n  ', dumps);
       return [xpath, new Map(selected.map(({ path, value }) => [path2xpath(path).down('*'), value]))];
     });
 
@@ -162,12 +162,12 @@ try {
     let x = new ImmutableXPath('/eagle/drawing/board');
     let drawing = deep.find(xml, v => v.tagName == 'drawing');
     let w = new ImmutablePath('children/0/children/0/children/3', true);
-    //console.log('w:', w.toString());
+    console.log('w:', w.toString());
     let y = ImmutableXPath.from(w, xml);
-    //console.log('y:', y, [...y]);
+    console.log('y:', y, [...y]);
     let z = w.apply(xml);
     let u = observer.get(z);
-    //console.log('z:', z);
+    console.log('z:', z);
   }
   main(...process.argv.slice(2));
 } catch(err) {}
