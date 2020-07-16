@@ -31,5 +31,5 @@ try {
 
   //console.log(tree.toStringTree(parser.ruleNames));
 } catch(error) {
-  //console.log(error);
+  console.log(error);
 }

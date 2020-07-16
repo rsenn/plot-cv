@@ -70,7 +70,7 @@ app.ws('/ws', async (ws, req) => {
           ws => ws.send(msg),
           true,
           err => {
-            //console.log('socket:', sock.info, ' error:', (err + '').replace(/\n.*/g, ''));
+            console.log('socket:', sock.info, ' error:', (err + '').replace(/\n.*/g, ''));
             return false;
           },
           sock.ws

@@ -246,7 +246,7 @@ async function testEagle(filename) {
     try {
       let project = await testEagle(arg);
     } catch(err) {
-      //console.log('Err:', err.message, err.stack);
+      console.log('Err:', err.message, err.stack);
       //throw err;
     }
   }

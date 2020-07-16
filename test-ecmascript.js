@@ -153,7 +153,7 @@ function finish(err) {
 
   if(err) {
     //console.log(parser.lexer.currentLine());
-    //console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
+    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
 
   let lexer = parser.lexer;
@@ -161,8 +161,8 @@ function finish(err) {
   //console.log(parser.trace() );
   dumpFile('trace.log', parser.trace());
   if(fail) {
-    //console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
+    console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
   }
-  //console.log('finish: ' + (fail ? 'error' : 'success'));
+  console.log('finish: ' + (fail ? 'error' : 'success'));
   return !fail;
 }
