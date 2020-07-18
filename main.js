@@ -116,6 +116,8 @@ Util.extend(
   { Chooser, useState, useLayoutEffect, useRef, Polygon }
 );
 
+  Error.stackTraceLimit = 100;
+
 let currentProj = trkl.property(window, 'project');
 let open = trkl();
 let showSearch = trkl(true);
@@ -359,7 +361,7 @@ const chooseDocument = async (e, proj, i) => {
     r = proj.loaded;
   } catch(err) {
     console.log('err:', err.message);
-    console.log('stack:', err.stack);
+    console.log('stack:', [...err.stack].join("\n"));
   }
 
   return r;
