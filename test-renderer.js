@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { EagleDocument, Renderer } from './lib/eagle.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
-import { render, Component } from './node_modules/htm/preact/standalone.mjs';
+import { render, Component } from './lib/preact.mjs';
 
 Error.stackTraceLimit = 100;
 

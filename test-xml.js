@@ -46,7 +46,7 @@ function main(...args) {
   for(let filename of args)
     try {
       let xml = readXML(filename);
-      let json = JSON.stringify(xml);
+      let json = JSON.stringify(xml, null, '  ');
       let basename = filename.replace(/.*\//g, '').replace(/\.[^.]*$/, '');
       //console.log('basename ', basename);
       //let js = toSource(xml);

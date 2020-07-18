@@ -30,7 +30,7 @@
     "preact-render-to-string": "^5.0.6",
     "preact-ssr-prepass": "^1.0.0",
     "styled-components": "^4.3.2",
-    "universal-websocket-client": "^1.0.2",
+    "svg-path-outline": "^1.0.1",
     "websocket-async": "https://github.com/jcao219/websocket-async"
   },
   "_moduleAliases": {
@@ -45,7 +45,6 @@
     "clarify": "^2.1.0",
     "eslint": "^7.4.0",
     "eslint-config-standard": "^14.1.1",
-    "eslint-config-standard-preact": "^1.1.6",
     "eslint-plugin-class-property": "^1.1.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-no-unused-code": "^0.0.2",
@@ -57,8 +56,6 @@
     "eslint-plugin-react": "^7.20.3",
     "eslint-plugin-standard": "^4.0.1",
     "http": "0.0.0",
-    "react-dom": "^16.8.6",
-    "svg-path-outline": "^1.0.1",
     "trace": "^3.1.1"
   },
   "husky": {

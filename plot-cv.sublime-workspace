@@ -8,53 +8,20 @@
 	"buffers":
 	[
 		{
-			"contents": "function DereferenceError(object, member, pos, locator)\nframe =>\nframe =>\nDereferenceError.prototype.toString = function()\nIsChildren\nMutablePath\nargs =>\nisChildren\nconstructor\n(acc, p) =>\npartToString\n(text, c = 33, b = 0) =>\n([name, value]) =>\nclone\nsize\nright\nleft\nup\ndown\nnthChild\ndiff\nlastId\nlast\nfirst\nnextSibling\nprevSibling\nparent\nparentNode\nfirstChild\nlastChild\ndepth\ncompareObj\napply\n(a, i) =>\nchild =>\ntoString\ncolor\npad\ntoSource\nitem =>\nabsolute\nmakeAbsolute\nMutablePath\nMutablePath\nexistsIn\nsplit\npred\nrelativeTo\n(part, i) =>\nslice\nsplice\npush\npop\nunshift\nshift\nconcat\nmap\nfilter\nat\noffset\n(p, i) =>\ntoArray\nequals\nparent\nwalk\np =>\nabort\nset\nignore\ncompare\n(a, b) =>\nfunction()\nfunction()",
+			"contents": "useSlot\n() =>\nv =>\ntrklGetSet\nvalue =>\nuseTrkl\n() =>\nvalue =>\nclassNames\narg =>\nMouseEvents\n.list\nElementToXML\nLoadFile\nasync res =>\n.save\nModifyColors\ne =>\nloadDocument\nFence\nvalue =>\nvalue =>\nchooseDocument\nMakeFitAction\nasync () =>\nCreateWebSocket\n(...args) =>\narg =>\n.onload\n.keystroke\n(key, modifiers = 0) =>\n.focusSearch\nvalue =>\n() =>\ntestComponent\nresponse =>\n({ name }, i) =>\nws =>\nvalue =>\nchangeInput\nfn: e\nc =>\nc =>\nc =>\nc =>\nevent =>\nevent =>\nonRuntimeInitialized: ()\nprint: txt",
 			"settings":
 			{
-				"buffer_size": 701,
+				"buffer_size": 491,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "lib/eagle/element.js",
+			"file": "test-renderer.js",
 			"settings":
 			{
-				"buffer_size": 16475,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/components.js",
-			"settings":
-			{
-				"buffer_size": 1602,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/common.js",
-			"settings":
-			{
-				"buffer_size": 4581,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/schematicRenderer.js",
-			"settings":
-			{
-				"buffer_size": 7841,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/log.js",
-			"settings":
-			{
-				"buffer_size": 4183,
+				"buffer_size": 1671,
 				"line_ending": "Unix"
 			}
 		},
@@ -62,167 +29,15 @@
 			"file": "lib/eagle/boardRenderer.js",
 			"settings":
 			{
-				"buffer_size": 8369,
+				"buffer_size": 8262,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/eagle/document.js",
+			"file": "lib/eagle/svgRenderer.js",
 			"settings":
 			{
-				"buffer_size": 6162,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/ref.js",
-			"settings":
-			{
-				"buffer_size": 3510,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/renderer.js",
-			"settings":
-			{
-				"buffer_size": 6606,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-eagle.js",
-			"settings":
-			{
-				"buffer_size": 7278,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Bold.tmTheme",
-			"settings":
-			{
-				"buffer_size": 53627,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Contrast.tmTheme",
-			"settings":
-			{
-				"buffer_size": 53625,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-xml.js",
-			"settings":
-			{
-				"buffer_size": 6601,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Modified.tmTheme",
-			"settings":
-			{
-				"buffer_size": 53629,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Other.tmTheme",
-			"settings":
-			{
-				"buffer_size": 53618,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Roman New.tmTheme",
-			"settings":
-			{
-				"buffer_size": 53627,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/deep.js",
-			"settings":
-			{
-				"buffer_size": 5182,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next.tmTheme",
-			"settings":
-			{
-				"buffer_size": 44374,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/project.js",
-			"settings":
-			{
-				"buffer_size": 7971,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/clone.js",
-			"settings":
-			{
-				"buffer_size": 7651,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd",
-			"settings":
-			{
-				"buffer_size": 35091,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch",
-			"settings":
-			{
-				"buffer_size": 228817,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/nodeList.js",
-			"settings":
-			{
-				"buffer_size": 5089,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/json/path.js",
-			"settings":
-			{
-				"buffer_size": 16103,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-renderer.js",
-			"settings":
-			{
-				"buffer_size": 1581,
+				"buffer_size": 13140,
 				"line_ending": "Unix"
 			}
 		},
@@ -230,91 +45,8 @@
 			"file": "main.js",
 			"settings":
 			{
-				"buffer_size": 20767,
+				"buffer_size": 20787,
 				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "Searching 207 files for \"Error\\.\" (regex)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js:\n   27  }\n   28  \n   29: DereferenceError.prototype.toString = function() {\n   30    const { message, object, member, pos, locator, stack } = this;\n   31    return `${message}\\n${Util.inspect({ object, member, pos, locator, stack }, { depth: 2, colors: false })}`;\n\n/home/roman/Dokumente/Sources/plot-cv/lib/util.js:\n 2039    let stack=[];\n 2040    let error;\n 2041:     Error.stackTraceLimit = 100;\n 2042:      const oldPrepareStackTrace = Error.prepareStackTrace;\n 2043:   Error.prepareStackTrace = (_, stack) => stack;\n 2044   try {\n 2045  \n ....\n 2050    stack = e.stack;\n 2051   }\n 2052:  Error.prepareStackTrace = oldPrepareStackTrace;\n 2053  \n 2054   return stack;\n ....\n 2056  \n 2057  Util.getCallerStack = function(position = 2) {\n 2058:   Error.stackTraceLimit = 100;\n 2059:   if(position >= Error.stackTraceLimit) {\n 2060:     throw new TypeError(`getCallerFile(position) requires position be less then Error.stackTraceLimit but position was: \\`${position}\\` and Error.stackTraceLimit was: \\`${Error.stackTraceLimit}\\``);\n 2061    }\n 2062:   const oldPrepareStackTrace = Error.prepareStackTrace;\n 2063:   Error.prepareStackTrace = (_, stack) => stack;\n 2064    let stack = new Error().stack;\n 2065    stack = stack.slice(position);\n\n/home/roman/Dokumente/Sources/plot-cv/test-renderer.js:\n   35  testRenderBoard(filename);\n   36  }catch(error) {\n   37:   console.log(\"ERROR:\", error.message);\n   38:   console.log(\"stack:\", error.stack);\n   39  }\n   40  \n\n/home/roman/Sources/plot-cv/lib/colorscheme.js:\n    4  export class ColorScheme {\n    5    static nextTheme =\n    6:     '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\\n<plist version=\"1.0\">\\n<dict>\\n\\t<key>name</key>\\n\\t<string>Next</string>\\n\\t<key>settings</key>\\n\\t<array>\\n\\t\\t<dict>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>activeGuide</key>\\n\\t\\t\\t\\t<string>#3333FFFF</string>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#000000</string>\\n\\t\\t\\t\\t<key>bracketsBackground</key>\\n\\t\\t\\t\\t<string>#FF00AA66</string>\\n\\t\\t\\t\\t<key>bracketsOptions</key>\\n\\t\\t\\t\\t<string>background</string>\\n\\t\\t\\t\\t<key>caret</key>\\n\\t\\t\\t\\t<string>#FF0099</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#E6E6E6</string>\\n\\t\\t\\t\\t<key>guide</key>\\n\\t\\t\\t\\t<string>#33333388</string>\\n\\t\\t\\t\\t<key>gutter</key>\\n\\t\\t\\t\\t<string>#6600FF33</string>\\n\\t\\t\\t\\t<key>invisibles</key>\\n\\t\\t\\t\\t<string>#404040</string>\\n\\t\\t\\t\\t<key>lineHighlight</key>\\n\\t\\t\\t\\t<string>#FF009933</string>\\n\\t\\t\\t\\t<key>multiEditHighlight</key>\\n\\t\\t\\t\\t<string>#00FF0022</string>\\n\\t\\t\\t\\t<key>searchHighlight</key>\\n\\t\\t\\t\\t<string>#FF00AA99</string>\\n\\t\\t\\t\\t<key>selection</key>\\n\\t\\t\\t\\t<string>#00FFFF44</string>\\n\\t\\t\\t\\t<key>stackGuide</key>\\n\\t\\t\\t\\t<string>#333333CC</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>bracket.curly</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>bracket.curly</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#FF44AA</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#3399FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>bracket.square</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>bracket.square</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#2266CC</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF8800</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>bracket.round</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>bracket.round</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#9922FF</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#00FF00</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>bracket.quote</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>bracket.quote</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#00FF00</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>comment</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>comment</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>italic</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#646464FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>Invalid</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>invalid</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#FF000022</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>constant</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>constant</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#3387CCFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>Keyword</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>keyword</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#E28964</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>constant.numeric</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>constant.numeric</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FFFF66</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>Storage</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>storage</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#99CF50</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>storage.modifier</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>storage.modifier</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#CF5099</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>storage.self</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>storage.self</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>bold</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#CC0033</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>storage.type</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>storage.type</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#CF9950</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>Support</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>support</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#8A5C8DFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>entity.name.function</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>entity.name.function</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#BB00FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>keyword control</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>keyword.control</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF00FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>keyword.control.declaration</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>keyword.control.declaration</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#8888AA</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>keyword.control.module</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>keyword.control.module</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#FFFF3333</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FFFF33</string>\\n\\t\\t\\t\\t<key>options</key>\\n\\t\\t\\t\\t<string>underline</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>keyword.control.flow</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>keyword.control.flow</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#110300</string>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>bold</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF6600</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>keyword.control.conditional</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>keyword.control.conditional</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF00FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>keyword.control.trycatch</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>keyword.control.trycatch</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF0033</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>keyword.control.loop</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>keyword.control.loop</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#009999</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>keyword.control.switch</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>keyword.control.switch</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#999999</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>keyword operator</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>keyword.operator</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF0080</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>Function arg</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.function.argument, variable.parameter, meta.parens.c</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#77FF11</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string></string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>punctuation.section.embedded</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#0D0D0D37</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#00D3FFFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>keyword.other.unit</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>keyword.other.unit, keyword.unit.css</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#80FF00FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>invalid.illegal</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>invalid.illegal</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#562D56BF</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FD5FF1FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>string.quoted source</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>string.quoted source</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#DAEFA3</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>string constant</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>string constant</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#CFED81</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>string.regexp</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>string.regexp</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#6FFF17</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>punctuation.definition.string</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>punctuation.definition.string</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#15151501</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#B4FF82</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>string.regexp.special</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>string.regexp constant.character.escape, string.regexp source.ruby.embedded, string.regexp string.regexp.arbitrary-repitition</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#00D505</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>string.regexp punctuation keyword</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>string.regexp punctuation keyword</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#C559FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>string variable</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>string variable</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#8A9A95</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>support.function</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>support.function</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FCF352FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>meta.tag</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.tag</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#4F9EFFFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>meta.tag entity</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.tag entity</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#157EFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>HTML/XML tag attribute value</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.tag string.quoted.double.html</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#E07D2C</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>html5 tag</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.tag.block.any.html.html5</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#E88BFCFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>html5 tag entity</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.tag.block.any.html.html5 entity</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#D730FAFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>meta.tag.inline</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>source entity.name.tag, source entity.other.attribute-name,meta.tag.inline, meta.tag.inline entity</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#87A7E2FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>html js tag</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>source.js.embedded.html entity.name.tag.script.html</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF3535</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>html js tag braces</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>source.js.embedded.html punctuation.definition.tag.html</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF1E1E</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>html js tag url</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>source.js.embedded.html string.quoted.double.html</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF9D9D</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>Attribute</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>entity.other.attribute-name</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#7349BEFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>Meta Toc List</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.toc-list</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#162C1AFF</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#BEFEC7FF</string>\\n\\t\\t\\t\\t<key>options</key>\\n\\t\\t\\t\\t<string>underline</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>js variable readwrite</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.initialization, variable.other.readwrite.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF9122</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>js variable dollar</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.initialization, variable.other.dollar.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>italic</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF9122</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>js object</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>variable.other.object.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FFEE00</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>js object with parent</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.property-name.js variable.other.object.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FFFF88</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>support.variable.property.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>support.variable.property.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#3399FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>variable.other.dot-access</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>variable.other.dot-access</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#66FFDD</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>variable.other.property.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>variable.other.property.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#37C1BE</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>punctuation.section.scope.square.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>punctuation.section.scope.square.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF2404</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>punctuation.section.scope.round.js, meta.brace.round</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>punctuation.section.scope.round.js, meta.brace.round</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#1C38FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>punctuation.definition.arrow.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>punctuation.definition.arrow.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#001133</string>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>bold</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#AA00FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>entity.arrow.function.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>entity.arrow.function.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#001133</string>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>bold</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#AA00FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>variable.language</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>variable.language</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#AA0044</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>variable.language.prototype</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>variable.language.prototype</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF6600</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>support.class.error.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>support.class.error.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF5522</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>support.class.builtin.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>support.class.builtin.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>italic</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FFEE00</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>support.class.node.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>support.class.node.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#1224FE</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>entity.name.function.node.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>entity.name.function.node.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#D84014</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>support.keyword.node.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>support.keyword.node.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>bold</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#99EF25</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>variable.import.destructuring.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>variable.import.destructuring.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#00BBFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>other.object.key.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>other.object.key.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#1C98C1</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>meta.accessor.js punctuation.definition.parameters</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.accessor.js punctuation.definition.parameters</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#005588</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>storage.type.accessor.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>storage.type.accessor.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#001122</string>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>bold italic</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#0066AA</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>entity.name.module.js, variable.import.parameter.js, variable.other.class.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>entity.name.module.js, variable.import.parameter.js, variable.other.class.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#220011</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF0044</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>storage.type.module.js, storage.type.export.js, storage.type.import.js, storage.type.from.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>storage.type.module.js, storage.type.export.js, storage.type.import.js, storage.type.from.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#222211</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#CCCC44</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>storage.type.class.js, storage.type.extends.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>storage.type.class.js, storage.type.extends.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#001122</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#0044AA</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>meta.function.call.class.static.js </string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.function.call.class.static.js </string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#880011</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>variable.other.class.static.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>variable.other.class.static.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#AA0066</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>entity.name.accessor.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>entity.name.accessor.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#001122</string>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>bold italic</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#00FFCC</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>entity.name.method.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>entity.name.method.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#110022</string>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>italic bold</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#AA00FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>meta.method.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.method.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>bold</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#660099</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>storage.type.function.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>storage.type.function.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>bold</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#99CC44</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>string.quoted.single</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>string.quoted.single</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#88FFAAAA</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>variable.other.template-string.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>variable.other.template-string.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF0099</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>string.template-string.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>string.template-string.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#00FF00</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>punctuation.template-string.element</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>punctuation.template-string.element</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#008800</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>entity.template-string.tag.name.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>entity.template-string.tag.name.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FFFF00</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>meta.group.braces.square, punctuation.destructuring</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.group.braces.square string.quoted.single, punctuation.destructuring</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#47E9AC</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>string.quoted.double</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>string.quoted.double</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#11BB11</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>punctuation.section.scope.curly.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>punctuation.section.scope.curly.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#F9044E</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>meta.delimiter.comma.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.delimiter.comma.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#00FFFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>meta.group.braces.curly string.quoted.single</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.group.braces.curly string.quoted.single</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#16B853</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>support.function</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>support.function</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#B532FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>punctuation.definition.string.begin.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>punctuation.definition.string.begin.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#D2E20C</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>punctuation.definition.string.end.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>punctuation.definition.string.end.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#CEA30D</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>instance constructor</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.class.inheritance, meta.instance.constructor</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>italic underline</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#E81E41</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>entity.name.class.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>entity.name.class.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#00FFFF33</string>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>italic</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#00FFFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>entity.name.extends.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>entity.name.extends.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#00FF9933</string>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>italic</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#00FF99</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>function call</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.function-call entity.name.function</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#5B24FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>function call with args</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.function-call.function.with-arguments.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#33FF00</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>js brace</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.brace.curly.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF0099</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>js paren</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.brace.round.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#000000FF</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#D0C5FEFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>js constant escape</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>constant.character.escape</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#10CF62FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>pseudo-class</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.selector.css entity.other.attribute-name.tag.pseudo-class</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#4FBC4B</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>css selectors</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>entity.namespace.unicode.css</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF4F4F</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>entity.other.attribute-name.id</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>entity.other.attribute-name.id</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#0B0028FF</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#F20073FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>class name</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.prototype support.class</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF0099</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>support object</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>support.object</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>bold</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FFEE00</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>class name prototype</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.prototype support.constant</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF6600</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>prototype declaration</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.prototype.declaration.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>bold</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>js undefined</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>constant.language.undefined.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#555588</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>variable.other.constant.js</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>variable.other.constant.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#003311</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#00FF33</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>false</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>constant.language.boolean.false</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#AAAA55</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>true</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>constant.language.boolean.true</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#CC7744</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>js null</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>constant.language.null.js</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#558855</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>css#id punctuation</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>punctuation.definition.entity.id.css</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#0B0028</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF489F</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>css.class</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>entity.other.attribute-name.class, source.css.less entity.other.attribute-name.class.css</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#0B0028</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#9529B8</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>css.class puntuation</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>punctuation.definition.entity.class.css</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#0B0028FF</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#CD87E4FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>css pseudo element</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>entity.other.attribute-name.pseudo-element.css</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#0B0028FF</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF00FFFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>css property-name</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>support.type.property-name.css</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#B8EFECFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>css @at-rule</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.preprocessor.at-rule keyword.control.at-rule</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#D7C271FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>css color</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>constant.other.color.rgb-value.css, support.constant.color.w3c-standard-color-name.css</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FB7720FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>css constants</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>support.constant.property-value.css</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#7CE85EFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>Puncation Termination</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>punctuation.terminator, punctuation.separator</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#4BFCF8FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>css constructor.argument</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.constructor.argument.css</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#8F9D6AFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>diff.header</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.diff, meta.diff.header, entity.name.namespace</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#0E2231FF</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#F8F8F8FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>diff.deleted</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>markup.deleted</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#420E09FF</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#F8F8F8FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>diff.changed</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>markup.changed</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#4A410DFF</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#F8F8F8FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>diff.inserted</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>markup.inserted</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#253B22FF</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#F8F8F8FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>Markup: Italic</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>markup.italic</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>italic</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#6AD500FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>Markup: Underline</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>markup.underline</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#E18964FF</string>\\n\\t\\t\\t\\t<key>options</key>\\n\\t\\t\\t\\t<string>underline</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>Markup: Quote</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>markup.quote</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#FEE09C12</string>\\n\\t\\t\\t\\t<key>fontStyle</key>\\n\\t\\t\\t\\t<string>italic</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#E1D4B9FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>Markup: Heading</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>markup.heading, markup.heading entity</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#DE3280FF</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FFFFFFFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>Markup: List</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>markup.list</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#6657EAFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>Markup: Raw</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>markup.raw</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#B1B3BA08</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#578BB3FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>Markup: Comment</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>markup comment</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#F67B37FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>Markup: Separator</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.separator</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#242424FF</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#60A633FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>Log Entry</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.line.entry.logfile, meta.line.exit.logfile</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#EEEEEE29</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#F8F8F8FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>Log Entry Error</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.line.error.logfile</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#751012</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#F8F8F8</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON property top</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure.dictionary.json string.quoted.double</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>background</key>\\n\\t\\t\\t\\t<string>#111111</string>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#1144BB</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON property level 2</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure meta.structure.dictionary.json string.quoted.double</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#1122BB</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON property level 3</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure meta.structure meta.structure meta.structure.dictionary.json string.quoted.double</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#2938EB</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON property level 4</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure meta.structure meta.structure meta.structure meta.structure meta.structure.dictionary.json string.quoted.double</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#6D7EF1</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON property level 5</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure meta.structure meta.structure meta.structure meta.structure meta.structure meta.structure meta.structure.dictionary.json string.quoted.double</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#B3BBF7</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON value</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure.dictionary.value.json string.quoted.double</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#AA00AA</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON value level 2</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure meta.structure meta.structure.dictionary.value.json string.quoted.double</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#BF00BF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON value level 3</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure meta.structure meta.structure meta.structure meta.structure.dictionary.value.json string.quoted.double</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF00FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON value level 4</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure meta.structure meta.structure meta.structure meta.structure meta.structure meta.structure.dictionary.value.json string.quoted.double</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF40FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON value level 5</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure meta.structure meta.structure meta.structure meta.structure meta.structure meta.structure meta.structure meta.structure.dictionary.value.json string.quoted.double</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FF80FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON value string punctuation</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure.dictionary.value.json string punctuation.definition.string.double</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#8409FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON array value</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure.array.json string.quoted.double</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#5522AA</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON array value level 1</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure meta.structure meta.structure.array.json string.quoted.double</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#7017C8FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON array value level 2</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure meta.structure meta.structure meta.structure meta.structure.array.json string.quoted.double</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#9541E9FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON array value level 3</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure meta.structure meta.structure meta.structure meta.structure.array.json string.quoted.double</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#BA83F1FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON array value level 4</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure meta.structure meta.structure meta.structure meta.structure meta.structure meta.structure.array.json string.quoted.double</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#DFC6F9FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON prop string punctuation</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure.dictionary.json string punctuation.definition.string</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#66BBDDFF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON array string puntuation</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure.array.json string punctuation.definition.string</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#416BE9FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON array brackets</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure.array.json punctuation.definition.array</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FCC401FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t\\t<dict>\\n\\t\\t\\t<key>name</key>\\n\\t\\t\\t<string>JSON object braces</string>\\n\\t\\t\\t<key>scope</key>\\n\\t\\t\\t<string>meta.structure.dictionary.json punctuation.definition.dictionary</string>\\n\\t\\t\\t<key>settings</key>\\n\\t\\t\\t<dict>\\n\\t\\t\\t\\t<key>foreground</key>\\n\\t\\t\\t\\t<string>#FEDF76FF</string>\\n\\t\\t\\t</dict>\\n\\t\\t</dict>\\n\\t</array>\\n\\t<key>uuid</key>\\n\\t<string>b238c753-1549-3f12-a519-0faa5dcd4f65</string>\\n</dict>\\n</plist>';\n    7  \n    8    static toObject(xml = global.window.nt) {\n\n/home/roman/Sources/plot-cv/lib/debug/console-history.js:\n   92    } catch(error) {\n   93      // The lines containing 'console-history.js' are not relevant to us.\n   94:     var stackParts = error.stack.split('\\n');\n   95      stack = [];\n   96      for(var i = 0; i < stackParts.length; i++) {\n\n/home/roman/Sources/plot-cv/lib/ecmascript/lexer.js:\n   59  }\n   60  \n   61: SyntaxError.prototype.toString = function() {\n   62    const { msg, pos, ctx } = this;\n   63    return pos + ': ' + (ctx ? ctx + ' error: ' : '') + msg;\n   64  };\n   65  \n   66: SyntaxError.prototype[Symbol.toStringTag] = function() {\n   67    return this.toString();\n   68  };\n\n/home/roman/Sources/plot-cv/lib/json/path.js:\n   27  }\n   28  \n   29: DereferenceError.prototype.toString = function() {\n   30    const { message, object, member, pos, locator, stack } = this;\n   31    return `${message}\\n${Util.inspect({ object, member, pos, locator, stack }, { depth: 2, colors: false })}`;\n\n/home/roman/Sources/plot-cv/lib/log4javascript.js:\n  733    Logger.prototype.info.isEntryPoint = true;\n  734    Logger.prototype.warn.isEntryPoint = true;\n  735:   Logger.prototype.error.isEntryPoint = true;\n  736    Logger.prototype.fatal.isEntryPoint = true;\n  737  \n\n/home/roman/Sources/plot-cv/lib/signalingchannel.js:\n   34  \n   35            this.websocket_.onerror = function() {\n   36:             trace('Signaling channel error.');\n   37            };\n   38            this.websocket_.onclose = function(event) {\n   ..\n   58  \n   59          this.websocket_.onerror = function() {\n   60:           reject(Error('WebSocket error.'));\n   61          };\n   62        }.bind(this)\n\n/home/roman/Sources/plot-cv/lib/svg/path-parser.js:\n   22    this.name = 'SyntaxError';\n   23  \n   24:   if(typeof Error.captureStackTrace === 'function') {\n   25:     Error.captureStackTrace(this, peg$SyntaxError);\n   26    }\n   27  }\n   ..\n   29  peg$subclass(peg$SyntaxError, Error);\n   30  \n   31: peg$SyntaxError.buildMessage = function(expected, found) {\n   32    var DESCRIBE_EXPECTATION_FNS = {\n   33      literal: function(expectation) {\n   ..\n  393  \n  394    function peg$buildStructuredError(expected, found, location) {\n  395:     return new peg$SyntaxError(peg$SyntaxError.buildMessage(expected, found), expected, found, location);\n  396    }\n  397  \n\n/home/roman/Sources/plot-cv/lib/util.js:\n 2039    let stack=[];\n 2040    let error;\n 2041:     Error.stackTraceLimit = 100;\n 2042:      const oldPrepareStackTrace = Error.prepareStackTrace;\n 2043:   Error.prepareStackTrace = (_, stack) => stack;\n 2044   try {\n 2045  \n ....\n 2050    stack = e.stack;\n 2051   }\n 2052:  Error.prepareStackTrace = oldPrepareStackTrace;\n 2053  \n 2054   return stack;\n ....\n 2056  \n 2057  Util.getCallerStack = function(position = 2) {\n 2058:   Error.stackTraceLimit = 100;\n 2059:   if(position >= Error.stackTraceLimit) {\n 2060:     throw new TypeError(`getCallerFile(position) requires position be less then Error.stackTraceLimit but position was: \\`${position}\\` and Error.stackTraceLimit was: \\`${Error.stackTraceLimit}\\``);\n 2061    }\n 2062:   const oldPrepareStackTrace = Error.prepareStackTrace;\n 2063:   Error.prepareStackTrace = (_, stack) => stack;\n 2064    let stack = new Error().stack;\n 2065    stack = stack.slice(position);\n\n39 matches across 11 files\n\n\nSearching 207 files for \"initCache\\(\" (regex)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js:\n  221        });\n  222      }\n  223:     this.initCache(EagleElement /*, EagleNodeList.create*/);\n  224    }\n  225  \n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js:\n  109    }\n  110  \n  111:   initCache(ctor = this.childConstructor, listCtor = (o, p, v) => v) {\n  112      let fields = this.cacheFields();\n  113      let node = this;\n\n/home/roman/Sources/plot-cv/lib/eagle/document.js:\n   40        Palette[this.type == 'brd' ? 'board' : 'schematic']((r, g, b) => new RGBA(r, g, b))\n   41      );\n   42:     this.initCache(EagleElement);\n   43  \n   44      lazyProperty(this, 'children', () => EagleNodeList.create(this, ['children'], this.raw.children));\n\n/home/roman/Sources/plot-cv/lib/eagle/element.js:\n  221        });\n  222      }\n  223:     this.initCache(EagleElement /*, EagleNodeList.create*/);\n  224    }\n  225  \n\n/home/roman/Sources/plot-cv/lib/eagle/node.js:\n  109    }\n  110  \n  111:   initCache(ctor = this.childConstructor, listCtor = (o, p, v) => v) {\n  112      let fields = this.cacheFields();\n  113      let node = this;\n\n5 matches across 5 files\n\n\nSearching 208 files for \"\\.initCache\\(\" (regex)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js:\n  221        });\n  222      }\n  223:     this.initCache(EagleElement, EagleNodeList.create);\n  224    }\n  225  \n\n/home/roman/Sources/plot-cv/lib/eagle/element.js:\n  221        });\n  222      }\n  223:     this.initCache(EagleElement, EagleNodeList.create);\n  224    }\n  225  \n\n/home/roman/Sources/plot-cv/lib/eagle/document.js:\n   40        Palette[this.type == 'brd' ? 'board' : 'schematic']((r, g, b) => new RGBA(r, g, b))\n   41      );\n   42:     this.initCache(EagleElement);\n   43  \n   44      lazyProperty(this, 'children', () => EagleNodeList.create(this, ['children'], this.raw.children));\n\n/home/roman/Sources/plot-cv/lib/eagle/element.js:\n  221        });\n  222      }\n  223:     this.initCache(EagleElement, EagleNodeList.create);\n  224    }\n  225  \n\n4 matches across 4 files\n\n\nSearching 213 files for \"lib/clone\" (regex)\n\n0 matches\n\nSearching 213 files for \"import.*/clone\" (regex)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js:\n    1  import tXml from '../tXml.js';\n    2  import Util from '../util.js';\n    3: import deepClone from '../clone.js';\n    4  import deepDiff from '../deep-diff.js';\n    5  import { EagleRef } from './ref.js';\n\n/home/roman/Sources/plot-cv/lib/eagle/document.js:\n    1  import tXml from '../tXml.js';\n    2  import Util from '../util.js';\n    3: import deepClone from '../clone.js';\n    4  import deepDiff from '../deep-diff.js';\n    5  import { EagleRef } from './ref.js';\n\n/home/roman/Sources/plot-cv/lib/eagle/document.js:\n    1  import tXml from '../tXml.js';\n    2  import Util from '../util.js';\n    3: import deepClone from '../clone.js';\n    4  import deepDiff from '../deep-diff.js';\n    5  import { EagleRef } from './ref.js';\n\n3 matches across 3 files\n\n\nSearching 214 files for \"clone\\(\" (regex)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/clone.js:\n   34     * This function supports circular references by default, but if you are certain\n   35     * there are no circular references in your object, you can save some CPU time\n   36:    * by calling clone(obj, false).\n   37     *\n   38     * Caution: if `circular` is false and `parent` contains circular references,\n   ..\n   50     *    chain will be ignored. (optional - false by default)\n   51     */\n   52:   function clone(parent, circular, depth, prototype, includeNonEnumerable) {\n   53      if(typeof circular === 'object') {\n   54        depth = circular.depth;\n   ..\n   69  \n   70      // recurse this function so we don't reset allParents and allChildren\n   71:     function _clone(parent, depth) {\n   72        // cloning null always returns null\n   73        if(parent === null) return null;\n   ..\n   89            parent.then(\n   90              function(value) {\n   91:               resolve(_clone(value, depth - 1));\n   92              },\n   93              function(err) {\n   94:               reject(_clone(err, depth - 1));\n   95              }\n   96            );\n   ..\n  137        if(_instanceof(parent, nativeMap)) {\n  138          parent.forEach(function(value, key) {\n  139:           var keyChild = _clone(key, depth - 1);\n  140:           var valueChild = _clone(value, depth - 1);\n  141            child.set(keyChild, valueChild);\n  142          });\n  ...\n  144        if(_instanceof(parent, nativeSet)) {\n  145          parent.forEach(function(value) {\n  146:           var entryChild = _clone(value, depth - 1);\n  147            child.add(entryChild);\n  148          });\n  ...\n  158            continue;\n  159          }\n  160:         child[i] = _clone(parent[i], depth - 1);\n  161        }\n  162  \n  ...\n  171              continue;\n  172            }\n  173:           child[symbol] = _clone(parent[symbol], depth - 1);\n  174            if(!descriptor.enumerable) {\n  175              Object.defineProperty(child, symbol, {\n  ...\n  188              continue;\n  189            }\n  190:           child[propertyName] = _clone(parent[propertyName], depth - 1);\n  191            Object.defineProperty(child, propertyName, {\n  192              enumerable: false\n  ...\n  198      }\n  199  \n  200:     return _clone(parent, depth);\n  201    }\n  202  \n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js:\n   23    constructor(xmlStr, project, filename, type) {\n   24      const xml = new tXml(xmlStr);\n   25:     super(project, EagleRef(deepClone(xml[0]), []));\n   26      type = type || /<library>/.test(xmlStr) ? 'lbr' : /<element\\ /.test(xmlStr) ? 'brd' : 'sch';\n   27      if(filename) {\n\n/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js:\n  145    }\n  146  \n  147:   clone() {\n  148      const ctor = this.constructor[Symbol.species];\n  149      return new ctor(this, this.absolute);\n\n/home/roman/Dokumente/Sources/plot-cv/test-eagle.js:\n   36  }\n   37  \n   38: function testProxyClone() {\n   39    let obj = {\n   40      blah: [1, 2, 3, 4],\n   ..\n   42      num: 41\n   43    };\n   44:   let clone = Util.proxyClone(obj);\n   45    obj.addProp = '1234';\n   46    clone.newProp = 'test';\n   ..\n  140  function alignItem(item) {\n  141    let geometry = item.geometry();\n  142:   let oldPos = geometry.clone();\n  143  \n  144:   let newPos = geometry.clone().round(1.27, 2);\n  145  \n  146    let diff = newPos.diff(oldPos).round(0.0001, 5);\n\n/home/roman/Sources/plot-cv/lib/eagle/document.js:\n   23    constructor(xmlStr, project, filename, type) {\n   24      const xml = new tXml(xmlStr);\n   25:     super(project, EagleRef(deepClone(xml[0]), []));\n   26      type = type || /<library>/.test(xmlStr) ? 'lbr' : /<element\\ /.test(xmlStr) ? 'brd' : 'sch';\n   27      if(filename) {\n\n/home/roman/Sources/plot-cv/lib/clipper-lib.js:\n 4168    if(!(polygon instanceof Array)) return [];\n 4169    var isPolygons = polygon[0] instanceof Array;\n 4170:   var polygon = ClipperLib.JS.Clone(polygon);\n 4171    if(typeof delta !== 'number' || delta === null) {\n 4172      ClipperLib.Error('Delta is not a number in Clean().');\n ....\n 4245    if(typeof tolerance !== 'number' || tolerance === null) {\n 4246      ClipperLib.Error('Tolerance is not a number in Lighten().');\n 4247:     return ClipperLib.JS.Clone(polygon);\n 4248    }\n 4249    if(polygon.length === 0 || (polygon.length === 1 && polygon[0].length === 0) || tolerance < 0) {\n 4250:     return ClipperLib.JS.Clone(polygon);\n 4251    }\n 4252    var isPolygons = polygon[0] instanceof Array;\n\n/home/roman/Sources/plot-cv/lib/clipper.js:\n  160    }\n  161  \n  162:   clone() {\n  163:     return new Shape(ClipperLib.JS.Clone(this.paths), this.closed);\n  164    }\n  165  \n\n/home/roman/Sources/plot-cv/lib/clone.js:\n   34     * This function supports circular references by default, but if you are certain\n   35     * there are no circular references in your object, you can save some CPU time\n   36:    * by calling clone(obj, false).\n   37     *\n   38     * Caution: if `circular` is false and `parent` contains circular references,\n   ..\n   50     *    chain will be ignored. (optional - false by default)\n   51     */\n   52:   function clone(parent, circular, depth, prototype, includeNonEnumerable) {\n   53      if(typeof circular === 'object') {\n   54        depth = circular.depth;\n   ..\n   69  \n   70      // recurse this function so we don't reset allParents and allChildren\n   71:     function _clone(parent, depth) {\n   72        // cloning null always returns null\n   73        if(parent === null) return null;\n   ..\n   89            parent.then(\n   90              function(value) {\n   91:               resolve(_clone(value, depth - 1));\n   92              },\n   93              function(err) {\n   94:               reject(_clone(err, depth - 1));\n   95              }\n   96            );\n   ..\n  137        if(_instanceof(parent, nativeMap)) {\n  138          parent.forEach(function(value, key) {\n  139:           var keyChild = _clone(key, depth - 1);\n  140:           var valueChild = _clone(value, depth - 1);\n  141            child.set(keyChild, valueChild);\n  142          });\n  ...\n  144        if(_instanceof(parent, nativeSet)) {\n  145          parent.forEach(function(value) {\n  146:           var entryChild = _clone(value, depth - 1);\n  147            child.add(entryChild);\n  148          });\n  ...\n  158            continue;\n  159          }\n  160:         child[i] = _clone(parent[i], depth - 1);\n  161        }\n  162  \n  ...\n  171              continue;\n  172            }\n  173:           child[symbol] = _clone(parent[symbol], depth - 1);\n  174            if(!descriptor.enumerable) {\n  175              Object.defineProperty(child, symbol, {\n  ...\n  188              continue;\n  189            }\n  190:           child[propertyName] = _clone(parent[propertyName], depth - 1);\n  191            Object.defineProperty(child, propertyName, {\n  192              enumerable: false\n  ...\n  198      }\n  199  \n  200:     return _clone(parent, depth);\n  201    }\n  202  \n\n/home/roman/Sources/plot-cv/lib/deep.js:\n   12      for(j = 0, len = obj.length; j < len; j++) {\n   13        v = obj[j];\n   14:       c.push(clone(v));\n   15      }\n   16      return c;\n   ..\n   19      for(k in obj) {\n   20        v = obj[k];\n   21:       c[k] = clone(v);\n   22      }\n   23      return c;\n   ..\n   66          extend(destination[k], source[k]);\n   67        } else {\n   68:         destination[k] = clone(source[k]);\n   69        }\n   70      }\n   ..\n  126    let len;\n  127    path = typeof path == 'string' ? path.split(/[\\.\\/]/) : path;\n  128:   path = Util.clone(path);\n  129    for(let j = 0, len = path.length; j < len; j++) {\n  130      let pathElement = path[j];\n\n/home/roman/Sources/plot-cv/lib/devtools.js:\n  995    let rects = {};\n  996  \n  997:   rects.border = b.border.null() ? Rect.clone(r) : b.border.outset(r);\n  998:   rects.margin = b.margin.null() ? Rect.clone(rects.border) : b.margin.outset(rects.border);\n  999:   rects.padding = b.padding.null() ? Rect.clone(r) : b.padding.inset(r);\n 1000  \n 1001    if(!b.border.null()) rect(rects.border, 'rgba(255,0,0,0.5)', 'red');\n\n/home/roman/Sources/plot-cv/lib/eagle/document.js:\n   23    constructor(xmlStr, project, filename, type) {\n   24      const xml = new tXml(xmlStr);\n   25:     super(project, EagleRef(deepClone(xml[0]), []));\n   26      type = type || /<library>/.test(xmlStr) ? 'lbr' : /<element\\ /.test(xmlStr) ? 'brd' : 'sch';\n   27      if(filename) {\n\n/home/roman/Sources/plot-cv/lib/eagle/renderUtils.js:\n  135    if(matrix.isIdentity()) return obj => obj;\n  136  \n  137:   //S if(matrix && matrix.clone) matrix = Object.freeze(matrix.clone());\n  138  \n  139    let tr = matrix.transformer();\n\n/home/roman/Sources/plot-cv/lib/eagle/svgRenderer.js:\n  256          const rotateAlignment = AlignmentAngle(wholeAngle);\n  257          const alignment = baseAlignment\n  258:           .clone()\n  259            .rotate((rotateAlignment * Math.PI) / 180)\n  260            .round(0.5);\n  ...\n  389            /*  width,\n  390            height,*/\n  391:           viewBox: rect.clone(r => (r.y = 0)).toString({ separator: ' ' }),\n  392            ...props\n  393          },\n\n/home/roman/Sources/plot-cv/lib/fd-graph.js:\n  339    label = null;\n  340  \n  341:   static clone(other) {\n  342      let node = new Node(other.label, other.charge, other.mass, () => 0);\n  343  \n  ...\n  397    constructor(node_a, node_b) {\n  398      super();\n  399:     if(node_a) this.a = node_a instanceof Node ? node_a : Node.clone(node_a);\n  400:     if(node_b) this.b = node_b instanceof Node ? node_b : Node.clone(node_b);\n  401  \n  402      if(!(node_a && node_b)) {\n\n/home/roman/Sources/plot-cv/lib/geom/matrix.js:\n  143  \n  144  Matrix.prototype.multiply = function(...args) {\n  145:   return this.clone().multiplySelf(...args);\n  146  };\n  147  \n  ...\n  295  \n  296  Matrix.prototype.transformGenerator = function(what = 'point') {\n  297:   const matrix = Object.freeze(this.clone());\n  298    return function*(list) {\n  299      const method = Matrix.prototype['transform_' + what] || (typeof what == 'function' && what) || Matrix.prototype.transform_xy;\n\n/home/roman/Sources/plot-cv/lib/geom/transformation.js:\n   52    }*/\n   53  \n   54:   clone() {\n   55      let desc = Object.getOwnPropertyDescriptors(this);\n   56      let props = this.props.reduce((acc, prop) => ({ ...acc, [prop]: desc[prop] }), {});\n   ..\n  156    }\n  157    /*\n  158:   clone() {\n  159      return new this.constructor[Symbol.species](angle, axis);\n  160    }*/\n  ...\n  245    }\n  246  \n  247:   /*clone() {\n  248      const { x, y, z } = this;\n  249      return z !== undefined ? new Translation(x, y, z) : new Translation(x, y);\n  ...\n  296    }\n  297  \n  298:   /*clone() {\n  299      const { x, y, z } = this;\n  300      return z !== undefined ? new Scaling(x, y, z) : new Scaling(x, y);\n  ...\n  330  \n  331    toMatrix() {\n  332:     return this.matrix.clone();\n  333    }\n  334  \n  ...\n  450    }\n  451  \n  452:   clone() {\n  453      return this.slice();\n  454    }\n  ...\n  589          i++;\n  590        } else {\n  591:         item = item.clone();\n  592        }\n  593        Array.prototype.push.call(ret, item);\n\n/home/roman/Sources/plot-cv/lib/json/path.js:\n  145    }\n  146  \n  147:   clone() {\n  148      const ctor = this.constructor[Symbol.species];\n  149      return new ctor(this, this.absolute);\n\n/home/roman/Sources/plot-cv/lib/jsonPatcherProxy.js:\n   16     * Deep clones your object and returns a new object.\n   17     */\n   18:   function deepClone(obj) {\n   19      switch (typeof obj) {\n   20        case 'object':\n\n/home/roman/Sources/plot-cv/lib/lua.js:\n  459    }\n  460  \n  461:   clone(multiline, ast) {\n  462      if(multiline === undefined) multiline = this.multiline;\n  463      if(ast === undefined) ast = this.ast;\n\n/home/roman/Sources/plot-cv/lib/parse/grammar.js:\n  142      let i;\n  143      let r = -1;\n  144:     let y = parser.clone();\n  145  \n  146      for(i = 0; i < this.length; i++) {\n  ...\n  151          r = i;\n  152          y.copyTo(parser);\n  153:         y = parser.clone();\n  154        }\n  155  \n\n/home/roman/Sources/plot-cv/lib/parse/lexer.js:\n  260    }\n  261  \n  262:   clone() {\n  263      const { file, source, pos, start, tokIndex, len } = this;\n  264  \n\n/home/roman/Sources/plot-cv/lib/parse/match.js:\n   56      let ri = values.indexOf(rule);\n   57      console.log('rule:', ri);\n   58:     let p = parser.clone();\n   59      for(let pattern of this) {\n   60        if(grammar.rules.has(pattern)) {\n   ..\n   72        ret.push(pattern);\n   73        p.copyTo(parser);\n   74:       p = parser.clone();\n   75      }\n   76      return ret;\n\n/home/roman/Sources/plot-cv/lib/parse/parser.js:\n   37    }\n   38  \n   39:   clone() {\n   40      let { tokens, token, lexer } = this;\n   41      tokens = [...tokens];\n   42:     return Object.assign(new Parser(lexer.clone()), { tokens, token });\n   43    }\n   44  \n\n/home/roman/Sources/plot-cv/lib/parse/pattern.js:\n   43  \n   44  Pattern.prototype.match = function(parser) {\n   45:   let y = parser.clone();\n   46    let lexer = y.lexer;\n   47  \n\n/home/roman/Sources/plot-cv/lib/parse/rule.js:\n   42      let i;\n   43      let r = -1;\n   44:     let y = parser.clone();\n   45  \n   46      for(i = 0; i < this.length; i++) {\n   ..\n   51          r = i;\n   52          y.copyTo(parser);\n   53:         y = parser.clone();\n   54        }\n   55  \n\n/home/roman/Sources/plot-cv/lib/proxy/clone.js:\n    9      if(!deleted[name]) value = override[name] || obj[name];\n   10      if(Util.isObject(value)) {\n   11:       value = Util.proxyClone(value);\n   12        override[name] = value;\n   13      }\n\n/home/roman/Sources/plot-cv/lib/proxy/proxyClone.js:\n    9      if(!deleted[name]) value = override[name] || obj[name];\n   10      if(Util.isObject(value)) {\n   11:       value = Util.proxyClone(value);\n   12        override[name] = value;\n   13      }\n\n74 matches across 27 files\n\n\nSearching 218 files for \"childCon\" (regex)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js:\n   99    }\n  100  \n  101:   get childConstructor() {\n  102      let protos = Util.getPrototypeChain(this);\n  103      if(Util.fnName(protos[0].constructor) == 'EagleDocument') protos.shift();\n  104      let ctor = protos[0].constructor;\n  105:     console.log('childConstructor:', this, ctor);\n  106      return ctor;\n  107    }\n  108  \n  109:   initCache(ctor = this.childConstructor, listCtor = (o, p, v) => v) {\n  110      let fields = this.cacheFields();\n  111      let node = this;\n  ...\n  232    }\n  233  \n  234:   getByName(element, name, attr = 'name', t = ([v, l, d]) => makeEagleNode(d, this.ref.concat([...l]), this.childConstructor)) {\n  235      for(let [v, l, d] of this.iterator([], it => it)) {\n  236        if(typeof v == 'object' && 'tagName' in v && 'attributes' in v && attr in v.attributes) {\n\n/home/roman/Sources/plot-cv/lib/eagle/node.js:\n   99    }\n  100  \n  101:   get childConstructor() {\n  102      let protos = Util.getPrototypeChain(this);\n  103      if(Util.fnName(protos[0].constructor) == 'EagleDocument') protos.shift();\n  104      let ctor = protos[0].constructor;\n  105:     console.log('childConstructor:', this, ctor);\n  106      return ctor;\n  107    }\n  108  \n  109:   initCache(ctor = this.childConstructor, listCtor = (o, p, v) => v) {\n  110      let fields = this.cacheFields();\n  111      let node = this;\n  ...\n  232    }\n  233  \n  234:   getByName(element, name, attr = 'name', t = ([v, l, d]) => makeEagleNode(d, this.ref.concat([...l]), this.childConstructor)) {\n  235      for(let [v, l, d] of this.iterator([], it => it)) {\n  236        if(typeof v == 'object' && 'tagName' in v && 'attributes' in v && attr in v.attributes) {\n\n/home/roman/Sources/plot-cv/lib/preact.js:\n  161   * @param {object} props The initial component props\n  162   * @param {object} context The initial context from parent components'\n  163:  * getChildContext\n  164   */\n  165  function Component(props, context) {\n  ...\n  225   * @param {object} state The component's current state\n  226   * @param {object} context Context object, as returned by the nearest\n  227:  * ancestor's `getChildContext()`\n  228   * @returns {import('./index').ComponentChildren | void}\n  229   */\n  ...\n  361   * @param {import('../internal').VNode} oldParentVNode The old virtual\n  362   * node whose children should be diff'ed against newParentVNode\n  363:  * @param {object} globalContext The current context object - modified by getChildContext\n  364   * @param {boolean} isSvg Whether or not this DOM node is an SVG node\n  365   * @param {Array<import('../internal').PreactElement>} excessDomChildren\n  ...\n  729   * @param {import('../internal').VNode} newVNode The new virtual node\n  730   * @param {import('../internal').VNode} oldVNode The old virtual node\n  731:  * @param {object} globalContext The current context object. Modified by getChildContext\n  732   * @param {boolean} isSvg Whether or not this element is an SVG node\n  733   * @param {Array<import('../internal').PreactElement>} excessDomChildren\n  ...\n  855        c.state = c._nextState;\n  856  \n  857:       if(c.getChildContext != null) {\n  858:         globalContext = assign(assign({}, globalContext), c.getChildContext());\n  859        }\n  860  \n  ...\n 1147      },\n 1148      Provider(props) {\n 1149:       if(!this.getChildContext) {\n 1150          const subs = [];\n 1151:         this.getChildContext = () => {\n 1152            ctx[context._id] = this;\n 1153            return ctx;\n ....\n 1312   * @param {object} props The initial component props\n 1313   * @param {object} context The initial context from parent components'\n 1314:  * getChildContext\n 1315   */\n 1316  function Component$1(props, context) {\n ....\n 1376   * @param {object} state The component's current state\n 1377   * @param {object} context Context object, as returned by the nearest\n 1378:  * ancestor's `getChildContext()`\n 1379   * @returns {import('./index').ComponentChildren | void}\n 1380   */\n ....\n 1512   * @param {import('../internal').VNode} oldParentVNode The old virtual\n 1513   * node whose children should be diff'ed against newParentVNode\n 1514:  * @param {object} globalContext The current context object - modified by getChildContext\n 1515   * @param {boolean} isSvg Whether or not this DOM node is an SVG node\n 1516   * @param {Array<import('../internal').PreactElement>} excessDomChildren\n ....\n 1880   * @param {import('../internal').VNode} newVNode The new virtual node\n 1881   * @param {import('../internal').VNode} oldVNode The old virtual node\n 1882:  * @param {object} globalContext The current context object. Modified by getChildContext\n 1883   * @param {boolean} isSvg Whether or not this element is an SVG node\n 1884   * @param {Array<import('../internal').PreactElement>} excessDomChildren\n ....\n 2006        c.state = c._nextState;\n 2007  \n 2008:       if(c.getChildContext != null) {\n 2009:         globalContext = assign$1(assign$1({}, globalContext), c.getChildContext());\n 2010        }\n 2011  \n\n22 matches across 3 files\n\n\nSearching 219 files for \" findAll\\(\" (regex)\n\n/home/roman/Sources/plot-cv/lib/dom/element.js:\n  171    }\n  172  \n  173:   static findAll(arg, parent) {\n  174      parent = typeof parent == 'string' ? Element.find(parent) : parent;\n  175      return [...(parent && parent.querySelectorAll ? parent.querySelectorAll(arg) : document.querySelectorAll(arg))];\n\n1 match in 1 file\n\n\nSearching 221 files for \"log..path:\" (regex)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js:\n  176        if(!library) {\n  177          console.log('chain:', this.chain);\n  178:         console.log('path:', this.ref.path);\n  179          console.log('this:', this);\n  180          console.log('xpath:', this.xpath());\n\n/home/roman/Sources/plot-cv/lib/eagle/element.js:\n  176        if(!library) {\n  177          console.log('chain:', this.chain);\n  178:         console.log('path:', this.ref.path);\n  179          console.log('this:', this);\n  180          console.log('xpath:', this.xpath());\n\n/home/roman/Sources/plot-cv/lib/devtools.js:\n  312    console.log('PointList: ', { d, g });\n  313    //f.root.parentElement.removeChild(f.root);\n  314:   console.log('path: ', path.str());\n  315    let p = f('path', {\n  316      d: path.str(),\n\n/home/roman/Sources/plot-cv/lib/eagle/element.js:\n  176        if(!library) {\n  177          console.log('chain:', this.chain);\n  178:         console.log('path:', this.ref.path);\n  179          console.log('this:', this);\n  180          console.log('xpath:', this.xpath());\n\n4 matches across 4 files\n\n\nSearching 221 files for \"log..path\" (regex)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js:\n  176        if(!library) {\n  177          console.log('chain:', this.chain);\n  178:         console.log('path:', this.ref.path);\n  179          console.log('this:', this);\n  180          console.log('xpath:', this.xpath());\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js:\n  128          let value = path.apply(raw, true);\n  129  \n  130:         console.log('path', { path, value }, listCtor + '');\n  131          /*      lazy[key] = () =>\n  132            //\n  ...\n  408      const { ref, owner } = this;\n  409      let x = ImmutableXPath.from(ref.path, owner.raw);\n  410:     //console.log('PATH', ref.path);\n  411      //console.log('ARRAY', [...x]);\n  412      //console.log('XPATH', x.toString());\n\n/home/roman/Sources/plot-cv/lib/eagle/element.js:\n  176        if(!library) {\n  177          console.log('chain:', this.chain);\n  178:         console.log('path:', this.ref.path);\n  179          console.log('this:', this);\n  180          console.log('xpath:', this.xpath());\n\n/home/roman/Sources/plot-cv/lib/eagle/node.js:\n  128          let value = path.apply(raw, true);\n  129  \n  130:         console.log('path', { path, value }, listCtor + '');\n  131          /*      lazy[key] = () =>\n  132            //\n  ...\n  408      const { ref, owner } = this;\n  409      let x = ImmutableXPath.from(ref.path, owner.raw);\n  410:     //console.log('PATH', ref.path);\n  411      //console.log('ARRAY', [...x]);\n  412      //console.log('XPATH', x.toString());\n\n/home/roman/Sources/plot-cv/lib/devtools.js:\n  312    console.log('PointList: ', { d, g });\n  313    //f.root.parentElement.removeChild(f.root);\n  314:   console.log('path: ', path.str());\n  315    let p = f('path', {\n  316      d: path.str(),\n\n/home/roman/Sources/plot-cv/lib/eagle/element.js:\n  176        if(!library) {\n  177          console.log('chain:', this.chain);\n  178:         console.log('path:', this.ref.path);\n  179          console.log('this:', this);\n  180          console.log('xpath:', this.xpath());\n\n/home/roman/Sources/plot-cv/lib/eagle/node.js:\n  128          let value = path.apply(raw, true);\n  129  \n  130:         console.log('path', { path, value }, listCtor + '');\n  131          /*      lazy[key] = () =>\n  132            //\n  ...\n  408      const { ref, owner } = this;\n  409      let x = ImmutableXPath.from(ref.path, owner.raw);\n  410:     //console.log('PATH', ref.path);\n  411      //console.log('ARRAY', [...x]);\n  412      //console.log('XPATH', x.toString());\n\n10 matches across 7 files\n\n\nSearching 221 files for \"^\\s*console.log..path\" (regex)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js:\n  176        if(!library) {\n  177          console.log('chain:', this.chain);\n  178:         console.log('path:', this.ref.path);\n  179          console.log('this:', this);\n  180          console.log('xpath:', this.xpath());\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js:\n  127  \n  128          let value = path.apply(raw, true);\n  129: \n  130:         console.log('path', { path, value }, listCtor + '');\n  131          /*      lazy[key] = () =>\n  132            //\n\n/home/roman/Sources/plot-cv/lib/eagle/element.js:\n  176        if(!library) {\n  177          console.log('chain:', this.chain);\n  178:         console.log('path:', this.ref.path);\n  179          console.log('this:', this);\n  180          console.log('xpath:', this.xpath());\n\n/home/roman/Sources/plot-cv/lib/eagle/node.js:\n  127  \n  128          let value = path.apply(raw, true);\n  129: \n  130:         console.log('path', { path, value }, listCtor + '');\n  131          /*      lazy[key] = () =>\n  132            //\n\n/home/roman/Sources/plot-cv/lib/devtools.js:\n  312    console.log('PointList: ', { d, g });\n  313    //f.root.parentElement.removeChild(f.root);\n  314:   console.log('path: ', path.str());\n  315    let p = f('path', {\n  316      d: path.str(),\n\n/home/roman/Sources/plot-cv/lib/eagle/element.js:\n  176        if(!library) {\n  177          console.log('chain:', this.chain);\n  178:         console.log('path:', this.ref.path);\n  179          console.log('this:', this);\n  180          console.log('xpath:', this.xpath());\n\n/home/roman/Sources/plot-cv/lib/eagle/node.js:\n  127  \n  128          let value = path.apply(raw, true);\n  129: \n  130:         console.log('path', { path, value }, listCtor + '');\n  131          /*      lazy[key] = () =>\n  132            //\n\n7 matches across 7 files\n\n\nSearching 221 files for \"log..p1\" (regex)\n\n0 matches\n\nSearching 221 files for \"log..p1\" (regex)\n\n0 matches\n\nSearching 221 files for \"log.*p1\" (regex)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js:\n   13      let p1 = new ImmutablePath(['children', 'eagle']);\n   14      let p2 = ref.slice(0, 2);\n   15:     console.log('', { p1, p2 }, [...p1], [...p2], p1.equals(p2));\n   16      if(!raw && !p1.equals(p2)) throw new Error('document');\n   17  \n\n/home/roman/Sources/plot-cv/lib/eagle/nodeList.js:\n   13      let p1 = new ImmutablePath(['children', 'eagle']);\n   14      let p2 = ref.slice(0, 2);\n   15:     console.log('', { p1, p2 }, [...p1], [...p2], p1.equals(p2));\n   16      if(!raw && !p1.equals(p2)) throw new Error('document');\n   17  \n\n2 matches across 2 files\n\n\nSearching 221 files for \"log..NodeMap\" (regex)\n\n/home/roman/Sources/plot-cv/lib/eagle/nodeMap.js:\n   59    *[Symbol.iterator](keyAttr = this.key) {\n   60      const list = this.list && this.list.raw ? this.list.raw : this.list;\n   61:     console.log('NodeMap ', this.list);\n   62      for(let i = 0; i < this.list.length; i++) yield [list[i].attributes[keyAttr], this.item(i)];\n   63    }\n\n1 match in 1 file\n\n\nSearching 222 files for \"log..lookup\" (regex)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js:\n  346  \n  347    lookup(xpath, t = (o, p, v) => [o, p]) {\n  348:     console.log('lookup(', ...arguments, ')');\n  349  \n  350      const { tagName, owner, raw, document } = this;\n  ...\n  353      if(!(xpath instanceof ImmutableXPath)) xpath = new ImmutableXPath(xpath);\n  354  \n  355:     console.log('lookup:', { xpath });\n  356      let path = new ImmutablePath(xpath.toArray().reduce((acc, p) => [...acc, 'children', p], []));\n  357      let value = this.path.concat(path).apply(raw, true);\n  ...\n  359      //  path = this.path.concat(path);\n  360      //  value = path.apply(this.raw,true);\n  361:     console.log('lookup:', { tagName, owner, raw, path, value });\n  362  \n  363      let ret = t(this, path, value);\n  364:     //console.log('lookup =', ret);\n  365      return ret;\n  366    }\n\n/home/roman/Sources/plot-cv/lib/eagle/node.js:\n  346  \n  347    lookup(xpath, t = (o, p, v) => [o, p]) {\n  348:     console.log('lookup(', ...arguments, ')');\n  349  \n  350      const { tagName, owner, raw, document } = this;\n  ...\n  353      if(!(xpath instanceof ImmutableXPath)) xpath = new ImmutableXPath(xpath);\n  354  \n  355:     console.log('lookup:', { xpath });\n  356      let path = new ImmutablePath(xpath.toArray().reduce((acc, p) => [...acc, 'children', p], []));\n  357      let value = this.path.concat(path).apply(raw, true);\n  ...\n  359      //  path = this.path.concat(path);\n  360      //  value = path.apply(this.raw,true);\n  361:     console.log('lookup:', { tagName, owner, raw, path, value });\n  362  \n  363      let ret = t(this, path, value);\n  364:     //console.log('lookup =', ret);\n  365      return ret;\n  366    }\n\n/home/roman/Sources/plot-cv/lib/eagle/node.js:\n  346  \n  347    lookup(xpath, t = (o, p, v) => [o, p]) {\n  348:     console.log('lookup(', ...arguments, ')');\n  349  \n  350      const { tagName, owner, raw, document } = this;\n  ...\n  353      if(!(xpath instanceof ImmutableXPath)) xpath = new ImmutableXPath(xpath);\n  354  \n  355:     console.log('lookup:', { xpath });\n  356      let path = new ImmutablePath(xpath.toArray().reduce((acc, p) => [...acc, 'children', p], []));\n  357      let value = this.path.concat(path).apply(raw, true);\n  ...\n  359      //  path = this.path.concat(path);\n  360      //  value = path.apply(this.raw,true);\n  361:     console.log('lookup:', { tagName, owner, raw, path, value });\n  362  \n  363      let ret = t(this, path, value);\n  364:     //console.log('lookup =', ret);\n  365      return ret;\n  366    }\n\n12 matches across 3 files\n\n\nSearching 222 files for \"log..plain\" (regex)\n\n0 matches\n\nSearching 222 files for \"debug.*getColor\" (regex)\n\n/home/roman/Sources/plot-cv/lib/eagle/svgRenderer.js:\n   77    getColor(color) {\n   78      let c = this.palette[color] || /*this.colors[color] || */ 'rgb(165,165,165)';\n   79:     this.debug('getColor', color, c);\n   80  \n   81      /* if(c)\n\n1 match in 1 file\n\n\nSearching 224 files for \"new Renderer\" (regex)\n\n/home/roman/Dokumente/Sources/plot-cv/main.js:\n  233    docElem.appendChild(eagleNode);*/\n  234  \n  235:   project.renderer = new Renderer(project.doc, ReactComponent.append, false);\n  236    console.log('project.renderer', project.renderer);\n  237  \n\n/home/roman/Dokumente/Sources/plot-cv/test-renderer.js:\n   10    let doc = (global.doc = new EagleDocument(fs.readFileSync(`${file}.sch`).toString()));\n   11    //console.log('doc:', doc.get('eagle/drawing'));\n   12:   let renderer = new Renderer(doc, ReactComponent.append, true);\n   13    let output = renderer.render(doc, null, 0);\n   14  \n   ..\n   20  function testRenderBoard(file) {\n   21    let doc = (global.doc = new EagleDocument(fs.readFileSync(`${file}.brd`).toString()));\n   22:   let renderer = new Renderer(doc, ReactComponent.append, true);\n   23    let output = renderer.render(doc, null, 0);\n   24  \n\n/home/roman/Sources/plot-cv/lib/devpane.js:\n  474      t.layer = this.createLayer({ id: 'devpane-layer' });\n  475      t.factory = Element.factory({ append_to: e => t.layer.appendChild(e) });\n  476:     t.renderer = new Renderer(t.chooser, t.factory('div'));\n  477      t.form = t.factory('form', {}, { display: 'flex', flexFlow: 'row nowrap', alignItems: 'flex-end', padding: '4px' });\n  478      t.form.addEventListener('submit', e => false);\n\n4 matches across 3 files\n",
-			"settings":
-			{
-				"buffer_size": 90846,
-				"line_ending": "Unix",
-				"name": "Find Results",
-				"scratch": true
-			}
-		},
-		{
-			"file": "/home/roman/Sources/plot-cv/lib/eagle/svgRenderer.js",
-			"settings":
-			{
-				"buffer_size": 13010,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/roman/Sources/plot-cv/lib/eagle/nodeMap.js",
-			"settings":
-			{
-				"buffer_size": 3450,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/roman/Sources/plot-cv/lib/dom/element.js",
-			"settings":
-			{
-				"buffer_size": 29306,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/roman/Sources/plot-cv/lib/eagle/node.js",
-			"settings":
-			{
-				"buffer_size": 13686,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/roman/Sources/plot-cv/lib/deep.js",
-			"settings":
-			{
-				"buffer_size": 5182,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/roman/Sources/plot-cv/lib/eagle/document.js",
-			"settings":
-			{
-				"buffer_size": 6162,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/roman/Sources/plot-cv/lib/eagle/element.js",
-			"settings":
-			{
-				"buffer_size": 16475,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/util.js",
-			"settings":
-			{
-				"buffer_size": 84147,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"settings":
-			{
-				"buffer_size": 0,
 				"line_ending": "Unix"
 			}
 		}
@@ -414,59 +146,88 @@
 		"/home/roman/Dokumente/Sources/plot-cv",
 		"/home/roman/Dokumente/Sources/plot-cv/Javascript_Clipper_6.4.2.2",
 		"/home/roman/Dokumente/Sources/plot-cv/lib",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/color",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/xml",
 		"/home/roman/Dokumente/Sources/plot-cv/opencv"
 	],
 	"file_history":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv/test-xml.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
-		"/home/roman/Dokumente/Sources/plot-cv/main.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/ref.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/ref.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/pathMapper.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-matrix.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/project.js",
+		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch",
+		"/home/roman/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
+		"/home/roman/Sources/plot-cv/lib/json/path.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-parse.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/log.js",
+		"/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Bold.tmTheme",
+		"/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Contrast.tmTheme",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/color/rgba.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/color/hsla.js",
+		"/home/roman/Sources/plot-cv/lib/devpane.js",
+		"/home/roman/Sources/plot-cv/lib/ecmascript/parser.js",
+		"/home/roman/Sources/plot-cv/lib/colorscheme.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-xml.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/draw/colorMap.js",
+		"/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Modified.tmTheme",
+		"/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Roman New.tmTheme",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
+		"/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next.tmTheme",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/clone.js",
+		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/functional.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-coverage.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-membrane.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/nodeMap.js",
+		"/home/roman/Sources/plot-cv/lib/dom/element.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/node.js",
+		"/home/roman/Sources/plot-cv/lib/deep.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/document.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Other.tmTheme",
+		"/home/roman/Dokumente/Sources/plot-cv/Next.xml",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/log4javascript.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/dotPath.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/json2xml.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/json/pathMapper.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
-		"/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Bold.tmTheme",
 		"/home/roman/Sources/plot-cv/lib/eagle/schematicRenderer.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/common.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
 		"/usr/lib/node_modules/npm/node_modules/figgy-pudding/index.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/alea.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/draw/colorMap.js",
 		"/home/roman/Sources/plot-cv/lib/devtools.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/color/hsla.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
 		"/home/roman/Sources/plot-cv/lib/dom/preactComponent.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/KolorWheel.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-kolorwheel.js",
-		"/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Modified.tmTheme",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/node.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/util.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/Next.xml",
 		"/home/roman/Sources/plot-cv/lib/alea.js",
 		"/home/roman/.config/sublime-text-3/Packages/Babel/Next.tmTheme",
 		"/home/roman/Dokumente/Sources/plot-cv/Next.json",
-		"/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Other.tmTheme",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/color/rgba.js",
 		"/home/roman/Dokumente/Sources/plot-cv/index.html",
 		"/home/roman/Dokumente/Sources/pictest/src/pictest.h",
 		"/opt/microchip/xc8/v1.45/include/pic16f876a.h",
@@ -496,15 +257,12 @@
 		"/opt/microchip/xc8/v1.45/sources/pic/eeprom.c",
 		"/home/roman/Dokumente/Sources/pictest/batterycharger-code/src/eeprom.c",
 		"/home/roman/Dokumente/Sources/pictest/obj/xc8-18f14k50/debug_20mhz_38kbps/ringtone/ringtone.c",
-		"/home/roman/Dokumente/Sources/plot-cv/test-matrix.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-membrane.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-pointlist.js",
 		"/home/roman/Sources/plot-cv/lib/xml/xpath.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/iterator.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-moon.js",
 		"/home/roman/Sources/plot-cv/lib/json/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/proxy/deepProxy.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/es6.grammar",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-cli.js",
@@ -515,7 +273,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/xml.js",
 		"/home/roman/Sources/plot-cv/lib/json/treeObserver.js",
 		"/home/roman/Dokumente/Sources/plot-cv/server.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/components.js",
 		"/home/roman/Dokumente/Sources/plot-cv/style.css",
@@ -525,39 +282,18 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/node.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/crosstab.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/autoStore.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/reactComponent.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/keysim.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/event.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/container.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom.js",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/Super-Regenerative-VHF-2Transistor-RickAndersen-October2006.brd",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/project.js",
-		"/home/roman/Sources/plot-cv/main.js",
-		"/home/roman/Sources/plot-cv/lib/eagle.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/project.js",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/VCF-LM324-Mono.brd",
-		"/home/roman/Sources/plot-cv/lib/eagle/nodeMap.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/nodeList.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/lineList.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-line.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
-		"/home/roman/Sources/plot-cv/lib/geom/point.js",
-		"/home/roman/Sources/plot-cv/lib/util.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/bbox.js",
-		"/home/roman/Dokumente/Sources/an-tronics/eagle/VCF-LM358-Stereo.sch",
-		"/home/roman/Dokumente/Sources/an-tronics/eagle/VCF-LM358-Stereo.brd"
+		"/home/roman/Dokumente/Sources/plot-cv/lib/autoStore.js"
 	],
 	"find":
 	{
-		"height": 39.0
+		"height": 48.0
 	},
 	"find_in_files":
 	{
 		"height": 137.0,
 		"where_history":
 		[
+			"/home/roman/Sources/plot-cv,*.js,<open files>",
 			"/home/roman/Sources/plot-cv/lib,*.js,<open files>",
 			"/home/roman/Sources/plot-cv,*.js,<open files>",
 			"/home/roman/Sources/plot-cv/lib,*.js",
@@ -581,134 +317,134 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			".left",
-			"foreground",
-			")).",
-			"find =",
-			"random",
-			"new Renderer",
-			"Renderer",
-			"debug.*getColor",
-			"find",
-			"angular",
-			"log..plain",
-			"log..lookup",
-			"log..NodeMap",
-			"log.*p1",
-			"log..p1",
-			"^\\s*console.log..path",
-			"log..path",
-			"log..path:",
-			"LogJS",
-			" findAll\\(",
-			" find",
-			" findAll\\(",
-			" find\\(",
-			"parseArgs",
-			" find\\(",
-			"childCon",
-			"toXML",
-			"clone\\(",
-			"deepClone",
-			"import.*/clone",
-			"lib/clone",
-			"clone",
-			"Renderer",
-			"<device",
-			"<device ",
-			"'settings'",
-			"\\.initCache\\(",
-			"create\\(",
-			"initCache\\(",
-			"initCache",
 			"getBounds",
-			"Error\\.",
-			"Util.toSource =",
-			"color",
-			"NodeList.create",
-			"toString",
-			"\\\\u",
-			"/\\*",
-			"lookup\\(",
-			"EagleNodeList.create",
-			"EagleNodeList\\(",
-			"EagleNodeList.create",
-			"EagleNodeList\\(",
-			"lookup",
-			" find\\(",
-			"Symbol\\.",
-			"toSource",
-			"this.constructor\\[Symbol.species\\]\\(\\)",
-			"this.getSpecies",
-			"getSpecies",
-			"Symbol.species",
-			"species",
-			"root",
-			"parser",
-			"ImmutableXPath",
-			" xpath\\(",
-			"'packages'",
-			"'package'",
-			"'library'",
-			"\\\\[",
+			"log..this.own",
+			"this.debug",
+			"lazy\\[",
+			"console.log",
+			"console.log(..)\\s*XPath\\.",
+			"console",
+			"from37",
 			"elementChain",
-			" elementChain",
-			"1.*35",
-			"'instances'",
+			" names\\(",
+			" names",
+			"EagleElement.map",
+			"names",
+			"elementChain",
+			"get raw",
+			"isGenerator",
+			"isGeneratoe",
+			"Util.map =",
+			"walk",
+			" up\\(",
+			"elementChain",
+			"member:",
+			"this.*children",
+			"children",
+			"instance'",
+			"instances",
 			"instances'",
-			"setPale",
-			"setPal",
-			"\n  static compare(a, b) {\n    if(a.length != b.length) return a.length - b.length;\n    for(let i = 0, len = a.length; i < len; i++) {\n      if(a[i] < b[i]) return -1;\n      if(a[i] > b[i]) return 1;\n    }\n    return 0;\n  }",
-			"compare",
-			"[^a-zA-Z]Path\\.",
-			"compare",
-			"^\\s*lookup\\(",
-			"renderer",
-			"attrs:",
-			"attrs",
-			"console.log..attrs:",
-			"^\\s*console.log..attrs:",
-			"log..attrs:",
-			"^\\s*//\\s*",
-			"log..path:",
-			"colors:",
-			"flat\\.",
-			"log..flat",
-			"pad🕈",
-			"'\\.'",
-			"toString",
-			"flat",
-			"flqt",
-			"flat 0",
-			"        \n",
-			"}\n",
-			"\\.map\\(",
-			"  if(value.tagName == 'key' && i > 0 )  { prev = p; return p.up(2); }\n               if(value.tagName == 'string')  { prev = p; return p.left(1); }",
-			"log..path:",
-			"log..paths:",
-			"log..patns:",
-			"//  ",
-			"Map\\.create\\(",
-			"\\.create\\(",
-			"\\.create\\8",
-			"EagleNodeMap\\(",
-			"EagleNodeMap\\/",
-			"EagleNodeMap",
-			"Ctor",
-			"EagleNodeMap",
-			" {};",
+			"renderInst",
 			"lookup",
-			"xml",
-			"apply\\(",
-			"filterOutKeys",
-			"            \n",
-			"const add =",
-			"add =",
-			"addd =",
-			"paths:",
-			"ctor",
-			"ftor",
-			"shuffle = "
+			"parse",
+			"^\\s*console.log.*parse",
+			"log.*parse",
+			"parse\\(",
+			"'children'",
+			"inst",
+			"r",
+			"lookup",
+			"ImmutableXP",
+			"lookup\\(",
+			"'sheet'",
+			"lookup\\(",
+			"lookup",
+			"lookup\\(",
+			"log.*this.sheets",
+			"initCache",
+			"construct",
+			");",
+			"^\\s*console.log.*this",
+			"log.*this",
+			"from\\(",
+			" from\\(",
+			"from\\(",
+			"create\\(",
+			"<draw",
+			"sheets =",
+			"sheets",
+			"Renderer",
+			"new Rende",
+			"\nexport function Renderer(doc, factory, debug) {",
+			"new Render",
+			"this.debug\\(",
+			"this.debug",
+			"^\\s*console.log.*this",
+			"console.log('this:', this",
+			"        console.log('this:', this",
+			"^\\s*console.log.*this",
+			"log.*this",
+			"//console",
+			"renderer.render\\(",
+			"parse\\(",
+			"parse",
+			"^\\s*console.log.*member",
+			"log..member",
+			"parse\\(",
+			"\\(function\\(",
+			"(function(",
+			"^  (static|) [a-z0-9_]*\\(",
+			"^  (stati|) [a-z0-9_]*\\(",
+			"^  (static|) [a-z0-9_]*\\(",
+			"^  [a-z0-9_]*\\(",
+			"^  [a-z0-9_]+\\(",
+			"^  static [a-z0-9_]+ =",
+			"^  [a-z0-9_]+ =",
+			"static (curry[^ ]*)\\(([^)]*)\\) {",
+			"static curry",
+			"curry3",
+			"\\(function\\(",
+			"iif =",
+			"_curry\\(",
+			"_curry",
+			"_curry =",
+			"_curry",
+			"_curry\\(",
+			"this\\._",
+			"__fnuc",
+			"__fnucthis",
+			"eql =",
+			"static zipobj",
+			"this\\.",
+			"partialr.apply",
+			"partialr",
+			"partialr\\(",
+			"partialr",
+			"Functionanl",
+			"static compose",
+			"function",
+			"plift =",
+			"function\\(",
+			"function ",
+			"promapply",
+			"plift\\(",
+			"_nary =",
+			"static ([a-z]*)\\(([^)]*)\\)",
+			"static shallow(a)",
+			"static ([a-z]*)\\(([^)]*)\\)",
+			"static ([a-z]*)\\(([^\\)]*\\)",
+			"static ([a-z]*)\\(([^)]*\\)",
+			"arity",
+			"static  arityof\\(",
+			"arityof\\(",
+			"\\.curry\\(",
+			"curry\\(",
+			" curry\\(",
+			"curry\\(",
+			"= _fn",
+			"= _[a-z0-9_]*",
+			" = _",
+			"= _[a-z0-9_]*\\("
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -716,6 +452,19 @@
 		"regex": true,
 		"replace_history":
 		[
+			"console.log\\1ImmutableXPath.",
+			"console",
+			"static \\1 = (\\2) => {",
+			"Functional",
+			"static \\1 = (\\2) =>",
+			" = this._pliftall(",
+			"static \\1(",
+			"this._\\1(",
+			" this._fold",
+			"static \\1(",
+			" this.curry\\1var(",
+			"fn(",
+			"fn",
 			"this.constructor[Symbol.species]",
 			"ctor",
 			"//",
@@ -749,7 +498,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 701,
+						"buffer_size": 491,
 						"regions":
 						{
 						},
@@ -759,378 +508,258 @@
 						"settings":
 						{
 							"color_scheme": "Packages/User/SchemeEditorTemp/Next Bold.tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/main.js",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
 								[
-									74,
-									129
+									4271,
+									4292
 								],
 								[
-									272,
-									280
+									4294,
+									4299
 								],
 								[
-									320,
-									328
+									4308,
+									4312
 								],
 								[
-									1157,
-									1205
+									4334,
+									4360
 								],
 								[
-									1400,
-									1417
+									4361,
+									4369
 								],
 								[
-									1562,
-									1573
+									4420,
+									4437
 								],
 								[
-									1893,
-									1900
+									4439,
+									4444
 								],
 								[
-									2126,
-									2136
+									4453,
+									4461
 								],
 								[
-									2342,
-									2353
+									4483,
+									4508
 								],
 								[
-									2672,
-									2683
+									4521,
+									4527
 								],
 								[
-									3986,
-									3998
+									4588,
+									4606
 								],
 								[
-									4030,
-									4054
+									5124,
+									5151
 								],
 								[
-									4785,
-									4803
+									5423,
+									5442
 								],
 								[
-									5053,
-									5058
+									5544,
+									5572
 								],
 								[
-									5167,
-									5171
+									5627,
+									5639
 								],
 								[
-									5357,
-									5362
+									5971,
+									6022
 								],
 								[
-									5705,
-									5709
+									6318,
+									6338
 								],
 								[
-									6024,
-									6026
+									6339,
+									6343
 								],
 								[
-									6107,
-									6111
+									6567,
+									6612
 								],
 								[
-									6295,
-									6303
+									7916,
+									7993
 								],
 								[
-									6367,
-									6371
+									8193,
+									8201
 								],
 								[
-									6634,
-									6640
+									8301,
+									8309
 								],
 								[
-									6698,
-									6702
+									10360,
+									10398
 								],
 								[
-									6766,
-									6771
+									10849,
+									10873
 								],
 								[
-									6822,
-									6833
+									10874,
+									10885
 								],
 								[
-									6889,
-									6900
+									12006,
+									12070
 								],
 								[
-									6955,
-									6961
+									12089,
+									12101
 								],
 								[
-									7015,
-									7025
+									12579,
+									12585
 								],
 								[
-									7079,
-									7089
+									12635,
+									12656
 								],
 								[
-									7149,
-									7158
+									12793,
+									12815
 								],
 								[
-									7219,
-									7224
+									12816,
+									12839
 								],
 								[
-									7261,
-									7271
+									12950,
+									12973
 								],
 								[
-									7668,
-									7673
+									13268,
+									13276
 								],
 								[
-									8050,
-									8059
+									13339,
+									13344
 								],
 								[
-									8425,
-									8433
+									14119,
+									14143
 								],
 								[
-									8844,
-									8852
+									15105,
+									15116
 								],
 								[
-									8874,
-									8897
+									15308,
+									15324
 								],
 								[
-									9375,
-									9394
+									15511,
+									15516
 								],
 								[
-									10145,
-									10153
+									15679,
+									15687
 								],
 								[
-									10194,
-									10201
+									15737,
+									15755
 								],
 								[
-									10258,
-									10266
+									15973,
+									15981
 								],
 								[
-									10305,
-									10317
+									16219,
+									16223
 								],
 								[
-									10654,
-									10665
+									16237,
+									16241
 								],
 								[
-									10973,
-									10984
+									16346,
+									16350
 								],
 								[
-									11049,
-									11057
+									16364,
+									16368
 								],
 								[
-									11321,
-									11326
+									17668,
+									17676
 								],
 								[
-									11475,
-									11498
+									18598,
+									18606
 								],
 								[
-									11663,
-									11673
+									20587,
+									20614
 								],
 								[
-									11712,
-									11724
-								],
-								[
-									12033,
-									12038
-								],
-								[
-									12327,
-									12333
-								],
-								[
-									12717,
-									12721
-								],
-								[
-									12901,
-									12904
-								],
-								[
-									12964,
-									12971
-								],
-								[
-									13107,
-									13112
-								],
-								[
-									13251,
-									13257
-								],
-								[
-									13521,
-									13524
-								],
-								[
-									13724,
-									13730
-								],
-								[
-									13866,
-									13868
-								],
-								[
-									13968,
-									13974
-								],
-								[
-									13987,
-									13996
-								],
-								[
-									14172,
-									14179
-								],
-								[
-									14426,
-									14432
-								],
-								[
-									15127,
-									15133
-								],
-								[
-									15204,
-									15208
-								],
-								[
-									15213,
-									15217
-								],
-								[
-									15305,
-									15318
-								],
-								[
-									15344,
-									15354
-								],
-								[
-									15374,
-									15388
-								],
-								[
-									15574,
-									15581
-								],
-								[
-									15805,
-									15814
-								],
-								[
-									15891,
-									15901
-								],
-								[
-									16062,
-									16072
+									20737,
+									20750
 								]
 							],
 							"symlist":
 							[
-								"function DereferenceError(object, member, pos, locator)",
-								"frame =>",
-								"frame =>",
-								"DereferenceError.prototype.toString = function()",
-								"IsChildren",
-								"MutablePath",
-								"args =>",
-								"isChildren",
-								"constructor",
-								"(acc, p) =>",
-								"partToString",
-								"(text, c = 33, b = 0) =>",
-								"([name, value]) =>",
-								"clone",
-								"size",
-								"right",
-								"left",
-								"up",
-								"down",
-								"nthChild",
-								"diff",
-								"lastId",
-								"last",
-								"first",
-								"nextSibling",
-								"prevSibling",
-								"parent",
-								"parentNode",
-								"firstChild",
-								"lastChild",
-								"depth",
-								"compareObj",
-								"apply",
-								"(a, i) =>",
-								"child =>",
-								"toString",
-								"color",
-								"pad",
-								"toSource",
-								"item =>",
-								"absolute",
-								"makeAbsolute",
-								"MutablePath",
-								"MutablePath",
-								"existsIn",
-								"split",
-								"pred",
-								"relativeTo",
-								"(part, i) =>",
-								"slice",
-								"splice",
-								"push",
-								"pop",
-								"unshift",
-								"shift",
-								"concat",
-								"map",
-								"filter",
-								"at",
-								"offset",
-								"(p, i) =>",
-								"toArray",
-								"equals",
-								"parent",
-								"walk",
-								"p =>",
-								"abort",
-								"set",
-								"ignore",
-								"compare",
-								"(a, b) =>",
-								"function()",
-								"function()"
+								"useSlot",
+								"() =>",
+								"v =>",
+								"trklGetSet",
+								"value =>",
+								"useTrkl",
+								"() =>",
+								"value =>",
+								"classNames",
+								"arg =>",
+								"MouseEvents",
+								".list",
+								"ElementToXML",
+								"LoadFile",
+								"async res =>",
+								".save",
+								"ModifyColors",
+								"e =>",
+								"loadDocument",
+								"Fence",
+								"value =>",
+								"value =>",
+								"chooseDocument",
+								"MakeFitAction",
+								"async () =>",
+								"CreateWebSocket",
+								"(...args) =>",
+								"arg =>",
+								".onload",
+								".keystroke",
+								"(key, modifiers = 0) =>",
+								".focusSearch",
+								"value =>",
+								"() =>",
+								"testComponent",
+								"response =>",
+								"({ name }, i) =>",
+								"ws =>",
+								"value =>",
+								"changeInput",
+								"fn: e",
+								"c =>",
+								"c =>",
+								"c =>",
+								"c =>",
+								"event =>",
+								"event =>",
+								"onRuntimeInitialized: ()",
+								"print: txt"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -1138,30 +767,30 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 36,
+					"stack_index": 4,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 23,
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "lib/eagle/element.js",
+					"file": "test-renderer.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 16475,
+						"buffer_size": 1671,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6703,
-								6703
+								437,
+								437
 							]
 						],
 						"settings":
@@ -1176,333 +805,6 @@
 								"tabSize": 2
 							},
 							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2898.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 17,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "lib/eagle/components.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1602,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 25,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "lib/eagle/common.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4581,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3025,
-								3025
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 7.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 22,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "lib/eagle/schematicRenderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7841,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								687,
-								687
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 16,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "lib/log.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4183,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2659,
-								2659
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1487.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 20,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "lib/eagle/boardRenderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8369,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 26,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "lib/eagle/document.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6162,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								861,
-								861
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 27,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "lib/eagle/ref.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3510,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								30,
-								30
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 21,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "lib/eagle/renderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6606,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								958,
-								958
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 128.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 11,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "test-eagle.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7278,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5932,
-								5932
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 4076.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Bold.tmTheme",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 53627,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								743,
-								743
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/XML/XML.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							}
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -1512,25 +814,25 @@
 					"type": "text"
 				},
 				{
-					"buffer": 12,
-					"file": "/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Contrast.tmTheme",
+					"buffer": 2,
+					"file": "lib/eagle/boardRenderer.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 53625,
+						"buffer_size": 8262,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5061,
-								5061
+								6957,
+								6957
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/XML/XML.sublime-syntax",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
 							"typescript_plugin_format_options":
@@ -1538,30 +840,31 @@
 								"convertTabsToSpaces": true,
 								"indentSize": 2,
 								"tabSize": 2
-							}
+							},
+							"use_tab_stops": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2631.0,
+						"translation.y": 6038.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 13,
-					"file": "test-xml.js",
+					"buffer": 3,
+					"file": "lib/eagle/svgRenderer.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6601,
+						"buffer_size": 13140,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5345,
-								5345
+								11284,
+								11284
 							]
 						],
 						"settings":
@@ -1569,1507 +872,49 @@
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
 							"use_tab_stops": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1840.0,
+						"translation.y": 365.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 14,
-					"file": "/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Modified.tmTheme",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 53629,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								678,
-								678
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/XML/XML.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							}
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 15,
-					"file": "/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Other.tmTheme",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 53618,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/XML/XML.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 16,
-					"file": "/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Roman New.tmTheme",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 53627,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								547,
-								547
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/XML/XML.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							}
-						},
-						"translation.x": 0.0,
-						"translation.y": 21.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 17,
-					"file": "lib/deep.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5182,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1165,
-								1165
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1206.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 18,
-					"file": "/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next.tmTheme",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 44374,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7897,
-								7897
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/XML/XML.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 5654.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 19,
-					"file": "lib/eagle/project.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7971,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1422,
-								1422
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 737.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 20,
-					"file": "lib/clone.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7651,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								615,
-								615
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 30,
-					"type": "text"
-				},
-				{
-					"buffer": 21,
-					"file": "/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 35091,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								8009,
-								8009
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/XML/XML.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 1707.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 31,
-					"type": "text"
-				},
-				{
-					"buffer": 22,
-					"file": "/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 228817,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								13975,
-								13975
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/XML/XML.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 159.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 13,
-					"type": "text"
-				},
-				{
-					"buffer": 23,
-					"file": "lib/eagle/nodeList.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5089,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1908,
-								1908
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 614.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 12,
-					"type": "text"
-				},
-				{
-					"buffer": 24,
-					"file": "lib/json/path.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 16103,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1826,
-								1826
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 405.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 25,
-					"file": "test-renderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1581,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								883,
-								883
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 14,
-					"type": "text"
-				},
-				{
-					"buffer": 26,
+					"buffer": 4,
 					"file": "main.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 20767,
+						"buffer_size": 20787,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								7099,
-								7099
+								10819,
+								10819
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 3818.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 18,
-					"type": "text"
-				},
-				{
-					"buffer": 27,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 90846,
-						"regions":
-						{
-							"match":
+							"translate_tabs_to_spaces": true,
+							"typescript_plugin_format_options":
 							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										134,
-										140
-									],
-									[
-										469,
-										475
-									],
-									[
-										539,
-										545
-									],
-									[
-										573,
-										579
-									],
-									[
-										692,
-										698
-									],
-									[
-										847,
-										853
-									],
-									[
-										900,
-										906
-									],
-									[
-										1012,
-										1018
-									],
-									[
-										1072,
-										1078
-									],
-									[
-										1103,
-										1109
-									],
-									[
-										1180,
-										1186
-									],
-									[
-										1214,
-										1220
-									],
-									[
-										1486,
-										1492
-									],
-									[
-										1533,
-										1539
-									],
-									[
-										21534,
-										21540
-									],
-									[
-										21605,
-										21611
-									],
-									[
-										46149,
-										46155
-									],
-									[
-										53967,
-										53973
-									],
-									[
-										54155,
-										54161
-									],
-									[
-										54333,
-										54339
-									],
-									[
-										54509,
-										54515
-									],
-									[
-										54920,
-										54926
-									],
-									[
-										55170,
-										55176
-									],
-									[
-										55370,
-										55376
-									],
-									[
-										55541,
-										55547
-									],
-									[
-										55594,
-										55600
-									],
-									[
-										55738,
-										55744
-									],
-									[
-										56007,
-										56013
-									],
-									[
-										56187,
-										56193
-									],
-									[
-										56257,
-										56263
-									],
-									[
-										56291,
-										56297
-									],
-									[
-										56410,
-										56416
-									],
-									[
-										56565,
-										56571
-									],
-									[
-										56618,
-										56624
-									],
-									[
-										56730,
-										56736
-									],
-									[
-										56790,
-										56796
-									],
-									[
-										56821,
-										56827
-									],
-									[
-										56898,
-										56904
-									],
-									[
-										56932,
-										56938
-									],
-									[
-										57242,
-										57252
-									],
-									[
-										57399,
-										57409
-									],
-									[
-										57719,
-										57729
-									],
-									[
-										57959,
-										57969
-									],
-									[
-										58106,
-										58116
-									],
-									[
-										58429,
-										58440
-									],
-									[
-										58592,
-										58603
-									],
-									[
-										58837,
-										58848
-									],
-									[
-										59077,
-										59088
-									],
-									[
-										59422,
-										59453
-									],
-									[
-										59685,
-										59716
-									],
-									[
-										59948,
-										59979
-									],
-									[
-										60400,
-										60406
-									],
-									[
-										60623,
-										60629
-									],
-									[
-										60888,
-										60894
-									],
-									[
-										61109,
-										61115
-									],
-									[
-										61221,
-										61227
-									],
-									[
-										61428,
-										61434
-									],
-									[
-										61486,
-										61492
-									],
-									[
-										61719,
-										61725
-									],
-									[
-										61880,
-										61886
-									],
-									[
-										62020,
-										62026
-									],
-									[
-										62252,
-										62258
-									],
-									[
-										62437,
-										62443
-									],
-									[
-										62676,
-										62682
-									],
-									[
-										62912,
-										62918
-									],
-									[
-										63125,
-										63131
-									],
-									[
-										63255,
-										63261
-									],
-									[
-										63443,
-										63449
-									],
-									[
-										63491,
-										63497
-									],
-									[
-										63769,
-										63775
-									],
-									[
-										64113,
-										64119
-									],
-									[
-										64431,
-										64437
-									],
-									[
-										64596,
-										64602
-									],
-									[
-										64751,
-										64757
-									],
-									[
-										64803,
-										64809
-									],
-									[
-										65099,
-										65105
-									],
-									[
-										65322,
-										65328
-									],
-									[
-										65587,
-										65593
-									],
-									[
-										65808,
-										65814
-									],
-									[
-										65920,
-										65926
-									],
-									[
-										66127,
-										66133
-									],
-									[
-										66185,
-										66191
-									],
-									[
-										66418,
-										66424
-									],
-									[
-										66579,
-										66585
-									],
-									[
-										66719,
-										66725
-									],
-									[
-										66951,
-										66957
-									],
-									[
-										67136,
-										67142
-									],
-									[
-										67320,
-										67326
-									],
-									[
-										67443,
-										67449
-									],
-									[
-										67597,
-										67603
-									],
-									[
-										67759,
-										67765
-									],
-									[
-										67995,
-										68001
-									],
-									[
-										68073,
-										68079
-									],
-									[
-										68175,
-										68181
-									],
-									[
-										68480,
-										68486
-									],
-									[
-										68816,
-										68822
-									],
-									[
-										69061,
-										69067
-									],
-									[
-										69251,
-										69257
-									],
-									[
-										69440,
-										69446
-									],
-									[
-										69678,
-										69684
-									],
-									[
-										69763,
-										69769
-									],
-									[
-										69956,
-										69962
-									],
-									[
-										70134,
-										70140
-									],
-									[
-										70402,
-										70408
-									],
-									[
-										70607,
-										70613
-									],
-									[
-										70735,
-										70741
-									],
-									[
-										70904,
-										70910
-									],
-									[
-										71095,
-										71101
-									],
-									[
-										71157,
-										71163
-									],
-									[
-										71285,
-										71291
-									],
-									[
-										71435,
-										71441
-									],
-									[
-										71703,
-										71709
-									],
-									[
-										71846,
-										71852
-									],
-									[
-										72104,
-										72110
-									],
-									[
-										72254,
-										72260
-									],
-									[
-										72363,
-										72369
-									],
-									[
-										72604,
-										72610
-									],
-									[
-										72790,
-										72796
-									],
-									[
-										72913,
-										72919
-									],
-									[
-										73053,
-										73059
-									],
-									[
-										73237,
-										73243
-									],
-									[
-										73399,
-										73405
-									],
-									[
-										73549,
-										73555
-									],
-									[
-										73766,
-										73772
-									],
-									[
-										74020,
-										74026
-									],
-									[
-										74247,
-										74255
-									],
-									[
-										74476,
-										74484
-									],
-									[
-										74583,
-										74591
-									],
-									[
-										74842,
-										74850
-									],
-									[
-										75109,
-										75117
-									],
-									[
-										75338,
-										75346
-									],
-									[
-										75445,
-										75453
-									],
-									[
-										75704,
-										75712
-									],
-									[
-										76086,
-										76094
-									],
-									[
-										76324,
-										76332
-									],
-									[
-										76654,
-										76662
-									],
-									[
-										77067,
-										77075
-									],
-									[
-										77308,
-										77316
-									],
-									[
-										77402,
-										77410
-									],
-									[
-										77516,
-										77524
-									],
-									[
-										77587,
-										77595
-									],
-									[
-										77838,
-										77846
-									],
-									[
-										78078,
-										78086
-									],
-									[
-										78408,
-										78416
-									],
-									[
-										78821,
-										78829
-									],
-									[
-										79062,
-										79070
-									],
-									[
-										79160,
-										79168
-									],
-									[
-										79357,
-										79366
-									],
-									[
-										79812,
-										79822
-									],
-									[
-										80088,
-										80098
-									],
-									[
-										80375,
-										80385
-									],
-									[
-										80609,
-										80619
-									],
-									[
-										80967,
-										80976
-									],
-									[
-										81230,
-										81239
-									],
-									[
-										81464,
-										81473
-									],
-									[
-										81731,
-										81740
-									],
-									[
-										81984,
-										81993
-									],
-									[
-										82218,
-										82227
-									],
-									[
-										82496,
-										82505
-									],
-									[
-										82730,
-										82739
-									],
-									[
-										82983,
-										82992
-									],
-									[
-										83217,
-										83226
-									],
-									[
-										83563,
-										83588
-									],
-									[
-										83826,
-										83859
-									],
-									[
-										84092,
-										84117
-									],
-									[
-										84345,
-										84378
-									],
-									[
-										84628,
-										84647
-									],
-									[
-										84856,
-										84881
-									],
-									[
-										85109,
-										85142
-									],
-									[
-										85597,
-										85637
-									],
-									[
-										85896,
-										85936
-									],
-									[
-										86300,
-										86312
-									],
-									[
-										86645,
-										86656
-									],
-									[
-										86865,
-										86876
-									],
-									[
-										87183,
-										87194
-									],
-									[
-										87309,
-										87320
-									],
-									[
-										87490,
-										87501
-									],
-									[
-										87710,
-										87721
-									],
-									[
-										88028,
-										88039
-									],
-									[
-										88154,
-										88165
-									],
-									[
-										88335,
-										88346
-									],
-									[
-										88555,
-										88566
-									],
-									[
-										88873,
-										88884
-									],
-									[
-										88999,
-										89010
-									],
-									[
-										89378,
-										89393
-									],
-									[
-										89630,
-										89642
-									],
-									[
-										89990,
-										90002
-									],
-									[
-										90265,
-										90277
-									],
-									[
-										90591,
-										90603
-									]
-								],
-								"scope": ""
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
 							}
 						},
-						"selection":
-						[
-							[
-								90032,
-								90032
-							]
-						],
-						"settings":
-						{
-							"detect_indentation": false,
-							"line_numbers": false,
-							"output_tag": 19,
-							"result_base_dir": "",
-							"result_file_regex": "^([^ \t].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
 						"translation.x": 0.0,
-						"translation.y": 28999.0,
+						"translation.y": 499.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 15,
-					"type": "text"
-				},
-				{
-					"buffer": 28,
-					"file": "/home/roman/Sources/plot-cv/lib/eagle/svgRenderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 13010,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2546,
-								2546
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 990.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 19,
-					"type": "text"
-				},
-				{
-					"buffer": 29,
-					"file": "/home/roman/Sources/plot-cv/lib/eagle/nodeMap.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3450,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1841,
-								1841
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 660.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 23,
-					"type": "text"
-				},
-				{
-					"buffer": 30,
-					"file": "/home/roman/Sources/plot-cv/lib/dom/element.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 29306,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5879,
-								5879
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2682.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 24,
-					"type": "text"
-				},
-				{
-					"buffer": 31,
-					"file": "/home/roman/Sources/plot-cv/lib/eagle/node.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 13686,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6637,
-								6637
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 28,
-					"type": "text"
-				},
-				{
-					"buffer": 32,
-					"file": "/home/roman/Sources/plot-cv/lib/deep.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5182,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								344,
-								344
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 29,
-					"type": "text"
-				},
-				{
-					"buffer": 33,
-					"file": "/home/roman/Sources/plot-cv/lib/eagle/document.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6162,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2038,
-								2038
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 302.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 32,
-					"type": "text"
-				},
-				{
-					"buffer": 34,
-					"file": "/home/roman/Sources/plot-cv/lib/eagle/element.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 16475,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								8702,
-								8702
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 3566.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 33,
-					"type": "text"
-				},
-				{
-					"buffer": 35,
-					"file": "lib/util.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 84147,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								52648,
-								52648
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 30996.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 35,
-					"type": "text"
-				},
-				{
-					"buffer": 36,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 0,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 34,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -3077,7 +922,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 27.0
+		"height": 36.0
 	},
 	"input":
 	{
@@ -3127,7 +972,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 74.0
+		"height": 92.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -3137,36 +982,200 @@
 		"selected_items":
 		[
 			[
-				"path",
+				"main",
+				"main.js"
+			],
+			[
+				"renderer",
+				"lib/eagle/renderer.js"
+			],
+			[
+				"path.",
 				"lib/json/path.js"
-			],
-			[
-				"test-xml",
-				"test-xml.js"
-			],
-			[
-				"path.j",
-				"lib/json/path.js"
-			],
-			[
-				"deep.",
-				"lib/deep.js"
-			],
-			[
-				"test-ea",
-				"test-eagle.js"
-			],
-			[
-				"element",
-				"lib/eagle/element.js"
 			],
 			[
 				"main.j",
 				"main.js"
 			],
 			[
+				"test-re",
+				"test-renderer.js"
+			],
+			[
+				"ref",
+				"lib/eagle/ref.js"
+			],
+			[
+				"SchematicRe",
+				"lib/eagle/schematicRenderer.js"
+			],
+			[
+				"svgr",
+				"lib/eagle/svgRenderer.js"
+			],
+			[
+				"xpath",
+				"lib/xml/xpath.js"
+			],
+			[
+				"element",
+				"lib/eagle/element.js"
+			],
+			[
+				"mapper",
+				"lib/json/pathMapper.js"
+			],
+			[
+				"Util.j",
+				"lib/util.js"
+			],
+			[
+				"eleme",
+				"lib/eagle/element.js"
+			],
+			[
+				"pathma",
+				"lib/json/pathMapper.js"
+			],
+			[
+				"node",
+				"lib/eagle/node.js"
+			],
+			[
+				"nodelist",
+				"lib/eagle/nodeList.js"
+			],
+			[
+				"scheamtic",
+				"lib/eagle/schematicRenderer.js"
+			],
+			[
 				"render",
+				"lib/eagle/schematicRenderer.js"
+			],
+			[
+				"test-ren",
+				"test-renderer.js"
+			],
+			[
+				"path",
+				"lib/json/path.js"
+			],
+			[
+				"project",
+				"lib/eagle/project.js"
+			],
+			[
+				"test-ea",
+				"test-eagle.js"
+			],
+			[
+				"docu",
+				"lib/eagle/document.js"
+			],
+			[
+				"schema",
+				"lib/eagle/schematicRenderer.js"
+			],
+			[
+				"path.j",
+				"lib/json/path.js"
+			],
+			[
+				"svgRend",
+				"lib/eagle/svgRenderer.js"
+			],
+			[
+				"schemat",
+				"lib/eagle/schematicRenderer.js"
+			],
+			[
+				"document",
+				"lib/eagle/document.js"
+			],
+			[
+				"testpar",
+				"test-parse.js"
+			],
+			[
+				"test-ma",
+				"test-matrix.js"
+			],
+			[
+				"svgRe",
+				"lib/eagle/svgRenderer.js"
+			],
+			[
+				"rendere",
 				"lib/eagle/renderer.js"
+			],
+			[
+				"test-mem",
+				"test-membrane.js"
+			],
+			[
+				"path.js",
+				"lib/json/path.js"
+			],
+			[
+				"test-cov",
+				"test-coverage.js"
+			],
+			[
+				"function",
+				"lib/functional.js"
+			],
+			[
+				"test-xml",
+				"test-xml.js"
+			],
+			[
+				"func",
+				"lib/functional.js"
+			],
+			[
+				"functional",
+				"lib/functional.js"
+			],
+			[
+				"test-xm",
+				"test-xml.js"
+			],
+			[
+				"util.",
+				"lib/util.js"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"util",
+				"lib/util.js"
+			],
+			[
+				"colormap",
+				"lib/draw/colorMap.js"
+			],
+			[
+				"util.j",
+				"lib/util.js"
+			],
+			[
+				"",
+				"lib/color/hsla.js"
+			],
+			[
+				"hsla",
+				"lib/color/hsla.js"
+			],
+			[
+				"rgba",
+				"lib/color/rgba.js"
+			],
+			[
+				"deep.",
+				"lib/deep.js"
 			],
 			[
 				"node.",
@@ -3197,32 +1206,12 @@
 				"test-renderer.js"
 			],
 			[
-				"util",
-				"lib/util.js"
-			],
-			[
-				"main",
-				"main.js"
-			],
-			[
 				"eagle",
 				"lib/eagle.js"
 			],
 			[
-				"util.js",
-				"lib/util.js"
-			],
-			[
 				"log4",
 				"lib/log4javascript.js"
-			],
-			[
-				"xpath",
-				"lib/xml/xpath.js"
-			],
-			[
-				"path.",
-				"lib/json/path.js"
 			],
 			[
 				"test-render",
@@ -3235,26 +1224,6 @@
 			[
 				"common",
 				"lib/eagle/common.js"
-			],
-			[
-				"node",
-				"lib/eagle/node.js"
-			],
-			[
-				"util.j",
-				"lib/util.js"
-			],
-			[
-				"colormap",
-				"lib/draw/colorMap.js"
-			],
-			[
-				"test-xm",
-				"test-xml.js"
-			],
-			[
-				"path.js",
-				"lib/json/path.js"
 			],
 			[
 				"nodeMap",
@@ -3273,14 +1242,6 @@
 				"lib/eagle/common.js"
 			],
 			[
-				"docu",
-				"lib/eagle/document.js"
-			],
-			[
-				"ref",
-				"lib/eagle/ref.js"
-			],
-			[
 				"xpah",
 				"lib/xml/xpath.js"
 			],
@@ -3290,10 +1251,6 @@
 			],
 			[
 				"Util.js",
-				"lib/util.js"
-			],
-			[
-				"util.",
 				"lib/util.js"
 			],
 			[
@@ -3315,10 +1272,6 @@
 			[
 				"next.xml",
 				"Next.xml"
-			],
-			[
-				"rgba",
-				"lib/color/rgba.js"
 			],
 			[
 				"index.",
@@ -3363,10 +1316,6 @@
 			[
 				"test-poin",
 				"test-pointlist.js"
-			],
-			[
-				"test-mem",
-				"test-membrane.js"
 			],
 			[
 				"test-matr",
@@ -3437,10 +1386,6 @@
 				"server.js"
 			],
 			[
-				"svgRe",
-				"lib/eagle/svgRenderer.js"
-			],
-			[
 				"preactCom",
 				"lib/dom/preactComponent.js"
 			],
@@ -3449,20 +1394,12 @@
 				"lib/eagle/element.js"
 			],
 			[
-				"document",
-				"lib/eagle/document.js"
-			],
-			[
 				"point.",
 				"lib/geom/point.js"
 			],
 			[
 				"line",
 				"lib/geom/line.js"
-			],
-			[
-				"eleme",
-				"lib/eagle/element.js"
 			],
 			[
 				"rect.",
@@ -3545,18 +1482,6 @@
 				"components.js"
 			],
 			[
-				"schema",
-				"lib/eagle/schematicRenderer.js"
-			],
-			[
-				"renderer",
-				"lib/eagle/renderer.js"
-			],
-			[
-				"project",
-				"lib/eagle/project.js"
-			],
-			[
 				"main.",
 				"main.js"
 			],
@@ -3567,86 +1492,6 @@
 			[
 				"eagle.js",
 				"lib/eagle.js"
-			],
-			[
-				"line.j",
-				"lib/geom/line.js"
-			],
-			[
-				"point",
-				"lib/geom/point.js"
-			],
-			[
-				"pointLis",
-				"lib/geom/pointList.js"
-			],
-			[
-				"lineLi",
-				"lib/geom/lineList.js"
-			],
-			[
-				"bbox",
-				"lib/geom/bbox.js"
-			],
-			[
-				"dom.",
-				"lib/dom.js"
-			],
-			[
-				"inde.",
-				"index.html"
-			],
-			[
-				"hsla",
-				"lib/dom/hsla.js"
-			],
-			[
-				"nodeList",
-				"lib/eagle/nodeList.js"
-			],
-			[
-				"obser",
-				"lib/proxy/observableMembrane.js"
-			],
-			[
-				"json.j",
-				"lib/json.js"
-			],
-			[
-				"index.html",
-				"index.html"
-			],
-			[
-				"node.j",
-				"lib/eagle/node.js"
-			],
-			[
-				"json",
-				"lib/json.js"
-			],
-			[
-				"matrix",
-				"lib/geom/matrix.js"
-			],
-			[
-				"transform",
-				"lib/geom/transformation.js"
-			],
-			[
-				"xmljs",
-				"lib/xml.js"
-			],
-			[
-				"serevr.j",
-				"server.js"
-			],
-			[
-				"board",
-				"lib/eagle/boardRenderer.js"
-			],
-			[
-				"schemt",
-				"lib/eagle/schematicRenderer.js"
 			]
 		],
 		"width": 0.0
