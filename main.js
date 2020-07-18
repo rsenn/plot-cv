@@ -61,17 +61,11 @@ import {
 } from './lib/eagle.js';
 
 const React = {
-  cloneElement,
   Component,
   createContext,
-  createRef,
-  Fragment,
   create: h,
   html,
-  hydrate,
-  isValidElement,
   render,
-  toChildArray,
   useCallback,
   useContext,
   useDebugValue,
@@ -116,7 +110,7 @@ Util.extend(
   { Chooser, useState, useLayoutEffect, useRef, Polygon }
 );
 
-  Error.stackTraceLimit = 100;
+Error.stackTraceLimit = 100;
 
 let currentProj = trkl.property(window, 'project');
 let open = trkl();
@@ -361,7 +355,7 @@ const chooseDocument = async (e, proj, i) => {
     r = proj.loaded;
   } catch(err) {
     console.log('err:', err.message);
-    console.log('stack:', [...err.stack].join("\n"));
+    console.log('stack:', [...err.stack].join('\n'));
   }
 
   return r;
