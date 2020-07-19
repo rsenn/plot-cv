@@ -92,8 +92,7 @@ export const Icon = ({ className = 'icon', caption, image, ...props }) => html`
   <div className=${className} ...${props}>${caption}<img src=${image} /></div>
 `;
 
-export const Progress = ({ className, percent, ...props }) => html`
-                <${Overlay} className=${classNames('progress', 'center', className)} text=${percent + '%'} style=${{
+export const Progress = ({ className, percent, ...props }) => html`<${Overlay} className=${classNames('progress', 'center', className)} text=${percent + '%'} style=${{
   position: 'relative',
   width: '100%',
   height: '1.5em',
