@@ -85,12 +85,12 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/static', express.static(p));
 app.use('/modules', express.static(path.join(p, 'node_modules')));
 app.use('/htm', express.static(path.join(p, 'htm')));
 app.use('/node_modules', express.static(path.join(p, 'node_modules')));
 app.use('/components', express.static(path.join(p, 'components')));
 app.use('/lib', express.static(path.join(p, 'lib')));
+app.use('/static', express.static(p));
 
 app.get('/favicon.ico', (req, res) =>
   res.sendFile(path.join(p, 'lib/eagle/icon/eagleicon.ico'), {
@@ -99,7 +99,10 @@ app.get('/favicon.ico', (req, res) =>
     }
   })
 );
-app.get('/main.js', async (req, res) => res.sendFile(path.join(p, 'main.js')));
+app.get(/\/[^/]*\.js$/, async (req, res) => res.sendFile(path.join(p, req.path)));
+
+//app.get('/components.js', async (req, res) => res.sendFile(path.join(p, 'components.js')));
+
 app.get('/style.css', async (req, res) => res.sendFile(path.join(p, 'style.css'), { headers: { 'Content-Type': 'text/css' } }));
 
 app.get('/files.html', async (req, res) => {

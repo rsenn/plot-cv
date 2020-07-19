@@ -221,9 +221,8 @@ async function testEagle(filename) {
 
   //console.log('saved:', await proj.saveTo('tmp', true));
 
-  for(let sheet of board.get('sheet')) {
-    //console.log('sheet', sheet, sheet.xpath());
-  }
+  // for(let sheet of board.get('sheet'))
+  //console.log('sheet', sheet, sheet.xpath());
 
   for(let instance of schematic.getAll(e => e.tagName == 'instance')) {
     const { part, gate } = instance;

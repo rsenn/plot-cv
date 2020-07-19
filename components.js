@@ -1,4 +1,5 @@
-import { h, html, render, Component, useState, useCallback, useRef, useEffect, useLayoutEffect } from '/modules/htm/preact/standalone.module.js';
+import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
+
 import { trkl } from './lib/trkl.js';
 
 //import React from '../modules/preact/dist/preact.mjs';
