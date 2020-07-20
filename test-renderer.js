@@ -11,7 +11,7 @@ function testRenderSchematic(file) {
   let doc = new EagleDocument(fs.readFileSync(`${file}.sch`).toString());
   //console.log('doc:', doc.get('eagle/drawing'));
   let renderer = new Renderer(doc, ReactComponent.append, debug);
-  // console.log('renderer:', renderer);
+  //console.log('renderer:', renderer);
   let output = renderer.render(doc, null, 0);
 
   //console.log('output:', output);

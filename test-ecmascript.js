@@ -89,16 +89,18 @@ function main(args) {
   if(args.length == 0) args.push('./lib/ecmascript/parser.js');
   for(let file of args) {
     let data, b, ret;
-    if(file == '-') file = '/dev/stdin';
+    if(file == '-') {
+      file = '/dev/stdin';
+      data = fs.readFileSync(file);
+    }
     //console.log('file:', file);
-    //  data = fs.readFileSync(file);
-    console.log('opened:', data);
+    //console.log('opened:', data);
     let ast, error;
 
-    global.parser = new ECMAScriptParser(code /*data.toString()*/, file);
+    global.parser = new ECMAScriptParser(data ? data.toString() : code, file);
     global.printer = new Printer({ indent: 4 });
 
-    console.log('prototypeChain:', Util.getPrototypeChain(parser));
+    //console.log('prototypeChain:', Util.getPrototypeChain(parser));
 
     //console.log("methodNames:",Util.getMethodNames(parser, 2));
 
@@ -112,8 +114,8 @@ function main(args) {
 
       //console.log('imports:', imports.map(node => ({ str: printer.print(node), toks: ECMAScriptParser.printToks( parser.tokensForNode(node))  })));
 
-      //  for(let imp of imports) console.log('tokens:', parser.tokensForNode(imp));
-
+      //for(let imp of imports) console.log('tokens:', parser.tokensForNode(imp));
+      /*
       let flat = deep.flatten(
         ast,
         new Map(),
@@ -121,11 +123,11 @@ function main(args) {
         (path, value) => {
           path = new Path(path);
           //value = Util.map(value,(k,v) => [k,v instanceof ESNode ? path.down(k) : v ]);
-          // value = Util.filter(value, (v,k) => !(v instanceof Path));
+           //value = Util.filter(value, (v,k) => !(v instanceof Path));
           return [path, value];
         }
       );
-      console.log('flat:', flat);
+      //console.log('flat:', flat);
 
       let posMap = new SortedMap(
         [...flat].map(([key, value]) => [value.position ? value.position.pos : -1, value]),
@@ -137,24 +139,29 @@ function main(args) {
         (a, b) => a - b
       );
 
-      // posMap = new SortedMap([/*...posMap,*/ ...commentMap], (a, b) => a - b);
+       //posMap = new SortedMap([...posMap, ...commentMap], (a, b) => a - b);
 
       //console.log("ast:", [...posMap.keys()]);$
       //console.log('commentMap:', commentMap);
       //console.log('posMap:', [...posMap.keys()]);
 
       //console.log("nodes:", parser.nodes.map(n =>  [Util.className(n), n.position.toString()]));
+//
+*/
     } catch(err) {
       error = err;
+      //console.log('error:', err);
     }
     files[file] = finish(error);
 
     if(!error) {
       const output_file = file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
 
-      //console.log("ast:", ast);
       //console.log('saving to:', output_file);
-      dumpFile(output_file, printAst(ast, parser.comments, printer));
+      const output = printAst(ast, parser.comments, printer);
+      //console.log('output:', output);
+
+      dumpFile(output_file, output);
     } else {
       process.exit(1);
     }

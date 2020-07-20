@@ -37,8 +37,8 @@ function main(args) {
     global.lexer = new Lexer(data.toString(), file);
     try {
       while((token = lexer.lex())) {
-        //      const { type, value, length, start, end } = token;
-        //        const position = token.position.start.toString();
+        //const { type, value, length, start, end } = token;
+        //const position = token.position.start.toString();
         //console.log("position:", position);
         //console.log(`Token`, token.toString());
         //console.log(token.position.start.toString());

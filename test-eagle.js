@@ -185,7 +185,7 @@ async function testEagle(filename) {
   );*/
   //console.log('Project loaded: ' + !proj.failed);
 
-  //  if(proj.failed) return false;
+  //if(proj.failed) return false;
 
   //console.log('failed  :', failed);
   //console.log('proj.documents', proj.documents);
@@ -221,7 +221,7 @@ async function testEagle(filename) {
 
   //console.log('saved:', await proj.saveTo('tmp', true));
 
-  // for(let sheet of board.get('sheet'))
+  //for(let sheet of board.get('sheet'))
   //console.log('sheet', sheet, sheet.xpath());
 
   for(let instance of schematic.getAll(e => e.tagName == 'instance')) {

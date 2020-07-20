@@ -483,7 +483,7 @@ export const Canvas = ({ onInit, ...props }) => {
   })*/
 
   function handleMouseMove(e) {
-    // actual coordinates
+    //actual coordinates
     const coords = [e.clientX - canvasRef.current.offsetLeft, e.clientY - canvasRef.current.offsetTop];
     if(drawing) {
       ctx.current.lineTo(...coords);
@@ -500,7 +500,7 @@ export const Canvas = ({ onInit, ...props }) => {
     ctx.current.lineWidth = 1;
     ctx.current.strokeStyle = props.color;
     ctx.current.beginPath();
-    // actual coordinates
+    //actual coordinates
     ctx.current.moveTo(e.clientX - canvasRef.current.offsetLeft, e.clientY - canvasRef.current.offsetTop);
     setDrawing(true);
   }
@@ -551,17 +551,17 @@ export const ColorWheel = ({ radius = 50, ...props }) => {
             let [r, phi] = xy2polar(x, y);
 
             if(r > radius) {
-              // skip all (x,y) coordinates that are outside of the circle
+              //skip all (x,y) coordinates that are outside of the circle
               continue;
             }
 
             let deg = rad2deg(phi);
 
-            // Figure out the starting index of this pixel in the image data array.
+            //Figure out the starting index of this pixel in the image data array.
             let rowLength = 2 * radius;
-            let adjustedX = x + radius; // convert x from [-50, 50] to [0, 100] (the coordinates of the image data array)
-            let adjustedY = y + radius; // convert y from [-50, 50] to [0, 100] (the coordinates of the image data array)
-            let pixelWidth = 4; // each pixel requires 4 slots in the data array
+            let adjustedX = x + radius; //convert x from [-50, 50] to [0, 100] (the coordinates of the image data array)
+            let adjustedY = y + radius; //convert y from [-50, 50] to [0, 100] (the coordinates of the image data array)
+            let pixelWidth = 4; //each pixel requires 4 slots in the data array
             let index = (adjustedX + adjustedY * rowLength) * pixelWidth;
 
             let hue = deg;
@@ -587,16 +587,16 @@ export const ColorWheel = ({ radius = 50, ...props }) => {
         return [r, phi];
       }
 
-      // rad in [-π, π] range
-      // return degree in [0, 360] range
+      //rad in [-π, π] range
+      //return degree in [0, 360] range
       function rad2deg(rad) {
         return ((rad + Math.PI) / (2 * Math.PI)) * 360;
       }
 
-      // hue in range [0, 360]
-      // saturation, value in range [0,1]
-      // return [r,g,b] each in range [0,255]
-      // See: https://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV
+      //hue in range [0, 360]
+      //saturation, value in range [0,1]
+      //return [r,g,b] each in range [0,255]
+      //See: https://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV
       function hsv2rgb(hue, saturation, value) {
         let chroma = value * saturation;
         let hue1 = hue / 60;
@@ -619,7 +619,7 @@ export const ColorWheel = ({ radius = 50, ...props }) => {
         let m = value - chroma;
         let [r, g, b] = [r1 + m, g1 + m, b1 + m];
 
-        // Change r,g,b values from [0,1] to [0,255]
+        //Change r,g,b values from [0,1] to [0,255]
         return [255 * r, 255 * g, 255 * b];
       }
     }

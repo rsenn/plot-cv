@@ -1,4 +1,4 @@
-// prettier-ignore-start
+//prettier-ignore-start
 import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
@@ -232,7 +232,7 @@ const loadDocument = async (project, parentElem) => {
   project.renderer = new Renderer(project.doc, ReactComponent.append, false);
   //console.log('project.renderer', project.renderer);
 
-  // if(!project.renderer || !project.renderer.render) return;
+  //if(!project.renderer || !project.renderer.render) return;
 
   let style = { width: '100%', height: '100%', position: 'relative' };
   /*  let svgXml = project.renderer.render(project.doc, null, {});
@@ -315,7 +315,7 @@ const loadDocument = async (project, parentElem) => {
   size.mul(doc.type == 'brd' ? 2 : 1.5);
   let svgrect = SVG.bbox(project.svg);
 
-  //  project.aspectRatio = svgrect.aspect();
+  //project.aspectRatio = svgrect.aspect();
 
   Element.attr(project.svg, {
     'data-filename': project.name,
@@ -324,7 +324,7 @@ const loadDocument = async (project, parentElem) => {
     'data-height': size.height + 'mm'
   });
 
-  // project.svg.setAttribute('data-aspect', project.aspectRatio);
+  //project.svg.setAttribute('data-aspect', project.aspectRatio);
   let css = size.div(0.26458333333719).toCSS({ width: 'px', height: 'px' });
 
   window.size = css;
@@ -412,7 +412,7 @@ const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 const AppMain = (window.onload = async () => {
   Object.assign(window, { Element, devtools, dom });
 
-  // window.focusSearch = trkl();
+  //window.focusSearch = trkl();
   window.currentSearch = trkl(null);
 
   window.keystroke = target => (key, modifiers = 0) => keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key), target);
@@ -445,7 +445,7 @@ const AppMain = (window.onload = async () => {
 
   Util(globalThis);
 
-  // prettier-ignore
+  //prettier-ignore
   Object.assign(window, { BBox, chooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, loadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
 
   const inspectSym = Symbol.for('nodejs.util.inspect.custom');
@@ -468,7 +468,7 @@ const AppMain = (window.onload = async () => {
           out = concat(out, arg[inspectSym]());
           continue;
         } else if(arg.toString && !Util.isNativeFunction(arg.toString)) {
-          //  console.realLog("toString: "+arg.toString);
+            //console.realLog("toString: "+arg.toString);
           out = concat(out, [arg.toString()]);
         } else if(Util.isObject(arg)) {
           out.push(arg);
@@ -478,8 +478,8 @@ const AppMain = (window.onload = async () => {
       }
       out[0] += ' ' + arg;
     }
-    //  for(let i in out)
-    //  console.realLog("out:",out);
+      //for(let i in out)
+      //console.realLog("out:",out);
     this.realLog(...out);
   };*/
 

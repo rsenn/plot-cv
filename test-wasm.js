@@ -38,7 +38,7 @@ module: {},
 };
 
 /*(async () => {
- // Explicitly compile and then instantiate the wasm module.
+  //Explicitly compile and then instantiate the wasm module.
  const module = await WebAssembly.compile(bytes);
  //console.log("module: ", module);
  const instance = await WebAssembly.instantiate(module, importObject);
@@ -47,7 +47,7 @@ module: {},
 })();*/
 
 (async () => {
-  // Instantiate the Wasm module with an implicit compilation step.
+  //Instantiate the Wasm module with an implicit compilation step.
   const { instance, module } = await WebAssembly.instantiate(bytes, importObject);
 
   //console.log(instance.exports.addTwo(8, 5));

@@ -16,17 +16,17 @@ function moon() {
 
 //Get today's moon
 
-moon(); // 🌗 (today's moon)
+moon(); //🌗 (today's moon)
 //Choose a different date
 
-moon(2017); // 🌑 (today in 2017)
-moon(2017, 3, 14); // 🌕 (a specific date)
+moon(2017); //🌑 (today in 2017)
+moon(2017, 3, 14); //🌕 (a specific date)
 //Choose from available formats (moon.FORMATS) default is icon
 
-moon(2017, 3, 14, { format: 'code' }); // 'full-moon'
-moon({ format: 'name' }); // 'Last Quarter Moon'
+moon(2017, 3, 14, { format: 'code' }); //'full-moon'
+moon({ format: 'name' }); //'Last Quarter Moon'
 
-// SolarCalc(date,lat,long)
+//SolarCalc(date,lat,long)
 const gps = { lat: 46.9480896, lon: 7.4474401 };
 let solar = new SolarCalc(new Date(), gps.lat, gps.lon);
 //console.log('solar:', solar /* 2015-03-08T11:35:30.000Z */);
