@@ -36,6 +36,6 @@ const LoginIcon = ({ style }) => (
       //console.log('tok:', token.value);
     } while(token.type != 'eof');
   } catch(err) {
-    console.log('ERROR:', err);
+    //console.log('ERROR:', err);
   }
 })(...process.argv.slice(2));

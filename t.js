@@ -60,7 +60,7 @@ async function testEagle(filename) {
     }
   } catch(error) {
     const { stack } = error;
-    console.log('error:', error.toString(), stack);
+    //console.log('error:', error.toString(), stack);
   }
   return;
 
@@ -74,7 +74,7 @@ async function testEagle(filename) {
     const stack = err.stack;
 
     //console.log('err:', err.toString());
-    console.log('stack:', stack);
+    //console.log('stack:', stack);
     throw err;
   }
 })();

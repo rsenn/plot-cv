@@ -7,7 +7,23 @@ import Util from './lib/util.js';
 import fs from 'fs';
 import { Console } from 'console';
 import deep from './lib/deep.js';
+import { Path } from './lib/json.js';
 import { SortedMap } from './lib/container/sortedMap.js';
+
+const code = `export const Progress = ({ className, percent, ...props }) => html\`<\x24{Overlay} className=\x24{classNames('progress', 'center', className)} text=\x24{percent + '%'} style=\x24{{
+  position: 'relative',
+  width: '100%',
+  height: '1.5em',
+  border: '1px solid black',
+  textAlign: 'center',
+  zIndex: '99'
+}}><div className=\x24{classNames('progress-bar', 'fill')} style=\x24{{
+  width: percent + '%',
+  position: 'absolute',
+  left: '0px',
+  top: '0px',
+  zIndex: '98'
+}}></div></\x24{Overlay}>\`"`;
 
 import process from 'process';
 
@@ -16,7 +32,7 @@ Error.stackTraceLimit = 1000;
 global.console = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
-  inspectOptions: { depth: 20, colors: true }
+  inspectOptions: { depth: 2, colors: true }
 });
 
 const testfn = () => true;
@@ -75,14 +91,15 @@ function main(args) {
     let data, b, ret;
     if(file == '-') file = '/dev/stdin';
     //console.log('file:', file);
-    data = fs.readFileSync(file);
-    //console.log('opened:', data);
+    //  data = fs.readFileSync(file);
+    console.log('opened:', data);
     let ast, error;
 
-    global.parser = new ECMAScriptParser(data.toString(), file);
+    global.parser = new ECMAScriptParser(code /*data.toString()*/, file);
     global.printer = new Printer({ indent: 4 });
 
-    //console.log("prototypeChain:",Object.keys(Object.getPrototypeOf(parser)));
+    console.log('prototypeChain:', Util.getPrototypeChain(parser));
+
     //console.log("methodNames:",Util.getMethodNames(parser, 2));
 
     //console.log(new parser.estree.Identifier());
@@ -98,9 +115,17 @@ function main(args) {
       //  for(let imp of imports) console.log('tokens:', parser.tokensForNode(imp));
 
       let flat = deep.flatten(
-        deep.iterate(ast, node => node instanceof ESNode),
-        new SortedMap()
+        ast,
+        new Map(),
+        node => node instanceof ESNode,
+        (path, value) => {
+          path = new Path(path);
+          //value = Util.map(value,(k,v) => [k,v instanceof ESNode ? path.down(k) : v ]);
+          // value = Util.filter(value, (v,k) => !(v instanceof Path));
+          return [path, value];
+        }
       );
+      console.log('flat:', flat);
 
       let posMap = new SortedMap(
         [...flat].map(([key, value]) => [value.position ? value.position.pos : -1, value]),
@@ -117,7 +142,6 @@ function main(args) {
       //console.log("ast:", [...posMap.keys()]);$
       //console.log('commentMap:', commentMap);
       //console.log('posMap:', [...posMap.keys()]);
-      //console.log('ast:', ast);
 
       //console.log("nodes:", parser.nodes.map(n =>  [Util.className(n), n.position.toString()]));
     } catch(err) {
@@ -152,7 +176,7 @@ function finish(err) {
 
   if(err) {
     //console.log(parser.lexer.currentLine());
-    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
+    //console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
 
   let lexer = parser.lexer;
@@ -160,8 +184,8 @@ function finish(err) {
   //console.log(parser.trace() );
   dumpFile('trace.log', parser.trace());
   if(fail) {
-    console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
+    //console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
   }
-  console.log('finish: ' + (fail ? 'error' : 'success'));
+  //console.log('finish: ' + (fail ? 'error' : 'success'));
   return !fail;
 }

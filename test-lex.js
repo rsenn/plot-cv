@@ -47,8 +47,8 @@ function main(args) {
     } catch(err) {
       error = err;
       const { msg } = error;
-      console.log('ERROR:', error);
-      console.log('stack:\n' + err.stack);
+      //console.log('ERROR:', error);
+      //console.log('stack:\n' + err.stack);
     }
     files[file] = error;
   }

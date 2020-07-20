@@ -20,18 +20,18 @@ const proxies = [
     })
       .on('data', function(proxies) {
         // Received some proxies.
-        console.log('got some proxies');
-        console.log(proxies);
+        //console.log('got some proxies');
+        //console.log(proxies);
         push(proxies);
       })
       .on('error', function(error) {
         // Some error has occurred.
-        console.log('error!', error);
+        //console.log('error!', error);
         stop(error);
       })
       .once('end', function() {
         // Done getting proxies.
-        console.log('end!');
+        //console.log('end!');
         stop();
       });
   })

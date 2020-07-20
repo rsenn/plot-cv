@@ -354,8 +354,8 @@ const chooseDocument = async (e, proj, i) => {
     }
     r = proj.loaded;
   } catch(err) {
-    console.log('err:', err.message);
-    console.log('stack:', [...err.stack].join('\n'));
+    //console.log('err:', err.message);
+    //console.log('stack:', [...err.stack].join('\n'));
   }
 
   return r;

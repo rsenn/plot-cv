@@ -15,7 +15,7 @@ function testRenderSchematic(file) {
   let output = renderer.render(doc, null, 0);
 
   //console.log('output:', output);
-  console.log('bounds:', doc.getBounds());
+  //console.log('bounds:', doc.getBounds());
 
   let outFile = file.replace(/.*\//g, '').replace(/\.[a-z]+$/, '');
 
@@ -29,7 +29,7 @@ function testRenderBoard(file) {
   let output = renderer.render(doc, null, 0);
 
   //console.log('output:', output);
-  console.log('bounds:', doc.getBounds());
+  //console.log('bounds:', doc.getBounds());
 
   let outFile = file.replace(/.*\//g, '').replace(/\.[a-z]+$/, '');
 
@@ -39,11 +39,11 @@ function testRenderBoard(file) {
 const filename = '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt';
 
 try {
-  console.log('debug:', debug);
+  //console.log('debug:', debug);
 
   testRenderSchematic(filename);
   testRenderBoard(filename);
 } catch(error) {
-  console.log('ERROR:', error.message);
-  console.log('stack:', error.stack);
+  //console.log('ERROR:', error.message);
+  //console.log('stack:', error.stack);
 }
