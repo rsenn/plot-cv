@@ -271,20 +271,19 @@ function main(...args) {
         return this.remap('s', 0, 0);
       },
       invert() {
-        this.remap((c,k) => {
+        this.remap((c, k) => {
           let rgba = c.toRGBA();
           return rgba.invert();
         });
 
-console.log('invert');
+        console.log('invert');
       }
     };
     console.log('cmds:', cmds);
 
-    cmds.forEach(cmd => handlers[cmd[0]](...cmd.slice(1)))
+    cmds.forEach(cmd => handlers[cmd[0]](...cmd.slice(1)));
 
-
-   console.log('palette', palette);
+    console.log('palette', palette);
 
     /*
     palette.remapChannel('h', Util.remap(mm.h, [0, 360]));
