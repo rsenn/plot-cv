@@ -38,7 +38,7 @@ function Proxy(obj) {
   if(i != -1) {
     throw new Error(`Property '${propNames[i]}' missing on: ` + Util.toSource(p));
   }
-  console.log("new proxy:",p);
+  console.log('new proxy:', p);
   return p;
 }
 Proxy.prototype.defaultTimeout = 5000;

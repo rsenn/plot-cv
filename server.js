@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 import Util from './lib/util.js';
+import tXml from './lib/tXml.js';
 
 import expressWs from 'express-ws';
 
@@ -106,17 +107,23 @@ app.get(/\/[^/]*\.js$/, async (req, res) => res.sendFile(path.join(p, req.path))
 app.get('/style.css', async (req, res) => res.sendFile(path.join(p, 'style.css'), { headers: { 'Content-Type': 'text/css' } }));
 
 app.get('/files.html', async (req, res) => {
-  let files = [...(await fs.promises.readdir('./tmp'))].filter(entry => /\.(brd|sch)$/.test(entry)).map(entry => `tmp/${entry}`);
+  let files = [...(await fs.promises.readdir('./tmp'))].filter(entry => /\.(brd|sch|lbr)$/.test(entry)).map(entry => `tmp/${entry}`);
 
   files = files.map(file => {
     const stat = fs.statSync(file);
+    const xml = tXml(fs.readFileSync(file).toString());
+    const description = [0, 'children', 0, 'children', 0, 'children', e => /(board|schematic|library)/.test(e.tagName) /*,'children',0*/].reduce((a, p) => a && a[p], xml);
+    //const description = xml[0].children[0].children[0].children[3].children[0];
+    console.log('description:', description);
+
     const { ctime, mtime, mode, size } = stat;
     return {
       name: file,
       mtime: '' + Util.unixTime(mtime),
       time: '' + Util.unixTime(ctime),
       mode: `0${(mode & 0o4777).toString(8)}`,
-      size: '' + size
+      size: '' + size,
+      description
     };
   });
 

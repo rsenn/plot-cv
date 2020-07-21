@@ -158,10 +158,13 @@ body,
   color: black;
 }
 .file.sch {
-  background: hsl(60, 100%, 98%);
+  background: hsl(61, 100%, 98%);
 }
 .file.brd {
-  background: hsl(120, 100%, 98%);
+  background: hsl(121, 100%, 98%);
+}
+.file.lbr {
+  background: hsl(41,100%,90%);
 }
 .file.none {
   background: white;

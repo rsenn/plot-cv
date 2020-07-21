@@ -181,6 +181,7 @@ const LoadFile = async filename => {
 
   if(/\.brd$/.test(filename)) window.board = doc;
   if(/\.sch$/.test(filename)) window.schematic = doc;
+  if(/\.lbr$/.test(filename)) window.libraries = add(window.libraries, doc);
 
   return doc;
 };
@@ -487,15 +488,20 @@ const AppMain = (window.onload = async () => {
     let data = JSON.parse(response);
     let { files } = data;
     //console.log(`Got ${files.length} files`);
-    projectFiles = window.files = files;
-    projects(
-      projectFiles.map(({ name }, i) => {
-        let data = trkl({ percent: NaN });
-        let proj = { name, i };
-        trkl.bind(proj, { data });
-        return proj;
-      })
-    );
+    function File(name, i) {
+      let file = this instanceof File ? this : Object.create(File.prototype);
+      let data = trkl({ percent: NaN });
+      file.name = name;
+      file.i = i;
+      trkl.bind(file, { data });
+
+      return file;
+    }
+    File.prototype.toString = function() {
+      return this.name;
+    };
+    projectFiles = window.files = files.map(({ name }, i) => new File(name, i));
+    projects(projectFiles);
   });
 
   CreateWebSocket(null, null, ws => (window.socket = ws));

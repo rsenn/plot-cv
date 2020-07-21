@@ -183,7 +183,7 @@ async function testEagle(filename) {
       }
     }
   );*/
-  //console.log('Project loaded: ' + !proj.failed);
+  console.log('Project loaded: ' + !proj.failed);
 
   //if(proj.failed) return false;
 
@@ -219,11 +219,13 @@ async function testEagle(filename) {
 
   if(updateMeasures(proj.board) | alignAll(board) | alignAll(schematic)) console.log('Saved:', await proj.board.saveTo(null, true));
 
-  //console.log('saved:', await proj.saveTo('tmp', true));
+  console.log('documents', proj.documents);
+
+  console.log('saved:', await proj.saveTo('tmp', true));
 
   //for(let sheet of board.get('sheet'))
   //console.log('sheet', sheet, sheet.xpath());
-
+  /*
   for(let instance of schematic.getAll(e => e.tagName == 'instance')) {
     const { part, gate } = instance;
   }
@@ -232,6 +234,10 @@ async function testEagle(filename) {
   while(p) {
     p = p.parentNode;
   }
+*/
+  let desc = new Map(proj.documents.map(doc => [doc.filename, doc.find('description')]).map(([file, e]) => [file, e && e.path.toCode()]));
+  console.log('descriptions', desc);
+
   return proj;
 }
 (async () => {

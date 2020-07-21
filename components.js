@@ -176,6 +176,14 @@ export const BoardIcon = props =>
     ]
   );
 
+export const LibraryIcon = props => html`
+  <svg xmlns="http://www.w3.org/2000/svg">
+    <path d="M3.398 6.487v26.942c0 3.085 2.13 5.675 5.011 6.406V.107a6.56 6.56 0 00-5.011 6.38M30.122 0H11.644v40.009h18.478c3.64 0 6.59-2.967 6.59-6.581V6.487c0-3.641-2.95-6.487-6.59-6.487" fill="#444443" />
+    <path d="m30.312 19.791h-12.5v-12.5h12.5z" fill="#dedd00" />
+    <path d="M8.408 0v39.834l3.237.166V0z" fill="#fff" />
+  </svg>
+`;
+
 export const Conditional = ({ initialState, component, className, children, signal, ...props }) => {
   const [show, setShown] = useState(initialState !== undefined ? initialState : signal());
 
@@ -223,7 +231,7 @@ export const File = ({ label, i, key, className = 'file', onPush, signal, data, 
   let name;
   let id = label || key || i;
   let style = { minWidth: '40px', width: '40px', height: '40px' };
-  let icon = /brd$/i.test(id || className) ? h(BoardIcon, { style }) : h(SchematicIcon, {});
+  let icon = /brd$/i.test(id + className) ? h(BoardIcon, { style }) : /sch$/i.test(id + className) ? h(SchematicIcon, {}) : /lbr$/i.test(id + className) ? h(LibraryIcon, {}) : undefined;
   icon = h('div', { style }, icon);
   if(id) {
     name = id;
@@ -258,12 +266,18 @@ export const Chooser = ({ className = 'list', itemClass = 'item', itemComponent 
 
   const bar = html``;
   const reList = filter
-    .split(/\s\s*/g)
-    .map(part => Util.tryCatch(() => new RegExp(part.replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i')))
-    .filter(r => r !== null);
-  const pred = name => reList.every(re => re.test(name));
+    .split(/\|/g)
+    .map(p => p.trim())
+    .filter(p => p != '')
+    .map(p =>
+      p
+        .split(/\s\s*/g)
+        .map(part => Util.tryCatch(() => new RegExp(part.replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i')))
+        .filter(r => r !== null)
+    );
+  console.log(reList);
+  const pred = name => reList.some(c => c.every(re => re.test(name)));
   const other = items.filter(({ name }) => !pred(name)).map(i => i.name);
-  //console.log(reList);
   const children = items
     .filter(({ name }) => pred(name))
     .map(({ name, i, data, ...item }, key) =>
