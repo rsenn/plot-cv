@@ -132,6 +132,11 @@
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.5.tgz#77211291c1900a700b8a78cfafda3160d76949ed"
   integrity sha512-OWORNpfjMsSSUBVrRBVGECkhWcULOAJz9ZW8uK9qgxD+87M7jHRcvh/A96XXNhXTLmKcoYSQtBEX7lHMO7YRwg==
 
+"@repeaterjs/repeater@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@repeaterjs/repeater/-/repeater-3.0.1.tgz#506641792ae5fdc5b8c3981ceb210bce407cd104"
+  integrity sha512-kqdrZRvTLFfvgPTeMgj8DpREYZXU+sz4/kdX2825zMNGmiaEUzM6u7A4YBoI4WzqXX4q123VftkllAw1C/4rMg==
+
 "@types/bezier-js@^0.0.6":
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/@types/bezier-js/-/bezier-js-0.0.6.tgz#0d976d68163c4955332ef798a21a0b3d6381d12b"

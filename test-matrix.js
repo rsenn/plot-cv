@@ -31,7 +31,7 @@ let dst = new PointList([
 m.affine_transform(src, dst);
 let affine = m.decompose(false);
 
-//console.log(
+console.log(
   'affine_transform = ',
   inspect(affine, (v, k) => typeof v != 'function' && k != 'toString')
 );
