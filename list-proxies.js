@@ -1,5 +1,7 @@
 import ProxyList from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/free-proxy/index.js';
 import ProxyLists from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/proxy-lists/index.js';
+import proxynova from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/proxynova/index.js';
+
 import Util from './lib/util.js';
 
 import repeater from '@repeaterjs/repeater';
@@ -30,12 +32,15 @@ function Proxy(obj) {
     } else if(/(country|source)/i.test(prop)) {
       p[prop] = v;
     }
-  }  const propNames = ['protocol', 'ip', 'port', 'country', 'source'];
+  }
+  const propNames = ['protocol', 'ip', 'port', 'country', 'source'];
   let i = propNames.findIndex(prop => p[prop] === undefined);
   if(i != -1) {
     throw new Error(`Property '${propNames[i]}' missing on: ` + Util.toSource(p));
   }
-  return p;}
+  console.log("new proxy:",p);
+  return p;
+}
 Proxy.prototype.defaultTimeout = 5000;
 Proxy.prototype.valueOf = function() {
   return this.time;
@@ -85,21 +90,22 @@ function main() {
         stop(new Error(error));
       }
     }),
-    new Repeater(async (push,stop) => {
-      proxynova(['de', 'at'], 1000, (err, proxies) => {
+    new Repeater(async (push, stop) => {
+      proxynova(['de', 'at'], 1000, async (err, proxies) => {
         for(let p of proxies)
-          await new Proxy(p).ping().then(push).catch(console.error);
-        }
-  //...
-});
-    })
+          await new Proxy(p)
+            .ping()
+            .then(push)
+            .catch(console.error);
+      });
+    }),
     new Repeater(async (push, stop) => {
       ProxyLists.getProxies({
         countries: ['de' /*, 'at', 'nl'*/],
-           requestQueue: {
-        concurrency: 5,
-        delay: 50
-    },
+        requestQueue: {
+          concurrency: 5,
+          delay: 50
+        }
       })
         .on('data', async proxies => {
           console.error('got some proxies', proxies.length);
@@ -124,7 +130,7 @@ function main() {
 
   async function writeResults(results, format = 'txt', outputName = 'proxies') {
     let filename = outputName + '.' + format;
-let tempfile = filename+'.'+Util.randStr(6);
+    let tempfile = filename + '.' + Util.randStr(6);
     let output = await fsPromises.open(tempfile, 'w');
     let method = { txt: r => r.map(p => p.toString()).join('\n'), json: r => `[\n${r.map(p => '  ' + Util.toSource(p)).join(',\n')}\n]` }[format];
 
@@ -141,7 +147,7 @@ let tempfile = filename+'.'+Util.randStr(6);
 
     try {
       let i = 0;
-      for await (const proxy of Repeater.merge(proxies.slice(0,1))) {
+      for await (const proxy of Repeater.merge(proxies.slice(/*0,*/ 2))) {
         console.error(`Proxy #${++i}:`, proxy); // 1, 2
 
         Util.insertSorted(results, proxy);
