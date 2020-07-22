@@ -121,7 +121,8 @@ function getDescription(file) {
   return parseDocument(fs.readFileSync(file));
   function parseDocument(data) {
     const xml = tXml(data.toString());
-    let s = [a => a[0], a => a.children[0], a => a.children[0], a => a.children, a => a.find(e => /(board|schematic|library)/.test(e.tagName)), a => a.children, a => a.find(e => e.tagName == 'description'), a => a.children[0]].reduce((a, p) => a && p(a), xml);
+    let s = [a => a[0], a => a.children && a.children[0], a => a.children && a.children[0], a => a.children, a => a.find(e => /(board|schematic|library)/.test(e.tagName)), a => a.children, a => a.find(e => e.tagName == 'description'), a => a.children && a.children[0]].reduce((a, p) => a && p(a), xml);
+
     if(typeof s == 'string') {
       s = Util.decodeHTMLEntities(s);
       s = Util.stripXML(s);
