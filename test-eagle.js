@@ -112,6 +112,7 @@ async function testGraph(proj) {
 }
 
 function updateMeasures(board) {
+  if(!board) return false;
   let bounds = board.getBounds();
   let measures = board.getMeasures();
 
@@ -163,6 +164,8 @@ function alignItem(item) {
 }
 
 function alignAll(doc) {
+  if(!doc) return false;
+
   let items = doc.getAll(doc.type == 'brd' ? 'element' : 'instance');
   let changed = false;
   for(let item of items) changed |= alignItem(item);
@@ -192,12 +195,15 @@ async function testEagle(filename) {
   let { board, schematic } = proj;
 
   const packages = {
-    board: [...board.elements].map(([name, e]) => e.package),
-    schematic: [...schematic.sheets].map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)).flat()
+    board: (board && [...board.elements].map(([name, e]) => e.package)) || [],
+    schematic: (schematic && [...schematic.sheets].map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)).flat()) || []
   };
-  let parts = schematic.parts;
-  let sheets = proj.schematic.sheets;
-  for(let [libName, lib] of board.libraries) {
+  let parts = (schematic && schematic.parts) || [];
+  let sheets = (schematic && schematic.sheets) || [];
+  let libraries = (board && board.libraries) || [];
+  let elements = (board && board.elements) || [];
+
+  for(let [libName, lib] of libraries) {
     for(let [pkgName, pkg] of lib.packages)
       for(let pad of pkg.children) {
         if(pad.tagName !== 'pad') continue;
@@ -209,14 +215,14 @@ async function testEagle(filename) {
       }
   }
   let cmds = [];
-  for(let elem of board.elements.list) {
+  for(let [name, elem] of elements) {
     cmds.push(`MOVE ${elem.name} ${elem.pos};`);
     if(elem.rot) cmds.push(`ROTATE ${elem.rot} ${elem.name};`);
   }
   /*  for(let description of board.getAll('description')) {
   }*/
 
-  if(updateMeasures(proj.board) | alignAll(board) | alignAll(schematic)) console.log('Saved:', await proj.board.saveTo(null, true));
+  if(updateMeasures(proj.board) || alignAll(board) || alignAll(schematic)) console.log('Saved:', await proj.saveTo(null, true));
 
   console.log('documents', proj.documents);
 
@@ -246,7 +252,7 @@ async function testEagle(filename) {
   let args = process.argv.slice(2);
   if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
   for(let arg of args) {
-    arg = arg.replace(/\.(brd|sch)$/i, '');
+    arg = arg.replace(/\.(brd|sch|lbr)$/i, '');
     try {
       let project = await testEagle(arg);
     } catch(err) {

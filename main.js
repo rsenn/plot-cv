@@ -242,18 +242,22 @@ const LoadDocument = async (project, parentElem) => {
   let eagleNode = docNode.firstElementChild;
   docNode.removeChild(eagleNode);
   docElem.appendChild(eagleNode);*/
-
-  project.renderer = new Renderer(project.doc, ReactComponent.append, false);
-  //console.log('project.renderer', project.renderer);
+  try {
+    project.renderer = new Renderer(project.doc, ReactComponent.append, true);
+    console.log('project.renderer', project.renderer);
+  } catch(err) {
+    console.error('Render ERROR:', err);
+  }
 
   //if(!project.renderer || !project.renderer.render) return;
 
   let style = { width: '100%', height: '100%', position: 'relative' };
-  /*  let svgXml = project.renderer.render(project.doc, null, {});
-  //console.log('testRender:', svgXml);*/
+  /*  let svgXml = project.renderer.render(project.doc, null, {});*/
   let component = project.renderer.render(project.doc, null, {});
   window.component = component;
   project.component = component;
+
+  console.log('testRender:', component);
 
   let element = Element.find('#main');
   //console.log('h', h);
