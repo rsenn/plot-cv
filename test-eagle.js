@@ -13,7 +13,7 @@ import LogJS from './lib/log.js';
 global.console = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
-  inspectOptions: { depth: 3, colors: true }
+  inspectOptions: { depth: 2, colors: true }
 });
 
 function xmlize(obj, depth = 2) {
@@ -235,8 +235,11 @@ async function testEagle(filename) {
     p = p.parentNode;
   }
 */
-  let desc = new Map(proj.documents.map(doc => [doc.filename, doc.find('description')]).map(([file, e]) => [file, e && e.path.toCode()]));
-  console.log('descriptions', desc);
+  let desc = proj.documents.map(doc => [doc.filename, doc.find('description')]);
+
+  desc = desc.map(([file, e]) => [file, e && e.xpath().toCode('', { spacing: '', function: true })]);
+  desc = new Map(desc);
+  console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v + ''])]);
 
   return proj;
 }
@@ -248,8 +251,9 @@ async function testEagle(filename) {
     try {
       let project = await testEagle(arg);
     } catch(err) {
-      //console.log('Err:', err.message, err.stack);
-      //throw err;
+      console.log('Err:', err.message, err.stack + ''); //typeof err.stack == 'string' ? err.stack : [...err.stack].map(f => f+''));
+      process.exit(1);
     }
   }
+  process.exit(0);
 })();
