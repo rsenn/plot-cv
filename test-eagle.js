@@ -81,7 +81,7 @@ async function testGraph(proj) {
   const { board } = proj;
   graph = new Graph();
 
-  for(let [name,element] of board.elements) {
+  for(let [name, element] of board.elements) {
     const { x, y } = element;
     const { attributes } = element.raw;
     let lib = board.get(e => e.tagName == 'library' && e.attributes.name == attributes.library);
@@ -167,9 +167,8 @@ function alignAll(doc) {
   let changed = false;
   for(let item of items) changed |= alignItem(item);
   let signals_nets = doc.getAll(/(signals|nets)/);
-for(let net of signals_nets)
   //console.log('signals_nets:', signals_nets);
-  for(let item of net.getAll('wire')) changed |= alignItem(item);
+  for(let net of signals_nets) for (let item of net.getAll('wire')) changed |= alignItem(item);
   return !!changed;
 }
 
@@ -193,8 +192,8 @@ async function testEagle(filename) {
   let { board, schematic } = proj;
 
   const packages = {
-    board: [...board.elements].map(([name,e]) => e.package),
-    schematic: [...schematic.sheets].map(e => [...e.instances].map(([name,i]) => i.part.device.package).filter(p => p !== undefined)).flat()
+    board: [...board.elements].map(([name, e]) => e.package),
+    schematic: [...schematic.sheets].map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)).flat()
   };
   let parts = schematic.parts;
   let sheets = proj.schematic.sheets;
@@ -214,7 +213,7 @@ async function testEagle(filename) {
     cmds.push(`MOVE ${elem.name} ${elem.pos};`);
     if(elem.rot) cmds.push(`ROTATE ${elem.rot} ${elem.name};`);
   }
-/*  for(let description of board.getAll('description')) {
+  /*  for(let description of board.getAll('description')) {
   }*/
 
   if(updateMeasures(proj.board) | alignAll(board) | alignAll(schematic)) console.log('Saved:', await proj.board.saveTo(null, true));
@@ -251,7 +250,7 @@ async function testEagle(filename) {
     try {
       let project = await testEagle(arg);
     } catch(err) {
-      console.log('Err:', err.message,typeof err.stack == 'string' ? err.stack : [...err.stack].map(f => f+''));
+      console.log('Err:', err.message, typeof err.stack == 'string' ? err.stack : [...err.stack].map(f => f + ''));
       process.exit(1);
     }
   }

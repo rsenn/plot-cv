@@ -84,7 +84,7 @@ export const Label = ({ className = 'label', text, children, ...props }) =>
 
 export const Item = ({ className = 'item', label, icon, children, ...props }) => html`
             <${Overlay} className=${className}  ...${props}>
-                <${Label} text=${icon} ...${props}>${label}</${Label}>
+                <${Label} text=${icon}>${label}</${Label}>
             </${Overlay}>
           `;
 
@@ -180,7 +180,7 @@ export const LibraryIcon = props => html`
   <svg xmlns="http://www.w3.org/2000/svg">
     <path d="M3.398 6.487v26.942c0 3.085 2.13 5.675 5.011 6.406V.107a6.56 6.56 0 00-5.011 6.38M30.122 0H11.644v40.009h18.478c3.64 0 6.59-2.967 6.59-6.581V6.487c0-3.641-2.95-6.487-6.59-6.487" fill="#444443" />
     <path d="m30.312 19.791h-12.5v-12.5h12.5z" fill="#dedd00" />
-    <path d="M8.408 0v39.834l3.237.166V0z" fill="#fff" />
+    <path d="M8.408 0v39.834l3.237.166V0z" fill="rgba(255,255,255,0)  " />
   </svg>
 `;
 
@@ -228,18 +228,19 @@ export const File = ({ label, i, key, className = 'file', onPush, signal, data, 
       //console.log(`loading "${name}"...`);
       await load(name);
     });
-  let name;
-  let id = label || key || i;
+  let name = label;
+  let id = key || i;
   let style = { minWidth: '40px', width: '40px', height: '40px' };
   let icon = /brd$/i.test(id + className) ? h(BoardIcon, { style }) : /sch$/i.test(id + className) ? h(SchematicIcon, {}) : /lbr$/i.test(id + className) ? h(LibraryIcon, {}) : undefined;
   icon = h('div', { style }, icon);
   if(id) {
-    name = id;
-    id = (id + '').replace(/[^._A-Za-z0-9]/g, '-');
+    id = isNaN(+id) ? 'file-' + i : id;
+    //  name = id;
+    //  id = (id + '').replace(/[^._A-Za-z0-9]/g, '-');
   }
   label = label.replace(/\.[^.]*$/, '').replace(/([^\s])-([^\s])/g, '$1 $2');
   //data = signal();
-  /*console.log(`File`, { name, id,  label });
+  console.log(`File`, { name, i, id, label });
   //console.log(`File`, props);*/
 
   return html`
@@ -283,7 +284,8 @@ export const Chooser = ({ className = 'list', itemClass = 'item', itemComponent 
     .map(({ name, i, data, ...item }, key) =>
       //console.log(`Chooser item #${i}:`, { name, data, item });
       h(itemComponent, {
-        key: key || i,
+        key: i,
+        i,
         className: classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
         active: i == active,
         onPush: pushHandler(i),

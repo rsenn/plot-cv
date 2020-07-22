@@ -224,7 +224,7 @@ const ModifyColors = fn => e => {
   }
 };
 
-const loadDocument = async (project, parentElem) => {
+const LoadDocument = async (project, parentElem) => {
   //console.log(`load project #${project.i}:`, project);
   project.doc = await LoadFile(project.name).catch(console.error);
 
@@ -348,18 +348,19 @@ const loadDocument = async (project, parentElem) => {
   });
   Element.setCSS(project.svg, { left: 0, top: 0, position: 'relative' });
   Element.setCSS(project.svg, { left: 0, top: 0, position: 'relative' });
-  //console.log('loadDocument:', project.svg);*/
+  //console.log('LoadDocument:', project.svg);*/
   return project;
 };
 
-const chooseDocument = async (e, proj, i) => {
+const ChooseDocument = async (e, proj, i) => {
   let r;
   try {
     const { type } = e;
     const box = Element.findAll('.file')[i];
-    //console.log('chooseDocument:', { e, proj, i, box });
+    console.log('ChooseDocument:', { e, proj, i, box });
+
     if(!proj.loaded) {
-      let data = await loadDocument(proj, box);
+      let data = await LoadDocument(proj, box);
       proj.loaded = true;
 
       open(false);
@@ -461,7 +462,7 @@ const AppMain = (window.onload = async () => {
     Util(globalThis);
 
     //prettier-ignore
-    Object.assign(window, { BBox, chooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, loadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
+    Object.assign(window, { BBox, ChooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, LoadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
 
     const inspectSym = Symbol.for('nodejs.util.inspect.custom');
 
@@ -516,7 +517,7 @@ const AppMain = (window.onload = async () => {
       File.prototype.toString = function() {
         return this.name;
       };
-      projectFiles = window.files = files.map((obj, i) => new File(obj, i));
+      projectFiles = window.files = files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i));
       projects(projectFiles);
     });
 
@@ -594,7 +595,7 @@ const AppMain = (window.onload = async () => {
         })
       ]),*/
         html`
-          <${FileList} files=${projects} onActive=${open} onChange=${chooseDocument} filter=${searchFilter} showSearch=${showSearch} changeInput=${changeInput} focusSearch=${focusSearch} currentInput=${currentSearch} />
+          <${FileList} files=${projects} onActive=${open} onChange=${ChooseDocument} filter=${searchFilter} showSearch=${showSearch} changeInput=${changeInput} focusSearch=${focusSearch} currentInput=${currentSearch} />
         `
       ],
       Element.find('#preact')
