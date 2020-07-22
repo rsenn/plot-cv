@@ -222,7 +222,7 @@ async function testEagle(filename) {
   /*  for(let description of board.getAll('description')) {
   }*/
 
-  if(updateMeasures(proj.board) || alignAll(board) || alignAll(schematic)) console.log('Saved:', await proj.saveTo(null, true));
+  if(updateMeasures(proj.board) || alignAll(board) || alignAll(schematic)) console.log('Saved:', await proj.saveTo('tmp', true));
 
   console.log('documents', proj.documents);
 
