@@ -1,10 +1,19 @@
 import express from 'express';
 import path from 'path';
-import fs from 'fs';
+import fs, { promises as fsPromises } from 'fs';
+import util from 'util';
 import Util from './lib/util.js';
 import tXml from './lib/tXml.js';
-
+import bodyParser from 'body-parser';
 import expressWs from 'express-ws';
+
+import { Console } from 'console';
+
+global.console = new Console({
+  stdout: process.stdout,
+  stderr: process.stderr,
+  inspectOptions: { depth: 2, colors: true }
+});
 
 let app = express();
 expressWs(app);
@@ -13,6 +22,8 @@ const p = path.join(path.dirname(process.argv[1]), '.');
 //console.log('Serving from', p);
 
 app.use(express.text({ type: 'application/xml' }));
+
+app.use(bodyParser.json());
 
 let sockets = [];
 
@@ -106,32 +117,57 @@ app.get(/\/[^/]*\.js$/, async (req, res) => res.sendFile(path.join(p, req.path))
 
 app.get('/style.css', async (req, res) => res.sendFile(path.join(p, 'style.css'), { headers: { 'Content-Type': 'text/css' } }));
 
-app.get('/files.html', async (req, res) => {
-  let files = [...(await fs.promises.readdir('./tmp'))].filter(entry => /\.(brd|sch|lbr)$/.test(entry)).map(entry => `tmp/${entry}`);
+function getDescription(file) {
+  return parseDocument(fs.readFileSync(file));
+  function parseDocument(data) {
+    const xml = tXml(data.toString());
+    let s = [a => a[0], a => a.children[0], a => a.children[0], a => a.children, a => a.find(e => /(board|schematic|library)/.test(e.tagName)), a => a.children, a => a.find(e => e.tagName == 'description'), a => a.children[0]].reduce((a, p) => a && p(a), xml);
+    if(typeof s == 'string') {
+      s = Util.decodeHTMLEntities(s);
+      s = Util.stripXML(s);
+      s = Util.decodeEscapes(s);
+      s = Util.stripNonPrintable(s);
+      s = s.trim();
+      s = s.split(/\n/g).filter(l => l != '')[0];
+    }
+    return s || '';
+  }
+}
+const descMap = Util.weakMapper(getDescription, new Map());
 
-  files = files.map(file => {
-    const stat = fs.statSync(file);
-    const xml = tXml(fs.readFileSync(file).toString());
-    const description = [0, 'children', 0, 'children', 0, 'children', e => /(board|schematic|library)/.test(e.tagName) /*,'children',0*/].reduce((a, p) => a && a[p], xml);
-    //const description = xml[0].children[0].children[0].children[3].children[0];
-    console.log('description:', description);
+const GetFilesList = async (dir = './tmp', opts = {}) => {
+  const { filter = '.*', descriptions = false } = opts;
+  const re = new RegExp(filter);
+  const f = ent => /\.(brd|sch|lbr)$/i.test(ent) && re.test(ent);
 
-    const { ctime, mtime, mode, size } = stat;
-    return {
-      name: file,
-      mtime: '' + Util.unixTime(mtime),
-      time: '' + Util.unixTime(ctime),
-      mode: `0${(mode & 0o4777).toString(8)}`,
-      size: '' + size,
-      description
-    };
-  });
+  return [...(await fs.promises.readdir(dir))]
+    .filter(f)
+    .map(entry => `${dir}/${entry}`)
+    .map(file => {
+      let description = descriptions ? descMap(file) : descMap.get(file);
+      //   console.log('descMap:', util.inspect(descMap, { depth: 1 }));
 
-  //console.log('files:', files);
+      const { ctime, mtime, mode, size } = fs.statSync(file);
+      let obj = {
+        name: file,
+        mtime: '' + Util.unixTime(mtime),
+        time: '' + Util.unixTime(ctime),
+        mode: `0${(mode & 0o4777).toString(8)}`,
+        size: '' + size
+      };
+      if(typeof description == 'string') obj.description = description;
+      return obj;
+    });
+};
 
-  res.type('json');
-  res.json({ files });
+app.get(/^\/files/, async (req, res) => res.json({ files: await GetFilesList() }));
+app.post(/^\/(files|list).html/, async (req, res) => {
+  const { body } = req;
+  const { filter, descriptions } = body;
+  console.log('body:', body);
+  res.json({ files: await GetFilesList('tmp', { filter, descriptions }) });
 });
+
 app.get('/index.html', (req, res) => {
   res.sendFile(path.join(p, 'index.html'));
 });

@@ -133,6 +133,8 @@ let aspectListener = trkl(1);
 
 let store = (window.store = makeLocalStorage());
 
+const add = (arr, ...items) => [...(arr ? arr : []), ...items];
+
 const useSlot = (arr, i) => [() => arr[i], v => (arr[i] = v)];
 const trklGetSet = (get, set) => value => (value !== undefined ? set(value) : get());
 const useTrkl = trkl => [() => trkl(), value => trkl(value)];
@@ -158,8 +160,18 @@ window.dom = { Element, SVG };
                           };*/
 const utf8Decoder = new TextDecoder('utf-8');
 
-const ListProjects = (window.list = async function(url) {
-  let response = await fetch('/files.html', { method: 'get' });
+const ListProjects = (window.list = async function(url = '/files.html') {
+  let response = await fetch(url, {
+    method: 'POST',
+    mode: 'cors', // no-cors, *cors, same-origin
+    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: 'same-origin', // include, *same-origin, omit
+
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ descriptions: true })
+  });
   const reader = await (await response.body).getReader();
   let { value: chunk, done: readerDone } = await reader.read();
   chunk = chunk ? await utf8Decoder.decode(chunk) : '';
@@ -177,11 +189,12 @@ const LoadFile = async filename => {
   //console.log('xml: ', xml.substring(0, 100));
   //let dom = new DOMParser().parseFromString(xml, 'application/xml');
 
-  let doc = new EagleDocument(xml);
+  let doc = new EagleDocument(xml, null, filename);
 
   if(/\.brd$/.test(filename)) window.board = doc;
   if(/\.sch$/.test(filename)) window.schematic = doc;
   if(/\.lbr$/.test(filename)) window.libraries = add(window.libraries, doc);
+  console.log('LoadFile', filename, doc);
 
   return doc;
 };
@@ -213,7 +226,7 @@ const ModifyColors = fn => e => {
 
 const loadDocument = async (project, parentElem) => {
   //console.log(`load project #${project.i}:`, project);
-  project.doc = await LoadFile(project.name);
+  project.doc = await LoadFile(project.name).catch(console.error);
 
   //console.log('project.doc', project.doc);
 
@@ -411,56 +424,57 @@ let socket = trkl();
 const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 
 const AppMain = (window.onload = async () => {
-  Object.assign(window, { Element, devtools, dom });
+  try {
+    Object.assign(window, { Element, devtools, dom });
 
-  //window.focusSearch = trkl();
-  window.currentSearch = trkl(null);
+    //window.focusSearch = trkl();
+    window.currentSearch = trkl(null);
 
-  window.keystroke = target => (key, modifiers = 0) => keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key), target);
+    window.keystroke = target => (key, modifiers = 0) => keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key), target);
 
-  window.focusSearch = state => {
-    const input = currentSearch();
-    //console.log('focusSearch', input.tagName, state);
-    input[state ? 'focus' : 'blur']();
-  };
+    window.focusSearch = state => {
+      const input = currentSearch();
+      //console.log('focusSearch', input.tagName, state);
+      input[state ? 'focus' : 'blur']();
+    };
 
-  BindGlobal({
-    projects,
-    socket,
-    transform,
-    size: sizeListener,
-    aspect: aspectListener,
-    showSearch
-  });
+    BindGlobal({
+      projects,
+      socket,
+      transform,
+      size: sizeListener,
+      aspect: aspectListener,
+      showSearch
+    });
 
-  currentSearch.subscribe(value => {
-    if(value) {
-      focusSearch(false);
+    currentSearch.subscribe(value => {
+      if(value) {
+        focusSearch(false);
 
-      setTimeout(() => {
-        //console.log('currentSearch:', value);
-        focusSearch(true);
-      }, 1000);
-    }
-  });
+        setTimeout(() => {
+          //console.log('currentSearch:', value);
+          focusSearch(true);
+        }, 1000);
+      }
+    });
 
-  Util(globalThis);
+    Util(globalThis);
 
-  //prettier-ignore
-  Object.assign(window, { BBox, chooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, loadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
+    //prettier-ignore
+    Object.assign(window, { BBox, chooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, loadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
 
-  const inspectSym = Symbol.for('nodejs.util.inspect.custom');
+    const inspectSym = Symbol.for('nodejs.util.inspect.custom');
 
-  const testComponent = props =>
-    html`
-      <div>This is a test</div>
-    `;
+    const testComponent = props =>
+      html`
+        <div>This is a test</div>
+      `;
 
-  let c = testComponent({});
-  window.testComponent = c;
-  //console.log('testComponent', ReactComponent.toObject(c));
+    let c = testComponent({});
+    window.testComponent = c;
+    //console.log('testComponent', ReactComponent.toObject(c));
 
-  /*console.realLog = console.log;
+    /*console.realLog = console.log;
   //console.log = function(...args) {
     let out = [''];
     for(let arg of args) {
@@ -484,74 +498,76 @@ const AppMain = (window.onload = async () => {
     this.realLog(...out);
   };*/
 
-  ListProjects('/files.html').then(response => {
-    let data = JSON.parse(response);
-    let { files } = data;
-    //console.log(`Got ${files.length} files`);
-    function File(name, i) {
-      let file = this instanceof File ? this : Object.create(File.prototype);
-      let data = trkl({ percent: NaN });
-      file.name = name;
-      file.i = i;
-      trkl.bind(file, { data });
+    ListProjects('/files.html').then(response => {
+      let data = JSON.parse(response);
+      let { files } = data;
+      //console.log(`Got ${files.length} files`);
+      function File(obj, i) {
+        const { name } = obj;
+        let file = this instanceof File ? this : Object.create(File.prototype);
+        let data = trkl({ percent: NaN });
+        Object.assign(file, obj);
+        file.name = name;
+        file.i = i;
+        trkl.bind(file, { data });
 
-      return file;
-    }
-    File.prototype.toString = function() {
-      return this.name;
+        return file;
+      }
+      File.prototype.toString = function() {
+        return this.name;
+      };
+      projectFiles = window.files = files.map((obj, i) => new File(obj, i));
+      projects(projectFiles);
+    });
+
+    CreateWebSocket(null, null, ws => (window.socket = ws));
+
+    const searchFilter = trkl(store.get('filter') || '.*');
+
+    //console.log('searchFilter is ', searchFilter());
+
+    searchFilter.subscribe(value => {
+      store.set('filter', value);
+    });
+
+    const changeInput = e => {
+      const { target } = e;
+      //console.log('changeInput:', target.value);
+
+      searchFilter(target.value);
     };
-    projectFiles = window.files = files.map(({ name }, i) => new File(name, i));
-    projects(projectFiles);
-  });
 
-  CreateWebSocket(null, null, ws => (window.socket = ws));
-
-  const searchFilter = trkl(store.get('filter') || '.*');
-
-  //console.log('searchFilter is ', searchFilter());
-
-  searchFilter.subscribe(value => {
-    store.set('filter', value);
-  });
-
-  const changeInput = e => {
-    const { target } = e;
-    //console.log('changeInput:', target.value);
-
-    searchFilter(target.value);
-  };
-
-  React.render(
-    [
-      Panel('buttons', [
-        h(Button, {
-          caption: '📂',
-          fn: e => {
-            if(e.type.endsWith('down')) {
-              //console.log('file list push', e);
-              open(!open());
+    React.render(
+      [
+        Panel('buttons', [
+          h(Button, {
+            caption: '📂',
+            fn: e => {
+              if(e.type.endsWith('down')) {
+                //console.log('file list push', e);
+                open(!open());
+              }
             }
-          }
-        }),
-        h(Button, {
-          caption: 'Random',
-          fn: ModifyColors(c => c.replaceAll(c => HSLA.random()))
-        }),
-        h(Button, {
-          caption: 'Invert',
-          fn: ModifyColors(c => c.replaceAll(c => c.invert()))
-        }),
-        h(Button, {
-          caption: '↔',
-          fn: MakeFitAction(0)
-        }),
-        h(Button, {
-          caption: '↕',
-          fn: MakeFitAction(1)
-        })
-      ]),
+          }),
+          h(Button, {
+            caption: 'Random',
+            fn: ModifyColors(c => c.replaceAll(c => HSLA.random()))
+          }),
+          h(Button, {
+            caption: 'Invert',
+            fn: ModifyColors(c => c.replaceAll(c => c.invert()))
+          }),
+          h(Button, {
+            caption: '↔',
+            fn: MakeFitAction(0)
+          }),
+          h(Button, {
+            caption: '↕',
+            fn: MakeFitAction(1)
+          })
+        ]),
 
-      /*  h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [
+        /*  h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [
         h(ColorWheel, {}),
         h(Slider, {
           min: 0,
@@ -577,38 +593,38 @@ const AppMain = (window.onload = async () => {
           }
         })
       ]),*/
-      html`
-        <${FileList} files=${projects} onActive=${open} onChange=${chooseDocument} filter=${searchFilter} showSearch=${showSearch} changeInput=${changeInput} focusSearch=${focusSearch} currentInput=${currentSearch} />
-      `
-    ],
-    Element.find('#preact')
-  );
+        html`
+          <${FileList} files=${projects} onActive=${open} onChange=${chooseDocument} filter=${searchFilter} showSearch=${showSearch} changeInput=${changeInput} focusSearch=${focusSearch} currentInput=${currentSearch} />
+        `
+      ],
+      Element.find('#preact')
+    );
 
-  let move;
-  container = Element.find('#main');
+    let move;
+    container = Element.find('#main');
 
-  TouchListener(
-    event => {
-      //if(event.index > 0 && event.buttons > 0) console.log('touch', event, container);
-      if(!move) {
-        let box = Element.find('#main').firstElementChild;
+    TouchListener(
+      event => {
+        //if(event.index > 0 && event.buttons > 0) console.log('touch', event, container);
+        if(!move) {
+          let box = Element.find('#main').firstElementChild;
 
-        move = Element.moveRelative(box);
-      } else if(move && event.buttons == 0) {
-        move = null;
-      } else if(event.index > 0) {
-        let rel = new Point(event);
-        if(move) {
-          if(event.buttons > 0) move(rel.x, rel.y);
-          else move = move.jump();
+          move = Element.moveRelative(box);
+        } else if(move && event.buttons == 0) {
+          move = null;
+        } else if(event.index > 0) {
+          let rel = new Point(event);
+          if(move) {
+            if(event.buttons > 0) move(rel.x, rel.y);
+            else move = move.jump();
+          }
         }
-      }
-    },
-    { element: window }
-  );
+      },
+      { element: window }
+    );
 
-  window.styles = CSS.create('head');
-  /* document.addEventListener('keydown', event => {
+    window.styles = CSS.create('head');
+    /* document.addEventListener('keydown', event => {
     const { ctrlKey, shiftKey, altKey, metaKey } = event;
 
     if(true || ctrlKey || shiftKey || altKey || metaKey) {
@@ -618,44 +634,44 @@ const AppMain = (window.onload = async () => {
     }
   });*/
 
-  window.addEventListener('wheel', event => {
-    //console.log('event:', event);
-    const clientArea = Element.rect('body > div');
-    const sideBar = Element.rect('.sidebar');
+    window.addEventListener('wheel', event => {
+      //console.log('event:', event);
+      const clientArea = Element.rect('body > div');
+      const sideBar = Element.rect('.sidebar');
 
-    if(sideBar.x2 > clientArea.x1) {
-      clientArea.width -= sideBar.x2;
+      if(sideBar.x2 > clientArea.x1) {
+        clientArea.width -= sideBar.x2;
 
-      clientArea.x = sideBar.x2;
-      clientArea.width = window.innerWidth - clientArea.x;
-    }
-    clientArea.height = window.innerHeight;
+        clientArea.x = sideBar.x2;
+        clientArea.width = window.innerWidth - clientArea.x;
+      }
+      clientArea.height = window.innerHeight;
 
-    clientArea.x += container.parentElement.scrollLeft;
+      clientArea.x += container.parentElement.scrollLeft;
 
-    //console.log('wheel:', { sideBar, clientArea });
+      //console.log('wheel:', { sideBar, clientArea });
 
-    const clientCenter = clientArea.center;
-    const { clientX, clientY, target, currentTarget, buttons, altKey, ctrlKey, shiftKey } = event;
-    const pos = new Point(clientX, clientY);
+      const clientCenter = clientArea.center;
+      const { clientX, clientY, target, currentTarget, buttons, altKey, ctrlKey, shiftKey } = event;
+      const pos = new Point(clientX, clientY);
 
-    if(!pos.inside(clientArea)) return;
+      if(!pos.inside(clientArea)) return;
 
-    const wheelPos = -event.deltaY.toFixed(2);
-    zoomVal = altKey || ctrlKey || shiftKey ? 0 : Util.clamp(-100, 100, zoomVal + wheelPos * 0.1);
-    const zoom = Math.pow(10, zoomVal / 100).toFixed(5);
+      const wheelPos = -event.deltaY.toFixed(2);
+      zoomVal = altKey || ctrlKey || shiftKey ? 0 : Util.clamp(-100, 100, zoomVal + wheelPos * 0.1);
+      const zoom = Math.pow(10, zoomVal / 100).toFixed(5);
 
-    let t = window.transform;
+      let t = window.transform;
 
-    if(!t.scaling) t.scale(zoom, zoom);
-    else {
-      t.scaling.x = zoom;
-      t.scaling.y = zoom;
-    }
+      if(!t.scaling) t.scale(zoom, zoom);
+      else {
+        t.scaling.x = zoom;
+        t.scaling.y = zoom;
+      }
 
-    window.transform = new TransformationList(t);
+      window.transform = new TransformationList(t);
 
-    /*    const transform = ` scale(${zoom},${zoom}) `;
+      /*    const transform = ` scale(${zoom},${zoom}) `;
     const origin = `${pos.toString(1, 'px', ' ')}`;
     let list = [...Element.skip(target)].find(p => p.classList.contains('list'));
     if(false && list) {
@@ -670,7 +686,12 @@ const AppMain = (window.onload = async () => {
       Element.setCSS(container, { transform });
       Element.setCSS(container, { 'transform-origin': origin });
     }*/
-  });
+    });
+  } catch(error) {
+    console.error('Exception in AppMain!\n', error);
+    throw error;
+  }
+  console.error('AppMain done');
 
   //console.log(Util.getGlobalObject());
 

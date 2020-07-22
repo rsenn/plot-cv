@@ -20,6 +20,7 @@
     "@app-elements/use-store-path": "^1.0.1",
     "@repeaterjs/repeater": "^3.0.1",
     "async-ws": "^0.0.3",
+    "body-parser": "^1.19.0",
     "canopy": "^0.3.0",
     "deep-diff": "^1.0.2",
     "express": "^4.17.1",
