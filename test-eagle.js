@@ -117,7 +117,7 @@ function updateMeasures(board) {
   let measures = board.getMeasures();
 
   if(measures) {
-    //console.log('got measures:', measures);
+    console.log('got measures:', measures);
   } else {
     let rect = new Rect(bounds.rect);
     let lines = rect.toLines(lines => new LineList(lines));
@@ -146,7 +146,11 @@ function alignItem(item) {
 
   let before = item.parentNode.toXML();
 
-  //console.log("geometry:", Object.entries(Object.getOwnPropertyDescriptors(geometry)).map(([name,{value}]) => [name, value && Object.getOwnPropertyDescriptors(value)  ]), geometry.x1);
+  console.log(
+    'geometry:',
+    Object.entries(Object.getOwnPropertyDescriptors(geometry)).map(([name, { value }]) => [name, value && Object.getOwnPropertyDescriptors(value)]),
+    geometry.x1
+  );
 
   geometry.add(diff);
 
@@ -155,10 +159,10 @@ function alignItem(item) {
   let changed = !diff.isNull();
 
   if(changed) {
-    //console.log('before:', before);
-    //console.log('after:', item.parentNode.toXML());
-    //console.log('geometry:', geometry);
-    //console.log('align\n', item.xpath(), '\n newPos:', newPos, '\n diff:', diff, '\n attr:', item.raw.attributes);
+    console.log('before:', before);
+    console.log('after:', item.parentNode.toXML());
+    console.log('geometry:', geometry);
+    console.log('align\n', item.xpath(), '\n newPos:', newPos, '\n diff:', diff, '\n attr:', item.raw.attributes);
   }
   return changed;
 }

@@ -610,7 +610,9 @@ const AppMain = (window.onload = async () => {
 
     TouchListener(
       event => {
-        //if(event.index > 0 && event.buttons > 0) console.log('touch', event, container);
+        if(event.buttons == 2) return event.cancel();
+
+        if(event.index > 0 && event.buttons > 0) console.log('touch', event, container);
         if(!move) {
           let box = Element.find('#main').firstElementChild;
 
