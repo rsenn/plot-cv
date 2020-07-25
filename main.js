@@ -245,114 +245,146 @@ const LoadDocument = async (project, parentElem) => {
   try {
     project.renderer = new Renderer(project.doc, ReactComponent.append, true);
     console.log('project.renderer', project.renderer);
-  } catch(err) {
-    console.error('Render ERROR:', err);
-  }
 
-  //if(!project.renderer || !project.renderer.render) return;
+    //if(!project.renderer || !project.renderer.render) return;
 
-  let style = { width: '100%', height: '100%', position: 'relative' };
-  /*  let svgXml = project.renderer.render(project.doc, null, {});*/
-  let component = project.renderer.render(project.doc, null, {});
-  window.component = component;
-  project.component = component;
+    let style = { width: '100%', height: '100%', position: 'relative' };
+    /*  let svgXml = project.renderer.render(project.doc, null, {});*/
+    let component = project.renderer.render(project.doc, null, {});
 
-  console.log('testRender:', component);
+    window.component = component;
+    project.component = component;
 
-  let element = Element.find('#main');
-  //console.log('h', h);
-  //
-  let r = project.renderer.rect || project.renderer.bounds;
-  //console.log('r', r);
-  let aspectRatio = r.width / r.height;
-  //console.log('aspectRatio', aspectRatio);
+    console.log('testRender:', component);
 
-  sizeListener({ width: r.width });
-  aspectListener(aspectRatio);
+    let element = Element.find('#main');
+    //console.log('h', h);
+    //
+    let r = project.renderer.rect || project.renderer.bounds;
+    //console.log('r', r);
+    let aspectRatio = r.width / r.height;
+    //console.log('aspectRatio', aspectRatio);
 
-  const Fence = ({ children, style = {}, sizeListener, aspectListener, ...props }) => {
-    const [dimensions, setDimensions] = useState(sizeListener());
-    const [aspect, setAspect] = useState(aspectListener());
+    sizeListener({ width: r.width });
+    aspectListener(aspectRatio);
 
-    if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
-    if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
+    const Fence = ({ children, style = {}, sizeListener, aspectListener, ...props }) => {
+      const [dimensions, setDimensions] = useState(sizeListener());
+      const [aspect, setAspect] = useState(aspectListener());
 
-    //console.log('Fence.render', { dimensions, aspect });
+      if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
+      if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
 
-    return h(
-      TransformedElement,
-      {
-        id: 'fence',
-        type: SizedAspectRatioBox,
-        aspect,
-        listener: transform,
-        style: {
-          position: 'relative',
-          minWidth: '100px',
-          'data-name': project.name,
-          ...style,
-          ...dimensions
+      //console.log('Fence.render', { dimensions, aspect });
+
+      return h(
+        TransformedElement,
+        {
+          id: 'fence',
+          type: SizedAspectRatioBox,
+          aspect,
+          listener: transform,
+          style: {
+            position: 'relative',
+            minWidth: '100px',
+            'data-name': project.name,
+            ...style,
+            ...dimensions
+          },
+          ...props
         },
-        ...props
+        children
+      );
+    };
+
+    component = h(
+      Fence,
+      {
+        style: {
+          /*border: '0.001em dashed red'*/
+        },
+        sizeListener,
+        aspectListener
       },
-      children
+      [component]
     );
-  };
 
-  component = h(
-    Fence,
-    {
-      style: {
-        /*border: '0.001em dashed red'*/
-      },
-      sizeListener,
-      aspectListener
-    },
-    [component]
-  );
+    React.render(component, element);
+    let object = ReactComponent.toObject(component);
+    project.object = object;
+    let rendered = object.children[0];
+    console.log('rendered:', rendered);
 
-  React.render(component, element);
+    for(let [item, path] of deep.iterate(object, v => Util.isObject(v) && v['data-path'])) {
+      let p = path.reduce((a, i) => (i == 'children' ? [...a, 'props', 'children'] : [...a, +i]), []); //, {tagField: 'type', specialFields: ['props']});
+      //  console.log("component",p, component);
 
-  let rendered = [...element.children];
+      let o = path.slice(0, 4 * 2 - 1).reduce((a, i) => a && a[i], object);
+      let c = p.slice(0, 4 * 3 - 1).reduce((a, i) => a && a[i], component);
+      //console.log("component",c, p.slice(4*3-1));
+      //console.log("object",o, path.slice(4*2-1));
+    }
 
-  window.rendered = rendered;
-  //console.log('window.rendered', window.rendered);
-  project.element = rendered[0];
-  project.svg = Element.find('svg', '#main');
-  project.grid = Element.find('g.grid', project.element);
-  project.bbox = SVG.bbox(project.grid);
-  project.aspectRatio = aspect;
-  //console.log('project.svg', project.svg);
-  //console.log('project', project);
+    let renderMap = [...Element.findAll('*[data-path]')];
 
-  let { name, data, doc, svg, bbox } = project;
-  let bounds = doc.getBounds();
-  let rect = bounds.rect;
-  let size = new Size(r);
-  currentProj(project);
-  size.mul(doc.type == 'brd' ? 2 : 1.5);
-  let svgrect = SVG.bbox(project.svg);
+    renderMap = renderMap.map(e => [e.getAttribute('data-path'), e]);
+    renderMap = renderMap.map(([p, e]) => [new ImmutablePath(p), e]);
+    renderMap = renderMap.map(([p, e]) => [p, p.apply(project.doc.raw), e]);
+    renderMap = renderMap.map(([p, r, e]) => [EagleElement.get(project.doc, p, r), e]);
+    let reverseMap = new WeakMap(renderMap.map(([k, v]) => [v, k]));
 
-  //project.aspectRatio = svgrect.aspect();
+    renderMap = new WeakMap(renderMap);
 
-  Element.attr(project.svg, {
-    'data-filename': project.name,
-    'data-aspect': project.aspectRatio,
-    'data-width': size.width + 'mm',
-    'data-height': size.height + 'mm'
-  });
+    console.log('renderMap:', renderMap);
+    project.renderMap = renderMap;
+    project.reverseMap = reverseMap;
 
-  //project.svg.setAttribute('data-aspect', project.aspectRatio);
-  let css = size.div(0.26458333333719).toCSS({ width: 'px', height: 'px' });
+    project.rendered = rendered;
+    //console.log('window.rendered', window.rendered);
+    project.element = element;
+    project.svg = Element.find('svg', '#main');
+    project.grid = Element.find('g.grid', project.element);
+    project.bbox = SVG.bbox(project.grid);
+    project.aspectRatio = aspect;
+    //console.log('project.svg', project.svg);
+    //console.log('project', project);
 
-  window.size = css;
-  //console.log('css:', css);
-  /*  Object.assign(project.svg.style, {
+    let { name, data, doc, svg, bbox } = project;
+    let bounds = doc.getBounds();
+    let rect = bounds.rect;
+    let size = new Size(r);
+    currentProj(project);
+    size.mul(doc.type == 'brd' ? 2 : 1.5);
+    let svgrect = SVG.bbox(project.svg);
+
+    //project.aspectRatio = svgrect.aspect();
+
+    Element.attr(project.svg, {
+      'data-filename': project.name,
+      'data-aspect': project.aspectRatio,
+      'data-width': size.width + 'mm',
+      'data-height': size.height + 'mm'
+    });
+
+    //project.svg.setAttribute('data-aspect', project.aspectRatio);
+    let css = size.div(0.26458333333719).toCSS({ width: 'px', height: 'px' });
+
+    window.size = css;
+    //console.log('css:', css);
+    /*  Object.assign(project.svg.style, {
     'min-width': `${size.width}mm`
   });
   Element.setCSS(project.svg, { left: 0, top: 0, position: 'relative' });
   Element.setCSS(project.svg, { left: 0, top: 0, position: 'relative' });
   //console.log('LoadDocument:', project.svg);*/
+  } catch(err) {
+    console.error(
+      'Render ERROR:',
+      err,
+      [...err.stack].map(f => (f + '').replace(Util.getURL() + '/', ''))
+    );
+  }
+
   return project;
 };
 
@@ -373,8 +405,8 @@ const ChooseDocument = async (e, proj, i) => {
     }
     r = proj.loaded;
   } catch(err) {
-    //console.log('err:', err.message);
-    //console.log('stack:', [...err.stack].join('\n'));
+    console.log('err:', err.message);
+    console.log('stack:', [...err.stack].map(f => f.replace(Util.getURL() + '/', '')).join('\n'));
   }
 
   return r;

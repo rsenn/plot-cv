@@ -272,7 +272,7 @@ label {
 body,
 #main,
 #container {
-  /* overflow: hidden; */
+  overflow: hidden;
 }
 
 .aspect-ratio-box {
