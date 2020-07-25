@@ -6,8 +6,14 @@ import Util from './lib/util.js';
 import tXml from './lib/tXml.js';
 import bodyParser from 'body-parser';
 import expressWs from 'express-ws';
+import { Alea } from './lib/alea.js';
 
 import { Console } from 'console';
+
+const prng = new Alea();
+prng.seed(Date.now());
+console.log('random:', prng.uint32());
+console.log('randStr:', Util.randStr(8, null, prng));
 
 global.console = new Console({
   stdout: process.stdout,
@@ -19,7 +25,7 @@ let app = express();
 expressWs(app);
 const p = path.join(path.dirname(process.argv[1]), '.');
 
-//Util.log('Serving from', p);
+//console.log('Serving from', p);
 
 app.use(express.text({ type: 'application/xml' }));
 
@@ -27,14 +33,15 @@ app.use(bodyParser.json());
 
 let sockets = [];
 
-const removeItem = (arr, item) => {
-  let i = arr.indexOf(item);
+const removeItem = (arr, item, key = 'ws') => {
+  let i = arr.findIndex(e => e[key] === item);
   if(i != -1) arr.splice(i, 1);
   return arr;
 };
 
 function Socket(ws, info) {
   Object.assign(this, { ...info, ws });
+  this.id = Util.randStr(10, '0123456789abcdef', prng);
   return this;
 }
 
@@ -50,7 +57,7 @@ app.ws('/ws', async (ws, req) => {
   let { address, port } = _peername;
   const { cookie } = headers;
 
-  //Util.log('WebSocket connected:', path);
+  console.log('WebSocket connected:', path);
   if(address == '::1') address = 'localhost';
 
   address = address.replace(/^::ffff:/, '');
@@ -61,39 +68,52 @@ app.ws('/ws', async (ws, req) => {
     localPort,
     cookie
   });
+  let i = sockets.length;
   sockets.push(s);
 
-  //Util.log('headers:', headers);
-  //Util.log('cookie:', cookie);
+  console.log('headers:', headers);
+  console.log('cookie:', cookie);
 
-  //Util.log('s:', Util.filterKeys(s, k => k != 'ws'));
+  console.log(
+    's:',
+    Util.filterKeys(s, k => k != 'ws')
+  );
+  let j = sockets.findIndex(e => e.ws === ws);
+
+  //  console.log('socket', { i, j });
+  console.log(
+    'sockets:',
+    sockets.map(s => Util.filterKeys(s, /^(address|port|id)/))
+  );
+  ws.on('close', () => {
+    console.log(`socket close ${s.toString()} (${s.id})`);
+    removeItem(sockets, ws, 'ws');
+  });
 
   ws.on('message', msg => {
-    //Util.log(`message from ${s.toString()}:`, msg);
-
+    console.log(`message from ${s.toString()} (${s.id}): '${msg}'`);
+    const data = `|${s.id}|${msg}`;
+    console.log('data:', data);
+    let i = -1;
     for(let sock of sockets) {
       if(sock.ws === ws) continue;
 
-      //Util.log('sock:', Util.filterKeys(sock, /^(address|port|cookies)/));
+      //   console.log('sock:', Util.filterKeys(sock, /^(address|port|cookies)/));
+      console.log(`Sending[${++i}/${sockets.length}] to ${sock.id}`);
 
-      let r =
-        client.writable &&
-        Util.tryCatch(
-          ws => ws.send(msg),
-          true,
-          err => {
-            //Util.log('socket:', sock.info, ' error:', (err + '').replace(/\n.*/g, ''));
-            return false;
-          },
-          sock.ws
-        );
-      if(!r) removeItem(sockets, sock);
+      let r = Util.tryCatch(
+        () => client.writable,
+        () => sock.ws.send(data),
+        err => (console.log('socket:', sock.info, ' error:', (err + '').replace(/\n.*/g, '')), false),
+        null
+      );
+      if(!r) removeItem(sockets, sock.ws, 'ws');
     }
   });
 });
 
 app.use((req, res, next) => {
-  if(!/lib\//.test(req.url)) Util.log('Request:', req.url);
+  if(!/lib\//.test(req.url)) console.log('Request:', req.url);
   next();
 });
 
@@ -146,7 +166,7 @@ const GetFilesList = async (dir = './tmp', opts = {}) => {
     .map(entry => `${dir}/${entry}`)
     .map(file => {
       let description = descriptions ? descMap(file) : descMap.get(file);
-      //   Util.log('descMap:', util.inspect(descMap, { depth: 1 }));
+      //   console.log('descMap:', util.inspect(descMap, { depth: 1 }));
 
       const { ctime, mtime, mode, size } = fs.statSync(file);
       let obj = {
@@ -165,7 +185,7 @@ app.get(/^\/files/, async (req, res) => res.json({ files: await GetFilesList() }
 app.post(/^\/(files|list).html/, async (req, res) => {
   const { body } = req;
   const { filter, descriptions } = body;
-  Util.log('body:', body);
+  console.log('body:', body);
   res.json({ files: await GetFilesList('tmp', { filter, descriptions }) });
 });
 
@@ -175,8 +195,8 @@ app.get('/index.html', (req, res) => {
 
 app.post('/save', async (req, res) => {
   const { body } = req;
-  //Util.log('req.headers:', req.headers);
-  //Util.log('save body:', body.substring(0, 100), '...');
+  //console.log('req.headers:', req.headers);
+  //console.log('save body:', body.substring(0, 100), '...');
   const filename = req.headers['content-disposition'].replace(/.*"([^"]*)".*/, '$1') || 'output.svg';
   let result = await fs.promises.writeFile(filename, body, { mode: 0o600, flag: 'w' });
   res.json({ result });
@@ -188,5 +208,5 @@ app.get('/', (req, res) => {
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
-  //Util.log(`Ready at http://127.0.0.1:${port}`);
+  //console.log(`Ready at http://127.0.0.1:${port}`);
 });

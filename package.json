@@ -26,6 +26,8 @@
     "express": "^4.17.1",
     "express-ws": "^4.0.0",
     "htm": "^3.0.4",
+    "isomorphic-ws": "^4.0.1",
+    "it-ws": "^3.0.0",
     "module-alias": "^2.2.2",
     "outline-stroke": "^0.0.0",
     "preact": "^10.4.1",
@@ -33,12 +35,16 @@
     "preact-ssr-prepass": "^1.0.0",
     "styled-components": "^4.3.2",
     "svg-path-outline": "^1.0.1",
-    "websocket-async": "https://github.com/jcao219/websocket-async"
+    "thenable-reject": "^1.0.0",
+    "websocket-async": "https://github.com/jcao219/websocket-async",
+    "websocket-iterator": "https://github.com/vadzim/websocket-iterator",
+    "ws": "^7.3.1"
   },
   "_moduleAliases": {
     "react": "node_modules/preact/compat",
     "react-dom": "node_modules/preact/compat",
-    "react-ssr-prepass": "node_modules/preact-ssr-prepass"
+    "react-ssr-prepass": "node_modules/preact-ssr-prepass",
+    "websocket-async": "node_modules/websocket-async/dist/websocket-async.esm.js"
   },
   "resolutions": {
     "lodash": "4.17.14"

@@ -17,6 +17,7 @@ import { devtools } from './lib/devtools.js';
 import Util from './lib/util.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
+import Alea from './lib/alea.js';
 import { Iterator } from './lib/iterator.js';
 import { Functional } from './lib/functional.js';
 import { makeLocalStorage } from './lib/autoStore.js';
@@ -108,7 +109,8 @@ Util.extend(
     Shape,
     RGBA,
     isHSLA,
-    ColoredText
+    ColoredText,
+    Alea
   },
   { Chooser, useState, useLayoutEffect, useRef, Polygon }
 );
@@ -228,10 +230,7 @@ const ModifyColors = fn => e => {
 };
 
 const LoadDocument = async (project, parentElem) => {
-  //Util.log(`load project #${project.i}:`, project);
   project.doc = await LoadFile(project.name).catch(console.error);
-
-  //Util.log('project.doc', project.doc);
 
   window.eagle = project.doc;
   window.project = project;
@@ -241,18 +240,11 @@ const LoadDocument = async (project, parentElem) => {
   let docElem = Element.find('#doc');
   docElem.innerHTML = '';
 
-  /*  let docNode = Util.parseXML(project.doc.toXML());
-  let eagleNode = docNode.firstElementChild;
-  docNode.removeChild(eagleNode);
-  docElem.appendChild(eagleNode);*/
   try {
     project.renderer = new Renderer(project.doc, ReactComponent.append, true);
     Util.log('project.renderer', project.renderer);
 
-    //if(!project.renderer || !project.renderer.render) return;
-
     let style = { width: '100%', height: '100%', position: 'relative' };
-    /*  let svgXml = project.renderer.render(project.doc, null, {});*/
     let component = project.renderer.render(project.doc, null, {});
 
     window.component = component;
@@ -261,12 +253,8 @@ const LoadDocument = async (project, parentElem) => {
     Util.log('testRender:', component);
 
     let element = Element.find('#main');
-    //Util.log('h', h);
-    //
     let r = project.renderer.rect || project.renderer.bounds;
-    //Util.log('r', r);
     let aspectRatio = r.width / r.height;
-    //Util.log('aspectRatio', aspectRatio);
 
     sizeListener({ width: r.width });
     aspectListener(aspectRatio);
@@ -277,8 +265,6 @@ const LoadDocument = async (project, parentElem) => {
 
       if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
       if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
-
-      //Util.log('Fence.render', { dimensions, aspect });
 
       return h(
         TransformedElement,
@@ -303,9 +289,7 @@ const LoadDocument = async (project, parentElem) => {
     component = h(
       Fence,
       {
-        style: {
-          /*border: '0.001em dashed red'*/
-        },
+        style: {},
         sizeListener,
         aspectListener
       },
@@ -320,12 +304,9 @@ const LoadDocument = async (project, parentElem) => {
 
     for(let [item, path] of deep.iterate(object, v => Util.isObject(v) && v['data-path'])) {
       let p = path.reduce((a, i) => (i == 'children' ? [...a, 'props', 'children'] : [...a, +i]), []); //, {tagField: 'type', specialFields: ['props']});
-      //  Util.log("component",p, component);
 
       let o = path.slice(0, 4 * 2 - 1).reduce((a, i) => a && a[i], object);
       let c = p.slice(0, 4 * 3 - 1).reduce((a, i) => a && a[i], component);
-      //Util.log("component",c, p.slice(4*3-1));
-      //Util.log("object",o, path.slice(4*2-1));
     }
 
     let renderMap = [...Element.findAll('*[data-path]')];
@@ -343,14 +324,11 @@ const LoadDocument = async (project, parentElem) => {
     project.reverseMap = reverseMap;
 
     project.rendered = rendered;
-    //Util.log('window.rendered', window.rendered);
     project.element = element;
     project.svg = Element.find('svg', '#main');
     project.grid = Element.find('g.grid', project.element);
     project.bbox = SVG.bbox(project.grid);
     project.aspectRatio = aspect;
-    //Util.log('project.svg', project.svg);
-    //Util.log('project', project);
 
     let { name, data, doc, svg, bbox } = project;
     let bounds = doc.getBounds();
@@ -442,17 +420,18 @@ const MakeFitAction = index => async () => {
 };
 
 const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
-  log = log || ((...args) => Util.log(...args));
+  // log = log || ((...args) => console.log(...args));
   socketURL = socketURL || Util.makeURL({ location: '/ws', protocol: 'ws' });
   let ws = new WebSocketClient();
-  log('New WebSocket:', ws);
+  window.socket = ws;
+  console.log('New WebSocket:', ws);
   await ws.connect(socketURL);
-  log('Connected:', ws.connected);
+  console.log('WebSocket Connected:', ws.connected);
   socketFn(ws);
   ws.send('hello!');
   let data;
   for await (data of ws) {
-    log('WebSocket data:', data);
+    console.log('WebSocket data:', data);
     ws.dataAvailable !== 0;
   }
   await ws.disconnect();
