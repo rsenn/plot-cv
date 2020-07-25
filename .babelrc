@@ -1,24 +1,13 @@
 {
-  "presets": [
-    [
-      "next/babel",
-      {
-        "preset-env": {
-          "targets": {
-            "browsers": ["> 0.25%", "not dead", "node 10.16", "last 2 chrome versions", "last 2 firefox versions", "last 2 edge versions", "last 2 safari versions", "not ie 11", "not Explorer 11", "not ExplorerMobile 11"]
-            /*"esmodules": true"*/
-          },
-          "useBuiltIns": "usage",
-          "corejs": 2
-        }
-      }
-    ]
-  ],
+  "presets": ['preact'],
   "plugins": [
- ["@babel/plugin-transform-react-jsx", {
-      "pragma": "h",
-      "pragmaFrag": "Fragment",
-    }],
+    [
+      "@babel/plugin-transform-react-jsx",
+      {
+        "pragma": "h",
+        "pragmaFrag": "Fragment"
+      }
+    ],
     [
       "@babel/plugin-proposal-decorators",
       {

@@ -44,6 +44,13 @@
     "lodash": "4.17.14"
   },
   "devDependencies": {
+    "@babel/core": "^7.10.5",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-proposal-decorators": "^7.10.5",
+    "@babel/plugin-proposal-export-default-from": "^7.10.4",
+    "@babel/plugin-transform-react-jsx": "^7.10.4",
+    "babel-cli": "^6.26.0",
+    "babel-preset-preact": "^2.0.0",
     "clarify": "^2.1.0",
     "eslint": "^7.4.0",
     "eslint-config-standard": "^14.1.1",
@@ -75,7 +82,12 @@
     ]
   },
   "eslintConfig": {
-    "extends": "preact"
+    "extends": [
+      "./node_modules/@s-ui/lint/eslintrc.js"
+    ]
   },
-  "prettier": ".prettierrc.js"
+  "prettier": "./node_modules/@s-ui/lint/.prettierrc.js",
+  "stylelint": {
+    "extends": "./node_modules/@s-ui/lint/stylelint.config.js"
+  }
 }
