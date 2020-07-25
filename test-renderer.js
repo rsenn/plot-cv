@@ -11,15 +11,16 @@ const debug = (process.env.APP_ENV + '').startsWith('devel'); /*||process.env.NO
 
 async function testRenderSchematic(file) {
   let doc = new EagleDocument((await fsPromises.readFile(`${file}.sch`)).toString());
-  //console.log('doc:', doc.get('eagle/drawing'));
+  //Util.log('doc:', doc.get('eagle/drawing'));
   let renderer = new Renderer(doc, ReactComponent.append, debug);
-  //console.log('renderer:', renderer);
+  //Util.log('renderer:', renderer);
   let output = renderer.render(doc, null, 0);
-  console.log('functionName:', Util.getStackFrame());
+  Util.log('Util.log.filters:', Util.log.filters);
+  Util.log('functionName:', Util.getStackFrame());
 
   //  throw new Error('test');
-  //console.log('output:', output);
-  //console.log('bounds:', doc.getBounds());
+  //Util.log('output:', output);
+  //Util.log('bounds:', doc.getBounds());
 
   let outFile = file.replace(/.*\//g, '').replace(/\.[a-z]+$/, '');
 
@@ -31,11 +32,11 @@ async function testRenderSchematic(file) {
 async function testRenderBoard(file) {
   let doc = new EagleDocument((await fsPromises.readFile(`${file}.brd`)).toString());
   let renderer = new Renderer(doc, ReactComponent.append, debug);
-  //console.log('renderer:', renderer);
+  //Util.log('renderer:', renderer);
   let output = renderer.render(doc, null, 0);
 
-  //console.log('output:', output);
-  //console.log('bounds:', doc.getBounds());
+  //Util.log('output:', output);
+  //Util.log('bounds:', doc.getBounds());
 
   let outFile = file.replace(/.*\//g, '').replace(/\.[a-z]+$/, '');
   let outStr = ReactComponent.toString(output);
@@ -45,21 +46,23 @@ async function testRenderBoard(file) {
 
 const filename = '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt';
 async function main() {
+  Util.log.setFilters([/(boardRenderer|schematicRenderer)/i]);
+
   try {
-    //console.log('debug:', debug);
+    //Util.log('debug:', debug);
 
     let r = [await testRenderSchematic(filename), await testRenderBoard(filename)];
-    console.log('r:', r);
+    Util.log('r:', r);
   } catch(error) {
-    /*console.log('argv[0]:', process.argv[0]);
-      console.log('argv[1]:', Util.scriptDir());
-      console.log('getURL():', Util.getURL());*/
-    console.log(Util.exception(error));
+    /*Util.log('argv[0]:', process.argv[0]);
+      Util.log('argv[1]:', Util.scriptDir());
+      Util.log('getURL():', Util.getURL());*/
+    Util.log(Util.exception(error));
 
-    console.log('stack:', Util.stack(error.stack));
+    Util.log('stack:', Util.stack(error.stack));
   }
 }
 main(process.argv.slice(2)).catch(error => {
   const stack = [...error.stack];
-  console.log('ERROR:', error.message, stack);
+  Util.log('ERROR:', error.message, stack);
 });

@@ -28,10 +28,10 @@ const filesystem = {
   stat(filename) {return fs.statSync(filename); }
 };
 function readXML(filename) {
-  //console.log('readXML', filename);
+  //Util.log('readXML', filename);
   let data = filesystem.readFile(filename);
   let xml = tXml(data);
-  //console.log('xml:', xml);
+  //Util.log('xml:', xml);
   return xml;
 }
 //TODO: Test with tmScheme (XML) and ColorMap
@@ -52,7 +52,7 @@ const GeneratePalette = (counts = { h: 3, s: 2, l: 5 }, deltas = { h: 360, s: 10
   //const numColors = ranges.reduce((acc, r) => acc * r.length, 1);
 
   //ranges.push(numColors);
-  console.log('ranges:', ranges);
+  Util.log('ranges:', ranges);
 
   new KolorWheel(base.hex())
     .rel(ranges.h, 0, 0)
@@ -62,7 +62,7 @@ const GeneratePalette = (counts = { h: 3, s: 2, l: 5 }, deltas = { h: 360, s: 10
       const hex = this.getHex();
       const rgba = new RGBA(hex);
       const hsla = rgba.toHSLA();
-      //console.log(hex, rgba.toString(), hsla.toString());
+      //Util.log(hex, rgba.toString(), hsla.toString());
       ret.push(hsla);
     });
   //ret = ret.sort((a,b) => a.compareTo(b));
@@ -73,7 +73,7 @@ const GeneratePalette = (counts = { h: 3, s: 2, l: 5 }, deltas = { h: 360, s: 10
 function main(...args) {
   let colors, keys;
 
-  //console.log('main', args);
+  //Util.log('main', args);
   if(args.length == 0) args = ['/home/roman/.config/sublime-text-3/Packages/Babel/Next.tmTheme' /*  */];
   let [filename, outfile, ...cmds] = args;
 
@@ -85,9 +85,9 @@ function main(...args) {
 
     const prng = new Alea().seed((ino * 256 + rdev) ^ mtime.valueOf() ^ Date.now());
 
-    console.log('prng.uint32():', prng.uint32());
+    Util.log('prng.uint32():', prng.uint32());
     let basename = filename.replace(/.*\//g, '').replace(/\.[^.]*$/, '');
-    //console.log('basename ', basename);
+    //Util.log('basename ', basename);
     //let js = toSource(xml);
     filesystem.writeFile(basename + '.json', json);
     //filesystem.writeFile('HoerMalWerDaHaemmert.js', js);
@@ -99,11 +99,11 @@ function main(...args) {
     );
 
     colors = new Map([...Iterator.filter(flat, ([path, value]) => /^#[0-9A-Fa-f]*$/.test(value))].map(([path, value]) => [path, new RGBA(value)]));
-    //console.log('colors:', colors); //[...colors].map(([path,value ]) => [path, value]));
+    //Util.log('colors:', colors); //[...colors].map(([path,value ]) => [path, value]));
     let obj = {};
-    //console.log('methods:', Util.getMethodNames(Iterator));
+    //Util.log('methods:', Util.getMethodNames(Iterator));
     let it = new IteratorForwarder(colors.entries());
-    //console.log('it.map', it.map + '');
+    //Util.log('it.map', it.map + '');
     let paths = Iterator.map(colors, ([path, value]) => [XPath.from(path, xml[0]), deep.get(xml[0], path), path]);
     let o = it.map(([path, value]) => {
       const key = path.up(0);
@@ -111,7 +111,7 @@ function main(...args) {
         prevValue = {},
         list = [],
         numString = 0;
-      //console.log('paths:', path);
+      //Util.log('paths:', path);
       let paths = [
         ...key.walk((p, i, abort, skip) => {
           let r;
@@ -135,7 +135,7 @@ function main(...args) {
             numString = 0;
             return p.up(2);
           }
-          //console.log('p:', p, util.inspect(value, { depth: 1 }));
+          //Util.log('p:', p, util.inspect(value, { depth: 1 }));
           if(p.last > 0 && text != 'scope') r = p.left(1);
           else if(p.length > 2) r = p.up(2);
           prev = p;
@@ -169,9 +169,9 @@ function main(...args) {
     o = [...o].filter(([p, k, v]) => !/background/i.test(k));
     keys = new Map(o.map(([p, k, v]) => [p, k]));
     colors = new Map(o.map(([p, k, v]) => [p, v]));
-    //console.log('colors:', [...colors].slice(0, 10));
+    //Util.log('colors:', [...colors].slice(0, 10));
     let palette = new ColorMap(HSLA, colors);
-    console.log('palette.getMinMax():', palette.getMinMax());
+    Util.log('palette.getMinMax():', palette.getMinMax());
 
     const lexOrder = key => {
       let i = 0;
@@ -191,17 +191,17 @@ function main(...args) {
     let gcd = [3, 4, 6, 8, 12, 16, 32].map(n => Util.greatestCommonDenominator(sz, n));
     let numHues = 6;
     let step = Math.ceil(Math.pow(sz, 1 / 2) / 1.85);
-    console.log('sz:', sz);
-    console.log('step:', step);
+    Util.log('sz:', sz);
+    Util.log('step:', step);
     let newPal = GeneratePalette({ l: step, s: 3, h: Math.ceil(sz / step / 3) });
-    //console.log('newPal:', newPal);
+    //Util.log('newPal:', newPal);
 
-    console.log('palette.size:', palette.size);
-    console.log('newPal.length:', newPal.length);
+    Util.log('palette.size:', palette.size);
+    Util.log('newPal.length:', newPal.length);
     /*const drawColor = Util.draw(newPal, prng);
-      console.log('drawColor:', drawColor + '');*/
-    /*   console.log('prng.int32():', prng.int32());
-      console.log('prng.uint32():', prng.uint32());
+      Util.log('drawColor:', drawColor + '');*/
+    /*   Util.log('prng.int32():', prng.int32());
+      Util.log('prng.uint32():', prng.uint32());
 */
     const newObj = {};
     for(let [path, value] of flat) {
@@ -218,12 +218,12 @@ function main(...args) {
         .flat()
         .filter(i => typeof i != 'string')
         .flat();
-      //console.log("hash:", hashes);
-      //console.log("color1:", color);
+      //Util.log("hash:", hashes);
+      //Util.log("color1:", color);
 
       if(/(background)/i.test(key)) continue;
       //if(/(activeGuide|bracketsBackground|bracketsOptions|caret|guide|gutter|invisibles|lineHighlight|multiEditHighlight|searchHighlight|selection|stackGuide)/i.test(key)) continue;
-      //console.log(`palette[${i++}] =`, key, color);
+      //Util.log(`palette[${i++}] =`, key, color);
       prng();
       color = Util.draw(newPal, 1, prng); //||
 
@@ -235,15 +235,15 @@ function main(...args) {
         color = HSLA.random([0, 360], [75, 100], [40, 60], [1, 1], prng);
       }
 
-      console.log('color2:', color);
+      Util.log('color2:', color);
       const rgba = color.toRGBA();
       const hex = rgba.hex();
-      console.log('deep.set:', { newObj, path, hex });
+      Util.log('deep.set:', { newObj, path, hex });
 
       palette.set(path, color);
     }
-    //  console.log(`palette.getChannel('h'):`, palette.getChannel('h'));
-    console.log(`palette.getMinMax():`, palette.getMinMax());
+    //  Util.log(`palette.getChannel('h'):`, palette.getChannel('h'));
+    Util.log(`palette.getMinMax():`, palette.getMinMax());
     const mm = palette.getMinMax();
 
     if(cmds.length == 0) {
@@ -267,7 +267,7 @@ function main(...args) {
         return palette.remapChannel(channel, mapper);
       },
       grayscale() {
-        //console.log('grayscale');
+        //Util.log('grayscale');
         return this.remap('s', 0, 0);
       },
       invert() {
@@ -276,14 +276,14 @@ function main(...args) {
           return rgba.invert();
         });
 
-        console.log('invert');
+        Util.log('invert');
       }
     };
-    console.log('cmds:', cmds);
+    Util.log('cmds:', cmds);
 
     cmds.forEach(cmd => handlers[cmd[0]](...cmd.slice(1)));
 
-    console.log('palette', palette);
+    Util.log('palette', palette);
 
     /*
     palette.remapChannel('h', Util.remap(mm.h, [0, 360]));
@@ -292,7 +292,7 @@ function main(...args) {
 */
 
     for(let [path, color] of palette.entries()) {
-      //console.log("palette.entries()",{path,color});
+      //Util.log("palette.entries()",{path,color});
 
       color = color && color.toRGBA ? color.toRGBA() : color;
       let [obj, key] = path.bottom(newObj);
@@ -302,9 +302,9 @@ function main(...args) {
       flat.set(path, color);
       deep.set(newObj, path, color.hex());
     }
-    //console.log('flat:', [...flat.entries()].filter(([path,value]) => value instanceof RGBA));
+    //Util.log('flat:', [...flat.entries()].filter(([path,value]) => value instanceof RGBA));
 
-    // console.log('newObj:', toXML(newObj));
+    // Util.log('newObj:', toXML(newObj));
     /*
       keys = [...palette.keys()];
       let values = [...palette.values()];
@@ -320,7 +320,7 @@ function main(...args) {
     //flat = [...shuffled.entries()];
 
     //let generated = ColorMap.generate(10, 3, prng);
-    //console.log('generated:', generated);
+    //Util.log('generated:', generated);
 
     outfile = outfile || basename + '.xml';
     filesystem.writeFile(outfile, toXML(newObj));
@@ -329,10 +329,10 @@ function main(...args) {
       return a * b * c;
     });
     let arity = Functional.arityof(c);
-    //console.log('arity:', arity, c(2)(3)(4));
+    //Util.log('arity:', arity, c(2)(3)(4));
     Functional.compose(Functional.trim, Functional.split(/\//g))('test/blah');
   } catch(err) {
-    console.log('err:', err);
+    Util.log('err:', err);
   }
 }
 main(...process.argv.slice(2));

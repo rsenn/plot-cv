@@ -38,7 +38,7 @@ function Proxy(obj) {
   if(i != -1) {
     throw new Error(`Property '${propNames[i]}' missing on: ` + Util.toSource(p));
   }
-  console.log('new proxy:', p);
+  Util.log('new proxy:', p);
   return p;
 }
 Proxy.prototype.defaultTimeout = 5000;
@@ -61,7 +61,7 @@ Proxy.prototype.ping = function() {
     const start = Date.now();
     tcp.setTimeout(proxy.defaultTimeout);
     tcp.setNoDelay(true);
-    //console.log(`Connecting to ${ip}:${port} ...`);
+    //Util.log(`Connecting to ${ip}:${port} ...`);
     tcp
       .connect(port, ip, () => finish(`connected to ${ip}:${port}`, start))
       .on('close', () => finish(null, start))
@@ -83,7 +83,7 @@ function main() {
         for(const p of await proxyList.getByCountryCode('DE')) {
           let proxy = new Proxy({ source: 'free-proxy', ...p });
           await proxy.ping();
-          console.log('\nPROXY:', proxy, '\n');
+          Util.log('\nPROXY:', proxy, '\n');
           push(proxy);
         }
       } catch(error) {
@@ -151,7 +151,7 @@ function main() {
         console.error(`Proxy #${++i}:`, proxy); // 1, 2
 
         Util.insertSorted(results, proxy);
-        console.log(proxy);
+        Util.log(proxy);
         await writeResults(results, 'txt');
         await writeResults(results, 'json');
       }
@@ -166,5 +166,5 @@ function main() {
 try {
   main();
 } catch(err) {
-  console.log('Top-level error:', err);
+  Util.log('Top-level error:', err);
 }

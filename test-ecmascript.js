@@ -49,7 +49,7 @@ process.on('uncaughtException', (err, origin) => {
 
 process.on('SIGINT', () => {
   //fs.writeSync(process.stderr.fd, "\nSIGINT - Exit\n");
-  //console.log('\nSIGINT - Exit\n');
+  //Util.log('\nSIGINT - Exit\n');
 
   finish();
   process.exit(3);
@@ -57,7 +57,7 @@ process.on('SIGINT', () => {
 
 process.on('exit', () => {
   //fs.writeSync(process.stderr.fd, "\nexited\n");
-  //console.log('\nexited\n');
+  //Util.log('\nexited\n');
   process.exit();
 });
 
@@ -74,7 +74,7 @@ function dumpFile(name, data) {
 
   fs.writeFileSync(name, data + '\n');
 
-  //console.log(`Wrote ${name}: ${data.length} bytes`);
+  //Util.log(`Wrote ${name}: ${data.length} bytes`);
 }
 
 function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments)) {
@@ -93,28 +93,28 @@ function main(args) {
       file = '/dev/stdin';
       data = fs.readFileSync(file);
     }
-    //console.log('file:', file);
-    //console.log('opened:', data);
+    //Util.log('file:', file);
+    //Util.log('opened:', data);
     let ast, error;
 
     global.parser = new ECMAScriptParser(data ? data.toString() : code, file);
     global.printer = new Printer({ indent: 4 });
 
-    //console.log('prototypeChain:', Util.getPrototypeChain(parser));
+    //Util.log('prototypeChain:', Util.getPrototypeChain(parser));
 
-    //console.log("methodNames:",Util.getMethodNames(parser, 2));
+    //Util.log("methodNames:",Util.getMethodNames(parser, 2));
 
-    //console.log(new parser.estree.Identifier());
+    //Util.log(new parser.estree.Identifier());
     try {
       ast = parser.parseProgram();
 
       parser.addCommentsToNodes(ast);
 
-      let imports = [...deep.iterate(ast, node => node instanceof CallExpression && /console.log/.test(printer.print(node)))].map(([node, path]) => node);
+      let imports = [...deep.iterate(ast, node => node instanceof CallExpression && /Util.log/.test(printer.print(node)))].map(([node, path]) => node);
 
-      //console.log('imports:', imports.map(node => ({ str: printer.print(node), toks: ECMAScriptParser.printToks( parser.tokensForNode(node))  })));
+      //Util.log('imports:', imports.map(node => ({ str: printer.print(node), toks: ECMAScriptParser.printToks( parser.tokensForNode(node))  })));
 
-      //for(let imp of imports) console.log('tokens:', parser.tokensForNode(imp));
+      //for(let imp of imports) Util.log('tokens:', parser.tokensForNode(imp));
       /*
       let flat = deep.flatten(
         ast,
@@ -127,7 +127,7 @@ function main(args) {
           return [path, value];
         }
       );
-      //console.log('flat:', flat);
+      //Util.log('flat:', flat);
 
       let posMap = new SortedMap(
         [...flat].map(([key, value]) => [value.position ? value.position.pos : -1, value]),
@@ -141,32 +141,32 @@ function main(args) {
 
        //posMap = new SortedMap([...posMap, ...commentMap], (a, b) => a - b);
 
-      //console.log("ast:", [...posMap.keys()]);$
-      //console.log('commentMap:', commentMap);
-      //console.log('posMap:', [...posMap.keys()]);
+      //Util.log("ast:", [...posMap.keys()]);$
+      //Util.log('commentMap:', commentMap);
+      //Util.log('posMap:', [...posMap.keys()]);
 
-      //console.log("nodes:", parser.nodes.map(n =>  [Util.className(n), n.position.toString()]));
+      //Util.log("nodes:", parser.nodes.map(n =>  [Util.className(n), n.position.toString()]));
 //
 */
     } catch(err) {
       error = err;
-      //console.log('error:', err);
+      //Util.log('error:', err);
     }
     files[file] = finish(error);
 
     if(!error) {
       const output_file = file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
 
-      //console.log('saving to:', output_file);
+      //Util.log('saving to:', output_file);
       const output = printAst(ast, parser.comments, printer);
-      //console.log('output:', output);
+      //Util.log('output:', output);
 
       dumpFile(output_file, output);
     } else {
       process.exit(1);
     }
 
-    //console.log('files:', files);
+    //Util.log('files:', files);
   }
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
   process.exit(Number(files.length == 0));
@@ -182,17 +182,17 @@ function finish(err) {
   }
 
   if(err) {
-    //console.log(parser.lexer.currentLine());
-    //console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
+    //Util.log(parser.lexer.currentLine());
+    //Util.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
 
   let lexer = parser.lexer;
   let t = [];
-  //console.log(parser.trace() );
+  //Util.log(parser.trace() );
   dumpFile('trace.log', parser.trace());
   if(fail) {
-    //console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
+    //Util.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
   }
-  //console.log('finish: ' + (fail ? 'error' : 'success'));
+  //Util.log('finish: ' + (fail ? 'error' : 'success'));
   return !fail;
 }

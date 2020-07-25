@@ -19,7 +19,7 @@ let app = express();
 expressWs(app);
 const p = path.join(path.dirname(process.argv[1]), '.');
 
-//console.log('Serving from', p);
+//Util.log('Serving from', p);
 
 app.use(express.text({ type: 'application/xml' }));
 
@@ -50,7 +50,7 @@ app.ws('/ws', async (ws, req) => {
   let { address, port } = _peername;
   const { cookie } = headers;
 
-  //console.log('WebSocket connected:', path);
+  //Util.log('WebSocket connected:', path);
   if(address == '::1') address = 'localhost';
 
   address = address.replace(/^::ffff:/, '');
@@ -63,18 +63,18 @@ app.ws('/ws', async (ws, req) => {
   });
   sockets.push(s);
 
-  //console.log('headers:', headers);
-  //console.log('cookie:', cookie);
+  //Util.log('headers:', headers);
+  //Util.log('cookie:', cookie);
 
-  //console.log('s:', Util.filterKeys(s, k => k != 'ws'));
+  //Util.log('s:', Util.filterKeys(s, k => k != 'ws'));
 
   ws.on('message', msg => {
-    //console.log(`message from ${s.toString()}:`, msg);
+    //Util.log(`message from ${s.toString()}:`, msg);
 
     for(let sock of sockets) {
       if(sock.ws === ws) continue;
 
-      //console.log('sock:', Util.filterKeys(sock, /^(address|port|cookies)/));
+      //Util.log('sock:', Util.filterKeys(sock, /^(address|port|cookies)/));
 
       let r =
         client.writable &&
@@ -82,7 +82,7 @@ app.ws('/ws', async (ws, req) => {
           ws => ws.send(msg),
           true,
           err => {
-            //console.log('socket:', sock.info, ' error:', (err + '').replace(/\n.*/g, ''));
+            //Util.log('socket:', sock.info, ' error:', (err + '').replace(/\n.*/g, ''));
             return false;
           },
           sock.ws
@@ -93,7 +93,7 @@ app.ws('/ws', async (ws, req) => {
 });
 
 app.use((req, res, next) => {
-  if(!/lib\//.test(req.url)) console.log('Request:', req.url);
+  if(!/lib\//.test(req.url)) Util.log('Request:', req.url);
   next();
 });
 
@@ -146,7 +146,7 @@ const GetFilesList = async (dir = './tmp', opts = {}) => {
     .map(entry => `${dir}/${entry}`)
     .map(file => {
       let description = descriptions ? descMap(file) : descMap.get(file);
-      //   console.log('descMap:', util.inspect(descMap, { depth: 1 }));
+      //   Util.log('descMap:', util.inspect(descMap, { depth: 1 }));
 
       const { ctime, mtime, mode, size } = fs.statSync(file);
       let obj = {
@@ -165,7 +165,7 @@ app.get(/^\/files/, async (req, res) => res.json({ files: await GetFilesList() }
 app.post(/^\/(files|list).html/, async (req, res) => {
   const { body } = req;
   const { filter, descriptions } = body;
-  console.log('body:', body);
+  Util.log('body:', body);
   res.json({ files: await GetFilesList('tmp', { filter, descriptions }) });
 });
 
@@ -175,8 +175,8 @@ app.get('/index.html', (req, res) => {
 
 app.post('/save', async (req, res) => {
   const { body } = req;
-  //console.log('req.headers:', req.headers);
-  //console.log('save body:', body.substring(0, 100), '...');
+  //Util.log('req.headers:', req.headers);
+  //Util.log('save body:', body.substring(0, 100), '...');
   const filename = req.headers['content-disposition'].replace(/.*"([^"]*)".*/, '$1') || 'output.svg';
   let result = await fs.promises.writeFile(filename, body, { mode: 0o600, flag: 'w' });
   res.json({ result });
@@ -188,5 +188,5 @@ app.get('/', (req, res) => {
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
-  //console.log(`Ready at http://127.0.0.1:${port}`);
+  //Util.log(`Ready at http://127.0.0.1:${port}`);
 });

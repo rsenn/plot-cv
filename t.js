@@ -27,14 +27,14 @@ function testLocator() {
   let testobj = [0, 1, 2, { name: 'roman', children: ['x', 'y', { id: 1, items: ['a', 'b', 'c'] }] }];
   let l = new EagleLocator([3, 'children', 2, 'items', -2]);
   let a = [l.slice(), l.slice()];
-  //console.log('l:', dump(l));
-  //console.log('a[0] == a[1]:', a[0] === a[1]);
+  //Util.log('l:', dump(l));
+  //Util.log('a[0] == a[1]:', a[0] === a[1]);
   a[1][0] = 'x';
-  //console.log('a:', dump(a));
+  //Util.log('a:', dump(a));
   let b = [l.prevSibling, l.nextSibling, l.parent];
-  //console.log('b:', dump(b));
-  //console.log(b[2].parent.parent.up(3));
-  //console.log('apply:', l.apply(testobj));
+  //Util.log('b:', dump(b));
+  //Util.log(b[2].parent.parent.up(3));
+  //Util.log('apply:', l.apply(testobj));
 }
 async function testEagle(filename) {
   let proj = new EagleProject(filename);
@@ -50,17 +50,17 @@ async function testEagle(filename) {
     }
     return e.package;
   };
-  //console.log(schematic.children);
+  //Util.log(schematic.children);
   try {
     for(let e of proj.getAll(
       v => v.tagName == 'part' || v.tagName == 'element',
       ([v, l, h, d]) => new EagleElement(d, l, v)
     )) {
-      //console.log('proj:', dump(e, 1));
+      //Util.log('proj:', dump(e, 1));
     }
   } catch(error) {
     const { stack } = error;
-    //console.log('error:', error.toString(), stack);
+    //Util.log('error:', error.toString(), stack);
   }
   return;
 
@@ -69,12 +69,12 @@ async function testEagle(filename) {
 (async () => {
   try {
     await testLocator();
-    await testEagle('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3').then(result => console.log(result));
+    await testEagle('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3').then(result => Util.log(result));
   } catch(err) {
     const stack = err.stack;
 
-    //console.log('err:', err.toString());
-    //console.log('stack:', stack);
+    //Util.log('err:', err.toString());
+    //Util.log('stack:', stack);
     throw err;
   }
 })();

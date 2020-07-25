@@ -148,8 +148,8 @@ const MouseEvents = h => ({
   onMouseOut: h,
   onMouseUp: h
 });
-//console.log('running');
-//console.log("dom", { Rect, Element });
+//Util.log('running');
+//Util.log("dom", { Rect, Element });
 
 window.dom = { Element, SVG };
 
@@ -180,13 +180,13 @@ const ListProjects = (window.list = async function(url = '/files.html') {
 
 const ElementToXML = e => {
   const x = Element.toObject(e);
-  //console.log('x:', x);
+  //Util.log('x:', x);
   return Element.toString(x);
 };
 
 const LoadFile = async filename => {
   let xml = await fetch(`/static/${filename}`).then(async res => await (await res).text());
-  //console.log('xml: ', xml.substring(0, 100));
+  //Util.log('xml: ', xml.substring(0, 100));
   //let dom = new DOMParser().parseFromString(xml, 'application/xml');
 
   let doc = new EagleDocument(xml, null, filename);
@@ -194,7 +194,7 @@ const LoadFile = async filename => {
   if(/\.brd$/.test(filename)) window.board = doc;
   if(/\.sch$/.test(filename)) window.schematic = doc;
   if(/\.lbr$/.test(filename)) window.libraries = add(window.libraries, doc);
-  console.log('LoadFile', filename, doc);
+  Util.log('LoadFile', filename, doc);
 
   return doc;
 };
@@ -209,7 +209,7 @@ const SaveSVG = (window.save = async function save(filename = projectName) {
     },
     body
   });
-  //console.log('saved', result);
+  //Util.log('saved', result);
 });
 
 const ModifyColors = fn => e => {
@@ -217,7 +217,7 @@ const ModifyColors = fn => e => {
   if(type.endsWith('down')) {
     if(!window.c) window.c = SVG.allColors(project.svg);
     let { c } = window;
-    //console.log('ModifyColors', fn);
+    //Util.log('ModifyColors', fn);
 
     c.dump();
     fn(c);
@@ -225,10 +225,10 @@ const ModifyColors = fn => e => {
 };
 
 const LoadDocument = async (project, parentElem) => {
-  //console.log(`load project #${project.i}:`, project);
+  //Util.log(`load project #${project.i}:`, project);
   project.doc = await LoadFile(project.name).catch(console.error);
 
-  //console.log('project.doc', project.doc);
+  //Util.log('project.doc', project.doc);
 
   window.eagle = project.doc;
   window.project = project;
@@ -244,7 +244,7 @@ const LoadDocument = async (project, parentElem) => {
   docElem.appendChild(eagleNode);*/
   try {
     project.renderer = new Renderer(project.doc, ReactComponent.append, true);
-    console.log('project.renderer', project.renderer);
+    Util.log('project.renderer', project.renderer);
 
     //if(!project.renderer || !project.renderer.render) return;
 
@@ -255,15 +255,15 @@ const LoadDocument = async (project, parentElem) => {
     window.component = component;
     project.component = component;
 
-    console.log('testRender:', component);
+    Util.log('testRender:', component);
 
     let element = Element.find('#main');
-    //console.log('h', h);
+    //Util.log('h', h);
     //
     let r = project.renderer.rect || project.renderer.bounds;
-    //console.log('r', r);
+    //Util.log('r', r);
     let aspectRatio = r.width / r.height;
-    //console.log('aspectRatio', aspectRatio);
+    //Util.log('aspectRatio', aspectRatio);
 
     sizeListener({ width: r.width });
     aspectListener(aspectRatio);
@@ -275,7 +275,7 @@ const LoadDocument = async (project, parentElem) => {
       if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
       if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
 
-      //console.log('Fence.render', { dimensions, aspect });
+      //Util.log('Fence.render', { dimensions, aspect });
 
       return h(
         TransformedElement,
@@ -313,16 +313,16 @@ const LoadDocument = async (project, parentElem) => {
     let object = ReactComponent.toObject(component);
     project.object = object;
     let rendered = object.children[0];
-    console.log('rendered:', rendered);
+    Util.log('rendered:', rendered);
 
     for(let [item, path] of deep.iterate(object, v => Util.isObject(v) && v['data-path'])) {
       let p = path.reduce((a, i) => (i == 'children' ? [...a, 'props', 'children'] : [...a, +i]), []); //, {tagField: 'type', specialFields: ['props']});
-      //  console.log("component",p, component);
+      //  Util.log("component",p, component);
 
       let o = path.slice(0, 4 * 2 - 1).reduce((a, i) => a && a[i], object);
       let c = p.slice(0, 4 * 3 - 1).reduce((a, i) => a && a[i], component);
-      //console.log("component",c, p.slice(4*3-1));
-      //console.log("object",o, path.slice(4*2-1));
+      //Util.log("component",c, p.slice(4*3-1));
+      //Util.log("object",o, path.slice(4*2-1));
     }
 
     let renderMap = [...Element.findAll('*[data-path]')];
@@ -335,19 +335,19 @@ const LoadDocument = async (project, parentElem) => {
 
     renderMap = new WeakMap(renderMap);
 
-    console.log('renderMap:', renderMap);
+    Util.log('renderMap:', renderMap);
     project.renderMap = renderMap;
     project.reverseMap = reverseMap;
 
     project.rendered = rendered;
-    //console.log('window.rendered', window.rendered);
+    //Util.log('window.rendered', window.rendered);
     project.element = element;
     project.svg = Element.find('svg', '#main');
     project.grid = Element.find('g.grid', project.element);
     project.bbox = SVG.bbox(project.grid);
     project.aspectRatio = aspect;
-    //console.log('project.svg', project.svg);
-    //console.log('project', project);
+    //Util.log('project.svg', project.svg);
+    //Util.log('project', project);
 
     let { name, data, doc, svg, bbox } = project;
     let bounds = doc.getBounds();
@@ -370,13 +370,13 @@ const LoadDocument = async (project, parentElem) => {
     let css = size.div(0.26458333333719).toCSS({ width: 'px', height: 'px' });
 
     window.size = css;
-    //console.log('css:', css);
+    //Util.log('css:', css);
     /*  Object.assign(project.svg.style, {
     'min-width': `${size.width}mm`
   });
   Element.setCSS(project.svg, { left: 0, top: 0, position: 'relative' });
   Element.setCSS(project.svg, { left: 0, top: 0, position: 'relative' });
-  //console.log('LoadDocument:', project.svg);*/
+  //Util.log('LoadDocument:', project.svg);*/
   } catch(err) {
     console.error(
       'Render ERROR:',
@@ -393,7 +393,7 @@ const ChooseDocument = async (e, proj, i) => {
   try {
     const { type } = e;
     const box = Element.findAll('.file')[i];
-    console.log('ChooseDocument:', { e, proj, i, box });
+    Util.log('ChooseDocument:', { e, proj, i, box });
 
     if(!proj.loaded) {
       let data = await LoadDocument(proj, box);
@@ -401,12 +401,12 @@ const ChooseDocument = async (e, proj, i) => {
 
       open(false);
 
-      //console.log('loaded:', proj);
+      //Util.log('loaded:', proj);
     }
     r = proj.loaded;
   } catch(err) {
-    console.log('err:', err.message);
-    console.log('stack:', [...err.stack].map(f => f.replace(Util.getURL() + '/', '')).join('\n'));
+    Util.log('err:', err.message);
+    Util.log('stack:', [...err.stack].map(f => f.replace(Util.getURL() + '/', '')).join('\n'));
   }
 
   return r;
@@ -417,7 +417,7 @@ const MakeFitAction = index => async () => {
   let prect = Element.rect(parent);
   let svg = Element.find('svg', parent);
   let container = [...Element.findAll('.aspect-ratio-box-size', parent)].reverse()[0];
-  //console.log('container:', container);
+  //Util.log('container:', container);
   let oldSize = Element.rect(container);
   let brect = Element.rect('.buttons');
   let srect = Element.rect(svg);
@@ -425,21 +425,21 @@ const MakeFitAction = index => async () => {
   prect.height -= brect.height;
   let rects = [prect, oldSize, srect];
   prect.scale(0.8);
-  //console.log('resize rects', { oldSize, prect, srect });
+  //Util.log('resize rects', { oldSize, prect, srect });
   let f = srect.fit(prect);
   let newSize = f[index].round(0.0001);
   let affineTransform = Matrix.getAffineTransform(oldSize.toPoints(), newSize.toPoints());
   let transform = affineTransform.decompose();
-  //console.log(`fitAction(${index})`, { oldSize, newSize, transform });
+  //Util.log(`fitAction(${index})`, { oldSize, newSize, transform });
   let factor = transform.scale.x;
-  //console.log('zoom factor:', factor);
+  //Util.log('zoom factor:', factor);
   let delay = Math.abs(Math.log(factor) * 1000);
-  //console.log('transition delay:', delay);
+  //Util.log('transition delay:', delay);
   await Element.transition(container, { ...newSize.toCSS(), transform: '', position: 'absolute' }, delay + 'ms', 'linear');
 };
 
 const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
-  log = log || ((...args) => console.log(...args));
+  log = log || ((...args) => Util.log(...args));
   socketURL = socketURL || Util.makeURL({ location: '/ws', protocol: 'ws' });
   let ws = new WebSocketClient();
   log('New WebSocket:', ws);
@@ -471,7 +471,7 @@ const AppMain = (window.onload = async () => {
 
     window.focusSearch = state => {
       const input = currentSearch();
-      //console.log('focusSearch', input.tagName, state);
+      //Util.log('focusSearch', input.tagName, state);
       input[state ? 'focus' : 'blur']();
     };
 
@@ -489,7 +489,7 @@ const AppMain = (window.onload = async () => {
         focusSearch(false);
 
         setTimeout(() => {
-          //console.log('currentSearch:', value);
+          //Util.log('currentSearch:', value);
           focusSearch(true);
         }, 1000);
       }
@@ -509,10 +509,10 @@ const AppMain = (window.onload = async () => {
 
     let c = testComponent({});
     window.testComponent = c;
-    //console.log('testComponent', ReactComponent.toObject(c));
+    //Util.log('testComponent', ReactComponent.toObject(c));
 
-    /*console.realLog = console.log;
-  //console.log = function(...args) {
+    /*console.realLog = Util.log;
+  //Util.log = function(...args) {
     let out = [''];
     for(let arg of args) {
       if(typeof arg != 'string') {
@@ -538,7 +538,7 @@ const AppMain = (window.onload = async () => {
     ListProjects('/files.html').then(response => {
       let data = JSON.parse(response);
       let { files } = data;
-      //console.log(`Got ${files.length} files`);
+      //Util.log(`Got ${files.length} files`);
       function File(obj, i) {
         const { name } = obj;
         let file = this instanceof File ? this : Object.create(File.prototype);
@@ -561,7 +561,7 @@ const AppMain = (window.onload = async () => {
 
     const searchFilter = trkl(store.get('filter') || '.*');
 
-    //console.log('searchFilter is ', searchFilter());
+    //Util.log('searchFilter is ', searchFilter());
 
     searchFilter.subscribe(value => {
       store.set('filter', value);
@@ -569,7 +569,7 @@ const AppMain = (window.onload = async () => {
 
     const changeInput = e => {
       const { target } = e;
-      //console.log('changeInput:', target.value);
+      //Util.log('changeInput:', target.value);
 
       searchFilter(target.value);
     };
@@ -581,7 +581,7 @@ const AppMain = (window.onload = async () => {
             caption: '📂',
             fn: e => {
               if(e.type.endsWith('down')) {
-                //console.log('file list push', e);
+                //Util.log('file list push', e);
                 open(!open());
               }
             }
@@ -615,7 +615,7 @@ const AppMain = (window.onload = async () => {
           length: '10px',
           style: { flex: '0 1 auto' },
           onChange: value => {
-            //console.log('value:', value);
+            //Util.log('value:', value);
           }
         }),
         h(Slider, {
@@ -626,7 +626,7 @@ const AppMain = (window.onload = async () => {
           length: '10px',
           style: { flex: '0 1 auto' },
           onChange: value => {
-            //console.log('value:', value);
+            //Util.log('value:', value);
           }
         })
       ]),*/
@@ -644,7 +644,7 @@ const AppMain = (window.onload = async () => {
       event => {
         if(event.buttons == 2) return event.cancel();
 
-        if(event.index > 0 && event.buttons > 0) console.log('touch', event, container);
+        if(event.index > 0 && event.buttons > 0) Util.log('touch', event, container);
         if(!move) {
           let box = Element.find('#main').firstElementChild;
 
@@ -669,12 +669,12 @@ const AppMain = (window.onload = async () => {
     if(true || ctrlKey || shiftKey || altKey || metaKey) {
       const { key, code, keyCode } = event;
       const { target, currentTarget } = event;
-      //console.log('keydown: ', (window.keyEvent = event));
+      //Util.log('keydown: ', (window.keyEvent = event));
     }
   });*/
 
     window.addEventListener('wheel', event => {
-      //console.log('event:', event);
+      //Util.log('event:', event);
       const clientArea = Element.rect('body > div');
       const sideBar = Element.rect('.sidebar');
 
@@ -688,7 +688,7 @@ const AppMain = (window.onload = async () => {
 
       clientArea.x += container.parentElement.scrollLeft;
 
-      //console.log('wheel:', { sideBar, clientArea });
+      //Util.log('wheel:', { sideBar, clientArea });
 
       const clientCenter = clientArea.center;
       const { clientX, clientY, target, currentTarget, buttons, altKey, ctrlKey, shiftKey } = event;
@@ -732,7 +732,7 @@ const AppMain = (window.onload = async () => {
   }
   console.error('AppMain done');
 
-  //console.log(Util.getGlobalObject());
+  //Util.log(Util.getGlobalObject());
 
   /*  for(let path of [...Element.findAll('path')]) {
     let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
@@ -742,7 +742,7 @@ const AppMain = (window.onload = async () => {
 const Module = {
   noInitialRun: true,
   onRuntimeInitialized: () => {
-    //console.log('initialized');
+    //Util.log('initialized');
     let myString = prompt('Enter a string:');
     Module.callMain([myString]);
   },

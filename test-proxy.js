@@ -42,7 +42,7 @@ const proxyObject = (root, handler) => {
         get(target, key) {
           let prop = value[key];
 
-          //console.log('get ', { key, prop });
+          //Util.log('get ', { key, prop });
 
           if(key == 'attributes') return prop;
 
@@ -52,7 +52,7 @@ const proxyObject = (root, handler) => {
         },
         ownKeys(target) {
           if('attributes' in value) {
-            //console.log('ownKeys', Object.keys(value.attributes));
+            //Util.log('ownKeys', Object.keys(value.attributes));
 
             return Object.keys(value.attributes);
           }
@@ -64,7 +64,7 @@ const proxyObject = (root, handler) => {
 
   function node(path) {
     let value = ptr(path);
-    //console.log("node:",{path,value});
+    //Util.log("node:",{path,value});
 
     let proxy = nodes(value, path);
 
@@ -78,32 +78,32 @@ async function main() {
   let str = fs.readFileSync('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
 
   let xml = tXml(str);
-  //console.log('xml:', Util.abbreviate(xml));
+  //Util.log('xml:', Util.abbreviate(xml));
 
   let p = proxyObject(xml[0], {
     construct(value, path) {
-      //console.log('construct', { value, path });
+      //Util.log('construct', { value, path });
       return 'tagName' in value ? new Node(value, path) : new NodeList(value, path);
     }
   });
-  //console.log('obj', p);
-  //console.log('tagName', p.tagName);
-  //console.log('children[0]', p.children[0]);
-  //console.log('children[0].tagName', p.children[0].tagName);
-  //console.log('keys(children[0])', Object.keys(p.children[0]));
+  //Util.log('obj', p);
+  //Util.log('tagName', p.tagName);
+  //Util.log('children[0]', p.children[0]);
+  //Util.log('children[0].tagName', p.children[0].tagName);
+  //Util.log('keys(children[0])', Object.keys(p.children[0]));
 
   let result = deep.select(p, o => {
-    //console.log('o:', o);
+    //Util.log('o:', o);
     return Util.isObject(o) && o.attributes !== undefined && o.name !== undefined;
   });
-  //console.log('result:', result);
+  //Util.log('result:', result);
 
   for(let { path, value } of result) {
     const {
       tagName: type,
       attributes: { name }
     } = value;
-    //console.log('found:', { type, name });
+    //Util.log('found:', { type, name });
   }
 }
 

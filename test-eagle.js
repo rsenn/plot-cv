@@ -117,7 +117,7 @@ function updateMeasures(board) {
   let measures = board.getMeasures();
 
   if(measures) {
-    console.log('got measures:', measures);
+    Util.log('got measures:', measures);
   } else {
     let rect = new Rect(bounds.rect);
     let lines = rect.toLines(lines => new LineList(lines));
@@ -129,10 +129,10 @@ function updateMeasures(board) {
         attributes: { ...line.toObject(), layer: 47, width: 0 }
       }))
     );
-    //console.log('no measures:', { bounds, lines }, [...plain]);
+    //Util.log('no measures:', { bounds, lines }, [...plain]);
     //plain.remove(e => e.attributes.layer == '51');
   }
-  //console.log('board.plain:', board.plain);
+  //Util.log('board.plain:', board.plain);
   return !measures;
 }
 
@@ -146,7 +146,7 @@ function alignItem(item) {
 
   let before = item.parentNode.toXML();
 
-  console.log(
+  Util.log(
     'geometry:',
     Object.entries(Object.getOwnPropertyDescriptors(geometry)).map(([name, { value }]) => [name, value && Object.getOwnPropertyDescriptors(value)]),
     geometry.x1
@@ -159,10 +159,10 @@ function alignItem(item) {
   let changed = !diff.isNull();
 
   if(changed) {
-    console.log('before:', before);
-    console.log('after:', item.parentNode.toXML());
-    console.log('geometry:', geometry);
-    console.log('align\n', item.xpath(), '\n newPos:', newPos, '\n diff:', diff, '\n attr:', item.raw.attributes);
+    Util.log('before:', before);
+    Util.log('after:', item.parentNode.toXML());
+    Util.log('geometry:', geometry);
+    Util.log('align\n', item.xpath(), '\n newPos:', newPos, '\n diff:', diff, '\n attr:', item.raw.attributes);
   }
   return changed;
 }
@@ -174,7 +174,7 @@ function alignAll(doc) {
   let changed = false;
   for(let item of items) changed |= alignItem(item);
   let signals_nets = doc.getAll(/(signals|nets)/);
-  //console.log('signals_nets:', signals_nets);
+  //Util.log('signals_nets:', signals_nets);
   for(let net of signals_nets) for (let item of net.getAll('wire')) changed |= alignItem(item);
   return !!changed;
 }
@@ -185,16 +185,16 @@ async function testEagle(filename) {
   LogJS.addAppender(
     class extends LogJS.BaseAppender {
       log(type, time, msg) {
-        //console.log(msg);
+        //Util.log(msg);
       }
     }
   );*/
-  console.log('Project loaded: ' + !proj.failed);
+  Util.log('Project loaded: ' + !proj.failed);
 
   //if(proj.failed) return false;
 
-  //console.log('failed  :', failed);
-  //console.log('proj.documents', proj.documents);
+  //Util.log('failed  :', failed);
+  //Util.log('proj.documents', proj.documents);
 
   let { board, schematic } = proj;
 
@@ -226,14 +226,14 @@ async function testEagle(filename) {
   /*  for(let description of board.getAll('description')) {
   }*/
 
-  if(updateMeasures(proj.board) || alignAll(board) || alignAll(schematic)) console.log('Saved:', await proj.saveTo('tmp', true));
+  if(updateMeasures(proj.board) || alignAll(board) || alignAll(schematic)) Util.log('Saved:', await proj.saveTo('tmp', true));
 
-  console.log('documents', proj.documents);
+  Util.log('documents', proj.documents);
 
-  console.log('saved:', await proj.saveTo('tmp', true));
+  Util.log('saved:', await proj.saveTo('tmp', true));
 
   //for(let sheet of board.get('sheet'))
-  //console.log('sheet', sheet, sheet.xpath());
+  //Util.log('sheet', sheet, sheet.xpath());
   /*
   for(let instance of schematic.getAll(e => e.tagName == 'instance')) {
     const { part, gate } = instance;
@@ -248,7 +248,7 @@ async function testEagle(filename) {
 
   desc = desc.map(([file, e]) => [file, e && e.xpath().toCode('', { spacing: '', function: true })]);
   desc = new Map(desc);
-  console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
+  Util.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
 
   return proj;
 }
@@ -260,7 +260,7 @@ async function testEagle(filename) {
     try {
       let project = await testEagle(arg);
     } catch(err) {
-      console.log('Err:', err.message, typeof err.stack == 'string' ? err.stack : [...err.stack].map(f => f + ''));
+      Util.log('Err:', err.message, typeof err.stack == 'string' ? err.stack : [...err.stack].map(f => f + ''));
       process.exit(1);
     }
   }
