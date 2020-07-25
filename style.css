@@ -15,37 +15,37 @@ svg {
 }*/
 
 .no-select {
-   -webkit-user-select: none;
+  -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
 }
-.label,.description {
+.label,
+.description {
   font-size: 1em;
   letter-spacing: 0em;
-        white-space: pre;
-
+  white-space: pre;
 }
-pre.label,span.label {
+pre.label,
+span.label {
   font-weight: bold;
-/*text-decoration: underline;*/
+  /*text-decoration: underline;*/
 
   margin: 0 0 0.25em 0;
-
 }
- p.label,p.description {
-    margin: 0;
-
- }
- pre.description {
+p.label,
+p.description {
   margin: 0;
-/*    font-size: 0.8em;*/
-
- }
- .description {
+}
+pre.description {
+  margin: 0;
+  /*    font-size: 0.8em;*/
+}
+.description {
   font-style: italic;
- }
- pre, p.description {
+}
+pre,
+p.description {
   /*font-size: 0.8em;*/
 }
 
@@ -54,7 +54,7 @@ div.description {
   overflow: hidden;
 }
 p.description {
- /* width: 100vw;*/
+  /* width: 100vw;*/
 }
 .fill {
   width: 100%;
@@ -214,8 +214,9 @@ body,
   background: white;
 }
 
-svg, text {
-  font-family: MiscFixedSC613,Fixed;
+svg,
+text {
+  font-family: MiscFixedSC613, Fixed;
 }
 .file.inactive {
   border: 4px solid hsla(230, 100%, 0%, 0);
