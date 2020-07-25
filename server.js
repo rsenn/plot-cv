@@ -7,6 +7,7 @@ import tXml from './lib/tXml.js';
 import bodyParser from 'body-parser';
 import expressWs from 'express-ws';
 import { Alea } from './lib/alea.js';
+import { Message } from './message.js';
 
 import { Console } from 'console';
 
@@ -36,6 +37,7 @@ let sockets = [];
 const removeItem = (arr, item, key = 'ws') => {
   let i = arr.findIndex(e => e[key] === item);
   if(i != -1) arr.splice(i, 1);
+
   return arr;
 };
 
@@ -71,13 +73,10 @@ app.ws('/ws', async (ws, req) => {
   let i = sockets.length;
   sockets.push(s);
 
-  console.log('headers:', headers);
-  console.log('cookie:', cookie);
+  /* console.log('headers:', headers);
+  console.log('cookie:', cookie);*/
 
-  console.log(
-    's:',
-    Util.filterKeys(s, k => k != 'ws')
-  );
+  //console.log('s:', Util.filterKeys(s, k => k != 'ws'));
   let j = sockets.findIndex(e => e.ws === ws);
 
   //  console.log('socket', { i, j });
@@ -88,26 +87,39 @@ app.ws('/ws', async (ws, req) => {
   ws.on('close', () => {
     console.log(`socket close ${s.toString()} (${s.id})`);
     removeItem(sockets, ws, 'ws');
+    console.log('sockets: ', sockets.length);
   });
 
-  ws.on('message', msg => {
-    console.log(`message from ${s.toString()} (${s.id}): '${msg}'`);
-    const data = `|${s.id}|${msg}`;
-    console.log('data:', data);
+  ws.on('message', data => {
+    let msg = new Message(data, s.id);
+
+    console.log(`message from ${s.toString()}${msg.recipient ? ' to ' + msg.recipient : ''} (${s.id}): '${msg.body}'`);
+
+    //console.log("sockets: ", sockets.length);
+
+    if(msg.recipient) {
+      let recipientId = sockets.findIndex(s => s.id == msg.recipient);
+      if(recipientId == -1) {
+        console.error(`No such recipient: '${msg.recipient}'`);
+        return;
+      }
+    }
+
     let i = -1;
     for(let sock of sockets) {
       if(sock.ws === ws) continue;
 
-      //   console.log('sock:', Util.filterKeys(sock, /^(address|port|cookies)/));
+      if(msg.recipient && sock.id != msg.recipient) continue;
+
       console.log(`Sending[${++i}/${sockets.length}] to ${sock.id}`);
 
       let r = Util.tryCatch(
         () => client.writable,
-        () => sock.ws.send(data),
+        () => sock.ws.send(msg.data),
         err => (console.log('socket:', sock.info, ' error:', (err + '').replace(/\n.*/g, '')), false),
         null
       );
-      if(!r) removeItem(sockets, sock.ws, 'ws');
+      //  if(!r) removeItem(sockets, sock.ws, 'ws');
     }
   });
 });

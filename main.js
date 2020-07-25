@@ -28,7 +28,7 @@ import { RGBA, isRGBA, HSLA, isHSLA, ColoredText } from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
 import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
 import components, { Chooser, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider } from './components.js';
-import { WebSocketClient } from './lib/websocket-client.js';
+import { WebSocketClient } from './lib/net/websocket-async.js';
 import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
 import {
   AlignmentAngle,
@@ -428,7 +428,7 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
   await ws.connect(socketURL);
   console.log('WebSocket Connected:', ws.connected);
   socketFn(ws);
-  ws.send('hello!');
+  ws.send('main.js data!');
   let data;
   for await (data of ws) {
     console.log('WebSocket data:', data);
