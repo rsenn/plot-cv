@@ -214,6 +214,9 @@ body,
   background: white;
 }
 
+svg, text {
+  font-family: MiscFixedSC613,Fixed;
+}
 .file.inactive {
   border: 4px solid hsla(230, 100%, 0%, 0);
   margin: 4px;

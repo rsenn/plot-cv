@@ -1,0 +1,18 @@
+@font-face {
+  font-family: 'MiscFixedSC613';
+  src: url('MiscFixedSC613.svg#MiscFixedSC613') format('svg'),
+       url('MiscFixedSC613.ttf') format('truetype'),
+       url('MiscFixedSC613.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'miscfs__';
+  src: url('miscfs__.eot');
+  src: url('miscfs__.eot?#iefix') format('embedded-opentype'),
+       url('miscfs__.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+

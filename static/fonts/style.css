@@ -1,0 +1,13 @@
+/* font converted using font-converter.net. thank you! */
+@font-face {
+  font-family: "MiscFixedSC613";
+  src: url("./fonts/miscfs.eot"); /* IE9 Compat Modes */
+  src: url("./fonts/miscfs.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+    url("./fonts/miscfs.otf") format("opentype"), /* Open Type Font */
+    url("./fonts/miscfs.svg") format("svg"), /* Legacy iOS */
+    url("./fonts/miscfs.ttf") format("truetype"), /* Safari, Android, iOS */
+    url("./fonts/miscfs.woff") format("woff"), /* Modern Browsers */
+    url("./fonts/miscfs.woff2") format("woff2"); /* Modern Browsers */
+  font-weight: normal;
+  font-style: normal;
+}
