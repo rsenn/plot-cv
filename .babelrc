@@ -1,6 +1,12 @@
 {
-  "presets": ['preact'],
+  "presets": ["preact"],
   "plugins": [
+    [
+      "@babel/plugin-transform-modules-commonjs",
+      {
+        "allowTopLevelThis": false
+      }
+    ],
     [
       "@babel/plugin-transform-react-jsx",
       {
@@ -25,14 +31,6 @@
       {
         "loose": true
       }
-    ] /*,
-    [
-      "styled-components",
-      {
-        "ssr": true,
-        "displayName": true,
-        "preprocess": false
-      }
-    ]*/
+    ]
   ]
 }
