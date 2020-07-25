@@ -23,7 +23,7 @@ import { makeLocalStorage } from './lib/autoStore.js';
 
 import { toXML, ImmutablePath } from './lib/json.js';
 import { XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';
-import { RGBA, isRGBA, HSLA, isHSLA } from './lib/color.js';
+import { RGBA, isRGBA, HSLA, isHSLA, ColoredText } from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
 import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
 import components, { Chooser, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider } from './components.js';
@@ -81,6 +81,8 @@ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps
   ...dom,
   ...geom
 };
+Util.colorCtor = ColoredText;
+
 Util.extend(
   window,
   { React, ReactComponent, WebSocketClient, html },
@@ -105,7 +107,8 @@ Util.extend(
     ClipperLib,
     Shape,
     RGBA,
-    isHSLA
+    isHSLA,
+    ColoredText
   },
   { Chooser, useState, useLayoutEffect, useRef, Polygon }
 );
