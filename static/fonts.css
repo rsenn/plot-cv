@@ -1,4 +1,12 @@
 @font-face {
+  font-family: 'Engineering Plot';
+  src: url('fonts/EngineeringPlotLight.woff2') format('woff2'), url('fonts/EngineeringPlotLight.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'MiscFixedSC613';
   src: url('fonts/MiscFixedSC613.eot');
   src: local('MiscFixedSC613'), url('fonts/MiscFixedSC613.eot?#iefix') format('embedded-opentype'), url('fonts/MiscFixedSC613.woff2') format('woff2'), url('fonts/MiscFixedSC613.woff') format('woff'), url('fonts/MiscFixedSC613.ttf') format('truetype'), url('fonts/MiscFixedSC613.svg#MiscFixedSC613') format('svg');
@@ -6,7 +14,6 @@
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: 'CenturyGothic';
   src: url('fonts/Gothic.eot');

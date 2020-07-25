@@ -1,0 +1,7 @@
+@font-face {
+  font-family: 'Engineering Plot';
+  src: url('fonts/EngineeringPlotLight.woff2') format('woff2'), url('fonts/EngineeringPlotLight.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
