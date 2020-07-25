@@ -28,6 +28,7 @@ import { RGBA, isRGBA, HSLA, isHSLA, ColoredText } from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
 import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
 import components, { Chooser, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider } from './components.js';
+import { Message } from './message.js';
 import { WebSocketClient } from './lib/net/websocket-async.js';
 import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
 import {
@@ -110,7 +111,8 @@ Util.extend(
     RGBA,
     isHSLA,
     ColoredText,
-    Alea
+    Alea,
+    Message
   },
   { Chooser, useState, useLayoutEffect, useRef, Polygon }
 );
@@ -423,15 +425,26 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
   // log = log || ((...args) => console.log(...args));
   socketURL = socketURL || Util.makeURL({ location: '/ws', protocol: 'ws' });
   let ws = new WebSocketClient();
+
+  let send = ws.send;
+  ws.send = (...args) => {
+    let [msg] = args;
+    if(!(msg instanceof Message)) msg = new Message(...args);
+    return send.call(ws, msg.data);
+  };
+
   window.socket = ws;
-  console.log('New WebSocket:', ws);
+
+  Util.log('New WebSocket:', ws);
   await ws.connect(socketURL);
-  console.log('WebSocket Connected:', ws.connected);
+  Util.log('WebSocket Connected:', ws.connected);
   socketFn(ws);
   ws.send('main.js data!');
   let data;
   for await (data of ws) {
-    console.log('WebSocket data:', data);
+    let msg = new Message(data);
+    window.msg = msg;
+    console.log('WebSocket data:', msg[Symbol.toStringTag]());
     ws.dataAvailable !== 0;
   }
   await ws.disconnect();

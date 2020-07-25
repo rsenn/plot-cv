@@ -59,67 +59,76 @@ app.ws('/ws', async (ws, req) => {
   let { address, port } = _peername;
   const { cookie } = headers;
 
-  console.log('WebSocket connected:', path);
+  console.log('WebSocket connected:', path, headers);
+
   if(address == '::1') address = 'localhost';
 
   address = address.replace(/^::ffff:/, '');
-  let s = new Socket(ws, {
-    address,
-    port,
-    /*remoteAddress, remotePort,*/ localAddress,
-    localPort,
-    cookie
-  });
+  let s = new Socket(ws, { address, port, remoteAddress, remotePort, localAddress, localPort, cookie });
   let i = sockets.length;
+
+  const sendTo = (sock, msg, ...args) => {
+    if(args.length > 0) msg = new Message(msg, ...args);
+    if(msg instanceof Message) msg = msg.data;
+
+    Util.tryCatch(
+      ws => client.writable,
+      (ok, ws, data) => ws.send(data),
+      (err, ws, data) => (console.log('socket:', sock.info, ' error:', (err + '').replace(/\n.*/g, '')), false),
+      sock.ws,
+      msg
+    );
+  };
+
+  sendTo(s, JSON.stringify(sockets.map(s => s.id)), null, null, 'USERS');
+
   sockets.push(s);
 
-  /* console.log('headers:', headers);
-  console.log('cookie:', cookie);*/
+  const sendMany = (except, msg, ...args) => {
+    if(args.length > 0) msg = new Message(msg, ...args);
+    if(msg instanceof Message) msg = msg.data;
 
-  //console.log('s:', Util.filterKeys(s, k => k != 'ws'));
-  let j = sockets.findIndex(e => e.ws === ws);
+    for(let sock of sockets) {
+      if(sock == except || sock.id == except || sock.ws == except) continue;
+      sendTo(sock, msg);
+    }
+  };
 
-  //  console.log('socket', { i, j });
-  console.log(
-    'sockets:',
-    sockets.map(s => Util.filterKeys(s, /^(address|port|id)/))
-  );
+  sendMany(s, '', s.id, null, 'JOIN');
+
+  //console.log('sockets:', sockets.map(s => Util.filterKeys(s, /^(address|port|id)/)));
+
   ws.on('close', () => {
     console.log(`socket close ${s.toString()} (${s.id})`);
     removeItem(sockets, ws, 'ws');
-    console.log('sockets: ', sockets.length);
+    sendMany(s, '', s.id, null, 'QUIT');
   });
 
   ws.on('message', data => {
+    s.lastMessage = Date.now();
     let msg = new Message(data, s.id);
-
+    if(msg.type == 'INFO') {
+      const id = sockets.findIndex(s => s.id == msg.body);
+      if(id != -1) {
+        const sock = sockets[id];
+        sendTo(s, JSON.stringify(Util.filterOutKeys(sock, ['ws', 'id'])), sock.id, s.id, 'INFO');
+      }
+      return;
+    }
     console.log(`message from ${s.toString()}${msg.recipient ? ' to ' + msg.recipient : ''} (${s.id}): '${msg.body}'`);
-
-    //console.log("sockets: ", sockets.length);
-
     if(msg.recipient) {
-      let recipientId = sockets.findIndex(s => s.id == msg.recipient);
-      if(recipientId == -1) {
+      let rId = sockets.findIndex(s => s.id == msg.recipient);
+      if(rId == -1) {
         console.error(`No such recipient: '${msg.recipient}'`);
         return;
       }
     }
-
     let i = -1;
     for(let sock of sockets) {
       if(sock.ws === ws) continue;
-
       if(msg.recipient && sock.id != msg.recipient) continue;
-
       console.log(`Sending[${++i}/${sockets.length}] to ${sock.id}`);
-
-      let r = Util.tryCatch(
-        () => client.writable,
-        () => sock.ws.send(msg.data),
-        err => (console.log('socket:', sock.info, ' error:', (err + '').replace(/\n.*/g, '')), false),
-        null
-      );
-      //  if(!r) removeItem(sockets, sock.ws, 'ws');
+      sendTo(sock, msg.data);
     }
   });
 });
