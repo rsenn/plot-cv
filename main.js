@@ -1,4 +1,4 @@
-//prettier-ignore-start
+//prettier-ignore-ignore-start
 import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
@@ -24,98 +24,18 @@ import { makeLocalStorage } from './lib/autoStore.js';
 
 import { toXML, ImmutablePath } from './lib/json.js';
 import { XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';
-import { RGBA, isRGBA, HSLA, isHSLA, ColoredText } from './lib/color.js';
+import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
 import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
-import components, { Chooser, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider } from './components.js';
+import components, { Chooser, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, BrowseIcon } from './components.js';
 import { Message } from './message.js';
 import { WebSocketClient } from './lib/net/websocket-async.js';
 import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
-import {
-  AlignmentAngle,
-  Arc,
-  BoardRenderer,
-  CalculateArcRadius,
-  ClampAngle,
-  DereferenceError,
-  EagleDocument,
-  EagleElement,
-  EagleNode,
-  EagleNodeList,
-  EagleNodeMap,
-  EagleProject,
-  EagleRef,
-  EagleReference,
-  EagleSVGRenderer,
-  HORIZONTAL,
-  HORIZONTAL_VERTICAL,
-  InvertY,
-  LayerAttributes,
-  LinesToPath,
-  MakeCoordTransformer,
-  PolarToCartesian,
-  Renderer,
-  RotateTransformation,
-  SchematicRenderer,
-  VERTICAL,
-  makeEagleElement,
-  makeEagleNode
-} from './lib/eagle.js';
-
-const React = {
-  Component,
-  createContext,
-  create: h,
-  html,
-  render,
-  useCallback,
-  useContext,
-  useDebugValue,
-  useEffect,
-  useImperativeHandle,
-  useLayoutEffect,
-  useMemo,
-  useReducer,
-  useRef,
-  useState
-};
-const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG, Timer, Transition, TransitionList, TRBL, Tree } = {
-  ...dom,
-  ...geom
-};
+/* prettier-ignore */ import { AlignmentAngle, Arc, BoardRenderer, CalculateArcRadius, ClampAngle, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, Renderer, RotateTransformation, SchematicRenderer, VERTICAL, makeEagleElement, makeEagleNode } from './lib/eagle.js';
+/* prettier-ignore */ const React = {Component, createContext, create: h, html, render, useCallback, useContext, useDebugValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useReducer, useRef, useState };
+/* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG, Timer, Transition, TransitionList, TRBL, Tree } = {...dom, ...geom };
 Util.colorCtor = ColoredText;
-
-Util.extend(
-  window,
-  { React, ReactComponent, WebSocketClient, html },
-  { dom, keysim },
-  geom,
-  { Iterator, Functional },
-  { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement },
-  { toXML, XmlObject, XmlAttr },
-  {
-    CTORS,
-    ECMAScriptParser,
-    ESNode,
-    estree,
-    Factory,
-    Lexer,
-    Parser,
-    PathReplacer,
-    Printer,
-    Stack,
-    Token,
-    ReactComponent,
-    ClipperLib,
-    Shape,
-    RGBA,
-    isHSLA,
-    ColoredText,
-    Alea,
-    Message
-  },
-  { Chooser, useState, useLayoutEffect, useRef, Polygon }
-);
+/* prettier-ignore */ Util.extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, {CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, ColoredText, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon } );
 
 Error.stackTraceLimit = 100;
 
@@ -137,6 +57,7 @@ let activeFile;
 let transform = trkl(new TransformationList());
 let sizeListener = trkl({});
 let aspectListener = trkl(1);
+let debug = false;
 
 let store = (window.store = makeLocalStorage());
 
@@ -155,8 +76,8 @@ const MouseEvents = h => ({
   onMouseOut: h,
   onMouseUp: h
 });
-//Util.log('running');
-//Util.log("dom", { Rect, Element });
+//console.log('running');
+//console.log("dom", { Rect, Element });
 
 window.dom = { Element, SVG };
 
@@ -173,10 +94,7 @@ const ListProjects = (window.list = async function(url = '/files.html') {
     mode: 'cors', // no-cors, *cors, same-origin
     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
     credentials: 'same-origin', // include, *same-origin, omit
-
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ descriptions: true })
   });
   const reader = await (await response.body).getReader();
@@ -187,13 +105,13 @@ const ListProjects = (window.list = async function(url = '/files.html') {
 
 const ElementToXML = e => {
   const x = Element.toObject(e);
-  //Util.log('x:', x);
+  //console.log('x:', x);
   return Element.toString(x);
 };
 
 const LoadFile = async filename => {
   let xml = await fetch(`/static/${filename}`).then(async res => await (await res).text());
-  //Util.log('xml: ', xml.substring(0, 100));
+  //console.log('xml: ', xml.substring(0, 100));
   //let dom = new DOMParser().parseFromString(xml, 'application/xml');
 
   let doc = new EagleDocument(xml, null, filename);
@@ -201,7 +119,7 @@ const LoadFile = async filename => {
   if(/\.brd$/.test(filename)) window.board = doc;
   if(/\.sch$/.test(filename)) window.schematic = doc;
   if(/\.lbr$/.test(filename)) window.libraries = add(window.libraries, doc);
-  Util.log('LoadFile', filename, doc);
+  Util.log('LoadFile', doc.file);
 
   return doc;
 };
@@ -216,7 +134,7 @@ const SaveSVG = (window.save = async function save(filename = projectName) {
     },
     body
   });
-  //Util.log('saved', result);
+  //console.log('saved', result);
 });
 
 const ModifyColors = fn => e => {
@@ -224,7 +142,7 @@ const ModifyColors = fn => e => {
   if(type.endsWith('down')) {
     if(!window.c) window.c = SVG.allColors(project.svg);
     let { c } = window;
-    //Util.log('ModifyColors', fn);
+    //console.log('ModifyColors', fn);
 
     c.dump();
     fn(c);
@@ -232,7 +150,9 @@ const ModifyColors = fn => e => {
 };
 
 const LoadDocument = async (project, parentElem) => {
-  project.doc = await LoadFile(project.name).catch(console.error);
+  Util.log('project.name:', project.name);
+
+  project.doc = await LoadFile(project.name);
 
   window.eagle = project.doc;
   window.project = project;
@@ -242,154 +162,181 @@ const LoadDocument = async (project, parentElem) => {
   let docElem = Element.find('#doc');
   docElem.innerHTML = '';
 
-  try {
-    project.renderer = new Renderer(project.doc, ReactComponent.append, true);
-    Util.log('project.renderer', project.renderer);
+  Util.log('project.doc:', project.doc.file);
 
-    let style = { width: '100%', height: '100%', position: 'relative' };
-    let component = project.renderer.render(project.doc, null, {});
+  project.renderer = new Renderer(project.doc, ReactComponent.append, debug);
+  Util.log('project.renderer', project.renderer);
 
-    window.component = component;
-    project.component = component;
+  let style = { width: '100%', height: '100%', position: 'relative' };
+  let component = project.renderer.render(project.doc, null, {});
 
-    Util.log('testRender:', component);
+  window.component = project.component = component;
 
-    let element = Element.find('#main');
-    let r = project.renderer.rect || project.renderer.bounds;
-    let aspectRatio = r.width / r.height;
+  Util.log('testRender:', component);
 
+  let element = Element.find('#main');
+  let r = project.renderer.rect || project.renderer.bounds;
+
+  Util.log('project.renderer:', project.renderer);
+  Util.log('r:', r);
+
+  let aspectRatio = 1;
+
+  if(r) {
+    aspectRatio = r.width / r.height;
     sizeListener({ width: r.width });
-    aspectListener(aspectRatio);
+  }
 
-    const Fence = ({ children, style = {}, sizeListener, aspectListener, ...props }) => {
-      const [dimensions, setDimensions] = useState(sizeListener());
-      const [aspect, setAspect] = useState(aspectListener());
+  aspectListener(aspectRatio);
 
-      if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
-      if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
+  const Fence = ({ children, style = {}, sizeListener, aspectListener, ...props }) => {
+    const [dimensions, setDimensions] = useState(sizeListener());
+    const [aspect, setAspect] = useState(aspectListener());
 
-      return h(
-        TransformedElement,
-        {
-          id: 'fence',
-          type: SizedAspectRatioBox,
-          aspect,
-          listener: transform,
-          style: {
-            position: 'relative',
-            minWidth: '100px',
-            'data-name': project.name,
-            ...style,
-            ...dimensions
-          },
-          ...props
-        },
-        children
-      );
-    };
+    if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
+    if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
 
-    component = h(
-      Fence,
+    return h(
+      TransformedElement,
       {
-        style: {},
-        sizeListener,
-        aspectListener
+        id: 'fence',
+        type: SizedAspectRatioBox,
+        aspect,
+        listener: transform,
+        style: {
+          position: 'relative',
+          minWidth: '100px',
+          'data-name': project.name,
+          ...style,
+          ...dimensions
+        },
+        ...props
       },
-      [component]
+      children
     );
+  };
 
-    React.render(component, element);
-    let object = ReactComponent.toObject(component);
-    project.object = object;
-    let rendered = object.children[0];
-    Util.log('rendered:', rendered);
+  component = h(
+    Fence,
+    {
+      style: {},
+      sizeListener,
+      aspectListener
+    },
+    [component]
+  );
 
-    for(let [item, path] of deep.iterate(object, v => Util.isObject(v) && v['data-path'])) {
-      let p = path.reduce((a, i) => (i == 'children' ? [...a, 'props', 'children'] : [...a, +i]), []); //, {tagField: 'type', specialFields: ['props']});
+  React.render(component, element);
 
-      let o = path.slice(0, 4 * 2 - 1).reduce((a, i) => a && a[i], object);
-      let c = p.slice(0, 4 * 3 - 1).reduce((a, i) => a && a[i], component);
-    }
+  let object = ReactComponent.toObject(component);
+  project.object = object;
+  let rendered = object.children[0];
+  Util.log('rendered:', rendered);
+  /*
+  for(let [item, path] of deep.iterate(object, v => Util.isObject(v) && v['data-path'])) {
+    let p = path.reduce((a, i) => (i == 'children' ? [...a, 'props', 'children'] : [...a, +i]), []); //, {tagField: 'type', specialFields: ['props']});
+    let o = path.slice(0, 4 * 2 - 1).reduce((a, i) => a && a[i], object);
+    let c = p.slice(0, 4 * 3 - 1).reduce((a, i) => a && a[i], component);
+  }
+*/
+  let eagle2dom = [...Element.findAll('*[data-path]')];
 
-    let renderMap = [...Element.findAll('*[data-path]')];
+  eagle2dom = eagle2dom.map(e => [e.getAttribute('data-path'), e]);
+  eagle2dom = eagle2dom.map(([p, e]) => [new ImmutablePath(p), e]);
+  eagle2dom = eagle2dom.map(([p, e]) => [p, p.apply(project.doc.raw), e]);
+  eagle2dom = eagle2dom.map(([p, r, e]) => [EagleElement.get(project.doc, p, r), e]);
 
-    renderMap = renderMap.map(e => [e.getAttribute('data-path'), e]);
-    renderMap = renderMap.map(([p, e]) => [new ImmutablePath(p), e]);
-    renderMap = renderMap.map(([p, e]) => [p, p.apply(project.doc.raw), e]);
-    renderMap = renderMap.map(([p, r, e]) => [EagleElement.get(project.doc, p, r), e]);
-    let reverseMap = new WeakMap(renderMap.map(([k, v]) => [v, k]));
+  console.log('eagle2dom:', eagle2dom);
 
-    renderMap = new WeakMap(renderMap);
+  let dom2eagle = Util.mapFunction(new WeakMap(eagle2dom.map(([k, v]) => [v, k])));
 
-    Util.log('renderMap:', renderMap);
-    project.renderMap = renderMap;
-    project.reverseMap = reverseMap;
+  eagle2dom = Util.mapFunction(new WeakMap(eagle2dom));
 
-    project.rendered = rendered;
-    project.element = element;
-    project.svg = Element.find('svg', '#main');
-    project.grid = Element.find('g.grid', project.element);
-    project.bbox = SVG.bbox(project.grid);
-    project.aspectRatio = aspect;
+  const [path2component, component2path] = project.renderer.maps.map(Util.mapFunction);
+  const { path2obj, obj2path, path2eagle, eagle2path, eagle2obj, obj2eagle } = project.doc.maps;
 
-    let { name, data, doc, svg, bbox } = project;
-    let bounds = doc.getBounds();
-    let rect = bounds.rect;
-    let size = new Size(r);
-    currentProj(project);
-    size.mul(doc.type == 'brd' ? 2 : 1.5);
-    let svgrect = SVG.bbox(project.svg);
+  const [component2eagle, eagle2component] = [Util.mapAdapter((key, value) => (value === undefined ? path2eagle(component2path(key)) : undefined)), Util.mapAdapter((key, value) => (value === undefined ? path2component(eagle2path(key)) : undefined))];
 
-    //project.aspectRatio = svgrect.aspect();
+  const [component2dom, dom2component] = [Util.mapAdapter((key, value) => (value === undefined ? eagle2dom(component2eagle(key)) : undefined)), Util.mapAdapter((key, value) => (value === undefined ? eagle2component(dom2eagle(key)) : undefined))];
 
-    Element.attr(project.svg, {
-      'data-filename': project.name,
-      'data-aspect': project.aspectRatio,
-      'data-width': size.width + 'mm',
-      'data-height': size.height + 'mm'
-    });
+  //path2eagle: path2obj, eagle2path: obj2path
 
-    //project.svg.setAttribute('data-aspect', project.aspectRatio);
-    let css = size.div(0.26458333333719).toCSS({ width: 'px', height: 'px' });
+  project.maps = {
+    ...project.doc.maps,
+    path2component,
+    component2path,
+    dom2eagle,
+    eagle2dom,
+    component2eagle,
+    eagle2component,
+    component2dom,
+    dom2component
+  };
 
-    window.size = css;
-    //Util.log('css:', css);
-    /*  Object.assign(project.svg.style, {
+  project.rendered = rendered;
+  project.element = element;
+  project.svg = Element.find('svg', '#main');
+  project.grid = Element.find('g.grid', project.element);
+  project.bbox = SVG.bbox(project.grid);
+  project.aspectRatio = aspect;
+
+  let { name, data, doc, svg, bbox } = project;
+  let bounds = doc.getBounds();
+  let rect = bounds.rect;
+  let size = new Size(r);
+  currentProj(project);
+  size.mul(doc.type == 'brd' ? 2 : 1.5);
+  let svgrect = SVG.bbox(project.svg);
+
+  //project.aspectRatio = svgrect.aspect();
+
+  Element.attr(project.svg, {
+    'data-filename': project.name,
+    'data-aspect': project.aspectRatio,
+    'data-width': size.width + 'mm',
+    'data-height': size.height + 'mm'
+  });
+
+  //project.svg.setAttribute('data-aspect', project.aspectRatio);
+  let css = size.div(0.26458333333719).toCSS({ width: 'px', height: 'px' });
+
+  window.size = css;
+  //console.log('css:', css);
+  /*  Object.assign(project.svg.style, {
     'min-width': `${size.width}mm`
   });
   Element.setCSS(project.svg, { left: 0, top: 0, position: 'relative' });
   Element.setCSS(project.svg, { left: 0, top: 0, position: 'relative' });
-  //Util.log('LoadDocument:', project.svg);*/
-  } catch(err) {
+  //console.log('LoadDocument:', project.svg);*/
+  /*  } catch(err) {
     console.error(
       'Render ERROR:',
       err,
       [...err.stack].map(f => (f + '').replace(Util.getURL() + '/', ''))
     );
-  }
+  }*/
 
   return project;
 };
 
 const ChooseDocument = async (e, proj, i) => {
   let r;
-  try {
-    const { type } = e;
-    const box = Element.findAll('.file')[i];
-    Util.log('ChooseDocument:', { e, proj, i, box });
+  const { type } = e;
+  const box = Element.findAll('.file')[i];
+  Util.log('ChooseDocument:', { e, proj, i, box });
 
+  try {
     if(!proj.loaded) {
       let data = await LoadDocument(proj, box);
       proj.loaded = true;
 
       open(false);
 
-      //Util.log('loaded:', proj);
+      //console.log('loaded:', proj);
     }
     r = proj.loaded;
   } catch(err) {
-    Util.log('err:', err.message);
-    Util.log('stack:', [...err.stack].map(f => f.replace(Util.getURL() + '/', '')).join('\n'));
+    Util.putError(err);
   }
 
   return r;
@@ -400,7 +347,7 @@ const MakeFitAction = index => async () => {
   let prect = Element.rect(parent);
   let svg = Element.find('svg', parent);
   let container = [...Element.findAll('.aspect-ratio-box-size', parent)].reverse()[0];
-  //Util.log('container:', container);
+  //console.log('container:', container);
   let oldSize = Element.rect(container);
   let brect = Element.rect('.buttons');
   let srect = Element.rect(svg);
@@ -408,16 +355,16 @@ const MakeFitAction = index => async () => {
   prect.height -= brect.height;
   let rects = [prect, oldSize, srect];
   prect.scale(0.8);
-  //Util.log('resize rects', { oldSize, prect, srect });
+  //console.log('resize rects', { oldSize, prect, srect });
   let f = srect.fit(prect);
   let newSize = f[index].round(0.0001);
   let affineTransform = Matrix.getAffineTransform(oldSize.toPoints(), newSize.toPoints());
   let transform = affineTransform.decompose();
-  //Util.log(`fitAction(${index})`, { oldSize, newSize, transform });
+  //console.log(`fitAction(${index})`, { oldSize, newSize, transform });
   let factor = transform.scale.x;
-  //Util.log('zoom factor:', factor);
+  //console.log('zoom factor:', factor);
   let delay = Math.abs(Math.log(factor) * 1000);
-  //Util.log('transition delay:', delay);
+  //console.log('transition delay:', delay);
   await Element.transition(container, { ...newSize.toCSS(), transform: '', position: 'absolute' }, delay + 'ms', 'linear');
 };
 
@@ -444,7 +391,7 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
   for await (data of ws) {
     let msg = new Message(data);
     window.msg = msg;
-    console.log('WebSocket data:', msg[Symbol.toStringTag]());
+    Util.log('WebSocket data:', msg[Symbol.toStringTag]());
     ws.dataAvailable !== 0;
   }
   await ws.disconnect();
@@ -456,150 +403,127 @@ let socket = trkl();
 const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 
 const AppMain = (window.onload = async () => {
-  try {
-    Object.assign(window, { Element, devtools, dom });
+  Object.assign(window, { Element, devtools, dom });
 
-    //window.focusSearch = trkl();
-    window.currentSearch = trkl(null);
+  Error.stackTraceLimit = 100;
 
-    window.keystroke = target => (key, modifiers = 0) => keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key), target);
+  //window.focusSearch = trkl();
+  window.currentSearch = trkl(null);
 
-    window.focusSearch = state => {
-      const input = currentSearch();
-      //Util.log('focusSearch', input.tagName, state);
-      input[state ? 'focus' : 'blur']();
-    };
+  window.keystroke = target => (key, modifiers = 0) => keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key), target);
 
-    BindGlobal({
-      projects,
-      socket,
-      transform,
-      size: sizeListener,
-      aspect: aspectListener,
-      showSearch
-    });
+  window.focusSearch = state => {
+    const input = currentSearch();
+    //console.log('focusSearch', input.tagName, state);
+    input[state ? 'focus' : 'blur']();
+  };
 
-    currentSearch.subscribe(value => {
-      if(value) {
-        focusSearch(false);
+  BindGlobal({
+    projects,
+    socket,
+    transform,
+    size: sizeListener,
+    aspect: aspectListener,
+    showSearch
+  });
 
-        setTimeout(() => {
-          //Util.log('currentSearch:', value);
-          focusSearch(true);
-        }, 1000);
-      }
-    });
+  currentSearch.subscribe(value => {
+    if(value) {
+      focusSearch(false);
 
-    Util(globalThis);
-
-    //prettier-ignore
-    Object.assign(window, { BBox, ChooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, LoadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
-
-    const inspectSym = Symbol.for('nodejs.util.inspect.custom');
-
-    const testComponent = props =>
-      html`
-        <div>This is a test</div>
-      `;
-
-    let c = testComponent({});
-    window.testComponent = c;
-    //Util.log('testComponent', ReactComponent.toObject(c));
-
-    /*console.realLog = Util.log;
-  //Util.log = function(...args) {
-    let out = [''];
-    for(let arg of args) {
-      if(typeof arg != 'string') {
-        if(arg[inspectSym]) {
-          out = concat(out, arg[inspectSym]());
-          continue;
-        } else if(arg.toString && !Util.isNativeFunction(arg.toString)) {
-            //console.realLog("toString: "+arg.toString);
-          out = concat(out, [arg.toString()]);
-        } else if(Util.isObject(arg)) {
-          out.push(arg);
-          continue;
-          out[0] += Util.inspect(arg, { indent: '', newline: '', depth: 2, spacing: '' });
-        }
-      }
-      out[0] += ' ' + arg;
+      setTimeout(() => {
+        //console.log('currentSearch:', value);
+        focusSearch(true);
+      }, 1000);
     }
-      //for(let i in out)
-      //console.realLog("out:",out);
-    this.realLog(...out);
-  };*/
+  });
 
-    ListProjects('/files.html').then(response => {
-      let data = JSON.parse(response);
-      let { files } = data;
-      //Util.log(`Got ${files.length} files`);
-      function File(obj, i) {
-        const { name } = obj;
-        let file = this instanceof File ? this : Object.create(File.prototype);
-        let data = trkl({ percent: NaN });
-        Object.assign(file, obj);
-        file.name = name;
-        file.i = i;
-        trkl.bind(file, { data });
+  Util(globalThis);
 
-        return file;
-      }
-      File.prototype.toString = function() {
-        return this.name;
-      };
-      projectFiles = window.files = files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i));
-      projects(projectFiles);
-    });
+  //prettier-ignore
+  Object.assign(window, { BBox, ChooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, LoadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
 
-    CreateWebSocket(null, null, ws => (window.socket = ws));
+  const inspectSym = Symbol.for('nodejs.util.inspect.custom');
 
-    const searchFilter = trkl(store.get('filter') || '.*');
+  const testComponent = props =>
+    html`
+      <div>This is a test</div>
+    `;
 
-    //Util.log('searchFilter is ', searchFilter());
+  let c = testComponent({});
+  window.testComponent = c;
 
-    searchFilter.subscribe(value => {
-      store.set('filter', value);
-    });
+  ListProjects('/files.html').then(response => {
+    let data = JSON.parse(response);
+    let { files } = data;
+    //console.log(`Got ${files.length} files`);
+    function File(obj, i) {
+      const { name } = obj;
+      let file = this instanceof File ? this : Object.create(File.prototype);
+      let data = trkl({ percent: NaN });
+      Object.assign(file, obj);
+      file.name = name;
+      file.i = i;
+      trkl.bind(file, { data });
 
-    const changeInput = e => {
-      const { target } = e;
-      //Util.log('changeInput:', target.value);
-
-      searchFilter(target.value);
+      return file;
+    }
+    File.prototype.toString = function() {
+      return this.name;
     };
+    projectFiles = window.files = files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i));
+    projects(projectFiles);
+  });
 
-    React.render(
-      [
-        Panel('buttons', [
-          h(Button, {
-            caption: '📂',
-            fn: e => {
-              if(e.type.endsWith('down')) {
-                //Util.log('file list push', e);
-                open(!open());
-              }
+  CreateWebSocket(null, null, ws => (window.socket = ws));
+
+  const searchFilter = trkl(store.get('filter') || '*');
+
+  searchFilter.subscribe(value => {
+    store.set('filter', value);
+    Util.log('searchFilter is ', value);
+  });
+
+  const changeInput = e => {
+    const { target } = e;
+    Util.log('changeInput:', target.value);
+
+    let { value } = target;
+
+    searchFilter(value == '' ? '*' : value.split(/\|/g).join(' | '));
+  };
+
+  React.render(
+    [
+      Panel('buttons', [
+        h(Button, {
+          caption: BrowseIcon(),
+          fn: e => {
+            if(e.type.endsWith('down')) {
+              //console.log('file list push', e);
+              open(!open());
             }
-          }),
-          h(Button, {
-            caption: 'Random',
-            fn: ModifyColors(c => c.replaceAll(c => HSLA.random()))
-          }),
-          h(Button, {
-            caption: 'Invert',
-            fn: ModifyColors(c => c.replaceAll(c => c.invert()))
-          }),
-          h(Button, {
-            caption: '↔',
-            fn: MakeFitAction(0)
-          }),
-          h(Button, {
-            caption: '↕',
-            fn: MakeFitAction(1)
-          })
-        ]),
+          }
+        }),
+        h(Button, {
+          caption: 'Random',
+          fn: ModifyColors(c => c.replaceAll(c => HSLA.random()))
+        }),
+        h(Button, {
+          caption: 'Invert',
+          fn: ModifyColors(c => c.replaceAll(c => c.invert()))
+        }),
+        h(Button, {
+          caption: '↔',
+          fn: MakeFitAction(0)
+        }),
+        h(Button, {
+          caption: '↕',
+          fn: MakeFitAction(1)
+        })
+      ]),
 
-        /*  h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [
+      /*  h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [
         h(ColorWheel, {}),
         h(Slider, {
           min: 0,
@@ -610,7 +534,7 @@ const AppMain = (window.onload = async () => {
           length: '10px',
           style: { flex: '0 1 auto' },
           onChange: value => {
-            //Util.log('value:', value);
+            //console.log('value:', value);
           }
         }),
         h(Slider, {
@@ -621,113 +545,101 @@ const AppMain = (window.onload = async () => {
           length: '10px',
           style: { flex: '0 1 auto' },
           onChange: value => {
-            //Util.log('value:', value);
+            //console.log('value:', value);
           }
         })
       ]),*/
-        html`
-          <${FileList} files=${projects} onActive=${open} onChange=${ChooseDocument} filter=${searchFilter} showSearch=${showSearch} changeInput=${changeInput} focusSearch=${focusSearch} currentInput=${currentSearch} />
-        `
-      ],
-      Element.find('#preact')
-    );
+      html`
+        <${FileList} files=${projects} onActive=${open} onChange=${ChooseDocument} filter=${searchFilter} showSearch=${showSearch} changeInput=${changeInput} focusSearch=${focusSearch} currentInput=${currentSearch} />
+      `
+    ],
+    Element.find('#preact')
+  );
 
-    let move;
-    container = Element.find('#main');
+  let move;
+  container = Element.find('#main');
 
-    TouchListener(
-      event => {
-        if(event.buttons == 2) return event.cancel();
+  TouchListener(
+    event => {
+      const { x, y } = event;
+      if(event.buttons == 2) return event.cancel();
 
-        if(event.index > 0 && event.buttons > 0) Util.log('touch', event, container);
-        if(!move) {
-          let box = Element.find('#main').firstElementChild;
+      if(event.index > 0 && event.buttons > 0) Util.log('touch', { x, y }, container);
 
-          move = Element.moveRelative(box);
-        } else if(move && event.buttons == 0) {
-          move = null;
-        } else if(event.index > 0) {
-          let rel = new Point(event);
-          if(move) {
-            if(event.buttons > 0) move(rel.x, rel.y);
-            else move = move.jump();
-          }
+      if(!move) {
+        let box = Element.find('#main').firstElementChild;
+
+        window.move = move = Element.moveRelative(box);
+      } else if(move && event.buttons == 0) {
+        move = null;
+      } else if(event.index > 0) {
+        let rel = new Point(event);
+        if(move) {
+          Util.log('move', ...[...rel]);
+          if(event.buttons > 0) move(rel.x, rel.y);
+          else move = move.jump();
         }
-      },
-      { element: window }
-    );
+      }
+    },
+    { element: window }
+  );
 
-    window.styles = CSS.create('head');
-    /* document.addEventListener('keydown', event => {
+  window.styles = CSS.create('head');
+  /* document.addEventListener('keydown', event => {
     const { ctrlKey, shiftKey, altKey, metaKey } = event;
 
     if(true || ctrlKey || shiftKey || altKey || metaKey) {
       const { key, code, keyCode } = event;
       const { target, currentTarget } = event;
-      //Util.log('keydown: ', (window.keyEvent = event));
+      //console.log('keydown: ', (window.keyEvent = event));
     }
   });*/
 
-    window.addEventListener('wheel', event => {
-      //Util.log('event:', event);
-      const clientArea = Element.rect('body > div');
-      const sideBar = Element.rect('.sidebar');
+  window.addEventListener('wheel', event => {
+    const { deltaX, deltaY, screenX, screenY, clientX, clientY, pageX, pageY, x, y, offsetX, offsetY, layerX, layerY } = event;
 
-      if(sideBar.x2 > clientArea.x1) {
-        clientArea.width -= sideBar.x2;
+    //console.log('wheel:', { deltaX, deltaY, screenX, screenY, clientX, clientY, pageX, pageY, x, y, offsetX, offsetY, layerX, layerY });
+    window.wheelEvent = event;
 
-        clientArea.x = sideBar.x2;
-        clientArea.width = window.innerWidth - clientArea.x;
-      }
-      clientArea.height = window.innerHeight;
+    const clientArea = Element.rect('body > div');
+    const sideBar = Element.rect('.sidebar');
 
-      clientArea.x += container.parentElement.scrollLeft;
+    if(sideBar.x2 > clientArea.x1) {
+      clientArea.width -= sideBar.x2;
 
-      //Util.log('wheel:', { sideBar, clientArea });
+      clientArea.x = sideBar.x2;
+      clientArea.width = window.innerWidth - clientArea.x;
+    }
+    clientArea.height = window.innerHeight;
 
-      const clientCenter = clientArea.center;
-      const { clientX, clientY, target, currentTarget, buttons, altKey, ctrlKey, shiftKey } = event;
-      const pos = new Point(clientX, clientY);
+    clientArea.x += container.parentElement.scrollLeft;
 
-      if(!pos.inside(clientArea)) return;
+    //console.log('wheel:', { sideBar, clientArea });
 
-      const wheelPos = -event.deltaY.toFixed(2);
-      zoomVal = altKey || ctrlKey || shiftKey ? 0 : Util.clamp(-100, 100, zoomVal + wheelPos * 0.1);
-      const zoom = Math.pow(10, zoomVal / 100).toFixed(5);
+    const clientCenter = clientArea.center;
+    const { target, currentTarget, buttons, altKey, ctrlKey, shiftKey } = event;
+    const pos = new Point(clientX, clientY);
 
-      let t = window.transform;
+    if(!pos.inside(clientArea)) return;
 
-      if(!t.scaling) t.scale(zoom, zoom);
-      else {
-        t.scaling.x = zoom;
-        t.scaling.y = zoom;
-      }
+    const wheelPos = -event.deltaY.toFixed(2);
+    zoomVal = altKey || ctrlKey || shiftKey ? 0 : Util.clamp(-100, 100, zoomVal + wheelPos * 0.1);
+    const zoom = Math.pow(10, zoomVal / 100).toFixed(5);
 
-      window.transform = new TransformationList(t);
+    let t = window.transform;
 
-      /*    const transform = ` scale(${zoom},${zoom}) `;
-    const origin = `${pos.toString(1, 'px', ' ')}`;
-    let list = [...Element.skip(target)].find(p => p.classList.contains('list'));
-    if(false && list) {
-      let parent = list.parentElement;
-      let rects = [Element.rect(parent), Element.rect(list)];
-      let screen = new Rect(0, 0, window.innerWidth, window.innerHeight);
-      rects[0].y2 = screen.y2;
-      rects[1].y2 = screen.y2;
-      Element.setRect(list, rects[1]);
-    } else {
-      window.transform;
-      Element.setCSS(container, { transform });
-      Element.setCSS(container, { 'transform-origin': origin });
-    }*/
-    });
-  } catch(error) {
-    console.error('Exception in AppMain!\n', error);
-    throw error;
-  }
+    if(!t.scaling) t.scale(zoom, zoom);
+    else {
+      t.scaling.x = zoom;
+      t.scaling.y = zoom;
+    }
+
+    window.transform = new TransformationList(t);
+  });
+
   console.error('AppMain done');
 
-  //Util.log(Util.getGlobalObject());
+  //console.log(Util.getGlobalObject());
 
   /*  for(let path of [...Element.findAll('path')]) {
     let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
@@ -737,7 +649,7 @@ const AppMain = (window.onload = async () => {
 const Module = {
   noInitialRun: true,
   onRuntimeInitialized: () => {
-    //Util.log('initialized');
+    //console.log('initialized');
     let myString = prompt('Enter a string:');
     Module.callMain([myString]);
   },

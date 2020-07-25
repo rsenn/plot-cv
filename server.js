@@ -138,6 +138,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/static', express.static(path.join(p, 'static')));
 app.use('/modules', express.static(path.join(p, 'node_modules')));
 app.use('/htm', express.static(path.join(p, 'htm')));
 app.use('/node_modules', express.static(path.join(p, 'node_modules')));
@@ -159,22 +160,22 @@ app.get(/\/[^/]*\.js$/, async (req, res) => res.sendFile(path.join(p, req.path))
 app.get('/style.css', async (req, res) => res.sendFile(path.join(p, 'style.css'), { headers: { 'Content-Type': 'text/css' } }));
 
 function getDescription(file) {
-  return parseDocument(fs.readFileSync(file));
-  function parseDocument(data) {
-    const xml = tXml(data.toString());
-    let s = [a => a[0], a => a.children && a.children[0], a => a.children && a.children[0], a => a.children, a => a.find(e => /(board|schematic|library)/.test(e.tagName)), a => a.children, a => a.find(e => e.tagName == 'description'), a => a.children && a.children[0]].reduce((a, p) => a && p(a), xml);
-
-    if(typeof s == 'string') {
-      s = Util.decodeHTMLEntities(s);
-      s = Util.stripXML(s);
-      s = Util.decodeEscapes(s);
-      s = Util.stripNonPrintable(s);
-      s = s.trim();
-      s = s.split(/\n/g).filter(l => l != '')[0];
-    }
-    return s || '';
-  }
+  let str = fs.readFileSync(file).toString();
+  let r = [...Util.matchAll('<(/)?(board|schematic|library)[ >]', str)]
+    .map(m => m.index)
+    .sort((a, b) => a - b)
+    .slice(0, 2);
+  let chunk = str.substring(...r);
+  let a = ['<description>', '</description>'];
+  let indexes = a
+    .map(s => new RegExp(s))
+    .map(re => re.exec(chunk))
+    .map(m => m && m.index);
+  let d = chunk.substring(...indexes);
+  if(d.startsWith('<description')) return Util.decodeHTMLEntities(d.substring(a[0].length));
+  return '';
 }
+
 const descMap = Util.weakMapper(getDescription, new Map());
 
 const GetFilesList = async (dir = './tmp', opts = {}) => {

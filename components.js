@@ -54,7 +54,7 @@ export const Overlay = ({ className = 'overlay', active = false, onPush, text, c
       const prev = pushed;
       if(!e.type.endsWith('down') && !e.type.endsWith('up')) return;
       setPushed(state);
-      //console.log(`overlay pushed=${pushed} active=${active}:`, e.target);
+      //Util.log(`overlay pushed=${pushed} active=${active}:`, e.target);
       return typeof onPush == 'function' ? onPush(e, state) : null;
     })
   );
@@ -67,7 +67,7 @@ export const Overlay = ({ className = 'overlay', active = false, onPush, text, c
 };
 
 export const Container = ({ className = 'panel', children, ...props }) => {
-  useCallback(() => console.log('re-render panel'));
+  useCallback(() => Util.log('re-render panel'));
   return html`
     <div className=${className} ...${props}>${children}</div>
   `;
@@ -108,7 +108,25 @@ export const Progress = ({ className, percent, ...props }) =>
     zIndex: '98'
   }}></div></${Overlay}>`;
 
-const SchematicIcon = props => html`
+export const BrowseIcon = props =>
+  h(
+    'svg',
+    {
+      height: '32',
+      width: '32',
+      viewBox: '0 0 48 48',
+      xmlns: 'http://www.w3.org/2000/svg'
+    },
+    [
+      h('defs', {}),
+      h('path', {
+        fill: '#fff',
+        d: 'M43.79 8.452h-8.482a2.825 2.825 0 00-2.827 2.827H9.863v2.827h33.305l-3.807 19.04-4.053-16.213H1.382L7.036 39.55h33.926l5.654-28.272a2.825 2.825 0 00-2.826-2.827z'
+      })
+    ]
+  );
+
+export const SchematicIcon = props => html`
   <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
     <defs />
     <path d="M32.02 3.594c-21.347 24.27-10.673 12.135 0 0zm3.439 26.494a2.727 2.727 0 01-.7 1.675l-7.165 7.505a2.375 2.375 0 01-1.706.732H12.766c-3.32 0-5.978-2.8-5.978-6.245V6.25c0-1.735.675-3.302 1.754-4.433C9.629.702 11.108 0 12.766 0h16.708A5.86 5.86 0 0133.7 1.817 6.422 6.422 0 0135.46 6.25z" fill="#fff" />
@@ -184,31 +202,44 @@ export const EditBox = ({ value = '', type = 'div', className, hidden = false, c
   );
 };
 
-export const File = ({ label, i, key, className = 'file', onPush, signal, data, doc, ...props }) => {
+export const File = ({ label, name, description, i, key, className = 'file', onPush, signal, data, doc, ...props }) => {
   const [loaded, setLoaded] = useState(NaN);
   if(signal) signal.subscribe(data => setLoaded(data.percent));
   onPush =
     onPush ||
     (async state => {
-      //console.log(`loading "${name}"...`);
+      //Util.log(`loading "${name}"...`);
       await load(name);
     });
-  let name = label;
   let id = key || i;
   let style = { minWidth: '40px', width: '40px', height: '40px' };
   let icon = /brd$/i.test(id + className) ? h(BoardIcon, { style }) : /sch$/i.test(id + className) ? h(SchematicIcon, {}) : /lbr$/i.test(id + className) ? h(LibraryIcon, {}) : undefined;
   icon = h('div', { style }, icon);
   if(id) {
     id = isNaN(+id) ? i : id;
-
     id = 'file-' + id;
     //  name = id;
     //  id = (id + '').replace(/[^._A-Za-z0-9]/g, '-');
   }
   label = label.replace(/\.[^.]*$/, '').replace(/([^\s])-([^\s])/g, '$1 $2');
+  let ext = name.replace(/.*\//g, '').replace(/.*\./g, '');
+  label = h('pre', { className: 'label' }, [label + '.' + ext]);
+  if(description) {
+    let d = Util.stripXML(Util.decodeHTMLEntities(description))
+      .split(/\n/g)
+      .slice(0, 1);
+    label = h('div', {}, [
+      label,
+      h(
+        'div',
+        { className: 'description' },
+        d.map(line => h('pre', { className: 'description' }, [line]))
+      )
+    ]);
+  }
+
   //data = signal();
-  //console.log(`File`, { name, i, id, label });
-  //console.log(`File`, props);*/
+  //Util.log(`File`, { name, label });
 
   return html`
               <${Item} className=${className} id=${id} data-filename="${name}" onPush=${onPush} label=${label} icon=${icon} ...${props}>
@@ -243,24 +274,26 @@ export const Chooser = ({ className = 'list', itemClass = 'item', itemComponent 
         .map(part => Util.tryCatch(() => new RegExp(part.replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i')))
         .filter(r => r !== null)
     );
-  console.log(reList);
-  const pred = name => reList.some(c => c.every(re => re.test(name)));
+  Util.log('regex:', ...reList);
+  const pred = name => !reList.every(c => !c.every(re => re.test(name)));
   const other = items.filter(({ name }) => !pred(name)).map(i => i.name);
   const children = items
     .filter(({ name }) => pred(name))
-    .map(({ name, i, data, ...item }, key) =>
-      //console.log(`Chooser item #${i}:`, { name, data, item });
+    .map(({ name, description, i, data, ...item }, key) =>
+      //Util.log(`Chooser item #${i}:`, { name, data, item });
       h(itemComponent, {
         key: i,
         i,
         className: classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
         active: i == active,
         onPush: pushHandler(i),
-        label: name.replace(/.*\//, '') /*,
+        label: name.replace(/.*\//, ''),
+        name,
+        description /*,
       ...item*/
       })
     );
-  return html`<${Container} className=${classNames('panel', className)} ...${props}>${children}</${Container}>`;
+  return html`<${Container} className=${classNames('panel', 'no-select', className)} ...${props}>${children}</${Container}>`;
 };
 
 export const FileList = ({ files, onChange, onActive, filter, showSearch, focusSearch, currentInput, changeInput, ...props }) => {
@@ -312,7 +345,7 @@ export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className 
         children
       );
 
-export const AspectRatioBox = ({ aspect = 1.0, children, insideClassName, outsideClassName, outsideProps = {}, style, ...props } /* console.log('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/) =>
+export const AspectRatioBox = ({ aspect = 1.0, children, insideClassName, outsideClassName, outsideProps = {}, style, ...props } /* Util.log('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/) =>
   h(React.Fragment, {}, [
     h(
       'div',
@@ -358,10 +391,10 @@ export const SizedAspectRatioBox = ({ width, height, style, className, children,
 export const TransformedElement = ({ type = 'div', aspect, listener, style = { position: 'relative' }, className, children = [], ...props }) => {
   const [transform, setTransform] = useState(new TransformationList());
 
-  //console.log('TransformedElement:', { aspect });
+  //Util.log('TransformedElement:', { aspect });
   if(listener && listener.subscribe)
     listener.subscribe(value => {
-      //console.log('TransformedElement setValue', value+'');
+      //Util.log('TransformedElement setValue', value+'');
       if(value !== undefined) setTransform(value);
     });
 
@@ -452,9 +485,9 @@ export const Canvas = ({ onInit, ...props }) => {
   const ctx = useRef();
 
   useEffect(() => {
-    //console.log('canvasRef.current', canvasRef.current);
+    //Util.log('canvasRef.current', canvasRef.current);
     ctx.current = canvasRef.current.getContext('2d');
-    //console.log('ctx.current', ctx.current);
+    //Util.log('ctx.current', ctx.current);
     const { offsetLeft: x, offsetTop: y } = canvasRef.current;
 
     if(typeof onInit == 'function') onInit(ctx.current, canvasRef.current, { width, height, x, y });

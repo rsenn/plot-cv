@@ -13,6 +13,49 @@ svg {
   display: flex;
   flex-flow: column nowrap;
 }*/
+
+.no-select {
+   -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.label,.description {
+  font-size: 1em;
+  letter-spacing: 0em;
+        white-space: pre;
+
+}
+pre.label,span.label {
+  font-weight: bold;
+/*text-decoration: underline;*/
+
+  margin: 0 0 0.25em 0;
+
+}
+ p.label,p.description {
+    margin: 0;
+
+ }
+ pre.description {
+  margin: 0;
+/*    font-size: 0.8em;*/
+
+ }
+ .description {
+  font-style: italic;
+ }
+ pre, p.description {
+  /*font-size: 0.8em;*/
+}
+
+div.description {
+  width: 100%;
+  overflow: hidden;
+}
+p.description {
+ /* width: 100vw;*/
+}
 .fill {
   width: 100%;
   height: 100%;
@@ -50,7 +93,7 @@ svg {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-flow: row wrap;
+  flex-flow: row nowrap;
   width: 100%;
 }
 .file {

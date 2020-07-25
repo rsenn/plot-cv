@@ -1,0 +1,7 @@
+@font-face {
+  font-family: 'fonts/MiscFixedSC613';
+  src: url('fonts/MiscFixedSC613.woff2') format('woff2'), url('fonts/MiscFixedSC613.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
