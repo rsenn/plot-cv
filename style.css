@@ -216,8 +216,8 @@ body,
 
 svg,
 text {
-  font-family: 'Engineering Plot', MiscFixedSC613, Fixed;
-  font-size: 1px;
+  font-family: 'Fixed Medium';
+  font-size: 0.5px;
   font-weight: bold;
 }
 .file.inactive {
