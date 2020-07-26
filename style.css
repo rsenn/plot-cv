@@ -26,10 +26,21 @@ svg {
   letter-spacing: 0em;
   white-space: pre;
 }
+span.label {
+  font-family: Verdana,'sans-serif',"Arial";
+  font-weight: normal;
+  font-size: 13px;
+
+}
+pre.description {
+  font-family: "MiscFixedSC613";
+    font-weight: 300;
+  font-size: 12px;
+    font-style: normal;
+
+}
 pre.label,
 span.label {
-  font-weight: bold;
-  /*text-decoration: underline;*/
 
   margin: 0 0 0.25em 0;
 }
@@ -40,9 +51,6 @@ p.description {
 pre.description {
   margin: 0;
   /*    font-size: 0.8em;*/
-}
-.description {
-  font-style: italic;
 }
 pre,
 p.description {
@@ -82,7 +90,7 @@ p.description {
 .button {
   text-shadow: 1px 1px 1px black;
   margin: 4px 4px 6px 4px;
-  padding: 8px;
+  padding: 4px 12px;
   flex: 0 1 auto;
 }
 .hcenter {
@@ -99,7 +107,10 @@ p.description {
 .file {
   border-radius: 5px;
 }
+.file > .label {
+font-size: 1.2em;
 
+}
 .hstart,
 .label {
   justify-content: flex-start;
@@ -134,7 +145,7 @@ body {
   color: white;
   font-weight: bold;
   user-select: none;
-  font-size: 1em;
+  font-size: 16px;
   min-width: 1.4em;
   min-height: 1.4em;
 }
@@ -213,17 +224,30 @@ body,
 .file.none {
   background: white;
 }
-
+.buttons > .label {
+  color: white;
+}
 svg,
 text {
   font-family: 'Fixed Medium';
-  font-size: 0.5px;
-  font-weight: bold;
+  font-size: 1px;
+  font-weight: normal;
 }
 .file.inactive {
   border: 4px solid hsla(230, 100%, 0%, 0);
   margin: 4px;
   box-shadow: 1px 1px 3px hsl(180, 20%, 20%);
+}
+.pad-lr {
+  padding: 0px 10px;
+}
+.hcenter {
+  display: inline-flex;
+    justify-content: center;
+}
+.vcenter {
+  display: inline-flex;
+  align-items: center;
 }
 
 .list {

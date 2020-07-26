@@ -27,7 +27,7 @@ import { XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';
 import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
 import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
-import components, { Chooser, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, BrowseIcon } from './components.js';
+import components, { Chooser, DynamicLabel,Label,Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, BrowseIcon } from './components.js';
 import { Message } from './message.js';
 import { WebSocketClient } from './lib/net/websocket-async.js';
 import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
@@ -58,6 +58,8 @@ let transform = trkl(new TransformationList());
 let sizeListener = trkl({});
 let aspectListener = trkl(1);
 let debug = false;
+  const documentTitle = trkl('');
+
 
 let store = (window.store = makeLocalStorage());
 
@@ -153,6 +155,9 @@ const LoadDocument = async (project, parentElem) => {
   Util.log('project.name:', project.name);
 
   project.doc = await LoadFile(project.name);
+
+
+documentTitle(project.doc.file.replace(/.*\//g, ""));
 
   window.eagle = project.doc;
   window.project = project;
@@ -477,6 +482,8 @@ const AppMain = (window.onload = async () => {
 
   CreateWebSocket(null, null, ws => (window.socket = ws));
 
+
+
   const searchFilter = trkl(store.get('filter') || '*');
 
   searchFilter.subscribe(value => {
@@ -520,7 +527,9 @@ const AppMain = (window.onload = async () => {
         h(Button, {
           caption: '↕',
           fn: MakeFitAction(1)
-        })
+        }),
+        h(DynamicLabel, { className: 'vcenter pad-lr', caption: documentTitle } )
+
       ]),
 
       /*  h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [
