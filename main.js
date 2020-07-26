@@ -33,6 +33,12 @@ import components, { Chooser, DynamicLabel, Label, Container, Button, FileList, 
 import { Message } from './message.js';
 import { WebSocketClient } from './lib/net/websocket-async.js';
 import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
+
+import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
+import { Wire } from './lib/eagle/components/wire.js';
+import { Instance } from './lib/eagle/components/instance.js';
+import { SchematicSymbol } from './lib/eagle/components/symbol.js';
+
 /* prettier-ignore */ import { AlignmentAngle, Arc, BoardRenderer, CalculateArcRadius, ClampAngle, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, Renderer, RotateTransformation, SchematicRenderer, VERTICAL, makeEagleElement, makeEagleNode } from './lib/eagle.js';
 /* prettier-ignore */ const React = {Component, createContext, create: h, html, render, useCallback, useContext, useDebugValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useReducer, useRef, useState };
 /* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG, Timer, Transition, TransitionList, TRBL, Tree } = {...dom, ...geom };
@@ -454,6 +460,7 @@ const AppMain = (window.onload = async () => {
 
   //prettier-ignore
   Object.assign(window, { BBox, ChooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, LoadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
+  Object.assign(window, { PrimitiveComponents, ElementNameToComponent, ElementToComponent, Wire, Instance, SchematicSymbol });
 
   const inspectSym = Symbol.for('nodejs.util.inspect.custom');
 

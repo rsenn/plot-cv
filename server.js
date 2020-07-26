@@ -133,8 +133,34 @@ app.ws('/ws', async (ws, req) => {
   });
 });
 
-app.use((req, res, next) => {
-  if(!/lib\//.test(req.url)) console.log('Request:', req.url);
+app.use(async (req, res, next) => {
+  if(!/overrides\//.test(req.path)) {
+    let relativePath = path.join('.', req.path);
+    let overridePath = path.join('overrides', req.path);
+    let isFile = false;
+
+    await fsPromises
+      .stat(relativePath)
+      .then(st => (isFile = st.isFile()))
+      .catch(err => {});
+
+    let override = false;
+
+    if(isFile)
+      await fsPromises
+        .access(overridePath, fs.constants.F_OK)
+        .then(() => (override = true))
+        .catch(err => {});
+
+    if(override) {
+      console.log('Request:', { overridePath, override });
+
+      return res.redirect('/' + overridePath);
+    }
+  }
+
+  if(!/lib\//.test(req.url)) console.log('Request:', req.url, ' path:', req.path);
+
   next();
 });
 
@@ -142,6 +168,7 @@ app.use('/static', express.static(path.join(p, 'static')));
 app.use('/modules', express.static(path.join(p, 'node_modules')));
 app.use('/htm', express.static(path.join(p, 'htm')));
 app.use('/node_modules', express.static(path.join(p, 'node_modules')));
+app.use('/overrides', express.static(path.join(p, 'overrides')));
 app.use('/components', express.static(path.join(p, 'components')));
 app.use('/lib', express.static(path.join(p, 'lib')));
 app.use('/static', express.static(p));
