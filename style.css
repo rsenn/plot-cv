@@ -216,7 +216,9 @@ body,
 
 svg,
 text {
-  font-family: MiscFixedSC613, Fixed;
+  font-family: 'Engineering Plot',MiscFixedSC613, Fixed;
+  font-size: 1px;
+  font-weight: bold;
 }
 .file.inactive {
   border: 4px solid hsla(230, 100%, 0%, 0);
