@@ -21,13 +21,15 @@ import Alea from './lib/alea.js';
 import { Iterator } from './lib/iterator.js';
 import { Functional } from './lib/functional.js';
 import { makeLocalStorage } from './lib/autoStore.js';
+import { Repeater } from './node_modules/@repeaterjs/repeater/lib/repeater.esm.js';
+import { useValue, useResult, useAsyncIter } from './lib/repeater/react-hooks.js';
 
 import { toXML, ImmutablePath } from './lib/json.js';
 import { XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';
 import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
 import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
-import components, { Chooser, DynamicLabel,Label,Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, BrowseIcon } from './components.js';
+import components, { Chooser, DynamicLabel, Label, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, BrowseIcon } from './components.js';
 import { Message } from './message.js';
 import { WebSocketClient } from './lib/net/websocket-async.js';
 import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
@@ -58,8 +60,7 @@ let transform = trkl(new TransformationList());
 let sizeListener = trkl({});
 let aspectListener = trkl(1);
 let debug = false;
-  const documentTitle = trkl('');
-
+const documentTitle = trkl('');
 
 let store = (window.store = makeLocalStorage());
 
@@ -156,8 +157,7 @@ const LoadDocument = async (project, parentElem) => {
 
   project.doc = await LoadFile(project.name);
 
-
-documentTitle(project.doc.file.replace(/.*\//g, ""));
+  documentTitle(project.doc.file.replace(/.*\//g, ''));
 
   window.eagle = project.doc;
   window.project = project;
@@ -412,6 +412,13 @@ const AppMain = (window.onload = async () => {
 
   Error.stackTraceLimit = 100;
 
+  const timestamps = new Repeater(async (push, stop) => {
+    push(Date.now());
+    const interval = setInterval(() => push(Date.now()), 1000);
+    await stop;
+    clearInterval(interval);
+  });
+
   //window.focusSearch = trkl();
   window.currentSearch = trkl(null);
 
@@ -482,8 +489,6 @@ const AppMain = (window.onload = async () => {
 
   CreateWebSocket(null, null, ws => (window.socket = ws));
 
-
-
   const searchFilter = trkl(store.get('filter') || '*');
 
   searchFilter.subscribe(value => {
@@ -498,6 +503,15 @@ const AppMain = (window.onload = async () => {
     let { value } = target;
 
     searchFilter(value == '' ? '*' : value.split(/\|/g).join(' | '));
+  };
+
+  const Consumer = props => {
+    const result = useResult(async function*() {
+      for await (let time of timestamps) {
+        yield time;
+      }
+    });
+    return h('div', { className: 'vcenter fixed', style: { color: 'white', height: '60px', width: '200px' } }, [result && new Date(result.value).toLocaleTimeString('de-CH')]);
   };
 
   React.render(
@@ -528,8 +542,8 @@ const AppMain = (window.onload = async () => {
           caption: '↕',
           fn: MakeFitAction(1)
         }),
-        h(DynamicLabel, { className: 'vcenter pad-lr', caption: documentTitle } )
-
+        h(DynamicLabel, { className: 'vcenter pad-lr', caption: documentTitle }),
+        h(Consumer, {})
       ]),
 
       /*  h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [

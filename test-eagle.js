@@ -189,8 +189,8 @@ async function testEagle(filename) {
       }
     }
   );*/
-  console.log('Project loaded: ',!proj.failed);
-  console.log('Project: ',proj);
+  console.log('Project loaded: ', !proj.failed);
+  console.log('Project: ', proj);
 
   //if(proj.failed) return false;
 

@@ -32,6 +32,10 @@ span.label {
   font-size: 13px;
 
 }
+.fixed {
+    font-family: "Fixed Medium";
+font-size: 16px;
+}
 pre.description {
   font-family: "MiscFixedSC613";
     font-weight: 300;
@@ -230,7 +234,7 @@ body,
 svg,
 text {
   font-family: 'Fixed Medium';
-  font-size: 1px;
+  font-size: 10em;
   font-weight: normal;
 }
 .file.inactive {

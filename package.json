@@ -18,7 +18,12 @@
   "license": "MIT",
   "dependencies": {
     "@app-elements/use-store-path": "^1.0.1",
+    "@bikeshaving/crank": "^0.2.1",
+    "@repeaterjs/limiters": "^0.3.3",
+    "@repeaterjs/pubsub": "^0.3.4",
+    "@repeaterjs/react-hooks": "^0.1.1",
     "@repeaterjs/repeater": "^3.0.1",
+    "@repeaterjs/timers": "^0.3.3",
     "async-ws": "^0.0.3",
     "body-parser": "^1.19.0",
     "canopy": "^0.3.0",

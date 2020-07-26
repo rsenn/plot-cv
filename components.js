@@ -79,16 +79,16 @@ export const Button = ({ caption, fn }) => html`
 
 export const Label = ({ className, text, children, ...props }) =>
   html`
-    <div className=${classNames('label',className)} ...${props}>${text}${children}</div>
+    <div className=${classNames('label', className)} ...${props}>${text}${children}</div>
   `;
 
- export const DynamicLabel = ({ caption, children, ...props }) => {
-const [text, setText] = useState(caption());
+export const DynamicLabel = ({ caption, children, ...props }) => {
+  const [text, setText] = useState(caption());
 
-caption.subscribe(value => setText(value));
+  caption.subscribe(value => setText(value));
 
-   return h(Label, { ...props, text }, []);
- };
+  return h(Label, { ...props, text }, []);
+};
 
 export const Item = ({ className = 'item', label, icon, children, ...props }) => html`
             <${Overlay} className=${className}  ...${props}>
@@ -270,22 +270,34 @@ export const Chooser = ({ className = 'list', itemClass = 'item', itemComponent 
     setFilter(itemFilter());
     itemFilter.subscribe(value => setFilter(value));
   }
-const list2re = list => list.map(part => Util.tryCatch(() => new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i')))
-        .filter(r => r !== null);
+  const list2re = list =>
+    list
+      .map(part =>
+        Util.tryCatch(
+          () =>
+            new RegExp(
+              part
+                .trim()
+                .replace(/\./g, '\\.')
+                .replace(/\*/g, '.*'),
+              'i'
+            )
+        )
+      )
+      .filter(r => r !== null);
   const bar = html``;
-  const preFilter = filter.replace(/\|/g, " | ").replace(/\+/, " +").split(/\s+/g);
-  const plus = list2re(preFilter.filter(p => p.startsWith('+')).map(p => p.replace(/\+/g, "")));
-  const rest = preFilter.filter(p => !p.startsWith('+')).join(" ");
-console.log("filter",{plus,rest});
+  const preFilter = filter
+    .replace(/\|/g, ' | ')
+    .replace(/\+/, ' +')
+    .split(/\s+/g);
+  const plus = list2re(preFilter.filter(p => p.startsWith('+')).map(p => p.replace(/\+/g, '')));
+  const rest = preFilter.filter(p => !p.startsWith('+')).join(' ');
+  console.log('filter', { plus, rest });
   const reList = rest
     .split(/\|/g)
     .map(p => p.trim())
     .filter(p => p != '')
-    .map(p =>
-     list2re(p
-        .split(/\s\s*/g))
-
-    );
+    .map(p => list2re(p.split(/\s\s*/g)));
   Util.log('regex:', ...reList);
   const pred = name => !reList.every(c => !c.every(re => re.test(name))) && plus.every(re => re.test(name));
   const other = items.filter(({ name }) => !pred(name)).map(i => i.name);
