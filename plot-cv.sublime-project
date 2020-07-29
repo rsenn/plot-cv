@@ -106,11 +106,8 @@
         "*.png",
         "*.make",
         "*.npmignore",
-       // "*.c",
-        //"*.h",
-        //"*.ttf", "*.tmp", "*.snap", "*.pub", "*.babelrc",
-        "*.sch",
-        "*.brd",
+       //"*.sch",
+        //"*.brd",
         "*.priv",
         "*.eslintignore"
       ],

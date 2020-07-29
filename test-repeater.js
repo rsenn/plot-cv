@@ -16,12 +16,11 @@ async function main() {
 
   let p = new InMemoryPubSub();
 
+  let subscriber = await p.subscribe('test' /*, new DroppingBuffer()*/);
+  // let publish = await p.publish('test');
 
-  let subscriber = await p.subscribe('test'/*, new DroppingBuffer()*/);
- // let publish = await p.publish('test');
-
-//  p.publishers['test'].push(1234);
-await  p.publish('test', 1234);
+  //  p.publishers['test'].push(1234);
+  await p.publish('test', 1234);
 
   console.log('subscriber:', subscriber);
 
