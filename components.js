@@ -1,15 +1,8 @@
-import { h as create, Fragment, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
+import { h, Fragment, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
 
 import { trkl } from './lib/trkl.js';
 
 //import React from '../modules/preact/dist/preact.mjs';
-
-const h = (...args) => {
-  if(args[0] == undefined) {
-    Util.putStack();
-  }
-  return create(...args);
-};
 
 export function classNames() {
   let classes = [];
@@ -59,7 +52,7 @@ export const Overlay = ({ className = 'overlay', active = false, onPush, text, c
   const events = MouseEvents(
     MouseHandler((e, state) => {
       const prev = pushed;
-      if(e.buttons != 1) return;
+      if(e.buttons && e.buttons != 1) return;
 
       if(!e.type.endsWith('down') && !e.type.endsWith('up')) return;
       setPushed(state);
@@ -709,6 +702,23 @@ export const CrossHair = ({ position, show, radius = 20, ...props }) => {
   );
 };
 
+export const MoveCursor = props =>
+  h(
+    'svg',
+    {
+      height: '22',
+      width: '22',
+      xmlns: 'http://www.w3.org/2000/svg'
+    },
+    [
+      h('defs', {}),
+      h('path', {
+        d:
+          'M19.173 11.722l-2.393 2.393 1.044 1.044L22 10.983l-4.176-4.177L16.78 7.85l3.132 3.133zM5.221 14.115l-3.132-3.132L5.22 7.851 4.177 6.806 0 10.983l4.177 4.177zm6.535-11.288l2.398 2.394 1.044-1.044L11.018 0 6.84 4.177 7.885 5.22l3.132-3.133zm-1.473 16.345L7.885 16.78l-1.044 1.044L11.017 22l4.181-4.177-1.044-1.044-3.136 3.132zm-7.455-7.45h16.345l.739-.74-.74-.739H2.829l-.74.74zm8.928-8.895l-.739-.739-.734.74v7.415h1.473zm-1.473 16.345l.734.74.74-.74v-7.455h-1.474z'
+      })
+    ]
+  );
+
 export default {
   Overlay,
   Container,
@@ -728,5 +738,6 @@ export default {
   Canvas,
   ColorWheel,
   Slider,
-  CrossHair
+  CrossHair,
+  MoveCursor
 };

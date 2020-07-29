@@ -4,7 +4,7 @@ import proxynova from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/p
 
 import Util from './lib/util.js';
 
-import repeater from '@repeaterjs/repeater';
+import repeater from './lib/repeater/repeater.js';
 const { Repeater } = repeater;
 import { Console } from 'console';
 import net from 'net';

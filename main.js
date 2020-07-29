@@ -21,7 +21,7 @@ import Alea from './lib/alea.js';
 import { Iterator } from './lib/iterator.js';
 import { Functional } from './lib/functional.js';
 import { makeLocalStorage } from './lib/autoStore.js';
-import { Repeater } from './node_modules/@repeaterjs/repeater/lib/repeater.esm.js';
+import { Repeater } from './lib/repeater/repeater.js';
 import { useValue, useResult, useAsyncIter } from './lib/repeater/react-hooks.js';
 
 import { toXML, ImmutablePath } from './lib/json.js';
@@ -35,11 +35,13 @@ import { WebSocketClient } from './lib/net/websocket-async.js';
 import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
 
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
+import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL } from './lib/eagle/renderUtils.js';
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
 
-/* prettier-ignore */ import { AlignmentAngle, Arc, BoardRenderer, CalculateArcRadius, ClampAngle, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, Renderer, RotateTransformation, SchematicRenderer, VERTICAL, makeEagleElement, makeEagleNode } from './lib/eagle.js';
+/* prettier-ignore */ import { BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode
+ } from './lib/eagle.js';
 /* prettier-ignore */ const React = {Component, createContext, create: h, html, render, useCallback, useContext, useDebugValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useReducer, useRef, useState };
 /* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG, Timer, Transition, TransitionList, TRBL, Tree } = {...dom, ...geom };
 Util.colorCtor = ColoredText;
@@ -414,7 +416,7 @@ let socket = trkl();
 const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 
 const AppMain = (window.onload = async () => {
-  Object.assign(window, { Element, devtools, dom });
+  Object.assign(window, { Element, devtools, dom }, { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL });
 
   Error.stackTraceLimit = 100;
 
@@ -598,12 +600,12 @@ const AppMain = (window.onload = async () => {
 
   TouchListener(
     event => {
-      const { x, y, index, buttons, start, type } = event;
+      const { x, y, index, buttons, start, type, target } = event;
 
       if(type.endsWith('end') || type.endsWith('up')) return cancel();
       if(event.buttons === 0 && type.endsWith('move')) return cancel();
 
-      if(event.index > 0) Util.log('touch', { x, y, index, buttons, type }, container);
+      if(event.index > 0) Util.log('touch', { x, y, index, buttons, type, target }, container);
 
       if(event.buttons & 2) return cancel();
 

@@ -112,8 +112,7 @@
         "*.sch",
         "*.brd",
         "*.priv",
-        "*.eslintignore",
-        "*.ts"
+        "*.eslintignore"
       ],
       "folder_exclude_patterns": [".*", "build", "inst","htm", "*/htm/*", "node_modules", "*/node_modules/*", "npm", ".next", "*.next/*"],
       "path": "."
