@@ -1,8 +1,15 @@
-import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
+import { h as create, Fragment, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
 
 import { trkl } from './lib/trkl.js';
 
 //import React from '../modules/preact/dist/preact.mjs';
+
+const h = (...args) => {
+  if(args[0] == undefined) {
+    Util.putStack();
+  }
+  return create(...args);
+};
 
 export function classNames() {
   let classes = [];
@@ -52,6 +59,8 @@ export const Overlay = ({ className = 'overlay', active = false, onPush, text, c
   const events = MouseEvents(
     MouseHandler((e, state) => {
       const prev = pushed;
+      if(e.buttons != 1) return;
+
       if(!e.type.endsWith('down') && !e.type.endsWith('up')) return;
       setPushed(state);
       //Util.log(`overlay pushed=${pushed} active=${active}:`, e.target);
@@ -231,11 +240,11 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
   }
   label = label.replace(/\.[^.]*$/, '').replace(/([^\s])-([^\s])/g, '$1 $2');
   let ext = name.replace(/.*\//g, '').replace(/.*\./g, '');
-  label = h('span', { className: 'label' }, [label /*+ '.' + ext*/]);
+  label = h('span', { className: 'label' }, [Util.wordWrap(label, 50, '\n') /*+ '.' + ext*/]);
   if(description) {
-    let d = Util.stripXML(Util.decodeHTMLEntities(description))
-      .split(/\n/g)
-      .slice(0, 1);
+    let s = Util.multiParagraphWordWrap(Util.stripXML(Util.decodeHTMLEntities(description)), 60, '\n');
+
+    let d = s.split(/\n/g).slice(0, 1);
     label = h('div', {}, [
       label,
       h(
@@ -370,7 +379,7 @@ export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className 
       );
 
 export const AspectRatioBox = ({ aspect = 1.0, children, insideClassName, outsideClassName, outsideProps = {}, style, ...props } /* Util.log('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/) =>
-  h(React.Fragment, {}, [
+  h(Fragment, {}, [
     h(
       'div',
       {
@@ -666,6 +675,40 @@ export const ColorWheel = ({ radius = 50, ...props }) => {
   });
 };
 
+export const CrossHair = ({ position, show, radius = 20, ...props }) => {
+  const [pos, setPos] = useState(position());
+  const [visible, setVisible] = useState(show());
+
+  position.subscribe(value => setPos(value));
+  show.subscribe(value => setVisible(value));
+
+  return h(
+    'div',
+    {
+      style: {
+        position: 'fixed',
+        left: `${pos.x - radius}px`,
+        top: `${pos.y - radius}px`,
+        ...(visible ? {} : { display: 'none' }),
+        zIndex: 100000
+      }
+    },
+    h(
+      'svg',
+      {
+        viewBox: '0 0 22 22',
+        style: { position: 'relative', width: `${radius * 2}px`, height: `${radius * 2}px` }
+      },
+      h('path', {
+        d: 'M11.004 22c-.007-9.184-.013-12.816 0-22M0 11.005c9.183-.007 12.816-.013 22 0M15.27 11A4.271 4.271 0 0111 15.27 4.271 4.271 0 016.729 11 4.271 4.271 0 0111 6.729a4.271 4.271 0 014.271 4.27zm3.645.015a7.932 7.931 0 01-7.932 7.932 7.932 7.931 0 01-7.931-7.932 7.932 7.931 0 017.931-7.931 7.932 7.931 0 017.932 7.931z',
+        fill: 'none',
+        stroke: '#000',
+        strokeWidth: 1
+      })
+    )
+  );
+};
+
 export default {
   Overlay,
   Container,
@@ -684,5 +727,6 @@ export default {
   SizedAspectRatioBox,
   Canvas,
   ColorWheel,
-  Slider
+  Slider,
+  CrossHair
 };

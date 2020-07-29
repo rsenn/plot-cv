@@ -184,7 +184,7 @@ app.get(/\/[^/]*\.js$/, async (req, res) => res.sendFile(path.join(p, req.path))
 
 //app.get('/components.js', async (req, res) => res.sendFile(path.join(p, 'components.js')));
 
-app.get('/style.css', async (req, res) => res.sendFile(path.join(p, 'style.css'), { headers: { 'Content-Type': 'text/css' } }));
+app.get('/style.css', async (req, res) => res.sendFile(path.join(p, 'style.css'), { headers: { 'Content-Type': 'text/css', cacheControl: false } }));
 
 function getDescription(file) {
   let str = fs.readFileSync(file).toString();
@@ -238,8 +238,9 @@ app.post(/^\/(files|list).html/, async (req, res) => {
   res.json({ files: await GetFilesList('tmp', { filter, descriptions }) });
 });
 
-app.get('/index.html', (req, res) => {
-  res.sendFile(path.join(p, 'index.html'));
+app.get('/index.html', async (req, res) => {
+  let data = await fs.promises.readFile(path.join(p, 'index.html'));
+  res.send(data.toString().replace(/<\?TS\?>/, Util.unixTime() + ''));
 });
 
 app.post('/save', async (req, res) => {

@@ -27,25 +27,22 @@ svg {
   white-space: pre;
 }
 span.label {
-  font-family: Verdana,'sans-serif',"Arial";
+  font-family: Verdana, 'sans-serif', 'Arial';
   font-weight: normal;
   font-size: 13px;
-
 }
 .fixed {
-    font-family: "Fixed Medium";
-font-size: 16px;
+  font-family: 'Fixed Medium';
+  font-size: 16px;
 }
 pre.description {
-  font-family: "MiscFixedSC613";
-    font-weight: 300;
+  font-family: 'MiscFixedSC613';
+  font-weight: 300;
   font-size: 12px;
-    font-style: normal;
-
+  font-style: normal;
 }
 pre.label,
 span.label {
-
   margin: 0 0 0.25em 0;
 }
 p.label,
@@ -100,20 +97,27 @@ p.description {
 .hcenter {
   justify-content: center;
 }
-
+.grow {
+  flex: 1 0 auto;
+}
 .label {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-flow: row nowrap;
-  width: 100%;
+}
+.label.pad-lr {
+  flex-grow: 1;
 }
 .file {
   border-radius: 5px;
 }
+.file.label {
+  width: 100%;
+}
 .file > .label {
-font-size: 1.2em;
-
+  font-size: 1.2em;
+  width: 100%;
 }
 .hstart,
 .label {
@@ -247,7 +251,7 @@ text {
 }
 .hcenter {
   display: inline-flex;
-    justify-content: center;
+  justify-content: center;
 }
 .vcenter {
   display: inline-flex;

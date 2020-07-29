@@ -29,7 +29,7 @@ import { XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';
 import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
 import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
-import components, { Chooser, DynamicLabel, Label, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, BrowseIcon } from './components.js';
+import components, { Chooser, DynamicLabel, Label, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, BrowseIcon, CrossHair } from './components.js';
 import { Message } from './message.js';
 import { WebSocketClient } from './lib/net/websocket-async.js';
 import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
@@ -497,6 +497,12 @@ const AppMain = (window.onload = async () => {
   CreateWebSocket(null, null, ws => (window.socket = ws));
 
   const searchFilter = trkl(store.get('filter') || '*');
+  const crosshair = {
+    show: trkl(false),
+    position: trkl({ x: 0, y: 0 })
+  };
+
+  window.crosshair = trkl.bind({}, crosshair);
 
   searchFilter.subscribe(value => {
     store.set('filter', value);
@@ -509,7 +515,7 @@ const AppMain = (window.onload = async () => {
 
     let { value } = target;
 
-    searchFilter(value == '' ? '*' : value.split(/\|/g).join(' | '));
+    searchFilter(value == '' ? '*' : value.split(/\s*\|\s*/g).join(' | '));
   };
 
   const Consumer = props => {
@@ -518,7 +524,7 @@ const AppMain = (window.onload = async () => {
         yield time;
       }
     });
-    return h('div', { className: 'vcenter fixed', style: { color: 'white', height: '60px', width: '200px' } }, [result && new Date(result.value).toLocaleTimeString('de-CH')]);
+    return h('div', { className: 'vcenter fixed grow no-select', style: { flex: '1 0 auto', justifyContent: 'flex-end', color: 'white', height: '60px', width: '200px', padding: '0 10px 0 0' } }, [result && new Date(result.value).toLocaleTimeString('de-CH')]);
   };
 
   React.render(
@@ -581,7 +587,8 @@ const AppMain = (window.onload = async () => {
       ]),*/
       html`
         <${FileList} files=${projects} onActive=${open} onChange=${ChooseDocument} filter=${searchFilter} showSearch=${showSearch} changeInput=${changeInput} focusSearch=${focusSearch} currentInput=${currentSearch} />
-      `
+      `,
+      h(CrossHair, { ...crosshair })
     ],
     Element.find('#preact')
   );
@@ -591,24 +598,39 @@ const AppMain = (window.onload = async () => {
 
   TouchListener(
     event => {
-      const { x, y } = event;
-      if(event.buttons == 2) return event.cancel();
+      const { x, y, index, buttons, start, type } = event;
 
-      if(event.index > 0 && event.buttons > 0) Util.log('touch', { x, y }, container);
+      if(type.endsWith('end') || type.endsWith('up')) return cancel();
+      if(event.buttons === 0 && type.endsWith('move')) return cancel();
+
+      if(event.index > 0) Util.log('touch', { x, y, index, buttons, type }, container);
+
+      if(event.buttons & 2) return cancel();
 
       if(!move) {
         let box = Element.find('#main').firstElementChild;
 
         window.move = move = Element.moveRelative(box);
       } else if(move && event.buttons == 0) {
-        move = null;
+        cancel();
       } else if(event.index > 0) {
         let rel = new Point(event);
+        let absolute = new Point(start).add(rel);
+
         if(move) {
-          Util.log('move', ...[...rel]);
-          if(event.buttons > 0) move(rel.x, rel.y);
+          window.crosshair.show = true;
+          window.crosshair.position = absolute;
+
+          Util.log('move', ...[...rel], ...[...absolute]);
+          if(true || event.buttons > 0) move(rel.x, rel.y);
           else move = move.jump();
         }
+      }
+      function cancel() {
+        move = null;
+        window.crosshair.show = false;
+
+        return event.cancel();
       }
     },
     { element: window }

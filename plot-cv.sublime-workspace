@@ -12,81 +12,22 @@
 	"buffers":
 	[
 		{
-			"contents": "function __awaiter(thisArg, _arguments, P, generator)\nfunction(resolve, reject)\nfunction fulfilled(value)\nfunction rejected(value)\nfunction step(result)\nfunction(resolve)\nfunction __generator(thisArg, body)\nsent: function()\nfunction()\nfunction verb(n)\nfunction(v)\nfunction step(op)\nfunction __read(o, n)\nfunction __spread()\nfunction createPrimedRepeater(buffer)\nfunction(push1, stop1)\nfunction useRepeater(buffer)\nfunction()\nfunction useAsyncIter(callback, deps)\nfunction()\nfunction()\nfunction()\nfunction()\nfunction useResult(callback, deps)\nfunction()\nfunction()\nfunction()\nfunction(_a)\nfunction()\nfunction()\nfunction useValue(callback, deps)",
+			"contents": "(g = globalThis || window) =>\n() =>\nfunction Util(g)\nUtil.formatAnnotatedObject = function(subject, o)\ni =>\nitem =>\npadding\narr =>\nUtil.curry = (fn, arity) =>\nret\n(v, i) =>\nCurried\nfunction()\nfunction(a)\nfunction(a, b)\nfunction(a, b, c)\nfunction(a, b, c, d)\nUtil.arityN = (fn, n) =>\nfunction(fn)\nfunction()\nfunction(fn)\nfunction(a)\nfunction(fn)\nfunction(a, b)\nfunction(fn)\nfunction(a, b, c)\nfunction(fn)\nfunction(a, b, c, d)\nfunction(fn)\nfunction(a, b, c, d, e)\nUtil.memoize = fn =>\n(...args) =>\n() =>\n() =>\ng =>\nerr =>\n() =>\ng =>\nerr =>\n() =>\ng =>\nerr =>\nfunction()\nUtil.log = (...args) =>\nf =>\nf =>\n(a, p) =>\nget: ()\n.setFilters\narg =>\n.getFilters\nUtil.msg = (strings, ...substitutions) =>\nUtil.logBase = function(n, base)\nUtil.generalLog = function(n, x)\nUtil.toSource = function(arg, opts = {})\nUtil.debug = function(message)\nremoveCircular\narg =>\nUtil.type = function({ type })\nUtil.functionName = function(fn)\nUtil.className = function(obj)\nobj\nUtil.unwrapComponent = function(c)\nUtil.componentName = function(c)\nUtil.count = function(s, ch)\nUtil.parseNum = function(str)\nUtil.minmax = function(num, min, max)\nUtil.getExponential = function(num)\nUtil.getNumberParts = function(num)\nUtil.pow2 = function(n)\nUtil.pow10 = function(n)\nUtil.bitValue = function(n)\nUtil.toBinary = function(num)\nUtil.toBits = function(num)\nbit =>\nUtil.getBit = function(v, n)\nUtil.isSet = function(v, n)\nUtil.bitCount = function(n)\nUtil.toggleBit = function(num, bit)\nUtil.setBit = function(num, bit)\nUtil.clearBit = function(num, bit)\nUtil.range = function(start, end)\n(v, k) =>\nUtil.set = function(obj, prop, value)\n(prop, value) =>\n(prop, value) =>\n(prop, value) =>\nvalue =>\n(obj, prop) =>\nUtil.inspect = (obj, opts = false) =>\nUtil.bitArrayToNumbers = function(arr)\nUtil.bitsToNumbers = function(bits)\n(val, key, arr) =>\nUtil.shuffle = function(arr, rnd = Util.rng)\n(a, b) =>\nUtil.sortNum = function(arr)\n(a, b) =>\nUtil.draw = (arr, n = 1, rnd = Util.rng) =>\nUtil.is = function(what, ...pred)\ntype =>\nfn =>\nUtil.onoff = function(val)\nUtil.numbersToBits = function(arr)\n(bits, num) =>\nUtil.randomNumbers = function([start, end], draws)\nUtil.randomBits = function(r = [1, 50], n = 5)\nUtil.padFn = function(len, char = ' ', fn = (str, pad) => pad)\n(s, n = len) =>\nUtil.pad = function(s, n, char = ' ')\nUtil.abbreviate = function(str, max = 40, suffix = '...')\nUtil.trim = function(str, charset)\nUtil.trimRight = function(str, charset)\nUtil.indent = (text, space = ' ') =>\nUtil.define = (obj, ...args) =>\nUtil.copyWhole = (dst, ...args) =>\nUtil.copyEntries = (obj, entries) =>\nUtil.extend = (...args) =>\nUtil.isCloneable = obj =>\nUtil.isUnextendable = val =>\nUtil.static = (obj, functions, thisObj, pred = (k, v, f) => true) =>\n(key, depth) =>\nvalue\nUtil.defineGetter = (obj, key, get, enumerable = false) =>\nUtil.defineGetterSetter = (obj, key, get, set, enumerable = false) =>\nUtil.extendArray = function(arr = Array.prototype)\nfunction(pred)\nfunction()\nfunction()\n(item, i, a) =>\nfunction()\nfunction(value)\nUtil.adapter = function(obj, getLength = obj => obj.length, getKey = (obj, index) => obj.\n(index), getItem\nget length()\nget instance()\nkey(i)\nget(key)\nset(key, value)\n*keys()\n*entries()\ntoObject()\ntoMap()\n.localStorage\n() =>\nw =>\n() =>\nl =>\n(l, i) =>\n(l, key) =>\n(l, key, v) =>\nUtil.array = function(a)\nUtil.arrayFromEntries = entries =>\n([k, v]) =>\nkey =>\n([k, v]) =>\nUtil.toMap = function(hash = {}, fn)\nUtil.extendMap = function(map)\n.entries\n.toObject\n.match\nentries =>\nUtil.objectFrom = function(any)\nUtil.tail = function(arr)\nUtil.splice = function(str, index, delcount, insert)\nUtil.keyOf = function(obj, prop)\nUtil.rotateRight = function(arr, n)\nUtil.repeater = function(n, what)\nfunction*()\nfunction*()\nUtil.repeat = function(n, what)\nUtil.arrayDim = function(dimensions, init)\nUtil.flatten = function(arr)\nUtil.chunkArray = function(a, size)\nUtil.chances = function(numbers, matches)\nUtil.sum = function(arr)\n(acc, n) =>\nUtil.expr = fn =>\nfunction expr(...args)\nfunction addArgs(args)\nret\n(a, b) =>\n(a, b) =>\n(a, b) =>\n(a, b) =>\n(a, b) =>\n(a, b) =>\n(a, b) =>\n(a, b) =>\n(a, b) =>\nUtil.fnName = function(f, parent)\nUtil.objName = function(o)\nUtil.findKey = function(obj, value)\nvalue : v\nUtil.find = function(arr, value, prop = 'id', acc = \n)\npred\npred\nUtil.match = function(arg, pred)\nmatch\n(acc, val, key) =>\n(acc, key) =>\nUtil.toHash = function(map, keyTransform = k => \n('' + k))\n(v, k) =>\nUtil.indexOf = function(obj, prop)\nUtil.greatestCommonDenominator = (a, b) =>\nUtil.leastCommonMultiple = (n1, n2) =>\nUtil.toString = (obj, opts = {}) =>\n(space = false) =>\n(space = false) =>\nUtil.dump = function(name, props)\n() =>\nw =>\n() =>\nUtil.ucfirst = function(str)\nUtil.lcfirst = function(str)\nUtil.typeOf = function(v)\nUtil.camelize = (text, sep = '') =>\nfunction(match, p1, p2, offset)\nUtil.decamelize = function(str, separator = '-')\nUtil.ifThenElse = function(pred = value => !!value, _then = () => {}, _else = () => {})\nfunction(value)\nfunction*(fn, arr)\nUtil.colorDump = (iterable, textFn) =>\n(color, n) =>\nUtil.bucketInserter = (map, ...extraArgs) =>\nfunction(...args)\nfunction(...args)\nUtil.fifo = function fifo()\nresolve\nasync function* generator()\nr =>\npush: function(...args)\nprocess: async function run()\nUtil.isEmail = function(v)\nUtil.isString = function(v)\nUtil.isNumeric = v =>\nUtil.isObject = (obj, proto = null) =>\nUtil.isFunction = fn =>\nUtil.isAsync = fn =>\nUtil.isArrowFunction = fn =>\nUtil.isEmptyString = v =>\nUtil.isEmpty = function(v)\nUtil.isNonEmpty = v =>\nUtil.isIpAddress = v =>\ni =>\ni =>\nUtil.isPortNumber = v =>\nUtil.hasProps = function(obj, props)\nprop =>\nUtil.validatePassword = function(value)\nUtil.clone = function(obj, proto)\nconstructor\nUtil.deepClone = function(data)\nUtil.findVal = function(object, propName, maxDepth = 10)\nUtil.deepCloneObservable = function(data)\nUtil.toArray = function(observableArray)\nUtil.arryToTree = function(data, id, pId, appId)\n(e, i) =>\nUtil.to3wei = function(a, old, id, pId)\n(e, i) =>\n(se, si) =>\nUtil.arrExchangePos = function(arr, i, j)\nUtil.arrRemove = function(arr, i)\nUtil.move = function(src, dst = [])\nUtil.moveIf = function(src, pred, dst = [])\nUtil.removeEqual = function(a, b)\nUtil.logOutClearStorage = function()\nUtil.getCookie = function(cookie, name)\nUtil.parseCookie = function(c = document.cookie)\nskip\n(char) != -1) =>\nchar =>\nchar =>\nUtil.encodeCookie = c =>\n([key, value]) =>\nUtil.setCookies = c =>\n([key, value]) =>\nUtil.clearCookies = function(c)\n(acc, name) =>\nUtil.deleteCookie = function(name)\n() =>\nw =>\n() =>\nUtil.accAdd = function(arg1, arg2)\nUtil.Subtr = function(arg1, arg2)\nUtil.accDiv = function(arg1, arg2)\nUtil.accMul = function(arg1, arg2)\nUtil.dateFormatter = function(date, formate)\nUtil.numberFormatter = function(numStr)\nUtil.searchObject = function(object, matchCallback, currentPath, result, searched)\nfunction(req = {})\n() =>\n() =>\n() =>\n() =>\n() =>\n() =>\n() =>\n() =>\n() =>\nUtil.parseQuery = function(url = \n)\nUtil.encodeQuery = function(data)\nUtil.parseURL = function(href = this.\n)\npart =>\n([k, v]) =>\n(acc, m) =>\nhref(override)\nUtil.makeURL = function(...args)\nUtil.numberFromURL = function(url, fn)\nUtil.tryPromise = fn =>\n(resolve, reject) =>\nUtil.tryFunction = (fn, resolve = a => a, reject = () => null) =>\nresolve\nreject\nasync function(...args)\nfunction(...args)\nUtil.tryCatch = (fn, resolve = a => a, reject = () => null, ...args) =>\nUtil.putError = err =>\nUtil.putStack = stack =>\n() =>\nfn =>\nret =>\nUtil.tryPredicate = (fn, defaultRet) =>\nret =>\n() =>\nUtil.isBrowser = function()\n() =>\nw =>\n() =>\n() =>\nw =>\n() =>\nUtil.isServer = function()\nUtil.isMobile = function()\nUtil.uniquePred = (cmp = null) =>\n(el, i, arr) =>\n(el, i, arr) =>\nitem =>\nUtil.unique = (arr, cmp) =>\nUtil.concat = function*(...args)\nUtil.distinct = function(arr)\nfunction(value, index, me)\nUtil.rangeMinMax = function(arr, field)\nobj =>\nUtil.remap = (...args) =>\ngetR\nr\nUtil.mergeLists = function(arr1, arr2, key = 'id')\nUtil.throttle = function(fn, wait)\nfunction()\nUtil.foreach = function(o, fn)\nUtil.all = function(obj, pred)\nUtil.isGenerator = function(fn)\nUtil.isIterable = obj =>\nUtil.isNativeFunction = x =>\nUtil.isConstructor = x =>\nconstruct(target, args)\ntarget\nx\nm =>\nUtil.filter = function(a, pred)\nfunction*()\nfunction*()\nfn\nUtil.reduce = (obj, fn, accu) =>\nUtil.mapFunctional = fn =>\nfunction*(arg)\nUtil.map = (obj, fn) =>\nret\nret\nfunction*()\nUtil.entriesToObj = function(arr)\n(acc, item) =>\nUtil.isDate = function(d)\nUtil.parseDate = function(d)\nUtil.isoDate = function(date)\nUtil.toUnixTime = function(dateObj, utc = false)\nUtil.unixTime = function(utc = false)\nUtil.fromUnixTime = function(epoch, utc = false)\nUtil.formatTime = function(date = \n(), format\nUtil.leapYear = function(year)\nUtil.timeSpan = function(s)\nUtil.randFloat = function(min, max, rnd = Util.rng)\nUtil.randInt = (...args) =>\nUtil.randStr = (len, charset, rnd = Util.rng) =>\nUtil.hex = function(num, numDigits = 0)\nUtil.numberParts = (num, base) =>\nUtil.roundTo = function(value, prec, digits, type = 'round')\n() =>\n() =>\nw =>\n() =>\nencode: utf8\ndecode: base64\nUtil.formatRecord = function(obj)\nitem =>\nUtil.isArray = function(obj)\nUtil.equals = function(a, b)\n(e, i) =>\nUtil.isGetter = (obj, propName) =>\nUtil.isBool = value =>\nUtil.size = function(obj)\nUtil.isMap = function(obj)\nUtil.effectiveDeviceWidth = function()\nUtil.getFormFields = function(initialState)\n(acc, { elements }) =>\n(acc2, { name, value }) =>\nUtil.mergeObjects = function(objArr, predicate = (dst, src, key) => (src[key] == '' ? undefined : src[key]))\nUtil.getUserAgent = function(headers = req.headers)\nUtil.factor = function(start, end)\nUtil.factorial = function(n)\nUtil.lottoChances = function(numbers, draws)\nUtil.increment = function(obj, key)\nUtil.counter = function()\n.incr\nUtil.filterKeys = function(obj, pred = k => true)\npred\npred\nUtil.filterOutKeys = function(obj, arr)\nkey =>\nUtil.getKeys = function(obj, arr)\nUtil.numbersConvert = function(str)\n(ch, i) =>\nUtil.entries = function(arg)\nfunction*()\nUtil.keys = function(arg)\nfunction*()\nUtil.values = function(arg)\nfunction*()\nUtil.traverse = function(o, fn)\n(v, k, a) =>\nfunction* walker(o, depth = 0)\nUtil.traverseWithPath = function(o, rootPath = [])\nfunction* walker(o, path)\nUtil.indexByPath = function(o, p)\nUtil.pushUnique = function(...args)\nitem =>\nUtil.insertSorted = function(arr, item, cmp = (a, b) => b - a)\nUtil.inserter = (dest, next = (k, v) => {}) =>\n(k, v) =>\n(k, v) =>\n(k, v) =>\nfn\nUtil.mapAdapter = getSetFunction =>\nget(key)\nset(key, value)\nUtil.mapFunction = map =>\nfn\nm =>\n.set\n(k, v) =>\n.get\n.keys\n.has\nUtil.mapWrapper = (map, toKey = key => key, fromKey = key => key) =>\n.set\n(k, v) =>\n.get\n.keys\n.has\nm =>\nUtil.mapCombinator = (forward, backward) =>\nfn\n(a,m) =>\nkey =>\na =>\nfunction makeGetter(map, next = a => a)\nkey =>\nUtil.predicate = fn_or_regex =>\nfn\nUtil.iterateMembers = function*(obj, predicate = (name, depth, obj, proto) => true, depth = 0)\nUtil.and = (...predicates) =>\n(...args) =>\npred =>\nUtil.or = (...predicates) =>\n(...args) =>\npred =>\n(pred, obj) =>\nUtil.memberNameFilter = (depth = 1, start = 0) =>\n(m, l, o) =>\n(m, l, o) =>\n(name, depth, obj, proto) =>\nUtil.getMemberNames = (obj, depth = Number.Infinity, start = 0) =>\nUtil.objectReducer = (filterFn, accFn = (a, m, o) => ({ ...a, [m]: o[m] }), accu = {}) =>\n(obj, ...args) =>\n(a, m) =>\n(r, a, m) =>\n(r, a) =>\n(a, m, o) =>\nUtil.methodNameFilter = (depth = 1, start = 0) =>\n(m, l, o) =>\nUtil.getMethodNames = (obj, depth = 1, start = 0) =>\n(a, m, o) =>\nUtil.inherit = (dst, src, depth = 1) =>\nUtil.bindMethods = function(methods, obj)\nUtil.bindMethodsTo = function(dest, obj, methods)\nUtil.getConstructor = obj =>\nUtil.getPrototypeChain = function(obj, fn = p => p)\nUtil.getConstructorChain = (ctor, fn = (c, p) => c) =>\n(p, o) =>\nUtil.weakAssign = function(obj)\nother =>\nUtil.exception = function Exception(...args)\nUtil.location = function Location(...args)\n(t, color) =>\nt =>\ngetFileName()\ngetLineNumber()\ngetColumnNumber()\nUtil.stackFrame = function StackFrame(frame)\nprop =>\ngetMethodName()\ngetFunctionName()\ngetTypeName()\ngetFileName()\ngetLineNumber()\ngetColumnNumber()\nget()\n(t, color) =>\nt =>\nfn =>\n(f, i) =>\ngetLocation()\nget location()\nUtil.scriptName = () =>\n() =>\nscript =>\n() =>\nUtil.getFunctionName = () =>\nUtil.scriptDir = () =>\n() =>\nscript =>\n() =>\nUtil.stack = function Stack(stack)\nf =>\nframe =>\npart =>\nframe =>\n([func, file]) =>\nn =>\n([func, file]) =>\n([func, [columnNumber, lineNumber, ...file]]) =>\n({ functionName: func, fileName: file, columnNumber: column, lineNumber: line }) =>\n() =>\nframe =>\nget: ()\nframe =>\nf =>\nget: function()\n(a, f) =>\n(fn, i) =>\nUtil.getCallerStack = function(position = 2)\n.prepareStackTrace\nUtil.getCallerFile = function(position = 2)\nUtil.getCallerFunction = function(position = 2)\nUtil.getCallerFunctionName = function(position = 2)\nUtil.getCallerFunctionNames = function(position = 2)\nUtil.getCaller = function(index = 1, stack)\n(acc, m) =>\nUtil.getCallers = function(start = 2, num = Number.MAX_SAFE_INTEGER, pred = () => true, stack)\n.toString\nframe =>\nfunction()\nUtil.getStackFrame = function(offset = 2)\nframe =>\nUtil.rotateLeft = function(x, n)\nUtil.rotateRight = function(x, n)\nUtil.hashString = function(string, bits = 32, mask = 0xffffffff)\nUtil.flatTree = function(tree, addOutput)\naddOutput\nkey =>\nUtil.traverseTree = function(tree, fn, depth = 0, parent = null)\nUtil.walkTree = function(node, pred, t, depth = 0, parent = null)\nfunction*()\npred\nt\nUtil.isPromise = function(obj)\nfn =>\nUtil.next = function(iter, observer, prev = undefined)\nval =>\n() =>\nerr =>\n() =>\nUtil.getImageAverageColor = function(imageElement, options)\ntoStringRgb()\ntoStringRgba()\ntoStringHex()\ntoHex\nUtil.jsonToObject = function(jsonStr)\nUtil.splitLines = function(str, max_linelen = Number.MAX_SAFE_INTEGER)\nfunction*(re, str)\nUtil.decodeEscapes = function(text)\nm =>\n([s, t]) =>\nUtil.stripXML = text =>\nUtil.stripNonPrintable = text =>\nUtil.decodeHTMLEntities = function(text)\nfunction(match, entity)\nUtil.encodeHTMLEntities = (str, charset = '\\u00A0-\\u9999<>&') =>\ni =>\nUtil.stripAnsi = function(str)\nUtil.proxy = (obj = {}, handler) =>\nget(target, key, receiver)\nset(target, key, value, receiver)\nUtil.propertyLookup = (obj = {}, handler = key => null) =>\nget(target, key, receiver)\nUtil.proxyTree = function proxyTree(...callbacks)\napplyCallback\nget(target, key)\nset(target, key, value)\napply(target, thisArg, args)\nfunction node(path)\n() =>\nUtil.construct = constructor =>\nfunction F(args)\nF\nUtil.constructApply = (constructor, array) =>\nUtil.immutable = args =>\nset: ()\ndeleteProperty: ()\ndefineProperty: ()\nUtil.immutableClass = (orig, ...proto) =>\np =>\nctor =>\nctor\nfunction()\nfunction(value)\nUtil.partial = function partial(fn /*, arg1, arg2 etc */)\nfunction()\n(min, max, value) =>\nUtil.coloring = (useColor = true) =>\ncode(...args)\ntext(text)\nconcat(...args)\ncode(...args)\ntext(text, ...color)\nconcat(...args)\ncode(...args)\ntext(text, ...color)\nconcat(...args)\nUtil.colorText = (...args) =>\nUtil.stripAnsi = str =>\nUtil.ansiCode = (...args) =>\nUtil.defineInspect = (proto, ...props) =>\nfunction()\n(acc, key) =>\n(a, b, value) =>\nUtil.bindProperties = (proxy, target, props, gen) =>\nname =>\ngen\nv =>\n(a, k) =>\nget: ()\nget: ()\nfunction()\nobj =>\non: val\noff: val\ntrue: val\nfalse: val\nUtil.assignGlobal = () =>\nUtil.weakMapper = (createFn, map = \n())\nself\n.set\n.get\nUtil.merge = (...args) =>\n(acc, arg) =>\nUtil.weakAssoc = (fn = (value, ...args) => Object.\n(value, ...args))\n() =>\nmap =>\n(obj, ...args) =>\n() =>\n(obj, ...args) =>\n(obj, ...args) =>\nUtil.transformer = (a, ...l) =>\n(c, f) =>\nfunction(...v)\nUtil.proxyObject = (root, handler) =>\nptr\n(a, i) =>\n(value, path) =>\nget(target, key)\nfunction node(path)\nUtil.parseXML = xmlStr =>\n() =>\nparser =>\nUtil.once = fn =>\n(...args) =>\nUtil.copyTextToClipboard = (i, { target: t } = {}) =>\n() =>\nUtil.toPlainObject = (obj, t = (v, n) => v) =>\n(acc, k) =>\nUtil.timer = msecs =>\nremaining\nfinish\nlog\nobj =>\nv =>\ntimeout\n() =>\n(...args) =>\n() =>\nadd\nget delay()\nget created()\nget start()\nget stop()\nget elapsed()\nget end()\nget remain()\ncancel()\npause()\n.resume\n.restart\ncallback(...args)\nsubscribe(f)\nunsubscribe(f)\nstart\n(resolve, reject) =>\nUtil.thenableReject = error =>\nthen: (resolve, reject)\nUtil.wrapGenerator = fn =>\nfunction(...args)\nUtil.decorateIterable = (proto, generators = false) =>\nforEach(fn, thisArg)\n*map(fn, thisArg)\n*filter(pred, thisArg)\nfindIndex(pred, thisArg)\nfind(pred, thisArg)\nevery(pred, thisArg)\nsome(pred, thisArg)\nreduce(fn, accu)\nfunction TRBL(arg)\nk =>\nv =>\nTRBL\nTRBL.prototype.null = function()\nTRBL.null = trbl =>\nTRBL\nTRBL.neg = (trbl = this) =>\nTRBL.prototype.isNaN = function()\nTRBL\nget()\nrect =>\nTRBL\nget()\nrect =>\nTRBL.prototype.add = function(other)\nTRBL.prototype.union = function(other)\nTRBL.prototype.toRect = function()\nTRBL.prototype.toRect = function()\nTRBL.union = (trbl, other) =>\nTRBL.toRect = trbl =>\nTRBL.prototype.toString = function(unit = 'px')\nTRBL.prototype.toSource = function()\npoints =>\nTRBL\nfunction isTRBL(obj)\nfunction Point(arg)\np\np\nPoint\nPoint\nPoint\nget()\nget()\nPoint.prototype.move = function(x, y)\nPoint.prototype.move_to = function(x, y)\nPoint.prototype.clear = function(x, y)\nPoint.prototype.set = function(fn)\nPoint.prototype.clone = function()\nPoint.prototype.sum = function(...args)\nPoint.prototype.add = function(...args)\nPoint.prototype.diff = function(...args)\nPoint.prototype.sub = function(...args)\nPoint.prototype.prod = function(f)\nPoint.prototype.mul = function(f)\nPoint.prototype.quot = function(other)\nPoint.prototype.div = function(other)\nPoint.prototype.comp = function()\nPoint.prototype.neg = function()\nPoint.prototype.distanceSquared = function(other = { x: 0, y: 0 })\nPoint.prototype.distance = function(other = { x: 0, y: 0 })\nPoint\nPoint.prototype.equals = function(other)\nPoint.prototype.round = function(precision = 0.001, digits, type = 'round')\nPoint.prototype.sides = function()\nPoint.prototype.dot = function(other)\nPoint.prototype.fromAngle = function(angle, dist = 1.0)\nPoint.prototype.toAngle = function(deg = false)\nPoint.prototype.angle = function(other, deg = false)\nPoint\nPoint.prototype.rotate = function(angle, origin = { x: 0, y: 0 })\nPoint.prototype.dimension = function()\nPoint\nfunction()\nPoint.prototype.toString = function(opts = {})\nPoint\nfunction()\nPoint\n() =>\nPoint.prototype.toSource = function(opts = {})\npad\nPoint.prototype.toObject = function()\nPoint\nPoint.prototype.toCSS = function(precision = 0.001)\nPoint.prototype.toFixed = function(digits)\nPoint.prototype.isNull = function()\nPoint.prototype.inside = function(rect)\nPoint.prototype.normalize = function(minmax)\nPoint.move = (point, x, y) =>\nPoint\nPoint.angle = (point, other, deg = false) =>\nPoint\nPoint.inside = (point, rect) =>\nPoint\nPoint.sub = (point, other) =>\nPoint\nPoint.prod = (a, b) =>\nPoint\nPoint.quot = (a, b) =>\nPoint\nPoint.equals = (a, b) =>\nPoint\nPoint.round = (point, prec) =>\nPoint\nPoint.fromAngle = (angle, f) =>\nPoint\n(point, ...args) =>\nPoint\nPoint.toSource = point =>\nisPoint\nPoint\nPoint.bind = (o, p, gen) =>\ngen\nv =>\nfunction()\nfunction Size(arg)\nSize\nSize\nSize\nSize.prototype.convertUnits = function(w = 'window' in global ? window : null)\nSize.prototype.aspect = function()\nSize.prototype.toCSS = function(units)\nSize.prototype.transform = function(m)\nSize.prototype.isSquare = function()\nSize.prototype.area = function()\nSize.prototype.resize = function(width, height)\nSize.prototype.sum = function(other)\nSize.prototype.add = function()\nSize.prototype.diff = function(other)\nSize.prototype.sub = function()\nSize.prototype.prod = function(f)\nSize.prototype.mul = function(...args)\nSize.prototype.quot = function(other)\nSize.prototype.inverse = function(other)\nSize.prototype.div = function(f)\nSize.prototype.round = function(precision = 0.001, digits)\nSize.prototype.bounds = function(other)\nSize.prototype.fit = function(size)\nSize\nSize\nSize\nSize.prototype.fitHeight = function(other)\nSize.prototype.fitWidth = function(other)\nSize.prototype.fitFactors = function(other)\nSize.prototype.toString = function(opts = {})\nSize.area = sz =>\nSize\nSize.aspect = sz =>\nSize\nSize.bind = (o, p, gen) =>\ngen\nv =>\nSize\n(size, ...args) =>\nSize\nisSize\n(size, ...args) =>\nSize\nfunction Rect(arg)\nfield =>\narg =>\narg =>\nRect\nSize\nPoint\nRect\nRect.prototype.clone = function(fn)\nRect.prototype.corners = function()\nRect\nRect.prototype.isSquare = function()\nRect\nRect.prototype.getArea = function()\nRect.prototype.toString = function(opts = {})\nPoint\nSize\nRect.prototype.toSource = function(opts = {})\nRect\nget: function()\nset: function(value)\nRect\nget: function()\nset: function(value)\nRect\nget: function()\nset: function(value)\nRect\nget: function()\nset: function(value)\nRect\nget: function()\nRect\nRect\nget: function()\nRect\nget: function()\nget()\nset(value)\nget()\nset(value)\nRect.prototype.points = function(ctor = items => Array.\n(items))\nRect\nRect.prototype.scale = function(factor)\nRect.prototype.mul = function(...args)\nPoint\nSize\nRect.prototype.div = function(...args)\nPoint\nSize\nRect.prototype.outset = function(trbl)\nRect.prototype.inset = function(trbl)\nRect.prototype.inside = function(point)\nRect.prototype.fit = function(other, align = Align.CENTER | Align.MIDDLE | Rect.CONTAIN)\nSize\n(a, b) =>\n(acc, factor) =>\nRect.prototype.pointFromCenter = function(point)\nPoint\nRect.prototype.toCSS = function()\nPoint\nSize\nRect.prototype.toTRBL = function()\nRect.prototype.toArray = function()\nRect.prototype.toPoints = function(ctor = points => Array.\n(points))\nRect.prototype.toLines = function(ctor = lines => Array.\n(lines, points\n(...points)))\nRect\nRect.prototype.align = function(align_to, a = 0)\nRect.prototype.round = function(precision = 0.001, digits, type = 'round')\nRect.prototype.toObject = function(bb = false)\nRect.round = rect =>\nRect\nRect.align = (rect, align_to, a = 0) =>\nRect\nRect.toCSS = rect =>\nRect\nRect.inset = (rect, trbl) =>\nRect\nRect.outset = (rect, trbl) =>\nRect\nRect.center = rect =>\nRect.bind = rect =>\nRect.inside = (rect, point) =>\nRect.from = function(obj)\nfn\nRect.fromCircle = function(...args)\n(rect, ...args) =>\nRect\nRect.toSource = (rect, opts = {}) =>\nRect.bind = (o, p, gen) =>\ngen\nv =>\n(rect, sx, sy) =>\n(rect, width, height) =>\n(rect, x, y) =>\nRect\nfunction(...args)\nRect\nisRect\nElement\nwrap\n(k, fn) =>\ncreate\nobj =>\nwalkUp\ne =>\npred\nskip\n(e, next) =>\nemit\nwalk\nfunction()\niterator\n(e, d, r) =>\ngetProp\ngetProp\nfunction()\nchildIterator\ntoObject\nc =>\ntoCommand\nk =>\ne =>\nfind\nfindAll\nattr\n(acc, name) =>\ngetRect\nrect\nsetRect\nposition\nmove\ngetValue\nmoveRelative\nfunction move(x, y)\n.cancel\n.jump\nresize\ngetEdgesXYWH\ngetEdge\ngetPointsXYWH\ncumulativeOffset\ngetTRBL\npos =>\nsetTRBL\n(acc, pos) =>\nsetCSS\n.subscribe\ngetCSS\n() =>\n() =>\n() =>\nk =>\nreceiver\nget: function()\n([k, v]) =>\n(ret, key) =>\nxpath\n(e, next) =>\nselector\ndepth\ndump\nfunction dumpElem(child, accu, root, depth)\nattr =>\nname =>\n(e, a, r, d) =>\nskipper\n(a, b) =>\nfunction(elem)\nprevSibling\nnextSibling\nidx\nname\nunique\nfactory\n.append_to\n.create\n.setattr\n.setcss\n.bound_factory\nremove\nisat\nat\ne =>\n(e, depth) =>\n(resolve, reject) =>\n(e, accu, root, depth) =>\ntransition\n(resolve, reject) =>\ntrun\ntend\ncancel\ntoString\n([name, value]) =>\ntext =>\n(resolve, reject) =>\n() =>\nerr =>\nElement.children = function*(elem, tfn = e => e)\nElement.recurse = function*(elem, tfn = e => e)\nfunction()\nElement.edges = arg =>\nElement.margin = element =>\nElement.padding = element =>\nElement.border = element =>\nfunction isElement(e)",
 			"settings":
 			{
-				"buffer_size": 643,
+				"buffer_size": 23388,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "package.json",
+			"file": "tamper.js",
 			"settings":
 			{
-				"buffer_size": 3678,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "main.js",
-			"settings":
-			{
-				"buffer_size": 23446,
+				"buffer_size": 184225,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/repeater/limiters.js",
-			"settings":
-			{
-				"buffer_size": 11845,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "lib/repeater/timers.js",
-			"settings":
-			{
-				"buffer_size": 10567,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "lib/repeater/pubsub.js",
-			"settings":
-			{
-				"buffer_size": 6887,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "style.css",
-			"settings":
-			{
-				"buffer_size": 6605,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/svgRenderer.js",
-			"settings":
-			{
-				"buffer_size": 15012,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/repeater/react-hooks.js",
-			"settings":
-			{
-				"buffer_size": 7282,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
 			}
 		}
 	],
@@ -102,11 +43,15 @@
 		"selected_items":
 		[
 			[
-				"install p",
-				"Package Control: Install Package"
+				"shell",
+				"Set Syntax: ShellScript Improved"
 			],
 			[
 				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"install p",
 				"Package Control: Install Package"
 			],
 			[
@@ -185,20 +130,65 @@
 		"/home/roman/Dokumente/Sources/plot-cv",
 		"/home/roman/Dokumente/Sources/plot-cv/Javascript_Clipper_6.4.2.2_fpoint",
 		"/home/roman/Dokumente/Sources/plot-cv/lib",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/antlr",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript",
 		"/home/roman/Dokumente/Sources/plot-cv/react-breadboard"
 	],
 	"file_history":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv/lib/pubsub.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/create-tamper.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
-		"/usr/share/applications/sublime_text.desktop",
-		"/home/roman/Sources/plot-cv/lib/eagle/svgRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/style.css",
-		"/home/roman/Dokumente/Sources/plot-cv/static/fonts.css",
+		"/home/roman/Dokumente/Sources/plot-cv/new.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/node.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/tamper.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/rectangle.js",
+		"/home/roman/Schreibtisch/tamper.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
+		"/home/roman/Sources/Scripts/sh/npmjs.sh",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/pubsub.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/repeater.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/docs/03_rationale.md",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
+		"/home/roman/Dokumente/Sources/Scripts/t",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/docs/08_utilities.md",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/docs/02_overview.md",
+		"/home/roman/Sources/plot-cv/lib/eagle/components/symbol.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/instance.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/wire.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/symbol.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/trbl.js",
+		"/home/roman/Dokumente/Sources/Scripts/sh/npmjs.sh",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/Headphone-Amplifier-ClassAB-alt3.sch",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
+		"/home/roman/Dokumente/Sources/plot-cv/server.js",
 		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
+		"/usr/share/applications/sublime_text.desktop",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
+		"/home/roman/Sources/plot-cv/lib/devtools.js",
+		"/home/roman/Dokumente/Sources/plot-cv/package.json",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/limiters.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/timers.js",
+		"/home/roman/Dokumente/Sources/plot-cv/style.css",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/react-hooks.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/pubsub.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/static/fonts.css",
 		"/home/roman/Dokumente/Sources/plot-cv/components.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/project.js",
@@ -207,12 +197,8 @@
 		"/home/roman/Sources/plot-cv/lib/eagle/schematicRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/index.html",
 		"/home/roman/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/pathMapper.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/color/hsla.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/color/coloredText.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom.js",
@@ -231,17 +217,12 @@
 		"/home/roman/Sources/plot-cv/lib/json/path.js",
 		"/home/roman/Sources/plot-cv/lib/xml/xpath.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/trbl.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/align.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/color/rgba.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/color.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/lineList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/polygon.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
 		"/home/roman/Dokumente/Sources/plot-cv/revelation-contrast.json",
 		"/home/roman/Sources/plot-cv/lib/geom/matrix3d.js",
@@ -249,17 +230,12 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/graph.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/libraryRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/net/websocket-async.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/nodeMap.js",
 		"/home/roman/Sources/plot-cv/lib/color/coloredText.js",
 		"/home/roman/Sources/plot-cv/lib/color/hsla.js",
-		"/home/roman/Dokumente/Sources/plot-cv/server.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-xml.js",
 		"/home/roman/Dokumente/Sources/plot-cv/message.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-description.js",
@@ -280,44 +256,13 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/iterator.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/container/Shash.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/event.js",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/Headphone-Amplifier-ClassAB-alt3.sch",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/Headphone-Amplifier-ClassAB-alt3.brd",
 		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/reactComponent.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/node.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/util.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/tXml.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/ref.js",
-		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd",
-		"/home/roman/Dokumente/Sources/an-tronics/eagle/lbr/t.lbr",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/t.lbr",
-		"/home/roman/Sources/plot-cv/lib/eagle/node.js",
-		"/home/roman/Dokumente/Sources/plot-cv/.babelrc",
-		"/home/roman/Sources/plot-cv/list-proxies.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/draw/colorMap.js",
-		"/home/roman/Dokumente/Sources/plot-cv/list-proxies.js",
-		"/home/roman/Dokumente/Sources/an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.sch",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/ic.lbr",
-		"/home/roman/Dokumente/Sources/plot-cv/package.json",
-		"/home/roman/Sources/plot-cv/lib/functional.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/KolorWheel.js",
-		"/home/roman/.config/sublime-text-3/Packages/User/SchemeEditorTemp/Next Roman 2.tmTheme",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/voronoi.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-voronoi.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/css.js",
-		"/home/roman/.cache/.fr-XLhmDP/clipboard.js-master/src/clipboard.js",
-		"/home/roman/.cache/.fr-7m70kN/clipboard.js-master/src/clipboard-action.js",
-		"/home/roman/Sources/plot-cv/htm/node_modules/cssnano-preset-default/node_modules/postcss-minify-params/dist/index.js",
-		"/home/roman/Sources/plot-cv/lib/ecmascript/lexer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-kolorwheel.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/async/websocket.js"
+		"/home/roman/Dokumente/Sources/plot-cv/lib/tXml.js"
 	],
 	"find":
 	{
@@ -328,6 +273,10 @@
 		"height": 118.0,
 		"where_history":
 		[
+			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js,/home/roman/Dokumente/Sources/plot-cv,*.js",
+			"/home/roman/Dokumente/Sources/plot-cv/lib,*.js",
+			"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/docs,*.md",
+			"/home/roman/Sources/plot-cv/lib,*.js,,/home/roman/Dokumente/Sources/plot-cv,*.js,/home/roman/Dokumente/Sources/plot-cv/lib/repeater/docs,*.md",
 			"/home/roman/Sources/plot-cv/lib,*.js,,/home/roman/Dokumente/Sources/plot-cv,*.js",
 			"/home/roman/Sources/plot-cv/lib,*.js",
 			"/home/roman/Sources/plot-cv,*.js,/home/roman/Sources/plot-cv/test-renderer.js",
@@ -360,6 +309,111 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"arity",
+			"new Syntax",
+			"error",
+			"no ast",
+			"ethodName:",
+			"ethodName:$",
+			"ExportStat",
+			"ForStat",
+			"return",
+			"'yield'",
+			", 'yield'",
+			"'yield'",
+			"'await'",
+			"No member",
+			"processing",
+			"^\\s*console.log",
+			"console.log",
+			"file:",
+			"\")));",
+			"VariableDec",
+			"ExportStat",
+			"declarations",
+			"log.*node:",
+			"node:",
+			"assoc",
+			"Weak",
+			"weak",
+			"new Path",
+			"weakMapper",
+			"\\(msg\\)",
+			"delete",
+			"deletre",
+			"this.pos =",
+			"this.pos",
+			"Error {",
+			"Error ",
+			"Error",
+			"^\\s*//\\s*console.log",
+			"^\\s*console.log",
+			"rect.js",
+			"dumpFile",
+			"writeFile",
+			"write",
+			"output_file",
+			"^\\s*console.log.*getRang",
+			"^\\s*console.log.*getRange",
+			"^\\s*console.log..result:",
+			"console.log.*result:",
+			"node",
+			"Util.log",
+			"Uilt.log",
+			"\\*iterator",
+			"iterator",
+			"walk",
+			"transition",
+			"import",
+			"import ",
+			"import",
+			"^\\s*g\\.[[:upper:]]",
+			"^g\\.[[:upper:]]",
+			"function",
+			"Size",
+			"g.Point =",
+			"^\\s*g\\.[A-Za-z]* =",
+			"Size",
+			"pubsub",
+			"const Immutable",
+			"^\\s*window\\.",
+			"window\\.",
+			"export ",
+			"ago",
+			"log.*data:",
+			"data:",
+			"Wire",
+			"map",
+			"import.*MakeCoordTransformer",
+			"props.item",
+			"item",
+			"promises",
+			"memo",
+			" toString",
+			"Mapper",
+			"mapper",
+			"React.render\\(",
+			"React.render",
+			"Object.ass",
+			"components.js",
+			"putError",
+			"getCaller",
+			"getCallerStack",
+			"width.*= data",
+			"flatten",
+			"instancesGroup",
+			"Wire",
+			"connsole",
+			"renderInstance\\(",
+			"ReactCompone",
+			"append",
+			"renderInstance\\(",
+			"import.*Fragment",
+			"item",
+			"arr",
+			"import.*TransformationList",
+			"import.*Transform",
+			"renderInstance",
 			"font-size",
 			"text",
 			"Consumer",
@@ -382,112 +436,7 @@
 			"Util.log",
 			"loaded",
 			"debug",
-			"Util.log",
-			"Label",
-			" \n",
-			"useStat",
-			"align",
-			"Label =",
-			"font-fa",
-			"'Fixed'",
-			"family.*fixed",
-			"Misc.*fixed",
-			"family",
-			"font",
-			"font-",
-			"font-size",
-			"px",
-			"font-fa",
-			"font-size",
-			"7px",
-			"append\\(",
-			"append",
-			"defs",
-			"'svg', ",
-			"'svg'",
-			"font-family",
-			"mapFunction =",
-			"this.pathMapper",
-			"this.elementMapper",
-			"this.ele",
-			"path2obj",
-			"getsetFunction",
-			"project.doc.mapper",
-			"mapper",
-			"path2obj",
-			"EagleElement.map",
-			"path2eagle",
-			"path",
-			"path2eagle",
-			"log.*mapper",
-			"inserter =",
-			"\n  ",
-			"mapWrapper",
-			"path2compon",
-			"path2component",
-			"Wrapper",
-			"obj2path",
-			"PathMapperf",
-			"mapWrapper",
-			"path2component",
-			"maps =",
-			"PathMapper",
-			"pathMapper",
-			"obj2path",
-			"mapper",
-			"setItem",
-			"mapWrapp",
-			"wrapper",
-			"wrap",
-			"Util.inserter",
-			"weakMapper",
-			"Util.inserter",
-			"weakMapper ",
-			"setComponent",
-			"^(\\s*)console.log",
-			"^\\s*console.log",
-			"^\\sconsole.log",
-			"orange",
-			"Util.stack.prototype, ",
-			"stackFrame.pr",
-			"stackFrame.r",
-			" toString",
-			"Util.trap",
-			"Error\\.",
-			"log.*LoadFile",
-			"LoadDoc",
-			"Util.trap",
-			"LoadDoc",
-			"612",
-			"console.log",
-			"location =",
-			"Util.log =",
-			"filename",
-			"project.doc",
-			"LoadFile",
-			"location =",
-			"throw",
-			"^(\\s*)console.log",
-			"^\\s*console.log",
-			"Util\\.[^ ]*insert",
-			"inserter =",
-			"inserter",
-			"insert =",
-			"new Map",
-			"insert =",
-			"insert ",
-			"insert =",
-			"Util\\.",
-			"[^\\.]formatAnnotatedObject",
-			"[^.]formatAnnotatedObject",
-			"formatAnnotatedObject",
-			" formatAnnotatedObject",
-			"formatAnnotatedObject",
-			"reverseMap",
-			"renderMap",
-			"\\.render\\(",
-			"trap",
-			"toRGBA ="
+			"Util.log"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -495,6 +444,11 @@
 		"regex": true,
 		"replace_history":
 		[
+			"console.log",
+			"",
+			"Rectangle",
+			"child",
+			"children",
 			"console.log",
 			"'Fixed Medium'",
 			"getSetFunction",
@@ -583,178 +537,5507 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 643,
+						"buffer_size": 23388,
 						"regions":
 						{
 						},
 						"selection":
 						[
+							[
+								295,
+								295
+							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/User/SchemeEditorTemp/Next Bold.tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/repeater/react-hooks.js",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/tamper.js",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
 								[
-									920,
-									973
+									607,
+									636
 								],
 								[
-									1010,
-									1035
+									668,
+									673
 								],
 								[
-									1042,
-									1067
+									831,
+									847
 								],
 								[
-									1175,
-									1199
+									918,
+									967
 								],
 								[
-									1311,
-									1332
+									1857,
+									1861
 								],
 								[
-									1401,
-									1418
+									2767,
+									2774
 								],
 								[
-									1586,
-									1621
+									3197,
+									3211
 								],
 								[
-									1658,
-									1674
+									3468,
+									3474
 								],
 								[
-									1942,
-									1952
+									3583,
+									3610
 								],
 								[
-									1999,
-									2015
+									3662,
+									3693
 								],
 								[
-									2029,
-									2040
+									3858,
+									3867
 								],
 								[
-									2083,
-									2100
+									3908,
+									3932
 								],
 								[
-									3723,
-									3744
+									4013,
+									4023
 								],
 								[
-									4156,
-									4175
+									4080,
+									4091
 								],
 								[
-									4457,
-									4494
+									4151,
+									4165
 								],
 								[
-									4551,
-									4573
+									4228,
+									4245
 								],
 								[
-									4797,
-									4825
+									4305,
+									4325
 								],
 								[
-									4862,
-									4872
+									4738,
+									4762
 								],
 								[
-									4982,
-									5019
+									4793,
+									4805
 								],
 								[
-									5176,
-									5186
+									4823,
+									4833
 								],
 								[
-									5279,
-									5289
+									4885,
+									4897
 								],
 								[
-									5406,
-									5416
+									4915,
+									4926
 								],
 								[
-									5432,
-									5442
+									4979,
+									4991
 								],
 								[
-									5611,
-									5645
+									5009,
+									5023
 								],
 								[
-									5805,
-									5815
+									5079,
+									5091
 								],
 								[
-									5851,
-									5861
+									5109,
+									5126
 								],
 								[
-									5912,
-									5922
+									5185,
+									5197
 								],
 								[
-									5991,
-									6003
+									5215,
+									5235
 								],
 								[
-									6723,
-									6733
+									5297,
+									5309
 								],
 								[
-									6976,
-									6986
+									5327,
+									5350
 								],
 								[
-									7065,
-									7098
+									6658,
+									6678
+								],
+								[
+									6712,
+									6724
+								],
+								[
+									7074,
+									7079
+								],
+								[
+									7105,
+									7110
+								],
+								[
+									7125,
+									7129
+								],
+								[
+									7139,
+									7145
+								],
+								[
+									7179,
+									7184
+								],
+								[
+									7207,
+									7211
+								],
+								[
+									7225,
+									7231
+								],
+								[
+									7273,
+									7278
+								],
+								[
+									7301,
+									7305
+								],
+								[
+									7323,
+									7329
+								],
+								[
+									7438,
+									7448
+								],
+								[
+									7665,
+									7688
+								],
+								[
+									8034,
+									8038
+								],
+								[
+									8082,
+									8086
+								],
+								[
+									8141,
+									8150
+								],
+								[
+									8366,
+									8376
+								],
+								[
+									8470,
+									8498
+								],
+								[
+									8534,
+									8540
+								],
+								[
+									8606,
+									8630
+								],
+								[
+									8666,
+									8707
+								],
+								[
+									8974,
+									9006
+								],
+								[
+									9057,
+									9089
+								],
+								[
+									9137,
+									9177
+								],
+								[
+									10278,
+									10308
+								],
+								[
+									10374,
+									10411
+								],
+								[
+									10612,
+									10618
+								],
+								[
+									10843,
+									10873
+								],
+								[
+									10942,
+									10974
+								],
+								[
+									11114,
+									11144
+								],
+								[
+									11295,
+									11298
+								],
+								[
+									11439,
+									11473
+								],
+								[
+									11646,
+									11678
+								],
+								[
+									11988,
+									12016
+								],
+								[
+									12100,
+									12129
+								],
+								[
+									12214,
+									12251
+								],
+								[
+									12307,
+									12342
+								],
+								[
+									12535,
+									12570
+								],
+								[
+									12892,
+									12915
+								],
+								[
+									12952,
+									12976
+								],
+								[
+									13046,
+									13073
+								],
+								[
+									13112,
+									13141
+								],
+								[
+									13189,
+									13216
+								],
+								[
+									13345,
+									13351
+								],
+								[
+									13375,
+									13403
+								],
+								[
+									13501,
+									13528
+								],
+								[
+									13573,
+									13600
+								],
+								[
+									13656,
+									13691
+								],
+								[
+									13801,
+									13833
+								],
+								[
+									13926,
+									13960
+								],
+								[
+									14053,
+									14086
+								],
+								[
+									14254,
+									14263
+								],
+								[
+									14334,
+									14371
+								],
+								[
+									14411,
+									14427
+								],
+								[
+									14451,
+									14467
+								],
+								[
+									14532,
+									14548
+								],
+								[
+									14643,
+									14651
+								],
+								[
+									14728,
+									14742
+								],
+								[
+									14797,
+									14834
+								],
+								[
+									15118,
+									15156
+								],
+								[
+									15323,
+									15358
+								],
+								[
+									15450,
+									15468
+								],
+								[
+									15532,
+									15576
+								],
+								[
+									15592,
+									15601
+								],
+								[
+									15639,
+									15667
+								],
+								[
+									15683,
+									15692
+								],
+								[
+									15769,
+									15812
+								],
+								[
+									15942,
+									15975
+								],
+								[
+									16004,
+									16011
+								],
+								[
+									16088,
+									16093
+								],
+								[
+									16113,
+									16139
+								],
+								[
+									16247,
+									16281
+								],
+								[
+									16306,
+									16320
+								],
+								[
+									16359,
+									16409
+								],
+								[
+									16557,
+									16603
+								],
+								[
+									16670,
+									16732
+								],
+								[
+									16746,
+									16761
+								],
+								[
+									16908,
+									16945
+								],
+								[
+									16990,
+									17047
+								],
+								[
+									17187,
+									17221
+								],
+								[
+									17361,
+									17400
+								],
+								[
+									17483,
+									17520
+								],
+								[
+									17647,
+									17678
+								],
+								[
+									18818,
+									18852
+								],
+								[
+									19053,
+									19089
+								],
+								[
+									19159,
+									19185
+								],
+								[
+									19978,
+									20003
+								],
+								[
+									20073,
+									20101
+								],
+								[
+									20657,
+									20725
+								],
+								[
+									20817,
+									20832
+								],
+								[
+									20964,
+									20989
+								],
+								[
+									21312,
+									21370
+								],
+								[
+									21503,
+									21572
+								],
+								[
+									21690,
+									21740
+								],
+								[
+									21861,
+									21875
+								],
+								[
+									21953,
+									21963
+								],
+								[
+									22060,
+									22070
+								],
+								[
+									22098,
+									22113
+								],
+								[
+									22205,
+									22215
+								],
+								[
+									22265,
+									22280
+								],
+								[
+									22516,
+									22605
+								],
+								[
+									22608,
+									22705
+								],
+								[
+									22736,
+									22748
+								],
+								[
+									22797,
+									22811
+								],
+								[
+									22849,
+									22855
+								],
+								[
+									22904,
+									22912
+								],
+								[
+									22964,
+									22979
+								],
+								[
+									23038,
+									23045
+								],
+								[
+									23164,
+									23174
+								],
+								[
+									23328,
+									23338
+								],
+								[
+									23407,
+									23414
+								],
+								[
+									23511,
+									23538
+								],
+								[
+									23570,
+									23575
+								],
+								[
+									23603,
+									23607
+								],
+								[
+									23630,
+									23635
+								],
+								[
+									23686,
+									23690
+								],
+								[
+									23707,
+									23716
+								],
+								[
+									23733,
+									23744
+								],
+								[
+									23779,
+									23793
+								],
+								[
+									23881,
+									23905
+								],
+								[
+									24356,
+									24390
+								],
+								[
+									24425,
+									24436
+								],
+								[
+									24447,
+									24453
+								],
+								[
+									24467,
+									24478
+								],
+								[
+									24503,
+									24539
+								],
+								[
+									25070,
+									25100
+								],
+								[
+									25148,
+									25179
+								],
+								[
+									25470,
+									25492
+								],
+								[
+									25558,
+									25584
+								],
+								[
+									25713,
+									25723
+								],
+								[
+									25849,
+									25880
+								],
+								[
+									26096,
+									26121
+								],
+								[
+									26194,
+									26246
+								],
+								[
+									26368,
+									26400
+								],
+								[
+									26534,
+									26569
+								],
+								[
+									26642,
+									26675
+								],
+								[
+									26726,
+									26737
+								],
+								[
+									26813,
+									26824
+								],
+								[
+									26889,
+									26920
+								],
+								[
+									26970,
+									27012
+								],
+								[
+									27208,
+									27236
+								],
+								[
+									27361,
+									27396
+								],
+								[
+									27510,
+									27551
+								],
+								[
+									27652,
+									27676
+								],
+								[
+									27701,
+									27712
+								],
+								[
+									27734,
+									27751
+								],
+								[
+									27849,
+									27871
+								],
+								[
+									27902,
+									27924
+								],
+								[
+									28396,
+									28428
+								],
+								[
+									28702,
+									28711
+								],
+								[
+									28744,
+									28753
+								],
+								[
+									28786,
+									28795
+								],
+								[
+									28828,
+									28837
+								],
+								[
+									28870,
+									28879
+								],
+								[
+									28911,
+									28920
+								],
+								[
+									28953,
+									28962
+								],
+								[
+									28995,
+									29004
+								],
+								[
+									29037,
+									29046
+								],
+								[
+									29210,
+									29243
+								],
+								[
+									29643,
+									29669
+								],
+								[
+									29909,
+									29944
+								],
+								[
+									29991,
+									30003
+								],
+								[
+									30076,
+									30128
+								],
+								[
+									30140,
+									30141
+								],
+								[
+									30262,
+									30282
+								],
+								[
+									30371,
+									30384
+								],
+								[
+									30669,
+									30701
+								],
+								[
+									30788,
+									30809
+								],
+								[
+									31068,
+									31086
+								],
+								[
+									31285,
+									31298
+								],
+								[
+									31428,
+									31476
+								],
+								[
+									31489,
+									31498
+								],
+								[
+									31541,
+									31550
+								],
+								[
+									31603,
+									31637
+								],
+								[
+									31927,
+									31969
+								],
+								[
+									32025,
+									32063
+								],
+								[
+									32210,
+									32245
+								],
+								[
+									32733,
+									32751
+								],
+								[
+									32790,
+									32808
+								],
+								[
+									34307,
+									34340
+								],
+								[
+									34508,
+									34513
+								],
+								[
+									34535,
+									34539
+								],
+								[
+									34549,
+									34554
+								],
+								[
+									34711,
+									34739
+								],
+								[
+									34864,
+									34892
+								],
+								[
+									34967,
+									34992
+								],
+								[
+									35345,
+									35380
+								],
+								[
+									35423,
+									35454
+								],
+								[
+									35543,
+									35591
+								],
+								[
+									35808,
+									35895
+								],
+								[
+									35909,
+									35924
+								],
+								[
+									36076,
+									36094
+								],
+								[
+									36147,
+									36185
+								],
+								[
+									36212,
+									36225
+								],
+								[
+									36838,
+									36882
+								],
+								[
+									36963,
+									36980
+								],
+								[
+									37253,
+									37270
+								],
+								[
+									37625,
+									37652
+								],
+								[
+									37663,
+									37678
+								],
+								[
+									37760,
+									37787
+								],
+								[
+									37922,
+									37926
+								],
+								[
+									38016,
+									38039
+								],
+								[
+									38252,
+									38281
+								],
+								[
+									38404,
+									38430
+								],
+								[
+									38500,
+									38527
+								],
+								[
+									38816,
+									38837
+								],
+								[
+									38909,
+									38947
+								],
+								[
+									39051,
+									39074
+								],
+								[
+									39127,
+									39147
+								],
+								[
+									39232,
+									39260
+								],
+								[
+									39360,
+									39385
+								],
+								[
+									39437,
+									39463
+								],
+								[
+									39721,
+									39743
+								],
+								[
+									39764,
+									39787
+								],
+								[
+									39828,
+									39832
+								],
+								[
+									39874,
+									39878
+								],
+								[
+									39920,
+									39944
+								],
+								[
+									40019,
+									40055
+								],
+								[
+									40124,
+									40131
+								],
+								[
+									40173,
+									40212
+								],
+								[
+									40348,
+									40381
+								],
+								[
+									40500,
+									40511
+								],
+								[
+									40614,
+									40645
+								],
+								[
+									40712,
+									40768
+								],
+								[
+									41177,
+									41218
+								],
+								[
+									41643,
+									41683
+								],
+								[
+									41930,
+									41978
+								],
+								[
+									42014,
+									42023
+								],
+								[
+									42331,
+									42370
+								],
+								[
+									42383,
+									42392
+								],
+								[
+									42435,
+									42446
+								],
+								[
+									42886,
+									42927
+								],
+								[
+									42979,
+									43012
+								],
+								[
+									43097,
+									43132
+								],
+								[
+									43242,
+									43285
+								],
+								[
+									43439,
+									43472
+								],
+								[
+									43755,
+									43791
+								],
+								[
+									44128,
+									44167
+								],
+								[
+									44308,
+									44356
+								],
+								[
+									44530,
+									44556
+								],
+								[
+									44563,
+									44579
+								],
+								[
+									44738,
+									44745
+								],
+								[
+									44869,
+									44876
+								],
+								[
+									45232,
+									45256
+								],
+								[
+									45290,
+									45307
+								],
+								[
+									45368,
+									45390
+								],
+								[
+									45421,
+									45438
+								],
+								[
+									45552,
+									45583
+								],
+								[
+									45653,
+									45667
+								],
+								[
+									45765,
+									45799
+								],
+								[
+									45837,
+									45842
+								],
+								[
+									45864,
+									45868
+								],
+								[
+									45878,
+									45883
+								],
+								[
+									45984,
+									46018
+								],
+								[
+									46353,
+									46386
+								],
+								[
+									46788,
+									46822
+								],
+								[
+									47226,
+									47260
+								],
+								[
+									47567,
+									47611
+								],
+								[
+									48276,
+									48315
+								],
+								[
+									48451,
+									48533
+								],
+								[
+									49731,
+									49749
+								],
+								[
+									49784,
+									49789
+								],
+								[
+									49813,
+									49818
+								],
+								[
+									49855,
+									49860
+								],
+								[
+									49897,
+									49902
+								],
+								[
+									50005,
+									50010
+								],
+								[
+									50155,
+									50160
+								],
+								[
+									50189,
+									50194
+								],
+								[
+									50225,
+									50230
+								],
+								[
+									50425,
+									50430
+								],
+								[
+									50636,
+									50669
+								],
+								[
+									50682,
+									50683
+								],
+								[
+									51126,
+									51159
+								],
+								[
+									51307,
+									51344
+								],
+								[
+									51352,
+									51353
+								],
+								[
+									51681,
+									51688
+								],
+								[
+									51837,
+									51848
+								],
+								[
+									51938,
+									51949
+								],
+								[
+									52293,
+									52307
+								],
+								[
+									52638,
+									52670
+								],
+								[
+									53085,
+									53123
+								],
+								[
+									53438,
+									53461
+								],
+								[
+									53474,
+									53494
+								],
+								[
+									53535,
+									53600
+								],
+								[
+									53674,
+									53689
+								],
+								[
+									53771,
+									53785
+								],
+								[
+									53834,
+									53857
+								],
+								[
+									54068,
+									54085
+								],
+								[
+									54290,
+									54361
+								],
+								[
+									54412,
+									54434
+								],
+								[
+									54585,
+									54609
+								],
+								[
+									54741,
+									54746
+								],
+								[
+									54793,
+									54798
+								],
+								[
+									54855,
+									54861
+								],
+								[
+									54899,
+									54938
+								],
+								[
+									54977,
+									54983
+								],
+								[
+									54995,
+									55000
+								],
+								[
+									55022,
+									55049
+								],
+								[
+									55099,
+									55104
+								],
+								[
+									55119,
+									55123
+								],
+								[
+									55177,
+									55182
+								],
+								[
+									55218,
+									55223
+								],
+								[
+									55240,
+									55244
+								],
+								[
+									55298,
+									55303
+								],
+								[
+									55395,
+									55421
+								],
+								[
+									55461,
+									55487
+								],
+								[
+									55514,
+									55547
+								],
+								[
+									55564,
+									55579
+								],
+								[
+									55604,
+									55619
+								],
+								[
+									55634,
+									55641
+								],
+								[
+									55667,
+									55694
+								],
+								[
+									55732,
+									55764
+								],
+								[
+									56084,
+									56113
+								],
+								[
+									56160,
+									56186
+								],
+								[
+									56246,
+									56285
+								],
+								[
+									56321,
+									56327
+								],
+								[
+									56406,
+									56431
+								],
+								[
+									56444,
+									56456
+								],
+								[
+									56655,
+									56665
+								],
+								[
+									56722,
+									56772
+								],
+								[
+									57192,
+									57226
+								],
+								[
+									57267,
+									57277
+								],
+								[
+									57384,
+									57414
+								],
+								[
+									57510,
+									57540
+								],
+								[
+									57621,
+									57652
+								],
+								[
+									57812,
+									57836
+								],
+								[
+									57934,
+									57962
+								],
+								[
+									58033,
+									58058
+								],
+								[
+									58156,
+									58179
+								],
+								[
+									58213,
+									58219
+								],
+								[
+									58378,
+									58379
+								],
+								[
+									58472,
+									58476
+								],
+								[
+									58620,
+									58651
+								],
+								[
+									58696,
+									58707
+								],
+								[
+									58833,
+									58844
+								],
+								[
+									58951,
+									58965
+								],
+								[
+									59119,
+									59151
+								],
+								[
+									59373,
+									59399
+								],
+								[
+									59404,
+									59418
+								],
+								[
+									59473,
+									59496
+								],
+								[
+									59507,
+									59517
+								],
+								[
+									59766,
+									59776
+								],
+								[
+									59980,
+									59991
+								],
+								[
+									60697,
+									60730
+								],
+								[
+									60760,
+									60774
+								],
+								[
+									60882,
+									60907
+								],
+								[
+									61062,
+									61090
+								],
+								[
+									61238,
+									61267
+								],
+								[
+									61530,
+									61578
+								],
+								[
+									61779,
+									61816
+								],
+								[
+									61871,
+									61919
+								],
+								[
+									62045,
+									62079
+								],
+								[
+									62087,
+									62111
+								],
+								[
+									62602,
+									62632
+								],
+								[
+									62770,
+									62797
+								],
+								[
+									63302,
+									63353
+								],
+								[
+									63401,
+									63428
+								],
+								[
+									63610,
+									63658
+								],
+								[
+									63886,
+									63925
+								],
+								[
+									64064,
+									64097
+								],
+								[
+									64387,
+									64447
+								],
+								[
+									64771,
+									64776
+								],
+								[
+									64814,
+									64819
+								],
+								[
+									64841,
+									64845
+								],
+								[
+									64855,
+									64860
+								],
+								[
+									64893,
+									64908
+								],
+								[
+									65048,
+									65065
+								],
+								[
+									65163,
+									65196
+								],
+								[
+									65314,
+									65321
+								],
+								[
+									65587,
+									65615
+								],
+								[
+									65827,
+									65855
+								],
+								[
+									65948,
+									65957
+								],
+								[
+									66358,
+									66392
+								],
+								[
+									66593,
+									66615
+								],
+								[
+									66653,
+									66678
+								],
+								[
+									66828,
+									66854
+								],
+								[
+									66955,
+									66993
+								],
+								[
+									67413,
+									67456
+								],
+								[
+									67530,
+									67552
+								],
+								[
+									67574,
+									67600
+								],
+								[
+									67729,
+									67837
+								],
+								[
+									68097,
+									68148
+								],
+								[
+									68234,
+									68268
+								],
+								[
+									68370,
+									68398
+								],
+								[
+									68438,
+									68482
+								],
+								[
+									68579,
+									68614
+								],
+								[
+									68698,
+									68723
+								],
+								[
+									68750,
+									68768
+								],
+								[
+									68822,
+									68871
+								],
+								[
+									69007,
+									69020
+								],
+								[
+									69097,
+									69110
+								],
+								[
+									69281,
+									69320
+								],
+								[
+									69399,
+									69405
+								],
+								[
+									69438,
+									69471
+								],
+								[
+									69561,
+									69596
+								],
+								[
+									69642,
+									69652
+								],
+								[
+									69761,
+									69789
+								],
+								[
+									69923,
+									69934
+								],
+								[
+									70056,
+									70081
+								],
+								[
+									70209,
+									70220
+								],
+								[
+									70330,
+									70357
+								],
+								[
+									70489,
+									70500
+								],
+								[
+									70616,
+									70647
+								],
+								[
+									70711,
+									70723
+								],
+								[
+									70817,
+									70847
+								],
+								[
+									71044,
+									71094
+								],
+								[
+									71143,
+									71168
+								],
+								[
+									71388,
+									71421
+								],
+								[
+									71479,
+									71514
+								],
+								[
+									71558,
+									71565
+								],
+								[
+									71649,
+									71711
+								],
+								[
+									71907,
+									71953
+								],
+								[
+									72182,
+									72191
+								],
+								[
+									72230,
+									72239
+								],
+								[
+									72260,
+									72269
+								],
+								[
+									72301,
+									72326
+								],
+								[
+									72470,
+									72505
+								],
+								[
+									72528,
+									72536
+								],
+								[
+									72590,
+									72605
+								],
+								[
+									72883,
+									72908
+								],
+								[
+									72927,
+									72952
+								],
+								[
+									73065,
+									73069
+								],
+								[
+									73174,
+									73196
+								],
+								[
+									73219,
+									73228
+								],
+								[
+									73246,
+									73259
+								],
+								[
+									73315,
+									73328
+								],
+								[
+									73380,
+									73393
+								],
+								[
+									73431,
+									73499
+								],
+								[
+									73544,
+									73566
+								],
+								[
+									73596,
+									73605
+								],
+								[
+									73623,
+									73636
+								],
+								[
+									73698,
+									73711
+								],
+								[
+									73781,
+									73794
+								],
+								[
+									73831,
+									73835
+								],
+								[
+									74120,
+									74163
+								],
+								[
+									74182,
+									74207
+								],
+								[
+									74364,
+									74372
+								],
+								[
+									74387,
+									74393
+								],
+								[
+									74403,
+									74407
+								],
+								[
+									74431,
+									74470
+								],
+								[
+									74486,
+									74492
+								],
+								[
+									74575,
+									74606
+								],
+								[
+									74659,
+									74676
+								],
+								[
+									74755,
+									74849
+								],
+								[
+									75310,
+									75339
+								],
+								[
+									75340,
+									75352
+								],
+								[
+									75370,
+									75377
+								],
+								[
+									75396,
+									75424
+								],
+								[
+									75425,
+									75437
+								],
+								[
+									75454,
+									75461
+								],
+								[
+									75507,
+									75521
+								],
+								[
+									75595,
+									75644
+								],
+								[
+									75665,
+									75677
+								],
+								[
+									75717,
+									75729
+								],
+								[
+									75827,
+									75855
+								],
+								[
+									75890,
+									75956
+								],
+								[
+									76016,
+									76105
+								],
+								[
+									76106,
+									76123
+								],
+								[
+									76205,
+									76214
+								],
+								[
+									76241,
+									76253
+								],
+								[
+									76265,
+									76274
+								],
+								[
+									76441,
+									76453
+								],
+								[
+									76524,
+									76573
+								],
+								[
+									76583,
+									76595
+								],
+								[
+									76664,
+									76716
+								],
+								[
+									76910,
+									76922
+								],
+								[
+									76993,
+									77032
+								],
+								[
+									77126,
+									77167
+								],
+								[
+									77281,
+									77330
+								],
+								[
+									77438,
+									77466
+								],
+								[
+									77528,
+									77579
+								],
+								[
+									77853,
+									77907
+								],
+								[
+									77937,
+									77946
+								],
+								[
+									77961,
+									77992
+								],
+								[
+									78067,
+									78075
+								],
+								[
+									78609,
+									78653
+								],
+								[
+									79652,
+									79694
+								],
+								[
+									80733,
+									80746
+								],
+								[
+									80786,
+									80790
+								],
+								[
+									81403,
+									81416
+								],
+								[
+									81458,
+									81473
+								],
+								[
+									81517,
+									81534
+								],
+								[
+									81584,
+									81628
+								],
+								[
+									81728,
+									81735
+								],
+								[
+									82064,
+									82079
+								],
+								[
+									82123,
+									82140
+								],
+								[
+									82186,
+									82199
+								],
+								[
+									82241,
+									82254
+								],
+								[
+									82296,
+									82311
+								],
+								[
+									82355,
+									82372
+								],
+								[
+									82488,
+									82493
+								],
+								[
+									82765,
+									82778
+								],
+								[
+									82802,
+									82806
+								],
+								[
+									83127,
+									83132
+								],
+								[
+									83173,
+									83182
+								],
+								[
+									83604,
+									83617
+								],
+								[
+									83669,
+									83683
+								],
+								[
+									83954,
+									83977
+								],
+								[
+									84003,
+									84008
+								],
+								[
+									84032,
+									84041
+								],
+								[
+									84061,
+									84066
+								],
+								[
+									84090,
+									84118
+								],
+								[
+									84235,
+									84257
+								],
+								[
+									84283,
+									84288
+								],
+								[
+									84314,
+									84323
+								],
+								[
+									84370,
+									84375
+								],
+								[
+									84399,
+									84433
+								],
+								[
+									84495,
+									84499
+								],
+								[
+									84693,
+									84701
+								],
+								[
+									84843,
+									84850
+								],
+								[
+									84915,
+									84923
+								],
+								[
+									85038,
+									85055
+								],
+								[
+									85144,
+									85148
+								],
+								[
+									85206,
+									85223
+								],
+								[
+									85302,
+									85350
+								],
+								[
+									85502,
+									85585
+								],
+								[
+									85828,
+									85833
+								],
+								[
+									85876,
+									85884
+								],
+								[
+									86276,
+									86286
+								],
+								[
+									86463,
+									86471
+								],
+								[
+									86981,
+									86985
+								],
+								[
+									87137,
+									87152
+								],
+								[
+									87182,
+									87191
+								],
+								[
+									87213,
+									87223
+								],
+								[
+									87300,
+									87344
+								],
+								[
+									87698,
+									87732
+								],
+								[
+									89201,
+									89244
+								],
+								[
+									89474,
+									89521
+								],
+								[
+									89726,
+									89777
+								],
+								[
+									90011,
+									90063
+								],
+								[
+									90435,
+									90478
+								],
+								[
+									90923,
+									90934
+								],
+								[
+									91316,
+									91410
+								],
+								[
+									91751,
+									91773
+								],
+								[
+									91798,
+									91806
+								],
+								[
+									91874,
+									91884
+								],
+								[
+									92058,
+									92099
+								],
+								[
+									92167,
+									92175
+								],
+								[
+									92342,
+									92374
+								],
+								[
+									92463,
+									92496
+								],
+								[
+									92563,
+									92627
+								],
+								[
+									92891,
+									92932
+								],
+								[
+									92974,
+									92992
+								],
+								[
+									93044,
+									93050
+								],
+								[
+									93252,
+									93316
+								],
+								[
+									93505,
+									93570
+								],
+								[
+									93585,
+									93596
+								],
+								[
+									93615,
+									93626
+								],
+								[
+									93654,
+									93669
+								],
+								[
+									94080,
+									94110
+								],
+								[
+									94310,
+									94315
+								],
+								[
+									94337,
+									94391
+								],
+								[
+									94636,
+									94642
+								],
+								[
+									94698,
+									94703
+								],
+								[
+									94763,
+									94769
+								],
+								[
+									94882,
+									94887
+								],
+								[
+									94936,
+									94995
+								],
+								[
+									97166,
+									97179
+								],
+								[
+									97337,
+									97351
+								],
+								[
+									97521,
+									97534
+								],
+								[
+									97620,
+									97639
+								],
+								[
+									97908,
+									97945
+								],
+								[
+									98322,
+									98392
+								],
+								[
+									98805,
+									98823
+								],
+								[
+									98939,
+									98974
+								],
+								[
+									99107,
+									99111
+								],
+								[
+									99133,
+									99144
+								],
+								[
+									99264,
+									99287
+								],
+								[
+									99440,
+									99472
+								],
+								[
+									99522,
+									99562
+								],
+								[
+									99802,
+									99825
+								],
+								[
+									99883,
+									99947
+								],
+								[
+									100000,
+									100004
+								],
+								[
+									100039,
+									100069
+								],
+								[
+									100143,
+									100178
+								],
+								[
+									100206,
+									100232
+								],
+								[
+									100354,
+									100387
+								],
+								[
+									100538,
+									100596
+								],
+								[
+									100625,
+									100651
+								],
+								[
+									100702,
+									100751
+								],
+								[
+									100778,
+									100799
+								],
+								[
+									100845,
+									100861
+								],
+								[
+									100921,
+									100944
+								],
+								[
+									101013,
+									101041
+								],
+								[
+									101113,
+									101132
+								],
+								[
+									101158,
+									101163
+								],
+								[
+									101770,
+									101801
+								],
+								[
+									101808,
+									101824
+								],
+								[
+									101882,
+									101883
+								],
+								[
+									102488,
+									102533
+								],
+								[
+									102643,
+									102667
+								],
+								[
+									102937,
+									102947
+								],
+								[
+									103001,
+									103022
+								],
+								[
+									103076,
+									103097
+								],
+								[
+									103195,
+									103236
+								],
+								[
+									103392,
+									103396
+								],
+								[
+									103449,
+									103456
+								],
+								[
+									103487,
+									103491
+								],
+								[
+									104128,
+									104138
+								],
+								[
+									104159,
+									104174
+								],
+								[
+									104222,
+									104279
+								],
+								[
+									104397,
+									104407
+								],
+								[
+									104767,
+									104787
+								],
+								[
+									104829,
+									104865
+								],
+								[
+									104900,
+									104913
+								],
+								[
+									104962,
+									104972
+								],
+								[
+									105023,
+									105038
+								],
+								[
+									105614,
+									105627
+								],
+								[
+									106230,
+									106250
+								],
+								[
+									106331,
+									106346
+								],
+								[
+									106743,
+									106756
+								],
+								[
+									106835,
+									106855
+								],
+								[
+									106943,
+									106958
+								],
+								[
+									107034,
+									107063
+								],
+								[
+									107145,
+									107168
+								],
+								[
+									107397,
+									107425
+								],
+								[
+									107543,
+									107584
+								],
+								[
+									107704,
+									107714
+								],
+								[
+									107874,
+									107887
+								],
+								[
+									108132,
+									108148
+								],
+								[
+									108179,
+									108231
+								],
+								[
+									108302,
+									108309
+								],
+								[
+									108381,
+									108391
+								],
+								[
+									108392,
+									108396
+								],
+								[
+									108520,
+									108529
+								],
+								[
+									108859,
+									108869
+								],
+								[
+									108926,
+									108936
+								],
+								[
+									109032,
+									109042
+								],
+								[
+									109106,
+									109112
+								],
+								[
+									109767,
+									109777
+								],
+								[
+									109829,
+									109840
+								],
+								[
+									109895,
+									109907
+								],
+								[
+									109944,
+									109957
+								],
+								[
+									110000,
+									110025
+								],
+								[
+									110076,
+									110111
+								],
+								[
+									110122,
+									110128
+								],
+								[
+									110139,
+									110168
+								],
+								[
+									110392,
+									110408
+								],
+								[
+									110432,
+									110443
+								],
+								[
+									110500,
+									110525
+								],
+								[
+									110538,
+									110551
+								],
+								[
+									110582,
+									110632
+								],
+								[
+									110638,
+									110658
+								],
+								[
+									110699,
+									110704
+								],
+								[
+									110726,
+									110732
+								],
+								[
+									110749,
+									110766
+								],
+								[
+									110800,
+									110805
+								],
+								[
+									110806,
+									110823
+								],
+								[
+									110868,
+									110885
+								],
+								[
+									110975,
+									111006
+								],
+								[
+									111035,
+									111044
+								],
+								[
+									111053,
+									111067
+								],
+								[
+									111156,
+									111193
+								],
+								[
+									111206,
+									111219
+								],
+								[
+									111232,
+									111241
+								],
+								[
+									111296,
+									111312
+								],
+								[
+									111350,
+									111366
+								],
+								[
+									111607,
+									111626
+								],
+								[
+									111796,
+									111821
+								],
+								[
+									111847,
+									111852
+								],
+								[
+									111876,
+									111885
+								],
+								[
+									111946,
+									111963
+								],
+								[
+									112013,
+									112025
+								],
+								[
+									112134,
+									112187
+								],
+								[
+									112218,
+									112223
+								],
+								[
+									113009,
+									113055
+								],
+								[
+									113093,
+									113104
+								],
+								[
+									113146,
+									113167
+								],
+								[
+									113297,
+									113314
+								],
+								[
+									113452,
+									113472
+								],
+								[
+									113680,
+									113706
+								],
+								[
+									113794,
+									113800
+								],
+								[
+									113831,
+									113835
+								],
+								[
+									113913,
+									113946
+								],
+								[
+									114114,
+									114119
+								],
+								[
+									114173,
+									114185
+								],
+								[
+									114210,
+									114215
+								],
+								[
+									114308,
+									114332
+								],
+								[
+									114432,
+									114443
+								],
+								[
+									114491,
+									114504
+								],
+								[
+									114558,
+									114569
+								],
+								[
+									114660,
+									114670
+								],
+								[
+									114760,
+									114773
+								],
+								[
+									114879,
+									114888
+								],
+								[
+									114937,
+									114949
+								],
+								[
+									115023,
+									115031
+								],
+								[
+									115143,
+									115150
+								],
+								[
+									115260,
+									115280
+								],
+								[
+									115484,
+									115505
+								],
+								[
+									115788,
+									115805
+								],
+								[
+									115970,
+									115982
+								],
+								[
+									116121,
+									116135
+								],
+								[
+									116320,
+									116333
+								],
+								[
+									116352,
+									116372
+								],
+								[
+									116526,
+									116556
+								],
+								[
+									116564,
+									116590
+								],
+								[
+									116613,
+									116639
+								],
+								[
+									116673,
+									116690
+								],
+								[
+									116764,
+									116818
+								],
+								[
+									116849,
+									116869
+								],
+								[
+									116971,
+									116988
+								],
+								[
+									117097,
+									117119
+								],
+								[
+									117239,
+									117263
+								],
+								[
+									117385,
+									117404
+								],
+								[
+									117510,
+									117530
+								],
+								[
+									117659,
+									117678
+								],
+								[
+									117806,
+									117822
+								],
+								[
+									118311,
+									118329
+								],
+								[
+									118502,
+									118506
+								],
+								[
+									118836,
+									118840
+								],
+								[
+									119358,
+									119362
+								],
+								[
+									119382,
+									119414
+								],
+								[
+									119507,
+									119526
+								],
+								[
+									119527,
+									119531
+								],
+								[
+									119562,
+									119589
+								],
+								[
+									119693,
+									119726
+								],
+								[
+									119849,
+									119853
+								],
+								[
+									119880,
+									119885
+								],
+								[
+									119901,
+									119908
+								],
+								[
+									119970,
+									119974
+								],
+								[
+									120002,
+									120007
+								],
+								[
+									120023,
+									120030
+								],
+								[
+									120160,
+									120196
+								],
+								[
+									120327,
+									120365
+								],
+								[
+									120646,
+									120680
+								],
+								[
+									120833,
+									120867
+								],
+								[
+									121021,
+									121050
+								],
+								[
+									121308,
+									121329
+								],
+								[
+									121412,
+									121459
+								],
+								[
+									121595,
+									121631
+								],
+								[
+									121840,
+									121849
+								],
+								[
+									121850,
+									121854
+								],
+								[
+									121892,
+									121912
+								],
+								[
+									122012,
+									122031
+								],
+								[
+									123347,
+									123348
+								],
+								[
+									123370,
+									123371
+								],
+								[
+									123384,
+									123389
+								],
+								[
+									123429,
+									123434
+								],
+								[
+									123500,
+									123505
+								],
+								[
+									123534,
+									123539
+								],
+								[
+									123595,
+									123600
+								],
+								[
+									123649,
+									123686
+								],
+								[
+									123747,
+									123787
+								],
+								[
+									123846,
+									123884
+								],
+								[
+									123943,
+									123977
+								],
+								[
+									124118,
+									124152
+								],
+								[
+									124285,
+									124324
+								],
+								[
+									124453,
+									124492
+								],
+								[
+									124603,
+									124643
+								],
+								[
+									124813,
+									124852
+								],
+								[
+									124963,
+									124997
+								],
+								[
+									125104,
+									125137
+								],
+								[
+									125249,
+									125287
+								],
+								[
+									125416,
+									125453
+								],
+								[
+									125587,
+									125620
+								],
+								[
+									125680,
+									125712
+								],
+								[
+									125775,
+									125841
+								],
+								[
+									125945,
+									126004
+								],
+								[
+									126028,
+									126033
+								],
+								[
+									126087,
+									126127
+								],
+								[
+									126241,
+									126316
+								],
+								[
+									126478,
+									126512
+								],
+								[
+									126651,
+									126688
+								],
+								[
+									126746,
+									126801
+								],
+								[
+									126902,
+									126949
+								],
+								[
+									127026,
+									127078
+								],
+								[
+									127129,
+									127134
+								],
+								[
+									127189,
+									127254
+								],
+								[
+									127503,
+									127541
+								],
+								[
+									127607,
+									127612
+								],
+								[
+									127641,
+									127651
+								],
+								[
+									127749,
+									127795
+								],
+								[
+									128083,
+									128088
+								],
+								[
+									128128,
+									128138
+								],
+								[
+									128164,
+									128169
+								],
+								[
+									128214,
+									128219
+								],
+								[
+									128242,
+									128288
+								],
+								[
+									128320,
+									128330
+								],
+								[
+									128881,
+									128918
+								],
+								[
+									129005,
+									129010
+								],
+								[
+									129046,
+									129097
+								],
+								[
+									129229,
+									129271
+								],
+								[
+									129353,
+									129388
+								],
+								[
+									129437,
+									129476
+								],
+								[
+									129716,
+									129760
+								],
+								[
+									129915,
+									129944
+								],
+								[
+									129945,
+									129950
+								],
+								[
+									129987,
+									130031
+								],
+								[
+									130032,
+									130037
+								],
+								[
+									130081,
+									130112
+								],
+								[
+									130113,
+									130118
+								],
+								[
+									130157,
+									130186
+								],
+								[
+									130187,
+									130192
+								],
+								[
+									130229,
+									130251
+								],
+								[
+									130252,
+									130257
+								],
+								[
+									130287,
+									130309
+								],
+								[
+									130310,
+									130315
+								],
+								[
+									130345,
+									130369
+								],
+								[
+									130386,
+									130391
+								],
+								[
+									130444,
+									130474
+								],
+								[
+									130475,
+									130480
+								],
+								[
+									130518,
+									130549
+								],
+								[
+									130550,
+									130555
+								],
+								[
+									130828,
+									130847
+								],
+								[
+									130848,
+									130853
+								],
+								[
+									130919,
+									130944
+								],
+								[
+									130989,
+									131003
+								],
+								[
+									131278,
+									131283
+								],
+								[
+									131309,
+									131336
+								],
+								[
+									131388,
+									131398
+								],
+								[
+									131399,
+									131403
+								],
+								[
+									131558,
+									131568
+								],
+								[
+									131597,
+									131615
+								],
+								[
+									133400,
+									133404
+								],
+								[
+									133430,
+									133434
+								],
+								[
+									133461,
+									133465
+								],
+								[
+									133493,
+									133571
+								],
+								[
+									134152,
+									134186
+								],
+								[
+									134233,
+									134271
+								],
+								[
+									134608,
+									134646
+								],
+								[
+									134788,
+									134824
+								],
+								[
+									134885,
+									134917
+								],
+								[
+									134964,
+									135011
+								],
+								[
+									135089,
+									135125
+								],
+								[
+									135210,
+									135241
+								],
+								[
+									135381,
+									135418
+								],
+								[
+									135503,
+									135534
+								],
+								[
+									135674,
+									135707
+								],
+								[
+									135882,
+									135920
+								],
+								[
+									136138,
+									136175
+								],
+								[
+									136260,
+									136300
+								],
+								[
+									136364,
+									136396
+								],
+								[
+									136511,
+									136569
+								],
+								[
+									136746,
+									136785
+								],
+								[
+									137040,
+									137075
+								],
+								[
+									137123,
+									137127
+								],
+								[
+									137182,
+									137186
+								],
+								[
+									137226,
+									137230
+								],
+								[
+									137295,
+									137337
+								],
+								[
+									137479,
+									137520
+								],
+								[
+									137662,
+									137705
+								],
+								[
+									137820,
+									137865
+								],
+								[
+									138056,
+									138073
+								],
+								[
+									138074,
+									138078
+								],
+								[
+									138106,
+									138125
+								],
+								[
+									138126,
+									138130
+								],
+								[
+									138161,
+									138187
+								],
+								[
+									138257,
+									138267
+								],
+								[
+									138268,
+									138272
+								],
+								[
+									138433,
+									138437
+								],
+								[
+									138465,
+									138483
+								],
+								[
+									138484,
+									138488
+								],
+								[
+									138555,
+									138568
+								],
+								[
+									138944,
+									138962
+								],
+								[
+									138963,
+									138967
+								],
+								[
+									139030,
+									139048
+								],
+								[
+									139351,
+									139359
+								],
+								[
+									140269,
+									140275
+								],
+								[
+									140726,
+									140732
+								],
+								[
+									141883,
+									141887
+								],
+								[
+									141909,
+									141913
+								],
+								[
+									141932,
+									141937
+								],
+								[
+									141956,
+									141960
+								],
+								[
+									141979,
+									142014
+								],
+								[
+									142176,
+									142211
+								],
+								[
+									142449,
+									142453
+								],
+								[
+									142494,
+									142530
+								],
+								[
+									142599,
+									142603
+								],
+								[
+									142636,
+									142671
+								],
+								[
+									142718,
+									142763
+								],
+								[
+									142936,
+									142941
+								],
+								[
+									142992,
+									142996
+								],
+								[
+									143049,
+									143094
+								],
+								[
+									143339,
+									143343
+								],
+								[
+									143367,
+									143382
+								],
+								[
+									143417,
+									143437
+								],
+								[
+									143587,
+									143591
+								],
+								[
+									143615,
+									143630
+								],
+								[
+									143678,
+									143698
+								],
+								[
+									143794,
+									143798
+								],
+								[
+									143822,
+									143837
+								],
+								[
+									143872,
+									143892
+								],
+								[
+									144021,
+									144025
+								],
+								[
+									144049,
+									144064
+								],
+								[
+									144113,
+									144133
+								],
+								[
+									144208,
+									144212
+								],
+								[
+									144238,
+									144253
+								],
+								[
+									144269,
+									144273
+								],
+								[
+									144340,
+									144344
+								],
+								[
+									144372,
+									144387
+								],
+								[
+									144458,
+									144462
+								],
+								[
+									144488,
+									144503
+								],
+								[
+									144650,
+									144655
+								],
+								[
+									144712,
+									144722
+								],
+								[
+									144846,
+									144851
+								],
+								[
+									144909,
+									144919
+								],
+								[
+									145058,
+									145113
+								],
+								[
+									145117,
+									145125
+								],
+								[
+									145185,
+									145189
+								],
+								[
+									145223,
+									145262
+								],
+								[
+									145498,
+									145536
+								],
+								[
+									145543,
+									145548
+								],
+								[
+									145588,
+									145592
+								],
+								[
+									145653,
+									145691
+								],
+								[
+									145698,
+									145703
+								],
+								[
+									145743,
+									145747
+								],
+								[
+									145807,
+									145845
+								],
+								[
+									146099,
+									146136
+								],
+								[
+									146470,
+									146509
+								],
+								[
+									146597,
+									146685
+								],
+								[
+									146706,
+									146710
+								],
+								[
+									146765,
+									146774
+								],
+								[
+									146852,
+									146868
+								],
+								[
+									147106,
+									147154
+								],
+								[
+									147161,
+									147166
+								],
+								[
+									147287,
+									147320
+								],
+								[
+									147345,
+									147350
+								],
+								[
+									147388,
+									147392
+								],
+								[
+									147435,
+									147469
+								],
+								[
+									147607,
+									147642
+								],
+								[
+									147728,
+									147786
+								],
+								[
+									147790,
+									147799
+								],
+								[
+									147972,
+									148028
+								],
+								[
+									148032,
+									148050
+								],
+								[
+									148058,
+									148071
+								],
+								[
+									148097,
+									148101
+								],
+								[
+									148221,
+									148269
+								],
+								[
+									149028,
+									149102
+								],
+								[
+									149438,
+									149484
+								],
+								[
+									149664,
+									149684
+								],
+								[
+									149685,
+									149689
+								],
+								[
+									149720,
+									149759
+								],
+								[
+									149760,
+									149764
+								],
+								[
+									149808,
+									149828
+								],
+								[
+									149829,
+									149833
+								],
+								[
+									149864,
+									149892
+								],
+								[
+									149893,
+									149897
+								],
+								[
+									149934,
+									149963
+								],
+								[
+									149964,
+									149968
+								],
+								[
+									150007,
+									150028
+								],
+								[
+									150093,
+									150112
+								],
+								[
+									150149,
+									150179
+								],
+								[
+									150309,
+									150334
+								],
+								[
+									150382,
+									150398
+								],
+								[
+									150641,
+									150676
+								],
+								[
+									151015,
+									151033
+								],
+								[
+									151034,
+									151038
+								],
+								[
+									151101,
+									151137
+								],
+								[
+									151437,
+									151463
+								],
+								[
+									151549,
+									151559
+								],
+								[
+									151560,
+									151564
+								],
+								[
+									151778,
+									151795
+								],
+								[
+									151867,
+									151891
+								],
+								[
+									151997,
+									152012
+								],
+								[
+									152115,
+									152119
+								],
+								[
+									152135,
+									152152
+								],
+								[
+									152237,
+									152241
+								],
+								[
+									152292,
+									152308
+								],
+								[
+									152361,
+									152368
+								],
+								[
+									152395,
+									152399
+								],
+								[
+									152472,
+									152482
+								],
+								[
+									152628,
+									152634
+								],
+								[
+									153549,
+									153555
+								],
+								[
+									153678,
+									153684
+								],
+								[
+									153698,
+									153702
+								],
+								[
+									153859,
+									153875
+								],
+								[
+									154095,
+									154099
+								],
+								[
+									154111,
+									154123
+								],
+								[
+									154267,
+									154278
+								],
+								[
+									154382,
+									154386
+								],
+								[
+									154781,
+									154791
+								],
+								[
+									155084,
+									155092
+								],
+								[
+									155111,
+									155123
+								],
+								[
+									155169,
+									155193
+								],
+								[
+									155275,
+									155299
+								],
+								[
+									155681,
+									155691
+								],
+								[
+									156001,
+									156014
+								],
+								[
+									156292,
+									156300
+								],
+								[
+									156466,
+									156470
+								],
+								[
+									157118,
+									157127
+								],
+								[
+									157472,
+									157476
+								],
+								[
+									157657,
+									157661
+								],
+								[
+									157995,
+									157999
+								],
+								[
+									158384,
+									158391
+								],
+								[
+									158850,
+									158854
+								],
+								[
+									160111,
+									160125
+								],
+								[
+									160483,
+									160490
+								],
+								[
+									161254,
+									161258
+								],
+								[
+									162520,
+									162527
+								],
+								[
+									164652,
+									164660
+								],
+								[
+									164868,
+									164872
+								],
+								[
+									165240,
+									165258
+								],
+								[
+									166144,
+									166156
+								],
+								[
+									166329,
+									166348
+								],
+								[
+									166539,
+									166554
+								],
+								[
+									166577,
+									166590
+								],
+								[
+									166654,
+									166660
+								],
+								[
+									166964,
+									166976
+								],
+								[
+									167136,
+									167143
+								],
+								[
+									167463,
+									167476
+								],
+								[
+									167586,
+									167602
+								],
+								[
+									167933,
+									167940
+								],
+								[
+									168024,
+									168030
+								],
+								[
+									168194,
+									168201
+								],
+								[
+									168300,
+									168313
+								],
+								[
+									168573,
+									168579
+								],
+								[
+									169069,
+									169091
+								],
+								[
+									169421,
+									169427
+								],
+								[
+									169883,
+									169888
+								],
+								[
+									170035,
+									170040
+								],
+								[
+									170360,
+									170365
+								],
+								[
+									170481,
+									170485
+								],
+								[
+									170647,
+									170667
+								],
+								[
+									170803,
+									170818
+								],
+								[
+									170892,
+									170903
+								],
+								[
+									171277,
+									171290
+								],
+								[
+									171719,
+									171724
+								],
+								[
+									171807,
+									171819
+								],
+								[
+									172230,
+									172238
+								],
+								[
+									172676,
+									172681
+								],
+								[
+									172848,
+									172852
+								],
+								[
+									172887,
+									172930
+								],
+								[
+									173125,
+									173132
+								],
+								[
+									173302,
+									173309
+								],
+								[
+									173571,
+									173586
+								],
+								[
+									173748,
+									173755
+								],
+								[
+									173767,
+									173776
+								],
+								[
+									173816,
+									173830
+								],
+								[
+									173981,
+									173992
+								],
+								[
+									174058,
+									174069
+								],
+								[
+									174132,
+									174135
+								],
+								[
+									174355,
+									174359
+								],
+								[
+									174582,
+									174588
+								],
+								[
+									175271,
+									175278
+								],
+								[
+									175749,
+									175784
+								],
+								[
+									175968,
+									175984
+								],
+								[
+									176060,
+									176093
+								],
+								[
+									176247,
+									176271
+								],
+								[
+									176348,
+									176399
+								],
+								[
+									177946,
+									177952
+								],
+								[
+									178208,
+									178212
+								],
+								[
+									178478,
+									178480
+								],
+								[
+									178721,
+									178725
+								],
+								[
+									178813,
+									178826
+								],
+								[
+									178978,
+									178998
+								],
+								[
+									179058,
+									179083
+								],
+								[
+									179618,
+									179628
+								],
+								[
+									180470,
+									180490
+								],
+								[
+									180505,
+									180523
+								],
+								[
+									180663,
+									180681
+								],
+								[
+									181147,
+									181161
+								],
+								[
+									181414,
+									181422
+								],
+								[
+									181627,
+									181645
+								],
+								[
+									181869,
+									181876
+								],
+								[
+									181895,
+									181915
+								],
+								[
+									182036,
+									182041
+								],
+								[
+									182076,
+									182082
+								],
+								[
+									182944,
+									182992
+								],
+								[
+									183145,
+									183192
+								],
+								[
+									183375,
+									183385
+								],
+								[
+									183834,
+									183856
+								],
+								[
+									183934,
+									183961
+								],
+								[
+									184000,
+									184028
+								],
+								[
+									184068,
+									184095
+								],
+								[
+									184135,
+									184156
 								]
 							],
 							"symlist":
 							[
-								"function __awaiter(thisArg, _arguments, P, generator)",
-								"function(resolve, reject)",
-								"function fulfilled(value)",
-								"function rejected(value)",
-								"function step(result)",
-								"function(resolve)",
-								"function __generator(thisArg, body)",
-								"sent: function()",
+								"(g = globalThis || window) =>",
+								"() =>",
+								"function Util(g)",
+								"Util.formatAnnotatedObject = function(subject, o)",
+								"i =>",
+								"item =>",
+								"padding",
+								"arr =>",
+								"Util.curry = (fn, arity) =>",
+								"ret",
+								"(v, i) =>",
+								"Curried",
 								"function()",
-								"function verb(n)",
-								"function(v)",
-								"function step(op)",
-								"function __read(o, n)",
-								"function __spread()",
-								"function createPrimedRepeater(buffer)",
-								"function(push1, stop1)",
-								"function useRepeater(buffer)",
+								"function(a)",
+								"function(a, b)",
+								"function(a, b, c)",
+								"function(a, b, c, d)",
+								"Util.arityN = (fn, n) =>",
+								"function(fn)",
 								"function()",
-								"function useAsyncIter(callback, deps)",
+								"function(fn)",
+								"function(a)",
+								"function(fn)",
+								"function(a, b)",
+								"function(fn)",
+								"function(a, b, c)",
+								"function(fn)",
+								"function(a, b, c, d)",
+								"function(fn)",
+								"function(a, b, c, d, e)",
+								"Util.memoize = fn =>",
+								"(...args) =>",
+								"() =>",
+								"() =>",
+								"g =>",
+								"err =>",
+								"() =>",
+								"g =>",
+								"err =>",
+								"() =>",
+								"g =>",
+								"err =>",
+								"function()",
+								"Util.log = (...args) =>",
+								"f =>",
+								"f =>",
+								"(a, p) =>",
+								"get: ()",
+								".setFilters",
+								"arg =>",
+								".getFilters",
+								"Util.msg = (strings, ...substitutions) =>",
+								"Util.logBase = function(n, base)",
+								"Util.generalLog = function(n, x)",
+								"Util.toSource = function(arg, opts = {})",
+								"Util.debug = function(message)",
+								"removeCircular",
+								"arg =>",
+								"Util.type = function({ type })",
+								"Util.functionName = function(fn)",
+								"Util.className = function(obj)",
+								"obj",
+								"Util.unwrapComponent = function(c)",
+								"Util.componentName = function(c)",
+								"Util.count = function(s, ch)",
+								"Util.parseNum = function(str)",
+								"Util.minmax = function(num, min, max)",
+								"Util.getExponential = function(num)",
+								"Util.getNumberParts = function(num)",
+								"Util.pow2 = function(n)",
+								"Util.pow10 = function(n)",
+								"Util.bitValue = function(n)",
+								"Util.toBinary = function(num)",
+								"Util.toBits = function(num)",
+								"bit =>",
+								"Util.getBit = function(v, n)",
+								"Util.isSet = function(v, n)",
+								"Util.bitCount = function(n)",
+								"Util.toggleBit = function(num, bit)",
+								"Util.setBit = function(num, bit)",
+								"Util.clearBit = function(num, bit)",
+								"Util.range = function(start, end)",
+								"(v, k) =>",
+								"Util.set = function(obj, prop, value)",
+								"(prop, value) =>",
+								"(prop, value) =>",
+								"(prop, value) =>",
+								"value =>",
+								"(obj, prop) =>",
+								"Util.inspect = (obj, opts = false) =>",
+								"Util.bitArrayToNumbers = function(arr)",
+								"Util.bitsToNumbers = function(bits)",
+								"(val, key, arr) =>",
+								"Util.shuffle = function(arr, rnd = Util.rng)",
+								"(a, b) =>",
+								"Util.sortNum = function(arr)",
+								"(a, b) =>",
+								"Util.draw = (arr, n = 1, rnd = Util.rng) =>",
+								"Util.is = function(what, ...pred)",
+								"type =>",
+								"fn =>",
+								"Util.onoff = function(val)",
+								"Util.numbersToBits = function(arr)",
+								"(bits, num) =>",
+								"Util.randomNumbers = function([start, end], draws)",
+								"Util.randomBits = function(r = [1, 50], n = 5)",
+								"Util.padFn = function(len, char = ' ', fn = (str, pad) => pad)",
+								"(s, n = len) =>",
+								"Util.pad = function(s, n, char = ' ')",
+								"Util.abbreviate = function(str, max = 40, suffix = '...')",
+								"Util.trim = function(str, charset)",
+								"Util.trimRight = function(str, charset)",
+								"Util.indent = (text, space = ' ') =>",
+								"Util.define = (obj, ...args) =>",
+								"Util.copyWhole = (dst, ...args) =>",
+								"Util.copyEntries = (obj, entries) =>",
+								"Util.extend = (...args) =>",
+								"Util.isCloneable = obj =>",
+								"Util.isUnextendable = val =>",
+								"Util.static = (obj, functions, thisObj, pred = (k, v, f) => true) =>",
+								"(key, depth) =>",
+								"value",
+								"Util.defineGetter = (obj, key, get, enumerable = false) =>",
+								"Util.defineGetterSetter = (obj, key, get, set, enumerable = false) =>",
+								"Util.extendArray = function(arr = Array.prototype)",
+								"function(pred)",
 								"function()",
 								"function()",
+								"(item, i, a) =>",
 								"function()",
+								"function(value)",
+								"Util.adapter = function(obj, getLength = obj => obj.length, getKey = (obj, index) => obj.",
+								"(index), getItem",
+								"get length()",
+								"get instance()",
+								"key(i)",
+								"get(key)",
+								"set(key, value)",
+								"*keys()",
+								"*entries()",
+								"toObject()",
+								"toMap()",
+								".localStorage",
+								"() =>",
+								"w =>",
+								"() =>",
+								"l =>",
+								"(l, i) =>",
+								"(l, key) =>",
+								"(l, key, v) =>",
+								"Util.array = function(a)",
+								"Util.arrayFromEntries = entries =>",
+								"([k, v]) =>",
+								"key =>",
+								"([k, v]) =>",
+								"Util.toMap = function(hash = {}, fn)",
+								"Util.extendMap = function(map)",
+								".entries",
+								".toObject",
+								".match",
+								"entries =>",
+								"Util.objectFrom = function(any)",
+								"Util.tail = function(arr)",
+								"Util.splice = function(str, index, delcount, insert)",
+								"Util.keyOf = function(obj, prop)",
+								"Util.rotateRight = function(arr, n)",
+								"Util.repeater = function(n, what)",
+								"function*()",
+								"function*()",
+								"Util.repeat = function(n, what)",
+								"Util.arrayDim = function(dimensions, init)",
+								"Util.flatten = function(arr)",
+								"Util.chunkArray = function(a, size)",
+								"Util.chances = function(numbers, matches)",
+								"Util.sum = function(arr)",
+								"(acc, n) =>",
+								"Util.expr = fn =>",
+								"function expr(...args)",
+								"function addArgs(args)",
+								"ret",
+								"(a, b) =>",
+								"(a, b) =>",
+								"(a, b) =>",
+								"(a, b) =>",
+								"(a, b) =>",
+								"(a, b) =>",
+								"(a, b) =>",
+								"(a, b) =>",
+								"(a, b) =>",
+								"Util.fnName = function(f, parent)",
+								"Util.objName = function(o)",
+								"Util.findKey = function(obj, value)",
+								"value : v",
+								"Util.find = function(arr, value, prop = 'id', acc = ",
+								")",
+								"pred",
+								"pred",
+								"Util.match = function(arg, pred)",
+								"match",
+								"(acc, val, key) =>",
+								"(acc, key) =>",
+								"Util.toHash = function(map, keyTransform = k => ",
+								"('' + k))",
+								"(v, k) =>",
+								"Util.indexOf = function(obj, prop)",
+								"Util.greatestCommonDenominator = (a, b) =>",
+								"Util.leastCommonMultiple = (n1, n2) =>",
+								"Util.toString = (obj, opts = {}) =>",
+								"(space = false) =>",
+								"(space = false) =>",
+								"Util.dump = function(name, props)",
+								"() =>",
+								"w =>",
+								"() =>",
+								"Util.ucfirst = function(str)",
+								"Util.lcfirst = function(str)",
+								"Util.typeOf = function(v)",
+								"Util.camelize = (text, sep = '') =>",
+								"function(match, p1, p2, offset)",
+								"Util.decamelize = function(str, separator = '-')",
+								"Util.ifThenElse = function(pred = value => !!value, _then = () => {}, _else = () => {})",
+								"function(value)",
+								"function*(fn, arr)",
+								"Util.colorDump = (iterable, textFn) =>",
+								"(color, n) =>",
+								"Util.bucketInserter = (map, ...extraArgs) =>",
+								"function(...args)",
+								"function(...args)",
+								"Util.fifo = function fifo()",
+								"resolve",
+								"async function* generator()",
+								"r =>",
+								"push: function(...args)",
+								"process: async function run()",
+								"Util.isEmail = function(v)",
+								"Util.isString = function(v)",
+								"Util.isNumeric = v =>",
+								"Util.isObject = (obj, proto = null) =>",
+								"Util.isFunction = fn =>",
+								"Util.isAsync = fn =>",
+								"Util.isArrowFunction = fn =>",
+								"Util.isEmptyString = v =>",
+								"Util.isEmpty = function(v)",
+								"Util.isNonEmpty = v =>",
+								"Util.isIpAddress = v =>",
+								"i =>",
+								"i =>",
+								"Util.isPortNumber = v =>",
+								"Util.hasProps = function(obj, props)",
+								"prop =>",
+								"Util.validatePassword = function(value)",
+								"Util.clone = function(obj, proto)",
+								"constructor",
+								"Util.deepClone = function(data)",
+								"Util.findVal = function(object, propName, maxDepth = 10)",
+								"Util.deepCloneObservable = function(data)",
+								"Util.toArray = function(observableArray)",
+								"Util.arryToTree = function(data, id, pId, appId)",
+								"(e, i) =>",
+								"Util.to3wei = function(a, old, id, pId)",
+								"(e, i) =>",
+								"(se, si) =>",
+								"Util.arrExchangePos = function(arr, i, j)",
+								"Util.arrRemove = function(arr, i)",
+								"Util.move = function(src, dst = [])",
+								"Util.moveIf = function(src, pred, dst = [])",
+								"Util.removeEqual = function(a, b)",
+								"Util.logOutClearStorage = function()",
+								"Util.getCookie = function(cookie, name)",
+								"Util.parseCookie = function(c = document.cookie)",
+								"skip",
+								"(char) != -1) =>",
+								"char =>",
+								"char =>",
+								"Util.encodeCookie = c =>",
+								"([key, value]) =>",
+								"Util.setCookies = c =>",
+								"([key, value]) =>",
+								"Util.clearCookies = function(c)",
+								"(acc, name) =>",
+								"Util.deleteCookie = function(name)",
+								"() =>",
+								"w =>",
+								"() =>",
+								"Util.accAdd = function(arg1, arg2)",
+								"Util.Subtr = function(arg1, arg2)",
+								"Util.accDiv = function(arg1, arg2)",
+								"Util.accMul = function(arg1, arg2)",
+								"Util.dateFormatter = function(date, formate)",
+								"Util.numberFormatter = function(numStr)",
+								"Util.searchObject = function(object, matchCallback, currentPath, result, searched)",
+								"function(req = {})",
+								"() =>",
+								"() =>",
+								"() =>",
+								"() =>",
+								"() =>",
+								"() =>",
+								"() =>",
+								"() =>",
+								"() =>",
+								"Util.parseQuery = function(url = ",
+								")",
+								"Util.encodeQuery = function(data)",
+								"Util.parseURL = function(href = this.",
+								")",
+								"part =>",
+								"([k, v]) =>",
+								"(acc, m) =>",
+								"href(override)",
+								"Util.makeURL = function(...args)",
+								"Util.numberFromURL = function(url, fn)",
+								"Util.tryPromise = fn =>",
+								"(resolve, reject) =>",
+								"Util.tryFunction = (fn, resolve = a => a, reject = () => null) =>",
+								"resolve",
+								"reject",
+								"async function(...args)",
+								"function(...args)",
+								"Util.tryCatch = (fn, resolve = a => a, reject = () => null, ...args) =>",
+								"Util.putError = err =>",
+								"Util.putStack = stack =>",
+								"() =>",
+								"fn =>",
+								"ret =>",
+								"Util.tryPredicate = (fn, defaultRet) =>",
+								"ret =>",
+								"() =>",
+								"Util.isBrowser = function()",
+								"() =>",
+								"w =>",
+								"() =>",
+								"() =>",
+								"w =>",
+								"() =>",
+								"Util.isServer = function()",
+								"Util.isMobile = function()",
+								"Util.uniquePred = (cmp = null) =>",
+								"(el, i, arr) =>",
+								"(el, i, arr) =>",
+								"item =>",
+								"Util.unique = (arr, cmp) =>",
+								"Util.concat = function*(...args)",
+								"Util.distinct = function(arr)",
+								"function(value, index, me)",
+								"Util.rangeMinMax = function(arr, field)",
+								"obj =>",
+								"Util.remap = (...args) =>",
+								"getR",
+								"r",
+								"Util.mergeLists = function(arr1, arr2, key = 'id')",
+								"Util.throttle = function(fn, wait)",
 								"function()",
-								"function useResult(callback, deps)",
+								"Util.foreach = function(o, fn)",
+								"Util.all = function(obj, pred)",
+								"Util.isGenerator = function(fn)",
+								"Util.isIterable = obj =>",
+								"Util.isNativeFunction = x =>",
+								"Util.isConstructor = x =>",
+								"construct(target, args)",
+								"target",
+								"x",
+								"m =>",
+								"Util.filter = function(a, pred)",
+								"function*()",
+								"function*()",
+								"fn",
+								"Util.reduce = (obj, fn, accu) =>",
+								"Util.mapFunctional = fn =>",
+								"function*(arg)",
+								"Util.map = (obj, fn) =>",
+								"ret",
+								"ret",
+								"function*()",
+								"Util.entriesToObj = function(arr)",
+								"(acc, item) =>",
+								"Util.isDate = function(d)",
+								"Util.parseDate = function(d)",
+								"Util.isoDate = function(date)",
+								"Util.toUnixTime = function(dateObj, utc = false)",
+								"Util.unixTime = function(utc = false)",
+								"Util.fromUnixTime = function(epoch, utc = false)",
+								"Util.formatTime = function(date = ",
+								"(), format",
+								"Util.leapYear = function(year)",
+								"Util.timeSpan = function(s)",
+								"Util.randFloat = function(min, max, rnd = Util.rng)",
+								"Util.randInt = (...args) =>",
+								"Util.randStr = (len, charset, rnd = Util.rng) =>",
+								"Util.hex = function(num, numDigits = 0)",
+								"Util.numberParts = (num, base) =>",
+								"Util.roundTo = function(value, prec, digits, type = 'round')",
+								"() =>",
+								"() =>",
+								"w =>",
+								"() =>",
+								"encode: utf8",
+								"decode: base64",
+								"Util.formatRecord = function(obj)",
+								"item =>",
+								"Util.isArray = function(obj)",
+								"Util.equals = function(a, b)",
+								"(e, i) =>",
+								"Util.isGetter = (obj, propName) =>",
+								"Util.isBool = value =>",
+								"Util.size = function(obj)",
+								"Util.isMap = function(obj)",
+								"Util.effectiveDeviceWidth = function()",
+								"Util.getFormFields = function(initialState)",
+								"(acc, { elements }) =>",
+								"(acc2, { name, value }) =>",
+								"Util.mergeObjects = function(objArr, predicate = (dst, src, key) => (src[key] == '' ? undefined : src[key]))",
+								"Util.getUserAgent = function(headers = req.headers)",
+								"Util.factor = function(start, end)",
+								"Util.factorial = function(n)",
+								"Util.lottoChances = function(numbers, draws)",
+								"Util.increment = function(obj, key)",
+								"Util.counter = function()",
+								".incr",
+								"Util.filterKeys = function(obj, pred = k => true)",
+								"pred",
+								"pred",
+								"Util.filterOutKeys = function(obj, arr)",
+								"key =>",
+								"Util.getKeys = function(obj, arr)",
+								"Util.numbersConvert = function(str)",
+								"(ch, i) =>",
+								"Util.entries = function(arg)",
+								"function*()",
+								"Util.keys = function(arg)",
+								"function*()",
+								"Util.values = function(arg)",
+								"function*()",
+								"Util.traverse = function(o, fn)",
+								"(v, k, a) =>",
+								"function* walker(o, depth = 0)",
+								"Util.traverseWithPath = function(o, rootPath = [])",
+								"function* walker(o, path)",
+								"Util.indexByPath = function(o, p)",
+								"Util.pushUnique = function(...args)",
+								"item =>",
+								"Util.insertSorted = function(arr, item, cmp = (a, b) => b - a)",
+								"Util.inserter = (dest, next = (k, v) => {}) =>",
+								"(k, v) =>",
+								"(k, v) =>",
+								"(k, v) =>",
+								"fn",
+								"Util.mapAdapter = getSetFunction =>",
+								"get(key)",
+								"set(key, value)",
+								"Util.mapFunction = map =>",
+								"fn",
+								"m =>",
+								".set",
+								"(k, v) =>",
+								".get",
+								".keys",
+								".has",
+								"Util.mapWrapper = (map, toKey = key => key, fromKey = key => key) =>",
+								".set",
+								"(k, v) =>",
+								".get",
+								".keys",
+								".has",
+								"m =>",
+								"Util.mapCombinator = (forward, backward) =>",
+								"fn",
+								"(a,m) =>",
+								"key =>",
+								"a =>",
+								"function makeGetter(map, next = a => a)",
+								"key =>",
+								"Util.predicate = fn_or_regex =>",
+								"fn",
+								"Util.iterateMembers = function*(obj, predicate = (name, depth, obj, proto) => true, depth = 0)",
+								"Util.and = (...predicates) =>",
+								"(...args) =>",
+								"pred =>",
+								"Util.or = (...predicates) =>",
+								"(...args) =>",
+								"pred =>",
+								"(pred, obj) =>",
+								"Util.memberNameFilter = (depth = 1, start = 0) =>",
+								"(m, l, o) =>",
+								"(m, l, o) =>",
+								"(name, depth, obj, proto) =>",
+								"Util.getMemberNames = (obj, depth = Number.Infinity, start = 0) =>",
+								"Util.objectReducer = (filterFn, accFn = (a, m, o) => ({ ...a, [m]: o[m] }), accu = {}) =>",
+								"(obj, ...args) =>",
+								"(a, m) =>",
+								"(r, a, m) =>",
+								"(r, a) =>",
+								"(a, m, o) =>",
+								"Util.methodNameFilter = (depth = 1, start = 0) =>",
+								"(m, l, o) =>",
+								"Util.getMethodNames = (obj, depth = 1, start = 0) =>",
+								"(a, m, o) =>",
+								"Util.inherit = (dst, src, depth = 1) =>",
+								"Util.bindMethods = function(methods, obj)",
+								"Util.bindMethodsTo = function(dest, obj, methods)",
+								"Util.getConstructor = obj =>",
+								"Util.getPrototypeChain = function(obj, fn = p => p)",
+								"Util.getConstructorChain = (ctor, fn = (c, p) => c) =>",
+								"(p, o) =>",
+								"Util.weakAssign = function(obj)",
+								"other =>",
+								"Util.exception = function Exception(...args)",
+								"Util.location = function Location(...args)",
+								"(t, color) =>",
+								"t =>",
+								"getFileName()",
+								"getLineNumber()",
+								"getColumnNumber()",
+								"Util.stackFrame = function StackFrame(frame)",
+								"prop =>",
+								"getMethodName()",
+								"getFunctionName()",
+								"getTypeName()",
+								"getFileName()",
+								"getLineNumber()",
+								"getColumnNumber()",
+								"get()",
+								"(t, color) =>",
+								"t =>",
+								"fn =>",
+								"(f, i) =>",
+								"getLocation()",
+								"get location()",
+								"Util.scriptName = () =>",
+								"() =>",
+								"script =>",
+								"() =>",
+								"Util.getFunctionName = () =>",
+								"Util.scriptDir = () =>",
+								"() =>",
+								"script =>",
+								"() =>",
+								"Util.stack = function Stack(stack)",
+								"f =>",
+								"frame =>",
+								"part =>",
+								"frame =>",
+								"([func, file]) =>",
+								"n =>",
+								"([func, file]) =>",
+								"([func, [columnNumber, lineNumber, ...file]]) =>",
+								"({ functionName: func, fileName: file, columnNumber: column, lineNumber: line }) =>",
+								"() =>",
+								"frame =>",
+								"get: ()",
+								"frame =>",
+								"f =>",
+								"get: function()",
+								"(a, f) =>",
+								"(fn, i) =>",
+								"Util.getCallerStack = function(position = 2)",
+								".prepareStackTrace",
+								"Util.getCallerFile = function(position = 2)",
+								"Util.getCallerFunction = function(position = 2)",
+								"Util.getCallerFunctionName = function(position = 2)",
+								"Util.getCallerFunctionNames = function(position = 2)",
+								"Util.getCaller = function(index = 1, stack)",
+								"(acc, m) =>",
+								"Util.getCallers = function(start = 2, num = Number.MAX_SAFE_INTEGER, pred = () => true, stack)",
+								".toString",
+								"frame =>",
 								"function()",
+								"Util.getStackFrame = function(offset = 2)",
+								"frame =>",
+								"Util.rotateLeft = function(x, n)",
+								"Util.rotateRight = function(x, n)",
+								"Util.hashString = function(string, bits = 32, mask = 0xffffffff)",
+								"Util.flatTree = function(tree, addOutput)",
+								"addOutput",
+								"key =>",
+								"Util.traverseTree = function(tree, fn, depth = 0, parent = null)",
+								"Util.walkTree = function(node, pred, t, depth = 0, parent = null)",
+								"function*()",
+								"pred",
+								"t",
+								"Util.isPromise = function(obj)",
+								"fn =>",
+								"Util.next = function(iter, observer, prev = undefined)",
+								"val =>",
+								"() =>",
+								"err =>",
+								"() =>",
+								"Util.getImageAverageColor = function(imageElement, options)",
+								"toStringRgb()",
+								"toStringRgba()",
+								"toStringHex()",
+								"toHex",
+								"Util.jsonToObject = function(jsonStr)",
+								"Util.splitLines = function(str, max_linelen = Number.MAX_SAFE_INTEGER)",
+								"function*(re, str)",
+								"Util.decodeEscapes = function(text)",
+								"m =>",
+								"([s, t]) =>",
+								"Util.stripXML = text =>",
+								"Util.stripNonPrintable = text =>",
+								"Util.decodeHTMLEntities = function(text)",
+								"function(match, entity)",
+								"Util.encodeHTMLEntities = (str, charset = '\\u00A0-\\u9999<>&') =>",
+								"i =>",
+								"Util.stripAnsi = function(str)",
+								"Util.proxy = (obj = {}, handler) =>",
+								"get(target, key, receiver)",
+								"set(target, key, value, receiver)",
+								"Util.propertyLookup = (obj = {}, handler = key => null) =>",
+								"get(target, key, receiver)",
+								"Util.proxyTree = function proxyTree(...callbacks)",
+								"applyCallback",
+								"get(target, key)",
+								"set(target, key, value)",
+								"apply(target, thisArg, args)",
+								"function node(path)",
+								"() =>",
+								"Util.construct = constructor =>",
+								"function F(args)",
+								"F",
+								"Util.constructApply = (constructor, array) =>",
+								"Util.immutable = args =>",
+								"set: ()",
+								"deleteProperty: ()",
+								"defineProperty: ()",
+								"Util.immutableClass = (orig, ...proto) =>",
+								"p =>",
+								"ctor =>",
+								"ctor",
 								"function()",
+								"function(value)",
+								"Util.partial = function partial(fn /*, arg1, arg2 etc */)",
 								"function()",
-								"function(_a)",
+								"(min, max, value) =>",
+								"Util.coloring = (useColor = true) =>",
+								"code(...args)",
+								"text(text)",
+								"concat(...args)",
+								"code(...args)",
+								"text(text, ...color)",
+								"concat(...args)",
+								"code(...args)",
+								"text(text, ...color)",
+								"concat(...args)",
+								"Util.colorText = (...args) =>",
+								"Util.stripAnsi = str =>",
+								"Util.ansiCode = (...args) =>",
+								"Util.defineInspect = (proto, ...props) =>",
 								"function()",
+								"(acc, key) =>",
+								"(a, b, value) =>",
+								"Util.bindProperties = (proxy, target, props, gen) =>",
+								"name =>",
+								"gen",
+								"v =>",
+								"(a, k) =>",
+								"get: ()",
+								"get: ()",
 								"function()",
-								"function useValue(callback, deps)"
+								"obj =>",
+								"on: val",
+								"off: val",
+								"true: val",
+								"false: val",
+								"Util.assignGlobal = () =>",
+								"Util.weakMapper = (createFn, map = ",
+								"())",
+								"self",
+								".set",
+								".get",
+								"Util.merge = (...args) =>",
+								"(acc, arg) =>",
+								"Util.weakAssoc = (fn = (value, ...args) => Object.",
+								"(value, ...args))",
+								"() =>",
+								"map =>",
+								"(obj, ...args) =>",
+								"() =>",
+								"(obj, ...args) =>",
+								"(obj, ...args) =>",
+								"Util.transformer = (a, ...l) =>",
+								"(c, f) =>",
+								"function(...v)",
+								"Util.proxyObject = (root, handler) =>",
+								"ptr",
+								"(a, i) =>",
+								"(value, path) =>",
+								"get(target, key)",
+								"function node(path)",
+								"Util.parseXML = xmlStr =>",
+								"() =>",
+								"parser =>",
+								"Util.once = fn =>",
+								"(...args) =>",
+								"Util.copyTextToClipboard = (i, { target: t } = {}) =>",
+								"() =>",
+								"Util.toPlainObject = (obj, t = (v, n) => v) =>",
+								"(acc, k) =>",
+								"Util.timer = msecs =>",
+								"remaining",
+								"finish",
+								"log",
+								"obj =>",
+								"v =>",
+								"timeout",
+								"() =>",
+								"(...args) =>",
+								"() =>",
+								"add",
+								"get delay()",
+								"get created()",
+								"get start()",
+								"get stop()",
+								"get elapsed()",
+								"get end()",
+								"get remain()",
+								"cancel()",
+								"pause()",
+								".resume",
+								".restart",
+								"callback(...args)",
+								"subscribe(f)",
+								"unsubscribe(f)",
+								"start",
+								"(resolve, reject) =>",
+								"Util.thenableReject = error =>",
+								"then: (resolve, reject)",
+								"Util.wrapGenerator = fn =>",
+								"function(...args)",
+								"Util.decorateIterable = (proto, generators = false) =>",
+								"forEach(fn, thisArg)",
+								"*map(fn, thisArg)",
+								"*filter(pred, thisArg)",
+								"findIndex(pred, thisArg)",
+								"find(pred, thisArg)",
+								"every(pred, thisArg)",
+								"some(pred, thisArg)",
+								"reduce(fn, accu)",
+								"function TRBL(arg)",
+								"k =>",
+								"v =>",
+								"TRBL",
+								"TRBL.prototype.null = function()",
+								"TRBL.null = trbl =>",
+								"TRBL",
+								"TRBL.neg = (trbl = this) =>",
+								"TRBL.prototype.isNaN = function()",
+								"TRBL",
+								"get()",
+								"rect =>",
+								"TRBL",
+								"get()",
+								"rect =>",
+								"TRBL.prototype.add = function(other)",
+								"TRBL.prototype.union = function(other)",
+								"TRBL.prototype.toRect = function()",
+								"TRBL.prototype.toRect = function()",
+								"TRBL.union = (trbl, other) =>",
+								"TRBL.toRect = trbl =>",
+								"TRBL.prototype.toString = function(unit = 'px')",
+								"TRBL.prototype.toSource = function()",
+								"points =>",
+								"TRBL",
+								"function isTRBL(obj)",
+								"function Point(arg)",
+								"p",
+								"p",
+								"Point",
+								"Point",
+								"Point",
+								"get()",
+								"get()",
+								"Point.prototype.move = function(x, y)",
+								"Point.prototype.move_to = function(x, y)",
+								"Point.prototype.clear = function(x, y)",
+								"Point.prototype.set = function(fn)",
+								"Point.prototype.clone = function()",
+								"Point.prototype.sum = function(...args)",
+								"Point.prototype.add = function(...args)",
+								"Point.prototype.diff = function(...args)",
+								"Point.prototype.sub = function(...args)",
+								"Point.prototype.prod = function(f)",
+								"Point.prototype.mul = function(f)",
+								"Point.prototype.quot = function(other)",
+								"Point.prototype.div = function(other)",
+								"Point.prototype.comp = function()",
+								"Point.prototype.neg = function()",
+								"Point.prototype.distanceSquared = function(other = { x: 0, y: 0 })",
+								"Point.prototype.distance = function(other = { x: 0, y: 0 })",
+								"Point",
+								"Point.prototype.equals = function(other)",
+								"Point.prototype.round = function(precision = 0.001, digits, type = 'round')",
+								"Point.prototype.sides = function()",
+								"Point.prototype.dot = function(other)",
+								"Point.prototype.fromAngle = function(angle, dist = 1.0)",
+								"Point.prototype.toAngle = function(deg = false)",
+								"Point.prototype.angle = function(other, deg = false)",
+								"Point",
+								"Point.prototype.rotate = function(angle, origin = { x: 0, y: 0 })",
+								"Point.prototype.dimension = function()",
+								"Point",
+								"function()",
+								"Point.prototype.toString = function(opts = {})",
+								"Point",
+								"function()",
+								"Point",
+								"() =>",
+								"Point.prototype.toSource = function(opts = {})",
+								"pad",
+								"Point.prototype.toObject = function()",
+								"Point",
+								"Point.prototype.toCSS = function(precision = 0.001)",
+								"Point.prototype.toFixed = function(digits)",
+								"Point.prototype.isNull = function()",
+								"Point.prototype.inside = function(rect)",
+								"Point.prototype.normalize = function(minmax)",
+								"Point.move = (point, x, y) =>",
+								"Point",
+								"Point.angle = (point, other, deg = false) =>",
+								"Point",
+								"Point.inside = (point, rect) =>",
+								"Point",
+								"Point.sub = (point, other) =>",
+								"Point",
+								"Point.prod = (a, b) =>",
+								"Point",
+								"Point.quot = (a, b) =>",
+								"Point",
+								"Point.equals = (a, b) =>",
+								"Point",
+								"Point.round = (point, prec) =>",
+								"Point",
+								"Point.fromAngle = (angle, f) =>",
+								"Point",
+								"(point, ...args) =>",
+								"Point",
+								"Point.toSource = point =>",
+								"isPoint",
+								"Point",
+								"Point.bind = (o, p, gen) =>",
+								"gen",
+								"v =>",
+								"function()",
+								"function Size(arg)",
+								"Size",
+								"Size",
+								"Size",
+								"Size.prototype.convertUnits = function(w = 'window' in global ? window : null)",
+								"Size.prototype.aspect = function()",
+								"Size.prototype.toCSS = function(units)",
+								"Size.prototype.transform = function(m)",
+								"Size.prototype.isSquare = function()",
+								"Size.prototype.area = function()",
+								"Size.prototype.resize = function(width, height)",
+								"Size.prototype.sum = function(other)",
+								"Size.prototype.add = function()",
+								"Size.prototype.diff = function(other)",
+								"Size.prototype.sub = function()",
+								"Size.prototype.prod = function(f)",
+								"Size.prototype.mul = function(...args)",
+								"Size.prototype.quot = function(other)",
+								"Size.prototype.inverse = function(other)",
+								"Size.prototype.div = function(f)",
+								"Size.prototype.round = function(precision = 0.001, digits)",
+								"Size.prototype.bounds = function(other)",
+								"Size.prototype.fit = function(size)",
+								"Size",
+								"Size",
+								"Size",
+								"Size.prototype.fitHeight = function(other)",
+								"Size.prototype.fitWidth = function(other)",
+								"Size.prototype.fitFactors = function(other)",
+								"Size.prototype.toString = function(opts = {})",
+								"Size.area = sz =>",
+								"Size",
+								"Size.aspect = sz =>",
+								"Size",
+								"Size.bind = (o, p, gen) =>",
+								"gen",
+								"v =>",
+								"Size",
+								"(size, ...args) =>",
+								"Size",
+								"isSize",
+								"(size, ...args) =>",
+								"Size",
+								"function Rect(arg)",
+								"field =>",
+								"arg =>",
+								"arg =>",
+								"Rect",
+								"Size",
+								"Point",
+								"Rect",
+								"Rect.prototype.clone = function(fn)",
+								"Rect.prototype.corners = function()",
+								"Rect",
+								"Rect.prototype.isSquare = function()",
+								"Rect",
+								"Rect.prototype.getArea = function()",
+								"Rect.prototype.toString = function(opts = {})",
+								"Point",
+								"Size",
+								"Rect.prototype.toSource = function(opts = {})",
+								"Rect",
+								"get: function()",
+								"set: function(value)",
+								"Rect",
+								"get: function()",
+								"set: function(value)",
+								"Rect",
+								"get: function()",
+								"set: function(value)",
+								"Rect",
+								"get: function()",
+								"set: function(value)",
+								"Rect",
+								"get: function()",
+								"Rect",
+								"Rect",
+								"get: function()",
+								"Rect",
+								"get: function()",
+								"get()",
+								"set(value)",
+								"get()",
+								"set(value)",
+								"Rect.prototype.points = function(ctor = items => Array.",
+								"(items))",
+								"Rect",
+								"Rect.prototype.scale = function(factor)",
+								"Rect.prototype.mul = function(...args)",
+								"Point",
+								"Size",
+								"Rect.prototype.div = function(...args)",
+								"Point",
+								"Size",
+								"Rect.prototype.outset = function(trbl)",
+								"Rect.prototype.inset = function(trbl)",
+								"Rect.prototype.inside = function(point)",
+								"Rect.prototype.fit = function(other, align = Align.CENTER | Align.MIDDLE | Rect.CONTAIN)",
+								"Size",
+								"(a, b) =>",
+								"(acc, factor) =>",
+								"Rect.prototype.pointFromCenter = function(point)",
+								"Point",
+								"Rect.prototype.toCSS = function()",
+								"Point",
+								"Size",
+								"Rect.prototype.toTRBL = function()",
+								"Rect.prototype.toArray = function()",
+								"Rect.prototype.toPoints = function(ctor = points => Array.",
+								"(points))",
+								"Rect.prototype.toLines = function(ctor = lines => Array.",
+								"(lines, points",
+								"(...points)))",
+								"Rect",
+								"Rect.prototype.align = function(align_to, a = 0)",
+								"Rect.prototype.round = function(precision = 0.001, digits, type = 'round')",
+								"Rect.prototype.toObject = function(bb = false)",
+								"Rect.round = rect =>",
+								"Rect",
+								"Rect.align = (rect, align_to, a = 0) =>",
+								"Rect",
+								"Rect.toCSS = rect =>",
+								"Rect",
+								"Rect.inset = (rect, trbl) =>",
+								"Rect",
+								"Rect.outset = (rect, trbl) =>",
+								"Rect",
+								"Rect.center = rect =>",
+								"Rect.bind = rect =>",
+								"Rect.inside = (rect, point) =>",
+								"Rect.from = function(obj)",
+								"fn",
+								"Rect.fromCircle = function(...args)",
+								"(rect, ...args) =>",
+								"Rect",
+								"Rect.toSource = (rect, opts = {}) =>",
+								"Rect.bind = (o, p, gen) =>",
+								"gen",
+								"v =>",
+								"(rect, sx, sy) =>",
+								"(rect, width, height) =>",
+								"(rect, x, y) =>",
+								"Rect",
+								"function(...args)",
+								"Rect",
+								"isRect",
+								"Element",
+								"wrap",
+								"(k, fn) =>",
+								"create",
+								"obj =>",
+								"walkUp",
+								"e =>",
+								"pred",
+								"skip",
+								"(e, next) =>",
+								"emit",
+								"walk",
+								"function()",
+								"iterator",
+								"(e, d, r) =>",
+								"getProp",
+								"getProp",
+								"function()",
+								"childIterator",
+								"toObject",
+								"c =>",
+								"toCommand",
+								"k =>",
+								"e =>",
+								"find",
+								"findAll",
+								"attr",
+								"(acc, name) =>",
+								"getRect",
+								"rect",
+								"setRect",
+								"position",
+								"move",
+								"getValue",
+								"moveRelative",
+								"function move(x, y)",
+								".cancel",
+								".jump",
+								"resize",
+								"getEdgesXYWH",
+								"getEdge",
+								"getPointsXYWH",
+								"cumulativeOffset",
+								"getTRBL",
+								"pos =>",
+								"setTRBL",
+								"(acc, pos) =>",
+								"setCSS",
+								".subscribe",
+								"getCSS",
+								"() =>",
+								"() =>",
+								"() =>",
+								"k =>",
+								"receiver",
+								"get: function()",
+								"([k, v]) =>",
+								"(ret, key) =>",
+								"xpath",
+								"(e, next) =>",
+								"selector",
+								"depth",
+								"dump",
+								"function dumpElem(child, accu, root, depth)",
+								"attr =>",
+								"name =>",
+								"(e, a, r, d) =>",
+								"skipper",
+								"(a, b) =>",
+								"function(elem)",
+								"prevSibling",
+								"nextSibling",
+								"idx",
+								"name",
+								"unique",
+								"factory",
+								".append_to",
+								".create",
+								".setattr",
+								".setcss",
+								".bound_factory",
+								"remove",
+								"isat",
+								"at",
+								"e =>",
+								"(e, depth) =>",
+								"(resolve, reject) =>",
+								"(e, accu, root, depth) =>",
+								"transition",
+								"(resolve, reject) =>",
+								"trun",
+								"tend",
+								"cancel",
+								"toString",
+								"([name, value]) =>",
+								"text =>",
+								"(resolve, reject) =>",
+								"() =>",
+								"err =>",
+								"Element.children = function*(elem, tfn = e => e)",
+								"Element.recurse = function*(elem, tfn = e => e)",
+								"function()",
+								"Element.edges = arg =>",
+								"Element.margin = element =>",
+								"Element.padding = element =>",
+								"Element.border = element =>",
+								"function isElement(e)"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -762,70 +6045,35 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 1,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 7,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "package.json",
+					"file": "tamper.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3678,
+						"buffer_size": 184225,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								817,
-								817
+								4793,
+								4805
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							}
-						},
-						"translation.x": 49.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "main.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 23446,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								18429,
-								18429
-							]
-						],
-						"settings":
-						{
+							"color_scheme": "Packages/User/SchemeEditorTemp/Next.tmTheme",
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
@@ -838,204 +6086,7 @@
 							"use_tab_stops": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 10235.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "lib/repeater/limiters.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 11845,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								54,
-								54
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "lib/repeater/timers.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 10567,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								10567,
-								10567
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"use_tab_stops": false
-						},
-						"translation.x": 109.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "lib/repeater/pubsub.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6887,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								41,
-								41
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "style.css",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6605,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3826,
-								3826
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							}
-						},
-						"translation.x": 0.0,
-						"translation.y": 4502.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "lib/eagle/svgRenderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 15012,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								14137,
-								14137
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 17.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "lib/repeater/react-hooks.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7282,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								104,
-								104
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 4,
-								"tabSize": 4
-							},
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 70505.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -1046,7 +6097,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 30.0
+		"height": 42.0
 	},
 	"input":
 	{
@@ -1110,12 +6161,136 @@
 		"selected_items":
 		[
 			[
-				"react-ho",
-				"lib/repeater/react-hooks.js"
+				"util",
+				"lib/util.js"
+			],
+			[
+				"parser",
+				"lib/ecmascript/parser.js"
+			],
+			[
+				"create-tamp",
+				"create-tamper.js"
+			],
+			[
+				"estree",
+				"lib/ecmascript/estree.js"
+			],
+			[
+				"node",
+				"lib/dom/node.js"
+			],
+			[
+				"new",
+				"new.js"
+			],
+			[
+				"element.js",
+				"lib/dom/element.js"
+			],
+			[
+				"elem",
+				"lib/dom/element.js"
+			],
+			[
+				"ele",
+				"lib/eagle/element.js"
+			],
+			[
+				"rect",
+				"lib/geom/rect.js"
+			],
+			[
+				"deep",
+				"lib/deep.js"
+			],
+			[
+				"token",
+				"lib/ecmascript/token.js"
+			],
+			[
+				"create",
+				"create-tamper.js"
+			],
+			[
+				"tamper",
+				"tamper.js"
+			],
+			[
+				"element",
+				"lib/dom/element.js"
+			],
+			[
+				"tamp",
+				"tamper.js"
+			],
+			[
+				"size",
+				"lib/geom/size.js"
+			],
+			[
+				"repea",
+				"lib/repeater/repeater.js"
 			],
 			[
 				"pubsu",
 				"lib/repeater/pubsub.js"
+			],
+			[
+				"trb",
+				"lib/geom/trbl.js"
+			],
+			[
+				"point",
+				"lib/geom/point.js"
+			],
+			[
+				"svgRe",
+				"lib/eagle/svgRenderer.js"
+			],
+			[
+				"wire",
+				"lib/eagle/components/wire.js"
+			],
+			[
+				"server",
+				"server.js"
+			],
+			[
+				"util.j",
+				"lib/util.js"
+			],
+			[
+				"main",
+				"main.js"
+			],
+			[
+				"symbo",
+				"lib/eagle/components/symbol.js"
+			],
+			[
+				"",
+				"/usr/share/applications/sublime_text.desktop"
+			],
+			[
+				"sym",
+				"lib/eagle/components/symbol.js"
+			],
+			[
+				"preactCom",
+				"lib/dom/preactComponent.js"
+			],
+			[
+				"preactC",
+				"lib/dom/preactComponent.js"
+			],
+			[
+				"mainjs",
+				"main.js"
+			],
+			[
+				"react-ho",
+				"lib/repeater/react-hooks.js"
 			],
 			[
 				"timers",
@@ -1140,10 +6315,6 @@
 			[
 				"react-hoo",
 				"lib/repeater/react-hooks.js"
-			],
-			[
-				"main",
-				"main.js"
 			],
 			[
 				"package",
@@ -1180,10 +6351,6 @@
 			[
 				"util.js",
 				"lib/util.js"
-			],
-			[
-				"",
-				"lib/eagle/boardRenderer.js"
 			],
 			[
 				"test-eag",
@@ -1230,14 +6397,6 @@
 				"lib/eagle/boardRenderer.js"
 			],
 			[
-				"element",
-				"lib/dom/element.js"
-			],
-			[
-				"util",
-				"lib/util.js"
-			],
-			[
 				"docu",
 				"lib/eagle/document.js"
 			],
@@ -1258,20 +6417,8 @@
 				"lib/color.js"
 			],
 			[
-				"rect",
-				"lib/geom/rect.js"
-			],
-			[
-				"size",
-				"lib/geom/size.js"
-			],
-			[
 				"line",
 				"lib/geom/line.js"
-			],
-			[
-				"point",
-				"lib/geom/point.js"
 			],
 			[
 				"rect.js",
@@ -1374,10 +6521,6 @@
 				"lib/eagle/nodeMap.js"
 			],
 			[
-				"node",
-				"lib/eagle/node.js"
-			],
-			[
 				"document",
 				"lib/eagle/document.js"
 			],
@@ -1396,10 +6539,6 @@
 			[
 				"coloredTe",
 				"lib/color/coloredText.js"
-			],
-			[
-				"server",
-				"server.js"
 			],
 			[
 				"test-xml",
@@ -1432,10 +6571,6 @@
 			[
 				"reconn",
 				"lib/net/reconnectingWebSocket.js"
-			],
-			[
-				"util.j",
-				"lib/util.js"
 			],
 			[
 				"test-we",
@@ -1522,10 +6657,6 @@
 				"lib/eagle/element.js"
 			],
 			[
-				"preactCom",
-				"lib/dom/preactComponent.js"
-			],
-			[
 				"deep.",
 				"lib/deep.js"
 			],
@@ -1534,92 +6665,12 @@
 				"lib/eagle/element.js"
 			],
 			[
-				"deep",
-				"lib/deep.js"
-			],
-			[
 				"test-eagle",
 				"test-eagle.js"
 			],
 			[
 				"node.",
 				"lib/eagle/node.js"
-			],
-			[
-				"trkl",
-				"lib/trkl.js"
-			],
-			[
-				"tXml",
-				"lib/tXml.js"
-			],
-			[
-				"nodeList",
-				"lib/eagle/nodeList.js"
-			],
-			[
-				"txml",
-				"lib/tXml.js"
-			],
-			[
-				"node.js",
-				"lib/eagle/node.js"
-			],
-			[
-				"nodeli",
-				"lib/eagle/nodeList.js"
-			],
-			[
-				"nodemap",
-				"lib/eagle/nodeMap.js"
-			],
-			[
-				"ref",
-				"lib/eagle/ref.js"
-			],
-			[
-				"xpath",
-				"lib/xml/xpath.js"
-			],
-			[
-				"path.js",
-				"lib/json/path.js"
-			],
-			[
-				"test-x",
-				"test-xml.js"
-			],
-			[
-				"server.",
-				"server.js"
-			],
-			[
-				"packa",
-				"package.json"
-			],
-			[
-				"list-p",
-				"list-proxies.js"
-			],
-			[
-				"colormap",
-				"lib/draw/colorMap.js"
-			],
-			[
-				"kolo",
-				"lib/KolorWheel.js"
-			],
-			[
-				"test-kol",
-				"test-kolorwheel.js"
-			],
-			[
-				"Util.",
-				"lib/util.js"
-			],
-			[
-				"78",
-				"node_modules/deep-diff/examples/issue-78.js"
 			]
 		],
 		"width": 0.0
