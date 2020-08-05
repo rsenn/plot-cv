@@ -114,10 +114,28 @@ const ListProjects = (window.list = async function(url = '/files.html') {
   return chunk;
 });
 
-const ElementToXML = e => {
-  const x = Element.toObject(e);
+const ElementToXML = (e, predicate) => {
+  const x = Element.toObject(e, { predicate });
   //console.log('x:', x);
-  return Element.toString(x);
+  return Element.toString(x, { newline: '\n' });
+};
+
+const FileSystem = {
+  async readFile(filename) {
+    return await fetch(`/static/${filename}`).then(async res => await (await res).text());
+  },
+  async writeFile(filename, data, overwrite = true) {
+    return await fetch('/save', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/octet-stream',
+        'Content-Disposition': `attachment; filename="${filename}"`
+      },
+      body: data + ''
+    });
+  },
+  async exists(filename) {},
+  async realpath(filename) {}
 };
 
 const LoadFile = async filename => {
@@ -125,7 +143,7 @@ const LoadFile = async filename => {
   //console.log('xml: ', xml.substring(0, 100));
   //let dom = new DOMParser().parseFromString(xml, 'application/xml');
 
-  let doc = new EagleDocument(xml, null, filename);
+  let doc = new EagleDocument(xml, null, filename, null, FileSystem);
 
   if(/\.brd$/.test(filename)) window.board = doc;
   if(/\.sch$/.test(filename)) window.schematic = doc;
@@ -135,17 +153,28 @@ const LoadFile = async filename => {
   return doc;
 };
 
-const SaveSVG = (window.save = async function save(filename = projectName) {
-  let body = ElementToXML(window.svg);
-  let result = await fetch('/save', {
+const SaveSVG = (window.save = async function save(filename = projectName, layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48, 51]) {
+  let predicate = element => {
+    if(!element.hasAttribute('data-layer')) return true;
+    console.log('element:', element);
+    const layer = element.getAttribute('data-layer');
+    let [number, name] = layer.split(/ /);
+    if(number !== undefined && name !== undefined) return layers.indexOf(+number) != -1 || layers.indexOf(name) != -1;
+    return true;
+  };
+  let data = ElementToXML(project.svg, predicate);
+
+  let { status, statusText, body } = await fetch('/save', {
     method: 'post',
     headers: {
       'Content-Type': 'application/xml',
-      'Content-Disposition': `attachment; filename="${projectName}.svg"`
+      'Content-Disposition': `attachment; filename="${filename.replace(/\.svg$/i, '')}.svg"`
     },
-    body
+    body: data
   });
-  //console.log('saved', result);
+  const result = { status, statusText, body };
+  console.log('saved', result);
+  return result;
 });
 
 const ModifyColors = fn => e => {
@@ -417,6 +446,7 @@ const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 
 const AppMain = (window.onload = async () => {
   Object.assign(window, { Element, devtools, dom }, { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL });
+  Object.assign(window, { SaveSVG });
 
   Error.stackTraceLimit = 100;
 

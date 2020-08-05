@@ -3944,7 +3944,7 @@ return ${imName};`;
     this.y += y;
     return this;
   };
-  Point.prototype.move_to = function(x, y) {
+  Point.prototype.moveTo = function(x, y) {
     this.x = x;
     this.y = y;
     return this;

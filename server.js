@@ -28,9 +28,11 @@ const p = path.join(path.dirname(process.argv[1]), '.');
 
 //console.log('Serving from', p);
 
-app.use(express.text({ type: 'application/xml' }));
+app.use(express.text({ type: 'application/xml', limit: '16384kb' }));
 
 app.use(bodyParser.json());
+app.use(bodyParser.raw({ type: 'application/octet-stream', limit: '16384kb' }));
+app.use(bodyParser.raw({ type: 'multipart/mixed', limit: '16384kb' }));
 
 let sockets = [];
 
@@ -245,8 +247,8 @@ app.get('/index.html', async (req, res) => {
 
 app.post('/save', async (req, res) => {
   const { body } = req;
-  //console.log('req.headers:', req.headers);
-  //console.log('save body:', body.substring(0, 100), '...');
+  console.log('req.headers:', req.headers);
+  console.log('save body:', typeof body == 'string' ? Util.abbreviate(body, 100) : body);
   const filename = req.headers['content-disposition'].replace(/.*"([^"]*)".*/, '$1') || 'output.svg';
   let result = await fs.promises.writeFile(filename, body, { mode: 0o600, flag: 'w' });
   res.json({ result });

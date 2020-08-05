@@ -238,7 +238,7 @@ body,
 svg,
 text {
   font-family: 'Fixed Medium';
-  font-size: 10em;
+  font-size: 0.0875rem;
   font-weight: normal;
 }
 .file.inactive {

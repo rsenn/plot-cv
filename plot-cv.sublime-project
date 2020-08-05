@@ -39,6 +39,7 @@
     {
       "file_exclude_patterns": [
       "*.tmp",
+      "*.scr",
         //"*.so", "*.orig", "*.log", "*.jshintrc",
         "*.vcxproj",
         "*.filters",

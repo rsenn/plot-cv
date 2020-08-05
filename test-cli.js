@@ -11,7 +11,7 @@ import { inspect } from './inspect.js';
 //import { Contour } from "contour";
 const { circle, contour, line, polygon, rect } = Draw;
 
-//console.log('global:', inspect({ drawLine, drawCircle }));
+//contournsole.log('global:', inspect({ drawLine, drawCircle }));
 //console.log('static:', inspect({ circle, contour, line, polygon, rect }));
 //console.log('test:', inspect({ Point, Size, Rect, Mat, Contour, Line, Draw }));
 
