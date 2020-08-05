@@ -1,6 +1,7 @@
 import { h, Fragment, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
 
 import { trkl } from './lib/trkl.js';
+import { useDimensions } from './useDimensions.js';
 
 //import React from '../modules/preact/dist/preact.mjs';
 
@@ -78,6 +79,19 @@ export const Container = ({ className = 'panel', children, ...props }) => {
 export const Button = ({ caption, fn }) => html`
   <${Overlay} className="button" text=${caption} onPush=${state => (state ? fn(state) : undefined)} />
 `;
+
+export const FloatingPanel = ({ children, className, size, style = {}, ...props }) => {
+  const [ref, { x, y, width, height }] = useDimensions();
+  //console.log("dimensions:",{x,y,width,height});
+  if(size) {
+    //  size = new Size(size);
+
+    style.width = `${size.width}px`;
+    style.height = `${size.height}px`;
+  }
+
+  return h(Overlay, { ref, className: classNames('floating', className), ...props, style }, children);
+};
 
 export const Label = ({ className, text, children, ...props }) =>
   html`

@@ -23,13 +23,14 @@ import { Functional } from './lib/functional.js';
 import { makeLocalStorage } from './lib/autoStore.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { useValue, useResult, useAsyncIter } from './lib/repeater/react-hooks.js';
-
+import LogJS from './lib/log.js';
+import { useDimensions } from './useDimensions.js';
 import { toXML, ImmutablePath } from './lib/json.js';
 import { XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';
 import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
 import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
-import components, { Chooser, DynamicLabel, Label, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, BrowseIcon, CrossHair } from './components.js';
+import components, { Chooser, DynamicLabel, Label, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, BrowseIcon, CrossHair, FloatingPanel } from './components.js';
 import { Message } from './message.js';
 import { WebSocketClient } from './lib/net/websocket-async.js';
 import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
@@ -288,7 +289,7 @@ const LoadDocument = async (project, parentElem) => {
   eagle2dom = eagle2dom.map(([p, e]) => [p, p.apply(project.doc.raw), e]);
   eagle2dom = eagle2dom.map(([p, r, e]) => [EagleElement.get(project.doc, p, r), e]);
 
-  console.log('eagle2dom:', eagle2dom);
+  //  console.log('eagle2dom:', eagle2dom);
 
   let dom2eagle = Util.mapFunction(new WeakMap(eagle2dom.map(([k, v]) => [v, k])));
 
@@ -445,7 +446,30 @@ let socket = trkl();
 const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 
 const AppMain = (window.onload = async () => {
-  Object.assign(window, { Element, devtools, dom }, { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL });
+  Object.assign(
+    window,
+    { LogJS },
+    { Element, devtools, dom },
+    {
+      SVGAlignments,
+      AlignmentAttrs,
+      Alignment,
+      AlignmentAngle,
+      Arc,
+      CalculateArcRadius,
+      ClampAngle,
+      EagleAlignments,
+      HORIZONTAL,
+      HORIZONTAL_VERTICAL,
+      InvertY,
+      LayerAttributes,
+      LinesToPath,
+      MakeCoordTransformer,
+      PolarToCartesian,
+      RotateTransformation,
+      VERTICAL
+    }
+  );
   Object.assign(window, { SaveSVG });
 
   Error.stackTraceLimit = 100;
@@ -456,6 +480,24 @@ const AppMain = (window.onload = async () => {
     await stop;
     clearInterval(interval);
   });
+
+  const logger = new Repeater(async (push, stop) => {
+    push('Load ready!');
+    window.pushlog = push;
+    await stop;
+  });
+  logger.push = window.pushlog;
+
+  const RegisterEventHandler = (events = []) =>
+    new Repeater(async (push, stop) => {
+      let handler = e => push(e);
+      events.forEach(ev => window.addEventListener(ev, handler));
+      console.log('registered');
+      await stop;
+      events.forEach(ev => window.removeEventListener(ev, handler));
+      console.log('unregistered');
+    });
+  const touchEvents = RegisterEventHandler(['touchmove', 'touchstart', 'touchcancel', 'mousemove', 'mouseup', 'mousedown']);
 
   //window.focusSearch = trkl();
   window.currentSearch = trkl(null);
@@ -492,7 +534,14 @@ const AppMain = (window.onload = async () => {
 
   //prettier-ignore
   Object.assign(window, { BBox, ChooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, LoadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
-  Object.assign(window, { PrimitiveComponents, ElementNameToComponent, ElementToComponent, Wire, Instance, SchematicSymbol });
+  Object.assign(window, {
+    PrimitiveComponents,
+    ElementNameToComponent,
+    ElementToComponent,
+    Wire,
+    Instance,
+    SchematicSymbol
+  });
 
   const inspectSym = Symbol.for('nodejs.util.inspect.custom');
 
@@ -556,7 +605,43 @@ const AppMain = (window.onload = async () => {
         yield time;
       }
     });
-    return h('div', { className: 'vcenter fixed grow no-select', style: { flex: '1 0 auto', justifyContent: 'flex-end', color: 'white', height: '60px', width: '200px', padding: '0 10px 0 0' } }, [result && new Date(result.value).toLocaleTimeString('de-CH')]);
+    return h(
+      'div',
+      {
+        className: 'vcenter fixed grow no-select',
+        style: {
+          flex: '1 0 auto',
+          justifyContent: 'flex-end',
+          color: 'white',
+          height: '60px',
+          width: '200px',
+          padding: '0 10px 0 0'
+        }
+      },
+      [result && new Date(result.value).toLocaleTimeString('de-CH')]
+    );
+  };
+  LogJS.addAppender(
+    class extends LogJS.BaseAppender {
+      log(type, time, msg) {
+        let d = new Date(time);
+        if(typeof window.pushlog == 'function') window.pushlog(type + ' ' + Util.isoDate(d).replace(/-/g, '') + ' ' + d.toLocaleTimeString(navigator.language || 'de') + ' ' + msg);
+      }
+    }
+  );
+  const Logger = props => {
+    const [lines, setLines] = useState([]);
+    //const [ref, { x, y, width, height }] = useDimensions();
+    //console.log('dimensions:', { x, y, width, height });
+    const result = useResult(async function*() {
+      for await (let msg of logger) yield msg;
+    });
+    if(result) lines.push(result.value);
+    return h(
+      'div',
+      { class: 'logger' },
+      lines.map((l, i) => h('p', {}, /*333*/ l + ''))
+    );
   };
 
   React.render(
@@ -620,7 +705,8 @@ const AppMain = (window.onload = async () => {
       html`
         <${FileList} files=${projects} onActive=${open} onChange=${ChooseDocument} filter=${searchFilter} showSearch=${showSearch} changeInput=${changeInput} focusSearch=${focusSearch} currentInput=${currentSearch} />
       `,
-      h(CrossHair, { ...crosshair })
+      h(CrossHair, { ...crosshair }),
+      h(FloatingPanel, {}, h(Logger, {}))
     ],
     Element.find('#preact')
   );
@@ -634,14 +720,10 @@ const AppMain = (window.onload = async () => {
 
       if(type.endsWith('end') || type.endsWith('up')) return cancel();
       if(event.buttons === 0 && type.endsWith('move')) return cancel();
-
-      if(event.index > 0) Util.log('touch', { x, y, index, buttons, type, target }, container);
-
+      // if(event.index > 0) Util.log('touch', { x, y, index, buttons, type, target }, container);
       if(event.buttons & 2) return cancel();
-
       if(!move) {
         let box = Element.find('#main').firstElementChild;
-
         window.move = move = Element.moveRelative(box);
       } else if(move && event.buttons == 0) {
         cancel();
@@ -653,7 +735,7 @@ const AppMain = (window.onload = async () => {
           window.crosshair.show = true;
           window.crosshair.position = absolute;
 
-          Util.log('move', ...[...rel], ...[...absolute]);
+          //          Util.log('move', ...[...rel], ...[...absolute]);
           if(true || event.buttons > 0) move(rel.x, rel.y);
           else move = move.jump();
         }
@@ -667,6 +749,60 @@ const AppMain = (window.onload = async () => {
     },
     { element: window }
   );
+
+  window.processEvents = async function eventLoop() {
+    for await (let e of touchEvents) {
+      const {
+        altKey,
+        bubbles,
+        button,
+        buttons,
+        cancelBubble,
+        cancelable,
+        clientX,
+        clientY,
+        composed,
+        ctrlKey,
+        //  currentTarget,
+        //    defaultPrevented,
+        detail,
+        eventPhase,
+        fromElement,
+        isTrusted,
+        layerX,
+        layerY,
+        metaKey,
+        movementX,
+        movementY,
+        offsetX,
+        offsetY,
+        pageX,
+        pageY,
+        path,
+        region,
+        relatedTarget,
+        returnValue,
+        screenX,
+        screenY,
+        shiftKey,
+        //     sourceCapabilities,
+        srcElement,
+        target,
+        timeStamp,
+        toElement,
+        type,
+        view,
+        which,
+        x,
+        y,
+        ...event
+      } = e;
+      LogJS.info(`${type} ` + /* Util.toSource(e)+ */ ` ${x},${y} → ${Element.xpath(target)}`);
+    }
+  };
+  processEvents();
+
+  //  eventLoop();
 
   window.styles = CSS.create('head');
   /* document.addEventListener('keydown', event => {
@@ -690,12 +826,10 @@ const AppMain = (window.onload = async () => {
 
     if(sideBar.x2 > clientArea.x1) {
       clientArea.width -= sideBar.x2;
-
       clientArea.x = sideBar.x2;
       clientArea.width = window.innerWidth - clientArea.x;
     }
     clientArea.height = window.innerHeight;
-
     clientArea.x += container.parentElement.scrollLeft;
 
     //console.log('wheel:', { sideBar, clientArea });
