@@ -2,7 +2,7 @@ import { h, html, render, Component, createContext, useState, useReducer, useEff
 
 function getDimensionObject(node) {
   if(typeof node == 'object' && node != null && node.base) node = node.base;
-  console.info('getDimensionObject', node);
+  //  console.info('getDimensionObject', node);
 
   var rect = node.getBoundingClientRect();
   return {

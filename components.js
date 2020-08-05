@@ -80,14 +80,18 @@ export const Button = ({ caption, fn }) => html`
   <${Overlay} className="button" text=${caption} onPush=${state => (state ? fn(state) : undefined)} />
 `;
 
-export const FloatingPanel = ({ children, className, size, style = {}, ...props }) => {
+export const FloatingPanel = ({ children, className, onSize, style = {}, ...props }) => {
   const [ref, { x, y, width, height }] = useDimensions();
-  //console.log("dimensions:",{x,y,width,height});
-  if(size) {
-    //  size = new Size(size);
 
-    style.width = `${size.width}px`;
-    style.height = `${size.height}px`;
+  console.log('FloatingPanel.dimensions:', { x, y, width, height });
+
+  const [size, setSize] = useState(onSize ? onSize() : {});
+
+  if(typeof onSize == 'function' && onSize.subscribe) onSize.subscribe(value => setSize(value));
+
+  if(size) {
+    if(!isNaN(+size.width)) style.width = `${size.width}px`;
+    if(!isNaN(+size.height)) style.height = `${size.height}px`;
   }
 
   return h(Overlay, { ref, className: classNames('floating', className), ...props, style }, children);

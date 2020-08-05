@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 12.7 12.7">
+  <defs/>
+  <defs>
+    <linearGradient id="error_svg__c" x1="71.204" x2="71.204" y1="6.238" y2="44.341" gradientTransform="translate(-16.798 282.47) scale(.32271)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset=".508" stop-color="#fff" stop-opacity=".235"/>
+      <stop offset=".835" stop-color="#fff" stop-opacity=".157"/>
+      <stop offset="1" stop-color="#fff" stop-opacity=".392"/>
+    </linearGradient>
+    <linearGradient id="error_svg__d" x1="69.032" x2="69.032" y1="-9.237" y2="4.469" gradientTransform="matrix(.11561 0 0 .10806 -1.107 290.92)" gradientUnits="userSpaceOnUse">
+      <stop offset="0"/>
+      <stop offset="1" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="error_svg__b" x1="18.379" x2="18.379" y1="44.98" y2="3.082" gradientTransform="matrix(.29932 0 0 .2993 -.833 283.47)" gradientUnits="userSpaceOnUse" href="#error_svg__error_svg__a"/>
+    <radialGradient id="error_svg__a" cx="23.896" cy="3.99" r="20.397" gradientTransform="matrix(0 .71432 -.94295 0 10.112 267.03)" gradientUnits="userSpaceOnUse" href="#error_svg__error_svg__a">
+      <stop offset="0" stop-color="#f8b17e"/>
+      <stop offset=".262" stop-color="#e35d4f"/>
+      <stop offset=".661" stop-color="#c6262e"/>
+      <stop offset="1" stop-color="#690b54"/>
+    </radialGradient>
+  </defs>
+  <path fill="url(#error_svg__a)" stroke="url(#error_svg__b)" stroke-linecap="round" stroke-linejoin="round" stroke-width=".117" d="M6.35 284.56a6.093 6.093 0 00-6.09 6.089c0 3.36 2.73 6.089 6.09 6.089s6.09-2.73 6.09-6.09a6.093 6.093 0 00-6.09-6.088z" transform="translate(0 -284.3)"/>
+  <path fill="none" stroke="url(#error_svg__c)" stroke-linecap="round" stroke-linejoin="round" stroke-width=".117" d="M12.32 290.65a5.97 5.97 0 11-11.94 0 5.97 5.97 0 0111.94 0z" opacity=".5" transform="translate(0 -284.3)"/>
+  <path fill="#b32a2d" d="M1.61 7.11h9.481V5.588H1.61z"/>
+  <path fill="#fff" d="M1.61 7.11h9.481V5.588H1.61z"/>
+  <path fill="none" stroke="url(#error_svg__d)" stroke-width=".117" d="M1.668 291.35h9.364v-1.405H1.668v1.405z" opacity=".1" transform="translate(0 -284.3)"/>
+</svg>

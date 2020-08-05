@@ -53,6 +53,8 @@ Error.stackTraceLimit = 100;
 let currentProj = trkl.property(window, 'project');
 let open = trkl();
 let showSearch = trkl(true);
+let logSize = trkl({});
+let dump = trkl({});
 
 let projectName = 'Headphone-Amplifier-ClassAB-alt3';
 let palette = null;
@@ -449,7 +451,7 @@ const AppMain = (window.onload = async () => {
   Object.assign(
     window,
     { LogJS },
-    { Element, devtools, dom },
+    { Element, devtools, dom,RGBA,HSLA },
     {
       SVGAlignments,
       AlignmentAttrs,
@@ -516,7 +518,9 @@ const AppMain = (window.onload = async () => {
     transform,
     size: sizeListener,
     aspect: aspectListener,
-    showSearch
+    showSearch,
+    logDimensions: logSize,
+    watched: dump
   });
 
   currentSearch.subscribe(value => {
@@ -629,18 +633,44 @@ const AppMain = (window.onload = async () => {
       }
     }
   );
+  let loggerRect = new Rect();
   const Logger = props => {
     const [lines, setLines] = useState([]);
-    //const [ref, { x, y, width, height }] = useDimensions();
-    //console.log('dimensions:', { x, y, width, height });
+
+    const [ref, { x, y, width, height }] = useDimensions();
+
+    const r = new Rect({ x, y, width, height });
+    if(!loggerRect.equals(r)) {
+      console.log('Logger.dimensions:', r);
+      loggerRect = r;
+      logSize({ width });
+    }
+
     const result = useResult(async function*() {
       for await (let msg of logger) yield msg;
     });
     if(result) lines.push(result.value);
     return h(
       'div',
-      { class: 'logger' },
-      lines.map((l, i) => h('p', {}, /*333*/ l + ''))
+      { className: 'logger', ref },
+      lines.slice(-10, lines.length).map((l, i) => h('p', {}, /*333*/ l + ''))
+    );
+  };
+  dump({ ...dump(), test: 123 });
+
+  const Dumper = props => {
+    const [values, setValues] = useState(dump());
+    let lines = [];
+
+    dump.subscribe(value => setValues(value));
+
+    for(let [key, value] of Object.entries(values)) {
+      lines.push([key, value]);
+    }
+    return h(
+      'table',
+      { border: '0',cellpadding: 3  ,cellspacing: 0, className: 'dumper' },
+      lines.map(([k,v]  , i) => h('tr', { className: 'watch' }, [h('td', { className: 'name'}, k + ''), h('td',  { className: 'value'}, v + '')]))
     );
   };
 
@@ -706,7 +736,7 @@ const AppMain = (window.onload = async () => {
         <${FileList} files=${projects} onActive=${open} onChange=${ChooseDocument} filter=${searchFilter} showSearch=${showSearch} changeInput=${changeInput} focusSearch=${focusSearch} currentInput=${currentSearch} />
       `,
       h(CrossHair, { ...crosshair }),
-      h(FloatingPanel, {}, h(Logger, {}))
+      h(FloatingPanel, { onSize: logSize }, [h(Logger, {}), h(Dumper, {})])
     ],
     Element.find('#preact')
   );
