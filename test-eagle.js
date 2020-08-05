@@ -146,11 +146,7 @@ function alignItem(item) {
 
   let before = item.parentNode.toXML();
 
-  console.log(
-    'geometry:',
-    Object.entries(Object.getOwnPropertyDescriptors(geometry)).map(([name, { value }]) => [name, value && Object.getOwnPropertyDescriptors(value)]),
-    geometry.x1
-  );
+  //console.log('geometry:', Object.entries(Object.getOwnPropertyDescriptors(geometry)).map(([name, { value }]) => [name, value && Object.getOwnPropertyDescriptors(value)]), geometry.x1);
 
   geometry.add(diff);
 
@@ -159,8 +155,8 @@ function alignItem(item) {
   let changed = !diff.isNull();
 
   if(changed) {
-    console.log('before:', before);
-    console.log('after:', item.parentNode.toXML());
+    console.log('before:', Util.abbreviate(before));
+    console.log('after:', Util.abbreviate(item.parentNode.toXML()));
     //console.log('geometry:', geometry);
     console.log('align\n', item.xpath(), '\n newPos:', newPos, '\n diff:', diff, '\n attr:', item.raw.attributes);
   }
@@ -180,6 +176,7 @@ function alignAll(doc) {
 }
 
 async function testEagle(filename) {
+  console.log('testEagle: ', filename);
   let proj = new EagleProject(filename, filesystem);
   /*
   LogJS.addAppender(

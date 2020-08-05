@@ -26,27 +26,17 @@ const code = `export const Progress = ({ className, percent, ...props }) => html
 }}></div></\x24{Overlay}>\`"`;
 
 import process from 'process';
+
 Error.stackTraceLimit = 1000;
 global.console = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
   inspectOptions: { depth: 3, colors: true }
 });
-const testfn = () => true;
-const testtmpl = `this is\na test`;
+
 let args = process.argv.slice(2);
 let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
-process.on('uncaughtException', (err, origin) => {
-  fs.writeSync(process.stderr.fd, `Caught exception: ${err}\nException origin: ${origin}\nStack: ${err.stack}`);
-  process.exit();
-});
-process.on('SIGINT', () => {
-  finish();
-  process.exit(3);
-});
-process.on('exit', () => {
-  process.exit();
-});
+
 main(args);
 
 function dumpFile(name, data) {
@@ -71,7 +61,7 @@ function main(args) {
     let ast, error;
     global.parser = new ECMAScriptParser(data ? data.toString() : code, file);
     global.printer = new Printer({ indent: 4 });
-    global.interpreter = new ECMAScriptInterpreter();
+    global.interpreter = new ECMAScriptInterpreter(util);
     interpreter.util = util;
     try {
       ast = parser.parseProgram();
