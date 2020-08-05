@@ -4,7 +4,15 @@
 			"path": "."
 		}
 	],
-	"settings": {},
+	"settings": {
+		"search.exclude": {
+			"*.sed": true
+		},
+		"files.exclude": {
+			"**/*.json": true,
+			"**/*.sed": true
+		}
+	},
 	"launch": {
 		"version": "0.2.0",
 		"configurations": [
