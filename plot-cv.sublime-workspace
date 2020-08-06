@@ -64,63 +64,88 @@
 	"buffers":
 	[
 		{
-			"contents": "function xmlize(obj, depth = 2)\nfunction testLocator()\nfunction testProxyTree()\n(path, key, value) =>\nfunction testProxyClone()\nfunction testJsonPointer()\nreadFile(filename)\nwriteFile(filename, data, overwrite\nexists(filename)\nrealpath(filename)\nasync function testGraph(proj)\ne =>\ne =>\np =>\nfunction updateMeasures(board)\nlines =>\ne =>\nline =>\nfunction alignItem(item)\nfunction alignAll(doc)\nasync function testEagle(filename)\n([name, e]) =>\ne =>\n([name, i]) =>\np =>\ndoc =>\n([file, e]) =>\n([k, v]) =>\nasync () =>\nf =>",
+			"contents": "CSS: svg, #container \nCSS: body \nCSS: #preact, svg \nCSS: .no-select \nCSS: .label, .description \nCSS: span.label \nCSS: .fixed \nCSS: pre.description \nCSS: pre.label, span.label \nCSS: p.label, p.description \nCSS: pre.description \nCSS: pre, p.description \nCSS: div.description \nCSS: p.description \nCSS: .fill \nCSS: .button.pushed, .button-inactive \nCSS: .button.pushed \nCSS: .button.inactive \nCSS: .button.pushed \nCSS: .button \nCSS: .hcenter \nCSS: .grow \nCSS: .label \nCSS: .label.pad-lr \nCSS: .file \nCSS: .file.label \nCSS: .file > .label \nCSS: .hstart, .label \nCSS: .vcenter \nCSS: .hidden \nCSS: .visible \nCSS: .transparent \nCSS: .button, .center, .button \nCSS: body \nCSS: .button \nCSS: .button \nCSS: .list > .file.active \nCSS: .list > .file.active.sch \nCSS: .list > .file.active.brd \nCSS: .list > .file.active.lbr \nCSS: html, body, .overlay, .button, .panel, .list \nCSS: .list \nCSS: .file, .file.active, .file.inactive \nCSS: .list \nCSS: .list \nCSS: .list \nCSS: .panel, .list \nCSS: .list \nCSS: .list .file \nCSS: .file \nCSS: .file.sch \nCSS: .file.brd \nCSS: .file.lbr \nCSS: .file.none \nCSS: .buttons > .label \nCSS: svg, text \nCSS: .file.inactive \nCSS: .pad-lr \nCSS: .hcenter \nCSS: .vcenter \nCSS: .list \nCSS: .file \nCSS: .button.pushed \nCSS: .panel, .buttons \nCSS: .buttons \nCSS: .buttons \nCSS: .sch > .progress > .progress-bar \nCSS: .brd > .progress > .progress-bar \nCSS: .progress \nCSS: .sidebar \nCSS: .sidebar.active \nCSS: .sidebar.inactive \nCSS: .sidebar > .list \nCSS: .sidebar > .list \nCSS: body \nCSS: label \nCSS: #main \nCSS: #main \nCSS: #container \nCSS: body, #main, #container \nCSS: .aspect-ratio-box \nCSS: .aspect-ratio-box-inside \nCSS: .aspect-ratio-box-size \nCSS: input[type='number'] \nCSS: input[type='number']::-webkit-outer-spin-button, input[type='number']::-webkit-inner-spin-button \nCSS: div.search, form.search \nCSS: .search.hidden \nCSS: input.search \nCSS: .floating \nCSS: .floating > div \nCSS: .floating \nCSS: .floating, .logger, .dumper \nCSS: .logger \nCSS: .floating \nCSS: .logger > p \nCSS: .dumper \nCSS: .logger, .dumper \nCSS: ul.dumper \nCSS: ul.dumper \nCSS: ul.dumper \nCSS: table.dumper \nCSS: table.dumper td \nCSS: td.name, td.value \nCSS: td.name \nCSS: td.value \nCSS: li.watch \nCSS: li.watch \nCSS: td \nCSS: td .log .message \nCSS: td .log .sign \nCSS: img.sign ",
 			"settings":
 			{
-				"buffer_size": 518,
+				"buffer_size": 2272,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "lib/ecmascript/interpreter.js",
+			"file": "lib/dom/element.js",
 			"settings":
 			{
-				"buffer_size": 12561,
+				"buffer_size": 31329,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "test-line.js",
+			"file": "components.js",
 			"settings":
 			{
-				"buffer_size": 546,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-eagle.js",
-			"settings":
-			{
-				"buffer_size": 8117,
+				"buffer_size": 26804,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/eagle/nodeList.js",
+			"file": "test-geom.js",
 			"settings":
 			{
-				"buffer_size": 4530,
+				"buffer_size": 2816,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"contents": "Searching 348 files for \"\\.log..data:\" (regex, case sensitive)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/symbol.js:\n    6    const children = [...data.children];\n    7  \n    8:   //children.map(data => console.log('data:', data.tagName));\n    9  \n   10    return h(Fragment, {}, [...children.filter(({ tagName }) => tagName != 'text').map(data => h(ElementToComponent(data), { data, opts })), ...children.filter(({ tagName }) => tagName == 'text').map(data => h(ElementToComponent(data), { data, opts }))]);\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js:\n  138      if(!file)\n  139         file = this.file;\n  140:      console.log(\"data: \",data);\n  141  \n  142      return new Promise((resolve,reject) => {\n\n/home/roman/Dokumente/Sources/plot-cv/test-ini.js:\n   14  \n   15  let sections = data[0].reduce((acc, sdata) => ({ ...acc, [sdata[0]]: new Map(sdata[1]) }), {});\n   16: //console.log('data:', sections);\n   17  \n   18  let file_keys = sections.FILE_INFO.keys();\n   ..\n   37  files = files.filter(file => !/.*(buffer|comparator|lcd|format|ds18b20|hd44).*/.test(file.FILE_INFO));\n   38  \n   39: //console.log('data:', file_sections);\n   40  //console.log('files:', filenames);\n   41  let i = 0;\n\n/home/roman/Dokumente/Sources/plot-cv/test-websocket.js:\n   29    for await (let data of ws) {\n   30      let msg = new Message(data);\n   31:     console.log('data:', msg);\n   32    }\n   33    /*\n   ..\n   35      let data = await ws.receive();\n   36  \n   37:     console.log('data:', { data });\n   38    }\n   39      let it = websocketEvents(ws.socket);\n\n6 matches across 4 files\n\n\nSearching 348 files for \"\\.log..geometry:\" (regex, case sensitive)\n\n/home/roman/Dokumente/Sources/plot-cv/test-eagle.js:\n  162      console.log('before:', before);\n  163      console.log('after:', item.parentNode.toXML());\n  164:     //console.log('geometry:', geometry);\n  165      console.log('align\\n', item.xpath(), '\\n newPos:', newPos, '\\n diff:', diff, '\\n attr:', item.raw.attributes);\n  166    }\n\n1 match in 1 file\n\n\nSearching 348 files for \"\\.log.*geometry:\" (regex, case sensitive)\n\n/home/roman/Dokumente/Sources/plot-cv/test-eagle.js:\n  162      console.log('before:', before);\n  163      console.log('after:', item.parentNode.toXML());\n  164:     //console.log('geometry:', geometry);\n  165      console.log('align\\n', item.xpath(), '\\n newPos:', newPos, '\\n diff:', diff, '\\n attr:', item.raw.attributes);\n  166    }\n\n1 match in 1 file\n\n\nSearching 348 files for \"geometry:\" (regex, case sensitive)\n\n/home/roman/Dokumente/Sources/plot-cv/test-eagle.js:\n  148  \n  149    console.log(\n  150:     'geometry:',\n  151      Object.entries(Object.getOwnPropertyDescriptors(geometry)).map(([name, { value }]) => [name, value && Object.getOwnPropertyDescriptors(value)]),\n  152      geometry.x1\n  ...\n  162      console.log('before:', before);\n  163      console.log('after:', item.parentNode.toXML());\n  164:     //console.log('geometry:', geometry);\n  165      console.log('align\\n', item.xpath(), '\\n newPos:', newPos, '\\n diff:', diff, '\\n attr:', item.raw.attributes);\n  166    }\n\n2 matches in 1 file\n\n\nSearching 348 files for \"before:\" (regex, case sensitive)\n\n/home/roman/Dokumente/Sources/plot-cv/test-eagle.js:\n  156  \n  157    if(changed) {\n  158:     console.log('before:', before);\n  159      console.log('after:', item.parentNode.toXML());\n  160      //console.log('geometry:', geometry);\n\n1 match in 1 file\n",
+			"file": "main.js",
 			"settings":
 			{
-				"buffer_size": 3442,
-				"line_ending": "Unix",
-				"name": "Find Results",
-				"scratch": true
+				"buffer_size": 30111,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/eagle/document.js",
+			"file": "style.css",
 			"settings":
 			{
-				"buffer_size": 7347,
+				"buffer_size": 9649,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "static/warn.svg",
+			"settings":
+			{
+				"buffer_size": 3564,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "error.svg",
+			"settings":
+			{
+				"buffer_size": 2226,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "test-ecmascript.js",
+			"settings":
+			{
+				"buffer_size": 5849,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "test-voronoi.js",
+			"settings":
+			{
+				"buffer_size": 4263,
 				"line_ending": "Unix"
 			}
 		}
@@ -226,14 +251,49 @@
 	"expanded_folders":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
-		"/home/roman/Dokumente/Sources/plot-cv/lib",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom"
+		"/home/roman/Dokumente/Sources/plot-cv/lib"
 	],
 	"file_history":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/test-point.js",
+		"/home/roman/Dokumente/Sources/plot-cv/style.css",
+		"/home/roman/Dokumente/Sources/plot-cv/main.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/useDimensions.js",
+		"/home/roman/Dokumente/Sources/plot-cv/components.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/log.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/environment.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-geom.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/voronoi.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/VCO-8038.sch",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/VCO-8038.brd",
+		"/home/roman/Dokumente/example014.jscad",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-voronoi.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/interpreter.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-line.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-eval.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eventEmitter.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/test-geom.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/test-point.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-jsjs.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/wru.js",
@@ -241,19 +301,10 @@
 		"/tmp/gentests.sh",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-cli.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/color/coloredText.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/main.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/interpreter.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/xml2json.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/json2xml.js",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/VCO-8038.brd",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/textElement.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/wire.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/rectangle.js",
@@ -263,17 +314,9 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/instance.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pin.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/circle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
-		"/home/roman/Dokumente/Sources/plot-cv/style.css",
 		"/home/roman/Dokumente/Sources/plot-cv/test-repeater.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/voronoi.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
 		"/home/roman/Dokumente/Sources/plot-cv/server.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/repeater.js",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/MS20-VCF.brd",
@@ -281,9 +324,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/LCmeter0-LCD-8pinlcd-PIC-COMP.sch",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/react-hooks.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-attributes.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/index.html",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/TDA7419 .sch",
@@ -302,11 +343,9 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/colorscheme.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components.js",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/Headphone-Amplifier-ClassAB-alt3.brd",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/circle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/components.js",
 		"/usr/share/applications/google-chrome-unstable.desktop",
 		"/home/roman/Dokumente/Sources/plot-cv/test-trkl.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
@@ -328,7 +367,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/create-tamper.js",
 		"/home/roman/Dokumente/Sources/plot-cv/new.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
 		"/home/roman/Schreibtisch/tamper.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
@@ -344,29 +382,15 @@
 		"/home/roman/Sources/plot-cv/lib/devtools.js",
 		"/home/roman/Dokumente/Sources/plot-cv/package.json",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/timers.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/svgRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/static/fonts.css",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/project.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/boardRenderer.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/components.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/schematicRenderer.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/json/pathMapper.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/color/hsla.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom.js",
-		"/home/roman/Dokumente/Sources/plot-cv/imgui/imgui_impl_metal.h",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix3d.js",
-		"/home/roman/Sources/plot-cv/lib/geom/line.js",
-		"/home/roman/Sources/plot-cv/lib/geom/matrix.js"
+		"/home/roman/Sources/plot-cv/lib/eagle/svgRenderer.js"
 	],
 	"find":
 	{
-		"height": 39.0
+		"height": 41.0
 	},
 	"find_in_files":
 	{
-		"height": 109.0,
+		"height": 115.0,
 		"where_history":
 		[
 			"/home/roman/Dokumente/Sources/plot-cv,*.js,-node_modules,-*/node_modules/*,-htm",
@@ -409,134 +433,134 @@
 		"case_sensitive": true,
 		"find_history":
 		[
-			"before:",
-			"geometry:",
-			"\\.log.*geometry:",
-			"\\.log..geometry:",
-			"\\.log..data:",
-			"global",
-			"move_to",
-			"move_t",
-			"instance",
-			"bind",
-			"instanceof",
-			"sides =",
-			"Util.colorText",
-			"toSource =",
-			"dimension =",
-			"dimension",
-			"Point\\.",
-			"static ",
-			"fromAngle",
-			"static",
-			"\\.prototype\\.",
+			"'td'",
+			"push.*type",
+			"push",
+			"AppMa",
+			"Run",
+			"assign",
+			"assign.*wi$",
+			"assign",
+			"RGBA",
+			"dotted",
+			"dump",
+			"dum",
+			"dump",
+			"dump =",
+			"dump\\(",
+			"logSize",
+			".assign",
+			"dump",
+			"dump\\(",
+			"dumper",
 			"log",
-			"transform_point =",
-			"transform_point",
-			"toCSS =",
-			"toObject",
-			"comp",
-			"move =",
-			"dot =",
-			"dot",
-			"equals",
-			"transform",
-			"inside =",
-			"inside",
-			"isNull",
-			"import.*oint.js",
-			"import.*Point",
-			"abs",
-			"abs\\(",
-			"Math\\.",
-			"random",
-			"random\\(",
-			"random",
-			"abs",
-			"node",
-			"evalProgram",
-			"log.*scope",
-			"evalFunc",
-			"assoc",
-			"evalAssi",
-			"newValue",
-			"eval: : ",
-			"log\\((.)eval",
-			"log\\('eval",
-			"evalVar",
-			"class VariableDecl",
-			"Declarator",
-			"'number'",
-			"evalLiteral",
-			"evalNew",
-			"fn:",
-			"Symbol.*inspect",
-			"inspect",
-			"class Ex",
-			"VariableDecl",
-			"ECMAScriptValue.object",
-			"(console.log.'fn: ', fn)",
-			"^  }$",
-			"^\\s*}\\s*$",
-			"evalImport",
-			"printAst",
-			"Printer",
-			"ElementToXML",
-			"elem\\.l",
-			"toObject",
-			"data-path'",
-			"data-path':",
-			"data-path",
-			"Util.isObject",
-			"save",
-			"data-path",
-			"data-layer",
-			"data-path",
-			"ElementToXML",
-			"static toString",
-			"writeFile",
-			"write",
-			"saveTo",
-			"EagleDocument",
-			"EagleProject",
-			"filesystem",
-			"fs",
-			"save",
-			"\\.color",
-			"rot",
-			";\n",
-			"<pin ",
-			"<pinn ",
-			"<pin ",
-			"color",
-			"font-size",
-			"'label'",
-			"\\.getColor\\(",
-			"Palette\\.",
-			"\\.getColor\\(",
-			"getColor",
-			"^\\s*position",
-			"Element.get",
-			"console",
-			"useEffect",
-			"useState",
-			"Util.memoize",
-			"^Util.memoize",
-			"pushEve",
-			"memoize",
-			"\\.event",
-			"lement\\.event",
-			"element\\.event",
-			"\\.event",
-			"^\\s*apply",
-			"get raw",
-			"'gate'",
-			"\\.deviceset",
-			"attributes.library",
-			"\\.deviceset",
-			"deviceset",
-			"attrMap",
-			"\\.deviceset"
+			"logger",
+			"Logger =",
+			"Logger,",
+			"FloatingPanel",
+			"logger",
+			"logger =",
+			"join",
+			"onSize",
+			"logSize",
+			"logSize\n",
+			"logSizef",
+			"logSize",
+			"logSize =",
+			"useDim",
+			"useDi",
+			"logger =",
+			"bindMethods",
+			"wrap",
+			"onSize",
+			"BindGlo",
+			"bind\\(.*window",
+			"bind\\(window",
+			"bind\\(",
+			"assign.win",
+			"= trkl",
+			"getDimension",
+			"getBounding",
+			"absolute",
+			"'absolute",
+			"Floating",
+			"Logger",
+			"toSource =",
+			"isoDate =",
+			"logger.push",
+			"Append",
+			"logger =",
+			"Appen",
+			"lib.util",
+			"Object.ass",
+			"LogJS",
+			"type, ",
+			"touchEvents",
+			"logger",
+			"logger =",
+			"logger",
+			"timestamps",
+			"trkl\\.",
+			"Floating",
+			"Overlay",
+			"TList",
+			"TList\\(",
+			"TList",
+			"Matrix",
+			"TList",
+			"<element",
+			"<board",
+			"initCac",
+			"TList =",
+			"concat",
+			"TList ",
+			"TList",
+			"\\.get\\(",
+			"TList =",
+			"project",
+			"'pad'",
+			"'pads'",
+			"lazy",
+			"lazyProperty\\(",
+			"'pad'",
+			"TList",
+			"'pad'",
+			"'contactref'",
+			"pad=\"",
+			"padColor",
+			"via'",
+			" toXML",
+			" geometry\\(",
+			"\\.geometry\\(\\)",
+			"\\.geometr",
+			"'pads'",
+			"EagleElement.get",
+			"pads'",
+			"<signal ",
+			"<signal",
+			"<pad ",
+			"<signal",
+			"<pad",
+			"NodeList.create",
+			"project.doc =",
+			"class Cel",
+			" prepareHG",
+			"CircleEvent",
+			" createHalf",
+			"createCell",
+			"class Vor",
+			"^class ",
+			"\\.prototype",
+			"get RB",
+			"class Hal",
+			"class Edge",
+			"class Vertex",
+			"class Cell",
+			"class RBT",
+			"Vertex\\(",
+			"^Voronoi.prototype.Halfedge.prototype.([^. ]*) = function(\\(.*\\)) {",
+			"^Voronoi.prototype.RBTree.prototype.([^. ]*) = function(\\(.*\\)) {",
+			"^Voronoi.prototype.Cell.prototype.([^. ]*) = function(\\(.*\\)) {"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -544,6 +568,17 @@
 		"regex": true,
 		"replace_history":
 		[
+			".geometry",
+			"this.getOrCreate",
+			"export class ",
+			"\\1\\2 {",
+			"console.log(ESNode.assoc(node).position.toString(), ",
+			"",
+			");",
+			"node.value",
+			"startLine(node)",
+			"type",
+			"\\1\\2 {",
 			"c",
 			".",
 			"eval: ",
@@ -656,7 +691,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 518,
+						"buffer_size": 2272,
 						"regions":
 						{
 						},
@@ -670,163 +705,568 @@
 						"settings":
 						{
 							"color_scheme": "Packages/User/SchemeEditorTemp/Next Bold.tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/style.css",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
 								[
-									583,
-									614
+									0,
+									16
 								],
 								[
-									734,
-									756
+									44,
+									49
 								],
 								[
-									871,
-									895
+									77,
+									90
 								],
 								[
-									926,
-									947
+									182,
+									193
 								],
 								[
-									1029,
-									1054
+									298,
+									319
 								],
 								[
-									1250,
-									1276
+									384,
+									395
 								],
 								[
-									1712,
-									1730
+									488,
+									495
 								],
 								[
-									1810,
-									1853
+									549,
+									565
 								],
 								[
-									1942,
-									1958
+									663,
+									685
 								],
 								[
-									2004,
-									2022
+									713,
+									736
 								],
 								[
-									2092,
-									2122
+									753,
+									769
 								],
 								[
-									2334,
-									2338
+									814,
+									833
 								],
 								[
-									2431,
-									2435
+									862,
+									878
 								],
 								[
-									2847,
-									2851
+									917,
+									931
 								],
 								[
-									3210,
-									3240
+									956,
+									962
 								],
 								[
-									3482,
-									3490
+									998,
+									1031
 								],
 								[
-									3557,
-									3561
+									1036,
+									1051
 								],
 								[
-									3651,
-									3658
+									1188,
+									1205
 								],
 								[
-									3960,
-									3984
+									1295,
+									1310
 								],
 								[
-									4784,
-									4806
+									1377,
+									1385
 								],
 								[
-									5199,
-									5233
+									1489,
+									1498
 								],
 								[
-									5781,
-									5795
+									1529,
+									1535
 								],
 								[
-									5870,
-									5874
+									1557,
+									1564
 								],
 								[
-									5896,
-									5910
+									1667,
+									1681
 								],
 								[
-									5941,
-									5945
+									1701,
+									1707
 								],
 								[
-									7389,
-									7395
+									1733,
+									1745
 								],
 								[
-									7457,
-									7471
+									1764,
+									1779
 								],
 								[
-									7614,
-									7625
+									1818,
+									1834
 								],
 								[
-									7656,
-									7667
+									1869,
+									1878
 								],
 								[
-									8044,
-									8048
+									1905,
+									1913
+								],
+								[
+									1934,
+									1943
+								],
+								[
+									1964,
+									1977
+								],
+								[
+									1995,
+									2021
+								],
+								[
+									2120,
+									2125
+								],
+								[
+									2278,
+									2286
+								],
+								[
+									2611,
+									2619
+								],
+								[
+									2647,
+									2668
+								],
+								[
+									2830,
+									2855
+								],
+								[
+									3003,
+									3028
+								],
+								[
+									3180,
+									3205
+								],
+								[
+									3357,
+									3402
+								],
+								[
+									3428,
+									3434
+								],
+								[
+									3480,
+									3516
+								],
+								[
+									3596,
+									3602
+								],
+								[
+									3647,
+									3653
+								],
+								[
+									3698,
+									3704
+								],
+								[
+									3731,
+									3745
+								],
+								[
+									3775,
+									3781
+								],
+								[
+									3808,
+									3820
+								],
+								[
+									3889,
+									3895
+								],
+								[
+									3915,
+									3925
+								],
+								[
+									3968,
+									3978
+								],
+								[
+									4017,
+									4027
+								],
+								[
+									4065,
+									4076
+								],
+								[
+									4101,
+									4119
+								],
+								[
+									4139,
+									4149
+								],
+								[
+									4231,
+									4246
+								],
+								[
+									4355,
+									4363
+								],
+								[
+									4388,
+									4397
+								],
+								[
+									4452,
+									4461
+								],
+								[
+									4513,
+									4519
+								],
+								[
+									4574,
+									4580
+								],
+								[
+									4706,
+									4721
+								],
+								[
+									4760,
+									4777
+								],
+								[
+									4798,
+									4807
+								],
+								[
+									4866,
+									4875
+								],
+								[
+									4992,
+									5025
+								],
+								[
+									5069,
+									5102
+								],
+								[
+									5147,
+									5157
+								],
+								[
+									5182,
+									5191
+								],
+								[
+									5292,
+									5308
+								],
+								[
+									5402,
+									5420
+								],
+								[
+									5569,
+									5586
+								],
+								[
+									5608,
+									5625
+								],
+								[
+									5650,
+									5655
+								],
+								[
+									5761,
+									5767
+								],
+								[
+									5809,
+									5815
+								],
+								[
+									5910,
+									5916
+								],
+								[
+									5987,
+									5998
+								],
+								[
+									6028,
+									6052
+								],
+								[
+									6077,
+									6095
+								],
+								[
+									6121,
+									6146
+								],
+								[
+									6213,
+									6236
+								],
+								[
+									6342,
+									6363
+								],
+								[
+									6389,
+									6486
+								],
+								[
+									6532,
+									6556
+								],
+								[
+									6611,
+									6626
+								],
+								[
+									6648,
+									6661
+								],
+								[
+									6696,
+									6706
+								],
+								[
+									6805,
+									6821
+								],
+								[
+									6843,
+									6853
+								],
+								[
+									7123,
+									7151
+								],
+								[
+									7207,
+									7215
+								],
+								[
+									7290,
+									7300
+								],
+								[
+									7733,
+									7745
+								],
+								[
+									7765,
+									7773
+								],
+								[
+									7878,
+									7895
+								],
+								[
+									7917,
+									7927
+								],
+								[
+									8031,
+									8041
+								],
+								[
+									8367,
+									8377
+								],
+								[
+									8432,
+									8445
+								],
+								[
+									8495,
+									8512
+								],
+								[
+									8564,
+									8582
+								],
+								[
+									9129,
+									9137
+								],
+								[
+									9238,
+									9247
+								],
+								[
+									9292,
+									9301
+								],
+								[
+									9373,
+									9382
+								],
+								[
+									9421,
+									9424
+								],
+								[
+									9455,
+									9472
+								],
+								[
+									9496,
+									9510
+								],
+								[
+									9537,
+									9546
 								]
 							],
 							"symlist":
 							[
-								"function xmlize(obj, depth = 2)",
-								"function testLocator()",
-								"function testProxyTree()",
-								"(path, key, value) =>",
-								"function testProxyClone()",
-								"function testJsonPointer()",
-								"readFile(filename)",
-								"writeFile(filename, data, overwrite",
-								"exists(filename)",
-								"realpath(filename)",
-								"async function testGraph(proj)",
-								"e =>",
-								"e =>",
-								"p =>",
-								"function updateMeasures(board)",
-								"lines =>",
-								"e =>",
-								"line =>",
-								"function alignItem(item)",
-								"function alignAll(doc)",
-								"async function testEagle(filename)",
-								"([name, e]) =>",
-								"e =>",
-								"([name, i]) =>",
-								"p =>",
-								"doc =>",
-								"([file, e]) =>",
-								"([k, v]) =>",
-								"async () =>",
-								"f =>"
+								"CSS: svg, #container ",
+								"CSS: body ",
+								"CSS: #preact, svg ",
+								"CSS: .no-select ",
+								"CSS: .label, .description ",
+								"CSS: span.label ",
+								"CSS: .fixed ",
+								"CSS: pre.description ",
+								"CSS: pre.label, span.label ",
+								"CSS: p.label, p.description ",
+								"CSS: pre.description ",
+								"CSS: pre, p.description ",
+								"CSS: div.description ",
+								"CSS: p.description ",
+								"CSS: .fill ",
+								"CSS: .button.pushed, .button-inactive ",
+								"CSS: .button.pushed ",
+								"CSS: .button.inactive ",
+								"CSS: .button.pushed ",
+								"CSS: .button ",
+								"CSS: .hcenter ",
+								"CSS: .grow ",
+								"CSS: .label ",
+								"CSS: .label.pad-lr ",
+								"CSS: .file ",
+								"CSS: .file.label ",
+								"CSS: .file > .label ",
+								"CSS: .hstart, .label ",
+								"CSS: .vcenter ",
+								"CSS: .hidden ",
+								"CSS: .visible ",
+								"CSS: .transparent ",
+								"CSS: .button, .center, .button ",
+								"CSS: body ",
+								"CSS: .button ",
+								"CSS: .button ",
+								"CSS: .list > .file.active ",
+								"CSS: .list > .file.active.sch ",
+								"CSS: .list > .file.active.brd ",
+								"CSS: .list > .file.active.lbr ",
+								"CSS: html, body, .overlay, .button, .panel, .list ",
+								"CSS: .list ",
+								"CSS: .file, .file.active, .file.inactive ",
+								"CSS: .list ",
+								"CSS: .list ",
+								"CSS: .list ",
+								"CSS: .panel, .list ",
+								"CSS: .list ",
+								"CSS: .list .file ",
+								"CSS: .file ",
+								"CSS: .file.sch ",
+								"CSS: .file.brd ",
+								"CSS: .file.lbr ",
+								"CSS: .file.none ",
+								"CSS: .buttons > .label ",
+								"CSS: svg, text ",
+								"CSS: .file.inactive ",
+								"CSS: .pad-lr ",
+								"CSS: .hcenter ",
+								"CSS: .vcenter ",
+								"CSS: .list ",
+								"CSS: .file ",
+								"CSS: .button.pushed ",
+								"CSS: .panel, .buttons ",
+								"CSS: .buttons ",
+								"CSS: .buttons ",
+								"CSS: .sch > .progress > .progress-bar ",
+								"CSS: .brd > .progress > .progress-bar ",
+								"CSS: .progress ",
+								"CSS: .sidebar ",
+								"CSS: .sidebar.active ",
+								"CSS: .sidebar.inactive ",
+								"CSS: .sidebar > .list ",
+								"CSS: .sidebar > .list ",
+								"CSS: body ",
+								"CSS: label ",
+								"CSS: #main ",
+								"CSS: #main ",
+								"CSS: #container ",
+								"CSS: body, #main, #container ",
+								"CSS: .aspect-ratio-box ",
+								"CSS: .aspect-ratio-box-inside ",
+								"CSS: .aspect-ratio-box-size ",
+								"CSS: input[type='number'] ",
+								"CSS: input[type='number']::-webkit-outer-spin-button, input[type='number']::-webkit-inner-spin-button ",
+								"CSS: div.search, form.search ",
+								"CSS: .search.hidden ",
+								"CSS: input.search ",
+								"CSS: .floating ",
+								"CSS: .floating > div ",
+								"CSS: .floating ",
+								"CSS: .floating, .logger, .dumper ",
+								"CSS: .logger ",
+								"CSS: .floating ",
+								"CSS: .logger > p ",
+								"CSS: .dumper ",
+								"CSS: .logger, .dumper ",
+								"CSS: ul.dumper ",
+								"CSS: ul.dumper ",
+								"CSS: ul.dumper ",
+								"CSS: table.dumper ",
+								"CSS: table.dumper td ",
+								"CSS: td.name, td.value ",
+								"CSS: td.name ",
+								"CSS: td.value ",
+								"CSS: li.watch ",
+								"CSS: li.watch ",
+								"CSS: td ",
+								"CSS: td .log .message ",
+								"CSS: td .log .sign ",
+								"CSS: img.sign "
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -834,30 +1274,134 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 9,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 2,
+			"selected": 4,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "lib/ecmascript/interpreter.js",
+					"file": "lib/dom/element.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 12561,
+						"buffer_size": 31329,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1567,
-								1567
+								322,
+								322
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							},
+							"use_tab_stops": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "components.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 26804,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2636,
+								2636
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							}
+						},
+						"translation.x": 0.0,
+						"translation.y": 8.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "test-geom.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2816,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								144,
+								144
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"use_tab_stops": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "main.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 30111,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								23071,
+								23071
 							]
 						],
 						"settings":
@@ -867,19 +1411,49 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 340.0,
+						"translation.y": 12708.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "test-line.js",
+					"buffer": 5,
+					"file": "style.css",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 546,
+						"buffer_size": 9649,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9600,
+								9600
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 9968.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "static/warn.svg",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3564,
 						"regions":
 						{
 						},
@@ -892,7 +1466,37 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax"
+							"syntax": "Packages/XML/XML.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "error.svg",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2226,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								326,
+								326
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -902,180 +1506,65 @@
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "test-eagle.js",
+					"buffer": 8,
+					"file": "test-ecmascript.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 8117,
+						"buffer_size": 5849,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4600,
-								4600
+								0,
+								0
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"translate_tabs_to_spaces": true,
+							"use_tab_stops": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2447.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "lib/eagle/nodeList.js",
+					"buffer": 9,
+					"file": "test-voronoi.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4530,
+						"buffer_size": 4263,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1534,
-								1534
+								4263,
+								4263
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"translate_tabs_to_spaces": true,
+							"use_tab_stops": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 592.0,
+						"translation.y": 1555.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3442,
-						"regions":
-						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										227,
-										238
-									],
-									[
-										660,
-										671
-									],
-									[
-										920,
-										931
-									],
-									[
-										1143,
-										1154
-									],
-									[
-										1388,
-										1399
-									],
-									[
-										1505,
-										1516
-									],
-									[
-										1860,
-										1875
-									],
-									[
-										2286,
-										2301
-									],
-									[
-										2625,
-										2634
-									],
-									[
-										2950,
-										2959
-									],
-									[
-										3296,
-										3303
-									]
-								],
-								"scope": ""
-							}
-						},
-						"selection":
-						[
-							[
-								3299,
-								3299
-							]
-						],
-						"settings":
-						{
-							"detect_indentation": false,
-							"line_numbers": false,
-							"output_tag": 5,
-							"result_base_dir": "",
-							"result_file_regex": "^([^ \t].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1512.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "lib/eagle/document.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7347,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4692,
-								4692
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2068.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
+					"stack_index": 7,
 					"type": "text"
 				}
 			]
@@ -1083,7 +1572,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 27.0
+		"height": 29.0
 	},
 	"input":
 	{
@@ -1137,7 +1626,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 74.0
+		"height": 78.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1147,8 +1636,196 @@
 		"selected_items":
 		[
 			[
+				"style",
+				"style.css"
+			],
+			[
+				"style.",
+				"style.css"
+			],
+			[
+				"main",
+				"main.js"
+			],
+			[
+				"error",
+				"error.svg"
+			],
+			[
+				"warn",
+				"static/warn.svg"
+			],
+			[
+				"useD",
+				"useDimensions.js"
+			],
+			[
+				"compon",
+				"components.js"
+			],
+			[
+				"util.",
+				"lib/util.js"
+			],
+			[
+				"element",
+				"lib/dom/element.js"
+			],
+			[
+				"style.css",
+				"style.css"
+			],
+			[
+				"useDi",
+				"useDimensions.js"
+			],
+			[
+				"main.",
+				"main.js"
+			],
+			[
+				"useDim",
+				"useDimensions.js"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"log.",
+				"lib/log.js"
+			],
+			[
+				"logj",
+				"lib/log.js"
+			],
+			[
+				"test-ge",
+				"test-geom.js"
+			],
+			[
+				"test-",
+				"test-voronoi.js"
+			],
+			[
+				"test-ec",
+				"test-ecmascript.js"
+			],
+			[
+				"test-geo",
+				"test-geom.js"
+			],
+			[
+				"main.js",
+				"main.js"
+			],
+			[
+				"nodeList",
+				"lib/eagle/nodeList.js"
+			],
+			[
+				"nodemap",
+				"lib/eagle/nodeMap.js"
+			],
+			[
+				".brd",
+				"tmp/VCO-8038.brd"
+			],
+			[
+				".sch",
+				"tmp/VCO-8038.sch"
+			],
+			[
+				"node",
+				"lib/eagle/node.js"
+			],
+			[
+				"eleme",
+				"lib/eagle/element.js"
+			],
+			[
+				"docu",
+				"lib/eagle/document.js"
+			],
+			[
+				".br",
+				"tmp/VCO-8038.brd"
+			],
+			[
+				"elem",
+				"lib/eagle/element.js"
+			],
+			[
 				"nodelist",
 				"lib/eagle/nodeList.js"
+			],
+			[
+				"nodeLi",
+				"lib/eagle/nodeList.js"
+			],
+			[
+				"board",
+				"lib/eagle/boardRenderer.js"
+			],
+			[
+				"svg",
+				"lib/eagle/svgRenderer.js"
+			],
+			[
+				"geom",
+				"lib/geom.js"
+			],
+			[
+				"voroi",
+				"lib/geom/voronoi.js"
+			],
+			[
+				"point.j",
+				"lib/geom/point.js"
+			],
+			[
+				"pointList",
+				"lib/geom/pointList.js"
+			],
+			[
+				"point",
+				"lib/geom/point.js"
+			],
+			[
+				"point.js",
+				"lib/geom/point.js"
+			],
+			[
+				"point.",
+				"lib/geom/point.js"
+			],
+			[
+				"rect.",
+				"lib/geom/rect.js"
+			],
+			[
+				"pointlist",
+				"lib/geom/pointList.js"
+			],
+			[
+				"eventE",
+				"lib/eventEmitter.js"
+			],
+			[
+				"parser",
+				"lib/ecmascript/parser.js"
+			],
+			[
+				"envi",
+				"lib/ecmascript/environment.js"
+			],
+			[
+				"evente",
+				"lib/eventEmitter.js"
+			],
+			[
+				"ecma",
+				"lib/ecmascript.js"
 			],
 			[
 				"test-ea",
@@ -1157,10 +1834,6 @@
 			[
 				"test-po",
 				"lib/geom/test-point.js"
-			],
-			[
-				"point",
-				"lib/geom/point.js"
 			],
 			[
 				"matrix",
@@ -1203,28 +1876,8 @@
 				"lib/ecmascript/parser.js"
 			],
 			[
-				"test-ec",
-				"test-ecmascript.js"
-			],
-			[
-				"ecma",
-				"lib/ecmascript.js"
-			],
-			[
 				"test-js",
 				"test-jsjs.js"
-			],
-			[
-				"eleme",
-				"lib/dom/element.js"
-			],
-			[
-				".brd",
-				"tmp/VCO-8038.brd"
-			],
-			[
-				"main",
-				"main.js"
 			],
 			[
 				"textE",
@@ -1235,20 +1888,12 @@
 				"lib/util.js"
 			],
 			[
-				"board",
-				"lib/eagle/boardRenderer.js"
-			],
-			[
 				".BRD",
 				"tmp/VCO-8038.brd"
 			],
 			[
 				"BOAR",
 				"lib/eagle/boardRenderer.js"
-			],
-			[
-				"element",
-				"lib/dom/element.js"
 			],
 			[
 				"server",
@@ -1279,10 +1924,6 @@
 				"tmp/FM Radio Simple Receiver.sch"
 			],
 			[
-				"style",
-				"style.css"
-			],
-			[
 				"repeater",
 				"lib/repeater/repeater.js"
 			],
@@ -1297,10 +1938,6 @@
 			[
 				"test-repea",
 				"test-repeater.js"
-			],
-			[
-				"util.js",
-				"lib/util.js"
 			],
 			[
 				"Util.js",
@@ -1339,22 +1976,6 @@
 				"test-attributes.js"
 			],
 			[
-				"test-",
-				"test-eagle.js"
-			],
-			[
-				"nodeList",
-				"lib/eagle/nodeList.js"
-			],
-			[
-				"util.",
-				"lib/util.js"
-			],
-			[
-				"node",
-				"lib/eagle/node.js"
-			],
-			[
 				"FM Simpl",
 				"tmp/FM Radio Simple Receiver.sch"
 			],
@@ -1373,10 +1994,6 @@
 			[
 				"",
 				"lib/eagle/node.js"
-			],
-			[
-				".sch",
-				"tmp/TDA7419 .sch"
 			],
 			[
 				"FM Simple",
@@ -1405,14 +2022,6 @@
 			[
 				"circle",
 				"lib/geom/circle.js"
-			],
-			[
-				"point.",
-				"lib/geom/point.js"
-			],
-			[
-				"rect.",
-				"lib/geom/rect.js"
 			],
 			[
 				"transform",
@@ -1447,10 +2056,6 @@
 				"lib/eagle/renderUtils.js"
 			],
 			[
-				"compon",
-				"components.js"
-			],
-			[
 				"trkl",
 				"lib/trkl.js"
 			],
@@ -1475,20 +2080,12 @@
 				"components.js"
 			],
 			[
-				"style.css",
-				"style.css"
-			],
-			[
 				"components ",
 				"components.js"
 			],
 			[
 				"rgba",
 				"lib/color/rgba.js"
-			],
-			[
-				"parser",
-				"lib/ecmascript/parser.js"
 			],
 			[
 				"create-tamp",
@@ -1500,10 +2097,6 @@
 			],
 			[
 				"element.js",
-				"lib/dom/element.js"
-			],
-			[
-				"elem",
 				"lib/dom/element.js"
 			],
 			[
@@ -1553,110 +2146,6 @@
 			[
 				"util.j",
 				"lib/util.js"
-			],
-			[
-				"symbo",
-				"lib/eagle/components/symbol.js"
-			],
-			[
-				"sym",
-				"lib/eagle/components/symbol.js"
-			],
-			[
-				"preactCom",
-				"lib/dom/preactComponent.js"
-			],
-			[
-				"preactC",
-				"lib/dom/preactComponent.js"
-			],
-			[
-				"mainjs",
-				"main.js"
-			],
-			[
-				"react-ho",
-				"lib/repeater/react-hooks.js"
-			],
-			[
-				"timers",
-				"lib/repeater/timers.js"
-			],
-			[
-				"limit",
-				"lib/repeater/limiters.js"
-			],
-			[
-				"limiter",
-				"lib/repeater/limiters.js"
-			],
-			[
-				"renderer",
-				"lib/eagle/svgRenderer.js"
-			],
-			[
-				"react-hoo",
-				"lib/repeater/react-hooks.js"
-			],
-			[
-				"package",
-				"package.json"
-			],
-			[
-				"font",
-				"static/fonts.css"
-			],
-			[
-				"com",
-				"components.js"
-			],
-			[
-				"fonts.cs",
-				"static/fonts.css"
-			],
-			[
-				"schemat",
-				"lib/eagle/schematicRenderer.js"
-			],
-			[
-				"project",
-				"lib/eagle/project.js"
-			],
-			[
-				"test-eag",
-				"test-eagle.js"
-			],
-			[
-				"comp",
-				"components.js"
-			],
-			[
-				"schema",
-				"lib/eagle/schematicRenderer.js"
-			],
-			[
-				"boardre",
-				"lib/eagle/boardRenderer.js"
-			],
-			[
-				"preactcom",
-				"lib/dom/preactComponent.js"
-			],
-			[
-				"preact",
-				"lib/dom/preactComponent.js"
-			],
-			[
-				"pathmapp",
-				"lib/json/pathMapper.js"
-			],
-			[
-				"pathMapp",
-				"lib/json/pathMapper.js"
-			],
-			[
-				"docu",
-				"lib/eagle/document.js"
 			]
 		],
 		"width": 0.0

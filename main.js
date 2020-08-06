@@ -451,7 +451,7 @@ const AppMain = (window.onload = async () => {
   Object.assign(
     window,
     { LogJS },
-    { Element, devtools, dom,RGBA,HSLA },
+    { Element, devtools, dom, RGBA, HSLA },
     {
       SVGAlignments,
       AlignmentAttrs,
@@ -629,7 +629,7 @@ const AppMain = (window.onload = async () => {
     class extends LogJS.BaseAppender {
       log(type, time, msg) {
         let d = new Date(time);
-        if(typeof window.pushlog == 'function') window.pushlog(type + ' ' + Util.isoDate(d).replace(/-/g, '') + ' ' + d.toLocaleTimeString(navigator.language || 'de') + ' ' + msg);
+        if(typeof window.pushlog == 'function') window.pushlog([type, Util.isoDate(d).replace(/-/g, ''), d.toLocaleTimeString(navigator.language || 'de'), msg]);
       }
     }
   );
@@ -651,9 +651,9 @@ const AppMain = (window.onload = async () => {
     });
     if(result) lines.push(result.value);
     return h(
-      'div',
+      'table',
       { className: 'logger', ref },
-      lines.slice(-10, lines.length).map((l, i) => h('p', {}, /*333*/ l + ''))
+      lines.slice(-10, lines.length).map(([type, d, t, m], i) => h('tr', {}, [h('td', { className: 'log sign' }, h('img', { className: 'log sign', src: `/static/${type.toLowerCase() || 'warn'}.svg`, style: { height: '1em', width: 'auto' } })), h('td', { className: 'log message' }, /*333*/ m + '')]))
     );
   };
   dump({ ...dump(), test: 123 });
@@ -669,8 +669,8 @@ const AppMain = (window.onload = async () => {
     }
     return h(
       'table',
-      { border: '0',cellpadding: 3  ,cellspacing: 0, className: 'dumper' },
-      lines.map(([k,v]  , i) => h('tr', { className: 'watch' }, [h('td', { className: 'name'}, k + ''), h('td',  { className: 'value'}, v + '')]))
+      { border: '0', cellpadding: 3, cellspacing: 0, className: 'dumper' },
+      lines.map(([k, v], i) => h('tr', { className: 'watch' }, [h('td', { className: 'name' }, k + ''), h('td', { className: 'value' }, v + '')]))
     );
   };
 
