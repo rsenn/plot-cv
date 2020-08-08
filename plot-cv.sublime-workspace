@@ -64,10 +64,10 @@
 	"buffers":
 	[
 		{
-			"contents": "CSS: svg, #container \nCSS: body \nCSS: #preact, svg \nCSS: .no-select \nCSS: .label, .description \nCSS: span.label \nCSS: .fixed \nCSS: pre.description \nCSS: pre.label, span.label \nCSS: p.label, p.description \nCSS: pre.description \nCSS: pre, p.description \nCSS: div.description \nCSS: p.description \nCSS: .fill \nCSS: .button.pushed, .button-inactive \nCSS: .button.pushed \nCSS: .button.inactive \nCSS: .button.pushed \nCSS: .button \nCSS: .hcenter \nCSS: .grow \nCSS: .label \nCSS: .label.pad-lr \nCSS: .file \nCSS: .file.label \nCSS: .file > .label \nCSS: .hstart, .label \nCSS: .vcenter \nCSS: .hidden \nCSS: .visible \nCSS: .transparent \nCSS: .button, .center, .button \nCSS: body \nCSS: .button \nCSS: .button \nCSS: .list > .file.active \nCSS: .list > .file.active.sch \nCSS: .list > .file.active.brd \nCSS: .list > .file.active.lbr \nCSS: html, body, .overlay, .button, .panel, .list \nCSS: .list \nCSS: .file, .file.active, .file.inactive \nCSS: .list \nCSS: .list \nCSS: .list \nCSS: .panel, .list \nCSS: .list \nCSS: .list .file \nCSS: .file \nCSS: .file.sch \nCSS: .file.brd \nCSS: .file.lbr \nCSS: .file.none \nCSS: .buttons > .label \nCSS: svg, text \nCSS: .file.inactive \nCSS: .pad-lr \nCSS: .hcenter \nCSS: .vcenter \nCSS: .list \nCSS: .file \nCSS: .button.pushed \nCSS: .panel, .buttons \nCSS: .buttons \nCSS: .buttons \nCSS: .sch > .progress > .progress-bar \nCSS: .brd > .progress > .progress-bar \nCSS: .progress \nCSS: .sidebar \nCSS: .sidebar.active \nCSS: .sidebar.inactive \nCSS: .sidebar > .list \nCSS: .sidebar > .list \nCSS: body \nCSS: label \nCSS: #main \nCSS: #main \nCSS: #container \nCSS: body, #main, #container \nCSS: .aspect-ratio-box \nCSS: .aspect-ratio-box-inside \nCSS: .aspect-ratio-box-size \nCSS: input[type='number'] \nCSS: input[type='number']::-webkit-outer-spin-button, input[type='number']::-webkit-inner-spin-button \nCSS: div.search, form.search \nCSS: .search.hidden \nCSS: input.search \nCSS: .floating \nCSS: .floating > div \nCSS: .floating \nCSS: .floating, .logger, .dumper \nCSS: .logger \nCSS: .floating \nCSS: .logger > p \nCSS: .dumper \nCSS: .logger, .dumper \nCSS: ul.dumper \nCSS: ul.dumper \nCSS: ul.dumper \nCSS: table.dumper \nCSS: table.dumper td \nCSS: td.name, td.value \nCSS: td.name \nCSS: td.value \nCSS: li.watch \nCSS: li.watch \nCSS: td \nCSS: td .log .message \nCSS: td .log .sign \nCSS: img.sign ",
+			"contents": "add\nuseSlot\n() =>\nv =>\ntrklGetSet\nvalue =>\nuseTrkl\n() =>\nvalue =>\nclassNames\narg =>\nMouseEvents\n.list\nElementToXML\nasync readFile(filename)\nasync res =>\nasync writeFile(filename, data, overwrite = true)\nasync exists(filename)\nasync realpath(filename)\nLoadFile\nasync res =>\n.save\npredicate\nModifyColors\ne =>\nLoadDocument\nFence\nvalue =>\nvalue =>\ne =>\n([p, e]) =>\n([p, e]) =>\n([p, r, e]) =>\n([k, v]) =>\n(key, value) =>\n(key, value) =>\n(key, value) =>\n(key, value) =>\nChooseDocument\nMakeFitAction\nasync () =>\nCreateWebSocket\n.send\narg =>\n.onload\nasync (push, stop) =>\n() =>\nasync (push, stop) =>\nRegisterEventHandler\nasync (push, stop) =>\nhandler\nev =>\nev =>\n.keystroke\n(key, modifiers = 0) =>\n.focusSearch\nvalue =>\n() =>\ntestComponent\nresponse =>\nFile\nFile.prototype.toString\n(a, b) =>\n(obj, i) =>\nws =>\nvalue =>\nchangeInput\nConsumer\nasync function*()\nextends\nlog\nLogger\nasync function*()\n([type, d, t, m], i) =>\nDumper\nvalue =>\n([k, v], i) =>\nCommander\nhandler\nfn: e\nonCommand: cmdStr\nevent =>\ncancel\n.processEvents\nevent =>\nonRuntimeInitialized: ()\nprint: txt",
 			"settings":
 			{
-				"buffer_size": 2272,
+				"buffer_size": 1058,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
@@ -82,15 +82,6 @@
 			}
 		},
 		{
-			"file": "components.js",
-			"settings":
-			{
-				"buffer_size": 26804,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "test-geom.js",
 			"settings":
 			{
@@ -100,10 +91,36 @@
 			}
 		},
 		{
+			"file": "components.js",
+			"settings":
+			{
+				"buffer_size": 27177,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "main.js",
 			"settings":
 			{
-				"buffer_size": 30111,
+				"buffer_size": 31505,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/components/instance.js",
+			"settings":
+			{
+				"buffer_size": 1492,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/boardRenderer.js",
+			"settings":
+			{
+				"buffer_size": 8999,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -112,7 +129,16 @@
 			"file": "style.css",
 			"settings":
 			{
-				"buffer_size": 9649,
+				"buffer_size": 10119,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/geom/voronoi.js",
+			"settings":
+			{
+				"buffer_size": 54737,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -162,6 +188,18 @@
 		"selected_items":
 		[
 			[
+				"install p",
+				"Package Control: Install Package"
+			],
+			[
+				"install pac",
+				"Package Control: Install Package"
+			],
+			[
+				"add rep",
+				"Package Control: Add Repository"
+			],
+			[
 				"install pack",
 				"Package Control: Install Package"
 			],
@@ -182,15 +220,7 @@
 				"Package Control: Install Package"
 			],
 			[
-				"install p",
-				"Package Control: Install Package"
-			],
-			[
 				"add re",
-				"Package Control: Add Repository"
-			],
-			[
-				"add rep",
 				"Package Control: Add Repository"
 			],
 			[
@@ -251,16 +281,18 @@
 	"expanded_folders":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
-		"/home/roman/Dokumente/Sources/plot-cv/lib"
+		"/home/roman/Dokumente/Sources/plot-cv/lib",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components"
 	],
 	"file_history":
 	[
+		"/home/roman/Dokumente/Sources/plot-cv/components.js",
 		"/home/roman/Dokumente/Sources/plot-cv/style.css",
 		"/home/roman/Dokumente/Sources/plot-cv/main.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/useDimensions.js",
-		"/home/roman/Dokumente/Sources/plot-cv/components.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/log.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/environment.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-geom.js",
@@ -433,6 +465,15 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"touchEvents",
+			"repeaeter",
+			"input",
+			"1px",
+			"text ",
+			"pad",
+			"select",
+			"zoom",
+			"LogJS",
 			"'td'",
 			"push.*type",
 			"push",
@@ -551,16 +592,7 @@
 			"class Vor",
 			"^class ",
 			"\\.prototype",
-			"get RB",
-			"class Hal",
-			"class Edge",
-			"class Vertex",
-			"class Cell",
-			"class RBT",
-			"Vertex\\(",
-			"^Voronoi.prototype.Halfedge.prototype.([^. ]*) = function(\\(.*\\)) {",
-			"^Voronoi.prototype.RBTree.prototype.([^. ]*) = function(\\(.*\\)) {",
-			"^Voronoi.prototype.Cell.prototype.([^. ]*) = function(\\(.*\\)) {"
+			"get RB"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -691,7 +723,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2272,
+						"buffer_size": 1058,
 						"regions":
 						{
 						},
@@ -705,568 +737,448 @@
 						"settings":
 						{
 							"color_scheme": "Packages/User/SchemeEditorTemp/Next Bold.tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/style.css",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/main.js",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
 								[
-									0,
-									16
+									5114,
+									5138
 								],
 								[
-									44,
-									49
+									5179,
+									5200
 								],
 								[
-									77,
-									90
+									5202,
+									5207
 								],
 								[
-									182,
-									193
+									5216,
+									5220
 								],
 								[
-									298,
-									319
+									5242,
+									5268
 								],
 								[
-									384,
-									395
+									5269,
+									5277
 								],
 								[
-									488,
-									495
+									5328,
+									5345
 								],
 								[
-									549,
-									565
+									5347,
+									5352
 								],
 								[
-									663,
-									685
+									5361,
+									5369
 								],
 								[
-									713,
-									736
+									5391,
+									5416
 								],
 								[
-									753,
-									769
+									5429,
+									5435
 								],
 								[
-									814,
-									833
+									5496,
+									5514
 								],
 								[
-									862,
-									878
+									6032,
+									6075
 								],
 								[
-									917,
-									931
+									6641,
+									6673
 								],
 								[
-									956,
-									962
+									6826,
+									6850
 								],
 								[
-									998,
-									1031
+									6904,
+									6916
 								],
 								[
-									1036,
-									1051
+									6951,
+									7000
 								],
 								[
-									1188,
-									1205
+									7242,
+									7264
 								],
 								[
-									1295,
-									1310
+									7271,
+									7295
 								],
 								[
-									1377,
-									1385
+									7309,
+									7337
 								],
 								[
-									1489,
-									1498
+									7392,
+									7404
 								],
 								[
-									1529,
-									1535
+									7881,
+									7986
 								],
 								[
-									1557,
-									1564
+									7995,
+									8017
 								],
 								[
-									1667,
-									1681
+									8769,
+									8789
 								],
 								[
-									1701,
-									1707
+									8790,
+									8794
 								],
 								[
-									1733,
-									1745
+									9018,
+									9063
 								],
 								[
-									1764,
-									1779
+									10187,
+									10264
 								],
 								[
-									1818,
-									1834
+									10464,
+									10472
 								],
 								[
-									1869,
-									1878
+									10572,
+									10580
 								],
 								[
-									1905,
-									1913
+									11770,
+									11774
 								],
 								[
-									1934,
-									1943
+									11838,
+									11849
 								],
 								[
-									1964,
-									1977
+									11906,
+									11917
 								],
 								[
-									1995,
-									2021
+									11981,
+									11995
 								],
 								[
-									2120,
-									2125
+									12146,
+									12157
 								],
 								[
-									2278,
-									2286
+									12475,
+									12490
 								],
 								[
-									2611,
-									2619
+									12577,
+									12592
 								],
 								[
-									2647,
-									2668
+									12723,
+									12738
 								],
 								[
-									2830,
-									2855
+									12825,
+									12840
 								],
 								[
-									3003,
-									3028
+									14531,
+									14572
 								],
 								[
-									3180,
-									3205
+									15019,
+									15043
 								],
 								[
-									3357,
-									3402
+									15044,
+									15055
 								],
 								[
-									3428,
-									3434
+									16176,
+									16240
 								],
 								[
-									3480,
-									3516
+									16437,
+									16457
 								],
 								[
-									3596,
-									3602
+									17061,
+									17067
 								],
 								[
-									3647,
-									3653
+									17117,
+									17138
 								],
 								[
-									3698,
-									3704
+									17708,
+									17729
 								],
 								[
-									3731,
-									3745
+									17787,
+									17792
 								],
 								[
-									3775,
-									3781
+									17900,
+									17921
 								],
 								[
-									3808,
-									3820
+									18039,
+									18078
 								],
 								[
-									3889,
-									3895
+									18096,
+									18117
 								],
 								[
-									3915,
-									3925
+									18130,
+									18144
 								],
 								[
-									3968,
-									3978
+									18175,
+									18180
 								],
 								[
-									4017,
-									4027
+									18292,
+									18297
 								],
 								[
-									4065,
-									4076
+									18643,
+									18665
 								],
 								[
-									4101,
-									4119
+									18666,
+									18689
 								],
 								[
-									4139,
-									4149
+									18800,
+									18823
 								],
 								[
-									4231,
-									4246
+									19165,
+									19173
 								],
 								[
-									4355,
-									4363
+									19236,
+									19241
 								],
 								[
-									4388,
-									4397
+									20168,
+									20192
 								],
 								[
-									4452,
-									4461
+									20336,
+									20347
 								],
 								[
-									4513,
-									4519
+									20465,
+									20486
 								],
 								[
-									4574,
-									4580
+									20773,
+									20809
 								],
 								[
-									4706,
-									4721
+									20888,
+									20897
 								],
 								[
-									4760,
-									4777
+									20932,
+									20943
 								],
 								[
-									4798,
-									4807
+									21103,
+									21108
 								],
 								[
-									4866,
-									4875
+									21349,
+									21357
 								],
 								[
-									4992,
-									5025
+									21448,
+									21466
 								],
 								[
-									5069,
-									5102
+									21659,
+									21678
 								],
 								[
-									5147,
-									5157
+									21710,
+									21727
 								],
 								[
-									5182,
-									5191
+									22219,
+									22226
 								],
 								[
-									5292,
-									5308
+									22254,
+									22257
 								],
 								[
-									5402,
-									5420
+									22529,
+									22546
 								],
 								[
-									5569,
-									5586
+									22864,
+									22881
 								],
 								[
-									5608,
-									5625
+									23086,
+									23109
 								],
 								[
-									5650,
-									5655
+									23401,
+									23418
 								],
 								[
-									5761,
-									5767
+									23511,
+									23519
 								],
 								[
-									5809,
-									5815
+									23753,
+									23767
 								],
 								[
-									5910,
-									5916
+									23906,
+									23946
 								],
 								[
-									5987,
-									5998
+									24369,
+									24383
 								],
 								[
-									6028,
-									6052
+									25017,
+									25025
 								],
 								[
-									6077,
-									6095
+									26864,
+									26884
 								],
 								[
-									6121,
-									6146
+									27087,
+									27095
 								],
 								[
-									6213,
-									6236
+									28070,
+									28087
 								],
 								[
-									6342,
-									6363
+									28235,
+									28278
 								],
 								[
-									6389,
-									6486
+									29687,
+									29695
 								],
 								[
-									6532,
-									6556
+									31305,
+									31332
 								],
 								[
-									6611,
-									6626
-								],
-								[
-									6648,
-									6661
-								],
-								[
-									6696,
-									6706
-								],
-								[
-									6805,
-									6821
-								],
-								[
-									6843,
-									6853
-								],
-								[
-									7123,
-									7151
-								],
-								[
-									7207,
-									7215
-								],
-								[
-									7290,
-									7300
-								],
-								[
-									7733,
-									7745
-								],
-								[
-									7765,
-									7773
-								],
-								[
-									7878,
-									7895
-								],
-								[
-									7917,
-									7927
-								],
-								[
-									8031,
-									8041
-								],
-								[
-									8367,
-									8377
-								],
-								[
-									8432,
-									8445
-								],
-								[
-									8495,
-									8512
-								],
-								[
-									8564,
-									8582
-								],
-								[
-									9129,
-									9137
-								],
-								[
-									9238,
-									9247
-								],
-								[
-									9292,
-									9301
-								],
-								[
-									9373,
-									9382
-								],
-								[
-									9421,
-									9424
-								],
-								[
-									9455,
-									9472
-								],
-								[
-									9496,
-									9510
-								],
-								[
-									9537,
-									9546
+									31455,
+									31468
 								]
 							],
 							"symlist":
 							[
-								"CSS: svg, #container ",
-								"CSS: body ",
-								"CSS: #preact, svg ",
-								"CSS: .no-select ",
-								"CSS: .label, .description ",
-								"CSS: span.label ",
-								"CSS: .fixed ",
-								"CSS: pre.description ",
-								"CSS: pre.label, span.label ",
-								"CSS: p.label, p.description ",
-								"CSS: pre.description ",
-								"CSS: pre, p.description ",
-								"CSS: div.description ",
-								"CSS: p.description ",
-								"CSS: .fill ",
-								"CSS: .button.pushed, .button-inactive ",
-								"CSS: .button.pushed ",
-								"CSS: .button.inactive ",
-								"CSS: .button.pushed ",
-								"CSS: .button ",
-								"CSS: .hcenter ",
-								"CSS: .grow ",
-								"CSS: .label ",
-								"CSS: .label.pad-lr ",
-								"CSS: .file ",
-								"CSS: .file.label ",
-								"CSS: .file > .label ",
-								"CSS: .hstart, .label ",
-								"CSS: .vcenter ",
-								"CSS: .hidden ",
-								"CSS: .visible ",
-								"CSS: .transparent ",
-								"CSS: .button, .center, .button ",
-								"CSS: body ",
-								"CSS: .button ",
-								"CSS: .button ",
-								"CSS: .list > .file.active ",
-								"CSS: .list > .file.active.sch ",
-								"CSS: .list > .file.active.brd ",
-								"CSS: .list > .file.active.lbr ",
-								"CSS: html, body, .overlay, .button, .panel, .list ",
-								"CSS: .list ",
-								"CSS: .file, .file.active, .file.inactive ",
-								"CSS: .list ",
-								"CSS: .list ",
-								"CSS: .list ",
-								"CSS: .panel, .list ",
-								"CSS: .list ",
-								"CSS: .list .file ",
-								"CSS: .file ",
-								"CSS: .file.sch ",
-								"CSS: .file.brd ",
-								"CSS: .file.lbr ",
-								"CSS: .file.none ",
-								"CSS: .buttons > .label ",
-								"CSS: svg, text ",
-								"CSS: .file.inactive ",
-								"CSS: .pad-lr ",
-								"CSS: .hcenter ",
-								"CSS: .vcenter ",
-								"CSS: .list ",
-								"CSS: .file ",
-								"CSS: .button.pushed ",
-								"CSS: .panel, .buttons ",
-								"CSS: .buttons ",
-								"CSS: .buttons ",
-								"CSS: .sch > .progress > .progress-bar ",
-								"CSS: .brd > .progress > .progress-bar ",
-								"CSS: .progress ",
-								"CSS: .sidebar ",
-								"CSS: .sidebar.active ",
-								"CSS: .sidebar.inactive ",
-								"CSS: .sidebar > .list ",
-								"CSS: .sidebar > .list ",
-								"CSS: body ",
-								"CSS: label ",
-								"CSS: #main ",
-								"CSS: #main ",
-								"CSS: #container ",
-								"CSS: body, #main, #container ",
-								"CSS: .aspect-ratio-box ",
-								"CSS: .aspect-ratio-box-inside ",
-								"CSS: .aspect-ratio-box-size ",
-								"CSS: input[type='number'] ",
-								"CSS: input[type='number']::-webkit-outer-spin-button, input[type='number']::-webkit-inner-spin-button ",
-								"CSS: div.search, form.search ",
-								"CSS: .search.hidden ",
-								"CSS: input.search ",
-								"CSS: .floating ",
-								"CSS: .floating > div ",
-								"CSS: .floating ",
-								"CSS: .floating, .logger, .dumper ",
-								"CSS: .logger ",
-								"CSS: .floating ",
-								"CSS: .logger > p ",
-								"CSS: .dumper ",
-								"CSS: .logger, .dumper ",
-								"CSS: ul.dumper ",
-								"CSS: ul.dumper ",
-								"CSS: ul.dumper ",
-								"CSS: table.dumper ",
-								"CSS: table.dumper td ",
-								"CSS: td.name, td.value ",
-								"CSS: td.name ",
-								"CSS: td.value ",
-								"CSS: li.watch ",
-								"CSS: li.watch ",
-								"CSS: td ",
-								"CSS: td .log .message ",
-								"CSS: td .log .sign ",
-								"CSS: img.sign "
+								"add",
+								"useSlot",
+								"() =>",
+								"v =>",
+								"trklGetSet",
+								"value =>",
+								"useTrkl",
+								"() =>",
+								"value =>",
+								"classNames",
+								"arg =>",
+								"MouseEvents",
+								".list",
+								"ElementToXML",
+								"async readFile(filename)",
+								"async res =>",
+								"async writeFile(filename, data, overwrite = true)",
+								"async exists(filename)",
+								"async realpath(filename)",
+								"LoadFile",
+								"async res =>",
+								".save",
+								"predicate",
+								"ModifyColors",
+								"e =>",
+								"LoadDocument",
+								"Fence",
+								"value =>",
+								"value =>",
+								"e =>",
+								"([p, e]) =>",
+								"([p, e]) =>",
+								"([p, r, e]) =>",
+								"([k, v]) =>",
+								"(key, value) =>",
+								"(key, value) =>",
+								"(key, value) =>",
+								"(key, value) =>",
+								"ChooseDocument",
+								"MakeFitAction",
+								"async () =>",
+								"CreateWebSocket",
+								".send",
+								"arg =>",
+								".onload",
+								"async (push, stop) =>",
+								"() =>",
+								"async (push, stop) =>",
+								"RegisterEventHandler",
+								"async (push, stop) =>",
+								"handler",
+								"ev =>",
+								"ev =>",
+								".keystroke",
+								"(key, modifiers = 0) =>",
+								".focusSearch",
+								"value =>",
+								"() =>",
+								"testComponent",
+								"response =>",
+								"File",
+								"File.prototype.toString",
+								"(a, b) =>",
+								"(obj, i) =>",
+								"ws =>",
+								"value =>",
+								"changeInput",
+								"Consumer",
+								"async function*()",
+								"extends",
+								"log",
+								"Logger",
+								"async function*()",
+								"([type, d, t, m], i) =>",
+								"Dumper",
+								"value =>",
+								"([k, v], i) =>",
+								"Commander",
+								"handler",
+								"fn: e",
+								"onCommand: cmdStr",
+								"event =>",
+								"cancel",
+								".processEvents",
+								"event =>",
+								"onRuntimeInitialized: ()",
+								"print: txt"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -1274,13 +1186,13 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 12,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 4,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -1317,47 +1229,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "components.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 26804,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2636,
-								2636
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							}
-						},
-						"translation.x": 0.0,
-						"translation.y": 8.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
 					"file": "test-geom.js",
 					"semi_transient": false,
 					"settings":
@@ -1378,13 +1254,57 @@
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							},
 							"use_tab_stops": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "components.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 27177,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1382,
+								1382
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							},
+							"use_tab_stops": false,
+							"word_separators": "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?"
+						},
+						"translation.x": 0.0,
+						"translation.y": 540.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -1393,45 +1313,128 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 30111,
+						"buffer_size": 31505,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								23071,
-								23071
+								26323,
+								26323
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"translate_tabs_to_spaces": true,
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							},
+							"use_tab_stops": false,
+							"word_separators": "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?"
 						},
 						"translation.x": 0.0,
-						"translation.y": 12708.0,
+						"translation.y": 15057.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
 					"buffer": 5,
-					"file": "style.css",
+					"file": "lib/eagle/components/instance.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9649,
+						"buffer_size": 1492,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								9600,
-								9600
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							},
+							"use_tab_stops": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "lib/eagle/boardRenderer.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8999,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2914,
+								2914
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							},
+							"use_tab_stops": false,
+							"word_separators": "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?"
+						},
+						"translation.x": 0.0,
+						"translation.y": 1700.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "style.css",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 10119,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10119,
+								10119
 							]
 						],
 						"settings":
@@ -1441,14 +1444,51 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 9968.0,
+						"translation.y": 10656.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 8,
+					"file": "lib/geom/voronoi.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 54737,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							},
+							"use_tab_stops": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1800.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
 					"file": "static/warn.svg",
 					"semi_transient": false,
 					"settings":
@@ -1466,17 +1506,19 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/XML/XML.sublime-syntax"
+							"syntax": "Packages/XML/XML.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 10,
 					"type": "text"
 				},
 				{
-					"buffer": 7,
+					"buffer": 10,
 					"file": "error.svg",
 					"semi_transient": false,
 					"settings":
@@ -1502,11 +1544,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 11,
 					"file": "test-ecmascript.js",
 					"semi_transient": false,
 					"settings":
@@ -1527,17 +1569,23 @@
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							},
 							"use_tab_stops": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 12,
 					"file": "test-voronoi.js",
 					"semi_transient": false,
 					"settings":
@@ -1564,7 +1612,7 @@
 						"translation.y": 1555.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 11,
 					"type": "text"
 				}
 			]
@@ -1636,16 +1684,32 @@
 		"selected_items":
 		[
 			[
+				"main",
+				"main.js"
+			],
+			[
 				"style",
 				"style.css"
 			],
 			[
-				"style.",
-				"style.css"
+				"boardr",
+				"lib/eagle/boardRenderer.js"
 			],
 			[
-				"main",
-				"main.js"
+				"copm",
+				"components.js"
+			],
+			[
+				"com",
+				"components.js"
+			],
+			[
+				"voro",
+				"lib/geom/voronoi.js"
+			],
+			[
+				"style.",
+				"style.css"
 			],
 			[
 				"error",
@@ -2130,22 +2194,6 @@
 			[
 				"size",
 				"lib/geom/size.js"
-			],
-			[
-				"repea",
-				"lib/repeater/repeater.js"
-			],
-			[
-				"pubsu",
-				"lib/repeater/pubsub.js"
-			],
-			[
-				"trb",
-				"lib/geom/trbl.js"
-			],
-			[
-				"util.j",
-				"lib/util.js"
 			]
 		],
 		"width": 0.0
@@ -2161,16 +2209,20 @@
 	},
 	"select_symbol":
 	{
-		"height": 400.0,
-		"last_filter": "",
+		"height": 110.0,
+		"last_filter": "Element.crea",
 		"selected_items":
 		[
+			[
+				"Element.crea",
+				"Element.create"
+			],
 			[
 				"",
 				"\"++\"(a)"
 			]
 		],
-		"width": 1024.0
+		"width": 1032.0
 	},
 	"selected_group": 1,
 	"settings":

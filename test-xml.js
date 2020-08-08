@@ -232,7 +232,7 @@ function main(...args) {
         let la = [30, 70];
         /*color = HSLA.random([hues[0] * 360, hues[1] * 360], [25,75], la || [luminances[0] * 255, luminances[1] * 255], [255, 255], prng);
         let luminances = [hashes[0][1] || 0.4, hashes[0][1] || 0.8];*/
-        color = HSLA.random([0, 360], [75, 100], [40, 60], [1, 1], prng);
+        color = HSLA.random([0, 360], [50, 100], [50, 85], [1, 1], prng);
       }
 
       Util.log('color2:', color);

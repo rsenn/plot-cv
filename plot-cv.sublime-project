@@ -35,19 +35,19 @@
 
     { "name": "prettier ${file_path}", "shell_cmd": "WIDTH=400 bash scripts/prettier.sh '${file}'", "working_dir": "${project_path:${folder:${file_path}}}" }
   ],
-  "folders": [
-    {
-      "file_exclude_patterns": [
-      "*.tmp",
-      "*.scr",
-        //"*.so", "*.orig", "*.log", "*.jshintrc",
-        "*.vcxproj",
-        "*.filters",
-        //  "*.json",
-        "*.tsbuildinfo",
-        "*.cjs",
-        "*.lbr",
-        "*.flow",
+    "folders": [
+      {
+        "file_exclude_patterns": [
+        "*.tmp",
+        "*.scr",
+          //"*.so", "*.orig", "*.log", "*.jshintrc",
+          "*.vcxproj",
+          "*.filters",
+          //  "*.json",
+          "*.tsbuildinfo",
+          "*.cjs",
+          "*.lbr",
+          "*.flow",
         "*.o",
         "*.yml",
         //"*.markdown",

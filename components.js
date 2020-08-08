@@ -1,4 +1,6 @@
 import { h, Fragment, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
+import { Repeater } from './lib/repeater/repeater.js';
+import { useValue, useResult, useAsyncIter } from './lib/repeater/react-hooks.js';
 
 import { trkl } from './lib/trkl.js';
 import { useDimensions } from './useDimensions.js';
@@ -76,25 +78,38 @@ export const Container = ({ className = 'panel', children, ...props }) => {
   `;
 };
 
-export const Button = ({ caption, fn }) => html`
-  <${Overlay} className="button" text=${caption} onPush=${state => (state ? fn(state) : undefined)} />
+export const Button = ({ caption, image, fn, style = {}, ...props }) => {
+  if(typeof image == 'string') {
+    if(!props.children) props.children = [];
+    props.children.unshift(h('img', { src: image }));
+    /*style.backgroundImage = `url(${image})`;
+  style.backgroundSize = 'cover';*/
+  }
+  return h(Overlay, { className: classNames('button', className), text: caption, onPush: state => (state ? fn(state) : undefined), style, ...props });
+};
+/*html`
+  <${Overlay} className="button" text=${caption} onPush=${state => (state ? fn(state) : undefined)} ${...props} />
 `;
-
-export const FloatingPanel = ({ children, className, onSize, style = {}, ...props }) => {
+*/
+export const FloatingPanel = ({ children, className, onSize, onHide, style = {}, ...props }) => {
   const [ref, { x, y, width, height }] = useDimensions();
 
   console.log('FloatingPanel.dimensions:', { x, y, width, height });
 
   const [size, setSize] = useState(onSize ? onSize() : {});
+  const [hidden, setHidden] = useState(onHide ? onHide() : false);
 
   if(typeof onSize == 'function' && onSize.subscribe) onSize.subscribe(value => setSize(value));
+  if(typeof onHide == 'function' && onHide.subscribe) onHide.subscribe(value => setHidden(value));
 
   if(size) {
     if(!isNaN(+size.width)) style.width = `${size.width}px`;
     if(!isNaN(+size.height)) style.height = `${size.height}px`;
   }
 
-  return h(Overlay, { ref, className: classNames('floating', className), ...props, style }, children);
+  if(hidden) style.display = 'none';
+
+  return h(Overlay, { ref, className: classNames('floating', hidden && 'hidden', className), ...props, style }, children);
 };
 
 export const Label = ({ className, text, children, ...props }) =>

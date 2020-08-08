@@ -472,6 +472,11 @@
   resolved "https://registry.yarnpkg.com/@bikeshaving/crank/-/crank-0.2.1.tgz#b7de2eede6f295208f941c371f118dfc801360ec"
   integrity sha512-yvlrHku3oN189Wd2a8Wmau8306ENlJ9QdOcHbvXo0vkUBI/g8Q8G8OT0QgaeSLvpDeKErgdrYU9+KSUpqWsBOw==
 
+"@code-sketch/sublime-command-palette@0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@code-sketch/sublime-command-palette/-/sublime-command-palette-0.0.12.tgz#61eefe343c7af5b174947dd966bfbf6a50ff8575"
+  integrity sha512-6gZtomAH2a+hFgOeqc8xYT///GpNkpP6IA6z8ca6BhcN2tLGUVZ+EzT8UCWR/0ABrMrfhMcZ3X58c3/NRy5wpw==
+
 "@emotion/is-prop-valid@^0.8.1":
   version "0.8.8"
   resolved "https://registry.yarnpkg.com/@emotion/is-prop-valid/-/is-prop-valid-0.8.8.tgz#db28b1c4368a259b60a97311d6a952d4fd01ac1a"
@@ -2470,6 +2475,11 @@ functional-red-black-tree@^1.0.1:
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
   integrity sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=
 
+fuse.js@^3.2.0:
+  version "3.6.1"
+  resolved "https://registry.yarnpkg.com/fuse.js/-/fuse.js-3.6.1.tgz#7de85fdd6e1b3377c23ce010892656385fd9b10c"
+  integrity sha512-hT9yh/tiinkmirKrlv4KWOjztdoZo1mx9Qh4KvWqC7isoXwdUY3PNWUxceF4/qO9R6riA2C29jdTOeQOIROjgw==
+
 generate-function@^2.0.0:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/generate-function/-/generate-function-2.3.1.tgz#f069617690c10c868e73b8465746764f97c3479f"
@@ -3816,7 +3826,7 @@ progress@^2.0.0:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-prop-types@^15.5.4, prop-types@^15.7.2:
+prop-types@^15.5.4, prop-types@^15.6.0, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -3872,15 +3882,35 @@ raw-body@2.4.0:
     iconv-lite "0.4.24"
     unpipe "1.0.0"
 
+react-fuse-picker@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-fuse-picker/-/react-fuse-picker-1.0.0.tgz#f9510f00484563a277ff95dda51b66b8f4aeedae"
+  integrity sha512-iWd0Rpt7gtnDvc1lcWLGCRRUOBuOHMiA88XMMnwK9m/CrlR5peuqalhMlE0P6TDttNlMIQImowYt9ADw4wz12A==
+  dependencies:
+    fuse.js "^3.2.0"
+
 react-is@^16.6.0, react-is@^16.8.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
+react-qsm@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-qsm/-/react-qsm-1.2.0.tgz#c1a2a10c2dbf506dfdbb2047174d5eef30d09ea4"
+  integrity sha512-DkHQfoaHPSRdwSTuKkMbYCXq9dNaiwMzkZeO4n2bjHAO4CInKJZl+BsLsNA7/u9EUw8twcUN5bQtG5Kvo1/+eA==
+  dependencies:
+    fuse.js "^3.2.0"
+    prop-types "^15.6.0"
+
 react-use-dimensions@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/react-use-dimensions/-/react-use-dimensions-1.2.1.tgz#eb1561db7b06c393209d2bffa449931dd93f7870"
   integrity sha512-XL+Rup9Hosxx3Ap9xpyQMbVwuUa4BSqiOjfBb2zDuGs4uv2FesFV+m8Z/huRx2BNptMd9ARPqFuSNA62zhCozg==
+
+react-use-gesture@^7.0.15:
+  version "7.0.15"
+  resolved "https://registry.yarnpkg.com/react-use-gesture/-/react-use-gesture-7.0.15.tgz#93c651e916a31cfb12d079e7fa1543d5b0511e07"
+  integrity sha512-vHQkaa7oUbSDTAcFk9huQXa7E8KPrZH91erPuOMoqZT513qvtbb/SzTQ33lHc71/kOoJkMbzOkc4uoA4sT7Ogg==
 
 read-pkg-up@^2.0.0:
   version "2.0.0"

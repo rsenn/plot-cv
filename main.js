@@ -40,6 +40,8 @@ import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, Calculat
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
+import { useDrag, useMove, useGesture } from './useGesture.js';
+import { Emitter, EventIterator } from './events.js';
 
 /* prettier-ignore */ import { BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode
  } from './lib/eagle.js';
@@ -197,6 +199,8 @@ const LoadDocument = async (project, parentElem) => {
 
   project.doc = await LoadFile(project.name);
 
+  LogJS.info(`${project.name} loaded.`);
+
   documentTitle(project.doc.file.replace(/.*\//g, ''));
 
   window.eagle = project.doc;
@@ -214,6 +218,8 @@ const LoadDocument = async (project, parentElem) => {
 
   let style = { width: '100%', height: '100%', position: 'relative' };
   let component = project.renderer.render(project.doc, null, {});
+
+  LogJS.info(`${project.name} rendered.`);
 
   window.component = project.component = component;
 
@@ -364,22 +370,22 @@ const LoadDocument = async (project, parentElem) => {
   return project;
 };
 
-const ChooseDocument = async (e, proj, i) => {
+const ChooseDocument = async (e, project, i) => {
   let r;
   const { type } = e;
   const box = Element.findAll('.file')[i];
-  Util.log('ChooseDocument:', { e, proj, i, box });
-
+  Util.log('ChooseDocument:', { e, project, i, box });
+  LogJS.info(`${project.name} selected.`);
   try {
-    if(!proj.loaded) {
-      let data = await LoadDocument(proj, box);
-      proj.loaded = true;
+    if(!project.loaded) {
+      let data = await LoadDocument(project, box);
+      project.loaded = true;
 
       open(false);
 
-      //console.log('loaded:', proj);
+      //console.log('loaded:', project);
     }
-    r = proj.loaded;
+    r = project.loaded;
   } catch(err) {
     Util.putError(err);
   }
@@ -400,7 +406,7 @@ const MakeFitAction = index => async () => {
   prect.height -= brect.height;
   let rects = [prect, oldSize, srect];
   prect.scale(0.8);
-  //console.log('resize rects', { oldSize, prect, srect });
+  console.log('resize rects', { oldSize, prect, srect });
   let f = srect.fit(prect);
   let newSize = f[index].round(0.0001);
   let affineTransform = Matrix.getAffineTransform(oldSize.toPoints(), newSize.toPoints());
@@ -429,7 +435,7 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
 
   Util.log('New WebSocket:', ws);
   await ws.connect(socketURL);
-  Util.log('WebSocket Connected:', ws.connected);
+  LogJS.info('WebSocket Connected:', ws.connected);
   socketFn(ws);
   ws.send('main.js data!');
   let data;
@@ -484,22 +490,11 @@ const AppMain = (window.onload = async () => {
   });
 
   const logger = new Repeater(async (push, stop) => {
-    push('Load ready!');
+    push(['DEBUG',null,null,'Load ready!']);
     window.pushlog = push;
     await stop;
   });
   logger.push = window.pushlog;
-
-  const RegisterEventHandler = (events = []) =>
-    new Repeater(async (push, stop) => {
-      let handler = e => push(e);
-      events.forEach(ev => window.addEventListener(ev, handler));
-      console.log('registered');
-      await stop;
-      events.forEach(ev => window.removeEventListener(ev, handler));
-      console.log('unregistered');
-    });
-  const touchEvents = RegisterEventHandler(['touchmove', 'touchstart', 'touchcancel', 'mousemove', 'mouseup', 'mousedown']);
 
   //window.focusSearch = trkl();
   window.currentSearch = trkl(null);
@@ -538,14 +533,18 @@ const AppMain = (window.onload = async () => {
 
   //prettier-ignore
   Object.assign(window, { BBox, ChooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, LoadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
-  Object.assign(window, {
-    PrimitiveComponents,
-    ElementNameToComponent,
-    ElementToComponent,
-    Wire,
-    Instance,
-    SchematicSymbol
-  });
+  Object.assign(
+    window,
+    {
+      PrimitiveComponents,
+      ElementNameToComponent,
+      ElementToComponent,
+      Wire,
+      Instance,
+      SchematicSymbol
+    },
+    { Emitter, EventIterator }
+  );
 
   const inspectSym = Symbol.for('nodejs.util.inspect.custom');
 
@@ -576,6 +575,7 @@ const AppMain = (window.onload = async () => {
       return this.name;
     };
     projectFiles = window.files = files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i));
+    LogJS.info(`retrieved project list. Got ${projectFiles.length} items.`);
     projects(projectFiles);
   });
 
@@ -649,7 +649,10 @@ const AppMain = (window.onload = async () => {
     const result = useResult(async function*() {
       for await (let msg of logger) yield msg;
     });
-    if(result) lines.push(result.value);
+    if(result) {
+      console.log("result:",result);
+      lines.push(result.value);
+    }
     return h(
       'table',
       { className: 'logger', ref },
@@ -674,6 +677,23 @@ const AppMain = (window.onload = async () => {
     );
   };
 
+  const Commander = ({ onCommand, ...props }) => {
+    const [inputText, setInputText] = useState('');
+    const handler = e => {
+      const { target } = e;
+      if(e.type.endsWith('down') && e.keyCode == 13) {
+        const value = target.value || inputText;
+        if(value != '') {
+          if(typeof onCommand == 'function') onCommand(value);
+          setInputText('');
+        }
+      } else {
+        setInputText(target.value);
+      }
+    };
+    return h('input', { type: 'text', className: 'commander', value: inputText, onKeyDown: handler, autofocus: true }, []);
+  };
+
   React.render(
     [
       Panel('buttons', [
@@ -686,21 +706,23 @@ const AppMain = (window.onload = async () => {
             }
           }
         }),
-        h(Button, {
+        /* h(Button, {
           caption: 'Random',
           fn: ModifyColors(c => c.replaceAll(c => HSLA.random()))
         }),
         h(Button, {
           caption: 'Invert',
           fn: ModifyColors(c => c.replaceAll(c => c.invert()))
+        }),*/
+        h(Button, {
+          //  caption: '↔',
+          fn: MakeFitAction(0),
+          image: '/static/fit-horizontal.svg'
         }),
         h(Button, {
-          caption: '↔',
-          fn: MakeFitAction(0)
-        }),
-        h(Button, {
-          caption: '↕',
-          fn: MakeFitAction(1)
+          //  caption: '↕',
+          fn: MakeFitAction(1),
+          image: '/static/fit-vertical.svg'
         }),
         h(DynamicLabel, { className: 'vcenter pad-lr', caption: documentTitle }),
         h(Consumer, {})
@@ -736,7 +758,16 @@ const AppMain = (window.onload = async () => {
         <${FileList} files=${projects} onActive=${open} onChange=${ChooseDocument} filter=${searchFilter} showSearch=${showSearch} changeInput=${changeInput} focusSearch=${focusSearch} currentInput=${currentSearch} />
       `,
       h(CrossHair, { ...crosshair }),
-      h(FloatingPanel, { onSize: logSize }, [h(Logger, {}), h(Dumper, {})])
+      h(FloatingPanel, { onSize: logSize, className: 'no-select', id: 'console' }, [
+        h(Logger, {}),
+        h(Dumper, {}),
+        h(Commander, {
+          onCommand: cmdStr => {
+            console.log('Command:', cmdStr);
+            LogJS.info(`> ${cmdStr}`);
+          }
+        })
+      ])
     ],
     Element.find('#preact')
   );
@@ -753,7 +784,13 @@ const AppMain = (window.onload = async () => {
       // if(event.index > 0) Util.log('touch', { x, y, index, buttons, type, target }, container);
       if(event.buttons & 2) return cancel();
       if(!move) {
-        let box = Element.find('#main').firstElementChild;
+        let box = (e => {
+          do {
+            if(['main', 'console'].indexOf(e.getAttribute('id')) != -1) return e;
+          } while((e = e.parentElement));
+        })(target);
+        //        let box = Element.find('#main').firstElementChild;
+        console.log('box: ', box);
         window.move = move = Element.moveRelative(box);
       } else if(move && event.buttons == 0) {
         cancel();
@@ -781,7 +818,7 @@ const AppMain = (window.onload = async () => {
   );
 
   window.processEvents = async function eventLoop() {
-    for await (let e of touchEvents) {
+    for await (let e of new EventIterator('touch')) {
       const {
         altKey,
         bubbles,
@@ -827,7 +864,7 @@ const AppMain = (window.onload = async () => {
         y,
         ...event
       } = e;
-      LogJS.info(`${type} ` + /* Util.toSource(e)+ */ ` ${x},${y} → ${Element.xpath(target)}`);
+      // LogJS.info(`${type} ` + /* Util.toSource(e)+ */ ` ${x},${y} → ${Element.xpath(target)}`);
     }
   };
   processEvents();
@@ -872,7 +909,7 @@ const AppMain = (window.onload = async () => {
 
     const wheelPos = -event.deltaY.toFixed(2);
     zoomVal = altKey || ctrlKey || shiftKey ? 0 : Util.clamp(-100, 100, zoomVal + wheelPos * 0.1);
-    const zoom = Math.pow(10, zoomVal / 100).toFixed(5);
+    const zoom = Math.pow(10, zoomVal / 200).toFixed(5);
 
     let t = window.transform;
 
