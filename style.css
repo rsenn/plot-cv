@@ -437,7 +437,9 @@ input.search {
 .floating {
 }
 .floating:hover {
-  border: 4px solid hsla(350, 100%, 50%, 1);
+  outline: 4px dashed hsla(350, 100%, 50%, 1);
+ outline-radius: 0.5em;
+
   box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.5);
 }
 .floating,
