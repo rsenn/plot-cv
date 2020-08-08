@@ -8,8 +8,11 @@ import bodyParser from 'body-parser';
 import expressWs from 'express-ws';
 import { Alea } from './lib/alea.js';
 import { Message } from './message.js';
+import crypto from 'crypto';
 
 import { Console } from 'console';
+
+const hash = crypto.createHash('sha1');
 
 const prng = new Alea();
 prng.seed(Date.now());
@@ -208,36 +211,54 @@ function getDescription(file) {
 const descMap = Util.weakMapper(getDescription, new Map());
 
 const GetFilesList = async (dir = './tmp', opts = {}) => {
-  const { filter = '.*', descriptions = false } = opts;
-  const re = new RegExp(filter);
-  const f = ent => /\.(brd|sch|lbr)$/i.test(ent) && re.test(ent);
+  let { filter = '.*\\.(brd|sch|lbr)$', descriptions = false, names } = opts;
+  const re = new RegExp(filter, 'i');
+  const f = ent => re.test(ent);
 
-  return [...(await fs.promises.readdir(dir))]
-    .filter(f)
-    .map(entry => `${dir}/${entry}`)
-    .map(file => {
-      let description = descriptions ? descMap(file) : descMap.get(file);
-      //   console.log('descMap:', util.inspect(descMap, { depth: 1 }));
+  console.log('GetFilesList()', { filter, descriptions, names });
 
-      const { ctime, mtime, mode, size } = fs.statSync(file);
-      let obj = {
-        name: file,
-        mtime: '' + Util.unixTime(mtime),
-        time: '' + Util.unixTime(ctime),
-        mode: `0${(mode & 0o4777).toString(8)}`,
-        size: '' + size
-      };
-      if(typeof description == 'string') obj.description = description;
-      return obj;
-    });
+  if(!names) names = [...(await fs.promises.readdir(dir))].filter(f);
+
+  return Promise.all(
+    names
+      .map(entry => `${dir}/${entry}`)
+      .reduce((acc, file) => {
+        let description = descriptions ? descMap(file) : descMap.get(file);
+        //   console.log('descMap:', util.inspect(descMap, { depth: 1 }));
+        let obj = {
+          name: file
+        };
+        if(typeof description == 'string') obj.description = description;
+
+        acc.push(
+          fs.promises
+            .stat(file)
+            .then(({ ctime, mtime, mode, size }) =>
+              Object.assign(obj, {
+                mtime: Util.toUnixTime(mtime),
+                time: Util.toUnixTime(ctime),
+                mode: `0${(mode & 0o4777).toString(8)}`,
+                size: size
+              })
+            )
+            .catch(err => {})
+        );
+        return acc;
+      }, [])
+  ).then(a => a.filter(i => i != null));
 };
 
 app.get(/^\/files/, async (req, res) => res.json({ files: await GetFilesList() }));
 app.post(/^\/(files|list).html/, async (req, res) => {
   const { body } = req;
-  const { filter, descriptions } = body;
-  console.log('body:', body);
-  res.json({ files: await GetFilesList('tmp', { filter, descriptions }) });
+  let { filter, descriptions, names } = body;
+
+  if(names !== undefined) {
+    if(typeof names == 'string') names = names.split(/\n/g);
+    if(Util.isArray(names)) names = names.map(name => name.replace(/.*\//g, ''));
+  }
+
+  res.json({ files: await GetFilesList('tmp', { filter, descriptions, names }) });
 });
 
 app.get('/index.html', async (req, res) => {
@@ -250,7 +271,7 @@ app.post('/save', async (req, res) => {
   console.log('req.headers:', req.headers);
   console.log('save body:', typeof body == 'string' ? Util.abbreviate(body, 100) : body);
   const filename = req.headers['content-disposition'].replace(/.*"([^"]*)".*/, '$1') || 'output.svg';
-  let result = await fs.promises.writeFile(filename, body, { mode: 0o600, flag: 'w' });
+  let result = await fs.promises.writeFile('tmp/' + filename, body, { mode: 0o600, flag: 'w' });
   res.json({ result });
 });
 

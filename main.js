@@ -104,19 +104,24 @@ window.dom = { Element, SVG };
                           };*/
 const utf8Decoder = new TextDecoder('utf-8');
 
-const ListProjects = (window.list = async function(url = '/files.html') {
+const ListProjects = (window.list = async function(opts = {}) {
+  const url = '/files.html';
+  const { descriptions = true, names, filter } = opts;
+  console.log('ListProjects', { descriptions, names, filter });
   let response = await fetch(url, {
     method: 'POST',
     mode: 'cors', // no-cors, *cors, same-origin
     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
     credentials: 'same-origin', // include, *same-origin, omit
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ descriptions: true })
+    body: JSON.stringify({ descriptions, names, filter })
   });
   const reader = await (await response.body).getReader();
   let { value: chunk, done: readerDone } = await reader.read();
   chunk = chunk ? await utf8Decoder.decode(chunk) : '';
-  return chunk;
+
+  let ret = chunk ? JSON.parse(chunk) : null;
+  return ret;
 });
 
 const ElementToXML = (e, predicate) => {
@@ -158,7 +163,11 @@ const LoadFile = async filename => {
   return doc;
 };
 
-const SaveSVG = (window.save = async function save(filename = projectName, layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48, 51]) {
+const SaveSVG = (window.save = async function save(filename, layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48, 51]) {
+  const { doc } = project;
+  const { basename, typeName } = doc;
+  if(!filename) filename = `${doc.basename}.${doc.typeName}.svg`;
+
   let predicate = element => {
     if(!element.hasAttribute('data-layer')) return true;
     console.log('element:', element);
@@ -178,7 +187,7 @@ const SaveSVG = (window.save = async function save(filename = projectName, layer
     body: data
   });
   const result = { status, statusText, body };
-  console.log('saved', result);
+  LogJS.info(`${filename} saved.`);
   return result;
 });
 
@@ -366,6 +375,7 @@ const LoadDocument = async (project, parentElem) => {
       [...err.stack].map(f => (f + '').replace(Util.getURL() + '/', ''))
     );
   }*/
+  project.status = SaveSVG();
 
   return project;
 };
@@ -478,7 +488,7 @@ const AppMain = (window.onload = async () => {
       VERTICAL
     }
   );
-  Object.assign(window, { SaveSVG });
+  Object.assign(window, { ListProjects, LoadDocument, LoadFile, ChooseDocument, SaveSVG });
 
   Error.stackTraceLimit = 100;
 
@@ -490,7 +500,7 @@ const AppMain = (window.onload = async () => {
   });
 
   const logger = new Repeater(async (push, stop) => {
-    push(['DEBUG',null,null,'Load ready!']);
+    push(['DEBUG', null, null, 'Load ready!']);
     window.pushlog = push;
     await stop;
   });
@@ -556,8 +566,7 @@ const AppMain = (window.onload = async () => {
   let c = testComponent({});
   window.testComponent = c;
 
-  ListProjects('/files.html').then(response => {
-    let data = JSON.parse(response);
+  ListProjects().then(data => {
     let { files } = data;
     //console.log(`Got ${files.length} files`);
     function File(obj, i) {
@@ -575,7 +584,28 @@ const AppMain = (window.onload = async () => {
       return this.name;
     };
     projectFiles = window.files = files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i));
+
+    let svgFiles = projectFiles.reduce((acc, file) => {
+      if(/\.lbr$/i.test(file.name)) return acc;
+
+      file.svg = `${EagleDocument.baseOf(file.name)}.${EagleDocument.typeOf(file.name)}.svg`;
+      console.log(`file.svg = '${file.svg}'`);
+      //if(/undefined/.test(file.svg)) throw new Error(file.name);
+      return [...acc, file.svg];
+    }, []);
+
+    ListProjects({ descriptions: false, names: svgFiles }).then(data => {
+      for(let svgFile of data.files) {
+        const f = projectFiles.find(i => i.svg === svgFile.name);
+        const delta = svgFile.mtime - f.mtime;
+
+        f.modified = delta < 0;
+        //      console.log("svgFile:",svgFile.name, f.name, delta);
+      }
+    });
+
     LogJS.info(`retrieved project list. Got ${projectFiles.length} items.`);
+
     projects(projectFiles);
   });
 
@@ -650,13 +680,13 @@ const AppMain = (window.onload = async () => {
       for await (let msg of logger) yield msg;
     });
     if(result) {
-      console.log("result:",result);
+      //     console.log("result:",result);
       lines.push(result.value);
     }
     return h(
       'table',
       { className: 'logger', ref },
-      lines.slice(-10, lines.length).map(([type, d, t, m], i) => h('tr', {}, [h('td', { className: 'log sign' }, h('img', { className: 'log sign', src: `/static/${type.toLowerCase() || 'warn'}.svg`, style: { height: '1em', width: 'auto' } })), h('td', { className: 'log message' }, /*333*/ m + '')]))
+      lines.slice(-10, lines.length).map(([type, d, t, m], i) => h('tr', {}, [h('td', { className: 'log sign' }, h('img', { className: 'log sign', src: `/static/${type.toLowerCase() || 'warn'}.svg`, style: { height: '14px', width: 'auto', marginTop: '-1px' } })), h('td', { className: 'log message' }, /*333*/ m + '')]))
     );
   };
   dump({ ...dump(), test: 123 });
@@ -790,11 +820,40 @@ const AppMain = (window.onload = async () => {
           } while((e = e.parentElement));
         })(target);
         //        let box = Element.find('#main').firstElementChild;
-        console.log('box: ', box);
-        window.move = move = Element.moveRelative(box);
-      } else if(move && event.buttons == 0) {
-        cancel();
-      } else if(event.index > 0) {
+        const id = box && box.getAttribute('id');
+
+        if(id == 'console') {
+          const rects = [true, false].map(border => Element.rect(box, { border }));
+
+          let p = new Point(start.x + x, start.y + y);
+          console.log('', p);
+          const inside = rects.map(r => r.inside(p));
+
+          const inBorder = inside[0] && !inside[1];
+
+          function mod(n, m) {
+            return ((n % m) + m) % m;
+          }
+
+          let rad = p.diff(rects[0].center).toAngle();
+          let deg = Math.round((rad * 180) / Math.PI);
+          let sector = mod(Math.floor(((180 - deg) * 8) / 360), 8);
+
+          let directions = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'];
+
+          let norm = Point.fromAngle(rad, 1);
+          console.log('box: ', id, ...inside, inBorder, p, { sector, deg });
+          let compass = directions[sector];
+
+          box.style.cursor = `${compass}-resize`;
+        }
+
+        if(box) window.move = move = Element.moveRelative(box, null, id == 'console' ? ['right', 'bottom'] : ['left', 'top']);
+        return;
+      }
+      if(move && event.buttons == 0) return cancel();
+
+      if(event.index > 0) {
         let rel = new Point(event);
         let absolute = new Point(start).add(rel);
 
@@ -830,7 +889,7 @@ const AppMain = (window.onload = async () => {
         clientY,
         composed,
         ctrlKey,
-        //  currentTarget,
+        //  curFcrentTarget,
         //    defaultPrevented,
         detail,
         eventPhase,
