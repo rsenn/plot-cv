@@ -9,8 +9,11 @@ import expressWs from 'express-ws';
 import { Alea } from './lib/alea.js';
 import { Message } from './message.js';
 import crypto from 'crypto';
-
+import fetch from 'isomorphic-fetch';
 import { Console } from 'console';
+import { exec, spawn, fork, execFile } from 'promisify-child-process';
+
+const port = process.env.PORT || 3000;
 
 const hash = crypto.createHash('sha1');
 
@@ -37,6 +40,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.raw({ type: 'application/octet-stream', limit: '16384kb' }));
 app.use(bodyParser.raw({ type: 'multipart/mixed', limit: '16384kb' }));
 
+app.use((req, res, next) => {
+  res.append('Access-Control-Allow-Origin', `https://api.github.com, http://127.0.0.1:${port}`);
+  res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.append('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization');
+  res.append('Access-Control-Allow-Credentials', 'true');
+  next();
+});
+
 let sockets = [];
 
 const removeItem = (arr, item, key = 'ws') => {
@@ -44,6 +55,52 @@ const removeItem = (arr, item, key = 'ws') => {
   if(i != -1) arr.splice(i, 1);
 
   return arr;
+};
+const convertToGerber = async (boardFile, opts = {}) => {
+  const { layers = ['Bottom', 'Pads', 'Vias'], format = 'GERBER_RS274X', data = false } = opts;
+  const base = path.basename(boardFile, '.brd');
+  const formatToExt = (layers, format) => {
+    if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER')) return 'GBL';
+    if(format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1) return 'txt';
+    return 'rs274x';
+  };
+  const gerberFile = `./tmp/${base}.${formatToExt(layers, format)}`;
+  const cmd = `eagle -X -d ${format} -o "${gerberFile}" "${boardFile}" ${layers.join(' ')}`;
+
+  console.info(`executing '${cmd}'`);
+  const child = exec(cmd, {});
+  // do whatever you want with `child` here - it's a ChildProcess instance just
+  // with promise-friendly `.then()` & `.catch()` functions added to it!
+  let output = '';
+  child.stdout.on('data', data => (output += data));
+  child.stderr.on('data', data => (output += data));
+  const { stdout, stderr, code, signal } = await child;
+
+  console.info(`code: ${code}`);
+  console.info(`output: ${output}`);
+
+  if(code !== 0) throw new Error(output);
+
+  if(output) output = output.replace(/ *\r*\n/g, '\n');
+
+  let result = { code, output };
+
+  if(data) result.data = await (await fsPromises.readFile(gerberFile)).toString();
+  else result.file = gerberFile;
+
+  return result;
+};
+
+const ListGithubRepo = async (owner, repo, dir, filter) => {
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${dir}`;
+  let response = await fetch(url);
+  let result = JSON.parse(await response.text());
+  console.log('result', result);
+  if(filter) {
+    const re = new RegExp(filter, 'g');
+    result = result.filter(({ name }) => re.test(name));
+  }
+  return result;
 };
 
 function Socket(ws, info) {
@@ -247,7 +304,50 @@ const GetFilesList = async (dir = './tmp', opts = {}) => {
       }, [])
   ).then(a => a.filter(i => i != null));
 };
+/*app.param(['owner', 'repo','dir'], function (req, res, next, value) {
+  console.log('CALLED ONLY ONCE with', value)
+  next()
+})
+*/
+function FilesURLs(list) {
+  const base_url = list[0].replace(/\/[^\/]*$/, '');
+  const files = list.map(url => url.replace(/.*\//g, ''));
+  return { base_url, files };
+}
 
+app.get(/\/github/, async (req, res) => {
+  const url = Util.parseURL(req.url);
+  const { query } = url;
+  let result;
+  const { owner, repo, dir, filter } = query;
+  result = await ListGithubRepo(owner, repo, dir, filter && new RegExp(filter, 'g'));
+  res.json(FilesURLs(result.map(file => file.download_url)));
+});
+
+app.post(/\/github.*/, async (req, res) => {
+  const { body } = req;
+  let result;
+  const { owner, repo, dir, filter } = body;
+  result = await ListGithubRepo(owner, repo, dir, filter && new RegExp(filter, 'g'));
+  res.json(FilesURLs(result.map(file => file.download_url)));
+});
+
+app.post(/^\/gerber/, async (req, res) => {
+  const { body } = req;
+  let { board, ...opts } = body;
+
+  let result;
+
+  console.log('gerber', { board, opts });
+
+  try {
+    result = await convertToGerber(board, opts);
+  } catch(error) {
+    result = { error };
+  }
+
+  res.json(result);
+});
 app.get(/^\/files/, async (req, res) => res.json({ files: await GetFilesList() }));
 app.post(/^\/(files|list).html/, async (req, res) => {
   const { body } = req;
@@ -278,8 +378,6 @@ app.post('/save', async (req, res) => {
 app.get('/', (req, res) => {
   res.redirect(302, '/index.html');
 });
-const port = process.env.PORT || 3000;
-
 app.listen(port, () => {
   //console.log(`Ready at http://127.0.0.1:${port}`);
 });

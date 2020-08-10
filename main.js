@@ -130,9 +130,23 @@ const ElementToXML = (e, predicate) => {
   return Element.toString(x, { newline: '\n' });
 };
 
+const FetchURL = async (url, opts) => {
+  let result;
+  let ret;
+
+  try {
+    result = await fetch(url, opts);
+    ret = await result.text();
+  } catch(error) {
+    result = { error };
+    ret = error.message;
+  }
+  return ret;
+};
+
 const FileSystem = {
   async readFile(filename) {
-    return await fetch(`/static/${filename}`).then(async res => await (await res).text());
+    return await FetchURL(`/static/${filename}`);
   },
   async writeFile(filename, data, overwrite = true) {
     return await fetch('/save', {
@@ -149,7 +163,8 @@ const FileSystem = {
 };
 
 const LoadFile = async filename => {
-  let xml = await fetch(`/static/${filename}`).then(async res => await (await res).text());
+  const url = /:\/\//.test(filename) ? filename : `/static/${filename}`;
+  let xml = await FetchURL(url);
   //console.log('xml: ', xml.substring(0, 100));
   //let dom = new DOMParser().parseFromString(xml, 'application/xml');
 
@@ -203,59 +218,135 @@ const ModifyColors = fn => e => {
   }
 };
 
+const BoardToGerber = async (board, opts = {}) => {
+  let response;
+
+  let request = { ...opts, board };
+
+  try {
+    response = await FetchURL('/gerber', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(request) });
+  } catch(err) {}
+  return JSON.parse(response);
+};
+
+const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
+  const { username, password } = opts;
+  let host, path;
+  if(new RegExp('://').test(owner) || (repo == null && dir == null)) {
+    const url = owner;
+    let parts = url
+      .replace(/.*:\/\//g, '')
+      .replace('/tree/master', '')
+      .split('/');
+    while(!/github.com/.test(parts[0])) parts = parts.slice(1);
+    [host, owner, repo, ...path] = parts;
+
+    dir = path.join('/');
+  }
+
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${dir}`;
+  console.log('ListGithubRepo', { host, owner, repo, dir, filter, url });
+  let response = await fetch(url, {
+    method: 'get', // credentials: 'include',
+    headers: {
+      Authorization: 'Basic ' + window.btoa(`${username}:${password}`)
+    }
+  });
+  let result = JSON.parse(await response.text());
+
+  if(!Util.isArray(result)) return result;
+
+  if(filter) {
+    const re = new RegExp(filter, 'g');
+    result = result.filter(({ name, type }) => type == 'dir' || re.test(name));
+  }
+  console.log('result:', result);
+  const firstFile = result.find(r => !!r.download_url);
+  const base_url = firstFile ? firstFile.download_url.replace(/\/[^\/]*$/, '') : '';
+  const files = result.map(({ download_url = '', html_url, name, type, size, path, sha }) => ({ url: (download_url || html_url || '').replace(base_url + '/', ''), name, type, size, path, sha }));
+  return Object.assign(
+    files.map(file => ({
+      ...file,
+      toString() {
+        return this.url;
+      }
+    })),
+    {
+      base_url,
+      at(i) {
+        let url = files[i].url;
+        if(!/:\/\//.test(url)) url = base_url + '/' + url;
+        return url;
+      },
+      async get(i) {
+        return await FetchURL(this.at(i));
+      },
+      get files() {
+        return files.filter(item => item.type != 'dir');
+      },
+      get dirs() {
+        return files
+          .filter(item => item.type == 'dir')
+          .map(dir => {
+            //          console.log('dir.url', dir.url);
+            dir.list = (f = filter) => ListGithubRepo(dir.url, null, null, f, opts);
+            return dir;
+          });
+      }
+    }
+  );
+};
+
+const ListGithubRepoServer = async (owner, repo, dir, filter) => {
+  let response;
+  let request = { owner, repo, dir, filter };
+  try {
+    response = await FetchURL('/github', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(request) });
+  } catch(err) {}
+  let ret = JSON.parse(response);
+  ret.at = function(i) {
+    return this.base_url + '/' + this.files[i];
+  };
+  ret.get = async function(i) {
+    let data = await FetchURL(this.at(i));
+    return data;
+  };
+  return ret;
+};
+
 const LoadDocument = async (project, parentElem) => {
   Util.log('project.name:', project.name);
-
   project.doc = await LoadFile(project.name);
-
   LogJS.info(`${project.name} loaded.`);
-
   documentTitle(project.doc.file.replace(/.*\//g, ''));
-
   window.eagle = project.doc;
   window.project = project;
-
   Element.remove('#fence');
-
   let docElem = Element.find('#doc');
   docElem.innerHTML = '';
-
   Util.log('project.doc:', project.doc.file);
-
   project.renderer = new Renderer(project.doc, ReactComponent.append, debug);
   Util.log('project.renderer', project.renderer);
-
   let style = { width: '100%', height: '100%', position: 'relative' };
   let component = project.renderer.render(project.doc, null, {});
-
   LogJS.info(`${project.name} rendered.`);
-
   window.component = project.component = component;
-
   Util.log('testRender:', component);
-
   let element = Element.find('#main');
   let r = project.renderer.rect || project.renderer.bounds;
-
   Util.log('project.renderer:', project.renderer);
   Util.log('r:', r);
-
   let aspectRatio = 1;
-
   if(r) {
     aspectRatio = r.width / r.height;
     sizeListener({ width: r.width });
   }
-
   aspectListener(aspectRatio);
-
   const Fence = ({ children, style = {}, sizeListener, aspectListener, ...props }) => {
     const [dimensions, setDimensions] = useState(sizeListener());
     const [aspect, setAspect] = useState(aspectListener());
-
     if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
     if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
-
     return h(
       TransformedElement,
       {
@@ -275,7 +366,6 @@ const LoadDocument = async (project, parentElem) => {
       children
     );
   };
-
   component = h(
     Fence,
     {
@@ -291,14 +381,9 @@ const LoadDocument = async (project, parentElem) => {
   let object = ReactComponent.toObject(component);
   project.object = object;
   let rendered = object.children[0];
+
   Util.log('rendered:', rendered);
-  /*
-  for(let [item, path] of deep.iterate(object, v => Util.isObject(v) && v['data-path'])) {
-    let p = path.reduce((a, i) => (i == 'children' ? [...a, 'props', 'children'] : [...a, +i]), []); //, {tagField: 'type', specialFields: ['props']});
-    let o = path.slice(0, 4 * 2 - 1).reduce((a, i) => a && a[i], object);
-    let c = p.slice(0, 4 * 3 - 1).reduce((a, i) => a && a[i], component);
-  }
-*/
+
   let eagle2dom = [...Element.findAll('*[data-path]')];
 
   eagle2dom = eagle2dom.map(e => [e.getAttribute('data-path'), e]);
@@ -380,11 +465,12 @@ const LoadDocument = async (project, parentElem) => {
   return project;
 };
 
-const ChooseDocument = async (e, project, i) => {
+const ChooseDocument = async (project, i) => {
   let r;
-  const { type } = e;
+  if(i == undefined) i = project.i || projectFiles.indexOf(project);
+
   const box = Element.findAll('.file')[i];
-  Util.log('ChooseDocument:', { e, project, i, box });
+  Util.log('ChooseDocument:', { project, i, box });
   LogJS.info(`${project.name} selected.`);
   try {
     if(!project.loaded) {
@@ -408,7 +494,7 @@ const MakeFitAction = index => async () => {
   let prect = Element.rect(parent);
   let svg = Element.find('svg', parent);
   let container = [...Element.findAll('.aspect-ratio-box-size', parent)].reverse()[0];
-  //console.log('container:', container);
+  console.log('container:', container);
   let oldSize = Element.rect(container);
   let brect = Element.rect('.buttons');
   let srect = Element.rect(svg);
@@ -420,13 +506,41 @@ const MakeFitAction = index => async () => {
   let f = srect.fit(prect);
   let newSize = f[index].round(0.0001);
   let affineTransform = Matrix.getAffineTransform(oldSize.toPoints(), newSize.toPoints());
+  /*console.log('oldSize:', oldSize);
+  console.log('newSize:', newSize);*/
+
+  let oldTransform = window.transform.clone();
+  // console.log('oldTransform:', oldTransform);
+  let oldFactor = oldTransform.scaling.x;
+  console.log('oldFactor:', oldFactor);
+
+  const zoom = Math.pow(10, zoomVal / 200).toFixed(5);
+  console.log('zoom:', zoom);
+
   let transform = affineTransform.decompose();
+  console.log('transform:', transform);
   //console.log(`fitAction(${index})`, { oldSize, newSize, transform });
   let factor = transform.scale.x;
-  //console.log('zoom factor:', factor);
+  console.log('factor:', factor);
+  let newFactor = zoom * factor;
+  console.log('newFactor:', newFactor);
+
+  let newTransform = new TransformationList().scale(newFactor, newFactor);
+  console.log('newTransform:', newTransform);
+
+  /*
+let newScaling = newTransform.scaling;
+  console.log('newScaling:', newScaling);
+newScaling.x *= factor;
+newScaling.y *= factor;
+newTransform[0] = newScaling;
+*/
   let delay = Math.abs(Math.log(factor) * 1000);
-  //console.log('transition delay:', delay);
-  await Element.transition(container, { ...newSize.toCSS(), transform: '', position: 'absolute' }, delay + 'ms', 'linear');
+  //Element.setCSS(container, { ...oldSize.toCSS(), transform: '', position: 'absolute' });
+  //await Element.transition(container, { ...newSize.toCSS()/*, transform: '', position: 'absolute'*/ }, delay + 'ms', 'linear');
+  await Element.transition(container, { transform: newTransform }, delay + 'ms', 'linear');
+  window.transform = newTransform;
+  zoomVal = Math.log10(newFactor) * 200;
 };
 
 const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
@@ -464,6 +578,22 @@ let socket = trkl();
 const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 
 const AppMain = (window.onload = async () => {
+  Util(globalThis);
+
+  //prettier-ignore
+  Object.assign(window, { BBox, ChooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, LoadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas, BoardToGerber, ListGithubRepo, ListGithubRepoServer });
+  Object.assign(
+    window,
+    {
+      PrimitiveComponents,
+      ElementNameToComponent,
+      ElementToComponent,
+      Wire,
+      Instance,
+      SchematicSymbol
+    },
+    { Emitter, EventIterator }
+  );
   Object.assign(
     window,
     { LogJS },
@@ -539,23 +669,6 @@ const AppMain = (window.onload = async () => {
     }
   });
 
-  Util(globalThis);
-
-  //prettier-ignore
-  Object.assign(window, { BBox, ChooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, LoadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas });
-  Object.assign(
-    window,
-    {
-      PrimitiveComponents,
-      ElementNameToComponent,
-      ElementToComponent,
-      Wire,
-      Instance,
-      SchematicSymbol
-    },
-    { Emitter, EventIterator }
-  );
-
   const inspectSym = Symbol.for('nodejs.util.inspect.custom');
 
   const testComponent = props =>
@@ -584,13 +697,10 @@ const AppMain = (window.onload = async () => {
       return this.name;
     };
     projectFiles = window.files = files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i));
-
     let svgFiles = projectFiles.reduce((acc, file) => {
       if(/\.lbr$/i.test(file.name)) return acc;
-
       file.svg = `${EagleDocument.baseOf(file.name)}.${EagleDocument.typeOf(file.name)}.svg`;
-      console.log(`file.svg = '${file.svg}'`);
-      //if(/undefined/.test(file.svg)) throw new Error(file.name);
+      //console.log(`file.svg = '${file.svg}'`);
       return [...acc, file.svg];
     }, []);
 
@@ -598,9 +708,7 @@ const AppMain = (window.onload = async () => {
       for(let svgFile of data.files) {
         const f = projectFiles.find(i => i.svg === svgFile.name);
         const delta = svgFile.mtime - f.mtime;
-
         f.modified = delta < 0;
-        //      console.log("svgFile:",svgFile.name, f.name, delta);
       }
     });
 
@@ -694,12 +802,8 @@ const AppMain = (window.onload = async () => {
   const Dumper = props => {
     const [values, setValues] = useState(dump());
     let lines = [];
-
     dump.subscribe(value => setValues(value));
-
-    for(let [key, value] of Object.entries(values)) {
-      lines.push([key, value]);
-    }
+    for(let [key, value] of Object.entries(values)) lines.push([key, value]);
     return h(
       'table',
       { border: '0', cellpadding: 3, cellspacing: 0, className: 'dumper' },
@@ -747,12 +851,12 @@ const AppMain = (window.onload = async () => {
         h(Button, {
           //  caption: '↔',
           fn: MakeFitAction(0),
-          image: '/static/fit-horizontal.svg'
+          image: '/static/fit-vertical.svg'
         }),
         h(Button, {
           //  caption: '↕',
           fn: MakeFitAction(1),
-          image: '/static/fit-vertical.svg'
+          image: '/static/fit-horizontal.svg'
         }),
         h(DynamicLabel, { className: 'vcenter pad-lr', caption: documentTitle }),
         h(Consumer, {})
@@ -785,7 +889,7 @@ const AppMain = (window.onload = async () => {
         })
       ]),*/
       html`
-        <${FileList} files=${projects} onActive=${open} onChange=${ChooseDocument} filter=${searchFilter} showSearch=${showSearch} changeInput=${changeInput} focusSearch=${focusSearch} currentInput=${currentSearch} />
+        <${FileList} files=${projects} onActive=${open} onChange=${(e, p, i) => ChooseDocument(p, i)} filter=${searchFilter} showSearch=${showSearch} changeInput=${changeInput} focusSearch=${focusSearch} currentInput=${currentSearch} />
       `,
       h(CrossHair, { ...crosshair }),
       h(FloatingPanel, { onSize: logSize, className: 'no-select', id: 'console' }, [
@@ -793,8 +897,12 @@ const AppMain = (window.onload = async () => {
         h(Dumper, {}),
         h(Commander, {
           onCommand: cmdStr => {
+            let fn = new Function(`return ${cmdStr};`);
+
             console.log('Command:', cmdStr);
             LogJS.info(`> ${cmdStr}`);
+            let result = fn();
+            LogJS.info(`= ${Util.toSource(result)}`);
           }
         })
       ])
@@ -858,8 +966,8 @@ const AppMain = (window.onload = async () => {
         let absolute = new Point(start).add(rel);
 
         if(move) {
-          window.crosshair.show = true;
-          window.crosshair.position = absolute;
+          /*  window.crosshair.show = true;
+          window.crosshair.position = absolute;*/
 
           //          Util.log('move', ...[...rel], ...[...absolute]);
           if(true || event.buttons > 0) move(rel.x, rel.y);
@@ -971,13 +1079,14 @@ const AppMain = (window.onload = async () => {
     const zoom = Math.pow(10, zoomVal / 200).toFixed(5);
 
     let t = window.transform;
+    console.log('t:', t);
 
     if(!t.scaling) t.scale(zoom, zoom);
     else {
       t.scaling.x = zoom;
       t.scaling.y = zoom;
     }
-
+    console.log('window.transform:', window.transform);
     window.transform = new TransformationList(t);
   });
 
