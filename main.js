@@ -120,7 +120,7 @@ const ListProjects = async function(opts = {}) {
   let response;
 
   if(!url) {
-    response = await FetchURL('/files.html', {
+    response = await fetch('/files.html', {
       //      nocache: true,
       method: 'post',
       mode: 'cors', // no-cors, *cors, same-origin
@@ -129,7 +129,10 @@ const ListProjects = async function(opts = {}) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ descriptions, names, filter })
     });
-    //console.log('response:', response);
+
+    if(typeof response.text == 'function') response = await response.text();
+
+    console.log('response:', Util.abbreviate(response));
 
     if(response) response = JSON.parse(response);
   } else {
@@ -299,7 +302,7 @@ const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
   const headers = {
     Authorization: 'Basic ' + window.btoa(`${username}:${password}`)
   };
-  let response = await fetch(url, {
+  let response = await FetchURL(url, {
     //method: 'get', // credentials: 'include',
     headers
   });
@@ -500,12 +503,14 @@ const LoadDocument = async (project, parentElem) => {
 
   let { name, data, doc, svg, bbox } = project;
   let bounds = doc.getBounds();
-  let rect = bounds.rect;
+  let rect = bounds.toRect(Rect.prototype);
   let size = new Size(r);
   currentProj(project);
   size.mul(doc.type == 'brd' ? 2 : 1.5);
   let svgrect = SVG.bbox(project.svg);
 
+  let measures = new BBox().update(doc.getMeasures(true)).toRect(Rect.prototype);
+  console.log('measures:', measures);
   //project.aspectRatio = svgrect.aspect();
 
   Element.attr(project.svg, {
@@ -777,7 +782,7 @@ const AppMain = (window.onload = async () => {
         file.name = name;
         file.i = i;
         trkl.bind(file, { data });
-        LogJS.info(`Got file '${name.replace(/.*\//g, '')}'`);
+        LogJS.info(`Got file '${name.replace(/.*:\/\//g, '').replace(/raw.githubusercontent.com/, 'github.com') || name.replace(/.*\//g, '')}'`);
 
         return file;
       }
@@ -835,12 +840,12 @@ const AppMain = (window.onload = async () => {
 
   trkl.bind(window, { searchFilter, listURL });
 
-  trkl.bind(window, {zoomVal: zoomLog});
+  trkl.bind(window, { zoomVal: zoomLog });
 
   zoomLog.subscribe(value => {
     const zoomFactor = ZoomFactor(value);
-    console.log("zoomFactor changed", zoomFactor);
-    if(value === 1)throw new Error(value);
+    console.log('zoomFactor changed', zoomFactor);
+    if(value === 1) throw new Error(value);
   });
 
   const updateIfChanged = (trkl, newValue, callback) => {
@@ -1213,7 +1218,7 @@ const AppMain = (window.onload = async () => {
 
     const wheelPos = -event.deltaY.toFixed(2);
     zoomVal = altKey || ctrlKey || shiftKey ? 0 : Util.clamp(-100, 100, zoomVal + wheelPos * 0.1);
-AdjustZoom();
+    AdjustZoom();
   });
 
   console.error('AppMain done');
@@ -1224,20 +1229,23 @@ AdjustZoom();
     let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
   }*/
 });
-function ZoomFactor(val) { return Math.pow(10, val / 200).toFixed(5); }
-function AdjustZoom() {const zoom = ZoomFactor(zoomVal);
+function ZoomFactor(val) {
+  return Math.pow(10, val / 200).toFixed(5);
+}
+function AdjustZoom() {
+  const zoom = ZoomFactor(zoomVal);
 
-    let t = window.transform;
-    //console.log('t:', t);
+  let t = window.transform;
+  //console.log('t:', t);
 
-    if(!t.scaling) t.scale(zoom, zoom);
-    else {
-      t.scaling.x = zoom;
-      t.scaling.y = zoom;
-    }
-    //console.log('window.transform:', window.transform);
-    window.transform = new TransformationList(t);
-};
+  if(!t.scaling) t.scale(zoom, zoom);
+  else {
+    t.scaling.x = zoom;
+    t.scaling.y = zoom;
+  }
+  //console.log('window.transform:', window.transform);
+  window.transform = new TransformationList(t);
+}
 
 const Module = {
   noInitialRun: true,
