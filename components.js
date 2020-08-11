@@ -50,7 +50,7 @@ export const MouseEvents = h => ({
   onMouseUp: h
 });
 
-export const Overlay = ({ className = 'overlay', active = false, onPush, text, children, ...props }) => {
+export const Overlay = ({ className = 'overlay', title, tooltip, active = false, onPush, text, children, ...props }) => {
   const [pushed, setPushed] = useState(false);
   const events = MouseEvents(
     MouseHandler((e, state) => {
@@ -63,12 +63,21 @@ export const Overlay = ({ className = 'overlay', active = false, onPush, text, c
       return typeof onPush == 'function' ? onPush(e, state) : null;
     })
   );
+  /*
+if(!Util.isArray(children)) {
+  if(typeof(children) == 'string')
+  children = [children];
+else
+  children = [];
+}
 
-  return html`
-    <div className=${classNames(className, pushed && 'pushed', active ? 'active' : 'inactive')} ...${props} ...${events}>
-      ${text} ${children}
-    </div>
-  `;
+  if(text)
+    children.unshift(text);
+*/
+  if(typeof title == 'string' && title.length > 0) props.title = title;
+  if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
+
+  return h('div', { className: classNames(className, pushed && 'pushed', active ? 'active' : 'inactive'), ...props, ...events }, children);
 };
 
 export const Container = ({ className = 'panel', children, ...props }) => {
@@ -112,12 +121,13 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
   return h(Overlay, { ref, className: classNames('floating', hidden && 'hidden', className), ...props, style }, children);
 };
 
-export const Label = ({ className, text, children, ...props }) =>
-  html`
-    <div className=${classNames('label', className)} ...${props}>${text}${children}</div>
-  `;
+export const Label = ({ className, text, title, tooltip, children, ...props }) => {
+  if(typeof title == 'string' && title.length > 0) props.title = title;
+  if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
+  return h('div', { className: classNames('label', className), ...props }, (text ? [text] : []).concat(children));
+};
 
-export const DynamicLabel = ({ caption, children, ...props }) => {
+export const DynamicLabel = ({ caption, title, children, ...props }) => {
   const [text, setText] = useState(caption());
 
   caption.subscribe(value => setText(value));
@@ -125,11 +135,12 @@ export const DynamicLabel = ({ caption, children, ...props }) => {
   return h(Label, { ...props, text }, []);
 };
 
-export const Item = ({ className = 'item', label, icon, children, ...props }) => html`
-            <${Overlay} className=${className}  ...${props}>
-                <${Label} text=${icon}>${label}</${Label}>
-            </${Overlay}>
-          `;
+export const Item = ({ className = 'item', title, tooltip, label, icon, children, ...props }) => {
+  if(typeof title == 'string' && title.length > 0) props.title = title;
+  if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
+
+  return h(Overlay, { className, ...props }, h(Label, { text: icon }, label));
+};
 
 export const Icon = ({ className = 'icon', caption, image, ...props }) => html`
   <div className=${className} ...${props}>${caption}<img src=${image} /></div>
@@ -266,7 +277,7 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
   }
   label = label.replace(/\.[^.]*$/, '').replace(/([^\s])-([^\s])/g, '$1 $2');
   let ext = name.replace(/.*\//g, '').replace(/.*\./g, '');
-  label = h('span', { className: 'label' }, [Util.wordWrap(label, 50, '\n') /*+ '.' + ext*/]);
+  label = h(Label, { text: Util.wordWrap(label, 50, '\n') });
   if(description) {
     let s = Util.multiParagraphWordWrap(Util.stripXML(Util.decodeHTMLEntities(description)), 60, '\n');
 
@@ -284,11 +295,7 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
   //data = signal();
   //Util.log(`File`, { name, label });
 
-  return html`
-              <${Item} className=${className} id=${id} data-filename="${name}" onPush=${onPush} label=${label} icon=${icon} ...${props}>
-              <${Progress} className=${!isNaN(loaded) ? 'visible' : 'hidden'} percent=${loaded} />
-              </${Item}>
-            `;
+  return h(Item, { className, id, 'data-filename': name, label, onPush, icon, ...props }, h(Progress, { className: !isNaN(loaded) ? 'visible' : 'hidden', percent: loaded }));
 };
 
 export const Chooser = ({ className = 'list', itemClass = 'item', itemComponent = Overlay, itemFilter, items, onChange = () => {}, onPush = () => {}, ...props }) => {
@@ -324,7 +331,8 @@ export const Chooser = ({ className = 'list', itemClass = 'item', itemComponent 
   const preFilter = filter
     .replace(/\|/g, ' | ')
     .replace(/\+/, ' +')
-    .split(/\s+/g);
+    .split(/\s+/g)
+    .filter(p => !/:\/\//.test(p));
   const plus = list2re(preFilter.filter(p => p.startsWith('+')).map(p => p.replace(/\+/g, '')));
   const rest = preFilter.filter(p => !p.startsWith('+')).join(' ');
   console.log('filter', { plus, rest });
@@ -338,20 +346,26 @@ export const Chooser = ({ className = 'list', itemClass = 'item', itemComponent 
   const other = items.filter(({ name }) => !pred(name)).map(i => i.name);
   const children = items
     .filter(({ name }) => pred(name))
-    .map(({ name, description, i, data, ...item }, key) =>
-      //Util.log(`Chooser item #${i}:`, { name, data, item });
-      h(itemComponent, {
+    .map(({ name, description, i, title, data, ...item }, key) => {
+      //Util.log(`Chooser item #${i}:`, {keys:Object.keys(item),data});
+      let tooltip = `name\t${name.replace(/.*\//g, '')}`;
+      tooltip += `\ntype\t${item.type}\nsize\t${item.size}\nsha\t${item.sha}\npath\t${item.path}`;
+
+      if(data) tooltip += `\ndata\t${Util.abbreviate(data)}`;
+
+      return h(itemComponent, {
         key: i,
         i,
         className: classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
         active: i == active,
         onPush: pushHandler(i),
         label: name.replace(/.*\//, ''),
+        tooltip,
         name,
-        description /*,
-      ...item*/
-      })
-    );
+        description,
+        ...item
+      });
+    });
   return html`<${Container} className=${classNames('panel', 'no-select', className)} ...${props}>${children}</${Container}>`;
 };
 

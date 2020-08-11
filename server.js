@@ -363,7 +363,7 @@ app.post(/^\/(files|list).html/, async (req, res) => {
 
 app.get('/index.html', async (req, res) => {
   let data = await fs.promises.readFile(path.join(p, 'index.html'));
-  res.send(data.toString().replace(/<\?TS\?>/, Util.unixTime() + ''));
+  res.send(data.toString().replace(/<\?TS\?>/g, Util.unixTime() + ''));
 });
 
 app.post('/save', async (req, res) => {

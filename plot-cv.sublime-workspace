@@ -4,6 +4,22 @@
 		"selected_items":
 		[
 			[
+				"isAu",
+				"isAutoHiding\tparameter"
+			],
+			[
+				"en",
+				"createElement"
+			],
+			[
+				"ListGit",
+				"ListGithubRepoServer\twarning"
+			],
+			[
+				"Bo",
+				"BoardToGerber\twarning"
+			],
+			[
 				"ECMAS",
 				"ECMAScriptValue"
 			],
@@ -64,38 +80,10 @@
 	"buffers":
 	[
 		{
-			"contents": "add\nuseSlot\n() =>\nv =>\ntrklGetSet\nvalue =>\nuseTrkl\n() =>\nvalue =>\nclassNames\narg =>\nMouseEvents\n.list\nElementToXML\nasync readFile(filename)\nasync res =>\nasync writeFile(filename, data, overwrite = true)\nasync exists(filename)\nasync realpath(filename)\nLoadFile\nasync res =>\n.save\npredicate\nModifyColors\ne =>\nLoadDocument\nFence\nvalue =>\nvalue =>\ne =>\n([p, e]) =>\n([p, e]) =>\n([p, r, e]) =>\n([k, v]) =>\n(key, value) =>\n(key, value) =>\n(key, value) =>\n(key, value) =>\nChooseDocument\nMakeFitAction\nasync () =>\nCreateWebSocket\n.send\narg =>\n.onload\nasync (push, stop) =>\n() =>\nasync (push, stop) =>\nRegisterEventHandler\nasync (push, stop) =>\nhandler\nev =>\nev =>\n.keystroke\n(key, modifiers = 0) =>\n.focusSearch\nvalue =>\n() =>\ntestComponent\nresponse =>\nFile\nFile.prototype.toString\n(a, b) =>\n(obj, i) =>\nws =>\nvalue =>\nchangeInput\nConsumer\nasync function*()\nextends\nlog\nLogger\nasync function*()\n([type, d, t, m], i) =>\nDumper\nvalue =>\n([k, v], i) =>\nCommander\nhandler\nfn: e\nonCommand: cmdStr\nevent =>\ncancel\n.processEvents\nevent =>\nonRuntimeInitialized: ()\nprint: txt",
+			"file": "lib/tlite.js",
 			"settings":
 			{
-				"buffer_size": 1058,
-				"line_ending": "Unix",
-				"name": "𝌆 Outline",
-				"scratch": true
-			}
-		},
-		{
-			"file": "lib/dom/element.js",
-			"settings":
-			{
-				"buffer_size": 31329,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-geom.js",
-			"settings":
-			{
-				"buffer_size": 2816,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "components.js",
-			"settings":
-			{
-				"buffer_size": 27177,
-				"encoding": "UTF-8",
+				"buffer_size": 6161,
 				"line_ending": "Unix"
 			}
 		},
@@ -103,75 +91,8 @@
 			"file": "main.js",
 			"settings":
 			{
-				"buffer_size": 31505,
+				"buffer_size": 41403,
 				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/components/instance.js",
-			"settings":
-			{
-				"buffer_size": 1492,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/boardRenderer.js",
-			"settings":
-			{
-				"buffer_size": 8999,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "style.css",
-			"settings":
-			{
-				"buffer_size": 10119,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/geom/voronoi.js",
-			"settings":
-			{
-				"buffer_size": 54737,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "static/warn.svg",
-			"settings":
-			{
-				"buffer_size": 3564,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "error.svg",
-			"settings":
-			{
-				"buffer_size": 2226,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-ecmascript.js",
-			"settings":
-			{
-				"buffer_size": 5849,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-voronoi.js",
-			"settings":
-			{
-				"buffer_size": 4263,
 				"line_ending": "Unix"
 			}
 		}
@@ -187,6 +108,22 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"svgo",
+				"SVGO: Prettify SVG"
+			],
+			[
+				"mini",
+				"SVGO: Minify SVG"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"add re",
+				"Package Control: Add Repository"
+			],
 			[
 				"install p",
 				"Package Control: Install Package"
@@ -214,14 +151,6 @@
 			[
 				"shell",
 				"Set Syntax: ShellScript Improved"
-			],
-			[
-				"install",
-				"Package Control: Install Package"
-			],
-			[
-				"add re",
-				"Package Control: Add Repository"
 			],
 			[
 				"scheme",
@@ -281,53 +210,107 @@
 	"expanded_folders":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
-		"/home/roman/Dokumente/Sources/plot-cv/lib",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components"
+		"/home/roman/Dokumente/Sources/plot-cv/lib"
 	],
 	"file_history":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv/components.js",
-		"/home/roman/Dokumente/Sources/plot-cv/style.css",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/cacheStorage.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/cache.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/draw/colorMap.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/behave.js",
 		"/home/roman/Dokumente/Sources/plot-cv/main.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/lscache.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/server.js",
+		"/home/roman/Dokumente/Sources/plot-cv/style.css",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/cross.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/arc.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/folder-open-icon.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/tlite.js",
+		"/home/roman/Dokumente/Sources/plot-cv/tlite.css",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/VCO-8038.brd",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/circle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/VCF-LM324-Stereo.brd",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-trkl.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
+		"/home/roman/Dokumente/Sources/plot-cv/index.html",
+		"/home/roman/Dokumente/Sources/plot-cv/static/fonts.css",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/project.js",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/VCF-LM324-Stereo+LFO-POT2x3.brd",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/40106-4069-Synth.brd",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/Pinguino-PIC18F2550-ICSP-Pk3.brd",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/load.js",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/555-Oscillator.brd",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/text.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/textElement.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/wire.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/rectangle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/select.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pin.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/instance.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/symbol.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
+		"/home/roman/Dokumente/Sources/plot-cv/reload.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/libraryRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/trbl.js",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/VCO-8038.sch",
+		"/home/roman/Dokumente/Sources/plot-cv/debug.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/error.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/css.js",
+		"/home/roman/Dokumente/Sources/plot-cv/debugging.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/devtools.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/color/rgba.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-geom.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-xml.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom.js",
+		"/home/roman/Dokumente/Sources/plot-cv/events.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eventEmitter.js",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/react-use-gesture/dist/react-use-gesture.esm.js",
+		"/home/roman/Dokumente/Sources/plot-cv/useGesture.js",
+		"/home/roman/Dokumente/Sources/plot-cv/fit-horizontal.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/fit-vertical.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/voronoi.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-voronoi.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/devpane.js",
+		"/home/roman/Dokumente/Sources/plot-cv/static/warn.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/info.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/useDimensions.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/log.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/environment.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-geom.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/voronoi.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/util.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/VCO-8038.sch",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/VCO-8038.brd",
 		"/home/roman/Dokumente/example014.jscad",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-voronoi.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/interpreter.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-line.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-eval.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eventEmitter.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/test-geom.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/test-point.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-jsjs.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/wru.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-wru.js",
 		"/tmp/gentests.sh",
@@ -337,33 +320,18 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/xml2json.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/json2xml.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/textElement.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/wire.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/rectangle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/text.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/libraryRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/instance.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pin.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/circle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-repeater.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
-		"/home/roman/Dokumente/Sources/plot-cv/server.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/repeater.js",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/MS20-VCF.brd",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/FM Radio Simple Receiver.sch",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/LCmeter0-LCD-8pinlcd-PIC-COMP.sch",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/react-hooks.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-attributes.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
-		"/home/roman/Dokumente/Sources/plot-cv/index.html",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/TDA7419 .sch",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/node.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/symbol.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/limiters.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/buffers.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/pubsub.js",
@@ -373,56 +341,15 @@
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/FM Radio Circuit.sch",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/bbox.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/colorscheme.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components.js",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/Headphone-Amplifier-ClassAB-alt3.brd",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/circle.js",
-		"/usr/share/applications/google-chrome-unstable.desktop",
-		"/home/roman/Dokumente/Sources/plot-cv/test-trkl.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
-		"/home/roman/Sources/plot-cv/lib/repeater/buffers.ts",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/pubsub.js",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/Headphone-Amplifier-ClassAB-alt3.sch",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
-		"/home/roman/.config/sublime-text-3/Packages/TypeScript-Sublime-Plugin/TypeScript.sublime-settings",
-		"/home/roman/.config/sublime-text-3/Packages/TypeScript-Sublime-Plugin/Preferences.sublime-settings",
-		"/home/roman/.config/sublime-text-3/Packages/User/TypeScript.sublime-settings",
-		"/home/roman/Sources/plot-cv/lib/eagle/components/text.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/isEditable.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/touchHandler.js",
-		"/home/roman/.local/share/applications/xfce4-terminal.desktop",
-		"/home/roman/Dokumente/Sources/plot-cv/tamper.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/docs/01_quickstart.md",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/color/rgba.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/tmp/Headphone-Amplifier-ClassAB-alt3.sch",
-		"/home/roman/Dokumente/Sources/plot-cv/create-tamper.js",
-		"/home/roman/Dokumente/Sources/plot-cv/new.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
-		"/home/roman/Schreibtisch/tamper.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
-		"/home/roman/Sources/Scripts/sh/npmjs.sh",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/docs/03_rationale.md",
-		"/home/roman/Dokumente/Sources/Scripts/t",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/docs/08_utilities.md",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/docs/02_overview.md",
-		"/home/roman/Sources/plot-cv/lib/eagle/components/symbol.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/trbl.js",
-		"/home/roman/Dokumente/Sources/Scripts/sh/npmjs.sh",
-		"/usr/share/applications/sublime_text.desktop",
-		"/home/roman/Sources/plot-cv/lib/devtools.js",
-		"/home/roman/Dokumente/Sources/plot-cv/package.json",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/timers.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/svgRenderer.js"
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js"
 	],
 	"find":
 	{
-		"height": 41.0
+		"height": 43.0
 	},
 	"find_in_files":
 	{
-		"height": 115.0,
+		"height": 121.0,
 		"where_history":
 		[
 			"/home/roman/Dokumente/Sources/plot-cv,*.js,-node_modules,-*/node_modules/*,-htm",
@@ -465,134 +392,134 @@
 		"case_sensitive": true,
 		"find_history":
 		[
-			"touchEvents",
-			"repeaeter",
-			"input",
-			"1px",
-			"text ",
-			"pad",
-			"select",
-			"zoom",
-			"LogJS",
-			"'td'",
-			"push.*type",
-			"push",
-			"AppMa",
-			"Run",
+			"\\.response",
+			"LoadFile =",
+			"brcache",
+			"warn",
+			"FetchCached =",
+			"\\.put\\(",
+			"this.cacheBuc",
+			"\\.put\\(",
+			"this\\.cacheBucket",
+			"this\\.cacheBuc",
+			"this\\.",
+			"his\\.cache\\.",
+			"his\\.cache",
+			"this\\.cacheBuck",
+			"get cache",
+			"cacheBucket",
+			"escapeRegExpSpecialCharacte",
+			"escapeReg",
+			"replace",
+			"eachKey",
+			"eachKey\\(",
+			"eachKey(",
+			"eachKey\\(",
+			"eachKey",
+			"isOut",
+			"LoadFile =",
+			"fetch\\(",
+			"CachedFetch",
+			"method",
+			"\\.response",
+			"FetchURL ",
+			"CachedFetch",
+			"response\\(",
+			"  response\\(",
+			"  response(",
+			"  response\\(",
+			" response\\(",
+			"\\.text\\(",
+			" response\\(",
+			" response(",
+			" response\\(",
+			"response\\(",
+			" response\\(",
+			"lscache\\(",
+			"lscache",
+			"lscache\\(",
+			"lscache",
+			"response\\(",
+			" get\\(",
+			"mapFunc",
+			"increment",
+			"hits",
+			"hits\\]",
+			"\\.mapFunction =",
+			"\\.set\\(",
+			"k, v",
+			"dest,",
+			"dst",
+			"incr",
+			"incrementHits",
+			"hits =",
+			" eachKey",
+			"eachKey",
+			" setItem",
+			"setItem",
+			"\\.set\\(\\)",
+			"\\.set\\(",
+			"\\.text",
+			"\\.text\\(",
+			"'text'",
+			" get\\(",
+			" remove\\(",
+			" set\\(",
+			" setItem\\(",
+			" set\\(",
+			"new Request",
+			"flushExpiredItem",
+			"flushExpiredItem\\(",
+			"flushExp",
+			" get\\(",
+			"response =",
+			"getItem\\(",
+			"brcache\\(",
 			"assign",
-			"assign.*wi$",
-			"assign",
-			"RGBA",
-			"dotted",
-			"dump",
-			"dum",
-			"dump",
-			"dump =",
-			"dump\\(",
-			"logSize",
-			".assign",
-			"dump",
-			"dump\\(",
-			"dumper",
-			"log",
-			"logger",
-			"Logger =",
-			"Logger,",
-			"FloatingPanel",
-			"logger",
-			"logger =",
-			"join",
-			"onSize",
-			"logSize",
-			"logSize\n",
-			"logSizef",
-			"logSize",
-			"logSize =",
-			"useDim",
-			"useDi",
-			"logger =",
-			"bindMethods",
-			"wrap",
-			"onSize",
-			"BindGlo",
-			"bind\\(.*window",
-			"bind\\(window",
-			"bind\\(",
-			"assign.win",
-			"= trkl",
-			"getDimension",
-			"getBounding",
-			"absolute",
-			"'absolute",
-			"Floating",
-			"Logger",
-			"toSource =",
-			"isoDate =",
-			"logger.push",
-			"Append",
-			"logger =",
-			"Appen",
-			"lib.util",
-			"Object.ass",
-			"LogJS",
-			"type, ",
-			"touchEvents",
-			"logger",
-			"logger =",
-			"logger",
-			"timestamps",
-			"trkl\\.",
-			"Floating",
-			"Overlay",
-			"TList",
-			"TList\\(",
-			"TList",
-			"Matrix",
-			"TList",
-			"<element",
-			"<board",
-			"initCac",
-			"TList =",
-			"concat",
-			"TList ",
-			"TList",
-			"\\.get\\(",
-			"TList =",
-			"project",
-			"'pad'",
-			"'pads'",
-			"lazy",
-			"lazyProperty\\(",
-			"'pad'",
-			"TList",
-			"'pad'",
-			"'contactref'",
-			"pad=\"",
-			"padColor",
-			"via'",
-			" toXML",
-			" geometry\\(",
-			"\\.geometry\\(\\)",
-			"\\.geometr",
-			"'pads'",
-			"EagleElement.get",
-			"pads'",
-			"<signal ",
-			"<signal",
-			"<pad ",
-			"<signal",
-			"<pad",
-			"NodeList.create",
-			"project.doc =",
-			"class Cel",
-			" prepareHG",
-			"CircleEvent",
-			" createHalf",
-			"createCell",
-			"class Vor",
-			"^class ",
-			"\\.prototype",
-			"get RB"
+			"lscache",
+			"^\\s*console",
+			"response =",
+			"new Respon",
+			"getItem\\(",
+			" get\\(",
+			" set\\(",
+			" set[^ ]*\\(",
+			"impl\\.",
+			"this\\.impl",
+			"lscache",
+			"brcache",
+			"eachKey\\(",
+			"eachKey",
+			"keys\\(",
+			"impl\\.([^.]*)\\.call\\(this, ",
+			"impl\\.([^.]*)\\.call\\(",
+			"\\.call\\(",
+			"getItem\\.call",
+			"getItem\\(",
+			" getItem\\(",
+			"getItem(",
+			"getItem\\(",
+			"impl.getItem.call",
+			"function expo",
+			"flushExpiredItem",
+			"flushExpired",
+			"impl.expir",
+			"xpirationKey",
+			"impl.removeItem",
+			"this\\.impl",
+			"impl.",
+			"impl =",
+			"browserCache:",
+			"brcache",
+			"funtion br",
+			"brcache\\(",
+			"},\\s*$",
+			"},\\$",
+			"this.cache",
+			"setItem",
+			"put",
+			"put\\(",
+			"lscache"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -600,6 +527,24 @@
 		"regex": true,
 		"replace_history":
 		[
+			"obj.cacheBucket",
+			"impl",
+			"impl.\\1(",
+			"expir",
+			"impl",
+			"this.impl.",
+			"}",
+			"brcache",
+			"impl.\\1.call(this, ",
+			"impl.\\1(this, ",
+			"const ",
+			"tlite-table\"",
+			"eachKey(",
+			"this.supportsJSON",
+			"this.supportsStorage",
+			"this.supportsStorage()",
+			"",
+			"=\"48\"",
 			".geometry",
 			"this.getOrCreate",
 			"export class ",
@@ -715,501 +660,24 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
+					"file": "lib/tlite.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1058,
+						"buffer_size": 6161,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/SchemeEditorTemp/Next Bold.tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/main.js",
-							"outline_rename_mode": false,
-							"symkeys":
-							[
-								[
-									5114,
-									5138
-								],
-								[
-									5179,
-									5200
-								],
-								[
-									5202,
-									5207
-								],
-								[
-									5216,
-									5220
-								],
-								[
-									5242,
-									5268
-								],
-								[
-									5269,
-									5277
-								],
-								[
-									5328,
-									5345
-								],
-								[
-									5347,
-									5352
-								],
-								[
-									5361,
-									5369
-								],
-								[
-									5391,
-									5416
-								],
-								[
-									5429,
-									5435
-								],
-								[
-									5496,
-									5514
-								],
-								[
-									6032,
-									6075
-								],
-								[
-									6641,
-									6673
-								],
-								[
-									6826,
-									6850
-								],
-								[
-									6904,
-									6916
-								],
-								[
-									6951,
-									7000
-								],
-								[
-									7242,
-									7264
-								],
-								[
-									7271,
-									7295
-								],
-								[
-									7309,
-									7337
-								],
-								[
-									7392,
-									7404
-								],
-								[
-									7881,
-									7986
-								],
-								[
-									7995,
-									8017
-								],
-								[
-									8769,
-									8789
-								],
-								[
-									8790,
-									8794
-								],
-								[
-									9018,
-									9063
-								],
-								[
-									10187,
-									10264
-								],
-								[
-									10464,
-									10472
-								],
-								[
-									10572,
-									10580
-								],
-								[
-									11770,
-									11774
-								],
-								[
-									11838,
-									11849
-								],
-								[
-									11906,
-									11917
-								],
-								[
-									11981,
-									11995
-								],
-								[
-									12146,
-									12157
-								],
-								[
-									12475,
-									12490
-								],
-								[
-									12577,
-									12592
-								],
-								[
-									12723,
-									12738
-								],
-								[
-									12825,
-									12840
-								],
-								[
-									14531,
-									14572
-								],
-								[
-									15019,
-									15043
-								],
-								[
-									15044,
-									15055
-								],
-								[
-									16176,
-									16240
-								],
-								[
-									16437,
-									16457
-								],
-								[
-									17061,
-									17067
-								],
-								[
-									17117,
-									17138
-								],
-								[
-									17708,
-									17729
-								],
-								[
-									17787,
-									17792
-								],
-								[
-									17900,
-									17921
-								],
-								[
-									18039,
-									18078
-								],
-								[
-									18096,
-									18117
-								],
-								[
-									18130,
-									18144
-								],
-								[
-									18175,
-									18180
-								],
-								[
-									18292,
-									18297
-								],
-								[
-									18643,
-									18665
-								],
-								[
-									18666,
-									18689
-								],
-								[
-									18800,
-									18823
-								],
-								[
-									19165,
-									19173
-								],
-								[
-									19236,
-									19241
-								],
-								[
-									20168,
-									20192
-								],
-								[
-									20336,
-									20347
-								],
-								[
-									20465,
-									20486
-								],
-								[
-									20773,
-									20809
-								],
-								[
-									20888,
-									20897
-								],
-								[
-									20932,
-									20943
-								],
-								[
-									21103,
-									21108
-								],
-								[
-									21349,
-									21357
-								],
-								[
-									21448,
-									21466
-								],
-								[
-									21659,
-									21678
-								],
-								[
-									21710,
-									21727
-								],
-								[
-									22219,
-									22226
-								],
-								[
-									22254,
-									22257
-								],
-								[
-									22529,
-									22546
-								],
-								[
-									22864,
-									22881
-								],
-								[
-									23086,
-									23109
-								],
-								[
-									23401,
-									23418
-								],
-								[
-									23511,
-									23519
-								],
-								[
-									23753,
-									23767
-								],
-								[
-									23906,
-									23946
-								],
-								[
-									24369,
-									24383
-								],
-								[
-									25017,
-									25025
-								],
-								[
-									26864,
-									26884
-								],
-								[
-									27087,
-									27095
-								],
-								[
-									28070,
-									28087
-								],
-								[
-									28235,
-									28278
-								],
-								[
-									29687,
-									29695
-								],
-								[
-									31305,
-									31332
-								],
-								[
-									31455,
-									31468
-								]
-							],
-							"symlist":
-							[
-								"add",
-								"useSlot",
-								"() =>",
-								"v =>",
-								"trklGetSet",
-								"value =>",
-								"useTrkl",
-								"() =>",
-								"value =>",
-								"classNames",
-								"arg =>",
-								"MouseEvents",
-								".list",
-								"ElementToXML",
-								"async readFile(filename)",
-								"async res =>",
-								"async writeFile(filename, data, overwrite = true)",
-								"async exists(filename)",
-								"async realpath(filename)",
-								"LoadFile",
-								"async res =>",
-								".save",
-								"predicate",
-								"ModifyColors",
-								"e =>",
-								"LoadDocument",
-								"Fence",
-								"value =>",
-								"value =>",
-								"e =>",
-								"([p, e]) =>",
-								"([p, e]) =>",
-								"([p, r, e]) =>",
-								"([k, v]) =>",
-								"(key, value) =>",
-								"(key, value) =>",
-								"(key, value) =>",
-								"(key, value) =>",
-								"ChooseDocument",
-								"MakeFitAction",
-								"async () =>",
-								"CreateWebSocket",
-								".send",
-								"arg =>",
-								".onload",
-								"async (push, stop) =>",
-								"() =>",
-								"async (push, stop) =>",
-								"RegisterEventHandler",
-								"async (push, stop) =>",
-								"handler",
-								"ev =>",
-								"ev =>",
-								".keystroke",
-								"(key, modifiers = 0) =>",
-								".focusSearch",
-								"value =>",
-								"() =>",
-								"testComponent",
-								"response =>",
-								"File",
-								"File.prototype.toString",
-								"(a, b) =>",
-								"(obj, i) =>",
-								"ws =>",
-								"value =>",
-								"changeInput",
-								"Consumer",
-								"async function*()",
-								"extends",
-								"log",
-								"Logger",
-								"async function*()",
-								"([type, d, t, m], i) =>",
-								"Dumper",
-								"value =>",
-								"([k, v], i) =>",
-								"Commander",
-								"handler",
-								"fn: e",
-								"onCommand: cmdStr",
-								"event =>",
-								"cancel",
-								".processEvents",
-								"event =>",
-								"onRuntimeInitialized: ()",
-								"print: txt"
-							],
-							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 12,
-					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 3,
-			"sheets":
-			[
-				{
-					"buffer": 1,
-					"file": "lib/dom/element.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 31329,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								322,
-								322
+								1983,
+								1983
 							]
 						],
 						"settings":
@@ -1217,115 +685,35 @@
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
 							"use_tab_stops": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "test-geom.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2816,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								144,
-								144
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "components.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 27177,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1382,
-								1382
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
-							"use_tab_stops": false,
-							"word_separators": "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?"
-						},
-						"translation.x": 0.0,
-						"translation.y": 540.0,
+						"translation.y": 8.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 1,
 					"file": "main.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 31505,
+						"buffer_size": 41403,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								26323,
-								26323
+								26505,
+								26505
 							]
 						],
 						"settings":
 						{
+							"color_scheme": "Packages/Dayle Rees Color Schemes/legacy/Contrast/Darkside.tmTheme",
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
@@ -1336,283 +724,13 @@
 								"tabSize": 2
 							},
 							"use_tab_stops": false,
-							"word_separators": "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?"
+							"word_separators": "./\\()\"'-:,.;<>~!@#%^&*|+=[]{}`~?"
 						},
 						"translation.x": 0.0,
-						"translation.y": 15057.0,
+						"translation.y": 16456.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "lib/eagle/components/instance.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1492,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "lib/eagle/boardRenderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8999,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2914,
-								2914
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
-							"use_tab_stops": false,
-							"word_separators": "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?"
-						},
-						"translation.x": 0.0,
-						"translation.y": 1700.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "style.css",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 10119,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								10119,
-								10119
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 10656.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "lib/geom/voronoi.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 54737,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1800.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "static/warn.svg",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3564,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/XML/XML.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "error.svg",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2226,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								326,
-								326
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/XML/XML.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "test-ecmascript.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5849,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 12,
-					"file": "test-voronoi.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4263,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4263,
-								4263
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1555.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 11,
 					"type": "text"
 				}
 			]
@@ -1620,7 +738,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 29.0
+		"height": 43.0
 	},
 	"input":
 	{
@@ -1631,29 +749,20 @@
 		"cells":
 		[
 			[
-				2,
-				0,
-				3,
-				2
-			],
-			[
 				0,
 				0,
-				2,
-				2
+				1,
+				1
 			]
 		],
 		"cols":
 		[
 			0.0,
-			0.2,
-			0.8,
 			1.0
 		],
 		"rows":
 		[
 			0.0,
-			0.5,
 			1.0
 		]
 	},
@@ -1674,7 +783,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 78.0
+		"height": 82.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1688,8 +797,280 @@
 				"main.js"
 			],
 			[
+				"util",
+				"lib/util.js"
+			],
+			[
+				"lscac",
+				"lib/lscache.js"
+			],
+			[
+				"cache",
+				"lib/dom/cache.js"
+			],
+			[
+				"lscache",
+				"lib/lscache.js"
+			],
+			[
+				"main.js",
+				"main.js"
+			],
+			[
+				"cache.",
+				"lib/dom/cache.js"
+			],
+			[
+				"server",
+				"server.js"
+			],
+			[
+				"ain.js",
+				"main.js"
+			],
+			[
+				"tlite",
+				"lib/tlite.js"
+			],
+			[
+				"compon",
+				"components.js"
+			],
+			[
+				"component",
+				"components.js"
+			],
+			[
 				"style",
 				"style.css"
+			],
+			[
+				"folder-op",
+				"folder-open-icon.svg"
+			],
+			[
+				"util.",
+				"lib/util.js"
+			],
+			[
+				"cross.js",
+				"lib/eagle/components/cross.js"
+			],
+			[
+				"pot2",
+				"tmp/VCF-LM324-Stereo+LFO-POT2x3.brd"
+			],
+			[
+				"VCF",
+				"tmp/VCF-LM324-Stereo.brd"
+			],
+			[
+				".brd",
+				"tmp/VCO-8038.brd"
+			],
+			[
+				"tlite.css",
+				"tlite.css"
+			],
+			[
+				"compo",
+				"components.js"
+			],
+			[
+				"tli",
+				"lib/tlite.js"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"trkl",
+				"lib/trkl.js"
+			],
+			[
+				"com",
+				"components.js"
+			],
+			[
+				"componen",
+				"components.js"
+			],
+			[
+				"fonts",
+				"static/fonts.css"
+			],
+			[
+				"index",
+				"index.html"
+			],
+			[
+				"style.",
+				"style.css"
+			],
+			[
+				"doc",
+				"lib/eagle/document.js"
+			],
+			[
+				"components.js",
+				"components.js"
+			],
+			[
+				"docu",
+				"lib/eagle/document.js"
+			],
+			[
+				"schemati",
+				"lib/eagle/schematicRenderer.js"
+			],
+			[
+				"docum",
+				"lib/eagle/document.js"
+			],
+			[
+				"project",
+				"lib/eagle/project.js"
+			],
+			[
+				"components",
+				"components.js"
+			],
+			[
+				"main.j",
+				"main.js"
+			],
+			[
+				"555",
+				"tmp/555-Oscillator.brd"
+			],
+			[
+				"401",
+				"tmp/40106-4069-Synth.brd"
+			],
+			[
+				"elemen",
+				"lib/dom/element.js"
+			],
+			[
+				"tranfo",
+				"lib/geom/transformation.js"
+			],
+			[
+				"matrix",
+				"lib/geom/matrix.js"
+			],
+			[
+				"compone",
+				"components.js"
+			],
+			[
+				"reload",
+				"reload.svg"
+			],
+			[
+				"point",
+				"lib/geom/point.js"
+			],
+			[
+				"rect",
+				"lib/geom/rect.js"
+			],
+			[
+				"elem",
+				"lib/dom/element.js"
+			],
+			[
+				"ele",
+				"lib/dom/element.js"
+			],
+			[
+				"document",
+				"lib/eagle/document.js"
+			],
+			[
+				"path",
+				"lib/json/path.js"
+			],
+			[
+				".sch",
+				"tmp/VCO-8038.sch"
+			],
+			[
+				"debug",
+				"debug.svg"
+			],
+			[
+				"debug.",
+				"debug.svg"
+			],
+			[
+				"error",
+				"error.svg"
+			],
+			[
+				"debugg",
+				"debugging.svg"
+			],
+			[
+				"css",
+				"lib/dom/css.js"
+			],
+			[
+				"trbl",
+				"lib/geom/trbl.js"
+			],
+			[
+				"element",
+				"lib/dom/element.js"
+			],
+			[
+				"rgba",
+				"lib/color/rgba.js"
+			],
+			[
+				"dev",
+				"lib/devpane.js"
+			],
+			[
+				"devtoo",
+				"lib/devtools.js"
+			],
+			[
+				"emitter",
+				"lib/eventEmitter.js"
+			],
+			[
+				"useGes",
+				"useGesture.js"
+			],
+			[
+				"test-xml",
+				"test-xml.js"
+			],
+			[
+				"fit-ve",
+				"fit-vertical.svg"
+			],
+			[
+				"fit-",
+				"fit-horizontal.svg"
+			],
+			[
+				"inde",
+				"index.html"
+			],
+			[
+				"fit",
+				"fit-vertical.svg"
+			],
+			[
+				"info",
+				"info.svg"
+			],
+			[
+				"err",
+				"error.svg"
 			],
 			[
 				"boardr",
@@ -1700,20 +1081,8 @@
 				"components.js"
 			],
 			[
-				"com",
-				"components.js"
-			],
-			[
 				"voro",
 				"lib/geom/voronoi.js"
-			],
-			[
-				"style.",
-				"style.css"
-			],
-			[
-				"error",
-				"error.svg"
 			],
 			[
 				"warn",
@@ -1722,18 +1091,6 @@
 			[
 				"useD",
 				"useDimensions.js"
-			],
-			[
-				"compon",
-				"components.js"
-			],
-			[
-				"util.",
-				"lib/util.js"
-			],
-			[
-				"element",
-				"lib/dom/element.js"
 			],
 			[
 				"style.css",
@@ -1750,10 +1107,6 @@
 			[
 				"useDim",
 				"useDimensions.js"
-			],
-			[
-				"util.js",
-				"lib/util.js"
 			],
 			[
 				"log.",
@@ -1780,24 +1133,12 @@
 				"test-geom.js"
 			],
 			[
-				"main.js",
-				"main.js"
-			],
-			[
 				"nodeList",
 				"lib/eagle/nodeList.js"
 			],
 			[
 				"nodemap",
 				"lib/eagle/nodeMap.js"
-			],
-			[
-				".brd",
-				"tmp/VCO-8038.brd"
-			],
-			[
-				".sch",
-				"tmp/VCO-8038.sch"
 			],
 			[
 				"node",
@@ -1808,16 +1149,8 @@
 				"lib/eagle/element.js"
 			],
 			[
-				"docu",
-				"lib/eagle/document.js"
-			],
-			[
 				".br",
 				"tmp/VCO-8038.brd"
-			],
-			[
-				"elem",
-				"lib/eagle/element.js"
 			],
 			[
 				"nodelist",
@@ -1850,10 +1183,6 @@
 			[
 				"pointList",
 				"lib/geom/pointList.js"
-			],
-			[
-				"point",
-				"lib/geom/point.js"
 			],
 			[
 				"point.js",
@@ -1900,10 +1229,6 @@
 				"lib/geom/test-point.js"
 			],
 			[
-				"matrix",
-				"lib/geom/matrix.js"
-			],
-			[
 				"test-wr",
 				"test-wru.js"
 			],
@@ -1932,10 +1257,6 @@
 				"lib/ecmascript/estree.js"
 			],
 			[
-				"path",
-				"lib/json/path.js"
-			],
-			[
 				"PARSER",
 				"lib/ecmascript/parser.js"
 			],
@@ -1948,10 +1269,6 @@
 				"lib/eagle/components/textElement.js"
 			],
 			[
-				"util",
-				"lib/util.js"
-			],
-			[
 				".BRD",
 				"tmp/VCO-8038.brd"
 			],
@@ -1960,20 +1277,8 @@
 				"lib/eagle/boardRenderer.js"
 			],
 			[
-				"server",
-				"server.js"
-			],
-			[
 				"test-eage",
 				"test-eagle.js"
-			],
-			[
-				"main.j",
-				"main.js"
-			],
-			[
-				"docum",
-				"lib/eagle/document.js"
 			],
 			[
 				"text.js",
@@ -1998,202 +1303,6 @@
 			[
 				"react-hook",
 				"lib/repeater/react-hooks.js"
-			],
-			[
-				"test-repea",
-				"test-repeater.js"
-			],
-			[
-				"Util.js",
-				"test-util.js"
-			],
-			[
-				"path.js",
-				"lib/json/path.js"
-			],
-			[
-				"wire",
-				"lib/eagle/components/wire.js"
-			],
-			[
-				"document",
-				"lib/eagle/document.js"
-			],
-			[
-				"node.j",
-				"lib/eagle/node.js"
-			],
-			[
-				"nodeMap",
-				"lib/eagle/nodeMap.js"
-			],
-			[
-				"instance",
-				"lib/eagle/components/instance.js"
-			],
-			[
-				"Simple Radio",
-				"tmp/FM Radio Simple Receiver.sch"
-			],
-			[
-				"test-attr",
-				"test-attributes.js"
-			],
-			[
-				"FM Simpl",
-				"tmp/FM Radio Simple Receiver.sch"
-			],
-			[
-				"text.j",
-				"lib/eagle/components/text.js"
-			],
-			[
-				"renderUt",
-				"lib/eagle/renderUtils.js"
-			],
-			[
-				"svgre",
-				"lib/eagle/svgRenderer.js"
-			],
-			[
-				"",
-				"lib/eagle/node.js"
-			],
-			[
-				"FM Simple",
-				"tmp/FM Radio Simple Receiver.sch"
-			],
-			[
-				"test-repe",
-				"test-repeater.js"
-			],
-			[
-				"pubsub",
-				"lib/repeater/pubsub.ts"
-			],
-			[
-				"buffer",
-				"lib/repeater/buffers.js"
-			],
-			[
-				"test-prox",
-				"test-proxy.js"
-			],
-			[
-				"bbox",
-				"lib/geom/bbox.js"
-			],
-			[
-				"circle",
-				"lib/geom/circle.js"
-			],
-			[
-				"transform",
-				"lib/geom/transformation.js"
-			],
-			[
-				"line.js",
-				"lib/geom/line.js"
-			],
-			[
-				"svgRe",
-				"lib/eagle/svgRenderer.js"
-			],
-			[
-				"schematic",
-				"lib/eagle/schematicRenderer.js"
-			],
-			[
-				"eagle.js",
-				"lib/eagle.js"
-			],
-			[
-				"transformat",
-				"lib/geom/transformation.js"
-			],
-			[
-				"transformation",
-				"lib/geom/transformation.js"
-			],
-			[
-				"renderUtil",
-				"lib/eagle/renderUtils.js"
-			],
-			[
-				"trkl",
-				"lib/trkl.js"
-			],
-			[
-				"trkl.js",
-				"test-trkl.js"
-			],
-			[
-				"touch",
-				"lib/touchHandler.js"
-			],
-			[
-				"index",
-				"index.html"
-			],
-			[
-				"server.js",
-				"server.js"
-			],
-			[
-				"components",
-				"components.js"
-			],
-			[
-				"components ",
-				"components.js"
-			],
-			[
-				"rgba",
-				"lib/color/rgba.js"
-			],
-			[
-				"create-tamp",
-				"create-tamper.js"
-			],
-			[
-				"new",
-				"new.js"
-			],
-			[
-				"element.js",
-				"lib/dom/element.js"
-			],
-			[
-				"ele",
-				"lib/eagle/element.js"
-			],
-			[
-				"rect",
-				"lib/geom/rect.js"
-			],
-			[
-				"deep",
-				"lib/deep.js"
-			],
-			[
-				"token",
-				"lib/ecmascript/token.js"
-			],
-			[
-				"create",
-				"create-tamper.js"
-			],
-			[
-				"tamper",
-				"tamper.js"
-			],
-			[
-				"tamp",
-				"tamper.js"
-			],
-			[
-				"size",
-				"lib/geom/size.js"
 			]
 		],
 		"width": 0.0
@@ -2209,8 +1318,8 @@
 	},
 	"select_symbol":
 	{
-		"height": 110.0,
-		"last_filter": "Element.crea",
+		"height": 400.0,
+		"last_filter": "",
 		"selected_items":
 		[
 			[
@@ -2222,9 +1331,9 @@
 				"\"++\"(a)"
 			]
 		],
-		"width": 1032.0
+		"width": 1291.0
 	},
-	"selected_group": 1,
+	"selected_group": 0,
 	"settings":
 	{
 	},

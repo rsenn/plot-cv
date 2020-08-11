@@ -1,4 +1,4 @@
-//prettier-ignore-ignore-start
+///prettier-ignore-ignore-start
 import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
@@ -15,9 +15,12 @@ import { ClipperLib } from './lib/clipper-lib.js';
 import Shape from './lib/clipper.js';
 import { devtools } from './lib/devtools.js';
 import Util from './lib/util.js';
+import tlite from './lib/tlite.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Alea from './lib/alea.js';
+import { Cache } from './lib/dom/cache.js';
+import { CacheStorage } from './lib/dom/cacheStorage.js';
 import { Iterator } from './lib/iterator.js';
 import { Functional } from './lib/functional.js';
 import { makeLocalStorage } from './lib/autoStore.js';
@@ -45,6 +48,9 @@ import { Emitter, EventIterator } from './events.js';
 
 /* prettier-ignore */ import { BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode
  } from './lib/eagle.js';
+//import PureCache from 'pure-cache';
+import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js';
+
 /* prettier-ignore */ const React = {Component, createContext, create: h, html, render, useCallback, useContext, useDebugValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useReducer, useRef, useState };
 /* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG, Timer, Transition, TransitionList, TRBL, Tree } = {...dom, ...geom };
 Util.colorCtor = ColoredText;
@@ -57,6 +63,7 @@ let open = trkl();
 let showSearch = trkl(true);
 let logSize = trkl({});
 let dump = trkl({});
+let cache = new lscache();
 
 let projectName = 'Headphone-Amplifier-ClassAB-alt3';
 let palette = null;
@@ -67,7 +74,7 @@ let loadedProjects = [];
 let zoomVal = 0;
 let container;
 
-let projectFiles;
+let projectFiles = [];
 let activeFile;
 let transform = trkl(new TransformationList());
 let sizeListener = trkl({});
@@ -97,6 +104,7 @@ const MouseEvents = h => ({
 
 window.dom = { Element, SVG };
 
+tlite(() => ({ grav: '-|', attrib: ['data-tlite', 'data-tooltip', 'title', 'data-filename'] }));
 /* prettier-ignore */
 /*    const CreateSelect = (obj, node = document.body) => {
                             let elem = Select.create(Object.entries(obj));
@@ -104,25 +112,36 @@ window.dom = { Element, SVG };
                           };*/
 const utf8Decoder = new TextDecoder('utf-8');
 
-const ListProjects = (window.list = async function(opts = {}) {
-  const url = '/files.html';
-  const { descriptions = true, names, filter } = opts;
-  console.log('ListProjects', { descriptions, names, filter });
-  let response = await fetch(url, {
-    method: 'POST',
-    mode: 'cors', // no-cors, *cors, same-origin
-    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-    credentials: 'same-origin', // include, *same-origin, omit
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ descriptions, names, filter })
-  });
-  const reader = await (await response.body).getReader();
-  let { value: chunk, done: readerDone } = await reader.read();
-  chunk = chunk ? await utf8Decoder.decode(chunk) : '';
+const ListProjects = async function(opts = {}) {
+  const { url, descriptions = true, names, filter } = opts;
 
-  let ret = chunk ? JSON.parse(chunk) : null;
-  return ret;
-});
+  //console.log('ListProjects', { url, descriptions, names, filter });
+
+  let response;
+
+  if(!url) {
+    response = await FetchURL('/files.html', {
+      //      nocache: true,
+      method: 'post',
+      mode: 'cors', // no-cors, *cors, same-origin
+      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+      credentials: 'same-origin', // include, *same-origin, omit
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ descriptions, names, filter })
+    });
+    //console.log('response:', response);
+
+    if(response) response = JSON.parse(response);
+  } else {
+    response = await ListGithubRepo(url, null, null, '\\.(brd|sch|lbr)$', opts);
+    //console.log('response:', response);
+    let fileList = response.map((file, i) => ({ ...file, name: response.at(i) }));
+
+    response = { files: fileList };
+  }
+
+  return response;
+};
 
 const ElementToXML = (e, predicate) => {
   const x = Element.toObject(e, { predicate });
@@ -130,17 +149,42 @@ const ElementToXML = (e, predicate) => {
   return Element.toString(x, { newline: '\n' });
 };
 
-const FetchURL = async (url, opts) => {
+const FetchCached = CachedFetch(window.fetch, 'fetch');
+
+const FetchURL = async (url, allOpts = {}) => {
+  let { nocache = false, ...opts } = allOpts;
   let result;
   let ret;
 
-  try {
-    result = await fetch(url, opts);
-    ret = await result.text();
-  } catch(error) {
-    result = { error };
-    ret = error.message;
+  let fetch = FetchCached;
+
+  if(opts.method && opts.method.toUpperCase() == 'POST') {
+    nocache = true;
+    fetch = (...args) => window.fetch(...args).then(async res => await res.text());
   }
+
+  if(/tmp\//.test(url)) {
+    url = url.replace(/.*tmp\//g, '/static/tmp/');
+  } else if(/^\//.test(url)) {
+  } else if(/:\/\//.test(url)) {
+  } else {
+    url = '/static/' + url;
+  }
+  try {
+    //    if(!nocache) ret = cache.get(url);
+
+    if(!ret) {
+      ret = result = await fetch(url, opts);
+
+      if(!nocache && typeof ret == 'string' && ret.length > 0) cache.set(url, ret);
+    }
+  } catch(error) {
+    Util.putError(error);
+    throw error;
+  }
+
+  if(typeof ret.text == 'function') ret = await result.text();
+
   return ret;
 };
 
@@ -162,9 +206,14 @@ const FileSystem = {
   async realpath(filename) {}
 };
 
-const LoadFile = async filename => {
-  const url = /:\/\//.test(filename) ? filename : `/static/${filename}`;
-  let xml = await FetchURL(url);
+const LoadFile = async file => {
+  //console.log('file:', file.url, file.name);
+  let { url, name: filename } = file;
+  url = /:\/\//.test(filename) ? filename : `/static/${filename}`;
+  //console.log('file: url=', url);
+  let xml = /* await FetchURL(url);*/ await (await fetch(url)).text(); //(typeof file.
+  //file= await FetchURL(url);  //'function' && (await file.fetch())) || (await FetchURL(url, {}));
+  //console.log('LoadFile', { url, xml });
   //console.log('xml: ', xml.substring(0, 100));
   //let dom = new DOMParser().parseFromString(xml, 'application/xml');
 
@@ -173,6 +222,7 @@ const LoadFile = async filename => {
   if(/\.brd$/.test(filename)) window.board = doc;
   if(/\.sch$/.test(filename)) window.schematic = doc;
   if(/\.lbr$/.test(filename)) window.libraries = add(window.libraries, doc);
+
   Util.log('LoadFile', doc.file);
 
   return doc;
@@ -185,7 +235,7 @@ const SaveSVG = (window.save = async function save(filename, layers = [1, 16, 20
 
   let predicate = element => {
     if(!element.hasAttribute('data-layer')) return true;
-    console.log('element:', element);
+    //console.log('element:', element);
     const layer = element.getAttribute('data-layer');
     let [number, name] = layer.split(/ /);
     if(number !== undefined && name !== undefined) return layers.indexOf(+number) != -1 || layers.indexOf(name) != -1;
@@ -245,12 +295,13 @@ const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
   }
 
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/${dir}`;
-  console.log('ListGithubRepo', { host, owner, repo, dir, filter, url });
+  //console.log('ListGithubRepo', { host, owner, repo, dir, filter, url });
+  const headers = {
+    Authorization: 'Basic ' + window.btoa(`${username}:${password}`)
+  };
   let response = await fetch(url, {
-    method: 'get', // credentials: 'include',
-    headers: {
-      Authorization: 'Basic ' + window.btoa(`${username}:${password}`)
-    }
+    //method: 'get', // credentials: 'include',
+    headers
   });
   let result = JSON.parse(await response.text());
 
@@ -260,38 +311,53 @@ const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
     const re = new RegExp(filter, 'g');
     result = result.filter(({ name, type }) => type == 'dir' || re.test(name));
   }
-  console.log('result:', result);
+  //  console.log('result:', result);
   const firstFile = result.find(r => !!r.download_url);
   const base_url = firstFile ? firstFile.download_url.replace(/\/[^\/]*$/, '') : '';
   const files = result.map(({ download_url = '', html_url, name, type, size, path, sha }) => ({ url: (download_url || html_url || '').replace(base_url + '/', ''), name, type, size, path, sha }));
+  const at = i => {
+    let url = files[i].url;
+    if(!/:\/\//.test(url)) url = base_url + '/' + url;
+    return url;
+  };
+
   return Object.assign(
-    files.map(file => ({
-      ...file,
-      toString() {
-        return this.url;
+    files.map((file, i) => {
+      file.toString = () => at(i);
+      if(file.type == 'dir') file.list = async (f = filter) => await ListGithubRepo(at(i), null, null, f, {});
+      else {
+        let getter = async function() {
+          let data = await fetch(at(i), {});
+          //         console.log('data:', data);
+          this.buf = await data.text();
+          return this.buf;
+        };
+
+        let text = function() {
+          return typeof this.buf == 'string' && this.buf.length > 0 ? this.buf : this.get();
+        }; //Util.memoize((...args) => file.fetch(...args));
+
+        file.get = getter;
+        file.getText = text;
+        Object.defineProperty(file, 'text', { get: text, enumerable: true, configurable: true });
+
+        //Util.defineGetter(file, 'text', text);
       }
-    })),
+      return file;
+    }),
     {
       base_url,
-      at(i) {
-        let url = files[i].url;
-        if(!/:\/\//.test(url)) url = base_url + '/' + url;
-        return url;
-      },
+      at,
       async get(i) {
-        return await FetchURL(this.at(i));
+        const url = at(i);
+        //console.log('url:', url);
+        return await FetchURL(url, {});
       },
       get files() {
         return files.filter(item => item.type != 'dir');
       },
       get dirs() {
-        return files
-          .filter(item => item.type == 'dir')
-          .map(dir => {
-            //          console.log('dir.url', dir.url);
-            dir.list = (f = filter) => ListGithubRepo(dir.url, null, null, f, opts);
-            return dir;
-          });
+        return files.filter(item => item.type == 'dir');
       }
     }
   );
@@ -315,20 +381,27 @@ const ListGithubRepoServer = async (owner, repo, dir, filter) => {
 };
 
 const LoadDocument = async (project, parentElem) => {
-  Util.log('project.name:', project.name);
-  project.doc = await LoadFile(project.name);
-  LogJS.info(`${project.name} loaded.`);
+  //console.log('project:', project);
+  try {
+    project.doc = await LoadFile(project);
+  } catch(error) {
+    Util.putError(error);
+    throw error;
+  }
+  LogJS.info(`${project.doc.basename} loaded.`);
   documentTitle(project.doc.file.replace(/.*\//g, ''));
   window.eagle = project.doc;
   window.project = project;
   Element.remove('#fence');
   let docElem = Element.find('#doc');
   docElem.innerHTML = '';
-  Util.log('project.doc:', project.doc.file);
+  Util.log('project.doc:', project.doc.basename);
   project.renderer = new Renderer(project.doc, ReactComponent.append, debug);
   Util.log('project.renderer', project.renderer);
   let style = { width: '100%', height: '100%', position: 'relative' };
+
   let component = project.renderer.render(project.doc, null, {});
+
   LogJS.info(`${project.name} rendered.`);
   window.component = project.component = component;
   Util.log('testRender:', component);
@@ -494,7 +567,7 @@ const MakeFitAction = index => async () => {
   let prect = Element.rect(parent);
   let svg = Element.find('svg', parent);
   let container = [...Element.findAll('.aspect-ratio-box-size', parent)].reverse()[0];
-  console.log('container:', container);
+  //console.log('container:', container);
   let oldSize = Element.rect(container);
   let brect = Element.rect('.buttons');
   let srect = Element.rect(svg);
@@ -502,35 +575,35 @@ const MakeFitAction = index => async () => {
   prect.height -= brect.height;
   let rects = [prect, oldSize, srect];
   prect.scale(0.8);
-  console.log('resize rects', { oldSize, prect, srect });
+  //console.log('resize rects', { oldSize, prect, srect });
   let f = srect.fit(prect);
   let newSize = f[index].round(0.0001);
   let affineTransform = Matrix.getAffineTransform(oldSize.toPoints(), newSize.toPoints());
   /*console.log('oldSize:', oldSize);
-  console.log('newSize:', newSize);*/
+  //console.log('newSize:', newSize);*/
 
   let oldTransform = window.transform.clone();
   // console.log('oldTransform:', oldTransform);
   let oldFactor = oldTransform.scaling.x;
-  console.log('oldFactor:', oldFactor);
+  //console.log('oldFactor:', oldFactor);
 
   const zoom = Math.pow(10, zoomVal / 200).toFixed(5);
-  console.log('zoom:', zoom);
+  //console.log('zoom:', zoom);
 
   let transform = affineTransform.decompose();
-  console.log('transform:', transform);
+  //console.log('transform:', transform);
   //console.log(`fitAction(${index})`, { oldSize, newSize, transform });
   let factor = transform.scale.x;
-  console.log('factor:', factor);
+  //console.log('factor:', factor);
   let newFactor = zoom * factor;
-  console.log('newFactor:', newFactor);
+  //console.log('newFactor:', newFactor);
 
   let newTransform = new TransformationList().scale(newFactor, newFactor);
-  console.log('newTransform:', newTransform);
+  //console.log('newTransform:', newTransform);
 
   /*
 let newScaling = newTransform.scaling;
-  console.log('newScaling:', newScaling);
+  //console.log('newScaling:', newScaling);
 newScaling.x *= factor;
 newScaling.y *= factor;
 newTransform[0] = newScaling;
@@ -574,6 +647,8 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
 
 let projects = trkl([]);
 let socket = trkl();
+let listURL = trkl(store.get('url') || null);
+let searchFilter = trkl(store.get('filter') || '*');
 
 const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 
@@ -581,9 +656,11 @@ const AppMain = (window.onload = async () => {
   Util(globalThis);
 
   //prettier-ignore
-  Object.assign(window, { BBox, ChooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, LoadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas, BoardToGerber, ListGithubRepo, ListGithubRepoServer });
+  Object.assign(window, { BBox, ChooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, LoadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas, BoardToGerber, ListGithubRepo, ListGithubRepoServer, brcache, lscache, BaseCache, FetchCached, CachedFetch });
   Object.assign(
     window,
+    { cache, tlite, FetchURL },
+    { classes: { Cache, CacheStorage, Response, Request } },
     {
       PrimitiveComponents,
       ElementNameToComponent,
@@ -624,7 +701,7 @@ const AppMain = (window.onload = async () => {
 
   const timestamps = new Repeater(async (push, stop) => {
     push(Date.now());
-    const interval = setInterval(() => push(Date.now()), 1000);
+    const iRnterval = setInterval(() => push(Date.now()), 1000);
     await stop;
     clearInterval(interval);
   });
@@ -678,48 +755,64 @@ const AppMain = (window.onload = async () => {
 
   let c = testComponent({});
   window.testComponent = c;
+  let credentials = { username: 'rsenn', password: 'tjIDznHp9' };
 
-  ListProjects().then(data => {
-    let { files } = data;
-    //console.log(`Got ${files.length} files`);
-    function File(obj, i) {
-      const { name } = obj;
-      let file = this instanceof File ? this : Object.create(File.prototype);
-      let data = trkl({ percent: NaN });
-      Object.assign(file, obj);
-      file.name = name;
-      file.i = i;
-      trkl.bind(file, { data });
+  const UpdateProjectList = async (opts = listURL() ? { url: listURL(), ...credentials } : {}) => {
+    let list = [];
+    //console.log('opts:', opts);
+    let { url, ...restOfOpts } = opts;
+    let urls = url ? url.split(/\n/g) : [null];
+    for(url of urls) {
+      let data = await ListProjects({ ...opts, url });
+      let { files } = data;
+      //console.log(`Got ${files.length} files`, files);
+      function File(obj, i) {
+        const { name } = obj;
+        let file = this instanceof File ? this : Object.create(File.prototype);
+        let data = trkl({ percent: NaN });
+        Object.assign(file, obj);
+        file.name = name;
+        file.i = i;
+        trkl.bind(file, { data });
+        LogJS.info(`Got file '${name.replace(/.*\//g, '')}'`);
 
-      return file;
-    }
-    File.prototype.toString = function() {
-      return this.name;
-    };
-    projectFiles = window.files = files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i));
-    let svgFiles = projectFiles.reduce((acc, file) => {
-      if(/\.lbr$/i.test(file.name)) return acc;
-      file.svg = `${EagleDocument.baseOf(file.name)}.${EagleDocument.typeOf(file.name)}.svg`;
-      //console.log(`file.svg = '${file.svg}'`);
-      return [...acc, file.svg];
-    }, []);
-
-    ListProjects({ descriptions: false, names: svgFiles }).then(data => {
-      for(let svgFile of data.files) {
-        const f = projectFiles.find(i => i.svg === svgFile.name);
-        const delta = svgFile.mtime - f.mtime;
-        f.modified = delta < 0;
+        return file;
       }
-    });
+      File.prototype.toString = function() {
+        return this.name;
+      };
+      list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i)));
+      let svgs = list.reduce((acc, file) => {
+        if(/\.lbr$/i.test(file.name)) return acc;
+        file.svg = `${EagleDocument.baseOf(file.name)}.${EagleDocument.typeOf(file.name)}.svg`;
+        //console.log(`file.svg = '${file.svg}'`);
+        return [...acc, file.svg];
+      }, []);
 
-    LogJS.info(`retrieved project list. Got ${projectFiles.length} items.`);
+      data = await ListProjects({ descriptions: false, names: svgs });
+      files = (data && data.files) || [];
+      //      console.log('filesData:', files);
 
-    projects(projectFiles);
-  });
+      for(let svgFile of files) {
+        if(Util.isObject(svgFile) && svgFile.mtime !== undefined) {
+          const f = list.find(i => i.svg === svgFile.name);
+          if(Util.isObject(f) && f.mtime !== undefined) {
+            const delta = svgFile.mtime - f.mtime;
 
+            f.modified = delta < 0;
+          }
+        }
+      }
+    }
+
+    LogJS.info(`retrieved project list. Got ${list.length} items.`);
+
+    projects(list);
+  };
+
+  UpdateProjectList();
   CreateWebSocket(null, null, ws => (window.socket = ws));
 
-  const searchFilter = trkl(store.get('filter') || '*');
   const crosshair = {
     show: trkl(false),
     position: trkl({ x: 0, y: 0 })
@@ -729,14 +822,38 @@ const AppMain = (window.onload = async () => {
 
   searchFilter.subscribe(value => {
     store.set('filter', value);
-    Util.log('searchFilter is ', value);
+    LogJS.info(`searchFilter is ${value}`);
   });
+
+  listURL.subscribe(value => {
+    store.set('url', value);
+    LogJS.info(`listURL is '${value}'`);
+  });
+
+  trkl.bind(window, { searchFilter, listURL });
+
+  const updateIfChanged = (trkl, newValue, callback) => {
+    const oldValue = trkl();
+    if(!Array.prototype.every.call(oldValue, (elem, i) => newValue[i] === elem)) return false;
+    trkl(newValue);
+    if(typeof callback == 'function') callback(trkl, oldValue, newValue);
+    return true;
+  };
 
   const changeInput = e => {
     const { target } = e;
-    Util.log('changeInput:', target.value);
+    LogJS.info('changeInput:', target.value);
 
     let { value } = target;
+
+    let parts = value.split(/\s+/g);
+
+    let urls = parts.filter(p => /\:\/\//.test(p)).join('\n');
+
+    updateIfChanged(listURL, urls, () => {});
+    listURL(urls);
+
+    //    value = parts.filter(p => !/\:\/\//.test(p)).join(' ');
 
     searchFilter(value == '' ? '*' : value.split(/\s*\|\s*/g).join(' | '));
   };
@@ -779,7 +896,7 @@ const AppMain = (window.onload = async () => {
 
     const r = new Rect({ x, y, width, height });
     if(!loggerRect.equals(r)) {
-      console.log('Logger.dimensions:', r);
+      //console.log('Logger.dimensions:', r);
       loggerRect = r;
       logSize({ width });
     }
@@ -831,15 +948,24 @@ const AppMain = (window.onload = async () => {
   React.render(
     [
       Panel('buttons', [
-        h(Button, {
-          caption: BrowseIcon(),
-          fn: e => {
-            if(e.type.endsWith('down')) {
-              //console.log('file list push', e);
-              open(!open());
+        h(
+          Button,
+          {
+            caption: BrowseIcon(),
+
+            fn: e => {
+              if(e.type.endsWith('down')) {
+                //console.log('file list push', e);
+                open(!open());
+              }
             }
-          }
-        }),
+          },
+          html`
+            <svg height="28" width="28" style=${{ height: 'auto', position: 'relative', width: '100%' }} viewBox="131 -131 512 512" xmlns="http://www.w3.org/2000/svg">
+              <path d="M131-70.3v390.6h432.4L643 76.2H207.4l-48.8 145.7 33.1-170.2h378V2.9H326.3l-47.2-73.2z" fill="#fff" />
+            </svg>
+          `
+        ),
         /* h(Button, {
           caption: 'Random',
           fn: ModifyColors(c => c.replaceAll(c => HSLA.random()))
@@ -899,7 +1025,7 @@ const AppMain = (window.onload = async () => {
           onCommand: cmdStr => {
             let fn = new Function(`return ${cmdStr};`);
 
-            console.log('Command:', cmdStr);
+            //console.log('Command:', cmdStr);
             LogJS.info(`> ${cmdStr}`);
             let result = fn();
             LogJS.info(`= ${Util.toSource(result)}`);
@@ -934,7 +1060,7 @@ const AppMain = (window.onload = async () => {
           const rects = [true, false].map(border => Element.rect(box, { border }));
 
           let p = new Point(start.x + x, start.y + y);
-          console.log('', p);
+          //console.log('', p);
           const inside = rects.map(r => r.inside(p));
 
           const inBorder = inside[0] && !inside[1];
@@ -950,7 +1076,7 @@ const AppMain = (window.onload = async () => {
           let directions = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'];
 
           let norm = Point.fromAngle(rad, 1);
-          console.log('box: ', id, ...inside, inBorder, p, { sector, deg });
+          //console.log('box: ', id, ...inside, inBorder, p, { sector, deg });
           let compass = directions[sector];
 
           box.style.cursor = `${compass}-resize`;
@@ -1079,14 +1205,14 @@ const AppMain = (window.onload = async () => {
     const zoom = Math.pow(10, zoomVal / 200).toFixed(5);
 
     let t = window.transform;
-    console.log('t:', t);
+    //console.log('t:', t);
 
     if(!t.scaling) t.scale(zoom, zoom);
     else {
       t.scaling.x = zoom;
       t.scaling.y = zoom;
     }
-    console.log('window.transform:', window.transform);
+    //console.log('window.transform:', window.transform);
     window.transform = new TransformationList(t);
   });
 

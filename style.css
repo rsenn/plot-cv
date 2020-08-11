@@ -143,6 +143,11 @@ p.description {
 .transparent {
   opacity: 0;
 }
+.button {
+  border: 2px outset hsla(0, 100%, 100%, 0.2);
+  box-shadow: 2px 2px 6px hsl(60, 100%, 80%);
+}
+
 .button,
 .center,
 .button {
@@ -280,6 +285,7 @@ text {
 }
 .button.pushed {
   background: rgba(255, 0, 0, 1);
+  border: 2px inset hsla(220, 100%, 100%, 0.2);
 }
 
 .panel,
@@ -559,3 +565,18 @@ input.commander {
   right: 10px;
   bottom: 10px;
 }
+
+/*.tlite {
+  border: 1px solid black;
+  background: hsla(60, 100%, 50%, 1);
+  border-radius: 4px;
+  padding: 5px 10px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  word-wrap: normal;
+  word-break: keep-all;
+}
+.tlite {
+  font-family: sans, Arial;
+  font-size: 18px;
+  font-weight: normal;
+}*/

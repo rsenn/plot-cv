@@ -44,6 +44,7 @@
     "preact-render-to-string": "^5.1.10",
     "preact-ssr-prepass": "^1.0.0",
     "promisify-child-process": "^4.1.1",
+    "pure-cache": "^1.0.5",
     "react-fuse-picker": "^1.0.0",
     "react-qsm": "^1.2.0",
     "react-use-dimensions": "^1.2.1",

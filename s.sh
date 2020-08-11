@@ -1,30 +1,14 @@
-toksubst.sh -i ArrayExpression ArrayExpression "$@"
-toksubst.sh -i AssignmentExpression AssignmentExpression "$@"
-toksubst.sh -i BinaryExpression BinaryExpression "$@"
-toksubst.sh -i callExpr callExpression "$@"
-toksubst.sh -i CallExpression CallExpression "$@"
-toksubst.sh -i ConditionalExpression ConditionalExpression "$@"
-toksubst.sh -i ExpressionStatement ExpressionStatement "$@"
-toksubst.sh -i FunctionExpression FunctionExpression "$@"
-toksubst.sh -i generateArrayExpression generateArrayExpression "$@"
-toksubst.sh -i generateAssignExpression generateAssignExpression "$@"
-toksubst.sh -i generateBinaryExpression generateBinaryExpression "$@"
-toksubst.sh -i generateCallExpression generateCallExpression "$@"
-toksubst.sh -i generateExpressionStatement generateExpressionStatement "$@"
-toksubst.sh -i generateFunctionExpression generateFunctionExpression "$@"
-toksubst.sh -i generateMemberExpression generateMemberExpression "$@"
-toksubst.sh -i generateNewExpression generateNewExpression "$@"
-toksubst.sh -i generateObjectExpression generateObjectExpression "$@"
-toksubst.sh -i generateSequenceExpression generateSequenceExpression "$@"
-toksubst.sh -i generateThisExpression generateThisExpression "$@"
-toksubst.sh -i generateUnaryExpression generateUnaryExpression "$@"
-toksubst.sh -i generateUpdateExpression generateUpdateExpression "$@"
-toksubst.sh -i LogicalExpression LogicalExpression "$@"
-toksubst.sh -i MemberExpression MemberExpression "$@"
-toksubst.sh -i memExprProperty memExpressionProperty "$@"
-toksubst.sh -i NewExpression NewExpression "$@"
-toksubst.sh -i ObjectExpression ObjectExpression "$@"
-toksubst.sh -i SequenceExpression SequenceExpression "$@"
-toksubst.sh -i ThisExpression ThisExpression "$@"
-toksubst.sh -i UnaryExpression UnaryExpression "$@"
-toksubst.sh -i UpdateExpression UpdateExpression "$@"
+EXTRACHARS=. toksubst.sh -i supportsStorage this.supportsStorage lib/lscache.js
+EXTRACHARS=. toksubst.sh -i isOutOfSpace this.isOutOfSpace lib/lscache.js
+EXTRACHARS=. toksubst.sh -i supportsJSON this.supportsJSON lib/lscache.js
+EXTRACHARS=. toksubst.sh -i escapeRegExpSpecialCharacters this.escapeRegExpSpecialCharacters lib/lscache.js
+EXTRACHARS=. toksubst.sh -i expirationKey this.expirationKey lib/lscache.js
+EXTRACHARS=. toksubst.sh -i currentTime this.currentTime lib/lscache.js
+EXTRACHARS=. toksubst.sh -i getItem this.getItem lib/lscache.js
+EXTRACHARS=. toksubst.sh -i setItem this.setItem lib/lscache.js
+EXTRACHARS=. toksubst.sh -i removeItem this.removeItem lib/lscache.js
+EXTRACHARS=. toksubst.sh -i eachKey this.eachKey lib/lscache.js
+EXTRACHARS=. toksubst.sh -i flushItem this.flushItem lib/lscache.js
+EXTRACHARS=. toksubst.sh -i flushExpiredItem this.flushExpiredItem lib/lscache.js
+EXTRACHARS=. toksubst.sh -i warn this.warn lib/lscache.js
+EXTRACHARS=. toksubst.sh -i calculateMaxDate this.calculateMaxDate lib/lscache.js
