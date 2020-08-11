@@ -71,7 +71,7 @@ let svgElement;
 let brdXml, schXml, brdDom, schDom;
 let board, schematic;
 let loadedProjects = [];
-let zoomVal = 0;
+let zoomLog = trkl(0);
 let container;
 
 let projectFiles = [];
@@ -533,6 +533,9 @@ const LoadDocument = async (project, parentElem) => {
       [...err.stack].map(f => (f + '').replace(Util.getURL() + '/', ''))
     );
   }*/
+
+  AdjustZoom();
+
   project.status = SaveSVG();
 
   return project;
@@ -831,6 +834,14 @@ const AppMain = (window.onload = async () => {
   });
 
   trkl.bind(window, { searchFilter, listURL });
+
+  trkl.bind(window, {zoomVal: zoomLog});
+
+  zoomLog.subscribe(value => {
+    const zoomFactor = ZoomFactor(value);
+    console.log("zoomFactor changed", zoomFactor);
+    if(value === 1)throw new Error(value);
+  });
 
   const updateIfChanged = (trkl, newValue, callback) => {
     const oldValue = trkl();
@@ -1202,7 +1213,19 @@ const AppMain = (window.onload = async () => {
 
     const wheelPos = -event.deltaY.toFixed(2);
     zoomVal = altKey || ctrlKey || shiftKey ? 0 : Util.clamp(-100, 100, zoomVal + wheelPos * 0.1);
-    const zoom = Math.pow(10, zoomVal / 200).toFixed(5);
+AdjustZoom();
+  });
+
+  console.error('AppMain done');
+
+  //console.log(Util.getGlobalObject());
+
+  /*  for(let path of [...Element.findAll('path')]) {
+    let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
+  }*/
+});
+function ZoomFactor(val) { return Math.pow(10, val / 200).toFixed(5); }
+function AdjustZoom() {const zoom = ZoomFactor(zoomVal);
 
     let t = window.transform;
     //console.log('t:', t);
@@ -1214,16 +1237,7 @@ const AppMain = (window.onload = async () => {
     }
     //console.log('window.transform:', window.transform);
     window.transform = new TransformationList(t);
-  });
-
-  console.error('AppMain done');
-
-  //console.log(Util.getGlobalObject());
-
-  /*  for(let path of [...Element.findAll('path')]) {
-    let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
-  }*/
-});
+};
 
 const Module = {
   noInitialRun: true,
