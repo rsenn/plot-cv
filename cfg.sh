@@ -96,7 +96,7 @@ cfg-diet() {
     export PKG_CONFIG=pkgconf
   fi
 
-  export PKG_CONFIG_PATH="$libdir/pkgconfig"
+  : ${PKG_CONFIG_PATH="$libdir/pkgconfig"}; export PKG_CONFIG_PATH
   
   builddir=build/${host%-*}-diet \
   cfg \

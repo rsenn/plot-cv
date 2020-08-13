@@ -271,6 +271,21 @@ const ModifyColors = fn => e => {
   }
 };
 
+const GerberLayers = {
+  GTL: "Top (copper) Layer",
+GBL: "Bottom (copper) Layer ",
+GTO: "Top Overlay",
+GBO: "Bottom Overlay ",
+GTP: "Top Paste Mask ",
+GBP: "Bottom Paste Mask ",
+GTS: "Top Solder Mask ",
+GBS: "Bottom Solder Mask ",
+GKO: "Keep-Out Layer ",
+GML: "Mill layer",
+gpi: "Photoplotter info file",
+TXT: "Drill file"
+};
+
 const BoardToGerber = async (board, opts = {}) => {
   let response;
 
@@ -278,8 +293,16 @@ const BoardToGerber = async (board, opts = {}) => {
 
   try {
     response = await FetchURL('/gerber', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(request) });
+    response = JSON.parse(response);
+
+if(opts.fetch  && response.file)
+  response.data = await FetchURL(`static/${response.file.replace(/^\.\//, "")}`);
+
   } catch(err) {}
-  return JSON.parse(response);
+
+
+return response;
+
 };
 
 const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
