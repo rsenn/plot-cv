@@ -39,13 +39,15 @@ import { WebSocketClient } from './lib/net/websocket-async.js';
 import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
 
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
-import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL } from './lib/eagle/renderUtils.js';
+import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl } from './lib/eagle/renderUtils.js';
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
 import { useDrag, useMove, useGesture } from './useGesture.js';
 import { Emitter, EventIterator } from './events.js';
 import { Slot, SlotContent, SlotProvider } from './slots.js';
+import Voronoi from './lib/geom/voronoi.js';
+import GerberParser from './lib/gerber/parser.js';
 
 /* prettier-ignore */ import { BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode
  } from './lib/eagle.js';
@@ -426,7 +428,7 @@ const LoadDocument = async (project, parentElem) => {
 
   let component = project.renderer.render(project.doc, null, {});
 
-  setTimeout(() => layerList([...project.doc.layers.list].map(layer => ({ i: layer.number, name: layer.name, element: layer }))), 250);
+  setTimeout(() => layerList([...project.doc.layers.list].filter(layer => layer.elements.size > 0).map(layer => ({ i: layer.number, name: layer.name, element: layer }))), 250);
 
   LogJS.info(`${project.name} rendered.`);
   window.component = project.component = component;
@@ -490,11 +492,12 @@ const LoadDocument = async (project, parentElem) => {
   eagle2dom = eagle2dom.map(([p, e]) => [p, p.apply(project.doc.raw), e]);
   eagle2dom = eagle2dom.map(([p, r, e]) => [EagleElement.get(project.doc, p, r), e]);
 
-  //  console.log('eagle2dom:', eagle2dom);
+  console.log('eagle2dom:', eagle2dom);
 
   let dom2eagle = Util.mapFunction(new WeakMap(eagle2dom.map(([k, v]) => [v, k])));
 
   eagle2dom = Util.mapFunction(new WeakMap(eagle2dom));
+  console.log('eagle2dom:', eagle2dom);
 
   const [path2component, component2path] = project.renderer.maps.map(Util.mapFunction);
   const { path2obj, obj2path, path2eagle, eagle2path, eagle2obj, obj2eagle } = project.doc.maps;
@@ -706,6 +709,7 @@ const AppMain = (window.onload = async () => {
     window,
     { LogJS },
     { Element, devtools, dom, RGBA, HSLA },
+    { Voronoi, GerberParser },
     {
       SVGAlignments,
       AlignmentAttrs,
@@ -988,9 +992,19 @@ const AppMain = (window.onload = async () => {
 
   const Toggle = trkl => trkl(!trkl());
 
-  const Layer = ({ title, name, i, ...props }) => {
+  const Layer = ({ title, name, label, i, element, className, ...props }) => {
+    const [visible, setVisible] = useTrkl(element.handlers['visible']);
     console.log('Layer props=', props);
-    return h('div', props, `${i} - ${name}`);
+    return h(
+      'div',
+      {
+        className,
+        onClick: e => {
+          setVisible(element.visible ? 'no' : 'yes');
+        }
+      },
+      [h('span', { className: classNames(className, 'number'), style: { background: element.color }, ...props }, `${i}`), h('span', { className: classNames(className, 'name'), ...props }, `${name}`), h('img', { className: classNames(className, 'visible'), ...props, style: { height: '1em', width: 'auto' }, src: `static/svg/${element.visible ? 'show' : 'hide'}.svg` })]
+    );
   };
 
   React.render(

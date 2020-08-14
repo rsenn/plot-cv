@@ -54,14 +54,14 @@ function testVoronoi(filename) {
     }
   }
 
-  let bb = new BBox();
+  let bb = doc.getBounds(); /*new BBox();
   for(let item of doc.plain) {
     if(item.layer.number != 47) continue;
 
     bb.update(item.geometry());
 
     //Util.log('item:', item);
-  }
+  }*/
 
   var sites = points.map(p => p.toObject());
   //xl, xr means x left, x right

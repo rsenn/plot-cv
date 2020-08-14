@@ -583,13 +583,46 @@ input.commander {
 
 #preact > div.buttons > div.panel.no-select.layers {
   position: absolute;
-  border: 1px solid red;
+  /*border: 1px solid red;*/
   max-height: 80vh;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 div.layers {
   flex-flow: column nowrap;
+  flex-basis: 30px;
+  padding: 2px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.75);
 }
 div.layers > .layer {
   background: white;
+}
+
+div.layer {
+  flex: 1 1 30px;
+  display: inline-flex;
+  flex-flow: row nowrap;
+  justify-content: stretch;
+  align-items: center;
+  transition: background 0.2s ease-in-out;
+  flex-basis: 100%;
+}
+div.layer:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+div.layer > span {
+  padding: 1px 2px;
+}
+div.layer > span.number {
+  flex: 0 0 15%;
+  text-align: right;
+}
+div.layer > span.name {
+  flex: 1 1 auto;
+}
+div.layer > .visible {
+  flex: 0 1 15%;
+}
+
+div.layer > img {
+  fill: white;
 }

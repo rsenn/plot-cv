@@ -98,7 +98,7 @@ else
   if(typeof title == 'string' && title.length > 0) props.title = title;
   if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
 
-  return h('div', { className: classNames(className, pushed && 'pushed', active || 'inactive'), ...props, ...events }, children);
+  return h('div', { className: classNames(className, pushed && 'pushed', active ? 'active' : 'inactive'), ...props, ...events }, children);
 };
 
 export const Container = ({ className = 'panel', children, ...props }) => {
@@ -375,15 +375,16 @@ export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () =
   const other = list.filter(({ name }) => !pred(name)).map(i => i.name);
   const children = list
     .filter(({ name }) => pred(name))
-    .map(({ name, description /*= ''*/, i, title, number, data, ...item }, key) => {
+    .map((value, key) => {
+      let { name, description /*= ''*/, i, title, number, data, ...item } = value;
       data = data || number;
       i = i === undefined ? number : i;
-      console.log(`Chooser item #${i}:`, { keys: Object.keys(item), data });
+      //console.log(`Chooser item #${i}:`, { keys: Object.keys(item), data });
 
       return h(itemComponent, {
         key: i,
         i,
-        className: classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
+        className: typeof itemClass == 'function' ? itemClass(value) : classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
         active: i == active,
         onPush: pushHandler(i),
         label: name.replace(/.*\//, ''),
@@ -410,7 +411,7 @@ export const FileList = ({ files, onChange, onActive, filter, showSearch, focusS
       <${Chooser}
         className="list"
         itemComponent=${File}
-        itemClass="file hcenter"
+        itemClass=${item => 'file hcenter ' + item.name.replace(/.*\./g, '')}
         itemFilter=${filter}
         items=${items}
         tooltip=${({ name, data, ...item }) => {
