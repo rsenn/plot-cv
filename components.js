@@ -1,9 +1,8 @@
-import { h, Fragment, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
-import { Repeater } from './lib/repeater/repeater.js';
-import { useValue, useResult, useAsyncIter } from './lib/repeater/react-hooks.js';
+import { h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent } from './lib/dom/preactComponent.js';
 
 import { trkl } from './lib/trkl.js';
 import { useDimensions } from './useDimensions.js';
+import { useTrkl } from './lib/eagle/renderUtils.js';
 
 //import React from '../modules/preact/dist/preact.mjs';
 
@@ -35,10 +34,22 @@ export function classNames() {
   return classes.join(' ');
 }
 
-export const MouseHandler = callback => e => {
+export const ClickHandler = callback => e => {
   if(e.type) {
-    const pressed = e.type.endsWith('down');
-    callback(e, pressed);
+    const press = e.type.endsWith('down');
+    callback(e, press);
+  }
+};
+
+export const ToggleHandler = (callback, getState, setState) => e => {
+  if(e.type) {
+    const press = e.type.endsWith('down');
+
+    if(press) {
+      let state = !getState();
+      setState(state);
+      callback(e, state);
+    }
   }
 };
 
@@ -50,18 +61,28 @@ export const MouseEvents = h => ({
   onMouseUp: h
 });
 
-export const Overlay = ({ className = 'overlay', title, tooltip, active = false, onPush, text, children, ...props }) => {
-  const [pushed, setPushed] = useState(false);
+export const Overlay = ({ className = 'overlay', title, tooltip, active = true, toggle, state, onPush, text, children, ...props }) => {
+  const [pushed, setPushed] = typeof state == 'function' ? useTrkl(state) : useState(false);
   const events = MouseEvents(
-    MouseHandler((e, state) => {
-      const prev = pushed;
-      if(e.buttons && e.buttons != 1) return;
+    (toggle ? ToggleHandler : ClickHandler)(
+      (e, state) => {
+        const prev = pushed;
+        if(e.buttons && e.buttons != 1) return;
 
-      if(!e.type.endsWith('down') && !e.type.endsWith('up')) return;
-      setPushed(state);
-      //Util.log(`overlay pushed=${pushed} active=${active}:`, e.target);
-      return typeof onPush == 'function' ? onPush(e, state) : null;
-    })
+        if(!e.type.endsWith('down') && !e.type.endsWith('up')) return;
+        //   setPushed(state);
+        //Util.log(`overlay pushed=${pushed} active=${active}:`, e.target);
+        let ret;
+
+        if(typeof onPush == 'function') ret = onPush(e, state);
+
+        if(ret === true || ret === false) state = ret;
+
+        setPushed(state);
+      },
+      () => pushed,
+      setPushed
+    )
   );
   /*
 if(!Util.isArray(children)) {
@@ -77,7 +98,7 @@ else
   if(typeof title == 'string' && title.length > 0) props.title = title;
   if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
 
-  return h('div', { className: classNames(className, pushed && 'pushed', active ? 'active' : 'inactive'), ...props, ...events }, children);
+  return h('div', { className: classNames(className, pushed && 'pushed', active || 'inactive'), ...props, ...events }, children);
 };
 
 export const Container = ({ className = 'panel', children, ...props }) => {
@@ -87,14 +108,14 @@ export const Container = ({ className = 'panel', children, ...props }) => {
   `;
 };
 
-export const Button = ({ caption, image, fn, style = {}, ...props }) => {
+export const Button = ({ caption, image, fn, state, style = {}, ...props }) => {
   if(typeof image == 'string') {
     if(!props.children) props.children = [];
     props.children.unshift(h('img', { src: image }));
     /*style.backgroundImage = `url(${image})`;
   style.backgroundSize = 'cover';*/
   }
-  return h(Overlay, { className: classNames('button', className), text: caption, onPush: state => (state ? fn(state) : undefined), style, ...props });
+  return h(Overlay, { className: classNames('button', className), text: caption, state, onPush: state => (state && typeof fn == 'function' ? fn(state) : undefined), style, ...props });
 };
 /*html`
   <${Overlay} className="button" text=${caption} onPush=${state => (state ? fn(state) : undefined)} ${...props} />
@@ -221,12 +242,12 @@ export const LibraryIcon = props => html`
   </svg>
 `;
 
-export const Conditional = ({ initialState, component, className, children, signal, ...props }) => {
+export const Conditional = ({ initialState, component = Fragment, className, children, signal, ...props }) => {
   const [show, setShown] = useState(initialState !== undefined ? initialState : signal());
 
   if(signal) signal.subscribe(value => setShown(value));
 
-  return show ? h(component, { className, ...props }, children) : [];
+  return show ? h(component, { className, ...props }, children) : h(Fragment, {});
 };
 
 export const ShowHide = ({ initialState, component, className, children, signal, ...props }) => {
@@ -298,13 +319,21 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
   return h(Item, { className, id, 'data-filename': name, label, onPush, icon, ...props }, h(Progress, { className: !isNaN(loaded) ? 'visible' : 'hidden', percent: loaded }));
 };
 
-export const Chooser = ({ className = 'list', itemClass = 'item', itemComponent = Overlay, itemFilter, items, onChange = () => {}, onPush = () => {}, ...props }) => {
+export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () => '', itemComponent = Overlay, itemFilter, items, onChange = () => {}, onPush = () => {}, ...props }) => {
   const [active, setActive] = useState(-1);
-  const [filter, setFilter] = useState('.*');
+  const [filter, setFilter] = useState('*');
+  const [list, setList] = /*useState(items);*/ trkl.is(items) ? useState(items()) : [items];
+
+  if(trkl.is(items)) items.subscribe(setList);
+
+  console.error('list:', list);
+  if(typeof items == 'function') console.error('items():', items());
+  //const list = items;
+
   const pushHandler = i => (e, state) => {
     const prev = active;
     state == true && setActive(i);
-    if(i != prev && e.type.endsWith('down')) onChange(e, items[i], i);
+    if(i != prev && e.type.endsWith('down')) onChange(e, list[i], i);
     onPush(e, i, state);
   };
 
@@ -343,15 +372,13 @@ export const Chooser = ({ className = 'list', itemClass = 'item', itemComponent 
     .map(p => list2re(p.split(/\s\s*/g)));
   Util.log('regex:', ...reList);
   const pred = name => !reList.every(c => !c.every(re => re.test(name))) && plus.every(re => re.test(name));
-  const other = items.filter(({ name }) => !pred(name)).map(i => i.name);
-  const children = items
+  const other = list.filter(({ name }) => !pred(name)).map(i => i.name);
+  const children = list
     .filter(({ name }) => pred(name))
-    .map(({ name, description, i, title, data, ...item }, key) => {
-      //Util.log(`Chooser item #${i}:`, {keys:Object.keys(item),data});
-      let tooltip = `name\t${name.replace(/.*\//g, '')}`;
-      tooltip += `\ntype\t${item.type}\nsize\t${item.size}\nsha\t${item.sha}\npath\t${item.path}`;
-
-      if(data) tooltip += `\ndata\t${Util.abbreviate(data)}`;
+    .map(({ name, description /*= ''*/, i, title, number, data, ...item }, key) => {
+      data = data || number;
+      i = i === undefined ? number : i;
+      console.log(`Chooser item #${i}:`, { keys: Object.keys(item), data });
 
       return h(itemComponent, {
         key: i,
@@ -360,7 +387,7 @@ export const Chooser = ({ className = 'list', itemClass = 'item', itemComponent 
         active: i == active,
         onPush: pushHandler(i),
         label: name.replace(/.*\//, ''),
-        tooltip,
+        tooltip: tooltip({ title, name, description, i, number, data, ...item }),
         name,
         description,
         ...item
@@ -386,6 +413,13 @@ export const FileList = ({ files, onChange, onActive, filter, showSearch, focusS
         itemClass="file hcenter"
         itemFilter=${filter}
         items=${items}
+        tooltip=${({ name, data, ...item }) => {
+          let tooltip = `name\t${name.replace(/.*\//g, '')}`;
+          tooltip += `\ntype\t${item.type}\nsize\t${item.size}\nsha\t${item.sha}\npath\t${item.path}`;
+
+          if(data) tooltip += `\ndata\t${Util.abbreviate(data)}`;
+          return tooltip;
+        }}
         onChange=${(...args) => {
           onChange(...args);
         }}
@@ -766,6 +800,43 @@ export const MoveCursor = props =>
     ]
   );
 
+export const DropDown = ({ children, into /* = 'body'*/, isOpen, ...props }) => {
+  let [button, overlay] = ReactComponent.toChildArray(children);
+
+  const [open, setOpen] = useState(isOpen());
+
+  isOpen.subscribe(value => {
+    setOpen(value);
+  });
+  console.log('DropDown open=', { open, Fragment });
+
+  if(typeof overlay == 'function')
+    overlay = overlay({
+      ref: current => {
+        if(current) {
+          const { base } = current;
+          const button = base.previousElementSibling;
+
+          const pos = Element.rect(button).toPoints()[3];
+
+          Element.move(base, pos, 'fixed');
+
+          console.log('overlay ref:', base, button);
+        }
+      }
+    });
+
+  return h(Fragment, {}, open ? [button, into ? h(Portal, { into }, overlay) : overlay] : button);
+};
+/*
+export const Conditional = ({ trkl, children, ...props }) => {
+  const [cond, setCond] = useState(trkl());
+
+  trkl.subscribe(setCond);
+
+  return h(Fragment, {}, cond ? children : []);
+};
+*/
 export default {
   Overlay,
   Container,

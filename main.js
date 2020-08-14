@@ -32,8 +32,8 @@ import { toXML, ImmutablePath } from './lib/json.js';
 import { XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';
 import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
-import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
-import components, { Chooser, DynamicLabel, Label, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, BrowseIcon, CrossHair, FloatingPanel } from './components.js';
+import React, { h, html, render, Fragment, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
+import components, { Chooser, DynamicLabel, Label, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, BrowseIcon, CrossHair, FloatingPanel, DropDown, Conditional } from './components.js';
 import { Message } from './message.js';
 import { WebSocketClient } from './lib/net/websocket-async.js';
 import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
@@ -45,20 +45,22 @@ import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
 import { useDrag, useMove, useGesture } from './useGesture.js';
 import { Emitter, EventIterator } from './events.js';
+import { Slot, SlotContent, SlotProvider } from './slots.js';
 
 /* prettier-ignore */ import { BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode
  } from './lib/eagle.js';
 //import PureCache from 'pure-cache';
-import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js';
+import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, createContext, create: h, html, render, useCallback, useContext, useDebugValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useReducer, useRef, useState };
 
-/* prettier-ignore */ const React = {Component, createContext, create: h, html, render, useCallback, useContext, useDebugValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useReducer, useRef, useState };
-/* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG, Timer, Transition, TransitionList, TRBL, Tree } = {...dom, ...geom };
+/* prettier-ignore */ /* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG, Timer, Transition, TransitionList, TRBL, Tree } = {...dom, ...geom };
 Util.colorCtor = ColoredText;
 /* prettier-ignore */ Util.extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, {CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, ColoredText, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon } );
 
 Error.stackTraceLimit = 100;
 
 let currentProj = trkl.property(window, 'project');
+let layerList = trkl.property(window, 'layers', { value: [] });
+
 let open = trkl();
 let showSearch = trkl(true);
 let logSize = trkl({});
@@ -88,7 +90,7 @@ const add = (arr, ...items) => [...(arr ? arr : []), ...items];
 
 const useSlot = (arr, i) => [() => arr[i], v => (arr[i] = v)];
 const trklGetSet = (get, set) => value => (value !== undefined ? set(value) : get());
-const useTrkl = trkl => [() => trkl(), value => trkl(value)];
+//const useTrkl = trkl => [() => trkl(), value => trkl(value)];
 
 const classNames = (...args) => args.filter(arg => typeof arg == 'string' && arg.length > 0).join(' ');
 
@@ -226,7 +228,7 @@ const LoadFile = async file => {
   if(/\.sch$/.test(filename)) window.schematic = doc;
   if(/\.lbr$/.test(filename)) window.libraries = add(window.libraries, doc);
 
-  Util.log('LoadFile', doc.file);
+  LogJS.info('LoadFile', doc.file);
 
   return doc;
 };
@@ -272,18 +274,18 @@ const ModifyColors = fn => e => {
 };
 
 const GerberLayers = {
-  GTL: "Top (copper) Layer",
-GBL: "Bottom (copper) Layer ",
-GTO: "Top Overlay",
-GBO: "Bottom Overlay ",
-GTP: "Top Paste Mask ",
-GBP: "Bottom Paste Mask ",
-GTS: "Top Solder Mask ",
-GBS: "Bottom Solder Mask ",
-GKO: "Keep-Out Layer ",
-GML: "Mill layer",
-gpi: "Photoplotter info file",
-TXT: "Drill file"
+  GTL: 'Top (copper) Layer',
+  GBL: 'Bottom (copper) Layer ',
+  GTO: 'Top Overlay',
+  GBO: 'Bottom Overlay ',
+  GTP: 'Top Paste Mask ',
+  GBP: 'Bottom Paste Mask ',
+  GTS: 'Top Solder Mask ',
+  GBS: 'Bottom Solder Mask ',
+  GKO: 'Keep-Out Layer ',
+  GML: 'Mill layer',
+  gpi: 'Photoplotter info file',
+  TXT: 'Drill file'
 };
 
 const BoardToGerber = async (board, opts = {}) => {
@@ -295,14 +297,10 @@ const BoardToGerber = async (board, opts = {}) => {
     response = await FetchURL('/gerber', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(request) });
     response = JSON.parse(response);
 
-if(opts.fetch  && response.file)
-  response.data = await FetchURL(`static/${response.file.replace(/^\.\//, "")}`);
-
+    if(opts.fetch && response.file) response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`);
   } catch(err) {}
 
-
-return response;
-
+  return response;
 };
 
 const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
@@ -427,6 +425,8 @@ const LoadDocument = async (project, parentElem) => {
   let style = { width: '100%', height: '100%', position: 'relative' };
 
   let component = project.renderer.render(project.doc, null, {});
+
+  setTimeout(() => layerList([...project.doc.layers.list].map(layer => ({ i: layer.number, name: layer.name, element: layer }))), 250);
 
   LogJS.info(`${project.name} rendered.`);
   window.component = project.component = component;
@@ -574,7 +574,7 @@ const ChooseDocument = async (project, i) => {
   if(i == undefined) i = project.i || projectFiles.indexOf(project);
 
   const box = Element.findAll('.file')[i];
-  Util.log('ChooseDocument:', { project, i, box });
+  LogJS.info('ChooseDocument:', { project, i, box });
   LogJS.info(`${project.name} selected.`);
   try {
     if(!project.loaded) {
@@ -661,7 +661,7 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
 
   window.socket = ws;
 
-  Util.log('New WebSocket:', ws);
+  LogJS.info('New WebSocket:', ws);
   await ws.connect(socketURL);
   LogJS.info('WebSocket Connected:', ws.connected);
   socketFn(ws);
@@ -670,7 +670,7 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
   for await (data of ws) {
     let msg = new Message(data);
     window.msg = msg;
-    Util.log('WebSocket data:', msg[Symbol.toStringTag]());
+    LogJS.info('WebSocket data:', msg[Symbol.toStringTag]());
     ws.dataAvailable !== 0;
   }
   await ws.disconnect();
@@ -984,8 +984,17 @@ const AppMain = (window.onload = async () => {
     return h('input', { type: 'text', className: 'commander', value: inputText, onKeyDown: handler, autofocus: true }, []);
   };
 
+  const layersDropDown = trkl(false);
+
+  const Toggle = trkl => trkl(!trkl());
+
+  const Layer = ({ title, name, i, ...props }) => {
+    console.log('Layer props=', props);
+    return h('div', props, `${i} - ${name}`);
+  };
+
   React.render(
-    [
+    h(SlotProvider, {}, [
       Panel('buttons', [
         h(
           Button,
@@ -1016,13 +1025,26 @@ const AppMain = (window.onload = async () => {
         h(Button, {
           //  caption: '↔',
           fn: MakeFitAction(0),
-          image: '/static/fit-vertical.svg'
+          image: 'static/fit-vertical.svg'
         }),
         h(Button, {
           //  caption: '↕',
           fn: MakeFitAction(1),
-          image: '/static/fit-horizontal.svg'
+          image: 'static/fit-horizontal.svg'
         }),
+        h(
+          Conditional,
+          { signal: currentProj },
+          h(DropDown, { isOpen: layersDropDown.subscribe(open => console.log('layers dropdown', { open })) }, [
+            h(Button, {
+              toggle: true,
+              state: layersDropDown,
+              //    fn: (e,state) => /*(e.buttons && e.type.endsWith('down')) &&*/ state && layersDropDown(state) || true,
+              image: 'static/svg/layers.svg'
+            }),
+            props => h(Chooser, { ...props, className: 'layers', itemClass: 'layer', itemComponent: Layer, items: layerList }, [])
+          ])
+        ),
         h(DynamicLabel, { className: 'vcenter pad-lr', caption: documentTitle }),
         h(Consumer, {})
       ]),
@@ -1070,8 +1092,9 @@ const AppMain = (window.onload = async () => {
             LogJS.info(`= ${Util.toSource(result)}`);
           }
         })
-      ])
-    ],
+      ]),
+      h(Slot, { name: 'layers' })
+    ]),
     Element.find('#preact')
   );
 

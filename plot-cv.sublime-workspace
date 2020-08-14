@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"lay",
+				"layersDropDown\tconst"
+			],
+			[
 				"isAu",
 				"isAutoHiding\tparameter"
 			],
@@ -80,66 +84,26 @@
 	"buffers":
 	[
 		{
-			"file": "lib/eagle/components/grid.js",
-			"settings":
-			{
-				"buffer_size": 1280,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "Searching 758 files for \"import.*Fragment\" (regex, case sensitive)\n\n/home/roman/Dokumente/Sources/plot-cv/components.js:\n    1: import { h, Fragment, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';\n    2  import { Repeater } from './lib/repeater/repeater.js';\n    3  import { useValue, useResult, useAsyncIter } from './lib/repeater/react-hooks.js';\n\n/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js:\n    1: //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from '../../node_modules/preact/dist/preact.mjs';\n    2  import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from '../../node_modules/htm/preact/standalone.mjs';\n    3  export { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from '../../node_modules/htm/preact/standalone.mjs';\n    4  \n    5: import { Fragment } from '../preact.js';\n    6  export { Fragment } from '../preact.js';\n    7  \n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/arc.js:\n    1: import { h, Fragment, Component } from '../../dom/preactComponent.js';\n    2  \n    3  export function polarToCartesian(x, y, r, deg) {\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pin.js:\n    1: import { h, Fragment, Component } from '../../dom/preactComponent.js';\n    2  import { MakeCoordTransformer } from '../renderUtils.js';\n    3  import { TransformationList } from '../../geom/transformation.js';\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/symbol.js:\n    1: import { h, Component, Fragment } from '../../dom/preactComponent.js';\n    2  import { ElementToComponent } from '../components.js';\n    3  \n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/text.js:\n    1: import { h, Fragment, Component } from '../../dom/preactComponent.js';\n    2  import { Rotation, Alignment, VERTICAL, HORIZONTAL } from '../renderUtils.js';\n    3  import { TransformationList } from '../../geom.js';\n\n/home/roman/Dokumente/Sources/plot-cv/lib/renderToString.js:\n    1: import { options, Fragment, createElement } from './preact.js';\n    2  \n    3  var IS_NON_DIMENSIONAL = /acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|^--/i;\n\n/home/roman/Dokumente/Sources/plot-cv/main.js:\n   32  import { XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';\n   33  import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';\n   34: //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';\n   35  import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';\n   36  import components, { Chooser, DynamicLabel, Label, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, BrowseIcon, CrossHair, FloatingPanel } from './components.js';\n\n/home/roman/Dokumente/Sources/plot-cv/test-preact.js:\n    1: import { Component, Fragment, cloneElement, createContext, createElement, createRef, h, hydrate, isValidElement, options, render, toChildArray } from './lib/preact.js';\n    2  \n    3  import { html } from './lib/htm.js';\n\n10 matches across 9 files\n",
-			"settings":
-			{
-				"buffer_size": 3702,
-				"line_ending": "Unix",
-				"name": "Find Results",
-				"scratch": true
-			}
-		},
-		{
-			"file": "lib/eagle/components/arc.js",
-			"settings":
-			{
-				"buffer_size": 1292,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "lib/eagle/svgRenderer.js",
 			"settings":
 			{
-				"buffer_size": 15986,
+				"buffer_size": 16014,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "test-sourcemap.js",
+			"file": "lib/eagle/components/grid.js",
 			"settings":
 			{
-				"buffer_size": 1262,
-				"encoding": "UTF-8",
-				"line_ending": "Unix",
-				"name": "import {SourceMap} from './lib/souceMap.js';"
-			}
-		},
-		{
-			"file": "lib/sourceMap.js",
-			"settings":
-			{
-				"buffer_size": 3971,
-				"encoding": "UTF-8",
+				"buffer_size": 1359,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"contents": "/opt/FFmpeg/lib\n/ opt/opencv4-x64/lib\n/opt/openssl-x86_64/lib\n/opt/protobuf-3.11.4/lib\n/opt/qt514/lib\n/opt/SDL2/lib\n",
-			"file": "/etc/ld.so.conf.d/opt.conf",
-			"file_size": 115,
-			"file_write_time": 132416670851247371,
+			"file": "components.js",
 			"settings":
 			{
-				"buffer_size": 116,
+				"buffer_size": 29271,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -148,32 +112,80 @@
 			"file": "lib/util.js",
 			"settings":
 			{
-				"buffer_size": 112987,
+				"buffer_size": 113041,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "test-xml.js",
+			"file": "static/svg/hide.svg",
 			"settings":
 			{
-				"buffer_size": 12467,
+				"buffer_size": 965,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/eagle/boardRenderer.js",
+			"contents": "///prettier-ignore-ignore-start\nimport { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';\nimport dom from './lib/dom.js';\nimport { ReactComponent } from './lib/dom/preactComponent.js';\nimport { iterator, eventIterator } from './lib/dom/iterator.js';\nimport keysim from './lib/dom/keysim.js';\nimport geom from './lib/geom.js';\nimport { BBox } from './lib/geom/bbox.js';\nimport { Polygon } from './lib/geom/polygon.js';\nimport { ScrollDisabler } from './lib/scrollHandler.js';\nimport { TouchListener } from './lib/touchHandler.js';\nimport { trkl } from './lib/trkl.js';\nimport { ColorMap } from './lib/draw/colorMap.js';\nimport { ClipperLib } from './lib/clipper-lib.js';\nimport Shape from './lib/clipper.js';\nimport { devtools } from './lib/devtools.js';\nimport Util from './lib/util.js';\nimport tlite from './lib/tlite.js';\nimport tXml from './lib/tXml.js';\nimport deep from './lib/deep.js';\nimport Alea from './lib/alea.js';\nimport { Cache } from './lib/dom/cache.js';\nimport { CacheStorage } from './lib/dom/cacheStorage.js';\nimport { Iterator } from './lib/iterator.js';\nimport { Functional } from './lib/functional.js';\nimport { makeLocalStorage } from './lib/autoStore.js';\nimport { Repeater } from './lib/repeater/repeater.js';\nimport { useValue, useResult, useAsyncIter } from './lib/repeater/react-hooks.js';\nimport LogJS from './lib/log.js';\nimport { useDimensions } from './useDimensions.js';\nimport { toXML, ImmutablePath } from './lib/json.js';\nimport { XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';\nimport { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';\n//import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';\nimport React, { h, html, render,Fragment, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';\nimport components, { Chooser, DynamicLabel, Label, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, BrowseIcon, CrossHair, FloatingPanel, DropDown, Conditional } from './components.js';\nimport { Message } from './message.js';\nimport { WebSocketClient } from './lib/net/websocket-async.js';\nimport { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';\n\nimport { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';\nimport { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL } from './lib/eagle/renderUtils.js';\nimport { Wire } from './lib/eagle/components/wire.js';\nimport { Instance } from './lib/eagle/components/instance.js';\nimport { SchematicSymbol } from './lib/eagle/components/symbol.js';\nimport { useDrag, useMove, useGesture } from './useGesture.js';\nimport { Emitter, EventIterator } from './events.js';\nimport { Slot, SlotContent, SlotProvider } from './slots.js';\n\n/* prettier-ignore */ import { BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode\n } from './lib/eagle.js';\n//import PureCache from 'pure-cache';\nimport { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js';\n\n/* prettier-ignore */ //const React = {Component, Fragment, createContext, create: h, html, render, useCallback, useContext, useDebugValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useReducer, useRef, useState };\n/* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG, Timer, Transition, TransitionList, TRBL, Tree } = {...dom, ...geom };\nUtil.colorCtor = ColoredText;\n/* prettier-ignore */ Util.extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, {CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, ColoredText, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon } );\n\nError.stackTraceLimit = 100;\n\nlet currentProj = trkl.property(window, 'project');\nlet layerList = trkl.property(window, 'layers', { value: [] });\n\nlet open = trkl();\nlet showSearch = trkl(true);\nlet logSize = trkl({});\nlet dump = trkl({});\nlet cache = new lscache();\n\nlet projectName = 'Headphone-Amplifier-ClassAB-alt3';\nlet palette = null;\nlet svgElement;\nlet brdXml, schXml, brdDom, schDom;\nlet board, schematic;\nlet loadedProjects = [];\nlet zoomLog = trkl(0);\nlet container;\n\nlet projectFiles = [];\nlet activeFile;\nlet transform = trkl(new TransformationList());\nlet sizeListener = trkl({});\nlet aspectListener = trkl(1);\nlet debug = false;\nconst documentTitle = trkl('');\n\nlet store = (window.store = makeLocalStorage());\n\nconst add = (arr, ...items) => [...(arr ? arr : []), ...items];\n\nconst useSlot = (arr, i) => [() => arr[i], v => (arr[i] = v)];\nconst trklGetSet = (get, set) => value => (value !== undefined ? set(value) : get());\n//const useTrkl = trkl => [() => trkl(), value => trkl(value)];\n\nconst classNames = (...args) => args.filter(arg => typeof arg == 'string' && arg.length > 0).join(' ');\n\nconst MouseEvents = h => ({\n  onMouseDown: h,\n\n  /*  onBlur: h,*/\n  onMouseOut: h,\n  onMouseUp: h\n});\n//console.log('running');\n//console.log(\"dom\", { Rect, Element });\n\nwindow.dom = { Element, SVG };\n\ntlite(() => ({ grav: '-|', attrib: ['data-tlite', 'data-tooltip', 'title', 'data-filename'] }));\n/* prettier-ignore */\n/*    const CreateSelect = (obj, node = document.body) => {\n                            let elem = Select.create(Object.entries(obj));\n                            node.insertBefore(elem, node.firstElementChild);\n                          };*/\nconst utf8Decoder = new TextDecoder('utf-8');\n\nconst ListProjects = async function(opts = {}) {\n  const { url, descriptions = true, names, filter } = opts;\n\n  //console.log('ListProjects', { url, descriptions, names, filter });\n\n  let response;\n\n  if(!url) {\n    response = await fetch('/files.html', {\n      //      nocache: true,\n      method: 'post',\n      mode: 'cors', // no-cors, *cors, same-origin\n      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached\n      credentials: 'same-origin', // include, *same-origin, omit\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify({ descriptions, names, filter })\n    });\n\n    if(typeof response.text == 'function') response = await response.text();\n\n    console.log('response:', Util.abbreviate(response));\n\n    if(response) response = JSON.parse(response);\n  } else {\n    response = await ListGithubRepo(url, null, null, '\\\\.(brd|sch|lbr)$', opts);\n    //console.log('response:', response);\n    let fileList = response.map((file, i) => ({ ...file, name: response.at(i) }));\n\n    response = { files: fileList };\n  }\n\n  return response;\n};\n\nconst ElementToXML = (e, predicate) => {\n  const x = Element.toObject(e, { predicate });\n  //console.log('x:', x);\n  return Element.toString(x, { newline: '\\n' });\n};\n\nconst FetchCached = CachedFetch(window.fetch, 'fetch');\n\nconst FetchURL = async (url, allOpts = {}) => {\n  let { nocache = false, ...opts } = allOpts;\n  let result;\n  let ret;\n\n  let fetch = FetchCached;\n\n  if(opts.method && opts.method.toUpperCase() == 'POST') {\n    nocache = true;\n    fetch = (...args) => window.fetch(...args).then(async res => await res.text());\n  }\n\n  if(/tmp\\//.test(url)) {\n    url = url.replace(/.*tmp\\//g, '/static/tmp/');\n  } else if(/^\\//.test(url)) {\n  } else if(/:\\/\\//.test(url)) {\n  } else {\n    url = '/static/' + url;\n  }\n  try {\n    //    if(!nocache) ret = cache.get(url);\n\n    if(!ret) {\n      ret = result = await fetch(url, opts);\n\n      if(!nocache && typeof ret == 'string' && ret.length > 0) cache.set(url, ret);\n    }\n  } catch(error) {\n    Util.putError(error);\n    throw error;\n  }\n\n  if(typeof ret.text == 'function') ret = await result.text();\n\n  return ret;\n};\n\nconst FileSystem = {\n  async readFile(filename) {\n    return await FetchURL(`/static/${filename}`);\n  },\n  async writeFile(filename, data, overwrite = true) {\n    return await fetch('/save', {\n      method: 'post',\n      headers: {\n        'Content-Type': 'application/octet-stream',\n        'Content-Disposition': `attachment; filename=\"${filename}\"`\n      },\n      body: data + ''\n    });\n  },\n  async exists(filename) {},\n  async realpath(filename) {}\n};\n\nconst LoadFile = async file => {\n  //console.log('file:', file.url, file.name);\n  let { url, name: filename } = file;\n  url = /:\\/\\//.test(filename) ? filename : `/static/${filename}`;\n  //console.log('file: url=', url);\n  let xml = /* await FetchURL(url);*/ await (await fetch(url)).text(); //(typeof file.\n  //file= await FetchURL(url);  //'function' && (await file.fetch())) || (await FetchURL(url, {}));\n  //console.log('LoadFile', { url, xml });\n  //console.log('xml: ', xml.substring(0, 100));\n  //let dom = new DOMParser().parseFromString(xml, 'application/xml');\n\n  let doc = new EagleDocument(xml, null, filename, null, FileSystem);\n\n  if(/\\.brd$/.test(filename)) window.board = doc;\n  if(/\\.sch$/.test(filename)) window.schematic = doc;\n  if(/\\.lbr$/.test(filename)) window.libraries = add(window.libraries, doc);\n\n  LogJS.info('LoadFile', doc.file);\n\n  return doc;\n};\n\nconst SaveSVG = (window.save = async function save(filename, layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48, 51]) {\n  const { doc } = project;\n  const { basename, typeName } = doc;\n  if(!filename) filename = `${doc.basename}.${doc.typeName}.svg`;\n\n  let predicate = element => {\n    if(!element.hasAttribute('data-layer')) return true;\n    //console.log('element:', element);\n    const layer = element.getAttribute('data-layer');\n    let [number, name] = layer.split(/ /);\n    if(number !== undefined && name !== undefined) return layers.indexOf(+number) != -1 || layers.indexOf(name) != -1;\n    return true;\n  };\n  let data = ElementToXML(project.svg, predicate);\n\n  let { status, statusText, body } = await fetch('/save', {\n    method: 'post',\n    headers: {\n      'Content-Type': 'application/xml',\n      'Content-Disposition': `attachment; filename=\"${filename.replace(/\\.svg$/i, '')}.svg\"`\n    },\n    body: data\n  });\n  const result = { status, statusText, body };\n  LogJS.info(`${filename} saved.`);\n  return result;\n});\n\nconst ModifyColors = fn => e => {\n  const { type, buttons } = e;\n  if(type.endsWith('down')) {\n    if(!window.c) window.c = SVG.allColors(project.svg);\n    let { c } = window;\n    //console.log('ModifyColors', fn);\n\n    c.dump();\n    fn(c);\n  }\n};\n\nconst GerberLayers = {\n  GTL: 'Top (copper) Layer',\n  GBL: 'Bottom (copper) Layer ',\n  GTO: 'Top Overlay',\n  GBO: 'Bottom Overlay ',\n  GTP: 'Top Paste Mask ',\n  GBP: 'Bottom Paste Mask ',\n  GTS: 'Top Solder Mask ',\n  GBS: 'Bottom Solder Mask ',\n  GKO: 'Keep-Out Layer ',\n  GML: 'Mill layer',\n  gpi: 'Photoplotter info file',\n  TXT: 'Drill file'\n};\n\nconst BoardToGerber = async (board, opts = {}) => {\n  let response;\n\n  let request = { ...opts, board };\n\n  try {\n    response = await FetchURL('/gerber', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(request) });\n    response = JSON.parse(response);\n\n    if(opts.fetch && response.file) response.data = await FetchURL(`static/${response.file.replace(/^\\.\\//, '')}`);\n  } catch(err) {}\n\n  return response;\n};\n\nconst ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {\n  const { username, password } = opts;\n  let host, path;\n  if(new RegExp('://').test(owner) || (repo == null && dir == null)) {\n    const url = owner;\n    let parts = url\n      .replace(/.*:\\/\\//g, '')\n      .replace('/tree/master', '')\n      .split('/');\n    while(!/github.com/.test(parts[0])) parts = parts.slice(1);\n    [host, owner, repo, ...path] = parts;\n\n    dir = path.join('/');\n  }\n\n  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${dir}`;\n  //console.log('ListGithubRepo', { host, owner, repo, dir, filter, url });\n  const headers = {\n    Authorization: 'Basic ' + window.btoa(`${username}:${password}`)\n  };\n  let response = await FetchURL(url, {\n    //method: 'get', // credentials: 'include',\n    headers\n  });\n  let result = JSON.parse(await response.text());\n\n  if(!Util.isArray(result)) return result;\n\n  if(filter) {\n    const re = new RegExp(filter, 'g');\n    result = result.filter(({ name, type }) => type == 'dir' || re.test(name));\n  }\n  //  console.log('result:', result);\n  const firstFile = result.find(r => !!r.download_url);\n  const base_url = firstFile ? firstFile.download_url.replace(/\\/[^\\/]*$/, '') : '';\n  const files = result.map(({ download_url = '', html_url, name, type, size, path, sha }) => ({ url: (download_url || html_url || '').replace(base_url + '/', ''), name, type, size, path, sha }));\n  const at = i => {\n    let url = files[i].url;\n    if(!/:\\/\\//.test(url)) url = base_url + '/' + url;\n    return url;\n  };\n\n  return Object.assign(\n    files.map((file, i) => {\n      file.toString = () => at(i);\n      if(file.type == 'dir') file.list = async (f = filter) => await ListGithubRepo(at(i), null, null, f, {});\n      else {\n        let getter = async function() {\n          let data = await fetch(at(i), {});\n          //         console.log('data:', data);\n          this.buf = await data.text();\n          return this.buf;\n        };\n\n        let text = function() {\n          return typeof this.buf == 'string' && this.buf.length > 0 ? this.buf : this.get();\n        }; //Util.memoize((...args) => file.fetch(...args));\n\n        file.get = getter;\n        file.getText = text;\n        Object.defineProperty(file, 'text', { get: text, enumerable: true, configurable: true });\n\n        //Util.defineGetter(file, 'text', text);\n      }\n      return file;\n    }),\n    {\n      base_url,\n      at,\n      async get(i) {\n        const url = at(i);\n        //console.log('url:', url);\n        return await FetchURL(url, {});\n      },\n      get files() {\n        return files.filter(item => item.type != 'dir');\n      },\n      get dirs() {\n        return files.filter(item => item.type == 'dir');\n      }\n    }\n  );\n};\n\nconst ListGithubRepoServer = async (owner, repo, dir, filter) => {\n  let response;\n  let request = { owner, repo, dir, filter };\n  try {\n    response = await FetchURL('/github', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(request) });\n  } catch(err) {}\n  let ret = JSON.parse(response);\n  ret.at = function(i) {\n    return this.base_url + '/' + this.files[i];\n  };\n  ret.get = async function(i) {\n    let data = await FetchURL(this.at(i));\n    return data;\n  };\n  return ret;\n};\n\nconst LoadDocument = async (project, parentElem) => {\n  //console.log('project:', project);\n  try {\n    project.doc = await LoadFile(project);\n  } catch(error) {\n    Util.putError(error);\n    throw error;\n  }\n  LogJS.info(`${project.doc.basename} loaded.`);\n  documentTitle(project.doc.file.replace(/.*\\//g, ''));\n  window.eagle = project.doc;\n  window.project = project;\n  layerList([...project.doc.layers.list]);\n  Element.remove('#fence');\n  let docElem = Element.find('#doc');\n  docElem.innerHTML = '';\n  Util.log('project.doc:', project.doc.basename);\n  project.renderer = new Renderer(project.doc, ReactComponent.append, debug);\n  Util.log('project.renderer', project.renderer);\n  let style = { width: '100%', height: '100%', position: 'relative' };\n\n  let component = project.renderer.render(project.doc, null, {});\n\n  LogJS.info(`${project.name} rendered.`);\n  window.component = project.component = component;\n  Util.log('testRender:', component);\n  let element = Element.find('#main');\n  let r = project.renderer.rect || project.renderer.bounds;\n  Util.log('project.renderer:', project.renderer);\n  Util.log('r:', r);\n  let aspectRatio = 1;\n  if(r) {\n    aspectRatio = r.width / r.height;\n    sizeListener({ width: r.width });\n  }\n  aspectListener(aspectRatio);\n  const Fence = ({ children, style = {}, sizeListener, aspectListener, ...props }) => {\n    const [dimensions, setDimensions] = useState(sizeListener());\n    const [aspect, setAspect] = useState(aspectListener());\n    if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));\n    if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));\n    return h(\n      TransformedElement,\n      {\n        id: 'fence',\n        type: SizedAspectRatioBox,\n        aspect,\n        listener: transform,\n        style: {\n          position: 'relative',\n          minWidth: '100px',\n          'data-name': project.name,\n          ...style,\n          ...dimensions\n        },\n        ...props\n      },\n      children\n    );\n  };\n  component = h(\n    Fence,\n    {\n      style: {},\n      sizeListener,\n      aspectListener\n    },\n    [component]\n  );\n\n  React.render(component, element);\n\n  let object = ReactComponent.toObject(component);\n  project.object = object;\n  let rendered = object.children[0];\n\n  Util.log('rendered:', rendered);\n\n  let eagle2dom = [...Element.findAll('*[data-path]')];\n\n  eagle2dom = eagle2dom.map(e => [e.getAttribute('data-path'), e]);\n  eagle2dom = eagle2dom.map(([p, e]) => [new ImmutablePath(p), e]);\n  eagle2dom = eagle2dom.map(([p, e]) => [p, p.apply(project.doc.raw), e]);\n  eagle2dom = eagle2dom.map(([p, r, e]) => [EagleElement.get(project.doc, p, r), e]);\n\n  //  console.log('eagle2dom:', eagle2dom);\n\n  let dom2eagle = Util.mapFunction(new WeakMap(eagle2dom.map(([k, v]) => [v, k])));\n\n  eagle2dom = Util.mapFunction(new WeakMap(eagle2dom));\n\n  const [path2component, component2path] = project.renderer.maps.map(Util.mapFunction);\n  const { path2obj, obj2path, path2eagle, eagle2path, eagle2obj, obj2eagle } = project.doc.maps;\n\n  const [component2eagle, eagle2component] = [Util.mapAdapter((key, value) => (value === undefined ? path2eagle(component2path(key)) : undefined)), Util.mapAdapter((key, value) => (value === undefined ? path2component(eagle2path(key)) : undefined))];\n\n  const [component2dom, dom2component] = [Util.mapAdapter((key, value) => (value === undefined ? eagle2dom(component2eagle(key)) : undefined)), Util.mapAdapter((key, value) => (value === undefined ? eagle2component(dom2eagle(key)) : undefined))];\n\n  //path2eagle: path2obj, eagle2path: obj2path\n\n  project.maps = {\n    ...project.doc.maps,\n    path2component,\n    component2path,\n    dom2eagle,\n    eagle2dom,\n    component2eagle,\n    eagle2component,\n    component2dom,\n    dom2component\n  };\n\n  project.rendered = rendered;\n  project.element = element;\n  project.svg = Element.find('svg', '#main');\n  project.grid = Element.find('g.grid', project.element);\n  project.bbox = SVG.bbox(project.grid);\n  project.aspectRatio = aspect;\n\n  let { name, data, doc, svg, bbox } = project;\n  let bounds = doc.getBounds();\n  let rect = bounds.toRect(Rect.prototype);\n  let size = new Size(r);\n  currentProj(project);\n  size.mul(doc.type == 'brd' ? 2 : 1.5);\n  let svgrect = SVG.bbox(project.svg);\n\n  let measures = new BBox().update(doc.getMeasures(true)).toRect(Rect.prototype);\n  console.log('measures:', measures);\n  //project.aspectRatio = svgrect.aspect();\n\n  Element.attr(project.svg, {\n    'data-filename': project.name,\n    'data-aspect': project.aspectRatio,\n    'data-width': size.width + 'mm',\n    'data-height': size.height + 'mm'\n  });\n\n  //project.svg.setAttribute('data-aspect', project.aspectRatio);\n  let css = size.div(0.26458333333719).toCSS({ width: 'px', height: 'px' });\n\n  window.size = css;\n  //console.log('css:', css);\n  /*  Object.assign(project.svg.style, {\n    'min-width': `${size.width}mm`\n  });\n  Element.setCSS(project.svg, { left: 0, top: 0, position: 'relative' });\n  Element.setCSS(project.svg, { left: 0, top: 0, position: 'relative' });\n  //console.log('LoadDocument:', project.svg);*/\n  /*  } catch(err) {\n    console.error(\n      'Render ERROR:',\n      err,\n      [...err.stack].map(f => (f + '').replace(Util.getURL() + '/', ''))\n    );\n  }*/\n\n  AdjustZoom();\n\n  project.status = SaveSVG();\n\n  return project;\n};\n\nconst ChooseDocument = async (project, i) => {\n  let r;\n  if(i == undefined) i = project.i || projectFiles.indexOf(project);\n\n  const box = Element.findAll('.file')[i];\n  LogJS.info('ChooseDocument:', { project, i, box });\n  LogJS.info(`${project.name} selected.`);\n  try {\n    if(!project.loaded) {\n      let data = await LoadDocument(project, box);\n      project.loaded = true;\n\n      open(false);\n\n      //console.log('loaded:', project);\n    }\n    r = project.loaded;\n  } catch(err) {\n    Util.putError(err);\n  }\n\n  return r;\n};\n\nconst MakeFitAction = index => async () => {\n  let parent = Element.find('#main');\n  let prect = Element.rect(parent);\n  let svg = Element.find('svg', parent);\n  let container = [...Element.findAll('.aspect-ratio-box-size', parent)].reverse()[0];\n  //console.log('container:', container);\n  let oldSize = Element.rect(container);\n  let brect = Element.rect('.buttons');\n  let srect = Element.rect(svg);\n  prect.y += brect.height;\n  prect.height -= brect.height;\n  let rects = [prect, oldSize, srect];\n  prect.scale(0.8);\n  //console.log('resize rects', { oldSize, prect, srect });\n  let f = srect.fit(prect);\n  let newSize = f[index].round(0.0001);\n  let affineTransform = Matrix.getAffineTransform(oldSize.toPoints(), newSize.toPoints());\n  /*console.log('oldSize:', oldSize);\n  //console.log('newSize:', newSize);*/\n\n  let oldTransform = window.transform.clone();\n  // console.log('oldTransform:', oldTransform);\n  let oldFactor = oldTransform.scaling.x;\n  //console.log('oldFactor:', oldFactor);\n\n  const zoom = Math.pow(10, zoomVal / 200).toFixed(5);\n  //console.log('zoom:', zoom);\n\n  let transform = affineTransform.decompose();\n  //console.log('transform:', transform);\n  //console.log(`fitAction(${index})`, { oldSize, newSize, transform });\n  let factor = transform.scale.x;\n  //console.log('factor:', factor);\n  let newFactor = zoom * factor;\n  //console.log('newFactor:', newFactor);\n\n  let newTransform = new TransformationList().scale(newFactor, newFactor);\n  //console.log('newTransform:', newTransform);\n\n  /*\nlet newScaling = newTransform.scaling;\n  //console.log('newScaling:', newScaling);\nnewScaling.x *= factor;\nnewScaling.y *= factor;\nnewTransform[0] = newScaling;\n*/\n  let delay = Math.abs(Math.log(factor) * 1000);\n  //Element.setCSS(container, { ...oldSize.toCSS(), transform: '', position: 'absolute' });\n  //await Element.transition(container, { ...newSize.toCSS()/*, transform: '', position: 'absolute'*/ }, delay + 'ms', 'linear');\n  await Element.transition(container, { transform: newTransform }, delay + 'ms', 'linear');\n  window.transform = newTransform;\n  zoomVal = Math.log10(newFactor) * 200;\n};\n\nconst CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {\n  // log = log || ((...args) => console.log(...args));\n  socketURL = socketURL || Util.makeURL({ location: '/ws', protocol: 'ws' });\n  let ws = new WebSocketClient();\n\n  let send = ws.send;\n  ws.send = (...args) => {\n    let [msg] = args;\n    if(!(msg instanceof Message)) msg = new Message(...args);\n    return send.call(ws, msg.data);\n  };\n\n  window.socket = ws;\n\n  LogJS.info('New WebSocket:', ws);\n  await ws.connect(socketURL);\n  LogJS.info('WebSocket Connected:', ws.connected);\n  socketFn(ws);\n  ws.send('main.js data!');\n  let data;\n  for await (data of ws) {\n    let msg = new Message(data);\n    window.msg = msg;\n    LogJS.info('WebSocket data:', msg[Symbol.toStringTag]());\n    ws.dataAvailable !== 0;\n  }\n  await ws.disconnect();\n};\n\nlet projects = trkl([]);\nlet socket = trkl();\nlet listURL = trkl(store.get('url') || null);\nlet searchFilter = trkl(store.get('filter') || '*');\n\nconst BindGlobal = Util.once(arg => trkl.bind(window, arg));\n\nconst AppMain = (window.onload = async () => {\n  Util(globalThis);\n\n  //prettier-ignore\n  Object.assign(window, { BBox, ChooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, LoadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas, BoardToGerber, ListGithubRepo, ListGithubRepoServer, brcache, lscache, BaseCache, FetchCached, CachedFetch });\n  Object.assign(\n    window,\n    { cache, tlite, FetchURL },\n    { classes: { Cache, CacheStorage, Response, Request } },\n    {\n      PrimitiveComponents,\n      ElementNameToComponent,\n      ElementToComponent,\n      Wire,\n      Instance,\n      SchematicSymbol\n    },\n    { Emitter, EventIterator }\n  );\n  Object.assign(\n    window,\n    { LogJS },\n    { Element, devtools, dom, RGBA, HSLA },\n    {\n      SVGAlignments,\n      AlignmentAttrs,\n      Alignment,\n      AlignmentAngle,\n      Arc,\n      CalculateArcRadius,\n      ClampAngle,\n      EagleAlignments,\n      HORIZONTAL,\n      HORIZONTAL_VERTICAL,\n      InvertY,\n      LayerAttributes,\n      LinesToPath,\n      MakeCoordTransformer,\n      PolarToCartesian,\n      RotateTransformation,\n      VERTICAL\n    }\n  );\n  Object.assign(window, { ListProjects, LoadDocument, LoadFile, ChooseDocument, SaveSVG });\n\n  Error.stackTraceLimit = 100;\n\n  const timestamps = new Repeater(async (push, stop) => {\n    push(Date.now());\n    const iRnterval = setInterval(() => push(Date.now()), 1000);\n    await stop;\n    clearInterval(interval);\n  });\n\n  const logger = new Repeater(async (push, stop) => {\n    push(['DEBUG', null, null, 'Load ready!']);\n    window.pushlog = push;\n    await stop;\n  });\n  logger.push = window.pushlog;\n\n  //window.focusSearch = trkl();\n  window.currentSearch = trkl(null);\n\n  window.keystroke = target => (key, modifiers = 0) => keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key), target);\n\n  window.focusSearch = state => {\n    const input = currentSearch();\n    //console.log('focusSearch', input.tagName, state);\n    input[state ? 'focus' : 'blur']();\n  };\n\n  BindGlobal({\n    projects,\n    socket,\n    transform,\n    size: sizeListener,\n    aspect: aspectListener,\n    showSearch,\n    logDimensions: logSize,\n    watched: dump\n  });\n\n  currentSearch.subscribe(value => {\n    if(value) {\n      focusSearch(false);\n\n      setTimeout(() => {\n        //console.log('currentSearch:', value);\n        focusSearch(true);\n      }, 1000);\n    }\n  });\n\n  const inspectSym = Symbol.for('nodejs.util.inspect.custom');\n\n  const testComponent = props =>\n    html`\n      <div>This is a test</div>\n    `;\n\n  let c = testComponent({});\n  window.testComponent = c;\n  let credentials = { username: 'rsenn', password: 'tjIDznHp9' };\n\n  const UpdateProjectList = async (opts = listURL() ? { url: listURL(), ...credentials } : {}) => {\n    let list = [];\n    //console.log('opts:', opts);\n    let { url, ...restOfOpts } = opts;\n    let urls = url ? url.split(/\\n/g) : [null];\n    for(url of urls) {\n      let data = await ListProjects({ ...opts, url });\n      let { files } = data;\n      //console.log(`Got ${files.length} files`, files);\n      function File(obj, i) {\n        const { name } = obj;\n        let file = this instanceof File ? this : Object.create(File.prototype);\n        let data = trkl({ percent: NaN });\n        Object.assign(file, obj);\n        file.name = name;\n        file.i = i;\n        trkl.bind(file, { data });\n        LogJS.info(`Got file '${name.replace(/.*:\\/\\//g, '').replace(/raw.githubusercontent.com/, 'github.com') || name.replace(/.*\\//g, '')}'`);\n\n        return file;\n      }\n      File.prototype.toString = function() {\n        return this.name;\n      };\n      list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i)));\n      let svgs = list.reduce((acc, file) => {\n        if(/\\.lbr$/i.test(file.name)) return acc;\n        file.svg = `${EagleDocument.baseOf(file.name)}.${EagleDocument.typeOf(file.name)}.svg`;\n        //console.log(`file.svg = '${file.svg}'`);\n        return [...acc, file.svg];\n      }, []);\n\n      data = await ListProjects({ descriptions: false, names: svgs });\n      files = (data && data.files) || [];\n      //      console.log('filesData:', files);\n\n      for(let svgFile of files) {\n        if(Util.isObject(svgFile) && svgFile.mtime !== undefined) {\n          const f = list.find(i => i.svg === svgFile.name);\n          if(Util.isObject(f) && f.mtime !== undefined) {\n            const delta = svgFile.mtime - f.mtime;\n\n            f.modified = delta < 0;\n          }\n        }\n      }\n    }\n\n    LogJS.info(`retrieved project list. Got ${list.length} items.`);\n\n    projects(list);\n  };\n\n  UpdateProjectList();\n  CreateWebSocket(null, null, ws => (window.socket = ws));\n\n  const crosshair = {\n    show: trkl(false),\n    position: trkl({ x: 0, y: 0 })\n  };\n\n  window.crosshair = trkl.bind({}, crosshair);\n\n  searchFilter.subscribe(value => {\n    store.set('filter', value);\n    LogJS.info(`searchFilter is ${value}`);\n  });\n\n  listURL.subscribe(value => {\n    store.set('url', value);\n    LogJS.info(`listURL is '${value}'`);\n  });\n\n  trkl.bind(window, { searchFilter, listURL });\n\n  trkl.bind(window, { zoomVal: zoomLog });\n\n  zoomLog.subscribe(value => {\n    const zoomFactor = ZoomFactor(value);\n    console.log('zoomFactor changed', zoomFactor);\n    if(value === 1) throw new Error(value);\n  });\n\n  const updateIfChanged = (trkl, newValue, callback) => {\n    const oldValue = trkl();\n    if(!Array.prototype.every.call(oldValue, (elem, i) => newValue[i] === elem)) return false;\n    trkl(newValue);\n    if(typeof callback == 'function') callback(trkl, oldValue, newValue);\n    return true;\n  };\n\n  const changeInput = e => {\n    const { target } = e;\n    LogJS.info('changeInput:', target.value);\n\n    let { value } = target;\n\n    let parts = value.split(/\\s+/g);\n\n    let urls = parts.filter(p => /\\:\\/\\//.test(p)).join('\\n');\n\n    updateIfChanged(listURL, urls, () => {});\n    listURL(urls);\n\n    //    value = parts.filter(p => !/\\:\\/\\//.test(p)).join(' ');\n\n    searchFilter(value == '' ? '*' : value.split(/\\s*\\|\\s*/g).join(' | '));\n  };\n\n  const Consumer = props => {\n    const result = useResult(async function*() {\n      for await (let time of timestamps) {\n        yield time;\n      }\n    });\n    return h(\n      'div',\n      {\n        className: 'vcenter fixed grow no-select',\n        style: {\n          flex: '1 0 auto',\n          justifyContent: 'flex-end',\n          color: 'white',\n          height: '60px',\n          width: '200px',\n          padding: '0 10px 0 0'\n        }\n      },\n      [result && new Date(result.value).toLocaleTimeString('de-CH')]\n    );\n  };\n  LogJS.addAppender(\n    class extends LogJS.BaseAppender {\n      log(type, time, msg) {\n        let d = new Date(time);\n        if(typeof window.pushlog == 'function') window.pushlog([type, Util.isoDate(d).replace(/-/g, ''), d.toLocaleTimeString(navigator.language || 'de'), msg]);\n      }\n    }\n  );\n  let loggerRect = new Rect();\n  const Logger = props => {\n    const [lines, setLines] = useState([]);\n\n    const [ref, { x, y, width, height }] = useDimensions();\n\n    const r = new Rect({ x, y, width, height });\n    if(!loggerRect.equals(r)) {\n      //console.log('Logger.dimensions:', r);\n      loggerRect = r;\n      logSize({ width });\n    }\n\n    const result = useResult(async function*() {\n      for await (let msg of logger) yield msg;\n    });\n    if(result) {\n      //     console.log(\"result:\",result);\n      lines.push(result.value);\n    }\n    return h(\n      'table',\n      { className: 'logger', ref },\n      lines.slice(-10, lines.length).map(([type, d, t, m], i) => h('tr', {}, [h('td', { className: 'log sign' }, h('img', { className: 'log sign', src: `/static/${type.toLowerCase() || 'warn'}.svg`, style: { height: '14px', width: 'auto', marginTop: '-1px' } })), h('td', { className: 'log message' }, /*333*/ m + '')]))\n    );\n  };\n  dump({ ...dump(), test: 123 });\n\n  const Dumper = props => {\n    const [values, setValues] = useState(dump());\n    let lines = [];\n    dump.subscribe(value => setValues(value));\n    for(let [key, value] of Object.entries(values)) lines.push([key, value]);\n    return h(\n      'table',\n      { border: '0', cellpadding: 3, cellspacing: 0, className: 'dumper' },\n      lines.map(([k, v], i) => h('tr', { className: 'watch' }, [h('td', { className: 'name' }, k + ''), h('td', { className: 'value' }, v + '')]))\n    );\n  };\n\n  const Commander = ({ onCommand, ...props }) => {\n    const [inputText, setInputText] = useState('');\n    const handler = e => {\n      const { target } = e;\n      if(e.type.endsWith('down') && e.keyCode == 13) {\n        const value = target.value || inputText;\n        if(value != '') {\n          if(typeof onCommand == 'function') onCommand(value);\n          setInputText('');\n        }\n      } else {\n        setInputText(target.value);\n      }\n    };\n    return h('input', { type: 'text', className: 'commander', value: inputText, onKeyDown: handler, autofocus: true }, []);\n  };\n\n  const layersDropDown = trkl(false);\n\n  const Toggle = trkl => trkl(!trkl());\n\n  React.render(\n    h(SlotProvider, {}, [\n      Panel('buttons', [\n        h(\n          Button,\n          {\n            caption: BrowseIcon(),\n\n            fn: e => {\n              if(e.type.endsWith('down')) {\n                //console.log('file list push', e);\n                open(!open());\n              }\n            }\n          },\n          html`\n            <svg height=\"28\" width=\"28\" style=${{ height: 'auto', position: 'relative', width: '100%' }} viewBox=\"131 -131 512 512\" xmlns=\"http://www.w3.org/2000/svg\">\n              <path d=\"M131-70.3v390.6h432.4L643 76.2H207.4l-48.8 145.7 33.1-170.2h378V2.9H326.3l-47.2-73.2z\" fill=\"#fff\" />\n            </svg>\n          `\n        ),\n        /* h(Button, {\n          caption: 'Random',\n          fn: ModifyColors(c => c.replaceAll(c => HSLA.random()))\n        }),\n        h(Button, {\n          caption: 'Invert',\n          fn: ModifyColors(c => c.replaceAll(c => c.invert()))\n        }),*/\n          h(Button, {\n          //  caption: '↔',\n          fn: MakeFitAction(0),\n          image: 'static/fit-vertical.svg'\n        }),\n        h(Button, {\n          //  caption: '↕',\n          fn: MakeFitAction(1),\n          image: 'static/fit-horizontal.svg'\n        }),\n        h(Conditional, { signal: currentProj },\n        h(DropDown, { isOpen: layersDropDown.subscribe(open => console.log(\"layers dropdown\",{open})) }, [\n          h(Button, {\n            toggle: true,\n            state: layersDropDown,\n        //    fn: (e,state) => /*(e.buttons && e.type.endsWith('down')) &&*/ state && layersDropDown(state) || true,\n            image: 'static/svg/layers.svg'\n          }),\n          h(Fragment, {name: 'layers'}, h(Chooser, { className: 'layers', itemClass: 'layer', items: layers  }, []))\n        ])),\n        h(DynamicLabel, { className: 'vcenter pad-lr', caption: documentTitle }),\n        h(Consumer, {})\n      ]),\n\n      /*  h('div', { style: { display: 'inline-flex', flexFlow: 'row', alignItems: 'stretch', height: '100px', padding: '10px' } }, [\n        h(ColorWheel, {}),\n        h(Slider, {\n          min: 0,\n          max: 100,\n          value: 100,\n          orient: 'vertical',\n          name: 'S',\n          length: '10px',\n          style: { flex: '0 1 auto' },\n          onChange: value => {\n            //console.log('value:', value);\n          }\n        }),\n        h(Slider, {\n          min: 0,\n          max: 100,\n          orient: 'vertical',\n          name: 'L',\n          length: '10px',\n          style: { flex: '0 1 auto' },\n          onChange: value => {\n            //console.log('value:', value);\n          }\n        })\n      ]),*/\n      html`\n        <${FileList} files=${projects} onActive=${open} onChange=${(e, p, i) => ChooseDocument(p, i)} filter=${searchFilter} showSearch=${showSearch} changeInput=${changeInput} focusSearch=${focusSearch} currentInput=${currentSearch} />\n      `,\n      h(CrossHair, { ...crosshair }),\n      h(FloatingPanel, { onSize: logSize, className: 'no-select', id: 'console' }, [\n        h(Logger, {}),\n        h(Dumper, {}),\n        h(Commander, {\n          onCommand: cmdStr => {\n            let fn = new Function(`return ${cmdStr};`);\n\n            //console.log('Command:', cmdStr);\n            LogJS.info(`> ${cmdStr}`);\n            let result = fn();\n            LogJS.info(`= ${Util.toSource(result)}`);\n          }\n        })\n      ]),\n      h(Slot, { name: 'layers' })\n    ]),\n    Element.find('#preact')\n  );\n\n  let move;\n  container = Element.find('#main');\n\n  TouchListener(\n    event => {\n      const { x, y, index, buttons, start, type, target } = event;\n\n      if(type.endsWith('end') || type.endsWith('up')) return cancel();\n      if(event.buttons === 0 && type.endsWith('move')) return cancel();\n      // if(event.index > 0) Util.log('touch', { x, y, index, buttons, type, target }, container);\n      if(event.buttons & 2) return cancel();\n      if(!move) {\n        let box = (e => {\n          do {\n            if(['main', 'console'].indexOf(e.getAttribute('id')) != -1) return e;\n          } while((e = e.parentElement));\n        })(target);\n        //        let box = Element.find('#main').firstElementChild;\n        const id = box && box.getAttribute('id');\n\n        if(id == 'console') {\n          const rects = [true, false].map(border => Element.rect(box, { border }));\n\n          let p = new Point(start.x + x, start.y + y);\n          //console.log('', p);\n          const inside = rects.map(r => r.inside(p));\n\n          const inBorder = inside[0] && !inside[1];\n\n          function mod(n, m) {\n            return ((n % m) + m) % m;\n          }\n\n          let rad = p.diff(rects[0].center).toAngle();\n          let deg = Math.round((rad * 180) / Math.PI);\n          let sector = mod(Math.floor(((180 - deg) * 8) / 360), 8);\n\n          let directions = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'];\n\n          let norm = Point.fromAngle(rad, 1);\n          //console.log('box: ', id, ...inside, inBorder, p, { sector, deg });\n          let compass = directions[sector];\n\n          box.style.cursor = `${compass}-resize`;\n        }\n\n        if(box) window.move = move = Element.moveRelative(box, null, id == 'console' ? ['right', 'bottom'] : ['left', 'top']);\n        return;\n      }\n      if(move && event.buttons == 0) return cancel();\n\n      if(event.index > 0) {\n        let rel = new Point(event);\n        let absolute = new Point(start).add(rel);\n\n        if(move) {\n          /*  window.crosshair.show = true;\n          window.crosshair.position = absolute;*/\n\n          //          Util.log('move', ...[...rel], ...[...absolute]);\n          if(true || event.buttons > 0) move(rel.x, rel.y);\n          else move = move.jump();\n        }\n      }\n      function cancel() {\n        move = null;\n        window.crosshair.show = false;\n\n        return event.cancel();\n      }\n    },\n    { element: window }\n  );\n\n  window.processEvents = async function eventLoop() {\n    for await (let e of new EventIterator('touch')) {\n      const {\n        altKey,\n        bubbles,\n        button,\n        buttons,\n        cancelBubble,\n        cancelable,\n        clientX,\n        clientY,\n        composed,\n        ctrlKey,\n        //  curFcrentTarget,\n        //    defaultPrevented,\n        detail,\n        eventPhase,\n        fromElement,\n        isTrusted,\n        layerX,\n        layerY,\n        metaKey,\n        movementX,\n        movementY,\n        offsetX,\n        offsetY,\n        pageX,\n        pageY,\n        path,\n        region,\n        relatedTarget,\n        returnValue,\n        screenX,\n        screenY,\n        shiftKey,\n        //     sourceCapabilities,\n        srcElement,\n        target,\n        timeStamp,\n        toElement,\n        type,\n        view,\n        which,\n        x,\n        y,\n        ...event\n      } = e;\n      // LogJS.info(`${type} ` + /* Util.toSource(e)+ */ ` ${x},${y} → ${Element.xpath(target)}`);\n    }\n  };\n  processEvents();\n\n  //  eventLoop();\n\n  window.styles = CSS.create('head');\n  /* document.addEventListener('keydown', event => {\n    const { ctrlKey, shiftKey, altKey, metaKey } = event;\n\n    if(true || ctrlKey || shiftKey || altKey || metaKey) {\n      const { key, code, keyCode } = event;\n      const { target, currentTarget } = event;\n      //console.log('keydown: ', (window.keyEvent = event));\n    }\n  });*/\n\n  window.addEventListener('wheel', event => {\n    const { deltaX, deltaY, screenX, screenY, clientX, clientY, pageX, pageY, x, y, offsetX, offsetY, layerX, layerY } = event;\n\n    //console.log('wheel:', { deltaX, deltaY, screenX, screenY, clientX, clientY, pageX, pageY, x, y, offsetX, offsetY, layerX, layerY });\n    window.wheelEvent = event;\n\n    const clientArea = Element.rect('body > div');\n    const sideBar = Element.rect('.sidebar');\n\n    if(sideBar.x2 > clientArea.x1) {\n      clientArea.width -= sideBar.x2;\n      clientArea.x = sideBar.x2;\n      clientArea.width = window.innerWidth - clientArea.x;\n    }\n    clientArea.height = window.innerHeight;\n    clientArea.x += container.parentElement.scrollLeft;\n\n    //console.log('wheel:', { sideBar, clientArea });\n\n    const clientCenter = clientArea.center;\n    const { target, currentTarget, buttons, altKey, ctrlKey, shiftKey } = event;\n    const pos = new Point(clientX, clientY);\n\n    if(!pos.inside(clientArea)) return;\n\n    const wheelPos = -event.deltaY.toFixed(2);\n    zoomVal = altKey || ctrlKey || shiftKey ? 0 : Util.clamp(-100, 100, zoomVal + wheelPos * 0.1);\n    AdjustZoom();\n  });\n\n  console.error('AppMain done');\n\n  //console.log(Util.getGlobalObject());\n\n  /*  for(let path of [...Element.findAll('path')]) {\n    let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);\n  }*/\n});\nfunction ZoomFactor(val) {\n  return Math.pow(10, val / 200).toFixed(5);\n}\nfunction AdjustZoom() {\n  const zoom = ZoomFactor(zoomVal);\n\n  let t = window.transform;\n  //console.log('t:', t);\n\n  if(!t.scaling) t.scale(zoom, zoom);\n  else {\n    t.scaling.x = zoom;\n    t.scaling.y = zoom;\n  }\n  //console.log('window.transform:', window.transform);\n  window.transform = new TransformationList(t);\n}\n\nconst Module = {\n  noInitialRun: true,\n  onRuntimeInitialized: () => {\n    //console.log('initialized');\n    let myString = prompt('Enter a string:');\n    Module.callMain([myString]);\n  },\n  print: txt => alert(`The MD5 hash is: ${txt}`)\n};\n",
+			"file": "main.js",
+			"file_size": 43455,
+			"file_write_time": 132418444573401207,
 			"settings":
 			{
-				"buffer_size": 10980,
+				"buffer_size": 43449,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/dom/node.js",
+			"file": "lib/eagle/renderUtils.js",
 			"settings":
 			{
-				"buffer_size": 1047,
+				"buffer_size": 6745,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "Searching 788 files for \"useTrkl\\(\" (regex, case sensitive)\n\n/home/roman/Dokumente/Sources/plot-cv/components.js:\n   63  \n   64  export const Overlay = ({ className = 'overlay', title, tooltip, active = true, toggle, state, onPush, text, children, ...props }) => {\n   65:   const [pushed, setPushed] = typeof(state) == 'function' ? useTrkl(state) : useState(false);\n   66    const events = MouseEvents(\n   67      (toggle ? ToggleHandler : ClickHandler)((e, state) => {\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js:\n  212          });\n  213         */\n  214:         let visible = useTrkl(layer.handlers['visible']);\n  215  \n  216          return h('path', {\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/circle.js:\n   22    const { x, y } = coordFn(data);\n   23    const color = data.getColor(); //(opts && opts.color) || (layer && this.getColor(layer.color));\n   24:   let visible = layer ? useTrkl(layer.handlers['visible']) : true;\n   25  \n   26    return h('circle', {\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/grid.js:\n   26    const { distance, unitdist, unit, style, multiple, display, altdistance, altunitdist, altunit } = useAttributes(data);\n   27  \n   28:   let visible = typeof isVisible == 'function' ? useTrkl(isVisible) : true;\n   29  \n   30    return h(Fragment, {}, [\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/rectangle.js:\n   15    const { layer, x1, x2, y1, y2 } = coordFn(data);\n   16    const color = data.getColor();\n   17:   let visible = layer ? useTrkl(layer.handlers['visible']) : true;\n   18  \n   19    let rect = Rect.from({ x1, x2, y1, y2 });\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/textElement.js:\n   19    const color = data.getColor();\n   20  \n   21:   let visible = layer ? useTrkl(layer.handlers['visible']) : true;\n   22  \n   23    //  const visible = layer ? layer.isVisible(data) : true;\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/wire.js:\n   26    const { width, curve = '', layer, x1, y1, x2, y2 } = coordFn(wire);\n   27    const color = wire.getColor();\n   28:   let visible = layer ? useTrkl(layer.handlers['visible']) : true;\n   29  \n   30    return h('line', {\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js:\n  236  \n  237    for(let attr of attributeNames) {\n  238:     ret[attr] = useTrkl(element.handlers[attr]);\n  239    }\n  240    return ret;\n\n8 matches across 8 files\n",
+			"settings":
+			{
+				"buffer_size": 2443,
+				"line_ending": "Unix",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "style.css",
+			"settings":
+			{
+				"buffer_size": 10873,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/trkl.js",
+			"settings":
+			{
+				"buffer_size": 4532,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/dom/element.js",
+			"settings":
+			{
+				"buffer_size": 32546,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/dom/cache.js",
+			"settings":
+			{
+				"buffer_size": 6364,
 				"line_ending": "Unix"
 			}
 		},
@@ -181,7 +193,16 @@
 			"file": "lib/dom/preactComponent.js",
 			"settings":
 			{
-				"buffer_size": 7279,
+				"buffer_size": 9054,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "static/svg/layers.svg",
+			"settings":
+			{
+				"buffer_size": 946,
 				"line_ending": "Unix"
 			}
 		}
@@ -198,16 +219,20 @@
 		"selected_items":
 		[
 			[
+				"list pac",
+				"Package Control: List Packages"
+			],
+			[
+				"svgo",
+				"SVGO: Prettify SVG"
+			],
+			[
 				"add re",
 				"Package Control: Add Repository"
 			],
 			[
 				"prett",
 				"HTMLPrettify"
-			],
-			[
-				"svgo",
-				"SVGO: Prettify SVG"
 			],
 			[
 				"mini",
@@ -303,28 +328,45 @@
 	"expanded_folders":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
+		"/home/roman/Dokumente/Sources/plot-cv/Generation_7_Electronics",
+		"/home/roman/Dokumente/Sources/plot-cv/gerber-parser",
 		"/home/roman/Dokumente/Sources/plot-cv/lib",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components"
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom",
+		"/home/roman/Dokumente/Sources/plot-cv/wru"
 	],
 	"file_history":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv/lib/sourceMap.js",
-		"/home/roman/Dokumente/Sources/plot-cv/htm/standalone.js.map",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
-		"/home/roman/Dokumente/Sources/plot-cv/main.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/reactComponent.js",
+		"/home/roman/Dokumente/Sources/plot-cv/slots.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/preact.js",
+		"/home/roman/Dokumente/Sources/plot-cv/static/layers.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/layers.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/grid.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/arc.js",
+		"/home/roman/Dokumente/Sources/plot-cv/burning-diodes-notext.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/test-sourcemap.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/sourceMap.js",
+		"/etc/ld.so.conf.d/opt.conf",
+		"/home/roman/Dokumente/bookmarks_8_13_20.html",
+		"/home/roman/Dokumente/Sources/plot-cv/server.js",
+		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/lscache.js",
+		"/home/roman/Dokumente/Sources/plot-cv/gerber-parser/lib/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-xml.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/node.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
+		"/home/roman/Dokumente/Sources/plot-cv/htm/standalone.js.map",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/reactComponent.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/tlite.js",
 		"/home/roman/Dokumente/Sources/plot-cv/components.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/lscache.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/instance.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components.js",
@@ -343,7 +385,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/cache.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/draw/colorMap.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/behave.js",
-		"/home/roman/Dokumente/Sources/plot-cv/server.js",
 		"/home/roman/Dokumente/Sources/plot-cv/style.css",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/cross.js",
 		"/home/roman/Dokumente/Sources/plot-cv/folder-open-icon.svg",
@@ -378,7 +419,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/devtools.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/color/rgba.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-geom.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-xml.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom.js",
 		"/home/roman/Dokumente/Sources/plot-cv/events.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eventEmitter.js",
@@ -426,18 +466,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/test-util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/repeater.js",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/MS20-VCF.brd",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/FM Radio Simple Receiver.sch",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/LCmeter0-LCD-8pinlcd-PIC-COMP.sch",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/react-hooks.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-attributes.js",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/TDA7419 .sch",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/node.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/limiters.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/buffers.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/pubsub.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/pubsub.ts"
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/MS20-VCF.brd"
 	],
 	"find":
 	{
@@ -488,6 +517,64 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"Conditional =",
+			"Chooser =",
+			"Container",
+			"Container =",
+			"Container",
+			"Chooser =",
+			"DropDown =",
+			"Panel",
+			"\\(Panel",
+			"Panel",
+			"useTrkl\\(",
+			"Overlay =",
+			"useTrkl",
+			"$",
+			"useTrkl",
+			"useTrlk",
+			"Util.log",
+			"Button",
+			"append\\(",
+			"MouseHandler",
+			"state",
+			"Button =",
+			"Button",
+			"Button =",
+			"Slot\\.update",
+			"LoadDoc",
+			"Fragment",
+			"DropDown =",
+			"Fragmentf",
+			"Button,",
+			"Button",
+			"React =",
+			"Fragment",
+			"SlotProvider",
+			"trkl:",
+			"signal",
+			"Conditional",
+			"Conditional$",
+			"Conditional",
+			"Conditional =",
+			"window.proj",
+			"currentProj",
+			"renderLayer",
+			"DropDown",
+			"Button",
+			"Button, ",
+			"toChild",
+			"Button,",
+			"Button, ",
+			"Overlay",
+			"Overlay =",
+			"bgGroup",
+			"bgGrou",
+			"Grid",
+			"BoardToGerber",
+			"Gerber",
+			"Convert",
+			"eagle",
 			"\n/",
 			"base64 =",
 			"btoa",
@@ -557,65 +644,7 @@
 			"iterator",
 			"toString",
 			"Rect.prototype.toStr",
-			"Symbol.iterator",
-			"toString ",
-			"units",
-			"getMeasures",
-			"brcache",
-			"Rect.from",
-			"setPalette",
-			"ŝetPalette",
-			"trkl",
-			"Palette\\.",
-			"await fetch",
-			"\\.text\\(",
-			"ListProjects =",
-			"ListProjects",
-			"subscribe\\(",
-			"subscribe",
-			"AdjustZoom",
-			"zoomVal",
-			"zoomVal =",
-			"zoomVal",
-			"zoomVal =",
-			"zoomVal",
-			"trkl.*\\(window",
-			"\\(window",
-			"GetterSet",
-			"zoomVal",
-			"zoom",
-			"zoomVal =",
-			"\\.response",
-			"LoadFile =",
-			"brcache",
-			"warn",
-			"FetchCached =",
-			"\\.put\\(",
-			"this.cacheBuc",
-			"\\.put\\(",
-			"this\\.cacheBucket",
-			"this\\.cacheBuc",
-			"this\\.",
-			"his\\.cache\\.",
-			"his\\.cache",
-			"this\\.cacheBuck",
-			"get cache",
-			"cacheBucket",
-			"escapeRegExpSpecialCharacte",
-			"escapeReg",
-			"replace",
-			"eachKey",
-			"eachKey\\(",
-			"eachKey(",
-			"eachKey\\(",
-			"eachKey",
-			"isOut",
-			"LoadFile =",
-			"fetch\\(",
-			"CachedFetch",
-			"method",
-			"\\.response",
-			"FetchURL "
+			"Symbol.iterator"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -623,6 +652,7 @@
 		"regex": true,
 		"replace_history":
 		[
+			"LogJS.info",
 			"new this.Converter",
 			"SourceMap.",
 			"static \\1",
@@ -749,8 +779,7 @@
 			"w.",
 			"makePredicate",
 			"EagleNodeMap.create",
-			"EagleNodeList.create",
-			"\\\\u200a"
+			"EagleNodeList.create"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -761,53 +790,281 @@
 	"groups":
 	[
 		{
-			"selected": 6,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "lib/eagle/components/grid.js",
+					"file": "lib/eagle/svgRenderer.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1280,
+						"buffer_size": 16014,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1262,
-								1262
+								24,
+								24
 							]
 						],
 						"settings":
 						{
+							"color_scheme": "Packages/Visual Studio Dark/Visual Studio Dark.tmTheme",
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 4,
+							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
 							"typescript_plugin_format_options":
 							{
 								"convertTabsToSpaces": true,
-								"indentSize": 4,
-								"tabSize": 4
+								"indentSize": 2,
+								"tabSize": 2
 							},
 							"use_tab_stops": false,
 							"word_separators": "./\\()\"'-:,.;<>~!@#%^&*|+=[]{}`~?"
 						},
 						"translation.x": 0.0,
-						"translation.y": 5.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 13,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
+					"file": "lib/eagle/components/grid.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3702,
+						"buffer_size": 1359,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								24,
+								24
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Visual Studio Dark/Visual Studio Dark.tmTheme",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							},
+							"use_tab_stops": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 12,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "components.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 29271,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10936,
+								10936
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Visual Studio Dark/Visual Studio Dark.tmTheme",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							},
+							"use_tab_stops": false,
+							"word_separators": "./\\()\"'-:,.;<>~!@#%^&*|+=[]{}`~?"
+						},
+						"translation.x": 0.0,
+						"translation.y": 4893.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "lib/util.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 113041,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								81797,
+								81797
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Visual Studio Dark/Visual Studio Dark.tmTheme",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							},
+							"use_tab_stops": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 59585.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "static/svg/hide.svg",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 965,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								965,
+								965
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Visual Studio Dark/Visual Studio Dark.tmTheme",
+							"syntax": "Packages/XML/XML.sublime-syntax",
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							}
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "main.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 43449,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								35707,
+								35707
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Visual Studio Dark/Visual Studio Dark.tmTheme",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							},
+							"use_tab_stops": false,
+							"word_separators": "./\\()\"'-:,.;<>~!@#%^&*|+=[]{}`~?"
+						},
+						"translation.x": 0.0,
+						"translation.y": 22075.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "lib/eagle/renderUtils.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6745,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5756,
+								5756
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							},
+							"use_tab_stops": false,
+							"word_separators": "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?"
+						},
+						"translation.x": 0.0,
+						"translation.y": 4407.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2443,
 						"regions":
 						{
 							"match":
@@ -816,44 +1073,36 @@
 								"regions":
 								[
 									[
-										128,
-										148
+										332,
+										340
 									],
 									[
-										584,
+										602,
 										610
 									],
 									[
-										1215,
-										1232
+										928,
+										936
 									],
 									[
-										1387,
-										1407
+										1270,
+										1278
 									],
 									[
-										1597,
-										1617
+										1542,
+										1550
 									],
 									[
-										1885,
-										1916
+										1799,
+										1807
 									],
 									[
-										2102,
-										2122
+										2134,
+										2142
 									],
 									[
-										2387,
-										2413
-									],
-									[
-										2800,
-										2826
-									],
-									[
-										3454,
-										3482
+										2352,
+										2360
 									]
 								],
 								"scope": ""
@@ -862,8 +1111,8 @@
 						"selection":
 						[
 							[
-								1370,
-								1370
+								0,
+								0
 							]
 						],
 						"settings":
@@ -882,28 +1131,97 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "lib/eagle/components/arc.js",
+					"buffer": 8,
+					"file": "style.css",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1292,
+						"buffer_size": 10873,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								71,
-								71
+								10781,
+								10781
 							]
 						],
 						"settings":
 						{
+							"syntax": "Packages/CSS/CSS.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 12098.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "lib/trkl.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4532,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3157,
+								3157
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							},
+							"use_tab_stops": false,
+							"word_separators": "./\\()\"'-:,.;<>~!@#%^&*|+=[]{}`~?"
+						},
+						"translation.x": 0.0,
+						"translation.y": 2335.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "lib/dom/element.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 32546,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Visual Studio Dark/Visual Studio Dark.tmTheme",
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
@@ -919,203 +1237,16 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 11,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "lib/eagle/svgRenderer.js",
+					"buffer": 11,
+					"file": "lib/dom/cache.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 15986,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2092,
-								2092
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
-							"use_tab_stops": false,
-							"word_separators": "./\\()\"'-:,.;<>~!@#%^&*|+=[]{}`~?"
-						},
-						"translation.x": 0.0,
-						"translation.y": 8.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "test-sourcemap.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1262,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1132,
-								1132
-							]
-						],
-						"settings":
-						{
-							"auto_name": "import {SourceMap} from './lib/souceMap.js';",
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
-							"use_tab_stops": false,
-							"word_separators": "./\\()\"'-:,.;<>~!@#%^&*|+=[]{}`~?"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "lib/sourceMap.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3971,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								164,
-								164
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Dayle Rees Color Schemes/legacy/Contrast/Darkside.tmTheme",
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
-							"use_tab_stops": false,
-							"word_separators": "./\\()\"'-:,.;<>~!@#%^&*|+=[]{}`~?"
-						},
-						"translation.x": 20.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "/etc/ld.so.conf.d/opt.conf",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 116,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								18,
-								18
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Dayle Rees Color Schemes/legacy/Contrast/Darkside.tmTheme",
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							}
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "lib/util.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 112987,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								60242,
-								60242
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
-							"use_tab_stops": false,
-							"word_separators": "./\\()\"'-:,.;<>~!@#%^&*|+=[]{}`~?"
-						},
-						"translation.x": 0.0,
-						"translation.y": 44052.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "test-xml.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 12467,
+						"buffer_size": 6364,
 						"regions":
 						{
 						},
@@ -1128,6 +1259,7 @@
 						],
 						"settings":
 						{
+							"color_scheme": "Packages/Visual Studio Dark/Visual Studio Dark.tmTheme",
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
@@ -1144,112 +1276,81 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 11,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
-					"file": "lib/eagle/boardRenderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 10980,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								8664,
-								8664
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "lib/dom/node.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1047,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": true,
-								"indentSize": 2,
-								"tabSize": 2
-							},
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 11,
+					"buffer": 12,
 					"file": "lib/dom/preactComponent.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7279,
+						"buffer_size": 9054,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2732,
-								2732
+								2742,
+								2742
 							]
 						],
 						"settings":
 						{
+							"color_scheme": "Packages/Visual Studio Dark/Visual Studio Dark.tmTheme",
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
-							"use_tab_stops": false
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							},
+							"use_tab_stops": false,
+							"word_separators": "./\\()\"'-:,.;<>~!@#%^&*|+=[]{}`~?"
+						},
+						"translation.x": 0.0,
+						"translation.y": 1285.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 13,
+					"file": "static/svg/layers.svg",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 946,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								946,
+								946
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Visual Studio Dark/Visual Studio Dark.tmTheme",
+							"syntax": "Packages/XML/XML.sublime-syntax",
+							"typescript_plugin_format_options":
+							{
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							}
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -1312,6 +1413,94 @@
 		"selected_items":
 		[
 			[
+				"renderUt",
+				"lib/eagle/renderUtils.js"
+			],
+			[
+				"util",
+				"lib/util.js"
+			],
+			[
+				"slots",
+				"slots.js"
+			],
+			[
+				"trkl",
+				"lib/trkl.js"
+			],
+			[
+				"style",
+				"style.css"
+			],
+			[
+				"slot",
+				"slots.js"
+			],
+			[
+				"main",
+				"main.js"
+			],
+			[
+				"preactC",
+				"lib/dom/preactComponent.js"
+			],
+			[
+				"preact.s",
+				"lib/preact.js"
+			],
+			[
+				"preact",
+				"lib/dom/preactComponent.js"
+			],
+			[
+				"svg/lay",
+				"static/svg/layers.svg"
+			],
+			[
+				"layers.",
+				"static/layers.svg"
+			],
+			[
+				"layers",
+				"layers.svg"
+			],
+			[
+				"static/svg",
+				"static/svg/hide.svg"
+			],
+			[
+				"compon",
+				"components.js"
+			],
+			[
+				"grid",
+				"lib/eagle/components/grid.js"
+			],
+			[
+				"preactCom",
+				"lib/dom/preactComponent.js"
+			],
+			[
+				"svgre",
+				"lib/eagle/svgRenderer.js"
+			],
+			[
+				"gerber",
+				"gerber-parser/lib/parser.js"
+			],
+			[
+				"lscache",
+				"lib/lscache.js"
+			],
+			[
+				"server",
+				"server.js"
+			],
+			[
+				"burn",
+				"burning-diodes-notext.svg"
+			],
+			[
 				"sourceMa",
 				"lib/sourceMap.js"
 			],
@@ -1340,10 +1529,6 @@
 				"lib/util.js"
 			],
 			[
-				"main",
-				"main.js"
-			],
-			[
 				"util.j",
 				"lib/util.js"
 			],
@@ -1354,10 +1539,6 @@
 			[
 				"reactcom",
 				"lib/dom/reactComponent.js"
-			],
-			[
-				"svgre",
-				"lib/eagle/svgRenderer.js"
 			],
 			[
 				"elem",
@@ -1372,16 +1553,8 @@
 				"tmp/VCO-8038.brd"
 			],
 			[
-				"grid",
-				"lib/eagle/components/grid.js"
-			],
-			[
 				"svgRe",
 				"lib/eagle/svgRenderer.js"
-			],
-			[
-				"compon",
-				"components.js"
 			],
 			[
 				"rect",
@@ -1394,10 +1567,6 @@
 			[
 				"docu",
 				"lib/eagle/document.js"
-			],
-			[
-				"lscache",
-				"lib/lscache.js"
 			],
 			[
 				"doc",
@@ -1436,16 +1605,8 @@
 				"lib/eagle/common.js"
 			],
 			[
-				"trkl",
-				"lib/trkl.js"
-			],
-			[
 				"trk",
 				"lib/trkl.js"
-			],
-			[
-				"util",
-				"lib/util.js"
 			],
 			[
 				"lscac",
@@ -1464,10 +1625,6 @@
 				"lib/dom/cache.js"
 			],
 			[
-				"server",
-				"server.js"
-			],
-			[
 				"ain.js",
 				"main.js"
 			],
@@ -1478,10 +1635,6 @@
 			[
 				"component",
 				"components.js"
-			],
-			[
-				"style",
-				"style.css"
 			],
 			[
 				"folder-op",
@@ -1770,58 +1923,6 @@
 			[
 				"pointList",
 				"lib/geom/pointList.js"
-			],
-			[
-				"point.js",
-				"lib/geom/point.js"
-			],
-			[
-				"point.",
-				"lib/geom/point.js"
-			],
-			[
-				"pointlist",
-				"lib/geom/pointList.js"
-			],
-			[
-				"eventE",
-				"lib/eventEmitter.js"
-			],
-			[
-				"parser",
-				"lib/ecmascript/parser.js"
-			],
-			[
-				"envi",
-				"lib/ecmascript/environment.js"
-			],
-			[
-				"evente",
-				"lib/eventEmitter.js"
-			],
-			[
-				"ecma",
-				"lib/ecmascript.js"
-			],
-			[
-				"test-ea",
-				"test-eagle.js"
-			],
-			[
-				"test-po",
-				"lib/geom/test-point.js"
-			],
-			[
-				"test-wr",
-				"test-wru.js"
-			],
-			[
-				"wru",
-				"lib/wru.js"
-			],
-			[
-				"test-lin",
-				"test-line.js"
 			]
 		],
 		"width": 0.0

@@ -580,3 +580,16 @@ input.commander {
   font-size: 18px;
   font-weight: normal;
 }*/
+
+#preact > div.buttons > div.panel.no-select.layers {
+  position: absolute;
+  border: 1px solid red;
+  max-height: 80vh;
+  overflow-y: scroll;
+}
+div.layers {
+  flex-flow: column nowrap;
+}
+div.layers > .layer {
+  background: white;
+}
