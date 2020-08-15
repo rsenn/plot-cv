@@ -56,6 +56,7 @@ const removeItem = (arr, item, key = 'ws') => {
 
   return arr;
 };
+
 const convertToGerber = async (boardFile, opts = {}) => {
   const { layers = ['Bottom', 'Pads', 'Vias'], format = 'GERBER_RS274X', data = false } = opts;
   const base = path.basename(boardFile, '.brd');
@@ -87,6 +88,52 @@ const convertToGerber = async (boardFile, opts = {}) => {
 
   if(data) result.data = await (await fsPromises.readFile(gerberFile)).toString();
   else result.file = gerberFile;
+
+  return result;
+};
+
+const gerberToGcode = async (gerberFile, opts = {}) => {
+  const basename = path.basename(gerberFile.replace(/\.[A-Za-z0-9]*$/, ''));
+  opts = {
+    basename,
+    zsafe: '1mm',
+    zchange: '2mm',
+    zwork: '-1mm',
+    'mill-feed': 30,
+    'mill-speed': 16000,
+    ...opts
+  };
+  let side = 'front' in opts ? 'front' : 'back' in opts ? 'back' : '';
+  if(side == '') {
+    side = 'back';
+    opts.back = '';
+  }
+
+  const gcodeFile = `${basename}_${side}.ngc`;
+  const params = [...Object.entries(opts)].filter(([k, v]) => typeof v == 'string' || typeof v == 'number').map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? ' ' + v : ''}`);
+  console.warn(`gerberToGcode`, { gerberFile, gcodeFile, opts });
+
+  const cmd = `pcb2gcode ${params.join(' ')}  '${gerberFile}'`;
+  console.warn(`executing '${cmd}'`);
+  const child = exec(cmd, {});
+  // do whatever you want with `child` here - it's a ChildProcess instance just
+  // with promise-friendly `.then()` & `.catch()` functions added to it!
+  let output = '';
+  child.stdout.on('data', data => (output += data));
+  child.stderr.on('data', data => (output += data));
+  const { stdout, stderr, code, signal } = await child;
+
+  console.info(`code: ${code}`);
+  console.info(`output: ${output}`);
+
+  if(code !== 0) throw new Error(output);
+
+  if(output) output = output.replace(/ *\r*\n/g, '\n');
+
+  let result = { code, output };
+
+  if(opts.data) result.data = await (await fsPromises.readFile(gcodeFile)).toString();
+  else result.file = gcodeFile;
 
   return result;
 };
@@ -126,7 +173,15 @@ app.ws('/ws', async (ws, req) => {
   if(address == '::1') address = 'localhost';
 
   address = address.replace(/^::ffff:/, '');
-  let s = new Socket(ws, { address, port, remoteAddress, remotePort, localAddress, localPort, cookie });
+  let s = new Socket(ws, {
+    address,
+    port,
+    remoteAddress,
+    remotePort,
+    localAddress,
+    localPort,
+    cookie
+  });
   let i = sockets.length;
 
   const sendTo = (sock, msg, ...args) => {
@@ -246,7 +301,11 @@ app.get(/\/[^/]*\.js$/, async (req, res) => res.sendFile(path.join(p, req.path))
 
 //app.get('/components.js', async (req, res) => res.sendFile(path.join(p, 'components.js')));
 
-app.get('/style.css', async (req, res) => res.sendFile(path.join(p, 'style.css'), { headers: { 'Content-Type': 'text/css', cacheControl: false } }));
+app.get('/style.css', async (req, res) =>
+  res.sendFile(path.join(p, 'style.css'), {
+    headers: { 'Content-Type': 'text/css', cacheControl: false }
+  })
+);
 
 function getDescription(file) {
   let str = fs.readFileSync(file).toString();
@@ -342,6 +401,23 @@ app.post(/^\/gerber/, async (req, res) => {
 
   try {
     result = await convertToGerber(board, opts);
+  } catch(error) {
+    result = { error };
+  }
+
+  res.json(result);
+});
+
+app.post(/^\/gcode/, async (req, res) => {
+  const { body } = req;
+  let { gerber, ...opts } = body;
+
+  let result;
+
+  console.log('gcode', { gerber, opts });
+
+  try {
+    result = await gerberToGcode(gerber, opts);
   } catch(error) {
     result = { error };
   }

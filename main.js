@@ -21,6 +21,7 @@ import deep from './lib/deep.js';
 import Alea from './lib/alea.js';
 import { Cache } from './lib/dom/cache.js';
 import { CacheStorage } from './lib/dom/cacheStorage.js';
+import { gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, Interpreter as GcodeInterpreter } from './lib/gcode.js';
 import { Iterator } from './lib/iterator.js';
 import { Functional } from './lib/functional.js';
 import { makeLocalStorage } from './lib/autoStore.js';
@@ -115,6 +116,50 @@ tlite(() => ({ grav: '-|', attrib: ['data-tlite', 'data-tooltip', 'title', 'data
                             node.insertBefore(elem, node.firstElementChild);
                           };*/
 const utf8Decoder = new TextDecoder('utf-8');
+
+function DrawSVG(factory, ...args) {
+  try {
+    let parent = project.svg.parentElement.lastElementChild;
+    const append = e => parent.appendChild(e);
+
+    let [tag, attrs, children] = args;
+
+    let e;
+    if(typeof tag == 'string') {
+      console.log('draw(', ...args, ')');
+
+      e = factory(...args);
+    } else if(Util.isArray(args[0])) {
+      let items = args.shift();
+      let c = RGBA.random();
+      /*
+items = items.map(i => isLine(i) ? new Line(i) : null);
+
+console.log("items:",items);
+*/
+      for(let item of items) {
+        console.log('item:', item);
+        let line;
+        if(isLine(item)) line = new Line(item);
+
+        console.log('line:', line);
+
+        if(line) {
+          e = factory('line', { ...line.toObject(), stroke: c, 'stroke-width': 0.1 });
+          append(e);
+          console.log('e:', e);
+        }
+      }
+
+      return;
+    }
+
+    if(e) append(e);
+  } catch(error) {
+    Util.putError(error);
+    throw error;
+  }
+}
 
 const ListProjects = async function(opts = {}) {
   const { url, descriptions = true, names, filter } = opts;
@@ -290,18 +335,35 @@ const GerberLayers = {
   TXT: 'Drill file'
 };
 
-const BoardToGerber = async (board, opts = {}) => {
-  let response;
-
-  let request = { ...opts, board };
-
+const BoardToGerber = async (board = project.name, opts = {}) => {
+  let request = { ...opts, board },
+    response;
   try {
-    response = await FetchURL('/gerber', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(request) });
+    response = await FetchURL('/gerber', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request)
+    });
     response = JSON.parse(response);
-
     if(opts.fetch && response.file) response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`);
   } catch(err) {}
+  return response;
+};
 
+const GerberToGcode = async (gerber, opts = {}) => {
+  let request = { ...opts, gerber, data: true },
+    response;
+  try {
+    response = await FetchURL('/gcode', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request)
+    });
+    response = JSON.parse(response);
+    if(opts.fetch && response.file) response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`);
+  } catch(err) {
+    response.error = err;
+  }
   return response;
 };
 
@@ -340,7 +402,14 @@ const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
   //  console.log('result:', result);
   const firstFile = result.find(r => !!r.download_url);
   const base_url = firstFile ? firstFile.download_url.replace(/\/[^\/]*$/, '') : '';
-  const files = result.map(({ download_url = '', html_url, name, type, size, path, sha }) => ({ url: (download_url || html_url || '').replace(base_url + '/', ''), name, type, size, path, sha }));
+  const files = result.map(({ download_url = '', html_url, name, type, size, path, sha }) => ({
+    url: (download_url || html_url || '').replace(base_url + '/', ''),
+    name,
+    type,
+    size,
+    path,
+    sha
+  }));
   const at = i => {
     let url = files[i].url;
     if(!/:\/\//.test(url)) url = base_url + '/' + url;
@@ -393,7 +462,11 @@ const ListGithubRepoServer = async (owner, repo, dir, filter) => {
   let response;
   let request = { owner, repo, dir, filter };
   try {
-    response = await FetchURL('/github', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(request) });
+    response = await FetchURL('/github', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request)
+    });
   } catch(err) {}
   let ret = JSON.parse(response);
   ret.at = function(i) {
@@ -421,9 +494,9 @@ const LoadDocument = async (project, parentElem) => {
   Element.remove('#fence');
   let docElem = Element.find('#doc');
   docElem.innerHTML = '';
-  Util.log('project.doc:', project.doc.basename);
+  console.log('project.doc:', project.doc.basename);
   project.renderer = new Renderer(project.doc, ReactComponent.append, debug);
-  Util.log('project.renderer', project.renderer);
+  console.log('project.renderer', project.renderer);
   let style = { width: '100%', height: '100%', position: 'relative' };
 
   let component = project.renderer.render(project.doc, null, {});
@@ -432,11 +505,11 @@ const LoadDocument = async (project, parentElem) => {
 
   LogJS.info(`${project.name} rendered.`);
   window.component = project.component = component;
-  Util.log('testRender:', component);
+  console.log('testRender:', component);
   let element = Element.find('#main');
   let r = project.renderer.rect || project.renderer.bounds;
-  Util.log('project.renderer:', project.renderer);
-  Util.log('r:', r);
+  console.log('project.renderer:', project.renderer);
+  console.log('r:', r);
   let aspectRatio = 1;
   if(r) {
     aspectRatio = r.width / r.height;
@@ -483,7 +556,7 @@ const LoadDocument = async (project, parentElem) => {
   project.object = object;
   let rendered = object.children[0];
 
-  Util.log('rendered:', rendered);
+  console.log('rendered:', rendered);
 
   let eagle2dom = [...Element.findAll('*[data-path]')];
 
@@ -596,6 +669,123 @@ const ChooseDocument = async (project, i) => {
   return r;
 };
 
+const GenerateVoronoi = () => {
+  //console.log('Loading document: ' + filename);
+  let { doc } = project;
+
+  console.log('doc', doc);
+  let points = new PointList();
+
+  for(let element of doc.elements.list) {
+    const pkg = element.package;
+    let { x, y } = element;
+    console.log('element:', element, { x, y });
+    let origin = new Point(x, y);
+
+    for(let item of pkg.children) {
+      if(item.drill !== undefined) {
+        let pos = new Point(+item.x, +item.y).add(origin);
+        console.log('pos:', pos);
+
+        points.push(pos);
+      }
+    }
+  }
+
+  let bb = doc.getBounds();
+  let rect = bb.toRect(Rect.prototype);
+  console.log('bb:', bb);
+  console.log('rect:', rect);
+
+  rect.outset(1.27);
+  window.tmprect = rect;
+  //bb.outset(1.27);
+  /*new BBox();
+  for(let item of doc.plain) {
+    if(item.layer.number != 47) continue;
+
+    bb.update(item.geometry());
+
+    //console.log('item:', item);
+  }*/
+
+  var sites = points.map(p => p.toObject());
+  //xl, xr means x left, x right
+  //yt, yb means y top, y bottom
+  //console.log('bbox:', bb);
+
+  var bbox = { xl: bb.x1, xr: bb.x2, yt: bb.y1, yb: bb.y2 };
+  var voronoi = new Voronoi();
+  //pass an object which exhibits xl, xr, yt, yb properties. The bounding
+  //box will be used to connect unbound edges, and to close open cells
+  let result = voronoi.compute(sites, bbox);
+  //render, further analyze, etc.
+  console.log('result:', Object.keys(result).join(', '));
+
+  let { site, cells, edges, vertices, execTime } = result;
+  console.log('cells:', cells);
+
+  let holes = edges.filter(e => !e.rSite).map(({ lSite, rSite, ...edge }) => new Point(lSite));
+  let rlines = edges.filter(e => e.rSite).map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
+  let vlines = edges.filter(e => e.va && e.vb).map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
+  let points2 = vertices.map(v => new Point(v).round(0.127, 4));
+  const add = (arr, ...items) => [...(Util.isArray(arr) ? arr : []), ...items];
+
+  const factory = SVG.factory(/*{
+    create: tag => ({ tagName: tag }),
+    append_to: (elem, parent) => (parent.children = add(parent.children, elem)),
+    setattr: (elem, name, value) => {
+      if(!elem.attributes) elem.attributes = {};
+      elem.attributes[name] = value;
+    }
+  }*/);
+
+  const lines = [...rlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.1 }]), ...vlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.1 }])];
+
+  const circles = [
+    ...holes.map(p => ['circle', { cx: p.x, cy: p.y, r: 0.254, fill: 'none', stroke: '#00f', 'stroke-width': 0.3 }])
+    /* ...points2.map(p => [
+      'circle',
+      { cx: p.x, cy: p.y, r: 0.254 * 2, fill: 'none', stroke: 'rgba(0,255,255,0.75)', 'stroke-width': 0.1 }
+    ])*/
+  ];
+
+  const polylines = [
+    ...cells.reduce(
+      (acc, { site, halfedges }) => [
+        ...acc,
+        [
+          'polyline',
+          {
+            points: new PointList(halfedges.map(({ site }) => site)).toString(),
+            stroke: '#f0f',
+            'stroke-width': 0.1
+          }
+        ]
+      ],
+      []
+    )
+  ];
+  console.log('polylines:', polylines);
+  console.log('cells:', cells);
+
+  window.cells = cells;
+
+  const svg = ['svg', { viewBox: rect.toString() }, [['defs'], ['g', { transform: ` scale(1,-1) translate(0,1.27)  translate(0,${-rect.height})` }, [['rect', { ...rect.toObject(), fill: 'hsla(0,0%,50%,0.3333)' }], ...lines, ...circles, ...polylines]]]];
+
+  //console.log('factory:', factory);
+  const svgElem = factory(...svg);
+
+  project.svg.parentElement.appendChild(svgElem);
+
+  window.draw = (...args) => DrawSVG(factory, ...args);
+
+  Element.setCSS(svgElem, { position: 'absolute', left: 0, top: 0, width: '100%', height: 'auto' });
+
+  //filesystem.writeFile('output.svg', svgFile);
+  console.log('svg:', svgElem);
+};
+
 const MakeFitAction = index => async () => {
   let parent = Element.find('#main');
   let prect = Element.rect(parent);
@@ -690,7 +880,7 @@ const AppMain = (window.onload = async () => {
   Util(globalThis);
 
   //prettier-ignore
-  Object.assign(window, { BBox, ChooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, LoadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas, BoardToGerber, ListGithubRepo, ListGithubRepoServer, brcache, lscache, BaseCache, FetchCached, CachedFetch });
+  Object.assign(window, { BBox, ChooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, LoadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas, BoardToGerber, ListGithubRepo, ListGithubRepoServer, brcache, lscache, BaseCache, FetchCached, CachedFetch ,GerberToGcode });
   Object.assign(
     window,
     { cache, tlite, FetchURL },
@@ -709,7 +899,7 @@ const AppMain = (window.onload = async () => {
     window,
     { LogJS },
     { Element, devtools, dom, RGBA, HSLA },
-    { Voronoi, GerberParser },
+    { Voronoi, GerberParser, GenerateVoronoi, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeInterpreter, GcodeParser },
     {
       SVGAlignments,
       AlignmentAttrs,
@@ -954,7 +1144,20 @@ const AppMain = (window.onload = async () => {
     return h(
       'table',
       { className: 'logger', ref },
-      lines.slice(-10, lines.length).map(([type, d, t, m], i) => h('tr', {}, [h('td', { className: 'log sign' }, h('img', { className: 'log sign', src: `/static/${type.toLowerCase() || 'warn'}.svg`, style: { height: '14px', width: 'auto', marginTop: '-1px' } })), h('td', { className: 'log message' }, /*333*/ m + '')]))
+      lines.slice(-10, lines.length).map(([type, d, t, m], i) =>
+        h('tr', {}, [
+          h(
+            'td',
+            { className: 'log sign' },
+            h('img', {
+              className: 'log sign',
+              src: `/static/${type.toLowerCase() || 'warn'}.svg`,
+              style: { height: '14px', width: 'auto', marginTop: '-1px' }
+            })
+          ),
+          h('td', { className: 'log message' }, /*333*/ m + '')
+        ])
+      )
     );
   };
   dump({ ...dump(), test: 123 });
@@ -985,7 +1188,17 @@ const AppMain = (window.onload = async () => {
         setInputText(target.value);
       }
     };
-    return h('input', { type: 'text', className: 'commander', value: inputText, onKeyDown: handler, autofocus: true }, []);
+    return h(
+      'input',
+      {
+        type: 'text',
+        className: 'commander',
+        value: inputText,
+        onKeyDown: handler,
+        autofocus: true
+      },
+      []
+    );
   };
 
   const layersDropDown = trkl(false);
@@ -1003,7 +1216,24 @@ const AppMain = (window.onload = async () => {
           setVisible(element.visible ? 'no' : 'yes');
         }
       },
-      [h('span', { className: classNames(className, 'number'), style: { background: element.color }, ...props }, `${i}`), h('span', { className: classNames(className, 'name'), ...props }, `${name}`), h('img', { className: classNames(className, 'visible'), ...props, style: { height: '1em', width: 'auto' }, src: `static/svg/${element.visible ? 'show' : 'hide'}.svg` })]
+      [
+        h(
+          'span',
+          {
+            className: classNames(className, 'number'),
+            style: { background: element.color },
+            ...props
+          },
+          `${i}`
+        ),
+        h('span', { className: classNames(className, 'name'), ...props }, `${name}`),
+        h('img', {
+          className: classNames(className, 'visible'),
+          ...props,
+          style: { height: '1em', width: 'auto' },
+          src: `static/svg/${element.visible ? 'show' : 'hide'}.svg`
+        })
+      ]
     );
   };
 
@@ -1056,7 +1286,18 @@ const AppMain = (window.onload = async () => {
               //    fn: (e,state) => /*(e.buttons && e.type.endsWith('down')) &&*/ state && layersDropDown(state) || true,
               image: 'static/svg/layers.svg'
             }),
-            props => h(Chooser, { ...props, className: 'layers', itemClass: 'layer', itemComponent: Layer, items: layerList }, [])
+            props =>
+              h(
+                Chooser,
+                {
+                  ...props,
+                  className: 'layers',
+                  itemClass: 'layer',
+                  itemComponent: Layer,
+                  items: layerList
+                },
+                []
+              )
           ])
         ),
         h(DynamicLabel, { className: 'vcenter pad-lr', caption: documentTitle }),
@@ -1121,7 +1362,7 @@ const AppMain = (window.onload = async () => {
 
       if(type.endsWith('end') || type.endsWith('up')) return cancel();
       if(event.buttons === 0 && type.endsWith('move')) return cancel();
-      // if(event.index > 0) Util.log('touch', { x, y, index, buttons, type, target }, container);
+      // if(event.index > 0) console.log('touch', { x, y, index, buttons, type, target }, container);
       if(event.buttons & 2) return cancel();
       if(!move) {
         let box = (e => {
@@ -1171,7 +1412,7 @@ const AppMain = (window.onload = async () => {
           /*  window.crosshair.show = true;
           window.crosshair.position = absolute;*/
 
-          //          Util.log('move', ...[...rel], ...[...absolute]);
+          //          console.log('move', ...[...rel], ...[...absolute]);
           if(true || event.buttons > 0) move(rel.x, rel.y);
           else move = move.jump();
         }
