@@ -49,7 +49,7 @@ import { Emitter, EventIterator } from './events.js';
 import { Slot, SlotContent, SlotProvider } from './slots.js';
 import Voronoi from './lib/geom/voronoi.js';
 import GerberParser from './lib/gerber/parser.js';
-
+import { lazyInitializer } from './lib/lazyInitializer.js';
 /* prettier-ignore */ import { BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode
  } from './lib/eagle.js';
 //import PureCache from 'pure-cache';
@@ -116,36 +116,83 @@ tlite(() => ({ grav: '-|', attrib: ['data-tlite', 'data-tooltip', 'title', 'data
                             node.insertBefore(elem, node.firstElementChild);
                           };*/
 const utf8Decoder = new TextDecoder('utf-8');
+let svgOwner, parent;
 
-function DrawSVG(factory, ...args) {
+const svgFactory = lazyInitializer(() => {
+  parent = project.svg.parentElement;
+
+  const factory = SVG.factory({
+    append_to(elem, p) {
+      (p || parent).appendChild(elem);
+    }
+  });
+  //const {width,height}=Element.rect('.aspect-ratio-box-inside');
+  let rect = DrawSVG.calcViewBox();
+
+  console.log('rect:', rect);
+
+  const svg = [
+    'svg',
+    { viewBox: rect.toString(), style: 'position: absolute; left: 0; top: 0;' },
+    [
+      ['defs'],
+      [
+        'g',
+        {
+          transform: ` scale(1,-1) translate(0,1.27) translate(0,${-rect.y2})
+       `
+        },
+        [['rect', { ...rect.toObject(), fill: 'hsla(0,0%,50%,0.3333)' }]]
+      ]
+    ]
+  ];
+  //console.log('factory:', factory);
+
+  const element = (svgOwner = factory(...svg));
+
+  factory.root = parent = element.lastElementChild;
+
+  //project.svg.parentElement.appendChild(element);
+
+  return factory;
+});
+
+function DrawSVG(...args) {
+  const factory = svgFactory();
+
+  let e;
   try {
     let parent = project.svg.parentElement.lastElementChild;
     const append = e => parent.appendChild(e);
+    let c = RGBA.random();
 
     let [tag, attrs, children] = args;
 
-    let e;
     if(typeof tag == 'string') {
       console.log('draw(', ...args, ')');
 
-      e = factory(...args);
+      e = factory(tag, { stroke: c.hex(), 'stroke-width': 0.1, ...attrs }, children);
     } else if(Util.isArray(args[0])) {
       let items = args.shift();
-      let c = RGBA.random();
+
+      document.querySelector('#main > div > div > div > svg:nth-child(2) > g');
+
+      DrawSVG.setViewBox(BBox.from(items));
+
       /*
 items = items.map(i => isLine(i) ? new Line(i) : null);
 
 console.log("items:",items);
 */
       for(let item of items) {
-        console.log('item:', item);
+        // console.log('item:', item);
         let line;
         if(isLine(item)) line = new Line(item);
 
-        console.log('line:', line);
+        //console.log('line:', line);
 
         if(line) {
-          e = factory('line', { ...line.toObject(), stroke: c, 'stroke-width': 0.1 });
+          e = factory('line', { ...line.toObject(), stroke: c.hex(), 'stroke-width': 0.1 });
           append(e);
           console.log('e:', e);
         }
@@ -159,7 +206,32 @@ console.log("items:",items);
     Util.putError(error);
     throw error;
   }
+  return e;
 }
+DrawSVG.calcViewBox = box => {
+  box = box || (project && project.doc && BBox.from(project.doc.getMeasures(true)));
+  box = box || Element.rect('.aspect-ratio-box-inside');
+
+  const { width, height, x, y } = box;
+
+  let { x1, y1, x2, y2 } = new Rect(x, y, width, height);
+
+  const rect = new BBox(x1, y1 - y2, x2 - x1, y2);
+  return rect;
+};
+
+DrawSVG.setViewBox = box => {
+  svgOwner = svgOwner || [...Element.findAll('svg', Element.find('#main'))].reverse()[0];
+  const rect = box; // instanceof BBox ? box : DrawSVG.calcViewBox(box);
+
+  rect.y1 -= rect.y2;
+  rect.x2 -= rect.x1;
+
+  console.log('setViewBox', { svgOwner, rect, box });
+  svgOwner.setAttribute('viewBox', rect.toString());
+  svgOwner.lastElementChild.setAttribute('transform', `scale(1,-1)  translate(0,${-rect.height})`);
+  Element.attr(svgOwner.lastElementChild.firstElementChild, { ...rect.toRect() });
+};
 
 const ListProjects = async function(opts = {}) {
   const { url, descriptions = true, names, filter } = opts;
@@ -669,6 +741,11 @@ const ChooseDocument = async (project, i) => {
   return r;
 };
 
+/*
+gerber=await BoardToGerber(project.name); gc=await GerberToGcode('tmp/7seg-2.54.GBL'); geom=gcodetogeometry(gc.data);lines = geom.lines.map(({start,end}) => new Line(start,end))
+
+*/
+
 const GenerateVoronoi = () => {
   //console.log('Loading document: ' + filename);
   let { doc } = project;
@@ -740,7 +817,7 @@ const GenerateVoronoi = () => {
     }
   }*/);
 
-  const lines = [...rlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.1 }]), ...vlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.1 }])];
+  const lines = [...rlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.01 }]), ...vlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.01 }])];
 
   const circles = [
     ...holes.map(p => ['circle', { cx: p.x, cy: p.y, r: 0.254, fill: 'none', stroke: '#00f', 'stroke-width': 0.3 }])
@@ -770,15 +847,6 @@ const GenerateVoronoi = () => {
   console.log('cells:', cells);
 
   window.cells = cells;
-
-  const svg = ['svg', { viewBox: rect.toString() }, [['defs'], ['g', { transform: ` scale(1,-1) translate(0,1.27)  translate(0,${-rect.height})` }, [['rect', { ...rect.toObject(), fill: 'hsla(0,0%,50%,0.3333)' }], ...lines, ...circles, ...polylines]]]];
-
-  //console.log('factory:', factory);
-  const svgElem = factory(...svg);
-
-  project.svg.parentElement.appendChild(svgElem);
-
-  window.draw = (...args) => DrawSVG(factory, ...args);
 
   Element.setCSS(svgElem, { position: 'absolute', left: 0, top: 0, width: '100%', height: 'auto' });
 
@@ -898,7 +966,7 @@ const AppMain = (window.onload = async () => {
   Object.assign(
     window,
     { LogJS },
-    { Element, devtools, dom, RGBA, HSLA },
+    { Element, devtools, dom, RGBA, HSLA, draw: DrawSVG },
     { Voronoi, GerberParser, GenerateVoronoi, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeInterpreter, GcodeParser },
     {
       SVGAlignments,
@@ -1056,6 +1124,7 @@ const AppMain = (window.onload = async () => {
   });
 
   trkl.bind(window, { searchFilter, listURL });
+  trkl.bind(window, { svgFactory });
 
   trkl.bind(window, { zoomVal: zoomLog });
 
