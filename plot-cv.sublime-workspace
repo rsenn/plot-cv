@@ -5,6 +5,34 @@
 		[
 		]
 	},
+	"buffers":
+	[
+		{
+			"file": "create-tamper.js",
+			"settings":
+			{
+				"buffer_size": 12714,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "list-proxies.js",
+			"settings":
+			{
+				"buffer_size": 5283,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "new.js",
+			"settings":
+			{
+				"buffer_size": 61767,
+				"line_ending": "Unix"
+			}
+		}
+	],
 	"build_system": "Run with Node.JS",
 	"build_system_choices":
 	[
@@ -57,6 +85,54 @@
 		"selected_items":
 		[
 			[
+				"instalk",
+				"Package Control: Install Package"
+			],
+			[
+				"remove pac",
+				"Package Control: Remove Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"install pa",
+				"Package Control: Install Package"
+			],
+			[
+				"install pac",
+				"Package Control: Install Package"
+			],
+			[
+				"install pack",
+				"Package Control: Install Package"
+			],
+			[
+				"remove ",
+				"Package Control: Remove Package"
+			],
+			[
+				"Package Control: install",
+				"Package Control: Install Package"
+			],
+			[
+				"extract",
+				"Extract Sublime Package: Extract all packages"
+			],
+			[
+				"extra",
+				"Extract Sublime Package: Extract all packages"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
 				"build",
 				"Build: Cancel"
 			],
@@ -73,7 +149,7 @@
 	},
 	"console":
 	{
-		"height": 185.0,
+		"height": 379.0,
 		"history":
 		[
 		]
@@ -87,10 +163,26 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
+	"expanded_folders":
+	[
+		"/home/roman/Sources/plot-cv",
+		"/home/roman/Sources/plot-cv/To-Misc-fixed"
+	],
 	"file_history":
 	[
-		"/home/roman/Sources/plot-cv/list-proxies.js",
 		"/home/roman/Sources/plot-cv/plot-cv.sublime-project",
+		"/home/roman/Sources/plot-cv/package.json",
+		"/home/roman/Sources/plot-cv/lib/util.js",
+		"/home/roman/Sources/plot-cv/test-line.js",
+		"/home/roman/Sources/plot-cv/test-date.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-alea.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-attributes.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-autoplacer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/Amiga.dark.json",
+		"/home/roman/Dokumente/Sources/plot-cv/list-proxies.js",
+		"/home/roman/.config/sublime-text-3/Packages/HTML-CSS-JS Prettify/.jsbeautifyrc.defaults.json",
+		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
+		"/home/roman/Sources/plot-cv/list-proxies.js",
 		"/home/roman/.config/sublime-text-3-20200815/Packages/User/Default (Linux).sublime-keymap"
 	],
 	"find":
@@ -109,14 +201,20 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"]+(\\.[\\-\\",
+			"\\[\\\\w-\\]",
+			"waitFor",
+			"/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/([^/]*)/index.js",
 			"ProxyLists"
 		],
 		"highlight": true,
 		"in_selection": false,
 		"preserve_case": false,
-		"regex": false,
+		"regex": true,
 		"replace_history":
 		[
+			"[-\\\\w]",
+			"\\1"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -124,6 +222,106 @@
 		"whole_word": false,
 		"wrap": true
 	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "create-tamper.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 12714,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								932,
+								932
+							]
+						],
+						"settings":
+						{
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "list-proxies.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5283,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								271,
+								271
+							]
+						],
+						"settings":
+						{
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "new.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 61767,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 19654.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				}
+			]
+		}
+	],
 	"incremental_find":
 	{
 		"height": 31.0
@@ -155,15 +353,20 @@
 		]
 	},
 	"menu_visible": true,
+	"output.Debugger":
+	{
+		"height": 150.0
+	},
 	"output.exec":
 	{
-		"height": 0.0
+		"height": 286.0
 	},
 	"output.find_results":
 	{
 		"height": 0.0
 	},
-	"pinned_build_system": "Run with Node.JS",
+	"pinned_build_system": "Run with NVM Node.JS 14.x",
+	"project": "plot-cv.sublime-project",
 	"replace":
 	{
 		"height": 78.0
@@ -176,11 +379,43 @@
 		"selected_items":
 		[
 			[
-				"list-p",
-				"list-proxies.js"
+				"new",
+				"new.js"
+			],
+			[
+				"create",
+				"create-tamper.js"
 			],
 			[
 				"list-pro",
+				"list-proxies.js"
+			],
+			[
+				"lib/util",
+				"lib/util.js"
+			],
+			[
+				"packa",
+				"package.json"
+			],
+			[
+				"list",
+				"list-proxies.js"
+			],
+			[
+				"list-pr",
+				"list-proxies.js"
+			],
+			[
+				"proxy",
+				"lib/proxy/proxyClone.js"
+			],
+			[
+				"list-por",
+				"list-proxies.js"
+			],
+			[
+				"list-p",
 				"list-proxies.js"
 			]
 		],
@@ -204,6 +439,7 @@
 		],
 		"width": 0.0
 	},
+	"selected_group": 0,
 	"settings":
 	{
 	},
@@ -211,7 +447,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 268.0,
+	"side_bar_width": 262.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

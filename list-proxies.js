@@ -1,6 +1,6 @@
-import ProxyList from 'free-proxy';
-import ProxyLists from 'proxy-lists';
-import proxynova from 'proxynova';
+import ProxyList from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/free-proxy/index.js';
+//import ProxyLists from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/proxy-lists/index.js';
+import proxynova from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/proxynova/index.js';
 
 import Util from './lib/util.js';
 
@@ -28,12 +28,15 @@ function Proxy(obj) {
 
     if(Util.isIpAddress(v)) {
       p.ip = v;
-    } else if(Util.isPortNumber(v)) {
+    }
+    else if(Util.isPortNumber(v)) {
       p.port = +v;
-    } else if(/proto/i.test(prop)) {
+    }
+    else if(/proto/i.test(prop)) {
       p.protocol = Util.isArray(v) ? v[0] : v;
       if(/https/.test(p.protocol)) p.protocol = 'http';
-    } else if(/(country|source)/i.test(prop)) {
+    }
+    else if(/(country|source)/i.test(prop)) {
       p[prop] = v;
     }
   }
@@ -105,7 +108,8 @@ function main() {
           console.info('\nPROXY:', proxy, check, '\n');
           push(proxy);
         }
-      } catch(error) {
+      }
+      catch(error) {
         stop(new Error(error));
       }
     }),
@@ -113,14 +117,14 @@ function main() {
       proxynova(['de', 'at'], 1000, async (err, proxies) => {
         for(let p of proxies)
           await new Proxy(p)
-            .ping()
+            //.ping()
             .then(push)
             .catch(console.error);
       });
-    }),
+    })/*,
     new Repeater(async (push, stop) => {
       ProxyLists.getProxies({
-        countries: ['de' /*, 'at', 'nl'*/],
+        countries: ['de'],
         requestQueue: {
           concurrency: 5,
           delay: 50
@@ -130,7 +134,6 @@ function main() {
           console.error('got some proxies', proxies.length);
           for(let p of proxies) {
             console.error('got proxy', p);
-
             let proxy = new Proxy(p);
             await proxy
               .ping()
@@ -138,17 +141,16 @@ function main() {
               .catch(err => console.error('err:', err));
           }
         })
-        .on('error', function(error) {
+        .on('error', (error) => {
           console.error('error!', (error + '').split(/\n/g)[0]);
         })
-        .once('end', function() {
+        .once('end', () => {
           stop();
         });
-    })
+    })*/
   ];
   (async () => {
     let results = [];
-
     try {
       let i = 0;
       for await (const proxy of Repeater.merge(proxies.slice(0, 2))) {
@@ -158,16 +160,15 @@ function main() {
           port,
           type
         }); // 1, 2
-
         Util.insertSorted(results, proxy);
         console.log(proxy.toString());
-
         let response = await Check(proxy);
 
         await writeResults(results, 'txt');
         await writeResults(results, 'json');
       }
-    } catch(err) {
+    }
+    catch(err) {
       console.error(err); // TimeoutError: 1000 ms elapsed
     }
 
@@ -177,7 +178,8 @@ function main() {
 
 try {
   main();
-} catch(err) {
+}
+catch(err) {
   console.info('Top-level error:', err);
 }
 

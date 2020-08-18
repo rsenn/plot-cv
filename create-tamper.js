@@ -17,7 +17,7 @@ const filesystem = {
   readFile(filename) {let data = fs.readFileSync(filename).toString(); return data; },
   writeFile(filename, data, overwrite = true) {return fs.writeFileSync(filename, data, { flag: overwrite ? 'w' : 'wx' }); },
   exists(filename) {return fs.existsSync(filename); },
-  realpath(filename) {return fs.realpathSync(filename); },
+  realpath(filenamee) {return fs.realpathSync(filename); },
   stat(filename) {return fs.statSync(filename); }
 };
 const code = `export const Progress = ({ className, percent, ...props }) => html\`<\x24{Overlay} className=\x24{classNames('progress', 'center', className)} text=\x24{percent + '%'} style=\x24{{
@@ -167,40 +167,27 @@ function main(args) {
 
     processed.push(file);
   }
-
   function processFile(file) {
     let data, b, ret;
-    /* if(file == '-') {
-      file = '/dev/stdin';
-    }*/
     console.log('processing:', file);
     removeFile(file);
     let thisdir = path.dirname(file);
     let absthisdir = path.resolve(thisdir);
     data = fs.readFileSync(file).toString();
-    //  console.log('opened:', data);
     let ast, error;
     let parser = new ECMAScriptParser(data ? data.toString() : code, file);
     let printer = new Printer({ indent: 4 });
-    //console.log('prototypeChain:', Util.getPrototypeChain(parser));
-    //console.log("methodNames:",Util.getMethodNames(parser, 2));
-    //console.log(new parser.estree.Identifier());
     try {
       ast = parser.parseProgram();
       parser.addCommentsToNodes(ast);
-      /*   let imports = [...deep.iterate(ast, node => node instanceof CallExpression && /console.log/.test(printer.print(node)))].map(([node, path]) => node);
-       */
-      //for(let imp of imports) console.log('tokens:', parser.tokensForNode(imp));
       let flat = deep.flatten(
         ast,
         new Map(),
         node => node instanceof ESNode,
         (path, value) => [path, value]
       );
-      //console.log('flat:', flat);
       function removeStatements(statements, predicate = stmt => true) {
         if(Util.isArray(statements)) statements = new Map(statements);
-
         console.log(
           'removeStatements:',
           [...statements].map(([path, stmt]) => printAst(stmt))
@@ -210,7 +197,6 @@ function main(args) {
           [...statements].map(([path, stmt]) => stmt)
         );
         let removed = [];
-        //       statements = [...statements].map(([p, v]) => [[...p], v]);
         for(let [path, node] of statements) {
           if(!predicate(node, path)) continue;
           if(node instanceof ImportStatement || node.what == 'default') {
@@ -224,15 +210,12 @@ function main(args) {
           removed.push(node);
         }
         return removed;
-        //console.log('i:', stmt.map(([path, node]) => deep.get(ast, [...path])) );
       }
       const getBase = filename => filename.replace(/\.[a-z0-9]*$/, '');
       const getRelative = filename => path.join(thisdir, filename);
       const getFile = Util.memoize(module => searchModuleInPath(module, file));
-
       let imports,
         importStatements = [...flat.entries()].filter(([key, node]) => node instanceof ImportStatement);
-      //   console.log(`${file}: importStatements =`, importStatements);
       imports = importStatements.map(([path, node], i) => {
         const getFromValue = Util.memoize(() => node.source.value.replace(/['"](.*)['"]/, '$1'));
         const getFromBase = () => getBase(getFromValue());
@@ -249,13 +232,9 @@ function main(args) {
           //    variables: Util.isObject(node.identifiers, () => node.identifiers.variables) ? node.identifiers : node
         });
       });
-
       let statement2module = new WeakMap(imports.map(({ node, ...module }) => [node, module]));
-      // console.log(`${file}: statement2module =`, statement2module);
-      //console.log(`${file}: imports =`, imports);
       let alter = imports.filter(({ fromPath, ...module }) => /^lib/.test(fromPath));
       alter = alter.map(node => {
-        /*   const { from, file } = node;*/
         const to = node.fromPath;
         const from = node.fromValue;
         node.from = new estree.Literal(`'${to}'`);
@@ -282,7 +261,6 @@ function main(args) {
         'exports:',
         exports.map(([p, stmt]) => (Util.isObject(stmt.declarations, 'id', id => id.value) == stmt.what.value ? stmt.declarations : stmt))
       );
-      //  removeStatements(exports);
     } catch(err) {
       console.error(err.message);
       Util.putStack(err.stack);
@@ -290,7 +268,7 @@ function main(args) {
     }
     let output = '';
     output = printAst(ast, parser.comments, printer);
-    r.push(`/** concatenanted '${file}' ***/\n${output}\n`);
+    r.push(` concatenanted '${file}' ***/\n${output}\n`);
   }
 }
 function finish(err) {
