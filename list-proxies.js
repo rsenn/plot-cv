@@ -1,11 +1,10 @@
-import ProxyList from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/free-proxy/index.js';
-import ProxyLists from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/proxy-lists/index.js';
-import proxynova from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/proxynova/index.js';
+import ProxyList from 'free-proxy';
+import ProxyLists from 'proxy-lists';
+import proxynova from 'proxynova';
 
 import Util from './lib/util.js';
 
-import repeater from './lib/repeater/repeater.js';
-const { Repeater } = repeater;
+import { Repeater } from './lib/repeater/repeater.js';
 import { Console } from 'console';
 import net from 'net';
 import fs, { promises as fsPromises } from 'fs';
@@ -13,7 +12,12 @@ import fs, { promises as fsPromises } from 'fs';
 global.console = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
-  inspectOptions: { depth: 0, colors: true, breakLength: Number.Infinity, compact: true }
+  inspectOptions: {
+    depth: 0,
+    colors: true,
+    breakLength: Number.Infinity,
+    compact: true
+  }
 });
 
 function Proxy(obj) {
@@ -38,7 +42,7 @@ function Proxy(obj) {
   if(i != -1) {
     throw new Error(`Property '${propNames[i]}' missing on: ` + Util.toSource(p));
   }
-  Util.log('new proxy:', p);
+  // console.info('new proxy:', p);
   return p;
 }
 Proxy.prototype.defaultTimeout = 5000;
@@ -47,12 +51,23 @@ Proxy.prototype.valueOf = function() {
 };
 Proxy.prototype.toSource = function() {
   const { protocol, ip, port, country, time, source } = this;
-  return Util.toSource({ protocol, ip, port, country, time, source });
+  return Util.toSource({
+    protocol,
+    ip,
+    port,
+    country,
+    time,
+    source
+  });
 };
 Proxy.prototype.toString = function() {
   const { protocol, ip, port } = this;
   return `${protocol} ${ip} ${port}`;
 };
+Proxy.prototype.check = function(url) {
+  return Check(this, url);
+};
+
 Proxy.prototype.ping = function() {
   const proxy = this;
   const { protocol, ip, port } = proxy;
@@ -61,11 +76,12 @@ Proxy.prototype.ping = function() {
     const start = Date.now();
     tcp.setTimeout(proxy.defaultTimeout);
     tcp.setNoDelay(true);
-    //Util.log(`Connecting to ${ip}:${port} ...`);
+    //console.info(`Connecting to ${ip}:${port} ...`);
     tcp
-      .connect(port, ip, () => finish(`connected to ${ip}:${port}`, start))
+      .connect(port, ip, () => finish(`Connected to ${ip}:${port}`, start))
       .on('close', () => finish(null, start))
       .on('error', err => finish(err, -1));
+
     function finish(msg, start = -1, end = Date.now()) {
       proxy.time = start >= 0 ? end - start : Number.Infinity;
       tcp.destroy();
@@ -81,9 +97,12 @@ function main() {
       try {
         const proxyList = new ProxyList();
         for(const p of await proxyList.getByCountryCode('DE')) {
-          let proxy = new Proxy({ source: 'free-proxy', ...p });
-          await proxy.ping();
-          Util.log('\nPROXY:', proxy, '\n');
+          let proxy = new Proxy({
+            source: 'free-proxy',
+            ...p
+          });
+          let check = await Check(proxy);
+          console.info('\nPROXY:', proxy, check, '\n');
           push(proxy);
         }
       } catch(error) {
@@ -127,31 +146,24 @@ function main() {
         });
     })
   ];
-
-  async function writeResults(results, format = 'txt', outputName = 'proxies') {
-    let filename = outputName + '.' + format;
-    let tempfile = filename + '.' + Util.randStr(6);
-    let output = await fsPromises.open(tempfile, 'w');
-    let method = { txt: r => r.map(p => p.toString()).join('\n'), json: r => `[\n${r.map(p => '  ' + Util.toSource(p)).join(',\n')}\n]` }[format];
-
-    await output.write(method(results) + '\n');
-    await output.close();
-
-    await fsPromises.unlink(filename);
-    await fsPromises.link(tempfile, filename);
-    await fsPromises.unlink(tempfile);
-  }
-
   (async () => {
     let results = [];
 
     try {
       let i = 0;
-      for await (const proxy of Repeater.merge(proxies.slice(/*0,*/ 2))) {
-        console.error(`Proxy #${++i}:`, proxy); // 1, 2
+      for await (const proxy of Repeater.merge(proxies.slice(0, 2))) {
+        const { host, port, type } = proxy;
+        console.error(`Proxy #${++i}:`, {
+          host,
+          port,
+          type
+        }); // 1, 2
 
         Util.insertSorted(results, proxy);
-        Util.log(proxy);
+        console.log(proxy.toString());
+
+        let response = await Check(proxy);
+
         await writeResults(results, 'txt');
         await writeResults(results, 'json');
       }
@@ -166,5 +178,19 @@ function main() {
 try {
   main();
 } catch(err) {
-  Util.log('Top-level error:', err);
+  console.info('Top-level error:', err);
+}
+
+async function writeResults(results, format = 'txt', outputName = 'proxies') {
+  let filename = outputName + '.' + format;
+  let tempfile = filename + '.' + Util.randStr(6);
+  let output = await fsPromises.open(tempfile, 'w');
+  let method = { txt: r => r.map(p => p.toString()).join('\n'), json: r => `[\n${r.map(p => '  ' + Util.toSource(p)).join(',\n')}\n]` }[format];
+
+  await output.write(method(results) + '\n');
+  await output.close();
+
+  await fsPromises.unlink(filename);
+  await fsPromises.link(tempfile, filename);
+  await fsPromises.unlink(tempfile);
 }

@@ -288,6 +288,7 @@ app.use('/node_modules', express.static(path.join(p, 'node_modules')));
 app.use('/overrides', express.static(path.join(p, 'overrides')));
 app.use('/components', express.static(path.join(p, 'components')));
 app.use('/lib', express.static(path.join(p, 'lib')));
+app.use('/tmp', express.static(path.join(p, 'tmp')));
 app.use('/static', express.static(p));
 
 app.get('/favicon.ico', (req, res) =>

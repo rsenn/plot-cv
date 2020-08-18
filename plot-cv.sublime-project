@@ -1,127 +1,126 @@
 {
-  "build_systems": [
+    "settings":
     {
-      "name": "Run with Node.JS",
-      "shell_cmd": "(. ~/.nvm/nvm.sh; nvm use 14;  set -x;  node --experimental-modules '${file}') 2>&1"
+        "debug.configurations": [],
+        "sublimegdb_i_know_how_to_use_gdb_thank_you_very_much": true,
+        "tab_size": 2,
+        "sublimegdb_exec_cmd": "-exec-run",
+        "sublimegdb_commandline": "gdb --interpreter=mi ${file}",
+        "sublimegdb_workingdir": "${folder:${project_path:${file}}}"
     },
-      {
-      "name": "List",
-      "shell_cmd": "ls -l"
-    },
-    {
-      "name": "Build debug",
-      "shell_cmd": ". ./cfg.sh; TYPE=Debug cfg && make -C \\$builddir",
-      "working_dir": "${project_path}"
-    },
-    {
-      "name": "Rebuild CTags",
-      "shell_cmd": "make .tags"
-    },
-    {
-      "name": "clang-format",
-      "shell_cmd": "clang-format -verbose -style=file -i `find . -name '*.c' -or -name '*.h'`",
-      "working_dir": "${project_path:${folder:${file_path}}}"
-    },
-    {
-      "name": "prettier",
-      "shell_cmd": "yarn run format",
-      "working_dir": "${project_path:${folder:${file_path}}}"
-    },
-        {
-      "name": "antlr4 - Build current .g4 file",
-      "shell_cmd": "(set -x; {  ARG='${file}'; NAME=\\${ARG##*/}; NAME=\\${NAME%.g4}; DIR=\\$(echo \"\\$NAME\" |  tr '[[:upper:]]' '[[:lower:]]'); DIR=\\${DIR%parser*}; DIR=\\${DIR%lexer*}; mkdir -p lib/antlr/\\$DIR; java -Xmx500M -cp '/usr/local/lib/antlr-4.8-complete.jar:$CLASSPATH' org.antlr.v4.Tool  -Dlanguage=JavaScript -lib lib/grammars -o lib/antlr/\\$DIR -visitor -Xexact-output-dir \\${ARG:-lib/grammars/C.g4}; } 0<>1 || echo failed) 2>&1",
-      "working_dir": "${project_path:${folder:${file_path}}}"
-    },
-
-    { "name": "prettier ${file_path}", "shell_cmd": "WIDTH=400 bash scripts/prettier.sh '${file}'", "working_dir": "${project_path:${folder:${file_path}}}" }
-  ],
     "folders": [
-      {
+    {
+        "folder_exclude_patterns": [
+            ".*",
+            "build",
+            "inst",
+            "htm",
+            "*/htm/*",
+            "node_modules",
+            "*/node_modules/*",
+            "npm",
+            ".next",
+            "*.next/*"
+        ],
+        "path": ".",
         "file_exclude_patterns": [
-        "*.tmp",
-        "*.scr",
-          //"*.so", "*.orig", "*.log", "*.jshintrc",
-          "*.vcxproj",
-          "*.filters",
-          //  "*.json",
-          "*.tsbuildinfo",
-          "*.cjs",
-          "*.lbr",
-          "*.flow",
-        "*.o",
-        "*.yml",
-        //"*.markdown",
-        //"*.mjs",
-        //"*.txt",
-        "*.map",
-        //"*.jsx", "*.d",
-        //"*.wasm",
-        "*.texi",
-        "*.plist",
-        "*.pdf",
-        "*.pbxproj",
-        "*.patch",
-        "*.pack",
-        "*.opts",
-        "*.nvmrc",
-        "*.md~",
-        "*.m",
-        "*.ls",
-        "*.lib",
-        "*.idx",
-        "*.gitattributes",
-        "*.git",
-        "*.conf",
-        "*.check_cache",
-        //"*.svg",
-        "*.sample",
-        //"*.css",
-        //"*.sh", "*.jst",
-        //"*.cmake",
-        "*.tsx",
-        "*.storyboard",
-        "*.sed",
-        "*.nycrc",
-        "*.marks",
-        "*.gitignore",
-        "*.editorconfig",
-        //"*.html", "*.eslintrc",
-        "*.un~",
-        "*.out",
-        "*.hpp",
-        "*.gitkeep",
-        "*.DS_Store",
-        "*.diff",
-        "*.coffee",
-        "*.BSD",
-        "*.a",
-        "*.internal",
-        "*.includecache",
-        "*.pem",
-        "*.mm",
-        "*.lock",
-        "*.def",
-        "*.bnf",
-        "*.bin",
-        "*.1",
-        "*.png",
-        "*.make",
-        "*.npmignore",
-       //"*.sch",
-        //"*.brd",
-        "*.priv",
-        "*.eslintignore"
-      ],
-      "folder_exclude_patterns": [".*", "build", "inst","htm", "*/htm/*", "node_modules", "*/node_modules/*", "npm", ".next", "*.next/*"],
-      "path": "."
-    }
-  ],
-  "settings": {
-    "debug.configurations": [],
-    "sublimegdb_commandline": "gdb --interpreter=mi ${file}",
-    "sublimegdb_exec_cmd": "-exec-run",
-    "sublimegdb_i_know_how_to_use_gdb_thank_you_very_much": true,
-    "sublimegdb_workingdir": "${folder:${project_path:${file}}}",
-    "tab_size": 2
-  }
+            "*.tmp",
+            "*.scr",
+            "*.vcxproj",
+            "*.filters",
+            "*.tsbuildinfo",
+            "*.cjs",
+            "*.lbr",
+            "*.flow",
+            "*.o",
+            "*.yml",
+            "*.map",
+            "*.texi",
+            "*.plist",
+            "*.pdf",
+            "*.pbxproj",
+            "*.patch",
+            "*.pack",
+            "*.opts",
+            "*.nvmrc",
+            "*.md~",
+            "*.m",
+            "*.ls",
+            "*.lib",
+            "*.idx",
+            "*.gitattributes",
+            "*.git",
+            "*.conf",
+            "*.check_cache",
+            "*.sample",
+            "*.tsx",
+            "*.storyboard",
+            "*.sed",
+            "*.nycrc",
+            "*.marks",
+            "*.gitignore",
+            "*.editorconfig",
+            "*.un~",
+            "*.out",
+            "*.hpp",
+            "*.gitkeep",
+            "*.DS_Store",
+            "*.diff",
+            "*.coffee",
+            "*.BSD",
+            "*.a",
+            "*.internal",
+            "*.includecache",
+            "*.pem",
+            "*.mm",
+            "*.lock",
+            "*.def",
+            "*.bnf",
+            "*.bin",
+            "*.1",
+            "*.png",
+            "*.make",
+            "*.npmignore",
+            "*.priv",
+            "*.eslintignore"
+        ]
+    }],
+    "build_systems": [
+    {
+        "name": "Run with Node.JS",
+        "shell_cmd": "(  node --experimental-modules '${file}') 2>&1"
+    },
+    {
+        "shell_cmd": "(. ~/.nvm/nvm.sh; nvm use 14;  set -x;  node --experimental-modules '${file}') 2>&1",
+        "name": "Run with NVM Node.JS 14.x"
+    },
+    {
+        "working_dir": "${project_path}",
+        "name": "Build debug",
+        "shell_cmd": ". ./cfg.sh; TYPE=Debug cfg && make -C \\$builddir"
+    },
+    {
+        "name": "Rebuild CTags",
+        "shell_cmd": "make .tags"
+    },
+    {
+        "shell_cmd": "clang-format -verbose -style=file -i `find . -name '*.c' -or -name '*.h'`",
+        "name": "clang-format",
+        "working_dir": "${project_path:${folder:${file_path}}}"
+    },
+    {
+        "name": "prettier",
+        "working_dir": "${project_path:${folder:${file_path}}}",
+        "shell_cmd": "yarn run format"
+    },
+    {
+        "name": "antlr4 - Build current .g4 file",
+        "working_dir": "${project_path:${folder:${file_path}}}",
+        "shell_cmd": "(set -x; {  ARG='${file}'; NAME=\\${ARG##*/}; NAME=\\${NAME%.g4}; DIR=\\$(echo \"\\$NAME\" |  tr '[[:upper:]]' '[[:lower:]]'); DIR=\\${DIR%parser*}; DIR=\\${DIR%lexer*}; mkdir -p lib/antlr/\\$DIR; java -Xmx500M -cp '/usr/local/lib/antlr-4.8-complete.jar:$CLASSPATH' org.antlr.v4.Tool  -Dlanguage=JavaScript -lib lib/grammars -o lib/antlr/\\$DIR -visitor -Xexact-output-dir \\${ARG:-lib/grammars/C.g4}; } 0<>1 || echo failed) 2>&1"
+    },
+    {
+        "working_dir": "${project_path:${folder:${file_path}}}",
+        "name": "prettier ${file_path}",
+        "shell_cmd": "WIDTH=400 bash scripts/prettier.sh '${file}'"
+    }]
 }

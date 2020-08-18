@@ -2,6 +2,7 @@
 import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
+import { ReactPropTypes } from './lib/prop-types.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
 import keysim from './lib/dom/keysim.js';
 import geom from './lib/geom.js';
@@ -273,19 +274,19 @@ const ElementToXML = (e, predicate) => {
   return Element.toString(x, { newline: '\n' });
 };
 
-const FetchCached = CachedFetch(window.fetch, 'fetch');
+const FetchCached = Util.cachedFetch();
 
 const FetchURL = async (url, allOpts = {}) => {
   let { nocache = false, ...opts } = allOpts;
   let result;
   let ret;
 
-  let fetch = FetchCached;
-
+  let fetch = nocache ? window.fetch : FetchCached;
+  /*
   if(opts.method && opts.method.toUpperCase() == 'POST') {
     nocache = true;
-    fetch = (...args) => window.fetch(...args).then(async res => await res.text());
-  }
+    fetch = (...args) => fetch(...args).then(async res => await res.text());
+  }*/
 
   if(/tmp\//.test(url)) {
     url = url.replace(/.*tmp\//g, '/static/tmp/');
@@ -300,7 +301,7 @@ const FetchURL = async (url, allOpts = {}) => {
     if(!ret) {
       ret = result = await fetch(url, opts);
 
-      if(!nocache && typeof ret == 'string' && ret.length > 0) cache.set(url, ret);
+      //  if(!nocache && typeof ret == 'string' && ret.length > 0) cache.set(url, ret);
     }
   } catch(error) {
     Util.putError(error);
@@ -334,14 +335,18 @@ const LoadFile = async file => {
   //console.log('file:', file.url, file.name);
   let { url, name: filename } = file;
   url = /:\/\//.test(filename) ? filename : `/static/${filename}`;
-  //console.log('file: url=', url);
-  let xml = /* await FetchURL(url);*/ await (await fetch(url)).text(); //(typeof file.
+  console.log('LoadFile url=', url);
+  let response = await fetch(url);
+  console.log('LoadFile response=', response);
+
+  let xml = /* await FetchURL(url);*/ await response.text(); //(typeof file.
+  // console.log('LoadFile xml=', await xml);
   //file= await FetchURL(url);  //'function' && (await file.fetch())) || (await FetchURL(url, {}));
   //console.log('LoadFile', { url, xml });
   //console.log('xml: ', xml.substring(0, 100));
   //let dom = new DOMParser().parseFromString(xml, 'application/xml');
 
-  let doc = new EagleDocument(xml, null, filename, null, FileSystem);
+  let doc = new EagleDocument(await xml, null, filename, null, FileSystem);
 
   if(/\.brd$/.test(filename)) window.board = doc;
   if(/\.sch$/.test(filename)) window.schematic = doc;
@@ -556,7 +561,7 @@ const LoadDocument = async (project, parentElem) => {
   try {
     project.doc = await LoadFile(project);
   } catch(error) {
-    Util.putError(error);
+    console.error(error);
     throw error;
   }
   LogJS.info(`${project.doc.basename} loaded.`);
@@ -588,6 +593,8 @@ const LoadDocument = async (project, parentElem) => {
     sizeListener({ width: r.width });
   }
   aspectListener(aspectRatio);
+  console.log('aspectRatio:', aspectRatio);
+
   const Fence = ({ children, style = {}, sizeListener, aspectListener, ...props }) => {
     const [dimensions, setDimensions] = useState(sizeListener());
     const [aspect, setAspect] = useState(aspectListener());
@@ -735,7 +742,7 @@ const ChooseDocument = async (project, i) => {
     }
     r = project.loaded;
   } catch(err) {
-    Util.putError(err);
+    console.error(err);
   }
 
   return r;
@@ -1587,7 +1594,7 @@ const AppMain = (window.onload = async () => {
     if(!pos.inside(clientArea)) return;
 
     const wheelPos = -event.deltaY.toFixed(2);
-    zoomVal = altKey || ctrlKey || shiftKey ? 0 : Util.clamp(-100, 100, zoomVal + wheelPos * 0.1);
+    zoomVal = altKey || ctrlKey || shiftKey ? 0 : Util.clamp(-100, 200, zoomVal + wheelPos * 0.1);
     AdjustZoom();
   });
 
