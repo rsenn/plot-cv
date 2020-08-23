@@ -72,14 +72,14 @@ export class Slot extends Component {
 }
 
 //(Slot.prototype = new Component()).constructor = Slot;
-Slot.prototype.render = function() {
+Slot.prototype.render = function () {
   let child = ReactComponent.toChildArray(this.props.children)[0];
   return typeof child === 'function' ? child(this.state.content) : this.state.content || child;
 };
 
 export function withSlot(name, alias) {
-  return Child => props =>
-    h(Slot, { name }, content => {
+  return (Child) => (props) =>
+    h(Slot, { name }, (content) => {
       let childProps = {};
       childProps[alias || name] = content;
       for(let i in props) childProps[i] = props[i];

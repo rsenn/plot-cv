@@ -1,4 +1,4 @@
-export const inspect = (obj, pred = v => true) =>
+export const inspect = (obj, pred = (v) => true) =>
   '{\n  ' +
   Object.entries(obj)
     .map(([key, value]) => {
@@ -22,7 +22,7 @@ export const inspect = (obj, pred = v => true) =>
       if(out.length > 200) out = out.substring(0, 200) + '...';
       return key + ': ' + out;
     })
-    .filter(item => item != '')
+    .filter((item) => item != '')
     .join(',\n  ') +
   '\n}';
 

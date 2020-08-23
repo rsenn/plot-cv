@@ -35,7 +35,7 @@ class NodeList {
 }
 
 const proxyObject = (root, handler) => {
-  const ptr = path => path.reduce((a, i) => a[i], root);
+  const ptr = (path) => path.reduce((a, i) => a[i], root);
   const nodes = Util.weakMapper(
     (value, path) =>
       new Proxy(handler && handler.construct ? handler.construct(value, path) : value, {
@@ -92,7 +92,7 @@ async function main() {
   //Util.log('children[0].tagName', p.children[0].tagName);
   //Util.log('keys(children[0])', Object.keys(p.children[0]));
 
-  let result = deep.select(p, o => {
+  let result = deep.select(p, (o) => {
     //Util.log('o:', o);
     return Util.isObject(o) && o.attributes !== undefined && o.name !== undefined;
   });

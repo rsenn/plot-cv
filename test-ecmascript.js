@@ -110,7 +110,7 @@ function main(args) {
 
       parser.addCommentsToNodes(ast);
 
-      let imports = [...deep.iterate(ast, node => node instanceof CallExpression && /Util.log/.test(printer.print(node)))].map(([node, path]) => node);
+      let imports = [...deep.iterate(ast, (node) => node instanceof CallExpression && /Util.log/.test(printer.print(node)))].map(([node, path]) => node);
 
       //Util.log('imports:', imports.map(node => ({ str: printer.print(node), toks: ECMAScriptParser.printToks( parser.tokensForNode(node))  })));
 
@@ -177,7 +177,7 @@ function finish(err) {
   if(fail) {
     err.stack = PathReplacer()('' + err.stack)
       .split(/\n/g)
-      .filter(s => !/esfactory/.test(s))
+      .filter((s) => !/esfactory/.test(s))
       .join('\n');
   }
 

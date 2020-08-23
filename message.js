@@ -10,7 +10,7 @@ export class Message {
 
     if(typeof msg != 'string') {
       msg = Util.tryCatch(
-        msg => JSON.stringify(msg),
+        (msg) => JSON.stringify(msg),
         (json, msg) => json,
         (err, msg) => msg,
         msg
@@ -65,7 +65,7 @@ export class Message {
     const { body } = this;
     let r = Util.tryCatch(
       () => JSON.parse(body),
-      obj => obj,
+      (obj) => obj,
       () => null
     );
 

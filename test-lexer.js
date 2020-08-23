@@ -23,7 +23,7 @@ const LoginIcon = ({ style }) => (
   </svg>
 );
 
-(async arg => {
+(async (arg) => {
   let data = await fs.readFile(arg || './lib/ecmascript/parser.js');
   //console.log(data);
 

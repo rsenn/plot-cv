@@ -16,7 +16,7 @@ let sections = data[0].reduce((acc, sdata) => ({ ...acc, [sdata[0]]: new Map(sda
 //console.log('data:', sections);
 
 let file_keys = sections.FILE_INFO.keys();
-let file_sections = Object.keys(sections).filter(name => /FILE/.test(name));
+let file_sections = Object.keys(sections).filter((name) => /FILE/.test(name));
 
 let files = [];
 for(let key of file_keys) {
@@ -32,9 +32,9 @@ for(let sect of file_sections) {
   sections[sect].clear();
 }
 
-let filenames = files.map(f => f.FILE_INFO);
+let filenames = files.map((f) => f.FILE_INFO);
 
-files = files.filter(file => !/.*(buffer|comparator|lcd|format|ds18b20|hd44).*/.test(file.FILE_INFO));
+files = files.filter((file) => !/.*(buffer|comparator|lcd|format|ds18b20|hd44).*/.test(file.FILE_INFO));
 
 //console.log('data:', file_sections);
 //console.log('files:', filenames);

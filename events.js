@@ -21,7 +21,7 @@ export function EventIterator(events, target = Util.tryCatch(() => window)) {
   if(typeof events == 'string') events = EventIterator[events + 'Events'] || events.split(/,/g);
 
   let iter = new Repeater(async (push, stop) => {
-    let handler = e => {
+    let handler = (e) => {
       e.emitter = emitter;
       push(e);
     };

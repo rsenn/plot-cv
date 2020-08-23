@@ -45,7 +45,7 @@ const GeneratePalette = (counts = { h: 3, s: 2, l: 5 }, deltas = { h: 360, s: 10
 
   const makeRange = (count, delta) =>
     Util.range(0, count - 1)
-      .map(v => (v * delta) / (count - 1) - delta / 2)
+      .map((v) => (v * delta) / (count - 1) - delta / 2)
       .map(Math.round);
 
   let ranges = { h: makeRange(counts.h, deltas.h), s: makeRange(counts.s, deltas.s), l: makeRange(counts.l, deltas.l) };
@@ -58,7 +58,7 @@ const GeneratePalette = (counts = { h: 3, s: 2, l: 5 }, deltas = { h: 360, s: 10
     .rel(ranges.h, 0, 0)
     .rel(0, ranges.s, 0)
     .rel(0, 0, ranges.l)
-    .each(function() {
+    .each(function () {
       const hex = this.getHex();
       const rgba = new RGBA(hex);
       const hsla = rgba.toHSLA();
@@ -156,11 +156,11 @@ function main(...args) {
 
       /*  paths = paths.filter(([path, value]) => value.tagName == 'key' && value.children[0] != 'settings');
        */
-      paths = paths.map(path => path.concat(['children', 0]));
+      paths = paths.map((path) => path.concat(['children', 0]));
       return [
         path,
         paths
-          .map(p => deep.get(xml[0], p))
+          .map((p) => deep.get(xml[0], p))
           .reverse()
           .join('/'),
         value
@@ -173,7 +173,7 @@ function main(...args) {
     let palette = new ColorMap(HSLA, colors);
     Util.log('palette.getMinMax():', palette.getMinMax());
 
-    const lexOrder = key => {
+    const lexOrder = (key) => {
       let i = 0;
       let r = [];
       for(i = 0; i < 10; i++) {
@@ -183,12 +183,12 @@ function main(...args) {
       }
       return r;
     };
-    const hash = key => ((a, b) => a / b)(...lexOrder(key).reduce((acc, c) => [acc[0] * (10 + 26 + 26) + c, acc[1] * (10 + 26 + 26)], [0, 1]));
+    const hash = (key) => ((a, b) => a / b)(...lexOrder(key).reduce((acc, c) => [acc[0] * (10 + 26 + 26) + c, acc[1] * (10 + 26 + 26)], [0, 1]));
 
     let i = 0;
     let sz = 1 << Math.ceil(Math.log2(palette.size));
 
-    let gcd = [3, 4, 6, 8, 12, 16, 32].map(n => Util.greatestCommonDenominator(sz, n));
+    let gcd = [3, 4, 6, 8, 12, 16, 32].map((n) => Util.greatestCommonDenominator(sz, n));
     let numHues = 6;
     let step = Math.ceil(Math.pow(sz, 1 / 2) / 1.85);
     Util.log('sz:', sz);
@@ -214,9 +214,9 @@ function main(...args) {
       const hashes = key
         .split(/\//g)
         .slice(0)
-        .map(k => [k, k.split(/,? /g).map(k => k.split(/\./g).map(h => hash(h)))])
+        .map((k) => [k, k.split(/,? /g).map((k) => k.split(/\./g).map((h) => hash(h)))])
         .flat()
-        .filter(i => typeof i != 'string')
+        .filter((i) => typeof i != 'string')
         .flat();
       //Util.log("hash:", hashes);
       //Util.log("color1:", color);
@@ -252,7 +252,7 @@ function main(...args) {
       cmds.unshift(['remap', 'l', 25, 75]);
     }
 
-    cmds = cmds.map(cmdStr => (Util.isArray(cmdStr) ? cmdStr : cmdStr.split(/[^-A-Za-z0-9\.\/]/g)));
+    cmds = cmds.map((cmdStr) => (Util.isArray(cmdStr) ? cmdStr : cmdStr.split(/[^-A-Za-z0-9\.\/]/g)));
 
     let handlers = {
       shuffle() {
@@ -281,7 +281,7 @@ function main(...args) {
     };
     Util.log('cmds:', cmds);
 
-    cmds.forEach(cmd => handlers[cmd[0]](...cmd.slice(1)));
+    cmds.forEach((cmd) => handlers[cmd[0]](...cmd.slice(1)));
 
     Util.log('palette', palette);
 
@@ -325,7 +325,7 @@ function main(...args) {
     outfile = outfile || basename + '.xml';
     filesystem.writeFile(outfile, toXML(newObj));
 
-    let c = Functional.curry(function(a, b, c) {
+    let c = Functional.curry(function (a, b, c) {
       return a * b * c;
     });
     let arity = Functional.arityof(c);

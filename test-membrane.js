@@ -8,7 +8,7 @@ import { ImmutableXPath, parseXPath, XMLIterator } from './lib/xml.js';
 import { Console } from 'console';
 
 const inspect = (arg, depth = 10, colors = true, breakLength = Number.Infinity) => util.inspect(arg, { depth, breakLength, compact: true, showProxy: true, colors });
-const printNode = node => {
+const printNode = (node) => {
   let s = toXML(node).replace(/\n.*/g, '');
   return s;
 };
@@ -44,10 +44,10 @@ try {
     let xml = tXml(str)[0];
     const mapper = new PathMapper(xml, parseXPath);
     let observer = new TreeObserver(mapper, false);
-    const path2obj = path => mapper.get(path);
+    const path2obj = (path) => mapper.get(path);
     const obj2path = observer.getField('path');
     const obj2type = observer.getField('type');
-    const path2xpath = path => {
+    const path2xpath = (path) => {
       if(!(path instanceof ImmutablePath)) path = new ImmutablePath(path, true);
       return path;
     };
@@ -126,7 +126,7 @@ try {
       if(tags[lkey] !== undefined) lists.push(lkey);
     }
     tags = Object.entries(tags).sort((a, b) => a[1] - b[1]);
-    tags = lists.map(t => {
+    tags = lists.map((t) => {
       let { path, value } = deep.find(xml, (v, p) => v.tagName == t);
       let selected = deep.select(xml, (v, p) => v.tagName == t);
       let xpath = ImmutableXPath.from(path, xml);
@@ -146,7 +146,7 @@ try {
 
       dumps = dumps
         .map(([p, s, v, r]) => [p, s, v, r.test(p), r.test(s), [...(p.toString() + '').match(q)], [...q.exec(p)].slice(1)])
-        .map(([p, s, ...rest]) => [p[Symbol.for('nodejs.util.inspect.custom')](), s[Symbol.for('nodejs.util.inspect.custom')](), ...rest.map(i => Util.toSource(i))])
+        .map(([p, s, ...rest]) => [p[Symbol.for('nodejs.util.inspect.custom')](), s[Symbol.for('nodejs.util.inspect.custom')](), ...rest.map((i) => Util.toSource(i))])
         .map(([p]) => p + '')
         .join('\n  |');
 
@@ -159,7 +159,7 @@ try {
       let path = new ImmutablePath(search);
     }
     let x = new ImmutableXPath('/eagle/drawing/board');
-    let drawing = deep.find(xml, v => v.tagName == 'drawing');
+    let drawing = deep.find(xml, (v) => v.tagName == 'drawing');
     let w = new ImmutablePath('children/0/children/0/children/3', true);
     //Util.log('w:', w.toString());
     let y = ImmutableXPath.from(w, xml);

@@ -78,7 +78,7 @@ async function main() {
     console.log(error.message, stack + '');
   }
 }
-main(process.argv.slice(2)).catch(error => {
+main(process.argv.slice(2)).catch((error) => {
   const stack = [...error.stack];
   console.log('ERROR:', error.message, stack);
 });

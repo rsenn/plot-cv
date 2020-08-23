@@ -1,8 +1,7 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
-import { ImportStatement, ExportStatement, VariableDeclaration } from './lib/ecmascript/estree.js';
-import { estree, ESNode, CallExpression, Literal } from './lib/ecmascript/estree.js';
+import { ImportStatement, ExportStatement, VariableDeclaration, MemberExpression, estree, ESNode, CallExpression, Literal } from './lib/ecmascript/estree.js';
 
 import Util from './lib/util.js';
 import fs from 'fs';
@@ -87,30 +86,40 @@ class ES6Module {
   static create(file) {
     let mod = new ES6Module();
     mod.file = file;
+    return mod;
+  }
+
+  toString() {
+    return this.file;
+  }
+  valueOf() {
+    return this.toString();
   }
 }
 
 class ES6ImportExport {
   static create(obj) {
-    let ret = new.target ? this : obj;
+    let ret = new ES6ImportExport();
     let nodeClass = Util.className(obj.node);
     let type = Util.decamelize(nodeClass).split('-')[0];
     let position = ESNode.assoc(obj.node).position;
-    ret = Util.define(ret, { position, nodeClass, type }, obj);
+    ret = Util.define(ret, { position, nodeClass, type });
     /* this.node = node;*/
     console.log('ES6ImportExport; obj:', ret);
-    if(!new.target) return Object.setPrototypeOf(ret, ES6ImportExport.prototype);
-    return ret;
+    // if(!new.target) return Object.setPrototypeOf(ret, ES6ImportExport.prototype);
+    return Object.assign(ret, obj);
   }
 
   get from() {
-    let value = this.node.source;
+    let value = this.node.source || c;
     while(Util.isObject(value, (v) => v.value)) value = value.value;
     return value;
   }
   set from(value) {
     console.log('from value: ', value);
-    this.node.source = value instanceof Literal ? value : new estree.Literal(`'${value}'`);
+    value = value instanceof Literal ? value : new estree.Literal(`'${value}'`);
+    if(this.node.source) this.node.source = value;
+    else this.node.arguments = [value];
   }
   toSource() {
     return printAst(this.node);
@@ -181,72 +190,56 @@ function main(args) {
   process.exit(Number(files.length == 0));
 
   function removeFile(file) {
-    let idx = args.indexOf(file);
-    if(idx != -1) args.splice(idx, idx + 1);
-    processed.push(file);
+    Util.remove(args, file);
+    Util.pushUnique(processed, file);
   }
 
   function processFile(file) {
-    let data, b, ret;
+    let b, ret;
     console.log('processing:', file);
     removeFile(file);
     let thisdir = path.dirname(file);
     let absthisdir = path.resolve(thisdir);
-    data = fs.readFileSync(file).toString();
-    let ast, error;
-    let parser = new ECMAScriptParser(data ? data.toString() : code, file);
-    let printer = new Printer({ indent: 4 });
+
+    let { data, error, ast, parser, printer, flat, map } = parseFile(file);
+    console.log('flat:', flat());
+
     try {
-      ast = parser.parseProgram();
-      parser.addCommentsToNodes(ast);
-      let flat = deep.flatten(
-        ast,
-        new Map(),
-        (node) => node instanceof ESNode,
-        (path, value) => [path, value]
-      );
-      function removeStatements(statements, predicate = (stmt) => true) {
-        //  if(Util.isArray(statements)) statements = new Map(statements);
-        // /* prettier-ignore */ console.log('removeStatements:', [...statements].map(mod=> printAst(mod.stmt)));
-        // /* prettier-ignore */ console.log('removeStatements:', [...statements].map(([path, stmt]) => stmt));
-        let removed = [];
-        for(let [path, node] of statements) {
-          console.log('removeStatements loop:', new ImmutablePath(path), printAst(node));
-          if(!predicate(node, path)) continue;
-          if(node instanceof ImportStatement || (Util.isObject(node) && node.what == 'default')) {
-            deep.unset(ast, path);
-          } else {
-            console.log('i:', deep.get(ast, path.slice(0, -2)));
-            if(!Util.isArray(node.declarations)) node = node.declarations;
-            else Object.setPrototypeOf(node, VariableDeclaration.prototype);
-            deep.set(ast, path, node);
-          }
-          removed.push(node);
-        }
-        return removed;
-      }
       const getBase = (filename) => filename.replace(/\.[a-z0-9]*$/, '');
       const getRelative = (filename) => path.join(thisdir, filename);
       const getFile = Util.memoize((module) => searchModuleInPath(module, file));
-      let imports,
-        importStatements = [...flat.entries()].filter(([key, node]) => node instanceof ImportStatement);
-      imports = importStatements.map(([path, node], i) => {
-        const getFromValue = Util.memoize(() => node.source.value.replace(/['"](.*)['"]/, '$1'));
-        const getFromBase = () => getBase(getFromValue()).replace(/^\.\//, '');
-        const getFromPath = () => getFile(getFromBase());
-        const getAssoc = Util.memoize(() => ESNode.assoc(node));
-        return ES6ImportExport.create({
-          // Object.assign(Object.setPrototypeOf({}, ES6ImportExport.prototype), {
+      let imports;
+      const useStrict = map().filter(([key, node]) => node instanceof Literal && /use strict/.test(node.value));
+      console.log('useStrict:', useStrict);
+
+      useStrict.map(([path, node]) => deep.unset(ast, path));
+
+      const requireStatements = map()
+        .filter(([key, node]) => node instanceof CallExpression && node.callee.value == 'require')
+        .map(([path, node]) => [path.slice(0, 2), deep.get(ast, path)]);
+      console.log('requireStatements:', requireStatements);
+
+      const importStatements = map().filter(([key, node]) => node instanceof ImportStatement);
+
+      const getFromValue = Util.memoize((node) => (node.source || node.arguments[0]).value.replace(/['"](.*)['"]/, '$1'));
+      const getFromBase = (node) => getBase(getFromValue(node)).replace(/^\.\//, '');
+      const getFromPath = (node) => getFile(getFromBase(node));
+
+      imports = [...requireStatements, ...importStatements].sort(([a], [b]) => a.join('.').localeCompare(b.join('.')));
+      console.log('imports:', imports);
+
+      imports = imports.map(([path, node], i) =>
+        ES6ImportExport.create({
           node,
           path: path.join('.'),
           file,
-          position: getAssoc().position,
-          fromPath: getFromPath(),
-          fromBase: getFromBase(),
-          fromValue: getFromValue()
+          position: ESNode.assoc(node).position,
+          fromPath: getFromPath(node),
+          fromBase: getFromBase(node),
+          fromValue: getFromValue(node)
           //    variables: Util.isObject(node.identifiers, () => node.identifiers.variables) ? node.identifiers : node
-        });
-      });
+        })
+      );
       let statement2module = imports.map((imp) => [imp.node, imp]);
       statement2module = new WeakMap(statement2module);
       let alter = imports.filter(({ fromPath, ...module }) => /^lib/.test(fromPath));
@@ -266,7 +259,10 @@ function main(args) {
       let remove = imports.map((imp, idx) => [idx, imp.node]).filter((imp, idx) => !/^lib/.test(imp.fromPath));
       /* prettier-ignore */ console.log(`${modulePath}: remove =`, remove .reduce((acc,imp) => [...acc,imp/*(imp.fromPath),imp.toSource()*/], []));
 
-      removeStatements(remove.map(([idx, node]) => [imports[idx].path, node]));
+      removeStatements(
+        ast,
+        remove.map(([idx, node]) => [imports[idx].path, node])
+      );
 
       let recurseFiles = remove.map(([idx, node]) => imports[idx]).filter((imp) => processed.indexOf(removeModulesDir(imp.fromPath)) == -1);
       //recurseFiles = recurseFiles.map(([path,module]) => { console.log("module:",module.fromPath); return module.fromPath; });
@@ -278,8 +274,15 @@ function main(args) {
         console.info('imp', imp);
         processFile(imp.fromPath);
       });
-      let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportStatement);
-      console.log('exports:', ...exports.map(([p, stmt]) => (Util.isObject(stmt.declarations, 'id', 'value') == Util.isObject(stmt.what, 'value') ? stmt.declarations : stmt)));
+      let exports = map().filter(([key, value]) => value instanceof ExportStatement);
+      let moduleExports = map()
+        .filter(([key, value]) => value instanceof MemberExpression && value.object.value == 'module' && value.property.value == 'exports')
+        .map(([path, node]) => path.slice(0, 2))
+        .map((p) => [p, deep.get(ast, p)]);
+
+      console.log(`${modulePath}: moduleExports:`, moduleExports);
+
+      console.log(`${modulePath}: exports:`, ...exports.map(([p, stmt]) => (Util.isObject(stmt.declarations, 'id', 'value') == Util.isObject(stmt.what, 'value') ? stmt.declarations : stmt)));
     } catch(err) {
       console.error(err.message);
       Util.putStack(err.stack);
@@ -291,6 +294,57 @@ function main(args) {
   }
 
   console.info('processed files:', ...processed);
+}
+
+function parseFile(file) {
+  let data, error, ast, parser, printer, flat;
+  try {
+    data = fs.readFileSync(file).toString();
+    parser = new ECMAScriptParser(data ? data.toString() : code, file);
+    printer = new Printer({ indent: 4 });
+    ast = parser.parseProgram();
+    parser.addCommentsToNodes(ast);
+  } catch(err) {
+    error = err;
+  } finally {
+    flat = Util.memoize(() =>
+      deep.flatten(
+        ast,
+        new Map(),
+        (node) => node instanceof ESNode,
+        (path, value) => [new ImmutablePath(path), value]
+      )
+    );
+  }
+  return {
+    data,
+    error,
+    ast,
+    parser,
+    printer,
+    flat,
+    map() {
+      let map = flat();
+
+      /*    return Util.mapWrapper(
+        flat,
+        (k) => k.join('.'),
+        (k) => k.split('.')
+      );
+*/
+      return Util.mapAdapter((key, value) =>
+        key !== undefined
+          ? value !== undefined
+            ? value === null
+              ? deep.unset(ast, key)
+              : deep.set(ast, key, value)
+            : deep.get(ast, key)
+          : (function* () {
+              for(let [key, value] of map) yield [[...key], key.apply(ast, true)];
+            })()
+      );
+    }
+  };
 }
 
 function finish(err) {
@@ -384,6 +438,26 @@ function searchModuleInPath(name, _from) {
   throw new Error(`Module '${name}' imported from '${_from}' not found`);
 }
 
+function removeStatements(ast, statements, predicate = (stmt) => true) {
+  //  if(Util.isArray(statements)) statements = new Map(statements);
+  // /* prettier-ignore */ console.log('removeStatements:', [...statements].map(mod=> printAst(mod.stmt)));
+  // /* prettier-ignore */ console.log('removeStatements:', [...statements].map(([path, stmt]) => stmt));
+  let removed = [];
+  for(let [path, node] of statements) {
+    console.log('removeStatements loop:', new ImmutablePath(path), printAst(node));
+    if(!predicate(node, path)) continue;
+    if(node instanceof ImportStatement || (Util.isObject(node) && node.what == 'default')) {
+      deep.unset(ast, path);
+    } else {
+      console.log('i:', deep.get(ast, path.slice(0, -2)));
+      if(!Util.isArray(node.declarations)) node = node.declarations;
+      else Object.setPrototypeOf(node, VariableDeclaration.prototype);
+      deep.set(ast, path, node);
+    }
+    removed.push(node);
+  }
+  return removed;
+}
 function makeNames(prefix) {
   return [prefix + '.es6.js', prefix + '.esm.js', prefix + '.module.js', prefix + '.module.ejs', prefix + '.js'];
 }

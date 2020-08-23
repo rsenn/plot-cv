@@ -31,7 +31,6 @@
     "cross-fetch": "^3.0.5",
     "deep-diff": "^1.0.2",
     "es6-promise": "^4.2.8",
-    "eslint-plugin-react-hooks": "^4.1.0",
     "express": "^4.17.1",
     "express-ws": "^4.0.0",
     "gcode-interpreter": "^2.1.0",
@@ -71,7 +70,6 @@
     "websocket-async": "node_modules/websocket-async/dist/websocket-async.esm.js",
     "fetch-with-proxy": "node_modules/fetch-with-proxy/src/index.js",
     "free-proxy": "node_modules/free-proxy",
-    "proxy-lists": "node_modules/proxy-lists",
     "proxynova": "node_modules/proxynova"
   },
   "resolutions": {
@@ -80,27 +78,12 @@
   "devDependencies": {
     "@aerian/eslint-config-preact": "^9.1.0",
     "clarify": "^2.1.0",
-    "eslint-config-preact": "^1.1.1",
-    "eslint-config-react": "^1.1.7",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-config-standard-preact": "^1.1.6",
-    "eslint-plugin-class-property": "^1.1.0",
-    "eslint-plugin-es6-recommended": "^0.1.2",
-    "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-no-unused-code": "^0.0.2",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-preact": "^0.1.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-proposal": "^2.3.0",
-    "eslint-plugin-react": "^7.20.6",
-    "eslint-plugin-react-compat": "^0.1.7",
-    "eslint-plugin-standard": "^4.0.1",
     "fetch-with-proxy": "https://github.com/touv/node-fetch-with-proxy",
+    "free-proxy": "^0.1.6",
     "http": "0.0.0",
-     "prettier": "^2.0.5",
-    "prettier-eslint": "^11.0.0",
-     "trace": "^3.1.1"
+    "prettier": "^2.0.5",
+    "proxynova": "^0.1.0",
+    "trace": "^3.1.1"
   },
   "husky": {
     "hooks": {
@@ -116,12 +99,7 @@
       "git add"
     ]
   },
-  /*"eslintConfig": {
-    "extends": [
-      ".eslintrc"
-    ]
-  }*/
-  "prettier": ".prettierrc",
+  "prettier": ".prettierrc.js",
   "stylelint": {
     "extends": "stylelint.config.js"
   }

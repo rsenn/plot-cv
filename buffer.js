@@ -51,7 +51,7 @@ function typedArraySupport() {
     var arr = new Uint8Array(1);
     arr.__proto__ = {
       __proto__: Uint8Array.prototype,
-      foo: function() {
+      foo: function () {
         return 42;
       }
     };
@@ -116,7 +116,7 @@ function Buffer(arg, encodingOrOffset, length) {
 Buffer.poolSize = 8192; // not used by this implementation
 
 // TODO: Legacy, not needed anymore. Remove in next major version.
-Buffer._augment = function(arr) {
+Buffer._augment = function (arr) {
   arr.__proto__ = Buffer.prototype;
   return arr;
 };
@@ -145,7 +145,7 @@ function from(that, value, encodingOrOffset, length) {
  * Buffer.from(buffer)
  * Buffer.from(arrayBuffer[, byteOffset[, length]])
  **/
-Buffer.from = function(value, encodingOrOffset, length) {
+Buffer.from = function (value, encodingOrOffset, length) {
   return from(null, value, encodingOrOffset, length);
 };
 
@@ -187,7 +187,7 @@ function alloc(that, size, fill, encoding) {
  * Creates a new filled Buffer instance.
  * alloc(size[, fill[, encoding]])
  **/
-Buffer.alloc = function(size, fill, encoding) {
+Buffer.alloc = function (size, fill, encoding) {
   return alloc(null, size, fill, encoding);
 };
 
@@ -205,13 +205,13 @@ function allocUnsafe(that, size) {
 /**
  * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
  * */
-Buffer.allocUnsafe = function(size) {
+Buffer.allocUnsafe = function (size) {
   return allocUnsafe(null, size);
 };
 /**
  * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.
  */
-Buffer.allocUnsafeSlow = function(size) {
+Buffer.allocUnsafeSlow = function (size) {
   return allocUnsafe(null, size);
 };
 
@@ -578,9 +578,7 @@ Buffer.prototype.inspect = function inspect() {
   var str = '';
   var max = exports.INSPECT_MAX_BYTES;
   if(this.length > 0) {
-    str = this.toString('hex', 0, max)
-      .match(/.{2}/g)
-      .join(' ');
+    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ');
     if(this.length > max) str += ' ... ';
   }
   return '<Buffer ' + str + '>';

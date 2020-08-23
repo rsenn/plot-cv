@@ -26,14 +26,14 @@ SafeBuffer.prototype = Object.create(Buffer.prototype);
 // Copy static methods from Buffer
 copyProps(Buffer, SafeBuffer);
 
-SafeBuffer.from = function(arg, encodingOrOffset, length) {
+SafeBuffer.from = function (arg, encodingOrOffset, length) {
   if(typeof arg === 'number') {
     throw new TypeError('Argument must not be a number');
   }
   return Buffer(arg, encodingOrOffset, length);
 };
 
-SafeBuffer.alloc = function(size, fill, encoding) {
+SafeBuffer.alloc = function (size, fill, encoding) {
   if(typeof size !== 'number') {
     throw new TypeError('Argument must be a number');
   }
@@ -50,14 +50,14 @@ SafeBuffer.alloc = function(size, fill, encoding) {
   return buf;
 };
 
-SafeBuffer.allocUnsafe = function(size) {
+SafeBuffer.allocUnsafe = function (size) {
   if(typeof size !== 'number') {
     throw new TypeError('Argument must be a number');
   }
   return Buffer(size);
 };
 
-SafeBuffer.allocUnsafeSlow = function(size) {
+SafeBuffer.allocUnsafeSlow = function (size) {
   if(typeof size !== 'number') {
     throw new TypeError('Argument must be a number');
   }

@@ -51,7 +51,7 @@ app.use((req, res, next) => {
 let sockets = [];
 
 const removeItem = (arr, item, key = 'ws') => {
-  let i = arr.findIndex(e => e[key] === item);
+  let i = arr.findIndex((e) => e[key] === item);
   if(i != -1) arr.splice(i, 1);
 
   return arr;
@@ -73,8 +73,8 @@ const convertToGerber = async (boardFile, opts = {}) => {
   // do whatever you want with `child` here - it's a ChildProcess instance just
   // with promise-friendly `.then()` & `.catch()` functions added to it!
   let output = '';
-  child.stdout.on('data', data => (output += data));
-  child.stderr.on('data', data => (output += data));
+  child.stdout.on('data', (data) => (output += data));
+  child.stderr.on('data', (data) => (output += data));
   const { stdout, stderr, code, signal } = await child;
 
   console.info(`code: ${code}`);
@@ -92,8 +92,9 @@ const convertToGerber = async (boardFile, opts = {}) => {
   return result;
 };
 
-const gerberToGcode = async (gerberFile, opts = {}) => {
+const gerberToGcode = async (gerberFile, allOpts = {}) => {
   const basename = path.basename(gerberFile.replace(/\.[A-Za-z0-9]*$/, ''));
+  let { fetch, data, ...opts } = allOpts;
   opts = {
     basename,
     zsafe: '1mm',
@@ -101,6 +102,7 @@ const gerberToGcode = async (gerberFile, opts = {}) => {
     zwork: '-1mm',
     'mill-feed': 30,
     'mill-speed': 16000,
+    'output-dir': './tmp/',
     ...opts
   };
   let side = 'front' in opts ? 'front' : 'back' in opts ? 'back' : '';
@@ -109,7 +111,7 @@ const gerberToGcode = async (gerberFile, opts = {}) => {
     opts.back = '';
   }
 
-  const gcodeFile = `${basename}_${side}.ngc`;
+  const gcodeFile = path.join(opts['output-dir'], `${basename}_${side}.ngc`);
   const params = [...Object.entries(opts)].filter(([k, v]) => typeof v == 'string' || typeof v == 'number').map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? ' ' + v : ''}`);
   console.warn(`gerberToGcode`, { gerberFile, gcodeFile, opts });
 
@@ -119,8 +121,8 @@ const gerberToGcode = async (gerberFile, opts = {}) => {
   // do whatever you want with `child` here - it's a ChildProcess instance just
   // with promise-friendly `.then()` & `.catch()` functions added to it!
   let output = '';
-  child.stdout.on('data', data => (output += data));
-  child.stderr.on('data', data => (output += data));
+  child.stdout.on('data', (data) => (output += data));
+  child.stderr.on('data', (data) => (output += data));
   const { stdout, stderr, code, signal } = await child;
 
   console.info(`code: ${code}`);
@@ -132,7 +134,7 @@ const gerberToGcode = async (gerberFile, opts = {}) => {
 
   let result = { code, output };
 
-  if(opts.data) result.data = await (await fsPromises.readFile(gcodeFile)).toString();
+  if(fetch || data) result.data = await (await fsPromises.readFile(gcodeFile)).toString();
   else result.file = gcodeFile;
 
   return result;
@@ -156,7 +158,7 @@ function Socket(ws, info) {
   return this;
 }
 
-Socket.prototype.toString = function() {
+Socket.prototype.toString = function () {
   return `${this.address}:${this.port}`;
 };
 
@@ -189,7 +191,7 @@ app.ws('/ws', async (ws, req) => {
     if(msg instanceof Message) msg = msg.data;
 
     Util.tryCatch(
-      ws => client.writable,
+      (ws) => client.writable,
       (ok, ws, data) => ws.send(data),
       (err, ws, data) => (console.log('socket:', sock.info, ' error:', (err + '').replace(/\n.*/g, '')), false),
       sock.ws,
@@ -197,7 +199,7 @@ app.ws('/ws', async (ws, req) => {
     );
   };
 
-  sendTo(s, JSON.stringify(sockets.map(s => s.id)), null, null, 'USERS');
+  sendTo(s, JSON.stringify(sockets.map((s) => s.id)), null, null, 'USERS');
 
   sockets.push(s);
 
@@ -221,11 +223,11 @@ app.ws('/ws', async (ws, req) => {
     sendMany(s, '', s.id, null, 'QUIT');
   });
 
-  ws.on('message', data => {
+  ws.on('message', (data) => {
     s.lastMessage = Date.now();
     let msg = new Message(data, s.id);
     if(msg.type == 'INFO') {
-      const id = sockets.findIndex(s => s.id == msg.body);
+      const id = sockets.findIndex((s) => s.id == msg.body);
       if(id != -1) {
         const sock = sockets[id];
         sendTo(s, JSON.stringify(Util.filterOutKeys(sock, ['ws', 'id'])), sock.id, s.id, 'INFO');
@@ -234,7 +236,7 @@ app.ws('/ws', async (ws, req) => {
     }
     console.log(`message from ${s.toString()}${msg.recipient ? ' to ' + msg.recipient : ''} (${s.id}): '${msg.body}'`);
     if(msg.recipient) {
-      let rId = sockets.findIndex(s => s.id == msg.recipient);
+      let rId = sockets.findIndex((s) => s.id == msg.recipient);
       if(rId == -1) {
         console.error(`No such recipient: '${msg.recipient}'`);
         return;
@@ -258,8 +260,8 @@ app.use(async (req, res, next) => {
 
     await fsPromises
       .stat(relativePath)
-      .then(st => (isFile = st.isFile()))
-      .catch(err => {});
+      .then((st) => (isFile = st.isFile()))
+      .catch((err) => {});
 
     let override = false;
 
@@ -267,7 +269,7 @@ app.use(async (req, res, next) => {
       await fsPromises
         .access(overridePath, fs.constants.F_OK)
         .then(() => (override = true))
-        .catch(err => {});
+        .catch((err) => {});
 
     if(override) {
       console.log('Request:', { overridePath, override });
@@ -311,15 +313,15 @@ app.get('/style.css', async (req, res) =>
 function getDescription(file) {
   let str = fs.readFileSync(file).toString();
   let r = [...Util.matchAll('<(/)?(board|schematic|library)[ >]', str)]
-    .map(m => m.index)
+    .map((m) => m.index)
     .sort((a, b) => a - b)
     .slice(0, 2);
   let chunk = str.substring(...r);
   let a = ['<description>', '</description>'];
   let indexes = a
-    .map(s => new RegExp(s))
-    .map(re => re.exec(chunk))
-    .map(m => m && m.index);
+    .map((s) => new RegExp(s))
+    .map((re) => re.exec(chunk))
+    .map((m) => m && m.index);
   let d = chunk.substring(...indexes);
   if(d.startsWith('<description')) return Util.decodeHTMLEntities(d.substring(a[0].length));
   return '';
@@ -330,7 +332,7 @@ const descMap = Util.weakMapper(getDescription, new Map());
 const GetFilesList = async (dir = './tmp', opts = {}) => {
   let { filter = '.*\\.(brd|sch|lbr)$', descriptions = false, names } = opts;
   const re = new RegExp(filter, 'i');
-  const f = ent => re.test(ent);
+  const f = (ent) => re.test(ent);
 
   console.log('GetFilesList()', { filter, descriptions, names });
 
@@ -338,7 +340,7 @@ const GetFilesList = async (dir = './tmp', opts = {}) => {
 
   return Promise.all(
     names
-      .map(entry => `${dir}/${entry}`)
+      .map((entry) => `${dir}/${entry}`)
       .reduce((acc, file) => {
         let description = descriptions ? descMap(file) : descMap.get(file);
         //   console.log('descMap:', util.inspect(descMap, { depth: 1 }));
@@ -358,11 +360,11 @@ const GetFilesList = async (dir = './tmp', opts = {}) => {
                 size: size
               })
             )
-            .catch(err => {})
+            .catch((err) => {})
         );
         return acc;
       }, [])
-  ).then(a => a.filter(i => i != null));
+  ).then((a) => a.filter((i) => i != null));
 };
 /*app.param(['owner', 'repo','dir'], function (req, res, next, value) {
   console.log('CALLED ONLY ONCE with', value)
@@ -371,7 +373,7 @@ const GetFilesList = async (dir = './tmp', opts = {}) => {
 */
 function FilesURLs(list) {
   const base_url = list[0].replace(/\/[^\/]*$/, '');
-  const files = list.map(url => url.replace(/.*\//g, ''));
+  const files = list.map((url) => url.replace(/.*\//g, ''));
   return { base_url, files };
 }
 
@@ -381,7 +383,7 @@ app.get(/\/github/, async (req, res) => {
   let result;
   const { owner, repo, dir, filter } = query;
   result = await ListGithubRepo(owner, repo, dir, filter && new RegExp(filter, 'g'));
-  res.json(FilesURLs(result.map(file => file.download_url)));
+  res.json(FilesURLs(result.map((file) => file.download_url)));
 });
 
 app.post(/\/github.*/, async (req, res) => {
@@ -389,19 +391,25 @@ app.post(/\/github.*/, async (req, res) => {
   let result;
   const { owner, repo, dir, filter } = body;
   result = await ListGithubRepo(owner, repo, dir, filter && new RegExp(filter, 'g'));
-  res.json(FilesURLs(result.map(file => file.download_url)));
+  res.json(FilesURLs(result.map((file) => file.download_url)));
 });
 
 app.post(/^\/gerber/, async (req, res) => {
   const { body } = req;
-  let { board, ...opts } = body;
+  let { board, save, filename, ...opts } = body;
 
   let result;
-
-  console.log('gerber', { board, opts });
+  console.log('gerber', { board, save, opts });
 
   try {
     result = await convertToGerber(board, opts);
+
+    if(save) {
+      filename = filename || typeof save == 'string' ? save : null;
+      filename = `tmp/` + filename.replace(/.*\/([^/])*\.[^/.]*$/g, '$1');
+
+      await fsPromises.writeFile(filename, result.data).then((res) => console.info('Wrote file:', res));
+    }
   } catch(error) {
     result = { error };
   }
@@ -432,7 +440,7 @@ app.post(/^\/(files|list).html/, async (req, res) => {
 
   if(names !== undefined) {
     if(typeof names == 'string') names = names.split(/\n/g);
-    if(Util.isArray(names)) names = names.map(name => name.replace(/.*\//g, ''));
+    if(Util.isArray(names)) names = names.map((name) => name.replace(/.*\//g, ''));
   }
 
   res.json({ files: await GetFilesList('tmp', { filter, descriptions, names }) });
@@ -445,11 +453,14 @@ app.get('/index.html', async (req, res) => {
 
 app.post('/save', async (req, res) => {
   const { body } = req;
-  console.log('req.headers:', req.headers);
+  //console.log('req.headers:', req.headers);
   console.log('save body:', typeof body == 'string' ? Util.abbreviate(body, 100) : body);
-  const filename = req.headers['content-disposition'].replace(/.*"([^"]*)".*/, '$1') || 'output.svg';
-  let result = await fs.promises.writeFile('tmp/' + filename, body, { mode: 0o600, flag: 'w' });
-  res.json({ result });
+  const filename = 'tmp/' + req.headers['content-disposition'].replace(/.*"([^"]*)".*/, '$1') || 'output.svg';
+  await fs.promises.writeFile(filename, body, { mode: 0o600, flag: 'w' });
+  let st = await fs.promises.stat(filename);
+
+  console.log('saved:', filename, `${st.size} bytes`);
+  res.json({ size: st.size, filename });
 });
 
 app.get('/', (req, res) => {

@@ -3,15 +3,131 @@
 	{
 		"selected_items":
 		[
+			[
+				"ES6I",
+				"ES6ImportExport.prototype"
+			]
 		]
 	},
 	"buffers":
 	[
 		{
+			"contents": "readFile(filename)\nwriteFile(filename, data, overwrite = true)\nexists(filename)\nrealpath(filenamee)\nstat(filename)\n(acc, file) =>\n (err, origin) =>\n () =>\n () =>\n() =>\nES6Module\nstatic create(file)\nES6ImportExport\nstatic create(obj)\nES6ImportExport\nget from()\n (v) =>\nset from(value)\ntoSource()\nget code()\nPrefixRemover\n (arg) =>\n(acc, re, i) =>\ndumpFile\nfunction printAst(ast, comments, printer\n({ indent: 4 }, comments))\nmain\n(arg) =>\n(p) =>\n(acc, p) =>\n([k, v]) =>\n  removeFile\n  processFile\n (node) =>\n (path, value) =>\n      removeStatements\ngetBase\ngetRelative\n(module) =>\n([key, node]) =>\n([path, node], i) =>\n() =>\ngetFromBase\ngetFromPath\n() =>\nimp =>\n({ fromPath, ...module }) =>\n(node) =>\nimp =>\nimp =>\n(imp,idx) =>\n(imp, idx) =>\n(acc,imp) =>\nimp =>\n(module) =>\n(modulePath) =>\n([key, value]) =>\n([p, stmt]) =>\nfinish\n(s) =>\nmakeSearchPath\naddPath\ncheckExists\nfindModule\n(i) =>\nsearchModuleInPath\nmakeNames",
+			"settings":
+			{
+				"buffer_size": 916,
+				"line_ending": "Unix",
+				"name": "𝌆 Outline",
+				"scratch": true
+			}
+		},
+		{
 			"file": "create-tamper.js",
 			"settings":
 			{
-				"buffer_size": 12714,
+				"buffer_size": 14107,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/container/spatial-hashmap.js",
+			"settings":
+			{
+				"buffer_size": 9772,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "server.js",
+			"settings":
+			{
+				"buffer_size": 14715,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "main.js",
+			"settings":
+			{
+				"buffer_size": 53063,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "Searching 2232 files for \"STACK TRACE\" (regex, case sensitive)\n\n/home/roman/Sources/plot-cv/Filmliste-akt:\n    File too large, skipping\n\n/home/roman/Sources/plot-cv/Human.Die.Menschheit.S01E01.Zwei.Seiten.der.Menschheit.German.DOKU.WS.BDRiP.x264-TV4A-876308131c.mp4:\n    File too large, skipping\n\n/home/roman/Sources/plot-cv/Human.Die.Menschheit.S01E02.Am.Scheideweg.German.DOKU.WS.BDRiP.x264-TV4A-a4719a6b34.mp4:\n    File too large, skipping\n\n/home/roman/Sources/plot-cv/Human.Die.Menschheit.S01E03.Der.Sinn.des.Lebens.German.DOKU.WS.BDRiP.x264-TV4A-5cdae82326.mp4:\n    File too large, skipping\n\n/home/roman/Sources/plot-cv/tamper.js:\n 1721    Util.putStack = stack => {\n 1722      stack = stack || Util.stack(new Error().stack);\n 1723:     console['error']('STACK TRACE:', stack.toString());\n 1724    };\n 1725  \n\n/home/roman/Sources/plot-cv/lib/sed5LTbMF:\n    ERROR: Unable to open file\n\n/home/roman/Sources/plot-cv/lib/sedq3xFna:\n    ERROR: Unable to open file\n\n/home/roman/Sources/plot-cv/lib/sedqazAhm:\n    ERROR: Unable to open file\n\n/home/roman/Sources/plot-cv/lib/util.js:\n 1863  Util.putStack = (stack) => {\n 1864    stack = stack || Util.stack(new Error().stack);\n 1865:   console['error']('STACK TRACE:', stack.toString());\n 1866  };\n 1867  \n\n2 matches across 2 files\n\n\nSearching 2233 files for \"import.*Sorted\" (regex, case sensitive)\n\n/home/roman/Sources/plot-cv/create-tamper.js:\n   11  import deep from './lib/deep.js';\n   12  //import { Path } from './lib/json.js';\n   13: import { SortedMap } from './lib/container/sortedMap.js';\n   14  //prettier-ignore\n   15  \n\n/home/roman/Sources/plot-cv/Filmliste-akt:\n    File too large, skipping\n\n/home/roman/Sources/plot-cv/Human.Die.Menschheit.S01E01.Zwei.Seiten.der.Menschheit.German.DOKU.WS.BDRiP.x264-TV4A-876308131c.mp4:\n    File too large, skipping\n\n/home/roman/Sources/plot-cv/Human.Die.Menschheit.S01E02.Am.Scheideweg.German.DOKU.WS.BDRiP.x264-TV4A-a4719a6b34.mp4:\n    File too large, skipping\n\n/home/roman/Sources/plot-cv/Human.Die.Menschheit.S01E03.Der.Sinn.des.Lebens.German.DOKU.WS.BDRiP.x264-TV4A-5cdae82326.mp4:\n    File too large, skipping\n\n/home/roman/Sources/plot-cv/sed4eHWKO:\n    ERROR: Unable to open file\n\n/home/roman/Sources/plot-cv/test-ecmascript.js:\n    9  import deep from './lib/deep.js';\n   10  import { Path } from './lib/json.js';\n   11: import { SortedMap } from './lib/container/sortedMap.js';\n   12  \n   13  const code = `export const Progress = ({ className, percent, ...props }) => html\\`<\\x24{Overlay} className=\\x24{classNames('progress', 'center', className)} text=\\x24{percent + '%'} style=\\x24{{\n\n/home/roman/Sources/plot-cv/test-jsjs.js:\n    9  import deep from './lib/deep.js';\n   10  import { Path } from './lib/json.js';\n   11: import { SortedMap } from './lib/container/sortedMap.js';\n   12  \n   13  const code = `export const Progress = ({ className, percent, ...props }) => html\\`<\\x24{Overlay} className=\\x24{classNames('progress', 'center', className)} text=\\x24{percent + '%'} style=\\x24{{\n\n/home/roman/Sources/plot-cv/lib/sed5LTbMF:\n    ERROR: Unable to open file\n\n/home/roman/Sources/plot-cv/lib/sedq3xFna:\n    ERROR: Unable to open file\n\n/home/roman/Sources/plot-cv/lib/sedqazAhm:\n    ERROR: Unable to open file\n\n3 matches across 3 files\n",
+			"settings":
+			{
+				"buffer_size": 3249,
+				"line_ending": "Unix",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "lib.js",
+			"settings":
+			{
+				"buffer_size": 25599,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/container/multiMap.js",
+			"settings":
+			{
+				"buffer_size": 4241,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/container/enum.js",
+			"settings":
+			{
+				"buffer_size": 3330,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/container/DenseSpatialHash2D.js",
+			"settings":
+			{
+				"buffer_size": 4343,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/container/compositeMap.js",
+			"settings":
+			{
+				"buffer_size": 10191,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/ecmascript/parser.js",
+			"settings":
+			{
+				"buffer_size": 69508,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/xml/xpath.js",
+			"settings":
+			{
+				"buffer_size": 12310,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/node.js",
+			"settings":
+			{
+				"buffer_size": 15210,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -20,7 +136,7 @@
 			"file": "list-proxies.js",
 			"settings":
 			{
-				"buffer_size": 5283,
+				"buffer_size": 5687,
 				"line_ending": "Unix"
 			}
 		},
@@ -28,7 +144,25 @@
 			"file": "new.js",
 			"settings":
 			{
-				"buffer_size": 61767,
+				"buffer_size": 1387,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/roman/Dokumente/Sources/plot-cv/package.json",
+			"settings":
+			{
+				"buffer_size": 3381,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": ".prettierrc.json",
+			"settings":
+			{
+				"buffer_size": 40,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		}
@@ -85,7 +219,23 @@
 		"selected_items":
 		[
 			[
-				"instalk",
+				"outli",
+				"Browse Mode: Outline (Right)"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"list pac",
+				"Package Control: List Packages"
+			],
+			[
+				"prettier",
+				"JsPrettier: Format Code"
+			],
+			[
+				"install",
 				"Package Control: Install Package"
 			],
 			[
@@ -93,11 +243,23 @@
 				"Package Control: Remove Package"
 			],
 			[
-				"install",
-				"Package Control: Install Package"
+				"add rep",
+				"Package Control: Add Repository"
 			],
 			[
 				"install pa",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Remove Package"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
+				"instalk",
 				"Package Control: Install Package"
 			],
 			[
@@ -129,20 +291,8 @@
 				"Package Control: Install Package"
 			],
 			[
-				"remove",
-				"Package Control: Remove Package"
-			],
-			[
 				"build",
 				"Build: Cancel"
-			],
-			[
-				"outli",
-				"Browse Mode: Outline (Right)"
-			],
-			[
-				"install ",
-				"Package Control: Install Package"
 			]
 		],
 		"width": 0.0
@@ -166,20 +316,44 @@
 	"expanded_folders":
 	[
 		"/home/roman/Sources/plot-cv",
-		"/home/roman/Sources/plot-cv/To-Misc-fixed"
+		"/home/roman/Sources/plot-cv/lib",
+		"/home/roman/Sources/plot-cv/lib/container",
+		"/home/roman/Sources/plot-cv/opencv"
 	],
 	"file_history":
 	[
-		"/home/roman/Sources/plot-cv/plot-cv.sublime-project",
-		"/home/roman/Sources/plot-cv/package.json",
+		"/home/roman/Sources/plot-cv/back.gcode",
+		"/home/roman/Sources/plot-cv/lib/container/sortedMap.js",
+		"/home/roman/Sources/plot-cv/create-tamper.js",
 		"/home/roman/Sources/plot-cv/lib/util.js",
+		"/home/roman/Sources/plot-cv/tamper.js",
+		"/home/roman/Sources/plot-cv/new.js",
+		"/home/roman/Sources/plot-cv/plot-cv.sublime-project",
+		"/home/roman/Sources/plot-cv/.eslintrc.js",
+		"/home/roman/Sources/plot-cv/.eslintrc",
+		"/home/roman/Sources/plot-cv/.prettierrc",
+		"/home/roman/.config/sublime-text-3/Packages/JsPrettier/JsPrettier.sublime-settings",
+		"/home/roman/.config/sublime-text-3/Packages/User/JsPrettier.sublime-settings",
+		"/home/roman/Dokumente/Sources/plot-cv/list-proxies.js",
+		"/home/roman/.config/sublime-text-3/Packages/User/ESLint.sublime-settings",
+		"/home/roman/Dokumente/Sources/plot-cv/package.json",
+		"/home/roman/.config/sublime-text-3/Packages/User/ESLintAutoFix.sublime-settings",
+		"/home/roman/Dokumente/Sources/plot-cv/.prettierrc",
+		"/home/roman/Dokumente/Sources/plot-cv/.eslintrc",
+		"/home/roman/Dokumente/Sources/plot-cv/.eslintrc.json",
+		"/home/roman/.config/sublime-text-3/Packages/ESLintAutoFix/ESLintAutoFix.sublime-settings",
+		"/home/roman/.config/sublime-text-3/Packages/ESLint/ESLint.sublime-settings",
+		"/home/roman/Dokumente/Sources/plot-cv/create-tamper.js",
+		"/home/roman/Dokumente/Sources/plot-cv/new.js",
+		"/home/roman/Dokumente/Sources/plot-cv/.eslintrc.js",
+		"/home/roman/Dokumente/Sources/plot-cv/.eslintrc.cjs",
+		"/home/roman/Sources/plot-cv/package.json",
 		"/home/roman/Sources/plot-cv/test-line.js",
 		"/home/roman/Sources/plot-cv/test-date.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-alea.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-attributes.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-autoplacer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/Amiga.dark.json",
-		"/home/roman/Dokumente/Sources/plot-cv/list-proxies.js",
 		"/home/roman/.config/sublime-text-3/Packages/HTML-CSS-JS Prettify/.jsbeautifyrc.defaults.json",
 		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
 		"/home/roman/Sources/plot-cv/list-proxies.js",
@@ -191,16 +365,78 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 113.0,
 		"where_history":
 		[
+			""
 		]
 	},
 	"find_state":
 	{
-		"case_sensitive": false,
+		"case_sensitive": true,
 		"find_history":
 		[
+			"SortedMa",
+			"SortedMap",
+			"removeState",
+			"removeFile",
+			"processFile",
+			"slice\\(",
+			"removeStatements",
+			"\\/gerber",
+			"basena",
+			"gerber",
+			"GerberT",
+			"import.*Sorted",
+			"reducer",
+			"Reducer",
+			"removeStatements",
+			"obj",
+			"ES6ImportExport",
+			"PrefixRemover",
+			"repeat =",
+			"isIterable",
+			"PrefixRemover",
+			"toSource\\(",
+			"removeStatements",
+			"\\.position\\.toS",
+			"\\.modulePath",
+			"recurseFiles",
+			"\\.replace",
+			"toSource",
+			" toSource",
+			"toSource",
+			"printAst",
+			"exports:",
+			"}));\n",
+			"console.*exited",
+			"console.*exied",
+			"modPath",
+			"processing:",
+			"removeState",
+			"removeState3",
+			"_from",
+			"STACK TRACE",
+			"promise\\)",
+			"promise =",
+			"repeater",
+			"repeaterr",
+			"Repeater",
+			"\\.race",
+			"concate",
+			"proxy-lists",
+			",\n",
+			"eslint",
+			"babel",
+			"react",
+			"proxy",
+			" true",
+			"'",
+			"ping\\(",
+			"timeout",
+			"timeout\\(",
+			"wait",
+			"ProxyLists",
 			"]+(\\.[\\-\\",
 			"\\[\\\\w-\\]",
 			"waitFor",
@@ -213,6 +449,8 @@
 		"regex": true,
 		"replace_history":
 		[
+			" \"true\"",
+			"\"",
 			"[-\\\\w]",
 			"\\1"
 		],
@@ -230,19 +468,392 @@
 			[
 				{
 					"buffer": 0,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 916,
+						"regions":
+						{
+						},
+						"selection":
+						[
+						],
+						"settings":
+						{
+							"current_file": "/home/roman/Sources/plot-cv/create-tamper.js",
+							"outline_rename_mode": false,
+							"sublime_recent_sort_is_transient": false,
+							"symkeys":
+							[
+								[
+									694,
+									712
+								],
+								[
+									781,
+									824
+								],
+								[
+									906,
+									922
+								],
+								[
+									961,
+									980
+								],
+								[
+									1021,
+									1035
+								],
+								[
+									2044,
+									2058
+								],
+								[
+									2129,
+									2146
+								],
+								[
+									2305,
+									2311
+								],
+								[
+									2461,
+									2467
+								],
+								[
+									2480,
+									2485
+								],
+								[
+									2606,
+									2615
+								],
+								[
+									2641,
+									2660
+								],
+								[
+									2732,
+									2747
+								],
+								[
+									2752,
+									2770
+								],
+								[
+									3167,
+									3182
+								],
+								[
+									3219,
+									3229
+								],
+								[
+									3296,
+									3303
+								],
+								[
+									3359,
+									3374
+								],
+								[
+									3515,
+									3525
+								],
+								[
+									3566,
+									3576
+								],
+								[
+									3787,
+									3836
+								],
+								[
+									3928,
+									3937
+								],
+								[
+									3953,
+									3968
+								],
+								[
+									4008,
+									4037
+								],
+								[
+									4235,
+									4278
+								],
+								[
+									4289,
+									4315
+								],
+								[
+									4380,
+									4399
+								],
+								[
+									4749,
+									4757
+								],
+								[
+									4782,
+									4788
+								],
+								[
+									5028,
+									5039
+								],
+								[
+									5713,
+									5724
+								],
+								[
+									5787,
+									5814
+								],
+								[
+									5927,
+									5955
+								],
+								[
+									6455,
+									6472
+								],
+								[
+									6497,
+									6521
+								],
+								[
+									6545,
+									6616
+								],
+								[
+									7631,
+									7654
+								],
+								[
+									7705,
+									7732
+								],
+								[
+									7798,
+									7809
+								],
+								[
+									7918,
+									7934
+								],
+								[
+									8006,
+									8026
+								],
+								[
+									8071,
+									8076
+								],
+								[
+									8141,
+									8160
+								],
+								[
+									8221,
+									8240
+								],
+								[
+									8303,
+									8308
+								],
+								[
+									8849,
+									8855
+								],
+								[
+									8964,
+									8992
+								],
+								[
+									9041,
+									9050
+								],
+								[
+									9514,
+									9520
+								],
+								[
+									9632,
+									9638
+								],
+								[
+									9692,
+									9704
+								],
+								[
+									9729,
+									9742
+								],
+								[
+									9854,
+									9866
+								],
+								[
+									9954,
+									9960
+								],
+								[
+									10025,
+									10036
+								],
+								[
+									10329,
+									10344
+								],
+								[
+									10479,
+									10496
+								],
+								[
+									10577,
+									10591
+								],
+								[
+									11022,
+									11042
+								],
+								[
+									11159,
+									11165
+								],
+								[
+									11638,
+									11691
+								],
+								[
+									11716,
+									11732
+								],
+								[
+									12271,
+									12297
+								],
+								[
+									12401,
+									12429
+								],
+								[
+									12787,
+									12793
+								],
+								[
+									12948,
+									12988
+								],
+								[
+									13962,
+									13988
+								]
+							],
+							"symlist":
+							[
+								"readFile(filename)",
+								"writeFile(filename, data, overwrite = true)",
+								"exists(filename)",
+								"realpath(filenamee)",
+								"stat(filename)",
+								"(acc, file) =>",
+								" (err, origin) =>",
+								" () =>",
+								" () =>",
+								"() =>",
+								"ES6Module",
+								"static create(file)",
+								"ES6ImportExport",
+								"static create(obj)",
+								"ES6ImportExport",
+								"get from()",
+								" (v) =>",
+								"set from(value)",
+								"toSource()",
+								"get code()",
+								"PrefixRemover",
+								" (arg) =>",
+								"(acc, re, i) =>",
+								"dumpFile",
+								"function printAst(ast, comments, printer",
+								"({ indent: 4 }, comments))",
+								"main",
+								"(arg) =>",
+								"(p) =>",
+								"(acc, p) =>",
+								"([k, v]) =>",
+								"  removeFile",
+								"  processFile",
+								" (node) =>",
+								" (path, value) =>",
+								"      removeStatements",
+								"getBase",
+								"getRelative",
+								"(module) =>",
+								"([key, node]) =>",
+								"([path, node], i) =>",
+								"() =>",
+								"getFromBase",
+								"getFromPath",
+								"() =>",
+								"imp =>",
+								"({ fromPath, ...module }) =>",
+								"(node) =>",
+								"imp =>",
+								"imp =>",
+								"(imp,idx) =>",
+								"(imp, idx) =>",
+								"(acc,imp) =>",
+								"imp =>",
+								"(module) =>",
+								"(modulePath) =>",
+								"([key, value]) =>",
+								"([p, stmt]) =>",
+								"finish",
+								"(s) =>",
+								"makeSearchPath",
+								"addPath",
+								"checkExists",
+								"findModule",
+								"(i) =>",
+								"searchModuleInPath",
+								"makeNames"
+							],
+							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 1,
 					"file": "create-tamper.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 12714,
+						"buffer_size": 14107,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								932,
-								932
+								2749,
+								2749
 							]
 						],
 						"settings":
@@ -253,33 +864,34 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1593.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "list-proxies.js",
-					"semi_transient": false,
+					"buffer": 2,
+					"file": "lib/container/spatial-hashmap.js",
+					"semi_transient": true,
 					"settings":
 					{
-						"buffer_size": 5283,
+						"buffer_size": 9772,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								271,
-								271
+								0,
+								0
 							]
 						],
 						"settings":
 						{
-							"sublime_recent_sort_is_transient": false,
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage"
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -289,12 +901,138 @@
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "new.js",
+					"buffer": 3,
+					"file": "server.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 61767,
+						"buffer_size": 14715,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								13178,
+								13178
+							]
+						],
+						"settings":
+						{
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 4.0,
+						"translation.y": 8391.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "main.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 53063,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								15627,
+								15627
+							]
+						],
+						"settings":
+						{
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 9029.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3249,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										760,
+										771
+									],
+									[
+										1201,
+										1212
+									],
+									[
+										1489,
+										1504
+									],
+									[
+										2326,
+										2341
+									],
+									[
+										2730,
+										2745
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								1546,
+								1546
+							]
+						],
+						"settings":
+						{
+							"detect_indentation": false,
+							"line_numbers": false,
+							"output_tag": 2,
+							"result_base_dir": "",
+							"result_file_regex": "^([^ \t].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 858.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "lib.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 25599,
 						"regions":
 						{
 						},
@@ -313,10 +1051,348 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 19654.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "lib/container/multiMap.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4241,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "lib/container/enum.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3330,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "lib/container/DenseSpatialHash2D.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4343,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "lib/container/compositeMap.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 10191,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "lib/ecmascript/parser.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 69508,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								21371,
+								21371
+							]
+						],
+						"settings":
+						{
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 10.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 11,
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "lib/xml/xpath.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 12310,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2291,
+								2291
+							]
+						],
+						"settings":
+						{
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1043.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 14,
+					"type": "text"
+				},
+				{
+					"buffer": 13,
+					"file": "lib/eagle/node.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 15210,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								11042,
+								11042
+							]
+						],
+						"settings":
+						{
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 7634.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 13,
+					"type": "text"
+				},
+				{
+					"buffer": 14,
+					"file": "list-proxies.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5687,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								194,
+								194
+							]
+						],
+						"settings":
+						{
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 12,
+					"type": "text"
+				},
+				{
+					"buffer": 15,
+					"file": "new.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1387,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 15,
+					"type": "text"
+				},
+				{
+					"buffer": 16,
+					"file": "/home/roman/Dokumente/Sources/plot-cv/package.json",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3381,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1947,
+								1947
+							]
+						],
+						"settings":
+						{
+							"sublime_recent_sort_is_transient": false,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JSON (JavaScriptNext).tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1122.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 17,
+					"type": "text"
+				},
+				{
+					"buffer": 17,
+					"file": ".prettierrc.json",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 40,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1,
+								1
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 16,
 					"type": "text"
 				}
 			]
@@ -328,27 +1404,36 @@
 	},
 	"input":
 	{
-		"height": 0.0
+		"height": 43.0
 	},
 	"layout":
 	{
 		"cells":
 		[
 			[
+				2,
+				0,
+				3,
+				2
+			],
+			[
 				0,
 				0,
-				1,
-				1
+				2,
+				2
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.2,
+			0.8,
 			1.0
 		],
 		"rows":
 		[
 			0.0,
+			0.5,
 			1.0
 		]
 	},
@@ -379,20 +1464,76 @@
 		"selected_items":
 		[
 			[
-				"new",
-				"new.js"
-			],
-			[
 				"create",
 				"create-tamper.js"
 			],
 			[
-				"list-pro",
-				"list-proxies.js"
+				"server",
+				"server.js"
+			],
+			[
+				"main",
+				"main.js"
+			],
+			[
+				"map",
+				"lib/container/multiMap.js"
+			],
+			[
+				"create-",
+				"create-tamper.js"
+			],
+			[
+				"parser",
+				"lib/ecmascript/parser.js"
+			],
+			[
+				"node.js",
+				"lib/eagle/node.js"
+			],
+			[
+				"xpath.js",
+				"lib/xml/xpath.js"
 			],
 			[
 				"lib/util",
 				"lib/util.js"
+			],
+			[
+				"new.",
+				"new.js"
+			],
+			[
+				"new",
+				"new.js"
+			],
+			[
+				"list-pr",
+				"list-proxies.js"
+			],
+			[
+				"list-",
+				"list-proxies.js"
+			],
+			[
+				"prettierrc",
+				".prettierrc"
+			],
+			[
+				"prettierr",
+				".prettierrc"
+			],
+			[
+				"eslintrc.js",
+				".eslintrc.js"
+			],
+			[
+				"eslintrc",
+				".eslintrc"
+			],
+			[
+				"list-pro",
+				"list-proxies.js"
 			],
 			[
 				"packa",
@@ -400,10 +1541,6 @@
 			],
 			[
 				"list",
-				"list-proxies.js"
-			],
-			[
-				"list-pr",
 				"list-proxies.js"
 			],
 			[
@@ -439,7 +1576,7 @@
 		],
 		"width": 0.0
 	},
-	"selected_group": 0,
+	"selected_group": 1,
 	"settings":
 	{
 	},

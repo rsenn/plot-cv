@@ -15,9 +15,9 @@ function main(args) {
 
   if(args.length == 0) args = ['0,0', '50,100', '100,100', '100,50'];
 
-  args = args.map(arg => arg.split(',').map(n => +n));
+  args = args.map((arg) => arg.split(',').map((n) => +n));
 
-  args = args.map(arg => new Point(arg));
+  args = args.map((arg) => new Point(arg));
 
   let list = new PointList(args);
 
@@ -56,11 +56,7 @@ function main(args) {
   console.log('list.transform(m):', list.clone().transform(m));
   console.log('list.toString():', list.clone().toString());
 
-  let l = list
-    .map(centroid.diff())
-    .prod(100)
-    .floor()
-    .quot(100);
+  let l = list.map(centroid.diff()).prod(100).floor().quot(100);
 
   console.log('l.toSource():', l.toSource({ plainObj: true, asString: true }));
   console.log('l:', l);
@@ -72,7 +68,7 @@ function main(args) {
   console.log('v:', v);
   let computation = v.compute(l2, bbox);
 
-  computation.vertices.map(p => Object.setPrototypeOf(p, Point.prototype));
+  computation.vertices.map((p) => Object.setPrototypeOf(p, Point.prototype));
   console.log('compute:', computation);
 
   let vertices = computation.vertices; /*.map(p => new Point(p))*/

@@ -84,8 +84,8 @@ async function testGraph(proj) {
   for(let [name, element] of board.elements) {
     const { x, y } = element;
     const { attributes } = element.raw;
-    let lib = board.get(e => e.tagName == 'library' && e.attributes.name == attributes.library);
-    const pkg = lib.get(e => e.tagName == 'package' && e.attributes.name == attributes.package);
+    let lib = board.get((e) => e.tagName == 'library' && e.attributes.name == attributes.library);
+    const pkg = lib.get((e) => e.tagName == 'package' && e.attributes.name == attributes.package);
     const bb = element.getBounds();
     let rect = bb.rect;
     let pos = rect.center;
@@ -95,7 +95,7 @@ async function testGraph(proj) {
     n.width = rect.width;
     n.height = rect.height;
     let pads = [...pkg.getAll('pad')];
-    let padNames = pads.map(p => p.name);
+    let padNames = pads.map((p) => p.name);
     for(let pad of pads) {
     }
   }
@@ -120,11 +120,11 @@ function updateMeasures(board) {
     console.log('got measures:', measures);
   } else {
     let rect = new Rect(bounds.rect);
-    let lines = rect.toLines(lines => new LineList(lines));
+    let lines = rect.toLines((lines) => new LineList(lines));
     let { plain } = board;
-    plain.remove(e => e.tagName == 'wire' && e.attributes.layer == '47');
+    plain.remove((e) => e.tagName == 'wire' && e.attributes.layer == '47');
     plain.append(
-      ...lines.map(line => ({
+      ...lines.map((line) => ({
         tagName: 'wire',
         attributes: { ...line.toObject(), layer: 47, width: 0 }
       }))
@@ -198,7 +198,7 @@ async function testEagle(filename) {
 
   const packages = {
     board: (board && [...board.elements].map(([name, e]) => e.package)) || [],
-    schematic: (schematic && [...schematic.sheets].map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)).flat()) || []
+    schematic: (schematic && [...schematic.sheets].map((e) => [...e.instances].map(([name, i]) => i.part.device.package).filter((p) => p !== undefined)).flat()) || []
   };
   let parts = (schematic && schematic.parts) || [];
   let sheets = (schematic && schematic.sheets) || [];
@@ -242,7 +242,7 @@ async function testEagle(filename) {
     p = p.parentNode;
   }
 */
-  let desc = proj.documents.map(doc => [doc.filename, doc.find('description')]);
+  let desc = proj.documents.map((doc) => [doc.filename, doc.find('description')]);
 
   desc = desc.map(([file, e]) => [file, e && e.xpath().toCode('', { spacing: '', function: true })]);
   desc = new Map(desc);
@@ -258,7 +258,7 @@ async function testEagle(filename) {
     try {
       let project = await testEagle(arg);
     } catch(err) {
-      console.log('Err:', err.message, typeof err.stack == 'string' ? err.stack : [...err.stack].map(f => f + ''));
+      console.log('Err:', err.message, typeof err.stack == 'string' ? err.stack : [...err.stack].map((f) => f + ''));
       process.exit(1);
     }
   }

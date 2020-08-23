@@ -1,9 +1,7 @@
 import ProxyList from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/free-proxy/index.js';
 //import ProxyLists from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/proxy-lists/index.js';
 import proxynova from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/proxynova/index.js';
-
 import Util from './lib/util.js';
-
 import { Repeater } from './lib/repeater/repeater.js';
 import { Console } from 'console';
 import net from 'net';
@@ -28,20 +26,17 @@ function Proxy(obj) {
 
     if(Util.isIpAddress(v)) {
       p.ip = v;
-    }
-    else if(Util.isPortNumber(v)) {
+    } else if(Util.isPortNumber(v)) {
       p.port = +v;
-    }
-    else if(/proto/i.test(prop)) {
+    } else if(/proto/i.test(prop)) {
       p.protocol = Util.isArray(v) ? v[0] : v;
       if(/https/.test(p.protocol)) p.protocol = 'http';
-    }
-    else if(/(country|source)/i.test(prop)) {
+    } else if(/(country|source)/i.test(prop)) {
       p[prop] = v;
     }
   }
   const propNames = ['protocol', 'ip', 'port', 'country', 'source'];
-  let i = propNames.findIndex(prop => p[prop] === undefined);
+  let i = propNames.findIndex((prop) => p[prop] === undefined);
   if(i != -1) {
     throw new Error(`Property '${propNames[i]}' missing on: ` + Util.toSource(p));
   }
@@ -49,10 +44,10 @@ function Proxy(obj) {
   return p;
 }
 Proxy.prototype.defaultTimeout = 5000;
-Proxy.prototype.valueOf = function() {
+Proxy.prototype.valueOf = function () {
   return this.time;
 };
-Proxy.prototype.toSource = function() {
+Proxy.prototype.toSource = function () {
   const { protocol, ip, port, country, time, source } = this;
   return Util.toSource({
     protocol,
@@ -63,15 +58,15 @@ Proxy.prototype.toSource = function() {
     source
   });
 };
-Proxy.prototype.toString = function() {
+Proxy.prototype.toString = function () {
   const { protocol, ip, port } = this;
   return `${protocol} ${ip} ${port}`;
 };
-Proxy.prototype.check = function(url) {
+Proxy.prototype.check = function (url) {
   return Check(this, url);
 };
 
-Proxy.prototype.ping = function() {
+Proxy.prototype.ping = function () {
   const proxy = this;
   const { protocol, ip, port } = proxy;
   return new Promise((resolve, reject) => {
@@ -83,7 +78,7 @@ Proxy.prototype.ping = function() {
     tcp
       .connect(port, ip, () => finish(`Connected to ${ip}:${port}`, start))
       .on('close', () => finish(null, start))
-      .on('error', err => finish(err, -1));
+      .on('error', (err) => finish(err, -1));
 
     function finish(msg, start = -1, end = Date.now()) {
       proxy.time = start >= 0 ? end - start : Number.Infinity;
@@ -108,8 +103,7 @@ function main() {
           console.info('\nPROXY:', proxy, check, '\n');
           push(proxy);
         }
-      }
-      catch(error) {
+      } catch(error) {
         stop(new Error(error));
       }
     }),
@@ -121,33 +115,34 @@ function main() {
             .then(push)
             .catch(console.error);
       });
-    })/*,
-    new Repeater(async (push, stop) => {
-      ProxyLists.getProxies({
-        countries: ['de'],
-        requestQueue: {
-          concurrency: 5,
-          delay: 50
-        }
-      })
-        .on('data', async proxies => {
-          console.error('got some proxies', proxies.length);
-          for(let p of proxies) {
-            console.error('got proxy', p);
-            let proxy = new Proxy(p);
-            await proxy
-              .ping()
-              .then(push)
-              .catch(err => console.error('err:', err));
-          }
-        })
-        .on('error', (error) => {
-          console.error('error!', (error + '').split(/\n/g)[0]);
-        })
-        .once('end', () => {
-          stop();
-        });
-    })*/
+    })
+    /*,
+            new Repeater(async (push, stop) => {
+              ProxyLists.getProxies({
+                countries: ['de'],
+                requestQueue: {
+                  concurrency: 5,
+                  delay: 50
+                }
+              })
+                .on('data', async proxies => {
+                  console.error('got some proxies', proxies.length);
+                  for(let p of proxies) {
+                    console.error('got proxy', p);
+                    let proxy = new Proxy(p);
+                    await proxy
+                      .ping()
+                      .then(push)
+                      .catch(err => console.error('err:', err));
+                  }
+                })
+                .on('error', (error) => {
+                  console.error('error!', (error + '').split(/\n/g)[0]);
+                })
+                .once('end', () => {
+                  stop();
+                });
+            })*/
   ];
   (async () => {
     let results = [];
@@ -167,8 +162,7 @@ function main() {
         await writeResults(results, 'txt');
         await writeResults(results, 'json');
       }
-    }
-    catch(err) {
+    } catch(err) {
       console.error(err); // TimeoutError: 1000 ms elapsed
     }
 
@@ -178,8 +172,7 @@ function main() {
 
 try {
   main();
-}
-catch(err) {
+} catch(err) {
   console.info('Top-level error:', err);
 }
 
@@ -187,7 +180,7 @@ async function writeResults(results, format = 'txt', outputName = 'proxies') {
   let filename = outputName + '.' + format;
   let tempfile = filename + '.' + Util.randStr(6);
   let output = await fsPromises.open(tempfile, 'w');
-  let method = { txt: r => r.map(p => p.toString()).join('\n'), json: r => `[\n${r.map(p => '  ' + Util.toSource(p)).join(',\n')}\n]` }[format];
+  let method = { txt: (r) => r.map((p) => p.toString()).join('\n'), json: (r) => `[\n${r.map((p) => '  ' + Util.toSource(p)).join(',\n')}\n]` }[format];
 
   await output.write(method(results) + '\n');
   await output.close();

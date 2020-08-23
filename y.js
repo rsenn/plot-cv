@@ -1,4 +1,4 @@
-var l={
+var l = {
   root: true,
   env: {
     browser: true,
@@ -6,7 +6,7 @@ var l={
     es6: true
   },
   extends: ['plugin:react/recommended', 'prettier'],
-  plugins: [ 'prettier', 'preact', 'react-hooks'],
+  plugins: ['prettier', 'preact', 'react-hooks'],
   parser: 'babel-eslint',
   parserOptions: {
     sourceType: 'module',
@@ -21,11 +21,7 @@ var l={
       pragma: 'React', // Pragma to use, default to "React"
       version: '16.8'
     },
-    propWrapperFunctions: [
-      'forbidExtraProps',
-      { property: 'freeze', object: 'Object' },
-      { property: 'myFavoriteWrapper' }
-    ],
+    propWrapperFunctions: ['forbidExtraProps', { property: 'freeze', object: 'Object' }, { property: 'myFavoriteWrapper' }],
     linkComponents: ['Hyperlink', { name: 'Link', linkAttribute: 'to' }]
   },
   rules: {
@@ -46,10 +42,10 @@ var l={
       'error',
       {
         semi: false,
-        singleQuote: "true",
+        singleQuote: 'true',
         printWidth: 80,
         tabWidth: 2
       }
     ]
   }
-}
+};

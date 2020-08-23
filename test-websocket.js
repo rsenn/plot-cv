@@ -44,7 +44,7 @@ async function main() {
   dump();
 }
 
-main(process.argv.slice(2)).catch(error => {
+main(process.argv.slice(2)).catch((error) => {
   const stack = error.stack;
   console.log('ERROR:', error.message, stack);
 });

@@ -17,7 +17,7 @@ let pathStr =
   'M.1 494.1c-1.1 9.5 6.3 17.8 15.9 17.8l32.3.1c8.1 0 14.9-5.9 16-13.9.7-4.9 1.8-11.1 3.4-18.1H380c1.6 6.9 2.9 13.2 3.5 18.1 1.1 8 7.9 14 16 13.9l32.3-.1c9.6 0 17.1-8.3 15.9-17.8-4.6-37.9-25.6-129-118.9-207.7-17.6 12.4-37.1 24.2-58.5 35.4 6.2 4.6 11.4 9.4 17 14.2H159.7c21.3-18.1 47-35.6 78.7-51.4C410.5 199.1 442.1 65.8 447.9 17.9 449 8.4 441.6.1 432 .1L399.6 0c-8.1 0-14.9 5.9-16 13.9-.7 4.9-1.8 11.1-3.4 18.1H67.8c-1.6-7-2.7-13.1-3.4-18.1-1.1-8-7.9-14-16-13.9L16.1.1C6.5.1-1 8.4.1 17.9 5.3 60.8 31.4 171.8 160 256 31.5 340.2 5.3 451.2.1 494.1z';
 let path = parseSVG(pathStr);
 
-let translate = (args.shift() + '').split(',').map(n => parseFloat(n));
+let translate = (args.shift() + '').split(',').map((n) => parseFloat(n));
 if(translate.length == 0 || isNaN(translate[0])) translate = [0, 0];
 
 //console.log('translate:', new Point([...translate]));
@@ -59,14 +59,14 @@ for(let i = 0; i < path.length; i++) {
   let points = [new Point(x, y), new Point(x1, y1), new Point(x2, y2)];
   //console.log(`path[${i}]:`, c);
 
-  if(!relative) points = points.map(p => (p.x !== undefined ? t.transform_point({ x: p.x, y: p.y }) : p));
+  if(!relative) points = points.map((p) => (p.x !== undefined ? t.transform_point({ x: p.x, y: p.y }) : p));
 
   if(command == 'A') points[0] = new Point(x, y);
 
   points.push(new Point(rx, ry));
 
   relative ? newPath.rel() : newPath.abs();
-  points = points.map(p => (p.x !== undefined ? { x: p.x.toFixed(3), y: p.y.toFixed(3) } : p));
+  points = points.map((p) => (p.x !== undefined ? { x: p.x.toFixed(3), y: p.y.toFixed(3) } : p));
 
   switch (code) {
     case 'M': {

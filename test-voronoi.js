@@ -63,7 +63,7 @@ function testVoronoi(filename) {
     //Util.log('item:', item);
   }*/
 
-  var sites = points.map(p => p.toObject());
+  var sites = points.map((p) => p.toObject());
   //xl, xr means x left, x right
   //yt, yb means y top, y bottom
   //Util.log('bbox:', bb);
@@ -79,14 +79,14 @@ function testVoronoi(filename) {
   let { site, cells, edges, vertices, execTime } = result;
   //Util.log('cells:', cells);
 
-  let holes = edges.filter(e => !e.rSite).map(({ lSite, rSite, ...edge }) => new Point(lSite));
-  let rlines = edges.filter(e => e.rSite).map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
-  let vlines = edges.filter(e => e.va && e.vb).map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
-  let points2 = vertices.map(v => new Point(v).round(0.127, 4));
+  let holes = edges.filter((e) => !e.rSite).map(({ lSite, rSite, ...edge }) => new Point(lSite));
+  let rlines = edges.filter((e) => e.rSite).map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
+  let vlines = edges.filter((e) => e.va && e.vb).map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
+  let points2 = vertices.map((v) => new Point(v).round(0.127, 4));
   const add = (arr, ...items) => [...(Util.isArray(arr) ? arr : []), ...items];
 
   const factory = SVG.factory({
-    create: tag => ({ tagName: tag }),
+    create: (tag) => ({ tagName: tag }),
     append_to: (elem, parent) => (parent.children = add(parent.children, elem)),
     setattr: (elem, name, value) => {
       if(!elem.attributes) elem.attributes = {};
@@ -94,9 +94,9 @@ function testVoronoi(filename) {
     }
   });
 
-  const lines = [...rlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.1 }]), ...vlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.1 }])];
+  const lines = [...rlines.map((l) => ['line', { ...l.toObject((t) => t + ''), stroke: '#000', 'stroke-width': 0.1 }]), ...vlines.map((l) => ['line', { ...l.toObject((t) => t + ''), stroke: '#f00', 'stroke-width': 0.1 }])];
 
-  const circles = [...holes.map(p => ['circle', { cx: p.x, cy: p.y, r: 0.254, fill: 'none', stroke: '#00f', 'stroke-width': 0.1 }]), ...points2.map(p => ['circle', { cx: p.x, cy: p.y, r: 0.254 * 2, fill: 'none', stroke: '#0f0', 'stroke-width': 0.1 }])];
+  const circles = [...holes.map((p) => ['circle', { cx: p.x, cy: p.y, r: 0.254, fill: 'none', stroke: '#00f', 'stroke-width': 0.1 }]), ...points2.map((p) => ['circle', { cx: p.x, cy: p.y, r: 0.254 * 2, fill: 'none', stroke: '#0f0', 'stroke-width': 0.1 }])];
 
   const polylines = [...cells.reduce((acc, { site, halfedges }) => [...acc, ['polyline', { points: new PointList(halfedges.map(({ site }) => site)).toString(), stroke: '#f0f', 'stroke-width': 0.1 }]], [])];
 

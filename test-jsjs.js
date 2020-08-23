@@ -67,7 +67,7 @@ function main(args) {
       ast = parser.parseProgram();
       ret = interpreter.run(ast);
       parser.addCommentsToNodes(ast);
-      let imports = [...deep.iterate(ast, node => node instanceof CallExpression && /Util.log/.test(printer.print(node)))].map(([node, path]) => node);
+      let imports = [...deep.iterate(ast, (node) => node instanceof CallExpression && /Util.log/.test(printer.print(node)))].map(([node, path]) => node);
     } catch(err) {
       error = err;
     }
@@ -93,7 +93,7 @@ function finish(err) {
   if(fail) {
     err.stack = PathReplacer()('' + err.stack)
       .split(/\n/g)
-      .filter(s => !/esfactory/.test(s))
+      .filter((s) => !/esfactory/.test(s))
       .join('\n');
   }
   if(err) {

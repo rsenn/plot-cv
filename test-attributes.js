@@ -45,7 +45,7 @@ function main(...args) {
   let colors, keys;
   let attributes = new Map();
   let numeric = new Set();
-  const printSet = set => [...set.values()].map(n => "'" + n + "'").join(', ');
+  const printSet = (set) => [...set.values()].map((n) => "'" + n + "'").join(', ');
 
   const setAttributes = (tag, attrs) => {
     if(!attributes.has(tag)) attributes.set(tag, new Set());

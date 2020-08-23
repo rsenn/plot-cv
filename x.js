@@ -6,7 +6,7 @@ module.exports = {
     es6: true
   },
   extends: ['plugin:react/recommended', 'prettier'],
-  plugins: [ 'prettier', 'preact', 'react-hooks'],
+  plugins: ['prettier', 'preact', 'react-hooks'],
   parser: 'babel-eslint',
   parserOptions: {
     sourceType: 'module',
@@ -21,11 +21,7 @@ module.exports = {
       pragma: 'React', // Pragma to use, default to "React"
       version: '16.8'
     },
-    propWrapperFunctions: [
-      'forbidExtraProps',
-      { property: 'freeze', object: 'Object' },
-      { property: 'myFavoriteWrapper' }
-    ],
+    propWrapperFunctions: ['forbidExtraProps', { property: 'freeze', object: 'Object' }, { property: 'myFavoriteWrapper' }],
     linkComponents: ['Hyperlink', { name: 'Link', linkAttribute: 'to' }]
   },
   rules: {
@@ -46,10 +42,10 @@ module.exports = {
       'error',
       {
         semi: false,
-        singleQuote: "true",
+        singleQuote: 'true',
         printWidth: 80,
         tabWidth: 2
       }
     ]
   }
-}
+};

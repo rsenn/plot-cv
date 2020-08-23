@@ -30,14 +30,14 @@ export function useDimensions() {
     node = _useState2[0],
     setNode = _useState2[1];
 
-  var ref = useCallback(function(node) {
+  var ref = useCallback(function (node) {
     setNode(node);
   }, []);
   useLayoutEffect(
-    function() {
+    function () {
       if(node) {
         var measure = function measure() {
-          return window.requestAnimationFrame(function() {
+          return window.requestAnimationFrame(function () {
             return setDimensions(getDimensionObject(node));
           });
         };
@@ -45,7 +45,7 @@ export function useDimensions() {
         if(liveMeasure) {
           window.addEventListener('resize', measure);
           window.addEventListener('scroll', measure);
-          return function() {
+          return function () {
             window.removeEventListener('resize', measure);
             window.removeEventListener('scroll', measure);
           };
