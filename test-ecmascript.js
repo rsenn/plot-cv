@@ -140,7 +140,7 @@ async function main(args) {
 
 
 for(let [i,n] of allNodes)
-      console.log(`${i}:\n `,node2path.get(n), "\n ", n, "\n ", ESNode.assoc(n).position);
+      Util.log(`${i}:\n `,node2path.get(n), "\n ", n, "\n ", ESNode.assoc(n).position);
 
     } catch(err) {
       error = err;
