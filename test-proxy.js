@@ -5,8 +5,6 @@ import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Util from './lib/util.js';
 
-
-
 /*
 class Node extends (Util.proxyObject) {
   constructor(root, handler) {

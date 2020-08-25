@@ -24,7 +24,6 @@ const code = `export const Progress = ({ className, percent, ...props }) => html
   zIndex: '98'
 }}></div></\x24{Overlay}>\`"`;
 
-
 Error.stackTraceLimit = 1000;
 
 let args = Util.getArgs();

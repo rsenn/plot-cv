@@ -51,7 +51,8 @@ async function testRenderBoard(file) {
 const filename = '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt';
 async function main() {
   await ConsoleSetup();
- filesystem = await PortableFileSystem(); Util.log.setFilters([/(test-rend|.*)/i]);
+  filesystem = await PortableFileSystem();
+  Util.log.setFilters([/(test-rend|.*)/i]);
 
   try {
     //Util.log('debug:', debug);

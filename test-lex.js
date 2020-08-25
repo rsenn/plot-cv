@@ -5,7 +5,6 @@ import ConsoleSetup from './consoleSetup.js';
 //import process from 'process';
 Error.stackTraceLimit = 1000;
 
-
 let args = Util.getArgs();
 if(args.length == 0) args.push('-');
 

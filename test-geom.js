@@ -4,7 +4,6 @@ import ConsoleSetup from './consoleSetup.js';
 
 Error.stackTraceLimit = 1000;
 
-
 function main(args) {
   let file = 'lib/geom/point.js';
 

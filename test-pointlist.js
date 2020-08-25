@@ -2,8 +2,6 @@ import { Point, Rect, PointList, Line, Vector } from './lib/geom.js';
 import Util from './lib/util.js';
 import ConsoleSetup from './consoleSetup.js';
 
-
-
 //let args = [...process.argv].slice(2);
 
 let points = new PointList(

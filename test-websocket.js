@@ -8,7 +8,6 @@ import Util from './lib/util.js';
 
 import { Message } from './message.js';
 
-
 async function main() {
   await ConsoleSetup();
   console.log('WebSocket:', WebSocket, Util.isConstructor(WebSocket));

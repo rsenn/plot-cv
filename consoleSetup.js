@@ -1,9 +1,9 @@
 import Util from './lib/util.js';
 
- async function SetupConsole(options) {
+async function SetupConsole(options) {
   let ret;
   try {
-    Util.tryCatch(() => Error.stackTraceLimit = 1000);
+    Util.tryCatch(() => (Error.stackTraceLimit = 1000));
 
     const { Console } = await import('console');
     ret = new Console({
@@ -12,9 +12,9 @@ import Util from './lib/util.js';
       inspectOptions: { depth: 2, colors: true, ...options }
     });
   } catch(err) {}
-  return Util.tryCatch(() => global.console = ret);
+  return Util.tryCatch(() => (global.console = ret));
 }
 
-export const ConsoleSetup = Util.once(opts => SetupConsole(opts));
+export const ConsoleSetup = Util.once((opts) => SetupConsole(opts));
 
 export default ConsoleSetup;

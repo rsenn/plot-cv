@@ -3,7 +3,6 @@ const fs = require('fs').promises;
 import ConsoleSetup from './consoleSetup.js';
 const { Console } = require('console');
 
-
 const testfn = () => true;
 const testtmpl = `this is
 a test`;

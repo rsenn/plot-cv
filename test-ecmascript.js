@@ -28,7 +28,6 @@ import process from 'process';
 
 Error.stackTraceLimit = 1000;
 
-
 const testfn = () => true;
 const testtmpl = `this is\na test`;
 let args = Util.getArgs();

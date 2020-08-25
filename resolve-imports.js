@@ -28,7 +28,6 @@ const code = `export const Progress = ({ className, percent, ...props }) => html
   zIndex: '98'
 }}></div></\x24{Overlay}>\`"`;
 
-
 class ES6Module {
   impExpList = [];
 
@@ -102,7 +101,6 @@ function dumpFile(name, data) {
 function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments)) {
   return printer.print(ast);
 }
-
 
 async function main(args) {
   await ConsoleSetup();

@@ -9,7 +9,6 @@ import { EagleDocument, EagleProject } from './lib/eagle.js';
 
 Error.stackTraceLimit = 1000;
 
-
 let filesystem;
 
 async function testVoronoi(filename) {

@@ -20,7 +20,6 @@ prng.seed(Date.now());
 console.log('random:', prng.uint32());
 console.log('randStr:', Util.randStr(8, null, prng));
 
-
 let app = express();
 expressWs(app);
 const p = path.join(path.dirname(process.argv[1]), '.');

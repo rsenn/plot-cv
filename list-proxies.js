@@ -6,7 +6,6 @@ import Util from './lib/util.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import net from 'net';
 
-
 function Proxy(obj) {
   const p = this instanceof Proxy ? this : {};
 

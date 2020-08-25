@@ -5,7 +5,6 @@ const { parseSVG, makeAbsolute } = require('./lib/svg/path-parser.js');
 const { Console } = require('console');
 const PointAtLength = require('point-at-length');
 
-
 let args = [...process.argv].slice(2);
 
 let pathStr =

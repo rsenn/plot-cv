@@ -2,7 +2,6 @@ import { RGBA } from './lib/color/rgba.js';
 
 import ConsoleSetup from './consoleSetup.js';
 
-
 let args = Util.getArgs();
 
 let colorStr = args.shift() || '#00f';

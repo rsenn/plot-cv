@@ -34,7 +34,6 @@ import process from 'process';
 
 Error.stackTraceLimit = 1000;
 
-
 let cwd = process.cwd();
 
 let searchPath = [];

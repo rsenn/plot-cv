@@ -5,8 +5,6 @@ import { TRBL } from './lib/geom/trbl.js';
 import { Rect } from './lib/geom/rect.js';
 import { Alea } from './lib/alea.js';
 
-
-
 let rg = new Alea(1337);
 
 let bb = new BBox();
