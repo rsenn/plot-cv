@@ -109,7 +109,7 @@ async function main(...args) {
         ...key.walk((p, i, abort, skip) => {
           let r;
           let value = deep.get(xml[0], p);
-          const children =Util.isObject(value) &&  value.children ? value.children : [];
+          const children = Util.isObject(value) && value.children ? value.children : [];
           const text = typeof children[0] == 'string' ? children[0] : '';
           if(['Next', 'settings', 'scope', 'name', 'gutter'].indexOf(text) != -1 || /* text.startsWith('#') ||*/ typeof children[0] != 'string') {
             skip();
@@ -172,11 +172,19 @@ async function main(...args) {
       cmds.unshift(['normalize']);
       //cmds.unshift(['remap', 'l', 50, 60]);
     }
-    const UpdatePalette = (palette) => {
-      // console.log('UpdatePalette:', palette);
-      for(let [path, color] of palette.entries()) {
-        color = color && color.toRGBA ? color.toRGBA() : color;
-        let [obj, key] = path.bottom(newObj, true);
+    const UpdatePalette = (pal) => {
+       pal = pal ||  palette
+      console.log('UpdatePalette:', pal);
+      for(let [path, color] of   pal) {
+        color = typeof(color) == 'function' ? color() : color;
+
+      //  color = color && color.toRGBA ? color.toRGBA() : color;
+           console.log('UpdatePalette:', Util.typeOf(color),  ...color, Util.toString(color.toObject(), {multiline: false}));
+           console.log('UpdatePalette:', newObj, path,Util.toString(color, {multiline: false}));
+           let obj = path.slice(0,-1);
+           let key = path.slice(-1);
+
+  //let [obj, key] = path.bottom(newObj, true);
         obj[key] = color.hex();
         flat.set(path, color);
         if(newObj) deep.set(newObj, path, color.hex());
@@ -292,13 +300,21 @@ async function main(...args) {
             .map((p) => (!isNaN(+p) ? +p : p))
             .map((p) => (typeof p == 'string' ? p.toLowerCase() : p))
     );
+
     cmds.forEach((cmd) => {
       cmd = cmd.map((p) => (/^.?time?$/i.test(p) ? +mtime : /^now$/i.test(p) ? Date.now() : /^p?r?a?n[dg]o?m?$/i.test(p) ? prng.uint32() : p));
       console.log('Command ', cmd);
-      let ret = handlers[cmd[0]](...cmd.slice(1)) || palette;
-      UpdatePalette(ret);
+    //  Util.putStack();
+      let ret = handlers[cmd[0]](...cmd.slice(1));
+
+      if(ret)
+       palette = ret;
+
+
+      UpdatePalette();
       // console.log('New Palette ', ret);
     });
+
     let changed = new Set();
     let i = 0;
     for(let [path, color] of palette) {
@@ -369,10 +385,10 @@ async function main(...args) {
 
     outfile = outfile || basename + '.xml';
     filesystem.writeFile(outfile, toXML(newObj));
-    
-
   } catch(err) {
-    console.log('err:', err);
+    let st = Util.stack(err.stack);
+    // console.log(err.message, '\n', st.toString()); //st.map(f =>  Util.toString(f)));
+    throw err;
   }
 }
-Util.callMain(main);
+Util.callMain(main, true);

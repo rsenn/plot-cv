@@ -10,6 +10,7 @@ import { Message } from './message.js';
 import crypto from 'crypto';
 import fetch from 'isomorphic-fetch';
 import { exec, spawn, fork, execFile } from 'promisify-child-process';
+import fs, { promises as fsPromises } from 'fs';
 
 const port = process.env.PORT || 3000;
 
@@ -302,8 +303,8 @@ app.get('/style.css', async (req, res) =>
   })
 );
 
-function getDescription(file) {
-  let str = filesystem.readFile(file).toString();
+async function getDescription(file) {
+  let str = await fs.promises.readFile(file).then(r => r.toString());
   let r = [...Util.matchAll('<(/)?(board|schematic|library)[ >]', str)]
     .map((m) => m.index)
     .sort((a, b) => a - b)

@@ -64,16 +64,12 @@ macro(add_prog)
   set(ARGS ${ARGN})
   list(GET ARGS 0 name)
   list(REMOVE_AT ARGS 0)
-
   add_executable(${name} opencv/${name}.cpp ${ARGS})
   target_link_libraries(${name} ${OpenCV_LIBS})
-
   install(TARGETS ${name} DESTINATION bin)
 endmacro()
 
 set(BUILD_SHARED_LIBS ON)
-
-add_subdirectory(quickjs "${CMAKE_BINARY_DIR}/quickjs")
 
 link_directories("${CMAKE_BINARY_DIR}/quickjs")
 
@@ -82,16 +78,13 @@ function(src_program NAME SOURCES)
     file(GLOB "${NAME}_SOURCES" ${SRC})
     list(APPEND SRCS ${${NAME}_SOURCES})
   endforeach()
-
   # string(REGEX REPLACE   "src/" "" "${NAME}_SOURCES" "${SOURCES}")
   set("${NAME}_SOURCES" ${SRCS})
   #[[message("${NAME}_SOURCES:"  ${${NAME}SOURCES})
   ]]
-
   # message("${NAME}_SOURCES: ${${NAME}_SOURCES}")
   add_executable(${NAME} src/${NAME}.cpp ${${NAME}_SOURCES})
   target_link_libraries(${NAME} ${ARGN})
-
   install(TARGETS ${NAME} DESTINATION bin)
 endfunction()
 
@@ -108,10 +101,13 @@ endif(IMGUI_VIEWER)
 
 src_program(
   cli
-  "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/js*.cpp"
+  "src/cli.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/js.cpp;src/jsbindings.cpp;src/js_contour.cpp;src/js.cpp;src/js_draw.cpp;src/js_line.cpp;src/js_mat.cpp;src/js_point.cpp;src/js_point_iterator.cpp;src/js_rect.cpp;src/js_size.cpp"
   ${OpenCV_LIBS}
   quickjs
-  ${ELECTRICFENCE_LIBRARY})
+  ${LIBDL}
+  ${LIBM}
+  ${LIBPTHREAD}
+  )
 
 option(ADDITIONAL_PROGS "Build other OpenCV programs" FALSE)
 option(QUICKJS_MODULES "Build .so modules for quickjs" FALSE)
@@ -236,17 +232,15 @@ if(ADDITIONAL_PROGS)
   add_prog(dis_opticalflow)
   add_prog(facemark_lbf_fitting)
   add_prog(filterdemo)
-  # add_prog(gms_matcher)
-  # add_prog(kinfu_demo)
+  # add_prog(gms_matcher) add_prog(kinfu_demo)
   add_prog(mace_webcam)
   add_prog(main opencv/detectLines.cpp opencv/getExteriorContour.cpp)
   add_prog(oil)
   add_prog(optical_flow_dense)
   # add_prog(pct_webcam)
   add_prog(qrcode)
-  # add_prog(sampleDetectLandmarksvideo)
-  # add_prog(text_detection) add_prog(tracking_by_matching)
-  # add_prog(tutorial_introduction_to_tracker)
+  # add_prog(sampleDetectLandmarksvideo) add_prog(text_detection)
+  # add_prog(tracking_by_matching) add_prog(tutorial_introduction_to_tracker)
   add_prog(videocapture_gstreamer_pipeline)
   # add_prog(webcam_demo)
   add_prog(homography_from_camera_displacement)
@@ -255,3 +249,4 @@ if(ADDITIONAL_PROGS)
   # target_link_libraries(tracking_calibration_with_img yaml-cpp roslib rospack
   # roscpp )
 endif(ADDITIONAL_PROGS)
+add_subdirectory(quickjs "${CMAKE_BINARY_DIR}/quickjs")

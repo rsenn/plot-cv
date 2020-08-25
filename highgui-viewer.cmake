@@ -19,6 +19,6 @@ file(GLOB HIGHGUI_VIEWER_SOURCES
     src/*.hpp 
 )
 add_executable(highgui-viewer src/highgui-viewer.cpp ${HIGHGUI_VIEWER_SOURCES})
-target_link_libraries(highgui-viewer ${OpenCV_LIBS} ${GLEW_SHARED_LIBRARY_RELEASE} ${GLEW_SHARED_LIBRARIES} quickjs ${ELECTRICFENCE_LIBRARY})
+target_link_libraries(highgui-viewer ${OpenCV_LIBS} ${GLEW_SHARED_LIBRARY_RELEASE} ${GLEW_SHARED_LIBRARIES} quickjs ${LIBDL} ${LIBM} ${LIBPTHREAD})
 
 install(TARGETS highgui-viewer DESTINATION bin)
