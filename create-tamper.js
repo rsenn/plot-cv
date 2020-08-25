@@ -12,15 +12,10 @@ import { Console } from 'console';
 import { ImmutablePath } from './lib/json.js';
 import deep from './lib/deep.js';
 import { SortedMap } from './lib/container/sortedMap.js';
+import PortableFileSystem from './lib/filesystem.js';
 //prettier-ignore
+let filesystem;
 
-const filesystem = {
-  readFile(filename) {let data = fs.readFileSync(filename).toString(); return data; },
-  writeFile(filename, data, overwrite = true) {return fs.writeFileSync(filename, data, { flag: overwrite ? 'w' : 'wx' }); },
-  exists(filename) {return fs.existsSync(filename); },
-  realpath(filenamee) {return fs.realpathSync(filename); },
-  stat(filename) {return fs.statSync(filename); }
-};
 const code = `export const Progress = ({ className, percent, ...props }) => html\`<\x24{Overlay} className=\x24{classNames('progress', 'center', className)} text=\x24{percent + '%'} style=\x24{{
   position: 'relative',
   width: '100%',
@@ -147,7 +142,8 @@ function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments))
 
 Error.stackTraceLimit = 100;
 
-function main(args) {
+async function main(args) {
+  filesystem = await PortableFileSystem();
   const cwd = process.cwd() || fs.realpath('.');
   console.info('cwd=', cwd);
 
@@ -168,7 +164,7 @@ function main(args) {
       let module = path.join(path.dirname(p), aliases[alias]);
       if(!filesystem.exists(module)) throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`);
       let file = findModule(module);
-      let st = filesystem.stat(file);
+      // let st = filesystem.stat(file);
       acc.set(alias, file);
     }
     return acc;
