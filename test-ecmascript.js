@@ -118,7 +118,7 @@ async function main(args) {
       let nodeKeys = [];
 
       for(let [path, node] of flat) {
-        node2path.set(node, new ImmutablePath(path));
+        node2path.set(node, (path));
         nodeKeys.push(path);
       }
 
@@ -140,7 +140,7 @@ async function main(args) {
 
 
 for(let [i,n] of allNodes)
-      Util.log(`\n  ${i}:\n `,node2path.get(n), "\n ", n, "\n ", ESNode.assoc(n).position,"\n");
+      Util.log(`\n  ${i}:\n `,new ImmutablePath(node2path.get(n)), "\n ", n, "\n ", ESNode.assoc(n).position,"\n");
 
     } catch(err) {
       error = err;
