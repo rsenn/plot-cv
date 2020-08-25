@@ -1,15 +1,13 @@
 import { ECMAScriptParser, Printer, Lexer, PathReplacer } from './lib/ecmascript.js';
 import ConsoleSetup from './consoleSetup.js';
 import { ImportStatement, ExportStatement, VariableDeclaration, estree, ESNode, CallExpression, Literal } from './lib/ecmascript/estree.js';
-
 import Util from './lib/util.js';
-import path from 'path';
-//import { Path } from './lib/json.js';
 import { ImmutablePath } from './lib/json.js';
 import deep from './lib/deep.js';
+import path from './lib/path.js';
 import { SortedMap } from './lib/container/sortedMap.js';
 import PortableFileSystem from './lib/filesystem.js';
-//prettier-ignore
+
 let filesystem;
 
 const code = `export const Progress = ({ className, percent, ...props }) => html\`<\x24{Overlay} className=\x24{classNames('progress', 'center', className)} text=\x24{percent + '%'} style=\x24{{
@@ -27,7 +25,7 @@ const code = `export const Progress = ({ className, percent, ...props }) => html
   zIndex: '98'
 }}></div></\x24{Overlay}>\`"`;
 
-let cwd = process.cwd();
+let cwd;
 
 let searchPath = [];
 let packagesPath = [];
@@ -35,11 +33,6 @@ let moduleAliases;
 let packageFiles;
 let importFiles;
 let moduleList = new SortedMap();
-
-let args = Util.getArgs();
-//[if(args.length == 0) args.push('-');
-
-let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
 
 class ES6Module {
   impExpList = [];
@@ -58,7 +51,7 @@ class ES6ImportExport {
     let position = ESNode.assoc(obj.node).position;
     ret = Util.define(ret, { position, nodeClass, type }, obj);
     /* this.node = node;*/
-    console.log('ES6ImportExport; obj:', ret);
+    Util.log('ES6ImportExport; obj:', ret);
     if(!new.target) return Object.setPrototypeOf(ret, ES6ImportExport.prototype);
     return ret;
   }
@@ -69,7 +62,7 @@ class ES6ImportExport {
     return value;
   }
   set from(value) {
-    console.log('from value: ', value);
+    Util.log('from value: ', value);
     this.node.source = value instanceof Literal ? value : new estree.Literal(`'${value}'`);
   }
   toSource() {
@@ -79,8 +72,8 @@ class ES6ImportExport {
     return this.toSource();
   }
 }
-
-main(args);
+Util.log('main');
+Util.callMain(main);
 
 /*
 const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg">
@@ -105,22 +98,44 @@ function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments))
   return printer.print(ast);
 }
 
-async function main(args) {
-  await ConsoleSetup();
+async function main(...args) {
   filesystem = await PortableFileSystem();
-  const cwd = process.cwd() || fs.realpath('.');
-  console.info('cwd=', cwd);
+  Util.log('filesystem:', filesystem);
+  //await ConsoleSetup();
+
+  cwd = filesystem.realpath('.');
+
+  // cwd = process.cwd() || fs.realpath('.');
+  Util.log('cwd=', cwd);
 
   if(args.length == 0) args = [/*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js', 'lib/geom/size.js', 'lib/geom/trbl.js', 'lib/geom/rect.js', 'lib/dom/element.js'];
   let r = [];
   let processed = [];
+  Util.log('args=', args);
+  Util.log('test', path.dirname('/usr/bin/ls'));
+  Util.log('test', path.resolve('/proc/self/../ls'));
+  const argDirs = [...args].map((arg) => path.dirname(arg));
+  // console.log('argDirs',Util.toString(argDirs));
 
-  const dirs = [cwd, ...args.map((arg) => path.dirname(arg))].map((p) => path.resolve(p));
+  const dirs = [cwd].concat(argDirs); /*.map(p => path.resolve(p))*/
+  Util.log('dirs=', dirs);
+
+  Util.log('join()', path.join(cwd, argDirs[0]));
+  Util.log('cwd', cwd);
+  Util.log('argDirs[0]', argDirs[0]);
+  ///path.cwd = cwd;
+
+  try {
+    Util.log('relative()', path.relative(cwd, argDirs[0], cwd));
+    Util.log('relative()', path.relative(argDirs[0], cwd, cwd));
+  } catch(err) {
+    Util.log(err);
+  }
 
   searchPath = makeSearchPath(dirs);
-  console.info('searchPath=', searchPath);
+  Util.log('searchPath=', searchPath);
   packagesPath = makeSearchPath(dirs, 'package.json');
-  console.info('packagesPath=', packagesPath);
+  Util.log('packagesPath=', packagesPath);
   moduleAliases = packagesPath.reduce((acc, p) => {
     let json = JSON.parse(filesystem.readFile(p));
     let aliases = json._moduleAliases || {};
@@ -133,12 +148,12 @@ async function main(args) {
     }
     return acc;
   }, new Map());
-  console.info('moduleAliases=', moduleAliases);
+  Util.log('moduleAliases=', moduleAliases);
   while(args.length > 0) processFile(args.shift());
   // console.log("result:",r);
   filesystem.writeFile('new.js', r.join('\n'));
-  let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
-  process.exit(Number(files.length == 0));
+  let success = Object.entries(processed).filter(([k, v]) => !!v).length != 0;
+  process.exit(Number(processed.length == 0));
 
   function removeFile(file) {
     let idx = args.indexOf(file);
@@ -148,7 +163,7 @@ async function main(args) {
 
   function processFile(file) {
     let data, b, ret;
-    console.log('processing:', file);
+    Util.log('processing:', file);
     removeFile(file);
     let thisdir = path.dirname(file);
     let absthisdir = path.resolve(thisdir);
@@ -171,12 +186,12 @@ async function main(args) {
         // /* prettier-ignore */ console.log('removeStatements:', [...statements].map(([path, stmt]) => stmt));
         let removed = [];
         for(let [path, node] of statements) {
-          console.log('removeStatements loop:', new ImmutablePath(path), printAst(node));
+          Util.log('removeStatements loop:', new ImmutablePath(path), printAst(node));
           if(!predicate(node, path)) continue;
           if(node instanceof ImportStatement || (Util.isObject(node) && node.what == 'default')) {
             deep.unset(ast, path);
           } else {
-            console.log('i:', deep.get(ast, path.slice(0, -2)));
+            Util.log('i:', deep.get(ast, path.slice(0, -2)));
             if(!Util.isArray(node.declarations)) node = node.declarations;
             else Object.setPrototypeOf(node, VariableDeclaration.prototype);
             deep.set(ast, path, node);
@@ -214,7 +229,7 @@ async function main(args) {
         const to = node.fromPath;
         const from = node.fromValue;
         node.from = new estree.Literal(`'${to}'`);
-        console.log(`node alter ${node.position.toString()}  => '${to}'   (was '${from}' )`, node);
+        Util.log(`node alter ${node.position.toString()}  => '${to}'   (was '${from}' )`, node);
         return node;
       });
 
@@ -232,14 +247,14 @@ async function main(args) {
       //recurseFiles = recurseFiles.map(([path,module]) => { console.log("module:",module.fromPath); return module.fromPath; });
       removeFile(modulePath);
 
-      console.info('processed files:', ...processed);
-      console.log(`${modulePath}: recurseFiles =`, recurseFiles);
+      Util.log('processed processed:', ...processed);
+      Util.log(`${modulePath}: recurseFiles =`, recurseFiles);
       recurseFiles.forEach((imp) => {
-        console.info('imp', imp);
+        Util.log('imp', imp);
         processFile(imp.fromPath);
       });
       let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportStatement);
-      console.log('exports:', ...exports.map(([p, stmt]) => (Util.isObject(stmt.declarations, 'id', 'value') == Util.isObject(stmt.what, 'value') ? stmt.declarations : stmt)));
+      Util.log('exports:', ...exports.map(([p, stmt]) => (Util.isObject(stmt.declarations, 'id', 'value') == Util.isObject(stmt.what, 'value') ? stmt.declarations : stmt)));
     } catch(err) {
       console.error(err.message);
       Util.putStack(err.stack);
@@ -250,7 +265,7 @@ async function main(args) {
     r.push(`/* --- concatenanted '${file}' --- */\n${output}\n`);
   }
 
-  console.info('processed files:', ...processed);
+  Util.log('processed processed:', ...processed);
 }
 
 function finish(err) {
@@ -262,17 +277,17 @@ function finish(err) {
       .join('\n');
   }
   if(err) {
-    console.log(parser.lexer.currentLine());
-    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
+    Util.log(parser.lexer.currentLine());
+    Util.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
   let lexer = parser.lexer;
   let t = [];
   //console.log(parser.trace() );
   dumpFile('trace.log', parser.trace());
   if(fail) {
-    console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
+    Util.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
   }
-  console.log('finish: ' + (fail ? 'error' : 'success'));
+  Util.log('finish: ' + (fail ? 'error' : 'success'));
   return !fail;
 }
 
@@ -282,7 +297,7 @@ function makeSearchPath(dirs, extra = 'node_modules') {
   let i = 0;
   for(let cwd of dirs) {
     let parts = (cwd + '').split(/[\\\/]/g);
-    //console.info('parts=', parts);
+    //console.log('parts=', parts);
     while(parts.length && parts[parts.length - 1] != '') {
       const dir = parts.join('/');
       const extra_dir = path.join(dir, extra);
@@ -298,7 +313,7 @@ function makeSearchPath(dirs, extra = 'node_modules') {
 
 function checkExists(path) {
   let r = filesystem.exists(path);
-  //console.info(`checkExists('${path}') = ${r}`);
+  //console.log(`checkExists('${path}') = ${r}`);
   return r;
 }
 
@@ -320,8 +335,8 @@ function searchModuleInPath(name, _from) {
   const thisdir = _from ? path.dirname(_from) : '.';
   const absthisdir = path.resolve(thisdir);
   /* console.log('thisdir:', thisdir);
-  console.log('name:', name);
-  console.log('_from:', _from);*/
+  Util.log('name:', name);
+  Util.log('_from:', _from);*/
 
   name = name.replace(/\..?js$/g, '');
   if(moduleAliases.has(name)) return moduleAliases.get(name);
@@ -334,9 +349,9 @@ function searchModuleInPath(name, _from) {
     for(let module of searchFor) {
       let modPath = path.join(dir, module);
       if(filesystem.exists(modPath)) {
-        //console.info('modPath', modPath);
+        //console.log('modPath', modPath);
         let path = findModule(modPath);
-        //console.info('path', path);
+        //console.log('path', path);
         if(path) return path;
       }
     }

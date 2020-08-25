@@ -1,5 +1,5 @@
 import express from 'express';
-import path from 'path';
+import path from './lib/path.js';
 import ConsoleSetup from './consoleSetup.js';
 import Util from './lib/util.js';
 import tXml from './lib/tXml.js';
@@ -60,7 +60,7 @@ const convertToGerber = async (boardFile, opts = {}) => {
   const gerberFile = `./tmp/${base}.${formatToExt(layers, format)}`;
   const cmd = `eagle -X -d ${format} -o "${gerberFile}" "${boardFile}" ${layers.join(' ')}`;
 
-  console.info(`executing '${cmd}'`);
+  console.log(`executing '${cmd}'`);
   const child = exec(cmd, {});
   // do whatever you want with `child` here - it's a ChildProcess instance just
   // with promise-friendly `.then()` & `.catch()` functions added to it!
@@ -69,8 +69,8 @@ const convertToGerber = async (boardFile, opts = {}) => {
   child.stderr.on('data', (data) => (output += data));
   const { stdout, stderr, code, signal } = await child;
 
-  console.info(`code: ${code}`);
-  console.info(`output: ${output}`);
+  console.log(`code: ${code}`);
+  console.log(`output: ${output}`);
 
   if(code !== 0) throw new Error(output);
 
@@ -117,8 +117,8 @@ const gerberToGcode = async (gerberFile, allOpts = {}) => {
   child.stderr.on('data', (data) => (output += data));
   const { stdout, stderr, code, signal } = await child;
 
-  console.info(`code: ${code}`);
-  console.info(`output: ${output}`);
+  console.log(`code: ${code}`);
+  console.log(`output: ${output}`);
 
   if(code !== 0) throw new Error(output);
 
@@ -400,7 +400,7 @@ app.post(/^\/gerber/, async (req, res) => {
       filename = filename || typeof save == 'string' ? save : null;
       filename = `tmp/` + filename.replace(/.*\/([^/])*\.[^/.]*$/g, '$1');
 
-      await fsPromises.writeFile(filename, result.data).then((res) => console.info('Wrote file:', res));
+      await fsPromises.writeFile(filename, result.data).then((res) => console.log('Wrote file:', res));
     }
   } catch(error) {
     result = { error };

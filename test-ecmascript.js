@@ -118,7 +118,7 @@ async function main(args) {
       let nodeKeys = [];
 
       for(let [path, node] of flat) {
-        node2path.set(node, (path));
+        node2path.set(node, path);
         nodeKeys.push(path);
       }
 
@@ -135,13 +135,10 @@ async function main(args) {
       //      posMap = new SortedMap([...posMap, ...commentMap], (a, b) => a - b);
       //    console.log('posMap:', [...posMap.keys()]);
       //   console.log('ast:', [...posMap.keys()]);
-   //   let allNodes = nodeKeys.map((path) => flat.get(path));
-   let allNodes = nodeKeys.map((path,i) => [i,flat.get(path)]);
+      //   let allNodes = nodeKeys.map((path) => flat.get(path));
+      let allNodes = nodeKeys.map((path, i) => [i, flat.get(path)]);
 
-
-for(let [i,n] of allNodes)
-      Util.log(`\n  ${i}:\n `,new ImmutablePath(node2path.get(n)), "\n ", n, "\n ", ESNode.assoc(n).position,"\n");
-
+      for(let [i, n] of allNodes) Util.log(`\n  ${i}:\n `, new ImmutablePath(node2path.get(n)), '\n ', n, '\n ', ESNode.assoc(n).position, '\n');
     } catch(err) {
       error = err;
       console.log('error:', err);

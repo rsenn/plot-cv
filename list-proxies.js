@@ -28,7 +28,7 @@ function Proxy(obj) {
   if(i != -1) {
     throw new Error(`Property '${propNames[i]}' missing on: ` + Util.toSource(p));
   }
-  // console.info('new proxy:', p);
+  // console.log('new proxy:', p);
   return p;
 }
 Proxy.prototype.defaultTimeout = 5000;
@@ -62,7 +62,7 @@ Proxy.prototype.ping = function () {
     const start = Date.now();
     tcp.setTimeout(proxy.defaultTimeout);
     tcp.setNoDelay(true);
-    //console.info(`Connecting to ${ip}:${port} ...`);
+    //console.log(`Connecting to ${ip}:${port} ...`);
     tcp
       .connect(port, ip, () => finish(`Connected to ${ip}:${port}`, start))
       .on('close', () => finish(null, start))
@@ -88,7 +88,7 @@ function main() {
             ...p
           });
           let check = await Check(proxy);
-          console.info('\nPROXY:', proxy, check, '\n');
+          console.log('\nPROXY:', proxy, check, '\n');
           push(proxy);
         }
       } catch(error) {
@@ -161,7 +161,7 @@ function main() {
 try {
   main();
 } catch(err) {
-  console.info('Top-level error:', err);
+  console.log('Top-level error:', err);
 }
 
 async function writeResults(results, format = 'txt', outputName = 'proxies') {

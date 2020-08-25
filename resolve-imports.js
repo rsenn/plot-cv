@@ -4,29 +4,17 @@ import ConsoleSetup from './consoleSetup.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
 import { ImportStatement, ExportStatement, VariableDeclaration, MemberExpression, estree, ESNode, CallExpression, Literal } from './lib/ecmascript/estree.js';
-
 import Util from './lib/util.js';
-import path from 'path';
+import path from './lib/path.js';
 //import { Path } from './lib/json.js';
 import { ImmutablePath } from './lib/json.js';
 import deep from './lib/deep.js';
 import { SortedMap } from './lib/container/sortedMap.js';
 
-let filesystem;
-const code = `export const Progress = ({ className, percent, ...props }) => html\`<\x24{Overlay} className=\x24{classNames('progress', 'center', className)} text=\x24{percent + '%'} style=\x24{{
-  position: 'relative',
-  width: '100%',
-  height: '1.5em',
-  border: '1px solid black',
-  textAlign: 'center',
-  zIndex: '99'
-}}><div className=\x24{classNames('progress-bar', 'fill')} style=\x24{{
-  width: percent + '%',
-  position: 'absolute',
-  left: '0px',
-  top: '0px',
-  zIndex: '98'
-}}></div></\x24{Overlay}>\`"`;
+let cwd, filesystem, searchPath, packagesPath, moduleAliases, files;
+
+const removeModulesDir = PrefixRemover([/node_modules\//g, /^\.\//g]);
+
 
 class ES6Module {
   impExpList = [];
@@ -77,7 +65,7 @@ class ES6ImportExport {
   }
 }
 
-main(args);
+Util.callMain(main);
 
 /*
 const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg">
@@ -102,11 +90,11 @@ function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments))
   return printer.print(ast);
 }
 
-async function main(args) {
-  await ConsoleSetup();
+async function main(...args) {
+  //  await ConsoleSetup();
   filesystem = await PortableFileSystem();
-  const cwd = process.cwd() || filesystem.realpath('.');
-  console.info('cwd=', cwd);
+  cwd = filesystem.realpath('.');
+  console.log('cwd=', cwd);
   const re = /(util.js|lib\/util)/;
   while(/^-/.test(args[0])) {
     let arg = args.shift();
@@ -115,13 +103,14 @@ async function main(args) {
   if(args.length == 0) args = [/*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js', 'lib/geom/size.js', 'lib/geom/trbl.js', 'lib/geom/rect.js', 'lib/dom/element.js'];
   let r = [];
   let processed = [];
+  console.log('args=', args);
 
-  const dirs = [cwd, ...args.map((arg) => path.dirname(arg))].map((p) => path.resolve(p));
+  const dirs = [cwd, ...args.map((arg) => path.dirname(arg))]; /*.map((p) => path.resolve(p))*/
 
   searchPath = makeSearchPath(dirs);
-  console.info('searchPath=', searchPath);
+  console.log('searchPath=', searchPath);
   packagesPath = makeSearchPath(dirs, 'package.json');
-  console.info('packagesPath=', packagesPath);
+  console.log('packagesPath=', packagesPath);
   moduleAliases = packagesPath.reduce((acc, p) => {
     let json = JSON.parse(filesystem.readFile(p));
     let aliases = json._moduleAliases || {};
@@ -134,12 +123,12 @@ async function main(args) {
     }
     return acc;
   }, new Map());
-  console.info('moduleAliases=', moduleAliases);
+  console.log('moduleAliases=', moduleAliases);
   while(args.length > 0) processFile(args.shift());
   console.log('processed:', ...processed.map((file) => `\n  ${file}`));
   filesystem.writeFile('resolved.js', r.join('\n'));
-  let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
-  process.exit(Number(files.length == 0));
+  let success = Object.entries(processed).filter(([k, v]) => !!v).length != 0;
+  process.exit(Number(processed.length == 0));
 
   function removeFile(file) {
     Util.remove(args, file);
@@ -169,6 +158,9 @@ async function main(args) {
       useStrict.forEach(([path, node]) => path.remove(ast));
       const isRequire = ([path, node]) => node instanceof CallExpression && node.callee.value == 'require';
       const isImport = ([path, node]) => node instanceof ImportStatement;
+      const isES6Export = ([path, node]) => node instanceof ExportStatement;
+      const isCJSExport = ([path, node]) => node instanceof MemberExpression && node.object.node == 'module' && node.property.node == 'exports';
+
       const getImport = ([path, node]) => (node instanceof ImportStatement ? [path, node] : [path.slice(0, 2), deep.get(ast, path)]);
 
       const getFromValue = (node) => (node.source || node.arguments[0]).value.replace(/['"](.*)['"]/, '$1');
@@ -235,24 +227,25 @@ async function main(args) {
 
       //recurseFiles = recurseFiles.map(([path,module]) => { console.log("module:",module.fromPath); return module.fromPath; });
 
-      console.info('processed files:', ...processed);
+      //   console.log('processed files:', ...processed);
       console.log(
         `${modulePath}: recurseFiles =`,
         recurseFiles.map((f) => f.fromPath)
       );
       recurseFiles.forEach((imp) => {
-        console.info('imp', imp);
+        // console.log('imp', imp);
         processFile(imp.fromPath);
       });
       let exports = map().filter(([key, value]) => value instanceof ExportStatement);
       let moduleExports = map()
-        .filter(([key, value]) => value instanceof MemberExpression && value.object.value == 'module' && value.property.value == 'exports')
-        .map(([path, node]) => path.slice(0, 2))
-        .map((p) => [p, deep.get(ast, p)]);
+        .filter((entry) => isCJSExport(entry) || isES6Export(entry))
+
+        .map(([path, node]) => [isCJSExport([path, node]) ? path.slice(0, 2) : path, node]); /*
+        .map((p) => [p, deep.get(ast, p)])*/
 
       console.log(`${modulePath}: moduleExports:`, moduleExports);
 
-      console.log(`${modulePath}: exports:`, ...exports.map(([p, stmt]) => (Util.isObject(stmt.declarations, 'id', 'value') == Util.isObject(stmt.what, 'value') ? stmt.declarations : stmt)));
+      console.log(`${modulePath}: exports:`, exports); //...exports.map(([p, stmt]) => (Util.isObject(stmt.declarations, 'id', 'value') == Util.isObject(stmt.what, 'value') ? stmt.declarations : stmt)));
     } catch(err) {
       console.error(err.message);
       Util.putStack(err.stack);
@@ -263,7 +256,7 @@ async function main(args) {
     r.push(`/*\n * concatenanted ${file}\n */\n\n${output}\n`);
   }
 
-  console.info('processed files:', ...processed);
+  console.log('processed files:', ...processed);
 }
 
 function parseFile(file) {
@@ -343,15 +336,24 @@ function finish(err) {
 
 function makeSearchPath(dirs, extra = 'node_modules') {
   let r = [];
-  const addPath = (p) => ((p = path.relative(cwd, p)), r.indexOf(p) == -1 && r.push(p));
+  const addPath = (p) => {
+    console.log('cwd=', cwd, typeof cwd);
+    console.log('p=', p, typeof p);
+
+    (p = path.relative(cwd, p, cwd)), r.indexOf(p) == -1 && r.push(p);
+  };
   let i = 0;
   for(let cwd of dirs) {
     let parts = (cwd + '').split(/[\\\/]/g);
-    //console.info('parts=', parts);
+    //console.log('parts=', parts);
     while(parts.length && parts[parts.length - 1] != '') {
       const dir = parts.join('/');
       const extra_dir = path.join(dir, extra);
-      if(extra == 'node_modules') if (i == 0) addPath(dir);
+      if(extra == 'node_modules')
+        if(i == 0) {
+          console.log('dir=', dir);
+          addPath(dir);
+        }
       if(filesystem.exists(extra_dir)) addPath(extra_dir);
       i++;
       parts.pop();
@@ -363,7 +365,7 @@ function makeSearchPath(dirs, extra = 'node_modules') {
 
 function checkExists(path) {
   let r = filesystem.exists(path);
-  //console.info(`checkExists('${path}') = ${r}`);
+  //console.log(`checkExists('${path}') = ${r}`);
   return r;
 }
 
@@ -418,9 +420,9 @@ function searchModuleInPath(name, _from) {
     for(let module of searchFor) {
       let modPath = path.join(dir, module);
       if(filesystem.exists(modPath)) {
-        //console.info('modPath', modPath);
+        //console.log('modPath', modPath);
         let path = findModule(modPath);
-        //console.info('path', path);
+        //console.log('path', path);
         if(path) return path;
       }
     }

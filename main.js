@@ -501,13 +501,13 @@ const GcodeToPolylines = (gcode = project.name, opts = {}) => {
   NewPolyline();
   let palette = GeneratePalette(polylines.length);
   let ret = { polylines, bbox: bb, palette };
-  //console.info('polylines(1):', polylines);
+  //console.log('polylines(1):', polylines);
   polylines = polylines.map((pl) => pl.toMatrix().flat());
-  //console.info('polylines(2):', polylines);
+  //console.log('polylines(2):', polylines);
   polylines = polylines.map((pl) => geom.simplify(pl, 0.02, true));
-  //console.info('polylines(3):', polylines);
+  //console.log('polylines(3):', polylines);
   polylines = polylines.map((pl) => Util.chunkArray(pl, 2).map((pt) => new Point(...pt)));
-  //console.info('polylines(4):', polylines);
+  //console.log('polylines(4):', polylines);
   polylines = polylines.map((pl) => new Polyline([]).push(...pl));
   let inside = new Map(polylines.map((polyline2, i) => [polyline2, polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2))]));
   let insideOf = polylines.map((polyline, i) => [
@@ -527,11 +527,11 @@ const GcodeToPolylines = (gcode = project.name, opts = {}) => {
   let remove = new Set();
   for(let [i, inner] of holes.entries()) {
     let ids = [i, ...inner];
-    //console.info('polygon', { i, ids, inner });
+    //console.log('polygon', { i, ids, inner });
     const polyline = polylines[i];
     inner = [...inner].map((ip) => polylines[ip].counterClockwise);
     if(inner.length == 0) continue;
-    //console.info('polygon', { polyline, inner });
+    //console.log('polygon', { polyline, inner });
     let list = [polyline, ...inner];
     paths.push([i, list.map((pl) => pl.toPath()).join('\n')]);
     ids.forEach((id) => remove.add(id));

@@ -1218,7 +1218,7 @@ Util.injectProps = function(options) {
 
       process: async function run() {
         for await (const event of this.loop) {
-          console.info('event:', event);
+          console.log('event:', event);
         }
       }
     };
