@@ -1,5 +1,5 @@
-import { open, SEEK_END, SEEK_SET } from 'std';
-import { realpath as OS_realpath } from 'os';
+import * as std from "std";
+import * as os  from 'os';
 
 function ArrayBufToString(buf, bytes = 1) {
   const ctor = bytes == 1 ? Uint8Array : bytes == 2 ? Uint16Array : Uint32Array;
@@ -16,12 +16,12 @@ function StringToArrayBuf(str, bytes = 1) {
 const filesystem = {
   readFile(filename) {
     let errorObj = { errno: 0 };
-    let file = open(filename, 'r', errorObj);
+    let file = std.open(filename, 'r', errorObj);
     let size, b;
     if(!errorObj.errno) {
-      file.seek(0, SEEK_END);
+      file.seek(0, std.SEEK_END);
       size = file.tell();
-      file.seek(0, SEEK_SET);
+      file.seek(0, std.SEEK_SET);
       b = new ArrayBuffer(size);
       file.read(b, 0, size);
       //b = file.readAsString(/*size*/);
@@ -32,7 +32,7 @@ const filesystem = {
   },
   writeFile(filename, data, overwrite = true) {
     let errorObj = { errno: 0 };
-    let file = open(filename, overwrite ? 'w' : 'wx', errorObj);
+    let file = std.open(filename, overwrite ? 'w' : 'wx', errorObj);
     if(!errorObj.errno) {
       let b = typeof data == 'string' ? StringToArrayBuf(data) : data;
       file.write(b, 0, b.byteLength);
@@ -44,7 +44,7 @@ const filesystem = {
   },
   exists(filename) {
     let errorObj = { errno: 0 };
-    let file = open(filename, 'r', errorObj);
+    let file = std.open(filename, 'r', errorObj);
     if(!errorObj.errno) {
       file.close();
       return true;
@@ -52,7 +52,7 @@ const filesystem = {
     return false;
   },
   realpath(filename) {
-    let [str, err] = OS_realpath(filename);
+    let [str, err] = os.realpath(filename);
     if(!err) return str;
     return err;
   }
