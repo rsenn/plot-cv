@@ -1,8 +1,8 @@
 import Util from './lib/util.js';
 
 function QuickJSFileSystem(std, os) {
-  console.log(`std.open:`, std.open);
-  console.log(`os.realpath:`, os.realpath);
+  /*console.log(`std.open:`, std.open);
+  console.log(`os.realpath:`, os.realpath);*/
 
   const CharWidth = {
     1: Uint8Array,
@@ -84,7 +84,7 @@ function QuickJSFileSystem(std, os) {
 }
 
 function NodeJSFileSystem(fs) {
-  console.log(`fs.readFileSync:`, fs.readFileSync);
+  //console.log(`fs :`, fs);
 
   return {
     readFile(filename) {
@@ -109,31 +109,35 @@ function NodeJSFileSystem(fs) {
     }
   };
 }
-async function main() {
-  let outputFile = 'test.txt';
-  let filesystem;
-  let err;
+
+async function PortableFileSystem() {
+  let fs, err;
+
   try {
-    filesystem = QuickJSFileSystem(await import('std'), await import('os'));
+    fs = QuickJSFileSystem(...(await Promise.all([import('std'), import('os')])));
   } catch(error) {
     err = error;
   }
-  if(!filesystem) {
-    err = null;
-    try {
-      filesystem = NodeJSFileSystem(await import('fs'));
-    } catch(error) {
-      err = error;
-    }
-  }
-  if(err) {
-    console.log(`error:`, err);
-    return;
-  }
+
+  if(fs && !err) return fs;
   err = null;
 
   try {
-    console.log(`filesystem :`, filesystem);
+    fs = NodeJSFileSystem(await import('fs'));
+  } catch(error) {
+    err = error;
+  }
+
+  if(fs && !err) return fs;
+}
+
+async function main() {
+  let outputFile = 'test.txt';
+  let filesystem = await PortableFileSystem();
+  let err;
+
+  try {
+   // console.log(`filesystem :`, filesystem);
     console.log(`filesystem.writeFile('${outputFile}', ...):`, filesystem.writeFile(outputFile, 'BLAH\nthis is a test!\n\n'));
     console.log(`filesystem.readFile('test-filesystem.js'):`, Util.abbreviate(filesystem.readFile('test-filesystem.js')));
     console.log(`filesystem.realpath('/proc/self'):`, filesystem.realpath('/proc/self'));
