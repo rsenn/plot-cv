@@ -11,7 +11,6 @@ import toSource from './lib/tosource.js';
 import { toXML, Path } from './lib/json.js';
 import { ColorMap } from './lib/draw/colorMap.js';
 import Alea from './lib/alea.js';
-import { Functional } from './lib/functional.js';
 import * as jsondiff from './lib/jsondiff.js';
 import KolorWheel from './lib/KolorWheel.js';
 
@@ -63,11 +62,11 @@ const GeneratePalette = (counts = { h: 3, s: 3, l: 5 }, deltas = { h: 360, s: 10
 };
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 10 });
+  //await ConsoleSetup({ depth: 10 });
   let colors, keys;
   filesystem = await PortableFileSystem();
 
-  //console.log('main', args);
+  console.log('main', args);
   if(args.length == 0) args = ['/home/roman/.config/sublime-text-3/Packages/Babel/Next.tmTheme' /*  */];
   let filename = args.shift();
   let basename = path.basename(filename).replace(/\.[^.]*$/, '');
@@ -89,10 +88,7 @@ async function main(...args) {
 
     console.log('prng.uint32():', prng.uint32());
     let basename = path.basename(filename).replace(/\.[^.]*$/, '');
-    //console.log('basename ', basename);
-    //let js = toSource(xml);
     filesystem.writeFile(basename + '.json', json);
-    //filesystem.writeFile('HoerMalWerDaHaemmert.js', js);
     newObj = deep.clone(xml[0]);
     let flat = deep.flatten(
       xml[0],
@@ -100,12 +96,8 @@ async function main(...args) {
       (v, p) => (typeof v != 'object' && p.indexOf('attributes') == -1) || (p.length && p.indexOf('attributes') == p.length - 1),
       (p, v) => [new Path(p), v]
     );
-
     colors = new Map([...Iterator.filter(flat, ([path, value]) => /^#[0-9A-Fa-f]*$/.test(value))].map(([path, value]) => [path, new RGBA(value)]));
-    //console.log('colors:', colors); //[...colors].map(([path,value ]) => [path, value]));
-    //console.log('methods:', Util.getMethodNames(Iterator));
     let it = new IteratorForwarder(colors.entries());
-    //console.log('it.map', it.map + '');
     let paths = Iterator.map(colors, ([path, value]) => [XPath.from(path, xml[0]), deep.get(xml[0], path), path]);
     let o = it.map(([path, value]) => {
       const key = path.up(0);
@@ -113,22 +105,19 @@ async function main(...args) {
         prevValue = {},
         list = [],
         numString = 0;
-      //console.log('paths:', path);
       let paths = [
         ...key.walk((p, i, abort, skip) => {
           let r;
           let value = deep.get(xml[0], p);
-          const children = value.children ? value.children : [];
+          const children =Util.isObject(value) &&  value.children ? value.children : [];
           const text = typeof children[0] == 'string' ? children[0] : '';
           if(['Next', 'settings', 'scope', 'name', 'gutter'].indexOf(text) != -1 || /* text.startsWith('#') ||*/ typeof children[0] != 'string') {
             skip();
           }
-
           if(text.startsWith('#')) {
             skip();
             numString++;
           }
-
           if(numString > 1) skip();
           if(numString == 2 || ('' + (prevValue.children && prevValue.children[0]))[0] == '#') {
             //skip() ;
@@ -380,11 +369,8 @@ async function main(...args) {
 
     outfile = outfile || basename + '.xml';
     filesystem.writeFile(outfile, toXML(newObj));
-    let c = Functional.curry(function (a, b, c) {
-      return a * b * c;
-    });
-    let arity = Functional.arityof(c);
-    Functional.compose(Functional.trim, Functional.split('/'))('test/blah');
+    
+
   } catch(err) {
     console.log('err:', err);
   }
