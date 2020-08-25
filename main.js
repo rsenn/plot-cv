@@ -381,6 +381,20 @@ const LoadFile = async (file) => {
   return doc;
 };
 
+const SaveFile = async (filename, data, contentType) => {
+  let { status, statusText, body } = await fetch('/save', {
+    method: 'post',
+    headers: {
+      'Content-Type': contentType || 'application/xml',
+      'Content-Disposition': `attachment; filename="${filename}"`
+    },
+    body: data
+  });
+  const result = { status, statusText, body };
+  LogJS.info(`${filename} saved.`);
+  return result;
+};
+
 const SaveSVG = (window.save = async function save(filename, layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48, 51]) {
   const { doc } = project;
   const { basename, typeName } = doc;
@@ -396,17 +410,7 @@ const SaveSVG = (window.save = async function save(filename, layers = [1, 16, 20
   };
   let data = ElementToXML(project.svg, predicate);
 
-  let { status, statusText, body } = await fetch('/save', {
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/xml',
-      'Content-Disposition': `attachment; filename="${filename.replace(/\.svg$/i, '')}.svg"`
-    },
-    body: data
-  });
-  const result = { status, statusText, body };
-  LogJS.info(`${filename} saved.`);
-  return result;
+  return await SaveFile(filename.replace(/\.svg$/i, '.svg'), data);
 });
 
 const ModifyColors = (fn) => (e) => {
@@ -459,7 +463,7 @@ const BoardToGerber = async (board = project.name, opts = { fetch: true }) => {
 
 const GerberToGcode = async (gerber = project.name, opts = {}) => {
   let proj = GetProject(gerber);
-  let request = { ...opts, gerber: proj.gerber.file, fetch: true },
+  let request = { ...opts, gerber: proj.gerber.file, fetch: true, /*voronoi: '1', */ 'isolation-width': '1mm' },
     response;
   try {
     response = await FetchURL('/gcode', {
@@ -469,15 +473,16 @@ const GerberToGcode = async (gerber = project.name, opts = {}) => {
     }).then((r) => r.json());
     /// response = JSON.parse(response);
     if(opts.fetch && response.file) proj.gcode = response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then((r) => r.text());
+    // response.polylines = GcodeToPolylines(proj, request);
   } catch(err) {
     response.error = err;
   }
+  response.opts = opts;
   return response;
 };
 
 const GcodeToPolylines = (gcode = project.name, opts = {}) => {
   let proj = GetProject(gcode);
-
   let gc = Util.filter(parseGcode(project.gcode.data), (g) => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args);
   let polylines = [];
   let polyline = null;
@@ -487,10 +492,8 @@ const GcodeToPolylines = (gcode = project.name, opts = {}) => {
     polyline = new Polyline([]);
   };
   const f = new Point(-25.4, 25.4);
-
   for(let g of gc) {
     if(g.command == 'G00') NewPolyline();
-
     if(isPoint(g.args)) {
       let p = new Point(g.args.x, g.args.y).prod(f).round(0.01, 2);
       bb.updateXY(p.x, p.y);
@@ -498,22 +501,16 @@ const GcodeToPolylines = (gcode = project.name, opts = {}) => {
     }
   }
   NewPolyline();
-
   let palette = GeneratePalette(polylines.length);
-
   let ret = { polylines, bbox: bb, palette };
-
-  console.info('polylines(1):', polylines);
+  //console.info('polylines(1):', polylines);
   polylines = polylines.map((pl) => pl.toMatrix().flat());
-
-  console.info('polylines(2):', polylines);
+  //console.info('polylines(2):', polylines);
   polylines = polylines.map((pl) => geom.simplify(pl, 0.02, true));
-  console.info('polylines(3):', polylines);
-
+  //console.info('polylines(3):', polylines);
   polylines = polylines.map((pl) => Util.chunkArray(pl, 2).map((pt) => new Point(...pt)));
-  console.info('polylines(4):', polylines);
+  //console.info('polylines(4):', polylines);
   polylines = polylines.map((pl) => new Polyline([]).push(...pl));
-
   let inside = new Map(polylines.map((polyline2, i) => [polyline2, polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2))]));
   let insideOf = polylines.map((polyline, i) => [
     i,
@@ -521,47 +518,29 @@ const GcodeToPolylines = (gcode = project.name, opts = {}) => {
       .map((polyline2, j) => [inside.get(polyline2).length, j, polyline2])
       .filter(([n, j, polyline2]) => i !== j && inside.get(polyline2).indexOf(polyline) != -1)
       .sort(([a], [b]) => a - b)
-    /* .map(([n, j, pl]) =>   [j,pl])*/
   ]);
   console.log('insideOf:', insideOf);
-
   let holes = polylines.map((polyline, i) => new Set());
-
-  //insideOf = insideOf.filter(([i,list ]) => list.length > 0).map(([i,list]) => [i,list.length,list]);
-  console.log('insideOf:', insideOf);
-
   insideOf.filter(([i, list]) => list.length == 1).map(([i, list]) => holes[list[0][1]].add(i));
-
-  //let holes = polylines.map((polyline) => insideOf.filter(([i,outer]) => outer == polyline).map(([i]) => polylines[i]));
   console.log('holes:', holes);
-
   let grp = SVG.create('g', { fill: 'none', stroke: 'magenta', 'stroke-width': 0.1, transform: ` scale(1,-1) translate(${0},${-bb.y2}) translate(-0.3175,0)  translate(0,-1.27)` }, proj.svg);
-  let props = (polyline, i) => ({ stroke: palette[i], fill: /*inside.get(polyline).length ? 'none' : */ palette[i].prod(1, 1, 1, 0.5) });
+  let props = (polyline, i) => ({ stroke: palette[i], fill: palette[i].prod(1, 1, 1, 0.5) });
   let paths = [];
   let remove = new Set();
   for(let [i, inner] of holes.entries()) {
     let ids = [i, ...inner];
-    console.info('polygon', { i, ids, inner });
-
+    //console.info('polygon', { i, ids, inner });
     const polyline = polylines[i];
-    inner = [...inner] /*.filter(ip => inside.get(ip).length > 0)*/
-      .map((ip) => polylines[ip].counterClockwise);
-
+    inner = [...inner].map((ip) => polylines[ip].counterClockwise);
     if(inner.length == 0) continue;
-    //   console.info('polygon', { inner });
-
-    console.info('polygon', { polyline, inner });
+    //console.info('polygon', { polyline, inner });
     let list = [polyline, ...inner];
     paths.push([i, list.map((pl) => pl.toPath()).join('\n')]);
-
     ids.forEach((id) => remove.add(id));
   }
   let ids = polylines.map((pl, i) => i).filter((i) => !remove.has(i));
-  /* [...remove].forEach((id) => Util.remove(ids, id));
-
-  console.info('polylines(5):', polylines);*/
   let polys = [...ids.map((i) => polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` }, grp, 0.01)), ...paths.map(([i, d]) => ({ ...props(polyline, i), id: `polygon-${polylines.indexOf(polyline)}`, d })).map((p, i) => ['path', p, grp])];
-  console.log('polys:', polys);
+  //console.log('polys:', polys);
   let elements = polys.map((args) => SVG.create(...args));
   return { ...ret, inside, group: grp, elements, insideOf, holes };
 };

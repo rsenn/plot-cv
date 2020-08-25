@@ -83,5 +83,5 @@ set_target_properties(quickjs-opencv PROPERTIES
     PREFIX ""
 )
 target_compile_definitions(quickjs-opencv PRIVATE "-DJS_BINDINGS_INIT_MODULE=1")
-target_link_libraries(quickjs-opencv ${OpenCV_LIBS} quickjs-shared)
+target_link_libraries(quickjs-opencv ${OpenCV_LIBS} quickjs)
 # link

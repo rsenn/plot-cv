@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 3.0)
-project (plot-cv)
+cmake_minimum_required(VERSION 3.0)
+project(plot-cv)
 
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
@@ -9,22 +9,18 @@ include(FindPkgConfig)
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH};${CMAKE_INSTALL_PREFIX}/lib")
 set(CMAKE_BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${CMAKE_BINARY_DIR}")
 
-check_library_exists(json-cpp ZN4YAML6detail9node_data9reset_mapEv /usr JSON_CPP)
+check_library_exists(json-cpp ZN4YAML6detail9node_data9reset_mapEv /usr
+                     JSON_CPP)
 
 set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 
-
 find_package(OpenCV REQUIRED)
 
 include_directories(
-    ${OPENCV_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/opencv
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/quickjs
-)
+  ${OPENCV_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/opencv ${CMAKE_CURRENT_SOURCE_DIR}/src
+  ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
 
 check_cxx_compiler_flag("-std=c++17" CXX_STD_CXX_17_FLAG)
 if(CXX_STD_CXX_17_FLAG)
@@ -38,14 +34,13 @@ endif(F_OPT_PIC)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   option(USE_EFENCE "Enable electric fence" OFF)
 
-    check_cxx_compiler_flag("-O0" O_OPT_NONE)
+  check_cxx_compiler_flag("-O0" O_OPT_NONE)
   if(O_OPT_NONE)
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
   endif(O_OPT_NONE)
 
 endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
-
 
 check_c_compiler_flag("-flto" HAS_F_LTO_FLAG)
 
@@ -59,14 +54,11 @@ if(ENABLE_LTO)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
 endif(ENABLE_LTO)
 
-
-
 if(HAVE_EFENCE)
   if(USE_EFENCE)
     set(ELECTRICFENCE_LIBRARY efence)
   endif(USE_EFENCE)
 endif(HAVE_EFENCE)
-
 
 macro(add_prog)
   set(ARGS ${ARGN})
@@ -76,7 +68,7 @@ macro(add_prog)
   add_executable(${name} opencv/${name}.cpp ${ARGS})
   target_link_libraries(${name} ${OpenCV_LIBS})
 
-  install(TARGETS ${name} DESTINATION bin )
+  install(TARGETS ${name} DESTINATION bin)
 endmacro()
 
 set(BUILD_SHARED_LIBS ON)
@@ -85,18 +77,18 @@ add_subdirectory(quickjs "${CMAKE_BINARY_DIR}/quickjs")
 
 link_directories("${CMAKE_BINARY_DIR}/quickjs")
 
-function(src_program NAME SOURCES )
+function(src_program NAME SOURCES)
   foreach(SRC ${SOURCES})
     file(GLOB "${NAME}_SOURCES" ${SRC})
     list(APPEND SRCS ${${NAME}_SOURCES})
   endforeach()
 
-  #string(REGEX REPLACE   "src/" "" "${NAME}_SOURCES" "${SOURCES}")
+  # string(REGEX REPLACE   "src/" "" "${NAME}_SOURCES" "${SOURCES}")
   set("${NAME}_SOURCES" ${SRCS})
   #[[message("${NAME}_SOURCES:"  ${${NAME}SOURCES})
   ]]
 
-  #message("${NAME}_SOURCES: ${${NAME}_SOURCES}")
+  # message("${NAME}_SOURCES: ${${NAME}_SOURCES}")
   add_executable(${NAME} src/${NAME}.cpp ${${NAME}_SOURCES})
   target_link_libraries(${NAME} ${ARGN})
 
@@ -114,12 +106,15 @@ if(IMGUI_VIEWER)
   include(imgui-viewer.cmake)
 endif(IMGUI_VIEWER)
 
-
-src_program(cli "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/js*.cpp"  ${OpenCV_LIBS} quickjs ${ELECTRICFENCE_LIBRARY})
-
+src_program(
+  cli
+  "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/js*.cpp"
+  ${OpenCV_LIBS}
+  quickjs
+  ${ELECTRICFENCE_LIBRARY})
 
 option(ADDITIONAL_PROGS "Build other OpenCV programs" FALSE)
-option(QUICKJS_MODULES  "Build .so modules for quickjs" FALSE)
+option(QUICKJS_MODULES "Build .so modules for quickjs" FALSE)
 
 if(QUICKJS_MODULES)
   include(js-bindings.cmake)
@@ -131,12 +126,12 @@ if(ADDITIONAL_PROGS)
   add_prog(contour)
   add_prog(Contour_detection)
   add_prog(contours2)
-  #add_prog(contours4)
+  # add_prog(contours4)
   add_prog(contours)
   add_prog(distance)
   add_prog(images src/polygon.cpp src/data.cpp)
   add_prog(laser)
-  #7u add_prog(MusicJamboree)
+  # 7u add_prog(MusicJamboree)
   add_prog(o_angle)
   add_prog(code6-1)
   add_prog(code6-2)
@@ -177,7 +172,7 @@ if(ADDITIONAL_PROGS)
   add_prog(intelperc_capture)
   add_prog(live_demo)
   add_prog(laplace)
-  add_prog(findLaserPoint )
+  add_prog(findLaserPoint)
   add_prog(homography)
   add_prog(meanshift)
   add_prog(motempl)
@@ -202,7 +197,7 @@ if(ADDITIONAL_PROGS)
   add_prog(videocapture_image_sequence)
   add_prog(videocapture_intelperc)
   add_prog(videocapture_openni)
-  #add_prog(VideoCapturePeopleCounter)
+  # add_prog(VideoCapturePeopleCounter)
   add_prog(videocapture_pvapi)
   add_prog(videocapture_starter)
   add_prog(video-input-psnr-ssim)
@@ -227,7 +222,7 @@ if(ADDITIONAL_PROGS)
   add_prog(7.Track)
   add_prog(9a.Training)
   add_prog(9b.Object_detect)
-  #add_prog(api_example)
+  # add_prog(api_example)
   add_prog(application_trace)
   add_prog(bgfg)
   add_prog(calibrate_camera_charuco)
@@ -236,30 +231,27 @@ if(ADDITIONAL_PROGS)
   add_prog(capsinpattern)
   add_prog(code5-8)
   add_prog(dense_optical_flow)
-  #add_prog(detect_board_charuco)
-  #add_prog(detect_board)
+  # add_prog(detect_board_charuco) add_prog(detect_board)
   add_prog(detect_diamonds)
   add_prog(dis_opticalflow)
   add_prog(facemark_lbf_fitting)
   add_prog(filterdemo)
-  #add_prog(gms_matcher)
-#  add_prog(kinfu_demo)
+  # add_prog(gms_matcher)
+  # add_prog(kinfu_demo)
   add_prog(mace_webcam)
   add_prog(main opencv/detectLines.cpp opencv/getExteriorContour.cpp)
   add_prog(oil)
   add_prog(optical_flow_dense)
-  #add_prog(pct_webcam)
+  # add_prog(pct_webcam)
   add_prog(qrcode)
-#  add_prog(sampleDetectLandmarksvideo)
-  #add_prog(text_detection)
-  #add_prog(tracking_by_matching)
-#  add_prog(tutorial_introduction_to_tracker)
+  # add_prog(sampleDetectLandmarksvideo)
+  # add_prog(text_detection) add_prog(tracking_by_matching)
+  # add_prog(tutorial_introduction_to_tracker)
   add_prog(videocapture_gstreamer_pipeline)
-#  add_prog(webcam_demo)
+  # add_prog(webcam_demo)
   add_prog(homography_from_camera_displacement)
   add_prog(aruco_ar_demo)
-  #add_prog(tracking_calibration_with_img)
-  #target_link_libraries(tracking_calibration_with_img yaml-cpp roslib rospack roscpp )
+  # add_prog(tracking_calibration_with_img)
+  # target_link_libraries(tracking_calibration_with_img yaml-cpp roslib rospack
+  # roscpp )
 endif(ADDITIONAL_PROGS)
-
-
