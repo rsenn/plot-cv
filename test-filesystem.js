@@ -16,10 +16,16 @@ async function main() {
     console.log(`filesystem.size('${outputFile}'):`, filesystem.size(outputFile));
     console.log(`filesystem.exists('blah.txt'):`, filesystem.exists('blah.txt'));
     st = filesystem.stat('test.txt');
-    console.log(`filesystem.stat('test.txt'):`, Util.toSource(st));
-    console.log(`st.isFile():`,  st.isFile());
+    console.log(
+      `filesystem.stat('test.txt'):`,
+      Util.toString(
+        Util.filterOutMembers(st, Util.isFunction),
+        { multiline: true }
+      )
+    );
+    console.log(`st.isFile():`, st.isFile());
     console.log(`filesystem.stat('/proc/self').isSymbolicLink():`, filesystem.stat('/proc/self').isSymbolicLink());
-    console.log(`filesystem.stat('/proc/self',true).isDirectory():`, filesystem.stat('/proc/self',true).isDirectory());
+    console.log(`filesystem.stat('/proc/self',true).isDirectory():`, filesystem.stat('/proc/self', true).isDirectory());
   } catch(error) {
     err = error;
   }
