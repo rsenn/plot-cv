@@ -1,12 +1,8 @@
 import Lexer from './lib/ecmascript/lexer.js';
 const fs = require('fs').promises;
+import ConsoleSetup from './consoleSetup.js';
 const { Console } = require('console');
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 20, colors: true }
-});
 
 const testfn = () => true;
 const testtmpl = `this is
@@ -38,4 +34,4 @@ const LoginIcon = ({ style }) => (
   } catch(err) {
     //console.log('ERROR:', err);
   }
-})(...process.argv.slice(2));
+})(...Util.getArgs());

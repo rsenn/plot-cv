@@ -1,10 +1,12 @@
 import { Repeater } from './lib/repeater/repeater.js';
 import { useValue, useResult, useAsyncIter, useRepeater } from './lib/repeater/react-hooks.js';
+import ConsoleSetup from './consoleSetup.js';
 import { InMemoryPubSub } from './lib/repeater/pubsub.js';
 import { semaphore, throttler } from './lib/repeater/limiters.js';
 import { DroppingBuffer, FixedBuffer, SlidingBuffer } from './lib/repeater/buffers.js';
 
 async function main() {
+  await ConsoleSetup();
   let pushEvent;
   let r = new Repeater(async (push, stop) => {
     push(null);
@@ -37,7 +39,7 @@ async function main() {
   }*/
 }
 try {
-  main(process.argv.slice(2));
+  main(Util.getArgs());
 } catch(err) {
   console.error('error:', err);
 }

@@ -1,20 +1,16 @@
 import WebSocket from 'ws';
 import WebSocketAsync from './lib/net/websocket-async.js';
+import ConsoleSetup from './consoleSetup.js';
 import { WebSocketClient } from './lib/net/websocket-client.js';
 import { websocketEvents, websocketData } from './lib/net/websocket-iterator.js';
 import { ReconnectingWebSocket } from './lib/net/reconnectingWebSocket.js';
 import Util from './lib/util.js';
 
-import { Console } from 'console';
 import { Message } from './message.js';
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 2, colors: true }
-});
 
 async function main() {
+  await ConsoleSetup();
   console.log('WebSocket:', WebSocket, Util.isConstructor(WebSocket));
   //let ws = new WebSocketClient(WebSocket);
   const url = 'ws://127.0.0.1:3000/ws';
@@ -44,7 +40,7 @@ async function main() {
   dump();
 }
 
-main(process.argv.slice(2)).catch((error) => {
+main(Util.getArgs()).catch((error) => {
   const stack = error.stack;
   console.log('ERROR:', error.message, stack);
 });

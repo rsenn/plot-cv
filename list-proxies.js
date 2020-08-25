@@ -1,22 +1,11 @@
 import ProxyList from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/free-proxy/index.js';
 //import ProxyLists from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/proxy-lists/index.js';
+import ConsoleSetup from './consoleSetup.js';
 import proxynova from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/proxynova/index.js';
 import Util from './lib/util.js';
 import { Repeater } from './lib/repeater/repeater.js';
-import { Console } from 'console';
 import net from 'net';
-import fs, { promises as fsPromises } from 'fs';
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: {
-    depth: 0,
-    colors: true,
-    breakLength: Number.Infinity,
-    compact: true
-  }
-});
 
 function Proxy(obj) {
   const p = this instanceof Proxy ? this : {};

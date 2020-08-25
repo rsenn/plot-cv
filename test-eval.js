@@ -1,11 +1,10 @@
 import { Environment, ECMAScriptParser, Printer } from './lib/ecmascript.js';
 import Util from './lib/util.js';
-import fs from 'fs';
 
 function main(args) {
   let file = 'lib/geom/point.js';
 
-  let data = fs.readFileSync(file).toString();
+  let data = filesystem.readFile(file).toString();
 
   let env = new Environment([
     {
@@ -26,7 +25,7 @@ function main(args) {
 }
 
 try {
-  main(process.argv.slice(2));
+  main(Util.getArgs());
 } catch(error) {
   Util.putError(error);
 }

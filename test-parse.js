@@ -1,18 +1,12 @@
 import { Lexer } from './lib/parse/lexer.js';
 import { Grammar } from './lib/parse/grammar.js';
+import ConsoleSetup from './consoleSetup.js';
 import { Parser } from './lib/parse/parser.js';
 import Ebnf2Parser from './lib/parse/ebnf2.js';
-import fs from 'fs';
 import CGrammar from './test-grammar.js';
-import { Console } from 'console';
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 20, colors: true }
-});
 
 let filename = './lib/grammars/INI.g4';
-let src = fs.readFileSync(filename).toString();
+let src = filesystem.readFile(filename).toString();
 
 //let lex = new Lexer(src, filename);
 let grammar = new Grammar(src, filename);
@@ -20,7 +14,7 @@ let grammar = new Grammar(src, filename);
 grammar.parse();
 //console.log('grammar:', grammar);
 //console.log('grammar:', grammar.generate());
-fs.writeFileSync('test-grammar.js', grammar.generate());
+filesystem.writeFile('test-grammar.js', grammar.generate());
 //grammar.resolveRules();
 
 //console.log("CGrammar", CGrammar);
@@ -28,7 +22,7 @@ fs.writeFileSync('test-grammar.js', grammar.generate());
 
 filename = './seek_set.c';
 filename = '../pictest/build/mplab/7segtest-16f876a-xc8-debug.mcp';
-src = fs.readFileSync(filename).toString();
+src = filesystem.readFile(filename).toString();
 //let result = CGrammar.compilationUnit(`int seek_set(int fd, seek_pos pos) {if(lseek(fd, (off_t)pos, SET) == -1) return -1; return 0; } `, 0);
 let result = CGrammar.ini(src, 0);
 //console.log('parsed:', result);
@@ -57,7 +51,7 @@ for(let { tok, str } of lex) {
 let rule = grammar.getRule('typeSpecifier');
 //console.log('rule:', rule);
 
-let buffer = fs.readFileSync('./lib/ecmascript/es6.ebnf');
+let buffer = filesystem.readFile('./lib/ecmascript/es6.ebnf');
 
 process.exit(0);
 let parser = new Ebnf2Parser(buffer.toString());

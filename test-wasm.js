@@ -7,7 +7,7 @@ console.error("bpgdec: ", bpgdec);
 */
 
 const fs = require('fs');
-const bytes = fs.readFileSync('./static/wasm/bpgdec.wasm');
+const bytes = filesystem.readFile('./static/wasm/bpgdec.wasm');
 //console.log('bytes: ', bytes);
 
 let importObject = {

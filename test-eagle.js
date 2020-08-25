@@ -1,20 +1,15 @@
 import { EagleDocument, EagleProject } from './lib/eagle.js';
 import PortableFileSystem from './lib/filesystem.js';
+import ConsoleSetup from './consoleSetup.js';
 import { LineList, Rect } from './lib/geom.js';
 import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import DeepDiff from 'deep-diff';
-import { Console } from 'console';
 import { Graph } from './lib/fd-graph.js';
 import ptr from './lib/json-ptr.js';
 import LogJS from './lib/log.js';
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 2, colors: true }
-});
 
 function xmlize(obj, depth = 2) {
   return obj.toXML ? obj.toXML().replace(/>\s*</g, '>\n    <') : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
@@ -238,7 +233,7 @@ async function testEagle(filename) {
   return proj;
 }
 (async () => {
-  let args = process.argv.slice(2);
+  let args = Util.getArgs();
   if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
   for(let arg of args) {
     arg = arg.replace(/\.(brd|sch|lbr)$/i, '');

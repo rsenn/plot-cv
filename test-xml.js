@@ -1,5 +1,5 @@
-import util from 'util';
 import Util from './lib/util.js';
+import ConsoleSetup from './consoleSetup.js';
 import { XPath } from './lib/xml.js';
 import deep from './lib/deep.js';
 import tXml from './lib/tXml.js';
@@ -8,16 +8,10 @@ import { Iterator, IteratorForwarder } from './lib/iterator.js';
 import toSource from './lib/tosource.js';
 import { toXML, Path } from './lib/json.js';
 import { ColorMap } from './lib/draw/colorMap.js';
-import { Console } from 'console';
 import Alea from './lib/alea.js';
 import { Functional } from './lib/functional.js';
 import KolorWheel from './lib/KolorWheel.js';
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 2, colors: true }
-});
 let filesystem;
 
 function readXML(filename) {
@@ -64,6 +58,7 @@ const GeneratePalette = (counts = { h: 3, s: 2, l: 5 }, deltas = { h: 360, s: 10
 };
 
 async function main(...args) {
+  await ConsoleSetup();
   let colors, keys;
   filesystem = await PortableFileSystem();
 
@@ -329,4 +324,4 @@ async function main(...args) {
     Util.log('err:', err);
   }
 }
-main(...process.argv.slice(2));
+main(...Util.getArgs());

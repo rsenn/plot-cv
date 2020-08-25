@@ -1,7 +1,10 @@
 import Util from './lib/util.js';
 import PortableFileSystem from './lib/filesystem.js';
+import ConsoleSetup from './consoleSetup.js';
+
 let filesystem;
 async function main() {
+  await ConsoleSetup();
   let err,
     st,
     outputFile = 'test.txt';

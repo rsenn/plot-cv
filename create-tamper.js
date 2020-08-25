@@ -1,12 +1,12 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
+import ConsoleSetup from './consoleSetup.js';
 import Printer from './lib/ecmascript/printer.js';
 import { ImportStatement, ExportStatement, VariableDeclaration } from './lib/ecmascript/estree.js';
 import { estree, ESNode, CallExpression, Literal } from './lib/ecmascript/estree.js';
 
 import Util from './lib/util.js';
 import path from 'path';
-import { Console } from 'console';
 //import { Path } from './lib/json.js';
 import { ImmutablePath } from './lib/json.js';
 import deep from './lib/deep.js';
@@ -34,11 +34,6 @@ import process from 'process';
 
 Error.stackTraceLimit = 1000;
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 3, colors: true }
-});
 
 let cwd = process.cwd();
 
@@ -49,7 +44,7 @@ let packageFiles;
 let importFiles;
 let moduleList = new SortedMap();
 
-let args = process.argv.slice(2);
+let args = Util.getArgs();
 //[if(args.length == 0) args.push('-');
 
 let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
@@ -131,7 +126,7 @@ function PrefixRemover(reOrStr, replacement = '') {
 function dumpFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
-  fs.writeFileSync(name, data + '\n');
+  filesystem.writeFile(name, data + '\n');
   //console.log(`Wrote ${name}: ${data.length} bytes`);
 }
 
@@ -142,6 +137,7 @@ function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments))
 Error.stackTraceLimit = 100;
 
 async function main(args) {
+  await ConsoleSetup();
   filesystem = await PortableFileSystem();
   const cwd = process.cwd() || fs.realpath('.');
   console.info('cwd=', cwd);
@@ -171,7 +167,7 @@ async function main(args) {
   console.info('moduleAliases=', moduleAliases);
   while(args.length > 0) processFile(args.shift());
   // console.log("result:",r);
-  fs.writeFileSync('new.js', r.join('\n'));
+  filesystem.writeFile('new.js', r.join('\n'));
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
   process.exit(Number(files.length == 0));
 
@@ -187,7 +183,7 @@ async function main(args) {
     removeFile(file);
     let thisdir = path.dirname(file);
     let absthisdir = path.resolve(thisdir);
-    data = fs.readFileSync(file).toString();
+    data = filesystem.readFile(file).toString();
     let ast, error;
     let parser = new ECMAScriptParser(data ? data.toString() : code, file);
     let printer = new Printer({ indent: 4 });

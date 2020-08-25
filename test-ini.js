@@ -1,13 +1,7 @@
 import INIGrammar from './ini-grammar.js';
-import fs from 'fs';
-import { Console } from 'console';
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 10, colors: true }
-});
+import ConsoleSetup from './consoleSetup.js';
 let filename = '../pictest/build/mplab/7segtest-16f876a-xc8-debug.mcp';
-let src = fs.readFileSync(filename).toString();
+let src = filesystem.readFile(filename).toString();
 
 //console.log('src:', src);
 let [done, data, pos] = INIGrammar.ini(src, 0);
@@ -57,4 +51,4 @@ for(let section in sections) {
 
 //console.log('out:', out);
 
-fs.writeFileSync(filename, out);
+filesystem.writeFile(filename, out);

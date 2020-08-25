@@ -1,11 +1,10 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
+import ConsoleSetup from './consoleSetup.js';
 import Printer from './lib/ecmascript/printer.js';
 import { estree, ESNode, CallExpression } from './lib/ecmascript/estree.js';
 
 import Util from './lib/util.js';
-import fs from 'fs';
-import { Console } from 'console';
 import deep from './lib/deep.js';
 import { Path } from './lib/json.js';
 import { SortedMap } from './lib/container/sortedMap.js';
@@ -29,15 +28,10 @@ import process from 'process';
 
 Error.stackTraceLimit = 1000;
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 2, colors: true }
-});
 
 const testfn = () => true;
 const testtmpl = `this is\na test`;
-let args = process.argv.slice(2);
+let args = Util.getArgs();
 if(args.length == 0) args.push('-');
 
 let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
@@ -72,7 +66,7 @@ function dumpFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
-  fs.writeFileSync(name, data + '\n');
+  filesystem.writeFile(name, data + '\n');
 
   //Util.log(`Wrote ${name}: ${data.length} bytes`);
 }
@@ -91,7 +85,7 @@ function main(args) {
     let data, b, ret;
     if(file == '-') {
       file = '/dev/stdin';
-      data = fs.readFileSync(file);
+      data = filesystem.readFile(file);
     }
     //Util.log('file:', file);
     //Util.log('opened:', data);

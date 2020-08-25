@@ -1,14 +1,9 @@
 import { Voronoi, Matrix, Point, PointList, Line, Rect, Size } from './lib/geom.js';
 import Util from './lib/util.js';
-import { Console } from 'console';
+import ConsoleSetup from './consoleSetup.js';
 
 Error.stackTraceLimit = 1000;
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 5, colors: true }
-});
 
 function main(args) {
   let file = 'lib/geom/point.js';
@@ -79,7 +74,7 @@ function main(args) {
 }
 
 try {
-  main(process.argv.slice(2));
+  main(Util.getArgs());
 } catch(error) {
   Util.putError(error);
 }

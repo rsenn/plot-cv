@@ -1,5 +1,6 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import PortableFileSystem from './lib/filesystem.js';
+import ConsoleSetup from './consoleSetup.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
 import { ImportStatement, ExportStatement, VariableDeclaration, MemberExpression, estree, ESNode, CallExpression, Literal } from './lib/ecmascript/estree.js';
@@ -27,53 +28,6 @@ const code = `export const Progress = ({ className, percent, ...props }) => html
   zIndex: '98'
 }}></div></\x24{Overlay}>\`"`;
 
-import process from 'process';
-
-async function ConsoleSetup(options) {
-  Error.stackTraceLimit = 1000;
-
-  const { Console } = await import('console');
-  return (global.console = new Console({
-    stdout: process.stdout,
-    stderr: process.stderr,
-    inspectOptions: { depth: 2, colors: true, ...options }
-  }));
-}
-let cwd = process.cwd();
-
-let searchPath = [];
-let packagesPath = [];
-let moduleAliases;
-let packageFiles;
-let importFiles;
-let moduleList = new SortedMap();
-const removeModulesDir = PrefixRemover([/node_modules\//g, /^\.\//g]);
-
-let args = process.argv.slice(2);
-//[if(args.length == 0) args.push('-');
-
-let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
-
-process.on('uncaughtException', (err, origin) => {
-  fs.writeSync(process.stderr.fd, `Caught exception: ${err}\nException origin: ${origin}\nStack: ${err.stack}`);
-  process.exit();
-});
-/*
-process.on('SIGINT', () => {
-  fs.writeSync(process.stderr.fd, '\nSIGINT - Exit\n');
-  console.log('\nSIGINT - Exit\n');
-
-  finish();
-  process.exit(3);
-});
-
-process.on('exit', () =>
-  Util.once(() => {
-    fs.writeSync(process.stderr.fd, '\nexited\n');
-    console.log('\nexited\n');
-    process.exit();
-  })
-);*/
 
 class ES6Module {
   impExpList = [];
@@ -141,7 +95,7 @@ function PrefixRemover(reOrStr, replacement = '') {
 function dumpFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
-  fs.writeFileSync(name, data + '\n');
+  filesystem.writeFile(name, data + '\n');
   //console.log(`Wrote ${name}: ${data.length} bytes`);
 }
 
@@ -149,11 +103,10 @@ function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments))
   return printer.print(ast);
 }
 
-Error.stackTraceLimit = 100;
 
 async function main(args) {
-  filesystem = await PortableFileSystem();
   await ConsoleSetup();
+  filesystem = await PortableFileSystem();
   const cwd = process.cwd() || filesystem.realpath('.');
   console.info('cwd=', cwd);
   const re = /(util.js|lib\/util)/;
@@ -186,7 +139,7 @@ async function main(args) {
   console.info('moduleAliases=', moduleAliases);
   while(args.length > 0) processFile(args.shift());
   console.log('processed:', ...processed.map((file) => `\n  ${file}`));
-  fs.writeFileSync('resolved.js', r.join('\n'));
+  filesystem.writeFile('resolved.js', r.join('\n'));
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
   process.exit(Number(files.length == 0));
 
@@ -318,7 +271,7 @@ async function main(args) {
 function parseFile(file) {
   let data, error, ast, parser, printer, flat;
   try {
-    data = fs.readFileSync(file).toString();
+    data = filesystem.readFile(file).toString();
     parser = new ECMAScriptParser(data ? data.toString() : code, file);
     printer = new Printer({ indent: 4 });
     ast = parser.parseProgram();

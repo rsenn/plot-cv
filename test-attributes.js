@@ -12,7 +12,6 @@ import Alea from './lib/alea.js';
 import KolorWheel from './lib/KolorWheel.js';
 import ConsoleSetup from './consoleSetup.js';
 
-
 //prettier-ignore
 let filesystem;
 
@@ -29,11 +28,44 @@ const push_back = (arr, ...items) => [...(arr || []), ...items];
 const push_front = (arr, ...items) => [...items, ...(arr || [])];
 
 async function main(...args) {
-  console.log("args:\n  "+args.join("\n  "))
+  console.log('args:\n  ' + args.join('\n  '));
+  console.log('APP_ENV:', await Util.getEnv('APP_ENV'));
+  const varNames = [
+    'CLASSPATH',
+    'COLORTERM',
+    'DEFAULTS_PATH',
+    'DESKTOP_SESSION',
+    'DISPLAY',
+    'EDITOR',
+    'HOME',
+    'LANG',
+    'LANGUAGE',
+    'LESS',
+    'LOGNAME',
+    'OLDPWD',
+    'PAGER',
+    'PATH',
+    'PROMPT_COMMAND',
+    'PWD',
+    'SESSION_MANAGER',
+    'SHELL',
+    'SHLVL',
+    'STY',
+    'TERM',
+    'TERMCAP',
+    'USER',
+    'VISUAL',
+    'WINDOW'
+  ];
+let envEntries =  (Util.chunkArray(await Promise.all(varNames.reduce((acc, n) => [...acc, n, Util.getEnv(n)], [])), 2 ) );
+let envMap = new Map(envEntries);
+  console.log('Environment:', Util.toSource(envEntries, { quote: '"'}).replace(/\n/g, "\\n"));
+  console.log('Environment:', Util.toString(envMap));
+
   filesystem = await PortableFileSystem();
   await ConsoleSetup();
 
-  console.log("OK")
+  console.log('OK');
   let colors, keys;
   let attributes = new Map();
   let numeric = new Set();

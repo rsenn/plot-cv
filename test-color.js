@@ -1,14 +1,9 @@
 import { RGBA } from './lib/color/rgba.js';
 
-import { Console } from 'console';
+import ConsoleSetup from './consoleSetup.js';
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stdout,
-  inspectOptions: { depth: 10 }
-});
 
-let args = process.argv.slice(2);
+let args = Util.getArgs();
 
 let colorStr = args.shift() || '#00f';
 let color = new RGBA(colorStr);

@@ -1,10 +1,9 @@
-import fs from 'fs';
 import Util from './lib/util.js';
 
 function readFile(path) {
   let ret;
   try {
-    ret = fs.readFileSync(path).toString();
+    ret = filesystem.readFile(path).toString();
   } catch(err) {}
   return ret;
 }
@@ -48,7 +47,7 @@ function lineColumn(pos, text) {
 }
 
 function processFile(arg, re) {
-  let str = fs.readFileSync(arg).toString();
+  let str = filesystem.readFile(arg).toString();
   let json = JSON.parse(str);
   //Util.log('json:', json);
   re = typeof re == 'string' ? new RegExp(re) : /.*/;
@@ -83,4 +82,4 @@ function main(args) {
   return 0;
 }
 
-process.exit(main(process.argv.slice(2)));
+process.exit(main(Util.getArgs()));

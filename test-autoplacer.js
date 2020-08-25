@@ -1,16 +1,11 @@
 import Autoplacer from './lib/autoplacer/autoplacer.js';
 import { BBox } from './lib/geom/bbox.js';
+import ConsoleSetup from './consoleSetup.js';
 import { TRBL } from './lib/geom/trbl.js';
 import { Rect } from './lib/geom/rect.js';
 import { Alea } from './lib/alea.js';
 
-import { Console } from 'console';
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 10, colors: true }
-});
 
 let rg = new Alea(1337);
 

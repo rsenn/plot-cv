@@ -1,19 +1,14 @@
 import Util from './lib/util.js';
 import PortableFileSystem from './lib/filesystem.js';
+import ConsoleSetup from './consoleSetup.js';
 import { Point, PointList, Line, BBox } from './lib/geom.js';
 import { SVG } from './lib/dom.js';
 import { toXML } from './lib/json.js';
 import Voronoi from './lib/geom/voronoi.js';
-import { Console } from 'console';
 import { EagleDocument, EagleProject } from './lib/eagle.js';
 
 Error.stackTraceLimit = 1000;
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 5, colors: true }
-});
 
 let filesystem;
 
@@ -96,7 +91,7 @@ async function testVoronoi(filename) {
   //Util.log('svg:', svgFile);
 }
 (() => {
-  let args = process.argv.slice(2);
+  let args = Util.getArgs();
   if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd');
   for(let arg of args) {
     try {

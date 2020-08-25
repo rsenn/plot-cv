@@ -1,6 +1,6 @@
 import Util from './lib/util.js';
 
-export async function ConsoleSetup(options) {
+ async function SetupConsole(options) {
   let ret;
   try {
     Util.tryCatch(() => Error.stackTraceLimit = 1000);
@@ -14,4 +14,7 @@ export async function ConsoleSetup(options) {
   } catch(err) {}
   return Util.tryCatch(() => global.console = ret);
 }
+
+export const ConsoleSetup = Util.once(opts => SetupConsole(opts));
+
 export default ConsoleSetup;

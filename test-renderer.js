@@ -1,20 +1,20 @@
-import fs, { promises as fsPromises } from 'fs';
 import { EagleDocument, Renderer } from './lib/eagle.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
+import ConsoleSetup from './consoleSetup.js';
 import { render, Component } from './lib/preact.mjs';
 import { ColoredText } from './lib/color/coloredText.js';
 import { RGBA, HSLA } from './lib/color.js';
-
 import Util from './lib/util.js';
-import util from 'util';
+import PortableFileSystem from './lib/filesystem.js';
 
-Error.stackTraceLimit = 100;
+let filesystem;
+
 Util.colorCtor = ColoredText;
 
-const debug = (process.env.APP_ENV + '').startsWith('devel'); /*||process.env.NODE_ENV.startsWith('devel')*/
+const debug = Util.getEnv('APP_ENV').startsWith('devel'); /*||process.env.NODE_ENV.startsWith('devel')*/
 
 async function testRenderSchematic(file) {
-  let doc = new EagleDocument((await fsPromises.readFile(`${file}.sch`)).toString());
+  let doc = new EagleDocument(filesystem.readFile(`${file}.sch`));
   //Util.log('doc:', doc.get('eagle/drawing'));
   let renderer = new Renderer(doc, ReactComponent.append, debug);
   //Util.log('renderer:', renderer);
@@ -29,7 +29,7 @@ async function testRenderSchematic(file) {
   let outFile = file.replace(/.*\//g, '').replace(/\.[a-z]+$/, '');
 
   let outStr = ReactComponent.toString(output);
-  fs.writeFileSync(`tmp/${outFile}.schematic.svg`, outStr);
+  filesystem.writeFile(`tmp/${outFile}.schematic.svg`, outStr);
   return outStr.length;
 }
 
@@ -44,13 +44,14 @@ async function testRenderBoard(file) {
 
   let outFile = file.replace(/.*\//g, '').replace(/\.[a-z]+$/, '');
   let outStr = ReactComponent.toString(output);
-  fs.writeFileSync(`tmp/${outFile}.board.svg`, outStr);
+  filesystem.writeFile(`tmp/${outFile}.board.svg`, outStr);
   return outStr.length;
 }
 
 const filename = '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt';
 async function main() {
-  Util.log.setFilters([/(test-rend|.*)/i]);
+  await ConsoleSetup();
+ filesystem = await PortableFileSystem(); Util.log.setFilters([/(test-rend|.*)/i]);
 
   try {
     //Util.log('debug:', debug);
@@ -78,7 +79,7 @@ async function main() {
     console.log(error.message, stack + '');
   }
 }
-main(process.argv.slice(2)).catch((error) => {
+main(Util.getArgs()).catch((error) => {
   const stack = [...error.stack];
   console.log('ERROR:', error.message, stack);
 });

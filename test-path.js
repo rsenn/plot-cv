@@ -1,14 +1,10 @@
 const SvgPath = require('./lib/svg/path.js');
 const { Point, Matrix, SVG, Line, PointList, Polygon } = require('./lib/dom.cjs');
+import ConsoleSetup from './consoleSetup.js';
 const { parseSVG, makeAbsolute } = require('./lib/svg/path-parser.js');
 const { Console } = require('console');
 const PointAtLength = require('point-at-length');
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stdout,
-  inspectOptions: { depth: 10 }
-});
 
 let args = [...process.argv].slice(2);
 

@@ -1,17 +1,13 @@
 import { SourceMap } from './lib/sourceMap.js';
 import PortableFileSystem from './lib/filesystem.js';
+import ConsoleSetup from './consoleSetup.js';
 
-import { Console } from 'console';
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 2, colors: true }
-});
 //prettier-ignore
 let filesystem;
 
 async function main(...args) {
+  await ConsoleSetup();
   filesystem = await PortableFileSystem();
 
   console.log('sourceMap');
@@ -26,7 +22,7 @@ async function main(...args) {
   }
 }
 
-main(...process.argv.slice(2));
+main(...Util.getArgs());
 /*  .then(() => process.exit(0))
   .catch(() => process.exit(1));
 */

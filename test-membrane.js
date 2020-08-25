@@ -1,11 +1,9 @@
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
+import ConsoleSetup from './consoleSetup.js';
 import Util from './lib/util.js';
-import util from 'util';
-import fs from 'fs';
 import { ImmutablePath, PathMapper, toXML, TreeObserver } from './lib/json.js';
 import { ImmutableXPath, parseXPath, XMLIterator } from './lib/xml.js';
-import { Console } from 'console';
 
 const inspect = (arg, depth = 10, colors = true, breakLength = Number.Infinity) => util.inspect(arg, { depth, breakLength, compact: true, showProxy: true, colors });
 const printNode = (node) => {
@@ -24,23 +22,11 @@ Util.toString.defaultOpts = {
 };
 
 const CH = 'children';
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: {
-    depth: 2,
-    colors: true,
-    breakLength: 200,
-    compact: true,
-    showProxy: true,
-    customInspect: true
-  }
-});
 
 Error.stackTraceLimit = 100;
 try {
   function main(...args) {
-    let str = fs.readFileSync(args.length ? args[0] : '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
+    let str = filesystem.readFile(args.length ? args[0] : '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
     let xml = tXml(str)[0];
     const mapper = new PathMapper(xml, parseXPath);
     let observer = new TreeObserver(mapper, false);
@@ -168,5 +154,5 @@ try {
     let u = observer.get(z);
     //Util.log('z:', z);
   }
-  main(...process.argv.slice(2));
+  main(...Util.getArgs());
 } catch(err) {}

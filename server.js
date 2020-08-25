@@ -1,7 +1,6 @@
 import express from 'express';
 import path from 'path';
-import fs, { promises as fsPromises } from 'fs';
-import util from 'util';
+import ConsoleSetup from './consoleSetup.js';
 import Util from './lib/util.js';
 import tXml from './lib/tXml.js';
 import bodyParser from 'body-parser';
@@ -10,7 +9,6 @@ import { Alea } from './lib/alea.js';
 import { Message } from './message.js';
 import crypto from 'crypto';
 import fetch from 'isomorphic-fetch';
-import { Console } from 'console';
 import { exec, spawn, fork, execFile } from 'promisify-child-process';
 
 const port = process.env.PORT || 3000;
@@ -22,11 +20,6 @@ prng.seed(Date.now());
 console.log('random:', prng.uint32());
 console.log('randStr:', Util.randStr(8, null, prng));
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 2, colors: true }
-});
 
 let app = express();
 expressWs(app);
@@ -311,7 +304,7 @@ app.get('/style.css', async (req, res) =>
 );
 
 function getDescription(file) {
-  let str = fs.readFileSync(file).toString();
+  let str = filesystem.readFile(file).toString();
   let r = [...Util.matchAll('<(/)?(board|schematic|library)[ >]', str)]
     .map((m) => m.index)
     .sort((a, b) => a - b)

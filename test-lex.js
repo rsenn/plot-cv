@@ -1,18 +1,12 @@
 import Lexer from './lib/ecmascript/lexer.js';
 import Util from './lib/util.js';
-import fs from 'fs';
-import { Console } from 'console';
+import ConsoleSetup from './consoleSetup.js';
 
 //import process from 'process';
 Error.stackTraceLimit = 1000;
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 20, colors: true }
-});
 
-let args = process.argv.slice(2);
+let args = Util.getArgs();
 if(args.length == 0) args.push('-');
 
 let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
@@ -30,7 +24,7 @@ function main(args) {
     let data, b, ret;
     if(file == '-') file = '/dev/stdin';
     //Util.log('file:', file);
-    data = fs.readFileSync(file);
+    data = filesystem.readFile(file);
     //Util.log('opened:', data);
     let token, error;
 

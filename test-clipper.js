@@ -1,15 +1,10 @@
 import ClipperLib from './lib/clipper-lib.js';
 import { Point, PointList } from './lib/geom.js';
+import ConsoleSetup from './consoleSetup.js';
 import { SVG } from './lib/dom.js';
 import { parse } from './lib/svg/path-parser.js';
-import { Console } from 'console';
 import Shape from './lib/clipper.js';
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 7, colors: true }
-});
 
 const d = 'M 193.54706,178.86683 163.80521,218.90155 116.21174,233.8085 68.945718,217.89373 40.061173,177.23615 40.591015,127.36556 70.332862,87.330839 117.92634,72.423889 165.19236,88.338658 194.0769,128.99624 Z';
 

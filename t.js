@@ -1,17 +1,10 @@
-import fs from 'fs';
 import { EagleElement } from './lib/eagle/element.js';
+import ConsoleSetup from './consoleSetup.js';
 import { EagleDocument } from './lib/eagle/document.js';
 import { EagleProject } from './lib/eagle/project.js';
 import { EagleLocator } from './lib/eagle/reference.js';
 import Util from './lib/util.js';
-import util from 'util';
-import { Console } from 'console';
 import { ansi, text, dingbatCode, inspect, EagleNode } from './lib/eagle/common.js';
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 2, colors: true }
-});
 function dump(o, depth = 2, breakLength = 400) {
   let s;
   if(o instanceof EagleElement) {

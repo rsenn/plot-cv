@@ -1,17 +1,11 @@
 //import RecursiveObject from './lib/proxy/recursiveObject.js';
 
-import fs from 'fs';
+import ConsoleSetup from './consoleSetup.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Util from './lib/util.js';
 
-import { Console } from 'console';
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 3, colors: true }
-});
 
 /*
 class Node extends (Util.proxyObject) {
@@ -75,7 +69,8 @@ const proxyObject = (root, handler) => {
 };
 
 async function main() {
-  let str = fs.readFileSync('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
+  await ConsoleSetup();
+  let str = filesystem.readFile('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
 
   let xml = tXml(str);
   //Util.log('xml:', Util.abbreviate(xml));
@@ -107,4 +102,4 @@ async function main() {
   }
 }
 
-main(process.argv.slice(2));
+main(Util.getArgs());

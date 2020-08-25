@@ -1,11 +1,6 @@
 import { SVG } from './lib/dom.js';
-import { Console } from 'console';
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 7, colors: true }
-});
+import ConsoleSetup from './consoleSetup.js';
 
 const d = 'M 193.54706,178.86683 163.80521,218.90155 116.21174,233.8085 68.945718,217.89373 40.061173,177.23615 40.591015,127.36556 70.332862,87.330839 117.92634,72.423889 165.19236,88.338658 194.0769,128.99624 Z';
 
