@@ -1,8 +1,8 @@
 import { EagleDocument, EagleProject } from './lib/eagle.js';
+import PortableFileSystem from './lib/filesystem.js';
 import { LineList, Rect } from './lib/geom.js';
 import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
-import fs, { promises as fsPromises } from 'fs';
 import deep from './lib/deep.js';
 import DeepDiff from 'deep-diff';
 import { Console } from 'console';
@@ -58,22 +58,7 @@ function testJsonPointer() {
   ptr.assign(pointer2)(data, 'test name');
 }
 
-const filesystem = {
-  readFile(filename) {
-    let data = fs.readFileSync(filename).toString();
-    return data;
-  },
-  writeFile(filename, data, overwrite = true) {
-    return fs.writeFileSync(filename, data, { flag: overwrite ? 'w' : 'wx' });
-  },
-  exists(filename) {
-    return fs.existsSync(filename);
-  },
-  realpath(filename) {
-    return fs.realpathSync(filename);
-  }
-};
-
+let filesystem;
 let graph, project;
 
 async function testGraph(proj) {
@@ -176,6 +161,8 @@ function alignAll(doc) {
 }
 
 async function testEagle(filename) {
+  filesystem = await PortableFileSystem();
+
   console.log('testEagle: ', filename);
   let proj = new EagleProject(filename, filesystem);
   /*

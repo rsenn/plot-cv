@@ -1,4 +1,4 @@
-import fs, { promises as fsPromises } from 'fs';
+import PortableFileSystem from './lib/filesystem.js';
 import util from 'util';
 import Util from './lib/util.js';
 import { XPath } from './lib/xml.js';
@@ -21,15 +21,11 @@ global.console = new Console({
   inspectOptions: { depth: 2, colors: true }
 });
 //prettier-ignore
-const filesystem = {
-  readFile(filename) {let data = fs.readFileSync(filename).toString(); return data; },
-  writeFile(filename, data, overwrite = true) {return fs.writeFileSync(filename, data, { flag: overwrite ? 'w' : 'wx' }); },
-  exists(filename) {return fs.existsSync(filename); },
-  realpath(filename) {return fs.realpathSync(filename); },
-  stat(filename) {return fs.statSync(filename); }
-};
+let filesystem ;
 
-function main(...args) {
+async function main(...args) {
+  filesystem = await PortableFileSystem();
+
   let file;
   let str;
   try {

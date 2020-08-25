@@ -1,25 +1,17 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
+import PortableFileSystem from './lib/filesystem.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
 import { ImportStatement, ExportStatement, VariableDeclaration, MemberExpression, estree, ESNode, CallExpression, Literal } from './lib/ecmascript/estree.js';
 
 import Util from './lib/util.js';
-import fs from 'fs';
 import path from 'path';
-import { Console } from 'console';
 //import { Path } from './lib/json.js';
 import { ImmutablePath } from './lib/json.js';
 import deep from './lib/deep.js';
 import { SortedMap } from './lib/container/sortedMap.js';
-//prettier-ignore
 
-const filesystem = {
-  readFile(filename) {let data = fs.readFileSync(filename).toString(); return data; },
-  writeFile(filename, data, overwrite = true) {return fs.writeFileSync(filename, data, { flag: overwrite ? 'w' : 'wx' }); },
-  exists(filename) {return fs.existsSync(filename); },
-  realpath(filenamee) {return fs.realpathSync(filename); },
-  stat(filename) {return fs.statSync(filename); }
-};
+let filesystem;
 const code = `export const Progress = ({ className, percent, ...props }) => html\`<\x24{Overlay} className=\x24{classNames('progress', 'center', className)} text=\x24{percent + '%'} style=\x24{{
   position: 'relative',
   width: '100%',
@@ -37,14 +29,16 @@ const code = `export const Progress = ({ className, percent, ...props }) => html
 
 import process from 'process';
 
-Error.stackTraceLimit = 1000;
+async function ConsoleSetup(options) {
+  Error.stackTraceLimit = 1000;
 
-global.console = new Console({
-  stdout: process.stdout,
-  stderr: process.stderr,
-  inspectOptions: { depth: 2, colors: true }
-});
-
+  const { Console } = await import('console');
+  return (global.console = new Console({
+    stdout: process.stdout,
+    stderr: process.stderr,
+    inspectOptions: { depth: 2, colors: true, ...options }
+  }));
+}
 let cwd = process.cwd();
 
 let searchPath = [];
@@ -157,8 +151,10 @@ function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments))
 
 Error.stackTraceLimit = 100;
 
-function main(args) {
-  const cwd = process.cwd() || fs.realpath('.');
+async function main(args) {
+  filesystem = await PortableFileSystem();
+  await ConsoleSetup();
+  const cwd = process.cwd() || filesystem.realpath('.');
   console.info('cwd=', cwd);
   const re = /(util.js|lib\/util)/;
   while(/^-/.test(args[0])) {

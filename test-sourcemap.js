@@ -1,6 +1,6 @@
 import { SourceMap } from './lib/sourceMap.js';
+import PortableFileSystem from './lib/filesystem.js';
 
-import fs from 'fs';
 import { Console } from 'console';
 
 global.console = new Console({
@@ -9,15 +9,11 @@ global.console = new Console({
   inspectOptions: { depth: 2, colors: true }
 });
 //prettier-ignore
-const filesystem = {
-  readFile(filename) {let data = fs.readFileSync(filename).toString(); return data; },
-  writeFile(filename, data, overwrite = true) {return fs.writeFileSync(filename, data, { flag: overwrite ? 'w' : 'wx' }); },
-  exists(filename) {return fs.existsSync(filename); },
-  realpath(filename) {return fs.realpathSync(filename); },
-  stat(filename) {return fs.statSync(filename); }
-};
+let filesystem;
 
-/*async*/ function main(...args) {
+async function main(...args) {
+  filesystem = await PortableFileSystem();
+
   console.log('sourceMap');
 
   if(args.length == 0) args = ['htm/dist/htm.module.js.map', 'htm/htm.js.map', 'htm/index.js.map', 'htm/preact.js.map', 'htm/preact/standalone.modern.js.map', 'htm/standalone.js.map'];

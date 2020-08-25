@@ -5,7 +5,6 @@ import { ImportStatement, ExportStatement, VariableDeclaration } from './lib/ecm
 import { estree, ESNode, CallExpression, Literal } from './lib/ecmascript/estree.js';
 
 import Util from './lib/util.js';
-import fs from 'fs';
 import path from 'path';
 import { Console } from 'console';
 //import { Path } from './lib/json.js';

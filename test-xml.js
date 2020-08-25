@@ -1,4 +1,3 @@
-import fs, { promises as fsPromises } from 'fs';
 import util from 'util';
 import Util from './lib/util.js';
 import { XPath } from './lib/xml.js';
@@ -19,14 +18,8 @@ global.console = new Console({
   stderr: process.stderr,
   inspectOptions: { depth: 2, colors: true }
 });
-//prettier-ignore
-const filesystem = {
-  readFile(filename) {let data = fs.readFileSync(filename).toString(); return data; },
-  writeFile(filename, data, overwrite = true) {return fs.writeFileSync(filename, data, { flag: overwrite ? 'w' : 'wx' }); },
-  exists(filename) {return fs.existsSync(filename); },
-  realpath(filename) {return fs.realpathSync(filename); },
-  stat(filename) {return fs.statSync(filename); }
-};
+let filesystem;
+
 function readXML(filename) {
   //Util.log('readXML', filename);
   let data = filesystem.readFile(filename);
@@ -70,8 +63,9 @@ const GeneratePalette = (counts = { h: 3, s: 2, l: 5 }, deltas = { h: 360, s: 10
   return ret; //Util.unique(ret, (a,b) => a.compareTo(b));
 };
 
-function main(...args) {
+async function main(...args) {
   let colors, keys;
+  filesystem = await PortableFileSystem();
 
   //Util.log('main', args);
   if(args.length == 0) args = ['/home/roman/.config/sublime-text-3/Packages/Babel/Next.tmTheme' /*  */];

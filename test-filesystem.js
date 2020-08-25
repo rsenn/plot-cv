@@ -1,11 +1,11 @@
 import Util from './lib/util.js';
 import PortableFileSystem from './lib/filesystem.js';
-
+let filesystem;
 async function main() {
-  let outputFile = 'test.txt';
-  let filesystem = await PortableFileSystem();
-  let err;
-  let st;
+  let err,
+    st,
+    outputFile = 'test.txt';
+  filesystem = await PortableFileSystem();
 
   try {
     // console.log(`filesystem :`, filesystem);

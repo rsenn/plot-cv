@@ -1,10 +1,10 @@
 import Util from './lib/util.js';
+import PortableFileSystem from './lib/filesystem.js';
 import { Point, PointList, Line, BBox } from './lib/geom.js';
 import { SVG } from './lib/dom.js';
 import { toXML } from './lib/json.js';
 import Voronoi from './lib/geom/voronoi.js';
 import { Console } from 'console';
-import fs from 'fs';
 import { EagleDocument, EagleProject } from './lib/eagle.js';
 
 Error.stackTraceLimit = 1000;
@@ -15,23 +15,11 @@ global.console = new Console({
   inspectOptions: { depth: 5, colors: true }
 });
 
-const filesystem = {
-  readFile(filename) {
-    let data = fs.readFileSync(filename).toString();
-    return data;
-  },
-  writeFile(filename, data, overwrite = true) {
-    return fs.writeFileSync(filename, data, { flag: overwrite ? 'w' : 'wx' });
-  },
-  exists(filename) {
-    return fs.existsSync(filename);
-  },
-  realpath(filename) {
-    return fs.realpathSync(filename);
-  }
-};
+let filesystem;
 
-function testVoronoi(filename) {
+async function testVoronoi(filename) {
+  filesystem = await PortableFileSystem();
+
   //Util.log('Loading document: ' + filename);
   let doc = new EagleDocument(filesystem.readFile(filename), null, filename);
 
