@@ -49,7 +49,7 @@ function lineColumn(pos, text) {
 function processFile(arg, re) {
   let str = filesystem.readFile(arg).toString();
   let json = JSON.parse(str);
-  //Util.log('json:', json);
+  //console.log('json:', json);
   re = typeof re == 'string' ? new RegExp(re) : /.*/;
   //if(!(json instanceof Array)) return 1;
 
@@ -64,13 +64,13 @@ function processFile(arg, re) {
       let used = extractRanges(ranges, text);
       let unused = extractRanges(inverted, text);
 
-      /* Util.log('file:', file);
-      //Util.log('obj:', Object.keys(obj));
-      //Util.log('text.length:', text.length);
-      //Util.log('ranges:', ranges);
-      //Util.log('inverted:', inverted);*/
-      //Util.log('used:', used.map(u => u.toString(file).replace(/\n/g, '\\n')).join('\n'));
-      //Util.log('unused:', unused.map(u => u.toString(file)).join('\n\n'));
+      /* console.log('file:', file);
+      //console.log('obj:', Object.keys(obj));
+      //console.log('text.length:', text.length);
+      //console.log('ranges:', ranges);
+      //console.log('inverted:', inverted);*/
+      //console.log('used:', used.map(u => u.toString(file).replace(/\n/g, '\\n')).join('\n'));
+      //console.log('unused:', unused.map(u => u.toString(file)).join('\n\n'));
     } catch(err) {}
   }
 }

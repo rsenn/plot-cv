@@ -23,7 +23,6 @@ Util.toString.defaultOpts = {
 
 const CH = 'children';
 
-Error.stackTraceLimit = 100;
 try {
   function main(...args) {
     let str = filesystem.readFile(args.length ? args[0] : '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
@@ -136,7 +135,7 @@ try {
         .map(([p]) => p + '')
         .join('\n  |');
 
-      //Util.log('result:\n  ', dumps);
+      //console.log('result:\n  ', dumps);
       return [xpath, new Map(selected.map(({ path, value }) => [path2xpath(path).down('*'), value]))];
     });
 
@@ -147,12 +146,12 @@ try {
     let x = new ImmutableXPath('/eagle/drawing/board');
     let drawing = deep.find(xml, (v) => v.tagName == 'drawing');
     let w = new ImmutablePath('children/0/children/0/children/3', true);
-    //Util.log('w:', w.toString());
+    //console.log('w:', w.toString());
     let y = ImmutableXPath.from(w, xml);
-    //Util.log('y:', y, [...y]);
+    //console.log('y:', y, [...y]);
     let z = w.apply(xml);
     let u = observer.get(z);
-    //Util.log('z:', z);
+    //console.log('z:', z);
   }
   main(...Util.getArgs());
 } catch(err) {}

@@ -16,10 +16,10 @@ import ConsoleSetup from './consoleSetup.js';
 let filesystem;
 
 function readXML(filename) {
-  //Util.log('readXML', filename);
+  //console.log('readXML', filename);
   let data = filesystem.readFile(filename);
   let xml = tXml(data);
-  //Util.log('xml:', xml);
+  //console.log('xml:', xml);
   return xml;
 }
 //TODO: Test with tmScheme (XML) and ColorMap

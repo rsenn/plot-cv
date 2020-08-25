@@ -90,8 +90,8 @@ function testPointVector() {
 */
 }
 
-global.test_array = [1, 2, 3, 4, 5, 6];
-global.process = function (contours, hier) {
+globalThis.test_array = [1, 2, 3, 4, 5, 6];
+globalThis.process = function (contours, hier) {
   let areas = [];
 
   let outlines = {
@@ -163,8 +163,8 @@ global.process = function (contours, hier) {
   //console.log("orig.rows =", orig.rows);
   //console.log("orig.cols =", orig.cols);*/
 
-  /*  console.log("contours: ", global.contours[global.contours.length - 1]);
-  //console.log("hier: ", global.hier[global.contours.length - 1]);*/
+  /*  console.log("contours: ", globalThis.contours[globalThis.contours.length - 1]);
+  //console.log("hier: ", globalThis.hier[globalThis.contours.length - 1]);*/
 
   function dumpContour(c) {
     //console.log(`contour #${c.id} length=${(c.length + '').padStart(5, ' ')} bbox=`, c.bbox, ' rect:', c.rect, ' area=', c.area);

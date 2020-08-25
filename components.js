@@ -164,20 +164,31 @@ export const Item = ({ className = 'item', title, tooltip, label, icon, children
 export const Icon = ({ className = 'icon', caption, image, ...props }) => html` <div className=${className} ...${props}>${caption}<img src=${image} /></div> `;
 
 export const Progress = ({ className, percent, ...props }) =>
-  html`<${Overlay} className=${classNames('progress', 'center', className)} text=${percent + '%'} style=${{
-    position: 'relative',
-    width: '100%',
-    height: '1.5em',
-    border: '1px solid black',
-    textAlign: 'center',
-    zIndex: '99'
-  }}><div className=${classNames('progress-bar', 'fill')} style=${{
-    width: percent + '%',
-    position: 'absolute',
-    left: '0px',
-    top: '0px',
-    zIndex: '98'
-  }}></div></${Overlay}>`;
+  h(
+    Overlay,
+    {
+      className: classNames('progress', 'center', className),
+      text: percent + '%',
+      style: {
+        position: 'relative',
+        width: '100%',
+        height: '1.5em',
+        border: '1px solid black',
+        textAlign: 'center',
+        zIndex: '99'
+      }
+    },
+    h('div', {
+      className: classNames('progress-bar', 'fill'),
+      style: {
+        width: percent + '%',
+        position: 'absolute',
+        left: '0px',
+        top: '0px',
+        zIndex: '98'
+      }
+    })
+  );
 
 export const BrowseIcon = (props) =>
   h(

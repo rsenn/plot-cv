@@ -746,7 +746,7 @@ Util.extend = (obj, ...args) => {
   };
   Util.adapter.localStorage = function (s) {
     s = Util.tryCatch(
-      () => !s && global.window,
+      () => !s && globalThis.window,
       (w) => w.localStorage,
       () => s
     );
@@ -1095,7 +1095,7 @@ Util.injectProps = function(options) {
       args.push(props[key]);
     }
     const w = Util.tryCatch(
-      () => global.window,
+      () => globalThis.window,
       (w) => w,
       () => null
     );
@@ -1453,7 +1453,7 @@ Util.injectProps = function(options) {
   };
   Util.deleteCookie = function (name) {
     const w = Util.tryCatch(
-      () => global.window,
+      () => globalThis.window,
       (w) => w,
       () => null
     );
@@ -1593,7 +1593,7 @@ Util.injectProps = function(options) {
       () => {
         let proto = Util.tryCatch(() => (process.env.NODE_ENV === 'production' ? 'https' : null)) || 'http';
         let port = Util.tryCatch(() => (process.env.PORT ? parseInt(process.env.PORT) : process.env.NODE_ENV === 'production' ? 443 : null)) || 3000;
-        let host = Util.tryCatch(() => global.ip) || Util.tryCatch(() => global.host) || Util.tryCatch(() => window.location.host.replace(/:.*/g, '')) || 'localhost';
+        let host = Util.tryCatch(() => globalThis.ip) || Util.tryCatch(() => globalThis.host) || Util.tryCatch(() => window.location.host.replace(/:.*/g, '')) || 'localhost';
         if(req && req.headers && req.headers.host !== undefined) host = req.headers.host.replace(/:.*/, '');
         else Util.tryCatch(() => process.env.HOST !== undefined && (host = process.env.HOST));
         if(req.url !== undefined) return req.url;
@@ -1749,7 +1749,7 @@ Util.injectProps = function(options) {
       () => {}
     );
     return ret;
-    //return !!(global.window && global.window.document);
+    //return !!(globalThis.window && globalThis.window.document);
   };
   Util.isServer = function () {
     return !Util.isBrowser();
@@ -2057,7 +2057,7 @@ console.log("isGenerator",Util.isGenerator(obj));*/
   };
   Util.base64 = (() => {
     const w = Util.tryCatch(
-      () => global.window,
+      () => globalThis.window,
       (w) => w,
       () => null
     );
@@ -2783,7 +2783,7 @@ Stack:${Util.stack.prototype.toString.call(stack, color, stack.columnWidths)}`;
 
       const w =
         Util.tryCatch(
-          () => global.window,
+          () => globalThis.window,
           w => w,
           () => null
         ) || {};
@@ -5302,8 +5302,8 @@ return ${imName};`;
     static getCSS(element, property = undefined, receiver = null) {
       element = typeof element == 'string' ? Element.find(element) : element;
 
-      const w = window !== undefined ? window : global.window;
-      const d = document !== undefined ? document : global.document;
+      const w = window !== undefined ? window : globalThis.window;
+      const d = document !== undefined ? document : globalThis.document;
       //console.log('Element.getCSS ', { w, d, element });
 
       let parent = Util.isObject(element) ? element.parentElement || element.parentNode : null;
@@ -5557,7 +5557,7 @@ return ${imName};`;
       if(isElement(x)) return Element.isat.apply(Element, arguments);
       let args = [...arguments];
       const p = Point(args);
-      const w = global.window;
+      const w = globalThis.window;
       const d = w.document;
       const s = o.all
         ? (e) => {

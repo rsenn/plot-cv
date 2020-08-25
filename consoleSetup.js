@@ -12,7 +12,7 @@ async function SetupConsole(options) {
       inspectOptions: { depth: 2, colors: true, ...options }
     });
   } catch(err) {}
-  return Util.tryCatch(() => (global.console = ret));
+  return Util.tryCatch(() => (globalThis.console = ret));
 }
 
 export const ConsoleSetup = Util.once((opts) => SetupConsole(opts));

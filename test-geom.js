@@ -2,8 +2,6 @@ import { Voronoi, Matrix, Point, PointList, Line, Rect, Size } from './lib/geom.
 import Util from './lib/util.js';
 import ConsoleSetup from './consoleSetup.js';
 
-Error.stackTraceLimit = 1000;
-
 function main(args) {
   let file = 'lib/geom/point.js';
 

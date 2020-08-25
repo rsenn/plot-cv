@@ -61,8 +61,6 @@ import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //c
 Util.colorCtor = ColoredText;
 /* prettier-ignore */ Util.extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, {CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, ColoredText, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon } );
 
-Error.stackTraceLimit = 100;
-
 const prng = new Alea(1598127218);
 let currentProj = trkl.property(window, 'project');
 let layerList = trkl.property(window, 'layers', { value: [] });

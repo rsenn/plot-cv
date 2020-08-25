@@ -7,7 +7,6 @@ import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import { Path } from './lib/json.js';
 import { SortedMap } from './lib/container/sortedMap.js';
-import process from 'process';
 
 const code = `export const Progress = ({ className, percent, ...props }) => html\`<\x24{Overlay} className=\x24{classNames('progress', 'center', className)} text=\x24{percent + '%'} style=\x24{{
   position: 'relative',
@@ -24,8 +23,6 @@ const code = `export const Progress = ({ className, percent, ...props }) => html
   zIndex: '98'
 }}></div></\x24{Overlay}>\`"`;
 
-Error.stackTraceLimit = 1000;
-
 let args = Util.getArgs();
 let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
 
@@ -41,8 +38,7 @@ function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments))
   return printer.print(ast);
 }
 
-Error.stackTraceLimit = 100;
-global.parser = null;
+globalThis.parser = null;
 
 function main(args) {
   if(args.length == 0) args.push('./lib/ecmascript/parser.js');
@@ -51,15 +47,15 @@ function main(args) {
     data = filesystem.readFile(file);
     console.log(`read ${file}:`, Util.abbreviate(data).replace(/\n/g, '\\n'));
     let ast, error;
-    global.parser = new ECMAScriptParser(data ? data.toString() : code, file);
-    global.printer = new Printer({ indent: 4 });
-    global.interpreter = new ECMAScriptInterpreter(util);
+    globalThis.parser = new ECMAScriptParser(data ? data.toString() : code, file);
+    globalThis.printer = new Printer({ indent: 4 });
+    globalThis.interpreter = new ECMAScriptInterpreter(util);
     interpreter.util = util;
     try {
       ast = parser.parseProgram();
       ret = interpreter.run(ast);
       parser.addCommentsToNodes(ast);
-      let imports = [...deep.iterate(ast, (node) => node instanceof CallExpression && /Util.log/.test(printer.print(node)))].map(([node, path]) => node);
+      let imports = [...deep.iterate(ast, (node) => node instanceof CallExpression && /console.log/.test(printer.print(node)))].map(([node, path]) => node);
     } catch(err) {
       error = err;
     }

@@ -1,9 +1,6 @@
-import { ECMAScriptParser } from './lib/ecmascript.js';
-import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
+import { ECMAScriptParser, Printer, Lexer, PathReplacer } from './lib/ecmascript.js';
 import ConsoleSetup from './consoleSetup.js';
-import Printer from './lib/ecmascript/printer.js';
-import { ImportStatement, ExportStatement, VariableDeclaration } from './lib/ecmascript/estree.js';
-import { estree, ESNode, CallExpression, Literal } from './lib/ecmascript/estree.js';
+import { ImportStatement, ExportStatement, VariableDeclaration, estree, ESNode, CallExpression, Literal } from './lib/ecmascript/estree.js';
 
 import Util from './lib/util.js';
 import path from 'path';
@@ -30,10 +27,6 @@ const code = `export const Progress = ({ className, percent, ...props }) => html
   zIndex: '98'
 }}></div></\x24{Overlay}>\`"`;
 
-import process from 'process';
-
-Error.stackTraceLimit = 1000;
-
 let cwd = process.cwd();
 
 let searchPath = [];
@@ -47,27 +40,6 @@ let args = Util.getArgs();
 //[if(args.length == 0) args.push('-');
 
 let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
-
-process.on('uncaughtException', (err, origin) => {
-  fs.writeSync(process.stderr.fd, `Caught exception: ${err}\nException origin: ${origin}\nStack: ${err.stack}`);
-  process.exit();
-});
-
-process.on('SIGINT', () => {
-  fs.writeSync(process.stderr.fd, '\nSIGINT - Exit\n');
-  console.log('\nSIGINT - Exit\n');
-
-  finish();
-  process.exit(3);
-});
-
-process.on('exit', () =>
-  Util.once(() => {
-    fs.writeSync(process.stderr.fd, '\nexited\n');
-    console.log('\nexited\n');
-    process.exit();
-  })
-);
 
 class ES6Module {
   impExpList = [];
@@ -132,8 +104,6 @@ function dumpFile(name, data) {
 function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments)) {
   return printer.print(ast);
 }
-
-Error.stackTraceLimit = 100;
 
 async function main(args) {
   await ConsoleSetup();

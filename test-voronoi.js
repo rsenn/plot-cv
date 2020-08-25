@@ -7,29 +7,27 @@ import { toXML } from './lib/json.js';
 import Voronoi from './lib/geom/voronoi.js';
 import { EagleDocument, EagleProject } from './lib/eagle.js';
 
-Error.stackTraceLimit = 1000;
-
 let filesystem;
 
 async function testVoronoi(filename) {
   filesystem = await PortableFileSystem();
 
-  //Util.log('Loading document: ' + filename);
+  //console.log('Loading document: ' + filename);
   let doc = new EagleDocument(filesystem.readFile(filename), null, filename);
 
-  //Util.log('doc', doc);
+  //console.log('doc', doc);
   let points = new PointList();
 
   for(let element of doc.elements.list) {
     const pkg = element.package;
     let { x, y } = element;
-    //Util.log('element:', element, { x, y });
+    //console.log('element:', element, { x, y });
     let origin = new Point(x, y);
 
     for(let item of pkg.children) {
       if(item.drill !== undefined) {
         let pos = new Point(+item.x, +item.y).add(origin);
-        //Util.log('pos:', pos);
+        //console.log('pos:', pos);
 
         points.push(pos);
       }
@@ -42,13 +40,13 @@ async function testVoronoi(filename) {
 
     bb.update(item.geometry());
 
-    //Util.log('item:', item);
+    //console.log('item:', item);
   }*/
 
   var sites = points.map((p) => p.toObject());
   //xl, xr means x left, x right
   //yt, yb means y top, y bottom
-  //Util.log('bbox:', bb);
+  //console.log('bbox:', bb);
 
   var bbox = { xl: bb.x1, xr: bb.x2, yt: bb.y1, yb: bb.y2 };
   var voronoi = new Voronoi();
@@ -56,10 +54,10 @@ async function testVoronoi(filename) {
   //box will be used to connect unbound edges, and to close open cells
   let result = voronoi.compute(sites, bbox);
   //render, further analyze, etc.
-  //Util.log('result:', Object.keys(result).join(', '));
+  //console.log('result:', Object.keys(result).join(', '));
 
   let { site, cells, edges, vertices, execTime } = result;
-  //Util.log('cells:', cells);
+  //console.log('cells:', cells);
 
   let holes = edges.filter((e) => !e.rSite).map(({ lSite, rSite, ...edge }) => new Point(lSite));
   let rlines = edges.filter((e) => e.rSite).map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
@@ -84,10 +82,10 @@ async function testVoronoi(filename) {
 
   const svg = ['svg', { viewBox: bb.toString() }, [['defs'], ...lines, ...circles, ...polylines]];
 
-  //Util.log('factory:', factory);
+  //console.log('factory:', factory);
   const svgFile = toXML(factory(...svg));
   filesystem.writeFile('output.svg', svgFile);
-  //Util.log('svg:', svgFile);
+  //console.log('svg:', svgFile);
 }
 (() => {
   let args = Util.getArgs();
@@ -96,7 +94,7 @@ async function testVoronoi(filename) {
     try {
       let project = testVoronoi(arg);
     } catch(err) {
-      //Util.log('Err:', err.message, err.stack);
+      //console.log('Err:', err.message, err.stack);
       throw err;
     }
   }

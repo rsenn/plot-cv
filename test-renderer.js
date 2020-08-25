@@ -15,16 +15,16 @@ const debug = Util.getEnv('APP_ENV').startsWith('devel'); /*||process.env.NODE_E
 
 async function testRenderSchematic(file) {
   let doc = new EagleDocument(filesystem.readFile(`${file}.sch`));
-  //Util.log('doc:', doc.get('eagle/drawing'));
+  //console.log('doc:', doc.get('eagle/drawing'));
   let renderer = new Renderer(doc, ReactComponent.append, debug);
-  //Util.log('renderer:', renderer);
+  //console.log('renderer:', renderer);
   let output = renderer.render(doc, null, 0);
-  Util.log('Util.log.filters:', Util.log.filters);
-  Util.log('functionName:', Util.getStackFrame());
+  console.log('console.log.filters:', console.log.filters);
+  console.log('functionName:', Util.getStackFrame());
 
   //  throw new Error('test');
-  //Util.log('output:', output);
-  //Util.log('bounds:', doc.getBounds());
+  //console.log('output:', output);
+  //console.log('bounds:', doc.getBounds());
 
   let outFile = file.replace(/.*\//g, '').replace(/\.[a-z]+$/, '');
 
@@ -36,11 +36,11 @@ async function testRenderSchematic(file) {
 async function testRenderBoard(file) {
   let doc = new EagleDocument((await fsPromises.readFile(`${file}.brd`)).toString());
   let renderer = new Renderer(doc, ReactComponent.append, debug);
-  //Util.log('renderer:', renderer);
+  //console.log('renderer:', renderer);
   let output = renderer.render(doc, null, 0);
 
-  //Util.log('output:', output);
-  //Util.log('bounds:', doc.getBounds());
+  //console.log('output:', output);
+  //console.log('bounds:', doc.getBounds());
 
   let outFile = file.replace(/.*\//g, '').replace(/\.[a-z]+$/, '');
   let outStr = ReactComponent.toString(output);
@@ -52,13 +52,13 @@ const filename = '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt';
 async function main() {
   await ConsoleSetup();
   filesystem = await PortableFileSystem();
-  Util.log.setFilters([/(test-rend|.*)/i]);
+  console.log.setFilters([/(test-rend|.*)/i]);
 
   try {
-    //Util.log('debug:', debug);
+    //console.log('debug:', debug);
 
     let r = [await testRenderSchematic(filename), await testRenderBoard(filename)];
-    Util.log('r:', r);
+    console.log('r:', r);
 
     let ct = new ColoredText();
     ct.write('this is a test ', new RGBA(255, 255, 0), new RGBA(0, 255, 255));
@@ -69,14 +69,14 @@ async function main() {
 
     ct.write(' arg', ' blah');
 
-    //Util.log( ct.toAnsi256());
-    Util.log(ct);
+    //console.log( ct.toAnsi256());
+    console.log(ct);
   } catch(error) {
     const stack = error.stack;
 
-    /*Util.log('argv[0]:', process.argv[0]);
-      Util.log('argv[1]:', Util.scriptDir());
-      Util.log('getURL():', Util.getURL());*/
+    /*console.log('argv[0]:', process.argv[0]);
+      console.log('argv[1]:', Util.scriptDir());
+      console.log('getURL():', Util.getURL());*/
     console.log(error.message, stack + '');
   }
 }

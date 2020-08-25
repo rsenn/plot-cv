@@ -39,7 +39,7 @@ export const INSPECT_MAX_BYTES = 50;
  * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
  * get the Object implementation, which is slower but behaves correctly.
  */
-Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined ? global.TYPED_ARRAY_SUPPORT : typedArraySupport();
+Buffer.TYPED_ARRAY_SUPPORT = globalThis.TYPED_ARRAY_SUPPORT !== undefined ? globalThis.TYPED_ARRAY_SUPPORT : typedArraySupport();
 
 /*
  * Export kMaxLength after typed array support is determined.
