@@ -153,5 +153,5 @@ try {
     let u = observer.get(z);
     //console.log('z:', z);
   }
-  main(...Util.getArgs());
+  Util.callMain(main);
 } catch(err) {}

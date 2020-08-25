@@ -51,4 +51,4 @@ async function main(...args) {
     console.log('err:', err);
   }
 }
-main(...Util.getArgs());
+Util.callMain(main);

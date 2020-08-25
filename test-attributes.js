@@ -107,4 +107,4 @@ async function main(...args) {
   console.log('numeric: ' + printSet([...numeric.values()].sort()));
 }
 Util.callMain(main);
-//main(...Util.getArgs());
+//Util.callMain(main);

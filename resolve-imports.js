@@ -15,7 +15,6 @@ let cwd, filesystem, searchPath, packagesPath, moduleAliases, files;
 
 const removeModulesDir = PrefixRemover([/node_modules\//g, /^\.\//g]);
 
-
 class ES6Module {
   impExpList = [];
 
@@ -224,28 +223,17 @@ async function main(...args) {
         .filter((imp) => processed.indexOf(imp.fromPath) == -1)
         .filter((imp) => !re.test(imp.fromPath));
       imports = imports.filter(({ fromPath, ...module }) => !re.test(fromPath));
-
-      //recurseFiles = recurseFiles.map(([path,module]) => { console.log("module:",module.fromPath); return module.fromPath; });
-
-      //   console.log('processed files:', ...processed);
       console.log(
         `${modulePath}: recurseFiles =`,
         recurseFiles.map((f) => f.fromPath)
       );
       recurseFiles.forEach((imp) => {
-        // console.log('imp', imp);
         processFile(imp.fromPath);
       });
-      let exports = map().filter(([key, value]) => value instanceof ExportStatement);
       let moduleExports = map()
         .filter((entry) => isCJSExport(entry) || isES6Export(entry))
-
-        .map(([path, node]) => [isCJSExport([path, node]) ? path.slice(0, 2) : path, node]); /*
-        .map((p) => [p, deep.get(ast, p)])*/
-
+        .map(([path, node]) => [isCJSExport([path, node]) ? path.slice(0, 2) : path, node]);
       console.log(`${modulePath}: moduleExports:`, moduleExports);
-
-      console.log(`${modulePath}: exports:`, exports); //...exports.map(([p, stmt]) => (Util.isObject(stmt.declarations, 'id', 'value') == Util.isObject(stmt.what, 'value') ? stmt.declarations : stmt)));
     } catch(err) {
       console.error(err.message);
       Util.putStack(err.stack);

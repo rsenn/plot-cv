@@ -21,7 +21,7 @@ async function main(...args) {
   }
 }
 
-main(...Util.getArgs());
+Util.callMain(main);
 /*  .then(() => process.exit(0))
   .catch(() => process.exit(1));
 */
