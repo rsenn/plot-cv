@@ -1,9 +1,6 @@
 import Util from './lib/util.js';
 
 function QuickJSFileSystem(std, os) {
-  /*console.log(`std.open:`, std.open);
-  console.log(`os.realpath:`, os.realpath);*/
-
   const CharWidth = {
     1: Uint8Array,
     2: Uint16Array,
@@ -23,57 +20,51 @@ function QuickJSFileSystem(std, os) {
 
   return {
     readFile(filename) {
-      let errorObj = { errno: 0 };
-      let file = std.open(filename, 'r', errorObj);
-      let size, b;
-      if(!errorObj.errno) {
+      let buf, size, res = { errno: 0 };
+      let file = std.open(filename, 'r', res);
+      if(!res.errno) {
         file.seek(0, std.SEEK_END);
         size = file.tell();
         file.seek(0, std.SEEK_SET);
-        b = new ArrayBuffer(size);
-        file.read(b, 0, size);
-        //b = file.readAsString(/*size*/);
+        buf = new ArrayBuffer(size);
+        file.read(buf, 0, size);
+        //buf = file.readAsString(/*size*/);
         file.close();
-        return ArrayBufToString(b);
+        return ArrayBufToString(buf);
       }
-      return errorObj.errno;
+      return res.errno;
     },
     writeFile(filename, data, overwrite = true) {
-      let errorObj = { errno: 0 };
-      let file = std.open(filename, overwrite ? 'w' : 'wx', errorObj);
-      let b, n, r;
-      console.log('writeFile', filename, data.length, file, errorObj.errno);
-      if(!errorObj.errno) {
-        b = typeof data == 'string' ? StringToArrayBuf(data) : data;
-        n = file.write(b, 0, b.byteLength);
+      let buf, bytes, res = { errno: 0 };
+      let file = std.open(filename, overwrite ? 'w' : 'wx', res);
+      // console.log('writeFile', filename, data.length, file, res.errno);
+      if(!res.errno) {
+        buf = typeof data == 'string' ? StringToArrayBuf(data) : data;
+        bytes = file.write(buf, 0, buf.byteLength);
         file.flush();
-        r = file.close();
-        if(r < 0) errorObj.errno = -r;
-        else return n;
+        res = file.close();
+        if(res < 0) return res;
+        return bytes;
       }
-      return -errorObj.errno;
+      return -res.errno;
     },
     exists(filename) {
-      let errorObj = { errno: 0 };
-      let file = std.open(filename, 'r', errorObj);
-      if(!errorObj.errno) {
-        file.close();
-        return true;
-      }
-      return false;
+      let file = std.open(filename, 'r');
+      let res = file != null;
+      if(file) file.close();
+      return res;
     },
     size(filename) {
-      let errorObj = { errno: 0 };
-      let file = std.open(filename, 'r', errorObj);
-      let size;
-      if(!errorObj.errno) {
+      let bytes, res = { errno: 0 };
+      let file = std.open(filename, 'r', res);
+      if(!res.errno) {
         file.seek(0, std.SEEK_END);
-        size = file.tell();
-
-        file.close();
-        return size;
+        bytes = file.tell();
+        res = file.close();
+        if(res < 0) return res;
+        return bytes;
       }
-      return -errorObj.errno;
+      return -res.errno;
     },
     realpath(filename) {
       let [str, err] = os.realpath(filename);
@@ -84,12 +75,9 @@ function QuickJSFileSystem(std, os) {
 }
 
 function NodeJSFileSystem(fs) {
-  //console.log(`fs :`, fs);
-
   return {
     readFile(filename) {
-      let data = fs.readFileSync(filename);
-      return typeof data.toString == 'function' ? data.toString() : data;
+      return fs.readFileSync(filename, { encoding: 'utf-8' });
     },
     writeFile(filename, data, overwrite = true) {
       let fd = fs.openSync(filename, overwrite ? 'w' : 'wx');
@@ -137,7 +125,7 @@ async function main() {
   let err;
 
   try {
-   // console.log(`filesystem :`, filesystem);
+    // console.log(`filesystem :`, filesystem);
     console.log(`filesystem.writeFile('${outputFile}', ...):`, filesystem.writeFile(outputFile, 'BLAH\nthis is a test!\n\n'));
     console.log(`filesystem.readFile('test-filesystem.js'):`, Util.abbreviate(filesystem.readFile('test-filesystem.js')));
     console.log(`filesystem.realpath('/proc/self'):`, filesystem.realpath('/proc/self'));
