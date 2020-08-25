@@ -1,10 +1,32 @@
 cmake_minimum_required(VERSION 3.0)
 project(plot-cv)
 
+include(FindThreads)
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(CheckLibraryExists)
 include(FindPkgConfig)
+
+message("Thread library: ${CMAKE_THREAD_LIBS_INIT}")
+if(CMAKE_THREAD_LIBS_INIT)
+  set(LIBPTHREAD ${CMAKE_THREAD_LIBS_INIT})
+endif(CMAKE_THREAD_LIBS_INIT)
+
+
+
+check_library_exists(m atan2 /usr/lib HAVE_LIBM)
+if(HAVE_LIBM)
+  set(LIBM m)
+  message("Found math library: ${LIBM}")
+endif(HAVE_LIBM)
+
+check_library_exists(dl dlopen /usr/lib HAVE_LIBDL)
+if(HAVE_LIBDL)
+  set(LIBDL dl)
+  message("Found dlfcn library: ${LIBDL}")
+endif(HAVE_LIBDL)
+
+
 
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH};${CMAKE_INSTALL_PREFIX}/lib")
 set(CMAKE_BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${CMAKE_BINARY_DIR}")
@@ -78,11 +100,11 @@ function(src_program NAME SOURCES)
     file(GLOB "${NAME}_SOURCES" ${SRC})
     list(APPEND SRCS ${${NAME}_SOURCES})
   endforeach()
-  # string(REGEX REPLACE   "src/" "" "${NAME}_SOURCES" "${SOURCES}")
+  string(REGEX REPLACE   ";" " " "SOURCES" "${SRCS}")
+  string(REGEX REPLACE   "/[^ ]*/" "\n  src/" "SOURCES" "${SOURCES}")
   set("${NAME}_SOURCES" ${SRCS})
-  #[[message("${NAME}_SOURCES:"  ${${NAME}SOURCES})
-  ]]
-  # message("${NAME}_SOURCES: ${${NAME}_SOURCES}")
+ 
+   message("${NAME}_SOURCES: ${SOURCES}")
   add_executable(${NAME} src/${NAME}.cpp ${${NAME}_SOURCES})
   target_link_libraries(${NAME} ${ARGN})
   install(TARGETS ${NAME} DESTINATION bin)
@@ -101,7 +123,7 @@ endif(IMGUI_VIEWER)
 
 src_program(
   cli
-  "src/cli.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/js.cpp;src/jsbindings.cpp;src/js_contour.cpp;src/js.cpp;src/js_draw.cpp;src/js_line.cpp;src/js_mat.cpp;src/js_point.cpp;src/js_point_iterator.cpp;src/js_rect.cpp;src/js_size.cpp"
+    "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/js.cpp;src/jsbindings.cpp;src/js_contour.cpp;src/js.cpp;src/js_draw.cpp;src/js_line.cpp;src/js_mat.cpp;src/js_point.cpp;src/js_point_iterator.cpp;src/js_rect.cpp;src/js_size.cpp"
   ${OpenCV_LIBS}
   quickjs
   ${LIBDL}
