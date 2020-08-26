@@ -18,14 +18,14 @@ async function testVoronoi(filename) {
   //console.log('doc', doc);
   let points = new PointList();
 
-  for (let element of doc.elements.list) {
+  for(let element of doc.elements.list) {
     const pkg = element.package;
     let { x, y } = element;
     //console.log('element:', element, { x, y });
     let origin = new Point(x, y);
 
-    for (let item of pkg.children) {
-      if (item.drill !== undefined) {
+    for(let item of pkg.children) {
+      if(item.drill !== undefined) {
         let pos = new Point(+item.x, +item.y).add(origin);
         //console.log('pos:', pos);
 
@@ -69,7 +69,7 @@ async function testVoronoi(filename) {
     create: (tag) => ({ tagName: tag }),
     append_to: (elem, parent) => (parent.children = add(parent.children, elem)),
     setattr: (elem, name, value) => {
-      if (!elem.attributes) elem.attributes = {};
+      if(!elem.attributes) elem.attributes = {};
       elem.attributes[name] = value;
     }
   });
@@ -89,12 +89,11 @@ async function testVoronoi(filename) {
 }
 (() => {
   let args = Util.getArgs();
-  if (args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd');
-  for (let arg of args) {
+  if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd');
+  for(let arg of args) {
     try {
       let project = testVoronoi(arg);
-    }
-    catch (err) {
+    } catch(err) {
       //console.log('Err:', err.message, err.stack);
       throw err;
     }

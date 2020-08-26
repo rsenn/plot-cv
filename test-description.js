@@ -24,7 +24,7 @@ async function main(...args) {
   let file;
   let str;
   try {
-    for (file of args) {
+    for(file of args) {
       str = filesystem.readFile(file);
 
       function getDesc(str) {
@@ -47,8 +47,7 @@ async function main(...args) {
       console.log(`description:\n` + description);
       //r = [...Util.matchAll('<\\/?(description)[^>]*>', str)];
     }
-  }
-  catch (err) {
+  } catch(err) {
     console.log('err:', err);
   }
 }

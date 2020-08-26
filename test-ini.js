@@ -13,16 +13,16 @@ let file_keys = sections.FILE_INFO.keys();
 let file_sections = Object.keys(sections).filter((name) => /FILE/.test(name));
 
 let files = [];
-for (let key of file_keys) {
+for(let key of file_keys) {
   let file = {};
-  for (let sect of file_sections) {
+  for(let sect of file_sections) {
     let value = sections[sect].get(key);
-    if (value) file[sect] = value;
+    if(value) file[sect] = value;
   }
   files.push(file);
 }
 
-for (let sect of file_sections) {
+for(let sect of file_sections) {
   sections[sect].clear();
 }
 
@@ -33,8 +33,8 @@ files = files.filter((file) => !/.*(buffer|comparator|lcd|format|ds18b20|hd44).*
 //console.log('data:', file_sections);
 //console.log('files:', filenames);
 let i = 0;
-for (let file of files) {
-  for (let field in file) {
+for(let file of files) {
+  for(let field in file) {
     sections[field].set(`file_${(i + '').padStart(3, '0')}`, file[field]);
   }
 
@@ -42,9 +42,9 @@ for (let file of files) {
 }
 
 let out = '';
-for (let section in sections) {
+for(let section in sections) {
   out += `[${section}]\r\n`;
-  for (let [key, value] of sections[section]) {
+  for(let [key, value] of sections[section]) {
     out += `${key}=${value}\r\n`;
   }
 }

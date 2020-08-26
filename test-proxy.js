@@ -36,14 +36,14 @@ const proxyObject = (root, handler) => {
 
           //console.log('get ', { key, prop });
 
-          if (key == 'attributes') return prop;
+          if(key == 'attributes') return prop;
 
-          if (key !== 'attributes' && (Util.isObject(prop) || Util.isArray(prop))) return new node([...path, key]);
+          if(key !== 'attributes' && (Util.isObject(prop) || Util.isArray(prop))) return new node([...path, key]);
 
           return handler && handler.get ? handler.get(prop, key) : prop;
         },
         ownKeys(target) {
-          if ('attributes' in value) {
+          if('attributes' in value) {
             //console.log('ownKeys', Object.keys(value.attributes));
 
             return Object.keys(value.attributes);
@@ -85,13 +85,15 @@ async function main() {
   //console.log('children[0].tagName', p.children[0].tagName);
   //console.log('keys(children[0])', Object.keys(p.children[0]));
 
-  let result = deep.select(p, (o) =>
-    //console.log('o:', o);
-    Util.isObject(o) && o.attributes !== undefined && o.name !== undefined
+  let result = deep.select(
+    p,
+    (o) =>
+      //console.log('o:', o);
+      Util.isObject(o) && o.attributes !== undefined && o.name !== undefined
   );
   //console.log('result:', result);
 
-  for (let { path, value } of result) {
+  for(let { path, value } of result) {
     const {
       tagName: type,
       attributes: { name }

@@ -5,7 +5,7 @@ import ConsoleSetup from './consoleSetup.js';
 function main(args) {
   let file = 'lib/geom/point.js';
 
-  if (args.length == 0) args = ['0,0', '50,100', '100,100', '100,50'];
+  if(args.length == 0) args = ['0,0', '50,100', '100,100', '100,50'];
 
   args = args.map((arg) => arg.split(',').map((n) => +n));
 
@@ -72,7 +72,6 @@ function main(args) {
 
 try {
   main(Util.getArgs());
-}
-catch (error) {
+} catch(error) {
   Util.putError(error);
 }

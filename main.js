@@ -193,12 +193,11 @@ function DrawSVG(...args) {
 
     let [tag, attrs, children] = args;
 
-    if (typeof tag == 'string') {
+    if(typeof tag == 'string') {
       console.log('draw(', ...args, ')');
 
       e = factory(tag, { stroke: c.hex(), 'stroke-width': 0.1, ...attrs }, children);
-    }
-    else if (Util.isArray(args[0])) {
+    } else if(Util.isArray(args[0])) {
       let items = args.shift();
 
       document.querySelector('#main > div > div > div > svg:nth-child(2) > g');
@@ -210,14 +209,14 @@ items = items.map(i => isLine(i) ? new Line(i) : null);
 
 console.log("items:",items);
 */
-      for (let item of items) {
+      for(let item of items) {
         // console.log('item:', item);
         let line;
-        if (isLine(item)) line = new Line(item);
+        if(isLine(item)) line = new Line(item);
 
         //console.log('line:', line);
 
-        if (line) {
+        if(line) {
           e = factory('line', { ...line.toObject(), stroke: c.hex(), 'stroke-width': 0.1 });
           append(e);
           console.log('e:', e);
@@ -227,9 +226,8 @@ console.log("items:",items);
       return;
     }
 
-    if (e) append(e);
-  }
-  catch (error) {
+    if(e) append(e);
+  } catch(error) {
     Util.putError(error);
     throw error;
   }
@@ -269,7 +267,7 @@ const ListProjects = async function (opts = {}) {
 
   let response;
 
-  if (!url) {
+  if(!url) {
     response = await fetch('/files.html', {
       //      nocache: true,
       method: 'post',
@@ -280,13 +278,12 @@ const ListProjects = async function (opts = {}) {
       body: JSON.stringify({ descriptions, names, filter })
     });
 
-    if (typeof response.text == 'function') response = await response.text();
+    if(typeof response.text == 'function') response = await response.text();
 
     console.log('response:', Util.abbreviate(response));
 
-    if (response) response = JSON.parse(response);
-  }
-  else {
+    if(response) response = JSON.parse(response);
+  } else {
     response = await ListGithubRepo(url, null, null, '\\.(brd|sch|lbr)$', opts);
     //console.log('response:', response);
     let fileList = response.map((file, i) => ({ ...file, name: response.at(i) }));
@@ -310,30 +307,26 @@ const FetchURL = async (url, allOpts = {}) => {
   let result;
   let ret;
 
-  if (opts.method && opts.method.toUpperCase() == 'POST') nocache = true;
+  if(opts.method && opts.method.toUpperCase() == 'POST') nocache = true;
 
   let fetch = nocache ? window.fetch : FetchCached;
 
-  if (/tmp\//.test(url)) {
+  if(/tmp\//.test(url)) {
     url = url.replace(/.*tmp\//g, '/static/tmp/');
-  }
-  else if (/^\//.test(url)) {
-  }
-  else if (/:\/\//.test(url)) {
-  }
-  else {
+  } else if(/^\//.test(url)) {
+  } else if(/:\/\//.test(url)) {
+  } else {
     url = '/static/' + url;
   }
   try {
     //    if(!nocache) ret = cache.get(url);
 
-    if (!ret) {
+    if(!ret) {
       ret = result = await fetch(url, opts);
 
       //  if(!nocache && typeof ret == 'string' && ret.length > 0) cache.set(url, ret);
     }
-  }
-  catch (error) {
+  } catch(error) {
     Util.putError(error);
     throw error;
   }
@@ -378,9 +371,9 @@ const LoadFile = async (file) => {
 
   let doc = new EagleDocument(await xml, null, filename, null, FileSystem);
 
-  if (/\.brd$/.test(filename)) window.board = doc;
-  if (/\.sch$/.test(filename)) window.schematic = doc;
-  if (/\.lbr$/.test(filename)) window.libraries = add(window.libraries, doc);
+  if(/\.brd$/.test(filename)) window.board = doc;
+  if(/\.sch$/.test(filename)) window.schematic = doc;
+  if(/\.lbr$/.test(filename)) window.libraries = add(window.libraries, doc);
 
   LogJS.info('LoadFile', doc.file);
 
@@ -404,14 +397,14 @@ const SaveFile = async (filename, data, contentType) => {
 const SaveSVG = (window.save = async function save(filename, layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48, 51]) {
   const { doc } = project;
   const { basename, typeName } = doc;
-  if (!filename) filename = `${doc.basename}.${doc.typeName}.svg`;
+  if(!filename) filename = `${doc.basename}.${doc.typeName}.svg`;
 
   let predicate = (element) => {
-    if (!element.hasAttribute('data-layer')) return true;
+    if(!element.hasAttribute('data-layer')) return true;
     //console.log('element:', element);
     const layer = element.getAttribute('data-layer');
     let [number, name] = layer.split(/ /);
-    if (number !== undefined && name !== undefined) return layers.indexOf(+number) != -1 || layers.indexOf(name) != -1;
+    if(number !== undefined && name !== undefined) return layers.indexOf(+number) != -1 || layers.indexOf(name) != -1;
     return true;
   };
   let data = ElementToXML(project.svg, predicate);
@@ -421,8 +414,8 @@ const SaveSVG = (window.save = async function save(filename, layers = [1, 16, 20
 
 const ModifyColors = (fn) => (e) => {
   const { type, buttons } = e;
-  if (type.endsWith('down')) {
-    if (!window.c) window.c = SVG.allColors(project.svg);
+  if(type.endsWith('down')) {
+    if(!window.c) window.c = SVG.allColors(project.svg);
     let { c } = window;
     //console.log('ModifyColors', fn);
 
@@ -458,11 +451,10 @@ const BoardToGerber = async (board = project.name, opts = { fetch: true }) => {
       body: JSON.stringify(request)
     }).then((r) => r.json());
     //response = JSON.parse(response);
-    if (opts.fetch && response.file) {
+    if(opts.fetch && response.file) {
       proj.gerber = response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then((r) => r.text());
     }
-  }
-  catch (err) {
+  } catch(err) {
     response.error = err;
   }
   return response;
@@ -479,10 +471,9 @@ const GerberToGcode = async (gerber = project.name, opts = {}) => {
       body: JSON.stringify(request)
     }).then((r) => r.json());
     /// response = JSON.parse(response);
-    if (opts.fetch && response.file) proj.gcode = response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then((r) => r.text());
+    if(opts.fetch && response.file) proj.gcode = response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then((r) => r.text());
     // response.polylines = GcodeToPolylines(proj, request);
-  }
-  catch (err) {
+  } catch(err) {
     response.error = err;
   }
   response.opts = opts;
@@ -496,13 +487,13 @@ const GcodeToPolylines = (gcode = project.name, opts = {}) => {
   let polyline = null;
   let bb = new BBox();
   const NewPolyline = () => {
-    if (polyline) polylines.push(polyline);
+    if(polyline) polylines.push(polyline);
     polyline = new Polyline([]);
   };
   const f = new Point(-25.4, 25.4);
-  for (let g of gc) {
-    if (g.command == 'G00') NewPolyline();
-    if (isPoint(g.args)) {
+  for(let g of gc) {
+    if(g.command == 'G00') NewPolyline();
+    if(isPoint(g.args)) {
       let p = new Point(g.args.x, g.args.y).prod(f).round(0.01, 2);
       bb.updateXY(p.x, p.y);
       polyline.push(p);
@@ -535,12 +526,12 @@ const GcodeToPolylines = (gcode = project.name, opts = {}) => {
   let props = (polyline, i) => ({ stroke: palette[i], fill: palette[i].prod(1, 1, 1, 0.5) });
   let paths = [];
   let remove = new Set();
-  for (let [i, inner] of holes.entries()) {
+  for(let [i, inner] of holes.entries()) {
     let ids = [i, ...inner];
     //console.log('polygon', { i, ids, inner });
     const polyline = polylines[i];
     inner = [...inner].map((ip) => polylines[ip].counterClockwise);
-    if (inner.length == 0) continue;
+    if(inner.length == 0) continue;
     //console.log('polygon', { polyline, inner });
     let list = [polyline, ...inner];
     paths.push([i, list.map((pl) => pl.toPath()).join('\n')]);
@@ -556,13 +547,13 @@ const GcodeToPolylines = (gcode = project.name, opts = {}) => {
 const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
   const { username, password } = opts;
   let host, path;
-  if (new RegExp('://').test(owner) || (repo == null && dir == null)) {
+  if(new RegExp('://').test(owner) || (repo == null && dir == null)) {
     const url = owner;
     let parts = url
       .replace(/.*:\/\//g, '')
       .replace('/tree/master', '')
       .split('/');
-    while (!/github.com/.test(parts[0])) parts = parts.slice(1);
+    while(!/github.com/.test(parts[0])) parts = parts.slice(1);
     [host, owner, repo, ...path] = parts;
 
     dir = path.join('/');
@@ -579,9 +570,9 @@ const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
   });
   let result = JSON.parse(await response.text());
 
-  if (!Util.isArray(result)) return result;
+  if(!Util.isArray(result)) return result;
 
-  if (filter) {
+  if(filter) {
     const re = new RegExp(filter, 'g');
     result = result.filter(({ name, type }) => type == 'dir' || re.test(name));
   }
@@ -598,14 +589,14 @@ const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
   }));
   const at = (i) => {
     let url = files[i].url;
-    if (!/:\/\//.test(url)) url = base_url + '/' + url;
+    if(!/:\/\//.test(url)) url = base_url + '/' + url;
     return url;
   };
 
   return Object.assign(
     files.map((file, i) => {
       file.toString = () => at(i);
-      if (file.type == 'dir') file.list = async (f = filter) => await ListGithubRepo(at(i), null, null, f, {});
+      if(file.type == 'dir') file.list = async (f = filter) => await ListGithubRepo(at(i), null, null, f, {});
       else {
         let getter = async function () {
           let data = await fetch(at(i), {});
@@ -653,8 +644,7 @@ const ListGithubRepoServer = async (owner, repo, dir, filter) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request)
     });
-  }
-  catch (err) {}
+  } catch(err) {}
   let ret = JSON.parse(response);
   ret.at = function (i) {
     return this.base_url + '/' + this.files[i];
@@ -671,8 +661,7 @@ const LoadDocument = async (project, parentElem) => {
   open(false);
   try {
     project.doc = await LoadFile(project);
-  }
-  catch (error) {
+  } catch(error) {
     console.error(error);
     throw error;
   }
@@ -700,7 +689,7 @@ const LoadDocument = async (project, parentElem) => {
   console.log('project.renderer:', project.renderer);
   console.log('r:', r);
   let aspectRatio = 1;
-  if (r) {
+  if(r) {
     aspectRatio = r.width / r.height;
     sizeListener({ width: r.width });
   }
@@ -710,8 +699,8 @@ const LoadDocument = async (project, parentElem) => {
   const Fence = ({ children, style = {}, sizeListener, aspectListener, ...props }) => {
     const [dimensions, setDimensions] = useState(sizeListener());
     const [aspect, setAspect] = useState(aspectListener());
-    if (sizeListener && sizeListener.subscribe) sizeListener.subscribe((value) => setDimensions(value));
-    if (aspectListener && aspectListener.subscribe) aspectListener.subscribe((value) => setAspect(value));
+    if(sizeListener && sizeListener.subscribe) sizeListener.subscribe((value) => setDimensions(value));
+    if(aspectListener && aspectListener.subscribe) aspectListener.subscribe((value) => setAspect(value));
     return h(
       TransformedElement,
       {
@@ -838,21 +827,20 @@ const LoadDocument = async (project, parentElem) => {
 
 const ChooseDocument = async (project, i) => {
   let r;
-  if (i == undefined) i = project.i || projectFiles.indexOf(project);
+  if(i == undefined) i = project.i || projectFiles.indexOf(project);
 
   const box = Element.findAll('.file')[i];
   LogJS.info('ChooseDocument:', { project, i, box });
   LogJS.info(`${project.name} selected.`);
   try {
-    if (!project.loaded) {
+    if(!project.loaded) {
       let data = await LoadDocument(project, box);
       project.loaded = true;
 
       //console.log('loaded:', project);
     }
     r = project.loaded;
-  }
-  catch (err) {
+  } catch(err) {
     console.error(err);
   }
 
@@ -871,14 +859,14 @@ const GenerateVoronoi = () => {
   console.log('doc', doc);
   let points = new PointList();
 
-  for (let element of doc.elements.list) {
+  for(let element of doc.elements.list) {
     const pkg = element.package;
     let { x, y } = element;
     console.log('element:', element, { x, y });
     let origin = new Point(x, y);
 
-    for (let item of pkg.children) {
-      if (item.drill !== undefined) {
+    for(let item of pkg.children) {
+      if(item.drill !== undefined) {
         let pos = new Point(+item.x, +item.y).add(origin);
         console.log('pos:', pos);
 
@@ -1036,7 +1024,7 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
   let send = ws.send;
   ws.send = (...args) => {
     let [msg] = args;
-    if (!(msg instanceof Message)) msg = new Message(...args);
+    if(!(msg instanceof Message)) msg = new Message(...args);
     return send.call(ws, msg.data);
   };
 
@@ -1144,7 +1132,7 @@ const AppMain = (window.onload = async () => {
   });
 
   currentSearch.subscribe((value) => {
-    if (value) {
+    if(value) {
       focusSearch(false);
 
       setTimeout(() => {
@@ -1167,7 +1155,7 @@ const AppMain = (window.onload = async () => {
     //console.log('opts:', opts);
     let { url, ...restOfOpts } = opts;
     let urls = url ? url.split(/\n/g) : [null];
-    for (url of urls) {
+    for(url of urls) {
       let data = await ListProjects({ ...opts, url });
       let { files } = data;
       //console.log(`Got ${files.length} files`, files);
@@ -1188,7 +1176,7 @@ const AppMain = (window.onload = async () => {
       };
       list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i)));
       let svgs = list.reduce((acc, file) => {
-        if (/\.lbr$/i.test(file.name)) return acc;
+        if(/\.lbr$/i.test(file.name)) return acc;
         file.svg = `${EagleDocument.baseOf(file.name)}.${EagleDocument.typeOf(file.name)}.svg`;
         //console.log(`file.svg = '${file.svg}'`);
         return [...acc, file.svg];
@@ -1198,10 +1186,10 @@ const AppMain = (window.onload = async () => {
       files = (data && data.files) || [];
       //      console.log('filesData:', files);
 
-      for (let svgFile of files) {
-        if (Util.isObject(svgFile) && svgFile.mtime !== undefined) {
+      for(let svgFile of files) {
+        if(Util.isObject(svgFile) && svgFile.mtime !== undefined) {
           const f = list.find((i) => i.svg === svgFile.name);
-          if (Util.isObject(f) && f.mtime !== undefined) {
+          if(Util.isObject(f) && f.mtime !== undefined) {
             const delta = svgFile.mtime - f.mtime;
 
             f.modified = delta < 0;
@@ -1243,14 +1231,14 @@ const AppMain = (window.onload = async () => {
   zoomLog.subscribe((value) => {
     const zoomFactor = ZoomFactor(value);
     console.log('zoomFactor changed', zoomFactor);
-    if (value === 1) throw new Error(value);
+    if(value === 1) throw new Error(value);
   });
 
   const updateIfChanged = (trkl, newValue, callback) => {
     const oldValue = trkl();
-    if (!Array.prototype.every.call(oldValue, (elem, i) => newValue[i] === elem)) return false;
+    if(!Array.prototype.every.call(oldValue, (elem, i) => newValue[i] === elem)) return false;
     trkl(newValue);
-    if (typeof callback == 'function') callback(trkl, oldValue, newValue);
+    if(typeof callback == 'function') callback(trkl, oldValue, newValue);
     return true;
   };
 
@@ -1298,7 +1286,7 @@ const AppMain = (window.onload = async () => {
     class extends LogJS.BaseAppender {
       log(type, time, msg) {
         let d = new Date(time);
-        if (typeof window.pushlog == 'function') window.pushlog([type, Util.isoDate(d).replace(/-/g, ''), d.toLocaleTimeString(navigator.language || 'de'), msg]);
+        if(typeof window.pushlog == 'function') window.pushlog([type, Util.isoDate(d).replace(/-/g, ''), d.toLocaleTimeString(navigator.language || 'de'), msg]);
       }
     }
   );
@@ -1309,7 +1297,7 @@ const AppMain = (window.onload = async () => {
     const [ref, { x, y, width, height }] = useDimensions();
 
     const r = new Rect({ x, y, width, height });
-    if (!loggerRect.equals(r)) {
+    if(!loggerRect.equals(r)) {
       //console.log('Logger.dimensions:', r);
       loggerRect = r;
       logSize({ width });
@@ -1318,7 +1306,7 @@ const AppMain = (window.onload = async () => {
     const result = useResult(async function* () {
       for await (let msg of logger) yield msg;
     });
-    if (result) {
+    if(result) {
       //     console.log("result:",result);
       lines.push(result.value);
     }
@@ -1347,7 +1335,7 @@ const AppMain = (window.onload = async () => {
     const [values, setValues] = useState(dump());
     let lines = [];
     dump.subscribe((value) => setValues(value));
-    for (let [key, value] of Object.entries(values)) lines.push([key, value]);
+    for(let [key, value] of Object.entries(values)) lines.push([key, value]);
     return h(
       'table',
       { border: '0', cellpadding: 3, cellspacing: 0, className: 'dumper' },
@@ -1359,14 +1347,13 @@ const AppMain = (window.onload = async () => {
     const [inputText, setInputText] = useState('');
     const handler = (e) => {
       const { target } = e;
-      if (e.type.endsWith('down') && e.keyCode == 13) {
+      if(e.type.endsWith('down') && e.keyCode == 13) {
         const value = target.value || inputText;
-        if (value != '') {
-          if (typeof onCommand == 'function') onCommand(value);
+        if(value != '') {
+          if(typeof onCommand == 'function') onCommand(value);
           setInputText('');
         }
-      }
-      else {
+      } else {
         setInputText(target.value);
       }
     };
@@ -1428,7 +1415,7 @@ const AppMain = (window.onload = async () => {
             caption: BrowseIcon(),
 
             fn: (e) => {
-              if (e.type.endsWith('down')) {
+              if(e.type.endsWith('down')) {
                 //console.log('file list push', e);
                 open(!open());
               }
@@ -1541,20 +1528,20 @@ const AppMain = (window.onload = async () => {
     (event) => {
       const { x, y, index, buttons, start, type, target } = event;
 
-      if (type.endsWith('end') || type.endsWith('up')) return cancel();
-      if (event.buttons === 0 && type.endsWith('move')) return cancel();
+      if(type.endsWith('end') || type.endsWith('up')) return cancel();
+      if(event.buttons === 0 && type.endsWith('move')) return cancel();
       // if(event.index > 0) console.log('touch', { x, y, index, buttons, type, target }, container);
-      if (event.buttons & 2) return cancel();
-      if (!move) {
+      if(event.buttons & 2) return cancel();
+      if(!move) {
         let box = ((e) => {
           do {
-            if (['main', 'console'].indexOf(e.getAttribute('id')) != -1) return e;
-          } while ((e = e.parentElement));
+            if(['main', 'console'].indexOf(e.getAttribute('id')) != -1) return e;
+          } while((e = e.parentElement));
         })(target);
         //        let box = Element.find('#main').firstElementChild;
         const id = box && box.getAttribute('id');
 
-        if (id == 'console') {
+        if(id == 'console') {
           const rects = [true, false].map((border) => Element.rect(box, { border }));
 
           let p = new Point(start.x + x, start.y + y);
@@ -1580,22 +1567,21 @@ const AppMain = (window.onload = async () => {
           box.style.cursor = `${compass}-resize`;
         }
 
-        if (box) window.move = move = Element.moveRelative(box, null, id == 'console' ? ['right', 'bottom'] : ['left', 'top']);
+        if(box) window.move = move = Element.moveRelative(box, null, id == 'console' ? ['right', 'bottom'] : ['left', 'top']);
         return;
       }
-      if (move && event.buttons == 0) return cancel();
+      if(move && event.buttons == 0) return cancel();
 
-      if (event.index > 0) {
+      if(event.index > 0) {
         let rel = new Point(event);
         let absolute = new Point(start).add(rel);
 
-        if (move) {
-
+        if(move) {
           /*  window.crosshair.show = true;
           window.crosshair.position = absolute;*/
 
           //          console.log('move', ...[...rel], ...[...absolute]);
-          if (true || event.buttons > 0) move(rel.x, rel.y);
+          if(true || event.buttons > 0) move(rel.x, rel.y);
           else move = move.jump();
         }
       }
@@ -1684,7 +1670,7 @@ const AppMain = (window.onload = async () => {
     const clientArea = Element.rect('body > div');
     const sideBar = Element.rect('.sidebar');
 
-    if (sideBar.x2 > clientArea.x1) {
+    if(sideBar.x2 > clientArea.x1) {
       clientArea.width -= sideBar.x2;
       clientArea.x = sideBar.x2;
       clientArea.width = window.innerWidth - clientArea.x;
@@ -1698,7 +1684,7 @@ const AppMain = (window.onload = async () => {
     const { target, currentTarget, buttons, altKey, ctrlKey, shiftKey } = event;
     const pos = new Point(clientX, clientY);
 
-    if (!pos.inside(clientArea)) return;
+    if(!pos.inside(clientArea)) return;
 
     const wheelPos = -event.deltaY.toFixed(2);
     zoomVal = altKey || ctrlKey || shiftKey ? 0 : Util.clamp(-100, 200, zoomVal + wheelPos * 0.1);
@@ -1722,7 +1708,7 @@ function AdjustZoom() {
   let t = window.transform;
   //console.log('t:', t);
 
-  if (!t.scaling) t.scale(zoom, zoom);
+  if(!t.scaling) t.scale(zoom, zoom);
   else {
     t.scaling.x = zoom;
     t.scaling.y = zoom;

@@ -1,7 +1,7 @@
 import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
 
 function getDimensionObject(node) {
-  if (typeof node == 'object' && node != null && node.base) node = node.base;
+  if(typeof node == 'object' && node != null && node.base) node = node.base;
   //  console.log('getDimensionObject', node);
 
   let rect = node.getBoundingClientRect();
@@ -33,25 +33,22 @@ export function useDimensions() {
   let ref = useCallback((node) => {
     setNode(node);
   }, []);
-  useLayoutEffect(
-    () => {
-      if (node) {
-        let measure = function measure() {
-          return window.requestAnimationFrame(() => setDimensions(getDimensionObject(node)));
+  useLayoutEffect(() => {
+    if(node) {
+      let measure = function measure() {
+        return window.requestAnimationFrame(() => setDimensions(getDimensionObject(node)));
+      };
+      measure();
+      if(liveMeasure) {
+        window.addEventListener('resize', measure);
+        window.addEventListener('scroll', measure);
+        return function () {
+          window.removeEventListener('resize', measure);
+          window.removeEventListener('scroll', measure);
         };
-        measure();
-        if (liveMeasure) {
-          window.addEventListener('resize', measure);
-          window.addEventListener('scroll', measure);
-          return function () {
-            window.removeEventListener('resize', measure);
-            window.removeEventListener('scroll', measure);
-          };
-        }
       }
-    },
-    [node]
-  );
+    }
+  }, [node]);
   return [ref, dimensions, node];
 }
 export default useDimensions;

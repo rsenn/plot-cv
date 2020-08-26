@@ -15,28 +15,28 @@ function _test() {
     /*#__PURE__*/ _regeneratorRuntime.mark(function _callee() {
       let i;
       return _regeneratorRuntime.wrap((_context) => {
-        while (1)
+        while(1)
           switch ((_context.prev = _context.next)) {
-          case 0:
-            i = 0;
+            case 0:
+              i = 0;
 
-          case 1:
-            if (!(i < 10)) {
-              _context.next = 7;
+            case 1:
+              if(!(i < 10)) {
+                _context.next = 7;
+                break;
+              }
+
+              _context.next = 4;
+              return i;
+
+            case 4:
+              i++;
+              _context.next = 1;
               break;
-            }
 
-            _context.next = 4;
-            return i;
-
-          case 4:
-            i++;
-            _context.next = 1;
-            break;
-
-          case 7:
-          case 'end':
-            return _context.stop();
+            case 7:
+            case 'end':
+              return _context.stop();
           }
       }, _callee);
     })

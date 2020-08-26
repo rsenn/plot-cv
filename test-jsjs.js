@@ -29,8 +29,8 @@ let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
 main(args);
 
 function dumpFile(name, data) {
-  if (Util.isArray(data)) data = data.join('\n');
-  if (typeof data != 'string') data = '' + data;
+  if(Util.isArray(data)) data = data.join('\n');
+  if(typeof data != 'string') data = '' + data;
   filesystem.writeFile(name, data + '\n');
 }
 
@@ -41,8 +41,8 @@ function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments))
 globalThis.parser = null;
 
 function main(args) {
-  if (args.length == 0) args.push('./lib/ecmascript/parser.js');
-  for (let file of args) {
+  if(args.length == 0) args.push('./lib/ecmascript/parser.js');
+  for(let file of args) {
     let data, b, ret;
     data = filesystem.readFile(file);
     console.log(`read ${file}:`, Util.abbreviate(data).replace(/\n/g, '\\n'));
@@ -56,18 +56,16 @@ function main(args) {
       ret = interpreter.run(ast);
       parser.addCommentsToNodes(ast);
       let imports = [...deep.iterate(ast, (node) => node instanceof CallExpression && /console.log/.test(printer.print(node)))].map(([node, path]) => node);
-    }
-    catch (err) {
+    } catch(err) {
       error = err;
     }
     files[file] = finish(error);
-    if (!error) {
+    if(!error) {
       const output_file = file.replace(/.*\/?/, '').replace(/\.[^.]*$/, '') + '.es';
       const output = printAst(ast, parser.comments, printer);
       console.log('ret:', ret);
       dumpFile(output_file, output);
-    }
-    else {
+    } else {
       const pos = error.pos;
       console.log(pos && pos.toString ? error.pos.toString() : pos);
       Util.putError(error);
@@ -80,18 +78,18 @@ function main(args) {
 }
 function finish(err) {
   let fail = !!err;
-  if (fail) {
+  if(fail) {
     err.stack = PathReplacer()('' + err.stack)
       .split(/\n/g)
       .filter((s) => !/esfactory/.test(s))
       .join('\n');
   }
-  if (err) {
+  if(err) {
   }
   let lexer = parser.lexer;
   let t = [];
   dumpFile('trace.log', parser.trace());
-  if (fail) {
+  if(fail) {
   }
   return !fail;
 }

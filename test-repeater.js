@@ -41,7 +41,6 @@ async function main() {
 }
 try {
   main(Util.getArgs());
-}
-catch (err) {
+} catch(err) {
   console.error('error:', err);
 }

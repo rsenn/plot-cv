@@ -9,26 +9,23 @@ import net from 'net';
 function Proxy(obj) {
   const p = this instanceof Proxy ? this : {};
 
-  for (let prop in obj) {
+  for(let prop in obj) {
     const v = obj[prop];
 
-    if (Util.isIpAddress(v)) {
+    if(Util.isIpAddress(v)) {
       p.ip = v;
-    }
-    else if (Util.isPortNumber(v)) {
+    } else if(Util.isPortNumber(v)) {
       p.port = +v;
-    }
-    else if (/proto/i.test(prop)) {
+    } else if(/proto/i.test(prop)) {
       p.protocol = Util.isArray(v) ? v[0] : v;
-      if (/https/.test(p.protocol)) p.protocol = 'http';
-    }
-    else if (/(country|source)/i.test(prop)) {
+      if(/https/.test(p.protocol)) p.protocol = 'http';
+    } else if(/(country|source)/i.test(prop)) {
       p[prop] = v;
     }
   }
   const propNames = ['protocol', 'ip', 'port', 'country', 'source'];
   let i = propNames.findIndex((prop) => p[prop] === undefined);
-  if (i != -1) {
+  if(i != -1) {
     throw new Error(`Property '${propNames[i]}' missing on: ` + Util.toSource(p));
   }
   // console.log('new proxy:', p);
@@ -74,7 +71,7 @@ Proxy.prototype.ping = function () {
     function finish(msg, start = -1, end = Date.now()) {
       proxy.time = start >= 0 ? end - start : Number.Infinity;
       tcp.destroy();
-      if (msg) console.error(msg);
+      if(msg) console.error(msg);
       start < 0 ? reject(msg) : resolve(proxy);
     }
   });
@@ -85,7 +82,7 @@ function main() {
     new Repeater(async (push, stop) => {
       try {
         const proxyList = new ProxyList();
-        for (const p of await proxyList.getByCountryCode('DE')) {
+        for(const p of await proxyList.getByCountryCode('DE')) {
           let proxy = new Proxy({
             source: 'free-proxy',
             ...p
@@ -94,14 +91,13 @@ function main() {
           console.log('\nPROXY:', proxy, check, '\n');
           push(proxy);
         }
-      }
-      catch (error) {
+      } catch(error) {
         stop(new Error(error));
       }
     }),
     new Repeater(async (push, stop) => {
       proxynova(['de', 'at'], 1000, async (err, proxies) => {
-        for (let p of proxies)
+        for(let p of proxies)
           await new Proxy(p)
             //.ping()
             .then(push)
@@ -155,8 +151,7 @@ function main() {
         await writeResults(results, 'txt');
         await writeResults(results, 'json');
       }
-    }
-    catch (err) {
+    } catch(err) {
       console.error(err); // TimeoutError: 1000 ms elapsed
     }
 
@@ -166,8 +161,7 @@ function main() {
 
 try {
   main();
-}
-catch (err) {
+} catch(err) {
   console.log('Top-level error:', err);
 }
 

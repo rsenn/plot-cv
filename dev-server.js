@@ -12,7 +12,7 @@ app.prepare().then(() => {
   createServer((req, res) => {
     handle(req, res, parse(req.url, true));
   }).listen(port, (err) => {
-    if (err) throw err;
+    if(err) throw err;
     //console.log(`> Ready on http://localhost:${port}`);
   });
 });

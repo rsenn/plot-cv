@@ -31,9 +31,7 @@ function calculateVelocity(delta, delta_t, len) {
  */
 
 function calculateVelocities(delta, delta_t) {
-  return delta_t
-    ? delta.map((v) => v / delta_t)
-    : Array(delta.length).fill(0);
+  return delta_t ? delta.map((v) => v / delta_t) : Array(delta.length).fill(0);
 }
 
 /**
@@ -95,22 +93,22 @@ function rubberband2(distance, constant) {
 }
 
 function rubberband(distance, dimension, constant) {
-  if (dimension === 0 || Math.abs(dimension) === Infinity) return rubberband2(distance, constant);
+  if(dimension === 0 || Math.abs(dimension) === Infinity) return rubberband2(distance, constant);
   return (distance * dimension * constant) / (dimension + constant * distance);
 }
 
 function rubberbandIfOutOfBounds(position, min, max, constant) {
-  if (constant === void 0) {
+  if(constant === void 0) {
     constant = 0.15;
   }
 
-  if (constant === 0) return minMax(position, min, max);
+  if(constant === 0) return minMax(position, min, max);
 
-  if (position < min) {
+  if(position < min) {
     return -rubberband(min - position, max - min, constant) + min;
   }
 
-  if (position > max) {
+  if(position > max) {
     return rubberband(position - max, max - min, constant) + max;
   }
 
@@ -118,18 +116,18 @@ function rubberbandIfOutOfBounds(position, min, max, constant) {
 }
 
 function _defineProperties(target, props) {
-  for (let i = 0; i < props.length; i++) {
+  for(let i = 0; i < props.length; i++) {
     let descriptor = props[i];
     descriptor.enumerable = descriptor.enumerable || false;
     descriptor.configurable = true;
-    if ('value' in descriptor) descriptor.writable = true;
+    if('value' in descriptor) descriptor.writable = true;
     Object.defineProperty(target, descriptor.key, descriptor);
   }
 }
 
 function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
+  if(protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if(staticProps) _defineProperties(Constructor, staticProps);
   return Constructor;
 }
 
@@ -137,11 +135,11 @@ function _extends() {
   _extends =
     Object.assign ||
     function (target) {
-      for (let i = 1; i < arguments.length; i++) {
+      for(let i = 1; i < arguments.length; i++) {
         let source = arguments[i];
 
-        for (let key in source) {
-          if (Object.prototype.hasOwnProperty.call(source, key)) {
+        for(let key in source) {
+          if(Object.prototype.hasOwnProperty.call(source, key)) {
             target[key] = source[key];
           }
         }
@@ -160,14 +158,14 @@ function _inheritsLoose(subClass, superClass) {
 }
 
 function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
+  if(source == null) return {};
   let target = {};
   let sourceKeys = Object.keys(source);
   let key, i;
 
-  for (i = 0; i < sourceKeys.length; i++) {
+  for(i = 0; i < sourceKeys.length; i++) {
     key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
+    if(excluded.indexOf(key) >= 0) continue;
     target[key] = source[key];
   }
 
@@ -175,7 +173,7 @@ function _objectWithoutPropertiesLoose(source, excluded) {
 }
 
 function _assertThisInitialized(self) {
-  if (self === void 0) {
+  if(self === void 0) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
   }
 
@@ -183,18 +181,18 @@ function _assertThisInitialized(self) {
 }
 
 function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === 'string') return _arrayLikeToArray(o, minLen);
+  if(!o) return;
+  if(typeof o === 'string') return _arrayLikeToArray(o, minLen);
   let n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === 'Object' && o.constructor) n = o.constructor.name;
-  if (n === 'Map' || n === 'Set') return Array.from(n);
-  if (n === 'Arguments' || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+  if(n === 'Object' && o.constructor) n = o.constructor.name;
+  if(n === 'Map' || n === 'Set') return Array.from(n);
+  if(n === 'Arguments' || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 
 function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
+  if(len == null || len > arr.length) len = arr.length;
 
-  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+  for(var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
 
   return arr2;
 }
@@ -202,10 +200,10 @@ function _arrayLikeToArray(arr, len) {
 function _createForOfIteratorHelperLoose(o) {
   let i = 0;
 
-  if (typeof Symbol === 'undefined' || o[Symbol.iterator] == null) {
-    if (Array.isArray(o) || (o = _unsupportedIterableToArray(o)))
+  if(typeof Symbol === 'undefined' || o[Symbol.iterator] == null) {
+    if(Array.isArray(o) || (o = _unsupportedIterableToArray(o)))
       return function () {
-        if (i >= o.length)
+        if(i >= o.length)
           return {
             done: true
           };
@@ -225,12 +223,12 @@ function _createForOfIteratorHelperLoose(o) {
 function noop() {} // returns a function that chains all functions given as parameters
 
 let chainFns = function chainFns() {
-  for (var _len = arguments.length, fns = new Array(_len), _key = 0; _key < _len; _key++) {
+  for(var _len = arguments.length, fns = new Array(_len), _key = 0; _key < _len; _key++) {
     fns[_key] = arguments[_key];
   }
 
   return function () {
-    for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+    for(var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
       args[_key2] = arguments[_key2];
     }
 
@@ -356,8 +354,7 @@ function supportsGestureEvents() {
     // TODO [TS] possibly find GestureEvent definitions?
     // @ts-ignore: no type definitions for webkit GestureEvents
     return 'constructor' in GestureEvent;
-  }
-  catch (e) {
+  } catch(e) {
     return false;
   }
 }
@@ -383,7 +380,7 @@ function getModifierKeys(event) {
 }
 
 function getTouchEvents(event) {
-  if ('touches' in event) {
+  if('touches' in event) {
     let touches = event.touches,
       changedTouches = event.changedTouches;
     return touches.length > 0 ? touches : changedTouches;
@@ -532,7 +529,7 @@ let Controller = function Controller() {
 
     let domTarget = _this.getDomTarget();
 
-    if (domTarget) {
+    if(domTarget) {
       removeListeners(domTarget, _this.domListeners, _this.config.eventOptions);
       _this.domListeners = [];
     }
@@ -552,7 +549,7 @@ let Controller = function Controller() {
    */
 
   this.addWindowListeners = function (stateKey, listeners) {
-    if (!_this.config.window) return; // we use this.windowListeners to keep track of the listeners we add
+    if(!_this.config.window) return; // we use this.windowListeners to keep track of the listeners we add
 
     _this.windowListeners[stateKey] = listeners;
     addListeners(_this.config.window, listeners, _this.config.eventOptions);
@@ -563,10 +560,10 @@ let Controller = function Controller() {
    */
 
   this.removeWindowListeners = function (stateKey) {
-    if (!_this.config.window) return;
+    if(!_this.config.window) return;
     let listeners = _this.windowListeners[stateKey];
 
-    if (listeners) {
+    if(listeners) {
       removeListeners(_this.config.window, listeners, _this.config.eventOptions);
       delete _this.windowListeners[stateKey];
     }
@@ -577,7 +574,6 @@ let Controller = function Controller() {
    */
 
   this.addDomTargetListeners = function (target) {
-
     /** We iterate on the entries of this.binding for each event, then we chain
      * the array of functions mapped to it and push them to this.domListeners
      */
@@ -600,7 +596,7 @@ let Controller = function Controller() {
   this.addBindings = function (eventNames, fn) {
     let eventNamesArray = !Array.isArray(eventNames) ? [eventNames] : eventNames;
     eventNamesArray.forEach((eventName) => {
-      if (_this.bindings[eventName]) _this.bindings[eventName].push(fn);
+      if(_this.bindings[eventName]) _this.bindings[eventName].push(fn);
       else _this.bindings[eventName] = [fn];
     });
   };
@@ -625,7 +621,7 @@ let Controller = function Controller() {
 
   this.getBind = function () {
     // If config.domTarget is set we add event listeners to it and return the clean function.
-    if (_this.config.domTarget) {
+    if(_this.config.domTarget) {
       let domTarget = _this.getDomTarget();
 
       domTarget && _this.addDomTargetListeners(domTarget);
@@ -661,17 +657,17 @@ function useRecognizers(handlers, classes, config, nativeHandlers) {
     let bind = function bind() {
       current.resetBindings();
 
-      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
         args[_key] = arguments[_key];
       }
 
-      for (var _iterator = _createForOfIteratorHelperLoose(classes), _step; !(_step = _iterator()).done; ) {
+      for(var _iterator = _createForOfIteratorHelperLoose(classes), _step; !(_step = _iterator()).done; ) {
         let RecognizerClass = _step.value;
         new RecognizerClass(current, args).addBindings();
       } // we also add event bindings for native handlers
 
-      if (controller.nativeRefs) {
-        for (let eventName in controller.nativeRefs) {
+      if(controller.nativeRefs) {
+        for(let eventName in controller.nativeRefs) {
           current.addBindings(
             eventName, // @ts-ignore we're cheating when it comes to event type :(
             controller.nativeRefs[eventName]
@@ -717,7 +713,7 @@ let Recognizer = /*#__PURE__*/ (function () {
   function Recognizer(stateKey, controller, args) {
     let _this = this;
 
-    if (args === void 0) {
+    if(args === void 0) {
       args = [];
     }
 
@@ -729,11 +725,11 @@ let Recognizer = /*#__PURE__*/ (function () {
     this.setTimeout = function (callback, ms) {
       let _window;
 
-      if (ms === void 0) {
+      if(ms === void 0) {
         ms = 140;
       }
 
-      for (var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+      for(var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
         args[_key - 2] = arguments[_key];
       }
 
@@ -789,14 +785,13 @@ let Recognizer = /*#__PURE__*/ (function () {
      */
 
     this.fireGestureHandler = function (forceFlag) {
-
       /**
        * If the gesture has been blocked (this can happen when the gesture has started in an unwanted direction),
        * clean everything and don't do anything.
        */
-      if (_this.state._blocked) {
+      if(_this.state._blocked) {
         // we need debounced gestures to end by themselves
-        if (!_this.debounced) {
+        if(!_this.debounced) {
           _this.state._active = false;
 
           _this.clean();
@@ -808,7 +803,7 @@ let Recognizer = /*#__PURE__*/ (function () {
       let _this$state$_intentio = _this.state._intentional,
         intentionalX = _this$state$_intentio[0],
         intentionalY = _this$state$_intentio[1];
-      if (!forceFlag && intentionalX === false && intentionalY === false) return null;
+      if(!forceFlag && intentionalX === false && intentionalY === false) return null;
       let _this$state = _this.state,
         _active = _this$state._active,
         active = _this$state.active;
@@ -825,7 +820,7 @@ let Recognizer = /*#__PURE__*/ (function () {
 
       _this.state.memo = newMemo !== void 0 ? newMemo : _this.state.memo; // Cleans the gesture when the gesture is no longer active.
 
-      if (!_active) _this.clean();
+      if(!_active) _this.clean();
       return state;
     };
   } // Returns the gesture config
@@ -884,7 +879,7 @@ let Recognizer = /*#__PURE__*/ (function () {
    */
 
   _proto.getMovement = function getMovement(values, state) {
-    if (state === void 0) {
+    if(state === void 0) {
       state = this.state;
     }
 
@@ -911,11 +906,11 @@ let Recognizer = /*#__PURE__*/ (function () {
      * For both dimensions of the gesture, check its intentionality on each frame.
      */
 
-    if (i0 === false) {
+    if(i0 === false) {
       i0 = getIntentionalDisplacement(_m0, t0);
     }
 
-    if (i1 === false) {
+    if(i1 === false) {
       i1 = getIntentionalDisplacement(_m1, t1);
     } // Get gesture specific state properties based on intentionality and movement.
 
@@ -925,15 +920,15 @@ let Recognizer = /*#__PURE__*/ (function () {
     let _i0 = _intentional[0],
       _i1 = _intentional[1];
     let _movement = [_m0, _m1];
-    if (_i0 !== false && intentional[0] === false) _initial[0] = valueFn(initial)[0];
-    if (_i1 !== false && intentional[1] === false) _initial[1] = valueFn(initial)[1];
+    if(_i0 !== false && intentional[0] === false) _initial[0] = valueFn(initial)[0];
+    if(_i1 !== false && intentional[1] === false) _initial[1] = valueFn(initial)[1];
 
     /**
      * If the gesture has been blocked (from gesture specific checkIntentionality),
      * stop right there.
      */
 
-    if (_blocked)
+    if(_blocked)
       return _extends({}, intentionalityCheck, {
         _movement,
         delta: [0, 0]
@@ -1043,7 +1038,7 @@ let CoordinatesRecognizer = /*#__PURE__*/ (function (_Recognizer) {
     let axis = state.axis;
     let _blocked = false; // If the movement is intentional, we can compute axis.
 
-    if (intentionalMovement) {
+    if(intentionalMovement) {
       let _movement$map = _movement.map(Math.abs),
         absX = _movement$map[0],
         absY = _movement$map[1];
@@ -1054,17 +1049,16 @@ let CoordinatesRecognizer = /*#__PURE__*/ (function (_Recognizer) {
 
       axis = axis || (absX > absY ? 'x' : absX < absY ? 'y' : undefined);
 
-      if (!!configAxis || lockDirection) {
-        if (axis) {
+      if(!!configAxis || lockDirection) {
+        if(axis) {
           // If the detected axis doesn't match the config axis we block the gesture
-          if (!!configAxis && axis !== configAxis) _blocked = true;
+          if(!!configAxis && axis !== configAxis) _blocked = true;
           else {
             // Otherwise we prevent the gesture from updating the unwanted axis.
             let lockedIndex = axis === 'x' ? 1 : 0;
             _intentional[lockedIndex] = false;
           }
-        }
-        else {
+        } else {
           // Until we've detected the axis, we prevent the hnadler from updating.
           _intentional = [false, false];
         }
@@ -1084,7 +1078,7 @@ let CoordinatesRecognizer = /*#__PURE__*/ (function (_Recognizer) {
     let _blocked = movementDetection._blocked,
       delta = movementDetection.delta,
       movement = movementDetection.movement;
-    if (_blocked) return movementDetection;
+    if(_blocked) return movementDetection;
     let delta_t = event.timeStamp - timeStamp;
     let kinematics = calculateAllKinematics(movement, delta, delta_t);
     return _extends(
@@ -1139,9 +1133,9 @@ let DragRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
       // this means that we might be dealing with mouse simulated events if they're close to
       // each other. We're only doing this check when we're not using pointer events.
 
-      if (!_this.controller.config.pointer && _this.isEventTypeTouch(_lastEventType) && !_this.isEventTypeTouch(event.type)) {
+      if(!_this.controller.config.pointer && _this.isEventTypeTouch(_lastEventType) && !_this.isEventTypeTouch(event.type)) {
         let delay = Math.abs(event.timeStamp - _this.state.startTime);
-        if (delay < FILTER_REPEATED_EVENTS_DELAY) return false;
+        if(delay < FILTER_REPEATED_EVENTS_DELAY) return false;
       }
 
       return _this.enabled && touches < 2;
@@ -1150,7 +1144,7 @@ let DragRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
     _this.setPointers = function (event) {
       let currentTarget = event.currentTarget,
         pointerId = event.pointerId;
-      if (currentTarget) currentTarget.setPointerCapture(pointerId);
+      if(currentTarget) currentTarget.setPointerCapture(pointerId);
 
       _this.updateGestureState({
         currentTarget,
@@ -1162,7 +1156,7 @@ let DragRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
       let _this$state = _this.state,
         currentTarget = _this$state.currentTarget,
         pointerId = _this$state.pointerId;
-      if (currentTarget && pointerId) currentTarget.releasePointerCapture(pointerId);
+      if(currentTarget && pointerId) currentTarget.releasePointerCapture(pointerId);
     };
 
     _this.setListeners = function (isTouch) {
@@ -1170,41 +1164,40 @@ let DragRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
 
       let dragListeners = isTouch
         ? [
-          ['touchmove', _this.onDragChange],
-          ['touchend', _this.onDragEnd],
-          ['touchcancel', _this.onDragEnd]
-        ]
+            ['touchmove', _this.onDragChange],
+            ['touchend', _this.onDragEnd],
+            ['touchcancel', _this.onDragEnd]
+          ]
         : [
-          ['mousemove', _this.onDragChange],
-          ['mouseup', _this.onDragEnd]
-        ];
+            ['mousemove', _this.onDragChange],
+            ['mouseup', _this.onDragEnd]
+          ];
 
       _this.addWindowListeners(dragListeners);
     };
 
     _this.onDragStart = function (event) {
-      if (!_this.dragShouldStart(event)) return; // if pointers events
+      if(!_this.dragShouldStart(event)) return; // if pointers events
 
-      if (_this.controller.config.pointer) _this.setPointers(event);
+      if(_this.controller.config.pointer) _this.setPointers(event);
       else _this.setListeners(_this.isEventTypeTouch(event.type));
 
-      if (_this.config.delay > 0) {
+      if(_this.config.delay > 0) {
         _this.state._delayedEvent = true;
-        if (typeof event.persist === 'function') event.persist();
+        if(typeof event.persist === 'function') event.persist();
 
         _this.setTimeout(() => _this.startDrag(event), _this.config.delay);
-      }
-      else {
+      } else {
         _this.startDrag(event);
       }
     };
 
     _this.onDragChange = function (event) {
       let canceled = _this.state.canceled;
-      if (canceled) return;
+      if(canceled) return;
 
-      if (!_this.state._active) {
-        if (_this.state._delayedEvent) {
+      if(!_this.state._active) {
+        if(_this.state._delayedEvent) {
           _this.clearTimeout();
 
           _this.startDrag(event);
@@ -1215,7 +1208,7 @@ let DragRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
 
       let genericEventData = getGenericEventData(event);
 
-      if (!genericEventData.down) {
+      if(!genericEventData.down) {
         _this.onDragEnd(event);
 
         return;
@@ -1229,7 +1222,7 @@ let DragRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
       let kinematics = _this.getKinematics(values, event);
 
       let _isTap = _this.state._isTap;
-      if (_isTap && calculateDistance(kinematics._movement) >= TAP_DISTANCE_THRESHOLD) _isTap = false;
+      if(_isTap && calculateDistance(kinematics._movement) >= TAP_DISTANCE_THRESHOLD) _isTap = false;
 
       _this.updateGestureState(
         _extends({}, _this.getGenericPayload(event), {}, kinematics, {
@@ -1277,9 +1270,9 @@ let DragRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
         sy = _this$config$swipeDis[1];
       let swipe = [0, 0];
 
-      if (elapsedTime < SWIPE_MAX_ELAPSED_TIME) {
-        if (ix !== false && Math.abs(vx) > svx && Math.abs(mx) > sx) swipe[0] = Math.sign(vx);
-        if (iy !== false && Math.abs(vy) > svy && Math.abs(my) > sy) swipe[1] = Math.sign(vy);
+      if(elapsedTime < SWIPE_MAX_ELAPSED_TIME) {
+        if(ix !== false && Math.abs(vx) > svx && Math.abs(mx) > sx) swipe[0] = Math.sign(vx);
+        if(iy !== false && Math.abs(vy) > svy && Math.abs(my) > sy) swipe[1] = Math.sign(vy);
       }
 
       _this.updateGestureState(
@@ -1302,7 +1295,7 @@ let DragRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
       _CoordinatesRecognize.prototype.clean.call(_assertThisInitialized(_this));
 
       _this.state._delayedEvent = false;
-      if (_this.controller.config.pointer) _this.removePointers();
+      if(_this.controller.config.pointer) _this.removePointers();
     };
 
     _this.onCancel = function () {
@@ -1348,12 +1341,11 @@ let DragRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
   };
 
   _proto.addBindings = function addBindings() {
-    if (this.controller.config.pointer) {
+    if(this.controller.config.pointer) {
       this.controller.addBindings('onPointerDown', this.onDragStart);
       this.controller.addBindings('onPointerMove', this.onDragChange);
       this.controller.addBindings(['onPointerUp', 'onPointerCancel'], this.onDragEnd);
-    }
-    else {
+    } else {
       this.controller.addBindings(['onTouchStart', 'onMouseDown'], this.onDragStart);
     }
   };
@@ -1382,7 +1374,7 @@ let defaultCoordinatesOptions = {
  */
 
 function getInternalGenericOptions(config) {
-  if (config === void 0) {
+  if(config === void 0) {
     config = {};
   }
 
@@ -1426,8 +1418,8 @@ function getInternalGestureOptions(gestureConfig) {
     enabled = _gestureConfig$enable === void 0 ? true : _gestureConfig$enable,
     _gestureConfig$initia = gestureConfig.initial,
     initial = _gestureConfig$initia === void 0 ? [0, 0] : _gestureConfig$initia;
-  if (typeof rubberband === 'boolean') rubberband = rubberband ? DEFAULT_RUBBERBAND : 0;
-  if (threshold === void 0) threshold = 0;
+  if(typeof rubberband === 'boolean') rubberband = rubberband ? DEFAULT_RUBBERBAND : 0;
+  if(threshold === void 0) threshold = 0;
   return {
     enabled,
     initial,
@@ -1436,7 +1428,7 @@ function getInternalGestureOptions(gestureConfig) {
   };
 }
 function getInternalCoordinatesOptions(coordinatesConfig) {
-  if (coordinatesConfig === void 0) {
+  if(coordinatesConfig === void 0) {
     coordinatesConfig = {};
   }
 
@@ -1470,7 +1462,7 @@ function getInternalCoordinatesOptions(coordinatesConfig) {
   );
 }
 function getInternalDistanceAngleOptions(distanceAngleConfig) {
-  if (distanceAngleConfig === void 0) {
+  if(distanceAngleConfig === void 0) {
     distanceAngleConfig = {};
   }
 
@@ -1490,7 +1482,7 @@ function getInternalDistanceAngleOptions(distanceAngleConfig) {
   });
 }
 function getInternalDragOptions(dragConfig) {
-  if (dragConfig === void 0) {
+  if(dragConfig === void 0) {
     dragConfig = {};
   }
 
@@ -1513,10 +1505,9 @@ function getInternalDragOptions(dragConfig) {
     axis = dragOptions.axis,
     lockDirection = dragOptions.lockDirection;
 
-  if (threshold === void 0) {
+  if(threshold === void 0) {
     threshold = Math.max(0, filterTaps ? 3 : 0, lockDirection || axis ? 1 : 0);
-  }
-  else {
+  } else {
     filterTaps = true;
   }
 
@@ -1553,7 +1544,7 @@ function getInternalDragOptions(dragConfig) {
  */
 
 function useDrag(handler, config) {
-  if (config === void 0) {
+  if(config === void 0) {
     config = {};
   }
 
@@ -1683,7 +1674,7 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
     };
 
     _this.onPinchStart = function (event) {
-      if (!_this.pinchShouldStart(event)) return;
+      if(!_this.pinchShouldStart(event)) return;
 
       let _getTwoTouchesEventDa = getTwoTouchesEventData(event),
         values = _getTwoTouchesEventDa.values,
@@ -1710,9 +1701,9 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
         canceled = _this$state.canceled,
         timeStamp = _this$state.timeStamp,
         _active = _this$state._active;
-      if (canceled || !_active) return;
+      if(canceled || !_active) return;
       let genericEventData = getGenericEventData(event);
-      if (genericEventData.touches !== 2 || event.timeStamp === timeStamp) return;
+      if(genericEventData.touches !== 2 || event.timeStamp === timeStamp) return;
 
       _this.updateSharedState(genericEventData);
 
@@ -1735,7 +1726,7 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
     };
 
     _this.onPinchEnd = function (event) {
-      if (!_this.state.active) return;
+      if(!_this.state.active) return;
       _this.state._active = false;
 
       _this.updateSharedState({
@@ -1778,7 +1769,7 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
      */
 
     _this.onGestureStart = function (event) {
-      if (!_this.enabled) return;
+      if(!_this.enabled) return;
       event.preventDefault();
 
       let _getWebkitGestureEven = getWebkitGestureEventValues(event),
@@ -1803,7 +1794,7 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
       let _this$state2 = _this.state,
         canceled = _this$state2.canceled,
         _active = _this$state2._active;
-      if (canceled || !_active) return;
+      if(canceled || !_active) return;
       event.preventDefault();
       let genericEventData = getGenericEventData(event);
 
@@ -1827,7 +1818,7 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
 
     _this.onGestureEnd = function (event) {
       event.preventDefault();
-      if (!_this.state.active) return;
+      if(!_this.state.active) return;
       _this.state._active = false;
 
       _this.updateSharedState({
@@ -1850,7 +1841,7 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
     };
 
     _this.updateTouchData = function (event) {
-      if (!_this.enabled || event.touches.length !== 2 || !_this.state._active) return;
+      if(!_this.enabled || event.touches.length !== 2 || !_this.state._active) return;
 
       let _getTwoTouchesEventDa3 = getTwoTouchesEventData(event),
         origin = _getTwoTouchesEventDa3.origin;
@@ -1884,13 +1875,13 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
     };
 
     _this.onWheel = function (event) {
-      if (!_this.wheelShouldRun(event)) return;
+      if(!_this.wheelShouldRun(event)) return;
 
       _this.clearTimeout();
 
       _this.setTimeout(_this.onWheelEnd);
 
-      if (!_this.state._active) _this.onWheelStart(event);
+      if(!_this.state._active) _this.onWheelStart(event);
       else _this.onWheelChange(event);
     };
 
@@ -1900,10 +1891,9 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
         delta = _this$getWheelValuesF.delta,
         origin = _this$getWheelValuesF.origin;
 
-      if (!_this.controller.config.eventOptions.passive) {
+      if(!_this.controller.config.eventOptions.passive) {
         event.preventDefault();
-      }
-      else if (process.env.NODE_ENV === 'development') {
+      } else if(process.env.NODE_ENV === 'development') {
         console.warn('To support zoom on trackpads, try using the `domTarget` option and `config.event.passive` set to `false`. This message will only appear in development mode.');
       }
 
@@ -1962,13 +1952,12 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
   _proto.addBindings = function addBindings() {
     // Only try to use gesture events when they are supported and domTarget is set
     // as React doesn't support gesture handlers.
-    if (this.controller.config.domTarget && supportsGestureEvents()) {
+    if(this.controller.config.domTarget && supportsGestureEvents()) {
       this.controller.addBindings('onGestureStart', this.onGestureStart);
       this.controller.addBindings('onGestureChange', this.onGestureChange);
       this.controller.addBindings(['onGestureEnd', 'onTouchCancel'], this.onGestureEnd);
       this.controller.addBindings(['onTouchStart', 'onTouchMove'], this.updateTouchData);
-    }
-    else {
+    } else {
       this.controller.addBindings('onTouchStart', this.onPinchStart);
       this.controller.addBindings('onTouchMove', this.onPinchChange);
       this.controller.addBindings(['onTouchEnd', 'onTouchCancel'], this.onPinchEnd);
@@ -1990,7 +1979,7 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
  */
 
 function usePinch(handler, config) {
-  if (config === void 0) {
+  if(config === void 0) {
     config = {};
   }
 
@@ -2037,7 +2026,7 @@ let WheelRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
     _this.debounced = true;
 
     _this.wheelShouldRun = function (event) {
-      if (event.ctrlKey && 'pinch' in _this.controller.handlers) return false;
+      if(event.ctrlKey && 'pinch' in _this.controller.handlers) return false;
       return _this.enabled;
     };
 
@@ -2053,13 +2042,13 @@ let WheelRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
     };
 
     _this.onWheel = function (event) {
-      if (!_this.wheelShouldRun(event)) return;
+      if(!_this.wheelShouldRun(event)) return;
 
       _this.clearTimeout();
 
       _this.setTimeout(_this.onWheelEnd);
 
-      if (!_this.state._active) _this.onWheelStart(event);
+      if(!_this.state._active) _this.onWheelStart(event);
       else _this.onWheelChange(event);
     };
 
@@ -2138,7 +2127,7 @@ let WheelRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
  */
 
 function useWheel(handler, config) {
-  if (config === void 0) {
+  if(config === void 0) {
     config = {};
   }
 
@@ -2189,13 +2178,13 @@ let MoveRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
     };
 
     _this.onMove = function (event) {
-      if (!_this.moveShouldRun()) return;
+      if(!_this.moveShouldRun()) return;
 
       _this.clearTimeout();
 
       _this.setTimeout(_this.onMoveEnd);
 
-      if (!_this.state._active) _this.onMoveStart(event);
+      if(!_this.state._active) _this.onMoveStart(event);
       else _this.onMoveChange(event);
     };
 
@@ -2242,9 +2231,9 @@ let MoveRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
 
     _this.onPointerEnter = function (event) {
       _this.controller.state.shared.hovering = true;
-      if (!_this.controller.config.enabled) return;
+      if(!_this.controller.config.enabled) return;
 
-      if (_this.controller.config.hover.enabled) {
+      if(_this.controller.config.hover.enabled) {
         let _getPointerEventValue3 = getPointerEventValues(event),
           values = _getPointerEventValue3.values;
 
@@ -2257,14 +2246,14 @@ let MoveRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
         _this.controller.handlers.hover(_extends({}, state, {}, _this.mapStateValues(state)));
       }
 
-      if ('move' in _this.controller.handlers) _this.onMoveStart(event);
+      if('move' in _this.controller.handlers) _this.onMoveStart(event);
     };
 
     _this.onPointerLeave = function (event) {
       _this.controller.state.shared.hovering = false;
-      if ('move' in _this.controller.handlers) _this.onMoveEnd();
+      if('move' in _this.controller.handlers) _this.onMoveEnd();
 
-      if (_this.controller.config.hover.enabled) {
+      if(_this.controller.config.hover.enabled) {
         let _getPointerEventValue4 = getPointerEventValues(event),
           values = _getPointerEventValue4.values;
 
@@ -2283,22 +2272,21 @@ let MoveRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
   let _proto = MoveRecognizer.prototype;
 
   _proto.addBindings = function addBindings() {
-    if (this.controller.config.pointer) {
-      if ('move' in this.controller.handlers) {
+    if(this.controller.config.pointer) {
+      if('move' in this.controller.handlers) {
         this.controller.addBindings('onPointerMove', this.onMove);
       }
 
-      if ('hover' in this.controller.handlers) {
+      if('hover' in this.controller.handlers) {
         this.controller.addBindings('onPointerEnter', this.onPointerEnter);
         this.controller.addBindings('onPointerLeave', this.onPointerLeave);
       }
-    }
-    else {
-      if ('move' in this.controller.handlers) {
+    } else {
+      if('move' in this.controller.handlers) {
         this.controller.addBindings('onMouseMove', this.onMove);
       }
 
-      if ('hover' in this.controller.handlers) {
+      if('hover' in this.controller.handlers) {
         this.controller.addBindings('onMouseEnter', this.onPointerEnter);
         this.controller.addBindings('onMouseLeave', this.onPointerLeave);
       }
@@ -2319,7 +2307,7 @@ let MoveRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
  */
 
 function useMove(handler, config) {
-  if (config === void 0) {
+  if(config === void 0) {
     config = {};
   }
 
@@ -2366,7 +2354,7 @@ function useMove(handler, config) {
  */
 
 function useHover(handler, config) {
-  if (config === void 0) {
+  if(config === void 0) {
     config = {};
   }
 
@@ -2422,13 +2410,13 @@ let ScrollRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
     };
 
     _this.onScroll = function (event) {
-      if (!_this.scrollShouldRun()) return;
+      if(!_this.scrollShouldRun()) return;
 
       _this.clearTimeout();
 
       _this.setTimeout(_this.onScrollEnd);
 
-      if (!_this.state._active) _this.onScrollStart(event);
+      if(!_this.state._active) _this.onScrollStart(event);
       else _this.onScrollChange(event);
     };
 
@@ -2507,7 +2495,7 @@ let ScrollRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
  */
 
 function useScroll(handler, config) {
-  if (config === void 0) {
+  if(config === void 0) {
     config = {};
   }
 
@@ -2554,7 +2542,7 @@ function useScroll(handler, config) {
  */
 
 function useGesture(handlers, config) {
-  if (config === void 0) {
+  if(config === void 0) {
     config = {};
   }
 
@@ -2562,9 +2550,7 @@ function useGesture(handlers, config) {
    * If handlers contains {onDragStart, onDrag, onDragEnd, onMoveStart, onMove}
    * actions will include 'onDrag' and 'onMove.
    */
-  let _React$useState = React.useState(() => new Set(
-      Object.keys(handlers).map((k) => k.replace(/End|Start/, ''))
-    )),
+  let _React$useState = React.useState(() => new Set(Object.keys(handlers).map((k) => k.replace(/End|Start/, '')))),
     actions = _React$useState[0];
 
   /**
@@ -2588,38 +2574,38 @@ function useGesture(handlers, config) {
 
   let _nativeHandlers = _extends({}, handlers);
 
-  if (actions.has('onDrag')) {
+  if(actions.has('onDrag')) {
     classes.push(DragRecognizer);
     internalHandlers.drag = includeStartEndHandlers(handlers, 'onDrag', _nativeHandlers);
     mergedConfig.drag = getInternalDragOptions(drag);
   }
 
-  if (actions.has('onWheel')) {
+  if(actions.has('onWheel')) {
     classes.push(WheelRecognizer);
     internalHandlers.wheel = includeStartEndHandlers(handlers, 'onWheel', _nativeHandlers);
     mergedConfig.wheel = getInternalCoordinatesOptions(wheel);
   }
 
-  if (actions.has('onScroll')) {
+  if(actions.has('onScroll')) {
     classes.push(ScrollRecognizer);
     internalHandlers.scroll = includeStartEndHandlers(handlers, 'onScroll', _nativeHandlers);
     mergedConfig.scroll = getInternalCoordinatesOptions(scroll);
   }
 
-  if (actions.has('onMove')) {
+  if(actions.has('onMove')) {
     classes.push(MoveRecognizer);
     internalHandlers.move = includeStartEndHandlers(handlers, 'onMove', _nativeHandlers);
     mergedConfig.move = getInternalCoordinatesOptions(move);
   }
 
-  if (actions.has('onPinch')) {
+  if(actions.has('onPinch')) {
     classes.push(PinchRecognizer);
     internalHandlers.pinch = includeStartEndHandlers(handlers, 'onPinch', _nativeHandlers);
     mergedConfig.pinch = getInternalDistanceAngleOptions(pinch);
   }
 
-  if (actions.has('onHover')) {
-    if (!actions.has('onMove')) classes.push(MoveRecognizer);
+  if(actions.has('onHover')) {
+    if(!actions.has('onMove')) classes.push(MoveRecognizer);
     internalHandlers.hover = handlers.onHover;
     mergedConfig.hover = _extends(
       {
@@ -2653,9 +2639,9 @@ function includeStartEndHandlers(handlers, handlerKey, _nativeHandlers) {
 
   let fn = function fn(state) {
     let memo;
-    if (state.first && startKey in handlers) handlers[startKey](state);
-    if (handlerKey in handlers) memo = handlers[handlerKey](state);
-    if (state.last && endKey in handlers) handlers[endKey](state);
+    if(state.first && startKey in handlers) handlers[startKey](state);
+    if(handlerKey in handlers) memo = handlers[handlerKey](state);
+    if(state.last && endKey in handlers) handlers[endKey](state);
     return memo;
   };
 
