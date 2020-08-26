@@ -17,8 +17,8 @@ export default class Portal extends Component {
     this.renderLayer();
   }
   componentDidUpdate(props) {
-    for(let i in props) {
-      if(props[i] !== this.props[i]) {
+    for (let i in props) {
+      if (props[i] !== this.props[i]) {
         return setTimeout(this.renderLayer);
       }
     }
@@ -27,16 +27,16 @@ export default class Portal extends Component {
   componentWillUnmount() {
     this.renderLayer(false);
     this.isMounted = false;
-    if(this.remote && this.remote.parentNode) this.remote.parentNode.removeChild(this.remote);
+    if (this.remote && this.remote.parentNode) this.remote.parentNode.removeChild(this.remote);
   }
 
   renderLayer(show = true) {
-    if(!this.isMounted) return;
+    if (!this.isMounted) return;
 
     // clean up old node if moving bases:
-    if(this.props.into !== this.intoPointer) {
+    if (this.props.into !== this.intoPointer) {
       this.intoPointer = this.props.into;
-      if(this.into && this.remote) {
+      if (this.into && this.remote) {
         this.remote = render(<PortalProxy />, this.into, this.remote);
       }
       this.into = this.findNode(this.props.into);

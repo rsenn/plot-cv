@@ -11,7 +11,8 @@ async function SetupConsole(options) {
       stderr: process.stderr,
       inspectOptions: { depth: 2, colors: true, ...options }
     });
-  } catch(err) {}
+  }
+  catch (err) {}
   return Util.tryCatch(() => (globalThis.console = ret));
 }
 

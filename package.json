@@ -9,7 +9,6 @@
     "server": "env PORT=3000 nodemon --experimental-modules -w server.js server.js",
     "build": "next build",
     "start": "next start",
-    "format": "WIDTH=400 bash scripts/prettier.sh $(ls -td --   *.js *.json *.html $(find lib -name '*.js' |grep -v 'es5'))",
     "lint": "eslint . --ext .js --ext .jsx --ignore-path .eslintignore --fix",
     "deploy": "now --target production",
     "now-build": "next build"
@@ -80,10 +79,12 @@
   "devDependencies": {
     "@aerian/eslint-config-preact": "^9.1.0",
     "clarify": "^2.1.0",
+    "eslint": "^7.7.0",
+    "eslint-plugin-class-property": "^1.1.0",
+    "eslint-plugin-preact": "^0.1.0",
     "fetch-with-proxy": "https://github.com/touv/node-fetch-with-proxy",
     "free-proxy": "^0.1.6",
     "http": "0.0.0",
-    "prettier": "^2.0.5",
     "proxynova": "^0.1.0",
     "trace": "^3.1.1"
   },
@@ -101,7 +102,6 @@
       "git add"
     ]
   },
-  "prettier": ".prettierrc.js",
   "stylelint": {
     "extends": "stylelint.config.js"
   }

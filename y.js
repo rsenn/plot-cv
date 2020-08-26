@@ -1,4 +1,4 @@
-var l = {
+let l = {
   root: true,
   env: {
     browser: true,

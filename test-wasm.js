@@ -11,6 +11,7 @@ const bytes = filesystem.readFile('./static/wasm/bpgdec.wasm');
 //console.log('bytes: ', bytes);
 
 let importObject = {
+
   /* imports: { imported_func: arg => console.log(arg) },
 module: {},
  instance: {},

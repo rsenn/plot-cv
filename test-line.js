@@ -6,6 +6,7 @@ let pl = rect.toPoints((points) => new PointList(points));
 let ll = rect.toLines((lines) => new LineList(lines));
 
 const sym = Symbol.for('nodejs.util.inspect.custom');
+
 /*console.log("pl[0][sym]:", pl[0][sym]+'');
 //console.log("ll[0][sym]:", ll[0][sym]+'');
 */

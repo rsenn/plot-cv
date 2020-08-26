@@ -25,6 +25,7 @@ async function main() {
     let msg = new Message(data);
     console.log('data:', msg);
   }
+
   /*
   while(ws.connected) {
     let data = await ws.receive();

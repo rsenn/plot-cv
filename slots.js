@@ -3,10 +3,10 @@ import { h, html, render, Component, createContext, useState, useReducer, useEff
 export class SlotContent {
   apply(slot, content, fireChange) {
     let { slots } = this.context;
-    if(slot) {
+    if (slot) {
       slots.named[slot] = content;
-      if(fireChange) {
-        for(let i = 0; i < slots.onChange.length; i++) {
+      if (fireChange) {
+        for (let i = 0; i < slots.onChange.length; i++) {
           slots.onChange[i]();
         }
       }
@@ -18,10 +18,11 @@ export class SlotContent {
   }
 
   componentWillReceiveProps({ slot, children }) {
-    if(slot !== this.props.slot) {
+    if (slot !== this.props.slot) {
       this.apply(this.props.slot, null, false);
       this.apply(slot, children[0], true);
-    } else if(children[0] !== this.props.children[0]) {
+    }
+    else if (children[0] !== this.props.children[0]) {
       this.apply(slot, children[0], true);
     }
   }
@@ -59,7 +60,7 @@ export class Slot extends Component {
   }
   update = () => {
     let content = this.context.slots.named[this.props.name];
-    if(content != this.state.content) {
+    if (content != this.state.content) {
       this.setState({ content });
     }
   };
@@ -82,7 +83,7 @@ export function withSlot(name, alias) {
     h(Slot, { name }, (content) => {
       let childProps = {};
       childProps[alias || name] = content;
-      for(let i in props) childProps[i] = props[i];
+      for (let i in props) childProps[i] = props[i];
       return h(Child, childProps);
     });
 }

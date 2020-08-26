@@ -45,7 +45,7 @@ let sockets = [];
 
 const removeItem = (arr, item, key = 'ws') => {
   let i = arr.findIndex((e) => e[key] === item);
-  if(i != -1) arr.splice(i, 1);
+  if (i != -1) arr.splice(i, 1);
 
   return arr;
 };
@@ -54,8 +54,8 @@ const convertToGerber = async (boardFile, opts = {}) => {
   const { layers = ['Bottom', 'Pads', 'Vias'], format = 'GERBER_RS274X', data = false } = opts;
   const base = path.basename(boardFile, '.brd');
   const formatToExt = (layers, format) => {
-    if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER')) return 'GBL';
-    if(format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1) return 'txt';
+    if (layers.indexOf('Bottom') != -1 || format.startsWith('GERBER')) return 'GBL';
+    if (format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1) return 'txt';
     return 'rs274x';
   };
   const gerberFile = `./tmp/${base}.${formatToExt(layers, format)}`;
@@ -73,13 +73,13 @@ const convertToGerber = async (boardFile, opts = {}) => {
   console.log(`code: ${code}`);
   console.log(`output: ${output}`);
 
-  if(code !== 0) throw new Error(output);
+  if (code !== 0) throw new Error(output);
 
-  if(output) output = output.replace(/ *\r*\n/g, '\n');
+  if (output) output = output.replace(/ *\r*\n/g, '\n');
 
   let result = { code, output };
 
-  if(data) result.data = await (await fsPromises.readFile(gerberFile)).toString();
+  if (data) result.data = await (await fsPromises.readFile(gerberFile)).toString();
   else result.file = gerberFile;
 
   return result;
@@ -99,7 +99,7 @@ const gerberToGcode = async (gerberFile, allOpts = {}) => {
     ...opts
   };
   let side = 'front' in opts ? 'front' : 'back' in opts ? 'back' : '';
-  if(side == '') {
+  if (side == '') {
     side = 'back';
     opts.back = '';
   }
@@ -121,13 +121,13 @@ const gerberToGcode = async (gerberFile, allOpts = {}) => {
   console.log(`code: ${code}`);
   console.log(`output: ${output}`);
 
-  if(code !== 0) throw new Error(output);
+  if (code !== 0) throw new Error(output);
 
-  if(output) output = output.replace(/ *\r*\n/g, '\n');
+  if (output) output = output.replace(/ *\r*\n/g, '\n');
 
   let result = { code, output };
 
-  if(fetch || data) result.data = await (await fsPromises.readFile(gcodeFile)).toString();
+  if (fetch || data) result.data = await (await fsPromises.readFile(gcodeFile)).toString();
   else result.file = gcodeFile;
 
   return result;
@@ -138,7 +138,7 @@ const ListGithubRepo = async (owner, repo, dir, filter) => {
   let response = await fetch(url);
   let result = JSON.parse(await response.text());
   console.log('result', result);
-  if(filter) {
+  if (filter) {
     const re = new RegExp(filter, 'g');
     result = result.filter(({ name }) => re.test(name));
   }
@@ -165,7 +165,7 @@ app.ws('/ws', async (ws, req) => {
 
   console.log('WebSocket connected:', path, headers);
 
-  if(address == '::1') address = 'localhost';
+  if (address == '::1') address = 'localhost';
 
   address = address.replace(/^::ffff:/, '');
   let s = new Socket(ws, {
@@ -180,8 +180,8 @@ app.ws('/ws', async (ws, req) => {
   let i = sockets.length;
 
   const sendTo = (sock, msg, ...args) => {
-    if(args.length > 0) msg = new Message(msg, ...args);
-    if(msg instanceof Message) msg = msg.data;
+    if (args.length > 0) msg = new Message(msg, ...args);
+    if (msg instanceof Message) msg = msg.data;
 
     Util.tryCatch(
       (ws) => client.writable,
@@ -197,11 +197,11 @@ app.ws('/ws', async (ws, req) => {
   sockets.push(s);
 
   const sendMany = (except, msg, ...args) => {
-    if(args.length > 0) msg = new Message(msg, ...args);
-    if(msg instanceof Message) msg = msg.data;
+    if (args.length > 0) msg = new Message(msg, ...args);
+    if (msg instanceof Message) msg = msg.data;
 
-    for(let sock of sockets) {
-      if(sock == except || sock.id == except || sock.ws == except) continue;
+    for (let sock of sockets) {
+      if (sock == except || sock.id == except || sock.ws == except) continue;
       sendTo(sock, msg);
     }
   };
@@ -219,26 +219,26 @@ app.ws('/ws', async (ws, req) => {
   ws.on('message', (data) => {
     s.lastMessage = Date.now();
     let msg = new Message(data, s.id);
-    if(msg.type == 'INFO') {
+    if (msg.type == 'INFO') {
       const id = sockets.findIndex((s) => s.id == msg.body);
-      if(id != -1) {
+      if (id != -1) {
         const sock = sockets[id];
         sendTo(s, JSON.stringify(Util.filterOutKeys(sock, ['ws', 'id'])), sock.id, s.id, 'INFO');
       }
       return;
     }
     console.log(`message from ${s.toString()}${msg.recipient ? ' to ' + msg.recipient : ''} (${s.id}): '${msg.body}'`);
-    if(msg.recipient) {
+    if (msg.recipient) {
       let rId = sockets.findIndex((s) => s.id == msg.recipient);
-      if(rId == -1) {
+      if (rId == -1) {
         console.error(`No such recipient: '${msg.recipient}'`);
         return;
       }
     }
     let i = -1;
-    for(let sock of sockets) {
-      if(sock.ws === ws) continue;
-      if(msg.recipient && sock.id != msg.recipient) continue;
+    for (let sock of sockets) {
+      if (sock.ws === ws) continue;
+      if (msg.recipient && sock.id != msg.recipient) continue;
       console.log(`Sending[${++i}/${sockets.length}] to ${sock.id}`);
       sendTo(sock, msg.data);
     }
@@ -246,7 +246,7 @@ app.ws('/ws', async (ws, req) => {
 });
 
 app.use(async (req, res, next) => {
-  if(!/overrides\//.test(req.path)) {
+  if (!/overrides\//.test(req.path)) {
     let relativePath = path.join('.', req.path);
     let overridePath = path.join('overrides', req.path);
     let isFile = false;
@@ -258,20 +258,20 @@ app.use(async (req, res, next) => {
 
     let override = false;
 
-    if(isFile)
+    if (isFile)
       await fsPromises
         .access(overridePath, fs.constants.F_OK)
         .then(() => (override = true))
         .catch((err) => {});
 
-    if(override) {
+    if (override) {
       console.log('Request:', { overridePath, override });
 
       return res.redirect('/' + overridePath);
     }
   }
 
-  if(!/lib\//.test(req.url)) console.log('Request:', req.url, ' path:', req.path);
+  if (!/lib\//.test(req.url)) console.log('Request:', req.url, ' path:', req.path);
 
   next();
 });
@@ -316,7 +316,7 @@ async function getDescription(file) {
     .map((re) => re.exec(chunk))
     .map((m) => m && m.index);
   let d = chunk.substring(...indexes);
-  if(d.startsWith('<description')) return Util.decodeHTMLEntities(d.substring(a[0].length));
+  if (d.startsWith('<description')) return Util.decodeHTMLEntities(d.substring(a[0].length));
   return '';
 }
 
@@ -329,7 +329,7 @@ const GetFilesList = async (dir = './tmp', opts = {}) => {
 
   console.log('GetFilesList()', { filter, descriptions, names });
 
-  if(!names) names = [...(await fs.promises.readdir(dir))].filter(f);
+  if (!names) names = [...(await fs.promises.readdir(dir))].filter(f);
 
   return Promise.all(
     names
@@ -340,7 +340,7 @@ const GetFilesList = async (dir = './tmp', opts = {}) => {
         let obj = {
           name: file
         };
-        if(typeof description == 'string') obj.description = description;
+        if (typeof description == 'string') obj.description = description;
 
         acc.push(
           fs.promises
@@ -350,7 +350,7 @@ const GetFilesList = async (dir = './tmp', opts = {}) => {
                 mtime: Util.toUnixTime(mtime),
                 time: Util.toUnixTime(ctime),
                 mode: `0${(mode & 0o4777).toString(8)}`,
-                size: size
+                size
               })
             )
             .catch((err) => {})
@@ -359,6 +359,7 @@ const GetFilesList = async (dir = './tmp', opts = {}) => {
       }, [])
   ).then((a) => a.filter((i) => i != null));
 };
+
 /*app.param(['owner', 'repo','dir'], function (req, res, next, value) {
   console.log('CALLED ONLY ONCE with', value)
   next()
@@ -397,13 +398,14 @@ app.post(/^\/gerber/, async (req, res) => {
   try {
     result = await convertToGerber(board, opts);
 
-    if(save) {
+    if (save) {
       filename = filename || typeof save == 'string' ? save : null;
       filename = `tmp/` + filename.replace(/.*\/([^/])*\.[^/.]*$/g, '$1');
 
       await fsPromises.writeFile(filename, result.data).then((res) => console.log('Wrote file:', res));
     }
-  } catch(error) {
+  }
+  catch (error) {
     result = { error };
   }
 
@@ -420,7 +422,8 @@ app.post(/^\/gcode/, async (req, res) => {
 
   try {
     result = await gerberToGcode(gerber, opts);
-  } catch(error) {
+  }
+  catch (error) {
     result = { error };
   }
 
@@ -431,9 +434,9 @@ app.post(/^\/(files|list).html/, async (req, res) => {
   const { body } = req;
   let { filter, descriptions, names } = body;
 
-  if(names !== undefined) {
-    if(typeof names == 'string') names = names.split(/\n/g);
-    if(Util.isArray(names)) names = names.map((name) => name.replace(/.*\//g, ''));
+  if (names !== undefined) {
+    if (typeof names == 'string') names = names.split(/\n/g);
+    if (Util.isArray(names)) names = names.map((name) => name.replace(/.*\//g, ''));
   }
 
   res.json({ files: await GetFilesList('tmp', { filter, descriptions, names }) });

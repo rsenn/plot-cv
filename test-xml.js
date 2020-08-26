@@ -67,14 +67,14 @@ async function main(...args) {
   filesystem = await PortableFileSystem();
 
   console.log('main', args);
-  if(args.length == 0) args = ['/home/roman/.config/sublime-text-3/Packages/Babel/Next.tmTheme' /*  */];
+  if (args.length == 0) args = ['/home/roman/.config/sublime-text-3/Packages/Babel/Next.tmTheme' /*  */];
   let filename = args.shift();
   let basename = path.basename(filename).replace(/\.[^.]*$/, '');
   let outfile;
-  if(/\.(xml|tmThem)/.test(args[0])) outfile = args.shift();
+  if (/\.(xml|tmThem)/.test(args[0])) outfile = args.shift();
   else {
     outfile = basename + '.xml';
-    if(outfile == filename) outfile = basename + '.out.xml';
+    if (outfile == filename) outfile = basename + '.out.xml';
   }
   let cmds = args;
   let newObj = {};
@@ -111,15 +111,15 @@ async function main(...args) {
           let value = deep.get(xml[0], p);
           const children = Util.isObject(value) && value.children ? value.children : [];
           const text = typeof children[0] == 'string' ? children[0] : '';
-          if(['Next', 'settings', 'scope', 'name', 'gutter'].indexOf(text) != -1 || /* text.startsWith('#') ||*/ typeof children[0] != 'string') {
+          if (['Next', 'settings', 'scope', 'name', 'gutter'].indexOf(text) != -1 || /* text.startsWith('#') ||*/ typeof children[0] != 'string') {
             skip();
           }
-          if(text.startsWith('#')) {
+          if (text.startsWith('#')) {
             skip();
             numString++;
           }
-          if(numString > 1) skip();
-          if(numString == 2 || ('' + (prevValue.children && prevValue.children[0]))[0] == '#') {
+          if (numString > 1) skip();
+          if (numString == 2 || ('' + (prevValue.children && prevValue.children[0]))[0] == '#') {
             //skip() ;
             prev = p;
             prevValue = value;
@@ -127,8 +127,8 @@ async function main(...args) {
             return p.up(2);
           }
           //console.log('p:', p, util.inspect(value, { depth: 1 }));
-          if(p.last > 0 && text != 'scope') r = p.left(1);
-          else if(p.length > 2) r = p.up(2);
+          if (p.last > 0 && text != 'scope') r = p.left(1);
+          else if (p.length > 2) r = p.up(2);
           prev = p;
           prevValue = value;
           return r;
@@ -149,6 +149,7 @@ async function main(...args) {
     );
     let palette = new ColorMap(HSLA, colors);
     console.log('palette.getMinMax():', palette.getMinMax());
+
     /*  const lexOrder = (key) => {
       let i = 0;
       let r = [];
@@ -166,35 +167,35 @@ async function main(...args) {
     console.log(`palette.getMinMax():`, palette.getMinMax());
     const mm = palette.getMinMax();
 
-    if(cmds.length == 0) {
+    if (cmds.length == 0) {
       //   cmds.unshift(['remap', 'h', 0, 360]);
       //  cmds.unshift(['remap', 's', 75, 100]);
       cmds.unshift(['normalize']);
       //cmds.unshift(['remap', 'l', 50, 60]);
     }
     const UpdatePalette = (pal) => {
-       pal = pal ||  palette
+      pal = pal ||  palette;
       console.log('UpdatePalette:', pal);
-      for(let [path, color] of   pal) {
+      for (let [path, color] of   pal) {
         color = typeof(color) == 'function' ? color() : color;
 
-      //  color = color && color.toRGBA ? color.toRGBA() : color;
-           console.log('UpdatePalette:', Util.typeOf(color),  ...color, Util.toString(color.toObject(), {multiline: false}));
-           console.log('UpdatePalette:', newObj, path,Util.toString(color, {multiline: false}));
-           let obj = path.slice(0,-1);
-           let key = path.slice(-1);
+        //  color = color && color.toRGBA ? color.toRGBA() : color;
+        console.log('UpdatePalette:', Util.typeOf(color),  ...color, Util.toString(color.toObject(), { multiline: false }));
+        console.log('UpdatePalette:', newObj, path,Util.toString(color, { multiline: false }));
+        let obj = path.slice(0,-1);
+        let key = path.slice(-1);
 
-  //let [obj, key] = path.bottom(newObj, true);
+        //let [obj, key] = path.bottom(newObj, true);
         obj[key] = color.hex();
         flat.set(path, color);
-        if(newObj) deep.set(newObj, path, color.hex());
+        if (newObj) deep.set(newObj, path, color.hex());
       }
     };
 
     let handlers = {
       shuffle(...seed) {
         let rng = prng.clone();
-        if(seed) rng.mash(...seed);
+        if (seed) rng.mash(...seed);
         const keys = [...palette.keys()];
         let values = keys.reduce((acc, key) => [...acc, palette.get(key)], []);
         values = Util.shuffle(values, rng);
@@ -229,7 +230,7 @@ async function main(...args) {
       },
       generate(...seed) {
         let rng = prng.clone();
-        if(seed) rng.mash(...seed);
+        if (seed) rng.mash(...seed);
         let i = 0;
         let sz = 1 << Math.ceil(Math.log2(palette.size));
         let gcd = [3, 4, 6, 8, 12, 16, 32].map((n) => Util.greatestCommonDenominator(sz, n));
@@ -241,11 +242,11 @@ async function main(...args) {
         console.log('palette.size:', palette.size);
         console.log('newPal.length:', newPal.length);
         newObj = {};
-        for(let [path, value] of flat) {
+        for (let [path, value] of flat) {
           deep.set(newObj, path, value);
         }
 
-        for(let item of palette) {
+        for (let item of palette) {
           let [path, color] = item;
           const key = keys.get(path);
           const hashes = key
@@ -255,21 +256,21 @@ async function main(...args) {
             .flat()
             .filter((i) => typeof i != 'string')
             .flat();
-          if(/(background)/i.test(key)) continue;
+          if (/(background)/i.test(key)) continue;
           prng();
           color = Util.draw(newPal, 1, rng);
-          if(false)
-            if(true || !color) {
+          if (false)
+            if (true || !color) {
               let hues = [hashes[0][0] - 0.4, hashes[0][0] + 0.4];
               let la = [30, 70];
               color = HSLA.random([0, 360], [80, 100], [50, 60], [1, 1], rng);
             }
           color = color || new HSLA(0, 0, 0, 0);
-          if(color.l < 60) {
+          if (color.l < 60) {
             let rem = 60 - color.l;
             color.l += rem / 3;
           }
-          if(Math.abs(100 - color.s) >= 10) {
+          if (Math.abs(100 - color.s) >= 10) {
             let rem = 100 - color.s;
             color.s = 100 - rem / 2;
           }
@@ -296,19 +297,19 @@ async function main(...args) {
       Util.isArray(cmdStr)
         ? cmdStr
         : cmdStr
-            .split(/[^-A-Za-z0-9\.\/]/g)
-            .map((p) => (!isNaN(+p) ? +p : p))
-            .map((p) => (typeof p == 'string' ? p.toLowerCase() : p))
+          .split(/[^-A-Za-z0-9\.\/]/g)
+          .map((p) => (!isNaN(+p) ? +p : p))
+          .map((p) => (typeof p == 'string' ? p.toLowerCase() : p))
     );
 
     cmds.forEach((cmd) => {
       cmd = cmd.map((p) => (/^.?time?$/i.test(p) ? +mtime : /^now$/i.test(p) ? Date.now() : /^p?r?a?n[dg]o?m?$/i.test(p) ? prng.uint32() : p));
       console.log('Command ', cmd);
-    //  Util.putStack();
+      //  Util.putStack();
       let ret = handlers[cmd[0]](...cmd.slice(1));
 
-      if(ret)
-       palette = ret;
+      if (ret)
+        palette = ret;
 
 
       UpdatePalette();
@@ -317,9 +318,9 @@ async function main(...args) {
 
     let changed = new Set();
     let i = 0;
-    for(let [path, color] of palette) {
+    for (let [path, color] of palette) {
       const prevColor = prevPalette.get(path);
-      if(!prevColor.equals(color)) changed.add(i);
+      if (!prevColor.equals(color)) changed.add(i);
       i++;
     }
     const getHSLA = (idx_or_hex) => colors[typeof idx_or_hex == 'string' ? hex2idx[idx_or_hex] : idx_or_hex] || palette.get(idx2path[idx_or_hex]);
@@ -385,7 +386,8 @@ async function main(...args) {
 
     outfile = outfile || basename + '.xml';
     filesystem.writeFile(outfile, toXML(newObj));
-  } catch(err) {
+  }
+  catch (err) {
     let st = Util.stack(err.stack);
     // console.log(err.message, '\n', st.toString()); //st.map(f =>  Util.toString(f)));
     throw err;

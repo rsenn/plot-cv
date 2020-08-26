@@ -7,10 +7,11 @@ import Util from './lib/util.js';
 import { ansi, text, dingbatCode, inspect, EagleNode } from './lib/eagle/common.js';
 function dump(o, depth = 2, breakLength = 400) {
   let s;
-  if(o instanceof EagleElement) {
+  if (o instanceof EagleElement) {
     s = inspect(o);
     depth * 4;
-  } else s = util.inspect(o, { depth, colors: true, breakLength });
+  }
+  else s = util.inspect(o, { depth, colors: true, breakLength });
   return s;
 }
 function xmlize(obj, depth = 2) {
@@ -34,7 +35,7 @@ async function testEagle(filename) {
   let { board, schematic, libraries } = proj;
   const getPackage = (e) => {
     const { document } = e;
-    if(e.tagName == 'part') {
+    if (e.tagName == 'part') {
       const device = e.deviceset.find(
         (v) => v.tagName == 'device' && v.attributes.name == e.attributes.device,
         ([v]) => v
@@ -45,13 +46,14 @@ async function testEagle(filename) {
   };
   //Util.log(schematic.children);
   try {
-    for(let e of proj.getAll(
+    for (let e of proj.getAll(
       (v) => v.tagName == 'part' || v.tagName == 'element',
       ([v, l, h, d]) => new EagleElement(d, l, v)
     )) {
       //Util.log('proj:', dump(e, 1));
     }
-  } catch(error) {
+  }
+  catch (error) {
     const { stack } = error;
     //Util.log('error:', error.toString(), stack);
   }
@@ -63,7 +65,8 @@ async function testEagle(filename) {
   try {
     await testLocator();
     await testEagle('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3').then((result) => Util.log(result));
-  } catch(err) {
+  }
+  catch (err) {
     const stack = err.stack;
 
     //Util.log('err:', err.toString());

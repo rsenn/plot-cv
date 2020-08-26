@@ -71,35 +71,36 @@ async function main(...args) {
   const printSet = (set) => [...set.values()].map((n) => "'" + n + "'").join(', ');
 
   const setAttributes = (tag, attrs) => {
-    if(!attributes.has(tag)) attributes.set(tag, new Set());
+    if (!attributes.has(tag)) attributes.set(tag, new Set());
 
     let s = attributes.get(tag);
 
-    for(let name in attrs) {
+    for (let name in attrs) {
       s.add(name);
 
       const value = attrs[name];
 
-      if(Util.isNumeric(value)) numeric.add(name);
+      if (Util.isNumeric(value)) numeric.add(name);
     }
   };
 
   try {
-    for(let filename of args) {
+    for (let filename of args) {
       let xml = readXML(filename);
 
-      for(let [element, path] of XMLIterator.iterate(xml[0])) {
+      for (let [element, path] of XMLIterator.iterate(xml[0])) {
         //console.log('element:',element.tagName, element.attributes);
         setAttributes(element.tagName, element.attributes);
       }
     }
-  } catch(err) {
+  }
+  catch (err) {
     Util.putError(err);
   }
 
-  for(let [tag, attr] of attributes) {
+  for (let [tag, attr] of attributes) {
     let names = [...attr.values()];
-    if(names.length == 0) continue;
+    if (names.length == 0) continue;
 
     console.log(` ${tag}: [${printSet(attr)}],`);
   }

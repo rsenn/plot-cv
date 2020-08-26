@@ -5,7 +5,7 @@ import ConsoleSetup from './consoleSetup.js';
 function main(args) {
   let file = 'lib/geom/point.js';
 
-  if(args.length == 0) args = ['0,0', '50,100', '100,100', '100,50'];
+  if (args.length == 0) args = ['0,0', '50,100', '100,100', '100,50'];
 
   args = args.map((arg) => arg.split(',').map((n) => +n));
 
@@ -54,7 +54,7 @@ function main(args) {
   console.log('l:', l);
   let l2 = new PointList('-47.88,5.53 52.120000000000005,55.53 2.12,-44.47 -47.88,-44.47 19.12,22.53 -13.88,-10.47');
   console.log('l2:', l2);
-  var bbox = { xl: 0, xr: 800, yt: 0, yb: 600 };
+  let bbox = { xl: 0, xr: 800, yt: 0, yb: 600 };
 
   let v = new Voronoi();
   console.log('v:', v);
@@ -72,6 +72,7 @@ function main(args) {
 
 try {
   main(Util.getArgs());
-} catch(error) {
+}
+catch (error) {
   Util.putError(error);
 }

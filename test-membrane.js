@@ -33,7 +33,7 @@ try {
     const obj2path = observer.getField('path');
     const obj2type = observer.getField('type');
     const path2xpath = (path) => {
-      if(!(path instanceof ImmutablePath)) path = new ImmutablePath(path, true);
+      if (!(path instanceof ImmutablePath)) path = new ImmutablePath(path, true);
       return path;
     };
 
@@ -46,18 +46,20 @@ try {
       let p = new ImmutablePath(path);
       path = p.toArray();
       let thisParent = p.parent;
-      if(thisParent.equal(prev)) path = p.relativeTo(thisParent);
-      if(prev.equal(thisParent)) {
+      if (thisParent.equal(prev)) path = p.relativeTo(thisParent);
+      if (prev.equal(thisParent)) {
         relTo = prev;
         path = p.relativeTo(relTo);
-      } else if(thisParent.equal(prevParent)) {
+      }
+      else if (thisParent.equal(prevParent)) {
         relTo = prevParent;
         path = p.relativeTo(relTo);
-      } else {
+      }
+      else {
         prev = p.makeAbsolute(relTo);
         relTo = [];
       }
-      if(prevParent && !prevParent.equal(thisParent)) {
+      if (prevParent && !prevParent.equal(thisParent)) {
         relTo = [];
       }
       prevParent = thisParent;
@@ -87,6 +89,7 @@ try {
 
     mapper.set(observer.unwrap(node), []);
     let tree = observer.get(xml);
+
     /* { function_description }
      *
      * @param      {<type>}  obj     The object
@@ -95,20 +98,20 @@ try {
      * @return     {Object}  { description_of_the_return_value }
      */
     const incr = (obj, prop, i = 1) => {
-      if(!obj) obj = {};
+      if (!obj) obj = {};
       return { ...obj, [prop]: (obj[prop] || 0) + i };
     };
 
     let tags = {};
     let iter = new XMLIterator({ children: xml.children, tagName: tree.tagName, attributes: tree.attributes }, (v, p) => true);
-    for(let [v, p] of iter) {
-      if(!(p instanceof ImmutablePath)) p = new ImmutablePath(p, true);
+    for (let [v, p] of iter) {
+      if (!(p instanceof ImmutablePath)) p = new ImmutablePath(p, true);
       tags = incr(tags, v.tagName);
     }
     let lists = [];
-    for(let key in tags) {
+    for (let key in tags) {
       let lkey = key == 'library' ? 'libraries' : key + 's';
-      if(tags[lkey] !== undefined) lists.push(lkey);
+      if (tags[lkey] !== undefined) lists.push(lkey);
     }
     tags = Object.entries(tags).sort((a, b) => a[1] - b[1]);
     tags = lists.map((t) => {
@@ -140,7 +143,7 @@ try {
     });
 
     tags = Object.fromEntries(tags);
-    for(let [search, value] of Object.entries(tags)) {
+    for (let [search, value] of Object.entries(tags)) {
       let path = new ImmutablePath(search);
     }
     let x = new ImmutableXPath('/eagle/drawing/board');
@@ -154,4 +157,5 @@ try {
     //console.log('z:', z);
   }
   Util.callMain(main);
-} catch(err) {}
+}
+catch (err) {}

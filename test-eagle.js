@@ -60,7 +60,7 @@ async function testGraph(proj) {
   const { board } = proj;
   graph = new Graph();
 
-  for(let [name, element] of board.elements) {
+  for (let [name, element] of board.elements) {
     const { x, y } = element;
     const { attributes } = element.raw;
     let lib = board.get((e) => e.tagName == 'library' && e.attributes.name == attributes.library);
@@ -75,12 +75,12 @@ async function testGraph(proj) {
     n.height = rect.height;
     let pads = [...pkg.getAll('pad')];
     let padNames = pads.map((p) => p.name);
-    for(let pad of pads) {
+    for (let pad of pads) {
     }
   }
 
-  for(let [name, signal] of board.signals) {
-    for(let contactref of signal.getAll('contactref')) {
+  for (let [name, signal] of board.signals) {
+    for (let contactref of signal.getAll('contactref')) {
       const elementName = contactref.attributes.element;
       const element = board.get({ tagName: 'element', name: elementName });
       const { name } = element.raw.attributes;
@@ -91,13 +91,14 @@ async function testGraph(proj) {
 }
 
 function updateMeasures(board) {
-  if(!board) return false;
+  if (!board) return false;
   let bounds = board.getBounds();
   let measures = board.getMeasures();
 
-  if(measures) {
+  if (measures) {
     console.log('got measures:', measures);
-  } else {
+  }
+  else {
     let rect = new Rect(bounds.rect);
     let lines = rect.toLines((lines) => new LineList(lines));
     let { plain } = board;
@@ -133,7 +134,7 @@ function alignItem(item) {
 
   let changed = !diff.isNull();
 
-  if(changed) {
+  if (changed) {
     console.log('before:', Util.abbreviate(before));
     console.log('after:', Util.abbreviate(item.parentNode.toXML()));
     //console.log('geometry:', geometry);
@@ -143,14 +144,14 @@ function alignItem(item) {
 }
 
 function alignAll(doc) {
-  if(!doc) return false;
+  if (!doc) return false;
 
   let items = doc.getAll(doc.type == 'brd' ? 'element' : 'instance');
   let changed = false;
-  for(let item of items) changed |= alignItem(item);
+  for (let item of items) changed |= alignItem(item);
   let signals_nets = doc.getAll(/(signals|nets)/);
   //console.log('signals_nets:', signals_nets);
-  for(let net of signals_nets) for (let item of net.getAll('wire')) changed |= alignItem(item);
+  for (let net of signals_nets) for (let item of net.getAll('wire')) changed |= alignItem(item);
   return !!changed;
 }
 
@@ -159,6 +160,7 @@ async function testEagle(filename) {
 
   console.log('testEagle: ', filename);
   let proj = new EagleProject(filename, filesystem);
+
   /*
   LogJS.addAppender(
     class extends LogJS.BaseAppender {
@@ -186,10 +188,10 @@ async function testEagle(filename) {
   let libraries = (board && board.libraries) || [];
   let elements = (board && board.elements) || [];
 
-  for(let [libName, lib] of libraries) {
-    for(let [pkgName, pkg] of lib.packages)
-      for(let pad of pkg.children) {
-        if(pad.tagName !== 'pad') continue;
+  for (let [libName, lib] of libraries) {
+    for (let [pkgName, pkg] of lib.packages)
+      for (let pad of pkg.children) {
+        if (pad.tagName !== 'pad') continue;
         pad.setAttribute('drill', '0.7');
         pad.setAttribute('diameter', '1.778');
         pad.removeAttribute('stop');
@@ -198,14 +200,15 @@ async function testEagle(filename) {
       }
   }
   let cmds = [];
-  for(let [name, elem] of elements) {
+  for (let [name, elem] of elements) {
     cmds.push(`MOVE ${elem.name} ${elem.pos};`);
-    if(elem.rot) cmds.push(`ROTATE ${elem.rot} ${elem.name};`);
+    if (elem.rot) cmds.push(`ROTATE ${elem.rot} ${elem.name};`);
   }
+
   /*  for(let description of board.getAll('description')) {
   }*/
 
-  if(updateMeasures(proj.board) || alignAll(board) || alignAll(schematic)) console.log('Saved:', await proj.saveTo('tmp', true));
+  if (updateMeasures(proj.board) || alignAll(board) || alignAll(schematic)) console.log('Saved:', await proj.saveTo('tmp', true));
 
   console.log('documents', proj.documents);
 
@@ -233,12 +236,13 @@ async function testEagle(filename) {
 }
 (async () => {
   let args = Util.getArgs();
-  if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
-  for(let arg of args) {
+  if (args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
+  for (let arg of args) {
     arg = arg.replace(/\.(brd|sch|lbr)$/i, '');
     try {
       let project = await testEagle(arg);
-    } catch(err) {
+    }
+    catch (err) {
       console.log('Err:', err.message, typeof err.stack == 'string' ? err.stack : [...err.stack].map((f) => f + ''));
       process.exit(1);
     }

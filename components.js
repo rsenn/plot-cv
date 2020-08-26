@@ -9,22 +9,24 @@ import { useTrkl } from './lib/eagle/renderUtils.js';
 export function classNames() {
   let classes = [];
 
-  for(let i = 0; i < arguments.length; i++) {
+  for (let i = 0; i < arguments.length; i++) {
     let arg = arguments[i];
-    if(!arg) continue;
+    if (!arg) continue;
 
     let argType = typeof arg;
 
-    if(argType === 'string' || argType === 'number') {
+    if (argType === 'string' || argType === 'number') {
       classes.push(arg);
-    } else if(Array.isArray(arg) && arg.length) {
+    }
+    else if (Array.isArray(arg) && arg.length) {
       let inner = classNames.apply(null, arg);
-      if(inner) {
+      if (inner) {
         classes.push(inner);
       }
-    } else if(argType === 'object') {
-      for(let key in arg) {
-        if(hasOwn.call(arg, key) && arg[key]) {
+    }
+    else if (argType === 'object') {
+      for (let key in arg) {
+        if (hasOwn.call(arg, key) && arg[key]) {
           classes.push(key);
         }
       }
@@ -35,17 +37,17 @@ export function classNames() {
 }
 
 export const ClickHandler = (callback) => (e) => {
-  if(e.type) {
+  if (e.type) {
     const press = e.type.endsWith('down');
     callback(e, press);
   }
 };
 
 export const ToggleHandler = (callback, getState, setState) => (e) => {
-  if(e.type) {
+  if (e.type) {
     const press = e.type.endsWith('down');
 
-    if(press) {
+    if (press) {
       let state = !getState();
       setState(state);
       callback(e, state);
@@ -67,16 +69,16 @@ export const Overlay = ({ className = 'overlay', title, tooltip, active = true, 
     (toggle ? ToggleHandler : ClickHandler)(
       (e, state) => {
         const prev = pushed;
-        if(e.buttons && e.buttons != 1) return;
+        if (e.buttons && e.buttons != 1) return;
 
-        if(!e.type.endsWith('down') && !e.type.endsWith('up')) return;
+        if (!e.type.endsWith('down') && !e.type.endsWith('up')) return;
         //   setPushed(state);
         //Util.log(`overlay pushed=${pushed} active=${active}:`, e.target);
         let ret;
 
-        if(typeof onPush == 'function') ret = onPush(e, state);
+        if (typeof onPush == 'function') ret = onPush(e, state);
 
-        if(ret === true || ret === false) state = ret;
+        if (ret === true || ret === false) state = ret;
 
         setPushed(state);
       },
@@ -84,6 +86,7 @@ export const Overlay = ({ className = 'overlay', title, tooltip, active = true, 
       setPushed
     )
   );
+
   /*
 if(!Util.isArray(children)) {
   if(typeof(children) == 'string')
@@ -95,8 +98,8 @@ else
   if(text)
     children.unshift(text);
 */
-  if(typeof title == 'string' && title.length > 0) props.title = title;
-  if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
+  if (typeof title == 'string' && title.length > 0) props.title = title;
+  if (typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
 
   return h('div', { className: classNames(className, pushed && 'pushed', active ? 'active' : 'inactive'), ...props, ...events }, children);
 };
@@ -107,14 +110,16 @@ export const Container = ({ className = 'panel', children, ...props }) => {
 };
 
 export const Button = ({ caption, image, fn, state, style = {}, ...props }) => {
-  if(typeof image == 'string') {
-    if(!props.children) props.children = [];
+  if (typeof image == 'string') {
+    if (!props.children) props.children = [];
     props.children.unshift(h('img', { src: image }));
+
     /*style.backgroundImage = `url(${image})`;
   style.backgroundSize = 'cover';*/
   }
   return h(Overlay, { className: classNames('button', className), text: caption, state, onPush: (state) => (state && typeof fn == 'function' ? fn(state) : undefined), style, ...props });
 };
+
 /*html`
   <${Overlay} className="button" text=${caption} onPush=${state => (state ? fn(state) : undefined)} ${...props} />
 `;
@@ -127,22 +132,22 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
   const [size, setSize] = useState(onSize ? onSize() : {});
   const [hidden, setHidden] = useState(onHide ? onHide() : false);
 
-  if(typeof onSize == 'function' && onSize.subscribe) onSize.subscribe((value) => setSize(value));
-  if(typeof onHide == 'function' && onHide.subscribe) onHide.subscribe((value) => setHidden(value));
+  if (typeof onSize == 'function' && onSize.subscribe) onSize.subscribe((value) => setSize(value));
+  if (typeof onHide == 'function' && onHide.subscribe) onHide.subscribe((value) => setHidden(value));
 
-  if(size) {
-    if(!isNaN(+size.width)) style.width = `${size.width}px`;
-    if(!isNaN(+size.height)) style.height = `${size.height}px`;
+  if (size) {
+    if (!isNaN(+size.width)) style.width = `${size.width}px`;
+    if (!isNaN(+size.height)) style.height = `${size.height}px`;
   }
 
-  if(hidden) style.display = 'none';
+  if (hidden) style.display = 'none';
 
   return h(Overlay, { ref, className: classNames('floating', hidden && 'hidden', className), ...props, style }, children);
 };
 
 export const Label = ({ className, text, title, tooltip, children, ...props }) => {
-  if(typeof title == 'string' && title.length > 0) props.title = title;
-  if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
+  if (typeof title == 'string' && title.length > 0) props.title = title;
+  if (typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
   return h('div', { className: classNames('label', className), ...props }, (text ? [text] : []).concat(children));
 };
 
@@ -155,8 +160,8 @@ export const DynamicLabel = ({ caption, title, children, ...props }) => {
 };
 
 export const Item = ({ className = 'item', title, tooltip, label, icon, children, ...props }) => {
-  if(typeof title == 'string' && title.length > 0) props.title = title;
-  if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
+  if (typeof title == 'string' && title.length > 0) props.title = title;
+  if (typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
 
   return h(Overlay, { className, ...props }, h(Label, { text: icon }, label));
 };
@@ -252,7 +257,7 @@ export const LibraryIcon = (props) => html`
 export const Conditional = ({ initialState, component = Fragment, className, children, signal, ...props }) => {
   const [show, setShown] = useState(initialState !== undefined ? initialState : signal());
 
-  if(signal) signal.subscribe((value) => setShown(value));
+  if (signal) signal.subscribe((value) => setShown(value));
 
   return show ? h(component, { className, ...props }, children) : h(Fragment, {});
 };
@@ -260,17 +265,17 @@ export const Conditional = ({ initialState, component = Fragment, className, chi
 export const ShowHide = ({ initialState, component, className, children, signal, ...props }) => {
   const [hidden, setHidden] = useState(initialState !== undefined ? initialState : !signal());
 
-  if(signal) signal.subscribe((value) => setHidden(!value));
+  if (signal) signal.subscribe((value) => setHidden(!value));
 
   return h(component, { className: classNames(className, hidden && 'hidden'), ...props }, children);
 };
 
 export const EditBox = ({ value = '', type = 'div', className, hidden = false, current, focus, ...props }) => {
-  if(typeof current == 'function') props.ref = (input) => current(input);
+  if (typeof current == 'function') props.ref = (input) => current(input);
 
   const outerProps = { className: classNames(className, hidden && 'hidden') };
 
-  if(type == 'form') outerProps.onSubmit = (event) => event.preventDefault();
+  if (type == 'form') outerProps.onSubmit = (event) => event.preventDefault();
 
   return h(
     type,
@@ -286,7 +291,7 @@ export const EditBox = ({ value = '', type = 'div', className, hidden = false, c
 
 export const File = ({ label, name, description, i, key, className = 'file', onPush, signal, data, doc, ...props }) => {
   const [loaded, setLoaded] = useState(NaN);
-  if(signal) signal.subscribe((data) => setLoaded(data.percent));
+  if (signal) signal.subscribe((data) => setLoaded(data.percent));
   onPush =
     onPush ||
     (async (state) => {
@@ -297,7 +302,7 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
   let style = { minWidth: '40px', width: '40px', height: '40px' };
   let icon = /brd$/i.test(id + className) ? h(BoardIcon, { style }) : /sch$/i.test(id + className) ? h(SchematicIcon, {}) : /lbr$/i.test(id + className) ? h(LibraryIcon, {}) : undefined;
   icon = h('div', { style }, icon);
-  if(id) {
+  if (id) {
     id = isNaN(+id) ? i : id;
     id = 'file-' + id;
     //  name = id;
@@ -306,7 +311,7 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
   label = label.replace(/\.[^.]*$/, '').replace(/([^\s])-([^\s])/g, '$1 $2');
   let ext = name.replace(/.*\//g, '').replace(/.*\./g, '');
   label = h(Label, { text: Util.wordWrap(label, 50, '\n') });
-  if(description) {
+  if (description) {
     let s = Util.multiParagraphWordWrap(Util.stripXML(Util.decodeHTMLEntities(description)), 60, '\n');
 
     let d = s.split(/\n/g).slice(0, 1);
@@ -331,20 +336,20 @@ export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () =
   const [filter, setFilter] = useState('*');
   const [list, setList] = /*useState(items);*/ trkl.is(items) ? useState(items()) : [items];
 
-  if(trkl.is(items)) items.subscribe(setList);
+  if (trkl.is(items)) items.subscribe(setList);
 
   console.error('list:', list);
-  if(typeof items == 'function') console.error('items():', items());
+  if (typeof items == 'function') console.error('items():', items());
   //const list = items;
 
   const pushHandler = (i) => (e, state) => {
     const prev = active;
     state == true && setActive(i);
-    if(i != prev && e.type.endsWith('down')) onChange(e, list[i], i);
+    if (i != prev && e.type.endsWith('down')) onChange(e, list[i], i);
     onPush(e, i, state);
   };
 
-  if(itemFilter) {
+  if (itemFilter) {
     setFilter(itemFilter());
     itemFilter.subscribe((value) => setFilter(value));
   }
@@ -408,15 +413,15 @@ export const FileList = ({ files, onChange, onActive, filter, showSearch, focusS
         itemFilter=${filter}
         items=${items}
         tooltip=${({ name, data, ...item }) => {
-          let tooltip = `name\t${name.replace(/.*\//g, '')}`;
-          tooltip += `\ntype\t${item.type}\nsize\t${item.size}\nsha\t${item.sha}\npath\t${item.path}`;
+    let tooltip = `name\t${name.replace(/.*\//g, '')}`;
+    tooltip += `\ntype\t${item.type}\nsize\t${item.size}\nsha\t${item.sha}\npath\t${item.path}`;
 
-          if(data) tooltip += `\ndata\t${Util.abbreviate(data)}`;
-          return tooltip;
-        }}
+    if (data) tooltip += `\ndata\t${Util.abbreviate(data)}`;
+    return tooltip;
+  }}
         onChange=${(...args) => {
-          onChange(...args);
-        }}
+    onChange(...args);
+  }}
         ...${props}
       />
     </div>
@@ -428,23 +433,23 @@ export const Panel = (name, children) => html`<${Container} className="${name}">
 export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className }, children) =>
   enable
     ? h(
-        SizedAspectRatioBox,
-        {
-          className,
-          width,
-          aspect,
-          style: { overflow: 'visible' }
-        },
-        children
-      )
+      SizedAspectRatioBox,
+      {
+        className,
+        width,
+        aspect,
+        style: { overflow: 'visible' }
+      },
+      children
+    )
     : h(
-        'div',
-        {
-          className,
-          style: { width }
-        },
-        children
-      );
+      'div',
+      {
+        className,
+        style: { width }
+      },
+      children
+    );
 
 export const AspectRatioBox = ({ aspect = 1.0, children, insideClassName, outsideClassName, outsideProps = {}, style, ...props } /* Util.log('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/) =>
   h(Fragment, {}, [
@@ -493,10 +498,10 @@ export const TransformedElement = ({ type = 'div', aspect, listener, style = { p
   const [transform, setTransform] = useState(new TransformationList());
 
   //Util.log('TransformedElement:', { aspect });
-  if(listener && listener.subscribe)
+  if (listener && listener.subscribe)
     listener.subscribe((value) => {
       //Util.log('TransformedElement setValue', value+'');
-      if(value !== undefined) setTransform(value);
+      if (value !== undefined) setTransform(value);
     });
 
   return h(
@@ -591,7 +596,7 @@ export const Canvas = ({ onInit, ...props }) => {
     //Util.log('ctx.current', ctx.current);
     const { offsetLeft: x, offsetTop: y } = canvasRef.current;
 
-    if(typeof onInit == 'function') onInit(ctx.current, canvasRef.current, { width, height, x, y });
+    if (typeof onInit == 'function') onInit(ctx.current, canvasRef.current, { width, height, x, y });
   }, []);
 
   /*  const [windowWidth, windowHeight] = useWindowSize(() => {
@@ -602,11 +607,11 @@ export const Canvas = ({ onInit, ...props }) => {
   function handleMouseMove(e) {
     //actual coordinates
     const coords = [e.clientX - canvasRef.current.offsetLeft, e.clientY - canvasRef.current.offsetTop];
-    if(drawing) {
+    if (drawing) {
       ctx.current.lineTo(...coords);
       ctx.current.stroke();
     }
-    if(props.handleMouseMove) {
+    if (props.handleMouseMove) {
       props.handleMouseMove(...coords);
     }
   }
@@ -663,11 +668,11 @@ export const ColorWheel = ({ radius = 50, ...props }) => {
         let image = ctx.createImageData(2 * radius, 2 * radius);
         data = image.data;
 
-        for(let x = -radius; x < radius; x++) {
-          for(let y = -radius; y < radius; y++) {
+        for (let x = -radius; x < radius; x++) {
+          for (let y = -radius; y < radius; y++) {
             let [r, phi] = xy2polar(x, y);
 
-            if(r > radius) {
+            if (r > radius) {
               //skip all (x,y) coordinates that are outside of the circle
               continue;
             }
@@ -719,17 +724,22 @@ export const ColorWheel = ({ radius = 50, ...props }) => {
         let hue1 = hue / 60;
         let x = chroma * (1 - Math.abs((hue1 % 2) - 1));
         let r1, g1, b1;
-        if(hue1 >= 0 && hue1 <= 1) {
+        if (hue1 >= 0 && hue1 <= 1) {
           [r1, g1, b1] = [chroma, x, 0];
-        } else if(hue1 >= 1 && hue1 <= 2) {
+        }
+        else if (hue1 >= 1 && hue1 <= 2) {
           [r1, g1, b1] = [x, chroma, 0];
-        } else if(hue1 >= 2 && hue1 <= 3) {
+        }
+        else if (hue1 >= 2 && hue1 <= 3) {
           [r1, g1, b1] = [0, chroma, x];
-        } else if(hue1 >= 3 && hue1 <= 4) {
+        }
+        else if (hue1 >= 3 && hue1 <= 4) {
           [r1, g1, b1] = [0, x, chroma];
-        } else if(hue1 >= 4 && hue1 <= 5) {
+        }
+        else if (hue1 >= 4 && hue1 <= 5) {
           [r1, g1, b1] = [x, 0, chroma];
-        } else if(hue1 >= 5 && hue1 <= 6) {
+        }
+        else if (hue1 >= 5 && hue1 <= 6) {
           [r1, g1, b1] = [chroma, 0, x];
         }
 
@@ -804,10 +814,10 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen, ...props }) => 
   });
   console.log('DropDown open=', { open, Fragment });
 
-  if(typeof overlay == 'function')
+  if (typeof overlay == 'function')
     overlay = overlay({
       ref: (current) => {
-        if(current) {
+        if (current) {
           const { base } = current;
           const button = base.previousElementSibling;
 
@@ -822,6 +832,7 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen, ...props }) => 
 
   return h(Fragment, {}, open ? [button, into ? h(Portal, { into }, overlay) : overlay] : button);
 };
+
 /*
 export const Conditional = ({ trkl, children, ...props }) => {
   const [cond, setCond] = useState(trkl());

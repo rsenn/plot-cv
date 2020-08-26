@@ -1,10 +1,10 @@
 import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
 
 function getDimensionObject(node) {
-  if(typeof node == 'object' && node != null && node.base) node = node.base;
+  if (typeof node == 'object' && node != null && node.base) node = node.base;
   //  console.log('getDimensionObject', node);
 
-  var rect = node.getBoundingClientRect();
+  let rect = node.getBoundingClientRect();
   return {
     width: rect.width,
     height: rect.height,
@@ -18,31 +18,29 @@ function getDimensionObject(node) {
 }
 
 export function useDimensions() {
-  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+  let _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
     _ref$liveMeasure = _ref.liveMeasure,
     liveMeasure = _ref$liveMeasure === undefined ? true : _ref$liveMeasure;
 
-  var _useState = useState({}),
+  let _useState = useState({}),
     dimensions = _useState[0],
     setDimensions = _useState[1];
 
-  var _useState2 = useState(null),
+  let _useState2 = useState(null),
     node = _useState2[0],
     setNode = _useState2[1];
 
-  var ref = useCallback(function (node) {
+  let ref = useCallback((node) => {
     setNode(node);
   }, []);
   useLayoutEffect(
-    function () {
-      if(node) {
-        var measure = function measure() {
-          return window.requestAnimationFrame(function () {
-            return setDimensions(getDimensionObject(node));
-          });
+    () => {
+      if (node) {
+        let measure = function measure() {
+          return window.requestAnimationFrame(() => setDimensions(getDimensionObject(node)));
         };
         measure();
-        if(liveMeasure) {
+        if (liveMeasure) {
           window.addEventListener('resize', measure);
           window.addEventListener('scroll', measure);
           return function () {

@@ -23,10 +23,11 @@ async function main() {
     console.log(`st.isFile():`, st.isFile());
     console.log(`filesystem.stat('/proc/self').isSymbolicLink():`, filesystem.stat('/proc/self').isSymbolicLink());
     console.log(`filesystem.stat('/proc/self',true).isDirectory():`, filesystem.stat('/proc/self', true).isDirectory());
-  } catch(error) {
+  }
+  catch (error) {
     err = error;
   }
-  if(err) console.log(`error:`, err);
+  if (err) console.log(`error:`, err);
 }
 
 main();

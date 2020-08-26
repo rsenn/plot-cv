@@ -21,6 +21,7 @@ async function main() {
   for await (let value of r) {
     console.log('value:', value);
   }
+
   /*
   let p = new InMemoryPubSub();
 
@@ -40,6 +41,7 @@ async function main() {
 }
 try {
   main(Util.getArgs());
-} catch(err) {
+}
+catch (err) {
   console.error('error:', err);
 }

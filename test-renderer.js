@@ -71,7 +71,8 @@ async function main() {
 
     //console.log( ct.toAnsi256());
     console.log(ct);
-  } catch(error) {
+  }
+  catch (error) {
     const stack = error.stack;
 
     /*console.log('argv[0]:', process.argv[0]);

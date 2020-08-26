@@ -19,10 +19,10 @@ const ctors = [Point, Size, Rect, Mat, Contour, Line];
 
 let objs = [];
 
-for(let ctor of ctors) {
+for (let ctor of ctors) {
   objs.push(new ctor(0, 0, 0, 0));
 }
-for(let obj of objs) {
+for (let obj of objs) {
   //console.log('obj: ', obj.constructor.name, '' + obj);
 }
 

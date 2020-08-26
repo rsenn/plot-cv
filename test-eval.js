@@ -26,6 +26,7 @@ function main(args) {
 
 try {
   main(Util.getArgs());
-} catch(error) {
+}
+catch (error) {
   Util.putError(error);
 }

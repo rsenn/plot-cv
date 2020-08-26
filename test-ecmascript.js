@@ -41,7 +41,7 @@ const code = `export const Progress = ({ className, percent, ...props }) =>  h(
 const testfn = () => true;
 const testtmpl = `this is\na test`;
 let args = Util.getArgs();
-if(args.length == 0) args.push('-');
+if (args.length == 0) args.push('-');
 
 let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
 
@@ -53,8 +53,8 @@ const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" view
 
 */
 function dumpFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
-  if(typeof data != 'string') data = '' + data;
+  if (Util.isArray(data)) data = data.join('\n');
+  if (typeof data != 'string') data = '' + data;
 
   filesystem.writeFile(name, data + '\n');
 
@@ -70,10 +70,10 @@ globalThis.parser = null;
 async function main(args) {
   filesystem = await PortableFileSystem();
 
-  if(args.length == 0) args.push('./lib/ecmascript/parser.js');
-  for(let file of args) {
+  if (args.length == 0) args.push('./lib/ecmascript/parser.js');
+  for (let file of args) {
     let data, b, ret;
-    if(file == '-') {
+    if (file == '-') {
       file = '/dev/stdin';
       data = filesystem.readFile(file);
     }
@@ -117,7 +117,7 @@ async function main(args) {
       let node2path = new WeakMap();
       let nodeKeys = [];
 
-      for(let [path, node] of flat) {
+      for (let [path, node] of flat) {
         node2path.set(node, path);
         nodeKeys.push(path);
       }
@@ -138,14 +138,15 @@ async function main(args) {
       //   let allNodes = nodeKeys.map((path) => flat.get(path));
       let allNodes = nodeKeys.map((path, i) => [i, flat.get(path)]);
 
-      for(let [i, n] of allNodes) Util.log(`\n  ${i}:\n `, new ImmutablePath(node2path.get(n)), '\n ', n, '\n ', ESNode.assoc(n).position, '\n');
-    } catch(err) {
+      for (let [i, n] of allNodes) Util.log(`\n  ${i}:\n `, new ImmutablePath(node2path.get(n)), '\n ', n, '\n ', ESNode.assoc(n).position, '\n');
+    }
+    catch (err) {
       error = err;
       console.log('error:', err);
     }
     files[file] = finish(error);
 
-    if(!error) {
+    if (!error) {
       const output_file = file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
 
       console.log('saving to:', output_file);
@@ -153,7 +154,8 @@ async function main(args) {
       console.log('output:', output);
 
       dumpFile(output_file, output);
-    } else {
+    }
+    else {
       process.exit(1);
     }
 
@@ -165,14 +167,14 @@ async function main(args) {
 
 function finish(err) {
   let fail = !!err;
-  if(fail) {
+  if (fail) {
     err.stack = PathReplacer()('' + err.stack)
       .split(/\n/g)
       .filter((s) => !/esfactory/.test(s))
       .join('\n');
   }
 
-  if(err) {
+  if (err) {
     console.log(parser.lexer.currentLine());
     console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
@@ -181,7 +183,7 @@ function finish(err) {
   let t = [];
   console.log(parser.trace());
   dumpFile('trace.log', parser.trace());
-  if(fail) {
+  if (fail) {
     console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
   }
   console.log('finish: ' + (fail ? 'error' : 'success'));

@@ -18,14 +18,14 @@ async function testVoronoi(filename) {
   //console.log('doc', doc);
   let points = new PointList();
 
-  for(let element of doc.elements.list) {
+  for (let element of doc.elements.list) {
     const pkg = element.package;
     let { x, y } = element;
     //console.log('element:', element, { x, y });
     let origin = new Point(x, y);
 
-    for(let item of pkg.children) {
-      if(item.drill !== undefined) {
+    for (let item of pkg.children) {
+      if (item.drill !== undefined) {
         let pos = new Point(+item.x, +item.y).add(origin);
         //console.log('pos:', pos);
 
@@ -43,13 +43,13 @@ async function testVoronoi(filename) {
     //console.log('item:', item);
   }*/
 
-  var sites = points.map((p) => p.toObject());
+  let sites = points.map((p) => p.toObject());
   //xl, xr means x left, x right
   //yt, yb means y top, y bottom
   //console.log('bbox:', bb);
 
-  var bbox = { xl: bb.x1, xr: bb.x2, yt: bb.y1, yb: bb.y2 };
-  var voronoi = new Voronoi();
+  let bbox = { xl: bb.x1, xr: bb.x2, yt: bb.y1, yb: bb.y2 };
+  let voronoi = new Voronoi();
   //pass an object which exhibits xl, xr, yt, yb properties. The bounding
   //box will be used to connect unbound edges, and to close open cells
   let result = voronoi.compute(sites, bbox);
@@ -69,7 +69,7 @@ async function testVoronoi(filename) {
     create: (tag) => ({ tagName: tag }),
     append_to: (elem, parent) => (parent.children = add(parent.children, elem)),
     setattr: (elem, name, value) => {
-      if(!elem.attributes) elem.attributes = {};
+      if (!elem.attributes) elem.attributes = {};
       elem.attributes[name] = value;
     }
   });
@@ -89,11 +89,12 @@ async function testVoronoi(filename) {
 }
 (() => {
   let args = Util.getArgs();
-  if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd');
-  for(let arg of args) {
+  if (args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd');
+  for (let arg of args) {
     try {
       let project = testVoronoi(arg);
-    } catch(err) {
+    }
+    catch (err) {
       //console.log('Err:', err.message, err.stack);
       throw err;
     }
