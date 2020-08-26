@@ -340,18 +340,18 @@ async function main(...args) {
 
   function processFile(file, depth = 0) {
     let b, ret;
-         console.log('file:', file);
- if(!name) {
+    console.log('file:', file);
+    if(!name) {
       name = file;
       if(/\/(src|index)[^/]*$/.test(name)) name = name.replace(/(src\/|index)[^/]*$/g, '');
 
       name = path.basename(name).replace(/\.[ce]?[tj]s$/, '');
     }
     const moduleDir = removeModulesDir(file);
-              console.log('moduleDir:', moduleDir);
- const modulePath = path.relative(ES6Env.cwd, moduleDir);
-          console.log('modulePath:', modulePath);
-console.log('processing:', ... [file, moduleDir, modulePath].reduce((acc,it) => [...acc, '\n  ', it], []));
+    console.log('moduleDir:', moduleDir);
+    const modulePath = path.relative(ES6Env.cwd, moduleDir);
+    console.log('modulePath:', modulePath);
+    console.log('processing:', ...[file, moduleDir, modulePath].reduce((acc, it) => [...acc, '\n  ', it], []));
     //  qconsole.log('processing:', ...Util.unique([file, moduleDir, modulePath]) .filter((p) => !path.isAbsolute(p)) .reduce((acc, item) => [...acc, '\n  ', item], []) );
 
     removeFile(file);
@@ -440,25 +440,24 @@ console.log('processing:', ... [file, moduleDir, modulePath].reduce((acc,it) => 
         let paths = literals.map(([p, n]) => flat.get(p).value);
         console.log('getFromValue paths', paths);
         if(paths) {
-          let v = paths.map(n => n.replace(/^[\u0027\u0022\u0060](.*)[\u0027\u0022\u0060]$/g, '$1'))[0];
+          let v = paths.map((n) => n.replace(/^[\u0027\u0022\u0060](.*)[\u0027\u0022\u0060]$/g, '$1'))[0];
           if(v) {
             console.log('getFromValue v', v);
             return v;
           }
         }
       };
-      const getFrom = ([node,path]) => {
-               if(node instanceof CallExpression) {
+      const getFrom = ([node, path]) => {
+        if(node instanceof CallExpression) {
           node = node['arguments'][0];
-          path = path.down('arguments',0);
+          path = path.down('arguments', 0);
         }
-  if(node instanceof Literal) {
+        if(node instanceof Literal) {
           node = node['value'];
           path = path.down('value');
         }
-        return [node,path];
-
-      }
+        return [node, path];
+      };
       const getFromBase = (path, node) => {
         console.log('getFromBase  : ', { path, node });
         let str = getFromValue([node, path]);
@@ -466,13 +465,13 @@ console.log('processing:', ... [file, moduleDir, modulePath].reduce((acc,it) => 
         return str;
       };
       const getFromPath = ([path, node]) => {
-           console.log('getFromPath:', { path, node });
+        console.log('getFromPath:', { path, node });
         let fileName,
-          fromStr =getFromValue([node, path]);
+          fromStr = getFromValue([node, path]);
         console.log('getFromPath fromStr: ', fromStr);
         if(typeof fromStr == 'string') fileName = getFile(fromStr);
-                console.log('getFromPath:', { fileName });
-   return fileName;
+        console.log('getFromPath:', { fileName });
+        return fileName;
       };
 
       imports = [...flat()].filter((it) => isRequire(it) || isImport(it));
@@ -492,7 +491,7 @@ console.log('processing:', ... [file, moduleDir, modulePath].reduce((acc,it) => 
           identifiers: node.right instanceof Identifier ? [node.right.value] : [],
           //    position: ESNode.assoc(node).position,
           fromValue: getFromValue([node, path]),
-          fromPath: getFromPath([path, node ]),
+          fromPath: getFromPath([path, node]),
           bindings: new Map(getDeclarations(node))
         });
       });
