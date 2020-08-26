@@ -75,7 +75,7 @@ const convertToGerber = async (boardFile, opts = {}) => {
 
   if(code !== 0) throw new Error(output);
 
-  if(output) output = output.replace(/ *\r*\n/g, '\n');
+  if(output) output = output.replace(/\s*\r*\n/g, '\n');
 
   let result = { code, output };
 
@@ -123,7 +123,7 @@ const gerberToGcode = async (gerberFile, allOpts = {}) => {
 
   if(code !== 0) throw new Error(output);
 
-  if(output) output = output.replace(/ *\r*\n/g, '\n');
+  if(output) output = output.replace(/\s*\r*\n/g, '\n');
 
   let result = { code, output };
 
@@ -293,7 +293,7 @@ app.get('/favicon.ico', (req, res) =>
     }
   })
 );
-app.get(/\/[^/]*\.js$/, async (req, res) => res.sendFile(path.join(p, req.path)));
+app.get(/\/[^\/]*\.js$/, async (req, res) => res.sendFile(path.join(p, req.path)));
 
 //app.get('/components.js', async (req, res) => res.sendFile(path.join(p, 'components.js')));
 
@@ -349,7 +349,7 @@ const GetFilesList = async (dir = './tmp', opts = {}) => {
               Object.assign(obj, {
                 mtime: Util.toUnixTime(mtime),
                 time: Util.toUnixTime(ctime),
-                mode: `0${(mode & 0o4777).toString(8)}`,
+                mode: `0${(mode & 04777).toString(8)}`,
                 size
               })
             )
@@ -400,7 +400,7 @@ app.post(/^\/gerber/, async (req, res) => {
 
     if(save) {
       filename = filename || typeof save == 'string' ? save : null;
-      filename = `tmp/` + filename.replace(/.*\/([^/])*\.[^/.]*$/g, '$1');
+      filename = `tmp/` + filename.replace(/.*\/([^\/])*\.[^\/.]*$/g, '$1');
 
       await fsPromises.writeFile(filename, result.data).then((res) => console.log('Wrote file:', res));
     }
@@ -450,7 +450,7 @@ app.post('/save', async (req, res) => {
   //console.log('req.headers:', req.headers);
   console.log('save body:', typeof body == 'string' ? Util.abbreviate(body, 100) : body);
   const filename = 'tmp/' + req.headers['content-disposition'].replace(/.*"([^"]*)".*/, '$1') || 'output.svg';
-  await fs.promises.writeFile(filename, body, { mode: 0o600, flag: 'w' });
+  await fs.promises.writeFile(filename, body, { mode: 0600, flag: 'w' });
   let st = await fs.promises.stat(filename);
 
   console.log('saved:', filename, `${st.size} bytes`);
