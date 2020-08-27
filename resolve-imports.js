@@ -537,8 +537,10 @@ async function main(...args) {
         recurseFiles.map((f) => f)
       );
       recurseFiles.forEach((imp, idx) => {
-        console.log(`recurseFiles [${depth}] forEach #${idx}:`, imp);
-        processFile(imp, (depth || 0) + 1);
+        if(processed.indexOf(imp) == -1) {
+          console.log(`recurseFiles [${depth}] forEach #${idx}:`, imp);
+          processFile(imp, (depth || 0) + 1);
+        }
       });
       //console.log('imports:', ...imports.map((imp, i) => `\n  #${i} ` + printAst(imp.node)));
 

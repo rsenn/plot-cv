@@ -86,6 +86,7 @@
     "free-proxy": "^0.1.6",
     "http": "0.0.0",
     "proxynova": "^0.1.0",
+    "sc-random": "^1.0.0",
     "trace": "^3.1.1"
   },
   "husky": {

@@ -349,7 +349,7 @@ const GetFilesList = async (dir = './tmp', opts = {}) => {
               Object.assign(obj, {
                 mtime: Util.toUnixTime(mtime),
                 time: Util.toUnixTime(ctime),
-                mode: `0${(mode & 04777).toString(8)}`,
+                mode: `0${(mode & 0x09ff).toString(8)}`,
                 size
               })
             )
@@ -450,7 +450,7 @@ app.post('/save', async (req, res) => {
   //console.log('req.headers:', req.headers);
   console.log('save body:', typeof body == 'string' ? Util.abbreviate(body, 100) : body);
   const filename = 'tmp/' + req.headers['content-disposition'].replace(/.*"([^"]*)".*/, '$1') || 'output.svg';
-  await fs.promises.writeFile(filename, body, { mode: 0600, flag: 'w' });
+  await fs.promises.writeFile(filename, body, { mode: 0x0180, flag: 'w' });
   let st = await fs.promises.stat(filename);
 
   console.log('saved:', filename, `${st.size} bytes`);
