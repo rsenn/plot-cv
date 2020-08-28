@@ -11,8 +11,7 @@ function test() {
 }
 
 function _test() {
-  _test = _wrapAsyncGenerator(
-    /*#__PURE__*/ _regeneratorRuntime.mark(function _callee() {
+  _test = _wrapAsyncGenerator(/*#__PURE__*/ _regeneratorRuntime.mark(function _callee() {
       let i;
       return _regeneratorRuntime.wrap((_context) => {
         while(1)

@@ -7,6 +7,8 @@ include(CheckCXXCompilerFlag)
 include(CheckLibraryExists)
 include(FindPkgConfig)
 
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+
 message("Thread library: ${CMAKE_THREAD_LIBS_INIT}")
 if(CMAKE_THREAD_LIBS_INIT)
   set(LIBPTHREAD ${CMAKE_THREAD_LIBS_INIT})
@@ -91,7 +93,6 @@ macro(add_prog)
   install(TARGETS ${name} DESTINATION bin)
 endmacro()
 
-set(BUILD_SHARED_LIBS ON)
 
 link_directories("${CMAKE_BINARY_DIR}/quickjs")
 
@@ -130,7 +131,8 @@ src_program(
   )
 
 option(ADDITIONAL_PROGS "Build other OpenCV programs" FALSE)
-option(QUICKJS_MODULES "Build .so modules for quickjs" FALSE)
+
+option(QUICKJS_MODULES "Build .so modules for quickjs" "${BUILD_SHARED_LIBS}")
 
 if(QUICKJS_MODULES)
   include(js-bindings.cmake)

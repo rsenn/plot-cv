@@ -2679,6 +2679,11 @@ onetime@^1.0.0:
   resolved "https://registry.yarnpkg.com/onetime/-/onetime-1.1.0.tgz#a1f7838f8314c516f05ecefcbc4ccfe04b4ed789"
   integrity sha1-ofeDj4MUxRbwXs78vEzP4EtO14k=
 
+opentype@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/opentype/-/opentype-0.1.2.tgz#d08d44c7dc3737298301d67f5d97c10f42c0a679"
+  integrity sha1-0I1Ex9w3NymDAdZ/XZfBD0LApnk=
+
 optionator@^0.8.2:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/optionator/-/optionator-0.8.3.tgz#84fa1d036fe9d3c7e21d99884b601167ec8fb495"

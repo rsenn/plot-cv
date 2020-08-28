@@ -37,7 +37,6 @@ cfg() {
 
   case "$STATIC:$TYPE" in
     YES:*|yes:*|y:*|1:*|ON:*|on:* | *:*[Ss]tatic*) set -- "$@" \
-      -DBUILD_SHARED_LIBS=OFF \
       -DENABLE_PIC=OFF ;;
   esac
 
@@ -51,7 +50,6 @@ cfg() {
     -G "$generator" \
     ${VERBOSE:+-DCMAKE_VERBOSE_MAKEFILE=$VERBOSE} \
     -DCMAKE_BUILD_TYPE="${TYPE:-Debug}" \
-    -DBUILD_SHARED_LIBS=ON \
     ${CC:+-DCMAKE_C_COMPILER="$CC"} \
     ${CXX:+-DCMAKE_CXX_COMPILER="$CXX"} \
     ${PKG_CONFIG:+-DPKG_CONFIG_EXECUTABLE="$PKG_CONFIG"} \
@@ -101,10 +99,7 @@ cfg-diet() {
   builddir=build/${host%-*}-diet \
   cfg \
     -DCMAKE_INSTALL_PREFIX="$prefix" \
-    -DENABLE_SHARED=OFF \
-    -DENABLE_STATIC=ON \
     -DSHARED_LIBS=OFF \
-    -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_VERBOSE_MAKEFILE=ON \
     -DCMAKE_FIND_ROOT_PATH="$prefix" \
     -DCMAKE_SYSTEM_LIBRARY_PATH="$prefix/lib-${host%%-*}" \
@@ -175,10 +170,7 @@ cfg-emscripten() {
   PKG_CONFIG="PKG_CONFIG_PATH=$libdir/pkgconfig pkg-config" \
   cfg \
     -DCMAKE_INSTALL_PREFIX="$prefix" \
-    -DENABLE_SHARED=OFF \
-    -DENABLE_STATIC=ON \
     -DSHARED_LIBS=OFF \
-    -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_VERBOSE_MAKEFILE=ON \
     "$@")
 }
@@ -212,10 +204,7 @@ cfg-musl() {
   CC=musl-gcc \
   PKG_CONFIG=musl-pkg-config \
   cfg \
-    -DENABLE_SHARED=OFF \
-    -DENABLE_STATIC=ON \
     -DSHARED_LIBS=OFF \
-    -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_VERBOSE_MAKEFILE=ON \
     "$@")
 }

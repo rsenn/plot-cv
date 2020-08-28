@@ -394,8 +394,7 @@ function getGenericEventData(event) {
   let touchEvents = getTouchEvents(event);
   let touches = (touchEvents && touchEvents.length) || 0;
   let down = touches > 0 || buttons > 0;
-  return _extends(
-    {
+  return _extends({
       touches,
       down,
       buttons
@@ -668,8 +667,7 @@ function useRecognizers(handlers, classes, config, nativeHandlers) {
 
       if(controller.nativeRefs) {
         for(let eventName in controller.nativeRefs) {
-          current.addBindings(
-            eventName, // @ts-ignore we're cheating when it comes to event type :(
+          current.addBindings(eventName, // @ts-ignore we're cheating when it comes to event type :(
             controller.nativeRefs[eventName]
           );
         }
@@ -1081,8 +1079,7 @@ let CoordinatesRecognizer = /*#__PURE__*/ (function (_Recognizer) {
     if(_blocked) return movementDetection;
     let delta_t = event.timeStamp - timeStamp;
     let kinematics = calculateAllKinematics(movement, delta, delta_t);
-    return _extends(
-      {
+    return _extends({
         values,
         delta
       },
@@ -1224,8 +1221,7 @@ let DragRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
       let _isTap = _this.state._isTap;
       if(_isTap && calculateDistance(kinematics._movement) >= TAP_DISTANCE_THRESHOLD) _isTap = false;
 
-      _this.updateGestureState(
-        _extends({}, _this.getGenericPayload(event), {}, kinematics, {
+      _this.updateGestureState(_extends({}, _this.getGenericPayload(event), {}, kinematics, {
           _isTap,
           cancel: function cancel() {
             return _this.onCancel();
@@ -1275,8 +1271,7 @@ let DragRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
         if(iy !== false && Math.abs(vy) > svy && Math.abs(my) > sy) swipe[1] = Math.sign(vy);
       }
 
-      _this.updateGestureState(
-        _extends(
+      _this.updateGestureState(_extends(
           {
             event
           },
@@ -1330,8 +1325,7 @@ let DragRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
 
     let startState = _extends({}, this.getStartGestureState(values, event), {}, this.getGenericPayload(event, true));
 
-    this.updateGestureState(
-      _extends({}, startState, {}, this.getMovement(values, startState), {
+    this.updateGestureState(_extends({}, startState, {}, this.getMovement(values, startState), {
         cancel: function cancel() {
           return _this2.onCancel();
         }
@@ -1443,14 +1437,12 @@ function getInternalCoordinatesOptions(coordinatesConfig) {
     [def.withDefault(bounds.left, -Infinity), def.withDefault(bounds.right, Infinity)],
     [def.withDefault(bounds.top, -Infinity), def.withDefault(bounds.bottom, Infinity)]
   ];
-  return _extends(
-    {},
+  return _extends({},
     getInternalGestureOptions(internalOptions),
     {},
     defaultCoordinatesOptions,
     {},
-    matchKeysFromObject(
-      {
+    matchKeysFromObject({
         axis,
         lockDirection
       },
@@ -1511,8 +1503,7 @@ function getInternalDragOptions(dragConfig) {
     filterTaps = true;
   }
 
-  let internalCoordinatesOptions = getInternalCoordinatesOptions(
-    matchKeysFromObject(
+  let internalCoordinatesOptions = getInternalCoordinatesOptions(matchKeysFromObject(
       {
         enabled,
         threshold,
@@ -1559,8 +1550,7 @@ function useDrag(handler, config) {
    * this could probably be optimized
    */
 
-  let mergedConfig = _extends(
-    {},
+  let mergedConfig = _extends({},
     getInternalGenericOptions({
       domTarget,
       eventOptions,
@@ -1571,11 +1561,9 @@ function useDrag(handler, config) {
     }
   );
 
-  return useRecognizers(
-    {
+  return useRecognizers({
       drag: handler
-    },
-    [DragRecognizer],
+    }, [DragRecognizer],
     mergedConfig
   );
 }
@@ -1635,8 +1623,7 @@ let DistanceAngleRecognizer = /*#__PURE__*/ (function (_Recognizer) {
     let turns = (values[1] - movement[1] - initial[1]) / 360;
     let delta_t = event.timeStamp - timeStamp;
     let kinematics = calculateAllKinematics(movement, delta, delta_t);
-    return _extends(
-      {
+    return _extends({
         values,
         delta,
         turns
@@ -1684,8 +1671,7 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
 
       let startState = _extends({}, _this.getStartGestureState(values, event), {}, _this.getGenericPayload(event, true));
 
-      _this.updateGestureState(
-        _extends({}, startState, {}, _this.getMovement(values, startState), {
+      _this.updateGestureState(_extends({}, startState, {}, _this.getMovement(values, startState), {
           origin,
           cancel: function cancel() {
             return _this.onCancel();
@@ -1713,8 +1699,7 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
 
       let kinematics = _this.getKinematics(values, event);
 
-      _this.updateGestureState(
-        _extends({}, _this.getGenericPayload(event), {}, kinematics, {
+      _this.updateGestureState(_extends({}, _this.getGenericPayload(event), {}, kinematics, {
           origin,
           cancel: function cancel() {
             return _this.onCancel();
@@ -1734,8 +1719,7 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
         touches: 0
       });
 
-      _this.updateGestureState(
-        _extends(
+      _this.updateGestureState(_extends(
           {
             event
           },
@@ -1779,8 +1763,7 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
 
       let startState = _extends({}, _this.getStartGestureState(values, event), {}, _this.getGenericPayload(event, true));
 
-      _this.updateGestureState(
-        _extends({}, startState, {}, _this.getMovement(values, startState), {
+      _this.updateGestureState(_extends({}, startState, {}, _this.getMovement(values, startState), {
           cancel: function cancel() {
             return _this.onCancel();
           }
@@ -1805,8 +1788,7 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
 
       let kinematics = _this.getKinematics(values, event);
 
-      _this.updateGestureState(
-        _extends({}, _this.getGenericPayload(event), {}, kinematics, {
+      _this.updateGestureState(_extends({}, _this.getGenericPayload(event), {}, kinematics, {
           cancel: function cancel() {
             return _this.onCancel();
           }
@@ -1826,8 +1808,7 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
         touches: 0
       });
 
-      _this.updateGestureState(
-        _extends(
+      _this.updateGestureState(_extends(
           {
             event
           },
@@ -1903,8 +1884,7 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
         initial: _this.state.values
       });
 
-      _this.updateGestureState(
-        _extends({}, startState, {}, _this.getMovement(values, startState), {
+      _this.updateGestureState(_extends({}, startState, {}, _this.getMovement(values, startState), {
           offset: values,
           delta,
           origin
@@ -1926,8 +1906,7 @@ let PinchRecognizer = /*#__PURE__*/ (function (_DistanceAngleRecogni) {
 
       let kinematics = _this.getKinematics(values, event);
 
-      _this.updateGestureState(
-        _extends({}, _this.getGenericPayload(event), {}, kinematics, {
+      _this.updateGestureState(_extends({}, _this.getGenericPayload(event), {}, kinematics, {
           origin,
           delta
         })
@@ -1994,8 +1973,7 @@ function usePinch(handler, config) {
    * this could probably be optimized
    */
 
-  let mergedConfig = _extends(
-    {},
+  let mergedConfig = _extends({},
     getInternalGenericOptions({
       domTarget,
       eventOptions,
@@ -2006,11 +1984,9 @@ function usePinch(handler, config) {
     }
   );
 
-  return useRecognizers(
-    {
+  return useRecognizers({
       pinch: handler
-    },
-    [PinchRecognizer],
+    }, [PinchRecognizer],
     mergedConfig
   );
 }
@@ -2066,8 +2042,7 @@ let WheelRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
 
       let delta = movementDetection.delta;
 
-      _this.updateGestureState(
-        _extends({}, startState, {}, movementDetection, {
+      _this.updateGestureState(_extends({}, startState, {}, movementDetection, {
           distance: calculateDistance(delta),
           direction: calculateDirection(delta)
         })
@@ -2094,8 +2069,7 @@ let WheelRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
     _this.onWheelEnd = function () {
       _this.state._active = false;
 
-      _this.updateGestureState(
-        _extends({}, _this.getMovement(_this.state.values), {
+      _this.updateGestureState(_extends({}, _this.getMovement(_this.state.values), {
           velocities: [0, 0],
           velocity: 0
         })
@@ -2142,8 +2116,7 @@ function useWheel(handler, config) {
    * this could probably be optimized
    */
 
-  let mergedConfig = _extends(
-    {},
+  let mergedConfig = _extends({},
     getInternalGenericOptions({
       domTarget,
       eventOptions,
@@ -2154,11 +2127,9 @@ function useWheel(handler, config) {
     }
   );
 
-  return useRecognizers(
-    {
+  return useRecognizers({
       wheel: handler
-    },
-    [WheelRecognizer],
+    }, [WheelRecognizer],
     mergedConfig
   );
 }
@@ -2219,8 +2190,7 @@ let MoveRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
     _this.onMoveEnd = function () {
       _this.state._active = false;
 
-      _this.updateGestureState(
-        _extends({}, _this.getMovement(_this.state.values), {
+      _this.updateGestureState(_extends({}, _this.getMovement(_this.state.values), {
           velocities: [0, 0],
           velocity: 0
         })
@@ -2322,8 +2292,7 @@ function useMove(handler, config) {
    * this could probably be optimized
    */
 
-  let mergedConfig = _extends(
-    {},
+  let mergedConfig = _extends({},
     getInternalGenericOptions({
       domTarget,
       eventOptions,
@@ -2334,11 +2303,9 @@ function useMove(handler, config) {
     }
   );
 
-  return useRecognizers(
-    {
+  return useRecognizers({
       move: handler
-    },
-    [MoveRecognizer],
+    }, [MoveRecognizer],
     mergedConfig
   );
 }
@@ -2369,16 +2336,14 @@ function useHover(handler, config) {
    * this could probably be optimized
    */
 
-  let mergedConfig = _extends(
-    {},
+  let mergedConfig = _extends({},
     getInternalGenericOptions({
       domTarget,
       eventOptions,
       window
     }),
     {
-      hover: _extends(
-        {
+      hover: _extends({
           enabled: true
         },
         hover
@@ -2386,11 +2351,9 @@ function useHover(handler, config) {
     }
   );
 
-  return useRecognizers(
-    {
+  return useRecognizers({
       hover: handler
-    },
-    [MoveRecognizer],
+    }, [MoveRecognizer],
     mergedConfig
   );
 }
@@ -2434,8 +2397,7 @@ let ScrollRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
 
       let delta = movementDetection.delta;
 
-      _this.updateGestureState(
-        _extends({}, startState, {}, movementDetection, {
+      _this.updateGestureState(_extends({}, startState, {}, movementDetection, {
           distance: calculateDistance(delta),
           direction: calculateDirection(delta)
         })
@@ -2462,8 +2424,7 @@ let ScrollRecognizer = /*#__PURE__*/ (function (_CoordinatesRecognize) {
     _this.onScrollEnd = function () {
       _this.state._active = false;
 
-      _this.updateGestureState(
-        _extends({}, _this.getMovement(_this.state.values), {
+      _this.updateGestureState(_extends({}, _this.getMovement(_this.state.values), {
           velocities: [0, 0],
           velocity: 0
         })
@@ -2510,8 +2471,7 @@ function useScroll(handler, config) {
    * this could probably be optimized
    */
 
-  let mergedConfig = _extends(
-    {},
+  let mergedConfig = _extends({},
     getInternalGenericOptions({
       domTarget,
       eventOptions,
@@ -2522,11 +2482,9 @@ function useScroll(handler, config) {
     }
   );
 
-  return useRecognizers(
-    {
+  return useRecognizers({
       scroll: handler
-    },
-    [ScrollRecognizer],
+    }, [ScrollRecognizer],
     mergedConfig
   );
 }
@@ -2607,8 +2565,7 @@ function useGesture(handlers, config) {
   if(actions.has('onHover')) {
     if(!actions.has('onMove')) classes.push(MoveRecognizer);
     internalHandlers.hover = handlers.onHover;
-    mergedConfig.hover = _extends(
-      {
+    mergedConfig.hover = _extends({
         enabled: true
       },
       hover

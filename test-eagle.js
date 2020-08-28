@@ -102,8 +102,7 @@ function updateMeasures(board) {
     let lines = rect.toLines((lines) => new LineList(lines));
     let { plain } = board;
     plain.remove((e) => e.tagName == 'wire' && e.attributes.layer == '47');
-    plain.append(
-      ...lines.map((line) => ({
+    plain.append(...lines.map((line) => ({
         tagName: 'wire',
         attributes: { ...line.toObject(), layer: 47, width: 0 }
       }))
@@ -161,8 +160,7 @@ async function testEagle(filename) {
   let proj = new EagleProject(filename, filesystem);
 
   /*
-  LogJS.addAppender(
-    class extends LogJS.BaseAppender {
+  LogJS.addAppender(class extends LogJS.BaseAppender {
       log(type, time, msg) {
         //console.log(msg);
       }

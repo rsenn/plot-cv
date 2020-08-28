@@ -55,8 +55,7 @@ function typedArraySupport() {
         return 42;
       }
     };
-    return (
-      arr.foo() === 42 && // typed array instances can be augmented
+    return (arr.foo() === 42 && // typed array instances can be augmented
       typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
       arr.subarray(1, 1).byteLength === 0
     ); // ie10 has broken `subarray`
@@ -365,8 +364,7 @@ Buffer.isEncoding = function isEncoding(encoding) {
     case 'utf16le':
     case 'utf-16le':
       return true;
-    default:
-      return false;
+    default: return false;
   }
 };
 
@@ -435,8 +433,7 @@ function byteLength(string, encoding) {
         return len >>> 1;
       case 'base64':
         return base64ToBytes(string).length;
-      default:
-        if(loweredCase) return utf8ToBytes(string).length; // assume utf8
+      default: if (loweredCase) return utf8ToBytes(string).length; // assume utf8
         encoding = ('' + encoding).toLowerCase();
         loweredCase = true;
     }
@@ -506,8 +503,7 @@ function slowToString(encoding, start, end) {
       case 'utf-16le':
         return utf16leSlice(this, start, end);
 
-      default:
-        if(loweredCase) throw new TypeError('Unknown encoding: ' + encoding);
+      default: if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding);
         encoding = (encoding + '').toLowerCase();
         loweredCase = true;
     }
@@ -884,8 +880,7 @@ Buffer.prototype.write = function write(string, offset, length, encoding) {
       case 'utf-16le':
         return ucs2Write(this, string, offset, length);
 
-      default:
-        if(loweredCase) throw new TypeError('Unknown encoding: ' + encoding);
+      default: if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding);
         encoding = ('' + encoding).toLowerCase();
         loweredCase = true;
     }

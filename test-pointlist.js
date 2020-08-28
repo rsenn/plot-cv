@@ -4,8 +4,7 @@ import ConsoleSetup from './consoleSetup.js';
 
 //let args = [...process.argv].slice(2);
 
-let points = new PointList(
-  [
+let points = new PointList([
     new Point(536, 478),
     new Point(516, 673),
     new Point(492, 606),

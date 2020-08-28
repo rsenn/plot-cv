@@ -148,8 +148,7 @@ const svgFactory = lazyInitializer(() => {
         {
           transform: ` scale(1,-1) translate(0,1.27) translate(0,${-rect.y2})
        `
-        },
-        [['rect', { ...rect.toObject(), fill: 'hsla(0,0%,50%,0.3333)' }]]
+        }, [['rect', { ...rect.toObject(), fill: 'hsla(0,0%,50%,0.3333)' }]]
       ]
     ]
   ];
@@ -593,8 +592,7 @@ const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
     return url;
   };
 
-  return Object.assign(
-    files.map((file, i) => {
+  return Object.assign(files.map((file, i) => {
       file.toString = () => at(i);
       if(file.type == 'dir') file.list = async (f = filter) => await ListGithubRepo(at(i), null, null, f, {});
       else {
@@ -701,8 +699,7 @@ const LoadDocument = async (project, parentElem) => {
     const [aspect, setAspect] = useState(aspectListener());
     if(sizeListener && sizeListener.subscribe) sizeListener.subscribe((value) => setDimensions(value));
     if(aspectListener && aspectListener.subscribe) aspectListener.subscribe((value) => setAspect(value));
-    return h(
-      TransformedElement,
+    return h(TransformedElement,
       {
         id: 'fence',
         type: SizedAspectRatioBox,
@@ -720,14 +717,12 @@ const LoadDocument = async (project, parentElem) => {
       children
     );
   };
-  component = h(
-    Fence,
+  component = h(Fence,
     {
       style: {},
       sizeListener,
       aspectListener
-    },
-    [component]
+    }, [component]
   );
 
   React.render(component, element);
@@ -811,8 +806,7 @@ const LoadDocument = async (project, parentElem) => {
   Element.setCSS(project.svg, { left: 0, top: 0, position: 'relative' });
   //console.log('LoadDocument:', project.svg);*/
   /*  } catch(err) {
-    console.error(
-      'Render ERROR:',
+    console.error('Render ERROR:',
       err,
       [...err.stack].map(f => (f + '').replace(Util.getURL() + '/', ''))
     );
@@ -935,8 +929,7 @@ const GenerateVoronoi = () => {
   ];
 
   const polylines = [
-    ...cells.reduce(
-      (acc, { site, halfedges }) => [
+    ...cells.reduce((acc, { site, halfedges }) => [
         ...acc,
         [
           'polyline',
@@ -1052,9 +1045,7 @@ const AppMain = (window.onload = async () => {
 
   //prettier-ignore
   Object.assign(window, { Repeater, BBox, ChooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, LoadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas, BoardToGerber, ListGithubRepo, ListGithubRepoServer, brcache, lscache, BaseCache, FetchCached, CachedFetch ,GerberToGcode });
-  Object.assign(
-    window,
-    { cache, tlite, FetchURL, GcodeToPolylines, geom },
+  Object.assign(window, { cache, tlite, FetchURL, GcodeToPolylines, geom },
     { classes: { Cache, CacheStorage, Response, Request } },
     {
       PrimitiveComponents,
@@ -1066,9 +1057,7 @@ const AppMain = (window.onload = async () => {
     },
     { Emitter, EventIterator }
   );
-  Object.assign(
-    window,
-    { LogJS },
+  Object.assign(window, { LogJS },
     { Element, devtools, dom, RGBA, HSLA, draw: DrawSVG },
     { Voronoi, GerberParser, GenerateVoronoi, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeInterpreter, GcodeParser },
     {
@@ -1266,8 +1255,7 @@ const AppMain = (window.onload = async () => {
         yield time;
       }
     });
-    return h(
-      'div',
+    return h('div',
       {
         className: 'vcenter fixed grow no-select',
         style: {
@@ -1278,12 +1266,10 @@ const AppMain = (window.onload = async () => {
           width: '200px',
           padding: '0 10px 0 0'
         }
-      },
-      [result && new Date(result.value).toLocaleTimeString('de-CH')]
+      }, [result && new Date(result.value).toLocaleTimeString('de-CH')]
     );
   };
-  LogJS.addAppender(
-    class extends LogJS.BaseAppender {
+  LogJS.addAppender(class extends LogJS.BaseAppender {
       log(type, time, msg) {
         let d = new Date(time);
         if(typeof window.pushlog == 'function') window.pushlog([type, Util.isoDate(d).replace(/-/g, ''), d.toLocaleTimeString(navigator.language || 'de'), msg]);
@@ -1310,14 +1296,11 @@ const AppMain = (window.onload = async () => {
       //     console.log("result:",result);
       lines.push(result.value);
     }
-    return h(
-      'table',
+    return h('table',
       { className: 'logger', ref },
       lines.slice(-10, lines.length).map(([type, d, t, m], i) =>
         h('tr', {}, [
-          h(
-            'td',
-            { className: 'log sign' },
+          h('td', { className: 'log sign' },
             h('img', {
               className: 'log sign',
               src: `/static/${type.toLowerCase() || 'warn'}.svg`,
@@ -1336,8 +1319,7 @@ const AppMain = (window.onload = async () => {
     let lines = [];
     dump.subscribe((value) => setValues(value));
     for(let [key, value] of Object.entries(values)) lines.push([key, value]);
-    return h(
-      'table',
+    return h('table',
       { border: '0', cellpadding: 3, cellspacing: 0, className: 'dumper' },
       lines.map(([k, v], i) => h('tr', { className: 'watch' }, [h('td', { className: 'name' }, k + ''), h('td', { className: 'value' }, v + '')]))
     );
@@ -1357,16 +1339,14 @@ const AppMain = (window.onload = async () => {
         setInputText(target.value);
       }
     };
-    return h(
-      'input',
+    return h('input',
       {
         type: 'text',
         className: 'commander',
         value: inputText,
         onKeyDown: handler,
         autofocus: true
-      },
-      []
+      }, []
     );
   };
 
@@ -1377,18 +1357,14 @@ const AppMain = (window.onload = async () => {
   const Layer = ({ title, name, label, i, element, className, ...props }) => {
     const [visible, setVisible] = useTrkl(element.handlers.visible);
     console.log('Layer props=', props);
-    return h(
-      'div',
+    return h('div',
       {
         className,
         onClick: (e) => {
           setVisible(element.visible ? 'no' : 'yes');
         }
-      },
-      [
-        h(
-          'span',
-          {
+      }, [
+        h('span', {
             className: classNames(className, 'number'),
             style: { background: element.color },
             ...props
@@ -1406,12 +1382,9 @@ const AppMain = (window.onload = async () => {
     );
   };
 
-  React.render(
-    h(SlotProvider, {}, [
+  React.render(h(SlotProvider, {}, [
       Panel('buttons', [
-        h(
-          Button,
-          {
+        h(Button, {
             caption: BrowseIcon(),
 
             fn: (e) => {
@@ -1446,9 +1419,7 @@ const AppMain = (window.onload = async () => {
           fn: MakeFitAction(1),
           image: 'static/fit-horizontal.svg'
         }),
-        h(
-          Conditional,
-          { signal: currentProj },
+        h(Conditional, { signal: currentProj },
           h(DropDown, { isOpen: layersDropDown.subscribe((open) => console.log('layers dropdown', { open })) }, [
             h(Button, {
               toggle: true,
@@ -1457,16 +1428,13 @@ const AppMain = (window.onload = async () => {
               image: 'static/svg/layers.svg'
             }),
             (props) =>
-              h(
-                Chooser,
-                {
+              h(Chooser, {
                   ...props,
                   className: 'layers',
                   itemClass: 'layer',
                   itemComponent: Layer,
                   items: layerList
-                },
-                []
+                }, []
               )
           ])
         ),
@@ -1525,8 +1493,7 @@ const AppMain = (window.onload = async () => {
   let box;
   container = Element.find('#main');
 
-  TouchListener(
-    Util.printReturnValue((event) => {
+  TouchListener(Util.printReturnValue((event) => {
       const { x, y, index, buttons, start, type, target } = event;
 
       if(type.endsWith('end') || type.endsWith('up')) return cancel();

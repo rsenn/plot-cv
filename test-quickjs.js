@@ -6,6 +6,8 @@ import { PointIterator } from './build/x86_64-linux-gnu/quickjs-point-iterator.s
 import { inspect } from './inspect.js';
 import { Contour } from './build/x86_64-linux-gnu/quickjs-contour.so';
 //console.log('test:', inspect({ Point, Size, Rect, Mat, PointIterator, Contour }));
+import path from './lib/path.js';
+
 
 let c = new Contour();
 
@@ -24,6 +26,7 @@ c.push(new Point(0, 10));
 c.push(new Point(0, 0));
 
 //console.log('contour:', inspect(c));
+console.log('path.realpath(.)',path.realpath("."));
 
 for(let point of c) {
   let { x, y } = point;

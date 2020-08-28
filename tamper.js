@@ -223,16 +223,13 @@ Util.compose = (...functions) => {
   };
 
   Util.getGlobalObject = Util.memoize(() =>
-    Util.tryCatch(
-      () => global,
+    Util.tryCatch(() => global,
       (g) => g,
       (err) =>
-        Util.tryCatch(
-          () => globalThis,
+        Util.tryCatch(() => globalThis,
           (g) => g,
           (err) =>
-            Util.tryCatch(
-              () => window,
+            Util.tryCatch(() => window,
               (g) => g,
               (err) => console.log('Util.getGlobalObject:', err)
             )
@@ -651,8 +648,7 @@ Util.extend = (obj, ...args) => {
 };*/
 
   Util.static = (obj, functions, thisObj, pred = (k, v, f) => true) => {
-    for(let [name, fn] of Util.iterateMembers(
-      functions,
+    for(let [name, fn] of Util.iterateMembers(functions,
 
       Util.tryPredicate((key, depth) => obj[key] === undefined && typeof functions[key] == 'function' && pred(key, depth, functions) && [key, value])
     )) {
@@ -697,8 +693,7 @@ Util.extend = (obj, ...args) => {
     Util.define(arr, 'unique', function () {
       return this.filter((item, i, a) => a.indexOf(item) == i);
     });
-    Util.defineGetterSetter(
-      arr,
+    Util.defineGetterSetter(arr,
       'tail',
       function () {
         return Util.tail(this);
@@ -736,8 +731,7 @@ Util.extend = (obj, ...args) => {
       },
       *entries() {
         for(let key of this.keys()) yield [key, getItem(obj, key)];
-      },
-      [Symbol.iterator]() {
+      }, [Symbol.iterator]() {
         return this.entries();
       },
       toObject() {
@@ -750,14 +744,12 @@ Util.extend = (obj, ...args) => {
     return adapter;
   };
   Util.adapter.localStorage = function (s) {
-    s = Util.tryCatch(
-      () => !s && globalThis.window,
+    s = Util.tryCatch(() => !s && globalThis.window,
       (w) => w.localStorage,
       () => s
     );
 
-    return Util.adapter(
-      s,
+    return Util.adapter(s,
       (l) => l.length,
       (l, i) => l.key(i),
       (l, key) => JSON.parse(l.getItem(key)),
@@ -781,8 +773,7 @@ Util.extend = (obj, ...args) => {
     return a;
   };
   Util.arrayFromEntries = (entries) =>
-    Array.from(
-      entries.map(([k, v]) => k),
+    Array.from(entries.map(([k, v]) => k),
       (key) => entries.find(([k, v]) => k === key)[1]
     );
 
@@ -1101,8 +1092,7 @@ Util.injectProps = function(options) {
       args.push(`\n\t${key}: `);
       args.push(props[key]);
     }
-    const w = Util.tryCatch(
-      () => globalThis.window,
+    const w = Util.tryCatch(() => globalThis.window,
       (w) => w,
       () => null
     );
@@ -1463,8 +1453,7 @@ Util.injectProps = function(options) {
     return Util.setCookies(Object.keys(Util.parseCookie(c)).reduce((acc, name) => Object.assign(acc, { [name]: `; max-age=0; expires=${new Date().toUTCString()}` }), {}));
   };
   Util.deleteCookie = function (name) {
-    const w = Util.tryCatch(
-      () => globalThis.window,
+    const w = Util.tryCatch(() => globalThis.window,
       (w) => w,
       () => null
     );
@@ -1598,8 +1587,7 @@ Util.injectProps = function(options) {
     return result;
   };
   Util.getURL = Util.memoize((req = {}) =>
-    Util.tryCatch(
-      () => process.argv[1],
+    Util.tryCatch(() => process.argv[1],
       () => 'file://' + Util.scriptDir(),
       () => {
         let proto = Util.tryCatch(() => (process.env.NODE_ENV === 'production' ? 'https' : null)) || 'http';
@@ -1739,8 +1727,7 @@ Util.injectProps = function(options) {
   })();
 
   Util.tryPredicate = (fn, defaultRet) =>
-    Util.tryFunction(
-      fn,
+    Util.tryFunction(fn,
       (ret) => ret,
       () => defaultRet
     );
@@ -1748,13 +1735,11 @@ Util.injectProps = function(options) {
   Util.isBrowser = function () {
     let ret = false;
 
-    Util.tryCatch(
-      () => window,
+    Util.tryCatch(() => window,
       (w) => (Util.isObject(w) ? (ret = true) : undefined),
       () => {}
     );
-    Util.tryCatch(
-      () => document,
+    Util.tryCatch(() => document,
       (w) => (Util.isObject(w) ? (ret = true) : undefined),
       () => {}
     );
@@ -1914,8 +1899,7 @@ Util.injectProps = function(options) {
 console.log("isGenerator",Util.isGenerator(obj));*/
 
     if(Util.isGenerator(obj))
-      return ret(
-        (function* () {
+      return ret((function* () {
           let i = 0;
           for(let item of obj) yield fn(item, i++, obj);
         })()
@@ -2069,8 +2053,7 @@ console.log("isGenerator",Util.isGenerator(obj));*/
     return ret;
   };
   Util.base64 = (() => {
-    const w = Util.tryCatch(
-      () => globalThis.window,
+    const w = Util.tryCatch(() => globalThis.window,
       (w) => w,
       () => null
     );
@@ -2431,8 +2414,7 @@ Util.isObject = function(obj) {
   Util.members = Util.curry((pred, obj) => Util.unique([...Util.iterateMembers(obj, Util.tryPredicate(pred))]));
 
   Util.memberNameFilter = (depth = 1, start = 0) =>
-    Util.and(
-      (m, l, o) => start <= l && l < depth + start,
+    Util.and((m, l, o) => start <= l && l < depth + start,
       (m, l, o) => typeof m != 'string' || ['caller', 'callee', 'constructor', 'arguments'].indexOf(m) == -1,
       (name, depth, obj, proto) => obj != Object.prototype
     );
@@ -2440,8 +2422,7 @@ Util.isObject = function(obj) {
   Util.getMemberNames = (obj, depth = Number.Infinity, start = 0) => Util.members(Util.memberNameFilter(depth, start))(obj);
 
   Util.objectReducer = (filterFn, accFn = (a, m, o) => ({ ...a, [m]: o[m] }), accu = {}) => (obj, ...args) =>
-    Util.members(filterFn(...args), obj).reduce(
-      Util.tryFunction(
+    Util.members(filterFn(...args), obj).reduce(Util.tryFunction(
         (a, m) => accFn(a, m, obj),
         (r, a, m) => r,
         (r, a) => a
@@ -2555,11 +2536,9 @@ Util.isObject = function(obj) {
       const { message, stack, proto } = this;
       return `${Util.fnName(proto.constructor || this.constructor)}: ${message}
 Stack:${Util.stack.prototype.toString.call(stack, color, stack.columnWidths)}`;
-    },
-    [Symbol.toStringTag]() {
+    }, [Symbol.toStringTag]() {
       return this.toString(false);
-    },
-    [Symbol.for('nodejs.util.inspect.custom')]() {
+    }, [Symbol.for('nodejs.util.inspect.custom')]() {
       return Util.exception.prototype.toString.call(this, true);
     }
   });
@@ -2595,11 +2574,9 @@ Stack:${Util.stack.prototype.toString.call(stack, color, stack.columnWidths)}`;
       c(':', palette[1]);
       c(columnNumber, palette[2]);
       return text;
-    },
-    [Symbol.toStringTag]() {
+    }, [Symbol.toStringTag]() {
       return Util.location.prototype.toString.call(this, false);
-    },
-    [Symbol.for('nodejs.util.inspect.custom')]() {
+    }, [Symbol.for('nodejs.util.inspect.custom')]() {
       return Util.location.prototype.toString.call(this, !Util.isBrowser());
     },
     getFileName() {
@@ -2676,17 +2653,14 @@ Stack:${Util.stack.prototype.toString.call(stack, color, stack.columnWidths)}`;
     },
     get location() {
       return this.getLocation();
-    },
-    [Symbol.toStringTag]() {
+    }, [Symbol.toStringTag]() {
       return this.toString(false);
-    },
-    [Symbol.for('nodejs.util.inspect.custom')](...args) {
+    }, [Symbol.for('nodejs.util.inspect.custom')](...args) {
       return Util.stackFrame.prototype.toString.call(this, true, this.columnWidths);
     }
   });
   Util.scriptName = () =>
-    Util.tryCatch(
-      () => process.argv[1],
+    Util.tryCatch(() => process.argv[1],
       (script) => script + '',
       () => Util.getURL()
     );
@@ -2696,8 +2670,7 @@ Stack:${Util.stack.prototype.toString.call(stack, color, stack.columnWidths)}`;
   };
 
   Util.scriptDir = () =>
-    Util.tryCatch(
-      () => Util.scriptName(),
+    Util.tryCatch(() => Util.scriptName(),
       (script) => (script + '').replace(/\/[^/]*$/g, ''),
       () => Util.getURL()
     );
@@ -2759,11 +2732,9 @@ Stack:${Util.stack.prototype.toString.call(stack, color, stack.columnWidths)}`;
       let a = [...this].map((frame) => Util.stackFrame.prototype.toString.call(frame, color, columns));
       let s = a.join('\n');
       return s + '\n';
-    },
-    [Symbol.toStringTag]() {
+    }, [Symbol.toStringTag]() {
       return Util.stack.prototype.toString.call(this);
-    },
-    [Symbol.for('nodejs.util.inspect.custom')](...args) {
+    }, [Symbol.for('nodejs.util.inspect.custom')](...args) {
       //const fields = ['functionName','fileName','lineNumber','columnNumber'];
       //this.columnWidths = this.reduce((a,f) => fields.slice(0,1).map((fn,i) => Math.max(a[i],(f[fn]+'').length)), [0,0,0,0]);
       return '\n' + this.map((f) => f.toString(!Util.isBrowser(), this.columnWidths)).join('\n');
@@ -2799,8 +2770,7 @@ Stack:${Util.stack.prototype.toString.call(stack, color, stack.columnWidths)}`;
       else if(this.getFunctionName()) s = this.getFunctionName() + ' ' + s;
 
       const w =
-        Util.tryCatch(
-          () => globalThis.window,
+        Util.tryCatch(() => globalThis.window,
           w => w,
           () => null
         ) || {};
@@ -3044,8 +3014,7 @@ Stack:${Util.stack.prototype.toString.call(stack, color, stack.columnWidths)}`;
       pixel.b = subpixels[i + 2];
       pixel.a = subpixels[i + 4];
       //Only consider pixels that aren't black, white, or too transparent
-      if(
-        pixel.a > settings.tooAlpha &&
+      if(pixel.a > settings.tooAlpha &&
         (luma = pixel.r + pixel.g + pixel.b) > settings.tooDark && //Luma is assigned inside the conditional to avoid re-calculation when alpha is not met
         luma < settings.tooLight
       ) {
@@ -3328,8 +3297,7 @@ return ${imName};`;
       : Util.isBrowser()
       ? {
           palette: ['rgb(0,0,0)', 'rgb(80,0,0)', 'rgb(0,80,0)', 'rgb(80,80,0)', 'rgb(0,0,80)', 'rgb(80,0,80)', 'rgb(0,80,80)', 'rgb(80,80,80)', 'rgb(0,0,0)', 'rgb(160,0,0)', 'rgb(0,160,0)', 'rgb(160,160,0)', 'rgb(0,0,160)', 'rgb(160,0,160)', 'rgb(0,160,160)', 'rgb(160,160,160)'],
-          /*Util.range(0, 15).map(
-          i =>
+          /*Util.range(0, 15).map(i =>
             `rgb(${Util.range(0, 2)
               .map(bitno => Util.getBit(i, bitno) * (i & 0x08 ? 160 : 80))
               .join(',')})`
@@ -3406,10 +3374,8 @@ return ${imName};`;
       const c = Util.coloring();
       proto[Symbol.for('nodejs.util.inspect.custom')] = function () {
         const obj = this;
-        return (
-          c.text(Util.fnName(proto.constructor) + ' ', 1, 31) +
-          Util.toString(
-            props.reduce((acc, key) => {
+        return (c.text(Util.fnName(proto.constructor) + ' ', 1, 31) +
+          Util.toString(props.reduce((acc, key) => {
               acc[key] = obj[key];
               return acc;
             }, {}),
@@ -3426,8 +3392,7 @@ return ${imName};`;
     if(props instanceof Array) props = Object.fromEntries(props.map((name) => [name, name]));
     const propNames = Object.keys(props);
     if(!gen) gen = (p) => (v) => (v === undefined ? target[p] : (target[p] = v));
-    Object.defineProperties(
-      proxy,
+    Object.defineProperties(proxy,
       propNames.reduce(
         (a, k) => {
           const prop = props[k];
@@ -3508,8 +3473,7 @@ return ${imName};`;
   Util.merge = (...args) => args.reduce((acc, arg) => ({ ...acc, ...arg }), {});
 
   Util.weakAssoc = (fn = (value, ...args) => Object.assign(value, ...args)) => {
-    let mapper = Util.tryCatch(
-      () => new WeakMap(),
+    let mapper = Util.tryCatch(() => new WeakMap(),
       (map) => Util.weakMapper((obj, ...args) => Util.merge(...args), map),
       () => (obj, ...args) => Util.define(obj, ...args)
     );
@@ -3519,8 +3483,7 @@ return ${imName};`;
     };
   };
   Util.transformer = (a, ...l) =>
-    (l || []).reduce(
-      (c, f) =>
+    (l || []).reduce((c, f) =>
         function (...v) {
           return f.apply(this, [c.apply(this, v), ...v]);
         },
@@ -3528,8 +3491,7 @@ return ${imName};`;
     );
   Util.proxyObject = (root, handler) => {
     const ptr = (path) => path.reduce((a, i) => a[i], root);
-    const nodes = Util.weakMapper(
-      (value, path) =>
+    const nodes = Util.weakMapper((value, path) =>
         new Proxy(value, {
           get(target, key) {
             let prop = value[key];
@@ -3553,8 +3515,7 @@ return ${imName};`;
     return node([]);
   };
   Util.parseXML = (xmlStr) =>
-    Util.tryCatch(
-      () => new DOMParser(),
+    Util.tryCatch(() => new DOMParser(),
       (parser) => parser.parseFromString(xmlStr, 'application/xml')
     );
 
@@ -4098,8 +4059,7 @@ return ${imName};`;
     const y = Util.roundTo(this.y, precision);
     return `${left}${x}${unit}${separator}${y}${unit}${right}`;
   };
-  Util.defineGetterSetter(
-    Point.prototype,
+  Util.defineGetterSetter(Point.prototype,
     Symbol.toStringTag,
     function () {
       return `Point{ ${Point.prototype.toSource.call(this)}`;
@@ -4720,8 +4680,7 @@ return ${imName};`;
       case Align.RIGHT:
         this.x = align_to.x + xdiff;
         break;
-      default:
-        this.x = align_to.x + xdiff / 2;
+      default: this.x = align_to.x + xdiff / 2;
         break;
     }
     switch (Align.vertical(a)) {
@@ -4731,8 +4690,7 @@ return ${imName};`;
       case Align.BOTTOM:
         this.y = align_to.y + ydiff;
         break;
-      default:
-        this.y = align_to.y + ydiff / 2;
+      default: this.y = align_to.y + ydiff / 2;
         break;
     }
 
@@ -5140,8 +5098,7 @@ return ${imName};`;
       let remove;
       switch (Anchor.horizontal(anchor)) {
         case Anchor.LEFT:
-        default:
-          css.left = Math.round(trbl.left /* - ptrbl.left*/) + unit;
+        default: css.left = Math.round(trbl.left /* - ptrbl.left*/) + unit;
           remove = 'right';
           break;
         case Anchor.RIGHT:
@@ -5151,8 +5108,7 @@ return ${imName};`;
       }
       switch (Anchor.vertical(anchor)) {
         case Anchor.TOP:
-        default:
-          css.top = Math.round(trbl.top /* - ptrbl.top*/) + unit;
+        default: css.top = Math.round(trbl.top /* - ptrbl.top*/) + unit;
           remove = 'bottom';
           break;
         case Anchor.BOTTOM:
@@ -5424,8 +5380,7 @@ return ${imName};`;
         return accu;
       }
       str = dumpElem(elem, '');
-      str = Element.walk(
-        elem.firstElementChild,
+      str = Element.walk(elem.firstElementChild,
         (e, a, r, d) => {
           if(e && e.attributes) return dumpElem(e, a + '\n', r, d);
           return null;

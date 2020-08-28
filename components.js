@@ -63,8 +63,7 @@ export const MouseEvents = (h) => ({
 
 export const Overlay = ({ className = 'overlay', title, tooltip, active = true, toggle, state, onPush, text, children, ...props }) => {
   const [pushed, setPushed] = typeof state == 'function' ? useTrkl(state) : useState(false);
-  const events = MouseEvents(
-    (toggle ? ToggleHandler : ClickHandler)(
+  const events = MouseEvents((toggle ? ToggleHandler : ClickHandler)(
       (e, state) => {
         const prev = pushed;
         if(e.buttons && e.buttons != 1) return;
@@ -167,9 +166,7 @@ export const Item = ({ className = 'item', title, tooltip, label, icon, children
 export const Icon = ({ className = 'icon', caption, image, ...props }) => html` <div className=${className} ...${props}>${caption}<img src=${image} /></div> `;
 
 export const Progress = ({ className, percent, ...props }) =>
-  h(
-    Overlay,
-    {
+  h(Overlay, {
       className: classNames('progress', 'center', className),
       text: percent + '%',
       style: {
@@ -194,15 +191,12 @@ export const Progress = ({ className, percent, ...props }) =>
   );
 
 export const BrowseIcon = (props) =>
-  h(
-    'svg',
-    {
+  h('svg', {
       height: '32',
       width: '32',
       viewBox: '0 0 48 48',
       xmlns: 'http://www.w3.org/2000/svg'
-    },
-    [
+    }, [
       h('defs', {}),
       h('path', {
         fill: '#fff',
@@ -275,8 +269,7 @@ export const EditBox = ({ value = '', type = 'div', className, hidden = false, c
 
   if(type == 'form') outerProps.onSubmit = (event) => event.preventDefault();
 
-  return h(
-    type,
+  return h(type,
     outerProps,
     h('input', {
       type: 'text',
@@ -315,9 +308,7 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
     let d = s.split(/\n/g).slice(0, 1);
     label = h('div', {}, [
       label,
-      h(
-        'div',
-        { className: 'description' },
+      h('div', { className: 'description' },
         d.map((line) => h('pre', { className: 'description' }, [line]))
       )
     ]);
@@ -430,8 +421,7 @@ export const Panel = (name, children) => html`<${Container} className="${name}">
 
 export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className }, children) =>
   enable
-    ? h(
-        SizedAspectRatioBox,
+    ? h(SizedAspectRatioBox,
         {
           className,
           width,
@@ -440,8 +430,7 @@ export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className 
         },
         children
       )
-    : h(
-        'div',
+    : h('div',
         {
           className,
           style: { width }
@@ -451,16 +440,11 @@ export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className 
 
 export const AspectRatioBox = ({ aspect = 1.0, children, insideClassName, outsideClassName, outsideProps = {}, style, ...props } /* Util.log('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/) =>
   h(Fragment, {}, [
-    h(
-      'div',
-      {
+    h('div', {
         className: classNames('aspect-ratio-box', outsideClassName),
         style: { height: 0, paddingBottom: (1.0 / aspect) * 100 + '%', ...style }
-      },
-      [
-        h(
-          'div',
-          {
+      }, [
+        h('div', {
             className: classNames('aspect-ratio-box-inside', insideClassName)
           },
           children
@@ -470,17 +454,12 @@ export const AspectRatioBox = ({ aspect = 1.0, children, insideClassName, outsid
   ]);
 
 export const SizedAspectRatioBox = ({ width, height, style, className, children, outsideClassName, insideClassName, insideProps, outsideProps = {}, sizeClassName, sizeProps = {}, onClick, ...props }) =>
-  h(
-    'div',
-    {
+  h('div', {
       className: classNames('aspect-ratio-box-size', className && className + '-size', sizeClassName),
       style: { position: 'relative', width, height, ...style },
       onClick
-    },
-    [
-      h(
-        AspectRatioBox,
-        {
+    }, [
+      h(AspectRatioBox, {
           outsideClassName: classNames('aspect-ratio-box-outside', className && className + '-outside', outsideClassName),
           outsideProps,
           insideClassName: insideClassName || className,
@@ -502,8 +481,7 @@ export const TransformedElement = ({ type = 'div', aspect, listener, style = { p
       if(value !== undefined) setTransform(value);
     });
 
-  return h(
-    type,
+  return h(type,
     {
       className: classNames('transformed-element', className && className + '-size'),
       style: { position: 'relative', ...style, transform },
@@ -524,8 +502,7 @@ export const Slider = ({ min = 0, max = 100, value: initialValue = 0, step = 1, 
   label = label || name;
   let dim = length ? { [orient == 'horizontal' ? 'width' : 'height']: length } : {};
 
-  return h(
-    'div',
+  return h('div',
     {
       style: {
         display: 'inline-flex',
@@ -536,8 +513,7 @@ export const Slider = ({ min = 0, max = 100, value: initialValue = 0, step = 1, 
         fontSize: '0.8em',
         ...style
       }
-    },
-    [
+    }, [
       //h('label', { for: name }, label),
       label,
       h('input', {
@@ -630,8 +606,7 @@ export const Canvas = ({ onInit, ...props }) => {
     setDrawing(false);
   }
 
-  return h(
-    'canvas',
+  return h('canvas',
     {
       ref: canvasRef,
       width,
@@ -640,8 +615,7 @@ export const Canvas = ({ onInit, ...props }) => {
       onMouseUp: stopDrawing,
       onMouseOut: stopDrawing,
       onMouseMove: handleMouseMove
-    },
-    []
+    }, []
   );
 };
 
@@ -753,8 +727,7 @@ export const CrossHair = ({ position, show, radius = 20, ...props }) => {
   position.subscribe((value) => setPos(value));
   show.subscribe((value) => setVisible(value));
 
-  return h(
-    'div',
+  return h('div',
     {
       style: {
         position: 'fixed',
@@ -781,18 +754,14 @@ export const CrossHair = ({ position, show, radius = 20, ...props }) => {
 };
 
 export const MoveCursor = (props) =>
-  h(
-    'svg',
-    {
+  h('svg', {
       height: '22',
       width: '22',
       xmlns: 'http://www.w3.org/2000/svg'
-    },
-    [
+    }, [
       h('defs', {}),
       h('path', {
-        d:
-          'M19.173 11.722l-2.393 2.393 1.044 1.044L22 10.983l-4.176-4.177L16.78 7.85l3.132 3.133zM5.221 14.115l-3.132-3.132L5.22 7.851 4.177 6.806 0 10.983l4.177 4.177zm6.535-11.288l2.398 2.394 1.044-1.044L11.018 0 6.84 4.177 7.885 5.22l3.132-3.133zm-1.473 16.345L7.885 16.78l-1.044 1.044L11.017 22l4.181-4.177-1.044-1.044-3.136 3.132zm-7.455-7.45h16.345l.739-.74-.74-.739H2.829l-.74.74zm8.928-8.895l-.739-.739-.734.74v7.415h1.473zm-1.473 16.345l.734.74.74-.74v-7.455h-1.474z'
+        d: 'M19.173 11.722l-2.393 2.393 1.044 1.044L22 10.983l-4.176-4.177L16.78 7.85l3.132 3.133zM5.221 14.115l-3.132-3.132L5.22 7.851 4.177 6.806 0 10.983l4.177 4.177zm6.535-11.288l2.398 2.394 1.044-1.044L11.018 0 6.84 4.177 7.885 5.22l3.132-3.133zm-1.473 16.345L7.885 16.78l-1.044 1.044L11.017 22l4.181-4.177-1.044-1.044-3.136 3.132zm-7.455-7.45h16.345l.739-.74-.74-.739H2.829l-.74.74zm8.928-8.895l-.739-.739-.734.74v7.415h1.473zm-1.473 16.345l.734.74.74-.74v-7.455h-1.474z'
       })
     ]
   );

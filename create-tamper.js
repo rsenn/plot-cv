@@ -175,8 +175,7 @@ async function main(...args) {
     try {
       ast = parser.parseProgram();
       parser.addCommentsToNodes(ast);
-      let flat = deep.flatten(
-        ast,
+      let flat = deep.flatten(ast,
         new Map(),
         (node) => node instanceof ESNode,
         (path, value) => [path, value]

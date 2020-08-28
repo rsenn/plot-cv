@@ -15,7 +15,8 @@ let filesystem, searchPath, packagesPath, moduleAliases, files;
 let node2path, flat, value, list;
 const removeModulesDir = PrefixRemover([/node_modules\//g, /^\.\//g]);
 let name;
-
+let parser, printer;
+const g = Util.getGlobalObject();
 class ES6Module {
   impExpList = [];
   importedFrom = null;
@@ -25,8 +26,7 @@ class ES6Module {
   static create(file, from) {
     let mod = new ES6Module();
     mod.file = file;
-    if(from) 
-      mod.importedFrom = from;
+    if(from) mod.importedFrom = from;
 
     ES6Module.moduleList.add(mod);
     return mod;
@@ -46,7 +46,7 @@ class ES6Module {
     let tmp,
       mod = this;
     while(mod) {
-      ret.push([mod,mod.importedFrom]);
+      ret.push([mod, mod.importedFrom]);
       tmp = mod.importedFrom;
       if(tmp === mod) break;
       mod = tmp;
@@ -129,8 +129,7 @@ class ES6ImportExport {
 
       //Util.isObject(bindings)  && typeof bindings.entries == 'function'  ? bindings.entries() : [...bindings];
 
-      return (
-        Util.ansi.code(1, 36) +
+      return (Util.ansi.code(1, 36) +
         '{' +
         entries
           .reduce((acc, [id, ref]) => {
@@ -154,8 +153,7 @@ class ES6ImportExport {
     console.log('importNodes:', importNodes.map((a) => '\n  ' + a.join('  ')).join('') + '\n');
     if(Util.isObject(position) && position.toString) position = position.toString(true, (p, i) => (i == 0 ? path.relative(ES6Env.cwd, p) : p)).replace(/1;33/, '1;34');
     const InspectFn = ret.bindings[Symbol.for('nodejs.util.inspect.custom')];
-    console.log(
-      Util.ansi.text(Util.ucfirst((type + '').toLowerCase()), 1, 31) + Util.ansi.text(` @ `, 1, 36),
+    console.log(Util.ansi.text(Util.ucfirst((type + '').toLowerCase()), 1, 31) + Util.ansi.text(` @ `, 1, 36),
       InspectFn ? InspectFn() : '',
       '\n  importNode:',
       [...obj.importNode].map((n) => [node2path.get(n), printAst(n)]).filter(([p, c]) => c.trim() != ''),
@@ -225,10 +223,8 @@ class ES6ImportExport {
     let { type, position, bindings, path, node, file, from, fromPath, relpath } = this;
     const opts = { colors: true, colon: ': ', multiline: false, quote: '' };
     if(position) position = [...position].map((p) => ES6Env.pathTransform(p)).join(':');
-    return Util.toString(
-      Object.assign(
-        Object.setPrototypeOf(
-          {
+    return Util.toString(Object.assign(
+        Object.setPrototypeOf({
             type,
             bindings: Util.toString(bindings, {
               ...opts,
@@ -261,8 +257,7 @@ class ES6ImportExport {
     return Util.toString({ ...obj, __proto__: proto }, { multiline: true });
   }
   toString() {
-    console.log(
-      'toString',
+    console.log('toString',
       ...Util.getMemberNames(this)
         .map((p) => [p, this[p]])
         .map(([k, v]) => [k, v + ''])
@@ -320,8 +315,7 @@ function dumpNode(node) {
 
 function GenerateFlatMap(ast, root = [], pred = (n, p) => true, t = (n, p) => n) {
   console.log('ast', Util.className(ast));
-  flat = deep.flatten(
-    ast,
+  flat = deep.flatten(ast,
     new Map(),
     (n, p) => n instanceof ESNode && pred(n, p),
     (p, n) => {
@@ -512,12 +506,11 @@ async function main(...args) {
 
       let recurseFiles = recurseImports
         //.filter((imp) => processed.indexOf(imp.file) == -1)
-        .map((imp) => getFromPath([imp.path, imp.node])); //imp.from || imp.relpath)
+        .map((imp) => getFromPath([imp.path, imp.node], file)); //imp.from || imp.relpath)
       // .filter((imp) => !re.test(imp.file))
       console.log(`recurseFiles [${depth}] `, recurseFiles.length, recurseFiles);
       imports = imports.filter(({ file, ...module }) => !re.test(file));
-      console.log(
-        `${Util.ansi.text(modulePath, 1, 36)}: recurseFiles x${depth}]:`,
+      console.log(`${Util.ansi.text(modulePath, 1, 36)}: recurseFiles x${depth}]:`,
         recurseFiles.map((f) => f)
       );
       recurseFiles.forEach((imp, idx) => {
@@ -546,11 +539,14 @@ async function main(...args) {
 }
 
 function parseFile(file) {
-  let data, error, ast, parser, printer, flat;
+  let data, error, ast, pflat;
   try {
     data = filesystem.readFile(file).toString();
     parser = new ECMAScriptParser(data ? data.toString() : code, file);
+    g.parser = parser;
+
     printer = new Printer({ indent: 4 });
+    g.printer = printer;
     ast = parser.parseProgram();
     parser.addCommentsToNodes(ast);
   } catch(err) {
@@ -558,8 +554,7 @@ function parseFile(file) {
     throw err;
   } finally {
     flat = Util.memoize(() =>
-      deep.flatten(
-        ast,
+      deep.flatten(ast,
         new Map(),
         (node) => node instanceof ESNode,
         (path, value) => [new ImmutablePath(path), value]
@@ -576,8 +571,7 @@ function parseFile(file) {
     map() {
       let map = flat();
 
-      /*    return Util.mapWrapper(
-        flat,
+      /*    return Util.mapWrapper(flat,
         (k) => k.join('.'),
         (k) => k.split('.')
       );
@@ -616,8 +610,7 @@ function getFromValue(...args) {
   if(!n || !(n instanceof ESNode)) throw new Error('No node:' + n + ' path:' + p);
   if(!(n instanceof ESNode)) n = deep.get(ast, n);
   let pathStr = p.join('.');
-  let flat = GenerateFlatMap(
-    n,
+  let flat = GenerateFlatMap(n,
     p,
     (n, p) => true || Util.isArray(n) || [ExportStatement, ImportStatement, ObjectBindingPattern, Literal].some((ctor) => n instanceof ctor),
     (n, p) => Object.setPrototypeOf({ ...Util.filterKeys(n, (k) => n instanceof CallExpression || (k != 'type' && !(Util.isObject(n[k]) || Util.isFunction(n[k])))) }, Object.getPrototypeOf(n))
@@ -668,24 +661,20 @@ function getFromPath([path, node], file) {
 function getBase(filename) {
   return path.basename(filename).replace(/\.[a-z0-9]*$/, '');
 }
+
 function readdirRecursive(dir) {
-  let ret=[];
-    for(let entry of filesystem.readdir(dir)) {
-      let file = path.join(dir, entry);
-
-      if(filesystem.stat(file).isDirectory()) {
-        ret = ret.concat( readdirRecursive(file));
-
-        continue;
-      }
-ret.push(entry);
-
-
+  let ret = [];
+  for(let entry of filesystem.readdir(dir)) {
+    let file = path.join(dir, entry);
+    if(filesystem.stat(file).isDirectory()) {
+      ret = ret.concat(readdirRecursive(file));
+      continue;
     }
-
-
-return ret;
+    ret.push(entry);
+  }
+  return ret;
 }
+
 function finish(err) {
   let fail = !!err;
   if(fail) {
@@ -755,7 +744,7 @@ function findModule(relpath) {
   let st = filesystem.stat(relpath);
   let module;
   const name = path.basename(relpath);
-  let indexes = [relpath + '/package.json', ...makeNames(relpath + '/src/index'),...makeNames(relpath + '/src/'+name), makeNames(relpath + '/dist/' + name), ...makeNames(relpath + '/dist/index'), ...makeNames(relpath + '/build/' + name), ...makeNames(relpath + '/' + name), ...makeNames(relpath + '/index')];
+  let indexes = [relpath + '/package.json', ...makeNames(relpath + '/src/index'), ...makeNames(relpath + '/src/' + name), makeNames(relpath + '/dist/' + name), ...makeNames(relpath + '/dist/index'), ...makeNames(relpath + '/build/' + name), ...makeNames(relpath + '/' + name), ...makeNames(relpath + '/index'), ...makeNames(relpath + '/browser')];
   console.log('findModule(', relpath, ')', { st });
 
   if(st.isDirectory()) {
@@ -776,7 +765,7 @@ function findModule(relpath) {
     }
     if(!checkExists(module)) {
       module = null;
-      let entries =readdirRecursive(relpath).filter((name) => /\.js$/.test(name));
+      let entries = readdirRecursive(relpath).filter((name) => /\.js$/.test(name));
 
       if(entries.length == 1) module = path.join(relpath, entries[0]);
       //            console.log('findModule()',{entries });
@@ -814,7 +803,9 @@ function searchModuleInPath(name, _from, position) {
       }
     }
   }
-  let chain = ES6Module.get(_from).chain;
+  let fromModule = ES6Module.get(_from);
+  if(!fromModule) throw new Error(`Module "${_from}" not found (${name})`, name);
+  let chain = fromModule.chain;
   console.log('_from:', _from);
   console.log('chain:', chain);
 

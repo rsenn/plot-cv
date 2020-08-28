@@ -93,8 +93,7 @@ async function main(...args) {
     filesystem.writeFile(basename + '.json', json);
     xmlData = xml[0];
     newObj = deep.clone(xml[0]);
-    let flat = deep.flatten(
-      xml[0],
+    let flat = deep.flatten(xml[0],
       new Map(),
       (v, p) => (typeof v != 'object' && p.indexOf('attributes') == -1) || (p.length && p.indexOf('attributes') == p.length - 1),
       (p, v) => [new Path(p), v]
@@ -143,8 +142,7 @@ async function main(...args) {
     o = [...o].filter(([p, k, v]) => !/background/i.test(k));
     keys = new Map(o.map(([p, k, v]) => [p, k]));
     colors = new Map(o.map(([p, k, v]) => [p, v]));
-    colors = new Map(
-      [...colors.entries()]
+    colors = new Map([...colors.entries()]
         .map(([p, c]) => [p, p.up(2).prevSibling.down('children', 0), c])
         .map(([p, f, c]) => [p, f.apply(xml[0]), c])
         .filter(([p, f, c]) => !/(gutter|guide)/.test(f))

@@ -12,8 +12,7 @@ import { ImmutablePath } from './lib/json.js';
 
 let filesystem;
 
-const code = `export const Progress = ({ className, percent, ...props }) =>  h(
-    Overlay,
+const code = `export const Progress = ({ className, percent, ...props }) =>  h(Overlay,
     {
       className: classNames('progress', 'center', className),
       text: percent + '%',
@@ -102,8 +101,7 @@ async function main(args) {
       console.log('imports:', importNodes);
 
       //for(let imp of imports) console.log('tokens:', parser.tokensForNode(imp));
-      let flat = deep.flatten(
-        ast,
+      let flat = deep.flatten(ast,
         new Map(),
         (node) => node instanceof ESNode,
         (path, value) => {
@@ -126,8 +124,7 @@ async function main(args) {
 
       //let posMap = new SortedMap([...flat].map(([key, value]) => [value.position ? value.position.pos : -1, value]), (a, b) => a - b);
 
-      let commentMap = new Map(
-        [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node: posMap.keyOf(node) }]),
+      let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node: posMap.keyOf(node) }]),
         (a, b) => a - b
       );
 

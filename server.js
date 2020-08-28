@@ -183,8 +183,7 @@ app.ws('/ws', async (ws, req) => {
     if(args.length > 0) msg = new Message(msg, ...args);
     if(msg instanceof Message) msg = msg.data;
 
-    Util.tryCatch(
-      (ws) => client.writable,
+    Util.tryCatch((ws) => client.writable,
       (ok, ws, data) => ws.send(data),
       (err, ws, data) => (console.log('socket:', sock.info, ' error:', (err + '').replace(/\n.*/g, '')), false),
       sock.ws,
@@ -331,8 +330,7 @@ const GetFilesList = async (dir = './tmp', opts = {}) => {
 
   if(!names) names = [...(await fs.promises.readdir(dir))].filter(f);
 
-  return Promise.all(
-    names
+  return Promise.all(names
       .map((entry) => `${dir}/${entry}`)
       .reduce((acc, file) => {
         let description = descriptions ? descMap(file) : descMap.get(file);
@@ -342,8 +340,7 @@ const GetFilesList = async (dir = './tmp', opts = {}) => {
         };
         if(typeof description == 'string') obj.description = description;
 
-        acc.push(
-          fs.promises
+        acc.push(fs.promises
             .stat(file)
             .then(({ ctime, mtime, mode, size }) =>
               Object.assign(obj, {
