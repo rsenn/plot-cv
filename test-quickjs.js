@@ -37,7 +37,7 @@ async function main(...args) {
     return '0x' + '0'.repeat(Math.ceil(s.length / b) * b - s.length) + s;
   }
 
-  let mat = new Mat(new Size(10, 10), Mat.CV_8UC4);
+  let mat = new Mat(new Size(10, 10), Mat.CV_8UC2);
   console.log(`Mat.CV_8UC3`, toHex(Mat.CV_8UC3), Mat.CV_8UC3);
   console.log(`Mat.CV_8UC4`, toHex(Mat.CV_8UC4), Mat.CV_8UC4);
   console.log(`Mat.CV_8SC3`, toHex(Mat.CV_8SC3), Mat.CV_8SC3);
@@ -62,7 +62,7 @@ async function main(...args) {
 
   for(let r = 0; r < mat.rows; r++)
     for(let c = 0; c < mat.cols; c++) {
-      const v = (r << 16) | c;
+      const v = (r << 4) | c;
       console.log(`mat.set(${r},${c},0x${v.toString(16)})`, mat.set(r, c, v));
     }
   console.log(`mat.set(0,1,0xcafebabe)`, mat.set(0, 1, 0xcafebabe));

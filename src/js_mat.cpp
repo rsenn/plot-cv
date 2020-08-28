@@ -157,11 +157,21 @@ static JSValue
 js_mat_get(JSContext* ctx, JSValueConst this_val, uint32_t row, uint32_t col) {
   JSValue ret = JS_EXCEPTION;
   cv::Mat* m = &js_mat_data(ctx, this_val)->mat;
+  uint32_t bytes = (1 << m->depth()) * m->channels();
+
   if(m) {
-    if(m->type() == CV_32FC1)
+    if(m->type() == CV_32FC1) {
       ret = JS_NewFloat64(ctx, (*m).at<float>(row, col));
-    else if((1 << m->depth()) * m->channels() / 8 <= sizeof(uint))
-      ret = JS_NewInt64(ctx, (*m).at<uint>(row, col));
+    } else if(bytes<= sizeof(uint)) {
+      uint32_t mask = (1LU << (bytes * 8)) - 1;
+
+      if(bytes <= 1)
+        ret = JS_NewUint32(ctx, (*m).at<uint8_t>(row, col) & mask);
+      else if(bytes <= 2)
+        ret = JS_NewUint32(ctx, (*m).at<uint16_t>(row, col) & mask);
+      else if(bytes <= 4)
+        ret = JS_NewUint32(ctx, (*m).at<uint32_t>(row, col) & mask);
+    }
   }
   return ret;
 }
@@ -210,13 +220,13 @@ js_mat_at(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
 static JSValue
 js_mat_set(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   cv::Mat* m = &js_mat_data(ctx, this_val)->mat;
+  uint32_t bytes;
   if(!m)
     return JS_EXCEPTION;
 
   JSPointData pt;
   JSValue ret;
   int64_t col = -1, row = -1;
-  uint* p;
 
   if(js_point_read(ctx, argv[0], &pt)) {
     col = pt.x;
@@ -235,19 +245,30 @@ js_mat_set(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) 
       argv++;
     }
   }
-
+  bytes = (1 << m->depth()) * m->channels();
   if(m->type() == CV_32FC1) {
     double data;
     if(JS_ToFloat64(ctx, &data, argv[0]))
       return JS_EXCEPTION;
     (*m).at<float>(row, col) = (float)data;
-  } else if((1 << m->depth()) * m->channels() / 8 <= sizeof(uint)) {
+  } else if(bytes <= sizeof(uint)) {
+    uint32_t mask = (1LU << (bytes * 8)) - 1;
     uint32_t data;
     if(JS_ToUint32(ctx, &data, argv[0]))
       return JS_EXCEPTION;
 
-    p = &(*m).at<uint>(row, col);
-    *p = (uint)data;
+    if(bytes <= 1) {
+      uint8_t* p = &(*m).at<uint8_t>(row, col);
+      *p = (uint8_t)data & mask;
+    } else if(bytes <= 2 ) {
+      uint16_t* p = &(*m).at<uint16_t>(row, col);
+      *p = (uint16_t)data & mask;
+
+    } else if(bytes <= 4) {
+      uint* p = &(*m).at<uint>(row, col);
+      *p = (uint)data & mask;
+    }
+
   } else
     return JS_EXCEPTION;
   return JS_UNDEFINED;
