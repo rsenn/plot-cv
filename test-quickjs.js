@@ -60,11 +60,11 @@ async function main(...args) {
 
   console.log(`mat.row(0)`, row0);
 
-  for(let r = 0; r < mat.rows; r++) 
+  for(let r = 0; r < mat.rows; r++)
     for(let c = 0; c < mat.cols; c++) {
-const v = r << 16 | c;
-  console.log(`mat.set(${r},${c},0x${v.toString(16)})`, mat.set(r,c,v));
-}
+      const v = (r << 16) | c;
+      console.log(`mat.set(${r},${c},0x${v.toString(16)})`, mat.set(r, c, v));
+    }
   console.log(`mat.set(0,1,0xcafebabe)`, mat.set(0, 1, 0xcafebabe));
   console.log(`mat.set(0,2,0xc01dd00d)`, mat.set(0, 2, 0xc01dd00d));
   console.log(`row0.at(0,0)`, row0.at(0, 0));
@@ -76,9 +76,9 @@ const v = r << 16 | c;
 
   let step = it.next();
   console.log(`it.next()`, step.done, step.value);
-  let  i = 0;
+  let i = 0;
   for(let x of row0.values()) {
-    console.log(`row0.values()[${i++}]`, (x));
+    console.log(`row0.values()[${i++}]`, x);
   }
   i = 0;
   it = row0.keys();
@@ -89,22 +89,21 @@ const v = r << 16 | c;
   while(true) {
     v = it.next();
     if(v.done) break;
-    console.log(`row0.keys() #${i++}`,  v.value, v.value.length);
+    console.log(`row0.keys() #${i++}`, v.value, v.value.length);
   }
   i = 0;
-  for(let [key,value] of row0.entries()) {
-    console.log(`row0.entries() #${i++}`, key,'0x'+('00000000'+value.toString(16)).slice(-8));
+  for(let [key, value] of row0.entries()) {
+    console.log(`row0.entries() #${i++}`, key, '0x' + ('00000000' + value.toString(16)).slice(-8));
   }
   i = 0;
-  for(let [key,value] of col0.entries()) {
-    console.log(`col0.entries() #${i++}`, key,'0x'+('00000000'+value.toString(16)).slice(-8));
+  for(let [key, value] of col0.entries()) {
+    console.log(`col0.entries() #${i++}`, key, '0x' + ('00000000' + value.toString(16)).slice(-8));
   }
-i = 0;
-  for(let [[row,col],value] of mat) {
-    console.log(`mat[${i++}] row=${row} col=${col} value=0x${('00000000'+value.toString(16)).slice(-8)}`);
-  
-  }  
-  
+  i = 0;
+  for(let [[row, col], value] of mat) {
+    console.log(`mat[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
+  }
+
   /* let c = new Contour();
 
   c.push(new Point(0, 0));
