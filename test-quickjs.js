@@ -56,11 +56,17 @@ async function main(...args) {
     Object.keys(Mat).find((k) => Mat[k] === mat.type)
   );
   let row0 = mat.row(0);
+  let col0 = mat.col(0);
 
   console.log(`mat.row(0)`, row0);
-  console.log(`row0.set(0,0,0xdeadbeef)`, row0.set(0, 0, 0xdeadbeef));
-  console.log(`row0.set(0,1,0xcafebabe)`, row0.set(0, 1, 0xcafebabe));
-  console.log(`row0.set(0,2,0xc01dd00d)`, row0.set(0, 2, 0xc01dd00d));
+
+  for(let r = 0; r < mat.rows; r++) 
+    for(let c = 0; c < mat.cols; c++) {
+const v = r << 16 | c;
+  console.log(`mat.set(${r},${c},0x${v.toString(16)})`, mat.set(r,c,v));
+}
+  console.log(`mat.set(0,1,0xcafebabe)`, mat.set(0, 1, 0xcafebabe));
+  console.log(`mat.set(0,2,0xc01dd00d)`, mat.set(0, 2, 0xc01dd00d));
   console.log(`row0.at(0,0)`, row0.at(0, 0));
   console.log(`mat.at(0,0)`, mat.at(0, 0));
   console.log(`mat.at(new Point(0,0))`, mat.at(new Point(0, 0)));
@@ -70,7 +76,7 @@ async function main(...args) {
 
   let step = it.next();
   console.log(`it.next()`, step.done, step.value);
-  let i = 0;
+  let  i = 0;
   for(let x of row0.values()) {
     console.log(`row0.values()[${i++}]`, (x));
   }
@@ -87,9 +93,18 @@ async function main(...args) {
   }
   i = 0;
   for(let [key,value] of row0.entries()) {
-    console.log(`row0.entries() #${i++}`, key,value);
+    console.log(`row0.entries() #${i++}`, key,'0x'+('00000000'+value.toString(16)).slice(-8));
   }
-
+  i = 0;
+  for(let [key,value] of col0.entries()) {
+    console.log(`col0.entries() #${i++}`, key,'0x'+('00000000'+value.toString(16)).slice(-8));
+  }
+i = 0;
+  for(let [[row,col],value] of mat) {
+    console.log(`mat[${i++}] row=${row} col=${col} value=0x${('00000000'+value.toString(16)).slice(-8)}`);
+  
+  }  
+  
   /* let c = new Contour();
 
   c.push(new Point(0, 0));

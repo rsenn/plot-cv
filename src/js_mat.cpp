@@ -191,22 +191,22 @@ js_mat_set(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) 
 
   JSPointData pt;
   JSValue ret;
-  int64_t x = -1, y = -1;
+  int64_t col = -1, row = -1;
   uint* p;
 
   if(js_point_read(ctx, argv[0], &pt)) {
-    x = pt.x;
-    y = pt.y;
+    col = pt.x;
+    row = pt.y;
     argc--;
     argv++;
   } else {
     if(argc >= 1) {
-      JS_ToInt64(ctx, &x, argv[0]);
+      JS_ToInt64(ctx, &row, argv[0]);
       argc--;
       argv++;
     }
     if(argc >= 1) {
-      JS_ToInt64(ctx, &y, argv[0]);
+      JS_ToInt64(ctx, &col, argv[0]);
       argc--;
       argv++;
     }
@@ -216,13 +216,13 @@ js_mat_set(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) 
     double data;
     if(JS_ToFloat64(ctx, &data, argv[0]))
       return JS_EXCEPTION;
-    (*m).at<float>(y, x) = (float)data;
+    (*m).at<float>(row, col) = (float)data;
   } else if((1 << m->depth()) * m->channels() / 8 <= sizeof(uint)) {
     uint32_t data;
     if(JS_ToUint32(ctx, &data, argv[0]))
       return JS_EXCEPTION;
 
-    p = &(*m).at<uint>(y, x);
+    p = &(*m).at<uint>(row, col);
     *p = (uint)data;
   } else
     return JS_EXCEPTION;
@@ -479,7 +479,7 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("keys", 0, js_create_mat_iterator, 0),
     JS_CFUNC_MAGIC_DEF("values", 0, js_create_mat_iterator, 1),
     JS_CFUNC_MAGIC_DEF("entries", 0, js_create_mat_iterator, 2),
-    JS_ALIAS_DEF("[Symbol.iterator]", "values"),
+    JS_ALIAS_DEF("[Symbol.iterator]", "entries"),
 
     //    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "cv::Mat", JS_PROP_CONFIGURABLE)
 
