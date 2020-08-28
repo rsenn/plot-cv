@@ -15,6 +15,9 @@ js_rect_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* ar
   JSValue proto;
 
   s = static_cast<JSRectData*>(js_mallocz(ctx, sizeof(*s)));
+
+  new (s) JSRectData();
+
   if(!s)
     return JS_EXCEPTION;
   if(JS_ToFloat64(ctx, &s->x, argv[0]))
@@ -51,6 +54,8 @@ void
 js_rect_finalizer(JSRuntime* rt, JSValue val) {
   JSRectData* s = static_cast<JSRectData*>(JS_GetOpaque(val, js_rect_class_id));
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
+
+s->~JSRectData();
   js_free_rt(rt, s);
 }
 
@@ -141,10 +146,10 @@ JSClassDef js_rect_class = {
 };
 
 const JSCFunctionListEntry js_rect_proto_funcs[] = {
-    JS_CGETSET_MAGIC_DEF("x", js_rect_get_xywh, js_rect_set_xywh, 0),
-    JS_CGETSET_MAGIC_DEF("y", js_rect_get_xywh, js_rect_set_xywh, 1),
-    JS_CGETSET_MAGIC_DEF("width", js_rect_get_xywh, js_rect_set_xywh, 2),
-    JS_CGETSET_MAGIC_DEF("height", js_rect_get_xywh, js_rect_set_xywh, 3),
+    JS_CGETSET_ENUMERABLE_DEF("x", js_rect_get_xywh, js_rect_set_xywh, 0),
+    JS_CGETSET_ENUMERABLE_DEF("y", js_rect_get_xywh, js_rect_set_xywh, 1),
+    JS_CGETSET_ENUMERABLE_DEF("width", js_rect_get_xywh, js_rect_set_xywh, 2),
+    JS_CGETSET_ENUMERABLE_DEF("height", js_rect_get_xywh, js_rect_set_xywh, 3),
     JS_CGETSET_MAGIC_DEF("x2", js_rect_get_xywh, js_rect_set_xywh, 4),
     JS_CGETSET_MAGIC_DEF("y2", js_rect_get_xywh, js_rect_set_xywh, 5),
     JS_ALIAS_DEF("x1", "x"),
@@ -180,6 +185,7 @@ js_rect_constructor(JSContext* ctx, JSValue parent, const char* name) {
 
   JS_SetPropertyStr(ctx, parent, name ? name : "Rect", rect_class);
 }
+
 #ifdef JS_RECT_MODULE
 #define JS_INIT_MODULE VISIBLE js_init_module
 #else

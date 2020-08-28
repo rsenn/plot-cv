@@ -7,11 +7,9 @@
 #define JS_INIT_MODULE VISIBLE js_init_module_mat
 #endif
 
-extern "C" {
-
 JSMatData*
 js_mat_data(JSContext* ctx, JSValue val) {
-  return static_cast<JSMatData*>(JS_GetOpaque2(ctx, val, js_mat_class_id));
+  return static_cast<JSMatData *>(JS_GetOpaque2(ctx, val, js_mat_class_id));
 }
 
 static JSValue
@@ -19,9 +17,16 @@ js_mat_new(JSContext* ctx, int cols, int rows, int type) {
   JSValue ret;
   JSMatData* s;
   ret = JS_NewObjectProtoClass(ctx, mat_proto, js_mat_class_id);
-  s = new cv::Mat(cv::Size(cols, rows), type);
 
-  *s = cv::Mat::zeros(cv::Size(cols, rows), type);
+    s = static_cast<JSMatData *>(js_mallocz(ctx, sizeof(JSMatData)));
+
+   // new ( s) cv::Mat(cv::Size(cols, rows), type);*/
+  s->mat = cv::Mat(cv::Size(cols, rows), type);
+  /* const auto init = cv::Mat::zeros(cv::Size(cols, rows), type);
+
+   memcpy(s, &init, sizeof(*s));*/
+
+  //*s = init;
 
   JS_SetOpaque(ret, s);
   return ret;
@@ -29,7 +34,7 @@ js_mat_new(JSContext* ctx, int cols, int rows, int type) {
 
 static JSValue
 js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
-  JSMatData* s;
+ // JSMatData* s;
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
   JSSizeData size;
@@ -56,11 +61,11 @@ js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* arg
   obj = js_mat_new(ctx, cols, rows, type);
 
   return obj;
-fail:
-  s->release();
+/*fail:
+  s->mat->release();
 
   JS_FreeValue(ctx, obj);
-  return JS_EXCEPTION;
+  return JS_EXCEPTION;*/
 }
 
 void
@@ -68,7 +73,25 @@ js_mat_finalizer(JSRuntime* rt, JSValue val) {
   JSMatData* s = static_cast<JSMatData*>(JS_GetOpaque(val, js_mat_class_id));
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
 
-  s->release();
+  /*struct list_head {
+      struct list_head *prev;
+      struct list_head *next;
+  } *list_ptr, *list;
+
+  list_ptr = list = ((list_head**)rt)[17];
+  std::cerr << __FUNCTION__ << " " << s << std::endl;
+
+  for(int i = 0; list_ptr; list_ptr = list_ptr->next, i++) {
+    if(list_ptr >= s)
+  std::cerr << __FUNCTION__ << " " << i << ": " << list_ptr << std::endl;
+  }
+
+  s->cv::Mat::~Mat();
+  */
+
+  s->mat.release();
+  js_free_rt(rt, s);
+  //
 }
 
 static JSValue
@@ -76,7 +99,7 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
   JSValue ret = JS_UNDEFINED;
   int64_t i = -1, i2 = -1;
   JSPointData pt;
-  JSMatData* m = js_mat_data(ctx, this_val);
+  cv::Mat* m = &js_mat_data(ctx, this_val)->mat;
 
   if(argc > 0) {
     JS_ToInt64(ctx, &i, argv[0]);
@@ -124,27 +147,27 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
 
 static JSValue
 js_mat_get_props(JSContext* ctx, JSValueConst this_val, int magic) {
-  JSMatData* s = js_mat_data(ctx, this_val);
-  if(!s)
+  cv::Mat* m = &js_mat_data(ctx, this_val)->mat;
+  if(!m)
     return JS_EXCEPTION;
   if(magic == 0)
-    return JS_NewFloat64(ctx, s->cols);
+    return JS_NewFloat64(ctx, m->cols);
   else if(magic == 1)
-    return JS_NewFloat64(ctx, s->rows);
+    return JS_NewFloat64(ctx, m->rows);
   else if(magic == 2)
-    return JS_NewFloat64(ctx, s->channels());
+    return JS_NewFloat64(ctx, m->channels());
   else if(magic == 3)
-    return JS_NewFloat64(ctx, s->type());
+    return JS_NewFloat64(ctx, m->type());
   else if(magic == 4)
-    return JS_NewFloat64(ctx, s->depth());
+    return JS_NewFloat64(ctx, m->depth());
   else if(magic == 5)
-    return JS_NewBool(ctx, s->empty());
+    return JS_NewBool(ctx, m->empty());
   return JS_UNDEFINED;
 }
 
 static JSValue
 js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSMatData* m = js_mat_data(ctx, this_val);
+  cv::Mat* m = &js_mat_data(ctx, this_val)->mat;
   int x, y;
 
   std::ostringstream os;
@@ -185,7 +208,7 @@ js_mat_getrotationmatrix2d(JSContext* ctx, JSValueConst this_val, int argc, JSVa
   JSPointData s;
 
   double angle = 0, scale = 1;
-  JSMatData m;
+  cv::Mat m;
 
   JSValue ret;
   if(argc == 0)
@@ -213,8 +236,9 @@ js_mat_wrap(JSContext* ctx, const cv::Mat& mat) {
 
   ret = JS_NewObjectProtoClass(ctx, mat_proto, js_mat_class_id);
 
-  s = new cv::Mat(cv::Size(mat.cols, mat.rows), mat.type());
-  *s = mat;
+s =   static_cast<JSMatData*>(js_mallocz(ctx, sizeof(JSMatData)));
+
+  s->mat = cv::Mat(cv::Size(mat.cols, mat.rows), mat.type());
 
   JS_SetOpaque(ret, s);
 
@@ -308,7 +332,7 @@ js_mat_init(JSContext* ctx, JSModuleDef* m) {
   return 0;
 }
 
-JSModuleDef*
+extern "C" JSModuleDef*
 JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
   m = JS_NewCModule(ctx, module_name, &js_mat_init);
@@ -317,12 +341,11 @@ JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JS_AddModuleExport(ctx, m, "Mat");
   return m;
 }
-
+/*
 void
 js_mat_constructor(JSContext* ctx, JSValue parent, const char* name) {
   if(JS_IsUndefined(mat_class))
     js_mat_init(ctx, 0);
 
   JS_SetPropertyStr(ctx, parent, name ? name : "Mat", mat_class);
-}
-}
+}*/

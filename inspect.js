@@ -1,28 +1,28 @@
-export const inspect = (obj, pred = (v) => true) =>
+export const inspect = (o, pred = (v) => true) =>
   '{\n  ' +
-  Object.entries(obj)
-    .map(([key, value]) => {
-      if(pred(value, key) == false) return '';
-      let out = value;
-      if(typeof out != 'string') {
+  [[o => o,Object.keys],[Object.getPrototypeOf,Object.keys], [o => o,Object.getOwnPropertyNames], [Object.getPrototypeOf,Object.getOwnPropertyNames]].reduce((a, [proto,keys]) => a.length ? a : [...a, ...keys(proto(o))], [])
+  .reduce((a,k) => a.indexOf(k) == -1 ? [...a, k] : a, [])
+  .map(k => [k,o[k]])
+    .map(([k, v]) => {
+      if(pred(v, k) == false) return '';
+      let s = v;
+      if(typeof s != 'string') {
         try {
-          if(typeof out == 'object') out = inspect(out, pred);
-          else out = out + '';
+          if(typeof s == 'object') s = inspect(s, pred);
+          else s = s + '';
         } catch(err) {
-          out = typeof out;
+          s = typeof s;
         }
-        if(typeof value == 'function') {
-          let idx = out.indexOf('{');
-          out = out.substring(0, idx).trim();
-        }
+        if(typeof v == 'function')
+          s = s.substring(0, s.indexOf('{')).trim();
+      
       } else {
-        out = '"' + out + '"';
+        s = '"' + s + '"';
       }
-      out = out.replace(/\n\s*/g, ' ');
-      if(out.length > 200) out = out.substring(0, 200) + '...';
-      return key + ': ' + out;
+      if(s.length > 200) s = s.substring(0, 200) + '...';
+      return k + ': ' + s.replace(/\n\s*/g, ' ');
     })
-    .filter((item) => item != '')
+ //   .filter((item) => item != '')
     .join(',\n  ') +
   '\n}';
 

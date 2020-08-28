@@ -167,10 +167,10 @@ JSClassDef js_line_class = {
 };
 
 const JSCFunctionListEntry js_line_proto_funcs[] = {
-    JS_CGETSET_MAGIC_DEF("x1", js_line_get_xy12, js_line_set_xy12, 0),
-    JS_CGETSET_MAGIC_DEF("y1", js_line_get_xy12, js_line_set_xy12, 1),
-    JS_CGETSET_MAGIC_DEF("x2", js_line_get_xy12, js_line_set_xy12, 2),
-    JS_CGETSET_MAGIC_DEF("y2", js_line_get_xy12, js_line_set_xy12, 3),
+    JS_CGETSET_ENUMERABLE_DEF("x1", js_line_get_xy12, js_line_set_xy12, 0),
+    JS_CGETSET_ENUMERABLE_DEF("y1", js_line_get_xy12, js_line_set_xy12, 1),
+    JS_CGETSET_ENUMERABLE_DEF("x2", js_line_get_xy12, js_line_set_xy12, 2),
+    JS_CGETSET_ENUMERABLE_DEF("y2", js_line_get_xy12, js_line_set_xy12, 3),
     JS_CGETSET_MAGIC_DEF("a", js_line_get_ab, js_line_set_ab, 0),
     JS_CGETSET_MAGIC_DEF("b", js_line_get_ab, js_line_set_ab, 1),
     /*  JS_CGETSET_MAGIC_DEF("x2", js_line_get_xy12, js_line_set_xy12, 2),

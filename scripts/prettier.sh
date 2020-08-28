@@ -22,7 +22,8 @@ prettier() {
     ${CONFIG:+--config
 "$CONFIG"} \
     --no-insert-pragma \
-    "$@"; ${DEBUG:-false} && echo "$@" 1>&2; command "$@" 2>&1 | grep -v 'ExperimentalWarning:'; exit $?)
+    "$@"; ${DEBUG:-false} && echo "$@" 1>&2; command "$@" 2>&1 ##| grep -v 'ExperimentalWarning:'
+ exit $?)
 }
 
 main() {
@@ -67,9 +68,14 @@ main() {
     TMPFILE=`mktemp --tmpdir "$MYNAME-XXXXXX.tmp"`
     DIFFFILE=`mktemp --tmpdir "$MYNAME-XXXXXX.diff"`
     echo "Processing ${SOURCE} ..." 1>&2
-    prettier <"$ARG" >"$TMPFILE" &&
+    prettier <"$ARG" >"$TMPFILE"; R=$?
+
+    if [ $R != 0 ]; then
+      cat "$TMPFILE" 1>&2 
+      exit 1
+     fi
     (: set -x; sed -i  "$EXPR" "$TMPFILE") &&
-    {  diff -u "$ARG" "$TMPFILE" | sed "s|$TMPFILE|$ARG|g; s|$ARG|${ARG##*/}|" | tee "$DIFFFILE" |  diffstat |sed "1! d; /0 files/d"  ;  (cd "$DIR" && patch -p0 ) <"$DIFFFILE" && rm -f "$TMPFILE" || mv -vf "$TMPFILE" "$ARG"; })
+    {  diff -u "$ARG" "$TMPFILE" | sed "s|$TMPFILE|$ARG|g; s|$ARG|${ARG##*/}|" | tee "$DIFFFILE" |  diffstat |sed "1! d; /0 files/d"  ;  (cd "$DIR" && patch -p0 ) <"$DIFFFILE" && rm -f "$TMPFILE" || mv -vf "$TMPFILE" "$ARG"; }) || return $?
    done
 }
 

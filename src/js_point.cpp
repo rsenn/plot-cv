@@ -227,8 +227,8 @@ JSClassDef js_point_class = {
 };
 
 const JSCFunctionListEntry js_point_proto_funcs[] = {
-    JS_CGETSET_MAGIC_DEF("x", js_point_get_xy, js_point_set_xy, 0),
-    JS_CGETSET_MAGIC_DEF("y", js_point_get_xy, js_point_set_xy, 1),
+    JS_CGETSET_ENUMERABLE_DEF("x", js_point_get_xy, js_point_set_xy, 0),
+    JS_CGETSET_ENUMERABLE_DEF("y", js_point_get_xy, js_point_set_xy, 1),
     JS_CFUNC_DEF("cross", 1, js_point_cross),
     JS_CFUNC_DEF("dot", 1, js_point_ddot),
     JS_CFUNC_DEF("inside", 1, js_point_inside),

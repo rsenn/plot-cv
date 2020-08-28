@@ -126,8 +126,8 @@ JSClassDef js_size_class = {
 };
 
 const JSCFunctionListEntry js_size_proto_funcs[] = {
-    JS_CGETSET_MAGIC_DEF("width", js_size_get_wh, js_size_set_wh, 0),
-    JS_CGETSET_MAGIC_DEF("height", js_size_get_wh, js_size_set_wh, 1),
+    JS_CGETSET_ENUMERABLE_DEF("width", js_size_get_wh, js_size_set_wh, 0),
+    JS_CGETSET_ENUMERABLE_DEF("height", js_size_get_wh, js_size_set_wh, 1),
     JS_CFUNC_DEF("toString", 0, js_size_to_string),
 };
 

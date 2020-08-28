@@ -8,7 +8,7 @@
 #include <map>
 
 typedef cv::Rect2d JSRectData;
-typedef cv::Mat JSMatData;
+typedef struct { cv::Mat  mat; } JSMatData;
 typedef cv::Size2d JSSizeData;
 typedef cv::Point2d JSPointData;
 typedef cv::Vec4d JSLineData;
@@ -17,6 +17,7 @@ typedef std::pair<JSPointData*, JSPointData*> JSPointIteratorData;
 
 #define VISIBLE
 #define HIDDEN __attribute__((visibility("hidden")))
+#define JS_CGETSET_ENUMERABLE_DEF(name, fgetter, fsetter, magic) { name, JS_PROP_ENUMERABLE|JS_PROP_CONFIGURABLE, JS_DEF_CGETSET_MAGIC, magic, .u = { .getset = { .get = { .getter_magic = fgetter }, .set = { .setter_magic = fsetter } } } }
 
 extern "C" {
 

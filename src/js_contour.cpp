@@ -886,7 +886,7 @@ js_contour_rect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 
 static JSValue
 js_contour_find(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSMatData* m = js_mat_data(ctx, this_val);
+  cv::Mat* m = &js_mat_data(ctx, this_val)->mat;
   JSValue ret = JS_UNDEFINED;
   int mode = cv::RETR_TREE;
   int approx = cv::CHAIN_APPROX_SIMPLE;

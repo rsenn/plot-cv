@@ -17,8 +17,6 @@ extern "C" {
 JSValue point_iterator_proto, point_iterator_class;
 JSClassID js_point_iterator_class_id;
 
-
-
 JSValue
 js_point_iterator_result(JSContext* ctx, JSValue val, BOOL done) {
   JSValue obj;
@@ -45,7 +43,7 @@ js_point_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
   JSValue result;
   ptr = it->first;
   *pdone = (it->first == it->second);
-  result =  js_point_new(ctx, it->first->x, it->first->y);
+  result = js_point_new(ctx, it->first->x, it->first->y);
   it->first++;
   return result;
 fail:
@@ -56,7 +54,7 @@ static void
 js_point_iterator_finalizer(JSRuntime* rt, JSValue val) {
   JSPointIteratorData* s = static_cast<JSPointIteratorData*>(JS_GetOpaque(val, js_point_iterator_class_id));
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
-  
+
   js_free_rt(rt, s);
 }
 
