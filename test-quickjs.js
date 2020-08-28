@@ -39,7 +39,7 @@ function toHex(n, b = 2) {
   return '0x'+('0'.repeat(Math.ceil(s.length/b)*b-s.length))+s;
 }
 
-  let mat = new Mat(new Size(100,100), Mat.CV_32FC4);
+  let mat = new Mat(new Size(100,100), Mat.CV_8UC4);
  console.log(`Mat.CV_8UC3`, toHex(Mat.CV_8UC3), (Mat.CV_8UC3));
  console.log(`Mat.CV_8UC4`, toHex(Mat.CV_8UC4), (Mat.CV_8UC4)); 
  console.log(`Mat.CV_8SC3`, toHex(Mat.CV_8SC3), (Mat.CV_8SC3));
@@ -50,7 +50,28 @@ console.log(`Mat.CV_32FC1`, toHex(Mat.CV_32FC1), (Mat.CV_32FC1));
  console.log(`inspect(mat)`, inspect(mat));
  console.log(`mat.channels`, mat.channels);
  console.log(`mat.depth`, mat.depth);
- console.log(`Mat.depth`, Object.keys(Mat).find(k => Mat[k] === mat.depth));
+ console.log(`1 << mat.depth`, 1 << mat.depth);
+ console.log(`Mat[DEPTH]`, Object.keys(Mat).find(k => Mat[k] === mat.depth));
+ console.log(`Mat[TYPE]`, Object.keys(Mat).find(k => Mat[k] === mat.type));
+ let row0 = mat.row(0);
+
+ console.log(`mat.row(0)`, row0);
+   console.log(`row0.set(0,0,0xdeadbeef)`, row0.set(0,0,0xdeadbeef));
+console.log(`row0.at(0,0)`, row0.at(0,0));
+console.log(`mat.at(0,0)`, mat.at(0,0));
+ console.log(`mat.at(new Point(0,0))`, mat.at(new Point(0,0)));
+
+let it = row0[Symbol.iterator]();
+console.log(`row0[Symbol.iterator]()`, it);
+
+let step= it.next();
+console.log(`it.next()`, step.done, step.value);
+let i = 0;
+for(let x of row0) {
+  console.log(`row0[${i++}]`, x);
+
+}
+
  /* let c = new Contour();
 
   c.push(new Point(0, 0));

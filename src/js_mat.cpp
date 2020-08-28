@@ -1,11 +1,21 @@
 #include "./jsbindings.h"
 #include "./geometry.h"
+#include "../quickjs/cutils.h"
 
 #if defined(JS_MAT_MODULE) || defined(quickjs_mat_EXPORTS)
 #define JS_INIT_MODULE VISIBLE js_init_module
 #else
 #define JS_INIT_MODULE VISIBLE js_init_module_mat
 #endif
+
+typedef struct JSMatIteratorData {
+  JSValue obj;
+  uint32_t row, col;
+} JSMatIteratorData;
+
+typedef struct JSMatSizeData {
+  uint32_t rows, cols;
+} JSMatSizeData;
 
 JSMatData*
 js_mat_data(JSContext* ctx, JSValue val) {
@@ -70,25 +80,9 @@ js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* arg
 void
 js_mat_finalizer(JSRuntime* rt, JSValue val) {
   JSMatData* s = static_cast<JSMatData*>(JS_GetOpaque(val, js_mat_class_id));
-  /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
-
-  /*struct list_head {
-      struct list_head *prev;
-      struct list_head *next;
-  } *list_ptr, *list;
-
-  list_ptr = list = ((list_head**)rt)[17];
-  std::cerr << __FUNCTION__ << " " << s << std::endl;
-
-  for(int i = 0; list_ptr; list_ptr = list_ptr->next, i++) {
-    if(list_ptr >= s)
-  std::cerr << __FUNCTION__ << " " << i << ": " << list_ptr << std::endl;
-  }
-
-  s->cv::Mat::~Mat();
-  */
 
   s->mat.release();
+  JS_FreeValueRT(rt, s->val);
   js_free_rt(rt, s);
   //
 }
@@ -109,13 +103,13 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
   }
 
   if(magic == 0)
-    ret = js_mat_wrap(ctx, m->col(i));
+    ret = js_mat_wrap(ctx, m->col(i), this_val);
   else if(magic == 1)
-    ret = js_mat_wrap(ctx, m->row(i));
+    ret = js_mat_wrap(ctx, m->row(i), this_val);
   else if(magic == 2)
-    ret = js_mat_wrap(ctx, m->colRange(i, i2));
+    ret = js_mat_wrap(ctx, m->colRange(i, i2), this_val);
   else if(magic == 3)
-    ret = js_mat_wrap(ctx, m->rowRange(i, i2));
+    ret = js_mat_wrap(ctx, m->rowRange(i, i2), this_val);
   else if(magic == 4) {
     cv::Point p;
 
@@ -138,10 +132,100 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
     if(argc > 0)
       rect = js_rect_get(ctx, argv[0]);
 
-    ret = js_mat_wrap(ctx, (*m)(rect));
+    ret = js_mat_wrap(ctx, (*m)(rect), this_val);
+
+  } else if(magic == 7) {
+    JSRectData rect = {0, 0, 0, 0};
+
+    if(argc > 0)
+      rect = js_rect_get(ctx, argv[0]);
+
+    ret = js_mat_wrap(ctx, (*m)(rect), this_val);
+  } else {
+    ret = JS_EXCEPTION;
   }
 
-  return JS_EXCEPTION;
+  return ret;
+}
+
+static JSValue
+js_mat_get(JSContext* ctx, JSValueConst this_val, uint32_t row, uint32_t col) {
+  JSValue ret = JS_EXCEPTION;
+  cv::Mat* m = &js_mat_data(ctx, this_val)->mat;
+  if(m) {
+    if(m->type() == CV_32FC1)
+      ret = JS_NewFloat64(ctx, (*m).at<float>(row, col));
+    else if((1 << m->depth()) * m->channels() / 8 <= sizeof(uint))
+      ret = JS_NewInt64(ctx, (*m).at<uint>(row, col));
+  }
+  return ret;
+}
+
+static JSValue
+js_mat_at(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  cv::Mat* m = &js_mat_data(ctx, this_val)->mat;
+  if(!m)
+    return JS_EXCEPTION;
+  JSPointData pt;
+  JSValue ret;
+  uint32_t row = 0, col = 0;
+  if(js_point_read(ctx, argv[0], &pt)) {
+    col = pt.x;
+    row = pt.y;
+  } else if(argc >= 2) {
+    JS_ToUint32(ctx, &row, argv[0]);
+    JS_ToUint32(ctx, &col, argv[1]);
+    argc -= 2;
+    argv += 2;
+  }
+
+  return js_mat_get(ctx, this_val, row, col);
+}
+
+static JSValue
+js_mat_set(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  cv::Mat* m = &js_mat_data(ctx, this_val)->mat;
+  if(!m)
+    return JS_EXCEPTION;
+
+  JSPointData pt;
+  JSValue ret;
+  int64_t x = -1, y = -1;
+  uint* p;
+
+  if(js_point_read(ctx, argv[0], &pt)) {
+    x = pt.x;
+    y = pt.y;
+    argc--;
+    argv++;
+  } else {
+    if(argc >= 1) {
+      JS_ToInt64(ctx, &x, argv[0]);
+      argc--;
+      argv++;
+    }
+    if(argc >= 1) {
+      JS_ToInt64(ctx, &y, argv[0]);
+      argc--;
+      argv++;
+    }
+  }
+
+  if(m->type() == CV_32FC1) {
+    double data;
+    if(JS_ToFloat64(ctx, &data, argv[0]))
+      return JS_EXCEPTION;
+    (*m).at<float>(y, x) = (float)data;
+  } else if((1 << m->depth()) * m->channels() / 8 <= sizeof(uint)) {
+    uint32_t data;
+    if(JS_ToUint32(ctx, &data, argv[0]))
+      return JS_EXCEPTION;
+
+    p = &(*m).at<uint>(y, x);
+    *p = (uint)data;
+  } else
+    return JS_EXCEPTION;
+  return JS_UNDEFINED;
 }
 
 static JSValue
@@ -161,6 +245,8 @@ js_mat_get_props(JSContext* ctx, JSValueConst this_val, int magic) {
     return JS_NewUint32(ctx, m->depth());
   else if(magic == 5)
     return JS_NewBool(ctx, m->empty());
+  else if(magic == 6)
+    return JS_NewFloat64(ctx, m->total());
   return JS_UNDEFINED;
 }
 
@@ -229,7 +315,7 @@ js_mat_getrotationmatrix2d(JSContext* ctx, JSValueConst this_val, int argc, JSVa
 }
 
 JSValue
-js_mat_wrap(JSContext* ctx, const cv::Mat& mat) {
+js_mat_wrap(JSContext* ctx, cv::Mat mat, JSValue val) {
   JSValue ret;
   JSMatData* s;
 
@@ -237,19 +323,107 @@ js_mat_wrap(JSContext* ctx, const cv::Mat& mat) {
 
   s = static_cast<JSMatData*>(js_mallocz(ctx, sizeof(JSMatData)));
 
-  s->mat = cv::Mat(cv::Size(mat.cols, mat.rows), mat.type());
+  s->mat = cv::Mat(mat);
+  s->val = JS_IsUndefined(val) ? val : JS_DupValue(ctx, val);
 
   JS_SetOpaque(ret, s);
 
   return ret;
 }
 
-JSValue mat_proto, mat_class;
-JSClassID js_mat_class_id;
+static int
+js_mat_get_wh(JSContext* ctx, JSMatSizeData* size, JSValueConst obj) {
+  cv::Mat* m = &js_mat_data(ctx, obj)->mat;
+
+  if(m) {
+    size->rows = m->rows;
+    size->cols = m->cols;
+    return 1;
+  }
+  return 0;
+}
+
+JSValue
+js_create_mat_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSValue enum_obj, mat;
+  JSMatIteratorData* it;
+  mat = JS_DupValue(ctx, this_val);
+  if(!JS_IsException(mat)) {
+    enum_obj = JS_NewObjectClass(ctx, js_mat_iterator_class_id);
+    if(!JS_IsException(enum_obj)) {
+      it = static_cast<JSMatIteratorData*>(js_malloc(ctx, sizeof(JSMatIteratorData)));
+
+      it->obj = mat;
+      it->row = 0;
+      it->col = 0;
+
+      JS_SetOpaque(/*ctx, */ enum_obj, it);
+      return enum_obj;
+    }
+    JS_FreeValue(ctx, enum_obj);
+  }
+  JS_FreeValue(ctx, mat);
+  return JS_EXCEPTION;
+}
+
+JSValue
+js_mat_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, BOOL* pdone, int magic) {
+  JSMatIteratorData* it;
+  uint32_t row, col;
+  JSValue val, obj;
+  JSObject* p;
+  JSMatSizeData dim;
+
+  it = static_cast<JSMatIteratorData*>(JS_GetOpaque2(ctx, this_val, js_mat_iterator_class_id));
+  if(it) {
+    if(!JS_IsUndefined(it->obj)) {
+      p = JS_VALUE_GET_OBJ(it->obj);
+
+      if(js_mat_get_wh(ctx, &dim, it->obj)) {
+
+        row = it->row;
+        col = it->col;
+        if(row >= dim.rows || col >= dim.cols) {
+          JS_FreeValue(ctx, it->obj);
+          it->obj = JS_UNDEFINED;
+        done:
+          *pdone = TRUE;
+          return JS_UNDEFINED;
+        }
+        if(col + 1 < dim.cols) {
+          it->col = col + 1;
+        } else {
+          it->col = 0;
+          it->row = row + 1;
+        }
+        *pdone = FALSE;
+        return js_mat_get(ctx, it->obj, row, col);
+      }
+
+      *pdone = FALSE;
+    }
+  }
+  return JS_EXCEPTION;
+}
+
+void
+js_mat_iterator_finalizer(JSRuntime* rt, JSValue val) {
+  JSMatIteratorData* it = static_cast<JSMatIteratorData*>(JS_GetOpaque(val, js_mat_iterator_class_id));
+
+  js_free_rt(rt, it);
+}
+
+JSValue mat_proto, mat_class, mat_iterator_proto, mat_iterator_class;
+JSClassID js_mat_class_id, js_mat_iterator_class_id;
 
 JSClassDef js_mat_class = {
     "Mat",
     .finalizer = js_mat_finalizer,
+};
+
+JSClassDef js_mat_iterator_class = {
+    "MatIterator",
+    .finalizer = js_mat_iterator_finalizer,
 };
 
 const JSCFunctionListEntry js_mat_proto_funcs[] = {
@@ -259,18 +433,30 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("type", js_mat_get_props, NULL, 3),
     JS_CGETSET_MAGIC_DEF("depth", js_mat_get_props, NULL, 4),
     JS_CGETSET_MAGIC_DEF("empty", js_mat_get_props, NULL, 5),
+    JS_CGETSET_MAGIC_DEF("total", js_mat_get_props, NULL, 6),
     JS_CFUNC_MAGIC_DEF("col", 1, js_mat_funcs, 0),
     JS_CFUNC_MAGIC_DEF("row", 1, js_mat_funcs, 1),
     JS_CFUNC_MAGIC_DEF("colRange", 2, js_mat_funcs, 2),
     JS_CFUNC_MAGIC_DEF("rowRange", 2, js_mat_funcs, 3),
-    JS_CFUNC_MAGIC_DEF("at", 1, js_mat_funcs, 4),
+    // JS_CFUNC_MAGIC_DEF("at", 1, js_mat_funcs, 4),
     JS_CFUNC_MAGIC_DEF("clone", 0, js_mat_funcs, 5),
     JS_CFUNC_MAGIC_DEF("roi", 0, js_mat_funcs, 6),
+    // JS_CFUNC_MAGIC_DEF("set", 3, js_mat_funcs, 7),
     // JS_CFUNC_DEF("findContours", 0, js_mat_findcontours),
     JS_CFUNC_DEF("toString", 0, js_mat_tostring),
+    JS_CFUNC_DEF("at", 1, js_mat_at),
+    JS_CFUNC_DEF("set", 2, js_mat_set),
+    JS_CFUNC_MAGIC_DEF("[Symbol.iterator]", 0, js_create_mat_iterator, 0),
+
     //    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "cv::Mat", JS_PROP_CONFIGURABLE)
 
 };
+
+const JSCFunctionListEntry js_mat_iterator_proto_funcs[] = {
+    JS_ITERATOR_NEXT_DEF("next", 0, js_mat_iterator_next, 0),
+    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "MatIterator", JS_PROP_CONFIGURABLE),
+};
+
 const JSCFunctionListEntry js_mat_static_funcs[] = {
     JS_CFUNC_DEF("getRotationMatrix2D", 3, js_mat_getrotationmatrix2d),
 };
@@ -279,11 +465,17 @@ int
 js_mat_init(JSContext* ctx, JSModuleDef* m) {
   /* create the Mat class */
   JS_NewClassID(&js_mat_class_id);
+  JS_NewClassID(&js_mat_iterator_class_id);
   JS_NewClass(JS_GetRuntime(ctx), js_mat_class_id, &js_mat_class);
+  JS_NewClass(JS_GetRuntime(ctx), js_mat_iterator_class_id, &js_mat_iterator_class);
 
   mat_proto = JS_NewObject(ctx);
   JS_SetPropertyFunctionList(ctx, mat_proto, js_mat_proto_funcs, countof(js_mat_proto_funcs));
   JS_SetClassProto(ctx, js_mat_class_id, mat_proto);
+
+  mat_iterator_proto = JS_NewObject(ctx);
+  JS_SetPropertyFunctionList(ctx, mat_iterator_proto, js_mat_iterator_proto_funcs, countof(js_mat_iterator_proto_funcs));
+  JS_SetClassProto(ctx, js_mat_iterator_class_id, mat_iterator_proto);
 
   mat_class = JS_NewCFunction2(ctx, js_mat_ctor, "Mat", 2, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */

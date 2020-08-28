@@ -10,6 +10,7 @@
 typedef cv::Rect2d JSRectData;
 typedef struct {
   cv::Mat mat;
+  JSValue val;
 } JSMatData;
 typedef cv::Size2d JSSizeData;
 typedef cv::Point2d JSPointData;
@@ -64,13 +65,10 @@ int js_contour_init(JSContext*, JSModuleDef*);
 JSModuleDef* js_init_contour_module(JSContext* ctx, const char* module_name);
 void js_contour_constructor(JSContext* ctx, JSValue parent, const char* name);
 
-JSValue js_mat_wrap(JSContext*, const cv::Mat& mat);
-
 int js_mat_init(JSContext*, JSModuleDef*);
 JSModuleDef* js_init_mat_module(JSContext* ctx, const char* module_name);
 void js_mat_constructor(JSContext* ctx, JSValue parent, const char* name);
 
-JSValue js_mat_wrap(JSContext* ctx, const cv::Mat& mat);
 JSMatData* js_mat_data(JSContext* ctx, JSValue val);
 
 JSModuleDef* js_init_module(JSContext* ctx, const char* module_name);
@@ -90,6 +88,8 @@ JSValue js_create_point_iterator(JSContext*, JSValueConst this_val, int argc, JS
 
 extern cv::Mat* dptr;
 }
+JSValue js_mat_wrap(JSContext*, cv::Mat mat, JSValue val = JS_UNDEFINED);
+
 extern "C" JSValue contour_proto;
 extern "C" JSClassDef js_contour_class, js_size_class, js_point_class, js_mat_class, js_rect_class;
 extern "C" JSClassID js_contour_class_id;
@@ -97,7 +97,7 @@ extern "C" JSClassID js_point_iterator_class_id, js_line_class_id, js_draw_class
 
 extern "C" const JSCFunctionListEntry js_rect_proto_funcs[];
 
-extern "C" JSClassID js_point_class_id, js_size_class_id, js_rect_class_id, js_mat_class_id;
+extern "C" JSClassID js_point_class_id, js_size_class_id, js_rect_class_id, js_mat_class_id, js_mat_iterator_class_id;
 
 extern "C" JSValue js_contour2d_new(JSContext*, const std::vector<cv::Point_<double>>& points);
 extern "C" JSValue js_contour2f_new(JSContext*, const std::vector<cv::Point_<float>>& points);
@@ -197,9 +197,11 @@ js_size_read(JSContext* ctx, JSValueConst size, JSSizeData* out) {
   JSValue w = JS_GetPropertyStr(ctx, size, "width");
   JSValue h = JS_GetPropertyStr(ctx, size, "height");
 
-  if(!JS_IsUndefined(w) && !JS_IsUndefined(h)) {
+  if(JS_IsNumber(w) && JS_IsNumber(h)) {
     ret &= !JS_ToFloat64(ctx, &out->width, w);
     ret &= !JS_ToFloat64(ctx, &out->height, h);
+  } else {
+    ret = 0;
   }
   return ret;
 }
@@ -213,9 +215,16 @@ js_size_get(JSContext* ctx, JSValueConst size) {
 
 static inline int
 js_point_read(JSContext* ctx, JSValueConst point, JSPointData* out) {
-  int ret = 0;
-  ret += JS_ToFloat64(ctx, &out->x, JS_GetPropertyStr(ctx, point, "x"));
-  ret += JS_ToFloat64(ctx, &out->y, JS_GetPropertyStr(ctx, point, "y"));
+  int ret = 1;
+  JSValue x = JS_GetPropertyStr(ctx, point, "x");
+  JSValue y = JS_GetPropertyStr(ctx, point, "y");
+
+  if(JS_IsNumber(x) && JS_IsNumber(y)) {
+    ret &= !JS_ToFloat64(ctx, &out->x, x);
+    ret &= !JS_ToFloat64(ctx, &out->y, y);
+  } else {
+    ret = 0;
+  }
   return ret;
 }
 
