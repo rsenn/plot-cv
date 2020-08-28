@@ -37,7 +37,7 @@ async function main(...args) {
     return '0x' + '0'.repeat(Math.ceil(s.length / b) * b - s.length) + s;
   }
 
-  let mat = new Mat(new Size(10, 10), Mat.CV_8UC2);
+  let mat = new Mat(new Size(10, 10), Mat.CV_8UC4);
   console.log(`Mat.CV_8UC3`, toHex(Mat.CV_8UC3), Mat.CV_8UC3);
   console.log(`Mat.CV_8UC4`, toHex(Mat.CV_8UC4), Mat.CV_8UC4);
   console.log(`Mat.CV_8SC3`, toHex(Mat.CV_8SC3), Mat.CV_8SC3);
@@ -62,7 +62,7 @@ async function main(...args) {
 
   for(let r = 0; r < mat.rows; r++)
     for(let c = 0; c < mat.cols; c++) {
-      const v = (r << 4) | c;
+      const v = (r << 24) | c;
       console.log(`mat.set(${r},${c},0x${v.toString(16)})`, mat.set(r, c, v));
     }
   console.log(`mat.set(0,1,0xcafebabe)`, mat.set(0, 1, 0xcafebabe));
@@ -99,17 +99,32 @@ async function main(...args) {
   for(let [key, value] of col0.entries()) {
     console.log(`col0.entries() #${i++}`, key, '0x' + ('00000000' + value.toString(16)).slice(-8));
   }
-  i = 0;
-  for(let [[row, col], value] of mat) {
-    console.log(`mat[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
-  }
+ 
   let range = mat.rowRange(2,8);
    i = 0;
   for(let [[row, col], value] of range) {
     console.log(`range[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
   }   i = 0;
-  for(let [[row, col], value] of mat.colRange(3,7)) {
-    console.log(`mat.colRange(3,7)[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
+
+
+let roi = mat.roi(new Rect(5,3,4,5));
+
+  for(let [[row, col], value] of roi) {
+    console.log(`roi[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
+  }
+
+  for(let r = 0; r < roi.rows; r++)
+    for(let c = 0; c < roi.cols; c++) {
+      const v = ~((r << 24) | c);
+      console.log(`roi.set(${r},${c},0x${v.toString(16)})`, roi.set(r, c, v));
+    }
+
+
+ /*roi.setTo(...Util.repeat(4*5,0xffffffff));*/
+
+   i = 0;
+  for(let [[row, col], value] of mat) {
+    console.log(`mat[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
   }
   /* let c = new Contour();
 

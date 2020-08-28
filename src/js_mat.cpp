@@ -162,7 +162,7 @@ js_mat_get(JSContext* ctx, JSValueConst this_val, uint32_t row, uint32_t col) {
   if(m) {
     if(m->type() == CV_32FC1) {
       ret = JS_NewFloat64(ctx, (*m).at<float>(row, col));
-    } else if(bytes<= sizeof(uint)) {
+    } else if(bytes <= sizeof(uint)) {
       uint32_t mask = (1LU << (bytes * 8)) - 1;
 
       if(bytes <= 1)
@@ -260,7 +260,7 @@ js_mat_set(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) 
     if(bytes <= 1) {
       uint8_t* p = &(*m).at<uint8_t>(row, col);
       *p = (uint8_t)data & mask;
-    } else if(bytes <= 2 ) {
+    } else if(bytes <= 2) {
       uint16_t* p = &(*m).at<uint16_t>(row, col);
       *p = (uint16_t)data & mask;
 
@@ -271,6 +271,101 @@ js_mat_set(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) 
 
   } else
     return JS_EXCEPTION;
+  return JS_UNDEFINED;
+}
+
+template<class T> struct js_mat_vector {
+  typedef T value_type;
+  static std::vector<T>
+  get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<bool>& defined) {
+    std::vector<T> ret(static_cast<size_t>(argc));
+    defined.resize(static_cast<size_t>(argc));
+    for(int i = 0; i < argc; i++) {
+      uint32_t val = 0;
+      bool isDef = JS_IsNumber(argv[i]) && !JS_ToUint32(ctx, &val, argv[i]);
+
+      ret[i] = val;
+      defined[i] = isDef;
+    }
+    return ret;
+  }
+};
+
+template<> struct js_mat_vector<double> {
+  typedef double value_type;
+  static std::vector<double>
+  get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<bool>& defined) {
+    std::vector<double> ret(static_cast<size_t>(argc));
+    defined.resize(static_cast<size_t>(argc));
+    for(int i = 0; i < argc; i++) {
+      double val = 0;
+      bool isDef = JS_IsNumber(argv[i]) && !JS_ToFloat64(ctx, &val, argv[i]);
+
+      ret[i] = val;
+      defined[i] = isDef;
+    }
+    return ret;
+  }
+};
+
+template<class T, int n> struct js_mat_vector<cv::Vec<T, n>> {
+  typedef cv::Vec<T, n> element_type;
+  typedef typename element_type::value_type value_type;
+  static constexpr int bits = sizeof(value_type) * 8;
+
+  static std::vector<element_type>
+  get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<bool>& defined) {
+    std::vector<element_type> ret(static_cast<size_t>(argc));
+    defined.resize(static_cast<size_t>(argc));
+    for(int i = 0; i < argc; i++) {
+      double val = 0;
+      bool isDef = JS_IsNumber(argv[i]) && !JS_ToFloat64(ctx, &val, argv[i]);
+      if(isDef) {
+        const uint64_t mask = (1U << bits) - 1;
+
+        uint64_t ival = val;
+        for(int j = 0; j < n; j++) {
+          ret[i][j] = ival & mask;
+          ival >>= bits;
+        }
+      }
+      defined[i] = isDef;
+    }
+    return ret;
+  }
+};
+
+static JSValue
+js_mat_set_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  cv::Mat* m = &js_mat_data(ctx, this_val)->mat;
+  uint32_t bytes;
+  std::vector<bool> defined;
+  if(!m)
+    return JS_EXCEPTION;
+
+  bytes = (1 << m->depth()) * m->channels();
+  if(m->type() == CV_32FC1) {
+
+    const auto v = js_mat_vector<double>::get(ctx, argc, argv, defined);
+
+    m->setTo(v, defined);
+
+  } else if(bytes <= sizeof(uint)) {
+
+    if(bytes <= 1) {
+      const auto v = js_mat_vector<uint8_t>::get(ctx, argc, argv, defined);
+      m->setTo(cv::InputArray(v), defined);
+
+    } else if(bytes <= 2) {
+      const auto v = js_mat_vector<uint16_t>::get(ctx, argc, argv, defined);
+      m->setTo(cv::InputArray(v), defined);
+
+    } else if(bytes <= 4) {
+      const auto v = js_mat_vector<cv::Vec<uchar, 4>>::get(ctx, argc, argv, defined);
+      m->setTo(cv::InputArray(v), defined);
+    }
+  }
+
   return JS_UNDEFINED;
 }
 
@@ -509,6 +604,7 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     JS_CFUNC_DEF("toString", 0, js_mat_tostring),
     JS_CFUNC_DEF("at", 1, js_mat_at),
     JS_CFUNC_DEF("set", 2, js_mat_set),
+    JS_CFUNC_DEF("setTo", 0, js_mat_set_to),
     JS_CFUNC_MAGIC_DEF("keys", 0, js_create_mat_iterator, 0),
     JS_CFUNC_MAGIC_DEF("values", 0, js_create_mat_iterator, 1),
     JS_CFUNC_MAGIC_DEF("entries", 0, js_create_mat_iterator, 2),
