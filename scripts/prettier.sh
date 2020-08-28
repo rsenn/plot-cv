@@ -1,5 +1,8 @@
 #!/bin/sh
 
+ME=${0}
+MYNAME=`basename "${ME%.sh}"`
+
 if ! type prettier 2>/dev/null >/dev/null; then
   for DIR in $HOME/.nvm/versions/node/*/bin; do
     PATH="$PATH:$DIR"
@@ -9,6 +12,7 @@ fi
 prettier() {
  ( set -- ${PRETTIER:-prettier} \
     $OPTS \
+    --parser babel \
     --jsx-single-quote \
     --trailing-comma none \
     --write \
@@ -45,8 +49,14 @@ for SOURCE in  ${@:-$(find components utils stores pages -name "*.js")}; do
   esac
   ARG=${SOURCE//"["/"\\["}
   ARG=${ARG//"]"/"\\]"}
-  prettier "$ARG"
-  (: set -x; sed -i  "$EXPR" "$SOURCE")
+ ( : trap 'rm -f "$TMPFILE" "$DIFFFILE"' EXIT
+ DIR=`dirname "$ARG"`
+  TMPFILE=`mktemp "$MYNAME-XXXXXX.tmp"`
+  DIFFFILE=`mktemp "$MYNAME-XXXXXX.diff"`
+  echo "Processing ${SOURCE} ..." 1>&2
+  prettier <"$ARG" >"$TMPFILE" &&
+  (: set -x; sed -i  "$EXPR" "$TMPFILE") &&
+  {  diff -u "$ARG" "$TMPFILE" | sed "s|$TMPFILE|$ARG|g; s|$ARG|${ARG##*/}|" | tee "$DIFFFILE" |  diffstat |sed "1! d; /0 files/d"  ;  (cd "$DIR" && patch -p0 ) <"$DIFFFILE" && rm -f "$TMPFILE" || mv -vf "$TMPFILE" "$ARG"; })
  done
 
 

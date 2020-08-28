@@ -1521,35 +1521,48 @@ const AppMain = (window.onload = async () => {
     Element.find('#preact')
   );
 
-  let move;
+  let move, resize;
+  let box;
   container = Element.find('#main');
 
   TouchListener(
-    (event) => {
+    Util.printReturnValue((event) => {
       const { x, y, index, buttons, start, type, target } = event;
 
       if(type.endsWith('end') || type.endsWith('up')) return cancel();
       if(event.buttons === 0 && type.endsWith('move')) return cancel();
       // if(event.index > 0) console.log('touch', { x, y, index, buttons, type, target }, container);
-      if(event.buttons & 2) return cancel();
-      if(!move) {
-        let box = ((e) => {
+      if(!move && !resize) {
+        box = ((e) => {
           do {
             if(['main', 'console'].indexOf(e.getAttribute('id')) != -1) return e;
           } while((e = e.parentElement));
         })(target);
+        if(event.buttons && event.buttons != 1) {
+          if('preventDefault' in event) event.preventDefault();
+          if(!resize) {
+            let edges = Element.rect(box).toPoints();
+            let corners = [edges[0], edges[2]].map((p, i) => [i, p.distance(new Point(start).sum(x, y)), p]);
+
+            let edge = corners.sort((a, b) => a[1] - b[1])[0];
+
+            window.resize = resize = Element.resizeRelative(box, null, edge[0] ? -1 : 1);
+            console.log('RESIZE:', { resize, box, corners, edge });
+            return true;
+          } else {
+            return cancel();
+          }
+        }
+
         //        let box = Element.find('#main').firstElementChild;
         const id = box && box.getAttribute('id');
 
         if(id == 'console') {
           const rects = [true, false].map((border) => Element.rect(box, { border }));
-
           let p = new Point(start.x + x, start.y + y);
           //console.log('', p);
           const inside = rects.map((r) => r.inside(p));
-
           const inBorder = inside[0] && !inside[1];
-
           function mod(n, m) {
             return ((n % m) + m) % m;
           }
@@ -1557,26 +1570,25 @@ const AppMain = (window.onload = async () => {
           let rad = p.diff(rects[0].center).toAngle();
           let deg = Math.round((rad * 180) / Math.PI);
           let sector = mod(Math.floor(((180 - deg) * 8) / 360), 8);
-
           let directions = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'];
-
           let norm = Point.fromAngle(rad, 1);
           //console.log('box: ', id, ...inside, inBorder, p, { sector, deg });
           let compass = directions[sector];
-
           box.style.cursor = `${compass}-resize`;
         }
 
         if(box) window.move = move = Element.moveRelative(box, null, id == 'console' ? ['right', 'bottom'] : ['left', 'top']);
-        return;
+        return true;
       }
-      if(move && event.buttons == 0) return cancel();
+      if((move || resize) && event.buttons == 0) return cancel();
 
       if(event.index > 0) {
         let rel = new Point(event);
         let absolute = new Point(start).add(rel);
 
-        if(move) {
+        if(resize) {
+          if(event.buttons > 0) resize(-rel.x, -rel.y);
+        } else if(move) {
           /*  window.crosshair.show = true;
           window.crosshair.position = absolute;*/
 
@@ -1587,14 +1599,19 @@ const AppMain = (window.onload = async () => {
       }
       function cancel() {
         move = null;
+        resize = null;
         window.crosshair.show = false;
 
-        return event.cancel();
+        /*return*/ event.cancel();
+        return false;
       }
-    },
+    }),
     { element: window }
   );
 
+  window.oncontextmenu = function (e) {
+    return false;
+  };
   window.processEvents = async function eventLoop() {
     for await (let e of new EventIterator('touch')) {
       const {
