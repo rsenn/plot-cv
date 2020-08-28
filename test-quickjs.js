@@ -71,8 +71,8 @@ async function main(...args) {
   let step = it.next();
   console.log(`it.next()`, step.done, step.value);
   let i = 0;
-  for(let x of row0) {
-    console.log(`row0[${i++}]`, x);
+  for(let x of row0.values()) {
+    console.log(`row0.values()[${i++}]`, (x));
   }
   i = 0;
   it = row0.keys();
@@ -83,7 +83,7 @@ async function main(...args) {
   while(true) {
     v = it.next();
     if(v.done) break;
-    console.log(`row0 ${i++}`, v.done, v.value, v.value.length);
+    console.log(`row0.keys() #${i++}`,  v.value, v.value.length);
   }
   i = 0;
   for(let [key,value] of row0.entries()) {
