@@ -85,7 +85,7 @@ js_mat_finalizer(JSRuntime* rt, JSValue val) {
 
   s->mat.release();
   if(!JS_IsUndefined(val))
-  JS_FreeValueRT(rt, s->val);
+    JS_FreeValueRT(rt, s->val);
   js_free_rt(rt, s);
   //
 }
@@ -166,6 +166,18 @@ js_mat_get(JSContext* ctx, JSValueConst this_val, uint32_t row, uint32_t col) {
   return ret;
 }
 
+static int
+js_mat_get_wh(JSContext* ctx, JSMatSizeData* size, JSValueConst obj) {
+  cv::Mat* m = &js_mat_data(ctx, obj)->mat;
+
+  if(m) {
+    size->rows = m->rows;
+    size->cols = m->cols;
+    return 1;
+  }
+  return 0;
+}
+
 static JSValue
 js_mat_at(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   cv::Mat* m = &js_mat_data(ctx, this_val)->mat;
@@ -177,11 +189,19 @@ js_mat_at(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   if(js_point_read(ctx, argv[0], &pt)) {
     col = pt.x;
     row = pt.y;
-  } else if(argc >= 2) {
+  } else if(argc >= 2 && JS_IsNumber(argv[0]) && JS_IsNumber(argv[1])) {
     JS_ToUint32(ctx, &row, argv[0]);
     JS_ToUint32(ctx, &col, argv[1]);
     argc -= 2;
     argv += 2;
+  } else if(argc >= 1 && JS_IsNumber(argv[0])) {
+    JSMatSizeData dim;
+    uint32_t idx;
+    if(!js_mat_get_wh(ctx, &dim, this_val))
+      return JS_EXCEPTION;
+    JS_ToUint32(ctx, &idx, argv[0]);
+    row = idx / dim.cols;
+    col = idx % dim.cols;
   }
 
   return js_mat_get(ctx, this_val, row, col);
@@ -334,18 +354,6 @@ js_mat_wrap(JSContext* ctx, cv::Mat mat, JSValue val) {
   JS_SetOpaque(ret, s);
 
   return ret;
-}
-
-static int
-js_mat_get_wh(JSContext* ctx, JSMatSizeData* size, JSValueConst obj) {
-  cv::Mat* m = &js_mat_data(ctx, obj)->mat;
-
-  if(m) {
-    size->rows = m->rows;
-    size->cols = m->cols;
-    return 1;
-  }
-  return 0;
 }
 
 static JSValue
