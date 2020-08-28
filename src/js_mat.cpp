@@ -9,7 +9,7 @@
 
 JSMatData*
 js_mat_data(JSContext* ctx, JSValue val) {
-  return static_cast<JSMatData *>(JS_GetOpaque2(ctx, val, js_mat_class_id));
+  return static_cast<JSMatData*>(JS_GetOpaque2(ctx, val, js_mat_class_id));
 }
 
 static JSValue
@@ -18,10 +18,10 @@ js_mat_new(JSContext* ctx, int cols, int rows, int type) {
   JSMatData* s;
   ret = JS_NewObjectProtoClass(ctx, mat_proto, js_mat_class_id);
 
-    s = static_cast<JSMatData *>(js_mallocz(ctx, sizeof(JSMatData)));
+  s = static_cast<JSMatData*>(js_mallocz(ctx, sizeof(JSMatData)));
 
-   // new ( s) cv::Mat(cv::Size(cols, rows), type);*/
-  s->mat = cv::Mat(cv::Size(cols, rows), type);
+  // new ( s) cv::Mat(cv::Size(cols, rows), type);*/
+  s->mat = cv::Mat::zeros(cv::Size(cols, rows), type);
   /* const auto init = cv::Mat::zeros(cv::Size(cols, rows), type);
 
    memcpy(s, &init, sizeof(*s));*/
@@ -34,38 +34,37 @@ js_mat_new(JSContext* ctx, int cols, int rows, int type) {
 
 static JSValue
 js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
- // JSMatData* s;
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
   JSSizeData size;
 
   int64_t cols = 0, rows = 0;
-  int32_t type = CV_32FC1;
+  uint32_t type = CV_32FC1;
 
   if(argc > 0) {
-    JS_ToInt64(ctx, &rows, argv[0]);
-    size = js_size_get(ctx, argv[0]);
-    if(argc > 1 && JS_IsNumber(argv[1])) {
-      JS_ToInt64(ctx, &cols, argv[1]);
-      argc--;
-      argv++;
-    } else {
+    if(js_size_read(ctx, argv[0], &size)) {
       cols = size.width;
       rows = size.height;
+      argv++;
+      argc--;
+    } else {
+      JS_ToInt64(ctx, &rows, argv[0]);
+      JS_ToInt64(ctx, &cols, argv[1]);
+      argv += 2;
+      argc -= 2;
     }
-    if(argc > 1) {
-      type = JS_ToInt32(ctx, &type, argv[1]);
+
+    if(argc > 0) {
+      if(!JS_ToUint32(ctx, &type, argv[0])) {
+        argv++;
+        argc--;
+      }
     }
   }
 
   obj = js_mat_new(ctx, cols, rows, type);
 
   return obj;
-/*fail:
-  s->mat->release();
-
-  JS_FreeValue(ctx, obj);
-  return JS_EXCEPTION;*/
 }
 
 void
@@ -151,15 +150,15 @@ js_mat_get_props(JSContext* ctx, JSValueConst this_val, int magic) {
   if(!m)
     return JS_EXCEPTION;
   if(magic == 0)
-    return JS_NewFloat64(ctx, m->cols);
+    return JS_NewUint32(ctx, m->cols);
   else if(magic == 1)
-    return JS_NewFloat64(ctx, m->rows);
+    return JS_NewUint32(ctx, m->rows);
   else if(magic == 2)
-    return JS_NewFloat64(ctx, m->channels());
+    return JS_NewUint32(ctx, m->channels());
   else if(magic == 3)
-    return JS_NewFloat64(ctx, m->type());
+    return JS_NewUint32(ctx, m->type());
   else if(magic == 4)
-    return JS_NewFloat64(ctx, m->depth());
+    return JS_NewUint32(ctx, m->depth());
   else if(magic == 5)
     return JS_NewBool(ctx, m->empty());
   return JS_UNDEFINED;
@@ -236,7 +235,7 @@ js_mat_wrap(JSContext* ctx, const cv::Mat& mat) {
 
   ret = JS_NewObjectProtoClass(ctx, mat_proto, js_mat_class_id);
 
-s =   static_cast<JSMatData*>(js_mallocz(ctx, sizeof(JSMatData)));
+  s = static_cast<JSMatData*>(js_mallocz(ctx, sizeof(JSMatData)));
 
   s->mat = cv::Mat(cv::Size(mat.cols, mat.rows), mat.type());
 
@@ -292,34 +291,42 @@ js_mat_init(JSContext* ctx, JSModuleDef* m) {
 
   JS_SetPropertyFunctionList(ctx, mat_class, js_mat_static_funcs, countof(js_mat_static_funcs));
 
-  JS_SetPropertyStr(ctx, mat_class, "CV_8UC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_8U, 1)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_8UC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_8U, 2)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_8UC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_8U, 3)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_8UC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_8U, 4)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_8SC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_8S, 1)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_8SC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_8S, 2)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_8SC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_8S, 3)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_8SC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_8S, 4)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_16UC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_16U, 1)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_16UC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_16U, 2)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_16UC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_16U, 3)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_16UC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_16U, 4)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_16SC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_16S, 1)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_16SC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_16S, 2)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_16SC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_16S, 3)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_16SC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_16S, 4)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_32SC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_32S, 1)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_32SC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_32S, 2)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_32SC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_32S, 3)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_32SC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_32S, 4)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_32FC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_32F, 1)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_32FC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_32F, 2)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_32FC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_32F, 3)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_32FC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_32F, 4)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_64FC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 1)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_64FC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 2)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_64FC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 3)));
-  JS_SetPropertyStr(ctx, mat_class, "CV_64FC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 4)));
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_8U", JS_NewInt32(ctx, CV_MAKETYPE(CV_8U, 1)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_8S", JS_NewInt32(ctx, CV_MAKETYPE(CV_8S, 1)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_16U", JS_NewInt32(ctx, CV_MAKETYPE(CV_16U, 1)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_16S", JS_NewInt32(ctx, CV_MAKETYPE(CV_16S, 1)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_32S", JS_NewInt32(ctx, CV_MAKETYPE(CV_32S, 1)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_32F", JS_NewInt32(ctx, CV_MAKETYPE(CV_32F, 1)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_64F", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 1)), JS_PROP_ENUMERABLE);
+
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_8UC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_8U, 1)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_8UC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_8U, 2)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_8UC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_8U, 3)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_8UC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_8U, 4)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_8SC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_8S, 1)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_8SC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_8S, 2)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_8SC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_8S, 3)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_8SC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_8S, 4)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_16UC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_16U, 1)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_16UC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_16U, 2)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_16UC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_16U, 3)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_16UC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_16U, 4)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_16SC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_16S, 1)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_16SC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_16S, 2)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_16SC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_16S, 3)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_16SC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_16S, 4)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_32SC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_32S, 1)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_32SC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_32S, 2)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_32SC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_32S, 3)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_32SC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_32S, 4)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_32FC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_32F, 1)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_32FC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_32F, 2)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_32FC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_32F, 3)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_32FC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_32F, 4)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_64FC1", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 1)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_64FC2", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 2)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_64FC3", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 3)), JS_PROP_ENUMERABLE);
+  JS_DefinePropertyValueStr(ctx, mat_class, "CV_64FC4", JS_NewInt32(ctx, CV_MAKETYPE(CV_64F, 4)), JS_PROP_ENUMERABLE);
 
   JSValue g = JS_GetGlobalObject(ctx);
   int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);

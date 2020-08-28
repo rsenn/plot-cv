@@ -6,8 +6,6 @@
 #define JS_INIT_MODULE VISIBLE js_init_module_rect
 #endif
 
-extern "C" {
-
 static JSValue
 js_rect_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   JSRectData* s;
@@ -16,7 +14,7 @@ js_rect_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* ar
 
   s = static_cast<JSRectData*>(js_mallocz(ctx, sizeof(*s)));
 
-  new (s) JSRectData();
+  new(s) JSRectData();
 
   if(!s)
     return JS_EXCEPTION;
@@ -55,7 +53,7 @@ js_rect_finalizer(JSRuntime* rt, JSValue val) {
   JSRectData* s = static_cast<JSRectData*>(JS_GetOpaque(val, js_rect_class_id));
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
 
-s->~JSRectData();
+  s->~JSRectData();
   js_free_rt(rt, s);
 }
 
@@ -192,7 +190,7 @@ js_rect_constructor(JSContext* ctx, JSValue parent, const char* name) {
 #define JS_INIT_MODULE VISIBLE js_init_module_rect
 #endif
 
-JSModuleDef*
+extern "C" JSModuleDef*
 JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JSModuleDef* m;
   m = JS_NewCModule(ctx, module_name, &js_rect_init);
@@ -200,5 +198,4 @@ JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
     return NULL;
   JS_AddModuleExport(ctx, m, "Rect");
   return m;
-}
 }

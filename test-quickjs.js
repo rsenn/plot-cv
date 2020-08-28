@@ -18,7 +18,6 @@ async function main(...args) {
   filesystem = await PortableFileSystem();
 
 
-  let mat = new Mat();
   let rect = new Rect(10,100,50,250);
   const {x,y,width,height}=rect;
   console.log(`rect`, inspect(rect));
@@ -33,6 +32,25 @@ async function main(...args) {
   console.log(`inspect(rect)`, inspect(rect));
   let point = new Point(25,75);
  console.log(`inspect(point)`, inspect(point));
+
+
+function toHex(n, b = 2) {
+  let s = (+n).toString(16);
+  return '0x'+('0'.repeat(Math.ceil(s.length/b)*b-s.length))+s;
+}
+
+  let mat = new Mat(new Size(100,100), Mat.CV_32FC4);
+ console.log(`Mat.CV_8UC3`, toHex(Mat.CV_8UC3), (Mat.CV_8UC3));
+ console.log(`Mat.CV_8UC4`, toHex(Mat.CV_8UC4), (Mat.CV_8UC4)); 
+ console.log(`Mat.CV_8SC3`, toHex(Mat.CV_8SC3), (Mat.CV_8SC3));
+ console.log(`Mat.CV_8SC4`, toHex(Mat.CV_8SC4), (Mat.CV_8SC4));
+console.log(`Mat.CV_32FC1`, toHex(Mat.CV_32FC1), (Mat.CV_32FC1));
+ console.log(`Mat.CV_32FC4`, toHex(Mat.CV_32FC4), (Mat.CV_32FC4));
+ console.log(`0x3ff`, toHex(0x3ff));
+ console.log(`inspect(mat)`, inspect(mat));
+ console.log(`mat.channels`, mat.channels);
+ console.log(`mat.depth`, mat.depth);
+ console.log(`Mat.depth`, Object.keys(Mat).find(k => Mat[k] === mat.depth));
  /* let c = new Contour();
 
   c.push(new Point(0, 0));
@@ -57,7 +75,7 @@ async function main(...args) {
     //console.log('contour:', inspect(c));
 */
 
-
+if(0) {
   console.log(`std.gc`, std.gc);
   console.log(`args`, args);
   console.log(`path`, inspect(path));
@@ -66,7 +84,7 @@ async function main(...args) {
   console.log(`filesystem.chdir('..')`, filesystem.chdir('..'));
   console.log(`filesystem.getcwd('.')`, filesystem.getcwd());
   console.log(`std.gc()`, std.gc());
-
+}
 
 }
 

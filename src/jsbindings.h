@@ -8,7 +8,9 @@
 #include <map>
 
 typedef cv::Rect2d JSRectData;
-typedef struct { cv::Mat  mat; } JSMatData;
+typedef struct {
+  cv::Mat mat;
+} JSMatData;
 typedef cv::Size2d JSSizeData;
 typedef cv::Point2d JSPointData;
 typedef cv::Vec4d JSLineData;
@@ -17,7 +19,10 @@ typedef std::pair<JSPointData*, JSPointData*> JSPointIteratorData;
 
 #define VISIBLE
 #define HIDDEN __attribute__((visibility("hidden")))
-#define JS_CGETSET_ENUMERABLE_DEF(name, fgetter, fsetter, magic) { name, JS_PROP_ENUMERABLE|JS_PROP_CONFIGURABLE, JS_DEF_CGETSET_MAGIC, magic, .u = { .getset = { .get = { .getter_magic = fgetter }, .set = { .setter_magic = fsetter } } } }
+#define JS_CGETSET_ENUMERABLE_DEF(name, fgetter, fsetter, magic)                                                                                                                                       \
+  {                                                                                                                                                                                                    \
+    name, JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE, JS_DEF_CGETSET_MAGIC, magic, .u = {.getset = {.get = {.getter_magic = fgetter}, .set = {.setter_magic = fsetter}} }                               \
+  }
 
 extern "C" {
 
@@ -188,13 +193,18 @@ js_rect_set(JSContext* ctx, JSValue out, double x, double y, double w, double h)
 
 static inline int
 js_size_read(JSContext* ctx, JSValueConst size, JSSizeData* out) {
-  int ret = 0;
-  ret += JS_ToFloat64(ctx, &out->width, JS_GetPropertyStr(ctx, size, "width"));
-  ret += JS_ToFloat64(ctx, &out->height, JS_GetPropertyStr(ctx, size, "height"));
+  int ret = 1;
+  JSValue w = JS_GetPropertyStr(ctx, size, "width");
+  JSValue h = JS_GetPropertyStr(ctx, size, "height");
+
+  if(!JS_IsUndefined(w) && !JS_IsUndefined(h)) {
+    ret &= !JS_ToFloat64(ctx, &out->width, w);
+    ret &= !JS_ToFloat64(ctx, &out->height, h);
+  }
   return ret;
 }
 
-static JSSizeData
+static inline JSSizeData
 js_size_get(JSContext* ctx, JSValueConst size) {
   JSSizeData r = {0, 0};
   js_size_read(ctx, size, &r);

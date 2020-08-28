@@ -6,8 +6,6 @@
 #define JS_INIT_MODULE VISIBLE js_init_module_size
 #endif
 
-extern "C" {
-
 static JSValue
 js_size_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   JSSizeData* s;
@@ -153,22 +151,6 @@ js_size_init(JSContext* ctx, JSModuleDef* m) {
   return 0;
 }
 
-#ifdef JS_SIZE_MODULE
-#define JS_INIT_MODULE VISIBLE js_init_module
-#else
-#define JS_INIT_MODULE VISIBLE js_init_module_size
-#endif
-
-JSModuleDef*
-JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
-  JSModuleDef* m;
-  m = JS_NewCModule(ctx, module_name, &js_size_init);
-  if(!m)
-    return NULL;
-  JS_AddModuleExport(ctx, m, "Size");
-  return m;
-}
-
 void
 js_size_constructor(JSContext* ctx, JSValue parent, const char* name) {
   if(JS_IsUndefined(size_class))
@@ -176,4 +158,19 @@ js_size_constructor(JSContext* ctx, JSValue parent, const char* name) {
 
   JS_SetPropertyStr(ctx, parent, name ? name : "Size", size_class);
 }
+
+#ifdef JS_SIZE_MODULE
+#define JS_INIT_MODULE VISIBLE js_init_module
+#else
+#define JS_INIT_MODULE VISIBLE js_init_module_size
+#endif
+
+extern "C" JSModuleDef*
+JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
+  JSModuleDef* m;
+  m = JS_NewCModule(ctx, module_name, &js_size_init);
+  if(!m)
+    return NULL;
+  JS_AddModuleExport(ctx, m, "Size");
+  return m;
 }
