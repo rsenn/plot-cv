@@ -17,7 +17,7 @@ let filesystem;
 async function main(...args) {
   filesystem = await PortableFileSystem();
 
-  let rect = new Rect(10, 100, 50, 250);
+  /*  let rect = new Rect(10, 100, 50, 250);
   const { x, y, width, height } = rect;
   console.log(`rect`, inspect(rect));
   console.log(`{x,y,width,height}`, inspect({ x, y, width, height }));
@@ -28,13 +28,19 @@ async function main(...args) {
   console.log(`Object.keys(rect.__proto__)`, Object.keys(rect.__proto__));
   console.log(`Object.keys(Object.getPrototypeOf(rect))`, Object.keys(Object.getPrototypeOf(rect)));
   console.log(`Object.keys(rect)`, Object.keys(rect));
-  console.log(`inspect(rect)`, inspect(rect));
+  console.log(`inspect(rect)`, inspect(rect));*/
   let point = new Point(25, 75);
   console.log(`inspect(point)`, inspect(point));
 
   function toHex(n, b = 2) {
     let s = (+n).toString(16);
     return '0x' + '0'.repeat(Math.ceil(s.length / b) * b - s.length) + s;
+  }
+
+  let rr = new Rect(5, 3, 4, 5);
+  if(rr) {
+    const { x, y, width, height } = rr;
+    console.log('rect:', x, y, width, height);
   }
 
   let mat = new Mat(new Size(10, 10), Mat.CV_8UC4);
@@ -99,15 +105,15 @@ async function main(...args) {
   for(let [key, value] of col0.entries()) {
     console.log(`col0.entries() #${i++}`, key, '0x' + ('00000000' + value.toString(16)).slice(-8));
   }
- 
-  let range = mat.rowRange(2,8);
-   i = 0;
+
+  let range = mat.rowRange(2, 8);
+  i = 0;
   for(let [[row, col], value] of range) {
     console.log(`range[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
-  }   i = 0;
+  }
+  i = 0;
 
-
-let roi = mat.roi(new Rect(5,3,4,5));
+  let roi = mat.roi(rr);
 
   for(let [[row, col], value] of roi) {
     console.log(`roi[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
@@ -115,17 +121,25 @@ let roi = mat.roi(new Rect(5,3,4,5));
 
   for(let r = 0; r < roi.rows; r++)
     for(let c = 0; c < roi.cols; c++) {
-      const v = ~((r << 24) | c);
+      const v = 0x7f000000 | ((r << 16) | c);
       console.log(`roi.set(${r},${c},0x${v.toString(16)})`, roi.set(r, c, v));
     }
 
+  roi.setTo(...Util.repeat(4 * 5, 0xffffffff));
 
- /*roi.setTo(...Util.repeat(4*5,0xffffffff));*/
-
-   i = 0;
+  i = 0;
   for(let [[row, col], value] of mat) {
     console.log(`mat[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
   }
+
+  let fmat = new Mat(new Size(10, 10), Mat.CV_32FC1);
+  const values = Util.repeat(fmat.rows * fmat.cols, 0.5);
+  console.log(`fmat setTo`, values);
+  fmat.setTo(...values);
+  for(let [[row, col], value] of fmat) {
+    console.log(`fmat[${i++}] row=${row} col=${col} value=${value}`);
+  }
+
   /* let c = new Contour();
 
   c.push(new Point(0, 0));

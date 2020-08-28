@@ -159,11 +159,17 @@ js_point_create(JSContext* ctx, double x, double y) {
 
 static inline int
 js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData* out) {
-  int ret = 0;
-  ret += JS_ToFloat64(ctx, &out->x, JS_GetPropertyStr(ctx, rect, "x"));
-  ret += JS_ToFloat64(ctx, &out->y, JS_GetPropertyStr(ctx, rect, "y"));
-  ret += JS_ToFloat64(ctx, &out->width, JS_GetPropertyStr(ctx, rect, "width"));
-  ret += JS_ToFloat64(ctx, &out->height, JS_GetPropertyStr(ctx, rect, "height"));
+  int ret = 1;
+  JSValue x = JS_GetPropertyStr(ctx, rect, "x");
+  JSValue y = JS_GetPropertyStr(ctx, rect, "y");
+  JSValue w = JS_GetPropertyStr(ctx, rect, "width");
+  JSValue h = JS_GetPropertyStr(ctx, rect, "height");
+  if(JS_IsNumber(x) && JS_IsNumber(y) && JS_IsNumber(w) && JS_IsNumber(h)) {
+    ret &= !JS_ToFloat64(ctx, &out->x, x);
+    ret &= !JS_ToFloat64(ctx, &out->y, y);
+    ret &= !JS_ToFloat64(ctx, &out->width, w);
+    ret &= !JS_ToFloat64(ctx, &out->height, h);
+  }
   return ret;
 }
 

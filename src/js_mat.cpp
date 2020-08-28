@@ -15,7 +15,7 @@ typedef struct JSMatIteratorData {
 } JSMatIteratorData;
 
 typedef struct JSMatSizeData {
-  uint32_t rows, cols;
+  size_t rows, cols;
 } JSMatSizeData;
 
 JSMatData*
@@ -190,7 +190,8 @@ js_mat_get_wh(JSContext* ctx, JSMatSizeData* size, JSValueConst obj) {
 
 static JSValue
 js_mat_at(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  cv::Mat* m = &js_mat_data(ctx, this_val)->mat;
+  JSMatData* s = js_mat_data(ctx, this_val);
+  cv::Mat* m = &s->mat;
   if(!m)
     return JS_EXCEPTION;
   JSPointData pt;
@@ -205,10 +206,9 @@ js_mat_at(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
     argc -= 2;
     argv += 2;
   } else if(argc >= 1 && JS_IsNumber(argv[0])) {
-    JSMatSizeData dim;
+    JSMatSizeData dim = {static_cast<size_t>(m->rows), static_cast<size_t>(m->cols)};
     uint32_t idx;
-    if(!js_mat_get_wh(ctx, &dim, this_val))
-      return JS_EXCEPTION;
+
     JS_ToUint32(ctx, &idx, argv[0]);
     row = idx / dim.cols;
     col = idx % dim.cols;
@@ -274,95 +274,123 @@ js_mat_set(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) 
   return JS_UNDEFINED;
 }
 
-template<class T> struct js_mat_vector {
-  typedef T value_type;
-  static std::vector<T>
-  get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<bool>& defined) {
-    std::vector<T> ret(static_cast<size_t>(argc));
-    defined.resize(static_cast<size_t>(argc));
-    for(int i = 0; i < argc; i++) {
-      uint32_t val = 0;
-      bool isDef = JS_IsNumber(argv[i]) && !JS_ToUint32(ctx, &val, argv[i]);
+template<class T>
+typename std::enable_if<std::is_integral<T>::value, void>::type
+js_mat_vector_get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<T>& output, std::vector<bool>& defined) {
+  output.resize(static_cast<size_t>(argc));
+  defined.resize(static_cast<size_t>(argc));
+  for(int i = 0; i < argc; i++) {
+    uint32_t val = 0;
+    bool isDef = JS_IsNumber(argv[i]) && !JS_ToUint32(ctx, &val, argv[i]);
 
-      ret[i] = val;
-      defined[i] = isDef;
-    }
-    return ret;
+    output[i] = val;
+    defined[i] = isDef;
   }
-};
+}
 
-template<> struct js_mat_vector<double> {
-  typedef double value_type;
-  static std::vector<double>
-  get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<bool>& defined) {
-    std::vector<double> ret(static_cast<size_t>(argc));
-    defined.resize(static_cast<size_t>(argc));
-    for(int i = 0; i < argc; i++) {
-      double val = 0;
-      bool isDef = JS_IsNumber(argv[i]) && !JS_ToFloat64(ctx, &val, argv[i]);
+template<class T>
+typename std::enable_if<std::is_floating_point<T>::value, void>::type
+js_mat_vector_get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<T>& output, std::vector<bool>& defined) {
+  output.resize(static_cast<size_t>(argc));
+  defined.resize(static_cast<size_t>(argc));
+  for(int i = 0; i < argc; i++) {
+    double val = 0;
+    bool isDef = JS_IsNumber(argv[i]) && !JS_ToFloat64(ctx, &val, argv[i]);
 
-      ret[i] = val;
-      defined[i] = isDef;
-    }
-    return ret;
+    output[i] = val;
+    defined[i] = isDef;
   }
-};
+}
 
-template<class T, int n> struct js_mat_vector<cv::Vec<T, n>> {
-  typedef cv::Vec<T, n> element_type;
-  typedef typename element_type::value_type value_type;
-  static constexpr int bits = sizeof(value_type) * 8;
-
-  static std::vector<element_type>
-  get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<bool>& defined) {
-    std::vector<element_type> ret(static_cast<size_t>(argc));
-    defined.resize(static_cast<size_t>(argc));
-    for(int i = 0; i < argc; i++) {
-      double val = 0;
-      bool isDef = JS_IsNumber(argv[i]) && !JS_ToFloat64(ctx, &val, argv[i]);
-      if(isDef) {
-        const uint64_t mask = (1U << bits) - 1;
-
-        uint64_t ival = val;
-        for(int j = 0; j < n; j++) {
-          ret[i][j] = ival & mask;
-          ival >>= bits;
-        }
+template<class T>
+typename std::enable_if<std::is_integral<typename T::value_type>::value, void>::type
+js_mat_vector_get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<T>& output, std::vector<bool>& defined) {
+  const size_t bits = (sizeof(typename T::value_type) * 8);
+  const size_t n = T::channels;
+  output.resize(static_cast<size_t>(argc));
+  defined.resize(static_cast<size_t>(argc));
+  for(int i = 0; i < argc; i++) {
+    double val = 0;
+    bool isDef = JS_IsNumber(argv[i]) && !JS_ToFloat64(ctx, &val, argv[i]);
+    if(isDef) {
+      const uint64_t mask = (1U << bits) - 1;
+      uint64_t ival = val;
+      for(int j = 0; j < n; j++) {
+        output[i][j] = ival & mask;
+        ival >>= bits;
       }
-      defined[i] = isDef;
     }
-    return ret;
+    defined[i] = isDef;
   }
 };
+
+template<class T>
+static std::vector<T>
+js_mat_set_vector(JSContext* ctx, JSMatData* s, int argc, JSValueConst* argv) {
+  cv::Mat* m = &s->mat;
+  JSMatSizeData dim = {static_cast<size_t>(m->rows), static_cast<size_t>(m->cols)};
+  uint32_t idx;
+  std::vector<bool> defined;
+  std::vector<T> v;
+  js_mat_vector_get(ctx, argc, argv, v, defined);
+
+  for(idx = 0; idx < v.size(); idx++)
+    if(defined[idx])
+      m->at<T>(idx / dim.cols, idx % dim.cols) = v[idx];
+  return v;
+}
 
 static JSValue
 js_mat_set_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  cv::Mat* m = &js_mat_data(ctx, this_val)->mat;
+  JSMatData* s = js_mat_data(ctx, this_val);
+  cv::Mat* m = &s->mat;
   uint32_t bytes;
   std::vector<bool> defined;
   if(!m)
     return JS_EXCEPTION;
 
   bytes = (1 << m->depth()) * m->channels();
-  if(m->type() == CV_32FC1) {
+  if(m->depth() == CV_16U && m->channels() > 1) {
+    if(m->channels() == 2)
+      js_mat_set_vector<cv::Vec<uint16_t, 2>>(ctx, s, argc, argv);
+    else if(m->channels() == 3)
+      js_mat_set_vector<cv::Vec<uint16_t, 3>>(ctx, s, argc, argv);
+    else if(m->channels() == 4)
+      js_mat_set_vector<cv::Vec<uint16_t, 4>>(ctx, s, argc, argv);
+  } else if(m->depth() == CV_32F) {
 
-    const auto v = js_mat_vector<double>::get(ctx, argc, argv, defined);
-
-    m->setTo(v, defined);
+    if(m->channels() == 1)
+      js_mat_set_vector<float>(ctx, s, argc, argv);
+    /*    else if(m->channels() == 2)
+          js_mat_set_vector<cv::Vec<float, 2>>(ctx, s, argc, argv);
+        else if(m->channels() == 3)
+          js_mat_set_vector<cv::Vec<float, 3>>(ctx, s, argc, argv);
+        else if(m->channels() == 4)
+          js_mat_set_vector<cv::Vec<float, 4>>(ctx, s, argc, argv);*/
 
   } else if(bytes <= sizeof(uint)) {
 
     if(bytes <= 1) {
-      const auto v = js_mat_vector<uint8_t>::get(ctx, argc, argv, defined);
+      std::vector<uint8_t> v;
+      js_mat_vector_get(ctx, argc, argv, v, defined);
       m->setTo(cv::InputArray(v), defined);
 
     } else if(bytes <= 2) {
-      const auto v = js_mat_vector<uint16_t>::get(ctx, argc, argv, defined);
+      std::vector<uint16_t> v;
+      js_mat_vector_get(ctx, argc, argv, v, defined);
       m->setTo(cv::InputArray(v), defined);
 
     } else if(bytes <= 4) {
-      const auto v = js_mat_vector<cv::Vec<uchar, 4>>::get(ctx, argc, argv, defined);
-      m->setTo(cv::InputArray(v), defined);
+      js_mat_set_vector<uint32_t>(ctx, s, argc, argv);
+    } else if(bytes <= 8) {
+      js_mat_set_vector<uint64_t>(ctx, s, argc, argv);
+      /*  JSMatSizeData dim;
+        uint32_t idx;
+        const auto v = js_mat_vector<uint32_t>::get(ctx, argc, argv, defined);
+        if(!js_mat_get_wh(ctx, &dim, this_val))
+          return JS_EXCEPTION;
+
+        for(idx = 0; idx < v.size(); idx++) m->at<uint32_t>(idx / dim.cols, idx % dim.cols) = v[idx];*/
     }
   }
 
