@@ -11,6 +11,7 @@
 typedef struct JSMatIteratorData {
   JSValue obj;
   uint32_t row, col;
+  int magic;
 } JSMatIteratorData;
 
 typedef struct JSMatSizeData {
@@ -343,19 +344,39 @@ js_mat_get_wh(JSContext* ctx, JSMatSizeData* size, JSValueConst obj) {
   return 0;
 }
 
+static JSValue
+js_mat_create_vec(JSContext* ctx, int len, JSValueConst* vec) {
+  JSValue obj = JS_EXCEPTION;
+  int i;
+
+  obj = JS_NewArray(ctx);
+  if(!JS_IsException(obj)) {
+
+    for(i = 0; i < len; i++) {
+
+      if(JS_SetPropertyUint32(ctx, obj, i, vec[i]) < 0) {
+        JS_FreeValue(ctx, obj);
+        return JS_EXCEPTION;
+      }
+    }
+  }
+  return obj;
+}
+
 JSValue
 js_create_mat_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSValue enum_obj, mat;
   JSMatIteratorData* it;
   mat = JS_DupValue(ctx, this_val);
   if(!JS_IsException(mat)) {
-    enum_obj = JS_NewObjectClass(ctx, js_mat_iterator_class_id);
+    enum_obj = JS_NewObjectProtoClass(ctx, mat_iterator_proto, js_mat_iterator_class_id);
     if(!JS_IsException(enum_obj)) {
       it = static_cast<JSMatIteratorData*>(js_malloc(ctx, sizeof(JSMatIteratorData)));
 
       it->obj = mat;
       it->row = 0;
       it->col = 0;
+      it->magic = magic;
 
       JS_SetOpaque(/*ctx, */ enum_obj, it);
       return enum_obj;
@@ -371,19 +392,15 @@ js_mat_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueCon
   JSMatIteratorData* it;
   uint32_t row, col;
   JSValue val, obj;
-  JSObject* p;
   JSMatSizeData dim;
 
-  it = static_cast<JSMatIteratorData*>(JS_GetOpaque2(ctx, this_val, js_mat_iterator_class_id));
+  it = static_cast<JSMatIteratorData*>(JS_GetOpaque(this_val, js_mat_iterator_class_id));
   if(it) {
     if(!JS_IsUndefined(it->obj)) {
-      p = JS_VALUE_GET_OBJ(it->obj);
-
       if(js_mat_get_wh(ctx, &dim, it->obj)) {
-
         row = it->row;
         col = it->col;
-        if(row >= dim.rows || col >= dim.cols) {
+        if(row >= dim.rows /*|| col >= dim.cols*/) {
           JS_FreeValue(ctx, it->obj);
           it->obj = JS_UNDEFINED;
         done:
@@ -397,9 +414,18 @@ js_mat_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueCon
           it->row = row + 1;
         }
         *pdone = FALSE;
-        return js_mat_get(ctx, it->obj, row, col);
-      }
+        if(it->magic == 0) {
+          JSValue v[2] = {JS_NewUint32(ctx, row), JS_NewUint32(ctx, col)};
+          return js_mat_create_vec(ctx, 2, v);
+        } else if(it->magic == 1) {
+          return js_mat_get(ctx, it->obj, row, col);
+        } else {
+          JSValue key[2] = {JS_NewUint32(ctx, row), JS_NewUint32(ctx, col)};
+          JSValue entry[2] = {js_mat_create_vec(ctx, 2, key), js_mat_get(ctx, it->obj, row, col)};
 
+          return js_mat_create_vec(ctx, 2, entry);
+        }
+      }
       *pdone = FALSE;
     }
   }
@@ -409,8 +435,12 @@ js_mat_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueCon
 void
 js_mat_iterator_finalizer(JSRuntime* rt, JSValue val) {
   JSMatIteratorData* it = static_cast<JSMatIteratorData*>(JS_GetOpaque(val, js_mat_iterator_class_id));
-
   js_free_rt(rt, it);
+}
+
+static JSValue
+js_mat_iterator_dup(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  return JS_DupValue(ctx, this_val);
 }
 
 JSValue mat_proto, mat_class, mat_iterator_proto, mat_iterator_class;
@@ -446,7 +476,10 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     JS_CFUNC_DEF("toString", 0, js_mat_tostring),
     JS_CFUNC_DEF("at", 1, js_mat_at),
     JS_CFUNC_DEF("set", 2, js_mat_set),
-    JS_CFUNC_MAGIC_DEF("[Symbol.iterator]", 0, js_create_mat_iterator, 0),
+    JS_CFUNC_MAGIC_DEF("keys", 0, js_create_mat_iterator, 0),
+    JS_CFUNC_MAGIC_DEF("values", 0, js_create_mat_iterator, 1),
+    JS_CFUNC_MAGIC_DEF("entries", 0, js_create_mat_iterator, 2),
+    JS_ALIAS_DEF("[Symbol.iterator]", "values"),
 
     //    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "cv::Mat", JS_PROP_CONFIGURABLE)
 
@@ -455,6 +488,8 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
 const JSCFunctionListEntry js_mat_iterator_proto_funcs[] = {
     JS_ITERATOR_NEXT_DEF("next", 0, js_mat_iterator_next, 0),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "MatIterator", JS_PROP_CONFIGURABLE),
+    JS_CFUNC_DEF("[Symbol.iterator]", 0, js_mat_iterator_dup),
+
 };
 
 const JSCFunctionListEntry js_mat_static_funcs[] = {
