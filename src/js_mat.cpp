@@ -33,6 +33,7 @@ js_mat_new(JSContext* ctx, int cols, int rows, int type) {
 
   // new ( s) cv::Mat(cv::Size(cols, rows), type);*/
   s->mat = cv::Mat::zeros(cv::Size(cols, rows), type);
+  s->val = JS_UNDEFINED;
   /* const auto init = cv::Mat::zeros(cv::Size(cols, rows), type);
 
    memcpy(s, &init, sizeof(*s));*/
@@ -83,6 +84,7 @@ js_mat_finalizer(JSRuntime* rt, JSValue val) {
   JSMatData* s = static_cast<JSMatData*>(JS_GetOpaque(val, js_mat_class_id));
 
   s->mat.release();
+  if(!JS_IsUndefined(val))
   JS_FreeValueRT(rt, s->val);
   js_free_rt(rt, s);
   //
@@ -93,7 +95,9 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
   JSValue ret = JS_UNDEFINED;
   int64_t i = -1, i2 = -1;
   JSPointData pt;
-  cv::Mat* m = &js_mat_data(ctx, this_val)->mat;
+  JSMatData* s = js_mat_data(ctx, this_val);
+  cv::Mat* m = &s->mat;
+  JSValue obj = JS_IsUndefined(s->val) ? this_val : s->val;
 
   if(argc > 0) {
     JS_ToInt64(ctx, &i, argv[0]);
@@ -104,13 +108,13 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
   }
 
   if(magic == 0)
-    ret = js_mat_wrap(ctx, m->col(i), this_val);
+    ret = js_mat_wrap(ctx, m->col(i), obj);
   else if(magic == 1)
-    ret = js_mat_wrap(ctx, m->row(i), this_val);
+    ret = js_mat_wrap(ctx, m->row(i), obj);
   else if(magic == 2)
-    ret = js_mat_wrap(ctx, m->colRange(i, i2), this_val);
+    ret = js_mat_wrap(ctx, m->colRange(i, i2), obj);
   else if(magic == 3)
-    ret = js_mat_wrap(ctx, m->rowRange(i, i2), this_val);
+    ret = js_mat_wrap(ctx, m->rowRange(i, i2), obj);
   else if(magic == 4) {
     cv::Point p;
 
@@ -133,7 +137,7 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
     if(argc > 0)
       rect = js_rect_get(ctx, argv[0]);
 
-    ret = js_mat_wrap(ctx, (*m)(rect), this_val);
+    ret = js_mat_wrap(ctx, (*m)(rect), obj);
 
   } else if(magic == 7) {
     JSRectData rect = {0, 0, 0, 0};
@@ -141,7 +145,7 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
     if(argc > 0)
       rect = js_rect_get(ctx, argv[0]);
 
-    ret = js_mat_wrap(ctx, (*m)(rect), this_val);
+    ret = js_mat_wrap(ctx, (*m)(rect), obj);
   } else {
     ret = JS_EXCEPTION;
   }

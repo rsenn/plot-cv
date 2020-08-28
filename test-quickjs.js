@@ -103,10 +103,13 @@ async function main(...args) {
   for(let [[row, col], value] of mat) {
     console.log(`mat[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
   }
-  let range = mat.rowRange(0,5);
+  let range = mat.rowRange(2,8);
    i = 0;
   for(let [[row, col], value] of range) {
     console.log(`range[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
+  }   i = 0;
+  for(let [[row, col], value] of mat.colRange(3,7)) {
+    console.log(`mat.colRange(3,7)[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
   }
   /* let c = new Contour();
 
