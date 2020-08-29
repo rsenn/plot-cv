@@ -835,6 +835,7 @@ const ChooseDocument = async (project, i) => {
     }
     r = project.loaded;
   } catch(err) {
+    Util.putError(err);
     console.error(err);
   }
 
@@ -1493,21 +1494,24 @@ const AppMain = (window.onload = async () => {
   let box;
   container = Element.find('#main');
 
-  TouchListener(Util.printReturnValue((event) => {
+  TouchListener(/*Util.printReturnValue*/ (event) => {
       const { x, y, index, buttons, start, type, target } = event;
 
       if(type.endsWith('end') || type.endsWith('up')) return cancel();
       if(event.buttons === 0 && type.endsWith('move')) return cancel();
       // if(event.index > 0) console.log('touch', { x, y, index, buttons, type, target }, container);
       if(!move && !resize) {
+        console.log('target:', target);
         box = ((e) => {
           do {
             if(['main', 'console'].indexOf(e.getAttribute('id')) != -1) return e;
           } while((e = e.parentElement));
         })(target);
+        console.log('box:', box);
+
         if(event.buttons && event.buttons != 1) {
           if('preventDefault' in event) event.preventDefault();
-          if(!resize) {
+          if(!resize && box) {
             let edges = Element.rect(box).toPoints();
             let corners = [edges[0], edges[2]].map((p, i) => [i, p.distance(new Point(start).sum(x, y)), p]);
 
@@ -1572,7 +1576,7 @@ const AppMain = (window.onload = async () => {
         /*return*/ event.cancel();
         return false;
       }
-    }),
+    },
     { element: window }
   );
 
