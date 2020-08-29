@@ -12,7 +12,7 @@ fi
 prettier() {
  ( set -- ${PRETTIER:-prettier} \
     $OPTS \
-    --parser babel \
+    --parser ${PARSER:-babel} \
     --jsx-single-quote \
     --trailing-comma none \
     --write \
@@ -68,6 +68,10 @@ main() {
     TMPFILE=`mktemp --tmpdir "$MYNAME-XXXXXX.tmp"`
     DIFFFILE=`mktemp --tmpdir "$MYNAME-XXXXXX.diff"`
     echo "Processing ${SOURCE} ..." 1>&2
+    case "$SOURCE" in
+      *.css) PARSER="css" ;;
+      *) unset PARSER ;;
+    esac
     prettier <"$ARG" >"$TMPFILE"; R=$?
 
     if [ $R != 0 ]; then
