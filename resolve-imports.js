@@ -149,7 +149,7 @@ class ES6ImportExport {
       .filter((p) => p.length < 3)
       .map((p) => deep.get(obj.ast, p))
       .map((n) => [ESNode.assoc(n).position, printAst(n)])
-      .map(([p, n]) => [Util.isIterable(position) && [...position].map((p) => ES6Env.pathTransform(p)).join(':'), n]);
+      .map(([p, n]) => [Util.isGenerator(position) && [...position].map((p) => ES6Env.pathTransform(p)).join(':'), n]);
     console.log('importNodes:', importNodes.map((a) => '\n  ' + a.join('  ')).join('') + '\n');
     if(Util.isObject(position) && position.toString) position = position.toString(true, (p, i) => (i == 0 ? path.relative(ES6Env.cwd, p) : p)).replace(/1;33/, '1;34');
     const InspectFn = ret.bindings[Symbol.for('nodejs.util.inspect.custom')];
@@ -222,7 +222,7 @@ class ES6ImportExport {
   [Symbol.for('nodejs.util.inspect.custom')]() {
     let { type, position, bindings, path, node, file, from, fromPath, relpath } = this;
     const opts = { colors: true, colon: ': ', multiline: false, quote: '' };
-    if(position) position = [...position].map((p) => ES6Env.pathTransform(p)).join(':');
+    if(Util.isIterator(position))  position = [...position].map((p) => ES6Env.pathTransform(p)).join(':');
     return Util.toString(Object.assign(
         Object.setPrototypeOf({
             type,
@@ -473,7 +473,7 @@ async function main(...args) {
           bindings: new Map(getDeclarations(node))
         });
       });
-      console.log('imports:', Util.toString(imports, { multiline: false, depth: 4 }));
+    //  console.log('imports:', Util.toString(imports, { multiline: false, depth: 4 }));
 
       let statement2module = imports.map((imp) => [imp.node, imp]);
       statement2module = new WeakMap(statement2module);
@@ -539,20 +539,18 @@ async function main(...args) {
 }
 
 function parseFile(file) {
-  let data, error, ast, pflat;
+  let data, error, ast, flat;
   try {
-    data = filesystem.readFile(file).toString();
-    parser = new ECMAScriptParser(data ? data.toString() : code, file);
+    data = filesystem.readFile(file);
+    parser = new ECMAScriptParser( data.toString() , file);
     g.parser = parser;
 
-    printer = new Printer({ indent: 4 });
-    g.printer = printer;
-    ast = parser.parseProgram();
+      ast = parser.parseProgram();
     parser.addCommentsToNodes(ast);
   } catch(err) {
     error = err;
-    throw err;
   } finally {
+    if( ast)
     flat = Util.memoize(() =>
       deep.flatten(ast,
         new Map(),
@@ -560,7 +558,17 @@ function parseFile(file) {
         (path, value) => [new ImmutablePath(path), value]
       )
     );
+  else if(!error)
+          error = new Error(`No ast for file '${file}'`);
+
   }
+  if(error)
+      throw error;
+
+  printer = new Printer({ indent: 4 });
+    g.printer = printer;
+
+
   return {
     data,
     error,
@@ -569,7 +577,8 @@ function parseFile(file) {
     printer,
     flat,
     map() {
-      let map = flat();
+      console.log("flat =",Util.className(flat));
+    let map = flat();
 
       /*    return Util.mapWrapper(flat,
         (k) => k.join('.'),
@@ -709,7 +718,9 @@ function makeSearchPath(dirs, extra = 'node_modules') {
     //console.log('cwd=', cwd, typeof cwd);
     console.log('p=', p, typeof p);
 
-    (p = path.relative(cwd, p, cwd)), r.indexOf(p) == -1 && r.push(p);
+    p = path.relative(cwd, p, cwd);
+   if(r.indexOf(p)== -1) 
+    r.unshift(p);
   };
   let i = 0;
   for(let cwd of dirs) {
@@ -745,7 +756,7 @@ function findModule(relpath) {
   let module;
   const name = path.basename(relpath);
   let indexes = [relpath + '/package.json', ...makeNames(relpath + '/src/index'), ...makeNames(relpath + '/src/' + name), makeNames(relpath + '/dist/' + name), ...makeNames(relpath + '/dist/index'), ...makeNames(relpath + '/build/' + name), ...makeNames(relpath + '/' + name), ...makeNames(relpath + '/index'), ...makeNames(relpath + '/browser')];
-  console.log('findModule(', relpath, ')', { st });
+  console.log('findModule(', relpath, ')');
 
   if(st.isDirectory()) {
     while(indexes.length) {
@@ -780,20 +791,22 @@ function findModule(relpath) {
 function searchModuleInPath(name, _from, position) {
   const thisdir = _from ? path.dirname(_from) : '.';
   const absthisdir = path.resolve(thisdir);
-  console.log('searchModuleInPath(', name, _from, ')');
+   const isRelative = /^\.\.?\//.test(name);
   /* console.log('thisdir:', thisdir);
   console.log('name:', name);
   console.log('_from:', _from);*/
   name = name.replace(/\..?js$/g, '');
   if(moduleAliases.has(name)) return moduleAliases.get(name);
-  let names = makeNames(name);
-  let indexes = [...makeNames(name + '/dist/' + name), ...makeNames(name + '/build/' + name), ...makeNames(name + '/' + name), ...makeNames(name + '/index')];
-  for(let dir of [thisdir, ...searchPath]) {
-    let searchFor = dir.endsWith('node_modules') ? [name] : names;
+  let names = [name, ...makeNames(name)];
+//  let indexes = [name, ...makeNames(name + '/dist/' + name), ...makeNames(name + '/build/' + name), ...makeNames(name + '/' + name), ...makeNames(name + '/index')];
+  let searchDirs = isRelative ? [thisdir] : [thisdir, ...searchPath];
+  console.log('searchModuleInPath(', { name, _from,  searchDirs },')');
+ for(let dir of searchDirs) {
+    let searchFor = dir.endsWith('node_modules') && !/\//.test(name) ? [name] : names;
     for(let module of searchFor) {
       let modPath = path.join(dir, module);
       let p;
-      //console.log('modPath',   modPath);
+      console.log('modPath',   modPath);
 
       if(filesystem.exists(modPath)) p = findModule(modPath);
 
