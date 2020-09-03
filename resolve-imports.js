@@ -16,6 +16,7 @@ const removeModulesDir = PrefixRemover([/node_modules\//g, /^\.\//g]);
 let name;
 let parser, printer;
 const g = Util.getGlobalObject();
+
 class ES6Module {
   impExpList = [];
   importedFrom = null;

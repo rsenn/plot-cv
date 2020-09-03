@@ -20,7 +20,7 @@ import deep from './lib/deep.js';
 import Alea from './lib/alea.js';
 import { Cache } from './lib/dom/cache.js';
 import { CacheStorage } from './lib/dom/cacheStorage.js';
-import { gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser as GcodeInterpreter } from './lib/gcode.js';
+import { gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser   } from './lib/gcode.js';
 import { Iterator } from './lib/iterator.js';
 import { Functional } from './lib/functional.js';
 import { makeLocalStorage } from './lib/autoStore.js';
@@ -1062,7 +1062,7 @@ const AppMain = (window.onload = async () => {
   );
   Object.assign(window, { LogJS },
     { Element, devtools, dom, RGBA, HSLA, draw: DrawSVG },
-    { Voronoi, GerberParser, GenerateVoronoi, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeInterpreter, GcodeParser },
+    { Voronoi, GerberParser, GenerateVoronoi, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GcodeParser },
     {
       SVGAlignments,
       AlignmentAttrs,
@@ -1444,6 +1444,7 @@ const AppMain = (window.onload = async () => {
               )
           ])
         ),
+        h(Button, { image: 'static/svg/voronoi.svg' }),
         h(DynamicLabel, { className: 'vcenter pad-lr', caption: documentTitle }),
         h(Consumer, {})
       ]),
