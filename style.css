@@ -94,7 +94,7 @@ p.description {
 }
 .button.pushed {
   background-color: #ffff00ee;
- /* filter: hue-rotate(180deg);*/
+  /* filter: hue-rotate(180deg);*/
   transform: translate(1px, 1px);
 }
 .button {
@@ -102,6 +102,7 @@ p.description {
   margin: 4px 4px 6px 4px;
   padding: 4px 4px;
   flex: 0 1 auto;
+  min-width: 52px;
 }
 .hcenter {
   justify-content: center;
@@ -147,15 +148,15 @@ p.description {
 .button > img {
   max-width: 100%;
   max-height: 100%;
-} 
-.button  {
+}
+.button {
   position: relative;
-  max-width:  48px;
+  max-width: 48px;
   max-height: 48px;
   overflow: hidden;
 }
 .button {
-  border: 2px outset hsla(0, 100%, 100%, 0.2);
+  border: 2px outset hsl(220, 100%, 70%);
   box-shadow: 2px 2px 6px hsl(60, 100%, 80%);
 }
 
@@ -181,6 +182,16 @@ body {
   min-width: 1.4em;
   min-height: 1.4em;
 }
+.button.pushed {
+  /*background: #ffff00ee;*/
+  /*  filter: invert();*/
+  background: linear-gradient(30deg, #ffc30f -20%, #ffecb3 85%);
+  border: 2px inset #ffd24d;
+}
+.button.pushed > img {
+  filter: invert();
+}
+
 .button {
   display: inline-flex;
 }
@@ -294,11 +305,6 @@ text {
   justify-content: space-between;
   align-items: center;
 }
-.button.pushed {
-  /*background: #ffff00ee;*/
-  filter: invert();
-  border: 2px inset hsla(220, 100%, 100%, 0.2);
-}
 
 .panel,
 .buttons {
@@ -321,12 +327,11 @@ text {
 .progress {
   max-width: 200px;
 }
-.panel < .sidebar  {
+.panel < .sidebar {
   background: #ffffffff;
-
 }
 .panel.list {
-   background: none; 
+  background: none;
 }
 .sidebar {
   position: absolute;
@@ -335,8 +340,7 @@ text {
   left: 0;
   transform: translateX(0);
   background: #ffffffff;
-    background: linear-gradient(to bottom, #ccccccff 0%, #ffffffff  100%);
-
+  background: linear-gradient(to bottom, #ccccccff 0%, #ffffffff 100%);
 }
 .sidebar.active {
   /*background: hsla(0, 0%, 80%, 1);*/
@@ -439,6 +443,24 @@ input.search {
 .floating > * {
   /*border: 1px dashed magenta;*/
 }
+#console {
+  position: relative;
+}
+#console > .logger {
+  position: absolute;
+  bottom: 28px;
+  display: block;
+}
+#console > .dumper {
+  position: absolute;
+  bottom: 28px;
+  right: 0px;
+  display: block;
+}
+#console > .commander {
+  position: absolute;
+  bottom: 0px;
+}
 .floating .logger {
   flex: 1 1 auto;
 }
@@ -484,10 +506,9 @@ input.search {
 
 .floating {
   background: #feffb9; /* Old browsers */
-/*  background: -moz-linear-gradient(top, hsla(55, 100%, 95%, 1) 0%, hsla(45, 100%, 88%, 0.75) 105%);
+  /*  background: -moz-linear-gradient(top, hsla(55, 100%, 95%, 1) 0%, hsla(45, 100%, 88%, 0.75) 105%);
   background: -webkit-linear-gradient(top, hsla(55, 100%, 95%, 1) 0%, hsla(45, 100%, 88%, 0.75) 105%);
   background: linear-gradient(to bottom, hsla(55, 100%, 95%, 1) 0%, hsla(45, 100%, 88%, 0.75) 105%);*/
-
 }
 
 .logger > p {
@@ -649,4 +670,7 @@ div.layer > .visible {
 
 div.layer > img {
   fill: white;
+}
+.layer.name {
+  padding: 0px 5px;
 }

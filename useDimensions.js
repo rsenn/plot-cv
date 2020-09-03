@@ -17,18 +17,13 @@ function getDimensionObject(node) {
   };
 }
 
-export function useDimensions() {
-  let _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-    _ref$liveMeasure = _ref.liveMeasure,
-    liveMeasure = _ref$liveMeasure === undefined ? true : _ref$liveMeasure;
+export function useDimensions(arg = {}) {
+  if(typeof arg == 'function') arg = arg();
 
-  let _useState = useState({}),
-    dimensions = _useState[0],
-    setDimensions = _useState[1];
-
-  let _useState2 = useState(null),
-    node = _useState2[0],
-    setNode = _useState2[1];
+  let liveRef = arg._ref$liveMeasure;
+  let _ref$liveMeasure = liveRef === undefined ? true : liveRef;
+  const [dimensions, setDimensions] = useState({});
+  const [node, setNode] = useState(null);
 
   let ref = useCallback((node) => {
     setNode(node);
@@ -39,7 +34,7 @@ export function useDimensions() {
         return window.requestAnimationFrame(() => setDimensions(getDimensionObject(node)));
       };
       measure();
-      if(liveMeasure) {
+      if(_ref$liveMeasure) {
         window.addEventListener('resize', measure);
         window.addEventListener('scroll', measure);
         return function () {

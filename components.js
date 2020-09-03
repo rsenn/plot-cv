@@ -5,34 +5,7 @@ import { useDimensions } from './useDimensions.js';
 import { useTrkl } from './lib/eagle/renderUtils.js';
 
 //import React from '../modules/preact/dist/preact.mjs';
-
-export function classNames() {
-  let classes = [];
-
-  for(let i = 0; i < arguments.length; i++) {
-    let arg = arguments[i];
-    if(!arg) continue;
-
-    let argType = typeof arg;
-
-    if(argType === 'string' || argType === 'number') {
-      classes.push(arg);
-    } else if(Array.isArray(arg) && arg.length) {
-      let inner = classNames.apply(null, arg);
-      if(inner) {
-        classes.push(inner);
-      }
-    } else if(argType === 'object') {
-      for(let key in arg) {
-        if(hasOwn.call(arg, key) && arg[key]) {
-          classes.push(key);
-        }
-      }
-    }
-  }
-
-  return classes.join(' ');
-}
+import { classNames } from './lib/classNames.js';
 
 export const ClickHandler = (callback) => (e) => {
   if(e.type) {
@@ -124,17 +97,22 @@ export const Button = ({ caption, image, fn, state, style = {}, ...props }) => {
 export const FloatingPanel = ({ children, className, onSize, onHide, style = {}, ...props }) => {
   const [ref, { x, y, width, height }] = useDimensions();
 
-  console.log('FloatingPanel.dimensions:', { x, y, width, height });
+  //  console.log('FloatingPanel.dimensions:', { x, y, width, height });
 
   const [size, setSize] = useState(onSize ? onSize() : {});
   const [hidden, setHidden] = useState(onHide ? onHide() : false);
 
-  if(typeof onSize == 'function' && onSize.subscribe) onSize.subscribe((value) => setSize(value));
+  if(typeof onSize == 'function' && onSize.subscribe)
+    onSize.subscribe((value) => {
+      console.log('FloatingPanel setSize:', value);
+      setSize(value);
+    });
   if(typeof onHide == 'function' && onHide.subscribe) onHide.subscribe((value) => setHidden(value));
 
   if(size) {
     if(!isNaN(+size.width)) style.width = `${size.width}px`;
     if(!isNaN(+size.height)) style.height = `${size.height}px`;
+    console.log('FloatingPanel size:', size);
   }
 
   if(hidden) style.display = 'none';
@@ -467,8 +445,8 @@ export const TransformedElement = ({ type = 'div', aspect, listener, style = { p
   //Util.log('TransformedElement:', { aspect });
   if(listener && listener.subscribe)
     listener.subscribe((value) => {
-      //Util.log('TransformedElement setValue', value+'');
-      if(value !== undefined) setTransform(value);
+      console.log('TransformedElement setValue', value);
+      if(value !== undefined) setTransform(value + '');
     });
 
   return h(type,
@@ -774,15 +752,15 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen, ...props }) => 
           const button = base.previousElementSibling;
           const overlay = button.nextElementSibling;
 
-          const br = Element.rect(button) ;
+          const br = Element.rect(button);
           const bottomLeft = br.toPoints()[3];
-          const or =  Element.rect(overlay);
-        //  const rect = new Rect(bottomLeft.x, bottomLeft.y, or.width, or.height );
+          const or = Element.rect(overlay);
+          //  const rect = new Rect(bottomLeft.x, bottomLeft.y, or.width, or.height );
 
-const css = bottomLeft.toCSS();
-Element.setCSS(overlay, css);
+          const css = bottomLeft.toCSS();
+          Element.setCSS(overlay, css);
 
-       //  Element.setRect(base, pos );
+          //  Element.setRect(base, pos );
 
           console.log('overlay ref:', base, button, br, bottomLeft, or, css);
         }

@@ -1,12 +1,5 @@
 ///prettier-ignore-ignore-start
-import {
-  Transformation,
-  Rotation,
-  Translation,
-  Scaling,
-  MatrixTransformation,
-  TransformationList
-} from './lib/geom/transformation.js';
+import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
@@ -25,16 +18,11 @@ import tlite from './lib/tlite.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Alea from './lib/alea.js';
+import { TimeoutError, delay, interval, timeout } from './lib/repeater/timers.js';
+
 import { Cache } from './lib/dom/cache.js';
 import { CacheStorage } from './lib/dom/cacheStorage.js';
-import {
-  gcodetogeometry,
-  GcodeObject,
-  gcodeToObject,
-  objectToGcode,
-  parseGcode,
-  GcodeParser
-} from './lib/gcode.js';
+import { gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser } from './lib/gcode.js';
 import { Iterator } from './lib/iterator.js';
 import { Functional } from './lib/functional.js';
 import { makeLocalStorage } from './lib/autoStore.js';
@@ -44,84 +32,17 @@ import LogJS from './lib/log.js';
 import { useDimensions } from './useDimensions.js';
 import { toXML, ImmutablePath } from './lib/json.js';
 import { XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';
-import {
-  RGBA,
-  isRGBA,
-  ImmutableRGBA,
-  HSLA,
-  isHSLA,
-  ImmutableHSLA,
-  ColoredText
-} from './lib/color.js';
+import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
-import React, {
-  h,
-  html,
-  render,
-  Fragment,
-  Component,
-  useState,
-  useLayoutEffect,
-  useRef
-} from './lib/dom/preactComponent.js';
-import components, {
-  Chooser,
-  DynamicLabel,
-  Button,
-  FileList,
-  Panel,
-  SizedAspectRatioBox,
-  TransformedElement,
-  Canvas,
-  ColorWheel,
-  Slider,
-  CrossHair,
-  FloatingPanel,
-  DropDown,
-  Conditional
-} from './components.js';
+import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
+import components, { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional } from './components.js';
 import { Message } from './message.js';
 import { WebSocketClient } from './lib/net/websocket-async.js';
-import {
-  CTORS,
-  ECMAScriptParser,
-  estree,
-  Factory,
-  Lexer,
-  ESNode,
-  Parser,
-  PathReplacer,
-  Printer,
-  Stack,
-  Token
-} from './lib/ecmascript.js';
+import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
 
 import KolorWheel from './lib/KolorWheel.js';
-import {
-  PrimitiveComponents,
-  ElementNameToComponent,
-  ElementToComponent
-} from './lib/eagle/components.js';
-import {
-  SVGAlignments,
-  AlignmentAttrs,
-  Alignment,
-  AlignmentAngle,
-  Arc,
-  CalculateArcRadius,
-  ClampAngle,
-  EagleAlignments,
-  HORIZONTAL,
-  HORIZONTAL_VERTICAL,
-  InvertY,
-  LayerAttributes,
-  LinesToPath,
-  MakeCoordTransformer,
-  PolarToCartesian,
-  RotateTransformation,
-  VERTICAL,
-  useTrkl
-} from './lib/eagle/renderUtils.js';
+import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
+import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl } from './lib/eagle/renderUtils.js';
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
@@ -135,9 +56,10 @@ import { lazyInitializer } from './lib/lazyInitializer.js';
 //import PureCache from 'pure-cache';
 import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
 
-/* prettier-ignore */ /* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG, Timer, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
+/* prettier-ignore */ /* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG,    Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
 Util.colorCtor = ColoredText;
 /* prettier-ignore */ Util.extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, ColoredText, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon } );
+const Timer = { delay, interval, timeout, once: dom.Timer };
 
 const prng = new Alea(1598127218);
 let currentProj = trkl.property(window, 'project');
@@ -146,7 +68,6 @@ let gcode = trkl(null);
 
 let open = trkl();
 let showSearch = trkl(true);
-let logSize = trkl({});
 let dump = trkl({});
 let cache = new lscache();
 
@@ -163,7 +84,7 @@ let activeFile;
 let transform = trkl(new TransformationList());
 let sizeListener = trkl({});
 let aspectListener = trkl(1);
-let debug = true;
+let debug = false;
 const documentTitle = trkl('');
 
 let store = (window.store = makeLocalStorage());
@@ -173,6 +94,8 @@ let socket = trkl();
 let listURL = trkl(store.get('url') || null);
 let searchFilter = trkl(store.get('filter') || '*');
 let zoomLog = trkl(store.get('zoom') || null);
+let logSize = trkl(store.get('console') || null);
+let showGrid;
 
 const add = (arr, ...items) => [...(arr ? arr : []), ...items];
 
@@ -180,8 +103,7 @@ const useSlot = (arr, i) => [() => arr[i], (v) => (arr[i] = v)];
 const trklGetSet = (get, set) => (value) => (value !== undefined ? set(value) : get());
 //const useTrkl = trkl => [() => trkl(), value => trkl(value)];
 
-const classNames = (...args) =>
-  args.filter((arg) => typeof arg == 'string' && arg.length > 0).join(' ');
+const classNames = (...args) => args.filter((arg) => typeof arg == 'string' && arg.length > 0).join(' ');
 
 const MouseEvents = (h) => ({
   onMouseDown: h,
@@ -195,7 +117,7 @@ const MouseEvents = (h) => ({
 
 window.dom = { Element, SVG };
 
-tlite(() => ({ grav: '-|', attrib: ['data-tlite', 'data-tooltip', 'title', 'data-filename'] }));
+tlite(() => ({ grav: 'nw', attrib: ['data-tlite', 'data-tooltip', 'title', 'data-filename'] }));
 
 /* prettier-ignore */
 /*    const CreateSelect = (obj, node = document.body) => {
@@ -246,9 +168,7 @@ const svgFactory = lazyInitializer(() => {
 const GeneratePalette = (numColors) => {
   let ret = [];
   let base = new HSLA(Util.randInt(0, 360, prng), 100, 50).toRGBA();
-  let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360],
-    []
-  );
+  let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360], []);
   offsets = offsets.sort((a, b) => a - b);
   //offsets = Util.shuffle(offsets, prng);
   //Util.log('offsets:', offsets);
@@ -263,122 +183,84 @@ const GeneratePalette = (numColors) => {
   return ret;
 };
 
-function DrawSVG(...args) {
+const DrawSVG = (...args) => {
   const factory = svgFactory();
-
   let e;
   try {
     let parent = project.svg.parentElement.lastElementChild;
     const append = (e) => parent.appendChild(e);
     let c = RGBA.random();
-
     let [tag, attrs, children] = args;
-
     if(typeof tag == 'string') {
       console.log('draw(', ...args, ')');
-
       e = factory(tag, { stroke: c.hex(), 'stroke-width': 0.1, ...attrs }, children);
     } else if(Util.isArray(args[0])) {
       let items = args.shift();
-
       document.querySelector('#main > div > div > div > svg:nth-child(2) > g');
-
       DrawSVG.setViewBox(BBox.from(items));
-
-      /*
-items = items.map(i => isLine(i) ? new Line(i) : null);
-
-console.log("items:",items);
-*/
       for(let item of items) {
-        // console.log('item:', item);
         let line;
         if(isLine(item)) line = new Line(item);
-
-        //console.log('line:', line);
-
         if(line) {
           e = factory('line', { ...line.toObject(), stroke: c.hex(), 'stroke-width': 0.1 });
           append(e);
           console.log('e:', e);
         }
       }
-
       return;
     }
-
     if(e) append(e);
   } catch(error) {
     Util.putError(error);
     throw error;
   }
   return e;
-}
-DrawSVG.calcViewBox = (box) => {
-  box = box || (project && project.doc && BBox.from(project.doc.getMeasures(true)));
-  box = box || Element.rect('.aspect-ratio-box-inside');
-
-  const { width, height, x, y } = box;
-
-  let { x1, y1, x2, y2 } = new Rect(x, y, width, height);
-
-  const rect = new BBox(x1, y1 - y2, x2 - x1, y2);
-  return rect;
+  function calcViewBox(box) {
+    box = box || (project && project.doc && BBox.from(project.doc.getMeasures(true)));
+    box = box || Element.rect('.aspect-ratio-box-inside');
+    const { width, height, x, y } = box;
+    let { x1, y1, x2, y2 } = new Rect(x, y, width, height);
+    const rect = new BBox(x1, y1 - y2, x2 - x1, y2);
+    return rect;
+  }
+  function setViewBox(box) {
+    svgOwner = svgOwner || [...Element.findAll('svg', Element.find('#main'))].reverse()[0];
+    const rect = box; // instanceof BBox ? box : DrawSVG.calcViewBox(box);
+    rect.y1 -= rect.y2;
+    rect.x2 -= rect.x1;
+    console.log('setViewBox', { svgOwner, rect, box });
+    svgOwner.setAttribute('viewBox', rect.toString());
+    svgOwner.lastElementChild.setAttribute('transform', `scale(1,-1)  translate(0,${-rect.height})`);
+    Element.attr(svgOwner.lastElementChild.firstElementChild, { ...rect.toRect() });
+  }
 };
 
-DrawSVG.setViewBox = (box) => {
-  svgOwner = svgOwner || [...Element.findAll('svg', Element.find('#main'))].reverse()[0];
-  const rect = box; // instanceof BBox ? box : DrawSVG.calcViewBox(box);
-
-  rect.y1 -= rect.y2;
-  rect.x2 -= rect.x1;
-
-  console.log('setViewBox', { svgOwner, rect, box });
-  svgOwner.setAttribute('viewBox', rect.toString());
-  svgOwner.lastElementChild.setAttribute('transform', `scale(1,-1)  translate(0,${-rect.height})`);
-  Element.attr(svgOwner.lastElementChild.firstElementChild, { ...rect.toRect() });
-};
-
-const GetProject = (arg) =>
-  typeof arg == 'number'
-    ? projects()[arg]
-    : typeof arg == 'string'
-    ? projects().find((p) => p.name == arg)
-    : arg;
+const GetProject = (arg) => (typeof arg == 'number' ? projects()[arg] : typeof arg == 'string' ? projects().find((p) => p.name == arg) : arg);
 
 const ListProjects = async function (opts = {}) {
   const { url, descriptions = true, names, filter } = opts;
-
   //console.log('ListProjects', { url, descriptions, names, filter });
-
   let response;
-
   if(!url) {
     response = await fetch('/files.html', {
-      //      nocache: true,
       method: 'post',
-      mode: 'cors', // no-cors, *cors, same-origin
-      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: 'same-origin', // include, *same-origin, omit
+      mode: 'cors',
+      cache: 'no-cache',
+      credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ descriptions, names, filter })
     });
-
     if(typeof response.text == 'function') response = await response.text();
-
     console.log('response:', Util.abbreviate(response));
-
     if(response) response = JSON.parse(response);
   } else {
     response = await ListGithubRepo(url, null, null, '\\.(brd|sch|lbr)$', opts);
-    //console.log('response:', response);
-    let fileList = response.map((file, i) => { let project = { ...file, name: response.at(i) }; 
-
-       return project; });
-
+    let fileList = response.map((file, i) => {
+      let project = { ...file, name: response.at(i) };
+      return project;
+    });
     response = { files: fileList };
   }
-
   return response;
 };
 
@@ -394,33 +276,21 @@ const FetchURL = async (url, allOpts = {}) => {
   let { nocache = false, ...opts } = allOpts;
   let result;
   let ret;
-
   if(opts.method && opts.method.toUpperCase() == 'POST') nocache = true;
-
   let fetch = nocache ? window.fetch : FetchCached;
-
   if(/tmp\//.test(url)) {
-    url = url.replace(/.*tmp\//g, '/static/tmp/');
+    url = url.replace(/.*tmp\//g, '/tmp/');
   } else if(/^\//.test(url)) {
   } else if(/:\/\//.test(url)) {
   } else {
     url = '/static/' + url;
   }
   try {
-    //    if(!nocache) ret = cache.get(url);
-
-    if(!ret) {
-      ret = result = await fetch(url, opts);
-
-      //  if(!nocache && typeof ret == 'string' && ret.length > 0) cache.set(url, ret);
-    }
+    if(!ret) ret = result = await fetch(url, opts);
   } catch(error) {
     Util.putError(error);
     throw error;
   }
-
-  //  if(typeof ret.text == 'function') ret = await result.text();
-
   return ret;
 };
 
@@ -443,28 +313,18 @@ const FileSystem = {
 };
 
 const LoadFile = async (file) => {
-  //console.log('file:', file.url, file.name);
   let { url, name: filename } = GetProject(file);
-  url = /:\/\//.test(filename) ? filename : `/static/${filename}`;
+  console.log('LoadFile  ', { url, filename });
+  url = /:\/\//.test(filename) ? filename : /^tmp\//.test(filename) ? '/' + filename : `/static/${filename}`;
   console.log('LoadFile url=', url);
   let response = await FetchURL(url);
   console.log('LoadFile response=', response);
-
-  let xml = /* await FetchURL(url);*/ await response.text(); //(typeof file.
-  // console.log('LoadFile xml=', await xml);
-  //file= await FetchURL(url);  //'function' && (await file.fetch())) || (await FetchURL(url, {}));
-  //console.log('LoadFile', { url, xml });
-  //console.log('xml: ', xml.substring(0, 100));
-  //let dom = new DOMParser().parseFromString(xml, 'application/xml');
-
+  let xml = await response.text();
   let doc = new EagleDocument(await xml, null, filename, null, FileSystem);
-
   if(/\.brd$/.test(filename)) window.board = doc;
   if(/\.sch$/.test(filename)) window.schematic = doc;
   if(/\.lbr$/.test(filename)) window.libraries = add(window.libraries, doc);
-
   LogJS.info('LoadFile', doc.file);
-
   return doc;
 };
 
@@ -482,24 +342,18 @@ const SaveFile = async (filename, data, contentType) => {
   return result;
 };
 
-const SaveSVG = (window.save = async function save(filename,
-  layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48, 51]
-) {
+const SaveSVG = (window.save = async function save(filename, layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48, 51]) {
   const { doc } = project;
   const { basename, typeName } = doc;
   if(!filename) filename = `${doc.basename}.${doc.typeName}.svg`;
-
   let predicate = (element) => {
     if(!element.hasAttribute('data-layer')) return true;
-    //console.log('element:', element);
     const layer = element.getAttribute('data-layer');
     let [number, name] = layer.split(/ /);
-    if(number !== undefined && name !== undefined)
-      return layers.indexOf(+number) != -1 || layers.indexOf(name) != -1;
+    if(number !== undefined && name !== undefined) return layers.indexOf(+number) != -1 || layers.indexOf(name) != -1;
     return true;
   };
   let data = ElementToXML(project.svg, predicate);
-
   return await SaveFile(filename.replace(/\.svg$/i, '.svg'), data);
 });
 
@@ -508,8 +362,6 @@ const ModifyColors = (fn) => (e) => {
   if(type.endsWith('down')) {
     if(!window.c) window.c = SVG.allColors(project.svg);
     let { c } = window;
-    //console.log('ModifyColors', fn);
-
     c.dump();
     fn(c);
   }
@@ -532,7 +384,6 @@ const GerberLayers = {
 
 const BoardToGerber = async (board = project.name, opts = { fetch: true }) => {
   let proj = GetProject(board);
-
   let request = { ...opts, board: proj.name },
     response;
   try {
@@ -541,10 +392,8 @@ const BoardToGerber = async (board = project.name, opts = { fetch: true }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request)
     }).then((r) => r.json());
-    //response = JSON.parse(response);
     if(opts.fetch && response.file) {
-      proj.gerber = response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`
-      ).then((r) => r.text());
+      proj.gerber = response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then((r) => r.text());
     }
   } catch(err) {
     response.error = err;
@@ -567,11 +416,7 @@ const GerberToGcode = async (gerber = project.name, opts = {}) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request)
     }).then((r) => r.json());
-    /// response = JSON.parse(response);
-    if(opts.fetch && response.file)
-      proj.gcode = response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`
-      ).then((r) => r.text());
-    // response.polylines = GcodeToPolylines(proj, request);
+    if(opts.fetch && response.file) proj.gcode = response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then((r) => r.text());
   } catch(err) {
     response.error = err;
   }
@@ -582,9 +427,7 @@ const GerberToGcode = async (gerber = project.name, opts = {}) => {
 const GcodeToPolylines = (gcode = project.name, opts = {}) => {
   const { fill = false, color } = opts;
   let proj = GetProject(gcode);
-  let gc = Util.filter(parseGcode(project.gcode.data),
-    (g) => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args
-  );
+  let gc = Util.filter(parseGcode(project.gcode.data), (g) => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args);
   let polylines = [];
   let polyline = null;
   let bb = new BBox();
@@ -629,12 +472,7 @@ const GcodeToPolylines = (gcode = project.name, opts = {}) => {
     polylines = polylines.map((pl) => Util.chunkArray(pl, 2).map((pt) => new Point(...pt)));
     //console.log('polylines(4):', polylines);
     polylines = polylines.map((pl) => new Polyline([]).push(...pl));
-    let inside = new Map(polylines.map((polyline2, i) => [
-        polyline2,
-        polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2)
-        )
-      ])
-    );
+    let inside = new Map(polylines.map((polyline2, i) => [polyline2, polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2))]));
     let insideOf = polylines.map((polyline, i) => [
       i,
       polylines
@@ -660,18 +498,10 @@ const GcodeToPolylines = (gcode = project.name, opts = {}) => {
     }
   }
   let ids = polylines.map((pl, i) => i).filter((i) => !remove.has(i));
-  let polys = [
-    ...ids.map((i) =>
-      polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` },
-        grp,
-        0.01
-      )
-    ),
-    ...paths
-      .map(([i, d]) => ({ ...props(polyline, i), id: `polygon-${polylines.indexOf(polyline)}`, d }))
-      .map((p, i) => ['path', p, grp])
-  ];
-  //console.log('polys:', polys);
+  let polys = [...ids.map((i) => polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` }, grp, 0.01)), ...paths.map(([i, d]) => ({ ...props(polyline, i), id: `polygon-${polylines.indexOf(polyline)}`, d })).map((p, i) => ['path', p, grp])];
+  console.log('polys:', polys);
+  let svgAttr = Element.attr(project.svg);
+  console.log('svgAttr:', svgAttr);
   let elements = polys.map((args) => SVG.create(...args));
   return { ...ret, group: grp, elements };
 };
@@ -687,23 +517,16 @@ const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
       .split('/');
     while(!/github.com/.test(parts[0])) parts = parts.slice(1);
     [host, owner, repo, ...path] = parts;
-
     dir = path.join('/');
   }
-
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/${dir}`;
   //console.log('ListGithubRepo', { host, owner, repo, dir, filter, url });
   const headers = {
     Authorization: 'Basic ' + window.btoa(`${username}:${password}`)
   };
-  let response = await FetchURL(url, {
-    //method: 'get', // credentials: 'include',
-    headers
-  });
+  let response = await FetchURL(url, { headers });
   let result = JSON.parse(await response.text());
-
   if(!Util.isArray(result)) return result;
-
   if(filter) {
     const re = new RegExp(filter, 'g');
     result = result.filter(({ name, type }) => type == 'dir' || re.test(name));
@@ -724,28 +547,21 @@ const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
     if(!/:\/\//.test(url)) url = base_url + '/' + url;
     return url;
   };
-
   return Object.assign(files.map((file, i) => {
       file.toString = () => at(i);
-      if(file.type == 'dir')
-        file.list = async (f = filter) => await ListGithubRepo(at(i), null, null, f, {});
+      if(file.type == 'dir') file.list = async (f = filter) => await ListGithubRepo(at(i), null, null, f, {});
       else {
         let getter = async function () {
           let data = await fetch(at(i), {});
-          //         console.log('data:', data);
           this.buf = await data.text();
           return this.buf;
         };
-
         let text = function () {
           return typeof this.buf == 'string' && this.buf.length > 0 ? this.buf : this.get();
-        }; //Util.memoize((...args) => file.fetch(...args));
-
+        };
         file.get = getter;
         file.getText = text;
         Object.defineProperty(file, 'text', { get: text, enumerable: true, configurable: true });
-
-        //Util.defineGetter(file, 'text', text);
       }
       return file;
     }),
@@ -791,7 +607,7 @@ const ListGithubRepoServer = async (owner, repo, dir, filter) => {
 const LoadDocument = async (project, parentElem) => {
   //console.log('project:', project);
   open(false);
-   gcode(null);
+  gcode(null);
 
   try {
     project.doc = await LoadFile(project);
@@ -808,19 +624,18 @@ const LoadDocument = async (project, parentElem) => {
   docElem.innerHTML = '';
   console.log('project.doc:', project.doc.basename);
   project.renderer = new Renderer(project.doc, ReactComponent.append, debug);
+
+  showGrid = trkl(true);
+  showGrid.subscribe((value) => {
+    let obj = { ...project.renderer.grid, visible: value };
+    console.log('showGrid:', obj);
+    project.renderer.grid = obj;
+  });
+
   console.log('project.renderer', project.renderer);
   let style = { width: '100%', height: '100%', position: 'relative' };
-
   let component = project.renderer.render(project.doc, null, {});
-
-  setTimeout(() =>
-      layerList([...project.doc.layers.list]
-          .filter((layer) => layer.elements.size > 0)
-          .map((layer) => ({ i: layer.number, name: layer.name, element: layer }))
-      ),
-    250
-  );
-
+  Timer.once(250).then(() => layerList([...project.doc.layers.list].filter((layer) => layer.elements.size > 0).map((layer) => ({ i: layer.number, name: layer.name, element: layer }))));
   LogJS.info(`${project.name} rendered.`);
   window.component = project.component = component;
   console.log('testRender:', component);
@@ -835,14 +650,11 @@ const LoadDocument = async (project, parentElem) => {
   }
   aspectListener(aspectRatio);
   console.log('aspectRatio:', aspectRatio);
-
   const Fence = ({ children, style = {}, sizeListener, aspectListener, ...props }) => {
     const [dimensions, setDimensions] = useState(sizeListener());
     const [aspect, setAspect] = useState(aspectListener());
-    if(sizeListener && sizeListener.subscribe)
-      sizeListener.subscribe((value) => setDimensions(value));
-    if(aspectListener && aspectListener.subscribe)
-      aspectListener.subscribe((value) => setAspect(value));
+    if(sizeListener && sizeListener.subscribe) sizeListener.subscribe((value) => setDimensions(value));
+    if(aspectListener && aspectListener.subscribe) aspectListener.subscribe((value) => setAspect(value));
     return h(TransformedElement,
       {
         id: 'fence',
@@ -894,23 +706,9 @@ const LoadDocument = async (project, parentElem) => {
   const [path2component, component2path] = project.renderer.maps.map(Util.mapFunction);
   const { path2obj, obj2path, path2eagle, eagle2path, eagle2obj, obj2eagle } = project.doc.maps;
 
-  const [component2eagle, eagle2component] = [
-    Util.mapAdapter((key, value) =>
-      value === undefined ? path2eagle(component2path(key)) : undefined
-    ),
-    Util.mapAdapter((key, value) =>
-      value === undefined ? path2component(eagle2path(key)) : undefined
-    )
-  ];
+  const [component2eagle, eagle2component] = [Util.mapAdapter((key, value) => (value === undefined ? path2eagle(component2path(key)) : undefined)), Util.mapAdapter((key, value) => (value === undefined ? path2component(eagle2path(key)) : undefined))];
 
-  const [component2dom, dom2component] = [
-    Util.mapAdapter((key, value) =>
-      value === undefined ? eagle2dom(component2eagle(key)) : undefined
-    ),
-    Util.mapAdapter((key, value) =>
-      value === undefined ? eagle2component(dom2eagle(key)) : undefined
-    )
-  ];
+  const [component2dom, dom2component] = [Util.mapAdapter((key, value) => (value === undefined ? eagle2dom(component2eagle(key)) : undefined)), Util.mapAdapter((key, value) => (value === undefined ? eagle2component(dom2eagle(key)) : undefined))];
 
   //path2eagle: path2obj, eagle2path: obj2path
 
@@ -940,47 +738,19 @@ const LoadDocument = async (project, parentElem) => {
   currentProj(project);
   size.mul(doc.type == 'brd' ? 2 : 1.5);
   let svgrect = SVG.bbox(project.svg);
-
   let measures = new BBox().update(doc.getMeasures(true)).toRect(Rect.prototype);
   console.log('measures:', measures);
-  //project.aspectRatio = svgrect.aspect();
-
-  Element.attr(project.svg, {
-    'data-filename': project.name,
-    'data-aspect': project.aspectRatio,
-    'data-width': size.width + 'mm',
-    'data-height': size.height + 'mm'
-  });
-
-  //project.svg.setAttribute('data-aspect', project.aspectRatio);
+  Element.attr(project.svg, { 'data-filename': project.name, 'data-aspect': project.aspectRatio });
   let css = size.div(0.26458333333719).toCSS({ width: 'px', height: 'px' });
-
   window.size = css;
-  //console.log('css:', css);
-  /*  Object.assign(project.svg.style, {
-    'min-width': `${size.width}mm`
-  });
-  Element.setCSS(project.svg, { left: 0, top: 0, position: 'relative' });
-  Element.setCSS(project.svg, { left: 0, top: 0, position: 'relative' });
-  //console.log('LoadDocument:', project.svg);*/
-  /*  } catch(err) {
-    console.error('Render ERROR:',
-      err,
-      [...err.stack].map(f => (f + '').replace(Util.getURL() + '/', ''))
-    );
-  }*/
-
   AdjustZoom();
-
   project.status = SaveSVG();
-
   return project;
 };
 
 const ChooseDocument = async (project, i) => {
   let r;
   if(i == undefined) i = project.i || projectFiles.indexOf(project);
-
   const box = Element.findAll('.file')[i];
   LogJS.info('ChooseDocument:', { project, i, box });
   LogJS.info(`${project.name} selected.`);
@@ -988,7 +758,6 @@ const ChooseDocument = async (project, i) => {
     if(!project.loaded) {
       let data = await LoadDocument(project, box);
       project.loaded = true;
-
       //console.log('loaded:', project);
     }
     r = project.loaded;
@@ -996,60 +765,36 @@ const ChooseDocument = async (project, i) => {
     Util.putError(err);
     console.error(err);
   }
-
   return r;
 };
 
-/*
-gerber=await BoardToGerber(project.name); gc=await GerberToGcode('tmp/7seg-2.54.GBL'); geom=gcodetogeometry(gc.data);lines = geom.lines.map(({start,end}) => new Line(start,end))
-
-*/
+/* gerber=await BoardToGerber(project.name); gc=await GerberToGcode('tmp/7seg-2.54.GBL'); geom=gcodetogeometry(gc.data);lines = geom.lines.map(({start,end}) => new Line(start,end)) */
 
 const GenerateVoronoi = () => {
   //console.log('Loading document: ' + filename);
   let { doc } = project;
-
   console.log('doc', doc);
   let points = new PointList();
-
   for(let element of doc.elements.list) {
     const pkg = element.package;
     let { x, y } = element;
     console.log('element:', element, { x, y });
     let origin = new Point(x, y);
-
     for(let item of pkg.children) {
       if(item.drill !== undefined) {
         let pos = new Point(+item.x, +item.y).add(origin);
         console.log('pos:', pos);
-
         points.push(pos);
       }
     }
   }
-
   let bb = doc.getBounds();
   let rect = bb.toRect(Rect.prototype);
   console.log('bb:', bb);
   console.log('rect:', rect);
-
   rect.outset(1.27);
   window.tmprect = rect;
-  //bb.outset(1.27);
-  /*new BBox();
-  for(let item of doc.plain) {
-    if(item.layer.number != 47) continue;
-
-    bb.update(item.geometry());
-
-    //console.log('item:', item);
-  }*/
-
   let sites = points.map((p) => p.toObject());
-  //xl, xr means x left, x right
-  //yt, yb means y top, y bottom
-  //console.log('bbox:', bb);
-
   let bbox = { xl: bb.x1, xr: bb.x2, yt: bb.y1, yb: bb.y2 };
   let voronoi = new Voronoi();
   //pass an object which exhibits xl, xr, yt, yb properties. The bounding
@@ -1057,52 +802,22 @@ const GenerateVoronoi = () => {
   let result = voronoi.compute(sites, bbox);
   //render, further analyze, etc.
   console.log('result:', Object.keys(result).join(', '));
-
   let { site, cells, edges, vertices, execTime } = result;
   console.log('cells:', cells);
-
   let holes = edges.filter((e) => !e.rSite).map(({ lSite, rSite, ...edge }) => new Point(lSite));
-  let rlines = edges
-    .filter((e) => e.rSite)
-    .map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
-  let vlines = edges
-    .filter((e) => e.va && e.vb)
-    .map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
+  let rlines = edges.filter((e) => e.rSite).map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
+  let vlines = edges.filter((e) => e.va && e.vb).map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
   let points2 = vertices.map((v) => new Point(v).round(0.127, 4));
   const add = (arr, ...items) => [...(Util.isArray(arr) ? arr : []), ...items];
-
-  const factory = SVG.factory(/*{
-    create: tag => ({ tagName: tag }),
-    append_to: (elem, parent) => (parent.children = add(parent.children, elem)),
-    setattr: (elem, name, value) => {
-      if(!elem.attributes) elem.attributes = {};
-      elem.attributes[name] = value;
-    }
-  }*/);
-
-  const lines = [
-    ...rlines.map((l) => [
-      'line',
-      { ...l.toObject((t) => t + ''), stroke: '#000', 'stroke-width': 0.01 }
-    ]),
-    ...vlines.map((l) => [
-      'line',
-      { ...l.toObject((t) => t + ''), stroke: '#f00', 'stroke-width': 0.01 }
-    ])
-  ];
-
+  const factory = SVG.factory();
+  const lines = [...rlines.map((l) => ['line', { ...l.toObject((t) => t + ''), stroke: '#000', 'stroke-width': 0.01 }]), ...vlines.map((l) => ['line', { ...l.toObject((t) => t + ''), stroke: '#f00', 'stroke-width': 0.01 }])];
   const circles = [
-    ...holes.map((p) => [
-      'circle',
-      { cx: p.x, cy: p.y, r: 0.254, fill: 'none', stroke: '#00f', 'stroke-width': 0.3 }
-    ])
-
+    ...holes.map((p) => ['circle', { cx: p.x, cy: p.y, r: 0.254, fill: 'none', stroke: '#00f', 'stroke-width': 0.3 }])
     /* ...points2.map(p => [
       'circle',
       { cx: p.x, cy: p.y, r: 0.254 * 2, fill: 'none', stroke: 'rgba(0,255,255,0.75)', 'stroke-width': 0.1 }
     ])*/
   ];
-
   const polylines = [
     ...cells.reduce((acc, { site, halfedges }) => [
         ...acc,
@@ -1120,84 +835,118 @@ const GenerateVoronoi = () => {
   ];
   console.log('polylines:', polylines);
   console.log('cells:', cells);
-
   window.cells = cells;
-
   Element.setCSS(svgElem, { position: 'absolute', left: 0, top: 0, width: '100%', height: 'auto' });
-
   //filesystem.writeFile('output.svg', svgFile);
   console.log('svg:', svgElem);
 };
 
-const MakeFitAction = (index) => async () => {
-  let parent = Element.find('#main');
-  let prect = Element.rect(parent);
-  let svg = Element.find('svg', parent);
-  let container = [...Element.findAll('.aspect-ratio-box-size', parent)].reverse()[0];
-  //console.log('container:', container);
+const MakeFitAction = (index) => async (event) => {
+  // window.transform='';
+  const { buttons, type } = event;
+
+  if(!type.endsWith('down') || buttons == 0) return false;
+  console.debug(`FitAct(${index})`, { buttons, type });
+
+  let container = Element.find('.transformed-element-size');
   let oldSize = Element.rect(container);
-  let brect = Element.rect('.buttons');
-  let srect = Element.rect(svg);
-  prect.y += brect.height;
-  prect.height -= brect.height;
-  let rects = [prect, oldSize, srect];
-  prect.scale(0.8);
-  //console.log('resize rects', { oldSize, prect, srect });
-  let f = srect.fit(prect);
-  let newSize = f[index].round(0.0001);
-  let affineTransform = Matrix.getAffineTransform(oldSize.toPoints(), newSize.toPoints());
+  let topBar = Element.rect('.buttons');
+  let clientArea = Element.rect('body');
+  clientArea.y1 += topBar.height;
+  const zoom = ZoomFactor();
+  // console.debug(`FitA
+  let f = oldSize.fit(clientArea);
+  // console.debug(`FitAction(${index})`,  { oldSize, clientArea }, "\n", ...f);
 
-  /*console.log('oldSize:', oldSize);
-  //console.log('newSize:', newSize);*/
+  let factors = new Size(oldSize).fitFactors(new Size(clientArea));
+  let factor = factors[index];
+  let oldTransform = new TransformationList(window.transform);
+  console.debug(`FitAction(${index})`, { factor, oldTransform });
+  let oldScaling = oldTransform.scaling;
+  let newTransform = oldTransform.slice(0, 1);
 
-  let oldTransform = window.transform.clone();
-  // console.log('oldTransform:', oldTransform);
-  let oldFactor = oldTransform.scaling.x;
-  //console.log('oldFactor:', oldFactor);
+  if(!newTransform.scaling) newTransform = newTransform.scale(factor, factor);
+  else {
+    newTransform.scaling.x *= factor;
+    newTransform.scaling.y *= factor;
+  }
 
-  const zoom = Math.pow(10, zoomVal / 200).toFixed(5);
-  //console.log('zoom:', zoom);
+  console.debug(`FitAction(${index})`, { oldScaling, newTransform });
 
-  let transform = affineTransform.decompose();
-  //console.log('transform:', transform);
-  //console.log(`fitAction(${index})`, { oldSize, newSize, transform });
-  let factor = transform.scale.x;
-  //console.log('factor:', factor);
-  let newFactor = zoom * factor;
-  //console.log('newFactor:', newFactor);
+  Element.setCSS(container, { transform: newTransform });
 
-  let newTransform = new TransformationList().scale(newFactor, newFactor);
-  //console.log('newTransform:', newTransform);
+  let newSize = Element.rect(container);
+  let size = new Rect(newSize).align(clientArea);
+  console.debug(`FitAction <->`, oldSize, ' -> ', size);
+
+  let points = [size, newSize].map((s) => new Point(s));
+  let delta = Point.diff(...points);
+  console.debug(`FitAction <->`, ...points);
+  console.debug(`FitAction -`, Point.diff(...points));
+  let newScaling = newTransform.scaling;
+
+  if(newTransform.translation) {
+    newTransform.translation.x += delta.x;
+    newTransform.translation.y += delta.y;
+  } else newTransform = newTransform.translate(delta.x / newScaling.x, delta.y / newScaling.y, 'px');
+  console.debug(`FitAction newTransform=`, newTransform, newTransform + '');
+  //  newTransform =
+  AdjustZoom(ZoomLog(newTransform.scaling.x));
+
+  window.transform = newTransform.toString('px', 'deg');
+
+  //Element.setCSS(container, { transform });
+
+  //  Element.setCSS(container, { transform: window.transform = t+' '+`translate(${delta.x},${delta.y})` });
+
+  // window.transform = t;
 
   /*
-let newScaling = newTransform.scaling;
-  //console.log('newScaling:', newScaling);
-newScaling.x *= factor;
-newScaling.y *= factor;
-newTransform[0] = newScaling;
-*/
-  let delay = Math.abs(Math.log(factor) * 1000);
-  //Element.setCSS(container, { ...oldSize.toCSS(), transform: '', position: 'absolute' });
-  //await Element.transition(container, { ...newSize.toCSS()/*, transform: '', position: 'absolute'*/ }, delay + 'ms', 'linear');
+  let newSize = f[index].round(0.0001);
+  let affineTransform = Matrix.getAffineTransform(oldSize.toPoints(), newSize.toPoints());
+ 
+  let transform = affineTransform.decompose();
+  let factor = transform.scale.x;
+  let newFactor = zoom * factor;
+  let newTransform = new TransformationList().scale(newFactor, newFactor);
+  let delay = Math.abs(Math.log(  newTransform.scaling.x ) * 1000);
   await Element.transition(container, { transform: newTransform }, delay + 'ms', 'linear');
-  window.transform = newTransform;
-  zoomVal = Math.log10(newFactor) * 200;
+  */
 };
+
+function ZoomFactor(val = zoomLog()) {
+  return Math.pow(10, val / 200).toFixed(5);
+}
+function ZoomLog(factor) {
+  return Math.log10(factor) * 200;
+}
+function AdjustZoom(l = zoomLog()) {
+  let zoomFactor = ZoomFactor(l);
+
+  let t = new TransformationList(window.transform);
+
+  //console.log('t:', t);
+
+  if(!t.scaling) t.scale(zoomFactor, zoomFactor);
+  else {
+    t.scaling.x = zoomFactor;
+    t.scaling.y = zoomFactor;
+  }
+  //console.log('window.transform:', window.transform);
+  window.transform = t;
+}
 
 const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
   // log = log || ((...args) => console.log(...args));
   socketURL = socketURL || Util.makeURL({ location: '/ws', protocol: 'ws' });
   let ws = new WebSocketClient();
-
   let send = ws.send;
   ws.send = (...args) => {
     let [msg] = args;
     if(!(msg instanceof Message)) msg = new Message(...args);
     return send.call(ws, msg.data);
   };
-
   window.socket = ws;
-
   LogJS.info('New WebSocket:', ws);
   await ws.connect(socketURL);
   LogJS.info('WebSocket Connected:', ws.connected);
@@ -1230,41 +979,14 @@ const AppMain = (window.onload = async () => {
       Instance,
       SchematicSymbol
     },
-    { Emitter, EventIterator }
+    { Emitter, EventIterator },
+    { ZoomFactor, AdjustZoom }
   );
   Object.assign(window, { LogJS },
     { Element, devtools, dom, RGBA, HSLA, draw: DrawSVG },
-    {
-      Voronoi,
-      GerberParser,
-      GenerateVoronoi,
-      gcodetogeometry,
-      GcodeObject,
-      gcodeToObject,
-      objectToGcode,
-      parseGcode,
-      GcodeParser,
-      GcodeParser
-    },
-    {
-      SVGAlignments,
-      AlignmentAttrs,
-      Alignment,
-      AlignmentAngle,
-      Arc,
-      CalculateArcRadius,
-      ClampAngle,
-      EagleAlignments,
-      HORIZONTAL,
-      HORIZONTAL_VERTICAL,
-      InvertY,
-      LayerAttributes,
-      LinesToPath,
-      MakeCoordTransformer,
-      PolarToCartesian,
-      RotateTransformation,
-      VERTICAL
-    }
+    /* prettier-ignore */ { Voronoi, GerberParser, GenerateVoronoi, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GcodeParser },
+    /* prettier-ignore */ { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL },
+    /* prettier-ignore */ { Timer, TimeoutError }
   );
   Object.assign(window, { ListProjects, LoadDocument, LoadFile, ChooseDocument, SaveSVG });
 
@@ -1287,10 +1009,7 @@ const AppMain = (window.onload = async () => {
   //window.focusSearch = trkl();
   window.currentSearch = trkl(null);
 
-  window.keystroke = (target) => (key, modifiers = 0) =>
-    keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key),
-      target
-    );
+  window.keystroke = (target) => (key, modifiers = 0) => keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key), target);
 
   window.focusSearch = (state) => {
     const input = currentSearch();
@@ -1298,25 +1017,13 @@ const AppMain = (window.onload = async () => {
     input[state ? 'focus' : 'blur']();
   };
 
-  BindGlobal({
-    projects,
-    socket,
-    transform,
-    size: sizeListener,
-    aspect: aspectListener,
-    showSearch,
-    logDimensions: logSize,
-    watched: dump
-  });
+  // prettier-ignore
+  BindGlobal({projects, socket, transform, size: sizeListener, aspect: aspectListener, showSearch, logDimensions: logSize, watched: dump });
 
   currentSearch.subscribe((value) => {
     if(value) {
       focusSearch(false);
-
-      setTimeout(() => {
-        //console.log('currentSearch:', value);
-        focusSearch(true);
-      }, 1000);
+      Timer.once(1000).then(() => focusSearch(true));
     }
   });
 
@@ -1345,19 +1052,14 @@ const AppMain = (window.onload = async () => {
         file.name = name;
         file.i = i;
         trkl.bind(file, { data });
-        LogJS.info(`Got file '${
-            name.replace(/.*:\/\//g, '').replace(/raw.githubusercontent.com/, 'github.com') ||
-            name.replace(/.*\//g, '')
-          }'`
-        );
+        LogJS.info(`Got file '${name.replace(/.*:\/\//g, '').replace(/raw.githubusercontent.com/, 'github.com') || name.replace(/.*\//g, '')}'`);
 
         return file;
       }
       File.prototype.toString = function () {
         return this.name;
       };
-      list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i))
-      );
+      list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i)));
       let svgs = list.reduce((acc, file) => {
         if(/\.lbr$/i.test(file.name)) return acc;
         file.svg = `${EagleDocument.baseOf(file.name)}.${EagleDocument.typeOf(file.name)}.svg`;
@@ -1400,23 +1102,26 @@ const AppMain = (window.onload = async () => {
     store.set('filter', value);
     LogJS.info(`searchFilter is ${value}`);
   });
-  zoomLog.subscribe((value) => {
-    store.set('zoom', value);
-  });
 
   listURL.subscribe((value) => {
     store.set('url', value);
     LogJS.info(`listURL is '${value}'`);
   });
 
+  logSize.subscribe((value) => {
+    store.set('console', value);
+    LogJS.info(`logSize is ${value.width} x ${value.height}`);
+  });
+
   trkl.bind(window, { searchFilter, listURL });
   trkl.bind(window, { svgFactory });
 
-  trkl.bind(window, { zoomVal: zoomLog });
+  trkl.bind(window, { zoomLog });
 
   zoomLog.subscribe((value) => {
-    const zoomFactor = ZoomFactor(value);
-    console.log('zoomFactor changed', zoomFactor);
+    let factor = ZoomFactor(value);
+    console.info('zoomFactor changed', value, factor);
+    store.set('zoom', value);
     if(value === 1) throw new Error(value);
   });
 
@@ -1469,39 +1174,27 @@ const AppMain = (window.onload = async () => {
   LogJS.addAppender(class extends LogJS.BaseAppender {
       log(type, time, msg) {
         let d = new Date(time);
-        if(typeof window.pushlog == 'function')
-          window.pushlog([
-            type,
-            Util.isoDate(d).replace(/-/g, ''),
-            d.toLocaleTimeString(navigator.language || 'de'),
-            msg
-          ]);
+        if(typeof window.pushlog == 'function') window.pushlog([type, Util.isoDate(d).replace(/-/g, ''), d.toLocaleTimeString(navigator.language || 'de'), msg]);
       }
     }
   );
   let loggerRect = new Rect();
   const Logger = (props) => {
     const [lines, setLines] = useState([]);
-
     const [ref, { x, y, width, height }] = useDimensions();
-
     const r = new Rect({ x, y, width, height });
     if(!loggerRect.equals(r)) {
-      //console.log('Logger.dimensions:', r);
       loggerRect = r;
-      logSize({ width });
     }
-
     const result = useResult(async function* () {
       for await (let msg of logger) yield msg;
     });
     if(result) {
-      //     console.log("result:",result);
       lines.push(result.value);
     }
     return h('table',
       { className: 'logger', ref },
-      lines.slice(-10, lines.length).map(([type, d, t, m], i) =>
+      lines.slice(-100, lines.length).map(([type, d, t, m], i) =>
         h('tr', {}, [
           h('td', { className: 'log sign' },
             h('img', {
@@ -1510,11 +1203,12 @@ const AppMain = (window.onload = async () => {
               style: { height: '14px', width: 'auto', marginTop: '-1px' }
             })
           ),
-          h('td', { className: 'log message' }, /*333*/ m + '')
+          h('td', { className: 'log message' }, m + '')
         ])
       )
     );
   };
+
   dump({ ...dump(), test: 123 });
 
   const Dumper = (props) => {
@@ -1524,12 +1218,7 @@ const AppMain = (window.onload = async () => {
     for(let [key, value] of Object.entries(values)) lines.push([key, value]);
     return h('table',
       { border: '0', cellpadding: 3, cellspacing: 0, className: 'dumper' },
-      lines.map(([k, v], i) =>
-        h('tr', { className: 'watch' }, [
-          h('td', { className: 'name' }, k + ''),
-          h('td', { className: 'value' }, v + '')
-        ])
-      )
+      lines.map(([k, v], i) => h('tr', { className: 'watch' }, [h('td', { className: 'name' }, k + ''), h('td', { className: 'value' }, v + '')]))
     );
   };
 
@@ -1561,15 +1250,21 @@ const AppMain = (window.onload = async () => {
   const layersDropDown = trkl(false);
 
   const Toggle = (trkl) => trkl(!trkl());
-
+  let setTo;
   const Layer = ({ title, name, label, i, element, className, ...props }) => {
     const [visible, setVisible] = useTrkl(element.handlers.visible);
     console.log('Layer props=', props);
     return h('div',
       {
         className,
-        onClick: (e) => {
-          setVisible(element.visible ? 'no' : 'yes');
+        onMouseMove: (e) => {
+          if(e.buttons > 0 && setTo) setVisible(setTo);
+        },
+        onMouseUp: (e) => {
+          setTo = null;
+        },
+        onMouseDown: (e) => {
+          setVisible((setTo = element.visible ? 'no' : 'yes'));
         }
       }, [
         h('span', {
@@ -1593,16 +1288,14 @@ const AppMain = (window.onload = async () => {
   React.render(h(SlotProvider, {}, [
       Panel('buttons', [
         h(Button, {
-         
- image: 'static/svg/browse.svg',
-            fn: (e) => {
-              if(e.type.endsWith('down')) {
-                //console.log('file list push', e);
-                open(!open());
-              }
+          image: 'static/svg/browse.svg',
+          fn: (e) => {
+            if(e.type.endsWith('down')) {
+              //console.log('file list push', e);
+              open(!open());
             }
           }
-        ),
+        }),
 
         /* h(Button, {
           caption: 'Random',
@@ -1614,15 +1307,22 @@ const AppMain = (window.onload = async () => {
         }),*/
         h(Button, {
           //  caption: '↔',
-          fn: MakeFitAction(0),
+          fn: MakeFitAction(VERTICAL & 1),
           image: 'static/fit-vertical.svg'
         }),
         h(Button, {
           //  caption: '↕',
-          fn: MakeFitAction(1),
+          fn: MakeFitAction(HORIZONTAL & 1),
           image: 'static/fit-horizontal.svg'
         }),
         h(Conditional, { signal: currentProj }, [
+          h(Button, {
+            //  caption: '↕',
+            fn: () => showGrid(!showGrid()),
+            //  state: showGrid,
+            toggle: true,
+            image: 'static/svg/grid.svg'
+          }),
           h(DropDown, {
               isOpen: layersDropDown.subscribe((open) => console.log('layers dropdown', { open }))
             }, [
@@ -1646,19 +1346,18 @@ const AppMain = (window.onload = async () => {
           h(Button, {
             fn: async () => {
               let r;
-              console.debug('CAM Button');
+              //console.debug('CAM Button');
               project.gerber = await BoardToGerber(project);
-
-              console.debug('BoardToGerber =', project.gerber);
+              // console.debug('BoardToGerber =', project.gerber);
               project.gcode = await GerberToGcode(project, { voronoi: 1 });
               gcode(project.gcode);
-              console.debug('GerberToGcode =', project.gcode);
+              // console.debug('GerberToGcode =', project.gcode);
             },
             image: 'static/svg/CAM.svg'
-          })]),
+          })
+        ]),
 
-                h(Conditional, { signal: gcode }, [
-
+        h(Conditional, { signal: gcode }, [
           h(Button, {
             fn: () => {
               GcodeToPolylines(project, { fill: false, color: 'rgba(255,0,255,100%)' });
@@ -1696,21 +1395,10 @@ const AppMain = (window.onload = async () => {
           }
         })
       ]),*/
-      html`
-        <${FileList}
-          files=${projects}
-          onActive=${open}
-          onChange=${(e, p, i) => ChooseDocument(p, i)}
-          filter=${searchFilter}
-          showSearch=${showSearch}
-          changeInput=${changeInput}
-          focusSearch=${focusSearch}
-          currentInput=${currentSearch}
-        />
-      `,
+      html` <${FileList} files=${projects} onActive=${open} onChange=${(e, p, i) => ChooseDocument(p, i)} filter=${searchFilter} showSearch=${showSearch} changeInput=${changeInput} focusSearch=${focusSearch} currentInput=${currentSearch} /> `,
       h(CrossHair, { ...crosshair }),
       h(FloatingPanel, { onSize: logSize, className: 'no-select', id: 'console' }, [
-        h(Logger, {}),
+        /*h(div, {}, [ */ h(Logger, {}),
         h(Dumper, {}),
         h(Commander, {
           onCommand: (cmdStr) => {
@@ -1721,7 +1409,7 @@ const AppMain = (window.onload = async () => {
             let result = fn();
             LogJS.info(`= ${Util.toSource(result)}`);
           }
-        })
+        }) /*])*/
       ]),
       h(Slot, { name: 'layers' })
     ]),
@@ -1739,10 +1427,12 @@ const AppMain = (window.onload = async () => {
       if(event.buttons === 0 && type.endsWith('move')) return cancel();
       // if(event.index > 0) console.log('touch', { x, y, index, buttons, type, target }, container);
       if(!move && !resize) {
+        let elemId;
         console.log('target:', target);
         box = ((e) => {
           do {
-            if(['main', 'console'].indexOf(e.getAttribute('id')) != -1) return e;
+            elemId = e.getAttribute('id');
+            if(['main', 'console'].indexOf(elemId) != -1) return e;
           } while((e = e.parentElement));
         })(target);
         console.log('box:', box);
@@ -1751,15 +1441,15 @@ const AppMain = (window.onload = async () => {
           if('preventDefault' in event) event.preventDefault();
           if(!resize && box) {
             let edges = Element.rect(box).toPoints();
-            let corners = [edges[0], edges[2]].map((p, i) => [
-              i,
-              p.distance(new Point(start).sum(x, y)),
-              p
-            ]);
+            let corners = [edges[0], edges[2]].map((p, i) => [i, p.distance(new Point(start).sum(x, y)), p]);
 
             let edge = corners.sort((a, b) => a[1] - b[1])[0];
 
-            window.resize = resize = Element.resizeRelative(box, null, edge[0] ? -1 : 1);
+            window.resize = resize = Element.resizeRelative(box, null, edge[0] ? -1 : 1, (size) => {
+              console.log('resizeRelative:', { elemId, size });
+              if(elemId == 'console') logSize(size);
+            });
+            box.style.cursor = `nwse-resize`;
             console.log('RESIZE:', { resize, box, corners, edge });
             return true;
           } else {
@@ -1787,17 +1477,17 @@ const AppMain = (window.onload = async () => {
           let norm = Point.fromAngle(rad, 1);
           //console.log('box: ', id, ...inside, inBorder, p, { sector, deg });
           let compass = directions[sector];
-          box.style.cursor = `${compass}-resize`;
         }
 
-        if(box)
-          window.move = move = Element.moveRelative(box,
-            null,
-            id == 'console' ? ['right', 'bottom'] : ['left', 'top']
-          );
+        if(box) {
+          window.move = move = Element.moveRelative(box, null, id == 'console' ? ['right', 'bottom'] : ['left', 'top']);
+          box.style.cursor = `move`;
+        }
         return true;
       }
-      if((move || resize) && event.buttons == 0) return cancel();
+      if((move || resize) && event.buttons == 0) {
+        return cancel();
+      }
 
       if(event.index > 0) {
         let rel = new Point(event);
@@ -1805,12 +1495,13 @@ const AppMain = (window.onload = async () => {
 
         if(resize) {
           if(event.buttons > 0) resize(-rel.x, -rel.y);
+          else resize = resize.jump();
         } else if(move) {
           /*  window.crosshair.show = true;
           window.crosshair.position = absolute;*/
 
           //          console.log('move', ...[...rel], ...[...absolute]);
-          if(true || event.buttons > 0) move(rel.x, rel.y);
+          if(event.buttons > 0) move(rel.x, rel.y);
           else move = move.jump();
         }
       }
@@ -1819,6 +1510,7 @@ const AppMain = (window.onload = async () => {
         resize = null;
         window.crosshair.show = false;
 
+        if(box && box.style) box.style.cursor = `default`;
         /*return*/ event.cancel();
         return false;
       }
@@ -1830,9 +1522,9 @@ const AppMain = (window.onload = async () => {
     const { x, y, index, buttons, start, type, target } = event;
     let rect = Element.rect('.transformed-element');
     let cons = Element.rect('#console');
-    if(rect.inside(event) && !cons.inside(event)) return true;
+    if(rect && cons) if (rect.inside(event) && !cons.inside(event)) return true;
     if(e.shiftKey && e.altKey) return true;
-     //console.log('oncontextmenu',  event);
+    //console.log('oncontextmenu',  event);
     return false;
   };
   window.processEvents = async function eventLoop() {
@@ -1902,22 +1594,7 @@ const AppMain = (window.onload = async () => {
   });*/
 
   window.addEventListener('wheel', (event) => {
-    const {
-      deltaX,
-      deltaY,
-      screenX,
-      screenY,
-      clientX,
-      clientY,
-      pageX,
-      pageY,
-      x,
-      y,
-      offsetX,
-      offsetY,
-      layerX,
-      layerY
-    } = event;
+    const { deltaX, deltaY, screenX, screenY, clientX, clientY, pageX, pageY, x, y, offsetX, offsetY, layerX, layerY } = event;
 
     //console.log('wheel:', { deltaX, deltaY, screenX, screenY, clientX, clientY, pageX, pageY, x, y, offsetX, offsetY, layerX, layerY });
     window.wheelEvent = event;
@@ -1942,7 +1619,10 @@ const AppMain = (window.onload = async () => {
     if(!pos.inside(clientArea)) return;
 
     const wheelPos = -event.deltaY.toFixed(2);
-    zoomVal = altKey || ctrlKey || shiftKey ? 0 : Util.clamp(-100, 200, zoomVal + wheelPos * 0.1);
+    let zoomVal = zoomLog();
+
+    zoomVal = altKey || ctrlKey || shiftKey ? 0 : Util.clamp(-100, 300, zoomVal + wheelPos * 0.1);
+    zoomLog(zoomVal);
     AdjustZoom();
   });
 
@@ -1954,24 +1634,6 @@ const AppMain = (window.onload = async () => {
     let points = new PointList([...SVG.pathIterator(path, 30, p => p.toFixed(3))]);
   }*/
 });
-function ZoomFactor(val) {
-  return Math.pow(10, val / 200).toFixed(5);
-}
-function AdjustZoom() {
-  const zoom = ZoomFactor(zoomVal);
-
-  let t = window.transform;
-  //console.log('t:', t);
-
-  if(!t.scaling) t.scale(zoom, zoom);
-  else {
-    t.scaling.x = zoom;
-    t.scaling.y = zoom;
-  }
-  //console.log('window.transform:', window.transform);
-  window.transform = new TransformationList(t);
-}
-
 const Module = {
   noInitialRun: true,
   onRuntimeInitialized: () => {
