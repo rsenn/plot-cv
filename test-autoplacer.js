@@ -1,6 +1,5 @@
 import Autoplacer from './lib/autoplacer/autoplacer.js';
 import { BBox } from './lib/geom/bbox.js';
-import ConsoleSetup from './consoleSetup.js';
 import { TRBL } from './lib/geom/trbl.js';
 import { Rect } from './lib/geom/rect.js';
 import { Alea } from './lib/alea.js';

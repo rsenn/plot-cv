@@ -1,6 +1,5 @@
-import { Voronoi, Matrix, Point, PointList, Line, Rect, Size } from './lib/geom.js';
+import { Voronoi, Matrix, Point, PointList } from './lib/geom.js';
 import Util from './lib/util.js';
-import ConsoleSetup from './consoleSetup.js';
 
 function main(args) {
   let file = 'lib/geom/point.js';

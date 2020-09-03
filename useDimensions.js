@@ -1,4 +1,4 @@
-import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
+import { Component, useState, useLayoutEffect, useCallback } from './lib/dom/preactComponent.js';
 
 function getDimensionObject(node) {
   if(typeof node == 'object' && node != null && node.base) node = node.base;

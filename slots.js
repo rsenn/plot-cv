@@ -1,4 +1,4 @@
-import { h, html, render, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
+import { h, render, Component } from './lib/dom/preactComponent.js';
 
 export class SlotContent {
   apply(slot, content, fireChange) {

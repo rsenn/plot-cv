@@ -3,7 +3,7 @@ import { ReactComponent } from './lib/dom/preactComponent.js';
 import ConsoleSetup from './consoleSetup.js';
 import { render, Component } from './lib/preact.mjs';
 import { ColoredText } from './lib/color/coloredText.js';
-import { RGBA, HSLA } from './lib/color.js';
+import { RGBA } from './lib/color.js';
 import Util from './lib/util.js';
 import PortableFileSystem from './lib/filesystem.js';
 

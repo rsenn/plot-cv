@@ -1,9 +1,6 @@
 import { Repeater } from './lib/repeater/repeater.js';
-import { useValue, useResult, useAsyncIter, useRepeater } from './lib/repeater/react-hooks.js';
 import ConsoleSetup from './consoleSetup.js';
 import { InMemoryPubSub } from './lib/repeater/pubsub.js';
-import { semaphore, throttler } from './lib/repeater/limiters.js';
-import { DroppingBuffer, FixedBuffer, SlidingBuffer } from './lib/repeater/buffers.js';
 
 async function main() {
   await ConsoleSetup();

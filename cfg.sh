@@ -1,34 +1,44 @@
 cfg() {
-  if type gcc 2>/dev/null >/dev/null && type g++ 2>/dev/null >/dev/null; then
-    : ${CC:=gcc} ${CXX:=g++}
-  elif type clang 2>/dev/null >/dev/null && type clang++ 2>/dev/null >/dev/null; then
-    : ${CC:=clang} ${CXX:=clang++}
+  : ${build:=`gcc -dumpmachine`}
+  : ${VERBOSE:=OFF}
+
+  if [ -n "$TOOLCHAIN" ]; then
+    toolchain=`basename "$TOOLCHAIN" .cmake`
+    compilers=$(grep -i compiler $TOOLCHAIN |sed 's,.*compiler\s*(\([^ ]*\)[^)]*).*,\1,p' -n)
+    sysroot=$(sed -n '\|^\s*/| {   s,^\s*,,; p; q }' $TOOLCHAIN)
+    if [ -n "$sysroot" -a -d "$sysroot" ]; then
+      SYSROOT="$sysroot"
+      : ${prefix:="$sysroot"}
+      echo "SYSROOT $SYSROOT" 1>&2
+    fi
+    for c in $compilers; do 
+      h=$("$c" -dumpmachine )
+      if [ -z "$host" ]; then
+        [ -n "$h" ] && host=$h
+        [ -n "$h" ] && CC="$c"
+     fi
+    done
+    if [ -e "$TOOLCHAIN" ]; then
+      cmakebuild=$(basename "$TOOLCHAIN" .cmake)
+      cmakebuild=${cmakebuild%.toolchain}
+      cmakebuild=${cmakebuild#toolchain-}
+    fi
   fi
 
-  : ${build:=`$CC -dumpmachine | sed 's|-pc-|-|g'`}
-
-  if [ -z "$host" -a -z "$builddir" ]; then
+ (if [ -z "$host" ]; then
     host=$build
     case "$host" in
-      x86_64-w64-mingw32) host="$host" builddir=build/$host prefix=/mingw64 ;;
-      i686-w64-mingw32) host="$host" builddir=build/$host prefix=/mingw32 ;;
-      x86_64-pc-*) host="$host" builddir=build/${host} prefix=/usr ;;
-      i686-pc-*) host="$host" builddir=build/${host} prefix=/usr ;;
+      *musl*) host="$host" prefix=/opt/musl ;;
+      *diet*) host="$host" prefix=/opt/diet ;;
+      x86_64-w64-mingw32) host="$host" prefix=/mingw64 ;;
+      i686-w64-mingw32) host="$host" prefix=/mingw32 ;;
+      x86_64-pc-*) host="$host" prefix=/usr ;;
+      i686-pc-*) host="$host" prefix=/usr ;;
     esac
   fi
-  : ${prefix:=/usr}
+  : ${prefix:=/usr/local}
   : ${libdir:=$prefix/lib}
   [ -d "$libdir/$host" ] && libdir=$libdir/$host
-
-  if [ -e "$TOOLCHAIN" ]; then
-    cmakebuild=$(basename "$TOOLCHAIN" .cmake)
-    cmakebuild=${cmakebuild%.toolchain}
-    cmakebuild=${cmakebuild#toolchain-}
-    : ${builddir=build/$cmakebuild}
-  else
-   : ${builddir=build/$host}
-  fi
-  test -n "$builddir" && builddir=`echo $builddir | sed 's|-pc-|-|g'`
 
   case $(uname -o) in
    # MSys|MSYS|Msys) SYSTEM="MSYS" ;;
@@ -39,28 +49,80 @@ cfg() {
     YES:*|yes:*|y:*|1:*|ON:*|on:* | *:*[Ss]tatic*) set -- "$@" \
       -DENABLE_PIC=OFF ;;
   esac
+  if [ -z "$generator" ]; then
+#    if type ninja 2>/dev/null; then
+#      builddir=$builddir-ninja
+#      generator="Ninja"
+#    else
+      generator="Unix Makefiles"
+#    fi
+  fi
+  case "$generator" in
+    *" - "*) break ;;
+    *)
+  if type codelite 2>/dev/null; then
+    generator="Sublime Text 2 - $generator"
+  fi
+  ;;
+  esac
 
-  : ${generator:="CodeLite - Unix Makefiles"}
-
+  if [ -n "$host" ]; then
+    case "$host" in
+      x86_64*) machine=x64 ;;
+      i[3-6]86*) machine=x86 ;;
+      aarch64*) machine=arm64 ;;
+      arm-*) machine=arm ;;
+      *) machine=${host%%-*} ;;
+    esac
+    case "$host" in
+      *-linux-*) os=linux ;;
+      *-mingw32*) os=mingw32 ;;
+      *-msys*) os=msys ;;
+      *) os=${host#*-}; os=${os%%-*} ;;
+    esac
+  fi
+    case "$SHARED" in
+      TRUE|ON|YES|1) link=shared ;;
+      *) link=static SHARED=OFF ;;
+    esac
+    : ${TYPE:=RelWithDebInfo}
+    case "$TYPE" in
+      *Debug*) type=debug suffix=debug symbols=debug ;;
+      *Deb*) type=relwithdebinfo suffix=relwithdeb symbols=debug ;;
+      *MinSize*) type=minsizerel suffix=minsize symbols= ;;
+      *) type=release suffix=release symbols= ;;
+    esac
+    case "$suffix" in
+      relwithdeb*) unset suffix ;;
+    esac
+    if [ -z "$CC" ]; then
+      for compiler in gcc clang cc; do
+        if type $compiler >/dev/null 2>/dev/null; then
+          CC="$compiler"
+          break
+        fi
+      done
+    fi
+    : ${builddir:=build/$os-$machine-$link${suffix:+-$suffix}}
  (mkdir -p $builddir
   : ${relsrcdir=`realpath --relative-to "$builddir" .`}
   set -x
-  cd "${builddir:-.}"
+  cd $builddir
   ${CMAKE:-cmake} -Wno-dev \
     -G "$generator" \
+    ${SHARED:+-DBUILD_SHARED_LIBS=$SHARED} \
     ${VERBOSE:+-DCMAKE_VERBOSE_MAKEFILE=$VERBOSE} \
-    -DCMAKE_BUILD_TYPE="${TYPE:-Debug}" \
+    -DCMAKE_BUILD_TYPE="${TYPE}" \
     ${CC:+-DCMAKE_C_COMPILER="$CC"} \
     ${CXX:+-DCMAKE_CXX_COMPILER="$CXX"} \
     ${PKG_CONFIG:+-DPKG_CONFIG_EXECUTABLE="$PKG_CONFIG"} \
     ${TOOLCHAIN:+-DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN"} \
     ${CC:+-DCMAKE_C_COMPILER="$CC"} \
     ${CXX:+-DCMAKE_CXX_COMPILER="$CXX"} \
-    -DCMAKE_{C,CXX}_FLAGS_DEBUG="-g -ggdb3" \
-    -DCMAKE_{C,CXX}_FLAGS_RELWITHDEBINFO="-Os -g -ggdb3 -DNDEBUG" \
     ${MAKE:+-DCMAKE_MAKE_PROGRAM="$MAKE"} \
+    ${prefix:+-DCMAKE_INSTALL_PREFIX="$prefix"} \
     "$@" \
-    $relsrcdir 2>&1 ) |tee "${builddir##*/}.log"
+    $relsrcdir 2>&1 ) |tee "${builddir##*/}.log")
 }
 
 cfg-android ()

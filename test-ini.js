@@ -1,5 +1,4 @@
 import INIGrammar from './ini-grammar.js';
-import ConsoleSetup from './consoleSetup.js';
 let filename = '../pictest/build/mplab/7segtest-16f876a-xc8-debug.mcp';
 let src = filesystem.readFile(filename).toString();
 

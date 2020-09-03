@@ -3,13 +3,12 @@ import PortableFileSystem from './lib/filesystem.js';
 import ConsoleSetup from './consoleSetup.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
-import estree, { ImportStatement, ExportStatement, VariableDeclaration, Identifier, MemberExpression, ESNode, CallExpression, ObjectBindingPattern, Literal } from './lib/ecmascript/estree.js';
+import estree, { ImportStatement, ExportStatement, Identifier, MemberExpression, ESNode, CallExpression, ObjectBindingPattern, Literal } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 //import { Path } from './lib/json.js';
 import { ImmutablePath, Path } from './lib/json.js';
 import deep from './lib/deep.js';
-import { SortedMap } from './lib/container/sortedMap.js';
 
 let filesystem, searchPath, packagesPath, moduleAliases, files;
 let node2path, flat, value, list;

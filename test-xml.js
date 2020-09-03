@@ -13,6 +13,7 @@ import { ColorMap } from './lib/draw/colorMap.js';
 import Alea from './lib/alea.js';
 import * as jsondiff from './lib/jsondiff.js';
 import KolorWheel from './lib/KolorWheel.js';
+import distanceChecker from './lib/color/distanceChecker.js';
 
 let filesystem;
 let prng /* = new Alea().seed(Date.now())*/;
@@ -191,7 +192,7 @@ async function main(...args) {
         let oldColor = RGBA.fromHex(oldValue).toHSLA();
         let rgbaColors = [oldColor, color].map((c) => c.toRGBA());
         let distance = RGBA.distance(...rgbaColors);
-        if(distance > 0) console.log('UpdatePalette:', oldColor, ` -> #${idx2path.indexOf(path)}`, color, ` Δ = ${distance}`);
+        //if(distance > 0) console.log('UpdatePalette:', oldColor, ` -> #${idx2path.indexOf(path)}`, color, ` Δ = ${distance}`);
         //console.log('UpdatePalette:', { color, oldValue, oldColor });
         //let [obj, key] = path.bottom(newObj, true);
         parent[key] = color.hex();
@@ -213,6 +214,32 @@ async function main(...args) {
       },
       remap(channel, start, end) {
         return palette.remapChannel(channel, Util.remap(mm[channel], start, end));
+      },
+      set(...args) {
+        let colors = '#' + args.join(',');
+        console.log('colors:', colors);
+        let re = /[^0-9a-fA-F]([0-9a-fA-F][0-9a-fA-F]+)/g;
+        //  console.log("matchAll:",[...colors.matchAll(re)]);
+        let result;
+        let a = [];
+        while((result = re.exec(colors))) {
+          const r = [...result].slice(1);
+          a.push('#' + r[0]);
+        }
+        let newColors = a.map((p) => new RGBA(p));
+        console.log('newColors:', newColors);
+        for(let [path, color] of palette) {
+          console.log(`path=`, path, ` color=`, color);
+          let path2 = path.up(4);
+          if(path2.last > 2) {
+            path2 = path2.left(path2.last - 1);
+            let obj = path2.apply(newObj, true);
+            console.log(`path2=${path2} obj=`, obj);
+          }
+          const { value, index, distance } = RGBA.nearestColor(color.toRGBA(), newColors, distanceChecker);
+          console.log(`value=`, value);
+          palette.set(path, value.toHSLA());
+        }
       },
       grayscale(amount = 1.0) {
         return palette.remapChannel('s', (s) => Util.clamp(0, 100, 100 - (100 - s) * amount));
@@ -358,7 +385,7 @@ async function main(...args) {
             let path = idx2path[i];
             let oldColor = /*new RGBA*/ deep.get(newObj, path);
             //    console.log('oldColor', { oldColor });
-            const r = RGBA.nearestColor(oldColor, newPalette);
+            const r = RGBA.nearestColor(oldColor, newPalette, distanceChecker);
             //    console.log('r', r , {oldColor});
 
             if(Util.isObject(r) && r.index !== undefined) {

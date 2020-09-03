@@ -1,7 +1,6 @@
 import Lexer from './lib/ecmascript/lexer.js';
-import { promises as fs } from 'fs';
 import ConsoleSetup from './consoleSetup.js';
-import { h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent } from './lib/dom/preactComponent.js';
+import { h, Component } from './lib/dom/preactComponent.js';
 import Util from './lib/util.js';
 const testfn = () => true;
 const testtmpl = `this is

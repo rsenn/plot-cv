@@ -1,6 +1,5 @@
 import ProxyList from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/free-proxy/index.js';
 //import ProxyLists from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/proxy-lists/index.js';
-import ConsoleSetup from './consoleSetup.js';
 import proxynova from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/proxynova/index.js';
 import Util from './lib/util.js';
 import { Repeater } from './lib/repeater/repeater.js';

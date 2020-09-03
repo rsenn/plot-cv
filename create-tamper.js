@@ -1,6 +1,6 @@
-import { ECMAScriptParser, Printer, Lexer, PathReplacer } from './lib/ecmascript.js';
+import { ECMAScriptParser, Printer, PathReplacer } from './lib/ecmascript.js';
 import ConsoleSetup from './consoleSetup.js';
-import { ImportStatement, ExportStatement, VariableDeclaration, estree, ESNode, CallExpression, Literal } from './lib/ecmascript/estree.js';
+import { ImportStatement, ExportStatement, VariableDeclaration, estree, ESNode, Literal } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import { ImmutablePath } from './lib/json.js';
 import deep from './lib/deep.js';

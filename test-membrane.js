@@ -1,6 +1,5 @@
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
-import ConsoleSetup from './consoleSetup.js';
 import Util from './lib/util.js';
 import { ImmutablePath, PathMapper, toXML, TreeObserver } from './lib/json.js';
 import { ImmutableXPath, parseXPath, XMLIterator } from './lib/xml.js';

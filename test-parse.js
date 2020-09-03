@@ -1,6 +1,5 @@
 import { Lexer } from './lib/parse/lexer.js';
 import { Grammar } from './lib/parse/grammar.js';
-import ConsoleSetup from './consoleSetup.js';
 import { Parser } from './lib/parse/parser.js';
 import Ebnf2Parser from './lib/parse/ebnf2.js';
 import CGrammar from './test-grammar.js';

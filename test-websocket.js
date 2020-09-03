@@ -2,8 +2,7 @@ import WebSocket from 'ws';
 import WebSocketAsync from './lib/net/websocket-async.js';
 import ConsoleSetup from './consoleSetup.js';
 import { WebSocketClient } from './lib/net/websocket-client.js';
-import { websocketEvents, websocketData } from './lib/net/websocket-iterator.js';
-import { ReconnectingWebSocket } from './lib/net/reconnectingWebSocket.js';
+import { websocketEvents } from './lib/net/websocket-iterator.js';
 import Util from './lib/util.js';
 
 import { Message } from './message.js';

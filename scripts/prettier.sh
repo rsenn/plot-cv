@@ -79,7 +79,10 @@ main() {
       exit 1
      fi
     (: set -x; sed -i  "$EXPR" "$TMPFILE") &&
-    {  diff -u "$ARG" "$TMPFILE" | sed "s|$TMPFILE|$ARG|g; s|$ARG|${ARG##*/}|" | tee "$DIFFFILE" |  diffstat |sed "1! d; /0 files/d"  ;  (cd "$DIR" && patch -p0 ) <"$DIFFFILE" && rm -f "$TMPFILE" || mv -vf "$TMPFILE" "$ARG"; }) || return $?
+    {  diff -u "$ARG" "$TMPFILE" | sed "s|$TMPFILE|$ARG|g; s|$ARG|${ARG##*/}|" | tee "$DIFFFILE" |  diffstat |sed "1! d; /0 files/d"  ;  (cd "$DIR" && patch -p0 ) <"$DIFFFILE" && rm -f "$TMPFILE" || mv -vf "$TMPFILE" "$ARG"; }) || {
+      echo "SOURCE=$SOURCE" 1>&2
+      return $?
+  }
    done
 }
 

@@ -1,15 +1,13 @@
 import express from 'express';
 import path from './lib/path.js';
-import ConsoleSetup from './consoleSetup.js';
 import Util from './lib/util.js';
-import tXml from './lib/tXml.js';
 import bodyParser from 'body-parser';
 import expressWs from 'express-ws';
 import { Alea } from './lib/alea.js';
 import { Message } from './message.js';
 import crypto from 'crypto';
 import fetch from 'isomorphic-fetch';
-import { exec, spawn, fork, execFile } from 'promisify-child-process';
+import { exec } from 'promisify-child-process';
 import fs, { promises as fsPromises } from 'fs';
 
 const port = process.env.PORT || 3000;

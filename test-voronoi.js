@@ -1,11 +1,10 @@
 import Util from './lib/util.js';
 import PortableFileSystem from './lib/filesystem.js';
-import ConsoleSetup from './consoleSetup.js';
 import { Point, PointList, Line, BBox } from './lib/geom.js';
 import { SVG } from './lib/dom.js';
 import { toXML } from './lib/json.js';
 import Voronoi from './lib/geom/voronoi.js';
-import { EagleDocument, EagleProject } from './lib/eagle.js';
+import { EagleDocument } from './lib/eagle.js';
 
 let filesystem;
 

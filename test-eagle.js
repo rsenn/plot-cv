@@ -1,11 +1,8 @@
 import { EagleDocument, EagleProject } from './lib/eagle.js';
 import PortableFileSystem from './lib/filesystem.js';
-import ConsoleSetup from './consoleSetup.js';
 import { LineList, Rect } from './lib/geom.js';
 import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
-import deep from './lib/deep.js';
-import DeepDiff from 'deep-diff';
 import { Graph } from './lib/fd-graph.js';
 import ptr from './lib/json-ptr.js';
 import LogJS from './lib/log.js';

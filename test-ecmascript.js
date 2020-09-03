@@ -1,6 +1,5 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
-import ConsoleSetup from './consoleSetup.js';
 import Printer from './lib/ecmascript/printer.js';
 import { estree, ESNode, CallExpression } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';

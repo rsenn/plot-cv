@@ -1,5 +1,5 @@
 /*import { Point as Point_ } from "./lib/geom/point.js";
-import { Size as Size_ } from "./lib/geom/size.js";*/
+import { Size as } from "./lib/geom/size.js";*/
 import { Contour } from 'contour';
 import { HSLA } from './lib/color/hsla.js';
 import { Line } from './lib/geom/line.js';

@@ -1,4 +1,4 @@
-import { Component, h, render } from 'preact';
+import { Component, render } from 'preact';
 
 /** Redirect rendering of descendants into the given CSS selector.
  *  @example

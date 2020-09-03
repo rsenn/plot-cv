@@ -1,12 +1,9 @@
 import { ECMAScriptParser, ECMAScriptInterpreter } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
-import ConsoleSetup from './consoleSetup.js';
 import Printer from './lib/ecmascript/printer.js';
-import { estree, ESNode, CallExpression } from './lib/ecmascript/estree.js';
+import { CallExpression } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
-import { Path } from './lib/json.js';
-import { SortedMap } from './lib/container/sortedMap.js';
 
 const code = `export const Progress = ({ className, percent, ...props }) => html\`<\x24{Overlay} className=\x24{classNames('progress', 'center', className)} text=\x24{percent + '%'} style=\x24{{
   position: 'relative',

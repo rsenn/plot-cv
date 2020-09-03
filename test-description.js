@@ -1,17 +1,6 @@
 import PortableFileSystem from './lib/filesystem.js';
 import ConsoleSetup from './consoleSetup.js';
 import Util from './lib/util.js';
-import { XPath } from './lib/xml.js';
-import deep from './lib/deep.js';
-import tXml from './lib/tXml.js';
-import { RGBA, HSLA } from './lib/color.js';
-import { Iterator, IteratorForwarder } from './lib/iterator.js';
-import toSource from './lib/tosource.js';
-import { toXML, Path } from './lib/json.js';
-import { ColorMap } from './lib/draw/colorMap.js';
-import Alea from './lib/alea.js';
-import { Functional } from './lib/functional.js';
-import KolorWheel from './lib/KolorWheel.js';
 import { ColoredText } from './lib/color/coloredText.js';
 Util.colorCtor = ColoredText;
 //prettier-ignore

@@ -2,13 +2,11 @@
 import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
-import { ReactPropTypes } from './lib/prop-types.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
 import keysim from './lib/dom/keysim.js';
 import geom from './lib/geom.js';
 import { BBox } from './lib/geom/bbox.js';
 import { Polygon } from './lib/geom/polygon.js';
-import { ScrollDisabler } from './lib/scrollHandler.js';
 import { TouchListener } from './lib/touchHandler.js';
 import { trkl } from './lib/trkl.js';
 import { ColorMap } from './lib/draw/colorMap.js';
@@ -22,20 +20,20 @@ import deep from './lib/deep.js';
 import Alea from './lib/alea.js';
 import { Cache } from './lib/dom/cache.js';
 import { CacheStorage } from './lib/dom/cacheStorage.js';
-import { gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, Interpreter as GcodeInterpreter } from './lib/gcode.js';
+import { gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser as GcodeInterpreter } from './lib/gcode.js';
 import { Iterator } from './lib/iterator.js';
 import { Functional } from './lib/functional.js';
 import { makeLocalStorage } from './lib/autoStore.js';
 import { Repeater } from './lib/repeater/repeater.js';
-import { useValue, useResult, useAsyncIter } from './lib/repeater/react-hooks.js';
+import { useResult } from './lib/repeater/react-hooks.js';
 import LogJS from './lib/log.js';
 import { useDimensions } from './useDimensions.js';
 import { toXML, ImmutablePath } from './lib/json.js';
 import { XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';
 import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
-import React, { h, html, render, Fragment, Component, createContext, useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue } from './lib/dom/preactComponent.js';
-import components, { Chooser, DynamicLabel, Label, Container, Button, FileList, Panel, AspectRatioBox, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, BrowseIcon, CrossHair, FloatingPanel, DropDown, Conditional } from './components.js';
+import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
+import components, { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, BrowseIcon, CrossHair, FloatingPanel, DropDown, Conditional } from './components.js';
 import { Message } from './message.js';
 import { WebSocketClient } from './lib/net/websocket-async.js';
 import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
@@ -46,16 +44,15 @@ import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, Calculat
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
-import { useDrag, useMove, useGesture } from './useGesture.js';
 import { Emitter, EventIterator } from './events.js';
-import { Slot, SlotContent, SlotProvider } from './slots.js';
+import { Slot, SlotProvider } from './slots.js';
 import Voronoi from './lib/geom/voronoi.js';
 import GerberParser from './lib/gerber/parser.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
 /* prettier-ignore */ import { BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode
 } from './lib/eagle.js';
 //import PureCache from 'pure-cache';
-import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, createContext, create: h, html, render, useCallback, useContext, useDebugValue, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useReducer, useRef, useState };
+import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
 
 /* prettier-ignore */ /* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG, Timer, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
 Util.colorCtor = ColoredText;
@@ -77,7 +74,6 @@ let svgElement;
 let brdXml, schXml, brdDom, schDom;
 let board, schematic;
 let loadedProjects = [];
-let zoomLog = trkl(0);
 let container;
 
 let projectFiles = [];
@@ -85,7 +81,7 @@ let activeFile;
 let transform = trkl(new TransformationList());
 let sizeListener = trkl({});
 let aspectListener = trkl(1);
-let debug = false;
+let debug = true;
 const documentTitle = trkl('');
 
 let store = (window.store = makeLocalStorage());
@@ -94,6 +90,7 @@ let projects = trkl([]);
 let socket = trkl();
 let listURL = trkl(store.get('url') || null);
 let searchFilter = trkl(store.get('filter') || '*');
+let zoomLog = trkl(store.get('zoom') || null);
 
 const add = (arr, ...items) => [...(arr ? arr : []), ...items];
 
@@ -480,6 +477,7 @@ const GerberToGcode = async (gerber = project.name, opts = {}) => {
 };
 
 const GcodeToPolylines = (gcode = project.name, opts = {}) => {
+  const { fill = false, color } = opts;
   let proj = GetProject(gcode);
   let gc = Util.filter(parseGcode(project.gcode.data), (g) => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args);
   let polylines = [];
@@ -502,45 +500,49 @@ const GcodeToPolylines = (gcode = project.name, opts = {}) => {
   let palette = GeneratePalette(polylines.length);
   let ret = { polylines, bbox: bb, palette };
   //console.log('polylines(1):', polylines);
-  polylines = polylines.map((pl) => pl.toMatrix().flat());
-  //console.log('polylines(2):', polylines);
-  polylines = polylines.map((pl) => geom.simplify(pl, 0.02, true));
-  //console.log('polylines(3):', polylines);
-  polylines = polylines.map((pl) => Util.chunkArray(pl, 2).map((pt) => new Point(...pt)));
-  //console.log('polylines(4):', polylines);
-  polylines = polylines.map((pl) => new Polyline([]).push(...pl));
-  let inside = new Map(polylines.map((polyline2, i) => [polyline2, polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2))]));
-  let insideOf = polylines.map((polyline, i) => [
-    i,
-    polylines
-      .map((polyline2, j) => [inside.get(polyline2).length, j, polyline2])
-      .filter(([n, j, polyline2]) => i !== j && inside.get(polyline2).indexOf(polyline) != -1)
-      .sort(([a], [b]) => a - b)
-  ]);
-  console.log('insideOf:', insideOf);
-  let holes = polylines.map((polyline, i) => new Set());
-  insideOf.filter(([i, list]) => list.length == 1).map(([i, list]) => holes[list[0][1]].add(i));
-  console.log('holes:', holes);
-  let grp = SVG.create('g', { fill: 'none', stroke: 'magenta', 'stroke-width': 0.1, transform: ` scale(1,-1) translate(${0},${-bb.y2}) translate(-0.3175,0)  translate(0,-1.27)` }, proj.svg);
-  let props = (polyline, i) => ({ stroke: palette[i], fill: palette[i].prod(1, 1, 1, 0.5) });
-  let paths = [];
   let remove = new Set();
-  for(let [i, inner] of holes.entries()) {
-    let ids = [i, ...inner];
-    //console.log('polygon', { i, ids, inner });
-    const polyline = polylines[i];
-    inner = [...inner].map((ip) => polylines[ip].counterClockwise);
-    if(inner.length == 0) continue;
-    //console.log('polygon', { polyline, inner });
-    let list = [polyline, ...inner];
-    paths.push([i, list.map((pl) => pl.toPath()).join('\n')]);
-    ids.forEach((id) => remove.add(id));
+  let props = (polyline, i) => ({ stroke: color || palette[i], fill: fill ? palette[i].prod(1, 1, 1, 0.5) : 'none' });
+  let grp = SVG.create('g', { fill: 'none', stroke: 'magenta', 'stroke-width': 0.1, transform: ` scale(1,-1) translate(${0},${-bb.y2}) translate(-0.3175,0)  translate(0,-2.54)` }, proj.svg);
+  let paths = [];
+
+  if(fill) {
+    polylines = polylines.map((pl) => pl.toMatrix().flat());
+    //console.log('polylines(2):', polylines);
+    polylines = polylines.map((pl) => geom.simplify(pl, 0.02, true));
+    //console.log('polylines(3):', polylines);
+    polylines = polylines.map((pl) => Util.chunkArray(pl, 2).map((pt) => new Point(...pt)));
+    //console.log('polylines(4):', polylines);
+    polylines = polylines.map((pl) => new Polyline([]).push(...pl));
+    let inside = new Map(polylines.map((polyline2, i) => [polyline2, polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2))]));
+    let insideOf = polylines.map((polyline, i) => [
+      i,
+      polylines
+        .map((polyline2, j) => [inside.get(polyline2).length, j, polyline2])
+        .filter(([n, j, polyline2]) => i !== j && inside.get(polyline2).indexOf(polyline) != -1)
+        .sort(([a], [b]) => a - b)
+    ]);
+    console.log('insideOf:', insideOf);
+    let holes = polylines.map((polyline, i) => new Set());
+    insideOf.filter(([i, list]) => list.length == 1).map(([i, list]) => holes[list[0][1]].add(i));
+    console.log('holes:', holes);
+    let remove = new Set();
+    for(let [i, inner] of holes.entries()) {
+      let ids = [i, ...inner];
+      //console.log('polygon', { i, ids, inner });
+      const polyline = polylines[i];
+      inner = [...inner].map((ip) => polylines[ip].counterClockwise);
+      if(inner.length == 0) continue;
+      //console.log('polygon', { polyline, inner });
+      let list = [polyline, ...inner];
+      paths.push([i, list.map((pl) => pl.toPath()).join('\n')]);
+      ids.forEach((id) => remove.add(id));
+    }
   }
   let ids = polylines.map((pl, i) => i).filter((i) => !remove.has(i));
   let polys = [...ids.map((i) => polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` }, grp, 0.01)), ...paths.map(([i, d]) => ({ ...props(polyline, i), id: `polygon-${polylines.indexOf(polyline)}`, d })).map((p, i) => ['path', p, grp])];
   //console.log('polys:', polys);
   let elements = polys.map((args) => SVG.create(...args));
-  return { ...ret, inside, group: grp, elements, insideOf, holes };
+  return { ...ret, group: grp, elements };
 };
 
 const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
@@ -1207,6 +1209,9 @@ const AppMain = (window.onload = async () => {
     store.set('filter', value);
     LogJS.info(`searchFilter is ${value}`);
   });
+  zoomLog.subscribe((value) => {
+    store.set('zoom', value);
+  });
 
   listURL.subscribe((value) => {
     store.set('url', value);
@@ -1581,6 +1586,11 @@ const AppMain = (window.onload = async () => {
   );
 
   window.oncontextmenu = function (e) {
+    const { x, y, index, buttons, start, type, target } = event;
+    let rect = Element.rect('.transformed-element');
+    let cons = Element.rect('#console');
+    if(rect.inside(event) && !cons.inside(event)) return true;
+    //console.log('oncontextmenu', { target }, event);
     return false;
   };
   window.processEvents = async function eventLoop() {

@@ -1,6 +1,5 @@
 import Lexer from './lib/ecmascript/lexer.js';
 import Util from './lib/util.js';
-import ConsoleSetup from './consoleSetup.js';
 
 let args = Util.getArgs();
 if(args.length == 0) args.push('-');

@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"js_mat_itera",
+				"js_mat_iterator_class_id"
+			],
+			[
+				"JSMat",
+				"JSMatIteratorData"
+			],
+			[
+				"mat_iterator",
+				"mat_iterator_proto"
+			],
+			[
 				"Obj",
 				"ObjectBindingPattern"
 			],
@@ -24,37 +36,46 @@
 	"buffers":
 	[
 		{
-			"contents": "ES6Module\nstatic create(file)\ntoString()\nvalueOf()\nES6Env\n() =>\nstatic get cwd()\nstatic pathTransform(p)\nES6ImportExport\nstatic create(obj)\n() =>\n(re) =>\n(re) =>\n([m]) =>\n(m) =>\n(p) =>\nColorIf\n function ()\n(n) =>\n(n) =>\n(acc, [id, ref]) =>\n(p) =>\n(p) =>\n(n) =>\n([p, n]) =>\n(p) =>\n(a) =>\n (p, i) =>\n(n) =>\n([p, c]) =>\n(acc, n) =>\nstatement(path)\nget relpath()\nget fromBase()\nget from()\n (v) =>\nset from(value)\ntoSource()\nget code()\n(p) =>\nES6ImportExport\n (x) =>\n(f) =>\ntoString()\n(p) =>\n([k, v]) =>\nPrintCode\n (node) =>\nPrintObject\n([prop, value]) =>\nPrefixRemover\n (arg) =>\n(acc, re, i) =>\ndumpFile\nfunction printAst(ast, comments, printer\n({ indent: 4 }, comments))\nid: (text)\npunct: (text)\nstr: (text)\ndumpNode\nGenerateFlatMap\n (n, p) =>\n (p, n) =>\nasync main\n(arg) =>\n(acc, p) =>\n(file) =>\n([k, v]) =>\n  removeFile\n  processFile\n(acc,it) =>\ngetBase\ngetRelative\ngetFile\n([key, node]) =>\n([path, node]) =>\nisRequire\nisImport\nisES6Export\nisCJSExport\ngetImport\n([path, node]) =>\nAddValue\ngetFromValue\n (n, p) =>\n(ctor) =>\n (n, p) =>\n (k) =>\n([p, n]) =>\n([p, n]) =>\nn =>\ngetFrom\ngetFromBase\ngetFromPath\n(it) =>\n([path, node], i) =>\n(imp) =>\n({ file, ...module }) =>\n(node) =>\n (p) =>\n(imp, idx) =>\n([i, imp]) =>\n([idx, imp]) =>\n(imp) =>\n({ file, ...module }) =>\n(f) =>\n(imp, idx) =>\n(entry) =>\n([path, node]) =>\nparseFile\n() =>\n (node) =>\n (path, value) =>\nmap()\n(key, value) =>\nfunction* ()\nfinish\n(s) =>\ngetBindings\n(node) =>\n(node) =>\nmakeSearchPath\naddPath\ncheckExists\nfindModule\nsearchModuleInPath\nremoveStatements\ngetDeclarations\n(acc, decl) =>\nmakeNames",
+			"contents": "dingbatCode\nm\n(c) =>\nm\n(c) =>\ndump\nisElement\nparseArgs\n.predicate\n.predicate\n.predicate\ntraverse",
 			"settings":
 			{
-				"buffer_size": 1559,
+				"buffer_size": 96,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "lib/ecmascript/parser.js",
+			"file": "main.js",
 			"settings":
 			{
-				"buffer_size": 69177,
+				"buffer_size": 58733,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "resolve-imports.js",
+			"file": "lib/color/rgba.js",
 			"settings":
 			{
-				"buffer_size": 28232,
+				"buffer_size": 21264,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/ecmascript/estree.js",
+			"file": "lib/color/hsla.js",
 			"settings":
 			{
-				"buffer_size": 14445,
+				"buffer_size": 8525,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/geom/rect.js",
+			"settings":
+			{
+				"buffer_size": 13823,
 				"line_ending": "Unix"
 			}
 		},
@@ -62,7 +83,42 @@
 			"file": "lib/util.js",
 			"settings":
 			{
-				"buffer_size": 129482,
+				"buffer_size": 130292,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/renderer.js",
+			"settings":
+			{
+				"buffer_size": 1234,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "Searching 839 files for \"LinesToPath\" (regex)\n\n/home/roman/Sources/plot-cv/lib/eagle.js:\n    2  \n    3  export { EagleNodeList } from './eagle/nodeList.js';\n    4: export { Rotation, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, ClampAngle, AlignmentAngle, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, Arc, CalculateArcRadius, LinesToPath, MakeCoordTransformer } from './eagle/renderUtils.js';\n    5  export { EagleDocument } from './eagle/document.js';\n    6  export { EagleReference, EagleRef } from './eagle/ref.js';\n\n/home/roman/Sources/plot-cv/lib/eagle/boardRenderer.js:\n    6  import { RGBA } from '../color.js';\n    7  import { Palette } from './common.js';\n    8: import { VERTICAL, HORIZONTAL, RotateTransformation, LayerAttributes, LinesToPath, MakeCoordTransformer, Rotation } from './renderUtils.js';\n    9  import { EagleSVGRenderer } from './svgRenderer.js';\n   10  import { Repeater } from '../repeater/repeater.js';\n   ..\n  178        //this.debug('Lines:', [...lines]);\n  179  \n  180:       const path = LinesToPath(lines);\n  181        const layer = layers[layerId] || this.layers.Bottom;\n  182        const width = widths[layerId];\n\n/home/roman/Sources/plot-cv/lib/eagle/renderUtils.js:\n  127  };\n  128  \n  129: export const LinesToPath = (lines) => {\n  130    let l = lines.shift(),\n  131      m;\n\n/home/roman/Sources/plot-cv/main.js:\n   43  import KolorWheel from './lib/KolorWheel.js';\n   44  import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';\n   45: import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl } from './lib/eagle/renderUtils.js';\n   46  import { Wire } from './lib/eagle/components/wire.js';\n   47  import { Instance } from './lib/eagle/components/instance.js';\n   ..\n 1075        InvertY,\n 1076        LayerAttributes,\n 1077:       LinesToPath,\n 1078        MakeCoordTransformer,\n 1079        PolarToCartesian,\n\n6 matches across 4 files\n\n\nSearching 839 files for \"columnWidths\" (regex)\n\n/home/roman/Sources/plot-cv/lib/util.js:\n 2903        const { message, stack, proto } = this;\n 2904        return `${Util.fnName((proto && proto.constructor) || this.constructor)}: ${message}\n 2905: Stack:${Util.stack.prototype.toString.call(stack, color, stack.columnWidths)}`;\n 2906      }, [Symbol.toStringTag]() {\n 2907        return this.toString(false);\n ....\n 3009        return fileName ? `${fileName}:${lineNumber}:${columnNumber}` : null;\n 3010      },\n 3011:     toString(color, columnWidths = [0, 0, 0, 0]) {\n 3012        let text = color && this.colorCtor ? new this.colorCtor() : '';\n 3013        const c = color && this.colorCtor ? (t, color) => text.write(t, color) : (t) => (text += t);\n ....\n 3023        let columns = fields.map((fn) => this[fn]);\n 3024  \n 3025:       columns = columns.map((f, i) => (f + '')[i >= 2 ? 'padStart' : 'padEnd'](columnWidths[i] || 0, ' '));\n 3026        // columns = columns.map((fn, i) => c(fn, colors[i]));\n 3027  \n 3028        const [functionName, fileName, lineNumber, columnNumber] = columns;\n 3029:       //console.log('stackFrame.toString', { color ,columnWidths, functionName, fileName, lineNumber, columnNumber});\n 3030        let colonList = [fileName, lineNumber, columnNumber]\n 3031          .map((p) => ('' + p == 'undefined' ? undefined : p))\n ....\n 3042        return this.toString(false);\n 3043      }, [Symbol.for('nodejs.util.inspect.custom')](...args) {\n 3044:       return Util.stackFrame.prototype.toString.call(this, true, this.columnWidths);\n 3045      }\n 3046    },\n ....\n 3166  Util.stack.prototype = Object.assign(Util.stack.prototype, {\n 3167    toString(color = false) {\n 3168:     let columns = this.columnWidths;\n 3169      let a = [...this].map((frame) => Util.stackFrame.prototype.toString.call(frame, color, columns));\n 3170      let s = a.join('\\n');\n ....\n 3173      return Util.stack.prototype.toString.call(this);\n 3174    }, [Symbol.for('nodejs.util.inspect.custom')](...args) {\n 3175:     return '\\n' + this.map((f) => f.toString(!Util.isBrowser(), this.columnWidths)).join('\\n');\n 3176    }\n 3177  });\n 3178  \n 3179  Object.defineProperties(Util.stack.prototype, {\n 3180:   columnWidths: {\n 3181      get() {\n 3182        return this.reduce((a, f) => ['functionName'].map((fn, i) => Math.max(a[i], (f[fn] + '').length)), [0, 0, 0, 0]);\n\n/home/roman/Sources/plot-cv/tamper.js:\n 2536        const { message, stack, proto } = this;\n 2537        return `${Util.fnName(proto.constructor || this.constructor)}: ${message}\n 2538: Stack:${Util.stack.prototype.toString.call(stack, color, stack.columnWidths)}`;\n 2539      }, [Symbol.toStringTag]() {\n 2540        return this.toString(false);\n ....\n 2627        return fileName ? `${fileName}:${lineNumber}:${columnNumber}` : null;\n 2628      },\n 2629:     toString(color, columnWidths = [0, 0, 0, 0]) {\n 2630        let text = color ? new this.colorCtor() : '';\n 2631        const c = color ? (t, color) => text.write(t, color) : (t) => (text += t);\n ....\n 2641        let columns = fields.map((fn) => this[fn]);\n 2642  \n 2643:       columns = columns.map((f, i) => (f + '')[i >= 2 ? 'padStart' : 'padEnd'](columnWidths[i] || 0, ' '));\n 2644        // columns = columns.map((fn, i) => c(fn, colors[i]));\n 2645  \n 2646        const [functionName, fileName, lineNumber, columnNumber] = columns;\n 2647:       //console.log('stackFrame.toString', { color ,columnWidths, functionName, fileName, lineNumber, columnNumber});\n 2648  \n 2649        return `${functionName} ${fileName}:${lineNumber}:${columnNumber}` + c('', 0);\n ....\n 2657        return this.toString(false);\n 2658      }, [Symbol.for('nodejs.util.inspect.custom')](...args) {\n 2659:       return Util.stackFrame.prototype.toString.call(this, true, this.columnWidths);\n 2660      }\n 2661    });\n ....\n 2729    Util.stack.prototype = Object.assign(Util.stack.prototype, {\n 2730      toString(color = false) {\n 2731:       let columns = this.columnWidths;\n 2732        let a = [...this].map((frame) => Util.stackFrame.prototype.toString.call(frame, color, columns));\n 2733        let s = a.join('\\n');\n ....\n 2737      }, [Symbol.for('nodejs.util.inspect.custom')](...args) {\n 2738        //const fields = ['functionName','fileName','lineNumber','columnNumber'];\n 2739:       //this.columnWidths = this.reduce((a,f) => fields.slice(0,1).map((fn,i) => Math.max(a[i],(f[fn]+'').length)), [0,0,0,0]);\n 2740:       return '\\n' + this.map((f) => f.toString(!Util.isBrowser(), this.columnWidths)).join('\\n');\n 2741      }\n 2742    });\n 2743  \n 2744    Object.defineProperties(Util.stack.prototype, {\n 2745:     columnWidths: {\n 2746        get() {\n 2747          return this.reduce((a, f) => ['functionName'].map((fn, i) => Math.max(a[i], (f[fn] + '').length)), [0, 0, 0, 0]);\n\n17 matches across 2 files\n\n\nSearching 839 files for \"requestContent\" (regex)\n\n0 matches",
+			"settings":
+			{
+				"buffer_size": 7063,
+				"line_ending": "Unix",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "lib/eagle/boardRenderer.js",
+			"settings":
+			{
+				"buffer_size": 11193,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/common.js",
+			"settings":
+			{
+				"buffer_size": 4222,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -120,12 +176,16 @@
 		"selected_items":
 		[
 			[
-				"install pac",
+				"install pack",
 				"Package Control: Install Package"
 			],
 			[
-				"add re",
-				"Package Control: Add Repository"
+				"extract fn",
+				"Extract Javascript Function to Regular Function"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
 			],
 			[
 				"install",
@@ -134,6 +194,14 @@
 			[
 				"add rep",
 				"Package Control: Add Repository"
+			],
+			[
+				"add re",
+				"Package Control: Add Repository"
+			],
+			[
+				"install pac",
+				"Package Control: Install Package"
 			],
 			[
 				"install ",
@@ -184,10 +252,6 @@
 				"Package Control: Install Package"
 			],
 			[
-				"install pack",
-				"Package Control: Install Package"
-			],
-			[
 				"Package Control: install",
 				"Package Control: Install Package"
 			],
@@ -200,10 +264,6 @@
 				"Extract Sublime Package: Extract all packages"
 			],
 			[
-				"insta",
-				"Package Control: Install Package"
-			],
-			[
 				"build",
 				"Build: Cancel"
 			]
@@ -212,7 +272,7 @@
 	},
 	"console":
 	{
-		"height": 78.0,
+		"height": 362.0,
 		"history":
 		[
 		]
@@ -229,27 +289,75 @@
 	"expanded_folders":
 	[
 		"/home/roman/Sources/plot-cv",
+		"/home/roman/Sources/plot-cv/include",
 		"/home/roman/Sources/plot-cv/lib",
+		"/home/roman/Sources/plot-cv/lib/color",
 		"/home/roman/Sources/plot-cv/lib/dom",
-		"/home/roman/Sources/plot-cv/lib/json"
+		"/home/roman/Sources/plot-cv/lib/eagle",
+		"/home/roman/Sources/plot-cv/lib/gerber"
 	],
 	"file_history":
 	[
+		"/home/roman/Sources/plot-cv/tamper.js",
+		"/home/roman/Sources/plot-cv/src/js_mat.cpp",
+		"/opt/opencv3/include/opencv2/core/types.hpp",
+		"/home/roman/Sources/plot-cv/src/jsbindings.h",
+		"/home/roman/Sources/plot-cv/quickjs/quickjs.c",
+		"/home/roman/Sources/plot-cv/quickjs/quickjs.h",
+		"/home/roman/Sources/plot-cv/test-quickjs.js",
 		"/home/roman/Sources/plot-cv/resolve-imports.js",
-		"/home/roman/Sources/plot-cv/server.js",
-		"/home/roman/Sources/plot-cv/lib/path.js",
+		"/home/roman/Sources/plot-cv/lib/geom.js",
+		"/home/roman/Sources/plot-cv/lib/geom/point.js",
+		"/home/roman/Sources/plot-cv/lib/geom/size.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
+		"/home/roman/Sources/plot-cv/src/js_rect.cpp",
+		"/home/roman/Sources/plot-cv/lib/eagle/components/wire.js",
+		"/home/roman/Sources/plot-cv/quickjs/cutils.h",
+		"/home/roman/Sources/plot-cv/src/js_contour.cpp",
+		"/home/roman/Sources/plot-cv/src/js_point.cpp",
+		"/home/roman/Sources/plot-cv/src/js_size.cpp",
+		"/home/roman/Sources/plot-cv/quickjs.c",
+		"/home/roman/Sources/plot-cv/main.js",
+		"/home/roman/Sources/plot-cv/lib/ecmascript/parser.js",
 		"/home/roman/Sources/plot-cv/lib/ecmascript/lexer.js",
-		"/home/roman/Sources/plot-cv/lib/ecmascript/estree.js",
-		"/home/roman/Sources/plot-cv/lib/ecmascript/printer.js",
+		"/home/roman/Sources/plot-cv/lib/ecmascript/token.js",
+		"/home/roman/Sources/plot-cv/test-eval.js",
+		"/home/roman/Sources/plot-cv/test-lexer.js",
+		"/home/roman/Sources/plot-cv/inspect.js",
+		"/home/roman/Sources/plot-cv/quickjs/examples/point.c",
+		"/home/roman/Sources/plot-cv/quickjs/quickjs-atom.h",
+		"/home/roman/Sources/plot-cv/quickjs/list.h",
+		"/home/roman/Sources/plot-cv/quickjs/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/examples/fib.c",
+		"/home/roman/Sources/plot-cv/node_modules/isomorphic-fetch/node_modules/node-fetch/test/server.js",
+		"/home/roman/Sources/plot-cv/lib/ecmascript/environment.js",
 		"/home/roman/Sources/plot-cv/lib/util.js",
+		"/home/roman/Sources/plot-cv/lib/path.js",
+		"/home/roman/Sources/plot-cv/lib/filesystem.js",
+		"/home/roman/Sources/plot-cv/lib/ecmascript/estree.js",
+		"/home/roman/Sources/plot-cv/src/js_line.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/examples/point.c",
+		"/home/roman/Sources/plot-cv/CMakeLists.txt",
+		"/home/roman/Sources/plot-cv/lib/xml/util.js",
+		"/home/roman/Sources/plot-cv/lib/dom/preactComponent.js",
+		"/home/roman/Sources/plot-cv/test-parse.js",
+		"/home/roman/Sources/plot-cv/components.js",
+		"/home/roman/Sources/plot-cv/lib/deep.js",
+		"/home/roman/Sources/plot-cv/lib/dom/css.js",
+		"/home/roman/Sources/plot-cv/style.css",
+		"/home/roman/Sources/plot-cv/lib/xml/xpath.js",
+		"/home/roman/Sources/plot-cv/lib/dom/element.js",
+		"/home/roman/Sources/plot-cv/lib/geom/rect.js",
+		"/home/roman/Dokumente/Sources/js-delaunay/delaunay-10k/nvm.sh",
+		"/home/roman/.nvm/nvm.sh",
+		"/home/roman/Downloads/08cd6e8b438ee87714cf45acb0271201eeedde34.dlc",
+		"/home/roman/Sources/plot-cv/rect.es",
+		"/home/roman/Sources/plot-cv/server.js",
+		"/home/roman/Sources/plot-cv/lib/ecmascript/printer.js",
 		"/home/roman/Sources/plot-cv/lib/json/path.js",
 		"/home/roman/Dokumente/Sources/js-color/convert-colors/src/lab-ciede.js",
-		"/home/roman/Sources/plot-cv/lib/ecmascript/parser.js",
 		"/home/roman/Dokumente/Sources/js-color/convert-colors/src/rgb-contrast.js",
-		"/home/roman/Sources/plot-cv/lib/deep.js",
-		"/home/roman/Sources/plot-cv/tamper.js",
 		"/home/roman/Dokumente/Sources/js-color/convert-colors/src/rgb-contrast.js$",
-		"/home/roman/Sources/plot-cv/lib/ecmascript/environment.js",
 		"/home/roman/Sources/plot-cv/test-xml.js",
 		"/home/roman/Dokumente/Sources/js-color/colornary/src/conversions/hsl.js",
 		"/home/roman/Dokumente/Sources/js-color/convert-colors/src/index.js",
@@ -260,10 +368,7 @@
 		"/home/roman/.config/sublime-text-3/Packages/Babel/Next Roman 4.tmTheme",
 		"/home/roman/Sources/plot-cv/lib/eagle/element.js",
 		"/home/roman/Dokumente/Sources/musl/src/malloc/mallocng/m",
-		"/home/roman/Sources/plot-cv/CMakeLists.txt",
-		"/home/roman/Sources/plot-cv/lib/dom/element.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/Sources/plot-cv/quickjs/CMakeLists.txt",
 		"/home/roman/Dokumente/Sources/plot-cv/.eslintrc.cjs",
 		"/home/roman/Sources/plot-cv/highgui-viewer.cmake",
 		"/home/roman/Dokumente/Sources/plot-cv/cmake.log",
@@ -272,7 +377,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/CMakeLists.txt",
 		"/home/roman/Sources/plot-cv/test-color.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/svgRenderer.js",
-		"/home/roman/Sources/plot-cv/main.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/boardRenderer.js",
 		"/home/roman/Sources/plot-cv/lib/trkl.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/renderUtils.js",
@@ -292,12 +396,10 @@
 		"/home/roman/Sources/plot-cv/test-voronoi.js",
 		"/home/roman/Sources/plot-cv/test-renderer.js",
 		"/home/roman/Sources/plot-cv/lib/container/sortedMap.js",
-		"/home/roman/Sources/plot-cv/components.js",
 		"/home/roman/Sources/plot-cv/lib/ecmascript.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/schematicRenderer.js",
 		"/home/roman/Sources/plot-cv/lib/geom/transformation.js",
 		"/home/roman/Sources/plot-cv/lib/log.js",
-		"/home/roman/Sources/plot-cv/lib/dom/preactComponent.js",
 		"/home/roman/Dokumente/Sources/plot-cv/create-tamper.js",
 		"/home/roman/Dokumente/Sources/plot-cv/resolve-imports.js",
 		"/home/roman/Dokumente/Sources/plot-cv/server.js",
@@ -323,56 +425,21 @@
 		"/home/roman/Dokumente/Sources/plot-cv/test-util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-xml.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-voronoi.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-sourcemap.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-attributes.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-description.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/grep",
-		"/home/roman/Dokumente/Sources/plot-cv/const filesystem",
-		"/home/roman/Dokumente/Sources/plot-cv/babel.js",
-		"/home/roman/Dokumente/Sources/plot-cv/b.js",
-		"/home/roman/Dokumente/Sources/plot-cv/buffer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/components.js",
-		"/home/roman/Dokumente/Sources/plot-cv/dev-server.js",
-		"/home/roman/Dokumente/Sources/plot-cv/events.js",
-		"/home/roman/Dokumente/Sources/plot-cv/find.js",
-		"/home/roman/Dokumente/Sources/plot-cv/github-results.js",
-		"/home/roman/Dokumente/Sources/plot-cv/HoerMalWerDaHaemmert.js",
-		"/home/roman/Dokumente/Sources/plot-cv/ini-grammar.js",
-		"/home/roman/Dokumente/Sources/plot-cv/inspect.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib.js",
-		"/home/roman/Dokumente/Sources/plot-cv/list-proxies.js",
-		"/home/roman/Dokumente/Sources/plot-cv/main.js",
-		"/home/roman/Dokumente/Sources/plot-cv/message.js",
-		"/home/roman/Dokumente/Sources/plot-cv/new.js",
-		"/home/roman/Dokumente/Sources/plot-cv/next.config.js",
-		"/home/roman/Dokumente/Sources/plot-cv/portal.js",
-		"/home/roman/Dokumente/Sources/plot-cv/resolved.js",
-		"/home/roman/Dokumente/Sources/plot-cv/safe-buffer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/slots.js",
-		"/home/roman/Dokumente/Sources/plot-cv/stylelint.config.js",
-		"/home/roman/Dokumente/Sources/plot-cv/tamper.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-alea.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-antlr.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-autoplacer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-cli.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-clipper.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-color.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-date.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-export.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-expr.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-filesystem.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-geom.js"
+		"/home/roman/Dokumente/Sources/plot-cv/test-sourcemap.js"
 	],
 	"find":
 	{
-		"height": 43.0
+		"height": 44.0
 	},
 	"find_in_files":
 	{
-		"height": 143.0,
+		"height": 144.0,
 		"where_history":
 		[
+			"/home/roman/Sources/plot-cv,*.js,CMakeLists.txt,-*/node_modules/*,/home/roman/Sources/plot-cv/quickjs,*.c,*.h",
+			"/home/roman/Sources/plot-cv,*.js,CMakeLists.txt,-*/node_modules/*",
+			"/home/roman/Sources/plot-cv,*.js,CMakeLists.txt",
+			"/home/roman/Sources/plot-cv/lib,*.js,CMakeLists.txt",
 			"/home/roman/Sources/plot-cv,*.js,CMakeLists.txt",
 			"/home/roman/Sources/plot-cv,*.js",
 			"/home/roman/Sources/plot-cv/lib",
@@ -381,137 +448,137 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": true,
+		"case_sensitive": false,
 		"find_history":
 		[
-			"getFromPath\\(",
-			"getFromPath =",
-			"getFrom[^ ]*\\(",
-			"getFrom[^ ]\\(",
-			"getFrom",
-			"getFromPath\\(",
-			"getFromPa",
-			"ery",
-			"getFromValue\\(",
-			"getFromValue",
-			"getFromValue\\(",
-			"getFromValue",
-			"\\.relpath",
-			"removeFile\\(",
-			"processed",
-			"processed ",
-			"log.*remove",
-			"remove",
-			"imports:",
-			"Util.define",
-			"recurse",
-			"o600",
-			"o4777",
-			"04777",
-			"new estree\\.",
-			"main Ex",
-			"export defa",
-			"estree",
-			"custom",
-			"\\.create",
-			"custom",
-			"function.*main",
-			"main\\(",
-			"let.*message.*err",
-			"message.*err",
-			"Exception:",
-			"\\.expectIdentif",
-			"parseLef",
-			"\\.expectIdentif",
-			"expectIdentif",
-			"Expecting <",
-			"parseLeft",
-			"custom",
-			"imports.*\\.\\.\\.",
-			"custom",
-			"log.*deep.set",
-			"forEach",
-			"log.*flat",
-			"log.*deep",
-			"alter:",
-			"this.estree\\.",
-			"estree\\.Ide",
-			"abspath",
-			"recurseFile",
-			"importNode:",
-			"log.*getFrom.* crea",
-			"log.*getFrom",
-			"getFromPat",
-			"log.*t\\(",
-			"path,",
-			"node,",
-			"node,$",
-			"getBindings",
-			"getImport\\(",
-			"getImport",
-			"log..get",
-			"log.*From",
-			"Util.toString\\(",
-			"toString\\(",
-			"console.lo\t",
-			"console.lo",
-			" { ...opts,colors: true,multiline: false, newline: '', quote: \"'\" }",
-			"quote",
-			"colon",
-			"toString\\(",
-			"toString",
-			"quote",
-			"toString =",
-			"replace.*\\\\n",
-			"transformPath",
-			"type",
-			"define\\(",
-			"cwd =",
-			";\n",
-			"resolve\\(",
-			"solute",
-			"solute\\(",
-			" absolute",
-			"resolve",
-			"realpath",
-			"resolve",
-			"^\\s*isAbs",
-			" isAbs",
-			"isAbs",
-			"^   *[^ ]*: .* {",
-			"^   *[^ ]*\\(.* {",
-			"^  [^ ]*\\(.* {",
-			"^\\s*[^ ]*\\(.* {",
-			"^\\s*[^ ]*\\(",
-			"verify",
-			"check",
-			"file",
-			"ES6Env.",
-			"S6Env.",
-			"cwd",
-			"\\(cwd,",
-			"cwd",
-			"let cwd",
-			"cwd",
-			"Position.*toStr",
-			"Symbol.for.*custom",
-			"colors",
-			"position.toString\\(",
-			"position.toStr",
-			"toString\\([^)]",
-			"(import|require)/i",
-			"obj.*ast",
-			"code",
-			"type =",
-			"getFromValue",
-			"throw",
-			"GenerateFlatMap",
-			"getImport",
-			"path, ",
-			"let path",
-			"let path ",
-			"GenerateFlatMap",
-			"create"
+			"zoomLog",
+			"54",
+			"});",
+			"'yes'",
+			"requestContent",
+			"columnWidths",
+			"LinesToPath",
+			"getArgs",
+			"name",
+			"indexes",
+			"searchPath",
+			"flat ",
+			"js_rect_get_xywh",
+			"js_mat_vector_get",
+			"4",
+			"JSMatSizeData dim",
+			" m->rows",
+			"js_mat_get_wh",
+			"get_wh",
+			"uint32_t",
+			"js_mat_get_wh",
+			"JS_ToUint32",
+			"js_mat_get_vector<([^>]*)>",
+			"DataType",
+			"uint8",
+			"mat_get_vec",
+			"js_mat_get_wh",
+			"js_mat_get",
+			"IsUndef",
+			"finalizer",
+			"rowRange",
+			"js_mat_set",
+			"for.*of",
+			"js_mat_create_vec",
+			"js_iterator.*proto",
+			"js_iterator.*class",
+			"js_iterator_",
+			"js_iterator_proto_funcs",
+			"ctx->iterator_proto",
+			"js_iterator_proto_funcs",
+			"iterator_proto_funcs",
+			"\"\\[Symbol.iterator\\]\"",
+			"\"keys\"",
+			"keys\"",
+			"ITERATOR.*DEF",
+			"NewObject",
+			"mat_proto",
+			"JS_GetIterator\\(",
+			"JS_GetIterator",
+			"is not itera",
+			"JS_SetOpaque",
+			"js_mat_iterator_proto_funcs",
+			"\"next\"",
+			"for_of_start",
+			"is not iterable",
+			"js_array_iterator_next",
+			"JS_ITERATOR_NEXT_DEF",
+			"js_mat_iterator_next",
+			"JS_DefinePropertyValueUint32",
+			"JS_DefineProperty",
+			"  ",
+			"js_create_array\\(",
+			"js_create_array",
+			"js_array_iterator_next\\(",
+			"^js_array",
+			"^js.*_next\\(",
+			"_next\\(",
+			"JS_NewObject\\(",
+			"Symbol.iterator",
+			"DEF_ALIAS.*Symbol",
+			"DEF_ALIAS",
+			"JS_FreeValue\\([^c]",
+			"JS_FreeValue...*ctx",
+			"JS_FreeValue.*ctx",
+			"JS_FreeValue.*rt",
+			"JS_FreeValue.*ctx",
+			"JS_FreeValue",
+			"js_mat.*class_id",
+			"js_mat_iterator_class_id",
+			"^JS_NewObjectProto",
+			"^JS_ToObject",
+			"= FALSE",
+			"define.*FALSE",
+			"def.*FALSE",
+			"JS_GetPropertyStr",
+			"js_get_length32",
+			"^js_get_length32",
+			"js_get_length32",
+			"JS_VALUE_GET_OBJ",
+			"JSClassDef",
+			"^JSClassDef",
+			"JSClassDef",
+			"JS_NewClass",
+			"JS_CLASS_ARRAY_ITERATOR",
+			"Class.*array.Iterator",
+			"Class.*Iterator",
+			"JS_NewClass",
+			"JS_NewClass\\(",
+			"JS_NewClass",
+			"JS_.*ARRAY.*ITERATOR",
+			"JSArrayIteratorData",
+			"mat.*iterator",
+			"JS_CLASS_ARRAY_ITERATOR\\]",
+			"JS_CLASS_ARRAY_ITERATOR",
+			"js_array_iterator_proto_funcs",
+			"js_create_array_iterator",
+			"JS_CLASS_STRING_ITERATOR",
+			"js_create_array_iterator",
+			"JS_ITERATOR_KIND_KEY",
+			"KIND",
+			"kind =",
+			"JSIteratorKindEnum",
+			"JSArrayIteratorData",
+			"js_create_array_iterator",
+			"Symbol.iterator",
+			"iterator",
+			"mat_wrap",
+			"ref_count",
+			"ref_count--",
+			"js_mat_finalizer",
+			"js_mat_wrap",
+			"JS_DupValue",
+			"Ref",
+			"mat_wrap",
+			"js_mat_wrap",
+			"New[^ ]*int64",
+			"JS_IsNumber",
+			"point_data"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -519,6 +586,21 @@
 		"regex": true,
 		"replace_history":
 		[
+			"js_mat_vector<\\1>::get",
+			"JS_PROP_ENUMERABLE",
+			"JS_DefinePropertyValueStr",
+			"JS_NewUint32",
+			"cv::Mat* m = &js_mat_data(ctx, this_val)->mat",
+			"cv::Mat* \\1 = js_mat_data",
+			"Enable dump ",
+			"",
+			"\\1console.debug",
+			"log(",
+			"position",
+			" ",
+			"g",
+			"\\1//\\2",
+			"Util.log('Util.stack:'",
 			"new ",
 			"",
 			"pathTransform",
@@ -570,7 +652,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1559,
+						"buffer_size": 96,
 						"regions":
 						{
 						},
@@ -580,664 +662,74 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Sources/plot-cv/resolve-imports.js",
+							"current_file": "/home/roman/Sources/plot-cv/lib/eagle/common.js",
 							"outline_rename_mode": false,
 							"sublime_recent_sort_is_transient": false,
 							"symkeys":
 							[
 								[
-									905,
-									914
+									842,
+									866
 								],
 								[
-									939,
-									958
+									1002,
+									1018
 								],
 								[
-									1036,
-									1046
+									1431,
+									1437
 								],
 								[
-									1077,
-									1086
+									1462,
+									1478
 								],
 								[
-									1165,
-									1171
+									1878,
+									1884
 								],
 								[
-									1205,
-									1210
+									1911,
+									1954
 								],
 								[
-									1261,
-									1277
+									1965,
+									1983
 								],
 								[
-									1315,
-									1338
+									2530,
+									2551
 								],
 								[
-									1500,
-									1515
+									2763,
+									2783
 								],
 								[
-									1540,
-									1558
+									3561,
+									3580
 								],
 								[
-									1672,
-									1677
+									3652,
+									3671
 								],
 								[
-									2172,
-									2179
-								],
-								[
-									2216,
-									2223
-								],
-								[
-									2248,
-									2256
-								],
-								[
-									2281,
-									2287
-								],
-								[
-									2619,
-									2625
-								],
-								[
-									3005,
-									3039
-								],
-								[
-									3278,
-									3290
-								],
-								[
-									3368,
-									3374
-								],
-								[
-									3413,
-									3419
-								],
-								[
-									3704,
-									3723
-								],
-								[
-									4139,
-									4145
-								],
-								[
-									4171,
-									4177
-								],
-								[
-									4211,
-									4217
-								],
-								[
-									4270,
-									4281
-								],
-								[
-									4330,
-									4336
-								],
-								[
-									4426,
-									4432
-								],
-								[
-									4561,
-									4571
-								],
-								[
-									4929,
-									4935
-								],
-								[
-									4976,
-									4987
-								],
-								[
-									5040,
-									5051
-								],
-								[
-									5390,
-									5405
-								],
-								[
-									5547,
-									5560
-								],
-								[
-									5789,
-									5803
-								],
-								[
-									5896,
-									5906
-								],
-								[
-									6070,
-									6077
-								],
-								[
-									6141,
-									6156
-								],
-								[
-									6364,
-									6374
-								],
-								[
-									6415,
-									6425
-								],
-								[
-									6720,
-									6726
-								],
-								[
-									7394,
-									7409
-								],
-								[
-									7735,
-									7742
-								],
-								[
-									7786,
-									7792
-								],
-								[
-									7884,
-									7894
-								],
-								[
-									7980,
-									7986
-								],
-								[
-									8014,
-									8025
-								],
-								[
-									8397,
-									8421
-								],
-								[
-									8450,
-									8460
-								],
-								[
-									8480,
-									8523
-								],
-								[
-									8565,
-									8583
-								],
-								[
-									8630,
-									8679
-								],
-								[
-									8771,
-									8780
-								],
-								[
-									8796,
-									8811
-								],
-								[
-									8881,
-									8910
-								],
-								[
-									9110,
-									9153
-								],
-								[
-									9164,
-									9190
-								],
-								[
-									9240,
-									9253
-								],
-								[
-									9285,
-									9301
-								],
-								[
-									9333,
-									9347
-								],
-								[
-									9386,
-									9406
-								],
-								[
-									9548,
-									9628
-								],
-								[
-									9721,
-									9734
-								],
-								[
-									9770,
-									9783
-								],
-								[
-									9997,
-									10025
-								],
-								[
-									10624,
-									10632
-								],
-								[
-									10906,
-									10917
-								],
-								[
-									11618,
-									11627
-								],
-								[
-									11735,
-									11746
-								],
-								[
-									11813,
-									11840
-								],
-								[
-									11937,
-									11976
-								],
-								[
-									12500,
-									12511
-								],
-								[
-									12978,
-									13001
-								],
-								[
-									13067,
-									13094
-								],
-								[
-									13137,
-									13164
-								],
-								[
-									13475,
-									13491
-								],
-								[
-									13684,
-									13701
-								],
-								[
-									13759,
-									13788
-								],
-								[
-									13867,
-									13895
-								],
-								[
-									13941,
-									13972
-								],
-								[
-									14018,
-									14049
-								],
-								[
-									14164,
-									14184
-								],
-								[
-									14811,
-									14828
-								],
-								[
-									14902,
-									14925
-								],
-								[
-									15550,
-									15577
-								],
-								[
-									16311,
-									16330
-								],
-								[
-									16429,
-									16438
-								],
-								[
-									16459,
-									16478
-								],
-								[
-									16524,
-									16531
-								],
-								[
-									16860,
-									16871
-								],
-								[
-									16984,
-									16995
-								],
-								[
-									17114,
-									17118
-								],
-								[
-									17320,
-									17346
-								],
-								[
-									17653,
-									17682
-								],
-								[
-									17895,
-									17926
-								],
-								[
-									18301,
-									18308
-								],
-								[
-									18370,
-									18390
-								],
-								[
-									19281,
-									19289
-								],
-								[
-									19397,
-									19421
-								],
-								[
-									19498,
-									19507
-								],
-								[
-									19710,
-									19717
-								],
-								[
-									20148,
-									20161
-								],
-								[
-									20466,
-									20479
-								],
-								[
-									20764,
-									20779
-								],
-								[
-									20984,
-									20992
-								],
-								[
-									21215,
-									21239
-								],
-								[
-									21375,
-									21381
-								],
-								[
-									21421,
-									21434
-								],
-								[
-									21706,
-									21716
-								],
-								[
-									21772,
-									21789
-								],
-								[
-									22256,
-									22280
-								],
-								[
-									22657,
-									22662
-								],
-								[
-									22715,
-									22732
-								],
-								[
-									22757,
-									22781
-								],
-								[
-									22914,
-									22919
-								],
-								[
-									23094,
-									23109
-								],
-								[
-									23332,
-									23344
-								],
-								[
-									23484,
-									23504
-								],
-								[
-									23621,
-									23627
-								],
-								[
-									24100,
-									24132
-								],
-								[
-									24162,
-									24171
-								],
-								[
-									24182,
-									24191
-								],
-								[
-									24258,
-									24311
-								],
-								[
-									24362,
-									24378
-								],
-								[
-									25078,
-									25104
-								],
-								[
-									25207,
-									25235
-								],
-								[
-									26189,
-									26239
-								],
-								[
-									27273,
-									27343
-								],
-								[
-									27606,
-									27636
-								],
-								[
-									27762,
-									27776
-								],
-								[
-									28083,
-									28109
+									3733,
+									3775
 								]
 							],
 							"symlist":
 							[
-								"ES6Module",
-								"static create(file)",
-								"toString()",
-								"valueOf()",
-								"ES6Env",
-								"() =>",
-								"static get cwd()",
-								"static pathTransform(p)",
-								"ES6ImportExport",
-								"static create(obj)",
-								"() =>",
-								"(re) =>",
-								"(re) =>",
-								"([m]) =>",
-								"(m) =>",
-								"(p) =>",
-								"ColorIf",
-								" function ()",
-								"(n) =>",
-								"(n) =>",
-								"(acc, [id, ref]) =>",
-								"(p) =>",
-								"(p) =>",
-								"(n) =>",
-								"([p, n]) =>",
-								"(p) =>",
-								"(a) =>",
-								" (p, i) =>",
-								"(n) =>",
-								"([p, c]) =>",
-								"(acc, n) =>",
-								"statement(path)",
-								"get relpath()",
-								"get fromBase()",
-								"get from()",
-								" (v) =>",
-								"set from(value)",
-								"toSource()",
-								"get code()",
-								"(p) =>",
-								"ES6ImportExport",
-								" (x) =>",
-								"(f) =>",
-								"toString()",
-								"(p) =>",
-								"([k, v]) =>",
-								"PrintCode",
-								" (node) =>",
-								"PrintObject",
-								"([prop, value]) =>",
-								"PrefixRemover",
-								" (arg) =>",
-								"(acc, re, i) =>",
-								"dumpFile",
-								"function printAst(ast, comments, printer",
-								"({ indent: 4 }, comments))",
-								"id: (text)",
-								"punct: (text)",
-								"str: (text)",
-								"dumpNode",
-								"GenerateFlatMap",
-								" (n, p) =>",
-								" (p, n) =>",
-								"async main",
-								"(arg) =>",
-								"(acc, p) =>",
-								"(file) =>",
-								"([k, v]) =>",
-								"  removeFile",
-								"  processFile",
-								"(acc,it) =>",
-								"getBase",
-								"getRelative",
-								"getFile",
-								"([key, node]) =>",
-								"([path, node]) =>",
-								"isRequire",
-								"isImport",
-								"isES6Export",
-								"isCJSExport",
-								"getImport",
-								"([path, node]) =>",
-								"AddValue",
-								"getFromValue",
-								" (n, p) =>",
-								"(ctor) =>",
-								" (n, p) =>",
-								" (k) =>",
-								"([p, n]) =>",
-								"([p, n]) =>",
-								"n =>",
-								"getFrom",
-								"getFromBase",
-								"getFromPath",
-								"(it) =>",
-								"([path, node], i) =>",
-								"(imp) =>",
-								"({ file, ...module }) =>",
-								"(node) =>",
-								" (p) =>",
-								"(imp, idx) =>",
-								"([i, imp]) =>",
-								"([idx, imp]) =>",
-								"(imp) =>",
-								"({ file, ...module }) =>",
-								"(f) =>",
-								"(imp, idx) =>",
-								"(entry) =>",
-								"([path, node]) =>",
-								"parseFile",
-								"() =>",
-								" (node) =>",
-								" (path, value) =>",
-								"map()",
-								"(key, value) =>",
-								"function* ()",
-								"finish",
-								"(s) =>",
-								"getBindings",
-								"(node) =>",
-								"(node) =>",
-								"makeSearchPath",
-								"addPath",
-								"checkExists",
-								"findModule",
-								"searchModuleInPath",
-								"removeStatements",
-								"getDeclarations",
-								"(acc, decl) =>",
-								"makeNames"
+								"dingbatCode",
+								"m",
+								"(c) =>",
+								"m",
+								"(c) =>",
+								"dump",
+								"isElement",
+								"parseArgs",
+								".predicate",
+								".predicate",
+								".predicate",
+								"traverse"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -1245,30 +737,30 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 9,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 1,
+			"selected": 8,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "lib/ecmascript/parser.js",
+					"file": "main.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 69177,
+						"buffer_size": 58733,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								19202,
-								19202
+								55196,
+								55196
 							]
 						],
 						"settings":
@@ -1278,27 +770,27 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 13283.0,
+						"translation.y": 34594.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "resolve-imports.js",
+					"file": "lib/color/rgba.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 28232,
+						"buffer_size": 21264,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								28232,
-								28232
+								6901,
+								6901
 							]
 						],
 						"settings":
@@ -1308,27 +800,27 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 5282.0,
+						"translation.y": 3618.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "lib/ecmascript/estree.js",
+					"file": "lib/color/hsla.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 14445,
+						"buffer_size": 8525,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								14433,
-								14433
+								4055,
+								4055
 							]
 						],
 						"settings":
@@ -1338,27 +830,252 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 13364.0,
+						"translation.y": 2650.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "lib/geom/rect.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 13823,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								11064,
+								11064
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 8172.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "lib/util.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 130292,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								20608,
+								20608
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 14706.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "lib/eagle/renderer.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1234,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1191,
+								1191
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 63.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 3,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "lib/util.js",
+					"buffer": 7,
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 129482,
+						"buffer_size": 7063,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										345,
+										356
+									],
+									[
+										761,
+										772
+									],
+									[
+										1040,
+										1051
+									],
+									[
+										1263,
+										1274
+									],
+									[
+										1730,
+										1741
+									],
+									[
+										2063,
+										2074
+									],
+									[
+										2480,
+										2492
+									],
+									[
+										2708,
+										2720
+									],
+									[
+										3079,
+										3091
+									],
+									[
+										3324,
+										3336
+									],
+									[
+										3717,
+										3729
+									],
+									[
+										3896,
+										3908
+									],
+									[
+										4260,
+										4272
+									],
+									[
+										4381,
+										4393
+									],
+									[
+										4793,
+										4805
+									],
+									[
+										5021,
+										5033
+									],
+									[
+										5356,
+										5368
+									],
+									[
+										5601,
+										5613
+									],
+									[
+										5960,
+										5972
+									],
+									[
+										6146,
+										6158
+									],
+									[
+										6487,
+										6499
+									],
+									[
+										6680,
+										6692
+									],
+									[
+										6809,
+										6821
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								4264,
+								4264
+							]
+						],
+						"settings":
+						{
+							"detect_indentation": false,
+							"line_numbers": false,
+							"output_tag": 3,
+							"result_base_dir": "",
+							"result_file_regex": "^([^ \t].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1316.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "lib/eagle/boardRenderer.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11193,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								129399,
-								129399
+								1267,
+								1267
 							]
 						],
 						"settings":
@@ -1368,10 +1085,40 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 93862.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "lib/eagle/common.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4222,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1419,
+								1419
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 396.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -1379,11 +1126,11 @@
 	],
 	"incremental_find":
 	{
-		"height": 30.0
+		"height": 44.0
 	},
 	"input":
 	{
-		"height": 47.0
+		"height": 54.0
 	},
 	"layout":
 	{
@@ -1433,7 +1180,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 77.0
+		"height": 79.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1443,24 +1190,252 @@
 		"selected_items":
 		[
 			[
-				"resol",
-				"resolve-imports.js"
-			],
-			[
-				"server",
-				"server.js"
-			],
-			[
-				"parser",
-				"lib/ecmascript/parser.js"
+				"rect.js",
+				"lib/geom/rect.js"
 			],
 			[
 				"util",
 				"lib/util.js"
 			],
 			[
+				"wire",
+				"lib/eagle/components/wire.js"
+			],
+			[
+				"size",
+				"lib/geom/size.js"
+			],
+			[
+				"point",
+				"lib/geom/point.js"
+			],
+			[
+				"geom",
+				"lib/geom.js"
+			],
+			[
+				"main",
+				"main.js"
+			],
+			[
+				"resol",
+				"resolve-imports.js"
+			],
+			[
+				"resolve-impo",
+				"resolve-imports.js"
+			],
+			[
+				"js_rect",
+				"src/js_rect.cpp"
+			],
+			[
+				"jsbin",
+				"src/jsbindings.h"
+			],
+			[
+				"jsbind",
+				"src/jsbindings.h"
+			],
+			[
+				"quickjs.h",
+				"quickjs/quickjs.h"
+			],
+			[
+				"quickjs.c",
+				"quickjs/quickjs.c"
+			],
+			[
+				"test-qui",
+				"test-quickjs.js"
+			],
+			[
+				"cutils.h",
+				"quickjs/cutils.h"
+			],
+			[
+				"js_mat",
+				"src/js_mat.cpp"
+			],
+			[
+				"js_cont",
+				"src/js_contour.cpp"
+			],
+			[
+				"js_point",
+				"src/js_point.cpp"
+			],
+			[
+				"js_ma",
+				"src/js_mat.cpp"
+			],
+			[
+				"js_size",
+				"src/js_size.cpp"
+			],
+			[
+				"atom.h",
+				"quickjs/quickjs-atom.h"
+			],
+			[
+				"quickjs",
+				"quickjs.c"
+			],
+			[
+				"js_con",
+				"src/js_contour.cpp"
+			],
+			[
+				"js_",
+				"src/js_mat.cpp"
+			],
+			[
+				"js_poin",
+				"src/js_point.cpp"
+			],
+			[
+				"inspect.",
+				"inspect.js"
+			],
+			[
+				"point.c",
+				"quickjs/examples/point.c"
+			],
+			[
+				"list.h",
+				"quickjs/list.h"
+			],
+			[
+				"cmakelists",
+				"quickjs/CMakeLists.txt"
+			],
+			[
+				"mat.cpp",
+				"src/js_mat.cpp"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"filesystem",
+				"lib/filesystem.js"
+			],
+			[
+				"CMakeLists",
+				"CMakeLists.txt"
+			],
+			[
+				"cmakelist",
+				"quickjs/CMakeLists.txt"
+			],
+			[
+				"path",
+				"lib/path.js"
+			],
+			[
+				"util.",
+				"lib/util.js"
+			],
+			[
+				"envi",
+				"lib/ecmascript/environment.js"
+			],
+			[
+				"test-lex",
+				"test-lexer.js"
+			],
+			[
+				"enviro",
+				"lib/ecmascript/environment.js"
+			],
+			[
+				"token",
+				"lib/ecmascript/token.js"
+			],
+			[
+				"lexer",
+				"lib/ecmascript/lexer.js"
+			],
+			[
+				"env",
+				"lib/ecmascript/environment.js"
+			],
+			[
+				"test-eval",
+				"test-eval.js"
+			],
+			[
 				"estree",
 				"lib/ecmascript/estree.js"
+			],
+			[
+				"envir",
+				"lib/ecmascript/environment.js"
+			],
+			[
+				"parser",
+				"lib/ecmascript/parser.js"
+			],
+			[
+				"test-eva",
+				"test-eval.js"
+			],
+			[
+				"environ",
+				"lib/ecmascript/environment.js"
+			],
+			[
+				"parser.js",
+				"lib/ecmascript/parser.js"
+			],
+			[
+				"test-par",
+				"test-parse.js"
+			],
+			[
+				"resolve-im",
+				"resolve-imports.js"
+			],
+			[
+				"preactc",
+				"lib/dom/preactComponent.js"
+			],
+			[
+				"deep",
+				"lib/deep.js"
+			],
+			[
+				"filesys",
+				"lib/filesystem.js"
+			],
+			[
+				"css.j",
+				"lib/dom/css.js"
+			],
+			[
+				"style",
+				"style.css"
+			],
+			[
+				"rect",
+				"rect.es"
+			],
+			[
+				"element",
+				"lib/dom/element.js"
+			],
+			[
+				"arser.",
+				"lib/ecmascript/parser.js"
+			],
+			[
+				"resolve",
+				"resolve-imports.js"
+			],
+			[
+				"server",
+				"server.js"
 			],
 			[
 				"resolv",
@@ -1479,24 +1454,8 @@
 				"lib/path.js"
 			],
 			[
-				"lexer",
-				"lib/ecmascript/lexer.js"
-			],
-			[
 				"printer",
 				"lib/ecmascript/printer.js"
-			],
-			[
-				"util.js",
-				"lib/util.js"
-			],
-			[
-				"path",
-				"lib/json/path.js"
-			],
-			[
-				"deep",
-				"lib/deep.js"
 			],
 			[
 				"deep.j",
@@ -1505,10 +1464,6 @@
 			[
 				"path.j",
 				"lib/json/path.js"
-			],
-			[
-				"resolve",
-				"resolve-imports.js"
 			],
 			[
 				"rgba",
@@ -1575,10 +1530,6 @@
 				"lib/eagle/boardRenderer.js"
 			],
 			[
-				"main",
-				"main.js"
-			],
-			[
 				"trkl",
 				"lib/trkl.js"
 			],
@@ -1609,10 +1560,6 @@
 			[
 				"kolorwhe",
 				"lib/KolorWheel.js"
-			],
-			[
-				"util.",
-				"lib/util.js"
 			],
 			[
 				"resolved",
@@ -1703,10 +1650,6 @@
 				"test-repeater.js"
 			],
 			[
-				"resolve-im",
-				"resolve-imports.js"
-			],
-			[
 				"test-jsjs",
 				"test-jsjs.js"
 			],
@@ -1757,102 +1700,6 @@
 			[
 				"matrix.js",
 				"lib/geom/matrix.js"
-			],
-			[
-				"element.js",
-				"lib/dom/element.js"
-			],
-			[
-				"geom",
-				"lib/geom.js"
-			],
-			[
-				"kol",
-				"test-kolorwheel.js"
-			],
-			[
-				"main.j",
-				"main.js"
-			],
-			[
-				"new",
-				"new.js"
-			],
-			[
-				"create",
-				"create-tamper.js"
-			],
-			[
-				"map",
-				"lib/container/multiMap.js"
-			],
-			[
-				"create-",
-				"create-tamper.js"
-			],
-			[
-				"node.js",
-				"lib/eagle/node.js"
-			],
-			[
-				"xpath.js",
-				"lib/xml/xpath.js"
-			],
-			[
-				"lib/util",
-				"lib/util.js"
-			],
-			[
-				"new.",
-				"new.js"
-			],
-			[
-				"list-pr",
-				"list-proxies.js"
-			],
-			[
-				"list-",
-				"list-proxies.js"
-			],
-			[
-				"prettierrc",
-				".prettierrc"
-			],
-			[
-				"prettierr",
-				".prettierrc"
-			],
-			[
-				"eslintrc.js",
-				".eslintrc.js"
-			],
-			[
-				"eslintrc",
-				".eslintrc"
-			],
-			[
-				"list-pro",
-				"list-proxies.js"
-			],
-			[
-				"packa",
-				"package.json"
-			],
-			[
-				"list",
-				"list-proxies.js"
-			],
-			[
-				"proxy",
-				"lib/proxy/proxyClone.js"
-			],
-			[
-				"list-por",
-				"list-proxies.js"
-			],
-			[
-				"list-p",
-				"list-proxies.js"
 			]
 		],
 		"width": 0.0
