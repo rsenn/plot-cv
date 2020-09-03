@@ -1,11 +1,65 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58.91 58.91">
-  <title>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (1.0+r73+1)"
+   height="40"
+   width="40"
+   sodipodi:docname="CNC_Fraesen.svg"
+   id="svg120"
+   version="1.1"
+   viewBox="0 0 40 40">
+  <metadata
+     id="metadata126">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>
+    Element 3
+  </dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs124" />
+  <sodipodi:namedview
+     inkscape:current-layer="svg120"
+     inkscape:window-maximized="1"
+     inkscape:window-y="0"
+     inkscape:window-x="0"
+     inkscape:cy="29.412433"
+     inkscape:cx="29.449997"
+     inkscape:zoom="13.310695"
+     showgrid="false"
+     id="namedview122"
+     inkscape:window-height="980"
+     inkscape:window-width="1918"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <title
+     id="title110">
     Element 3
   </title>
-  <g data-name="Ebene 2">
-    <g data-name="Ebene 1">
-      <path d="M29 47l2.69-2.68V45a2.31 2.31 0 01-2.26 2zM28.22 46.64a2.24 2.24 0 01-1-1.31l4.45-4.45v2.26zM31.71 37.48V39.75l-4.52 4.52V42l4.52-4.52zM22.66 27.75v-3.39h13.59v3.39l-2.27 2.27h-9.05l-2.27-2.27zM23.79 20.96h11.33v2.27H23.79zM38.51 15.3l-1.13 1.13 1.13 1.13v2.27H20.39v-2.27l1.13-1.13-1.13-1.13v-3.4h18.12v3.4zM31.72 34.08v.47l-.01 1.79v.01l-4.52 4.52V38.6l4.53-4.52zM31.25 31.15h.47v1.8l-4.53 4.52v-2.26l4.06-4.06zM27.19 34.09v-2.94h2.94l-2.94 2.94z"/>
-      <path d="M29.45 2.27A27.19 27.19 0 002.27 29.45a27.18 27.18 0 0027.18 27.18 27.18 27.18 0 0027.18-27.18A27.19 27.19 0 0029.45 2.27m0-2.26A29.43 29.43 0 0158.9 29.45 29.45 29.45 0 0129.45 58.9 29.45 29.45 0 010 29.45 29.43 29.43 0 0129.45 0"/>
-    </g>
-  </g>
+  <path
+     style="stroke-width:0.675382;fill:#ffffff"
+     id="path112"
+     d="m 19.69608,31.852958 1.816778,-1.810024 v 0.45926 a 1.5601327,1.5601327 0 0 1 -1.526364,1.350764 z M 19.169282,31.609821 A 1.5128559,1.5128559 0 0 1 18.4939,30.72507 l 3.00545,-3.00545 v 1.526363 z m 2.357083,-6.1865 v 1.533117 l -3.052727,3.052727 V 28.476048 Z M 15.414157,18.851853 V 16.562307 H 24.5926 v 2.289546 l -1.533117,1.533117 h -6.112208 z m 0.763182,-4.585845 h 7.652079 v 1.533118 h -7.652079 z m 9.941625,-3.822663 -0.763182,0.763182 0.763182,0.763182 v 1.533117 H 13.88104 V 11.969709 L 14.644222,11.206527 13.88104,10.443345 V 8.1470463 h 12.237924 z m -4.585845,12.683676 v 0.31743 l -0.0068,1.208934 v 0.0068 l -3.052727,3.052727 V 26.179749 Z M 21.21569,21.148152 h 0.317429 v 1.215688 l -3.059481,3.052727 v -1.526364 z m -2.742052,1.985623 v -1.985623 h 1.985624 z" />
+  <path
+     style="stroke-width:0.675382;fill:#ffffff"
+     id="path114"
+     d="M 20.000002,1.6431165 A 18.36364,18.36364 0 0 0 1.643116,20.000002 18.356886,18.356886 0 0 0 20.000002,38.356888 18.356886,18.356886 0 0 0 38.356887,20.000002 18.36364,18.36364 0 0 0 20.000002,1.6431165 m 0,-1.52636352 A 19.876495,19.876495 0 0 1 39.890005,20.000002 19.890003,19.890003 0 0 1 20.000002,39.890005 19.890003,19.890003 0 0 1 0.10999858,20.000002 19.876495,19.876495 0 0 1 20.000002,0.10999916" />
 </svg>

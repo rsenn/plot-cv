@@ -49,16 +49,15 @@ const removeItem = (arr, item, key = 'ws') => {
 };
 
 const convertToGerber = async (boardFile, opts = {}) => {
-  const { layers = ['Bottom', 'Pads', 'Vias'], format = 'GERBER_RS274X', data, fetch = false } = opts;
+  const { layers = [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'], format = 'GERBER_RS274X', data, fetch = false, front, back } = opts;
   const base = path.basename(boardFile, '.brd');
   const formatToExt = (layers, format) => {
-    if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER')) return 'GBL';
+    if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER')) return front ? 'GTL' : 'GBL';
     if(format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1) return 'txt';
     return 'rs274x';
   };
   const gerberFile = `./tmp/${base}.${formatToExt(layers, format)}`;
   const cmd = `eagle -X -d ${format} -o "${gerberFile}" "${boardFile}" ${layers.join(' ')}`;
-
   console.log(`executing '${cmd}'`);
   const child = exec(cmd, {});
   // do whatever you want with `child` here - it's a ChildProcess instance just
@@ -67,23 +66,53 @@ const convertToGerber = async (boardFile, opts = {}) => {
   child.stdout.on('data', (data) => (output += data));
   child.stderr.on('data', (data) => (output += data));
   const { stdout, stderr, code, signal } = await child;
-
   console.log(`code: ${code}`);
   console.log(`output: ${output}`);
-
   if(code !== 0) throw new Error(output);
-
   if(output) output = output.replace(/\s*\r*\n/g, '\n');
-
   let result = { code, output };
-
   if(fetch || data) result.data = await (await fsPromises.readFile(gerberFile)).toString();
   result.file = gerberFile;
-
   return result;
 };
+const gerberEndpoint = async (req, res) => {
+  const { body } = req;
+  let { board, save, file: filename, raw, ...opts } = body;
+  let result;
+  console.log('gerber request', { board, save, opts });
+  try {
+    result = await convertToGerber(board, opts);
+    if(save) {
+      filename = filename || typeof save == 'string' ? save : null;
+      filename = `tmp/` + filename.replace(/.*\/([^\/])*\.[^\/.]*$/g, '$1');
+      await fsPromises.writeFile(filename, result.data).then((res) => console.log('Wrote file:', res));
+    }
+  } catch(error) {
+    result = { error };
+  }
+  console.log('gerber result', result);
+
+  if(/get/i.test(req.method) || raw) {
+    const { file } = result;
+    res.setHeader('Content-Disposition', `attachment; filename="${path.basename(file)}"`);
+    res.setHeader('Content-Type', 'application/octet-stream');
+    if(result.data) res.send(result.data);
+    else if(result.file && typeof result.file == 'string') {
+      console.log('sendFile', { file });
+      res.sendFile(result.file, { root: process.cwd() });
+    }
+  }
+
+  return;
+
+  res.json(result);
+};
+
+app.get(/^\/gerber/, gerberEndpoint);
+app.post(/^\/gerber/, gerberEndpoint);
 
 const gerberToGcode = async (gerberFile, allOpts = {}) => {
+  console.debug(`gerberToGcode`, gerberFile, allOpts);
   const basename = gerberFile.replace(/.*\//g, '').replace(/\.[^.]*$/, '');
   let { fetch, data, ...opts } = allOpts;
   opts = {
@@ -121,11 +150,26 @@ const gerberToGcode = async (gerberFile, allOpts = {}) => {
 
   //   if(code !== 0) throw new Error(output);
   if(output) output = output.replace(/\s*\r*\n/g, '\n');
-  let result = { code, output, file: gcodeFile };
+  let result = { code, output, cmd, file: gcodeFile };
   if(fetch) result.data = await (await fsPromises.readFile(gcodeFile)).toString();
 
   return result;
 };
+
+let gcodeEndpoint = async (req, res) => {
+  const { body } = req;
+  let { file, ...opts } = body;
+  let result;
+  console.log('gcode', { file, opts });
+  try {
+    result = await gerberToGcode(file, opts);
+  } catch(error) {
+    result = { error };
+  }
+  res.json(result);
+};
+app.post(/^\/gcode/, gcodeEndpoint);
+app.get(/^\/gcode/, gcodeEndpoint);
 
 const ListGithubRepo = async (owner, repo, dir, filter) => {
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/${dir}`;
@@ -378,48 +422,6 @@ app.post(/\/github.*/, async (req, res) => {
   result = await ListGithubRepo(owner, repo, dir, filter && new RegExp(filter, 'g'));
   res.json(FilesURLs(result.map((file) => file.download_url)));
 });
-
-app.post(/^\/gerber/, async (req, res) => {
-  const { body } = req;
-  let { board, save, filename, ...opts } = body;
-
-  let result;
-  console.log('gerber', { board, save, opts });
-
-  try {
-    result = await convertToGerber(board, opts);
-
-    if(save) {
-      filename = filename || typeof save == 'string' ? save : null;
-      filename = `tmp/` + filename.replace(/.*\/([^\/])*\.[^\/.]*$/g, '$1');
-
-      await fsPromises.writeFile(filename, result.data).then((res) => console.log('Wrote file:', res));
-    }
-  } catch(error) {
-    result = { error };
-  }
-
-  res.json(result);
-});
-let gcodeEndpoint = async (req, res) => {
-  const { body } = req;
-  let { file, ...opts } = body;
-
-  let result;
-
-  console.log('gcode', { file, opts });
-
-  try {
-    result = await gerberToGcode(file, opts);
-  } catch(error) {
-    result = { error };
-  }
-
-  res.json(result);
-};
-
-app.post(/^\/gcode/, gcodeEndpoint);
-app.get(/^\/gcode/, gcodeEndpoint);
 
 app.get(/^\/files/, async (req, res) => res.json({ files: await GetFilesList() }));
 app.post(/^\/(files|list).html/, async (req, res) => {

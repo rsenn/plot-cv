@@ -14,7 +14,7 @@
             "*.tmp",
             "*.vcxproj",
             "*.scr",
-            "*.svg","*.json","*.xml",
+             "*.json","*.xml",
             "*.filters",
             "*.tsbuildinfo",
             "*.cjs",

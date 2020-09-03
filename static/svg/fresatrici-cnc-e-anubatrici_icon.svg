@@ -1,6 +1,63 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150">
-  <circle fill="#D8DDDD" cx="75" cy="75" r="75"/>
-  <path fill="none" stroke="#000" stroke-width="1.851" stroke-miterlimit="10" d="M88.3 59.8h-8c-4.3 0-7.8-3.5-7.8-7.8v-7H96v7c.1 4.3-3.4 7.8-7.7 7.8z"/>
-  <path d="M73 88.9v-9.4H53.3v18.7h37.4v-9.3z"/>
-  <path d="M90.7 66.6v-4.9h-4.6zm0 8.5v-5.9l-7.2-7.5h-4.9v1zm-12.1-9.8v6l12.1 12.3v-5.9zm0 8.5v6l5.5 7.2h6zm0 8.5V87h3z"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (1.0+r73+1)"
+   height="40"
+   width="40"
+   sodipodi:docname="fresatrici-cnc-e-anubatrici_icon.svg"
+   id="svg102"
+   version="1.1"
+   viewBox="0 0 40 40">
+  <metadata
+     id="metadata108">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs106" />
+  <sodipodi:namedview
+     inkscape:current-layer="svg102"
+     inkscape:window-maximized="1"
+     inkscape:window-y="0"
+     inkscape:window-x="0"
+     inkscape:cy="75"
+     inkscape:cx="87.038582"
+     inkscape:zoom="5.2241817"
+     showgrid="false"
+     id="namedview104"
+     inkscape:window-height="980"
+     inkscape:window-width="1918"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <path
+     style="stroke:#ffffff"
+     id="path96"
+     d="m 27.990609,13.129828 h -4.847858 c -2.605723,0 -4.726661,-2.120938 -4.726661,-4.726662 V 4.1612902 H 32.656673 V 8.403166 c 0.0606,2.605724 -2.06034,4.726662 -4.666064,4.726662 z"
+     stroke-miterlimit="10"
+     stroke-width="1.12167"
+     stroke="#000000"
+     fill="none" />
+  <path
+     d="m 29.444967,17.250507 v -2.969313 h -2.787519 z m 0,5.150849 v -3.575295 l -4.363072,-4.544867 h -2.969314 v 0.605982 z M 22.112581,16.46273 v 3.635894 l 7.332386,7.453582 V 23.97691 Z m 0,5.15085 v 3.635893 l 3.332903,4.363072 h 3.635894 z m 0,5.150849 v 2.848116 h 1.817947 z m -3.3935,3.999483 V 25.067678 H 6.78123 v 11.331869 h 22.663737 v -5.635635 z"
+     style="stroke-width:0.605982;fill:#ffffff"
+     id="path100" />
 </svg>

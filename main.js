@@ -384,53 +384,60 @@ const GerberLayers = {
 
 const BoardToGerber = async (board = project.name, opts = { fetch: true }) => {
   let proj = GetProject(board);
-  let request = { ...opts, board: proj.name },
+  let request = { ...opts, board: proj.name, raw: true },
     response;
+  let data;
   try {
     response = await FetchURL('/gerber', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request)
-    }).then((r) => r.json());
-    if(response.file) {
-      if(opts.fetch) proj.gerber = response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then((r) => r.text());
-      proj.gerber.file = response.file;
+    }) /*.then((r) => r.json())*/;
+
+    if(Util.isObject(response) && typeof response.text == 'function') {
+      console.debug('BoardToGerber response =', response);
+      let file = response.headers.get('Content-Disposition').replace(/.*"([^"]+)".*/, '$1');
+      response = { file, data: await response.text() };
+    } else if(response.file) {
+      if(opts.fetch) response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then((r) => r.text());
+      // proj.gerber.file = response.file;
     }
-  } catch(err) {
-    response.error = err;
+  } catch(error) {
+    response = { error };
   }
+  console.debug('BoardToGerber response =', response);
+
   return response;
 };
 
-const GerberToGcode = async (gerber = project.name, opts = {}) => {
-  let proj = GetProject(gerber);
-  console.debug('proj.gerber.', proj.gerber);
-  let request = {
-      ...opts,
-      //  gerber: proj.gerber.data,
-      file: proj.gerber.file,
-      fetch: true,
-      /*voronoi: '1', */ 'isolation-width': '1mm'
-    },
-    response;
+const GerberToGcode = async (file, allOpts = {}) => {
+  const { side, ...opts } = allOpts;
+  console.debug('GerberToGcode', file, opts);
+  let request = { ...opts, file, fetch: true, 'isolation-width': '1mm' };
+  let response;
+  if(typeof side == 'string') request[side] = '';
   try {
     response = await FetchURL('/gcode', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request)
     }).then((r) => r.json());
-    if(opts.fetch && response.file) proj.gcode = response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then((r) => r.text());
-  } catch(err) {
-    response.error = err;
+    if(Util.isObject(response) && typeof response.text == 'function') {
+      console.debug('BoardToGerber response =', response);
+      let file = response.headers.get('Content-Disposition').replace(/.*"([^"]+)".*/, '$1');
+      response = { file, data: await response.text() };
+    } else if(opts.fetch && response.file) proj.gcode = response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then((r) => r.text());
+  } catch(error) {
+    response = { error };
   }
   response.opts = opts;
+  console.debug('GerberToGcode response =', response);
   return response;
 };
 
-const GcodeToPolylines = (gcode = project.name, opts = {}) => {
-  const { fill = false, color } = opts;
-  let proj = GetProject(gcode);
-  let gc = Util.filter(parseGcode(project.gcode.data), (g) => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args);
+const GcodeToPolylines = (data, opts = {}) => {
+  const { fill = false, color, side } = opts;
+  let gc = Util.filter(parseGcode(data), (g) => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args);
   let polylines = [];
   let polyline = null;
   let bb = new BBox();
@@ -452,18 +459,23 @@ const GcodeToPolylines = (gcode = project.name, opts = {}) => {
   let ret = { polylines, bbox: bb, palette };
   //console.log('polylines(1):', polylines);
   let remove = new Set();
-  let props = (polyline, i) => ({
-    stroke: color || palette[i],
-    fill: fill ? palette[i].prod(1, 1, 1, 0.5) : 'none'
-  });
+  let props = color
+    ? (polyline, i) => ({
+        fill: fill ? palette[i].prod(1, 1, 1, 0.5) : 'none'
+      })
+    : (polyline, i) => ({
+        stroke: color || palette[i],
+        fill: fill ? palette[i].prod(1, 1, 1, 0.5) : 'none'
+      });
   let grp = SVG.create('g',
     {
       fill: 'none',
-      stroke: 'magenta',
-      'stroke-width': 0.1,
-      transform: ` scale(1,-1) translate(${0},${-bb.y2}) translate(-0.3175,0)  translate(0,-2.54)`
+      class: `gcode ${side} side`,
+      stroke: color,
+      'stroke-width': 0.15,
+      transform: ` translate(-0.3175,0) ` + (side == 'front' ? 'scale(-1,-1)' : 'scale(1,-1)') + ` translate(${0},${-bb.y2})  translate(0,-2.54)`
     },
-    proj.svg
+    project.svg
   );
   let paths = [];
 
@@ -483,10 +495,10 @@ const GcodeToPolylines = (gcode = project.name, opts = {}) => {
         .filter(([n, j, polyline2]) => i !== j && inside.get(polyline2).indexOf(polyline) != -1)
         .sort(([a], [b]) => a - b)
     ]);
-    console.log('insideOf:', insideOf);
+    console.log('GcodeToPolylines insideOf:', insideOf);
     let holes = polylines.map((polyline, i) => new Set());
     insideOf.filter(([i, list]) => list.length == 1).map(([i, list]) => holes[list[0][1]].add(i));
-    console.log('holes:', holes);
+    console.log('GcodeToPolylines holes:', holes);
     let remove = new Set();
     for(let [i, inner] of holes.entries()) {
       let ids = [i, ...inner];
@@ -502,9 +514,9 @@ const GcodeToPolylines = (gcode = project.name, opts = {}) => {
   }
   let ids = polylines.map((pl, i) => i).filter((i) => !remove.has(i));
   let polys = [...ids.map((i) => polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` }, grp, 0.01)), ...paths.map(([i, d]) => ({ ...props(polyline, i), id: `polygon-${polylines.indexOf(polyline)}`, d })).map((p, i) => ['path', p, grp])];
-  console.log('polys:', polys);
+  console.log('GcodeToPolylines polys:', polys.length, { bb, color });
   let svgAttr = Element.attr(project.svg);
-  console.log('svgAttr:', svgAttr);
+  console.log('GcodeToPolylines svgAttr:', svgAttr);
   let elements = polys.map((args) => SVG.create(...args));
   return { ...ret, group: grp, elements };
 };
@@ -1355,21 +1367,36 @@ const AppMain = (window.onload = async () => {
           h(Button, {
             fn: async () => {
               let r;
+
+              project.gerber = {};
+              project.gcode = {};
+
               //console.debug('CAM Button');
-              project.gerber = await BoardToGerber(project);
-              // console.debug('BoardToGerber =', project.gerber);
-              project.gcode = await GerberToGcode(project, { voronoi: 1 });
-              gcode(project.gcode);
-              // console.debug('GerberToGcode =', project.gcode);
+              for(let side of ['back', 'front']) {
+                project.gerber[side] = await BoardToGerber(project, { [side]: true });
+                console.debug('BoardToGerber =', { side }, project.gerber[side]);
+              }
+              for(let side of ['back', 'front']) {
+                project.gcode[side] = await GerberToGcode('tmp/' + project.gerber[side].file, { side, voronoi: 1 });
+                console.debug('GerberToGcode =', { side }, project.gcode[side]);
+                gcode(project.gcode);
+              }
             },
-            image: 'static/svg/CAM.svg'
+            image: 'static/svg/cnc-frezovani.svg'
           })
         ]),
 
         h(Conditional, { signal: gcode }, [
           h(Button, {
             fn: () => {
-              GcodeToPolylines(project, { fill: false, color: 'rgba(255,0,255,100%)' });
+              const colors = {
+                front: 'hsl(300,100%,70%)',
+                back: 'hsl(230,100%,70%)'
+              };
+              for(let side of ['back', 'front']) {
+                console.debug('GcodeToPolylines =', { side }, colors[side], project.gcode[side].file);
+                GcodeToPolylines(project.gcode[side].data, { fill: false, color: colors[side], side });
+              }
             },
             image: 'static/svg/voronoi.svg'
           })

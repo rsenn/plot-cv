@@ -749,7 +749,7 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen, ...props }) => 
       const { currentTarget, target, x, y } = e;
       const element = overlayRef.current;
       const rect = Element.rect(element);
-      const inside = rect.inside({ x, y });
+      const inside = rect && rect.inside({ x, y });
       console.debug('addEventListener mousedown', { rect, inside, x, y, element });
       if(element && open && !inside) {
         isOpen(false);
