@@ -392,8 +392,9 @@ const BoardToGerber = async (board = project.name, opts = { fetch: true }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request)
     }).then((r) => r.json());
-    if(opts.fetch && response.file) {
-      proj.gerber = response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then((r) => r.text());
+    if(response.file) {
+      if(opts.fetch) proj.gerber = response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then((r) => r.text());
+      proj.gerber.file = response.file;
     }
   } catch(err) {
     response.error = err;
@@ -403,9 +404,11 @@ const BoardToGerber = async (board = project.name, opts = { fetch: true }) => {
 
 const GerberToGcode = async (gerber = project.name, opts = {}) => {
   let proj = GetProject(gerber);
+  console.debug('proj.gerber.', proj.gerber);
   let request = {
       ...opts,
-      gerber: proj.gerber.file,
+      //  gerber: proj.gerber.data,
+      file: proj.gerber.file,
       fetch: true,
       /*voronoi: '1', */ 'isolation-width': '1mm'
     },
@@ -1126,7 +1129,8 @@ const AppMain = (window.onload = async () => {
   });
 
   const updateIfChanged = (trkl, newValue, callback) => {
-    const oldValue = trkl();
+    const oldValue = trkl() || [];
+    console.info('updateIfChanged ', { oldValue, newValue });
     if(!Array.prototype.every.call(oldValue, (elem, i) => newValue[i] === elem)) return false;
     trkl(newValue);
     if(typeof callback == 'function') callback(trkl, oldValue, newValue);
@@ -1258,13 +1262,18 @@ const AppMain = (window.onload = async () => {
       {
         className,
         onMouseMove: (e) => {
-          if(e.buttons > 0 && setTo) setVisible(setTo);
+          if(e.buttons & 1 && setTo) setVisible(setTo);
         },
         onMouseUp: (e) => {
           setTo = null;
         },
         onMouseDown: (e) => {
-          setVisible((setTo = element.visible ? 'no' : 'yes'));
+          if(e.buttons & 1) {
+            setVisible((setTo = element.visible ? 'no' : 'yes'));
+            return true;
+          }
+
+          // if(e.buttons & 2)
         }
       }, [
         h('span', {

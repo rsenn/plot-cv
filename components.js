@@ -738,31 +738,49 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen, ...props }) => 
   let [button, overlay] = ReactComponent.toChildArray(children);
 
   const [open, setOpen] = useState(isOpen());
+  const overlayRef = useRef(null);
 
-  isOpen.subscribe((value) => {
-    setOpen(value);
-  });
+  isOpen.subscribe((value) => setOpen(value));
+
   console.log('DropDown open=', { open, Fragment });
+
+  useEffect(() => {
+    let handler = (e) => {
+      const { currentTarget, target, x, y } = e;
+      const element = overlayRef.current;
+      const rect = Element.rect(element);
+      const inside = rect.inside({ x, y });
+      console.debug('addEventListener mousedown', { rect, inside, x, y, element });
+      if(element && open && !inside) {
+        isOpen(false);
+      }
+    };
+    window.addEventListener('mousedown', handler);
+    return () => {
+      window.removeEventListener('mousedown', handler);
+    };
+  });
 
   if(typeof overlay == 'function')
     overlay = overlay({
       ref: (current) => {
         if(current) {
+          console.log('overlay ref:', { current, overlayRef });
           const { base } = current;
+          let element = (overlayRef.current = base.nextElementSibling);
+          console.log('overlay element:', element);
           const button = base.previousElementSibling;
-          const overlay = button.nextElementSibling;
-
           const br = Element.rect(button);
           const bottomLeft = br.toPoints()[3];
-          const or = Element.rect(overlay);
+          const or = Element.rect(element);
           //  const rect = new Rect(bottomLeft.x, bottomLeft.y, or.width, or.height );
 
           const css = bottomLeft.toCSS();
-          Element.setCSS(overlay, css);
+          Element.setCSS(element, css);
 
           //  Element.setRect(base, pos );
 
-          console.log('overlay ref:', base, button, br, bottomLeft, or, css);
+          console.log('overlay ref:', element, button, br, bottomLeft, or, css);
         }
       }
     });

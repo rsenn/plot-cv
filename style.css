@@ -81,6 +81,12 @@ p.description {
 .button.pushed,
 .button-inactive {
 }
+.button.disabled {
+  filter: grayscale() brightness(1.5);
+}
+.button.active:hover {
+  box-shadow: 0.5px 0.5px 5px #ffff20;
+}
 
 .button.pushed {
   transition-timing-function: ease-in-out;
