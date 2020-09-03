@@ -1,5 +1,12 @@
 ///prettier-ignore-ignore-start
-import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
+import {
+  Transformation,
+  Rotation,
+  Translation,
+  Scaling,
+  MatrixTransformation,
+  TransformationList
+} from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
@@ -20,7 +27,14 @@ import deep from './lib/deep.js';
 import Alea from './lib/alea.js';
 import { Cache } from './lib/dom/cache.js';
 import { CacheStorage } from './lib/dom/cacheStorage.js';
-import { gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser   } from './lib/gcode.js';
+import {
+  gcodetogeometry,
+  GcodeObject,
+  gcodeToObject,
+  objectToGcode,
+  parseGcode,
+  GcodeParser
+} from './lib/gcode.js';
 import { Iterator } from './lib/iterator.js';
 import { Functional } from './lib/functional.js';
 import { makeLocalStorage } from './lib/autoStore.js';
@@ -30,17 +44,84 @@ import LogJS from './lib/log.js';
 import { useDimensions } from './useDimensions.js';
 import { toXML, ImmutablePath } from './lib/json.js';
 import { XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';
-import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
+import {
+  RGBA,
+  isRGBA,
+  ImmutableRGBA,
+  HSLA,
+  isHSLA,
+  ImmutableHSLA,
+  ColoredText
+} from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
-import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
-import components, { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, BrowseIcon, CrossHair, FloatingPanel, DropDown, Conditional } from './components.js';
+import React, {
+  h,
+  html,
+  render,
+  Fragment,
+  Component,
+  useState,
+  useLayoutEffect,
+  useRef
+} from './lib/dom/preactComponent.js';
+import components, {
+  Chooser,
+  DynamicLabel,
+  Button,
+  FileList,
+  Panel,
+  SizedAspectRatioBox,
+  TransformedElement,
+  Canvas,
+  ColorWheel,
+  Slider,
+  CrossHair,
+  FloatingPanel,
+  DropDown,
+  Conditional
+} from './components.js';
 import { Message } from './message.js';
 import { WebSocketClient } from './lib/net/websocket-async.js';
-import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
+import {
+  CTORS,
+  ECMAScriptParser,
+  estree,
+  Factory,
+  Lexer,
+  ESNode,
+  Parser,
+  PathReplacer,
+  Printer,
+  Stack,
+  Token
+} from './lib/ecmascript.js';
 
 import KolorWheel from './lib/KolorWheel.js';
-import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
-import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl } from './lib/eagle/renderUtils.js';
+import {
+  PrimitiveComponents,
+  ElementNameToComponent,
+  ElementToComponent
+} from './lib/eagle/components.js';
+import {
+  SVGAlignments,
+  AlignmentAttrs,
+  Alignment,
+  AlignmentAngle,
+  Arc,
+  CalculateArcRadius,
+  ClampAngle,
+  EagleAlignments,
+  HORIZONTAL,
+  HORIZONTAL_VERTICAL,
+  InvertY,
+  LayerAttributes,
+  LinesToPath,
+  MakeCoordTransformer,
+  PolarToCartesian,
+  RotateTransformation,
+  VERTICAL,
+  useTrkl
+} from './lib/eagle/renderUtils.js';
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
@@ -61,6 +142,7 @@ Util.colorCtor = ColoredText;
 const prng = new Alea(1598127218);
 let currentProj = trkl.property(window, 'project');
 let layerList = trkl.property(window, 'layers', { value: [] });
+let gcode = trkl(null);
 
 let open = trkl();
 let showSearch = trkl(true);
@@ -98,7 +180,8 @@ const useSlot = (arr, i) => [() => arr[i], (v) => (arr[i] = v)];
 const trklGetSet = (get, set) => (value) => (value !== undefined ? set(value) : get());
 //const useTrkl = trkl => [() => trkl(), value => trkl(value)];
 
-const classNames = (...args) => args.filter((arg) => typeof arg == 'string' && arg.length > 0).join(' ');
+const classNames = (...args) =>
+  args.filter((arg) => typeof arg == 'string' && arg.length > 0).join(' ');
 
 const MouseEvents = (h) => ({
   onMouseDown: h,
@@ -163,7 +246,9 @@ const svgFactory = lazyInitializer(() => {
 const GeneratePalette = (numColors) => {
   let ret = [];
   let base = new HSLA(Util.randInt(0, 360, prng), 100, 50).toRGBA();
-  let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360], []);
+  let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360],
+    []
+  );
   offsets = offsets.sort((a, b) => a - b);
   //offsets = Util.shuffle(offsets, prng);
   //Util.log('offsets:', offsets);
@@ -254,7 +339,12 @@ DrawSVG.setViewBox = (box) => {
   Element.attr(svgOwner.lastElementChild.firstElementChild, { ...rect.toRect() });
 };
 
-const GetProject = (arg) => (typeof arg == 'number' ? projects()[arg] : typeof arg == 'string' ? projects().find((p) => p.name == arg) : arg);
+const GetProject = (arg) =>
+  typeof arg == 'number'
+    ? projects()[arg]
+    : typeof arg == 'string'
+    ? projects().find((p) => p.name == arg)
+    : arg;
 
 const ListProjects = async function (opts = {}) {
   const { url, descriptions = true, names, filter } = opts;
@@ -282,7 +372,9 @@ const ListProjects = async function (opts = {}) {
   } else {
     response = await ListGithubRepo(url, null, null, '\\.(brd|sch|lbr)$', opts);
     //console.log('response:', response);
-    let fileList = response.map((file, i) => ({ ...file, name: response.at(i) }));
+    let fileList = response.map((file, i) => { let project = { ...file, name: response.at(i) }; 
+
+       return project; });
 
     response = { files: fileList };
   }
@@ -390,7 +482,9 @@ const SaveFile = async (filename, data, contentType) => {
   return result;
 };
 
-const SaveSVG = (window.save = async function save(filename, layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48, 51]) {
+const SaveSVG = (window.save = async function save(filename,
+  layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48, 51]
+) {
   const { doc } = project;
   const { basename, typeName } = doc;
   if(!filename) filename = `${doc.basename}.${doc.typeName}.svg`;
@@ -400,7 +494,8 @@ const SaveSVG = (window.save = async function save(filename, layers = [1, 16, 20
     //console.log('element:', element);
     const layer = element.getAttribute('data-layer');
     let [number, name] = layer.split(/ /);
-    if(number !== undefined && name !== undefined) return layers.indexOf(+number) != -1 || layers.indexOf(name) != -1;
+    if(number !== undefined && name !== undefined)
+      return layers.indexOf(+number) != -1 || layers.indexOf(name) != -1;
     return true;
   };
   let data = ElementToXML(project.svg, predicate);
@@ -448,7 +543,8 @@ const BoardToGerber = async (board = project.name, opts = { fetch: true }) => {
     }).then((r) => r.json());
     //response = JSON.parse(response);
     if(opts.fetch && response.file) {
-      proj.gerber = response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then((r) => r.text());
+      proj.gerber = response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`
+      ).then((r) => r.text());
     }
   } catch(err) {
     response.error = err;
@@ -458,7 +554,12 @@ const BoardToGerber = async (board = project.name, opts = { fetch: true }) => {
 
 const GerberToGcode = async (gerber = project.name, opts = {}) => {
   let proj = GetProject(gerber);
-  let request = { ...opts, gerber: proj.gerber.file, fetch: true, /*voronoi: '1', */ 'isolation-width': '1mm' },
+  let request = {
+      ...opts,
+      gerber: proj.gerber.file,
+      fetch: true,
+      /*voronoi: '1', */ 'isolation-width': '1mm'
+    },
     response;
   try {
     response = await FetchURL('/gcode', {
@@ -467,7 +568,9 @@ const GerberToGcode = async (gerber = project.name, opts = {}) => {
       body: JSON.stringify(request)
     }).then((r) => r.json());
     /// response = JSON.parse(response);
-    if(opts.fetch && response.file) proj.gcode = response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then((r) => r.text());
+    if(opts.fetch && response.file)
+      proj.gcode = response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`
+      ).then((r) => r.text());
     // response.polylines = GcodeToPolylines(proj, request);
   } catch(err) {
     response.error = err;
@@ -479,7 +582,9 @@ const GerberToGcode = async (gerber = project.name, opts = {}) => {
 const GcodeToPolylines = (gcode = project.name, opts = {}) => {
   const { fill = false, color } = opts;
   let proj = GetProject(gcode);
-  let gc = Util.filter(parseGcode(project.gcode.data), (g) => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args);
+  let gc = Util.filter(parseGcode(project.gcode.data),
+    (g) => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args
+  );
   let polylines = [];
   let polyline = null;
   let bb = new BBox();
@@ -501,8 +606,19 @@ const GcodeToPolylines = (gcode = project.name, opts = {}) => {
   let ret = { polylines, bbox: bb, palette };
   //console.log('polylines(1):', polylines);
   let remove = new Set();
-  let props = (polyline, i) => ({ stroke: color || palette[i], fill: fill ? palette[i].prod(1, 1, 1, 0.5) : 'none' });
-  let grp = SVG.create('g', { fill: 'none', stroke: 'magenta', 'stroke-width': 0.1, transform: ` scale(1,-1) translate(${0},${-bb.y2}) translate(-0.3175,0)  translate(0,-2.54)` }, proj.svg);
+  let props = (polyline, i) => ({
+    stroke: color || palette[i],
+    fill: fill ? palette[i].prod(1, 1, 1, 0.5) : 'none'
+  });
+  let grp = SVG.create('g',
+    {
+      fill: 'none',
+      stroke: 'magenta',
+      'stroke-width': 0.1,
+      transform: ` scale(1,-1) translate(${0},${-bb.y2}) translate(-0.3175,0)  translate(0,-2.54)`
+    },
+    proj.svg
+  );
   let paths = [];
 
   if(fill) {
@@ -513,7 +629,12 @@ const GcodeToPolylines = (gcode = project.name, opts = {}) => {
     polylines = polylines.map((pl) => Util.chunkArray(pl, 2).map((pt) => new Point(...pt)));
     //console.log('polylines(4):', polylines);
     polylines = polylines.map((pl) => new Polyline([]).push(...pl));
-    let inside = new Map(polylines.map((polyline2, i) => [polyline2, polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2))]));
+    let inside = new Map(polylines.map((polyline2, i) => [
+        polyline2,
+        polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2)
+        )
+      ])
+    );
     let insideOf = polylines.map((polyline, i) => [
       i,
       polylines
@@ -539,7 +660,17 @@ const GcodeToPolylines = (gcode = project.name, opts = {}) => {
     }
   }
   let ids = polylines.map((pl, i) => i).filter((i) => !remove.has(i));
-  let polys = [...ids.map((i) => polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` }, grp, 0.01)), ...paths.map(([i, d]) => ({ ...props(polyline, i), id: `polygon-${polylines.indexOf(polyline)}`, d })).map((p, i) => ['path', p, grp])];
+  let polys = [
+    ...ids.map((i) =>
+      polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` },
+        grp,
+        0.01
+      )
+    ),
+    ...paths
+      .map(([i, d]) => ({ ...props(polyline, i), id: `polygon-${polylines.indexOf(polyline)}`, d }))
+      .map((p, i) => ['path', p, grp])
+  ];
   //console.log('polys:', polys);
   let elements = polys.map((args) => SVG.create(...args));
   return { ...ret, group: grp, elements };
@@ -596,7 +727,8 @@ const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
 
   return Object.assign(files.map((file, i) => {
       file.toString = () => at(i);
-      if(file.type == 'dir') file.list = async (f = filter) => await ListGithubRepo(at(i), null, null, f, {});
+      if(file.type == 'dir')
+        file.list = async (f = filter) => await ListGithubRepo(at(i), null, null, f, {});
       else {
         let getter = async function () {
           let data = await fetch(at(i), {});
@@ -659,6 +791,8 @@ const ListGithubRepoServer = async (owner, repo, dir, filter) => {
 const LoadDocument = async (project, parentElem) => {
   //console.log('project:', project);
   open(false);
+   gcode(null);
+
   try {
     project.doc = await LoadFile(project);
   } catch(error) {
@@ -679,7 +813,13 @@ const LoadDocument = async (project, parentElem) => {
 
   let component = project.renderer.render(project.doc, null, {});
 
-  setTimeout(() => layerList([...project.doc.layers.list].filter((layer) => layer.elements.size > 0).map((layer) => ({ i: layer.number, name: layer.name, element: layer }))), 250);
+  setTimeout(() =>
+      layerList([...project.doc.layers.list]
+          .filter((layer) => layer.elements.size > 0)
+          .map((layer) => ({ i: layer.number, name: layer.name, element: layer }))
+      ),
+    250
+  );
 
   LogJS.info(`${project.name} rendered.`);
   window.component = project.component = component;
@@ -699,8 +839,10 @@ const LoadDocument = async (project, parentElem) => {
   const Fence = ({ children, style = {}, sizeListener, aspectListener, ...props }) => {
     const [dimensions, setDimensions] = useState(sizeListener());
     const [aspect, setAspect] = useState(aspectListener());
-    if(sizeListener && sizeListener.subscribe) sizeListener.subscribe((value) => setDimensions(value));
-    if(aspectListener && aspectListener.subscribe) aspectListener.subscribe((value) => setAspect(value));
+    if(sizeListener && sizeListener.subscribe)
+      sizeListener.subscribe((value) => setDimensions(value));
+    if(aspectListener && aspectListener.subscribe)
+      aspectListener.subscribe((value) => setAspect(value));
     return h(TransformedElement,
       {
         id: 'fence',
@@ -752,9 +894,23 @@ const LoadDocument = async (project, parentElem) => {
   const [path2component, component2path] = project.renderer.maps.map(Util.mapFunction);
   const { path2obj, obj2path, path2eagle, eagle2path, eagle2obj, obj2eagle } = project.doc.maps;
 
-  const [component2eagle, eagle2component] = [Util.mapAdapter((key, value) => (value === undefined ? path2eagle(component2path(key)) : undefined)), Util.mapAdapter((key, value) => (value === undefined ? path2component(eagle2path(key)) : undefined))];
+  const [component2eagle, eagle2component] = [
+    Util.mapAdapter((key, value) =>
+      value === undefined ? path2eagle(component2path(key)) : undefined
+    ),
+    Util.mapAdapter((key, value) =>
+      value === undefined ? path2component(eagle2path(key)) : undefined
+    )
+  ];
 
-  const [component2dom, dom2component] = [Util.mapAdapter((key, value) => (value === undefined ? eagle2dom(component2eagle(key)) : undefined)), Util.mapAdapter((key, value) => (value === undefined ? eagle2component(dom2eagle(key)) : undefined))];
+  const [component2dom, dom2component] = [
+    Util.mapAdapter((key, value) =>
+      value === undefined ? eagle2dom(component2eagle(key)) : undefined
+    ),
+    Util.mapAdapter((key, value) =>
+      value === undefined ? eagle2component(dom2eagle(key)) : undefined
+    )
+  ];
 
   //path2eagle: path2obj, eagle2path: obj2path
 
@@ -906,8 +1062,12 @@ const GenerateVoronoi = () => {
   console.log('cells:', cells);
 
   let holes = edges.filter((e) => !e.rSite).map(({ lSite, rSite, ...edge }) => new Point(lSite));
-  let rlines = edges.filter((e) => e.rSite).map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
-  let vlines = edges.filter((e) => e.va && e.vb).map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
+  let rlines = edges
+    .filter((e) => e.rSite)
+    .map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
+  let vlines = edges
+    .filter((e) => e.va && e.vb)
+    .map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
   let points2 = vertices.map((v) => new Point(v).round(0.127, 4));
   const add = (arr, ...items) => [...(Util.isArray(arr) ? arr : []), ...items];
 
@@ -920,10 +1080,22 @@ const GenerateVoronoi = () => {
     }
   }*/);
 
-  const lines = [...rlines.map((l) => ['line', { ...l.toObject((t) => t + ''), stroke: '#000', 'stroke-width': 0.01 }]), ...vlines.map((l) => ['line', { ...l.toObject((t) => t + ''), stroke: '#f00', 'stroke-width': 0.01 }])];
+  const lines = [
+    ...rlines.map((l) => [
+      'line',
+      { ...l.toObject((t) => t + ''), stroke: '#000', 'stroke-width': 0.01 }
+    ]),
+    ...vlines.map((l) => [
+      'line',
+      { ...l.toObject((t) => t + ''), stroke: '#f00', 'stroke-width': 0.01 }
+    ])
+  ];
 
   const circles = [
-    ...holes.map((p) => ['circle', { cx: p.x, cy: p.y, r: 0.254, fill: 'none', stroke: '#00f', 'stroke-width': 0.3 }])
+    ...holes.map((p) => [
+      'circle',
+      { cx: p.x, cy: p.y, r: 0.254, fill: 'none', stroke: '#00f', 'stroke-width': 0.3 }
+    ])
 
     /* ...points2.map(p => [
       'circle',
@@ -1062,7 +1234,18 @@ const AppMain = (window.onload = async () => {
   );
   Object.assign(window, { LogJS },
     { Element, devtools, dom, RGBA, HSLA, draw: DrawSVG },
-    { Voronoi, GerberParser, GenerateVoronoi, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GcodeParser },
+    {
+      Voronoi,
+      GerberParser,
+      GenerateVoronoi,
+      gcodetogeometry,
+      GcodeObject,
+      gcodeToObject,
+      objectToGcode,
+      parseGcode,
+      GcodeParser,
+      GcodeParser
+    },
     {
       SVGAlignments,
       AlignmentAttrs,
@@ -1104,7 +1287,10 @@ const AppMain = (window.onload = async () => {
   //window.focusSearch = trkl();
   window.currentSearch = trkl(null);
 
-  window.keystroke = (target) => (key, modifiers = 0) => keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key), target);
+  window.keystroke = (target) => (key, modifiers = 0) =>
+    keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key),
+      target
+    );
 
   window.focusSearch = (state) => {
     const input = currentSearch();
@@ -1159,14 +1345,19 @@ const AppMain = (window.onload = async () => {
         file.name = name;
         file.i = i;
         trkl.bind(file, { data });
-        LogJS.info(`Got file '${name.replace(/.*:\/\//g, '').replace(/raw.githubusercontent.com/, 'github.com') || name.replace(/.*\//g, '')}'`);
+        LogJS.info(`Got file '${
+            name.replace(/.*:\/\//g, '').replace(/raw.githubusercontent.com/, 'github.com') ||
+            name.replace(/.*\//g, '')
+          }'`
+        );
 
         return file;
       }
       File.prototype.toString = function () {
         return this.name;
       };
-      list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i)));
+      list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i))
+      );
       let svgs = list.reduce((acc, file) => {
         if(/\.lbr$/i.test(file.name)) return acc;
         file.svg = `${EagleDocument.baseOf(file.name)}.${EagleDocument.typeOf(file.name)}.svg`;
@@ -1278,7 +1469,13 @@ const AppMain = (window.onload = async () => {
   LogJS.addAppender(class extends LogJS.BaseAppender {
       log(type, time, msg) {
         let d = new Date(time);
-        if(typeof window.pushlog == 'function') window.pushlog([type, Util.isoDate(d).replace(/-/g, ''), d.toLocaleTimeString(navigator.language || 'de'), msg]);
+        if(typeof window.pushlog == 'function')
+          window.pushlog([
+            type,
+            Util.isoDate(d).replace(/-/g, ''),
+            d.toLocaleTimeString(navigator.language || 'de'),
+            msg
+          ]);
       }
     }
   );
@@ -1327,7 +1524,12 @@ const AppMain = (window.onload = async () => {
     for(let [key, value] of Object.entries(values)) lines.push([key, value]);
     return h('table',
       { border: '0', cellpadding: 3, cellspacing: 0, className: 'dumper' },
-      lines.map(([k, v], i) => h('tr', { className: 'watch' }, [h('td', { className: 'name' }, k + ''), h('td', { className: 'value' }, v + '')]))
+      lines.map(([k, v], i) =>
+        h('tr', { className: 'watch' }, [
+          h('td', { className: 'name' }, k + ''),
+          h('td', { className: 'value' }, v + '')
+        ])
+      )
     );
   };
 
@@ -1391,20 +1593,15 @@ const AppMain = (window.onload = async () => {
   React.render(h(SlotProvider, {}, [
       Panel('buttons', [
         h(Button, {
-            caption: BrowseIcon(),
-
+         
+ image: 'static/svg/browse.svg',
             fn: (e) => {
               if(e.type.endsWith('down')) {
                 //console.log('file list push', e);
                 open(!open());
               }
             }
-          },
-          html`
-            <svg height="28" width="28" style=${{ height: 'auto', position: 'relative', width: '100%' }} viewBox="131 -131 512 512" xmlns="http://www.w3.org/2000/svg">
-              <path d="M131-70.3v390.6h432.4L643 76.2H207.4l-48.8 145.7 33.1-170.2h378V2.9H326.3l-47.2-73.2z" fill="#fff" />
-            </svg>
-          `
+          }
         ),
 
         /* h(Button, {
@@ -1425,26 +1622,50 @@ const AppMain = (window.onload = async () => {
           fn: MakeFitAction(1),
           image: 'static/fit-horizontal.svg'
         }),
-        h(Conditional, { signal: currentProj },
-          h(DropDown, { isOpen: layersDropDown.subscribe((open) => console.log('layers dropdown', { open })) }, [
-            h(Button, {
-              toggle: true,
-              state: layersDropDown,
-              //    fn: (e,state) => /*(e.buttons && e.type.endsWith('down')) &&*/ state && layersDropDown(state) || true,
-              image: 'static/svg/layers.svg'
-            }),
-            (props) =>
-              h(Chooser, {
-                  ...props,
-                  className: 'layers',
-                  itemClass: 'layer',
-                  itemComponent: Layer,
-                  items: layerList
-                }, []
-              )
-          ])
-        ),
-        h(Button, { image: 'static/svg/voronoi.svg' }),
+        h(Conditional, { signal: currentProj }, [
+          h(DropDown, {
+              isOpen: layersDropDown.subscribe((open) => console.log('layers dropdown', { open }))
+            }, [
+              h(Button, {
+                toggle: true,
+                state: layersDropDown,
+                //    fn: (e,state) => /*(e.buttons && e.type.endsWith('down')) &&*/ state && layersDropDown(state) || true,
+                image: 'static/svg/layers.svg'
+              }),
+              (props) =>
+                h(Chooser, {
+                    ...props,
+                    className: 'layers',
+                    itemClass: 'layer',
+                    itemComponent: Layer,
+                    items: layerList
+                  }, []
+                )
+            ]
+          ),
+          h(Button, {
+            fn: async () => {
+              let r;
+              console.debug('CAM Button');
+              project.gerber = await BoardToGerber(project);
+
+              console.debug('BoardToGerber =', project.gerber);
+              project.gcode = await GerberToGcode(project, { voronoi: 1 });
+              gcode(project.gcode);
+              console.debug('GerberToGcode =', project.gcode);
+            },
+            image: 'static/svg/CAM.svg'
+          })]),
+
+                h(Conditional, { signal: gcode }, [
+
+          h(Button, {
+            fn: () => {
+              GcodeToPolylines(project, { fill: false, color: 'rgba(255,0,255,100%)' });
+            },
+            image: 'static/svg/voronoi.svg'
+          })
+        ]),
         h(DynamicLabel, { className: 'vcenter pad-lr', caption: documentTitle }),
         h(Consumer, {})
       ]),
@@ -1475,7 +1696,18 @@ const AppMain = (window.onload = async () => {
           }
         })
       ]),*/
-      html` <${FileList} files=${projects} onActive=${open} onChange=${(e, p, i) => ChooseDocument(p, i)} filter=${searchFilter} showSearch=${showSearch} changeInput=${changeInput} focusSearch=${focusSearch} currentInput=${currentSearch} /> `,
+      html`
+        <${FileList}
+          files=${projects}
+          onActive=${open}
+          onChange=${(e, p, i) => ChooseDocument(p, i)}
+          filter=${searchFilter}
+          showSearch=${showSearch}
+          changeInput=${changeInput}
+          focusSearch=${focusSearch}
+          currentInput=${currentSearch}
+        />
+      `,
       h(CrossHair, { ...crosshair }),
       h(FloatingPanel, { onSize: logSize, className: 'no-select', id: 'console' }, [
         h(Logger, {}),
@@ -1519,7 +1751,11 @@ const AppMain = (window.onload = async () => {
           if('preventDefault' in event) event.preventDefault();
           if(!resize && box) {
             let edges = Element.rect(box).toPoints();
-            let corners = [edges[0], edges[2]].map((p, i) => [i, p.distance(new Point(start).sum(x, y)), p]);
+            let corners = [edges[0], edges[2]].map((p, i) => [
+              i,
+              p.distance(new Point(start).sum(x, y)),
+              p
+            ]);
 
             let edge = corners.sort((a, b) => a[1] - b[1])[0];
 
@@ -1554,7 +1790,11 @@ const AppMain = (window.onload = async () => {
           box.style.cursor = `${compass}-resize`;
         }
 
-        if(box) window.move = move = Element.moveRelative(box, null, id == 'console' ? ['right', 'bottom'] : ['left', 'top']);
+        if(box)
+          window.move = move = Element.moveRelative(box,
+            null,
+            id == 'console' ? ['right', 'bottom'] : ['left', 'top']
+          );
         return true;
       }
       if((move || resize) && event.buttons == 0) return cancel();
@@ -1591,7 +1831,8 @@ const AppMain = (window.onload = async () => {
     let rect = Element.rect('.transformed-element');
     let cons = Element.rect('#console');
     if(rect.inside(event) && !cons.inside(event)) return true;
-    //console.log('oncontextmenu', { target }, event);
+    if(e.shiftKey && e.altKey) return true;
+     //console.log('oncontextmenu',  event);
     return false;
   };
   window.processEvents = async function eventLoop() {
@@ -1661,7 +1902,22 @@ const AppMain = (window.onload = async () => {
   });*/
 
   window.addEventListener('wheel', (event) => {
-    const { deltaX, deltaY, screenX, screenY, clientX, clientY, pageX, pageY, x, y, offsetX, offsetY, layerX, layerY } = event;
+    const {
+      deltaX,
+      deltaY,
+      screenX,
+      screenY,
+      clientX,
+      clientY,
+      pageX,
+      pageY,
+      x,
+      y,
+      offsetX,
+      offsetY,
+      layerX,
+      layerY
+    } = event;
 
     //console.log('wheel:', { deltaX, deltaY, screenX, screenY, clientX, clientY, pageX, pageY, x, y, offsetX, offsetY, layerX, layerY });
     window.wheelEvent = event;

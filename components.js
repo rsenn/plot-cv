@@ -190,20 +190,10 @@ export const Progress = ({ className, percent, ...props }) =>
     })
   );
 
-export const BrowseIcon = (props) =>
-  h('svg', {
-      height: '32',
-      width: '32',
-      viewBox: '0 0 48 48',
-      xmlns: 'http://www.w3.org/2000/svg'
-    }, [
-      h('defs', {}),
-      h('path', {
-        fill: '#fff',
-        d: 'M43.79 8.452h-8.482a2.825 2.825 0 00-2.827 2.827H9.863v2.827h33.305l-3.807 19.04-4.053-16.213H1.382L7.036 39.55h33.926l5.654-28.272a2.825 2.825 0 00-2.826-2.827z'
-      })
-    ]
-  );
+/*export const BrowseIcon = (props) => html`<svg xmlns="http://www.w3.org/2000/svg" height="40" width="40" viewBox="131 -131 731.429 731.429">
+  <path d="M240.714 39.414v390.6h432.4l79.6-244.1h-435.6l-48.8 145.7 33.1-170.2h378v-48.8h-243.4l-47.2-73.2z" fill="#fff"/>
+</svg>
+`;*/
 
 export const SchematicIcon = (props) => html`
   <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
@@ -782,12 +772,19 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen, ...props }) => 
         if(current) {
           const { base } = current;
           const button = base.previousElementSibling;
+          const overlay = button.nextElementSibling;
 
-          const pos = Element.rect(button).toPoints()[3];
+          const br = Element.rect(button) ;
+          const bottomLeft = br.toPoints()[3];
+          const or =  Element.rect(overlay);
+        //  const rect = new Rect(bottomLeft.x, bottomLeft.y, or.width, or.height );
 
-          Element.move(base, pos, 'fixed');
+const css = bottomLeft.toCSS();
+Element.setCSS(overlay, css);
 
-          console.log('overlay ref:', base, button);
+       //  Element.setRect(base, pos );
+
+          console.log('overlay ref:', base, button, br, bottomLeft, or, css);
         }
       }
     });
