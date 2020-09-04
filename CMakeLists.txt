@@ -14,8 +14,6 @@ if(CMAKE_THREAD_LIBS_INIT)
   set(LIBPTHREAD ${CMAKE_THREAD_LIBS_INIT})
 endif(CMAKE_THREAD_LIBS_INIT)
 
-
-
 check_library_exists(m atan2 /usr/lib HAVE_LIBM)
 if(HAVE_LIBM)
   set(LIBM m)
@@ -27,8 +25,6 @@ if(HAVE_LIBDL)
   set(LIBDL dl)
   message("Found dlfcn library: ${LIBDL}")
 endif(HAVE_LIBDL)
-
-
 
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH};${CMAKE_INSTALL_PREFIX}/lib")
 set(CMAKE_BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${CMAKE_BINARY_DIR}")
@@ -56,7 +52,7 @@ if(F_OPT_PIC)
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fPIC")
 endif(F_OPT_PIC)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  #option(USE_EFENCE "Enable electric fence" OFF)
+  # option(USE_EFENCE "Enable electric fence" OFF)
 
   check_cxx_compiler_flag("-O0" O_OPT_NONE)
   if(O_OPT_NONE)
@@ -78,11 +74,8 @@ if(ENABLE_LTO)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
 endif(ENABLE_LTO)
 
-#if(HAVE_EFENCE)
-#  if(USE_EFENCE)
-#    set(ELECTRICFENCE_LIBRARY efence)
-#  endif(USE_EFENCE)
-#endif(HAVE_EFENCE)
+# if(HAVE_EFENCE) if(USE_EFENCE) set(ELECTRICFENCE_LIBRARY efence)
+# endif(USE_EFENCE) endif(HAVE_EFENCE)
 
 macro(add_prog)
   set(ARGS ${ARGN})
@@ -93,7 +86,6 @@ macro(add_prog)
   install(TARGETS ${name} DESTINATION bin)
 endmacro()
 
-
 link_directories("${CMAKE_BINARY_DIR}/quickjs")
 
 function(src_program NAME SOURCES)
@@ -101,11 +93,11 @@ function(src_program NAME SOURCES)
     file(GLOB "${NAME}_SOURCES" ${SRC})
     list(APPEND SRCS ${${NAME}_SOURCES})
   endforeach()
-  string(REGEX REPLACE   ";" " " "SOURCES" "${SRCS}")
-  string(REGEX REPLACE   "/[^ ]*/" "\n  src/" "SOURCES" "${SOURCES}")
+  string(REGEX REPLACE ";" " " "SOURCES" "${SRCS}")
+  string(REGEX REPLACE "/[^ ]*/" "\n  src/" "SOURCES" "${SOURCES}")
   set("${NAME}_SOURCES" ${SRCS})
- 
-   message("${NAME}_SOURCES: ${SOURCES}")
+
+  message("${NAME}_SOURCES: ${SOURCES}")
   add_executable(${NAME} src/${NAME}.cpp ${${NAME}_SOURCES})
   target_link_libraries(${NAME} ${ARGN})
   install(TARGETS ${NAME} DESTINATION bin)
@@ -124,11 +116,9 @@ endif(IMGUI_VIEWER)
 
 src_program(
   cli
-    "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/js.cpp;src/jsbindings.cpp;src/js_contour.cpp;src/js.cpp;src/js_draw.cpp;src/js_line.cpp;src/js_mat.cpp;src/js_point.cpp;src/js_point_iterator.cpp;src/js_rect.cpp;src/js_size.cpp"
+  "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/js.cpp;src/jsbindings.cpp;src/js_contour.cpp;src/js.cpp;src/js_draw.cpp;src/js_line.cpp;src/js_mat.cpp;src/js_point.cpp;src/js_point_iterator.cpp;src/js_rect.cpp;src/js_size.cpp"
   ${OpenCV_LIBS}
-  quickjs
-
-  )
+  quickjs)
 
 option(ADDITIONAL_PROGS "Build other OpenCV programs" FALSE)
 
