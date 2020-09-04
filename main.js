@@ -15,6 +15,7 @@ import Shape from './lib/clipper.js';
 import { devtools } from './lib/devtools.js';
 import Util from './lib/util.js';
 import tlite from './lib/tlite.js';
+import { debounceAsync, debounceIterator } from './lib/async/debounce.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Alea from './lib/alea.js';
@@ -138,7 +139,7 @@ const svgFactory = lazyInitializer(() => {
   //const {width,height}=Element.rect('.aspect-ratio-box-inside');
   let rect = DrawSVG.calcViewBox();
 
-  console.log('rect:', rect);
+  //console.log('rect:', rect);
 
   const svg = [
     'svg',
@@ -192,7 +193,7 @@ const DrawSVG = (...args) => {
     let c = RGBA.random();
     let [tag, attrs, children] = args;
     if(typeof tag == 'string') {
-      console.log('draw(', ...args, ')');
+      // console.log('draw(', ...args, ')');
       e = factory(tag, { stroke: c.hex(), 'stroke-width': 0.1, ...attrs }, children);
     } else if(Util.isArray(args[0])) {
       let items = args.shift();
@@ -204,7 +205,7 @@ const DrawSVG = (...args) => {
         if(line) {
           e = factory('line', { ...line.toObject(), stroke: c.hex(), 'stroke-width': 0.1 });
           append(e);
-          console.log('e:', e);
+          //   console.log('e:', e);
         }
       }
       return;
@@ -228,7 +229,7 @@ const DrawSVG = (...args) => {
     const rect = box; // instanceof BBox ? box : DrawSVG.calcViewBox(box);
     rect.y1 -= rect.y2;
     rect.x2 -= rect.x1;
-    console.log('setViewBox', { svgOwner, rect, box });
+    // console.log('setViewBox', { svgOwner, rect, box });
     svgOwner.setAttribute('viewBox', rect.toString());
     svgOwner.lastElementChild.setAttribute('transform', `scale(1,-1)  translate(0,${-rect.height})`);
     Element.attr(svgOwner.lastElementChild.firstElementChild, { ...rect.toRect() });
@@ -249,10 +250,13 @@ const ListProjects = async function (opts = {}) {
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ descriptions, names, filter })
-    });
-    if(typeof response.text == 'function') response = await response.text();
-    console.log('response:', Util.abbreviate(response));
-    if(response) response = JSON.parse(response);
+    })
+      .then(NormalizeResponse)
+      .catch((error) => ({ error }));
+
+    /*   if(typeof response.text == 'function') response = await response.text();
+    //console.log('response:', Util.abbreviate(response));
+    if(response) response = JSON.parse(response);*/
   } else {
     response = await ListGithubRepo(url, null, null, '\\.(brd|sch|lbr)$', opts);
     let fileList = response.map((file, i) => {
@@ -314,11 +318,11 @@ const FileSystem = {
 
 const LoadFile = async (file) => {
   let { url, name: filename } = GetProject(file);
-  console.log('LoadFile  ', { url, filename });
+  LogJS.info(`LoadFile ${url}`);
   url = /:\/\//.test(filename) ? filename : /^tmp\//.test(filename) ? '/' + filename : `/static/${filename}`;
-  console.log('LoadFile url=', url);
+  //console.log('LoadFile url=', url);
   let response = await FetchURL(url);
-  console.log('LoadFile response=', response);
+  // console.debug('LoadFile response=', response);
   let xml = await response.text();
   let doc = new EagleDocument(await xml, null, filename, null, FileSystem);
   if(/\.brd$/.test(filename)) window.board = doc;
@@ -380,145 +384,6 @@ const GerberLayers = {
   GML: 'Mill layer',
   gpi: 'Photoplotter info file',
   TXT: 'Drill file'
-};
-
-const BoardToGerber = async (board = project.name, opts = { fetch: true }) => {
-  let proj = GetProject(board);
-  let request = { ...opts, board: proj.name, raw: true },
-    response;
-  let data;
-  try {
-    response = await FetchURL('/gerber', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(request)
-    }) /*.then((r) => r.json())*/;
-
-    if(Util.isObject(response) && typeof response.text == 'function') {
-      console.debug('BoardToGerber response =', response);
-      let file = response.headers.get('Content-Disposition').replace(/.*"([^"]+)".*/, '$1');
-      response = { file, data: await response.text() };
-    } else if(response.file) {
-      if(opts.fetch) response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then((r) => r.text());
-      // proj.gerber.file = response.file;
-    }
-  } catch(error) {
-    response = { error };
-  }
-  console.debug('BoardToGerber response =', response);
-
-  return response;
-};
-
-const GerberToGcode = async (file, allOpts = {}) => {
-  const { side, ...opts } = allOpts;
-  console.debug('GerberToGcode', file, opts);
-  let request = { ...opts, file, fetch: true, 'isolation-width': '1mm' };
-  let response;
-  if(typeof side == 'string') request[side] = '';
-  try {
-    response = await FetchURL('/gcode', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(request)
-    }).then((r) => r.json());
-    if(Util.isObject(response) && typeof response.text == 'function') {
-      console.debug('BoardToGerber response =', response);
-      let file = response.headers.get('Content-Disposition').replace(/.*"([^"]+)".*/, '$1');
-      response = { file, data: await response.text() };
-    } else if(opts.fetch && response.file) proj.gcode = response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then((r) => r.text());
-  } catch(error) {
-    response = { error };
-  }
-  response.opts = opts;
-  console.debug('GerberToGcode response =', response);
-  return response;
-};
-
-const GcodeToPolylines = (data, opts = {}) => {
-  const { fill = false, color, side } = opts;
-  let gc = Util.filter(parseGcode(data), (g) => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args);
-  let polylines = [];
-  let polyline = null;
-  let bb = new BBox();
-  const NewPolyline = () => {
-    if(polyline) polylines.push(polyline);
-    polyline = new Polyline([]);
-  };
-  const f = new Point(-25.4, 25.4);
-  for(let g of gc) {
-    if(g.command == 'G00') NewPolyline();
-    if(isPoint(g.args)) {
-      let p = new Point(g.args.x, g.args.y).prod(f).round(0.01, 2);
-      bb.updateXY(p.x, p.y);
-      polyline.push(p);
-    }
-  }
-  NewPolyline();
-  let palette = GeneratePalette(polylines.length);
-  let ret = { polylines, bbox: bb, palette };
-  //console.log('polylines(1):', polylines);
-  let remove = new Set();
-  let props = color
-    ? (polyline, i) => ({
-        fill: fill ? palette[i].prod(1, 1, 1, 0.5) : 'none'
-      })
-    : (polyline, i) => ({
-        stroke: color || palette[i],
-        fill: fill ? palette[i].prod(1, 1, 1, 0.5) : 'none'
-      });
-  let grp = SVG.create('g',
-    {
-      fill: 'none',
-      class: `gcode ${side} side`,
-      stroke: color,
-      'stroke-width': 0.15,
-      transform: ` translate(-0.3175,0) ` + (side == 'front' ? 'scale(-1,-1)' : 'scale(1,-1)') + ` translate(${0},${-bb.y2})  translate(0,-2.54)`
-    },
-    project.svg
-  );
-  let paths = [];
-
-  if(fill) {
-    polylines = polylines.map((pl) => pl.toMatrix().flat());
-    //console.log('polylines(2):', polylines);
-    polylines = polylines.map((pl) => geom.simplify(pl, 0.02, true));
-    //console.log('polylines(3):', polylines);
-    polylines = polylines.map((pl) => Util.chunkArray(pl, 2).map((pt) => new Point(...pt)));
-    //console.log('polylines(4):', polylines);
-    polylines = polylines.map((pl) => new Polyline([]).push(...pl));
-    let inside = new Map(polylines.map((polyline2, i) => [polyline2, polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2))]));
-    let insideOf = polylines.map((polyline, i) => [
-      i,
-      polylines
-        .map((polyline2, j) => [inside.get(polyline2).length, j, polyline2])
-        .filter(([n, j, polyline2]) => i !== j && inside.get(polyline2).indexOf(polyline) != -1)
-        .sort(([a], [b]) => a - b)
-    ]);
-    console.log('GcodeToPolylines insideOf:', insideOf);
-    let holes = polylines.map((polyline, i) => new Set());
-    insideOf.filter(([i, list]) => list.length == 1).map(([i, list]) => holes[list[0][1]].add(i));
-    console.log('GcodeToPolylines holes:', holes);
-    let remove = new Set();
-    for(let [i, inner] of holes.entries()) {
-      let ids = [i, ...inner];
-      //console.log('polygon', { i, ids, inner });
-      const polyline = polylines[i];
-      inner = [...inner].map((ip) => polylines[ip].counterClockwise);
-      if(inner.length == 0) continue;
-      //console.log('polygon', { polyline, inner });
-      let list = [polyline, ...inner];
-      paths.push([i, list.map((pl) => pl.toPath()).join('\n')]);
-      ids.forEach((id) => remove.add(id));
-    }
-  }
-  let ids = polylines.map((pl, i) => i).filter((i) => !remove.has(i));
-  let polys = [...ids.map((i) => polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` }, grp, 0.01)), ...paths.map(([i, d]) => ({ ...props(polyline, i), id: `polygon-${polylines.indexOf(polyline)}`, d })).map((p, i) => ['path', p, grp])];
-  console.log('GcodeToPolylines polys:', polys.length, { bb, color });
-  let svgAttr = Element.attr(project.svg);
-  console.log('GcodeToPolylines svgAttr:', svgAttr);
-  let elements = polys.map((args) => SVG.create(...args));
-  return { ...ret, group: grp, elements };
 };
 
 const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
@@ -653,18 +518,18 @@ const LoadDocument = async (project, parentElem) => {
   Timer.once(250).then(() => layerList([...project.doc.layers.list].filter((layer) => layer.elements.size > 0).map((layer) => ({ i: layer.number, name: layer.name, element: layer }))));
   LogJS.info(`${project.name} rendered.`);
   window.component = project.component = component;
-  console.log('testRender:', component);
+  //console.debug('testRender:', component);
   let element = Element.find('#main');
   let r = project.renderer.rect || project.renderer.bounds;
-  console.log('project.renderer:', project.renderer);
-  console.log('r:', r);
+  //console.debug('project.renderer:', project.renderer);
+  //console.debug('r:', r);
   let aspectRatio = 1;
   if(r) {
     aspectRatio = r.width / r.height;
     sizeListener({ width: r.width });
   }
   aspectListener(aspectRatio);
-  console.log('aspectRatio:', aspectRatio);
+  //console.debug('aspectRatio:', aspectRatio);
   const Fence = ({ children, style = {}, sizeListener, aspectListener, ...props }) => {
     const [dimensions, setDimensions] = useState(sizeListener());
     const [aspect, setAspect] = useState(aspectListener());
@@ -702,7 +567,7 @@ const LoadDocument = async (project, parentElem) => {
   project.object = object;
   let rendered = object.children[0];
 
-  console.log('rendered:', rendered);
+  //console.debug('rendered:', rendered);
 
   let eagle2dom = [...Element.findAll('*[data-path]')];
 
@@ -711,12 +576,12 @@ const LoadDocument = async (project, parentElem) => {
   eagle2dom = eagle2dom.map(([p, e]) => [p, p.apply(project.doc.raw), e]);
   eagle2dom = eagle2dom.map(([p, r, e]) => [EagleElement.get(project.doc, p, r), e]);
 
-  console.log('eagle2dom:', eagle2dom);
+  //console.debug('eagle2dom:', eagle2dom);
 
   let dom2eagle = Util.mapFunction(new WeakMap(eagle2dom.map(([k, v]) => [v, k])));
 
   eagle2dom = Util.mapFunction(new WeakMap(eagle2dom));
-  console.log('eagle2dom:', eagle2dom);
+  //console.debug('eagle2dom:', eagle2dom);
 
   const [path2component, component2path] = project.renderer.maps.map(Util.mapFunction);
   const { path2obj, obj2path, path2eagle, eagle2path, eagle2obj, obj2eagle } = project.doc.maps;
@@ -754,7 +619,7 @@ const LoadDocument = async (project, parentElem) => {
   size.mul(doc.type == 'brd' ? 2 : 1.5);
   let svgrect = SVG.bbox(project.svg);
   let measures = new BBox().update(doc.getMeasures(true)).toRect(Rect.prototype);
-  console.log('measures:', measures);
+  //console.debug('measures:', measures);
   Element.attr(project.svg, { 'data-filename': project.name, 'data-aspect': project.aspectRatio });
   let css = size.div(0.26458333333719).toCSS({ width: 'px', height: 'px' });
   window.size = css;
@@ -979,6 +844,144 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
 
 const BindGlobal = Util.once((arg) => trkl.bind(window, arg));
 
+async function NormalizeResponse(resp) {
+  if(Util.isObject(resp)) {
+    let disp = resp.headers.get('Content-Disposition');
+    let type = resp.headers.get('Content-Type');
+    if(!disp && /json/.test(type) && typeof resp.json == 'function') resp = await resp.json();
+    else if(typeof resp.text == 'function') resp = { data: await resp.text() };
+    if(disp && !resp.file) resp.file = disp.replace(/.*['"]([^"]+)['"].*/, '$1');
+    if(type) resp.type = type;
+    if(resp.file) if (!/tmp\//.test(resp.file)) resp.file = 'tmp/' + resp.file;
+  }
+  return resp;
+}
+const BoardToGerber = async (board = project.name, opts = { fetch: true }) => {
+  let proj = GetProject(board);
+  let data;
+  let request = { ...opts, board: proj.name, raw: true },
+    response;
+  response = await FetchURL('/gerber', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request)
+  })
+    .then(NormalizeResponse)
+    .catch((error) => ({ error }));
+
+  if(opts.fetch && response.file && !response.data) response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then(NormalizeResponse);
+
+  // console.debug('BoardToGerber response =', response);
+  return response;
+};
+
+const GerberToGcode = async (file, allOpts = {}) => {
+  const { side, ...opts } = allOpts;
+  //console.debug('GerberToGcode', file, opts);
+  let request = { ...opts, file, fetch: true, 'isolation-width': '1mm' };
+  let response;
+  if(typeof side == 'string') request[side] = '';
+  response = await FetchURL('/gcode', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request)
+  })
+    .then(NormalizeResponse)
+    .catch((error) => ({ error }));
+
+  if(opts.fetch && response.file && !response.data) response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then(NormalizeResponse);
+
+  response.opts = opts;
+  //console.debug('GerberToGcode response =',  Util.filterOutKeys(response, (k,v) => typeof(v) == 'string' ? v.length > 60 : ['data','output'].indexOf(k) != -1));
+  return response;
+};
+
+const GcodeToPolylines = (data, opts = {}) => {
+  const { fill = false, color, side } = opts;
+  let gc = Util.filter(parseGcode(data), (g) => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args);
+  let polylines = [];
+  let polyline = null;
+  let bb = new BBox();
+  const NewPolyline = () => {
+    if(polyline) polylines.push(polyline);
+    polyline = new Polyline([]);
+  };
+  const f = new Point(-25.4, 25.4);
+  for(let g of gc) {
+    if(g.command == 'G00') NewPolyline();
+    if(isPoint(g.args)) {
+      let p = new Point(g.args.x, g.args.y).prod(f).round(0.01, 2);
+      bb.updateXY(p.x, p.y);
+      polyline.push(p);
+    }
+  }
+  NewPolyline();
+  let palette = GeneratePalette(polylines.length);
+  let ret = { polylines, bbox: bb, palette };
+  //console.log('polylines(1):', polylines);
+  let remove = new Set();
+  let props = color
+    ? (polyline, i) => ({
+        fill: fill ? palette[i].prod(1, 1, 1, 0.5) : 'none'
+      })
+    : (polyline, i) => ({
+        stroke: color || palette[i],
+        fill: fill ? palette[i].prod(1, 1, 1, 0.5) : 'none'
+      });
+  let grp = SVG.create('g',
+    {
+      fill: 'none',
+      class: `gcode ${side} side`,
+      stroke: color,
+      'stroke-width': 0.15,
+      transform: ` translate(-0.3175,0) ` + (side == 'front' ? 'scale(-1,-1)' : 'scale(1,-1)') + ` translate(${0},${-bb.y2})  translate(0,-2.54)`
+    },
+    project.svg
+  );
+  let paths = [];
+
+  if(fill) {
+    polylines = polylines.map((pl) => pl.toMatrix().flat());
+    //console.log('polylines(2):', polylines);
+    polylines = polylines.map((pl) => geom.simplify(pl, 0.02, true));
+    //console.log('polylines(3):', polylines);
+    polylines = polylines.map((pl) => Util.chunkArray(pl, 2).map((pt) => new Point(...pt)));
+    //console.log('polylines(4):', polylines);
+    polylines = polylines.map((pl) => new Polyline([]).push(...pl));
+    let inside = new Map(polylines.map((polyline2, i) => [polyline2, polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2))]));
+    let insideOf = polylines.map((polyline, i) => [
+      i,
+      polylines
+        .map((polyline2, j) => [inside.get(polyline2).length, j, polyline2])
+        .filter(([n, j, polyline2]) => i !== j && inside.get(polyline2).indexOf(polyline) != -1)
+        .sort(([a], [b]) => a - b)
+    ]);
+    //console.log('GcodeToPolylines insideOf:', insideOf);
+    let holes = polylines.map((polyline, i) => new Set());
+    insideOf.filter(([i, list]) => list.length == 1).map(([i, list]) => holes[list[0][1]].add(i));
+    //console.log('GcodeToPolylines holes:', holes);
+    let remove = new Set();
+    for(let [i, inner] of holes.entries()) {
+      let ids = [i, ...inner];
+      //console.log('polygon', { i, ids, inner });
+      const polyline = polylines[i];
+      inner = [...inner].map((ip) => polylines[ip].counterClockwise);
+      if(inner.length == 0) continue;
+      //console.log('polygon', { polyline, inner });
+      let list = [polyline, ...inner];
+      paths.push([i, list.map((pl) => pl.toPath()).join('\n')]);
+      ids.forEach((id) => remove.add(id));
+    }
+  }
+  let ids = polylines.map((pl, i) => i).filter((i) => !remove.has(i));
+  let polys = [...ids.map((i) => polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` }, grp, 0.01)), ...paths.map(([i, d]) => ({ ...props(polyline, i), id: `polygon-${polylines.indexOf(polyline)}`, d })).map((p, i) => ['path', p, grp])];
+  // console.log('GcodeToPolylines polys:', polys.length, { bb, color });
+  let svgAttr = Element.attr(project.svg);
+  //console.log('GcodeToPolylines svgAttr:', svgAttr);
+  let elements = polys.map((args) => SVG.create(...args));
+  return { ...ret, group: grp, elements };
+};
+
 const AppMain = (window.onload = async () => {
   Util(globalThis);
 
@@ -1135,14 +1138,14 @@ const AppMain = (window.onload = async () => {
 
   zoomLog.subscribe((value) => {
     let factor = ZoomFactor(value);
-    console.info('zoomFactor changed', value, factor);
+    // console.info('zoomFactor changed', value, factor);
     store.set('zoom', value);
     if(value === 1) throw new Error(value);
   });
 
   const updateIfChanged = (trkl, newValue, callback) => {
     const oldValue = trkl() || [];
-    console.info('updateIfChanged ', { oldValue, newValue });
+    //console.info('updateIfChanged ', { oldValue, newValue });
     if(!Array.prototype.every.call(oldValue, (elem, i) => newValue[i] === elem)) return false;
     trkl(newValue);
     if(typeof callback == 'function') callback(trkl, oldValue, newValue);
@@ -1269,7 +1272,7 @@ const AppMain = (window.onload = async () => {
   let setTo;
   const Layer = ({ title, name, label, i, element, className, ...props }) => {
     const [visible, setVisible] = useTrkl(element.handlers.visible);
-    console.log('Layer props=', props);
+    // console.log('Layer props=', props);
     return h('div',
       {
         className,
@@ -1365,23 +1368,23 @@ const AppMain = (window.onload = async () => {
             ]
           ),
           h(Button, {
-            fn: async () => {
+            fn: debounceAsync(async (e) => {
+              /*console.log("CAM button",{e});
+              if(e.type.endsWith('up')) return false;*/
               let r;
-
               project.gerber = {};
               project.gcode = {};
-
               //console.debug('CAM Button');
               for(let side of ['back', 'front']) {
                 project.gerber[side] = await BoardToGerber(project, { [side]: true });
-                console.debug('BoardToGerber =', { side }, project.gerber[side]);
+                console.debug('BoardToGerber side =', side, ' file =', project.gerber[side].file);
               }
               for(let side of ['back', 'front']) {
-                project.gcode[side] = await GerberToGcode('tmp/' + project.gerber[side].file, { side, voronoi: 1 });
-                console.debug('GerberToGcode =', { side }, project.gcode[side]);
+                project.gcode[side] = await GerberToGcode(project.gerber[side].file, { side, voronoi: 1 });
+                console.debug('GerberToGcode side =', side, ' file =', project.gcode[side].file);
                 gcode(project.gcode);
               }
-            },
+            }, 100),
             image: 'static/svg/cnc-obrabeni.svg'
           })
         ]),
@@ -1398,7 +1401,7 @@ const AppMain = (window.onload = async () => {
                 GcodeToPolylines(project.gcode[side].data, { fill: false, color: colors[side], side });
               }
             },
-            image: 'static/svg/voronoi-square.svg'
+            image: 'static/svg/voronoi.svg'
           })
         ]),
         h(DynamicLabel, { className: 'vcenter pad-lr', caption: documentTitle }),
@@ -1464,14 +1467,14 @@ const AppMain = (window.onload = async () => {
       // if(event.index > 0) console.log('touch', { x, y, index, buttons, type, target }, container);
       if(!move && !resize) {
         let elemId;
-        console.log('target:', target);
+        //  console.log('target:', target);
         box = ((e) => {
           do {
             elemId = e.getAttribute('id');
             if(['main', 'console'].indexOf(elemId) != -1) return e;
           } while((e = e.parentElement));
         })(target);
-        console.log('box:', box);
+        //console.log('box:', box);
 
         if(event.buttons && event.buttons != 1) {
           if('preventDefault' in event) event.preventDefault();
@@ -1482,7 +1485,7 @@ const AppMain = (window.onload = async () => {
             let edge = corners.sort((a, b) => a[1] - b[1])[0];
 
             window.resize = resize = Element.resizeRelative(box, null, edge[0] ? -1 : 1, (size) => {
-              console.log('resizeRelative:', { elemId, size });
+              //console.log('resizeRelative:', { elemId, size });
               if(elemId == 'console') logSize(size);
             });
             box.style.cursor = `nwse-resize`;

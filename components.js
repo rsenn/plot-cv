@@ -43,7 +43,7 @@ export const Overlay = ({ className = 'overlay', title, tooltip, active = true, 
 
         if(!e.type.endsWith('down') && !e.type.endsWith('up')) return;
         //   setPushed(state);
-        //Util.log(`overlay pushed=${pushed} active=${active}:`, e.target);
+        //console.debug(`overlay pushed=${pushed} active=${active}:`, e.target);
         let ret;
 
         if(typeof onPush == 'function') ret = onPush(e, state);
@@ -75,7 +75,7 @@ else
 };
 
 export const Container = ({ className = 'panel', children, ...props }) => {
-  useCallback(() => Util.log('re-render panel'));
+  useCallback(() => console.debug('re-render panel'));
   return html` <div className=${className} ...${props}>${children}</div> `;
 };
 
@@ -104,7 +104,7 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
 
   if(typeof onSize == 'function' && onSize.subscribe)
     onSize.subscribe((value) => {
-      console.log('FloatingPanel setSize:', value);
+      //   console.log('FloatingPanel setSize:', value);
       setSize(value);
     });
   if(typeof onHide == 'function' && onHide.subscribe) onHide.subscribe((value) => setHidden(value));
@@ -254,7 +254,7 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
   onPush =
     onPush ||
     (async (state) => {
-      //Util.log(`loading "${name}"...`);
+      //console.debug(`loading "${name}"...`);
       await load(name);
     });
   let id = key || i;
@@ -283,7 +283,7 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
   }
 
   //data = signal();
-  //Util.log(`File`, { name, label });
+  //console.debug(`File`, { name, label });
 
   return h(Item, { className, id, 'data-filename': name, label, onPush, icon, ...props }, h(Progress, { className: !isNaN(loaded) ? 'visible' : 'hidden', percent: loaded }));
 };
@@ -295,7 +295,7 @@ export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () =
 
   if(trkl.is(items)) items.subscribe(setList);
 
-  console.error('list:', list);
+  //  console.error('list:', list);
   if(typeof items == 'function') console.error('items():', items());
   //const list = items;
 
@@ -325,7 +325,7 @@ export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () =
     .map((p) => p.trim())
     .filter((p) => p != '')
     .map((p) => list2re(p.split(/\s\s*/g)));
-  Util.log('regex:', ...reList);
+  console.debug('regex:', ...reList);
   const pred = (name) => !reList.every((c) => !c.every((re) => re.test(name))) && plus.every((re) => re.test(name));
   const other = list.filter(({ name }) => !pred(name)).map((i) => i.name);
   const children = list
@@ -406,7 +406,7 @@ export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className 
         children
       );
 
-export const AspectRatioBox = ({ aspect = 1.0, children, insideClassName, outsideClassName, outsideProps = {}, style, ...props } /* Util.log('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/) =>
+export const AspectRatioBox = ({ aspect = 1.0, children, insideClassName, outsideClassName, outsideProps = {}, style, ...props } /* console.debug('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/) =>
   h(Fragment, {}, [
     h('div', {
         className: classNames('aspect-ratio-box', outsideClassName),
@@ -441,14 +441,12 @@ export const SizedAspectRatioBox = ({ width, height, style, className, children,
 
 export const TransformedElement = ({ type = 'div', aspect, listener, style = { position: 'relative' }, className, children = [], ...props }) => {
   const [transform, setTransform] = useState(new TransformationList());
-
-  //Util.log('TransformedElement:', { aspect });
+  //console.debug('TransformedElement:', { aspect });
   if(listener && listener.subscribe)
     listener.subscribe((value) => {
-      console.log('TransformedElement setValue', value);
+      //console.log('TransformedElement setValue', value);
       if(value !== undefined) setTransform(value + '');
     });
-
   return h(type,
     {
       className: classNames('transformed-element', className && className + '-size'),
@@ -533,9 +531,9 @@ export const Canvas = ({ onInit, ...props }) => {
   const ctx = useRef();
 
   useEffect(() => {
-    //Util.log('canvasRef.current', canvasRef.current);
+    //console.debug('canvasRef.current', canvasRef.current);
     ctx.current = canvasRef.current.getContext('2d');
-    //Util.log('ctx.current', ctx.current);
+    //console.debug('ctx.current', ctx.current);
     const { offsetLeft: x, offsetTop: y } = canvasRef.current;
 
     if(typeof onInit == 'function') onInit(ctx.current, canvasRef.current, { width, height, x, y });
@@ -750,7 +748,7 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen, ...props }) => 
       const element = overlayRef.current;
       const rect = Element.rect(element);
       const inside = rect && rect.inside({ x, y });
-      console.debug('addEventListener mousedown', { rect, inside, x, y, element });
+      //console.debug('addEventListener mousedown', { rect, inside, x, y, element });
       if(element && open && !inside) {
         isOpen(false);
       }
@@ -765,10 +763,10 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen, ...props }) => 
     overlay = overlay({
       ref: (current) => {
         if(current) {
-          console.log('overlay ref:', { current, overlayRef });
+          // console.log('overlay ref:', { current, overlayRef });
           const { base } = current;
           let element = (overlayRef.current = base.nextElementSibling);
-          console.log('overlay element:', element);
+          // console.log('overlay element:', element);
           const button = base.previousElementSibling;
           const br = Element.rect(button);
           const bottomLeft = br.toPoints()[3];
@@ -780,7 +778,7 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen, ...props }) => 
 
           //  Element.setRect(base, pos );
 
-          console.log('overlay ref:', element, button, br, bottomLeft, or, css);
+          // console.log('overlay ref:', element, button, br, bottomLeft, or, css);
         }
       }
     });

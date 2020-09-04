@@ -59,7 +59,7 @@ const convertToGerber = async (boardFile, opts = {}) => {
   const gerberFile = `./tmp/${base}.${formatToExt(layers, format)}`;
   const cmd = `eagle -X -d ${format} -o "${gerberFile}" "${boardFile}" ${layers.join(' ')}`;
   console.log(`executing '${cmd}'`);
-  const child = exec(cmd, {});
+  const child = exec(`${cmd} 2>&1`, {});
   // do whatever you want with `child` here - it's a ChildProcess instance just
   // with promise-friendly `.then()` & `.catch()` functions added to it!
   let output = '';
@@ -67,7 +67,7 @@ const convertToGerber = async (boardFile, opts = {}) => {
   child.stderr.on('data', (data) => (output += data));
   const { stdout, stderr, code, signal } = await child;
   console.log(`code: ${code}`);
-  console.log(`output: ${output}`);
+//  console.log(`output: ${output}`);
   if(code !== 0) throw new Error(output);
   if(output) output = output.replace(/\s*\r*\n/g, '\n');
   let result = { code, output };
@@ -75,11 +75,12 @@ const convertToGerber = async (boardFile, opts = {}) => {
   result.file = gerberFile;
   return result;
 };
+
 const gerberEndpoint = async (req, res) => {
   const { body } = req;
   let { board, save, file: filename, raw, ...opts } = body;
   let result;
-  console.log('gerber request', { board, save, opts });
+  console.log('Request /gerber', { board, save, opts });
   try {
     result = await convertToGerber(board, opts);
     if(save) {
@@ -90,21 +91,18 @@ const gerberEndpoint = async (req, res) => {
   } catch(error) {
     result = { error };
   }
-  console.log('gerber result', result);
+  console.log('Response /gerber', Util.filterOutKeys(result, /(output|data)/));
 
   if(/get/i.test(req.method) || raw) {
     const { file } = result;
     res.setHeader('Content-Disposition', `attachment; filename="${path.basename(file)}"`);
     res.setHeader('Content-Type', 'application/octet-stream');
-    if(result.data) res.send(result.data);
+    if(result.data)  return  res.send(result.data);
     else if(result.file && typeof result.file == 'string') {
       console.log('sendFile', { file });
-      res.sendFile(result.file, { root: process.cwd() });
+       return  res.sendFile(result.file, { root: process.cwd() });
     }
-  }
-
-  return;
-
+ }
   res.json(result);
 };
 
@@ -129,13 +127,15 @@ const gerberToGcode = async (gerberFile, allOpts = {}) => {
   if(side == '') {
     side = 'back';
     opts.back = '';
-  }
+  }  console.log('Request /gcode', {  gerberFile, opts, side, gcodeFile });
+  ;
+
 
   const gcodeFile = path.join(opts['output-dir'], `${basename}_${side}.ngc`);
   const params = [...Object.entries(opts)].filter(([k, v]) => typeof v == 'string' || typeof v == 'number').map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? ' ' + v : ''}`);
   console.warn(`gerberToGcode`, Util.abbreviate(gerberFile), { gcodeFile, opts });
 
-  const cmd = `pcb2gcode ${params.join(' ')}  '${gerberFile}'`;
+  const cmd = `pcb2gcode ${params.join(' ')}  '${gerberFile}' 2>&1`;
   console.warn(`executing '${cmd}'`);
   const child = exec(cmd, {});
   // do whatever you want with `child` here - it's a ChildProcess instance just
@@ -144,14 +144,12 @@ const gerberToGcode = async (gerberFile, allOpts = {}) => {
   child.stdout.on('data', (data) => (output += data));
   child.stderr.on('data', (data) => (output += data));
   const { stdout, stderr, code, signal } = await child;
-
-  console.log(`code: ${code}`);
-  console.log(`output:`, Util.abbreviate(output));
-
+ 
   //   if(code !== 0) throw new Error(output);
   if(output) output = output.replace(/\s*\r*\n/g, '\n');
   let result = { code, output, cmd, file: gcodeFile };
   if(fetch) result.data = await (await fsPromises.readFile(gcodeFile)).toString();
+  console.log('Response /gcode', Util.filterOutKeys(result, /(output|data)/));
 
   return result;
 };
@@ -159,13 +157,8 @@ const gerberToGcode = async (gerberFile, allOpts = {}) => {
 let gcodeEndpoint = async (req, res) => {
   const { body } = req;
   let { file, ...opts } = body;
-  let result;
-  console.log('gcode', { file, opts });
-  try {
-    result = await gerberToGcode(file, opts);
-  } catch(error) {
-    result = { error };
-  }
+  let result  = await gerberToGcode(file, opts).catch(error => ({error}));
+ 
   res.json(result);
 };
 app.post(/^\/gcode/, gcodeEndpoint);
@@ -302,13 +295,13 @@ app.use(async (req, res, next) => {
         .catch((err) => {});
 
     if(override) {
-      console.log('Request:', { overridePath, override });
+      console.log('Static request:', { overridePath, override });
 
       return res.redirect('/' + overridePath);
     }
   }
 
-  if(!/lib\//.test(req.url)) console.log('Request:', req.url, ' path:', req.path);
+  if(!/lib\//.test(req.url)) console.log('Static request:', req.url, ' path:', req.path);
 
   next();
 });
@@ -364,7 +357,7 @@ const GetFilesList = async (dir = './tmp', opts = {}) => {
   const re = new RegExp(filter, 'i');
   const f = (ent) => re.test(ent);
 
-  console.log('GetFilesList()', { filter, descriptions, names });
+  console.log('GetFilesList()', { filter, descriptions }, ...(names ?  [names.length] : []));
 
   if(!names) names = [...(await fs.promises.readdir(dir))].filter(f);
 

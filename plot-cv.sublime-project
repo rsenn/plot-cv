@@ -11,6 +11,7 @@
       {
          "path" : ".",
          "file_exclude_patterns" : [
+            "*.es",
             "*.tmp",
             "*.vcxproj",
             "*.scr",
