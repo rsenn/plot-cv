@@ -878,7 +878,7 @@ const BoardToGerber = async (board = project.name, opts = { fetch: true }) => {
 const GerberToGcode = async (file, allOpts = {}) => {
   const { side, ...opts } = allOpts;
   //console.debug('GerberToGcode', file, opts);
-  let request = { ...opts, file, fetch: true, 'isolation-width': '1mm' };
+  let request = { ...opts, file, fetch: true, /*raw: true, */ 'isolation-width': '1mm' };
   let response;
   if(typeof side == 'string') request[side] = '';
   response = await FetchURL('/gcode', {
@@ -899,6 +899,7 @@ const GerberToGcode = async (file, allOpts = {}) => {
 const GcodeToPolylines = (data, opts = {}) => {
   const { fill = false, color, side } = opts;
   let gc = Util.filter(parseGcode(data), (g) => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args);
+  console.debug('GcodeToPolylines', Util.abbreviate(data), { opts, gc });
   let polylines = [];
   let polyline = null;
   let bb = new BBox();
@@ -1377,11 +1378,11 @@ const AppMain = (window.onload = async () => {
               //console.debug('CAM Button');
               for(let side of ['back', 'front']) {
                 project.gerber[side] = await BoardToGerber(project, { [side]: true });
-                console.debug('BoardToGerber side =', side, ' file =', project.gerber[side].file);
+                //console.debug('BoardToGerber side =', side, ' file =', project.gerber[side].file);
               }
               for(let side of ['back', 'front']) {
                 project.gcode[side] = await GerberToGcode(project.gerber[side].file, { side, voronoi: 1 });
-                console.debug('GerberToGcode side =', side, ' file =', project.gcode[side].file);
+                // console.debug('GerberToGcode side =', side, ' file =', project.gcode[side].file);
                 gcode(project.gcode);
               }
             }, 100),
@@ -1397,8 +1398,9 @@ const AppMain = (window.onload = async () => {
                 back: 'hsl(230,100%,70%)'
               };
               for(let side of ['back', 'front']) {
-                console.debug('GcodeToPolylines =', { side }, colors[side], project.gcode[side].file);
-                GcodeToPolylines(project.gcode[side].data, { fill: false, color: colors[side], side });
+                let gc = project.gcode[side];
+                //console.debug('GcodeToPolylines =', { side }, colors[side], gc);
+                GcodeToPolylines(gc.data, { fill: false, color: colors[side], side });
               }
             },
             image: 'static/svg/voronoi.svg'

@@ -3,6 +3,56 @@ project(imgui-viewer)
 set(CMAKE_CXX_STANDARD 14)
 ]]
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/FindGLFW.cmake)
+# include: OpenCV
+find_package(OpenCV REQUIRED)
+
+
+# glfw
+include(FindPkgConfig)
+pkg_check_modules(GLFW3 glfw3 REQUIRED)
+#[[
+
+find_package(glfw3 REQUIRED)]]
+include_directories(${GLFW_INCLUDE_DIRS})
+link_libraries(${GLFW_LIBRARY_DIRS})
+
+set(GLFW_LIBRARIES
+    ${GLFW_LIBRARY}
+    ${pkgcfg_lib_GLFW3_glfw}
+ 
+)
+# opengl
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIRS})
+
+# glew
+pkg_check_modules(GLEW glew REQUIRED)
+
+set(GLEW_LIBRARIES
+  
+${pkgcfg_lib_GLEW_GL}
+${pkgcfg_lib_GLEW_GLEW}
+${pkgcfg_lib_GLEW_GLU}
+
+)
+#find_package(GLEW REQUIRED)
+include_directories(${GLEW_INCLUDE_DIRS})
+
+if (APPLE)
+    find_library(COCOA_LIBRARY Cocoa)
+    find_library(OpenGL_LIBRARY OpenGL)
+    find_library(IOKIT_LIBRARY IOKit)
+    find_library(COREVIDEO_LIBRARY CoreVideo)
+    SET(EXTRA_LIBS ${COCOA_LIBRARY} ${OpenGL_LIBRARY} ${IOKIT_LIBRARY} ${COREVIDEO_LIBRARY})
+endif (APPLE)
+
+if (WIN32)
+# nothing now
+endif (WIN32)
+include(${CMAKE_CURRENT_SOURCE_DIR}/sdl2-config.cmake)
+
+
 if(ANDROID)
   add_definitions(-DIMGUI_IMPL_OPENGL_ES2=1)
 else(ANDROID)
@@ -37,33 +87,29 @@ add_executable(imgui-viewer
     imgui/libs/gl3w/GL/gl3w.c
     ${HIGHGUI_VIEWER_SOURCES}
 )
+#[[
+target_link_libraries(
+        ${APP_TARGET}
+        glfw
+        ${OPENGL_LIBRARIES}
+        ${GLEW_LIBRARIES}
+        ${EXTRA_LIBS}
+)]]
 
-# include: OpenCV
-find_package(OpenCV REQUIRED)
+# link
+target_link_libraries(imgui-viewer
+    ${SDL2_LIBRARIES}
+    ${OpenCV_LIBS}  glfw
+        ${OPENGL_LIBRARIES}
+        ${GLFW_LIBRARIES}
+        ${GLEW_LIBRARIES}
+        ${EXTRA_LIBS} quickjs 
+    dl
+    GL
+)
 if(OpenCV_FOUND)
     target_include_directories(imgui-viewer PUBLIC ${OpenCV_INCLUDE_DIRS})
     target_link_libraries(imgui-viewer ${OpenCV_LIBS})
 endif()
-
-# include: SDL
-find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS})
-if(NOT SDL2_LIBRARIES)
-set(SDL2_LIBRARIES SDL2)
-endif(NOT SDL2_LIBRARIES)
-# include: ImGui(symbolic linked)
-include_directories(
-    imgui/
-    imgui/examples
-    imgui/libs/gl3w
-)
-
-# link
-target_link_libraries(imgui-viewer
-    ${SDL2_LIBRARIES}m
-    ${OpenCV_LIBS} ${GLEW_SHARED_LIBRARY_RELEASE} ${GLEW_STATIC_LIBRARY_RELEASE} ${GLEW_LIBRARY_RELEASE} ${GLEW_SHARED_LIBRARY_RELEASE} quickjs ${ELECTRICFENCE_LIBRARY}
-    dl
-    GL
-)
 
 install(TARGETS imgui-viewer DESTINATION bin)

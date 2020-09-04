@@ -48,6 +48,17 @@ const removeItem = (arr, item, key = 'ws') => {
   return arr;
 };
 
+function SendRaw(res, file, data, type = 'application/octet-stream') {
+  res.setHeader('Content-Disposition', `attachment; filename="${path.basename(file)}"`);
+
+  if(type) res.setHeader('Content-Type', type);
+  if(data) return res.send(data);
+  else if(file && typeof file == 'string') {
+    console.log('sendFile', { file });
+    return res.sendFile(file, { root: process.cwd() });
+  }
+}
+
 const convertToGerber = async (boardFile, opts = {}) => {
   const { layers = [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'], format = 'GERBER_RS274X', data, fetch = false, front, back } = opts;
   const base = path.basename(boardFile, '.brd');
@@ -95,13 +106,7 @@ const gerberEndpoint = async (req, res) => {
 
   if(/get/i.test(req.method) || raw) {
     const { file } = result;
-    res.setHeader('Content-Disposition', `attachment; filename="${path.basename(file)}"`);
-    res.setHeader('Content-Type', 'application/octet-stream');
-    if(result.data) return res.send(result.data);
-    else if(result.file && typeof result.file == 'string') {
-      console.log('sendFile', { file });
-      return res.sendFile(result.file, { root: process.cwd() });
-    }
+    return SendRaw(res, file, result.data);
   }
   res.json(result);
 };
@@ -110,9 +115,8 @@ app.get(/^\/gerber/, gerberEndpoint);
 app.post(/^\/gerber/, gerberEndpoint);
 
 const gerberToGcode = async (gerberFile, allOpts = {}) => {
-  console.debug(`gerberToGcode`, gerberFile, allOpts);
   const basename = gerberFile.replace(/.*\//g, '').replace(/\.[^.]*$/, '');
-  let { fetch, data, ...opts } = allOpts;
+  let { fetch, data, raw, ...opts } = allOpts;
   opts = {
     basename,
     zsafe: '1mm',
@@ -128,10 +132,11 @@ const gerberToGcode = async (gerberFile, allOpts = {}) => {
     side = 'back';
     opts.back = '';
   }
-  console.log('Request /gcode', { gerberFile, opts, side, gcodeFile });
+  console.debug(`gerberToGcode`, allOpts);
   const gcodeFile = path.join(opts['output-dir'], `${basename}_${side}.ngc`);
   const params = [...Object.entries(opts)].filter(([k, v]) => typeof v == 'string' || typeof v == 'number').map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? ' ' + v : ''}`);
-  console.warn(`gerberToGcode`, Util.abbreviate(gerberFile), { gcodeFile, opts });
+  console.log('Request /gcode', { gerberFile, gcodeFile, fetch, raw });
+  //console.warn(`gerberToGcode`, Util.abbreviate(gerberFile), { gcodeFile, opts });
 
   const cmd = `pcb2gcode ${params.join(' ')}  '${gerberFile}' 2>&1`;
   console.warn(`executing '${cmd}'`);
@@ -147,8 +152,11 @@ const gerberToGcode = async (gerberFile, allOpts = {}) => {
   if(output) output = output.replace(/\s*\r*\n/g, '\n');
   let result = { code, output, cmd, file: gcodeFile };
   if(fetch) result.data = await (await fsPromises.readFile(gcodeFile)).toString();
-  console.log('Response /gcode', Util.filterOutKeys(result, /(output|data)/));
-
+  console.log('Response /gcode', Util.filterOutKeys(result, /(Xoutput|data)/));
+  if(/*/get/i.test(req.method) || */ raw) {
+    const { file } = result;
+    return SendRaw(res, file, result.data);
+  }
   return result;
 };
 
