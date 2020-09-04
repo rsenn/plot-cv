@@ -432,7 +432,27 @@ void
 write_image(image_type img) {
   static int count = 0;
 
-  std::filesystem::create_directories("tmp");
+#if 0
+  std::filesystem::path tmpdir(std::string("./tmp"));
+
+  if(!std::filesystem::exists(tmpdir))
+    std::filesystem::create_directories(tmpdir);
+#else
+  {
+    const char* tmpdir = "tmp";
+    struct stat st;
+    if(stat(tmpdir, &st) == -1) {
+      if(errno == ENOENT) {
+        errno = 0;
+        if(mkdir(tmpdir, 1777) == -1) {
+          std::cerr << "Failed making directory '" << tmpdir << "': " << strerror(errno) << std::endl;
+          return;
+        }
+      }
+    }
+  }
+#endif
+
   string file = make_filename("frame", ((++count) % max_frames), "png");
 
   cv::imwrite(cv::String(file), img);

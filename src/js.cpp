@@ -79,8 +79,11 @@ jsrt::create(JSContext* _ctx) {
   if(_ctx) {
     rt = JS_GetRuntime(ctx = _ctx);
   } else {
-    if((rt = JS_NewRuntime()))
+    if((rt = JS_NewRuntime())) {
+      js_std_init_handlers(rt);
+
       ctx = JS_NewContext(rt);
+    }
   }
   return ctx != nullptr;
 }
@@ -357,37 +360,38 @@ jsrt::call(const_value func, size_t argc, const_value* argv) {
 
 extern "C" char*
 normalize_module(JSContext* ctx, const char* module_base_name, const char* module_name, void* opaque) {
+  using std::filesystem::exists;
   using std::filesystem::path;
   using std::filesystem::weakly_canonical;
 
   char* name;
   jsrt* js = static_cast<jsrt*>(opaque);
-  /*
-    std::cerr << "module_base_name: " << module_base_name << std::endl;
-    std::cerr << "module_name: " << module_name << std::endl;
-  */
+
+  std::cerr << "module_base_name: " << module_base_name << std::endl;
+  std::cerr << "module_name: " << module_name << std::endl;
+
   if(module_name[0] == '.' && module_name[1] == '/')
     module_name += 2;
 
   path module_path = path(module_base_name).replace_filename(path(module_name, module_name + strlen(module_name)));
   std::string module_pathstr;
 
-  // std::cerr << "module_path: " << module_path.string() << std::endl;
+  std::cerr << "module_path: " << module_path.string() << std::endl;
 
-  bool exists = std::filesystem::exists(module_path);
-  // std::cerr << "exists module_path: " << exists << std::endl;
+  bool present = exists(module_path);
+  std::cerr << "exists module_path: " << present << std::endl;
   module_pathstr = module_path.string();
 
-  if(!exists) {
+  if(!present) {
     module_path = weakly_canonical(module_path);
     module_pathstr = module_path.string();
 
-    exists = std::filesystem::exists(module_path);
+    present = exists(module_path);
   }
-  /* std::cerr << "module_pathstr: " << module_pathstr << std::endl;
-   std::cerr << "module_base_name: " << module_base_name << std::endl;
-   std::cerr << "module_name: " << module_name << std::endl;
-   std::cerr << "exists: " << exists << std::endl;*/
+  std::cerr << "module_pathstr: " << module_pathstr << std::endl;
+  std::cerr << "module_base_name: " << module_base_name << std::endl;
+  std::cerr << "module_name: " << module_name << std::endl;
+  std::cerr << "present: " << present << std::endl;
 
   if(true) {
 

@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.0)
 project(plot-cv)
 
+if(NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
+  set(CMAKE_BUILD_TYPE "Debug")
+endif(NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
+
 include(FindThreads)
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
@@ -114,15 +118,34 @@ if(IMGUI_VIEWER)
   include(imgui-viewer.cmake)
 endif(IMGUI_VIEWER)
 
+add_subdirectory(quickjs "${CMAKE_BINARY_DIR}/quickjs")
+
+if(NOT quickjs_version)
+  set(quickjs_version "2020-07-05")
+endif(NOT quickjs_version)
+
+set(QUICKJS_SOURCES_LIST "quickjs/quickjs.c;quickjs/quickjs.h;quickjs/libregexp.c;quickjs/libunicode.c;quickjs/cutils.c;quickjs/quickjs-libc.c;quickjs/quickjs-libc.h;quickjs/libbf.c")
+#add_definitions(-D_GNU_SOURCE=1)
+
 src_program(
   cli
-  "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/js.cpp;src/jsbindings.cpp;src/js_contour.cpp;src/js.cpp;src/js_draw.cpp;src/js_line.cpp;src/js_mat.cpp;src/js_point.cpp;src/js_point_iterator.cpp;src/js_rect.cpp;src/js_size.cpp"
+  "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/js.cpp;src/jsbindings.cpp;src/js_contour.cpp;src/js.cpp;src/js_draw.cpp;src/js_line.cpp;src/js_mat.cpp;src/js_point.cpp;src/js_point_iterator.cpp;src/js_rect.cpp;src/js_size.cpp;${QUICKJS_SOURCES_LIST}"
   ${OpenCV_LIBS}
-  quickjs)
+  pthread
+  dl
+  m
+  #quickjs
+  )
+target_compile_definitions(
+ cli
+  PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${quickjs_version}"
+          CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1)
+
 
 option(ADDITIONAL_PROGS "Build other OpenCV programs" FALSE)
 
-option(QUICKJS_MODULES "Build .so modules for quickjs" "${BUILD_SHARED_LIBS}")
+#option(QUICKJS_MODULES "Build .so modules for quickjs" "${BUILD_SHARED_LIBS}")
+option(QUICKJS_MODULES "Build .so modules for quickjs" ON)
 
 if(QUICKJS_MODULES)
   include(js-bindings.cmake)
@@ -261,4 +284,3 @@ if(ADDITIONAL_PROGS)
   # target_link_libraries(tracking_calibration_with_img yaml-cpp roslib rospack
   # roscpp )
 endif(ADDITIONAL_PROGS)
-add_subdirectory(quickjs "${CMAKE_BINARY_DIR}/quickjs")

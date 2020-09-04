@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"Trans",
+				"TransformationList"
+			],
+			[
+				"HAVE_",
+				"HAVE_MALLOC_USABLE_SIZE_DEFINITION"
+			],
+			[
 				"js_mat_itera",
 				"js_mat_iterator_class_id"
 			],
@@ -36,10 +44,10 @@
 	"buffers":
 	[
 		{
-			"contents": "dingbatCode\nm\n(c) =>\nm\n(c) =>\ndump\nisElement\nparseArgs\n.predicate\n.predicate\n.predicate\ntraverse",
+			"contents": "",
 			"settings":
 			{
-				"buffer_size": 96,
+				"buffer_size": 0,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
@@ -49,76 +57,46 @@
 			"file": "main.js",
 			"settings":
 			{
-				"buffer_size": 58733,
+				"buffer_size": 60666,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/color/rgba.js",
+			"file": "quickjs/qjsc.c",
 			"settings":
 			{
-				"buffer_size": 21264,
+				"buffer_size": 20655,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/color/hsla.js",
+			"contents": "JsDebuggr\nSublimeLinter-jshint\nView In Browser\nCodeFormatter\nJavaScriptNext - ES6 Syntax\nEschaton Color Scheme\nEntheogen Color Scheme\nCodeFall Color Scheme\nAcme Color Scheme\nClosureMyJS\nES6-Toolkit\nESLintAutoFix\nFormat JSDoc @params\nGoto Usage\nJavaScript Enhancements\nJavaScriptExtractFunction\nJavaScriptFunctionDefinition\nJSCustom\nJSDebug\nJsModules\nCMakeEditor\nDoxyDoc\nEasy Import\nClang Format\nGoto Usage\nSublimeAnarchyDebug\nSublimeLLDB\nSublimeGDB\n",
+			"file": "/home/roman/Dokumente/Sources/plot-cv/sub-pkgs.tmp",
+			"file_size": 460,
+			"file_write_time": 132437013818690615,
 			"settings":
 			{
-				"buffer_size": 8525,
-				"encoding": "UTF-8",
+				"buffer_size": 449,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/geom/rect.js",
+			"contents": "Package Control Messages\n========================\n\nCodeFormatter\n-------------\n\n  Thanks for installing Sublime CodeFormatter! Below are some quick notes to get you\n  started with the plugin.\n  \n  CodeFormatter\n  =============\n  \n  \n  CodeFormatter is a Sublime Text 2/3 plugin that supports format (beautify) source code.\n  \n  \n  CodeFormatter has support for the following languages:\n  \n  * PHP - By phpfmt\n  * JavaScript/JSON - By JSBeautifier\n  * HTML - By JSBeautifier\n  * CSS - By JSBeautifier\n  * SCSS - By Nishutosh Sharma\n  * Python - By PythonTidy (only ST2)\n  * Visual Basic/VBScript\n  \n  \n  Sponsors\n  -----\n  No sponsors yet.. :(\n  \n  If you like the software, don't forget to donate to further development of it!\n  \n  [![PayPal donate button](https://www.paypalobjects.com/webstatic/en_US/btn/btn_donate_pp_142x27.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=akalongman@gmail.com&item_name=Donation to Sublime Text - CodeFormatter&item_number=1&no_shipping=1 \"Donate to this project using Paypal\")\n  \n  \n  Installing\n  ----------\n  **With the Package Control plugin:** The easiest way to install CodeFormatter is through Package Control, which can be found at this site: http://wbond.net/sublime_packages/package_control\n  \n  Once you install Package Control, restart Sublime Text and bring up the Command Palette (`Command+Shift+P` on OS X, `Control+Shift+P` on Linux/Windows). Select \"Package Control: Install Package\", wait while Package Control fetches the latest package list, then select CodeFormatter when the list appears. The advantage of using this method is that Package Control will automatically keep CodeFormatter up to date with the latest version.\n  \n  **Without Git:** Download the latest source from [GitHub](https://github.com/akalongman/sublimetext-codeformatter) and copy the CodeFormatter folder to your Sublime Text \"Packages\" directory.\n  \n  **With Git:** Clone the repository in your Sublime Text \"Packages\" directory:\n  \n      git clone https://github.com/akalongman/sublimetext-codeformatter.git CodeFormatter\n  \n  \n  The \"Packages\" directory is located at:\n  \n  * OS X:\n  \n          ST2: ~/Library/Application Support/Sublime Text 2/Packages/\n          ST3: ~/Library/Application Support/Sublime Text 3/Packages/\n  \n  * Linux:\n  \n          ST2: ~/.config/sublime-text-2/Packages/\n          ST3: ~/.config/sublime-text-3/Packages/\n  \n  * Windows:\n  \n          ST2: %APPDATA%/Sublime Text 2/Packages/\n          ST3: %APPDATA%/Sublime Text 3/Packages/\n  \n  \n  ## Formatter-specific notes\n  Following are notes specific to individual formatters that you should be aware of:\n  ### PHP\n  PHP - Used phpfmt (https://github.com/phpfmt/fmt) by Carlos Cirello and Shaked Klein Orbach.\n  \n  Getting and installing PHP - http://www.php.net/manual/en/install.general.php\n  \n  You must install 5.6 or above\n  \n  On Linux/OSx after installation of package, you must set chmod +x to file fmt.phar in folder %PACKAGESDIR%/CodeFormatter/codeformatter/lib/phpbeautifier\n  \n  You can list all available transformations from Command Palette: CodeFormatter: Show PHP Transformations\n  \n  Language specific options:\n  ```js\n     \"codeformatter_php_options\":\n      {\n          \"syntaxes\": \"php\", // Syntax names which must process PHP formatter\n          \"php_path\": \"\", // Path for PHP executable, e.g. \"/usr/lib/php\" or \"C:/Program Files/PHP/php.exe\". If empty, uses command \"php\" from system environments\n          \"format_on_save\": false, // Format on save\n          \"psr1\": false, // Activate PSR1 style\n          \"psr1_naming\": false, // Activate PSR1 style - Section 3 and 4.3 - Class and method names case\n          \"psr2\": true, // Activate PSR2 style\n          \"indent_with_space\": 4, // Use spaces instead of tabs for indentation\n          \"enable_auto_align\": true, // Enable auto align of = and =>\n          \"visibility_order\": true, // Fixes visibiliy order for method in classes - PSR-2 4.2\n          \"smart_linebreak_after_curly\": true, // Convert multistatement blocks into multiline blocks\n  \n          // Enable specific transformations. Example: [\"ConvertOpenTagWithEcho\", \"PrettyPrintDocBlocks\"]\n          // You can list all available transformations from command palette: CodeFormatter: Show PHP Transformations\n          \"passes\": [],\n  \n          // Disable specific transformations\n          \"exclude\": []\n      }\n  ```\n  \n  \n  \n  ### Javascript/JSON\n  Javascript/JSON - used [JSBeautifier] (http://jsbeautifier.org/) by Einar Lielmanis\n  \n  Language specific options:\n  ```js\n      \"codeformatter_js_options\":\n      {\n          \"syntaxes\": \"javascript,json\", // Syntax names which must process JS formatter\n          \"format_on_save\": false, // Format on save\n          \"indent_size\": 4, // indentation size\n          \"indent_char\": \" \", // Indent character\n          \"indent_with_tabs\": false, // Indent with one tab (overrides indent_size and indent_char options)\n          \"eol\": \"\\n\", // EOL symbol\n          \"preserve_newlines\": false, // whether existing line breaks should be preserved,\n          \"max_preserve_newlines\": 10, // maximum number of line breaks to be preserved in one chunk\n          \"space_in_paren\": false, // Add padding spaces within paren, ie. f( a, b )\n          \"space_in_empty_paren\": false, // Add padding spaces within paren if parent empty, ie. f(  )\n          \"e4x\": false, // Pass E4X xml literals through untouched\n          \"jslint_happy\": false, // if true, then jslint-stricter mode is enforced. Example function () vs function()\n          \"brace_style\": \"collapse\", // \"collapse\" | \"expand\" | \"end-expand\". put braces on the same line as control statements (default), or put braces on own line (Allman / ANSI style), or just put end braces on own line.\n          \"keep_array_indentation\": false, // keep array identation.\n          \"keep_function_indentation\": false, // keep function identation.\n          \"eval_code\": false, // eval code\n          \"unescape_strings\": false, // Decode printable characters encoded in xNN notation\n          \"wrap_line_length\": 0, // Wrap lines at next opportunity after N characters\n          \"break_chained_methods\": false, // Break chained method calls across subsequent lines\n          \"end_with_newline\": false, // Add new line at end of file\n          \"comma_first\": false // Add comma first\n      }\n  ```\n  \n  ### HTML\n  HTML - used custom python port, please use it with caution, feature in early beta\n  \n  Language specific options:\n  ```js\n      \"codeformatter_html_options\":\n      {\n          \"syntaxes\": \"html,asp,xml\", // Syntax names which must process HTML formatter\n          \"format_on_save\": false, // Format on save\n          \"indent_size\": 4, // indentation size\n          \"indent_char\": \" \", // Indentation character\n          \"indent_with_tabs\": false, // Indent with one tab (overrides indent_size and indent_char options)\n          \"preserve_newlines\": false, // Preserve existing line-breaks\n          \"max_preserve_newlines\": 10, // Maximum number of line-breaks to be preserved in one chunk\n          \"indent_tags\": \"html|head|body|div|nav|ul|ol|dl|li|table|thead|tbody|tr|th|td|blockquote|select|form|option|optgroup|fieldset|legend|label|header|section|aside|footer|figure|video|datalist|keygen|audio|embed|source|track|output|article|bdi|details|dialog|figcaption|main|mark|menuitem|meter|nav|progress|rp|rt|ruby|summary|time|wbr\" // List of tags (defaults to indent) that should be reformatted. Example \"div|p|li|table\"\n      }\n  ```\n  \n  ### CSS\n  CSS - used [JSBeautifier] (http://jsbeautifier.org/) by Einar Lielmanis and Style Css by Harutyun Amirjanyan\n  \n  Language specific options:\n  ```js\n      \"codeformatter_css_options\":\n      {\n          \"syntaxes\": \"css,less\", // Syntax names which must process CSS formatter\n          \"format_on_save\": false, // Format on save\n          \"indent_size\": 4, // Indentation size\n          \"indent_char\": \" \", // Indentation character\n          \"indent_with_tabs\": false, // Indent with one tab (overrides indent_size and indent_char options)\n          \"selector_separator_newline\": false, // Add new lines after selector separators\n          \"end_with_newline\": false, // Add new line of end in file\n          \"newline_between_rules\": false, // Add new line between rules\n          \"eol\": \"\\n\" // EOL symbol\n      }\n  ```\n  ### SCSS\n  SCSS - Simply modified the CSS formatter module as per the response from scss-lint (Gives way to modify further)\n  \n  Language specific options:\n  ```js\n      \"codeformatter_scss_options\":\n      {\n          \"syntaxes\": \"scss\", // Indentation size\n          \"indent_size\": 2, // Indentation size\n          \"format_on_save\": false, // Format on save\n          \"indent_char\": \" \", // Indentation character\n          \"indent_with_tabs\": false, // Indent with one tab (overrides indent_size and indent_char options)\n          \"selector_separator_newline\": true, // Add new lines after selector separators\n          \"newline_between_rules\": true, // Add new line between rules\n          \"end_with_newline\": true // Add new line of end in file\n      }\n  ```\n  \n  ### Python\n  Python - used [PythonTidy] (https://pypi.python.org/pypi/PythonTidy/) by Chuck Rhode\n  \n  Language specific options:\n  ```js\n      \"codeformatter_python_options\":\n      {\n          \"syntaxes\": \"python\", // Syntax names which must process Python formatter\n          \"format_on_save\": false, // Format on save\n          \"indent_size\": 1, // indentation size\n          \"indent_with_tabs\": true, // Indent with tabs or spaces\n          \"max_char\": 80, // Width of output lines in characters.\n          \"assignment\": \" = \", // This is how the assignment operator is to appear.\n          \"function_param_assignment\": \"=\", // This is how function-parameter assignment should appear.\n          \"function_param_sep\": \", \", // This is how function parameters are separated.\n          \"list_sep\": \", \", // This is how list items are separated.\n          \"subscript_sep\": \"=\", // This is how subscripts are separated.\n          \"dict_colon\": \": \", // This separates dictionary keys from values.\n          \"slice_colon\": \":\", // this separates the start:end indices of slices.\n          \"comment_prefix\": \"# \", // This is the sentinel that marks the beginning of a commentary string.\n          \"shebang\": \"#!/usr/bin/env python\", // Hashbang, a line-one comment naming the Python interpreter to Unix shells.\n          \"boilerplate\": \"\", // Standard code block (if any). This is inserted after the module doc string on output.\n          \"blank_line\": \"\", // This is how a blank line is to appear (up to the newline character).\n          \"keep_blank_lines\": true, // If true, preserve one blank where blank(s) are encountered.\n          \"add_blank_lines_around_comments\": true, // If true, set off comment blocks with blanks.\n          \"add_blank_line_after_doc_string\": true, // If true, add blank line after doc strings.\n          \"max_seps_func_def\": 3, // Split lines containing longer function definitions.\n          \"max_seps_func_ref\": 5, // Split lines containing longer function calls.\n          \"max_seps_series\": 5, // Split lines containing longer lists or tuples.\n          \"max_seps_dict\": 3, // Split lines containing longer dictionary definitions.\n          \"max_lines_before_split_lit\": 2, // Split string literals containing more newline characters.\n          \"left_margin\": \"\", // This is how the left margin is to appear.\n          \"normalize_doc_strings\": false, // If true, normalize white space in doc strings.\n          \"leftjust_doc_strings\": false, // If true, left justify doc strings.\n          \"wrap_doc_strings\": false, // If true, wrap doc strings to max_char.\n          \"leftjust_comments\": false, // If true, left justify comments.\n          \"wrap_comments\": false, // If true, wrap comments to max_char.\n          \"double_quoted_strings\": false, // If true, use quotes instead of apostrophes for string literals.\n          \"single_quoted_strings\": false, // If true, use apostrophes instead of quotes for string literals.\n          \"can_split_strings\": false, // If true, longer strings are split at the max_char.\n          \"doc_tab_replacement\": \"....\", // This literal replaces tab characters in doc strings and comments.\n  \n          // Optionally preserve unassigned constants so that code to be tidied\n          // may contain blocks of commented-out lines that have been no-op'ed\n          // with leading and trailing triple quotes.  Python scripts may declare\n          // constants without assigning them to a variables, but CodeFormatter\n          // considers this wasteful and normally elides them.\n          \"keep_unassigned_constants\": false,\n  \n          // Optionally omit parentheses around tuples, which are superfluous\n          // after all.  Normal CodeFormatter behavior will be still to include them\n          // as a sort of tuple display analogous to list displays, dict\n          // displays, and yet-to-come set displays.\n          \"parenthesize_tuple_display\": true,\n  \n          // When CodeFormatter splits longer lines because max_seps\n          // are exceeded, the statement normally is closed before the margin is\n          // restored.  The closing bracket, brace, or parenthesis is placed at the\n          // current indent level.  This looks ugly to \"C\" programmers.  When\n          // java_style_list_dedent is True, the closing bracket, brace, or\n          // parenthesis is brought back left to the indent level of the enclosing\n          // statement.\n          \"java_style_list_dedent\": false\n      }\n  ```\n  ### Visual Basic/VBScript\n  Visual Basic/VBScript - used custom approach using the HTML beautifier as a guide\n  \n  Language specific options:\n  ```js\n      \"codeformatter_vbscript_options\":\n      {\n          \"syntaxes\": \"vbscript\", // Syntax names which must process VBScript formatter\n          \"format_on_save\": false, // Format on save\n          \"indent_size\": 1, // indentation size\n          \"indent_char\": \"\\t\", // Indentation character\n          \"indent_with_tabs\": true, // Indent with one tab (overrides indent_size and indent_char options)\n          \"preserve_newlines\": true, // Preserve existing line-breaks\n          \"max_preserve_newlines\": 10, // Maximum number of line-breaks to be preserved in one chunk\n          \"opening_tags\": \"^(Function .*|Sub .*|If .* Then|For .*|Do While .*|Select Case.*)\", // List of keywords which open a new block\n          \"middle_tags\": \"^(Else|ElseIf .* Then|Case .*)$\", // List of keywords which divide a block, but neither open or close the block\n          \"closing_tags\": \"(End Function|End Sub|End If|Next|Loop|End Select)$\" // List of keywords which close an open block\n      }\n  ```\n  \n  Usage\n  -----\n  Tools -> Command Palette (`Cmd+Shift+P` or `Ctrl+Shift+P`) and type `Format Code`.\n  \n  You can set up your own key combo for this, by going to Preferences -> Key Bindings - User, and adding a command in that huge array: `{ \"keys\": [\"ctrl+alt+f\"], \"command\": \"code_formatter\" },`. Default keybinding is `ctrl+alt+f`. You can use any other key you want, thought most of them are already taken.\n  \n  TODO\n  -----\n  Add other languages support:\n  * Python (for ST3)\n  * Perl\n  * Ruby\n  \n  Pull requests are welcome.\n  \n  Troubleshooting\n  ---------------\n  If you like living on the edge, please report any bugs you find on the [CodeFormatter issues](https://github.com/akalongman/sublimetext-codeformatter/issues) page.\n\n\nCodeFall Color Scheme\n---------------------\n\n  # CodeFall Color Scheme  \n  Codefall is a dark Color-Scheme for Sublime Text.\n  \n  \n  ## Installation \n  ### Via Package Control\n  \n  1. Make sure you already have [Package Control](https://packagecontrol.io/installation) installed.\n  2. Choose Install Package from the Command Palette (via `Tools > Coomand Palette` from the main menu).\n  3. Select **`CodeFall Color Scheme`** and press <kbd>Enter</kbd>.\n  \n  ### or Manual Installation\n  \n  1. Download the desired **`CodeFall Color Scheme`** file.\n  2. Browse Packages from the Command Palette (via `Preferences > Browse packages` from the main menu).\n  3. Copy the **`CodeFall Color Scheme`** file to `Packages/User/`.\n\n\nES6-Toolkit\n-----------\n\n  Package Control Messages\n  ========================\n  \n  ES6-Toolkit:\n  ---\n  \n    Thanks for installing Sublime ES6-Toolkit! Below are some quick notes to get you\n    started with the plugin. Please see https://github.com/Stephn-R/ES6-Toolkit for\n    the full documentation.\n    \n    \n    ----------------------------------------------------------------------------------\n                                        IMPORTANT\n    ----------------------------------------------------------------------------------\n    \n    In order to be able to run the ES6 Compiler, you will need to install the NPM module\n    `babel` globally. Please run the following command to install babel:\n  \n    ```bash\n    npm install -g babel\n    ```\n  \n    ----------------------------------------------------------------------------------\n  \n    ## Features\n  \n    The ES6-Toolkit comes pre-packages with lots of cool tools. Below is a short list\n    with links to more information in the Wiki Pages:\n  \n    1. ES6 Completions => [Wiki Link](http://www.google.com)\n  \n    ## Coming Soon\n  \n    1. ES6 Inline Compiling\n    2. Compile entire JS files to ES5 using Babel\n    3. Compile entire projects to ES5 using Babel\n    \n    Support\n    ----\n    \n    To learn more about the features and settings, please visit\n    https://github.com/Stephn-R/ES6-Toolkit-for-Sublime\n    \n    If you are having trouble, please contact me at steprodriguez10@gmail.com\n\n\nJavaScript Enhancements\n-----------------------\n\n  =================================================================\n  ** THIS PLUGIN IS IN BETA! Thanks for your support in advance! **\n  =================================================================\n  \n  If you like it, remember to star it ⭐ on GitHub: https://github.com/pichillilorenzo/JavaScriptEnhancements\n  \n  ** USAGE **\n  ===========\n  \n  See how it works on the Wiki: 👉👉 https://github.com/pichillilorenzo/JavaScriptEnhancements/wiki 👈👈\n  \n  A little introduction to this plugin could be found in this css-tricks.com article: \"Turn Sublime Text 3 into a JavaScript IDE\"\n  👉👉 https://css-tricks.com/turn-sublime-text-3-into-a-javascript-ide 👈👈\n  \n  \n  *****************************************************************************\n  *                                                                           *\n  *             Do you want to help me develop this plugin?                   *\n  *                                                                           *\n  *                     Become a member of the team!                          *\n  * (see https://github.com/pichillilorenzo/JavaScriptEnhancements/issues/51) *\n  *                                                                           *\n  *****************************************************************************\n  \n  \n  ** WHAT IS THIS? **\n  ===================\n  \n  This plugin uses Flow (javascript static type checker from Facebook) under the hood.\n  \n  It offers better javascript autocomplete and a lot of features about creating, \n  developing and managing javascript projects, such as:\n  \n  - Cordova projects (run cordova emulate, build, compile, serve, etc. directly from Sublime Text!)\n  - Ionic v1 and v2 (it includes also v3) projects (same as Cordova projects!)\n  - Angular v1 and v2 (it includes also v4 and v5) projects\n  - Vue projects (only about the creation at this moment, see https://github.com/pichillilorenzo/JavaScriptEnhancements/wiki/Example-Vue.js-project)\n  - React projects (only about the creation at this moment)\n  - React Native projects (only about the creation at this moment. I will add also NativeScript support)\n  - Express projects (only about the creation at this moment)\n  - Yeoman generators\n  - Local bookmarks project\n  - JavaScript real-time errors\n  - Code Refactoring\n  - etc.\n  \n  You could use it also in existing projects (see the Wiki - https://github.com/pichillilorenzo/JavaScriptEnhancements/wiki/Using-it-with-an-existing-project)!\n  \n  It turns Sublime Text into a JavaScript IDE like!\n  \n  This project is based on my other Sublime Text plugin JavaScript Completions (https://github.com/pichillilorenzo/JavaScript-Completions)\n  \n  ** NOTE **\n  If you want use this plugin, you may want uninstall/disable the JavaScript Completions plugin, if installed.\n  \n  ** OS SUPPORTED **\n  ==================\n  \n  👉 Linux (64-bit)\n  👉 Mac OS X \n  👉 Windows (64-bit): released without the use of TerminalView plugin. For each feature (like also creating a project) will be used the cmd.exe shell (so during the creation of a project don't close it until it finishes!). Unfortunately the TerminalView plugin supports only Linux-based OS 😞. See https://github.com/Wramberg/TerminalView/issues/3#issuecomment-390434623, that is a workaround using WSL (Windows Subsystem for Linux).\n  \n  ❗❗ Dependencies ❗❗\n  =======================\n  \n  In order to work properly, this plugin has some dependencies:\n  \n  👉 Sublime Text 3 (build 3124 or newer)\n  👉 Node.js and npm (https://nodejs.org or nvm (https://github.com/creationix/nvm))\n  👉 TerminalView (only for Linux and Mac OS X) sublime text plugin (https://github.com/Wramberg/TerminalView)\n  \n  Not required, but useful for typescript files (Flow wont work on this type of files):\n  \n  👉 TypeScript sublime text plugin (https://github.com/Microsoft/TypeScript-Sublime-Plugin) \n  \n  ** Flow Requirements **\n  =======================\n  \n  It use [Flow](https://github.com/facebook/flow) for type checking and auto-completions.\n  \n  👉 Mac OS X\n  👉 Linux (64-bit)\n  👉 Windows (64-bit)\n  \n  Email me for any questions or doubts about this new project on: pichillilorenzo@gmail.com\n  \n  ** Donation **\n  ==============\n  \n  If this project help you reduce time to develop and also you like it, please support it with a donation 😄👍. Thanks!\n  \n  Open Collective: https://opencollective.com/javascriptenhancements/donate\n  PayPal: https://www.paypal.me/LorenzoPichilli\n  \n  Thanks anyway for your support! 😄😄\n  \n  MIT License\n\n\nJSCustom\n--------\n\n  JS Custom - Customizable JavaScript syntax highlighting for Sublime Text\n  ========================================================================\n  \n  Upon installation, JS Custom will compile a couple of example syntaxes, “JS Custom - Default” and “JS Custom - React”. You can try these out right away. To customize your syntaxes, choose Preferences → Package Settings → JS Custom → Settings from the menubar. When you save your user settings file, JS Custom will recompile your syntaxes on the fly.\n  \n  Visit the JS Custom GitHub at https://github.com/Thom1729/Sublime-JS-Custom for full documentation, including all syntax options.\n  \n  If you find a bug, need help, or have a suggestion for a new feature, please post an issue on the GitHub page.\n\n\nDoxyDoc\n-------\n\n  Hello.\n  \n  Thanks for installing this package. This package was made to help make\n  the hassle of making doxygen documentation a little bit easier. There\n  were many plug-ins that did this for other languages, but there weren't\n  many that did it for C++ properly. Many failed when handling templates.\n  As a result, this package was made with high inspiration from the other\n  popular documentation package, DocBlockr.\n  \n  If you find any bugs, which are sure to show up due to the imperfections\n  of parsing C++ with regex, please notify me on the GitHub page:\n  https://github.com/Rapptz/DoxyDoc\n",
 			"settings":
 			{
-				"buffer_size": 13823,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/util.js",
-			"settings":
-			{
-				"buffer_size": 130292,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/renderer.js",
-			"settings":
-			{
-				"buffer_size": 1234,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "Searching 839 files for \"LinesToPath\" (regex)\n\n/home/roman/Sources/plot-cv/lib/eagle.js:\n    2  \n    3  export { EagleNodeList } from './eagle/nodeList.js';\n    4: export { Rotation, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, ClampAngle, AlignmentAngle, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, Arc, CalculateArcRadius, LinesToPath, MakeCoordTransformer } from './eagle/renderUtils.js';\n    5  export { EagleDocument } from './eagle/document.js';\n    6  export { EagleReference, EagleRef } from './eagle/ref.js';\n\n/home/roman/Sources/plot-cv/lib/eagle/boardRenderer.js:\n    6  import { RGBA } from '../color.js';\n    7  import { Palette } from './common.js';\n    8: import { VERTICAL, HORIZONTAL, RotateTransformation, LayerAttributes, LinesToPath, MakeCoordTransformer, Rotation } from './renderUtils.js';\n    9  import { EagleSVGRenderer } from './svgRenderer.js';\n   10  import { Repeater } from '../repeater/repeater.js';\n   ..\n  178        //this.debug('Lines:', [...lines]);\n  179  \n  180:       const path = LinesToPath(lines);\n  181        const layer = layers[layerId] || this.layers.Bottom;\n  182        const width = widths[layerId];\n\n/home/roman/Sources/plot-cv/lib/eagle/renderUtils.js:\n  127  };\n  128  \n  129: export const LinesToPath = (lines) => {\n  130    let l = lines.shift(),\n  131      m;\n\n/home/roman/Sources/plot-cv/main.js:\n   43  import KolorWheel from './lib/KolorWheel.js';\n   44  import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';\n   45: import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl } from './lib/eagle/renderUtils.js';\n   46  import { Wire } from './lib/eagle/components/wire.js';\n   47  import { Instance } from './lib/eagle/components/instance.js';\n   ..\n 1075        InvertY,\n 1076        LayerAttributes,\n 1077:       LinesToPath,\n 1078        MakeCoordTransformer,\n 1079        PolarToCartesian,\n\n6 matches across 4 files\n\n\nSearching 839 files for \"columnWidths\" (regex)\n\n/home/roman/Sources/plot-cv/lib/util.js:\n 2903        const { message, stack, proto } = this;\n 2904        return `${Util.fnName((proto && proto.constructor) || this.constructor)}: ${message}\n 2905: Stack:${Util.stack.prototype.toString.call(stack, color, stack.columnWidths)}`;\n 2906      }, [Symbol.toStringTag]() {\n 2907        return this.toString(false);\n ....\n 3009        return fileName ? `${fileName}:${lineNumber}:${columnNumber}` : null;\n 3010      },\n 3011:     toString(color, columnWidths = [0, 0, 0, 0]) {\n 3012        let text = color && this.colorCtor ? new this.colorCtor() : '';\n 3013        const c = color && this.colorCtor ? (t, color) => text.write(t, color) : (t) => (text += t);\n ....\n 3023        let columns = fields.map((fn) => this[fn]);\n 3024  \n 3025:       columns = columns.map((f, i) => (f + '')[i >= 2 ? 'padStart' : 'padEnd'](columnWidths[i] || 0, ' '));\n 3026        // columns = columns.map((fn, i) => c(fn, colors[i]));\n 3027  \n 3028        const [functionName, fileName, lineNumber, columnNumber] = columns;\n 3029:       //console.log('stackFrame.toString', { color ,columnWidths, functionName, fileName, lineNumber, columnNumber});\n 3030        let colonList = [fileName, lineNumber, columnNumber]\n 3031          .map((p) => ('' + p == 'undefined' ? undefined : p))\n ....\n 3042        return this.toString(false);\n 3043      }, [Symbol.for('nodejs.util.inspect.custom')](...args) {\n 3044:       return Util.stackFrame.prototype.toString.call(this, true, this.columnWidths);\n 3045      }\n 3046    },\n ....\n 3166  Util.stack.prototype = Object.assign(Util.stack.prototype, {\n 3167    toString(color = false) {\n 3168:     let columns = this.columnWidths;\n 3169      let a = [...this].map((frame) => Util.stackFrame.prototype.toString.call(frame, color, columns));\n 3170      let s = a.join('\\n');\n ....\n 3173      return Util.stack.prototype.toString.call(this);\n 3174    }, [Symbol.for('nodejs.util.inspect.custom')](...args) {\n 3175:     return '\\n' + this.map((f) => f.toString(!Util.isBrowser(), this.columnWidths)).join('\\n');\n 3176    }\n 3177  });\n 3178  \n 3179  Object.defineProperties(Util.stack.prototype, {\n 3180:   columnWidths: {\n 3181      get() {\n 3182        return this.reduce((a, f) => ['functionName'].map((fn, i) => Math.max(a[i], (f[fn] + '').length)), [0, 0, 0, 0]);\n\n/home/roman/Sources/plot-cv/tamper.js:\n 2536        const { message, stack, proto } = this;\n 2537        return `${Util.fnName(proto.constructor || this.constructor)}: ${message}\n 2538: Stack:${Util.stack.prototype.toString.call(stack, color, stack.columnWidths)}`;\n 2539      }, [Symbol.toStringTag]() {\n 2540        return this.toString(false);\n ....\n 2627        return fileName ? `${fileName}:${lineNumber}:${columnNumber}` : null;\n 2628      },\n 2629:     toString(color, columnWidths = [0, 0, 0, 0]) {\n 2630        let text = color ? new this.colorCtor() : '';\n 2631        const c = color ? (t, color) => text.write(t, color) : (t) => (text += t);\n ....\n 2641        let columns = fields.map((fn) => this[fn]);\n 2642  \n 2643:       columns = columns.map((f, i) => (f + '')[i >= 2 ? 'padStart' : 'padEnd'](columnWidths[i] || 0, ' '));\n 2644        // columns = columns.map((fn, i) => c(fn, colors[i]));\n 2645  \n 2646        const [functionName, fileName, lineNumber, columnNumber] = columns;\n 2647:       //console.log('stackFrame.toString', { color ,columnWidths, functionName, fileName, lineNumber, columnNumber});\n 2648  \n 2649        return `${functionName} ${fileName}:${lineNumber}:${columnNumber}` + c('', 0);\n ....\n 2657        return this.toString(false);\n 2658      }, [Symbol.for('nodejs.util.inspect.custom')](...args) {\n 2659:       return Util.stackFrame.prototype.toString.call(this, true, this.columnWidths);\n 2660      }\n 2661    });\n ....\n 2729    Util.stack.prototype = Object.assign(Util.stack.prototype, {\n 2730      toString(color = false) {\n 2731:       let columns = this.columnWidths;\n 2732        let a = [...this].map((frame) => Util.stackFrame.prototype.toString.call(frame, color, columns));\n 2733        let s = a.join('\\n');\n ....\n 2737      }, [Symbol.for('nodejs.util.inspect.custom')](...args) {\n 2738        //const fields = ['functionName','fileName','lineNumber','columnNumber'];\n 2739:       //this.columnWidths = this.reduce((a,f) => fields.slice(0,1).map((fn,i) => Math.max(a[i],(f[fn]+'').length)), [0,0,0,0]);\n 2740:       return '\\n' + this.map((f) => f.toString(!Util.isBrowser(), this.columnWidths)).join('\\n');\n 2741      }\n 2742    });\n 2743  \n 2744    Object.defineProperties(Util.stack.prototype, {\n 2745:     columnWidths: {\n 2746        get() {\n 2747          return this.reduce((a, f) => ['functionName'].map((fn, i) => Math.max(a[i], (f[fn] + '').length)), [0, 0, 0, 0]);\n\n17 matches across 2 files\n\n\nSearching 839 files for \"requestContent\" (regex)\n\n0 matches",
-			"settings":
-			{
-				"buffer_size": 7063,
+				"buffer_size": 23592,
 				"line_ending": "Unix",
-				"name": "Find Results",
+				"name": "Package Control Messages",
+				"read_only": true,
 				"scratch": true
 			}
 		},
 		{
-			"file": "lib/eagle/boardRenderer.js",
+			"file": "/home/roman/.config/sublime-text-3/Packages/User/NewScheme.tmTheme",
 			"settings":
 			{
-				"buffer_size": 11193,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/common.js",
-			"settings":
-			{
-				"buffer_size": 4222,
+				"buffer_size": 11917,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -176,6 +154,46 @@
 		"selected_items":
 		[
 			[
+				"adva",
+				"Package Control: Advanced Install Package"
+			],
+			[
+				"add ",
+				"Package Control: Add Repository"
+			],
+			[
+				"add re",
+				"Package Control: Add Repository"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"extract pack",
+				"PackageResourceViewer: Extract Package"
+			],
+			[
+				"symbol",
+				"CTags: Show Symbols (all)"
+			],
+			[
+				"ctags",
+				"CTags: Show Symbols (file)"
+			],
+			[
+				"svgo",
+				"SVGO: Prettify SVG"
+			],
+			[
+				"",
+				"Browse Mode: FileBrowser Top Left, Outline Bottom Left"
+			],
+			[
+				"prett",
+				"SVGO: Prettify SVG"
+			],
+			[
 				"install pack",
 				"Package Control: Install Package"
 			],
@@ -188,15 +206,7 @@
 				"Package Control: Install Package"
 			],
 			[
-				"install",
-				"Package Control: Install Package"
-			],
-			[
 				"add rep",
-				"Package Control: Add Repository"
-			],
-			[
-				"add re",
 				"Package Control: Add Repository"
 			],
 			[
@@ -289,153 +299,151 @@
 	"expanded_folders":
 	[
 		"/home/roman/Sources/plot-cv",
-		"/home/roman/Sources/plot-cv/include",
 		"/home/roman/Sources/plot-cv/lib",
-		"/home/roman/Sources/plot-cv/lib/color",
-		"/home/roman/Sources/plot-cv/lib/dom",
-		"/home/roman/Sources/plot-cv/lib/eagle",
-		"/home/roman/Sources/plot-cv/lib/gerber"
+		"/home/roman/Sources/plot-cv/lib/eagle"
 	],
 	"file_history":
 	[
-		"/home/roman/Sources/plot-cv/tamper.js",
-		"/home/roman/Sources/plot-cv/src/js_mat.cpp",
-		"/opt/opencv3/include/opencv2/core/types.hpp",
-		"/home/roman/Sources/plot-cv/src/jsbindings.h",
-		"/home/roman/Sources/plot-cv/quickjs/quickjs.c",
-		"/home/roman/Sources/plot-cv/quickjs/quickjs.h",
-		"/home/roman/Sources/plot-cv/test-quickjs.js",
-		"/home/roman/Sources/plot-cv/resolve-imports.js",
-		"/home/roman/Sources/plot-cv/lib/geom.js",
-		"/home/roman/Sources/plot-cv/lib/geom/point.js",
-		"/home/roman/Sources/plot-cv/lib/geom/size.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
-		"/home/roman/Sources/plot-cv/src/js_rect.cpp",
-		"/home/roman/Sources/plot-cv/lib/eagle/components/wire.js",
-		"/home/roman/Sources/plot-cv/quickjs/cutils.h",
-		"/home/roman/Sources/plot-cv/src/js_contour.cpp",
-		"/home/roman/Sources/plot-cv/src/js_point.cpp",
-		"/home/roman/Sources/plot-cv/src/js_size.cpp",
-		"/home/roman/Sources/plot-cv/quickjs.c",
-		"/home/roman/Sources/plot-cv/main.js",
-		"/home/roman/Sources/plot-cv/lib/ecmascript/parser.js",
-		"/home/roman/Sources/plot-cv/lib/ecmascript/lexer.js",
-		"/home/roman/Sources/plot-cv/lib/ecmascript/token.js",
-		"/home/roman/Sources/plot-cv/test-eval.js",
-		"/home/roman/Sources/plot-cv/test-lexer.js",
-		"/home/roman/Sources/plot-cv/inspect.js",
-		"/home/roman/Sources/plot-cv/quickjs/examples/point.c",
-		"/home/roman/Sources/plot-cv/quickjs/quickjs-atom.h",
-		"/home/roman/Sources/plot-cv/quickjs/list.h",
-		"/home/roman/Sources/plot-cv/quickjs/CMakeLists.txt",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/examples/fib.c",
-		"/home/roman/Sources/plot-cv/node_modules/isomorphic-fetch/node_modules/node-fetch/test/server.js",
-		"/home/roman/Sources/plot-cv/lib/ecmascript/environment.js",
-		"/home/roman/Sources/plot-cv/lib/util.js",
-		"/home/roman/Sources/plot-cv/lib/path.js",
-		"/home/roman/Sources/plot-cv/lib/filesystem.js",
-		"/home/roman/Sources/plot-cv/lib/ecmascript/estree.js",
-		"/home/roman/Sources/plot-cv/src/js_line.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/examples/point.c",
-		"/home/roman/Sources/plot-cv/CMakeLists.txt",
-		"/home/roman/Sources/plot-cv/lib/xml/util.js",
-		"/home/roman/Sources/plot-cv/lib/dom/preactComponent.js",
-		"/home/roman/Sources/plot-cv/test-parse.js",
-		"/home/roman/Sources/plot-cv/components.js",
-		"/home/roman/Sources/plot-cv/lib/deep.js",
-		"/home/roman/Sources/plot-cv/lib/dom/css.js",
-		"/home/roman/Sources/plot-cv/style.css",
-		"/home/roman/Sources/plot-cv/lib/xml/xpath.js",
-		"/home/roman/Sources/plot-cv/lib/dom/element.js",
+		"/home/roman/Sources/plot-cv/quickjs/qjsc.c",
+		"/home/roman/Sources/plot-cv/quickjs/qjs.c",
+		"/home/roman/Sources/plot-cv/src/imgui-viewer.cpp",
 		"/home/roman/Sources/plot-cv/lib/geom/rect.js",
-		"/home/roman/Dokumente/Sources/js-delaunay/delaunay-10k/nvm.sh",
-		"/home/roman/.nvm/nvm.sh",
-		"/home/roman/Downloads/08cd6e8b438ee87714cf45acb0271201eeedde34.dlc",
-		"/home/roman/Sources/plot-cv/rect.es",
-		"/home/roman/Sources/plot-cv/server.js",
-		"/home/roman/Sources/plot-cv/lib/ecmascript/printer.js",
-		"/home/roman/Sources/plot-cv/lib/json/path.js",
-		"/home/roman/Dokumente/Sources/js-color/convert-colors/src/lab-ciede.js",
-		"/home/roman/Dokumente/Sources/js-color/convert-colors/src/rgb-contrast.js",
-		"/home/roman/Dokumente/Sources/js-color/convert-colors/src/rgb-contrast.js$",
-		"/home/roman/Sources/plot-cv/test-xml.js",
-		"/home/roman/Dokumente/Sources/js-color/colornary/src/conversions/hsl.js",
-		"/home/roman/Dokumente/Sources/js-color/convert-colors/src/index.js",
-		"/home/roman/Sources/plot-cv/lib/color/rgba.js",
-		"/home/roman/Sources/plot-cv/lib/color/hsla.js",
-		"/home/roman/Sources/plot-cv/lib/draw/colorMap.js",
-		"/home/roman/Sources/plot-cv/test-attributes.js",
-		"/home/roman/.config/sublime-text-3/Packages/Babel/Next Roman 4.tmTheme",
-		"/home/roman/Sources/plot-cv/lib/eagle/element.js",
-		"/home/roman/Dokumente/Sources/musl/src/malloc/mallocng/m",
-		"/home/roman/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/Dokumente/Sources/plot-cv/.eslintrc.cjs",
+		"/home/roman/Dokumente/Sources/plot-cv/sdl2-config.cmake",
+		"/home/roman/Sources/plot-cv/CMakeLists.txt",
 		"/home/roman/Sources/plot-cv/highgui-viewer.cmake",
-		"/home/roman/Dokumente/Sources/plot-cv/cmake.log",
-		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/cmake.log",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/CMakeLists.txt",
-		"/home/roman/Sources/plot-cv/test-color.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/svgRenderer.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/boardRenderer.js",
-		"/home/roman/Sources/plot-cv/lib/trkl.js",
+		"/home/roman/Sources/plot-cv/imgui-viewer.cmake",
+		"/usr/local/share/cmake-3.18/Modules/FindGLEW.cmake",
+		"/home/roman/Dokumente/Sources/imgui/examples/example_glfw_vulkan/CMakeLists.txt",
+		"/home/roman/Sources/plot-cv/lib/dom/cache.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/renderUtils.js",
-		"/home/roman/Sources/plot-cv/lib/repeater/repeater.js",
-		"/home/roman/Sources/plot-cv/lib/alea.js",
-		"/home/roman/Sources/plot-cv/lib/jsondiff.js",
-		"/home/roman/Sources/plot-cv/lib/deep-diff.js",
-		"/home/roman/Sources/plot-cv/lib/KolorWheel.js",
-		"/home/roman/Sources/plot-cv/test-ecmascript.js",
-		"/home/roman/Dokumente/Sources/plot-cv/Next.xml",
-		"/home/roman/.config/sublime-text-3/Packages/Babel/Next.tmTheme",
-		"/home/roman/Sources/plot-cv/create-tamper.js",
-		"/home/roman/Sources/plot-cv/test-stack.js",
-		"/home/roman/Sources/plot-cv/resolved.js",
-		"/home/roman/Sources/plot-cv/consoleSetup.js",
-		"/home/roman/Sources/plot-cv/test-proxy.js",
-		"/home/roman/Sources/plot-cv/test-voronoi.js",
-		"/home/roman/Sources/plot-cv/test-renderer.js",
-		"/home/roman/Sources/plot-cv/lib/container/sortedMap.js",
-		"/home/roman/Sources/plot-cv/lib/ecmascript.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/schematicRenderer.js",
+		"/home/roman/Sources/plot-cv/lib/util.js",
+		"/home/roman/Sources/plot-cv/lib/geom/size.js",
+		"/home/roman/Sources/plot-cv/plot-cv.sublime-project",
+		"/home/roman/Sources/plot-cv/components.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/components/grid.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/document.js",
+		"/home/roman/Sources/plot-cv/server.js",
+		"/home/roman/Dokumente/Sources/inkscape-0.92.4/share/extensions/color_randomize.py",
+		"/home/roman/Sources/plot-cv/lib/eagle/components/textElement.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/renderer.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Sources/plot-cv/lib/async/debounce.js",
 		"/home/roman/Sources/plot-cv/lib/geom/transformation.js",
-		"/home/roman/Sources/plot-cv/lib/log.js",
-		"/home/roman/Dokumente/Sources/plot-cv/create-tamper.js",
-		"/home/roman/Dokumente/Sources/plot-cv/resolve-imports.js",
-		"/home/roman/Dokumente/Sources/plot-cv/server.js",
+		"/home/roman/Sources/plot-cv/static/svg/cnc-frezovani.svg",
+		"/home/roman/Sources/plot-cv/main.js",
+		"/home/roman/Sources/plot-cv/static/svg/cnc-obrabeni.svg",
+		"/home/roman/Sources/plot-cv/Voronoi_diagram.svg",
+		"/home/roman/Sources/plot-cv/static/svg/voronoi.svg",
+		"/home/roman/Sources/plot-cv/static/svg/voronoi-square.svg",
+		"/home/roman/Sources/plot-cv/cnc-milling.svg",
+		"/home/roman/Sources/plot-cv/cnc-turning.svg",
+		"/home/roman/Sources/plot-cv/3d-printers.svg",
+		"/home/roman/Sources/plot-cv/cutting-machines.svg",
+		"/home/roman/Sources/plot-cv/cnc-machines.svg",
+		"/home/roman/Sources/plot-cv/static/svg/hide-black.svg",
+		"/home/roman/Sources/plot-cv/CNC_Fraesen.svg",
+		"/home/roman/Sources/plot-cv/CNC_Fraesen (1).svg",
+		"/home/roman/Sources/plot-cv/cnc-obrabeni.svg",
+		"/home/roman/Sources/plot-cv/cnc-frezovani.svg",
+		"/home/roman/Sources/plot-cv/cnc-milling-machine-spindle-vector-600w-1256901511.webp",
+		"/home/roman/Sources/plot-cv/fresatrici-cnc-e-anubatrici_icon.svg",
+		"/home/roman/Sources/plot-cv/style.css",
+		"/home/roman/Sources/plot-cv/lib/eagle/components/pad.js",
+		"/home/roman/Sources/plot-cv/tmp/7seg-2.54.brd",
+		"/home/roman/Sources/plot-cv/lib/eagle/components/pin.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/components/text.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/components/rectangle.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/components/wire.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/components/svg.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/components/symbol.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/components/circle.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/components/drawing.js",
+		"/home/roman/Sources/plot-cv/classNames.js",
+		"/home/roman/Sources/plot-cv/lib/xml/xpath.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/node.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/components.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/nodeMap.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/static/svg/grid.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/7seg-2.54.brd",
+		"/home/roman/Sources/plot-cv/lib/eagle/components/cross.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/components/origin.js",
+		"/home/roman/Sources/plot-cv/lib/dom.js",
+		"/home/roman/Sources/plot-cv/lib/dom/timer.js",
+		"/home/roman/Sources/pictest/eagle/7seg-2.54.brd",
+		"/home/roman/Sources/plot-cv/lib/dom/preactComponent.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/components/background.js",
+		"/home/roman/Sources/plot-cv/lib/trkl.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/schematicRenderer.js",
+		"/home/roman/Sources/plot-cv/lib/dom/element.js",
+		"/home/roman/Sources/plot-cv/useDimensions.js",
+		"/home/roman/Sources/plot-cv/tlite.css",
+		"/home/roman/Sources/plot-cv/lib/tlite.js",
+		"/home/roman/Dokumente/Sources/plot-cv/static/svg/layers.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/static/svg/exception.svg",
+		"/home/roman/.config/sublime-text-3/Packages/Babel/Next Roman 2.tmTheme",
+		"/home/roman/Dokumente/Sources/plot-cv/test-alea.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-antlr.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-attributes.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-autoplacer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-cli.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-clipper.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-color.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-coverage.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-date.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-description.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-eval.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-export.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-expr.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-filesystem.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-geom.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-ini.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-jpeg.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-jsjs.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-kolorwheel.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-lexer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-lex.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-line.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-matrix.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-membrane.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-moon.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-parse.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-path.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-pointlist.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-preact.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-proxy.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-quickjs.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
-		"/home/roman/Sources/plot-cv/test-repeater.js",
-		"/home/roman/Sources/plot-cv/test-filesystem.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-wasm.js",
-		"/home/roman/Sources/plot-cv/test-jsjs.js",
-		"/home/roman/Sources/plot-cv/test-pointlist.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/functional.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/json/treeObserver.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-repeater.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-sourcemap.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-stack.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-svgpath.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-template.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-trkl.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-util.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-xml.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-voronoi.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-sourcemap.js"
+		"/home/roman/Dokumente/Sources/plot-cv/lib/axios.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/devpane.js",
+		"/home/roman/Sources/plot-cv/resolve-imports.js",
+		"/home/roman/.config/sublime-text-3/Packages/Babel/Next Roman 3.tmTheme",
+		"/home/roman/Sources/plot-cv/lib/color/distanceChecker.js",
+		"/home/roman/Sources/plot-cv/static/svg/browse.svg",
+		"/home/roman/Sources/plot-cv/test-xml.js",
+		"/home/roman/Dokumente/Sources/plot-cv/static/svg/CAM.svg"
 	],
 	"find":
 	{
-		"height": 44.0
+		"height": 43.0
 	},
 	"find_in_files":
 	{
-		"height": 144.0,
+		"height": 157.0,
 		"where_history":
 		[
+			"/home/roman/Sources/plot-cv,*.js,CMakeLists.txt,-*/node_modules/*,/home/roman/Sources/plot-cv/quickjs,*.c,*.h",
+			"/home/roman/Sources/plot-cv/lib,*.js,CMakeLists.txt,-*/node_modules/*,/home/roman/Sources/plot-cv/quickjs,*.c,*.h",
 			"/home/roman/Sources/plot-cv,*.js,CMakeLists.txt,-*/node_modules/*,/home/roman/Sources/plot-cv/quickjs,*.c,*.h",
 			"/home/roman/Sources/plot-cv,*.js,CMakeLists.txt,-*/node_modules/*",
 			"/home/roman/Sources/plot-cv,*.js,CMakeLists.txt",
@@ -448,137 +456,137 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": false,
+		"case_sensitive": true,
 		"find_history":
 		[
-			"zoomLog",
-			"54",
-			"});",
-			"'yes'",
-			"requestContent",
-			"columnWidths",
-			"LinesToPath",
-			"getArgs",
-			"name",
-			"indexes",
-			"searchPath",
-			"flat ",
-			"js_rect_get_xywh",
-			"js_mat_vector_get",
-			"4",
-			"JSMatSizeData dim",
-			" m->rows",
-			"js_mat_get_wh",
-			"get_wh",
-			"uint32_t",
-			"js_mat_get_wh",
-			"JS_ToUint32",
-			"js_mat_get_vector<([^>]*)>",
-			"DataType",
-			"uint8",
-			"mat_get_vec",
-			"js_mat_get_wh",
-			"js_mat_get",
-			"IsUndef",
-			"finalizer",
-			"rowRange",
-			"js_mat_set",
-			"for.*of",
-			"js_mat_create_vec",
-			"js_iterator.*proto",
-			"js_iterator.*class",
-			"js_iterator_",
-			"js_iterator_proto_funcs",
-			"ctx->iterator_proto",
-			"js_iterator_proto_funcs",
-			"iterator_proto_funcs",
-			"\"\\[Symbol.iterator\\]\"",
-			"\"keys\"",
-			"keys\"",
-			"ITERATOR.*DEF",
-			"NewObject",
-			"mat_proto",
-			"JS_GetIterator\\(",
-			"JS_GetIterator",
-			"is not itera",
-			"JS_SetOpaque",
-			"js_mat_iterator_proto_funcs",
-			"\"next\"",
-			"for_of_start",
-			"is not iterable",
-			"js_array_iterator_next",
-			"JS_ITERATOR_NEXT_DEF",
-			"js_mat_iterator_next",
-			"JS_DefinePropertyValueUint32",
-			"JS_DefineProperty",
-			"  ",
-			"js_create_array\\(",
-			"js_create_array",
-			"js_array_iterator_next\\(",
-			"^js_array",
-			"^js.*_next\\(",
-			"_next\\(",
-			"JS_NewObject\\(",
-			"Symbol.iterator",
-			"DEF_ALIAS.*Symbol",
-			"DEF_ALIAS",
-			"JS_FreeValue\\([^c]",
-			"JS_FreeValue...*ctx",
-			"JS_FreeValue.*ctx",
-			"JS_FreeValue.*rt",
-			"JS_FreeValue.*ctx",
-			"JS_FreeValue",
-			"js_mat.*class_id",
-			"js_mat_iterator_class_id",
-			"^JS_NewObjectProto",
-			"^JS_ToObject",
-			"= FALSE",
-			"define.*FALSE",
-			"def.*FALSE",
-			"JS_GetPropertyStr",
-			"js_get_length32",
-			"^js_get_length32",
-			"js_get_length32",
-			"JS_VALUE_GET_OBJ",
-			"JSClassDef",
-			"^JSClassDef",
-			"JSClassDef",
-			"JS_NewClass",
-			"JS_CLASS_ARRAY_ITERATOR",
-			"Class.*array.Iterator",
-			"Class.*Iterator",
-			"JS_NewClass",
-			"JS_NewClass\\(",
-			"JS_NewClass",
-			"JS_.*ARRAY.*ITERATOR",
-			"JSArrayIteratorData",
-			"mat.*iterator",
-			"JS_CLASS_ARRAY_ITERATOR\\]",
-			"JS_CLASS_ARRAY_ITERATOR",
-			"js_array_iterator_proto_funcs",
-			"js_create_array_iterator",
-			"JS_CLASS_STRING_ITERATOR",
-			"js_create_array_iterator",
-			"JS_ITERATOR_KIND_KEY",
-			"KIND",
-			"kind =",
-			"JSIteratorKindEnum",
-			"JSArrayIteratorData",
-			"js_create_array_iterator",
-			"Symbol.iterator",
-			"iterator",
-			"mat_wrap",
-			"ref_count",
-			"ref_count--",
-			"js_mat_finalizer",
-			"js_mat_wrap",
-			"JS_DupValue",
-			"Ref",
-			"mat_wrap",
-			"js_mat_wrap",
-			"New[^ ]*int64",
-			"JS_IsNumber",
-			"point_data"
+			">italic<",
+			"italic",
+			"VideoCap",
+			"GLFW.*LIB",
+			"GLFW_LIB",
+			"^",
+			"SDL2",
+			"SDL",
+			"sdl2",
+			"^\\s*console",
+			"^funct",
+			"^async fun",
+			"Normalize",
+			"isposi",
+			"GcodeToPolylines",
+			"$",
+			"finished.*loading",
+			"finished loading",
+			"Util.log",
+			"code:",
+			"filterOutKeys",
+			"filterOutKeys =",
+			"Response /gerbe",
+			"Response .ger",
+			"Request:",
+			"Content-Dispo",
+			" NormalizeResponse\\(",
+			"^\\s*console",
+			"^\\s*Util.log",
+			"^\\s*console",
+			"filterKeys =",
+			"if",
+			"filterOutKeys =",
+			"GerberToGcode",
+			"this.debug",
+			"this.log",
+			"this\\.log",
+			"console\\.log",
+			"console\\.",
+			"tmp\\/",
+			"console.log",
+			"console.debu",
+			"GerberToGcode",
+			"BoardToGerber",
+			"BoardTo",
+			"BoardToGer",
+			"gcodeTo",
+			"coloreffect",
+			"GcodeToPolylines",
+			"^\\s*console",
+			"Util.log",
+			"^\\s*console",
+			"GerberToGcode",
+			"BoardToGerber",
+			"\\.error",
+			"ispo",
+			"gerberEndpoint",
+			"path\\.",
+			"gerberToGcode",
+			"convertToGerber",
+			"GBL",
+			"GerberToGcode",
+			"306",
+			"RGBA",
+			"polylines",
+			"stroke",
+			"CAM\\.",
+			"layerList",
+			" \\& 1",
+			"buttons",
+			"layerList",
+			"onMouseD",
+			"mousedown",
+			"Chooser",
+			"DropDown",
+			"overlay",
+			"      ",
+			"currentTarget",
+			"gerberDa",
+			"gerberToGcode",
+			"gerberFile",
+			"gcode",
+			"gerberToGcode",
+			"gcode",
+			"convertToGerber",
+			"inactive",
+			"disabled",
+			"\\.type",
+			"Alignment\\(",
+			"Alignment\\($",
+			"Alignment\\(",
+			"0.0875rem",
+			"defs",
+			"style",
+			"pad",
+			"<pad",
+			"this.create",
+			"decodeUR",
+			"ElementToPath",
+			"ElementToClass",
+			"ElementToPath",
+			"layerName",
+			"classNames",
+			"import.*classNames",
+			"\\.number",
+			"className",
+			"class",
+			"layerList",
+			"ayerList",
+			"Layer",
+			"ayerList",
+			"AdjustZo",
+			"AdjustZoom",
+			"Math.log",
+			"initialized to",
+			"args",
+			"^\\s*slice\\(",
+			"^\\s*map",
+			"MakeFitAction",
+			"fn:",
+			"MakeFitAc",
+			"class.*TransformationList",
+			"class.*Translat",
+			"Make",
+			"setTransform",
+			"transform",
+			"\\.subsc",
+			"MakeFit"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -586,6 +594,18 @@
 		"regex": true,
 		"replace_history":
 		[
+			"><",
+			"#",
+			"console.debug",
+			"this.debug",
+			"console.log",
+			"_ref$liveMeasure",
+			"liveRef",
+			"refLiveMeasure",
+			"GcodeParser",
+			"DEPENDS ${QJSC_DEPS}",
+			"#ffff4b",
+			"new RGBA",
 			"js_mat_vector<\\1>::get",
 			"JS_PROP_ENUMERABLE",
 			"JS_DefinePropertyValueStr",
@@ -652,7 +672,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 96,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
@@ -662,74 +682,14 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Sources/plot-cv/lib/eagle/common.js",
+							"current_file": null,
 							"outline_rename_mode": false,
 							"sublime_recent_sort_is_transient": false,
 							"symkeys":
 							[
-								[
-									842,
-									866
-								],
-								[
-									1002,
-									1018
-								],
-								[
-									1431,
-									1437
-								],
-								[
-									1462,
-									1478
-								],
-								[
-									1878,
-									1884
-								],
-								[
-									1911,
-									1954
-								],
-								[
-									1965,
-									1983
-								],
-								[
-									2530,
-									2551
-								],
-								[
-									2763,
-									2783
-								],
-								[
-									3561,
-									3580
-								],
-								[
-									3652,
-									3671
-								],
-								[
-									3733,
-									3775
-								]
 							],
 							"symlist":
 							[
-								"dingbatCode",
-								"m",
-								"(c) =>",
-								"m",
-								"(c) =>",
-								"dump",
-								"isElement",
-								"parseArgs",
-								".predicate",
-								".predicate",
-								".predicate",
-								"traverse"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
@@ -737,13 +697,13 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 5,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 8,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -752,337 +712,81 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 58733,
+						"buffer_size": 60666,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								55196,
-								55196
+								33772,
+								33772
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"syntax": "Packages/Text/Plain text.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 34594.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "lib/color/rgba.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 21264,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6901,
-								6901
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 3618.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "lib/color/hsla.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8525,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4055,
-								4055
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2650.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "lib/geom/rect.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 13823,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								11064,
-								11064
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 8172.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "lib/util.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 130292,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								20608,
-								20608
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 14706.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "lib/eagle/renderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1234,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1191,
-								1191
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 63.0,
-						"translation.y": 0.0,
+						"translation.y": 18606.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 3,
 					"type": "text"
 				},
 				{
-					"buffer": 7,
+					"buffer": 2,
+					"file": "quickjs/qjsc.c",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7063,
+						"buffer_size": 20655,
 						"regions":
 						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										345,
-										356
-									],
-									[
-										761,
-										772
-									],
-									[
-										1040,
-										1051
-									],
-									[
-										1263,
-										1274
-									],
-									[
-										1730,
-										1741
-									],
-									[
-										2063,
-										2074
-									],
-									[
-										2480,
-										2492
-									],
-									[
-										2708,
-										2720
-									],
-									[
-										3079,
-										3091
-									],
-									[
-										3324,
-										3336
-									],
-									[
-										3717,
-										3729
-									],
-									[
-										3896,
-										3908
-									],
-									[
-										4260,
-										4272
-									],
-									[
-										4381,
-										4393
-									],
-									[
-										4793,
-										4805
-									],
-									[
-										5021,
-										5033
-									],
-									[
-										5356,
-										5368
-									],
-									[
-										5601,
-										5613
-									],
-									[
-										5960,
-										5972
-									],
-									[
-										6146,
-										6158
-									],
-									[
-										6487,
-										6499
-									],
-									[
-										6680,
-										6692
-									],
-									[
-										6809,
-										6821
-									]
-								],
-								"scope": ""
-							}
 						},
 						"selection":
 						[
 							[
-								4264,
-								4264
+								4146,
+								4146
 							]
 						],
 						"settings":
 						{
-							"detect_indentation": false,
-							"line_numbers": false,
-							"output_tag": 3,
-							"result_base_dir": "",
-							"result_file_regex": "^([^ \t].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
-							"translate_tabs_to_spaces": false
+							"color_scheme": "Packages/JavaScript Ultimate/themes/Indiana Jones.tmTheme",
+							"syntax": "Packages/C Improved/C Improved.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1316.0,
+						"translation.y": 441.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 8,
-					"file": "lib/eagle/boardRenderer.js",
+					"buffer": 3,
+					"file": "/home/roman/Dokumente/Sources/plot-cv/sub-pkgs.tmp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 11193,
+						"buffer_size": 449,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1267,
-								1267
+								405,
+								405
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/Text/Plain text.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -1092,33 +796,62 @@
 					"type": "text"
 				},
 				{
-					"buffer": 9,
-					"file": "lib/eagle/common.js",
+					"buffer": 4,
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4222,
+						"buffer_size": 23592,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1419,
-								1419
+								2134,
+								2134
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"auto_indent": false,
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_width": 2,
+							"word_wrap": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 396.0,
+						"translation.y": 8305.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/home/roman/.config/sublime-text-3/Packages/User/NewScheme.tmTheme",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11917,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2019,
+								2019
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 948.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
 					"type": "text"
 				}
 			]
@@ -1126,11 +859,11 @@
 	],
 	"incremental_find":
 	{
-		"height": 44.0
+		"height": 30.0
 	},
 	"input":
 	{
-		"height": 54.0
+		"height": 55.0
 	},
 	"layout":
 	{
@@ -1180,7 +913,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 79.0
+		"height": 77.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1190,20 +923,240 @@
 		"selected_items":
 		[
 			[
+				"qjsc.c",
+				"quickjs/qjsc.c"
+			],
+			[
+				"qjsc.",
+				"quickjs/qjsc.c"
+			],
+			[
+				"qjs.c",
+				"quickjs/qjs.c"
+			],
+			[
+				"imgui-v",
+				"src/imgui-viewer.cpp"
+			],
+			[
+				"main",
+				"main.js"
+			],
+			[
+				"imgui",
+				"imgui-viewer.cmake"
+			],
+			[
+				"high",
+				"highgui-viewer.cmake"
+			],
+			[
+				"cmakel",
+				"CMakeLists.txt"
+			],
+			[
 				"rect.js",
 				"lib/geom/rect.js"
+			],
+			[
+				"cache.js",
+				"lib/dom/cache.js"
+			],
+			[
+				"server",
+				"server.js"
+			],
+			[
+				"renderUtil",
+				"lib/eagle/renderUtils.js"
+			],
+			[
+				"grid",
+				"lib/eagle/components/grid.js"
 			],
 			[
 				"util",
 				"lib/util.js"
 			],
 			[
-				"wire",
-				"lib/eagle/components/wire.js"
-			],
-			[
 				"size",
 				"lib/geom/size.js"
+			],
+			[
+				"compo",
+				"components.js"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"textEle",
+				"lib/eagle/components/textElement.js"
+			],
+			[
+				"compon",
+				"components.js"
+			],
+			[
+				"debounce",
+				"lib/async/debounce.js"
+			],
+			[
+				"transfor",
+				"lib/geom/transformation.js"
+			],
+			[
+				"-squa",
+				"static/svg/voronoi-square.svg"
+			],
+			[
+				"voronoi.sv",
+				"static/svg/voronoi.svg"
+			],
+			[
+				"voro",
+				"Voronoi_diagram.svg"
+			],
+			[
+				"obra",
+				"static/svg/cnc-obrabeni.svg"
+			],
+			[
+				"frezo",
+				"static/svg/cnc-frezovani.svg"
+			],
+			[
+				"transfo",
+				"lib/geom/transformation.js"
+			],
+			[
+				"board",
+				"lib/eagle/boardRenderer.js"
+			],
+			[
+				"comp",
+				"components.js"
+			],
+			[
+				"mai",
+				"main.js"
+			],
+			[
+				"cnc-fre",
+				"static/svg/cnc-frezovani.svg"
+			],
+			[
+				"rect.",
+				"lib/geom/rect.js"
+			],
+			[
+				"ser",
+				"server.js"
+			],
+			[
+				"style.cs",
+				"style.css"
+			],
+			[
+				"main.",
+				"main.js"
+			],
+			[
+				"trans",
+				"lib/geom/transformation.js"
+			],
+			[
+				"7seg-2",
+				"tmp/7seg-2.54.brd"
+			],
+			[
+				"xpath",
+				"lib/xml/xpath.js"
+			],
+			[
+				"style",
+				"style.css"
+			],
+			[
+				"svgre",
+				"lib/eagle/svgRenderer.js"
+			],
+			[
+				"timer",
+				"lib/dom/timer.js"
+			],
+			[
+				"dom.",
+				"lib/dom.js"
+			],
+			[
+				"7seg-",
+				"tmp/7seg-2.54.brd"
+			],
+			[
+				"trkl",
+				"lib/trkl.js"
+			],
+			[
+				"eleme",
+				"lib/dom/element.js"
+			],
+			[
+				"tlite",
+				"lib/tlite.js"
+			],
+			[
+				"useDim",
+				"useDimensions.js"
+			],
+			[
+				"element",
+				"lib/dom/element.js"
+			],
+			[
+				"dom",
+				"lib/dom.js"
+			],
+			[
+				"style.css",
+				"style.css"
+			],
+			[
+				"quickjs.",
+				"quickjs/quickjs.c"
+			],
+			[
+				"cfg.",
+				"quickjs/cfg.sh"
+			],
+			[
+				"cmakelist",
+				"quickjs/CMakeLists.txt"
+			],
+			[
+				"path.",
+				"lib/json/path.js"
+			],
+			[
+				"colorDis",
+				"lib/color/distanceChecker.js"
+			],
+			[
+				"test-xml",
+				"test-xml.js"
+			],
+			[
+				"rgba",
+				"lib/color/rgba.js"
+			],
+			[
+				"resolve",
+				"resolve-imports.js"
+			],
+			[
+				"wire",
+				"lib/eagle/components/wire.js"
 			],
 			[
 				"point",
@@ -1212,10 +1165,6 @@
 			[
 				"geom",
 				"lib/geom.js"
-			],
-			[
-				"main",
-				"main.js"
 			],
 			[
 				"resol",
@@ -1314,20 +1263,12 @@
 				"src/js_mat.cpp"
 			],
 			[
-				"util.js",
-				"lib/util.js"
-			],
-			[
 				"filesystem",
 				"lib/filesystem.js"
 			],
 			[
 				"CMakeLists",
 				"CMakeLists.txt"
-			],
-			[
-				"cmakelist",
-				"quickjs/CMakeLists.txt"
 			],
 			[
 				"path",
@@ -1414,28 +1355,12 @@
 				"lib/dom/css.js"
 			],
 			[
-				"style",
-				"style.css"
-			],
-			[
 				"rect",
 				"rect.es"
 			],
 			[
-				"element",
-				"lib/dom/element.js"
-			],
-			[
 				"arser.",
 				"lib/ecmascript/parser.js"
-			],
-			[
-				"resolve",
-				"resolve-imports.js"
-			],
-			[
-				"server",
-				"server.js"
 			],
 			[
 				"resolv",
@@ -1444,10 +1369,6 @@
 			[
 				"util.j",
 				"lib/util.js"
-			],
-			[
-				"path.",
-				"lib/path.js"
 			],
 			[
 				"ath.j",
@@ -1466,10 +1387,6 @@
 				"lib/json/path.js"
 			],
 			[
-				"rgba",
-				"lib/color/rgba.js"
-			],
-			[
 				"hsla",
 				"lib/color/hsla.js"
 			],
@@ -1480,10 +1397,6 @@
 			[
 				"colorma",
 				"lib/draw/colorMap.js"
-			],
-			[
-				"test-xml",
-				"test-xml.js"
 			],
 			[
 				"test-x",
@@ -1500,10 +1413,6 @@
 			[
 				"docu",
 				"lib/eagle/document.js"
-			],
-			[
-				"eleme",
-				"lib/dom/element.js"
 			],
 			[
 				"highgu",
@@ -1524,182 +1433,6 @@
 			[
 				"svgRe",
 				"lib/eagle/svgRenderer.js"
-			],
-			[
-				"board",
-				"lib/eagle/boardRenderer.js"
-			],
-			[
-				"trkl",
-				"lib/trkl.js"
-			],
-			[
-				"test-co",
-				"test-color.js"
-			],
-			[
-				"colormap",
-				"lib/draw/colorMap.js"
-			],
-			[
-				"alea",
-				"lib/alea.js"
-			],
-			[
-				"jsondiff",
-				"lib/jsondiff.js"
-			],
-			[
-				"diff",
-				"lib/deep-diff.js"
-			],
-			[
-				"deep.",
-				"lib/deep.js"
-			],
-			[
-				"kolorwhe",
-				"lib/KolorWheel.js"
-			],
-			[
-				"resolved",
-				"resolved.js"
-			],
-			[
-				"create-ta",
-				"create-tamper.js"
-			],
-			[
-				"path.js",
-				"lib/path.js"
-			],
-			[
-				"test-stac",
-				"test-stack.js"
-			],
-			[
-				"sortedMap",
-				"lib/container/sortedMap.js"
-			],
-			[
-				"compon",
-				"components.js"
-			],
-			[
-				"ecmas",
-				"lib/ecmascript.js"
-			],
-			[
-				"test-ec",
-				"test-ecmascript.js"
-			],
-			[
-				"test-attr",
-				"test-attributes.js"
-			],
-			[
-				"test-rende",
-				"test-renderer.js"
-			],
-			[
-				"test-re",
-				"test-repeater.js"
-			],
-			[
-				"log.j",
-				"lib/log.js"
-			],
-			[
-				"transform",
-				"lib/geom/transformation.js"
-			],
-			[
-				"preactcom",
-				"lib/dom/preactComponent.js"
-			],
-			[
-				"schematic",
-				"lib/eagle/schematicRenderer.js"
-			],
-			[
-				"renderUtil",
-				"lib/eagle/renderUtils.js"
-			],
-			[
-				"test-voro",
-				"test-voronoi.js"
-			],
-			[
-				"test-proxy",
-				"test-proxy.js"
-			],
-			[
-				"console",
-				"consoleSetup.js"
-			],
-			[
-				"test-rep",
-				"test-repeater.js"
-			],
-			[
-				"test-file",
-				"test-filesystem.js"
-			],
-			[
-				"test-repea",
-				"test-repeater.js"
-			],
-			[
-				"test-jsjs",
-				"test-jsjs.js"
-			],
-			[
-				"test-pro",
-				"test-proxy.js"
-			],
-			[
-				"test-poin",
-				"test-pointlist.js"
-			],
-			[
-				"test-fl",
-				"test-filesystem.js"
-			],
-			[
-				"test-",
-				"test-voronoi.js"
-			],
-			[
-				"qjs.c",
-				"quickjs/qjsc.c"
-			],
-			[
-				"imgui",
-				"imgui-viewer.cmake"
-			],
-			[
-				"node",
-				"lib/eagle/node.js"
-			],
-			[
-				"xpath",
-				"lib/xml/xpath.js"
-			],
-			[
-				"rgba.j",
-				"lib/color/rgba.js"
-			],
-			[
-				"resolve-imports",
-				"resolve-imports.js"
-			],
-			[
-				"matrix",
-				"lib/geom/matrix.js"
-			],
-			[
-				"matrix.js",
-				"lib/geom/matrix.js"
 			]
 		],
 		"width": 0.0

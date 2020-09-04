@@ -1,4 +1,3 @@
-
 set(GLEW_USE_STATIC_LIBS TRUE)
 set(GLEW_VERBOSE TRUE)
 
@@ -17,13 +16,32 @@ file(
   src/polygon.cpp
   src/*.h
   src/*.hpp)
-add_executable(highgui-viewer src/highgui-viewer.cpp ${HIGHGUI_VIEWER_SOURCES})
+
+set(QUICKJS_SOURCES
+    quickjs/quickjs.c
+    quickjs/quickjs.h
+    quickjs/libregexp.c
+    quickjs/libunicode.c
+    quickjs/cutils.c
+    quickjs/quickjs-libc.c
+    quickjs/quickjs-libc.h
+    quickjs/libbf.c)
+
+add_definitions(-D_GNU_SOURCE=1)
+
+add_executable(highgui-viewer src/highgui-viewer.cpp ${HIGHGUI_VIEWER_SOURCES}
+                              ${QUICKJS_SOURCES})
+target_compile_definitions(
+  highgui-viewer
+  PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${quickjs_version}"
+          CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1)
+
 target_link_libraries(
   highgui-viewer
   ${OpenCV_LIBS}
   ${GLEW_SHARED_LIBRARY_RELEASE}
   ${GLEW_SHARED_LIBRARIES}
-  quickjs
+  # quickjs
   ${LIBDL}
   ${LIBM}
   ${LIBPTHREAD})

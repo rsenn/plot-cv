@@ -1,4 +1,3 @@
-
 # include: OpenCV
 find_package(OpenCV REQUIRED)
 

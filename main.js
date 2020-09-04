@@ -898,7 +898,7 @@ const GerberToGcode = async (file, allOpts = {}) => {
 
 const GcodeToPolylines = (data, opts = {}) => {
   const { fill = false, color, side } = opts;
-  let gc = Util.filter(parseGcode(data), (g) => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args);
+  let gc = [...Util.filter(parseGcode(data), (g) => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args)];
   console.debug('GcodeToPolylines', Util.abbreviate(data), { opts, gc });
   let polylines = [];
   let polyline = null;
@@ -1378,12 +1378,16 @@ const AppMain = (window.onload = async () => {
               //console.debug('CAM Button');
               for(let side of ['back', 'front']) {
                 project.gerber[side] = await BoardToGerber(project, { [side]: true });
-                //console.debug('BoardToGerber side =', side, ' file =', project.gerber[side].file);
+                 console.debug('BoardToGerber side =', side, ' file =', project.gerber[side]);
               }
               for(let side of ['back', 'front']) {
-                project.gcode[side] = await GerberToGcode(project.gerber[side].file, { side, voronoi: 1 });
-                // console.debug('GerberToGcode side =', side, ' file =', project.gcode[side].file);
-                gcode(project.gcode);
+                let gerb =  project.gerber[side];
+
+                project.gcode[side] = await GerberToGcode(gerb.file, { side, voronoi: 1 });
+                
+                let gc = project.gcode[side];
+               console.debug('GerberToGcode side =', side, ' gc =', gc);
+                gcode(gc.data);
               }
             }, 100),
             image: 'static/svg/cnc-obrabeni.svg'
