@@ -1382,7 +1382,7 @@ const AppMain = (window.onload = async () => {
                 gcode(project.gcode);
               }
             },
-            image: 'static/svg/cnc-frezovani.svg'
+            image: 'static/svg/cnc-obrabeni.svg'
           })
         ]),
 
@@ -1398,7 +1398,7 @@ const AppMain = (window.onload = async () => {
                 GcodeToPolylines(project.gcode[side].data, { fill: false, color: colors[side], side });
               }
             },
-            image: 'static/svg/voronoi.svg'
+            image: 'static/svg/voronoi-square.svg'
           })
         ]),
         h(DynamicLabel, { className: 'vcenter pad-lr', caption: documentTitle }),
