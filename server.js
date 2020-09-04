@@ -67,7 +67,7 @@ const convertToGerber = async (boardFile, opts = {}) => {
   child.stderr.on('data', (data) => (output += data));
   const { stdout, stderr, code, signal } = await child;
   console.log(`code: ${code}`);
-//  console.log(`output: ${output}`);
+  //  console.log(`output: ${output}`);
   if(code !== 0) throw new Error(output);
   if(output) output = output.replace(/\s*\r*\n/g, '\n');
   let result = { code, output };
@@ -97,12 +97,12 @@ const gerberEndpoint = async (req, res) => {
     const { file } = result;
     res.setHeader('Content-Disposition', `attachment; filename="${path.basename(file)}"`);
     res.setHeader('Content-Type', 'application/octet-stream');
-    if(result.data)  return  res.send(result.data);
+    if(result.data) return res.send(result.data);
     else if(result.file && typeof result.file == 'string') {
       console.log('sendFile', { file });
-       return  res.sendFile(result.file, { root: process.cwd() });
+      return res.sendFile(result.file, { root: process.cwd() });
     }
- }
+  }
   res.json(result);
 };
 
@@ -127,10 +127,8 @@ const gerberToGcode = async (gerberFile, allOpts = {}) => {
   if(side == '') {
     side = 'back';
     opts.back = '';
-  }  console.log('Request /gcode', {  gerberFile, opts, side, gcodeFile });
-  ;
-
-
+  }
+  console.log('Request /gcode', { gerberFile, opts, side, gcodeFile });
   const gcodeFile = path.join(opts['output-dir'], `${basename}_${side}.ngc`);
   const params = [...Object.entries(opts)].filter(([k, v]) => typeof v == 'string' || typeof v == 'number').map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? ' ' + v : ''}`);
   console.warn(`gerberToGcode`, Util.abbreviate(gerberFile), { gcodeFile, opts });
@@ -144,7 +142,7 @@ const gerberToGcode = async (gerberFile, allOpts = {}) => {
   child.stdout.on('data', (data) => (output += data));
   child.stderr.on('data', (data) => (output += data));
   const { stdout, stderr, code, signal } = await child;
- 
+
   //   if(code !== 0) throw new Error(output);
   if(output) output = output.replace(/\s*\r*\n/g, '\n');
   let result = { code, output, cmd, file: gcodeFile };
@@ -157,8 +155,8 @@ const gerberToGcode = async (gerberFile, allOpts = {}) => {
 let gcodeEndpoint = async (req, res) => {
   const { body } = req;
   let { file, ...opts } = body;
-  let result  = await gerberToGcode(file, opts).catch(error => ({error}));
- 
+  let result = await gerberToGcode(file, opts).catch((error) => ({ error }));
+
   res.json(result);
 };
 app.post(/^\/gcode/, gcodeEndpoint);
@@ -357,7 +355,7 @@ const GetFilesList = async (dir = './tmp', opts = {}) => {
   const re = new RegExp(filter, 'i');
   const f = (ent) => re.test(ent);
 
-  console.log('GetFilesList()', { filter, descriptions }, ...(names ?  [names.length] : []));
+  console.log('GetFilesList()', { filter, descriptions }, ...(names ? [names.length] : []));
 
   if(!names) names = [...(await fs.promises.readdir(dir))].filter(f);
 
