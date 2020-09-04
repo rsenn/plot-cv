@@ -7,6 +7,7 @@
 #include "matrix.h"
 
 #include "js.h"
+#include "../quickjs/quickjs-libc.h"
 
 std::ofstream logfile("clilog", std::ios_base::out | std::ios_base::ate);
 
@@ -22,13 +23,25 @@ main(int argc, char* argv[]) {
     return 1;
   }
 
+  jsrt::value promise = js.get_global("Promise");
+  jsrt::value promise_proto = js.get_property(promise, "prototype");
+
+  std::cerr << "Promise is_function " << js.is_constructor(promise) << std::endl;
+  std::cerr << "Promise type=" << js.typestr(promise) << std::endl;
+  std::cerr << "Promise.prototype type=" << js.typestr(promise_proto) << std::endl;
   for(i = 1; i < argc; i++) {
-    int ret;
+    jsrt::value ret;
 
     std::cerr << "eval file: " << argv[i] << std::endl;
 
     ret = js.eval_file(argv[i]);
-    std::cerr << "ret: " << ret << std::endl;
+
+    js_std_loop(js.ctx);
+
+    std::string type = js.typestr(ret);
+    std::cerr << "ret is_promise " << js.is_promise(ret) << std::endl;
+
+    std::cerr << "ret type=" << type << std::endl;
   }
 
   return 0;

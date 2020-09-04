@@ -144,7 +144,7 @@ target_compile_definitions(
 
 option(ADDITIONAL_PROGS "Build other OpenCV programs" FALSE)
 
-#option(QUICKJS_MODULES "Build .so modules for quickjs" "${BUILD_SHARED_LIBS}")
+# option(QUICKJS_MODULES "Build .so modules for quickjs" "${BUILD_SHARED_LIBS}")
 option(QUICKJS_MODULES "Build .so modules for quickjs" ON)
 
 if(QUICKJS_MODULES)

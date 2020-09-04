@@ -271,10 +271,10 @@ jsrt::~jsrt() {
   rt = nullptr;
 }
 
-int
+JSValue
 jsrt::eval_buf(const char* buf, int buf_len, const char* filename, int eval_flags) {
-  value val;
-  int ret;
+  jsrt::value val;
+  // int ret;
   if((eval_flags & JS_EVAL_TYPE_MASK) == JS_EVAL_TYPE_MODULE) {
     val = JS_Eval(ctx, buf, buf_len, filename, eval_flags | JS_EVAL_FLAG_COMPILE_ONLY);
     if(!JS_IsException(val)) {
@@ -286,18 +286,19 @@ jsrt::eval_buf(const char* buf, int buf_len, const char* filename, int eval_flag
   }
   if(JS_IsException(val)) {
     js_std_dump_error(ctx);
-    ret = -1;
+    //  ret = -1;
   } else {
-    ret = 0;
+    // ret = 0;
   }
-  JS_FreeValue(ctx, val);
-  return ret;
+  // JS_FreeValue(ctx, val);
+  return val;
 }
 
-int
+jsrt::value
 jsrt::eval_file(const char* filename, int module) {
   char* buf;
-  int ret, eval_flags;
+  int eval_flags;
+  jsrt::value ret;
   size_t buf_len;
   buf = reinterpret_cast<char*>(js_load_file(ctx, &buf_len, filename));
   if(!buf) {
@@ -339,6 +340,13 @@ jsrt::get_global(const char* name) {
   return ret;
 }
 
+bool
+jsrt::is_promise(const_value val) {
+  jsrt::value promise = get_global("Promise");
+  jsrt::value promise_proto = get_property(promise, "prototype");
+  return JS_IsInstanceOf(ctx, val, promise) || JS_IsInstanceOf(ctx, val, promise_proto);
+}
+
 jsrt::value
 jsrt::call(const char* name, size_t argc, const_value* argv) {
   const_value func = get_global(name);
@@ -367,8 +375,8 @@ normalize_module(JSContext* ctx, const char* module_base_name, const char* modul
   char* name;
   jsrt* js = static_cast<jsrt*>(opaque);
 
-  std::cerr << "module_base_name: " << module_base_name << std::endl;
-  std::cerr << "module_name: " << module_name << std::endl;
+  /* std::cerr << "module_base_name: " << module_base_name << std::endl;
+   std::cerr << "module_name: " << module_name << std::endl;*/
 
   if(module_name[0] == '.' && module_name[1] == '/')
     module_name += 2;
@@ -376,10 +384,10 @@ normalize_module(JSContext* ctx, const char* module_base_name, const char* modul
   path module_path = path(module_base_name).replace_filename(path(module_name, module_name + strlen(module_name)));
   std::string module_pathstr;
 
-  std::cerr << "module_path: " << module_path.string() << std::endl;
+  /* std::cerr << "module_path: " << module_path.string() << std::endl;*/
 
   bool present = exists(module_path);
-  std::cerr << "exists module_path: " << present << std::endl;
+  /*  std::cerr << "exists module_path: " << present << std::endl;*/
   module_pathstr = module_path.string();
 
   if(!present) {
@@ -388,10 +396,10 @@ normalize_module(JSContext* ctx, const char* module_base_name, const char* modul
 
     present = exists(module_path);
   }
-  std::cerr << "module_pathstr: " << module_pathstr << std::endl;
+  /*std::cerr << "module_pathstr: " << module_pathstr << std::endl;
   std::cerr << "module_base_name: " << module_base_name << std::endl;
   std::cerr << "module_name: " << module_name << std::endl;
-  std::cerr << "present: " << present << std::endl;
+  std::cerr << "present: " << present << std::endl;*/
 
   if(true) {
 

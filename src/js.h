@@ -38,8 +38,8 @@ struct jsrt {
 
   typedef value c_function(jsrt* rt, const_value this_val, int argc, const_value* argv);
 
-  int eval_buf(const char* buf, int buf_len, const char* filename, int eval_flags);
-  int eval_file(const char* filename, int module = -1);
+  value eval_buf(const char* buf, int buf_len, const char* filename, int eval_flags);
+  value eval_file(const char* filename, int module = -1);
 
   value add_function(const char* name, JSCFunction* fn, int args = 0);
 
@@ -125,6 +125,9 @@ struct jsrt {
   bool is_array(const_value val) const;
   bool is_object(const_value val) const;
   bool is_boolean(const_value val) const;
+  bool is_function(const_value val) const;
+  bool is_constructor(const_value val) const;
+  bool is_promise(const_value val);
   bool is_point(const_value val) const;
   bool is_rect(const_value val) const;
   bool is_color(const_value val) const;
@@ -140,12 +143,16 @@ struct jsrt {
       return "number";
     else if(is_undefined(val))
       return "undefined";
+    else if(is_boolean(val))
+      return "boolean";
+    else if(is_function(val))
+      return "function";
+    /*   else if(is_constructor(val))
+         return "constructor";*/
     else if(is_array(val))
       return "array";
     else if(is_object(val))
       return "object";
-    else if(is_boolean(val))
-      return "boolean";
     else if(is_point(val))
       return "point";
     else if(is_rect(val))
@@ -560,6 +567,16 @@ jsrt::is_object(const_value val) const {
 inline bool
 jsrt::is_boolean(const_value val) const {
   return JS_IsBool(val);
+}
+
+inline bool
+jsrt::is_function(const_value val) const {
+  return JS_IsFunction(ctx, val);
+}
+
+inline bool
+jsrt::is_constructor(const_value val) const {
+  return JS_IsConstructor(ctx, val);
 }
 
 inline bool

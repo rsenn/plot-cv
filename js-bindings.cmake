@@ -6,27 +6,29 @@ function(make_shared_module FNAME)
   string(TOUPPER "${FNAME}" UNAME)
 
   message("Module: ${NAME}")
+  set(TARGET_NAME quickjs-${NAME})
 
-  add_library(quickjs-${NAME} SHARED src/js_${FNAME}.cpp src/jsbindings.cpp
+  add_library(${TARGET_NAME} SHARED src/js_${FNAME}.cpp src/jsbindings.cpp
                                      src/js.cpp)
 
-  target_link_libraries(quickjs-${NAME} ${OpenCV_LIBS} quickjs dl)
+  target_link_libraries(${TARGET_NAME} ${OpenCV_LIBS} quickjs dl)
   set_target_properties(
-    quickjs-${NAME}
+    ${TARGET_NAME}
     PROPERTIES
       PREFIX ""
       BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR}"
       INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib"
+      OUTPUT_NAME "${NAME}"
       # COMPILE_FLAGS "-fvisibility=hidden"
       BUILD_RPATH
       "${CMAKE_BINARY_DIR};${CMAKE_CURRENT_BINARY_DIR};${CMAKE_BINARY_DIR}/quickjs;${CMAKE_CURRENT_BINARY_DIR}/quickjs"
   )
-  target_compile_definitions(quickjs-${NAME} PRIVATE -DJS_${UNAME}_MODULE=1)
-  install(TARGETS quickjs-${NAME} DESTINATION bin)
+  target_compile_definitions(${TARGET_NAME} PRIVATE -DJS_${UNAME}_MODULE=1)
+  install(TARGETS ${TARGET_NAME} DESTINATION lib/quickjs)
 
   if(OpenCV_FOUND)
-    target_include_directories(quickjs-${NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
-    target_link_libraries(quickjs-${NAME} ${OpenCV_LIBS})
+    target_include_directories(${TARGET_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
+    target_link_libraries(${TARGET_NAME} ${OpenCV_LIBS})
   endif()
 endfunction()
 

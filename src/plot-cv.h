@@ -288,7 +288,7 @@ implode(InputIterator begin, InputIterator end, const std::string& separator) {
 
 void process_image(std::function<void(std::string, image_type*)> display, int show_image);
 
-int check_eval();
+jsrt::value check_eval();
 
 class Timer {
 public:

@@ -1,10 +1,10 @@
-import { Rect } from './build/x86_64-linux-gnu/quickjs-rect.so';
-import { Point } from './build/x86_64-linux-gnu/quickjs-point.so';
-import { Size } from './build/x86_64-linux-gnu/quickjs-size.so';
-import { Mat } from './build/x86_64-linux-gnu/quickjs-mat.so';
-import { PointIterator } from './build/x86_64-linux-gnu/quickjs-point-iterator.so';
+import { Rect } from './build/x86_64-linux-gnu/rect.so';
+import { Point } from './build/x86_64-linux-gnu/point.so';
+import { Size } from './build/x86_64-linux-gnu/size.so';
+import { Mat } from './build/x86_64-linux-gnu/mat.so';
+import { PointIterator } from './build/x86_64-linux-gnu/point-iterator.so';
 import { inspect } from './inspect.js';
-import { Contour } from './build/x86_64-linux-gnu/quickjs-contour.so';
+import { Contour } from './build/x86_64-linux-gnu/contour.so';
 
 //console.log('test:', inspect({ Point, Size, Rect, Mat, PointIterator, Contour }));
 import path from './lib/path.js';
@@ -15,7 +15,12 @@ import * as std from 'std';
 let filesystem;
 
 async function main(...args) {
+
+  //std.print("TEST PRINT\n");
+
   filesystem = await PortableFileSystem();
+
+ console.log('modules:', inspect({ Point, Size, Rect, Mat, PointIterator, Contour }));
 
   /*  let rect = new Rect(10, 100, 50, 250);
   const { x, y, width, height } = rect;
@@ -163,7 +168,7 @@ async function main(...args) {
 
     //console.log('contour:', inspect(c));
 */
-
+//throw new Error("ERROR");
   if(0) {
     console.log(`std.gc`, std.gc);
     console.log(`args`, args);
@@ -174,6 +179,15 @@ async function main(...args) {
     console.log(`filesystem.getcwd('.')`, filesystem.getcwd());
     console.log(`std.gc()`, std.gc());
   }
+
+  return 'done';
 }
 
-Util.callMain(main, true);
+console.log("TEST\n");
+print("TEST\n");
+ let retVal =  main().catch(err => console.log("Error:", err, err.stack)).then(ret => console.log("Resolved:", ret));
+
+ console.log("retVal:", retVal);
+ retVal;
+
+//Util.callMain(main, true);
