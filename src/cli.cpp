@@ -38,10 +38,9 @@ main(int argc, char* argv[]) {
 
     js_std_loop(js.ctx);
 
-    std::string type = js.typestr(ret);
     std::cerr << "ret is_promise " << js.is_promise(ret) << std::endl;
 
-    std::cerr << "ret type=" << type << std::endl;
+    std::cerr << "ret type=" << js.typestr(ret) << std::endl;
   }
 
   return 0;

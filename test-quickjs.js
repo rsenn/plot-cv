@@ -185,9 +185,10 @@ async function main(...args) {
 
 console.log("TEST\n");
 print("TEST\n");
- let retVal =  main().catch(err => console.log("Error:", err, err.stack)).then(ret => console.log("Resolved:", ret));
-
+ let retVal 
+ //retVal =  main().catch(err => console.log("Error:", err, err.stack)).then(ret => (console.log("Resolved:", ret),ret));
+retVal = main();
  console.log("retVal:", retVal);
  retVal;
-
+1;
 //Util.callMain(main, true);

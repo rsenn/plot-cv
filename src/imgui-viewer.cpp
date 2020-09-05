@@ -1,4 +1,7 @@
-#include "../imgui/libs/gl3w/GL/gl3w.h"
+#define IMGUI_IMPL_OPENGL_LOADER_GLEW 1
+#include <GL/glew.h> // Initialize with glewInit()
+
+//#include "../imgui/libs/gl3w/GL/gl3w.h"
 
 #include <cstdio>
 #include <fstream>
@@ -35,13 +38,23 @@ ImageViewer::init() {
     printf("Error: %s\n", SDL_GetError());
     exit();
   }
-
+  // Decide GL+GLSL versions
+#if __APPLE__
+  // GL 3.2 Core + GLSL 150
   const char* glsl_version = "#version 150";
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS,
                       SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Always required on Mac
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+#else
+  // GL 3.0 + GLSL 130
+  const char* glsl_version = "#version 130";
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+#endif
 
   // Create window with graphics context
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -53,8 +66,17 @@ ImageViewer::init() {
   // SDL_GLContext
   gl_context = SDL_GL_CreateContext(window);
   SDL_GL_SetSwapInterval(1); // Enable vsync
-
+                             // Initialize OpenGL loader
+#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
   bool err = gl3wInit() != 0;
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
+  bool err = glewInit() != GLEW_OK;
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
+  bool err = gladLoadGL() == 0;
+#else
+  bool err = false; // If you use IMGUI_IMPL_OPENGL_LOADER_CUSTOM, your loader is likely to requires
+                    // some form of initialization.
+#endif
   if(err) {
     fprintf(stderr, "Failed to initialize OpenGL loader!\n");
     exit();

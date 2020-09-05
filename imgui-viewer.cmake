@@ -54,7 +54,7 @@ endif(ANDROID)
 
 file(
   GLOB
-  HIGHGUI_VIEWER_SOURCES
+  IMGUI_VIEWER_SOURCES
   src/color.cpp
   src/data.cpp
   src/geometry.cpp
@@ -67,6 +67,20 @@ file(
   src/polygon.cpp
   src/*.h
   src/*.hpp)
+
+
+set(QUICKJS_SOURCES
+    quickjs/quickjs.c
+    quickjs/quickjs.h
+    quickjs/libregexp.c
+    quickjs/libunicode.c
+    quickjs/cutils.c
+    quickjs/quickjs-libc.c
+    quickjs/quickjs-libc.h
+    quickjs/libbf.c)
+
+add_definitions(-D_GNU_SOURCE=1)
+
 # Main
 add_executable(
   imgui-viewer
@@ -77,15 +91,13 @@ add_executable(
   imgui/imgui_impl_sdl.cpp
   imgui/imgui_impl_opengl3.cpp
   imgui/libs/gl3w/GL/gl3w.c
-  ${HIGHGUI_VIEWER_SOURCES})
-#[[
-target_link_libraries(
-        ${APP_TARGET}
-        glfw
-        ${OPENGL_LIBRARIES}
-        ${GLEW_LIBRARIES}
-        ${EXTRA_LIBS}
-)]]
+  ${IMGUI_VIEWER_SOURCES}
+  ${QUICKJS_SOURCES}
+)
+target_compile_definitions(
+  imgui-viewer
+  PRIVATE CONFIG_VERSION="${quickjs_version}"
+          CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1)
 
 # link
 target_link_libraries(
@@ -97,9 +109,12 @@ target_link_libraries(
   ${GLFW_LIBRARIES}
   ${GLEW_LIBRARIES}
   ${EXTRA_LIBS}
-  quickjs
-  dl
-  GL)
+  #quickjs
+  ${LIBDL}
+  ${LIBM}
+  ${LIBPTHREAD}
+  GL
+)
 if(OpenCV_FOUND)
   target_include_directories(imgui-viewer PUBLIC ${OpenCV_INCLUDE_DIRS})
   target_link_libraries(imgui-viewer ${OpenCV_LIBS})

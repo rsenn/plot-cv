@@ -344,7 +344,7 @@ bool
 jsrt::is_promise(const_value val) {
   jsrt::value promise = get_global("Promise");
   jsrt::value promise_proto = get_property(promise, "prototype");
-  return JS_IsInstanceOf(ctx, val, promise) || JS_IsInstanceOf(ctx, val, promise_proto);
+  return is_object(val) && (JS_IsInstanceOf(ctx, val, promise) || JS_IsInstanceOf(ctx, val, promise_proto));
 }
 
 jsrt::value

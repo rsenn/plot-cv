@@ -141,8 +141,6 @@ struct jsrt {
   typestr(const_value val) const {
     if(is_number(val))
       return "number";
-    else if(is_undefined(val))
-      return "undefined";
     else if(is_boolean(val))
       return "boolean";
     else if(is_function(val))
@@ -159,6 +157,8 @@ struct jsrt {
       return "rect";
     else if(is_color(val))
       return "color";
+    else if(is_undefined(val))
+      return "undefined";
     return "unknown";
   }
 
