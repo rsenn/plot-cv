@@ -46,29 +46,27 @@ async function main(...args) {
       const svgFile = '/home/roman/mnt/ubuntu/' + desktopEntry.Icon.replace(/\.[a-z]*$/, '') + '.svg';
       const iconFile = '/home/lexy/.logos/' + path.basename(svgFile, '.svg') + '.png';
       console.log(' :', { svgFile, iconFile });
-      let svgData =  tXml(filesystem.readFile(svgFile));
+      let svgData = tXml(filesystem.readFile(svgFile));
 
       let svg = svgData[0] || { attributes: {} };
-      const attr =svg && svg.attributes ;
-      const viewBoxStr =attr  && attr.viewBox ;
-      const viewCoords =  viewBoxStr && viewBoxStr.split(' ')  || [0,0,svg.attributes.width, svg.attributes.height];
-   const [x1, y1, x2, y2]=viewCoords;
+      const attr = svg && svg.attributes;
+      const viewBoxStr = attr && attr.viewBox;
+      const viewCoords = (viewBoxStr && viewBoxStr.split(' ')) || [0, 0, svg.attributes.width, svg.attributes.height];
+      const [x1, y1, x2, y2] = viewCoords;
       const viewBox = new Rect(svg.attributes && svg.attributes.viewBox ? { x1, y1, x2, y2 } : ['width', 'height'].map((a) => svg.attributes[a]));
       iconSize = viewBox.size; //new Size(viewBox.width, viewBox.height);
       iconAspect = iconSize.aspect();
       const scale = iconAspect > 1 ? size.width / iconSize.width : size.height / iconSize.height;
       newSize = iconSize.prod(scale, scale);
 
-
-
-      const { width, height } = newSize.prod(5,5).round();
+      const { width, height } = newSize.prod(5, 5).round();
       newSize = newSize.round();
 
-     Object.assign(svg.attributes, { width,height });
-      Util.weakAssign(svg.attributes, { viewBox: new BBox(0,0, iconSize.width, iconSize.height)});
+      Object.assign(svg.attributes, { width, height });
+      Util.weakAssign(svg.attributes, { viewBox: new BBox(0, 0, iconSize.width, iconSize.height) });
       filesystem.writeFile(svgFile, toXML(svgData));
 
-      console.log(' :', {attr,svgFile,  scale, iconSize,viewCoords, newSize, size, scale, width, height, iconSize, iconAspect });
+      console.log(' :', { attr, svgFile, scale, iconSize, viewCoords, newSize, size, scale, width, height, iconSize, iconAspect });
 
       if(xy.x + size.width >= maxWidth) {
         xy.x = 0;
@@ -137,7 +135,7 @@ async function main(...args) {
   Width: ${(newSize || size).width}
   Height: ${(newSize || size).height}
   X: ${xy.x}
-  Y: ${xy.y + ( size.height - newSize.height)}
+  Y: ${xy.y + (size.height - newSize.height)}
   Command: ${Exec}
 end`;
   }

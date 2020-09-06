@@ -5,8 +5,7 @@ import { ReactComponent } from './lib/dom/preactComponent.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
 import keysim from './lib/dom/keysim.js';
 import geom from './lib/geom.js';
-import { BBox } from './lib/geom/bbox.js';
-import { Polygon } from './lib/geom/polygon.js';
+import { BBox, Polygon, Circle } from './lib/geom.js';
 import { TouchListener } from './lib/touchHandler.js';
 import { trkl } from './lib/trkl.js';
 import { ColorMap } from './lib/draw/colorMap.js';
@@ -20,7 +19,7 @@ import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Alea from './lib/alea.js';
 import { TimeoutError, delay, interval, timeout } from './lib/repeater/timers.js';
-
+import asyncHelpers from './lib/async/helpers.js';
 import { Cache } from './lib/dom/cache.js';
 import { CacheStorage } from './lib/dom/cacheStorage.js';
 import { gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser } from './lib/gcode.js';
@@ -59,7 +58,7 @@ import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //c
 
 /* prettier-ignore */ /* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG,    Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
 Util.colorCtor = ColoredText;
-/* prettier-ignore */ Util.extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, ColoredText, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon } );
+/* prettier-ignore */ Util.extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, ColoredText, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon, Circle } );
 const Timer = { delay, interval, timeout, once: dom.Timer };
 
 const prng = new Alea(1598127218);
@@ -87,6 +86,7 @@ let sizeListener = trkl({});
 let aspectListener = trkl(1);
 let debug = false;
 const documentTitle = trkl('');
+const documentSize = trkl('');
 
 let store = (window.store = makeLocalStorage());
 
@@ -274,7 +274,12 @@ const ElementToXML = (e, predicate) => {
   return Element.toString(x, { newline: '\n' });
 };
 
-const FetchCached = Util.cachedFetch();
+const FetchCached = Util.cachedFetch({
+  debug: true,
+  print: function ({ cached, ok, status, redirected, statusText, type, url }, fn, ...args) {
+    console.debug(`FetchCached(${args.map((a, i) => (typeof a == 'string' ? `"${a}"` : i == 1 ? Util.toSource({ ...this.opts, ...a }, { colors: false, multiline: false }) : a)).join(', ')}) =`, { cached, ok, status, redirected, statusText, type, url } /*.then(  NormalizeResponse)*/);
+  }
+});
 
 const FetchURL = async (url, allOpts = {}) => {
   let { nocache = false, ...opts } = allOpts;
@@ -496,7 +501,7 @@ const AddLayer = (layer, project = currentProj()) => {
   let layers = layerList();
   let i = Math.max(...layers.map((l) => l.i)) + 1;
 
-  let element = SVG.create('g', { i, stroke: color, ...props }, project.svg);
+  let element = layer.create ? layer.create(project) : SVG.create('g', { i, stroke: color, ...props }, project.svg);
   let visible = trkl(true);
 
   visible.subscribe((value) => {
@@ -507,6 +512,91 @@ const AddLayer = (layer, project = currentProj()) => {
   layerList([...layers, layer]);
   return layer;
 };
+
+const WriteToRepeater = async () => {
+  const repeater = new Repeater(async (push, stop) => {
+    await push({
+      write(chunk) {
+        push(chunk);
+      },
+      close() {
+        stop();
+      },
+      abort(err) {
+        stop(new Error('WriteRepeater error:' + err));
+      }
+    });
+  });
+  const stream = new WritableStream((await repeater.next()).value);
+  return [repeater, stream];
+};
+
+const LogSink = (fn = console.log) =>
+  new WritableStream({
+    write(chunk) {
+      fn(chunk);
+    },
+    close() {
+      fn('LogSink closed');
+    },
+    abort(err) {
+      throw new Error('LogSink error:' + err);
+    }
+  });
+
+const RepeaterSink = async (start = (sink) => {}) =>
+  new Repeater(async (push, stop) => {
+    await start(new WritableStream({
+        write(chunk) {
+          push(chunk);
+        },
+        close() {
+          stop();
+        },
+        abort(err) {
+          stop(new Error('WriteRepeater error:' + err));
+        }
+      })
+    );
+  });
+
+const StringReader = function (str, chunk = (pos, str) => [pos, str.length]) {
+  let pos = 0;
+  return new ReadableStream({
+    //  type: 'bytes',
+    queuingStrategy: new ByteLengthQueuingStrategy({
+      highWaterMark: 512,
+      size(chunk) {
+        console.log('size(chunk)', chunk);
+        return 16;
+      }
+    }),
+    start(controller) {
+      for(;;) {
+        this.read(controller);
+      }
+    }
+  });
+  function read(controller) {
+    let s;
+
+    if(pos < str.length) {
+      let [start, end] = chunk(pos, str);
+      s = str.substring(start, end || str.length);
+      controller.enqueue(s);
+      pos = end;
+    } else {
+      controller.close();
+    }
+    console.log('pull()', { desiredSize: n }, { pos, end: pos + s.length, s });
+  }
+};
+const LineReader = (str) => new StringReader(str, (pos, str) => [pos, 1 + str.indexOf('\n', pos)]);
+
+const ChunkReader = (str, chunkSize) => new StringReader(str, (pos, str) => [pos, pos + chunkSize]);
+const ByteReader = (str) => ChunkReader(str, 1);
+
+const PipeToRepeater = async (stream) => RepeaterSink((writable) => stream.pipeTo(writable));
 
 const LoadDocument = async (project, parentElem) => {
   //console.log('project:', project);
@@ -521,6 +611,9 @@ const LoadDocument = async (project, parentElem) => {
   }
   LogJS.info(`${project.doc.basename} loaded.`);
   documentTitle(project.doc.file.replace(/.*\//g, ''));
+  let s = project.doc.getMeasures(false).toSize((o) => new Size(o.width, o.height));
+
+  documentSize(s.toString({ unit: 'mm' }));
   window.eagle = project.doc;
   window.project = project;
   Element.remove('#fence');
@@ -541,7 +634,15 @@ const LoadDocument = async (project, parentElem) => {
   let component = project.renderer.render(project.doc, null, {});
   let usedLayers = [...project.doc.layers.list].filter((layer) => layer.elements.size > 0);
 
-  Timer.once(250).then(() => layerList(usedLayers.map((layer) => ({ i: layer.number, name: layer.name, element: layer, visible: layer.handlers.visible }))));
+  Timer.once(250).then(() =>
+    layerList(usedLayers.map((layer) => ({
+        i: layer.number,
+        name: layer.name,
+        element: layer,
+        visible: layer.handlers.visible
+      }))
+    )
+  );
   LogJS.info(`${project.name} rendered.`);
   window.component = project.component = component;
   //console.debug('testRender:', component);
@@ -892,6 +993,11 @@ async function NormalizeResponse(resp) {
   }
   return resp;
 }
+async function ResponseData(resp) {
+  resp = await NormalizeResponse(resp);
+  if(resp.data) return resp.data;
+}
+
 const BoardToGerber = async (board = project.name, opts = { fetch: true }) => {
   let proj = GetProject(board);
   let data;
@@ -914,7 +1020,13 @@ const BoardToGerber = async (board = project.name, opts = { fetch: true }) => {
 const GerberToGcode = async (file, allOpts = {}) => {
   const { side, ...opts } = allOpts;
   console.debug('GerberToGcode', file, allOpts);
-  let request = { file, fetch: true, software: 'LinuxCNC', /*raw: true, */ 'isolation-width': '1mm', ...opts };
+  let request = {
+    file,
+    fetch: true,
+    software: 'LinuxCNC',
+    /*raw: true, */ 'isolation-width': '1mm',
+    ...opts
+  };
   let response;
   if(typeof side == 'string') request[side] = 1;
   response = await FetchURL('/gcode', {
@@ -1024,7 +1136,7 @@ const AppMain = (window.onload = async () => {
 
   //prettier-ignore
   Object.assign(window, { Repeater, BBox, ChooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, LoadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas, BoardToGerber, ListGithubRepo, ListGithubRepoServer, brcache, lscache, BaseCache, FetchCached, CachedFetch ,GerberToGcode });
-  Object.assign(window, { cache, tlite, FetchURL, GcodeToPolylines, geom, NormalizeResponse, AddLayer },
+  Object.assign(window, { cache, tlite, FetchURL, GcodeToPolylines, geom, NormalizeResponse, ResponseData, WriteToRepeater, PipeToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, AddLayer, asyncHelpers },
     { classes: { Cache, CacheStorage, Response, Request } },
     {
       PrimitiveComponents,
@@ -1417,11 +1529,17 @@ const AppMain = (window.onload = async () => {
               project.gerber = {};
               project.gcode = {};
               //console.debug('CAM Button');
-              for(let side of ['back', 'front']) {
+              for(let side of ['back', 'front', 'drill']) {
                 let gerber = await BoardToGerber(project, { [side]: true });
 
                 if(gerber) {
                   project.gerber[side] = gerber;
+                  if(side == 'drill') {
+                    gerber.cmds = await GerberParser.parse(project.gerber.drill.data);
+                    gerber.unit = gerber.cmds.find((i) => i.prop == 'units');
+
+                    gerber.points = gerber.cmds.filter((i) => i.coord).map(({ coord }) => new Point(coord.x, coord.y));
+                  }
                   console.debug('BoardToGerber side =', side, ' file =', gerber.file);
                 }
               }
@@ -1430,7 +1548,29 @@ const AppMain = (window.onload = async () => {
                 let gc = await GerberToGcode(gerb.file, { side, nog64: 1, voronoi: 1 });
                 if(gc) {
                   project.gcode[side] = gc;
-                  console.debug('GerberToGcode side =', side, ' gc =', gc.file);
+                  let processed = gc.file.replace(/\.ngc$/, '.svg');
+                  gc.svg = await FetchCached(processed).then(ResponseData);
+                  let layer = GetLayer({
+                    name: processed,
+                    create: ((project) =>
+                        SVG.create('svg', {
+                            outerHTML: gc.svg
+                          },
+                          project.svg
+                        )) ||
+                      ((project) =>
+                        SVG.create('image', {
+                            href: processed,
+                            transform: `scale(0.3937007874015748031,0.3937007874015748031)`
+                          },
+                          project.svg
+                        ))
+                  });
+                  layer.element.innerHTML = gc.svg;
+
+                  //    if(gc.svg && gc.svg.tagName.startsWith('?') && gc.svg.children) gc.svg = gc.svg.children[0];
+
+                  console.debug('GerberToGcode side =', side, ' gc =', gc.file, ' svg =', Util.abbreviate(gc.svg));
                 }
               }
               gcode(project.gcode);
@@ -1458,6 +1598,7 @@ const AppMain = (window.onload = async () => {
           })
         ]),
         h(DynamicLabel, { className: 'vcenter pad-lr', caption: documentTitle }),
+        h(DynamicLabel, { className: 'vcenter pad-lr', caption: documentSize }),
         h(Consumer, {})
       ]),
 
@@ -1490,7 +1631,9 @@ const AppMain = (window.onload = async () => {
       h(FileList, {
         files: projects,
         onActive: open,
-        onChange: debounceAsync(async (e, p, i) => await ChooseDocument(p, i), 5000, { leading: true }),
+        onChange: debounceAsync(async (e, p, i) => await ChooseDocument(p, i), 5000, {
+          leading: true
+        }),
         filter: searchFilter,
         showSearch,
         changeInput,

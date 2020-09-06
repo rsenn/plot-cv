@@ -60,11 +60,12 @@ function SendRaw(res, file, data, type = 'application/octet-stream') {
 }
 
 const convertToGerber = async (boardFile, opts = {}) => {
-  const { layers = [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'], format = 'GERBER_RS274X', data, fetch = false, front, back } = opts;
+  const { layers = opts.drill ? ['Drills', 'Holes'] : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'], format = opts.drill ? 'EXCELLON' : 'GERBER_RS274X', data, fetch = false, front, back } = opts;
   const base = path.basename(boardFile, '.brd');
   const formatToExt = (layers, format) => {
+    if(opts.drill || format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1) return 'TXT';
     if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER')) return front ? 'GTL' : 'GBL';
-    if(format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1) return 'txt';
+
     return 'rs274x';
   };
   const gerberFile = `./tmp/${base}.${formatToExt(layers, format)}`;
