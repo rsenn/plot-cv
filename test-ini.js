@@ -62,6 +62,7 @@ async function main(...args) {
 
 
       const { width, height } = newSize.prod(5,5).round();
+      newSize = newSize.round();
 
      Object.assign(svg.attributes, { width,height });
       Util.weakAssign(svg.attributes, { viewBox: new BBox(0,0, iconSize.width, iconSize.height)});
@@ -136,7 +137,7 @@ async function main(...args) {
   Width: ${(newSize || size).width}
   Height: ${(newSize || size).height}
   X: ${xy.x}
-  Y: ${xy.y}
+  Y: ${xy.y + ( size.height - newSize.height)}
   Command: ${Exec}
 end`;
   }
