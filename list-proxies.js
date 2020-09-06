@@ -79,6 +79,9 @@ Proxy.prototype.ping = function () {
     }
   });
 };
+Proxy.prototype[Symbol.for('nodejs.util.inspect.custom')] = function () {
+  const coloring = Util.coloring(!Util.isBrowser());
+};
 
 async function main() {
   await ConsoleSetup({ depth: 2 });

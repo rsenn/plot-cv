@@ -39,7 +39,7 @@ import components, { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspect
 import { Message } from './message.js';
 import { WebSocketClient } from './lib/net/websocket-async.js';
 import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
-
+import { WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater } from './streamUtils.js';
 import KolorWheel from './lib/KolorWheel.js';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
 import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl } from './lib/eagle/renderUtils.js';
@@ -512,91 +512,6 @@ const AddLayer = (layer, project = currentProj()) => {
   layerList([...layers, layer]);
   return layer;
 };
-
-const WriteToRepeater = async () => {
-  const repeater = new Repeater(async (push, stop) => {
-    await push({
-      write(chunk) {
-        push(chunk);
-      },
-      close() {
-        stop();
-      },
-      abort(err) {
-        stop(new Error('WriteRepeater error:' + err));
-      }
-    });
-  });
-  const stream = new WritableStream((await repeater.next()).value);
-  return [repeater, stream];
-};
-
-const LogSink = (fn = console.log) =>
-  new WritableStream({
-    write(chunk) {
-      fn(chunk);
-    },
-    close() {
-      fn('LogSink closed');
-    },
-    abort(err) {
-      throw new Error('LogSink error:' + err);
-    }
-  });
-
-const RepeaterSink = async (start = (sink) => {}) =>
-  new Repeater(async (push, stop) => {
-    await start(new WritableStream({
-        write(chunk) {
-          push(chunk);
-        },
-        close() {
-          stop();
-        },
-        abort(err) {
-          stop(new Error('WriteRepeater error:' + err));
-        }
-      })
-    );
-  });
-
-const StringReader = function (str, chunk = (pos, str) => [pos, str.length]) {
-  let pos = 0;
-  return new ReadableStream({
-    //  type: 'bytes',
-    queuingStrategy: new ByteLengthQueuingStrategy({
-      highWaterMark: 512,
-      size(chunk) {
-        console.log('size(chunk)', chunk);
-        return 16;
-      }
-    }),
-    start(controller) {
-      for(;;) {
-        this.read(controller);
-      }
-    }
-  });
-  function read(controller) {
-    let s;
-
-    if(pos < str.length) {
-      let [start, end] = chunk(pos, str);
-      s = str.substring(start, end || str.length);
-      controller.enqueue(s);
-      pos = end;
-    } else {
-      controller.close();
-    }
-    console.log('pull()', { desiredSize: n }, { pos, end: pos + s.length, s });
-  }
-};
-const LineReader = (str) => new StringReader(str, (pos, str) => [pos, 1 + str.indexOf('\n', pos)]);
-
-const ChunkReader = (str, chunkSize) => new StringReader(str, (pos, str) => [pos, pos + chunkSize]);
-const ByteReader = (str) => ChunkReader(str, 1);
-
-const PipeToRepeater = async (stream) => RepeaterSink((writable) => stream.pipeTo(writable));
 
 const LoadDocument = async (project, parentElem) => {
   //console.log('project:', project);
@@ -1136,7 +1051,7 @@ const AppMain = (window.onload = async () => {
 
   //prettier-ignore
   Object.assign(window, { Repeater, BBox, ChooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, LoadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas, BoardToGerber, ListGithubRepo, ListGithubRepoServer, brcache, lscache, BaseCache, FetchCached, CachedFetch ,GerberToGcode });
-  Object.assign(window, { cache, tlite, FetchURL, GcodeToPolylines, geom, NormalizeResponse, ResponseData, WriteToRepeater, PipeToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, AddLayer, asyncHelpers },
+  Object.assign(window, { cache, tlite, FetchURL, GcodeToPolylines, geom, NormalizeResponse, ResponseData,  AddLayer, asyncHelpers },
     { classes: { Cache, CacheStorage, Response, Request } },
     {
       PrimitiveComponents,
@@ -1147,7 +1062,8 @@ const AppMain = (window.onload = async () => {
       SchematicSymbol
     },
     { Emitter, EventIterator },
-    { ZoomFactor, AdjustZoom }
+    { ZoomFactor, AdjustZoom },
+    { WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater } 
   );
   Object.assign(window, { LogJS },
     { Element, devtools, dom, RGBA, HSLA, draw: DrawSVG },
