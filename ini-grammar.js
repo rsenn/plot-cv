@@ -3,7 +3,7 @@ import { choice, seq, token, char, regex, option, any, many, eof, ignore, invert
 function wrap(parser, name) {
   return (str, pos) => {
     let r = parser(str, pos);
-    if(r[0] || name.startsWith('direct')) console.log('matched (' + name + ') ' + pos + ' - ' + r[2] + ": '", r[1], "'");
+    //  if(r[0] || name.startsWith('direct')) console.log('matched (' + name + ') ' + pos + ' - ' + r[2] + ": '", r[1], "'");
     return r;
   };
 }
@@ -20,7 +20,7 @@ function section_header(...args) {
 }
 
 function section_header_title(...args) {
-  return wrap(regex(/[A-Za-z0-9_]+/g), 'section_header_title')(...args);
+  return wrap(regex(/[A-Za-z0-9_ ]+/g), 'section_header_title')(...args);
 }
 
 function key_values(...args) {

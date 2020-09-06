@@ -15,12 +15,11 @@ import * as std from 'std';
 let filesystem;
 
 async function main(...args) {
-
   //std.print("TEST PRINT\n");
 
   filesystem = await PortableFileSystem();
 
- console.log('modules:', inspect({ Point, Size, Rect, Mat, PointIterator, Contour }));
+  console.log('modules:', inspect({ Point, Size, Rect, Mat, PointIterator, Contour }));
 
   /*  let rect = new Rect(10, 100, 50, 250);
   const { x, y, width, height } = rect;
@@ -168,7 +167,7 @@ async function main(...args) {
 
     //console.log('contour:', inspect(c));
 */
-//throw new Error("ERROR");
+  //throw new Error("ERROR");
   if(0) {
     console.log(`std.gc`, std.gc);
     console.log(`args`, args);
@@ -183,12 +182,12 @@ async function main(...args) {
   return 'done';
 }
 
-console.log("TEST\n");
-print("TEST\n");
- let retVal 
- //retVal =  main().catch(err => console.log("Error:", err, err.stack)).then(ret => (console.log("Resolved:", ret),ret));
+console.log('TEST\n');
+print('TEST\n');
+let retVal;
+//retVal =  main().catch(err => console.log("Error:", err, err.stack)).then(ret => (console.log("Resolved:", ret),ret));
 retVal = main();
- console.log("retVal:", retVal);
- retVal;
+console.log('retVal:', retVal);
+retVal;
 1;
 //Util.callMain(main, true);

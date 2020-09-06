@@ -317,9 +317,9 @@ const FileSystem = {
 };
 
 const LoadFile = async (file) => {
-  let { url, name: filename } = GetProject(file);
+  let { url, name: filename } = typeof file == 'string' ? { url: file, name: file.replace(/.*\//g, '') } : GetProject(file);
   LogJS.info(`LoadFile ${url}`);
-  url = /:\/\//.test(filename) ? filename : /^tmp\//.test(filename) ? '/' + filename : `/static/${filename}`;
+  url = /:\/\//.test(url) ? url : /^tmp\//.test(url) ? '/' + url : `/static/${filename}`;
   //console.log('LoadFile url=', url);
   let response = await FetchURL(url);
   // console.debug('LoadFile response=', response);
@@ -484,6 +484,30 @@ const ListGithubRepoServer = async (owner, repo, dir, filter) => {
   return ret;
 };
 
+const FindLayer = (name, project = currentProj()) => {
+  let layers = layerList();
+  return layers.find((l) => l.name === name);
+};
+
+const GetLayer = (layer, project = currentProj()) => FindLayer(layer.name, project) || AddLayer(layer, project);
+
+const AddLayer = (layer, project = currentProj()) => {
+  const { color, name, ...props } = layer;
+  let layers = layerList();
+  let i = Math.max(...layers.map((l) => l.i)) + 1;
+
+  let element = SVG.create('g', { i, stroke: color, ...props }, project.svg);
+  let visible = trkl(true);
+
+  visible.subscribe((value) => {
+    console.warn(`layer ${name} visible=${value}`);
+    value ? element.style.removeProperty('display') : element.style.setProperty('display', 'none');
+  });
+  layer = { i, name, color, visible, element };
+  layerList([...layers, layer]);
+  return layer;
+};
+
 const LoadDocument = async (project, parentElem) => {
   //console.log('project:', project);
   open(false);
@@ -515,7 +539,9 @@ const LoadDocument = async (project, parentElem) => {
   console.log('project.renderer', project.renderer);
   let style = { width: '100%', height: '100%', position: 'relative' };
   let component = project.renderer.render(project.doc, null, {});
-  Timer.once(250).then(() => layerList([...project.doc.layers.list].filter((layer) => layer.elements.size > 0).map((layer) => ({ i: layer.number, name: layer.name, element: layer }))));
+  let usedLayers = [...project.doc.layers.list].filter((layer) => layer.elements.size > 0);
+
+  Timer.once(250).then(() => layerList(usedLayers.map((layer) => ({ i: layer.number, name: layer.name, element: layer, visible: layer.handlers.visible }))));
   LogJS.info(`${project.name} rendered.`);
   window.component = project.component = component;
   //console.debug('testRender:', component);
@@ -845,14 +871,24 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
 const BindGlobal = Util.once((arg) => trkl.bind(window, arg));
 
 async function NormalizeResponse(resp) {
+  resp = await resp;
+
   if(Util.isObject(resp)) {
+    let { cached, status, ok, redirected, url } = resp;
     let disp = resp.headers.get('Content-Disposition');
     let type = resp.headers.get('Content-Type');
-    if(!disp && /json/.test(type) && typeof resp.json == 'function') resp = await resp.json();
-    else if(typeof resp.text == 'function') resp = { data: await resp.text() };
-    if(disp && !resp.file) resp.file = disp.replace(/.*['"]([^"]+)['"].*/, '$1');
-    if(type) resp.type = type;
-    if(resp.file) if (!/tmp\//.test(resp.file)) resp.file = 'tmp/' + resp.file;
+    if(ok) {
+      if(!disp && /json/.test(type) && typeof resp.json == 'function') resp = await resp.json();
+      else if(typeof resp.text == 'function') resp = { data: await resp.text() };
+      if(disp && !resp.file) resp.file = disp.replace(/.*['"]([^"]+)['"].*/, '$1');
+      if(type) resp.type = type;
+      if(resp.file) if (!/tmp\//.test(resp.file)) resp.file = 'tmp/' + resp.file;
+    } else {
+      console.info('resp:', resp);
+      resp = { ...resp, error: resp.statusText };
+    }
+    if(cached) resp.cached = true;
+    if(redirected) resp.redirected = true;
   }
   return resp;
 }
@@ -871,16 +907,16 @@ const BoardToGerber = async (board = project.name, opts = { fetch: true }) => {
 
   if(opts.fetch && response.file && !response.data) response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then(NormalizeResponse);
 
-  // console.debug('BoardToGerber response =', response);
+  console.debug('BoardToGerber response =', Util.filterOutKeys(response, /(data)/));
   return response;
 };
 
 const GerberToGcode = async (file, allOpts = {}) => {
   const { side, ...opts } = allOpts;
-  //console.debug('GerberToGcode', file, opts);
-  let request = { ...opts, file, fetch: true, /*raw: true, */ 'isolation-width': '1mm' };
+  console.debug('GerberToGcode', file, allOpts);
+  let request = { file, fetch: true, software: 'LinuxCNC', /*raw: true, */ 'isolation-width': '1mm', ...opts };
   let response;
-  if(typeof side == 'string') request[side] = '';
+  if(typeof side == 'string') request[side] = 1;
   response = await FetchURL('/gcode', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -892,7 +928,7 @@ const GerberToGcode = async (file, allOpts = {}) => {
   if(opts.fetch && response.file && !response.data) response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then(NormalizeResponse);
 
   response.opts = opts;
-  //console.debug('GerberToGcode response =',  Util.filterOutKeys(response, (k,v) => typeof(v) == 'string' ? v.length > 60 : ['data','output'].indexOf(k) != -1));
+  console.debug('GerberToGcode response =', Util.filterOutKeys(response, /(data)/));
   return response;
 };
 
@@ -929,16 +965,16 @@ const GcodeToPolylines = (data, opts = {}) => {
         stroke: color || palette[i],
         fill: fill ? palette[i].prod(1, 1, 1, 0.5) : 'none'
       });
-  let grp = SVG.create('g',
-    {
+  let grp = GetLayer({
       fill: 'none',
+      name: `Voronoi ${side}`,
       class: `gcode ${side} side`,
-      stroke: color,
+      color,
       'stroke-width': 0.15,
       transform: ` translate(-0.3175,0) ` + (side == 'front' ? 'scale(-1,-1)' : 'scale(1,-1)') + ` translate(${0},${-bb.y2})  translate(0,-2.54)`
     },
-    project.svg
-  );
+    project
+  ).element;
   let paths = [];
 
   if(fill) {
@@ -988,7 +1024,7 @@ const AppMain = (window.onload = async () => {
 
   //prettier-ignore
   Object.assign(window, { Repeater, BBox, ChooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, LoadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas, BoardToGerber, ListGithubRepo, ListGithubRepoServer, brcache, lscache, BaseCache, FetchCached, CachedFetch ,GerberToGcode });
-  Object.assign(window, { cache, tlite, FetchURL, GcodeToPolylines, geom },
+  Object.assign(window, { cache, tlite, FetchURL, GcodeToPolylines, geom, NormalizeResponse, AddLayer },
     { classes: { Cache, CacheStorage, Response, Request } },
     {
       PrimitiveComponents,
@@ -1271,21 +1307,26 @@ const AppMain = (window.onload = async () => {
 
   const Toggle = (trkl) => trkl(!trkl());
   let setTo;
-  const Layer = ({ title, name, label, i, element, className, ...props }) => {
-    const [visible, setVisible] = useTrkl(element.handlers.visible);
-    // console.log('Layer props=', props);
+
+  const Layer = ({ title, name, label, i, color, element, className, ...props }) => {
+    let setVisible = props.visible || element.handlers.visible,
+      visible = useTrkl(setVisible);
+    const isVisible = Util.is.on(visible);
+    if('visible' in element) setVisible = (value) => (element.visible = value);
+
+    console.log(`Layer #${i} ${name} isVisible=${isVisible}`);
     return h('div',
       {
         className,
         onMouseMove: (e) => {
-          if(e.buttons & 1 && setTo) setVisible(setTo);
+          if(e.buttons & 1 && setTo !== undefined) setVisible(setTo);
         },
         onMouseUp: (e) => {
           setTo = null;
         },
         onMouseDown: (e) => {
           if(e.buttons & 1) {
-            setVisible((setTo = element.visible ? 'no' : 'yes'));
+            setVisible((setTo = !isVisible));
             return true;
           }
 
@@ -1294,7 +1335,7 @@ const AppMain = (window.onload = async () => {
       }, [
         h('span', {
             className: classNames(className, 'number'),
-            style: { background: element.color },
+            style: { background: color || element.color },
             ...props
           },
           `${i}`
@@ -1304,7 +1345,7 @@ const AppMain = (window.onload = async () => {
           className: classNames(className, 'visible'),
           ...props,
           style: { height: '1em', width: 'auto' },
-          src: `static/svg/${element.visible ? 'show' : 'hide'}.svg`
+          src: `static/svg/${isVisible ? 'show' : 'hide'}.svg`
         })
       ]
     );
@@ -1333,12 +1374,12 @@ const AppMain = (window.onload = async () => {
         h(Button, {
           //  caption: '↔',
           fn: MakeFitAction(VERTICAL & 1),
-          image: 'static/fit-vertical.svg'
+          image: 'static/svg/fit-vertical.svg'
         }),
         h(Button, {
           //  caption: '↕',
           fn: MakeFitAction(HORIZONTAL & 1),
-          image: 'static/fit-horizontal.svg'
+          image: 'static/svg/fit-horizontal.svg'
         }),
         h(Conditional, { signal: currentProj }, [
           h(Button, {
@@ -1377,19 +1418,24 @@ const AppMain = (window.onload = async () => {
               project.gcode = {};
               //console.debug('CAM Button');
               for(let side of ['back', 'front']) {
-                project.gerber[side] = await BoardToGerber(project, { [side]: true });
-                 console.debug('BoardToGerber side =', side, ' file =', project.gerber[side]);
+                let gerber = await BoardToGerber(project, { [side]: true });
+
+                if(gerber) {
+                  project.gerber[side] = gerber;
+                  console.debug('BoardToGerber side =', side, ' file =', gerber.file);
+                }
               }
               for(let side of ['back', 'front']) {
-                let gerb =  project.gerber[side];
-
-                project.gcode[side] = await GerberToGcode(gerb.file, { side, voronoi: 1 });
-                
-                let gc = project.gcode[side];
-               console.debug('GerberToGcode side =', side, ' gc =', gc);
-                gcode(gc.data);
+                let gerb = project.gerber[side];
+                let gc = await GerberToGcode(gerb.file, { side, nog64: 1, voronoi: 1 });
+                if(gc) {
+                  project.gcode[side] = gc;
+                  console.debug('GerberToGcode side =', side, ' gc =', gc.file);
+                }
               }
+              gcode(project.gcode);
             }, 100),
+            'data-tooltip': 'Generate Gerber RS274-X CAM data',
             image: 'static/svg/cnc-obrabeni.svg'
           })
         ]),
@@ -1407,6 +1453,7 @@ const AppMain = (window.onload = async () => {
                 GcodeToPolylines(gc.data, { fill: false, color: colors[side], side });
               }
             },
+            'data-tooltip': 'Create Voronoi diagram',
             image: 'static/svg/voronoi.svg'
           })
         ]),
@@ -1440,7 +1487,17 @@ const AppMain = (window.onload = async () => {
           }
         })
       ]),*/
-      html` <${FileList} files=${projects} onActive=${open} onChange=${(e, p, i) => ChooseDocument(p, i)} filter=${searchFilter} showSearch=${showSearch} changeInput=${changeInput} focusSearch=${focusSearch} currentInput=${currentSearch} /> `,
+      h(FileList, {
+        files: projects,
+        onActive: open,
+        onChange: debounceAsync(async (e, p, i) => await ChooseDocument(p, i), 5000, { leading: true }),
+        filter: searchFilter,
+        showSearch,
+        changeInput,
+        focusSearch,
+        currentInput: currentSearch
+      }),
+
       h(CrossHair, { ...crosshair }),
       h(FloatingPanel, { onSize: logSize, className: 'no-select', id: 'console' }, [
         /*h(div, {}, [ */ h(Logger, {}),

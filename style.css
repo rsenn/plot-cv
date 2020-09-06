@@ -645,7 +645,7 @@ div.layers {
   z-index: 10000000;
 }
 div.layers > .layer {
-  /* background: white;*/
+  background: white;
 }
 
 div.layer {
@@ -656,6 +656,7 @@ div.layer {
   align-items: center;
   transition: background 0.2s ease-in-out;
   flex-basis: 100%;
+  min-height: 1.5em;
 }
 div.layer:hover {
   background: rgba(0, 0, 0, 0.5);
@@ -668,6 +669,7 @@ div.layer > span.number {
   text-align: right;
 }
 div.layer > span.name {
+  white-space: nowrap;
   flex: 1 1 auto;
 }
 div.layer > .visible {

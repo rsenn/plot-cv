@@ -127,18 +127,30 @@ const gerberToGcode = async (gerberFile, allOpts = {}) => {
     'output-dir': './tmp/',
     ...opts
   };
-  let side = 'front' in opts ? 'front' : 'back' in opts ? 'back' : '';
-  if(side == '') {
-    side = 'back';
-    opts.back = '';
+  if(opts.front == undefined && opts.back == undefined) opts.back = gerberFile;
+  let sides = [];
+
+  if('front' in opts) {
+    if(typeof opts.front != 'string') opts.front = gerberFile;
+    sides.push('front');
   }
-  console.debug(`gerberToGcode`, allOpts);
-  const gcodeFile = path.join(opts['output-dir'], `${basename}_${side}.ngc`);
+  if('back' in opts) {
+    if(typeof opts.back != 'string') opts.back = gerberFile;
+    sides.push('back');
+  }
+
+  if(opts.voronoi && !opts.vectorial) opts.vectorial = 1;
+
+  console.debug(`gerberToGcode`, opts);
+  function makePath(ext, side, base = basename) {
+    return path.join(opts['output-dir'], `${base}_${side}.${ext}`);
+  }
+
   const params = [...Object.entries(opts)].filter(([k, v]) => typeof v == 'string' || typeof v == 'number').map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? ' ' + v : ''}`);
-  console.log('Request /gcode', { gerberFile, gcodeFile, fetch, raw });
+  console.log('Request /gcode', { gerberFile, fetch, raw });
   //console.warn(`gerberToGcode`, Util.abbreviate(gerberFile), { gcodeFile, opts });
 
-  const cmd = `pcb2gcode ${params.join(' ')}  '${gerberFile}' 2>&1`;
+  const cmd = `pcb2gcode ${params.join(' ')} 2>&1`;
   console.warn(`executing '${cmd}'`);
   const child = exec(cmd, {});
   // do whatever you want with `child` here - it's a ChildProcess instance just
@@ -150,6 +162,12 @@ const gerberToGcode = async (gerberFile, allOpts = {}) => {
 
   //   if(code !== 0) throw new Error(output);
   if(output) output = output.replace(/\s*\r*\n/g, '\n');
+
+  const gcodeFile = makePath('ngc', sides[0]);
+  const svgFile = makePath('svg', sides[0], 'processed');
+
+  for(let [file, to] of sides.map((side) => [makePath('svg', side, 'processed'), makePath('svg', side)])) if(fs.existsSync(file)) fs.renameSync(file, to);
+
   let result = { code, output, cmd, file: gcodeFile };
   if(fetch) result.data = await (await fsPromises.readFile(gcodeFile)).toString();
   console.log('Response /gcode', Util.filterOutKeys(result, /(Xoutput|data)/));
@@ -163,9 +181,15 @@ const gerberToGcode = async (gerberFile, allOpts = {}) => {
 let gcodeEndpoint = async (req, res) => {
   const { body } = req;
   let { file, ...opts } = body;
-  let result = await gerberToGcode(file, opts).catch((error) => ({ error }));
+  let result;
 
-  res.json(result);
+  try {
+    result = await gerberToGcode(file, opts).catch((error) => ({ error }));
+  } catch(error) {
+    result = { error };
+  } finally {
+    res.json(result);
+  }
 };
 app.post(/^\/gcode/, gcodeEndpoint);
 app.get(/^\/gcode/, gcodeEndpoint);

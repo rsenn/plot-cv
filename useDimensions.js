@@ -1,10 +1,10 @@
 import { Component, useState, useLayoutEffect, useCallback } from './lib/dom/preactComponent.js';
 
-function getDimensionObject(node) {
-  if(typeof node == 'object' && node != null && node.base) node = node.base;
-  //  console.log('getDimensionObject', node);
+function getDimensionObject(element) {
+  if(typeof element == 'object' && element != null && element.base) element = element.base;
+  //  console.log('getDimensionObject', element);
 
-  let rect = node.getBoundingClientRect();
+  let rect = element.getBoundingClientRect();
   return {
     width: rect.width,
     height: rect.height,

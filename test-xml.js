@@ -1,10 +1,11 @@
 import PortableFileSystem from './lib/filesystem.js';
 import Util from './lib/util.js';
 import ConsoleSetup from './consoleSetup.js';
-import { XPath } from './lib/xml.js';
 import deep from './lib/deep.js';
 import path from './lib/path.js';
 import tXml from './lib/tXml.js';
+import { XPath } from './lib/xml.js';
+
 import { RGBA, HSLA } from './lib/color.js';
 import { Iterator, IteratorForwarder } from './lib/iterator.js';
 import toSource from './lib/tosource.js';

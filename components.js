@@ -35,7 +35,7 @@ export const MouseEvents = (h) => ({
 });
 
 export const Overlay = ({ className = 'overlay', title, tooltip, active = true, toggle, state, onPush, text, children, ...props }) => {
-  const [pushed, setPushed] = typeof state == 'function' ? useTrkl(state) : useState(false);
+  const [pushed, setPushed] = typeof state == 'function' ? [useTrkl(state), state] : useState(false);
   const events = MouseEvents((toggle ? ToggleHandler : ClickHandler)(
       (e, state) => {
         const prev = pushed;
