@@ -4,8 +4,7 @@ import dom from './lib/dom.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
 import keysim from './lib/dom/keysim.js';
-import geom from './lib/geom.js';
-import { BBox, Polygon, Circle } from './lib/geom.js';
+import geom, { BBox, Polygon, Circle } from './lib/geom.js';
 import { TouchListener } from './lib/touchHandler.js';
 import { trkl } from './lib/trkl.js';
 import { ColorMap } from './lib/draw/colorMap.js';
@@ -56,7 +55,10 @@ import { lazyInitializer } from './lib/lazyInitializer.js';
 //import PureCache from 'pure-cache';
 import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
 import { NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer } from './commands.js';
-/* prettier-ignore */ /* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG,    Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
+/* prettier-ignore */ /* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG,   
+
+  Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
+
 import { classNames } from './lib/classNames.js';
 
 Util.colorCtor = ColoredText;
@@ -64,7 +66,6 @@ Util.colorCtor = ColoredText;
 //Util.extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, ColoredText, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon, Circle } );
 const Timer = { delay, interval, timeout, once: dom.Timer };
 
-const prng = new Alea(1598127218);
 let currentProj = trkl.property(window, 'project');
 let layerList = trkl.property(window, 'layers', { value: [] });
 let gcode = trkl(null);
@@ -87,7 +88,7 @@ let activeFile;
 let transform = trkl(new TransformationList());
 let sizeListener = trkl({});
 let aspectListener = trkl(1);
-let debug = false;
+let debug = true;
 const documentTitle = trkl('');
 const documentSize = trkl('');
 
@@ -306,7 +307,7 @@ const LoadDocument = async (project, parentElem) => {
   }
   LogJS.info(`${project.doc.basename} loaded.`);
   documentTitle(project.doc.file.replace(/.*\//g, ''));
-  let s = project.doc.getMeasures(false).toSize((o) => new Size(o.width, o.height));
+  let s = new BBox().update(project.doc.getMeasures(false)).toSize((o) => new Size(o.width, o.height));
 
   documentSize(s.toString({ unit: 'mm' }));
   window.eagle = project.doc;
@@ -1198,13 +1199,14 @@ const AppMain = (window.onload = async () => {
               project.gerber = {};
               project.gcode = {};
               //console.debug('CAM Button');
-              for(let side of ['back', 'front', 'drill']) {
-                let gerber = await BoardToGerber(project, { side, [side]: true });
+              for(let side of ['back', 'front', 'drill', 'outline']) {
+                let gerber = await BoardToGerber(project, { side, [side]: true, fetch: ['drill', 'outline'].indexOf(side) != -1 });
 
                 if(gerber) {
+                  console.debug('BoardToGerber gerber =', gerber);
                   project.gerber[side] = gerber;
-                  if(side == 'drill') {
-                    gerber.cmds = await GerberParser.parse(project.gerber.drill.data);
+                  if(gerber.data) {
+                    gerber.cmds = await GerberParser.parse(gerber.data);
                     gerber.unit = gerber.cmds.find((i) => i.prop == 'units');
 
                     gerber.points = gerber.cmds.filter((i) => i.coord).map(({ coord }) => new Point(coord.x, coord.y));
@@ -1212,16 +1214,23 @@ const AppMain = (window.onload = async () => {
                   console.debug('BoardToGerber side =', side, ' file =', gerber.file);
                 }
               }
+              const sides = Object.fromEntries(['back', 'front', 'drill', 'outline'].map((side) => [side, project.gerber[side].file]));
+              console.debug('  sides = ', sides);
+              const allGcode = await GerberToGcode(project.name, { ...sides, nog64: true, 'fill-outline': true, voronoi: true, /*'zero-start': true,*/ nog81: true });
+              console.debug('GerberToGcode allGcode = ', allGcode);
+
               for(let side of ['back', 'front', 'drill']) {
                 let gerb = project.gerber[side];
-                let gc = await GerberToGcode(gerb.file, { side, nog64: 1, voronoi: 1, 'zero-start': 1, nog81: side == 'drill' });
-                if(gc) {
-                  project.gcode[side] = gc;
+                let data = allGcode[side];
+                let file = allGcode.files[side];
+
+                if(data) {
+                  let gc = (project.gcode[side] = { data, file });
 
                   if(side != 'drill') {
-                    let processed = gc.file.replace(/\.ngc$/, '.svg');
+                    let processed = file.replace(/\.ngc$/, '.svg');
                     gc.svg = await FetchURL(processed).then(ResponseData);
-                    console.debug('processed', processed);
+                    console.debug('processed', processed, gc.svg);
                     //  console.debug('gc.svg ',gc.svg );
                     let layer = GetLayer({
                       name: makeLayerName('processed', side),

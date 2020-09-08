@@ -2,6 +2,7 @@ import { h, Fragment, html, render, Component, useState, useEffect, useRef, useC
 
 import { trkl } from './lib/trkl.js';
 import { useDimensions } from './useDimensions.js';
+import { Element } from './lib/dom.js';
 import { useTrkl } from './lib/eagle/renderUtils.js';
 
 //import React from '../modules/preact/dist/preact.mjs';

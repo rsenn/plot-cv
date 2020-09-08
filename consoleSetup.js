@@ -15,6 +15,6 @@ export async function ConsoleSetup(options) {
   return Util.tryCatch(() => (globalThis.console = ret));
 }
 
-export const ConsoleOnce = Util.once((opts) => SetupConsole(opts));
+export const ConsoleOnce = Util.once((opts) => ConsoleSetup(opts));
 
 export default ConsoleOnce;

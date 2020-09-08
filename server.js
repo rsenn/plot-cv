@@ -27,7 +27,7 @@ const p = path.join(path.dirname(process.argv[1]), '.');
 //console.log('Serving from', p);
 
 async function main() {
-  await ConsoleSetup({ breakLength: 120, maxStringLength: 80, maxArrayLength: 20 });
+  await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
 
   app.use(express.text({ type: 'application/xml', limit: '16384kb' }));
 
@@ -64,11 +64,12 @@ async function main() {
   }
 
   const convertToGerber = async (boardFile, opts = {}) => {
-    const { layers = opts.drill ? ['Drills', 'Holes'] : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'], format = opts.drill ? 'EXCELLON' : 'GERBER_RS274X', data, fetch = false, front, back } = opts;
+    console.log('convertToGerber', { boardFile, opts });
+    let { layers = opts.side == 'outline' ? ['Measures'] : opts.drill ? ['Drills', 'Holes'] : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'], format = opts.drill ? 'EXCELLON' : 'GERBER_RS274X', data, fetch = false, front, back } = opts;
     const base = path.basename(boardFile, '.brd');
     const formatToExt = (layers, format) => {
       if(opts.drill || format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1) return 'TXT';
-      if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER')) return front ? 'GTL' : 'GBL';
+      if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER')) return opts.side == 'outline' ? 'GKO' : front ? 'GTL' : 'GBL';
 
       return 'rs274x';
     };
@@ -87,8 +88,9 @@ async function main() {
     if(code !== 0) throw new Error(output);
     if(output) output = output.replace(/\s*\r*\n/g, '\n');
     let result = { code, output };
-    if(fetch || data) result.data = await (await fsPromises.readFile(gerberFile)).toString();
+    if(opts.fetch) result.data = await (await fsPromises.readFile(gerberFile)).toString();
     result.file = gerberFile;
+    console.log('convertToGerber result =', result);
     return result;
   };
 
@@ -128,28 +130,27 @@ async function main() {
       zchange: '2mm',
       zwork: '-1mm',
       zdrill: '-2mm',
+      zcut: '-2mm',
+      'cutter-diameter': '1mm',
       'drill-feed': 1000,
       'drill-speed': 10000,
       'mill-feed': 600,
       'mill-speed': 16000,
+      'cut-feed': 200,
+      'cut-speed': 10000,
+      'cut-infeed': '1mm',
+
       'output-dir': './tmp/',
       ...opts
     };
     if(opts.front == undefined && opts.back == undefined && opts.drill == undefined) opts.back = gerberFile;
     let sides = [];
 
-    if('front' in opts) {
-      if(typeof opts.front != 'string') opts.front = gerberFile;
-      sides.push('front');
-    }
-    if('back' in opts) {
-      if(typeof opts.back != 'string') opts.back = gerberFile;
-      sides.push('back');
-    }
-    if('drill' in opts) {
-      if(typeof opts.drill != 'string') opts.drill = gerberFile;
-      sides.push('drill');
-    }
+    for(let side of ['front', 'back', 'drill', 'outline'])
+      if(side in opts) {
+        if(typeof opts[side] != 'string') opts[side] = gerberFile;
+        sides.push(side);
+      }
 
     if(opts.voronoi && !opts.vectorial) opts.vectorial = 1;
 
@@ -158,36 +159,50 @@ async function main() {
       return path.join(opts['output-dir'], `${base}_${side}.${ext}`);
     }
 
-    const params = [...Object.entries(opts)].filter(([k, v]) => typeof v == 'string' || typeof v == 'number' || (typeof v == 'boolean' && v === true)).map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? ' ' + v : ''}`);
+    const params = [...Object.entries(opts)].filter(([k, v]) => typeof v == 'string' || typeof v == 'number' || (typeof v == 'boolean' && v === true)).map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? '=' + v : ''}`);
     console.log('Request /gcode', { gerberFile, fetch, raw });
     //console.warn(`gerberToGcode`, Util.abbreviate(gerberFile), { gcodeFile, opts });
 
-    const cmd = `pcb2gcode ${params.join(' ')} 2>&1`;
-    console.warn(`executing '${cmd}'`);
-    const child = exec(cmd, {});
-    // do whatever you want with `child` here - it's a ChildProcess instance just
-    // with promise-friendly `.then()` & `.catch()` functions added to it!
-    let output = '';
-    child.stdout.on('data', (data) => (output += data));
-    child.stderr.on('data', (data) => (output += data));
-    const { stdout, stderr, code, signal } = await child;
+    let wait;
+    try {
+      const cmd = `pcb2gcode ${params.join(' ')} 2>&1`;
+      console.warn(`executing '${cmd}'`);
+      const child = exec(cmd, {});
+      // do whatever you want with `child` here - it's a ChildProcess instance just
+      // with promise-friendly `.then()` & `.catch()` functions added to it!
+      let output = '';
+      child.stdout.on('data', (data) => (output += data));
+      child.stderr.on('data', (data) => (output += data));
+      wait = await child.catch((error) => ({ code: -1, error }));
 
-    //   if(code !== 0) throw new Error(output);
-    if(output) output = output.replace(/\s*\r*\n/g, '\n');
+      const { stdout, stderr, code, signal } = wait;
+      if(output) output = Util.abbreviate(output.replace(/\s*\r*\n/g, '\n'), 200);
+      console.log('Response /gcode', { stdout, output });
 
-    const gcodeFile = makePath('ngc', sides[0]);
-    const svgFile = makePath('svg', sides[0], 'processed');
+      //   if(code !== 0) throw new Error(output);
 
-    for(let [file, to] of sides.map((side) => [makePath('svg', side, 'processed'), makePath('svg', side)])) if(fs.existsSync(file)) fs.renameSync(file, to);
+      const gcodeFile = makePath('ngc', sides[0]);
+      const svgFile = makePath('svg', sides[0], 'processed');
 
-    let result = { code, output, cmd, file: gcodeFile };
-    if(fetch) result.data = await (await fsPromises.readFile(gcodeFile)).toString();
-    console.log('Response /gcode', Util.filterOutKeys(result, /(Xoutput|data)/));
-    if(/*/get/i.test(req.method) || */ raw) {
-      const { file } = result;
-      return SendRaw(res, file, result.data);
+      for(let [file, to] of sides.map((side) => [makePath('svg', side, 'processed'), makePath('svg', side)])) if(fs.existsSync(file)) fs.renameSync(file, to);
+
+      let files = sides.map((side) => [side, makePath('ngc', side)]).filter(([side, file]) => fs.existsSync(file));
+      console.log('Response /gcode', { files });
+
+      let result = { code, output, cmd };
+      if(fetch) {
+        for(let [side, file] of files) result[side] = await (await fsPromises.readFile(file)).toString();
+      }
+      if(/*/get/i.test(req.method) || */ raw) {
+        const { file } = result;
+        return SendRaw(res, file, result.data);
+      }
+      result.files = Object.fromEntries(files);
+      console.log('Response /gcode', Util.filterOutKeys(result, /(Xoutput|data)/));
+      return result;
+    } catch(error) {
+      Util.putError(error);
     }
-    return result;
   };
 
   let gcodeEndpoint = async (req, res) => {
