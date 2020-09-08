@@ -342,14 +342,22 @@ export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () =
         className: typeof itemClass == 'function' ? itemClass(value) : classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
         active: i == active,
         onPush: pushHandler(i),
-        label: name.replace(/.*\//, ''),
+        label: name.replace(new RegExp('.*/'), ''),
         tooltip: tooltip({ title, name, description, i, number, data, ...item }),
         name,
         description,
         ...item
       });
     });
+
   return html`<${Container} className=${classNames('panel', 'no-select', className)} ...${props}>${children}</${Container}>`;
+};
+const toolTipFn = ({ name, data, ...item }) => {
+  let tooltip = `name\t${name.replace(new RegExp('.*/', 'g'), '')}`;
+  tooltip += `\ntype\t${item.type}\nsize\t${item.size}\nsha\t${item.sha}\npath\t${item.path}`;
+
+  if(data) tooltip += `\ndata\t${Util.abbreviate(data)}`;
+  return tooltip;
 };
 
 export const FileList = ({ files, onChange, onActive, filter, showSearch, focusSearch, currentInput, changeInput, ...props }) => {
@@ -359,9 +367,10 @@ export const FileList = ({ files, onChange, onActive, filter, showSearch, focusS
   files.subscribe((value) => setItems(value));
 
   onActive.subscribe((value) => setActive(value));
+  const classes = classNames('sidebar', active ? 'active' : 'inactive');
 
   return html`
-    <div className=${classNames('sidebar', active ? 'active' : 'inactive')}>
+    <div className=${classes}>
       <${Conditional} component=${EditBox} type="form" className="search" autofocus name=${'query'} id="search" placeholder="Search" signal=${showSearch} focus=${focusSearch} current=${currentInput} onChange=${changeInput} onInput=${changeInput} value=${filter()} />
       <${Chooser}
         className="list"
@@ -369,13 +378,7 @@ export const FileList = ({ files, onChange, onActive, filter, showSearch, focusS
         itemClass=${(item) => 'file hcenter ' + item.name.replace(/.*\./g, '')}
         itemFilter=${filter}
         items=${items}
-        tooltip=${({ name, data, ...item }) => {
-          let tooltip = `name\t${name.replace(/.*\//g, '')}`;
-          tooltip += `\ntype\t${item.type}\nsize\t${item.size}\nsha\t${item.sha}\npath\t${item.path}`;
-
-          if(data) tooltip += `\ndata\t${Util.abbreviate(data)}`;
-          return tooltip;
-        }}
+        tooltip=${toolTipFn}
         onChange=${(...args) => {
           onChange(...args);
         }}

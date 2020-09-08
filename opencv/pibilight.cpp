@@ -222,7 +222,7 @@ processImage() {
   // Undistort the image by distortion coefficients
   // if(!cameraMatrix.empty())
   // {
-  // 	undistort(currentImage, undistortedTemp, cameraMatrix, distortionCoefficients);
+  //   undistort(currentImage, undistortedTemp, cameraMatrix, distortionCoefficients);
   // }
   // else
   // {

@@ -124,7 +124,7 @@ process::sync(vector<string>* list, std::string ip) {
   }
 
   // for (auto text : *list)
-  //	cout << "\t\t" << text << endl;
+  //  cout << "\t\t" << text << endl;
 
   // cout << "\tsync was done" <<endl;
 }

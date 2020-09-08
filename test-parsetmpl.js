@@ -12,6 +12,31 @@ import { ConsoleSetup } from './consoleSetup.js';
 
 let filesystem;
 
+const code = `export const Progress = ({ className, percent, ...props }) =>  h(Overlay,
+    {
+      className: classNames('progress', 'center', className),
+      text: percent + '%',
+      style: {
+        position: 'relative',
+        width: '100%',
+        height: '1.5em',
+        border: '1px solid black',
+        textAlign: 'center',
+        zIndex: '99'
+      }
+    },
+    h('div', {
+      className: classNames('progress-bar', 'fill'),
+      style: {
+        width: percent + '%',
+        position: 'absolute',
+        left: '0px',
+        top: '0px',
+        zIndex: '98'
+      }
+    })
+  );`;
+
 const testfn = () => true;
 const testtmpl = `this is\na test`;
 
@@ -44,7 +69,7 @@ async function main(...args) {
   const stdout = (await import('process')).stdout;
 
   const breakLength = stdout.columns || process.env.COLUMNS || 80;
-  await ConsoleSetup({ breakLength, maxStringLength: breakLength });
+  await ConsoleSetup({ breakLength, maxStringLength: breakLength, depth: Infinity });
   console.log('breakLength:', breakLength);
 
   filesystem = await PortableFileSystem();
@@ -56,18 +81,11 @@ async function main(...args) {
 
     if(filesystem.exists(file)) data = filesystem.readFile(file);
 
-    console.log('file:', file);
-    console.log('opened:', Util.abbreviate(data));
+    console.log(`opened '${file}':`, Util.abbreviate(data));
     let ast, error;
 
-    globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, true);
+    globalThis.parser = new ECMAScriptParser(data ? data.toString() : code, file, false);
     globalThis.printer = new Printer({ indent: 4 });
-
-    console.log('prototypeChain:', Util.getPrototypeChain(parser));
-
-    console.log('methodNames:', Util.getMethodNames(parser, 2));
-
-    //console.log(new parser.estree.Identifier());
     console.log('OK');
 
     try {
@@ -75,19 +93,11 @@ async function main(...args) {
 
       parser.addCommentsToNodes(ast);
 
-      /*let imports = [...deep.iterate(ast, (node) => node instanceof CallExpression && /console.log/.test(printer.print(node)))].map(([node, path]) => node);
-      let importNodes = imports.map((node) => ({ str: printer.print(node), toks: ECMAScriptParser.printToks(parser.tokensForNode(node)) }));
-
-      console.log('imports:', importNodes);*/
-
-      //for(let imp of imports) console.log('tokens:', parser.tokensForNode(imp));
       let flat = deep.flatten(ast,
         new Map(),
         (node) => node instanceof ESNode,
         (path, value) => {
           path = new Path(path);
-          //value = Util.map(value,(k,v) => [k,v instanceof ESNode ? path.down(k) : v ]);
-          //value = Util.filter(value, (v,k) => !(v instanceof Path));
           return [path, value];
         }
       );
@@ -99,58 +109,21 @@ async function main(...args) {
         node2path.set(node, path);
         nodeKeys.push(path);
       }
-
-      const isRequire = (node) => node instanceof CallExpression && node.callee.value == 'require';
-      const isImport = (node) => node instanceof ImportStatement;
-
-      //let posMap = new SortedMap([...flat].map(([key, value]) => [value.position ? value.position.pos : -1, value]), (a, b) => a - b);
-
       let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node: posMap.keyOf(node) }]),
         (a, b) => a - b
       );
 
       console.log('commentMap:', commentMap);
-      //      posMap = new SortedMap([...posMap, ...commentMap], (a, b) => a - b);
-      //    console.log('posMap:', [...posMap.keys()]);
-      //   console.log('ast:', [...posMap.keys()]);
-      //   let allNodes = nodeKeys.map((path) => flat.get(path));
-      let allNodes = nodeKeys.map((path, i) => [i, flat.get(path)]);
 
-      for(let [i, n] of allNodes) console.log(`\n  ${i}:\n `, new ImmutablePath(node2path.get(n)), '\n ', n, '\n ', ESNode.assoc(n).position, '\n');
-
-      const output_file = file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
-
-      console.log('saving to:', output_file);
-      const output = printAst(ast, parser.comments, printer);
-      console.log('output:', output);
-
-      dumpFile(output_file, output);
-
-      const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
-      const importStatements = imports.map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path)).map((path) => [path, deep.get(ast, path)]);
-
-      console.log('imports:', new Map(imports.map(([path, node]) => [ESNode.assoc(node).position, node])));
-      console.log('importStatements:', importStatements);
-
-      const importedFiles = imports.map(([pos, node]) => Identifier.string(node.source || node.arguments[0]));
-      console.log('importedFiles:', importedFiles);
-      const importIdentifiers = importStatements
-        .map(([p, n]) => [p, n.identifiers ? n.identifiers : n])
-        .map(([p, n]) => [p, n.declarations ? n.declarations : n])
-        .map(([p, n]) =>
-          n
-            .map((decl) => (decl.id instanceof ObjectBindingPattern ? decl.id.properties : [decl.id]))
-            .flat()
-            .map((n) => [n.id ? n.id : n])
-            .flat()
-            .map((n) => Identifier.string(n))
-        );
-      //  console.log('importIdentifiers:',importIdentifiers.map(ids => ids.join(", ")).join(",\n"));
-      console.log('importIdentifiers:', Util.unique(importIdentifiers.flat()).join(', '));
-      await ConsoleSetup({ depth: Infinity });
-      const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
+      const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral && path[path.length - 1] == 'arguments');
 
       console.log('templates:', templates);
+
+      const output_file = file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
+      const output = printAst(ast, parser.comments, printer);
+      //console.log('output:', output);
+
+      dumpFile(output_file, output);
     } catch(err) {
       error = err;
       console.log('error:', err);

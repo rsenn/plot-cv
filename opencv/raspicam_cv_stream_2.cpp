@@ -59,11 +59,11 @@ main(int argc, char** argv) {
 
   init_raspicam();
 
-  //	char* outFile = "./out.mjpg";
-  //	char* outFile = "out.mp4"; // functional with ??
-  //	char* outFile = "out.mjpg"; // worked with MJPG
+  //  char* outFile = "./out.mjpg";
+  //  char* outFile = "out.mp4"; // functional with ??
+  //  char* outFile = "out.mjpg"; // worked with MJPG
 
-  //	char* outFile = "/home/pi/DEV/bprp/raspicam_cv_stream/out.mjpg"; // functional with MJPG
+  //  char* outFile = "/home/pi/DEV/bprp/raspicam_cv_stream/out.mjpg"; // functional with MJPG
   char* outFile = "/home/pi/out.mjpg";
 
   int resizeFactor = 1;
@@ -79,7 +79,7 @@ main(int argc, char** argv) {
       outFile = argv[1];
 
   //   if (argv[2] && strcmp(argv[2], "-bgs") == 0)
-  //		doBGS = true;
+  //    doBGS = true;
 
   int camIndex = 0;
   for(int i = 0; i < 5; i++) {
@@ -121,15 +121,15 @@ main(int argc, char** argv) {
 
   Mat foreground;
 
-  //	if (displayWindows) namedWindow("Source",1);
-  //	if (displayWindows && doBGS) namedWindow("Background Subtraction", 1);
+  //  if (displayWindows) namedWindow("Source",1);
+  //  if (displayWindows && doBGS) namedWindow("Background Subtraction", 1);
 
-  //	unsigned int codec_id = CV_FOURCC('D','I','V','X');
+  //  unsigned int codec_id = CV_FOURCC('D','I','V','X');
   int codec_id = CV_FOURCC('D', 'I', 'V', 'X');
   codec_id = CV_FOURCC('M', 'J', 'P', 'G');
 
-  //	codec_id = CV_FOURCC('F','L','V','1');
-  //	codec_id = CV_FOURCC('U','2','6','3');
+  //  codec_id = CV_FOURCC('F','L','V','1');
+  //  codec_id = CV_FOURCC('U','2','6','3');
 
   // quit if ESC is pressed
   //    while((waitKey(10) & 255) != 27)

@@ -43,7 +43,7 @@ main(int argc, char* argv[]) {
     // introduce a delay
     // or press key to stop
     // if (cv::waitKey(delay) >= 0)
-    //	stop = true;
+    //  stop = true;
     cv::waitKey();
   }
 

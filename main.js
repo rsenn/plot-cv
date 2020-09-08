@@ -14,10 +14,11 @@ import Shape from './lib/clipper.js';
 import { devtools } from './lib/devtools.js';
 import Util from './lib/util.js';
 import tlite from './lib/tlite.js';
-import { debounceAsync, debounceIterator } from './lib/async/debounce.js';
+import { debounceAsync } from './lib/async/debounce.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Alea from './lib/alea.js';
+import path from './lib/path.js';
 import { TimeoutError, delay, interval, timeout } from './lib/repeater/timers.js';
 import asyncHelpers from './lib/async/helpers.js';
 import { Cache } from './lib/dom/cache.js';
@@ -40,7 +41,6 @@ import { Message } from './message.js';
 import { WebSocketClient } from './lib/net/websocket-async.js';
 import { CTORS, ECMAScriptParser, estree, Factory, Lexer, ESNode, Parser, PathReplacer, Printer, Stack, Token } from './lib/ecmascript.js';
 import { WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater } from './streamUtils.js';
-import KolorWheel from './lib/KolorWheel.js';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
 import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl } from './lib/eagle/renderUtils.js';
 import { Wire } from './lib/eagle/components/wire.js';
@@ -55,10 +55,13 @@ import { lazyInitializer } from './lib/lazyInitializer.js';
 } from './lib/eagle.js';
 //import PureCache from 'pure-cache';
 import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
-
+import { NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer } from './commands.js';
 /* prettier-ignore */ /* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG,    Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
+import { classNames } from './lib/classNames.js';
+
 Util.colorCtor = ColoredText;
-/* prettier-ignore */ Util.extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, ColoredText, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon, Circle } );
+/* prettier-ignore */
+//Util.extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, ColoredText, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon, Circle } );
 const Timer = { delay, interval, timeout, once: dom.Timer };
 
 const prng = new Alea(1598127218);
@@ -104,8 +107,6 @@ const useSlot = (arr, i) => [() => arr[i], (v) => (arr[i] = v)];
 const trklGetSet = (get, set) => (value) => (value !== undefined ? set(value) : get());
 //const useTrkl = trkl => [() => trkl(), value => trkl(value)];
 
-const classNames = (...args) => args.filter((arg) => typeof arg == 'string' && arg.length > 0).join(' ');
-
 const MouseEvents = (h) => ({
   onMouseDown: h,
 
@@ -113,34 +114,20 @@ const MouseEvents = (h) => ({
   onMouseOut: h,
   onMouseUp: h
 });
-//console.log('running');
-//console.log("dom", { Rect, Element });
-
-window.dom = { Element, SVG };
 
 tlite(() => ({ grav: 'nw', attrib: ['data-tlite', 'data-tooltip', 'title', 'data-filename'] }));
 
-/* prettier-ignore */
-/*    const CreateSelect = (obj, node = document.body) => {
-                            let elem = Select.create(Object.entries(obj));
-                            node.insertBefore(elem, node.firstElementChild);
-                          };*/
 const utf8Decoder = new TextDecoder('utf-8');
 let svgOwner, parent;
 
 const svgFactory = lazyInitializer(() => {
   parent = project.svg.parentElement;
-
   const factory = SVG.factory({
     append_to(elem, p) {
       (p || parent).appendChild(elem);
     }
   });
-  //const {width,height}=Element.rect('.aspect-ratio-box-inside');
   let rect = DrawSVG.calcViewBox();
-
-  //console.log('rect:', rect);
-
   const svg = [
     'svg',
     { viewBox: rect.toString(), style: 'position: absolute; left: 0; top: 0;' },
@@ -155,34 +142,10 @@ const svgFactory = lazyInitializer(() => {
       ]
     ]
   ];
-  //console.log('factory:', factory);
-
   const element = (svgOwner = factory(...svg));
-
   factory.root = parent = element.lastElementChild;
-
-  //project.svg.parentElement.appendChild(element);
-
   return factory;
 });
-
-const GeneratePalette = (numColors) => {
-  let ret = [];
-  let base = new HSLA(Util.randInt(0, 360, prng), 100, 50).toRGBA();
-  let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360], []);
-  offsets = offsets.sort((a, b) => a - b);
-  //offsets = Util.shuffle(offsets, prng);
-  //Util.log('offsets:', offsets);
-
-  new KolorWheel(base.hex()).rel(offsets, 0, 0).each(function () {
-    const hex = this.getHex();
-    const rgba = new RGBA(hex);
-    const hsla = rgba.toHSLA();
-    //Util.log(hex, rgba.toString(), hsla.toString());
-    ret.push(hsla);
-  });
-  return ret;
-};
 
 const DrawSVG = (...args) => {
   const factory = svgFactory();
@@ -236,71 +199,10 @@ const DrawSVG = (...args) => {
   }
 };
 
-const GetProject = (arg) => (typeof arg == 'number' ? projects()[arg] : typeof arg == 'string' ? projects().find((p) => p.name == arg) : arg);
-
-const ListProjects = async function (opts = {}) {
-  const { url, descriptions = true, names, filter } = opts;
-  //console.log('ListProjects', { url, descriptions, names, filter });
-  let response;
-  if(!url) {
-    response = await fetch('/files.html', {
-      method: 'post',
-      mode: 'cors',
-      cache: 'no-cache',
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ descriptions, names, filter })
-    })
-      .then(NormalizeResponse)
-      .catch((error) => ({ error }));
-
-    /*   if(typeof response.text == 'function') response = await response.text();
-    //console.log('response:', Util.abbreviate(response));
-    if(response) response = JSON.parse(response);*/
-  } else {
-    response = await ListGithubRepo(url, null, null, '\\.(brd|sch|lbr)$', opts);
-    let fileList = response.map((file, i) => {
-      let project = { ...file, name: response.at(i) };
-      return project;
-    });
-    response = { files: fileList };
-  }
-  return response;
-};
-
 const ElementToXML = (e, predicate) => {
   const x = Element.toObject(e, { predicate });
   //console.log('x:', x);
   return Element.toString(x, { newline: '\n' });
-};
-
-const FetchCached = Util.cachedFetch({
-  debug: true,
-  print: function ({ cached, ok, status, redirected, statusText, type, url }, fn, ...args) {
-    console.debug(`FetchCached(${args.map((a, i) => (typeof a == 'string' ? `"${a}"` : i == 1 ? Util.toSource({ ...this.opts, ...a }, { colors: false, multiline: false }) : a)).join(', ')}) =`, { cached, ok, status, redirected, statusText, type, url } /*.then(  NormalizeResponse)*/);
-  }
-});
-
-const FetchURL = async (url, allOpts = {}) => {
-  let { nocache = false, ...opts } = allOpts;
-  let result;
-  let ret;
-  if(opts.method && opts.method.toUpperCase() == 'POST') nocache = true;
-  let fetch = nocache ? window.fetch : FetchCached;
-  if(/tmp\//.test(url)) {
-    url = url.replace(/.*tmp\//g, '/tmp/');
-  } else if(/^\//.test(url)) {
-  } else if(/:\/\//.test(url)) {
-  } else {
-    url = '/static/' + url;
-  }
-  try {
-    if(!ret) ret = result = await fetch(url, opts);
-  } catch(error) {
-    Util.putError(error);
-    throw error;
-  }
-  return ret;
 };
 
 const FileSystem = {
@@ -351,20 +253,20 @@ const SaveFile = async (filename, data, contentType) => {
   return result;
 };
 
-const SaveSVG = (window.save = async function save(filename, layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48, 51]) {
+const SaveSVG = async function save(filename, layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48, 51]) {
   const { doc } = project;
   const { basename, typeName } = doc;
   if(!filename) filename = `${doc.basename}.${doc.typeName}.svg`;
   let predicate = (element) => {
     if(!element.hasAttribute('data-layer')) return true;
     const layer = element.getAttribute('data-layer');
-    let [number, name] = layer.split(/ /);
+    let [number, name] = layer.split(/\ /);
     if(number !== undefined && name !== undefined) return layers.indexOf(+number) != -1 || layers.indexOf(name) != -1;
     return true;
   };
   let data = ElementToXML(project.svg, predicate);
   return await SaveFile(filename.replace(/\.svg$/i, '.svg'), data);
-});
+};
 
 const ModifyColors = (fn) => (e) => {
   const { type, buttons } = e;
@@ -389,128 +291,6 @@ const GerberLayers = {
   GML: 'Mill layer',
   gpi: 'Photoplotter info file',
   TXT: 'Drill file'
-};
-
-const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
-  const { username, password } = opts;
-  let host, path;
-  if(new RegExp('://').test(owner) || (repo == null && dir == null)) {
-    const url = owner;
-    let parts = url
-      .replace(/.*:\/\//g, '')
-      .replace('/tree/master', '')
-      .split('/');
-    while(!/github.com/.test(parts[0])) parts = parts.slice(1);
-    [host, owner, repo, ...path] = parts;
-    dir = path.join('/');
-  }
-  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${dir}`;
-  //console.log('ListGithubRepo', { host, owner, repo, dir, filter, url });
-  const headers = {
-    Authorization: 'Basic ' + window.btoa(`${username}:${password}`)
-  };
-  let response = await FetchURL(url, { headers });
-  let result = JSON.parse(await response.text());
-  if(!Util.isArray(result)) return result;
-  if(filter) {
-    const re = new RegExp(filter, 'g');
-    result = result.filter(({ name, type }) => type == 'dir' || re.test(name));
-  }
-  //  console.log('result:', result);
-  const firstFile = result.find((r) => !!r.download_url);
-  const base_url = firstFile ? firstFile.download_url.replace(/\/[^\/]*$/, '') : '';
-  const files = result.map(({ download_url = '', html_url, name, type, size, path, sha }) => ({
-    url: (download_url || html_url || '').replace(base_url + '/', ''),
-    name,
-    type,
-    size,
-    path,
-    sha
-  }));
-  const at = (i) => {
-    let url = files[i].url;
-    if(!/:\/\//.test(url)) url = base_url + '/' + url;
-    return url;
-  };
-  return Object.assign(files.map((file, i) => {
-      file.toString = () => at(i);
-      if(file.type == 'dir') file.list = async (f = filter) => await ListGithubRepo(at(i), null, null, f, {});
-      else {
-        let getter = async function () {
-          let data = await fetch(at(i), {});
-          this.buf = await data.text();
-          return this.buf;
-        };
-        let text = function () {
-          return typeof this.buf == 'string' && this.buf.length > 0 ? this.buf : this.get();
-        };
-        file.get = getter;
-        file.getText = text;
-        Object.defineProperty(file, 'text', { get: text, enumerable: true, configurable: true });
-      }
-      return file;
-    }),
-    {
-      base_url,
-      at,
-      async get(i) {
-        const url = at(i);
-        //console.log('url:', url);
-        return await FetchURL(url, {});
-      },
-      get files() {
-        return files.filter((item) => item.type != 'dir');
-      },
-      get dirs() {
-        return files.filter((item) => item.type == 'dir');
-      }
-    }
-  );
-};
-
-const ListGithubRepoServer = async (owner, repo, dir, filter) => {
-  let response;
-  let request = { owner, repo, dir, filter };
-  try {
-    response = await FetchURL('/github', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(request)
-    });
-  } catch(err) {}
-  let ret = JSON.parse(response);
-  ret.at = function (i) {
-    return this.base_url + '/' + this.files[i];
-  };
-  ret.get = async function (i) {
-    let data = await FetchURL(this.at(i));
-    return data;
-  };
-  return ret;
-};
-
-const FindLayer = (name, project = currentProj()) => {
-  let layers = layerList();
-  return layers.find((l) => l.name === name);
-};
-
-const GetLayer = (layer, project = currentProj()) => FindLayer(layer.name, project) || AddLayer(layer, project);
-
-const AddLayer = (layer, project = currentProj()) => {
-  const { color, name, ...props } = layer;
-  let layers = layerList();
-  let i = Math.max(...layers.map((l) => l.i)) + 1;
-
-  let element = layer.create ? layer.create(project) : SVG.create('g', { i, stroke: color, ...props }, project.svg);
-  let visible = trkl(true);
-
-  visible.subscribe((value) => {
-    console.warn(`layer ${name} visible=${value}`);
-    value ? element.style.removeProperty('display') : element.style.setProperty('display', 'none');
-  });
-  layer = { i, name, color, visible, element };
-  layerList([...layers, layer]);
-  return layer;
 };
 
 const LoadDocument = async (project, parentElem) => {
@@ -816,45 +596,24 @@ const MakeFitAction = (index) => async (event) => {
   AdjustZoom(ZoomLog(newTransform.scaling.x));
 
   window.transform = newTransform.toString('px', 'deg');
-
-  //Element.setCSS(container, { transform });
-
-  //  Element.setCSS(container, { transform: window.transform = t+' '+`translate(${delta.x},${delta.y})` });
-
-  // window.transform = t;
-
-  /*
-  let newSize = f[index].round(0.0001);
-  let affineTransform = Matrix.getAffineTransform(oldSize.toPoints(), newSize.toPoints());
- 
-  let transform = affineTransform.decompose();
-  let factor = transform.scale.x;
-  let newFactor = zoom * factor;
-  let newTransform = new TransformationList().scale(newFactor, newFactor);
-  let delay = Math.abs(Math.log(  newTransform.scaling.x ) * 1000);
-  await Element.transition(container, { transform: newTransform }, delay + 'ms', 'linear');
-  */
 };
 
 function ZoomFactor(val = zoomLog()) {
   return Math.pow(10, val / 200).toFixed(5);
 }
+
 function ZoomLog(factor) {
   return Math.log10(factor) * 200;
 }
+
 function AdjustZoom(l = zoomLog()) {
   let zoomFactor = ZoomFactor(l);
-
   let t = new TransformationList(window.transform);
-
-  //console.log('t:', t);
-
   if(!t.scaling) t.scale(zoomFactor, zoomFactor);
   else {
     t.scaling.x = zoomFactor;
     t.scaling.y = zoomFactor;
   }
-  //console.log('window.transform:', window.transform);
   window.transform = t;
 }
 
@@ -886,193 +645,186 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
 
 const BindGlobal = Util.once((arg) => trkl.bind(window, arg));
 
-async function NormalizeResponse(resp) {
-  resp = await resp;
-
-  if(Util.isObject(resp)) {
-    let { cached, status, ok, redirected, url } = resp;
-    let disp = resp.headers.get('Content-Disposition');
-    let type = resp.headers.get('Content-Type');
-    if(ok) {
-      if(!disp && /json/.test(type) && typeof resp.json == 'function') resp = await resp.json();
-      else if(typeof resp.text == 'function') resp = { data: await resp.text() };
-      if(disp && !resp.file) resp.file = disp.replace(/.*['"]([^"]+)['"].*/, '$1');
-      if(type) resp.type = type;
-      if(resp.file) if (!/tmp\//.test(resp.file)) resp.file = 'tmp/' + resp.file;
-    } else {
-      console.info('resp:', resp);
-      resp = { ...resp, error: resp.statusText };
-    }
-    if(cached) resp.cached = true;
-    if(redirected) resp.redirected = true;
-  }
-  return resp;
-}
-async function ResponseData(resp) {
-  resp = await NormalizeResponse(resp);
-  if(resp.data) return resp.data;
-}
-
-const BoardToGerber = async (board = project.name, opts = { fetch: true }) => {
-  let proj = GetProject(board);
-  let data;
-  let request = { ...opts, board: proj.name, raw: true },
-    response;
-  response = await FetchURL('/gerber', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(request)
-  })
-    .then(NormalizeResponse)
-    .catch((error) => ({ error }));
-
-  if(opts.fetch && response.file && !response.data) response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then(NormalizeResponse);
-
-  console.debug('BoardToGerber response =', Util.filterOutKeys(response, /(data)/));
-  return response;
-};
-
-const GerberToGcode = async (file, allOpts = {}) => {
-  const { side, ...opts } = allOpts;
-  console.debug('GerberToGcode', file, allOpts);
-  let request = {
-    file,
-    fetch: true,
-    software: 'LinuxCNC',
-    /*raw: true, */ 'isolation-width': '1mm',
-    ...opts
-  };
-  let response;
-  if(typeof side == 'string') request[side] = 1;
-  response = await FetchURL('/gcode', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(request)
-  })
-    .then(NormalizeResponse)
-    .catch((error) => ({ error }));
-
-  if(opts.fetch && response.file && !response.data) response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then(NormalizeResponse);
-
-  response.opts = opts;
-  console.debug('GerberToGcode response =', Util.filterOutKeys(response, /(data)/));
-  return response;
-};
-
-const GcodeToPolylines = (data, opts = {}) => {
-  const { fill = false, color, side } = opts;
-  let gc = [...Util.filter(parseGcode(data), (g) => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args)];
-  console.debug('GcodeToPolylines', Util.abbreviate(data), { opts, gc });
-  let polylines = [];
-  let polyline = null;
-  let bb = new BBox();
-  const NewPolyline = () => {
-    if(polyline) polylines.push(polyline);
-    polyline = new Polyline([]);
-  };
-  const f = new Point(-25.4, 25.4);
-  for(let g of gc) {
-    if(g.command == 'G00') NewPolyline();
-    if(isPoint(g.args)) {
-      let p = new Point(g.args.x, g.args.y).prod(f).round(0.01, 2);
-      bb.updateXY(p.x, p.y);
-      polyline.push(p);
-    }
-  }
-  NewPolyline();
-  let palette = GeneratePalette(polylines.length);
-  let ret = { polylines, bbox: bb, palette };
-  //console.log('polylines(1):', polylines);
-  let remove = new Set();
-  let props = color
-    ? (polyline, i) => ({
-        fill: fill ? palette[i].prod(1, 1, 1, 0.5) : 'none'
-      })
-    : (polyline, i) => ({
-        stroke: color || palette[i],
-        fill: fill ? palette[i].prod(1, 1, 1, 0.5) : 'none'
-      });
-  let grp = GetLayer({
-      fill: 'none',
-      name: `Voronoi ${side}`,
-      class: `gcode ${side} side`,
-      color,
-      'stroke-width': 0.15,
-      transform: ` translate(-0.3175,0) ` + (side == 'front' ? 'scale(-1,-1)' : 'scale(1,-1)') + ` translate(${0},${-bb.y2})  translate(0,-2.54)`
-    },
-    project
-  ).element;
-  let paths = [];
-
-  if(fill) {
-    polylines = polylines.map((pl) => pl.toMatrix().flat());
-    //console.log('polylines(2):', polylines);
-    polylines = polylines.map((pl) => geom.simplify(pl, 0.02, true));
-    //console.log('polylines(3):', polylines);
-    polylines = polylines.map((pl) => Util.chunkArray(pl, 2).map((pt) => new Point(...pt)));
-    //console.log('polylines(4):', polylines);
-    polylines = polylines.map((pl) => new Polyline([]).push(...pl));
-    let inside = new Map(polylines.map((polyline2, i) => [polyline2, polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2))]));
-    let insideOf = polylines.map((polyline, i) => [
-      i,
-      polylines
-        .map((polyline2, j) => [inside.get(polyline2).length, j, polyline2])
-        .filter(([n, j, polyline2]) => i !== j && inside.get(polyline2).indexOf(polyline) != -1)
-        .sort(([a], [b]) => a - b)
-    ]);
-    //console.log('GcodeToPolylines insideOf:', insideOf);
-    let holes = polylines.map((polyline, i) => new Set());
-    insideOf.filter(([i, list]) => list.length == 1).map(([i, list]) => holes[list[0][1]].add(i));
-    //console.log('GcodeToPolylines holes:', holes);
-    let remove = new Set();
-    for(let [i, inner] of holes.entries()) {
-      let ids = [i, ...inner];
-      //console.log('polygon', { i, ids, inner });
-      const polyline = polylines[i];
-      inner = [...inner].map((ip) => polylines[ip].counterClockwise);
-      if(inner.length == 0) continue;
-      //console.log('polygon', { polyline, inner });
-      let list = [polyline, ...inner];
-      paths.push([i, list.map((pl) => pl.toPath()).join('\n')]);
-      ids.forEach((id) => remove.add(id));
-    }
-  }
-  let ids = polylines.map((pl, i) => i).filter((i) => !remove.has(i));
-  let polys = [...ids.map((i) => polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` }, grp, 0.01)), ...paths.map(([i, d]) => ({ ...props(polyline, i), id: `polygon-${polylines.indexOf(polyline)}`, d })).map((p, i) => ['path', p, grp])];
-  // console.log('GcodeToPolylines polys:', polys.length, { bb, color });
-  let svgAttr = Element.attr(project.svg);
-  //console.log('GcodeToPolylines svgAttr:', svgAttr);
-  let elements = polys.map((args) => SVG.create(...args));
-  return { ...ret, group: grp, elements };
-};
-
 const AppMain = (window.onload = async () => {
   Util(globalThis);
+  const imports = {
+    Transformation,
+    Rotation,
+    Translation,
+    Scaling,
+    MatrixTransformation,
+    TransformationList,
+    dom,
+    ReactComponent,
+    iterator,
+    eventIterator,
+    keysim,
+    geom,
+    BBox,
+    Polygon,
+    Circle,
+    TouchListener,
+    trkl,
+    ColorMap,
+    ClipperLib,
+    Shape,
+    devtools,
+    Util,
+    tlite,
+    debounceAsync,
+    tXml,
+    deep,
+    Alea,
+    path,
+    TimeoutError,
+    delay,
+    interval,
+    timeout,
+    asyncHelpers,
+    Cache,
+    CacheStorage,
+    gcodetogeometry,
+    GcodeObject,
+    gcodeToObject,
+    objectToGcode,
+    parseGcode,
+    GcodeParser,
+    Iterator,
+    Functional,
+    makeLocalStorage,
+    Repeater,
+    useResult,
+    LogJS,
+    useDimensions,
+    toXML,
+    ImmutablePath,
+    XmlObject,
+    XmlAttr,
+    ImmutableXPath,
+    RGBA,
+    isRGBA,
+    ImmutableRGBA,
+    HSLA,
+    isHSLA,
+    ImmutableHSLA,
+    ColoredText,
+    React,
+    h,
+    html,
+    render,
+    Fragment,
+    Component,
+    useState,
+    useLayoutEffect,
+    useRef,
+    components,
+    Chooser,
+    DynamicLabel,
+    Button,
+    FileList,
+    Panel,
+    SizedAspectRatioBox,
+    TransformedElement,
+    Canvas,
+    ColorWheel,
+    Slider,
+    CrossHair,
+    FloatingPanel,
+    DropDown,
+    Conditional,
+    Message,
+    WebSocketClient,
+    CTORS,
+    ECMAScriptParser,
+    estree,
+    Factory,
+    Lexer,
+    ESNode,
+    Parser,
+    PathReplacer,
+    Printer,
+    Stack,
+    Token,
+    WriteToRepeater,
+    LogSink,
+    RepeaterSink,
+    StringReader,
+    LineReader,
+    ChunkReader,
+    ByteReader,
+    PipeToRepeater,
+    PrimitiveComponents,
+    ElementNameToComponent,
+    ElementToComponent,
+    SVGAlignments,
+    AlignmentAttrs,
+    Alignment,
+    AlignmentAngle,
+    Arc,
+    CalculateArcRadius,
+    ClampAngle,
+    EagleAlignments,
+    HORIZONTAL,
+    HORIZONTAL_VERTICAL,
+    InvertY,
+    LayerAttributes,
+    LinesToPath,
+    MakeCoordTransformer,
+    PolarToCartesian,
+    RotateTransformation,
+    VERTICAL,
+    useTrkl,
+    Wire,
+    Instance,
+    SchematicSymbol,
+    Emitter,
+    EventIterator,
+    Slot,
+    SlotProvider,
+    Voronoi,
+    GerberParser,
+    lazyInitializer,
+    BoardRenderer,
+    DereferenceError,
+    EagleDocument,
+    EagleElement,
+    EagleNode,
+    EagleNodeList,
+    EagleNodeMap,
+    EagleProject,
+    EagleRef,
+    EagleReference,
+    EagleSVGRenderer,
+    Renderer,
+    SchematicRenderer,
+    makeEagleElement,
+    makeEagleNode,
+    brcache,
+    lscache,
+    BaseCache,
+    CachedFetch,
+    NormalizeResponse,
+    ResponseData,
+    FetchURL,
+    FetchCached,
+    GetProject,
+    ListProjects,
+    GetLayer,
+    AddLayer,
+    BoardToGerber,
+    GerberToGcode,
+    GcodeToPolylines,
+    ListGithubRepo,
+    ListGithubRepoServer,
+    classNames
+  };
+  const importedNames = Object.keys(imports);
+  console.debug('Dupes:',
+    Util.getMemberNames(window).filter((m) => importedNames.indexOf(m) != -1)
+  );
 
   //prettier-ignore
-  Object.assign(window, { Repeater, BBox, ChooseDocument, classNames, ColorMap, components, CSS, deep, EagleDocument, EagleElement, EagleNode, ImmutablePath, ImmutableXPath, EagleReference, eventIterator, h, HSLA, html, isLine, isPoint, isRect, isSize, iterator, Line, LoadDocument, LoadFile, Matrix, MatrixTransformation, ModifyColors, Point, PointList, React, Rect,  Rotation, Scaling, Size, SVG, Transformation, TransformationList, Translation, tXml, Util, MouseEvents, ElementToXML, LoadFile, ModifyColors, MakeFitAction, CreateWebSocket, AppMain, Canvas, BoardToGerber, ListGithubRepo, ListGithubRepoServer, brcache, lscache, BaseCache, FetchCached, CachedFetch ,GerberToGcode });
-  Object.assign(window, { cache, tlite, FetchURL, GcodeToPolylines, geom, NormalizeResponse, ResponseData,  AddLayer, asyncHelpers },
-    { classes: { Cache, CacheStorage, Response, Request } },
-    {
-      PrimitiveComponents,
-      ElementNameToComponent,
-      ElementToComponent,
-      Wire,
-      Instance,
-      SchematicSymbol
-    },
-    { Emitter, EventIterator },
-    { ZoomFactor, AdjustZoom },
-    { WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater } 
-  );
-  Object.assign(window, { LogJS },
-    { Element, devtools, dom, RGBA, HSLA, draw: DrawSVG },
-    /* prettier-ignore */ { Voronoi, GerberParser, GenerateVoronoi, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GcodeParser },
-    /* prettier-ignore */ { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL },
-    /* prettier-ignore */ { Timer, TimeoutError }
-  );
-  Object.assign(window, { ListProjects, LoadDocument, LoadFile, ChooseDocument, SaveSVG });
-
+  Util.weakAssign(window,imports);
   Error.stackTraceLimit = 100;
 
   const timestamps = new Repeater(async (push, stop) => {
@@ -1265,8 +1017,9 @@ const AppMain = (window.onload = async () => {
   let loggerRect = new Rect();
   const Logger = (props) => {
     const [lines, setLines] = useState([]);
-    const [ref, { x, y, width, height }] = useDimensions();
-    const r = new Rect({ x, y, width, height });
+    const [ref, rect] = useDimensions();
+
+    const r = new Rect(rect);
     if(!loggerRect.equals(r)) {
       loggerRect = r;
     }
@@ -1340,7 +1093,7 @@ const AppMain = (window.onload = async () => {
     let setVisible = props.visible || element.handlers.visible,
       visible = useTrkl(setVisible);
     const isVisible = Util.is.on(visible);
-    if('visible' in element) setVisible = (value) => (element.visible = value);
+    if(Util.isObject(element) && 'visible' in element) setVisible = (value) => (element.visible = value);
 
     console.log(`Layer #${i} ${name} isVisible=${isVisible}`);
     return h('div',
@@ -1363,7 +1116,7 @@ const AppMain = (window.onload = async () => {
       }, [
         h('span', {
             className: classNames(className, 'number'),
-            style: { background: color || element.color },
+            style: { background: color || (Util.isObject(element) && element.color) },
             ...props
           },
           `${i}`
@@ -1446,7 +1199,7 @@ const AppMain = (window.onload = async () => {
               project.gcode = {};
               //console.debug('CAM Button');
               for(let side of ['back', 'front', 'drill']) {
-                let gerber = await BoardToGerber(project, { [side]: true });
+                let gerber = await BoardToGerber(project, { side, [side]: true });
 
                 if(gerber) {
                   project.gerber[side] = gerber;
@@ -1459,37 +1212,46 @@ const AppMain = (window.onload = async () => {
                   console.debug('BoardToGerber side =', side, ' file =', gerber.file);
                 }
               }
-              for(let side of ['back', 'front']) {
+              for(let side of ['back', 'front', 'drill']) {
                 let gerb = project.gerber[side];
-                let gc = await GerberToGcode(gerb.file, { side, nog64: 1, voronoi: 1 });
+                let gc = await GerberToGcode(gerb.file, { side, nog64: 1, voronoi: 1, 'zero-start': 1, nog81: side == 'drill' });
                 if(gc) {
                   project.gcode[side] = gc;
-                  let processed = gc.file.replace(/\.ngc$/, '.svg');
-                  gc.svg = await FetchCached(processed).then(ResponseData);
-                  let layer = GetLayer({
-                    name: processed,
-                    create: ((project) =>
-                        SVG.create('svg', {
-                            outerHTML: gc.svg
-                          },
-                          project.svg
-                        )) ||
-                      ((project) =>
-                        SVG.create('image', {
-                            href: processed,
-                            transform: `scale(0.3937007874015748031,0.3937007874015748031)`
-                          },
-                          project.svg
-                        ))
-                  });
-                  layer.element.innerHTML = gc.svg;
 
-                  //    if(gc.svg && gc.svg.tagName.startsWith('?') && gc.svg.children) gc.svg = gc.svg.children[0];
+                  if(side != 'drill') {
+                    let processed = gc.file.replace(/\.ngc$/, '.svg');
+                    gc.svg = await FetchURL(processed).then(ResponseData);
+                    console.debug('processed', processed);
+                    //  console.debug('gc.svg ',gc.svg );
+                    let layer = GetLayer({
+                      name: makeLayerName('processed', side),
+                      'data-filename': processed,
+                      create: ((project, props = {}) => {
+                          let g = SVG.create('g', { innerHTML: gc.svg, ...props }, project.svg);
+                          g.innerHTML = gc.svg;
+                          if(g.firstElementChild && g.firstElementChild.tagName == 'svg') {
+                            let svg = g.firstElementChild;
+                            ['width', 'height', 'xmlns', 'xmlns:xlink', 'version'].forEach((a) => svg.removeAttribute(a));
+                          }
+                          return g;
+                        }) || ((project, props = {}) => SVG.create('g', props, SVG.create('image', { href: processed, transform: `scale(0.3937,0.3937)` }, project.svg)))
+                    });
+                  }
 
                   console.debug('GerberToGcode side =', side, ' gc =', gc.file, ' svg =', Util.abbreviate(gc.svg));
                 }
               }
               gcode(project.gcode);
+
+              function makeLayerName(name, side) {
+                const prefix = side == 'front' ? 't-' : side == 'back' ? 'b-' : '';
+                return Util.camelize(prefix +
+                    path
+                      .basename(name)
+                      .replace(new RegExp(`_${side}`), '')
+                      .replace(/\.[A-Za-z0-9]{3}$/, '')
+                );
+              }
             }, 100),
             'data-tooltip': 'Generate Gerber RS274-X CAM data',
             image: 'static/svg/cnc-obrabeni.svg'

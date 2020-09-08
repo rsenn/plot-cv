@@ -12,7 +12,6 @@
          "path" : ".",
          "file_exclude_patterns" : [
          "*.bz2", "*.gz", "*.txz", "*.xz", "*.zip",
-            "*.es",
             "*.tmp",
             "*.vcxproj",
             "*.scr",

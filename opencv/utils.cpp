@@ -427,7 +427,7 @@ draw_linear_time_MSER(string img_name) {
   int priority = highest_level;
 
   //!< 1-2. push a dummy-component onto the stack,
-  //!<	  with grey-level heigher than any allowed in the image
+  //!<    with grey-level heigher than any allowed in the image
   er_stack.push_back(new ER(256, 0, 0, 0));
 
   //!< 2. make the top-right corner the source pixel, get its gray level and mark it accessible
@@ -446,12 +446,12 @@ step_3:
   for(;;) {
     //!< 4. Explore the remaining edges to the neighbors of the current pixel, in order, as follows
     //!< :
-    //!<	For each neighbor, check if the neighbor is already accessible.If it
-    //!<	is not, mark it as accessible and retrieve its grey - level.If the grey - level is not
-    //!<	lower than the current one, push it onto the heap of boundary pixels.If on
-    //!<	the other hand the grey - level is lower than the current one, enter the current
-    //!<	pixel back into the queue of boundary pixels for later processing(with the
-    //!<	next edge number), consider the new pixel and its grey - level and go to 3.
+    //!<  For each neighbor, check if the neighbor is already accessible.If it
+    //!<  is not, mark it as accessible and retrieve its grey - level.If the grey - level is not
+    //!<  lower than the current one, push it onto the heap of boundary pixels.If on
+    //!<  the other hand the grey - level is lower than the current one, enter the current
+    //!<  pixel back into the queue of boundary pixels for later processing(with the
+    //!<  next edge number), consider the new pixel and its grey - level and go to 3.
     int neighbor_pixel;
     int neighbor_level;
 
@@ -500,7 +500,7 @@ step_3:
     }
 
     //!< 5. Accumulate the current pixel to the component at the top of the stack
-    //!<	(water saturates the current pixel).
+    //!<  (water saturates the current pixel).
     er_stack.back()->area++;
     int x1 = min(er_stack.back()->bound.x, x);
     int x2 = max(er_stack.back()->bound.br().x - 1, x);
@@ -525,7 +525,7 @@ step_3:
     }
 
     //!< 6. Pop the heap of boundary pixels. If the heap is empty, we are done. If the
-    //!<	returned pixel is at the same grey - level as the previous, go to 4
+    //!<  returned pixel is at the same grey - level as the previous, go to 4
     if(priority == highest_level) {
       delete[] pixel_accessible;
       writer.release();

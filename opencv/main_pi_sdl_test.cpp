@@ -1,12 +1,12 @@
 //
-//	main_pi_sdl_test.cpp - OpenCV & SDL sample program for Raspberry Pi
+//  main_pi_sdl_test.cpp - OpenCV & SDL sample program for Raspberry Pi
 //
-//	How to Build
-//		$ sudo apt-get install libopencv-dev
-//		$ sudo apt-get install libsdl1.2-dev
-//		$ sudo apt-get install cmake
-//		$ cmake .
-//		$ make
+//  How to Build
+//    $ sudo apt-get install libopencv-dev
+//    $ sudo apt-get install libsdl1.2-dev
+//    $ sudo apt-get install cmake
+//    $ cmake .
+//    $ make
 //
 
 #include <SDL/SDL.h>

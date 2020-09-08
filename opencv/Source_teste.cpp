@@ -50,8 +50,8 @@ main(int argc, char** argv) {
     imwrite("C:/Users/User/Documents/Visual Studio "
             "2015/Projects/experiencia_opencv/data/Canny_Image.jpg",
             frame_canny);
-    //	img = cvQueryFrame(frame_canny);
-    //	cvSaveImage("frame/canny.jpg", img);
+    //  img = cvQueryFrame(frame_canny);
+    //  cvSaveImage("frame/canny.jpg", img);
 
     if(waitKey(0) == 27)
       break;

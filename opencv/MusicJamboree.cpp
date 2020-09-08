@@ -48,7 +48,7 @@ main(int argc, char** argv) {
 
   // for(int i = 0; i < rows; i++) {
   // if (rowsums2.at<unsigned char>(i, 0) == 255) {
-  //	 line(dest, cv::Point2d(0, i), cv::Point2d(cols - 1, i), Scalar(0, 0, 255));
+  //   line(dest, cv::Point2d(0, i), cv::Point2d(cols - 1, i), Scalar(0, 0, 255));
   // }
   //}
 
