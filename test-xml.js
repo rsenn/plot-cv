@@ -200,6 +200,7 @@ async function main(...args) {
         flat.set(path, color);
         if(newObj) deep.set(newObj, path, color.hex());
       }
+
       /*idx2path = [...palette.keys()];
         console.log(`idx2path`, idx2path);*/
     };

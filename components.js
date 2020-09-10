@@ -98,17 +98,39 @@ export const Button = ({ caption, image, fn, state, style = {}, ...props }) => {
 export const FloatingPanel = ({ children, className, onSize, onHide, style = {}, ...props }) => {
   const [ref, { x, y, width, height }] = useDimensions();
 
-  //  console.log('FloatingPanel.dimensions:', { x, y, width, height });
+  //console.log('FloatingPanel.dimensions:', { x, y, width, height });
 
   const [size, setSize] = useState(onSize ? onSize() : {});
   const [hidden, setHidden] = useState(onHide ? onHide() : false);
 
-  if(typeof onSize == 'function' && onSize.subscribe)
-    onSize.subscribe((value) => {
-      //   console.log('FloatingPanel setSize:', value);
-      setSize(value);
-    });
-  if(typeof onHide == 'function' && onHide.subscribe) onHide.subscribe((value) => setHidden(value));
+  let noUpdate = false;
+
+  const hasOnSize = typeof onSize == 'function' && typeof onSize.subscribe == 'function';
+
+  function updateSize(value) {
+    if(!noUpdate) setSize(value);
+  }
+  useEffect(() => {
+    hasOnSize && onSize.subscribe(updateSize);
+    return () => hasOnSize && onSize.unsubscribe(updateSize);
+  }, []);
+
+  if(hasOnSize) {
+    const tmpSize = onSize();
+    noUpdate = true;
+    // if(tmpSize.width != width || tmpSize.height != height)
+    if(tmpSize.width === undefined || tmpSize.height === undefined) if (width !== undefined && height !== undefined) onSize({ width, height });
+    noUpdate = false;
+  }
+  const hasOnHide = typeof onHide == 'function' && typeof onHide.subscribe == 'function';
+
+  function updateHide(value) {
+    setHidden(value);
+  }
+  useEffect(() => {
+    hasOnHide && onHide.subscribe(updateHide);
+    return () => hasOnHide && onHide.unsubscribe(updateHide);
+  }, []);
 
   if(size) {
     if(!isNaN(+size.width)) style.width = `${size.width}px`;

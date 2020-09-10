@@ -23,6 +23,8 @@ export function useDimensions(arg = {}) {
   let liveRef = arg._ref$liveMeasure;
   let _ref$liveMeasure = liveRef === undefined ? true : liveRef;
   const [dimensions, setDimensions] = useState({});
+  // const dimensions = trkl({});
+
   const [node, setNode] = useState(null);
 
   let ref = useCallback((node) => {

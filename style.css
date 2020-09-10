@@ -14,15 +14,18 @@ svg {
   flex-flow: column nowrap;
 }*/
 
-.no-select, .no-select img, .no-select > img, .no-select div, .no-select > div  {
+.no-select,
+.no-select img,
+.no-select > img,
+.no-select div,
+.no-select > div {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-     -webkit-user-drag: none; /* Prevents dragging of images/divs etc */
-    user-drag: none;
+  -webkit-user-drag: none; /* Prevents dragging of images/divs etc */
+  user-drag: none;
 }
-
 
 svg {
   -webkit-user-select: none;

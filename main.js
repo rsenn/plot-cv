@@ -4,7 +4,7 @@ import dom from './lib/dom.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
 import keysim from './lib/dom/keysim.js';
-import geom, { BBox, Polygon, Circle } from './lib/geom.js';
+import geom, { BBox, Polygon, Circle, LineList } from './lib/geom.js';
 import { TouchListener } from './lib/touchHandler.js';
 import { trkl } from './lib/trkl.js';
 import { ColorMap } from './lib/draw/colorMap.js';
@@ -61,6 +61,7 @@ import { NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, Lis
 import { classNames } from './lib/classNames.js';
 
 Util.colorCtor = ColoredText;
+
 /* prettier-ignore */
 //Util.extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, ColoredText, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon, Circle } );
 const Timer = { delay, interval, timeout, once: dom.Timer };
@@ -515,6 +516,7 @@ const GenerateVoronoi = () => {
   const lines = [...rlines.map((l) => ['line', { ...l.toObject((t) => t + ''), stroke: '#000', 'stroke-width': 0.01 }]), ...vlines.map((l) => ['line', { ...l.toObject((t) => t + ''), stroke: '#f00', 'stroke-width': 0.01 }])];
   const circles = [
     ...holes.map((p) => ['circle', { cx: p.x, cy: p.y, r: 0.254, fill: 'none', stroke: '#00f', 'stroke-width': 0.3 }])
+
     /* ...points2.map(p => [
       'circle',
       { cx: p.x, cy: p.y, r: 0.254 * 2, fill: 'none', stroke: 'rgba(0,255,255,0.75)', 'stroke-width': 0.1 }
@@ -853,7 +855,7 @@ const AppMain = (window.onload = async () => {
   };
 
   // prettier-ignore
-  BindGlobal({projects, socket, transform, size: sizeListener, aspect: aspectListener, showSearch, logDimensions: logSize, watched: dump });
+  BindGlobal({ projects, socket, transform, size: sizeListener, aspect: aspectListener, showSearch, logDimensions: logSize, watched: dump });
 
   currentSearch.subscribe((value) => {
     if(value) {
@@ -944,6 +946,11 @@ const AppMain = (window.onload = async () => {
   });
 
   logSize.subscribe((value) => {
+    const { width, height } = value;
+
+    if(width === undefined || height === undefined) {
+      throw new Error('logSize undefined');
+    }
     store.set('console', value);
     LogJS.info(`logSize is ${value.width} x ${value.height}`);
   });
@@ -951,7 +958,7 @@ const AppMain = (window.onload = async () => {
   trkl.bind(window, { searchFilter, listURL });
   trkl.bind(window, { svgFactory });
 
-  trkl.bind(window, { zoomLog });
+  trkl.bind(window, { zoomLog, logSize });
 
   zoomLog.subscribe((value) => {
     let factor = ZoomFactor(value);
@@ -1424,15 +1431,14 @@ const AppMain = (window.onload = async () => {
             let edge = corners.sort((a, b) => a[1] - b[1])[0];
 
             window.resize = resize = Element.resizeRelative(box, null, edge[0] ? -1 : 1, (size) => {
-              //console.log('resizeRelative:', { elemId, size });
+              console.log('resizeRelative:', { elemId, size });
               if(elemId == 'console') logSize(size);
             });
             box.style.cursor = `nwse-resize`;
             console.log('RESIZE:', { resize, box, corners, edge });
             return true;
-          } else {
-            return cancel();
           }
+          return cancel();
         }
 
         //        let box = Element.find('#main').firstElementChild;
