@@ -3,7 +3,18 @@ import PortableFileSystem from './lib/filesystem.js';
 import ConsoleSetup from './consoleSetup.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
-import estree, { VariableDeclaration, ImportStatement, ExportStatement, Identifier, MemberExpression, ESNode, CallExpression, ObjectBindingPattern, Literal } from './lib/ecmascript/estree.js';
+import estree, {
+  VariableDeclaration,
+  ImportStatement,
+  ExportStatement,
+  Identifier,
+  MemberExpression,
+  ESNode,
+  CallExpression,
+  ObjectBindingPattern,
+  Literal,
+  AssignmentExpression
+} from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 //import { Path } from './lib/json.js';
@@ -42,6 +53,9 @@ class ES6Module {
     ES6Module.moduleList.add(mod);
     return mod;
   }
+  static get list() {
+    return [...ES6Module.moduleList];
+  }
 
   static getOrCreate(file, from, position) {
     let mod = ES6Module.get(file);
@@ -75,10 +89,16 @@ class ES6Module {
   [inspectSymbol]() {
     const t = (...args) => Util.ansi.text(...args);
     let s = t(Util.className(this), 1, 31) + t(' {', 1, 36);
-    for(let prop of ['file', 'importedFrom', 'importedPosition', 'deps']) if(this[prop]) s += '\n' + t(prop.padStart(13, ' '), 1, 33) + t(': ', 1, 36) + formatProp(this[prop]);
+    for(let prop of ['file', 'importedFrom', 'importedPosition', 'deps'])
+      if(this[prop])
+        s += '\n' + t(prop.padStart(13, ' '), 1, 33) + t(': ', 1, 36) + formatProp(this[prop]);
     s += t('\n}', 1, 36);
     function formatProp(value) {
-      if(Util.isArray(value)) return t('[ ', 1, 36) + value.map((mod) => formatProp(mod.file)).join(t(', ', 1, 36)) + t(' ]', 1, 36);
+      if(Util.isArray(value))
+        return (t('[ ', 1, 36) +
+          value.map((mod) => formatProp(mod.file)).join(t(', ', 1, 36)) +
+          t(' ]', 1, 36)
+        );
       return typeof value == 'string' ? t(value, 1, 32) : value;
     }
     return s;
@@ -95,6 +115,25 @@ class ES6Module {
       else if((m.importedFrom + '').startsWith(module.file)) yield m;
     }
   }
+  get imports() {
+    return [...ES6Module.getImports(this)];
+  }
+
+  static *getImports(module) {
+    for(let impExp of [...ES6ImportExport.importExportList]) {
+      if(['require', 'import'].indexOf(impExp.type) == -1) continue;
+      if(impExp.file == module.file) yield impExp;
+    }
+  }
+  get exports() {
+    return [...ES6Module.getExports(this)];
+  }
+  static *getExports(module) {
+    for(let impExp of [...ES6ImportExport.importExportList]) {
+      if(['require', 'import'].indexOf(impExp.type) != -1) continue;
+      if(impExp.file == module.file) yield impExp;
+    }
+  }
 
   static tree(colors = true) {
     const t = colors ? (...args) => Util.ansi.text(...args) : (t) => t;
@@ -105,9 +144,18 @@ class ES6Module {
     function printModule(module, sym = '') {
       // if(!modules.has(module)) return;
       modules.delete(module);
+      if(typeof module.file != 'string') {
+        console.debug('module:', module);
+        throw new Error();
+      }
       lines.push(t(sym, 1, 36) + t(path.basename(module.file), 1, 33));
       let deps = [...ES6Module.getDeps(module)];
-      for(let i = 0; i < deps.length; i++) printModule(deps[i], sym.replace(/\u251c\u2500/g, '\u2502 ') + ((i + 1 == deps.length ? '\u2514' : '\u251c') + '\u2500') + ' ');
+      for(let i = 0; i < deps.length; i++)
+        printModule(deps[i],
+          sym.replace(/\u251c\u2500/g, '\u2502 ') +
+            ((i + 1 == deps.length ? '\u2514' : '\u251c') + '\u2500') +
+            ' '
+        );
     }
     printModule(arr[0], '');
     return lines.join('\n');
@@ -203,23 +251,46 @@ class ES6ImportExport {
         Util.ansi.text('}', 1, 36)
       );
     };
+    obj.importNode = obj.importNode || [];
+
     let importNodes = obj.importNode
       .filter((p) => p.length < 3)
       .map((p) => deep.get(obj.ast, p))
       .map((n) => [ESNode.assoc(n).position, printAst(n)])
-      .map(([p, n]) => [Util.isGenerator(position) && [...position].map((p) => ES6Env.pathTransform(p)).join(':'), n]);
+      .map(([p, n]) => [
+        Util.isGenerator(position) && [...position].map((p) => ES6Env.pathTransform(p)).join(':'),
+        n
+      ]);
     //console.log('importNodes:', importNodes.map((a) => '\n  ' + a.join('  ')).join('') + '\n');
-    if(Util.isObject(position) && position.toString) position = position.toString(true, (p, i) => (i == 0 ? path.relative(ES6Env.cwd, p) : p)).replace(/1;33/, '1;34');
+    if(Util.isObject(position) && position.toString)
+      position = position
+        .toString(true, (p, i) => (i == 0 ? path.relative(ES6Env.cwd, p) : p))
+        .replace(/1;33/, '1;34');
     const InspectFn = ret.bindings[inspectSymbol];
     console.log(Util.ansi.text(Util.ucfirst((type + '').toLowerCase()), 1, 31) + Util.ansi.text(` @ `, 1, 36),
-      InspectFn ? InspectFn() : '',
+      InspectFn ? InspectFn.call(ret.bindings) : '',
       'importNode:',
-      [...obj.importNode].map((n) => [node2path.get(n), printAst(n)]).filter(([p, c]) => c.trim() != ''),
-      ...['dir', 'relpath'].reduce((acc, n) => [...acc, Util.ansi.text(n, 38, 5, 197) + Util.ansi.text(' ', 1, 36) + (typeof ret[n] == 'string' ? Util.ansi.text(ret[n], 1, 32) : typeof InspectFn == 'function' ? InspectFn.call(ret) : Util.toString(ret[n], { multiline: false, newline: '' }).replace(/.*\)\ {/g, '')) + ' '], [])
+      [...obj.importNode]
+        .map((n) => [node2path.get(n), printAst(n)])
+        .filter(([p, c]) => c.trim() != ''),
+      ...['dir', 'relpath'].reduce(
+        (acc, n) => [
+          ...acc,
+          Util.ansi.text(n, 38, 5, 197) +
+            Util.ansi.text(' ', 1, 36) +
+            (typeof ret[n] == 'string'
+              ? Util.ansi.text(ret[n], 1, 32)
+              : typeof InspectFn == 'function'
+              ? InspectFn.call(ret)
+              : Util.toString(ret[n], { multiline: false, newline: '' }).replace(/.*\)\ {/g, '')) +
+            ' '
+        ],
+        []
+      )
     );
     Object.assign(ret, obj);
-    ret.module = ES6Module.getOrCreate(ret.file, null);
-    ret.fromModule = ES6Module.getOrCreate(ret.fromPath, position || ret.file);
+    if(ret.file) ret.module = ES6Module.getOrCreate(ret.file, null);
+    if(ret.fromPath) ret.fromModule = ES6Module.getOrCreate(ret.fromPath, position || ret.file);
 
     ES6ImportExport.importExportList.add(ret);
     return ret;
@@ -269,7 +340,8 @@ class ES6ImportExport {
   [inspectSymbol]() {
     let { type, position, bindings, path, node, file, from, fromPath, relpath } = this;
     const opts = { colors: true, colon: ': ', multiline: false, quote: '' };
-    if(Util.isIterator(position)) position = [...position].map((p) => ES6Env.pathTransform(p)).join(':');
+    if(Util.isIterator(position))
+      position = [...position].map((p) => ES6Env.pathTransform(p)).join(':');
     return Util.toString(Object.assign(
         Object.setPrototypeOf({
             type,
@@ -300,7 +372,9 @@ class ES6ImportExport {
       .replace(/\s*'\s*/g, '');
 
     let proto = Object.getPrototypeOf(this);
-    let obj = Util.filterOutMembers(this, (x) => [Util.isFunction /*, Util.isObject*/].some((f) => f(x)));
+    let obj = Util.filterOutMembers(this, (x) =>
+      [Util.isFunction /*, Util.isObject*/].some((f) => f(x))
+    );
     return Util.toString({ ...obj, __proto__: proto }, { multiline: true });
   }
   toString() {
@@ -331,7 +405,8 @@ function PrintObject(node, t = (n, p) => n) {
 function PrefixRemover(reOrStr, replacement = '') {
   if(!(Util.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
 
-  return (arg) => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), typeof arg == 'string' ? arg : '');
+  return (arg) =>
+    reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), typeof arg == 'string' ? arg : '');
 }
 
 function dumpFile(name, data) {
@@ -352,10 +427,19 @@ const hl = {
 };
 
 function dumpNode(node) {
-  return [hl.id`path` + hl.punct`:`, node2path.get(node), Util.ansi.text(`node`, 1, 33) + `:`, Util.toString(node, { multiline: false, depth: 4 })];
+  return [
+    hl.id`path` + hl.punct`:`,
+    node2path.get(node),
+    Util.ansi.text(`node`, 1, 33) + `:`,
+    Util.toString(node, { multiline: false, depth: 4 })
+  ];
 }
 
-function GenerateFlatMap(ast, root = [], pred = (n, p) => true, t = (p, n) => [root.concat(p).join('.'), n]) {
+function GenerateFlatMap(ast,
+  root = [],
+  pred = (n, p) => true,
+  t = (p, n) => [root.concat(p).join('.'), n]
+) {
   //console.log('ast', Util.className(ast));
   flat = deep.flatten(ast,
     new Map(),
@@ -381,7 +465,7 @@ function GenerateDistinctVariableDeclarations(variableDeclaration) {
 }
 
 async function main(...args) {
-  await ConsoleSetup({ colors: true, depth: 2 });
+  await ConsoleSetup({ colors: true, depth: 4 });
   filesystem = await PortableFileSystem();
   // ES6Env.cwd = filesystem.realpath('.');
   //console.log('cwd=', ES6Env.cwd);
@@ -390,12 +474,22 @@ async function main(...args) {
 
   while(/^-/.test(args[0])) parameters.push(args.shift());
 
-  if(args.length == 0) args = [/*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js', 'lib/geom/size.js', 'lib/geom/trbl.js', 'lib/geom/rect.js', 'lib/dom/element.js'];
+  if(args.length == 0)
+    args = [
+      /*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js',
+      'lib/geom/size.js',
+      'lib/geom/trbl.js',
+      'lib/geom/rect.js',
+      'lib/dom/element.js'
+    ];
   let r = [];
   let processed = [];
   //console.log('args=', args);
 
-  const dirs = [ES6Env.cwd, ...args.map((arg) => path.dirname(arg))]; /*.map((p) => path.resolve(p))*/
+  const dirs = [
+    ES6Env.cwd,
+    ...args.map((arg) => path.dirname(arg))
+  ]; /*.map((p) => path.resolve(p))*/
 
   searchPath = makeSearchPath(dirs);
   //console.log('searchPath=', searchPath);
@@ -406,7 +500,8 @@ async function main(...args) {
     let aliases = json._moduleAliases || {};
     for(let alias in aliases) {
       let module = path.join(path.dirname(p), aliases[alias]);
-      if(!filesystem.exists(module)) throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`);
+      if(!filesystem.exists(module))
+        throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`);
       let file = findModule(module);
       let st = filesystem.stat(file);
       acc.set(alias, file);
@@ -497,7 +592,8 @@ async function main(...args) {
 
       //useStrict.map(([path, node]) => deep.unset(ast, path));
       //path.remove(ast));
-      const isRequire = ([path, node]) => node instanceof CallExpression && node.callee.value == 'require';
+      const isRequire = ([path, node]) =>
+        node instanceof CallExpression && node.callee.value == 'require';
       const isImport = ([path, node]) => node instanceof ImportStatement;
       const isES6Export = ([path, node]) => node instanceof ExportStatement;
       const isCJSExport = ([path, node]) => {
@@ -507,22 +603,26 @@ async function main(...args) {
       else
   console.debug(`${ESNode.assoc(node).position} isCJSExport object=`,node.object, ` property=`,node.property);
 */
-          if(node.object instanceof Identifier && node.property instanceof Identifier) return node.object.value == 'module' && node.property.value == 'exports';
+          if(node.object instanceof Identifier && node.property instanceof Identifier)
+            return node.object.value == 'module' && node.property.value == 'exports';
         }
       };
 
-      const getImport = (arg) => {
-        let [p, n] = arg;
-        //console.log('getImport:', { p,n });
-
+      const getImport = ([p, n]) => {
         let r = [];
         if(!Util.isObject(n) || !(n instanceof ESNode)) throw new Error('No node:' + n);
-        // if(!Util.isObject(p) || !('length' in p)) throw new Error('No path:' + p);
-
         if(!(n instanceof ImportStatement)) r.push(ImmutablePath.prototype.slice.call(p, 0, 2));
-        if(n instanceof CallExpression && Util.isObject(n, 'callee').value == 'require') r.push(new ImmutablePath(p.concat(['arguments', 0])));
-        //console.log('getImport:', r);
+        if(n instanceof CallExpression && Util.isObject(n, 'callee').value == 'require')
+          r.push(new ImmutablePath(p.concat(['arguments', 0])));
         return r;
+      };
+      const getExport = ([p, n]) => {
+        let r = [];
+        if(!Util.isObject(n) || !(n instanceof ESNode)) throw new Error('No node:' + n);
+        if(!(n instanceof ExportStatement)) r = p.slice(0, 2);
+        else r = p;
+
+        return [r, p];
       };
 
       //console.log('node2path:', node2path);
@@ -563,13 +663,10 @@ async function main(...args) {
             .filter(([path, stmt]) => stmt instanceof VariableDeclaration);
           let declCounts = Math.max(...declStatements.map(([p, n]) => n.declarations.length));
 
-          console.log('importNodes:', importNodes);
-          console.log('declCounts:', declCounts);
           //  console.log('importStatements:', ...importStatements);
-          console.log('declStatements :', ...declStatements);
-
-          console.log('importStatements:', ...importStatements.map((stmt, i) => `\n#${i}: ${printer.printNode(stmt)}`));
-
+          /*  console.log('declStatements :', ...declStatements);
+          console.log('importStatements:', ...importStatements.map((stmt, i) => `\n#${i}: ${printer.printNode(stmt)}`) );
+*/
           if(declCounts > 1 && declStatements.length > 0) {
             for(let [path, declStatement] of declStatements.reverse()) {
               let index = path.last;
@@ -579,17 +676,16 @@ async function main(...args) {
 
               arr.splice(index, 1, ...decls);
 
-              console.debug('declStatement', { path, index, parent },
-                decls.map((d) => printAst(d))
-              );
-              console.debug('parent', deep.get(ast, parent));
+              //     console.debug('declStatement', { path, index, parent }, decls.map((d) => printAst(d)));
+              // console.debug('parent', deep.get(ast, parent));
             }
             continue;
           }
         }
         break;
       }
-      const useStrict = map.filter(([key, node]) => node instanceof Literal && /use strict/.test(node.value));
+      const useStrict = map.filter(([key, node]) => node instanceof Literal && /use strict/.test(node.value)
+      );
 
       useStrict.forEach(([path, node]) => deep.unset(ast, path));
 
@@ -639,7 +735,9 @@ async function main(...args) {
       let recurseImports = Util.unique(remove.map(([idx, imp]) => imp || imports[idx]));
       console.log(`recurseImports [${depth}]:`, recurseImports);
 
-      let recurseFiles = recurseImports.map((imp) => path.relative(ES6Env.cwd, getFromPath([imp.path, imp.node], file))).filter((imp) => processed.indexOf(imp.file) == -1); //imp.from || imp.relpath)
+      let recurseFiles = recurseImports
+        .map((imp) => path.relative(ES6Env.cwd, getFromPath([imp.path, imp.node], file)))
+        .filter((imp) => processed.indexOf(imp.file) == -1); //imp.from || imp.relpath)
       // .filter((imp) => !re.test(imp.file))
       imports = imports.filter(({ file, ...module }) => !re.test(file));
       //console.log('imports:', ...imports.map((imp, i) => `\n  #${i} ` + printAst(imp.node)));
@@ -658,8 +756,43 @@ async function main(...args) {
         });
       }
 
-      let moduleExports = map.filter((entry) => isCJSExport(entry) || isES6Export(entry)).map(([path, node]) => [isCJSExport([path, node]) ? path.slice(0, 2) : path, node]);
-      //  console.log(`${Util.ansi.text(modulePath, 1, 36)}: moduleExports:`, moduleExports);
+      let exportNodes = [...flat].filter((entry) => isCJSExport(entry) || isES6Export(entry));
+
+      let exportPaths = exportNodes.map(getExport);
+
+      let exportEntries = exportPaths
+        .map(([path, path2]) => [path, path2, deep.get(ast, path)])
+        .map(([path, path2, node]) => [
+          path,
+          path2,
+          node,
+          node instanceof AssignmentExpression ? node.right : node
+        ]);
+
+      let moduleExports = exportEntries.map(([path, path2, node, node2]) => [
+        node != node2 ? 'default' : null,
+        node2
+      ]);
+
+      let exportInstances = moduleExports.map(([name, node], i) =>
+        //console.log('getFromPath   create : ', node, ...[path, Util.className(node)]);
+        /* let nodes = paths.map((p) => (!(p instanceof ESNode) ? p.apply(ast, true) : p));
+        let idx = nodes.findIndex((n) => typeof n.value == 'string');
+        let node = idx >= 0 && nodes[idx];*/
+
+        ES6ImportExport.create({
+          ast,
+          node,
+          exportNode: exportEntries[i][2],
+          path: exportEntries[i][0],
+          file,
+          identifiers: [name],
+          bindings: Object.fromEntries([[name, node]])
+        })
+      );
+
+      console.log(`moduleExports:`, moduleExports);
+
       let output = '';
       output = printAst(ast, parser.comments, printer);
       r.push(`/*\n * concatenanted ${file}\n */\n\n${output}\n`);
@@ -672,6 +805,30 @@ async function main(...args) {
   }
 
   console.debug('Modules:\n' + ES6Module.tree());
+  console.debug('ES6Imports:',
+    new Map(
+      ES6Module.list.map((module) => [
+        module.file,
+        new Map(module.imports.map((imp) => [
+            imp.position && imp.position.clone(true, false),
+            imp.fromPath
+          ])
+        )
+      ])
+    )
+  );
+  console.debug('ES6Exports:',
+    new Map(
+      ES6Module.list.map((module) => [
+        module.file,
+        new Map(module.exports.map((exp) => [
+            exp.position && exp.position.clone(true, false),
+            exp.bindings
+          ])
+        )
+      ])
+    )
+  );
   //  console.debug('root.deps\n', ES6Module.root.deps);
 }
 
@@ -735,14 +892,30 @@ function getFromValue(...args) {
   //let arg = args.shift() || [];
   let [p, n] = args[0] instanceof ESNode ? args.reverse() : args; //rgs[0] ;
   //console.log('getFromValue args', { n, p });
-  if(!p || (!('length' in p) && typeof p != 'string')) throw new Error('No path:' + p + ' node:' + printAst(n));
+  if(!p || (!('length' in p) && typeof p != 'string'))
+    throw new Error('No path:' + p + ' node:' + printAst(n));
   if(!n || !(n instanceof ESNode)) throw new Error('No node:' + n + ' path:' + p);
   if(!(n instanceof ESNode)) n = deep.get(ast, n);
   let pathStr = p.join('.');
   let flat = GenerateFlatMap(n,
     p,
-    (n, p) => true || Util.isArray(n) || [ExportStatement, ImportStatement, ObjectBindingPattern, Literal].some((ctor) => n instanceof ctor),
-    (p, n) => [p, Object.setPrototypeOf({ ...Util.filterKeys(n, (k) => n instanceof CallExpression || (k != 'type' && !(Util.isObject(n[k]) || Util.isFunction(n[k])))) }, Object.getPrototypeOf(n))]
+    (n, p) =>
+      true ||
+      Util.isArray(n) ||
+      [ExportStatement, ImportStatement, ObjectBindingPattern, Literal].some((ctor) => n instanceof ctor
+      ),
+    (p, n) => [
+      p,
+      Object.setPrototypeOf({
+          ...Util.filterKeys(n,
+            (k) =>
+              n instanceof CallExpression ||
+              (k != 'type' && !(Util.isObject(n[k]) || Util.isFunction(n[k])))
+          )
+        },
+        Object.getPrototypeOf(n)
+      )
+    ]
   );
   //let calls = [...flat.entries()].map(([p, n]) => [new Path(p), n]).filter(([p, n]) => [...p.slice(-2)].join('.') == 'arguments.0');
   let literals = [...flat.entries()].filter(([p, n]) => n instanceof Literal);
@@ -828,7 +1001,9 @@ function finish(err) {
 }
 
 function getBindings(properties) {
-  return properties.filter((node) => node).map((node) => (node.id ? [node.id.value, node.value.value] : [node, node]));
+  return properties
+    .filter((node) => node)
+    .map((node) => (node.id ? [node.id.value, node.value.value] : [node, node]));
 }
 
 function makeSearchPath(dirs, extra = 'node_modules') {
@@ -874,7 +1049,17 @@ function findModule(relpath) {
   let st = filesystem.stat(relpath);
   let module;
   const name = path.basename(relpath);
-  let indexes = [relpath + '/package.json', ...makeNames(relpath + '/src/index'), ...makeNames(relpath + '/src/' + name), makeNames(relpath + '/dist/' + name), ...makeNames(relpath + '/dist/index'), ...makeNames(relpath + '/build/' + name), ...makeNames(relpath + '/' + name), ...makeNames(relpath + '/index'), ...makeNames(relpath + '/browser')];
+  let indexes = [
+    relpath + '/package.json',
+    ...makeNames(relpath + '/src/index'),
+    ...makeNames(relpath + '/src/' + name),
+    makeNames(relpath + '/dist/' + name),
+    ...makeNames(relpath + '/dist/index'),
+    ...makeNames(relpath + '/build/' + name),
+    ...makeNames(relpath + '/' + name),
+    ...makeNames(relpath + '/index'),
+    ...makeNames(relpath + '/browser')
+  ];
   //console.log('findModule(', relpath, ')');
 
   if(st.isDirectory()) {
@@ -939,7 +1124,10 @@ function searchModuleInPath(name, _from, position) {
   //console.log('_from:', _from);
   //console.log('chain:', chain);
 
-  throw new URIError(`Module '${name}' imported from '${_from}' not found ` + Util.toString({ name, chain }, { multiline: false }), name);
+  throw new URIError(`Module '${name}' imported from '${_from}' not found ` +
+      Util.toString({ name, chain }, { multiline: false }),
+    name
+  );
 }
 
 function removeStatements(ast, statements, predicate = (stmt) => true) {
@@ -967,5 +1155,12 @@ function getDeclarations(node) {
 }
 
 function makeNames(prefix) {
-  return [prefix + '.njs', prefix + '.es6.js', prefix + '.esm.js', prefix + '.module.js', prefix + '.module.ejs', prefix + '.js'];
+  return [
+    prefix + '.njs',
+    prefix + '.es6.js',
+    prefix + '.esm.js',
+    prefix + '.module.js',
+    prefix + '.module.ejs',
+    prefix + '.js'
+  ];
 }
