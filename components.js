@@ -425,11 +425,12 @@ export const AspectRatioBox = ({ aspect = 1.0, children, insideClassName, outsid
     )
   ]);
 
-export const SizedAspectRatioBox = ({ width, height, style, className, children, outsideClassName, insideClassName, insideProps, outsideProps = {}, sizeClassName, sizeProps = {}, onClick, ...props }) =>
+export const SizedAspectRatioBox = ({ id, width, height, style, className, children, outsideClassName, insideClassName, insideProps, outsideProps = {}, sizeClassName, sizeProps = {}, onClick, ...props }) =>
   h('div', {
       className: classNames('aspect-ratio-box-size', className && className + '-size', sizeClassName),
       style: { position: 'relative', width, height, ...style },
-      onClick
+      onClick,
+      id
     }, [
       h(AspectRatioBox, {
           outsideClassName: classNames('aspect-ratio-box-outside', className && className + '-outside', outsideClassName),
@@ -443,7 +444,7 @@ export const SizedAspectRatioBox = ({ width, height, style, className, children,
     ]
   );
 
-export const TransformedElement = ({ type = 'div', aspect, listener, style = { position: 'relative' }, className, children = [], ...props }) => {
+export const TransformedElement = ({ type = 'div', id, aspect, listener, style = { position: 'relative' }, className, children = [], ...props }) => {
   const [transform, setTransform] = useState(new TransformationList());
   //console.debug('TransformedElement:', { aspect });
   if(listener && listener.subscribe)
@@ -453,6 +454,7 @@ export const TransformedElement = ({ type = 'div', aspect, listener, style = { p
     });
   return h(type,
     {
+      id,
       className: classNames('transformed-element', className && className + '-size'),
       style: { position: 'relative', ...style, transform },
       aspect
