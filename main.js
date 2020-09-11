@@ -18,7 +18,7 @@ import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Alea from './lib/alea.js';
 import path from './lib/path.js';
-import { TimeoutError, delay, interval, timeout } from './lib/repeater/timers.js';
+import Timers, { TimeoutError } from './lib/repeater/timers.js';
 import asyncHelpers from './lib/async/helpers.js';
 import { Cache } from './lib/dom/cache.js';
 import { CacheStorage } from './lib/dom/cacheStorage.js';
@@ -41,9 +41,10 @@ import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import { CTORS, ECMAScriptParser, estree, Factory, Lexer, Position, Range, ESNode, Parser, PathReplacer, Printer, Stack, Token, ArrayBindingPattern, ArrayLiteral, ArrowFunction, AssignmentExpression, AwaitExpression, BinaryExpression, BindingPattern, BindingProperty, LabelledStatement, BlockStatement, BreakStatement, CallExpression, ClassDeclaration, ConditionalExpression, ContinueStatement, Declaration, DecoratorExpression, DoStatement, EmptyStatement, Expression, ExpressionStatement, ForInStatement, ForStatement, FunctionLiteral, FunctionDeclaration, Identifier, ComputedPropertyName, IfStatement, SwitchStatement, CaseClause, ImportStatement, ExportStatement, JSXLiteral, Literal, TemplateLiteral, LogicalExpression, MemberExpression, InExpression, NewExpression, ObjectBindingPattern, ObjectLiteral, PropertyDefinition, MemberVariable, Program, RestOfExpression, ReturnStatement, SequenceExpression, SpreadElement, Statement, StatementList, ThisExpression, ThrowStatement, YieldStatement, TryStatement, UnaryExpression, UpdateExpression, VariableDeclaration, VariableDeclarator, WhileStatement, WithStatement } from './lib/ecmascript.js';
 import {
   PipeTo,
+  AsyncRead,
+  AsyncWrite,
   AcquireReader,
   AcquireWriter,
-  ReadIterator,
   DebugTransformStream,
   TextEncodeTransformer,
   TextEncoderStream,
@@ -81,7 +82,7 @@ import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //c
 import { NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer } from './commands.js';
 // prettier-ignore-end
 
-/* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line, Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
+/* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line,Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
 
 import { classNames } from './lib/classNames.js';
 
@@ -89,7 +90,7 @@ Util.colorCtor = ColoredText;
 
 /* prettier-ignore */
 //Util.extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, ColoredText, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon, Circle } );
-const Timer = { delay, interval, timeout, once: dom.Timer };
+const Timer = { ...Timers, once: dom.Timer };
 
 let currentProj = trkl.property(window, 'project');
 let layerList = trkl.property(window, 'layers', { value: [] });
@@ -113,7 +114,6 @@ let activeFile;
 let transform = trkl(new TransformationList());
 let sizeListener = trkl({});
 let aspectListener = trkl(1);
-let debug = true;
 const documentTitle = trkl('');
 const documentSize = trkl('');
 
@@ -125,6 +125,9 @@ let listURL = trkl(store.get('url') || null);
 let searchFilter = trkl(store.get('filter') || '*');
 let zoomLog = trkl(store.get('zoom') || null);
 let logSize = trkl(store.get('console') || null);
+let debugFlag = trkl(store.get('debug') || false);
+let elementChildren = null;
+let elementGeometries = null;
 let showGrid;
 
 const add = (arr, ...items) => [...(arr ? arr : []), ...items];
@@ -266,6 +269,7 @@ const LoadFile = async (file) => {
 };
 
 const SaveFile = async (filename, data, contentType) => {
+  if(!data.endsWith('\n')) data += '\n';
   let { status, statusText, body } = await fetch('/save', {
     method: 'post',
     headers: {
@@ -331,6 +335,12 @@ const LoadDocument = async (project, parentElem) => {
     throw error;
   }
   LogJS.info(`${project.doc.basename} loaded.`);
+  const topPlace = 'tPlace';
+  elementChildren = Util.memoize(() => ElementChildren(topPlace, (ent) => Object.fromEntries(ent)));
+  elementGeometries = Util.memoize(() => ElementGeometries(topPlace, (ent) => Object.fromEntries(ent)));
+  //polygonGeometries = Util.memoize(() => Object.entries(elementGeometries()).map(([name, lineList]) => [name, lineList.toPolygon((pts) => new Polyline(pts))]));
+
+
   documentTitle(project.doc.file.replace(/.*\//g, ''));
   let s = new BBox().update(project.doc.getMeasures(false)).toSize((o) => new Size(o.width, o.height));
 
@@ -411,6 +421,7 @@ const LoadDocument = async (project, parentElem) => {
 
   React.render(component, element);
 
+
   let object = ReactComponent.toObject(component);
   project.object = object;
   let rendered = object.children[0];
@@ -458,6 +469,20 @@ const LoadDocument = async (project, parentElem) => {
   project.grid = Element.find('g.grid', project.element);
   project.bbox = SVG.bbox(project.grid);
   project.aspectRatio = aspect;
+
+
+  function xx() {
+    let g = SVG.create('g', {});
+
+    project.svg.appendChild(g);
+let center = SVG.bbox(project.svg).center;
+
+   let ll = geometries.R4.lines.toSVG(ReactComponent.append, () =>h('g', 
+    { stroke: 'red', fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': 0.1, transform: `translate(${center.x},${center.y}) scale(2.54,2.54)` }));
+   
+    render(ll, g);
+  }
+xx();
 
   let { name, data, doc, svg, bbox } = project;
   let bounds = doc.getBounds();
@@ -570,6 +595,21 @@ const GenerateVoronoi = () => {
   console.log('svg:', svgElem);
 };
 
+function PackageChildren(element, layer) {
+  return [...element.children].filter((p) => p.layer.name == 'tPlace' && p.tagName == 'wire');
+}
+function ElementChildren(layer = 'tPlace', rfn = (ent) => new Map(ent)) {
+  return rfn([...project.doc.elements].map(([name, element]) => [name, PackageChildren(element, layer)]));
+}
+
+function ElementGeometries(layer = 'tPlace', rfn = (ent) => new Map(ent)) {
+  return rfn(ElementChildren(layer, (ent) => ent)
+      .map(([name, children]) => [name, new LineList(children.map((e) => e.geometry))])
+      .map(([name, lines]) => [name, lines, lines.toPolygons((pts) => new Polyline(pts))])
+      .map(([name, lines, polygons]) => [name, { lines, polygons }])
+  );
+}
+
 const MakeFitAction = (index) => async (event) => {
   // window.transform='';
   const { buttons, type } = event;
@@ -664,7 +704,7 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
   for await (data of ws) {
     let msg = new Message(data);
     window.msg = msg;
-    LogJS.info('WebSocket data:', msg[Symbol.toStringTag]());
+    LogJS.info('WebSocket recv: ' + Util.toString(msg)); //fmsg[Symbol.toStringTag]());
     ws.dataAvailable !== 0;
   }
   await ws.disconnect();
@@ -674,268 +714,10 @@ const BindGlobal = Util.once((arg) => trkl.bind(window, arg));
 
 const AppMain = (window.onload = async () => {
   Util(globalThis);
-  const imports = {
-    Transformation,
-    Rotation,
-    Translation,
-    Scaling,
-    MatrixTransformation,
-    TransformationList,
-    dom,
-    ReactComponent,
-    iterator,
-    eventIterator,
-    keysim,
-    geom,
-    BBox,
-    Polygon,
-    Circle,
-    TouchListener,
-    trkl,
-    ColorMap,
-    ClipperLib,
-    Shape,
-    devtools,
-    Util,
-    tlite,
-    debounceAsync,
-    tXml,
-    deep,
-    Alea,
-    path,
-    TimeoutError,
-    delay,
-    interval,
-    timeout,
-    asyncHelpers,
-    Cache,
-    CacheStorage,
-    InterpretGcode,
-    gcodetogeometry,
-    GcodeObject,
-    gcodeToObject,
-    objectToGcode,
-    parseGcode,
-    GcodeParser,
-    GCodeLineStream,
-    parseStream,
-    parseFile,
-    parseFileSync,
-    parseString,
-    parseStringSync,
-    noop,
-    Interpreter,
+  //prettier-ignore
+  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, ImmutablePath, arrayDiff, objectDiff, XmlObject, XmlAttr, ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser, estree, Factory, Lexer, Position, Range, Factory, ESNode, ArrayBindingPattern, ArrayLiteral, ArrowFunction, AssignmentExpression, AwaitExpression, BinaryExpression, BindingPattern, BindingProperty, LabelledStatement, BlockStatement, BreakStatement, CallExpression, ClassDeclaration, ConditionalExpression, ContinueStatement, Declaration, DecoratorExpression, DoStatement, EmptyStatement, Expression, ExpressionStatement, ForInStatement, ForStatement, FunctionLiteral, FunctionDeclaration, Identifier, ComputedPropertyName, IfStatement, SwitchStatement, CaseClause, ImportStatement, ExportStatement, JSXLiteral, Literal, TemplateLiteral, LogicalExpression, MemberExpression, InExpression, NewExpression, ObjectBindingPattern, ObjectLiteral, PropertyDefinition, MemberVariable, Program, RestOfExpression, ReturnStatement, SequenceExpression, SpreadElement, Statement, StatementList, ThisExpression, ThrowStatement, YieldStatement, TryStatement, UnaryExpression, UpdateExpression, VariableDeclaration, VariableDeclarator, WhileStatement, WithStatement, Parser, PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite, AcquireReader, AcquireWriter, DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer, classNames };
+  const localFunctions = { PackageChildren, ElementChildren, Timer, MouseEvents, DrawSVG, ElementToXML, FileSystem, LoadFile, SaveFile, SaveSVG, ModifyColors, GerberLayers, LoadDocument, ChooseDocument, GenerateVoronoi, MakeFitAction, CreateWebSocket, BindGlobal, AppMain };
 
-    Iterator,
-    Functional,
-    makeLocalStorage,
-    Repeater,
-    useResult,
-    LogJS,
-    useDimensions,
-    toXML,
-    ImmutablePath,
-    arrayDiff,
-    objectDiff,
-    XmlObject,
-    XmlAttr,
-    ImmutableXPath,
-    RGBA,
-    isRGBA,
-    ImmutableRGBA,
-    HSLA,
-    isHSLA,
-    ImmutableHSLA,
-    ColoredText,
-    React,
-    h,
-    html,
-    render,
-    Fragment,
-    Component,
-    useState,
-    useLayoutEffect,
-    useRef,
-    components,
-    Chooser,
-    DynamicLabel,
-    Button,
-    FileList,
-    Panel,
-    SizedAspectRatioBox,
-    TransformedElement,
-    Canvas,
-    ColorWheel,
-    Slider,
-    CrossHair,
-    FloatingPanel,
-    DropDown,
-    Conditional,
-    Message,
-    WebSocketClient,
-    CTORS,
-    ECMAScriptParser,
-    estree,
-    Factory,
-    Lexer,
-    Position,
-    Range,
-    Factory,
-    ESNode,
-    ArrayBindingPattern,
-    ArrayLiteral,
-    ArrowFunction,
-    AssignmentExpression,
-    AwaitExpression,
-    BinaryExpression,
-    BindingPattern,
-    BindingProperty,
-    LabelledStatement,
-    BlockStatement,
-    BreakStatement,
-    CallExpression,
-    ClassDeclaration,
-    ConditionalExpression,
-    ContinueStatement,
-    Declaration,
-    DecoratorExpression,
-    DoStatement,
-    EmptyStatement,
-    Expression,
-    ExpressionStatement,
-    ForInStatement,
-    ForStatement,
-    FunctionLiteral,
-    FunctionDeclaration,
-    Identifier,
-    ComputedPropertyName,
-    IfStatement,
-    SwitchStatement,
-    CaseClause,
-    ImportStatement,
-    ExportStatement,
-    JSXLiteral,
-    Literal,
-    TemplateLiteral,
-    LogicalExpression,
-    MemberExpression,
-    InExpression,
-    NewExpression,
-    ObjectBindingPattern,
-    ObjectLiteral,
-    PropertyDefinition,
-    MemberVariable,
-    Program,
-    RestOfExpression,
-    ReturnStatement,
-    SequenceExpression,
-    SpreadElement,
-    Statement,
-    StatementList,
-    ThisExpression,
-    ThrowStatement,
-    YieldStatement,
-    TryStatement,
-    UnaryExpression,
-    UpdateExpression,
-    VariableDeclaration,
-    VariableDeclarator,
-    WhileStatement,
-    WithStatement,
-    Parser,
-    PathReplacer,
-    Printer,
-    Stack,
-    Token,
-    PipeTo,
-    AcquireReader,
-    AcquireWriter,
-    ReadIterator,
-    DebugTransformStream,
-    TextEncodeTransformer,
-    TextEncoderStream,
-    TextDecodeTransformer,
-    TextDecoderStream,
-    TransformStreamSink,
-    TransformStreamSource,
-    TransformStreamDefaultController,
-    TransformStream,
-    ArrayWriter,
-    readStream,
-    WriteToRepeater,
-    LogSink,
-    RepeaterSink,
-    StringReader,
-    LineReader,
-    ChunkReader,
-    ByteReader,
-    PipeToRepeater,
-    WritableStream,
-    PrimitiveComponents,
-    ElementNameToComponent,
-    ElementToComponent,
-    SVGAlignments,
-    AlignmentAttrs,
-    Alignment,
-    AlignmentAngle,
-    Arc,
-    CalculateArcRadius,
-    ClampAngle,
-    EagleAlignments,
-    HORIZONTAL,
-    HORIZONTAL_VERTICAL,
-    InvertY,
-    LayerAttributes,
-    LinesToPath,
-    MakeCoordTransformer,
-    PolarToCartesian,
-    RotateTransformation,
-    VERTICAL,
-    useTrkl,
-    Wire,
-    Instance,
-    SchematicSymbol,
-    Emitter,
-    EventIterator,
-    Slot,
-    SlotProvider,
-    Voronoi,
-    GerberParser,
-    lazyInitializer,
-    BoardRenderer,
-    DereferenceError,
-    EagleDocument,
-    EagleElement,
-    EagleNode,
-    EagleNodeList,
-    EagleNodeMap,
-    EagleProject,
-    EagleRef,
-    EagleReference,
-    EagleSVGRenderer,
-    Renderer,
-    SchematicRenderer,
-    makeEagleElement,
-    makeEagleNode,
-    brcache,
-    lscache,
-    BaseCache,
-    CachedFetch,
-    NormalizeResponse,
-    ResponseData,
-    FetchURL,
-    FetchCached,
-    GetProject,
-    ListProjects,
-    GetLayer,
-    AddLayer,
-    BoardToGerber,
-    GerberToGcode,
-    GcodeToPolylines,
-    ListGithubRepo,
-    ListGithubRepoServer,
-    classNames
-  };
   const importedNames = Object.keys(imports);
   console.debug('Dupes:',
     Util.getMemberNames(window).filter((m) => importedNames.indexOf(m) != -1)
@@ -943,6 +725,7 @@ const AppMain = (window.onload = async () => {
 
   //prettier-ignore
   Util.weakAssign(window,imports);
+  Util.weakAssign(window, localFunctions);
   Error.stackTraceLimit = 100;
 
   const timestamps = new Repeater(async (push, stop) => {
@@ -971,7 +754,10 @@ const AppMain = (window.onload = async () => {
   };
 
   // prettier-ignore
-  BindGlobal({ projects, socket, transform, size: sizeListener, aspect: aspectListener, showSearch, logDimensions: logSize, watched: dump });
+  BindGlobal({ projects, socket, transform, size: sizeListener, aspect: aspectListener, showSearch, logDimensions: logSize, watched: dump, 
+    children: () => elementChildren(),
+     geometries: () => elementGeometries(),
+     debug: debugFlag });
 
   currentSearch.subscribe((value) => {
     if(value) {
@@ -1009,7 +795,7 @@ const AppMain = (window.onload = async () => {
 
         return file;
       }
-      File.prototype.toString = function () {
+      File.prototype.toString = function() {
         return this.name;
       };
       list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i)));
@@ -1060,6 +846,7 @@ const AppMain = (window.onload = async () => {
     store.set('url', value);
     LogJS.info(`listURL is '${value}'`);
   });
+  debugFlag.subscribe((value) => store.set('debug', value));
 
   logSize.subscribe((value) => {
     const { width, height } = value;
@@ -1068,7 +855,7 @@ const AppMain = (window.onload = async () => {
       throw new Error('logSize undefined');
     }
     store.set('console', value);
-    LogJS.info(`logSize is ${value.width} x ${value.height}`);
+    //LogJS.info(`logSize is ${value.width} x ${value.height}`);
   });
 
   trkl.bind(window, { searchFilter, listURL });
@@ -1547,11 +1334,11 @@ const AppMain = (window.onload = async () => {
             let edge = corners.sort((a, b) => a[1] - b[1])[0];
 
             window.resize = resize = Element.resizeRelative(box, null, edge[0] ? -1 : 1, (size) => {
-              console.log('resizeRelative:', { elemId, size });
+              //    console.log('resizeRelative:', { elemId, size });
               if(elemId == 'console') logSize(size);
             });
             box.style.cursor = `nwse-resize`;
-            console.log('RESIZE:', { resize, box, corners, edge });
+            //console.log('RESIZE:', { resize, box, corners, edge });
             return true;
           }
           return cancel();
@@ -1618,7 +1405,7 @@ const AppMain = (window.onload = async () => {
     { element: window }
   );
 
-  window.oncontextmenu = function (e) {
+  window.oncontextmenu = function(e) {
     const { x, y, index, buttons, start, type, target } = event;
     let rect = Element.rect('.transformed-element-size');
     let cons = Element.rect('#console');

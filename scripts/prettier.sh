@@ -28,7 +28,7 @@ prettier() {
 
 main() {
   EXPR='1 { /@format/ { N; /\n$/ { d } } }'
-  for KW in "if" "for" "do" "while" "catch"; do
+  for KW in "if" "for" "do" "while" "catch" "function"; do
     EXPR="$EXPR; s|\s${KW}\s*(| ${KW}(|"
     EXPR="$EXPR; s|^${KW}\s*(|${KW}(|"
   done

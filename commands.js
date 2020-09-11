@@ -323,12 +323,12 @@ export const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
       file.toString = () => at(i);
       if(file.type == 'dir') file.list = async (f = filter) => await ListGithubRepo(at(i), null, null, f, {});
       else {
-        let getter = async function () {
+        let getter = async function() {
           let data = await fetch(at(i), {});
           this.buf = await data.text();
           return this.buf;
         };
-        let text = function () {
+        let text = function() {
           return typeof this.buf == 'string' && this.buf.length > 0 ? this.buf : this.get();
         };
         file.get = getter;
@@ -366,10 +366,10 @@ export async function ListGithubRepoServer(owner, repo, dir, filter) {
     });
   } catch(err) {}
   let ret = JSON.parse(response);
-  ret.at = function (i) {
+  ret.at = function(i) {
     return this.base_url + '/' + this.files[i];
   };
-  ret.get = async function (i) {
+  ret.get = async function(i) {
     let data = await FetchURL(this.at(i));
     return data;
   };

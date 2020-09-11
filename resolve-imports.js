@@ -176,7 +176,7 @@ class ES6ImportExport {
     let dir = path.relative(ES6Env.cwd, path.dirname(obj.file));
     ret = Util.define(ret, { ...obj, nodeClass, dir });
 
-    bindings[inspectSymbol] = function () {
+    bindings[inspectSymbol] = function() {
       return Util.inspect(this);
     };
     obj.importNode = obj.importNode || [];

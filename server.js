@@ -241,98 +241,9 @@ async function main() {
     return this;
   }
 
-  Socket.prototype.toString = function () {
+  Socket.prototype.toString = function() {
     return `${this.address}:${this.port}`;
   };
-
-  app.ws('/ws', async (ws, req) => {
-    const { connection, client, upgrade, query, socket, headers, trailers, params, res, route, body } = req;
-    const { path, protocol, ip, cookies, hostname } = req;
-    const { remoteAddress, remotePort, localAddress, localPort } = client;
-    const { _host, _peername } = connection;
-    let { address, port } = _peername;
-    const { cookie } = headers;
-
-    console.log('WebSocket connected:', path, headers);
-
-    if(address == '::1') address = 'localhost';
-
-    address = address.replace(/^::ffff:/, '');
-    let s = new Socket(ws, {
-      address,
-      port,
-      remoteAddress,
-      remotePort,
-      localAddress,
-      localPort,
-      cookie
-    });
-    let i = sockets.length;
-
-    const sendTo = (sock, msg, ...args) => {
-      if(args.length > 0) msg = new Message(msg, ...args);
-      if(msg instanceof Message) msg = msg.data;
-
-      Util.tryCatch((ws) => client.writable,
-        (ok, ws, data) => ws.send(data),
-        (err, ws, data) => (console.log('socket:', sock.info, ' error:', (err + '').replace(/\n.*/g, '')), false),
-        sock.ws,
-        msg
-      );
-    };
-
-    sendTo(s, JSON.stringify(sockets.map((s) => s.id)), null, null, 'USERS');
-
-    sockets.push(s);
-
-    const sendMany = (except, msg, ...args) => {
-      if(args.length > 0) msg = new Message(msg, ...args);
-      if(msg instanceof Message) msg = msg.data;
-
-      for(let sock of sockets) {
-        if(sock == except || sock.id == except || sock.ws == except) continue;
-        sendTo(sock, msg);
-      }
-    };
-
-    sendMany(s, '', s.id, null, 'JOIN');
-
-    //console.log('sockets:', sockets.map(s => Util.filterKeys(s, /^(address|port|id)/)));
-
-    ws.on('close', () => {
-      console.log(`socket close ${s.toString()} (${s.id})`);
-      removeItem(sockets, ws, 'ws');
-      sendMany(s, '', s.id, null, 'QUIT');
-    });
-
-    ws.on('message', (data) => {
-      s.lastMessage = Date.now();
-      let msg = new Message(data, s.id);
-      if(msg.type == 'INFO') {
-        const id = sockets.findIndex((s) => s.id == msg.body);
-        if(id != -1) {
-          const sock = sockets[id];
-          sendTo(s, JSON.stringify(Util.filterOutKeys(sock, ['ws', 'id'])), sock.id, s.id, 'INFO');
-        }
-        return;
-      }
-      console.log(`message from ${s.toString()}${msg.recipient ? ' to ' + msg.recipient : ''} (${s.id}): '${msg.body}'`);
-      if(msg.recipient) {
-        let rId = sockets.findIndex((s) => s.id == msg.recipient);
-        if(rId == -1) {
-          console.error(`No such recipient: '${msg.recipient}'`);
-          return;
-        }
-      }
-      let i = -1;
-      for(let sock of sockets) {
-        if(sock.ws === ws) continue;
-        if(msg.recipient && sock.id != msg.recipient) continue;
-        console.log(`Sending[${++i}/${sockets.length}] to ${sock.id}`);
-        sendTo(sock, msg.data);
-      }
-    });
-  });
 
   app.use(async (req, res, next) => {
     if(!/overrides\//.test(req.path)) {
@@ -411,7 +322,7 @@ async function main() {
 
   const descMap = Util.weakMapper(getDescription, new Map());
 
-  const GetFilesList = async (dir = './tmp', opts = {}) => {
+  async function GetFilesList(dir = './tmp', opts = {}) {
     let { filter = '.*\\.(brd|sch|lbr)$', descriptions = false, names } = opts;
     const re = new RegExp(filter, 'i');
     const f = (ent) => re.test(ent);
@@ -445,13 +356,8 @@ async function main() {
           return acc;
         }, [])
     ).then((a) => a.filter((i) => i != null));
-  };
+  }
 
-  /*app.param(['owner', 'repo','dir'], function (req, res, next, value) {
-  console.log('CALLED ONLY ONCE with', value)
-  next()
-})
-*/
   function FilesURLs(list) {
     const base_url = list[0].replace(/\/[^\/]*$/, '');
     const files = list.map((url) => url.replace(/.*\//g, ''));
@@ -493,9 +399,9 @@ async function main() {
     res.send(data.toString().replace(/<\?TS\?>/g, Util.unixTime() + ''));
   });
 
-  app.post('/save', (req, res, next) => {
+  app.post('/save', async (req, res, next) => {
     //   const filename = (req.headers['content-disposition']||'').replace(new RegExp('.*"([^"]*)".*','g'), '$1') || 'output.svg';
-    const filename = path.join(process.cwd(), 'tmp', 'upload-' + Util.toUnixTime(Date.now()) + '.txt');
+    /*    const filename = path.join(process.cwd(), 'tmp', 'upload-' + Util.toUnixTime(Date.now()) + '.txt');
     let output = fs.createWriteStream(filename, { autoClose: true, emitClose: true });
     let s = req.pipe(output);
     console.log('s', Util.className(s));
@@ -510,24 +416,113 @@ async function main() {
       res.end(data + '\n\nUpload complete');
       next();
     }
-
-    /*
+*/
 
     const { body } = req;
     console.log('req.headers:', req.headers);
     console.log('body:', body, Util.className(body), Util.toString(body));
     console.log('save body:', typeof body == 'string' ? Util.abbreviate(body, 100) : body);
-    const filename = (req.headers['content-disposition']||'').replace(new RegExp('.*"([^"]*)".*','g'), '$1') || 'output.svg';
+    const filename = (req.headers['content-disposition'] || '').replace(new RegExp('.*"([^"]*)".*', 'g'), '$1') || 'output.svg';
     await fs.promises.writeFile('tmp/' + filename.replace(/^tmp\//, ''), body, { mode: 0x0180, flag: 'w' });
     let st = await fs.promises.stat(filename);
 
     console.log('saved:', filename, `${st.size} bytes`);
-    res.json({ size: st.size, filename });*/
+    res.json({ size: st.size, filename });
+  });
+
+  app.ws('/ws', async (ws, req) => {
+    const { connection, client, upgrade, query, socket, headers, trailers, params, res, route, body } = req;
+    const { path, protocol, ip, cookies, hostname } = req;
+    const { remoteAddress, remotePort, localAddress, localPort } = client;
+    const { _host, _peername } = connection;
+    let { address, port } = _peername;
+    const { cookie } = headers;
+
+    console.log('WebSocket connected:', path, headers);
+
+    if(address == '::1') address = 'localhost';
+
+    address = address.replace(/^::ffff:/, '');
+    let s = new Socket(ws, {
+      address,
+      port,
+      remoteAddress,
+      remotePort,
+      localAddress,
+      localPort,
+      cookie
+    });
+    let i = sockets.length;
+
+    const sendTo = (sock, msg, ...args) => {
+      if(args.length > 0) msg = new Message(msg, ...args);
+      if(msg instanceof Message) msg = msg.data;
+
+      Util.tryCatch((ws) => client.writable,
+        (ok, ws, data) => Util.tryCatch(() => ws.send(data)),
+        (err, ws, data) => (console.log('socket:', sock.info, ' error:', (err + '').replace(/\n.*/g, '')), false),
+        sock.ws,
+        msg
+      );
+    };
+
+    sendTo(s, JSON.stringify(sockets.map((s) => s.id)), null, null, 'USERS');
+
+    sockets.push(s);
+
+    const sendMany = (except, msg, ...args) => {
+      if(args.length > 0) msg = new Message(msg, ...args);
+      if(msg instanceof Message) msg = msg.data;
+
+      for(let sock of sockets) {
+        if(sock == except || sock.id == except || sock.ws == except) continue;
+        sendTo(sock, msg);
+      }
+    };
+
+    sendMany(s, '', s.id, null, 'JOIN');
+
+    //console.log('sockets:', sockets.map(s => Util.filterKeys(s, /^(address|port|id)/)));
+
+    ws.on('close', () => {
+      console.log(`socket close ${s.toString()} (${s.id})`);
+      removeItem(sockets, ws, 'ws');
+      sendMany(s, '', s.id, null, 'QUIT');
+    });
+
+    ws.on('message', (data) => {
+      s.lastMessage = Date.now();
+      let msg = new Message(data, s.id);
+      if(msg.type == 'INFO') {
+        const id = sockets.findIndex((s) => s.id == msg.body);
+        if(id != -1) {
+          const sock = sockets[id];
+          sendTo(s, JSON.stringify(Util.filterOutKeys(sock, ['ws', 'id'])), sock.id, s.id, 'INFO');
+        }
+        return;
+      }
+      console.log(`message from ${s.toString()}${msg.recipient ? ' to ' + msg.recipient : ''} (${s.id}): '${msg.body}'`);
+      if(msg.recipient) {
+        let rId = sockets.findIndex((s) => s.id == msg.recipient);
+        if(rId == -1) {
+          console.error(`No such recipient: '${msg.recipient}'`);
+          return;
+        }
+      }
+      let i = -1;
+      for(let sock of sockets) {
+        if(sock.ws === ws) continue;
+        if(msg.recipient && sock.id != msg.recipient) continue;
+        console.log(`Sending[${++i}/${sockets.length}] to ${sock.id}`);
+        sendTo(sock, msg.data);
+      }
+    });
   });
 
   app.get('/', (req, res) => {
     res.redirect(302, '/index.html');
   });
+
   app.listen(port, () => {
     //console.log(`Ready at http://127.0.0.1:${port}`);
   });

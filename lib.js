@@ -31,90 +31,90 @@ export function Point(arg) {
     return p;
   }
 }
-Point.prototype.move = function (x, y) {
+Point.prototype.move = function(x, y) {
   this.x += x;
   this.y += y;
   return this;
 };
-Point.prototype.moveTo = function (x, y) {
+Point.prototype.moveTo = function(x, y) {
   this.x = x;
   this.y = y;
   return this;
 };
-Point.prototype.clear = function (x, y) {
+Point.prototype.clear = function(x, y) {
   this.x = 0;
   this.y = 0;
   return this;
 };
-Point.prototype.move = function (x, y) {
+Point.prototype.move = function(x, y) {
   this.x += x;
   this.y += y;
   return this;
 };
-Point.prototype.set = function (fn) {
+Point.prototype.set = function(fn) {
   if(typeof fn != 'function') {
     Point.apply(this, [...arguments]);
     return this;
   }
   return fn(this.x, this.y);
 };
-Point.prototype.clone = function () {
+Point.prototype.clone = function() {
   return new Point({ x: this.x, y: this.y });
 };
-Point.prototype.sum = function (other) {
+Point.prototype.sum = function(other) {
   return new Point(this.x + other.x, this.y + other.y);
 };
-Point.prototype.add = function (other) {
+Point.prototype.add = function(other) {
   this.x += other.x;
   this.y += other.y;
   return this;
 };
-Point.prototype.diff = function (other) {
+Point.prototype.diff = function(other) {
   return new Point(this.x - other.x, this.y - other.y);
 };
-Point.prototype.sub = function (other) {
+Point.prototype.sub = function(other) {
   this.x -= other.x;
   this.y -= other.y;
   return this;
 };
-Point.prototype.prod = function (f) {
+Point.prototype.prod = function(f) {
   const o = isPoint(f) ? f : { x: f, y: f };
   return new Point(this.x * o.x, this.y * o.y);
 };
-Point.prototype.mul = function (f) {
+Point.prototype.mul = function(f) {
   const o = isPoint(f) ? f : { x: f, y: f };
   this.x *= o.x;
   this.y *= o.y;
   return this;
 };
-Point.prototype.quot = function (other) {
+Point.prototype.quot = function(other) {
   return new Point(this.x / other.x, this.y / other.y);
 };
-Point.prototype.div = function (f) {
+Point.prototype.div = function(f) {
   this.x /= f;
   this.y /= f;
   return this;
 };
-Point.prototype.comp = function () {
+Point.prototype.comp = function() {
   return new Point({ x: -this.x, y: -this.y });
 };
-Point.prototype.neg = function () {
+Point.prototype.neg = function() {
   this.x *= -1;
   this.y *= -1;
   return this;
 };
-Point.prototype.distance = function (other = { x: 0, y: 0 }) {
+Point.prototype.distance = function(other = { x: 0, y: 0 }) {
   return Math.sqrt((other.y - this.y) * (other.y - this.y) + (other.x - this.x) * (other.x - this.x));
 };
-Point.prototype.equal = function (other) {
+Point.prototype.equal = function(other) {
   return this.x == other.x && this.y == other.y;
 };
-Point.prototype.round = function (precision = 1.0) {
+Point.prototype.round = function(precision = 1.0) {
   this.x = Math.round(this.x / precision) * precision;
   this.y = Math.round(this.y / precision) * precision;
   return this;
 };
-Point.prototype.sides = function () {
+Point.prototype.sides = function() {
   return {
     top: this.y,
     right: this.x + this.w1idth,
@@ -122,45 +122,45 @@ Point.prototype.sides = function () {
     left: this.x
   };
 };
-Point.prototype.dot = function (other) {
+Point.prototype.dot = function(other) {
   return this.x * other.x + this.y * other.y;
 };
-Point.prototype.fromAngle = function (angle, dist = 1.0) {
+Point.prototype.fromAngle = function(angle, dist = 1.0) {
   this.x = Math.cos(angle) * dist;
   this.y = Math.sin(angle) * dist;
   return this;
 };
-Point.prototype.toAngle = function (deg = false) {
+Point.prototype.toAngle = function(deg = false) {
   return Math.atan2(this.x, this.y) * (deg ? 180 / Math.PI : 1);
 };
-Point.prototype.angle = function (p2 = { x: 0, y: 0 }) {
+Point.prototype.angle = function(p2 = { x: 0, y: 0 }) {
   return Point.prototype.diff.call(p1, p2).toAngle();
 };
-Point.prototype.dimension = function () {
+Point.prototype.dimension = function() {
   return [this.width, this.height];
 };
-Point.prototype.toString = function (asArray = false) {
+Point.prototype.toString = function(asArray = false) {
   if(typeof this != 'object' || this === null) return '';
   if(asArray) return `[${this.x},${this.y}]`;
   return `{x:${this.x},y:${this.y}}`;
 };
-Point.prototype.toSource = function () {
+Point.prototype.toSource = function() {
   return '{x:' + this.x.toFixed(3) + ',y:' + this.y.toFixed(3) + '}';
 };
-Point.prototype.toCSS = function () {
+Point.prototype.toCSS = function() {
   return {
     left: this.x + 'px',
     top: this.y + 'px'
   };
 };
-Point.prototype.inside = function (rect) {
+Point.prototype.inside = function(rect) {
   return this.x >= rect.x && this.x < rect.x + rect.width && this.y >= rect.y && this.y < rect.y + rect.height;
 };
-Point.prototype.transform = function (m) {
+Point.prototype.transform = function(m) {
   Matrix.prototype.transform_point.call(m, this);
   return this;
 };
-Point.prototype.normalize = function (minmax) {
+Point.prototype.normalize = function(minmax) {
   return new Point({
     x: (this.x - minmax.x1) / (minmax.x2 - minmax.x1),
     y: (this.y - minmax.y1) / (minmax.y2 - minmax.y1)
@@ -234,10 +234,10 @@ Size.aspect = (size) => {
   size = this instanceof Size ? this : size;
   return size.width / size.height;
 };
-Size.prototype.aspect = function () {
+Size.prototype.aspect = function() {
   return Size.aspect(this);
 };
-Size.toCSS = function (arg) {
+Size.toCSS = function(arg) {
   const size = arg && arg.width !== undefined ? arg : this;
   let ret = {};
   if(size.width !== undefined) ret.width = size.width + (size.units && 'width' in size.units ? size.units.width : 'px');
@@ -249,16 +249,16 @@ Size.transform = (s, m) => ({
   width: m.xx * s.width + m.yx * s.height,
   height: m.xy * s.width + m.yy * s.height
 });
-Size.prototype.transform = function (m) {
+Size.prototype.transform = function(m) {
   const t = Size.transform(this, m);
   this.width = t.width;
   this.height = t.height;
   return this;
 };
-Size.prototype.isSquare = function () {
+Size.prototype.isSquare = function() {
   return Math.abs(this.width - this.height) < 1;
 };
-Size.prototype.area = function () {
+Size.prototype.area = function() {
   return this.width * this.height;
 };
 Size.area = (size) => size.width * size.height;
@@ -348,23 +348,23 @@ Object.defineProperty(Line.prototype, 'y2', {
   },
   enumerable: true
 });
-Line.prototype.direction = function () {
+Line.prototype.direction = function() {
   let dist = Point.prototype.distance.call(this.a, this.b);
   return Point.prototype.diff.call(this.a, this.b) / dist;
 };
-Line.prototype.slope = function () {
+Line.prototype.slope = function() {
   return Point.prototype.diff.call(this.a, this.b);
 };
-Line.prototype.angle = function () {
+Line.prototype.angle = function() {
   return Point.prototype.angle.call(Line.prototype.slope.call(this));
 };
-Line.prototype.length = function () {
+Line.prototype.length = function() {
   return Point.prototype.distance.call(this.a, this.b);
 };
-Line.prototype.pointAt = function (pos) {
+Line.prototype.pointAt = function(pos) {
   return new Point(pos * (this.x2 - this.x1) + this.x1, pos * (this.y2 - this.y1) + this.y1);
 };
-Line.prototype.transform = function (m) {
+Line.prototype.transform = function(m) {
   this.a = this.a.transform(m);
   this.b = this.b.transform(m);
   return this;
@@ -380,21 +380,21 @@ Line.transform = (line, matrix) => {
   };
 };
 Line.bbox = (line) => BBox.fromPoints(Line.points(line));
-Line.prototype.bbox = function () {
+Line.prototype.bbox = function() {
   return BBox.fromPoints(this.points());
 };
 Line.points = (line) => {
   const { a, b } = line;
   return [a, b];
 };
-Line.prototype.points = function () {
+Line.prototype.points = function() {
   return Line.points(this);
 };
-Line.prototype.inspect = function () {
+Line.prototype.inspect = function() {
   const { x1, y1, x2, y2 } = this;
   return 'Line{ ' + inspect({ x1, y1, x2, y2 }) + ' }';
 };
-Line.prototype.toString = function () {
+Line.prototype.toString = function() {
   let { a, b } = this;
   if(a.x > b.x) {
     let tmp = this.b;
@@ -472,10 +472,10 @@ export function Rect(arg) {
     return ret;
   }
 }
-Rect.prototype.clone = function () {
+Rect.prototype.clone = function() {
   return new Rect(this.x, this.y, this.width, this.height);
 };
-Rect.prototype.corners = function () {
+Rect.prototype.corners = function() {
   const rect = this;
   return [
     { x: rect.x, y: rect.y },
@@ -487,18 +487,18 @@ Rect.prototype.corners = function () {
 Object.assign(Rect.prototype, Point.prototype);
 Object.assign(Rect.prototype, Size.prototype);
 if(Rect.prototype.isSquare === undefined) {
-  Rect.prototype.isSquare = function () {
+  Rect.prototype.isSquare = function() {
     return Math.abs(this.width - this.height) < 1;
   };
 }
 Rect.prototype.constructor = Rect;
-Rect.prototype.area = function () {
+Rect.prototype.area = function() {
   return this.width * this.height;
 };
-Rect.prototype.toString = function () {
+Rect.prototype.toString = function() {
   return this.x + ',' + this.y + ' ' + this.width + 'x' + this.height;
 };
-Rect.prototype.toSource = function () {
+Rect.prototype.toSource = function() {
   return 'new Rect(' + (this ? this.x + ',' + this.y + ',' + this.width + ',' + this.height : '') + ')';
 };
 Object.defineProperty(Rect.prototype, 'x1', {
@@ -549,12 +549,12 @@ Object.defineProperty(Rect.prototype, 'center', {
     return Rect.center(this);
   }
 });
-Rect.prototype.points = function () {
+Rect.prototype.points = function() {
   const c = this.corners();
   return new PointList(c);
 };
 Rect.prototype.toCSS = Rect.toCSS;
-Rect.prototype.outset = function (trbl) {
+Rect.prototype.outset = function(trbl) {
   if(typeof trbl == 'number') trbl = new TRBL(trbl, trbl, trbl, trbl);
   this.x -= trbl.left;
   this.y -= trbl.top;
@@ -562,7 +562,7 @@ Rect.prototype.outset = function (trbl) {
   this.height += trbl.top + trbl.bottom;
   return this;
 };
-Rect.prototype.inset = function (trbl) {
+Rect.prototype.inset = function(trbl) {
   if(typeof trbl == 'number') trbl = new TRBL(trbl, trbl, trbl, trbl);
   if(trbl.left + trbl.right < this.width && trbl.top + trbl.bottom < this.height) {
     this.x += trbl.left;
@@ -572,10 +572,10 @@ Rect.prototype.inset = function (trbl) {
   }
   return this;
 };
-Rect.prototype.inside = function (point) {
+Rect.prototype.inside = function(point) {
   return Rect.inside(this, point);
 };
-Rect.prototype.pointFromCenter = function (point) {
+Rect.prototype.pointFromCenter = function(point) {
   Point.prototype.sub.call(point, this.center);
   point.x /= this.width;
   point.y /= this.height;
@@ -601,7 +601,7 @@ function PointList(points) {
   }
 }
 PointList.prototype = new Array();
-PointList.prototype.push = function () {
+PointList.prototype.push = function() {
   const args = [...arguments];
   args.forEach((arg) => {
     if(!(arg instanceof Point)) arg = new Point(arg);
@@ -613,7 +613,7 @@ PointList.push = (plist, points) => {
   args.shift();
   return PointList.prototype.push.apply(plist, args);
 };
-PointList.prototype.splice = function () {
+PointList.prototype.splice = function() {
   let args = [...arguments];
   const start = args.shift();
   const remove = args.shift();
@@ -624,7 +624,7 @@ PointList.splice = (plist, start, remove, points) => {
   args.shift();
   return PointList.prototype.splice.apply(plist, args);
 };
-PointList.prototype.removeSegment = function (index) {
+PointList.prototype.removeSegment = function(index) {
   let indexes = [PointList.prototype.getLineIndex.call(this, index - 1), PointList.prototype.getLineIndex.call(this, index), PointList.prototype.getLineIndex.call(this, index + 1)];
   let lines = indexes.map((i) => PointList.prototype.getLine.call(this, i));
   let point = Line.intersect(lines[0], lines[2]);
@@ -632,7 +632,7 @@ PointList.prototype.removeSegment = function (index) {
     PointList.prototype.splice.call(this, 0, 2, new Point(point));
   }
 };
-PointList.prototype.toPath = function (options = {}) {
+PointList.prototype.toPath = function(options = {}) {
   const { relative = false, close = false } = options;
   let out = '';
   for(let i = 0; i < this.length; i++) {
@@ -641,13 +641,13 @@ PointList.prototype.toPath = function (options = {}) {
   if(close) out += 'Z';
   return out;
 };
-PointList.prototype.clone = function () {
+PointList.prototype.clone = function() {
   let ret = new PointList();
   ret.splice.apply(ret, [0, ret.length, ...this.map((p) => new Point(p.x, p.y))]);
   return ret;
 };
 PointList.copy = (plist) => PointList.prototype.clone.call(plist);
-PointList.prototype.toPolar = function (tfn) {
+PointList.prototype.toPolar = function(tfn) {
   let ret = new PointList();
   let t = typeof tfn == 'function' ? tfn : (x, y) => ({ x: (x * 180) / Math.PI, y });
   ret.splice.apply(ret, [
@@ -661,7 +661,7 @@ PointList.prototype.toPolar = function (tfn) {
   return ret;
 };
 PointList.toPolar = (plist) => PointList.prototype.toPolar.call(plist);
-PointList.prototype.fromPolar = function (tfn) {
+PointList.prototype.fromPolar = function(tfn) {
   let ret = new PointList();
   let t = typeof tfn == 'function' ? tfn : (x, y) => ({ x: (x * Math.PI) / 180, y });
   ret.splice.apply(ret, [
@@ -675,7 +675,7 @@ PointList.prototype.fromPolar = function (tfn) {
   return ret;
 };
 PointList.fromPolar = (plist) => PointList.prototype.toPolar.call(plist);
-PointList.prototype.draw = function (ctx, close = false) {
+PointList.prototype.draw = function(ctx, close = false) {
   ctx.to(this[0].x, this[0].y);
   for(let i = 1; i < this.length; i++) {
     ctx.line(this[i].x, this[i].y);
@@ -683,7 +683,7 @@ PointList.prototype.draw = function (ctx, close = false) {
   if(close) ctx.line(this[0].x, this[0].y);
   return this;
 };
-PointList.prototype.area = function () {
+PointList.prototype.area = function() {
   let area = 0;
   let i;
   let j;
@@ -698,7 +698,7 @@ PointList.prototype.area = function () {
   area /= 2;
   return area;
 };
-PointList.prototype.centroid = function () {
+PointList.prototype.centroid = function() {
   let x = 0;
   let y = 0;
   let i;
@@ -716,11 +716,11 @@ PointList.prototype.centroid = function () {
   f = this.area() * 6;
   return new Point(x / f, y / f);
 };
-PointList.prototype.avg = function () {
+PointList.prototype.avg = function() {
   let ret = this.reduce((acc, p) => acc.add(p), new Point());
   return ret.div(this.length);
 };
-PointList.prototype.minmax = function () {
+PointList.prototype.minmax = function() {
   if(!this.length) return {};
   let ret = {
     x1: this[0].x,
@@ -743,14 +743,14 @@ PointList.prototype.minmax = function () {
 };
 PointList.minmax = (list) => PointList.prototype.minmax.call(list);
 PointList.rect = (list) => new Rect(PointList.minmax(list));
-PointList.prototype.rect = function () {
+PointList.prototype.rect = function() {
   return PointList.rect(this);
 };
-PointList.prototype.xrange = function () {
+PointList.prototype.xrange = function() {
   const minmax = this.minmax();
   return [minmax.x1, minmax.x2];
 };
-PointList.prototype.normalizeX = function (newVal = (x) => x) {
+PointList.prototype.normalizeX = function(newVal = (x) => x) {
   const xrange = PointList.prototype.xrange.call(this);
   const xdiff = xrange[1] - xrange[0];
   this.forEach((p, i, l) => {
@@ -758,11 +758,11 @@ PointList.prototype.normalizeX = function (newVal = (x) => x) {
   });
   return this;
 };
-PointList.prototype.yrange = function () {
+PointList.prototype.yrange = function() {
   const minmax = this.minmax();
   return [minmax.y1, minmax.y2];
 };
-PointList.prototype.normalizeY = function (newVal = (y) => y) {
+PointList.prototype.normalizeY = function(newVal = (y) => y) {
   const yrange = PointList.prototype.yrange.call(this);
   const ydiff = yrange[1] - yrange[0];
   this.forEach((p, i, l) => {
@@ -770,14 +770,14 @@ PointList.prototype.normalizeY = function (newVal = (y) => y) {
   });
   return this;
 };
-PointList.prototype.boundingRect = function () {
+PointList.prototype.boundingRect = function() {
   return new Rect(this.minmax());
 };
-PointList.prototype.translate = function (x, y) {
+PointList.prototype.translate = function(x, y) {
   for(let i = 0; i < this.length; i++) Point.prototype.move.call(this[i], x, y);
   return this;
 };
-PointList.prototype.transform = function (arg) {
+PointList.prototype.transform = function(arg) {
   const fn = typeof arg == 'function' ? arg : (p) => Point.prototype.transform.call(p, arg);
   for(let i = 0; i < this.length; i++) {
     const p = fn(this[i]);
@@ -786,20 +786,20 @@ PointList.prototype.transform = function (arg) {
   }
   return this;
 };
-PointList.prototype.filter = function (pred) {
+PointList.prototype.filter = function(pred) {
   let ret = new PointList();
   this.forEach((p, i, l) => pred(p, i, l) && ret.push(new Point(l[i])));
   return ret;
 };
-PointList.prototype.getLineIndex = function (index) {
+PointList.prototype.getLineIndex = function(index) {
   return (index < 0 ? this.length + index : index) % this.length;
 };
-PointList.prototype.getLine = function (index) {
+PointList.prototype.getLine = function(index) {
   let a = PointList.prototype.getLineIndex.call(this, index);
   let b = PointList.prototype.getLineIndex.call(this, index + 1);
   return [this[a], this[b]];
 };
-PointList.prototype.lines = function (closed = false) {
+PointList.prototype.lines = function(closed = false) {
   const points = this;
   const n = points.length - (closed ? 0 : 1);
   const iterableObj = {
@@ -820,11 +820,11 @@ PointList.prototype.lines = function (closed = false) {
   };
   return iterableObj;
 };
-PointList.prototype.toString = function (prec) {
+PointList.prototype.toString = function(prec) {
   return this.map((point) => Point.prototype.toString.call(point, prec)).join(' ');
 };
 PointList.toString = (pointList) => '[' + [...pointList].map((p) => `[${p.x || p[0]},${p.y || p[1]}]`).join(',') + ']';
-PointList.prototype.rotateRight = function (n) {
+PointList.prototype.rotateRight = function(n) {
   return Util.rotateRight(this, n);
 };
 const Classes = { Point, Line, Rect, Size };

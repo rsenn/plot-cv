@@ -15,7 +15,7 @@ import { inspect } from './inspect.js';
 
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };
 
-Point.prototype.atan2 = function () {
+Point.prototype.atan2 = function() {
   return Math.atan2(this.x, this.y);
 };
 Object.defineProperty(Point.prototype, 'distance', {
@@ -91,7 +91,7 @@ function testPointVector() {
 }
 
 globalThis.test_array = [1, 2, 3, 4, 5, 6];
-globalThis.process = function (contours, hier) {
+globalThis.process = function(contours, hier) {
   let areas = [];
 
   let outlines = {

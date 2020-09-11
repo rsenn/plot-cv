@@ -135,7 +135,7 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
   if(size) {
     if(!isNaN(+size.width)) style.width = `${size.width}px`;
     if(!isNaN(+size.height)) style.height = `${size.height}px`;
-    console.log('FloatingPanel size:', size);
+    //    console.log('FloatingPanel size:', size);
   }
 
   if(hidden) style.display = 'none';

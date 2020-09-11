@@ -39,7 +39,7 @@ export function useDimensions(arg = {}) {
       if(_ref$liveMeasure) {
         window.addEventListener('resize', measure);
         window.addEventListener('scroll', measure);
-        return function () {
+        return function() {
           window.removeEventListener('resize', measure);
           window.removeEventListener('scroll', measure);
         };

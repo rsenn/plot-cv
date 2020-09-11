@@ -35,10 +35,10 @@ function Proxy(obj) {
   return p;
 }
 Proxy.prototype.defaultTimeout = 30000;
-Proxy.prototype.valueOf = function () {
+Proxy.prototype.valueOf = function() {
   return this.time;
 };
-Proxy.prototype.toSource = function () {
+Proxy.prototype.toSource = function() {
   const { protocol, ip, port, country, time, source } = this;
   return Util.toSource({
     protocol,
@@ -49,15 +49,15 @@ Proxy.prototype.toSource = function () {
     source
   });
 };
-Proxy.prototype.toString = function () {
+Proxy.prototype.toString = function() {
   const { protocol, ip, port } = this;
   return `${protocol} ${ip} ${port}`;
 };
-Proxy.prototype.check = function (url) {
+Proxy.prototype.check = function(url) {
   return Check(this, url);
 };
 
-Proxy.prototype.ping = function () {
+Proxy.prototype.ping = function() {
   const proxy = this;
   const { protocol, ip, port } = proxy;
   return new Promise((resolve, reject) => {
@@ -79,7 +79,7 @@ Proxy.prototype.ping = function () {
     }
   });
 };
-Proxy.prototype[Symbol.for('nodejs.util.inspect.custom')] = function () {
+Proxy.prototype[Symbol.for('nodejs.util.inspect.custom')] = function() {
   const coloring = Util.coloring(!Util.isBrowser());
 };
 

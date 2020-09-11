@@ -13,7 +13,7 @@ const code = `
         var nread = 0;
 
         var error;
-        this.on('error', function (er) {
+        this.on('error', function(er) {
           error = er;
         });
 

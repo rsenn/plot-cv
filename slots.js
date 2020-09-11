@@ -72,7 +72,7 @@ export class Slot extends Component {
 }
 
 //(Slot.prototype = new Component()).constructor = Slot;
-Slot.prototype.render = function () {
+Slot.prototype.render = function() {
   let child = ReactComponent.toChildArray(this.props.children)[0];
   return typeof child === 'function' ? child(this.state.content) : this.state.content || child;
 };
