@@ -32,7 +32,9 @@ async function main() {
   app.use(express.text({ type: 'application/xml', limit: '16384kb' }));
 
   app.use(bodyParser.json());
-  app.use(bodyParser.raw({ type: 'application/octet-stream', limit: '16384kb' }));
+  app.use(bodyParser.raw({ type: 'text/plain;charset=UTF-8', limit: '524288kb' }));
+  app.use(bodyParser.raw({ type: 'text/plain', limit: '524288kb' }));
+  app.use(bodyParser.raw({ type: 'application/octet-stream', limit: '524288kb' }));
   app.use(bodyParser.raw({ type: 'multipart/mixed', limit: '16384kb' }));
 
   app.use((req, res, next) => {
@@ -491,16 +493,36 @@ async function main() {
     res.send(data.toString().replace(/<\?TS\?>/g, Util.unixTime() + ''));
   });
 
-  app.post('/save', async (req, res) => {
+  app.post('/save', (req, res, next) => {
+    //   const filename = (req.headers['content-disposition']||'').replace(new RegExp('.*"([^"]*)".*','g'), '$1') || 'output.svg';
+    const filename = path.join(process.cwd(), 'tmp', 'upload-' + Util.toUnixTime(Date.now()) + '.txt');
+    let output = fs.createWriteStream(filename, { autoClose: true, emitClose: true });
+    let s = req.pipe(output);
+    console.log('s', Util.className(s));
+    let data;
+    s.on('close', () => Util.waitFor(1000).then(() => end()));
+
+    //  req.on('end', () => Util.waitFor(500).then(() => end()));
+
+    function end() {
+      data = fs.readFileSync(filename).toString();
+      console.log('req end', { data });
+      res.end(data + '\n\nUpload complete');
+      next();
+    }
+
+    /*
+
     const { body } = req;
-    //console.log('req.headers:', req.headers);
+    console.log('req.headers:', req.headers);
+    console.log('body:', body, Util.className(body), Util.toString(body));
     console.log('save body:', typeof body == 'string' ? Util.abbreviate(body, 100) : body);
-    const filename = 'tmp/' + req.headers['content-disposition'].replace(/.*"([^"]*)".*/, '$1') || 'output.svg';
-    await fs.promises.writeFile(filename, body, { mode: 0x0180, flag: 'w' });
+    const filename = (req.headers['content-disposition']||'').replace(new RegExp('.*"([^"]*)".*','g'), '$1') || 'output.svg';
+    await fs.promises.writeFile('tmp/' + filename.replace(/^tmp\//, ''), body, { mode: 0x0180, flag: 'w' });
     let st = await fs.promises.stat(filename);
 
     console.log('saved:', filename, `${st.size} bytes`);
-    res.json({ size: st.size, filename });
+    res.json({ size: st.size, filename });*/
   });
 
   app.get('/', (req, res) => {
