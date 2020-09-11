@@ -113,7 +113,7 @@ import {
   WhileStatement,
   WithStatement
 } from './lib/ecmascript.js';
-import { WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater } from './streamUtils.js';
+import { readStream, ArrayWriter, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater } from './lib/streamUtils.js?ts=<?TS?>';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
 import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl } from './lib/eagle/renderUtils.js';
 import { Wire } from './lib/eagle/components/wire.js';
@@ -884,6 +884,7 @@ const AppMain = (window.onload = async () => {
     Printer,
     Stack,
     Token,
+    readStream, ArrayWriter, 
     WriteToRepeater,
     LogSink,
     RepeaterSink,

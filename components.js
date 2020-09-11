@@ -119,7 +119,8 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
     const tmpSize = onSize();
     noUpdate = true;
     // if(tmpSize.width != width || tmpSize.height != height)
-    if(tmpSize.width === undefined || tmpSize.height === undefined) if (width !== undefined && height !== undefined) onSize({ width, height });
+    if(Util.isObject(tmpSize) && (tmpSize.width === undefined || tmpSize.height === undefined))
+      if(width !== undefined && height !== undefined) onSize({ width, height });
     noUpdate = false;
   }
   const hasOnHide = typeof onHide == 'function' && typeof onHide.subscribe == 'function';
