@@ -42,6 +42,7 @@ class ES6Module {
     ES6Module.moduleList.add(mod);
     return mod;
   }
+
   static get list() {
     return [...ES6Module.moduleList];
   }
@@ -91,6 +92,14 @@ class ES6Module {
     return [...ES6Module.getDeps(this)];
   }
 
+  get imports() {
+    return [...ES6Module.getImportExport(this, (i) => i == -1)];
+  }
+
+  get exports() {
+    return [...ES6Module.getImportExport(this, (i) => i != -1)];
+  }
+
   static *getDeps(module) {
     for(let m of ES6Module.moduleList) {
       if(m === module) continue;
@@ -98,29 +107,16 @@ class ES6Module {
       else if((m.importedFrom + '').startsWith(module.file)) yield m;
     }
   }
-  get imports() {
-    return [...ES6Module.getImports(this)];
-  }
 
-  static *getImports(module) {
-    for(let impExp of [...ES6ImportExport.importExportList]) {
-      if(['require', 'import'].indexOf(impExp.type) == -1) continue;
-      if(impExp.file == module.file) yield impExp;
-    }
-  }
-  get exports() {
-    return [...ES6Module.getExports(this)];
-  }
-  static *getExports(module) {
-    for(let impExp of [...ES6ImportExport.importExportList]) {
-      if(['require', 'import'].indexOf(impExp.type) != -1) continue;
+  static *getImportExport(module, skipFn = (idx) => idx == -1) {
+    for(let impExp of ES6ImportExport.importExportList) {
+      if(skipFn(['require', 'import'].indexOf(impExp.type))) continue;
       if(impExp.file == module.file) yield impExp;
     }
   }
 
   static tree(colors = true) {
     const t = colors ? (...args) => Util.ansi.text(...args) : (t) => t;
-
     let arr = [...ES6Module.moduleList];
     let modules = new Set(arr);
     let lines = [];
@@ -128,7 +124,7 @@ class ES6Module {
       // if(!modules.has(module)) return;
       modules.delete(module);
       if(typeof module.file != 'string') {
-        console.debug('module:', module);
+        //console.debug('module:', module);
         throw new Error();
       }
       lines.push(t(sym, 1, 36) + t(path.basename(module.file), 1, 33));
@@ -160,91 +156,64 @@ class ES6ImportExport {
 
   static importExportList = new Set();
 
+  static get list() {
+    return [...ES6ImportExport.importExportList];
+  }
+
   static create(obj) {
     let ret = new ES6ImportExport();
     let nodeClass = Util.className(obj.node);
-    let code = Util.memoize(() => '' + Util.decamelize(nodeClass) + ' ' + printAst(obj.node))();
+    let code = Util.memoize(() => '' + Util.decamelize(nodeClass) + ' ' + PrintAst(obj.node))();
     let p, n;
     p = obj.path.slice(0, 2);
-
     n = p.apply(obj.ast, true);
-    //console.log('ES6ImportExport obj', Util.filterOutKeys(obj, ['ast']));
-    code = printAst(n);
-
+    code = PrintAst(n);
     if(obj.node instanceof ESNode) n = obj.node;
     else p = obj.node;
-    //console.log('ES6ImportExport node', n, Util.ansi.text('path', 1, 31), p, Util.ansi.text('code', 1, 31), code);
-
     let type = [/(import|require)/i, /exports?[^a-z]/i].filter((re) => re.test(code));
     type = type.map((re) => [...re.exec(code)]).map(([m]) => m);
     type = type.map((m) => m + '');
     type = (Util.isArray(type) && type[0]) || type;
-    //console.log('create  n', Util.className(n));
-    //console.log('create  obj.node', Util.className(obj.node));
     let assoc = ESNode.assoc(obj.node) || ESNode.assoc(n);
-
     let position = ESNode.assoc(obj.node).position || ESNode.assoc(n).position;
     if(position) {
       position = position.clone();
       position.file = ES6Env.pathTransform(position.file);
     }
-    console.log('position:', position);
-
     let bindings = (obj.bindings instanceof Map && obj.bindings) || new Map();
-
     ret = Object.assign(ret, { type, bindings, position });
-
-    //console.log('ES6ImportExport create', { code, type, position });
     let dir = path.relative(ES6Env.cwd, path.dirname(obj.file));
     ret = Util.define(ret, { ...obj, nodeClass, dir });
-    const ColorIf = (cond, str, ...codes) => {
+    /* const ColorIf = (cond, str, ...codes) => {
       let b;
       if(typeof cond == 'function') b = cond();
       else b = !!cond;
       if(!b) return str;
       return Util.ansi.text(str, ...codes) + Util.ansi.code(0);
-    };
+    };*/
     bindings[inspectSymbol] = function () {
-      let entries = [...Util.getMemberNames(ret.bindings)]
-        .filter((n) => !Util.isObject(ret[n]))
-
-        .map((n) => [n, ret[n]]);
-      //console.log('nodejs.util.inspect.custom', entries);
-
-      //Util.isObject(bindings)  && typeof bindings.entries == 'function'  ? bindings.entries() : [...bindings];
-
-      return (Util.ansi.code(1, 36) +
-        '{' +
-        entries
-          .reduce((acc, [id, ref]) => {
-            let s = '';
-            s += Util.ansi.text(id, 1, 33);
-            if(ref !== id) {
-              s += Util.ansi.code(1, 31) + ' as ';
-              s += Util.ansi.text(ref, 1, 33);
-            }
-            return [...acc, ' ', s];
-          }, [])
-          .join(Util.ansi.code(1, 36) + ', ') +
-        Util.ansi.text('}', 1, 36)
-      );
+      return Util.inspect(this);
+      /*
+      let entries = [...Util.getMemberNames(ret.bindings)].filter((n) => !Util.isObject(ret[n])).map((n) => [n, ret[n]]);
+      // prettier-ignore
+      return Util.ansi.code(1, 36) + '{' + entries .reduce((acc, [id, ref]) => {let s = ''; s += Util.ansi.text(id, 1, 33); if(ref !== id) {s += Util.ansi.code(1, 31) + ' as '; s += Util.ansi.text(ref, 1, 33); } return [...acc, ' ', s]; }, []) .join(Util.ansi.code(1, 36) + ', ') + Util.ansi.text('}', 1, 36);*/
     };
     obj.importNode = obj.importNode || [];
 
     let importNodes = obj.importNode
       .filter((p) => p.length < 3)
       .map((p) => deep.get(obj.ast, p))
-      .map((n) => [ESNode.assoc(n).position, printAst(n)])
+      .map((n) => [ESNode.assoc(n).position, PrintAst(n)])
       .map(([p, n]) => [Util.isGenerator(position) && [...position].map((p) => ES6Env.pathTransform(p)).join(':'), n]);
-    //console.log('importNodes:', importNodes.map((a) => '\n  ' + a.join('  ')).join('') + '\n');
+
     if(Util.isObject(position) && position.toString) position = position.toString(true, (p, i) => (i == 0 ? path.relative(ES6Env.cwd, p) : p)).replace(/1;33/, '1;34');
     const InspectFn = ret.bindings[inspectSymbol];
-    console.log(Util.ansi.text(Util.ucfirst((type + '').toLowerCase()), 1, 31) + Util.ansi.text(` @ `, 1, 36),
+    /*  console.log(Util.ansi.text(Util.ucfirst((type + '').toLowerCase()), 1, 31) + Util.ansi.text(` @ `, 1, 36),
       InspectFn ? InspectFn.call(ret.bindings) : '',
       'importNode:',
-      [...obj.importNode].map((n) => [node2path.get(n), printAst(n)]).filter(([p, c]) => c.trim() != ''),
+      [...obj.importNode].map((n) => [node2path.get(n), PrintAst(n)]).filter(([p, c]) => c.trim() != ''),
       ...['dir', 'relpath'].reduce((acc, n) => [...acc, Util.ansi.text(n, 38, 5, 197) + Util.ansi.text(' ', 1, 36) + (typeof ret[n] == 'string' ? Util.ansi.text(ret[n], 1, 32) : typeof InspectFn == 'function' ? InspectFn.call(ret) : Util.toString(ret[n], { multiline: false, newline: '' }).replace(/.*\)\ {/g, '')) + ' '], [])
-    );
+    );*/
     Object.assign(ret, obj);
     if(ret.file) ret.module = ES6Module.getOrCreate(ret.file, null);
     if(ret.fromPath) ret.fromModule = ES6Module.getOrCreate(ret.fromPath, position || ret.file);
@@ -252,30 +221,24 @@ class ES6ImportExport {
     ES6ImportExport.importExportList.add(ret);
     return ret;
   }
-  statement(path) {
-    path = path || node2path.get(this.importNode);
-    //console.log('importNode:', this.importNode);
-    //console.log('path:', path);
-  }
 
   get relpath() {
     const { file } = this;
-    //console.log('relpath()', file, Object.keys(this));
     if(ES6Env.cwd && file) {
       let r = path.relative(ES6Env.cwd, file);
       if(!/\//.test(r)) r = './' + r;
       return r;
     }
   }
+
   get fromBase() {
     return path.basename(this.relpath).replace(/\.([0-9a-z]{2}|[0-9a-z]{3})$/, '');
   }
+
   get from() {
     let { node, path } = this;
-
     let value = (node && node.source) || node;
     path = (value && path.down('source')) || path;
-
     while(Util.isObject(value, (v) => v.value)) value = value.value;
     return [value, path];
   }
@@ -289,7 +252,7 @@ class ES6ImportExport {
     }
   }
   toSource() {
-    return printAst(this.node);
+    return PrintAst(this.node);
   }
   get code() {
     return this.toSource();
@@ -301,18 +264,9 @@ class ES6ImportExport {
     return Util.toString(Object.assign(
         Object.setPrototypeOf({
             type,
-            bindings: Util.toString(bindings, {
-              ...opts,
-              newline: '',
-              separator: '',
-              spacing: ' ,',
-              quote: "'"
-            })
-              .replace(/=>/g, Util.ansi.text('as', 1, 31))
-              .replace(/\s*.\[1;31[^ ,]*as[^,}]*(,*)/g, '\x1b[1;36m$1 ')
-              .replace(/'/g, ''),
+            bindings: Util.inspect(bindings, { colors: true, toString: 'toString' }),
             path: path.join('.'),
-            node: printAst(node) //Util.toString(node, { ...opts, separator: '', newline: '', depth: 0 })
+            node: PrintAst(node) //Util.toString(node, { ...opts, separator: '', newline: '', depth: 0 })
           },
           ES6ImportExport.prototype
         ),
@@ -340,15 +294,22 @@ class ES6ImportExport {
   }
 }
 
-Util.callMain(main, true);
+const isRequire = ([path, node]) => node instanceof CallExpression && node.callee.value == 'require';
+const isImport = ([path, node]) => node instanceof ImportStatement;
+const isES6Export = ([path, node]) => node instanceof ExportStatement;
+const isCJSExport = ([path, node]) => node instanceof MemberExpression && node.object instanceof Identifier && node.property instanceof Identifier && node.object.value == 'module' && node.property.value == 'exports';
 
-/*
-const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg">
-    <defs />
+const getImport = ([p, n]) => {
+  let r = [];
+  if(n instanceof CallExpression && Util.isObject(n, 'callee').value == 'require') r.push(p.concat(['arguments', 0]));
+  else if(!(n instanceof ImportStatement)) r.push(p.slice(0, 2));
+  r.push(p);
+  return r;
+};
+const getExport = ([p, n]) => [n instanceof ExportStatement ? p : p.slice(0, 2), p];
 
-*/
 function PrintCode(node) {
-  return PrintObject(node, (node) => printAst(node));
+  return PrintObject(node, (node) => PrintAst(node));
 }
 function PrintObject(node, t = (n, p) => n) {
   return Object.entries(node)
@@ -362,14 +323,14 @@ function PrefixRemover(reOrStr, replacement = '') {
   return (arg) => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), typeof arg == 'string' ? arg : '');
 }
 
-function dumpFile(name, data) {
+function DumpFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
   filesystem.writeFile(name, data + '\n');
   console.log(`Wrote ${name}: ${data.length} bytes`);
 }
 
-function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments)) {
+function PrintAst(ast, comments, printer = new Printer({ indent: 4 }, comments)) {
   return printer.print(ast);
 }
 
@@ -379,21 +340,16 @@ const hl = {
   str: (text) => Util.ansi.text(text, 1, 32)
 };
 
-function dumpNode(node) {
+function DumpNode(node) {
   return [hl.id`path` + hl.punct`:`, node2path.get(node), Util.ansi.text(`node`, 1, 33) + `:`, Util.toString(node, { multiline: false, depth: 4 })];
 }
 
 function GenerateFlatMap(ast, root = [], pred = (n, p) => true, t = (p, n) => [root.concat(p).join('.'), n]) {
-  //console.log('ast', Util.className(ast));
   flat = deep.flatten(ast,
     new Map(),
     (n, p) => n instanceof ESNode && pred(n, p),
-    (p, n) =>
-      /*console.log('t(', { p, n }, ')');
-      console.log('root =', root);*/
-      t(p, n)
+    (p, n) => t(p, n)
   );
-  //console.log('flat', Util.className(flat), flat.size);
   return flat;
 }
 
@@ -453,7 +409,7 @@ async function main(...args) {
 
   console.log('processed:', ...processed.map((file) => `\n  ${file}`));
 
-  dumpFile(`${name}.es`, r.join('\n'));
+  DumpFile(`${name}.es`, r.join('\n'));
   let success = Object.entries(processed).filter(([k, v]) => !!v).length != 0;
   // process.exit(Number(processed.length == 0));
 
@@ -512,23 +468,6 @@ async function main(...args) {
 
     try {
       const getRelative = (filename) => path.join(thisdir, filename);
-      const isRequire = ([path, node]) => node instanceof CallExpression && node.callee.value == 'require';
-      const isImport = ([path, node]) => node instanceof ImportStatement;
-      const isES6Export = ([path, node]) => node instanceof ExportStatement;
-      const isCJSExport = ([path, node]) => {
-        if(node instanceof MemberExpression) {
-          if(node.object instanceof Identifier && node.property instanceof Identifier) return node.object.value == 'module' && node.property.value == 'exports';
-        }
-      };
-
-      const getImport = ([p, n]) => {
-        let r = [];
-        // if(!Util.isObject(n) || !(n instanceof ESNode)) throw new Error('No node:' + n);
-        if(!(n instanceof ImportStatement)) r.push(p.slice(0, 2));
-        if(n instanceof CallExpression && Util.isObject(n, 'callee').value == 'require') r.push(p.concat(['arguments', 0]));
-        return r;
-      };
-      const getExport = ([p, n]) => [n instanceof ExportStatement ? p : p.slice(0, 2), p];
 
       //console.log('node2path:', node2path);
 
@@ -571,7 +510,7 @@ async function main(...args) {
           if(declCounts > 1 && declStatements.length > 0) {
             for(let [path, stmt] of declStatements.reverse()) {
               let index = path.last;
-               let arr = deep.get(ast, path.up());
+              let arr = deep.get(ast, path.up());
               let decls = GenerateDistinctVariableDeclarations(stmt);
 
               arr.splice(index, 1, ...decls);
@@ -584,7 +523,8 @@ async function main(...args) {
 
       const useStrict = map.filter(([key, node]) => node instanceof Literal && /use strict/.test(node.value));
       useStrict.forEach(([path, node]) => deep.unset(ast, path));
-
+      let importDeclarations = imports.map(([path, node], i) => getDeclarations(ast, importNodes[i]));
+      console.debug('importDeclarations:', importDeclarations);
       imports = imports.map(([path, node], i) =>
         ES6ImportExport.create({
           ast,
@@ -593,10 +533,10 @@ async function main(...args) {
           path,
           file,
           identifiers: node.right instanceof Identifier ? [node.right.value] : [],
-         position: ESNode.assoc(node).position,
+          position: ESNode.assoc(node).position,
           fromValue: getFromValue([node, path]),
           fromPath: getFromPath([path, node], file),
-          bindings: new Map(getDeclarations(node))
+          bindings: new Map(importDeclarations[i])
         })
       );
       let statement2module = imports.map((imp) => [imp.node, imp]);
@@ -610,15 +550,18 @@ async function main(...args) {
       });
       let remove = imports.map((imp, idx) => [idx, imp]);
       remove.forEach(([i, imp]) => {
+        let nodes = importNodes[i];
         let { path, node } = imp;
-        console.log(`remove.forEach arg`, i, path, Util.className(node));
+        console.log(`remove.forEach arg`, i, importDeclarations[i].entries(), Util.className(node));
         deep.set(ast, [...path], undefined);
       });
 
       let recurseImports = Util.unique(remove.map(([idx, imp]) => imp || imports[idx]));
-      console.log(`recurseImports [${depth}]:`, recurseImports);
+      //   console.log(`recurseImports [${depth}]:`, recurseImports);
       let recurseFiles = recurseImports.map((imp) => path.relative(ES6Env.cwd, getFromPath([imp.path, imp.node], file))).filter((imp) => processed.indexOf(imp.file) == -1);
+
       imports = imports.filter(({ file, ...module }) => !re.test(file));
+
       if(recurseFiles.length > 0) {
         console.log(`recurseFiles [${depth}] `, recurseFiles.length, recurseFiles);
         console.log(`${Util.ansi.text(modulePath, 1, 36)}: recurseFiles x${depth}]:`,
@@ -651,7 +594,7 @@ async function main(...args) {
       console.log(`moduleExports:`, moduleExports);
 
       let output = '';
-      output = printAst(ast, parser.comments, printer);
+      output = PrintAst(ast, parser.comments, printer);
       r.push(`/*\n * concatenanted ${file}\n */\n\n${output}\n`);
     } catch(err) {
       console.error(err.message);
@@ -661,10 +604,12 @@ async function main(...args) {
     console.log('processed files:', ...processed);
   }
 
-  console.debug('Modules:\n' + ES6Module.tree());
-  console.debug('ES6Imports:', new Map(ES6Module.list.map((module) => [module.file, new Map(module.imports.map((imp) => [imp.position && imp.position.clone(true, false), imp.fromPath]))])));
-  console.debug('ES6Exports:', new Map(ES6Module.list.map((module) => [module.file, new Map(module.exports.map((exp) => [exp.position && exp.position.clone(true, false), exp.bindings]))])));
-  //  console.debug('root.deps\n', ES6Module.root.deps);
+  console.debug(`Modules:\n` + ES6Module.tree());
+  console.debug(`ES6Imports:`, new Map(ES6Module.list.map((module) => [module.file, module.imports])));
+  console.debug(`ES6Exports:`, Util.toString(new Map(ES6Module.list.map((module) => [module.file, new Map(module.exports.map((exp) => [exp.position && exp.position.clone(true, false), exp.bindings]))])), { colors: true, multiline: true, toString: Symbol.toStringTag }));
+  console.debug(`ES6Module.root.imports[0].bindings`, Util.inspect(ES6Module.list.map((module) => module.exports.map((i) => new Map(Object.entries(i.bindings)))).flat()[0]));
+  console.debug(`new Identifier("test")`, Util.toString(new Identifier('test'), { toString: 'toString' }));
+  console.debug(`new Literal("'test'")`, Util.toString(new Literal("'test'"), { toString: 'toString' }));
 }
 
 function parseFile(file) {
@@ -727,7 +672,7 @@ function getFromValue(...args) {
   //let arg = args.shift() || [];
   let [p, n] = args[0] instanceof ESNode ? args.reverse() : args; //rgs[0] ;
   //console.log('getFromValue args', { n, p });
-  if(!p || (!('length' in p) && typeof p != 'string')) throw new Error('No path:' + p + ' node:' + printAst(n));
+  if(!p || (!('length' in p) && typeof p != 'string')) throw new Error('No path:' + p + ' node:' + PrintAst(n));
   if(!n || !(n instanceof ESNode)) throw new Error('No node:' + n + ' path:' + p);
   if(!(n instanceof ESNode)) n = deep.get(ast, n);
   let pathStr = p.join('.');
@@ -818,16 +763,12 @@ function finish(err) {
   let lexer = parser.lexer;
   let t = [];
   //console.log(parser.trace() );
-  dumpFile('trace.log', parser.trace());
+  DumpFile('trace.log', parser.trace());
   if(fail) {
     console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
   }
   console.log('finish: ' + (fail ? 'error' : 'success'));
   return !fail;
-}
-
-function getBindings(properties) {
-  return properties.filter((node) => node).map((node) => (node.id ? [node.id.value, node.value.value] : [node, node]));
 }
 
 function makeSearchPath(dirs, extra = 'node_modules') {
@@ -944,15 +885,29 @@ function searchModuleInPath(name, _from, position) {
 function removeStatements(ast, statements, predicate = (stmt) => true) {
   let removed = [];
   for(let [path, node] of statements) {
-    //console.log('removeStatements loop:', new ImmutablePath(path), printAst(node));
+    //console.log('removeStatements loop:', new ImmutablePath(path), PrintAst(node));
     if(!predicate(node, path)) continue;
     deep.unset(ast, path);
     removed.push(node);
   }
   return removed;
 }
-function getDeclarations(node) {
+
+function getBindings(properties) {
+  return properties.filter((node) => node).map((node) => (node.id ? [node.id.value, node.value.value] : [node, node]));
+}
+
+function getDeclarations(ast, paths) {
   let acc = [];
+  let [path, path2] = paths;
+
+  path = path.slice(0, path.indexOf('init'));
+  let node = deep.get(ast, path);
+
+  if(node.id && node.init) return [[node.id, node.init]];
+
+  console.log('getDeclarations:', node);
+
   if(node.identifiers) node = node.identifiers;
   if(node.declarations)
     acc = node.declarations.reduce((acc, decl) => {
@@ -962,9 +917,12 @@ function getDeclarations(node) {
       return acc;
     }, acc);
   if(node.properties) acc = acc.concat(getBindings(node.properties));
+
   return acc;
 }
 
 function makeNames(prefix) {
   return [prefix + '.njs', prefix + '.es6.js', prefix + '.esm.js', prefix + '.module.js', prefix + '.module.ejs', prefix + '.js'];
 }
+
+Util.callMain(main, true);
