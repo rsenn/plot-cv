@@ -12,7 +12,7 @@ import toSource from './lib/tosource.js';
 import { toXML, Path } from './lib/json.js';
 import { ColorMap } from './lib/draw/colorMap.js';
 import Alea from './lib/alea.js';
-import * as jsondiff from './lib/jsondiff.js';
+import * as jsondiff from './lib/json/diff.js';
 import KolorWheel from './lib/KolorWheel.js';
 import distanceChecker from './lib/color/distanceChecker.js';
 
@@ -86,8 +86,9 @@ async function main(...args) {
   try {
     let xml = readXML(filename);
     let json = JSON.stringify(xml, null, '  ');
-    let { rdev, ino, mtime, atime } = filesystem.stat(filename);
-
+    let st;
+    let { rdev, ino, mtime, atime } = (st = filesystem.stat(filename));
+    console.log('stat:', Util.toString(st), Object.keys(st));
     prng = new Alea().seed((ino * 256 + rdev) ^ mtime.valueOf());
 
     console.log('prng.uint32():', prng.uint32());

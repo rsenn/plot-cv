@@ -22,7 +22,7 @@ import { TimeoutError, delay, interval, timeout } from './lib/repeater/timers.js
 import asyncHelpers from './lib/async/helpers.js';
 import { Cache } from './lib/dom/cache.js';
 import { CacheStorage } from './lib/dom/cacheStorage.js';
-import { gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser } from './lib/gcode.js';
+import { InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter } from './lib/gcode.js';
 import { Iterator } from './lib/iterator.js';
 import { Functional } from './lib/functional.js';
 import { makeLocalStorage } from './lib/autoStore.js';
@@ -30,7 +30,7 @@ import { Repeater } from './lib/repeater/repeater.js';
 import { useResult } from './lib/repeater/react-hooks.js';
 import LogJS from './lib/log.js';
 import { useDimensions } from './useDimensions.js';
-import { toXML, ImmutablePath } from './lib/json.js';
+import { toXML, ImmutablePath, arrayDiff, objectDiff } from './lib/json.js';
 import { XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';
 import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
@@ -759,12 +759,22 @@ const AppMain = (window.onload = async () => {
     asyncHelpers,
     Cache,
     CacheStorage,
+    InterpretGcode,
     gcodetogeometry,
     GcodeObject,
     gcodeToObject,
     objectToGcode,
     parseGcode,
     GcodeParser,
+    GCodeLineStream,
+    parseStream,
+    parseFile,
+    parseFileSync,
+    parseString,
+    parseStringSync,
+    noop,
+    Interpreter,
+
     Iterator,
     Functional,
     makeLocalStorage,
@@ -774,6 +784,8 @@ const AppMain = (window.onload = async () => {
     useDimensions,
     toXML,
     ImmutablePath,
+    arrayDiff,
+    objectDiff,
     XmlObject,
     XmlAttr,
     ImmutableXPath,
@@ -884,7 +896,8 @@ const AppMain = (window.onload = async () => {
     Printer,
     Stack,
     Token,
-    readStream, ArrayWriter, 
+    readStream,
+    ArrayWriter,
     WriteToRepeater,
     LogSink,
     RepeaterSink,

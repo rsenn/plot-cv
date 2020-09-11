@@ -27,8 +27,7 @@ class ES6Module {
   static create(file, from, position) {
     let mod = new ES6Module();
     mod.file = file;
-    if(from) 
-      mod.importedFrom = position ? position : from;
+    if(from) mod.importedFrom = position ? position : from;
     if(ES6Module.root == null) ES6Module.root = mod;
     ES6Module.moduleList.add(mod);
     return mod;
@@ -176,10 +175,10 @@ class ES6ImportExport {
     ret = Object.assign(ret, { type, bindings, position });
     let dir = path.relative(ES6Env.cwd, path.dirname(obj.file));
     ret = Util.define(ret, { ...obj, nodeClass, dir });
- 
+
     bindings[inspectSymbol] = function () {
       return Util.inspect(this);
-      };
+    };
     obj.importNode = obj.importNode || [];
 
     let importNodes = obj.importNode
@@ -349,17 +348,17 @@ function GenerateDistinctVariableDeclarations(variableDeclaration) {
 async function main(...args) {
   await ConsoleSetup({ colors: true, depth: 4 });
   filesystem = await PortableFileSystem();
- 
+
   const re = /(lib\/util.js$)/;
   let parameters = [];
 
   while(/^-/.test(args[0])) parameters.push(args.shift());
 
-  if(args.length == 0) args = [ 'lib/geom/point.js', 'lib/geom/size.js', 'lib/geom/trbl.js', 'lib/geom/rect.js', 'lib/dom/element.js'];
+  if(args.length == 0) args = ['lib/geom/point.js', 'lib/geom/size.js', 'lib/geom/trbl.js', 'lib/geom/rect.js', 'lib/dom/element.js'];
   let r = [];
   let processed = [];
 
-  const dirs = [ES6Env.cwd, ...args.map((arg) => path.dirname(arg))]; 
+  const dirs = [ES6Env.cwd, ...args.map((arg) => path.dirname(arg))];
 
   searchPath = makeSearchPath(dirs);
   packagesPath = makeSearchPath(dirs, 'package.json');
@@ -375,8 +374,8 @@ async function main(...args) {
     }
     return acc;
   }, new Map());
- 
-   let optind = 0;
+
+  let optind = 0;
 
   while(args.length > 0) {
     let arg = args.shift();
@@ -563,7 +562,7 @@ async function main(...args) {
         })
       );
 
-    //  console.log(`moduleExports:`, moduleExports);
+      //  console.log(`moduleExports:`, moduleExports);
 
       let output = '';
       output = PrintAst(ast, parser.comments, printer);
@@ -577,7 +576,7 @@ async function main(...args) {
   }
 
   console.debug(`Modules:\n` + ES6Module.tree());
-/*  console.debug(`ES6Imports:`, new Map(ES6Module.list.map((module) => [module.file, module.imports])));
+  /*  console.debug(`ES6Imports:`, new Map(ES6Module.list.map((module) => [module.file, module.imports])));
   console.debug(`ES6Exports:`, Util.toString(new Map(ES6Module.list.map((module) => [module.file, new Map(module.exports.map((exp) => [exp.position && exp.position.clone(true, false), exp.bindings]))])), { colors: true, multiline: true, toString: Symbol.toStringTag }));
   console.debug(`ES6Module.root.imports[0].bindings`, Util.inspect(ES6Module.list.map((module) => module.exports.map((i) => new Map(Object.entries(i.bindings)))).flat()[0]));
   console.debug(`new Identifier("test")`, Util.toString(new Identifier('test'), { toString: 'toString' }));
@@ -600,12 +599,12 @@ function parseFile(file) {
   if(error) throw error;
   printer = new Printer({ indent: 4 });
   g.printer = printer;
-  return { data, error, ast, parser, printer }; 
+  return { data, error, ast, parser, printer };
 }
 
 function getFile(module, file) {
- // console.log(`getFile(  `, module, file, ` )`);
-    return searchModuleInPath(module, file);
+  // console.log(`getFile(  `, module, file, ` )`);
+  return searchModuleInPath(module, file);
 }
 
 function getFromValue(...args) {
@@ -767,7 +766,6 @@ function findModule(relpath) {
   return module;
 }
 
-
 function searchModuleInPath(name, _from, position) {
   const thisdir = _from ? path.dirname(_from) : '.';
   const absthisdir = path.resolve(thisdir);
@@ -780,7 +778,8 @@ function searchModuleInPath(name, _from, position) {
     let searchFor = dir.endsWith('node_modules') && !/\//.test(name) ? [name] : names;
     for(let module of searchFor) {
       let modPath = path.join(dir, module);
-      let p;        if(filesystem.exists(modPath)) p = findModule(modPath);
+      let p;
+      if(filesystem.exists(modPath)) p = findModule(modPath);
       if(p) {
         return p;
       }
