@@ -87,6 +87,7 @@ import { NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, Lis
 import { classNames } from './lib/classNames.js';
 
 Util.colorCtor = ColoredText;
+const elementDefaultAttributes = { stroke: 'red', fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': 0.1 };
 
 /* prettier-ignore */
 //Util.extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, ColoredText, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon, Circle } );
@@ -340,7 +341,6 @@ const LoadDocument = async (project, parentElem) => {
   elementGeometries = Util.memoize(() => ElementGeometries(topPlace, (ent) => Object.fromEntries(ent)));
   //polygonGeometries = Util.memoize(() => Object.entries(elementGeometries()).map(([name, lineList]) => [name, lineList.toPolygon((pts) => new Polyline(pts))]));
 
-
   documentTitle(project.doc.file.replace(/.*\//g, ''));
   let s = new BBox().update(project.doc.getMeasures(false)).toSize((o) => new Size(o.width, o.height));
 
@@ -421,7 +421,6 @@ const LoadDocument = async (project, parentElem) => {
 
   React.render(component, element);
 
-
   let object = ReactComponent.toObject(component);
   project.object = object;
   let rendered = object.children[0];
@@ -470,19 +469,31 @@ const LoadDocument = async (project, parentElem) => {
   project.bbox = SVG.bbox(project.grid);
   project.aspectRatio = aspect;
 
+  let center = SVG.bbox(project.svg).center.round();
+  let defaultTransform = `translate(${center.x},${center.y}) scale(2.54,2.54)`;
 
   function xx() {
     let g = SVG.create('g', {});
 
     project.svg.appendChild(g);
-let center = SVG.bbox(project.svg).center;
+    let ll = geometries.R4.lines.toSVG(ReactComponent.append, () => h('g', { ...elementDefaultAttributes, defaultTransform }));
 
-   let ll = geometries.R4.lines.toSVG(ReactComponent.append, () =>h('g', 
-    { stroke: 'red', fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': 0.1, transform: `translate(${center.x},${center.y}) scale(2.54,2.54)` }));
-   
     render(ll, g);
   }
-xx();
+  xx();
+  window.AddElement = (function (transform) {
+    const root = project.svg;
+
+    let list = [];
+
+    return (tag, attr, children = []) => {
+      let e = SVG.create(tag, { ...elementDefaultAttributes, transform, ...attr }, root);
+      list.push(e);
+      let d = trkl.property(e, 'd');
+      d.subscribe((value) => e.setAttribute('d', value));
+      return e;
+    };
+  })(defaultTransform);
 
   let { name, data, doc, svg, bbox } = project;
   let bounds = doc.getBounds();
@@ -596,7 +607,9 @@ const GenerateVoronoi = () => {
 };
 
 function PackageChildren(element, layer) {
-  return [...element.children].filter((p) => p.layer.name == 'tPlace' && p.tagName == 'wire');
+  let children = [...element.children].filter((p) => p.layer.name == 'tPlace' && p.tagName == 'wire');
+  children.xml = children.map((e) => e.toXML()).join('\n');
+  return children;
 }
 function ElementChildren(layer = 'tPlace', rfn = (ent) => new Map(ent)) {
   return rfn([...project.doc.elements].map(([name, element]) => [name, PackageChildren(element, layer)]));
@@ -605,9 +618,14 @@ function ElementChildren(layer = 'tPlace', rfn = (ent) => new Map(ent)) {
 function ElementGeometries(layer = 'tPlace', rfn = (ent) => new Map(ent)) {
   return rfn(ElementChildren(layer, (ent) => ent)
       .map(([name, children]) => [name, new LineList(children.map((e) => e.geometry))])
-      .map(([name, lines]) => [name, lines, lines.toPolygons((pts) => new Polyline(pts))])
+      .map(([name, lines]) => [name, lines, lines.slice().toPolygons((pts) => new Polyline(pts))])
       .map(([name, lines, polygons]) => [name, { lines, polygons }])
   );
+}
+
+function NewPath(path) {
+  let elem = SVG.create('path');
+  project.svg.appendChild(elem);
 }
 
 const MakeFitAction = (index) => async (event) => {
