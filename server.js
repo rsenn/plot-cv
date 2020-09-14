@@ -48,7 +48,7 @@ async function main() {
   let sockets = [];
 
   const removeItem = (arr, item, key = 'ws') => {
-    let i = arr.findIndex((e) => e[key] === item);
+    let i = arr.findIndex(e => e[key] === item);
     if(i != -1) arr.splice(i, 1);
 
     return arr;
@@ -82,8 +82,8 @@ async function main() {
     // do whatever you want with `child` here - it's a ChildProcess instance just
     // with promise-friendly `.then()` & `.catch()` functions added to it!
     let output = '';
-    child.stdout.on('data', (data) => (output += data));
-    child.stderr.on('data', (data) => (output += data));
+    child.stdout.on('data', data => (output += data));
+    child.stderr.on('data', data => (output += data));
     const { stdout, stderr, code, signal } = await child;
     console.log(`code: ${code}`);
     //  console.log(`output: ${output}`);
@@ -106,7 +106,7 @@ async function main() {
       if(save) {
         filename = filename || typeof save == 'string' ? save : null;
         filename = `tmp/` + filename.replace(/.*\/([^\/])*\.[^\/.]*$/g, '$1');
-        await fsPromises.writeFile(filename, result.data).then((res) => console.log('Wrote file:', res));
+        await fsPromises.writeFile(filename, result.data).then(res => console.log('Wrote file:', res));
       }
     } catch(error) {
       result = { error };
@@ -173,9 +173,9 @@ async function main() {
       // do whatever you want with `child` here - it's a ChildProcess instance just
       // with promise-friendly `.then()` & `.catch()` functions added to it!
       let output = '';
-      child.stdout.on('data', (data) => (output += data));
-      child.stderr.on('data', (data) => (output += data));
-      wait = await child.catch((error) => ({ code: -1, error }));
+      child.stdout.on('data', data => (output += data));
+      child.stderr.on('data', data => (output += data));
+      wait = await child.catch(error => ({ code: -1, error }));
 
       const { stdout, stderr, code, signal } = wait;
       if(output) output = Util.abbreviate(output.replace(/\s*\r*\n/g, '\n'), 200);
@@ -186,9 +186,9 @@ async function main() {
       const gcodeFile = makePath('ngc', sides[0]);
       const svgFile = makePath('svg', sides[0], 'processed');
 
-      for(let [file, to] of sides.map((side) => [makePath('svg', side, 'processed'), makePath('svg', side)])) if(fs.existsSync(file)) fs.renameSync(file, to);
+      for(let [file, to] of sides.map(side => [makePath('svg', side, 'processed'), makePath('svg', side)])) if(fs.existsSync(file)) fs.renameSync(file, to);
 
-      let files = sides.map((side) => [side, makePath('ngc', side)]).filter(([side, file]) => fs.existsSync(file));
+      let files = sides.map(side => [side, makePath('ngc', side)]).filter(([side, file]) => fs.existsSync(file));
       console.log('Response /gcode', { files });
 
       let result = { code, output, cmd };
@@ -213,7 +213,7 @@ async function main() {
     let result;
 
     try {
-      result = await gerberToGcode(file, opts).catch((error) => ({ error }));
+      result = await gerberToGcode(file, opts).catch(error => ({ error }));
     } catch(error) {
       result = { error };
     } finally {
@@ -253,8 +253,8 @@ async function main() {
 
       await fsPromises
         .stat(relativePath)
-        .then((st) => (isFile = st.isFile()))
-        .catch((err) => {});
+        .then(st => (isFile = st.isFile()))
+        .catch(err => {});
 
       let override = false;
 
@@ -262,7 +262,7 @@ async function main() {
         await fsPromises
           .access(overridePath, fs.constants.F_OK)
           .then(() => (override = true))
-          .catch((err) => {});
+          .catch(err => {});
 
       if(override) {
         console.log('Static request:', { overridePath, override });
@@ -271,7 +271,7 @@ async function main() {
       }
     }
 
-    if(!/lib\//.test(req.url)) console.log('Static request:', req.url, ' path:', req.path);
+    if(!/lib\//.test(req.url)) console.log('Static request: ' + req.url + '\npath: ' + req.path + '\nheaders:', req.headers);
 
     next();
   });
@@ -304,17 +304,17 @@ async function main() {
   );
 
   async function getDescription(file) {
-    let str = await fs.promises.readFile(file).then((r) => r.toString());
+    let str = await fs.promises.readFile(file).then(r => r.toString());
     let r = [...Util.matchAll('<(/)?(board|schematic|library)[ >]', str)]
-      .map((m) => m.index)
+      .map(m => m.index)
       .sort((a, b) => a - b)
       .slice(0, 2);
     let chunk = str.substring(...r);
     let a = ['<description>', '</description>'];
     let indexes = a
-      .map((s) => new RegExp(s))
-      .map((re) => re.exec(chunk))
-      .map((m) => m && m.index);
+      .map(s => new RegExp(s))
+      .map(re => re.exec(chunk))
+      .map(m => m && m.index);
     let d = chunk.substring(...indexes);
     if(d.startsWith('<description')) return Util.decodeHTMLEntities(d.substring(a[0].length));
     return '';
@@ -325,14 +325,14 @@ async function main() {
   async function GetFilesList(dir = './tmp', opts = {}) {
     let { filter = '.*\\.(brd|sch|lbr)$', descriptions = false, names } = opts;
     const re = new RegExp(filter, 'i');
-    const f = (ent) => re.test(ent);
+    const f = ent => re.test(ent);
 
     console.log('GetFilesList()', { filter, descriptions }, ...(names ? [names.length] : []));
 
     if(!names) names = [...(await fs.promises.readdir(dir))].filter(f);
 
     return Promise.all(names
-        .map((entry) => `${dir}/${entry}`)
+        .map(entry => `${dir}/${entry}`)
         .reduce((acc, file) => {
           let description = descriptions ? descMap(file) : descMap.get(file);
           //   console.log('descMap:', util.inspect(descMap, { depth: 1 }));
@@ -351,16 +351,16 @@ async function main() {
                   size
                 })
               )
-              .catch((err) => {})
+              .catch(err => {})
           );
           return acc;
         }, [])
-    ).then((a) => a.filter((i) => i != null));
+    ).then(a => a.filter(i => i != null));
   }
 
   function FilesURLs(list) {
     const base_url = list[0].replace(/\/[^\/]*$/, '');
-    const files = list.map((url) => url.replace(/.*\//g, ''));
+    const files = list.map(url => url.replace(/.*\//g, ''));
     return { base_url, files };
   }
 
@@ -370,7 +370,7 @@ async function main() {
     let result;
     const { owner, repo, dir, filter } = query;
     result = await ListGithubRepo(owner, repo, dir, filter && new RegExp(filter, 'g'));
-    res.json(FilesURLs(result.map((file) => file.download_url)));
+    res.json(FilesURLs(result.map(file => file.download_url)));
   });
 
   app.post(/\/github.*/, async (req, res) => {
@@ -378,7 +378,7 @@ async function main() {
     let result;
     const { owner, repo, dir, filter } = body;
     result = await ListGithubRepo(owner, repo, dir, filter && new RegExp(filter, 'g'));
-    res.json(FilesURLs(result.map((file) => file.download_url)));
+    res.json(FilesURLs(result.map(file => file.download_url)));
   });
 
   app.get(/^\/files/, async (req, res) => res.json({ files: await GetFilesList() }));
@@ -388,7 +388,7 @@ async function main() {
 
     if(names !== undefined) {
       if(typeof names == 'string') names = names.split(/\n/g);
-      if(Util.isArray(names)) names = names.map((name) => name.replace(/.*\//g, ''));
+      if(Util.isArray(names)) names = names.map(name => name.replace(/.*\//g, ''));
     }
 
     res.json({ files: await GetFilesList('tmp', { filter, descriptions, names }) });
@@ -422,12 +422,22 @@ async function main() {
     console.log('req.headers:', req.headers);
     console.log('body:', body, Util.className(body), Util.toString(body));
     console.log('save body:', typeof body == 'string' ? Util.abbreviate(body, 100) : body);
-    const filename = (req.headers['content-disposition'] || '').replace(new RegExp('.*"([^"]*)".*', 'g'), '$1') || 'output.svg';
-    await fs.promises.writeFile('tmp/' + filename.replace(/^tmp\//, ''), body, { mode: 0x0180, flag: 'w' });
-    let st = await fs.promises.stat(filename);
+    let st,
+      err,
+      filename = (req.headers['content-disposition'] || '').replace(new RegExp('.*"([^"]*)".*', 'g'), '$1') || 'output.svg';
+    filename = 'tmp/' + filename.replace(/^tmp\//, '');
+    await fs.promises
+      .writeFile(filename, body, { mode: 0x0180, flag: 'w' })
+      .then(() => (st = fs.statSync(filename)))
+      .catch(error => (err = error));
 
-    console.log('saved:', filename, `${st.size} bytes`);
-    res.json({ size: st.size, filename });
+    if(err) {
+      console.log('save error:', err);
+      res.json(err);
+    } else {
+      console.log('saved:', filename, `${st.size} bytes`);
+      res.json({ size: st.size, filename });
+    }
   });
 
   app.ws('/ws', async (ws, req) => {
@@ -458,7 +468,7 @@ async function main() {
       if(args.length > 0) msg = new Message(msg, ...args);
       if(msg instanceof Message) msg = msg.data;
 
-      Util.tryCatch((ws) => client.writable,
+      Util.tryCatch(ws => client.writable,
         (ok, ws, data) => Util.tryCatch(() => ws.send(data)),
         (err, ws, data) => (console.log('socket:', sock.info, ' error:', (err + '').replace(/\n.*/g, '')), false),
         sock.ws,
@@ -466,7 +476,7 @@ async function main() {
       );
     };
 
-    sendTo(s, JSON.stringify(sockets.map((s) => s.id)), null, null, 'USERS');
+    sendTo(s, JSON.stringify(sockets.map(s => s.id)), null, null, 'USERS');
 
     sockets.push(s);
 
@@ -490,11 +500,11 @@ async function main() {
       sendMany(s, '', s.id, null, 'QUIT');
     });
 
-    ws.on('message', (data) => {
+    ws.on('message', data => {
       s.lastMessage = Date.now();
       let msg = new Message(data, s.id);
       if(msg.type == 'INFO') {
-        const id = sockets.findIndex((s) => s.id == msg.body);
+        const id = sockets.findIndex(s => s.id == msg.body);
         if(id != -1) {
           const sock = sockets[id];
           sendTo(s, JSON.stringify(Util.filterOutKeys(sock, ['ws', 'id'])), sock.id, s.id, 'INFO');
@@ -503,7 +513,7 @@ async function main() {
       }
       console.log(`message from ${s.toString()}${msg.recipient ? ' to ' + msg.recipient : ''} (${s.id}): '${msg.body}'`);
       if(msg.recipient) {
-        let rId = sockets.findIndex((s) => s.id == msg.recipient);
+        let rId = sockets.findIndex(s => s.id == msg.recipient);
         if(rId == -1) {
           console.error(`No such recipient: '${msg.recipient}'`);
           return;

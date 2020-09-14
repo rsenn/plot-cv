@@ -27,7 +27,7 @@ function Proxy(obj) {
     }
   }
   const propNames = ['protocol', 'ip', 'port', 'country', 'source'];
-  let i = propNames.findIndex((prop) => p[prop] === undefined);
+  let i = propNames.findIndex(prop => p[prop] === undefined);
   if(i != -1) {
     throw new Error(`Property '${propNames[i]}' missing on: ` + Util.toSource(p));
   }
@@ -68,7 +68,7 @@ Proxy.prototype.ping = function() {
     console.log(`Connecting to ${ip}:${port} ...`);
     tcp.connect(port, ip, () => finish(`Connected to ${ip}:${port}`, start));
     tcp.on('close', () => finish(null, start));
-    tcp.on('error', (err) => finish(err, -1));
+    tcp.on('error', err => finish(err, -1));
     tcp.on('timeout', () => finish('timeout', -1));
 
     function finish(msg, start = -1, end = Date.now()) {
@@ -120,7 +120,7 @@ async function main() {
           delay: 50
         }
       })
-        .on('data', async (proxies) => {
+        .on('data', async proxies => {
           console.log('got some proxies', proxies.length);
           for(let p of proxies) {
             console.log('got proxy', p);
@@ -128,10 +128,10 @@ async function main() {
             await proxy
               .ping()
               .then(push)
-              .catch((err) => console.error('err:', err));
+              .catch(err => console.error('err:', err));
           }
         })
-        .on('error', (error) => {
+        .on('error', error => {
           console.error('error!', (error + '').split(/\n/g)[0]);
         })
         .once('end', () => {
@@ -162,7 +162,7 @@ async function main() {
         await proxy
           .ping()
           .then(push)
-          .catch((err) => console.error('err:', err));
+          .catch(err => console.error('err:', err));
       }
     })
   ];
@@ -196,12 +196,12 @@ async function writeResults(results, format = 'txt', outputName = 'proxies') {
   let ret;
   try {
     let output = await fsPromises.open(tempfile, 'w');
-    let method = { txt: (r) => r.map((p) => p.toString()).join('\n'), json: (r) => `[\n${r.map((p) => '  ' + Util.toSource(p)).join(',\n')}\n]` }[format];
+    let method = { txt: r => r.map(p => p.toString()).join('\n'), json: r => `[\n${r.map(p => '  ' + Util.toSource(p)).join(',\n')}\n]` }[format];
 
     ret = await output.write(method(results) + '\n');
     await output.close();
 
-    await fsPromises.unlink(filename).catch((err) => {});
+    await fsPromises.unlink(filename).catch(err => {});
     await fsPromises.link(tempfile, filename);
     await fsPromises.unlink(tempfile);
   } catch(err) {

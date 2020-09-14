@@ -26,11 +26,11 @@ async function main(...args) {
     //console.log('src:', src);
     let [done, data, pos] = INIGrammar.ini(src, 0);
 
-    let createMap = (entries) => Object.fromEntries(entries) || new Map(entries);
+    let createMap = entries => Object.fromEntries(entries) || new Map(entries);
     let sections = data[0].reduce((acc, sdata) => ({ ...acc, [sdata[0]]: createMap(sdata[1]) }), {});
     const flat = deep.flatten(sections,
       new Map(),
-      (k) => k.length > 0,
+      k => k.length > 0,
       (k, v) => [k.slice(1), v]
     );
     console.log('flat:', flat);
@@ -53,7 +53,7 @@ async function main(...args) {
       const viewBoxStr = attr && attr.viewBox;
       const viewCoords = (viewBoxStr && viewBoxStr.split(' ')) || [0, 0, svg.attributes.width, svg.attributes.height];
       const [x1, y1, x2, y2] = viewCoords;
-      const viewBox = new Rect(svg.attributes && svg.attributes.viewBox ? { x1, y1, x2, y2 } : ['width', 'height'].map((a) => svg.attributes[a]));
+      const viewBox = new Rect(svg.attributes && svg.attributes.viewBox ? { x1, y1, x2, y2 } : ['width', 'height'].map(a => svg.attributes[a]));
       iconSize = viewBox.size; //new Size(viewBox.width, viewBox.height);
       iconAspect = iconSize.aspect();
       const scale = iconAspect > 1 ? size.width / iconSize.width : size.height / iconSize.height;
@@ -84,7 +84,7 @@ async function main(...args) {
       count++;
     } else if(sections.FILE_INFO) {
       let file_keys = sections.FILE_INFO.keys();
-      let file_sections = Object.keys(sections).filter((name) => /FILE/.test(name));
+      let file_sections = Object.keys(sections).filter(name => /FILE/.test(name));
 
       let files = [];
       for(let key of file_keys) {
@@ -100,9 +100,9 @@ async function main(...args) {
         sections[sect].clear();
       }
 
-      let filenames = files.map((f) => f.FILE_INFO);
+      let filenames = files.map(f => f.FILE_INFO);
 
-      files = files.filter((file) => !/.*(buffer|comparator|lcd|format|ds18b20|hd44).*/.test(file.FILE_INFO));
+      files = files.filter(file => !/.*(buffer|comparator|lcd|format|ds18b20|hd44).*/.test(file.FILE_INFO));
 
       //console.log('data:', file_sections);
       //console.log('files:', filenames);

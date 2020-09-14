@@ -8,14 +8,14 @@ import { useTrkl } from './lib/eagle/renderUtils.js';
 //import React from '../modules/preact/dist/preact.mjs';
 import { classNames } from './lib/classNames.js';
 
-export const ClickHandler = (callback) => (e) => {
+export const ClickHandler = callback => e => {
   if(e.type) {
     const press = e.type.endsWith('down');
     callback(e, press);
   }
 };
 
-export const ToggleHandler = (callback, getState, setState) => (e) => {
+export const ToggleHandler = (callback, getState, setState) => e => {
   if(e.type) {
     const press = e.type.endsWith('down');
 
@@ -27,7 +27,7 @@ export const ToggleHandler = (callback, getState, setState) => (e) => {
   }
 };
 
-export const MouseEvents = (h) => ({
+export const MouseEvents = h => ({
   onMouseDown: h,
 
   /*  onBlur: h,*/
@@ -88,7 +88,7 @@ export const Button = ({ caption, image, fn, state, style = {}, ...props }) => {
     /*style.backgroundImage = `url(${image})`;
   style.backgroundSize = 'cover';*/
   }
-  return h(Overlay, { className: classNames('button', className), text: caption, state, onPush: (state) => (state && typeof fn == 'function' ? fn(state) : undefined), style, ...props });
+  return h(Overlay, { className: classNames('button', className), text: caption, state, onPush: state => (state && typeof fn == 'function' ? fn(state) : undefined), style, ...props });
 };
 
 /*html`
@@ -152,7 +152,7 @@ export const Label = ({ className, text, title, tooltip, children, ...props }) =
 export const DynamicLabel = ({ caption, title, children, ...props }) => {
   const [text, setText] = useState(caption());
 
-  caption.subscribe((value) => setText(value));
+  caption.subscribe(value => setText(value));
 
   return h(Label, { ...props, text }, []);
 };
@@ -196,7 +196,7 @@ export const Progress = ({ className, percent, ...props }) =>
 </svg>
 `;*/
 
-export const SchematicIcon = (props) => html`
+export const SchematicIcon = props => html`
   <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
     <defs />
     <path d="M32.02 3.594c-21.347 24.27-10.673 12.135 0 0zm3.439 26.494a2.727 2.727 0 01-.7 1.675l-7.165 7.505a2.375 2.375 0 01-1.706.732H12.766c-3.32 0-5.978-2.8-5.978-6.245V6.25c0-1.735.675-3.302 1.754-4.433C9.629.702 11.108 0 12.766 0h16.708A5.86 5.86 0 0133.7 1.817 6.422 6.422 0 0135.46 6.25z" fill="#fff" />
@@ -213,7 +213,7 @@ export const SchematicIcon = (props) => html`
   </svg>
 `;
 
-export const BoardIcon = (props) => html`
+export const BoardIcon = props => html`
   <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
     <defs />
     <path d="M32.02 3.594c-21.347 24.27-10.673 12.135 0 0zm3.439 26.494a2.727 2.727 0 01-.7 1.675l-7.165 7.505a2.375 2.375 0 01-1.706.732H12.766c-3.32 0-5.978-2.8-5.978-6.245V6.25c0-1.735.675-3.302 1.754-4.433C9.629.702 11.108 0 12.766 0h16.708A5.86 5.86 0 0133.7 1.817 6.422 6.422 0 0135.46 6.25z" fill="#fff" />
@@ -229,7 +229,7 @@ export const BoardIcon = (props) => html`
   </svg>
 `;
 
-export const LibraryIcon = (props) => html`
+export const LibraryIcon = props => html`
   <svg xmlns="http://www.w3.org/2000/svg">
     <path d="M3.398 6.487v26.942c0 3.085 2.13 5.675 5.011 6.406V.107a6.56 6.56 0 00-5.011 6.38M30.122 0H11.644v40.009h18.478c3.64 0 6.59-2.967 6.59-6.581V6.487c0-3.641-2.95-6.487-6.59-6.487" fill="#444443" />
     <path d="m30.312 19.791h-12.5v-12.5h12.5z" fill="#dedd00" />
@@ -240,7 +240,7 @@ export const LibraryIcon = (props) => html`
 export const Conditional = ({ initialState, component = Fragment, className, children, signal, ...props }) => {
   const [show, setShown] = useState(initialState !== undefined ? initialState : signal());
 
-  if(signal) signal.subscribe((value) => setShown(value));
+  if(signal) signal.subscribe(value => setShown(value));
 
   return show ? h(component, { className, ...props }, children) : h(Fragment, {});
 };
@@ -248,17 +248,17 @@ export const Conditional = ({ initialState, component = Fragment, className, chi
 export const ShowHide = ({ initialState, component, className, children, signal, ...props }) => {
   const [hidden, setHidden] = useState(initialState !== undefined ? initialState : !signal());
 
-  if(signal) signal.subscribe((value) => setHidden(!value));
+  if(signal) signal.subscribe(value => setHidden(!value));
 
   return h(component, { className: classNames(className, hidden && 'hidden'), ...props }, children);
 };
 
 export const EditBox = ({ value = '', type = 'div', className, hidden = false, current, focus, ...props }) => {
-  if(typeof current == 'function') props.ref = (input) => current(input);
+  if(typeof current == 'function') props.ref = input => current(input);
 
   const outerProps = { className: classNames(className, hidden && 'hidden') };
 
-  if(type == 'form') outerProps.onSubmit = (event) => event.preventDefault();
+  if(type == 'form') outerProps.onSubmit = event => event.preventDefault();
 
   return h(type,
     outerProps,
@@ -273,10 +273,10 @@ export const EditBox = ({ value = '', type = 'div', className, hidden = false, c
 
 export const File = ({ label, name, description, i, key, className = 'file', onPush, signal, data, doc, ...props }) => {
   const [loaded, setLoaded] = useState(NaN);
-  if(signal) signal.subscribe((data) => setLoaded(data.percent));
+  if(signal) signal.subscribe(data => setLoaded(data.percent));
   onPush =
     onPush ||
-    (async (state) => {
+    (async state => {
       //console.debug(`loading "${name}"...`);
       await load(name);
     });
@@ -300,7 +300,7 @@ export const File = ({ label, name, description, i, key, className = 'file', onP
     label = h('div', {}, [
       label,
       h('div', { className: 'description' },
-        d.map((line) => h('pre', { className: 'description' }, [line]))
+        d.map(line => h('pre', { className: 'description' }, [line]))
       )
     ]);
   }
@@ -322,7 +322,7 @@ export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () =
   if(typeof items == 'function') console.error('items():', items());
   //const list = items;
 
-  const pushHandler = (i) => (e, state) => {
+  const pushHandler = i => (e, state) => {
     const prev = active;
     state == true && setActive(i);
     if(i != prev && e.type.endsWith('down')) onChange(e, list[i], i);
@@ -331,26 +331,26 @@ export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () =
 
   if(itemFilter) {
     setFilter(itemFilter());
-    itemFilter.subscribe((value) => setFilter(value));
+    itemFilter.subscribe(value => setFilter(value));
   }
-  const list2re = (list) => list.map((part) => Util.tryCatch(() => new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i'))).filter((r) => r !== null);
+  const list2re = list => list.map(part => Util.tryCatch(() => new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i'))).filter(r => r !== null);
   const bar = html``;
   const preFilter = filter
     .replace(/\|/g, ' | ')
     .replace(/\+/, ' +')
     .split(/\s+/g)
-    .filter((p) => !/:\/\//.test(p));
-  const plus = list2re(preFilter.filter((p) => p.startsWith('+')).map((p) => p.replace(/\+/g, '')));
-  const rest = preFilter.filter((p) => !p.startsWith('+')).join(' ');
+    .filter(p => !/:\/\//.test(p));
+  const plus = list2re(preFilter.filter(p => p.startsWith('+')).map(p => p.replace(/\+/g, '')));
+  const rest = preFilter.filter(p => !p.startsWith('+')).join(' ');
   console.log('filter', { plus, rest });
   const reList = rest
     .split(/\|/g)
-    .map((p) => p.trim())
-    .filter((p) => p != '')
-    .map((p) => list2re(p.split(/\s\s*/g)));
+    .map(p => p.trim())
+    .filter(p => p != '')
+    .map(p => list2re(p.split(/\s\s*/g)));
   console.debug('regex:', ...reList);
-  const pred = (name) => !reList.every((c) => !c.every((re) => re.test(name))) && plus.every((re) => re.test(name));
-  const other = list.filter(({ name }) => !pred(name)).map((i) => i.name);
+  const pred = name => !reList.every(c => !c.every(re => re.test(name))) && plus.every(re => re.test(name));
+  const other = list.filter(({ name }) => !pred(name)).map(i => i.name);
   const children = list
     .filter(({ name }) => pred(name))
     .map((value, key) => {
@@ -387,9 +387,9 @@ export const FileList = ({ files, onChange, onActive, filter, showSearch, focusS
   const [active, setActive] = useState(true);
   const [items, setItems] = useState(files());
 
-  files.subscribe((value) => setItems(value));
+  files.subscribe(value => setItems(value));
 
-  onActive.subscribe((value) => setActive(value));
+  onActive.subscribe(value => setActive(value));
   const classes = classNames('sidebar', active ? 'active' : 'inactive');
 
   return html`
@@ -398,7 +398,7 @@ export const FileList = ({ files, onChange, onActive, filter, showSearch, focusS
       <${Chooser}
         className="list"
         itemComponent=${File}
-        itemClass=${(item) => 'file hcenter ' + item.name.replace(/.*\./g, '')}
+        itemClass=${item => 'file hcenter ' + item.name.replace(/.*\./g, '')}
         itemFilter=${filter}
         items=${items}
         tooltip=${toolTipFn}
@@ -470,7 +470,7 @@ export const TransformedElement = ({ type = 'div', id, aspect, listener, style =
   const [transform, setTransform] = useState(new TransformationList());
   //console.debug('TransformedElement:', { aspect });
   if(listener && listener.subscribe)
-    listener.subscribe((value) => {
+    listener.subscribe(value => {
       //console.log('TransformedElement setValue', value);
       if(value !== undefined) setTransform(value + '');
     });
@@ -485,9 +485,9 @@ export const TransformedElement = ({ type = 'div', id, aspect, listener, style =
   );
 };
 
-export const Slider = ({ min = 0, max = 100, value: initialValue = 0, step = 1, name = 'slider', orient = 'horizontal', label, onChange = (value) => {}, style = {}, length, ...props }) => {
+export const Slider = ({ min = 0, max = 100, value: initialValue = 0, step = 1, name = 'slider', orient = 'horizontal', label, onChange = value => {}, style = {}, length, ...props }) => {
   const [value, setValue] = useState(initialValue);
-  const onInput = (e) => {
+  const onInput = e => {
     const { target } = e;
 
     setValue(target.value);
@@ -718,8 +718,8 @@ export const CrossHair = ({ position, show, radius = 20, ...props }) => {
   const [pos, setPos] = useState(position());
   const [visible, setVisible] = useState(show());
 
-  position.subscribe((value) => setPos(value));
-  show.subscribe((value) => setVisible(value));
+  position.subscribe(value => setPos(value));
+  show.subscribe(value => setVisible(value));
 
   return h('div',
     {
@@ -747,7 +747,7 @@ export const CrossHair = ({ position, show, radius = 20, ...props }) => {
   );
 };
 
-export const MoveCursor = (props) =>
+export const MoveCursor = props =>
   h('svg', {
       height: '22',
       width: '22',
@@ -766,12 +766,12 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen, ...props }) => 
   const [open, setOpen] = useState(isOpen());
   const overlayRef = useRef(null);
 
-  isOpen.subscribe((value) => setOpen(value));
+  isOpen.subscribe(value => setOpen(value));
 
   console.log('DropDown open=', { open, Fragment });
 
   useEffect(() => {
-    let handler = (e) => {
+    let handler = e => {
       const { currentTarget, target, x, y } = e;
       const element = overlayRef.current;
       const rect = Element.rect(element);
@@ -789,7 +789,7 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen, ...props }) => 
 
   if(typeof overlay == 'function')
     overlay = overlay({
-      ref: (current) => {
+      ref: current => {
         if(current) {
           // console.log('overlay ref:', { current, overlayRef });
           const { base } = current;

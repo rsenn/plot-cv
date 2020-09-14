@@ -18,6 +18,7 @@ prettier() {
     --write \
     --print-width ${WIDTH:-120} \
     --semi \
+    --arrow-parens avoid \
     --bracket-spacing \
     ${CONFIG:+--config
 "$CONFIG"} \

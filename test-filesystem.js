@@ -6,7 +6,7 @@ import { WritableStream } from './lib/stream/writableStream.js';
 let filesystem;
 
 async function main() {
-  await PortableFileSystem((fs) => (filesystem = fs));
+  await PortableFileSystem(fs => (filesystem = fs));
   //await ConsoleSetup();
   let err,
     st,
@@ -55,7 +55,7 @@ async function main() {
     let w = new WritableStream('stream.tmp', { flags: 'w', encoding: 'utf-8' });
 
     //   w.on('open', arg => console.log("open:", arg));
-    w.on('data', (arg) => console.log('data:', arg.byteLength, filesystem.bufferToString(arg).replace(/\n/g, '\\n')));
+    w.on('data', arg => console.log('data:', arg.byteLength, filesystem.bufferToString(arg).replace(/\n/g, '\\n')));
     w.on('close', () => console.log('close:', w.fd));
 
     w.write('TEST\nBLAH\n' + new Date());

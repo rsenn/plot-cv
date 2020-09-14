@@ -93,7 +93,7 @@ function transformTagged(node) {
       if(propName) nextProp();
 
       if(children) {
-        children = children.filter((part) => typeof part != 'string' || !isSpace(part));
+        children = children.filter(part => typeof part != 'string' || !isSpace(part));
 
         if(children.length) r.push(children);
 
@@ -243,7 +243,7 @@ async function main(...args) {
 
       let flat = deep.flatten(ast,
         new Map(),
-        (node) => node instanceof ESNode,
+        node => node instanceof ESNode,
         (path, value) => {
           path = new Path(path);
           return [path, value];
@@ -296,7 +296,7 @@ function finish(err) {
   if(fail) {
     err.stack = PathReplacer()('' + err.stack)
       .split(/\n/g)
-      .filter((s) => !/esfactory/.test(s))
+      .filter(s => !/esfactory/.test(s))
       .join('\n');
   }
 

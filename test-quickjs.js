@@ -60,10 +60,10 @@ async function main(...args) {
   console.log(`mat.depth`, mat.depth);
   console.log(`1 << mat.depth`, 1 << mat.depth);
   console.log(`Mat[DEPTH]`,
-    Object.keys(Mat).find((k) => Mat[k] === mat.depth)
+    Object.keys(Mat).find(k => Mat[k] === mat.depth)
   );
   console.log(`Mat[TYPE]`,
-    Object.keys(Mat).find((k) => Mat[k] === mat.type)
+    Object.keys(Mat).find(k => Mat[k] === mat.type)
   );
   let row0 = mat.row(0);
   let col0 = mat.col(0);

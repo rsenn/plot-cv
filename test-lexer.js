@@ -36,7 +36,7 @@ const LoginIcon = ({ style }) =>
     ]
   );
 
-(async (arg) => {
+(async arg => {
   await ConsoleSetup();
   let data = Code || (await fs.readFile(arg || './lib/ecmascript/parser.js'));
   //console.log(data);

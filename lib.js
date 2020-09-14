@@ -166,7 +166,7 @@ Point.prototype.normalize = function(minmax) {
     y: (this.y - minmax.y1) / (minmax.y2 - minmax.y1)
   });
 };
-export const isPoint = (o) => o && ((o.x !== undefined && o.y !== undefined) || ((o.left !== undefined || o.right !== undefined) && (o.top !== undefined || o.bottom !== undefined)));
+export const isPoint = o => o && ((o.x !== undefined && o.y !== undefined) || ((o.left !== undefined || o.right !== undefined) && (o.top !== undefined || o.bottom !== undefined)));
 Point.isPoint = isPoint;
 
 export function Size(arg) {
@@ -230,7 +230,7 @@ Size.convertUnits = (size, w = 'window' in global ? window : null) => {
   }
   return size;
 };
-Size.aspect = (size) => {
+Size.aspect = size => {
   size = this instanceof Size ? this : size;
   return size.width / size.height;
 };
@@ -261,13 +261,13 @@ Size.prototype.isSquare = function() {
 Size.prototype.area = function() {
   return this.width * this.height;
 };
-Size.area = (size) => size.width * size.height;
+Size.area = size => size.width * size.height;
 export function Line(x1, y1, x2, y2) {
   let obj = this instanceof Line ? this : {};
   let arg;
   let args = [...arguments];
   let ret;
-  if(args.length >= 4 && args.every((arg) => !isNaN(parseFloat(arg)))) {
+  if(args.length >= 4 && args.every(arg => !isNaN(parseFloat(arg)))) {
     arg = { x1, y1, x2, y2 };
   } else if(args.length == 1) {
     arg = args[0];
@@ -285,7 +285,7 @@ export function Line(x1, y1, x2, y2) {
     obj.x2 = parseFloat(args[1].x);
     obj.y2 = parseFloat(args[1].y);
     ret = 2;
-  } else if(arg && arg.length >= 4 && arg.slice(0, 4).every((arg) => !isNaN(parseFloat(arg)))) {
+  } else if(arg && arg.length >= 4 && arg.slice(0, 4).every(arg => !isNaN(parseFloat(arg)))) {
     obj.x1 = typeof x === 'number' ? x : parseFloat(x);
     obj.y1 = typeof y === 'number' ? y : parseFloat(y);
     obj.x2 = typeof w === 'number' ? w : parseFloat(w);
@@ -297,7 +297,7 @@ export function Line(x1, y1, x2, y2) {
   if(!isLine(obj)) console.log('ERROR: is not a line: ', [...arguments]);
   if(!(this instanceof Line)) return obj;
 }
-export const isLine = (obj) => ['x1', 'y1', 'x2', 'y2'].every((prop) => obj[prop] !== undefined);
+export const isLine = obj => ['x1', 'y1', 'x2', 'y2'].every(prop => obj[prop] !== undefined);
 Line.isLine = isLine;
 Line.intersect = (a, b) => {
   const ma = (a[0].y - a[1].y) / (a[0].x - a[1].x);
@@ -379,11 +379,11 @@ Line.transform = (line, matrix) => {
     y2: b.y
   };
 };
-Line.bbox = (line) => BBox.fromPoints(Line.points(line));
+Line.bbox = line => BBox.fromPoints(Line.points(line));
 Line.prototype.bbox = function() {
   return BBox.fromPoints(this.points());
 };
-Line.points = (line) => {
+Line.points = line => {
   const { a, b } = line;
   return [a, b];
 };
@@ -409,7 +409,7 @@ export function Rect(arg) {
   let ret;
   if(typeof args[0] == 'number') arg = args;
   else if(args[0].length !== undefined) arg = args.shift();
-  ['x', 'y', 'width', 'height'].forEach((field) => {
+  ['x', 'y', 'width', 'height'].forEach(field => {
     if(typeof obj[field] != 'number') obj[field] = 0;
   });
   if(arg && arg.x1 !== undefined && arg.y1 !== undefined && arg.x2 !== undefined && arg.y2 !== undefined) {
@@ -432,7 +432,7 @@ export function Rect(arg) {
     obj.width = parseFloat(arg.width);
     obj.height = parseFloat(arg.height);
     ret = 1;
-  } else if(arg && arg.length >= 4 && arg.slice(0, 4).every((arg) => !isNaN(parseFloat(arg)))) {
+  } else if(arg && arg.length >= 4 && arg.slice(0, 4).every(arg => !isNaN(parseFloat(arg)))) {
     let x = arg.shift();
     let y = arg.shift();
     let w = arg.shift();
@@ -442,7 +442,7 @@ export function Rect(arg) {
     obj.width = typeof w === 'number' ? w : parseFloat(w);
     obj.height = typeof h === 'number' ? h : parseFloat(h);
     ret = 4;
-  } else if(arg && arg.length >= 2 && arg.slice(0, 2).every((arg) => !isNaN(parseFloat(arg)))) {
+  } else if(arg && arg.length >= 2 && arg.slice(0, 2).every(arg => !isNaN(parseFloat(arg)))) {
     obj.width = typeof x === 'number' ? x : parseFloat(x);
     obj.height = typeof y === 'number' ? y : parseFloat(y);
     ret = 2;
@@ -603,7 +603,7 @@ function PointList(points) {
 PointList.prototype = new Array();
 PointList.prototype.push = function() {
   const args = [...arguments];
-  args.forEach((arg) => {
+  args.forEach(arg => {
     if(!(arg instanceof Point)) arg = new Point(arg);
     Array.prototype.push.call(this, arg);
   });
@@ -617,7 +617,7 @@ PointList.prototype.splice = function() {
   let args = [...arguments];
   const start = args.shift();
   const remove = args.shift();
-  return Array.prototype.splice.apply(this, [start, remove, ...args.map((arg) => (arg instanceof Point ? arg : new Point(arg)))]);
+  return Array.prototype.splice.apply(this, [start, remove, ...args.map(arg => (arg instanceof Point ? arg : new Point(arg)))]);
 };
 PointList.splice = (plist, start, remove, points) => {
   let args = [...arguments];
@@ -626,7 +626,7 @@ PointList.splice = (plist, start, remove, points) => {
 };
 PointList.prototype.removeSegment = function(index) {
   let indexes = [PointList.prototype.getLineIndex.call(this, index - 1), PointList.prototype.getLineIndex.call(this, index), PointList.prototype.getLineIndex.call(this, index + 1)];
-  let lines = indexes.map((i) => PointList.prototype.getLine.call(this, i));
+  let lines = indexes.map(i => PointList.prototype.getLine.call(this, i));
   let point = Line.intersect(lines[0], lines[2]);
   if(point) {
     PointList.prototype.splice.call(this, 0, 2, new Point(point));
@@ -643,38 +643,38 @@ PointList.prototype.toPath = function(options = {}) {
 };
 PointList.prototype.clone = function() {
   let ret = new PointList();
-  ret.splice.apply(ret, [0, ret.length, ...this.map((p) => new Point(p.x, p.y))]);
+  ret.splice.apply(ret, [0, ret.length, ...this.map(p => new Point(p.x, p.y))]);
   return ret;
 };
-PointList.copy = (plist) => PointList.prototype.clone.call(plist);
+PointList.copy = plist => PointList.prototype.clone.call(plist);
 PointList.prototype.toPolar = function(tfn) {
   let ret = new PointList();
   let t = typeof tfn == 'function' ? tfn : (x, y) => ({ x: (x * 180) / Math.PI, y });
   ret.splice.apply(ret, [
     0,
     ret.length,
-    ...this.map((p) => {
+    ...this.map(p => {
       const angle = Point.prototype.toAngle.call(p);
       return t(angle, Point.prototype.distance.call(p));
     })
   ]);
   return ret;
 };
-PointList.toPolar = (plist) => PointList.prototype.toPolar.call(plist);
+PointList.toPolar = plist => PointList.prototype.toPolar.call(plist);
 PointList.prototype.fromPolar = function(tfn) {
   let ret = new PointList();
   let t = typeof tfn == 'function' ? tfn : (x, y) => ({ x: (x * Math.PI) / 180, y });
   ret.splice.apply(ret, [
     0,
     ret.length,
-    ...this.map((p) => {
+    ...this.map(p => {
       let r = t(p.x, p.y);
       return Point.prototype.fromAngle.call(r.x, r.y);
     })
   ]);
   return ret;
 };
-PointList.fromPolar = (plist) => PointList.prototype.toPolar.call(plist);
+PointList.fromPolar = plist => PointList.prototype.toPolar.call(plist);
 PointList.prototype.draw = function(ctx, close = false) {
   ctx.to(this[0].x, this[0].y);
   for(let i = 1; i < this.length; i++) {
@@ -741,8 +741,8 @@ PointList.prototype.minmax = function() {
   }
   return ret;
 };
-PointList.minmax = (list) => PointList.prototype.minmax.call(list);
-PointList.rect = (list) => new Rect(PointList.minmax(list));
+PointList.minmax = list => PointList.prototype.minmax.call(list);
+PointList.rect = list => new Rect(PointList.minmax(list));
 PointList.prototype.rect = function() {
   return PointList.rect(this);
 };
@@ -750,7 +750,7 @@ PointList.prototype.xrange = function() {
   const minmax = this.minmax();
   return [minmax.x1, minmax.x2];
 };
-PointList.prototype.normalizeX = function(newVal = (x) => x) {
+PointList.prototype.normalizeX = function(newVal = x => x) {
   const xrange = PointList.prototype.xrange.call(this);
   const xdiff = xrange[1] - xrange[0];
   this.forEach((p, i, l) => {
@@ -762,7 +762,7 @@ PointList.prototype.yrange = function() {
   const minmax = this.minmax();
   return [minmax.y1, minmax.y2];
 };
-PointList.prototype.normalizeY = function(newVal = (y) => y) {
+PointList.prototype.normalizeY = function(newVal = y => y) {
   const yrange = PointList.prototype.yrange.call(this);
   const ydiff = yrange[1] - yrange[0];
   this.forEach((p, i, l) => {
@@ -778,7 +778,7 @@ PointList.prototype.translate = function(x, y) {
   return this;
 };
 PointList.prototype.transform = function(arg) {
-  const fn = typeof arg == 'function' ? arg : (p) => Point.prototype.transform.call(p, arg);
+  const fn = typeof arg == 'function' ? arg : p => Point.prototype.transform.call(p, arg);
   for(let i = 0; i < this.length; i++) {
     const p = fn(this[i]);
     this[i].x = p.x;
@@ -821,9 +821,9 @@ PointList.prototype.lines = function(closed = false) {
   return iterableObj;
 };
 PointList.prototype.toString = function(prec) {
-  return this.map((point) => Point.prototype.toString.call(point, prec)).join(' ');
+  return this.map(point => Point.prototype.toString.call(point, prec)).join(' ');
 };
-PointList.toString = (pointList) => '[' + [...pointList].map((p) => `[${p.x || p[0]},${p.y || p[1]}]`).join(',') + ']';
+PointList.toString = pointList => '[' + [...pointList].map(p => `[${p.x || p[0]},${p.y || p[1]}]`).join(',') + ']';
 PointList.prototype.rotateRight = function(n) {
   return Util.rotateRight(this, n);
 };

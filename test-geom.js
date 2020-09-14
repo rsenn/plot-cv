@@ -6,9 +6,9 @@ function main(args) {
 
   if(args.length == 0) args = ['0,0', '50,100', '100,100', '100,50'];
 
-  args = args.map((arg) => arg.split(',').map((n) => +n));
+  args = args.map(arg => arg.split(',').map(n => +n));
 
-  args = args.map((arg) => new Point(arg));
+  args = args.map(arg => new Point(arg));
 
   let list = new PointList(args);
 
@@ -59,7 +59,7 @@ function main(args) {
   console.log('v:', v);
   let computation = v.compute(l2, bbox);
 
-  computation.vertices.map((p) => Object.setPrototypeOf(p, Point.prototype));
+  computation.vertices.map(p => Object.setPrototypeOf(p, Point.prototype));
   console.log('compute:', computation);
 
   let vertices = computation.vertices; /*.map(p => new Point(p))*/

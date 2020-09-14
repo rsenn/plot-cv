@@ -31,7 +31,7 @@ function calculateVelocity(delta, delta_t, len) {
  */
 
 function calculateVelocities(delta, delta_t) {
-  return delta_t ? delta.map((v) => v / delta_t) : Array(delta.length).fill(0);
+  return delta_t ? delta.map(v => v / delta_t) : Array(delta.length).fill(0);
 }
 
 /**
@@ -54,7 +54,7 @@ function calculateDistance(movement) {
 
 function calculateDirection(delta, len) {
   len = len || Math.hypot.apply(Math, delta) || 1;
-  return delta.map((v) => v / len);
+  return delta.map(v => v / len);
 }
 
 /**
@@ -232,7 +232,7 @@ let chainFns = function chainFns() {
       args[_key2] = arguments[_key2];
     }
 
-    return fns.forEach((fn) => fn.apply(void 0, args));
+    return fns.forEach(fn => fn.apply(void 0, args));
   };
 };
 let def = {
@@ -245,7 +245,7 @@ let def = {
 };
 function matchKeysFromObject(obj, matchingObject) {
   let o = {};
-  Object.entries(obj).forEach((_ref) => {
+  Object.entries(obj).forEach(_ref => {
     let key = _ref[0],
       value = _ref[1];
     return (value !== void 0 || key in matchingObject) && (o[key] = value);
@@ -336,7 +336,7 @@ function getInitialState() {
 let setListeners = function setListeners(add) {
   return function(el, listeners, options) {
     let action = add ? 'addEventListener' : 'removeEventListener';
-    listeners.forEach((_ref) => {
+    listeners.forEach(_ref => {
       let eventName = _ref[0],
         fn = _ref[1];
       return el[action](eventName, fn, options);
@@ -515,7 +515,7 @@ let Controller = function Controller() {
     _this.resetBindings();
 
     Object.values(_this.timeouts).forEach(clearTimeout);
-    Object.keys(_this.windowListeners).forEach((stateKey) => _this.removeWindowListeners(stateKey));
+    Object.keys(_this.windowListeners).forEach(stateKey => _this.removeWindowListeners(stateKey));
   };
 
   /**
@@ -576,7 +576,7 @@ let Controller = function Controller() {
     /** We iterate on the entries of this.binding for each event, then we chain
      * the array of functions mapped to it and push them to this.domListeners
      */
-    Object.entries(_this.bindings).forEach((_ref) => {
+    Object.entries(_this.bindings).forEach(_ref => {
       let event = _ref[0],
         fns = _ref[1];
 
@@ -594,7 +594,7 @@ let Controller = function Controller() {
 
   this.addBindings = function(eventNames, fn) {
     let eventNamesArray = !Array.isArray(eventNames) ? [eventNames] : eventNames;
-    eventNamesArray.forEach((eventName) => {
+    eventNamesArray.forEach(eventName => {
       if(_this.bindings[eventName]) _this.bindings[eventName].push(fn);
       else _this.bindings[eventName] = [fn];
     });
@@ -608,7 +608,7 @@ let Controller = function Controller() {
   this.getBindings = function() {
     let bindings = {};
     let captureString = _this.config.captureString;
-    Object.entries(_this.bindings).forEach((_ref2) => {
+    Object.entries(_this.bindings).forEach(_ref2 => {
       let event = _ref2[0],
         fns = _ref2[1];
       let fnsArray = Array.isArray(fns) ? fns : [fns];
@@ -2508,7 +2508,7 @@ function useGesture(handlers, config) {
    * If handlers contains {onDragStart, onDrag, onDragEnd, onMoveStart, onMove}
    * actions will include 'onDrag' and 'onMove.
    */
-  let _React$useState = React.useState(() => new Set(Object.keys(handlers).map((k) => k.replace(/End|Start/, '')))),
+  let _React$useState = React.useState(() => new Set(Object.keys(handlers).map(k => k.replace(/End|Start/, '')))),
     actions = _React$useState[0];
 
   /**

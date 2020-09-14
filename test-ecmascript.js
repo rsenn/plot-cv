@@ -83,7 +83,7 @@ async function main(...args) {
       //for(let imp of imports) console.log('tokens:', parser.tokensForNode(imp));
       let flat = deep.flatten(ast,
         new Map(),
-        (node) => node instanceof ESNode,
+        node => node instanceof ESNode,
         (path, value) => {
           path = new Path(path);
           //value = Util.map(value,(k,v) => [k,v instanceof ESNode ? path.down(k) : v ]);
@@ -100,8 +100,8 @@ async function main(...args) {
         nodeKeys.push(path);
       }
 
-      const isRequire = (node) => node instanceof CallExpression && node.callee.value == 'require';
-      const isImport = (node) => node instanceof ImportStatement;
+      const isRequire = node => node instanceof CallExpression && node.callee.value == 'require';
+      const isImport = node => node instanceof ImportStatement;
 
       //let posMap = new SortedMap([...flat].map(([key, value]) => [value.position ? value.position.pos : -1, value]), (a, b) => a - b);
 
@@ -127,7 +127,7 @@ async function main(...args) {
       dumpFile(output_file, output);
 
       const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
-      const importStatements = imports.map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path)).map((path) => [path, deep.get(ast, path)]);
+      const importStatements = imports.map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path)).map(path => [path, deep.get(ast, path)]);
 
       console.log('imports:', new Map(imports.map(([path, node]) => [ESNode.assoc(node).position, node])));
       console.log('importStatements:', importStatements);
@@ -139,11 +139,11 @@ async function main(...args) {
         .map(([p, n]) => [p, n.declarations ? n.declarations : n])
         .map(([p, n]) =>
           n
-            .map((decl) => (decl.id instanceof ObjectBindingPattern ? decl.id.properties : [decl.id]))
+            .map(decl => (decl.id instanceof ObjectBindingPattern ? decl.id.properties : [decl.id]))
             .flat()
-            .map((n) => [n.id ? n.id : n])
+            .map(n => [n.id ? n.id : n])
             .flat()
-            .map((n) => Identifier.string(n))
+            .map(n => Identifier.string(n))
         );
       //  console.log('importIdentifiers:',importIdentifiers.map(ids => ids.join(", ")).join(",\n"));
       console.log('importIdentifiers:', Util.unique(importIdentifiers.flat()).join(', '));
@@ -170,7 +170,7 @@ function finish(err) {
   if(fail) {
     err.stack = PathReplacer()('' + err.stack)
       .split(/\n/g)
-      .filter((s) => !/esfactory/.test(s))
+      .filter(s => !/esfactory/.test(s))
       .join('\n');
   }
 

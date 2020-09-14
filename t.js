@@ -31,10 +31,10 @@ function testLocator() {
 async function testEagle(filename) {
   let proj = new EagleProject(filename);
   let { board, schematic, libraries } = proj;
-  const getPackage = (e) => {
+  const getPackage = e => {
     const { document } = e;
     if(e.tagName == 'part') {
-      const device = e.deviceset.find((v) => v.tagName == 'device' && v.attributes.name == e.attributes.device,
+      const device = e.deviceset.find(v => v.tagName == 'device' && v.attributes.name == e.attributes.device,
         ([v]) => v
       );
       return device.package;
@@ -43,7 +43,7 @@ async function testEagle(filename) {
   };
   //Util.log(schematic.children);
   try {
-    for(let e of proj.getAll((v) => v.tagName == 'part' || v.tagName == 'element',
+    for(let e of proj.getAll(v => v.tagName == 'part' || v.tagName == 'element',
       ([v, l, h, d]) => new EagleElement(d, l, v)
     )) {
       //Util.log('proj:', dump(e, 1));
@@ -59,7 +59,7 @@ async function testEagle(filename) {
 (async () => {
   try {
     await testLocator();
-    await testEagle('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3').then((result) => Util.log(result));
+    await testEagle('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3').then(result => Util.log(result));
   } catch(err) {
     const stack = err.stack;
 

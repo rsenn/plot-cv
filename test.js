@@ -98,7 +98,7 @@ globalThis.process = function(contours, hier) {
     contours,
     hier
   };
-  contours = contours.filter((c) => c.length > 3);
+  contours = contours.filter(c => c.length > 3);
 
   let c = contours[0];
 
@@ -172,7 +172,7 @@ globalThis.process = function(contours, hier) {
 
   function processContours(contours) {
     contours.sort((a, b) => a.length - b.length);
-    contours = contours.filter((c) => c.length >= 4);
+    contours = contours.filter(c => c.length >= 4);
     for(let i = 0; i < contours.length; i++) {
       const [next, prev, child, parent] = hier[i];
       let list = new PointList(contours[i]);
@@ -183,7 +183,7 @@ globalThis.process = function(contours, hier) {
       contours[i].bbox = bbox;
       contours[i].rect = rect;
       areas.push(rect.area);
-      list = list.map((p) => {
+      list = list.map(p => {
         p.x += 2;
         p.y += 2;
         return p;
@@ -191,7 +191,7 @@ globalThis.process = function(contours, hier) {
       drawContour(list, new RGBA(255, 0, 255), 8, false);
     }
     contours.sort((a, b) => b.area - a.area);
-    areas = contours.map((c) => c.area);
+    areas = contours.map(c => c.area);
     dumpContour(contours[0]);
     drawContour(contours[0], new RGBA(255, 0, 0), 20, false);
     return contours;

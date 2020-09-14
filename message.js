@@ -9,7 +9,7 @@ export class Message {
     let obj = this instanceof Message ? this : Object.setPrototypeOf({}, Message.prototype);
 
     if(typeof msg != 'string') {
-      msg = Util.tryCatch((msg) => JSON.stringify(msg),
+      msg = Util.tryCatch(msg => JSON.stringify(msg),
         (json, msg) => json,
         (err, msg) => msg,
         msg
@@ -63,7 +63,7 @@ export class Message {
   get json() {
     const { body } = this;
     let r = Util.tryCatch(() => JSON.parse(body),
-      (obj) => obj,
+      obj => obj,
       () => null
     );
 

@@ -27,7 +27,7 @@ export function useDimensions(arg = {}) {
 
   const [node, setNode] = useState(null);
 
-  let ref = useCallback((node) => {
+  let ref = useCallback(node => {
     setNode(node);
   }, []);
   useLayoutEffect(() => {

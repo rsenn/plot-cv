@@ -134,7 +134,7 @@ const layerColors = {
   trash: 'rgb(189,133,64)'
 };
 
-const findAllKeys = (color) => {
+const findAllKeys = color => {
   let keys = [];
   for(let name in layerColors) {
     const c = layerColors[name];
@@ -160,7 +160,7 @@ for(let color of allColors) {
 }
 //console.log("keyList:", keyList);
 
-const GeneratePalette = (numColors) => {
+const GeneratePalette = numColors => {
   let ret = [];
   let base = new HSLA(Util.randInt(0, 360, prng), 100, 50).toRGBA();
   let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360], []);

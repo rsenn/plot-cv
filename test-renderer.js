@@ -80,7 +80,7 @@ async function main() {
     console.log(error.message, stack + '');
   }
 }
-main(Util.getArgs()).catch((error) => {
+main(Util.getArgs()).catch(error => {
   const stack = [...error.stack];
   console.log('ERROR:', error.message, stack);
 });

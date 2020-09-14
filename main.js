@@ -133,11 +133,11 @@ let showGrid;
 
 const add = (arr, ...items) => [...(arr ? arr : []), ...items];
 
-const useSlot = (arr, i) => [() => arr[i], (v) => (arr[i] = v)];
-const trklGetSet = (get, set) => (value) => (value !== undefined ? set(value) : get());
+const useSlot = (arr, i) => [() => arr[i], v => (arr[i] = v)];
+const trklGetSet = (get, set) => value => (value !== undefined ? set(value) : get());
 //const useTrkl = trkl => [() => trkl(), value => trkl(value)];
 
-const MouseEvents = (h) => ({
+const MouseEvents = h => ({
   onMouseDown: h,
 
   /*  onBlur: h,*/
@@ -182,7 +182,7 @@ const DrawSVG = (...args) => {
   let e;
   try {
     let parent = project.svg.parentElement.lastElementChild;
-    const append = (e) => parent.appendChild(e);
+    const append = e => parent.appendChild(e);
     let c = RGBA.random();
     let [tag, attrs, children] = args;
     if(typeof tag == 'string') {
@@ -253,7 +253,7 @@ const FileSystem = {
   async realpath(filename) {}
 };
 
-const LoadFile = async (file) => {
+const LoadFile = async file => {
   let { url, name: filename } = typeof file == 'string' ? { url: file, name: file.replace(/.*\//g, '') } : GetProject(file);
   LogJS.info(`LoadFile ${url}`);
   url = /:\/\//.test(url) ? url : /^tmp\//.test(url) ? '/' + url : `/static/${filename}`;
@@ -288,7 +288,7 @@ const SaveSVG = async function save(filename, layers = [1, 16, 20, 21, 22, 23, 2
   const { doc } = project;
   const { basename, typeName } = doc;
   if(!filename) filename = `${doc.basename}.${doc.typeName}.svg`;
-  let predicate = (element) => {
+  let predicate = element => {
     if(!element.hasAttribute('data-layer')) return true;
     const layer = element.getAttribute('data-layer');
     let [number, name] = layer.split(/\ /);
@@ -299,7 +299,7 @@ const SaveSVG = async function save(filename, layers = [1, 16, 20, 21, 22, 23, 2
   return await SaveFile(filename.replace(/\.svg$/i, '.svg'), data);
 };
 
-const ModifyColors = (fn) => (e) => {
+const ModifyColors = fn => e => {
   const { type, buttons } = e;
   if(type.endsWith('down')) {
     if(!window.c) window.c = SVG.allColors(project.svg);
@@ -337,12 +337,12 @@ const LoadDocument = async (project, parentElem) => {
   }
   LogJS.info(`${project.doc.basename} loaded.`);
   const topPlace = 'tPlace';
-  elementChildren = Util.memoize(() => ElementChildren(topPlace, (ent) => Object.fromEntries(ent)));
-  elementGeometries = Util.memoize(() => ElementGeometries(topPlace, (ent) => Object.fromEntries(ent)));
+  elementChildren = Util.memoize(() => ElementChildren(topPlace, ent => Object.fromEntries(ent)));
+  elementGeometries = Util.memoize(() => ElementGeometries(topPlace, ent => Object.fromEntries(ent)));
   //polygonGeometries = Util.memoize(() => Object.entries(elementGeometries()).map(([name, lineList]) => [name, lineList.toPolygon((pts) => new Polyline(pts))]));
 
   documentTitle(project.doc.file.replace(/.*\//g, ''));
-  let s = new BBox().update(project.doc.getMeasures(false)).toSize((o) => new Size(o.width, o.height));
+  let s = project.doc.dimensions;
 
   documentSize(s.toString({ unit: 'mm' }));
   window.eagle = project.doc;
@@ -354,7 +354,7 @@ const LoadDocument = async (project, parentElem) => {
   project.renderer = new Renderer(project.doc, ReactComponent.append, debug);
 
   showGrid = trkl(true);
-  showGrid.subscribe((value) => {
+  showGrid.subscribe(value => {
     let obj = { ...project.renderer.grid, visible: value };
     console.log('showGrid:', obj);
     project.renderer.grid = obj;
@@ -363,10 +363,10 @@ const LoadDocument = async (project, parentElem) => {
   console.log('project.renderer', project.renderer);
   let style = { width: '100%', height: '100%', position: 'relative' };
   let component = project.renderer.render(project.doc, null, {});
-  let usedLayers = [...project.doc.layers.list].filter((layer) => layer.elements.size > 0);
+  let usedLayers = [...project.doc.layers.list].filter(layer => layer.elements.size > 0);
 
   Timer.once(250).then(() =>
-    layerList(usedLayers.map((layer) => ({
+    layerList(usedLayers.map(layer => ({
         i: layer.number,
         name: layer.name,
         element: layer,
@@ -391,8 +391,8 @@ const LoadDocument = async (project, parentElem) => {
   const Fence = ({ children, style = {}, sizeListener, aspectListener, ...props }) => {
     const [dimensions, setDimensions] = useState(sizeListener());
     const [aspect, setAspect] = useState(aspectListener());
-    if(sizeListener && sizeListener.subscribe) sizeListener.subscribe((value) => setDimensions(value));
-    if(aspectListener && aspectListener.subscribe) aspectListener.subscribe((value) => setAspect(value));
+    if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
+    if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
     return h(TransformedElement,
       {
         id: 'fence',
@@ -429,7 +429,7 @@ const LoadDocument = async (project, parentElem) => {
 
   let eagle2dom = [...Element.findAll('*[data-path]')];
 
-  eagle2dom = eagle2dom.map((e) => [e.getAttribute('data-path'), e]);
+  eagle2dom = eagle2dom.map(e => [e.getAttribute('data-path'), e]);
   eagle2dom = eagle2dom.map(([p, e]) => [new ImmutablePath(p), e]);
   eagle2dom = eagle2dom.map(([p, e]) => [p, p.apply(project.doc.raw), e]);
   eagle2dom = eagle2dom.map(([p, r, e]) => [EagleElement.get(project.doc, p, r), e]);
@@ -490,7 +490,7 @@ const LoadDocument = async (project, parentElem) => {
       let e = SVG.create(tag, { ...elementDefaultAttributes, transform, ...attr }, root);
       list.push(e);
       let d = trkl.property(e, 'd');
-      d.subscribe((value) => e.setAttribute('d', value));
+      d.subscribe(value => e.setAttribute('d', value));
       return e;
     };
   })(defaultTransform);
@@ -502,7 +502,7 @@ const LoadDocument = async (project, parentElem) => {
   currentProj(project);
   size.mul(doc.type == 'brd' ? 2 : 1.5);
   let svgrect = SVG.bbox(project.svg);
-  let measures = new BBox().update(doc.getMeasures(true)).toRect(Rect.prototype);
+  let measures = doc.measures.rect;
   //console.debug('measures:', measures);
   Element.attr(project.svg, { 'data-filename': project.name, 'data-aspect': project.aspectRatio });
   let css = size.div(0.26458333333719).toCSS({ width: 'px', height: 'px' });
@@ -558,7 +558,7 @@ const GenerateVoronoi = () => {
   console.log('rect:', rect);
   rect.outset(1.27);
   window.tmprect = rect;
-  let sites = points.map((p) => p.toObject());
+  let sites = points.map(p => p.toObject());
   let bbox = { xl: bb.x1, xr: bb.x2, yt: bb.y1, yb: bb.y2 };
   let voronoi = new Voronoi();
   //pass an object which exhibits xl, xr, yt, yb properties. The bounding
@@ -568,15 +568,15 @@ const GenerateVoronoi = () => {
   console.log('result:', Object.keys(result).join(', '));
   let { site, cells, edges, vertices, execTime } = result;
   console.log('cells:', cells);
-  let holes = edges.filter((e) => !e.rSite).map(({ lSite, rSite, ...edge }) => new Point(lSite));
-  let rlines = edges.filter((e) => e.rSite).map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
-  let vlines = edges.filter((e) => e.va && e.vb).map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
-  let points2 = vertices.map((v) => new Point(v).round(0.127, 4));
+  let holes = edges.filter(e => !e.rSite).map(({ lSite, rSite, ...edge }) => new Point(lSite));
+  let rlines = edges.filter(e => e.rSite).map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
+  let vlines = edges.filter(e => e.va && e.vb).map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
+  let points2 = vertices.map(v => new Point(v).round(0.127, 4));
   const add = (arr, ...items) => [...(Util.isArray(arr) ? arr : []), ...items];
   const factory = SVG.factory();
-  const lines = [...rlines.map((l) => ['line', { ...l.toObject((t) => t + ''), stroke: '#000', 'stroke-width': 0.01 }]), ...vlines.map((l) => ['line', { ...l.toObject((t) => t + ''), stroke: '#f00', 'stroke-width': 0.01 }])];
+  const lines = [...rlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.01 }]), ...vlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.01 }])];
   const circles = [
-    ...holes.map((p) => ['circle', { cx: p.x, cy: p.y, r: 0.254, fill: 'none', stroke: '#00f', 'stroke-width': 0.3 }])
+    ...holes.map(p => ['circle', { cx: p.x, cy: p.y, r: 0.254, fill: 'none', stroke: '#00f', 'stroke-width': 0.3 }])
 
     /* ...points2.map(p => [
       'circle',
@@ -607,18 +607,18 @@ const GenerateVoronoi = () => {
 };
 
 function PackageChildren(element, layer) {
-  let children = [...element.children].filter((p) => p.layer.name == 'tPlace' && p.tagName == 'wire');
-  children.xml = children.map((e) => e.toXML()).join('\n');
+  let children = [...element.children].filter(p => p.layer && p.layer.name == 'tPlace' && p.tagName == 'wire');
+  children.xml = children.map(e => e.toXML()).join('\n');
   return children;
 }
-function ElementChildren(layer = 'tPlace', rfn = (ent) => new Map(ent)) {
+function ElementChildren(layer = 'tPlace', rfn = ent => new Map(ent)) {
   return rfn([...project.doc.elements].map(([name, element]) => [name, PackageChildren(element, layer)]));
 }
 
-function ElementGeometries(layer = 'tPlace', rfn = (ent) => new Map(ent)) {
-  return rfn(ElementChildren(layer, (ent) => ent)
-      .map(([name, children]) => [name, new LineList(children.map((e) => e.geometry))])
-      .map(([name, lines]) => [name, lines, lines.slice().toPolygons((pts) => new Polyline(pts))])
+function ElementGeometries(layer = 'tPlace', rfn = ent => new Map(ent)) {
+  return rfn(ElementChildren(layer, ent => ent)
+      .map(([name, children]) => [name, new LineList(children.map(e => e.geometry))])
+      .map(([name, lines]) => [name, lines, lines.slice().toPolygons(pts => new Polyline(pts))])
       .map(([name, lines, polygons]) => [name, { lines, polygons }])
   );
 }
@@ -628,7 +628,7 @@ function NewPath(path) {
   project.svg.appendChild(elem);
 }
 
-const MakeFitAction = (index) => async (event) => {
+const MakeFitAction = index => async event => {
   // window.transform='';
   const { buttons, type } = event;
 
@@ -666,7 +666,7 @@ const MakeFitAction = (index) => async (event) => {
   let size = new Rect(newSize).align(clientArea);
   console.debug(`FitAction <->`, oldSize, ' -> ', size);
 
-  let points = [size, newSize].map((s) => new Point(s));
+  let points = [size, newSize].map(s => new Point(s));
   let delta = Point.diff(...points);
   console.debug(`FitAction <->`, ...points);
   console.debug(`FitAction -`, Point.diff(...points));
@@ -728,7 +728,7 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
   await ws.disconnect();
 };
 
-const BindGlobal = Util.once((arg) => trkl.bind(window, arg));
+const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 
 const AppMain = (window.onload = async () => {
   Util(globalThis);
@@ -738,11 +738,12 @@ const AppMain = (window.onload = async () => {
 
   const importedNames = Object.keys(imports);
   console.debug('Dupes:',
-    Util.getMemberNames(window).filter((m) => importedNames.indexOf(m) != -1)
+    Util.getMemberNames(window).filter(m => importedNames.indexOf(m) != -1)
   );
 
   //prettier-ignore
-  Util.weakAssign(window,imports);
+  Util.weakAssign(window,geom);
+  Util.weakAssign(window, imports);
   Util.weakAssign(window, localFunctions);
   Error.stackTraceLimit = 100;
 
@@ -763,9 +764,9 @@ const AppMain = (window.onload = async () => {
   //window.focusSearch = trkl();
   window.currentSearch = trkl(null);
 
-  window.keystroke = (target) => (key, modifiers = 0) => keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key), target);
+  window.keystroke = target => (key, modifiers = 0) => keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key), target);
 
-  window.focusSearch = (state) => {
+  window.focusSearch = state => {
     const input = currentSearch();
     //console.log('focusSearch', input.tagName, state);
     input[state ? 'focus' : 'blur']();
@@ -777,7 +778,7 @@ const AppMain = (window.onload = async () => {
      geometries: () => elementGeometries(),
      debug: debugFlag });
 
-  currentSearch.subscribe((value) => {
+  currentSearch.subscribe(value => {
     if(value) {
       focusSearch(false);
       Timer.once(1000).then(() => focusSearch(true));
@@ -786,7 +787,7 @@ const AppMain = (window.onload = async () => {
 
   const inspectSym = Symbol.for('nodejs.util.inspect.custom');
 
-  const testComponent = (props) => html` <div>This is a test</div> `;
+  const testComponent = props => html` <div>This is a test</div> `;
 
   let c = testComponent({});
   window.testComponent = c;
@@ -830,7 +831,7 @@ const AppMain = (window.onload = async () => {
 
       for(let svgFile of files) {
         if(Util.isObject(svgFile) && svgFile.mtime !== undefined) {
-          const f = list.find((i) => i.svg === svgFile.name);
+          const f = list.find(i => i.svg === svgFile.name);
           if(Util.isObject(f) && f.mtime !== undefined) {
             const delta = svgFile.mtime - f.mtime;
 
@@ -846,7 +847,7 @@ const AppMain = (window.onload = async () => {
   };
 
   UpdateProjectList();
-  CreateWebSocket(null, null, (ws) => (window.socket = ws));
+  CreateWebSocket(null, null, ws => (window.socket = ws));
 
   const crosshair = {
     show: trkl(false),
@@ -855,18 +856,18 @@ const AppMain = (window.onload = async () => {
 
   window.crosshair = trkl.bind({}, crosshair);
 
-  searchFilter.subscribe((value) => {
+  searchFilter.subscribe(value => {
     store.set('filter', value);
     LogJS.info(`searchFilter is ${value}`);
   });
 
-  listURL.subscribe((value) => {
+  listURL.subscribe(value => {
     store.set('url', value);
     LogJS.info(`listURL is '${value}'`);
   });
-  debugFlag.subscribe((value) => store.set('debug', value));
+  debugFlag.subscribe(value => store.set('debug', value));
 
-  logSize.subscribe((value) => {
+  logSize.subscribe(value => {
     const { width, height } = value;
 
     if(width === undefined || height === undefined) {
@@ -881,7 +882,7 @@ const AppMain = (window.onload = async () => {
 
   trkl.bind(window, { zoomLog, logSize });
 
-  zoomLog.subscribe((value) => {
+  zoomLog.subscribe(value => {
     let factor = ZoomFactor(value);
     // console.info('zoomFactor changed', value, factor);
     store.set('zoom', value);
@@ -897,7 +898,7 @@ const AppMain = (window.onload = async () => {
     return true;
   };
 
-  const changeInput = (e) => {
+  const changeInput = e => {
     const { target } = e;
     LogJS.info('changeInput:', target.value);
 
@@ -905,7 +906,7 @@ const AppMain = (window.onload = async () => {
 
     let parts = value.split(/\s+/g);
 
-    let urls = parts.filter((p) => /\:\/\//.test(p)).join('\n');
+    let urls = parts.filter(p => /\:\/\//.test(p)).join('\n');
 
     updateIfChanged(listURL, urls, () => {});
     listURL(urls);
@@ -915,7 +916,7 @@ const AppMain = (window.onload = async () => {
     searchFilter(value == '' ? '*' : value.split(/\s*\|\s*/g).join(' | '));
   };
 
-  const Consumer = (props) => {
+  const Consumer = props => {
     const result = useResult(async function* () {
       for await (let time of timestamps) {
         yield time;
@@ -943,7 +944,7 @@ const AppMain = (window.onload = async () => {
     }
   );
   let loggerRect = new Rect();
-  const Logger = (props) => {
+  const Logger = props => {
     const [lines, setLines] = useState([]);
     const [ref, rect] = useDimensions();
 
@@ -976,10 +977,10 @@ const AppMain = (window.onload = async () => {
 
   dump({ ...dump(), test: 123 });
 
-  const Dumper = (props) => {
+  const Dumper = props => {
     const [values, setValues] = useState(dump());
     let lines = [];
-    dump.subscribe((value) => setValues(value));
+    dump.subscribe(value => setValues(value));
     for(let [key, value] of Object.entries(values)) lines.push([key, value]);
     return h('table',
       { border: '0', cellpadding: 3, cellspacing: 0, className: 'dumper' },
@@ -989,7 +990,7 @@ const AppMain = (window.onload = async () => {
 
   const Commander = ({ onCommand, ...props }) => {
     const [inputText, setInputText] = useState('');
-    const handler = (e) => {
+    const handler = e => {
       const { target } = e;
       if(e.type.endsWith('down') && e.keyCode == 13) {
         const value = target.value || inputText;
@@ -1014,26 +1015,26 @@ const AppMain = (window.onload = async () => {
 
   const layersDropDown = trkl(false);
 
-  const Toggle = (trkl) => trkl(!trkl());
+  const Toggle = trkl => trkl(!trkl());
   let setTo;
 
   const Layer = ({ title, name, label, i, color, element, className, ...props }) => {
     let setVisible = props.visible || element.handlers.visible,
       visible = useTrkl(setVisible);
     const isVisible = Util.is.on(visible);
-    if(Util.isObject(element) && 'visible' in element) setVisible = (value) => (element.visible = value);
+    if(Util.isObject(element) && 'visible' in element) setVisible = value => (element.visible = value);
 
     console.log(`Layer #${i} ${name} isVisible=${isVisible}`);
     return h('div',
       {
         className,
-        onMouseMove: (e) => {
+        onMouseMove: e => {
           if(e.buttons & 1 && setTo !== undefined) setVisible(setTo);
         },
-        onMouseUp: (e) => {
+        onMouseUp: e => {
           setTo = null;
         },
-        onMouseDown: (e) => {
+        onMouseDown: e => {
           if(e.buttons & 1) {
             setVisible((setTo = !isVisible));
             return true;
@@ -1064,7 +1065,7 @@ const AppMain = (window.onload = async () => {
       Panel('buttons no-select', [
         h(Button, {
           image: 'static/svg/browse.svg',
-          fn: (e) => {
+          fn: e => {
             if(e.type.endsWith('down')) {
               //console.log('file list push', e);
               open(!open());
@@ -1099,7 +1100,7 @@ const AppMain = (window.onload = async () => {
             image: 'static/svg/grid.svg'
           }),
           h(DropDown, {
-              isOpen: layersDropDown.subscribe((open) => console.log('layers dropdown', { open }))
+              isOpen: layersDropDown.subscribe(open => console.log('layers dropdown', { open }))
             }, [
               h(Button, {
                 toggle: true,
@@ -1107,7 +1108,7 @@ const AppMain = (window.onload = async () => {
                 //    fn: (e,state) => /*(e.buttons && e.type.endsWith('down')) &&*/ state && layersDropDown(state) || true,
                 image: 'static/svg/layers.svg'
               }),
-              (props) =>
+              props =>
                 h(Chooser, {
                     ...props,
                     className: 'layers',
@@ -1119,7 +1120,7 @@ const AppMain = (window.onload = async () => {
             ]
           ),
           h(Button, {
-            fn: debounceAsync(async (e) => {
+            fn: debounceAsync(async e => {
               /*console.log("CAM button",{e});
               if(e.type.endsWith('up')) return false;*/
               let r;
@@ -1138,14 +1139,14 @@ const AppMain = (window.onload = async () => {
                   project.gerber[side] = gerber;
                   if(gerber.data) {
                     gerber.cmds = await GerberParser.parse(gerber.data);
-                    gerber.unit = gerber.cmds.find((i) => i.prop == 'units');
+                    gerber.unit = gerber.cmds.find(i => i.prop == 'units');
 
-                    gerber.points = gerber.cmds.filter((i) => i.coord).map(({ coord }) => new Point(coord.x, coord.y));
+                    gerber.points = gerber.cmds.filter(i => i.coord).map(({ coord }) => new Point(coord.x, coord.y));
                   }
                   console.debug('BoardToGerber side =', side, ' file =', gerber.file);
                 }
               }
-              const sides = Object.fromEntries(['back', 'front', 'drill', 'outline'].map((side) => [side, project.gerber[side].file]));
+              const sides = Object.fromEntries(['back', 'front', 'drill', 'outline'].map(side => [side, project.gerber[side].file]));
               console.debug('  sides = ', sides);
               const allGcode = await GerberToGcode(project.name, {
                 ...sides,
@@ -1191,15 +1192,15 @@ const AppMain = (window.onload = async () => {
                         g.innerHTML = gc.svg;
                         if(g.firstElementChild && g.firstElementChild.tagName == 'svg') {
                           let svg = g.firstElementChild;
-                          ['width', 'height', 'xmlns', 'xmlns:xlink', 'version'].forEach((a) => svg.removeAttribute(a));
+                          ['width', 'height', 'xmlns', 'xmlns:xlink', 'version'].forEach(a => svg.removeAttribute(a));
                           svg.setAttribute('viewBox', bbox);
                         }
                         Element.findAll('path', g)
-                          .filter((e) => e.style['fill-opacity'] == 1)
-                          .forEach((e) => (e.style.display = 'none'));
+                          .filter(e => e.style['fill-opacity'] == 1)
+                          .forEach(e => (e.style.display = 'none'));
 
-                        ['fill', 'stroke'].forEach((name) =>
-                          Element.findAll(`[style*="${name}:"]`, g).forEach((e) => {
+                        ['fill', 'stroke'].forEach(name =>
+                          Element.findAll(`[style*="${name}:"]`, g).forEach(e => {
                             const value = e.style[name];
                             if(value != 'rgb(0, 0, 0)' && value != 'none') {
                               e.setAttribute(name, value);
@@ -1213,7 +1214,7 @@ const AppMain = (window.onload = async () => {
                     });
 
                     layer.sublayers = Util.histogram(Element.walk(layer.dom, (e, acc) => (e.tagName.endsWith('g') ? acc : [...acc, e]), []),
-                      (e) => e.getAttribute('style'),
+                      e => e.getAttribute('style'),
                       new Map(),
                       () => new Set()
                     );
@@ -1305,7 +1306,7 @@ const AppMain = (window.onload = async () => {
         /*h(div, {}, [ */ h(Logger, {}),
         h(Dumper, {}),
         h(Commander, {
-          onCommand: (cmdStr) => {
+          onCommand: cmdStr => {
             let fn = new Function(`return ${cmdStr};`);
 
             //console.log('Command:', cmdStr);
@@ -1326,7 +1327,7 @@ const AppMain = (window.onload = async () => {
 
   //Element.find('.transformed-element-size').setAttribute('id', 'transformed-element');
 
-  TouchListener(/*Util.printReturnValue*/ (event) => {
+  TouchListener(/*Util.printReturnValue*/ event => {
       const { x, y, index, buttons, start, type, target } = event;
 
       if(type.endsWith('end') || type.endsWith('up')) return cancel();
@@ -1335,7 +1336,7 @@ const AppMain = (window.onload = async () => {
       if(!move && !resize) {
         let elemId;
         //  console.log('target:', target);
-        box = ((e) => {
+        box = (e => {
           do {
             elemId = e.getAttribute('id');
             if(['fence', 'console'].indexOf(elemId) != -1) return e;
@@ -1351,7 +1352,7 @@ const AppMain = (window.onload = async () => {
 
             let edge = corners.sort((a, b) => a[1] - b[1])[0];
 
-            window.resize = resize = Element.resizeRelative(box, null, edge[0] ? -1 : 1, (size) => {
+            window.resize = resize = Element.resizeRelative(box, null, edge[0] ? -1 : 1, size => {
               //    console.log('resizeRelative:', { elemId, size });
               if(elemId == 'console') logSize(size);
             });
@@ -1366,10 +1367,10 @@ const AppMain = (window.onload = async () => {
         const id = box && box.getAttribute('id');
 
         if(id == 'console') {
-          const rects = [true, false].map((border) => Element.rect(box, { border }));
+          const rects = [true, false].map(border => Element.rect(box, { border }));
           let p = new Point(start.x + x, start.y + y);
           //console.log('', p);
-          const inside = rects.map((r) => r.inside(p));
+          const inside = rects.map(r => r.inside(p));
           const inBorder = inside[0] && !inside[1];
           function mod(n, m) {
             return ((n % m) + m) % m;
@@ -1498,7 +1499,7 @@ const AppMain = (window.onload = async () => {
     }
   });*/
 
-  window.addEventListener('wheel', (event) => {
+  window.addEventListener('wheel', event => {
     const { deltaX, deltaY, screenX, screenY, clientX, clientY, pageX, pageY, x, y, offsetX, offsetY, layerX, layerY } = event;
 
     //console.log('wheel:', { deltaX, deltaY, screenX, screenY, clientX, clientY, pageX, pageY, x, y, offsetX, offsetY, layerX, layerY });
@@ -1546,5 +1547,5 @@ const Module = {
     let myString = prompt('Enter a string:');
     Module.callMain([myString]);
   },
-  print: (txt) => alert(`The MD5 hash is: ${txt}`)
+  print: txt => alert(`The MD5 hash is: ${txt}`)
 };

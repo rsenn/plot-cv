@@ -19,7 +19,6 @@
             "*.filters",
             "*.tsbuildinfo",
             "*.cjs",
-            "*.lbr",
             "*.flow",
             "*.o",
             "*.yml",

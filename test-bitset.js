@@ -43,10 +43,10 @@ orBinary(bits, 0x4b4b4b, 8, 8);
 
 printBinary(bits, 16);
 console.log('bits:', bits);
-let colors = [...bits].map((num) => `#${('000000' + (+num).toString(16)).slice(-6)}`).map((c) => new RGBA(c));
+let colors = [...bits].map(num => `#${('000000' + (+num).toString(16)).slice(-6)}`).map(c => new RGBA(c));
 
 console.log('colors:', colors);
-console.log('colors:\n', colors.map((c) => c.toSource()).join(',\n'));
+console.log('colors:\n', colors.map(c => c.toSource()).join(',\n'));
 let palette = [new RGBA(0x4b, 0xff, 0x4b), new RGBA(0x4b, 0xff, 0xff), new RGBA(0xff, 0x4b, 0x4b), new RGBA(0xff, 0xff, 0x4b)];
 console.log('palette:', palette);
-console.log('palette:', palette.map((color) => color.hex()).join(','));
+console.log('palette:', palette.map(color => color.hex()).join(','));
