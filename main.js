@@ -393,6 +393,7 @@ const LoadDocument = async (project, parentElem) => {
     const [aspect, setAspect] = useState(aspectListener());
     if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
     if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
+    console.debug('Fence dimensions:', dimensions);
     return h(TransformedElement,
       {
         id: 'fence',
@@ -607,8 +608,8 @@ const GenerateVoronoi = () => {
 };
 
 function PackageChildren(element, layer) {
-  let children = [...element.children].filter(p => p.layer && p.layer.name == 'tPlace' && p.tagName == 'wire');
-  children.xml = children.map(e => e.toXML()).join('\n');
+  let children = [...element.children].map((c, i) => [i, c]).filter(([i, p]) => p.layer && p.layer.name == 'tPlace' && p.tagName == 'wire');
+  children.xml = children.map(([i, e]) => e.toXML()).join('\n');
   return children;
 }
 function ElementChildren(layer = 'tPlace', rfn = ent => new Map(ent)) {
@@ -617,7 +618,17 @@ function ElementChildren(layer = 'tPlace', rfn = ent => new Map(ent)) {
 
 function ElementGeometries(layer = 'tPlace', rfn = ent => new Map(ent)) {
   return rfn(ElementChildren(layer, ent => ent)
-      .map(([name, children]) => [name, new LineList(children.map(e => e.geometry))])
+      .map(([name, children]) => [
+        name,
+        new LineList(children.map(([i, e]) => {
+            let line = e.geometry;
+            if(e.curve !== undefined) line.curve = e.curve;
+            line.element = e;
+            line.xml = e.toXML();
+            return line;
+          })
+        )
+      ])
       .map(([name, lines]) => [name, lines, lines.slice().toPolygons(pts => new Polyline(pts))])
       .map(([name, lines, polygons]) => [name, { lines, polygons }])
   );
@@ -630,10 +641,10 @@ function NewPath(path) {
 
 const MakeFitAction = index => async event => {
   // window.transform='';
-  const { buttons, type } = event;
+  const { buttons, type, target } = event;
 
   if(!type.endsWith('down') || buttons == 0) return false;
-  console.debug(`FitAct(${index})`, { buttons, type });
+  console.debug(`FitAct(${index})`, { buttons, type, target });
 
   let container = Element.find('.transformed-element-size');
   let oldSize = Element.rect(container);
