@@ -1,5 +1,12 @@
 // prettier-ignore-start
-import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
+import {
+  Transformation,
+  Rotation,
+  Translation,
+  Scaling,
+  MatrixTransformation,
+  TransformationList
+} from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
@@ -28,14 +35,47 @@ import { Functional } from './lib/functional.js';
 import { makeLocalStorage } from './lib/autoStore.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { useResult } from './lib/repeater/react-hooks.js';
+import { Portal } from './lib/dom/preactComponent.js';
 import LogJS from './lib/log.js';
 import { useDimensions } from './useDimensions.js';
 import { toXML, ImmutablePath, arrayDiff, objectDiff } from './lib/json.js';
 import { XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';
-import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
+import {
+  RGBA,
+  isRGBA,
+  ImmutableRGBA,
+  HSLA,
+  isHSLA,
+  ImmutableHSLA,
+  ColoredText
+} from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
-import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
-import components, { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional } from './components.js';
+import React, {
+  h,
+  html,
+  render,
+  Fragment,
+  Component,
+  useState,
+  useLayoutEffect,
+  useRef
+} from './lib/dom/preactComponent.js';
+import components, {
+  Chooser,
+  DynamicLabel,
+  Button,
+  FileList,
+  Panel,
+  SizedAspectRatioBox,
+  TransformedElement,
+  Canvas,
+  ColorWheel,
+  Slider,
+  CrossHair,
+  FloatingPanel,
+  DropDown,
+  Conditional
+} from './components.js';
 import { Message } from './message.js';
 import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import { CTORS, ECMAScriptParser, estree, Factory, Lexer, Position, Range, ESNode, Parser, PathReplacer, Printer, Stack, Token, ArrayBindingPattern, ArrayLiteral, ArrowFunction, AssignmentExpression, AwaitExpression, BinaryExpression, BindingPattern, BindingProperty, LabelledStatement, BlockStatement, BreakStatement, CallExpression, ClassDeclaration, ConditionalExpression, ContinueStatement, Declaration, DecoratorExpression, DoStatement, EmptyStatement, Expression, ExpressionStatement, ForInStatement, ForStatement, FunctionLiteral, FunctionDeclaration, Identifier, ComputedPropertyName, IfStatement, SwitchStatement, CaseClause, ImportStatement, ExportStatement, JSXLiteral, Literal, TemplateLiteral, LogicalExpression, MemberExpression, InExpression, NewExpression, ObjectBindingPattern, ObjectLiteral, PropertyDefinition, MemberVariable, Program, RestOfExpression, ReturnStatement, SequenceExpression, SpreadElement, Statement, StatementList, ThisExpression, ThrowStatement, YieldStatement, TryStatement, UnaryExpression, UpdateExpression, VariableDeclaration, VariableDeclarator, WhileStatement, WithStatement } from './lib/ecmascript.js';
@@ -66,8 +106,31 @@ import {
   PipeToRepeater,
   WritableStream
 } from './lib/stream.js?ts=<?TS?>';
-import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
-import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl } from './lib/eagle/renderUtils.js';
+import {
+  PrimitiveComponents,
+  ElementNameToComponent,
+  ElementToComponent
+} from './lib/eagle/components.js';
+import {
+  SVGAlignments,
+  AlignmentAttrs,
+  Alignment,
+  AlignmentAngle,
+  Arc,
+  CalculateArcRadius,
+  ClampAngle,
+  EagleAlignments,
+  HORIZONTAL,
+  HORIZONTAL_VERTICAL,
+  InvertY,
+  LayerAttributes,
+  LinesToPath,
+  MakeCoordTransformer,
+  PolarToCartesian,
+  RotateTransformation,
+  VERTICAL,
+  useTrkl
+} from './lib/eagle/renderUtils.js';
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
@@ -76,10 +139,40 @@ import { Slot, SlotProvider } from './slots.js';
 import Voronoi from './lib/geom/voronoi.js';
 import GerberParser from './lib/gerber/parser.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
-import { BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode } from './lib/eagle.js';
+import {
+  BoardRenderer,
+  DereferenceError,
+  EagleDocument,
+  EagleElement,
+  EagleNode,
+  EagleNodeList,
+  EagleNodeMap,
+  EagleProject,
+  EagleRef,
+  EagleReference,
+  EagleSVGRenderer,
+  Renderer,
+  SchematicRenderer,
+  makeEagleElement,
+  makeEagleNode
+} from './lib/eagle.js';
 //import PureCache from 'pure-cache';
 import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
-import { NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer } from './commands.js';
+import {
+  NormalizeResponse,
+  ResponseData,
+  FetchURL,
+  FetchCached,
+  GetProject,
+  ListProjects,
+  GetLayer,
+  AddLayer,
+  BoardToGerber,
+  GerberToGcode,
+  GcodeToPolylines,
+  ListGithubRepo,
+  ListGithubRepoServer
+} from './commands.js';
 // prettier-ignore-end
 
 /* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line,Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
@@ -87,7 +180,13 @@ import { NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, Lis
 import { classNames } from './lib/classNames.js';
 
 Util.colorCtor = ColoredText;
-const elementDefaultAttributes = { stroke: 'red', fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': 0.1 };
+const elementDefaultAttributes = {
+  stroke: 'red',
+  fill: 'none',
+  'stroke-linecap': 'round',
+  'stroke-linejoin': 'round',
+  'stroke-width': 0.1
+};
 
 /* prettier-ignore */
 //Util.extend(window, { React, ReactComponent, WebSocketClient, html }, { dom, keysim }, geom, { Iterator, Functional }, { EagleNodeList, EagleNodeMap, EagleDocument, EagleReference, EagleNode, EagleElement }, { toXML, XmlObject, XmlAttr }, { CTORS, ECMAScriptParser, ESNode, estree, Factory, Lexer, Parser, PathReplacer, Printer, Stack, Token, ReactComponent, ClipperLib, Shape, isRGBA, RGBA, ImmutableRGBA, isHSLA, HSLA, ImmutableHSLA, ColoredText, Alea, Message }, { Chooser, useState, useLayoutEffect, useRef, Polygon, Circle } );
@@ -96,6 +195,7 @@ const Timer = { ...Timers, once: dom.Timer };
 let currentProj = trkl.property(window, 'project');
 let layerList = trkl.property(window, 'layers', { value: [] });
 let gcode = trkl(null);
+let wantAuthorization = trkl(null);
 
 let open = trkl();
 let showSearch = trkl(true);
@@ -127,6 +227,7 @@ let searchFilter = trkl(store.get('filter') || '*');
 let zoomLog = trkl(store.get('zoom') || null);
 let logSize = trkl(store.get('console') || null);
 let debugFlag = trkl(store.get('debug') || false);
+let credentials = trkl(store.get('auth') || {});
 let elementChildren = null;
 let elementGeometries = null;
 let showGrid;
@@ -224,7 +325,9 @@ const DrawSVG = (...args) => {
     rect.x2 -= rect.x1;
     // console.log('setViewBox', { svgOwner, rect, box });
     svgOwner.setAttribute('viewBox', rect.toString());
-    svgOwner.lastElementChild.setAttribute('transform', `scale(1,-1)  translate(0,${-rect.height})`);
+    svgOwner.lastElementChild.setAttribute('transform',
+      `scale(1,-1)  translate(0,${-rect.height})`
+    );
     Element.attr(svgOwner.lastElementChild.firstElementChild, { ...rect.toRect() });
   }
 };
@@ -254,7 +357,8 @@ const FileSystem = {
 };
 
 const LoadFile = async file => {
-  let { url, name: filename } = typeof file == 'string' ? { url: file, name: file.replace(/.*\//g, '') } : GetProject(file);
+  let { url, name: filename } =
+    typeof file == 'string' ? { url: file, name: file.replace(/.*\//g, '') } : GetProject(file);
   LogJS.info(`LoadFile ${url}`);
   url = /:\/\//.test(url) ? url : /^tmp\//.test(url) ? '/' + url : `/static/${filename}`;
   //console.log('LoadFile url=', url);
@@ -284,7 +388,9 @@ const SaveFile = async (filename, data, contentType) => {
   return result;
 };
 
-const SaveSVG = async function save(filename, layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48, 51]) {
+const SaveSVG = async function save(filename,
+  layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48, 51]
+) {
   const { doc } = project;
   const { basename, typeName } = doc;
   if(!filename) filename = `${doc.basename}.${doc.typeName}.svg`;
@@ -292,7 +398,8 @@ const SaveSVG = async function save(filename, layers = [1, 16, 20, 21, 22, 23, 2
     if(!element.hasAttribute('data-layer')) return true;
     const layer = element.getAttribute('data-layer');
     let [number, name] = layer.split(/\ /);
-    if(number !== undefined && name !== undefined) return layers.indexOf(+number) != -1 || layers.indexOf(name) != -1;
+    if(number !== undefined && name !== undefined)
+      return layers.indexOf(+number) != -1 || layers.indexOf(name) != -1;
     return true;
   };
   let data = ElementToXML(project.svg, predicate);
@@ -338,7 +445,9 @@ const LoadDocument = async (project, parentElem) => {
   LogJS.info(`${project.doc.basename} loaded.`);
   const topPlace = 'tPlace';
   elementChildren = Util.memoize(() => ElementChildren(topPlace, ent => Object.fromEntries(ent)));
-  elementGeometries = Util.memoize(() => ElementGeometries(topPlace, ent => Object.fromEntries(ent)));
+  elementGeometries = Util.memoize(() =>
+    ElementGeometries(topPlace, ent => Object.fromEntries(ent))
+  );
   //polygonGeometries = Util.memoize(() => Object.entries(elementGeometries()).map(([name, lineList]) => [name, lineList.toPolygon((pts) => new Polyline(pts))]));
 
   documentTitle(project.doc.file.replace(/.*\//g, ''));
@@ -391,8 +500,10 @@ const LoadDocument = async (project, parentElem) => {
   const Fence = ({ children, style = {}, sizeListener, aspectListener, ...props }) => {
     const [dimensions, setDimensions] = useState(sizeListener());
     const [aspect, setAspect] = useState(aspectListener());
-    if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
-    if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
+    if(sizeListener && sizeListener.subscribe)
+      sizeListener.subscribe(value => setDimensions(value));
+    if(aspectListener && aspectListener.subscribe)
+      aspectListener.subscribe(value => setAspect(value));
     console.debug('Fence dimensions:', dimensions);
     return h(TransformedElement,
       {
@@ -445,9 +556,23 @@ const LoadDocument = async (project, parentElem) => {
   const [path2component, component2path] = project.renderer.maps.map(Util.mapFunction);
   const { path2obj, obj2path, path2eagle, eagle2path, eagle2obj, obj2eagle } = project.doc.maps;
 
-  const [component2eagle, eagle2component] = [Util.mapAdapter((key, value) => (value === undefined ? path2eagle(component2path(key)) : undefined)), Util.mapAdapter((key, value) => (value === undefined ? path2component(eagle2path(key)) : undefined))];
+  const [component2eagle, eagle2component] = [
+    Util.mapAdapter((key, value) =>
+      value === undefined ? path2eagle(component2path(key)) : undefined
+    ),
+    Util.mapAdapter((key, value) =>
+      value === undefined ? path2component(eagle2path(key)) : undefined
+    )
+  ];
 
-  const [component2dom, dom2component] = [Util.mapAdapter((key, value) => (value === undefined ? eagle2dom(component2eagle(key)) : undefined)), Util.mapAdapter((key, value) => (value === undefined ? eagle2component(dom2eagle(key)) : undefined))];
+  const [component2dom, dom2component] = [
+    Util.mapAdapter((key, value) =>
+      value === undefined ? eagle2dom(component2eagle(key)) : undefined
+    ),
+    Util.mapAdapter((key, value) =>
+      value === undefined ? eagle2component(dom2eagle(key)) : undefined
+    )
+  ];
 
   //path2eagle: path2obj, eagle2path: obj2path
 
@@ -477,7 +602,9 @@ const LoadDocument = async (project, parentElem) => {
     let g = SVG.create('g', {});
 
     project.svg.appendChild(g);
-    let ll = geometries.R4.lines.toSVG(ReactComponent.append, () => h('g', { ...elementDefaultAttributes, defaultTransform }));
+    let ll = geometries.R4.lines.toSVG(ReactComponent.append, () =>
+      h('g', { ...elementDefaultAttributes, defaultTransform })
+    );
 
     render(ll, g);
   }
@@ -570,14 +697,30 @@ const GenerateVoronoi = () => {
   let { site, cells, edges, vertices, execTime } = result;
   console.log('cells:', cells);
   let holes = edges.filter(e => !e.rSite).map(({ lSite, rSite, ...edge }) => new Point(lSite));
-  let rlines = edges.filter(e => e.rSite).map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
-  let vlines = edges.filter(e => e.va && e.vb).map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
+  let rlines = edges
+    .filter(e => e.rSite)
+    .map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
+  let vlines = edges
+    .filter(e => e.va && e.vb)
+    .map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
   let points2 = vertices.map(v => new Point(v).round(0.127, 4));
   const add = (arr, ...items) => [...(Util.isArray(arr) ? arr : []), ...items];
   const factory = SVG.factory();
-  const lines = [...rlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.01 }]), ...vlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.01 }])];
+  const lines = [
+    ...rlines.map(l => [
+      'line',
+      { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.01 }
+    ]),
+    ...vlines.map(l => [
+      'line',
+      { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.01 }
+    ])
+  ];
   const circles = [
-    ...holes.map(p => ['circle', { cx: p.x, cy: p.y, r: 0.254, fill: 'none', stroke: '#00f', 'stroke-width': 0.3 }])
+    ...holes.map(p => [
+      'circle',
+      { cx: p.x, cy: p.y, r: 0.254, fill: 'none', stroke: '#00f', 'stroke-width': 0.3 }
+    ])
 
     /* ...points2.map(p => [
       'circle',
@@ -608,12 +751,15 @@ const GenerateVoronoi = () => {
 };
 
 function PackageChildren(element, layer) {
-  let children = [...element.children].map((c, i) => [i, c]).filter(([i, p]) => p.layer && p.layer.name == 'tPlace' && p.tagName == 'wire');
+  let children = [...element.children]
+    .map((c, i) => [i, c])
+    .filter(([i, p]) => p.layer && p.layer.name == 'tPlace' && p.tagName == 'wire');
   children.xml = children.map(([i, e]) => e.toXML()).join('\n');
   return children;
 }
 function ElementChildren(layer = 'tPlace', rfn = ent => new Map(ent)) {
-  return rfn([...project.doc.elements].map(([name, element]) => [name, PackageChildren(element, layer)]));
+  return rfn([...project.doc.elements].map(([name, element]) => [name, PackageChildren(element, layer)])
+  );
 }
 
 function ElementGeometries(layer = 'tPlace', rfn = ent => new Map(ent)) {
@@ -686,7 +832,8 @@ const MakeFitAction = index => async event => {
   if(newTransform.translation) {
     newTransform.translation.x += delta.x;
     newTransform.translation.y += delta.y;
-  } else newTransform = newTransform.translate(delta.x / newScaling.x, delta.y / newScaling.y, 'px');
+  } else
+    newTransform = newTransform.translate(delta.x / newScaling.x, delta.y / newScaling.y, 'px');
   console.debug(`FitAction newTransform=`, newTransform, newTransform + '');
   //  newTransform =
   AdjustZoom(ZoomLog(newTransform.scaling.x));
@@ -739,13 +886,71 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
   await ws.disconnect();
 };
 
+const AuthorizationDialog = ({ onAuth, ...props }) => {
+  
+  const [username, setUsername] = useState(props.username || '');
+  const [password, setPassword] = useState(props.password || '');
+
+
+
+  return h(Portal,
+    { into: '#portal' },
+    h('div', { class: 'auth-portal' },  
+    h('div', { class: 'auth-dialog' }, [
+      h('h1', {}, 'Authorization'),
+      h('form', { action: '', method: '', onSubmit: () => false },
+        h('div', { class: 'auth-form' }, [
+          h('input', {
+            name: 'username',
+            placeholder: 'Username',
+            type: 'text',
+            size: 30,
+            onInput: e => {
+              setUsername(e.target.value);
+            },
+            value: username
+          }),
+          h('input', { name: 'password',    placeholder: 'Password',type: 'password', size: 30,   onInput: e => {
+              setPassword(e.target.value);
+            },value: password }),
+            h('input', { name: 'Ok', type: 'submit',  onClick: e => {
+             e.preventDefault();
+             onAuth({ username, password });
+             return false;
+            } })
+        ])
+      )
+    ])
+  ));
+};
+
 const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 
 const AppMain = (window.onload = async () => {
   Util(globalThis);
   //prettier-ignore
   const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, ImmutablePath, arrayDiff, objectDiff, XmlObject, XmlAttr, ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser, estree, Factory, Lexer, Position, Range, Factory, ESNode, ArrayBindingPattern, ArrayLiteral, ArrowFunction, AssignmentExpression, AwaitExpression, BinaryExpression, BindingPattern, BindingProperty, LabelledStatement, BlockStatement, BreakStatement, CallExpression, ClassDeclaration, ConditionalExpression, ContinueStatement, Declaration, DecoratorExpression, DoStatement, EmptyStatement, Expression, ExpressionStatement, ForInStatement, ForStatement, FunctionLiteral, FunctionDeclaration, Identifier, ComputedPropertyName, IfStatement, SwitchStatement, CaseClause, ImportStatement, ExportStatement, JSXLiteral, Literal, TemplateLiteral, LogicalExpression, MemberExpression, InExpression, NewExpression, ObjectBindingPattern, ObjectLiteral, PropertyDefinition, MemberVariable, Program, RestOfExpression, ReturnStatement, SequenceExpression, SpreadElement, Statement, StatementList, ThisExpression, ThrowStatement, YieldStatement, TryStatement, UnaryExpression, UpdateExpression, VariableDeclaration, VariableDeclarator, WhileStatement, WithStatement, Parser, PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite, AcquireReader, AcquireWriter, DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer, classNames };
-  const localFunctions = { PackageChildren, ElementChildren, Timer, MouseEvents, DrawSVG, ElementToXML, FileSystem, LoadFile, SaveFile, SaveSVG, ModifyColors, GerberLayers, LoadDocument, ChooseDocument, GenerateVoronoi, MakeFitAction, CreateWebSocket, BindGlobal, AppMain };
+  const localFunctions = {
+    PackageChildren,
+    ElementChildren,
+    Timer,
+    MouseEvents,
+    DrawSVG,
+    ElementToXML,
+    FileSystem,
+    LoadFile,
+    SaveFile,
+    SaveSVG,
+    ModifyColors,
+    GerberLayers,
+    LoadDocument,
+    ChooseDocument,
+    GenerateVoronoi,
+    MakeFitAction,
+    CreateWebSocket,
+    BindGlobal,
+    AppMain
+  };
 
   const importedNames = Object.keys(imports);
   console.debug('Dupes:',
@@ -775,7 +980,10 @@ const AppMain = (window.onload = async () => {
   //window.focusSearch = trkl();
   window.currentSearch = trkl(null);
 
-  window.keystroke = target => (key, modifiers = 0) => keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key), target);
+  window.keystroke = target => (key, modifiers = 0) =>
+    keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key),
+      target
+    );
 
   window.focusSearch = state => {
     const input = currentSearch();
@@ -787,7 +995,7 @@ const AppMain = (window.onload = async () => {
   BindGlobal({ projects, socket, transform, size: sizeListener, aspect: aspectListener, showSearch, logDimensions: logSize, watched: dump, 
     children: () => elementChildren(),
      geometries: () => elementGeometries(),
-     debug: debugFlag });
+     debug: debugFlag, credentials });
 
   currentSearch.subscribe(value => {
     if(value) {
@@ -802,7 +1010,6 @@ const AppMain = (window.onload = async () => {
 
   let c = testComponent({});
   window.testComponent = c;
-  let credentials = { username: 'rsenn', password: 'tjIDznHp9' };
 
   const UpdateProjectList = async (opts = listURL() ? { url: listURL(), ...credentials } : {}) => {
     let list = [];
@@ -810,6 +1017,7 @@ const AppMain = (window.onload = async () => {
     let { url, ...restOfOpts } = opts;
     let urls = url ? url.split(/\n/g) : [null];
     for(url of urls) {
+      console.log('UpdateProjectList:', { opts, url });
       let data = await ListProjects({ ...opts, url });
       let { files } = data;
       //console.log(`Got ${files.length} files`, files);
@@ -821,14 +1029,19 @@ const AppMain = (window.onload = async () => {
         file.name = name;
         file.i = i;
         trkl.bind(file, { data });
-        LogJS.info(`Got file '${name.replace(/.*:\/\//g, '').replace(/raw.githubusercontent.com/, 'github.com') || name.replace(/.*\//g, '')}'`);
+        LogJS.info(`Got file '${
+            name.replace(/.*:\/\//g, '').replace(/raw.githubusercontent.com/, 'github.com') ||
+            name.replace(/.*\//g, '')
+          }'`
+        );
 
         return file;
       }
       File.prototype.toString = function() {
         return this.name;
       };
-      list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i)));
+      list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i))
+      );
       let svgs = list.reduce((acc, file) => {
         if(/\.lbr$/i.test(file.name)) return acc;
         file.svg = `${EagleDocument.baseOf(file.name)}.${EagleDocument.typeOf(file.name)}.svg`;
@@ -902,7 +1115,7 @@ const AppMain = (window.onload = async () => {
 
   const updateIfChanged = (trkl, newValue, callback) => {
     const oldValue = trkl() || [];
-    //console.info('updateIfChanged ', { oldValue, newValue });
+    console.info('updateIfChanged ', { oldValue, newValue });
     if(!Array.prototype.every.call(oldValue, (elem, i) => newValue[i] === elem)) return false;
     trkl(newValue);
     if(typeof callback == 'function') callback(trkl, oldValue, newValue);
@@ -919,7 +1132,10 @@ const AppMain = (window.onload = async () => {
 
     let urls = parts.filter(p => /\:\/\//.test(p)).join('\n');
 
-    updateIfChanged(listURL, urls, () => {});
+    updateIfChanged(listURL, urls, arg => {
+
+      console.debug("updateIfChanged:", arg);
+    });
     listURL(urls);
 
     //    value = parts.filter(p => !/\:\/\//.test(p)).join(' ');
@@ -950,7 +1166,13 @@ const AppMain = (window.onload = async () => {
   LogJS.addAppender(class extends LogJS.BaseAppender {
       log(type, time, msg) {
         let d = new Date(time);
-        if(typeof window.pushlog == 'function') window.pushlog([type, Util.isoDate(d).replace(/-/g, ''), d.toLocaleTimeString(navigator.language || 'de'), msg]);
+        if(typeof window.pushlog == 'function')
+          window.pushlog([
+            type,
+            Util.isoDate(d).replace(/-/g, ''),
+            d.toLocaleTimeString(navigator.language || 'de'),
+            msg
+          ]);
       }
     }
   );
@@ -995,7 +1217,12 @@ const AppMain = (window.onload = async () => {
     for(let [key, value] of Object.entries(values)) lines.push([key, value]);
     return h('table',
       { border: '0', cellpadding: 3, cellspacing: 0, className: 'dumper' },
-      lines.map(([k, v], i) => h('tr', { className: 'watch' }, [h('td', { className: 'name' }, k + ''), h('td', { className: 'value' }, v + '')]))
+      lines.map(([k, v], i) =>
+        h('tr', { className: 'watch' }, [
+          h('td', { className: 'name' }, k + ''),
+          h('td', { className: 'value' }, v + '')
+        ])
+      )
     );
   };
 
@@ -1033,7 +1260,8 @@ const AppMain = (window.onload = async () => {
     let setVisible = props.visible || element.handlers.visible,
       visible = useTrkl(setVisible);
     const isVisible = Util.is.on(visible);
-    if(Util.isObject(element) && 'visible' in element) setVisible = value => (element.visible = value);
+    if(Util.isObject(element) && 'visible' in element)
+      setVisible = value => (element.visible = value);
 
     console.log(`Layer #${i} ${name} isVisible=${isVisible}`);
     return h('div',
@@ -1106,7 +1334,7 @@ const AppMain = (window.onload = async () => {
           h(Button, {
             //  caption: '↕',
             fn: () => showGrid(!showGrid()),
-            //  state: showGrid,
+          state: showGrid,
             toggle: true,
             image: 'static/svg/grid.svg'
           }),
@@ -1152,12 +1380,15 @@ const AppMain = (window.onload = async () => {
                     gerber.cmds = await GerberParser.parse(gerber.data);
                     gerber.unit = gerber.cmds.find(i => i.prop == 'units');
 
-                    gerber.points = gerber.cmds.filter(i => i.coord).map(({ coord }) => new Point(coord.x, coord.y));
+                    gerber.points = gerber.cmds
+                      .filter(i => i.coord)
+                      .map(({ coord }) => new Point(coord.x, coord.y));
                   }
                   console.debug('BoardToGerber side =', side, ' file =', gerber.file);
                 }
               }
-              const sides = Object.fromEntries(['back', 'front', 'drill', 'outline'].map(side => [side, project.gerber[side].file]));
+              const sides = Object.fromEntries(['back', 'front', 'drill', 'outline'].map(side => [side, project.gerber[side].file])
+              );
               console.debug('  sides = ', sides);
               const allGcode = await GerberToGcode(project.name, {
                 ...sides,
@@ -1203,7 +1434,9 @@ const AppMain = (window.onload = async () => {
                         g.innerHTML = gc.svg;
                         if(g.firstElementChild && g.firstElementChild.tagName == 'svg') {
                           let svg = g.firstElementChild;
-                          ['width', 'height', 'xmlns', 'xmlns:xlink', 'version'].forEach(a => svg.removeAttribute(a));
+                          ['width', 'height', 'xmlns', 'xmlns:xlink', 'version'].forEach(a =>
+                            svg.removeAttribute(a)
+                          );
                           svg.setAttribute('viewBox', bbox);
                         }
                         Element.findAll('path', g)
@@ -1224,14 +1457,24 @@ const AppMain = (window.onload = async () => {
                       }
                     });
 
-                    layer.sublayers = Util.histogram(Element.walk(layer.dom, (e, acc) => (e.tagName.endsWith('g') ? acc : [...acc, e]), []),
+                    layer.sublayers = Util.histogram(Element.walk(
+                        layer.dom,
+                        (e, acc) => (e.tagName.endsWith('g') ? acc : [...acc, e]),
+                        []
+                      ),
                       e => e.getAttribute('style'),
                       new Map(),
                       () => new Set()
                     );
                   }
 
-                  console.debug('GerberToGcode side =', side, ' gc =', gc.file, ' svg =', Util.abbreviate(gc.svg));
+                  console.debug('GerberToGcode side =',
+                    side,
+                    ' gc =',
+                    gc.file,
+                    ' svg =',
+                    Util.abbreviate(gc.svg)
+                  );
                 }
               }
               gcode(project.gcode);
@@ -1327,7 +1570,9 @@ const AppMain = (window.onload = async () => {
           }
         }) /*])*/
       ]),
-      h(Slot, { name: 'layers' })
+      h(Slot, { name: 'layers' }),
+            h(Conditional, { signal: wantAuthorization }, 
+  h(AuthorizationDialog, { onAuth: credentials }))
     ]),
     Element.find('#preact')
   );
@@ -1359,7 +1604,11 @@ const AppMain = (window.onload = async () => {
           if('preventDefault' in event) event.preventDefault();
           if(!resize && box) {
             let edges = Element.rect(box).toPoints();
-            let corners = [edges[0], edges[2]].map((p, i) => [i, p.distance(new Point(start).sum(x, y)), p]);
+            let corners = [edges[0], edges[2]].map((p, i) => [
+              i,
+              p.distance(new Point(start).sum(x, y)),
+              p
+            ]);
 
             let edge = corners.sort((a, b) => a[1] - b[1])[0];
 
@@ -1397,7 +1646,10 @@ const AppMain = (window.onload = async () => {
         }
 
         if(box) {
-          window.move = move = Element.moveRelative(box, null, id == 'console' ? ['right', 'bottom'] : ['left', 'top']);
+          window.move = move = Element.moveRelative(box,
+            null,
+            id == 'console' ? ['right', 'bottom'] : ['left', 'top']
+          );
           box.style.cursor = `move`;
         }
         return true;
@@ -1511,7 +1763,22 @@ const AppMain = (window.onload = async () => {
   });*/
 
   window.addEventListener('wheel', event => {
-    const { deltaX, deltaY, screenX, screenY, clientX, clientY, pageX, pageY, x, y, offsetX, offsetY, layerX, layerY } = event;
+    const {
+      deltaX,
+      deltaY,
+      screenX,
+      screenY,
+      clientX,
+      clientY,
+      pageX,
+      pageY,
+      x,
+      y,
+      offsetX,
+      offsetY,
+      layerX,
+      layerY
+    } = event;
 
     //console.log('wheel:', { deltaX, deltaY, screenX, screenY, clientX, clientY, pageX, pageY, x, y, offsetX, offsetY, layerX, layerY });
     window.wheelEvent = event;

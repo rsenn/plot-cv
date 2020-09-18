@@ -75,7 +75,7 @@ export const GetProject = arg => (typeof arg == 'number' ? projects()[arg] : typ
 
 export async function ListProjects(opts = {}) {
   const { url, descriptions = true, names, filter } = opts;
-  //console.log('ListProjects', { url, descriptions, names, filter });
+  console.log('ListProjects', { url, descriptions, names, filter });
   let response;
   if(!url) {
     response = await fetch('/files.html', {
@@ -94,11 +94,16 @@ export async function ListProjects(opts = {}) {
     if(response) response = JSON.parse(response);*/
   } else {
     response = await ListGithubRepo(url, null, null, '\\.(brd|sch|lbr)$', opts);
-    let fileList = response.map((file, i) => {
+
+    console.log('ListGithubRepo response:',response);
+    if(Util.isArray(response)) {
+  let fileList = response.map((file, i) => {
       let project = { ...file, name: response.at(i) };
       return project;
     });
     response = { files: fileList };
+    }
+
   }
   return response;
 }
@@ -292,18 +297,21 @@ export const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
     dir = path.join('/');
   }
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/${dir}`;
-  //console.log('ListGithubRepo', { host, owner, repo, dir, filter, url });
+  console.log('ListGithubRepo', { host, owner, repo, dir, filter, url });
   const headers = {
     Authorization: 'Basic ' + window.btoa(`${username}:${password}`)
   };
   let response = await FetchURL(url, { headers });
   let result = JSON.parse(await response.text());
-  if(!Util.isArray(result)) return result;
+  if(!Util.isArray(result)) {
+   result.status = response.status;
+    return result;
+  }
   if(filter) {
     const re = new RegExp(filter, 'g');
     result = result.filter(({ name, type }) => type == 'dir' || re.test(name));
   }
-  //  console.log('result:', result);
+  console.log('result:', result);
   const firstFile = result.find(r => !!r.download_url);
   const base_url = firstFile ? firstFile.download_url.replace(/\/[^\/]*$/, '') : '';
   const files = result.map(({ download_url = '', html_url, name, type, size, path, sha }) => ({
@@ -342,7 +350,7 @@ export const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
       at,
       async get(i) {
         const url = at(i);
-        //console.log('url:', url);
+        console.log('url:', url);
         return await FetchURL(url, {});
       },
       get files() {

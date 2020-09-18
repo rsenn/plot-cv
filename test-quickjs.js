@@ -3,15 +3,15 @@ import { Point } from './build/x86_64-linux-gnu/point.so';
 import { Size } from './build/x86_64-linux-gnu/size.so';
 import { Mat } from './build/x86_64-linux-gnu/mat.so';
 import { PointIterator } from './build/x86_64-linux-gnu/point-iterator.so';
-import { inspect } from './inspect.js';
-import { Contour } from './build/x86_64-linux-gnu/contour.so';
+import { inspect } from './lib/inspect.js';
+///import { Contour } from './build/x86_64-linux-gnu/contour.so';
 
 //console.log('test:', inspect({ Point, Size, Rect, Mat, PointIterator, Contour }));
 import path from './lib/path.js';
 import PortableFileSystem from './lib/filesystem.js';
 import Util from './lib/util.js';
-import * as os from 'os';
-import * as std from 'std';
+/*import * as os from 'os';
+import * as std from 'std';*/
 let filesystem;
 
 async function main(...args) {

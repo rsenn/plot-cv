@@ -1,4 +1,4 @@
-import { Component, render } from 'preact';
+import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
 
 /** Redirect rendering of descendants into the given CSS selector.
  *  @example
@@ -6,16 +6,7 @@ import { Component, render } from 'preact';
  *      <div>I am rendered into document.body</div>
  *    </Portal>
  */
-export default class Portal extends Component {
-  findNode(node) {
-    return typeof node === 'string' ? document.querySelector(node) : node;
-  }
-
-  componentDidMount() {
-    this.isMounted = true;
-    this.renderLayer = this.renderLayer.bind(this);
-    this.renderLayer();
-  }
+export class Portal extends Component {
   componentDidUpdate(props) {
     for(let i in props) {
       if(props[i] !== this.props[i]) {
@@ -24,10 +15,20 @@ export default class Portal extends Component {
     }
   }
 
+  componentDidMount() {
+    this.isMounted = true;
+    this.renderLayer = this.renderLayer.bind(this);
+    this.renderLayer();
+  }
+
   componentWillUnmount() {
     this.renderLayer(false);
     this.isMounted = false;
     if(this.remote && this.remote.parentNode) this.remote.parentNode.removeChild(this.remote);
+  }
+
+  findNode(node) {
+    return typeof node === 'string' ? document.querySelector(node) : node;
   }
 
   renderLayer(show = true) {
@@ -37,12 +38,12 @@ export default class Portal extends Component {
     if(this.props.into !== this.intoPointer) {
       this.intoPointer = this.props.into;
       if(this.into && this.remote) {
-        this.remote = render(<PortalProxy />, this.into, this.remote);
+        this.remote = render(h(PortalProxy), this.into, this.remote);
       }
       this.into = this.findNode(this.props.into);
     }
 
-    this.remote = render(<PortalProxy context={this.context}>{(show && this.props.children) || null}</PortalProxy>, this.into, this.remote);
+    this.remote = render((h(PortalProxy, { context: this.context }), (show && this.props.children) || null), this.into, this.remote);
   }
 
   render() {
@@ -60,3 +61,5 @@ class PortalProxy extends Component {
     return (children && children[0]) || null;
   }
 }
+
+export default Portal;

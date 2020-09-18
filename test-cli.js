@@ -6,7 +6,7 @@ import { Contour } from 'contour';
 import { Line } from 'line';
 import { Draw, drawLine, drawCircle } from 'draw';
 //import { PointIterator } from "point-iterator";
-import { inspect } from './inspect.js';
+import { inspect } from './lib/inspect.js';
 
 //import { Contour } from "contour";
 const { circle, contour, line, polygon, rect } = Draw;

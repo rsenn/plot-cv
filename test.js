@@ -11,7 +11,7 @@ import { PointList } from './lib/geom/pointList.js';
 import { RGBA } from './lib/color/rgba.js';
 import { Rect } from 'rect';
 import { Size } from 'size';
-import { inspect } from './inspect.js';
+import { inspect } from './lib/inspect.js';
 
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };
 
