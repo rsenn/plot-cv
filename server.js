@@ -11,7 +11,11 @@ import fs, { promises as fsPromises } from 'fs';
 import ConsoleSetup from './consoleSetup.js';
 import SerialPorts from 'serialport';
 import SerialStream from '@serialport/stream';
+import SerialBinding from '@serialport/bindings';
 import Socket from './socket.js';
+import WebSocket from 'ws';
+
+SerialStream.Binding = SerialBinding;
 
 const port = process.env.PORT || 3000;
 
@@ -23,7 +27,7 @@ console.log('random:', prng.uint32());
 console.log('randStr:', Util.randStr(8, null, prng));
 
 let app = express();
-expressWs(app);
+expressWs(app, null, { perMessageDeflate: false });
 const p = path.join(path.dirname(process.argv[1]), '.');
 
 //console.log('Serving from', p);
@@ -356,16 +360,44 @@ async function main() {
     const files = list.map(url => url.replace(/.*\//g, ''));
     return { base_url, files };
   }
-  app.get(/\/serial/, async (req, res) => {
+  //app.use("/serialport", remoteSerialPort.http({ verbose: true }));
+
+  app.get(/\/list-serial/, async (req, res) => {
     const list = await SerialPort.list();
 
     res.json(list.filter(port => ['manufacturer', 'pnpId', 'vendorId', 'productId'].some(key => port[key])));
   });
+
+  app.ws('/serial', async (ws, req) => {
+    const { port } = req.body;
+    console.debug('Object.keys(req)', Object.keys(req));
+
+    const duplex = WebSocket.createWebSocketStream(ws, { encoding: 'utf8' });
+
+    let serial = new SerialStream(port || '/dev/tnt1');
+
+    duplex.on('data', async data => {
+      data = data + '' + '\r\n';
+
+      console.debug('ws -> serial:', escape(data));
+
+      serial.write(data);
+      serial.flush();
+    });
+
+    serial.on('data', async data => {
+      data = (data + '').replace(/\r?\n?$/, '');
+
+      console.debug('serial -> ws:', escape(data));
+      duplex.write(data);
+    });
+
+    console.debug('websocket:', Util.getMethods(ws, Infinity, 0));
+  });
+
   app.post(/\/serial/, async (req, res) => {
     const { body } = req;
     const { port } = body;
-
-    res.json(list.filter(port => ['manufacturer', 'pnpId', 'vendorId', 'productId'].some(key => port[key])));
   });
 
   app.get(/\/github/, async (req, res) => {

@@ -53,7 +53,7 @@ function sendTo(sock, msg, ...args) {
   if(msg instanceof Message) msg = msg.data;
 
   const { writable } = this;
- // console.debug(`[${sock.id}] sendTo '${msg.replace(/\n/g, '\\n')}'`);
+  // console.debug(`[${sock.id}] sendTo '${msg.replace(/\n/g, '\\n')}'`);
 
   return Util.tryCatch(async () => {
       if(writable) await sock.ws.send(msg);
@@ -102,7 +102,7 @@ export class Socket {
     this.lastMessage = Date.now();
 
     this.bytesRead = (this.bytesRead || 0) + line.length;
-   // console.debug(`[${this.id}] message '${line}'`);
+    // console.debug(`[${this.id}] message '${line}'`);
 
     let msg = new Message(line);
     if(msg.type == 'INFO') {

@@ -1301,6 +1301,11 @@ domutils@^1.5.1:
     dom-serializer "0"
     domelementtype "1"
 
+duplex-child-process@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/duplex-child-process/-/duplex-child-process-1.0.1.tgz#d3868754b108726be9c665d810b989e87ae7833e"
+  integrity sha512-tWbt4tyioDjyK5nh+qicbdvBvNjSXsTUF5zKUwSauuKPg1mokjwn/HezwfvWhh6hXoLdgetY+ZlzU/sMwUMJkg==
+
 ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
@@ -1824,6 +1829,11 @@ eventemitter2@0.4.14:
   version "0.4.14"
   resolved "https://registry.yarnpkg.com/eventemitter2/-/eventemitter2-0.4.14.tgz#8f61b75cde012b2e9eb284d4545583b5643b61ab"
   integrity sha1-j2G3XN4BKy6esoTUVFWDtWQ7Yas=
+
+exec-stream@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/exec-stream/-/exec-stream-0.1.0.tgz#050120c5a5069276eb70d6c225451f0a776993ec"
+  integrity sha1-BQEgxaUGknbrcNbCJUUfCndpk+w=
 
 exit-hook@^1.0.0:
   version "1.1.1"

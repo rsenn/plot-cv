@@ -154,9 +154,10 @@ async function main(...args) {
   while(args.length > 0) processFile(args.shift());
   // console.log("result:",r);
 
-  for(let ids of exportMap.values()) r.push(`Util.weakAssign(globalObj, { ${Util.unique(ids.map(id => id.value)).join(', ')} });`);
+  for(let ids of exportMap.values()) r.push(`Util.weakAssign(globalObj, { ${Util.unique(ids).join(', ')} });`);
 
   const script = `// ==UserScript==
+
 // @name         ${name}
 // @namespace    create-tamper
 // @version      0.2
@@ -298,7 +299,8 @@ async function main(...args) {
       exports = exports.map(([p, stmt]) => (Util.isObject(stmt.declarations, 'id', 'value') == Util.isObject(stmt.what, 'value') ? stmt.declarations : stmt));
       exports = exports.map(decl => (decl instanceof ObjectBindingPattern ? decl.properties.map(prop => ('id' in prop ? prop.id : prop)) : decl instanceof ObjectLiteral ? decl.members.map(prop => ('id' in prop ? prop.id : prop)) : decl));
       exports = exports.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl));
-      log(`exports =`, exports);
+      exports = exports.map(e => e.value);
+      log(`exports =`, exports.join(', '));
 
       exportMap.set(modulePath, Util.unique(exports.flat()));
     } catch(err) {
