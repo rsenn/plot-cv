@@ -1,28 +1,66 @@
 import WebSocket from 'ws';
 import WebSocketAsync from './lib/net/websocket-async.js';
 import ConsoleSetup from './consoleSetup.js';
-import { WebSocketClient } from './lib/net/websocket-client.js';
-import { websocketEvents } from './lib/net/websocket-iterator.js';
 import Util from './lib/util.js';
 
 import { Message } from './message.js';
 
 async function main() {
-  await ConsoleSetup();
+  await ConsoleSetup({ breakLength: 200 });
+
   console.log('WebSocket:', WebSocket, Util.isConstructor(WebSocket));
-  //let ws = new WebSocketClient(WebSocket);
+
   const url = 'ws://127.0.0.1:3000/ws';
-  let ws = new WebSocketAsync(/*url, ['appProtocol', 'appProtocol-v2'],*/ WebSocket);
+  let ws = new WebSocketAsync(WebSocket);
 
   const dump = () => console.log('ws:', Util.getKeys(ws, ['receiveDataQueue', 'receiveCallbacksQueue', 'connected']));
 
   await ws.connect(url);
 
-  await ws.send('test-websocket.js data!');
+  // await ws.send('test-websocket.js data!');
 
+  ws.sendMessage = function(...args) {
+    let { data } = new Message(...args);
+    console.debug(`send => '${data}'`);
+
+    return this.send(data);
+  };
+
+  let myId;
+  ws.sendMessage({ type: 'PING', body: Date.now() });
   for await (let data of ws) {
-    let msg = new Message(data);
-    console.log('data:', msg);
+    for(let line of data.split(/\n/g)) {
+      let msg = new Message(line);
+      //console.log(`line = '${line}'`);
+
+      switch (msg.type) {
+        case 'HELLO': {
+          myId = msg.body;
+          console.log(`Your client Id is '${myId}'`);
+          break;
+        }
+        case 'PONG': {
+          console.log(`PONG '${msg.body}'`);
+          break;
+        }
+        case 'USERS': {
+          console.log(`USERS '${msg.body}'`);
+          for(let id of [...msg.body, myId]) ws.send(`INFO ${id}`);
+          break;
+        }
+        case 'INFO': {
+          console.log(`Info for '${msg.origin}':`, msg.body);
+
+          if(msg.origin == myId) ws.sendMessage({ type: 'QUIT', body: 'reason' });
+
+          break;
+        }
+        default: {
+          console.log('Message:', msg);
+          break;
+        }
+      }
+    }
   }
 
   /*
@@ -35,11 +73,8 @@ async function main() {
 */
 
   // Close the connection.
-  await ws.disconnect();
+  process.exit(0);
   dump();
 }
 
-main(Util.getArgs()).catch(error => {
-  const stack = error.stack;
-  console.log('ERROR:', error.message, stack);
-});
+Util.callMain(main, true);

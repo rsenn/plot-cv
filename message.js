@@ -5,58 +5,95 @@ export class Message {
   static RECIPIENT_ID = 0x2690;
   static TYPE_ID = 0x2606; //0xfffc;
 
-  constructor(msg, origin, recipient, type) {
-    let obj = this instanceof Message ? this : Object.setPrototypeOf({}, Message.prototype);
+  constructor(...args) {
+    //console.log('new Message(', ...args, ')');
 
-    if(typeof msg != 'string') {
-      msg = Util.tryCatch(msg => JSON.stringify(msg),
-        (json, msg) => json,
-        (err, msg) => msg,
-        msg
-      );
+    if(args.length == 1) {
+      Object.assign(this, typeof args[0] == 'string' ? Message.decode(args[0]) : Util.filterOutMembers(args[0], v => v == undefined));
     } else {
-      const fields = {
+      const [body, origin, recipient, type] = args;
+      if(origin !== undefined) this.origin = origin;
+      if(recipient !== undefined) this.recipient = recipient;
+      if(type !== undefined) this.type = type;
+      if(body !== undefined) this.body = body;
+    }
+    const { origin, recipient, type, body } = this;
+
+    //console.log('new Message', Util.filterOutMembers({ origin, recipient, type, body }, v => v == undefined));
+  }
+
+  static isId(char) {
+    const { RECIPIENT_ID, SENDER_ID, TYPE_ID } = Message;
+    const num = typeof char == 'string' ? char.codePointAt(0) : char;
+
+    return [SENDER_ID, RECIPIENT_ID, TYPE_ID].some(code => code == num);
+  }
+
+  static decode(m) {
+    if(Message.isId(m[0])) {
+      const o = {
         origin: getPrefix(Message.SENDER_ID),
         recipient: getPrefix(Message.RECIPIENT_ID),
         type: getPrefix(Message.TYPE_ID)
       };
 
-      origin = origin || fields.origin;
-      recipient = recipient || fields.recipient;
-      type = type || fields.type;
-    }
-
-    if(origin) obj.origin = origin;
-    if(recipient) obj.recipient = recipient;
-    if(type) obj.type = type;
-
-    function getPrefix(code) {
-      let r, i;
-      if(msg.codePointAt(0) == code) {
-        i = msg.lastIndexOf(String.fromCodePoint(code));
-        r = msg.substring(1, i);
-        msg = msg.substring(i + 1);
+      function getPrefix(code) {
+        let r, i;
+        if(m.codePointAt(0) == code) {
+          i = m.lastIndexOf(String.fromCodePoint(code));
+          r = m.substring(1, i);
+          m = m.substring(i + 1);
+        }
+        return r;
       }
-      return r;
+      return o;
     }
-    msg = decodeURIComponent(msg);
+    let o = {};
+    let len;
+    if(m[0] == ':') {
+      len = m.indexOf(' ');
+      if(len == -1) len = m.length;
+      o.origin = m.substring(1, len);
+      m = m.substring(len + 1);
+    }
+    len = m.indexOf(' ');
+    if(len == -1) len = m.length;
+    o.type = m.substring(0, len);
+    m = m.substring(len + 1);
 
-    obj.body = msg;
+    len = m.indexOf(' ');
+    if(len != -1) {
+      o.recipient = m.substring(0, len);
+      m = m.substring(len + 1);
+    }
 
-    //console.log('Message', obj);
-    return obj;
+    if(m.length) o.body = decodeBody(m);
+
+    return o;
   }
 
   get data() {
-    const { body, recipient, origin, type } = this;
-    let r = encodeURIComponent(body);
+    // console.log(`Message data: `, this);
+    let data = this.encode();
+    //  console.log(`Message data: '${data}'`);
+    return data;
+  }
+
+  encode(plain = true) {
+    const { body, recipient, origin, type, isJSON } = this;
+    //console.log('Message.encode',{body,recipient,origin, type});
+    let r = encodeBody(body) || '';
+
+    const prepend = plain ? str => (r = str + (r != '' ? ' ' : '') + r) : str => (r = str + r);
+
+    const insertField = plain ? (str, code) => prepend((code == Message.SENDER_ID ? ':' : '') + str) : (str, code) => prepend((r = String.fromCodePoint(code) + str + String.fromCodePoint(code)));
+
     if(type) r = insertField(type, Message.TYPE_ID);
+
     if(recipient) r = insertField(recipient, Message.RECIPIENT_ID);
     if(origin) r = insertField(origin, Message.SENDER_ID);
+    //console.log('Message.encode =', r);
 
-    function insertField(str, code) {
-      return String.fromCodePoint(code) + str + String.fromCodePoint(code) + r;
-    }
     return r;
   }
 
@@ -71,19 +108,27 @@ export class Message {
   }
 
   [Symbol.for('nodejs.util.inspect.custom')]() {
-    const { body, recipient, origin, type } = this;
-    let ret = {};
-
-    if(this.json) ret.body = this.json;
-    else ret.body = body;
-    if(recipient) ret.recipient = recipient;
-    if(origin) ret.origin = origin;
-    if(type) ret.origin = type;
-    return ret;
+    return this[Symbol.toStringTag]();
   }
   [Symbol.toStringTag]() {
-    return this[Symbol.for('nodejs.util.inspect.custom')]();
+    const { origin, recipient, type, body } = this;
+    return 'new Message', Util.filterOutMembers({ origin, recipient, type, body }, v => v == undefined);
   }
 }
 
+function decodeBody(str) {
+  if(str[0] == ':') {
+    //console.debug('decodeBody', str);
+    return JSON.parse(unescape(str.substring(1)));
+  }
+  return str;
+}
+
+function encodeBody(body) {
+  if(typeof body == 'string') return body;
+  if(body == undefined) return undefined;
+
+  //console.debug('encodeBody', JSON.stringify(body));
+  return ':' + escape(JSON.stringify(body));
+}
 export default Message;

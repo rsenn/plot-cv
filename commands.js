@@ -95,15 +95,14 @@ export async function ListProjects(opts = {}) {
   } else {
     response = await ListGithubRepo(url, null, null, '\\.(brd|sch|lbr)$', opts);
 
-    console.log('ListGithubRepo response:',response);
+    console.log('ListGithubRepo response:', response);
     if(Util.isArray(response)) {
-  let fileList = response.map((file, i) => {
-      let project = { ...file, name: response.at(i) };
-      return project;
-    });
-    response = { files: fileList };
+      let fileList = response.map((file, i) => {
+        let project = { ...file, name: response.at(i) };
+        return project;
+      });
+      response = { files: fileList };
     }
-
   }
   return response;
 }
@@ -304,7 +303,7 @@ export const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
   let response = await FetchURL(url, { headers });
   let result = JSON.parse(await response.text());
   if(!Util.isArray(result)) {
-   result.status = response.status;
+    result.status = response.status;
     return result;
   }
   if(filter) {

@@ -4,12 +4,14 @@ import Util from './lib/util.js';
 import bodyParser from 'body-parser';
 import expressWs from 'express-ws';
 import { Alea } from './lib/alea.js';
-import { Message } from './message.js';
 import crypto from 'crypto';
 import fetch from 'isomorphic-fetch';
 import { exec } from 'promisify-child-process';
 import fs, { promises as fsPromises } from 'fs';
 import ConsoleSetup from './consoleSetup.js';
+import SerialPorts from 'serialport';
+import SerialStream from '@serialport/stream';
+import Socket from './socket.js';
 
 const port = process.env.PORT || 3000;
 
@@ -29,6 +31,8 @@ const p = path.join(path.dirname(process.argv[1]), '.');
 async function main() {
   await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
 
+  Socket.timeoutCycler();
+
   app.use(express.text({ type: 'application/xml', limit: '16384kb' }));
 
   app.use(bodyParser.json());
@@ -44,15 +48,6 @@ async function main() {
     res.append('Access-Control-Allow-Credentials', 'true');
     next();
   });
-
-  let sockets = [];
-
-  const removeItem = (arr, item, key = 'ws') => {
-    let i = arr.findIndex(e => e[key] === item);
-    if(i != -1) arr.splice(i, 1);
-
-    return arr;
-  };
 
   function SendRaw(res, file, data, type = 'application/octet-stream') {
     res.setHeader('Content-Disposition', `attachment; filename="${path.basename(file)}"`);
@@ -235,16 +230,6 @@ async function main() {
     return result;
   };
 
-  function Socket(ws, info) {
-    Object.assign(this, { ...info, ws });
-    this.id = Util.randStr(10, '0123456789abcdef', prng);
-    return this;
-  }
-
-  Socket.prototype.toString = function() {
-    return `${this.address}:${this.port}`;
-  };
-
   app.use(async (req, res, next) => {
     if(!/overrides\//.test(req.path)) {
       let relativePath = path.join('.', req.path);
@@ -271,7 +256,15 @@ async function main() {
       }
     }
 
-    if(!/lib\//.test(req.url)) console.log('Static request: ' + req.url + '\npath: ' + req.path + '\nheaders:', req.headers);
+    if(!/lib\//.test(req.url))
+      console.log('Static request: ' + req.path,
+        ...Util.if(
+          Util.filterOutKeys(req.headers, /(^sec|^accept|^cache|^dnt|-length|^host$|^if-|^connect|^user-agent|-type$|^origin$|^referer$)/),
+          () => [],
+          value => ['headers: ', value],
+          Util.isEmpty
+        )
+      );
 
     next();
   });
@@ -363,6 +356,17 @@ async function main() {
     const files = list.map(url => url.replace(/.*\//g, ''));
     return { base_url, files };
   }
+  app.get(/\/serial/, async (req, res) => {
+    const list = await SerialPort.list();
+
+    res.json(list.filter(port => ['manufacturer', 'pnpId', 'vendorId', 'productId'].some(key => port[key])));
+  });
+  app.post(/\/serial/, async (req, res) => {
+    const { body } = req;
+    const { port } = body;
+
+    res.json(list.filter(port => ['manufacturer', 'pnpId', 'vendorId', 'productId'].some(key => port[key])));
+  });
 
   app.get(/\/github/, async (req, res) => {
     const url = Util.parseURL(req.url);
@@ -440,94 +444,7 @@ async function main() {
     }
   });
 
-  app.ws('/ws', async (ws, req) => {
-    const { connection, client, upgrade, query, socket, headers, trailers, params, res, route, body } = req;
-    const { path, protocol, ip, cookies, hostname } = req;
-    const { remoteAddress, remotePort, localAddress, localPort } = client;
-    const { _host, _peername } = connection;
-    let { address, port } = _peername;
-    const { cookie } = headers;
-
-    console.log('WebSocket connected:', path, headers);
-
-    if(address == '::1') address = 'localhost';
-
-    address = address.replace(/^::ffff:/, '');
-    let s = new Socket(ws, {
-      address,
-      port,
-      remoteAddress,
-      remotePort,
-      localAddress,
-      localPort,
-      cookie
-    });
-    let i = sockets.length;
-
-    const sendTo = (sock, msg, ...args) => {
-      if(args.length > 0) msg = new Message(msg, ...args);
-      if(msg instanceof Message) msg = msg.data;
-
-      Util.tryCatch(ws => client.writable,
-        (ok, ws, data) => Util.tryCatch(() => ws.send(data)),
-        (err, ws, data) => (console.log('socket:', sock.info, ' error:', (err + '').replace(/\n.*/g, '')), false),
-        sock.ws,
-        msg
-      );
-    };
-
-    sendTo(s, JSON.stringify(sockets.map(s => s.id)), null, null, 'USERS');
-
-    sockets.push(s);
-
-    const sendMany = (except, msg, ...args) => {
-      if(args.length > 0) msg = new Message(msg, ...args);
-      if(msg instanceof Message) msg = msg.data;
-
-      for(let sock of sockets) {
-        if(sock == except || sock.id == except || sock.ws == except) continue;
-        sendTo(sock, msg);
-      }
-    };
-
-    sendMany(s, '', s.id, null, 'JOIN');
-
-    //console.log('sockets:', sockets.map(s => Util.filterKeys(s, /^(address|port|id)/)));
-
-    ws.on('close', () => {
-      console.log(`socket close ${s.toString()} (${s.id})`);
-      removeItem(sockets, ws, 'ws');
-      sendMany(s, '', s.id, null, 'QUIT');
-    });
-
-    ws.on('message', data => {
-      s.lastMessage = Date.now();
-      let msg = new Message(data, s.id);
-      if(msg.type == 'INFO') {
-        const id = sockets.findIndex(s => s.id == msg.body);
-        if(id != -1) {
-          const sock = sockets[id];
-          sendTo(s, JSON.stringify(Util.filterOutKeys(sock, ['ws', 'id'])), sock.id, s.id, 'INFO');
-        }
-        return;
-      }
-      console.log(`message from ${s.toString()}${msg.recipient ? ' to ' + msg.recipient : ''} (${s.id}): '${msg.body}'`);
-      if(msg.recipient) {
-        let rId = sockets.findIndex(s => s.id == msg.recipient);
-        if(rId == -1) {
-          console.error(`No such recipient: '${msg.recipient}'`);
-          return;
-        }
-      }
-      let i = -1;
-      for(let sock of sockets) {
-        if(sock.ws === ws) continue;
-        if(msg.recipient && sock.id != msg.recipient) continue;
-        console.log(`Sending[${++i}/${sockets.length}] to ${sock.id}`);
-        sendTo(sock, msg.data);
-      }
-    });
-  });
+  app.ws('/ws', Socket.endpoint);
 
   app.get('/', (req, res) => {
     res.redirect(302, '/index.html');
@@ -537,4 +454,5 @@ async function main() {
     //console.log(`Ready at http://127.0.0.1:${port}`);
   });
 }
+
 Util.callMain(main, true);
