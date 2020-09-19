@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"PipeTo",
+				"PipeToRepeater"
+			],
+			[
+				"ini",
+				"initializer"
+			],
+			[
+				"parseFunc",
+				"parseFunctionParametersAndBody"
+			],
+			[
 				"Calc",
 				"CalculateArc"
 			],
@@ -68,29 +80,74 @@
 	"buffers":
 	[
 		{
-			"contents": "add\nuseSlot\ntrklGetSet\nMouseEvents\nappend_to(elem, p)\nDrawSVG\nappend\n   calcViewBox\n   setViewBox\nElementToXML\nreadFile(filename)\nwriteFile(filename, data, overwrite = true)\nexists(filename)\nrealpath(filename)\nLoadFile\nSaveFile\nSaveSVG\npredicate\nModifyColors\nLoadDocument\nFence\n   xx\nChooseDocument\nGenerateVoronoi\nadd\nPackageChildren\nElementChildren\nElementGeometries\nNewPath\nMakeFitAction\nfunction ZoomFactor(val\nZoomLog\nfunction AdjustZoom(l\nsocketFn\n  .send\n  .onload\n  .keystroke\n  .focusSearch\nchildren: ()\ngeometries: ()\ntestComponent\n   File\nFile.prototype.toString = function()\nupdateIfChanged\nchangeInput\nConsumer\nfunction* ()\nlog(type, time, msg)\nLogger\nfunction* ()\nDumper\nCommander\nhandler\nToggle\nLayer\nsetVisible\nonMouseMove: (e)\nonMouseUp: (e)\nonMouseDown: (e)\nfn: (e)\nfn: ()\ncreate: (project, props\n   makeLayerName\nfn: ()\nonCommand: (cmdStr)\n   mod\n   cancel\n  .oncontextmenu\n  .processEvents\nonRuntimeInitialized: ()\nprint: (txt)",
+			"contents": "ES6Module\n  create\nES6ImportExport\n  create\nES6ImportExport\n  from\n  from\n  toSource\n  code\nPrefixRemover\n  arg =>\n  dumpFile\n  function printAst(ast, comments, printer\n  main\n  fs =>\n  arg =>\n  removeFile\n  processFile\n  node =>\n  removeStatements\n  getBase\n  getRelative\n  module =>\n  getFromBase\n  getFromPath\n  imp =>\n  node =>\n  imp =>\n  imp =>\n  imp =>\n  imp =>\n  imp =>\n  imp =>\n  decl =>\n  prop =>\n  prop =>\n  decl =>\n  log\n  arg =>\n  assoc =>\n  finish\n  makeSearchPath\n  addPath\n  checkExists\n  findModule\n  searchModuleInPath\n  makeNames",
 			"settings":
 			{
-				"buffer_size": 947,
+				"buffer_size": 547,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "lib/eagle/boardRenderer.js",
+			"file": "lib/stream/utils.js",
 			"settings":
 			{
-				"buffer_size": 10587,
+				"buffer_size": 9048,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/eagle/renderUtils.js",
+			"file": "lib/repeater/repeater.js",
 			"settings":
 			{
-				"buffer_size": 12242,
+				"buffer_size": 33264,
 				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "create-tamper.js",
+			"settings":
+			{
+				"buffer_size": 15129,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/stream.js",
+			"settings":
+			{
+				"buffer_size": 1301,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "resolve-imports.js",
+			"settings":
+			{
+				"buffer_size": 29144,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "Searching 478 files for \"ReadFromIter\" (regex, case sensitive)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/stream/utils.js:\n  157  }\n  158  \n  159: export const ReadFromIterator =\n  160    (gotClassPrototype('ReadableStream', 'read') &&\n  161:     class ReadFromIterator extends (await import('stream')).Readable {\n  162        constructor(iterator, options) {\n  163          super(options);\n  ...\n  177        }\n  178      }) ||\n  179:   function ReadFromIterator(iterator) {\n  180      return new ReadableStream({\n  181        start() {},\n\n/home/roman/Dokumente/Sources/plot-cv/childProcess.js:\n    5  import Timers, { TimeoutError } from './lib/repeater/timers.js';\n    6  import { spawn } from 'child_process';\n    7: import { AsyncWrite, AsyncRead, PipeToRepeater, LineReader, WritableRepeater, WriteIterator, ReadFromIterator } from './lib/stream/utils.js';\n    8  import { Repeater } from './lib/repeater/repeater.js';\n    9  import ConsoleSetup from './consoleSetup.js';\n   ..\n   99      }\n  100    })();\n  101:   let st = new ReadFromIterator(async function* () {\n  102      yield '$\\n';\n  103      yield '$$\\n';\n\n/home/roman/Dokumente/Sources/plot-cv/lib/stream/utils.js:\n  157  }\n  158  \n  159: export const ReadFromIterator =\n  160    (gotClassPrototype('ReadableStream', 'read') &&\n  161:     class ReadFromIterator extends (await import('stream')).Readable {\n  162        constructor(iterator, options) {\n  163          super(options);\n  ...\n  177        }\n  178      }) ||\n  179:   function ReadFromIterator(iterator) {\n  180      return new ReadableStream({\n  181        start() {},\n\n8 matches across 3 files\n\n\nSearching 482 files for \"log..args:\" (regex, case sensitive)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js:\n  224    printCallExpression(call_expression) {\n  225      const { arguments: args, callee } = call_expression;\n  226:     //console.log(\"args:\", util.inspect(args, { depth: Infinity, breakLength: 1000 }));\n  227  \n  228      if(args instanceof TemplateLiteral) return this.printNode(callee) + this.colorCode.punctuators() + this.printNode(args);\n\n/home/roman/Dokumente/Sources/plot-cv/test-attributes.js:\n   23  \n   24  async function main(...args) {\n   25:   console.log('args:\\n  ' + args.join('\\n  '));\n   26  \n   27    const varNames = [\n\n/home/roman/Dokumente/Sources/plot-cv/test-sourcemap.js:\n   13  \n   14    if(args.length == 0) args = ['htm/dist/htm.module.js.map', 'htm/htm.js.map', 'htm/index.js.map', 'htm/preact.js.map', 'htm/preact/standalone.modern.js.map', 'htm/standalone.js.map'];\n   15:   console.log('args:', args);\n   16    for(let arg of args) {\n   17      let map = SourceMap.fromMapFileComment(`//# sourceMappingURL=${arg} \\r\\n`, '.', filesystem);\n\n3 matches across 3 files\n\n\nSearching 483 files for \"log..args:\" (regex, case sensitive)\n\n/home/roman/Dokumente/Sources/plot-cv/test-sourcemap.js:\n   13  \n   14    if(args.length == 0) args = ['htm/dist/htm.module.js.map', 'htm/htm.js.map', 'htm/index.js.map', 'htm/preact.js.map', 'htm/preact/standalone.modern.js.map', 'htm/standalone.js.map'];\n   15:   console.log('args:', args);\n   16    for(let arg of args) {\n   17      let map = SourceMap.fromMapFileComment(`//# sourceMappingURL=${arg} \\r\\n`, '.', filesystem);\n\n/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js:\n  224    printCallExpression(call_expression) {\n  225      const { arguments: args, callee } = call_expression;\n  226:     //console.log(\"args:\", util.inspect(args, { depth: Infinity, breakLength: 1000 }));\n  227  \n  228      if(args instanceof TemplateLiteral) return this.printNode(callee) + this.colorCode.punctuators() + this.printNode(args);\n\n/home/roman/Dokumente/Sources/plot-cv/test-attributes.js:\n   23  \n   24  async function main(...args) {\n   25:   console.log('args:\\n  ' + args.join('\\n  '));\n   26  \n   27    const varNames = [\n\n/home/roman/Dokumente/Sources/plot-cv/test-sourcemap.js:\n   13  \n   14    if(args.length == 0) args = ['htm/dist/htm.module.js.map', 'htm/htm.js.map', 'htm/index.js.map', 'htm/preact.js.map', 'htm/preact/standalone.modern.js.map', 'htm/standalone.js.map'];\n   15:   console.log('args:', args);\n   16    for(let arg of args) {\n   17      let map = SourceMap.fromMapFileComment(`//# sourceMappingURL=${arg} \\r\\n`, '.', filesystem);\n\n4 matches across 4 files\n\n\nSearching 483 files for \"console.*args:\" (regex, case sensitive)\n\n/home/roman/Dokumente/Sources/plot-cv/test-sourcemap.js:\n   13  \n   14    if(args.length == 0) args = ['htm/dist/htm.module.js.map', 'htm/htm.js.map', 'htm/index.js.map', 'htm/preact.js.map', 'htm/preact/standalone.modern.js.map', 'htm/standalone.js.map'];\n   15:   console.log('args:', args);\n   16    for(let arg of args) {\n   17      let map = SourceMap.fromMapFileComment(`//# sourceMappingURL=${arg} \\r\\n`, '.', filesystem);\n\n/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js:\n  653  \n  654        if(this.matchPunctuators('=>')) {\n  655:         //console.debug('expression args:', expression);\n  656          let args = expression.expressions || expression || [];\n  657          for(let i = 0; i < args.length; i++) {\n  ...\n  666          }\n  667  \n  668:         console.debug(`${this.position()} args:`, expression);\n  669          expression = this.parseArrowFunction(args, is_async);\n  670          expression = new SequenceExpression([expression]);\n\n/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js:\n  224    printCallExpression(call_expression) {\n  225      const { arguments: args, callee } = call_expression;\n  226:     //console.log(\"args:\", util.inspect(args, { depth: Infinity, breakLength: 1000 }));\n  227  \n  228      if(args instanceof TemplateLiteral) return this.printNode(callee) + this.colorCode.punctuators() + this.printNode(args);\n\n/home/roman/Dokumente/Sources/plot-cv/lib/gcode/gcode-interp.js:\n   66  function G00(prevState, nextState, command, args, i) {\n   67    // Rapid positioning\n   68:   //console.log('cmd:', command, ' args:', args );\n   69  \n   70    G0.call(this, prevState, nextState, command, args, i);\n   ..\n   78    // else: Fixed cycle, simple cycle, for roughing (Z-axis emphasis)\n   79    console.info('Absolute programming /  Fixed cycle, simple cycle, for roughing (Z-axis emphasis)');\n   80:   console.log(`#${this.i}: cmd:`, command, ' args:', args, ' prevState:', prevState, ' nextState:', nextState);\n   81  }\n   82  \n   ..\n  114  function M3(prevState, nextState, command, args, i) {\n  115    if(prevState.spindle !== command) nextState.spindle = command;\n  116:   console.log(`#${this.i}: cmd:`, command, ' args:', args, ' prevState.spindle:', prevState.spindle, ' nextState.spindle:', nextState.spindle);\n  117  }\n  118  function M9(prevState, nextState, command, args) {\n\n/home/roman/Dokumente/Sources/plot-cv/lib/gcode/interp.js:\n   65      interp.call(thisObj, prevState, nextState, command, args);\n   66  \n   67:     console.log(`#${i}: cmd:`, command, ' args:', args, ' prevState:', prevState, ' nextState:', nextState);\n   68    } else {\n   69      console.error('Unrecognized gcode:', command, args);\n\n/home/roman/Dokumente/Sources/plot-cv/lib/path.js:\n  105      let cwd = this.cwd;\n  106      let ret;\n  107:     //console.log(\"resolve args:\",`['${args.join(\"', '\")}']`);\n  108  \n  109      for(let i = args.length - 1; i >= -1 && !resolvedAbsolute; i--) {\n\n/home/roman/Dokumente/Sources/plot-cv/lib/util.js:\n 1069      }\n 1070      addArgs(args);\n 1071:     //console.debug('nargs:', nargs);\n 1072      //console.debug('nums.length:', nums.length);\n 1073      if(nums.length >= nargs) return fn(...nums);\n\n/home/roman/Dokumente/Sources/plot-cv/tamper.js:\n 2359        addArgs(args);\n 2360      \n 2361:       //console.debug('nargs:', nargs);\n 2362            \n 2363        //console.debug('nums.length:', nums.length);\n\n/home/roman/Dokumente/Sources/plot-cv/test-attributes.js:\n   23  \n   24  async function main(...args) {\n   25:   console.log('args:\\n  ' + args.join('\\n  '));\n   26  \n   27    const varNames = [\n\n/home/roman/Dokumente/Sources/plot-cv/test-sourcemap.js:\n   13  \n   14    if(args.length == 0) args = ['htm/dist/htm.module.js.map', 'htm/htm.js.map', 'htm/index.js.map', 'htm/preact.js.map', 'htm/preact/standalone.modern.js.map', 'htm/standalone.js.map'];\n   15:   console.log('args:', args);\n   16    for(let arg of args) {\n   17      let map = SourceMap.fromMapFileComment(`//# sourceMappingURL=${arg} \\r\\n`, '.', filesystem);\n\n13 matches across 10 files\n\n\nSearching 483 files for \"^\\s*console.*args:\" (regex, case sensitive)\n\n/home/roman/Dokumente/Sources/plot-cv/test-sourcemap.js:\n   13  \n   14    if(args.length == 0) args = ['htm/dist/htm.module.js.map', 'htm/htm.js.map', 'htm/index.js.map', 'htm/preact.js.map', 'htm/preact/standalone.modern.js.map', 'htm/standalone.js.map'];\n   15:   console.log('args:', args);\n   16    for(let arg of args) {\n   17      let map = SourceMap.fromMapFileComment(`//# sourceMappingURL=${arg} \\r\\n`, '.', filesystem);\n\n/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js:\n  665            }\n  666          }\n  667: \n  668:         console.debug(`${this.position()} args:`, expression);\n  669          expression = this.parseArrowFunction(args, is_async);\n  670          expression = new SequenceExpression([expression]);\n\n/home/roman/Dokumente/Sources/plot-cv/lib/gcode/gcode-interp.js:\n   78    // else: Fixed cycle, simple cycle, for roughing (Z-axis emphasis)\n   79    console.info('Absolute programming /  Fixed cycle, simple cycle, for roughing (Z-axis emphasis)');\n   80:   console.log(`#${this.i}: cmd:`, command, ' args:', args, ' prevState:', prevState, ' nextState:', nextState);\n   81  }\n   82  \n   ..\n  114  function M3(prevState, nextState, command, args, i) {\n  115    if(prevState.spindle !== command) nextState.spindle = command;\n  116:   console.log(`#${this.i}: cmd:`, command, ' args:', args, ' prevState.spindle:', prevState.spindle, ' nextState.spindle:', nextState.spindle);\n  117  }\n  118  function M9(prevState, nextState, command, args) {\n\n/home/roman/Dokumente/Sources/plot-cv/lib/gcode/interp.js:\n   64    if(interp) {\n   65      interp.call(thisObj, prevState, nextState, command, args);\n   66: \n   67:     console.log(`#${i}: cmd:`, command, ' args:', args, ' prevState:', prevState, ' nextState:', nextState);\n   68    } else {\n   69      console.error('Unrecognized gcode:', command, args);\n\n/home/roman/Dokumente/Sources/plot-cv/test-attributes.js:\n   23  \n   24  async function main(...args) {\n   25:   console.log('args:\\n  ' + args.join('\\n  '));\n   26  \n   27    const varNames = [\n\n/home/roman/Dokumente/Sources/plot-cv/test-sourcemap.js:\n   13  \n   14    if(args.length == 0) args = ['htm/dist/htm.module.js.map', 'htm/htm.js.map', 'htm/index.js.map', 'htm/preact.js.map', 'htm/preact/standalone.modern.js.map', 'htm/standalone.js.map'];\n   15:   console.log('args:', args);\n   16    for(let arg of args) {\n   17      let map = SourceMap.fromMapFileComment(`//# sourceMappingURL=${arg} \\r\\n`, '.', filesystem);\n\n7 matches across 6 files\n",
+			"settings":
+			{
+				"buffer_size": 11021,
+				"line_ending": "Unix",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "test-sourcemap.js",
+			"settings":
+			{
+				"buffer_size": 854,
 				"line_ending": "Unix"
 			}
 		},
@@ -98,41 +155,8 @@
 			"file": "main.js",
 			"settings":
 			{
-				"buffer_size": 59973,
+				"buffer_size": 62343,
 				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/geom/line.js",
-			"settings":
-			{
-				"buffer_size": 12705,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/svg/path-parser.js",
-			"settings":
-			{
-				"buffer_size": 50138,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/dom/svg.js",
-			"settings":
-			{
-				"buffer_size": 14503,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "\nconst CalculateArc = (p1, p2, theta) => {\n  const M_2_PI = Math.PI * 2;\n  console.log(\"Point\",Point);\n  const chordLen = Point.distance(p1, p2);\n  let radius = chordLen / (2 * Math.sin(theta / 2));\n  let sweepArc = theta >= 0 ? '1' : '0';\n\n\n          const largeArc = Math.abs(theta) > Math.PI ? '1' : '0';\nlet arc ={\n    theta: Util.roundTo(theta,  Math.PI/360),\n    chordLen: Util.roundTo(chordLen, 0.0001,4),\n    radius: Util.roundTo(radius, 0.0001,4),\n    get circumference() {\n      return this.radius * Math.PI;\n    },\n    get diameter() {\n      return this.radius * 2;\n    },\n    get arcLen() {\n      return this.radius * this.theta;\n    },\n    get pathData() {\n   return [`M ${p1.x} ${p1.y}`, `A ${this.radius} ${this.radius} 0 ${largeArc} ${sweepArc} ${p2.x} ${p2.y}`];\n    }\n  };\nconsole.debug(`CalculateArc`, arc);\n  return arc;\n};",
-			"settings":
-			{
-				"buffer_size": 843,
 				"line_ending": "Unix"
 			}
 		}
@@ -148,6 +172,22 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
+				"unicode",
+				"Unicode Character Insert: Show Panel"
+			],
+			[
+				"math",
+				"UnicodeMath: Insert"
+			],
+			[
+				"install pack",
+				"Package Control: Install Package"
+			],
 			[
 				"outline",
 				"Browse Mode: Outline (Right)"
@@ -237,10 +277,6 @@
 				"SVGO: Prettify SVG"
 			],
 			[
-				"install pack",
-				"Package Control: Install Package"
-			],
-			[
 				"extract fn",
 				"Extract Javascript Function to Regular Function"
 			],
@@ -251,10 +287,6 @@
 			[
 				"add rep",
 				"Package Control: Add Repository"
-			],
-			[
-				"install ",
-				"Package Control: Install Package"
 			],
 			[
 				"cmake",
@@ -331,30 +363,78 @@
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
 		"/home/roman/Dokumente/Sources/plot-cv/lib",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/draw",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/svg"
+		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater"
 	],
 	"file_history":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
-		"/home/roman/Dokumente/Sources/plot-cv/server.js",
 		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/filesystem.js",
+		"/home/roman/.config/sublime-text-3/Packages/Outline/common.py",
+		"/home/roman/.config/sublime-text-3/Packages/Outline/show.py",
+		"/home/roman/.config/sublime-text-3/Packages/Outline/outline.py",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/stream/utils.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/socket.js",
+		"/home/roman/Dokumente/Sources/plot-cv/childProcess.js",
+		"/home/roman/Dokumente/Sources/plot-cv/server.js",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/ws/lib/stream.js",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/ws/index.js",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/ws/README.md",
+		"/home/roman/Dokumente/Sources/plot-cv/serial.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/net/websocket-async.js",
+		"/home/roman/Dokumente/Sources/plot-cv/message.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/timers.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-websocket.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/7seg-2.54.brd",
+		"/home/roman/Dokumente/Sources/plot-cv/test-quickjs.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/environment.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-eval.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/commands.js",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/libwebsockets/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/js-bindings.cmake",
+		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/components.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
+		"/home/roman/Dokumente/Sources/plot-cv/portal.js",
+		"/home/roman/Dokumente/Sources/plot-cv/index.html",
+		"/home/roman/Dokumente/Sources/plot-cv/style.css",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/libwebsockets/CMakeLists",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/data.xml",
+		"/home/roman/.config/sublime-text-3/Packages/User/UnicodeMath.sublime-settings",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/r.lbr",
+		"/home/roman/.config/sublime-text-3/Packages/UnicodeMath/UnicodeMath.sublime-settings",
+		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
+		"/home/roman/Dokumente/Sources/plot-cv/create-tamper.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/align.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/repeater.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/react-hooks.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/container/multiMap.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-jsjs.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/path-parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/origin.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/lineList.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/polygon.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom.js",
-		"/home/roman/Dokumente/Sources/plot-cv/components.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/log.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/stream/utils.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/timers.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/stream.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/stream/textDecodeStream.js",
@@ -362,12 +442,9 @@
 		"/home/roman/Dokumente/Sources/js-streams/text-streams.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-filesystem.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-stream.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/filesystem.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/stream/writableStream.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/stream/transformStream.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/gcode/parser.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-xml.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/streamUtils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/gcode/interp.js",
@@ -377,7 +454,6 @@
 		"/home/roman/Dokumente/Sources/js-gcode/cncjs-shopfloor-tablet/src/simple-toolpath.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-export.js",
 		"/home/roman/Dokumente/Sources/js-gcode/tightcnc/lib/gcode-line.js",
-		"/home/roman/Dokumente/Sources/plot-cv/create-tamper.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/gerber/parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/7seg-2.54_drill.ngc",
 		"/home/roman/Dokumente/Sources/plot-cv/resolve-imports.js",
@@ -397,84 +473,36 @@
 		"/home/roman/Dokumente/Sources/js-gcode/cncjs-shopfloor-tablet/src/simple-interpreter.js",
 		"/home/roman/Dokumente/Sources/js-gcode/gcode-interpreter/src/Interpreter.js",
 		"/home/roman/Dokumente/Sources/js-gcode/gcodejs/test/cuttingedge/cncweb.cnc",
-		"/home/roman/Dokumente/Sources/plot-cv/commands.js",
 		"/home/roman/Dokumente/Sources/js-gcode/gcode-utils/src/interpreter.ts",
 		"/home/roman/Dokumente/Sources/js-gcode/lw-gcode-parser/src/legacy/gcode-parser.js",
 		"/home/roman/Dokumente/Sources/js-gcode/gcodejs/parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/jsondiff.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/index.html",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
 		"/home/roman/Dokumente/Sources/plot-cv/streamUtils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/images?q=tbn:ANd9GcTk_RYBkEt7zCMSzAmaZOL-QboGRnkugV9DgQ",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/useDimensions.js",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/7seg-2.54.brd",
-		"/home/roman/Dokumente/Sources/plot-cv/style.css",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/align.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pin.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pad.js",
 		"/home/roman/Dokumente/Sources/plot-cv/consoleSetup.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/sweepLine.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/drawing.js",
 		"/home/roman/Downloads/00ef62472f88a1726c2f1b4584ba5ff53252cb62.dlc",
 		"/home/roman/Dokumente/Sources/plot-cv/test-parsetmpl.js",
 		"/home/roman/Dokumente/Sources/plot-cv/c2.js",
 		"/home/roman/Dokumente/Sources/plot-cv/c2.es",
-		"/home/roman/Dokumente/Sources/plot-cv/c.js",
-		"/home/roman/Dokumente/Sources/plot-cv/useGesture.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/clipper-lib.js",
-		"/home/roman/Dokumente/Sources/plot-cv/node_modules/object-inspect/index.js",
-		"/home/roman/Dokumente/Sources/plot-cv/ini-grammar.js",
-		"/home/roman/Dokumente/Sources/plot-cv/list-proxies.js",
-		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
-		"/home/roman/Dokumente/Sources/plot-cv/portal.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test.js",
-		"/home/roman/Dokumente/Sources/plot-cv/t.js",
-		"/home/roman/Dokumente/Sources/plot-cv/main.es",
-		"/home/roman/.config/sublime-text-3/Packages/Outline/outline.py",
-		"/home/roman/Dokumente/Sources/plot-cv/HoerMalWerDaHaemmert.js",
-		"/home/roman/Dokumente/Sources/plot-cv/github-results.js",
-		"/home/roman/Dokumente/Sources/plot-cv/babel.js",
-		"/home/roman/Dokumente/Sources/plot-cv/buffer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/dev-server.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/classNames.js",
-		"/home/roman/Dokumente/Sources/plot-cv/classNames.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test.py",
-		"/home/roman/Dokumente/Sources/plot-cv/b.js",
-		"/home/roman/Dokumente/Sources/plot-cv/y.js",
-		"/home/roman/Dokumente/Sources/plot-cv/x.js",
-		"/home/roman/Sources/plot-cv/main.js",
-		"/home/roman/Sources/plot-cv/server.js",
-		"/home/roman/Sources/plot-cv/.babelrc.disabled",
-		"/home/roman/Sources/plot-cv/lib/dom/svg.js",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/7seg-2.54.TXT",
-		"/home/roman/.config/sublime-text-3/Packages/Chromium X-Refs/Default.sublime-keymap",
-		"/home/roman/Sources/plot-cv/lib/dom/element.js",
-		"/home/roman/Sources/plot-cv/streamUtils.js",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/555-Synth.GTL",
-		"/home/roman/Sources/plot-cv/list-proxies.js",
-		"/home/roman/Sources/plot-cv/lib/deep.js",
-		"/home/roman/Sources/plot-cv/lib/util.js"
+		"/home/roman/Dokumente/Sources/plot-cv/c.js"
 	],
 	"find":
 	{
-		"height": 45.0
+		"height": 43.0
 	},
 	"find_in_files":
 	{
-		"height": 213.0,
+		"height": 306.0,
 		"where_history":
 		[
 			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,<open files>",
@@ -490,134 +518,134 @@
 		"case_sensitive": true,
 		"find_history":
 		[
-			"610",
-			"polygons",
-			"lines",
-			"lines:",
-			"sweepArc",
-			"distance",
-			"distance =",
-			"path",
-			"lineFn",
-			"pathIter",
-			"LinesToPath\\(",
-			"LinesTo",
-			"defaultTrans",
-			"CalculateArcRadius",
-			"largeArc",
-			"*\n",
-			"\\~:\\s*$",
-			"\\1~:$",
-			"^\\~",
-			"transformed-ele",
-			"container",
-			"transformed-ele",
-			"    ) => Util.toString({ x, y }, { multiline: false, spacing: ' ' })).join(',\\n  ')}\\n${c.text(']', 1, 36)}`;\n",
-			"Symbol.for",
-			"elementProp",
-			"default",
-			"elementDefaultAttributes",
-			"ElementGeometries",
-			"project.svg",
-			"svg =",
-			"Geometr",
-			"geometr",
-			"Propert",
-			"render",
-			"elementGeo",
-			"subscribe",
-			"elementChil",
-			"polygonGeometries",
-			"ElementLineGeometries",
-			"lineGeometries",
-			"LineGeo",
-			"lineGeo",
-			"LineGeo",
-			"LineList.to",
-			"ElementChildren",
-			"ElementGeometries",
-			"elementChildren",
-			"ElementChildren",
-			"ElementChild",
-			"ElementChildren",
-			";\n",
-			"packageGeometries",
-			"PackageGeometries",
-			"AppMain",
-			"LineLis",
-			"LineList",
-			"geom",
-			"PointList",
-			"LineList",
-			"LogJS",
-			"CreateWebSocket",
+			"exportMap",
+			"args",
+			"exportMap",
+			"^\\s*console.*args:",
+			"console.*args:",
+			"log..args:",
+			"exports =",
+			"args:",
+			"WritableSt",
+			"AsyncRead",
+			"Grbl",
+			"ReadFromIter",
+			"symlist =",
+			"sym",
+			"OutlineRefreshCommand",
+			"iterator",
+			"Iterator",
+			"socketFn",
 			"CreateWeb",
-			"/save",
-			"window, ",
-			"SaveFile",
-			"Timers,",
-			"interval",
-			"TimeoutError",
-			"AsyncWrite",
-			"ReadIterat",
-			"ReadIterator",
-			"Acq",
-			"yield",
-			"^export.*const",
-			"const ([A-Za-z0-9]*) = function",
-			"=> {",
-			"RepeaterSink",
-			"Acq",
-			"Deb",
-			"[Ll]ock",
-			"Lock",
-			"new TransformStream",
-			"TransformStream",
-			"DebugTrans",
-			"\\.on",
-			"'end'",
-			"();\n",
-			"path.join.*tmp",
-			"path.join",
-			"cwd",
-			"fetch",
-			"open\\(",
-			"Upload com",
-			"toUnixTime",
-			"TextDeco",
-			"Decode",
-			"class TextEnc",
-			"TextEncode",
-			"  'content-disposition': `attachment; filename=\"${filename}\"`,\n              'content-type': 'application/octet-stream'",
-			"stream.js",
-			"stream\\/",
-			"this.mode",
-			"this.flags",
-			"this\\.path",
-			"if",
-			"CopyToArrayBuffer",
-			");",
-			"CopyToArrayBuffer",
-			"$",
-			"CopyToArrayBuffer",
-			"DecoderStream:\",TextDecoderStream);\n      return await fetch(filename)\n        .then((response) => response.body && (stream = response.body).pipeThrough(new TextDecoderStream()))\n        .catch((err) => (error = err));\n    },\n    async close(fd) { await fd.cancel(); },\n   async read(fd, buf, offset, length) {\nlet reader, chunk; \nlet ret,  retFn ;\n      try {\n        length = length || 1024;\n        offset = offset || 0;\n                   retFn = (r) => typeof(r) == 'object' && r != null  && typeof(r.value) == 'string' ? CopyToArrayBuffer(r.value, buf ||CreateArrayBuffer(r.value.length)) : r;\n  reader = await fd.getReader(/*{ mode: \"byob\" }*/);\n ret = await reader.read(buf);\n     console.log(\"chunk:\", ret, ret.value && ret.value.length);\n   await  reader.releaseLock();\n  }catch(error) {\n    ret = error;",
-			"CopyToArrayBuffer",
-			"CreateArrayBuffer",
-			"CopyToArrayBuffer",
-			"ArrayBufferToString",
-			"CopyToArrayBuffer",
-			"CreateBuffe",
-			"import.*transformSt",
-			"import.*transf",
-			"import.*TransformStream",
-			"import.*TransformStrteam",
-			"TextDecoderStream",
-			"ArrayBufToString",
-			"StringToArrayBuf",
-			"chunk.length",
-			"chunk.",
-			"chunk.length",
-			"chunk.lenfgth"
+			"Uint8Array",
+			"gotClass",
+			"function",
+			"expressWs",
+			"createWebSocketStream",
+			"duplex",
+			"Stream",
+			"SerialStream",
+			"/serial",
+			"readable",
+			"ReadableStrea",
+			"Util.isConstructor",
+			"getGlobalObject",
+			"PipeTo",
+			"pipe",
+			"getPrototypeChain",
+			"Repeater.merge",
+			"globalThis =",
+			"ReadableStream",
+			"import.*Repeater",
+			"merge",
+			"import.*utils.js",
+			"Repeater",
+			"\\.id.*message",
+			"log.*\\[.*message",
+			"log...*\\[.*message",
+			"log.*Message data",
+			"log.*message data",
+			"processLine",
+			"on\\(",
+			"sendBuf",
+			"this.ws",
+			"closeConnection",
+			"QUIT",
+			"processLine",
+			"flush",
+			"flush =",
+			"flush\\(",
+			"flush",
+			"closeConnec",
+			"log.*message",
+			"send\\(",
+			"Util.once =",
+			"error",
+			"sendMany",
+			"sendBuf",
+			"flush\\(",
+			" send\\(",
+			"send\\(",
+			"await ",
+			"closeConnection",
+			"await client.sendTo\\(sock, ",
+			"await client.sendTo\\(s, ",
+			"breakLen",
+			"'connect'",
+			"lastMessage",
+			"Timers",
+			"Timerws",
+			"repeater.*timer",
+			"info.bytes",
+			"log..socket",
+			"sendTo",
+			"removeItem",
+			"console.*data =",
+			"data =",
+			"await await",
+			"client.send",
+			"Util.ifThenElse",
+			"Util.isEmpty",
+			"log..message",
+			"log(`message",
+			"headers:",
+			"connected",
+			"message from",
+			"const add =",
+			"socket",
+			"expressWs",
+			"ws",
+			"data:",
+			"sendMany",
+			"weakMapper",
+			"codeBody",
+			"Symbol.for",
+			"encode",
+			"message:",
+			"client",
+			"SendFunction",
+			"JOIN",
+			"USERS",
+			"socket",
+			"sockets",
+			"SendF",
+			"sockets",
+			"SerialPorts",
+			"SerialPort",
+			"serial",
+			"serial.Port.prototype",
+			"USERS",
+			"Message",
+			"CreateWe",
+			"sendTo",
+			"Sending",
+			"Socket",
+			"/ws",
+			"JSON.string",
+			"Message ",
+			"Socket",
+			"prng",
+			"Util.[^ ]*Id.*="
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -625,6 +653,18 @@
 		"regex": true,
 		"replace_history":
 		[
+			" this.send(",
+			"send(",
+			"bytes",
+			"await client.send",
+			"Port.prototype",
+			"#",
+			"minnet",
+			"LIBWEBSOCKETS",
+			"PI",
+			"\\\\n",
+			"log(\\1",
+			"console.log",
 			"",
 			" *",
 			"ElementGeometries",
@@ -681,7 +721,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 947,
+						"buffer_size": 547,
 						"regions":
 						{
 						},
@@ -690,376 +730,256 @@
 						],
 						"settings":
 						{
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/main.js",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/create-tamper.js",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
 								[
-									8179,
-									8203
+									1324,
+									1333
 								],
 								[
-									8244,
-									8265
+									1365,
+									1371
 								],
 								[
-									8309,
-									8346
+									1445,
+									1460
 								],
 								[
-									8462,
-									8482
+									1472,
+									1478
 								],
 								[
-									8845,
-									8863
+									1875,
+									1890
 								],
 								[
-									9426,
-									9448
+									1930,
+									1934
 								],
 								[
-									9571,
-									9586
+									2068,
+									2072
 								],
 								[
-									10439,
-									10466
+									2173,
+									2181
 								],
 								[
-									10790,
-									10816
+									2228,
+									2232
 								],
 								[
-									11349,
-									11381
+									2474,
+									2523
 								],
 								[
-									11534,
-									11558
+									2616,
+									2622
 								],
 								[
-									11618,
-									11667
+									2693,
+									2722
 								],
 								[
-									11909,
-									11931
+									2922,
+									2965
 								],
 								[
-									11938,
-									11962
+									3037,
+									3065
 								],
 								[
-									11976,
-									12002
+									3095,
+									3100
 								],
 								[
-									12734,
-									12783
+									3673,
+									3679
 								],
 								[
-									13182,
-									13275
+									5784,
+									5809
 								],
 								[
-									13415,
-									13439
+									5993,
+									6019
 								],
 								[
-									13867,
-									13896
+									6589,
+									6596
 								],
 								[
-									14429,
-									14474
+									6675,
+									6738
 								],
 								[
-									16808,
-									16885
+									7757,
+									7778
 								],
 								[
-									19790,
-									19805
+									7829,
+									7854
 								],
 								[
-									21077,
-									21115
+									7920,
+									7929
 								],
 								[
-									21797,
-									21820
+									8283,
+									8302
 								],
 								[
-									23424,
-									23448
+									8363,
+									8382
 								],
 								[
-									24670,
-									24710
+									8988,
+									8994
 								],
 								[
-									24908,
-									24966
+									9179,
+									9186
 								],
 								[
-									25092,
-									25152
+									9473,
+									9479
 								],
 								[
-									25482,
-									25504
+									9544,
+									9550
 								],
 								[
-									25582,
-									25608
+									9812,
+									9818
 								],
 								[
-									27624,
-									27650
+									10005,
+									10011
 								],
 								[
-									27711,
-									27735
+									10268,
+									10274
 								],
 								[
-									27776,
-									27800
+									10325,
+									10331
 								],
 								[
-									28096,
-									28112
+									10813,
+									10820
 								],
 								[
-									28315,
-									28335
+									10881,
+									10888
 								],
 								[
-									28978,
-									28999
+									10973,
+									10980
 								],
 								[
-									33603,
-									33651
+									11052,
+									11059
 								],
 								[
-									33762,
-									33787
+									11570,
+									11591
 								],
 								[
-									34091,
-									34106
+									11623,
+									11629
 								],
 								[
-									34131,
-									34148
+									11681,
+									11689
 								],
 								[
-									34417,
-									34443
+									12053,
+									12073
 								],
 								[
-									35007,
-									35034
+									12667,
+									12720
 								],
 								[
-									35487,
-									35523
+									12745,
+									12759
 								],
 								[
-									37708,
-									37755
+									13297,
+									13323
 								],
 								[
-									38077,
-									38097
+									13426,
+									13454
 								],
 								[
-									38529,
-									38550
+									13971,
+									14011
 								],
 								[
-									38582,
-									38600
-								],
-								[
-									39109,
-									39129
-								],
-								[
-									39384,
-									39403
-								],
-								[
-									39611,
-									39629
-								],
-								[
-									40292,
-									40311
-								],
-								[
-									40777,
-									40817
-								],
-								[
-									40882,
-									40898
-								],
-								[
-									41460,
-									41478
-								],
-								[
-									41516,
-									41591
-								],
-								[
-									41793,
-									41816
-								],
-								[
-									41963,
-									41982
-								],
-								[
-									42074,
-									42091
-								],
-								[
-									42137,
-									42156
-								],
-								[
-									43020,
-									43030
-								],
-								[
-									43867,
-									43876
-								],
-								[
-									47888,
-									47920
-								],
-								[
-									49679,
-									49727
-								],
-								[
-									50311,
-									50320
-								],
-								[
-									52367,
-									52389
-								],
-								[
-									54842,
-									54870
-								],
-								[
-									56186,
-									56209
-								],
-								[
-									56465,
-									56493
-								],
-								[
-									56860,
-									56903
-								],
-								[
-									59771,
-									59798
-								],
-								[
-									59921,
-									59936
+									14984,
+									15010
 								]
 							],
 							"symlist":
 							[
-								"add",
-								"useSlot",
-								"trklGetSet",
-								"MouseEvents",
-								"append_to(elem, p)",
-								"DrawSVG",
-								"append",
-								"\tcalcViewBox",
-								"\tsetViewBox",
-								"ElementToXML",
-								"readFile(filename)",
-								"writeFile(filename, data, overwrite = true)",
-								"exists(filename)",
-								"realpath(filename)",
-								"LoadFile",
-								"SaveFile",
-								"SaveSVG",
-								"predicate",
-								"ModifyColors",
-								"LoadDocument",
-								"Fence",
-								"\txx",
-								"ChooseDocument",
-								"GenerateVoronoi",
-								"add",
-								"PackageChildren",
-								"ElementChildren",
-								"ElementGeometries",
-								"NewPath",
-								"MakeFitAction",
-								"function ZoomFactor(val",
-								"ZoomLog",
-								"function AdjustZoom(l",
-								"socketFn",
-								"  .send",
-								"  .onload",
-								"  .keystroke",
-								"  .focusSearch",
-								"children: ()",
-								"geometries: ()",
-								"testComponent",
-								"\tFile",
-								"File.prototype.toString = function()",
-								"updateIfChanged",
-								"changeInput",
-								"Consumer",
-								"function* ()",
-								"log(type, time, msg)",
-								"Logger",
-								"function* ()",
-								"Dumper",
-								"Commander",
-								"handler",
-								"Toggle",
-								"Layer",
-								"setVisible",
-								"onMouseMove: (e)",
-								"onMouseUp: (e)",
-								"onMouseDown: (e)",
-								"fn: (e)",
-								"fn: ()",
-								"create: (project, props",
-								"\tmakeLayerName",
-								"fn: ()",
-								"onCommand: (cmdStr)",
-								"\tmod",
-								"\tcancel",
-								"  .oncontextmenu",
-								"  .processEvents",
-								"onRuntimeInitialized: ()",
-								"print: (txt)"
+								"ES6Module",
+								"  create",
+								"ES6ImportExport",
+								"  create",
+								"ES6ImportExport",
+								"  from",
+								"  from",
+								"  toSource",
+								"  code",
+								"PrefixRemover",
+								"  arg =>",
+								"  dumpFile",
+								"  function printAst(ast, comments, printer",
+								"  main",
+								"  fs =>",
+								"  arg =>",
+								"  removeFile",
+								"  processFile",
+								"  node =>",
+								"  removeStatements",
+								"  getBase",
+								"  getRelative",
+								"  module =>",
+								"  getFromBase",
+								"  getFromPath",
+								"  imp =>",
+								"  node =>",
+								"  imp =>",
+								"  imp =>",
+								"  imp =>",
+								"  imp =>",
+								"  imp =>",
+								"  imp =>",
+								"  decl =>",
+								"  prop =>",
+								"  prop =>",
+								"  decl =>",
+								"  log",
+								"  arg =>",
+								"  assoc =>",
+								"  finish",
+								"  makeSearchPath",
+								"  addPath",
+								"  checkExists",
+								"  findModule",
+								"  searchModuleInPath",
+								"  makeNames"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 833.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 8,
 					"type": "text"
 				}
 			]
@@ -1070,29 +990,29 @@
 			[
 				{
 					"buffer": 1,
-					"file": "lib/eagle/boardRenderer.js",
+					"file": "lib/stream/utils.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 10587,
+						"buffer_size": 9048,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6214,
-								6214
+								4261,
+								4261
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3734.0,
+						"translation.y": 2901.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 6,
@@ -1100,101 +1020,41 @@
 				},
 				{
 					"buffer": 2,
-					"file": "lib/eagle/renderUtils.js",
+					"file": "lib/repeater/repeater.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 12242,
+						"buffer_size": 33264,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								8106,
-								8106
+								931,
+								931
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 5304.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "main.js",
+					"file": "create-tamper.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 59973,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								24777,
-								24777
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 13710.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "lib/geom/line.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 12705,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2943,
-								2943
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1173.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "lib/svg/path-parser.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 50138,
+						"buffer_size": 15129,
 						"regions":
 						{
 						},
@@ -1207,12 +1067,70 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "lib/stream.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1301,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								993,
+								993
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "resolve-imports.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 29144,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1986,
+								1986
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1074.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 4,
@@ -1220,53 +1138,207 @@
 				},
 				{
 					"buffer": 6,
-					"file": "lib/dom/svg.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 14503,
+						"buffer_size": 11021,
 						"regions":
 						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										160,
+										172
+									],
+									[
+										253,
+										265
+									],
+									[
+										447,
+										459
+									],
+									[
+										814,
+										826
+									],
+									[
+										1034,
+										1046
+									],
+									[
+										1218,
+										1230
+									],
+									[
+										1311,
+										1323
+									],
+									[
+										1505,
+										1517
+									],
+									[
+										1886,
+										1896
+									],
+									[
+										2222,
+										2232
+									],
+									[
+										2571,
+										2581
+									],
+									[
+										3091,
+										3101
+									],
+									[
+										3446,
+										3456
+									],
+									[
+										3782,
+										3792
+									],
+									[
+										4131,
+										4141
+									],
+									[
+										4647,
+										4665
+									],
+									[
+										4948,
+										4979
+									],
+									[
+										5165,
+										5204
+									],
+									[
+										5546,
+										5564
+									],
+									[
+										5937,
+										5973
+									],
+									[
+										6255,
+										6303
+									],
+									[
+										6530,
+										6578
+									],
+									[
+										6888,
+										6931
+									],
+									[
+										7191,
+										7217
+									],
+									[
+										7437,
+										7458
+									],
+									[
+										7687,
+										7708
+									],
+									[
+										7910,
+										7928
+									],
+									[
+										8259,
+										8277
+									],
+									[
+										8787,
+										8807
+									],
+									[
+										9061,
+										9116
+									],
+									[
+										9524,
+										9574
+									],
+									[
+										9799,
+										9849
+									],
+									[
+										10169,
+										10224
+									],
+									[
+										10480,
+										10500
+									],
+									[
+										10829,
+										10849
+									]
+								],
+								"scope": ""
+							}
 						},
 						"selection":
 						[
 							[
-								10121,
-								10121
+								8453,
+								8453
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"detect_indentation": false,
+							"line_numbers": false,
+							"output_tag": 5,
+							"result_base_dir": "",
+							"result_file_regex": "^([^ \t].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 7199.0,
+						"translation.y": 4935.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
 					"buffer": 7,
+					"file": "test-sourcemap.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 843,
+						"buffer_size": 854,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								843,
-								843
+								497,
+								497
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
@@ -1274,7 +1346,37 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "main.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 62343,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								33815,
+								33815
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 18357.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
 					"type": "text"
 				}
 			]
@@ -1282,11 +1384,11 @@
 	],
 	"incremental_find":
 	{
-		"height": 32.0
+		"height": 30.0
 	},
 	"input":
 	{
-		"height": 77.0
+		"height": 95.0
 	},
 	"layout":
 	{
@@ -1320,6 +1422,10 @@
 		]
 	},
 	"menu_visible": true,
+	"output.YAMLMacros":
+	{
+		"height": 169.0
+	},
 	"output.exec":
 	{
 		"height": 121.0
@@ -1332,7 +1438,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 81.0
+		"height": 161.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1342,12 +1448,180 @@
 		"selected_items":
 		[
 			[
+				"stream",
+				"lib/stream.js"
+			],
+			[
+				"create-ta",
+				"create-tamper.js"
+			],
+			[
+				"resolve",
+				"resolve-imports.js"
+			],
+			[
+				"repeat",
+				"lib/repeater/repeater.js"
+			],
+			[
 				"main",
 				"main.js"
 			],
 			[
+				"utils",
+				"lib/stream/utils.js"
+			],
+			[
+				"socket",
+				"socket.js"
+			],
+			[
+				"server",
+				"server.js"
+			],
+			[
+				"child",
+				"childProcess.js"
+			],
+			[
+				"util",
+				"lib/util.js"
+			],
+			[
+				"util.",
+				"lib/util.js"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"timers",
+				"lib/repeater/timers.js"
+			],
+			[
+				"test-web",
+				"test-websocket.js"
+			],
+			[
+				"messa",
+				"message.js"
+			],
+			[
+				"serial",
+				"serial.js"
+			],
+			[
+				"seri",
+				"serial.js"
+			],
+			[
+				"message",
+				"message.js"
+			],
+			[
+				"cmake",
+				"quickjs/CMakeLists.txt"
+			],
+			[
+				"cmakelists",
+				"quickjs/net/libwebsockets/CMakeLists.txt"
+			],
+			[
+				"js-bind",
+				"js-bindings.cmake"
+			],
+			[
+				"command",
+				"commands.js"
+			],
+			[
+				"index.html",
+				"index.html"
+			],
+			[
+				"style",
+				"style.css"
+			],
+			[
+				"portal.js",
+				"portal.js"
+			],
+			[
+				"component",
+				"components.js"
+			],
+			[
+				"test-qui",
+				"test-quickjs.js"
+			],
+			[
+				"test-eval",
+				"test-eval.js"
+			],
+			[
+				"7seg-2",
+				"tmp/7seg-2.54.brd"
+			],
+			[
+				"r.lbr",
+				"tmp/r.lbr"
+			],
+			[
+				"7seg-",
+				"tmp/7seg-2.54.brd"
+			],
+			[
+				"serve",
+				"server.js"
+			],
+			[
+				"estree",
+				"lib/ecmascript/estree.js"
+			],
+			[
+				"lexer",
+				"lib/ecmascript/lexer.js"
+			],
+			[
+				"align",
+				"lib/geom/align.js"
+			],
+			[
+				"parser",
+				"lib/ecmascript/parser.js"
+			],
+			[
+				"tamper",
+				"create-tamper.js"
+			],
+			[
+				"multimap",
+				"lib/container/multiMap.js"
+			],
+			[
+				"create-tamper",
+				"create-tamper.js"
+			],
+			[
 				"point",
 				"lib/geom/point.js"
+			],
+			[
+				"printer",
+				"lib/ecmascript/printer.js"
+			],
+			[
+				"test-jsjs",
+				"test-jsjs.js"
+			],
+			[
+				"test-ecmascr",
+				"test-ecmascript.js"
+			],
+			[
+				"create-t",
+				"create-tamper.js"
 			],
 			[
 				"point .",
@@ -1376,22 +1650,6 @@
 			[
 				"logjs",
 				"lib/log.js"
-			],
-			[
-				"server",
-				"server.js"
-			],
-			[
-				"stream",
-				"lib/stream.js"
-			],
-			[
-				"util",
-				"lib/stream/utils.js"
-			],
-			[
-				"util.",
-				"lib/util.js"
 			],
 			[
 				"stream.j",
@@ -1438,14 +1696,6 @@
 				"test-export.js"
 			],
 			[
-				"util.js",
-				"lib/util.js"
-			],
-			[
-				"parser",
-				"lib/gcode/parser.js"
-			],
-			[
 				"interp",
 				"lib/gcode/interp.js"
 			],
@@ -1482,10 +1732,6 @@
 				"lib/streamUtils.js"
 			],
 			[
-				"index.html",
-				"index.html"
-			],
-			[
 				"elemen",
 				"lib/eagle/element.js"
 			],
@@ -1498,14 +1744,6 @@
 				"tmp/images?q=tbn:ANd9GcTk_RYBkEt7zCMSzAmaZOL-QboGRnkugV9DgQ"
 			],
 			[
-				"lexer",
-				"lib/ecmascript/lexer.js"
-			],
-			[
-				"resolve",
-				"resolve-imports.js"
-			],
-			[
 				"ecmascrp",
 				"lib/ecmascript.js"
 			],
@@ -1516,14 +1754,6 @@
 			[
 				"lexe",
 				"lib/ecmascript/lexer.js"
-			],
-			[
-				"estree",
-				"lib/ecmascript/estree.js"
-			],
-			[
-				"printer",
-				"lib/ecmascript/printer.js"
 			],
 			[
 				"parse",
@@ -1544,18 +1774,6 @@
 			[
 				"compone",
 				"components.js"
-			],
-			[
-				"7seg-2",
-				"tmp/7seg-2.54.brd"
-			],
-			[
-				"style",
-				"style.css"
-			],
-			[
-				"7seg-",
-				"tmp/7seg-2.54.brd"
 			],
 			[
 				"element",
@@ -1624,10 +1842,6 @@
 			[
 				"resolve-import",
 				"resolve-imports.js"
-			],
-			[
-				"command",
-				"commands.js"
 			],
 			[
 				"main.es",
@@ -1744,114 +1958,6 @@
 			[
 				"grid",
 				"lib/eagle/components/grid.js"
-			],
-			[
-				"node.j",
-				"lib/eagle/node.js"
-			],
-			[
-				"node.js",
-				"lib/dom/node.js"
-			],
-			[
-				"deboun",
-				"lib/async/debounce.js"
-			],
-			[
-				"pad.js",
-				"lib/eagle/components/pad.js"
-			],
-			[
-				"debounc",
-				"lib/async/debounce.js"
-			],
-			[
-				"renderUtil",
-				"lib/eagle/renderUtils.js"
-			],
-			[
-				"renderu",
-				"lib/eagle/renderUtils.js"
-			],
-			[
-				"trkl",
-				"lib/trkl.js"
-			],
-			[
-				"7seg",
-				"tmp/7seg-2.54.GBL"
-			],
-			[
-				"com",
-				"components.js"
-			],
-			[
-				"stasn",
-				"standalone.module.js"
-			],
-			[
-				"preact",
-				"lib/dom/preactComponent.js"
-			],
-			[
-				"imgui-view",
-				"src/imgui-viewer.h"
-			],
-			[
-				"main.cpp",
-				"imgui/example_sdl_opengl3/main.cpp"
-			],
-			[
-				"imgui-v",
-				"imgui-viewer.cmake"
-			],
-			[
-				"highgui",
-				"highgui-viewer.cmake"
-			],
-			[
-				"imgui",
-				"imgui-viewer.cmake"
-			],
-			[
-				"test-qui",
-				"test-quickjs.js"
-			],
-			[
-				"quickjs",
-				"quickjs/quickjs.c"
-			],
-			[
-				"quickjs-li",
-				"quickjs-2020-07-05/quickjs-libc.c"
-			],
-			[
-				"cli.cp",
-				"src/cli.cpp"
-			],
-			[
-				"plot-cv.h",
-				"src/plot-cv.h"
-			],
-			[
-				"plot-cv",
-				"src/plot-cv.cpp"
-			],
-			[
-				"js.h",
-				"src/js.h"
-			],
-			[
-				"quickjs.c",
-				"quickjs/quickjs.c"
-			],
-			[
-				"quickjs.h",
-				"quickjs/quickjs.h"
-			],
-			[
-				"cli.cpp",
-				"src/cli.cpp"
 			]
 		],
 		"width": 0.0
