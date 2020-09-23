@@ -160,17 +160,18 @@ async function main(...args) {
     console.log('line.toString() =', line.toString());
 
     let i = 0;
-
+  let arr = line.toArray();
     console.log('toArray:', line.toArray().join(','));
  console.log('values(): ', line.values() );
  console.log('toPoints(): ',[...line.toPoints()].map(p => Util.className(p)));
 
   console.log('toString(): ',line.toString());
-const [x1,y1,x2,y2] = line;
-/*
-console.log(`x1=${x1},y1=${y1} x2=${x2},y2=${y2}`);*/
+  console.log('new Line(50,50,320-50,240-25): ',new Line(50,50,320-50,240-25));
+let [x1,y1,x2,y2] = arr;
+ 
+console.log(`Line{${x1},${y1} ${x2},${y2}}`);
         for(let num of line) {
-      console.log('num:', num);
+      console.log('num:',i++, num);
     }
 
     //const [start, end] = line;
