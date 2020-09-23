@@ -90,10 +90,11 @@
 			}
 		},
 		{
-			"contents": "     \n\n      tftf",
+			"file": "CMakeLists.txt",
 			"settings":
 			{
-				"buffer_size": 17,
+				"buffer_size": 8492,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		}
@@ -433,7 +434,7 @@
 	],
 	"find":
 	{
-		"height": 43.0
+		"height": 50.0
 	},
 	"find_in_files":
 	{
@@ -453,6 +454,7 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"SHARED",
 			"exportMap",
 			"args",
 			"exportMap",
@@ -579,8 +581,7 @@
 			"JSON.string",
 			"Message ",
 			"Socket",
-			"prng",
-			"Util.[^ ]*Id.*="
+			"prng"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -669,7 +670,7 @@
 						],
 						"settings":
 						{
-							"current_file": null,
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
 							"outline_rename_mode": false,
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
 							"tab_size": 2,
@@ -679,7 +680,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				}
 			]
@@ -690,30 +691,32 @@
 			[
 				{
 					"buffer": 1,
+					"file": "CMakeLists.txt",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 17,
+						"buffer_size": 8492,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								17,
-								17
+								4459,
+								4459
 							]
 						],
 						"settings":
 						{
-							"auto_name": "",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
+							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 3818.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -721,7 +724,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 30.0
+		"height": 37.0
 	},
 	"input":
 	{
@@ -784,6 +787,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"cmake",
+				"CMakeLists.txt"
+			],
 			[
 				"stream",
 				"lib/stream.js"
@@ -855,10 +862,6 @@
 			[
 				"message",
 				"message.js"
-			],
-			[
-				"cmake",
-				"quickjs/CMakeLists.txt"
 			],
 			[
 				"cmakelists",
@@ -1317,7 +1320,7 @@
 		],
 		"width": 1050.0
 	},
-	"selected_group": 0,
+	"selected_group": 1,
 	"settings":
 	{
 	},
