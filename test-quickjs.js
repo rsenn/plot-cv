@@ -1,9 +1,11 @@
 import { Rect } from './build/x86_64-linux-gnu/rect.so';
 import { Point } from './build/x86_64-linux-gnu/point.so';
 import { Size } from './build/x86_64-linux-gnu/size.so';
+import { Line } from './build/x86_64-linux-gnu/line.so';
 import { Mat } from './build/x86_64-linux-gnu/mat.so';
 import { Contour } from './build/x86_64-linux-gnu/contour.so';
 import { PointIterator } from './build/x86_64-linux-gnu/point-iterator.so';
+import { Draw, drawLine, drawCircle } from './build/x86_64-linux-gnu/draw.so';
 import { inspect } from './lib/inspect.js';
 
 //console.log('test:', inspect({ Point, Size, Rect, Mat, PointIterator, Contour }));
@@ -146,6 +148,14 @@ console.log("start");
     console.log(`fmat[${i++}] row=${row} col=${col} value=${value}`);
   }
 
+
+let ll = [ new Line(0,0,50,50), new Line(50,50,50,75), new Line(50,75, 100,75) ];
+
+for(let line of ll) {
+  console.log("line:", line.x1, line.y1, line.x2, line.y2);
+  
+  
+}
   /* let c = new Contour();
 
   c.push(new Point(0, 0));
