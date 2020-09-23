@@ -133,8 +133,9 @@ js_line_points(JSContext* ctx, JSValueConst line, int argc, JSValueConst* argv) 
 
   obj = JS_NewArray(ctx);
   if(!JS_IsException(obj)) {
-    JS_SetPropertyUint32(ctx, obj, 0, js_point_new(ctx, s->pts[0].x, s->pts[0].y));
-    JS_SetPropertyUint32(ctx, obj, 1, js_point_new(ctx, s->pts[1].x, s->pts[1].y));
+  std::pair<cv::Point2d,cv::Point2d> points = s->pt;
+    JS_SetPropertyUint32(ctx, obj, 0, js_point_new(ctx, points.first.x,  points.first.y));
+    JS_SetPropertyUint32(ctx, obj, 1, js_point_new(ctx, points.second.x, points.second.y));
   }
   return obj;
 }

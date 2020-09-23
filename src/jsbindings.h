@@ -18,7 +18,7 @@ typedef cv::Point2d JSPointData;
 typedef union {
   std::array<double, 4> arr;
   cv::Vec4d vec;
-  cv::Point2d pts[2];
+ std::pair<cv::Point2d, cv::Point2d> pt;
 } JSLineData;
 typedef std::vector<JSPointData> JSContourData;
 struct JSPointIteratorData : public std::pair<JSPointData*, JSPointData*> {
