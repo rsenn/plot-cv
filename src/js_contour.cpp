@@ -937,6 +937,12 @@ js_contour2d_new(JSContext* ctx, const std::vector<cv::Point_<double>>& points) 
   return ret;
 }
 
+JSValue
+js_contour_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSContourData* s = js_contour_data(ctx, this_val);
+
+  return js_create_point_iterator(ctx, std::make_pair(&(*s)[0], &(*s)[s->size()]), magic);
+}
 const JSCFunctionListEntry js_contour_proto_funcs[] = {
     JS_CFUNC_DEF("push", 1, js_contour_push),
     JS_CFUNC_DEF("pop", 0, js_contour_pop),
@@ -970,7 +976,9 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("simplifyPerpendicularDistance", 0, js_contour_psimpl, 6),
     JS_CFUNC_DEF("toArray", 0, js_contour_toarray),
     JS_CFUNC_DEF("toString", 0, js_contour_tostring),
-    JS_CFUNC_MAGIC_DEF("entries", 0, js_create_point_iterator, 0),
+    JS_CFUNC_MAGIC_DEF("entries", 0, js_contour_iterator, 0),
+    JS_CFUNC_MAGIC_DEF("keys", 0, js_contour_iterator, 1),
+    JS_CFUNC_MAGIC_DEF("values", 0, js_contour_iterator, 2),
 
     JS_ALIAS_DEF("[Symbol.iterator]", "entries"),
 

@@ -16,7 +16,9 @@ typedef cv::Size2d JSSizeData;
 typedef cv::Point2d JSPointData;
 typedef cv::Vec4d JSLineData;
 typedef std::vector<JSPointData> JSContourData;
-typedef std::pair<JSPointData*, JSPointData*> JSPointIteratorData;
+struct JSPointIteratorData : public std::pair<JSPointData*, JSPointData*> {
+  int magic;
+};
 
 #define VISIBLE
 #define HIDDEN __attribute__((visibility("hidden")))
@@ -84,7 +86,7 @@ JSModuleDef* js_init_module_draw(JSContext*, const char*);
 extern "C" JSValue contour_class, contour_proto, int32array_ctor, int32array_proto, mat_class, mat_proto, mat_iterator_proto, point_class, line_class, point_iterator_class, draw_class,
     point_iterator_proto, point_proto, rect_class, rect_proto, size_class, size_proto, line_proto, draw_proto;
 
-JSValue js_create_point_iterator(JSContext*, JSValueConst this_val, int argc, JSValueConst* argv, int magic);
+JSValue js_create_point_iterator(JSContext* ctx, const std::pair<JSPointData*, JSPointData*>& range, int magic);
 
 extern cv::Mat* dptr;
 }
