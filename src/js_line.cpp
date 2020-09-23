@@ -152,15 +152,15 @@ js_line_array(JSContext* ctx, JSValueConst line, int argc, JSValueConst* arg) {
   return obj;
 }
 
-static JSValue js_call_method(JSContext*ctx, JSValue obj, const char*name, int argc, JSValueConst* argv) {
-     JSValue fn, ret = JS_UNDEFINED;
+static JSValue
+js_call_method(JSContext* ctx, JSValue obj, const char* name, int argc, JSValueConst* argv) {
+  JSValue fn, ret = JS_UNDEFINED;
 
-     fn  = JS_GetPropertyStr(ctx, obj, name);
-      if(!JS_IsUndefined(fn))
-        ret = JS_Call(ctx, fn, obj, argc, argv);
-      return ret;
-    }
-
+  fn = JS_GetPropertyStr(ctx, obj, name);
+  if(!JS_IsUndefined(fn))
+    ret = JS_Call(ctx, fn, obj, argc, argv);
+  return ret;
+}
 
 static JSValue
 js_line_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
@@ -168,14 +168,12 @@ js_line_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* 
   JSValue method, ret = JS_UNDEFINED;
 
   ret = js_line_array(ctx, this_val, argc, argv);
-   
-   switch(magic) {
-    case 3:
-     ret = js_call_method(ctx, ret, "values", 0, NULL);
-      break;
-    case 4:{
-      JSValue args[] = { JS_NewString(ctx, " "), 0 };
-     ret = js_call_method(ctx, ret, "join", 1, args);
+
+  switch(magic) {
+    case 3: ret = js_call_method(ctx, ret, "values", 0, NULL); break;
+    case 4: {
+      JSValue args[] = {JS_NewString(ctx, " "), 0};
+      ret = js_call_method(ctx, ret, "join", 1, args);
       break;
     }
   }
@@ -197,22 +195,19 @@ const JSCFunctionListEntry js_line_proto_funcs[] = {
     JS_CGETSET_ENUMERABLE_DEF("y2", js_line_get_xy12, js_line_set_xy12, 3),
     JS_CGETSET_MAGIC_DEF("a", js_line_get_ab, js_line_set_ab, 0),
     JS_CGETSET_MAGIC_DEF("b", js_line_get_ab, js_line_set_ab, 1),
-    /*  JS_CGETSET_MAGIC_DEF("x2", js_line_get_xy12, js_line_set_xy12, 2),
-       JS_CGETSET_MAGIC_DEF("y2", js_line_get_xy12, js_line_set_xy12, 3),
-        JS_ALIAS_DEF("x1", "x1"),
-       JS_ALIAS_DEF("y1", "y1"),*/
-
+    JS_CGETSET_MAGIC_DEF("0", js_line_get_ab, js_line_set_ab, 0),
+    JS_CGETSET_MAGIC_DEF("1", js_line_get_ab, js_line_set_ab, 1),
+ /*    JS_CGETSET_MAGIC_DEF("first", js_line_get_ab, js_line_set_ab, 0),
+    JS_CGETSET_MAGIC_DEF("second", js_line_get_ab, js_line_set_ab, 1),
+*/ 
     JS_CFUNC_DEF("toArray", 0, js_line_array),
     JS_CFUNC_DEF("toPoints", 0, js_line_points),
     JS_CFUNC_MAGIC_DEF("toString", 0, js_line_iterator, 4),
     JS_CFUNC_MAGIC_DEF("values", 0, js_line_iterator, 3),
-
     JS_ALIAS_DEF("[Symbol.iterator]", "values"),
     //  JS_ALIAS_DEF("[Symbol.toStringTag]", "toString"),
-
     //    JS_CFUNC_DEF("toString", 0, js_line_to_string),
 };
-
 int
 js_line_init(JSContext* ctx, JSModuleDef* m) {
 

@@ -155,6 +155,8 @@ async function main(...args) {
 
     console.log('a =', a);
     console.log('b =', b);
+    console.log('line[0] =', line[0] );
+    console.log('line[1] =', line[1]);
 
     let i = 0;
 
