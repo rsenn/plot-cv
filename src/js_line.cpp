@@ -126,21 +126,20 @@ js_line_set_ab(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
 }
 
 static JSValue
-js_line_points(JSContext* ctx, JSValueConst line) {
+js_line_points(JSContext* ctx, JSValueConst line, int argc, JSValueConst* argv) {
   JSLineData* s = static_cast<JSLineData*>(JS_GetOpaque2(ctx, line, js_line_class_id));
   JSValue obj = JS_EXCEPTION, p;
   int i;
 
   obj = JS_NewArray(ctx);
   if(!JS_IsException(obj)) {
-
-    JS_SetPropertyUint32(ctx, obj, 0, js_point_new(ctx, s->vec[0], s->vec[1]));
-    JS_SetPropertyUint32(ctx, obj, 1, js_point_new(ctx, s->vec[2], s->vec[3]));
+    JS_SetPropertyUint32(ctx, obj, 0, js_point_new(ctx, s->pts[0].x, s->pts[0].y));
+    JS_SetPropertyUint32(ctx, obj, 1, js_point_new(ctx, s->pts[1].x, s->pts[1].y));
   }
   return obj;
 }
 static JSValue
-js_line_vector(JSContext* ctx, JSValueConst line) {
+js_line_array(JSContext* ctx, JSValueConst line, int argc, JSValueConst* arg) {
   JSLineData* s = static_cast<JSLineData*>(JS_GetOpaque2(ctx, line, js_line_class_id));
   JSValue obj = JS_EXCEPTION, p;
   int i;
@@ -158,9 +157,9 @@ js_line_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* 
   JSLineData* s = static_cast<JSLineData*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
 
   if(magic == 1)
-    return js_line_vector(ctx, this_val);
+    return js_line_array(ctx, this_val, argc, argv);
   if(magic == 2)
-    return js_line_points(ctx, this_val);
+    return js_line_points(ctx, this_val, argc, argv);
 
   return JS_UNDEFINED;
 }
@@ -185,8 +184,8 @@ const JSCFunctionListEntry js_line_proto_funcs[] = {
         JS_ALIAS_DEF("x1", "x1"),
        JS_ALIAS_DEF("y1", "y1"),*/
 
-    JS_CFUNC_MAGIC_DEF("toArray", 0, js_line_iterator, 1),
-    JS_CFUNC_MAGIC_DEF("values", 0, js_line_iterator, 2),
+    JS_CFUNC_DEF("toArray", 0, js_line_array),
+    JS_CFUNC_DEF("values", 0, js_line_points),
 
     JS_ALIAS_DEF("[Symbol.iterator]", "toArray"),
 
