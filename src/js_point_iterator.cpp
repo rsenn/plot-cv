@@ -64,12 +64,14 @@ js_point_iterator_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValu
   JSContourData* v;
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
+assert(0);
+
 
   s = static_cast<JSPointIteratorData*>(js_mallocz(ctx, sizeof(*s)));
   if(!s)
     return JS_EXCEPTION;
 
-  v = static_cast<JSContourData*>(JS_GetOpaque(argv[0], js_contour_class_id));
+ v = static_cast<JSContourData*>(JS_GetOpaque(argv[0], js_contour_class_id));
 
   s->first = &(*v)[0];
   s->second = s->first + v->size();
