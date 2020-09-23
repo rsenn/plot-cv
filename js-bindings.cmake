@@ -1,3 +1,4 @@
+
 # include: OpenCV
 find_package(OpenCV REQUIRED)
 
@@ -54,8 +55,9 @@ add_dependencies(quickjs-rect quickjs-point quickjs-size)
 
 add_dependencies(quickjs-contour quickjs-mat)
 
-target_link_libraries(quickjs-point-iterator quickjs-contour quickjs-point
+target_link_libraries(quickjs-point-iterator  quickjs-point
                       quickjs-mat)
+target_link_libraries(quickjs-contour quickjs-point-iterator)
 # add_dependencies(quickjs-point-iterator quickjs-contour quickjs-mat)
 
 file(
@@ -81,5 +83,6 @@ set_target_properties(
   quickjs-opencv PROPERTIES # COMPILE_FLAGS "-fvisibility=hidden"
                             PREFIX "")
 target_compile_definitions(quickjs-opencv PRIVATE "-DJS_BINDINGS_INIT_MODULE=1")
+
 target_link_libraries(quickjs-opencv ${OpenCV_LIBS} quickjs)
 # link
