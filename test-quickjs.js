@@ -12,7 +12,7 @@ import { inspect } from './lib/inspect.js';
 import path from './lib/path.js';
 import PortableFileSystem from './lib/filesystem.js';
 import Util from './lib/util.js';
-import ConsoleSetup from './consoleSetup.js'; 
+///import ConsoleSetup from './consoleSetup.js'; 
 
 
 let filesystem;
@@ -155,9 +155,10 @@ for(let line of ll) {
   console.log("line:", line.x1, line.y1, line.x2, line.y2);  
   const {a,b} = line;
 
-  console.log("ab:",a,b);
+  console.log("a =", a);
+  console.log("b =", b);
   let it = line.values();
-  console.log("it:", it);
+  console.log("it:", ...it);
 
   for(let item of it) {
     console.log("item:", item);
