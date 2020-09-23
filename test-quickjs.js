@@ -157,13 +157,14 @@ for(let line of ll) {
 
   console.log("a =", a);
   console.log("b =", b);
-  let it = line.values();
-  console.log("it:", ...it);
+  
+
 let i = 0;
-  for(let item of it) {
-    console.log("item:", i, item);
-    i++;
-  }
+  
+   console.log("toArray:",line.toArray().join(","));
+   console.log("values(): "+[...line.values()].map(n => ''+n).join(", "));
+console.log("[Symbol.iterator]():",line[Symbol.iterator]());
+
   //const [start, end] = line;
 
 
