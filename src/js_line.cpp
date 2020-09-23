@@ -186,9 +186,10 @@ const JSCFunctionListEntry js_line_proto_funcs[] = {
        JS_ALIAS_DEF("y1", "y1"),*/
 
     JS_CFUNC_DEF("toArray", 0, js_line_array),
-    JS_CFUNC_DEF("values", 0, js_line_points),
+    JS_CFUNC_DEF("toPoints", 0, js_line_points),
+    JS_CFUNC_DEF("values", 0, js_line_array),
 
-    JS_ALIAS_DEF("[Symbol.iterator]", "toArray"),
+    JS_ALIAS_DEF("[Symbol.iterator]", "values"),
 
     //    JS_CFUNC_DEF("toString", 0, js_line_to_string),
 };
