@@ -2,17 +2,18 @@
 #ifndef JS_H
 #define JS_H
 
-#include "quickjs/quickjs.h"
 extern "C" {
 #include "quickjs/quickjs-atom.h"
 }
 enum {
-  JS_ATOM_NULL,
+  JS_NULL,
 #define DEF(name, str) JS_ATOM_##name,
 #include "quickjs-atom.h"
 #undef DEF
   JS_ATOM_END,
 };
+#include "quickjs/quickjs.h"
+
 #include <unordered_map>
 #include <vector>
 #include <type_traits>
