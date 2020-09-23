@@ -142,6 +142,10 @@ target_compile_definitions(
           CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1)
 
 
+if(NOT BUILD_SHARED_LIBS)
+set(POSITION_INDEPENDENT_CODE TRUE)
+endif(NOT BUILD_SHARED_LIBS)
+
 option(ADDITIONAL_PROGS "Build other OpenCV programs" FALSE)
 
 # option(QUICKJS_MODULES "Build .so modules for quickjs" "${BUILD_SHARED_LIBS}")
