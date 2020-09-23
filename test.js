@@ -7,14 +7,13 @@ import { Size } from './build/x86_64-linux-gnu/size.so';
 import { Mat } from './build/x86_64-linux-gnu/mat.so';
 import { PointIterator } from './build/x86_64-linux-gnu/point-iterator.so';
 
-
 import { HSLA } from './lib/color/hsla.js';
 import { Line } from './lib/geom/line.js';
- import { Matrix } from './lib/geom/matrix.js';
+import { Matrix } from './lib/geom/matrix.js';
 //import { Point, Size, Rect } from "./build//x86_64-linux-gnu/quickjs-opencv.so";
- import { PointList } from './lib/geom/pointList.js';
+import { PointList } from './lib/geom/pointList.js';
 import { RGBA } from './lib/color/rgba.js';
- import { inspect } from './lib/inspect.js';
+import { inspect } from './lib/inspect.js';
 
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };
 

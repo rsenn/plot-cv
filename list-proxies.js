@@ -85,7 +85,7 @@ Proxy.prototype[Symbol.for('nodejs.util.inspect.custom')] = function() {
 
 async function main(country = 'de') {
   await ConsoleSetup({ depth: 2 });
-  
+
   console.log(`Searching proxies in country '${country}'`);
   const proxies = [
     new Repeater(async (push, stop) => {

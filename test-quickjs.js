@@ -12,17 +12,16 @@ import { inspect } from './lib/inspect.js';
 import path from './lib/path.js';
 import PortableFileSystem from './lib/filesystem.js';
 import Util from './lib/util.js';
-///import ConsoleSetup from './consoleSetup.js'; 
-
+///import ConsoleSetup from './consoleSetup.js';
 
 let filesystem;
 
 async function main(...args) {
   //std.print("TEST PRINT\n");
-//  await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
+  //  await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
 
-  await PortableFileSystem(fs => filesystem = fs);
-console.log("start");
+  await PortableFileSystem(fs => (filesystem = fs));
+  console.log('start');
   console.log('modules:', inspect({ Point, Size, Rect, Mat, PointIterator, Contour }));
 
   /*  let rect = new Rect(10, 100, 50, 250);
@@ -148,35 +147,32 @@ console.log("start");
     console.log(`fmat[${i++}] row=${row} col=${col} value=${value}`);
   }
 
+  let ll = [new Line(0, 0, 50, 50), new Line(50, 50, 50, 75), new Line(50, 75, 100, 75)];
 
-let ll = [ new Line(0,0,50,50), new Line(50,50,50,75), new Line(50,75, 100,75) ];
+  for(let line of ll) {
+    console.log('line:', line.x1, line.y1, line.x2, line.y2);
+    const { a, b } = line;
 
-for(let line of ll) {
-  console.log("line:", line.x1, line.y1, line.x2, line.y2);  
-  const {a,b} = line;
+    console.log('a =', a);
+    console.log('b =', b);
 
-  console.log("a =", a);
-  console.log("b =", b);
-  
+    let i = 0;
 
-let i = 0;
-  
-   console.log("toArray:",line.toArray().join(","));
-   console.log("values(): "+[...line.values()].map(n => ''+n).join(", "));
+    console.log('toArray:', line.toArray().join(','));
+    console.log('values(): ' + [...line.values()].map(n => '' + n).join(', '));
 
-let it =line[Symbol.iterator]();
-console.log("[Symbol.iterator]():",it);
+    let it = line[Symbol.iterator]();
+    console.log('[Symbol.iterator]():', it);
 
-console.log("it:", it);
-for(let a of it) {
-  console.log("a:", a);
-}
+    console.log('it:', it);
+    for(let a of it) {
+      console.log('a:', a);
+    }
 
-  //const [start, end] = line;
+    //const [start, end] = line;
 
-
-  //console.log("start,end:",start,end);
-}
+    //console.log("start,end:",start,end);
+  }
   /* let c = new Contour();
 
   c.push(new Point(0, 0));
