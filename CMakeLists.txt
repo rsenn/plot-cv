@@ -11,6 +11,10 @@ include(CheckCXXCompilerFlag)
 include(CheckLibraryExists)
 include(FindPkgConfig)
 
+
+if(NOT POSITION_INDEPENDENT_CODE)
+set(POSITION_INDEPENDENT_CODE ON)
+endif(NOT POSITION_INDEPENDENT_CODE)p
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
 message("Thread library: ${CMAKE_THREAD_LIBS_INIT}")
@@ -141,14 +145,7 @@ target_compile_definitions(
   PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${quickjs_version}"
           CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1)
 
-
-if(NOT BUILD_SHARED_LIBS)
-set(POSITION_INDEPENDENT_CODE TRUE)
-endif(NOT BUILD_SHARED_LIBS)
-
-if(NOT SHARED)
-set(POSITION_INDEPENDENT_CODE TRUE)
-endif(NOT SHARED)
+ 
 
 option(ADDITIONAL_PROGS "Build other OpenCV programs" FALSE)
 

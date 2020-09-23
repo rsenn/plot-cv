@@ -2,23 +2,25 @@ import { Rect } from './build/x86_64-linux-gnu/rect.so';
 import { Point } from './build/x86_64-linux-gnu/point.so';
 import { Size } from './build/x86_64-linux-gnu/size.so';
 import { Mat } from './build/x86_64-linux-gnu/mat.so';
+import { Contour } from './build/x86_64-linux-gnu/contour.so';
 import { PointIterator } from './build/x86_64-linux-gnu/point-iterator.so';
 import { inspect } from './lib/inspect.js';
-///import { Contour } from './build/x86_64-linux-gnu/contour.so';
 
 //console.log('test:', inspect({ Point, Size, Rect, Mat, PointIterator, Contour }));
 import path from './lib/path.js';
 import PortableFileSystem from './lib/filesystem.js';
 import Util from './lib/util.js';
-/*import * as os from 'os';
-import * as std from 'std';*/
+import ConsoleSetup from './consoleSetup.js'; 
+
+
 let filesystem;
 
 async function main(...args) {
   //std.print("TEST PRINT\n");
+//  await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
 
-  filesystem = await PortableFileSystem();
-
+  await PortableFileSystem(fs => filesystem = fs);
+console.log("start");
   console.log('modules:', inspect({ Point, Size, Rect, Mat, PointIterator, Contour }));
 
   /*  let rect = new Rect(10, 100, 50, 250);
@@ -181,7 +183,8 @@ async function main(...args) {
 
   return 'done';
 }
-
+Util.callMain(main, true);
+/*
 console.log('TEST\n');
 print('TEST\n');
 let retVal;
@@ -191,3 +194,4 @@ console.log('retVal:', retVal);
 retVal;
 1;
 //Util.callMain(main, true);
+*/
