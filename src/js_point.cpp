@@ -194,7 +194,7 @@ js_point_sum(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
 }
 
 static JSValue
-js_point_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+js_point_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSPointData* s = js_point_data(ctx, this_val);
   std::ostringstream os;
   JSValue xv, yv;
@@ -213,8 +213,21 @@ js_point_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
     y = s->y;
   }
 
-  os << "{x:" << x << ",y:" << y << "}" << std::endl;
+  switch(magic) {
+    case 0: {
+      os << x << "," << y;
+      break;
+    }
+    case 1: {
+      os << "[" << x << "," << y << "]";
+      break;
+    }
+    case 2: {
 
+      os << "{x:" << x << ",y:" << y << "}";
+      break;
+    }
+  }
   return JS_NewString(ctx, os.str().c_str());
 }
 
@@ -238,7 +251,8 @@ const JSCFunctionListEntry js_point_proto_funcs[] = {
     JS_CFUNC_DEF("quot", 1, js_point_quot),
     JS_CFUNC_DEF("norm", 0, js_point_norm),
     // JS_CFUNC_DEF("getRotationMatrix2D", 0, js_point_getrotationmatrix2d),
-    JS_CFUNC_DEF("toString", 0, js_point_to_string),
+    JS_CFUNC_MAGIC_DEF("toString", 0, js_point_to_string, 0),
+    JS_CFUNC_MAGIC_DEF("[Symbol.toStringTag]", 0, js_point_to_string, 1),
 };
 
 int

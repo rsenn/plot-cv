@@ -157,13 +157,15 @@ async function main(...args) {
     console.log('b =', b);
     console.log('line[0] =', line[0] );
     console.log('line[1] =', line[1]);
+    console.log('line.toString() =', line.toString());
 
     let i = 0;
 
     console.log('toArray:', line.toArray().join(','));
- console.log('values(): ',[...line.values()]);
-//  console.log('toPoints(): ',line.toPoints());
-  console.log('toString(): ',line+'');
+ console.log('values(): ', line.values() );
+ console.log('toPoints(): ',[...line.toPoints()].map(p => Util.className(p)));
+
+  console.log('toString(): ',line.toString());
 const [x1,y1,x2,y2] = line;
 /*
 console.log(`x1=${x1},y1=${y1} x2=${x2},y2=${y2}`);*/

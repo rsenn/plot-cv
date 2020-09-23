@@ -162,20 +162,29 @@ js_call_method(JSContext* ctx, JSValue obj, const char* name, int argc, JSValueC
   return ret;
 }
 
+#define JS_LINE_AS_POINTS 0x01
+#define JS_LINE_AS_VECTOR 0x02
+
+#define JS_LINE_GET_ITERATOR 0x80
+#define JS_LINE_TO_STRING 0x40
 static JSValue
 js_line_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSLineData* s = static_cast<JSLineData*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
   JSValue method, ret = JS_UNDEFINED;
 
-  ret = js_line_array(ctx, this_val, argc, argv);
+  if(magic & JS_LINE_AS_POINTS)
+    ret = js_line_points(ctx, this_val, argc, argv);
+  if(magic & JS_LINE_AS_VECTOR)
+    ret = js_line_array(ctx, this_val, argc, argv);
 
-  switch(magic) {
-    case 3: ret = js_call_method(ctx, ret, "values", 0, NULL); break;
-    case 4: {
-      JSValue args[] = {JS_NewString(ctx, " "), 0};
-      ret = js_call_method(ctx, ret, "join", 1, args);
-      break;
-    }
+  if(magic & JS_LINE_GET_ITERATOR)
+    ret = js_call_method(ctx, ret, "values", 0, NULL);
+
+  if(magic & JS_LINE_TO_STRING) {
+    JSValue args[1] = {0};
+    args[0] = JS_NewString(ctx, " ");
+
+    ret = js_call_method(ctx, ret, "join", 1, args);
   }
 
   return ret;
@@ -197,16 +206,12 @@ const JSCFunctionListEntry js_line_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("b", js_line_get_ab, js_line_set_ab, 1),
     JS_CGETSET_MAGIC_DEF("0", js_line_get_ab, js_line_set_ab, 0),
     JS_CGETSET_MAGIC_DEF("1", js_line_get_ab, js_line_set_ab, 1),
- /*    JS_CGETSET_MAGIC_DEF("first", js_line_get_ab, js_line_set_ab, 0),
-    JS_CGETSET_MAGIC_DEF("second", js_line_get_ab, js_line_set_ab, 1),
-*/ 
     JS_CFUNC_DEF("toArray", 0, js_line_array),
-    JS_CFUNC_DEF("toPoints", 0, js_line_points),
-    JS_CFUNC_MAGIC_DEF("toString", 0, js_line_iterator, 4),
-    JS_CFUNC_MAGIC_DEF("values", 0, js_line_iterator, 3),
+    JS_CFUNC_MAGIC_DEF("toPoints", 0, js_line_iterator, JS_LINE_AS_POINTS),
+    JS_CFUNC_MAGIC_DEF("toString", 0, js_line_iterator, JS_LINE_AS_POINTS | JS_LINE_TO_STRING),
+    JS_CFUNC_MAGIC_DEF("values", 0, js_line_iterator, JS_LINE_AS_VECTOR | JS_LINE_GET_ITERATOR),
     JS_ALIAS_DEF("[Symbol.iterator]", "values"),
-    //  JS_ALIAS_DEF("[Symbol.toStringTag]", "toString"),
-    //    JS_CFUNC_DEF("toString", 0, js_line_to_string),
+    JS_ALIAS_DEF("[Symbol.toStringTag]", "toString"),
 };
 int
 js_line_init(JSContext* ctx, JSModuleDef* m) {
