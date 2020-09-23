@@ -47,6 +47,13 @@ js_point_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
   it->first++;
   return result;
 fail:
+
+  return JS_EXCEPTION;
+}
+
+static JSValue
+js_point_iterator_create(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+
   return JS_EXCEPTION;
 }
 
@@ -64,14 +71,13 @@ js_point_iterator_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValu
   JSContourData* v;
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
-assert(0);
-
+  assert(0);
 
   s = static_cast<JSPointIteratorData*>(js_mallocz(ctx, sizeof(*s)));
   if(!s)
     return JS_EXCEPTION;
 
- v = static_cast<JSContourData*>(JS_GetOpaque(argv[0], js_contour_class_id));
+  v = static_cast<JSContourData*>(JS_GetOpaque(argv[0], js_contour_class_id));
 
   s->first = &(*v)[0];
   s->second = s->first + v->size();
@@ -130,9 +136,7 @@ const JSCFunctionListEntry js_point_iterator_proto_funcs[] = {
     JS_ITERATOR_NEXT_DEF("next", 0, js_point_iterator_next, 0),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "PointIterator", JS_PROP_CONFIGURABLE),
 };
-const JSCFunctionListEntry js_point_iterator_static_funcs[] = {
-    // JS_CFUNC_MAGIC_DEF("create", 0, js_create_point_iterator, 0),
-    0};
+const JSCFunctionListEntry js_point_iterator_static_funcs[] = {JS_CFUNC_MAGIC_DEF("create", 0, js_point_iterator_create, 0)};
 
 int
 js_point_iterator_init(JSContext* ctx, JSModuleDef* m) {
@@ -147,6 +151,7 @@ js_point_iterator_init(JSContext* ctx, JSModuleDef* m) {
 
   point_iterator_class = JS_NewCFunction2(ctx, js_point_iterator_ctor, "PointIterator", 2, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */
+
   JS_SetConstructor(ctx, point_iterator_class, point_iterator_proto);
   JS_SetPropertyFunctionList(ctx, point_iterator_class, js_point_iterator_static_funcs, countof(js_point_iterator_static_funcs));
 
