@@ -130,7 +130,6 @@ js_line_points(JSContext* ctx, JSValueConst line, int argc, JSValueConst* argv) 
   JSLineData* s = static_cast<JSLineData*>(JS_GetOpaque2(ctx, line, js_line_class_id));
   JSValue obj = JS_EXCEPTION, p;
   int i;
-
   obj = JS_NewArray(ctx);
   if(!JS_IsException(obj)) {
     std::pair<cv::Point2d, cv::Point2d> points = s->pt;
@@ -156,25 +155,31 @@ js_line_array(JSContext* ctx, JSValueConst line, int argc, JSValueConst* arg) {
 static JSValue
 js_line_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSLineData* s = static_cast<JSLineData*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
-  JSValue ret = JS_UNDEFINED;
+  JSValue method,ret = JS_UNDEFINED;
 
-  if(magic < 3)
+  if(magic < 5)
     ret = js_line_array(ctx, this_val, argc, argv);
 
-  else if(magic == 3)
+  else if(magic == 5)
     ret = js_line_points(ctx, this_val, argc, argv);
 
-  if(magic == 2) {
-    JSValue method = JS_GetPropertyStr(ctx, ret, "values");
-
+  if(magic == 3) {
+      method = JS_GetPropertyStr(ctx, ret, "values");
     if(!JS_IsUndefined(method))
       ret = JS_Call(ctx, method, ret, 0, NULL);
+  }
+  if(magic == 4) {
+      method = JS_GetPropertyStr(ctx, ret, "join")
+      ;
+    if(!JS_IsUndefined(method)) {
+      JSValue args[2] = { JS_NewString(ctx, " ") };
+      ret = JS_Call(ctx, method, ret, 1, args);
+    }
   }
 
   return ret;
 }
-
-JSValue line_proto = JS_UNDEFINED, line_class = JS_UNDEFINED;
+ JSValue line_proto = JS_UNDEFINED, line_class = JS_UNDEFINED;
 JSClassID js_line_class_id;
 
 JSClassDef js_line_class = {
@@ -195,10 +200,12 @@ const JSCFunctionListEntry js_line_proto_funcs[] = {
        JS_ALIAS_DEF("y1", "y1"),*/
 
     JS_CFUNC_MAGIC_DEF("toArray", 0, js_line_iterator, 1),
-    JS_CFUNC_MAGIC_DEF("toPoints", 0, js_line_iterator, 3),
-    JS_CFUNC_MAGIC_DEF("values", 0, js_line_iterator, 2),
+    JS_CFUNC_DEF("toPoints", 0, js_line_points),
+    JS_CFUNC_MAGIC_DEF("toString", 0, js_line_iterator, 4),
+    JS_CFUNC_MAGIC_DEF("values", 0, js_line_iterator, 3),
 
     JS_ALIAS_DEF("[Symbol.iterator]", "values"),
+  //  JS_ALIAS_DEF("[Symbol.toStringTag]", "toString"),
 
     //    JS_CFUNC_DEF("toString", 0, js_line_to_string),
 };

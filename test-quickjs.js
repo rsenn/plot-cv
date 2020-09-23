@@ -159,8 +159,12 @@ async function main(...args) {
     let i = 0;
 
     console.log('toArray:', line.toArray().join(','));
-    console.log('values(): ' + [...line.values()].map(n => '' + n).join(', '));
-
+ //console.log('values(): ' + [...line.values()].map(n => '' + n).join(', '));
+//  console.log('toPoints(): ',line.toPoints());
+  console.log('toString(): ',line+'');
+const [x1,y1,x2,y2] = line;
+/*
+console.log(`x1=${x1},y1=${y1} x2=${x2},y2=${y2}`);*/
     let it = line[Symbol.iterator]();
     console.log('[Symbol.iterator]():', it);
 
