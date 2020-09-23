@@ -169,12 +169,8 @@ async function main(...args) {
 const [x1,y1,x2,y2] = line;
 /*
 console.log(`x1=${x1},y1=${y1} x2=${x2},y2=${y2}`);*/
-    let it = line[Symbol.iterator]();
-    console.log('[Symbol.iterator]():', it);
-
-    console.log('it:', it);
-    for(let a of it) {
-      console.log('a:', a);
+        for(let num of line) {
+      console.log('num:', num);
     }
 
     //const [start, end] = line;

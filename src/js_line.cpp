@@ -17,13 +17,13 @@ js_line_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* ar
   s = static_cast<JSLineData*>(js_mallocz(ctx, sizeof(*s)));
   if(!s)
     return JS_EXCEPTION;
-  if(JS_ToFloat64(ctx, &s->vec[0], argv[0]))
+  if(JS_ToFloat64(ctx, &s->arr[0], argv[0]))
     goto fail;
-  if(JS_ToFloat64(ctx, &s->vec[1], argv[1]))
+  if(JS_ToFloat64(ctx, &s->arr[1], argv[1]))
     goto fail;
-  if(JS_ToFloat64(ctx, &s->vec[2], argv[2]))
+  if(JS_ToFloat64(ctx, &s->arr[2], argv[2]))
     goto fail;
-  if(JS_ToFloat64(ctx, &s->vec[3], argv[3]))
+  if(JS_ToFloat64(ctx, &s->arr[3], argv[3]))
     goto fail;
   /* using new_target to get the prototype is necessary when the
      class is extended. */
