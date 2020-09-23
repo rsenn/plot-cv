@@ -159,9 +159,10 @@ for(let line of ll) {
   console.log("b =", b);
   let it = line.values();
   console.log("it:", ...it);
-
+let i = 0;
   for(let item of it) {
-    console.log("item:", item);
+    console.log("item:", i, item);
+    i++;
   }
   //const [start, end] = line;
 
