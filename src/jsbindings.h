@@ -14,7 +14,12 @@ typedef struct {
 } JSMatData;
 typedef cv::Size2d JSSizeData;
 typedef cv::Point2d JSPointData;
-typedef cv::Vec4d JSLineData;
+
+typedef union {
+  std::array<double, 4> arr;
+  cv::Vec4d vec;
+  cv::Point2d pts[2];
+} JSLineData;
 typedef std::vector<JSPointData> JSContourData;
 struct JSPointIteratorData : public std::pair<JSPointData*, JSPointData*> {
   int magic;

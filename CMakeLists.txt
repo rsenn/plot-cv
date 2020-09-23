@@ -14,7 +14,7 @@ include(FindPkgConfig)
 
 if(NOT POSITION_INDEPENDENT_CODE)
 set(POSITION_INDEPENDENT_CODE ON)
-endif(NOT POSITION_INDEPENDENT_CODE)p
+endif(NOT POSITION_INDEPENDENT_CODE)
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
 message("Thread library: ${CMAKE_THREAD_LIBS_INIT}")

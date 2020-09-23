@@ -17,13 +17,13 @@ js_line_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* ar
   s = static_cast<JSLineData*>(js_mallocz(ctx, sizeof(*s)));
   if(!s)
     return JS_EXCEPTION;
-  if(JS_ToFloat64(ctx, &s->operator[](0), argv[0]))
+  if(JS_ToFloat64(ctx, &s->vec[0], argv[0]))
     goto fail;
-  if(JS_ToFloat64(ctx, &s->operator[](1), argv[1]))
+  if(JS_ToFloat64(ctx, &s->vec[1], argv[1]))
     goto fail;
-  if(JS_ToFloat64(ctx, &s->operator[](2), argv[2]))
+  if(JS_ToFloat64(ctx, &s->vec[2], argv[2]))
     goto fail;
-  if(JS_ToFloat64(ctx, &s->operator[](3), argv[3]))
+  if(JS_ToFloat64(ctx, &s->vec[3], argv[3]))
     goto fail;
   /* using new_target to get the prototype is necessary when the
      class is extended. */
@@ -61,13 +61,13 @@ js_line_get_xy12(JSContext* ctx, JSValueConst this_val, int magic) {
   if(!s)
     ret = JS_EXCEPTION;
   else if(magic == 0)
-    ret = JS_NewFloat64(ctx, s->operator[](0));
+    ret = JS_NewFloat64(ctx, s->vec[0]);
   else if(magic == 1)
-    ret = JS_NewFloat64(ctx, s->operator[](1));
+    ret = JS_NewFloat64(ctx, s->vec[1]);
   else if(magic == 2)
-    ret = JS_NewFloat64(ctx, s->operator[](2));
+    ret = JS_NewFloat64(ctx, s->vec[2]);
   else if(magic == 3)
-    ret = JS_NewFloat64(ctx, s->operator[](3));
+    ret = JS_NewFloat64(ctx, s->vec[3]);
   return ret;
 }
 
@@ -78,9 +78,9 @@ js_line_get_ab(JSContext* ctx, JSValueConst this_val, int magic) {
   if(!s)
     ret = JS_EXCEPTION;
   else if(magic == 0)
-    ret = js_point_new(ctx, s->operator[](0), s->operator[](1));
+    ret = js_point_new(ctx, s->vec[0], s->vec[1]);
   else if(magic == 1)
-    ret = js_point_new(ctx, s->operator[](2), s->operator[](3));
+    ret = js_point_new(ctx, s->vec[2], s->vec[3]);
 
   return ret;
 }
@@ -94,13 +94,13 @@ js_line_set_xy12(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) 
   if(JS_ToFloat64(ctx, &v, val))
     return JS_EXCEPTION;
   if(magic == 0)
-    s->operator[](0) = v;
+    s->vec[0] = v;
   else if(magic == 1)
-    s->operator[](1) = v;
+    s->vec[1] = v;
   else if(magic == 2)
-    s->operator[](2) = v;
+    s->vec[2] = v;
   else if(magic == 3)
-    s->operator[](3) = v;
+    s->vec[3] = v;
 
   return JS_UNDEFINED;
 }
@@ -114,48 +114,55 @@ js_line_set_ab(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
     return JS_EXCEPTION;
 
   if(magic == 0) {
-    s->operator[](0) = pt.x;
-    s->operator[](1) = pt.y;
+    s->vec[0] = pt.x;
+    s->vec[1] = pt.y;
 
   } else if(magic == 1) {
-    s->operator[](2) = pt.x;
-    s->operator[](3) = pt.y;
+    s->vec[2] = pt.x;
+    s->vec[3] = pt.y;
   }
 
   return JS_UNDEFINED;
 }
 
 static JSValue
-js_line_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSLineData* s = static_cast<JSLineData*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
-  std::ostringstream os;
-  JSValue x1v, y1v, x2v, y2v;
-  double x1 = -1, y1 = -1, x2 = 0, y2 = 0;
-  /* if(!s)
-     return JS_EXCEPTION;*/
+js_line_points(JSContext* ctx, JSValueConst line) {
+  JSLineData* s = static_cast<JSLineData*>(JS_GetOpaque2(ctx, line, js_line_class_id));
+  JSValue obj = JS_EXCEPTION, p;
+  int i;
 
-  if(s) {
-    x1 = s->operator[](0);
-    y1 = s->operator[](1);
-    x2 = s->operator[](2);
-    y2 = s->operator[](3);
-  } else {
-    x1v = JS_GetPropertyStr(ctx, this_val, "x1");
-    y1v = JS_GetPropertyStr(ctx, this_val, "y1");
-    x2v = JS_GetPropertyStr(ctx, this_val, "x2");
-    y2v = JS_GetPropertyStr(ctx, this_val, "y2");
+  obj = JS_NewArray(ctx);
+  if(!JS_IsException(obj)) {
 
-    if(JS_IsNumber(x1v) && JS_IsNumber(y1v) && JS_IsNumber(x2v) && JS_IsNumber(y2v)) {
-      JS_ToFloat64(ctx, &x1, x1v);
-      JS_ToFloat64(ctx, &y1, y1v);
-      JS_ToFloat64(ctx, &x2, x2v);
-      JS_ToFloat64(ctx, &y2, y2v);
-    }
+    JS_SetPropertyUint32(ctx, obj, 0, js_point_new(ctx, s->vec[0], s->vec[1]));
+    JS_SetPropertyUint32(ctx, obj, 1, js_point_new(ctx, s->vec[2], s->vec[3]));
   }
+  return obj;
+}
+static JSValue
+js_line_vector(JSContext* ctx, JSValueConst line) {
+  JSLineData* s = static_cast<JSLineData*>(JS_GetOpaque2(ctx, line, js_line_class_id));
+  JSValue obj = JS_EXCEPTION, p;
+  int i;
 
-  os << "{x1:" << x1 << ",y1:" << y1 << ",x2:" << x2 << ",y2:" << y2 << "}" << std::endl;
+  obj = JS_NewArray(ctx);
+  if(!JS_IsException(obj)) {
 
-  return JS_NewString(ctx, os.str().c_str());
+    for(i = 0; i < 4; i++) JS_SetPropertyUint32(ctx, obj, i, JS_NewFloat64(ctx, s->arr[i]));
+  }
+  return obj;
+}
+
+static JSValue
+js_line_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSLineData* s = static_cast<JSLineData*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
+
+  if(magic == 1)
+    return js_line_vector(ctx, this_val);
+  if(magic == 2)
+    return js_line_points(ctx, this_val);
+
+  return JS_UNDEFINED;
 }
 
 JSValue line_proto = JS_UNDEFINED, line_class = JS_UNDEFINED;
@@ -177,7 +184,13 @@ const JSCFunctionListEntry js_line_proto_funcs[] = {
        JS_CGETSET_MAGIC_DEF("y2", js_line_get_xy12, js_line_set_xy12, 3),
         JS_ALIAS_DEF("x1", "x1"),
        JS_ALIAS_DEF("y1", "y1"),*/
-    JS_CFUNC_DEF("toString", 0, js_line_to_string),
+
+    JS_CFUNC_MAGIC_DEF("toArray", 0, js_line_iterator, 1),
+    JS_CFUNC_MAGIC_DEF("values", 0, js_line_iterator, 2),
+
+    JS_ALIAS_DEF("[Symbol.iterator]", "toArray"),
+
+    //    JS_CFUNC_DEF("toString", 0, js_line_to_string),
 };
 
 int

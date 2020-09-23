@@ -152,9 +152,20 @@ console.log("start");
 let ll = [ new Line(0,0,50,50), new Line(50,50,50,75), new Line(50,75, 100,75) ];
 
 for(let line of ll) {
-  console.log("line:", line.x1, line.y1, line.x2, line.y2);
-  
-  
+  console.log("line:", line.x1, line.y1, line.x2, line.y2);  
+  const {a,b} = line;
+
+  console.log("ab:",a,b);
+  let it = line.values();
+  console.log("it:", it);
+
+  for(let item of it) {
+    console.log("item:", item);
+  }
+  //const [start, end] = line;
+
+
+  //console.log("start,end:",start,end);
 }
   /* let c = new Contour();
 
