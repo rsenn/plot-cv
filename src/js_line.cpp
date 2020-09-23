@@ -133,8 +133,8 @@ js_line_points(JSContext* ctx, JSValueConst line, int argc, JSValueConst* argv) 
 
   obj = JS_NewArray(ctx);
   if(!JS_IsException(obj)) {
-  std::pair<cv::Point2d,cv::Point2d> points = s->pt;
-    JS_SetPropertyUint32(ctx, obj, 0, js_point_new(ctx, points.first.x,  points.first.y));
+    std::pair<cv::Point2d, cv::Point2d> points = s->pt;
+    JS_SetPropertyUint32(ctx, obj, 0, js_point_new(ctx, points.first.x, points.first.y));
     JS_SetPropertyUint32(ctx, obj, 1, js_point_new(ctx, points.second.x, points.second.y));
   }
   return obj;
@@ -156,13 +156,22 @@ js_line_array(JSContext* ctx, JSValueConst line, int argc, JSValueConst* arg) {
 static JSValue
 js_line_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSLineData* s = static_cast<JSLineData*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
+  JSValue ret = JS_UNDEFINED;
 
-  if(magic == 1)
-    return js_line_array(ctx, this_val, argc, argv);
-  if(magic == 2)
-    return js_line_points(ctx, this_val, argc, argv);
+  if(magic < 3)
+    ret = js_line_array(ctx, this_val, argc, argv);
 
-  return JS_UNDEFINED;
+  else if(magic == 3)
+    ret = js_line_points(ctx, this_val, argc, argv);
+
+  if(magic == 2) {
+    JSValue method = JS_GetPropertyStr(ctx, ret, "values");
+
+    if(!JS_IsUndefined(method))
+      ret = JS_Call(ctx, method, ret, 0, NULL);
+  }
+
+  return ret;
 }
 
 JSValue line_proto = JS_UNDEFINED, line_class = JS_UNDEFINED;
@@ -185,9 +194,9 @@ const JSCFunctionListEntry js_line_proto_funcs[] = {
         JS_ALIAS_DEF("x1", "x1"),
        JS_ALIAS_DEF("y1", "y1"),*/
 
-    JS_CFUNC_DEF("toArray", 0, js_line_array),
-    JS_CFUNC_DEF("toPoints", 0, js_line_points),
-    JS_CFUNC_DEF("values", 0, js_line_array),
+    JS_CFUNC_MAGIC_DEF("toArray", 0, js_line_iterator, 1),
+    JS_CFUNC_MAGIC_DEF("toPoints", 0, js_line_iterator, 3),
+    JS_CFUNC_MAGIC_DEF("values", 0, js_line_iterator, 2),
 
     JS_ALIAS_DEF("[Symbol.iterator]", "values"),
 

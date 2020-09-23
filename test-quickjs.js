@@ -165,6 +165,13 @@ let i = 0;
    console.log("values(): "+[...line.values()].map(n => ''+n).join(", "));
 console.log("[Symbol.iterator]():",line[Symbol.iterator]());
 
+let it =line[Symbol.iterator]();
+
+console.log("it:", it);
+for(let a of it) {
+  console.log("a:", a);
+}
+
   //const [start, end] = line;
 
 
