@@ -9,7 +9,7 @@ import fetch from 'isomorphic-fetch';
 import { exec } from 'promisify-child-process';
 import fs, { promises as fsPromises } from 'fs';
 import ConsoleSetup from './consoleSetup.js';
-import SerialPorts from 'serialport';
+import SerialPort  from 'serialport';
 import SerialStream from '@serialport/stream';
 import SerialBinding from '@serialport/bindings';
 import Socket from './socket.js';

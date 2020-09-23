@@ -83,13 +83,15 @@ Proxy.prototype[Symbol.for('nodejs.util.inspect.custom')] = function() {
   const coloring = Util.coloring(!Util.isBrowser());
 };
 
-async function main() {
+async function main(country = 'de') {
   await ConsoleSetup({ depth: 2 });
+  
+  console.log(`Searching proxies in country '${country}'`);
   const proxies = [
     new Repeater(async (push, stop) => {
       try {
         const proxyList = new ProxyList();
-        for(const p of await proxyList.getByCountryCode('DE')) {
+        for(const p of await proxyList.getByCountryCode(country.toUpperCase())) {
           let proxy = new Proxy({
             source: 'free-proxy',
             ...p
@@ -103,7 +105,7 @@ async function main() {
       }
     }),
     new Repeater(async (push, stop) => {
-      proxynova(['de', 'at'], 1000, async (err, proxies) => {
+      proxynova([country], 1000, async (err, proxies) => {
         for(let p of proxies)
           await new Proxy(p)
             //.ping()
@@ -114,7 +116,7 @@ async function main() {
 
     new Repeater(async (push, stop) => {
       ProxyLists.getProxies({
-        countries: ['de'],
+        countries: [country],
         requestQueue: {
           concurrency: 5,
           delay: 50
