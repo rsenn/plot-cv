@@ -91,6 +91,7 @@ get_prototypes() {
       -A | --no-pad-args* | -*no*args*) PAD_ARGS=false; shift ;;
       -a | --pad-args* | -*args*) PAD_ARGS=true; shift ;;
       -r=* | --remove*=* | -R=*) REMOVE_NAMES=${1#*=}; shift ;;
+      -I* ) CPROTO_ARGS="$CPROTO_ARGS $1" ; shift ;; 
       -r | --remove* | -R) REMOVE_NAMES=true; shift ;;
       -c | --copy* | --xclip*) XCLIP=true; shift ;;
       -E | --ellips* | --empty*) EMPTY=true; shift ;;
@@ -107,7 +108,8 @@ get_prototypes() {
     exec 7>/dev/null
   fi
 
-  CPROTO_OUT=`cproto -D_Noreturn= -D__{value,x,y}= -p "$@"  | sed "\\|^/|d ;; $EXPR"`
+
+  CPROTO_OUT=`cproto $CPROTO_ARGS -D_Noreturn= -D__{value,x,y}= -p "$@"  | sed "\\|^/|d ;; $EXPR"`
  
   IFS=" "
   while read_proto; do

@@ -21,8 +21,8 @@ std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
 
 extern "C" {
 
-static int show_image;
-
+static int show_image, image_index;
+static size_t num_images;
 char keycode = 0;
 int levels = 3;
 int eps = 8;
@@ -81,6 +81,7 @@ display_image(std::string str, image_type* m) {
      cv::putText(out,
                  image_names[show_image],
                  origin,
+
                  cv::FONT_HERSHEY_PLAIN,
                  1.5,
                  color_type(0, 255, 0, 255),
@@ -132,12 +133,15 @@ main(int argc, char* argv[]) {
     }
   } else {
     imgInput = cv::imread(filename.empty() ? "input.png" : filename);
+ num_images = argc - 2;
+
   }
 
+
   cv::namedWindow("imgBlurred", CV_WINDOW_AUTOSIZE);
-  cv::namedWindow("imgMorphology", CV_WINDOW_AUTOSIZE);
+ cv::namedWindow("imgMorphology", CV_WINDOW_AUTOSIZE);
   cv::namedWindow("imgCanny", CV_WINDOW_AUTOSIZE);
-  cv::createTrackbar("threshold", "imgCanny", &thresh, 255, trackbar, (void*)"thres");
+   cv::createTrackbar("frame", "imgCanny", &image_index, 255, trackbar, (void*)"frame");
   cv::createTrackbar("threshold2", "imgCanny", &thresh2, 255, trackbar, (void*)"thres2");
   // cv::createTrackbar("Image", "img", &show_image, 4, trackbar, (void*)"Image Index");
   cv::createTrackbar("morphology_kernel_size", "imgMorphology", &config.morphology_kernel_size, 2, trackbar, (void*)"Morphology kernel size");

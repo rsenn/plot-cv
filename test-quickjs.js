@@ -155,24 +155,36 @@ async function main(...args) {
 
     console.log('a =', a);
     console.log('b =', b);
-    console.log('line[0] =', line[0] );
+    console.log('line[0] =', line[0]);
     console.log('line[1] =', line[1]);
     console.log('line.toString() =', line.toString());
 
     let i = 0;
-  let arr = line.toArray();
+    let arr = line.toArray();
     console.log('toArray:', line.toArray().join(','));
- console.log('values(): ', line.values() );
- console.log('toPoints(): ',[...line.toPoints()].map(p => Util.className(p)));
+    console.log('values(): ', line.values());
+    console.log('toPoints(): ',
+      [...line.toPoints()].map(p => Util.className(p))
+    );
 
-  console.log('toString(): ',line.toString());
-  console.log('new Line(50,50,320-50,240-25): ',new Line(50,50,320-50,240-25));
-let [x1,y1,x2,y2] = arr;
- 
-console.log(`Line{${x1},${y1} ${x2},${y2}}`);
-        for(let num of line) {
-      console.log('num:',i++, num);
+    console.log('toString(): ', line.toString());
+    console.log('new Line(50,50,320-50,240-25): ', new Line(50, 50, 320 - 50, 240 - 25));
+    let [x1, y1, x2, y2] = arr;
+
+    console.log(`Line{${x1},${y1} ${x2},${y2}}`);
+    for(let num of line) {
+      console.log('num:', i++, num);
     }
+    let r = new Rect(50, 100, 350, 200);
+    console.log('r.br(): ', r.br());
+    console.log('r.tl(): ', r.tl());
+    console.log('r.area(): ', r.area());
+    let pt = new Point(75, 150);
+    console.log(`r.contains(${pt}): `, r.contains(pt));
+    pt = new Point(51, 99);
+    console.log(`r.contains(${pt}): `, r.contains(pt));
+    r = new Rect(50, 50, 0, 0);
+    console.log('r.empty(): ', r.empty());
 
     //const [start, end] = line;
 

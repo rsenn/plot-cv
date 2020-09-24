@@ -135,6 +135,33 @@ js_rect_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
   return JS_NewString(ctx, os.str().c_str());
 }
 
+static JSValue
+js_rect_method(JSContext* ctx, JSValueConst rect, int argc, JSValueConst* argv, int magic) {
+  JSRectData* s = static_cast<JSRectData*>(JS_GetOpaque2(ctx, rect, js_rect_class_id));
+  JSValue ret = JS_UNDEFINED;
+  JSPointData point = js_point_get(ctx, argv[0]);
+  if(magic == 0)
+    ret = JS_NewBool(ctx, s->contains(point));
+  if(magic == 1)
+    ret = JS_NewBool(ctx, s->empty());
+     if(magic == 2)
+    ret = JS_NewFloat64(ctx, s->area()); 
+
+
+  if(magic == 3 || magic == 4) {
+cv::Point2d pt = magic == 3 ? s->br() : s->tl();
+
+   ret = js_point_new(ctx, pt.x, pt.y);
+  
+  }
+  if(magic == 5) {
+cv::Size2d sz = s->size();
+   ret = js_size_new(ctx, sz.width, sz.height);
+  
+  }
+  return ret;
+}
+
 JSValue rect_proto = JS_UNDEFINED, rect_class = JS_UNDEFINED;
 JSClassID js_rect_class_id;
 
@@ -152,6 +179,12 @@ const JSCFunctionListEntry js_rect_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("y2", js_rect_get_xywh, js_rect_set_xywh, 5),
     JS_ALIAS_DEF("x1", "x"),
     JS_ALIAS_DEF("y1", "y"),
+    JS_CFUNC_MAGIC_DEF("contains", 0, js_rect_method, 0),
+    JS_CFUNC_MAGIC_DEF("empty", 0, js_rect_method, 1),
+    JS_CFUNC_MAGIC_DEF("area", 0, js_rect_method, 2),
+    JS_CFUNC_MAGIC_DEF("br", 0, js_rect_method, 3),
+    JS_CFUNC_MAGIC_DEF("tl", 0, js_rect_method, 4),
+    JS_CFUNC_MAGIC_DEF("size", 0, js_rect_method, 5),
     JS_CFUNC_DEF("toString", 0, js_rect_to_string),
 };
 

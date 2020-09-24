@@ -60,7 +60,7 @@ js_size_get_wh(JSContext* ctx, JSValueConst this_val, int magic) {
   return JS_UNDEFINED;
 }
 
-static JSValue
+ JSValue
 js_size_new(JSContext* ctx, double w, double h) {
   JSValue ret;
   JSSizeData* s;

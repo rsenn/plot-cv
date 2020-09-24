@@ -17,9 +17,9 @@ typedef cv::Point2d JSPointData;
 
 typedef union {
   std::array<double, 4> arr;
-  cv::Vec4d vec; 
-  cv::Scalar scalar;  
- std::array<JSPointData, 2> points;
+  cv::Vec4d vec;
+  cv::Scalar scalar;
+  std::array<JSPointData, 2> points;
   std::pair<JSPointData, JSPointData> pt;
 } JSLineData;
 typedef std::vector<JSPointData> JSContourData;
@@ -49,6 +49,7 @@ void js_point_constructor(JSContext* ctx, JSValue parent, const char* name);
 
 JSModuleDef* js_init_point_module(JSContext*, const char* module_name);
 
+JSValue js_size_new(JSContext* ctx, double w, double h);
 JSSizeData* js_size_data(JSContext*, JSValue val);
 
 int js_size_init(JSContext*, JSModuleDef* m);

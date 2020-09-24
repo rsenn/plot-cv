@@ -29,6 +29,12 @@ js_point_new(JSContext* ctx, double x, double y) {
   return ret;
 }
 
+ 
+JSValue
+js_point_clone(JSContext* ctx, const JSPointData& point ) {
+return js_point_new(ctx, point.x, point.y);
+}
+
 static JSValue
 js_point_cross(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSPointData* s = js_point_data(ctx, this_val);
