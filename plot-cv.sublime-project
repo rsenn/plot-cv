@@ -101,7 +101,7 @@
          "name" : "Build debug"
       },
       {
-         "shell_cmd" : "make .tags",
+         "shell_cmd" : "ctags -R .",
          "name" : "Rebuild CTags"
       },
       {

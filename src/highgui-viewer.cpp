@@ -133,15 +133,13 @@ main(int argc, char* argv[]) {
     }
   } else {
     imgInput = cv::imread(filename.empty() ? "input.png" : filename);
- num_images = argc - 2;
-
+    num_images = argc - 2;
   }
 
-
   cv::namedWindow("imgBlurred", CV_WINDOW_AUTOSIZE);
- cv::namedWindow("imgMorphology", CV_WINDOW_AUTOSIZE);
+  cv::namedWindow("imgMorphology", CV_WINDOW_AUTOSIZE);
   cv::namedWindow("imgCanny", CV_WINDOW_AUTOSIZE);
-   cv::createTrackbar("frame", "imgCanny", &image_index, 255, trackbar, (void*)"frame");
+  cv::createTrackbar("frame", "imgCanny", &image_index, 255, trackbar, (void*)"frame");
   cv::createTrackbar("threshold2", "imgCanny", &thresh2, 255, trackbar, (void*)"thres2");
   // cv::createTrackbar("Image", "img", &show_image, 4, trackbar, (void*)"Image Index");
   cv::createTrackbar("morphology_kernel_size", "imgMorphology", &config.morphology_kernel_size, 2, trackbar, (void*)"Morphology kernel size");

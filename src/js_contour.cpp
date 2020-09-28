@@ -16,11 +16,11 @@
 
 using namespace cv;
 
-template<class Value> int64_t js_array_to_vector(JSContext* ctx, JSValue arr, std::vector<Value>& out);
+template<class Value> int64_t js_array_to_vector(JSContext* ctx, JSValueConst arr, std::vector<Value>& out);
 
 template<>
 int64_t
-js_array_to_vector(JSContext* ctx, JSValue arr, std::vector<int>& out) {
+js_array_to_vector(JSContext* ctx, JSValueConst arr, std::vector<int>& out) {
   int64_t i, n;
   JSValue len = JS_GetPropertyStr(ctx, arr, "length");
   JS_ToInt64(ctx, &n, len);
@@ -345,7 +345,7 @@ fail:
 }
 
 JSContourData*
-js_contour_data(JSContext* ctx, JSValue val) {
+js_contour_data(JSContext* ctx, JSValueConst val) {
   return static_cast<JSContourData*>(JS_GetOpaque2(ctx, val, js_contour_class_id));
 }
 
@@ -754,7 +754,7 @@ js_contour_push(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   JSContourData* v;
   int i;
   double x, y;
-  JSValue xv, yv;
+  JSValueConst xv, yv;
   JSPointData point;
 
   v = js_contour_data(ctx, this_val);
@@ -811,7 +811,7 @@ js_contour_rotatedrectangleintersection(JSContext* ctx, JSValueConst this_val, i
 }
 
 static JSValue
-js_contour_rotatepoints(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+js_contour_rotatepoints(JSContext* ctx, JSValueConst  this_val, int argc, JSValueConst* argv) {
   JSContourData* s = js_contour_data(ctx, this_val);
   int32_t shift = 1;
   uint32_t size = s->size();
@@ -828,7 +828,7 @@ js_contour_rotatepoints(JSContext* ctx, JSValueConst this_val, int argc, JSValue
   } else if(shift < 0) {
     std::rotate(s->rbegin(), s->rbegin() + (-shift), s->rend());
   }
-  return this_val;
+  return JSValue(this_val);
 }
 
 static JSValue
@@ -885,8 +885,8 @@ js_contour_rect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 }
 
 static JSValue
-js_contour_find(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  cv::Mat* m = &js_mat_data(ctx, this_val)->mat;
+js_contour_find(JSContext* ctx, JSValueConst  this_val, int argc, JSValueConst* argv) {
+  cv::Mat* m = js_mat_data(ctx, this_val);
   JSValue ret = JS_UNDEFINED;
   int mode = cv::RETR_TREE;
   int approx = cv::CHAIN_APPROX_SIMPLE;
@@ -985,7 +985,10 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
     //  JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Contour", JS_PROP_CONFIGURABLE),
 
 };
-const JSCFunctionListEntry js_contour_static_funcs[] = {JS_CFUNC_DEF("fromRect", 1, js_contour_rect), JS_CFUNC_DEF("find", 1, js_contour_find)};
+const JSCFunctionListEntry js_contour_static_funcs[] = {
+  JS_CFUNC_DEF("fromRect", 1, js_contour_rect),
+  JS_CFUNC_DEF("find", 1, js_contour_find)
+};
 
 int
 js_contour_init(JSContext* ctx, JSModuleDef* m) {

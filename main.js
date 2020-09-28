@@ -745,7 +745,7 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
     return send.call(ws, msg.data);
   };
   window.socket = ws;
-  LogJS.info('New WebSocket:', ws);
+  LogJS.info('New WebSocket: ' + socketURL);
   await ws.connect(socketURL);
   LogJS.info('WebSocket Connected:', ws.connected);
   socketFn(ws);

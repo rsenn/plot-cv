@@ -43,7 +43,7 @@ fail:
 }
 
 JSLineData*
-js_line_data(JSContext* ctx, JSValue val) {
+js_line_data(JSContext* ctx, JSValueConst val) {
   return static_cast<JSLineData*>(JS_GetOpaque2(ctx, val, js_line_class_id));
 }
 
@@ -86,7 +86,7 @@ js_line_get_ab(JSContext* ctx, JSValueConst this_val, int magic) {
 }
 
 static JSValue
-js_line_set_xy12(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
+js_line_set_xy12(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magic) {
   JSLineData* s = static_cast<JSLineData*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
   double v;
   if(!s)
@@ -106,7 +106,7 @@ js_line_set_xy12(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) 
 }
 
 static JSValue
-js_line_set_ab(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
+js_line_set_ab(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magic) {
   JSLineData* s = static_cast<JSLineData*>(JS_GetOpaque2(ctx, this_val, js_line_class_id));
   JSPointData pt = js_point_get(ctx, val);
 
@@ -181,7 +181,7 @@ js_line_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* 
     ret = js_call_method(ctx, ret, "values", 0, NULL);
 
   if(magic & JS_LINE_TO_STRING) {
-    JSValue args[1] = {0};
+    JSValueConst args[1] = {0};
     args[0] = JS_NewString(ctx, " ");
 
     ret = js_call_method(ctx, ret, "join", 1, args);

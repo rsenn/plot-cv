@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 project(plot-cv)
 
+set(quickjs_version "2020-07-05")
+set(quickjs_soversion 1)
+
 if(NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
   set(CMAKE_BUILD_TYPE "Debug")
 endif(NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
@@ -11,9 +14,8 @@ include(CheckCXXCompilerFlag)
 include(CheckLibraryExists)
 include(FindPkgConfig)
 
-
 if(NOT POSITION_INDEPENDENT_CODE)
-set(POSITION_INDEPENDENT_CODE ON)
+  set(POSITION_INDEPENDENT_CODE ON)
 endif(NOT POSITION_INDEPENDENT_CODE)
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
@@ -37,18 +39,14 @@ endif(HAVE_LIBDL)
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH};${CMAKE_INSTALL_PREFIX}/lib")
 set(CMAKE_BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${CMAKE_BINARY_DIR}")
 
-check_library_exists(json-cpp ZN4YAML6detail9node_data9reset_mapEv /usr
-                     JSON_CPP)
+check_library_exists(json-cpp ZN4YAML6detail9node_data9reset_mapEv /usr JSON_CPP)
 
 set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 
 find_package(OpenCV REQUIRED)
 
-include_directories(
-  ${OPENCV_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/opencv ${CMAKE_CURRENT_SOURCE_DIR}/src
-  ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
+include_directories(${OPENCV_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/opencv ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
 
 check_cxx_compiler_flag("-std=c++17" CXX_STD_CXX_17_FLAG)
 if(CXX_STD_CXX_17_FLAG)
@@ -82,8 +80,7 @@ if(ENABLE_LTO)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
 endif(ENABLE_LTO)
 
-# if(HAVE_EFENCE) if(USE_EFENCE) set(ELECTRICFENCE_LIBRARY efence)
-# endif(USE_EFENCE) endif(HAVE_EFENCE)
+# if(HAVE_EFENCE) if(USE_EFENCE) set(ELECTRICFENCE_LIBRARY efence) endif(USE_EFENCE) endif(HAVE_EFENCE)
 
 macro(add_prog)
   set(ARGS ${ARGN})
@@ -129,23 +126,31 @@ if(NOT quickjs_version)
 endif(NOT quickjs_version)
 
 set(QUICKJS_SOURCES_LIST "quickjs/quickjs.c;quickjs/quickjs.h;quickjs/libregexp.c;quickjs/libunicode.c;quickjs/cutils.c;quickjs/quickjs-libc.c;quickjs/quickjs-libc.h;quickjs/quickjs-find-module.c;quickjs/libbf.c")
-#add_definitions(-D_GNU_SOURCE=1)
+# add_definitions(-D_GNU_SOURCE=1)
+
+macro(find_static_library VAR NAME)
+  find_library(${VAR} NAMES lib${NAME}.a PATHS "${CMAKE_INSTALL_PREFIX}/lib" NO_DEFAULT_PATH)
+endmacro()
+
+find_static_library(QUICKJS_LIBRARY quickjs)
+message("QUICKJS_LIBRARY: ${QUICKJS_LIBRARY}")
 
 src_program(
   cli
-  "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/js.cpp;src/jsbindings.cpp;src/js_contour.cpp;src/js.cpp;src/js_draw.cpp;src/js_line.cpp;src/js_mat.cpp;src/js_point.cpp;src/js_point_iterator.cpp;src/js_rect.cpp;src/js_size.cpp;${QUICKJS_SOURCES_LIST}"
+  "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/js.cpp;src/jsbindings.cpp;src/js_contour.cpp;src/js.cpp;src/js_draw.cpp;src/js_line.cpp;src/js_mat.cpp;src/js_point.cpp;src/js_point_iterator.cpp;src/js_rect.cpp;src/js_size.cpp"
   ${OpenCV_LIBS}
-  pthread
-  dl
-  m
-  #quickjs
-  )
-target_compile_definitions(
- cli
-  PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${quickjs_version}"
-          CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1)
+  ${QUICKJS_LIBRARY}
+  pthread dl m
+  # 
+)
 
- 
+target_compile_definitions(cli PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${quickjs_version}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM CONFIG_CHECK_JSVALUE)
+
+add_executable(test-qjs test-qjs.c)
+
+target_link_libraries(test-qjs quickjs pthread dl m)
+
+target_compile_definitions(test-qjs PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${quickjs_version}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1)
 
 option(ADDITIONAL_PROGS "Build other OpenCV programs" FALSE)
 
@@ -279,13 +284,10 @@ if(ADDITIONAL_PROGS)
   add_prog(optical_flow_dense)
   # add_prog(pct_webcam)
   add_prog(qrcode)
-  # add_prog(sampleDetectLandmarksvideo) add_prog(text_detection)
-  # add_prog(tracking_by_matching) add_prog(tutorial_introduction_to_tracker)
+  # add_prog(sampleDetectLandmarksvideo) add_prog(text_detection) add_prog(tracking_by_matching) add_prog(tutorial_introduction_to_tracker)
   add_prog(videocapture_gstreamer_pipeline)
   # add_prog(webcam_demo)
   add_prog(homography_from_camera_displacement)
   add_prog(aruco_ar_demo)
-  # add_prog(tracking_calibration_with_img)
-  # target_link_libraries(tracking_calibration_with_img yaml-cpp roslib rospack
-  # roscpp )
+  # add_prog(tracking_calibration_with_img) target_link_libraries(tracking_calibration_with_img yaml-cpp roslib rospack roscpp )
 endif(ADDITIONAL_PROGS)

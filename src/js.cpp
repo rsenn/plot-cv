@@ -125,7 +125,7 @@ jsrt::to_str(const_value val) {
   return ret;
 }
 
-jsrt::value
+jsrt::const_value
 jsrt::prototype(const_value obj) const {
   return JS_GetPrototype(ctx, obj);
 }
@@ -329,7 +329,7 @@ jsrt::add_function(const char* name, JSCFunction* fn, int args) {
 }
 
 void
-jsrt::set_global(const char* name, JSValue val) {
+jsrt::set_global(const char* name, JSValue  val) {
 
   JS_SetPropertyStr(ctx, global_object(), name, val);
 }

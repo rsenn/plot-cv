@@ -62,6 +62,7 @@ main() {
     case "$SOURCE" in
       *.es5.js) continue ;;
     esac
+    [ -e "$SOURCE" -a ! -f "$SOURCE" ] && continue
     ARG=${SOURCE//"["/"\\["}
     ARG=${ARG//"]"/"\\]"}
    ( trap 'rm -f "$TMPFILE" "$DIFFFILE"' EXIT

@@ -8,10 +8,10 @@
 #include <map>
 
 typedef cv::Rect2d JSRectData;
-typedef struct {
-  cv::Mat mat;
-  JSValue val;
-} JSMatData;
+typedef     /*  struct { */
+    cv::Mat /* mat;
+    JSValue val;
+  }  */ JSMatData;
 typedef cv::Size2d JSSizeData;
 typedef cv::Point2d JSPointData;
 
@@ -42,7 +42,7 @@ int js_draw_functions(JSContext* ctx, JSValue parent);
 int js_draw_init(JSContext*, JSModuleDef*);
 
 JSValue js_point_new(JSContext*, double x, double y);
-JSPointData* js_point_data(JSContext*, JSValue val);
+JSPointData* js_point_data(JSContext*, JSValueConst val);
 
 int js_point_init(JSContext*, JSModuleDef* m);
 void js_point_constructor(JSContext* ctx, JSValue parent, const char* name);
@@ -50,13 +50,13 @@ void js_point_constructor(JSContext* ctx, JSValue parent, const char* name);
 JSModuleDef* js_init_point_module(JSContext*, const char* module_name);
 
 JSValue js_size_new(JSContext* ctx, double w, double h);
-JSSizeData* js_size_data(JSContext*, JSValue val);
+JSSizeData* js_size_data(JSContext*, JSValueConst val);
 
 int js_size_init(JSContext*, JSModuleDef* m);
 JSModuleDef* js_init_size_module(JSContext*, const char* module_name);
 void js_size_constructor(JSContext* ctx, JSValue parent, const char* name);
 
-JSRectData* js_rect_data(JSContext*, JSValue val);
+JSRectData* js_rect_data(JSContext*, JSValueConst val);
 
 int js_rect_init(JSContext*, JSModuleDef*);
 JSModuleDef* js_init_rect_module(JSContext*, const char* module_name);
@@ -67,7 +67,7 @@ int js_point_iterator_init(JSContext*, JSModuleDef* m);
 JSModuleDef* js_init_point_iterator_module(JSContext*, const char* module_name);
 void js_point_iterator_constructor(JSContext* ctx, JSValue parent, const char* name);
 
-JSContourData* js_contour_data(JSContext*, JSValue val);
+JSContourData* js_contour_data(JSContext*, JSValueConst val);
 void js_contour_finalizer(JSRuntime* rt, JSValue val);
 
 JSValue js_contour_to_string(JSContext*, JSValueConst this_val, int argc, JSValueConst* argv);
@@ -79,7 +79,7 @@ int js_mat_init(JSContext*, JSModuleDef*);
 JSModuleDef* js_init_mat_module(JSContext* ctx, const char* module_name);
 void js_mat_constructor(JSContext* ctx, JSValue parent, const char* name);
 
-JSMatData* js_mat_data(JSContext* ctx, JSValue val);
+JSMatData* js_mat_data(JSContext* ctx, JSValueConst val);
 
 JSModuleDef* js_init_module(JSContext* ctx, const char* module_name);
 JSModuleDef* js_init_module_point(JSContext*, const char*);
@@ -98,7 +98,7 @@ JSValue js_create_point_iterator(JSContext* ctx, const std::pair<JSPointData*, J
 
 extern cv::Mat* dptr;
 }
-JSValue js_mat_wrap(JSContext*, cv::Mat mat, JSValue val = JS_UNDEFINED);
+JSValue js_mat_wrap(JSContext*, const cv::Mat& mat);
 
 extern "C" JSValue contour_proto;
 extern "C" JSClassDef js_contour_class, js_size_class, js_point_class, js_mat_class, js_rect_class;

@@ -1,16 +1,16 @@
 /*import { Point as Point_ } from "./lib/geom/point.js";
 import { Size as } from "./lib/geom/size.js";*/
-import { Contour } from './build/x86_64-linux-gnu/contour.so';
-import { Rect } from './build/x86_64-linux-gnu/rect.so';
-import { Point } from './build/x86_64-linux-gnu/point.so';
-import { Size } from './build/x86_64-linux-gnu/size.so';
-import { Mat } from './build/x86_64-linux-gnu/mat.so';
-import { PointIterator } from './build/x86_64-linux-gnu/point-iterator.so';
+import { Contour } from 'contour';
+import { Rect } from 'rect';
+import { Point } from 'point';
+import { Size } from 'size';
+import { Mat } from 'mat';
+import { PointIterator } from 'point-iterator';
 
 import { HSLA } from './lib/color/hsla.js';
 import { Line } from './lib/geom/line.js';
 import { Matrix } from './lib/geom/matrix.js';
-//import { Point, Size, Rect } from "./build//x86_64-linux-gnu/quickjs-opencv.so";
+//import { Point, Size, Rect } from 'opencv';
 import { PointList } from './lib/geom/pointList.js';
 import { RGBA } from './lib/color/rgba.js';
 import { inspect } from './lib/inspect.js';

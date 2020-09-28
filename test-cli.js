@@ -1,12 +1,12 @@
-import { Rect } from './build/x86_64-linux-gnu/rect.so';
-import { Point } from './build/x86_64-linux-gnu/point.so';
-import { Size } from './build/x86_64-linux-gnu/size.so';
-import { Mat } from './build/x86_64-linux-gnu/mat.so';
-import { PointIterator } from './build/x86_64-linux-gnu/point-iterator.so';
+import { Rect } from 'rect';
+import { Point } from 'point';
+import { Size } from 'size';
+import { Mat } from 'mat';
+import { PointIterator } from 'point-iterator';
 
-import { Contour } from './build/x86_64-linux-gnu/contour.so';
-import { Line } from './build/x86_64-linux-gnu/line.so';
-import { Draw, drawLine, drawCircle } from './build/x86_64-linux-gnu/draw.so';
+import { Contour } from 'contour';
+import { Line } from 'line';
+import { Draw, drawLine, drawCircle } from 'draw';
 //import { PointIterator } from "point-iterator";
 import { inspect } from './lib/inspect.js';
 

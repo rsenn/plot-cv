@@ -29,10 +29,9 @@ js_point_new(JSContext* ctx, double x, double y) {
   return ret;
 }
 
- 
 JSValue
-js_point_clone(JSContext* ctx, const JSPointData& point ) {
-return js_point_new(ctx, point.x, point.y);
+js_point_clone(JSContext* ctx, const JSPointData& point) {
+  return js_point_new(ctx, point.x, point.y);
 }
 
 static JSValue
@@ -77,7 +76,7 @@ fail:
 }
 
 JSPointData*
-js_point_data(JSContext* ctx, JSValue val) {
+js_point_data(JSContext* ctx, JSValueConst val) {
   return static_cast<JSPointData*>(JS_GetOpaque2(ctx, val, js_point_class_id));
 }
 
@@ -172,7 +171,7 @@ js_point_quot(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
 }
 
 static JSValue
-js_point_set_xy(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
+js_point_set_xy(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magic) {
   JSPointData* s = js_point_data(ctx, this_val);
   double v;
   if(!s)

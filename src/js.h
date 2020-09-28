@@ -25,11 +25,12 @@ enum {
 
 struct jsiter;
 
+
 struct jsrt {
   typedef JSValue value;
   typedef JSValueConst const_value;
 
-  const_value _true, _false, _null, _undefined;
+  value _true, _false, _null, _undefined;
 
   bool init(int argc, char* argv[]);
   bool create(JSContext* ctx = 0);
@@ -95,7 +96,7 @@ struct jsrt {
   std::string function_name(const_value fn) const;
 
   value get_global(const char* name);
-  void set_global(const char* name, const_value v);
+  void set_global(const char* name, value v);
 
   value
   global_object() {
@@ -283,7 +284,7 @@ jsrt::get_int_array(const_value val, T& ref) const {
 template<class T>
 inline void
 jsrt::get_point(const_value val, T& ref) const {
-  value vx = _undefined, vy = _undefined;
+  const_value vx = _undefined, vy = _undefined;
 
   if(is_array(val)) {
     uint32_t length;
@@ -322,7 +323,7 @@ jsrt::get_rect(const_value val, T& ref) const {
 template<class T>
 inline void
 jsrt::get_color(const_value val, T& ref) const {
-  value vr = _undefined, vg = _undefined, vb = _undefined, va = _undefined;
+  const_value vr = _undefined, vg = _undefined, vb = _undefined, va = _undefined;
 
   if(is_object(val) && has_property(val, "r") && has_property(val, "g") && has_property(val, "b")) {
     vr = get_property(val, "r");
@@ -695,7 +696,7 @@ jsrt::index() const {
   return std::bind(&jsrt::get_property<uint32_t>, this, std::placeholders::_1, std::placeholders::_2);
 }
 inline std::function<JSValue(uint32_t)>
-jsrt::index(const JSValue& a) const {
+jsrt::index(const JSValueConst& a) const {
   return std::bind(&jsrt::get_property<uint32_t>, this, a, std::placeholders::_1);
 }
 

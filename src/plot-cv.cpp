@@ -853,7 +853,7 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
     std::vector<point2i_vector> squares;
 
     {
-      JSValue args[2] = {contours_to_array(js.ctx, contours), vector_to_js(js, hier, &vec4i_to_js)};
+      JSValueConst args[2] = {contours_to_array(js.ctx, contours), vector_to_js(js, hier, &vec4i_to_js)};
 
       /*   js.set_global("contours", args[0]);
          js.set_global("hier", args[1]);*/
@@ -946,7 +946,7 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
 
     timer.stop();
 
-  //  std::cerr << "\033[1mTimer duration\033[0m " << (int)timer.elapsedSeconds() << "s " << ((int)timer.elapsedMilliseconds() % 1000) << "ms" << std::endl;
+    //  std::cerr << "\033[1mTimer duration\033[0m " << (int)timer.elapsedSeconds() << "s " << ((int)timer.elapsedMilliseconds() % 1000) << "ms" << std::endl;
   }
 }
 

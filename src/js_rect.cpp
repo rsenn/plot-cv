@@ -44,7 +44,7 @@ fail:
 }
 
 JSRectData*
-js_rect_data(JSContext* ctx, JSValue val) {
+js_rect_data(JSContext* ctx, JSValueConst val) {
   return static_cast<JSRectData*>(JS_GetOpaque2(ctx, val, js_rect_class_id));
 }
 
@@ -79,7 +79,7 @@ js_rect_get_xywh(JSContext* ctx, JSValueConst this_val, int magic) {
 }
 
 static JSValue
-js_rect_set_xywh(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
+js_rect_set_xywh(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magic) {
   JSRectData* s = static_cast<JSRectData*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id));
   double v;
   if(!s)
@@ -144,20 +144,17 @@ js_rect_method(JSContext* ctx, JSValueConst rect, int argc, JSValueConst* argv, 
     ret = JS_NewBool(ctx, s->contains(point));
   if(magic == 1)
     ret = JS_NewBool(ctx, s->empty());
-     if(magic == 2)
-    ret = JS_NewFloat64(ctx, s->area()); 
-
+  if(magic == 2)
+    ret = JS_NewFloat64(ctx, s->area());
 
   if(magic == 3 || magic == 4) {
-cv::Point2d pt = magic == 3 ? s->br() : s->tl();
+    cv::Point2d pt = magic == 3 ? s->br() : s->tl();
 
-   ret = js_point_new(ctx, pt.x, pt.y);
-  
+    ret = js_point_new(ctx, pt.x, pt.y);
   }
   if(magic == 5) {
-cv::Size2d sz = s->size();
-   ret = js_size_new(ctx, sz.width, sz.height);
-  
+    cv::Size2d sz = s->size();
+    ret = js_size_new(ctx, sz.width, sz.height);
   }
   return ret;
 }

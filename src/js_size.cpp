@@ -37,7 +37,7 @@ fail:
 }
 
 JSSizeData*
-js_size_data(JSContext* ctx, JSValue val) {
+js_size_data(JSContext* ctx, JSValueConst val) {
   return static_cast<JSSizeData*>(JS_GetOpaque2(ctx, val, js_size_class_id));
 }
 
@@ -60,7 +60,7 @@ js_size_get_wh(JSContext* ctx, JSValueConst this_val, int magic) {
   return JS_UNDEFINED;
 }
 
- JSValue
+JSValue
 js_size_new(JSContext* ctx, double w, double h) {
   JSValue ret;
   JSSizeData* s;
@@ -76,7 +76,7 @@ js_size_new(JSContext* ctx, double w, double h) {
 }
 
 static JSValue
-js_size_set_wh(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
+js_size_set_wh(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magic) {
   JSSizeData* s = js_size_data(ctx, this_val);
   double v;
   if(!s)
