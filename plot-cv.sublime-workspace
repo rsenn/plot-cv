@@ -80,21 +80,36 @@
 	"buffers":
 	[
 		{
-			"contents": "",
+			"contents": "  log\nParseNode.prototype.value\nParseNode.prototype.nodeLength\nParseNode.prototype.addChild\nParseNode.prototype.print\nParseNode\nParseState.prototype.charAt\nParseState.prototype.advance\nParseState.prototype.parseNode\nParseState.prototype.checkWhitespace\nParseState.prototype.checkComment\nParseState.prototype.nextToken\nParseState\nParser.prototype.pushFrame\nParser.prototype.popFrame\nParser.prototype.parseLetter\nParser.prototype.parseDigit\nParser.prototype.parseNonzero\nParser.prototype.parseSymbol\nParser.prototype.parseCharacter\nParser.prototype.parseIdentifier\nParser.prototype.parseTerminal\nParser.prototype.parseCount\nParser.prototype.parseLhs\nParser.prototype._parseBinary\nParser.prototype._parseEnclosure\nParser.prototype.parseCounted\nParser.prototype.parseException\nParser.prototype.parseOptional\nParser.prototype.parseRepetition\nParser.prototype.parseGrouping\nParser.prototype.parseAlternation\nParser.prototype.parseConcatenation\nParser.prototype.parseRhs\n  parseRule =>\nParser.prototype.parseRule\nParser.prototype.parseGrammar\nParser",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 1042,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "CMakeLists.txt",
+			"file": "/home/roman/Dokumente/Sources/sf2/sf2.js/sf2.js",
 			"settings":
 			{
-				"buffer_size": 8492,
-				"encoding": "UTF-8",
+				"buffer_size": 11280,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/roman/Dokumente/Sources/sf2/sf2-parser/src/sf2-parser.js",
+			"settings":
+			{
+				"buffer_size": 31096,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/parse/ebnf2.js",
+			"settings":
+			{
+				"buffer_size": 14219,
 				"line_ending": "Unix"
 			}
 		}
@@ -299,18 +314,52 @@
 	},
 	"expanded_folders":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv"
+		"/home/roman/Dokumente/Sources/plot-cv",
+		"/home/roman/Dokumente/Sources/plot-cv/lib",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/parse",
+		"/home/roman/Dokumente/Sources/plot-cv/src"
 	],
 	"file_history":
 	[
+		"/home/roman/Dokumente/Sources/plot-cv/src/plot-cv.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/highgui-viewer.cpp",
+		"/home/roman/Dokumente/Sources/sf2/sf2-parser/src/sf2-parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/js-bindings.cmake",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_point.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_rect.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_size.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.h",
+		"/home/roman/Dokumente/Sources/plot-cv/test-quickjs.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_line.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/FindGLFW.cmake",
+		"/home/roman/Dokumente/Sources/plot-cv/glfw3Config.cmake",
+		"/home/roman/Dokumente/Sources/plot-cv/highgui-viewer.cmake",
+		"/home/roman/Dokumente/Sources/plot-cv/imgui-viewer.cmake",
+		"/home/roman/Dokumente/Sources/plot-cv/sdl2-config.cmake",
+		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.cmake",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.h",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
+		"/home/roman/Dokumente/Sources/plot-cv/consoleSetup.js",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs.rej",
+		"/home/roman/Dokumente/Sources/plot-cv/create-tamper.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_point_iterator.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/test-cli.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-line.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_mat.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svg/Module.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_contour.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs-2020-07-05/quickjs.h",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/img/6bbe3995763181343c204e03f016597f7d09dbcf.svg",
 		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-export.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test.js",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/stream/utils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-sourcemap.js",
 		"/home/roman/Dokumente/Sources/plot-cv/resolve-imports.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/stream.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/stream/utils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/repeater.js",
-		"/home/roman/Dokumente/Sources/plot-cv/create-tamper.js",
 		"/home/roman/Dokumente/Sources/plot-cv/list-proxies.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/filesystem.js",
 		"/home/roman/.config/sublime-text-3/Packages/Outline/common.py",
@@ -330,15 +379,12 @@
 		"/home/roman/Dokumente/Sources/plot-cv/test-websocket.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/common.js",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/7seg-2.54.brd",
-		"/home/roman/Dokumente/Sources/plot-cv/test-quickjs.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/environment.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-eval.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/commands.js",
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/libwebsockets/CMakeLists.txt",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/CMakeLists.txt",
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/CMakeLists.txt",
-		"/home/roman/Dokumente/Sources/plot-cv/js-bindings.cmake",
 		"/home/roman/Dokumente/Sources/plot-cv/components.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
 		"/home/roman/Dokumente/Sources/plot-cv/portal.js",
@@ -346,7 +392,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/style.css",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/libwebsockets/CMakeLists",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
@@ -391,7 +436,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/gcode/gcode-interp.js",
 		"/home/roman/Dokumente/Sources/js-gcode/gcode-toolpath/src/Toolpath.js",
 		"/home/roman/Dokumente/Sources/js-gcode/cncjs-shopfloor-tablet/src/simple-toolpath.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-export.js",
 		"/home/roman/Dokumente/Sources/js-gcode/tightcnc/lib/gcode-line.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/gerber/parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/7seg-2.54_drill.ngc",
@@ -404,33 +448,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json.js",
 		"/home/roman/Dokumente/Sources/js-gcode/tightcnc/lib/gcode-vm.js",
 		"/home/roman/Dokumente/Sources/js-gcode/cncjs/src/server/controllers/TinyG/TinyGRunner.js",
-		"/home/roman/Dokumente/Sources/js-gcode/tightcnc/src/server/grbl-controller.js",
-		"/home/roman/Dokumente/Sources/js-gcode/grbl-parser/lib/extractor.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/gcode/interpreter.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/gcode.js",
-		"/home/roman/Dokumente/Sources/js-gcode/cncjs-shopfloor-tablet/src/simple-interpreter.js",
-		"/home/roman/Dokumente/Sources/js-gcode/gcode-interpreter/src/Interpreter.js",
-		"/home/roman/Dokumente/Sources/js-gcode/gcodejs/test/cuttingedge/cncweb.cnc",
-		"/home/roman/Dokumente/Sources/js-gcode/gcode-utils/src/interpreter.ts",
-		"/home/roman/Dokumente/Sources/js-gcode/lw-gcode-parser/src/legacy/gcode-parser.js",
-		"/home/roman/Dokumente/Sources/js-gcode/gcodejs/parser.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/jsondiff.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/streamUtils.js",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/images?q=tbn:ANd9GcTk_RYBkEt7zCMSzAmaZOL-QboGRnkugV9DgQ",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
-		"/home/roman/Dokumente/Sources/plot-cv/useDimensions.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pin.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pad.js",
-		"/home/roman/Dokumente/Sources/plot-cv/consoleSetup.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/sweepLine.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/drawing.js",
-		"/home/roman/Downloads/00ef62472f88a1726c2f1b4584ba5ff53252cb62.dlc",
-		"/home/roman/Dokumente/Sources/plot-cv/test-parsetmpl.js",
-		"/home/roman/Dokumente/Sources/plot-cv/c2.js"
+		"/home/roman/Dokumente/Sources/js-gcode/tightcnc/src/server/grbl-controller.js"
 	],
 	"find":
 	{
@@ -441,6 +459,11 @@
 		"height": 306.0,
 		"where_history":
 		[
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,/home/roman/Dokumente/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Dokumente/Sources/plot-cv/quickjs,*.h,*,c",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,,/home/roman/Dokumente/Sources/plot-cv/src,*.h,*,cpp",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,,/home/roman/Dokumente/Sources/plot-cv/src,*.h",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,,/home/roman/Dokumente/Sources/plot-cv/src,*.cpp,*.h",
 			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,<open files>",
 			"/home/roman/Dokumente/Sources/plot-cv,-*node_modules*,*.js,<open files>",
 			"/home/roman/Dokumente/Sources/plot-cv,-node_modules,*.js,<open files>",
@@ -454,6 +477,93 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"thresh2",
+			"image_index",
+			"num_images",
+			"show_image",
+			"Timer dur",
+			"duration",
+			"br$",
+			"contour",
+			"JS_NewObjectProtoClass",
+			"create_point",
+			"JS_NewF",
+			"JS_New",
+			"Float64",
+			"JS_.*Float",
+			"JS_New.*",
+			"JS_NewFloat",
+			"JS_NewBool",
+			"point_",
+			"get_point",
+			"let a",
+			"a =",
+			"JS_[^ ]*String",
+			"JS.*String",
+			"JS_NewStriing",
+			"js_point_to_string",
+			"JS_CGETSET_ENUMERABLE_DEF",
+			"JS_DEF_CGETSET",
+			",\\s*JS_DEF_CGETSET",
+			"JS_DEF_CGETSET",
+			"JS_DEF_CGETSET.*}",
+			"JS_DEF_CGETSET",
+			"JS.*GET.*SET",
+			"JS.*GETSET",
+			"JS.*GET",
+			"JS_ALIAS",
+			"JS_Call",
+			"JS_NewString",
+			"JS_UNDEF",
+			"JS_Call",
+			"GetProperty",
+			"toPoints",
+			"js_line_points",
+			"line_points",
+			"item",
+			"console\\.log",
+			"\\.log",
+			"log",
+			":",
+			"ab",
+			"vec\\[",
+			"s->operator\\[\\]\\(([0-9])\\)",
+			"s->operator\\[\\]\\((.*)\\)",
+			"create_point",
+			"create_poitn",
+			"NewArray",
+			"JS_NewArray",
+			"JS_[^ ]*Array",
+			"JS_Create",
+			"Symbol.iterator",
+			" ll\\.",
+			"rand",
+			"'TEST",
+			"NOT BUILD",
+			"POSITION",
+			"line",
+			"iterator_nex",
+			"_next",
+			"next",
+			"js_create_point_iterator",
+			"js_contour_class",
+			"ContourData",
+			"Contour",
+			"js_contour_data",
+			"JSPointIteratorData",
+			"create_point",
+			"create_pot",
+			"create_po",
+			"js_create",
+			"js_create_",
+			"js_create_po",
+			"erator",
+			"contour",
+			"src/",
+			"src",
+			"target_link",
+			"_dep",
+			"contour",
 			"SHARED",
 			"exportMap",
 			"args",
@@ -494,94 +604,7 @@
 			"globalThis =",
 			"ReadableStream",
 			"import.*Repeater",
-			"merge",
-			"import.*utils.js",
-			"Repeater",
-			"\\.id.*message",
-			"log.*\\[.*message",
-			"log...*\\[.*message",
-			"log.*Message data",
-			"log.*message data",
-			"processLine",
-			"on\\(",
-			"sendBuf",
-			"this.ws",
-			"closeConnection",
-			"QUIT",
-			"processLine",
-			"flush",
-			"flush =",
-			"flush\\(",
-			"flush",
-			"closeConnec",
-			"log.*message",
-			"send\\(",
-			"Util.once =",
-			"error",
-			"sendMany",
-			"sendBuf",
-			"flush\\(",
-			" send\\(",
-			"send\\(",
-			"await ",
-			"closeConnection",
-			"await client.sendTo\\(sock, ",
-			"await client.sendTo\\(s, ",
-			"breakLen",
-			"'connect'",
-			"lastMessage",
-			"Timers",
-			"Timerws",
-			"repeater.*timer",
-			"info.bytes",
-			"log..socket",
-			"sendTo",
-			"removeItem",
-			"console.*data =",
-			"data =",
-			"await await",
-			"client.send",
-			"Util.ifThenElse",
-			"Util.isEmpty",
-			"log..message",
-			"log(`message",
-			"headers:",
-			"connected",
-			"message from",
-			"const add =",
-			"socket",
-			"expressWs",
-			"ws",
-			"data:",
-			"sendMany",
-			"weakMapper",
-			"codeBody",
-			"Symbol.for",
-			"encode",
-			"message:",
-			"client",
-			"SendFunction",
-			"JOIN",
-			"USERS",
-			"socket",
-			"sockets",
-			"SendF",
-			"sockets",
-			"SerialPorts",
-			"SerialPort",
-			"serial",
-			"serial.Port.prototype",
-			"USERS",
-			"Message",
-			"CreateWe",
-			"sendTo",
-			"Sending",
-			"Socket",
-			"/ws",
-			"JSON.string",
-			"Message ",
-			"Socket",
-			"prng"
+			"merge"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -589,6 +612,9 @@
 		"regex": true,
 		"replace_history":
 		[
+			"s->vec\\[\\1\\]",
+			"s->vec[\\1]",
+			" line.",
 			" this.send(",
 			"send(",
 			"bytes",
@@ -657,63 +683,319 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 0,
+						"buffer_size": 1042,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								1042,
+								1042
 							]
 						],
 						"settings":
 						{
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/parse/ebnf2.js",
 							"outline_rename_mode": false,
+							"symkeys":
+							[
+								[
+									0,
+									25
+								],
+								[
+									551,
+									589
+								],
+								[
+									645,
+									688
+								],
+								[
+									727,
+									773
+								],
+								[
+									832,
+									876
+								],
+								[
+									1300,
+									1344
+								],
+								[
+									1619,
+									1665
+								],
+								[
+									1718,
+									1760
+								],
+								[
+									2040,
+									2087
+								],
+								[
+									2354,
+									2403
+								],
+								[
+									2715,
+									2761
+								],
+								[
+									3267,
+									3310
+								],
+								[
+									3602,
+									3655
+								],
+								[
+									4112,
+									4155
+								],
+								[
+									4758,
+									4807
+								],
+								[
+									5306,
+									5347
+								],
+								[
+									5461,
+									5501
+								],
+								[
+									5587,
+									5629
+								],
+								[
+									5714,
+									5755
+								],
+								[
+									6063,
+									6107
+								],
+								[
+									6324,
+									6369
+								],
+								[
+									6788,
+									6831
+								],
+								[
+									7406,
+									7446
+								],
+								[
+									7779,
+									7817
+								],
+								[
+									8161,
+									8240
+								],
+								[
+									9089,
+									9183
+								],
+								[
+									9742,
+									9784
+								],
+								[
+									9867,
+									9911
+								],
+								[
+									9994,
+									10037
+								],
+								[
+									10112,
+									10157
+								],
+								[
+									10234,
+									10277
+								],
+								[
+									10352,
+									10398
+								],
+								[
+									10483,
+									10531
+								],
+								[
+									10618,
+									10656
+								],
+								[
+									11124,
+									11136
+								],
+								[
+									11920,
+									11959
+								],
+								[
+									12635,
+									12677
+								],
+								[
+									13323,
+									13346
+								]
+							],
+							"symlist":
+							[
+								"  log",
+								"ParseNode.prototype.value",
+								"ParseNode.prototype.nodeLength",
+								"ParseNode.prototype.addChild",
+								"ParseNode.prototype.print",
+								"ParseNode",
+								"ParseState.prototype.charAt",
+								"ParseState.prototype.advance",
+								"ParseState.prototype.parseNode",
+								"ParseState.prototype.checkWhitespace",
+								"ParseState.prototype.checkComment",
+								"ParseState.prototype.nextToken",
+								"ParseState",
+								"Parser.prototype.pushFrame",
+								"Parser.prototype.popFrame",
+								"Parser.prototype.parseLetter",
+								"Parser.prototype.parseDigit",
+								"Parser.prototype.parseNonzero",
+								"Parser.prototype.parseSymbol",
+								"Parser.prototype.parseCharacter",
+								"Parser.prototype.parseIdentifier",
+								"Parser.prototype.parseTerminal",
+								"Parser.prototype.parseCount",
+								"Parser.prototype.parseLhs",
+								"Parser.prototype._parseBinary",
+								"Parser.prototype._parseEnclosure",
+								"Parser.prototype.parseCounted",
+								"Parser.prototype.parseException",
+								"Parser.prototype.parseOptional",
+								"Parser.prototype.parseRepetition",
+								"Parser.prototype.parseGrouping",
+								"Parser.prototype.parseAlternation",
+								"Parser.prototype.parseConcatenation",
+								"Parser.prototype.parseRhs",
+								"  parseRule =>",
+								"Parser.prototype.parseRule",
+								"Parser.prototype.parseGrammar",
+								"Parser"
+							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.x": 1.0,
+						"translation.y": 184.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 0,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "CMakeLists.txt",
+					"file": "/home/roman/Dokumente/Sources/sf2/sf2.js/sf2.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 8492,
+						"buffer_size": 11280,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4459,
-								4459
+								1421,
+								1441
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4942.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/home/roman/Dokumente/Sources/sf2/sf2-parser/src/sf2-parser.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 31096,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								29588,
+								29618
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3818.0,
+						"translation.y": 29246.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "lib/parse/ebnf2.js",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 14219,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								13323,
+								13346
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 14154.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -724,7 +1006,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 37.0
+		"height": 39.0
 	},
 	"input":
 	{
@@ -778,7 +1060,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 161.0
+		"height": 91.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -788,16 +1070,116 @@
 		"selected_items":
 		[
 			[
-				"cmake",
+				"test-qui",
+				"test-quickjs.js"
+			],
+			[
+				"js_rec",
+				"src/js_rect.cpp"
+			],
+			[
+				"cmakeli",
 				"CMakeLists.txt"
 			],
 			[
-				"stream",
-				"lib/stream.js"
+				"quickjs.h",
+				"quickjs/quickjs.h"
 			],
 			[
 				"create-ta",
 				"create-tamper.js"
+			],
+			[
+				"quickjs",
+				"quickjs.rej"
+			],
+			[
+				"line.js",
+				"lib/geom/line.js"
+			],
+			[
+				"console",
+				"consoleSetup.js"
+			],
+			[
+				"jsbind",
+				"src/jsbindings.h"
+			],
+			[
+				"test-quick",
+				"test-quickjs.js"
+			],
+			[
+				"js_li",
+				"src/js_line.cpp"
+			],
+			[
+				"js_mat",
+				"src/js_mat.cpp"
+			],
+			[
+				"js_cont",
+				"src/js_contour.cpp"
+			],
+			[
+				"_line",
+				"src/js_line.cpp"
+			],
+			[
+				"line.",
+				"lib/geom/line.js"
+			],
+			[
+				"modules",
+				"lib/eagle/svg/Module.svg"
+			],
+			[
+				"cmake",
+				"CMakeLists.txt"
+			],
+			[
+				"test-cli",
+				"test-cli.js"
+			],
+			[
+				"point_iter",
+				"src/js_point_iterator.cpp"
+			],
+			[
+				"jsbin",
+				"src/jsbindings.h"
+			],
+			[
+				"995",
+				"tmp/img/6bbe3995763181343c204e03f016597f7d09dbcf.svg"
+			],
+			[
+				"js_point_it",
+				"src/js_point_iterator.cpp"
+			],
+			[
+				"cmakelist",
+				"quickjs/CMakeLists.txt"
+			],
+			[
+				"test.js",
+				"test.js"
+			],
+			[
+				"utils",
+				"lib/stream/utils.js"
+			],
+			[
+				"test-",
+				"test-export.js"
+			],
+			[
+				"main",
+				"main.js"
+			],
+			[
+				"stream",
+				"lib/stream.js"
 			],
 			[
 				"resolve",
@@ -806,14 +1188,6 @@
 			[
 				"repeat",
 				"lib/repeater/repeater.js"
-			],
-			[
-				"main",
-				"main.js"
-			],
-			[
-				"utils",
-				"lib/stream/utils.js"
 			],
 			[
 				"socket",
@@ -890,10 +1264,6 @@
 			[
 				"component",
 				"components.js"
-			],
-			[
-				"test-qui",
-				"test-quickjs.js"
 			],
 			[
 				"test-eval",
@@ -1210,94 +1580,6 @@
 			[
 				"test-ini",
 				"test-ini.js"
-			],
-			[
-				"list-p",
-				"list-proxies.js"
-			],
-			[
-				"iter",
-				"lib/async/iterify.js"
-			],
-			[
-				"gerber",
-				"lib/gerber/parser.js"
-			],
-			[
-				"wire.",
-				"lib/eagle/components/wire.js"
-			],
-			[
-				"util.j",
-				"lib/util.js"
-			],
-			[
-				"bbox",
-				"lib/geom/bbox.js"
-			],
-			[
-				"docu",
-				"lib/eagle/document.js"
-			],
-			[
-				"size.",
-				"lib/geom/size.js"
-			],
-			[
-				"elem",
-				"lib/eagle/element.js"
-			],
-			[
-				"poin",
-				"lib/geom/point.js"
-			],
-			[
-				"xml",
-				"lib/tXml.js"
-			],
-			[
-				"size",
-				"lib/geom/size.js"
-			],
-			[
-				"rect.j",
-				"lib/geom/rect.js"
-			],
-			[
-				"rect",
-				"lib/geom/rect.js"
-			],
-			[
-				"lazyIni",
-				"lib/lazyInitializer.js"
-			],
-			[
-				"xml.j",
-				"test-xml.js"
-			],
-			[
-				"xml.js",
-				"lib/xml.js"
-			],
-			[
-				"ini-gr",
-				"ini-grammar.js"
-			],
-			[
-				"path.j",
-				"lib/path.js"
-			],
-			[
-				"ini-gra",
-				"ini-grammar.js"
-			],
-			[
-				"ini",
-				"test-ini.js"
-			],
-			[
-				"grid",
-				"lib/eagle/components/grid.js"
 			]
 		],
 		"width": 0.0

@@ -2535,6 +2535,10 @@ it-ws@^3.0.0:
     relative-url "^1.0.2"
     ws "^7.3.1"
 
+"js-synthesizer@https://github.com/jet2jet/js-synthesizer":
+  version "1.7.0"
+  resolved "https://github.com/jet2jet/js-synthesizer#9539c4d04b8d1223c92e7e182d1f505a8d512b0c"
+
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -2736,6 +2740,10 @@ methods@^1.1.1, methods@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/methods/-/methods-1.1.2.tgz#5529a4d67654134edcc5266656835b0f851afcee"
   integrity sha1-VSmk1nZUE07cxSZmVoNbD4Ua/O4=
+
+"midi@https://github.com/mudcube/MIDI.js":
+  version "0.3.0"
+  resolved "https://github.com/mudcube/MIDI.js#a8a84257afa70721ae462448048a87301fc1554a"
 
 mime-db@1.44.0:
   version "1.44.0"
