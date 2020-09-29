@@ -1,7 +1,6 @@
 import Stream from 'stream';
 import Timers from './lib/repeater/timers.js';
 
-
 export function execStream(cmd, args, options = { stdio: 'pipe' }) {
   var AB = new Stream.Duplex({ ...options, readableHighWaterMark: 1, writableHighWaterMark: 1 });
   var A = new Stream.PassThrough();
