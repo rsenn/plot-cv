@@ -84,7 +84,7 @@ Proxy.prototype[Symbol.for('nodejs.util.inspect.custom')] = function() {
 };
 
 async function main(country = 'de') {
-  await ConsoleSetup({ depth: 2 });
+  await ConsoleSetup({ depth: 2, breakLength: 120 });
 
   console.log(`Searching proxies in country '${country}'`);
   const proxies = [
@@ -141,31 +141,32 @@ async function main(country = 'de') {
         });
     }),
     new Repeater(async (push, stop) => {
-      let response = await fetch('https://sunny9577.github.io/proxy-scraper/proxies.json').catch(stop);
+        let response = await fetch('https://sunny9577.github.io/proxy-scraper/proxies.json').catch(stop);
 
-      let json = await response.json();
-      //console.log("json:", json);
+        let json = await response.json();
+        //console.log("json:", json);
 
-      const flat = deep.flatten(json,
-        new Map(),
-        (v, k) => k.length > 1 && typeof v == 'object',
-        (k, v) => [k.join('.'), v]
-      );
-      //console.log('flat:', flat.values());
+        const flat = deep.flatten(json,
+          new Map(),
+          (v, k) => k.length > 1 && typeof v == 'object',
+          (k, v) => [k.join('.'), v]
+        );
+        console.log('flat:', flat.values());
 
-      for(let entry of flat.values()) {
-        //console.log('proxy:', entry);
-        const { ip, port, country, anonymity, type } = entry;
-        if(!/germany/i.test(country)) continue;
-        const protocol = type.split(/[^A-Za-z0-9]+/g)[0].toLowerCase();
+        for(let entry of flat.values()) {
+          console.log('proxy:', entry);
+          const { ip, port, country, anonymity, type } = entry;
+          if(!/germany/i.test(country)) continue;
+          const protocol = type.split(/[^A-Za-z0-9]+/g)[0].toLowerCase();
 
-        // console.log('proxy:', { ip, port, country, anonymity, protocol });
-        let proxy = new Proxy({ ip, port, country, protocol, source: 'proxy-scraper' });
-        await proxy
-          .ping()
-          .then(push)
-          .catch(err => console.error('err:', err));
-      }
+          console.log('proxy:', { ip, port, country, anonymity, protocol });
+          let proxy = new Proxy({ ip, port, country, protocol, source: 'proxy-scraper' });
+          await proxy
+            .ping()
+            .then(push)
+            .catch(err => console.error('err:', err));
+        }
+      } catch(err) {}
     })
   ];
   (async () => {

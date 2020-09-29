@@ -17,7 +17,7 @@ import KolorWheel from './lib/KolorWheel.js';
 import distanceChecker from './lib/color/distanceChecker.js';
 
 let filesystem;
-let prng /* = new Alea().seed(Date.now())*/;
+let prng = new Alea().seed(Date.now());
 
 function readXML(filename) {
   //console.log('readXML', filename);
@@ -89,7 +89,7 @@ async function main(...args) {
     let st;
     let { rdev, ino, mtime, atime } = (st = filesystem.stat(filename));
     console.log('stat:', Util.toString(st), Object.keys(st));
-    prng = new Alea().seed((ino * 256 + rdev) ^ mtime.valueOf());
+    //prng = new Alea().seed((ino * 256 + rdev) ^ mtime.valueOf());
 
     console.log('prng.uint32():', prng.uint32());
     let basename = path.basename(filename).replace(/\.[^.]*$/, '');
