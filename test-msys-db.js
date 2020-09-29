@@ -56,6 +56,8 @@ async function main(...args) {
   let packages = Object.keys(data);
   let files = [];
   let i;
+  console.log("packages.length:", packages.length);
+  console.log("packages:", packages.slice(0,10));
   for(let i = 0; i < args.length; i++) {
     let arg = args[i].replace(/\+/, '\\+');
     let [name, ver] = arg.split('=');
@@ -63,8 +65,12 @@ async function main(...args) {
       name = name.slice(0, -1);
       ver = null;
     }
+
     let re = new RegExp(arg.startsWith('/') ? name + '-' + (ver || 'r?[0-9]') : arg, 'gi');
-    let pkgs = Util.filter(packages, re);
+    console.log("re:", re); 
+    let pkgs = [... Util.filter(packages, re)];
+
+    console.log("pkgs:", pkgs);
     if(pkgs.length != 1) {
       pkgs = Util.filter(packages, (re = new RegExp(arg.startsWith('/') ? name + '-[a-z]+-' + (ver || 'r?[0-9]') : arg, 'gi')));
 
@@ -88,12 +94,16 @@ async function main(...args) {
     for(let arg of args) {
     }
   }
-  let output = filesystem.open('mingw.sh', 'w');
+  let output = filesystem.open('msys-install.sh', 'w');
 
   for(let file of files) {
     let parts = file.split('/');
-    let arch = parts.slice(-2, -1);
-    let extractDest = `/usr/${arch}-w64-mingw32/sysroot/mingw/`;
+    let [system,arch] = parts.slice(-3, -1);
+    console.log("parts:", parts, system);
+    let os = system.startsWith('mingw') ? 'w64' : 'pc';
+    let kernel = system.startsWith('mingw') ? 'mingw32' : 'msys';
+    let rootDir = system.startsWith('mingw') ? '/mingw' : '/usr';
+    let extractDest = `/usr/${arch}-${os}-${kernel}/sysroot${rootDir}`;
     let compressProgram = file.endsWith('xz') ? 'xz' : 'zstd';
     filesystem.write(output, `curl -s '${file}' | tar --use-compress-program=${compressProgram} -C ${extractDest} --strip-components=1 -xv\n`);
   }
