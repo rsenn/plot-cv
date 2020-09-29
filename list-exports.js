@@ -11,55 +11,11 @@ import PortableFileSystem from './lib/filesystem.js';
 let filesystem;
 
 let cwd;
-
-let searchPath = [];
-let packagesPath = [];
-let moduleAliases;
-let packageFiles;
-let importFiles;
-let moduleList = new SortedMap();
+  
 let exportMap = new Map();
 let allExports = [];
 const removeModulesDir = PrefixRemover([/node_modules\//g, /^\.\//g]);
-
-class ES6Module {
-  impExpList = [];
-
-  static create(file) {
-    let mod = new ES6Module();
-    mod.file = file;
-  }
-}
-
-class ES6ImportExport {
-  static create(obj) {
-    let ret = new.target ? this : obj;
-    let nodeClass = Util.className(obj.node);
-    let type = Util.decamelize(nodeClass).split('-')[0];
-    let position = ESNode.assoc(obj.node).position;
-    ret = Util.define(ret, { position, nodeClass, type }, obj);
-
-    /* this.node = node;*/
-    //console.log('ES6ImportExport; obj:', ret);
-    if(!new.target) return Object.setPrototypeOf(ret, ES6ImportExport.prototype);
-    return ret;
-  }
-
-  get from() {
-    let value = this.node.source;
-    while(Util.isObject(value, v => v.value)) value = value.value;
-    return value;
-  }
-  set from(value) {
-    this.node.source = value instanceof Literal ? value : new Literal(`'${value}'`);
-  }
-  toSource() {
-    return printAst(this.node);
-  }
-  get code() {
-    return this.toSource();
-  }
-}
+ 
 console.log('main');
 Util.callMain(main);
 
@@ -118,24 +74,6 @@ async function main(...args) {
   } catch(err) {
     console.log(err);
   }
-
-  searchPath = makeSearchPath(dirs);
-  console.log('searchPath=', searchPath);
-  packagesPath = makeSearchPath(dirs, 'package.json');
-  console.log('packagesPath=', packagesPath);
-  moduleAliases = packagesPath.reduce((acc, p) => {
-    let json = JSON.parse(filesystem.readFile(p));
-    let aliases = json._moduleAliases || {};
-    for(let alias in aliases) {
-      let module = path.join(path.dirname(p), aliases[alias]);
-      if(!filesystem.exists(module)) throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`);
-      let file = findModule(module);
-      // let st = filesystem.stat(file);
-      acc.set(alias, file);
-    }
-    return acc;
-  }, new Map());
-  console.log('moduleAliases=', moduleAliases);
   const name = args.join(', ');
   while(args.length > 0) processFile(args.shift());
   // console.log("result:",r);
@@ -173,79 +111,7 @@ async function main(...args) {
         node => node instanceof ESNode,
         (path, value) => [path, value]
       );
-      function removeStatements(statements, predicate = stmt => true) {
-        //  if(Util.isArray(statements)) statements = new Map(statements);
-        // /* prettier-ignore */ console.log('removeStatements:', [...statements].map(mod=> printAst(mod.stmt)));
-        // /* prettier-ignore */ console.log('removeStatements:', [...statements].map(([path, stmt]) => stmt));
-        let removed = [];
-        for(let [path, node] of statements) {
-          if(!predicate(node, path)) continue;
-          console.log('removeStatements loop:', new ImmutablePath(path), printAst(node));
-
-          if(node instanceof ImportStatement || (Util.isObject(node) && node.what == 'default')) {
-            deep.unset(ast, path);
-          } else {
-            console.log('i:', deep.get(ast, path.slice(0, -2)));
-            if(!Util.isArray(node.declarations)) node = node.declarations;
-            else Object.setPrototypeOf(node, VariableDeclaration.prototype);
-            deep.set(ast, path, node);
-          }
-          removed.push(node);
-        }
-        return removed;
-      }
-      const getBase = filename => filename.replace(/\.[a-z0-9]*$/, '');
-      const getRelative = filename => path.join(thisdir, filename);
-      const getFile = Util.memoize(module => searchModuleInPath(module, file));
-      let imports,
-        importStatements = [...flat.entries()].filter(([key, node]) => node instanceof ImportStatement);
-      imports = importStatements.map(([path, node], i) => {
-        //   console.debug("node:",node);
-        const getFromValue = Util.memoize(() => Literal.string(node.source));
-        const getFromBase = () => getBase(getFromValue()).replace(/^\.\//, '');
-        const getFromPath = () => getFile(getFromBase());
-        const getAssoc = Util.memoize(() => ESNode.assoc(node));
-        return ES6ImportExport.create({
-          // Object.assign(Object.setPrototypeOf({}, ES6ImportExport.prototype), {
-          node,
-          path: path.join('.'),
-          file,
-          position: getAssoc().position,
-          fromPath: getFromPath(),
-          fromBase: getFromBase(),
-          fromValue: getFromValue()
-          //    variables: Util.isObject(node.identifiers, () => node.identifiers.variables) ? node.identifiers : node
-        });
-      });
-      let statement2module = imports.map(imp => [imp.node, imp]);
-      statement2module = new WeakMap(statement2module);
-      let alter = imports.filter(({ fromPath, ...module }) => /^lib/.test(fromPath));
-      alter = alter.map(node => {
-        const to = node.fromPath;
-        const from = node.fromValue;
-        node.from = new Literal(`'${to}'`);
-        console.log(`node alter ${node.position.toString()}  => '${to}'   (was '${from}' )`);
-        return node;
-      });
-
-      log(`imports =`,
-        imports.map(imp => imp.toSource())
-      );
-      log(`alter =`,
-        alter.map(imp => printAst(imp.node))
-      );
-      let remove = imports.map((imp, idx) => [idx, imp.node]).filter((imp, idx) => !/^lib/.test(imp.fromPath));
-      log(`remove =`,
-        remove.reduce((acc, [i, imp]) => [...acc, imp /*(imp.fromPath),imp.toSource()*/], []).map(imp => Util.className(imp))
-      );
-
-      removeStatements(remove.map(([idx, node]) => [imports[idx].path, node]));
-
-      /*    let recurseFiles = remove.map(([idx, node]) => imports[idx]).filter(imp => processed.indexOf(imp.fromPath) == -1);
-      log(`recurseFiles =`,
-        recurseFiles.map(imp => imp.fromPath)
-      );
-      recurseFiles.forEach(imp => processFile(imp.fromPath));*/
+    
 
       let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportStatement || value.exported === true);
 
@@ -312,77 +178,4 @@ function finish(err) {
   }
   console.log('finish: ' + (fail ? 'error' : 'success'));
   return !fail;
-}
-
-function makeSearchPath(dirs, extra = 'node_modules') {
-  let r = [];
-  const addPath = p => ((p = path.relative(cwd, p)), r.indexOf(p) == -1 && r.push(p));
-  let i = 0;
-  for(let cwd of dirs) {
-    let parts = (cwd + '').split(/[\\\/]/g);
-    //console.log('parts=', parts);
-    while(parts.length && parts[parts.length - 1] != '') {
-      const dir = parts.join('/');
-      const extra_dir = path.join(dir, extra);
-      if(extra == 'node_modules') if (i == 0) addPath(dir);
-      if(filesystem.exists(extra_dir)) addPath(extra_dir);
-      i++;
-      parts.pop();
-    }
-    if(extra == 'node_modules') i = 0;
-  }
-  return r;
-}
-
-function checkExists(path) {
-  let r = filesystem.exists(path);
-  //console.log(`checkExists('${path}') = ${r}`);
-  return r;
-}
-
-function findModule(relpath) {
-  let st = filesystem.stat(relpath);
-  let module;
-  if(st.isDirectory()) {
-    const name = path.basename(relpath);
-    let indexes = [...makeNames(relpath + '/dist/' + name), ...makeNames(relpath + '/dist/index'), ...makeNames(relpath + '/build/' + name), ...makeNames(relpath + '/' + name), ...makeNames(relpath + '/index')];
-    module = indexes.find(i => checkExists(i));
-  } else if(st.isFile()) {
-    module = relpath;
-  }
-  if(!module) throw new Error(`Module '${relpath}' not found`);
-  return module;
-}
-
-function searchModuleInPath(name, _from) {
-  const thisdir = _from ? path.dirname(_from) : '.';
-  const absthisdir = path.resolve(thisdir);
-
-  /* console.log('thisdir:', thisdir);
-  console.log('name:', name);
-  console.log('_from:', _from);*/
-
-  name = name.replace(/\..?js$/g, '');
-  if(moduleAliases.has(name)) return moduleAliases.get(name);
-
-  let names = makeNames(name);
-  let indexes = [...makeNames(name + '/dist/' + name), ...makeNames(name + '/build/' + name), ...makeNames(name + '/' + name), ...makeNames(name + '/index')];
-
-  for(let dir of [thisdir, ...searchPath]) {
-    let searchFor = dir.endsWith('node_modules') ? [name] : names;
-    for(let module of searchFor) {
-      let modPath = path.join(dir, module);
-      if(filesystem.exists(modPath)) {
-        //console.log('modPath', modPath);
-        let path = findModule(modPath);
-        //console.log('path', path);
-        if(path) return path;
-      }
-    }
-  }
-  throw new Error(`Module '${name}' imported from '${_from}' not found`);
-}
-
-function makeNames(prefix) {
-  return [prefix + '.es6.js', prefix + '.esm.js', prefix + '.module.js', prefix + '.module.ejs', prefix + '.js'];
 }
