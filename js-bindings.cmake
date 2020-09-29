@@ -1,4 +1,3 @@
-
 # include: OpenCV
 find_package(OpenCV REQUIRED)
 
@@ -10,15 +9,16 @@ function(make_shared_module FNAME)
   set(TARGET_NAME quickjs-${NAME})
 
   add_library(${TARGET_NAME} SHARED src/js_${FNAME}.cpp src/jsbindings.cpp
-                                     src/js.cpp)
+                                    src/js.cpp)
 
-  target_link_libraries(${TARGET_NAME} ${OpenCV_LIBS}) 
+  target_link_libraries(${TARGET_NAME} ${OpenCV_LIBS})
   set_target_properties(
     ${TARGET_NAME}
     PROPERTIES
       PREFIX ""
       BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR}"
-      INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/quickjs"
+      INSTALL_RPATH
+      "${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/quickjs"
       OUTPUT_NAME "${NAME}"
       # COMPILE_FLAGS "-fvisibility=hidden"
       BUILD_RPATH
@@ -55,8 +55,7 @@ add_dependencies(quickjs-rect quickjs-point quickjs-size)
 
 add_dependencies(quickjs-contour quickjs-mat)
 
-target_link_libraries(quickjs-point-iterator  quickjs-point
-                      quickjs-mat)
+target_link_libraries(quickjs-point-iterator quickjs-point quickjs-mat)
 target_link_libraries(quickjs-contour quickjs-point-iterator)
 target_link_libraries(quickjs-line quickjs-point)
 target_link_libraries(quickjs-rect quickjs-size quickjs-point)

@@ -44,7 +44,6 @@ target_link_libraries(
   # quickjs
   ${LIBDL}
   ${LIBM}
-  ${LIBPTHREAD}
-)
+  ${LIBPTHREAD})
 
 install(TARGETS highgui-viewer DESTINATION bin)

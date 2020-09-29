@@ -129,7 +129,11 @@ set(QUICKJS_SOURCES_LIST "quickjs/quickjs.c;quickjs/quickjs.h;quickjs/libregexp.
 # add_definitions(-D_GNU_SOURCE=1)
 
 macro(find_static_library VAR NAME)
-  find_library(${VAR} NAMES lib${NAME}.a PATHS "${CMAKE_INSTALL_PREFIX}/lib" NO_DEFAULT_PATH)
+  find_library(
+    ${VAR}
+    NAMES lib${NAME}.a
+    PATHS "${CMAKE_INSTALL_PREFIX}/lib"
+    NO_DEFAULT_PATH)
 endmacro()
 
 find_static_library(QUICKJS_LIBRARY quickjs)
@@ -140,8 +144,10 @@ src_program(
   "src/cli.cpp;src/plot-cv.cpp;src/color.cpp;src/matrix.cpp;src/line.cpp;src/geometry.cpp;src/js.cpp;src/jsbindings.cpp;src/js_contour.cpp;src/js.cpp;src/js_draw.cpp;src/js_line.cpp;src/js_mat.cpp;src/js_point.cpp;src/js_point_iterator.cpp;src/js_rect.cpp;src/js_size.cpp"
   ${OpenCV_LIBS}
   ${QUICKJS_LIBRARY}
-  pthread dl m
-  # 
+  pthread
+  dl
+  m
+  #
 )
 
 target_compile_definitions(cli PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${quickjs_version}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM CONFIG_CHECK_JSVALUE)

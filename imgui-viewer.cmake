@@ -68,7 +68,6 @@ file(
   src/*.h
   src/*.hpp)
 
-
 set(QUICKJS_SOURCES
     quickjs/quickjs.c
     quickjs/quickjs.h
@@ -92,12 +91,10 @@ add_executable(
   imgui/imgui_impl_opengl3.cpp
   imgui/libs/gl3w/GL/gl3w.c
   ${IMGUI_VIEWER_SOURCES}
-  ${QUICKJS_SOURCES}
-)
+  ${QUICKJS_SOURCES})
 target_compile_definitions(
-  imgui-viewer
-  PRIVATE CONFIG_VERSION="${quickjs_version}"
-          CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1)
+  imgui-viewer PRIVATE CONFIG_VERSION="${quickjs_version}"
+                       CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1)
 
 # link
 target_link_libraries(
@@ -109,12 +106,11 @@ target_link_libraries(
   ${GLFW_LIBRARIES}
   ${GLEW_LIBRARIES}
   ${EXTRA_LIBS}
-  #quickjs
+  # quickjs
   ${LIBDL}
   ${LIBM}
   ${LIBPTHREAD}
-  GL
-)
+  GL)
 if(OpenCV_FOUND)
   target_include_directories(imgui-viewer PUBLIC ${OpenCV_INCLUDE_DIRS})
   target_link_libraries(imgui-viewer ${OpenCV_LIBS})

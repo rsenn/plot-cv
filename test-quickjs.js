@@ -24,7 +24,7 @@ async function main(...args) {
   console.log('start');
   // console.log('modules:', inspect({ Point, Size, Rect }));
   let globalThis = Util.getGlobalObject();
-  const moduleNames = ['Rect', 'Point', 'Size', 'Line', /* 'Mat',*/ 'Contour', 'PointIterator', 'Draw'];
+  const moduleNames = ['Rect', 'Point', 'Size', 'Line', 'Mat', 'Contour', 'PointIterator', 'Draw'];
   for(let moduleName of moduleNames) Util.tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
 
   let ctors = new Map(moduleNames.map(name => [name, globalThis[name]]));
