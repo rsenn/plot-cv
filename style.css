@@ -721,3 +721,6 @@ div.auth-dialog {
   background: white;
   pointer-events: all;
 }
+.panel.layers {
+  margin: 2px;
+}

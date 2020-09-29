@@ -7,6 +7,8 @@ import { useTrkl } from './lib/eagle/renderUtils.js';
 
 //import React from '../modules/preact/dist/preact.mjs';
 import { classNames } from './lib/classNames.js';
+import { useEvent } from './lib/hooks/useEvent.js';
+import { useElement } from './lib/hooks/useElement.js';
 
 export const ClickHandler = callback => e => {
   if(e.type) {
@@ -745,44 +747,50 @@ export const MoveCursor = props =>
 export const DropDown = ({ children, into /* = 'body'*/, isOpen, ...props }) => {
   let [button, overlay] = ReactComponent.toChildArray(children);
   const [open, setOpen] = useState(isOpen());
-  const overlayRef = useRef(null);
-  isOpen.subscribe(value => setOpen(value));
-  console.log('DropDown open=', { open, Fragment });
-  useEffect(() => {
-    let handler = e => {
-      const { currentTarget, target, x, y } = e;
-      const element = overlayRef.current;
-      const rect = Element.rect(element);
-      const inside = rect && rect.inside({ x, y });
-      //console.debug('addEventListener mousedown', { rect, inside, x, y, element });
-      if(element && open && !inside) {
-        isOpen(false);
-      }
-    };
-    window.addEventListener('mousedown', handler);
-    return () => {
-      window.removeEventListener('mousedown', handler);
-    };
+  let buttonRect;
+  const buttonRef = useElement(element => {
+    buttonRect = Util.memoize(() => Element.rect(element, { border: true }));
   });
+  const overlayRef = useElement(element => {
+    const button = buttonRef.current || element.previousElementSibling;
+    const xy = buttonRect().toPoints()[3];
+    Element.setCSS(element, xy.toCSS());
+  });
+  isOpen.subscribe(value => setOpen(value));
+  console.log('DropDown open=', { open, overlay: overlayRef.current, button: buttonRef.current });
+  useEvent('mousedown', e => {
+    const { currentTarget, target, x, y } = e;
+    const element = overlayRef.current;
+    const rect = Element.rect(element);
+    const inside = rect && rect.inside({ x, y });
+    console.debug(e.type, { rect, inside, x, y, element });
+
+    if(e.button == 2) {
+      e.preventDefault();
+      return false;
+    }
+
+    if(element && open && !inside) {
+      isOpen(false);
+      return false;
+    }
+    return true;
+  });
+
+  if(typeof button == 'function')
+    button = button({
+      ref: buttonRef,
+      ...props
+    });
 
   if(typeof overlay == 'function')
     overlay = overlay({
-      ref: current => {
-        if(current) {
-          // console.log('overlay ref:', { current, overlayRef });
-          const { base } = current;
-          let element = (overlayRef.current = base.nextElementSibling);
-          // console.log('overlay element:', element);
-          const button = base.previousElementSibling;
-          const br = Element.rect(button);
-          const bottomLeft = br.toPoints()[3];
-          const or = Element.rect(element);
-          //  const rect = new Rect(bottomLeft.x, bottomLeft.y, or.width, or.height );
-          const css = bottomLeft.toCSS();
-          Element.setCSS(element, css);
-          //  Element.setRect(base, pos );
-          // console.log('overlay ref:', element, button, br, bottomLeft, or, css);
-        }
+      ref: overlayRef,
+      onMouseWheel: e => {
+        const { deltaY, wheelDelta, wheelDeltaX, wheelDeltaY } = e;
+        console.log(e.type, ': ', { deltaY, wheelDelta, wheelDeltaX, wheelDeltaY });
+        e.stopPropagation();
+        return false;
       }
     });
 
@@ -793,7 +801,7 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen, ...props }) => 
 export const Conditional = ({ trkl, children, ...props }) => {
   const [cond, setCond] = useState(trkl());
 
-  trkl.subscribe(setCond);
+  trkl.subscribe(setCond);+
 
   return h(Fragment, {}, cond ? children : []);
 };

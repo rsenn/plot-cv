@@ -1207,13 +1207,16 @@ const AppMain = (window.onload = async () => {
           }),
           h(DropDown, {
               isOpen: layersDropDown.subscribe(open => console.log('layers dropdown', { open }))
+              // into: '#portal'
             }, [
-              h(Button, {
-                toggle: true,
-                state: layersDropDown,
-                //    fn: (e,state) => /*(e.buttons && e.type.endsWith('down')) &&*/ state && layersDropDown(state) || true,
-                image: 'static/svg/layers.svg'
-              }),
+              props =>
+                h(Button, {
+                  ...props,
+                  toggle: true,
+                  state: layersDropDown,
+                  //    fn: (e,state) => /*(e.buttons && e.type.endsWith('down')) &&*/ state && layersDropDown(state) || true,
+                  image: 'static/svg/layers.svg'
+                }),
               props =>
                 h(Chooser, {
                     ...props,

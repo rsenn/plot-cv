@@ -4,6 +4,8 @@ project(plot-cv)
 set(quickjs_version "2020-07-05")
 set(quickjs_soversion 1)
 
+set(QUICKJS_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+
 if(NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
   set(CMAKE_BUILD_TYPE "Debug")
 endif(NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")

@@ -56,8 +56,11 @@ async function main(...args) {
   let packages = Object.keys(data);
   let files = [];
   let i;
-  console.log("packages.length:", packages.length);
-  console.log("packages:", packages.slice(0,10));
+
+  dumpFile('packages.list', packages.join('\n'));
+
+  /*console.log("packages.length:", packages.length);
+  console.log("packages:", packages.slice(0,10));*/
   for(let i = 0; i < args.length; i++) {
     let arg = args[i].replace(/\+/, '\\+');
     let [name, ver] = arg.split('=');
@@ -67,15 +70,14 @@ async function main(...args) {
     }
 
     let re = new RegExp(arg.startsWith('/') ? name + '-' + (ver || 'r?[0-9]') : arg, 'gi');
-    console.log("re:", re); 
-    let pkgs = [... Util.filter(packages, re)];
-
-    console.log("pkgs:", pkgs);
-    if(pkgs.length != 1) {
+    let pkgs = [...Util.filter(packages, re)];
+    if(pkgs.length == 0 || packages.length == pkgs.length) {
+      console.log('re =', re, ' pkgs.length =', pkgs.length, ' pacakges.length =', packages.length);
       pkgs = Util.filter(packages, (re = new RegExp(arg.startsWith('/') ? name + '-[a-z]+-' + (ver || 'r?[0-9]') : arg, 'gi')));
-
-      if(pkgs.length != 1) {
-        console.log('pkgs:', pkgs);
+      if(pkgs.length == 0 || packages.length == pkgs.length) {
+        console.log('re =', re, ' pkgs.length =', pkgs.length, ' pacakges.length =', packages.length);
+        console.error(`Number of packages ${pkgs.length} when matching ${re}`);
+        continue;
         throw new Error(`Number of packages ${pkgs.length} when matching ${re}`);
       }
     }
@@ -84,28 +86,25 @@ async function main(...args) {
       const { depends = '', optdepends = '' } = obj;
 
       const deps = concat(depends, optdepends);
-      console.log('obj:', obj.name, deps);
-      //console.log('deps:', concat(depends, optdepends));
+      //console.log('obj:', obj.name, deps);
+      //console.log('deps:', deps);
       Util.pushUnique(args, ...deps.map(dep => '/' + dep));
-      files.push(pkg);
+      Util.pushUnique(files, pkg);
     }
   }
-  function matchAll(pkgs) {
-    for(let arg of args) {
-    }
-  }
-  let output = filesystem.open('msys-install.sh', 'w');
+  let output = filesystem.open('install-msys2.sh', 'w');
+  filesystem.write(output, `#!/bin/sh -x\n`);
 
   for(let file of files) {
     let parts = file.split('/');
-    let [system,arch] = parts.slice(-3, -1);
-    console.log("parts:", parts, system);
-    let os = system.startsWith('mingw') ? 'w64' : 'pc';
-    let kernel = system.startsWith('mingw') ? 'mingw32' : 'msys';
-    let rootDir = system.startsWith('mingw') ? '/mingw' : '/usr';
-    let extractDest = `/usr/${arch}-${os}-${kernel}/sysroot${rootDir}`;
+    let [system, arch] = parts.slice(-3, -1);
+    let [os, kernel, rootDir] = system.startsWith('mingw') ? ['w64', 'mingw32', '/sysroot/mingw'] : ['pc', 'msys', ''];
+    let extractDest = `/usr/${arch}-${os}-${kernel}${rootDir}`;
     let compressProgram = file.endsWith('xz') ? 'xz' : 'zstd';
-    filesystem.write(output, `curl -s '${file}' | tar --use-compress-program=${compressProgram} -C ${extractDest} --strip-components=1 -xv\n`);
+    // let line =  `CMD="curl -s '${file}' | tar --use-compress-program=${compressProgram} -C ${extractDest} --strip-components=1 -xv 2>/dev/null"; eval "$CMD" || { R=$?; echo "ERROR: $CMD" ; exit $R; }\n`;
+    let line = `curl -s '${file}' | tar --use-compress-program=${compressProgram} -C ${extractDest} --strip-components=1 -xv \n`;
+
+    filesystem.write(output, line);
   }
   filesystem.close(output);
 }
@@ -114,7 +113,11 @@ async function processUrl(url, map) {
   let dir = url.replace(/\/[^\/]*$/, '');
   let base = url.replace(/.*\//, '');
 
-  let stat = filesystem.stat(base);
+  let stat = Util.tryCatch(() => filesystem.stat(base),
+    st => st,
+    () => ({ mtime: 0 })
+  );
+
   let expired = stat.mtime + 5 * 60 * 1000 < new Date();
 
   console.log('expired:', expired);
@@ -168,3 +171,12 @@ async function processUrl(url, map) {
 }
 
 Util.callMain(main, true);
+
+function dumpFile(name, data) {
+  if(Util.isArray(data)) data = data.join('\n');
+  if(typeof data != 'string') data = '' + data;
+
+  filesystem.writeFile(name, data + '\n');
+
+  console.log(`Wrote ${name}: ${data.length} bytes`);
+}
