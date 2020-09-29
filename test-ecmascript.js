@@ -116,7 +116,8 @@ async function main(...args) {
       //   let allNodes = nodeKeys.map((path) => flat.get(path));
       let allNodes = nodeKeys.map((path, i) => [i, flat.get(path)]);
 
-      for(let [i, n] of allNodes) console.log(`\n  ${i}:\n `, new ImmutablePath(node2path.get(n)), '\n ', n, '\n ', ESNode.assoc(n).position, '\n');
+      //  for(let [i, n] of allNodes) console.log(`\n  ${i}:\n `, new ImmutablePath(node2path.get(n)), '\n ', n, '\n ', ESNode.assoc(n).position, '\n');
+      for(let [i, n] of allNodes) console.log(new ImmutablePath(node2path.get(n)), n);
 
       const output_file = file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
 

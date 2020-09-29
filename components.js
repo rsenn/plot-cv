@@ -1,14 +1,9 @@
 import { h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent } from './lib/dom/preactComponent.js';
-
 import { trkl } from './lib/trkl.js';
-import { useDimensions } from './lib/hooks/useDimensions.js';
 import { Element } from './lib/dom.js';
 import { useTrkl } from './lib/eagle/renderUtils.js';
-
-//import React from '../modules/preact/dist/preact.mjs';
 import { classNames } from './lib/classNames.js';
-import { useEvent } from './lib/hooks/useEvent.js';
-import { useElement } from './lib/hooks/useElement.js';
+import { useEvent, useElement, useDoubleClick, useDimensions } from './lib/hooks.js';
 import deepDiff from './lib/deep-diff.js';
 
 export const ClickHandler = callback => e => {
@@ -756,31 +751,33 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen, ...props }) => 
       Element.setCSS(element, xy.toCSS());
     }
   });
-  const event = trkl();
+  const event = useCallback(trkl().subscribe((e, prev) => {
+      const { x, y, buttons, button, timeStamp } = e;
+      const orect = Element.rect(oref.current);
+      const timeStep = timeStamp - (prev ? prev.timeStamp : NaN);
+      const points = [new Point(prev), new Point(e)];
+      const diff = Point.diff(...points);
+      const dist = Point.distance(...points);
+      const inside = orect && orect.inside({ x, y });
+      console.debug(e.type, diff, dist, { timeStep, orect, inside, x, y, buttons, button, timeStamp } /*, Util.getMemberEntries(e, name => typeof name != 'symbol').sort()*/);
+      if(e.button == 2) {
+        e.preventDefault();
+        return false;
+      }
+      if(oref.current && open && !inside) {
+        isOpen(false);
+        return false;
+      }
+      return true;
+    })
+  );
 
   useEvent('mousedown', event);
-  event.subscribe((e, prev) => {
-    const { x, y, buttons, button, timeStamp } = e;
-    const orect = Element.rect(oref.current);
-    const timeStep = timeStamp - prev.timeStamp;
-    const points = [new Point(prev), new Point(e)];
-    const diff = Point.diff(...points);
-    const dist = Point.distance(...points);
-    const inside = orect && orect.inside({ x, y });
-    console.debug(e.type, diff, dist, { timeStep, orect, inside, x, y, buttons, button, timeStamp } /*, Util.getMemberEntries(e, name => typeof name != 'symbol').sort()*/);
-    if(e.button == 2) {
-      e.preventDefault();
-      return false;
-    }
-    if(oref.current && open && !inside) {
-      isOpen(false);
-      return false;
-    }
-    return true;
-  });
+
   if(typeof button == 'function') button = button({ ref: ref, ...props });
   if(typeof overlay == 'function') overlay = overlay({ ref: oref, onMouseWheel });
   console.log('DropDown open=', { open });
+
   function onMouseWheel(e) {
     const { deltaY, wheelDelta, wheelDeltaX, wheelDeltaY } = e;
     console.log(e.type, ': ', { deltaY, wheelDelta, wheelDeltaX, wheelDeltaY });

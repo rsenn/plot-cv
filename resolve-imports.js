@@ -346,7 +346,7 @@ function GenerateDistinctVariableDeclarations(variableDeclaration) {
 }
 
 async function main(...args) {
-  await ConsoleSetup({ colors: true, depth: 4 });
+  await ConsoleSetup({ colors: true, depth: 6 });
   filesystem = await PortableFileSystem();
 
   const re = /(lib\/util.js$)/;
