@@ -1,12 +1,5 @@
-import { Message } from './message.js';
-import Util from './lib/util.js';
-import { Alea } from './lib/alea.js';
-import Stream, { Readable, Writable, PassThrough, Duplex } from 'stream';
-import Timers, { TimeoutError } from './lib/repeater/timers.js';
-import { spawn } from 'child_process';
-import { AsyncWrite, AsyncRead, PipeToRepeater, LineReader, WritableRepeater, WriteIterator, ReadFromIterator } from './lib/stream/utils.js';
-import { Repeater } from './lib/repeater/repeater.js';
-import ConsoleSetup from './consoleSetup.js';
+import Stream from 'stream';
+import Timers from './lib/repeater/timers.js';
 
 const prng = new Alea();
 
