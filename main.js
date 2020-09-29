@@ -31,7 +31,7 @@ import { useResult } from './lib/repeater/react-hooks.js';
 import { Portal } from './lib/dom/preactComponent.js';
 import LogJS from './lib/log.js';
 import serial from './serial.js';
-import { useDimensions } from './useDimensions.js';
+import { useDimensions } from './lib/hook./lib/hooks/useDimensions.js';
 import { toXML, ImmutablePath, arrayDiff, objectDiff } from './lib/json.js';
 import { XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';
 import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
@@ -138,7 +138,7 @@ let debugFlag = trkl(store.get('debug') || false);
 let credentials = trkl(store.get('auth') || {});
 let elementChildren = null;
 let elementGeometries = null;
-let showGrid;
+let showGrid = trkl(store.get('grîd') || true);
 
 const add = (arr, ...items) => [...(arr ? arr : []), ...items];
 
@@ -878,7 +878,7 @@ const AppMain = (window.onload = async () => {
   BindGlobal({ projects, socket, transform, size: sizeListener, aspect: aspectListener, showSearch, logDimensions: logSize, watched: dump, 
     children: () => elementChildren(),
      geometries: () => elementGeometries(),
-     debug: debugFlag, credentials });
+     debug: debugFlag, credentials, showGrid });
 
   currentSearch.subscribe(value => {
     if(value) {

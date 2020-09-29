@@ -1,7 +1,7 @@
 import { h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent } from './lib/dom/preactComponent.js';
 
 import { trkl } from './lib/trkl.js';
-import { useDimensions } from './useDimensions.js';
+import { useDimensions } from './lib/hook./lib/hooks/useDimensions.js';
 import { Element } from './lib/dom.js';
 import { useTrkl } from './lib/eagle/renderUtils.js';
 
@@ -41,53 +41,35 @@ export const Overlay = ({ className = 'overlay', title, tooltip, active = true, 
       (e, state) => {
         const prev = pushed;
         if(e.buttons && e.buttons != 1) return;
-
         if(!e.type.endsWith('down') && !e.type.endsWith('up')) return;
-        //   setPushed(state);
-        //console.debug(`overlay pushed=${pushed} active=${active}:`, e.target);
         let ret;
-
         if(typeof onPush == 'function') ret = onPush(e, state);
-
         if(ret === true || ret === false) state = ret;
-
         setPushed(state);
       },
       () => pushed,
       setPushed
     )
   );
-
-  /*
-if(!Util.isArray(children)) {
-  if(typeof(children) == 'string')
-  children = [children];
-else
-  children = [];
-}
-
-  if(text)
-    children.unshift(text);
-*/
   if(typeof title == 'string' && title.length > 0) props.title = title;
   if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
-
   return h('div', { className: classNames(className, pushed && 'pushed', active ? 'active' : 'inactive'), ...props, ...events }, children);
 };
 
-export const Container = ({ className = 'panel', children, ...props }) => {
-  useCallback(() => console.debug('re-render panel'));
-  return html` <div className=${className} ...${props}>${children}</div> `;
+export const Container = ({ className = 'panel', tag = 'div', children, ...props }) => {
+ // useCallback(() => console.debug('re-render panel'));
+  return h(tag, { className, ...props }, children);
 };
 
-export const Button = ({ caption, image, fn, state, style = {}, ...props }) => {
-  if(typeof image == 'string') {
-    if(!props.children) props.children = [];
-    props.children.unshift(h('img', { src: image }));
+export const Button = allProps => {
+  let { className, caption, image, fn, state, style = {}, ...props } = allProps;
 
-    /*style.backgroundImage = `url(${image})`;
-  style.backgroundSize = 'cover';*/
-  }
+  if(!props.children) props.children = [];
+  if(typeof image == 'string') image = h('img', { src: image });
+  else if(typeof image == 'function') image = image(allProps);
+
+  props.children.unshift(image);
+
   return h(Overlay, { className: classNames('button', className), text: caption, state, onPush: state => (state && typeof fn == 'function' ? fn(state) : undefined), style, ...props });
 };
 
@@ -164,7 +146,7 @@ export const Item = ({ className = 'item', title, tooltip, label, icon, children
   return h(Overlay, { className, ...props }, h(Label, { text: icon }, label));
 };
 
-export const Icon = ({ className = 'icon', caption, image, ...props }) => html` <div className=${className} ...${props}>${caption}<img src=${image} /></div> `;
+export const Icon = ({ className = 'icon', caption, image, ...props }) => h(Container, { className, ...props }, h('img', {src: image }));
 
 export const Progress = ({ className, percent, ...props }) =>
   h(Overlay, {
@@ -373,7 +355,7 @@ export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () =
       });
     });
 
-  return html`<${Container} className=${classNames('panel', 'no-select', className)} ...${props}>${children}</${Container}>`;
+  return h(Container, { className: classNames ('panel', 'no-select', className), ...props }, children);
 };
 const toolTipFn = ({ name, data, ...item }) => {
   let tooltip = `name\t${name.replace(new RegExp('.*/', 'g'), '')}`;
@@ -411,7 +393,7 @@ export const FileList = ({ files, onChange, onActive, filter, showSearch, focusS
   `;
 };
 
-export const Panel = (name, children) => html`<${Container} className="${name}">${children}</${Container}>`;
+export const Panel = (name, children) =>h(Container, { className: classNames('panel', name) }, children);
 
 export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className }, children) =>
   enable
@@ -762,14 +744,10 @@ export const MoveCursor = props =>
 
 export const DropDown = ({ children, into /* = 'body'*/, isOpen, ...props }) => {
   let [button, overlay] = ReactComponent.toChildArray(children);
-
   const [open, setOpen] = useState(isOpen());
   const overlayRef = useRef(null);
-
   isOpen.subscribe(value => setOpen(value));
-
   console.log('DropDown open=', { open, Fragment });
-
   useEffect(() => {
     let handler = e => {
       const { currentTarget, target, x, y } = e;
@@ -800,12 +778,9 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen, ...props }) => 
           const bottomLeft = br.toPoints()[3];
           const or = Element.rect(element);
           //  const rect = new Rect(bottomLeft.x, bottomLeft.y, or.width, or.height );
-
           const css = bottomLeft.toCSS();
           Element.setCSS(element, css);
-
           //  Element.setRect(base, pos );
-
           // console.log('overlay ref:', element, button, br, bottomLeft, or, css);
         }
       }
