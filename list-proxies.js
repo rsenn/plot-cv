@@ -139,7 +139,7 @@ async function main(country = 'de') {
         .once('end', () => {
           stop();
         });
-    })/*,
+    }) /*,
     new Repeater(async (push, stop) => {
     try {    
       let response = await fetch('https://sunny9577.github.io/proxy-scraper/proxies.json').catch(stop);
