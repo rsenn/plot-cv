@@ -410,6 +410,16 @@ Line<T>::endpoint_distances(const Line<T>& l) const {
   size_t offs = dist.first < dist.second ? offs1 : offs2;
   return std::make_pair(dist.first < dist.second ? dist.first : dist.second, offs);
 }
+#if 0
+template<class T>
+inline std::pair<T, unsigned long long int>
+Line<T>::endpoint_distances(const Line<T>& l) const {
+  size_t offs1, offs2;
+  std::pair<T, T> dist(endpoint_distance(l.a, &offs1), endpoint_distance(l.b, &offs2));
+  size_t offs = dist.first < dist.second ? offs1 : offs2;
+  return std::make_pair(dist.first < dist.second ? dist.first : dist.second, offs);
+}
+#endif
 
 template<class T>
 inline T

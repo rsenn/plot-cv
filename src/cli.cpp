@@ -9,6 +9,8 @@
 #include "js.h"
 #include "../quickjs/quickjs-libc.h"
 
+#include <libgen.h>
+
 std::ofstream logfile("clilog", std::ios_base::out | std::ios_base::ate);
 
 extern "C" {

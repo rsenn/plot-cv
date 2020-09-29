@@ -25,7 +25,6 @@ enum {
 
 struct jsiter;
 
-
 struct jsrt {
   typedef JSValue value;
   typedef JSValueConst const_value;

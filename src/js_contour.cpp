@@ -811,7 +811,7 @@ js_contour_rotatedrectangleintersection(JSContext* ctx, JSValueConst this_val, i
 }
 
 static JSValue
-js_contour_rotatepoints(JSContext* ctx, JSValueConst  this_val, int argc, JSValueConst* argv) {
+js_contour_rotatepoints(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData* s = js_contour_data(ctx, this_val);
   int32_t shift = 1;
   uint32_t size = s->size();
@@ -885,7 +885,7 @@ js_contour_rect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 }
 
 static JSValue
-js_contour_find(JSContext* ctx, JSValueConst  this_val, int argc, JSValueConst* argv) {
+js_contour_find(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   cv::Mat* m = js_mat_data(ctx, this_val);
   JSValue ret = JS_UNDEFINED;
   int mode = cv::RETR_TREE;
@@ -985,10 +985,7 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
     //  JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Contour", JS_PROP_CONFIGURABLE),
 
 };
-const JSCFunctionListEntry js_contour_static_funcs[] = {
-  JS_CFUNC_DEF("fromRect", 1, js_contour_rect),
-  JS_CFUNC_DEF("find", 1, js_contour_find)
-};
+const JSCFunctionListEntry js_contour_static_funcs[] = {JS_CFUNC_DEF("fromRect", 1, js_contour_rect), JS_CFUNC_DEF("find", 1, js_contour_find)};
 
 int
 js_contour_init(JSContext* ctx, JSModuleDef* m) {

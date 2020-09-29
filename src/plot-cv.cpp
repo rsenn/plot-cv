@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include <map>
 #include <filesystem>
+#include <ctime>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <iomanip> // std::setbase
@@ -101,7 +102,15 @@ make_filename(const string& name, int count, const string& ext, const string& di
   gettimeofday(&tv, NULL);
   msecs = (tv.tv_usec / 1000) % 1000;
 
-  strftime(buf, sizeof(buf), "%Y%m%d-%H%M%S", localtime_r(&now, &lt));
+  strftime(buf,
+           sizeof(buf),
+           "%Y%m%d-%H%M%S",
+#ifdef _WIN32
+           localtime(&now)
+#else
+           localtime_r(&now, &lt)
+#endif
+  );
 
   filename << dir << "/" << name << "-" << buf << "." << std::setfill('0') << std::setw(3) << msecs << "-" << std::setfill('0') << std::setw(pad) << count << "." << ext;
   return filename.str();
@@ -444,7 +453,12 @@ write_image(image_type img) {
     if(stat(tmpdir, &st) == -1) {
       if(errno == ENOENT) {
         errno = 0;
-        if(mkdir(tmpdir, 1777) == -1) {
+        if(mkdir(tmpdir
+#ifndef _WIN32
+                 ,
+                 1777
+#endif
+                 ) == -1) {
           std::cerr << "Failed making directory '" << tmpdir << "': " << strerror(errno) << std::endl;
           return;
         }
@@ -676,11 +690,11 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
         if(contourStr.str().size())
           contourStr << "\n";
         out_points(contourStr, a);
-      /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
-         ", " << hier[i][2] << ", " << hier[i][3] << ", "
-                    << "} " << std::endl;
-          logfile << "contourDepth(i) = " << depth << std::endl;
-*/
+        /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
+           ", " << hier[i][2] << ", " << hier[i][3] << ", "
+                      << "} " << std::endl;
+            logfile << "contourDepth(i) = " << depth << std::endl;
+  */
         /*  if(dptr != nullptr)
             cv::drawContours(*dptr, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
    */     }
