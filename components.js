@@ -1,7 +1,7 @@
 import { h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent } from './lib/dom/preactComponent.js';
 
 import { trkl } from './lib/trkl.js';
-import { useDimensions } from './lib/hook./lib/hooks/useDimensions.js';
+import { useDimensions } from './lib/hooks/useDimensions.js';
 import { Element } from './lib/dom.js';
 import { useTrkl } from './lib/eagle/renderUtils.js';
 
@@ -57,7 +57,7 @@ export const Overlay = ({ className = 'overlay', title, tooltip, active = true, 
 };
 
 export const Container = ({ className = 'panel', tag = 'div', children, ...props }) => {
- // useCallback(() => console.debug('re-render panel'));
+  // useCallback(() => console.debug('re-render panel'));
   return h(tag, { className, ...props }, children);
 };
 
@@ -146,7 +146,7 @@ export const Item = ({ className = 'item', title, tooltip, label, icon, children
   return h(Overlay, { className, ...props }, h(Label, { text: icon }, label));
 };
 
-export const Icon = ({ className = 'icon', caption, image, ...props }) => h(Container, { className, ...props }, h('img', {src: image }));
+export const Icon = ({ className = 'icon', caption, image, ...props }) => h(Container, { className, ...props }, h('img', { src: image }));
 
 export const Progress = ({ className, percent, ...props }) =>
   h(Overlay, {
@@ -355,7 +355,7 @@ export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () =
       });
     });
 
-  return h(Container, { className: classNames ('panel', 'no-select', className), ...props }, children);
+  return h(Container, { className: classNames('panel', 'no-select', className), ...props }, children);
 };
 const toolTipFn = ({ name, data, ...item }) => {
   let tooltip = `name\t${name.replace(new RegExp('.*/', 'g'), '')}`;
@@ -393,7 +393,7 @@ export const FileList = ({ files, onChange, onActive, filter, showSearch, focusS
   `;
 };
 
-export const Panel = (name, children) =>h(Container, { className: classNames('panel', name) }, children);
+export const Panel = (name, children) => h(Container, { className: classNames('panel', name) }, children);
 
 export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className }, children) =>
   enable
