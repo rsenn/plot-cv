@@ -667,6 +667,10 @@ div.layer {
 div.layer:hover {
   background: rgba(0, 0, 0, 0.5);
 }
+div.layer.gray:hover {
+  color: white;
+  background: rgba(0, 0, 0, 0.8);
+}
 div.layer > span {
   padding: 1px 2px;
 }
@@ -724,4 +728,10 @@ div.auth-dialog {
 .panel.layers {
   margin: 2px;
   min-width: 200px;
+}
+.gray {
+  color: #787878;
+}
+.bold {
+  font-weight: bold;
 }

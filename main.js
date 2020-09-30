@@ -39,7 +39,7 @@ import React, { h, html, render, Fragment, Component, useState, useLayoutEffect,
 import components, { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional } from './components.js';
 import { Message } from './message.js';
 
-import { useDimensions, useElement, eventSubscriber, eventTracker, useEvent, useDrag, useGesture, useHover, useMove, usePinch, useScroll, useWheel } from './lib/hooks.js';
+import { useEvent, useElement, useDoubleClick, useDimensions } from './lib/hooks.js';
 
 import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import { CTORS, ECMAScriptParser, estree, Factory, Lexer, Position, Range, ESNode, Parser, PathReplacer, Printer, Stack, Token, ArrayBindingPattern, ArrayLiteral, ArrowFunction, AssignmentExpression, AwaitExpression, BinaryExpression, BindingPattern, BindingProperty, LabelledStatement, BlockStatement, BreakStatement, CallExpression, ClassDeclaration, ConditionalExpression, ContinueStatement, Declaration, DecoratorExpression, DoStatement, EmptyStatement, Expression, ExpressionStatement, ForInStatement, ForStatement, FunctionLiteral, FunctionDeclaration, Identifier, ComputedPropertyName, IfStatement, SwitchStatement, CaseClause, ImportStatement, ExportStatement, JSXLiteral, Literal, TemplateLiteral, LogicalExpression, MemberExpression, InExpression, NewExpression, ObjectBindingPattern, ObjectLiteral, PropertyDefinition, MemberVariable, Program, RestOfExpression, ReturnStatement, SequenceExpression, SpreadElement, Statement, StatementList, ThisExpression, ThrowStatement, YieldStatement, TryStatement, UnaryExpression, UpdateExpression, VariableDeclaration, VariableDeclarator, WhileStatement, WithStatement } from './lib/ecmascript.js';
@@ -334,6 +334,17 @@ const GerberLayers = {
   gpi: 'Photoplotter info file',
   TXT: 'Drill file'
 };
+
+function saveItemsProperty(itemList, get = item => Util.is.on(item.visible())) {
+  let map = new WeakMap();
+
+  for(let item of itemList) map.set(item, get(item));
+
+  return map;
+}
+function restoreItemsProperty(map, itemList, set = (item, value) => item.visible(Util.is.on(value))) {
+  for(let item of itemList) set(item, map.get(item));
+}
 
 const LoadDocument = async (project, parentElem) => {
   //console.log('project:', project);
@@ -815,8 +826,7 @@ const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 const AppMain = (window.onload = async () => {
   Util(globalThis);
   //prettier-ignore
-  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, ImmutablePath, arrayDiff, objectDiff, XmlObject, XmlAttr, ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser, estree, Factory, Lexer, Position, Range, Factory, ESNode, ArrayBindingPattern, ArrayLiteral, ArrowFunction, AssignmentExpression, AwaitExpression, BinaryExpression, BindingPattern, BindingProperty, LabelledStatement, BlockStatement, BreakStatement, CallExpression, ClassDeclaration, ConditionalExpression, ContinueStatement, Declaration, DecoratorExpression, DoStatement, EmptyStatement, Expression, ExpressionStatement, ForInStatement, ForStatement, FunctionLiteral, FunctionDeclaration, Identifier, ComputedPropertyName, IfStatement, SwitchStatement, CaseClause, ImportStatement, ExportStatement, JSXLiteral, Literal, TemplateLiteral, LogicalExpression, MemberExpression, InExpression, NewExpression, ObjectBindingPattern, ObjectLiteral, PropertyDefinition, MemberVariable, Program, RestOfExpression, ReturnStatement, SequenceExpression, SpreadElement, Statement, StatementList, ThisExpression, ThrowStatement, YieldStatement, TryStatement, UnaryExpression, UpdateExpression, VariableDeclaration, VariableDeclarator, WhileStatement, WithStatement, Parser, PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer, classNames,
-     useDrag, useGesture, useHover, useMove, usePinch, useScroll, useWheel   };
+  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, ImmutablePath, arrayDiff, objectDiff, XmlObject, XmlAttr, ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser, estree, Factory, Lexer, Position, Range, Factory, ESNode, ArrayBindingPattern, ArrayLiteral, ArrowFunction, AssignmentExpression, AwaitExpression, BinaryExpression, BindingPattern, BindingProperty, LabelledStatement, BlockStatement, BreakStatement, CallExpression, ClassDeclaration, ConditionalExpression, ContinueStatement, Declaration, DecoratorExpression, DoStatement, EmptyStatement, Expression, ExpressionStatement, ForInStatement, ForStatement, FunctionLiteral, FunctionDeclaration, Identifier, ComputedPropertyName, IfStatement, SwitchStatement, CaseClause, ImportStatement, ExportStatement, JSXLiteral, Literal, TemplateLiteral, LogicalExpression, MemberExpression, InExpression, NewExpression, ObjectBindingPattern, ObjectLiteral, PropertyDefinition, MemberVariable, Program, RestOfExpression, ReturnStatement, SequenceExpression, SpreadElement, Statement, StatementList, ThisExpression, ThrowStatement, YieldStatement, TryStatement, UnaryExpression, UpdateExpression, VariableDeclaration, VariableDeclarator, WhileStatement, WithStatement, Parser, PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer, classNames   };
   const localFunctions = {
     PackageChildren,
     ElementChildren,
@@ -1128,13 +1138,39 @@ const AppMain = (window.onload = async () => {
   const Layer = ({ title, name, label, i, color, element, className, ...props }) => {
     let setVisible = props.visible || element.handlers.visible,
       visible = useTrkl(setVisible);
-    const isVisible = Util.is.on(visible);
+    const isVisible = visible === true || (visible !== false && Util.is.on(visible));
     if(Util.isObject(element) && 'visible' in element) setVisible = value => (element.visible = value);
+    let [solo, setSolo] = useState(null);
 
     console.log(`Layer #${i} ${name} isVisible=${isVisible}`);
     return h('div',
       {
-        className,
+        className: classNames(className, !isVisible && 'gray'),
+        onClick: useDoubleClick(e => {
+            console.log('Double click', { solo });
+            let layers = [...layerList()];
+
+            if(solo) {
+            } else {
+              let visibleLayers = layers.filter(l => Util.is.on(l.visible()));
+              setSolo(saveItemsProperty(visibleLayers, item => Util.is.on(item.visible())));
+              for(let l of visibleLayers) l.visible('no');
+              setVisible(true);
+            }
+            layerList(layers);
+          },
+          e => {
+            let layers = [...layerList()];
+
+            if(solo) {
+              let restoreData = solo;
+              setSolo(null);
+              restoreItemsProperty(restoreData, layers, (item, value) => item.visible(Util.is.on(value)));
+            } else {
+            }
+            layerList(layers);
+          }
+        ),
         onMouseMove: e => {
           if(e.buttons & 1 && setTo !== undefined) setVisible(setTo);
         },
@@ -1146,8 +1182,6 @@ const AppMain = (window.onload = async () => {
             setVisible((setTo = !isVisible));
             return true;
           }
-
-          // if(e.buttons & 2)
         }
       }, [
         h('span', {
@@ -1157,7 +1191,7 @@ const AppMain = (window.onload = async () => {
           },
           `${i}`
         ),
-        h('span', { className: classNames(className, 'name'), ...props }, `${name}`),
+        h('span', { className: classNames(className, 'name', !isVisible && 'gray', solo && 'bold'), ...props }, `${name}`),
         h('img', {
           className: classNames(className, 'visible'),
           ...props,

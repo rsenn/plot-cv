@@ -11,11 +11,11 @@ import PortableFileSystem from './lib/filesystem.js';
 let filesystem;
 
 let cwd;
-  
+
 let exportMap = new Map();
 let allExports = [];
 const removeModulesDir = PrefixRemover([/node_modules\//g, /^\.\//g]);
- 
+
 console.log('main');
 Util.callMain(main);
 
@@ -111,7 +111,6 @@ async function main(...args) {
         node => node instanceof ESNode,
         (path, value) => [path, value]
       );
-    
 
       let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportStatement || value.exported === true);
 
