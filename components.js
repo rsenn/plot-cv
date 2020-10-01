@@ -357,7 +357,8 @@ export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () =
 };
 const toolTipFn = ({ name, data, ...item }) => {
   let tooltip = `name\t${name.replace(new RegExp('.*/', 'g'), '')}`;
-  tooltip += `\ntype\t${item.type}\nsize\t${item.size}\nsha\t${item.sha}\npath\t${item.path}`;
+
+  for(let field of ['type', 'size', 'sha', 'path']) if(item[field] !== undefined) tooltip += `\n${field}\t${item[field]}`;
 
   if(data) tooltip += `\ndata\t${Util.abbreviate(data)}`;
   return tooltip;

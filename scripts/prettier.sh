@@ -43,14 +43,15 @@ main() {
 
   SEP=${IFS%"${IFS#?}"}
 
+  [ -f .prettierrc ] && CONFIG=.prettierrc
+
   while [ $# -gt 0 ]; do
     case "$1" in
+      --parser=*) PARSER=${1#*=}; shift ;; --parser) PARSER=$2; shift 2 ;;
       -*) OPTS="${OPTS:+$OPTS$SEP}$1"; shift ;;
       *) break ;;
     esac
   done
-
-  [ -f .prettierrc ] && CONFIG=.prettierrc
 
   if [ $# -le 0 ]; then
     set -- $(find . -maxdepth 1 -type f -name "*.js"; find lib -type f -name "*.js")
@@ -71,8 +72,8 @@ main() {
     DIFFFILE=`mktemp --tmpdir "$MYNAME-XXXXXX.diff"`
     echo "Processing ${SOURCE} ..." 1>&2
     case "$SOURCE" in
-      *.css) PARSER="css" ;;
-      *) unset PARSER ;;
+      *.css) : ${PARSER="css"} ;;
+      *) ;;
     esac
     prettier <"$ARG" >"$TMPFILE"; R=$?
 
