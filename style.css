@@ -735,3 +735,10 @@ div.auth-dialog {
 .bold {
   font-weight: bold;
 }
+.devtools.rectangle {
+  border-width: 4px;
+  box-shadow: 0px 0px 2px #ffe500;
+  opacity: 0.8;
+  z-index: 99999;
+  /* pointer-events: none;  */
+}

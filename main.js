@@ -85,7 +85,7 @@ import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //c
 import { NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer } from './commands.js';
 // prettier-ignore-end
 
-/* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line,Matrix, Node, Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
+/* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line,Matrix,  Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
 
 import { classNames } from './lib/classNames.js';
 
@@ -141,6 +141,10 @@ let credentials = trkl(store.get('auth') || {});
 let elementChildren = null;
 let elementGeometries = null;
 let showGrid = trkl(store.get('grîd') || true);
+//let zoomValue = Util.getSet(() => ZoomFactor(zoomLog()), value => zoomLog(ZoomLog(value)));
+let zoomValue = Util.deriveGetSet(zoomLog, ZoomFactor, ZoomLog);
+
+zoomLog.subscribe(AdjustZoom);
 
 const add = (arr, ...items) => [...(arr ? arr : []), ...items];
 
@@ -320,6 +324,13 @@ const ModifyColors = fn => e => {
   }
 };
 
+const FindLayer = name_or_id => {
+  for(let id of (name_or_id + '').split(/\s+/g).map(n => (isNaN(n) ? n : +n))) {
+    const layer = layers.find(l => l.i == id || l.name == id);
+    if(layer) return layer;
+  }
+};
+
 const GerberLayers = {
   GTL: 'Top (copper) Layer',
   GBL: 'Bottom (copper) Layer ',
@@ -391,6 +402,7 @@ const LoadDocument = async (project, parentElem) => {
     layerList(usedLayers.map(layer => ({
         i: layer.number,
         name: layer.name,
+        color: layer.getColor(),
         element: layer,
         visible: layer.handlers.visible
       }))
@@ -475,14 +487,14 @@ const LoadDocument = async (project, parentElem) => {
 
   project.maps = {
     ...project.doc.maps,
-    path2component,
-    component2path,
-    dom2eagle,
-    eagle2dom,
-    component2eagle,
-    eagle2component,
     component2dom,
-    dom2component
+    component2eagle,
+    component2path,
+    dom2component,
+    dom2eagle,
+    eagle2component,
+    eagle2dom,
+    path2component
   };
 
   project.rendered = rendered;
@@ -491,6 +503,14 @@ const LoadDocument = async (project, parentElem) => {
   project.grid = Element.find('g.grid', project.element);
   project.bbox = SVG.bbox(project.grid);
   project.aspectRatio = aspect;
+
+  project.makeGroup = ({ transform, ...props } = {}) => {
+    let e;
+    if(props.id && (e = project.svg.querySelector(`#${props.id}`))) return e;
+
+    transform = project.svg.querySelector('*[transform]').getAttribute('transform') + (transform ? ' ' + transform : '');
+    return (e = SVG.create('g', { ...props, transform }, project.svg));
+  };
 
   let center = SVG.bbox(project.svg).center.round();
   let defaultTransform = `translate(${center.x},${center.y}) scale(2.54,2.54)`;
@@ -717,7 +737,7 @@ const MakeFitAction = index => async event => {
 };
 
 function ZoomFactor(val = zoomLog()) {
-  return Math.pow(10, val / 200).toFixed(5);
+  return +Math.pow(10, val / 200).toFixed(5);
 }
 
 function ZoomLog(factor) {
@@ -848,7 +868,8 @@ const AppMain = (window.onload = async () => {
     CreateGrblSocket,
     BindGlobal,
     AppMain,
-    serial
+    serial,
+    FindLayer
   };
 
   const importedNames = Object.keys(imports);
@@ -995,7 +1016,7 @@ const AppMain = (window.onload = async () => {
   trkl.bind(window, { searchFilter, listURL });
   trkl.bind(window, { svgFactory });
 
-  trkl.bind(window, { zoomLog, logSize });
+  trkl.bind(window, { zoomLog, zoom: zoomValue, logSize });
 
   zoomLog.subscribe(value => {
     let factor = ZoomFactor(value);
@@ -1016,20 +1037,14 @@ const AppMain = (window.onload = async () => {
   const changeInput = e => {
     const { target } = e;
     LogJS.info('changeInput:', target.value);
-
     let { value } = target;
-
     let parts = value.split(/\s+/g);
-
     let urls = parts.filter(p => /\:\/\//.test(p)).join('\n');
-
     updateIfChanged(listURL, urls, arg => {
       console.debug('updateIfChanged:', arg);
     });
     listURL(urls);
-
     //    value = parts.filter(p => !/\:\/\//.test(p)).join(' ');
-
     searchFilter(value == '' ? '*' : value.split(/\s*\|\s*/g).join(' | '));
   };
 
@@ -1469,11 +1484,109 @@ const AppMain = (window.onload = async () => {
   let box;
   container = Element.find('#main');
 
+  let touchHandler = trkl();
+  let moveHandler = trkl();
+
   //Element.find('.transformed-element-size').setAttribute('id', 'transformed-element');
 
-  TouchListener(/*Util.printReturnValue*/ event => {
+  TouchListener(touchHandler, { element: window });
+
+  window.addEventListener('mousemove', moveHandler);
+
+  let rects = new Map();
+  window.elems = new Set();
+
+  moveHandler.subscribe((event, prevEvent) => {
+    const { x, y, clientX, clientY, index, buttons, start, type, target } = event;
+    /*  console.log('moveHandler', {x,y});
+    console.log('moveHandlerObject.keys(event));*/
+    window.lastMoveEvent = event;
+
+    event.elements = document.elementsFromPoint(x, y);
+
+    let zIndex = Math.max(...Element.walkUp(event.target, (e, d, set) => set(Element.getCSS(e, 'z-index'))).filter(z => !isNaN(+z)));
+
+    if(zIndex > 0) Util.clear(event.elements);
+
+    for(let e of event.elements)
+      Element.walkUp(e)
+        .slice(1)
+        .forEach(p => Util.remove(event.elements, p));
+    Util.remove(event.elements, document.documentElement);
+
+    event.layers = new Map(event.elements.map(e => [
+        e,
+        Element.walkUp(e, e => {
+          if(e.hasAttribute('data-layer')) throw e.getAttribute('data-layer');
+        })
+      ]) /*.map(([e,l]) => [e, l && project.doc.getLayer(l).name])*/
+    );
+    event.colors = new Map();
+
+    for(let [e, layer] of event.layers) {
+      if(!layer || /(Measure|Dimension)/.test(layer)) {
+        //  Util.remove(event.elements, e);
+        continue;
+      }
+      let l = FindLayer(layer);
+      //console.log('', { l, layer });
+
+      event.colors.set(e, l.color.setOpacity(0.8) || '#000');
+    }
+    event.classes = new Map(event.elements.map(e => [
+        e,
+        Util.ifThenElse(v => v,
+          l => l.map(e => e.classList.value),
+          () => ''
+        )(Element.walkUp(e, (e, depth) => !e.classList.value.startsWith('aspect') && e.classList.value))
+      ])
+    );
+
+    Util.removeIf(event.classes, classes => classes == '');
+
+    Util.removeIf(event.elements, e => e.tagName == 'polyline');
+    Util.removeIf(event.elements, e => !(event.classes.has(e) || event.colors.has(e)));
+    // console.log('event.classes:', event.classes, '\nevent.layers:', event.layers);
+    const group = project && project.makeGroup({ id: 'rects', stroke: 'red', 'stroke-width': 0.1, fill: 'none' });
+
+    if(prevEvent && group) {
+      let u = Util.union(prevEvent.elements, event.elements, (a, b) => a.isSameNode(b));
+      let [remove, add] = Util.difference(prevEvent.elements, event.elements, (a, b) => a.findIndex(Node.prototype.isSameNode, b) != -1);
+
+      //  console.log('difference:', [remove,add], 'union:', u);
+
+      const bboxes = new Map(add.map(e => [e, new Rect(e.getBBox())]));
+
+      for(let [e, rect] of bboxes) {
+        let transforms = (Element.walkUp(e, (p,d,set,stop) =>  p.parentElement.isSameNode(p.ownerSVGElement) ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform'))) || []).reverse();
+        console.log("transforms:",transforms);
+        elems.add(e);
+        rects.set(e, SVG.create('rect', { ...rect.toObject(), transform: transforms.join(' ') }, group));
+      }
+      /*
+      add.forEach(e => {
+        elems.add(e);
+        rects.set(e, devtools.rect(new Rect(e.getBoundingClientRect()), event.colors.get(e) || '#00000000', event.colors.get(e)));
+      });*/
+      remove.forEach(e => {
+        let rect = rects.get(e);
+        rects.delete(e);
+        Element.remove(rect);
+      });
+
+      if(bboxes.size) {
+        console.log('event.elements:', event.elements);
+        console.log('event.classes:', event.classes);
+        console.log('event.target:', zIndex);
+        console.log('rects:', Util.clone(bboxes));
+      }
+    }
+  });
+
+  touchHandler.subscribe(/*Util.printReturnValue*/ event => {
       const { x, y, index, buttons, start, type, target } = event;
 
+      // console.log('touchHandler', event);
       if(type.endsWith('end') || type.endsWith('up')) return cancel();
       if(event.buttons === 0 && type.endsWith('move')) return cancel();
       // if(event.index > 0) console.log('touch', { x, y, index, buttons, type, target }, container);
@@ -1564,8 +1677,7 @@ const AppMain = (window.onload = async () => {
         /*return*/ event.cancel();
         return false;
       }
-    },
-    { element: window }
+    }
   );
 
   window.oncontextmenu = function(e) {
