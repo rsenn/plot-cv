@@ -315,11 +315,7 @@ function PrintAst(ast, comments, printer = new Printer({ indent: 4 }, comments))
   return printer.print(ast);
 }
 
-const hl = {
-  id: text => Util.ansi.text(text, 1, 33),
-  punct: text => Util.ansi.text(text, 1, 36),
-  str: text => Util.ansi.text(text, 1, 32)
-};
+const hl = { id: text => Util.ansi.text(text, 1, 33), punct: text => Util.ansi.text(text, 1, 36), str: text => Util.ansi.text(text, 1, 32) };
 
 function DumpNode(node) {
   return [hl.id`path` + hl.punct`:`, node2path.get(node), Util.ansi.text(`node`, 1, 33) + `:`, Util.toString(node, { multiline: false, depth: 4 })];
@@ -550,17 +546,7 @@ async function main(...args) {
       let exportPaths = exportNodes.map(getExport);
       let exportEntries = exportPaths.map(([path, path2]) => [path, path2, deep.get(ast, path)]).map(([path, path2, node]) => [path, path2, node, node instanceof AssignmentExpression ? node.right : node]);
       let moduleExports = exportEntries.map(([path, path2, node, node2]) => [node != node2 ? 'default' : null, node2]);
-      let exportInstances = moduleExports.map(([name, node], i) =>
-        ES6ImportExport.create({
-          ast,
-          node,
-          exportNode: exportEntries[i][2],
-          path: exportEntries[i][0],
-          file,
-          identifiers: [name],
-          bindings: Object.fromEntries([[name, node]])
-        })
-      );
+      let exportInstances = moduleExports.map(([name, node], i) => ES6ImportExport.create({ ast, node, exportNode: exportEntries[i][2], path: exportEntries[i][0], file, identifiers: [name], bindings: Object.fromEntries([[name, node]]) }));
 
       //  console.log(`moduleExports:`, moduleExports);
 
@@ -618,14 +604,7 @@ function getFromValue(...args) {
   let flat = GenerateFlatMap(n,
     p,
     (n, p) => true || Util.isArray(n) || [ExportStatement, ImportStatement, ObjectBindingPattern, Literal].some(ctor => n instanceof ctor),
-    (p, n) => [
-      p,
-      Object.setPrototypeOf({
-          ...Util.filterKeys(n, k => n instanceof CallExpression || (k != 'type' && !(Util.isObject(n[k]) || Util.isFunction(n[k]))))
-        },
-        Object.getPrototypeOf(n)
-      )
-    ]
+    (p, n) => [p, Object.setPrototypeOf({ ...Util.filterKeys(n, k => n instanceof CallExpression || (k != 'type' && !(Util.isObject(n[k]) || Util.isFunction(n[k])))) }, Object.getPrototypeOf(n))]
   );
   let literals = [...flat.entries()].filter(([p, n]) => n instanceof Literal);
   let paths = literals.map(([p, n]) => flat.get(p).value);

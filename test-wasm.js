@@ -11,23 +11,10 @@ const bytes = filesystem.readFile('./static/wasm/bpgdec.wasm');
 //console.log('bytes: ', bytes);
 
 let importObject = {
-  /* imports: { imported_func: arg => console.log(arg) },
-module: {},
- instance: {},
- env: {
-   memory: new WebAssembly.Memory({ initial: 256 }),
-   table: new WebAssembly.Table({ initial: 0, element: "anyfunc" }),
-   abort: err => console.log("Abort:",err)
- }*/
-  module: {},
+  /* imports: { imported_func: arg => console.log(arg) }, module: {}, instance: {}, env: { memory: new WebAssembly.Memory({ initial: 256 }), table: new WebAssembly.Table({ initial: 0, element: "anyfunc" }), abort: err => console.log("Abort:",err) }*/ module: {},
   env: {
-    memory: new WebAssembly.Memory({
-      initial: 256
-    }),
-    table: new WebAssembly.Table({
-      initial: 0,
-      element: 'anyfunc'
-    }),
+    memory: new WebAssembly.Memory({ initial: 256 }),
+    table: new WebAssembly.Table({ initial: 0, element: 'anyfunc' }),
     abort(_msg, _file, line, column) {
       console.error('abort called at main.ts:' + line + ':' + column);
     },

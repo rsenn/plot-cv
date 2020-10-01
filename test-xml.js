@@ -38,11 +38,7 @@ const GeneratePalette = (counts = { h: 3, s: 3, l: 5 }, deltas = { h: 360, s: 10
     Util.range(0, count - 1)
       .map(v => (v * delta) / (count - 1) - delta / 2)
       .map(Math.round);
-  let ranges = {
-    h: makeRange(counts.h, deltas.h),
-    s: makeRange(counts.s, deltas.s),
-    l: makeRange(counts.l, deltas.l)
-  };
+  let ranges = { h: makeRange(counts.h, deltas.h), s: makeRange(counts.s, deltas.s), l: makeRange(counts.l, deltas.l) };
   //const numColors = ranges.reduce((acc, r) => acc * r.length, 1);
   //ranges.push(numColors);
   console.log('ranges:', ranges);

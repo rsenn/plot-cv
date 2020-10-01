@@ -20,12 +20,7 @@ console.log('main');
 Util.callMain(main);
 
 /*
-const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg">
-    <defs />
-
-*/
-
-function PrefixRemover(reOrStr, replacement = '') {
+const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg"> <defs /> */ function PrefixRemover(reOrStr, replacement = '') {
   if(!(Util.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
 
   return arg => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), arg);
@@ -60,8 +55,8 @@ async function main(...args) {
   const argDirs = [...args].map(arg => path.dirname(arg));
   // console.log('argDirs',Util.toString(argDirs));
 
-  const dirs = [cwd].concat(argDirs); /*.map(p => path.resolve(p))*/
-  console.log('dirs=', dirs);
+  const dirs = [cwd].concat(argDirs);
+  /*.map(p => path.resolve(p))*/ console.log('dirs=', dirs);
 
   console.log('join()', path.join(cwd, argDirs[0]));
   console.log('cwd', cwd);

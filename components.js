@@ -628,10 +628,7 @@ export const ColorWheel = ({ radius = 50, ...props }) => {
 
             //Figure out the starting index of this pixel in the image data array.
             let rowLength = 2 * radius;
-            let adjustedX = x + radius; //convert x from [-50, 50] to [0, 100] (the coordinates of the image data array)
-            let adjustedY = y + radius; //convert y from [-50, 50] to [0, 100] (the coordinates of the image data array)
-            let pixelWidth = 4; //each pixel requires 4 slots in the data array
-            let index = (adjustedX + adjustedY * rowLength) * pixelWidth;
+            let adjustedX = x + radius; //convert x from [-50, 50] to [0, 100] (the coordinates of the image data array) let adjustedY = y + radius; //convert y from [-50, 50] to [0, 100] (the coordinates of the image data array) let pixelWidth = 4; //each pixel requires 4 slots in the data array let index = (adjustedX + adjustedY * rowLength) * pixelWidth;
 
             let hue = deg;
             let saturation = r / radius;

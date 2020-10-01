@@ -92,10 +92,7 @@ async function main(country = 'de') {
       try {
         const proxyList = new ProxyList();
         for(const p of await proxyList.getByCountryCode(country.toUpperCase())) {
-          let proxy = new Proxy({
-            source: 'free-proxy',
-            ...p
-          });
+          let proxy = new Proxy({ source: 'free-proxy', ...p });
           let check = await Check(proxy);
           console.log('\nPROXY:', proxy, check, '\n');
           push(proxy);
@@ -147,10 +144,7 @@ async function main(country = 'de') {
         let json = await response.json();
         //console.log("json:", json);
 
-        const flat = deep.flatten(json,
-          new Map(),
-          (v, k) => k.length > 1 && typeof v == 'object',
-          (k, v) => [k.join('.'), v]
+        const flat = deep.flatten(json, new Map(), (v, k) => k.length > 1 && typeof v == 'object', (k, v) => [k.join('.'), v]
         );
         console.log('flat:', flat.values());
 

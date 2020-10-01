@@ -18,11 +18,7 @@ const testtmpl = `this is\na test`;
 Util.callMain(main, true);
 
 /*
-const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg">
-    <defs />
-
-*/
-function dumpFile(name, data) {
+const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg"> <defs /> */ function dumpFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 

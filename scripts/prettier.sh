@@ -37,9 +37,9 @@ main() {
   EXPR="$EXPR; /([^,]*,$/ { N; s|^\(\s*[^ ]*([^,]*,\)\n\s*{|\1 {| }"
   EXPR="$EXPR; /^\s*[^ ]\+:$/ { N; s|^\(\s*[^ ]\+:\)\n\s*|\1 | }"
   EXPR="$EXPR; /^\s*},$/  { N; s|^\(\s*},\)\n\s*\[|\1 [| }"
-  #EXPR="$EXPR; /^\s*},$/ { N; s|},\n\s*|}, |; N; s|\n\s*);$|);| }"
-  #EXPR="$EXPR; /($/ { N; s|(\n\s*|(| }"
-  #EXPR="$EXPR; /[^ ],$/ { N; s|,\n *{$|, {|g ; s|,\n\s*\([^\n]*\);$|, \1;|g }"
+  #EXPR="$EXPR; /^\s*let\s/ { :lp; /;\s*$/! { N; s,\s*\n\s*, ,g; b lp } }"
+  #EXPR="$EXPR; /^\s*const\s/ { :lp; /;\s*$/! { N; s,\s*\n\s*, ,g; b lp } }"
+  #EXPR="$EXPR; /^\s*var\s/ { :lp; /;\s*$/! { N; s,\s*\n\s*, ,g; b lp } }"
 
   SEP=${IFS%"${IFS#?}"}
 

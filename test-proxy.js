@@ -85,9 +85,9 @@ async function main() {
   //console.log('keys(children[0])', Object.keys(p.children[0]));
 
   let result = deep.select(p,
-    o =>
-      //console.log('o:', o);
-      Util.isObject(o) && o.attributes !== undefined && o.name !== undefined
+    (
+      o //console.log('o:', o);
+    ) => Util.isObject(o) && o.attributes !== undefined && o.name !== undefined
   );
   //console.log('result:', result);
 

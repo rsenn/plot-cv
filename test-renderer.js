@@ -11,9 +11,8 @@ let filesystem;
 
 Util.colorCtor = ColoredText;
 
-const debug = Util.getEnv('APP_ENV').startsWith('devel'); /*||process.env.NODE_ENV.startsWith('devel')*/
-
-async function testRenderSchematic(file) {
+const debug = Util.getEnv('APP_ENV').startsWith('devel');
+/*||process.env.NODE_ENV.startsWith('devel')*/ async function testRenderSchematic(file) {
   let doc = new EagleDocument(filesystem.readFile(`${file}.sch`));
   //console.log('doc:', doc.get('eagle/drawing'));
   let renderer = new Renderer(doc, ReactComponent.append, debug);
