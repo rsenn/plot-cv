@@ -301,13 +301,97 @@ const FindLayer = name_or_id => {
 
 const GerberLayers = { GTL: 'Top (copper) Layer', GBL: 'Bottom (copper) Layer ', GTO: 'Top Overlay', GBO: 'Bottom Overlay ', GTP: 'Top Paste Mask ', GBP: 'Bottom Paste Mask ', GTS: 'Top Solder Mask ', GBS: 'Bottom Solder Mask ', GKO: 'Keep-Out Layer ', GML: 'Mill layer', gpi: 'Photoplotter info file', TXT: 'Drill file' };
 
+function GetPaths(query, parent = project.svg) {
+  return Element.findAll(query, parent).reduce((a, e) => a.concat(e.tagName != 'path' ? Element.findAll('path', e) : [e]), []);
+}
+
+function PathToPolylines(path, step = 0.01) {
+  let poly,
+    polys = [];
+  [...SVG.pathIterator(path, { step })].forEach(p => {
+    if(p.move || !poly) polys.push((poly = []));
+
+    poly.push(new Point(p).round(0.001));
+  });
+
+  return polys
+    .filter(poly => poly.length > 1)
+    .map(poly => {
+      let transforms = new TransformationList(Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse()).collapse();
+      console.log('transforms', transforms);
+      return new Polyline(poly).transform(transforms);
+    });
+}
+
+function PathToPolyline(path, step = 0.01) {
+  let poly = [...SVG.pathIterator(path, { step })];
+
+  let transforms = new TransformationList(Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse()).collapse();
+  console.log('transforms', transforms);
+  return new Polyline(poly).transform(transforms);
+}
+
+function PathsToPolylines(paths, step = 0.01) {
+  if(typeof paths == 'string') paths = GetPaths(...paths.split(' '));
+  if(!Util.isArray(paths)) paths = [paths];
+  return new Map(paths.map(path => [path, PathToPolyline(path, step)]));
+}
+
+function OutsetPath(path, offset, miterLimit = 2, arcTolerance = 0.01) {
+  let co = new ClipperLib.ClipperOffset(miterLimit, arcTolerance);
+  let output = (window.output = new ClipperLib.Paths());
+  co.AddPath(path.closed ? path.slice(0, -1) : path, ClipperLib.JoinType[path.closed ? 'jtRound' : 'jtSquare'], ClipperLib.EndType[path.closed ? 'etClosedLine' /*'etClosedPolygon' */ : 'etOpenSquare' || 'etOpenRound']);
+  co.Execute(output, offset);
+  console.log('output:', output);
+  output.toPolylines = function() {
+    return this.map(p => new Polyline(p.map(({ X, Y }) => new Point(X, Y))).close());
+  };
+  return output;
+}
+
+//
+//  OutsetPaths(PathsToPolylines('path.top .R8'), 0.1);
+//
+function OutsetPaths(paths, offset, miterLimit = 2, arcTolerance = 0.25) {
+  let ret;
+  // if(typeof paths == 'string') paths = PathsToPolylines(paths);
+  if(typeof paths.values == 'function') paths = [...paths.values()];
+
+  console.log('OutsetPaths:', { paths, ret });
+
+  ret = paths.map(path => OutsetPath(path, offset, miterLimit, arcTolerance));
+
+  ret = ret.slice(1).reduce((a, p) => ClipPath(a, p), ret[0]);
+
+  let [outer, clip] = ret.toPolylines();
+
+  outer.toSVG(project.makeFactory(), { 'stroke-width': 0.0508, stroke: 'black', fill: 'none' });
+  clip.toSVG(project.makeFactory(), { 'stroke-width': 0.0508, stroke: 'black', fill: 'none' });
+
+  return ret;
+}
+
+function ClipPath(path, clip, mode = ClipperLib.ClipType.ctUnion) {
+  let cl = new ClipperLib.Clipper();
+  let output = new ClipperLib.Paths();
+  const add = (p, clip = false) => (Util.isArray(p[0]) ? cl.AddPaths : cl.AddPath).call(cl, p, clip ? ClipperLib.PolyType.ptClip : ClipperLib.PolyType.ptSubject, true);
+
+  add(path, false);
+  add(clip, true);
+
+  cl.Execute(mode, output);
+  output.toPolylines = function() {
+    return this.map(p => new Polyline(p.map(({ X, Y }) => new Point(X, Y))).close());
+  };
+  return output;
+}
+
 function saveItemsProperty(itemList, get = item => Util.is.on(item.visible())) {
   let map = new WeakMap();
-
   for(let item of itemList) map.set(item, get(item));
-
   return map;
 }
+
 function restoreItemsProperty(map, itemList, set = (item, value) => item.visible(Util.is.on(value))) {
   for(let item of itemList) set(item, map.get(item));
 }
@@ -466,6 +550,7 @@ const LoadDocument = async (project, parentElem) => {
     transform = project.svg.querySelector('*[transform]').getAttribute('transform') + (transform ? ' ' + transform : '');
     return (e = SVG.create('g', { ...props, transform }, project.svg));
   };
+  project.makeFactory = Util.memoize(id => SVG.factory(() => project.makeGroup({ ...((id !== undefined && { id }) || {}), 'stroke-width': 0.127 / 4 })));
 
   let center = SVG.bbox(project.svg).center.round();
   let defaultTransform = `translate(${center.x},${center.y}) scale(2.54,2.54)`;
@@ -781,7 +866,7 @@ const AppMain = (window.onload = async () => {
   Util(globalThis);
   //prettier-ignore
   const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, ImmutablePath, arrayDiff, objectDiff, XmlObject, XmlAttr, ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser,  PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer, classNames   };
-  const localFunctions = { PackageChildren, ElementChildren, Timer, MouseEvents, DrawSVG, ElementToXML, FileSystem, LoadFile, SaveFile, SaveSVG, ModifyColors, GerberLayers, LoadDocument, ChooseDocument, GenerateVoronoi, MakeFitAction, CreateWebSocket, CreateGrblSocket, BindGlobal, AppMain, serial, FindLayer };
+  const localFunctions = { PackageChildren, ElementChildren, Timer, MouseEvents, DrawSVG, ElementToXML, FileSystem, LoadFile, SaveFile, SaveSVG, ModifyColors, GerberLayers, LoadDocument, ChooseDocument, GenerateVoronoi, MakeFitAction, CreateWebSocket, CreateGrblSocket, BindGlobal, AppMain, serial, FindLayer, OutsetPath, OutsetPaths, ClipPath, PathToPolyline, PathsToPolylines, GetPaths };
 
   const importedNames = Object.keys(imports);
   console.debug('Dupes:',
@@ -789,7 +874,8 @@ const AppMain = (window.onload = async () => {
   );
 
   //prettier-ignore
-  Util.weakAssign(window,geom);
+  Util.weakAssign(window,dom);
+  Util.weakAssign(window, geom);
   Util.weakAssign(window, imports);
   Util.weakAssign(window, localFunctions);
   Error.stackTraceLimit = 100;
@@ -922,7 +1008,7 @@ const AppMain = (window.onload = async () => {
   });
 
   trkl.bind(window, { searchFilter, listURL });
-  trkl.bind(window, { svgFactory });
+  //trkl.bind(window, { svgFactory });
 
   trkl.bind(window, { zoomLog, zoom: zoomValue, logSize });
 
@@ -1465,7 +1551,8 @@ const AppMain = (window.onload = async () => {
       remove.forEach(e => {
         let rect = rects.get(e);
         rects.delete(e);
-        rect.forEach(e => Element.remove(e));
+
+        if(Util.isArray(rect)) rect.forEach(e => Element.remove(e));
       });
 
       if(bboxes.size) {

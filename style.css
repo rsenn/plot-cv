@@ -345,6 +345,12 @@ text {
 .panel.list {
   background: none;
 }
+.panel.list {
+  background: white;
+}
+.panel.list < .file {
+  background: white;
+}
 .sidebar {
   position: absolute;
   max-width: 50%;
