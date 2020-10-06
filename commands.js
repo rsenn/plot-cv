@@ -45,7 +45,17 @@ export async function ResponseData(resp) {
 export const FetchCached = Util.cachedFetch({
   debug: true,
   print({ cached, ok, status, redirected, statusText, type, url }, fn, ...args) {
-    console.debug(`FetchCached(${args.map((a, i) => (typeof a == 'string' ? '"' + a + '"' : i == 1 ? Util.toSource({ ...this.opts, ...a }, { colors: false, multiline: false }) : a)).join(', ')}) =`, { cached, ok, status, redirected, statusText, type, url } /*.then(  NormalizeResponse)*/);
+    console.debug(`FetchCached(${args
+        .map((a, i) =>
+          typeof a == 'string'
+            ? '"' + a + '"'
+            : i == 1
+            ? Util.toSource({ ...this.opts, ...a }, { colors: false, multiline: false })
+            : a
+        )
+        .join(', ')}) =`,
+      { cached, ok, status, redirected, statusText, type, url } /*.then(  NormalizeResponse)*/
+    );
   }
 });
 
@@ -71,7 +81,8 @@ export async function FetchURL(url, allOpts = {}) {
   return ret;
 }
 
-export const GetProject = arg => (typeof arg == 'number' ? projects()[arg] : typeof arg == 'string' ? projects().find(p => p.name == arg) : arg);
+export const GetProject = arg =>
+  typeof arg == 'number' ? projects()[arg] : typeof arg == 'string' ? projects().find(p => p.name == arg) : arg;
 
 export async function ListProjects(opts = {}) {
   const { url, descriptions = true, names, filter } = opts;
@@ -119,7 +130,9 @@ export const AddLayer = (layer, project = window.project) => {
   let layers = window.layers;
   let i = Math.max(...layers.map(l => l.i)) + 1;
 
-  let dom = create ? create(project, { ...props, 'data-layer': `${i} ${name}` }) : SVG.create('g', { i, stroke: color, ...props }, project.svg);
+  let dom = create
+    ? create(project, { ...props, 'data-layer': `${i} ${name}` })
+    : SVG.create('g', { i, stroke: color, ...props }, project.svg);
   let visible = trkl(true);
 
   visible.subscribe(value => {
@@ -144,7 +157,8 @@ export async function BoardToGerber(board = project.name, opts = { fetch: true }
     .then(NormalizeResponse)
     .catch(error => ({ error }));
 
-  if(opts.fetch && response.file && !response.data) response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then(NormalizeResponse);
+  if(opts.fetch && response.file && !response.data)
+    response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then(NormalizeResponse);
 
   console.debug('BoardToGerber response =', Util.filterOutKeys(response, /(data)/));
   return response;
@@ -170,7 +184,8 @@ export async function GerberToGcode(file, allOpts = {}) {
     .then(NormalizeResponse)
     .catch(error => ({ error }));
 
-  if(opts.fetch && response.file && !response.data) response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then(NormalizeResponse);
+  if(opts.fetch && response.file && !response.data)
+    response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then(NormalizeResponse);
 
   response.opts = opts;
   console.debug('GerberToGcode response =', Util.filterOutKeys(response, /(data)/));
@@ -216,7 +231,9 @@ export const GcodeToPolylines = (data, opts = {}) => {
       class: `gcode ${side} side`,
       color,
       'stroke-width': 0.15,
-      transform: ` translate(-0.3175,0) ` + (side == 'front' ? 'scale(-1,-1)' : 'scale(1,-1)') + ` translate(${0},${-bb.y2})  translate(0,-2.54)`
+      transform: ` translate(-0.3175,0) ` +
+        (side == 'front' ? 'scale(-1,-1)' : 'scale(1,-1)') +
+        ` translate(${0},${-bb.y2})  translate(0,-2.54)`
     },
     project
   ).dom;
@@ -230,7 +247,11 @@ export const GcodeToPolylines = (data, opts = {}) => {
     polylines = polylines.map(pl => Util.chunkArray(pl, 2).map(pt => new Point(...pt)));
     //console.log('polylines(4):', polylines);
     polylines = polylines.map(pl => new Polyline([]).push(...pl));
-    let inside = new Map(polylines.map((polyline2, i) => [polyline2, polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2))]));
+    let inside = new Map(polylines.map((polyline2, i) => [
+        polyline2,
+        polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2))
+      ])
+    );
     let insideOf = polylines.map((polyline, i) => [
       i,
       polylines
@@ -256,7 +277,14 @@ export const GcodeToPolylines = (data, opts = {}) => {
     }
   }
   let ids = polylines.map((pl, i) => i).filter(i => !remove.has(i));
-  let polys = [...ids.map(i => polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` }, grp, 0.01)), ...paths.map(([i, d]) => ({ ...props(polyline, i), id: `polygon-${polylines.indexOf(polyline)}`, d })).map((p, i) => ['path', p, grp])];
+  let polys = [
+    ...ids.map(i =>
+      polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` }, grp, 0.01)
+    ),
+    ...paths
+      .map(([i, d]) => ({ ...props(polyline, i), id: `polygon-${polylines.indexOf(polyline)}`, d }))
+      .map((p, i) => ['path', p, grp])
+  ];
   // console.log('GcodeToPolylines polys:', polys.length, { bb, color });
   let svgAttr = Element.attr(project.svg);
   //console.log('GcodeToPolylines svgAttr:', svgAttr);
@@ -267,7 +295,9 @@ export const GcodeToPolylines = (data, opts = {}) => {
 export function GeneratePalette(numColors) {
   let ret = [];
   let base = new HSLA(Util.randInt(0, 360, prng), 100, 50).toRGBA();
-  let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360], []);
+  let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360],
+    []
+  );
   offsets = offsets.sort((a, b) => a - b);
   //offsets = Util.shuffle(offsets, prng);
   //Util.log('offsets:', offsets);
@@ -383,4 +413,14 @@ export async function ListGithubRepoServer(owner, repo, dir, filter) {
   return ret;
 }
 
-export default { FetchURL, GetProject, ListProjects, FindLayer, GetLayer, AddLayer, GeneratePalette, ListGithubRepo, ListGithubRepoServer };
+export default {
+  FetchURL,
+  GetProject,
+  ListProjects,
+  FindLayer,
+  GetLayer,
+  AddLayer,
+  GeneratePalette,
+  ListGithubRepo,
+  ListGithubRepoServer
+};

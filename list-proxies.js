@@ -194,7 +194,10 @@ async function writeResults(results, format = 'txt', outputName = 'proxies') {
   let ret;
   try {
     let output = await fsPromises.open(tempfile, 'w');
-    let method = { txt: r => r.map(p => p.toString()).join('\n'), json: r => `[\n${r.map(p => '  ' + Util.toSource(p)).join(',\n')}\n]` }[format];
+    let method = {
+      txt: r => r.map(p => p.toString()).join('\n'),
+      json: r => `[\n${r.map(p => '  ' + Util.toSource(p)).join(',\n')}\n]`
+    }[format];
 
     ret = await output.write(method(results) + '\n');
     await output.close();

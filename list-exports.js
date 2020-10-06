@@ -1,5 +1,14 @@
 import { ECMAScriptParser, Printer, PathReplacer } from './lib/ecmascript.js';
-import { ObjectBindingPattern, ObjectLiteral, ImportStatement, ExportStatement, VariableDeclaration, estree, ESNode, Literal } from './lib/ecmascript.js';
+import {
+  ObjectBindingPattern,
+  ObjectLiteral,
+  ImportStatement,
+  ExportStatement,
+  VariableDeclaration,
+  estree,
+  ESNode,
+  Literal
+} from './lib/ecmascript.js';
 import ConsoleSetup from './consoleSetup.js';
 import Util from './lib/util.js';
 import { ImmutablePath } from './lib/json.js';
@@ -20,7 +29,9 @@ console.log('main');
 Util.callMain(main);
 
 /*
-const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg"> <defs /> */ function PrefixRemover(reOrStr, replacement = '') {
+const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg"> <defs /> */ function PrefixRemover(reOrStr,
+  replacement = ''
+) {
   if(!(Util.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
 
   return arg => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), arg);
@@ -46,7 +57,14 @@ async function main(...args) {
   // cwd = process.cwd() || fs.realpath('.');
   console.log('cwd=', cwd);
 
-  if(args.length == 0) args = [/*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js', 'lib/geom/size.js', 'lib/geom/trbl.js', 'lib/geom/rect.js', 'lib/dom/element.js'];
+  if(args.length == 0)
+    args = [
+      /*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js',
+      'lib/geom/size.js',
+      'lib/geom/trbl.js',
+      'lib/geom/rect.js',
+      'lib/dom/element.js'
+    ];
   let r = [];
   let processed = [];
   console.log('args=', args);
@@ -107,17 +125,29 @@ async function main(...args) {
         (path, value) => [path, value]
       );
 
-      let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportStatement || value.exported === true);
+      let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportStatement || value.exported === true
+      );
 
       for(let [path, node] of exports) {
         log(`export ${path}`, node);
         deep.set(ast, path, node.declarations[0]);
       }
 
-      allExports.splice(allExports.length, 0, ...exports.map(([key, value]) => [ESNode.assoc(value).position.toString(), value]));
+      allExports.splice(allExports.length,
+        0,
+        ...exports.map(([key, value]) => [ESNode.assoc(value).position.toString(), value])
+      );
 
-      exports = exports.map(([p, stmt]) => (Util.isObject(stmt.declarations, 'id', 'value') == Util.isObject(stmt.what, 'value') ? stmt.declarations : stmt));
-      exports = exports.map(decl => (decl instanceof ObjectBindingPattern ? decl.properties.map(prop => ('id' in prop ? prop.id : prop)) : decl instanceof ObjectLiteral ? decl.members.map(prop => ('id' in prop ? prop.id : prop)) : decl));
+      exports = exports.map(([p, stmt]) =>
+        Util.isObject(stmt.declarations, 'id', 'value') == Util.isObject(stmt.what, 'value') ? stmt.declarations : stmt
+      );
+      exports = exports.map(decl =>
+        decl instanceof ObjectBindingPattern
+          ? decl.properties.map(prop => ('id' in prop ? prop.id : prop))
+          : decl instanceof ObjectLiteral
+          ? decl.members.map(prop => ('id' in prop ? prop.id : prop))
+          : decl
+      );
       exports = exports.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl));
       exports = exports.flat().map(e => e.value);
       log(`exports =`, exports.join(', '));

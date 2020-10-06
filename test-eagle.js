@@ -175,7 +175,11 @@ async function testEagle(filename) {
 
   const packages = {
     board: (board && [...board.elements].map(([name, e]) => e.package)) || [],
-    schematic: (schematic && [...schematic.sheets].map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)).flat()) || []
+    schematic: (schematic &&
+        [...schematic.sheets]
+          .map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined))
+          .flat()) ||
+      []
   };
   let parts = (schematic && schematic.parts) || [];
   let sheets = (schematic && schematic.sheets) || [];
@@ -202,7 +206,8 @@ async function testEagle(filename) {
   /*  for(let description of board.getAll('description')) {
   }*/
 
-  if(updateMeasures(proj.board) || alignAll(board) || alignAll(schematic)) console.log('Saved:', await proj.saveTo('tmp', true));
+  if(updateMeasures(proj.board) || alignAll(board) || alignAll(schematic))
+    console.log('Saved:', await proj.saveTo('tmp', true));
 
   console.log('documents', proj.documents);
 

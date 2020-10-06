@@ -1,7 +1,15 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
-import { estree, ESNode, TemplateLiteral, CallExpression, ImportStatement, Identifier, ObjectBindingPattern } from './lib/ecmascript/estree.js';
+import {
+  estree,
+  ESNode,
+  TemplateLiteral,
+  CallExpression,
+  ImportStatement,
+  Identifier,
+  ObjectBindingPattern
+} from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import { Path } from './lib/json.js';
@@ -18,7 +26,9 @@ const testtmpl = `this is\na test`;
 Util.callMain(main, true);
 
 /*
-const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg"> <defs /> */ function dumpFile(name, data) {
+const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg"> <defs /> */ function dumpFile(name,
+  data
+) {
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
@@ -101,7 +111,10 @@ async function main(...args) {
 
       //let posMap = new SortedMap([...flat].map(([key, value]) => [value.position ? value.position.pos : -1, value]), (a, b) => a - b);
 
-      let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node: posMap.keyOf(node) }]),
+      let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
+          pos * 10 - 1,
+          { comment, pos, len, node: posMap.keyOf(node) }
+        ]),
         (a, b) => a - b
       );
 
@@ -124,7 +137,9 @@ async function main(...args) {
       dumpFile(output_file, output);
 
       const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
-      const importStatements = imports.map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path)).map(path => [path, deep.get(ast, path)]);
+      const importStatements = imports
+        .map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path))
+        .map(path => [path, deep.get(ast, path)]);
 
       console.log('imports:', new Map(imports.map(([path, node]) => [ESNode.assoc(node).position, node])));
       console.log('importStatements:', importStatements);

@@ -53,7 +53,8 @@ async function main(...args) {
       const viewBoxStr = attr && attr.viewBox;
       const viewCoords = (viewBoxStr && viewBoxStr.split(' ')) || [0, 0, svg.attributes.width, svg.attributes.height];
       const [x1, y1, x2, y2] = viewCoords;
-      const viewBox = new Rect(svg.attributes && svg.attributes.viewBox ? { x1, y1, x2, y2 } : ['width', 'height'].map(a => svg.attributes[a]));
+      const viewBox = new Rect(svg.attributes && svg.attributes.viewBox ? { x1, y1, x2, y2 } : ['width', 'height'].map(a => svg.attributes[a])
+      );
       iconSize = viewBox.size; //new Size(viewBox.width, viewBox.height);
       iconAspect = iconSize.aspect();
       const scale = iconAspect > 1 ? size.width / iconSize.width : size.height / iconSize.height;
@@ -66,7 +67,20 @@ async function main(...args) {
       Util.weakAssign(svg.attributes, { viewBox: new BBox(0, 0, iconSize.width, iconSize.height) });
       filesystem.writeFile(svgFile, toXML(svgData));
 
-      console.log(' :', { attr, svgFile, scale, iconSize, viewCoords, newSize, size, scale, width, height, iconSize, iconAspect });
+      console.log(' :', {
+        attr,
+        svgFile,
+        scale,
+        iconSize,
+        viewCoords,
+        newSize,
+        size,
+        scale,
+        width,
+        height,
+        iconSize,
+        iconAspect
+      });
 
       if(xy.x + size.width >= maxWidth) {
         xy.x = 0;

@@ -71,7 +71,10 @@ function sendMany(except, msg, ...args) {
     msg = new Message(msg, ...args);
     msg = msg.data;
   }
-  return Promise.all(sockets.filter(sock => !(sock == except || sock.id == except || sock.ws == except)).map(sock => this.sendTo(sock, msg)));
+  return Promise.all(sockets
+      .filter(sock => !(sock == except || sock.id == except || sock.ws == except))
+      .map(sock => this.sendTo(sock, msg))
+  );
 }
 
 export class Socket {

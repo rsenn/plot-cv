@@ -186,7 +186,11 @@ body {
 .button {
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.7);
   border-radius: 4px;
-  background: linear-gradient(30deg, hsla(220, 100%, 40%, 1) 20%, hsla(220, 100%, 50%, 1) 50%, hsla(220, 100%, 45%, 1) 80%); /* w3c */
+  background: linear-gradient(30deg,
+    hsla(220, 100%, 40%, 1) 20%,
+    hsla(220, 100%, 50%, 1) 50%,
+    hsla(220, 100%, 45%, 1) 80%
+  ); /* w3c */
   color: white;
   font-weight: bold;
   user-select: none;
@@ -551,7 +555,20 @@ ul.dumper {
   position: absolute;
   right: 0px;
 
-  background-image: linear-gradient(to top, rgb(219, 209, 222), rgb(205, 197, 208), rgb(191, 185, 193), rgb(178, 174, 179), rgb(164, 162, 164), rgb(150, 150, 150), rgb(157, 156, 156), rgb(163, 162, 162), rgb(170, 168, 168), rgb(176, 173, 173), rgb(183, 179, 179), rgb(189, 185, 185));
+  background-image: linear-gradient(to top,
+    rgb(219, 209, 222),
+    rgb(205, 197, 208),
+    rgb(191, 185, 193),
+    rgb(178, 174, 179),
+    rgb(164, 162, 164),
+    rgb(150, 150, 150),
+    rgb(157, 156, 156),
+    rgb(163, 162, 162),
+    rgb(170, 168, 168),
+    rgb(176, 173, 173),
+    rgb(183, 179, 179),
+    rgb(189, 185, 185)
+  );
 }
 ul.dumper {
   list-style: square none;
@@ -569,8 +586,18 @@ td.name,
 td.value {
   background: #ffffff; /* Old browsers */
   background: -moz-linear-gradient(top, #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%); /* FF3.6-15 */
-  background: -webkit-linear-gradient(top, #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%); /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(to bottom, #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  background: -webkit-linear-gradient(top,
+    #ffffff 0%,
+    #f1f1f1 50%,
+    #e1e1e1 51%,
+    #f6f6f6 100%
+  ); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom,
+    #ffffff 0%,
+    #f1f1f1 50%,
+    #e1e1e1 51%,
+    #f6f6f6 100%
+  ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0 ); /* IE6-9 */
 }
 td.name {

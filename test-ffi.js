@@ -1,7 +1,28 @@
 import * as std from 'std';
 import * as os from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
-import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toArrayBuffer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT } from './ffi.so';
+import {
+  debug,
+  dlopen,
+  define,
+  dlerror,
+  dlclose,
+  dlsym,
+  call,
+  toString,
+  toArrayBuffer,
+  errno,
+  JSContext,
+  RTLD_LAZY,
+  RTLD_NOW,
+  RTLD_GLOBAL,
+  RTLD_LOCAL,
+  RTLD_NODELETE,
+  RTLD_NOLOAD,
+  RTLD_DEEPBIND,
+  RTLD_DEFAULT,
+  RTLD_NEXT
+} from './ffi.so';
 import Util from './lib/util.js';
 
 function foreign(name, ret, ...args) {
@@ -73,5 +94,7 @@ function MakeArray(buf, numBytes) {
 
 function ArrayBufToHex(buf, numBytes = 8) {
   let arr = MakeArray(buf, numBytes);
-  return arr.reduce((s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)), '');
+  return arr.reduce((s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
+    ''
+  );
 }

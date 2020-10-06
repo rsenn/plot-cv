@@ -1,7 +1,16 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
-import { estree, ESNode, Literal, TemplateLiteral, CallExpression, ImportStatement, Identifier, ObjectBindingPattern } from './lib/ecmascript/estree.js';
+import {
+  estree,
+  ESNode,
+  Literal,
+  TemplateLiteral,
+  CallExpression,
+  ImportStatement,
+  Identifier,
+  ObjectBindingPattern
+} from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import { Path } from './lib/json.js';
@@ -257,7 +266,10 @@ async function main(...args) {
         node2path.set(node, path);
         nodeKeys.push(path);
       }
-      let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node: posMap.keyOf(node) }]),
+      let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
+          pos * 10 - 1,
+          { comment, pos, len, node: posMap.keyOf(node) }
+        ]),
         (a, b) => a - b
       );
 

@@ -14,8 +14,12 @@ async function main() {
 
   try {
     // console.log(`filesystem :`, filesystem);
-    console.log(`filesystem.writeFile('${outputFile}', ...):`, filesystem.writeFile(outputFile, 'BLAH\nthis is a test!\n\n'));
-    console.log(`filesystem.readFile('test-filesystem.js'):`, Util.abbreviate(filesystem.readFile('test-filesystem.js')));
+    console.log(`filesystem.writeFile('${outputFile}', ...):`,
+      filesystem.writeFile(outputFile, 'BLAH\nthis is a test!\n\n')
+    );
+    console.log(`filesystem.readFile('test-filesystem.js'):`,
+      Util.abbreviate(filesystem.readFile('test-filesystem.js'))
+    );
     console.log(`filesystem.realpath('/proc/self'):`, filesystem.realpath('/proc/self'));
     console.log(`filesystem.exists('${outputFile}'):`, filesystem.exists(outputFile));
     console.log(`filesystem.size('${outputFile}'):`, filesystem.size(outputFile));
