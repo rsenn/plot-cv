@@ -335,7 +335,7 @@ const ElementToXML = (e, predicate) => {
   return Element.toString(x, { newline: '\n' });
 };
 
-const FileSystem = {
+const filesystem = {
   async readFile(filename) {
     return await FetchURL(`/static/${filename}`);
   },
@@ -362,7 +362,7 @@ const LoadFile = async file => {
   let response = await FetchURL(url);
   // console.debug('LoadFile response=', response);
   let xml = await response.text();
-  let doc = new EagleDocument(await xml, null, filename, null, FileSystem);
+  let doc = new EagleDocument(await xml, null, filename, null, filesystem);
   if(/\.brd$/.test(filename)) window.board = doc;
   if(/\.sch$/.test(filename)) window.schematic = doc;
   if(/\.lbr$/.test(filename)) window.libraries = add(window.libraries, doc);
@@ -1178,7 +1178,7 @@ const AppMain = (window.onload = async () => {
     MouseEvents,
     DrawSVG,
     ElementToXML,
-    FileSystem,
+    filesystem,
     LoadFile,
     SaveFile,
     SaveSVG,
@@ -1210,11 +1210,12 @@ const AppMain = (window.onload = async () => {
   );
 
   //prettier-ignore
-  Util.weakAssign(window,dom);
-  Util.weakAssign(window, geom);
-  Util.weakAssign(window, imports);
-  Util.weakAssign(window, localFunctions);
+  Util.weakAssign(window,dom, geom, imports, localFunctions);
+  Util.weakAssign(window, { functions: Util.filter(localFunctions, v => typeof(v) == 'function'), dom,geom,imports });
   Error.stackTraceLimit = 100;
+
+
+  Util.timer(5000).then(() => DrawArc({x:50,y:150}, {x:350,y:300}, 120 * (Math.PI/180) ));
 
   const timestamps = new Repeater(async (push, stop) => {
     push(Date.now());
