@@ -901,20 +901,7 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen = trkl(false), .
       const diff = Point.diff(...points);
       const dist = Point.distance(...points);
       const inside = orect && orect.inside({ x, y });
-      console.debug(e.type,
-        diff,
-        dist,
-        {
-          timeStep,
-          orect,
-          inside,
-          x,
-          y,
-          buttons,
-          button,
-          timeStamp
-        } /*, Util.getMemberEntries(e, name => typeof name != 'symbol').sort()*/
-      );
+   //   console.debug(e.type, diff, dist, {timeStep, orect, inside, x, y, buttons, button, timeStamp });
       if(e.button == 2) {
         e.preventDefault();
         return false;

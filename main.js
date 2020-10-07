@@ -419,10 +419,10 @@ const GerberLayers = {
 };
 
 let svgDocFactory = Util.memoize((id = '#geom') =>
-  SVG.factory(Element.find(id)).initialize('svg', { width: window.innerWidth, height: window.innerHeight })
+  SVG.factory(Element.find(id)).initialize('svg', { width: window.innerWidth, height: window.innerHeight/*, style: "pointer-events: none;"*/ })
 );
 let svgGroupFactory = Util.memoize((props = {}) =>
-  svgDocFactory().root('g', { stroke: '#f00', 'stroke-width': 3, fill: 'none', ...props })
+  svgDocFactory().setRoot('g', { stroke: '#f00', 'stroke-width': 3, fill: 'none', ...props })
 );
 
 const maxZIndex = () =>
@@ -445,6 +445,9 @@ const groupProps = Util.memoize(() => {
 
 function DrawArc(start, end, angle) {
   let [r, g, b] = groupProps().map(props => svgGroupFactory(props).clear());
+
+
+  
   let [p1, p2] = [start, end].map(p => new Point(p));
 
   let line = new Line(p1, p2);
@@ -505,8 +508,13 @@ function DrawArc(start, end, angle) {
     b('circle', { cx: x, cy: y, r: 10, fill: rainbow[i], 'stroke-width': 2, stroke: 'black' })
   );
 
-  g('line', { ...line.toObject() });
-
+  ;
+  let svg=g('line', { ...line.toObject() }).ownerSVGElement;
+  console.log("svg:",svg);
+   svg.addEventListener('click', e=> {
+    console.log("clicked:",e.target);
+    svg.style.setProperty('display','none');
+  }); 
   lines2.forEach((l, i) => g('line', { ...l.toObject(), stroke: compound[i] }));
 
   range.forEach((p, i) => b('circle', { cx: p.x, cy: p.y, r: 15, stroke: '#0ff' }));
@@ -1943,7 +1951,7 @@ const AppMain = (window.onload = async () => {
         /* console.log('event.elements:', event.elements);
         console.log('event.classes:', event.classes);
         console.log('event.target:', zIndex);*/
-        console.log('rects:', Util.clone(bboxes));
+      //  console.log('rects:', Util.clone(bboxes));
       }
     }
   });
