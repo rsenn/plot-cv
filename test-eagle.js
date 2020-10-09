@@ -3,6 +3,7 @@ import PortableFileSystem from './lib/filesystem.js';
 import { LineList, Rect } from './lib/geom.js';
 import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
+import deep from './lib/deep.js';
 import { Graph } from './lib/fd-graph.js';
 import ptr from './lib/json-ptr.js';
 import LogJS from './lib/log.js';
@@ -174,8 +175,9 @@ async function testEagle(filename) {
   let { board, schematic } = proj;
 
   const packages = {
-    board: (board && [...board.elements].map(([name, e]) => e.package)) || [],
+    board: (board && board.elements && [...board.elements].map(([name, e]) => e.package)) || [],
     schematic: (schematic &&
+        schematic.sheets &&
         [...schematic.sheets]
           .map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined))
           .flat()) ||
@@ -205,9 +207,10 @@ async function testEagle(filename) {
 
   /*  for(let description of board.getAll('description')) {
   }*/
+  console.log('proj.board', proj.board);
+  if(proj.board) updateMeasures(proj.board);
 
-  if(updateMeasures(proj.board) || alignAll(board) || alignAll(schematic))
-    console.log('Saved:', await proj.saveTo('tmp', true));
+  if(alignAll(board) || alignAll(schematic)) console.log('Saved:', await proj.saveTo('tmp', true));
 
   console.log('documents', proj.documents);
 
@@ -225,9 +228,45 @@ async function testEagle(filename) {
     p = p.parentNode;
   }
 */
-  let desc = proj.documents.map(doc => [doc.filename, doc.find('description')]);
 
-  desc = desc.map(([file, e]) => [file, e && e.xpath().toCode('', { spacing: '', function: true })]);
+  for(let doc of proj.documents) {
+    let changed = false;
+    console.log('eagle:', Util.className(doc.find('eagle')));
+
+    for(let pkg of doc.find('eagle').getAll('package')) {
+      let indexes = [...pkg.children].map((child, i, a) =>
+        a
+          .slice(i + 1)
+          .map((child2, i2) => [i2 + i + 1, Util.equals(child.raw, child2.raw)])
+          .filter(([index, equal]) => equal)
+          .map(([index]) => index)
+      );
+
+      indexes = indexes.flat().reverse();
+      let paths = indexes.map(i => pkg.path.down('children', i));
+
+      //console.log("pkg.children", pkg.children.toXML());
+      console.log('indexes', pkg.name, paths);
+
+      //console.log('remove', paths.map(i => deep.get(doc.raw, [...i])));
+
+      paths.forEach(i => deep.unset(doc.raw, [...i]));
+      changed = changed || indexes.length > 0;
+
+      //console.log("indexes:", new Map(indexes.map((j,i) => [i, j]).filter(([i,j]) => j.length).map(([i,j]) => [i,pkg.children[j]])));
+    }
+    if(changed) {
+      doc.saveTo(doc.filename);
+      console.log('Saved:', doc.filename);
+    }
+  }
+
+  let desc = proj.documents.map(doc => [doc.filename, doc.find('description')]);
+  console.log('desc', desc);
+
+  desc = desc
+    .map(([file, e]) => [file, e && e.xpath()])
+    .map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
   desc = new Map(desc);
   console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
 
@@ -237,7 +276,7 @@ async function testEagle(filename) {
   let args = Util.getArgs();
   if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
   for(let arg of args) {
-    arg = arg.replace(/\.(brd|sch|lbr)$/i, '');
+    //arg = arg.replace(/\.(brd|sch|lbr)$/i, '');
     try {
       let project = await testEagle(arg);
     } catch(err) {

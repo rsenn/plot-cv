@@ -15,7 +15,7 @@ import { trkl } from './lib/trkl.js';
 import { Element } from './lib/dom.js';
 import { useTrkl } from './lib/eagle/renderUtils.js';
 import { classNames } from './lib/classNames.js';
-import { useEvent, useElement, useDoubleClick, useDimensions } from './lib/hooks.js';
+import { useEvent, useElement, useDoubleClick, useDimensions, usePanZoom } from './lib/hooks.js';
 import deepDiff from './lib/deep-diff.js';
 
 export const ClickHandler = callback => e => {
@@ -163,7 +163,7 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
 export const Label = ({ className, text, title, tooltip, children, ...props }) => {
   if(typeof title == 'string' && title.length > 0) props.title = title;
   if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
-  return h('div', { className: classNames('label', className), ...props }, (text ? [text] : []).concat(children));
+  return h('div', { className: classNames('caption', className), ...props }, (text ? [text] : []).concat(children));
 };
 
 export const DynamicLabel = ({ caption, title, children, ...props }) => {
@@ -592,7 +592,8 @@ export const TransformedElement = ({
       id,
       className: classNames('transformed-element', className && className + '-size'),
       style: { position: 'relative', ...style, transform },
-      aspect
+      aspect,
+      ...props
     },
     children
   );
@@ -901,7 +902,7 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen = trkl(false), .
       const diff = Point.diff(...points);
       const dist = Point.distance(...points);
       const inside = orect && orect.inside({ x, y });
-   //   console.debug(e.type, diff, dist, {timeStep, orect, inside, x, y, buttons, button, timeStamp });
+      //   console.debug(e.type, diff, dist, {timeStep, orect, inside, x, y, buttons, button, timeStamp });
       if(e.button == 2) {
         e.preventDefault();
         return false;
@@ -930,6 +931,62 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen = trkl(false), .
   return h(Fragment, {}, open ? [button, into ? h(Portal, { into }, overlay) : overlay] : button);
 };
 
+export const Fence = ({ children, style = {}, sizeListener, aspectListener, ...props }) => {
+  const [dimensions, setDimensions] = useState(sizeListener());
+  const [aspect, setAspect] = useState(aspectListener());
+  if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
+  if(aspectListener && aspectListener.subscribe) aspectListener.subscribe(value => setAspect(value));
+  console.debug('Fence dimensions:', dimensions);
+  return h(TransformedElement,
+    {
+      id: 'fence',
+      type: SizedAspectRatioBox,
+      aspect,
+      // listener: transform,
+      style: {
+        position: 'relative',
+        minWidth: '100px',
+        ...style,
+        ...dimensions
+      },
+      ...props
+    },
+    children
+  );
+};
+
+export const Zoomable = ({ type = 'div', style,   children, ...props }) => {
+  const { transform, panZoomHandlers, setContainer, setPan, setZoom } = usePanZoom({
+    zoomSensitivity: 0.001,
+    minZoom: 1,
+    //minX: 0, minY: 0, //maxX: window.innerWidth, maxY: window.innerHeight,
+    onPan,
+    onZoom
+  });
+  function onPan(arg) {
+    //console.log('onPan', arg);
+  }
+  function onZoom(arg) {
+    //console.log('onZoom', arg);
+  }
+  // console.log('Zoomable transform:', transform);
+  let inner = trkl();
+  const ref = el => {
+    /*  if(el && typeof el.getBoundingClientRect == 'function')
+          console.log('Zoomable.container:', el.getBoundingClientRect());
+
+        if(inner())
+          console.log('Zoomable.inner:', inner().getBoundingClientRect());*/
+    setContainer(el);
+  };
+  return h(type,
+    {
+      ...props,
+      ...panZoomHandlers
+    },
+    h(type, { ref,     style: { ...style, transform } }, children)
+  );
+};
 /*
 export const Conditional = ({ trkl, children, ...props }) => {
   const [cond, setCond] = useState(trkl());
@@ -959,5 +1016,6 @@ export default {
   ColorWheel,
   Slider,
   CrossHair,
-  MoveCursor
+  MoveCursor,
+  Fence
 };

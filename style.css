@@ -34,13 +34,13 @@ svg {
   user-select: none;
 }
 
-.label,
+.caption,
 .description {
   font-size: 1em;
   letter-spacing: 0em;
   white-space: pre;
 }
-span.label {
+span.caption {
   font-family: Verdana, 'sans-serif', 'Arial';
   font-weight: normal;
   font-size: 13px;
@@ -55,11 +55,11 @@ pre.description {
   font-size: 12px;
   font-style: normal;
 }
-pre.label,
-span.label {
+pre.caption,
+span.caption {
   margin: 0 0 0.25em 0;
 }
-p.label,
+p.caption,
 p.description {
   margin: 0;
 }
@@ -79,8 +79,12 @@ div.description {
 p.description {
   /* width: 100vw;*/
 }
+.hfill,
 .fill {
   width: 100%;
+}
+.vfill,
+.fill {
   height: 100%;
 }
 
@@ -122,30 +126,31 @@ p.description {
 .grow {
   flex: 1 0 auto;
 }
-.label {
+.caption {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-flow: row nowrap;
 }
-.label.pad-lr {
+.caption.pad-lr {
   flex-grow: 1;
 }
 .file {
   border-radius: 5px;
 }
-.file.label {
+.file.caption {
   width: 100%;
 }
-.file > .label {
+.file > .caption {
   font-size: 1.2em;
   width: 100%;
 }
 .hstart,
-.label {
+.caption {
   justify-content: flex-start;
 }
 .vcenter {
+  display: inline-flex;
   align-items: center;
 }
 .hidden {
@@ -283,7 +288,7 @@ body,
 .file.none {
   background: white;
 }
-.buttons > .label {
+.buttons > .caption {
   color: white;
 }
 svg,
@@ -389,7 +394,7 @@ body {
   pointer-events: none;
 }
 
-label {
+caption {
   display: flex;
   padding: 2px 4px;
 }
@@ -404,8 +409,8 @@ label {
 }
 #main {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  /*justify-content: center;
+  align-items: center;*/
 }
 #container {
   display: inline-block;
@@ -426,7 +431,7 @@ body,
   width: 100%;
   height: 100%;
 }
-.aspect-ratio-box-size {
+.aspect-ratio-box-size, .zoomable > div {
   /* position: relative; */
   /* overflow: hidden; */
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.75);

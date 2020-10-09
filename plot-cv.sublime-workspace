@@ -88,79 +88,13 @@
 	"buffers":
 	[
 		{
-			"contents": "  readXML\n  writeXML\n  isPositive\n  parseStyle\n  function* formatPath(path)\n  flatSVG\n  scaleSVG\n  path =>\n  main",
+			"contents": "",
 			"settings":
 			{
-				"buffer_size": 113,
+				"buffer_size": 0,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
-			}
-		},
-		{
-			"file": "lib/deep.js",
-			"settings":
-			{
-				"buffer_size": 5519,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "svg-scale.js",
-			"settings":
-			{
-				"buffer_size": 5926,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/dom/css.js",
-			"settings":
-			{
-				"buffer_size": 5289,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/gerber/parser.js",
-			"settings":
-			{
-				"buffer_size": 27942,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/svg/overlay.js",
-			"settings":
-			{
-				"buffer_size": 3460,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/svg/path-parser.js",
-			"settings":
-			{
-				"buffer_size": 50124,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/svg/path.js",
-			"settings":
-			{
-				"buffer_size": 5362,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/util.js",
-			"settings":
-			{
-				"buffer_size": 144878,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
 			}
 		}
 	],
@@ -178,6 +112,14 @@
 			[
 				"svgo",
 				"SVGO: Prettify SVG"
+			],
+			[
+				"pret",
+				"SVGO: Prettify SVG"
+			],
+			[
+				"svg",
+				"SVGO: Minify SVG"
 			],
 			[
 				"outlin",
@@ -379,31 +321,53 @@
 		"/home/roman/Dokumente/Sources/plot-cv",
 		"/home/roman/Dokumente/Sources/plot-cv/include",
 		"/home/roman/Dokumente/Sources/plot-cv/lib",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom"
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/gerber",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/xml"
 	],
 	"file_history":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/css.js",
-		"/home/roman/Dokumente/Sources/plot-cv/svg-scale.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/arc.js",
+		"/home/roman/Dokumente/Sources/plot-cv/clip.html",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/components.js",
 		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
+		"/home/roman/Downloads/vanilla.js",
+		"/home/roman/Dokumente/Sources/plot-cv/drawing-1.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/c.js",
+		"/home/roman/Dokumente/Sources/plot-cv/drawing.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/xml.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
+		"/home/roman/Dokumente/Sources/plot-cv/a.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/color/rgba.js",
+		"/home/roman/Dokumente/Sources/plot-cv/style.css",
+		"/home/roman/Dokumente/Sources/plot-cv/index.html",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/color/hsla.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
+		"/home/roman/Dokumente/Sources/plot-cv/svg-scale.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/bbox.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/css.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/gerber/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/overlay.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/path-parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/path.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/filesystem.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/alea.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/xml.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/tXml.js",
 		"/home/roman/Dokumente/Sources/plot-cv/consoleSetup.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
-		"/home/roman/Dokumente/Sources/plot-cv/components.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
-		"/home/roman/Dokumente/Sources/plot-cv/style.css",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/polyline.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/xpath.js",
@@ -419,12 +383,10 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/useFocus.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/useEvent.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/useDimensions.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/color/rgba.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-trkl.js",
 		"/home/roman/Dokumente/Sources/plot-cv/commands.js",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/Headphone-Amplifier-ClassAB-alt2.brd",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/elementRect.js",
 		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/debug/console-history.js",
@@ -493,24 +455,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-find-module.c",
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/libwebsockets/CMakeLists.txt",
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-libc.h",
-		"/home/roman/Dokumente/Sources/plot-cv/hello.c",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.h",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_contour.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js.h",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_mat.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_point.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_rect.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_size.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.h",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/plot-cv.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/qjsc.c",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/qjscalc.c",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/cutils.c",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/qjs.c",
-		"/home/roman/Dokumente/Sources/plot-cv/test-qjs.c",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-libc.c",
-		"/home/roman/Dokumente/Sources/plot-cv/src/color.cpp"
+		"/home/roman/Dokumente/Sources/plot-cv/hello.c"
 	],
 	"find":
 	{
@@ -539,6 +484,45 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"toString",
+			"viewBox",
+			"$",
+			"viewBox",
+			"fence",
+			"'",
+			"^\\s*console",
+			"olar",
+			"^Util.range",
+			"bounds:",
+			"'svg'",
+			"XmlObj",
+			"bit",
+			"pivots",
+			"timer",
+			"Util.timer",
+			"localFunc",
+			"FileSystem",
+			"double\\s*",
+			"))));",
+			"mul",
+			"class ",
+			"rotate",
+			"nterpo",
+			"pointAt",
+			"255",
+			"  let r = svgGroupFactory({ stroke: RGBA.random([0,255],[0,255],[0,255],[0,255],prng), transform });\n",
+			"random =",
+			"Alea",
+			"50",
+			"DrawArc",
+			"z-index",
+			"local",
+			"  \n",
+			"Arc",
+			"geom.js",
+			"distance",
+			"enter",
+			"CalculateArcRadius",
 			"^Util.merge",
 			" \");",
 			"return `(.) ",
@@ -627,46 +611,7 @@
 			"isRect",
 			"isPoint",
 			"ElementXYProps",
-			"Rect",
-			"getCSS",
-			"walkUp",
-			"receiver",
-			"^Util.diff",
-			"subscribe",
-			"TouchListen",
-			"Polyline",
-			"tooltip",
-			"sha",
-			"tlite",
-			"data-tool",
-			"itle",
-			"'yes'",
-			":hover",
-			"weight",
-			"           \n",
-			"restoreItemsProperty",
-			"useState",
-			"layerList",
-			"Layer =",
-			"visible:",
-			"layerList",
-			"Layer",
-			"Layer =",
-			"useDim",
-			"use",
-			"useDim",
-			"useDimensions",
-			"FunctionArgument",
-			"FunctionDeclaration",
-			"FunctionDecl",
-			"formalParameterList",
-			"AliasNa",
-			"ImportStat",
-			"ObjectLiteral",
-			"aliasName",
-			"class Import",
-			"As ",
-			"As"
+			"Rect"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -674,6 +619,10 @@
 		"regex": true,
 		"replace_history":
 		[
+			"\"",
+			"let ",
+			" ",
+			"defs",
 			"case '\\1': return `${part.code} ",
 			"`;",
 			"/",
@@ -750,328 +699,32 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 113,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
 						"selection":
 						[
-							[
-								0,
-								0
-							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/svg-scale.js",
+							"current_file": null,
 							"outline_rename_mode": false,
-							"symkeys":
-							[
-								[
-									486,
-									512
-								],
-								[
-									668,
-									700
-								],
-								[
-									1006,
-									1028
-								],
-								[
-									1096,
-									1125
-								],
-								[
-									1380,
-									1406
-								],
-								[
-									2331,
-									2352
-								],
-								[
-									2447,
-									2476
-								],
-								[
-									4835,
-									4842
-								],
-								[
-									5498,
-									5526
-								]
-							],
-							"symlist":
-							[
-								"  readXML",
-								"  writeXML",
-								"  isPositive",
-								"  parseStyle",
-								"  function* formatPath(path)",
-								"  flatSVG",
-								"  scaleSVG",
-								"  path =>",
-								"  main"
-							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 1,
 			"sheets":
 			[
-				{
-					"buffer": 1,
-					"file": "lib/deep.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5519,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5026,
-								5026
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "svg-scale.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5926,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4549,
-								4549
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 3694.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "lib/dom/css.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5289,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3203,
-								3203
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2253.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "lib/gerber/parser.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 27942,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								612,
-								612
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 414.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "lib/svg/overlay.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3460,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "lib/svg/path-parser.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 50124,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								48489,
-								48518
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 43630.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "lib/svg/path.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5362,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "lib/util.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 144878,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								80628,
-								80628
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 64307.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				}
 			]
 		}
 	],
@@ -1104,7 +757,7 @@
 		[
 			0.0,
 			0.2,
-			0.784171303022,
+			0.712310126822,
 			1.0
 		],
 		"rows":
@@ -1141,12 +794,96 @@
 		"selected_items":
 		[
 			[
-				"scale",
-				"svg-scale.js"
+				"rect.js",
+				"lib/geom/rect.js"
+			],
+			[
+				"clip",
+				"clip.html"
+			],
+			[
+				"boardre",
+				"lib/eagle/boardRenderer.js"
+			],
+			[
+				"comp",
+				"components.js"
+			],
+			[
+				"util",
+				"lib/util.js"
 			],
 			[
 				"util.js",
 				"lib/util.js"
+			],
+			[
+				"drawing.s",
+				"drawing.svg"
+			],
+			[
+				"xml.j",
+				"lib/xml.js"
+			],
+			[
+				"drawing",
+				"drawing.svg"
+			],
+			[
+				"drawin",
+				"drawing-1.svg"
+			],
+			[
+				"arc",
+				"lib/geom/arc.js"
+			],
+			[
+				"Util.",
+				"lib/util.js"
+			],
+			[
+				"main",
+				"main.js"
+			],
+			[
+				"transfo",
+				"lib/geom/transformation.js"
+			],
+			[
+				"line",
+				"lib/geom/line.js"
+			],
+			[
+				"hsla",
+				"lib/color/hsla.js"
+			],
+			[
+				"rgba",
+				"lib/color/rgba.js"
+			],
+			[
+				"style.css",
+				"style.css"
+			],
+			[
+				"index.h",
+				"index.html"
+			],
+			[
+				"geom.js",
+				"lib/geom.js"
+			],
+			[
+				"point.js",
+				"lib/geom/point.js"
+			],
+			[
+				"main.j",
+				"main.js"
+			],
+			[
+				"scale",
+				"svg-scale.js"
 			],
 			[
 				"deep.js",
@@ -1167,14 +904,6 @@
 			[
 				"size.js",
 				"lib/geom/size.js"
-			],
-			[
-				"main",
-				"main.js"
-			],
-			[
-				"util",
-				"lib/util.js"
 			],
 			[
 				"style.cs",
@@ -1213,10 +942,6 @@
 				"lib/trkl.js"
 			],
 			[
-				"style.css",
-				"style.css"
-			],
-			[
 				"util.j",
 				"lib/util.js"
 			],
@@ -1243,10 +968,6 @@
 			[
 				"dom.j",
 				"lib/dom.js"
-			],
-			[
-				"geom.js",
-				"lib/geom.js"
 			],
 			[
 				"compon",
@@ -1583,74 +1304,6 @@
 			[
 				"r.lbr",
 				"tmp/r.lbr"
-			],
-			[
-				"7seg-",
-				"tmp/7seg-2.54.brd"
-			],
-			[
-				"serve",
-				"server.js"
-			],
-			[
-				"align",
-				"lib/geom/align.js"
-			],
-			[
-				"tamper",
-				"create-tamper.js"
-			],
-			[
-				"multimap",
-				"lib/container/multiMap.js"
-			],
-			[
-				"create-tamper",
-				"create-tamper.js"
-			],
-			[
-				"point",
-				"lib/geom/point.js"
-			],
-			[
-				"test-jsjs",
-				"test-jsjs.js"
-			],
-			[
-				"test-ecmascr",
-				"test-ecmascript.js"
-			],
-			[
-				"create-t",
-				"create-tamper.js"
-			],
-			[
-				"point .",
-				"lib/geom/point.js"
-			],
-			[
-				"preactCom",
-				"lib/dom/preactComponent.js"
-			],
-			[
-				"geom",
-				"lib/geom.js"
-			],
-			[
-				"pointList",
-				"lib/geom/pointList.js"
-			],
-			[
-				"eleme",
-				"lib/dom/element.js"
-			],
-			[
-				"logjs",
-				"lib/log.js"
-			],
-			[
-				"stream.j",
-				"lib/stream.js"
 			]
 		],
 		"width": 0.0
