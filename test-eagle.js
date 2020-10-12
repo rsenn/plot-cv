@@ -113,7 +113,8 @@ function updateMeasures(board) {
 }
 
 function alignItem(item) {
-  let geometry = item.geometry();
+  console.debug('alignItem', item);
+  let geometry = item.geometry;
   let oldPos = geometry.clone();
 
   let newPos = geometry.clone().round(1.27, 2);

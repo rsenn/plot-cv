@@ -1,12 +1,5 @@
 // prettier-ignore-start
-import {
-  Transformation,
-  Rotation,
-  Translation,
-  Scaling,
-  MatrixTransformation,
-  TransformationList
-} from './lib/geom/transformation.js';
+import { Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList } from './lib/geom/transformation.js';
 import dom from './lib/dom.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
 import { iterator, eventIterator } from './lib/dom/iterator.js';
@@ -36,92 +29,24 @@ import { makeLocalStorage } from './lib/autoStore.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { useResult } from './lib/repeater/react-hooks.js';
 import { Portal } from './lib/dom/preactComponent.js';
+import { BinaryTree } from './lib/container/binaryTree.js';
 import LogJS from './lib/log.js';
 import serial from './serial.js';
 import { toXML, ImmutablePath, arrayDiff, objectDiff } from './lib/json.js';
 import { Object2Array, XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';
 import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
-import React, {
-  h,
-  html,
-  render,
-  Fragment,
-  Component,
-  useState,
-  useLayoutEffect,
-  useRef
-} from './lib/dom/preactComponent.js';
-import components, {
-  Chooser,
-  DynamicLabel,
-  Button,
-  FileList,
-  Panel,
-  SizedAspectRatioBox,
-  TransformedElement,
-  Canvas,
-  ColorWheel,
-  Slider,
-  CrossHair,
-  FloatingPanel,
-  DropDown,
-  Conditional,
-  Fence,
-  Zoomable
-} from './components.js';
+import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
+import components, { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable } from './components.js';
 import { Message } from './message.js';
 
 import { useEvent, useElement, useDoubleClick, useDimensions } from './lib/hooks.js';
 
 import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import { CTORS, ECMAScriptParser, estree, Factory, Lexer, Position, Range, ESNode, Parser, PathReplacer, Printer, Stack, Token, ArrayBindingPattern, ArrayLiteral, ArrowFunction, AssignmentExpression, AwaitExpression, BinaryExpression, BindingPattern, BindingProperty, LabelledStatement, BlockStatement, BreakStatement, CallExpression, ClassDeclaration, ConditionalExpression, ContinueStatement, Declaration, DecoratorExpression, DoStatement, EmptyStatement, Expression, ExpressionStatement, ForInStatement, ForStatement, FunctionLiteral, FunctionDeclaration, Identifier, ComputedPropertyName, IfStatement, SwitchStatement, CaseClause, ImportStatement, ExportStatement, JSXLiteral, Literal, TemplateLiteral, LogicalExpression, MemberExpression, InExpression, NewExpression, ObjectBindingPattern, ObjectLiteral, PropertyDefinition, MemberVariable, Program, RestOfExpression, ReturnStatement, SequenceExpression, SpreadElement, Statement, StatementList, ThisExpression, ThrowStatement, YieldStatement, TryStatement, UnaryExpression, UpdateExpression, VariableDeclaration, VariableDeclarator, WhileStatement, WithStatement } from './lib/ecmascript.js';
-import {
-  PipeTo,
-  AsyncRead,
-  AsyncWrite,
-  DebugTransformStream,
-  TextEncodeTransformer,
-  TextEncoderStream,
-  TextDecodeTransformer,
-  TextDecoderStream,
-  TransformStreamSink,
-  TransformStreamSource,
-  TransformStreamDefaultController,
-  TransformStream,
-  ArrayWriter,
-  readStream,
-  WriteToRepeater,
-  LogSink,
-  RepeaterSink,
-  StringReader,
-  LineReader,
-  ChunkReader,
-  ByteReader,
-  PipeToRepeater,
-  WritableStream,
-  ReadFromIterator
-} from './lib/stream.js?ts=<?TS?>';
+import { PipeTo, AsyncRead, AsyncWrite, DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater, WritableStream, ReadFromIterator } from './lib/stream.js?ts=<?TS?>';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
-import {
-  SVGAlignments,
-  AlignmentAttrs,
-  Alignment,
-  AlignmentAngle,
-  CalculateArcRadius,
-  ClampAngle,
-  EagleAlignments,
-  HORIZONTAL,
-  HORIZONTAL_VERTICAL,
-  InvertY,
-  LayerAttributes,
-  LinesToPath,
-  MakeCoordTransformer,
-  PolarToCartesian,
-  RotateTransformation,
-  VERTICAL,
-  useTrkl
-} from './lib/eagle/renderUtils.js';
+import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl } from './lib/eagle/renderUtils.js';
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
@@ -130,40 +55,10 @@ import { Slot, SlotProvider } from './slots.js';
 import Voronoi from './lib/geom/voronoi.js';
 import GerberParser from './lib/gerber/parser.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
-import {
-  BoardRenderer,
-  DereferenceError,
-  EagleDocument,
-  EagleElement,
-  EagleNode,
-  EagleNodeList,
-  EagleNodeMap,
-  EagleProject,
-  EagleRef,
-  EagleReference,
-  EagleSVGRenderer,
-  Renderer,
-  SchematicRenderer,
-  makeEagleElement,
-  makeEagleNode
-} from './lib/eagle.js';
+import { BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode } from './lib/eagle.js';
 //import PureCache from 'pure-cache';
 import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
-import {
-  NormalizeResponse,
-  ResponseData,
-  FetchURL,
-  FetchCached,
-  GetProject,
-  ListProjects,
-  GetLayer,
-  AddLayer,
-  BoardToGerber,
-  GerberToGcode,
-  GcodeToPolylines,
-  ListGithubRepo,
-  ListGithubRepoServer
-} from './commands.js';
+import { NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer } from './commands.js';
 // prettier-ignore-end
 
 /* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line,Matrix,  Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
@@ -240,18 +135,22 @@ tlite(() => ({ grav: 'nw', attrib: ['data-tlite', 'data-tooltip', 'title', 'data
 const utf8Decoder = new TextDecoder('utf-8');
 let svgOwner, parent;
 
-const svgFactory = lazyInitializer(() => {
-  parent = project.svg.parentElement;
+const svgFactory = Util.memoize((parent, delegate) => {
+  parent = parent ? Element.find(parent) : project.svg.parentElement;
   const factory = SVG.factory({
+    ...delegate,
     append_to(elem, p) {
-      (p || parent).appendChild(elem);
+      if(delegate.append_to) delegate.append_to(elem, p || parent);
     }
   });
-  let rect = DrawSVG.calcViewBox();
+  let rect = calcViewBox(parent);
+  let zIndex = maxZIndex() + 1;
   const svg = [
     'svg',
-    { viewBox: rect.toString(), style: 'position: absolute; left: 0; top: 0;' },
-    [
+    {
+      viewBox: rect.toString(),
+      style: `position: absolute; left: 0; top: 0; z-index: ${zIndex}; stroke: #000, fill: none;`
+    }, [
       ['defs'],
       [
         'g',
@@ -265,60 +164,69 @@ const svgFactory = lazyInitializer(() => {
   return factory;
 });
 
-const DrawSVG = (...args) => {
-  const factory = svgFactory();
-  let e;
-  try {
-    let parent = project.svg.parentElement.lastElementChild;
-    const append = e => parent.appendChild(e);
-    let c = RGBA.random();
-    let [tag, attrs, children] = args;
-    if(typeof tag == 'string') {
-      // console.log('draw(', ...args, ')');
-      e = factory(tag, { stroke: c.hex(), 'stroke-width': 0.1, ...attrs }, children);
-    } else if(Util.isArray(args[0])) {
-      let items = args.shift();
-      document.querySelector('#main > div > div > div > svg:nth-child(2) > g');
-      DrawSVG.setViewBox(BBox.from(items));
-      for(let item of items) {
-        let line;
-        if(isLine(item)) line = new Line(item);
-        if(line) {
-          e = factory('line', { ...line.toObject(), stroke: c.hex(), 'stroke-width': 0.1 });
-          append(e);
-          //   console.log('e:', e);
-        }
-      }
-      return;
+function DrawSVG(...args) {
+  const factory = svgFactory('body', {
+    append_to(elem, p) {
+      console.log('append_to', this, { elem, p });
+      (p || this.root).appendChild(elem);
+      adjustViewBox(elem);
     }
-    if(e) append(e);
-  } catch(error) {
-    Util.putError(error);
-    throw error;
-  }
-  return e;
+  });
+  let e;
+  /*let parent = project.svg.parentElement.lastElementChild;
+    const append = e => parent.appendChild(e);*/
+  let c = RGBA.random();
+  let [tag, attrs, children] = args;
+  if(typeof tag == 'string') {
+    // console.log('draw(', ...args, ')');
+    e = factory(tag, { stroke: c.hex(), 'stroke-width': 0.1, ...attrs }, children);
+  } else if(Util.isArray(args[0])) {
+    let items = args.shift();
+    // document.querySelector('#main > div > div > div > svg:nth-child(2) > g');
+    //   setViewBox(factory.root.ownerSVGElement||factory.root, BBox.from(items));
+    for(let item of items) {
+      let line;
+      if(isLine(item)) line = new Line(item);
+      if(line) {
+        e = factory('line', { ...line.toObject(), stroke: c.hex(), 'stroke-width': 0.1 });
+      }
+    }
 
-  function calcViewBox(box) {
-    box = box || (project && project.doc && BBox.from(project.doc.getMeasures(true) || project.doc.getBounds(0)));
-    box = box || Element.rect('.aspect-ratio-box-inside');
-    const { width, height, x, y } = box;
-    let { x1, y1, x2, y2 } = new Rect(x, y, width, height);
-    const rect = new BBox(x1, y1 - y2, x2 - x1, y2);
-    return rect;
+    return;
   }
 
-  function setViewBox(box) {
-    svgOwner = svgOwner || [...Element.findAll('svg', Element.find('#main'))].reverse()[0];
-    const rect = box; // instanceof BBox ? box : DrawSVG.calcViewBox(box);
-    rect.y1 -= rect.y2;
-    rect.x2 -= rect.x1;
-    console.log('setViewBox', { svgOwner, rect, box });
-    svgOwner.setAttribute('viewBox', rect.toString());
-    svgOwner.lastElementChild.setAttribute('transform', `scale(1,-1)  translate(0,${-rect.height})`);
-    Element.attr(svgOwner.lastElementChild.firstElementChild, { ...rect.toRect() });
-  }
-};
+  function adjustViewBox(e) {
+    let ownerSVG;
 
+    if(!(ownerSVG = e.ownerSVGElement)) return;
+    let rect = new Rect(ownerSVG.getBBox());
+    //console.log('ownerSVG:', ownerSVG, 'rect:', rect);
+    ownerSVG.setAttribute('viewBox', rect + '');
+    if(!ownerSVG.style.maxHeight) Element.setCSS(ownerSVG, { maxWidth: '100vw', maxHeight: '100vh' });
+  }
+
+  return e || factory;
+}
+
+function calcViewBox(box) {
+  box = box || (project && project.doc && BBox.from(project.doc.getMeasures(true) || project.doc.getBounds(0)));
+  box = box || Element.rect('.aspect-ratio-box-inside');
+  const { width, height, x, y } = box;
+  let { x1, y1, x2, y2 } = new Rect(x, y, width, height);
+  const rect = new BBox(x1, y1 - y2, x2 - x1, y2);
+  return rect;
+}
+
+function setViewBox(svgOwner, box) {
+  svgOwner = svgOwner || [...Element.findAll('svg', Element.find('#main'))].reverse()[0];
+  const rect = box; // instanceof BBox ? box : DrawSVG.calcViewBox(box);
+  rect.y1 -= rect.y2;
+  rect.x2 -= rect.x1;
+  console.log('setViewBox', { svgOwner, rect, box });
+  svgOwner.setAttribute('viewBox', rect.toString());
+  svgOwner.lastElementChild.setAttribute('transform', `scale(1,-1)  translate(0,${-rect.height})`);
+  Element.attr(svgOwner.lastElementChild.firstElementChild, { ...rect.toRect() });
+}
 const ElementToXML = (e, predicate) => {
   const x = Element.toObject(e, { predicate });
 
@@ -550,6 +458,67 @@ function DrawArc(start, end, angle) {
 
   //g('line', { ...line2.toObject(), stroke: '#0f0' });
 }
+
+const DrawBinaryTree = (tree, draw = DrawSVG()) => {
+  let a = [];
+  const add = (level, item) => (a[level] ? a[level].push(item) : (a[level] = [item]));
+
+  RecurseBinaryNode(tree.root);
+
+  let svg = Element.find('body > svg');
+  [...svg.children].forEach(Element.remove);
+
+  function RecurseBinaryNode(node, parent = null, depth = 0) {
+    let item = { node, parent, y: depth * 20 };
+    add(depth, item);
+
+    if(node.left) RecurseBinaryNode(node.left, item, depth + 1);
+    if(node.right) RecurseBinaryNode(node.right, item, depth + 1);
+  }
+
+  console.log('a:', a);
+  a.forEach((nodes, i, level) => {
+    let fx = j => j * 20 - ((nodes.length - 1) * 20) / 2;
+    nodes.map((node, j) => (node.x = fx(j)));
+  });
+  a.flat().forEach(item => (DrawNode(item.x, item.y, item.node), item.parent && DrawEdge(item, item.parent)));
+
+  function DrawNode(x, y, node) {
+    draw('circle', { cx: x, cy: y, r: 5, stroke: '#000', fill: '#fff', 'stroke-width': 0.4 });
+    draw('text', { x: x + 0.2, y: y + 0.5, ...AlignmentAttrs({ x: 0, y: 0 }), 'font-size': '6px' }, node.value + '');
+  }
+  function DrawEdge(item, parent) {
+    let points = [item, parent].map(Point);
+    let line = new Line(...points);
+    let slope = line.slope.normal().mul(5);
+
+    points[0].add(slope);
+    points[1].sub(slope);
+
+    console.log('points:', points);
+    draw('line', { ...Line(...points).round(0.001), stroke: '#000', 'stroke-width': 0.4 });
+  }
+};
+DrawBinaryTree.bt = new BinaryTree(new BinaryTree.Node(
+    'A',
+    new BinaryTree.Node('B', new BinaryTree.Node('D')),
+    new BinaryTree.Node('C', new BinaryTree.Node('E', null, new BinaryTree.Node('G')), new BinaryTree.Node('F'))
+  )
+);
+DrawBinaryTree.bt = new BinaryTree(new BinaryTree.Node(
+    'V',
+    new BinaryTree.Node('H', new BinaryTree.Node(2), new BinaryTree.Node(1)),
+    new BinaryTree.Node(
+      'H',
+      new BinaryTree.Node('H',
+        new BinaryTree.Node('V', new BinaryTree.Node(6), new BinaryTree.Node(7)),
+        new BinaryTree.Node('V', new BinaryTree.Node(4), new BinaryTree.Node(5)),
+        new BinaryTree.Node('V')
+      ),
+      new BinaryTree.Node(3)
+    )
+  )
+);
 
 function GetPaths(query, parent = project.svg) {
   return Element.findAll(query, parent).reduce((a, e) => a.concat(e.tagName != 'path' ? Element.findAll('path', e) : [e]),
@@ -1256,7 +1225,7 @@ const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 const AppMain = (window.onload = async () => {
   Util(globalThis);
   //prettier-ignore
-  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, ImmutablePath, arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser,  PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer, classNames   };
+  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, ImmutablePath, arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser,  PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer, classNames , BinaryTree  };
   const localFunctions = {
     PackageChildren,
     ElementChildren,
@@ -1289,7 +1258,8 @@ const AppMain = (window.onload = async () => {
     DrawArc,
     maxZIndex,
     ClearCache,
-    PackageNames
+    PackageNames,
+    DrawBinaryTree
   };
 
   const importedNames = Object.keys(imports);
@@ -1941,9 +1911,7 @@ const AppMain = (window.onload = async () => {
 
     event.elements = document.elementsFromPoint(x, y);
 
-    if(event.elements.length)
-console.log('moveHandler', { x, y }, event.elements );
-
+    //if(event.elements.length) console.log('moveHandler', { x, y }, event.elements );
 
     let zIndex = Math.max(...Element.walkUp(event.target, (e, d, set) => set(Element.getCSS(e, 'z-index'))).filter(z => !isNaN(+z))
     );

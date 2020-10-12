@@ -3,18 +3,7 @@ import PortableFileSystem from './lib/filesystem.js';
 import ConsoleSetup from './consoleSetup.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
-import estree, {
-  VariableDeclaration,
-  ImportStatement,
-  ExportStatement,
-  Identifier,
-  MemberExpression,
-  ESNode,
-  CallExpression,
-  ObjectBindingPattern,
-  Literal,
-  AssignmentExpression
-} from './lib/ecmascript/estree.js';
+import estree, { VariableDeclaration, ImportStatement, ExportStatement, Identifier, MemberExpression, ESNode, CallExpression, ObjectBindingPattern, Literal, AssignmentExpression } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 import { ImmutablePath, Path } from './lib/json.js';
@@ -524,20 +513,22 @@ async function main(...args) {
       useStrict.forEach(([path, node]) => deep.unset(ast, path));
       let importDeclarations = imports.map(([path, node], i) => getDeclarations(ast, importNodes[i]));
       //console.debug('importDeclarations:', importDeclarations);
-      imports = imports.map(([path, node], i) =>
-        ES6ImportExport.create({
+      imports = imports.map(([path, node], i) => {
+        const { position } = ESNode.assoc(node);
+
+        return ES6ImportExport.create({
           ast,
           node,
           importNode: importNodes[i],
           path,
           file,
           identifiers: node.right instanceof Identifier ? [node.right.value] : [],
-          position: ESNode.assoc(node).position,
+          position,
           fromValue: getFromValue([node, path]),
-          fromPath: getFromPath([path, node], file),
+          fromPath: getFromPath([path, node], position),
           bindings: new Map(importDeclarations[i])
-        })
-      );
+        });
+      });
       let statement2module = imports.map(imp => [imp.node, imp]);
       statement2module = new WeakMap(statement2module);
       let alter = imports.filter(({ file, ...module }) => re.test(file));
@@ -634,9 +625,22 @@ function parseFile(file) {
   return { data, error, ast, parser, printer };
 }
 
-function getFile(module, file) {
-  // console.log(`getFile(  `, module, file, ` )`);
-  return searchModuleInPath(module, file);
+function getFile(module, position) {
+  let r;
+  let file = typeof position == 'string' ? position : position.file;
+
+  module = module.replace(/\?.*/g, '');
+
+  if(module.indexOf('/') != -1 && typeof file == 'string' && !path.isAbsolute(module))
+    module = path.join(path.dirname(file), module);
+
+  try {
+    if(filesystem.exists(module)) r = module;
+    else r = searchModuleInPath(module, position.file);
+  } catch(err) {
+    console.log(`getFile(  `, module, position + '', ` ) =`, err);
+  }
+  return r;
 }
 
 function getFromValue(...args) {
@@ -693,10 +697,11 @@ function getFromBase(path, node) {
   return str;
 }
 
-function getFromPath([path, node], file) {
+function getFromPath([path, node], position) {
+  let file = typeof position == 'string' ? position : position.file;
   let fileName,
     fromStr = getFromValue([node, path]);
-  if(typeof fromStr == 'string') fileName = getFile(fromStr, file);
+  if(typeof fromStr == 'string') fileName = getFile(fromStr, position);
   return fileName;
 }
 
@@ -780,7 +785,7 @@ function findModule(relpath) {
     relpath + '/package.json',
     ...makeNames(relpath + '/src/index'),
     ...makeNames(relpath + '/src/' + name),
-    makeNames(relpath + '/dist/' + name),
+    ...makeNames(relpath + '/dist/' + name),
     ...makeNames(relpath + '/dist/index'),
     ...makeNames(relpath + '/build/' + name),
     ...makeNames(relpath + '/' + name),
@@ -863,7 +868,7 @@ function getDeclarations(ast, paths) {
 
   if(node.id && node.init) return [[node.id, node.init]];
 
-  console.log('getDeclarations:', node);
+  //console.log('getDeclarations:', node);
 
   if(node.identifiers) node = node.identifiers;
   if(node.declarations)

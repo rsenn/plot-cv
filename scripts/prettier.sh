@@ -40,6 +40,7 @@ main() {
   #EXPR="$EXPR; /^\s*let\s/ { :lp; /;\s*$/! { N; s,\s*\n\s*, ,g; b lp } }"
   #EXPR="$EXPR; /^\s*const\s/ { :lp; /;\s*$/! { N; s,\s*\n\s*, ,g; b lp } }"
   #EXPR="$EXPR; /^\s*var\s/ { :lp; /;\s*$/! { N; s,\s*\n\s*, ,g; b lp } }"
+  EXPR="$EXPR; /^import/ { :lp; /;$/! { N; b lp };  s|\n\s*| |g }"
 
   SEP=${IFS%"${IFS#?}"}
 

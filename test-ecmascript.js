@@ -1,15 +1,7 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
-import {
-  estree,
-  ESNode,
-  TemplateLiteral,
-  CallExpression,
-  ImportStatement,
-  Identifier,
-  ObjectBindingPattern
-} from './lib/ecmascript/estree.js';
+import { estree, ESNode, TemplateLiteral, CallExpression, ImportStatement, Identifier, ObjectBindingPattern } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import { Path } from './lib/json.js';
@@ -22,6 +14,8 @@ let filesystem;
 
 const testfn = () => true;
 const testtmpl = `this is\na test`;
+
+const code = `Util.matchAll(/([^:]*)\\s*:\\s*([^;]*);?/gm, body)`;
 
 Util.callMain(main, true);
 
@@ -45,23 +39,26 @@ globalThis.parser = null;
 let files = {};
 
 async function main(...args) {
-  if(args.length == 0) args.push('-');
-  //await import('tty');
   const stdout = (await import('process')).stdout;
 
   const breakLength = stdout.columns || process.env.COLUMNS || 80;
   await ConsoleSetup({ breakLength, maxStringLength: breakLength });
   console.log('breakLength:', breakLength);
 
-  filesystem = await PortableFileSystem();
+  await PortableFileSystem(fs => (filesystem = fs));
 
-  if(args.length == 0) args.push('./lib/ecmascript/parser.js');
+  //await import('tty');
+
+  if(args.length == 0) args.push(null); //'./lib/ecmascript/parser.js');
   for(let file of args) {
     let data, b, ret;
     if(file == '-') file = '/dev/stdin';
 
-    if(filesystem.exists(file)) data = filesystem.readFile(file);
-
+    if(file && filesystem.exists(file)) data = filesystem.readFile(file);
+    else {
+      file = 'stdin';
+      data = code;
+    }
     console.log('file:', file);
     console.log('opened:', Util.abbreviate(data));
     let ast, error;
@@ -71,10 +68,10 @@ async function main(...args) {
 
     console.log('prototypeChain:', Util.getPrototypeChain(parser));
 
-    console.log('methodNames:', Util.getMethodNames(parser, 2));
+    // console.log('methodNames:', Util.getMethodNames(parser, 2));
 
     //console.log(new parser.estree.Identifier());
-    console.log('OK');
+    console.log('OK, data: ', data);
 
     try {
       ast = parser.parseProgram();

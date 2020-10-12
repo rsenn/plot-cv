@@ -7,7 +7,7 @@ const testtmpl = `this is
 a test`;
 
 const Code = `
-         var INVALID_BASE64_RE = /[^+/0-9A-Za-z-_]/g;
+         Util.matchAll(/([^:]*)\\s*:\\s*([^;]*);?/gm, body)
 
  `;
 
@@ -39,7 +39,7 @@ const LoginIcon = ({ style }) =>
 (async arg => {
   await ConsoleSetup();
   let data = Code || (await fs.readFile(arg || './lib/ecmascript/parser.js'));
-  //console.log(data);
+  console.log('data:', data);
 
   let lexer = new Lexer(data.toString());
   let token;
@@ -50,6 +50,6 @@ const LoginIcon = ({ style }) =>
       console.info('tok:', token.value);
     } while(token.type != 'eof');
   } catch(err) {
-    console.error()('ERROR:', err);
+    console.log('ERROR:', err);
   }
 })(...Util.getArgs());

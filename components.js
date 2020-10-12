@@ -1,16 +1,4 @@
-import {
-  h,
-  Fragment,
-  html,
-  render,
-  Component,
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  Portal,
-  ReactComponent
-} from './lib/dom/preactComponent.js';
+import { h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent } from './lib/dom/preactComponent.js';
 import { trkl } from './lib/trkl.js';
 import { Element } from './lib/dom.js';
 import { useTrkl } from './lib/eagle/renderUtils.js';
@@ -955,10 +943,11 @@ export const Fence = ({ children, style = {}, sizeListener, aspectListener, ...p
   );
 };
 
-export const Zoomable = ({ type = 'div', style,   children, ...props }) => {
+export const Zoomable = ({ type = 'div', style, children, ...props }) => {
   const { transform, panZoomHandlers, setContainer, setPan, setZoom } = usePanZoom({
     zoomSensitivity: 0.001,
     minZoom: 1,
+    initialZoom: 4,
     //minX: 0, minY: 0, //maxX: window.innerWidth, maxY: window.innerHeight,
     onPan,
     onZoom
@@ -984,7 +973,7 @@ export const Zoomable = ({ type = 'div', style,   children, ...props }) => {
       ...props,
       ...panZoomHandlers
     },
-    h(type, { ref,     style: { ...style, transform } }, children)
+    h(type, { ref, style: { ...style, transform } }, children)
   );
 };
 /*
