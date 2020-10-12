@@ -1,18 +1,27 @@
 import Util from './lib/util.js';
 
-export async function ConsoleSetup(options) {
+export async function ConsoleSetup(opts = {}) {
   let ret;
+  Util.tryCatch(() => (Error.stackTraceLimit = 1000));
+  const proc = await Util.tryCatch(async () => await import('process'));
+  const defaultBreakLength =
+    proc && proc.stdout && proc.stdout.isTTY ? proc.stdout.columns || proc.env.COLUMNS : Infinity;
+  const { depth = 2, colors = await Util.isatty(1), breakLength = defaultBreakLength, ...options } = opts;
   try {
-    Util.tryCatch(() => (Error.stackTraceLimit = 1000));
-
-    const { Console } = await import('console');
+    //  const { Console } = await import('console');
+    const Console = await import('console').then(module => module.Console);
+    console.log('Console:', Console);
     ret = new Console({
-      stdout: process.stdout,
-      stderr: process.stderr,
-      inspectOptions: { depth: 2, colors: true, ...options }
+      stdout: proc.stdout,
+      stderr: proc.stderr,
+      inspectOptions: { depth, colors, breakLength, ...options }
     });
+    console.log('ret:', ret);
+    ret.colors = colors;
+    ret.depth = depth;
   } catch(err) {}
-  return Util.tryCatch(() => (globalThis.console = ret));
+
+  if(ret) return Util.tryCatch(() => (globalThis.console = ret));
 }
 
 export const ConsoleOnce = Util.once(opts => ConsoleSetup(opts));

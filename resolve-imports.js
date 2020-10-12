@@ -1,7 +1,7 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import PortableFileSystem from './lib/filesystem.js';
 import ConsoleSetup from './consoleSetup.js';
-import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
+import Lexer, { PathReplacer, Position, Range } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
 import estree, { VariableDeclaration, ImportStatement, ExportStatement, Identifier, MemberExpression, ESNode, CallExpression, ObjectBindingPattern, Literal, AssignmentExpression } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
@@ -229,6 +229,7 @@ class ES6ImportExport {
     while(Util.isObject(value, v => v.value)) value = value.value;
     return [value, path];
   }
+
   set from(value) {
     let { ast, node, path } = this;
     if(node.source) {
@@ -365,7 +366,7 @@ async function main(...args) {
   await ConsoleSetup({ colors: true, depth: 6 });
   filesystem = await PortableFileSystem();
 
-  const re = /(lib\/util.js$)/;
+  const re = /(lib\/util.js$|\.mjs$|node_modules\/)/;
   let parameters = [];
 
   while(/^-/.test(args[0])) parameters.push(args.shift());
@@ -401,7 +402,7 @@ async function main(...args) {
     optind++;
   }
 
-  console.log('processed:', ...processed.map(file => `\n  ${file}`));
+  //console.log('processed:', ...processed.map(file => `\n  ${file}`));
 
   DumpFile(`${name}.es`, r.join('\n'));
   let success = Object.entries(processed).filter(([k, v]) => !!v).length != 0;
@@ -525,38 +526,49 @@ async function main(...args) {
           identifiers: node.right instanceof Identifier ? [node.right.value] : [],
           position,
           fromValue: getFromValue([node, path]),
-          fromPath: getFromPath([path, node], position),
+          fromPath: getFromPath([path, node], position || file),
           bindings: new Map(importDeclarations[i])
         });
       });
       let statement2module = imports.map(imp => [imp.node, imp]);
       statement2module = new WeakMap(statement2module);
-      let alter = imports.filter(({ file, ...module }) => re.test(file));
+      /*  let alter = imports.filter(module => {
+        console.log("alter from:", module.fromPath,  re.test(module.fromPath));
+       return re.test(module.fromPath);
+      });
+
+
+      if(alter.length) {
+        //console.log("alter:", alter);
+       imports = imports.filter(module => !re.test(module.fromPath));
+      }
+
       alter = alter.map(node => {
         const to = path.relative(ES6Env.cwd, node.file);
         const from = node.fromValue;
         node.from = new Literal(`'${to}'`);
         return node;
-      });
+      });*/
       let remove = imports.map((imp, idx) => [idx, imp]);
       remove.forEach(([i, imp]) => {
         let nodes = importNodes[i];
         let { path, node } = imp;
-        console.log(`remove.forEach arg`, i, importDeclarations[i].entries(), Util.className(node));
+        // console.log(`remove.forEach arg`, i, getFromPath([path,node], file), importDeclarations[i].entries(), Util.className(node));
         deep.set(ast, [...path], undefined);
       });
 
       let recurseImports = Util.unique(remove.map(([idx, imp]) => imp || imports[idx]));
       //   console.log(`recurseImports [${depth}]:`, recurseImports);
-      let recurseFiles = recurseImports
-        .map(imp => path.relative(ES6Env.cwd, getFromPath([imp.path, imp.node], file)))
-        .filter(imp => processed.indexOf(imp.file) == -1);
+      let recurseFiles = recurseImports.map(imp => path.relative(ES6Env.cwd, getFromPath([imp.path, imp.node], file)));
+
+      recurseFiles = recurseFiles.filter(f => processed.indexOf(f) == -1);
+      recurseFiles = recurseFiles.filter(f => !re.test(f));
 
       imports = imports.filter(({ file, ...module }) => !re.test(file));
 
       if(recurseFiles.length > 0) {
         console.log(`recurseFiles [${depth}] `, recurseFiles.length, recurseFiles);
-        console.log(`${Util.ansi.text(modulePath, 1, 36)}: recurseFiles x${depth}]:`,
+        console.log(`${Util.ansi.text(modulePath, 1, 36)}: recurseFiles [${depth}]:`,
           recurseFiles.map(f => f)
         );
         recurseFiles.forEach((imp, idx) => {
@@ -595,8 +607,8 @@ async function main(...args) {
       Util.putStack(err.stack);
       process.exit(1);
     }
-    console.log('processed files:', ...processed);
   }
+  console.log('processed files:', ...processed);
 
   console.debug(`Modules:\n` + ES6Module.tree());
   /*  console.debug(`ES6Imports:`, new Map(ES6Module.list.map((module) => [module.file, module.imports])));
@@ -627,7 +639,8 @@ function parseFile(file) {
 
 function getFile(module, position) {
   let r;
-  let file = typeof position == 'string' ? position : position.file;
+  let file = position instanceof Range ? position.file : position;
+  //console.log("getFile",{module,position, file}, Util.className(position))
 
   module = module.replace(/\?.*/g, '');
 
@@ -636,9 +649,10 @@ function getFile(module, position) {
 
   try {
     if(filesystem.exists(module)) r = module;
-    else r = searchModuleInPath(module, position.file);
+    else r = searchModuleInPath(module, file);
   } catch(err) {
     console.log(`getFile(  `, module, position + '', ` ) =`, err);
+    throw err;
   }
   return r;
 }
@@ -698,7 +712,8 @@ function getFromBase(path, node) {
 }
 
 function getFromPath([path, node], position) {
-  let file = typeof position == 'string' ? position : position.file;
+  let file = position instanceof Range ? position.file : position;
+  // console.log("getFromPath",{ position, file}, Util.className(position))
   let fileName,
     fromStr = getFromValue([node, path]);
   if(typeof fromStr == 'string') fileName = getFile(fromStr, position);

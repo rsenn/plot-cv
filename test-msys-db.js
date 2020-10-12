@@ -1,25 +1,7 @@
 import PortableFileSystem from './lib/filesystem.js';
 import ConsoleSetup from './consoleSetup.js';
 import { execStream } from './childProcess.js';
-import {
-  AsyncWrite,
-  AsyncRead,
-  AcquireReader,
-  AcquireWriter,
-  PipeToRepeater,
-  LineReader,
-  WritableRepeater,
-  WriteIterator,
-  ReadFromIterator,
-  TextTransformStream,
-  PipeTo,
-  CreateTransformStream,
-  isStream,
-  CreateWritableStream,
-  LineBufferStream,
-  RepeaterSink,
-  RepeaterSource
-} from './lib/stream/utils.js';
+import { AsyncWrite, AsyncRead, AcquireReader, AcquireWriter, PipeToRepeater, LineReader, WritableRepeater, WriteIterator, ReadFromIterator, TextTransformStream, PipeTo, CreateTransformStream, isStream, CreateWritableStream, LineBufferStream, RepeaterSink, RepeaterSource } from './lib/stream/utils.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 import fs from 'fs';

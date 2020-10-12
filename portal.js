@@ -1,13 +1,4 @@
-import React, {
-  h,
-  html,
-  render,
-  Fragment,
-  Component,
-  useState,
-  useLayoutEffect,
-  useRef
-} from './lib/dom/preactComponent.js';
+import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
 
 /** Redirect rendering of descendants into the given CSS selector.
  *  @example

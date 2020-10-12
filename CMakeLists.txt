@@ -14,7 +14,21 @@ include(FindThreads)
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(CheckLibraryExists)
+include(CheckTypeSize)
 include(FindPkgConfig)
+
+macro(check_size TYPE VAR)
+  check_type_size("${TYPE}" CMAKE_${VAR})
+  if(${CMAKE_${VAR}})
+    add_definitions(-D${VAR}=${CMAKE_${VAR}})
+  endif(${CMAKE_${VAR}})
+  message(STATUS "size of ${TYPE} ${CMAKE_${VAR}}")
+endmacro(check_size TYPE VAR)
+
+
+check_size("long" SIZEOF_LONG)
+check_size("long long" SIZEOF_LONG_LONG)
+check_size("size_t" SIZEOF_SIZE_T)
 
 if(NOT POSITION_INDEPENDENT_CODE)
   set(POSITION_INDEPENDENT_CODE ON)

@@ -1,6 +1,5 @@
 /*import { Point as Point_ } from "./lib/geom/point.js";
-import { Size as } from "./lib/geom/size.js";*/
-import { Contour } from 'contour';
+import { Size as } from "./lib/geom/size.js";*/ import { Contour } from 'contour';
 import { Rect } from 'rect';
 import { Point } from 'point';
 import { Size } from 'size';

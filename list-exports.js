@@ -1,14 +1,5 @@
 import { ECMAScriptParser, Printer, PathReplacer } from './lib/ecmascript.js';
-import {
-  ObjectBindingPattern,
-  ObjectLiteral,
-  ImportStatement,
-  ExportStatement,
-  VariableDeclaration,
-  estree,
-  ESNode,
-  Literal
-} from './lib/ecmascript.js';
+import { ObjectBindingPattern, ObjectLiteral, ImportStatement, ExportStatement, VariableDeclaration, estree, ESNode, Literal } from './lib/ecmascript.js';
 import ConsoleSetup from './consoleSetup.js';
 import Util from './lib/util.js';
 import { ImmutablePath } from './lib/json.js';
