@@ -716,7 +716,7 @@ window.dom2eagle=eagle2dom.map(([k, v]) => [v, k]);*/
   return maps;
 }
 
-async function ClearCache(match) {
+async function ClearCache(match = /.*/) {
   let pred = Util.predicate(match);
   let cache = await caches.open('fetch');
   for(let request of await cache.keys()) {
