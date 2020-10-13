@@ -23,7 +23,7 @@ js_mat_data(JSContext* ctx, JSValueConst val) {
   return static_cast<JSMatData*>(JS_GetOpaque2(ctx, val, js_mat_class_id));
 }
 
-static JSValue
+VISIBLE JSValue
 js_mat_new(JSContext* ctx, int cols, int rows, int type) {
   JSValue ret;
   JSMatData* s;

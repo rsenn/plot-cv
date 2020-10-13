@@ -195,6 +195,10 @@ if(QUICKJS_MODULES)
   include(js-bindings.cmake)
 endif(QUICKJS_MODULES)
 
+add_executable(test-dlfcn test-dlfcn.c)
+target_link_libraries(test-dlfcn dl)
+
+
 if(ADDITIONAL_PROGS)
   add_prog(mouth)
   add_prog(canny)
