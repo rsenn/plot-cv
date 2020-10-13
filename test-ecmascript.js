@@ -163,7 +163,7 @@ async function processFile(file) {
     .map(([p, n]) => [p, n.declarations ? n.declarations : n]);
   console.log('importIdentifiers:', importIdentifiers);
 
-/*  importIdentifiers = importIdentifiers.map(([p, n]) =>
+  /*  importIdentifiers = importIdentifiers.map(([p, n]) =>
     n
       .map(decl => (decl.id instanceof ObjectBindingPattern ? decl.id.properties : [decl.id]))
       .flat()

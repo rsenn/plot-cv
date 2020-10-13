@@ -60,6 +60,7 @@
     "preact-ssr-prepass": "^1.1.1",
     "preact-tiny-virtual-list": "^2.2.0",
     "promisify-child-process": "^4.1.1",
+    "proxy-lists": "^1.23.0",
     "pure-cache": "^1.0.5",
     "quickjs-emscripten": "^0.11.0",
     "react-fuse-picker": "^1.0.0",

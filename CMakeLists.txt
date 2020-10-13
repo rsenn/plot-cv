@@ -163,7 +163,9 @@ macro(find_static_library VAR NAME)
     NO_DEFAULT_PATH)
 endmacro()
 
-find_static_library(QUICKJS_LIBRARY quickjs)
+set(QUICKJS_LIBRARY quickjs)
+link_directories(${CMAKE_CURRENT_BINARY_DIR}/quickjs)
+
 message("QUICKJS_LIBRARY: ${QUICKJS_LIBRARY}")
 
 src_program(

@@ -1,13 +1,85 @@
-import ProxyList from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/free-proxy/index.js';
-import ProxyLists from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/proxy-lists/index.js';
-import proxynova from '/home/roman/.nvm/versions/node/v14.3.0/lib/node_modules/proxynova/index.js';
+import ProxyList from './node_modules/free-proxy/index.js';
+import ProxyLists from './node_modules/proxy-lists/index.js';
+import proxynova from './node_modules/proxynova/index.js';
 import Util from './lib/util.js';
 import { Repeater } from './lib/repeater/repeater.js';
+import url from 'url';
 import net from 'net';
+import http from 'http';
+import https from 'https';
+import querystring from 'querystring';
 import ConsoleSetup from './consoleSetup.js';
 import fetch from 'isomorphic-fetch';
 import deep from './lib/deep.js';
 import { promises as fsPromises } from 'fs';
+import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater } from './lib/stream.js';
+
+function TCPSocket(host, port) {
+  const defaultTimeout = 30000;
+  const tcp = new net.Socket();
+  const start = Date.now();
+
+  return new Promise((resolve, reject) => {
+    tcp.setTimeout(defaultTimeout);
+    tcp.setNoDelay(true);
+    console.log(`Connecting to ${host}:${port} ...`);
+    tcp.connect(port, host, () => finish(`Connected to ${host}:${port}`, start));
+    tcp.on('close', () => finish(null, start));
+    tcp.on('error', err => finish(err, -1));
+    tcp.on('timeout', () => finish('timeout', -1));
+
+    function finish(msg, start = -1, end = Date.now()) {
+      if(msg) console.error(msg);
+      if(start < 0) {
+        tcp.destroy();
+        reject(msg);
+      } else {
+        resolve(tcp);
+      }
+    }
+  });
+}
+
+function HTTPRequest(url, proxy_host, proxy_port) {
+  const defaultTimeout = 30000;
+  let ctor = url.startsWith('https') ? https.request : http.request;
+  return new Promise((resolve, reject) => {
+    const req = new ctor(url,
+      {
+        host: proxy_host,
+        port: proxy_port,
+        timeout: defaultTimeout,
+
+        method: 'CONNECT',
+        path: 'www.google.com:80'
+      },
+      res => {
+        console.log('got result!');
+        resolve(res);
+
+        /*   socket.write('GET / HTTP/1.1\r\n' + 'Host: www.google.com:80\r\n' + 'Connection: close\r\n' + '\r\n');
+      socket.on('data', chunk => {
+        console.log((data = chunk.toString()));
+             resolve(data);
+ }); 
+       socket.on('response', chunk => {
+        console.log((data = chunk.toString()));
+           resolve(data);
+   });
+       socket.on('error', error => {
+        console.log("error:",error);
+        reject(error);
+      });  socket.on('close', () => {
+        console.log("closed");
+        reject();
+      });
+      socket.on('end', () => {
+        resolve(data);
+      });*/
+      }
+    );
+  });
+}
 
 function Proxy(obj) {
   const p = this instanceof Proxy ? this : {};
@@ -74,7 +146,7 @@ Proxy.prototype.ping = function() {
     function finish(msg, start = -1, end = Date.now()) {
       proxy.time = start >= 0 ? end - start : Number.Infinity;
       tcp.destroy();
-      if(msg) console.error(msg);
+      if(msg) console.error(msg, proxy.time + 'msecs');
       start < 0 ? reject(msg) : resolve(proxy);
     }
   });
@@ -85,7 +157,16 @@ Proxy.prototype[Symbol.for('nodejs.util.inspect.custom')] = function() {
 
 async function main(country = 'de') {
   await ConsoleSetup({ depth: 2, breakLength: 120 });
-
+  /*let sock = await new TCPSocket('178.238.229.236', 80);
+  await AcquireWriter(sock, w => w.write('CONNECT github.com:443 HTTP/1.1\r\n\r\n'));
+  await AcquireReader(sock, async r => {
+    const data = await r.read();
+    console.log('r.read()=', data.value.toString());
+  });
+  console.log("sock:", sock);*/
+  /*let h = await new HTTPRequest('http://www.google.com', '178.238.229.236', 80);
+  console.log('h:', h);
+  process.exit(0);*/
   console.log(`Searching proxies in country '${country}'`);
   const proxies = [
     new Repeater(async (push, stop) => {
@@ -93,9 +174,10 @@ async function main(country = 'de') {
         const proxyList = new ProxyList();
         for(const p of await proxyList.getByCountryCode(country.toUpperCase())) {
           let proxy = new Proxy({ source: 'free-proxy', ...p });
-          let check = await Check(proxy);
+          await proxy.ping().then(push).catch(console.log);
+          /*  let check = await Check(proxy);
           console.log('\nPROXY:', proxy, check, '\n');
-          push(proxy);
+          push(proxy);*/
         }
       } catch(error) {
         stop(new Error(error));
@@ -103,11 +185,7 @@ async function main(country = 'de') {
     }),
     new Repeater(async (push, stop) => {
       proxynova([country], 1000, async (err, proxies) => {
-        for(let p of proxies)
-          await new Proxy(p)
-            //.ping()
-            .then(push)
-            .catch(console.log);
+        for(let p of proxies) await new Proxy(p).ping().then(push).catch(console.log);
       });
     }),
 

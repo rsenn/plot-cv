@@ -6,7 +6,13 @@ export async function ConsoleSetup(opts = {}) {
   const proc = await Util.tryCatch(async () => await import('process'));
   const defaultBreakLength =
     proc && proc.stdout && proc.stdout.isTTY ? proc.stdout.columns || proc.env.COLUMNS : Infinity;
-  const { depth = 2, colors = await Util.isatty(1), breakLength = defaultBreakLength, ...options } = opts;
+  const {
+    depth = 2,
+    colors = await Util.isatty(1),
+    breakLength = defaultBreakLength,
+    maxArrayLength = Infinity,
+    ...options
+  } = opts;
   try {
     //  const { Console } = await import('console');
     const Console = await import('console').then(module => module.Console);
@@ -14,9 +20,8 @@ export async function ConsoleSetup(opts = {}) {
     ret = new Console({
       stdout: proc.stdout,
       stderr: proc.stderr,
-      inspectOptions: { depth, colors, breakLength, ...options }
+      inspectOptions: { depth, colors, breakLength, maxArrayLength, ...options }
     });
-    console.log('ret:', ret);
     ret.colors = colors;
     ret.depth = depth;
   } catch(err) {}

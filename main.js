@@ -1272,7 +1272,9 @@ const AppMain = (window.onload = async () => {
   Util.weakAssign(window, { functions: Util.filter(localFunctions, v => typeof v == 'function'), dom, geom, imports });
   Error.stackTraceLimit = 100;
 
-  Util.timer(2000).then(() => DrawArc({ x: 50, y: 150 }, { x: 350, y: 300 }, 120 * (Math.PI / 180)));
+  Util.weakAssign(window, {
+    TestArc: () => Util.timer(2000).then(() => DrawArc({ x: 50, y: 150 }, { x: 350, y: 300 }, 120 * (Math.PI / 180)))
+  });
 
   const timestamps = new Repeater(async (push, stop) => {
     push(Date.now());
