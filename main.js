@@ -32,8 +32,8 @@ import { Portal } from './lib/dom/preactComponent.js';
 import { BinaryTree } from './lib/container/binaryTree.js';
 import LogJS from './lib/log.js';
 import serial from './serial.js';
-import { toXML, ImmutablePath, arrayDiff, objectDiff } from './lib/json.js';
-import { Object2Array, XmlObject, XmlAttr, ImmutableXPath } from './lib/xml.js';
+import { toXML, ImmutablePath, MutablePath, arrayDiff, objectDiff } from './lib/json.js';
+import { Object2Array, XmlObject, XmlAttr, ImmutableXPath, MutableXPath } from './lib/xml.js';
 import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
 import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
@@ -46,7 +46,7 @@ import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import { CTORS, ECMAScriptParser, estree, Factory, Lexer, Position, Range, ESNode, Parser, PathReplacer, Printer, Stack, Token, ArrayBindingPattern, ArrayLiteral, ArrowFunction, AssignmentExpression, AwaitExpression, BinaryExpression, BindingPattern, BindingProperty, LabelledStatement, BlockStatement, BreakStatement, CallExpression, ClassDeclaration, ConditionalExpression, ContinueStatement, Declaration, DecoratorExpression, DoStatement, EmptyStatement, Expression, ExpressionStatement, ForInStatement, ForStatement, FunctionLiteral, FunctionDeclaration, Identifier, ComputedPropertyName, IfStatement, SwitchStatement, CaseClause, ImportStatement, ExportStatement, JSXLiteral, Literal, TemplateLiteral, LogicalExpression, MemberExpression, InExpression, NewExpression, ObjectBindingPattern, ObjectLiteral, PropertyDefinition, MemberVariable, Program, RestOfExpression, ReturnStatement, SequenceExpression, SpreadElement, Statement, StatementList, ThisExpression, ThrowStatement, YieldStatement, TryStatement, UnaryExpression, UpdateExpression, VariableDeclaration, VariableDeclarator, WhileStatement, WithStatement } from './lib/ecmascript.js';
 import { PipeTo, AsyncRead, AsyncWrite, DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater, WritableStream, ReadFromIterator } from './lib/stream.js?ts=<?TS?>';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
-import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl } from './lib/eagle/renderUtils.js';
+import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, CartesianToPolar, RotateTransformation, VERTICAL, useTrkl, ElementToClass } from './lib/eagle/renderUtils.js';
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
@@ -634,20 +634,41 @@ function saveItemsProperty(itemList, get = item => Util.is.on(item.visible())) {
 function restoreItemsProperty(map, itemList, set = (item, value) => item.visible(Util.is.on(value))) {
   for(let item of itemList) set(item, map.get(item));
 }
+
 function EagleMaps(project) {
-  let eagle2dom = [...Element.findAll('*[data-path]', project.object)];
+  let transformPath = p => p.replace(/\s*➟\s*/g, '/').replace(/\/([0-9]+)/g, '/[$1]');
+  let eagle2dom = [...Element.findAll('*[data-path]', project.object)].map(e => [
+    transformPath(e.getAttribute('data-path')),
+    e
+  ]);
+  console.debug('eagle2dom:', eagle2dom);
 
-  eagle2dom = eagle2dom.map(e => [e.getAttribute('data-path'), e]);
-  eagle2dom = eagle2dom.map(([p, e]) => [new ImmutablePath(p), e]);
-  eagle2dom = eagle2dom.map(([p, e]) => [p, p.apply(project.doc.raw), e]);
-  eagle2dom = eagle2dom.map(([p, r, e]) => [EagleElement.get(project.doc, p, r), e]);
+  eagle2dom = eagle2dom.map(([p, e]) => [new ImmutableXPath(p), e]);
+  eagle2dom = eagle2dom.map(([p, e]) => [p.apply(project.doc), e]);
 
-  //console.debug('eagle2dom:', eagle2dom);
+  let mapElements = {
+    eagle: Util.unique(eagle2dom.map(([e, d]) => e)),
+    dom: Util.unique(eagle2dom.map(([e, d]) => d),
+      (a, b) => a.isSameNode(b)
+    )
+  };
 
-  let dom2eagle = Util.mapFunction(new WeakMap(eagle2dom.map(([k, v]) => [v, k])));
+  /*
 
-  eagle2dom = Util.mapFunction(new WeakMap(eagle2dom));
-  //console.debug('eagle2dom:', eagle2dom);
+   console.debug('mapElements:', mapElements);
+   console.debug('eagle2dom:', eagle2dom);
+window.mapElements=mapElements;
+window.eagle2dom=eagle2dom;
+window.dom2eagle=eagle2dom.map(([k, v]) => [v, k]);*/
+
+  //eagle2dom = eagle2dom.map(([p, r, e]) => [EagleElement.get(project.doc, p, r), e]);
+  let maps = {};
+
+  maps.eagle2dom = Util.mapFunction(new WeakMap(mapElements.eagle.map(eagle => [eagle, eagle2dom.filter(([e, d]) => e === eagle).map(([e, d]) => d)]))
+  );
+  console.debug('maps.eagle2dom:', maps.eagle2dom);
+  //console.debug('new WeakMap(eagle2dom):', new Map(eagle2dom));
+  maps.dom2eagle = Util.mapFunction(new WeakMap(eagle2dom.map(([k, v]) => [v, k])));
 
   const [path2component, component2path] = project.renderer.maps.map(Util.mapFunction);
   const { path2obj, obj2path, path2eagle, eagle2path, eagle2obj, obj2eagle } = project.doc.maps;
@@ -658,20 +679,20 @@ function EagleMaps(project) {
   ];
 
   const [component2dom, dom2component] = [
-    Util.mapAdapter((key, value) => (value === undefined ? eagle2dom(component2eagle(key)) : undefined)),
-    Util.mapAdapter((key, value) => (value === undefined ? eagle2component(dom2eagle(key)) : undefined))
+    Util.mapAdapter((key, value) => (value === undefined ? maps.eagle2dom(component2eagle(key)) : undefined)),
+    Util.mapAdapter((key, value) => (value === undefined ? eagle2component(maps.dom2eagle(key)) : undefined))
   ];
-
-  return {
+  Object.assign(maps, {
     component2dom,
     component2eagle,
     component2path,
     dom2component,
-    dom2eagle,
+
     eagle2component,
-    eagle2dom,
     path2component
-  };
+  });
+  Object.assign(project, { maps });
+  return maps;
 }
 
 async function ClearCache(match) {
@@ -1225,7 +1246,7 @@ const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 const AppMain = (window.onload = async () => {
   Util(globalThis);
   //prettier-ignore
-  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, ImmutablePath, arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser,  PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, RotateTransformation, VERTICAL, useTrkl, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer, classNames , BinaryTree  };
+  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, ImmutablePath, MutablePath,arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser,  PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian,CartesianToPolar, RotateTransformation, VERTICAL, useTrkl,ElementToClass, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer, classNames , BinaryTree  };
   const localFunctions = {
     PackageChildren,
     ElementChildren,
@@ -1259,7 +1280,8 @@ const AppMain = (window.onload = async () => {
     maxZIndex,
     ClearCache,
     PackageNames,
-    DrawBinaryTree
+    DrawBinaryTree,
+    EagleMaps
   };
 
   const importedNames = Object.keys(imports);
@@ -1268,7 +1290,8 @@ const AppMain = (window.onload = async () => {
   );
 
   //prettier-ignore
-  Util.weakAssign(window,dom, geom, imports, localFunctions);
+  Util.weakAssign(window.Element,Util.getMethods(dom.Element) );
+  Util.weakAssign(window, dom, geom, imports, localFunctions);
   Util.weakAssign(window, { functions: Util.filter(localFunctions, v => typeof v == 'function'), dom, geom, imports });
   Error.stackTraceLimit = 100;
 
