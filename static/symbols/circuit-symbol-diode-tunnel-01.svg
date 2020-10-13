@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="630" height="270.5" viewBox="0, 0, 630, 270.5">
+  <g id="Layer_1">
+    <path d="M0,0 L630,0 L630,266 L0,266 L0,0 z" fill="#FFFFFF"/>
+    <g>
+      <g>
+        <path d="M318.956,113.194 L257.16,207.911 L380.185,207.911 L318.956,113.194 z" fill="#000000"/>
+        <path d="M318.956,113.194 L257.16,207.911 L380.185,207.911 L318.956,113.194 z" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+      </g>
+      <g>
+        <path d="M257.16,113.194 L257.16,93.091 L380.185,93.091 L380.185,113.194 L257.16,113.194 z" fill="#000000"/>
+        <path d="M257.16,113.194 L257.16,93.091 L380.185,93.091 L380.185,113.194 L257.16,113.194 z" fill-opacity="0" stroke="#000000" stroke-width="5"/>
+      </g>
+    </g>
+    <text transform="matrix(1, 0, 0, 1, 468.726, 100.922)">
+      <tspan x="-70.38" y="11" font-family="Avenir-Medium" font-size="36" fill="#656565">Cathode</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 463.878, 202.5)">
+      <tspan x="-54.378" y="11" font-family="Avenir-Medium" font-size="36" fill="#656565">Anode</tspan>
+    </text>
+    <path d="M318.5,46 L318.5,258" fill-opacity="0" stroke="#000000" stroke-width="7"/>
+    <path d="M263.16,113.194 L263.16,142.055" fill-opacity="0" stroke="#000000" stroke-width="18"/>
+    <path d="M373.16,113.194 L373.16,142.055" fill-opacity="0" stroke="#000000" stroke-width="18"/>
+  </g>
+</svg>

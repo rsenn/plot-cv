@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="214" height="168.333" viewBox="0, 0, 214, 168.333">
+  <g id="Layer_1">
+    <path d="M0,-0 L214,-0 L214,168.333 L0,168.333 L0,-0 z" fill="#FFFFFF"/>
+    <path d="M72.709,8.997 L71.826,160.337" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+    <path d="M143.333,8.997 L142.449,160.337" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+    <path d="M68.5,23.914 L74.833,23.914 L74.833,143.581 L68.5,143.581 L68.5,23.914 z" fill="#FFFFFF"/>
+    <path d="M139.167,24.333 L145.5,24.333 L145.5,144 L139.167,144 L139.167,24.333 z" fill="#FFFFFF"/>
+    <g>
+      <path d="M144.257,46.469 C116.647,59.087 117.581,11.947 144.108,24.918" fill-opacity="0" stroke="#000000" stroke-width="2" stroke-miterlimit="3"/>
+      <path d="M144.257,66.577 C116.647,79.194 117.581,32.054 144.108,45.025" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+      <path d="M144.257,86.358 C116.647,98.976 117.581,51.836 144.108,64.807" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+      <path d="M144.257,105.278 C116.647,117.895 117.581,70.755 144.108,83.726" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+      <path d="M144.257,124.507 C116.647,137.124 117.581,89.984 144.108,102.956" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+      <path d="M144.257,144.529 C116.647,157.146 117.581,110.006 144.108,122.978" fill-opacity="0" stroke="#000000" stroke-width="2" stroke-miterlimit="2"/>
+    </g>
+    <g>
+      <path d="M71.88,46.469 C99.49,59.087 98.555,11.947 72.028,24.918" fill-opacity="0" stroke="#000000" stroke-width="2" stroke-miterlimit="3"/>
+      <path d="M71.88,66.577 C99.49,79.194 98.555,32.054 72.028,45.025" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+      <path d="M71.88,86.358 C99.49,98.976 98.555,51.836 72.028,64.807" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+      <path d="M71.88,105.278 C99.49,117.895 98.555,70.755 72.028,83.726" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+      <path d="M71.88,124.507 C99.49,137.124 98.555,89.984 72.028,102.956" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+      <path d="M71.88,144.529 C99.49,157.146 98.555,110.006 72.028,122.978" fill-opacity="0" stroke="#000000" stroke-width="2" stroke-miterlimit="2"/>
+    </g>
+  </g>
+</svg>

@@ -106,10 +106,43 @@
 			}
 		},
 		{
-			"file": "server.js",
+			"file": "lib/geom/size.js",
 			"settings":
 			{
-				"buffer_size": 18735,
+				"buffer_size": 8763,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/element.js",
+			"settings":
+			{
+				"buffer_size": 27636,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/components/instance.js",
+			"settings":
+			{
+				"buffer_size": 1409,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/eagle/components/element.js",
+			"settings":
+			{
+				"buffer_size": 1263,
+				"line_ending": "Unix",
+				"name": "import { h, Component } from '../../dom/preactComp"
+			}
+		},
+		{
+			"file": "lib/eagle/components.js",
+			"settings":
+			{
+				"buffer_size": 2045,
 				"line_ending": "Unix"
 			}
 		},
@@ -117,57 +150,34 @@
 			"file": "main.js",
 			"settings":
 			{
-				"buffer_size": 84468,
+				"buffer_size": 84475,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/autoStore.js",
+			"file": "tmp/7seg.brd",
 			"settings":
 			{
-				"buffer_size": 3660,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/components/polygon.js",
-			"settings":
-			{
-				"buffer_size": 1404,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "commands.js",
-			"settings":
-			{
-				"buffer_size": 14414,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/util.js",
-			"settings":
-			{
-				"buffer_size": 150431,
+				"buffer_size": 35839,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/filesystem.js",
+			"file": "lib/eagle/components/package.js",
 			"settings":
 			{
-				"buffer_size": 14423,
+				"buffer_size": 614,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "test-filesystem.js",
+			"file": "lib/eagle/boardRenderer.js",
 			"settings":
 			{
-				"buffer_size": 2711,
+				"buffer_size": 12987,
 				"line_ending": "Unix"
 			}
 		}
@@ -403,13 +413,19 @@
 	],
 	"file_history":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-filesystem.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/filesystem.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/commands.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/polygon.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/autoStore.js",
+		"/home/roman/Dokumente/Sources/plot-cv/server.js",
+		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pad.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/Simple-NPN-Regen-Receiver.brd",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/Simple-NPN-Regen-Receiver.sch",
@@ -463,7 +479,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/resolve-imports.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/filesystem.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-lexer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/devtools.js",
@@ -483,7 +498,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/index.html",
 		"/home/roman/Dokumente/Sources/plot-cv/style.css",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/useDimensions.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/useGetSet.js",
@@ -506,7 +520,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/polygon.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/circle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/7seg.brd",
@@ -527,10 +540,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/gerber/parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/overlay.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/path-parser.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/path.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/tXml.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/polyline.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom.js"
+		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/path.js"
 	],
 	"find":
 	{
@@ -564,6 +574,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"<package",
+			"<element ",
+			"push[A-Z]",
 			"credenti",
 			"ListProjects",
 			"ListGithub",
@@ -688,10 +701,7 @@
 			"unescape",
 			"^Util.escape",
 			"globalThis",
-			"printer\\.print",
-			"colorCode\\.",
-			"^Util.color",
-			"color"
+			"printer\\.print"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1021,391 +1031,391 @@
 								],
 								[
 									28706,
-									28738
+									28745
 								],
 								[
-									28990,
-									29031
+									28997,
+									29038
 								],
 								[
-									31022,
-									31070
+									31029,
+									31077
 								],
 								[
-									31402,
-									31408
+									31409,
+									31415
 								],
 								[
-									31505,
-									31511
+									31512,
+									31518
 								],
 								[
-									32650,
-									32658
+									32657,
+									32665
 								],
 								[
-									33041,
-									33049
+									33048,
+									33056
 								],
 								[
-									33139,
-									33147
+									33146,
+									33154
 								],
 								[
-									34943,
-									34994
+									34950,
+									35001
 								],
 								[
-									35307,
-									35312
+									35314,
+									35319
 								],
 								[
-									36234,
-									36242
+									36241,
+									36249
 								],
 								[
-									37032,
-									37070
+									37039,
+									37077
 								],
 								[
-									37701,
-									37724
+									37708,
+									37731
 								],
 								[
-									39318,
-									39342
+									39325,
+									39349
 								],
 								[
-									40563,
-									40603
+									40570,
+									40610
 								],
 								[
-									40844,
-									40900
+									40851,
+									40907
 								],
 								[
-									41062,
-									41120
+									41069,
+									41127
 								],
 								[
-									41172,
-									41178
+									41179,
+									41185
 								],
 								[
-									41566,
-									41572
+									41573,
+									41579
 								],
 								[
-									41671,
-									41693
+									41678,
+									41700
 								],
 								[
-									41771,
-									41795
+									41778,
+									41802
 								],
 								[
-									41796,
-									41810
+									41803,
+									41817
 								],
 								[
-									43823,
-									43849
+									43830,
+									43856
 								],
 								[
-									43911,
-									43935
+									43918,
+									43942
 								],
 								[
-									43976,
-									44000
+									43983,
+									44007
 								],
 								[
-									44254,
-									44297
+									44261,
+									44304
 								],
 								[
-									44607,
-									44671
+									44614,
+									44678
 								],
 								[
-									44867,
-									44887
+									44874,
+									44894
 								],
 								[
-									45567,
-									45614
+									45574,
+									45621
 								],
 								[
-									45958,
-									45973
+									45965,
+									45980
 								],
 								[
-									46190,
-									46203
+									46197,
+									46210
 								],
 								[
-									46480,
-									46493
+									46487,
+									46500
 								],
 								[
-									46699,
-									46712
+									46706,
+									46719
 								],
 								[
-									46936,
-									46942
+									46943,
+									46949
 								],
 								[
-									46992,
-									47013
+									46999,
+									47020
 								],
 								[
-									50303,
-									50314
+									50310,
+									50321
 								],
 								[
-									51528,
-									51542
+									51535,
+									51549
 								],
 								[
-									52108,
-									52130
+									52115,
+									52137
 								],
 								[
-									52269,
-									52292
+									52276,
+									52299
 								],
 								[
-									52596,
-									52611
+									52603,
+									52618
 								],
 								[
-									52636,
-									52653
+									52643,
+									52660
 								],
 								[
-									52751,
-									52759
+									52758,
+									52766
 								],
 								[
-									52943,
-									52967
+									52950,
+									52974
 								],
 								[
-									53070,
-									53104
+									53077,
+									53111
 								],
 								[
-									53113,
-									53123
+									53120,
+									53130
 								],
 								[
-									53132,
-									53159
+									53139,
+									53166
 								],
 								[
-									53562,
-									53583
+									53569,
+									53590
 								],
 								[
-									54069,
-									54105
+									54076,
+									54112
 								],
 								[
-									55268,
-									55273
+									55275,
+									55280
 								],
 								[
-									55446,
-									55454
+									55453,
+									55461
 								],
 								[
-									55556,
-									55564
+									55563,
+									55571
 								],
 								[
-									55670,
-									55678
+									55677,
+									55685
 								],
 								[
-									55779,
-									55787
+									55786,
+									55794
 								],
 								[
-									55837,
-									55845
+									55844,
+									55852
 								],
 								[
-									56264,
-									56272
+									56271,
+									56279
 								],
 								[
-									56458,
-									56505
+									56465,
+									56512
 								],
 								[
-									56825,
-									56843
+									56832,
+									56850
 								],
 								[
-									57081,
-									57087
+									57088,
+									57094
 								],
 								[
-									57319,
-									57338
+									57326,
+									57345
 								],
 								[
-									57370,
-									57388
+									57377,
+									57395
 								],
 								[
-									57862,
-									57869
+									57869,
+									57876
 								],
 								[
-									57897,
-									57900
+									57904,
+									57907
 								],
 								[
-									58242,
-									58259
+									58249,
+									58266
 								],
 								[
-									58467,
-									58485
+									58474,
+									58492
 								],
 								[
-									59148,
-									59165
+									59155,
+									59172
 								],
 								[
-									59257,
-									59265
+									59264,
+									59272
 								],
 								[
-									59674,
-									59714
+									59681,
+									59721
 								],
 								[
-									59779,
-									59793
+									59786,
+									59800
 								],
 								[
-									60355,
-									60371
+									60362,
+									60378
 								],
 								[
-									60409,
-									60484
+									60416,
+									60491
 								],
 								[
-									60729,
-									60750
+									60736,
+									60757
 								],
 								[
-									61288,
-									61295
+									61295,
+									61302
 								],
 								[
-									61830,
-									61847
+									61837,
+									61854
 								],
 								[
-									61939,
-									61954
+									61946,
+									61961
 								],
 								[
-									62000,
-									62017
+									62007,
+									62024
 								],
 								[
-									62940,
-									62948
+									62947,
+									62955
 								],
 								[
-									63814,
-									63823
+									63821,
+									63830
 								],
 								[
-									64028,
-									64035
+									64035,
+									64042
 								],
 								[
-									64142,
-									64150
+									64149,
+									64157
 								],
 								[
-									64363,
-									64371
+									64370,
+									64378
 								],
 								[
-									65916,
-									65923
+									65923,
+									65930
 								],
 								[
-									67858,
-									67890
+									67876,
+									67908
 								],
 								[
-									68628,
-									68635
+									68668,
+									68675
 								],
 								[
-									69669,
-									69703
+									69745,
+									69779
 								],
 								[
-									70287,
-									70296
+									70363,
+									70372
 								],
 								[
-									72297,
-									72317
+									72373,
+									72393
 								],
 								[
-									74792,
-									74802
+									74868,
+									74878
 								],
 								[
-									77365,
-									77373
+									77441,
+									77449
 								],
 								[
-									78538,
-									78545
+									78614,
+									78621
 								],
 								[
-									79070,
-									79079
+									79146,
+									79155
 								],
 								[
-									79315,
-									79333
+									79391,
+									79409
 								],
 								[
-									80655,
-									80672
+									80731,
+									80748
 								],
 								[
-									80903,
-									80931
+									80979,
+									81007
 								],
 								[
-									81298,
-									81341
+									81374,
+									81417
 								],
 								[
-									82673,
-									82681
+									82749,
+									82757
 								],
 								[
-									84199,
-									84226
+									84275,
+									84302
 								],
 								[
-									84349,
-									84362
+									84425,
+									84438
 								]
 							],
 							"symlist":
@@ -1570,30 +1580,30 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 9,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 1,
+			"selected": 5,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "server.js",
+					"file": "lib/geom/size.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 18735,
+						"buffer_size": 8763,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								15524,
-								15524
+								6740,
+								6740
 							]
 						],
 						"settings":
@@ -1603,27 +1613,27 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 7152.0,
+						"translation.y": 3107.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "main.js",
+					"file": "lib/eagle/element.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 84468,
+						"buffer_size": 27636,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								69466,
-								69466
+								5496,
+								5496
 							]
 						],
 						"settings":
@@ -1633,27 +1643,27 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 34140.0,
+						"translation.y": 2568.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "lib/autoStore.js",
+					"file": "lib/eagle/components/instance.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3660,
+						"buffer_size": 1409,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								937,
-								937
+								1409,
+								1409
 							]
 						],
 						"settings":
@@ -1666,34 +1676,35 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
 					"buffer": 4,
-					"file": "lib/eagle/components/polygon.js",
+					"file": "lib/eagle/components/element.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1404,
+						"buffer_size": 1263,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1185,
-								1185
+								1144,
+								1144
 							]
 						],
 						"settings":
 						{
+							"auto_name": "import { h, Component } from '../../dom/preactComp",
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 54.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
@@ -1701,122 +1712,148 @@
 				},
 				{
 					"buffer": 5,
-					"file": "commands.js",
+					"file": "lib/eagle/components.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 14414,
+						"buffer_size": 2045,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2772,
-								2772
+								998,
+								998
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1488.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "lib/util.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 150431,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								61888,
-								61888
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 37794.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "lib/filesystem.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 14423,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7832,
-								7832
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 4410.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "test-filesystem.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2711,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								296,
-								296
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "main.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 84475,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								28744,
+								28744
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 13044.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "tmp/7seg.brd",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 35839,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								12152,
+								12152
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 2442.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "lib/eagle/components/package.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 614,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								372,
+								372
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "lib/eagle/boardRenderer.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 12987,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10049,
+								10049
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4260.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
 					"type": "text"
 				}
 			]
@@ -1888,6 +1925,22 @@
 		"selected_items":
 		[
 			[
+				"main",
+				"main.js"
+			],
+			[
+				".brd",
+				"tmp/7seg.brd"
+			],
+			[
+				"element",
+				"lib/eagle/element.js"
+			],
+			[
+				"size.js",
+				"lib/geom/size.js"
+			],
+			[
 				"autoSt",
 				"lib/autoStore.js"
 			],
@@ -1898,10 +1951,6 @@
 			[
 				"util",
 				"lib/util.js"
-			],
-			[
-				"main",
-				"main.js"
 			],
 			[
 				"filesyste",
@@ -2272,20 +2321,12 @@
 				"lib/xml.js"
 			],
 			[
-				"size.js",
-				"lib/geom/size.js"
-			],
-			[
 				"style.cs",
 				"style.css"
 			],
 			[
 				"dom.js",
 				"lib/dom.js"
-			],
-			[
-				"element",
-				"lib/dom/element.js"
 			],
 			[
 				"tlite.js",
@@ -2394,10 +2435,6 @@
 			[
 				"test-qui",
 				"test-quickjs.js"
-			],
-			[
-				"utils",
-				"lib/stream/utils.js"
 			]
 		],
 		"width": 0.0

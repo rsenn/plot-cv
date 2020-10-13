@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="214" height="168.333" viewBox="0, 0, 214, 168.333">
+  <g id="Layer_1">
+    <path d="M0,-0 L214,-0 L214,168.333 L0,168.333 L0,-0 z" fill="#FFFFFF"/>
+    <path d="M100.043,7.33 L99.159,158.67" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+    <path d="M102.753,102.745 L173.086,102.745" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+    <g>
+      <path d="M104.167,142.362 L93.825,142.362 L93.825,23.409 L104.167,23.409 L104.167,142.362 z" fill="#FFFFFF"/>
+      <g>
+        <path d="M100.167,44.803 C72.557,57.42 73.491,10.28 100.018,23.251" fill-opacity="0" stroke="#000000" stroke-width="2" stroke-miterlimit="3"/>
+        <path d="M100.167,64.91 C72.557,77.527 73.491,30.387 100.018,43.359" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+        <path d="M100.167,84.692 C72.557,97.309 73.491,50.169 100.018,63.14" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+        <path d="M100.167,103.611 C72.557,116.228 73.491,69.088 100.018,82.06" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+        <path d="M100.167,122.84 C72.557,135.457 73.491,88.317 100.018,101.289" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+        <path d="M100.167,142.862 C72.557,155.479 73.491,108.339 100.018,121.311" fill-opacity="0" stroke="#000000" stroke-width="2" stroke-miterlimit="2"/>
+      </g>
+    </g>
+    <g>
+      <path d="M102.167,107.167 C99.681,107.167 97.667,105.152 97.667,102.667 C97.667,100.181 99.681,98.167 102.167,98.167 C104.652,98.167 106.667,100.181 106.667,102.667 C106.667,105.152 104.652,107.167 102.167,107.167 z" fill="#000000"/>
+      <path d="M102.167,107.167 C99.681,107.167 97.667,105.152 97.667,102.667 C97.667,100.181 99.681,98.167 102.167,98.167 C104.652,98.167 106.667,100.181 106.667,102.667 C106.667,105.152 104.652,107.167 102.167,107.167 z" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+    </g>
+  </g>
+</svg>

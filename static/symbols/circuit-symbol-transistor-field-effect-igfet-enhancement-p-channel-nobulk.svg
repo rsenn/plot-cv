@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="297.905" height="234.333" viewBox="0, 0, 297.905, 234.333">
+  <g id="Layer_1">
+    <g>
+      <path d="M0,-0 L297.905,-0 L297.905,234.333 L0,234.333 L0,-0 z" fill="#FFFFFF"/>
+      <path d="M169.09,92.847 L169.09,153.144" fill-opacity="0" stroke="#000000" stroke-width="5"/>
+      <path d="M174.368,166.153 C150.047,166.153 130.332,146.437 130.332,122.117 C130.332,97.796 150.047,78.08 174.368,78.08 C198.689,78.08 218.405,97.796 218.405,122.117 C218.405,146.437 198.689,166.153 174.368,166.153 z" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+      <path d="M157.016,149.528 L157.016,98.528" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+      <path d="M157.016,146.347 L73.84,146.347" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+      <path d="M193.59,98.528 L193.59,44.847" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+      <g>
+        <path d="M178.636,147.117 L192.236,147.117" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+        <path d="M178.636,147.117 L181.436,142.917 L170.236,147.117 L181.436,151.317 z" fill="#000000" fill-opacity="1" stroke="#000000" stroke-width="3" stroke-opacity="1"/>
+      </g>
+      <path d="M170.59,98.528 L193.59,98.528" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+      <path d="M193.59,146.347 L193.59,200.097" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+      <text transform="matrix(1, 0, 0, 1, 211.227, 190.653)">
+        <tspan x="-10.008" y="11" font-family="Avenir-Medium" font-size="36" fill="#656565">S</tspan>
+      </text>
+      <text transform="matrix(1, 0, 0, 1, 87.344, 123.528)">
+        <tspan x="-14.004" y="11" font-family="Avenir-Medium" font-size="36" fill="#656565">G</tspan>
+      </text>
+      <text transform="matrix(1, 0, 0, 1, 211.227, 59.347)">
+        <tspan x="-13.338" y="11" font-family="Avenir-Medium" font-size="36" fill="#656565">D</tspan>
+      </text>
+    </g>
+  </g>
+</svg>

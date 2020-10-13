@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="214" height="168.333" viewBox="0, 0, 214, 168.333">
+  <g id="Layer_1">
+    <path d="M0,-0 L214,-0 L214,168.333 L0,168.333 L0,-0 z" fill="#FFFFFF"/>
+    <g>
+      <path d="M118.5,128.703 C94.179,128.703 74.463,108.987 74.463,84.667 C74.463,60.346 94.179,40.63 118.5,40.63 C142.821,40.63 162.537,60.346 162.537,84.667 C162.537,108.987 142.821,128.703 118.5,128.703 z" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+      <path d="M118.413,53.178 L126.463,53.178 L126.463,116.155 L118.413,116.155 L118.413,53.178 z" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+      <path d="M118.413,85.277 L74.463,85.277" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+      <path d="M144.456,51.184 L126.463,72.966" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+      <g>
+        <path d="M136.941,109.799 L126.463,97.115" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+        <path d="M134.166,112.092 L143.055,117.2 L139.716,107.506 z" fill="#000000" fill-opacity="1" stroke="#000000" stroke-width="2" stroke-opacity="1"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path d="M50.458,37.241 L68.27,50.825" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+        <path d="M65.723,54.164 L77.175,57.616 L70.816,47.485 z" fill="#000000" fill-opacity="1" stroke="#000000" stroke-width="3" stroke-opacity="1"/>
+      </g>
+      <g>
+        <path d="M61.373,22.928 L79.185,36.512" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+        <path d="M76.638,39.851 L88.09,43.303 L81.731,33.172 z" fill="#000000" fill-opacity="1" stroke="#000000" stroke-width="3" stroke-opacity="1"/>
+      </g>
+    </g>
+  </g>
+</svg>

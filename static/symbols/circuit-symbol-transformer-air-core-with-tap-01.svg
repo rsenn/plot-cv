@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="214" height="168.333" viewBox="0, 0, 214, 168.333">
+  <g id="Layer_1">
+    <path d="M0,-0 L214,-0 L214,168.333 L0,168.333 L0,-0 z" fill="#FFFFFF"/>
+    <path d="M64.709,8.997 L63.826,160.337" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+    <path d="M135.333,8.997 L134.449,160.337" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+    <path d="M138,84.397 L179.296,84.397" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+    <path d="M60.5,23.914 L66.833,23.914 L66.833,143.581 L60.5,143.581 L60.5,23.914 z" fill="#FFFFFF"/>
+    <path d="M131.167,24.333 L137.5,24.333 L137.5,144 L131.167,144 L131.167,24.333 z" fill="#FFFFFF"/>
+    <g>
+      <path d="M136.257,46.469 C108.647,59.086 109.581,11.946 136.108,24.918" fill-opacity="0" stroke="#000000" stroke-width="2" stroke-miterlimit="3"/>
+      <path d="M136.257,66.577 C108.647,79.194 109.581,32.054 136.108,45.025" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+      <path d="M136.257,86.358 C108.647,98.976 109.581,51.836 136.108,64.807" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+      <path d="M136.257,105.277 C108.647,117.895 109.581,70.755 136.108,83.726" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+      <path d="M136.257,124.507 C108.647,137.124 109.581,89.984 136.108,102.956" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+      <path d="M136.257,144.529 C108.647,157.146 109.581,110.006 136.108,122.978" fill-opacity="0" stroke="#000000" stroke-width="2" stroke-miterlimit="2"/>
+    </g>
+    <g>
+      <path d="M63.88,46.469 C91.49,59.086 90.555,11.946 64.028,24.918" fill-opacity="0" stroke="#000000" stroke-width="2" stroke-miterlimit="3"/>
+      <path d="M63.88,66.577 C91.49,79.194 90.555,32.054 64.028,45.025" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+      <path d="M63.88,86.358 C91.49,98.976 90.555,51.836 64.028,64.807" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+      <path d="M63.88,105.277 C91.49,117.895 90.555,70.755 64.028,83.726" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+      <path d="M63.88,124.507 C91.49,137.124 90.555,89.984 64.028,102.956" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+      <path d="M63.88,144.529 C91.49,157.146 90.555,110.006 64.028,122.978" fill-opacity="0" stroke="#000000" stroke-width="2" stroke-miterlimit="2"/>
+    </g>
+    <g>
+      <path d="M137.882,87.042 C136.432,87.042 135.257,85.978 135.257,84.667 C135.257,83.355 136.432,82.292 137.882,82.292 C139.331,82.292 140.507,83.355 140.507,84.667 C140.507,85.978 139.331,87.042 137.882,87.042 z" fill="#000000" fill-opacity="0.975"/>
+      <path d="M137.882,87.042 C136.432,87.042 135.257,85.978 135.257,84.667 C135.257,83.355 136.432,82.292 137.882,82.292 C139.331,82.292 140.507,83.355 140.507,84.667 C140.507,85.978 139.331,87.042 137.882,87.042 z" fill-opacity="0" stroke="#000000" stroke-width="2"/>
+    </g>
+  </g>
+</svg>

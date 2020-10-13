@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="630" height="270.5" viewBox="0, 0, 630, 270.5">
+  <g id="Layer_1">
+    <text transform="matrix(1, 0, 0, 1, 482.724, 67.091)">
+      <tspan x="-70.38" y="11" font-family="Avenir-Medium" font-size="36" fill="#656565">Cathode</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 477.224, 213.5)">
+      <tspan x="-54.378" y="11" font-family="Avenir-Medium" font-size="36" fill="#656565">Anode</tspan>
+    </text>
+    <path d="M0,0 L630,0 L630,30 L0,30 L0,0 z" fill="#FFFFFF"/>
+    <g>
+      <g>
+        <path d="M318.783,113.194 L256.988,207.911 L380.012,207.911 L318.784,113.194 z" fill="#000000"/>
+        <path d="M318.783,113.194 L256.988,207.911 L380.012,207.911 L318.784,113.194 z" fill-opacity="0" stroke="#000000" stroke-width="3"/>
+      </g>
+      <g>
+        <path d="M256.988,113.194 L256.988,98.091 L380.012,98.091 L380.012,113.194 L256.988,113.194 z" fill="#000000"/>
+        <path d="M256.988,113.194 L256.988,98.091 L380.012,98.091 L380.012,113.194 L256.988,113.194 z" fill-opacity="0" stroke="#000000" stroke-width="5"/>
+      </g>
+      <path d="M318.5,46 L318.5,258" fill-opacity="0" stroke="#000000" stroke-width="7"/>
+      <path d="M259.488,101.091 L259.488,72.091 L292.166,72.091" fill-opacity="0" stroke="#000000" stroke-width="11"/>
+      <path d="M377.012,107.091 L377.012,136.091 L344.334,136.091" fill-opacity="0" stroke="#000000" stroke-width="11"/>
+    </g>
+  </g>
+</svg>
