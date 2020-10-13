@@ -14,9 +14,11 @@ import SerialStream from '@serialport/stream';
 import SerialBinding from '@serialport/bindings';
 import Socket from './socket.js';
 import WebSocket from 'ws';
+import PortableFileSystem from './lib/filesystem.js';
 
 SerialStream.Binding = SerialBinding;
 
+let filesystem;
 const port = process.env.PORT || 3000;
 
 const hash = crypto.createHash('sha1');
@@ -34,6 +36,7 @@ const p = path.join(path.dirname(process.argv[1]), '.');
 
 async function main() {
   await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
+  await PortableFileSystem(fs => (filesystem = fs));
 
   Socket.timeoutCycler();
 
@@ -420,6 +423,33 @@ async function main() {
   app.post(/\/serial/, async (req, res) => {
     const { body } = req;
     const { port } = body;
+  });
+  const configFile = 'config.json';
+  const safeStat = Util.tryFunction(f => filesystem.stat(f),
+    st => st,
+    () => {}
+  );
+
+  app.get('/config', async (req, res) => {
+    let str = '',
+      data = {},
+      stat = {};
+    Util.tryCatch(() => filesystem.readFile(configFile),
+      c => (str = c)
+    );
+    //  Util.tryCatch(() => JSON.parse(str), d => data =d);
+    stat = safeStat(configFile);
+
+    res.json({ config: str, time: stat.mtime.getTime(), hash: Util.hashString(str) });
+  });
+  app.post('/config', async (req, res) => {
+    const { body } = req;
+    let text = body.toString();
+    console.log('text:', text);
+    let ret = filesystem.writeFile(configFile, text);
+    console.log('ret:', ret);
+    let stat = safeStat(configFile);
+    res.json({ size: ret, time: stat.mtime.getTime(), hash: Util.hashString(text) });
   });
 
   app.get(/\/github/, async (req, res) => {

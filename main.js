@@ -104,6 +104,27 @@ let aspectListener = trkl(1);
 const documentTitle = trkl('');
 const documentSize = trkl('');
 
+const SaveConfig = Util.debounce(() => {
+  let obj = store.toObject();
+
+  return fetch('/config', {
+    method: 'POST',
+    headers: { 'content-type': 'application/octet-stream' },
+    body: JSON.stringify(obj)
+  }).then(res => res.json());
+}, 5 * 1000);
+
+const LoadConfig = Util.once(() =>
+  fetch('/config')
+    .then(r => r.json())
+    .then(r => ({
+      ...r,
+      entries() {
+        return Object.entries(JSON.parse(r.config));
+      }
+    }))
+);
+
 let store = (window.store = makeLocalStorage());
 
 let projects = trkl([]);
@@ -1281,9 +1302,43 @@ const AppMain = (window.onload = async () => {
     ClearCache,
     PackageNames,
     DrawBinaryTree,
-    EagleMaps
+    EagleMaps,
+    SaveConfig,
+    LoadConfig
   };
 
+  if(store.keys().length == 0) {
+    await LoadConfig().then(response => {
+      for(let [key, value] of response.entries()) {
+        console.log(`Initializing store set('${key}',`, value, `)`);
+        store.set(key, value);
+      }
+
+      for(let key of store.keys()) {
+        const value = store.get(key);
+        switch (key) {
+          case 'url':
+            listURL(value);
+            break;
+          case 'filter':
+            searchFilter(value);
+            break;
+          case 'zoom':
+            zoomLog(value);
+            break;
+          case 'console':
+            logSize(value);
+            break;
+          case 'debug':
+            debugFlag(value);
+            break;
+          case 'auth':
+            credentials(value);
+            break;
+        }
+      }
+    });
+  }
   const importedNames = Object.keys(imports);
   console.debug('Dupes:',
     Util.getMemberNames(window).filter(m => importedNames.indexOf(m) != -1)
@@ -1351,8 +1406,8 @@ const AppMain = (window.onload = async () => {
     let { url, ...restOfOpts } = opts;
     let urls = url ? url.split(/\n/g) : [null];
     for(url of urls) {
-      console.log('UpdateProjectList:', { opts, url });
-      let data = await ListProjects({ ...opts, url });
+      console.log('UpdateProjectList:', { ...opts, ...credentials, url });
+      let data = await ListProjects({ ...opts, ...credentials, url });
       let { files } = data;
       //console.log(`Got ${files.length} files`, files);
       function File(obj, i) {
@@ -1373,25 +1428,27 @@ const AppMain = (window.onload = async () => {
       File.prototype.toString = function() {
         return this.name;
       };
-      list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i)));
-      let svgs = list.reduce((acc, file) => {
-        if(/\.lbr$/i.test(file.name)) return acc;
-        file.svg = `${EagleDocument.baseOf(file.name)}.${EagleDocument.typeOf(file.name)}.svg`;
-        //console.log(`file.svg = '${file.svg}'`);
-        return [...acc, file.svg];
-      }, []);
+      if(files) {
+        list = list.concat(files.sort((a, b) => a.name.localeCompare(b.name)).map((obj, i) => new File(obj, i)));
+        let svgs = list.reduce((acc, file) => {
+          if(/\.lbr$/i.test(file.name)) return acc;
+          file.svg = `${EagleDocument.baseOf(file.name)}.${EagleDocument.typeOf(file.name)}.svg`;
+          //console.log(`file.svg = '${file.svg}'`);
+          return [...acc, file.svg];
+        }, []);
 
-      data = await ListProjects({ descriptions: false, names: svgs });
-      files = (data && data.files) || [];
-      //      console.log('filesData:', files);
+        data = await ListProjects({ descriptions: false, names: svgs });
+        files = (data && data.files) || [];
+        //      console.log('filesData:', files);
 
-      for(let svgFile of files) {
-        if(Util.isObject(svgFile) && svgFile.mtime !== undefined) {
-          const f = list.find(i => i.svg === svgFile.name);
-          if(Util.isObject(f) && f.mtime !== undefined) {
-            const delta = svgFile.mtime - f.mtime;
+        for(let svgFile of files) {
+          if(Util.isObject(svgFile) && svgFile.mtime !== undefined) {
+            const f = list.find(i => i.svg === svgFile.name);
+            if(Util.isObject(f) && f.mtime !== undefined) {
+              const delta = svgFile.mtime - f.mtime;
 
-            f.modified = delta < 0;
+              f.modified = delta < 0;
+            }
           }
         }
       }
@@ -1409,6 +1466,10 @@ const AppMain = (window.onload = async () => {
 
   window.crosshair = trkl.bind({}, crosshair);
 
+  credentials.subscribe(value => {
+    store.set('auth', value);
+    LogJS.info(`credentials`, value);
+  });
   searchFilter.subscribe(value => {
     store.set('filter', value);
     LogJS.info(`searchFilter is ${value}`);
@@ -1762,55 +1823,58 @@ const AppMain = (window.onload = async () => {
                     let processed = file.replace(/\.ngc$/, '.svg');
                     gc.svg = await FetchURL(processed).then(ResponseData);
                     let pos;
-                    if((pos = gc.svg.indexOf('<svg ')) != -1) gc.svg = gc.svg.substring(pos);
 
-                    console.debug('processed', processed, Util.abbreviate(gc.svg));
+                    if(gc.svg) {
+                      if((pos = gc.svg.indexOf('<svg ')) != -1) gc.svg = gc.svg.substring(pos);
 
-                    if(side == 'outline') {
-                      let xmlData = tXml(gc.svg);
-                      let svgPath = Util.tail(xmlData[0].children).children[0];
-                      let points = SVG.pathToPoints(svgPath.attributes);
-                      console.debug('points:', points);
-                      bbox = new Rect(new BBox().update(points)).round(0.001);
-                      console.debug('bbox:', bbox);
+                      console.debug('processed', processed, Util.abbreviate(gc.svg));
 
-                      continue;
-                    }
-                    //  console.debug('gc.svg ',gc.svg );
-                    let layer = GetLayer({
-                      name: makeLayerName('processed', side),
-                      'data-filename': processed,
-                      create: (project, props = {}) => {
-                        let g = SVG.create('g', { innerHTML: gc.svg, ...props }, project.svg);
-                        g.innerHTML = gc.svg;
-                        if(g.firstElementChild && g.firstElementChild.tagName == 'svg') {
-                          let svg = g.firstElementChild;
-                          ['width', 'height', 'xmlns', 'xmlns:xlink', 'version'].forEach(a => svg.removeAttribute(a));
-                          svg.setAttribute('viewBox', bbox);
-                        }
-                        Element.findAll('path', g)
-                          .filter(e => e.style['fill-opacity'] == 1)
-                          .forEach(e => (e.style.display = 'none'));
+                      if(side == 'outline') {
+                        let xmlData = tXml(gc.svg);
+                        let svgPath = Util.tail(xmlData[0].children).children[0];
+                        let points = SVG.pathToPoints(svgPath.attributes);
+                        console.debug('points:', points);
+                        bbox = new Rect(new BBox().update(points)).round(0.001);
+                        console.debug('bbox:', bbox);
 
-                        ['fill', 'stroke'].forEach(name =>
-                          Element.findAll(`[style*="${name}:"]`, g).forEach(e => {
-                            const value = e.style[name];
-                            if(value != 'rgb(0, 0, 0)' && value != 'none') {
-                              e.setAttribute(name, value);
-                              e.style.removeProperty(name);
-                            }
-                          })
-                        );
-
-                        return g;
+                        continue;
                       }
-                    });
+                      //  console.debug('gc.svg ',gc.svg );
+                      let layer = GetLayer({
+                        name: makeLayerName('processed', side),
+                        'data-filename': processed,
+                        create: (project, props = {}) => {
+                          let g = SVG.create('g', { innerHTML: gc.svg, ...props }, project.svg);
+                          g.innerHTML = gc.svg;
+                          if(g.firstElementChild && g.firstElementChild.tagName == 'svg') {
+                            let svg = g.firstElementChild;
+                            ['width', 'height', 'xmlns', 'xmlns:xlink', 'version'].forEach(a => svg.removeAttribute(a));
+                            svg.setAttribute('viewBox', bbox);
+                          }
+                          Element.findAll('path', g)
+                            .filter(e => e.style['fill-opacity'] == 1)
+                            .forEach(e => (e.style.display = 'none'));
 
-                    layer.sublayers = Util.histogram(Element.walk(layer.dom, (e, acc) => (e.tagName.endsWith('g') ? acc : [...acc, e]), []),
-                      e => e.getAttribute('style'),
-                      new Map(),
-                      () => new Set()
-                    );
+                          ['fill', 'stroke'].forEach(name =>
+                            Element.findAll(`[style*="${name}:"]`, g).forEach(e => {
+                              const value = e.style[name];
+                              if(value != 'rgb(0, 0, 0)' && value != 'none') {
+                                e.setAttribute(name, value);
+                                e.style.removeProperty(name);
+                              }
+                            })
+                          );
+
+                          return g;
+                        }
+                      });
+
+                      layer.sublayers = Util.histogram(Element.walk(layer.dom, (e, acc) => (e.tagName.endsWith('g') ? acc : [...acc, e]), []),
+                        e => e.getAttribute('style'),
+                        new Map(),
+                        () => new Set()
+                      );
+                    }
                   }
 
                   console.debug('GerberToGcode side =', side, ' gc =', gc.file, ' svg =', Util.abbreviate(gc.svg));
