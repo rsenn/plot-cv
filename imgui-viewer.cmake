@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/FindGLFW.cmake)
 # include: OpenCV
-find_package(OpenCV REQUIRED)
+include(${CMAKE_CURRENT_SOURCE_DIR}/opencv.cmake)
 
 # glfw
 include(FindPkgConfig)

@@ -1,14 +1,23 @@
 cmake_minimum_required(VERSION 3.0)
 project(plot-cv)
 
-set(quickjs_version "2020-07-05")
-set(quickjs_soversion 1)
+set(quickjs_sources_root ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
+include(${quickjs_sources_root}/defs.cmake)
 
+#[[set(quickjs_version "2020-07-05")
+set(quickjs_soversion 1)
+]]
 set(QUICKJS_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
 if(NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
   set(CMAKE_BUILD_TYPE "Debug")
 endif(NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
+
+if(WIN32)
+  set(LIBWS2_32 ws2_32)
+else(WIN32)
+
+endif(WIN32)
 
 include(FindThreads)
 include(CheckCCompilerFlag)
@@ -23,8 +32,10 @@ macro(check_size TYPE VAR)
     add_definitions(-D${VAR}=${CMAKE_${VAR}})
   endif(${CMAKE_${VAR}})
   message(STATUS "size of ${TYPE} ${CMAKE_${VAR}}")
-endmacro(check_size TYPE VAR)
-
+endmacro(
+  check_size
+  TYPE
+  VAR)
 
 check_size("long" SIZEOF_LONG)
 check_size("long long" SIZEOF_LONG_LONG)
@@ -59,8 +70,8 @@ check_library_exists(json-cpp ZN4YAML6detail9node_data9reset_mapEv /usr JSON_CPP
 
 set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
-
-find_package(OpenCV REQUIRED)
+ 
+include(${CMAKE_CURRENT_SOURCE_DIR}/opencv.cmake)
 
 include_directories(${OPENCV_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/opencv ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
 
@@ -95,6 +106,11 @@ if(ENABLE_LTO)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -flto")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
 endif(ENABLE_LTO)
+
+add_subdirectory(quickjs "${CMAKE_BINARY_DIR}/quickjs")
+
+link_directories(${quickjs_BINARY_DIR})
+#message("quickjs_BINARY_DIR: ${quickjs_BINARY_DIR}")
 
 # if(HAVE_EFENCE) if(USE_EFENCE) set(ELECTRICFENCE_LIBRARY efence) endif(USE_EFENCE) endif(HAVE_EFENCE)
 
@@ -135,11 +151,6 @@ if(IMGUI_VIEWER)
   include(imgui-viewer.cmake)
 endif(IMGUI_VIEWER)
 
-add_subdirectory(quickjs "${CMAKE_BINARY_DIR}/quickjs")
-
-if(NOT quickjs_version)
-  set(quickjs_version "2020-07-05")
-endif(NOT quickjs_version)
 
 set(QUICKJS_SOURCES_LIST "quickjs/quickjs.c;quickjs/quickjs.h;quickjs/libregexp.c;quickjs/libunicode.c;quickjs/cutils.c;quickjs/quickjs-libc.c;quickjs/quickjs-libc.h;quickjs/quickjs-find-module.c;quickjs/libbf.c")
 # add_definitions(-D_GNU_SOURCE=1)
@@ -163,6 +174,7 @@ src_program(
   pthread
   dl
   m
+  ${LIBWS2_32}
   #
 )
 

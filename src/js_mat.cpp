@@ -18,7 +18,7 @@ typedef struct JSMatSizeData {
   size_t rows, cols;
 } JSMatSizeData;
 
-JSMatData*
+VISIBLE JSMatData*
 js_mat_data(JSContext* ctx, JSValueConst val) {
   return static_cast<JSMatData*>(JS_GetOpaque2(ctx, val, js_mat_class_id));
 }
@@ -473,7 +473,7 @@ js_mat_getrotationmatrix2d(JSContext* ctx, JSValueConst this_val, int argc, JSVa
   return ret;
 }
 
-JSValue
+VISIBLE JSValue
 js_mat_wrap(JSContext* ctx, const cv::Mat& mat) {
   JSValue ret;
   JSMatData* s;

@@ -56,7 +56,7 @@ js_contour_new(JSContext* ctx, const std::vector<cv::Point_<float>>& points) {
   return ret;
 };
 
-JSValue
+VISIBLE JSValue
 js_contour2i_new(JSContext* ctx, const std::vector<cv::Point_<int>>& points) {
   JSValue ret;
   JSContourData* contour;
@@ -70,6 +70,21 @@ js_contour2i_new(JSContext* ctx, const std::vector<cv::Point_<int>>& points) {
   JS_SetOpaque(ret, contour);
   return ret;
 };
+
+VISIBLE JSValue
+js_contour2d_new(JSContext* ctx, const std::vector<cv::Point_<double>>& points) {
+  JSValue ret;
+  JSContourData* contour;
+
+  ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
+
+  contour = static_cast<JSContourData*>(js_mallocz(ctx, sizeof(JSContourData)));
+
+  std::copy(points.cbegin(), points.cend(), std::back_inserter(*contour));
+
+  JS_SetOpaque(ret, contour);
+  return ret;
+}
 
 template<class Value> JSValue js_vector_to_array(JSContext* ctx, const std::vector<Value>& vec);
 
@@ -344,7 +359,7 @@ fail:
   return JS_EXCEPTION;
 }
 
-JSContourData*
+VISIBLE JSContourData*
 js_contour_data(JSContext* ctx, JSValueConst val) {
   return static_cast<JSContourData*>(JS_GetOpaque2(ctx, val, js_contour_class_id));
 }
@@ -915,7 +930,7 @@ js_contour_find(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 }
 
 JSValue contour_proto, contour_class;
-JSClassID js_contour_class_id;
+VISIBLE JSClassID js_contour_class_id;
 
 JSClassDef js_contour_class = {
     "Contour",
@@ -923,26 +938,12 @@ JSClassDef js_contour_class = {
 };
 
 JSValue
-js_contour2d_new(JSContext* ctx, const std::vector<cv::Point_<double>>& points) {
-  JSValue ret;
-  JSContourData* contour;
-
-  ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
-
-  contour = static_cast<JSContourData*>(js_mallocz(ctx, sizeof(JSContourData)));
-
-  std::copy(points.cbegin(), points.cend(), std::back_inserter(*contour));
-
-  JS_SetOpaque(ret, contour);
-  return ret;
-}
-
-JSValue
 js_contour_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSContourData* s = js_contour_data(ctx, this_val);
 
-  return js_create_point_iterator(ctx, std::make_pair(&(*s)[0], &(*s)[s->size()]), magic);
+  return js_point_iterator_new(ctx, std::make_pair(&(*s)[0], &(*s)[s->size()]), magic);
 }
+
 const JSCFunctionListEntry js_contour_proto_funcs[] = {
     JS_CFUNC_DEF("push", 1, js_contour_push),
     JS_CFUNC_DEF("pop", 0, js_contour_pop),

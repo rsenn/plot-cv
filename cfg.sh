@@ -1,6 +1,9 @@
 cfg() {
-  : ${build:=`gcc -dumpmachine`}
+ (: ${build:=`gcc -dumpmachine`}
   : ${VERBOSE:=OFF}
+  : ${PKG_CONFIG_PATH="/opt/opencv4/lib/pkgconfig:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig"}
+
+  export PKG_CONFIG_PATH
 
   if [ -n "$TOOLCHAIN" ]; then
     toolchain=`basename "$TOOLCHAIN" .cmake`
@@ -122,7 +125,7 @@ cfg() {
     ${MAKE:+-DCMAKE_MAKE_PROGRAM="$MAKE"} \
     ${prefix:+-DCMAKE_INSTALL_PREFIX="$prefix"} \
     "$@" \
-    $relsrcdir 2>&1 ) |tee "${builddir##*/}.log")
+    $relsrcdir 2>&1 ) |tee "${builddir##*/}.log"))
 }
 
 cfg-android ()
@@ -219,6 +222,7 @@ cfg-mingw() {
 
   export TOOLCHAIN PKG_CONFIG_PATH
 
+  VERBOSE=TRUE \
   builddir=build/$host \
   bindir=$prefix/bin \
   libdir=$prefix/lib \

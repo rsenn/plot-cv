@@ -14,7 +14,7 @@
 
 extern "C" {
 
-JSValue
+VISIBLE JSValue
 js_point_new(JSContext* ctx, double x, double y) {
   JSValue ret;
   JSPointData* s;
@@ -75,7 +75,7 @@ fail:
   return JS_EXCEPTION;
 }
 
-JSPointData*
+VISIBLE JSPointData*
 js_point_data(JSContext* ctx, JSValueConst val) {
   return static_cast<JSPointData*>(JS_GetOpaque2(ctx, val, js_point_class_id));
 }

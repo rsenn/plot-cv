@@ -15,7 +15,31 @@
 extern "C" {
 
 JSValue point_iterator_proto, point_iterator_class;
-JSClassID js_point_iterator_class_id;
+VISIBLE JSClassID js_point_iterator_class_id;
+
+VISIBLE JSValue
+js_point_iterator_new(JSContext* ctx, const std::pair<JSPointData*, JSPointData*>& range, int magic) {
+  JSPointIteratorData* it;
+  JSValue iterator;
+  int class_id;
+
+  iterator = JS_NewObjectClass(ctx, js_point_iterator_class_id);
+  if(JS_IsException(iterator))
+    goto fail;
+  it = static_cast<JSPointIteratorData*>(js_malloc(ctx, sizeof(*it)));
+  if(!it)
+    goto fail1;
+  it->magic = magic;
+  it->first = range.first;
+  it->second = range.second;
+
+  JS_SetOpaque(iterator, it);
+  return iterator;
+fail1:
+  JS_FreeValue(ctx, iterator);
+fail:
+  return JS_EXCEPTION;
+}
 
 JSValue
 js_point_iterator_result(JSContext* ctx, JSValue val, BOOL done) {
@@ -77,17 +101,11 @@ js_point_iterator_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValu
   if(!s)
     return JS_EXCEPTION;
 
-  v = static_cast<JSContourData*>(JS_GetOpaque(argv[0], js_contour_class_id));
+  v = static_cast<JSContourData*>(JS_GetOpaque(argv[0], 0 /*js_contour_class_id*/));
 
   s->first = &(*v)[0];
   s->second = s->first + v->size();
 
-  /*  if(JS_ToFloat64(ctx, &s->x, argv[0]))
-      goto fail;
-    if(JS_ToFloat64(ctx, &s->y, argv[1]))
-      goto fail;*/
-  /* using new_target to get the prototype is necessary when the
-     class is extended. */
   proto = JS_GetPropertyStr(ctx, new_target, "prototype");
   if(JS_IsException(proto))
     goto fail;
@@ -103,30 +121,6 @@ fail:
   return JS_EXCEPTION;
 }
 
-JSValue
-js_create_point_iterator(JSContext* ctx, const std::pair<JSPointData*, JSPointData*>& range, int magic) {
-  JSPointIteratorData* it;
-  JSValue iterator;
-  int class_id;
-
-  iterator = JS_NewObjectClass(ctx, js_point_iterator_class_id);
-  if(JS_IsException(iterator))
-    goto fail;
-  it = static_cast<JSPointIteratorData*>(js_malloc(ctx, sizeof(*it)));
-  if(!it)
-    goto fail1;
-  it->magic = magic;
-  it->first = range.first;
-  it->second = range.second;
-
-  JS_SetOpaque(iterator, it);
-  return iterator;
-fail1:
-  JS_FreeValue(ctx, iterator);
-fail:
-  return JS_EXCEPTION;
-}
-
 JSClassDef js_point_iterator_class = {
     "PointIterator",
     .finalizer = js_point_iterator_finalizer,
@@ -136,7 +130,7 @@ const JSCFunctionListEntry js_point_iterator_proto_funcs[] = {
     JS_ITERATOR_NEXT_DEF("next", 0, js_point_iterator_next, 0),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "PointIterator", JS_PROP_CONFIGURABLE),
 };
-const JSCFunctionListEntry js_point_iterator_static_funcs[] = {JS_CFUNC_MAGIC_DEF("create", 0, js_point_iterator_create, 0)};
+// const JSCFunctionListEntry js_point_iterator_static_funcs[] = {JS_CFUNC_MAGIC_DEF("create", 0, js_point_iterator_create, 0)};
 
 int
 js_point_iterator_init(JSContext* ctx, JSModuleDef* m) {
@@ -153,7 +147,7 @@ js_point_iterator_init(JSContext* ctx, JSModuleDef* m) {
   /* set proto.constructor and ctor.prototype */
 
   JS_SetConstructor(ctx, point_iterator_class, point_iterator_proto);
-  JS_SetPropertyFunctionList(ctx, point_iterator_class, js_point_iterator_static_funcs, countof(js_point_iterator_static_funcs));
+  // JS_SetPropertyFunctionList(ctx, point_iterator_class, js_point_iterator_static_funcs, countof(js_point_iterator_static_funcs));
 
   if(m)
     JS_SetModuleExport(ctx, m, "PointIterator", point_iterator_class);

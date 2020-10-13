@@ -36,7 +36,7 @@ fail:
   return JS_EXCEPTION;
 }
 
-JSSizeData*
+VISIBLE JSSizeData*
 js_size_data(JSContext* ctx, JSValueConst val) {
   return static_cast<JSSizeData*>(JS_GetOpaque2(ctx, val, js_size_class_id));
 }
@@ -60,7 +60,7 @@ js_size_get_wh(JSContext* ctx, JSValueConst this_val, int magic) {
   return JS_UNDEFINED;
 }
 
-JSValue
+VISIBLE JSValue
 js_size_new(JSContext* ctx, double w, double h) {
   JSValue ret;
   JSSizeData* s;

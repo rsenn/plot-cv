@@ -43,7 +43,7 @@ fail:
   return JS_EXCEPTION;
 }
 
-JSRectData*
+VISIBLE JSRectData*
 js_rect_data(JSContext* ctx, JSValueConst val) {
   return static_cast<JSRectData*>(JS_GetOpaque2(ctx, val, js_rect_class_id));
 }
