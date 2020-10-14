@@ -1,7 +1,7 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
-import { estree, ESNode, TemplateLiteral, CallExpression, ImportStatement, Identifier, ObjectBindingPattern, ArrowFunction } from './lib/ecmascript/estree.js';
+import { estree, ESNode, BlockStatement, SequenceExpression, TemplateLiteral, CallExpression, ImportStatement, Identifier, ObjectBindingPattern, ArrowFunction, Program } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import { Path } from './lib/json.js';
@@ -17,8 +17,12 @@ const testfn = () => true;
 const testtmpl = `this is\na test`;
 
 const code = `
+(function() {
+  "use strict";
 
-for(let [value, path] of deep.iterate(x, (v, k) => /data-/.test(k[k.length - 1]))) deep.unset(x, path);
+  for(let [value, path] of deep.iterate(x, (v, k) => /data-/.test(k[k.length - 1]))) deep.unset(x, path);
+})();
+
 `;
 
 Util.callMain(main, Util.putError);
@@ -54,7 +58,7 @@ async function main(...args) {
 
   globalThis = Util.getGlobalObject();
   Util.defineGettersSetters(globalThis, {
-    printer: Util.once(() => new Printer({ colors: console.colors, indent: 4 }))
+    printer: Util.once(() => new Printer({ colors: false, indent: 2 }))
   });
 
   // console.log('globalThis', globalThis);
@@ -103,27 +107,33 @@ async function processFile(file) {
     new Map(),
     node => node instanceof ESNode || Util.isArray(node),
     (path, value) => {
-      path = /*path.join("."); //*/ new Path(path);
+      //   path = /*path.join("."); //*/ new Path(path);
       return [path, value];
     }
   );
+  let nodeKeys = [];
+  //console.log('flat', flat);
 
-  let [path, fn] = Util.find(flat, (value, key) => value instanceof ArrowFunction);
+  await ConsoleSetup({ depth: 10, colors: true });
+
+  //console.log('ast', ast);
+  /*
+console.log("find:",[...flat].find(([path,node]) => node instanceof CallExpression));
+console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpression));*/
+
+  /*  let [path, fn] = Util.find(flat, (value, key) => value instanceof ArrowFunction);
   path = path.slice(0, path.lastIndexOf('arguments') + 1);
   console.log('path:', path);
 
   let node = Util.find(flat, (value, key) => path.equals(key));
-  /*console.log('keys:', flat.keys());
-  console.log('node:', node);*/
-
+ 
   let node2path = new WeakMap();
-  let nodeKeys = [];
-
+ 
   for(let [path, node] of flat) {
     node2path.set(node, path);
     nodeKeys.push(path);
   }
-
+*/
   const isRequire = node => node instanceof CallExpression && node.callee.value == 'require';
   const isImport = node => node instanceof ImportStatement;
 
@@ -135,35 +145,46 @@ async function processFile(file) {
   );
 
   console.log('commentMap:', commentMap);
-  let allNodes = nodeKeys.map((path, i) => [i, flat.get(path)]);
+  // let allNodes = nodeKeys.map((path, i) => [i, flat.get(path)]);
 
   // for(let [i, n] of allNodes) console.log(new ImmutablePath(node2path.get(n)), n);
 
   const output_file = file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
 
+  let st = deep.get(ast, ['body', 0, 'callee', 'expressions', 0].join('.')) || ast;
+
+  let [p, n] = [...flat].find(([path, node]) => node instanceof BlockStatement);
+  console.log('find:', [...p]);
+  //console.log("find:",n);
+
+  let body = deep.get(ast, p.concat(['body'])) || ast.body;
+
+  console.log('find:', body);
+
   console.log('saving to:', output_file);
-  const output = printAst(ast, parser.comments, printer);
+  const output = printAst(new Program(body), parser.comments, printer);
   console.log('output:', output);
 
   dumpFile(output_file, output);
 
-  const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
-  const importStatements = imports
-    .map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path))
-    .map(path => [path, deep.get(ast, path)]);
+  function getImports() {
+    const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
+    const importStatements = imports
+      .map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path))
+      .map(path => [path, deep.get(ast, path)]);
 
-  console.log('imports:', new Map(imports.map(([path, node]) => [ESNode.assoc(node).position, node])));
-  console.log('importStatements:', importStatements);
+    console.log('imports:', new Map(imports.map(([path, node]) => [ESNode.assoc(node).position, node])));
+    console.log('importStatements:', importStatements);
 
-  const importedFiles = imports.map(([pos, node]) => Identifier.string(node.source || node.arguments[0]));
-  console.log('importedFiles:', importedFiles);
+    const importedFiles = imports.map(([pos, node]) => Identifier.string(node.source || node.arguments[0]));
+    console.log('importedFiles:', importedFiles);
 
-  let importIdentifiers = importStatements
-    .map(([p, n]) => [p, n.identifiers ? n.identifiers : n])
-    .map(([p, n]) => [p, n.declarations ? n.declarations : n]);
-  console.log('importIdentifiers:', importIdentifiers);
+    let importIdentifiers = importStatements
+      .map(([p, n]) => [p, n.identifiers ? n.identifiers : n])
+      .map(([p, n]) => [p, n.declarations ? n.declarations : n]);
+    console.log('importIdentifiers:', importIdentifiers);
 
-  /*  importIdentifiers = importIdentifiers.map(([p, n]) =>
+    /*  importIdentifiers = importIdentifiers.map(([p, n]) =>
     n
       .map(decl => (decl.id instanceof ObjectBindingPattern ? decl.id.properties : [decl.id]))
       .flat()
@@ -171,7 +192,9 @@ async function processFile(file) {
       .flat()
       .map(n => Identifier.string(n))
   );*/
-  console.log('importIdentifiers:', Util.unique(importIdentifiers.flat()).join(', '));
+    console.log('importIdentifiers:', Util.unique(importIdentifiers.flat()).join(', '));
+  }
+
   await ConsoleSetup({ depth: Infinity });
   const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
 

@@ -5,7 +5,7 @@ export async function ConsoleSetup(opts = {}) {
   Util.tryCatch(() => (Error.stackTraceLimit = 1000));
   const proc = await Util.tryCatch(async () => await import('process'));
   const defaultBreakLength =
-    proc && proc.stdout && proc.stdout.isTTY ? proc.stdout.columns || proc.env.COLUMNS : Infinity;
+    (proc && proc.stdout && proc.stdout.isTTY && proc.stdout.columns) || proc.env.COLUMNS || 80; // Infinity;
   const {
     depth = 2,
     colors = await Util.isatty(1),
