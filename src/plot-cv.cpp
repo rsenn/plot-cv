@@ -412,6 +412,49 @@ draw_lines(image_type& target, const std::vector<cv::Vec4i>& lines, const cv::Sc
   return draw_lines(target, lines.cbegin(), lines.cend(), color, thickness, lineType);
 }
 
+// https://stackoverflow.com/questions/6555629/algorithm-to-detect-corners-of-paper-sheet-in-photo
+void
+contour_detect(const image_type& input, image_type& drawing) {
+  image_type mat;
+  cv::cvtColor(input, mat, CV_BGR2GRAY);
+  cv::GaussianBlur(mat, mat, cv::Size(3, 3), 0);
+  cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Point(9, 9));
+  cv::Mat dilated;
+  cv::dilate(mat, dilated, kernel);
+
+  cv::Mat edges;
+  cv::Canny(dilated, edges, 84, 3);
+
+  std::vector<cv::Vec4i> lines;
+  lines.clear();
+  cv::HoughLinesP(edges, lines, 1, CV_PI / 180, 25);
+  std::vector<cv::Vec4i>::iterator it = lines.begin();
+  for(; it != lines.end(); ++it) {
+    cv::Vec4i l = *it;
+    cv::line(edges, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]), cv::Scalar(255, 0, 0), 2, 8);
+  }
+  std::vector<std::vector<cv::Point>> contours;
+  cv::findContours(edges, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+  std::vector<std::vector<cv::Point>> contoursCleaned;
+  for(int i = 0; i < contours.size(); i++) {
+    if(cv::arcLength(contours[i], false) > 100)
+      contoursCleaned.push_back(contours[i]);
+  }
+  std::vector<std::vector<cv::Point>> contoursArea;
+
+  for(int i = 0; i < contoursCleaned.size(); i++) {
+    if(cv::contourArea(contoursCleaned[i]) > 10000) {
+      contoursArea.push_back(contoursCleaned[i]);
+    }
+  }
+  std::vector<std::vector<cv::Point>> contoursDraw(contoursCleaned.size());
+  for(int i = 0; i < contoursArea.size(); i++) {
+    cv::approxPolyDP(cv::Mat(contoursArea[i]), contoursDraw[i], 40, true);
+  }
+//  Mat drawing = cv::Mat::zeros(mat.size(), CV_8UC3);
+  cv::drawContours(drawing, contoursDraw, -1, cv::Scalar(0, 255, 0), 1);
+}
+
 void
 corner_harris_detection(image_type& src, const std::function<void(const cv::Point& point)>& fn) {
   int thresh = 200;
@@ -690,11 +733,11 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
         if(contourStr.str().size())
           contourStr << "\n";
         out_points(contourStr, a);
-      /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
-         ", " << hier[i][2] << ", " << hier[i][3] << ", "
-                    << "} " << std::endl;
-          logfile << "contourDepth(i) = " << depth << std::endl;
-*/
+        /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
+           ", " << hier[i][2] << ", " << hier[i][3] << ", "
+                      << "} " << std::endl;
+            logfile << "contourDepth(i) = " << depth << std::endl;
+  */
         /*  if(dptr != nullptr)
             cv::drawContours(*dptr, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
    */     }

@@ -870,7 +870,7 @@ async function LoadDocument(project, parentElem) {
     aspectListener(aspectRatio);
     //console.debug('aspectRatio:', aspectRatio);
     component =
-      h(Zoomable, { /*className: 'zoomable',*/ style: size.toCSS('mm') }, [component]) ||
+     // h(Zoomable, { /*className: 'zoomable',*/ style: size.toCSS('mm') }, [component]) ||
       h(Fence, {
           style: {},
           sizeListener,

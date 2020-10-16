@@ -68,15 +68,7 @@ file(
   src/*.h
   src/*.hpp)
 
-set(QUICKJS_SOURCES
-    quickjs/quickjs.c
-    quickjs/quickjs.h
-    quickjs/libregexp.c
-    quickjs/libunicode.c
-    quickjs/cutils.c
-    quickjs/quickjs-libc.c
-    quickjs/quickjs-libc.h
-    quickjs/libbf.c)
+set(QUICKJS_SOURCES ${quickjs_sources})
 
 add_definitions(-D_GNU_SOURCE=1)
 

@@ -109,7 +109,7 @@ endif(ENABLE_LTO)
 
 add_subdirectory(quickjs "${CMAKE_BINARY_DIR}/quickjs")
 
-link_directories(${quickjs_BINARY_DIR})
+link_directories(BEFORE ${quickjs_BINARY_DIR})
 #message("quickjs_BINARY_DIR: ${quickjs_BINARY_DIR}")
 
 # if(HAVE_EFENCE) if(USE_EFENCE) set(ELECTRICFENCE_LIBRARY efence) endif(USE_EFENCE) endif(HAVE_EFENCE)
