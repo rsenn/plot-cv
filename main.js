@@ -859,18 +859,18 @@ async function LoadDocument(project, parentElem) {
   if(project.renderer) {
     //console.debug('testRender:', component);
     let r = project.renderer.rect || project.renderer.bounds;
-    let size = (project.dimensions = new Size(r));
+    let size = (project.dimensions = project.renderer.size);
     //console.debug('project.renderer:', project.renderer);
     //console.debug('r:', r);
     let aspectRatio = 1;
     if(r) {
       aspectRatio = r.width / r.height;
-      sizeListener({ width: r.width });
+      sizeListener(size);
     }
     aspectListener(aspectRatio);
     //console.debug('aspectRatio:', aspectRatio);
     component =
-     // h(Zoomable, { /*className: 'zoomable',*/ style: size.toCSS('mm') }, [component]) ||
+      // h(Zoomable, { /*className: 'zoomable',*/ style: size.toCSS('mm') }, [component]) ||
       h(Fence, {
           style: {},
           sizeListener,
@@ -983,7 +983,7 @@ const ChooseDocument = async (project, i) => {
     if(!project.loaded) {
       let data = await LoadDocument(project, box);
       project.loaded = true;
-      //console.log('loaded:', project);
+  console.log('loaded:', project);
     }
     r = project.loaded;
   })();
@@ -2055,7 +2055,8 @@ const AppMain = (window.onload = async () => {
         'stroke-width': 0.127,
         fill: 'none',
         'stroke-linecap': 'square',
-        'vector-effect': 'non-scaling-stroke'
+        'vector-effect': 'non-scaling-stroke',
+        'pointer-events': 'none'
       });
 
     if(prevEvent && group) {
