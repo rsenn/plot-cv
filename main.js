@@ -983,7 +983,7 @@ const ChooseDocument = async (project, i) => {
     if(!project.loaded) {
       let data = await LoadDocument(project, box);
       project.loaded = true;
-  console.log('loaded:', project);
+      console.log('loaded:', project);
     }
     r = project.loaded;
   })();
