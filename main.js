@@ -789,7 +789,7 @@ async function LoadDocument(project, parentElem) {
 
   project.doc = await LoadFile(project).catch(err => console.error(err));
 
-currentProj(project);
+  currentProj(project);
   LogJS.info(`${project.name} loaded.`);
   const topPlace = 'tPlace';
   elementChildren = Util.memoize(() => ElementChildren(topPlace, ent => Object.fromEntries(ent)));
@@ -881,6 +881,8 @@ currentProj(project);
       );
   }
 
+  let svgElement;
+
   if(window.component) {
     React.render(component, element);
 
@@ -888,9 +890,9 @@ currentProj(project);
     project.object = object;
     let rendered = object.children[0];
 
-     console.debug('LoadDocument rendered:', rendered);
-     console.debug('LoadDocument element:', element);
-     console.debug('LoadDocument  project:', project);
+    console.debug('LoadDocument rendered:', rendered);
+    console.debug('LoadDocument element:', element);
+    console.debug('LoadDocument  project:', project);
 
     //path2eagle: path2obj, eagle2path: obj2path
 
@@ -901,7 +903,7 @@ currentProj(project);
 
     project.rendered = rendered;
     window.project.element = element;
-    window.project.svgElement = Element.find('svg', element);
+    window.project.svgElement = svgElement = Element.find('svg', element);
     project.grid = Element.find('g.grid', project.element);
     project.bbox = SVG.bbox(project.grid);
     project.aspectRatio = aspect;
@@ -923,7 +925,7 @@ currentProj(project);
 
     project.makeFactory();
 
-    let center = SVG.bbox(project.svg).center.round();
+    let center = SVG.bbox(svgElement).center.round();
     let defaultTransform = `translate(${center.x},${center.y}) scale(2.54,2.54)`;
 
     function xx() {
@@ -960,7 +962,7 @@ currentProj(project);
     let bounds = doc.getBounds();
     let rect = bounds.toRect(Rect.prototype);
     let size = new Size(r);
-   // currentProj(project);
+    // currentProj(project);
     size.mul(doc.type == 'brd' ? 2 : 1.5);
     let svgrect = SVG.bbox(project.svg);
     let measures = (doc.measures || doc.getBounds()).rect;
@@ -2118,11 +2120,11 @@ const AppMain = (window.onload = async () => {
       for(let [e, rect] of bboxes) {
         let transforms =
           Element.walkUp(e, (p, d, set, stop) =>
-            (p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement))
+            p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement)
               ? stop()
               : p.hasAttribute('transform') && set(p.getAttribute('transform'))
           ) || [];
-        console.log('transforms:', transforms);
+        //        console.log('transforms:', transforms);
         transforms = transforms.reverse();
         elems.add(e);
         let props = { ...rect.round(0.001).toObject(), transform: transforms.join(' ') };
