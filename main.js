@@ -28,7 +28,7 @@ import { Iterator } from './lib/iterator.js';
 import { Functional } from './lib/functional.js';
 import { makeLocalStorage } from './lib/autoStore.js';
 import { Repeater } from './lib/repeater/repeater.js';
-import { useResult } from './lib/repeater/react-hooks.js';
+import { useResult, useValue } from './lib/repeater/react-hooks.js';
 import { Portal } from './lib/dom/preactComponent.js';
 import { BinaryTree } from './lib/container/binaryTree.js';
 import LogJS from './lib/log.js';
@@ -38,7 +38,7 @@ import { Object2Array, XmlObject, XmlAttr, ImmutableXPath, MutableXPath } from '
 import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
 import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
-import components, { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable } from './components.js';
+import components, { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable, DisplayList } from './components.js';
 import { Message } from './message.js';
 
 import { useEvent, useElement, useDoubleClick, useDimensions } from './lib/hooks.js';
@@ -47,7 +47,7 @@ import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import { CTORS, ECMAScriptParser, estree, Factory, Lexer, Position, Range, ESNode, Parser, PathReplacer, Printer, Stack, Token, ArrayBindingPattern, ArrayLiteral, ArrowFunction, AssignmentExpression, AwaitExpression, BinaryExpression, BindingPattern, BindingProperty, LabelledStatement, BlockStatement, BreakStatement, CallExpression, ClassDeclaration, ConditionalExpression, ContinueStatement, Declaration, DecoratorExpression, DoStatement, EmptyStatement, Expression, ExpressionStatement, ForInStatement, ForStatement, FunctionLiteral, FunctionDeclaration, Identifier, ComputedPropertyName, IfStatement, SwitchStatement, CaseClause, ImportStatement, ExportStatement, JSXLiteral, Literal, TemplateLiteral, LogicalExpression, MemberExpression, InExpression, NewExpression, ObjectBindingPattern, ObjectLiteral, PropertyDefinition, MemberVariable, Program, RestOfExpression, ReturnStatement, SequenceExpression, SpreadElement, Statement, StatementList, ThisExpression, ThrowStatement, YieldStatement, TryStatement, UnaryExpression, UpdateExpression, VariableDeclaration, VariableDeclarator, WhileStatement, WithStatement } from './lib/ecmascript.js';
 import { PipeTo, AsyncRead, AsyncWrite, DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater, WritableStream, ReadFromIterator } from './lib/stream.js?ts=<?TS?>';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
-import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, CartesianToPolar, RotateTransformation, VERTICAL, useTrkl, ElementToClass } from './lib/eagle/renderUtils.js';
+import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, CartesianToPolar, RotateTransformation, VERTICAL, useTrkl, ElementToClass, MakeRotation } from './lib/eagle/renderUtils.js';
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
@@ -56,10 +56,10 @@ import { Slot, SlotProvider } from './slots.js';
 import Voronoi from './lib/geom/voronoi.js';
 import GerberParser from './lib/gerber/parser.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
-import { BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode } from './lib/eagle.js';
+import { BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, LibraryRenderer, makeEagleElement, makeEagleNode } from './lib/eagle.js';
 //import PureCache from 'pure-cache';
 import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
-import { NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer } from './commands.js';
+import { NormalizeResponse, ResponseData, FetchURL, FetchCached, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer, ClearCache } from './commands.js';
 // prettier-ignore-end
 
 /* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line,Matrix,  Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
@@ -130,19 +130,28 @@ let store = (window.store = makeLocalStorage());
 
 let projects = trkl([]);
 let socket = trkl();
-let listURL = trkl(store.get('url') || null);
-let searchFilter = trkl(store.get('filter') || '*');
-let zoomLog = trkl(store.get('zoom') || null);
-let logSize = trkl(store.get('console') || null);
-let debugFlag = trkl(store.get('debug') || false);
-let credentials = trkl(store.get('auth') || {});
+let config = {
+  listURL: trkl(store.get('url') || null),
+  searchFilter: trkl(store.get('filter') || '*'),
+  zoomLog: trkl(store.get('zoom') || null),
+  logSize: trkl(store.get('console') || null),
+  debugFlag: trkl(store.get('debug') || false),
+  credentials: trkl(store.get('auth') || {}),
+  showGrid: trkl(store.get('grîd') || true)
+};
+
+const GetProject = arg => {
+  let ret =
+    typeof arg == 'number' ? projects()[arg] : typeof arg == 'string' ? projects().find(p => p.name == arg) : arg;
+  if(typeof ret == 'string') ret = { name: ret };
+  return ret;
+};
 let elementChildren = null;
 let elementGeometries = null;
-let showGrid = trkl(store.get('grîd') || true);
-//let zoomValue = Util.getSet(() => ZoomFactor(zoomLog()), value => zoomLog(ZoomLog(value)));
-let zoomValue = Util.deriveGetSet(zoomLog, ZoomFactor, ZoomLog);
+//let zoomValue = Util.getSet(() => ZoomFactor(config.zoomLog()), value => config.zoomLog(ZoomLog(value)));
+let zoomValue = Util.deriveGetSet(config.zoomLog, ZoomFactor, ZoomLog);
 
-zoomLog.subscribe(AdjustZoom);
+config.zoomLog.subscribe(AdjustZoom);
 
 const add = (arr, ...items) => [...(arr ? arr : []), ...items];
 
@@ -717,17 +726,6 @@ window.dom2eagle=eagle2dom.map(([k, v]) => [v, k]);*/
   return maps;
 }
 
-async function ClearCache(match = /.*/) {
-  let pred = Util.predicate(match);
-  let cache = await caches.open('fetch');
-  for(let request of await cache.keys()) {
-    if(pred(request.url)) {
-      console.warn(`Cleared cache entry ${request.url}`);
-      cache.delete(request);
-    }
-  }
-}
-
 function* PackageNames(doc = project.doc) {
   const tokenize = Util.matchAll(/([A-Za-z]+|[0-9,]+|[^0-9A-Za-z]+)/g);
   let packages = doc.packages && doc.packages.length ? doc.packages : [...doc.getAll('package')];
@@ -783,17 +781,16 @@ function* PackageNames(doc = project.doc) {
 }
 
 async function LoadDocument(project, parentElem) {
-  //console.log('project:', project);
   open(false);
   gcode(null);
 
-  try {
-    project.doc = await LoadFile(project);
-  } catch(error) {
-    console.error(error);
-    throw error;
-  }
-  LogJS.info(`${project.doc.basename} loaded.`);
+  if(typeof project == 'string') project = GetProject(project);
+  console.log('project:', project);
+
+  project.doc = await LoadFile(project).catch(err => console.error(err));
+
+currentProj(project);
+  LogJS.info(`${project.name} loaded.`);
   const topPlace = 'tPlace';
   elementChildren = Util.memoize(() => ElementChildren(topPlace, ent => Object.fromEntries(ent)));
   elementGeometries = Util.memoize(() => ElementGeometries(topPlace, ent => Object.fromEntries(ent)));
@@ -825,19 +822,22 @@ async function LoadDocument(project, parentElem) {
     /**/
   }
 
-  if(doc.type != 'lbr') {
+  if(/*doc.type != 'lbr'*/ true) {
     project.renderer = new Renderer(doc, ReactComponent.append, debug);
 
-    showGrid = trkl(true);
-    showGrid.subscribe(value => {
+    config.showGrid = trkl(true);
+    config.showGrid.subscribe(value => {
       let obj = { ...project.renderer.grid, visible: value };
-      console.log('showGrid:', obj);
+      console.log('config.showGrid:', obj);
       project.renderer.grid = obj;
     });
 
     console.log('project.renderer', project.renderer);
     let style = { width: '100%', height: '100%', position: 'relative' };
     let component = project.renderer.render(doc, null, {});
+
+    console.log('renderer.render =', component);
+
     let usedLayers = [...doc.layers.list].filter(layer => layer.elements.size > 0);
 
     Timer.once(250).then(() =>
@@ -888,7 +888,9 @@ async function LoadDocument(project, parentElem) {
     project.object = object;
     let rendered = object.children[0];
 
-    //console.debug('rendered:', rendered);
+     console.debug('LoadDocument rendered:', rendered);
+     console.debug('LoadDocument element:', element);
+     console.debug('LoadDocument  project:', project);
 
     //path2eagle: path2obj, eagle2path: obj2path
 
@@ -898,8 +900,8 @@ async function LoadDocument(project, parentElem) {
     };
 
     project.rendered = rendered;
-    project.element = element;
-    project.svg = Element.find('svg', '#main');
+    window.project.element = element;
+    window.project.svgElement = Element.find('svg', element);
     project.grid = Element.find('g.grid', project.element);
     project.bbox = SVG.bbox(project.grid);
     project.aspectRatio = aspect;
@@ -958,7 +960,7 @@ async function LoadDocument(project, parentElem) {
     let bounds = doc.getBounds();
     let rect = bounds.toRect(Rect.prototype);
     let size = new Size(r);
-    currentProj(project);
+   // currentProj(project);
     size.mul(doc.type == 'brd' ? 2 : 1.5);
     let svgrect = SVG.bbox(project.svg);
     let measures = (doc.measures || doc.getBounds()).rect;
@@ -1158,7 +1160,7 @@ const MakeFitAction = index => async event => {
   window.transform = newTransform.toString('px', 'deg');
 };
 
-function ZoomFactor(val = zoomLog()) {
+function ZoomFactor(val = config.zoomLog()) {
   return +Math.pow(10, val / 200).toFixed(5);
 }
 
@@ -1166,7 +1168,7 @@ function ZoomLog(factor) {
   return Math.log10(factor) * 200;
 }
 
-function AdjustZoom(l = zoomLog()) {
+function AdjustZoom(l = config.zoomLog()) {
   let zoomFactor = ZoomFactor(l);
   let t = new TransformationList(window.transform);
   if(!t.scaling) t.scale(zoomFactor, zoomFactor);
@@ -1268,7 +1270,7 @@ const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 const AppMain = (window.onload = async () => {
   Util(globalThis);
   //prettier-ignore
-  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, ImmutablePath, MutablePath,arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser,  PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian,CartesianToPolar, RotateTransformation, VERTICAL, useTrkl,ElementToClass, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer, classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath };
+  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, ImmutablePath, MutablePath,arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser,  PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian,CartesianToPolar, RotateTransformation, VERTICAL, useTrkl,ElementToClass, MakeRotation, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer, classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath };
 
   const localFunctions = {
     PackageChildren,
@@ -1320,22 +1322,22 @@ const AppMain = (window.onload = async () => {
         const value = store.get(key);
         switch (key) {
           case 'url':
-            listURL(value);
+            config.listURL(value);
             break;
           case 'filter':
-            searchFilter(value);
+            config.searchFilter(value);
             break;
           case 'zoom':
-            zoomLog(value);
+            config.zoomLog(value);
             break;
           case 'console':
-            logSize(value);
+            config.logSize(value);
             break;
           case 'debug':
-            debugFlag(value);
+            config.debugFlag(value);
             break;
           case 'auth':
-            credentials(value);
+            config.credentials(value);
             break;
         }
       }
@@ -1383,10 +1385,10 @@ const AppMain = (window.onload = async () => {
   };
 
   // prettier-ignore
-  BindGlobal({ projects, socket, transform, size: sizeListener, aspect: aspectListener, showSearch, logDimensions: logSize, watched: dump, 
+  BindGlobal({ projects, socket, transform, size: sizeListener, aspect: aspectListener, showSearch,   watched: dump, 
     children: () => elementChildren(),
      geometries: () => elementGeometries(),
-     debug: debugFlag, credentials, showGrid });
+    ...config });
 
   currentSearch.subscribe(value => {
     if(value) {
@@ -1402,7 +1404,7 @@ const AppMain = (window.onload = async () => {
   let c = testComponent({});
   window.testComponent = c;
 
-  const UpdateProjectList = async (opts = listURL() ? { url: listURL(), ...credentials } : {}) => {
+  const UpdateProjectList = async (opts = config.listURL() ? { url: config.listURL(), ...credentials } : {}) => {
     let list = [];
     //console.log('opts:', opts);
     let { url, ...restOfOpts } = opts;
@@ -1468,39 +1470,39 @@ const AppMain = (window.onload = async () => {
 
   window.crosshair = trkl.bind({}, crosshair);
 
-  credentials.subscribe(value => {
+  config.credentials.subscribe(value => {
     store.set('auth', value);
-    LogJS.info(`credentials`, value);
+    LogJS.info(`config.credentials`, value);
   });
-  searchFilter.subscribe(value => {
+  config.searchFilter.subscribe(value => {
     store.set('filter', value);
-    LogJS.info(`searchFilter is ${value}`);
+    LogJS.info(`config.searchFilter is ${value}`);
   });
 
-  listURL.subscribe(value => {
+  config.listURL.subscribe(value => {
     store.set('url', value);
-    LogJS.info(`listURL is '${value}'`);
+    LogJS.info(`config.listURL is '${value}'`);
   });
-  debugFlag.subscribe(value => store.set('debug', value));
+  config.debugFlag.subscribe(value => store.set('debug', value));
 
-  logSize.subscribe(value => {
+  config.logSize.subscribe(value => {
     const { width, height } = value;
 
     if(width === undefined || height === undefined) {
-      throw new Error('logSize undefined');
+      throw new Error('config.logSize undefined');
     }
     store.set('console', value);
-    //LogJS.info(`logSize is ${value.width} x ${value.height}`);
+    //LogJS.info(`config.logSize is ${value.width} x ${value.height}`);
   });
 
-  trkl.bind(window, { searchFilter, listURL });
+  //trkl.bind(window, { config.searchFilter, config.listURL });
   //trkl.bind(window, { svgFactory });
 
-  trkl.bind(window, { zoomLog, zoom: zoomValue, logSize });
+  //trkl.bind(window, { config.zoomLog, zoom: zoomValue, config.logSize });
 
-  zoomLog.subscribe(value => {
+  config.zoomLog.subscribe(value => {
     let factor = ZoomFactor(value);
-    // console.info('zoomFactor changed', value, factor);
+    console.info('zoomFactor changed', value, factor);
     store.set('zoom', value);
     if(value === 1) throw new Error(value);
   });
@@ -1520,12 +1522,12 @@ const AppMain = (window.onload = async () => {
     let { value } = target;
     let parts = value.split(/\s+/g);
     let urls = parts.filter(p => /\:\/\//.test(p)).join('\n');
-    updateIfChanged(listURL, urls, arg => {
+    updateIfChanged(config.listURL, urls, arg => {
       console.debug('updateIfChanged:', arg);
     });
-    listURL(urls);
+    config.listURL(urls);
     //    value = parts.filter(p => !/\:\/\//.test(p)).join(' ');
-    searchFilter(value == '' ? '*' : value.split(/\s*\|\s*/g).join(' | '));
+    config.searchFilter(value == '' ? '*' : value.split(/\s*\|\s*/g).join(' | '));
   };
 
   const Consumer = props => {
@@ -1571,7 +1573,10 @@ const AppMain = (window.onload = async () => {
       loggerRect = r;
     }
     const result = useResult(async function* () {
-      for await (let msg of logger) yield msg;
+      for await (let msg of logger) {
+        //  console.debug("msg:", msg);
+        yield msg;
+      }
     });
     if(result) {
       lines.push(result.value);
@@ -1713,6 +1718,45 @@ const AppMain = (window.onload = async () => {
     );
   };
 
+  class DocumentList {
+    constructor() {
+      this.repeater = new Repeater((push, stop) => {
+        this.push = push;
+        this.stop = stop;
+      });
+      this.map = new Map();
+    }
+
+    add(name, component) {
+      const { map } = this;
+
+      if(!ReactComponent.isComponent(component)) component = h(component, {}, []);
+
+      map.set(name, component);
+      this.update();
+    }
+
+    addEntry([name, component]) {
+      return this.add(name, component);
+    }
+
+    remove(name) {
+      if(map.has(name)) {
+        map.delete(name);
+        this.update();
+        return true;
+      }
+    }
+
+    update() {
+      const { map } = this;
+      this.push([...map.values()]);
+    }
+  }
+  let data;
+  window.documentList = data = new DocumentList();
+  React.render(h(DisplayList, { data }), Element.find('#display'));
+
   React.render(h(SlotProvider, {}, [
       Panel('buttons no-select', [
         h(Button, {
@@ -1747,8 +1791,8 @@ const AppMain = (window.onload = async () => {
         h(Conditional, { signal: currentProj }, [
           h(Button, {
             //  caption: '↕',
-            fn: () => showGrid(!showGrid()),
-            state: showGrid,
+            fn: () => config.showGrid(!config.showGrid()),
+            state: config.showGrid,
             toggle: true,
             image: 'static/svg/grid.svg'
           }),
@@ -1950,7 +1994,7 @@ const AppMain = (window.onload = async () => {
         onChange: debounceAsync(async (e, p, i) => await ChooseDocument(p, i), 5000, {
           leading: true
         }),
-        filter: searchFilter,
+        filter: config.searchFilter,
         showSearch,
         changeInput,
         focusSearch,
@@ -1958,7 +2002,7 @@ const AppMain = (window.onload = async () => {
       }),
 
       h(CrossHair, { ...crosshair }),
-      h(FloatingPanel, { onSize: logSize, className: 'no-select', id: 'console' }, [
+      h(FloatingPanel, { onSize: config.logSize, className: 'no-select', id: 'console' }, [
         /*h(div, {}, [ */ h(Logger, {}),
         h(Dumper, {}),
         h(Commander, {
@@ -1973,7 +2017,7 @@ const AppMain = (window.onload = async () => {
         }) /*])*/
       ]),
       h(Slot, { name: 'layers' }),
-      h(Conditional, { signal: wantAuthorization }, h(AuthorizationDialog, { onAuth: credentials }))
+      h(Conditional, { signal: wantAuthorization }, h(AuthorizationDialog, { onAuth: config.credentials }))
     ]),
     Element.find('#preact')
   );
@@ -1987,7 +2031,7 @@ const AppMain = (window.onload = async () => {
 
   //Element.find('.transformed-element-size').setAttribute('id', 'transformed-element');
 
-  //TouchListener(touchHandler, { element: window });
+  TouchListener(touchHandler, { element: window });
 
   window.addEventListener('pointermove', moveHandler);
 
@@ -2067,17 +2111,19 @@ const AppMain = (window.onload = async () => {
       );
 
       //  console.log('difference:', [remove,add], 'union:', u);
+      //  console.log('add:', add);
 
-      const bboxes = new Map(add.map(e => [e, new Rect(e.getBBox())]));
+      const bboxes = new Map(add.map(e => [e, new Rect(e.getBBox ? e.getBBox() : e.getBoundingClientRect())]));
 
       for(let [e, rect] of bboxes) {
-        let transforms = (Element.walkUp(e, (p, d, set, stop) =>
-            p.parentElement.isSameNode(p.ownerSVGElement)
+        let transforms =
+          Element.walkUp(e, (p, d, set, stop) =>
+            (p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement))
               ? stop()
               : p.hasAttribute('transform') && set(p.getAttribute('transform'))
-          ) || []
-        ).reverse();
-        // console.log('transforms:', transforms);
+          ) || [];
+        console.log('transforms:', transforms);
+        transforms = transforms.reverse();
         elems.add(e);
         let props = { ...rect.round(0.001).toObject(), transform: transforms.join(' ') };
         rects.set(e, [
@@ -2117,7 +2163,7 @@ const AppMain = (window.onload = async () => {
   touchHandler.subscribe(/*Util.printReturnValue*/ event => {
       const { x, y, index, buttons, start, type, target } = event;
 
-      // console.log('touchHandler', event);
+      //  console.log('touchHandler', event);
       if(type.endsWith('end') || type.endsWith('up')) return cancel();
       if(event.buttons === 0 && type.endsWith('move')) return cancel();
       // if(event.index > 0) console.log('touch', { x, y, index, buttons, type, target }, container);
@@ -2142,7 +2188,7 @@ const AppMain = (window.onload = async () => {
 
             window.resize = resize = Element.resizeRelative(box, null, edge[0] ? -1 : 1, size => {
               //    console.log('resizeRelative:', { elemId, size });
-              if(elemId == 'console') logSize(size);
+              if(elemId == 'console') config.logSize(size);
             });
             box.style.cursor = `nwse-resize`;
             //console.log('RESIZE:', { resize, box, corners, edge });
@@ -2184,7 +2230,7 @@ const AppMain = (window.onload = async () => {
       }
 
       if(event.index > 0) {
-        let rel = new Point(event);
+        let rel = new Point(event).sub(event.start);
         let absolute = new Point(start).add(rel);
 
         if(resize) {
@@ -2194,7 +2240,7 @@ const AppMain = (window.onload = async () => {
           /*  window.crosshair.show = true;
           window.crosshair.position = absolute;*/
 
-          //          console.log('move', ...[...rel], ...[...absolute]);
+          console.log('move', { rel, absolute });
           if(event.buttons > 0) move(rel.x, rel.y);
           else move = move.jump();
         }
@@ -2301,7 +2347,6 @@ const AppMain = (window.onload = async () => {
       layerY
     } = event;
 
-    //console.log('wheel:', { deltaX, deltaY, screenX, screenY, clientX, clientY, pageX, pageY, x, y, offsetX, offsetY, layerX, layerY });
     window.wheelEvent = event;
 
     const clientArea = Element.rect('body > div');
@@ -2324,10 +2369,10 @@ const AppMain = (window.onload = async () => {
     if(!pos.inside(clientArea)) return;
 
     const wheelPos = -event.deltaY.toFixed(2);
-    let zoomVal = zoomLog();
+    let zoomVal = config.zoomLog();
 
     zoomVal = altKey || ctrlKey || shiftKey ? 0 : Util.clamp(-100, 300, zoomVal + wheelPos * 0.1);
-    zoomLog(zoomVal);
+    config.zoomLog(zoomVal);
     AdjustZoom();
   });
 

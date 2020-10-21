@@ -81,9 +81,6 @@ export async function FetchURL(url, allOpts = {}) {
   return ret;
 }
 
-export const GetProject = arg =>
-  typeof arg == 'number' ? projects()[arg] : typeof arg == 'string' ? projects().find(p => p.name == arg) : arg;
-
 export async function ListProjects(opts = {}) {
   const { url, descriptions = true, names, filter } = opts;
   console.log('ListProjects', { url, descriptions, names, filter });
@@ -144,8 +141,7 @@ export const AddLayer = (layer, project = window.project) => {
   return layer;
 };
 
-export async function BoardToGerber(board = project.name, opts = { fetch: true }) {
-  let proj = GetProject(board);
+export async function BoardToGerber(proj, opts = { fetch: true }) {
   let data;
   let request = { ...opts, board: proj.name, raw: false },
     response;
@@ -413,14 +409,24 @@ export async function ListGithubRepoServer(owner, repo, dir, filter) {
   return ret;
 }
 
+export async function ClearCache(match = /.*/) {
+  let pred = Util.predicate(match);
+  let cache = await caches.open('fetch');
+  for(let request of await cache.keys()) {
+    if(pred(request.url)) {
+      console.warn(`Cleared cache entry ${request.url}`);
+      cache.delete(request);
+    }
+  }
+}
 export default {
   FetchURL,
-  GetProject,
   ListProjects,
   FindLayer,
   GetLayer,
   AddLayer,
   GeneratePalette,
   ListGithubRepo,
-  ListGithubRepoServer
+  ListGithubRepoServer,
+  ClearCache
 };

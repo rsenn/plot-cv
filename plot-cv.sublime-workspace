@@ -104,28 +104,29 @@
 	"buffers":
 	[
 		{
-			"contents": "",
+			"contents": "  res =>\n  entries()\nGetProject\n  add\n  useSlot\n  trklGetSet\n  value =>\nMouseEvents\n  append_to(elem, p)\nDrawSVG\n  append_to(elem, p)\n  adjustViewBox\n  calcViewBox\n  setViewBox\nElementToXML\n  readFile(filename)\n  writeFile(filename, data, overwrite = true)\n  exists(filename)\n  realpath(filename)\nLoadFile\nSaveFile\nSaveSVG\n  predicate\nModifyColors\nFindLayer\n  maxZIndex\n  randomColor\nDrawArc\n  props =>\n  hex =>\nDrawBinaryTree\n  add\nRecurseBinaryNode\n  item =>\nDrawNode\nDrawEdge\nGetPaths\nPathToPolylines\n  poly =>\n  poly =>\nPathToPolyline\nPathsToPolylines\n  path =>\nOutsetPath\n  .toPolylines\nOutsetPaths\n  path =>\nClipPath\n  add\n  .toPolylines\n  function saveItemsProperty(itemList, get\n(item.\n  restoreItemsProperty\n(Util.is.\nEagleMaps\n  transformPath\n  eagle =>\n  function* PackageNames(doc\nLoadDocument\n  err =>\n  ent =>\n  ent =>\n  value =>\n  layer =>\n  layer =>\n  .makeGroup\n  id =>\n  value =>\nChooseDocument\nGenerateVoronoi\n  add\nPackageChildren\n  function ElementChildren(layer\n  function ElementGeometries(layer\n  ent =>\n  pts =>\nNewPath\nMakeFitAction\n  event =>\n  function ZoomFactor(val\nZoomLog\n  function AdjustZoom(l\nCreateGrblSocket\nCreateWebSocket\n  .send\nAuthorizationDialog\n  onSubmit: ()\n  onInput: e\n  onInput: e\n  onClick: e\n  arg =>\n  .onload\n  response =>\nTestArc: ()\n  .keystroke\n  .focusSearch\n  children: ()\n  geometries: ()\n  value =>\n  testComponent\nUpdateProjectList\n  ? { url: config.\n, ...credentials } : {}) =>\nFile\nFile.prototype.toString\n  ws =>\n  value =>\n  value =>\n  value =>\n  value =>\n  value =>\n  value =>\n  updateIfChanged\n  changeInput\n  arg =>\nConsumer\n  function* ()\n  extends\n  log\nLogger\n  function* ()\nDumper\n  value =>\nCommander\n  handler\nToggle\nLayer\n  setVisible\n  item =>\n  onMouseMove: e\n  onMouseUp: e\n  onMouseDown: e\nDocumentList\n  constructor\n  add\n  addEntry\n  remove\n  update\n  fn: e\n  fn: ()\n  open =>\n  props =>\n  props =>\n  side =>\n  create: (project, props\n  name =>\n  makeLayerName\n  fn: ()\n  onCommand: cmdStr\n  classes =>\n  event =>\n  size =>\n  border =>\n  mod\n  cancel\n  .oncontextmenu\n  .processEvents\n  event =>\n  onRuntimeInitialized: ()\n  print: txt",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 2116,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "lib/dom/svg.js",
+			"file": "lib/eagle/components/text.js",
 			"settings":
 			{
-				"buffer_size": 16752,
+				"buffer_size": 1332,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/eagle/element.js",
+			"file": "lib/eagle/renderUtils.js",
 			"settings":
 			{
-				"buffer_size": 28386,
+				"buffer_size": 13947,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -134,8 +135,16 @@
 			"file": "main.js",
 			"settings":
 			{
-				"buffer_size": 84685,
+				"buffer_size": 85964,
 				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/trkl.js",
+			"settings":
+			{
+				"buffer_size": 4680,
 				"line_ending": "Unix"
 			}
 		},
@@ -143,139 +152,7 @@
 			"file": "lib/geom/transformation.js",
 			"settings":
 			{
-				"buffer_size": 19121,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/dom/timer.js",
-			"settings":
-			{
-				"buffer_size": 1598,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "style.css",
-			"settings":
-			{
-				"buffer_size": 13872,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/boardRenderer.js",
-			"settings":
-			{
-				"buffer_size": 13456,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/components/textElement.js",
-			"settings":
-			{
-				"buffer_size": 1693,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/svgRenderer.js",
-			"settings":
-			{
-				"buffer_size": 15855,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/geom/lineList.js",
-			"settings":
-			{
-				"buffer_size": 8983,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/geom/line.js",
-			"settings":
-			{
-				"buffer_size": 13381,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/document.js",
-			"settings":
-			{
-				"buffer_size": 9049,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/components/polygon.js",
-			"settings":
-			{
-				"buffer_size": 1438,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/renderUtils.js",
-			"settings":
-			{
-				"buffer_size": 13784,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/components/text.js",
-			"settings":
-			{
-				"buffer_size": 1764,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/components/element.js",
-			"settings":
-			{
-				"buffer_size": 1264,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "components.js",
-			"settings":
-			{
-				"buffer_size": 33281,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "FDSearching 155326 files for \"min-width\" (regex)\n\n/home/roman/Dokumente/Sources/plot-cv/files.list:\n 104038  node_modules/mdn-browser-compat-data/css/properties/scroll-snap-type.json\n 104039  node_modules/mdn-browser-compat-data/css/properties/padding-top.json\n 104040: node_modules/mdn-browser-compat-data/css/properties/min-width.json\n 104041  node_modules/mdn-browser-compat-data/css/properties/image-orientation.json\n 104042  node_modules/mdn-browser-compat-data/css/properties/offset-distance.json\n\n/home/roman/Dokumente/Sources/plot-cv/lib/util.js:\n 1529      console.log(`  %c    %c ${color} %c ${textFn(color, i)}`,\n 1530        `background: ${color}; font-size: 18px; ${filters};`,\n 1531:       `background: none; color: ${color}; min-width: 120px; ${filters}; `,\n 1532        `color: black; font-size: 12px;`\n 1533      );\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-emscripten/examples/website/src/App.css:\n   11    border-radius: 2px;\n   12    padding: 0.75em;\n   13:   min-width: 100%;\n   14    min-height: 5em;\n   15    margin-top: 1em;\n\n/home/roman/Dokumente/Sources/plot-cv/style.css:\n  119    padding: 4px 4px;\n  120    flex: 0 1 auto;\n  121:   min-width: 52px;\n  122  }\n  123  .hcenter {\n  ...\n  201    user-select: none;\n  202    font-size: 16px;\n  203:   min-width: 1.4em;\n  204    min-height: 1.4em;\n  205  }\n  ...\n  501  }\n  502  .floating {\n  503:   min-width: 50vw;\n  504    min-height: 100px;\n  505    background: rgba(255, 255, 255, 0.9);\n  ...\n  550    overflow: auto;\n  551    margin: 2px;\n  552:   min-width: 10px;\n  553  }\n  554  ul.dumper {\n  ...\n  583  \n  584  table.dumper {\n  585:   min-width: 100px;\n  586    border-collapse: collapse;\n  587  }\n  ...\n  615  }\n  616  td.value {\n  617:   min-width: 100px;\n  618    text-align: right;\n  619  }\n  ...\n  761  \n  762  div.auth-dialog {\n  763:   min-width: 20vw;\n  764    background: white;\n  765    pointer-events: all;\n  ...\n  767  .panel.layers {\n  768    margin: 2px;\n  769:   min-width: 200px;\n  770  }\n  771  .gray {\n\n/home/roman/Dokumente/Sources/plot-cv/tamper.js:\n 1702        console.log(`  %c    %c ${color} %c ${textFn(color, i)}`,\n 1703          `background: ${color}; font-size: 18px; ${filters};`,\n 1704:         `background: none; color: ${color}; min-width: 120px; ${filters}; `,\n 1705          `color: black; font-size: 12px;`\n 1706        );\n\n/home/roman/Dokumente/Sources/plot-cv/test-quickjs:\n    <binary>\n\n/home/roman/Dokumente/Sources/plot-cv/tmp/an-tronics/unrouted/sedAWgUBt:\n    ERROR: Unable to open file\n\n/home/roman/Dokumente/Sources/plot-cv/tmp/unrouted/sedAWgUBt:\n    ERROR: Unable to open file\n\n13 matches across 6 files\n\n\nSearching 155326 files for \"minWidth\" (regex)\n\n/home/roman/Dokumente/Sources/plot-cv/components.js:\n  297      });\n  298    let id = key || i;\n  299:   let style = { minWidth: '40px', width: '40px', height: '40px' };\n  300    let icon = /brd$/i.test(id + className)\n  301      ? h(BoardIcon, { style })\n  ...\n  934        style: {\n  935          position: 'relative',\n  936:         minWidth: '100px',\n  937          ...style,\n  938          ...dimensions\n\n/home/roman/Dokumente/Sources/plot-cv/imgui/libs/glfw/include/GLFW/glfw3.h:\n 2054   *\n 2055   *  @param[in] window The window to set limits for.\n 2056:  *  @param[in] minwidth The minimum width, in screen coordinates, of the client\n 2057   *  area, or `GLFW_DONT_CARE`.\n 2058   *  @param[in] minheight The minimum height, in screen coordinates, of the\n ....\n 2079   */\n 2080  GLFWAPI void glfwSetWindowSizeLimits(\n 2081:     GLFWwindow* window, int minwidth, int minheight, int maxwidth, int maxheight);\n 2082  \n 2083  /*! @brief Sets the aspect ratio of the specified window.\n\n/home/roman/Dokumente/Sources/plot-cv/lib/devpane.js:\n   81          {\n   82            zIndex: 18,\n   83:           minWidth: '300px',\n   84            maxWidth: '80vw',\n   85            minHeight: '30vh',\n   ..\n  380        ...props,\n  381        style: {\n  382:         /*    minWidth: 100,\n  383          minHeight: 100,\n  384          padding: '1em',\n  ...\n  489      t.fields = Element.create('div', {\n  490        parent: t.form,\n  491:       style: { minWidth: '100px' }\n  492      });\n  493  \n\n/home/roman/Dokumente/Sources/plot-cv/opencv/camera_c.cpp:\n   76      }\n   77      qDebug() << res;\n   78:     //   printf(\"Minimum size:\\t%d x %d\\n\", video_cap.minwidth, video_cap.minheight);\n   79      //  printf(\"Maximum size:\\t%d x %d\\n\", video_cap.maxwidth, video_cap.maxheight);\n   80    }\n\n/home/roman/Dokumente/Sources/plot-cv/tmp/AGC-Amplifier-LM13600-Stereo.pro:\n   21  ModuleTextSizeThickness=0.150000000000\n   22  SolderMaskClearance=0.000000000000\n   23: SolderMaskMinWidth=0.000000000000\n   24  DrawSegmentWidth=0.200000000000\n   25  BoardOutlineThickness=0.100000000000\n\n/home/roman/Dokumente/Sources/plot-cv/tmp/an-tronics/AGC-Amplifier-LM13600-Stereo.pro:\n   21  ModuleTextSizeThickness=0.150000000000\n   22  SolderMaskClearance=0.000000000000\n   23: SolderMaskMinWidth=0.000000000000\n   24  DrawSegmentWidth=0.200000000000\n   25  BoardOutlineThickness=0.100000000000\n\n/home/roman/Dokumente/Sources/plot-cv/tmp/an-tronics/unrouted/sedAWgUBt:\n    ERROR: Unable to open file\n\n/home/roman/Dokumente/Sources/plot-cv/tmp/unrouted/sedAWgUBt:\n    ERROR: Unable to open file\n\n10 matches across 6 files\n\n\nSearching 155423 files for \"mod =\" (regex)\n\n/home/roman/Dokumente/Sources/plot-cv/create-tamper.js:\n   41  \n   42    static create(file) {\n   43:     let mod = new ES6Module();\n   44      mod.file = file;\n   45    }\n\n/home/roman/Dokumente/Sources/plot-cv/imgui/imgui_draw.cpp:\n 2403  \n 2404        const float char_advance_x_org = pc.xadvance;\n 2405:       const float char_advance_x_mod =\n 2406            ImClamp(char_advance_x_org, cfg.GlyphMinAdvanceX, cfg.GlyphMaxAdvanceX);\n 2407        float char_off_x = font_off_x;\n ....\n 3833  static unsigned int\n 3834  stb_adler32(unsigned int adler32, unsigned char* buffer, unsigned int buflen) {\n 3835:   const unsigned long ADLER_MOD = 65521;\n 3836    unsigned long s1 = adler32 & 0xffff, s2 = adler32 >> 16;\n 3837    unsigned long blocklen, i;\n\n/home/roman/Dokumente/Sources/plot-cv/imgui/libs/usynergy/uSynergy.c:\n  301      //\t\tkMsgDKeyDown1_0\t\t= \"DKDN%2i%2i\"\n  302      // uint16_t id = sNetToNative16(message+8);\n  303:     uint16_t mod = sNetToNative16(message + 10);\n  304      uint16_t key = sNetToNative16(message + 12);\n  305      sSendKeyboardCallback(context, key, mod, USYNERGY_TRUE, USYNERGY_FALSE);\n  ...\n  308      //\t\tkMsgDKeyRepeat\t\t= \"DKRP%2i%2i%2i%2i\"\n  309      //\t\tkMsgDKeyRepeat1_0\t= \"DKRP%2i%2i%2i\"\n  310:     uint16_t mod = sNetToNative16(message + 10);\n  311      //\t\tuint16_t count = sNetToNative16(message+12);\n  312      uint16_t key = sNetToNative16(message + 14);\n  ...\n  317      //\t\tkMsgDKeyUp1_0\t\t= \"DKUP%2i%2i\"\n  318      // uint16 id=Endian::sNetToNative(sbuf[4]);\n  319:     uint16_t mod = sNetToNative16(message + 10);\n  320      uint16_t key = sNetToNative16(message + 12);\n  321      sSendKeyboardCallback(context, key, mod, USYNERGY_FALSE, USYNERGY_FALSE);\n\n/home/roman/Dokumente/Sources/plot-cv/imgui/misc/fonts/binary_to_compressed_c.cpp:\n  162  static stb_uint\n  163  stb_adler32(stb_uint adler32, stb_uchar* buffer, stb_uint buflen) {\n  164:   const unsigned long ADLER_MOD = 65521;\n  165    unsigned long s1 = adler32 & 0xffff, s2 = adler32 >> 16;\n  166    unsigned long blocklen, i;\n\n/home/roman/Dokumente/Sources/plot-cv/imgui/misc/freetype/imgui_freetype.cpp:\n  574  \n  575        float char_advance_x_org = info.AdvanceX;\n  576:       float char_advance_x_mod =\n  577            ImClamp(char_advance_x_org, cfg.GlyphMinAdvanceX, cfg.GlyphMaxAdvanceX);\n  578        float char_off_x = font_off_x;\n\n/home/roman/Dokumente/Sources/plot-cv/lib/autoplacer/autoplacer.js:\n  171      vinc(b, d);\n  172  \n  173:     velmod = vlen(vel);\n  174      this.kin_ += s.mass * velmod * velmod;\n  175    }\n\n/home/roman/Dokumente/Sources/plot-cv/lib/bundle.js:\n   22    load(props) {\n   23      this.setState({ mod: null });\n   24:     props.load(mod => {\n   25        this.setState({ mod: mod.default ? mod.default : mod });\n   26      });\n\n/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js:\n   52  };\n   53  \n   54: export const ClampAngle = (a, mod = 360) => {\n   55    while(a < 0) a += 360;\n   56    a %= mod;\n\n/home/roman/Dokumente/Sources/plot-cv/lib/functional.js:\n  880    });\n  881  \n  882:   static mod = this.curry2var(function () {\n  883      let as;\n  884      as = 1 <= arguments.length ? slice1.call(arguments, 0) : [];\n\n/home/roman/Dokumente/Sources/plot-cv/lib/lua.js:\n  830  Token.MUL = 'MUL';\n  831  Token.DIV = 'DIV';\n  832: Token.MOD = 'MOD';\n  833: Token.MOD = 'POW';\n  834  Token.COMMA = 'COMMA';\n  835  Token.LPAREN = 'LEFT PAREN';\n\n/home/roman/Dokumente/Sources/plot-cv/lib/qrcode.js:\n  212        let bits = QRUtil.getBCHTypeNumber(this.typeNumber);\n  213        for(var i = 0; i < 18; i++) {\n  214:         var mod = !test && ((bits >> i) & 1) == 1;\n  215          this.modules[Math.floor(i / 3)][(i % 3) + this.moduleCount - 8 - 3] = mod;\n  216        }\n  217        for(var i = 0; i < 18; i++) {\n  218:         var mod = !test && ((bits >> i) & 1) == 1;\n  219          this.modules[(i % 3) + this.moduleCount - 8 - 3][Math.floor(i / 3)] = mod;\n  220        }\n  ...\n  224        let bits = QRUtil.getBCHTypeInfo(data);\n  225        for(var i = 0; i < 15; i++) {\n  226:         var mod = !test && ((bits >> i) & 1) == 1;\n  227          if(i < 6) {\n  228            this.modules[i][8] = mod;\n  ...\n  234        }\n  235        for(var i = 0; i < 15; i++) {\n  236:         var mod = !test && ((bits >> i) & 1) == 1;\n  237          if(i < 8) {\n  238            this.modules[8][this.moduleCount - i - 1] = mod;\n\n/home/roman/Dokumente/Sources/plot-cv/lib/util.js:\n 1209  Util.or = Util.curry((a, b) => a | b);\n 1210  Util.and = Util.curry((a, b) => a & b);\n 1211: Util.mod = (a, b) => (typeof b == 'number' ? ((a % b) + b) % b : n => ((n % a) + a) % a);\n 1212  Util.pow = Util.curry((a, b) => Math.pow(a, b));\n 1213  \n ....\n 5059    for(let module of ['os', 'tty']) {\n 5060      try {\n 5061:       ret = await import(module).then(mod => mod.isatty(fd));\n 5062      } catch(err) {\n 5063        ret = undefined;\n\n/home/roman/Dokumente/Sources/plot-cv/opencv/cap_dshow.cpp:\n 1718    } else {\n 1719      // we need to rasterize the value to the stepping amnt\n 1720:     long mod = value % stepAmnt;\n 1721      float halfStep = (float)stepAmnt * 0.5f;\n 1722      if(mod < halfStep)\n ....\n 1821    } else {\n 1822      // we need to rasterize the value to the stepping amnt\n 1823:     long mod = value % stepAmnt;\n 1824      float halfStep = (float)stepAmnt * 0.5f;\n 1825      if(mod < halfStep)\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-2019-10-27/libbf.c:\n 4248          /* abs(a) <= 0.25: no modulo reduction needed */\n 4249          bf_set(T, a);\n 4250:         mod = 0;\n 4251      } else {\n 4252          slimb_t cancel;\n ....\n 4258              bf_remquo(&mod, T, a, U, prec2, BF_RNDN);\n 4259              //            printf(\"T.expn=%ld prec2=%ld\\n\", T->expn, prec2);\n 4260:             if (mod == 0 || (T->expn != BF_EXP_ZERO &&\n 4261                               (T->expn + prec2) >= (prec1 - 1)))\n 4262                  break;\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-2019-10-27/qjscalc.js:\n   34      var OT_FLOAT = 20;\n   35      var OT_COMPLEX = 30;\n   36:     var OT_MOD = 40;\n   37      var OT_POLY = 50;\n   38:     var OT_POLYMOD = 55;\n   39      var OT_RFUNC = 60;\n   40      var OT_SERIES = 70;\n   ..\n  764      /* Mod */\n  765  \n  766:     Mod = function Mod(a, m) {\n  767          var obj, t;\n  768          if (new.target)\n  ...\n  783          }\n  784          obj.res = a;\n  785:         obj.mod = m;\n  786          return obj;\n  787      };\n  ...\n  852                  !(b instanceof Mod))\n  853                  return false;\n  854:             return (a.mod == b.mod && a.res == b.res);\n  855          }\n  856      });\n  ...\n 1230      /* Polynomial Modulo Q */\n 1231  \n 1232:     PolyMod = function PolyMod(a, m) {\n 1233          var obj, t;\n 1234          if (new.target)\n ....\n 1249          }\n 1250          obj.res = a;\n 1251:         obj.mod = m;\n 1252          return obj;\n 1253      };\n ....\n 1318                  !(b instanceof PolyMod))\n 1319                  return false;\n 1320:             return (a.mod == b.mod && a.res == b.res);\n 1321          }\n 1322      });\n ....\n 2225  var fact = Integer.fact;\n 2226  var comb = Integer.comb;\n 2227: var pmod = Integer.pmod;\n 2228: var invmod = Integer.invmod;\n 2229  var factor = Integer.factor;\n 2230  var isprime = Integer.isPrime;\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-2020-01-19/libbf.c:\n 4801          /* abs(a) <= 0.25: no modulo reduction needed */\n 4802          bf_set(T, a);\n 4803:         mod = 0;\n 4804      } else {\n 4805          slimb_t cancel;\n ....\n 4811              bf_remquo(&mod, T, a, U, prec2, BF_RNDN, BF_RNDN);\n 4812              //            printf(\"T.expn=%ld prec2=%ld\\n\", T->expn, prec2);\n 4813:             if (mod == 0 || (T->expn != BF_EXP_ZERO &&\n 4814                               (T->expn + prec2) >= (prec1 - 1)))\n 4815                  break;\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-2020-01-19/qjscalc.js:\n  830      /* Mod */\n  831  \n  832:     Mod = function Mod(a, m) {\n  833          var obj, t;\n  834          if (new.target)\n  ...\n  849          }\n  850          obj.res = a;\n  851:         obj.mod = m;\n  852          return obj;\n  853      };\n  ...\n  892      }\n  893      function mod_eq(a, b) {\n  894:         return (a.mod == b.mod && a.res == b.res);\n  895      }\n  896  \n  ...\n 1341      /* Polynomial Modulo Q */\n 1342  \n 1343:     PolyMod = function PolyMod(a, m) {\n 1344          var obj, t;\n 1345          if (new.target)\n ....\n 1360          }\n 1361          obj.res = a;\n 1362:         obj.mod = m;\n 1363          return obj;\n 1364      };\n ....\n 1395      }\n 1396      function polymod_eq(a, b) {\n 1397:         return (a.mod == b.mod && a.res == b.res);\n 1398      }\n 1399  \n ....\n 2388  var fact = Integer.fact;\n 2389  var comb = Integer.comb;\n 2390: var pmod = Integer.pmod;\n 2391: var invmod = Integer.invmod;\n 2392  var factor = Integer.factor;\n 2393  var isprime = Integer.isPrime;\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-2020-07-05/libbf.c:\n 4863          /* abs(a) <= 0.25: no modulo reduction needed */\n 4864          bf_set(T, a);\n 4865:         mod = 0;\n 4866      } else {\n 4867          slimb_t cancel;\n ....\n 4873              bf_remquo(&mod, T, a, U, prec2, BF_RNDN, BF_RNDN);\n 4874              //            printf(\"T.expn=%ld prec2=%ld\\n\", T->expn, prec2);\n 4875:             if (mod == 0 || (T->expn != BF_EXP_ZERO &&\n 4876                               (T->expn + prec2) >= (prec1 - 1)))\n 4877                  break;\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-2020-07-05/qjscalc.js:\n  830      /* Mod */\n  831  \n  832:     Mod = function Mod(a, m) {\n  833          var obj, t;\n  834          if (new.target)\n  ...\n  849          }\n  850          obj.res = a;\n  851:         obj.mod = m;\n  852          return obj;\n  853      };\n  ...\n  892      }\n  893      function mod_eq(a, b) {\n  894:         return (a.mod == b.mod && a.res == b.res);\n  895      }\n  896  \n  ...\n 1341      /* Polynomial Modulo Q */\n 1342  \n 1343:     PolyMod = function PolyMod(a, m) {\n 1344          var obj, t;\n 1345          if (new.target)\n ....\n 1360          }\n 1361          obj.res = a;\n 1362:         obj.mod = m;\n 1363          return obj;\n 1364      };\n ....\n 1395      }\n 1396      function polymod_eq(a, b) {\n 1397:         return (a.mod == b.mod && a.res == b.res);\n 1398      }\n 1399  \n ....\n 2388  var fact = Integer.fact;\n 2389  var comb = Integer.comb;\n 2390: var pmod = Integer.pmod;\n 2391: var invmod = Integer.invmod;\n 2392  var factor = Integer.factor;\n 2393  var isprime = Integer.isPrime;\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-2020-07-05/quickjs-libc.c:\n  231  \n  232              /* we only support the \"l\" modifier for 64 bit numbers */\n  233:             mod = ' ';\n  234              if (*fmt == 'l') {\n  235:                 mod = *fmt++;\n  236              }\n  237              \n  ...\n  275                  if (JS_ToInt64Ext(ctx, &int64_arg, argv[i++]))\n  276                      goto fail;\n  277:                 if (mod == 'l') {\n  278                      /* 64 bit number */\n  279  #if defined(_WIN32)\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-bellard/libbf.c:\n 4863          /* abs(a) <= 0.25: no modulo reduction needed */\n 4864          bf_set(T, a);\n 4865:         mod = 0;\n 4866      } else {\n 4867          slimb_t cancel;\n ....\n 4873              bf_remquo(&mod, T, a, U, prec2, BF_RNDN, BF_RNDN);\n 4874              //            printf(\"T.expn=%ld prec2=%ld\\n\", T->expn, prec2);\n 4875:             if (mod == 0 || (T->expn != BF_EXP_ZERO &&\n 4876                               (T->expn + prec2) >= (prec1 - 1)))\n 4877                  break;\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-bellard/qjscalc.js:\n  830      /* Mod */\n  831  \n  832:     Mod = function Mod(a, m) {\n  833          var obj, t;\n  834          if (new.target)\n  ...\n  849          }\n  850          obj.res = a;\n  851:         obj.mod = m;\n  852          return obj;\n  853      };\n  ...\n  892      }\n  893      function mod_eq(a, b) {\n  894:         return (a.mod == b.mod && a.res == b.res);\n  895      }\n  896  \n  ...\n 1341      /* Polynomial Modulo Q */\n 1342  \n 1343:     PolyMod = function PolyMod(a, m) {\n 1344          var obj, t;\n 1345          if (new.target)\n ....\n 1360          }\n 1361          obj.res = a;\n 1362:         obj.mod = m;\n 1363          return obj;\n 1364      };\n ....\n 1395      }\n 1396      function polymod_eq(a, b) {\n 1397:         return (a.mod == b.mod && a.res == b.res);\n 1398      }\n 1399  \n ....\n 2388  var fact = Integer.fact;\n 2389  var comb = Integer.comb;\n 2390: var pmod = Integer.pmod;\n 2391: var invmod = Integer.invmod;\n 2392  var factor = Integer.factor;\n 2393  var isprime = Integer.isPrime;\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-bellard/quickjs-libc.c:\n  232  \n  233              /* we only support the \"l\" modifier for 64 bit numbers */\n  234:             mod = ' ';\n  235              if (*fmt == 'l') {\n  236:                 mod = *fmt++;\n  237              }\n  238              \n  ...\n  276                  if (JS_ToInt64Ext(ctx, &int64_arg, argv[i++]))\n  277                      goto fail;\n  278:                 if (mod == 'l') {\n  279                      /* 64 bit number */\n  280  #if defined(_WIN32)\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-cmake/libbf.c:\n 4863          /* abs(a) <= 0.25: no modulo reduction needed */\n 4864          bf_set(T, a);\n 4865:         mod = 0;\n 4866      } else {\n 4867          slimb_t cancel;\n ....\n 4873              bf_remquo(&mod, T, a, U, prec2, BF_RNDN, BF_RNDN);\n 4874              //            printf(\"T.expn=%ld prec2=%ld\\n\", T->expn, prec2);\n 4875:             if (mod == 0 || (T->expn != BF_EXP_ZERO &&\n 4876                               (T->expn + prec2) >= (prec1 - 1)))\n 4877                  break;\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-cmake/qjscalc.js:\n  830      /* Mod */\n  831  \n  832:     Mod = function Mod(a, m) {\n  833          var obj, t;\n  834          if (new.target)\n  ...\n  849          }\n  850          obj.res = a;\n  851:         obj.mod = m;\n  852          return obj;\n  853      };\n  ...\n  892      }\n  893      function mod_eq(a, b) {\n  894:         return (a.mod == b.mod && a.res == b.res);\n  895      }\n  896  \n  ...\n 1341      /* Polynomial Modulo Q */\n 1342  \n 1343:     PolyMod = function PolyMod(a, m) {\n 1344          var obj, t;\n 1345          if (new.target)\n ....\n 1360          }\n 1361          obj.res = a;\n 1362:         obj.mod = m;\n 1363          return obj;\n 1364      };\n ....\n 1395      }\n 1396      function polymod_eq(a, b) {\n 1397:         return (a.mod == b.mod && a.res == b.res);\n 1398      }\n 1399  \n ....\n 2388  var fact = Integer.fact;\n 2389  var comb = Integer.comb;\n 2390: var pmod = Integer.pmod;\n 2391: var invmod = Integer.invmod;\n 2392  var factor = Integer.factor;\n 2393  var isprime = Integer.isPrime;\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-cmake/quickjs-libc.c:\n  232  \n  233              /* we only support the \"l\" modifier for 64 bit numbers */\n  234:             mod = ' ';\n  235              if (*fmt == 'l') {\n  236:                 mod = *fmt++;\n  237              }\n  238              \n  ...\n  276                  if (JS_ToInt64Ext(ctx, &int64_arg, argv[i++]))\n  277                      goto fail;\n  278:                 if (mod == 'l') {\n  279                      /* 64 bit number */\n  280  #if defined(_WIN32)\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-debugger-grassel/libbf.c:\n 4248          /* abs(a) <= 0.25: no modulo reduction needed */\n 4249          bf_set(T, a);\n 4250:         mod = 0;\n 4251      } else {\n 4252          slimb_t cancel;\n ....\n 4258              bf_remquo(&mod, T, a, U, prec2, BF_RNDN);\n 4259              //            printf(\"T.expn=%ld prec2=%ld\\n\", T->expn, prec2);\n 4260:             if (mod == 0 || (T->expn != BF_EXP_ZERO &&\n 4261                               (T->expn + prec2) >= (prec1 - 1)))\n 4262                  break;\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-debugger-grassel/qjscalc.js:\n   34      var OT_FLOAT = 20;\n   35      var OT_COMPLEX = 30;\n   36:     var OT_MOD = 40;\n   37      var OT_POLY = 50;\n   38:     var OT_POLYMOD = 55;\n   39      var OT_RFUNC = 60;\n   40      var OT_SERIES = 70;\n   ..\n  764      /* Mod */\n  765  \n  766:     Mod = function Mod(a, m) {\n  767          var obj, t;\n  768          if (new.target)\n  ...\n  783          }\n  784          obj.res = a;\n  785:         obj.mod = m;\n  786          return obj;\n  787      };\n  ...\n  852                  !(b instanceof Mod))\n  853                  return false;\n  854:             return (a.mod == b.mod && a.res == b.res);\n  855          }\n  856      });\n  ...\n 1230      /* Polynomial Modulo Q */\n 1231  \n 1232:     PolyMod = function PolyMod(a, m) {\n 1233          var obj, t;\n 1234          if (new.target)\n ....\n 1249          }\n 1250          obj.res = a;\n 1251:         obj.mod = m;\n 1252          return obj;\n 1253      };\n ....\n 1318                  !(b instanceof PolyMod))\n 1319                  return false;\n 1320:             return (a.mod == b.mod && a.res == b.res);\n 1321          }\n 1322      });\n ....\n 2225  var fact = Integer.fact;\n 2226  var comb = Integer.comb;\n 2227: var pmod = Integer.pmod;\n 2228: var invmod = Integer.invmod;\n 2229  var factor = Integer.factor;\n 2230  var isprime = Integer.isPrime;\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-debugger/libbf.c:\n 4801          /* abs(a) <= 0.25: no modulo reduction needed */\n 4802          bf_set(T, a);\n 4803:         mod = 0;\n 4804      } else {\n 4805          slimb_t cancel;\n ....\n 4811              bf_remquo(&mod, T, a, U, prec2, BF_RNDN, BF_RNDN);\n 4812              //            printf(\"T.expn=%ld prec2=%ld\\n\", T->expn, prec2);\n 4813:             if (mod == 0 || (T->expn != BF_EXP_ZERO &&\n 4814                               (T->expn + prec2) >= (prec1 - 1)))\n 4815                  break;\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-debugger/qjscalc.js:\n  830      /* Mod */\n  831  \n  832:     Mod = function Mod(a, m) {\n  833          var obj, t;\n  834          if (new.target)\n  ...\n  849          }\n  850          obj.res = a;\n  851:         obj.mod = m;\n  852          return obj;\n  853      };\n  ...\n  892      }\n  893      function mod_eq(a, b) {\n  894:         return (a.mod == b.mod && a.res == b.res);\n  895      }\n  896  \n  ...\n 1341      /* Polynomial Modulo Q */\n 1342  \n 1343:     PolyMod = function PolyMod(a, m) {\n 1344          var obj, t;\n 1345          if (new.target)\n ....\n 1360          }\n 1361          obj.res = a;\n 1362:         obj.mod = m;\n 1363          return obj;\n 1364      };\n ....\n 1395      }\n 1396      function polymod_eq(a, b) {\n 1397:         return (a.mod == b.mod && a.res == b.res);\n 1398      }\n 1399  \n ....\n 2388  var fact = Integer.fact;\n 2389  var comb = Integer.comb;\n 2390: var pmod = Integer.pmod;\n 2391: var invmod = Integer.invmod;\n 2392  var factor = Integer.factor;\n 2393  var isprime = Integer.isPrime;\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-emscripten/quickjs/libbf.c:\n 4863          /* abs(a) <= 0.25: no modulo reduction needed */\n 4864          bf_set(T, a);\n 4865:         mod = 0;\n 4866      } else {\n 4867          slimb_t cancel;\n ....\n 4873              bf_remquo(&mod, T, a, U, prec2, BF_RNDN, BF_RNDN);\n 4874              //            printf(\"T.expn=%ld prec2=%ld\\n\", T->expn, prec2);\n 4875:             if (mod == 0 || (T->expn != BF_EXP_ZERO &&\n 4876                               (T->expn + prec2) >= (prec1 - 1)))\n 4877                  break;\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-emscripten/quickjs/qjscalc.js:\n  830      /* Mod */\n  831  \n  832:     Mod = function Mod(a, m) {\n  833          var obj, t;\n  834          if (new.target)\n  ...\n  849          }\n  850          obj.res = a;\n  851:         obj.mod = m;\n  852          return obj;\n  853      };\n  ...\n  892      }\n  893      function mod_eq(a, b) {\n  894:         return (a.mod == b.mod && a.res == b.res);\n  895      }\n  896  \n  ...\n 1341      /* Polynomial Modulo Q */\n 1342  \n 1343:     PolyMod = function PolyMod(a, m) {\n 1344          var obj, t;\n 1345          if (new.target)\n ....\n 1360          }\n 1361          obj.res = a;\n 1362:         obj.mod = m;\n 1363          return obj;\n 1364      };\n ....\n 1395      }\n 1396      function polymod_eq(a, b) {\n 1397:         return (a.mod == b.mod && a.res == b.res);\n 1398      }\n 1399  \n ....\n 2388  var fact = Integer.fact;\n 2389  var comb = Integer.comb;\n 2390: var pmod = Integer.pmod;\n 2391: var invmod = Integer.invmod;\n 2392  var factor = Integer.factor;\n 2393  var isprime = Integer.isPrime;\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs-emscripten/quickjs/quickjs-libc.c:\n  231  \n  232              /* we only support the \"l\" modifier for 64 bit numbers */\n  233:             mod = ' ';\n  234              if (*fmt == 'l') {\n  235:                 mod = *fmt++;\n  236              }\n  237              \n  ...\n  275                  if (JS_ToInt64Ext(ctx, &int64_arg, argv[i++]))\n  276                      goto fail;\n  277:                 if (mod == 'l') {\n  278                      /* 64 bit number */\n  279  #if defined(_WIN32)\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs/libbf.c:\n 4863          /* abs(a) <= 0.25: no modulo reduction needed */\n 4864          bf_set(T, a);\n 4865:         mod = 0;\n 4866      } else {\n 4867          slimb_t cancel;\n ....\n 4873              bf_remquo(&mod, T, a, U, prec2, BF_RNDN, BF_RNDN);\n 4874              //            printf(\"T.expn=%ld prec2=%ld\\n\", T->expn, prec2);\n 4875:             if (mod == 0 || (T->expn != BF_EXP_ZERO &&\n 4876                               (T->expn + prec2) >= (prec1 - 1)))\n 4877                  break;\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/lib/vtls/nss.c:\n 1291    if(module && module->loaded) {\n 1292      /* loaded successfully */\n 1293:     *pmod = module;\n 1294      return CURLE_OK;\n 1295    }\n ....\n 1313  \n 1314    SECMOD_DestroyModule(module);\n 1315:   *pmod = NULL;\n 1316  }\n 1317  \n\n/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/src/tool_doswin.c:\n  656  {\n  657    HANDLE hnd = INVALID_HANDLE_VALUE;\n  658:   MODULEENTRY32 mod = {0};\n  659    struct curl_slist *slist = NULL;\n  660  \n\n/home/roman/Dokumente/Sources/plot-cv/quickjs/qjscalc.js:\n  830      /* Mod */\n  831  \n  832:     Mod = function Mod(a, m) {\n  833          var obj, t;\n  834          if (new.target)\n  ...\n  849          }\n  850          obj.res = a;\n  851:         obj.mod = m;\n  852          return obj;\n  853      };\n  ...\n  892      }\n  893      function mod_eq(a, b) {\n  894:         return (a.mod == b.mod && a.res == b.res);\n  895      }\n  896  \n  ...\n 1341      /* Polynomial Modulo Q */\n 1342  \n 1343:     PolyMod = function PolyMod(a, m) {\n 1344          var obj, t;\n 1345          if (new.target)\n ....\n 1360          }\n 1361          obj.res = a;\n 1362:         obj.mod = m;\n 1363          return obj;\n 1364      };\n ....\n 1395      }\n 1396      function polymod_eq(a, b) {\n 1397:         return (a.mod == b.mod && a.res == b.res);\n 1398      }\n 1399  \n ....\n 2388  var fact = Integer.fact;\n 2389  var comb = Integer.comb;\n 2390: var pmod = Integer.pmod;\n 2391: var invmod = Integer.invmod;\n 2392  var factor = Integer.factor;\n 2393  var isprime = Integer.isPrime;\n\n/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-libc.c:\n  232  \n  233              /* we only support the \"l\" modifier for 64 bit numbers */\n  234:             mod = ' ';\n  235              if (*fmt == 'l') {\n  236:                 mod = *fmt++;\n  237              }\n  238              \n  ...\n  276                  if (JS_ToInt64Ext(ctx, &int64_arg, argv[i++]))\n  277                      goto fail;\n  278:                 if (mod == 'l') {\n  279                      /* 64 bit number */\n  280  #if defined(_WIN32)\n\n/home/roman/Dokumente/Sources/plot-cv/resolve-imports.js:\n   26  \n   27    static create(file, from, position) {\n   28:     let mod = new ES6Module();\n   29      mod.file = file;\n   30      if(from) mod.importedFrom = position ? position : from;\n   ..\n   39  \n   40    static getOrCreate(file, from, position) {\n   41:     let mod = ES6Module.get(file);\n   42:     if(!mod) mod = ES6Module.create(file, from, position);\n   43      return mod;\n   44    }\n   ..\n   50      let ret = [];\n   51      let tmp,\n   52:       mod = this;\n   53      while(mod) {\n   54        ret.push([mod, mod.importedFrom]);\n   55        tmp = mod.importedFrom;\n   56        if(tmp === mod) break;\n   57:       mod = tmp;\n   58      }\n   59      return ret;\n   ..\n   75      function formatProp(value) {\n   76        if(Util.isArray(value))\n   77:         return t('[ ', 1, 36) + value.map(mod => formatProp(mod.file)).join(t(', ', 1, 36)) + t(' ]', 1, 36);\n   78        return typeof value == 'string' ? t(value, 1, 32) : value;\n   79      }\n\n/home/roman/Dokumente/Sources/plot-cv/tamper.js:\n 1340    Util.or = Util.curry((a, b) => a | b);\n 1341    Util.and = Util.curry((a, b) => a & b);\n 1342:   Util.mod = (a, b) => (typeof b == 'number' ? ((a % b) + b) % b : n => ((n % a) + a) % a);\n 1343    Util.pow = Util.curry((a, b) => Math.pow(a, b));\n 1344  \n\n/home/roman/Sources/plot-cv/quickjs/libbf.c:\n 4863          /* abs(a) <= 0.25: no modulo reduction needed */\n 4864          bf_set(T, a);\n 4865:         mod = 0;\n 4866      } else {\n 4867          slimb_t cancel;\n ....\n 4873              bf_remquo(&mod, T, a, U, prec2, BF_RNDN, BF_RNDN);\n 4874              //            printf(\"T.expn=%ld prec2=%ld\\n\", T->expn, prec2);\n 4875:             if (mod == 0 || (T->expn != BF_EXP_ZERO &&\n 4876                               (T->expn + prec2) >= (prec1 - 1)))\n 4877                  break;\n\n/home/roman/Sources/plot-cv/quickjs/net/curl/lib/vtls/nss.c:\n 1291    if(module && module->loaded) {\n 1292      /* loaded successfully */\n 1293:     *pmod = module;\n 1294      return CURLE_OK;\n 1295    }\n ....\n 1313  \n 1314    SECMOD_DestroyModule(module);\n 1315:   *pmod = NULL;\n 1316  }\n 1317  \n\n/home/roman/Sources/plot-cv/quickjs/net/curl/src/tool_doswin.c:\n  656  {\n  657    HANDLE hnd = INVALID_HANDLE_VALUE;\n  658:   MODULEENTRY32 mod = {0};\n  659    struct curl_slist *slist = NULL;\n  660  \n\n/home/roman/Sources/plot-cv/quickjs/qjscalc.js:\n  830      /* Mod */\n  831  \n  832:     Mod = function Mod(a, m) {\n  833          var obj, t;\n  834          if (new.target)\n  ...\n  849          }\n  850          obj.res = a;\n  851:         obj.mod = m;\n  852          return obj;\n  853      };\n  ...\n  892      }\n  893      function mod_eq(a, b) {\n  894:         return (a.mod == b.mod && a.res == b.res);\n  895      }\n  896  \n  ...\n 1341      /* Polynomial Modulo Q */\n 1342  \n 1343:     PolyMod = function PolyMod(a, m) {\n 1344          var obj, t;\n 1345          if (new.target)\n ....\n 1360          }\n 1361          obj.res = a;\n 1362:         obj.mod = m;\n 1363          return obj;\n 1364      };\n ....\n 1395      }\n 1396      function polymod_eq(a, b) {\n 1397:         return (a.mod == b.mod && a.res == b.res);\n 1398      }\n 1399  \n ....\n 2388  var fact = Integer.fact;\n 2389  var comb = Integer.comb;\n 2390: var pmod = Integer.pmod;\n 2391: var invmod = Integer.invmod;\n 2392  var factor = Integer.factor;\n 2393  var isprime = Integer.isPrime;\n\n/home/roman/Sources/plot-cv/quickjs/quickjs-libc.c:\n  232  \n  233              /* we only support the \"l\" modifier for 64 bit numbers */\n  234:             mod = ' ';\n  235              if (*fmt == 'l') {\n  236:                 mod = *fmt++;\n  237              }\n  238              \n  ...\n  276                  if (JS_ToInt64Ext(ctx, &int64_arg, argv[i++]))\n  277                      goto fail;\n  278:                 if (mod == 'l') {\n  279                      /* 64 bit number */\n  280  #if defined(_WIN32)\n\n157 matches across 45 files\n\n\nSearching 155423 files for \"import.*Rotation.*renderUtils\" (regex)\n\n",
-			"settings":
-			{
-				"buffer_size": 33160,
-				"line_ending": "Unix",
-				"name": "Find Results",
-				"scratch": true
-			}
-		},
-		{
-			"file": "lib/util.js",
-			"settings":
-			{
-				"buffer_size": 150419,
+				"buffer_size": 20544,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -505,67 +382,101 @@
 	"expanded_folders":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
-		"/home/roman/Dokumente/Sources/plot-cv/include",
 		"/home/roman/Dokumente/Sources/plot-cv/lib",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom"
 	],
 	"file_history":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/text.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/libraryRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pad.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/wire.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/textElement.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/package.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/instance.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/proxy-recv-7f000001-8f90-00000000-1f40.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/drawing.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/svg.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/symbol.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/rectangle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/style.css",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/background.js",
+		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/an-tronics/eagle/lbr/r.lbr",
+		"/home/roman/Dokumente/Sources/pictest/eagle/lbr/l.lbr",
+		"/home/roman/Dokumente/Sources/plot-cv/commands.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/circle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/bbox.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/wirePath.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/grid.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/text.js",
+		"/home/roman/Dokumente/Sources/plot-cv/r.lbr",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/polygon.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/circle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/frame.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pin.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/cross.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/origin.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
+		"/home/roman/Dokumente/Sources/plot-cv/components.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp/7seg.brd",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle.js",
+		"/home/roman/Dokumente/Sources/plot-cv/index.html",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/ref.js",
+		"/home/roman/Dokumente/Sources/plot-cv/Simple-NPN-Regen-Receiver.brd",
+		"/home/roman/Dokumente/Sources/dietlibc-rsenn/include/sched.h",
+		"/home/roman/Dokumente/Sources/musl-1.1.19/include/sched.h",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/timer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/create-tamper.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/lineList.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/arc.js",
+		"/home/roman/Dokumente/Sources/plot-cv/proxy-recv-7f000001-8f90-00000000-1f40.txt",
 		"/home/roman/Dokumente/Sources/an-tronics/gerbers/5V-to-12V-Converter.TXT",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/pathReverse.js",
-		"/home/roman/Dokumente/Sources/plot-cv/main.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
 		"/home/roman/Dokumente/Sources/plot-cv/broken.diff",
 		"/home/roman/Dokumente/Sources/plot-cv/src/plot-cv.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/mount-tmp.sh",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/package.js",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/7seg.brd",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/consoleSetup.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/instance.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
 		"/home/roman/Dokumente/Sources/eda/eagle2gedapcb/eagle2gedapcb.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/test-filesystem.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/filesystem.js",
-		"/home/roman/Dokumente/Sources/plot-cv/commands.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/polygon.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/autoStore.js",
 		"/home/roman/Dokumente/Sources/plot-cv/server.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pad.js",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/Simple-NPN-Regen-Receiver.brd",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/Simple-NPN-Regen-Receiver.sch",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/textElement.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
-		"/home/roman/Dokumente/Sources/plot-cv/components.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-membrane.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/xpath.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-clang-ast.js",
 		"/home/roman/Dokumente/Sources/plot-cv/list-proxies.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/wire.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/circle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/rectangle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/stream/utils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/stream.js",
@@ -603,44 +514,10 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/container.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/container/multiMap.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/container/binaryTree.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/drawing.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/alea.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/usePanZoom.js",
 		"/home/roman/Dokumente/Sources/js-btree/js-data-structs/src/binary_tree.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js.orig",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/index.html",
-		"/home/roman/Dokumente/Sources/plot-cv/style.css",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/useDimensions.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/useGetSet.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/useForceUpdate.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/utils.js",
-		"/home/roman/Dokumente/Sources/an-tronics/eagle/lbr/l.lbr",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/Simple NPN Regen Receiver.brd",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/arc.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/icon/eagle-logo.svg",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/project.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/bbox.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/svg.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/grid.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp/7seg.sch",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/json/util.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/circle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/x.svg",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/arc.js",
-		"/home/roman/Dokumente/Sources/plot-cv/clip.html",
-		"/home/roman/Downloads/vanilla.js",
-		"/home/roman/Dokumente/Sources/plot-cv/drawing-1.svg",
-		"/home/roman/Dokumente/Sources/plot-cv/c.js",
-		"/home/roman/Dokumente/Sources/plot-cv/drawing.svg"
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js.orig"
 	],
 	"find":
 	{
@@ -651,6 +528,7 @@
 		"height": 306.0,
 		"where_history":
 		[
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json",
 			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
 			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
 			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
@@ -671,9 +549,87 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": false,
+		"case_sensitive": true,
 		"find_history":
 		[
+			"TouchListener",
+			" rotate\\(",
+			"static ",
+			"MakeRotation",
+			"Symbol.toString",
+			" log\\(.*\\.render",
+			" log\\(",
+			"scale",
+			"Fixed",
+			": Fixed",
+			"Util.histogram\\(",
+			"t\\(",
+			"t",
+			"^\\s*console",
+			"msg:",
+			"drill=",
+			"logger",
+			"LogJS\\.[^i]",
+			"LogJS\\.",
+			"LogJS",
+			"try",
+			"try ",
+			"try",
+			"LoadDocument",
+			"e\\.getBBox\\(\\)",
+			"#main",
+			"partMatcher",
+			"'pad'",
+			"//\\s*",
+			"^(\\s*)(this\\.debug)",
+			"this.create",
+			"DocumentList",
+			"ReactComponent",
+			"isComponent",
+			"class ",
+			"^(\\s*)console\\.",
+			"^\\s*console",
+			"import.*classNames",
+			"font-family:",
+			"box-shadow",
+			"style",
+			"outset",
+			"\\.getBounds\\([^)]",
+			"\\.getBounds\\(",
+			"\\.getBounds\\([^)]",
+			"\\.getBounds\\(",
+			"bg",
+			"grid",
+			"\\.render",
+			"SchematicSymbo",
+			"SchematicSymbol",
+			"\\.render\\(",
+			"ElementToCompon",
+			"eagle.js",
+			"BoardRenderer",
+			"useValue",
+			"React.render",
+			"AppMain",
+			"#main",
+			"GetProject",
+			"projects",
+			"GetProject",
+			"zoomLog",
+			"config =",
+			"zoomLog",
+			"BoardPackage",
+			"showSearch",
+			"debugFlag",
+			"config\\.",
+			"BoardPackage",
+			"WirePath",
+			"WirePath$",
+			"WirePath",
+			"\\sRotation.*renderUtils",
+			"Rotation",
+			" Rotation\\(",
+			"renderUtils",
+			"Rotation",
 			"import.*Rotation.*renderUtils",
 			"Util.mod =",
 			"mod =",
@@ -723,85 +679,7 @@
 			"debounce",
 			"^Util.mapFunction",
 			"LocalStorage",
-			"makeLocalStorage",
-			"store",
-			"toPolar",
-			"Polar",
-			"atan2",
-			"PolarTo",
-			"Ω/>",
-			"id:",
-			"Util.adder",
-			"Util.accumu",
-			"Util.adder",
-			"^Util.push",
-			"data-path",
-			"path",
-			"path2xpath",
-			"XPath.from",
-			"ransform.* =.*=>",
-			"ransform",
-			"data-pa",
-			"path.toString",
-			"useTr",
-			"ElementToClass",
-			"data-path",
-			"insertCtoP",
-			"component2path",
-			"(component2path|path2component)",
-			"maps",
-			"component2path",
-			"CHILDREN_GLYPH",
-			"^Util.unique",
-			"EagleMaps",
-			"eagle2dom",
-			"layers",
-			"process",
-			"AcquiAv",
-			"import.*Acquire",
-			"Acquire",
-			"TCPSocket",
-			"AppMain",
-			"Check",
-			"ping",
-			"ret",
-			"ret:",
-			"execStream",
-			"mat_new",
-			"^VISIBLE",
-			"_wrap",
-			"js_mat_wrap",
-			"js_contour_iterator",
-			"js_point_iterator_new",
-			"js_point_iterator_create",
-			"js_create_point_iterator",
-			"js_contour_class_id",
-			"js_point_iterator_static_funcs",
-			"JS_GetOpaque",
-			"js_create_point_iterator",
-			"js_point_iterator_class_id",
-			"js_contour_class_id",
-			"contour",
-			"create_point",
-			"js_mat_wrap",
-			"quickjs_version",
-			"quickjs_vers",
-			"add_sub",
-			"quickjs_",
-			"add_sub",
-			"quickjs_version",
-			"OPENCV_RESULT",
-			"dd_subdir",
-			"OpenCV",
-			"find_package",
-			"opencv",
-			"message\\(",
-			"TypeSize",
-			"TypeSIze",
-			"%zd",
-			"close\\(",
-			"CFLAGS_DEBUG",
-			"Stack.toStr"
+			"makeLocalStorage"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -809,6 +687,9 @@
 		"regex": true,
 		"replace_history":
 		[
+			"//",
+			"\\1//\\2",
+			"\\1//console.",
 			"LocalStore",
 			"const ",
 			"\"",
@@ -891,7 +772,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 0,
+						"buffer_size": 2116,
 						"regions":
 						{
 						},
@@ -901,460 +782,846 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": null,
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/main.js",
 							"outline_rename_mode": false,
+							"symkeys":
+							[
+								[
+									8406,
+									8412
+								],
+								[
+									8556,
+									8565
+								],
+								[
+									9084,
+									9103
+								],
+								[
+									9584,
+									9608
+								],
+								[
+									9649,
+									9670
+								],
+								[
+									9712,
+									9738
+								],
+								[
+									9739,
+									9747
+								],
+								[
+									9863,
+									9881
+								],
+								[
+									10297,
+									10315
+								],
+								[
+									10972,
+									10997
+								],
+								[
+									11043,
+									11061
+								],
+								[
+									11999,
+									12024
+								],
+								[
+									12379,
+									12404
+								],
+								[
+									12743,
+									12777
+								],
+								[
+									13285,
+									13317
+								],
+								[
+									13577,
+									13601
+								],
+								[
+									13661,
+									13710
+								],
+								[
+									13952,
+									13974
+								],
+								[
+									13981,
+									14005
+								],
+								[
+									14013,
+									14042
+								],
+								[
+									14771,
+									14823
+								],
+								[
+									15215,
+									15301
+								],
+								[
+									15497,
+									15519
+								],
+								[
+									15946,
+									15966
+								],
+								[
+									16155,
+									16180
+								],
+								[
+									17076,
+									17093
+								],
+								[
+									17363,
+									17382
+								],
+								[
+									17597,
+									17632
+								],
+								[
+									17670,
+									17678
+								],
+								[
+									18961,
+									18967
+								],
+								[
+									20893,
+									20924
+								],
+								[
+									20962,
+									20984
+								],
+								[
+									21163,
+									21221
+								],
+								[
+									21620,
+									21627
+								],
+								[
+									21715,
+									21744
+								],
+								[
+									21966,
+									21997
+								],
+								[
+									23013,
+									23059
+								],
+								[
+									23200,
+									23243
+								],
+								[
+									23455,
+									23462
+								],
+								[
+									23489,
+									23496
+								],
+								[
+									23856,
+									23898
+								],
+								[
+									24279,
+									24324
+								],
+								[
+									24468,
+									24475
+								],
+								[
+									24517,
+									24587
+								],
+								[
+									25017,
+									25042
+								],
+								[
+									25218,
+									25290
+								],
+								[
+									25507,
+									25514
+								],
+								[
+									26011,
+									26076
+								],
+								[
+									26163,
+									26189
+								],
+								[
+									26428,
+									26453
+								],
+								[
+									26567,
+									26626
+								],
+								[
+									26628,
+									26634
+								],
+								[
+									26746,
+									26819
+								],
+								[
+									26826,
+									26835
+								],
+								[
+									26906,
+									26933
+								],
+								[
+									26942,
+									26962
+								],
+								[
+									27904,
+									27912
+								],
+								[
+									29117,
+									29158
+								],
+								[
+									31149,
+									31197
+								],
+								[
+									31378,
+									31384
+								],
+								[
+									31542,
+									31548
+								],
+								[
+									31645,
+									31651
+								],
+								[
+									32813,
+									32821
+								],
+								[
+									33262,
+									33270
+								],
+								[
+									33360,
+									33368
+								],
+								[
+									35163,
+									35214
+								],
+								[
+									35527,
+									35532
+								],
+								[
+									36454,
+									36462
+								],
+								[
+									37252,
+									37290
+								],
+								[
+									37919,
+									37942
+								],
+								[
+									39536,
+									39560
+								],
+								[
+									40781,
+									40821
+								],
+								[
+									41062,
+									41118
+								],
+								[
+									41280,
+									41338
+								],
+								[
+									41390,
+									41396
+								],
+								[
+									41784,
+									41790
+								],
+								[
+									41889,
+									41911
+								],
+								[
+									41989,
+									42013
+								],
+								[
+									42014,
+									42028
+								],
+								[
+									44041,
+									44074
+								],
+								[
+									44136,
+									44160
+								],
+								[
+									44201,
+									44232
+								],
+								[
+									44486,
+									44529
+								],
+								[
+									44839,
+									44903
+								],
+								[
+									45099,
+									45119
+								],
+								[
+									45799,
+									45846
+								],
+								[
+									46190,
+									46205
+								],
+								[
+									46422,
+									46435
+								],
+								[
+									46712,
+									46725
+								],
+								[
+									46931,
+									46944
+								],
+								[
+									47168,
+									47174
+								],
+								[
+									47224,
+									47245
+								],
+								[
+									50633,
+									50644
+								],
+								[
+									51900,
+									51914
+								],
+								[
+									52480,
+									52502
+								],
+								[
+									52641,
+									52664
+								],
+								[
+									52946,
+									52961
+								],
+								[
+									52986,
+									53003
+								],
+								[
+									53070,
+									53078
+								],
+								[
+									53262,
+									53286
+								],
+								[
+									53389,
+									53430
+								],
+								[
+									53439,
+									53456
+								],
+								[
+									53465,
+									53492
+								],
+								[
+									53895,
+									53916
+								],
+								[
+									54402,
+									54438
+								],
+								[
+									55601,
+									55606
+								],
+								[
+									55786,
+									55794
+								],
+								[
+									55910,
+									55918
+								],
+								[
+									56038,
+									56046
+								],
+								[
+									56161,
+									56169
+								],
+								[
+									56226,
+									56234
+								],
+								[
+									56706,
+									56714
+								],
+								[
+									56898,
+									56945
+								],
+								[
+									57265,
+									57283
+								],
+								[
+									57528,
+									57534
+								],
+								[
+									57780,
+									57799
+								],
+								[
+									57831,
+									57849
+								],
+								[
+									58323,
+									58330
+								],
+								[
+									58358,
+									58361
+								],
+								[
+									58703,
+									58720
+								],
+								[
+									58928,
+									58946
+								],
+								[
+									59667,
+									59684
+								],
+								[
+									59776,
+									59784
+								],
+								[
+									60193,
+									60233
+								],
+								[
+									60298,
+									60312
+								],
+								[
+									60874,
+									60890
+								],
+								[
+									60928,
+									61003
+								],
+								[
+									61248,
+									61269
+								],
+								[
+									61807,
+									61814
+								],
+								[
+									62349,
+									62366
+								],
+								[
+									62458,
+									62473
+								],
+								[
+									62519,
+									62536
+								],
+								[
+									63323,
+									63335
+								],
+								[
+									63342,
+									63353
+								],
+								[
+									63512,
+									63515
+								],
+								[
+									63712,
+									63720
+								],
+								[
+									63793,
+									63799
+								],
+								[
+									63923,
+									63929
+								],
+								[
+									64284,
+									64292
+								],
+								[
+									65158,
+									65167
+								],
+								[
+									65393,
+									65400
+								],
+								[
+									65507,
+									65515
+								],
+								[
+									65728,
+									65736
+								],
+								[
+									67281,
+									67288
+								],
+								[
+									69234,
+									69266
+								],
+								[
+									70026,
+									70033
+								],
+								[
+									71103,
+									71137
+								],
+								[
+									71721,
+									71730
+								],
+								[
+									73745,
+									73765
+								],
+								[
+									76246,
+									76256
+								],
+								[
+									78925,
+									78933
+								],
+								[
+									80095,
+									80102
+								],
+								[
+									80634,
+									80643
+								],
+								[
+									80879,
+									80897
+								],
+								[
+									82206,
+									82223
+								],
+								[
+									82454,
+									82482
+								],
+								[
+									82849,
+									82892
+								],
+								[
+									84224,
+									84232
+								],
+								[
+									85764,
+									85791
+								],
+								[
+									85914,
+									85927
+								]
+							],
+							"symlist":
+							[
+								"  res =>",
+								"  entries()",
+								"GetProject",
+								"  add",
+								"  useSlot",
+								"  trklGetSet",
+								"  value =>",
+								"MouseEvents",
+								"  append_to(elem, p)",
+								"DrawSVG",
+								"  append_to(elem, p)",
+								"  adjustViewBox",
+								"  calcViewBox",
+								"  setViewBox",
+								"ElementToXML",
+								"  readFile(filename)",
+								"  writeFile(filename, data, overwrite = true)",
+								"  exists(filename)",
+								"  realpath(filename)",
+								"LoadFile",
+								"SaveFile",
+								"SaveSVG",
+								"  predicate",
+								"ModifyColors",
+								"FindLayer",
+								"  maxZIndex",
+								"  randomColor",
+								"DrawArc",
+								"  props =>",
+								"  hex =>",
+								"DrawBinaryTree",
+								"  add",
+								"RecurseBinaryNode",
+								"  item =>",
+								"DrawNode",
+								"DrawEdge",
+								"GetPaths",
+								"PathToPolylines",
+								"  poly =>",
+								"  poly =>",
+								"PathToPolyline",
+								"PathsToPolylines",
+								"  path =>",
+								"OutsetPath",
+								"  .toPolylines",
+								"OutsetPaths",
+								"  path =>",
+								"ClipPath",
+								"  add",
+								"  .toPolylines",
+								"  function saveItemsProperty(itemList, get",
+								"(item.",
+								"  restoreItemsProperty",
+								"(Util.is.",
+								"EagleMaps",
+								"  transformPath",
+								"  eagle =>",
+								"  function* PackageNames(doc",
+								"LoadDocument",
+								"  err =>",
+								"  ent =>",
+								"  ent =>",
+								"  value =>",
+								"  layer =>",
+								"  layer =>",
+								"  .makeGroup",
+								"  id =>",
+								"  value =>",
+								"ChooseDocument",
+								"GenerateVoronoi",
+								"  add",
+								"PackageChildren",
+								"  function ElementChildren(layer",
+								"  function ElementGeometries(layer",
+								"  ent =>",
+								"  pts =>",
+								"NewPath",
+								"MakeFitAction",
+								"  event =>",
+								"  function ZoomFactor(val",
+								"ZoomLog",
+								"  function AdjustZoom(l",
+								"CreateGrblSocket",
+								"CreateWebSocket",
+								"  .send",
+								"AuthorizationDialog",
+								"  onSubmit: ()",
+								"  onInput: e",
+								"  onInput: e",
+								"  onClick: e",
+								"  arg =>",
+								"  .onload",
+								"  response =>",
+								"TestArc: ()",
+								"  .keystroke",
+								"  .focusSearch",
+								"  children: ()",
+								"  geometries: ()",
+								"  value =>",
+								"  testComponent",
+								"UpdateProjectList",
+								"\t? { url: config.",
+								", ...credentials } : {}) =>",
+								"File",
+								"File.prototype.toString",
+								"  ws =>",
+								"  value =>",
+								"  value =>",
+								"  value =>",
+								"  value =>",
+								"  value =>",
+								"  value =>",
+								"  updateIfChanged",
+								"  changeInput",
+								"  arg =>",
+								"Consumer",
+								"  function* ()",
+								"  extends",
+								"  log",
+								"Logger",
+								"  function* ()",
+								"Dumper",
+								"  value =>",
+								"Commander",
+								"  handler",
+								"Toggle",
+								"Layer",
+								"  setVisible",
+								"  item =>",
+								"  onMouseMove: e",
+								"  onMouseUp: e",
+								"  onMouseDown: e",
+								"DocumentList",
+								"  constructor",
+								"  add",
+								"  addEntry",
+								"  remove",
+								"  update",
+								"  fn: e",
+								"  fn: ()",
+								"  open =>",
+								"  props =>",
+								"  props =>",
+								"  side =>",
+								"  create: (project, props",
+								"  name =>",
+								"  makeLayerName",
+								"  fn: ()",
+								"  onCommand: cmdStr",
+								"  classes =>",
+								"  event =>",
+								"  size =>",
+								"  border =>",
+								"  mod",
+								"  cancel",
+								"  .oncontextmenu",
+								"  .processEvents",
+								"  event =>",
+								"  onRuntimeInitialized: ()",
+								"  print: txt"
+							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 459.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 19,
+					"stack_index": 5,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 17,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "lib/dom/svg.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 16752,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1485,
-								1485
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 17,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "lib/eagle/element.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 28386,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								21509,
-								21509
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 10848.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 15,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "main.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 84685,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								75617,
-								75617
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 12.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "lib/geom/transformation.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 19121,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4123,
-								4123
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2586.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "lib/dom/timer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1598,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "style.css",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 13872,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7195,
-								7195
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 6798.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "lib/eagle/boardRenderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 13456,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2620,
-								2620
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2401.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "lib/eagle/components/textElement.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1693,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 216.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "lib/eagle/svgRenderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 15855,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5475,
-								5475
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2862.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 11,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "lib/geom/lineList.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8983,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3098,
-								3098
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 756.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 14,
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "lib/geom/line.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 13381,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								10024,
-								10024
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 5534.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 13,
-					"type": "text"
-				},
-				{
-					"buffer": 12,
-					"file": "lib/eagle/document.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 9049,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7898,
-								7898
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 3842.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 13,
-					"file": "lib/eagle/components/polygon.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1438,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1115,
-								1115
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 14,
-					"file": "lib/eagle/renderUtils.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 13784,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2011,
-								2011
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 756.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 15,
 					"file": "lib/eagle/components/text.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1764,
+						"buffer_size": 1332,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								528,
-								530
+								690,
+								690
 							]
 						],
 						"settings":
@@ -1371,20 +1638,20 @@
 					"type": "text"
 				},
 				{
-					"buffer": 16,
-					"file": "lib/eagle/components/element.js",
+					"buffer": 2,
+					"file": "lib/eagle/renderUtils.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1264,
+						"buffer_size": 13947,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								857,
-								857
+								3057,
+								3057
 							]
 						],
 						"settings":
@@ -1394,27 +1661,27 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1229.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 16,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 17,
-					"file": "components.js",
+					"buffer": 3,
+					"file": "main.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 33281,
+						"buffer_size": 85964,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								31153,
-								31153
+								81370,
+								81370
 							]
 						],
 						"settings":
@@ -1424,786 +1691,27 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 17100.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 18,
-					"type": "text"
-				},
-				{
-					"buffer": 18,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 33160,
-						"regions":
-						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										322,
-										331
-									],
-									[
-										740,
-										749
-									],
-									[
-										985,
-										994
-									],
-									[
-										1165,
-										1174
-									],
-									[
-										1278,
-										1287
-									],
-									[
-										1376,
-										1385
-									],
-									[
-										1530,
-										1539
-									],
-									[
-										1620,
-										1629
-									],
-									[
-										1725,
-										1734
-									],
-									[
-										1828,
-										1837
-									],
-									[
-										1963,
-										1972
-									],
-									[
-										2246,
-										2255
-									],
-									[
-										2803,
-										2811
-									],
-									[
-										3020,
-										3028
-									],
-									[
-										3261,
-										3269
-									],
-									[
-										3543,
-										3551
-									],
-									[
-										3789,
-										3797
-									],
-									[
-										3951,
-										3959
-									],
-									[
-										4131,
-										4139
-									],
-									[
-										4336,
-										4344
-									],
-									[
-										4653,
-										4661
-									],
-									[
-										4953,
-										4961
-									],
-									[
-										5442,
-										5447
-									],
-									[
-										5672,
-										5677
-									],
-									[
-										5967,
-										5972
-									],
-									[
-										6275,
-										6280
-									],
-									[
-										6580,
-										6585
-									],
-									[
-										6858,
-										6863
-									],
-									[
-										7252,
-										7257
-									],
-									[
-										7543,
-										7548
-									],
-									[
-										7797,
-										7802
-									],
-									[
-										8015,
-										8020
-									],
-									[
-										8229,
-										8234
-									],
-									[
-										8391,
-										8396
-									],
-									[
-										8633,
-										8638
-									],
-									[
-										8659,
-										8664
-									],
-									[
-										8920,
-										8925
-									],
-									[
-										9126,
-										9131
-									],
-									[
-										9391,
-										9396
-									],
-									[
-										9583,
-										9588
-									],
-									[
-										9872,
-										9877
-									],
-									[
-										10133,
-										10138
-									],
-									[
-										10374,
-										10379
-									],
-									[
-										10586,
-										10591
-									],
-									[
-										10867,
-										10872
-									],
-									[
-										11100,
-										11105
-									],
-									[
-										11390,
-										11395
-									],
-									[
-										11451,
-										11456
-									],
-									[
-										11568,
-										11573
-									],
-									[
-										11723,
-										11728
-									],
-									[
-										11889,
-										11894
-									],
-									[
-										12020,
-										12025
-									],
-									[
-										12179,
-										12184
-									],
-									[
-										12349,
-										12354
-									],
-									[
-										12496,
-										12501
-									],
-									[
-										12530,
-										12535
-									],
-									[
-										12801,
-										12806
-									],
-									[
-										13043,
-										13048
-									],
-									[
-										13293,
-										13298
-									],
-									[
-										13448,
-										13453
-									],
-									[
-										13577,
-										13582
-									],
-									[
-										13697,
-										13702
-									],
-									[
-										13856,
-										13861
-									],
-									[
-										13989,
-										13994
-									],
-									[
-										14125,
-										14130
-									],
-									[
-										14159,
-										14164
-									],
-									[
-										14430,
-										14435
-									],
-									[
-										14672,
-										14677
-									],
-									[
-										14922,
-										14927
-									],
-									[
-										15077,
-										15082
-									],
-									[
-										15206,
-										15211
-									],
-									[
-										15326,
-										15331
-									],
-									[
-										15485,
-										15490
-									],
-									[
-										15618,
-										15623
-									],
-									[
-										15754,
-										15759
-									],
-									[
-										15788,
-										15793
-									],
-									[
-										16062,
-										16067
-									],
-									[
-										16134,
-										16139
-									],
-									[
-										16330,
-										16335
-									],
-									[
-										16590,
-										16595
-									],
-									[
-										16832,
-										16837
-									],
-									[
-										17079,
-										17084
-									],
-									[
-										17234,
-										17239
-									],
-									[
-										17363,
-										17368
-									],
-									[
-										17483,
-										17488
-									],
-									[
-										17642,
-										17647
-									],
-									[
-										17775,
-										17780
-									],
-									[
-										17911,
-										17916
-									],
-									[
-										17945,
-										17950
-									],
-									[
-										18216,
-										18221
-									],
-									[
-										18288,
-										18293
-									],
-									[
-										18484,
-										18489
-									],
-									[
-										18742,
-										18747
-									],
-									[
-										18984,
-										18989
-									],
-									[
-										19229,
-										19234
-									],
-									[
-										19384,
-										19389
-									],
-									[
-										19513,
-										19518
-									],
-									[
-										19633,
-										19638
-									],
-									[
-										19792,
-										19797
-									],
-									[
-										19925,
-										19930
-									],
-									[
-										20061,
-										20066
-									],
-									[
-										20095,
-										20100
-									],
-									[
-										20364,
-										20369
-									],
-									[
-										20436,
-										20441
-									],
-									[
-										20632,
-										20637
-									],
-									[
-										20901,
-										20906
-									],
-									[
-										21134,
-										21139
-									],
-									[
-										21430,
-										21435
-									],
-									[
-										21491,
-										21496
-									],
-									[
-										21608,
-										21613
-									],
-									[
-										21763,
-										21768
-									],
-									[
-										21929,
-										21934
-									],
-									[
-										22060,
-										22065
-									],
-									[
-										22219,
-										22224
-									],
-									[
-										22389,
-										22394
-									],
-									[
-										22536,
-										22541
-									],
-									[
-										22570,
-										22575
-									],
-									[
-										22839,
-										22844
-									],
-									[
-										23081,
-										23086
-									],
-									[
-										23329,
-										23334
-									],
-									[
-										23484,
-										23489
-									],
-									[
-										23613,
-										23618
-									],
-									[
-										23733,
-										23738
-									],
-									[
-										23892,
-										23897
-									],
-									[
-										24025,
-										24030
-									],
-									[
-										24161,
-										24166
-									],
-									[
-										24195,
-										24200
-									],
-									[
-										24474,
-										24479
-									],
-									[
-										24716,
-										24721
-									],
-									[
-										24974,
-										24979
-									],
-									[
-										25129,
-										25134
-									],
-									[
-										25258,
-										25263
-									],
-									[
-										25378,
-										25383
-									],
-									[
-										25537,
-										25542
-									],
-									[
-										25670,
-										25675
-									],
-									[
-										25806,
-										25811
-									],
-									[
-										25840,
-										25845
-									],
-									[
-										26122,
-										26127
-									],
-									[
-										26194,
-										26199
-									],
-									[
-										26390,
-										26395
-									],
-									[
-										26642,
-										26647
-									],
-									[
-										26884,
-										26889
-									],
-									[
-										27186,
-										27191
-									],
-									[
-										27303,
-										27308
-									],
-									[
-										27483,
-										27488
-									],
-									[
-										27643,
-										27648
-									],
-									[
-										27798,
-										27803
-									],
-									[
-										27927,
-										27932
-									],
-									[
-										28047,
-										28052
-									],
-									[
-										28206,
-										28211
-									],
-									[
-										28339,
-										28344
-									],
-									[
-										28475,
-										28480
-									],
-									[
-										28509,
-										28514
-									],
-									[
-										28772,
-										28777
-									],
-									[
-										28844,
-										28849
-									],
-									[
-										29040,
-										29045
-									],
-									[
-										29257,
-										29262
-									],
-									[
-										29456,
-										29461
-									],
-									[
-										29503,
-										29508
-									],
-									[
-										29647,
-										29652
-									],
-									[
-										29817,
-										29822
-									],
-									[
-										29996,
-										30001
-									],
-									[
-										30310,
-										30315
-									],
-									[
-										30615,
-										30620
-									],
-									[
-										30857,
-										30862
-									],
-									[
-										31149,
-										31154
-									],
-									[
-										31266,
-										31271
-									],
-									[
-										31436,
-										31441
-									],
-									[
-										31586,
-										31591
-									],
-									[
-										31741,
-										31746
-									],
-									[
-										31870,
-										31875
-									],
-									[
-										31990,
-										31995
-									],
-									[
-										32149,
-										32154
-									],
-									[
-										32282,
-										32287
-									],
-									[
-										32418,
-										32423
-									],
-									[
-										32452,
-										32457
-									],
-									[
-										32705,
-										32710
-									],
-									[
-										32777,
-										32782
-									],
-									[
-										32973,
-										32978
-									]
-								],
-								"scope": ""
-							}
-						},
-						"selection":
-						[
-							[
-								33160,
-								33160
-							]
-						],
-						"settings":
-						{
-							"detect_indentation": false,
-							"line_numbers": false,
-							"output_tag": 4,
-							"result_base_dir": "",
-							"result_file_regex": "^([^ \t].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 19152.0,
+						"translation.y": 38799.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 19,
-					"file": "lib/util.js",
+					"buffer": 4,
+					"file": "lib/trkl.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 150419,
+						"buffer_size": 4680,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								34445,
-								34445
+								3566,
+								3566
 							]
 						],
 						"settings":
@@ -2213,10 +1721,40 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 21396.0,
+						"translation.y": 991.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 12,
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "lib/geom/transformation.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 20544,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								15505,
+								15505
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 9797.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
 					"type": "text"
 				}
 			]
@@ -2224,7 +1762,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 27.0
+		"height": 26.0
 	},
 	"input":
 	{
@@ -2288,24 +1826,92 @@
 		"selected_items":
 		[
 			[
+				"trkl",
+				"lib/trkl.js"
+			],
+			[
+				"main.js",
+				"main.js"
+			],
+			[
+				"transfor",
+				"lib/geom/transformation.js"
+			],
+			[
+				"main",
+				"main.js"
+			],
+			[
+				"style.css",
+				"style.css"
+			],
+			[
 				"util.js",
 				"lib/util.js"
 			],
 			[
-				"element",
-				"lib/eagle/element.js"
+				"r.lbr",
+				"r.lbr"
+			],
+			[
+				"command",
+				"commands.js"
 			],
 			[
 				"style.cs",
 				"style.css"
 			],
 			[
-				"compon",
+				"component",
 				"components.js"
 			],
 			[
-				"main",
+				"rect",
+				"lib/geom/rect.js"
+			],
+			[
+				"rect.",
+				"lib/geom/rect.js"
+			],
+			[
+				".brd",
+				"tmp/7seg.brd"
+			],
+			[
+				"eagle.js",
+				"lib/eagle.js"
+			],
+			[
+				"hooks.js",
+				"lib/hooks.js"
+			],
+			[
+				"index.",
+				"index.html"
+			],
+			[
+				"main.j",
 				"main.js"
+			],
+			[
+				"componen",
+				"components.js"
+			],
+			[
+				"simple",
+				"Simple-NPN-Regen-Receiver.brd"
+			],
+			[
+				"commands",
+				"commands.js"
+			],
+			[
+				"element",
+				"lib/eagle/element.js"
+			],
+			[
+				"compon",
+				"components.js"
 			],
 			[
 				"util.",
@@ -2314,10 +1920,6 @@
 			[
 				"line.js",
 				"lib/geom/line.js"
-			],
-			[
-				"trkl",
-				"lib/trkl.js"
 			],
 			[
 				"main.",
@@ -2332,20 +1934,12 @@
 				"test-ecmascript.js"
 			],
 			[
-				".brd",
-				"tmp/7seg.brd"
-			],
-			[
 				"size.js",
 				"lib/geom/size.js"
 			],
 			[
 				"autoSt",
 				"lib/autoStore.js"
-			],
-			[
-				"command",
-				"commands.js"
 			],
 			[
 				"util",
@@ -2516,10 +2110,6 @@
 				"resolve-imports.js"
 			],
 			[
-				"main.j",
-				"main.js"
-			],
-			[
 				"alea",
 				"lib/alea.js"
 			],
@@ -2534,10 +2124,6 @@
 			[
 				"test-ea",
 				"test-eagle.js"
-			],
-			[
-				"style.css",
-				"style.css"
 			],
 			[
 				"style",
@@ -2570,10 +2156,6 @@
 			[
 				"style.",
 				"style.css"
-			],
-			[
-				"rect",
-				"lib/geom/rect.js"
 			],
 			[
 				"7seg.sch",
@@ -2712,10 +2294,6 @@
 				"lib/devtools.js"
 			],
 			[
-				"main.js",
-				"main.js"
-			],
-			[
 				"devto",
 				"lib/devtools.js"
 			],
@@ -2740,10 +2318,6 @@
 				"lib/dom.js"
 			],
 			[
-				"commands",
-				"commands.js"
-			],
-			[
 				"list-expo",
 				"list-exports.js"
 			],
@@ -2762,42 +2336,6 @@
 			[
 				"list-pr",
 				"list-proxies.js"
-			],
-			[
-				"test-xml",
-				"test-xml.js"
-			],
-			[
-				"diff",
-				"lib/deep-diff.js"
-			],
-			[
-				"test-ffi",
-				"test-ffi.js"
-			],
-			[
-				"test-ms",
-				"test-msys-db.js"
-			],
-			[
-				"useDim",
-				"lib/hooks/useDimensions.js"
-			],
-			[
-				"useGes",
-				"lib/hooks/useGesture.js"
-			],
-			[
-				"list-exports",
-				"list-exports.js"
-			],
-			[
-				"inspect",
-				"lib/inspect.js"
-			],
-			[
-				"filesys",
-				"lib/filesystem.js"
 			]
 		],
 		"width": 0.0

@@ -486,8 +486,11 @@ async function main(...args) {
         importNodes = imports.map(it => getImport(it));
 
         if(imports.length) {
-          let importStatements = importNodes.map(([stmt, imp]) => deep.get(ast, stmt));
-          let declPaths = Util.unique(importNodes.map(([stmt]) => stmt.join('.')));
+          console.log('imports:', imports);
+          console.log('ast.body:', ast.body);
+          let importStatements = imports.map(([stmt, imp]) => imp);
+          let declPaths = Util.unique(importNodes.map(([stmt]) => stmt.toString()));
+          console.log('importNodes:', importNodes);
 
           let declStatements = declPaths
             .map(p => new ImmutablePath(p.split(/\./g)))
@@ -512,6 +515,8 @@ async function main(...args) {
 
       const useStrict = map.filter(([key, node]) => node instanceof Literal && /use strict/.test(node.value));
       useStrict.forEach(([path, node]) => deep.unset(ast, path));
+      console.debug('importNodes:', importNodes);
+      console.debug('imports:', imports);
       let importDeclarations = imports.map(([path, node], i) => getDeclarations(ast, importNodes[i]));
       //console.debug('importDeclarations:', importDeclarations);
       imports = imports.map(([path, node], i) => {
@@ -879,8 +884,10 @@ function getDeclarations(ast, paths) {
   let [path, path2] = paths;
 
   path = path.slice(0, path.indexOf('init'));
-  let node = deep.get(ast, path);
+  console.log('path:', path);
+  let node = path.apply(ast); //deep.get(ast, [...path]);
 
+  console.log('node:', node);
   if(node.id && node.init) return [[node.id, node.init]];
 
   //console.log('getDeclarations:', node);

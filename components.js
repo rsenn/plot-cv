@@ -5,6 +5,7 @@ import { useTrkl } from './lib/eagle/renderUtils.js';
 import { classNames } from './lib/classNames.js';
 import { useEvent, useElement, useDoubleClick, useDimensions, usePanZoom } from './lib/hooks.js';
 import deepDiff from './lib/deep-diff.js';
+import { useValue } from './lib/repeater/react-hooks.js';
 
 export const ClickHandler = callback => e => {
   if(e.type) {
@@ -975,6 +976,23 @@ export const Zoomable = ({ type = 'div', style, children, ...props }) => {
     },
     h(type, { ref, style: { ...style, transform } }, children)
   );
+};
+
+export const DisplayList = ({ data, ...props }) => {
+  let [items, setItems] = useState([]);
+
+  let itemData = useValue(async function* () {
+    for await (let item of data.repeater) {
+      console.log('DisplayList.item:', item);
+      yield item;
+    }
+  });
+
+  if(itemData) setItems(itemData);
+
+  //console.log('itemData:', itemData);
+
+  return h(Fragment, {}, ['DisplayList', ...items]);
 };
 /*
 export const Conditional = ({ trkl, children, ...props }) => {

@@ -412,6 +412,9 @@ caption {
   justify-content: center;
   align-items: center;
 }
+#main {
+  pointer-events: all;
+}
 #container {
   display: inline-block;
 }
@@ -789,4 +792,50 @@ div.auth-dialog {
 }
 #geom > svg {
   z-index: 1000000;
+}
+div.frame,
+div.rendering,
+div.title {
+  position: relative;
+}
+
+div.frame {
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.75);
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+div.rendering {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+div.frame .rendering {
+  width: 100%;
+  position: relative;
+}
+div.frame {
+  margin: 4px;
+  border: 1px solid black;
+  background: linear-gradient(to top, rgba(212, 212, 212, 1) 0%, rgba(89, 89, 89, 1) 100%);
+}
+div.frame .title {
+  display: block;
+}
+div.frame .title {
+  background: black;
+  color: white;
+  text-align: left;
+  padding: 4px;
+  min-height: 20px;
+}
+div.frame > .title > p {
+  font-family: 'MiscFixedSC613', Fixed, 'Fixed Medium';
+  font-size: 12px;
+}
+div.frame > .title > p {
+  padding: 0;
+  margin: 0;
 }

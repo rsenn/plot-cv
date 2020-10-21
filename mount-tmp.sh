@@ -3,7 +3,7 @@
 IFS="
 "
 
-set -- ../*/eagle/*.{brd,sch}
+set -- ../*/eagle/{lbr/*.lbr,*.{brd,sch}}
 set -- "${@%/*}"
 set -- $(echo "$*" | sort -u)
 
