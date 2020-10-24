@@ -35,6 +35,7 @@ const URLS = [
   'https://repo.msys2.org/msys/i686/msys.db',
   'https://repo.msys2.org/msys/x86_64/msys.db'
 ];
+const BASE_URL = 'https://repo.msys2.org';
 async function main(...args) {
   console.log('main(', ...args, ')');
   await ConsoleSetup({ breakLength: 80 });
@@ -47,14 +48,23 @@ async function main(...args) {
   if(args.length == 0) args.unshift('.*');
   console.log('args:', args);
   while(args.length > 0) {
-    a = [...Util.filter(urls, new RegExp(args[0]))];
+    a = [
+      ...Util.filter(urls.map(url => url.replace(BASE_URL + '/', '')),
+        new RegExp(args[0])
+      )
+    ];
     if(a.length > 0) args.shift();
     else break;
     urls = a;
   }
   let data = {};
+  urls = urls.map(loc => BASE_URL + '/' + loc);
   console.log('urls:', urls);
-  for(let url of urls) ret = await processUrl(url, data);
+  for(let url of urls) {
+    ret = await processUrl(url, data);
+
+    console.debug(`url: ${url} ret:`, ret);
+  }
   if(args.length == 0) args.unshift('.*');
   /*let predicates = args.map(arg => new RegExp(arg));
   console.log("predicates:", predicates);*/
@@ -64,8 +74,12 @@ async function main(...args) {
 
   dumpFile('packages.list', packages.join('\n'));
 
-  /*console.log("packages.length:", packages.length);
-  console.log("packages:", packages.slice(0,10));*/
+  let locations = packages.map(url => url.replace('https://repo.msys2.org/', ''));
+  let names = locations.map(url => url.replace(/(.*)(-[^-.]+)(\.pkg\..*)/g, '$1|$2|$3').split(/\|/g));
+  console.log('names.length:', names.length);
+
+  console.log('names:', names.slice(-10, -1));
+
   for(let i = 0; i < args.length; i++) {
     let arg = args[i].replace(/\+/, '\\+');
     let [name, ver] = arg.split('=');
@@ -75,7 +89,10 @@ async function main(...args) {
     }
 
     let re = new RegExp(arg.startsWith('/') ? name + '-' + (ver || 'r?[0-9]') : arg, 'gi');
-    let pkgs = [...Util.filter(packages, re)];
+    let matches = [...Util.filter(names, item => re.test(item[0]))];
+    let pkgs = matches.map(loc => 'https://repo.msys2.org/' + loc.join(''));
+    /*console.log("re:", re+'');
+console.log("matches:", matches);*/
     if(pkgs.length == 0 || packages.length == pkgs.length) {
       console.log('re =', re, ' pkgs.length =', pkgs.length, ' pacakges.length =', packages.length);
       pkgs = Util.filter(packages,
@@ -99,7 +116,16 @@ async function main(...args) {
       Util.pushUnique(files, pkg);
     }
   }
-  let output = filesystem.open('install-msys2.sh', 'w');
+  let dirs = Util.unique(files.map(file => path.dirname(file))).map(dir => Util.parseURL(dir).location);
+  //  console.debug("dirs:", dirs);
+
+  let host = dirs[0]
+    .split(/\//g)
+    .filter(p => p != '')
+    .join('-');
+  let installScript = `install-${host}.sh`;
+  console.log(`Writing install script: '${installScript}' ...`);
+  let output = filesystem.open(installScript, 'w');
   filesystem.write(output, `#!/bin/sh -x\n`);
 
   for(let file of files) {

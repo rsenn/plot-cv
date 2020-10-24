@@ -387,29 +387,7 @@ cfg-wasm() {
     -DUSE_{ZLIB,BZIP,LZMA,SSL}=OFF \
   "$@")
 }
-
-cfg-msys32() {
- (build=$(gcc -dumpmachine | sed 's|-pc-|-|g')
-  host=${build%%-*}-pc-msys
-  host=i686-${host#*-}
-  cfg-msys "$@")
-}
-
-cfg-msys() {
- (build=$(gcc -dumpmachine | sed 's|-pc-|-|g')
-  : ${host=${build%%-*}-pc-msys}
-  : ${prefix=/usr/$host/sysroot/usr}
-
-  builddir=build/$host \
-  bindir=$prefix/bin \
-  libdir=$prefix/lib \
-  
-  CC="$host-gcc" \
-  cfg \
-    -DCMAKE_CROSSCOMPILING=TRUE \
-    "$@")
-}
-
+ 
 cfg-tcc() {
  (build=$(cc -dumpmachine | sed 's|-pc-|-|g')
   host=${build/-gnu/-tcc}
