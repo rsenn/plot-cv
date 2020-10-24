@@ -2242,7 +2242,7 @@ const AppMain = (window.onload = async () => {
           /*  window.crosshair.show = true;
           window.crosshair.position = absolute;*/
 
-          console.log('move', { rel, absolute });
+          //          console.log('move', { rel, absolute });
           if(event.buttons > 0) move(rel.x, rel.y);
           else move = move.jump();
         }
