@@ -104,39 +104,13 @@
 	"buffers":
 	[
 		{
-			"contents": "  incr\n  isSpecialAttr\nMutableXPath\n  partMatcher\n  isMemberName\n  from\n  maxCount\n  item =>\nImmutableXPath\n  matchObj\n  strToPart\n  parse\n  constructor\n  part =>\n  descendand\n  absolute\n  slice\n  partToString\n  toArray\n  toString\n  text =>\n  toCode\n  partToStr\nMutableXPath\nMutableXPath\n  text =>\n  toRegExp\nMutableXPath\n  findXPath\n  parseXPath",
+			"contents": "",
 			"settings":
 			{
-				"buffer_size": 346,
+				"buffer_size": 0,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
-			}
-		},
-		{
-			"file": "lib/eagle/element.js",
-			"settings":
-			{
-				"buffer_size": 29242,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/util.js",
-			"settings":
-			{
-				"buffer_size": 150825,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/xml/xpath.js",
-			"settings":
-			{
-				"buffer_size": 12760,
-				"line_ending": "Unix"
 			}
 		}
 	],
@@ -152,12 +126,16 @@
 		"selected_items":
 		[
 			[
-				"add repo",
-				"Package Control: Add Repository"
-			],
-			[
 				"svgo",
 				"SVGO: Prettify SVG"
+			],
+			[
+				"prett",
+				"SVGO: Prettify SVG"
+			],
+			[
+				"add repo",
+				"Package Control: Add Repository"
 			],
 			[
 				"pret",
@@ -230,10 +208,6 @@
 			[
 				"install pac",
 				"Package Control: Install Package"
-			],
-			[
-				"prett",
-				"SVGO: Prettify SVG"
 			],
 			[
 				"min",
@@ -364,12 +338,32 @@
 	"expanded_folders":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
-		"/home/roman/Dokumente/Sources/plot-cv/lib"
+		"/home/roman/Dokumente/Sources/plot-cv/lib",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/gerber"
 	],
 	"file_history":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/get-msys-packages.js",
 		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/shish/cfg-cmake.sh",
+		"/home/roman/Dokumente/Sources/plot-cv/cfg.sh",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/cfg.sh",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
+		"/home/roman/Dokumente/Sources/c-utils/lib/dns/dns_rcip.c",
+		"/home/roman/Dokumente/Sources/c-utils/lib/io/io_sendfile.c",
+		"/home/roman/Dokumente/Sources/plot-cv/PeterUndCharlie2_orig.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/PeterUndCharlie2.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/PeterUndCharlie2_opt.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/xpath.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/react-hooks.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/timers.js",
@@ -377,14 +371,10 @@
 		"/home/roman/Dokumente/Sources/plot-cv/style.css",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/resolve-imports.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/instance.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/origin.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/cross.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/text.js",
@@ -396,10 +386,7 @@
 		"/home/roman/.cache/.fr-fwNUNF/bglibs-2.04/unix/sig_suspend.c",
 		"/home/roman/.cache/.fr-VojcwT/bglibs-2.04/unix/sig_misc.c",
 		"/home/roman/.cache/.fr-RtC2Ei/bglibs-2.04/unix/sig_block.c",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/textElement.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/libraryRenderer.js",
@@ -412,7 +399,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pad.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/wire.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/svg.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/symbol.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/rectangle.js",
@@ -486,16 +472,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/src/js_contour.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/src/js_point.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/src/js_rect.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_line.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_point_iterator.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.h",
-		"/home/roman/Dokumente/Sources/plot-cv/test-exception.js",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/Makefile",
-		"/home/roman/Dokumente/Sources/plot-cv/opencv.cmake",
-		"/home/roman/Dokumente/Sources/plot-cv/imgui-viewer.cmake",
-		"/home/roman/Dokumente/Sources/plot-cv/highgui-viewer.cmake",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-debugger-transport-win.c",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js"
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_line.cpp"
 	],
 	"find":
 	{
@@ -530,6 +507,16 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"\\(window, ",
+			"^\\s*console",
+			"cfg-msys",
+			"URLS",
+			"\\.db",
+			"^Util.filter",
+			"til.filter",
+			"LoadLib",
+			"iphlp",
+			"putStack",
 			"151",
 			"columnWidth",
 			"stripUrl =",
@@ -647,17 +634,7 @@
 			"ElementToCompon",
 			"eagle.js",
 			"BoardRenderer",
-			"useValue",
-			"React.render",
-			"AppMain",
-			"#main",
-			"GetProject",
-			"projects",
-			"GetProject",
-			"zoomLog",
-			"config =",
-			"zoomLog",
-			"BoardPackage"
+			"useValue"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -752,7 +729,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 346,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
@@ -762,164 +739,8 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
+							"current_file": null,
 							"outline_rename_mode": false,
-							"symkeys":
-							[
-								[
-									85,
-									108
-								],
-								[
-									141,
-									164
-								],
-								[
-									227,
-									239
-								],
-								[
-									483,
-									494
-								],
-								[
-									1408,
-									1420
-								],
-								[
-									1569,
-									1573
-								],
-								[
-									2113,
-									2129
-								],
-								[
-									2447,
-									2454
-								],
-								[
-									3798,
-									3812
-								],
-								[
-									4081,
-									4089
-								],
-								[
-									4501,
-									4510
-								],
-								[
-									5239,
-									5244
-								],
-								[
-									5838,
-									5849
-								],
-								[
-									6036,
-									6043
-								],
-								[
-									6288,
-									6298
-								],
-								[
-									6421,
-									6429
-								],
-								[
-									6547,
-									6552
-								],
-								[
-									7327,
-									7339
-								],
-								[
-									8552,
-									8559
-								],
-								[
-									8593,
-									8601
-								],
-								[
-									8666,
-									8673
-								],
-								[
-									9104,
-									9110
-								],
-								[
-									9576,
-									9600
-								],
-								[
-									10598,
-									10610
-								],
-								[
-									11185,
-									11197
-								],
-								[
-									11261,
-									11268
-								],
-								[
-									11283,
-									11291
-								],
-								[
-									11308,
-									11320
-								],
-								[
-									11648,
-									11721
-								],
-								[
-									12557,
-									12574
-								]
-							],
-							"symlist":
-							[
-								"  incr",
-								"  isSpecialAttr",
-								"MutableXPath",
-								"  partMatcher",
-								"  isMemberName",
-								"  from",
-								"  maxCount",
-								"  item =>",
-								"ImmutableXPath",
-								"  matchObj",
-								"  strToPart",
-								"  parse",
-								"  constructor",
-								"  part =>",
-								"  descendand",
-								"  absolute",
-								"  slice",
-								"  partToString",
-								"  toArray",
-								"  toString",
-								"  text =>",
-								"  toCode",
-								"  partToStr",
-								"MutableXPath",
-								"MutableXPath",
-								"  text =>",
-								"  toRegExp",
-								"MutableXPath",
-								"  findXPath",
-								"  parseXPath"
-							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
@@ -928,105 +749,14 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 2,
 			"sheets":
 			[
-				{
-					"buffer": 1,
-					"file": "lib/eagle/element.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 29242,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								11961,
-								11961
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 5190.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "lib/util.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 150825,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								103549,
-								103549
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 59012.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "lib/xml/xpath.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 12760,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5460,
-								5460
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2130.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				}
 			]
 		}
 	],
@@ -1096,16 +826,32 @@
 		"selected_items":
 		[
 			[
-				"xpath.js",
-				"lib/xml/xpath.js"
-			],
-			[
 				"util.js",
 				"lib/util.js"
 			],
 			[
 				"main",
 				"main.js"
+			],
+			[
+				"cfg.",
+				"cfg.sh"
+			],
+			[
+				"get-msys",
+				"get-msys-packages.js"
+			],
+			[
+				"peter",
+				"PeterUndCharlie2_opt.svg"
+			],
+			[
+				"Peter",
+				"PeterUndCharlie2_orig.svg"
+			],
+			[
+				"xpath.js",
+				"lib/xml/xpath.js"
 			],
 			[
 				"resolve",
@@ -1590,22 +1336,6 @@
 			[
 				"dom.j",
 				"lib/dom.js"
-			],
-			[
-				"list-expo",
-				"list-exports.js"
-			],
-			[
-				"javascrip",
-				"lib/grammars/JavaScriptParser.g4"
-			],
-			[
-				"hooks",
-				"lib/hooks.js"
-			],
-			[
-				"cli.cpp",
-				"src/cli.cpp"
 			]
 		],
 		"width": 0.0

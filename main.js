@@ -810,20 +810,20 @@ async function LoadDocument(project, parentElem) {
   docElem.innerHTML = '';
   console.log('doc.basename', doc.basename);
 
-  if(true) {
-    window.names = [...PackageNames(doc)];
-
-    console.log('Package names', names);
-    let changes = names.filter(a => a[0] != a[1]);
-
-    console.log('Commands:\n' + changes.map(([oldName, newName]) => `RENAME ${oldName} ${newName};`).join('\n'));
-    console.log('Expressions:\n' + changes.map(([oldName, newName]) => `s|="${oldName}"|="${newName}"|g;`).join('\n'));
-
-    /**/
-  }
+  Util.memoizedProperties(window, {
+    renamePackages() {
+      let names = [...PackageNames(doc)];
+      console.log('Package names', names);
+      let changes = names.filter(a => a[0] != a[1]);
+      console.log('Commands:\n' + changes.map(([oldName, newName]) => `RENAME ${oldName} ${newName};`).join('\n'));
+      console.log('Expressions:\n' + changes.map(([oldName, newName]) => `s|="${oldName}"|="${newName}"|g;`).join('\n')
+      );
+      return names;
+    }
+  });
 
   if(/*doc.type != 'lbr'*/ true) {
-    project.renderer = new Renderer(doc, ReactComponent.append, debug);
+    project.renderer = new Renderer(doc, ReactComponent.append, false && config.debugFlag);
 
     config.showGrid = trkl(true);
     config.showGrid.subscribe(value => {
@@ -977,23 +977,20 @@ async function LoadDocument(project, parentElem) {
   return project;
 }
 
-const ChooseDocument = async (project, i) => {
+async function ChooseDocument(project, i) {
   let r;
   if(i == undefined) i = project.i || projectFiles.indexOf(project);
   const box = Element.findAll('.file')[i];
   LogJS.info('ChooseDocument:', { project, i, box });
   LogJS.info(`${project.name} selected.`);
-  (async () => {
-    if(!project.loaded) {
-      let data = await LoadDocument(project, box);
-      project.loaded = true;
-      console.log('loaded:', project);
-    }
-    r = project.loaded;
-  })();
 
-  return r;
-};
+  if(!project.loaded) {
+    let data = await LoadDocument(project, box);
+    project.loaded = true;
+    console.log('loaded:', project);
+  }
+  return project.loaded;
+}
 
 /* gerber=await BoardToGerber(project.name); gc=await GerberToGcode('tmp/7seg-2.54.GBL'); geom=gcodetogeometry(gc.data);lines = geom.lines.map(({start,end}) => new Line(start,end)) */
 
@@ -1353,7 +1350,13 @@ const AppMain = (window.onload = async () => {
   //prettier-ignore
   Util.weakAssign(window.Element,Util.getMethods(dom.Element) );
   Util.weakAssign(window, dom, geom, imports, localFunctions);
-  Util.weakAssign(window, { functions: Util.filter(localFunctions, v => typeof v == 'function'), dom, geom, imports });
+  Util.weakAssign(window, {
+    functions: Util.filter(localFunctions, v => typeof v == 'function'),
+    dom,
+    geom,
+    imports,
+    config
+  });
   Error.stackTraceLimit = 100;
 
   Util.weakAssign(window, {
@@ -2040,7 +2043,7 @@ const AppMain = (window.onload = async () => {
   let rects = (window.rects = new Map());
   let elems = (window.elems = new Set());
 
-  moveHandler.subscribe((event, prevEvent) => {
+  moveHandler.subscribe(function MoveEvent(event, prevEvent) {
     const { x, y, clientX, clientY, index, buttons, start, type, target } = event;
     //console.log('moveHandler', { x, y });
     /*   console.log('moveHandlerObject.keys(event));*/
@@ -2049,9 +2052,17 @@ const AppMain = (window.onload = async () => {
     event.elements = document.elementsFromPoint(x, y);
 
     //if(event.elements.length) console.log('moveHandler', { x, y }, event.elements );
-
-    let zIndex = Math.max(...Element.walkUp(event.target, (e, d, set) => set(Element.getCSS(e, 'z-index'))).filter(z => !isNaN(+z))
+    function* WalkUp(e) {
+      while(e) {
+        yield e;
+        e = e.parentElement;
+      }
+    }
+    let zIndex = Util.find(Util.map(WalkUp(event.target), e => e.style.getPropertyValue('z-index')),
+      z => /^[0-9]/.test(z)
     );
+
+    //let zIndex = Math.max(...Element.walkUp(event.target, (e, d, set) => set(Element.getCSS(e, 'z-index'))).filter(z => !isNaN(+z)) );
 
     if(zIndex > 0) Util.clear(event.elements);
 
@@ -2162,102 +2173,101 @@ const AppMain = (window.onload = async () => {
     }
   });
 
-  touchHandler.subscribe(/*Util.printReturnValue*/ event => {
-      const { x, y, index, buttons, start, type, target } = event;
+  touchHandler.subscribe(function TouchEvent(event) {
+    const { x, y, index, buttons, start, type, target } = event;
 
-      //  console.log('touchHandler', event);
-      if(type.endsWith('end') || type.endsWith('up')) return cancel();
-      if(event.buttons === 0 && type.endsWith('move')) return cancel();
-      // if(event.index > 0) console.log('touch', { x, y, index, buttons, type, target }, container);
-      if(!move && !resize) {
-        let elemId;
-        //  console.log('target:', target);
-        box = (e => {
-          do {
-            elemId = e.getAttribute('id');
-            if(['fence', 'console'].indexOf(elemId) != -1) return e;
-          } while((e = e.parentElement));
-        })(target);
-        //console.log('box:', box);
+    //  console.log('touchHandler', event);
+    if(type.endsWith('end') || type.endsWith('up')) return cancel();
+    if(event.buttons === 0 && type.endsWith('move')) return cancel();
+    // if(event.index > 0) console.log('touch', { x, y, index, buttons, type, target }, container);
+    if(!move && !resize) {
+      let elemId;
+      //  console.log('target:', target);
+      box = (e => {
+        do {
+          elemId = e.getAttribute('id');
+          if(['fence', 'console'].indexOf(elemId) != -1) return e;
+        } while((e = e.parentElement));
+      })(target);
+      //console.log('box:', box);
 
-        if(event.buttons && event.buttons != 1) {
-          if('preventDefault' in event) event.preventDefault();
-          if(!resize && box) {
-            let edges = Element.rect(box).toPoints();
-            let corners = [edges[0], edges[2]].map((p, i) => [i, p.distance(new Point(start).sum(x, y)), p]);
+      if(event.buttons && event.buttons != 1) {
+        if('preventDefault' in event) event.preventDefault();
+        if(!resize && box) {
+          let edges = Element.rect(box).toPoints();
+          let corners = [edges[0], edges[2]].map((p, i) => [i, p.distance(new Point(start).sum(x, y)), p]);
 
-            let edge = corners.sort((a, b) => a[1] - b[1])[0];
+          let edge = corners.sort((a, b) => a[1] - b[1])[0];
 
-            window.resize = resize = Element.resizeRelative(box, null, edge[0] ? -1 : 1, size => {
-              //    console.log('resizeRelative:', { elemId, size });
-              if(elemId == 'console') config.logSize(size);
-            });
-            box.style.cursor = `nwse-resize`;
-            //console.log('RESIZE:', { resize, box, corners, edge });
-            return true;
-          }
-          return cancel();
+          window.resize = resize = Element.resizeRelative(box, null, edge[0] ? -1 : 1, size => {
+            //    console.log('resizeRelative:', { elemId, size });
+            if(elemId == 'console') config.logSize(size);
+          });
+          box.style.cursor = `nwse-resize`;
+          //console.log('RESIZE:', { resize, box, corners, edge });
+          return true;
         }
-
-        //        let box = Element.find('#main').firstElementChild;
-        const id = box && box.getAttribute('id');
-
-        if(id == 'console') {
-          const rects = [true, false].map(border => Element.rect(box, { border }));
-          let p = new Point(start.x + x, start.y + y);
-          //console.log('', p);
-          const inside = rects.map(r => r.inside(p));
-          const inBorder = inside[0] && !inside[1];
-          function mod(n, m) {
-            return ((n % m) + m) % m;
-          }
-
-          let rad = p.diff(rects[0].center).toAngle();
-          let deg = Math.round((rad * 180) / Math.PI);
-          let sector = mod(Math.floor(((180 - deg) * 8) / 360), 8);
-          let directions = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'];
-          let norm = Point.fromAngle(rad, 1);
-          //console.log('box: ', id, ...inside, inBorder, p, { sector, deg });
-          let compass = directions[sector];
-        }
-
-        if(box) {
-          window.move = move = Element.moveRelative(box, null, id == 'console' ? ['right', 'bottom'] : ['left', 'top']);
-          box.style.cursor = `move`;
-        }
-        return true;
-      }
-      if((move || resize) && event.buttons == 0) {
         return cancel();
       }
 
-      if(event.index > 0) {
-        let rel = new Point(event).sub(event.start);
-        let absolute = new Point(start).add(rel);
+      //        let box = Element.find('#main').firstElementChild;
+      const id = box && box.getAttribute('id');
 
-        if(resize) {
-          if(event.buttons > 0) resize(-rel.x, -rel.y);
-          else resize = resize.jump();
-        } else if(move) {
-          /*  window.crosshair.show = true;
+      if(id == 'console') {
+        const rects = [true, false].map(border => Element.rect(box, { border }));
+        let p = new Point(start.x + x, start.y + y);
+        //console.log('', p);
+        const inside = rects.map(r => r.inside(p));
+        const inBorder = inside[0] && !inside[1];
+        function mod(n, m) {
+          return ((n % m) + m) % m;
+        }
+
+        let rad = p.diff(rects[0].center).toAngle();
+        let deg = Math.round((rad * 180) / Math.PI);
+        let sector = mod(Math.floor(((180 - deg) * 8) / 360), 8);
+        let directions = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'];
+        let norm = Point.fromAngle(rad, 1);
+        //console.log('box: ', id, ...inside, inBorder, p, { sector, deg });
+        let compass = directions[sector];
+      }
+
+      if(box) {
+        window.move = move = Element.moveRelative(box, null, id == 'console' ? ['right', 'bottom'] : ['left', 'top']);
+        box.style.cursor = `move`;
+      }
+      return true;
+    }
+    if((move || resize) && event.buttons == 0) {
+      return cancel();
+    }
+
+    if(event.index > 0) {
+      let rel = new Point(event).sub(event.start);
+      let absolute = new Point(start).add(rel);
+
+      if(resize) {
+        if(event.buttons > 0) resize(-rel.x, -rel.y);
+        else resize = resize.jump();
+      } else if(move) {
+        /*  window.crosshair.show = true;
           window.crosshair.position = absolute;*/
 
-          //          console.log('move', { rel, absolute });
-          if(event.buttons > 0) move(rel.x, rel.y);
-          else move = move.jump();
-        }
-      }
-      function cancel() {
-        move = null;
-        resize = null;
-        window.crosshair.show = false;
-
-        if(box && box.style) box.style.cursor = `default`;
-        /*return*/ event.cancel();
-        return false;
+        //          console.log('move', { rel, absolute });
+        if(event.buttons > 0) move(rel.x, rel.y);
+        else move = move.jump();
       }
     }
-  );
+    function cancel() {
+      move = null;
+      resize = null;
+      window.crosshair.show = false;
+
+      if(box && box.style) box.style.cursor = `default`;
+      /*return*/ event.cancel();
+      return false;
+    }
+  });
 
   window.oncontextmenu = function(e) {
     const { x, y, index, buttons, start, type, target } = event;
