@@ -104,56 +104,38 @@
 	"buffers":
 	[
 		{
-			"contents": "  res =>\n  entries()\nGetProject\n  add\n  useSlot\n  trklGetSet\n  value =>\nMouseEvents\n  append_to(elem, p)\nDrawSVG\n  append_to(elem, p)\n  adjustViewBox\n  calcViewBox\n  setViewBox\nElementToXML\n  readFile(filename)\n  writeFile(filename, data, overwrite = true)\n  exists(filename)\n  realpath(filename)\nLoadFile\nSaveFile\nSaveSVG\n  predicate\nModifyColors\nFindLayer\n  maxZIndex\n  randomColor\nDrawArc\n  props =>\n  hex =>\nDrawBinaryTree\n  add\nRecurseBinaryNode\n  item =>\nDrawNode\nDrawEdge\nGetPaths\nPathToPolylines\n  poly =>\n  poly =>\nPathToPolyline\nPathsToPolylines\n  path =>\nOutsetPath\n  .toPolylines\nOutsetPaths\n  path =>\nClipPath\n  add\n  .toPolylines\n  function saveItemsProperty(itemList, get\n(item.\n  restoreItemsProperty\n(Util.is.\nEagleMaps\n  transformPath\n  eagle =>\n  function* PackageNames(doc\nLoadDocument\n  err =>\n  ent =>\n  ent =>\n  value =>\n  layer =>\n  layer =>\n  .makeGroup\n  id =>\n  value =>\nChooseDocument\nGenerateVoronoi\n  add\nPackageChildren\n  function ElementChildren(layer\n  function ElementGeometries(layer\n  ent =>\n  pts =>\nNewPath\nMakeFitAction\n  event =>\n  function ZoomFactor(val\nZoomLog\n  function AdjustZoom(l\nCreateGrblSocket\nCreateWebSocket\n  .send\nAuthorizationDialog\n  onSubmit: ()\n  onInput: e\n  onInput: e\n  onClick: e\n  arg =>\n  .onload\n  response =>\nTestArc: ()\n  .keystroke\n  .focusSearch\n  children: ()\n  geometries: ()\n  value =>\n  testComponent\nUpdateProjectList\n  ? { url: config.\n, ...credentials } : {}) =>\nFile\nFile.prototype.toString\n  ws =>\n  value =>\n  value =>\n  value =>\n  value =>\n  value =>\n  value =>\n  updateIfChanged\n  changeInput\n  arg =>\nConsumer\n  function* ()\n  extends\n  log\nLogger\n  function* ()\nDumper\n  value =>\nCommander\n  handler\nToggle\nLayer\n  setVisible\n  item =>\n  onMouseMove: e\n  onMouseUp: e\n  onMouseDown: e\nDocumentList\n  constructor\n  add\n  addEntry\n  remove\n  update\n  fn: e\n  fn: ()\n  open =>\n  props =>\n  props =>\n  side =>\n  create: (project, props\n  name =>\n  makeLayerName\n  fn: ()\n  onCommand: cmdStr\n  classes =>\n  event =>\n  size =>\n  border =>\n  mod\n  cancel\n  .oncontextmenu\n  .processEvents\n  event =>\n  onRuntimeInitialized: ()\n  print: txt",
+			"contents": "  incr\n  isSpecialAttr\nMutableXPath\n  partMatcher\n  isMemberName\n  from\n  maxCount\n  item =>\nImmutableXPath\n  matchObj\n  strToPart\n  parse\n  constructor\n  part =>\n  descendand\n  absolute\n  slice\n  partToString\n  toArray\n  toString\n  text =>\n  toCode\n  partToStr\nMutableXPath\nMutableXPath\n  text =>\n  toRegExp\nMutableXPath\n  findXPath\n  parseXPath",
 			"settings":
 			{
-				"buffer_size": 2116,
+				"buffer_size": 346,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "lib/eagle/components/text.js",
+			"file": "lib/eagle/element.js",
 			"settings":
 			{
-				"buffer_size": 1332,
+				"buffer_size": 29242,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/eagle/renderUtils.js",
+			"file": "lib/util.js",
 			"settings":
 			{
-				"buffer_size": 13947,
+				"buffer_size": 150825,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "main.js",
+			"file": "lib/xml/xpath.js",
 			"settings":
 			{
-				"buffer_size": 85964,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/trkl.js",
-			"settings":
-			{
-				"buffer_size": 4680,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/geom/transformation.js",
-			"settings":
-			{
-				"buffer_size": 20544,
-				"encoding": "UTF-8",
+				"buffer_size": 12760,
 				"line_ending": "Unix"
 			}
 		}
@@ -169,6 +151,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"add repo",
+				"Package Control: Add Repository"
+			],
 			[
 				"svgo",
 				"SVGO: Prettify SVG"
@@ -236,10 +222,6 @@
 			[
 				"adv",
 				"Package Control: Advanced Install Package"
-			],
-			[
-				"add repo",
-				"Package Control: Add Repository"
 			],
 			[
 				"adva",
@@ -382,37 +364,59 @@
 	"expanded_folders":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
-		"/home/roman/Dokumente/Sources/plot-cv/lib",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom"
+		"/home/roman/Dokumente/Sources/plot-cv/lib"
 	],
 	"file_history":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/libraryRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pad.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/wire.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/textElement.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/package.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
+		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/xpath.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/react-hooks.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/timers.js",
+		"/home/roman/Dokumente/Sources/plot-cv/components.js",
+		"/home/roman/Dokumente/Sources/plot-cv/style.css",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/resolve-imports.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/instance.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/origin.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/cross.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/text.js",
+		"/home/roman/.cache/.fr-SJQ91h/bglibs-2.04/unix/sig_child.c",
+		"/home/roman/.cache/.fr-mUxNKA/bglibs-2.04/unix/sig_child.c",
+		"/home/roman/.cache/.fr-kIlXGZ/bglibs-2.04/unix/sig_catch.c",
+		"/home/roman/.cache/.fr-qOeeOL/bglibs-2.04/unix/sig_int.c",
+		"/home/roman/.cache/.fr-5VbjxG/bglibs-2.04/unix/sig_term.c",
+		"/home/roman/.cache/.fr-fwNUNF/bglibs-2.04/unix/sig_suspend.c",
+		"/home/roman/.cache/.fr-VojcwT/bglibs-2.04/unix/sig_misc.c",
+		"/home/roman/.cache/.fr-RtC2Ei/bglibs-2.04/unix/sig_block.c",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/textElement.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/libraryRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/package.js",
+		"/home/roman/Dokumente/Sources/plot-cv/r.lbr",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/drawing.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeList.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pad.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/wire.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/svg.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/symbol.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/rectangle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/style.css",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/background.js",
-		"/home/roman/Dokumente/Sources/plot-cv/main.js",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/lbr/r.lbr",
 		"/home/roman/Dokumente/Sources/pictest/eagle/lbr/l.lbr",
 		"/home/roman/Dokumente/Sources/plot-cv/commands.js",
@@ -421,27 +425,15 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/bbox.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/wirePath.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/grid.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/text.js",
-		"/home/roman/Dokumente/Sources/plot-cv/r.lbr",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/polygon.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/circle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/frame.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pin.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/cross.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/origin.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
-		"/home/roman/Dokumente/Sources/plot-cv/components.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp/7seg.brd",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/index.html",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/ref.js",
 		"/home/roman/Dokumente/Sources/plot-cv/Simple-NPN-Regen-Receiver.brd",
 		"/home/roman/Dokumente/Sources/dietlibc-rsenn/include/sched.h",
@@ -474,7 +466,6 @@
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/Simple-NPN-Regen-Receiver.brd",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/Simple-NPN-Regen-Receiver.sch",
 		"/home/roman/Dokumente/Sources/plot-cv/test-membrane.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/xpath.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-clang-ast.js",
 		"/home/roman/Dokumente/Sources/plot-cv/list-proxies.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
@@ -504,20 +495,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/imgui-viewer.cmake",
 		"/home/roman/Dokumente/Sources/plot-cv/highgui-viewer.cmake",
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-debugger-transport-win.c",
-		"/home/roman/Dokumente/Sources/plot-cv/resolve-imports.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/token.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-lexer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/devtools.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/interpreter.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/css.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/container.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/container/multiMap.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/container/binaryTree.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/alea.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/usePanZoom.js",
-		"/home/roman/Dokumente/Sources/js-btree/js-data-structs/src/binary_tree.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js.orig"
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/lexer.js"
 	],
 	"find":
 	{
@@ -552,6 +530,68 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"151",
+			"columnWidth",
+			"stripUrl =",
+			"stripUrl",
+			"lazy",
+			"^Util.putStack =",
+			"add =",
+			"putStack",
+			"^Util.stackFrame =",
+			"^Util.makeURL",
+			"^Util.stack =",
+			"Util.stack",
+			"mutablePath",
+			"utableXPath",
+			"Immutable",
+			"from",
+			"partMatcher",
+			"matchObj",
+			"getExport",
+			"deep.get",
+			"generateFlatAndMap",
+			"box-shadow",
+			"renderElement",
+			"currentProj",
+			"renderer.render",
+			"svg:",
+			"project.svg",
+			"project.svg =",
+			"transform[^a]",
+			"renderInstance\\(",
+			"this.transform",
+			"transformation",
+			"transform",
+			"part\\.",
+			"renderItem\\(",
+			"'instances'",
+			"getMeasures",
+			"'pinref'",
+			"'part'",
+			"'elements'",
+			"'g'",
+			"<symbol",
+			"<descr",
+			"'bg'",
+			"MatrixTransformation",
+			"toMatrices",
+			"init-call",
+			"multiply_self",
+			"rotate",
+			"multiply",
+			"rotate",
+			"Matrix.deg2rad",
+			"deg2rad",
+			"rad2deg",
+			"\\.rotat",
+			"\\.rotate",
+			"skew",
+			"rotate =",
+			"touchHandler",
+			"decompose",
+			"wheel",
+			"Wheel",
 			"TouchListener",
 			" rotate\\(",
 			"static ",
@@ -617,69 +657,7 @@
 			"zoomLog",
 			"config =",
 			"zoomLog",
-			"BoardPackage",
-			"showSearch",
-			"debugFlag",
-			"config\\.",
-			"BoardPackage",
-			"WirePath",
-			"WirePath$",
-			"WirePath",
-			"\\sRotation.*renderUtils",
-			"Rotation",
-			" Rotation\\(",
-			"renderUtils",
-			"Rotation",
-			"import.*Rotation.*renderUtils",
-			"Util.mod =",
-			"mod =",
-			"#main",
-			"sizeListener",
-			"AspectRatioBox",
-			"AspectRat",
-			"AspectRt",
-			"minWidth",
-			"min-width",
-			"height",
-			"min-height",
-			"AspectRatio",
-			"Zoomable",
-			"getOrCreate",
-			"new Set.*=>",
-			"entries.*=>",
-			"collapse",
-			"path",
-			"renderCollection",
-			"bind =",
-			"geometries",
-			"LineList",
-			"imported",
-			"pathCmd",
-			"parseSVG",
-			"find\\(",
-			"new Sequence",
-			"allNodes",
-			"<package",
-			"<element ",
-			"push[A-Z]",
-			"credenti",
-			"ListProjects",
-			"ListGithub",
-			"ListGit",
-			"ListGithub",
-			"credentials",
-			"listURL.s",
-			"\\.subscribe",
-			"credentials",
-			"credentials =",
-			"AppMain",
-			"localFunc",
-			"throttle",
-			"Util.debounce",
-			"debounce",
-			"^Util.mapFunction",
-			"LocalStorage",
-			"makeLocalStorage"
+			"BoardPackage"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -687,6 +665,8 @@
 		"regex": true,
 		"replace_history":
 		[
+			"multiplySelf",
+			"deg2rad",
 			"//",
 			"\\1//\\2",
 			"\\1//console.",
@@ -772,7 +752,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2116,
+						"buffer_size": 346,
 						"regions":
 						{
 						},
@@ -782,823 +762,173 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/main.js",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/xml/xpath.js",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
 								[
-									8406,
-									8412
+									85,
+									108
 								],
 								[
-									8556,
-									8565
+									141,
+									164
 								],
 								[
-									9084,
-									9103
+									227,
+									239
 								],
 								[
-									9584,
-									9608
+									483,
+									494
 								],
 								[
-									9649,
-									9670
+									1408,
+									1420
 								],
 								[
-									9712,
-									9738
+									1569,
+									1573
 								],
 								[
-									9739,
-									9747
+									2113,
+									2129
 								],
 								[
-									9863,
-									9881
+									2447,
+									2454
 								],
 								[
-									10297,
-									10315
+									3798,
+									3812
 								],
 								[
-									10972,
-									10997
+									4081,
+									4089
 								],
 								[
-									11043,
-									11061
+									4501,
+									4510
 								],
 								[
-									11999,
-									12024
+									5239,
+									5244
 								],
 								[
-									12379,
-									12404
+									5838,
+									5849
 								],
 								[
-									12743,
-									12777
+									6036,
+									6043
 								],
 								[
-									13285,
-									13317
+									6288,
+									6298
 								],
 								[
-									13577,
-									13601
+									6421,
+									6429
 								],
 								[
-									13661,
-									13710
+									6547,
+									6552
 								],
 								[
-									13952,
-									13974
+									7327,
+									7339
 								],
 								[
-									13981,
-									14005
+									8552,
+									8559
 								],
 								[
-									14013,
-									14042
+									8593,
+									8601
 								],
 								[
-									14771,
-									14823
+									8666,
+									8673
 								],
 								[
-									15215,
-									15301
+									9104,
+									9110
 								],
 								[
-									15497,
-									15519
+									9576,
+									9600
 								],
 								[
-									15946,
-									15966
+									10598,
+									10610
 								],
 								[
-									16155,
-									16180
+									11185,
+									11197
 								],
 								[
-									17076,
-									17093
+									11261,
+									11268
 								],
 								[
-									17363,
-									17382
+									11283,
+									11291
 								],
 								[
-									17597,
-									17632
+									11308,
+									11320
 								],
 								[
-									17670,
-									17678
+									11648,
+									11721
 								],
 								[
-									18961,
-									18967
-								],
-								[
-									20893,
-									20924
-								],
-								[
-									20962,
-									20984
-								],
-								[
-									21163,
-									21221
-								],
-								[
-									21620,
-									21627
-								],
-								[
-									21715,
-									21744
-								],
-								[
-									21966,
-									21997
-								],
-								[
-									23013,
-									23059
-								],
-								[
-									23200,
-									23243
-								],
-								[
-									23455,
-									23462
-								],
-								[
-									23489,
-									23496
-								],
-								[
-									23856,
-									23898
-								],
-								[
-									24279,
-									24324
-								],
-								[
-									24468,
-									24475
-								],
-								[
-									24517,
-									24587
-								],
-								[
-									25017,
-									25042
-								],
-								[
-									25218,
-									25290
-								],
-								[
-									25507,
-									25514
-								],
-								[
-									26011,
-									26076
-								],
-								[
-									26163,
-									26189
-								],
-								[
-									26428,
-									26453
-								],
-								[
-									26567,
-									26626
-								],
-								[
-									26628,
-									26634
-								],
-								[
-									26746,
-									26819
-								],
-								[
-									26826,
-									26835
-								],
-								[
-									26906,
-									26933
-								],
-								[
-									26942,
-									26962
-								],
-								[
-									27904,
-									27912
-								],
-								[
-									29117,
-									29158
-								],
-								[
-									31149,
-									31197
-								],
-								[
-									31378,
-									31384
-								],
-								[
-									31542,
-									31548
-								],
-								[
-									31645,
-									31651
-								],
-								[
-									32813,
-									32821
-								],
-								[
-									33262,
-									33270
-								],
-								[
-									33360,
-									33368
-								],
-								[
-									35163,
-									35214
-								],
-								[
-									35527,
-									35532
-								],
-								[
-									36454,
-									36462
-								],
-								[
-									37252,
-									37290
-								],
-								[
-									37919,
-									37942
-								],
-								[
-									39536,
-									39560
-								],
-								[
-									40781,
-									40821
-								],
-								[
-									41062,
-									41118
-								],
-								[
-									41280,
-									41338
-								],
-								[
-									41390,
-									41396
-								],
-								[
-									41784,
-									41790
-								],
-								[
-									41889,
-									41911
-								],
-								[
-									41989,
-									42013
-								],
-								[
-									42014,
-									42028
-								],
-								[
-									44041,
-									44074
-								],
-								[
-									44136,
-									44160
-								],
-								[
-									44201,
-									44232
-								],
-								[
-									44486,
-									44529
-								],
-								[
-									44839,
-									44903
-								],
-								[
-									45099,
-									45119
-								],
-								[
-									45799,
-									45846
-								],
-								[
-									46190,
-									46205
-								],
-								[
-									46422,
-									46435
-								],
-								[
-									46712,
-									46725
-								],
-								[
-									46931,
-									46944
-								],
-								[
-									47168,
-									47174
-								],
-								[
-									47224,
-									47245
-								],
-								[
-									50633,
-									50644
-								],
-								[
-									51900,
-									51914
-								],
-								[
-									52480,
-									52502
-								],
-								[
-									52641,
-									52664
-								],
-								[
-									52946,
-									52961
-								],
-								[
-									52986,
-									53003
-								],
-								[
-									53070,
-									53078
-								],
-								[
-									53262,
-									53286
-								],
-								[
-									53389,
-									53430
-								],
-								[
-									53439,
-									53456
-								],
-								[
-									53465,
-									53492
-								],
-								[
-									53895,
-									53916
-								],
-								[
-									54402,
-									54438
-								],
-								[
-									55601,
-									55606
-								],
-								[
-									55786,
-									55794
-								],
-								[
-									55910,
-									55918
-								],
-								[
-									56038,
-									56046
-								],
-								[
-									56161,
-									56169
-								],
-								[
-									56226,
-									56234
-								],
-								[
-									56706,
-									56714
-								],
-								[
-									56898,
-									56945
-								],
-								[
-									57265,
-									57283
-								],
-								[
-									57528,
-									57534
-								],
-								[
-									57780,
-									57799
-								],
-								[
-									57831,
-									57849
-								],
-								[
-									58323,
-									58330
-								],
-								[
-									58358,
-									58361
-								],
-								[
-									58703,
-									58720
-								],
-								[
-									58928,
-									58946
-								],
-								[
-									59667,
-									59684
-								],
-								[
-									59776,
-									59784
-								],
-								[
-									60193,
-									60233
-								],
-								[
-									60298,
-									60312
-								],
-								[
-									60874,
-									60890
-								],
-								[
-									60928,
-									61003
-								],
-								[
-									61248,
-									61269
-								],
-								[
-									61807,
-									61814
-								],
-								[
-									62349,
-									62366
-								],
-								[
-									62458,
-									62473
-								],
-								[
-									62519,
-									62536
-								],
-								[
-									63323,
-									63335
-								],
-								[
-									63342,
-									63353
-								],
-								[
-									63512,
-									63515
-								],
-								[
-									63712,
-									63720
-								],
-								[
-									63793,
-									63799
-								],
-								[
-									63923,
-									63929
-								],
-								[
-									64284,
-									64292
-								],
-								[
-									65158,
-									65167
-								],
-								[
-									65393,
-									65400
-								],
-								[
-									65507,
-									65515
-								],
-								[
-									65728,
-									65736
-								],
-								[
-									67281,
-									67288
-								],
-								[
-									69234,
-									69266
-								],
-								[
-									70026,
-									70033
-								],
-								[
-									71103,
-									71137
-								],
-								[
-									71721,
-									71730
-								],
-								[
-									73745,
-									73765
-								],
-								[
-									76246,
-									76256
-								],
-								[
-									78925,
-									78933
-								],
-								[
-									80095,
-									80102
-								],
-								[
-									80634,
-									80643
-								],
-								[
-									80879,
-									80897
-								],
-								[
-									82206,
-									82223
-								],
-								[
-									82454,
-									82482
-								],
-								[
-									82849,
-									82892
-								],
-								[
-									84224,
-									84232
-								],
-								[
-									85764,
-									85791
-								],
-								[
-									85914,
-									85927
+									12557,
+									12574
 								]
 							],
 							"symlist":
 							[
-								"  res =>",
-								"  entries()",
-								"GetProject",
-								"  add",
-								"  useSlot",
-								"  trklGetSet",
-								"  value =>",
-								"MouseEvents",
-								"  append_to(elem, p)",
-								"DrawSVG",
-								"  append_to(elem, p)",
-								"  adjustViewBox",
-								"  calcViewBox",
-								"  setViewBox",
-								"ElementToXML",
-								"  readFile(filename)",
-								"  writeFile(filename, data, overwrite = true)",
-								"  exists(filename)",
-								"  realpath(filename)",
-								"LoadFile",
-								"SaveFile",
-								"SaveSVG",
-								"  predicate",
-								"ModifyColors",
-								"FindLayer",
-								"  maxZIndex",
-								"  randomColor",
-								"DrawArc",
-								"  props =>",
-								"  hex =>",
-								"DrawBinaryTree",
-								"  add",
-								"RecurseBinaryNode",
+								"  incr",
+								"  isSpecialAttr",
+								"MutableXPath",
+								"  partMatcher",
+								"  isMemberName",
+								"  from",
+								"  maxCount",
 								"  item =>",
-								"DrawNode",
-								"DrawEdge",
-								"GetPaths",
-								"PathToPolylines",
-								"  poly =>",
-								"  poly =>",
-								"PathToPolyline",
-								"PathsToPolylines",
-								"  path =>",
-								"OutsetPath",
-								"  .toPolylines",
-								"OutsetPaths",
-								"  path =>",
-								"ClipPath",
-								"  add",
-								"  .toPolylines",
-								"  function saveItemsProperty(itemList, get",
-								"(item.",
-								"  restoreItemsProperty",
-								"(Util.is.",
-								"EagleMaps",
-								"  transformPath",
-								"  eagle =>",
-								"  function* PackageNames(doc",
-								"LoadDocument",
-								"  err =>",
-								"  ent =>",
-								"  ent =>",
-								"  value =>",
-								"  layer =>",
-								"  layer =>",
-								"  .makeGroup",
-								"  id =>",
-								"  value =>",
-								"ChooseDocument",
-								"GenerateVoronoi",
-								"  add",
-								"PackageChildren",
-								"  function ElementChildren(layer",
-								"  function ElementGeometries(layer",
-								"  ent =>",
-								"  pts =>",
-								"NewPath",
-								"MakeFitAction",
-								"  event =>",
-								"  function ZoomFactor(val",
-								"ZoomLog",
-								"  function AdjustZoom(l",
-								"CreateGrblSocket",
-								"CreateWebSocket",
-								"  .send",
-								"AuthorizationDialog",
-								"  onSubmit: ()",
-								"  onInput: e",
-								"  onInput: e",
-								"  onClick: e",
-								"  arg =>",
-								"  .onload",
-								"  response =>",
-								"TestArc: ()",
-								"  .keystroke",
-								"  .focusSearch",
-								"  children: ()",
-								"  geometries: ()",
-								"  value =>",
-								"  testComponent",
-								"UpdateProjectList",
-								"\t? { url: config.",
-								", ...credentials } : {}) =>",
-								"File",
-								"File.prototype.toString",
-								"  ws =>",
-								"  value =>",
-								"  value =>",
-								"  value =>",
-								"  value =>",
-								"  value =>",
-								"  value =>",
-								"  updateIfChanged",
-								"  changeInput",
-								"  arg =>",
-								"Consumer",
-								"  function* ()",
-								"  extends",
-								"  log",
-								"Logger",
-								"  function* ()",
-								"Dumper",
-								"  value =>",
-								"Commander",
-								"  handler",
-								"Toggle",
-								"Layer",
-								"  setVisible",
-								"  item =>",
-								"  onMouseMove: e",
-								"  onMouseUp: e",
-								"  onMouseDown: e",
-								"DocumentList",
+								"ImmutableXPath",
+								"  matchObj",
+								"  strToPart",
+								"  parse",
 								"  constructor",
-								"  add",
-								"  addEntry",
-								"  remove",
-								"  update",
-								"  fn: e",
-								"  fn: ()",
-								"  open =>",
-								"  props =>",
-								"  props =>",
-								"  side =>",
-								"  create: (project, props",
-								"  name =>",
-								"  makeLayerName",
-								"  fn: ()",
-								"  onCommand: cmdStr",
-								"  classes =>",
-								"  event =>",
-								"  size =>",
-								"  border =>",
-								"  mod",
-								"  cancel",
-								"  .oncontextmenu",
-								"  .processEvents",
-								"  event =>",
-								"  onRuntimeInitialized: ()",
-								"  print: txt"
+								"  part =>",
+								"  descendand",
+								"  absolute",
+								"  slice",
+								"  partToString",
+								"  toArray",
+								"  toString",
+								"  text =>",
+								"  toCode",
+								"  partToStr",
+								"MutableXPath",
+								"MutableXPath",
+								"  text =>",
+								"  toRegExp",
+								"MutableXPath",
+								"  findXPath",
+								"  parseXPath"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 459.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -1609,19 +939,19 @@
 			[
 				{
 					"buffer": 1,
-					"file": "lib/eagle/components/text.js",
+					"file": "lib/eagle/element.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1332,
+						"buffer_size": 29242,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								690,
-								690
+								11961,
+								11961
 							]
 						],
 						"settings":
@@ -1631,57 +961,27 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "lib/eagle/renderUtils.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 13947,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3057,
-								3057
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1229.0,
+						"translation.y": 5190.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "main.js",
+					"buffer": 2,
+					"file": "lib/util.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 85964,
+						"buffer_size": 150825,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								81370,
-								81370
+								103549,
+								103549
 							]
 						],
 						"settings":
@@ -1691,70 +991,40 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 38799.0,
+						"translation.y": 59012.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "lib/xml/xpath.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 12760,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5460,
+								5460
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2130.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "lib/trkl.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4680,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3566,
-								3566
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 991.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "lib/geom/transformation.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 20544,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								15505,
-								15505
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 9797.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
 					"type": "text"
 				}
 			]
@@ -1826,19 +1096,27 @@
 		"selected_items":
 		[
 			[
-				"trkl",
-				"lib/trkl.js"
+				"xpath.js",
+				"lib/xml/xpath.js"
 			],
 			[
-				"main.js",
-				"main.js"
-			],
-			[
-				"transfor",
-				"lib/geom/transformation.js"
+				"util.js",
+				"lib/util.js"
 			],
 			[
 				"main",
+				"main.js"
+			],
+			[
+				"resolve",
+				"resolve-imports.js"
+			],
+			[
+				"style.cs",
+				"style.css"
+			],
+			[
+				"main.js",
 				"main.js"
 			],
 			[
@@ -1846,20 +1124,20 @@
 				"style.css"
 			],
 			[
-				"util.js",
-				"lib/util.js"
-			],
-			[
 				"r.lbr",
 				"r.lbr"
 			],
 			[
-				"command",
-				"commands.js"
+				"trkl",
+				"lib/trkl.js"
 			],
 			[
-				"style.cs",
-				"style.css"
+				"transfor",
+				"lib/geom/transformation.js"
+			],
+			[
+				"command",
+				"commands.js"
 			],
 			[
 				"component",
@@ -2106,10 +1384,6 @@
 				"lib/dom/css.js"
 			],
 			[
-				"resolve",
-				"resolve-imports.js"
-			],
-			[
 				"alea",
 				"lib/alea.js"
 			],
@@ -2332,10 +1606,6 @@
 			[
 				"cli.cpp",
 				"src/cli.cpp"
-			],
-			[
-				"list-pr",
-				"list-proxies.js"
 			]
 		],
 		"width": 0.0

@@ -299,7 +299,7 @@ const getImport = ([p, n]) => {
   r.push(p);
   return r;
 };
-const getExport = ([p, n]) => [n instanceof ExportStatement ? p : p.slice(0, 2), p];
+const getExport = ([p, n]) => [n instanceof ExportStatement ? p : p.slice(0, 2), p]; /*.map(p => [...p])*/
 
 function PrintCode(node) {
   return PrintObject(node, node => PrintAst(node));
@@ -493,7 +493,8 @@ async function main(...args) {
           console.log('importNodes:', importNodes);
 
           let declStatements = declPaths
-            .map(p => new ImmutablePath(p.split(/\./g)))
+            .map(p => p.split(/\./g))
+            //  .map(p => new ImmutablePath(p))
             .map(p => [p, deep.get(ast, p)])
             .filter(([path, stmt]) => stmt instanceof VariableDeclaration);
 
@@ -586,8 +587,9 @@ async function main(...args) {
 
       let exportNodes = [...flat].filter(entry => isCJSExport(entry) || isES6Export(entry));
       let exportPaths = exportNodes.map(getExport);
+      console.log('exportPaths:', exportPaths);
       let exportEntries = exportPaths
-        .map(([path, path2]) => [path, path2, deep.get(ast, path)])
+        .map(([path, path2]) => [path, path2, deep.get(ast, [...path])])
         .map(([path, path2, node]) => [path, path2, node, node instanceof AssignmentExpression ? node.right : node]);
       let moduleExports = exportEntries.map(([path, path2, node, node2]) => [node != node2 ? 'default' : null, node2]);
       let exportInstances = moduleExports.map(([name, node], i) =>

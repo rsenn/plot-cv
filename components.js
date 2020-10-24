@@ -929,8 +929,8 @@ export const Fence = ({ children, style = {}, sizeListener, aspectListener, ...p
   return h(TransformedElement,
     {
       id: 'fence',
-      type: SizedAspectRatioBox,
-      aspect,
+      type: 'div' || SizedAspectRatioBox,
+      'data-aspect': aspect,
       // listener: transform,
       style: {
         position: 'relative',

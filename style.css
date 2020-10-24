@@ -434,7 +434,8 @@ body,
   width: 100%;
   height: 100%;
 }
-.aspect-ratio-box-size,
+.fence,
+/*.aspect-ratio-box-size,*/
 .zoomable > div {
   /* position: relative; */
   /* overflow: hidden; */
