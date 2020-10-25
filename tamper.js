@@ -2497,7 +2497,7 @@
     let tmp;
     const defKeyFunc = it => it;
     t = t || defKeyFunc;
-    if(Util.isObject(arr, o => typeof o.entries == 'function')) arr = arr.entries();
+    if(Util.isObject(arr) && typeof arr.entries == 'function') arr = arr.entries();
     arr = [...arr];
     let entries = arr.map((it, i) => [i, it]);
     let x = {};
@@ -3525,7 +3525,7 @@
     );
 
     fn = function ReduceIntoMap(arg, acc = mapObj) {
-      if(Util.isObject(arg, o => typeof o.reduce == 'function'))
+      if(Util.isObject(arg) && typeof o.reduce == 'function')
         return arg.reduce((acc, arg) => (Util.isArray(arg) ? arg : Util.members(arg)).reduce(reducer, acc), self.map);
       let c = Util.counter();
       for(let mem of arg) acc = next(acc, mem, c());
@@ -4146,7 +4146,7 @@
 
   Util.traverseTree = function(tree, fn, depth = (0, (parent = null))) {
     fn(tree, depth, parent);
-    if(Util.isObject(tree, tree.childre) && tree.children.length > 0)
+    if(Util.isObject(tree.children) && tree.children.length > 0)
       for(let child of tree.children) Util.traverseTree(child, fn, depth + 1, tree);
   };
 

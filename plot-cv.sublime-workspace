@@ -104,13 +104,22 @@
 	"buffers":
 	[
 		{
-			"contents": "",
+			"contents": "  res =>\n  entries()\nGetProject\n  add\n  useSlot\n  trklGetSet\n  value =>\nMouseEvents\n  append_to(elem, p)\nDrawSVG\n  append_to(elem, p)\n  adjustViewBox\n  calcViewBox\n  setViewBox\nElementToXML\n  readFile(filename)\n  writeFile(filename, data, overwrite = true)\n  exists(filename)\n  realpath(filename)\nLoadFile\nSaveFile\nSaveSVG\n  predicate\nModifyColors\nFindLayer\n  maxZIndex\n  randomColor\nDrawArc\n  props =>\n  hex =>\nDrawBinaryTree\n  add\nRecurseBinaryNode\n  item =>\nDrawNode\nDrawEdge\nGetPaths\nPathToPolylines\n  poly =>\n  poly =>\nPathToPolyline\nPathsToPolylines\n  path =>\nOutsetPath\n  .toPolylines\nOutsetPaths\n  path =>\nClipPath\n  add\n  .toPolylines\n  function saveItemsProperty(itemList, get\n(item.\n  restoreItemsProperty\n(Util.is.\nEagleMaps\n  transformPath\n  eagle =>\n  function* PackageNames(doc\nLoadDocument\n  err =>\n  ent =>\n  ent =>\n  renamePackages()\n  value =>\n  layer =>\n  layer =>\n  .makeGroup\n  id =>\n  value =>\nChooseDocument\nGenerateVoronoi\n  add\nPackageChildren\n  function ElementChildren(layer\n  function ElementGeometries(layer\n  ent =>\n  pts =>\nNewPath\nMakeFitAction\n  event =>\n  function ZoomFactor(val\nZoomLog\n  function AdjustZoom(l\nCreateGrblSocket\nCreateWebSocket\n  .send\nAuthorizationDialog\n  onSubmit: ()\n  onInput: e\n  onInput: e\n  onClick: e\n  arg =>\n  .onload\n  response =>\nTestArc: ()\n  .keystroke\n  .focusSearch\n  children: ()\n  geometries: ()\n  value =>\n  testComponent\nUpdateProjectList\n  ? { url: config.\n, ...credentials } : {}) =>\nFile\nFile.prototype.toString\n  ws =>\n  value =>\n  value =>\n  value =>\n  value =>\n  value =>\n  value =>\n  updateIfChanged\n  changeInput\n  arg =>\nConsumer\n  function* ()\n  extends\n  log\nLogger\n  function* ()\nDumper\n  value =>\nCommander\n  handler\nToggle\nLayer\n  setVisible\n  item =>\n  onMouseMove: e\n  onMouseUp: e\n  onMouseDown: e\nDocumentList\n  constructor\n  add\n  addEntry\n  remove\n  update\n  fn: e\n  fn: ()\n  open =>\n  props =>\n  props =>\n  side =>\n  create: (project, props\n  name =>\n  makeLayerName\n  fn: ()\n  onCommand: cmdStr\nMoveEvent\n  function* WalkUp(e)\n  classes =>\nTouchEvent\n  size =>\n  border =>\n  mod\n  cancel\n  .oncontextmenu\n  .processEvents\n  event =>\n  onRuntimeInitialized: ()\n  print: txt",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 2167,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
+			}
+		},
+		{
+			"file": "main.js",
+			"settings":
+			{
+				"buffer_size": 86293,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
 			}
 		}
 	],
@@ -338,19 +347,22 @@
 	"expanded_folders":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
-		"/home/roman/Dokumente/Sources/plot-cv/lib",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/gerber"
+		"/home/roman/Dokumente/Sources/plot-cv/lib"
 	],
 	"file_history":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/create-tamper.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/ref.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/get-msys-packages.js",
 		"/home/roman/Dokumente/Sources/plot-cv/main.js",
@@ -363,7 +375,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/PeterUndCharlie2_orig.svg",
 		"/home/roman/Dokumente/Sources/plot-cv/PeterUndCharlie2.svg",
 		"/home/roman/Dokumente/Sources/plot-cv/PeterUndCharlie2_opt.svg",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/xpath.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/react-hooks.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/repeater/timers.js",
@@ -371,8 +382,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/style.css",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/xml/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/resolve-imports.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/instance.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/origin.js",
@@ -392,7 +401,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/libraryRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/package.js",
 		"/home/roman/Dokumente/Sources/plot-cv/r.lbr",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/drawing.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/trkl.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
@@ -420,13 +428,11 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/index.html",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/ref.js",
 		"/home/roman/Dokumente/Sources/plot-cv/Simple-NPN-Regen-Receiver.brd",
 		"/home/roman/Dokumente/Sources/dietlibc-rsenn/include/sched.h",
 		"/home/roman/Dokumente/Sources/musl-1.1.19/include/sched.h",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/timer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/create-tamper.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/lineList.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/arc.js",
@@ -507,6 +513,21 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"Util.isObject\\([^)]*,[^)]*\\)",
+			"acc",
+			"^Util.find =",
+			"^Util.find",
+			"isIdentity",
+			"^Util.memoizedP",
+			"PackageNames",
+			"LoadDocument",
+			"up\\(",
+			"^Util.find =",
+			"walkUp",
+			"^Util.iterat",
+			"yield ",
+			"^Util.walk",
+			"options",
 			"\\(window, ",
 			"^\\s*console",
 			"cfg-msys",
@@ -619,22 +640,7 @@
 			"import.*classNames",
 			"font-family:",
 			"box-shadow",
-			"style",
-			"outset",
-			"\\.getBounds\\([^)]",
-			"\\.getBounds\\(",
-			"\\.getBounds\\([^)]",
-			"\\.getBounds\\(",
-			"bg",
-			"grid",
-			"\\.render",
-			"SchematicSymbo",
-			"SchematicSymbol",
-			"\\.render\\(",
-			"ElementToCompon",
-			"eagle.js",
-			"BoardRenderer",
-			"useValue"
+			"style"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -729,18 +735,843 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 0,
+						"buffer_size": 2167,
 						"regions":
 						{
 						},
 						"selection":
 						[
+							[
+								622,
+								622
+							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": null,
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/main.js",
 							"outline_rename_mode": false,
+							"symkeys":
+							[
+								[
+									8406,
+									8412
+								],
+								[
+									8556,
+									8565
+								],
+								[
+									9084,
+									9103
+								],
+								[
+									9584,
+									9608
+								],
+								[
+									9649,
+									9670
+								],
+								[
+									9712,
+									9738
+								],
+								[
+									9739,
+									9747
+								],
+								[
+									9863,
+									9881
+								],
+								[
+									10297,
+									10315
+								],
+								[
+									10972,
+									10997
+								],
+								[
+									11043,
+									11061
+								],
+								[
+									11999,
+									12024
+								],
+								[
+									12379,
+									12404
+								],
+								[
+									12743,
+									12777
+								],
+								[
+									13285,
+									13317
+								],
+								[
+									13577,
+									13601
+								],
+								[
+									13661,
+									13710
+								],
+								[
+									13952,
+									13974
+								],
+								[
+									13981,
+									14005
+								],
+								[
+									14013,
+									14042
+								],
+								[
+									14771,
+									14823
+								],
+								[
+									15215,
+									15301
+								],
+								[
+									15497,
+									15519
+								],
+								[
+									15946,
+									15966
+								],
+								[
+									16155,
+									16180
+								],
+								[
+									17076,
+									17093
+								],
+								[
+									17363,
+									17382
+								],
+								[
+									17597,
+									17632
+								],
+								[
+									17670,
+									17678
+								],
+								[
+									18961,
+									18967
+								],
+								[
+									20893,
+									20924
+								],
+								[
+									20962,
+									20984
+								],
+								[
+									21163,
+									21221
+								],
+								[
+									21620,
+									21627
+								],
+								[
+									21715,
+									21744
+								],
+								[
+									21966,
+									21997
+								],
+								[
+									23013,
+									23059
+								],
+								[
+									23200,
+									23243
+								],
+								[
+									23455,
+									23462
+								],
+								[
+									23489,
+									23496
+								],
+								[
+									23856,
+									23898
+								],
+								[
+									24279,
+									24324
+								],
+								[
+									24468,
+									24475
+								],
+								[
+									24517,
+									24587
+								],
+								[
+									25017,
+									25042
+								],
+								[
+									25218,
+									25290
+								],
+								[
+									25507,
+									25514
+								],
+								[
+									26011,
+									26076
+								],
+								[
+									26163,
+									26189
+								],
+								[
+									26428,
+									26453
+								],
+								[
+									26567,
+									26626
+								],
+								[
+									26628,
+									26634
+								],
+								[
+									26746,
+									26819
+								],
+								[
+									26826,
+									26835
+								],
+								[
+									26906,
+									26933
+								],
+								[
+									26942,
+									26962
+								],
+								[
+									27904,
+									27912
+								],
+								[
+									29117,
+									29158
+								],
+								[
+									31149,
+									31197
+								],
+								[
+									31378,
+									31384
+								],
+								[
+									31566,
+									31572
+								],
+								[
+									31669,
+									31675
+								],
+								[
+									32306,
+									32322
+								],
+								[
+									32933,
+									32941
+								],
+								[
+									33382,
+									33390
+								],
+								[
+									33480,
+									33488
+								],
+								[
+									35454,
+									35505
+								],
+								[
+									35818,
+									35823
+								],
+								[
+									36744,
+									36752
+								],
+								[
+									37539,
+									37580
+								],
+								[
+									38162,
+									38185
+								],
+								[
+									39779,
+									39803
+								],
+								[
+									41024,
+									41064
+								],
+								[
+									41305,
+									41361
+								],
+								[
+									41523,
+									41581
+								],
+								[
+									41633,
+									41639
+								],
+								[
+									42027,
+									42033
+								],
+								[
+									42132,
+									42154
+								],
+								[
+									42232,
+									42256
+								],
+								[
+									42257,
+									42271
+								],
+								[
+									44284,
+									44317
+								],
+								[
+									44379,
+									44403
+								],
+								[
+									44444,
+									44475
+								],
+								[
+									44729,
+									44772
+								],
+								[
+									45082,
+									45146
+								],
+								[
+									45342,
+									45362
+								],
+								[
+									46042,
+									46089
+								],
+								[
+									46433,
+									46448
+								],
+								[
+									46665,
+									46678
+								],
+								[
+									46955,
+									46968
+								],
+								[
+									47174,
+									47187
+								],
+								[
+									47411,
+									47417
+								],
+								[
+									47467,
+									47488
+								],
+								[
+									50902,
+									50913
+								],
+								[
+									52199,
+									52213
+								],
+								[
+									52779,
+									52801
+								],
+								[
+									52940,
+									52963
+								],
+								[
+									53245,
+									53260
+								],
+								[
+									53285,
+									53302
+								],
+								[
+									53369,
+									53377
+								],
+								[
+									53561,
+									53585
+								],
+								[
+									53688,
+									53729
+								],
+								[
+									53738,
+									53755
+								],
+								[
+									53764,
+									53791
+								],
+								[
+									54194,
+									54215
+								],
+								[
+									54701,
+									54737
+								],
+								[
+									55900,
+									55905
+								],
+								[
+									56085,
+									56093
+								],
+								[
+									56209,
+									56217
+								],
+								[
+									56337,
+									56345
+								],
+								[
+									56460,
+									56468
+								],
+								[
+									56525,
+									56533
+								],
+								[
+									57005,
+									57013
+								],
+								[
+									57196,
+									57243
+								],
+								[
+									57563,
+									57581
+								],
+								[
+									57826,
+									57832
+								],
+								[
+									58078,
+									58097
+								],
+								[
+									58129,
+									58147
+								],
+								[
+									58621,
+									58628
+								],
+								[
+									58656,
+									58659
+								],
+								[
+									59001,
+									59018
+								],
+								[
+									59226,
+									59244
+								],
+								[
+									59965,
+									59982
+								],
+								[
+									60074,
+									60082
+								],
+								[
+									60491,
+									60531
+								],
+								[
+									60596,
+									60610
+								],
+								[
+									61172,
+									61188
+								],
+								[
+									61226,
+									61301
+								],
+								[
+									61546,
+									61567
+								],
+								[
+									62105,
+									62112
+								],
+								[
+									62647,
+									62664
+								],
+								[
+									62756,
+									62771
+								],
+								[
+									62817,
+									62834
+								],
+								[
+									63621,
+									63633
+								],
+								[
+									63640,
+									63651
+								],
+								[
+									63810,
+									63813
+								],
+								[
+									64010,
+									64018
+								],
+								[
+									64091,
+									64097
+								],
+								[
+									64221,
+									64227
+								],
+								[
+									64582,
+									64590
+								],
+								[
+									65456,
+									65465
+								],
+								[
+									65691,
+									65698
+								],
+								[
+									65805,
+									65813
+								],
+								[
+									66026,
+									66034
+								],
+								[
+									67579,
+									67586
+								],
+								[
+									69532,
+									69564
+								],
+								[
+									70324,
+									70331
+								],
+								[
+									71401,
+									71435
+								],
+								[
+									72019,
+									72028
+								],
+								[
+									74043,
+									74063
+								],
+								[
+									74954,
+									74990
+								],
+								[
+									75358,
+									75377
+								],
+								[
+									76795,
+									76805
+								],
+								[
+									79518,
+									79544
+								],
+								[
+									80666,
+									80673
+								],
+								[
+									81179,
+									81188
+								],
+								[
+									81414,
+									81432
+								],
+								[
+									82693,
+									82710
+								],
+								[
+									82922,
+									82950
+								],
+								[
+									83317,
+									83360
+								],
+								[
+									84692,
+									84700
+								],
+								[
+									86093,
+									86120
+								],
+								[
+									86243,
+									86256
+								]
+							],
+							"symlist":
+							[
+								"  res =>",
+								"  entries()",
+								"GetProject",
+								"  add",
+								"  useSlot",
+								"  trklGetSet",
+								"  value =>",
+								"MouseEvents",
+								"  append_to(elem, p)",
+								"DrawSVG",
+								"  append_to(elem, p)",
+								"  adjustViewBox",
+								"  calcViewBox",
+								"  setViewBox",
+								"ElementToXML",
+								"  readFile(filename)",
+								"  writeFile(filename, data, overwrite = true)",
+								"  exists(filename)",
+								"  realpath(filename)",
+								"LoadFile",
+								"SaveFile",
+								"SaveSVG",
+								"  predicate",
+								"ModifyColors",
+								"FindLayer",
+								"  maxZIndex",
+								"  randomColor",
+								"DrawArc",
+								"  props =>",
+								"  hex =>",
+								"DrawBinaryTree",
+								"  add",
+								"RecurseBinaryNode",
+								"  item =>",
+								"DrawNode",
+								"DrawEdge",
+								"GetPaths",
+								"PathToPolylines",
+								"  poly =>",
+								"  poly =>",
+								"PathToPolyline",
+								"PathsToPolylines",
+								"  path =>",
+								"OutsetPath",
+								"  .toPolylines",
+								"OutsetPaths",
+								"  path =>",
+								"ClipPath",
+								"  add",
+								"  .toPolylines",
+								"  function saveItemsProperty(itemList, get",
+								"(item.",
+								"  restoreItemsProperty",
+								"(Util.is.",
+								"EagleMaps",
+								"  transformPath",
+								"  eagle =>",
+								"  function* PackageNames(doc",
+								"LoadDocument",
+								"  err =>",
+								"  ent =>",
+								"  ent =>",
+								"  renamePackages()",
+								"  value =>",
+								"  layer =>",
+								"  layer =>",
+								"  .makeGroup",
+								"  id =>",
+								"  value =>",
+								"ChooseDocument",
+								"GenerateVoronoi",
+								"  add",
+								"PackageChildren",
+								"  function ElementChildren(layer",
+								"  function ElementGeometries(layer",
+								"  ent =>",
+								"  pts =>",
+								"NewPath",
+								"MakeFitAction",
+								"  event =>",
+								"  function ZoomFactor(val",
+								"ZoomLog",
+								"  function AdjustZoom(l",
+								"CreateGrblSocket",
+								"CreateWebSocket",
+								"  .send",
+								"AuthorizationDialog",
+								"  onSubmit: ()",
+								"  onInput: e",
+								"  onInput: e",
+								"  onClick: e",
+								"  arg =>",
+								"  .onload",
+								"  response =>",
+								"TestArc: ()",
+								"  .keystroke",
+								"  .focusSearch",
+								"  children: ()",
+								"  geometries: ()",
+								"  value =>",
+								"  testComponent",
+								"UpdateProjectList",
+								"\t? { url: config.",
+								", ...credentials } : {}) =>",
+								"File",
+								"File.prototype.toString",
+								"  ws =>",
+								"  value =>",
+								"  value =>",
+								"  value =>",
+								"  value =>",
+								"  value =>",
+								"  value =>",
+								"  updateIfChanged",
+								"  changeInput",
+								"  arg =>",
+								"Consumer",
+								"  function* ()",
+								"  extends",
+								"  log",
+								"Logger",
+								"  function* ()",
+								"Dumper",
+								"  value =>",
+								"Commander",
+								"  handler",
+								"Toggle",
+								"Layer",
+								"  setVisible",
+								"  item =>",
+								"  onMouseMove: e",
+								"  onMouseUp: e",
+								"  onMouseDown: e",
+								"DocumentList",
+								"  constructor",
+								"  add",
+								"  addEntry",
+								"  remove",
+								"  update",
+								"  fn: e",
+								"  fn: ()",
+								"  open =>",
+								"  props =>",
+								"  props =>",
+								"  side =>",
+								"  create: (project, props",
+								"  name =>",
+								"  makeLayerName",
+								"  fn: ()",
+								"  onCommand: cmdStr",
+								"MoveEvent",
+								"  function* WalkUp(e)",
+								"  classes =>",
+								"TouchEvent",
+								"  size =>",
+								"  border =>",
+								"  mod",
+								"  cancel",
+								"  .oncontextmenu",
+								"  .processEvents",
+								"  event =>",
+								"  onRuntimeInitialized: ()",
+								"  print: txt"
+							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
@@ -749,14 +1580,45 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				}
 			]
 		},
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 1,
+					"file": "main.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 86293,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								26011,
+								26076
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 11174.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -825,6 +1687,18 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"util",
+				"lib/util.js"
+			],
+			[
+				"matrix.js",
+				"lib/geom/matrix.js"
+			],
+			[
+				"main.j",
+				"main.js"
+			],
 			[
 				"util.js",
 				"lib/util.js"
@@ -914,10 +1788,6 @@
 				"index.html"
 			],
 			[
-				"main.j",
-				"main.js"
-			],
-			[
 				"componen",
 				"components.js"
 			],
@@ -964,10 +1834,6 @@
 			[
 				"autoSt",
 				"lib/autoStore.js"
-			],
-			[
-				"util",
-				"lib/util.js"
 			],
 			[
 				"filesyste",
@@ -1332,10 +2198,6 @@
 			[
 				"alt2",
 				"tmp/Headphone-Amplifier-ClassAB-alt2.brd"
-			],
-			[
-				"dom.j",
-				"lib/dom.js"
 			]
 		],
 		"width": 0.0

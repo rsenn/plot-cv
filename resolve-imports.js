@@ -226,7 +226,7 @@ class ES6ImportExport {
     let { node, path } = this;
     let value = (node && node.source) || node;
     path = (value && path.down('source')) || path;
-    while(Util.isObject(value, v => v.value)) value = value.value;
+    while(Util.isObject(value) && value.value) value = value.value;
     return [value, path];
   }
 
@@ -294,7 +294,8 @@ const isCJSExport = ([path, node]) =>
 
 const getImport = ([p, n]) => {
   let r = [];
-  if(n instanceof CallExpression && Util.isObject(n, 'callee').value == 'require') r.push(p.concat(['arguments', 0]));
+  if(n instanceof CallExpression && Util.isObject(n) && n.callee && n.callee.value == 'require')
+    r.push(p.concat(['arguments', 0]));
   else if(!(n instanceof ImportStatement)) r.push(p.slice(0, 2));
   r.push(p);
   return r;

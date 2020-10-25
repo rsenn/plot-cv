@@ -940,7 +940,7 @@ async function LoadDocument(project, parentElem) {
 
       render(ll, g);
     }
-    xx();
+    /*xx();*/
 
     window.AddElement = (function (transform) {
       const root = project.svg;

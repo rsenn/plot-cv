@@ -130,7 +130,11 @@ async function main(...args) {
       );
 
       exports = exports.map(([p, stmt]) =>
-        Util.isObject(stmt.declarations, 'id', 'value') == Util.isObject(stmt.what, 'value') ? stmt.declarations : stmt
+        (Util.isObject(stmt.declarations) &&
+          Util.isObject(stmt.declarations.id) &&
+          Util.isObject(stmt.declarations.id.value)) == (Util.isObject(stmt.what) && Util.isObject(stmt.what.value))
+          ? stmt.declarations
+          : stmt
       );
       exports = exports.map(decl =>
         decl instanceof ObjectBindingPattern

@@ -61,7 +61,7 @@ class ES6ImportExport {
 
   get from() {
     let value = this.node.source;
-    while(Util.isObject(value, v => v.value)) value = value.value;
+    while(Util.isObject(value) && value.value) value = value.value;
     return value;
   }
   set from(value) {
@@ -261,7 +261,6 @@ async function main(...args) {
           fromPath: getFromPath(),
           fromBase: getFromBase(),
           fromValue: getFromValue()
-          //    variables: Util.isObject(node.identifiers, () => node.identifiers.variables) ? node.identifiers : node
         });
       });
       let statement2module = imports.map(imp => [imp.node, imp]);
@@ -307,7 +306,11 @@ async function main(...args) {
       }
 
       exports = exports.map(([p, stmt]) =>
-        Util.isObject(stmt.declarations, 'id', 'value') == Util.isObject(stmt.what, 'value') ? stmt.declarations : stmt
+        (Util.isObject(stmt.declarations) &&
+          Util.isObject(stmt.declarations.id) &&
+          Util.isObject(stmt.declarations.id.value)) == (Util.isObject(stmt.what) && Util.isObject(stmt.what.value))
+          ? stmt.declarations
+          : stmt
       );
       exports = exports.map(decl =>
         decl instanceof ObjectBindingPattern
