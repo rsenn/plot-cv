@@ -419,6 +419,39 @@ export async function ClearCache(match = /.*/) {
     }
   }
 }
+
+export async function ShowCache(match = /.*/) {
+  let pred = Util.predicate(match);
+  let cache = await caches.open('fetch');
+  let baseUrl = Util.makeURL({ location: '/' });
+
+  for(let request of await cache.keys()) {
+    if(pred(request.url)) {
+      const file = request.url.replace(baseUrl, '');
+      console.info(`Cache entry ${file}`);
+    }
+  }
+}
+
+export async function GetCache(match = /.*/) {
+  let pred = Util.predicate(match);
+  let cache = await caches.open('fetch');
+  let baseUrl = Util.makeURL({ location: '/' });
+  let entries = [];
+
+  for(let request of await cache.keys()) {
+    let response = await cache.match(request);
+    let time = Date.parse(response.headers.get('date')) / 1000;
+    let headers = new Map(Util.map(response.headers.keys(), k => [k, response.headers.get(k)]));
+    delete response.headers;
+    let methods = Util.bindMethods(Util.getMethods(response), response);
+
+    response = Object.assign(Util.getMembers(response), { headers, time, ...methods });
+    entries.push([request, response]);
+  }
+  return entries;
+}
+
 export default {
   FetchURL,
   ListProjects,
@@ -428,5 +461,7 @@ export default {
   GeneratePalette,
   ListGithubRepo,
   ListGithubRepoServer,
-  ClearCache
+  ClearCache,
+  ShowCache,
+  GetCache
 };
