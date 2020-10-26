@@ -447,7 +447,7 @@ export async function GetCache(match = /.*/) {
     let methods = Util.bindMethods(Util.getMethods(response), response);
 
     response = Object.assign(Util.getMembers(response), { headers, time, ...methods });
-    entries.push([request, response]);
+    entries.push([request.url.replace(baseUrl, ''), response]);
   }
   return entries;
 }
