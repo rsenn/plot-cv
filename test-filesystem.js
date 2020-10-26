@@ -143,11 +143,11 @@ const tests = {
   }
 };
 
-async function main() {
+async function main(...args) {
   await ConsoleSetup();
   await PortableFileSystem(fs => (filesystem = fs));
 
-  console.error('ERROR');
+  console.error('ARGS:', Util.getArgs());
   tmpdir = `/tmp/${Util.randStr(10)}`;
   TinyTest.run(Util.filter(tests, t => t));
   return;
