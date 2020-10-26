@@ -1,6 +1,6 @@
 //import RecursiveObject from './lib/proxy/recursiveObject.js';
 
-import ConsoleSetup from './consoleSetup.js';
+import ConsoleSetup from './lib/consoleSetup.js';
 import tXml from './lib/tXml.js';
 import deep from './lib/deep.js';
 import Util from './lib/util.js';

@@ -1,5 +1,5 @@
 import Lexer from './lib/ecmascript/lexer.js';
-import ConsoleSetup from './consoleSetup.js';
+import ConsoleSetup from './lib/consoleSetup.js';
 import { h, Component } from './lib/dom/preactComponent.js';
 import Util from './lib/util.js';
 const testfn = () => true;

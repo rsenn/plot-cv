@@ -1,6 +1,7 @@
 import Util from './lib/util.js';
 import PortableFileSystem, { SEEK_SET, SEEK_END } from './lib/filesystem.js';
-import ConsoleSetup from './consoleSetup.js';
+import ConsoleSetup from './lib/consoleSetup.js';
+import ObjectInspect from './lib/objectInspect.js';
 
 import TinyTest, { run, assert, assertEquals } from './lib/tinyTest.js';
 
@@ -144,10 +145,20 @@ const tests = {
 };
 
 async function main(...args) {
-  await ConsoleSetup();
+  await ConsoleSetup({ colors: true, depth: Infinity });
   await PortableFileSystem(fs => (filesystem = fs));
+  //  Util.getGlobalObject().console = {};
 
-  console.error('ARGS:', Util.getArgs());
+  console.log('Console:', Object.getPrototypeOf(console));
+  console.log('log:', Object.getPrototypeOf(console).log);
+
+  console.log('ARGS:',
+    new Map([
+      ['a', 1],
+      ['b', 2]
+    ]),
+    { u: undefined, n: null, args: Util.getArgs(), filesystem }
+  );
   tmpdir = `/tmp/${Util.randStr(10)}`;
   TinyTest.run(Util.filter(tests, t => t));
   return;

@@ -8,7 +8,7 @@ import crypto from 'crypto';
 import fetch from 'isomorphic-fetch';
 import { exec } from 'promisify-child-process';
 import fs, { promises as fsPromises } from 'fs';
-import ConsoleSetup from './consoleSetup.js';
+import ConsoleSetup from './lib/consoleSetup.js';
 import SerialPort from 'serialport';
 import SerialStream from '@serialport/stream';
 import SerialBinding from '@serialport/bindings';

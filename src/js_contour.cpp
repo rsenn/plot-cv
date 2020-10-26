@@ -676,30 +676,6 @@ js_contour_pointpolygontest(JSContext* ctx, JSValueConst this_val, int argc, JSV
 }
 
 static JSValue
-js_contour_pop(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSContourData* v;
-  JSValue ret;
-  JSValue x, y;
-  JSPointData *ptr, point;
-  int64_t n = 0;
-
-  v = js_contour_data(ctx, this_val);
-  if(!v)
-    return JS_EXCEPTION;
-  n = v->size();
-  if(n > 0) {
-    point = (*v)[n - 1];
-    v->pop_back();
-  } else {
-    return JS_EXCEPTION;
-  }
-
-  ret = js_point_create(ctx, point.x, point.y);
-
-  return ret;
-}
-
-static JSValue
 js_contour_psimpl(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSContourData* s = js_contour_data(ctx, this_val);
   int32_t shift = 1;
@@ -795,6 +771,111 @@ js_contour_push(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   }
   return JS_UNDEFINED;
 }
+
+static JSValue
+js_contour_pop(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSContourData* v;
+  JSValue ret;
+  JSValue x, y;
+  JSPointData *ptr, point;
+  int64_t n = 0;
+
+  v = js_contour_data(ctx, this_val);
+  if(!v)
+    return JS_EXCEPTION;
+  n = v->size();
+  if(n > 0) {
+    point = (*v)[n - 1];
+    v->pop_back();
+  } else {
+    return JS_EXCEPTION;
+  }
+
+  ret = js_point_create(ctx, point.x, point.y);
+
+  return ret;
+}
+
+static JSValue
+js_contour_unshift(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSContourData* v;
+  int i;
+  double x, y;
+  JSValueConst xv, yv;
+  JSPointData point;
+
+  v = js_contour_data(ctx, this_val);
+  if(!v)
+    return JS_EXCEPTION;
+
+  for(i = 0; i < argc; i++) {
+    if(JS_IsObject(argv[i])) {
+      xv = JS_GetPropertyStr(ctx, argv[i], "x");
+      yv = JS_GetPropertyStr(ctx, argv[i], "y");
+    } else if(JS_IsArray(ctx, argv[i])) {
+
+      xv = JS_GetPropertyUint32(ctx, argv[i], 0);
+      yv = JS_GetPropertyUint32(ctx, argv[i], 1);
+    } else if(i + 1 < argc) {
+      xv = argv[i++];
+      yv = argv[i];
+    }
+    JS_ToFloat64(ctx, &point.x, xv);
+    JS_ToFloat64(ctx, &point.y, yv);
+
+    v->insert(v->begin(), point);
+  }
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_contour_shift(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSContourData* v;
+  JSValue ret;
+  JSValue x, y;
+  JSPointData *ptr, point;
+  int64_t n = 0;
+
+  v = js_contour_data(ctx, this_val);
+  if(!v)
+    return JS_EXCEPTION;
+  n = v->size();
+  if(n > 0) {
+    point = (*v)[0];
+    v->erase(v->begin());
+  } else {
+    return JS_EXCEPTION;
+  }
+
+  ret = js_point_create(ctx, point.x, point.y);
+
+  return ret;
+}
+
+static JSValue
+js_contour_concat(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSContourData* v, *other, *r;
+  int i;
+  double x, y;
+  JSValue ret;
+  JSValueConst xv, yv;
+  JSPointData point;
+
+  
+  if(!(v = js_contour_data(ctx, this_val)))
+    return JS_EXCEPTION;
+
+  
+  if(!(other = js_contour_data(ctx, argv[0])))
+    return JS_EXCEPTION;
+
+ret =js_contour_new(ctx, *v);
+
+r = js_contour_data(ctx, ret);
+std::copy(other->cbegin(), other->cend(), std::back_inserter(*r));
+  return ret;
+}
+
 
 static JSValue
 js_contour_rotatedrectangleintersection(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
@@ -947,7 +1028,10 @@ js_contour_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 const JSCFunctionListEntry js_contour_proto_funcs[] = {
     JS_CFUNC_DEF("push", 1, js_contour_push),
     JS_CFUNC_DEF("pop", 0, js_contour_pop),
-    JS_CFUNC_DEF("get", 1, js_contour_get),
+    JS_CFUNC_DEF("unshift", 1, js_contour_unshift),
+    JS_CFUNC_DEF("shift", 0, js_contour_shift),
+      JS_CFUNC_DEF("concat", 1, js_contour_concat),
+  JS_CFUNC_DEF("get", 1, js_contour_get),
     JS_CGETSET_DEF("length", js_contour_length, NULL),
     JS_CGETSET_DEF("area", js_contour_area, NULL),
     JS_CGETSET_DEF("center", js_contour_center, NULL),

@@ -4,7 +4,7 @@ import Util from './lib/util.js';
 import path from './lib/path.js';
 import { Point, Size, Rect, BBox } from './lib/geom.js';
 import deep from './lib/deep.js';
-import ConsoleSetup from './consoleSetup.js';
+import ConsoleSetup from './lib/consoleSetup.js';
 import tXml from './lib/tXml.js';
 import { XPath } from './lib/xml.js';
 import { toXML } from './lib/json.js';

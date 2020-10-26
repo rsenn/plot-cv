@@ -63,11 +63,11 @@ js_point_iterator_result(JSContext* ctx, JSValue val, BOOL done) {
 static JSValue
 js_point_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, BOOL* pdone, int magic) {
   JSPointIteratorData* it = static_cast<JSPointIteratorData*>(JS_GetOpaque(this_val, js_point_iterator_class_id));
-  JSPointData* ptr;
+//  JSPointData* ptr;
   JSValue result;
-  ptr = it->first;
-  *pdone = (it->first == it->second);
-  result = js_point_new(ctx, it->first->x, it->first->y);
+ // ptr = it->first;
+  *pdone = it->first == nullptr || it->second == nullptr || (it->first == it->second);
+  result = *pdone ? JS_NULL : js_point_new(ctx, it->first->x, it->first->y);
   it->first++;
   return result;
 fail:
@@ -77,7 +77,7 @@ fail:
 
 static JSValue
 js_point_iterator_create(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
-
+ 
   return JS_EXCEPTION;
 }
 

@@ -1,6 +1,6 @@
 import WebSocket from 'ws';
 import WebSocketAsync from './lib/net/websocket-async.js';
-import ConsoleSetup from './consoleSetup.js';
+import ConsoleSetup from './lib/consoleSetup.js';
 import Util from './lib/util.js';
 
 import { Message } from './message.js';

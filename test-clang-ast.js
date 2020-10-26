@@ -1,11 +1,11 @@
 import PortableFileSystem from './lib/filesystem.js';
-import ConsoleSetup from './consoleSetup.js';
+import ConsoleSetup from './lib/consoleSetup.js';
 import PortableSpawn from './lib/spawn.js';
 import { AsyncWrite, AsyncRead, AcquireReader, AcquireWriter, PipeToRepeater, LineReader, WritableRepeater, WriteIterator, ReadFromIterator, TextTransformStream, PipeTo, CreateTransformStream, isStream, CreateWritableStream, LineBufferStream, RepeaterSink, RepeaterSource } from './lib/stream/utils.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 import fs from 'fs';
-import inspect from './lib/inspect.js';
+import inspect from './lib/objectInspect.js';
 import deep from './lib/deep.js';
 
 //prettier-ignore

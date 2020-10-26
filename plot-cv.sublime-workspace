@@ -104,21 +104,62 @@
 	"buffers":
 	[
 		{
-			"contents": "  res =>\n  entries()\nGetProject\n  add\n  useSlot\n  trklGetSet\n  value =>\nMouseEvents\n  append_to(elem, p)\nDrawSVG\n  append_to(elem, p)\n  adjustViewBox\n  calcViewBox\n  setViewBox\nElementToXML\n  readFile(filename)\n  writeFile(filename, data, overwrite = true)\n  exists(filename)\n  realpath(filename)\nLoadFile\nSaveFile\nSaveSVG\n  predicate\nModifyColors\nFindLayer\n  maxZIndex\n  randomColor\nDrawArc\n  props =>\n  hex =>\nDrawBinaryTree\n  add\nRecurseBinaryNode\n  item =>\nDrawNode\nDrawEdge\nGetPaths\nPathToPolylines\n  poly =>\n  poly =>\nPathToPolyline\nPathsToPolylines\n  path =>\nOutsetPath\n  .toPolylines\nOutsetPaths\n  path =>\nClipPath\n  add\n  .toPolylines\n  function saveItemsProperty(itemList, get\n(item.\n  restoreItemsProperty\n(Util.is.\nEagleMaps\n  transformPath\n  eagle =>\n  function* PackageNames(doc\nLoadDocument\n  err =>\n  ent =>\n  ent =>\n  renamePackages()\n  value =>\n  layer =>\n  layer =>\n  .makeGroup\n  id =>\n  value =>\nChooseDocument\nGenerateVoronoi\n  add\nPackageChildren\n  function ElementChildren(layer\n  function ElementGeometries(layer\n  ent =>\n  pts =>\nNewPath\nMakeFitAction\n  event =>\n  function ZoomFactor(val\nZoomLog\n  function AdjustZoom(l\nCreateGrblSocket\nCreateWebSocket\n  .send\nAuthorizationDialog\n  onSubmit: ()\n  onInput: e\n  onInput: e\n  onClick: e\n  arg =>\n  .onload\n  response =>\nTestArc: ()\n  .keystroke\n  .focusSearch\n  children: ()\n  geometries: ()\n  value =>\n  testComponent\nUpdateProjectList\n  ? { url: config.\n, ...credentials } : {}) =>\nFile\nFile.prototype.toString\n  ws =>\n  value =>\n  value =>\n  value =>\n  value =>\n  value =>\n  value =>\n  updateIfChanged\n  changeInput\n  arg =>\nConsumer\n  function* ()\n  extends\n  log\nLogger\n  function* ()\nDumper\n  value =>\nCommander\n  handler\nToggle\nLayer\n  setVisible\n  item =>\n  onMouseMove: e\n  onMouseUp: e\n  onMouseDown: e\nDocumentList\n  constructor\n  add\n  addEntry\n  remove\n  update\n  fn: e\n  fn: ()\n  open =>\n  props =>\n  props =>\n  side =>\n  create: (project, props\n  name =>\n  makeLayerName\n  fn: ()\n  onCommand: cmdStr\nMoveEvent\n  function* WalkUp(e)\n  classes =>\nTouchEvent\n  size =>\n  border =>\n  mod\n  cancel\n  .oncontextmenu\n  .processEvents\n  event =>\n  onRuntimeInitialized: ()\n  print: txt",
+			"contents": "  main",
 			"settings":
 			{
-				"buffer_size": 2167,
+				"buffer_size": 6,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "main.js",
+			"file": "lib/consoleSetup.js",
 			"settings":
 			{
-				"buffer_size": 86293,
+				"buffer_size": 2205,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "test.js",
+			"settings":
+			{
+				"buffer_size": 8394,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "test-cli.js",
+			"settings":
+			{
+				"buffer_size": 1580,
 				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/js_point_iterator.cpp",
+			"settings":
+			{
+				"buffer_size": 5743,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "quickjs/quickjs.h",
+			"settings":
+			{
+				"buffer_size": 41031,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/js_contour.cpp",
+			"settings":
+			{
+				"buffer_size": 32440,
 				"line_ending": "Unix"
 			}
 		}
@@ -134,6 +175,14 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"ctag",
+				"CTags: Rebuild Tags"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
 			[
 				"svgo",
 				"SVGO: Prettify SVG"
@@ -197,10 +246,6 @@
 			[
 				"remove p",
 				"Package Control: Remove Package"
-			],
-			[
-				"install",
-				"Package Control: Install Package"
 			],
 			[
 				"add re",
@@ -347,25 +392,36 @@
 	"expanded_folders":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
-		"/home/roman/Dokumente/Sources/plot-cv/lib"
+		"/home/roman/Dokumente/Sources/plot-cv/src"
 	],
 	"file_history":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-filesystem.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-quickjs.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/filesystem.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/objectInspect.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_contour.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/scripts/check-imports.sh",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/tinyTest.js",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/consoleSetup.js",
+		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/commands.js",
+		"/home/roman/Dokumente/Sources/LaserWeb4/src/components/workspace.js",
 		"/home/roman/Dokumente/Sources/plot-cv/create-tamper.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/ref.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/get-msys-packages.js",
-		"/home/roman/Dokumente/Sources/plot-cv/main.js",
 		"/home/roman/Dokumente/Sources/shish/cfg-cmake.sh",
 		"/home/roman/Dokumente/Sources/plot-cv/cfg.sh",
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/cfg.sh",
@@ -413,7 +469,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/background.js",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/lbr/r.lbr",
 		"/home/roman/Dokumente/Sources/pictest/eagle/lbr/l.lbr",
-		"/home/roman/Dokumente/Sources/plot-cv/commands.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/circle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/rect.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/bbox.js",
@@ -445,14 +500,11 @@
 		"/home/roman/Dokumente/Sources/plot-cv/src/plot-cv.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/mount-tmp.sh",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
-		"/home/roman/Dokumente/Sources/plot-cv/consoleSetup.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/size.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-ecmascript.js",
 		"/home/roman/Dokumente/Sources/eda/eagle2gedapcb/eagle2gedapcb.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/test-filesystem.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/filesystem.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/autoStore.js",
 		"/home/roman/Dokumente/Sources/plot-cv/server.js",
 		"/home/roman/Dokumente/Sources/an-tronics/eagle/Simple-NPN-Regen-Receiver.brd",
@@ -471,14 +523,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/test-spawn.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-msys-db.js",
 		"/home/roman/Dokumente/Sources/plot-cv/.directory",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/defs.cmake",
-		"/home/roman/Dokumente/Sources/plot-cv/js-bindings.cmake",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/CMakeLists.txt",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_size.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_contour.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_point.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_rect.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_line.cpp"
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/defs.cmake"
 	],
 	"find":
 	{
@@ -513,6 +558,113 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"NULL",
+			"js_point_iterator_next",
+			"js_contour_ctor",
+			"js_contour_proto_funcs",
+			"js_contour_new",
+			"js_point_iterator_new",
+			"_pop",
+			"hasOwn",
+			" has\\(",
+			"customIns",
+			"custom",
+			"//console",
+			"^Util.define =",
+			"^Util.define",
+			"for\\(const",
+			"const s[^a-z]",
+			"const s",
+			"const s = ",
+			"const s ",
+			"const ([^=]*);",
+			"const [^ ]*;",
+			"hasSet",
+			"hasMap",
+			"\\n\\n\\n",
+			"eslint",
+			"\\s*//\\seslint.*",
+			"let errno",
+			"let errno;",
+			"errno;",
+			"':'",
+			"Function",
+			"arrObjKeys",
+			"inspect\\(",
+			"isGetter =",
+			"arrObjKeys",
+			"indentedJoin",
+			"console.log",
+			"^\\s*//console",
+			"^\\s*console",
+			"inspect_",
+			"collectionOf",
+			"indentedJoin",
+			"collectionOf",
+			"'Map",
+			"Map\\(",
+			"Map",
+			"for\\(",
+			"'undef",
+			"'undefined'",
+			"function wrap",
+			"\\[Func",
+			"depth =",
+			"\\[Object",
+			"\\[obj",
+			"^Util.isObject",
+			"Util.isObject",
+			"ObjectIn",
+			"maxDepth",
+			"else if",
+			" else if",
+			"else if",
+			"isMap",
+			"'\\\\'",
+			"'\\\\''",
+			" inspect\\(",
+			"}\n  if\\(",
+			" inspect\\(",
+			"inspect\\(",
+			"inspect",
+			"isString",
+			"arrObjKeys",
+			"xs =",
+			"isArra",
+			"inspectCustom",
+			"getArgs",
+			"scriptArgs",
+			"tmp:",
+			"EXPR=",
+			"\\\\0",
+			"NodeJSFileSystem",
+			"os.seek",
+			"std.seek",
+			"getcwd",
+			"chdir",
+			"getcwd",
+			"exists",
+			"symlink",
+			"ArrayBufferToString",
+			"filesystem.buffer",
+			"seek",
+			": function",
+			"os\\.",
+			"remove\\(",
+			"mkdir",
+			"mapAdapter",
+			" if(map instanceof Map || (Util.isObject(map) && typeof map.get == 'function' && typeof map.set == 'function')) {\n    fn.set = (key, value) => (map.set(key, value), (k, v) => fn(k, v));\n    fn.get = key => map.get(key);\n",
+			"mapFunction =",
+			"getItem",
+			"^Util.getMembers",
+			"Util.isGetter",
+			"FetchURL",
+			"CachedFetch",
+			"pos",
+			"NormalizeRes",
+			"pushEvent",
+			" pushEvent",
+			"pushEvent",
 			"Util.isObject\\([^)]*,[^)]*\\)",
 			"acc",
 			"^Util.find =",
@@ -533,114 +685,7 @@
 			"cfg-msys",
 			"URLS",
 			"\\.db",
-			"^Util.filter",
-			"til.filter",
-			"LoadLib",
-			"iphlp",
-			"putStack",
-			"151",
-			"columnWidth",
-			"stripUrl =",
-			"stripUrl",
-			"lazy",
-			"^Util.putStack =",
-			"add =",
-			"putStack",
-			"^Util.stackFrame =",
-			"^Util.makeURL",
-			"^Util.stack =",
-			"Util.stack",
-			"mutablePath",
-			"utableXPath",
-			"Immutable",
-			"from",
-			"partMatcher",
-			"matchObj",
-			"getExport",
-			"deep.get",
-			"generateFlatAndMap",
-			"box-shadow",
-			"renderElement",
-			"currentProj",
-			"renderer.render",
-			"svg:",
-			"project.svg",
-			"project.svg =",
-			"transform[^a]",
-			"renderInstance\\(",
-			"this.transform",
-			"transformation",
-			"transform",
-			"part\\.",
-			"renderItem\\(",
-			"'instances'",
-			"getMeasures",
-			"'pinref'",
-			"'part'",
-			"'elements'",
-			"'g'",
-			"<symbol",
-			"<descr",
-			"'bg'",
-			"MatrixTransformation",
-			"toMatrices",
-			"init-call",
-			"multiply_self",
-			"rotate",
-			"multiply",
-			"rotate",
-			"Matrix.deg2rad",
-			"deg2rad",
-			"rad2deg",
-			"\\.rotat",
-			"\\.rotate",
-			"skew",
-			"rotate =",
-			"touchHandler",
-			"decompose",
-			"wheel",
-			"Wheel",
-			"TouchListener",
-			" rotate\\(",
-			"static ",
-			"MakeRotation",
-			"Symbol.toString",
-			" log\\(.*\\.render",
-			" log\\(",
-			"scale",
-			"Fixed",
-			": Fixed",
-			"Util.histogram\\(",
-			"t\\(",
-			"t",
-			"^\\s*console",
-			"msg:",
-			"drill=",
-			"logger",
-			"LogJS\\.[^i]",
-			"LogJS\\.",
-			"LogJS",
-			"try",
-			"try ",
-			"try",
-			"LoadDocument",
-			"e\\.getBBox\\(\\)",
-			"#main",
-			"partMatcher",
-			"'pad'",
-			"//\\s*",
-			"^(\\s*)(this\\.debug)",
-			"this.create",
-			"DocumentList",
-			"ReactComponent",
-			"isComponent",
-			"class ",
-			"^(\\s*)console\\.",
-			"^\\s*console",
-			"import.*classNames",
-			"font-family:",
-			"box-shadow",
-			"style"
+			"^Util.filter"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -648,6 +693,16 @@
 		"regex": true,
 		"replace_history":
 		[
+			"console",
+			"for(let",
+			"let s = ",
+			"let \\1;",
+			"\\n\\n",
+			"",
+			"console.reallog",
+			"if",
+			"} else if(",
+			"",
 			"multiplySelf",
 			"deg2rad",
 			"//",
@@ -735,842 +790,28 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2167,
+						"buffer_size": 6,
 						"regions":
 						{
 						},
 						"selection":
 						[
-							[
-								622,
-								622
-							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/main.js",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/test-cli.js",
 							"outline_rename_mode": false,
 							"symkeys":
 							[
 								[
-									8406,
-									8412
-								],
-								[
-									8556,
-									8565
-								],
-								[
-									9084,
-									9103
-								],
-								[
-									9584,
-									9608
-								],
-								[
-									9649,
-									9670
-								],
-								[
-									9712,
-									9738
-								],
-								[
-									9739,
-									9747
-								],
-								[
-									9863,
-									9881
-								],
-								[
-									10297,
-									10315
-								],
-								[
-									10972,
-									10997
-								],
-								[
-									11043,
-									11061
-								],
-								[
-									11999,
-									12024
-								],
-								[
-									12379,
-									12404
-								],
-								[
-									12743,
-									12777
-								],
-								[
-									13285,
-									13317
-								],
-								[
-									13577,
-									13601
-								],
-								[
-									13661,
-									13710
-								],
-								[
-									13952,
-									13974
-								],
-								[
-									13981,
-									14005
-								],
-								[
-									14013,
-									14042
-								],
-								[
-									14771,
-									14823
-								],
-								[
-									15215,
-									15301
-								],
-								[
-									15497,
-									15519
-								],
-								[
-									15946,
-									15966
-								],
-								[
-									16155,
-									16180
-								],
-								[
-									17076,
-									17093
-								],
-								[
-									17363,
-									17382
-								],
-								[
-									17597,
-									17632
-								],
-								[
-									17670,
-									17678
-								],
-								[
-									18961,
-									18967
-								],
-								[
-									20893,
-									20924
-								],
-								[
-									20962,
-									20984
-								],
-								[
-									21163,
-									21221
-								],
-								[
-									21620,
-									21627
-								],
-								[
-									21715,
-									21744
-								],
-								[
-									21966,
-									21997
-								],
-								[
-									23013,
-									23059
-								],
-								[
-									23200,
-									23243
-								],
-								[
-									23455,
-									23462
-								],
-								[
-									23489,
-									23496
-								],
-								[
-									23856,
-									23898
-								],
-								[
-									24279,
-									24324
-								],
-								[
-									24468,
-									24475
-								],
-								[
-									24517,
-									24587
-								],
-								[
-									25017,
-									25042
-								],
-								[
-									25218,
-									25290
-								],
-								[
-									25507,
-									25514
-								],
-								[
-									26011,
-									26076
-								],
-								[
-									26163,
-									26189
-								],
-								[
-									26428,
-									26453
-								],
-								[
-									26567,
-									26626
-								],
-								[
-									26628,
-									26634
-								],
-								[
-									26746,
-									26819
-								],
-								[
-									26826,
-									26835
-								],
-								[
-									26906,
-									26933
-								],
-								[
-									26942,
-									26962
-								],
-								[
-									27904,
-									27912
-								],
-								[
-									29117,
-									29158
-								],
-								[
-									31149,
-									31197
-								],
-								[
-									31378,
-									31384
-								],
-								[
-									31566,
-									31572
-								],
-								[
-									31669,
-									31675
-								],
-								[
-									32306,
-									32322
-								],
-								[
-									32933,
-									32941
-								],
-								[
-									33382,
-									33390
-								],
-								[
-									33480,
-									33488
-								],
-								[
-									35454,
-									35505
-								],
-								[
-									35818,
-									35823
-								],
-								[
-									36744,
-									36752
-								],
-								[
-									37539,
-									37580
-								],
-								[
-									38162,
-									38185
-								],
-								[
-									39779,
-									39803
-								],
-								[
-									41024,
-									41064
-								],
-								[
-									41305,
-									41361
-								],
-								[
-									41523,
-									41581
-								],
-								[
-									41633,
-									41639
-								],
-								[
-									42027,
-									42033
-								],
-								[
-									42132,
-									42154
-								],
-								[
-									42232,
-									42256
-								],
-								[
-									42257,
-									42271
-								],
-								[
-									44284,
-									44317
-								],
-								[
-									44379,
-									44403
-								],
-								[
-									44444,
-									44475
-								],
-								[
-									44729,
-									44772
-								],
-								[
-									45082,
-									45146
-								],
-								[
-									45342,
-									45362
-								],
-								[
-									46042,
-									46089
-								],
-								[
-									46433,
-									46448
-								],
-								[
-									46665,
-									46678
-								],
-								[
-									46955,
-									46968
-								],
-								[
-									47174,
-									47187
-								],
-								[
-									47411,
-									47417
-								],
-								[
-									47467,
-									47488
-								],
-								[
-									50902,
-									50913
-								],
-								[
-									52199,
-									52213
-								],
-								[
-									52779,
-									52801
-								],
-								[
-									52940,
-									52963
-								],
-								[
-									53245,
-									53260
-								],
-								[
-									53285,
-									53302
-								],
-								[
-									53369,
-									53377
-								],
-								[
-									53561,
-									53585
-								],
-								[
-									53688,
-									53729
-								],
-								[
-									53738,
-									53755
-								],
-								[
-									53764,
-									53791
-								],
-								[
-									54194,
-									54215
-								],
-								[
-									54701,
-									54737
-								],
-								[
-									55900,
-									55905
-								],
-								[
-									56085,
-									56093
-								],
-								[
-									56209,
-									56217
-								],
-								[
-									56337,
-									56345
-								],
-								[
-									56460,
-									56468
-								],
-								[
-									56525,
-									56533
-								],
-								[
-									57005,
-									57013
-								],
-								[
-									57196,
-									57243
-								],
-								[
-									57563,
-									57581
-								],
-								[
-									57826,
-									57832
-								],
-								[
-									58078,
-									58097
-								],
-								[
-									58129,
-									58147
-								],
-								[
-									58621,
-									58628
-								],
-								[
-									58656,
-									58659
-								],
-								[
-									59001,
-									59018
-								],
-								[
-									59226,
-									59244
-								],
-								[
-									59965,
-									59982
-								],
-								[
-									60074,
-									60082
-								],
-								[
-									60491,
-									60531
-								],
-								[
-									60596,
-									60610
-								],
-								[
-									61172,
-									61188
-								],
-								[
-									61226,
-									61301
-								],
-								[
-									61546,
-									61567
-								],
-								[
-									62105,
-									62112
-								],
-								[
-									62647,
-									62664
-								],
-								[
-									62756,
-									62771
-								],
-								[
-									62817,
-									62834
-								],
-								[
-									63621,
-									63633
-								],
-								[
-									63640,
-									63651
-								],
-								[
-									63810,
-									63813
-								],
-								[
-									64010,
-									64018
-								],
-								[
-									64091,
-									64097
-								],
-								[
-									64221,
-									64227
-								],
-								[
-									64582,
-									64590
-								],
-								[
-									65456,
-									65465
-								],
-								[
-									65691,
-									65698
-								],
-								[
-									65805,
-									65813
-								],
-								[
-									66026,
-									66034
-								],
-								[
-									67579,
-									67586
-								],
-								[
-									69532,
-									69564
-								],
-								[
-									70324,
-									70331
-								],
-								[
-									71401,
-									71435
-								],
-								[
-									72019,
-									72028
-								],
-								[
-									74043,
-									74063
-								],
-								[
-									74954,
-									74990
-								],
-								[
-									75358,
-									75377
-								],
-								[
-									76795,
-									76805
-								],
-								[
-									79518,
-									79544
-								],
-								[
-									80666,
-									80673
-								],
-								[
-									81179,
-									81188
-								],
-								[
-									81414,
-									81432
-								],
-								[
-									82693,
-									82710
-								],
-								[
-									82922,
-									82950
-								],
-								[
-									83317,
-									83360
-								],
-								[
-									84692,
-									84700
-								],
-								[
-									86093,
-									86120
-								],
-								[
-									86243,
-									86256
+									428,
+									456
 								]
 							],
 							"symlist":
 							[
-								"  res =>",
-								"  entries()",
-								"GetProject",
-								"  add",
-								"  useSlot",
-								"  trklGetSet",
-								"  value =>",
-								"MouseEvents",
-								"  append_to(elem, p)",
-								"DrawSVG",
-								"  append_to(elem, p)",
-								"  adjustViewBox",
-								"  calcViewBox",
-								"  setViewBox",
-								"ElementToXML",
-								"  readFile(filename)",
-								"  writeFile(filename, data, overwrite = true)",
-								"  exists(filename)",
-								"  realpath(filename)",
-								"LoadFile",
-								"SaveFile",
-								"SaveSVG",
-								"  predicate",
-								"ModifyColors",
-								"FindLayer",
-								"  maxZIndex",
-								"  randomColor",
-								"DrawArc",
-								"  props =>",
-								"  hex =>",
-								"DrawBinaryTree",
-								"  add",
-								"RecurseBinaryNode",
-								"  item =>",
-								"DrawNode",
-								"DrawEdge",
-								"GetPaths",
-								"PathToPolylines",
-								"  poly =>",
-								"  poly =>",
-								"PathToPolyline",
-								"PathsToPolylines",
-								"  path =>",
-								"OutsetPath",
-								"  .toPolylines",
-								"OutsetPaths",
-								"  path =>",
-								"ClipPath",
-								"  add",
-								"  .toPolylines",
-								"  function saveItemsProperty(itemList, get",
-								"(item.",
-								"  restoreItemsProperty",
-								"(Util.is.",
-								"EagleMaps",
-								"  transformPath",
-								"  eagle =>",
-								"  function* PackageNames(doc",
-								"LoadDocument",
-								"  err =>",
-								"  ent =>",
-								"  ent =>",
-								"  renamePackages()",
-								"  value =>",
-								"  layer =>",
-								"  layer =>",
-								"  .makeGroup",
-								"  id =>",
-								"  value =>",
-								"ChooseDocument",
-								"GenerateVoronoi",
-								"  add",
-								"PackageChildren",
-								"  function ElementChildren(layer",
-								"  function ElementGeometries(layer",
-								"  ent =>",
-								"  pts =>",
-								"NewPath",
-								"MakeFitAction",
-								"  event =>",
-								"  function ZoomFactor(val",
-								"ZoomLog",
-								"  function AdjustZoom(l",
-								"CreateGrblSocket",
-								"CreateWebSocket",
-								"  .send",
-								"AuthorizationDialog",
-								"  onSubmit: ()",
-								"  onInput: e",
-								"  onInput: e",
-								"  onClick: e",
-								"  arg =>",
-								"  .onload",
-								"  response =>",
-								"TestArc: ()",
-								"  .keystroke",
-								"  .focusSearch",
-								"  children: ()",
-								"  geometries: ()",
-								"  value =>",
-								"  testComponent",
-								"UpdateProjectList",
-								"\t? { url: config.",
-								", ...credentials } : {}) =>",
-								"File",
-								"File.prototype.toString",
-								"  ws =>",
-								"  value =>",
-								"  value =>",
-								"  value =>",
-								"  value =>",
-								"  value =>",
-								"  value =>",
-								"  updateIfChanged",
-								"  changeInput",
-								"  arg =>",
-								"Consumer",
-								"  function* ()",
-								"  extends",
-								"  log",
-								"Logger",
-								"  function* ()",
-								"Dumper",
-								"  value =>",
-								"Commander",
-								"  handler",
-								"Toggle",
-								"Layer",
-								"  setVisible",
-								"  item =>",
-								"  onMouseMove: e",
-								"  onMouseUp: e",
-								"  onMouseDown: e",
-								"DocumentList",
-								"  constructor",
-								"  add",
-								"  addEntry",
-								"  remove",
-								"  update",
-								"  fn: e",
-								"  fn: ()",
-								"  open =>",
-								"  props =>",
-								"  props =>",
-								"  side =>",
-								"  create: (project, props",
-								"  name =>",
-								"  makeLayerName",
-								"  fn: ()",
-								"  onCommand: cmdStr",
-								"MoveEvent",
-								"  function* WalkUp(e)",
-								"  classes =>",
-								"TouchEvent",
-								"  size =>",
-								"  border =>",
-								"  mod",
-								"  cancel",
-								"  .oncontextmenu",
-								"  .processEvents",
-								"  event =>",
-								"  onRuntimeInitialized: ()",
-								"  print: txt"
+								"  main"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
 							"tab_size": 2,
@@ -1580,30 +821,30 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 6,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 0,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "main.js",
+					"file": "lib/consoleSetup.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 86293,
+						"buffer_size": 2205,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								26011,
-								26076
+								1135,
+								1135
 							]
 						],
 						"settings":
@@ -1613,10 +854,158 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 11174.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "test.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8394,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								591,
+								591
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "test-cli.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1580,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1477,
+								1477
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 255.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/js_point_iterator.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5743,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1970,
+								1970
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 923.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "quickjs/quickjs.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 41031,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7601,
+								7601
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C11/C11.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3932.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "src/js_contour.cpp",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 32440,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8853,
+								8853
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 5343.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
 					"type": "text"
 				}
 			]
@@ -1688,8 +1077,68 @@
 		"selected_items":
 		[
 			[
+				"quickjs.h",
+				"quickjs/quickjs.h"
+			],
+			[
+				"test-cli",
+				"test-cli.js"
+			],
+			[
+				"test.js",
+				"test.js"
+			],
+			[
+				"test-qui",
+				"test-quickjs.js"
+			],
+			[
+				"filesys",
+				"lib/filesystem.js"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"test-fi",
+				"test-filesystem.js"
+			],
+			[
+				"objectIn",
+				"lib/objectInspect.js"
+			],
+			[
+				"consoleset",
+				"lib/consoleSetup.js"
+			],
+			[
+				"objectInspe",
+				"lib/objectInspect.js"
+			],
+			[
 				"util",
 				"lib/util.js"
+			],
+			[
+				"check-im",
+				"scripts/check-imports.sh"
+			],
+			[
+				"tinytest",
+				"lib/tinyTest.js"
+			],
+			[
+				"main.js",
+				"main.js"
+			],
+			[
+				"comman",
+				"commands.js"
+			],
+			[
+				"main",
+				"main.js"
 			],
 			[
 				"matrix.js",
@@ -1697,14 +1146,6 @@
 			],
 			[
 				"main.j",
-				"main.js"
-			],
-			[
-				"util.js",
-				"lib/util.js"
-			],
-			[
-				"main",
 				"main.js"
 			],
 			[
@@ -1734,10 +1175,6 @@
 			[
 				"style.cs",
 				"style.css"
-			],
-			[
-				"main.js",
-				"main.js"
 			],
 			[
 				"style.css",
@@ -1902,10 +1339,6 @@
 			[
 				"",
 				".directory"
-			],
-			[
-				"quickjs.h",
-				"quickjs/quickjs.h"
 			],
 			[
 				"bindings.h",
@@ -2154,50 +1587,6 @@
 			[
 				"point.js",
 				"lib/geom/point.js"
-			],
-			[
-				"scale",
-				"svg-scale.js"
-			],
-			[
-				"xml.js",
-				"lib/xml.js"
-			],
-			[
-				"dom.js",
-				"lib/dom.js"
-			],
-			[
-				"tlite.js",
-				"lib/tlite.js"
-			],
-			[
-				"hooks.",
-				"lib/hooks.js"
-			],
-			[
-				"devtool",
-				"lib/devtools.js"
-			],
-			[
-				"devto",
-				"lib/devtools.js"
-			],
-			[
-				"elementRect",
-				"lib/dom/elementRect.js"
-			],
-			[
-				"devtoo",
-				"lib/devtools.js"
-			],
-			[
-				"utgil",
-				"tmp/FunctionGenerator-ICL8038.brd"
-			],
-			[
-				"alt2",
-				"tmp/Headphone-Amplifier-ClassAB-alt2.brd"
 			]
 		],
 		"width": 0.0

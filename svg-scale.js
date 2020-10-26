@@ -1,6 +1,6 @@
 import PortableFileSystem from './lib/filesystem.js';
 import Util from './lib/util.js';
-import ConsoleSetup from './consoleSetup.js';
+import ConsoleSetup from './lib/consoleSetup.js';
 import deep from './lib/deep.js';
 import path from './lib/path.js';
 import { Size, Rect } from './lib/geom.js';

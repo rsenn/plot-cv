@@ -1,6 +1,6 @@
 import PortableFileSystem from './lib/filesystem.js';
 import Util from './lib/util.js';
-import ConsoleSetup from './consoleSetup.js';
+import ConsoleSetup from './lib/consoleSetup.js';
 import deep from './lib/deep.js';
 import path from './lib/path.js';
 import tXml from './lib/tXml.js';
@@ -60,7 +60,7 @@ const GeneratePalette = (counts = { h: 3, s: 3, l: 5 }, deltas = { h: 360, s: 10
 };
 
 async function main(...args) {
-  //await ConsoleSetup({ depth: 10 });
+  await ConsoleSetup({ depth: 10 });
   let colors, keys;
   filesystem = await PortableFileSystem();
 

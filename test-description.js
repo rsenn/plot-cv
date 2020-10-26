@@ -1,5 +1,5 @@
 import PortableFileSystem from './lib/filesystem.js';
-import ConsoleSetup from './consoleSetup.js';
+import ConsoleSetup from './lib/consoleSetup.js';
 import Util from './lib/util.js';
 import { ColoredText } from './lib/color/coloredText.js';
 Util.colorCtor = ColoredText;

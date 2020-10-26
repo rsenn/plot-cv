@@ -1,6 +1,6 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import PortableFileSystem from './lib/filesystem.js';
-import ConsoleSetup from './consoleSetup.js';
+import ConsoleSetup from './lib/consoleSetup.js';
 import Lexer, { PathReplacer, Position, Range } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
 import estree, { VariableDeclaration, ImportStatement, ExportStatement, Identifier, MemberExpression, ESNode, CallExpression, ObjectBindingPattern, Literal, AssignmentExpression } from './lib/ecmascript/estree.js';

@@ -1,7 +1,7 @@
 import Util from './lib/util.js';
 
 import PortableFileSystem from './lib/filesystem.js';
-import { ConsoleSetup } from './consoleSetup.js';
+import { ConsoleSetup } from './lib/consoleSetup.js';
 
 let filesystem;
 let globalThis;
@@ -18,7 +18,7 @@ async function main(...args) {
 
   console.log('main args =', args);
 
-  // await ConsoleSetup({ depth: 3 });
+  await ConsoleSetup({ depth: 3 });
 
   globalThis = Util.getGlobalObject();
 

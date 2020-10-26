@@ -8,7 +8,7 @@ import net from 'net';
 import http from 'http';
 import https from 'https';
 import querystring from 'querystring';
-import ConsoleSetup from './consoleSetup.js';
+import ConsoleSetup from './lib/consoleSetup.js';
 import fetch from 'isomorphic-fetch';
 import deep from './lib/deep.js';
 import { promises as fsPromises } from 'fs';

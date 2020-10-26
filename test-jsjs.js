@@ -5,7 +5,7 @@ import { CallExpression } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import PortableFileSystem from './lib/filesystem.js';
-import { ConsoleSetup } from './consoleSetup.js';
+import { ConsoleSetup } from './lib/consoleSetup.js';
 
 let filesystem;
 

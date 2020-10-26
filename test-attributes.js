@@ -4,7 +4,7 @@ import { XMLIterator } from './lib/xml/util.js';
 import tXml from './lib/tXml.js';
 import toSource from './lib/tosource.js';
 import { ColorMap } from './lib/draw/colorMap.js';
-import ConsoleSetup from './consoleSetup.js';
+import ConsoleSetup from './lib/consoleSetup.js';
 
 //prettier-ignore
 let filesystem;

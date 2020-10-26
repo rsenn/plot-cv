@@ -12,7 +12,7 @@ import { Matrix } from './lib/geom/matrix.js';
 //import { Point, Size, Rect } from 'opencv';
 import { PointList } from './lib/geom/pointList.js';
 import { RGBA } from './lib/color/rgba.js';
-import { inspect } from './lib/inspect.js';
+import inspect from './lib/objectInspect.js';
 
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };
 

@@ -8,7 +8,7 @@ import { Path } from './lib/json.js';
 import { SortedMap } from './lib/container/sortedMap.js';
 import PortableFileSystem from './lib/filesystem.js';
 import { ImmutablePath } from './lib/json.js';
-import { ConsoleSetup } from './consoleSetup.js';
+import { ConsoleSetup } from './lib/consoleSetup.js';
 
 let filesystem;
 

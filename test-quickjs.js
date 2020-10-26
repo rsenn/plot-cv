@@ -6,19 +6,19 @@ import { Mat } from 'mat';
 //import { Contour } from 'contour';
 //import { PointIterator } from 'point-iterator';
 import { Draw, drawLine, drawCircle } from 'draw';
-import { inspect } from './lib/inspect.js';
+import inspect from './lib/objectInspect.js';
 
 //console.log('test:', inspect({ Point, Size, Rect, Mat, PointIterator, Contour }));
 import path from './lib/path.js';
 import PortableFileSystem from './lib/filesystem.js';
 import Util from './lib/util.js';
-///import ConsoleSetup from './consoleSetup.js';
+import ConsoleSetup from './lib/consoleSetup.js';
 
 let filesystem;
 
 async function main(...args) {
   //std.print("TEST PRINT\n");
-  //  await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
+  await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
 
   await PortableFileSystem(fs => (filesystem = fs));
   console.log('start');

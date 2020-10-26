@@ -1,6 +1,6 @@
 import { SourceMap } from './lib/sourceMap.js';
 import PortableFileSystem from './lib/filesystem.js';
-import ConsoleSetup from './consoleSetup.js';
+import ConsoleSetup from './lib/consoleSetup.js';
 
 //prettier-ignore
 let filesystem;

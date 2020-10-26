@@ -1,15 +1,15 @@
 import Util from './lib/util.js';
 import PortableSpawn from './lib/spawn.js';
 import PortableFileSystem from './lib/filesystem.js';
-import ConsoleSetup from './consoleSetup.js';
-import inspect from './lib/inspect.js';
+import ConsoleSetup from './lib/consoleSetup.js';
+import inspect from './lib/objectInspect.js';
 
 //prettier-ignore
 let filesystem, spawn;
 
 async function main(...args) {
   console.log('main(', ...args, ')');
-  // await ConsoleSetup({ breakLength: 80 });
+  await ConsoleSetup({ breakLength: 80 });
   await PortableFileSystem(fs => (filesystem = fs));
   spawn = await PortableSpawn();
   //console.log('spawn:', spawn);
