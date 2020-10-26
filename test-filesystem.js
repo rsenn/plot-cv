@@ -1,9 +1,8 @@
 import Util from './lib/util.js';
-import PortableFileSystem, { SEEK_SET, SEEK_CUR, SEEK_END } from './lib/filesystem.js';
-//import ConsoleSetup from './consoleSetup.js';
-import { WritableStream } from './lib/stream/writableStream.js';
-import guardian from './lib/guardian.js';
-import TinyTest, { run, fail, assert, assertEquals, assertStrictEquals } from './lib/tinyTest.js';
+import PortableFileSystem, { SEEK_SET, SEEK_END } from './lib/filesystem.js';
+import ConsoleSetup from './consoleSetup.js';
+
+import TinyTest, { run, assert, assertEquals } from './lib/tinyTest.js';
 
 let filesystem;
 let tmpdir;
@@ -145,21 +144,17 @@ const tests = {
 };
 
 async function main() {
+  await ConsoleSetup();
   await PortableFileSystem(fs => (filesystem = fs));
 
+  console.error('ERROR');
   tmpdir = `/tmp/${Util.randStr(10)}`;
-
   TinyTest.run(Util.filter(tests, t => t));
   return;
-
   console.log(Util.getMethodNames(filesystem)
       .map(n => `  'filesystem.${n}': null,`)
       .join('\n')
   );
-  //await ConsoleSetup();
-  let err,
-    st,
-    outputFile = 'test.txt';
 }
 
 Util.callMain(main, true);

@@ -3,7 +3,10 @@ import Util from './lib/util.js';
 export async function ConsoleSetup(opts = {}) {
   let ret;
   Util.tryCatch(() => (Error.stackTraceLimit = 1000));
-  const proc = await Util.tryCatch(async () => await import('process'));
+  const proc = await Util.tryCatch(async () => await import('process'),
+    ({ stdout, env }) => ({ stdout, env }),
+    () => ({ stdout: {}, env: {} })
+  );
   const defaultBreakLength =
     (proc && proc.stdout && proc.stdout.isTTY && proc.stdout.columns) || proc.env.COLUMNS || 80; // Infinity;
   const {
@@ -13,18 +16,24 @@ export async function ConsoleSetup(opts = {}) {
     maxArrayLength = Infinity,
     ...options
   } = opts;
-  try {
-    //  const { Console } = await import('console');
-    const Console = await import('console').then(module => module.Console);
-    console.log('Console:', Console);
-    ret = new Console({
-      stdout: proc.stdout,
-      stderr: proc.stderr,
-      inspectOptions: { depth, colors, breakLength, maxArrayLength, ...options }
-    });
-    ret.colors = colors;
-    ret.depth = depth;
-  } catch(err) {}
+  ret = await Util.tryCatch(async () => {
+      const Console = await import('console').then(module => module.Console);
+      ret = new Console({
+        stdout: proc.stdout,
+        stderr: proc.stderr,
+        inspectOptions: { depth, colors, breakLength, maxArrayLength, ...options }
+      });
+      ret.colors = colors;
+      ret.depth = depth;
+      return ret;
+    },
+    c => c,
+    () => console
+  );
+
+  for(let method of ['error', 'warn', 'debug']) {
+    if(!(method in ret)) ret[method] = ret.log;
+  }
 
   if(ret) return Util.tryCatch(() => (globalThis.console = ret));
 }
