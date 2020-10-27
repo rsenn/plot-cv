@@ -104,62 +104,20 @@
 	"buffers":
 	[
 		{
-			"contents": "  main",
+			"contents": "",
 			"settings":
 			{
-				"buffer_size": 6,
+				"buffer_size": 0,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "lib/consoleSetup.js",
+			"file": "/home/roman/Dokumente/laserweb4-settings-Eleksmaker_A3.json",
 			"settings":
 			{
-				"buffer_size": 2205,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test.js",
-			"settings":
-			{
-				"buffer_size": 8394,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-cli.js",
-			"settings":
-			{
-				"buffer_size": 1580,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/js_point_iterator.cpp",
-			"settings":
-			{
-				"buffer_size": 5743,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "quickjs/quickjs.h",
-			"settings":
-			{
-				"buffer_size": 41031,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/js_contour.cpp",
-			"settings":
-			{
-				"buffer_size": 32440,
+				"buffer_size": 2997,
 				"line_ending": "Unix"
 			}
 		}
@@ -396,6 +354,13 @@
 	],
 	"file_history":
 	[
+		"/home/roman/Dokumente/laserweb4-profile-Eleksmaker_A3.json",
+		"/home/roman/Dokumente/Sources/plot-cv/grbl-settings.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.h",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_point_iterator.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/consoleSetup.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-cli.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-filesystem.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-quickjs.js",
@@ -516,14 +481,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/stream/utils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/stream.js",
 		"/home/roman/Dokumente/Sources/plot-cv/src/js_mat.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.h",
-		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/spawn.js",
-		"/home/roman/Dokumente/Sources/plot-cv/childProcess.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-spawn.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-msys-db.js",
-		"/home/roman/Dokumente/Sources/plot-cv/.directory",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/defs.cmake"
+		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.h"
 	],
 	"find":
 	{
@@ -790,29 +748,22 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
 						"selection":
 						[
+							[
+								0,
+								0
+							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/test-cli.js",
+							"current_file": "/home/roman/Dokumente/laserweb4-settings-Eleksmaker_A3.json",
 							"outline_rename_mode": false,
-							"symkeys":
-							[
-								[
-									428,
-									456
-								]
-							],
-							"symlist":
-							[
-								"  main"
-							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
@@ -821,191 +772,43 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 1,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 2,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "lib/consoleSetup.js",
+					"file": "/home/roman/Dokumente/laserweb4-settings-Eleksmaker_A3.json",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2205,
+						"buffer_size": 2997,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1135,
-								1135
+								1286,
+								1286
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "test.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8394,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								591,
-								591
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "test-cli.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1580,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1477,
-								1477
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 255.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "src/js_point_iterator.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5743,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1970,
-								1970
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 923.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "quickjs/quickjs.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 41031,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7601,
-								7601
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C11/C11.tmLanguage",
+							"syntax": "Packages/sublime-better-javascript/JSON.tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3932.0,
+						"translation.y": 432.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "src/js_contour.cpp",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 32440,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								8853,
-								8853
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 5343.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -1013,7 +816,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 26.0
+		"height": 27.0
 	},
 	"input":
 	{
@@ -1067,7 +870,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 71.0
+		"height": 50.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1076,6 +879,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"grbl-set",
+				"grbl-settings.txt"
+			],
 			[
 				"quickjs.h",
 				"quickjs/quickjs.h"
@@ -1583,10 +1390,6 @@
 			[
 				"geom.js",
 				"lib/geom.js"
-			],
-			[
-				"point.js",
-				"lib/geom/point.js"
 			]
 		],
 		"width": 0.0

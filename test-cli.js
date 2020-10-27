@@ -39,19 +39,21 @@ async function main(...args) {
   console.log('line.a:', l.a);
   console.log('line.b:', l.b);
 
-  let c = new Contour([new Point(0,0),new Point(40,0),new Point(40,20),new Point(0,20),])
-  for(let point of [new Point(0,0),new Point(40,0),new Point(40,20),new Point(0,20),])
-    c.push(point);
+  let ct1 = new Contour();
+  let ct2 = new Contour();
+  let pl1 = [new Point(0, 0), new Point(40, 0), new Point(40, 20), new Point(0, 20)];
+  let pl2 = pl1.map(({x,y}) => new Point(x+100, y+50));
+ console.log('pl1:', pl1);
+ console.log('pl2:', pl2);
 
-
-  let it = c[Symbol.iterator]();
+  for(let point of pl1) ct1.push(point);
+  for(let point of pl2) ct2.push(point);
+  let it = ct1[Symbol.iterator]();
 
   let item;
 
-  for(; (item = it.next(), !item.done); )  
-  console.log("Item:", item);
-
-  for(let p of c)
-  console.log('p:', p);
+  for(; (item = it.next()), !item.done; ) console.log('Item:', item);
+let i = 0;
+  for(let p of ct1.concat(ct2)) console.log(`p[${i++}]:`, p);
 }
 Util.callMain(main, true);
