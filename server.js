@@ -15,10 +15,11 @@ import SerialBinding from '@serialport/bindings';
 import Socket from './socket.js';
 import WebSocket from 'ws';
 import PortableFileSystem from './lib/filesystem.js';
+import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 
 SerialStream.Binding = SerialBinding;
 
-let filesystem;
+let filesystem,childProcess;
 const port = process.env.PORT || 3000;
 
 const hash = crypto.createHash('sha1');
@@ -37,8 +38,11 @@ const p = path.join(path.dirname(process.argv[1]), '.');
 async function main() {
   await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
   await PortableFileSystem(fs => (filesystem = fs));
+  await PortableChildProcess(cp => (childProcess = cp));
 
   Socket.timeoutCycler();
+
+  await childProcess('./mount-tmp.sh').wait();
 
   app.use(express.text({ type: 'application/xml', limit: '16384kb' }));
 
