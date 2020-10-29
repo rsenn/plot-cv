@@ -78,7 +78,8 @@
         "*.priv",
         "*.eslintignore"
       ],
-      "folder_exclude_patterns": [".*", "build", "inst", "htm", "*/htm/*", "node_modules", "*/node_modules/*", "npm", ".next", "*.next/*"]
+      "folder_exclude_patterns": [".*", "build", "inst", "htm", "*/htm/*", "node_modules", "*/node_modules/*",
+       "npm", ".next", "*.next/*", "quickjs-*"]
     }
   ],
   "build_systems": [

@@ -823,7 +823,7 @@ async function LoadDocument(project, parentElem) {
   });
 
   if(/*doc.type != 'lbr'*/ true) {
-    project.renderer = new Renderer(doc, ReactComponent.append, false && config.debugFlag);
+    project.renderer = new Renderer(doc, ReactComponent.append, /* false && */ config.debugFlag);
 
     config.showGrid = trkl(true);
     config.showGrid.subscribe(value => {

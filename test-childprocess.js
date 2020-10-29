@@ -11,8 +11,8 @@ function FdReader(fd, bufferSize = 1024) {
     let ret;
     do {
       let r = await filesystem.waitRead(fd);
-       ret = filesystem.read(fd, buf);
-       if(ret > 0) {
+      ret = filesystem.read(fd, buf);
+      if(ret > 0) {
         let data = buf.slice(0, ret);
         await push(filesystem.bufferToString(data));
       }

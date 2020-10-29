@@ -19,7 +19,7 @@ import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/
 
 SerialStream.Binding = SerialBinding;
 
-let filesystem,childProcess;
+let filesystem, childProcess;
 const port = process.env.PORT || 3000;
 
 const hash = crypto.createHash('sha1');
@@ -42,7 +42,7 @@ async function main() {
 
   Socket.timeoutCycler();
 
-  await childProcess('./mount-tmp.sh').wait();
+  await childProcess('sh', ['./mount-tmp.sh']).wait();
 
   app.use(express.text({ type: 'application/xml', limit: '16384kb' }));
 
