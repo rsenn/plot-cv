@@ -129,7 +129,7 @@ export const AddLayer = (layer, project = window.project) => {
 
   let dom = create
     ? create(project, { ...props, 'data-layer': `${i} ${name}` })
-    : SVG.create('g', { i, stroke: color, ...props }, project.svg);
+    : SVG.create('g', { i, stroke: color, ...props }, project.svgElement);
   let visible = trkl(true);
 
   visible.subscribe(value => {
@@ -229,7 +229,7 @@ export const GcodeToPolylines = (data, opts = {}) => {
       'stroke-width': 0.15,
       transform: ` translate(-0.3175,0) ` +
         (side == 'front' ? 'scale(-1,-1)' : 'scale(1,-1)') +
-        ` translate(${0},${-bb.y2})  translate(0,-2.54)`
+        ` translate(${0},${-bb.y2})  translate(0,0)`
     },
     project
   ).dom;
@@ -282,7 +282,7 @@ export const GcodeToPolylines = (data, opts = {}) => {
       .map((p, i) => ['path', p, grp])
   ];
   // console.log('GcodeToPolylines polys:', polys.length, { bb, color });
-  let svgAttr = Element.attr(project.svg);
+  let svgAttr = Element.attr(project.svgElement);
   //console.log('GcodeToPolylines svgAttr:', svgAttr);
   let elements = polys.map(args => SVG.create(...args));
   return { ...ret, group: grp, elements };

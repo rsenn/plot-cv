@@ -1,7 +1,7 @@
 import { h, Fragment, html, render, Component, useState, useEffect, useRef, useCallback, Portal, ReactComponent } from './lib/dom/preactComponent.js';
 import { trkl } from './lib/trkl.js';
 import { Element } from './lib/dom.js';
-import { useTrkl } from './lib/eagle/renderUtils.js';
+import { useTrkl } from './lib/hooks/useTrkl.js';
 import { classNames } from './lib/classNames.js';
 import { useEvent, useElement, useDoubleClick, useDimensions, usePanZoom } from './lib/hooks.js';
 import deepDiff from './lib/deep-diff.js';
@@ -415,7 +415,8 @@ export const Chooser = ({
 
   return h(Container, { className: classNames('panel', 'no-select', className), ...props }, children);
 };
-const toolTipFn = ({ name, data, ...item }) => {
+
+const ToolTipFn = ({ name, data, ...item }) => {
   let tooltip = `name\t${name.replace(new RegExp('.*/', 'g'), '')}`;
 
   for(let field of ['type', 'size', 'sha', 'path'])
@@ -467,7 +468,7 @@ export const FileList = ({
         itemClass=${item => 'file hcenter ' + item.name.replace(/.*\./g, '')}
         itemFilter=${filter}
         items=${items}
-        tooltip=${toolTipFn}
+        tooltip=${ToolTipFn}
         onChange=${(...args) => {
           onChange(...args);
         }}
@@ -569,18 +570,20 @@ export const TransformedElement = ({
   children = [],
   ...props
 }) => {
-  const [transform, setTransform] = useState(new TransformationList());
+  /*  const [transform, setTransform] = useState(new TransformationList());
   //console.debug('TransformedElement:', { aspect });
+  //
   if(listener && listener.subscribe)
     listener.subscribe(value => {
-      //console.log('TransformedElement setValue', value);
+     console.log('TransformedElement setValue', value);
       if(value !== undefined) setTransform(value + '');
-    });
+    });*/
+  let transform = useTrkl(listener);
   return h(type,
     {
       id,
       className: classNames('transformed-element', className && className + '-size'),
-      style: { position: 'relative', ...style, transform },
+      style: { position: 'relative', ...style, transform: transform.toString('px') },
       aspect,
       ...props
     },
@@ -935,6 +938,8 @@ export const Fence = ({ children, style = {}, sizeListener, aspectListener, ...p
       style: {
         position: 'relative',
         minWidth: '100px',
+        top: 0,
+        left: 0,
         ...style,
         ...dimensions
       },

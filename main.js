@@ -47,7 +47,7 @@ import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import { CTORS, ECMAScriptParser, estree, Factory, Lexer, Position, Range, ESNode, Parser, PathReplacer, Printer, Stack, Token, ArrayBindingPattern, ArrayLiteral, ArrowFunction, AssignmentExpression, AwaitExpression, BinaryExpression, BindingPattern, BindingProperty, LabelledStatement, BlockStatement, BreakStatement, CallExpression, ClassDeclaration, ConditionalExpression, ContinueStatement, Declaration, DecoratorExpression, DoStatement, EmptyStatement, Expression, ExpressionStatement, ForInStatement, ForStatement, FunctionLiteral, FunctionDeclaration, Identifier, ComputedPropertyName, IfStatement, SwitchStatement, CaseClause, ImportStatement, ExportStatement, JSXLiteral, Literal, TemplateLiteral, LogicalExpression, MemberExpression, InExpression, NewExpression, ObjectBindingPattern, ObjectLiteral, PropertyDefinition, MemberVariable, Program, RestOfExpression, ReturnStatement, SequenceExpression, SpreadElement, Statement, StatementList, ThisExpression, ThrowStatement, YieldStatement, TryStatement, UnaryExpression, UpdateExpression, VariableDeclaration, VariableDeclarator, WhileStatement, WithStatement } from './lib/ecmascript.js';
 import { PipeTo, AsyncRead, AsyncWrite, DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater, WritableStream, ReadFromIterator } from './lib/stream.js?ts=<?TS?>';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
-import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, CartesianToPolar, RotateTransformation, VERTICAL, useTrkl, ElementToClass, MakeRotation } from './lib/eagle/renderUtils.js';
+import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, CartesianToPolar, RotateTransformation, VERTICAL, useTrkl, ElementToClass, MakeRotation, DEBUG, log } from './lib/eagle/renderUtils.js';
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
@@ -62,7 +62,7 @@ import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //c
 import commands, { NormalizeResponse, ResponseData, FetchURL, FetchCached, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer, ClearCache } from './commands.js';
 // prettier-ignore-end
 
-/* prettier-ignore */ const { Align, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line,Matrix,  Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
+/* prettier-ignore */ const { Align, AlignToString, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line,Matrix,  Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
 
 import { classNames } from './lib/classNames.js';
 
@@ -167,7 +167,7 @@ const utf8Decoder = new TextDecoder('utf-8');
 let svgOwner, parent;
 
 const svgFactory = Util.memoize((parent, delegate) => {
-  parent = parent ? Element.find(parent) : project.svg.parentElement;
+  parent = parent ? Element.find(parent) : project.svgElement.parentElement;
   const factory = SVG.factory({
     ...delegate,
     append_to(elem, p) {
@@ -261,7 +261,13 @@ function setViewBox(svgOwner, box) {
 const ElementToXML = (e, predicate) => {
   const x = Element.toObject(e, { predicate });
 
-  for(let [value, path] of deep.iterate(x, (v, k) => /data-/.test(k[k.length - 1]))) deep.unset(x, path);
+  for(let [value, path] of deep.iterate(x, (v, k) => k[k.length - 1] == 'd')) {
+    deep.set(x, path, value.trim().replace(/\s+/g, ' '));
+  }
+
+  for(let [value, path] of deep.iterate(x, (v, k) => k[k.length - 1] == 'id' && v == 'rects'))
+    deep.unset(x, path.slice(0, -1));
+  for(let [value, path] of deep.iterate(x, (v, k) => /(^data-|^class$)/.test(k[k.length - 1]))) deep.unset(x, path);
   //console.log('x:', x);
   return Element.toString(x, { newline: '\n' });
 };
@@ -291,7 +297,7 @@ async function LoadFile(file) {
   url = /:\/\//.test(url) ? url : /^tmp\//.test(url) ? '/' + url : `/static/${filename}`;
   //console.log('LoadFile url=', url);
   let response = await FetchURL(url);
-  // console.debug('LoadFile response=', response);
+  console.debug('LoadFile response=', response);
   let xml = await response.text();
   let doc = new EagleDocument(await xml, null, filename, null, filesystem);
   if(/\.brd$/.test(filename)) window.board = doc;
@@ -312,6 +318,12 @@ async function SaveFile(filename, data, contentType) {
     body: data
   });
   const result = { status, statusText, body };
+
+  const request = new Request(`/tmp/${filename}`);
+  const response = new Response(data);
+  let cache = await caches.open('fetch');
+  let r = await cache.put(request, response);
+  console.log('r:', r);
   LogJS.info(`${filename} saved.`);
   return result;
 }
@@ -322,20 +334,22 @@ async function SaveSVG(filename, layers = [1, 16, 20, 21, 22, 23, 25, 27, 47, 48
   if(!filename) filename = `${doc.basename}.${doc.typeName}.svg`;
   console.log('SaveSVG(', filename, ', ', layers, ')');
   let predicate = element => {
-    if(!element.hasAttribute('data-layer')) return true;
+    /*  if(element.hasAttribute) {if(!element.hasAttribute('data-layer')) return true;
     const layer = element.getAttribute('data-layer');
     let [number, name] = layer.split(/\ /);
     if(number !== undefined && name !== undefined) return layers.indexOf(+number) != -1 || layers.indexOf(name) != -1;
+  }*/
     return true;
   };
-  let data = ElementToXML(project.svg, predicate);
+  let data = ElementToXML(project.svgElement, predicate);
+  //let data = ElementToXML(project.svgElement);
   return await SaveFile(filename.replace(/\.svg$/i, '.svg'), data);
 }
 
 const ModifyColors = fn => e => {
   const { type, buttons } = e;
   if(type.endsWith('down')) {
-    if(!window.c) window.c = SVG.allColors(project.svg);
+    if(!window.c) window.c = SVG.allColors(project.svgElement);
     let { c } = window;
     c.dump();
     fn(c);
@@ -551,7 +565,7 @@ DrawBinaryTree.bt = new BinaryTree(new BinaryTree.Node(
   )
 );
 
-function GetPaths(query, parent = project.svg) {
+function GetPaths(query, parent = project.svgElement) {
   return Element.findAll(query, parent).reduce((a, e) => a.concat(e.tagName != 'path' ? Element.findAll('path', e) : [e]),
     []
   );
@@ -629,6 +643,8 @@ function OutsetPaths(paths, offset, miterLimit = 2, arcTolerance = 0.25) {
   let f = project.makeFactory();
   let d = [outer.toPath(), clip.toPath()].join(' ');
 
+  console.log('d:', d);
+
   /* outer.toSVG(f, { 'stroke-width': 0.0508, stroke: 'black', fill: 'none' });
   clip.toSVG(f, { 'stroke-width': 0.0508, stroke: 'black', fill: 'none' });
 */
@@ -674,8 +690,16 @@ function EagleMaps(project) {
   ]);
   console.debug('eagle2dom:', eagle2dom);
 
-  eagle2dom = eagle2dom.map(([p, e]) => [new ImmutableXPath(p), e]);
-  eagle2dom = eagle2dom.map(([p, e]) => [p.apply(project.doc), e]);
+  eagle2dom = eagle2dom
+    .map(([p, e]) => [
+      Util.tryCatch(() => project.doc.lookup(p),
+        ret => ret,
+        () => Util.tryCatch(() => new ImmutableXPath(p).apply(project.doc, true))
+      ),
+      e
+    ])
+    .filter(([eagle, dom]) => eagle && dom);
+  //eagle2dom = eagle2dom.map(([p, e]) => [p.apply(project.doc), e]);
 
   let mapElements = {
     eagle: Util.unique(eagle2dom.map(([e, d]) => e)),
@@ -823,7 +847,7 @@ async function LoadDocument(project, parentElem) {
   });
 
   if(/*doc.type != 'lbr'*/ true) {
-    project.renderer = new Renderer(doc, ReactComponent.append, /* false && */ config.debugFlag);
+    project.renderer = new Renderer(doc, ReactComponent.append, /* false && */ config.debugFlag());
 
     config.showGrid = trkl(true);
     config.showGrid.subscribe(value => {
@@ -858,17 +882,23 @@ async function LoadDocument(project, parentElem) {
 
   if(project.renderer) {
     //console.debug('testRender:', component);
+    //
     let r = project.renderer.rect || project.renderer.bounds;
     let size = (project.dimensions = project.renderer.size);
     //console.debug('project.renderer:', project.renderer);
     //console.debug('r:', r);
     let aspectRatio = 1;
-    if(r) {
-      aspectRatio = r.width / r.height;
-      sizeListener(size);
+    if(project.doc.type != 'lbr') {
+      if(r) {
+        aspectRatio = r.width / r.height;
+        sizeListener(size);
+      }
+    } else {
+      sizeListener({});
     }
+    //console.
     aspectListener(aspectRatio);
-    //console.debug('aspectRatio:', aspectRatio);
+    debug('aspectRatio:', aspectRatio);
     component =
       // h(Zoomable, { /*className: 'zoomable',*/ style: size.toCSS('mm') }, [component]) ||
       h(Fence, {
@@ -915,7 +945,7 @@ async function LoadDocument(project, parentElem) {
       let e;
       if(props.id && (e = Element.find(`#${props.id}`))) return e;
 
-      transform = svg.querySelector('*[transform]').getAttribute('transform') + (transform ? ' ' + transform : '');
+      transform = svg.querySelector('g#elements').getAttribute('transform') + (transform ? ' ' + transform : '');
       return (e = SVG.create('g', { ...props, transform }, svg));
     };
 
@@ -931,7 +961,7 @@ async function LoadDocument(project, parentElem) {
     function xx() {
       let g = SVG.create('g', {});
 
-      project.svg.appendChild(g);
+      project.svgElement.appendChild(g);
       let ll =
         geometries.R4 &&
         geometries.R4.lines.toSVG(ReactComponent.append, () =>
@@ -943,7 +973,7 @@ async function LoadDocument(project, parentElem) {
     /*xx();*/
 
     window.AddElement = (function (transform) {
-      const root = project.svg;
+      const root = project.svgElement;
 
       let list = [];
 
@@ -964,15 +994,19 @@ async function LoadDocument(project, parentElem) {
     let size = new Size(r);
     // currentProj(project);
     size.mul(doc.type == 'brd' ? 2 : 1.5);
-    let svgrect = SVG.bbox(project.svg);
+    let svgrect = SVG.bbox(project.svgElement);
     let measures = (doc.measures || doc.getBounds()).rect;
     console.debug('measures:', measures);
-    Element.attr(project.svg, { 'data-filename': project.name, 'data-aspect': project.aspectRatio });
-    let css = size.div(0.26458333333719).toCSS({ width: 'px', height: 'px' });
-    window.size = css;
+    Element.attr(project.svgElement, { 'data-filename': project.name, 'data-aspect': project.aspectRatio });
+    // let css = size.div(0.26458333333719).toCSS({ width: 'px', height: 'px' });
+    //  window.size = project.doc.type == 'lbr' ? {} : css;
     AdjustZoom();
     project.status = SaveSVG();
   }, Util.putError);
+
+  sizeListener.subscribe(value => {
+    console.log('sizeListener', { value }, Util.getCallers());
+  });
 
   return project;
 }
@@ -1101,62 +1135,33 @@ function ElementGeometries(layer = 'tPlace', rfn = ent => new Map(ent)) {
 
 function NewPath(path) {
   let elem = SVG.create('path');
-  project.svg.appendChild(elem);
+  project.svgElement.appendChild(elem);
 }
 
 const MakeFitAction = index => async event => {
   // window.transform='';
   const { buttons, type, target } = event;
-
   if(!type.endsWith('down') || buttons == 0) return false;
   console.debug(`FitAct(${index})`, { buttons, type, target });
-
-  let container = Element.find('.transformed-element-size');
-  let oldSize = Element.rect(container);
+  let oldSize = Element.rect('#fence');
+  let matrix = transform().invert().toMatrix();
+  oldSize = matrix.transform_rect(oldSize);
   let topBar = Element.rect('.buttons');
-  let clientArea = Element.rect('body');
-  clientArea.y1 += topBar.height;
-  const zoom = ZoomFactor();
-  // console.debug(`FitA
-  let f = oldSize.fit(clientArea);
-  // console.debug(`FitAction(${index})`,  { oldSize, clientArea }, "\n", ...f);
-
+  let clientArea = Element.rect('#main');
+    let f = oldSize.fit(clientArea);
   let factors = new Size(oldSize).fitFactors(new Size(clientArea));
-  let factor = factors[index];
-  let oldTransform = new TransformationList(window.transform);
-  console.debug(`FitAction(${index})`, { factor, oldTransform });
-  let oldScaling = oldTransform.scaling;
-  let newTransform = oldTransform.slice(0, 1);
-
-  if(!newTransform.scaling) newTransform = newTransform.scale(factor, factor);
-  else {
-    newTransform.scaling.x *= factor;
-    newTransform.scaling.y *= factor;
-  }
-
-  console.debug(`FitAction(${index})`, { oldScaling, newTransform });
-
-  Element.setCSS(container, { transform: newTransform });
-
-  let newSize = Element.rect(container);
-  let size = new Rect(newSize).align(clientArea);
-  console.debug(`FitAction <->`, oldSize, ' -> ', size);
-
-  let points = [size, newSize].map(s => new Point(s));
-  let delta = Point.diff(...points);
-  console.debug(`FitAction <->`, ...points);
-  console.debug(`FitAction -`, Point.diff(...points));
-  let newScaling = newTransform.scaling;
-
-  if(newTransform.translation) {
-    newTransform.translation.x += delta.x;
-    newTransform.translation.y += delta.y;
-  } else newTransform = newTransform.translate(delta.x / newScaling.x, delta.y / newScaling.y, 'px');
-  console.debug(`FitAction newTransform=`, newTransform, newTransform + '');
-  //  newTransform =
-  AdjustZoom(ZoomLog(newTransform.scaling.x));
-
-  window.transform = newTransform.toString('px', 'deg');
+  let t = new TransformationList().scale(factors[index], factors[index]);
+  matrix = t.toMatrix();
+  let newSize = matrix.transform_rect(new Rect(oldSize));
+  let align = 0;
+  if(newSize.width > clientArea.width) align |= Align.LEFT;
+  else align |= Align.CENTER;
+  if(newSize.height > clientArea.height) align |= Align.TOP;
+  else align |= Align.MIDDLE;
+  newSize.align(clientArea, align);
+  matrix = Matrix.getAffineTransform(oldSize.toPoints(), newSize.toPoints());
+  console.debug(`FitAction(${index})`, { oldSize, newSize, clientArea }, AlignToString(align), matrix.decompose());
+  transform(t);
 };
 
 function ZoomFactor(val = config.zoomLog()) {
@@ -1269,7 +1274,7 @@ const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 const AppMain = (window.onload = async () => {
   Util(globalThis);
   //prettier-ignore
-  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, MutableXPath,ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser,  PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian,CartesianToPolar, RotateTransformation, VERTICAL, useTrkl,ElementToClass, MakeRotation, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer, classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands };
+  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, MutableXPath,ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser,  PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian,CartesianToPolar, RotateTransformation, VERTICAL, useTrkl,ElementToClass, MakeRotation, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ListGithubRepo, ListGithubRepoServer, classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG  };
 
   const localFunctions = {
     PackageChildren,
@@ -1348,13 +1353,13 @@ const AppMain = (window.onload = async () => {
   );
 
   //prettier-ignore
-  Util.weakAssign(window.Element,Util.getMethods(dom.Element) );
+  Util.weakAssign(window, imports );
+  Util.weakAssign(window.Element, Util.getMethods(dom.Element));
   Util.weakAssign(window, dom, geom, imports, localFunctions);
   Util.weakAssign(window, {
     functions: Util.filter(localFunctions, v => typeof v == 'function'),
     dom,
     geom,
-    imports,
     config
   });
   Error.stackTraceLimit = 100;
@@ -1507,7 +1512,7 @@ const AppMain = (window.onload = async () => {
 
   config.zoomLog.subscribe(value => {
     let factor = ZoomFactor(value);
-    console.info('zoomFactor changed', value, factor);
+    //console.info('zoomFactor changed', value, factor);
     store.set('zoom', value);
     if(value === 1) throw new Error(value);
   });
@@ -1895,7 +1900,7 @@ const AppMain = (window.onload = async () => {
                         name: makeLayerName('processed', side),
                         'data-filename': processed,
                         create: (project, props = {}) => {
-                          let g = SVG.create('g', { innerHTML: gc.svg, ...props }, project.svg);
+                          let g = SVG.create('g', { innerHTML: gc.svg, ...props }, project.svgElement);
                           g.innerHTML = gc.svg;
                           if(g.firstElementChild && g.firstElementChild.tagName == 'svg') {
                             let svg = g.firstElementChild;
@@ -1919,12 +1924,12 @@ const AppMain = (window.onload = async () => {
                           return g;
                         }
                       });
-
+                      /*
                       layer.sublayers = Util.histogram(Element.walk(layer.dom, (e, acc) => (e.tagName.endsWith('g') ? acc : [...acc, e]), []),
                         e => e.getAttribute('style'),
                         new Map(),
                         () => new Set()
-                      );
+                      );*/
                     }
                   }
 
@@ -2042,7 +2047,9 @@ const AppMain = (window.onload = async () => {
 
   let rects = (window.rects = new Map());
   let elems = (window.elems = new Set());
-
+  window.addEventListener('pointerdown', event => {
+    window.elements = [...elems].filter(e => e.tagName == 'path');
+  });
   moveHandler.subscribe(function MoveEvent(event, prevEvent) {
     const { x, y, clientX, clientY, index, buttons, start, type, target } = event;
     //console.log('moveHandler', { x, y });
@@ -2087,7 +2094,9 @@ const AppMain = (window.onload = async () => {
         continue;
       }
       let l = FindLayer(layer);
-      if(l) event.colors.set(e, l.color.setOpacity(0.8) || '#000');
+      if(l) {
+        event.colors.set(e, l.color.setOpacity(0.8) || '#000');
+      }
     }
     event.classes = new Map(event.elements.map(e => [
         e,
@@ -2135,7 +2144,6 @@ const AppMain = (window.onload = async () => {
               ? stop()
               : p.hasAttribute('transform') && set(p.getAttribute('transform'))
           ) || [];
-        //        console.log('transforms:', transforms);
         transforms = transforms.reverse();
         elems.add(e);
         let props = { ...rect.round(0.001).toObject(), transform: transforms.join(' ') };
@@ -2172,6 +2180,7 @@ const AppMain = (window.onload = async () => {
       }
     }
   });
+  let css = { cursor: undefined, 'pointer-events': undefined, 'user-select': undefined };
 
   touchHandler.subscribe(function TouchEvent(event) {
     const { x, y, index, buttons, start, type, target } = event;
@@ -2233,8 +2242,30 @@ const AppMain = (window.onload = async () => {
       }
 
       if(box) {
-        window.move = move = Element.moveRelative(box, null, id == 'console' ? ['right', 'bottom'] : ['left', 'top']);
-        box.style.cursor = `move`;
+        let translation = new Translation();
+        let transformList = new TransformationList([translation]).concat(transform());
+
+        let setStyle = Util.once(() =>
+          Element.setCSS(box, { cursor: 'move', 'pointer-events': 'none', 'user-select': 'none' })
+        );
+
+        window.move = move = Element.moveRelative(box,
+          null,
+          id == 'console' ? ['right', 'bottom'] : ['left', 'top'],
+          (pos, last, first) => {
+            if(pos && first) {
+              let rel = Point.diff(pos, first);
+              if(rel.distanceSquared() > 0) {
+                setStyle();
+
+                translation.x = rel.x;
+                translation.y = rel.y;
+                transform(transformList.collapse());
+                //   console.log('TouchHandler transform:', transform());
+              }
+            }
+          }
+        );
       }
       return true;
     }
@@ -2263,7 +2294,7 @@ const AppMain = (window.onload = async () => {
       resize = null;
       window.crosshair.show = false;
 
-      if(box && box.style) box.style.cursor = `default`;
+      if(box && box.style) Element.setCSS(box, css);
       /*return*/ event.cancel();
       return false;
     }
