@@ -845,6 +845,7 @@ async function LoadDocument(project, parentElem) {
       return names;
     }
   });
+  let Component;
 
   if(/*doc.type != 'lbr'*/ true) {
     project.renderer = new Renderer(doc, ReactComponent.append, /* false && */ config.debugFlag());
@@ -858,9 +859,9 @@ async function LoadDocument(project, parentElem) {
 
     console.log('project.renderer', project.renderer);
     let style = { width: '100%', height: '100%', position: 'relative' };
-    let component = project.renderer.render(doc, null, {});
+    Component = project.renderer.render(doc, null, {});
 
-    console.log('renderer.render =', component);
+    console.log('renderer.render =', Component);
 
     let usedLayers = [...doc.layers.list].filter(layer => layer.elements.size > 0);
 
@@ -875,13 +876,13 @@ async function LoadDocument(project, parentElem) {
       )
     );
     LogJS.info(`${project.name} rendered.`);
-    window.component = project.component = component;
+    window.component = project.component = Component;
   }
 
   let element = Element.find('#main');
 
   if(project.renderer) {
-    //console.debug('testRender:', component);
+    //console.debug('testRender:', Component);
     //
     let r = project.renderer.rect || project.renderer.bounds;
     let size = (project.dimensions = project.renderer.size);
@@ -899,24 +900,26 @@ async function LoadDocument(project, parentElem) {
     //console.
     aspectListener(aspectRatio);
     debug('aspectRatio:', aspectRatio);
-    component =
-      // h(Zoomable, { /*className: 'zoomable',*/ style: size.toCSS('mm') }, [component]) ||
+    Component =
+      // h(Zoomable, { /*className: 'zoomable',*/ style: size.toCSS('mm') }, [Component]) ||
       h(Fence, {
           style: {},
           sizeListener,
           aspectListener,
           listener: transform,
           'data-name': project.name
-        }, [component]
+        }, [Component]
       );
   }
 
   let svgElement;
 
   if(window.component) {
-    React.render(component, element);
+    //[...element.children].forEach(Element.remove);
 
-    let object = ReactComponent.toObject(component);
+    React.render(Component, element);
+
+    let object = ReactComponent.toObject(Component);
     project.object = object;
     let rendered = object.children[0];
 
@@ -945,7 +948,9 @@ async function LoadDocument(project, parentElem) {
       let e;
       if(props.id && (e = Element.find(`#${props.id}`))) return e;
 
-      transform = svg.querySelector('g#elements').getAttribute('transform') + (transform ? ' ' + transform : '');
+      transform =
+        (Element.find('g.elements', svg) || Element.find('g.instances', svg)).getAttribute('transform') +
+        (transform ? ' ' + transform : '');
       return (e = SVG.create('g', { ...props, transform }, svg));
     };
 
@@ -1148,7 +1153,7 @@ const MakeFitAction = index => async event => {
   oldSize = matrix.transform_rect(oldSize);
   let topBar = Element.rect('.buttons');
   let clientArea = Element.rect('#main');
-    let f = oldSize.fit(clientArea);
+  let f = oldSize.fit(clientArea);
   let factors = new Size(oldSize).fitFactors(new Size(clientArea));
   let t = new TransformationList().scale(factors[index], factors[index]);
   matrix = t.toMatrix();
