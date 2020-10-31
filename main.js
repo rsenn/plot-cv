@@ -1773,7 +1773,7 @@ const AppMain = (window.onload = async () => {
   React.render(h(DisplayList, { data }), Element.find('#display'));
 
   React.render(h(SlotProvider, {}, [
-      Panel('buttons no-select', [
+      h(Panel, { className: classNames('buttons', 'no-select'), tag: 'header' }, [
         h(Button, {
           image: 'static/svg/browse.svg',
           fn: e => {
@@ -2004,6 +2004,7 @@ const AppMain = (window.onload = async () => {
         })
       ]),*/
       h(FileList, {
+        listTag: 'nav', 
         files: projects,
         onActive: open,
         onChange: debounceAsync(async (e, p, i) => await ChooseDocument(p, i), 5000, {

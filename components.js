@@ -435,6 +435,8 @@ export const FileList = ({
   focusSearch,
   currentInput,
   changeInput,
+  tag = 'div',
+  listTag = 'div',
   ...props
 }) => {
   const [active, setActive] = useState(true);
@@ -443,42 +445,40 @@ export const FileList = ({
   files.subscribe(value => setItems(value));
 
   onActive.subscribe(value => setActive(value));
-  const classes = classNames('sidebar', active ? 'active' : 'inactive');
+  const className = classNames('sidebar', active ? 'active' : 'inactive');
 
-  return html`
-    <div className=${classes}>
-      <${Conditional}
-        component=${EditBox}
-        type="form"
-        className="search"
-        autofocus
-        name=${'query'}
-        id="search"
-        placeholder="Search"
-        signal=${showSearch}
-        focus=${focusSearch}
-        current=${currentInput}
-        onChange=${changeInput}
-        onInput=${changeInput}
-        value=${filter()}
-      />
-      <${Chooser}
-        className="list"
-        itemComponent=${File}
-        itemClass=${item => 'file hcenter ' + item.name.replace(/.*\./g, '')}
-        itemFilter=${filter}
-        items=${items}
-        tooltip=${ToolTipFn}
-        onChange=${(...args) => {
-          onChange(...args);
-        }}
-        ...${props}
-      />
-    </div>
-  `;
+  return h(tag, { className }, [
+    h(Conditional, {
+      component: EditBox,
+      type: 'form',
+      className: 'search',
+      autofocus: true,
+      name: 'query',
+      id: 'search',
+      placeholder: 'Search',
+      signal: showSearch,
+      focus: focusSearch,
+      current: currentInput,
+      onChange: changeInput,
+      onInput: changeInput,
+      value: filter()
+    }),
+    h(Chooser, {
+      tag: listTag,
+      className: 'list',
+      itemComponent: File,
+      itemClass: item => classNames('file', 'hcenter', item.name.replace(/.*\./g, '')),
+      itemFilter: filter,
+      items,
+      tooltip: ToolTipFn,
+      onChange: (...args) => onChange(...args),
+      ...props
+    })
+  ]);
 };
 
-export const Panel = (name, children) => h(Container, { className: classNames('panel', name) }, children);
+export const Panel = ({ className, children, ...props }) =>
+  h(Container, { className: classNames('panel', className), ...props }, children);
 
 export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className }, children) =>
   enable
