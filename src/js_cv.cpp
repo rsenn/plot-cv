@@ -286,7 +286,7 @@ js_cv_named_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
 static JSValue
 js_cv_create_trackbar(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   const char *name, *window;
-  int32_t count;
+  int32_t ret, count;
   struct Trackbar {
     int32_t value;
     JSValue name, window, count;
@@ -301,15 +301,21 @@ js_cv_create_trackbar(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
   if(name == nullptr || window == nullptr)
     return JS_EXCEPTION;
 
+  userdata = static_cast<Trackbar*>(js_mallocz(ctx, sizeof(Trackbar)));
+
   JS_ToInt32(ctx, &userdata->value, argv[2]);
   JS_ToInt32(ctx, &count, argv[3]);
 
-  userdata = static_cast<Trackbar*>(js_mallocz(ctx, sizeof(Trackbar)));
   userdata->name = JS_NewString(ctx, name);
   userdata->window = JS_NewString(ctx, window);
   userdata->count = JS_NewInt32(ctx, count);
+  userdata->handler = JS_DupValue(ctx, argv[4]);
+  userdata->ctx = ctx;
 
-  cv::createTrackbar(
+    /*JSValue str = JS_ToString(ctx, userdata->handler);
+    std::cout << "handler: " << JS_ToCString(ctx, str) << std::endl;*/
+
+  ret = cv::createTrackbar(
       name,
       window,
       &userdata->value,
@@ -320,12 +326,12 @@ js_cv_create_trackbar(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
         if(JS_IsFunction(data.ctx, data.handler)) {
           JSValueConst argv[] = {JS_NewInt32(data.ctx, newValue), data.count, data.name, data.window};
 
-          JS_Call(data.ctx, data.handler, JS_UNDEFINED, 2, argv);
+          JS_Call(data.ctx, data.handler, JS_UNDEFINED, 4, argv);
         }
       },
       userdata);
 
-  return JS_UNDEFINED;
+  return JS_NewInt32(ctx, ret);
 }
 
 static JSValue
@@ -368,7 +374,7 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_CFUNC_DEF("split", 2, js_cv_split),
     JS_CFUNC_DEF("normalize", 2, js_cv_normalize),
     JS_CFUNC_DEF("namedWindow", 1, js_cv_named_window),
-    JS_CFUNC_DEF("createTrackbar", 1, js_cv_create_trackbar),
+    JS_CFUNC_DEF("createTrackbar", 5, js_cv_create_trackbar),
     JS_CFUNC_DEF("waitKey", 0, js_cv_wait_key),
     JS_PROP_INT32_DEF("CV_VERSION_MAJOR", CV_VERSION_MAJOR, JS_PROP_ENUMERABLE),
     JS_PROP_INT32_DEF("CV_VERSION_MINOR", CV_VERSION_MINOR, JS_PROP_ENUMERABLE),

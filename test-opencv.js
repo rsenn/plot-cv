@@ -29,6 +29,10 @@ async function main(...args) {
 
   let image;
   cv.namedWindow('main');
+  cv.createTrackbar('threshold', 'main', 0, 100, function (value, count, name, window) {
+    console.log('Trackbar', { value, count, name, window });
+  });
+
   //image = cv.imread('../an-tronics/images/5.19.jpg');
   image = cv.imread(args[0] || 'OpenOTA-board.png');
   //  image = cv.imread('rainbow.png');
@@ -107,8 +111,8 @@ async function main(...args) {
   let lines = [];
   cv.HoughLinesP(edges, lines, 1, cv.CV_PI / 180, 30 /*, 30, 10*/);
 
-  console.log('lines:', lines);
-  console.log('at(0,0):', labImage.at(37,47));
+  //  console.log('lines:', lines);
+  console.log('at(0,0):', labImage.at(37, 47));
 
   // cv.imwrite('gray.png', labChannels[0]);
   /*
