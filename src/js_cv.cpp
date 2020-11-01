@@ -154,6 +154,7 @@ js_cv_imread(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
 
   return js_mat_wrap(ctx, mat);
 }
+
 static JSValue
 js_cv_imwrite(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
 
@@ -164,6 +165,20 @@ js_cv_imwrite(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
     return JS_EXCEPTION;
 
   cv::imwrite(filename, *image);
+
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_cv_imshow(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+
+  const char* filename = JS_ToCString(ctx, argv[0]);
+  cv::Mat* image = js_mat_data(ctx, argv[1]);
+
+  if(image == nullptr)
+    return JS_EXCEPTION;
+
+  cv::imshow(filename, *image);
 
   return JS_UNDEFINED;
 }
@@ -257,24 +272,24 @@ js_cv_normalize(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 
 static JSValue
 js_cv_named_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
- const char* name;
- int32_t flags = cv::WINDOW_AUTOSIZE;
-    name=  JS_ToCString(ctx,   argv[0]);
+  const char* name;
+  int32_t flags = cv::WINDOW_AUTOSIZE;
+  name = JS_ToCString(ctx, argv[0]);
 
-    if(argc > 1)
-JS_ToInt32(ctx, &flags, argv[1]);
+  if(argc > 1)
+    JS_ToInt32(ctx, &flags, argv[1]);
 
-cv::namedWindow(name, flags);
-return JS_UNDEFINED;
+  cv::namedWindow(name, flags);
+  return JS_UNDEFINED;
 }
 
 static JSValue
 js_cv_wait_key(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   int32_t delay = 0;
-union {
+  union {
     int32_t i;
     char c;
-} key;
+  } key;
   JSValue ret;
 
   if(argc > 0)
@@ -283,7 +298,7 @@ union {
   key.i = cv::waitKey(delay);
 
   if(key.i >= 0 && key.i <= 255) {
-    char ch[2] = {key.c,  0};
+    char ch[2] = {key.c, 0};
 
     ret = JS_NewString(ctx, ch);
   } else {
@@ -303,6 +318,7 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_CFUNC_DEF("Canny", 4, js_cv_canny),
     JS_CFUNC_DEF("imread", 1, js_cv_imread),
     JS_CFUNC_DEF("imwrite", 2, js_cv_imwrite),
+    JS_CFUNC_DEF("imshow", 2, js_cv_imshow),
     JS_CFUNC_DEF("cvtColor", 3, js_cv_cvt_color),
     JS_CFUNC_DEF("split", 2, js_cv_split),
     JS_CFUNC_DEF("normalize", 2, js_cv_normalize),

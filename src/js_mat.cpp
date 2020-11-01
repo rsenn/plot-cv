@@ -146,6 +146,16 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
   return ret;
 }
 
+template<class T>
+ void
+js_mat_get(JSContext* ctx, JSValueConst this_val, uint32_t row, uint32_t col, T& value) {
+   cv::Mat* m = js_mat_data(ctx, this_val);
+ 
+  if(m)
+        value = (*m).at<T>(row, col);
+      else value = T();
+}
+
 static JSValue
 js_mat_get(JSContext* ctx, JSValueConst this_val, uint32_t row, uint32_t col) {
   JSValue ret = JS_EXCEPTION;
@@ -153,19 +163,60 @@ js_mat_get(JSContext* ctx, JSValueConst this_val, uint32_t row, uint32_t col) {
   uint32_t bytes = (1 << m->depth()) * m->channels();
 
   if(m) {
-    if(m->type() == CV_32FC1) {
-      ret = JS_NewFloat64(ctx, (*m).at<float>(row, col));
-    } else if(bytes <= sizeof(uint)) {
-      uint32_t mask = (1LU << (bytes * 8)) - 1;
-
-      if(bytes <= 1)
-        ret = JS_NewUint32(ctx, (*m).at<uint8_t>(row, col) & mask);
-      else if(bytes <= 2)
-        ret = JS_NewUint32(ctx, (*m).at<uint16_t>(row, col) & mask);
-      else if(bytes <= 4)
-        ret = JS_NewUint32(ctx, (*m).at<uint32_t>(row, col) & mask);
+    switch(m->type()) {
+      case CV_32FC1: {
+        double value;
+        js_mat_get(ctx, this_val, row, col, value);
+      ret = JS_NewFloat64(ctx, value);
+      break;
     }
+    case CV_8UC1: {
+      uint8_t value;
+   js_mat_get(ctx, this_val, row, col, value);
+      ret = JS_NewUint32(ctx, value);
+      break;
+    } 
+    case CV_8UC2: {
+      cv::Vec2b value;
+   js_mat_get(ctx, this_val, row, col, value);
+   ret = JS_NewArray(ctx);
+   JS_SetPropertyUint32(ctx, ret, 0,  JS_NewUint32(ctx, value[0]));
+   JS_SetPropertyUint32(ctx, ret, 1,  JS_NewUint32(ctx, value[1]));
+      break;
+    }
+    case CV_8UC3: {
+      cv::Vec3b value;
+   js_mat_get(ctx, this_val, row, col, value);
+   ret = JS_NewArray(ctx);
+   JS_SetPropertyUint32(ctx, ret, 0,  JS_NewUint32(ctx, value[0]));
+   JS_SetPropertyUint32(ctx, ret, 1,  JS_NewUint32(ctx, value[1]));
+   JS_SetPropertyUint32(ctx, ret, 2,  JS_NewUint32(ctx, value[2]));
+      break;
+    }  case CV_8UC4: {
+      cv::Vec4b value;
+   js_mat_get(ctx, this_val, row, col, value);
+   ret = JS_NewArray(ctx);
+   JS_SetPropertyUint32(ctx, ret, 0,  JS_NewUint32(ctx, value[0]));
+   JS_SetPropertyUint32(ctx, ret, 1,  JS_NewUint32(ctx, value[1]));
+   JS_SetPropertyUint32(ctx, ret, 2,  JS_NewUint32(ctx, value[2]));
+   JS_SetPropertyUint32(ctx, ret, 3,  JS_NewUint32(ctx, value[3]));
+      break;
+    }
+    case CV_16UC1: {
+      uint16_t value;
+   js_mat_get(ctx, this_val, row, col, value);
+      ret = JS_NewUint32(ctx, value);
+      break;
+    }
+   case CV_32SC1: {
+      int32_t value;
+   js_mat_get(ctx, this_val, row, col, value);
+      ret = JS_NewInt32(ctx, value);
+      break;
+    }
+ 
   }
+}
   return ret;
 }
 

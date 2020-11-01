@@ -28,6 +28,7 @@ async function main(...args) {
   console.log('line', line);
 
   let image;
+  cv.namedWindow('main');
   //image = cv.imread('../an-tronics/images/5.19.jpg');
   image = cv.imread(args[0] || 'OpenOTA-board.png');
   //  image = cv.imread('rainbow.png');
@@ -75,8 +76,7 @@ async function main(...args) {
     let p = mat.channels == 1 ? 'P2' : 'P3';
     let colors = [];
     for(let [pos, value] of image) {
-      let c =
-        mat.channels == 1 ? [value] : [value % 256, Math.floor(value / 256) % 256, Math.floor(value / 65536) % 256];
+      let c = value;
       colors.push(c);
     }
     filesystem.writeFile(`${name}.${ext}`, `${p}\n${image.cols} ${image.rows}\n255\n${colors.flat().join('\n')}`);
@@ -98,6 +98,8 @@ async function main(...args) {
   cv.imwrite('a.png', labChannels[1]);
   cv.imwrite('b.png', labChannels[2]);
 
+  cv.imshow('main', labChannels[0]);
+
   let edges = new Mat();
   cv.Canny(labChannels[0], edges, 10, 20);
   cv.imwrite('canny.png', edges);
@@ -106,6 +108,7 @@ async function main(...args) {
   cv.HoughLinesP(edges, lines, 1, cv.CV_PI / 180, 30 /*, 30, 10*/);
 
   console.log('lines:', lines);
+  console.log('at(0,0):', image.at(37,47));
 
   // cv.imwrite('gray.png', labChannels[0]);
   /*
@@ -115,10 +118,14 @@ async function main(...args) {
   //console.log('image', [...image]);
   //
   //
-  cv.namedWindow('main', 0);
 
-  let key = cv.waitKey();
-  console.log("key:", key);
+  let key;
+
+  while((key = cv.waitKey())) {
+    console.log('key:', key);
+
+    if(key == 'q' || key == '\x1b') break;
+  }
 
   return;
 
