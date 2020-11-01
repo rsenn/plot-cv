@@ -115,8 +115,8 @@ async function main(...args) {
   //console.log('image', [...image]);
   //
   //
-  cv.namedWindow('main');
-  
+  cv.namedWindow('main', 0);
+
   let key = cv.waitKey();
   console.log("key:", key);
 
