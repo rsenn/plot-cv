@@ -43,7 +43,8 @@ CannyDetect() {
   // Running the Canny detector
   Canny(detected_edges, detected_edges, lowThreshold, lowThreshold * ratio, kernel_size);
   // finding contours
-  findContours(detected_edges, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE, cv::Point(0, 0));
+  findContours(
+      detected_edges, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE, cv::Point(0, 0));
   // converting image from grayscale to coloured
   cvtColor(detected_edges, detected_edges, CV_GRAY2BGR);
 
@@ -68,8 +69,20 @@ CannyDetect() {
   // making the red cross using lines
   for(int i = 0; i < mc.size(); i++) {
 
-    line(dst, cv::Point(mc[i].x - 6, mc[i].y), cv::Point(mc[i].x + 6, mc[i].y), Scalar(0, 0, 255), 1, 8, 0);
-    line(dst, cv::Point(mc[i].x, mc[i].y - 6), cv::Point(mc[i].x, mc[i].y + 6), Scalar(0, 0, 255), 1, 8, 0);
+    line(dst,
+         cv::Point(mc[i].x - 6, mc[i].y),
+         cv::Point(mc[i].x + 6, mc[i].y),
+         Scalar(0, 0, 255),
+         1,
+         8,
+         0);
+    line(dst,
+         cv::Point(mc[i].x, mc[i].y - 6),
+         cv::Point(mc[i].x, mc[i].y + 6),
+         Scalar(0, 0, 255),
+         1,
+         8,
+         0);
   }
 
   imshow(window_name, dst);

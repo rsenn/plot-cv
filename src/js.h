@@ -113,9 +113,14 @@ struct jsrt {
 
   const_value prototype(const_value obj) const;
 
-  void property_names(const_value obj, std::vector<const char*>& out, bool enum_only = false, bool recursive = false) const;
+  void property_names(const_value obj,
+                      std::vector<const char*>& out,
+                      bool enum_only = false,
+                      bool recursive = false) const;
 
-  std::vector<const char*> property_names(const_value obj, bool enum_only = true, bool recursive = true) const;
+  std::vector<const char*> property_names(const_value obj,
+                                          bool enum_only = true,
+                                          bool recursive = true) const;
 
   void dump_error();
 
@@ -465,7 +470,10 @@ jsrt::set_property<uint32_t>(const_value obj, uint32_t index, value val) {
 
 template<class T>
 inline jsrt::value
-vector_to_js(jsrt& js, const T& v, size_t n, const std::function<jsrt::value(const typename T::value_type&)>& fn) {
+vector_to_js(jsrt& js,
+             const T& v,
+             size_t n,
+             const std::function<jsrt::value(const typename T::value_type&)>& fn) {
   using std::placeholders::_1;
   jsrt::value ret = js.create_array(n);
   for(uint32_t i = 0; i < n; i++) js.set_property(ret, i, fn(v[i]));
@@ -475,7 +483,9 @@ vector_to_js(jsrt& js, const T& v, size_t n, const std::function<jsrt::value(con
 template<class T>
 inline jsrt::value
 vector_to_js(jsrt& js, const T& v, size_t n) {
-  return vector_to_js(v, n, std::bind(&jsrt::create<typename T::value_type>, &js, std::placeholders::_1));
+  return vector_to_js(v,
+                      n,
+                      std::bind(&jsrt::create<typename T::value_type>, &js, std::placeholders::_1));
 }
 
 template<class T>
@@ -663,7 +673,8 @@ protected:
 private:
   friend class jsrt;
 
-  jsiter(std::function<JSValue(uint32_t)> index, size_t len, size_t pos) : i(index), n(len), p(pos) {}
+  jsiter(std::function<JSValue(uint32_t)> index, size_t len, size_t pos)
+      : i(index), n(len), p(pos) {}
   jsiter(jsrt& js, const JSValue& arr, size_t len) : i(js.index(arr)), n(len), p(0) {}
   jsiter(jsrt& js, const JSValue& arr, size_t len, size_t pos) : i(js.index(arr)), n(len), p(pos) {}
 };
@@ -692,7 +703,10 @@ jsrt::end(JSValue& v) {
 
 inline std::function<JSValue(JSValue, uint32_t)>
 jsrt::index() const {
-  return std::bind(&jsrt::get_property<uint32_t>, this, std::placeholders::_1, std::placeholders::_2);
+  return std::bind(&jsrt::get_property<uint32_t>,
+                   this,
+                   std::placeholders::_1,
+                   std::placeholders::_2);
 }
 inline std::function<JSValue(uint32_t)>
 jsrt::index(const JSValueConst& a) const {

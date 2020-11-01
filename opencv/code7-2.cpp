@@ -11,7 +11,8 @@ using namespace std;
 
 Mat frame_hsv, frame, mask;
 
-int low_diff = 10, high_diff = 10, conn = 4, val = 255, flags = conn + (val << 8) + CV_FLOODFILL_MASK_ONLY;
+int low_diff = 10, high_diff = 10, conn = 4, val = 255,
+    flags = conn + (val << 8) + CV_FLOODFILL_MASK_ONLY;
 double h_h = 0, l_h = 0, h_s = 0, l_s = 0;
 
 bool selected = false;
@@ -34,13 +35,30 @@ on_mouse(int event, int x, int y, int, void*) {
 
   // make mask using floodFill
   mask = Scalar::all(0);
-  floodFill(frame, mask, p, Scalar(255, 255, 255), 0, Scalar(low_diff, low_diff, low_diff), Scalar(high_diff, high_diff, high_diff), flags);
+  floodFill(frame,
+            mask,
+            p,
+            Scalar(255, 255, 255),
+            0,
+            Scalar(low_diff, low_diff, low_diff),
+            Scalar(high_diff, high_diff, high_diff),
+            flags);
 
   // find the H and S range of piexels selected by floodFill
   Mat channels[3];
   split(frame_hsv, channels);
-  minMaxLoc(channels[0], &l_h, &h_h, NULL, NULL, mask.rowRange(1, mask.rows - 1).colRange(1, mask.cols - 1));
-  minMaxLoc(channels[1], &l_s, &h_s, NULL, NULL, mask.rowRange(1, mask.rows - 1).colRange(1, mask.cols - 1));
+  minMaxLoc(channels[0],
+            &l_h,
+            &h_h,
+            NULL,
+            NULL,
+            mask.rowRange(1, mask.rows - 1).colRange(1, mask.cols - 1));
+  minMaxLoc(channels[1],
+            &l_s,
+            &h_s,
+            NULL,
+            NULL,
+            mask.rowRange(1, mask.rows - 1).colRange(1, mask.cols - 1));
 }
 
 int

@@ -118,7 +118,8 @@ main(int argc, char** argv) {
     //  - establish lcation - remove obj if off screen
     //  - count direction
     for(unsigned i = 0; i < trackers.objects.size(); i++) {
-      rectangle(frame, trackers.objects[i], Scalar(255, 0, 0), 2, 1); // draw rectangle around object
+      rectangle(
+          frame, trackers.objects[i], Scalar(255, 0, 0), 2, 1); // draw rectangle around object
       int mid_x = trackers.objects[i].x + (trackers.objects[i].width / 2);
       int mid_y = trackers.objects[i].y - (trackers.objects[i].height / 2);
 

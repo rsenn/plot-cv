@@ -11,19 +11,24 @@ namespace {
 enum Pattern { CHESSBOARD, CIRCLES_GRID, ASYMMETRIC_CIRCLES_GRID };
 
 void
-calcChessboardCorners(Size boardSize, float squareSize, vector<Point3f>& corners, Pattern patternType = CHESSBOARD) {
+calcChessboardCorners(Size boardSize,
+                      float squareSize,
+                      vector<Point3f>& corners,
+                      Pattern patternType = CHESSBOARD) {
   corners.resize(0);
 
   switch(patternType) {
     case CHESSBOARD:
     case CIRCLES_GRID:
       for(int i = 0; i < boardSize.height; i++)
-        for(int j = 0; j < boardSize.width; j++) corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
+        for(int j = 0; j < boardSize.width; j++)
+          corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
       break;
 
     case ASYMMETRIC_CIRCLES_GRID:
       for(int i = 0; i < boardSize.height; i++)
-        for(int j = 0; j < boardSize.width; j++) corners.push_back(Point3f(float((2 * j + i % 2) * squareSize), float(i * squareSize), 0));
+        for(int j = 0; j < boardSize.width; j++)
+          corners.push_back(Point3f(float((2 * j + i % 2) * squareSize), float(i * squareSize), 0));
       break;
 
     default: CV_Error(Error::StsBadArg, "Unknown pattern type\n");
@@ -39,14 +44,20 @@ computeHomography(const Mat& R_1to2, const Mat& tvec_1to2, const double d_inv, c
 //! [compute-homography]
 
 Mat
-computeHomography(const Mat& R1, const Mat& tvec1, const Mat& R2, const Mat& tvec2, const double d_inv, const Mat& normal) {
+computeHomography(const Mat& R1,
+                  const Mat& tvec1,
+                  const Mat& R2,
+                  const Mat& tvec2,
+                  const double d_inv,
+                  const Mat& normal) {
   Mat homography = R2 * R1.t() + d_inv * (-R2 * R1.t() * tvec1 + tvec2) * normal.t();
   return homography;
 }
 
 //! [compute-c2Mc1]
 void
-computeC2MC1(const Mat& R1, const Mat& tvec1, const Mat& R2, const Mat& tvec2, Mat& R_1to2, Mat& tvec_1to2) {
+computeC2MC1(
+    const Mat& R1, const Mat& tvec1, const Mat& R2, const Mat& tvec2, Mat& R_1to2, Mat& tvec_1to2) {
   // c2Mc1 = c2Mo * oMc1 = c2Mo * c1Mo.inv()
   R_1to2 = R2 * R1.t();
   tvec_1to2 = R2 * (-R1.t() * tvec1) + tvec2;
@@ -54,7 +65,11 @@ computeC2MC1(const Mat& R1, const Mat& tvec1, const Mat& R2, const Mat& tvec2, M
 //! [compute-c2Mc1]
 
 void
-homographyFromCameraDisplacement(const string& img1Path, const string& img2Path, const Size& patternSize, const float squareSize, const string& intrinsicsPath) {
+homographyFromCameraDisplacement(const string& img1Path,
+                                 const string& img2Path,
+                                 const Size& patternSize,
+                                 const float squareSize,
+                                 const string& intrinsicsPath) {
   Mat img1 = imread(img1Path);
   Mat img2 = imread(img2Path);
 
@@ -179,7 +194,11 @@ main(int argc, char* argv[]) {
 
   Size patternSize(parser.get<int>("width"), parser.get<int>("height"));
   float squareSize = (float)parser.get<double>("square_size");
-  homographyFromCameraDisplacement(parser.get<String>("image1"), parser.get<String>("image2"), patternSize, squareSize, parser.get<String>("intrinsics"));
+  homographyFromCameraDisplacement(parser.get<String>("image1"),
+                                   parser.get<String>("image2"),
+                                   patternSize,
+                                   squareSize,
+                                   parser.get<String>("intrinsics"));
 
   return 0;
 }

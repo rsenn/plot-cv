@@ -116,11 +116,12 @@ libraryPrefix() {
 static inline std::string
 librarySuffix() {
 #if defined(_WIN32)
-  const char* suffix = "" CVAUX_STR(CV_MAJOR_VERSION) CVAUX_STR(CV_MINOR_VERSION) CVAUX_STR(CV_SUBMINOR_VERSION)
+  const char* suffix =
+      "" CVAUX_STR(CV_MAJOR_VERSION) CVAUX_STR(CV_MINOR_VERSION) CVAUX_STR(CV_SUBMINOR_VERSION)
 #if(defined _MSC_VER && defined _M_X64) || (defined __GNUC__ && defined __x86_64__)
-      "_64"
+          "_64"
 #endif
-      ".dll";
+          ".dll";
   return suffix;
 #else
   return ".so";
@@ -135,7 +136,9 @@ private:
   const FileSystemPath_t fname;
 
 public:
-  DynamicLib(const FileSystemPath_t& filename) : handle(0), fname(filename) { libraryLoad(filename); }
+  DynamicLib(const FileSystemPath_t& filename) : handle(0), fname(filename) {
+    libraryLoad(filename);
+  }
   ~DynamicLib() { libraryRelease(); }
   bool
   isLoaded() const {
@@ -185,31 +188,42 @@ public:
 
   PluginBackend(const Ptr<DynamicLib>& lib) : lib_(lib), plugin_api_(NULL) {
     const char* init_name = "opencv_videoio_plugin_init_v0";
-    FN_opencv_videoio_plugin_init_t fn_init = reinterpret_cast<FN_opencv_videoio_plugin_init_t>(lib_->getSymbol(init_name));
+    FN_opencv_videoio_plugin_init_t fn_init =
+        reinterpret_cast<FN_opencv_videoio_plugin_init_t>(lib_->getSymbol(init_name));
     if(fn_init) {
       plugin_api_ = fn_init(ABI_VERSION, API_VERSION, NULL);
       if(!plugin_api_) {
         CV_LOG_INFO(NULL, "Video I/O: plugin is incompatible: " << lib->getName());
         return;
       }
-      if(plugin_api_->api_header.opencv_version_major != CV_VERSION_MAJOR || plugin_api_->api_header.opencv_version_minor != CV_VERSION_MINOR) {
+      if(plugin_api_->api_header.opencv_version_major != CV_VERSION_MAJOR ||
+         plugin_api_->api_header.opencv_version_minor != CV_VERSION_MINOR) {
         CV_LOG_ERROR(NULL,
                      "Video I/O: wrong OpenCV version used by plugin '"
-                         << plugin_api_->api_header.api_description
-                         << "': " << cv::format("%d.%d, OpenCV version is '" CV_VERSION "'", plugin_api_->api_header.opencv_version_major, plugin_api_->api_header.opencv_version_minor))
+                         << plugin_api_->api_header.api_description << "': "
+                         << cv::format("%d.%d, OpenCV version is '" CV_VERSION "'",
+                                       plugin_api_->api_header.opencv_version_major,
+                                       plugin_api_->api_header.opencv_version_minor))
         plugin_api_ = NULL;
         return;
       }
       // TODO Preview: add compatibility API/ABI checks
-      CV_LOG_INFO(NULL, "Video I/O: loaded plugin '" << plugin_api_->api_header.api_description << "'");
+      CV_LOG_INFO(NULL,
+                  "Video I/O: loaded plugin '" << plugin_api_->api_header.api_description << "'");
     } else {
-      CV_LOG_INFO(NULL, "Video I/O: plugin is incompatible, missing init function: '" << init_name << "', file: " << lib->getName());
+      CV_LOG_INFO(NULL,
+                  "Video I/O: plugin is incompatible, missing init function: '"
+                      << init_name << "', file: " << lib->getName());
     }
   }
 
   Ptr<IVideoCapture> createCapture(int camera) const CV_OVERRIDE;
   Ptr<IVideoCapture> createCapture(const std::string& filename) const CV_OVERRIDE;
-  Ptr<IVideoWriter> createWriter(const std::string& filename, int fourcc, double fps, const cv::Size& sz, bool isColor) const CV_OVERRIDE;
+  Ptr<IVideoWriter> createWriter(const std::string& filename,
+                                 int fourcc,
+                                 double fps,
+                                 const cv::Size& sz,
+                                 bool isColor) const CV_OVERRIDE;
 };
 
 class PluginBackendFactory : public IBackendFactory {
@@ -220,7 +234,8 @@ public:
   bool initialized;
 
 public:
-  PluginBackendFactory(VideoCaptureAPIs id, const char* baseName) : id_(id), baseName_(baseName), initialized(false) {
+  PluginBackendFactory(VideoCaptureAPIs id, const char* baseName)
+      : id_(id), baseName_(baseName), initialized(false) {
     // nothing, plugins are loaded on demand
   }
 
@@ -255,7 +270,8 @@ getPluginCandidates(const std::string& baseName) {
   const string baseName_u = toUpperCase(baseName);
   const FileSystemPath_t baseName_l_fs = toFileSystemPath(baseName_l);
   vector<FileSystemPath_t> paths;
-  const vector<string> paths_ = getConfigurationParameterPaths("OPENCV_VIDEOIO_PLUGIN_PATH", vector<string>());
+  const vector<string> paths_ =
+      getConfigurationParameterPaths("OPENCV_VIDEOIO_PLUGIN_PATH", vector<string>());
   if(paths_.size() != 0) {
     for(size_t i = 0; i < paths_.size(); i++) {
       paths.push_back(toFileSystemPath(paths_[i]));
@@ -267,15 +283,20 @@ getPluginCandidates(const std::string& baseName) {
 #ifndef CV_VIDEOIO_PLUGIN_SUBDIRECTORY
       paths.push_back(binaryLocation);
 #else
-      paths.push_back(binaryLocation + toFileSystemPath("/") + toFileSystemPath(CV_VIDEOIO_PLUGIN_SUBDIRECTORY_STR));
+      paths.push_back(binaryLocation + toFileSystemPath("/") +
+                      toFileSystemPath(CV_VIDEOIO_PLUGIN_SUBDIRECTORY_STR));
 #endif
     }
   }
-  const string default_expr = libraryPrefix() + "opencv_videoio_" + baseName_l + "*" + librarySuffix();
-  const string plugin_expr = getConfigurationParameterString((std::string("OPENCV_VIDEOIO_PLUGIN_") + baseName_u).c_str(), default_expr.c_str());
+  const string default_expr =
+      libraryPrefix() + "opencv_videoio_" + baseName_l + "*" + librarySuffix();
+  const string plugin_expr =
+      getConfigurationParameterString((std::string("OPENCV_VIDEOIO_PLUGIN_") + baseName_u).c_str(),
+                                      default_expr.c_str());
   vector<FileSystemPath_t> results;
 #ifdef _WIN32
-  FileSystemPath_t moduleName = toFileSystemPath(libraryPrefix() + "opencv_videoio_" + baseName_l + librarySuffix());
+  FileSystemPath_t moduleName =
+      toFileSystemPath(libraryPrefix() + "opencv_videoio_" + baseName_l + librarySuffix());
 #ifndef WINRT
   if(baseName_u == "FFMPEG") { // backward compatibility
     const wchar_t* ffmpeg_env_path = _wgetenv(L"OPENCV_FFMPEG_DLL_DIR");
@@ -293,7 +314,9 @@ getPluginCandidates(const std::string& baseName) {
   }
   results.push_back(moduleName);
 #else
-  CV_LOG_INFO(NULL, "VideoIO pluigin (" << baseName << "): glob is '" << plugin_expr << "', " << paths.size() << " location(s)");
+  CV_LOG_INFO(NULL,
+              "VideoIO pluigin (" << baseName << "): glob is '" << plugin_expr << "', "
+                                  << paths.size() << " location(s)");
   for(const string& path : paths) {
     if(path.empty())
       continue;
@@ -318,15 +341,19 @@ PluginBackendFactory::loadPlugin() {
       if(pluginBackend && pluginBackend->plugin_api_) {
         if(pluginBackend->plugin_api_->captureAPI != id_) {
           CV_LOG_ERROR(NULL,
-                       "Video I/O: plugin '" << pluginBackend->plugin_api_->api_header.api_description << "': unexpected backend ID: " << pluginBackend->plugin_api_->captureAPI << " vs " << (int)id_
-                                             << " (expected)");
+                       "Video I/O: plugin '"
+                           << pluginBackend->plugin_api_->api_header.api_description
+                           << "': unexpected backend ID: " << pluginBackend->plugin_api_->captureAPI
+                           << " vs " << (int)id_ << " (expected)");
         } else {
           backend = pluginBackend;
           return;
         }
       }
     } catch(...) {
-      CV_LOG_WARNING(NULL, "Video I/O: exception during plugin initialization: " << toPrintablePath(plugin) << ". SKIP");
+      CV_LOG_WARNING(NULL,
+                     "Video I/O: exception during plugin initialization: "
+                         << toPrintablePath(plugin) << ". SKIP");
     }
   }
 }
@@ -339,12 +366,15 @@ class PluginCapture : public cv::IVideoCapture {
 
 public:
   static Ptr<PluginCapture>
-  create(const OpenCV_VideoIO_Plugin_API_preview* plugin_api, const std::string& filename, int camera) {
+  create(const OpenCV_VideoIO_Plugin_API_preview* plugin_api,
+         const std::string& filename,
+         int camera) {
     CV_Assert(plugin_api);
     CvPluginCapture capture = NULL;
     if(plugin_api->Capture_open) {
       CV_Assert(plugin_api->Capture_release);
-      if(CV_ERROR_OK == plugin_api->Capture_open(filename.empty() ? 0 : filename.c_str(), camera, &capture)) {
+      if(CV_ERROR_OK ==
+         plugin_api->Capture_open(filename.empty() ? 0 : filename.c_str(), camera, &capture)) {
         CV_Assert(capture);
         return makePtr<PluginCapture>(plugin_api, capture);
       }
@@ -352,7 +382,8 @@ public:
     return Ptr<PluginCapture>();
   }
 
-  PluginCapture(const OpenCV_VideoIO_Plugin_API_preview* plugin_api, CvPluginCapture capture) : plugin_api_(plugin_api), capture_(capture) {
+  PluginCapture(const OpenCV_VideoIO_Plugin_API_preview* plugin_api, CvPluginCapture capture)
+      : plugin_api_(plugin_api), capture_(capture) {
     CV_Assert(plugin_api_);
     CV_Assert(capture_);
   }
@@ -360,7 +391,9 @@ public:
   ~PluginCapture() {
     CV_DbgAssert(plugin_api_->Capture_release);
     if(CV_ERROR_OK != plugin_api_->Capture_release(capture_))
-      CV_LOG_ERROR(NULL, "Video I/O: Can't release capture by plugin '" << plugin_api_->api_header.api_description << "'");
+      CV_LOG_ERROR(NULL,
+                   "Video I/O: Can't release capture by plugin '"
+                       << plugin_api_->api_header.api_description << "'");
     capture_ = NULL;
   }
   double
@@ -386,7 +419,13 @@ public:
     return false;
   }
   static CvResult CV_API_CALL
-  retrieve_callback(int stream_idx, const unsigned char* data, int step, int width, int height, int cn, void* userdata) {
+  retrieve_callback(int stream_idx,
+                    const unsigned char* data,
+                    int step,
+                    int width,
+                    int height,
+                    int cn,
+                    void* userdata) {
     CV_UNUSED(stream_idx);
     cv::_OutputArray* dst = static_cast<cv::_OutputArray*>(userdata);
     if(!dst)
@@ -398,7 +437,8 @@ public:
   retrieveFrame(int idx, cv::OutputArray img) CV_OVERRIDE {
     bool res = false;
     if(plugin_api_->Capture_retreive)
-      if(CV_ERROR_OK == plugin_api_->Capture_retreive(capture_, idx, retrieve_callback, (cv::_OutputArray*)&img))
+      if(CV_ERROR_OK ==
+         plugin_api_->Capture_retreive(capture_, idx, retrieve_callback, (cv::_OutputArray*)&img))
         res = true;
     return res;
   }
@@ -420,13 +460,19 @@ class PluginWriter : public cv::IVideoWriter {
 
 public:
   static Ptr<PluginWriter>
-  create(const OpenCV_VideoIO_Plugin_API_preview* plugin_api, const std::string& filename, int fourcc, double fps, const cv::Size& sz, bool isColor) {
+  create(const OpenCV_VideoIO_Plugin_API_preview* plugin_api,
+         const std::string& filename,
+         int fourcc,
+         double fps,
+         const cv::Size& sz,
+         bool isColor) {
     CV_Assert(plugin_api);
     CvPluginWriter writer = NULL;
     if(plugin_api->Writer_open) {
       CV_Assert(plugin_api->Writer_release);
       CV_Assert(!filename.empty());
-      if(CV_ERROR_OK == plugin_api->Writer_open(filename.c_str(), fourcc, fps, sz.width, sz.height, isColor, &writer)) {
+      if(CV_ERROR_OK == plugin_api->Writer_open(
+                            filename.c_str(), fourcc, fps, sz.width, sz.height, isColor, &writer)) {
         CV_Assert(writer);
         return makePtr<PluginWriter>(plugin_api, writer);
       }
@@ -434,7 +480,8 @@ public:
     return Ptr<PluginWriter>();
   }
 
-  PluginWriter(const OpenCV_VideoIO_Plugin_API_preview* plugin_api, CvPluginWriter writer) : plugin_api_(plugin_api), writer_(writer) {
+  PluginWriter(const OpenCV_VideoIO_Plugin_API_preview* plugin_api, CvPluginWriter writer)
+      : plugin_api_(plugin_api), writer_(writer) {
     CV_Assert(plugin_api_);
     CV_Assert(writer_);
   }
@@ -442,7 +489,9 @@ public:
   ~PluginWriter() {
     CV_DbgAssert(plugin_api_->Writer_release);
     if(CV_ERROR_OK != plugin_api_->Writer_release(writer_))
-      CV_LOG_ERROR(NULL, "Video I/O: Can't release writer by plugin '" << plugin_api_->api_header.api_description << "'");
+      CV_LOG_ERROR(NULL,
+                   "Video I/O: Can't release writer by plugin '"
+                       << plugin_api_->api_header.api_description << "'");
     writer_ = NULL;
   }
   double
@@ -469,8 +518,12 @@ public:
     cv::Mat img = arr.getMat();
     CV_DbgAssert(writer_);
     CV_Assert(plugin_api_->Writer_write);
-    if(CV_ERROR_OK != plugin_api_->Writer_write(writer_, img.data, (int)img.step[0], img.cols, img.rows, img.channels())) {
-      CV_LOG_DEBUG(NULL, "Video I/O: Can't write frame by plugin '" << plugin_api_->api_header.api_description << "'");
+    if(CV_ERROR_OK !=
+       plugin_api_->Writer_write(
+           writer_, img.data, (int)img.step[0], img.cols, img.rows, img.channels())) {
+      CV_LOG_DEBUG(NULL,
+                   "Video I/O: Can't write frame by plugin '"
+                       << plugin_api_->api_header.api_description << "'");
     }
     // TODO return bool result?
   }
@@ -484,7 +537,8 @@ Ptr<IVideoCapture>
 PluginBackend::createCapture(int camera) const {
   try {
     if(plugin_api_)
-      return PluginCapture::create(plugin_api_, std::string(),
+      return PluginCapture::create(plugin_api_,
+                                   std::string(),
                                    camera); //.staticCast<IVideoCapture>();
   } catch(...) {
     CV_LOG_DEBUG(NULL, "Video I/O: can't create camera capture: " << camera);
@@ -504,10 +558,12 @@ PluginBackend::createCapture(const std::string& filename) const {
 }
 
 Ptr<IVideoWriter>
-PluginBackend::createWriter(const std::string& filename, int fourcc, double fps, const cv::Size& sz, bool isColor) const {
+PluginBackend::createWriter(
+    const std::string& filename, int fourcc, double fps, const cv::Size& sz, bool isColor) const {
   try {
     if(plugin_api_)
-      return PluginWriter::create(plugin_api_, filename, fourcc, fps, sz, isColor); //.staticCast<IVideoWriter>();
+      return PluginWriter::create(
+          plugin_api_, filename, fourcc, fps, sz, isColor); //.staticCast<IVideoWriter>();
   } catch(...) {
     CV_LOG_DEBUG(NULL, "Video I/O: can't open writer: " << filename);
   }

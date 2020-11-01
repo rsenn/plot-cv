@@ -39,7 +39,8 @@ doCanny() {
   /// Detect edges using canny
   Canny(src_gray, canny_output, lowThreshold, lowThreshold * 2, 3);
   /// Find contours
-  findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+  findContours(
+      canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Draw contours
   final = cv::Mat::zeros(canny_output.size(), CV_8UC4);

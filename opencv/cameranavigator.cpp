@@ -81,7 +81,8 @@ FindLineCenter(raspicam::RaspiCam_Cv& Camera, int32_t nTick, int32_t& nCenterX, 
 #endif
 #if !TESTROI
     // printf("findContours image\n");
-    cv::findContours(roiImg, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+    cv::findContours(
+        roiImg, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
     int nMaxAreaContourIndex = -1;
     float fMaxArea = 0.f;
 
@@ -162,21 +163,33 @@ OffsetNavigator(ros::ServiceClient& client, float fXOffset) {
 
   srv2.request.nNewSpeed = 60; // max speed;
 
-  if(fabs(fXOffset) > 0.2 && fabs(fXOffset) < 0.4) {        // If the offset is more than 30% on either side from the center of the image
-    srv2.request.nNewSpeed = 60;                            // max speed;
-  } else if(fabs(fXOffset) > 0.4 && fabs(fXOffset) < 0.6) { // If the offset is more than 50% on either side from the center of the image
-    srv2.request.nNewSpeed = 65;                            // max speed;
-  } else if(fabs(fXOffset) > 0.6 && fabs(fXOffset) < 0.8) { // If the offset is more than 70% on either side from the center of the image
-    srv2.request.nNewSpeed = 70;                            // max speed;
-  } else if(fabs(fXOffset) > 0.8) {                         // If the offset is more than 90% on either side from the center of the image
-    srv2.request.nNewSpeed = 75;                            // max speed;
-  } else {                                                  // Move forward with the specified speed by the user
-    srv2.request.nNewSpeed = 60;                            // max speed;
-    srv2.request.nNewDirection = 1;                         // forward
+  if(fabs(fXOffset) > 0.2 &&
+     fabs(fXOffset) <
+         0.4) { // If the offset is more than 30% on either side from the center of the image
+    srv2.request.nNewSpeed = 60; // max speed;
+  } else if(fabs(fXOffset) > 0.4 &&
+            fabs(fXOffset) <
+                0.6) { // If the offset is more than 50% on either side from the center of the image
+    srv2.request.nNewSpeed = 65; // max speed;
+  } else if(fabs(fXOffset) > 0.6 &&
+            fabs(fXOffset) <
+                0.8) { // If the offset is more than 70% on either side from the center of the image
+    srv2.request.nNewSpeed = 70; // max speed;
+  } else if(fabs(fXOffset) >
+            0.8) { // If the offset is more than 90% on either side from the center of the image
+    srv2.request.nNewSpeed = 75;    // max speed;
+  } else {                          // Move forward with the specified speed by the user
+    srv2.request.nNewSpeed = 60;    // max speed;
+    srv2.request.nNewDirection = 1; // forward
   }
   if(client.call(srv2)) {
-    ROS_INFO("Set New Car direction=%d speed=%d", srv2.request.nNewDirection, srv2.request.nNewSpeed);
-    ROS_INFO("Last car status: RetCode=%d: last_dir=%d, last_speed=%d", srv2.response.nRetCode, srv2.response.nLastDirection, srv2.response.nLastSpeed);
+    ROS_INFO("Set New Car direction=%d speed=%d",
+             srv2.request.nNewDirection,
+             srv2.request.nNewSpeed);
+    ROS_INFO("Last car status: RetCode=%d: last_dir=%d, last_speed=%d",
+             srv2.response.nRetCode,
+             srv2.response.nLastDirection,
+             srv2.response.nLastSpeed);
     nRet = 1;
   } else {
     ROS_ERROR("Failed to call service set_direction_speed");
@@ -221,7 +234,8 @@ main(int argc, char** argv) {
   }
   cout << "Connected to camera =" << Camera.getId() << endl;
 
-  ros::ServiceClient client2 = n.serviceClient<wheels::cmd_set_car_direction_speed>("set_direction_speed");
+  ros::ServiceClient client2 =
+      n.serviceClient<wheels::cmd_set_car_direction_speed>("set_direction_speed");
 
   while(ros::ok()) {
     FindLineCenter(Camera, nTick, nCenterX, nCenterY);

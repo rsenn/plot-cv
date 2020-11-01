@@ -27,7 +27,9 @@ main() {
   cout << "Descriptor depth " << train_desc.depth() << endl;
 
   // FLANN based descriptor matcher object
-  flann::Index flannIndex(train_desc, flann::LshIndexParams(12, 20, 2), cvflann::FLANN_DIST_HAMMING);
+  flann::Index flannIndex(train_desc,
+                          flann::LshIndexParams(12, 20, 2),
+                          cvflann::FLANN_DIST_HAMMING);
 
   // VideoCapture object
   VideoCapture cap(0);

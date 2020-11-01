@@ -77,7 +77,8 @@ public:
   }
   virtual bool
   setProperty(int propId, double value) CV_OVERRIDE {
-    return ffmpegCapture ? icvSetCaptureProperty_FFMPEG_p(ffmpegCapture, propId, value) != 0 : false;
+    return ffmpegCapture ? icvSetCaptureProperty_FFMPEG_p(ffmpegCapture, propId, value) != 0
+                         : false;
   }
   virtual bool
   grabFrame() CV_OVERRIDE {
@@ -88,7 +89,8 @@ public:
     unsigned char* data = 0;
     int step = 0, width = 0, height = 0, cn = 0;
 
-    if(!ffmpegCapture || !icvRetrieveFrame_FFMPEG_p(ffmpegCapture, &data, &step, &width, &height, &cn))
+    if(!ffmpegCapture ||
+       !icvRetrieveFrame_FFMPEG_p(ffmpegCapture, &data, &step, &width, &height, &cn))
       return false;
     cv::Mat(height, width, CV_MAKETYPE(CV_8U, cn), data, step).copyTo(frame);
     return true;
@@ -136,7 +138,8 @@ namespace {
 class CvVideoWriter_FFMPEG_proxy CV_FINAL : public cv::IVideoWriter {
 public:
   CvVideoWriter_FFMPEG_proxy() { ffmpegWriter = 0; }
-  CvVideoWriter_FFMPEG_proxy(const cv::String& filename, int fourcc, double fps, cv::Size frameSize, bool isColor) {
+  CvVideoWriter_FFMPEG_proxy(
+      const cv::String& filename, int fourcc, double fps, cv::Size frameSize, bool isColor) {
     ffmpegWriter = 0;
     open(filename, fourcc, fps, frameSize, isColor);
   }
@@ -153,12 +156,19 @@ public:
       return;
     CV_Assert(image.depth() == CV_8U);
 
-    icvWriteFrame_FFMPEG_p(ffmpegWriter, (const uchar*)image.getMat().ptr(), (int)image.step(), image.cols(), image.rows(), image.channels(), 0);
+    icvWriteFrame_FFMPEG_p(ffmpegWriter,
+                           (const uchar*)image.getMat().ptr(),
+                           (int)image.step(),
+                           image.cols(),
+                           image.rows(),
+                           image.channels(),
+                           0);
   }
   virtual bool
   open(const cv::String& filename, int fourcc, double fps, cv::Size frameSize, bool isColor) {
     close();
-    ffmpegWriter = icvCreateVideoWriter_FFMPEG_p(filename.c_str(), fourcc, fps, frameSize.width, frameSize.height, isColor);
+    ffmpegWriter = icvCreateVideoWriter_FFMPEG_p(
+        filename.c_str(), fourcc, fps, frameSize.width, frameSize.height, isColor);
     return ffmpegWriter != 0;
   }
 
@@ -190,8 +200,10 @@ protected:
 } // namespace
 
 cv::Ptr<cv::IVideoWriter>
-cvCreateVideoWriter_FFMPEG_proxy(const std::string& filename, int fourcc, double fps, const cv::Size& frameSize, bool isColor) {
-  cv::Ptr<CvVideoWriter_FFMPEG_proxy> writer = cv::makePtr<CvVideoWriter_FFMPEG_proxy>(filename, fourcc, fps, frameSize, isColor != 0);
+cvCreateVideoWriter_FFMPEG_proxy(
+    const std::string& filename, int fourcc, double fps, const cv::Size& frameSize, bool isColor) {
+  cv::Ptr<CvVideoWriter_FFMPEG_proxy> writer =
+      cv::makePtr<CvVideoWriter_FFMPEG_proxy>(filename, fourcc, fps, frameSize, isColor != 0);
   if(writer && writer->isOpened())
     return writer;
   return cv::Ptr<cv::IVideoWriter>();
@@ -278,7 +290,10 @@ cv_capture_grab(CvPluginCapture handle) {
 }
 
 static CvResult CV_API_CALL
-cv_capture_retrieve(CvPluginCapture handle, int stream_idx, cv_videoio_retrieve_cb_t callback, void* userdata) {
+cv_capture_retrieve(CvPluginCapture handle,
+                    int stream_idx,
+                    cv_videoio_retrieve_cb_t callback,
+                    void* userdata) {
   if(!handle)
     return CV_ERROR_FAIL;
   try {
@@ -294,7 +309,13 @@ cv_capture_retrieve(CvPluginCapture handle, int stream_idx, cv_videoio_retrieve_
 }
 
 static CvResult CV_API_CALL
-cv_writer_open(const char* filename, int fourcc, double fps, int width, int height, int isColor, CV_OUT CvPluginWriter* handle) {
+cv_writer_open(const char* filename,
+               int fourcc,
+               double fps,
+               int width,
+               int height,
+               int isColor,
+               CV_OUT CvPluginWriter* handle) {
   Size sz(width, height);
   CvVideoWriter_FFMPEG_proxy* wrt = 0;
   try {
@@ -330,7 +351,8 @@ cv_writer_set_prop(CvPluginWriter /*handle*/, int /*prop*/, double /*val*/) {
 }
 
 static CvResult CV_API_CALL
-cv_writer_write(CvPluginWriter handle, const unsigned char* data, int step, int width, int height, int cn) {
+cv_writer_write(
+    CvPluginWriter handle, const unsigned char* data, int step, int width, int height, int cn) {
   if(!handle)
     return CV_ERROR_FAIL;
   try {
@@ -344,7 +366,14 @@ cv_writer_write(CvPluginWriter handle, const unsigned char* data, int step, int 
 }
 
 static const OpenCV_VideoIO_Plugin_API_preview plugin_api_v0 = {
-    {sizeof(OpenCV_VideoIO_Plugin_API_preview), ABI_VERSION, API_VERSION, CV_VERSION_MAJOR, CV_VERSION_MINOR, CV_VERSION_REVISION, CV_VERSION_STATUS, "FFmpeg OpenCV Video I/O plugin"},
+    {sizeof(OpenCV_VideoIO_Plugin_API_preview),
+     ABI_VERSION,
+     API_VERSION,
+     CV_VERSION_MAJOR,
+     CV_VERSION_MINOR,
+     CV_VERSION_REVISION,
+     CV_VERSION_STATUS,
+     "FFmpeg OpenCV Video I/O plugin"},
     /*  1*/ CAP_FFMPEG,
     /*  2*/ cv_capture_open,
     /*  3*/ cv_capture_release,
@@ -361,7 +390,9 @@ static const OpenCV_VideoIO_Plugin_API_preview plugin_api_v0 = {
 } // namespace cv
 
 const OpenCV_VideoIO_Plugin_API_preview*
-opencv_videoio_plugin_init_v0(int requested_abi_version, int requested_api_version, void* /*reserved=NULL*/) CV_NOEXCEPT {
+opencv_videoio_plugin_init_v0(int requested_abi_version,
+                              int requested_api_version,
+                              void* /*reserved=NULL*/) CV_NOEXCEPT {
   if(requested_abi_version != 0)
     return NULL;
   if(requested_api_version != 0)

@@ -62,7 +62,8 @@ findBrightPoint(cv::Mat& img) {
   std::vector<std::vector<cv::Point>> contours;
   std::vector<Vec4i> hierarchy;
   cv::Mat imgProcCopy = img.clone();
-  findContours(imgProcCopy, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+  findContours(
+      imgProcCopy, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
   if(contours.size() == 0)
     return cv::Point(-1, -1);
   int maxArea = 0, maxAreaIndex = -1;
@@ -116,7 +117,8 @@ main() {
     std::vector<std::vector<cv::Point>> wall;
     std::vector<Vec4i> hierarchy;
     cv::Mat imgProcCopy = imgProc.clone();
-    findContours(imgProcCopy, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+    findContours(
+        imgProcCopy, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
     int left = 1000, right = 0, up = 1000, down = 0;
     int maxArea = 0, maxAreaIndex = -1;
     for(int i = 0; i < contours.size(); i++) {
@@ -133,7 +135,8 @@ main() {
     int tempLeftD = 1000, tempRightD = 0, tempLeftDIndex = -1, tempRightDIndex = -1;
     if(maxAreaIndex != -1) {
       for(int j = 0; j < contours[maxAreaIndex].size(); j++) {
-        imgRaw.at<Vec3b>(contours[maxAreaIndex][j].y, contours[maxAreaIndex][j].x) = Vec3b(0, 0, 255);
+        imgRaw.at<Vec3b>(contours[maxAreaIndex][j].y, contours[maxAreaIndex][j].x) =
+            Vec3b(0, 0, 255);
         if(contours[maxAreaIndex][j].x < left)
           left = contours[maxAreaIndex][j].x;
         if(contours[maxAreaIndex][j].x > right)
@@ -219,7 +222,10 @@ main() {
       int sumX = 0, sumY = 0, sumCountX = 0, sumCountY = 0;
       // cout<<endl;
       for(int i = 0; i < lines.size(); i++) {
-        line(imgToMapProcCopy, cv::Point(lines[i][0], lines[i][1]), cv::Point(lines[i][2], lines[i][3]), Scalar(255));
+        line(imgToMapProcCopy,
+             cv::Point(lines[i][0], lines[i][1]),
+             cv::Point(lines[i][2], lines[i][3]),
+             Scalar(255));
         // cout<<"deltX:"<<abs(lines[i][0]-lines[i][2])<<"
         // deltY:"<<abs(lines[i][1]-lines[i][3])<<endl;
         if(abs(lines[i][0] - lines[i][2]) < 20) {

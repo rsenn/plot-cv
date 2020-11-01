@@ -125,21 +125,31 @@ main(int argc, const char** argv) {
           histimg = Scalar::all(0);
           int binW = histimg.cols / hsize;
           Mat buf(1, hsize, CV_8UC3);
-          for(int i = 0; i < hsize; i++) buf.at<Vec3b>(i) = Vec3b(saturate_cast<uchar>(i * 180. / hsize), 255, 255);
+          for(int i = 0; i < hsize; i++)
+            buf.at<Vec3b>(i) = Vec3b(saturate_cast<uchar>(i * 180. / hsize), 255, 255);
           cvtColor(buf, buf, CV_HSV2BGR);
 
           for(int i = 0; i < hsize; i++) {
             int val = saturate_cast<int>(hist.at<float>(i) * histimg.rows / 255);
-            rectangle(histimg, Point(i * binW, histimg.rows), Point((i + 1) * binW, histimg.rows - val), Scalar(buf.at<Vec3b>(i)), -1, 8);
+            rectangle(histimg,
+                      Point(i * binW, histimg.rows),
+                      Point((i + 1) * binW, histimg.rows - val),
+                      Scalar(buf.at<Vec3b>(i)),
+                      -1,
+                      8);
           }
         }
 
         calcBackProject(&hue, 1, 0, hist, backproj, &phranges);
         backproj &= mask;
-        RotatedRect trackBox = CamShift(backproj, trackWindow, TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 10, 1));
+        RotatedRect trackBox = CamShift(backproj,
+                                        trackWindow,
+                                        TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 10, 1));
         if(trackWindow.area() <= 1) {
           int cols = backproj.cols, rows = backproj.rows, r = (MIN(cols, rows) + 5) / 6;
-          trackWindow = Rect(trackWindow.x - r, trackWindow.y - r, trackWindow.x + r, trackWindow.y + r) & Rect(0, 0, cols, rows);
+          trackWindow =
+              Rect(trackWindow.x - r, trackWindow.y - r, trackWindow.x + r, trackWindow.y + r) &
+              Rect(0, 0, cols, rows);
         }
 
         if(backprojMode)

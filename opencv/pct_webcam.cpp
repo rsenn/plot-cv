@@ -127,7 +127,8 @@ main(int argc, char** argv) {
   }
 
   // create algorithm
-  Ptr<PCTSignatures> pctSignatures = PCTSignatures::create(initSampleCount, initSeedCount, PCTSignatures::UNIFORM);
+  Ptr<PCTSignatures> pctSignatures =
+      PCTSignatures::create(initSampleCount, initSeedCount, PCTSignatures::UNIFORM);
   pctSignatures->setGrayscaleBits(grayscaleBitsPerPixel);
 
   // open video capture device

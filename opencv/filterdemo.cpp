@@ -85,7 +85,8 @@ main(int argc, const char** argv) {
     if(frame.rows <= rows0)
       src = frame;
     else
-      resize(frame, src, Size(cvRound(480. * frame.cols / frame.rows), 480), 0, 0, INTER_LINEAR_EXACT);
+      resize(
+          frame, src, Size(cvRound(480. * frame.cols / frame.rows), 480), 0, 0, INTER_LINEAR_EXACT);
 
     float t = (float)getTickCount();
     ximgproc::anisotropicDiffusion(src, dst, alpha, sigma, niters);

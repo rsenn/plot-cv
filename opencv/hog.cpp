@@ -259,8 +259,26 @@ App::run() {
   else
     detector = cv::gpu::HOGDescriptor::getPeopleDetector48x96();
 
-  cv::gpu::HOGDescriptor gpu_hog(win_size, Size(16, 16), Size(8, 8), Size(8, 8), 9, cv::gpu::HOGDescriptor::DEFAULT_WIN_SIGMA, 0.2, gamma_corr, cv::gpu::HOGDescriptor::DEFAULT_NLEVELS);
-  cv::HOGDescriptor cpu_hog(win_size, Size(16, 16), Size(8, 8), Size(8, 8), 9, 1, -1, HOGDescriptor::L2Hys, 0.2, gamma_corr, cv::HOGDescriptor::DEFAULT_NLEVELS);
+  cv::gpu::HOGDescriptor gpu_hog(win_size,
+                                 Size(16, 16),
+                                 Size(8, 8),
+                                 Size(8, 8),
+                                 9,
+                                 cv::gpu::HOGDescriptor::DEFAULT_WIN_SIGMA,
+                                 0.2,
+                                 gamma_corr,
+                                 cv::gpu::HOGDescriptor::DEFAULT_NLEVELS);
+  cv::HOGDescriptor cpu_hog(win_size,
+                            Size(16, 16),
+                            Size(8, 8),
+                            Size(8, 8),
+                            9,
+                            1,
+                            -1,
+                            HOGDescriptor::L2Hys,
+                            0.2,
+                            gamma_corr,
+                            cv::HOGDescriptor::DEFAULT_NLEVELS);
   gpu_hog.setSVMDetector(detector);
   cpu_hog.setSVMDetector(detector);
 
@@ -318,9 +336,11 @@ App::run() {
       hogWorkBegin();
       if(use_gpu) {
         gpu_img.upload(img);
-        gpu_hog.detectMultiScale(gpu_img, found, hit_threshold, win_stride, Size(0, 0), scale, gr_threshold);
+        gpu_hog.detectMultiScale(
+            gpu_img, found, hit_threshold, win_stride, Size(0, 0), scale, gr_threshold);
       } else
-        cpu_hog.detectMultiScale(img, found, hit_threshold, win_stride, Size(0, 0), scale, gr_threshold);
+        cpu_hog.detectMultiScale(
+            img, found, hit_threshold, win_stride, Size(0, 0), scale, gr_threshold);
       hogWorkEnd();
 
       // Draw positive classified windows
@@ -330,11 +350,35 @@ App::run() {
       }
 
       if(use_gpu)
-        putText(img_to_show, "Mode: GPU", Point(5, 25), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
+        putText(img_to_show,
+                "Mode: GPU",
+                Point(5, 25),
+                FONT_HERSHEY_SIMPLEX,
+                1.,
+                Scalar(255, 100, 0),
+                2);
       else
-        putText(img_to_show, "Mode: CPU", Point(5, 25), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
-      putText(img_to_show, "FPS (HOG only): " + hogWorkFps(), Point(5, 65), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
-      putText(img_to_show, "FPS (total): " + workFps(), Point(5, 105), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
+        putText(img_to_show,
+                "Mode: CPU",
+                Point(5, 25),
+                FONT_HERSHEY_SIMPLEX,
+                1.,
+                Scalar(255, 100, 0),
+                2);
+      putText(img_to_show,
+              "FPS (HOG only): " + hogWorkFps(),
+              Point(5, 65),
+              FONT_HERSHEY_SIMPLEX,
+              1.,
+              Scalar(255, 100, 0),
+              2);
+      putText(img_to_show,
+              "FPS (total): " + workFps(),
+              Point(5, 105),
+              FONT_HERSHEY_SIMPLEX,
+              1.,
+              Scalar(255, 100, 0),
+              2);
       imshow("opencv_gpu_hog", img_to_show);
 
       if(args.src_is_video || args.src_is_camera)
@@ -344,7 +388,11 @@ App::run() {
 
       if(args.write_video) {
         if(!video_writer.isOpened()) {
-          video_writer.open(args.dst_video, CV_FOURCC('x', 'v', 'i', 'd'), args.dst_video_fps, img_to_show.size(), true);
+          video_writer.open(args.dst_video,
+                            CV_FOURCC('x', 'v', 'i', 'd'),
+                            args.dst_video_fps,
+                            img_to_show.size(),
+                            true);
           if(!video_writer.isOpened())
             throw std::runtime_error("can't create video writer");
         }

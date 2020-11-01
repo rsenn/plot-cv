@@ -14,27 +14,29 @@ using namespace std;
 
 enum STATE { NEUTRAL, RECORD, PREDICT };
 
-const char* help = "press 'r' to record images. once N trainimages were recorded, train the mace filter\n"
-                   "press 'p' to predict (twofactor mode will switch back to neutral after each prediction "
-                   "attempt)\n"
-                   "press 's' to save a trained model\n"
-                   "press 'esc' to return\n"
-                   "any other key will reset to neutral state\n";
+const char* help =
+    "press 'r' to record images. once N trainimages were recorded, train the mace filter\n"
+    "press 'p' to predict (twofactor mode will switch back to neutral after each prediction "
+    "attempt)\n"
+    "press 's' to save a trained model\n"
+    "press 'esc' to return\n"
+    "any other key will reset to neutral state\n";
 
 int
 main(int argc, char** argv) {
-  CommandLineParser parser(argc,
-                           argv,
-                           "{ help h usage ? ||     show this help message }"
-                           "{ cascade c      ||     (required) path to a cascade file for face detection }"
-                           "{ pre p          ||     load a pretrained mace filter file, saved from previous session  "
-                           "(e.g. my.xml.gz) }"
-                           "{ num n          |50|   num train images }"
-                           "{ size s         |64|   image size }"
-                           "{ twofactor t    ||     pass phrase(text) for 2 factor authentification.\n"
-                           "                     (random convolute images seeded with the crc of this)\n"
-                           "                     users will get prompted to guess the secrect, additional to the image. "
-                           "}");
+  CommandLineParser parser(
+      argc,
+      argv,
+      "{ help h usage ? ||     show this help message }"
+      "{ cascade c      ||     (required) path to a cascade file for face detection }"
+      "{ pre p          ||     load a pretrained mace filter file, saved from previous session  "
+      "(e.g. my.xml.gz) }"
+      "{ num n          |50|   num train images }"
+      "{ size s         |64|   image size }"
+      "{ twofactor t    ||     pass phrase(text) for 2 factor authentification.\n"
+      "                     (random convolute images seeded with the crc of this)\n"
+      "                     users will get prompted to guess the secrect, additional to the image. "
+      "}");
   String cascade = parser.get<String>("cascade");
   if(parser.has("help") || cascade.empty()) {
     parser.printMessage();

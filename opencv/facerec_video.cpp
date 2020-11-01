@@ -53,7 +53,8 @@ main(int argc, const char* argv[]) {
   // Check for valid command line arguments, print usage
   // if no arguments were given.
   if(argc != 4) {
-    cout << "usage: " << argv[0] << " </path/to/haar_cascade> </path/to/csv.ext> </path/to/device id>" << endl;
+    cout << "usage: " << argv[0]
+         << " </path/to/haar_cascade> </path/to/csv.ext> </path/to/device id>" << endl;
     cout << "\t </path/to/haar_cascade> -- Path to the Haar Cascade for face detection." << endl;
     cout << "\t </path/to/csv.ext> -- Path to the CSV file with the face database." << endl;
     cout << "\t <device id> -- The webcam device id to grab frames from." << endl;
@@ -140,7 +141,8 @@ main(int argc, const char* argv[]) {
       int pos_x = std::max(face_i.tl().x - 10, 0);
       int pos_y = std::max(face_i.tl().y - 10, 0);
       // And now put it into the image:
-      putText(original, box_text, Point(pos_x, pos_y), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0, 255, 0), 2.0);
+      putText(
+          original, box_text, Point(pos_x, pos_y), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0, 255, 0), 2.0);
     }
     // Show the result:
     imshow("face_recognizer", original);

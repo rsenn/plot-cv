@@ -135,7 +135,8 @@ Tserial::connect(char* port_arg, int rate_arg, serial_parity parity_arg) {
     wchar_t wtext[20];
     mbstowcs(wtext, text, strlen(text) + 1); // Plus null
     LPWSTR ptr = (LPWSTR)port;
-    serial_handle = CreateFile(ptr, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, NULL, NULL);
+    serial_handle =
+        CreateFile(ptr, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, NULL, NULL);
     // opening serial port
 
     if(serial_handle != INVALID_HANDLE_VALUE) {

@@ -119,7 +119,7 @@ JSValue size_proto, size_class;
 JSClassID js_size_class_id;
 
 JSClassDef js_size_class = {
-   .class_name =  "Size",
+    .class_name = "Size",
     .finalizer = js_size_finalizer,
 };
 

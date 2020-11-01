@@ -227,9 +227,9 @@ js_cv_split(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
 
   if(dst.size() >= src->channels()) {
 
-    /*  std::transform(js_begin(ctx, argv[1]), js_end(ctx, argv[1]), std::back_inserter(dst), [ctx, src](const JSValue& v) -> cv::Mat {
-        cv::Mat* mat = js_mat_data(ctx, v);
-        return mat == nullptr ? cv::Mat::zeros(src->rows, src->cols, src->type()) : *mat;
+    /*  std::transform(js_begin(ctx, argv[1]), js_end(ctx, argv[1]), std::back_inserter(dst), [ctx,
+      src](const JSValue& v) -> cv::Mat { cv::Mat* mat = js_mat_data(ctx, v); return mat == nullptr
+      ? cv::Mat::zeros(src->rows, src->cols, src->type()) : *mat;
       });
   */
 
@@ -324,7 +324,10 @@ js_cv_create_trackbar(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
         Trackbar const& data = *static_cast<Trackbar*>(ptr);
 
         if(JS_IsFunction(data.ctx, data.handler)) {
-          JSValueConst argv[] = {JS_NewInt32(data.ctx, newValue), data.count, data.name, data.window};
+          JSValueConst argv[] = {JS_NewInt32(data.ctx, newValue),
+                                 data.count,
+                                 data.name,
+                                 data.window};
 
           JS_Call(data.ctx, data.handler, JS_UNDEFINED, 4, argv);
         }

@@ -53,7 +53,8 @@ public:
       }
 
       // erase old contours (seen 16 frames ago) -- CHANGED TO 100 frames
-      unregisterPersonIf([&](const Person* p) { return frameNumber - lastFrameWherePersonWasSeen[p] > fps; });
+      unregisterPersonIf(
+          [&](const Person* p) { return frameNumber - lastFrameWherePersonWasSeen[p] > fps; });
 
       // and then process the current frame
       processFrame(frame);
@@ -149,7 +150,8 @@ private:
       for(int i = 0; i < person->trace.size() - 2; i++) {
         if(intersect(person->trace[i], person->trace[i + 1], line.start, line.end)) {
           if(direction != NULL) {
-            *direction = person->trace[i].y > line.start.y ? LINE_DIRECTION_UP : LINE_DIRECTION_DOWN;
+            *direction =
+                person->trace[i].y > line.start.y ? LINE_DIRECTION_UP : LINE_DIRECTION_DOWN;
           }
 
           linesCrossedByPerson[person].push_back(line);

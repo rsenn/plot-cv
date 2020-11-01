@@ -25,7 +25,8 @@ help(std::string errorMessage) {
   std::cout << "\t if processing an image or video file, then, specify the path and filename of "
                "the target to process"
             << std::endl;
-  std::cout << "\t leave empty if processing video stream coming from a connected video device" << std::endl;
+  std::cout << "\t leave empty if processing video stream coming from a connected video device"
+            << std::endl;
   std::cout << "\t[Optional : activate retina log sampling] : an optional last parameter can be "
                "specified for retina "
                "spatial log sampling"
@@ -35,7 +36,8 @@ help(std::string errorMessage) {
             << std::endl;
   std::cout << "\nExamples:" << std::endl;
   std::cout << "\t-Image processing : ./retinaDemo -image lena.jpg" << std::endl;
-  std::cout << "\t-Image processing with log sampling : ./retinaDemo -image lena.jpg log" << std::endl;
+  std::cout << "\t-Image processing with log sampling : ./retinaDemo -image lena.jpg log"
+            << std::endl;
   std::cout << "\t-Video processing : ./retinaDemo -video myMovie.mp4" << std::endl;
   std::cout << "\t-Live video processing : ./retinaDemo -video" << std::endl;
   std::cout << "\nPlease start again with new parameters" << std::endl;
@@ -67,7 +69,8 @@ main(int argc, char* argv[]) {
     return -1;
   }
 
-  bool useLogSampling = !strcmp(argv[argc - 1], "log"); // check if user wants retina log sampling processing
+  bool useLogSampling =
+      !strcmp(argv[argc - 1], "log"); // check if user wants retina log sampling processing
 
   std::string inputMediaType = argv[1];
 
@@ -82,7 +85,8 @@ main(int argc, char* argv[]) {
     // image processing case
     inputFrame = cv::imread(std::string(argv[2]), 1); // load image in RGB mode
   } else if(!strcmp(inputMediaType.c_str(), "-video")) {
-    if(argc == 2 || (argc == 3 && useLogSampling)) { // attempt to grab images from a video capture device
+    if(argc == 2 ||
+       (argc == 3 && useLogSampling)) { // attempt to grab images from a video capture device
       videoCapture.open(0);
     } else { // attempt to grab images from a video filestream
       std::cout << "RetinaDemo: processing video stream " << argv[2] << std::endl;

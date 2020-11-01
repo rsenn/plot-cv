@@ -12,15 +12,16 @@ using namespace cv::motempl;
 
 static void
 help(void) {
-  printf("\nThis program demonstrated the use of motion templates -- basically using the gradients\n"
-         "of thresholded layers of decaying frame differencing. New movements are stamped on top with "
-         "floating system\n"
-         "time code and motions too old are thresholded away. This is the 'motion history file'. The "
-         "program reads "
-         "from the camera of your choice or from\n"
-         "a file. Gradients of motion history are used to detect direction of motion etc\n"
-         "Usage :\n"
-         "./motempl [camera number 0-n or file name, default is camera 0]\n");
+  printf(
+      "\nThis program demonstrated the use of motion templates -- basically using the gradients\n"
+      "of thresholded layers of decaying frame differencing. New movements are stamped on top with "
+      "floating system\n"
+      "time code and motions too old are thresholded away. This is the 'motion history file'. The "
+      "program reads "
+      "from the camera of your choice or from\n"
+      "a file. Gradients of motion history are used to detect direction of motion etc\n"
+      "Usage :\n"
+      "./motempl [camera number 0-n or file name, default is camera 0]\n");
 }
 // various tracking parameters (in seconds)
 const double MHI_DURATION = 5;
@@ -125,7 +126,14 @@ update_mhi(const Mat& img, Mat& dst, int diff_threshold) {
     center = Point((comp_rect.x + comp_rect.width / 2), (comp_rect.y + comp_rect.height / 2));
 
     circle(img, center, cvRound(magnitude * 1.2), color, 3, 16, 0);
-    line(img, center, Point(cvRound(center.x + magnitude * cos(angle * CV_PI / 180)), cvRound(center.y - magnitude * sin(angle * CV_PI / 180))), color, 3, 16, 0);
+    line(img,
+         center,
+         Point(cvRound(center.x + magnitude * cos(angle * CV_PI / 180)),
+               cvRound(center.y - magnitude * sin(angle * CV_PI / 180))),
+         color,
+         3,
+         16,
+         0);
   }
 }
 

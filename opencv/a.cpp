@@ -185,11 +185,23 @@ main() {
     inRange(matProcessed, Scalar(Y1, Cr1, Cb1), Scalar(Y2, Cr2, Cb2), matProcessed);
     bitwise_not(matProcessed, matProcessed);
 
-    erode(matProcessed, matProcessed, getStructuringElement(MORPH_ELLIPSE, Size(morph_pixel, morph_pixel)));
+    erode(matProcessed,
+          matProcessed,
+          getStructuringElement(MORPH_ELLIPSE, Size(morph_pixel, morph_pixel)));
 
-    dilate(matProcessed, matProcessed, getStructuringElement(MORPH_ELLIPSE, Size(morph_pixel, morph_pixel)));
+    dilate(matProcessed,
+           matProcessed,
+           getStructuringElement(MORPH_ELLIPSE, Size(morph_pixel, morph_pixel)));
 
-    HoughCircles(matProcessed, v3fCircles, CV_HOUGH_GRADIENT, acc_res, min_dis, high_thres, low_thres, min_rad, max_rad);
+    HoughCircles(matProcessed,
+                 v3fCircles,
+                 CV_HOUGH_GRADIENT,
+                 acc_res,
+                 min_dis,
+                 high_thres,
+                 low_thres,
+                 min_rad,
+                 max_rad);
 
     for(int i = 0; i < v3fCircles.size(); i++) {
 
@@ -244,42 +256,118 @@ main() {
       stringstream j;
       j << fixed << setprecision(2) << Jarak;
       S_Jarak = j.str();
-      putText(matOriginal, S_Jarak, Point(x_center, (y_center + 10)), FONT_HERSHEY_SIMPLEX, .7, Scalar(255, 0, 0), 2, 8, false);
-      putText(matOriginal, "cm", Point((x_center + 80), (y_center + 10)), FONT_HERSHEY_PLAIN, .7, Scalar(255, 0, 0), 1, 8, false);
+      putText(matOriginal,
+              S_Jarak,
+              Point(x_center, (y_center + 10)),
+              FONT_HERSHEY_SIMPLEX,
+              .7,
+              Scalar(255, 0, 0),
+              2,
+              8,
+              false);
+      putText(matOriginal,
+              "cm",
+              Point((x_center + 80), (y_center + 10)),
+              FONT_HERSHEY_PLAIN,
+              .7,
+              Scalar(255, 0, 0),
+              1,
+              8,
+              false);
 
       stringstream x;
       x << x_center;
       string S_x_center = x.str();
-      putText(matOriginal, "X ", Point(185, 220), FONT_HERSHEY_PLAIN, .7, Scalar(0, 0, 0), 1, 4, false);
-      putText(matOriginal, S_x_center, Point(195, 220), FONT_HERSHEY_PLAIN, .7, Scalar(255, 255, 255), 1, 4, false);
+      putText(
+          matOriginal, "X ", Point(185, 220), FONT_HERSHEY_PLAIN, .7, Scalar(0, 0, 0), 1, 4, false);
+      putText(matOriginal,
+              S_x_center,
+              Point(195, 220),
+              FONT_HERSHEY_PLAIN,
+              .7,
+              Scalar(255, 255, 255),
+              1,
+              4,
+              false);
 
       stringstream y;
       y << y_center;
       string S_y_center = y.str();
-      putText(matOriginal, "Y ", Point(185, 230), FONT_HERSHEY_PLAIN, .7, Scalar(0, 0, 0), 1, 4, false);
-      putText(matOriginal, S_y_center, Point(195, 230), FONT_HERSHEY_PLAIN, .7, Scalar(255, 255, 255), 1, 4, false);
+      putText(
+          matOriginal, "Y ", Point(185, 230), FONT_HERSHEY_PLAIN, .7, Scalar(0, 0, 0), 1, 4, false);
+      putText(matOriginal,
+              S_y_center,
+              Point(195, 230),
+              FONT_HERSHEY_PLAIN,
+              .7,
+              Scalar(255, 255, 255),
+              1,
+              4,
+              false);
 
       stringstream d;
       d << Diameter;
       string S_Diameter = d.str();
-      putText(matOriginal, "D ", Point(230, 230), FONT_HERSHEY_PLAIN, .7, Scalar(0, 0, 0), 1, 4, false);
-      putText(matOriginal, S_Diameter, Point(270, 230), FONT_HERSHEY_PLAIN, .7, Scalar(255, 255, 255), 1, 4, false);
+      putText(
+          matOriginal, "D ", Point(230, 230), FONT_HERSHEY_PLAIN, .7, Scalar(0, 0, 0), 1, 4, false);
+      putText(matOriginal,
+              S_Diameter,
+              Point(270, 230),
+              FONT_HERSHEY_PLAIN,
+              .7,
+              Scalar(255, 255, 255),
+              1,
+              4,
+              false);
 
-      putText(matOriginal, "Posisi ", Point(230, 220), FONT_HERSHEY_PLAIN, .7, Scalar(0, 0, 0), 1, 4, false);
-      putText(matOriginal, posisi, Point(270, 220), FONT_HERSHEY_PLAIN, .7, Scalar(255, 255, 255), 1, 4, false);
+      putText(matOriginal,
+              "Posisi ",
+              Point(230, 220),
+              FONT_HERSHEY_PLAIN,
+              .7,
+              Scalar(0, 0, 0),
+              1,
+              4,
+              false);
+      putText(matOriginal,
+              posisi,
+              Point(270, 220),
+              FONT_HERSHEY_PLAIN,
+              .7,
+              Scalar(255, 255, 255),
+              1,
+              4,
+              false);
 
       stringstream s;
       s << fixed << setprecision(2) << Sudut;
       S_Sudut = s.str();
-      putText(matOriginal, "Sudut ", Point(230, 210), FONT_HERSHEY_PLAIN, .7, Scalar(0, 0, 0), 1, 4, false);
-      putText(matOriginal, S_Sudut, Point(270, 210), FONT_HERSHEY_PLAIN, .7, Scalar(255, 255, 255), 1, 4, false);
+      putText(matOriginal,
+              "Sudut ",
+              Point(230, 210),
+              FONT_HERSHEY_PLAIN,
+              .7,
+              Scalar(0, 0, 0),
+              1,
+              4,
+              false);
+      putText(matOriginal,
+              S_Sudut,
+              Point(270, 210),
+              FONT_HERSHEY_PLAIN,
+              .7,
+              Scalar(255, 255, 255),
+              1,
+              4,
+              false);
     }
 
     line(matOriginal, Point(160, 240), Point(160, 0), Scalar(0, 0, 0), 1, CV_AA);
     imshow("tresh", matProcessed);
     imshow("OUTPUT", matOriginal);
 
-    cout << "\t X= " << x_center << "\t Y= " << y_center << "\t DIAMETER= " << Diameter << "\t JARAK= " << S_Jarak << "\t SUDUT= " << S_Sudut << endl;
+    cout << "\t X= " << x_center << "\t Y= " << y_center << "\t DIAMETER= " << Diameter
+         << "\t JARAK= " << S_Jarak << "\t SUDUT= " << S_Sudut << endl;
 
     charCheckForEscKey = waitKey(1);
   }

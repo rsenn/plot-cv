@@ -78,7 +78,14 @@ fft(const cv::Mat& src, cv::Mat& dst) {
   cv::Mat padded;
   int m = cv::getOptimalDFTSize(src.rows);
   int n = cv::getOptimalDFTSize(src.cols);
-  cv::copyMakeBorder(logimg, padded, 0, m - logimg.rows, 0, n - logimg.cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
+  cv::copyMakeBorder(logimg,
+                     padded,
+                     0,
+                     m - logimg.rows,
+                     0,
+                     n - logimg.cols,
+                     cv::BORDER_CONSTANT,
+                     cv::Scalar::all(0));
 
   // add imaginary column to mat and apply fft
   cv::Mat plane[] = {cv::Mat_<float>(padded), cv::Mat::zeros(padded.size(), CV_32F)};

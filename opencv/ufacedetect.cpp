@@ -32,7 +32,12 @@ help() {
        << endl;
 }
 
-void detectAndDraw(UMat& img, Mat& canvas, CascadeClassifier& cascade, CascadeClassifier& nestedCascade, double scale, bool tryflip);
+void detectAndDraw(UMat& img,
+                   Mat& canvas,
+                   CascadeClassifier& cascade,
+                   CascadeClassifier& nestedCascade,
+                   double scale,
+                   bool tryflip);
 
 string cascadeName = "../../data/haarcascades/haarcascade_frontalface_alt.xml";
 string nestedCascadeName = "../../data/haarcascades/haarcascade_eye_tree_eyeglasses.xml";
@@ -49,11 +54,12 @@ main(int argc, const char** argv) {
   CascadeClassifier cascade, nestedCascade;
   double scale;
 
-  cv::CommandLineParser parser(argc,
-                               argv,
-                               "{cascade|../../data/haarcascades/haarcascade_frontalface_alt.xml|}"
-                               "{nested-cascade|../../data/haarcascades/haarcascade_eye_tree_eyeglasses.xml|}"
-                               "{help h ||}{scale|1|}{try-flip||}{@filename||}");
+  cv::CommandLineParser parser(
+      argc,
+      argv,
+      "{cascade|../../data/haarcascades/haarcascade_frontalface_alt.xml|}"
+      "{nested-cascade|../../data/haarcascades/haarcascade_eye_tree_eyeglasses.xml|}"
+      "{help h ||}{scale|1|}{try-flip||}{@filename||}");
   if(parser.has("help")) {
     help();
     return 0;
@@ -141,10 +147,22 @@ main(int argc, const char** argv) {
 }
 
 void
-detectAndDraw(UMat& img, Mat& canvas, CascadeClassifier& cascade, CascadeClassifier& nestedCascade, double scale, bool tryflip) {
+detectAndDraw(UMat& img,
+              Mat& canvas,
+              CascadeClassifier& cascade,
+              CascadeClassifier& nestedCascade,
+              double scale,
+              bool tryflip) {
   double t = 0;
   vector<Rect> faces, faces2;
-  const static Scalar colors[] = {Scalar(255, 0, 0), Scalar(255, 128, 0), Scalar(255, 255, 0), Scalar(0, 255, 0), Scalar(0, 128, 255), Scalar(0, 255, 255), Scalar(0, 0, 255), Scalar(255, 0, 255)};
+  const static Scalar colors[] = {Scalar(255, 0, 0),
+                                  Scalar(255, 128, 0),
+                                  Scalar(255, 255, 0),
+                                  Scalar(0, 255, 0),
+                                  Scalar(0, 128, 255),
+                                  Scalar(0, 255, 255),
+                                  Scalar(0, 0, 255),
+                                  Scalar(255, 0, 255)};
   static UMat gray, smallImg;
 
   t = (double)getTickCount();
@@ -188,7 +206,13 @@ detectAndDraw(UMat& img, Mat& canvas, CascadeClassifier& cascade, CascadeClassif
   double alpha = nframes > 50 ? 0.01 : 1. / nframes;
   avgfps = avgfps * (1 - alpha) + fps * alpha;
 
-  putText(canvas, format("OpenCL: %s, fps: %.1f", ocl::useOpenCL() ? "ON" : "OFF", avgfps), Point(50, 30), FONT_HERSHEY_SIMPLEX, 0.8, Scalar(0, 255, 0), 2);
+  putText(canvas,
+          format("OpenCL: %s, fps: %.1f", ocl::useOpenCL() ? "ON" : "OFF", avgfps),
+          Point(50, 30),
+          FONT_HERSHEY_SIMPLEX,
+          0.8,
+          Scalar(0, 255, 0),
+          2);
 
   for(size_t i = 0; i < faces.size(); i++) {
     Rect r = faces[i];
@@ -204,7 +228,13 @@ detectAndDraw(UMat& img, Mat& canvas, CascadeClassifier& cascade, CascadeClassif
       radius = cvRound((r.width + r.height) * 0.25 * scale);
       circle(canvas, center, radius, color, 3, 8, 0);
     } else
-      rectangle(canvas, Point(cvRound(r.x * scale), cvRound(r.y * scale)), Point(cvRound((r.x + r.width - 1) * scale), cvRound((r.y + r.height - 1) * scale)), color, 3, 8, 0);
+      rectangle(canvas,
+                Point(cvRound(r.x * scale), cvRound(r.y * scale)),
+                Point(cvRound((r.x + r.width - 1) * scale), cvRound((r.y + r.height - 1) * scale)),
+                color,
+                3,
+                8,
+                0);
     if(nestedCascade.empty())
       continue;
     UMat smallImgROI = smallImg(r);

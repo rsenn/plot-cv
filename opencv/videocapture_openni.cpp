@@ -84,7 +84,14 @@ printCommandLineParams() {
 }
 
 static void
-parseCommandLine(int argc, char* argv[], bool& isColorizeDisp, bool& isFixedMaxDisp, int& imageMode, bool retrievedImageFlags[], string& filename, bool& isFileReading) {
+parseCommandLine(int argc,
+                 char* argv[],
+                 bool& isColorizeDisp,
+                 bool& isFixedMaxDisp,
+                 int& imageMode,
+                 bool retrievedImageFlags[],
+                 string& filename,
+                 bool& isFileReading) {
   filename.clear();
   cv::CommandLineParser parser(argc, argv, "{h help||}{cd|1|}{fmd|0|}{mode|-1|}{m|010100|}{r||}");
   if(parser.has("h")) {
@@ -125,7 +132,14 @@ main(int argc, char* argv[]) {
   bool retrievedImageFlags[6];
   string filename;
   bool isVideoReading;
-  parseCommandLine(argc, argv, isColorizeDisp, isFixedMaxDisp, imageMode, retrievedImageFlags, filename, isVideoReading);
+  parseCommandLine(argc,
+                   argv,
+                   isColorizeDisp,
+                   isFixedMaxDisp,
+                   imageMode,
+                   retrievedImageFlags,
+                   filename,
+                   isVideoReading);
 
   cout << "Device opening ..." << endl;
   VideoCapture capture;
@@ -147,12 +161,22 @@ main(int argc, char* argv[]) {
   if(!isVideoReading && imageMode >= 0) {
     bool modeRes = false;
     switch(imageMode) {
-      case 0: modeRes = capture.set(CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CAP_OPENNI_VGA_30HZ); break;
-      case 1: modeRes = capture.set(CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CAP_OPENNI_SXGA_15HZ); break;
-      case 2: modeRes = capture.set(CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CAP_OPENNI_SXGA_30HZ); break;
+      case 0:
+        modeRes = capture.set(CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CAP_OPENNI_VGA_30HZ);
+        break;
+      case 1:
+        modeRes = capture.set(CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CAP_OPENNI_SXGA_15HZ);
+        break;
+      case 2:
+        modeRes = capture.set(CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CAP_OPENNI_SXGA_30HZ);
+        break;
       // The following modes are only supported by the Xtion Pro Live
-      case 3: modeRes = capture.set(CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CAP_OPENNI_QVGA_30HZ); break;
-      case 4: modeRes = capture.set(CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CAP_OPENNI_QVGA_60HZ); break;
+      case 3:
+        modeRes = capture.set(CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CAP_OPENNI_QVGA_30HZ);
+        break;
+      case 4:
+        modeRes = capture.set(CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE, CAP_OPENNI_QVGA_60HZ);
+        break;
       default: CV_Error(Error::StsBadArg, "Unsupported image mode property.\n");
     }
     if(!modeRes)
@@ -190,8 +214,10 @@ main(int argc, char* argv[]) {
 
   if(capture.get(CAP_OPENNI_IMAGE_GENERATOR_PRESENT)) {
     cout << "\nImage generator output mode:" << endl
-         << "FRAME_WIDTH   " << capture.get(CAP_OPENNI_IMAGE_GENERATOR + CAP_PROP_FRAME_WIDTH) << endl
-         << "FRAME_HEIGHT  " << capture.get(CAP_OPENNI_IMAGE_GENERATOR + CAP_PROP_FRAME_HEIGHT) << endl
+         << "FRAME_WIDTH   " << capture.get(CAP_OPENNI_IMAGE_GENERATOR + CAP_PROP_FRAME_WIDTH)
+         << endl
+         << "FRAME_HEIGHT  " << capture.get(CAP_OPENNI_IMAGE_GENERATOR + CAP_PROP_FRAME_HEIGHT)
+         << endl
          << "FPS           " << capture.get(CAP_OPENNI_IMAGE_GENERATOR + CAP_PROP_FPS) << endl;
   } else {
     cout << "\nDevice doesn't contain image generator or it is not selected." << endl;
@@ -228,7 +254,9 @@ main(int argc, char* argv[]) {
       if(retrievedImageFlags[1] && capture.retrieve(disparityMap, CAP_OPENNI_DISPARITY_MAP)) {
         if(isColorizeDisp) {
           Mat colorDisparityMap;
-          colorizeDisparity(disparityMap, colorDisparityMap, isFixedMaxDisp ? getMaxDisparity(capture) : -1);
+          colorizeDisparity(disparityMap,
+                            colorDisparityMap,
+                            isFixedMaxDisp ? getMaxDisparity(capture) : -1);
           Mat validColorDisparityMap;
           colorDisparityMap.copyTo(validColorDisparityMap, disparityMap != 0);
           imshow("colorized disparity map", validColorDisparityMap);

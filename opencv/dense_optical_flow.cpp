@@ -46,12 +46,13 @@ fitSize(const Size& sz, const Size& bounds) {
 
 int
 main(int argc, const char* argv[]) {
-  const char* keys = "{ h help     |     | print help message }"
-                     "{ c camera   | 0   | capture video from camera (device index starting from 0) }"
-                     "{ a algorithm | fb | algorithm (supported: 'fb', 'dis')}"
-                     "{ m cpu      |     | run without OpenCL }"
-                     "{ v video    |     | use video as input }"
-                     "{ o original |     | use original frame size (do not resize to 640x480)}";
+  const char* keys =
+      "{ h help     |     | print help message }"
+      "{ c camera   | 0   | capture video from camera (device index starting from 0) }"
+      "{ a algorithm | fb | algorithm (supported: 'fb', 'dis')}"
+      "{ m cpu      |     | run without OpenCL }"
+      "{ v video    |     | use video as input }"
+      "{ o original |     | use original frame size (do not resize to 640x480)}";
   CommandLineParser parser(argc, argv, keys);
   parser.about("This sample demonstrates using of dense optical flow algorithms.");
   if(parser.has("help")) {
@@ -74,7 +75,8 @@ main(int argc, const char* argv[]) {
   else
     cap.open(filename);
   if(!cap.isOpened()) {
-    cout << "Can not open video stream: '" << (filename.empty() ? "<camera>" : filename) << "'" << endl;
+    cout << "Can not open video stream: '" << (filename.empty() ? "<camera>" : filename) << "'"
+         << endl;
     return 2;
   }
 
@@ -116,7 +118,8 @@ main(int argc, const char* argv[]) {
         buf << "Algo: " << algorithm << " | "
             << "Mode: " << (useCPU ? "CPU" : "GPU") << " | "
             << "FPS: " << fixed << setprecision(1) << (getTickFrequency() / (double)t);
-        putText(img, buf.str(), Point(10, 30), FONT_HERSHEY_PLAIN, 2.0, Scalar(0, 0, 255), 2, LINE_AA);
+        putText(
+            img, buf.str(), Point(10, 30), FONT_HERSHEY_PLAIN, 2.0, Scalar(0, 0, 255), 2, LINE_AA);
         imshow("Dense optical flow field", img);
       }
     }

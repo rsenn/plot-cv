@@ -19,7 +19,8 @@ int
 main(int argc, char* argv[]) {
   QCoreApplication app(argc, argv);
   for(int i{}; i < argc; i++) cout << argv[i] << std::endl;
-  cout << "OpenCV version: " << CV_MAJOR_VERSION << "." << CV_MINOR_VERSION << "." << CV_SUBMINOR_VERSION << std::endl;
+  cout << "OpenCV version: " << CV_MAJOR_VERSION << "." << CV_MINOR_VERSION << "."
+       << CV_SUBMINOR_VERSION << std::endl;
   cout << "Qt version: " << QT_VERSION_STR << endl;
 
   //
