@@ -29,15 +29,14 @@ async function main(...args) {
 
   let image;
   //image = cv.imread('../an-tronics/images/5.19.jpg');
-  image = cv.imread(args[0] ||  'OpenOTA-board.png');
-//  image = cv.imread('rainbow.png');
+  image = cv.imread(args[0] || 'OpenOTA-board.png');
+  //  image = cv.imread('rainbow.png');
   let labImage = new Mat();
   let rgbImage = new Mat();
   let labChannels = [new Mat(), new Mat(), new Mat(), new Mat()];
   let rgbChannels = [new Mat(), new Mat(), new Mat(), new Mat()];
 
-
-   cv.cvtColor(image, rgbImage, cv.COLOR_BGR2RGB);
+  cv.cvtColor(image, rgbImage, cv.COLOR_BGR2RGB);
   cv.cvtColor(image, labImage, cv.COLOR_BGR2Lab);
   cv.split(rgbImage, rgbChannels);
   cv.split(labImage, labChannels);
@@ -89,14 +88,13 @@ async function main(...args) {
   saveMat('b', channels[2]);*/
 
   cv.imwrite('output.png', image);
- /* cv.imwrite('r.png', rgbChannels[0]);
+  /* cv.imwrite('r.png', rgbChannels[0]);
   cv.imwrite('g.png', rgbChannels[1]);
   cv.imwrite('b.png', rgbChannels[2]);
 */
-  for(let channel of labChannels )
-  cv.normalize(channel, channel, 0,255, cv.NORM_MINMAX);
+  for(let channel of labChannels) cv.normalize(channel, channel, 0, 255, cv.NORM_MINMAX);
 
-cv.imwrite('l.png', labChannels[0]);
+  cv.imwrite('l.png', labChannels[0]);
   cv.imwrite('a.png', labChannels[1]);
   cv.imwrite('b.png', labChannels[2]);
 
@@ -104,17 +102,23 @@ cv.imwrite('l.png', labChannels[0]);
   cv.Canny(labChannels[0], edges, 10, 20);
   cv.imwrite('canny.png', edges);
 
-let lines = [];
-cv.HoughLinesP(edges, lines, 1, cv.CV_PI / 180, 30/*, 30, 10*/);
+  let lines = [];
+  cv.HoughLinesP(edges, lines, 1, cv.CV_PI / 180, 30 /*, 30, 10*/);
 
-console.log("lines:", lines);
+  console.log('lines:', lines);
 
- // cv.imwrite('gray.png', labChannels[0]);
+  // cv.imwrite('gray.png', labChannels[0]);
   /*
   filesystem.writeFile('output.ppm', `P3\n${image.cols} ${image.rows}\n${colors.flat().join('\n')}`);
   filesystem.writeFile('gray.pgm', `P2\n${image.cols} ${image.rows}\n${grays.join('\n')}`);*/
   //console.log("colors:", colors);
   //console.log('image', [...image]);
+  //
+  //
+  cv.namedWindow('main');
+  
+  let key = cv.waitKey();
+  console.log("key:", key);
 
   return;
 

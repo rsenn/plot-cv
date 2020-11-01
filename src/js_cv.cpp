@@ -3,6 +3,7 @@
 #include "../quickjs/cutils.h"
 
 #include <opencv2/imgcodecs.hpp>
+#include <opencv2/highgui.hpp>
 
 #if defined(JS_CV_MODULE) || defined(quickjs_cv_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
@@ -112,7 +113,7 @@ js_cv_hough_lines_p(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   for(const cv::Vec4i& line : lines) {
     JSValue v = js_line_new(ctx, line[0], line[1], line[2], line[3]);
 
-        JS_SetPropertyUint32(ctx, argv[1], i++, v);
+    JS_SetPropertyUint32(ctx, argv[1], i++, v);
   }
 
   return JS_UNDEFINED;
@@ -254,6 +255,43 @@ js_cv_normalize(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   return JS_UNDEFINED;
 }
 
+static JSValue
+js_cv_named_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+ const char* name;
+ int32_t flags;
+    name=  JS_ToCString(ctx,   argv[0]);
+
+    if(argc > 1)
+JS_ToInt32(ctx, &flags, argv[1]);
+
+cv::namedWindow(name, flags);
+return JS_UNDEFINED;
+}
+
+static JSValue
+js_cv_wait_key(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  int32_t delay = 0;
+union {
+    int32_t i;
+    char c;
+} key;
+  JSValue ret;
+
+  if(argc > 0)
+    JS_ToInt32(ctx, &delay, argv[0]);
+
+  key.i = cv::waitKey(delay);
+
+  if(key.i >= 0 && key.i <= 255) {
+    char ch[2] = {key.c,  0};
+
+    ret = JS_NewString(ctx, ch);
+  } else {
+    ret = JS_NewInt32(ctx, key.i);
+  }
+  return ret;
+}
+
 JSValue cv_proto, cv_class;
 JSClassID js_cv_class_id;
 
@@ -262,12 +300,14 @@ JSClassDef js_cv_class = {"cv"};
 const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_CFUNC_DEF("HoughLines", 5, js_cv_hough_lines),
     JS_CFUNC_DEF("HoughLinesP", 5, js_cv_hough_lines_p),
+    JS_CFUNC_DEF("Canny", 4, js_cv_canny),
     JS_CFUNC_DEF("imread", 1, js_cv_imread),
     JS_CFUNC_DEF("imwrite", 2, js_cv_imwrite),
     JS_CFUNC_DEF("cvtColor", 3, js_cv_cvt_color),
     JS_CFUNC_DEF("split", 2, js_cv_split),
     JS_CFUNC_DEF("normalize", 2, js_cv_normalize),
-    JS_CFUNC_DEF("Canny", 4, js_cv_canny),
+    JS_CFUNC_DEF("namedWindow", 1, js_cv_named_window),
+    JS_CFUNC_DEF("waitKey", 0, js_cv_wait_key),
     JS_PROP_INT32_DEF("CV_VERSION_MAJOR", CV_VERSION_MAJOR, JS_PROP_ENUMERABLE),
     JS_PROP_INT32_DEF("CV_VERSION_MINOR", CV_VERSION_MINOR, JS_PROP_ENUMERABLE),
     JS_PROP_INT32_DEF("CV_VERSION_REVISION", CV_VERSION_REVISION, JS_PROP_ENUMERABLE),
