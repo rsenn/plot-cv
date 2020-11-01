@@ -17,9 +17,9 @@ js_line_new(JSContext* ctx, double x1, double y1, double x2, double y2) {
 
   s = static_cast<JSLineData*>(js_mallocz(ctx, sizeof(JSLineData)));
   s->arr[0] = x1;
-s->arr[1] = y1;
-s->arr[2] = x2;
-s->arr[3] = y2;
+  s->arr[1] = y1;
+  s->arr[2] = x2;
+  s->arr[3] = y2;
 
   JS_SetOpaque(ret, s);
   return ret;

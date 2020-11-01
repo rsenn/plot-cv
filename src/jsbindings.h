@@ -6,6 +6,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iomanip>
 #include <map>
+#include <iterator>
 
 typedef cv::Rect2d JSRectData;
 typedef     /*  struct { */
@@ -27,7 +28,7 @@ typedef union {
 typedef union {
   std::array<int, 4> arr;
   cv::Vec4i vec;
- cv::Scalar_<int> scalar;
+  cv::Scalar_<int> scalar;
   std::array<JSPointDataI, 2> points;
   std::pair<JSPointDataI, JSPointDataI> pt;
 } JSLineDataI;
@@ -78,6 +79,8 @@ int js_rect_init(JSContext*, JSModuleDef*);
 JSModuleDef* js_init_rect_module(JSContext*, const char* module_name);
 
 void js_rect_constructor(JSContext* ctx, JSValue parent, const char* name);
+
+VISIBLE JSValue js_line_new(JSContext* ctx, double x1, double y1, double x2, double y2);
 
 int js_point_iterator_init(JSContext*, JSModuleDef* m);
 JSModuleDef* js_init_point_iterator_module(JSContext*, const char* module_name);
@@ -138,6 +141,57 @@ template<> JSValue js_contour_new<float>(JSContext* ctx, const std::vector<cv::P
 template<> JSValue js_contour_new<int>(JSContext* ctx, const std::vector<cv::Point_<int>>& points);
 
 #define countof(x) (sizeof(x) / sizeof((x)[0]))
+
+static inline int32_t
+js_array_length(JSContext* ctx, const JSValueConst& arr) {
+  int32_t ret = -1;
+  if(JS_IsArray(ctx, arr)) {
+
+    JSValue v = JS_GetPropertyStr(ctx, arr, "length");
+
+    JS_ToInt32(ctx, &ret, v);
+  }
+  return ret;
+}
+
+class js_array_iterator : public std::iterator<std::input_iterator_tag, JSValue> {
+public:
+  js_array_iterator(JSContext* c, const JSValueConst& a, const size_t i = 0) : ctx(c), array(&a), pos(i) {}
+  value_type operator*() const { return JS_GetPropertyUint32(ctx, *array, pos); }
+  js_array_iterator&
+  operator++() {
+    ++this->pos;
+    return *this;
+  }
+  js_array_iterator
+  operator++(int) {
+    js_array_iterator temp(*this);
+    ++(*this);
+    return temp;
+  }
+  bool
+  operator==(const js_array_iterator& rhs) {
+    return array == rhs.array && pos == rhs.pos;
+  }
+  bool
+  operator!=(const js_array_iterator& rhs) {
+    return !operator==(rhs);
+  }
+
+private:
+  JSContext* ctx;
+  const JSValueConst* array;
+  difference_type pos;
+};
+
+static inline js_array_iterator
+js_begin(JSContext* c, const JSValueConst& a) {
+  return js_array_iterator(c, a, 0);
+}
+static inline js_array_iterator
+js_end(JSContext* c, const JSValueConst& a) {
+  return js_array_iterator(c, a, js_array_length(c, a));
+}
 
 template<class T>
 JSValue

@@ -26,7 +26,8 @@ js_cv_hough_lines(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
   double rho, theta;
   int32_t threshold;
   double srn = 0, stn = 0, min_theta = 0, max_theta = CV_PI;
-  std::vector<cv::Vec4i> lines;
+  std::vector<cv::Vec2f> lines;
+  size_t i;
 
   double angle = 0, scale = 1;
   cv::Mat m;
@@ -37,7 +38,7 @@ js_cv_hough_lines(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 
   image = js_mat_data(ctx, argv[0]);
 
-  if(image == nullptr)
+  if(image == nullptr || !JS_IsArray(ctx, argv[1]))
     return JS_EXCEPTION;
 
   array = argv[1];
@@ -57,6 +58,89 @@ js_cv_hough_lines(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 
   cv::HoughLines(*image, lines, rho, theta, threshold, srn, stn, min_theta, max_theta);
 
+  i = 0;
+
+  for(const cv::Vec2f& line : lines) {
+    JSValue v = JS_NewArray(ctx);
+
+    JS_SetPropertyUint32(ctx, v, 0, JS_NewFloat64(ctx, line[0]));
+    JS_SetPropertyUint32(ctx, v, 1, JS_NewFloat64(ctx, line[1]));
+
+    JS_SetPropertyUint32(ctx, argv[1], i++, v);
+  }
+
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_cv_hough_lines_p(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  cv::Mat* image;
+  JSValue array;
+  double rho, theta;
+  int32_t threshold;
+  double minLineLength = 0, maxLineGap = 0;
+
+  std::vector<cv::Vec4i> lines;
+  size_t i;
+
+  double angle = 0, scale = 1;
+  cv::Mat m;
+
+  JSValue ret;
+  if(argc < 5)
+    return JS_EXCEPTION;
+
+  image = js_mat_data(ctx, argv[0]);
+
+  if(image == nullptr || !JS_IsArray(ctx, argv[1]))
+    return JS_EXCEPTION;
+
+  array = argv[1];
+  JS_ToFloat64(ctx, &rho, argv[2]);
+  JS_ToFloat64(ctx, &theta, argv[3]);
+  JS_ToInt32(ctx, &threshold, argv[4]);
+
+  if(argc >= 6)
+    JS_ToFloat64(ctx, &minLineLength, argv[5]);
+  if(argc >= 7)
+    JS_ToFloat64(ctx, &maxLineGap, argv[6]);
+
+  cv::HoughLinesP(*image, lines, rho, theta, threshold, minLineLength, maxLineGap);
+
+  i = 0;
+
+  for(const cv::Vec4i& line : lines) {
+    JSValue v = js_line_new(ctx, line[0], line[1], line[2], line[3]);
+
+        JS_SetPropertyUint32(ctx, argv[1], i++, v);
+  }
+
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_cv_canny(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  cv::Mat *image, *edges;
+  double threshold1, threshold2;
+  int32_t apertureSize = 3;
+  bool L2gradient = false;
+
+  image = js_mat_data(ctx, argv[0]);
+  edges = js_mat_data(ctx, argv[1]);
+
+  if(image == nullptr || edges == nullptr)
+    return JS_EXCEPTION;
+
+  JS_ToFloat64(ctx, &threshold1, argv[2]);
+  JS_ToFloat64(ctx, &threshold2, argv[3]);
+
+  if(argc >= 5)
+    JS_ToInt32(ctx, &apertureSize, argv[4]);
+  if(argc >= 6 && JS_IsBool(argv[4]))
+    L2gradient = JS_ToBool(ctx, argv[5]);
+
+  cv::Canny(*image, *edges, threshold1, threshold2, apertureSize, L2gradient);
+
   return JS_UNDEFINED;
 }
 
@@ -69,6 +153,19 @@ js_cv_imread(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
 
   return js_mat_wrap(ctx, mat);
 }
+static JSValue
+js_cv_imwrite(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+
+  const char* filename = JS_ToCString(ctx, argv[0]);
+  cv::Mat* image = js_mat_data(ctx, argv[1]);
+
+  if(image == nullptr)
+    return JS_EXCEPTION;
+
+  cv::imwrite(filename, *image);
+
+  return JS_UNDEFINED;
+}
 
 static JSValue
 js_cv_cvt_color(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
@@ -76,8 +173,8 @@ js_cv_cvt_color(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   cv::Mat *src, *dst;
   int code, dstCn = 0;
 
-  src = js_mat_data(ctx,argv[0]);
-  dst = js_mat_data(ctx,argv[1]);
+  src = js_mat_data(ctx, argv[0]);
+  dst = js_mat_data(ctx, argv[1]);
 
   if(src == nullptr || dst == nullptr)
     return JS_EXCEPTION;
@@ -91,6 +188,72 @@ js_cv_cvt_color(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   return JS_UNDEFINED;
 }
 
+static JSValue
+js_cv_split(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+
+  cv::Mat* src;
+  std::vector<cv::Mat> dst;
+  int code, dstCn = 0;
+  int32_t length;
+
+  src = js_mat_data(ctx, argv[0]);
+
+  if(src == nullptr)
+    return JS_EXCEPTION;
+
+  length = js_array_length(ctx, argv[1]);
+
+  for(int32_t i = 0; i < src->channels(); i++) {
+    dst.push_back(cv::Mat(src->size(), src->type() & 0x7));
+  }
+
+  // dst.resize(src->channels());
+
+  if(dst.size() >= src->channels()) {
+
+    /*  std::transform(js_begin(ctx, argv[1]), js_end(ctx, argv[1]), std::back_inserter(dst), [ctx, src](const JSValue& v) -> cv::Mat {
+        cv::Mat* mat = js_mat_data(ctx, v);
+        return mat == nullptr ? cv::Mat::zeros(src->rows, src->cols, src->type()) : *mat;
+      });
+  */
+
+    cv::split(*src, dst.data());
+
+    for(int32_t i = 0; i < src->channels(); i++) {
+      JS_SetPropertyUint32(ctx, argv[1], i, js_mat_wrap(ctx, dst[i]));
+    }
+
+    return JS_UNDEFINED;
+  }
+  return JS_EXCEPTION;
+}
+
+static JSValue
+js_cv_normalize(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+
+  cv::Mat *src, *dst;
+  double alpha = 1, beta = 0;
+  int32_t norm_type = cv::NORM_L2, dtype = -1;
+
+  src = js_mat_data(ctx, argv[0]);
+  dst = js_mat_data(ctx, argv[1]);
+
+  if(src == nullptr || dst == nullptr)
+    return JS_EXCEPTION;
+
+  if(argc >= 3)
+    JS_ToFloat64(ctx, &alpha, argv[2]);
+  if(argc >= 4)
+    JS_ToFloat64(ctx, &beta, argv[3]);
+  if(argc >= 5)
+    JS_ToInt32(ctx, &norm_type, argv[4]);
+  if(argc >= 6)
+    JS_ToInt32(ctx, &dtype, argv[5]);
+
+  cv::normalize(*src, *dst, alpha, beta, norm_type, dtype);
+  return JS_UNDEFINED;
+}
+
 JSValue cv_proto, cv_class;
 JSClassID js_cv_class_id;
 
@@ -98,8 +261,13 @@ JSClassDef js_cv_class = {"cv"};
 
 const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_CFUNC_DEF("HoughLines", 5, js_cv_hough_lines),
+    JS_CFUNC_DEF("HoughLinesP", 5, js_cv_hough_lines_p),
     JS_CFUNC_DEF("imread", 1, js_cv_imread),
+    JS_CFUNC_DEF("imwrite", 2, js_cv_imwrite),
     JS_CFUNC_DEF("cvtColor", 3, js_cv_cvt_color),
+    JS_CFUNC_DEF("split", 2, js_cv_split),
+    JS_CFUNC_DEF("normalize", 2, js_cv_normalize),
+    JS_CFUNC_DEF("Canny", 4, js_cv_canny),
     JS_PROP_INT32_DEF("CV_VERSION_MAJOR", CV_VERSION_MAJOR, JS_PROP_ENUMERABLE),
     JS_PROP_INT32_DEF("CV_VERSION_MINOR", CV_VERSION_MINOR, JS_PROP_ENUMERABLE),
     JS_PROP_INT32_DEF("CV_VERSION_REVISION", CV_VERSION_REVISION, JS_PROP_ENUMERABLE),
@@ -113,6 +281,51 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_PROP_DOUBLE_DEF("CV_PI", CV_PI, JS_PROP_ENUMERABLE),
     JS_PROP_DOUBLE_DEF("CV_2PI", CV_2PI, JS_PROP_ENUMERABLE),
     JS_PROP_DOUBLE_DEF("CV_LOG2", CV_LOG2, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_8U", CV_8U, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_8S", CV_8S, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_16U", CV_16U, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_16S", CV_16S, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_32S", CV_32S, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_32F", CV_32F, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_64F", CV_64F, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_8UC1", CV_8UC1, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_8UC2", CV_8UC2, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_8UC3", CV_8UC3, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_8UC4", CV_8UC4, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_8SC1", CV_8SC1, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_8SC2", CV_8SC2, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_8SC3", CV_8SC3, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_8SC4", CV_8SC4, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_16UC1", CV_16UC1, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_16UC2", CV_16UC2, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_16UC3", CV_16UC3, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_16UC4", CV_16UC4, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_16SC1", CV_16SC1, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_16SC2", CV_16SC2, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_16SC3", CV_16SC3, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_16SC4", CV_16SC4, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_32SC1", CV_32SC1, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_32SC2", CV_32SC2, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_32SC3", CV_32SC3, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_32SC4", CV_32SC4, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_32FC1", CV_32FC1, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_32FC2", CV_32FC2, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_32FC3", CV_32FC3, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_32FC4", CV_32FC4, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_64FC1", CV_64FC1, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_64FC2", CV_64FC2, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_64FC3", CV_64FC3, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("CV_64FC4", CV_64FC4, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("NORM_HAMMING", cv::NORM_HAMMING, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("NORM_HAMMING2", cv::NORM_HAMMING2, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("NORM_INF", cv::NORM_INF, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("NORM_L1", cv::NORM_L1, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("NORM_L2", cv::NORM_L2, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("NORM_L2SQR", cv::NORM_L2SQR, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("NORM_MINMAX", cv::NORM_MINMAX, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("NORM_RELATIVE", cv::NORM_RELATIVE, JS_PROP_ENUMERABLE),
+    JS_PROP_INT32_DEF("NORM_TYPE_MASK", cv::NORM_TYPE_MASK, JS_PROP_ENUMERABLE),
+
     JS_PROP_INT32_DEF("COLOR_BGR2BGRA", cv::COLOR_BGR2BGRA, 0),
     JS_PROP_INT32_DEF("COLOR_RGB2RGBA", cv::COLOR_RGB2RGBA, 0),
     JS_PROP_INT32_DEF("COLOR_BGRA2BGR", cv::COLOR_BGRA2BGR, 0),

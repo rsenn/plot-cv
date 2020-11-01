@@ -2004,7 +2004,7 @@ const AppMain = (window.onload = async () => {
         })
       ]),*/
       h(FileList, {
-        listTag: 'nav', 
+        listTag: 'nav',
         files: projects,
         onActive: open,
         onChange: debounceAsync(async (e, p, i) => await ChooseDocument(p, i), 5000, {

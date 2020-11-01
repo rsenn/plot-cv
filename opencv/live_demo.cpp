@@ -39,21 +39,21 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/ximgproc.hpp>
-using namespace cv;
+// using namespace cv;
 using namespace cv::ximgproc;
 
 #include <iostream>
 using namespace std;
 
-typedef void (*FilteringOperation)(const Mat& src, Mat& dst);
+typedef void (*FilteringOperation)(const cv::Mat& src, cv::Mat& dst);
 // current mode (filtering operation example)
 FilteringOperation g_filterOp = NULL;
 
 // list of filtering operations
-void filterDoNothing(const Mat& frame, Mat& dst);
-void filterBlurring(const Mat& frame, Mat& dst);
-void filterStylize(const Mat& frame, Mat& dst);
-void filterDetailEnhancement(const Mat& frame8u, Mat& dst);
+void filterDoNothing(const cv::Mat& frame, cv::Mat& dst);
+void filterBlurring(const cv::Mat& frame, cv::Mat& dst);
+void filterStylize(const cv::Mat& frame, cv::Mat& dst);
+void filterDetailEnhancement(const cv::Mat& frame8u, cv::Mat& dst);
 
 // common sliders for every mode
 int g_sigmaColor = 25;
@@ -72,66 +72,66 @@ int g_numberOfCPUs = cv::getNumberOfCPUs();
 void changeModeCallback(int state, void* filter);
 void changeNumberOfCpuCallback(int count, void*);
 
-void splitScreen(const Mat& rawFrame, Mat& outputFrame, Mat& srcFrame, Mat& processedFrame);
+void splitScreen(const cv::Mat& rawFrame, cv::Mat& outputFrame, cv::Mat& srcFrame, cv::Mat& processedFrame);
 
 // trivial filter
 void
-filterDoNothing(const Mat& frame, Mat& dst) {
+filterDoNothing(const cv::Mat& frame, cv::Mat& dst) {
   frame.copyTo(dst);
 }
 
 // simple edge-aware blurring
 void
-filterBlurring(const Mat& frame, Mat& dst) {
-  dtFilter(frame, frame, dst, g_sigmaSpatial, g_sigmaColor, DTF_RF);
+filterBlurring(const cv::Mat& frame, cv::Mat& dst) {
+  cv::ximgproc::dtFilter(frame, frame, dst, g_sigmaSpatial, g_sigmaColor, DTF_RF);
 }
 
 // stylizing filter
 void
-filterStylize(const Mat& frame, Mat& dst) {
+filterStylize(const cv::Mat& frame, cv::Mat& dst) {
   // blur frame
-  Mat filtered;
-  dtFilter(frame, frame, filtered, g_sigmaSpatial, g_sigmaColor, DTF_NC);
+  cv::Mat filtered;
+  cv::ximgproc::dtFilter(frame, frame, filtered, g_sigmaSpatial, g_sigmaColor, DTF_NC);
 
   // compute grayscale blurred frame
-  Mat filteredGray;
-  cvtColor(filtered, filteredGray, COLOR_BGR2GRAY);
+  cv::Mat filteredGray;
+  cv::cvtColor(filtered, filteredGray, cv::COLOR_BGR2GRAY);
 
   // find gradients of blurred image
-  Mat gradX, gradY;
-  Sobel(filteredGray, gradX, CV_32F, 1, 0, 3, 1.0 / 255);
-  Sobel(filteredGray, gradY, CV_32F, 0, 1, 3, 1.0 / 255);
+  cv::Mat gradX, gradY;
+  cv::Sobel(filteredGray, gradX, CV_32F, 1, 0, 3, 1.0 / 255);
+  cv::Sobel(filteredGray, gradY, CV_32F, 0, 1, 3, 1.0 / 255);
 
   // compute magnitude of gradient and fit it accordingly the gamma parameter
-  Mat gradMagnitude;
-  magnitude(gradX, gradY, gradMagnitude);
+  cv::Mat gradMagnitude;
+  cv::magnitude(gradX, gradY, gradMagnitude);
   cv::pow(gradMagnitude, g_edgesGamma / 100.0, gradMagnitude);
 
   // multiply a blurred frame to the value inversely proportional to the magnitude
-  Mat multiplier = 1.0 / (1.0 + gradMagnitude);
-  cvtColor(multiplier, multiplier, COLOR_GRAY2BGR);
-  multiply(filtered, multiplier, dst, 1, dst.type());
+  cv::Mat multiplier = 1.0 / (1.0 + gradMagnitude);
+  cv::cvtColor(multiplier, multiplier, cv::COLOR_GRAY2BGR);
+  cv::multiply(filtered, multiplier, dst, 1, dst.type());
 }
 
 void
-filterDetailEnhancement(const Mat& frame8u, Mat& dst) {
-  Mat frame;
+filterDetailEnhancement(const cv::Mat& frame8u, cv::Mat& dst) {
+  cv::Mat frame;
   frame8u.convertTo(frame, CV_32F, 1.0 / 255);
 
   // Decompose image to 3 Lab channels
-  Mat frameLab, frameLabCn[3];
-  cvtColor(frame, frameLab, COLOR_BGR2Lab);
-  split(frameLab, frameLabCn);
+  cv::Mat frameLab, frameLabCn[3];
+  cv::cvtColor(frame, frameLab, cv::COLOR_BGR2Lab);
+  cv::split(frameLab, frameLabCn);
 
   // Generate progressively smoother versions of the lightness channel
-  Mat layer0 = frameLabCn[0]; // first channel is original lightness
-  Mat layer1, layer2;
-  dtFilter(layer0, layer0, layer1, g_sigmaSpatial, g_sigmaColor, DTF_IC);
-  dtFilter(layer1, layer1, layer2, 2 * g_sigmaSpatial, g_sigmaColor, DTF_IC);
+  cv::Mat layer0 = frameLabCn[0]; // first channel is original lightness
+  cv::Mat layer1, layer2;
+  cv::ximgproc::dtFilter(layer0, layer0, layer1, g_sigmaSpatial, g_sigmaColor, DTF_IC);
+  cv::ximgproc::dtFilter(layer1, layer1, layer2, 2 * g_sigmaSpatial, g_sigmaColor, DTF_IC);
 
   // Compute detail layers
-  Mat detailLayer1 = layer0 - layer1;
-  Mat detailLayer2 = layer1 - layer2;
+  cv::Mat detailLayer1 = layer0 - layer1;
+  cv::Mat detailLayer2 = layer1 - layer2;
 
   double cBase = g_contrastBase / 100.0;
   double cDetails1 = g_detailsLevel / 100.0;
@@ -144,8 +144,8 @@ filterDetailEnhancement(const Mat& frame8u, Mat& dst) {
   frameLabCn[0] += cDetails2 * detailLayer2;                      //
 
   // Update new lightness
-  merge(frameLabCn, 3, frameLab);
-  cvtColor(frameLab, frame, COLOR_Lab2BGR);
+  cv::merge(frameLabCn, 3, frameLab);
+  cv::cvtColor(frameLab, frame, cv::COLOR_Lab2BGR);
   frame.convertTo(dst, CV_8U, 255);
 }
 
@@ -163,51 +163,51 @@ changeNumberOfCpuCallback(int count, void*) {
 
 // divide screen on two parts: srcFrame and processed Frame
 void
-splitScreen(const Mat& rawFrame, Mat& outputFrame, Mat& srcFrame, Mat& processedFrame) {
+splitScreen(const cv::Mat& rawFrame, cv::Mat& outputFrame, cv::Mat& srcFrame, cv::Mat& processedFrame) {
   int h = rawFrame.rows;
   int w = rawFrame.cols;
   int cn = rawFrame.channels();
 
   outputFrame.create(h, 2 * w, CV_MAKE_TYPE(CV_8U, cn));
-  srcFrame = outputFrame(Range::all(), Range(0, w));
-  processedFrame = outputFrame(Range::all(), Range(w, 2 * w));
+  srcFrame = outputFrame(cv::Range::all(), cv::Range(0, w));
+  processedFrame = outputFrame(cv::Range::all(), cv::Range(w, 2 * w));
   rawFrame.convertTo(srcFrame, srcFrame.type());
 }
 
 int
 main() {
-  VideoCapture cap(0);
+  cv::VideoCapture cap(0);
   if(!cap.isOpened()) {
     cerr << "Capture device was not found" << endl;
     return -1;
   }
 
-  namedWindow("Demo");
-  displayOverlay("Demo", "Press Ctrl+P to show property window", 5000);
+  cv::namedWindow("Demo");
+  cv::displayOverlay("Demo", "Press Ctrl+P to show property window", 5000);
 
   // Thread trackbar
-  createTrackbar("Threads", String(), &g_numberOfCPUs, cv::getNumberOfCPUs(), changeNumberOfCpuCallback);
+  cv::createTrackbar("Threads", cv::String(), &g_numberOfCPUs, cv::getNumberOfCPUs(), changeNumberOfCpuCallback);
 
   // Buttons to choose different modes
-  createButton("Mode Details Enhancement", changeModeCallback, (void*)filterDetailEnhancement, QT_RADIOBOX, true);
-  createButton("Mode Stylizing", changeModeCallback, (void*)filterStylize, QT_RADIOBOX, false);
-  createButton("Mode Blurring", changeModeCallback, (void*)filterBlurring, QT_RADIOBOX, false);
-  createButton("Mode DoNothing", changeModeCallback, (void*)filterDoNothing, QT_RADIOBOX, false);
+  cv::createButton("Mode Details Enhancement", changeModeCallback, (void*)filterDetailEnhancement, cv::QT_RADIOBOX, true);
+  cv::createButton("Mode Stylizing", changeModeCallback, (void*)filterStylize, cv::QT_RADIOBOX, false);
+  cv::createButton("Mode Blurring", changeModeCallback, (void*)filterBlurring, cv::QT_RADIOBOX, false);
+  cv::createButton("Mode DoNothing", changeModeCallback, (void*)filterDoNothing, cv::QT_RADIOBOX, false);
 
   // sliders for Details Enhancement mode
   g_filterOp = filterDetailEnhancement; // set Details Enhancement as default filter
-  createTrackbar("Detail contrast", String(), &g_contrastBase, 200);
-  createTrackbar("Detail level", String(), &g_detailsLevel, 200);
+  cv::createTrackbar("Detail contrast", cv::String(), &g_contrastBase, 200);
+  cv::createTrackbar("Detail level", cv::String(), &g_detailsLevel, 200);
 
   // sliders for Stylizing mode
-  createTrackbar("Style gamma", String(), &g_edgesGamma, 300);
+  cv::createTrackbar("Style gamma", cv::String(), &g_edgesGamma, 300);
 
   // sliders for every mode
-  createTrackbar("Sigma Spatial", String(), &g_sigmaSpatial, 200);
-  createTrackbar("Sigma Color", String(), &g_sigmaColor, 200);
+  cv::createTrackbar("Sigma Spatial", cv::String(), &g_sigmaSpatial, 200);
+  cv::createTrackbar("Sigma Color", cv::String(), &g_sigmaColor, 200);
 
-  Mat rawFrame, outputFrame;
-  Mat srcFrame, processedFrame;
+  cv::Mat rawFrame, outputFrame;
+  cv::Mat srcFrame, processedFrame;
 
   for(;;) {
     do {
@@ -219,9 +219,9 @@ main() {
     splitScreen(rawFrame, outputFrame, srcFrame, processedFrame);
     g_filterOp(srcFrame, processedFrame);
 
-    imshow("Demo", outputFrame);
+    cv::imshow("Demo", outputFrame);
 
-    if(waitKey(1) == 27)
+    if(cv::waitKey(1) == 27)
       break;
   }
 
