@@ -122,7 +122,7 @@ fail:
 }
 
 JSClassDef js_point_iterator_class = {
-    "PointIterator",
+    .class_name = "PointIterator",
     .finalizer = js_point_iterator_finalizer,
 };
 

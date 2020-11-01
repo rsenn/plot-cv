@@ -75,9 +75,9 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/opencv.cmake)
 
 include_directories(${OPENCV_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/opencv ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
 
-check_cxx_compiler_flag("-std=c++17" CXX_STD_CXX_17_FLAG)
+check_cxx_compiler_flag("-std=c++20" CXX_STD_CXX_17_FLAG)
 if(CXX_STD_CXX_17_FLAG)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 endif(CXX_STD_CXX_17_FLAG)
 check_cxx_compiler_flag("-fPIC" F_OPT_PIC)
 if(F_OPT_PIC)

@@ -108,88 +108,20 @@
 	"buffers":
 	[
 		{
-			"contents": "  js_array_to_vector\n  js_array_to_vector\n  js_contour_new\nJSValue\njs_contour2i_new\nJSValue\njs_contour2d_new\n  js_vector_to_array\n  js_vector_to_array\n  js_vector_to_array\n  js_vector_to_array\n  js_vector_to_array\n  js_contour_approxpolydp\n  js_contour_arclength\n  js_contour_area\n  js_contour_boundingrect\n  js_contour_center\n  js_contour_convexhull\n  js_contour_convexitydefects\n  js_contour_ctor\n  js_contour_finalizer\n  js_contour_fitellipse\n  js_contour_fitline\n  js_contour_getaffinetransform\n  js_contour_get\n  js_contour_getperspectivetransform\n  js_contour_intersectconvex\n  js_contour_isconvex\n  js_contour_length\n  js_contour_minarearect\n  js_contour_minenclosingcircle\n  js_contour_minenclosingtriangle\n  js_contour_pointpolygontest\n  js_contour_psimpl\n  js_contour_push\n  js_contour_pop\n  js_contour_unshift\n  js_contour_shift\n  js_contour_concat\n  js_contour_rotatedrectangleintersection\n  js_contour_rotatepoints\n  js_contour_toarray\n  js_contour_tostring\n  js_contour_rect\n  js_contour_find\n  js_contour_iterator\n  js_contour_init\nJS_INIT_MODULE\n  js_contour_constructor\n  js_contour_new\n  js_contour_new",
+			"contents": "  medianMat\n  auto_canny\n  medianMat\n  auto_canny",
 			"settings":
 			{
-				"buffer_size": 1120,
+				"buffer_size": 49,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "src/jsbindings.h",
+			"file": "src/auto_canny.h",
 			"settings":
 			{
-				"buffer_size": 11203,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-opencv.js",
-			"settings":
-			{
-				"buffer_size": 10473,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "CMakeLists.txt",
-			"settings":
-			{
-				"buffer_size": 9830,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-dlfcn.c",
-			"settings":
-			{
-				"buffer_size": 203,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/js_cv.cpp",
-			"settings":
-			{
-				"buffer_size": 26675,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/plot-cv.cpp",
-			"settings":
-			{
-				"buffer_size": 37167,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/js_mat.cpp",
-			"settings":
-			{
-				"buffer_size": 21382,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/js_contour.cpp",
-			"settings":
-			{
-				"buffer_size": 32444,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "quickjs/quickjs.h",
-			"settings":
-			{
-				"buffer_size": 41032,
+				"buffer_size": 1159,
 				"line_ending": "Unix"
 			}
 		}
@@ -426,20 +358,22 @@
 	],
 	"file_history":
 	[
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.h",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_mat.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/plot-cv.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/test-opencv.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_cv.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.h",
+		"/home/roman/Dokumente/Sources/plot-cv/test-dlfcn.c",
+		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
 		"/home/roman/Dokumente/Sources/plot-cv/src/js_draw.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/src/js_line.cpp",
 		"/opt/opencv-4.5.0/include/opencv4/opencv2/core/matx.hpp",
 		"/home/roman/Dokumente/Sources/plot-cv/src/js_point.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/test-opencv.js",
-		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
 		"/home/roman/Dokumente/Sources/plot-cv/js-bindings.cmake",
 		"/home/roman/Dokumente/Sources/plot-cv/highgui-viewer.cmake",
-		"/home/roman/Dokumente/Sources/plot-cv/src/plot-cv.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_mat.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.h",
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs.html",
 		"/opt/opencv-4.5.0/include/opencv4/opencv2/core.hpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_cv.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/src/js_contour.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/src/line.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/opencv/live_demo.cpp",
@@ -447,7 +381,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/color/rgba.js",
 		"/home/roman/Dokumente/Sources/plot-cv/src/highgui-viewer.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/src/js_point_iterator.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.h",
 		"/home/roman/Dokumente/Sources/plot-cv/src/js_size.cpp",
 		"/home/roman/Dokumente/Sources/opencv-detect/opencv/tutorial/houghlines.cpp",
 		"/opt/opencv4/include/opencv4/opencv2/core/cvdef.h",
@@ -552,8 +485,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/test.js",
 		"/home/roman/Dokumente/Sources/plot-cv/scripts/check-imports.sh",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/tinyTest.js",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs.txt",
-		"/home/roman/Dokumente/Sources/plot-cv/consoleSetup.js"
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs.txt"
 	],
 	"find":
 	{
@@ -589,6 +521,19 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"JS_Dup",
+			"JS_Get",
+			"JS_[^ ]*Class",
+			"JS_[^ ]*Type",
+			"JS_Is",
+			"Function",
+			"JSFunct",
+			"JS_[^ ]*Function",
+			"JS_IsFunction",
+			"JS_Call",
+			"JS_NewString",
+			"JS_Call",
+			"JS_IsFunction",
 			"findCont",
 			"js_mat_get",
 			"test-dl",
@@ -703,20 +648,7 @@
 			"Element.attr",
 			"size =",
 			"Fence,",
-			"moveRelative",
-			"prefix",
-			"get translation",
-			"stack =",
-			"useEffect",
-			"useTrkl",
-			"import.*useTrkl",
-			"import.*useTrklü",
-			"useTrkl",
-			"useRef",
-			"useGrid",
-			"imported",
-			"output:",
-			"ClipperLib"
+			"moveRelative"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -833,7 +765,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1120,
+						"buffer_size": 49,
 						"regions":
 						{
 						},
@@ -843,259 +775,34 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/src/js_contour.cpp",
-							"function_name_status_row": 19,
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/src/auto_canny.h",
+							"function_name_status_row": 0,
 							"outline_rename_mode": false,
 							"symkeys":
 							[
 								[
-									419,
-									437
+									145,
+									154
 								],
 								[
-									518,
-									536
+									179,
+									189
 								],
 								[
-									911,
-									925
+									243,
+									252
 								],
 								[
-									1576,
-									1600
-								],
-								[
-									2074,
-									2098
-								],
-								[
-									2515,
-									2533
-								],
-								[
-									2602,
-									2620
-								],
-								[
-									2883,
-									2901
-								],
-								[
-									3328,
-									3346
-								],
-								[
-									3642,
-									3660
-								],
-								[
-									3962,
-									3985
-								],
-								[
-									4924,
-									4944
-								],
-								[
-									5603,
-									5618
-								],
-								[
-									6081,
-									6104
-								],
-								[
-									6827,
-									6844
-								],
-								[
-									7351,
-									7372
-								],
-								[
-									8406,
-									8433
-								],
-								[
-									9027,
-									9042
-								],
-								[
-									9893,
-									9913
-								],
-								[
-									10142,
-									10163
-								],
-								[
-									10750,
-									10768
-								],
-								[
-									11798,
-									11827
-								],
-								[
-									12639,
-									12653
-								],
-								[
-									13002,
-									13036
-								],
-								[
-									13982,
-									14008
-								],
-								[
-									14921,
-									14940
-								],
-								[
-									15473,
-									15490
-								],
-								[
-									15708,
-									15730
-								],
-								[
-									16317,
-									16346
-								],
-								[
-									17076,
-									17107
-								],
-								[
-									17702,
-									17729
-								],
-								[
-									18554,
-									18571
-								],
-								[
-									20360,
-									20375
-								],
-								[
-									21134,
-									21148
-								],
-								[
-									21585,
-									21603
-								],
-								[
-									22371,
-									22387
-								],
-								[
-									22827,
-									22844
-								],
-								[
-									23343,
-									23382
-								],
-								[
-									24316,
-									24339
-								],
-								[
-									24838,
-									24856
-								],
-								[
-									25256,
-									25275
-								],
-								[
-									25760,
-									25775
-								],
-								[
-									26286,
-									26301
-								],
-								[
-									27243,
-									27262
-								],
-								[
-									30213,
-									30228
-								],
-								[
-									31120,
-									31134
-								],
-								[
-									31340,
-									31362
-								],
-								[
-									31579,
-									31593
-								],
-								[
-									32036,
-									32050
+									601,
+									611
 								]
 							],
 							"symlist":
 							[
-								"  js_array_to_vector",
-								"  js_array_to_vector",
-								"  js_contour_new",
-								"JSValue\njs_contour2i_new",
-								"JSValue\njs_contour2d_new",
-								"  js_vector_to_array",
-								"  js_vector_to_array",
-								"  js_vector_to_array",
-								"  js_vector_to_array",
-								"  js_vector_to_array",
-								"  js_contour_approxpolydp",
-								"  js_contour_arclength",
-								"  js_contour_area",
-								"  js_contour_boundingrect",
-								"  js_contour_center",
-								"  js_contour_convexhull",
-								"  js_contour_convexitydefects",
-								"  js_contour_ctor",
-								"  js_contour_finalizer",
-								"  js_contour_fitellipse",
-								"  js_contour_fitline",
-								"  js_contour_getaffinetransform",
-								"  js_contour_get",
-								"  js_contour_getperspectivetransform",
-								"  js_contour_intersectconvex",
-								"  js_contour_isconvex",
-								"  js_contour_length",
-								"  js_contour_minarearect",
-								"  js_contour_minenclosingcircle",
-								"  js_contour_minenclosingtriangle",
-								"  js_contour_pointpolygontest",
-								"  js_contour_psimpl",
-								"  js_contour_push",
-								"  js_contour_pop",
-								"  js_contour_unshift",
-								"  js_contour_shift",
-								"  js_contour_concat",
-								"  js_contour_rotatedrectangleintersection",
-								"  js_contour_rotatepoints",
-								"  js_contour_toarray",
-								"  js_contour_tostring",
-								"  js_contour_rect",
-								"  js_contour_find",
-								"  js_contour_iterator",
-								"  js_contour_init",
-								"JS_INIT_MODULE",
-								"  js_contour_constructor",
-								"  js_contour_new",
-								"  js_contour_new"
+								"  medianMat",
+								"  auto_canny",
+								"  medianMat",
+								"  auto_canny"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
 							"tab_size": 2,
@@ -1105,290 +812,44 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 1,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 7,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "src/jsbindings.h",
+					"file": "src/auto_canny.h",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 11203,
+						"buffer_size": 1159,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4913,
-								4913
+								849,
+								889
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 118,
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1530.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "test-opencv.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 10473,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3569,
-								3569
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 110,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1242.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "CMakeLists.txt",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 9830,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6035,
-								6035
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 198,
-							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 3270.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "test-dlfcn.c",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 203,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								18,
-								18
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 0,
-							"syntax": "Packages/C Improved/C Improved.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "src/js_cv.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 26675,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								9593,
-								9593
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 352,
+							"function_name_status_row": 25,
 							"syntax": "Packages/C++/C++.sublime-syntax",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 5736.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "src/plot-cv.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 37167,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								15477,
-								15477
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 500,
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 8990.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "src/js_mat.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 21382,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5605,
-								5605
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 225,
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2797.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "src/js_contour.cpp",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 32444,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								10735,
-								10735
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 398,
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 6456.0,
+						"translation.y": 378.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "quickjs/quickjs.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 41032,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								22757,
-								22757
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 672,
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 12114.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
 					"type": "text"
 				}
 			]
@@ -1460,6 +921,10 @@
 		"selected_items":
 		[
 			[
+				"quickjs.h",
+				"quickjs/quickjs.h"
+			],
+			[
 				"plot-cv",
 				"src/plot-cv.cpp"
 			],
@@ -1474,10 +939,6 @@
 			[
 				"test-ope",
 				"test-opencv.js"
-			],
-			[
-				"quickjs.h",
-				"quickjs/quickjs.h"
 			],
 			[
 				"jsb",

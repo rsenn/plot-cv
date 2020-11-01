@@ -163,7 +163,7 @@ JSValue rect_proto = JS_UNDEFINED, rect_class = JS_UNDEFINED;
 JSClassID js_rect_class_id;
 
 JSClassDef js_rect_class = {
-    "Rect",
+    .class_name = "Rect",
     .finalizer = js_rect_finalizer,
 };
 

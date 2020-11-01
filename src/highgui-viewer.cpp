@@ -16,8 +16,10 @@
 #include <map>
 #include <algorithm>
 #include <string>
+#include <set>
 
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
+std::set<std::string> visible { /*"imgBlurred", */"imgCanny", "imgGrayscale",/* "imgMorphology", */"imgVector" };
 
 extern "C" {
 
@@ -47,6 +49,7 @@ trackbar(int input, void* u) {
 void
 display_image(std::string str, image_type* m) {
 
+if(visible.contains(str))
   cv::imshow(str.c_str(), *m);
   /* if(m == nullptr)
      return;

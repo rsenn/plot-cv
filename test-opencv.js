@@ -29,7 +29,7 @@ async function main(...args) {
 
   let image;
   cv.namedWindow('main');
-  cv.createTrackbar('threshold', 'main', 0, 100, function (value, count, name, window) {
+  cv.createTrackbar('threshold', 'main', 0, 100, function(value, count, name, window) {
     console.log('Trackbar', { value, count, name, window });
   });
 

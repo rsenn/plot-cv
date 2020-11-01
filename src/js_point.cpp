@@ -240,7 +240,7 @@ JSValue point_proto = JS_UNDEFINED, point_class = JS_UNDEFINED;
 JSClassID js_point_class_id;
 
 JSClassDef js_point_class = {
-    "Point",
+    .class_name = "Point",
     .finalizer = js_point_finalizer,
 };
 

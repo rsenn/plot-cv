@@ -654,12 +654,12 @@ JSValue mat_proto, mat_class, mat_iterator_proto, mat_iterator_class;
 JSClassID js_mat_class_id, js_mat_iterator_class_id;
 
 JSClassDef js_mat_class = {
-    "Mat",
+   .class_name =  "Mat",
     .finalizer = js_mat_finalizer,
 };
 
 JSClassDef js_mat_iterator_class = {
-    "MatIterator",
+    .class_name = "MatIterator",
     .finalizer = js_mat_iterator_finalizer,
 };
 

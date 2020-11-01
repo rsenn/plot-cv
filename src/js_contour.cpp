@@ -1,4 +1,4 @@
-#include "./jsbindings.h"
+  #include "./jsbindings.h"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -1011,7 +1011,7 @@ JSValue contour_proto, contour_class;
 VISIBLE JSClassID js_contour_class_id;
 
 JSClassDef js_contour_class = {
-    "Contour",
+    .class_name = "Contour",
     .finalizer = js_contour_finalizer,
 };
 

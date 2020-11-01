@@ -179,7 +179,7 @@ JSValue draw_proto, draw_class;
 JSClassID js_draw_class_id;
 
 JSClassDef js_draw_class = {
-    "Draw",
+    .class_name = "Draw",
     .finalizer = 0,
 };
 

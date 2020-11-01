@@ -312,8 +312,8 @@ js_cv_create_trackbar(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
   userdata->handler = JS_DupValue(ctx, argv[4]);
   userdata->ctx = ctx;
 
-    /*JSValue str = JS_ToString(ctx, userdata->handler);
-    std::cout << "handler: " << JS_ToCString(ctx, str) << std::endl;*/
+  /*JSValue str = JS_ToString(ctx, userdata->handler);
+  std::cout << "handler: " << JS_ToCString(ctx, str) << std::endl;*/
 
   ret = cv::createTrackbar(
       name,

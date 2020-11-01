@@ -210,7 +210,7 @@ JSValue line_proto = JS_UNDEFINED, line_class = JS_UNDEFINED;
 JSClassID js_line_class_id;
 
 JSClassDef js_line_class = {
-    "Line",
+   .class_name =  "Line",
     .finalizer = js_line_finalizer,
 };
 
