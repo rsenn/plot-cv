@@ -108,7 +108,7 @@ async function main(...args) {
   cv.HoughLinesP(edges, lines, 1, cv.CV_PI / 180, 30 /*, 30, 10*/);
 
   console.log('lines:', lines);
-  console.log('at(0,0):', image.at(37,47));
+  console.log('at(0,0):', labImage.at(37,47));
 
   // cv.imwrite('gray.png', labChannels[0]);
   /*
