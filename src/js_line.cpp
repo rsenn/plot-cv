@@ -1,12 +1,29 @@
 #include "./jsbindings.h"
 
 #if defined(JS_LINE_MODULE) || defined(quickjs_line_EXPORTS)
-#define JS_INIT_MODULE VISIBLE js_init_module
+#define JS_INIT_MODULE /*VISIBLE*/ js_init_module
 #else
 #define JS_INIT_MODULE VISIBLE js_init_module_line
 #endif
 
 extern "C" {
+
+VISIBLE JSValue
+js_line_new(JSContext* ctx, double x1, double y1, double x2, double y2) {
+  JSValue ret;
+  JSLineData* s;
+
+  ret = JS_NewObjectProtoClass(ctx, line_proto, js_line_class_id);
+
+  s = static_cast<JSLineData*>(js_mallocz(ctx, sizeof(JSLineData)));
+  s->arr[0] = x1;
+s->arr[1] = y1;
+s->arr[2] = x2;
+s->arr[3] = y2;
+
+  JS_SetOpaque(ret, s);
+  return ret;
+}
 
 static JSValue
 js_line_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
@@ -242,7 +259,7 @@ js_line_constructor(JSContext* ctx, JSValue parent, const char* name) {
   JS_SetPropertyStr(ctx, parent, name ? name : "Line", line_class);
 }
 #ifdef JS_LINE_MODULE
-#define JS_INIT_MODULE VISIBLE js_init_module
+#define JS_INIT_MODULE /*VISIBLE*/ js_init_module
 #else
 #define JS_INIT_MODULE VISIBLE js_init_module_line
 #endif

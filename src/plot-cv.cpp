@@ -451,7 +451,7 @@ contour_detect(const image_type& input, image_type& drawing) {
   for(int i = 0; i < contoursArea.size(); i++) {
     cv::approxPolyDP(cv::Mat(contoursArea[i]), contoursDraw[i], 40, true);
   }
-//  Mat drawing = cv::Mat::zeros(mat.size(), CV_8UC3);
+  //  Mat drawing = cv::Mat::zeros(mat.size(), CV_8UC3);
   cv::drawContours(drawing, contoursDraw, -1, cv::Scalar(0, 255, 0), 1);
 }
 
@@ -733,11 +733,11 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
         if(contourStr.str().size())
           contourStr << "\n";
         out_points(contourStr, a);
-        /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
-           ", " << hier[i][2] << ", " << hier[i][3] << ", "
-                      << "} " << std::endl;
-            logfile << "contourDepth(i) = " << depth << std::endl;
-  */
+      /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
+         ", " << hier[i][2] << ", " << hier[i][3] << ", "
+                    << "} " << std::endl;
+          logfile << "contourDepth(i) = " << depth << std::endl;
+*/
         /*  if(dptr != nullptr)
             cv::drawContours(*dptr, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
    */     }
