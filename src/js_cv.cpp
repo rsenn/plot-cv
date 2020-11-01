@@ -258,7 +258,7 @@ js_cv_normalize(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 static JSValue
 js_cv_named_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
  const char* name;
- int32_t flags;
+ int32_t flags = cv::WINDOW_AUTOSIZE;
     name=  JS_ToCString(ctx,   argv[0]);
 
     if(argc > 1)
