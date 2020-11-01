@@ -284,6 +284,51 @@ js_cv_named_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
 }
 
 static JSValue
+js_cv_create_trackbar(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  const char *name, *window;
+  int32_t count;
+  struct Trackbar {
+    int32_t value;
+    JSValue name, window, count;
+    JSValueConst handler;
+    JSContext* ctx;
+  };
+  Trackbar* userdata;
+
+  name = JS_ToCString(ctx, argv[0]);
+  window = JS_ToCString(ctx, argv[1]);
+
+  if(name == nullptr || window == nullptr)
+    return JS_EXCEPTION;
+
+  JS_ToInt32(ctx, &userdata->value, argv[2]);
+  JS_ToInt32(ctx, &count, argv[3]);
+
+  userdata = static_cast<Trackbar*>(js_mallocz(ctx, sizeof(Trackbar)));
+  userdata->name = JS_NewString(ctx, name);
+  userdata->window = JS_NewString(ctx, window);
+  userdata->count = JS_NewInt32(ctx, count);
+
+  cv::createTrackbar(
+      name,
+      window,
+      &userdata->value,
+      count,
+      [](int newValue, void* ptr) {
+        Trackbar const& data = *static_cast<Trackbar*>(ptr);
+
+        if(JS_IsFunction(data.ctx, data.handler)) {
+          JSValueConst argv[] = {JS_NewInt32(data.ctx, newValue), data.count, data.name, data.window};
+
+          JS_Call(data.ctx, data.handler, JS_UNDEFINED, 2, argv);
+        }
+      },
+      userdata);
+
+  return JS_UNDEFINED;
+}
+
+static JSValue
 js_cv_wait_key(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   int32_t delay = 0;
   union {
@@ -323,6 +368,7 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_CFUNC_DEF("split", 2, js_cv_split),
     JS_CFUNC_DEF("normalize", 2, js_cv_normalize),
     JS_CFUNC_DEF("namedWindow", 1, js_cv_named_window),
+    JS_CFUNC_DEF("createTrackbar", 1, js_cv_create_trackbar),
     JS_CFUNC_DEF("waitKey", 0, js_cv_wait_key),
     JS_PROP_INT32_DEF("CV_VERSION_MAJOR", CV_VERSION_MAJOR, JS_PROP_ENUMERABLE),
     JS_PROP_INT32_DEF("CV_VERSION_MINOR", CV_VERSION_MINOR, JS_PROP_ENUMERABLE),
