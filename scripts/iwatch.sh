@@ -4,7 +4,7 @@ if [ $# -le 0 ]; then
   set -- ./src ./quickjs
 fi
 
-builddir=`ls -td build/* | head -n1`
+: ${builddir=`ls -td build/* | head -n1`}
 echo "Build dir is ${builddir}" 1>&2
 
 export builddir
@@ -17,5 +17,17 @@ fi
 
 
 set -- iwatch -v -c "$CMD" -e close_write -t '.*\.(h|hpp|c|cpp)$$' -x '.*/build/.*' -X'./(\.|tmp|static|lib|.git).*' -r "$@"
+for ARG; do 
+  case "$ARG" in
+    *\ * | *[\$\(\)\|]*) ARG="'$ARG'" ;;
+esac
+  case "$ARG" in
+    *\ * ) ARG="\\
+$ARG \\
+" ;;
+esac
 
-exec "$@" 
+  OUT="${OUT:+$OUT }$ARG"
+done
+echo "$OUT" 1>&2
+exec "$@"

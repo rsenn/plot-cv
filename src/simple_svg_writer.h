@@ -150,7 +150,8 @@ protected:
 
 public:
   Base(const std::string& tag) : tag(tag) {}
-  Base(const std::string& tag, const std::vector<Attribute>& attributes) : tag(tag), attributes(attributes) {}
+  Base(const std::string& tag, const std::vector<Attribute>& attributes)
+      : tag(tag), attributes(attributes) {}
 
   virtual ~Base() {}
 
@@ -230,7 +231,8 @@ public:
 class Rect : public Base {
 public:
   Rect() : Base("rect") {}
-  Rect(double x, double y, double w, double h) : Base("rect", {{"x", x}, {"y", y}, {"width", w}, {"height", h}}) {}
+  Rect(double x, double y, double w, double h)
+      : Base("rect", {{"x", x}, {"y", y}, {"width", w}, {"height", h}}) {}
   Rect(double w, double h) : Base("rect", {{"width", w}, {"height", h}}) {}
 };
 
@@ -361,7 +363,8 @@ protected:
 
 public:
   GroupBase(std::string group_tag) : Base(group_tag) {}
-  GroupBase(std::string group_tag, const std::vector<Attribute>& attributes) : Base(group_tag, attributes) {}
+  GroupBase(std::string group_tag, const std::vector<Attribute>& attributes)
+      : Base(group_tag, attributes) {}
   virtual ~GroupBase() override {}
 
   template<typename T>
@@ -395,7 +398,8 @@ class Text : public GroupBase {
   std::string text;
 
 public:
-  Text(double x, double y, const std::string& text) : GroupBase("text", {{"x", x}, {"y", y}}), text(text) {}
+  Text(double x, double y, const std::string& text)
+      : GroupBase("text", {{"x", x}, {"y", y}}), text(text) {}
   virtual ~Text() override {}
 
   virtual std::string
@@ -442,14 +446,16 @@ public:
       : GroupBase("svg",
                   {{"xmlns", std::string("http://www.w3.org/2000/svg")},
                    {"xmlns:xlink", std::string("http://www.w3.org/1999/xlink")},
-                   {"xmlns:inkscape", std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
+                   {"xmlns:inkscape",
+                    std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
   Document(double width, double height)
       : GroupBase("svg",
                   {{"width", to_string(width)},
                    {"height", to_string(height)},
                    {"xmlns", std::string("http://www.w3.org/2000/svg")},
                    {"xmlns:xlink", std::string("http://www.w3.org/1999/xlink")},
-                   {"xmlns:inkscape", std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
+                   {"xmlns:inkscape",
+                    std::string("http://www.inkscape.org/namespaces/inkscape")}}) {}
   virtual ~Document() override {}
 
   Document&

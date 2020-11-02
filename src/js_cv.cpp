@@ -324,7 +324,10 @@ js_cv_create_trackbar(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
         Trackbar const& data = *static_cast<Trackbar*>(ptr);
 
         if(JS_IsFunction(data.ctx, data.handler)) {
-          JSValueConst argv[] = {JS_NewInt32(data.ctx, newValue), data.count, data.name, data.window};
+          JSValueConst argv[] = {JS_NewInt32(data.ctx, newValue),
+                                 data.count,
+                                 data.name,
+                                 data.window};
 
           JS_Call(data.ctx, data.handler, JS_UNDEFINED, 4, argv);
         }

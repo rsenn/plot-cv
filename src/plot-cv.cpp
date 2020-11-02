@@ -115,8 +115,8 @@ make_filename(const string& name, int count, const string& ext, const string& di
 #endif
   );
 
-  filename << dir << "/" << name << "-" << buf << "." << std::setfill('0') << std::setw(3) << msecs << "-"
-           << std::setfill('0') << std::setw(pad) << count << "." << ext;
+  filename << dir << "/" << name << "-" << buf << "." << std::setfill('0') << std::setw(3) << msecs
+           << "-" << std::setfill('0') << std::setw(pad) << count << "." << ext;
   return filename.str();
 }
 
@@ -316,7 +316,8 @@ find_rectangles(const contour2i_vector& contours, contour2i_vector& squares) {
     // Note: absolute value of an area is used because
     // area may be positive or negative - in accordance with the
     // contour orientation
-    if(arcLen > 80 || fabs(cv::contourArea(image_type(approx))) > 200 /*|| cv::isContourConvex(image_type(approx))*/) {
+    if(arcLen > 80 || fabs(cv::contourArea(image_type(approx))) >
+                          200 /*|| cv::isContourConvex(image_type(approx))*/) {
       /*      double maxCosine = 0;
 
             for(int j = 2; j < 5; j++) {
@@ -396,7 +397,9 @@ hough_lines(image_type& img, const std::function<void(int, int, int, int)>& fn) 
   std::vector<cv::Vec4i> lines;
 
   hough_lines(img, lines);
-  std::for_each(lines.cbegin(), lines.cend(), [fn](const cv::Vec4i& vec) { fn(vec[0], vec[1], vec[2], vec[3]); });
+  std::for_each(lines.cbegin(), lines.cend(), [fn](const cv::Vec4i& vec) {
+    fn(vec[0], vec[1], vec[2], vec[3]);
+  });
 }
 
 template<class InputIterator>
@@ -422,7 +425,12 @@ draw_lines(image_type& target,
            int lineType = cv::LINE_8) {
 
   std::for_each(start, end, [target, color, thickness, lineType](const cv::Vec4i& vec) {
-    cv::line(target, point2i_type(vec[0], vec[1]), point2i_type(vec[2], vec[3]), color, thickness, lineType);
+    cv::line(target,
+             point2i_type(vec[0], vec[1]),
+             point2i_type(vec[2], vec[3]),
+             color,
+             thickness,
+             lineType);
   });
 }
 
@@ -463,7 +471,8 @@ contour_detect(const image_type& input, image_type& drawing) {
   std::vector<cv::Vec4i>::iterator it = lines.begin();
   for(; it != lines.end(); ++it) {
     cv::Vec4i l = *it;
-    cv::line(edges, point2i_type(l[0], l[1]), point2i_type(l[2], l[3]), cv::Scalar(255, 0, 0), 2, 8);
+    cv::line(
+        edges, point2i_type(l[0], l[1]), point2i_type(l[2], l[3]), cv::Scalar(255, 0, 0), 2, 8);
   }
   std::vector<std::vector<point2i_type>> contours;
   cv::findContours(edges, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
@@ -534,7 +543,8 @@ write_image(image_type img) {
                  1777
 #endif
                  ) == -1) {
-          std::cerr << "Failed making directory '" << outdir << "': " << strerror(errno) << std::endl;
+          std::cerr << "Failed making directory '" << outdir << "': " << strerror(errno)
+                    << std::endl;
           return;
         }
       }
@@ -575,7 +585,9 @@ get_alpha_channel(image_type m) {
 void
 image_info(image_type img) {
   std::cerr << "image cols=" << img.cols << " rows=" << img.rows << " channels=" << img.channels()
-            << " depth=" << (img.depth() == CV_8U ? "CV_8U" : img.depth() == CV_32F ? "CV_32F" : "CV_??") << std::endl;
+            << " depth="
+            << (img.depth() == CV_8U ? "CV_8U" : img.depth() == CV_32F ? "CV_32F" : "CV_??")
+            << std::endl;
 }
 
 JSValue
@@ -626,8 +638,11 @@ process_raster(std::function<void(std::string, cv::Mat*)> display_image, int sho
   // config.blur_kernel_size* 2 + 1), (double)config.blur_sigma * 0.01);
   // cv::edgePreservingFilter(imgGrayscale, imgBlurred, cv::NORMCONV_FILTER,
   // (double)config.blur_sigma_r * 0.01, (double)config.blur_sigma_s * 0.01);
-  cv::bilateralFilter(
-      imgGrayscale, imgBlurred, -1, (double)config.blur_sigma_r * 0.01, config.blur_kernel_size * 2 + 1);
+  cv::bilateralFilter(imgGrayscale,
+                      imgBlurred,
+                      -1,
+                      (double)config.blur_sigma_r * 0.01,
+                      config.blur_kernel_size * 2 + 1);
 
   cv::Canny(imgBlurred, imgCanny, thresh, thresh2, apertureSize);
 
@@ -853,13 +868,15 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
         auto it = min_element(distances.begin(), distances.end());
         int min = *it;
 
-        std::transform(adjacent.begin(), adjacent.end(), back_inserter(adjacent_lines), [&](int index) -> Line<float>* {
-          return &lines[index];
-        });
+        std::transform(adjacent.begin(),
+                       adjacent.end(),
+                       back_inserter(adjacent_lines),
+                       [&](int index) -> Line<float>* { return &lines[index]; });
 
-        std::vector<int> parallel = filter_lines(lines.begin(), lines.end(), [&line](Line<float>& l2, size_t) {
-          return fabs((line.angle() - l2.angle()) * 180 / M_PI) < 3;
-        });
+        std::vector<int> parallel =
+            filter_lines(lines.begin(), lines.end(), [&line](Line<float>& l2, size_t) {
+              return fabs((line.angle() - l2.angle()) * 180 / M_PI) < 3;
+            });
         /*
                   logfile << "adjacent " << adjacent << std::endl;
                   logfile << "parallel " << parallel << std::endl;
@@ -884,9 +901,10 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
                        [&line](Line<float>* l2) -> float { return line.angle_diff(*l2); });
         std::vector<int> angleoffs_i;
 
-        std::transform(angleoffs.begin(), angleoffs.end(), back_inserter(angleoffs_i), [](const float ang) -> int {
-          return int(ang * 180 / M_PI) % 180;
-        });
+        std::transform(angleoffs.begin(),
+                       angleoffs.end(),
+                       back_inserter(angleoffs_i),
+                       [](const float ang) -> int { return int(ang * 180 / M_PI) % 180; });
 
         point2i_vector centers;
         std::transform(adjacent_lines.begin(),
@@ -942,11 +960,15 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
 
     logfile << "histogram:";
 
-    std::for_each(histogram.begin(), histogram.end(), [](const int count) { logfile << ' ' << count; });
+    std::for_each(histogram.begin(), histogram.end(), [](const int count) {
+      logfile << ' ' << count;
+    });
     logfile << std::endl;
 
     logfile << "angles:";
-    std::for_each(angles.begin(), angles.end(), [](const float a) { logfile << ' ' << (int)(a * 180 / M_PI); });
+    std::for_each(angles.begin(), angles.end(), [](const float a) {
+      logfile << ' ' << (int)(a * 180 / M_PI);
+    });
     logfile << std::endl;
 
     draw_all_lines(imgGrayscale, filteredLines, [&](int index, size_t len) -> int {
@@ -969,7 +991,8 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
   std::vector<point2i_vector> squares;
 
   {
-    jsrt::value args[3] = {contours_to_array(js.ctx, contours), vector_to_js(js, hier, &vec4i_to_js)};
+    jsrt::value args[3] = {contours_to_array(js.ctx, contours),
+                           vector_to_js(js, hier, &vec4i_to_js)};
 
     js.set_global("contours", args[0]);
     js.set_global("hier", args[1]);
@@ -995,9 +1018,15 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
     js.call(processFn, 3, args);
   }
   {
-    point2f_vector src = {point2f_type(50, 50), point2f_type(100, 50), point2f_type(100, 100), point2f_type(50, 100)};
+    point2f_vector src = {point2f_type(50, 50),
+                          point2f_type(100, 50),
+                          point2f_type(100, 100),
+                          point2f_type(50, 100)};
 
-    point2f_vector dst = {point2f_type(100, 0), point2f_type(150, 0), point2f_type(150, 50), point2f_type(100, 50)};
+    point2f_vector dst = {point2f_type(100, 0),
+                          point2f_type(150, 0),
+                          point2f_type(150, 50),
+                          point2f_type(100, 50)};
 
     image_type perspective = cv::getPerspectiveTransform(src, dst);
 
@@ -1018,9 +1047,12 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
   }
 
   std::vector<point2i_vector> approxim;
-  transform(contours2.begin(), contours2.end(), back_inserter(approxim), [](const point2f_vector& p) -> point2i_vector {
-    return transform_points<int, float>(p);
-  });
+  transform(contours2.begin(),
+            contours2.end(),
+            back_inserter(approxim),
+            [](const point2f_vector& p) -> point2i_vector {
+              return transform_points<int, float>(p);
+            });
 
   for_each(approxim.begin(), approxim.end(), [&](const point2i_vector& c) {
     const double length = cv::arcLength(c, false);
@@ -1048,7 +1080,8 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
 
   timer.start();
 
-  logfile << "Got frame (resolution: " << imgOriginal.cols << "x" << imgOriginal.rows << ")" << std::endl;
+  logfile << "Got frame (resolution: " << imgOriginal.cols << "x" << imgOriginal.rows << ")"
+          << std::endl;
 
   process_raster(display_image, show_image);
 

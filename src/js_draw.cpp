@@ -136,7 +136,8 @@ js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
     int lineType = antialias ? cv::LINE_AA : cv::LINE_8;
     const point2i_type* pts = points.data();
 
-    std::cerr << "drawPolygon() points: " << (points) << " color: " << to_string(color) << std::endl;
+    std::cerr << "drawPolygon() points: " << (points) << " color: " << to_string(color)
+              << std::endl;
 
     // cv::fillPoly(*dptr, points, color, antialias ? cv::LINE_AA : cv::LINE_8);
     (thickness <= 0 ? cv::fillPoly(*dptr, &pts, &size, 1, color, lineType)
@@ -171,7 +172,8 @@ js_draw_rect(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
   points[1].x = rect.x + rect.width;
   points[1].y = rect.y + rect.height;
 
-  cv::rectangle(*dptr, points[0], points[1], color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
+  cv::rectangle(
+      *dptr, points[0], points[1], color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
 
   return js._true;
 }

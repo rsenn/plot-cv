@@ -13,7 +13,9 @@ medianMat(cv::Mat Input) {
   Input = Input.reshape(0, 1); // spread Input Mat to single row
   std::vector<double> vecFromMat;
   Input.copyTo(vecFromMat); // Copy Input Mat to vector vecFromMat
-  std::nth_element(vecFromMat.begin(), vecFromMat.begin() + vecFromMat.size() / 2, vecFromMat.end());
+  std::nth_element(vecFromMat.begin(),
+                   vecFromMat.begin() + vecFromMat.size() / 2,
+                   vecFromMat.end());
   return vecFromMat[vecFromMat.size() / 2];
 }
 

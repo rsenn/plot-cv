@@ -75,8 +75,12 @@ create_trackbar(const char* name,
 
   trackbars[barName] = caption;
 
-  return cv::createTrackbar(
-      caption, windowName, value, count, onChange, const_cast<void*>(static_cast<const void*>(name)));
+  return cv::createTrackbar(caption,
+                            windowName,
+                            value,
+                            count,
+                            onChange,
+                            const_cast<void*>(static_cast<const void*>(name)));
 }
 
 void
@@ -206,10 +210,12 @@ main(int argc, char* argv[]) {
 
   std::vector<std::string> visible;
 
-  std::for_each(views.cbegin(), views.cend(), [&visible](const std::map<std::string, bool>::value_type& pair) {
-    if(pair.second)
-      visible.push_back(pair.first);
-  });
+  std::for_each(views.cbegin(),
+                views.cend(),
+                [&visible](const std::map<std::string, bool>::value_type& pair) {
+                  if(pair.second)
+                    visible.push_back(pair.first);
+                });
 
   for(const auto& window : visible) {
     std::cout << "Create window '" << window << "'" << std::endl;
@@ -219,20 +225,37 @@ main(int argc, char* argv[]) {
   create_trackbar("frame", "imgCanny", &image_index, 255, trackbar, "frame");
   create_trackbar("threshold2", "imgCanny", &thresh2, 255, trackbar, "thres2");
 
+  create_trackbar("morphology_kernel_size",
+                  "imgMorphology",
+                  &config.morphology_kernel_size,
+                  2,
+                  trackbar,
+                  "Morphology kernel size");
   create_trackbar(
-      "morphology_kernel_size", "imgMorphology", &config.morphology_kernel_size, 2, trackbar, "Morphology kernel size");
-  create_trackbar("morphology_enable", "imgMorphology", &morphology_enable, 1, trackbar, "Morphology enable");
-  create_trackbar(
-      "morphology_operator", "imgMorphology", &config.morphology_operator, 3, trackbar, "Morphology operator");
+      "morphology_enable", "imgMorphology", &morphology_enable, 1, trackbar, "Morphology enable");
+  create_trackbar("morphology_operator",
+                  "imgMorphology",
+                  &config.morphology_operator,
+                  3,
+                  trackbar,
+                  "Morphology operator");
   create_trackbar("blur_sigma", "imgBlurred", &config.blur_sigma, 300, trackbar, "blur sigma");
 
-  create_trackbar("blur_kernel_size", "imgBlurred", &config.blur_kernel_size, 2, trackbar, "Blur kernel size");
+  create_trackbar(
+      "blur_kernel_size", "imgBlurred", &config.blur_kernel_size, 2, trackbar, "Blur kernel size");
 
   create_trackbar("hough_rho", "imgVector", &config.hough_rho, 10, trackbar, "Hough rho");
   create_trackbar("hough_theta", "imgCanny", &config.hough_theta, 360, trackbar, "Hough theta");
-  create_trackbar("hough_threshold", "imgVector", &config.hough_threshold, 1000, trackbar, "Hough threshold");
-  create_trackbar("hough_minlinelen", "imgVector", &config.hough_minlinelen, 1000, trackbar, "Hough minLineLen");
-  create_trackbar("hough_maxlinega", "imgVector", &config.hough_maxlinegap, 1000, trackbar, "Hough maxLineGap");
+  create_trackbar(
+      "hough_threshold", "imgVector", &config.hough_threshold, 1000, trackbar, "Hough threshold");
+  create_trackbar("hough_minlinelen",
+                  "imgVector",
+                  &config.hough_minlinelen,
+                  1000,
+                  trackbar,
+                  "Hough minLineLen");
+  create_trackbar(
+      "hough_maxlinega", "imgVector", &config.hough_maxlinegap, 1000, trackbar, "Hough maxLineGap");
 
   time_point<steady_clock> start = steady_clock::now();
   int frames = 0;

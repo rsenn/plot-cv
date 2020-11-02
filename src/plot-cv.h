@@ -47,7 +47,10 @@ enum { CANNY = 0, ORIGINAL, GRAYSCALE, MORPHOLOGY };
 
 std::string to_string(const cv::Scalar& scalar);
 
-std::string make_filename(const std::string& name, int count, const std::string& ext, const std::string& dir = "tmp");
+std::string make_filename(const std::string& name,
+                          int count,
+                          const std::string& ext,
+                          const std::string& dir = "tmp");
 
 inline int32_t
 get_mtime(const char* filename) {
@@ -79,9 +82,9 @@ inline std::string
 to_string(const cv::Scalar& scalar) {
   const int pad = 3;
   std::ostringstream oss;
-  oss << '[' << std::setfill(' ') << std::setw(pad) << scalar[0] << ',' << std::setfill(' ') << std::setw(pad)
-      << scalar[1] << ',' << std::setfill(' ') << std::setw(pad) << scalar[2] << ',' << std::setfill(' ')
-      << std::setw(pad) << scalar[3] << ']';
+  oss << '[' << std::setfill(' ') << std::setw(pad) << scalar[0] << ',' << std::setfill(' ')
+      << std::setw(pad) << scalar[1] << ',' << std::setfill(' ') << std::setw(pad) << scalar[2]
+      << ',' << std::setfill(' ') << std::setw(pad) << scalar[3] << ']';
   return oss.str();
 }
 
@@ -107,7 +110,9 @@ extern "C" image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, img
     imgMorphology; // Canny edge image
 
 void image_info(image_type img);
-std::vector<point2i_list> get_contours(image_type src, std::vector<cv::Vec4i>& hierarchy, int flag = CV_RETR_TREE);
+std::vector<point2i_list> get_contours(image_type src,
+                                       std::vector<cv::Vec4i>& hierarchy,
+                                       int flag = CV_RETR_TREE);
 
 void svg_draw_polyline(svg::Document& doc,
                        const point2f_list& contour_arg,
@@ -271,7 +276,8 @@ svg_export_file(const std::vector<std::vector<cv::Point_<T>>>& contours, std::st
 template<class P>
 inline JSValue
 points_to_js(const std::vector<P>& v) {
-  std::function<JSValue(const P&)> fn([](const P& point) -> JSValue { return js.create_point(point.x, point.y); });
+  std::function<JSValue(const P&)> fn(
+      [](const P& point) -> JSValue { return js.create_point(point.x, point.y); });
   return vector_to_js(js, v, fn);
 }
 
