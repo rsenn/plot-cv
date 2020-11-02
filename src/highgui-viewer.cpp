@@ -17,13 +17,22 @@
 #include <algorithm>
 #include <string>
 #include <set>
+#include <chrono>
+#include <thread>
+
+using std::chrono::duration;
+using std::chrono::duration_cast;
+using std::chrono::milliseconds;
+using std::chrono::seconds;
+using std::chrono::steady_clock;
+using std::chrono::time_point;
 
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
 std::map<std::string, bool> views{{"imgBlurred", true},
-                                    {"imgCanny", true},
-                                    {"imgGrayscale", false},
-                                    {"imgMorphology", true},
-                                    {"imgVector", true} };
+                                  {"imgCanny", true},
+                                  {"imgGrayscale", true},
+                                  {"imgMorphology", true},
+                                  {"imgVector", true}};
 
 extern "C" {
 
@@ -50,15 +59,17 @@ trackbar(int input, void* u) {
     blur = input;
 };
 
-int createTrackbar(const std::string& name, const std::string& window,
-                              int* value, int count,
-                              cv::TrackbarCallback onChange = 0,
-                              void* userdata = 0) {
+int
+create_trackbar(const std::string& name,
+               const std::string& window,
+               int* value,
+               int count,
+               cv::TrackbarCallback onChange = 0,
+               void* userdata = 0) {
   std::string windowName = views[window] ? window : "imgOriginal";
 
   return cv::createTrackbar(name, windowName, value, count, onChange, userdata);
 }
-
 
 void
 display_image(std::string str, image_type* m) {
@@ -124,16 +135,30 @@ main(int argc, char* argv[]) {
   unsigned int ret;
   show_image = 0;
 
-  int camID = (argc > 1 && isdigit(argv[1][0])) ? strtol(argv[1], nullptr, 10) : -1;
   std::string filename;
+  cv::CommandLineParser parser(argc,
+                               argv,
+                               "{help h usage ? |      | print this message   }"
+                               "{@input         |      | camera number or image file }"
+                               "{si save-images |      | save each frame as image }");
 
   js_init(argc, argv);
 
   if(ret < 0)
     return ret;
 
-  if(camID == -1 && argc > 1)
-    filename = argv[1];
+  parser.about("plot-cv v1.0");
+  if(parser.has("help")) {
+    parser.printMessage();
+    return 0;
+  }
+  bool saveImages = parser.has("save-images");
+  std::string input = parser.get<cv::String>(0);
+  int camID = isdigit(input.c_str()[0]) ? std::stoi(input, nullptr, 10) : -1;
+
+  if(camID == -1)
+    filename = input;
+
   cv::VideoCapture capWebcam(camID);
   image_type imgInput;
   if(camID >= 0) {
@@ -148,77 +173,86 @@ main(int argc, char* argv[]) {
       getchar();  // may have to modify this line if not using Windows
       return (0); // and exit program
     }
+
+    double fps = capWebcam.get(cv::CAP_PROP_FPS);
+
+    std::cout << "Frames per second: " << fps << std::endl;
+
   } else {
     imgInput = cv::imread(filename.empty() ? "input.png" : filename);
     num_images = argc - 2;
   }
 
-std::vector<std::string> visible;
+  std::vector<std::string> visible;
 
-std::for_each(
-    views.cbegin(),
-    views.cend(),
-     [&visible](const std::map<std::string,bool>::value_type &pair){ if(pair.second) visible.push_back(pair.first);});
+  std::for_each(views.cbegin(),
+                views.cend(),
+                [&visible](const std::map<std::string, bool>::value_type& pair) {
+                  if(pair.second)
+                    visible.push_back(pair.first);
+                });
 
+  for(const auto& window : visible) {
+    std::cout << "Create window '" << window << "'" << std::endl;
+    cv::namedWindow(window, CV_WINDOW_AUTOSIZE);
+  }
 
-for(const auto& window : visible)  {
-  std::cout << "Create window '" << window << "'"  << std::endl;
-  cv::namedWindow(window, CV_WINDOW_AUTOSIZE);
-}
-
-  createTrackbar("frame", "imgCanny", &image_index, 255, trackbar, (void*)"frame");
-  createTrackbar("threshold2", "imgCanny", &thresh2, 255, trackbar, (void*)"thres2");
-  // createTrackbar("Image", "img", &show_image, 4, trackbar, (void*)"Image Index");
-  createTrackbar("morphology_kernel_size",
-                     "imgMorphology",
-                     &config.morphology_kernel_size,
-                     2,
-                     trackbar,
-                     (void*)"Morphology kernel size");
-  createTrackbar("morphology_enable",
-                     "imgMorphology",
-                     &morphology_enable,
-                     2,
-                     trackbar,
-                     (void*)"Morphology enable");
-  createTrackbar("morphology_operator",
-                     "imgMorphology",
-                     &config.morphology_operator,
-                     3,
-                     trackbar,
-                     (void*)"Morphology operator");
-  createTrackbar(
+  create_trackbar("frame", "imgCanny", &image_index, 255, trackbar, (void*)"frame");
+  create_trackbar("threshold2", "imgCanny", &thresh2, 255, trackbar, (void*)"thres2");
+  // create_trackbar("Image", "img", &show_image, 4, trackbar, (void*)"Image Index");
+  create_trackbar("morphology_kernel_size",
+                 "imgMorphology",
+                 &config.morphology_kernel_size,
+                 2,
+                 trackbar,
+                 (void*)"Morphology kernel size");
+  create_trackbar("morphology_enable",
+                 "imgMorphology",
+                 &morphology_enable,
+                 1,
+                 trackbar,
+                 (void*)"Morphology enable");
+  create_trackbar("morphology_operator",
+                 "imgMorphology",
+                 &config.morphology_operator,
+                 3,
+                 trackbar,
+                 (void*)"Morphology operator");
+  create_trackbar(
       "blur_sigma", "imgBlurred", &config.blur_sigma, 300, trackbar, (void*)"blur sigma");
 
-  createTrackbar("blur_kernel_size",
-                     "imgBlurred",
-                     &config.blur_kernel_size,
-                     2,
-                     trackbar,
-                     (void*)"Blur kernel size");
+  create_trackbar("blur_kernel_size",
+                 "imgBlurred",
+                 &config.blur_kernel_size,
+                 2,
+                 trackbar,
+                 (void*)"Blur kernel size");
 
-  createTrackbar("hough_rho", "imgCanny", &config.hough_rho, 10, trackbar, (void*)"Hough rho");
-  createTrackbar(
+  create_trackbar("hough_rho", "imgCanny", &config.hough_rho, 10, trackbar, (void*)"Hough rho");
+  create_trackbar(
       "hough_theta", "imgCanny", &config.hough_theta, 360, trackbar, (void*)"Hough theta");
-  createTrackbar("hough_threshold",
-                     "imgCanny",
-                     &config.hough_threshold,
-                     1000,
-                     trackbar,
-                     (void*)"Hough threshold");
-  createTrackbar("hough_minlinelen",
-                     "imgCanny",
-                     &config.hough_minlinelen,
-                     1000,
-                     trackbar,
-                     (void*)"Hough minLineLen");
-  createTrackbar("hough_maxlinega",
-                     "imgCanny",
-                     &config.hough_maxlinegap,
-                     1000,
-                     trackbar,
-                     (void*)"Hough maxLineGap");
+  create_trackbar("hough_threshold",
+                 "imgCanny",
+                 &config.hough_threshold,
+                 1000,
+                 trackbar,
+                 (void*)"Hough threshold");
+  create_trackbar("hough_minlinelen",
+                 "imgCanny",
+                 &config.hough_minlinelen,
+                 1000,
+                 trackbar,
+                 (void*)"Hough minLineLen");
+  create_trackbar("hough_maxlinega",
+                 "imgCanny",
+                 &config.hough_maxlinegap,
+                 1000,
+                 trackbar,
+                 (void*)"Hough maxLineGap");
   mptr = &imgOriginal;
+
+  time_point<steady_clock> start = steady_clock ::now();
+  int frames = 0;
 
   while(keycode != 27) { // until the Esc key is pressed or webcam connection is lost
 
@@ -252,6 +286,17 @@ for(const auto& window : visible)  {
           std::cerr << "Unknown keycode: '" << (int)(char)keycode << "'" << std::endl;
         break;
     }
+    time_point<steady_clock> now = steady_clock::now();
+    auto diff = now - start;
+    auto end = now + milliseconds(16);
+
+    frames++;
+    
+    if(diff >= seconds(1)) {
+      start = now;
+      std::cout << "FPS: " << frames << std::endl;
+      frames = 0;
+    }
 
     // std::cerr << "Show image: " << show_image << std::endl;
 
@@ -275,22 +320,21 @@ for(const auto& window : visible)  {
     imgRaw.copyTo(imgOutput);
     imgRaw.copyTo(imgOriginal);
 
-    write_image(imgOutput);
+    if(saveImages)
+      write_image(imgOutput);
 
     if(dptr == nullptr) {
       imgVector = image_type::zeros(cvSize(imgOriginal.cols, imgOriginal.rows), imgOriginal.type());
       dptr = &imgVector;
     }
     process_image(std::function<void(std::string, cv::Mat*)>(&display_image), show_image);
-    keycode = cv::waitKey(50);
 
-    /*
-          if(show_image == ORIGINAL)
-            display_image(imgOriginal);
-          else if(show_image == GRAYSCALE)
-            display_image(imgGrayscale);*/
+    duration<int, std::milli> sleep = duration_cast<milliseconds>(end - steady_clock::now());
 
-    //  keycode = cv::waitKey(1); // delay (in ms) and get key press, if any
+    keycode = cv::waitKey(sleep.count() > 0 ? sleep.count() : 1);
+
+    std::this_thread::sleep_until(end);
+
   } // end while
 
   return (0);

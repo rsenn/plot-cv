@@ -23,7 +23,7 @@ js_cv_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv
 static JSValue
 js_cv_hough_lines(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   cv::Mat* image;
-  JSValue array;
+  JSValueConst array;
   double rho, theta;
   int32_t threshold;
   double srn = 0, stn = 0, min_theta = 0, max_theta = CV_PI;
@@ -76,7 +76,7 @@ js_cv_hough_lines(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 static JSValue
 js_cv_hough_lines_p(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   cv::Mat* image;
-  JSValue array;
+  JSValueConst array;
   double rho, theta;
   int32_t threshold;
   double minLineLength = 0, maxLineGap = 0;

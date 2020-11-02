@@ -341,7 +341,7 @@ jsrt::add_function(const char* name, JSCFunction* fn, int args) {
 }
 
 void
-jsrt::set_global(const char* name, JSValue val) {
+jsrt::set_global(const char* name, jsrt::value val) {
 
   JS_SetPropertyStr(ctx, global_object(), name, val);
 }
@@ -361,19 +361,19 @@ jsrt::is_promise(const_value val) {
 }
 
 jsrt::value
-jsrt::call(const char* name, size_t argc, const_value* argv) {
+jsrt::call(const char* name, size_t argc, value argv[]) {
   const_value func = get_global(name);
   return call(func, argc, argv);
 }
 
 jsrt::value
 jsrt::call(const_value func, std::vector<const_value>& args) {
-  return call(func, args.size(), args.data());
+  return call(func, args.size(), const_cast<value*>(args.data()));
 }
 
 jsrt::value
-jsrt::call(const_value func, size_t argc, const_value* argv) {
-  value ret = JS_Call(ctx, func, global_object(), argc, argv);
+jsrt::call(const_value func, size_t argc, value argv[]) {
+  value ret = JS_Call(ctx, func, global_object(), argc, const_cast<const_value*>(argv));
   if(JS_IsException(ret))
     dump_error();
   return ret;

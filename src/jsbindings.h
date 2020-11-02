@@ -113,6 +113,7 @@ JSModuleDef* js_init_module_mat(JSContext*, const char*);
 JSModuleDef* js_init_module_contour(JSContext*, const char*);
 JSModuleDef* js_init_module_line(JSContext*, const char*);
 JSModuleDef* js_init_module_draw(JSContext*, const char*);
+JSModuleDef* js_init_module_cv(JSContext*, const char*);
 
 extern "C" JSValue contour_class, contour_proto, int32array_ctor, int32array_proto, mat_class,
     mat_proto, mat_iterator_proto, point_class, line_class, point_iterator_class, draw_class,

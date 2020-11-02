@@ -32,12 +32,15 @@
 #include "psimpl.h"
 
 using std::string;
+using std::chrono::duration;
+using std::chrono::high_resolution_clock;
+using std::chrono::milliseconds;
 
 typedef Line<float> line_type;
 
 extern "C" {
 
-//const char* image_names[] = {"CANNY", "ORIGINAL", "GRAYSCALE", "MORPHOLOGY"};
+// const char* image_names[] = {"CANNY", "ORIGINAL", "GRAYSCALE", "MORPHOLOGY"};
 int num_iterations = 0;
 
 int morphology_enable = 2;
@@ -599,7 +602,7 @@ points_to_js<cv::Point>(const std::vector<cv::Point>& v) {
   return vector_to_js(js, v, fn);
 }
 
-JSValueConst
+jsrt::value
 contours_to_array(JSContext* ctx, const contour2i_vector& contours) {
   JSValue ret = JS_NewArray(ctx);
 
@@ -785,11 +788,11 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
         if(contourStr.str().size())
           contourStr << "\n";
         out_points(contourStr, a);
-        /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
-           ", " << hier[i][2] << ", " << hier[i][3] << ", "
-                      << "} " << std::endl;
-            logfile << "contourDepth(i) = " << depth << std::endl;
-  */
+      /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
+         ", " << hier[i][2] << ", " << hier[i][3] << ", "
+                    << "} " << std::endl;
+          logfile << "contourDepth(i) = " << depth << std::endl;
+*/
         /*  if(dptr != nullptr)
             cv::drawContours(*dptr, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
    */     }
@@ -992,11 +995,12 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
     std::vector<point2i_vector> squares;
 
     {
-      JSValueConst args[2] = {contours_to_array(js.ctx, contours),
-                              vector_to_js(js, hier, &vec4i_to_js)};
+      jsrt::value args[2] = {contours_to_array(js.ctx, contours),
+                             vector_to_js(js, hier, &vec4i_to_js)};
 
-      /*   js.set_global("contours", args[0]);
-         js.set_global("hier", args[1]);*/
+      js.set_global("contours", args[0]);
+      js.set_global("hier", args[1]);
+
       js.set_global("HIER_NEXT", js.create(0));
       js.set_global("HIER_PREVIOUS", js.create(1));
       js.set_global("HIER_FIRSTCHILD", js.create(2));
@@ -1004,7 +1008,7 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
 
       check_eval();
 
-      auto before = std::chrono::high_resolution_clock::now();
+      auto before = high_resolution_clock::now();
 
       js.set_global("imgRaw", js_mat_wrap(js.ctx, imgRaw));
       js.set_global("imgVector", js_mat_wrap(js.ctx, imgVector));
@@ -1036,13 +1040,13 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
 
       //   std::cerr << "array object <" << js.typestr(test_arr) << ">: " << str << std::endl;
 
-      auto after = std::chrono::high_resolution_clock::now();
+      auto after = high_resolution_clock::now();
       bool do_timing = false;
 
       if(do_timing) {
-        std::chrono::duration<double, std::milli> fp_ms = after - before;
-        auto int_ms = std::chrono::duration_cast<std::chrono::milliseconds>(after - before);
-        std::chrono::duration<long, std::micro> int_usec = int_ms;
+        duration<double, std::milli> fp_ms = after - before;
+        auto int_ms = duration_cast<milliseconds>(after - before);
+        duration<long, std::micro> int_usec = int_ms;
 
         std::cout << "f() took " << fp_ms.count() << " ms, "
                   << "or " << int_ms.count() << " whole milliseconds "
@@ -1149,17 +1153,9 @@ js_init(int argc, char* argv[]) {
   js_init_module_contour(js.ctx, "contour");
   js_init_module_line(js.ctx, "line");
   js_init_module_draw(js.ctx, "draw");
-  /*  js_init_point_module(js.ctx, "Point");
-    js_init_point_iterator_module(js.ctx, "PointIterator");
-    js_init_rect_module(js.ctx, "Rect");
-    js_init_size_module(js.ctx, "Size");
-  */
-  /* js_size_init(js.ctx, &global_obj, "Size", false);
-   js_rect_init(js.ctx, &global_obj, "Rect", false);*/
-
-  //  js_point_iterator_init(js.ctx, &global_obj, "PointIterator", false);
-  // js_contour_init(js.ctx, &global_obj, "Contour", false);
-  // js_mat_init(js.ctx, &global_obj, "Mat", false);
+  js_init_module_cv(js.ctx, "cv");
+ 
+ 
   jsrt::value console = js.get_global("console");
 
   JS_SetPropertyStr(js.ctx, console, "log", JS_NewCFunction(js.ctx, js_print, "log", 1));

@@ -103,9 +103,15 @@ struct jsrt {
     return global;
   }
 
-  value call(const_value func, size_t argc, const_value* argv);
+
+  value call(const_value func, size_t argc, value argv[]);
   value call(const_value func, std::vector<const_value>& args);
-  value call(const char* name, size_t argc, const_value* argv);
+  value call(const char* name, size_t argc, value argv[]);
+
+
+/*  value call(const_value func, size_t argc, const_value argv[]) {
+    return call(func, argc, const_cast<value*>(argv));
+  }*/
 
   value* get_function(const char* name);
 
