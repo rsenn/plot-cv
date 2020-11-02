@@ -28,11 +28,9 @@ using std::chrono::steady_clock;
 using std::chrono::time_point;
 
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
-std::map<std::string, bool> views{{"imgBlurred", true},
-                                  {"imgCanny", true},
-                                  {"imgGrayscale", true},
-                                  {"imgMorphology", true},
-                                  {"imgVector", true}};
+std::map<std::string, bool> views{{"imgBlurred", true}, {"imgCanny", true}, {"imgGrayscale", true}, {"imgMorphology", true}, {"imgVector", true}};
+
+std::map<std::string, std::string> trackbars;
 
 extern "C" {
 
@@ -60,15 +58,16 @@ trackbar(int input, void* u) {
 };
 
 int
-create_trackbar(const std::string& name,
-               const std::string& window,
-               int* value,
-               int count,
-               cv::TrackbarCallback onChange = 0,
-               void* userdata = 0) {
+create_trackbar(const char* name, const std::string& window, int* value, int count, cv::TrackbarCallback onChange = 0, const char* caption = nullptr) {
+  std::string barName = name;
   std::string windowName = views[window] ? window : "imgOriginal";
 
-  return cv::createTrackbar(name, windowName, value, count, onChange, userdata);
+  if(caption == nullptr)
+    caption = name;
+
+  trackbars[barName] = caption;
+
+  return cv::createTrackbar(caption, windowName, value, count, onChange, const_cast<void*>(static_cast<const void*>(name)));
 }
 
 void
@@ -165,13 +164,13 @@ main(int argc, char* argv[]) {
     // capWebcam.open((int)camID, (int)cv::CAP_V4L2); // declare a VideoCapture
     // object and associate to webcam, 0 => use 1st webcam
 
-    if(capWebcam.isOpened() == false) { // check if VideoCapture object was
-                                        // associated to webcam successfully
+    if(capWebcam.isOpened() == false) {                            // check if VideoCapture object was
+                                                                   // associated to webcam successfully
       logfile << "error: capWebcam not accessed successfully\n\n"; // if not, print
                                                                    // error message
                                                                    // to std out
-      getchar();  // may have to modify this line if not using Windows
-      return (0); // and exit program
+      getchar();                                                   // may have to modify this line if not using Windows
+      return (0);                                                  // and exit program
     }
 
     double fps = capWebcam.get(cv::CAP_PROP_FPS);
@@ -185,73 +184,33 @@ main(int argc, char* argv[]) {
 
   std::vector<std::string> visible;
 
-  std::for_each(views.cbegin(),
-                views.cend(),
-                [&visible](const std::map<std::string, bool>::value_type& pair) {
-                  if(pair.second)
-                    visible.push_back(pair.first);
-                });
+  std::for_each(views.cbegin(), views.cend(), [&visible](const std::map<std::string, bool>::value_type& pair) {
+    if(pair.second)
+      visible.push_back(pair.first);
+  });
 
   for(const auto& window : visible) {
     std::cout << "Create window '" << window << "'" << std::endl;
     cv::namedWindow(window, CV_WINDOW_AUTOSIZE);
   }
 
-  create_trackbar("frame", "imgCanny", &image_index, 255, trackbar, (void*)"frame");
-  create_trackbar("threshold2", "imgCanny", &thresh2, 255, trackbar, (void*)"thres2");
-  // create_trackbar("Image", "img", &show_image, 4, trackbar, (void*)"Image Index");
-  create_trackbar("morphology_kernel_size",
-                 "imgMorphology",
-                 &config.morphology_kernel_size,
-                 2,
-                 trackbar,
-                 (void*)"Morphology kernel size");
-  create_trackbar("morphology_enable",
-                 "imgMorphology",
-                 &morphology_enable,
-                 1,
-                 trackbar,
-                 (void*)"Morphology enable");
-  create_trackbar("morphology_operator",
-                 "imgMorphology",
-                 &config.morphology_operator,
-                 3,
-                 trackbar,
-                 (void*)"Morphology operator");
-  create_trackbar(
-      "blur_sigma", "imgBlurred", &config.blur_sigma, 300, trackbar, (void*)"blur sigma");
+  create_trackbar("frame", "imgCanny", &image_index, 255, trackbar, "frame");
+  create_trackbar("threshold2", "imgCanny", &thresh2, 255, trackbar, "thres2");
+  // create_trackbar("Image", "img", &show_image, 4, trackbar, "Image Index");
+  create_trackbar("morphology_kernel_size", "imgMorphology", &config.morphology_kernel_size, 2, trackbar, "Morphology kernel size");
+  create_trackbar("morphology_enable", "imgMorphology", &morphology_enable, 1, trackbar, "Morphology enable");
+  create_trackbar("morphology_operator", "imgMorphology", &config.morphology_operator, 3, trackbar, "Morphology operator");
+  create_trackbar("blur_sigma", "imgBlurred", &config.blur_sigma, 300, trackbar, "blur sigma");
 
-  create_trackbar("blur_kernel_size",
-                 "imgBlurred",
-                 &config.blur_kernel_size,
-                 2,
-                 trackbar,
-                 (void*)"Blur kernel size");
+  create_trackbar("blur_kernel_size", "imgBlurred", &config.blur_kernel_size, 2, trackbar, "Blur kernel size");
 
-  create_trackbar("hough_rho", "imgCanny", &config.hough_rho, 10, trackbar, (void*)"Hough rho");
-  create_trackbar(
-      "hough_theta", "imgCanny", &config.hough_theta, 360, trackbar, (void*)"Hough theta");
-  create_trackbar("hough_threshold",
-                 "imgCanny",
-                 &config.hough_threshold,
-                 1000,
-                 trackbar,
-                 (void*)"Hough threshold");
-  create_trackbar("hough_minlinelen",
-                 "imgCanny",
-                 &config.hough_minlinelen,
-                 1000,
-                 trackbar,
-                 (void*)"Hough minLineLen");
-  create_trackbar("hough_maxlinega",
-                 "imgCanny",
-                 &config.hough_maxlinegap,
-                 1000,
-                 trackbar,
-                 (void*)"Hough maxLineGap");
-  mptr = &imgOriginal;
+  create_trackbar("hough_rho", "imgVector", &config.hough_rho, 10, trackbar, "Hough rho");
+  create_trackbar("hough_theta", "imgCanny", &config.hough_theta, 360, trackbar, "Hough theta");
+  create_trackbar("hough_threshold", "imgVector", &config.hough_threshold, 1000, trackbar, "Hough threshold");
+  create_trackbar("hough_minlinelen", "imgVector", &config.hough_minlinelen, 1000, trackbar, "Hough minLineLen");
+  create_trackbar("hough_maxlinega", "imgVector", &config.hough_maxlinegap, 1000, trackbar, "Hough maxLineGap");
 
-  time_point<steady_clock> start = steady_clock ::now();
+  time_point<steady_clock> start = steady_clock::now();
   int frames = 0;
 
   while(keycode != 27) { // until the Esc key is pressed or webcam connection is lost
@@ -291,7 +250,7 @@ main(int argc, char* argv[]) {
     auto end = now + milliseconds(16);
 
     frames++;
-    
+
     if(diff >= seconds(1)) {
       start = now;
       std::cout << "FPS: " << frames << std::endl;
@@ -333,7 +292,7 @@ main(int argc, char* argv[]) {
 
     keycode = cv::waitKey(sleep.count() > 0 ? sleep.count() : 1);
 
-    std::this_thread::sleep_until(end);
+   // std::this_thread::sleep_until(end);
 
   } // end while
 

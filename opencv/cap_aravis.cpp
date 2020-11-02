@@ -218,16 +218,13 @@ CvCaptureCAM_Aravis::init_buffers() {
     stream = NULL;
   }
   if((stream = arv_camera_create_stream(camera, NULL, NULL))) {
-    g_object_set(
-        stream, "socket-buffer", ARV_GV_STREAM_SOCKET_BUFFER_AUTO, "socket-buffer-size", 0, NULL);
+    g_object_set(stream, "socket-buffer", ARV_GV_STREAM_SOCKET_BUFFER_AUTO, "socket-buffer-size", 0, NULL);
     g_object_set(stream, "packet-resend", ARV_GV_STREAM_PACKET_RESEND_NEVER, NULL);
-    g_object_set(
-        stream, "packet-timeout", (unsigned)40000, "frame-retention", (unsigned)200000, NULL);
+    g_object_set(stream, "packet-timeout", (unsigned)40000, "frame-retention", (unsigned)200000, NULL);
 
     payload = arv_camera_get_payload(camera);
 
-    for(int i = 0; i < num_buffers; i++)
-      arv_stream_push_buffer(stream, arv_buffer_new(payload, NULL));
+    for(int i = 0; i < num_buffers; i++) arv_stream_push_buffer(stream, arv_buffer_new(payload, NULL));
 
     return true;
   }
@@ -315,8 +312,7 @@ CvCaptureCAM_Aravis::retrieveFrame(int) {
       cvInitImageHeader(&src, cvSize(width, height), depth, channels, IPL_ORIGIN_TL, 4);
 
       cvSetData(&src, framebuffer, src.widthStep);
-      if(!frame || frame->width != src.width || frame->height != src.height ||
-         frame->depth != src.depth || frame->nChannels != src.nChannels) {
+      if(!frame || frame->width != src.width || frame->height != src.height || frame->depth != src.depth || frame->nChannels != src.nChannels) {
 
         cvReleaseImage(&frame);
         frame = cvCreateImage(cvGetSize(&src), src.depth, channels);

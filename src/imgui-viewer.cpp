@@ -60,15 +60,9 @@ ImageViewer::init() {
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
   SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-  SDL_WindowFlags window_flags =
-      (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+  SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
   // SDL_Window*
-  window = SDL_CreateWindow("OpenCV/ImGUI Viewer",
-                            SDL_WINDOWPOS_CENTERED,
-                            SDL_WINDOWPOS_CENTERED,
-                            1280,
-                            720,
-                            window_flags);
+  window = SDL_CreateWindow("OpenCV/ImGUI Viewer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
   // SDL_GLContext
   gl_context = SDL_GL_CreateContext(window);
   SDL_GL_SetSwapInterval(1); // Enable vsync
@@ -134,9 +128,7 @@ ImageViewer::imshow(std::string frame_name, cv::Mat* frame) {
   if(frame->empty())
     return;
 
-  if(std::any_of(frame_names.cbegin(), frame_names.cend(), [&frame_name](std::string str) -> bool {
-       return frame_name == str;
-     }))
+  if(std::any_of(frame_names.cbegin(), frame_names.cend(), [&frame_name](std::string str) -> bool { return frame_name == str; }))
     return;
 
   frame_names.push_back(frame_name);
@@ -154,9 +146,7 @@ ImageViewer::showMainContents() {
 
   ImGui::SliderFloat("gain", &gain, 0.0f, 2.0f, "%.3f");
 
-  ImGui::Text("%.3f ms/frame (%.1f FPS)",
-              1000.0f / ImGui::GetIO().Framerate,
-              ImGui::GetIO().Framerate);
+  ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
   ImGui::End();
 }
 
@@ -176,8 +166,7 @@ ImageViewer::show() {
     ImageTexture* text = new ImageTexture();
     cv::Size s = frames[i]->size();
     if(s.width > 200)
-      cv::resize(
-          *frames[i], *frames[i], cv::Size(s.width / 2, s.height / 2), 0, 0, cv::INTER_LINEAR);
+      cv::resize(*frames[i], *frames[i], cv::Size(s.width / 2, s.height / 2), 0, 0, cv::INTER_LINEAR);
 
     text->setImage(frames[i]);
     my_textures.push_back(text);
@@ -233,8 +222,7 @@ ImageViewer::handleEvent() {
     ImGui_ImplSDL2_ProcessEvent(&event);
     if(event.type == SDL_QUIT)
       done = true;
-    if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE &&
-       event.window.windowID == SDL_GetWindowID(window))
+    if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
       done = true;
   }
   return done;
@@ -259,8 +247,7 @@ main(int argc, char* argv[]) {
     if(cap.read(imgOriginal)) {
       double scaleFactor = 200.0 / (double)imgOriginal.cols;
 
-      process_image(
-          std::bind(&ImageViewer::imshow, &gui, std::placeholders::_1, std::placeholders::_2), 0);
+      process_image(std::bind(&ImageViewer::imshow, &gui, std::placeholders::_1, std::placeholders::_2), 0);
 
       /*      cv::resize(imgOriginal, imgOriginal, cv::Size(0, 0), scaleFactor, scaleFactor,
          cv::INTER_LINEAR); cv::resize(imgGrayscale, imgGrayscale, cv::Size(0,

@@ -33,10 +33,9 @@ main(int argc, char** argv) {
   cv::Size* resolution = nullptr;
 
   // parser keys
-  const char* keys =
-      "{ help h usage ?  |   | show this message }"
-      "{ width W         |  0| camera resolution width. leave at 0 to use defaults }"
-      "{ height H        |  0| camera resolution height. leave at 0 to use defaults }";
+  const char* keys = "{ help h usage ?  |   | show this message }"
+                     "{ width W         |  0| camera resolution width. leave at 0 to use defaults }"
+                     "{ height H        |  0| camera resolution height. leave at 0 to use defaults }";
 
   CommandLineParser parser(argc, argv, keys);
   if(parser.has("help")) {
@@ -96,13 +95,7 @@ main(int argc, char** argv) {
       printf("%d: all matches size=%zd\n", imgId, matches.size());
       std::string allMatchIdString{"all matches "};
       allMatchIdString += toString(imgId - 1) + "<->" + toString(imgId);
-      cvv::debugDMatch(prevImgGray,
-                       prevKeypoints,
-                       imgGray,
-                       keypoints,
-                       matches,
-                       CVVISUAL_LOCATION,
-                       allMatchIdString.c_str());
+      cvv::debugDMatch(prevImgGray, prevKeypoints, imgGray, keypoints, matches, CVVISUAL_LOCATION, allMatchIdString.c_str());
 
       // remove worst (as defined by match distance) bestRatio quantile
       double bestRatio = 0.8;
@@ -111,13 +104,7 @@ main(int argc, char** argv) {
       printf("%d: best matches size=%zd\n", imgId, matches.size());
       std::string bestMatchIdString{"best " + toString(bestRatio) + " matches "};
       bestMatchIdString += toString(imgId - 1) + "<->" + toString(imgId);
-      cvv::debugDMatch(prevImgGray,
-                       prevKeypoints,
-                       imgGray,
-                       keypoints,
-                       matches,
-                       CVVISUAL_LOCATION,
-                       bestMatchIdString.c_str());
+      cvv::debugDMatch(prevImgGray, prevKeypoints, imgGray, keypoints, matches, CVVISUAL_LOCATION, bestMatchIdString.c_str());
     }
 
     prevImgGray = imgGray;

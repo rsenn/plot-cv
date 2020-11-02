@@ -25,8 +25,7 @@ main(int argc, char* argv[]) {
   ros::Publisher pub_msg_pid_xy = nh.advertise<geometry_msgs::Twist>("pid_xy", 1000000);
   double kp_roll = 0, ki_roll = 0, kd_roll = 0, kp_pitch = 0, ki_pitch = 0, kd_pitch = 0;
   double error_x = 0, error_y = 0;
-  double previous_error_x = 0, previous_error_y = 0, integral_x = 0, integral_y = 0,
-         derivative_x = 0, derivative_y = 0;
+  double previous_error_x = 0, previous_error_y = 0, integral_x = 0, integral_y = 0, derivative_x = 0, derivative_y = 0;
   double control_value_x = 0, control_value_y = 0;
   double finish_time0 = 0.0;
   ros::param::set("pid_kp_roll", 0);
@@ -51,8 +50,7 @@ main(int argc, char* argv[]) {
     if(!hsv.empty()) {
       inRange(hsv, Scalar(105, 114, 0), Scalar(120, 255, 255), threshold_blue);
       if(!threshold_blue.empty()) {
-        findContours(
-            threshold_blue, contours, hierarchy, CV_RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
+        findContours(threshold_blue, contours, hierarchy, CV_RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
         if(!contours.empty()) {
           for(int i = 0; i < contours.size(); i++) {
             if(hierarchy[i][0] == -1) {

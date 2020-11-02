@@ -28,8 +28,7 @@ on_mouse(int event, int x, int y, int, void*) {
   // floodFill
   Point p(x, y);
   mask = Scalar::all(0);
-  floodFill(
-      frame, mask, p, Scalar(255, 255, 255), 0, Scalar(10, 10, 10), Scalar(10, 10, 10), flags);
+  floodFill(frame, mask, p, Scalar(255, 255, 255), 0, Scalar(10, 10, 10), Scalar(10, 10, 10), flags);
   Mat _mask = mask.rowRange(1, mask.rows - 1).colRange(1, mask.cols - 1);
 
   // number of bins in the histogram for each channel

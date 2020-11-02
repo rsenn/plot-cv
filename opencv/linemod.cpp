@@ -11,24 +11,11 @@
 // Function prototypes
 void subtractPlane(const cv::Mat& depth, cv::Mat& mask, std::vector<Cvcv::Point>& chain, double f);
 
-std::vector<Cvcv::Point> maskFromTemplate(const std::vector<cv::linemod::Template>& templates,
-                                          int num_modalities,
-                                          cv::Point offset,
-                                          cv::Size size,
-                                          cv::Mat& mask,
-                                          cv::Mat& dst);
+std::vector<Cvcv::Point> maskFromTemplate(const std::vector<cv::linemod::Template>& templates, int num_modalities, cv::Point offset, cv::Size size, cv::Mat& mask, cv::Mat& dst);
 
-void templateConvexHull(const std::vector<cv::linemod::Template>& templates,
-                        int num_modalities,
-                        cv::Point offset,
-                        cv::Size size,
-                        cv::Mat& dst);
+void templateConvexHull(const std::vector<cv::linemod::Template>& templates, int num_modalities, cv::Point offset, cv::Size size, cv::Mat& dst);
 
-void drawResponse(const std::vector<cv::linemod::Template>& templates,
-                  int num_modalities,
-                  cv::Mat& dst,
-                  cv::Point offset,
-                  int T);
+void drawResponse(const std::vector<cv::linemod::Template>& templates, int num_modalities, cv::Mat& dst, cv::Point offset, int T);
 
 cv::Mat displayQuantized(const cv::Mat& quantized);
 
@@ -179,10 +166,7 @@ main(int argc, char* argv[]) {
 
     std::vector<std::string> ids = detector->classIds();
     num_classes = detector->numClasses();
-    printf("Loaded %s with %d classes and %d templates\n",
-           argv[1],
-           num_classes,
-           detector->numTemplates());
+    printf("Loaded %s with %d classes and %d templates\n", argv[1], num_classes, detector->numTemplates());
     if(!ids.empty()) {
       printf("Class ids:\n");
       std::copy(ids.begin(), ids.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
@@ -241,9 +225,7 @@ main(int argc, char* argv[]) {
         int template_id = detector->addTemplate(sources, class_id, mask, &bb);
         extract_timer.stop();
         if(template_id != -1) {
-          printf("*** Added template (id %d) for new object class %d***\n",
-                 template_id,
-                 num_classes);
+          printf("*** Added template (id %d) for new object class %d***\n", template_id, num_classes);
           // printf("Extracted at (%d, %d) size %dx%d\n", bb.x, bb.y, bb.width, bb.height);
         }
 
@@ -273,17 +255,11 @@ main(int argc, char* argv[]) {
         ++classes_visited;
 
         if(show_match_result) {
-          printf("Similarity: %5.1f%%; x: %3d; y: %3d; class: %s; template: %3d\n",
-                 m.similarity,
-                 m.x,
-                 m.y,
-                 m.class_id.c_str(),
-                 m.template_id);
+          printf("Similarity: %5.1f%%; x: %3d; y: %3d; class: %s; template: %3d\n", m.similarity, m.x, m.y, m.class_id.c_str(), m.template_id);
         }
 
         // Draw matching template
-        const std::vector<cv::linemod::Template>& templates =
-            detector->getTemplates(m.class_id, m.template_id);
+        const std::vector<cv::linemod::Template>& templates = detector->getTemplates(m.class_id, m.template_id);
         drawResponse(templates, num_modalities, display, cv::Point(m.x, m.y), detector->getT(0));
 
         if(learn_online == true) {
@@ -292,8 +268,7 @@ main(int argc, char* argv[]) {
 
           // Compute masks based on convex hull of matched template
           cv::Mat color_mask, depth_mask;
-          std::vector<Cvcv::Point> chain = maskFromTemplate(
-              templates, num_modalities, cv::Point(m.x, m.y), color.size(), color_mask, display);
+          std::vector<Cvcv::Point> chain = maskFromTemplate(templates, num_modalities, cv::Point(m.x, m.y), color.size(), color_mask, display);
           subtractPlane(depth, depth_mask, chain, focal_length);
 
           cv::imshow("mask", depth_mask);
@@ -304,9 +279,7 @@ main(int argc, char* argv[]) {
             int template_id = detector->addTemplate(sources, m.class_id, depth_mask);
             extract_timer.stop();
             if(template_id != -1) {
-              printf("*** Added template (id %d) for existing object class %s***\n",
-                     template_id,
-                     m.class_id.c_str());
+              printf("*** Added template (id %d) for existing object class %s***\n", template_id, m.class_id.c_str());
             }
           }
         }
@@ -369,9 +342,7 @@ main(int argc, char* argv[]) {
 }
 
 static void
-reprojectcv::Points(const std::vector<cv::Point3d>& proj,
-                    std::vector<cv::Point3d>& real,
-                    double f) {
+reprojectcv::Points(const std::vector<cv::Point3d>& proj, std::vector<cv::Point3d>& real, double f) {
   real.resize(proj.size());
   double f_inv = 1.0 / f;
 
@@ -384,10 +355,7 @@ reprojectcv::Points(const std::vector<cv::Point3d>& proj,
 }
 
 static void
-filterPlane(IplImage* ap_depth,
-            std::vector<IplImage*>& a_masks,
-            std::vector<Cvcv::Point>& a_chain,
-            double f) {
+filterPlane(IplImage* ap_depth, std::vector<IplImage*>& a_masks, std::vector<Cvcv::Point>& a_chain, double f) {
   const int l_num_cost_pts = 200;
 
   float l_thres = 4;
@@ -416,10 +384,8 @@ filterPlane(IplImage* ap_depth,
 
         Cvcv::Point l_pts;
 
-        l_pts.x = cvRound(l_ratio * (a_chain[(l_i + 1) % a_chain.size()].x - a_chain[l_i].x) +
-                          a_chain[l_i].x);
-        l_pts.y = cvRound(l_ratio * (a_chain[(l_i + 1) % a_chain.size()].y - a_chain[l_i].y) +
-                          a_chain[l_i].y);
+        l_pts.x = cvRound(l_ratio * (a_chain[(l_i + 1) % a_chain.size()].x - a_chain[l_i].x) + a_chain[l_i].x);
+        l_pts.y = cvRound(l_ratio * (a_chain[(l_i + 1) % a_chain.size()].y - a_chain[l_i].y) + a_chain[l_i].y);
 
         l_chain_std::vector.push_back(l_pts);
       }
@@ -430,10 +396,7 @@ filterPlane(IplImage* ap_depth,
   for(int l_i = 0; l_i < (int)l_chain_std::vector.size(); ++l_i) {
     lp_src_3Dpts[l_i].x = l_chain_std::vector[l_i].x;
     lp_src_3Dpts[l_i].y = l_chain_std::vector[l_i].y;
-    lp_src_3Dpts[l_i].z = CV_IMAGE_ELEM(ap_depth,
-                                        unsigned short,
-                                        cvRound(lp_src_3Dpts[l_i].y),
-                                        cvRound(lp_src_3Dpts[l_i].x));
+    lp_src_3Dpts[l_i].z = CV_IMAGE_ELEM(ap_depth, unsigned short, cvRound(lp_src_3Dpts[l_i].y), cvRound(lp_src_3Dpts[l_i].x));
     // CV_IMAGE_ELEM(lp_mask,unsigned char,(int)lp_src_3Dpts[l_i].Y,(int)lp_src_3Dpts[l_i].X)=255;
   }
   // cv_show_image(lp_mask,"hallo2");
@@ -452,10 +415,7 @@ filterPlane(IplImage* ap_depth,
   }
   cvSVD(lp_pts, lp_w, 0, lp_v);
 
-  float l_n[4] = {CV_MAT_ELEM(*lp_v, float, 0, 3),
-                  CV_MAT_ELEM(*lp_v, float, 1, 3),
-                  CV_MAT_ELEM(*lp_v, float, 2, 3),
-                  CV_MAT_ELEM(*lp_v, float, 3, 3)};
+  float l_n[4] = {CV_MAT_ELEM(*lp_v, float, 0, 3), CV_MAT_ELEM(*lp_v, float, 1, 3), CV_MAT_ELEM(*lp_v, float, 2, 3), CV_MAT_ELEM(*lp_v, float, 3, 3)};
 
   float l_norm = sqrt(l_n[0] * l_n[0] + l_n[1] * l_n[1] + l_n[2] * l_n[2]);
 
@@ -467,10 +427,8 @@ filterPlane(IplImage* ap_depth,
   float l_max_dist = 0;
 
   for(int l_i = 0; l_i < (int)l_chain_std::vector.size(); ++l_i) {
-    float l_dist = l_n[0] * CV_MAT_ELEM(*lp_pts, float, l_i, 0) +
-                   l_n[1] * CV_MAT_ELEM(*lp_pts, float, l_i, 1) +
-                   l_n[2] * CV_MAT_ELEM(*lp_pts, float, l_i, 2) +
-                   l_n[3] * CV_MAT_ELEM(*lp_pts, float, l_i, 3);
+    float l_dist =
+        l_n[0] * CV_MAT_ELEM(*lp_pts, float, l_i, 0) + l_n[1] * CV_MAT_ELEM(*lp_pts, float, l_i, 1) + l_n[2] * CV_MAT_ELEM(*lp_pts, float, l_i, 2) + l_n[3] * CV_MAT_ELEM(*lp_pts, float, l_i, 3);
 
     if(fabs(l_dist) > l_max_dist)
       l_max_dist = l_dist;
@@ -521,8 +479,7 @@ filterPlane(IplImage* ap_depth,
 
   for(int l_r = 0; l_r < l_h; ++l_r) {
     for(int l_c = 0; l_c < l_w; ++l_c) {
-      float l_dist = (float)(l_n[0] * lp_dst_3Dpts[l_ind].x + l_n[1] * lp_dst_3Dpts[l_ind].y +
-                             lp_dst_3Dpts[l_ind].z * l_n[2] + l_n[3]);
+      float l_dist = (float)(l_n[0] * lp_dst_3Dpts[l_ind].x + l_n[1] * lp_dst_3Dpts[l_ind].y + lp_dst_3Dpts[l_ind].z * l_n[2] + l_n[3]);
 
       ++l_ind;
 
@@ -562,12 +519,7 @@ subtractPlane(const cv::Mat& depth, cv::Mat& mask, std::vector<Cvcv::Point>& cha
 }
 
 std::vector<Cvcv::Point>
-maskFromTemplate(const std::vector<cv::linemod::Template>& templates,
-                 int num_modalities,
-                 cv::Point offset,
-                 cv::Size size,
-                 cv::Mat& mask,
-                 cv::Mat& dst) {
+maskFromTemplate(const std::vector<cv::linemod::Template>& templates, int num_modalities, cv::Point offset, cv::Size size, cv::Mat& mask, cv::Mat& dst) {
   templateConvexHull(templates, num_modalities, offset, size, mask);
 
   const int OFFSET = 30;
@@ -580,12 +532,7 @@ maskFromTemplate(const std::vector<cv::linemod::Template>& templates,
 
   cv::Mat mask_copy = mask.clone();
   IplImage mask_copy_ipl = mask_copy;
-  cvFindContours(&mask_copy_ipl,
-                 lp_storage,
-                 &lp_contour,
-                 sizeof(CvContour),
-                 CV_RETR_CCOMP,
-                 CV_CHAIN_APPROX_SIMPLE);
+  cvFindContours(&mask_copy_ipl, lp_storage, &lp_contour, sizeof(CvContour), CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
 
   std::vector<Cvcv::Point> l_pts1; // to use as input to cv_primesensor::filter_plane
 
@@ -686,11 +633,7 @@ displayQuantized(const cv::Mat& quantized) {
 
 // Adapted from cv_line_template::convex_hull
 void
-templateConvexHull(const std::vector<cv::linemod::Template>& templates,
-                   int num_modalities,
-                   cv::Point offset,
-                   cv::Size size,
-                   cv::Mat& dst) {
+templateConvexHull(const std::vector<cv::linemod::Template>& templates, int num_modalities, cv::Point offset, cv::Size size, cv::Mat& dst) {
   std::vector<cv::Point> points;
   for(int m = 0; m < num_modalities; ++m) {
     for(int i = 0; i < (int)templates[m].features.size(); ++i) {
@@ -709,16 +652,8 @@ templateConvexHull(const std::vector<cv::linemod::Template>& templates,
 }
 
 void
-drawResponse(const std::vector<cv::linemod::Template>& templates,
-             int num_modalities,
-             cv::Mat& dst,
-             cv::Point offset,
-             int T) {
-  static const cv::Scalar COLORS[5] = {CV_RGB(0, 0, 255),
-                                       CV_RGB(0, 255, 0),
-                                       CV_RGB(255, 255, 0),
-                                       CV_RGB(255, 140, 0),
-                                       CV_RGB(255, 0, 0)};
+drawResponse(const std::vector<cv::linemod::Template>& templates, int num_modalities, cv::Mat& dst, cv::Point offset, int T) {
+  static const cv::Scalar COLORS[5] = {CV_RGB(0, 0, 255), CV_RGB(0, 255, 0), CV_RGB(255, 255, 0), CV_RGB(255, 140, 0), CV_RGB(255, 0, 0)};
 
   for(int m = 0; m < num_modalities; ++m) {
     // NOTE: Original demo recalculated max response for each feature in the TxT

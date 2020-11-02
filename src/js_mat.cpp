@@ -327,11 +327,7 @@ js_mat_set(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) 
 
 template<class T>
 typename std::enable_if<std::is_integral<T>::value, void>::type
-js_mat_vector_get(JSContext* ctx,
-                  int argc,
-                  JSValueConst* argv,
-                  std::vector<T>& output,
-                  std::vector<bool>& defined) {
+js_mat_vector_get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<T>& output, std::vector<bool>& defined) {
   output.resize(static_cast<size_t>(argc));
   defined.resize(static_cast<size_t>(argc));
   for(int i = 0; i < argc; i++) {
@@ -345,11 +341,7 @@ js_mat_vector_get(JSContext* ctx,
 
 template<class T>
 typename std::enable_if<std::is_floating_point<T>::value, void>::type
-js_mat_vector_get(JSContext* ctx,
-                  int argc,
-                  JSValueConst* argv,
-                  std::vector<T>& output,
-                  std::vector<bool>& defined) {
+js_mat_vector_get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<T>& output, std::vector<bool>& defined) {
   output.resize(static_cast<size_t>(argc));
   defined.resize(static_cast<size_t>(argc));
   for(int i = 0; i < argc; i++) {
@@ -363,11 +355,7 @@ js_mat_vector_get(JSContext* ctx,
 
 template<class T>
 typename std::enable_if<std::is_integral<typename T::value_type>::value, void>::type
-js_mat_vector_get(JSContext* ctx,
-                  int argc,
-                  JSValueConst* argv,
-                  std::vector<T>& output,
-                  std::vector<bool>& defined) {
+js_mat_vector_get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<T>& output, std::vector<bool>& defined) {
   const size_t bits = (sizeof(typename T::value_type) * 8);
   const size_t n = T::channels;
   output.resize(static_cast<size_t>(argc));
@@ -494,15 +482,8 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   if(m->rows * m->cols > 50) {
     os << "cv::Mat(" << m->rows << ", " << m->cols << ", ";
 
-    const char* tstr = (m->type() == CV_8UC4)
-                           ? "CV_8UC4"
-                           : (m->type() == CV_8UC2)
-                                 ? "CV_8UC2"
-                                 : (m->type() == CV_8UC3)
-                                       ? "CV_8UC3"
-                                       : (m->type() == CV_8UC1)
-                                             ? "CV_8UC1"
-                                             : (m->type() == CV_32FC1) ? "CV_32FC1" : "?";
+    const char* tstr =
+        (m->type() == CV_8UC4) ? "CV_8UC4" : (m->type() == CV_8UC2) ? "CV_8UC2" : (m->type() == CV_8UC3) ? "CV_8UC3" : (m->type() == CV_8UC1) ? "CV_8UC1" : (m->type() == CV_32FC1) ? "CV_32FC1" : "?";
 
     os << tstr << ")" << std::endl;
   } else {
@@ -516,9 +497,7 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
         if(m->type() == CV_32FC1)
           os << m->at<float>(y, x);
         else
-          os << std::setfill('0') << std::setbase(16)
-             << std::setw(m->type() == CV_8UC4 ? 8 : m->type() == CV_8UC1 ? 2 : 6)
-             << m->at<uint32_t>(y, x);
+          os << std::setfill('0') << std::setbase(16) << std::setw(m->type() == CV_8UC4 ? 8 : m->type() == CV_8UC1 ? 2 : 6) << m->at<uint32_t>(y, x);
       }
     }
 
@@ -593,8 +572,7 @@ js_mat_create_vec(JSContext* ctx, int len, JSValue* vec) {
 }
 
 JSValue
-js_create_mat_iterator(
-    JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+js_create_mat_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSValue enum_obj, mat;
   JSMatIteratorData* it;
   mat = JS_DupValue(ctx, this_val);
@@ -618,8 +596,7 @@ js_create_mat_iterator(
 }
 
 JSValue
-js_mat_iterator_next(
-    JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, BOOL* pdone, int magic) {
+js_mat_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, BOOL* pdone, int magic) {
   JSMatIteratorData* it;
   uint32_t row, col;
   JSValue val, obj;
@@ -665,8 +642,7 @@ js_mat_iterator_next(
 
 void
 js_mat_iterator_finalizer(JSRuntime* rt, JSValue val) {
-  JSMatIteratorData* it =
-      static_cast<JSMatIteratorData*>(JS_GetOpaque(val, js_mat_iterator_class_id));
+  JSMatIteratorData* it = static_cast<JSMatIteratorData*>(JS_GetOpaque(val, js_mat_iterator_class_id));
   js_free_rt(rt, it);
 }
 
@@ -713,6 +689,7 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("values", 0, js_create_mat_iterator, 1),
     JS_CFUNC_MAGIC_DEF("entries", 0, js_create_mat_iterator, 2),
     JS_ALIAS_DEF("[Symbol.iterator]", "entries"),
+    JS_ALIAS_DEF("[Symbol.toPrimitive]", "toString"),
 
     //    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "cv::Mat", JS_PROP_CONFIGURABLE)
 
@@ -743,10 +720,7 @@ js_mat_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetClassProto(ctx, js_mat_class_id, mat_proto);
 
   mat_iterator_proto = JS_NewObject(ctx);
-  JS_SetPropertyFunctionList(ctx,
-                             mat_iterator_proto,
-                             js_mat_iterator_proto_funcs,
-                             countof(js_mat_iterator_proto_funcs));
+  JS_SetPropertyFunctionList(ctx, mat_iterator_proto, js_mat_iterator_proto_funcs, countof(js_mat_iterator_proto_funcs));
   JS_SetClassProto(ctx, js_mat_iterator_class_id, mat_iterator_proto);
 
   mat_class = JS_NewCFunction2(ctx, js_mat_ctor, "Mat", 2, JS_CFUNC_constructor, 0);

@@ -46,12 +46,11 @@ struct JSPointIteratorData : public std::pair<JSPointData*, JSPointData*> {
 #define HIDDEN __attribute__((visibility("hidden")))
 #endif
 
-#define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter, magic_num)                          \
-  {                                                                                                \
-    .name = prop_name, .prop_flags = JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE,                    \
-    .def_type = JS_DEF_CGETSET_MAGIC, .magic = magic_num, .u = {                                   \
-      .getset = {.get = {.getter_magic = fgetter}, .set = {.setter_magic = fsetter}}               \
-    }                                                                                              \
+#define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter, magic_num)                                                                                                                              \
+  {                                                                                                                                                                                                    \
+    .name = prop_name, .prop_flags = JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE, .def_type = JS_DEF_CGETSET_MAGIC, .magic = magic_num, .u = {                                                           \
+      .getset = {.get = {.getter_magic = fgetter}, .set = {.setter_magic = fsetter}}                                                                                                                   \
+    }                                                                                                                                                                                                  \
   }
 
 extern "C" {
@@ -115,14 +114,10 @@ JSModuleDef* js_init_module_line(JSContext*, const char*);
 JSModuleDef* js_init_module_draw(JSContext*, const char*);
 JSModuleDef* js_init_module_cv(JSContext*, const char*);
 
-extern "C" JSValue contour_class, contour_proto, int32array_ctor, int32array_proto, mat_class,
-    mat_proto, mat_iterator_proto, point_class, line_class, point_iterator_class, draw_class,
-    point_iterator_proto, point_proto, rect_class, rect_proto, size_class, size_proto, line_proto,
-    draw_proto;
+extern "C" JSValue contour_class, contour_proto, int32array_ctor, int32array_proto, mat_class, mat_proto, mat_iterator_proto, point_class, line_class, point_iterator_class, draw_class,
+    point_iterator_proto, point_proto, rect_class, rect_proto, size_class, size_proto, line_proto, draw_proto;
 
-VISIBLE JSValue js_point_iterator_new(JSContext* ctx,
-                                      const std::pair<JSPointData*, JSPointData*>& range,
-                                      int magic);
+VISIBLE JSValue js_point_iterator_new(JSContext* ctx, const std::pair<JSPointData*, JSPointData*>& range, int magic);
 VISIBLE JSValue js_mat_wrap(JSContext*, const cv::Mat& mat);
 VISIBLE JSValue js_contour2d_new(JSContext*, const std::vector<cv::Point_<double>>& points);
 VISIBLE JSValue js_contour2f_new(JSContext*, const std::vector<cv::Point_<float>>& points);
@@ -138,17 +133,13 @@ extern "C" JSClassID js_point_iterator_class_id, js_line_class_id, js_draw_class
 
 extern "C" const JSCFunctionListEntry js_rect_proto_funcs[];
 
-extern "C" JSClassID js_point_class_id, js_size_class_id, js_rect_class_id, js_mat_class_id,
-    js_mat_iterator_class_id;
+extern "C" JSClassID js_point_class_id, js_size_class_id, js_rect_class_id, js_mat_class_id, js_mat_iterator_class_id;
 
-template<class Type>
-JSValue js_contour_new(JSContext* ctx, const std::vector<cv::Point_<Type>>& points);
+template<class Type> JSValue js_contour_new(JSContext* ctx, const std::vector<cv::Point_<Type>>& points);
 
-template<>
-JSValue js_contour_new<double>(JSContext* ctx, const std::vector<cv::Point_<double>>& points);
+template<> JSValue js_contour_new<double>(JSContext* ctx, const std::vector<cv::Point_<double>>& points);
 
-template<>
-JSValue js_contour_new<float>(JSContext* ctx, const std::vector<cv::Point_<float>>& points);
+template<> JSValue js_contour_new<float>(JSContext* ctx, const std::vector<cv::Point_<float>>& points);
 
 template<> JSValue js_contour_new<int>(JSContext* ctx, const std::vector<cv::Point_<int>>& points);
 
@@ -168,8 +159,7 @@ js_array_length(JSContext* ctx, const JSValueConst& arr) {
 
 class js_array_iterator : public std::iterator<std::input_iterator_tag, JSValue> {
 public:
-  js_array_iterator(JSContext* c, const JSValueConst& a, const size_t i = 0)
-      : ctx(c), array(&a), pos(i) {}
+  js_array_iterator(JSContext* c, const JSValueConst& a, const size_t i = 0) : ctx(c), array(&a), pos(i) {}
   value_type operator*() const { return JS_GetPropertyUint32(ctx, *array, pos); }
   js_array_iterator&
   operator++() {

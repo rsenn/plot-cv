@@ -34,9 +34,7 @@ determineCodecId(const String& filename) {
 
 //==========================================================================
 
-VideoCapture_IntelMFX::VideoCapture_IntelMFX(const cv::String& filename)
-    : session(0), plugin(0), deviceHandler(0), bs(0), decoder(0), pool(0), outSurface(0),
-      good(false) {
+VideoCapture_IntelMFX::VideoCapture_IntelMFX(const cv::String& filename) : session(0), plugin(0), deviceHandler(0), bs(0), decoder(0), pool(0), outSurface(0), good(false) {
   mfxStatus res = MFX_ERR_NONE;
 
   // Init device and session
@@ -146,10 +144,7 @@ VideoCapture_IntelMFX::grabFrame() {
     }
 
     outSurface = 0;
-    res = decoder->DecodeFrameAsync(bs->drain ? 0 : &bs->stream,
-                                    workSurface,
-                                    (mfxFrameSurface1**)&outSurface,
-                                    &sync);
+    res = decoder->DecodeFrameAsync(bs->drain ? 0 : &bs->stream, workSurface, (mfxFrameSurface1**)&outSurface, &sync);
     if(res == MFX_ERR_NONE) {
       res = session->SyncOperation(sync, 1000); // 1 sec, TODO: provide interface to modify timeout
       if(res == MFX_ERR_NONE) {
@@ -216,8 +211,7 @@ VideoCapture_IntelMFX::retrieveFrame(int, OutputArray out) {
   out.create(rows, cols, CV_8UC3);
   Mat res = out.getMat();
 
-  hal::cvtTwoPlaneYUVtoBGR(
-      data.Y, data.UV, data.Pitch, res.data, res.step, cols, rows, 3, false, 0);
+  hal::cvtTwoPlaneYUVtoBGR(data.Y, data.UV, data.Pitch, res.data, res.step, cols, rows, 3, false, 0);
 
   return true;
 }

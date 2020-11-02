@@ -214,15 +214,9 @@ CvCaptureCAM_PvAPI::getProperty(int property_id) const {
   tPvUint32 nTemp;
 
   switch(property_id) {
-    case CV_CAP_PROP_FRAME_WIDTH:
-      PvAttrUint32Get(Camera.Handle, "Width", &nTemp);
-      return (double)nTemp;
-    case CV_CAP_PROP_FRAME_HEIGHT:
-      PvAttrUint32Get(Camera.Handle, "Height", &nTemp);
-      return (double)nTemp;
-    case CV_CAP_PROP_EXPOSURE:
-      PvAttrUint32Get(Camera.Handle, "ExposureValue", &nTemp);
-      return (double)nTemp;
+    case CV_CAP_PROP_FRAME_WIDTH: PvAttrUint32Get(Camera.Handle, "Width", &nTemp); return (double)nTemp;
+    case CV_CAP_PROP_FRAME_HEIGHT: PvAttrUint32Get(Camera.Handle, "Height", &nTemp); return (double)nTemp;
+    case CV_CAP_PROP_EXPOSURE: PvAttrUint32Get(Camera.Handle, "ExposureValue", &nTemp); return (double)nTemp;
     case CV_CAP_PROP_FPS:
       tPvFloat32 nfTemp;
       PvAttrFloat32Get(Camera.Handle, "StatFrameRate", &nfTemp);
@@ -241,9 +235,7 @@ CvCaptureCAM_PvAPI::getProperty(int property_id) const {
         ip = ((a * 256 + b) * 256 + c) * 256 + d;
         return (double)ip;
       }
-    case CV_CAP_PROP_GAIN:
-      PvAttrUint32Get(Camera.Handle, "GainValue", &nTemp);
-      return (double)nTemp;
+    case CV_CAP_PROP_GAIN: PvAttrUint32Get(Camera.Handle, "GainValue", &nTemp); return (double)nTemp;
     case CV_CAP_PROP_PVAPI_FRAMESTARTTRIGGERMODE:
       char triggerMode[256];
       PvAttrEnumGet(Camera.Handle, "FrameStartTriggerMode", triggerMode, 256, NULL);
@@ -259,18 +251,10 @@ CvCaptureCAM_PvAPI::getProperty(int property_id) const {
         return 4.0;
       else
         return -1.0;
-    case CV_CAP_PROP_PVAPI_DECIMATIONHORIZONTAL:
-      PvAttrUint32Get(Camera.Handle, "DecimationHorizontal", &nTemp);
-      return (double)nTemp;
-    case CV_CAP_PROP_PVAPI_DECIMATIONVERTICAL:
-      PvAttrUint32Get(Camera.Handle, "DecimationVertical", &nTemp);
-      return (double)nTemp;
-    case CV_CAP_PROP_PVAPI_BINNINGX:
-      PvAttrUint32Get(Camera.Handle, "BinningX", &nTemp);
-      return (double)nTemp;
-    case CV_CAP_PROP_PVAPI_BINNINGY:
-      PvAttrUint32Get(Camera.Handle, "BinningY", &nTemp);
-      return (double)nTemp;
+    case CV_CAP_PROP_PVAPI_DECIMATIONHORIZONTAL: PvAttrUint32Get(Camera.Handle, "DecimationHorizontal", &nTemp); return (double)nTemp;
+    case CV_CAP_PROP_PVAPI_DECIMATIONVERTICAL: PvAttrUint32Get(Camera.Handle, "DecimationVertical", &nTemp); return (double)nTemp;
+    case CV_CAP_PROP_PVAPI_BINNINGX: PvAttrUint32Get(Camera.Handle, "BinningX", &nTemp); return (double)nTemp;
+    case CV_CAP_PROP_PVAPI_BINNINGY: PvAttrUint32Get(Camera.Handle, "BinningY", &nTemp); return (double)nTemp;
     case CV_CAP_PROP_PVAPI_PIXELFORMAT:
       char pixelFormat[256];
       PvAttrEnumGet(Camera.Handle, "PixelFormat", pixelFormat, 256, NULL);
@@ -344,13 +328,8 @@ CvCaptureCAM_PvAPI::setProperty(int property_id, double value) {
         else
           return false;
       } else {
-        cv::String ip = cv::format("%d.%d.%d.%d",
-                                   ((unsigned int)value >> 24) & 255,
-                                   ((unsigned int)value >> 16) & 255,
-                                   ((unsigned int)value >> 8) & 255,
-                                   (unsigned int)value & 255);
-        if((PvAttrEnumSet(Camera.Handle, "MulticastEnable", "On") == ePvErrSuccess) &&
-           (PvAttrStringSet(Camera.Handle, "MulticastIPAddress", ip.c_str()) == ePvErrSuccess))
+        cv::String ip = cv::format("%d.%d.%d.%d", ((unsigned int)value >> 24) & 255, ((unsigned int)value >> 16) & 255, ((unsigned int)value >> 8) & 255, (unsigned int)value & 255);
+        if((PvAttrEnumSet(Camera.Handle, "MulticastEnable", "On") == ePvErrSuccess) && (PvAttrStringSet(Camera.Handle, "MulticastIPAddress", ip.c_str()) == ePvErrSuccess))
           break;
         else
           return false;

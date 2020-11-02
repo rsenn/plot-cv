@@ -56,8 +56,7 @@ main(int argc, char** argv) {
         printf("manual selection of bounding box will be employed\n");
         break;
       }
-      int num =
-          atoi(initBoundingBox.substr(pos, (ctr == 3) ? (string::npos) : (npos - pos)).c_str());
+      int num = atoi(initBoundingBox.substr(pos, (ctr == 3) ? (string::npos) : (npos - pos)).c_str());
       if(num <= 0) {
         printf("bounding box should be given in format \"x1,y1,x2,y2\",where x's and y's are "
                "integer coordinates of "
@@ -109,11 +108,7 @@ main(int argc, char** argv) {
     boundingBox.y = coords[1];
     boundingBox.width = std::abs(coords[2] - coords[0]);
     boundingBox.height = std::abs(coords[3] - coords[1]);
-    printf("bounding box with vertices (%d,%d) and (%d,%d) was given in command line\n",
-           coords[0],
-           coords[1],
-           coords[2],
-           coords[3]);
+    printf("bounding box with vertices (%d,%d) and (%d,%d) was given in command line\n", coords[0], coords[1], coords[2], coords[3]);
     rectangle(image, boundingBox, Scalar(255, 0, 0), 2, 1);
   } else
     boundingBox = selectROI("Tracking API", image);

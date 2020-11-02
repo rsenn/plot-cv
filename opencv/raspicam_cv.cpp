@@ -143,9 +143,7 @@ RaspiCam_Cv::set(int propId, double value) {
       break;
     case CV_CAP_PROP_BRIGHTNESS: _impl->setBrightness(value); break;
     case CV_CAP_PROP_CONTRAST: _impl->setContrast(Scaler::scale(0, 100, -100, 100, value)); break;
-    case CV_CAP_PROP_SATURATION:
-      _impl->setSaturation(Scaler::scale(0, 100, -100, 100, value));
-      break;
+    case CV_CAP_PROP_SATURATION: _impl->setSaturation(Scaler::scale(0, 100, -100, 100, value)); break;
     //     case CV_CAP_PROP_HUE : return _cam_impl->getSharpness();
     case CV_CAP_PROP_GAIN: _impl->setISO(Scaler::scale(0, 100, 0, 800, value)); break;
     case CV_CAP_PROP_EXPOSURE:

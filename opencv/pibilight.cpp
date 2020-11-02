@@ -209,8 +209,7 @@ outputImage() {
     yuyvImg.create(bgraImg.rows, bgraImg.cols, CV_8UC2);
   }
 
-  int res = libyuv::ARGBToYUY2(
-      bgraImg.data, bgraImg.cols * 4, yuyvImg.data, outWidth * 2, bgraImg.cols, bgraImg.rows);
+  int res = libyuv::ARGBToYUY2(bgraImg.data, bgraImg.cols * 4, yuyvImg.data, outWidth * 2, bgraImg.cols, bgraImg.rows);
 
   if(write(outputFD, yuyvImg.ptr(), bufferSize) == -1) {
     throw("Write to output");

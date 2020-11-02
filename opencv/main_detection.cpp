@@ -21,8 +21,7 @@
 using namespace cv;
 using namespace std;
 
-string tutorial_path =
-    "../../samples/cpp/tutorial_code/calib3d/real_time_pose_estimation/"; // path to tutorial
+string tutorial_path = "../../samples/cpp/tutorial_code/calib3d/real_time_pose_estimation/"; // path to tutorial
 
 string video_read_path = tutorial_path + "Data/box.mp4";       // recorded video
 string yml_read_path = tutorial_path + "Data/cookies_ORB.yml"; // 3dpts + descriptors
@@ -63,13 +62,8 @@ int pnpMethod = SOLVEPNP_ITERATIVE;
 /**  Functions headers  **/
 void help();
 void initKalmanFilter(KalmanFilter& KF, int nStates, int nMeasurements, int nInputs, double dt);
-void updateKalmanFilter(KalmanFilter& KF,
-                        Mat& measurements,
-                        Mat& translation_estimated,
-                        Mat& rotation_estimated);
-void fillMeasurements(Mat& measurements,
-                      const Mat& translation_measured,
-                      const Mat& rotation_measured);
+void updateKalmanFilter(KalmanFilter& KF, Mat& measurements, Mat& translation_estimated, Mat& rotation_estimated);
+void fillMeasurements(Mat& measurements, const Mat& translation_measured, const Mat& rotation_measured);
 
 /**  Main program  **/
 int
@@ -77,31 +71,27 @@ main(int argc, char* argv[]) {
 
   help();
 
-  const String keys =
-      "{help h        |      | print this message                   }"
-      "{video v       |      | path to recorded video               }"
-      "{model         |      | path to yml model                    }"
-      "{mesh          |      | path to ply mesh                     }"
-      "{keypoints k   |2000  | number of keypoints to detect        }"
-      "{ratio r       |0.7   | threshold for ratio test             }"
-      "{iterations it |500   | RANSAC maximum iterations count      }"
-      "{error e       |2.0   | RANSAC reprojection errror           }"
-      "{confidence c  |0.95  | RANSAC confidence                    }"
-      "{inliers in    |30    | minimum inliers for Kalman update    }"
-      "{method  pnp   |0     | PnP method: (0) ITERATIVE - (1) EPNP - (2) P3P - (3) DLS}"
-      "{fast f        |true  | use of robust fast match             }";
+  const String keys = "{help h        |      | print this message                   }"
+                      "{video v       |      | path to recorded video               }"
+                      "{model         |      | path to yml model                    }"
+                      "{mesh          |      | path to ply mesh                     }"
+                      "{keypoints k   |2000  | number of keypoints to detect        }"
+                      "{ratio r       |0.7   | threshold for ratio test             }"
+                      "{iterations it |500   | RANSAC maximum iterations count      }"
+                      "{error e       |2.0   | RANSAC reprojection errror           }"
+                      "{confidence c  |0.95  | RANSAC confidence                    }"
+                      "{inliers in    |30    | minimum inliers for Kalman update    }"
+                      "{method  pnp   |0     | PnP method: (0) ITERATIVE - (1) EPNP - (2) P3P - (3) DLS}"
+                      "{fast f        |true  | use of robust fast match             }";
   CommandLineParser parser(argc, argv, keys);
 
   if(parser.has("help")) {
     parser.printMessage();
     return 0;
   } else {
-    video_read_path =
-        parser.get<string>("video").size() > 0 ? parser.get<string>("video") : video_read_path;
-    yml_read_path =
-        parser.get<string>("model").size() > 0 ? parser.get<string>("model") : yml_read_path;
-    ply_read_path =
-        parser.get<string>("mesh").size() > 0 ? parser.get<string>("mesh") : ply_read_path;
+    video_read_path = parser.get<string>("video").size() > 0 ? parser.get<string>("video") : video_read_path;
+    yml_read_path = parser.get<string>("model").size() > 0 ? parser.get<string>("model") : yml_read_path;
+    ply_read_path = parser.get<string>("mesh").size() > 0 ? parser.get<string>("mesh") : ply_read_path;
     numKeyPoints = !parser.has("keypoints") ? parser.get<int>("keypoints") : numKeyPoints;
     ratioTest = !parser.has("ratio") ? parser.get<float>("ratio") : ratioTest;
     fast_match = !parser.has("fast") ? parser.get<bool>("fast") : fast_match;
@@ -128,10 +118,8 @@ main(int argc, char* argv[]) {
   rmatcher.setFeatureDetector(orb);     // set feature detector
   rmatcher.setDescriptorExtractor(orb); // set descriptor extractor
 
-  Ptr<flann::IndexParams> indexParams =
-      makePtr<flann::LshIndexParams>(6, 12, 1); // instantiate LSH index parameters
-  Ptr<flann::SearchParams> searchParams =
-      makePtr<flann::SearchParams>(50); // instantiate flann search parameters
+  Ptr<flann::IndexParams> indexParams = makePtr<flann::LshIndexParams>(6, 12, 1); // instantiate LSH index parameters
+  Ptr<flann::SearchParams> searchParams = makePtr<flann::SearchParams>(50);       // instantiate flann search parameters
 
   // instantiate FlannBased matcher
   Ptr<DescriptorMatcher> matcher = makePtr<FlannBasedMatcher>(indexParams, searchParams);
@@ -151,7 +139,7 @@ main(int argc, char* argv[]) {
 
   // Get the MODEL INFO
   vector<Point3f> list_points3d_model = model.get_points3d(); // list with model 3D coordinates
-  Mat descriptors_model = model.get_descriptors(); // list with descriptors of each 3D coordinate
+  Mat descriptors_model = model.get_descriptors();            // list with descriptors of each 3D coordinate
 
   // Create & Open Window
   namedWindow("REAL TIME DEMO", WINDOW_KEEPRATIO);
@@ -196,18 +184,14 @@ main(int argc, char* argv[]) {
 
     // -- Step 2: Find out the 2D/3D correspondences
 
-    vector<Point3f>
-        list_points3d_model_match; // container for the model 3D coordinates found in the scene
-    vector<Point2f>
-        list_points2d_scene_match; // container for the model 2D coordinates found in the scene
+    vector<Point3f> list_points3d_model_match; // container for the model 3D coordinates found in the scene
+    vector<Point2f> list_points2d_scene_match; // container for the model 2D coordinates found in the scene
 
     for(unsigned int match_index = 0; match_index < good_matches.size(); ++match_index) {
-      Point3f point3d_model =
-          list_points3d_model[good_matches[match_index].trainIdx]; // 3D point from model
-      Point2f point2d_scene =
-          keypoints_scene[good_matches[match_index].queryIdx].pt; // 2D point from the scene
-      list_points3d_model_match.push_back(point3d_model);         // add 3D point
-      list_points2d_scene_match.push_back(point2d_scene);         // add 2D point
+      Point3f point3d_model = list_points3d_model[good_matches[match_index].trainIdx]; // 3D point from model
+      Point2f point2d_scene = keypoints_scene[good_matches[match_index].queryIdx].pt;  // 2D point from the scene
+      list_points3d_model_match.push_back(point3d_model);                              // add 3D point
+      list_points2d_scene_match.push_back(point2d_scene);                              // add 2D point
     }
 
     // Draw outliers
@@ -219,13 +203,7 @@ main(int argc, char* argv[]) {
     if(good_matches.size() > 0) { // None matches, then RANSAC crashes
 
       // -- Step 3: Estimate the pose using RANSAC approach
-      pnp_detection.estimatePoseRANSAC(list_points3d_model_match,
-                                       list_points2d_scene_match,
-                                       pnpMethod,
-                                       inliers_idx,
-                                       iterationsCount,
-                                       reprojectionError,
-                                       confidence);
+      pnp_detection.estimatePoseRANSAC(list_points3d_model_match, list_points2d_scene_match, pnpMethod, inliers_idx, iterationsCount, reprojectionError, confidence);
 
       // -- Step 4: Catch the inliers keypoints to draw
       for(int inliers_index = 0; inliers_index < inliers_idx.rows; ++inliers_index) {
@@ -410,10 +388,7 @@ initKalmanFilter(KalmanFilter& KF, int nStates, int nMeasurements, int nInputs, 
 
 /**********************************************************************************************************/
 void
-updateKalmanFilter(KalmanFilter& KF,
-                   Mat& measurement,
-                   Mat& translation_estimated,
-                   Mat& rotation_estimated) {
+updateKalmanFilter(KalmanFilter& KF, Mat& measurement, Mat& translation_estimated, Mat& rotation_estimated) {
 
   // First predict, to update the internal statePre variable
   Mat prediction = KF.predict();

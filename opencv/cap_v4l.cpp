@@ -377,10 +377,8 @@ struct CvCaptureCAM_V4L CV_FINAL : public CvCapture {
 /***********************   Implementations  ***************************************/
 
 CvCaptureCAM_V4L::CvCaptureCAM_V4L()
-    : deviceHandle(-1), bufferIndex(-1), FirstCapture(true), palette(0), width(0), height(0),
-      width_set(0), height_set(0), bufferSize(DEFAULT_V4L_BUFFERS), fps(0), convert_rgb(0),
-      frame_allocated(false), returnFrame(false), channelNumber(-1), normalizePropRange(false),
-      type(V4L2_BUF_TYPE_VIDEO_CAPTURE) {
+    : deviceHandle(-1), bufferIndex(-1), FirstCapture(true), palette(0), width(0), height(0), width_set(0), height_set(0), bufferSize(DEFAULT_V4L_BUFFERS), fps(0), convert_rgb(0),
+      frame_allocated(false), returnFrame(false), channelNumber(-1), normalizePropRange(false), type(V4L2_BUF_TYPE_VIDEO_CAPTURE) {
   frame = cvIplImage();
   memset(&timestamp, 0, sizeof(timestamp));
 }
@@ -625,8 +623,7 @@ CvCaptureCAM_V4L::initCapture() {
   }
 
   if(!autosetup_capture_mode_v4l2()) {
-    fprintf(stderr,
-            "VIDEOIO ERROR: V4L2: Pixel format of incoming image is unsupported by OpenCV\n");
+    fprintf(stderr, "VIDEOIO ERROR: V4L2: Pixel format of incoming image is unsupported by OpenCV\n");
     return false;
   }
 
@@ -719,12 +716,7 @@ CvCaptureCAM_V4L::createBuffers() {
     }
 
     buffers[n_buffers].length = buf.length;
-    buffers[n_buffers].start = mmap(NULL /* start anywhere */,
-                                    buf.length,
-                                    PROT_READ /* required */,
-                                    MAP_SHARED /* recommended */,
-                                    deviceHandle,
-                                    buf.m.offset);
+    buffers[n_buffers].start = mmap(NULL /* start anywhere */, buf.length, PROT_READ /* required */, MAP_SHARED /* recommended */, deviceHandle, buf.m.offset);
 
     if(MAP_FAILED == buffers[n_buffers].start) {
       perror("mmap");
@@ -797,8 +789,7 @@ CvCaptureCAM_V4L::open(const char* _deviceName) {
   frame_allocated = false;
   deviceName = _deviceName;
   returnFrame = true;
-  normalizePropRange =
-      utils::getConfigurationParameterBool("OPENCV_VIDEOIO_V4L_RANGE_NORMALIZED", false);
+  normalizePropRange = utils::getConfigurationParameterBool("OPENCV_VIDEOIO_V4L_RANGE_NORMALIZED", false);
   channelNumber = -1;
   bufferIndex = -1;
 
@@ -941,8 +932,7 @@ CvCaptureCAM_V4L::grabFrame() {
 #define LIMIT(x) ((x) > 0xffffff ? 0xff : ((x) <= 0xffff ? 0 : ((x) >> 16)))
 
 static inline void
-move_411_block(
-    int yTL, int yTR, int yBL, int yBR, int u, int v, int /*rowPixels*/, unsigned char* rgb) {
+move_411_block(int yTL, int yTR, int yBL, int yBR, int u, int v, int /*rowPixels*/, unsigned char* rgb) {
   const int rvScale = 91881;
   const int guScale = -22553;
   const int gvScale = -46801;
@@ -1048,12 +1038,9 @@ bayer2rgb24(long int WIDTH, long int HEIGHT, unsigned char* src, unsigned char* 
       if((i % 2) == 0) {
         /* B */
         if((i > WIDTH) && ((i % WIDTH) > 0)) {
-          *scanpt++ = (*(rawpt - WIDTH - 1) + *(rawpt - WIDTH + 1) + *(rawpt + WIDTH - 1) +
-                       *(rawpt + WIDTH + 1)) /
-                      4; /* R */
-          *scanpt++ =
-              (*(rawpt - 1) + *(rawpt + 1) + *(rawpt + WIDTH) + *(rawpt - WIDTH)) / 4; /* G */
-          *scanpt++ = *rawpt;                                                          /* B */
+          *scanpt++ = (*(rawpt - WIDTH - 1) + *(rawpt - WIDTH + 1) + *(rawpt + WIDTH - 1) + *(rawpt + WIDTH + 1)) / 4; /* R */
+          *scanpt++ = (*(rawpt - 1) + *(rawpt + 1) + *(rawpt + WIDTH) + *(rawpt - WIDTH)) / 4;                         /* G */
+          *scanpt++ = *rawpt;                                                                                          /* B */
         } else {
           /* first line or left column */
           *scanpt++ = *(rawpt + WIDTH + 1);                  /* R */
@@ -1089,12 +1076,9 @@ bayer2rgb24(long int WIDTH, long int HEIGHT, unsigned char* src, unsigned char* 
       } else {
         /* R */
         if(i < (WIDTH * (HEIGHT - 1)) && ((i % WIDTH) < (WIDTH - 1))) {
-          *scanpt++ = *rawpt; /* R */
-          *scanpt++ =
-              (*(rawpt - 1) + *(rawpt + 1) + *(rawpt - WIDTH) + *(rawpt + WIDTH)) / 4; /* G */
-          *scanpt++ = (*(rawpt - WIDTH - 1) + *(rawpt - WIDTH + 1) + *(rawpt + WIDTH - 1) +
-                       *(rawpt + WIDTH + 1)) /
-                      4; /* B */
+          *scanpt++ = *rawpt;                                                                                          /* R */
+          *scanpt++ = (*(rawpt - 1) + *(rawpt + 1) + *(rawpt - WIDTH) + *(rawpt + WIDTH)) / 4;                         /* G */
+          *scanpt++ = (*(rawpt - WIDTH - 1) + *(rawpt - WIDTH + 1) + *(rawpt + WIDTH - 1) + *(rawpt + WIDTH + 1)) / 4; /* B */
         } else {
           /* bottom line or right column */
           *scanpt++ = *rawpt;                                /* R */
@@ -1138,12 +1122,9 @@ sgbrg2rgb24(long int WIDTH, long int HEIGHT, unsigned char* src, unsigned char* 
         }
       } else { // odd pixel
         if((i > WIDTH) && ((i % WIDTH) < (WIDTH - 1))) {
-          *scanpt++ = *(rawpt); /* R */
-          *scanpt++ =
-              (*(rawpt - 1) + *(rawpt + 1) + *(rawpt - WIDTH) + *(rawpt + WIDTH)) / 4; /* G */
-          *scanpt++ = (*(rawpt - WIDTH - 1) + *(rawpt - WIDTH + 1) + *(rawpt + WIDTH - 1) +
-                       *(rawpt + WIDTH + 1)) /
-                      4; /* B */
+          *scanpt++ = *(rawpt);                                                                                        /* R */
+          *scanpt++ = (*(rawpt - 1) + *(rawpt + 1) + *(rawpt - WIDTH) + *(rawpt + WIDTH)) / 4;                         /* G */
+          *scanpt++ = (*(rawpt - WIDTH - 1) + *(rawpt - WIDTH + 1) + *(rawpt + WIDTH - 1) + *(rawpt + WIDTH + 1)) / 4; /* B */
         } else {
           /* first line or right column */
 
@@ -1156,12 +1137,9 @@ sgbrg2rgb24(long int WIDTH, long int HEIGHT, unsigned char* src, unsigned char* 
       // odd row
       if((i % 2) == 0) { // even pixel
         if((i < (WIDTH * (HEIGHT - 1))) && ((i % WIDTH) > 0)) {
-          *scanpt++ = (*(rawpt - WIDTH - 1) + *(rawpt - WIDTH + 1) + *(rawpt + WIDTH - 1) +
-                       *(rawpt + WIDTH + 1)) /
-                      4; /* R */
-          *scanpt++ =
-              (*(rawpt - 1) + *(rawpt + 1) + *(rawpt - WIDTH) + *(rawpt + WIDTH)) / 4; /* G */
-          *scanpt++ = *(rawpt);                                                        /* B */
+          *scanpt++ = (*(rawpt - WIDTH - 1) + *(rawpt - WIDTH + 1) + *(rawpt + WIDTH - 1) + *(rawpt + WIDTH + 1)) / 4; /* R */
+          *scanpt++ = (*(rawpt - 1) + *(rawpt + 1) + *(rawpt - WIDTH) + *(rawpt + WIDTH)) / 4;                         /* G */
+          *scanpt++ = *(rawpt);                                                                                        /* B */
         } else {
           /* bottom line or left column */
 
@@ -1349,83 +1327,32 @@ CvCaptureCAM_V4L::convertToRgb(const Buffer& currentBuffer) {
   cv::Size imageSize(form.fmt.pix.width, form.fmt.pix.height);
   // Not found conversion
   switch(palette) {
-    case V4L2_PIX_FMT_YUV411P:
-      yuv411p_to_rgb24(imageSize.width,
-                       imageSize.height,
-                       (unsigned char*)(currentBuffer.start),
-                       (unsigned char*)frame.imageData);
-      return;
-    case V4L2_PIX_FMT_SBGGR8:
-      bayer2rgb24(imageSize.width,
-                  imageSize.height,
-                  (unsigned char*)currentBuffer.start,
-                  (unsigned char*)frame.imageData);
-      return;
+    case V4L2_PIX_FMT_YUV411P: yuv411p_to_rgb24(imageSize.width, imageSize.height, (unsigned char*)(currentBuffer.start), (unsigned char*)frame.imageData); return;
+    case V4L2_PIX_FMT_SBGGR8: bayer2rgb24(imageSize.width, imageSize.height, (unsigned char*)currentBuffer.start, (unsigned char*)frame.imageData); return;
 
     case V4L2_PIX_FMT_SN9C10X:
       sonix_decompress_init();
-      sonix_decompress(imageSize.width,
-                       imageSize.height,
-                       (unsigned char*)currentBuffer.start,
-                       (unsigned char*)buffers[MAX_V4L_BUFFERS].start);
+      sonix_decompress(imageSize.width, imageSize.height, (unsigned char*)currentBuffer.start, (unsigned char*)buffers[MAX_V4L_BUFFERS].start);
 
-      bayer2rgb24(imageSize.width,
-                  imageSize.height,
-                  (unsigned char*)buffers[MAX_V4L_BUFFERS].start,
-                  (unsigned char*)frame.imageData);
+      bayer2rgb24(imageSize.width, imageSize.height, (unsigned char*)buffers[MAX_V4L_BUFFERS].start, (unsigned char*)frame.imageData);
       return;
-    case V4L2_PIX_FMT_SGBRG8:
-      sgbrg2rgb24(imageSize.width,
-                  imageSize.height,
-                  (unsigned char*)currentBuffer.start,
-                  (unsigned char*)frame.imageData);
-      return;
+    case V4L2_PIX_FMT_SGBRG8: sgbrg2rgb24(imageSize.width, imageSize.height, (unsigned char*)currentBuffer.start, (unsigned char*)frame.imageData); return;
     default: break;
   }
   // Converted by cvtColor or imdecode
   cv::Mat destination(imageSize, CV_8UC3, frame.imageData);
   switch(palette) {
-    case V4L2_PIX_FMT_YVU420:
-      cv::cvtColor(cv::Mat(imageSize.height * 3 / 2, imageSize.width, CV_8U, currentBuffer.start),
-                   destination,
-                   COLOR_YUV2BGR_YV12);
-      return;
-    case V4L2_PIX_FMT_YUV420:
-      cv::cvtColor(cv::Mat(imageSize.height * 3 / 2, imageSize.width, CV_8U, currentBuffer.start),
-                   destination,
-                   COLOR_YUV2BGR_IYUV);
-      return;
-    case V4L2_PIX_FMT_NV12:
-      cv::cvtColor(cv::Mat(imageSize.height * 3 / 2, imageSize.width, CV_8U, currentBuffer.start),
-                   destination,
-                   COLOR_YUV2RGB_NV12);
-      return;
-    case V4L2_PIX_FMT_NV21:
-      cv::cvtColor(cv::Mat(imageSize.height * 3 / 2, imageSize.width, CV_8U, currentBuffer.start),
-                   destination,
-                   COLOR_YUV2RGB_NV21);
-      return;
+    case V4L2_PIX_FMT_YVU420: cv::cvtColor(cv::Mat(imageSize.height * 3 / 2, imageSize.width, CV_8U, currentBuffer.start), destination, COLOR_YUV2BGR_YV12); return;
+    case V4L2_PIX_FMT_YUV420: cv::cvtColor(cv::Mat(imageSize.height * 3 / 2, imageSize.width, CV_8U, currentBuffer.start), destination, COLOR_YUV2BGR_IYUV); return;
+    case V4L2_PIX_FMT_NV12: cv::cvtColor(cv::Mat(imageSize.height * 3 / 2, imageSize.width, CV_8U, currentBuffer.start), destination, COLOR_YUV2RGB_NV12); return;
+    case V4L2_PIX_FMT_NV21: cv::cvtColor(cv::Mat(imageSize.height * 3 / 2, imageSize.width, CV_8U, currentBuffer.start), destination, COLOR_YUV2RGB_NV21); return;
 #ifdef HAVE_JPEG
     case V4L2_PIX_FMT_MJPEG:
-    case V4L2_PIX_FMT_JPEG:
-      cv::imdecode(Mat(1, currentBuffer.buffer.bytesused, CV_8U, currentBuffer.start),
-                   IMREAD_COLOR,
-                   &destination);
-      return;
+    case V4L2_PIX_FMT_JPEG: cv::imdecode(Mat(1, currentBuffer.buffer.bytesused, CV_8U, currentBuffer.start), IMREAD_COLOR, &destination); return;
 #endif
-    case V4L2_PIX_FMT_YUYV:
-      cv::cvtColor(cv::Mat(imageSize, CV_8UC2, currentBuffer.start),
-                   destination,
-                   COLOR_YUV2BGR_YUYV);
-      return;
-    case V4L2_PIX_FMT_UYVY:
-      cv::cvtColor(cv::Mat(imageSize, CV_8UC2, currentBuffer.start),
-                   destination,
-                   COLOR_YUV2BGR_UYVY);
-      return;
-    case V4L2_PIX_FMT_RGB24:
-      cv::cvtColor(cv::Mat(imageSize, CV_8UC3, currentBuffer.start), destination, COLOR_RGB2BGR);
-      return;
+    case V4L2_PIX_FMT_YUYV: cv::cvtColor(cv::Mat(imageSize, CV_8UC2, currentBuffer.start), destination, COLOR_YUV2BGR_YUYV); return;
+    case V4L2_PIX_FMT_UYVY: cv::cvtColor(cv::Mat(imageSize, CV_8UC2, currentBuffer.start), destination, COLOR_YUV2BGR_UYVY); return;
+    case V4L2_PIX_FMT_RGB24: cv::cvtColor(cv::Mat(imageSize, CV_8UC3, currentBuffer.start), destination, COLOR_RGB2BGR); return;
     case V4L2_PIX_FMT_Y16: {
       cv::Mat temp(imageSize, CV_8UC1, buffers[MAX_V4L_BUFFERS].start);
       cv::Mat(imageSize, CV_16UC1, currentBuffer.start).convertTo(temp, CV_8U, 1.0 / 256);
@@ -1438,15 +1365,9 @@ CvCaptureCAM_V4L::convertToRgb(const Buffer& currentBuffer) {
       cv::cvtColor(temp, destination, COLOR_GRAY2BGR);
       return;
     }
-    case V4L2_PIX_FMT_GREY:
-      cv::cvtColor(cv::Mat(imageSize, CV_8UC1, currentBuffer.start), destination, COLOR_GRAY2BGR);
-      break;
+    case V4L2_PIX_FMT_GREY: cv::cvtColor(cv::Mat(imageSize, CV_8UC1, currentBuffer.start), destination, COLOR_GRAY2BGR); break;
     case V4L2_PIX_FMT_BGR24:
-    default:
-      memcpy((char*)frame.imageData,
-             (char*)currentBuffer.start,
-             std::min(frame.imageSize, (int)currentBuffer.buffer.bytesused));
-      break;
+    default: memcpy((char*)frame.imageData, (char*)currentBuffer.start, std::min(frame.imageSize, (int)currentBuffer.buffer.bytesused)); break;
   }
 }
 
@@ -1570,9 +1491,7 @@ CvCaptureCAM_V4L::controlInfo(int property_id, __u32& _v4l2id, cv::Range& range)
   v4l2_queryctrl queryctrl = v4l2_queryctrl();
   queryctrl.id = __u32(v4l2id);
   if(v4l2id == -1 || !tryIoctl(VIDIOC_QUERYCTRL, &queryctrl)) {
-    fprintf(stderr,
-            "VIDEOIO ERROR: V4L2: property %s is not supported\n",
-            capPropertyName(property_id).c_str());
+    fprintf(stderr, "VIDEOIO ERROR: V4L2: property %s is not supported\n", capPropertyName(property_id).c_str());
     return false;
   }
   _v4l2id = __u32(v4l2id);
@@ -1610,9 +1529,7 @@ CvCaptureCAM_V4L::icvControl(__u32 v4l2id, int& value, bool isSet) const {
                 "VIDIOC_QUERYMENU).");
         break;
       case ERANGE: fprintf(stderr, "The struct v4l2_control value is out of bounds."); break;
-      case EACCES:
-        fprintf(stderr, "Attempt to set a read-only control or to get a write-only control.");
-        break;
+      case EACCES: fprintf(stderr, "Attempt to set a read-only control or to get a write-only control."); break;
 #endif
       default: perror(isSet ? "VIDIOC_S_CTRL" : "VIDIOC_G_CTRL"); break;
     }
@@ -1643,8 +1560,7 @@ CvCaptureCAM_V4L::getProperty(int property_id) const {
         fprintf(stderr, "VIDEOIO ERROR: V4L: Unable to get camera FPS\n");
         return -1;
       }
-      return sp.parm.capture.timeperframe.denominator /
-             (double)sp.parm.capture.timeperframe.numerator;
+      return sp.parm.capture.timeperframe.denominator / (double)sp.parm.capture.timeperframe.numerator;
     }
     case cv::CAP_PROP_POS_MSEC:
       if(FirstCapture)
@@ -1724,10 +1640,7 @@ CvCaptureCAM_V4L::setProperty(int property_id, double _value) {
         return true;
 
       if(value > MAX_V4L_BUFFERS || value < 1) {
-        fprintf(stderr,
-                "V4L: Bad buffer size %d, buffer size must be from 1 to %d\n",
-                value,
-                MAX_V4L_BUFFERS);
+        fprintf(stderr, "V4L: Bad buffer size %d, buffer size must be from 1 to %d\n", value, MAX_V4L_BUFFERS);
         return false;
       }
       bufferSize = value;
@@ -1828,9 +1741,7 @@ CvCaptureCAM_V4L::retrieveFrame(int) {
       v4l2_create_frame();
 
     frame.imageData = (char*)buffers[MAX_V4L_BUFFERS].start;
-    memcpy(buffers[MAX_V4L_BUFFERS].start,
-           currentBuffer.start,
-           std::min(buffers[MAX_V4L_BUFFERS].length, (size_t)currentBuffer.buffer.bytesused));
+    memcpy(buffers[MAX_V4L_BUFFERS].start, currentBuffer.start, std::min(buffers[MAX_V4L_BUFFERS].length, (size_t)currentBuffer.buffer.bytesused));
   }
   // Revert buffer to the queue
   if(!tryIoctl(VIDIOC_QBUF, &buffers[bufferIndex].buffer))

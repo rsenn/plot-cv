@@ -99,8 +99,7 @@ main(int argc, char** argv) {
       bestcv::Match = ii;
       bestDis = dis;
     }
-    std::cout << " distance between " << queryName.str() << " and " << iiname.str()
-              << " is: " << dis << std::endl;
+    std::cout << " distance between " << queryName.str() << " and " << iiname.str() << " is: " << dis << std::endl;
   }
   destroyWindow("TEST");
   stringstream bestname;

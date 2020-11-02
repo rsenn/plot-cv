@@ -58,8 +58,7 @@ int col_count = 0;
 int grid_width = 0; //格子的宽高
 int grid_height = 0;
 
-int image_fliped_direc =
-    -2; //定义原始图像翻转的形式，默认不进行翻转，如果检测到位-2则不执行翻转处理，因为小于0都会进行翻转
+int image_fliped_direc = -2; //定义原始图像翻转的形式，默认不进行翻转，如果检测到位-2则不执行翻转处理，因为小于0都会进行翻转
 
 void DrawRectangle(cv::Mat& img, cv::Rect box);
 void on_MouseHandle(int event, int x, int y, int flags, void* param);
@@ -125,9 +124,7 @@ saveConfig() {
 
   cvWriteString(fs, "commit_mode2", "是否设置为人体扫描模式");
   cvWriteInt(fs, "modeScan", modeScan);
-  cvWriteString(fs,
-                "commit_mode4",
-                "格子检测的另一种方法, 1使用普通USB摄像头，2表示需要进行额外初始化的摄像头");
+  cvWriteString(fs, "commit_mode4", "格子检测的另一种方法, 1使用普通USB摄像头，2表示需要进行额外初始化的摄像头");
   cvWriteInt(fs, "modeGrid2", modeGrid2);
   cvWriteString(fs, "commit_brightness", "洛日摄像头的亮度设置0-64");
   cvWriteInt(fs, "camera_BRIGHTNESS", camera_BRIGHTNESS);
@@ -179,8 +176,7 @@ loadConfig() {
     col_count = (int)100 / col_resolution;
     grid_width = (RIGHT_BOTTOM_X - LEFT_TOP_X) / col_count; //启动计算格子的高宽
     grid_height = (RIGHT_BOTTOM_Y - LEFT_TOP_Y) / row_count;
-    image_fliped_direc =
-        cvReadIntByName(fs, nullptr, "image_fliped_direc", -2); //加载图像翻转的形式
+    image_fliped_direc = cvReadIntByName(fs, nullptr, "image_fliped_direc", -2); //加载图像翻转的形式
     g_medianBlurGridThresh = cvReadIntByName(fs, nullptr, "g_medianBlurGridThresh", 1);
     if(g_medianBlurGridThresh % 2 == 0) {
       g_medianBlurGridThresh += 1;
@@ -233,11 +229,7 @@ main(int argc, char** argv) {
         if(!hasInitedSrcWindow) { //如果还没有初始化显示窗口
           namedWindow(WINDOW_SRC, WINDOW_AUTOSIZE);
           setMouseCallback(WINDOW_SRC, on_MouseHandle, (void*)&g_srcImage); //设置鼠标操作回调函数
-          createTrackbar("contous",
-                         WINDOW_SRC,
-                         &g_medianBlurGridThresh,
-                         g_medianBlurMaxThresh,
-                         on_ContoursChange);
+          createTrackbar("contous", WINDOW_SRC, &g_medianBlurGridThresh, g_medianBlurMaxThresh, on_ContoursChange);
           on_ContoursChange(0, 0);
           hasInitedSrcWindow = true;
         }
@@ -248,8 +240,7 @@ main(int argc, char** argv) {
         for(int i = 0; i < row_count + 1; i++) {
           int x1 = LEFT_TOP_X;
           int y1 = LEFT_TOP_Y + i * grid_height + 1;
-          if((y1 > RIGHT_BOTTOM_Y) ||
-             (i == row_count && y1 < RIGHT_BOTTOM_Y)) { // 避免边框的线出现不齐的情况
+          if((y1 > RIGHT_BOTTOM_Y) || (i == row_count && y1 < RIGHT_BOTTOM_Y)) { // 避免边框的线出现不齐的情况
             y1 = RIGHT_BOTTOM_Y;
           }
           int x2 = RIGHT_BOTTOM_X;
@@ -270,8 +261,7 @@ main(int argc, char** argv) {
 
       cv::Mat img_mask;     //前景移动物体图像
       cv::Mat img_bkgmodel; //祛除移动物体的背景图像
-      bgs->process(g_srcImage,
-                   img_mask,
+      bgs->process(g_srcImage, img_mask,
                    img_bkgmodel); // by default, it shows automatically the foreground mask image
 
       // 1.对前景移动物体进行滤波,中值滤波
@@ -280,8 +270,7 @@ main(int argc, char** argv) {
       // 找出运动物体轮廓
       std::vector<std::vector<cv::Point>> contours;
       std::vector<Vec4i> hierarchy;
-      findContours(
-          g_filterImage, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+      findContours(g_filterImage, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
       // 多边形逼近轮廓+获取矩形和圆形边界框
       std::vector<std::vector<cv::Point>> contours_poly(contours.size());
@@ -293,9 +282,7 @@ main(int argc, char** argv) {
       // 循环遍历所有的部分
       for(unsigned int i = 0; i < contours.size(); i++) {
         approxPolyDP(cv::Mat(contours[i]), contours_poly[i], 3, true); //用指定精度逼近多边形曲线
-        for(std::vector<cv::Point>::const_iterator itp = contours_poly[i].begin();
-            itp != contours_poly[i].end();
-            itp++) {
+        for(std::vector<cv::Point>::const_iterator itp = contours_poly[i].begin(); itp != contours_poly[i].end(); itp++) {
           setGridStatus(itp->x, itp->y, grid_array);
         }
       }
@@ -398,8 +385,7 @@ main(int argc, char** argv) {
         if(!hasInitedSrcWindow) { //如果还没有初始化显示窗口
           namedWindow(WINDOW_SRC, WINDOW_AUTOSIZE);
           setMouseCallback(WINDOW_SRC, on_MouseHandle, (void*)&g_srcImage); //设置鼠标操作回调函数
-          createTrackbar(
-              "contous", WINDOW_SRC, &histMinValue, g_medianBlurMaxThresh, on_ContoursChangeHalf);
+          createTrackbar("contous", WINDOW_SRC, &histMinValue, g_medianBlurMaxThresh, on_ContoursChangeHalf);
           on_ContoursChangeHalf(0, 0);
           hasInitedSrcWindow = true;
         }
@@ -413,11 +399,9 @@ main(int argc, char** argv) {
         continue;
       } else if(readPicCount == 100) {
         readPicCount++;
-        cvtColor(g_srcImage,
-                 hsvImage_base,
+        cvtColor(g_srcImage, hsvImage_base,
                  COLOR_BGR2HSV); //【3】 将图像由BGR色彩空间转换到 HSV色彩空间
-        hsvImage_halfDown = hsvImage_base(
-            Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
+        hsvImage_halfDown = hsvImage_base(Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
         if(showOutput) { //显示部分框选画面
           imshow("ROI", hsvImage_halfDown);
         }
@@ -429,34 +413,16 @@ main(int argc, char** argv) {
 
         //【4】创建包含基准图像下半部的半身图像(HSV格式)
         //从原始图像中提取感兴趣的区域，每帧图像与模板区域进行比较
-        hsvImage_halfDown = hsvImage_base(
-            Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
+        hsvImage_halfDown = hsvImage_base(Rect(LEFT_TOP_X, LEFT_TOP_Y, RIGHT_BOTTOM_X - LEFT_TOP_X, RIGHT_BOTTOM_Y - LEFT_TOP_Y));
         if(showOutput) { //显示部分框选画面
           imshow("ROI", hsvImage_halfDown);
         }
         // 【5】分别计算基准图像，半身基准图像的HSV直方图:
-        calcHist(&hsvImage_base_template,
-                 1,
-                 channels,
-                 cv::Mat(),
-                 baseHist,
-                 2,
-                 histSize,
-                 ranges,
-                 true,
+        calcHist(&hsvImage_base_template, 1, channels, cv::Mat(), baseHist, 2, histSize, ranges, true,
                  false); //计算模板图像的直方图
         normalize(baseHist, baseHist, 0, 1, NORM_MINMAX, -1, cv::Mat());
 
-        calcHist(&hsvImage_halfDown,
-                 1,
-                 channels,
-                 cv::Mat(),
-                 halfDownHist,
-                 2,
-                 histSize,
-                 ranges,
-                 true,
-                 false);
+        calcHist(&hsvImage_halfDown, 1, channels, cv::Mat(), halfDownHist, 2, histSize, ranges, true, false);
         normalize(halfDownHist, halfDownHist, 0, 1, NORM_MINMAX, -1, cv::Mat());
 
         //【6】按顺序使用第一种对比标准将基准图像的直方图与其余各直方图进行对比:
@@ -465,9 +431,7 @@ main(int argc, char** argv) {
         double base_half = compareHist(baseHist, halfDownHist, 0);
         //输出结果
         if(showOutput) {
-          printf("匹配结果如下:histMinValue = %.2f, 【比半身图】：%.2f; \n\n",
-                 histMinValue * 0.1,
-                 base_half);
+          printf("匹配结果如下:histMinValue = %.2f, 【比半身图】：%.2f; \n\n", histMinValue * 0.1, base_half);
         }
         if(base_half <= histMinValue * 0.1) {
           startMotor(4);
@@ -521,12 +485,7 @@ setGridStatus(int x, int y, int grid_array[][100]) {
 //-----------------------------------------------------------------------------------------------
 void
 DrawRectangle(cv::Mat& img, cv::Rect box) {
-  cv::rectangle(img,
-                box.tl(),
-                box.br(),
-                cv::Scalar(g_rng.uniform(0, 255),
-                           g_rng.uniform(0, 255),
-                           g_rng.uniform(0, 255))); //随机颜色
+  cv::rectangle(img, box.tl(), box.br(), cv::Scalar(g_rng.uniform(0, 255), g_rng.uniform(0, 255), g_rng.uniform(0, 255))); //随机颜色
 }
 void
 on_MouseHandle(int event, int x, int y, int flags, void* param) {
@@ -580,8 +539,7 @@ on_MouseHandle(int event, int x, int y, int flags, void* param) {
       grid_height = (RIGHT_BOTTOM_Y - LEFT_TOP_Y) / row_count;
       saveConfig(); //写入文件
       if(showOutput) {
-        cout << "--起点x = " << g_rectangle.x << ", y = " << g_rectangle.y
-             << "， 区域宽w = " << g_rectangle.width << ", h = " << g_rectangle.height << endl;
+        cout << "--起点x = " << g_rectangle.x << ", y = " << g_rectangle.y << "， 区域宽w = " << g_rectangle.width << ", h = " << g_rectangle.height << endl;
       }
     } break;
   }

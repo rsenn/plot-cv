@@ -19,29 +19,28 @@ static const char* keys = {"{video_name       | | video name                    
 
 static void
 help() {
-  cout
-      << "\nThis example shows the functionality of \"Tracking-by-Matching\" approach:"
-         " detector is used to detect objects on frames, \n"
-         "matching is used to find correspondences between new detections and tracked objects.\n"
-         "Detection is made by DNN detection network every `--frame_step` frame.\n"
-         "Point a .prototxt file of the network as the parameter `--detector_model`, and a "
-         ".caffemodel file"
-         " as the parameter `--detector_weights`.\n"
-         "(As an example of such detection network is a popular MobileNet_SSD network trained on "
-         "VOC dataset.)\n"
-         "If `--desired_class_id` parameter is set, the detection result is filtered by class id,"
-         " returned by the detection network.\n"
-         "(That is, if a detection net was trained on VOC dataset, then to track pedestrians point "
-         "--desired_class_id=15)\n"
-         "Example of <video_name> is in opencv_extra/testdata/cv/tracking/\n"
-         "Call:\n"
-         "./example_tracking_tracking_by_matching --video_name=<video_name> "
-         "--detector_model=<detector_model_path> "
-         "--detector_weights=<detector_weights_path> \\\n"
-         "                                       [--start_frame=<start_frame>] \\\n"
-         "                                       [--frame_step=<frame_step>] \\\n"
-         "                                       [--desired_class_id=<desired_class_id>]\n"
-      << endl;
+  cout << "\nThis example shows the functionality of \"Tracking-by-Matching\" approach:"
+          " detector is used to detect objects on frames, \n"
+          "matching is used to find correspondences between new detections and tracked objects.\n"
+          "Detection is made by DNN detection network every `--frame_step` frame.\n"
+          "Point a .prototxt file of the network as the parameter `--detector_model`, and a "
+          ".caffemodel file"
+          " as the parameter `--detector_weights`.\n"
+          "(As an example of such detection network is a popular MobileNet_SSD network trained on "
+          "VOC dataset.)\n"
+          "If `--desired_class_id` parameter is set, the detection result is filtered by class id,"
+          " returned by the detection network.\n"
+          "(That is, if a detection net was trained on VOC dataset, then to track pedestrians point "
+          "--desired_class_id=15)\n"
+          "Example of <video_name> is in opencv_extra/testdata/cv/tracking/\n"
+          "Call:\n"
+          "./example_tracking_tracking_by_matching --video_name=<video_name> "
+          "--detector_model=<detector_model_path> "
+          "--detector_weights=<detector_weights_path> \\\n"
+          "                                       [--start_frame=<start_frame>] \\\n"
+          "                                       [--frame_step=<frame_step>] \\\n"
+          "                                       [--desired_class_id=<desired_class_id>]\n"
+       << endl;
 
   cout << "\n\nHot keys: \n"
           "\tq - quit the program\n"
@@ -63,10 +62,8 @@ public:
                     const Size& net_size = Size(300, 300),
                     const Scalar& net_mean = Scalar(127.5, 127.5, 127.5),
                     bool net_swapRB = false)
-      : desired_class_id(desired_class_id), confidence_threshold(confidence_threshold),
-        net_input_name(net_input_name), net_output_name(net_output_name),
-        net_scalefactor(net_scalefactor), net_size(net_size), net_mean(net_mean),
-        net_swapRB(net_swapRB) {
+      : desired_class_id(desired_class_id), confidence_threshold(confidence_threshold), net_input_name(net_input_name), net_output_name(net_output_name), net_scalefactor(net_scalefactor),
+        net_size(net_size), net_mean(net_mean), net_swapRB(net_swapRB) {
     net = dnn::readNetFromCaffe(net_caffe_model_path, net_caffe_weights_path);
     if(net.empty())
       CV_Error(Error::StsError, "Cannot read Caffe net");
@@ -75,8 +72,7 @@ public:
   detect(const cv::Mat& frame, int frame_idx) {
     Mat resized_frame;
     resize(frame, resized_frame, net_size);
-    Mat inputBlob =
-        cv::dnn::blobFromImage(resized_frame, net_scalefactor, net_size, net_mean, net_swapRB);
+    Mat inputBlob = cv::dnn::blobFromImage(resized_frame, net_scalefactor, net_size, net_mean, net_swapRB);
 
     net.setInput(inputBlob, net_input_name);
     Mat detection = net.forward(net_output_name);
@@ -127,9 +123,7 @@ createTrackerByMatchingWithFastDescriptor() {
 
   cv::Ptr<ITrackerByMatching> tracker = createTrackerByMatching(params);
 
-  std::shared_ptr<IImageDescriptor> descriptor_fast =
-      std::make_shared<ResizedImageDescriptor>(cv::Size(16, 32),
-                                               cv::InterpolationFlags::INTER_LINEAR);
+  std::shared_ptr<IImageDescriptor> descriptor_fast = std::make_shared<ResizedImageDescriptor>(cv::Size(16, 32), cv::InterpolationFlags::INTER_LINEAR);
   std::shared_ptr<IDescriptorDistance> distance_fast = std::make_shared<MatchTemplateDistance>();
 
   tracker->setDescriptorFast(descriptor_fast);
@@ -220,15 +214,8 @@ main(int argc, char** argv) {
     // confidence level.
     for(const auto& detection : tracker->trackedDetections()) {
       cv::rectangle(frame, detection.rect, cv::Scalar(0, 0, 255), 3);
-      std::string text =
-          std::to_string(detection.object_id) + " conf: " + std::to_string(detection.confidence);
-      cv::putText(frame,
-                  text,
-                  detection.rect.tl(),
-                  cv::FONT_HERSHEY_COMPLEX,
-                  1.0,
-                  cv::Scalar(0, 0, 255),
-                  3);
+      std::string text = std::to_string(detection.object_id) + " conf: " + std::to_string(detection.confidence);
+      cv::putText(frame, text, detection.rect.tl(), cv::FONT_HERSHEY_COMPLEX, 1.0, cv::Scalar(0, 0, 255), 3);
     }
 
     imshow("Tracking by Matching", frame);

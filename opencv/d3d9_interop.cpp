@@ -25,8 +25,7 @@ using namespace cv;
 
 class D3D9WinApp : public D3DSample {
 public:
-  D3D9WinApp(int width, int height, std::string& window_name, cv::VideoCapture& cap)
-      : D3DSample(width, height, window_name, cap) {}
+  D3D9WinApp(int width, int height, std::string& window_name, cv::VideoCapture& cap) : D3DSample(width, height, window_name, cap) {}
 
   ~D3D9WinApp() {}
 
@@ -43,8 +42,7 @@ public:
       return -1;
     }
 
-    DWORD flags = D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_PUREDEVICE |
-                  D3DCREATE_NOWINDOWCHANGES | D3DCREATE_MULTITHREADED | D3DCREATE_FPU_PRESERVE;
+    DWORD flags = D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_PUREDEVICE | D3DCREATE_NOWINDOWCHANGES | D3DCREATE_MULTITHREADED | D3DCREATE_FPU_PRESERVE;
 
     D3DPRESENT_PARAMETERS d3dpp;
     ::ZeroMemory(&d3dpp, sizeof(D3DPRESENT_PARAMETERS));
@@ -61,8 +59,7 @@ public:
     d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
     d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 
-    r = m_pD3D9->CreateDevice(
-        D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hWnd, flags, &d3dpp, &m_pD3D9Dev);
+    r = m_pD3D9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hWnd, flags, &d3dpp, &m_pD3D9Dev);
     if(FAILED(r)) {
       return -1;
     }
@@ -72,8 +69,7 @@ public:
       return -1;
     }
 
-    r = m_pD3D9Dev->CreateOffscreenPlainSurface(
-        m_width, m_height, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pSurface, NULL);
+    r = m_pD3D9Dev->CreateOffscreenPlainSurface(m_width, m_height, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pSurface, NULL);
     if(FAILED(r)) {
       std::cerr << "Can't create surface for result" << std::endl;
       return -1;
@@ -84,8 +80,7 @@ public:
       m_oclCtx = cv::directx::ocl::initializeContextFromDirect3DDevice9(m_pD3D9Dev);
     }
 
-    m_oclDevName =
-        cv::ocl::useOpenCL() ? cv::ocl::Context::getDefault().device(0).name() : "No OpenCL device";
+    m_oclDevName = cv::ocl::useOpenCL() ? cv::ocl::Context::getDefault().device(0).name() : "No OpenCL device";
 
     return 0;
   } // create()

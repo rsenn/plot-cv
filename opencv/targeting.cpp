@@ -107,8 +107,7 @@ process(VideoCapture& capture) {
         for(int h = 0; h <= currentpix; h++) {
 
           if(catnumx[h] + catnumy[h] != 0)
-            if((thisbee < bee[h] + thresh && thisbee > bee[h] - thresh) &&
-               (thisjee < jee[h] + thresh && thisjee > jee[h] - thresh) &&
+            if((thisbee < bee[h] + thresh && thisbee > bee[h] - thresh) && (thisjee < jee[h] + thresh && thisjee > jee[h] - thresh) &&
                (thisare < are[h] + thresh && thisare > are[h] - thresh)) { // if it's a match
               newframe.at<cv::Vec3b>(i, j)[0] = 255;                       // set to white
               newframe.at<cv::Vec3b>(i, j)[1] = 255;
@@ -136,8 +135,7 @@ process(VideoCapture& capture) {
       runningx = 0;
       runningy = 0;
       Point thecenter = Point(avrgy, avrgx);
-      ellipse(
-          newframe, thecenter, Size(20, 20), 0, 0, 360, Scalar(255, 0, 238), 2, 8); // draw circle
+      ellipse(newframe, thecenter, Size(20, 20), 0, 0, 360, Scalar(255, 0, 238), 2, 8); // draw circle
     }
     imshow("Threshold Image", newframe);
     capture >> frame;

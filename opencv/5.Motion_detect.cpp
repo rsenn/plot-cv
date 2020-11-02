@@ -65,12 +65,8 @@ main() {
     meanStdDev(diff, mean_diff, stddev_diff);
     Scalar mean_erode, stddev_erode;
     meanStdDev(diff_erode, mean_erode, stddev_erode);
-    printf("[Diff] Mean = %.3f. Standard deviation = %.3f\r\n",
-           mean_diff.val[0],
-           stddev_diff.val[0]);
-    printf("[Erode] Mean = %.3f. Standard deviation = %.3f\r\n",
-           mean_erode.val[0],
-           stddev_erode.val[0]);
+    printf("[Diff] Mean = %.3f. Standard deviation = %.3f\r\n", mean_diff.val[0], stddev_diff.val[0]);
+    printf("[Erode] Mean = %.3f. Standard deviation = %.3f\r\n", mean_erode.val[0], stddev_erode.val[0]);
     /*-- So sanh do lech chuan de xac dinh motion ---*/
     if(stddev_erode.val[0] > 5) {
       printf("[ALERT] MOTION DETECTED!\r\n");

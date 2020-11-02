@@ -69,10 +69,8 @@ getFlowField(const Mat& u, const Mat& v, Mat& flowField) {
 
     for(int j = 0; j < flowField.cols; ++j) {
       row[j][0] = 0;
-      row[j][1] = static_cast<unsigned char>(
-          mapValue(-ptr_v[j], -maxDisplacement, maxDisplacement, 0.0f, 255.0f));
-      row[j][2] = static_cast<unsigned char>(
-          mapValue(ptr_u[j], -maxDisplacement, maxDisplacement, 0.0f, 255.0f));
+      row[j][1] = static_cast<unsigned char>(mapValue(-ptr_v[j], -maxDisplacement, maxDisplacement, 0.0f, 255.0f));
+      row[j][2] = static_cast<unsigned char>(mapValue(ptr_u[j], -maxDisplacement, maxDisplacement, 0.0f, 255.0f));
       row[j][3] = 255;
     }
   }

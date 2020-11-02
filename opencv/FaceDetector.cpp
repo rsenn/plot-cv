@@ -54,8 +54,7 @@ DetectAndDisplayFaces(Mat frame, CascadeClassifier face_cascade) {
 
     /* Creation of the two points with the face detected coordenates */
     Point pt1(faces[CurrentFaceIndex].x, faces[CurrentFaceIndex].y);
-    Point pt2((faces[CurrentFaceIndex].x + faces[CurrentFaceIndex].height),
-              (faces[CurrentFaceIndex].y + faces[CurrentFaceIndex].width));
+    Point pt2((faces[CurrentFaceIndex].x + faces[CurrentFaceIndex].height), (faces[CurrentFaceIndex].y + faces[CurrentFaceIndex].width));
 
     /* Create a green rectangle box to attach to the frame */
     rectangle(frame, pt1, pt2, Scalar(0, 255, 0), 2, 8, 0);
@@ -66,14 +65,12 @@ DetectAndDisplayFaces(Mat frame, CascadeClassifier face_cascade) {
     BiggestRegion.width = faces[BiggestFaceIndex].width;
     BiggestRegion.height = faces[BiggestFaceIndex].height;
 
-    text = "Bigest face area: " + to_string(BiggestRegion.width) + "x" +
-           to_string(BiggestRegion.height);
+    text = "Bigest face area: " + to_string(BiggestRegion.width) + "x" + to_string(BiggestRegion.height);
     printf("Face detected\n");
   }
 
   /* Add the text to the frame */
-  putText(
-      frame, text, cvPoint(30, 30), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0, 0, 255), 1, CV_AA);
+  putText(frame, text, cvPoint(30, 30), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0, 0, 255), 1, CV_AA);
 
   /* Show the image captured with green rectangles on the faces detected */
   imshow("Raspberry Pi Camera", frame);

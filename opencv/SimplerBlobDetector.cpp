@@ -49,8 +49,7 @@ void
 onMouseClick(int event, int x, int y, int flags, void* userdata) {
   if(event == CV_EVENT_LBUTTONDOWN) {
     assert(userdata != nullptr);
-    assert(x > 0 && y > 0 && x < ((cv::Mat*)userdata)->size().width &&
-           y < ((cv::Mat*)userdata)->size().height);
+    assert(x > 0 && y > 0 && x < ((cv::Mat*)userdata)->size().width && y < ((cv::Mat*)userdata)->size().height);
 
     cv::Mat image(*(cv::Mat*)userdata);
     int gr = image.at<uchar>(y, x);
@@ -120,8 +119,7 @@ findBlobs(InputArray _image, InputArray _binaryImage, std::vector<Center>& cente
 
     // If filtering by inertia is requested,
     if(params.filterByInertia) {
-      double denominator =
-          std::sqrt(std::pow(2 * moms.mu11, 2) + std::pow(moms.mu20 - moms.mu02, 2));
+      double denominator = std::sqrt(std::pow(2 * moms.mu11, 2) + std::pow(moms.mu20 - moms.mu02, 2));
       const double eps = 1e-2;
       double ratio;
       if(denominator > eps) {
@@ -130,10 +128,8 @@ findBlobs(InputArray _image, InputArray _binaryImage, std::vector<Center>& cente
         double cosmax = -cosmin;
         double sinmax = -sinmin;
 
-        double imin = 0.5 * (moms.mu20 + moms.mu02) - 0.5 * (moms.mu20 - moms.mu02) * cosmin -
-                      moms.mu11 * sinmin;
-        double imax = 0.5 * (moms.mu20 + moms.mu02) - 0.5 * (moms.mu20 - moms.mu02) * cosmax -
-                      moms.mu11 * sinmax;
+        double imin = 0.5 * (moms.mu20 + moms.mu02) - 0.5 * (moms.mu20 - moms.mu02) * cosmin - moms.mu11 * sinmin;
+        double imax = 0.5 * (moms.mu20 + moms.mu02) - 0.5 * (moms.mu20 - moms.mu02) * cosmax - moms.mu11 * sinmax;
         ratio = imin / imax;
       } else
         ratio = 1;
@@ -168,8 +164,7 @@ findBlobs(InputArray _image, InputArray _binaryImage, std::vector<Center>& cente
     // If filtering by color was requested, skip this contour if the center pixel's color does
     // not match the specified color. Note that we are processing gray scale images here...
     if(params.filterByColor)
-      if(binaryImage.at<uchar>(cvRound(center.location.y), cvRound(center.location.x)) !=
-         params.blobColor) {
+      if(binaryImage.at<uchar>(cvRound(center.location.y), cvRound(center.location.x)) != params.blobColor) {
         drawContours(inter, contours, contourIdx, filteredByColorColor, 3);
         continue;
       }
@@ -221,8 +216,7 @@ detect(InputArray image, std::vector<Keycv::Point>& keypoints, InputArray mask) 
     CV_Error(Error::StsUnsupportedFormat, "Blob detector only supports 8-bit images!");
 
   std::vector<std::vector<Center>> centers;
-  for(double thresh = params.minThreshold; thresh < params.maxThreshold;
-      thresh += params.thresholdStep) {
+  for(double thresh = params.minThreshold; thresh < params.maxThreshold; thresh += params.thresholdStep) {
     // For each threshold value from the specified minimum to the specified maximum using the
     // specified step size, generate a binary image and find the centers of any blobs in it.
     cv::Mat binarizedImage;
@@ -237,8 +231,7 @@ detect(InputArray image, std::vector<Keycv::Point>& keypoints, InputArray mask) 
       bool isNew = true;
       for(size_t j = 0; j < centers.size(); j++) {
         double dist = norm(centers[j][centers[j].size() / 2].location - curCenters[i].location);
-        isNew = dist >= params.minDistBetweenBlobs &&
-                dist >= centers[j][centers[j].size() / 2].radius && dist >= curCenters[i].radius;
+        isNew = dist >= params.minDistBetweenBlobs && dist >= centers[j][centers[j].size() / 2].radius && dist >= curCenters[i].radius;
         if(!isNew) {
           centers[j].push_back(curCenters[i]);
           size_t k = centers[j].size() - 1;
@@ -341,8 +334,7 @@ main(int argc, char** argv) {
   std::vector<Keycv::Point> keypoints;
   detect(image, keypoints, mask);
   for(Keycv::Point k : keypoints) cout << "(" << k.pt.x << "," << k.pt.y << ")" << endl;
-  drawKeypoints(
-      image, keypoints, result, Scalar(0, 0, 255), Drawcv::MatchesFlags::DRAW_RICH_KEYPOINTS);
+  drawKeypoints(image, keypoints, result, Scalar(0, 0, 255), Drawcv::MatchesFlags::DRAW_RICH_KEYPOINTS);
   ostringstream os;
   os << "Result: " << keypoints.size() << " keypoints.";
   imshow(os.str(), result);

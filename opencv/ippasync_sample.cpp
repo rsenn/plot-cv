@@ -11,24 +11,24 @@ using namespace cv;
 #ifdef HAVE_IPP_A
 #include "opencv2/core/ippasync.hpp"
 
-#define CHECK_STATUS(STATUS, NAME)                                                                 \
-  if(STATUS != HPP_STATUS_NO_ERROR) {                                                              \
-    printf("%s error %d\n", NAME, STATUS);                                                         \
-    if(virtMatrix) {                                                                               \
-      hppStatus delSts = hppiDeleteVirtualMatrices(accel, virtMatrix);                             \
-      CHECK_DEL_STATUS(delSts, "hppiDeleteVirtualMatrices");                                       \
-    }                                                                                              \
-    if(accel) {                                                                                    \
-      hppStatus delSts = hppDeleteInstance(accel);                                                 \
-      CHECK_DEL_STATUS(delSts, "hppDeleteInstance");                                               \
-    }                                                                                              \
-    return -1;                                                                                     \
+#define CHECK_STATUS(STATUS, NAME)                                                                                                                                                                     \
+  if(STATUS != HPP_STATUS_NO_ERROR) {                                                                                                                                                                  \
+    printf("%s error %d\n", NAME, STATUS);                                                                                                                                                             \
+    if(virtMatrix) {                                                                                                                                                                                   \
+      hppStatus delSts = hppiDeleteVirtualMatrices(accel, virtMatrix);                                                                                                                                 \
+      CHECK_DEL_STATUS(delSts, "hppiDeleteVirtualMatrices");                                                                                                                                           \
+    }                                                                                                                                                                                                  \
+    if(accel) {                                                                                                                                                                                        \
+      hppStatus delSts = hppDeleteInstance(accel);                                                                                                                                                     \
+      CHECK_DEL_STATUS(delSts, "hppDeleteInstance");                                                                                                                                                   \
+    }                                                                                                                                                                                                  \
+    return -1;                                                                                                                                                                                         \
   }
 
-#define CHECK_DEL_STATUS(STATUS, NAME)                                                             \
-  if(STATUS != HPP_STATUS_NO_ERROR) {                                                              \
-    printf("%s error %d\n", NAME, STATUS);                                                         \
-    return -1;                                                                                     \
+#define CHECK_DEL_STATUS(STATUS, NAME)                                                                                                                                                                 \
+  if(STATUS != HPP_STATUS_NO_ERROR) {                                                                                                                                                                  \
+    printf("%s error %d\n", NAME, STATUS);                                                                                                                                                             \
+    return -1;                                                                                                                                                                                         \
   }
 
 #endif
@@ -84,8 +84,7 @@ main(int argc, const char** argv) {
     return -1;
   }
 
-  accelType = sAccel == "cpu" ? HPP_ACCEL_TYPE_CPU
-                              : sAccel == "gpu" ? HPP_ACCEL_TYPE_GPU : HPP_ACCEL_TYPE_ANY;
+  accelType = sAccel == "cpu" ? HPP_ACCEL_TYPE_CPU : sAccel == "gpu" ? HPP_ACCEL_TYPE_GPU : HPP_ACCEL_TYPE_ANY;
 
   // Create accelerator instance
   sts = hppCreateInstance(accelType, 0, &accel);
@@ -93,11 +92,7 @@ main(int argc, const char** argv) {
 
   accelType = hppQueryAccelType(accel);
 
-  sAccel = accelType == HPP_ACCEL_TYPE_CPU
-               ? "cpu"
-               : accelType == HPP_ACCEL_TYPE_GPU
-                     ? "gpu"
-                     : accelType == HPP_ACCEL_TYPE_GPU_VIA_DX9 ? "gpu dx9" : "?";
+  sAccel = accelType == HPP_ACCEL_TYPE_CPU ? "cpu" : accelType == HPP_ACCEL_TYPE_GPU ? "gpu" : accelType == HPP_ACCEL_TYPE_GPU_VIA_DX9 ? "gpu dx9" : "?";
 
   printf("accelType %s\n", sAccel.c_str());
 
