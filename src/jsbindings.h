@@ -46,11 +46,12 @@ struct JSPointIteratorData : public std::pair<JSPointData*, JSPointData*> {
 #define HIDDEN __attribute__((visibility("hidden")))
 #endif
 
-#define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter, magic_num)                                                                                                                              \
-  {                                                                                                                                                                                                    \
-    .name = prop_name, .prop_flags = JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE, .def_type = JS_DEF_CGETSET_MAGIC, .magic = magic_num, .u = {                                                           \
-      .getset = {.get = {.getter_magic = fgetter}, .set = {.setter_magic = fsetter}}                                                                                                                   \
-    }                                                                                                                                                                                                  \
+#define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter, magic_num)                                              \
+  {                                                                                                                    \
+    .name = prop_name, .prop_flags = JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE, .def_type = JS_DEF_CGETSET_MAGIC,      \
+    .magic = magic_num, .u = {                                                                                         \
+      .getset = {.get = {.getter_magic = fgetter}, .set = {.setter_magic = fsetter}}                                   \
+    }                                                                                                                  \
   }
 
 extern "C" {
@@ -114,8 +115,9 @@ JSModuleDef* js_init_module_line(JSContext*, const char*);
 JSModuleDef* js_init_module_draw(JSContext*, const char*);
 JSModuleDef* js_init_module_cv(JSContext*, const char*);
 
-extern "C" JSValue contour_class, contour_proto, int32array_ctor, int32array_proto, mat_class, mat_proto, mat_iterator_proto, point_class, line_class, point_iterator_class, draw_class,
-    point_iterator_proto, point_proto, rect_class, rect_proto, size_class, size_proto, line_proto, draw_proto;
+extern "C" JSValue contour_class, contour_proto, int32array_ctor, int32array_proto, mat_class, mat_proto,
+    mat_iterator_proto, point_class, line_class, point_iterator_class, draw_class, point_iterator_proto, point_proto,
+    rect_class, rect_proto, size_class, size_proto, line_proto, draw_proto;
 
 VISIBLE JSValue js_point_iterator_new(JSContext* ctx, const std::pair<JSPointData*, JSPointData*>& range, int magic);
 VISIBLE JSValue js_mat_wrap(JSContext*, const cv::Mat& mat);

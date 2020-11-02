@@ -115,7 +115,8 @@ make_filename(const string& name, int count, const string& ext, const string& di
 #endif
   );
 
-  filename << dir << "/" << name << "-" << buf << "." << std::setfill('0') << std::setw(3) << msecs << "-" << std::setfill('0') << std::setw(pad) << count << "." << ext;
+  filename << dir << "/" << name << "-" << buf << "." << std::setfill('0') << std::setw(3) << msecs << "-"
+           << std::setfill('0') << std::setw(pad) << count << "." << ext;
   return filename.str();
 }
 
@@ -127,7 +128,9 @@ make_filename(const string& name, int count, const string& ext, const string& di
  * @param[in]  color_fn     The color function
  */
 void
-svg_draw_polyline(svg::Document& doc, const point2f_vector& contour_arg, std::function<svg::Color(const point2f_vector&)> color_fn) {
+svg_draw_polyline(svg::Document& doc,
+                  const point2f_vector& contour_arg,
+                  std::function<svg::Color(const point2f_vector&)> color_fn) {
   svg::Polyline polyline(svg::Stroke(1, color_fn(contour_arg)));
 
   for(size_t i = 0; i < contour_arg.size(); i++) {
@@ -282,7 +285,9 @@ template<class InputIterator>
 point2i_vector
 to_point_vec(InputIterator start, InputIterator end) {
   point2i_vector ret;
-  std::for_each(start, end, [&ret](const typename InputIterator::value_type& pt) { ret.push_back(point2i_type(pt.x, pt.y)); });
+  std::for_each(start, end, [&ret](const typename InputIterator::value_type& pt) {
+    ret.push_back(point2i_type(pt.x, pt.y));
+  });
   return ret;
 }
 /*
@@ -334,7 +339,9 @@ find_rectangles(const contour2i_vector& contours, contour2i_vector& squares) {
 
 template<class T>
 static void
-draw_polylines(image_type& image, const typename contour_list<T>::type& polylines, const color_type& color = color_type(0, 255, 0)) {
+draw_polylines(image_type& image,
+               const typename contour_list<T>::type& polylines,
+               const color_type& color = color_type(0, 255, 0)) {
 
   cv::polylines(image, polylines, true, color, 2, cv::LINE_AA);
 }
@@ -394,24 +401,46 @@ hough_lines(image_type& img, const std::function<void(int, int, int, int)>& fn) 
 
 template<class InputIterator>
 void
-draw_lines(image_type& target, InputIterator start, InputIterator end, const cv::Scalar& color, int thickness = 1, int lineType = cv::LINE_8) {
+draw_lines(image_type& target,
+           InputIterator start,
+           InputIterator end,
+           const cv::Scalar& color,
+           int thickness = 1,
+           int lineType = cv::LINE_8) {
 
-  std::for_each(start, end, [target, color, thickness, lineType](const Line<int>& line) { cv::line(target, line.a, line.b, color, thickness, lineType); });
+  std::for_each(start, end, [target, color, thickness, lineType](const Line<int>& line) {
+    cv::line(target, line.a, line.b, color, thickness, lineType);
+  });
 }
 
 void
-draw_lines(image_type& target, std::vector<cv::Vec4i>::const_iterator start, std::vector<cv::Vec4i>::const_iterator end, const cv::Scalar& color, int thickness = 1, int lineType = cv::LINE_8) {
+draw_lines(image_type& target,
+           std::vector<cv::Vec4i>::const_iterator start,
+           std::vector<cv::Vec4i>::const_iterator end,
+           const cv::Scalar& color,
+           int thickness = 1,
+           int lineType = cv::LINE_8) {
 
-  std::for_each(start, end, [target, color, thickness, lineType](const cv::Vec4i& vec) { cv::line(target, point2i_type(vec[0], vec[1]), point2i_type(vec[2], vec[3]), color, thickness, lineType); });
+  std::for_each(start, end, [target, color, thickness, lineType](const cv::Vec4i& vec) {
+    cv::line(target, point2i_type(vec[0], vec[1]), point2i_type(vec[2], vec[3]), color, thickness, lineType);
+  });
 }
 
 void
-draw_lines(image_type& target, const std::vector<Line<int>>& lines, const cv::Scalar& color, int thickness = 1, int lineType = cv::LINE_8) {
+draw_lines(image_type& target,
+           const std::vector<Line<int>>& lines,
+           const cv::Scalar& color,
+           int thickness = 1,
+           int lineType = cv::LINE_8) {
   draw_lines(target, lines.cbegin(), lines.cend(), color, thickness, lineType);
 }
 
 void
-draw_lines(image_type& target, const std::vector<cv::Vec4i>& lines, const cv::Scalar& color, int thickness = 1, int lineType = cv::LINE_8) {
+draw_lines(image_type& target,
+           const std::vector<cv::Vec4i>& lines,
+           const cv::Scalar& color,
+           int thickness = 1,
+           int lineType = cv::LINE_8) {
   return draw_lines(target, lines.cbegin(), lines.cend(), color, thickness, lineType);
 }
 
@@ -545,8 +574,8 @@ get_alpha_channel(image_type m) {
 
 void
 image_info(image_type img) {
-  std::cerr << "image cols=" << img.cols << " rows=" << img.rows << " channels=" << img.channels() << " depth=" << (img.depth() == CV_8U ? "CV_8U" : img.depth() == CV_32F ? "CV_32F" : "CV_??")
-            << std::endl;
+  std::cerr << "image cols=" << img.cols << " rows=" << img.rows << " channels=" << img.channels()
+            << " depth=" << (img.depth() == CV_8U ? "CV_8U" : img.depth() == CV_32F ? "CV_32F" : "CV_??") << std::endl;
 }
 
 JSValue
@@ -557,7 +586,8 @@ vec4i_to_js(const cv::Vec4i& v) {
 template<>
 JSValue
 points_to_js<point2i_type>(const std::vector<point2i_type>& v) {
-  std::function<JSValue(const point2i_type&)> fn([](const point2i_type& point) -> JSValue { return js.create_point(point.x, point.y); });
+  std::function<JSValue(const point2i_type&)> fn(
+      [](const point2i_type& point) -> JSValue { return js.create_point(point.x, point.y); });
   return vector_to_js(js, v, fn);
 }
 
@@ -580,27 +610,8 @@ lineFrom(const cv::Vec4i& vec) {
 }
 
 void
-process_image(std::function<void(std::string, cv::Mat*)> display_image, int show_image) {
-  typedef std::vector<Line<int>> line_vector;
-  std::vector<cv::Vec4i> hough;
-
-  line_vector houghLines;
-
-  std::vector<point2f_vector> contours2;
-  std::vector<cv::Vec4i> hier;
-  /*  switch(show_image) {
-      case MORPHOLOGY: mptr = &imgMorphology; break;
-      case ORIGINAL: mptr = &imgOriginal; break;
-      case GRAYSCALE: mptr = &imgGrayscale; break;
-      case CANNY:
-      default: mptr = &imgCanny; break;
-    }*/
-
-  timer.start();
-
-  logfile << "got frame" << std::endl;
-
-  display_image("imgOriginal", &imgGrayscale);
+process_raster(std::function<void(std::string, cv::Mat*)> display_image, int show_image) {
+  display_image("imgOriginal", &imgOriginal);
 
   image_type frameLab, frameLabCn[3];
   imgOriginal.copyTo(frameLab);
@@ -610,14 +621,13 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
   // cv::equalizeHist(frameLabCn[0], imgGrayscale);
   cv::normalize(frameLabCn[0], imgGrayscale, 0, 255, cv::NORM_MINMAX);
 
-  std::vector<cv::Vec3f> circles;
-
   display_image("imgGrayscale", &imgGrayscale);
   // cv::GaussianBlur(imgGrayscale, imgBlurred, cv::Size(config.blur_kernel_size * 2 + 1,
   // config.blur_kernel_size* 2 + 1), (double)config.blur_sigma * 0.01);
   // cv::edgePreservingFilter(imgGrayscale, imgBlurred, cv::NORMCONV_FILTER,
   // (double)config.blur_sigma_r * 0.01, (double)config.blur_sigma_s * 0.01);
-  cv::bilateralFilter(imgGrayscale, imgBlurred, -1, (double)config.blur_sigma_r * 0.01, config.blur_kernel_size * 2 + 1);
+  cv::bilateralFilter(
+      imgGrayscale, imgBlurred, -1, (double)config.blur_sigma_r * 0.01, config.blur_kernel_size * 2 + 1);
 
   cv::Canny(imgBlurred, imgCanny, thresh, thresh2, apertureSize);
 
@@ -626,7 +636,9 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
   cv::morphologyEx(imgCanny,
                    imgMorphology,
                    config.morphology_operator ? cv::MORPH_DILATE : cv::MORPH_CLOSE,
-                   cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(config.morphology_kernel_size + 1, config.morphology_kernel_size + 1)));
+                   cv::getStructuringElement(cv::MORPH_ELLIPSE,
+                                             cv::Size(config.morphology_kernel_size + 1,
+                                                      config.morphology_kernel_size + 1)));
 
   cv::cvtColor(imgBlurred, imgBlurred, cv::COLOR_GRAY2BGR);
   /*
@@ -635,7 +647,9 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
      houghLines.push_back(Line<int>(x1, y1, x2, y2));
    });*/
 
-  corner_harris_detection(imgGrayscale, [&](const point2i_type& pt) { cv::circle(imgCanny, pt, 10, cv::Scalar(0, 255, 0, 255), 2, cv::LINE_8); });
+  corner_harris_detection(imgGrayscale, [&](const point2i_type& pt) {
+    cv::circle(imgCanny, pt, 10, cv::Scalar(0, 255, 0, 255), 2, cv::LINE_8);
+  });
 
   if(show_diagnostics)
     image_info(imgMorphology);
@@ -647,132 +661,147 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
   display_image("imgMorphology", &imgMorphology);
 
   cv::cvtColor(imgGrayscale, imgGrayscale, cv::COLOR_GRAY2BGR);
+}
+
+void
+process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int show_image) {
+  typedef std::vector<Line<int>> line_vector;
+  std::vector<cv::Vec4i> hough;
+
+  line_vector houghLines;
+  std::vector<cv::Vec3f> circles;
+
+  std::vector<point2f_vector> contours2;
+  std::vector<cv::Vec4i> hier;
 
   //  apply_clahe(imgOriginal, imgOriginal);XY
-  {
 
-    (morphology_enable > 1) ? imgMorphology.copyTo(imgRaw) : imgCanny.copyTo(imgRaw);
+  (morphology_enable > 1) ? imgMorphology.copyTo(imgRaw) : imgCanny.copyTo(imgRaw);
 
-    std::vector<point2i_vector> contours = get_contours((morphology_enable > 1) ? imgMorphology : imgCanny, hier, CV_RETR_TREE);
+  std::vector<point2i_vector> contours =
+      get_contours((morphology_enable > 1) ? imgMorphology : imgCanny, hier, CV_RETR_TREE);
 
-    std::vector<point2i_vector> external = get_contours(morphology_enable > 1 ? imgMorphology : imgCanny, hier, CV_RETR_EXTERNAL);
+  std::vector<point2i_vector> external =
+      get_contours(morphology_enable > 1 ? imgMorphology : imgCanny, hier, CV_RETR_EXTERNAL);
 
-    draw_all_contours(imgGrayscale, external, 1);
+  draw_all_contours(imgGrayscale, external, 1);
 
-    // imgMorphology.convertTo(imgMorphology, CV_32SC1);
+  // imgMorphology.convertTo(imgMorphology, CV_32SC1);
 
-    /* imgCanny = color_type::all(255) - imgCanny;
-     imgMorphology = color_type::all(255) - imgMorphology;
+  /* imgCanny = color_type::all(255) - imgCanny;
+   imgMorphology = color_type::all(255) - imgMorphology;
 
-     cv::cvtColor(imgCanny, imgCanny, cv::COLOR_GRAY2BGR);
-     cv::cvtColor(imgMorphology, imgMorphology, cv::COLOR_GRAY2BGR);
- */
-    if(show_diagnostics)
-      std::cerr << "Num contours: " << contours.size() << std::endl;
+   cv::cvtColor(imgCanny, imgCanny, cv::COLOR_GRAY2BGR);
+   cv::cvtColor(imgMorphology, imgMorphology, cv::COLOR_GRAY2BGR);
+*/
+  if(show_diagnostics)
+    std::cerr << "Num contours: " << contours.size() << std::endl;
 
-    point2i_vector largestContour;
-    int largestIndex = get_largest_contour(contours, largestContour);
+  point2i_vector largestContour;
+  int largestIndex = get_largest_contour(contours, largestContour);
 
-    if(largestIndex != -1) {
-      draw_all_contours(imgVector, contours, 1);
-
-      if(show_diagnostics)
-        std::cerr << "largestIndex: " << largestIndex << std::endl;
-
-      cv::drawContours(imgVector, contours, largestIndex, color_type(0, 0, 255, 255), 2, cv::LINE_8);
-    }
-
-    cv::cvtColor(imgCanny, imgCanny, cv::COLOR_GRAY2BGR);
-
-    draw_lines(imgCanny, houghLines, cv::Scalar(0, 0, 255, 255), 1, cv::LINE_8);
-
-    display_image("imgCanny", &imgCanny);
-
+  if(largestIndex != -1) {
     draw_all_contours(imgVector, contours, 1);
 
-    /* if(dptr != nullptr)
-       cv::drawContours(*dptr, contours, -1, color_type(0, 0, 255), 1, cv::LINE_AA);*/
+    if(show_diagnostics)
+      std::cerr << "largestIndex: " << largestIndex << std::endl;
 
-    display_image("imgVector", &imgVector);
+    cv::drawContours(imgVector, contours, largestIndex, color_type(0, 0, 255, 255), 2, cv::LINE_8);
+  }
 
-    if(contours.empty()) {
-      logfile << "No contours" << std::endl;
-      // keycode = cv::waitKey(100);
-      return;
-    }
+  cv::cvtColor(imgCanny, imgCanny, cv::COLOR_GRAY2BGR);
 
-    std::ostringstream contourStr;
-    double maxArea = 0;
+  draw_lines(imgCanny, houghLines, cv::Scalar(0, 0, 255, 255), 1, cv::LINE_8);
 
-    std::vector<line_type> lines;
-    std::map<int, ref_list> adjacency_list;
+  display_image("imgCanny", &imgCanny);
 
-    const auto& contourDepth = [&hier](int i) {
-      size_t depth = 0;
-      while(i != -1) {
-        i = hier[i][3];
-        ++depth;
-      };
-      return depth;
+  draw_all_contours(imgVector, contours, 1);
+
+  /* if(dptr != nullptr)
+     cv::drawContours(*dptr, contours, -1, color_type(0, 0, 255), 1, cv::LINE_AA);*/
+
+  display_image("imgVector", &imgVector);
+
+  if(contours.empty()) {
+    logfile << "No contours" << std::endl;
+    // keycode = cv::waitKey(100);
+    return;
+  }
+
+  std::ostringstream contourStr;
+  double maxArea = 0;
+
+  std::vector<line_type> lines;
+  std::map<int, ref_list> adjacency_list;
+
+  const auto& contourDepth = [&hier](int i) {
+    size_t depth = 0;
+    while(i != -1) {
+      i = hier[i][3];
+      ++depth;
     };
+    return depth;
+  };
 
-    int i = 0;
-    for(contour2i_vector::const_iterator it = contours.cbegin(); it != contours.cend(); ++i, ++it) {
-      const std::vector<point2i_type>& a = *it;
+  int i = 0;
+  for(contour2i_vector::const_iterator it = contours.cbegin(); it != contours.cend(); ++i, ++it) {
+    const std::vector<point2i_type>& a = *it;
+    int depth = contourDepth(i);
+  }
+  i = 0;
+  for(contour2i_vector::const_iterator it = contours.cbegin(); it != contours.cend(); ++i, ++it) {
+    const std::vector<point2i_type>& a = *it;
+
+    if(a.size() >= 3) {
+
+      point2f_vector c;
+      cv::approxPolyDP(a, c, 8, true);
+      double area = cv::contourArea(c);
       int depth = contourDepth(i);
-    }
-    i = 0;
-    for(contour2i_vector::const_iterator it = contours.cbegin(); it != contours.cend(); ++i, ++it) {
-      const std::vector<point2i_type>& a = *it;
+      if(area > maxArea)
+        maxArea = area;
+      contours2.push_back(c);
 
-      if(a.size() >= 3) {
-
-        point2f_vector c;
-        cv::approxPolyDP(a, c, 8, true);
-        double area = cv::contourArea(c);
-        int depth = contourDepth(i);
-        if(area > maxArea)
-          maxArea = area;
-        contours2.push_back(c);
-
-        if(contourStr.str().size())
-          contourStr << "\n";
-        out_points(contourStr, a);
-        /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
-           ", " << hier[i][2] << ", " << hier[i][3] << ", "
-                      << "} " << std::endl;
-            logfile << "contourDepth(i) = " << depth << std::endl;
+      if(contourStr.str().size())
+        contourStr << "\n";
+      out_points(contourStr, a);
+      /*    logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] <<
+         ", " << hier[i][2] << ", " << hier[i][3] << ", "
+                    << "} " << std::endl;
+          logfile << "contourDepth(i) = " << depth << std::endl;
   */
         /*  if(dptr != nullptr)
             cv::drawContours(*dptr, contours, i, hsv_to_rgb(depth * 10, 1.0, 1.0), 2, cv::LINE_AA);
    */     }
-    }
+  }
 
-    display_image("imgGrayscale", &imgGrayscale);
+  display_image("imgGrayscale", &imgGrayscale);
 
-    if(maxArea == 0) {
-      // keycode = cv::waitKey(16);
-      logfile << "No contour area" << std::endl;
-      return;
-    }
+  if(maxArea == 0) {
+    // keycode = cv::waitKey(16);
+    logfile << "No contour area" << std::endl;
+    return;
+  }
 
-    for_each(contours2.begin(), contours2.end(), [&lines](const std::vector<point2f_type>& a) {
-      double len = cv::arcLength(a, false);
-      double area = cv::contourArea(a);
+  for_each(contours2.begin(), contours2.end(), [&lines](const std::vector<point2f_type>& a) {
+    double len = cv::arcLength(a, false);
+    double area = cv::contourArea(a);
 
-      if(len >= 2) {
+    if(len >= 2) {
 
-        for(size_t i = 0; i + 1 < a.size(); i++) {
+      for(size_t i = 0; i + 1 < a.size(); i++) {
 
-          Line<float> l(a[i], a[i + 1]);
+        Line<float> l(a[i], a[i + 1]);
 
-          if(l.length() > 0)
-            lines.push_back(l);
-        }
+        if(l.length() > 0)
+          lines.push_back(l);
       }
-    });
+    }
+  });
 
-    logfile << "Num contours: " << contours.size() << std::endl;
+  logfile << "Num contours: " << contours.size() << std::endl;
+
+  if(false) {
 
     std::list<Line<float>> filteredLines;
     std::vector<bool> takenLines;
@@ -787,7 +816,11 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
 
     //     sort(lines.begin(), lines.end());
 
-    transform(lines.begin(), lines.end(), back_inserter(lineLengths), [&](Line<float>& l) -> float { return l.length(); });
+    transform(lines.begin(), lines.end(), back_inserter(lineLengths), [&](Line<float>& l) -> float {
+      return l.length();
+    });
+
+    std::cout << "Num lines: " << lines.size() << std::endl;
 
     float avg = accumulate(lineLengths.begin(), lineLengths.end(), 0) / lineLengths.size();
 
@@ -806,41 +839,60 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
         std::vector<LineEnd<float>> line_ends;
         std::vector<Line<float>*> adjacent_lines;
 
-        std::vector<int> adjacent = filter_lines(lines.begin(), lines.end(), [&](Line<float>& l2, size_t index) -> bool {
-          size_t point_index;
-          double min_dist = line.min_distance(l2, &point_index);
-          bool intersects = line.intersect(l2);
-          bool ok = (/*intersects ||*/ min_dist < 10);
-          if(ok)
-            distances.push_back(min_dist);
-          return ok;
-        });
+        std::vector<int> adjacent =
+            filter_lines(lines.begin(), lines.end(), [&](Line<float>& l2, size_t index) -> bool {
+              size_t point_index;
+              double min_dist = line.min_distance(l2, &point_index);
+              bool intersects = line.intersect(l2);
+              bool ok = (/*intersects ||*/ min_dist < 10);
+              if(ok)
+                distances.push_back(min_dist);
+              return ok;
+            });
 
         auto it = min_element(distances.begin(), distances.end());
         int min = *it;
 
-        std::transform(adjacent.begin(), adjacent.end(), back_inserter(adjacent_lines), [&](int index) -> Line<float>* { return &lines[index]; });
+        std::transform(adjacent.begin(), adjacent.end(), back_inserter(adjacent_lines), [&](int index) -> Line<float>* {
+          return &lines[index];
+        });
 
-        std::vector<int> parallel = filter_lines(lines.begin(), lines.end(), [&line](Line<float>& l2, size_t) { return fabs((line.angle() - l2.angle()) * 180 / M_PI) < 3; });
+        std::vector<int> parallel = filter_lines(lines.begin(), lines.end(), [&line](Line<float>& l2, size_t) {
+          return fabs((line.angle() - l2.angle()) * 180 / M_PI) < 3;
+        });
         /*
                   logfile << "adjacent " << adjacent << std::endl;
                   logfile << "parallel " << parallel << std::endl;
         */
         distances.clear();
-        std::transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(distances), [&line](Line<float>* l2) -> float { return line.min_distance(*l2); });
-        std::transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(line_ends), [&line](Line<float>* l2) -> LineEnd<float> {
-          LineEnd<float> end;
-          line.nearest_end(*l2, end);
-          return end;
-        });
+        std::transform(adjacent_lines.begin(),
+                       adjacent_lines.end(),
+                       back_inserter(distances),
+                       [&line](Line<float>* l2) -> float { return line.min_distance(*l2); });
+        std::transform(adjacent_lines.begin(),
+                       adjacent_lines.end(),
+                       back_inserter(line_ends),
+                       [&line](Line<float>* l2) -> LineEnd<float> {
+                         LineEnd<float> end;
+                         line.nearest_end(*l2, end);
+                         return end;
+                       });
         angleoffs.clear();
-        std::transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(angleoffs), [&line](Line<float>* l2) -> float { return line.angle_diff(*l2); });
+        std::transform(adjacent_lines.begin(),
+                       adjacent_lines.end(),
+                       back_inserter(angleoffs),
+                       [&line](Line<float>* l2) -> float { return line.angle_diff(*l2); });
         std::vector<int> angleoffs_i;
 
-        std::transform(angleoffs.begin(), angleoffs.end(), back_inserter(angleoffs_i), [](const float ang) -> int { return int(ang * 180 / M_PI) % 180; });
+        std::transform(angleoffs.begin(), angleoffs.end(), back_inserter(angleoffs_i), [](const float ang) -> int {
+          return int(ang * 180 / M_PI) % 180;
+        });
 
         point2i_vector centers;
-        std::transform(adjacent_lines.begin(), adjacent_lines.end(), back_inserter(centers), [](Line<float>* line) -> point2i_type { return line->center(); });
+        std::transform(adjacent_lines.begin(),
+                       adjacent_lines.end(),
+                       back_inserter(centers),
+                       [](Line<float>* line) -> point2i_type { return line->center(); });
 
         Matrix<double> rot = Matrix<double>::rotation(-line.angle());
 
@@ -897,123 +949,149 @@ process_image(std::function<void(std::string, cv::Mat*)> display_image, int show
     std::for_each(angles.begin(), angles.end(), [](const float a) { logfile << ' ' << (int)(a * 180 / M_PI); });
     logfile << std::endl;
 
-    draw_all_lines(imgGrayscale, filteredLines, [&](int index, size_t len) -> int { return lines[index].length() * 10; });
+    draw_all_lines(imgGrayscale, filteredLines, [&](int index, size_t len) -> int {
+      return lines[index].length() * 10;
+    });
 
     logfile << "Num lines: " << lines.size() << std::endl;
     logfile << "Num filteredLines: " << filteredLines.size() << std::endl;
-
-    // filename << "contour-" << ++count << ".svg";
-
-    if(0) {
-      std::string svg = make_filename("contour", ++num_iterations, "svg");
-
-      svg_export_file<float>(contours2, svg);
-
-      unlink("contour.svg");
-      rename("contour.svg.tmp", "contour.svg");
-    }
-    std::vector<point2i_vector> squares;
-
-    {
-      jsrt::value args[3] = {contours_to_array(js.ctx, contours), vector_to_js(js, hier, &vec4i_to_js)};
-
-      js.set_global("contours", args[0]);
-      js.set_global("hier", args[1]);
-
-      js.set_global("HIER_NEXT", js.create(0));
-      js.set_global("HIER_PREVIOUS", js.create(1));
-      js.set_global("HIER_FIRSTCHILD", js.create(2));
-      js.set_global("HIER_PARENT", js.create(3));
-
-      check_eval();
-
-      auto before = high_resolution_clock::now();
-
-      jsrt::value obj = args[3] = js.create_object();
-
-      js.set_property(obj, "imgRaw", js_mat_wrap(js.ctx, imgRaw));
-      js.set_property(obj, "imgVector", js_mat_wrap(js.ctx, imgVector));
-      js.set_property(obj, "imgOriginal", js_mat_wrap(js.ctx, imgOriginal));
-      js.set_property(obj, "imgTemp", js_mat_wrap(js.ctx, imgTemp));
-      js.set_property(obj, "imgGrayscale", js_mat_wrap(js.ctx, imgGrayscale));
-      js.set_property(obj, "imgBlurred", js_mat_wrap(js.ctx, imgBlurred));
-      js.set_property(obj, "imgCanny", js_mat_wrap(js.ctx, imgCanny));
-      js.set_property(obj, "imgMorphology", js_mat_wrap(js.ctx, imgMorphology));
-
-      js.call(processFn, 3, args);
-
-      JSValue test_arr = js.get_global("test_array");
-
-      std::vector<int32_t> num_vec;
-
-      std::transform(js.begin(test_arr), js.end(test_arr), std::back_inserter(num_vec), [&](const JSValue& test_arr) -> int32_t {
-        int32_t num;
-        js.get_number(test_arr, num);
-        //  std::cerr << "array member <" << js.typestr(test_arr) << ">: " << num
-        //  << std::endl;
-        return num;
-      });
-
-      std::string str = js.to_string(test_arr);
-
-      //   std::cerr << "array object <" << js.typestr(test_arr) << ">: " << str << std::endl;
-
-      auto after = high_resolution_clock::now();
-      bool do_timing = false;
-
-      if(do_timing) {
-        duration<double, std::milli> fp_ms = after - before;
-        auto int_ms = duration_cast<milliseconds>(after - before);
-        duration<long, std::micro> int_usec = int_ms;
-
-        std::cout << "f() took " << fp_ms.count() << " ms, "
-                  << "or " << int_ms.count() << " whole milliseconds "
-                  << "(which is " << int_usec.count() << " whole microseconds)" << std::endl;
-      }
-    }
-    {
-      point2f_vector src = {point2f_type(50, 50), point2f_type(100, 50), point2f_type(100, 100), point2f_type(50, 100)};
-
-      point2f_vector dst = {point2f_type(100, 0), point2f_type(150, 0), point2f_type(150, 50), point2f_type(100, 50)};
-
-      image_type perspective = cv::getPerspectiveTransform(src, dst);
-
-      logfile << "perspective:" << perspective << std::endl;
-    }
-
-    find_rectangles(contours, squares);
-
-    // Draw the circles detected
-    for(size_t i = 0; i < circles.size(); i++) {
-      point2i_type center(cvRound(circles[i][0]), cvRound(circles[i][1]));
-      int radius = cvRound(circles[i][2]);
-      cv::circle(imgOriginal, center, 3, color_type(255, 0, 0), -1, 8,
-                 0); // circle center
-      cv::circle(imgOriginal, center, radius, color_type(255, 0, 0), 3, 8,
-                 0); // circle outline
-      logfile << "center : " << center << "\nradius : " << radius << std::endl;
-    }
-
-    std::vector<point2i_vector> approxim;
-    transform(contours2.begin(), contours2.end(), back_inserter(approxim), [](const point2f_vector& p) -> point2i_vector { return transform_points<int, float>(p); });
-
-    for_each(approxim.begin(), approxim.end(), [&](const point2i_vector& c) {
-      const double length = cv::arcLength(c, false);
-      const double area = cv::contourArea(c, false);
-      cv::Rect rect = cv::boundingRect(c);
-      std::vector<point2i_vector> list;
-      list.push_back(c);
-      // cv::drawContours(imgOriginal, list, -1, color_type(255, 255, 0), 1);
-    });
-
-    draw_all_contours(imgVector, contours);
-    display_image("imgVector", &imgVector);
-
-    timer.stop();
-
-    //  std::cerr << "\033[1mTimer duration\033[0m " << (int)timer.elapsedSeconds() << "s " <<
-    //  ((int)timer.elapsedMilliseconds() % 1000) << "ms" << std::endl;
   }
+  // filename << "contour-" << ++count << ".svg";
+
+  if(0) {
+    std::string svg = make_filename("contour", ++num_iterations, "svg");
+
+    svg_export_file<float>(contours2, svg);
+
+    unlink("contour.svg");
+    rename("contour.svg.tmp", "contour.svg");
+  }
+  std::vector<point2i_vector> squares;
+
+  {
+    jsrt::value args[3] = {contours_to_array(js.ctx, contours), vector_to_js(js, hier, &vec4i_to_js)};
+
+    js.set_global("contours", args[0]);
+    js.set_global("hier", args[1]);
+
+    js.set_global("HIER_NEXT", js.create(0));
+    js.set_global("HIER_PREVIOUS", js.create(1));
+    js.set_global("HIER_FIRSTCHILD", js.create(2));
+    js.set_global("HIER_PARENT", js.create(3));
+
+    check_eval();
+
+    jsrt::value obj = args[2] = js.create_object();
+
+    js.set_property(obj, "imgRaw", js_mat_wrap(js.ctx, imgRaw));
+    js.set_property(obj, "imgVector", js_mat_wrap(js.ctx, imgVector));
+    js.set_property(obj, "imgOriginal", js_mat_wrap(js.ctx, imgOriginal));
+    js.set_property(obj, "imgTemp", js_mat_wrap(js.ctx, imgTemp));
+    js.set_property(obj, "imgGrayscale", js_mat_wrap(js.ctx, imgGrayscale));
+    js.set_property(obj, "imgBlurred", js_mat_wrap(js.ctx, imgBlurred));
+    js.set_property(obj, "imgCanny", js_mat_wrap(js.ctx, imgCanny));
+    js.set_property(obj, "imgMorphology", js_mat_wrap(js.ctx, imgMorphology));
+
+    js.call(processFn, 3, args);
+  }
+  {
+    point2f_vector src = {point2f_type(50, 50), point2f_type(100, 50), point2f_type(100, 100), point2f_type(50, 100)};
+
+    point2f_vector dst = {point2f_type(100, 0), point2f_type(150, 0), point2f_type(150, 50), point2f_type(100, 50)};
+
+    image_type perspective = cv::getPerspectiveTransform(src, dst);
+
+    logfile << "perspective:" << perspective << std::endl;
+  }
+
+  find_rectangles(contours, squares);
+
+  // Draw the circles detected
+  for(size_t i = 0; i < circles.size(); i++) {
+    point2i_type center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+    int radius = cvRound(circles[i][2]);
+    cv::circle(imgOriginal, center, 3, color_type(255, 0, 0), -1, 8,
+               0); // circle center
+    cv::circle(imgOriginal, center, radius, color_type(255, 0, 0), 3, 8,
+               0); // circle outline
+    logfile << "center : " << center << "\nradius : " << radius << std::endl;
+  }
+
+  std::vector<point2i_vector> approxim;
+  transform(contours2.begin(), contours2.end(), back_inserter(approxim), [](const point2f_vector& p) -> point2i_vector {
+    return transform_points<int, float>(p);
+  });
+
+  for_each(approxim.begin(), approxim.end(), [&](const point2i_vector& c) {
+    const double length = cv::arcLength(c, false);
+    const double area = cv::contourArea(c, false);
+    cv::Rect rect = cv::boundingRect(c);
+    std::vector<point2i_vector> list;
+    list.push_back(c);
+    // cv::drawContours(imgOriginal, list, -1, color_type(255, 255, 0), 1);
+  });
+
+  draw_all_contours(imgVector, contours);
+  display_image("imgVector", &imgVector);
+}
+
+void
+process_image(std::function<void(std::string, cv::Mat*)> display_image, int show_image) {
+
+  /*  switch(show_image) {
+      case MORPHOLOGY: mptr = &imgMorphology; break;
+      case ORIGINAL: mptr = &imgOriginal; break;
+      case GRAYSCALE: mptr = &imgGrayscale; break;
+      case CANNY:
+      default: mptr = &imgCanny; break;
+    }*/
+
+  timer.start();
+
+  logfile << "Got frame (resolution: " << imgOriginal.cols << "x" << imgOriginal.rows << ")" << std::endl;
+
+  process_raster(display_image, show_image);
+
+  auto before = high_resolution_clock::now();
+
+  process_geometry(display_image, show_image);
+
+  JSValue test_arr = js.get_global("test_array");
+
+  std::vector<int32_t> num_vec;
+
+  std::transform(js.begin(test_arr),
+                 js.end(test_arr),
+                 std::back_inserter(num_vec),
+                 [&](const JSValue& test_arr) -> int32_t {
+                   int32_t num;
+                   js.get_number(test_arr, num);
+                   //  std::cerr << "array member <" << js.typestr(test_arr) << ">: " << num
+                   //  << std::endl;
+                   return num;
+                 });
+
+  std::string str = js.to_string(test_arr);
+
+  //   std::cerr << "array object <" << js.typestr(test_arr) << ">: " << str << std::endl;
+
+  auto after = high_resolution_clock::now();
+  bool do_timing = false;
+
+  if(do_timing) {
+    duration<double, std::milli> fp_ms = after - before;
+    auto int_ms = duration_cast<milliseconds>(after - before);
+    duration<long, std::micro> int_usec = int_ms;
+
+    std::cout << "f() took " << fp_ms.count() << " ms, "
+              << "or " << int_ms.count() << " whole milliseconds "
+              << "(which is " << int_usec.count() << " whole microseconds)" << std::endl;
+  }
+
+  timer.stop();
+
+  //  std::cerr << "\033[1mTimer duration\033[0m " << (int)timer.elapsedSeconds() << "s " <<
+  //  ((int)timer.elapsedMilliseconds() % 1000) << "ms" << std::endl;
 }
 
 /**********************************************************/

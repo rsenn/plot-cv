@@ -483,7 +483,13 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
     os << "cv::Mat(" << m->rows << ", " << m->cols << ", ";
 
     const char* tstr =
-        (m->type() == CV_8UC4) ? "CV_8UC4" : (m->type() == CV_8UC2) ? "CV_8UC2" : (m->type() == CV_8UC3) ? "CV_8UC3" : (m->type() == CV_8UC1) ? "CV_8UC1" : (m->type() == CV_32FC1) ? "CV_32FC1" : "?";
+        (m->type() == CV_8UC4)
+            ? "CV_8UC4"
+            : (m->type() == CV_8UC2)
+                  ? "CV_8UC2"
+                  : (m->type() == CV_8UC3)
+                        ? "CV_8UC3"
+                        : (m->type() == CV_8UC1) ? "CV_8UC1" : (m->type() == CV_32FC1) ? "CV_32FC1" : "?";
 
     os << tstr << ")" << std::endl;
   } else {
@@ -497,7 +503,8 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
         if(m->type() == CV_32FC1)
           os << m->at<float>(y, x);
         else
-          os << std::setfill('0') << std::setbase(16) << std::setw(m->type() == CV_8UC4 ? 8 : m->type() == CV_8UC1 ? 2 : 6) << m->at<uint32_t>(y, x);
+          os << std::setfill('0') << std::setbase(16)
+             << std::setw(m->type() == CV_8UC4 ? 8 : m->type() == CV_8UC1 ? 2 : 6) << m->at<uint32_t>(y, x);
       }
     }
 
@@ -720,7 +727,10 @@ js_mat_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetClassProto(ctx, js_mat_class_id, mat_proto);
 
   mat_iterator_proto = JS_NewObject(ctx);
-  JS_SetPropertyFunctionList(ctx, mat_iterator_proto, js_mat_iterator_proto_funcs, countof(js_mat_iterator_proto_funcs));
+  JS_SetPropertyFunctionList(ctx,
+                             mat_iterator_proto,
+                             js_mat_iterator_proto_funcs,
+                             countof(js_mat_iterator_proto_funcs));
   JS_SetClassProto(ctx, js_mat_iterator_class_id, mat_iterator_proto);
 
   mat_class = JS_NewCFunction2(ctx, js_mat_ctor, "Mat", 2, JS_CFUNC_constructor, 0);

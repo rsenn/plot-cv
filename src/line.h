@@ -167,7 +167,8 @@ moment_from_angle(double phi, cv::Point_<T>& point) {
   point.y = std::cos(phi);
 }
 
-template<class T, typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type* = nullptr>
+template<class T,
+         typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type* = nullptr>
 inline std::string
 to_string(const T& t, size_t n_pad = 3, char ch_pad = ' ') {
   std::ostringstream oss;

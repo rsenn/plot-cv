@@ -33,8 +33,10 @@ bezier_table(ImVec2 P[4], ImVec2 results[steps + 1]) {
     }
   }
   for(unsigned step = 0; step <= steps; ++step) {
-    ImVec2 point = {K[step * 4 + 0] * P[0].x + K[step * 4 + 1] * P[1].x + K[step * 4 + 2] * P[2].x + K[step * 4 + 3] * P[3].x,
-                    K[step * 4 + 0] * P[0].y + K[step * 4 + 1] * P[1].y + K[step * 4 + 2] * P[2].y + K[step * 4 + 3] * P[3].y};
+    ImVec2 point = {K[step * 4 + 0] * P[0].x + K[step * 4 + 1] * P[1].x + K[step * 4 + 2] * P[2].x +
+                        K[step * 4 + 3] * P[3].x,
+                    K[step * 4 + 0] * P[0].y + K[step * 4 + 1] * P[1].y + K[step * 4 + 2] * P[2].y +
+                        K[step * 4 + 3] * P[3].y};
     results[step] = point;
   }
 }
@@ -86,10 +88,14 @@ Bezier(const char* label, float P[4]) {
 
   // background grid
   for(int i = 0; i <= Canvas.x; i += (Canvas.x / 4)) {
-    DrawList->AddLine(ImVec2(bb.Min.x + i, bb.Min.y), ImVec2(bb.Min.x + i, bb.Max.y), GetColorU32(ImGuiCol_TextDisabled));
+    DrawList->AddLine(ImVec2(bb.Min.x + i, bb.Min.y),
+                      ImVec2(bb.Min.x + i, bb.Max.y),
+                      GetColorU32(ImGuiCol_TextDisabled));
   }
   for(int i = 0; i <= Canvas.y; i += (Canvas.y / 4)) {
-    DrawList->AddLine(ImVec2(bb.Min.x, bb.Min.y + i), ImVec2(bb.Max.x, bb.Min.y + i), GetColorU32(ImGuiCol_TextDisabled));
+    DrawList->AddLine(ImVec2(bb.Min.x, bb.Min.y + i),
+                      ImVec2(bb.Max.x, bb.Min.y + i),
+                      GetColorU32(ImGuiCol_TextDisabled));
   }
 
   // eval curve

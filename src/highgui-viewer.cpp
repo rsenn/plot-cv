@@ -28,11 +28,14 @@ using std::chrono::steady_clock;
 using std::chrono::time_point;
 
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
-std::map<std::string, bool> views{{"imgBlurred", true}, {"imgCanny", true}, {"imgGrayscale", true}, {"imgMorphology", true}, {"imgVector", true}};
+std::map<std::string, bool> views{{"imgOriginal", true},
+                                  {"imgBlurred", true},
+                                  {"imgCanny", true},
+                                  {"imgGrayscale", true},
+                                  {"imgMorphology", true},
+                                  {"imgVector", true}};
 
 std::map<std::string, std::string> trackbars;
-
-extern "C" {
 
 static int show_image, image_index;
 static size_t num_images;
@@ -58,7 +61,12 @@ trackbar(int input, void* u) {
 };
 
 int
-create_trackbar(const char* name, const std::string& window, int* value, int count, cv::TrackbarCallback onChange = 0, const char* caption = nullptr) {
+create_trackbar(const char* name,
+                const std::string& window,
+                int* value,
+                int count,
+                cv::TrackbarCallback onChange = 0,
+                const char* caption = nullptr) {
   std::string barName = name;
   std::string windowName = views[window] ? window : "imgOriginal";
 
@@ -67,14 +75,19 @@ create_trackbar(const char* name, const std::string& window, int* value, int cou
 
   trackbars[barName] = caption;
 
-  return cv::createTrackbar(caption, windowName, value, count, onChange, const_cast<void*>(static_cast<const void*>(name)));
+  return cv::createTrackbar(
+      caption, windowName, value, count, onChange, const_cast<void*>(static_cast<const void*>(name)));
 }
 
 void
 display_image(std::string str, image_type* m) {
 
-  if(views[str])
-    cv::imshow(str.c_str(), *m);
+  if(!views[str])
+    return;
+
+  // std::cout << "Displaying '" << str << "' " << m->cols << "x" << m->rows << std::endl;
+
+  cv::imshow(str.c_str(), *m);
   /* if(m == nullptr)
      return;
 
@@ -119,7 +132,6 @@ display_image(std::string str, image_type* m) {
    cv::imshow(str.c_str(), out);*/
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
 int
 main(int argc, char* argv[]) {
   using std::back_inserter;
@@ -132,13 +144,16 @@ main(int argc, char* argv[]) {
   std::map<const char*, const char*> props = {{"name", "test"}, {"length", "4"}};
 
   unsigned int ret;
-  show_image = 0;
+  float wantFPS = 0.5;
+  show_image = ORIGINAL;
 
   std::string filename;
   cv::CommandLineParser parser(argc,
                                argv,
                                "{help h usage ? |      | print this message   }"
                                "{@input         |      | camera number or image file }"
+                               "{@width         |    -1| frame width }"
+                               "{@height        |    -1| frame height }"
                                "{si save-images |      | save each frame as image }");
 
   js_init(argc, argv);
@@ -153,30 +168,37 @@ main(int argc, char* argv[]) {
   }
   bool saveImages = parser.has("save-images");
   std::string input = parser.get<cv::String>(0);
+  int width = parser.get<int>(1);
+  int height = parser.get<int>(2);
   int camID = isdigit(input.c_str()[0]) ? std::stoi(input, nullptr, 10) : -1;
 
   if(camID == -1)
     filename = input;
 
-  cv::VideoCapture capWebcam(camID);
+  cv::VideoCapture capWebcam(camID, cv::CAP_V4L);
+
   image_type imgInput;
   if(camID >= 0) {
     // capWebcam.open((int)camID, (int)cv::CAP_V4L2); // declare a VideoCapture
     // object and associate to webcam, 0 => use 1st webcam
 
-    if(capWebcam.isOpened() == false) {                            // check if VideoCapture object was
-                                                                   // associated to webcam successfully
-      logfile << "error: capWebcam not accessed successfully\n\n"; // if not, print
-                                                                   // error message
-                                                                   // to std out
-      getchar();                                                   // may have to modify this line if not using Windows
-      return (0);                                                  // and exit program
+    if(capWebcam.isOpened() == false) {
+      logfile << "error: capWebcam not accessed successfully\n\n";
+      getchar();
+      return (0);
     }
 
+    if(width != -1 && height != -1) {
+      capWebcam.set(cv::CAP_PROP_FRAME_WIDTH, width);
+      capWebcam.set(cv::CAP_PROP_FRAME_HEIGHT, height);
+    }
     double fps = capWebcam.get(cv::CAP_PROP_FPS);
 
     std::cout << "Frames per second: " << fps << std::endl;
 
+    int width = capWebcam.get(cv::CAP_PROP_FRAME_WIDTH);
+    int height = capWebcam.get(cv::CAP_PROP_FRAME_HEIGHT);
+    std::cout << "Resolution: " << width << "x" << height << std::endl;
   } else {
     imgInput = cv::imread(filename.empty() ? "input.png" : filename);
     num_images = argc - 2;
@@ -191,15 +213,17 @@ main(int argc, char* argv[]) {
 
   for(const auto& window : visible) {
     std::cout << "Create window '" << window << "'" << std::endl;
-    cv::namedWindow(window, CV_WINDOW_AUTOSIZE);
+    cv::namedWindow(window, cv::WINDOW_NORMAL);
   }
 
   create_trackbar("frame", "imgCanny", &image_index, 255, trackbar, "frame");
   create_trackbar("threshold2", "imgCanny", &thresh2, 255, trackbar, "thres2");
-  // create_trackbar("Image", "img", &show_image, 4, trackbar, "Image Index");
-  create_trackbar("morphology_kernel_size", "imgMorphology", &config.morphology_kernel_size, 2, trackbar, "Morphology kernel size");
+
+  create_trackbar(
+      "morphology_kernel_size", "imgMorphology", &config.morphology_kernel_size, 2, trackbar, "Morphology kernel size");
   create_trackbar("morphology_enable", "imgMorphology", &morphology_enable, 1, trackbar, "Morphology enable");
-  create_trackbar("morphology_operator", "imgMorphology", &config.morphology_operator, 3, trackbar, "Morphology operator");
+  create_trackbar(
+      "morphology_operator", "imgMorphology", &config.morphology_operator, 3, trackbar, "Morphology operator");
   create_trackbar("blur_sigma", "imgBlurred", &config.blur_sigma, 300, trackbar, "blur sigma");
 
   create_trackbar("blur_kernel_size", "imgBlurred", &config.blur_kernel_size, 2, trackbar, "Blur kernel size");
@@ -247,7 +271,7 @@ main(int argc, char* argv[]) {
     }
     time_point<steady_clock> now = steady_clock::now();
     auto diff = now - start;
-    auto end = now + milliseconds(16);
+    auto end = now + milliseconds((int)(1000.0 / wantFPS));
 
     frames++;
 
@@ -274,6 +298,11 @@ main(int argc, char* argv[]) {
       break;                                            // and jump out of while loop
     }
 
+    int frame = capWebcam.get(cv::CAP_PROP_POS_FRAMES);
+    int msec = capWebcam.get(cv::CAP_PROP_POS_MSEC);
+
+    std::cout << "Video frame#" << frame << " pos " << msec << "ms" << std::endl;
+
     image_type imgOutput;
 
     imgRaw.copyTo(imgOutput);
@@ -289,13 +318,15 @@ main(int argc, char* argv[]) {
     process_image(std::function<void(std::string, cv::Mat*)>(&display_image), show_image);
 
     duration<int, std::milli> sleep = duration_cast<milliseconds>(end - steady_clock::now());
+    int millis = sleep.count(); // > 0 ? sleep.count() : 0;
 
-    keycode = cv::waitKey(sleep.count() > 0 ? sleep.count() : 1);
+    std::cout << "Sleep " << millis << "ms" << std::endl;
 
-   // std::this_thread::sleep_until(end);
+    keycode = cv::waitKey(millis > 0 ? millis : 1);
+
+    // std::this_thread::sleep_until(end);
 
   } // end while
 
   return (0);
-}
 }
