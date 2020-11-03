@@ -22,7 +22,8 @@ getNow(char* tt) {
 // Tap mau khuon mat
 String face_cascade_data = "/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_alt.xml";
 // Tap mau mat
-String eyes_cascade_data = "/usr/local/share/OpenCV/haarcascades/haarcascade_eye_tree_eyeglasses.xml";
+String eyes_cascade_data =
+    "/usr/local/share/OpenCV/haarcascades/haarcascade_eye_tree_eyeglasses.xml";
 
 CascadeClassifier face_cascade;
 CascadeClassifier eyes_cascade;
@@ -77,7 +78,16 @@ main() {
     printf("[%s] Phat hien %d khuon mat\r\n", timetext, faces.size());
     for(int i = 0; i < faces.size(); i++) {
       Point center(faces[i].x + faces[i].width * 0.5, faces[i].y + faces[i].height * 0.5);
-      ellipse(frame, center, Size(faces[i].width * 0.5, faces[i].height * 0.5), 0, 0, 360, Scalar(0, 0, 255), 4, 8, 0);
+      ellipse(frame,
+              center,
+              Size(faces[i].width * 0.5, faces[i].height * 0.5),
+              0,
+              0,
+              360,
+              Scalar(0, 0, 255),
+              4,
+              8,
+              0);
       printf("[%s] Khuon mat thu %d tai: %d, %d\r\n", timetext, i, center.x, center.y);
       // Tim mat
       Mat faceROI = frame_result(faces[i]);
@@ -85,8 +95,18 @@ main() {
       eyes_cascade.detectMultiScale(faceROI, eyes, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(30, 30));
       printf("[%s] Khuon mat %d co %d mat\r\n", timetext, i, eyes.size());
       for(int j = 0; j < eyes.size(); j++) {
-        Point center_eye(faces[i].x + eyes[j].x + eyes[j].width * 0.5, faces[i].y + eyes[j].y + eyes[j].height * 0.5);
-        ellipse(frame, center_eye, Size(eyes[j].width * 0.5, eyes[j].height * 0.5), 0, 0, 360, Scalar(0, 0, 255), 4, 8, 0);
+        Point center_eye(faces[i].x + eyes[j].x + eyes[j].width * 0.5,
+                         faces[i].y + eyes[j].y + eyes[j].height * 0.5);
+        ellipse(frame,
+                center_eye,
+                Size(eyes[j].width * 0.5, eyes[j].height * 0.5),
+                0,
+                0,
+                360,
+                Scalar(0, 0, 255),
+                4,
+                8,
+                0);
       }
     }
     printf("----------------------------------\r\n");

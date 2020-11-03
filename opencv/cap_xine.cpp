@@ -67,7 +67,9 @@ class XINECapture : public IVideoCapture {
   bool seekable;
 
 public:
-  XINECapture() : xine(0), stream(0), vo_port(0), frame_number(-1), frame_rate(0.), frame_duration(0.), seekable(false) {
+  XINECapture()
+      : xine(0), stream(0), vo_port(0), frame_number(-1), frame_rate(0.), frame_duration(0.),
+        seekable(false) {
     xine_video_frame_t z = {};
     xine_frame = z;
   }
@@ -209,7 +211,8 @@ public:
       case CV_CAP_PROP_FRAME_WIDTH: return size.width;
       case CV_CAP_PROP_FRAME_HEIGHT: return size.height;
       case CV_CAP_PROP_FPS: return frame_rate;
-      case CV_CAP_PROP_FOURCC: return (double)xine_get_stream_info(stream, XINE_STREAM_INFO_VIDEO_FOURCC);
+      case CV_CAP_PROP_FOURCC:
+        return (double)xine_get_stream_info(stream, XINE_STREAM_INFO_VIDEO_FOURCC);
     }
     return 0;
   }

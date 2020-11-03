@@ -19,11 +19,11 @@ export async function NormalizeResponse(resp) {
   resp = await resp;
 
   if(Util.isObject(resp)) {
-    let { cached, status, ok, redirected, url } = resp;
-    let disp = resp.headers.get('Content-Disposition');
-    let type = resp.headers.get('Content-Type');
+    let { cached, status, ok, redirected, url, headers } = resp;
+    let disp = headers.get('Content-Disposition');
+    let type = headers.get('Content-Type');
     if(ok) {
-      if(!disp && /json/.test(type) && typeof resp.json == 'function') resp = await resp.json();
+      if(!disp && /json/.test(type) && typeof resp.json == 'function') resp = { data: await resp.json() };
       else if(typeof resp.text == 'function') resp = { data: await resp.text() };
       if(disp && !resp.file) resp.file = disp.replace(/.*['"]([^"]+)['"].*/, '$1');
       if(disp && type) resp.type = type;
@@ -34,6 +34,10 @@ export async function NormalizeResponse(resp) {
     }
     if(cached) resp.cached = true;
     if(redirected) resp.redirected = true;
+
+    let fn = Util.mapFunction(headers);
+    //let { keys, get } = fn;
+    resp.headers = Util.define(Object.fromEntries(fn.entries()), { keys: fn, get: fn });
   }
   return resp;
 }
@@ -101,9 +105,9 @@ export async function ListProjects(opts = {}) {
     //console.log('response:', Util.abbreviate(response));
     if(response) response = JSON.parse(response);*/
   } else {
-    response = await ListGithubRepo(url, null, null, '\\.(brd|sch|lbr)$', opts);
+    response = await GithubListContents(url, null, null, '\\.(brd|sch|lbr)$', opts);
 
-    console.log('ListGithubRepo response:', response);
+    console.log('GithubListContents response:', response);
     if(Util.isArray(response)) {
       let fileList = response.map((file, i) => {
         let project = { ...file, name: response.at(i) };
@@ -308,7 +312,27 @@ export function GeneratePalette(numColors) {
   return ret;
 }
 
-export const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
+export async function* GithubListRepositories(user) {
+  let url = `/github/${user}?tab=repositories`;
+  let fetched = [];
+  do {
+    fetched.push(url);
+    let response = await fetch(url, { mode: 'no-cors' });
+    let text = await response.clone().text();
+    let matches = [...text.matchAll(/([^<"]*after=[^">]*)/g)].map(m => m[1]);
+    matches = matches.map(m => decodeURIComponent(Util.decodeHTMLEntities(m)));
+    matches = matches.filter(m => m[0] != '{' && fetched.indexOf(m) == -1);
+    //console.log('matches:', matches);
+    url = matches[matches.length - 1] + '';
+    //   url = decodeURIComponent(Util.decodeHTMLEntities(url));
+    url = url.replace(/.*github\.com/, '/github');
+    url = url.replace(new RegExp('(,|"|%22).*', 'g'), '');
+    console.log('url:', url);
+    yield* [...text.matchAll(/pository"\s*>\s*([^<]*)/g)].map(m => m[1]);
+  } while(url != 'undefined');
+}
+
+export const GithubListContents = async (owner, repo, dir, filter, opts = {}) => {
   const { username, password } = opts;
   let host, path;
   if(new RegExp('://').test(owner) || (repo == null && dir == null)) {
@@ -322,7 +346,7 @@ export const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
     dir = path.join('/');
   }
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/${dir}`;
-  console.log('ListGithubRepo', { host, owner, repo, dir, filter, url });
+  console.log('GithubListContents', { host, owner, repo, dir, filter, url });
   const headers = {
     Authorization: 'Basic ' + window.btoa(`${username}:${password}`)
   };
@@ -354,7 +378,7 @@ export const ListGithubRepo = async (owner, repo, dir, filter, opts = {}) => {
   };
   return Object.assign(files.map((file, i) => {
       file.toString = () => at(i);
-      if(file.type == 'dir') file.list = async (f = filter) => await ListGithubRepo(at(i), null, null, f, {});
+      if(file.type == 'dir') file.list = async (f = filter) => await GithubListContents(at(i), null, null, f, {});
       else {
         let getter = async function() {
           let data = await fetch(at(i), {});
@@ -392,18 +416,22 @@ export async function ListGithubRepoServer(owner, repo, dir, filter) {
   let response;
   let request = { owner, repo, dir, filter };
   try {
-    response = await FetchURL('/github', {
+    response = await fetch('/github', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request)
     });
   } catch(err) {}
-  let ret = JSON.parse(response);
+  let ret = Util.tryCatch(() => JSON.parse(response),
+    response => response,
+    error => ({ error, response })
+  );
+
   ret.at = function(i) {
     return this.base_url + '/' + this.files[i];
   };
   ret.get = async function(i) {
-    let data = await FetchURL(this.at(i));
+    let data = await FetchCached(this.at(i));
     return data;
   };
   return ret;
@@ -459,7 +487,8 @@ export default {
   GetLayer,
   AddLayer,
   GeneratePalette,
-  ListGithubRepo,
+  GithubListRepositories,
+  GithubListContents,
   ListGithubRepoServer,
   ClearCache,
   ShowCache,

@@ -249,8 +249,9 @@ async function main() {
   app.post(/^\/gcode/, gcodeEndpoint);
   app.get(/^\/gcode/, gcodeEndpoint);
 
-  const ListGithubRepo = async (owner, repo, dir, filter) => {
+  const GithubListContents = async (owner, repo, dir, filter) => {
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${dir}`;
+    console.log(`GITHUB list`, { owner, repo, dir, filter });
     let response = await fetch(url);
     let result = JSON.parse(await response.text());
     console.log('result', result);
@@ -457,20 +458,61 @@ async function main() {
   });
 
   app.get(/\/github/, async (req, res) => {
-    const url = Util.parseURL(req.url);
-    const { query } = url;
-    let result;
-    const { owner, repo, dir, filter } = query;
-    result = await ListGithubRepo(owner, repo, dir, filter && new RegExp(filter, 'g'));
-    res.json(FilesURLs(result.map(file => file.download_url)));
+    Util.tryCatch(async () => {
+        const { body } = req;
+        const url = Util.parseURL(req.url);
+        const { location, query } = url;
+        let args = location.split(/\//g).filter(p => !/(^github$|^$)/.test(p));
+        let options = { ...query, ...body };
+
+        if(args.length > 0) {
+          const [owner, repo, dir, filter] = args;
+          Util.weakAssign(options, { owner, repo, dir, filter });
+        }
+
+        console.log(`GET ${location}`, { args, query, options });
+
+        let result;
+        const { owner, repo, dir, filter, tab, after } = options;
+
+        if(owner && repo && dir)
+          result = await GithubListContents(owner, repo, dir, filter && new RegExp(filter, 'g'));
+        else if(owner && (tab || after)) {
+          let proxyUrl = Util.makeURL({
+            ...url,
+            protocol: 'https',
+            host: 'github.com',
+            location: ['', ...args].join('/')
+          });
+          console.log(`PROXY ${proxyUrl}`);
+
+          let response = await fetch(proxyUrl);
+          let type = response.headers['content-type'];
+
+          console.log(`RESPONSE`, response.url, type);
+          let data = await response.text();
+          res.send(data);
+          //, 200, { headers: { 'content-type': type }});
+          return;
+        }
+
+        res.json(FilesURLs(result.map(file => file.download_url)));
+      },
+      () => {},
+      Util.putError
+    );
   });
 
   app.post(/\/github.*/, async (req, res) => {
     const { body } = req;
     let result;
     const { owner, repo, dir, filter } = body;
-    result = await ListGithubRepo(owner, repo, dir, filter && new RegExp(filter, 'g'));
-    res.json(FilesURLs(result.map(file => file.download_url)));
+    console.log('POST github', { owner, repo, dir, filter });
+
+    res.json(await GithubListContents(owner, repo, dir, filter && new RegExp(filter, 'g'))
+        .then(result => FilesURLs(result.map(file => file.download_url)))
+        .catch(error => ({ error }))
+    );
   });
 
   app.get(/^\/files/, async (req, res) => res.json({ files: await GetFilesList() }));

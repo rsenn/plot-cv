@@ -85,10 +85,12 @@ main() {
     cout << "did threshold stuff" << endl;
 
     CvBlobs blobs;
-    unsigned int result = cvLabel(thrs_img_p, label_img_p, blobs); // I think this one makes the blobs
+    unsigned int result =
+        cvLabel(thrs_img_p, label_img_p, blobs); // I think this one makes the blobs
     cout << "blob 0" << endl;
 
-    cvFilterByArea(blobs, 500,
+    cvFilterByArea(blobs,
+                   500,
                    1000000); // this one filters blobs by area (limited to range provided)
     cout << "blob 1" << endl;
 
@@ -98,7 +100,10 @@ main() {
     cvUpdateTracks(blobs, tracks, 200., 5);
     cout << "blob 3" << endl;
 
-    cvRenderTracks(tracks, frame_img_p, frame_img_p, CV_TRACK_RENDER_ID | CV_TRACK_RENDER_BOUNDING_BOX);
+    cvRenderTracks(tracks,
+                   frame_img_p,
+                   frame_img_p,
+                   CV_TRACK_RENDER_ID | CV_TRACK_RENDER_BOUNDING_BOX);
 
     cvShowImage("red_object_tracking", frame_img_p);
     cvResizeWindow("red_object_tracking", 1024, 768);

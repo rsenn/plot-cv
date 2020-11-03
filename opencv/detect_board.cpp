@@ -46,20 +46,21 @@ using namespace cv;
 
 namespace {
 const char* about = "Pose estimation using a ArUco Planar Grid board";
-const char* keys = "{w        |       | Number of squares in X direction }"
-                   "{h        |       | Number of squares in Y direction }"
-                   "{l        |       | Marker side lenght (in pixels) }"
-                   "{s        |       | Separation between two consecutive markers in the grid (in pixels)}"
-                   "{d        |       | dictionary: DICT_4X4_50=0, DICT_4X4_100=1, DICT_4X4_250=2,"
-                   "DICT_4X4_1000=3, DICT_5X5_50=4, DICT_5X5_100=5, DICT_5X5_250=6, DICT_5X5_1000=7, "
-                   "DICT_6X6_50=8, DICT_6X6_100=9, DICT_6X6_250=10, DICT_6X6_1000=11, DICT_7X7_50=12,"
-                   "DICT_7X7_100=13, DICT_7X7_250=14, DICT_7X7_1000=15, DICT_ARUCO_ORIGINAL = 16}"
-                   "{c        |       | Output file with calibrated camera parameters }"
-                   "{v        |       | Input from video file, if ommited, input comes from camera }"
-                   "{ci       | 0     | Camera id if input doesnt come from video (-v) }"
-                   "{dp       |       | File of marker detector parameters }"
-                   "{rs       |       | Apply refind strategy }"
-                   "{r        |       | show rejected candidates too }";
+const char* keys =
+    "{w        |       | Number of squares in X direction }"
+    "{h        |       | Number of squares in Y direction }"
+    "{l        |       | Marker side lenght (in pixels) }"
+    "{s        |       | Separation between two consecutive markers in the grid (in pixels)}"
+    "{d        |       | dictionary: DICT_4X4_50=0, DICT_4X4_100=1, DICT_4X4_250=2,"
+    "DICT_4X4_1000=3, DICT_5X5_50=4, DICT_5X5_100=5, DICT_5X5_250=6, DICT_5X5_1000=7, "
+    "DICT_6X6_50=8, DICT_6X6_100=9, DICT_6X6_250=10, DICT_6X6_1000=11, DICT_7X7_50=12,"
+    "DICT_7X7_100=13, DICT_7X7_250=14, DICT_7X7_1000=15, DICT_ARUCO_ORIGINAL = 16}"
+    "{c        |       | Output file with calibrated camera parameters }"
+    "{v        |       | Input from video file, if ommited, input comes from camera }"
+    "{ci       | 0     | Camera id if input doesnt come from video (-v) }"
+    "{dp       |       | File of marker detector parameters }"
+    "{rs       |       | Apply refind strategy }"
+    "{r        |       | show rejected candidates too }";
 } // namespace
 
 /**
@@ -142,7 +143,8 @@ main(int argc, char* argv[]) {
       return 0;
     }
   }
-  detectorParams->cornerRefinementMethod = aruco::CORNER_REFINE_SUBPIX; // do corner refinement in markers
+  detectorParams->cornerRefinementMethod =
+      aruco::CORNER_REFINE_SUBPIX; // do corner refinement in markers
 
   String video;
   if(parser.has("v")) {
@@ -154,7 +156,8 @@ main(int argc, char* argv[]) {
     return 0;
   }
 
-  Ptr<aruco::Dictionary> dictionary = aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
+  Ptr<aruco::Dictionary> dictionary =
+      aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
 
   VideoCapture inputVideo;
   int waitTime;
@@ -166,10 +169,12 @@ main(int argc, char* argv[]) {
     waitTime = 10;
   }
 
-  float axisLength = 0.5f * ((float)min(markersX, markersY) * (markerLength + markerSeparation) + markerSeparation);
+  float axisLength = 0.5f * ((float)min(markersX, markersY) * (markerLength + markerSeparation) +
+                             markerSeparation);
 
   // create board object
-  Ptr<aruco::GridBoard> gridboard = aruco::GridBoard::create(markersX, markersY, markerLength, markerSeparation, dictionary);
+  Ptr<aruco::GridBoard> gridboard =
+      aruco::GridBoard::create(markersX, markersY, markerLength, markerSeparation, dictionary);
   Ptr<aruco::Board> board = gridboard.staticCast<aruco::Board>();
 
   double totalTime = 0;
@@ -195,7 +200,8 @@ main(int argc, char* argv[]) {
     // estimate board pose
     int markersOfBoardDetected = 0;
     if(ids.size() > 0)
-      markersOfBoardDetected = aruco::estimatePoseBoard(corners, ids, board, camMatrix, distCoeffs, rvec, tvec);
+      markersOfBoardDetected =
+          aruco::estimatePoseBoard(corners, ids, board, camMatrix, distCoeffs, rvec, tvec);
 
     double currentTime = ((double)getTickCount() - tick) / getTickFrequency();
     totalTime += currentTime;

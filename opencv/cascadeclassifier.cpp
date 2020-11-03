@@ -66,7 +66,8 @@ displayState(Mat& canvas, bool bHelp, bool bGpu, bool bLargestFace, bool bFilter
   ss << "FPS = " << setprecision(1) << fixed << fps;
   matPrint(canvas, 0, fontColorRed, ss.str());
   ss.str("");
-  ss << "[" << canvas.cols << "x" << canvas.rows << "], " << (bGpu ? "GPU, " : "CPU, ") << (bLargestFace ? "OneFace, " : "MultiFace, ") << (bFilter ? "Filter:ON" : "Filter:OFF");
+  ss << "[" << canvas.cols << "x" << canvas.rows << "], " << (bGpu ? "GPU, " : "CPU, ")
+     << (bLargestFace ? "OneFace, " : "MultiFace, ") << (bFilter ? "Filter:ON" : "Filter:OFF");
   matPrint(canvas, 1, fontColorRed, ss.str());
 
   // by Anatoly. MacOS fix. ostringstream(const string&) is a private
@@ -124,12 +125,14 @@ main(int argc, const char* argv[]) {
 
   CascadeClassifier_GPU cascade_gpu;
   if(!cascade_gpu.load(cascadeName)) {
-    return cerr << "ERROR: Could not load cascade classifier \"" << cascadeName << "\"" << endl, help(), -1;
+    return cerr << "ERROR: Could not load cascade classifier \"" << cascadeName << "\"" << endl,
+           help(), -1;
   }
 
   CascadeClassifier cascade_cpu;
   if(!cascade_cpu.load(cascadeName)) {
-    return cerr << "ERROR: Could not load cascade classifier \"" << cascadeName << "\"" << endl, help(), -1;
+    return cerr << "ERROR: Could not load cascade classifier \"" << cascadeName << "\"" << endl,
+           help(), -1;
   }
 
   VideoCapture capture;
@@ -182,11 +185,20 @@ main(int argc, const char* argv[]) {
       // cascade_gpu.visualizeInPlace = true;
       cascade_gpu.findLargestObject = findLargestObject;
 
-      detections_num = cascade_gpu.detectMultiScale(resized_gpu, facesBuf_gpu, 1.2, (filterRects || findLargestObject) ? 4 : 0);
+      detections_num = cascade_gpu.detectMultiScale(resized_gpu,
+                                                    facesBuf_gpu,
+                                                    1.2,
+                                                    (filterRects || findLargestObject) ? 4 : 0);
       facesBuf_gpu.colRange(0, detections_num).download(faces_downloaded);
     } else {
       Size minSize = cascade_gpu.getClassifierSize();
-      cascade_cpu.detectMultiScale(resized_cpu, facesBuf_cpu, 1.2, (filterRects || findLargestObject) ? 4 : 0, (findLargestObject ? CV_HAAR_FIND_BIGGEST_OBJECT : 0) | CV_HAAR_SCALE_IMAGE, minSize);
+      cascade_cpu.detectMultiScale(resized_cpu,
+                                   facesBuf_cpu,
+                                   1.2,
+                                   (filterRects || findLargestObject) ? 4 : 0,
+                                   (findLargestObject ? CV_HAAR_FIND_BIGGEST_OBJECT : 0) |
+                                       CV_HAAR_SCALE_IMAGE,
+                                   minSize);
       detections_num = (int)facesBuf_cpu.size();
     }
 
@@ -214,7 +226,8 @@ main(int argc, const char* argv[]) {
     if((filterRects || findLargestObject) && detections_num > 0) {
       Rect* faceRects = useGPU ? faces_downloaded.ptr<Rect>() : &facesBuf_cpu[0];
       for(int i = 0; i < min(detections_num, 2); ++i) {
-        cout << ", [" << setw(4) << faceRects[i].x << ", " << setw(4) << faceRects[i].y << ", " << setw(4) << faceRects[i].width << ", " << setw(4) << faceRects[i].height << "]";
+        cout << ", [" << setw(4) << faceRects[i].x << ", " << setw(4) << faceRects[i].y << ", "
+             << setw(4) << faceRects[i].width << ", " << setw(4) << faceRects[i].height << "]";
       }
     }
     cout << endl;

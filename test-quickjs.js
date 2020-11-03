@@ -22,6 +22,8 @@ async function main(...args) {
 
   await PortableFileSystem(fs => (filesystem = fs));
   console.log('start');
+  console.log('isBrowser:', Util.isBrowser());
+  console.log('Util.copyTextToClipboard()', await Util.copyTextToClipboard('TEST'));
   // console.log('modules:', inspect({ Point, Size, Rect }));
   let globalThis = Util.getGlobalObject();
   const moduleNames = ['Rect', 'Point', 'Size', 'Line', 'Mat', 'Contour', 'PointIterator', 'Draw'];

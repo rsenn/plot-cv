@@ -30,9 +30,13 @@ bool getROI = true;
 bool saveROI = false;
 bool Undistort = false;
 
-int Lower[3] = {calibration_data["h_low"].as<int>(), calibration_data["s_low"].as<int>(), calibration_data["v_low"].as<int>()};
+int Lower[3] = {calibration_data["h_low"].as<int>(),
+                calibration_data["s_low"].as<int>(),
+                calibration_data["v_low"].as<int>()};
 
-int Upper[3] = {calibration_data["h_up"].as<int>(), calibration_data["s_up"].as<int>(), calibration_data["v_up"].as<int>()};
+int Upper[3] = {calibration_data["h_up"].as<int>(),
+                calibration_data["s_up"].as<int>(),
+                calibration_data["v_up"].as<int>()};
 
 double lower[3], upper[3];
 int intLow[3], intUp[3];
@@ -121,10 +125,12 @@ main(int argc, char* argv[]) {
       if(!sampling && !saveROI) {
         imshow("frame", frame);
       } else if(sampling && !saveROI) {
-        rectangle(frame, cv::Point(x_start, y_start), cv::Point(x_end, y_end), Scalar(0, 255, 0), 2);
+        rectangle(
+            frame, cv::Point(x_start, y_start), cv::Point(x_end, y_end), Scalar(0, 255, 0), 2);
         imshow("frame", frame);
       } else if(saveROI) {
-        rectangle(frame, cv::Point(x_start, y_start), cv::Point(x_end, y_end), Scalar(0, 255, 0), 2);
+        rectangle(
+            frame, cv::Point(x_start, y_start), cv::Point(x_end, y_end), Scalar(0, 255, 0), 2);
         imshow("frame", frame);
 
         cv::Mat roi = frame(Range(y_start, y_end), Range(x_start, x_end));
@@ -153,7 +159,10 @@ main(int argc, char* argv[]) {
       }
 
       cvtColor(frame, hsv, COLOR_BGR2HSV);
-      inRange(hsv, Scalar(lower[0], lower[1], lower[2]), Scalar(upper[0], upper[1], upper[2]), mask);
+      inRange(hsv,
+              Scalar(lower[0], lower[1], lower[2]),
+              Scalar(upper[0], upper[1], upper[2]),
+              mask);
       erode(mask, mask, 0, cv::Point(-1, -1), 2);
       dilate(mask, mask, 0, cv::Point(-1, -1), 2);
       morphologyEx(mask, mask, MORPH_CLOSE, kernel);

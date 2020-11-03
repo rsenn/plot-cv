@@ -34,8 +34,14 @@ bool case2(Entity, Entity);
 bool case3(Entity, Entity);
 bool case4(Entity, Entity);
 
-void myFunc(cv::Mat& cameraFeed, Entity& playerfront, Entity& playerrear, Entity& ball, Entity& goal);
-void movePlayer(string balld, Entity& playerfront, Entity& playerrear, Entity& ball, Entity& goal, Serial& serial);
+void
+myFunc(cv::Mat& cameraFeed, Entity& playerfront, Entity& playerrear, Entity& ball, Entity& goal);
+void movePlayer(string balld,
+                Entity& playerfront,
+                Entity& playerrear,
+                Entity& ball,
+                Entity& goal,
+                Serial& serial);
 
 void
 on_trackbar(int, void*) { // This function gets called whenever a
@@ -88,8 +94,18 @@ createTrackbars() {
 void
 drawObject(Entity anEntity, cv::Mat& frame) {
   cv::circle(frame, cv::Point(anEntity.getXPos(), anEntity.getYPos()), 10, cv::Scalar(0, 0, 255));
-  cv::putText(frame, intToString(anEntity.getXPos()) + " , " + intToString(anEntity.getYPos()), cv::Point(anEntity.getXPos(), anEntity.getYPos() + 20), 1, 1, Scalar(0, 255, 0));
-  cv::putText(frame, anEntity.getType(), cv::Point(anEntity.getXPos(), anEntity.getYPos() - 30), 1, 2, anEntity.getColor());
+  cv::putText(frame,
+              intToString(anEntity.getXPos()) + " , " + intToString(anEntity.getYPos()),
+              cv::Point(anEntity.getXPos(), anEntity.getYPos() + 20),
+              1,
+              1,
+              Scalar(0, 255, 0));
+  cv::putText(frame,
+              anEntity.getType(),
+              cv::Point(anEntity.getXPos(), anEntity.getYPos() - 30),
+              1,
+              2,
+              anEntity.getColor());
 }
 void
 morphOps(cv::Mat& thresh) {
@@ -209,7 +225,13 @@ trackFilteredObject(Entity& anEntity, cv::Mat threshold, cv::Mat HSV, cv::Mat& c
       }
 
     } else
-      putText(cameraFeed, "TOO MUCH NOISE! ADJUST FILTER", cv::Point(0, 50), 1, 2, Scalar(0, 0, 255), 2);
+      putText(cameraFeed,
+              "TOO MUCH NOISE! ADJUST FILTER",
+              cv::Point(0, 50),
+              1,
+              2,
+              Scalar(0, 0, 255),
+              2);
   }
 }
 
@@ -261,14 +283,17 @@ main(int argc, char* argv[]) {
         capture.read(cameraFeed);
         imshow(windowName, cameraFeed);
       }
-      cout << "Ball X: " << ball.getXPos() << " Ball Y: " << ball.getYPos() << " Player X: " << playerfront.getXPos() << " Player Y: " << playerfront.getYPos() << endl;
+      cout << "Ball X: " << ball.getXPos() << " Ball Y: " << ball.getYPos()
+           << " Player X: " << playerfront.getXPos() << " Player Y: " << playerfront.getYPos()
+           << endl;
       string balld = findDirection(playerrear, ball);
       int x, y;
       int mySentinel = true;
       // if direction is northwest x and y both are decreased until they match
       if(balld == "NORTHWEST") {
         cout << balld << endl;
-        while(playerrear.getXPos() != playerfront.getXPos() && playerrear.getYPos() < playerfront.getYPos()) {
+        while(playerrear.getXPos() != playerfront.getXPos() &&
+              playerrear.getYPos() < playerfront.getYPos()) {
           if(case1(playerfront, playerrear) || case2(playerfront, playerrear)) {
             myData("L", serial);
             capture.read(cameraFeed);
@@ -289,7 +314,8 @@ main(int argc, char* argv[]) {
           imshow(windowName, cameraFeed);
           waitKey(33);
         }
-        while(playerfront.getYPos() != playerrear.getYPos() && playerfront.getXPos() > playerrear.getXPos()) {
+        while(playerfront.getYPos() != playerrear.getYPos() &&
+              playerfront.getXPos() > playerrear.getXPos()) {
           waitKey(33);
           if(case1(playerfront, playerrear) || case4(playerfront, playerrear)) {
             myData("R", serial);
@@ -320,7 +346,8 @@ main(int argc, char* argv[]) {
         // left until car's front y - car rear y >= whatever distance between them && car's front x
         // == car's rear x  go forward until ball's y coordinate == car's y coordinate  stop
         {
-          while(playerrear.getXPos() != playerfront.getXPos() && playerrear.getYPos() > playerfront.getYPos()) {
+          while(playerrear.getXPos() != playerfront.getXPos() &&
+                playerrear.getYPos() > playerfront.getYPos()) {
             waitKey(33);
             if(case1(playerfront, playerrear) || case2(playerfront, playerrear)) {
               myData("R", serial);
@@ -342,7 +369,8 @@ main(int argc, char* argv[]) {
           myFunc(cameraFeed, playerfront, playerrear, ball, goal);
           imshow(windowName, cameraFeed);
         }
-        while(playerfront.getYPos() != playerrear.getYPos() && playerfront.getXPos() > playerrear.getXPos()) {
+        while(playerfront.getYPos() != playerrear.getYPos() &&
+              playerfront.getXPos() > playerrear.getXPos()) {
           waitKey(33);
           if(case1(playerfront, playerrear) || case4(playerfront, playerrear)) {
             myData("R", serial);
@@ -372,7 +400,8 @@ main(int argc, char* argv[]) {
         // right until car's front y - car rear y >= whatever distance between them && car's front x
         // == car's rear x  go forward until ball's y coordinate == car's y coordinate  stop
         {
-          while(playerrear.getXPos() != playerfront.getXPos() && playerrear.getYPos() > playerfront.getYPos()) {
+          while(playerrear.getXPos() != playerfront.getXPos() &&
+                playerrear.getYPos() > playerfront.getYPos()) {
             waitKey(33);
             if(case1(playerfront, playerrear) || case2(playerfront, playerrear)) {
               myData("R", serial);
@@ -393,7 +422,8 @@ main(int argc, char* argv[]) {
             myFunc(cameraFeed, playerfront, playerrear, ball, goal);
             imshow(windowName, cameraFeed);
           }
-          while(playerfront.getYPos() != playerrear.getYPos() && playerfront.getXPos() < playerrear.getXPos()) {
+          while(playerfront.getYPos() != playerrear.getYPos() &&
+                playerfront.getXPos() < playerrear.getXPos()) {
             waitKey(33);
             if(case1(playerfront, playerrear) || case4(playerfront, playerrear)) {
               myData("L", serial);
@@ -424,7 +454,8 @@ main(int argc, char* argv[]) {
         // left until car's rear y - car front y >= whatever distance between them && car's front x
         // == car's rear x  go forward until ball's y coordinate == car's y coordinate  stop
         {
-          while(playerrear.getXPos() != playerfront.getXPos() && playerrear.getYPos() < playerfront.getYPos()) {
+          while(playerrear.getXPos() != playerfront.getXPos() &&
+                playerrear.getYPos() < playerfront.getYPos()) {
             waitKey(33);
             if(case1(playerfront, playerrear) || case2(playerfront, playerrear)) {
               myData("L", serial);
@@ -445,7 +476,8 @@ main(int argc, char* argv[]) {
             myFunc(cameraFeed, playerfront, playerrear, ball, goal);
             imshow(windowName, cameraFeed);
           }
-          while(playerfront.getYPos() != playerrear.getYPos() && playerfront.getXPos() < playerrear.getXPos()) {
+          while(playerfront.getYPos() != playerrear.getYPos() &&
+                playerfront.getXPos() < playerrear.getXPos()) {
             waitKey(33);
             if(case1(playerfront, playerrear) || case2(playerfront, playerrear)) {
               myData("L", serial);
@@ -491,30 +523,46 @@ myFunc(cv::Mat& cameraFeed, Entity& playerfront, Entity& playerrear, Entity& bal
   // name the entity
   // playerfront
   cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
-  inRange(HSV, playerfront.getHSVmin(), playerfront.getHSVmax(),
+  inRange(HSV,
+          playerfront.getHSVmin(),
+          playerfront.getHSVmax(),
           threshold); // enter the range of hsv for the object
   morphOps(threshold);
-  trackFilteredObject(playerfront, threshold, HSV,
+  trackFilteredObject(playerfront,
+                      threshold,
+                      HSV,
                       cameraFeed); // passes the object to the tracking function //playerrear
   cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
-  inRange(HSV, playerrear.getHSVmin(), playerrear.getHSVmax(),
+  inRange(HSV,
+          playerrear.getHSVmin(),
+          playerrear.getHSVmax(),
           threshold); // enter the range of hsv for the object
   morphOps(threshold);
-  trackFilteredObject(playerrear, threshold, HSV,
+  trackFilteredObject(playerrear,
+                      threshold,
+                      HSV,
                       cameraFeed); // passes the object to the tracking function
   // ball
   cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
-  inRange(HSV, goal.getHSVmin(), goal.getHSVmax(),
+  inRange(HSV,
+          goal.getHSVmin(),
+          goal.getHSVmax(),
           threshold); // enter the range of hsv for the object
   morphOps(threshold);
-  trackFilteredObject(goal, threshold, HSV,
+  trackFilteredObject(goal,
+                      threshold,
+                      HSV,
                       cameraFeed); // passes the object to the tracking function
   // goal
   cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
-  inRange(HSV, ball.getHSVmin(), ball.getHSVmax(),
+  inRange(HSV,
+          ball.getHSVmin(),
+          ball.getHSVmax(),
           threshold); // enter the range of hsv for the object
   morphOps(threshold);
-  trackFilteredObject(ball, threshold, HSV,
+  trackFilteredObject(ball,
+                      threshold,
+                      HSV,
                       cameraFeed); // passes the object to the tracking function
 }
 bool
@@ -539,7 +587,12 @@ case4(Entity PF, Entity PR) {
 }
 
 void
-movePlayer(string balld, Entity& playerfront, Entity& playerrear, Entity& ball, Entity& goal, Serial& serial) {}
+movePlayer(string balld,
+           Entity& playerfront,
+           Entity& playerrear,
+           Entity& ball,
+           Entity& goal,
+           Serial& serial) {}
 
 // void movePlayer(string balld, Entity &playerfront, Entity &playerrear, Entity &ball,Entity &goal,
 // Serial &serial) {

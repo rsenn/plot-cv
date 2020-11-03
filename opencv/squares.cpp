@@ -87,7 +87,10 @@ findSquares(const cv::Mat& image, std::vector<std::vector<cv::Point>>& squares) 
       for(size_t i = 0; i < contours.size(); i++) {
         // approximate contour with accuracy proportional
         // to the contour perimeter
-        approxPolyDP(cv::Mat(contours[i]), approx, arcLength(cv::Mat(contours[i]), true) * 0.02, true);
+        approxPolyDP(cv::Mat(contours[i]),
+                     approx,
+                     arcLength(cv::Mat(contours[i]), true) * 0.02,
+                     true);
 
         // square contours should have 4 vertices after approximation
         // relatively large area (to filter out noisy contours)
@@ -95,7 +98,8 @@ findSquares(const cv::Mat& image, std::vector<std::vector<cv::Point>>& squares) 
         // Note: absolute value of an area is used because
         // area may be positive or negative - in accordance with the
         // contour orientation
-        if(approx.size() == 4 && fabs(contourArea(cv::Mat(approx))) > 1000 && isContourConvex(cv::Mat(approx))) {
+        if(approx.size() == 4 && fabs(contourArea(cv::Mat(approx))) > 1000 &&
+           isContourConvex(cv::Mat(approx))) {
           double maxCosine = 0;
 
           for(int j = 2; j < 5; j++) {
@@ -129,7 +133,8 @@ drawSquares(cv::Mat& image, const std::vector<std::vector<cv::Point>>& squares) 
 
 int
 main(int /*argc*/, char** /*argv*/) {
-  static const char* names[] = {"pic1.png", "pic2.png", "pic3.png", "pic4.png", "pic5.png", "pic6.png", 0};
+  static const char* names[] = {
+      "pic1.png", "pic2.png", "pic3.png", "pic4.png", "pic5.png", "pic6.png", 0};
   help();
   namedWindow(wndname, 1);
   std::vector<std::vector<cv::Point>> squares;

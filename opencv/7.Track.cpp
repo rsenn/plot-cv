@@ -136,7 +136,8 @@ main() {
       for(int i = 0; i < pt_idx; i++) {
         circle(image, pt[i], 3, Scalar(0, 0, 255), -1);
       }
-      if((r.x >= 0) && (r.y >= 0) && (r.x + r.width <= image.cols) && (r.y + r.height <= image.rows)) {
+      if((r.x >= 0) && (r.y >= 0) && (r.x + r.width <= image.cols) &&
+         (r.y + r.height <= image.rows)) {
         if(threshold_type < 5)
           imageCrop = frame_gray(r); // Crop tu anh xam
         else

@@ -33,7 +33,8 @@ main(void) {
     // Workaround
     // OpenCV's VideoCapture works for USB cameras but Raspberry Pi CSI Camera Interface
     // still finding better solution ...
-    system("/opt/vc/bin/raspistill -w 400 -h 300 --quality 50 --timeout 10 --output /tmp/result.jpg");
+    system(
+        "/opt/vc/bin/raspistill -w 400 -h 300 --quality 50 --timeout 10 --output /tmp/result.jpg");
     frame = imread("/tmp/result.jpg");
 
     if(frame.empty()) {

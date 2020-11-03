@@ -64,7 +64,8 @@ String fourccToString(uint32_t fourcc);
 
 String
 fourccToString(uint32_t fourcc) {
-  return format("%c%c%c%c", fourcc & 255, (fourcc >> 8) & 255, (fourcc >> 16) & 255, (fourcc >> 24) & 255);
+  return format(
+      "%c%c%c%c", fourcc & 255, (fourcc >> 8) & 255, (fourcc >> 16) & 255, (fourcc >> 24) & 255);
 }
 
 #ifndef DWORD
@@ -79,15 +80,15 @@ typedef int32_t LONG;
 
 #pragma pack(push, 1)
 struct AviMainHeader {
-  DWORD dwMicroSecPerFrame;    //  The period between video frames
-  DWORD dwMaxBytesPerSec;      //  Maximum data rate of the file
-  DWORD dwReserved1;           // 0
-  DWORD dwFlags;               //  0x10 AVIF_HASINDEX: The AVI file has an idx1 chunk containing an index at the
-                               //  end of the file.
-  DWORD dwTotalFrames;         // Field of the main header specifies the total number of frames of data in
-                               // file.
-  DWORD dwInitialFrames;       // Is used for interleaved files
-  DWORD dwStreams;             // Specifies the number of streams in the file.
+  DWORD dwMicroSecPerFrame; //  The period between video frames
+  DWORD dwMaxBytesPerSec;   //  Maximum data rate of the file
+  DWORD dwReserved1;        // 0
+  DWORD dwFlags; //  0x10 AVIF_HASINDEX: The AVI file has an idx1 chunk containing an index at the
+                 //  end of the file.
+  DWORD dwTotalFrames;   // Field of the main header specifies the total number of frames of data in
+                         // file.
+  DWORD dwInitialFrames; // Is used for interleaved files
+  DWORD dwStreams;       // Specifies the number of streams in the file.
   DWORD dwSuggestedBufferSize; // Field specifies the suggested buffer size forreading the file
   DWORD dwWidth;               // Fields specify the width of the AVIfile in pixels.
   DWORD dwHeight;              // Fields specify the height of the AVIfile in pixels.
@@ -95,18 +96,18 @@ struct AviMainHeader {
 };
 
 struct AviStreamHeader {
-  uint32_t fccType;            // 'vids', 'auds', 'txts'...
-  uint32_t fccHandler;         // "cvid", "DIB "
-  DWORD dwFlags;               // 0
-  DWORD dwPriority;            // 0
-  DWORD dwInitialFrames;       // 0
-  DWORD dwScale;               // 1
-  DWORD dwRate;                // Fps (dwRate - frame rate for video streams)
-  DWORD dwStart;               // 0
-  DWORD dwLength;              // Frames number (playing time of AVI file as defined by scale and rate)
+  uint32_t fccType;      // 'vids', 'auds', 'txts'...
+  uint32_t fccHandler;   // "cvid", "DIB "
+  DWORD dwFlags;         // 0
+  DWORD dwPriority;      // 0
+  DWORD dwInitialFrames; // 0
+  DWORD dwScale;         // 1
+  DWORD dwRate;          // Fps (dwRate - frame rate for video streams)
+  DWORD dwStart;         // 0
+  DWORD dwLength;        // Frames number (playing time of AVI file as defined by scale and rate)
   DWORD dwSuggestedBufferSize; // For reading the stream
-  DWORD dwQuality;             // -1 (encoding quality. If set to -1, drivers use the default quality value)
-  DWORD dwSampleSize;          // 0 means that each frame is in its own chunk
+  DWORD dwQuality;    // -1 (encoding quality. If set to -1, drivers use the default quality value)
+  DWORD dwSampleSize; // 0 means that each frame is in its own chunk
   struct {
     short int left;
     short int top;
@@ -171,7 +172,9 @@ private:
 
 MjpegInputStream::MjpegInputStream() : m_is_valid(false), m_f(0) {}
 
-MjpegInputStream::MjpegInputStream(const String& filename) : m_is_valid(false), m_f(0) { open(filename); }
+MjpegInputStream::MjpegInputStream(const String& filename) : m_is_valid(false), m_f(0) {
+  open(filename);
+}
 
 bool
 MjpegInputStream::isOpened() const {
@@ -357,7 +360,9 @@ protected:
   bool m_is_indx_present;
 };
 
-AviMjpegStream::AviMjpegStream() : m_stream_id(0), m_movi_start(0), m_movi_end(0), m_width(0), m_height(0), m_fps(0), m_is_indx_present(false) {}
+AviMjpegStream::AviMjpegStream()
+    : m_stream_id(0), m_movi_start(0), m_movi_end(0), m_width(0), m_height(0), m_fps(0),
+      m_is_indx_present(false) {}
 
 size_t
 AviMjpegStream::getFramesCount() {
@@ -387,20 +392,33 @@ AviMjpegStream::getFps() {
 void
 AviMjpegStream::printError(MjpegInputStream& in_str, RiffList& list, uint32_t expected_fourcc) {
   if(!in_str) {
-    fprintf(stderr, "Unexpected end of file while searching for %s list\n", fourccToString(expected_fourcc).c_str());
+    fprintf(stderr,
+            "Unexpected end of file while searching for %s list\n",
+            fourccToString(expected_fourcc).c_str());
   } else if(list.m_riff_or_list_cc != LIST_CC) {
-    fprintf(stderr, "Unexpected element. Expected: %s. Got: %s.\n", fourccToString(LIST_CC).c_str(), fourccToString(list.m_riff_or_list_cc).c_str());
+    fprintf(stderr,
+            "Unexpected element. Expected: %s. Got: %s.\n",
+            fourccToString(LIST_CC).c_str(),
+            fourccToString(list.m_riff_or_list_cc).c_str());
   } else {
-    fprintf(stderr, "Unexpected list type. Expected: %s. Got: %s.\n", fourccToString(expected_fourcc).c_str(), fourccToString(list.m_list_type_cc).c_str());
+    fprintf(stderr,
+            "Unexpected list type. Expected: %s. Got: %s.\n",
+            fourccToString(expected_fourcc).c_str(),
+            fourccToString(list.m_list_type_cc).c_str());
   }
 }
 
 void
 AviMjpegStream::printError(MjpegInputStream& in_str, RiffChunk& chunk, uint32_t expected_fourcc) {
   if(!in_str) {
-    fprintf(stderr, "Unexpected end of file while searching for %s chunk\n", fourccToString(expected_fourcc).c_str());
+    fprintf(stderr,
+            "Unexpected end of file while searching for %s chunk\n",
+            fourccToString(expected_fourcc).c_str());
   } else {
-    fprintf(stderr, "Unexpected element. Expected: %s. Got: %s.\n", fourccToString(expected_fourcc).c_str(), fourccToString(chunk.m_four_cc).c_str());
+    fprintf(stderr,
+            "Unexpected element. Expected: %s. Got: %s.\n",
+            fourccToString(expected_fourcc).c_str(),
+            fourccToString(chunk.m_four_cc).c_str());
   }
 }
 
@@ -417,7 +435,9 @@ AviMjpegStream::parseInfo(MjpegInputStream&) {
 }
 
 bool
-AviMjpegStream::parseIndex(MjpegInputStream& in_str, uint32_t index_size, frame_list& in_frame_list) {
+AviMjpegStream::parseIndex(MjpegInputStream& in_str,
+                           uint32_t index_size,
+                           frame_list& in_frame_list) {
   uint64_t index_end = in_str.tellg();
   index_end += index_size;
   bool result = false;
@@ -521,7 +541,8 @@ AviMjpegStream::parseHdrlList(MjpegInputStream& in_str) {
         RiffList strl_list;
         in_str >> strl_list;
 
-        if(in_str && strl_list.m_riff_or_list_cc == LIST_CC && strl_list.m_list_type_cc == STRL_CC) {
+        if(in_str && strl_list.m_riff_or_list_cc == LIST_CC &&
+           strl_list.m_list_type_cc == STRL_CC) {
           next_strl_list = in_str.tellg();
           // RiffList::m_size includes fourCC field which we have already read
           next_strl_list += (strl_list.m_size - 4);
@@ -792,7 +813,8 @@ MotionJpegCapture::parseRiff(MjpegInputStream& in_str) {
 
     in_str >> riff_list;
 
-    if(in_str && riff_list.m_riff_or_list_cc == RIFF_CC && ((riff_list.m_list_type_cc == AVI_CC) | (riff_list.m_list_type_cc == AVIX_CC))) {
+    if(in_str && riff_list.m_riff_or_list_cc == RIFF_CC &&
+       ((riff_list.m_list_type_cc == AVI_CC) | (riff_list.m_list_type_cc == AVIX_CC))) {
       uint64_t next_riff = in_str.tellg();
       // RiffList::m_size includes fourCC field which we have already read
       next_riff += (riff_list.m_size - 4);

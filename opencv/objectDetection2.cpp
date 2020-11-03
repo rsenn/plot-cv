@@ -90,11 +90,21 @@ detectAndDisplay(Mat frame) {
     if(eyes.size() == 2) {
       //-- Draw the face
       Point center(faces[i].x + faces[i].width / 2, faces[i].y + faces[i].height / 2);
-      ellipse(frame, center, Size(faces[i].width / 2, faces[i].height / 2), 0, 0, 360, Scalar(255, 0, 0), 2, 8, 0);
+      ellipse(frame,
+              center,
+              Size(faces[i].width / 2, faces[i].height / 2),
+              0,
+              0,
+              360,
+              Scalar(255, 0, 0),
+              2,
+              8,
+              0);
 
       for(size_t j = 0; j < eyes.size(); j++) {
         //-- Draw the eyes
-        Point eye_center(faces[i].x + eyes[j].x + eyes[j].width / 2, faces[i].y + eyes[j].y + eyes[j].height / 2);
+        Point eye_center(faces[i].x + eyes[j].x + eyes[j].width / 2,
+                         faces[i].y + eyes[j].y + eyes[j].height / 2);
         int radius = cvRound((eyes[j].width + eyes[j].height) * 0.25);
         circle(frame, eye_center, radius, Scalar(255, 0, 255), 3, 8, 0);
       }

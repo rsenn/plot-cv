@@ -120,8 +120,10 @@ cvCreateCameraCapture(int index) {
 
   // try every possibly installed camera API
   for(int i = 0; domains[i] >= 0; i++) {
-#if defined(HAVE_VIDEOINPUT) || defined(HAVE_TYZX) || defined(HAVE_VFW) || defined(HAVE_CAMV4L) || defined(HAVE_CAMV4L2) || defined(HAVE_GSTREAMER) || defined(HAVE_DC1394_2) ||                       \
-    defined(HAVE_DC1394) || defined(HAVE_CMU1394) || defined(HAVE_GSTREAMER) || defined(HAVE_MIL) || defined(HAVE_QUICKTIME) || defined(HAVE_UNICAP) || defined(HAVE_PVAPI)
+#if defined(HAVE_VIDEOINPUT) || defined(HAVE_TYZX) || defined(HAVE_VFW) || defined(HAVE_CAMV4L) || \
+    defined(HAVE_CAMV4L2) || defined(HAVE_GSTREAMER) || defined(HAVE_DC1394_2) ||                  \
+    defined(HAVE_DC1394) || defined(HAVE_CMU1394) || defined(HAVE_GSTREAMER) ||                    \
+    defined(HAVE_MIL) || defined(HAVE_QUICKTIME) || defined(HAVE_UNICAP) || defined(HAVE_PVAPI)
     // local variable to memorize the captured device
     CvCapture* capture;
 #endif
@@ -395,7 +397,10 @@ VideoCapture::get(int propId) {
 
 VideoWriter::VideoWriter() {}
 
-VideoWriter::VideoWriter(const string& filename, int fourcc, double fps, Size frameSize, bool isColor) { open(filename, fourcc, fps, frameSize, isColor); }
+VideoWriter::VideoWriter(
+    const string& filename, int fourcc, double fps, Size frameSize, bool isColor) {
+  open(filename, fourcc, fps, frameSize, isColor);
+}
 
 VideoWriter::~VideoWriter() { writer.release(); }
 

@@ -57,7 +57,8 @@ main(int argc, char** argv) {
     cap >> src;
     src.copyTo(src_copy);
     // src.copyTo(src_HSV); //20170420  *************src_HSV ���ӷ�(�O�����m)�Msrc�@��
-    src_HSV = src.clone(); ////20170420*************** ����ƻs�@�Msrc�X�� ,output���ӷ�(�O�����m)�M���P
+    src_HSV =
+        src.clone(); ////20170420*************** ����ƻs�@�Msrc�X�� ,output���ӷ�(�O�����m)�M���P
     cvtColor(src_copy, src_copy, CV_BGR2GRAY);
     cvtColor(src_HSV, src_HSV, CV_BGR2HSV); // 20170420
     // threshold(src_copy, src_copy, 70, 255, THRESH_BINARY_INV); //20170420
@@ -72,7 +73,8 @@ main(int argc, char** argv) {
     add(src_HSV, src_HSV, src_add_mask, hsv_threshold);                           // 20170420
     int num = 0;
     if(!src_HSV.empty()) { // 20170420
-      findContours(hsv_threshold, contours_2, hierarchy_2, CV_RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
+      findContours(
+          hsv_threshold, contours_2, hierarchy_2, CV_RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
       if(!contours_2.empty()) {
         //#pragma omp parallel for
         for(int i = 0; i < contours_2.size(); i++) {
@@ -126,7 +128,9 @@ main(int argc, char** argv) {
         vec_center_minus_red = center_2 - center;                   // 20170420
         vec_horizontal = cv::Point(300, 240) - cv::Point(200, 240); // 20170420
         ///////////////////�|(��)��!!!!!!!!!!! 20170420
-        arc_theta = acos(vec_center_minus_red.dot(vec_horizontal) / (pow(vec_center_minus_red.dot(vec_center_minus_red), 0.5) * pow(vec_horizontal.dot(vec_horizontal), 0.5)));
+        arc_theta = acos(vec_center_minus_red.dot(vec_horizontal) /
+                         (pow(vec_center_minus_red.dot(vec_center_minus_red), 0.5) *
+                          pow(vec_horizontal.dot(vec_horizontal), 0.5)));
         theta = (arc_theta * 360) / (2 * pi); // 20170420
 
         if((center_2.x > center.x) && (center_2.y < center.y)) { // 20170420

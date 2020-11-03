@@ -15,8 +15,10 @@ else
   CMD="make -C ${builddir}"
 fi
 
+#EVENTS=modify,create
+EVENTS=close_write 
 
-set -- iwatch -v -c "$CMD" -e close_write -t '.*\.(h|hpp|c|cpp)$$' -x '.*/build/.*' -X'./(\.|tmp|static|lib|.git).*' -r "$@"
+set -- iwatch -v -c "$CMD" -e "$EVENTS" -t '.*\.(h|hpp|c|cpp)$' -x '.*/build/.*' -X'./(\.|tmp|static|lib|.git).*' -r "$@"
 for ARG; do 
   case "$ARG" in
     *\ * | *[\$\(\)\|]*) ARG="'$ARG'" ;;

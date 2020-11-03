@@ -6,7 +6,7 @@ function process(contours, hier, ...args) {
 
   let m = imgOriginal;
   console.log('Images: ', typeof images);
-  console.log('Images: ',  Object.keys(images));
+  console.log('Images: ', Object.keys(images));
   console.log('rest.length: ', rest.length);
   console.log('rest: ', ...rest);
 

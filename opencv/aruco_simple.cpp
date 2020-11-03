@@ -164,7 +164,8 @@ main(int argc, char** argv) {
       // chekc the speed by calculating the mean speed of all iterations
       AvrgTime.first += ((double)getTickCount() - tick) / getTickFrequency();
       AvrgTime.second++;
-      cout << "\rTime detection=" << 1000 * AvrgTime.first / AvrgTime.second << " milliseconds nmarkers=" << TheMarkers.size() << std::flush;
+      cout << "\rTime detection=" << 1000 * AvrgTime.first / AvrgTime.second
+           << " milliseconds nmarkers=" << TheMarkers.size() << std::flush;
 
       // print marker info and draw the markers in image
       TheInputImage.copyTo(TheInputImageCopy);
@@ -278,7 +279,8 @@ cvTackBarEvents(int pos, void*) {
   // recompute
   MDetector.detect(TheInputImage, TheMarkers, TheCameraParameters);
   TheInputImage.copyTo(TheInputImageCopy);
-  for(unsigned int i = 0; i < TheMarkers.size(); i++) TheMarkers[i].draw(TheInputImageCopy, Scalar(0, 0, 255), 1);
+  for(unsigned int i = 0; i < TheMarkers.size(); i++)
+    TheMarkers[i].draw(TheInputImageCopy, Scalar(0, 0, 255), 1);
   // print other rectangles that contains no valid markers
   /*for (unsigned int i=0;i<MDetector.getCandidates().size();i++) {
       aruco::Marker m( MDetector.getCandidates()[i],999);
@@ -287,7 +289,8 @@ cvTackBarEvents(int pos, void*) {
 
   // draw a 3d cube in each marker if there is 3d info
   if(TheCameraParameters.isValid())
-    for(unsigned int i = 0; i < TheMarkers.size(); i++) CvDrawingUtils::draw3dCube(TheInputImageCopy, TheMarkers[i], TheCameraParameters);
+    for(unsigned int i = 0; i < TheMarkers.size(); i++)
+      CvDrawingUtils::draw3dCube(TheInputImageCopy, TheMarkers[i], TheCameraParameters);
 
   cv::imshow("in", TheInputImageCopy);
   cv::imshow("thres", MDetector.getThresholdedImage());

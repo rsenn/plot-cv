@@ -293,7 +293,9 @@ StereoMultiGpuStream::~StereoMultiGpuStream() {
 }
 
 void
-StereoMultiGpuStream::compute(const CudaMem& leftFrame, const CudaMem& rightFrame, CudaMem& disparity) {
+StereoMultiGpuStream::compute(const CudaMem& leftFrame,
+                              const CudaMem& rightFrame,
+                              CudaMem& disparity) {
   disparity.create(leftFrame.size(), CV_8UC1);
 
   // Split input data onto two parts for each GPUs.
@@ -314,8 +316,10 @@ StereoMultiGpuStream::compute(const CudaMem& leftFrame, const CudaMem& rightFram
   streams[0]->enqueueDownload(d_disparities[0].rowRange(0, leftFrame.rows / 2), disparityPart0);
 
   gpu::setDevice(1);
-  streams[1]->enqueueUpload(leftFrameHdr.rowRange(leftFrame.rows / 2 - 32, leftFrame.rows), d_leftFrames[1]);
-  streams[1]->enqueueUpload(rightFrameHdr.rowRange(leftFrame.rows / 2 - 32, leftFrame.rows), d_rightFrames[1]);
+  streams[1]->enqueueUpload(leftFrameHdr.rowRange(leftFrame.rows / 2 - 32, leftFrame.rows),
+                            d_leftFrames[1]);
+  streams[1]->enqueueUpload(rightFrameHdr.rowRange(leftFrame.rows / 2 - 32, leftFrame.rows),
+                            d_rightFrames[1]);
   (*d_algs[1])(d_leftFrames[1], d_rightFrames[1], d_disparities[1], *streams[1]);
   streams[1]->enqueueDownload(d_disparities[1].rowRange(32, d_disparities[1].rows), disparityPart1);
 
@@ -345,7 +349,8 @@ main(int argc, char** argv) {
   for(int i = 0; i < numDevices; ++i) {
     DeviceInfo devInfo(i);
     if(!devInfo.isCompatible()) {
-      cerr << "GPU module was't built for GPU #" << i << " (" << devInfo.name() << ", CC " << devInfo.majorVersion() << devInfo.minorVersion() << endl;
+      cerr << "GPU module was't built for GPU #" << i << " (" << devInfo.name() << ", CC "
+           << devInfo.majorVersion() << devInfo.minorVersion() << endl;
       return -1;
     }
 
@@ -440,13 +445,20 @@ main(int argc, char** argv) {
 
     const double multiStreamTime = tm.getTimeMilli();
 
-    cout << "| " << setw(5) << i << " | " << setw(8) << setprecision(1) << fixed << gpu0Time << " | " << setw(8) << setprecision(1) << fixed << gpu1Time << " | " << setw(15) << setprecision(1)
-         << fixed << multiThreadTime << " | " << setw(15) << setprecision(1) << fixed << multiStreamTime << " |" << endl;
+    cout << "| " << setw(5) << i << " | " << setw(8) << setprecision(1) << fixed << gpu0Time
+         << " | " << setw(8) << setprecision(1) << fixed << gpu1Time << " | " << setw(15)
+         << setprecision(1) << fixed << multiThreadTime << " | " << setw(15) << setprecision(1)
+         << fixed << multiStreamTime << " |" << endl;
 
     resize(disparityGpu0, disparityGpu0Show, Size(1024, 768), 0, 0, INTER_AREA);
     resize(disparityGpu1, disparityGpu1Show, Size(1024, 768), 0, 0, INTER_AREA);
     resize(disparityMultiThread, disparityMultiThreadShow, Size(1024, 768), 0, 0, INTER_AREA);
-    resize(disparityMultiStream.createMatHeader(), disparityMultiStreamShow, Size(1024, 768), 0, 0, INTER_AREA);
+    resize(disparityMultiStream.createMatHeader(),
+           disparityMultiStreamShow,
+           Size(1024, 768),
+           0,
+           0,
+           INTER_AREA);
 
     imshow("disparityGpu0", disparityGpu0Show);
     imshow("disparityGpu1", disparityGpu1Show);

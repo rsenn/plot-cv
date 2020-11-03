@@ -34,7 +34,12 @@ int live = 1;
 
 static void
 drawRectangle(Mat* img, Rect win) {
-  rectangle(*img, Point(win.x, win.y), Point(win.x + win.width, win.y + win.height), Scalar(0, 255, 0), 2, CV_AA);
+  rectangle(*img,
+            Point(win.x, win.y),
+            Point(win.x + win.width, win.y + win.height),
+            Scalar(0, 255, 0),
+            2,
+            CV_AA);
 }
 
 static void
@@ -132,11 +137,19 @@ main(int argc, char** argv) {
       image = imread(img_file, CV_LOAD_IMAGE_COLOR);
       if(image.empty())
         break;
-      selection = Rect(cvRound(w[0] * image.cols), cvRound(w[1] * image.rows), cvRound(w[2] * image.cols), cvRound(w[3] * image.rows));
+      selection = Rect(cvRound(w[0] * image.cols),
+                       cvRound(w[1] * image.rows),
+                       cvRound(w[2] * image.cols),
+                       cvRound(w[3] * image.rows));
     }
 
     sprintf(img_file_num, "Frame: %d", i);
-    putText(image, img_file_num, Point(10, image.rows - 20), FONT_HERSHEY_PLAIN, 0.75, Scalar(255, 255, 255));
+    putText(image,
+            img_file_num,
+            Point(10, image.rows - 20),
+            FONT_HERSHEY_PLAIN,
+            0.75,
+            Scalar(255, 255, 255));
     if(!image.empty()) {
 
       if(trackObject < 0) {
@@ -154,7 +167,11 @@ main(int argc, char** argv) {
         bitwise_not(roi, roi);
       }
 
-      drawRectangle(&image, Rect(cvRound(w[0] * image.cols), cvRound(w[1] * image.rows), cvRound(w[2] * image.cols), cvRound(w[3] * image.rows)));
+      drawRectangle(&image,
+                    Rect(cvRound(w[0] * image.cols),
+                         cvRound(w[1] * image.rows),
+                         cvRound(w[2] * image.cols),
+                         cvRound(w[3] * image.rows)));
       imshow("Win", image);
 
       waitKey(100);

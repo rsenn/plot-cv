@@ -16,14 +16,19 @@ const char* keys = "{ help  h     | | Print help message. }"
                    "{ thr         | 0.5 | Confidence threshold. }"
                    "{ nms         | 0.4 | Non-maximum suppression threshold. }";
 
-void decode(const Mat& scores, const Mat& geometry, float scoreThresh, std::vector<RotatedRect>& detections, std::vector<float>& confidences);
+void decode(const Mat& scores,
+            const Mat& geometry,
+            float scoreThresh,
+            std::vector<RotatedRect>& detections,
+            std::vector<float>& confidences);
 
 int
 main(int argc, char** argv) {
   // Parse command line arguments.
   CommandLineParser parser(argc, argv, keys);
-  parser.about("Use this script to run TensorFlow implementation (https://github.com/argman/EAST) of "
-               "EAST: An Efficient and Accurate Scene Text Detector (https://arxiv.org/abs/1704.03155v2)");
+  parser.about(
+      "Use this script to run TensorFlow implementation (https://github.com/argman/EAST) of "
+      "EAST: An Efficient and Accurate Scene Text Detector (https://arxiv.org/abs/1704.03155v2)");
   if(argc == 1 || parser.has("help")) {
     parser.printMessage();
     return 0;
@@ -68,7 +73,8 @@ main(int argc, char** argv) {
       break;
     }
 
-    blobFromImage(frame, blob, 1.0, Size(inpWidth, inpHeight), Scalar(123.68, 116.78, 103.94), true, false);
+    blobFromImage(
+        frame, blob, 1.0, Size(inpWidth, inpHeight), Scalar(123.68, 116.78, 103.94), true, false);
     net.setInput(blob);
     net.forward(outs, outNames);
 
@@ -95,7 +101,8 @@ main(int argc, char** argv) {
         vertices[j].x *= ratio.x;
         vertices[j].y *= ratio.y;
       }
-      for(int j = 0; j < 4; ++j) line(frame, vertices[j], vertices[(j + 1) % 4], Scalar(0, 255, 0), 1);
+      for(int j = 0; j < 4; ++j)
+        line(frame, vertices[j], vertices[(j + 1) % 4], Scalar(0, 255, 0), 1);
     }
 
     // Put efficiency information.
@@ -111,7 +118,11 @@ main(int argc, char** argv) {
 }
 
 void
-decode(const Mat& scores, const Mat& geometry, float scoreThresh, std::vector<RotatedRect>& detections, std::vector<float>& confidences) {
+decode(const Mat& scores,
+       const Mat& geometry,
+       float scoreThresh,
+       std::vector<RotatedRect>& detections,
+       std::vector<float>& confidences) {
   detections.clear();
   CV_Assert(scores.dims == 4);
   CV_Assert(geometry.dims == 4);
@@ -145,7 +156,8 @@ decode(const Mat& scores, const Mat& geometry, float scoreThresh, std::vector<Ro
       float h = x0_data[x] + x2_data[x];
       float w = x1_data[x] + x3_data[x];
 
-      Point2f offset(offsetX + cosA * x1_data[x] + sinA * x2_data[x], offsetY - sinA * x1_data[x] + cosA * x2_data[x]);
+      Point2f offset(offsetX + cosA * x1_data[x] + sinA * x2_data[x],
+                     offsetY - sinA * x1_data[x] + cosA * x2_data[x]);
       Point2f p1 = Point2f(-sinA * h, -cosA * h) + offset;
       Point2f p3 = Point2f(-cosA * w, sinA * w) + offset;
       RotatedRect r(0.5f * (p1 + p3), Size2f(w, h), -angle * 180.0f / (float)CV_PI);

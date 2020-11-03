@@ -68,9 +68,27 @@ main() {
     normalize(r_hist, r_hist, 0, histImage.rows, NORM_MINMAX, -1, Mat());
     // Draw lines of histogram
     for(int i = 1; i < histSize; i++) {
-      line(histImage, Point(bin_w * (i - 1), hist_h - cvRound(b_hist.at<float>(i - 1))), Point(bin_w * (i), hist_h - cvRound(b_hist.at<float>(i))), Scalar(255, 0, 0), 2, 8, 0);
-      line(histImage, Point(bin_w * (i - 1), hist_h - cvRound(g_hist.at<float>(i - 1))), Point(bin_w * (i), hist_h - cvRound(g_hist.at<float>(i))), Scalar(0, 255, 0), 2, 8, 0);
-      line(histImage, Point(bin_w * (i - 1), hist_h - cvRound(r_hist.at<float>(i - 1))), Point(bin_w * (i), hist_h - cvRound(r_hist.at<float>(i))), Scalar(0, 0, 255), 2, 8, 0);
+      line(histImage,
+           Point(bin_w * (i - 1), hist_h - cvRound(b_hist.at<float>(i - 1))),
+           Point(bin_w * (i), hist_h - cvRound(b_hist.at<float>(i))),
+           Scalar(255, 0, 0),
+           2,
+           8,
+           0);
+      line(histImage,
+           Point(bin_w * (i - 1), hist_h - cvRound(g_hist.at<float>(i - 1))),
+           Point(bin_w * (i), hist_h - cvRound(g_hist.at<float>(i))),
+           Scalar(0, 255, 0),
+           2,
+           8,
+           0);
+      line(histImage,
+           Point(bin_w * (i - 1), hist_h - cvRound(r_hist.at<float>(i - 1))),
+           Point(bin_w * (i), hist_h - cvRound(r_hist.at<float>(i))),
+           Scalar(0, 0, 255),
+           2,
+           8,
+           0);
     }
     /*-----------------------------------------------*/
     imshow("Camera", frame);
