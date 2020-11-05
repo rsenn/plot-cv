@@ -70,7 +70,7 @@ check_library_exists(json-cpp ZN4YAML6detail9node_data9reset_mapEv /usr JSON_CPP
 
 set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
- 
+
 include(${CMAKE_CURRENT_SOURCE_DIR}/opencv.cmake)
 
 include_directories(${OPENCV_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/opencv ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
@@ -140,8 +140,8 @@ function(src_program NAME SOURCES)
   install(TARGETS ${NAME} DESTINATION bin)
 endfunction()
 
-option(HIGHGUI_VIEWER ON)
-option(IMGUI_VIEWER OFF)
+option(HIGHGUI_VIEWER "Enable OpenCV highgui viewer" ON)
+option(IMGUI_VIEWER "Enable imgui viewer" OFF)
 
 if(HIGHGUI_VIEWER)
   include(highgui-viewer.cmake)

@@ -10,7 +10,7 @@
 #if defined(JS_DRAW_MODULE) || defined(quickjs_draw_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
 #else
-#define JS_INIT_MODULE VISIBLE js_init_module_draw
+#define JS_INIT_MODULE /*VISIBLE*/ js_init_module_draw
 #endif
 
 extern "C" {

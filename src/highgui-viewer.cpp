@@ -148,7 +148,7 @@ main(int argc, char* argv[]) {
   std::map<const char*, const char*> props = {{"name", "test"}, {"length", "4"}};
 
   unsigned int ret;
-  float wantFPS = 0.5;
+  float wantFPS = 2;
   show_image = ORIGINAL;
 
   std::string filename;
@@ -196,6 +196,9 @@ main(int argc, char* argv[]) {
       capWebcam.set(cv::CAP_PROP_FRAME_WIDTH, width);
       capWebcam.set(cv::CAP_PROP_FRAME_HEIGHT, height);
     }
+
+    capWebcam.set(cv::CAP_PROP_FPS, wantFPS);
+
     double fps = capWebcam.get(cv::CAP_PROP_FPS);
 
     std::cout << "Frames per second: " << fps << std::endl;
@@ -207,6 +210,8 @@ main(int argc, char* argv[]) {
     imgInput = cv::imread(filename.empty() ? "input.png" : filename);
     num_images = argc - 2;
   }
+
+    int startTime = -1;
 
   std::vector<std::string> visible;
 
@@ -324,7 +329,10 @@ main(int argc, char* argv[]) {
     int frame = capWebcam.get(cv::CAP_PROP_POS_FRAMES);
     int msec = capWebcam.get(cv::CAP_PROP_POS_MSEC);
 
-    std::cout << "Video frame#" << frame << " pos " << msec << "ms" << std::endl;
+    if(startTime == -1)
+      startTime = msec;
+
+    std::cout << "Video frame#" << frame << " pos " << (msec - startTime) << "ms" << std::endl;
 
     image_type imgOutput;
 

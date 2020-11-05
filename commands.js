@@ -332,6 +332,39 @@ export async function* GithubListRepositories(user) {
   } while(url != 'undefined');
 }
 
+export async function GithubRepositories(user) {
+  let url = `/github/${user}?tab=repositories`;
+  let ret = [];
+  let fetched = [];
+  let i = 0;
+  do {
+   // console.debug(`url #${i}:`, url);
+    let html = await fetch(url).then(ResponseData);
+    fetched.push(url);
+    let indexes = [...html.matchAll(/<li[^>]*itemtype[^>]*>/g)].map(i => i.index);
+    let hrefs = Util.unique([...html.matchAll(/href="([^"]*)"/g)].map(m => m[1]))
+      .map(Util.decodeHTMLEntities)
+      .map(decodeURIComponent)
+      .filter(h => !/(return_to=|before=)/.test(h))
+      .filter(h => /(tab=repositories|after=)/.test(h))
+      .map(url => url.replace('https://github.com', ''))
+      .map(url => '/github' + url)
+      .filter(url => fetched.indexOf(url) == -1 && !/page=1/.test(url));
+    url = hrefs[hrefs.length-1];
+    //console.debug('hrefs:', hrefs);
+    let tags = indexes.map(index => [index, html.indexOf('</li>', index)]).map(([s, e]) => html.substring(s, e));
+    let data = tags.map(Util.stripHTML);
+    ret = ret.concat(data.map(a =>
+        a.slice(0, 2).map(p => (['0', 'Forked from', 'Updated'].indexOf(p) != -1 || Util.isNumeric(p) ? '' : p))
+      )
+    );
+    i++;
+  } while(url);
+  return new Map( ret.map(([name,description]) => [  `https://github.com/${user}/${name}`, description ]));
+  return new Map( ret.map(([name,description]) => [name, { url: `https://github.com/${user}/${name}`, description }]));
+  return new Map( ret.map(([name,...rest]) => [name, [`https://github.com/${user}/${name}`, ...rest]]));
+}
+
 export const GithubListContents = async (owner, repo, dir, filter, opts = {}) => {
   const { username, password } = opts;
   let host, path;
@@ -492,5 +525,6 @@ export default {
   ListGithubRepoServer,
   ClearCache,
   ShowCache,
-  GetCache
+  GetCache,
+  GithubRepositories
 };

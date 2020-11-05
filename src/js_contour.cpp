@@ -11,7 +11,7 @@
 #if defined(JS_CONTOUR_MODULE) || defined(quickjs_contour_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
 #else
-#define JS_INIT_MODULE VISIBLE js_init_module_contour
+#define JS_INIT_MODULE /*VISIBLE*/ js_init_module_contour
 #endif
 
 using namespace cv;

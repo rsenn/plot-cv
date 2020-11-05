@@ -3,7 +3,7 @@
 #if defined(JS_LINE_MODULE) || defined(quickjs_line_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
 #else
-#define JS_INIT_MODULE VISIBLE js_init_module_line
+#define JS_INIT_MODULE /*VISIBLE*/ js_init_module_line
 #endif
 
 extern "C" {
@@ -261,7 +261,7 @@ js_line_constructor(JSContext* ctx, JSValue parent, const char* name) {
 #ifdef JS_LINE_MODULE
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
 #else
-#define JS_INIT_MODULE VISIBLE js_init_module_line
+#define JS_INIT_MODULE /*VISIBLE*/ js_init_module_line
 #endif
 
 JSModuleDef*

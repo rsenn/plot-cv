@@ -1,5 +1,6 @@
+ 
 cfg() {
- (: ${build:=`gcc -dumpmachine`}
+  : ${build:=`gcc -dumpmachine`}
   : ${VERBOSE:=OFF}
   : ${PKG_CONFIG_PATH="/opt/opencv4/lib/pkgconfig:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig"}
 
@@ -8,7 +9,7 @@ cfg() {
   if [ -n "$TOOLCHAIN" ]; then
     toolchain=`basename "$TOOLCHAIN" .cmake`
     compilers=$(grep -i compiler $TOOLCHAIN |sed 's,.*compiler\s*(\([^ ]*\)[^)]*).*,\1,p' -n)
-    sysroot=$(sed -n '\|^\s*/| {   s,^\s*,,; p; q }' $TOOLCHAIN)
+    sysroot=$(sed -n '/SYSROOT/ { \|^\s*/| {   s,^\s*,,; p; q } }' $TOOLCHAIN; sed -n '\|^\s*/| {   s,^\s*,,; p; q }' $TOOLCHAIN)
     if [ -n "$sysroot" -a -d "$sysroot" ]; then
       SYSROOT="$sysroot"
       : ${prefix:="$sysroot"}
@@ -111,9 +112,8 @@ cfg() {
   : ${relsrcdir=`realpath --relative-to "$builddir" .`}
   set -x
   cd $builddir
-  ${CMAKE:-cmake} -Wno-dev \
+  ${CMAKE_WRAPPER} ${CMAKE:-cmake} -Wno-dev \
     -G "$generator" \
-    ${SHARED:+-DBUILD_SHARED_LIBS=$SHARED} \
     ${VERBOSE:+-DCMAKE_VERBOSE_MAKEFILE=$VERBOSE} \
     -DCMAKE_BUILD_TYPE="${TYPE}" \
     ${CC:+-DCMAKE_C_COMPILER="$CC"} \
@@ -125,7 +125,7 @@ cfg() {
     ${MAKE:+-DCMAKE_MAKE_PROGRAM="$MAKE"} \
     ${prefix:+-DCMAKE_INSTALL_PREFIX="$prefix"} \
     "$@" \
-    $relsrcdir 2>&1 ) |tee "${builddir##*/}.log"))
+    $relsrcdir 2>&1 ) |tee "${builddir##*/}.log")
 }
 
 cfg-android ()
@@ -229,21 +229,88 @@ cfg-mingw() {
   cfg \
     "$@")
 }
+
 cfg-emscripten() {
- (build=$(${CC:-emcc} -dumpmachine | sed 's|-pc-|-|g')
-  host=${build/-gnu/-emscriptenlibc}
+ (build=$(cc -dumpmachine | sed 's|-pc-|-|g')
+  host=$(emcc -dumpmachine)
   builddir=build/${host%-*}-emscripten
   
-  prefix=`which emcc | sed 's|/emcc$|/system|'` 
-  libdir=$prefix/lib
-  bindir=$prefix/bin
+  : ${prefix=$EMSCRIPTEN/system}
+  : ${libdir=$prefix/lib}
+  : ${bindir=$prefix/bin}
 
   CC="emcc" \
-  PKG_CONFIG="PKG_CONFIG_PATH=$libdir/pkgconfig pkg-config" \
+  CXX="em++" \
+  PKG_CONFIG_PATH="$EMSCRIPTEN/system/lib/pkgconfig" \
   cfg \
-    -DCMAKE_INSTALL_PREFIX="$prefix" \
-    -DSHARED_LIBS=OFF \
-    -DCMAKE_VERBOSE_MAKEFILE=ON \
+    -DENABLE_PIC=FALSE \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_TOOLCHAIN_FILE="$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake" \
+    -DCPU_BASELINE='' \
+    -DCPU_DISPATCH='' \
+    -DCV_TRACE=OFF \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DWITH_1394=OFF \
+    -DWITH_ADE=OFF \
+    -DWITH_VTK=OFF \
+    -DWITH_EIGEN=OFF \
+    -DWITH_FFMPEG=OFF \
+    -DWITH_GSTREAMER=OFF \
+    -DWITH_GTK=OFF \
+    -DWITH_GTK_2_X=OFF \
+    -DWITH_IPP=OFF \
+    -DWITH_JASPER=OFF \
+    -DWITH_JPEG=OFF \
+    -DWITH_WEBP=OFF \
+    -DWITH_OPENEXR=OFF \
+    -DWITH_OPENGL=OFF \
+    -DWITH_OPENVX=OFF \
+    -DWITH_OPENNI=OFF \
+    -DWITH_OPENNI2=OFF \
+    -DWITH_PNG=OFF \
+    -DWITH_TBB=OFF \
+    -DWITH_TIFF=OFF \
+    -DWITH_V4L=OFF \
+    -DWITH_OPENCL=OFF \
+    -DWITH_OPENCL_SVM=OFF \
+    -DWITH_OPENCLAMDFFT=OFF \
+    -DWITH_OPENCLAMDBLAS=OFF \
+    -DWITH_GPHOTO2=OFF \
+    -DWITH_LAPACK=OFF \
+    -DWITH_ITT=OFF \
+    -DWITH_QUIRC=OFF \
+    -DBUILD_ZLIB=ON \
+    -DBUILD_opencv_apps=OFF \
+    -DBUILD_opencv_calib3d=ON \
+    -DBUILD_opencv_dnn=ON \
+    -DBUILD_opencv_features2d=ON \
+    -DBUILD_opencv_flann=ON \
+    -DBUILD_opencv_gapi=OFF \
+    -DBUILD_opencv_ml=OFF \
+    -DBUILD_opencv_photo=ON \
+    -DBUILD_opencv_imgcodecs=OFF \
+    -DBUILD_opencv_shape=OFF \
+    -DBUILD_opencv_videoio=OFF \
+    -DBUILD_opencv_videostab=OFF \
+    -DBUILD_opencv_highgui=OFF \
+    -DBUILD_opencv_superres=OFF \
+    -DBUILD_opencv_stitching=OFF \
+    -DBUILD_opencv_java=OFF \
+    -DBUILD_opencv_java_bindings_generator=OFF \
+    -DBUILD_opencv_js=ON \
+    -DBUILD_opencv_python2=OFF \
+    -DBUILD_opencv_python3=OFF \
+    -DBUILD_opencv_python_bindings_generator=OFF \
+    -DBUILD_EXAMPLES=OFF \
+    -DBUILD_PACKAGE=OFF \
+    -DBUILD_TESTS=OFF \
+    -DBUILD_PERF_TESTS=OFF \
+    -DBUILD_DOCS=OFF \
+    -DWITH_PTHREADS_PF=OFF \
+    -DCV_ENABLE_INTRINSICS=OFF \
+    -DBUILD_WASM_INTRIN_TESTS=OFF \
+    "-DCMAKE_C_FLAGS='-s WASM=1 -s USE_PTHREADS=0 -s LLD_REPORT_UNDEFINED'" \
+    "-DCMAKE_CXX_FLAGS='-s WASM=1 -s USE_PTHREADS=0 -s LLD_REPORT_UNDEFINED'" \
     "$@")
 }
 
@@ -402,4 +469,4 @@ cfg-tcc() {
     -DCMAKE_VERBOSE_MAKEFILE=ON \
     "$@")
 }
-  
+ 

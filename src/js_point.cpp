@@ -9,7 +9,7 @@
 #if defined(JS_POINT_MODULE) || defined(quickjs_point_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
 #else
-#define JS_INIT_MODULE VISIBLE js_init_module_point
+#define JS_INIT_MODULE /*VISIBLE*/ js_init_module_point
 #endif
 
 extern "C" {

@@ -8,7 +8,7 @@
 #if defined(JS_CV_MODULE) || defined(quickjs_cv_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
 #else
-#define JS_INIT_MODULE VISIBLE js_init_module_cv
+#define JS_INIT_MODULE /*VISIBLE*/ js_init_module_cv
 #endif
 
 static JSValue
