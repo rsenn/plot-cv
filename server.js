@@ -36,14 +36,13 @@ const p = path.join(path.dirname(process.argv[1]), '.');
 
 let mountDirs = [];
 
-
-    async function waitChild(proc) {
-      const { pid, stdout, stderr, wait } = proc;
-      console.log('Process ID =', pid);
-      let ret = await wait();
-      console.log('wait() =', ret);
-      return ret;
-    }
+async function waitChild(proc) {
+  const { pid, stdout, stderr, wait } = proc;
+  console.log('Process ID =', pid);
+  let ret = await wait();
+  console.log('wait() =', ret);
+  return ret;
+}
 
 async function runMount(dirsIterator) {
   console.debug(`runMount ${dirsIterator}`);
