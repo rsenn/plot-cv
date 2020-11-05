@@ -3,19 +3,30 @@
 IFS="
 "
 
-set -- ../*/eagle/{lbr/*.lbr,*.{brd,sch}}
-set -- "${@%/*}"
-set -- $(echo "$*" | sort -u)
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -f | -d) ARGS="${ARGS:+$ARGS
+}$1"; shift ;;
+    *) break ;;
+  esac
+done
 
-echo "$*"
+if [ $# -le 0 ]; then
+  set -- $( (find ../*/eagle "(" -iname "*.lbr" ")"; find ../*/eagle -maxdepth 1 "(" -iname "*.sch" -or -iname "*.brd" ")" ) |sed 's,/[^/]*$,,' |sort -u)
+  #set -- ../*/eagle/{lbr/*.lbr,*.{brd,sch}}
+  #set -- "${@%/*}"
+  #set -- $(echo "$*" | sort -u)
+fi
+
+echo "$*" 1>&2
 
 mkdir -m 1777 -p tmp
 
 set -- data=RW "$@"
 
 IFS=":"
-OPTS=hide_meta_files
-
-fusermount -z -u tmp >&/dev/null
+OPTS=${OPTS:+$OPTS,}hide_meta_files
+echo "OPTS='$OPTS'" 1>&2
 set -x
-exec unionfs-fuse ${OPTS:+-o} ${OPTS:+"$OPTS"} "$*" tmp
+fusermount -z -u tmp 2>/dev/null >/dev/null
+exec unionfs-fuse ${OPTS:+-o} ${OPTS:+"$OPTS"} $ARGS "$*" tmp 2>&1

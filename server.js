@@ -42,7 +42,15 @@ async function main() {
 
   Socket.timeoutCycler();
 
-  await childProcess('sh', ['./mount-tmp.sh']).wait();
+  let proc = childProcess('bash', ['-x', './mount-tmp.sh'], { env: { OPTS: 'debug' }});
+
+  (async function waitChild() {
+    const { pid, stdout, stderr, wait } = proc;
+       console.log('waitChild:', pid);
+ let ret = await wait();
+         console.log('ret:',ret);
+  return await ret;
+  })();
 
   app.use(express.text({ type: 'application/xml', limit: '16384kb' }));
 
