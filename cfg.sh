@@ -2,7 +2,7 @@
 cfg() {
   : ${build:=`gcc -dumpmachine`}
   : ${VERBOSE:=OFF}
-  : ${PKG_CONFIG_PATH="/opt/opencv4/lib/pkgconfig:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig"}
+  : ${PKG_CONFIG_PATH="/opt/opencv-4.5.0/lib/pkgconfig:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig"}
 
   export PKG_CONFIG_PATH
 
