@@ -469,4 +469,26 @@ cfg-tcc() {
     -DCMAKE_VERBOSE_MAKEFILE=ON \
     "$@")
 }
- 
+
+cfg-emscripten() {
+  (build=$(cc -dumpmachine | sed 's|-pc-|-|g')
+  host=$(emcc -dumpmachine)
+  : ${builddir=build/${host%-*}-emscripten}
+  : ${prefix=$EMSCRIPTEN/system}
+  : ${libdir=$prefix/lib}
+  : ${bindir=$prefix/bin}
+  : ${EMSCRIPTEN=$EMSDK/upstream/emscripten}
+  export TOOLCHAIN="${EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake"
+  PKG_CONFIG_PATH="$(set -- /opt/*-wasm/lib/pkgconfig; IFS=":"; echo "$*")${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
+  PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+$PKG_CONFIG_PATH:}${EMSCRIPTEN}/system/lib/pkgconfig"
+  export PKG_CONFIG_PATH
+  echo PKG_CONFIG_PATH="${PKG_CONFIG_PATH}"
+  CC="emcc" CXX="em++" TYPE="Release" VERBOSE="TRUE" \
+    CFLAGS="'-sWASM=1 -sUSE_PTHREADS=0 -sLLD_REPORT_UNDEFINED'" \
+    CXXFLAGS="'-sWASM=1 -sUSE_PTHREADS=0 -sLLD_REPORT_UNDEFINED'" \
+    CMAKE_WRAPPER="emcmake" \
+    prefix=/opt/${PWD##*/}-wasm \
+    cfg \
+    -DENABLE_PIC=FALSE \
+    "$@")
+}
