@@ -34,6 +34,50 @@ let app = express();
 expressWs(app, null, { perMessageDeflate: false });
 const p = path.join(path.dirname(process.argv[1]), '.');
 
+let mountDirs = [];
+
+
+    async function waitChild(proc) {
+      const { pid, stdout, stderr, wait } = proc;
+      console.log('Process ID =', pid);
+      let ret = await wait();
+      console.log('wait() =', ret);
+      return ret;
+    }
+
+async function runMount(dirsIterator) {
+  console.debug(`runMount ${dirsIterator}`);
+  for await (let dirs of await dirsIterator) {
+    console.debug(`Mount ${dirs} to tmp/`);
+
+    let proc = childProcess('./mount-tmp.sh', ['-f', ...Util.unique(dirs || [])], {
+      env: { OPTS: 'auto_unmount,atomic_o_trunc,big_writes,kernel_cache' }
+    });
+    async function readData(output, callback = d => {}) {
+      try {
+        for await (let data of new Repeater((push, stop) => {
+          output.on('data', chunk => push(chunk.toString()));
+          proc.on('exit', stop);
+          //          output.on('close', () => push(null));
+        })) {
+          if(data === null) {
+            console.log('output EOF');
+            //return;
+          }
+          if(typeof data == 'string') data.split(/\n/g).forEach(line => callback(line));
+        }
+      } catch(e) {
+        return e;
+      }
+    }
+    readData(proc.stdout);
+    readData(proc.stderr, data =>
+      console.log('stderr data:', Util.abbreviate(Util.unescape(data), Util.getEnv('COLUMNS') || 120))
+    );
+    console.log('exitCode:', await waitChild(proc));
+  }
+}
+
 //console.log('Serving from', p);
 
 async function main() {
@@ -43,27 +87,10 @@ async function main() {
 
   Socket.timeoutCycler();
 
-  let proc = childProcess('./mount-tmp.sh', ['-f'], {
-    env: { OPTS: 'auto_unmount,atomic_o_trunc,big_writes,kernel_cache' }
-  });
-
-  (async function waitChild() {
-    const { pid, stdout, stderr, wait } = proc;
-    console.log('waitChild:', pid);
-    let ret = await wait();
-    console.log('ret:', ret);
-    return await ret;
-  })();
-
-  let output = new Repeater((push, pull) => {
-    proc.stdout.on('data', chunk => push(chunk.toString()));
-  });
-
-  (async function readData() {
-    for await (let data of output) {
-      // console.log("output data:", Util.abbreviate(Util.unescape(data)));
-    }
-  })();
+  let mounter = runMount(new Repeater(async (push, stop) => {
+      while(true) await push(mountDirs);
+    })
+  );
 
   app.use(express.text({ type: 'application/xml', limit: '16384kb' }));
 
