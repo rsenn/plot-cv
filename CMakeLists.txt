@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 project(plot-cv)
 
+set(DISABLE_WERROR ON)
+
 set(quickjs_sources_root ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
 include(${quickjs_sources_root}/defs.cmake)
 

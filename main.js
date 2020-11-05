@@ -59,7 +59,8 @@ import { lazyInitializer } from './lib/lazyInitializer.js';
 import { BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, LibraryRenderer, makeEagleElement, makeEagleNode } from './lib/eagle.js';
 //import PureCache from 'pure-cache';
 import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
-import commands, { NormalizeResponse, ResponseData, FetchURL, FetchCached, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, GithubListContents, ListGithubRepoServer, ClearCache } from './commands.js';
+import commands, { NormalizeResponse, ResponseData, FetchURL, FetchCached, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ClearCache } from './commands.js';
+import github, { GithubListRepositories, GithubRepositories, GithubListContents, ListGithubRepoServer } from './lib/github.js';
 // prettier-ignore-end
 
 /* prettier-ignore */ const { Align, AlignToString, Anchor, CSS, Event, CSSTransformSetters, Element, ElementPosProps, ElementRectProps, ElementRectProxy, ElementSizeProps, ElementTransformation, ElementWHProps, ElementXYProps, isElement, isLine, isMatrix, isNumber, isPoint, isRect, isSize, Line,Matrix,  Point, PointList, Polyline, Rect, Select, Size, SVG, Transition, TransitionList, TRBL, Tree } = { ...dom, ...geom };
