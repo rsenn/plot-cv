@@ -16,6 +16,7 @@ import Socket from './socket.js';
 import WebSocket from 'ws';
 import PortableFileSystem from './lib/filesystem.js';
 import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
+import { Repeater } from './lib/repeater/repeater.js';
 
 SerialStream.Binding = SerialBinding;
 
@@ -42,14 +43,26 @@ async function main() {
 
   Socket.timeoutCycler();
 
-  let proc = childProcess('bash', ['-x', './mount-tmp.sh'], { env: { OPTS: 'debug' }});
+  let proc = childProcess('./mount-tmp.sh', ['-f'], {
+    env: { OPTS: 'auto_unmount,atomic_o_trunc,big_writes,kernel_cache' }
+  });
 
   (async function waitChild() {
     const { pid, stdout, stderr, wait } = proc;
-       console.log('waitChild:', pid);
- let ret = await wait();
-         console.log('ret:',ret);
-  return await ret;
+    console.log('waitChild:', pid);
+    let ret = await wait();
+    console.log('ret:', ret);
+    return await ret;
+  })();
+
+  let output = new Repeater((push, pull) => {
+    proc.stdout.on('data', chunk => push(chunk.toString()));
+  });
+
+  (async function readData() {
+    for await (let data of output) {
+      // console.log("output data:", Util.abbreviate(Util.unescape(data)));
+    }
   })();
 
   app.use(express.text({ type: 'application/xml', limit: '16384kb' }));
