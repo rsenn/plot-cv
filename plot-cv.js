@@ -1,4 +1,26 @@
-import minnet from 'net.so';
+import * as net from "net.so"
+
+
+function client() {
+    print("CLIENT")
+    net.client({
+        port: 3001,
+        server: "localhost",
+        onConnect: (socket) => {
+            print("Connected to server")
+            socket.send("hello")
+        },
+        onMessage: (socket, msg) => {
+            print("Received from server: ", msg)
+        },
+        onClose: (why) => {
+            print("Disconnected from server. Reason: ", why)
+        },
+        onPong: (socket, data) => {
+            print("Pong: ", data)
+        }
+    });
+}
 
 function process(contours, hier, ...args) {
   //let size = new Size(imgOriginal.cols, imgOriginal.rows);
@@ -16,3 +38,6 @@ function process(contours, hier, ...args) {
 
   console.log('Num contours: ', contours.length);
 }
+
+
+client();
