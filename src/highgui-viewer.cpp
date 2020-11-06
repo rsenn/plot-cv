@@ -211,7 +211,7 @@ main(int argc, char* argv[]) {
     num_images = argc - 2;
   }
 
-    int startTime = -1;
+  int startTime = -1;
 
   std::vector<std::string> visible;
 

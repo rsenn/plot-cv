@@ -4,6 +4,7 @@
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/videoio.hpp>
 #include <iomanip>
 #include <map>
 #include <iterator>
@@ -16,6 +17,7 @@ typedef     /*  struct { */
 typedef cv::Size2d JSSizeData;
 typedef cv::Point2d JSPointData;
 typedef cv::Point2i JSPointDataI;
+typedef cv::VideoCapture JSVideoCaptureData;
 
 typedef union {
   std::array<double, 4> arr;
