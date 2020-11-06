@@ -1,4 +1,5 @@
-//
+import minnet from 'net.so';
+
 function process(contours, hier, ...args) {
   //let size = new Size(imgOriginal.cols, imgOriginal.rows);
   const [images, ...rest] = args;

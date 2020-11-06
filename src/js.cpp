@@ -4,6 +4,7 @@
 #include <cstring>
 #include <filesystem>
 #include <cassert>
+#include <regex>
 
 extern "C" {
 #include "quickjs/quickjs.h"
@@ -390,18 +391,29 @@ normalize_module(JSContext* ctx,
 
   char* name;
   jsrt* js = static_cast<jsrt*>(opaque);
+  /*
+    std::string str = "The quick brown fox";
+    std::regex re{R"(\s+)"};
+  auto begin =
+      std::regex_token_iterator(str.cbegin(), str.cend(), re, -1,
+  std::regex_constants::match_default), end= std::regex_token_iterator();
+  */
+  std::string module_dir = std::string(CONFIG_PREFIX) + "/lib/quickjs";
 
-  /* std::cerr << "module_base_name: " << module_base_name << std::endl;
-   std::cerr << "module_name: " << module_name << std::endl;*/
+  std::cerr << "module_base_name: " << module_base_name << std::endl;
+  std::cerr << "module_name: " << module_name << std::endl;
+  std::cerr << "module_dir: " << module_dir << std::endl;
 
   if(module_name[0] == '.' && module_name[1] == '/')
     module_name += 2;
 
+  std::string module = module_dir + "/" + module_base_name;
+
   path module_path =
-      path(module_base_name).replace_filename(path(module_name, module_name + strlen(module_name)));
+      path(module).replace_filename(path(module_name, module_name + strlen(module_name)));
   std::string module_pathstr;
 
-  /* std::cerr << "module_path: " << module_path.string() << std::endl;*/
+  std::cerr << "module_path: " << module_path.string() << std::endl;
 
   bool present = exists(module_path);
   /*  std::cerr << "exists module_path: " << present << std::endl;*/
@@ -413,10 +425,10 @@ normalize_module(JSContext* ctx,
 
     present = exists(module_path);
   }
-  /*std::cerr << "module_pathstr: " << module_pathstr << std::endl;
+  std::cerr << "module_pathstr: " << module_pathstr << std::endl;
   std::cerr << "module_base_name: " << module_base_name << std::endl;
   std::cerr << "module_name: " << module_name << std::endl;
-  std::cerr << "present: " << present << std::endl;*/
+  std::cerr << "present: " << present << std::endl;
 
   if(true) {
 

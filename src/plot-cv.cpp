@@ -1173,6 +1173,7 @@ js_init(int argc, char* argv[]) {
   js_init_module_line(js.ctx, "line");
   js_init_module_draw(js.ctx, "draw");
   js_init_module_cv(js.ctx, "cv");
+  js_init_module_video_capture(js.ctx, "video-capture");
 
   jsrt::value console = js.get_global("console");
 

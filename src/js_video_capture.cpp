@@ -7,6 +7,7 @@
 #endif
 
 JSClassID js_video_capture_class_id;
+JSValue video_capture_proto = JS_UNDEFINED, video_capture_class = JS_UNDEFINED;
 
 static JSValue
 js_video_capture_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
@@ -108,7 +109,18 @@ js_video_capture_method(
   return ret;
 }
 
-JSValue video_capture_proto = JS_UNDEFINED, video_capture_class = JS_UNDEFINED;
+VISIBLE JSValue
+js_video_capture_wrap(JSContext* ctx, cv::VideoCapture* cap) {
+  JSValue ret;
+
+  ret = JS_NewObjectProtoClass(ctx, video_capture_proto, js_video_capture_class_id);
+
+  // cap->addref();
+
+  JS_SetOpaque(ret, cap);
+
+  return ret;
+}
 
 JSClassDef js_video_capture_class = {
     .class_name = "VideoCapture",

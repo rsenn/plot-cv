@@ -10,10 +10,7 @@
 #include <iterator>
 
 typedef cv::Rect2d JSRectData;
-typedef     /*  struct { */
-    cv::Mat /* mat;
-    JSValue val;
-  }  */ JSMatData;
+typedef cv::Mat JSMatData;
 typedef cv::Size2d JSSizeData;
 typedef cv::Point2d JSPointData;
 typedef cv::Point2i JSPointDataI;
@@ -116,6 +113,11 @@ JSModuleDef* js_init_module_contour(JSContext*, const char*);
 JSModuleDef* js_init_module_line(JSContext*, const char*);
 JSModuleDef* js_init_module_draw(JSContext*, const char*);
 JSModuleDef* js_init_module_cv(JSContext*, const char*);
+JSModuleDef* js_init_module_video_capture(JSContext*, const char*);
+
+int js_video_capture_init(JSContext*, JSModuleDef*);
+
+VISIBLE JSValue js_video_capture_wrap(JSContext*, cv::VideoCapture* cap);
 
 extern "C" JSValue contour_class, contour_proto, int32array_ctor, int32array_proto, mat_class,
     mat_proto, mat_iterator_proto, point_class, line_class, point_iterator_class, draw_class,
