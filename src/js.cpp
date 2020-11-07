@@ -407,10 +407,20 @@ normalize_module(JSContext* ctx,
   if(module_name[0] == '.' && module_name[1] == '/')
     module_name += 2;
 
-  std::string module = module_dir + "/" + module_base_name;
+  const char* module_ext = strrchr(module_name, '.');
+  std::cerr << "module_ext: " << module_ext << std::endl;
 
-  path module_path =
-      path(module).replace_filename(path(module_name, module_name + strlen(module_name)));
+  std::string module;
+  path module_path;
+  if((module_ext && !strcmp(".so", module_ext)) || module_ext == nullptr) {
+    module = module_dir + "/" + module_name;
+    module_path = path(module);
+  } else {
+    module = module_base_name;
+    module_path =
+        path(module).replace_filename(path(module_name, module_name + strlen(module_name)));
+  }
+
   std::string module_pathstr;
 
   std::cerr << "module_path: " << module_path.string() << std::endl;
@@ -426,7 +436,6 @@ normalize_module(JSContext* ctx,
     present = exists(module_path);
   }
   std::cerr << "module_pathstr: " << module_pathstr << std::endl;
-  std::cerr << "module_base_name: " << module_base_name << std::endl;
   std::cerr << "module_name: " << module_name << std::endl;
   std::cerr << "present: " << present << std::endl;
 

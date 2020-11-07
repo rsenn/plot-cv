@@ -1,8 +1,12 @@
 import * as net from "net.so"
+import PortableConsole from "./lib/consoleSetup.js"
+const { client, server, fetch } = net;
 
-  console.log('net: ', net);
 
-function client() {
+PortableConsole(console => 
+  console.log('net: ', { client, server, fetch } ));
+
+function connect() {
     print("CLIENT")
     net.client({
         port: 3001,
