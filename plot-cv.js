@@ -1,5 +1,6 @@
 import * as net from "net.so"
 
+  console.log('net: ', net);
 
 function client() {
     print("CLIENT")
@@ -40,4 +41,4 @@ function process(contours, hier, ...args) {
 }
 
 
-client();
+//client();

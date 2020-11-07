@@ -622,7 +622,9 @@ async function main() {
     }
   });
 
-  app.ws(/(\.websocket|\/ws)/, Socket.endpoint);
+  app.ws('/ws', Socket.endpoint);
+  app.ws('/.websocket', Socket.endpoint);
+  app.ws('/ws/.websocket', Socket.endpoint);
 
   app.get('/', (req, res) => {
     res.redirect(302, '/index.html');

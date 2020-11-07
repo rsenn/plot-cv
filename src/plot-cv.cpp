@@ -1016,7 +1016,8 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
     js.set_property(obj, "imgCanny", js_mat_wrap(js.ctx, imgCanny));
     js.set_property(obj, "imgMorphology", js_mat_wrap(js.ctx, imgMorphology));
 
-    js.call(processFn, 3, args);
+    if(js.is_function(processFn))
+      js.call(processFn, 3, args);
   }
   {
     point2f_vector src = {point2f_type(50, 50),

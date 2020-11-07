@@ -313,8 +313,9 @@ main(int argc, char* argv[]) {
 
     bool blnFrameReadSuccessfully = false;
     if(capWebcam.isOpened()) {
-      blnFrameReadSuccessfully = capWebcam.read(imgRaw); // get next frame
-                                                         //
+      blnFrameReadSuccessfully = capWebcam.grab(); // get next frame
+                                                   //
+      capWebcam.retrieve(imgRaw);
     } else {
       imgInput.copyTo(imgRaw);
       blnFrameReadSuccessfully = imgRaw.cols > 0 && imgRaw.rows > 0;
