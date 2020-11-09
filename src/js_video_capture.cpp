@@ -151,6 +151,7 @@ const JSCFunctionListEntry js_video_capture_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("open", 0, js_video_capture_method, 5),
     JS_CFUNC_MAGIC_DEF("read", 1, js_video_capture_method, 6),
     JS_CFUNC_MAGIC_DEF("retrieve", 1, js_video_capture_method, 7),
+
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "VideoCapture", JS_PROP_CONFIGURABLE),
 
 };

@@ -254,6 +254,8 @@ js_point_create(JSContext* ctx, double x, double y) {
   return point;
 }*/
 
+extern "C" JSValue js_point_clone(JSContext* ctx, const JSPointData& point);
+
 static inline int
 js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData* out) {
   int ret = 1;

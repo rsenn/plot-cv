@@ -6,8 +6,7 @@
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module_rect
 #endif
 
-extern "C"
-VISIBLE JSValue
+extern "C" VISIBLE JSValue
 js_rect_new(JSContext* ctx, double x, double y, double w, double h) {
   JSValue ret;
   JSRectData* s;
@@ -25,7 +24,6 @@ js_rect_new(JSContext* ctx, double x, double y, double w, double h) {
   JS_SetOpaque(ret, s);
   return ret;
 }
-
 
 static JSValue
 js_rect_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
@@ -183,6 +181,8 @@ const JSCFunctionListEntry js_rect_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("tl", 0, js_rect_method, 4),
     JS_CFUNC_MAGIC_DEF("size", 0, js_rect_method, 5),
     JS_CFUNC_DEF("toString", 0, js_rect_to_string),
+    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Rect", JS_PROP_CONFIGURABLE)
+
 };
 
 int

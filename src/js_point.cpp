@@ -17,10 +17,16 @@ std::vector<JSPointData*> points;
 
 extern "C" {
 
+JSValue point_proto = JS_UNDEFINED;
+JSClassID js_point_class_id;
+
 VISIBLE JSValue
 js_point_new(JSContext* ctx, double x, double y) {
   JSValue ret;
   JSPointData* s;
+
+  if(JS_IsUndefined(point_proto))
+    js_point_init(ctx, NULL);
 
   ret = JS_NewObjectProtoClass(ctx, point_proto, js_point_class_id);
 
@@ -54,7 +60,7 @@ js_point_cross(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
 
 static JSValue
 js_point_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
-  double x,y;
+  double x, y;
 
   if(JS_ToFloat64(ctx, &x, argv[0]))
     return JS_EXCEPTION;
@@ -108,10 +114,13 @@ js_point_finalizer(JSRuntime* rt, JSValue val) {
       std::cerr << "isObject: " << isObject << std::endl;
       std::cerr << "isNumber: " << isNumber << std::endl;
     }
-   js_free_rt(rt, s);
+    js_free_rt(rt, s);
   }
 
   JS_FreeValueRT(rt, val);
+
+  /*  if(points.size() == 0)
+      JS_FreeValueRT(rt, point_proto);*/
 }
 
 static JSValue
@@ -239,8 +248,7 @@ js_point_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   return JS_NewString(ctx, os.str().c_str());
 }
 
-JSValue point_proto = JS_UNDEFINED, point_class = JS_UNDEFINED;
-JSClassID js_point_class_id;
+JSValue point_class = JS_UNDEFINED;
 
 JSClassDef js_point_class = {
     .class_name = "Point",
@@ -260,23 +268,30 @@ const JSCFunctionListEntry js_point_proto_funcs[] = {
     JS_CFUNC_DEF("norm", 0, js_point_norm),
     // JS_CFUNC_DEF("getRotationMatrix2D", 0, js_point_getrotationmatrix2d),
     JS_CFUNC_MAGIC_DEF("toString", 0, js_point_to_string, 0),
-    JS_CFUNC_MAGIC_DEF("[Symbol.toStringTag]", 0, js_point_to_string, 1),
+    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Point", JS_PROP_CONFIGURABLE),
+
+    // JS_CFUNC_MAGIC_DEF("[Symbol.toStringTag]", 0, js_point_to_string, 1),
 };
 
 int
 js_point_init(JSContext* ctx, JSModuleDef* m) {
 
-  /* create the Point class */
-  JS_NewClassID(&js_point_class_id);
-  JS_NewClass(JS_GetRuntime(ctx), js_point_class_id, &js_point_class);
+  if(JS_IsUndefined(point_proto)) {
+    /* create the Point class */
+    JS_NewClassID(&js_point_class_id);
+    JS_NewClass(JS_GetRuntime(ctx), js_point_class_id, &js_point_class);
 
-  point_proto = JS_NewObject(ctx);
-  JS_SetPropertyFunctionList(ctx, point_proto, js_point_proto_funcs, countof(js_point_proto_funcs));
-  JS_SetClassProto(ctx, js_point_class_id, point_proto);
+    point_proto = JS_NewObject(ctx);
+    JS_SetPropertyFunctionList(ctx,
+                               point_proto,
+                               js_point_proto_funcs,
+                               countof(js_point_proto_funcs));
+    JS_SetClassProto(ctx, js_point_class_id, point_proto);
 
-  point_class = JS_NewCFunction2(ctx, js_point_ctor, "Point", 2, JS_CFUNC_constructor, 0);
-  /* set proto.constructor and ctor.prototype */
-  JS_SetConstructor(ctx, point_class, point_proto);
+    point_class = JS_NewCFunction2(ctx, js_point_ctor, "Point", 2, JS_CFUNC_constructor, 0);
+    /* set proto.constructor and ctor.prototype */
+    JS_SetConstructor(ctx, point_class, point_proto);
+  }
 
   if(m)
     JS_SetModuleExport(ctx, m, "Point", point_class);

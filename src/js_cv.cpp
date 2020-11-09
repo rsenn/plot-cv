@@ -362,10 +362,7 @@ js_cv_wait_key(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
 }
 
 static JSValue
-js_cv_getperspectivetransform(JSContext* ctx,
-                                   JSValueConst this_val,
-                                   int argc,
-                                   JSValueConst* argv) {
+js_cv_getperspectivetransform(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData *v, *other = nullptr, *ptr;
   JSValue ret = JS_UNDEFINED;
   bool handleNested = true;
@@ -395,7 +392,7 @@ js_cv_getperspectivetransform(JSContext* ctx,
                  std::back_inserter(b),
                  [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
 
-  matrix = cv::getPerspectiveTransform(a, b , solveMethod);
+  matrix = cv::getPerspectiveTransform(a, b, solveMethod);
 
   ret = js_mat_wrap(ctx, matrix);
   return ret;
@@ -463,7 +460,6 @@ js_cv_findcontours(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   return ret;
 }
 
-
 JSValue cv_proto, cv_class;
 JSClassID js_cv_class_id;
 
@@ -471,7 +467,7 @@ void
 js_cv_finalizer(JSRuntime* rt, JSValue val) {
 
   JS_FreeValueRT(rt, val);
-  //JS_FreeValueRT(rt, cv_class);
+  // JS_FreeValueRT(rt, cv_class);
 }
 
 JSClassDef js_cv_class = {.class_name = "cv", .finalizer = js_cv_finalizer};
@@ -769,13 +765,13 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
 
 int
 js_cv_init(JSContext* ctx, JSModuleDef* m) {
- /* cv_class = JS_NewObject(ctx);
-  JS_SetPropertyFunctionList(ctx, cv_class, js_cv_static_funcs, countof(js_cv_static_funcs));*/
- /* JSValue g = JS_GetGlobalObject(ctx);
+  /* cv_class = JS_NewObject(ctx);
+   JS_SetPropertyFunctionList(ctx, cv_class, js_cv_static_funcs, countof(js_cv_static_funcs));*/
+  /* JSValue g = JS_GetGlobalObject(ctx);
 
-  int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
-  int32array_proto = JS_GetPrototype(ctx, int32array_ctor);*/
-   JS_SetModuleExportList(ctx, m, js_cv_static_funcs, countof(js_cv_static_funcs));
+   int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
+   int32array_proto = JS_GetPrototype(ctx, int32array_ctor);*/
+  JS_SetModuleExportList(ctx, m, js_cv_static_funcs, countof(js_cv_static_funcs));
   /*if(m)
     JS_SetModuleExport(ctx, m, "cv", cv_class);
 */

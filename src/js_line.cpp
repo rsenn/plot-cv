@@ -34,7 +34,7 @@ js_line_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* ar
   s = static_cast<JSLineData*>(js_mallocz(ctx, sizeof(JSLineData)));
   if(!s)
     return JS_EXCEPTION;
-  //new(s) JSLineData();
+  // new(s) JSLineData();
 
   if(JS_ToFloat64(ctx, &s->arr[0], argv[0]))
     goto fail;
@@ -230,7 +230,7 @@ const JSCFunctionListEntry js_line_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("toString", 0, js_line_iterator, JS_LINE_AS_POINTS | JS_LINE_TO_STRING),
     JS_CFUNC_MAGIC_DEF("values", 0, js_line_iterator, JS_LINE_AS_VECTOR | JS_LINE_GET_ITERATOR),
     JS_ALIAS_DEF("[Symbol.iterator]", "values"),
-    JS_ALIAS_DEF("[Symbol.toStringTag]", "toString"),
+    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Line", JS_PROP_CONFIGURABLE),
 };
 int
 js_line_init(JSContext* ctx, JSModuleDef* m) {

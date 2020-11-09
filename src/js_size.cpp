@@ -15,8 +15,8 @@ js_size_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* ar
   s = static_cast<JSSizeData*>(js_mallocz(ctx, sizeof(JSSizeData)));
   if(!s)
     return JS_EXCEPTION;
-  new (s) JSSizeData();
-  
+  new(s) JSSizeData();
+
   if(JS_ToFloat64(ctx, &s->width, argv[0]))
     goto fail;
   if(JS_ToFloat64(ctx, &s->height, argv[1]))
@@ -129,6 +129,7 @@ const JSCFunctionListEntry js_size_proto_funcs[] = {
     JS_CGETSET_ENUMERABLE_DEF("width", js_size_get_wh, js_size_set_wh, 0),
     JS_CGETSET_ENUMERABLE_DEF("height", js_size_get_wh, js_size_set_wh, 1),
     JS_CFUNC_DEF("toString", 0, js_size_to_string),
+    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Size", JS_PROP_CONFIGURABLE),
 };
 
 int

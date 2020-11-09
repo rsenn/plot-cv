@@ -394,7 +394,7 @@ js_contour_data(JSContext* ctx, JSValueConst val) {
 void
 js_contour_finalizer(JSRuntime* rt, JSValue val) {
   JSContourData* s = static_cast<JSContourData*>(JS_GetOpaque(val, js_contour_class_id));
- 
+
   if(s != nullptr)
     js_free_rt(rt, s);
 
@@ -492,7 +492,6 @@ js_contour_get(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
   ret = js_point_new(ctx, (*v)[i].x, (*v)[i].y);
   return ret;
 }
-
 
 static JSValue
 js_contour_intersectconvex(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
@@ -951,27 +950,33 @@ js_contour_toarray(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   ret = JS_NewArray(ctx);
 
   for(i = 0; i < size; i++) {
-    JS_SetPropertyUint32(ctx, ret, i, js_point_new(ctx, (*s)[i].x, (*s)[i].y));
+    JS_SetPropertyUint32(ctx, ret, i, js_point_clone(ctx, (*s)[i]));
   }
 
   return ret;
 }
 
 static JSValue
-js_contour_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+js_contour_tostring(
+    JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSContourData* s = js_contour_data(ctx, this_val);
   std::ostringstream os;
   int i = 0;
   if(!s)
     return JS_EXCEPTION;
-  os << "Contour[";
+
+  if(magic == 0)
+    os << "Contour";
+
+  os << '[';
+
   std::for_each(s->begin(), s->end(), [&i, &os](const JSPointData& point) {
     if(i > 0)
       os << ',';
     os << "{x:" << point.x << ",y:" << point.y << "}";
     i++;
   });
-  os << ']' << std::endl;
+  os << ']'; // << std::endl;
 
   return JS_NewString(ctx, os.str().c_str());
 }
@@ -1041,20 +1046,21 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("simplifyRadialDistance", 0, js_contour_psimpl, 5),
     JS_CFUNC_MAGIC_DEF("simplifyPerpendicularDistance", 0, js_contour_psimpl, 6),
     JS_CFUNC_DEF("toArray", 0, js_contour_toarray),
-    JS_CFUNC_DEF("toString", 0, js_contour_tostring),
+    JS_CFUNC_MAGIC_DEF("toString", 0, js_contour_tostring, 0),
+    JS_CFUNC_MAGIC_DEF("toSource", 0, js_contour_tostring, 1),
     JS_CFUNC_MAGIC_DEF("entries", 0, js_contour_iterator, 0),
     JS_CFUNC_MAGIC_DEF("keys", 0, js_contour_iterator, 1),
     JS_CFUNC_MAGIC_DEF("values", 0, js_contour_iterator, 2),
 
     JS_ALIAS_DEF("[Symbol.iterator]", "entries"),
+    JS_ALIAS_DEF("size", "length"),
     //    JS_ALIAS_DEF("[Symbol.toStringTag]", "toString"),
 
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Contour", JS_PROP_CONFIGURABLE),
 
 };
 const JSCFunctionListEntry js_contour_static_funcs[] = {
-    JS_CFUNC_DEF("fromRect", 1, js_contour_rect)
-  };
+    JS_CFUNC_DEF("fromRect", 1, js_contour_rect)};
 
 int
 js_contour_init(JSContext* ctx, JSModuleDef* m) {

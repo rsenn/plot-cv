@@ -31,7 +31,7 @@ js_point_iterator_new(JSContext* ctx,
   it = static_cast<JSPointIteratorData*>(js_mallocz(ctx, sizeof(JSPointIteratorData)));
   if(!it)
     goto fail1;
-  new (it) JSPointIteratorData();
+  new(it) JSPointIteratorData();
 
   it->magic = magic;
   it->first = range.first;
@@ -112,7 +112,7 @@ js_point_iterator_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValu
   if(!s)
     return JS_EXCEPTION;
 
-  new (s) JSPointIteratorData();
+  new(s) JSPointIteratorData();
 
   v = static_cast<JSContourData*>(JS_GetOpaque(argv[0], 0 /*js_contour_class_id*/));
 

@@ -717,7 +717,7 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     JS_ALIAS_DEF("[Symbol.iterator]", "entries"),
     JS_ALIAS_DEF("[Symbol.toPrimitive]", "toString"),
 
-    //    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "cv::Mat", JS_PROP_CONFIGURABLE)
+    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Mat", JS_PROP_CONFIGURABLE)
 
 };
 

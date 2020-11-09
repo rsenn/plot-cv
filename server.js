@@ -79,11 +79,9 @@ async function runMount(dirsIterator) {
 
 async function RequestContours(req, res) {
   const { body } = req;
-  console.log('Request: ', Object.keys(req));
-  console.log('Contours: ', Object.keys(body));
-  console.log('Contours: ', Object.keys(body));
+  console.log(`${req.url} body:`, body);
 
-  res.json({ status: 'OK', data: body });
+  res.json({ status: 'OK' });
 }
 
 //console.log('Serving from', p);

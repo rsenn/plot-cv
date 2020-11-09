@@ -33,36 +33,52 @@ main() {
   #   fi
   # done
 
-dump() { (for VAR; do eval "echo \$VAR=\$$VAR"; done 1>&2);  }
+  dump() { (OUT=; for VAR; do eval "OUT=\${OUT:+\$OUT }\$VAR=\$$VAR"; done; echo "$OUT")  1>&2;  }
 
-list_cmd() {  set -- -f'!d' -i'*.'{h,hpp,c,cpp} "$@"; list-r -c -n -l "$@"; }
-temp_file() { echo  "${1:-${0#-}}-$$.tmp"; }
+  list_cmd() {  set -- -f'!d' -i'*.'{h,hpp,c,cpp} "$@"; list-r -c -n -l "$@"; }
+
+  temp_file() { echo  "${1:-${0#-}}-$$.tmp"; }
 
   LIST=`set -x; list_cmd "$@"`
-  FILES=`set -- $LIST; ech  o "${*##* }"`
+
+  FILES=`set -- $LIST; echo "${*##* }"`
   (set -- $LIST; echo "Got $# files." 1>&2)
 
   (set -x; clang-format -style=file -i $FILES)
 
   A=`temp_file "A"`
 
-MATCH=""
+  MATCH=""
   echo "$LIST" >"$A" 
   { IFS=" "; while read  -r  CRC32 MODE N USERID GROUPID SIZE TIME FILE; do
-    dump CRC32 MODE N USERID GROUPID SIZE TIME FILE
+    #dump CRC32 MODE N USERID GROUPID SIZE TIME FILE
     MATCH="${MATCH:+$MATCH\\|}^${CRC32} .* ${FILE}\$"
   done; } <"$A"
 
   IFS="$NL"; 
-   B=`temp_file "B"`
+  B=`temp_file "B"`
 
-echo "Match: ${MATCH}" 1>&2
-list_cmd "$@"  >"$B"
+  echo "Match: ${MATCH}" 1>&2
+  list_cmd "$@"  >"$B"
+
+  { IFS=" "; while read  -r  CRC32 MODE N USERID GROUPID SIZE TIME FILE; do
+   (OTHER=$(grep " $FILE\$" "$A")
+    read -r OTHER_{CRC32,MODE,N,USERID,GROUPID,SIZE,TIME,FILE} <<<"$OTHER"
+
+  if [ "$TIME" != "$OTHER_TIME" ]; then
+    dump CRC32 MODE N USERID GROUPID SIZE TIME FILE
+    dump OTHER_{CRC32,MODE,N,USERID,GROUPID,SIZE,TIME,FILE}
+
+    echo 1>&2
+  fi )
+    
+  done; } <"$B"
+
 
 #  grep  "$MATCH" "$L" >"$A"
 
 
-(set -x; diff -U0 "$A" "$B" | grep "^[-+][^-+]" | sort -t' ' -k8 )
+  (set -x; diff -U0 "$A" "$B" | grep "^[-+][^-+]" | sort -t' ' -k8 )
 }
 
 
