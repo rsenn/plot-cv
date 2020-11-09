@@ -23,6 +23,16 @@ main() {
     if [ $# -le 0 ]; then
     set -- ./src ./quickjs
   fi
+
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --width|-w) WIDTH=$2; shift 2 ;;
+      --width=*|-w=*) WIDTH=${1#*=}; shift ;; 
+      -w*) WIDTH=${1#-w}; shift ;;
+      *) break ;;
+    esac
+  done
+
   ARGS="$*"
  # set -- 
   # for ARG in $ARGS; do
@@ -44,7 +54,7 @@ main() {
   FILES=`set -- $LIST; echo "${*##* }"`
   (set -- $LIST; echo "Got $# files." 1>&2)
 
-  (set -x; clang-format -style=file -i $FILES)
+  (set -x; clang-format -style=file  ${WIDTH:+-style="{ColumnLimit:$WIDTH}"} -if $FILES)
 
   A=`temp_file "A"`
 
@@ -97,3 +107,4 @@ main() {
   # done
 
 main "$@"
+  
