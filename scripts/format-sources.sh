@@ -39,7 +39,7 @@ main() {
 
   temp_file() { echo  "${1:-${0#-}}-$$.tmp"; }
 
-  LIST=`set -x; list_cmd "$@"`
+  LIST=`: set -x; list_cmd "$@"`
 
   FILES=`set -- $LIST; echo "${*##* }"`
   (set -- $LIST; echo "Got $# files." 1>&2)
@@ -58,14 +58,14 @@ main() {
   IFS="$NL"; 
   B=`temp_file "B"`
 
-  echo "Match: ${MATCH}" 1>&2
+  #echo "Match: ${MATCH}" 1>&2
   list_cmd "$@"  >"$B"
 
   { IFS=" "; while read  -r  CRC32 MODE N USERID GROUPID SIZE TIME FILE; do
    (OTHER=$(grep " $FILE\$" "$A")
     read -r OTHER_{CRC32,MODE,N,USERID,GROUPID,SIZE,TIME,FILE} <<<"$OTHER"
 
-  if [ "$TIME" != "$OTHER_TIME" ]; then
+  if [ "$CRC32" != "$OTHER_CRC32" -o "$TIME" != "$OTHER_TIME" ]; then
     dump CRC32 MODE N USERID GROUPID SIZE TIME FILE
     dump OTHER_{CRC32,MODE,N,USERID,GROUPID,SIZE,TIME,FILE}
 
@@ -78,7 +78,7 @@ main() {
 #  grep  "$MATCH" "$L" >"$A"
 
 
-  (set -x; diff -U0 "$A" "$B" | grep "^[-+][^-+]" | sort -t' ' -k8 )
+  (: set -x; diff -U0 "$A" "$B" | grep "^[-+][^-+]" | sort -t' ' -k8 )
 }
 
 
