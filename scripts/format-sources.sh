@@ -18,7 +18,7 @@ fs_time() {
 
 
 main() {
-  IFS="$NL"
+ (IFS="$NL"
 
     if [ $# -le 0 ]; then
     set -- ./src ./quickjs
@@ -47,7 +47,9 @@ main() {
 
   list_cmd() {  set -- -f'!d' -i'*.'{h,hpp,c,cpp} "$@"; list-r -c -n -l "$@"; }
 
-  temp_file() { echo  "${1:-${0#-}}-$$.tmp"; }
+  trap 'IFS=$NL; : ls -la  -- $TEMPFILES; rm -f -- $TEMPFILES 1>&2' EXIT
+
+  temp_file() { FILENAME="${2:-${0#-}}-$(( $$ + ${RANDOM:-0} )).tmp"; TEMPFILES="${TEMPFILES:+$TEMPFILES$NL}$FILENAME"; eval "$1=\$FILENAME"; }
 
   LIST=`: set -x; list_cmd "$@"`
 
@@ -56,7 +58,7 @@ main() {
 
   (set -x; clang-format -style=file  ${WIDTH:+-style="{ColumnLimit:$WIDTH}"} -i $FILES)
 
-  A=`temp_file "A"`
+  temp_file A
 
   MATCH=""
   echo "$LIST" >"$A" 
@@ -66,7 +68,7 @@ main() {
   done; } <"$A"
 
   IFS="$NL"; 
-  B=`temp_file "B"`
+  temp_file B 
 
   #echo "Match: ${MATCH}" 1>&2
   list_cmd "$@"  >"$B"
@@ -89,6 +91,7 @@ main() {
 
 
   (: set -x; diff -U0 "$A" "$B" | grep "^[-+][^-+]" | sort -t' ' -k8 )
+)
 }
 
 
