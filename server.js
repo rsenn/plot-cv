@@ -77,10 +77,19 @@ async function runMount(dirsIterator) {
   }
 }
 
+async function RequestContours(req, res) {
+  const { body } = req;
+  console.log('Request: ', Object.keys(req));
+  console.log('Contours: ', Object.keys(body));
+  console.log('Contours: ', Object.keys(body));
+
+  res.json({ status: 'OK', data: body });
+}
+
 //console.log('Serving from', p);
 
 async function main() {
-  await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
+  await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: Infinity });
   await PortableFileSystem(fs => (filesystem = fs));
   await PortableChildProcess(cp => (childProcess = cp));
 
@@ -329,16 +338,17 @@ async function main() {
           .catch(err => {});
 
       if(override) {
-        console.log('Static request:', { overridePath, override });
+        console.log('Static request:', { overridePath, override, res });
 
         return res.redirect('/' + overridePath);
       }
     }
 
-    if(!/lib\//.test(req.url))
-      console.log('Static request: ' + req.path,
-        ...Util.if(
-          Util.filterOutKeys(req.headers,
+    if(!/lib\//.test(req.url)) {
+      const { path, url, method, headers, query, body } = req;
+      console.log('Static request:', { path, url, method, headers, query, body } /* Object.keys(req), */,
+        ...Util.if(Util.filterOutKeys(
+            req.headers,
             /(^sec|^accept|^cache|^dnt|-length|^host$|^if-|^connect|^user-agent|-type$|^origin$|^referer$)/
           ),
           () => [],
@@ -346,6 +356,7 @@ async function main() {
           Util.isEmpty
         )
       );
+    }
 
     next();
   });
@@ -579,11 +590,8 @@ async function main() {
     let data = await fs.promises.readFile(path.join(p, 'index.html'));
     res.send(data.toString().replace(/<\?TS\?>/g, Util.unixTime() + ''));
   });
-
-  app.post('/contours', async (req, res) => {
-    const { body } = req;
-    console.log('Contours: ', body);
-  });
+  app.get('/contours', RequestContours);
+  app.post('/contours', RequestContours);
 
   app.post('/save', async (req, res, next) => {
     //   const filename = (req.headers['content-disposition']||'').replace(new RegExp('.*"([^"]*)".*','g'), '$1') || 'output.svg';

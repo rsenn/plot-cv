@@ -1,5 +1,5 @@
 import * as net from 'net.so';
-import contour from 'contour.so';
+import { Contour } from 'contour.so';
 import PortableConsole from './lib/consoleSetup.js';
 import Util from './lib/util.js';
 const { client, server, fetch } = net;
@@ -59,12 +59,17 @@ globalThis.process = async function process(contours, hier, ...args) {
   // console.log('contours[0]: ', contours[0]);
   console.log('contours[0][0]: ', contours[0][0]);
 
-  let body = contours.map(contour => [...contour].map(({ x, y }) => `{x:${x},y:${y}}`)).join(',');
+  let body = contours.map(contour => contour.toString()).join(',');
 
   console.log('body: ', body);
 
-  let response = await fetch('http://127.0.0.1:3000/contours', { method: 'POST', body });
+  let response = await fetch('http://127.0.0.1:3001/contours', { method: 'POST', body });
   console.log('response: ', response);
 };
+
+let args = Util.getArgv();
+console.log('args:', args);
+
+if(args.length >= 1) process([new Contour()], [], {});
 
 //client();
