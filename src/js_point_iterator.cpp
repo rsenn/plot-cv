@@ -25,12 +25,14 @@ js_point_iterator_new(JSContext* ctx,
   JSValue iterator;
   int class_id;
 
-  iterator = JS_NewObjectClass(ctx, js_point_iterator_class_id);
+  iterator = JS_NewObjectProtoClass(ctx, point_iterator_proto, js_point_iterator_class_id);
   if(JS_IsException(iterator))
     goto fail;
-  it = static_cast<JSPointIteratorData*>(js_malloc(ctx, sizeof(*it)));
+  it = static_cast<JSPointIteratorData*>(js_mallocz(ctx, sizeof(JSPointIteratorData)));
   if(!it)
     goto fail1;
+  new (it) JSPointIteratorData();
+
   it->magic = magic;
   it->first = range.first;
   it->second = range.second;
@@ -92,7 +94,10 @@ js_point_iterator_finalizer(JSRuntime* rt, JSValue val) {
       static_cast<JSPointIteratorData*>(JS_GetOpaque(val, js_point_iterator_class_id));
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
 
-  js_free_rt(rt, s);
+  if(s != nullptr)
+    js_free_rt(rt, s);
+
+  JS_FreeValueRT(rt, val);
 }
 
 static JSValue
@@ -103,9 +108,11 @@ js_point_iterator_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValu
   JSValue proto;
   assert(0);
 
-  s = static_cast<JSPointIteratorData*>(js_mallocz(ctx, sizeof(*s)));
+  s = static_cast<JSPointIteratorData*>(js_mallocz(ctx, sizeof(JSPointIteratorData)));
   if(!s)
     return JS_EXCEPTION;
+
+  new (s) JSPointIteratorData();
 
   v = static_cast<JSContourData*>(JS_GetOpaque(argv[0], 0 /*js_contour_class_id*/));
 

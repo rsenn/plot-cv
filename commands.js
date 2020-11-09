@@ -105,6 +105,7 @@ export async function ListProjects(opts = {}) {
     /*   if(typeof response.text == 'function') response = await response.text();
     //console.log('response:', Util.abbreviate(response));
     if(response) response = JSON.parse(response);*/
+    if(Util.isObject(response)) response = response.data;
   } else {
     response = await GithubListContents(url, null, null, '\\.(brd|sch|lbr)$', opts);
 
@@ -117,6 +118,7 @@ export async function ListProjects(opts = {}) {
       response = { files: fileList };
     }
   }
+  console.log('ListProjects', { response });
   return response;
 }
 

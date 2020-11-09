@@ -31,9 +31,11 @@ js_line_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* ar
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
 
-  s = static_cast<JSLineData*>(js_mallocz(ctx, sizeof(*s)));
+  s = static_cast<JSLineData*>(js_mallocz(ctx, sizeof(JSLineData)));
   if(!s)
     return JS_EXCEPTION;
+  //new(s) JSLineData();
+
   if(JS_ToFloat64(ctx, &s->arr[0], argv[0]))
     goto fail;
   if(JS_ToFloat64(ctx, &s->arr[1], argv[1]))

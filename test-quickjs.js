@@ -2,9 +2,11 @@ import { Point } from 'point';
 import { Size } from 'size';
 import { Rect } from 'rect';
 //import { Line } from 'line';
-import { Mat } from 'mat';
-//import { Contour } from 'contour';
-//import { PointIterator } from 'point-iterator';
+//import { Mat } from 'mat';
+import { Contour } from 'contour';
+import { cv } from 'cv';
+import * as std from 'std';
+import { PointIterator } from 'point-iterator';
 import { Draw, drawLine, drawCircle } from 'draw';
 import inspect from './lib/objectInspect.js';
 
@@ -19,6 +21,8 @@ let filesystem;
 async function main(...args) {
   //std.print("TEST PRINT\n");
   await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
+  console.log('console', Util.className(console));
+  console.log('console.log', console.log);
 
   await PortableFileSystem(fs => (filesystem = fs));
   console.log('start');
@@ -33,6 +37,23 @@ async function main(...args) {
   console.log('globalThis:', Object.keys(globalThis));
   console.log('modules:', inspect(ctors));
 
+  if(globalThis.Contour) {
+    let c = new Contour();
+    c.push(new Point(0, 0));
+    /*   c.push({x: 50, y: 0});
+    c.push({x: 50, y: 50});
+    c.push({x: 0, y: 50});
+    c.push({x: 0, y: 0});*/
+    console.log('contour:', c);
+    let it = c[Symbol.iterator]();
+
+    console.log('contour[Symbol.iterator]:', c[Symbol.iterator]);
+    console.log('contour[Symbol.iterator]():', Util.className(it));
+    console.log('contour.get(0):', c.get(0));
+    console.log('[...contour]:', [...c]);
+    console.log('contour.length:', c.length);
+    console.log('contour:', Util.className(c));
+  }
   /*  let rect = new Rect(10, 100, 50, 250);
   const { x, y, width, height } = rect;
   console.log(`rect`, inspect(rect));
@@ -62,13 +83,13 @@ async function main(...args) {
     }
   }
   if(globalThis.Mat) {
-    let mat = new Mat(new Size(10, 10), Mat.CV_8UC4);
-    console.log(`Mat.CV_8UC3`, toHex(Mat.CV_8UC3), Mat.CV_8UC3);
-    console.log(`Mat.CV_8UC4`, toHex(Mat.CV_8UC4), Mat.CV_8UC4);
-    console.log(`Mat.CV_8SC3`, toHex(Mat.CV_8SC3), Mat.CV_8SC3);
-    console.log(`Mat.CV_8SC4`, toHex(Mat.CV_8SC4), Mat.CV_8SC4);
-    console.log(`Mat.CV_32FC1`, toHex(Mat.CV_32FC1), Mat.CV_32FC1);
-    console.log(`Mat.CV_32FC4`, toHex(Mat.CV_32FC4), Mat.CV_32FC4);
+    let mat = new Mat(new Size(10, 10), cv.CV_8UC4);
+    console.log(`cv.CV_8UC3`, toHex(cv.CV_8UC3), cv.CV_8UC3);
+    console.log(`cv.CV_8UC4`, toHex(cv.CV_8UC4), cv.CV_8UC4);
+    console.log(`cv.CV_8SC3`, toHex(cv.CV_8SC3), cv.CV_8SC3);
+    console.log(`cv.CV_8SC4`, toHex(cv.CV_8SC4), cv.CV_8SC4);
+    console.log(`cv.CV_32FC1`, toHex(cv.CV_32FC1), cv.CV_32FC1);
+    console.log(`cv.CV_32FC4`, toHex(cv.CV_32FC4), cv.CV_32FC4);
     console.log(`0x3ff`, toHex(0x3ff));
     console.log(`inspect(mat)`, inspect(mat));
     console.log(`mat.channels`, mat.channels);
@@ -138,10 +159,12 @@ async function main(...args) {
       for(let [[row, col], value] of roi) {
         console.log(`roi[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
       }
+      console.log(`roi rows=${roi.rows} cols=${roi.cols} depth=${roi.depth} channels=${roi.channels}`);
 
       for(let r = 0; r < roi.rows; r++)
         for(let c = 0; c < roi.cols; c++) {
           const v = 0x7f000000 | ((r << 16) | c);
+          console.log(`roi.set(${r},${c},0x${v.toString(16)})`);
           console.log(`roi.set(${r},${c},0x${v.toString(16)})`, roi.set(r, c, v));
         }
 
@@ -153,7 +176,7 @@ async function main(...args) {
       console.log(`mat[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
     }
 
-    let fmat = new Mat(new Size(10, 10), Mat.CV_32FC1);
+    let fmat = new Mat(new Size(10, 10), cv.CV_32FC1);
     const values = Util.repeat(fmat.rows * fmat.cols, 0.5);
     console.log(`fmat setTo`, values);
     fmat.setTo(...values);
@@ -238,11 +261,11 @@ async function main(...args) {
     //console.log('contour:', inspect(c));
 */
   //throw new Error("ERROR");
-  if(0) {
+  if(1) {
     console.log(`std.gc`, std.gc);
     console.log(`args`, args);
-    console.log(`path`, inspect(path));
-    console.log(`console`, Util.inspect(console));
+    console.log(`path`, console.inspect(path));
+    console.log(`console`, console);
     console.log(`filesystem.realpath('.')`, filesystem.realpath('.'));
     console.log(`filesystem.chdir('..')`, filesystem.chdir('..'));
     console.log(`filesystem.getcwd('.')`, filesystem.getcwd());

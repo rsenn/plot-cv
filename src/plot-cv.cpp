@@ -74,11 +74,11 @@ image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, im
     imgMorphology; // Canny edge image
 }
 int32_t newmt, mt = -1;
-JSValue processFn, global_obj;
+JSValue processFn;
 
 jsrt::value
 check_eval() {
-  jsrt::value ret = js._undefined;
+  jsrt::value ret = js._undefined, global_obj;
   newmt = get_mtime("plot-cv.js");
 
   /* std::cerr << "plot-cv.js mtime new=" << newmt << " old=" << mt
@@ -89,7 +89,10 @@ check_eval() {
       std::cerr << "plot-cv.js changed, reloading..." << std::endl;
 
     ret = js.eval_file("plot-cv.js");
+    global_obj = js.global_object();
+    std::cerr << "ret: " << js.typestr(ret) << std::endl;
     processFn = js.get_property(global_obj, "process");
+    std::cerr << "processFn: " << js.typestr(processFn) << std::endl;
   }
   return ret;
 };
@@ -1007,6 +1010,8 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
 
     jsrt::value obj = args[2] = js.create_object();
 
+    js.set_property(obj, "cols", js.create(imgRaw.cols));
+    js.set_property(obj, "rows", js.create(imgRaw.rows));
     js.set_property(obj, "imgRaw", js_mat_wrap(js.ctx, imgRaw));
     js.set_property(obj, "imgVector", js_mat_wrap(js.ctx, imgVector));
     js.set_property(obj, "imgOriginal", js_mat_wrap(js.ctx, imgOriginal));
@@ -1156,7 +1161,7 @@ js_init(int argc, char* argv[]) {
   js.init(argc, argv);
 
   JSValue* fn = js.get_function("drawContour");
-  global_obj = js.global_object();
+  JSValue global_obj = js.global_object();
 
   /*  js_point_constructor(js.ctx, js.global_object(), nullptr);
     js_rect_constructor(js.ctx, js.global_object(), nullptr);
@@ -1188,7 +1193,7 @@ js_init(int argc, char* argv[]) {
   // js_draw_functions(js.ctx, js.global_object());
   /*  js.add_function("drawContour", &js_draw_contour, 2);
     js.add_function("drawLine", &js_draw_line, 2);
-    js.add_function("drawRect", &js_draw_rect, 2);
+    js.add_function("pdrawRect", &js_draw_rect, 2);
     js.add_function("drawPolygon", &js_draw_polygon, 2);
     js.add_function("drawCircle", &js_draw_circle, 2);
   */

@@ -244,7 +244,7 @@ js_new(JSContext* ctx, const char* name) {
   return JS_NewObjectProto(ctx, js_proto(ctx, name));
 }
 
-static inline JSValue
+/*static inline JSValue
 js_point_create(JSContext* ctx, double x, double y) {
 
   JSValue point = js_new(ctx, "Point");
@@ -252,7 +252,7 @@ js_point_create(JSContext* ctx, double x, double y) {
   JS_SetPropertyStr(ctx, point, "x", JS_NewFloat64(ctx, x));
   JS_SetPropertyStr(ctx, point, "y", JS_NewFloat64(ctx, y));
   return point;
-}
+}*/
 
 static inline int
 js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData* out) {

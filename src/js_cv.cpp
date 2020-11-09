@@ -361,10 +361,120 @@ js_cv_wait_key(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
   return ret;
 }
 
+static JSValue
+js_cv_getperspectivetransform(JSContext* ctx,
+                                   JSValueConst this_val,
+                                   int argc,
+                                   JSValueConst* argv) {
+  JSContourData *v, *other = nullptr, *ptr;
+  JSValue ret = JS_UNDEFINED;
+  bool handleNested = true;
+  std::vector<cv::Point2f> a, b;
+  cv::Mat matrix;
+  int32_t solveMethod = cv::DECOMP_LU;
+
+  v = js_contour_data(ctx, argv[0]);
+  if(!v)
+    return JS_EXCEPTION;
+
+  if(argc > 1) {
+    other = static_cast<JSContourData*>(JS_GetOpaque2(ctx, argv[1], js_contour_class_id));
+
+    if(argc > 2) {
+      JS_ToInt32(ctx, &solveMethod, argv[2]);
+    }
+  }
+
+  std::transform(v->begin(),
+                 v->end(),
+                 std::back_inserter(a),
+                 [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
+
+  std::transform(other->begin(),
+                 other->end(),
+                 std::back_inserter(b),
+                 [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
+
+  matrix = cv::getPerspectiveTransform(a, b , solveMethod);
+
+  ret = js_mat_wrap(ctx, matrix);
+  return ret;
+}
+
+static JSValue
+js_cv_getaffinetransform(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSContourData *v, *other = nullptr, *ptr;
+  JSValue ret = JS_UNDEFINED;
+  bool handleNested = true;
+  std::vector<cv::Point2f> a, b;
+  cv::Mat matrix;
+
+  v = js_contour_data(ctx, argv[0]);
+  if(!v)
+    return JS_EXCEPTION;
+
+  if(argc > 1) {
+    other = static_cast<JSContourData*>(JS_GetOpaque2(ctx, argv[1], js_contour_class_id));
+  }
+
+  std::transform(v->begin(),
+                 v->end(),
+                 std::back_inserter(a),
+                 [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
+
+  std::transform(other->begin(),
+                 other->end(),
+                 std::back_inserter(b),
+                 [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
+
+  matrix = cv::getAffineTransform(a, b);
+
+  ret = js_mat_wrap(ctx, matrix);
+  return ret;
+}
+
+static JSValue
+js_cv_findcontours(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  cv::Mat* m = js_mat_data(ctx, argv[0]);
+  JSValue ret = JS_UNDEFINED;
+  int mode = cv::RETR_TREE;
+  int approx = cv::CHAIN_APPROX_SIMPLE;
+  cv::Point offset(0, 0);
+
+  contour2i_vector contours;
+  vec4i_vector hier;
+  contour2f_vector poly;
+
+  cv::findContours(*m, contours, hier, mode, approx, offset);
+
+  poly.resize(contours.size());
+
+  transform_contours(contours.cbegin(), contours.cend(), poly.begin());
+
+  {
+    JSValue hier_arr = js_vector_vec4i_to_array(ctx, hier);
+    JSValue contours_obj = js_contours_new(ctx, poly);
+
+    ret = JS_NewObject(ctx);
+
+    JS_SetPropertyStr(ctx, ret, "hier", hier_arr);
+    JS_SetPropertyStr(ctx, ret, "contours", contours_obj);
+  }
+  return ret;
+}
+
+
 JSValue cv_proto, cv_class;
 JSClassID js_cv_class_id;
 
-JSClassDef js_cv_class = {"cv"};
+void
+js_cv_finalizer(JSRuntime* rt, JSValue val) {
+
+  JS_FreeValueRT(rt, val);
+  //JS_FreeValueRT(rt, cv_class);
+}
+
+JSClassDef js_cv_class = {.class_name = "cv", .finalizer = js_cv_finalizer};
 
 const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_CFUNC_DEF("HoughLines", 5, js_cv_hough_lines),
@@ -379,6 +489,9 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_CFUNC_DEF("namedWindow", 1, js_cv_named_window),
     JS_CFUNC_DEF("createTrackbar", 5, js_cv_create_trackbar),
     JS_CFUNC_DEF("waitKey", 0, js_cv_wait_key),
+    JS_CFUNC_DEF("getPerspectiveTransform", 2, js_cv_getperspectivetransform),
+    JS_CFUNC_DEF("getAffineTransform", 2, js_cv_getaffinetransform),
+    JS_CFUNC_DEF("findContours", 1, js_cv_findcontours),
     JS_PROP_INT32_DEF("CV_VERSION_MAJOR", CV_VERSION_MAJOR, JS_PROP_ENUMERABLE),
     JS_PROP_INT32_DEF("CV_VERSION_MINOR", CV_VERSION_MINOR, JS_PROP_ENUMERABLE),
     JS_PROP_INT32_DEF("CV_VERSION_REVISION", CV_VERSION_REVISION, JS_PROP_ENUMERABLE),
@@ -642,21 +755,30 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_PROP_INT32_DEF("COLOR_BayerGB2RGBA", cv::COLOR_BayerGB2RGBA, 0),
     JS_PROP_INT32_DEF("COLOR_BayerRG2RGBA", cv::COLOR_BayerRG2RGBA, 0),
     JS_PROP_INT32_DEF("COLOR_BayerGR2RGBA", cv::COLOR_BayerGR2RGBA, 0),
+    JS_PROP_INT32_DEF("RETR_EXTERNAL", cv::RETR_EXTERNAL, 0),
+    JS_PROP_INT32_DEF("RETR_LIST", cv::RETR_LIST, 0),
+    JS_PROP_INT32_DEF("RETR_CCOMP", cv::RETR_CCOMP, 0),
+    JS_PROP_INT32_DEF("RETR_TREE", cv::RETR_TREE, 0),
+    JS_PROP_INT32_DEF("RETR_FLOODFILL", cv::RETR_FLOODFILL, 0),
+    JS_PROP_INT32_DEF("CHAIN_APPROX_NONE", cv::CHAIN_APPROX_NONE, 0),
+    JS_PROP_INT32_DEF("CHAIN_APPROX_SIMPLE", cv::CHAIN_APPROX_SIMPLE, 0),
+    JS_PROP_INT32_DEF("CHAIN_APPROX_TC89_L1", cv::CHAIN_APPROX_TC89_L1, 0),
+    JS_PROP_INT32_DEF("CHAIN_APPROX_TC89_KCOS", cv::CHAIN_APPROX_TC89_KCOS, 0),
 
 };
 
 int
 js_cv_init(JSContext* ctx, JSModuleDef* m) {
-  cv_class = JS_NewObject(ctx);
-  JS_SetPropertyFunctionList(ctx, cv_class, js_cv_static_funcs, countof(js_cv_static_funcs));
-  JSValue g = JS_GetGlobalObject(ctx);
+ /* cv_class = JS_NewObject(ctx);
+  JS_SetPropertyFunctionList(ctx, cv_class, js_cv_static_funcs, countof(js_cv_static_funcs));*/
+ /* JSValue g = JS_GetGlobalObject(ctx);
 
   int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
-  int32array_proto = JS_GetPrototype(ctx, int32array_ctor);
-
-  if(m)
+  int32array_proto = JS_GetPrototype(ctx, int32array_ctor);*/
+   JS_SetModuleExportList(ctx, m, js_cv_static_funcs, countof(js_cv_static_funcs));
+  /*if(m)
     JS_SetModuleExport(ctx, m, "cv", cv_class);
-
+*/
   return 0;
 }
 

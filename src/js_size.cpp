@@ -12,9 +12,11 @@ js_size_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* ar
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
 
-  s = static_cast<JSSizeData*>(js_mallocz(ctx, sizeof(*s)));
+  s = static_cast<JSSizeData*>(js_mallocz(ctx, sizeof(JSSizeData)));
   if(!s)
     return JS_EXCEPTION;
+  new (s) JSSizeData();
+  
   if(JS_ToFloat64(ctx, &s->width, argv[0]))
     goto fail;
   if(JS_ToFloat64(ctx, &s->height, argv[1]))

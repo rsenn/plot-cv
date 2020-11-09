@@ -6,41 +6,41 @@
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module_rect
 #endif
 
-static JSValue
-js_rect_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
+extern "C"
+VISIBLE JSValue
+js_rect_new(JSContext* ctx, double x, double y, double w, double h) {
+  JSValue ret;
   JSRectData* s;
-  JSValue obj = JS_UNDEFINED;
-  JSValue proto;
 
-  s = static_cast<JSRectData*>(js_mallocz(ctx, sizeof(*s)));
+  ret = JS_NewObjectProtoClass(ctx, rect_proto, js_rect_class_id);
+
+  s = static_cast<JSRectData*>(js_mallocz(ctx, sizeof(JSRectData)));
 
   new(s) JSRectData();
+  s->x = x;
+  s->y = y;
+  s->width = w;
+  s->height = h;
 
-  if(!s)
+  JS_SetOpaque(ret, s);
+  return ret;
+}
+
+
+static JSValue
+js_rect_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
+  double x, y, w, h;
+
+  if(JS_ToFloat64(ctx, &x, argv[0]))
     return JS_EXCEPTION;
-  if(JS_ToFloat64(ctx, &s->x, argv[0]))
-    goto fail;
-  if(JS_ToFloat64(ctx, &s->y, argv[1]))
-    goto fail;
-  if(JS_ToFloat64(ctx, &s->width, argv[2]))
-    goto fail;
-  if(JS_ToFloat64(ctx, &s->height, argv[3]))
-    goto fail;
-  /* using new_target to get the prototype is necessary when the
-     class is extended. */
-  proto = JS_GetPropertyStr(ctx, new_target, "prototype");
-  if(JS_IsException(proto))
-    goto fail;
-  obj = JS_NewObjectProtoClass(ctx, proto, js_rect_class_id);
-  JS_FreeValue(ctx, proto);
-  if(JS_IsException(obj))
-    goto fail;
-  JS_SetOpaque(obj, s);
-  return obj;
-fail:
-  js_free(ctx, s);
-  JS_FreeValue(ctx, obj);
-  return JS_EXCEPTION;
+  if(JS_ToFloat64(ctx, &y, argv[1]))
+    return JS_EXCEPTION;
+  if(JS_ToFloat64(ctx, &w, argv[2]))
+    return JS_EXCEPTION;
+  if(JS_ToFloat64(ctx, &h, argv[3]))
+    return JS_EXCEPTION;
+
+  return js_rect_new(ctx, x, y, w, h);
 }
 
 VISIBLE JSRectData*

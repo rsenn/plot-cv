@@ -580,6 +580,11 @@ async function main() {
     res.send(data.toString().replace(/<\?TS\?>/g, Util.unixTime() + ''));
   });
 
+  app.post('/contours', async (req, res) => {
+    const { body } = req;
+    console.log('Contours: ', body);
+  });
+
   app.post('/save', async (req, res, next) => {
     //   const filename = (req.headers['content-disposition']||'').replace(new RegExp('.*"([^"]*)".*','g'), '$1') || 'output.svg';
     /*    const filename = path.join(process.cwd(), 'tmp', 'upload-' + Util.toUnixTime(Date.now()) + '.txt');

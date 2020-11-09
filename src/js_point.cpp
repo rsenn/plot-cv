@@ -3,6 +3,7 @@
 #include "quickjs/cutils.h"
 #include "quickjs/quickjs.h"
 
+#include <list>
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
@@ -11,6 +12,8 @@
 #else
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module_point
 #endif
+
+std::vector<JSPointData*> points;
 
 extern "C" {
 
@@ -22,8 +25,12 @@ js_point_new(JSContext* ctx, double x, double y) {
   ret = JS_NewObjectProtoClass(ctx, point_proto, js_point_class_id);
 
   s = static_cast<JSPointData*>(js_mallocz(ctx, sizeof(JSPointData)));
+
+  new(s) JSPointData();
   s->x = x;
   s->y = y;
+
+  points.push_back(s);
 
   JS_SetOpaque(ret, s);
   return ret;
@@ -47,32 +54,14 @@ js_point_cross(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
 
 static JSValue
 js_point_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
-  JSPointData* s;
-  JSValue obj = JS_UNDEFINED;
-  JSValue proto;
+  double x,y;
 
-  s = static_cast<JSPointData*>(js_mallocz(ctx, sizeof(*s)));
-  if(!s)
+  if(JS_ToFloat64(ctx, &x, argv[0]))
     return JS_EXCEPTION;
-  if(JS_ToFloat64(ctx, &s->x, argv[0]))
-    goto fail;
-  if(JS_ToFloat64(ctx, &s->y, argv[1]))
-    goto fail;
-  /* using new_target to get the prototype is necessary when the
-     class is extended. */
-  proto = JS_GetPropertyStr(ctx, new_target, "prototype");
-  if(JS_IsException(proto))
-    goto fail;
-  obj = JS_NewObjectProtoClass(ctx, proto, js_point_class_id);
-  JS_FreeValue(ctx, proto);
-  if(JS_IsException(obj))
-    goto fail;
-  JS_SetOpaque(obj, s);
-  return obj;
-fail:
-  js_free(ctx, s);
-  JS_FreeValue(ctx, obj);
-  return JS_EXCEPTION;
+  if(JS_ToFloat64(ctx, &y, argv[1]))
+    return JS_EXCEPTION;
+
+  return js_point_new(ctx, x, y);
 }
 
 VISIBLE JSPointData*
@@ -107,8 +96,22 @@ js_point_diff(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
 static void
 js_point_finalizer(JSRuntime* rt, JSValue val) {
   JSPointData* s = static_cast<JSPointData*>(JS_GetOpaque(val, js_point_class_id));
-  /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
-  js_free_rt(rt, s);
+
+  if(s != nullptr) {
+    auto pos = std::find(points.begin(), points.end(), s);
+
+    if(pos != points.end()) {
+      points.erase(pos);
+    } else {
+      bool isObject = JS_IsObject(val);
+      bool isNumber = JS_IsNumber(val);
+      std::cerr << "isObject: " << isObject << std::endl;
+      std::cerr << "isNumber: " << isNumber << std::endl;
+    }
+   js_free_rt(rt, s);
+  }
+
+  JS_FreeValueRT(rt, val);
 }
 
 static JSValue

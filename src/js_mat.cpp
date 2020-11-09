@@ -83,6 +83,8 @@ js_mat_finalizer(JSRuntime* rt, JSValue val) {
   s->release();
 
   js_free_rt(rt, s);
+
+  JS_FreeValueRT(rt, val);
 }
 
 static JSValue

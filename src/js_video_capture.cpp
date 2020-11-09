@@ -16,12 +16,11 @@ js_video_capture_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValue
   JSValue proto, ret;
   int32_t camID, apiPreference;
 
-  s = static_cast<JSVideoCaptureData*>(js_mallocz(ctx, sizeof(*s)));
-
-  new(s) JSVideoCaptureData();
-
+  s = static_cast<JSVideoCaptureData*>(js_mallocz(ctx, sizeof(JSVideoCaptureData)));
   if(!s)
     return JS_EXCEPTION;
+
+  new(s) JSVideoCaptureData();
 
   if(!JS_ToInt32(ctx, &camID, argv[0])) {
     if(JS_ToInt32(ctx, &apiPreference, argv[1]))
@@ -106,6 +105,15 @@ js_video_capture_method(
       ret = JS_EXCEPTION;
   }
 
+  if(magic == 6 || magic == 7) {
+    JSMatData* m = js_mat_data(ctx, argv[0]);
+
+    if(m == nullptr)
+      return JS_EXCEPTION;
+
+    ret = JS_NewBool(ctx, magic == 6 ? s->read(*m) : s->retrieve(*m));
+  }
+
   return ret;
 }
 
@@ -141,8 +149,8 @@ const JSCFunctionListEntry js_video_capture_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("grab", 0, js_video_capture_method, 3),
     JS_CFUNC_MAGIC_DEF("isOpened", 0, js_video_capture_method, 4),
     JS_CFUNC_MAGIC_DEF("open", 0, js_video_capture_method, 5),
-    JS_CFUNC_MAGIC_DEF("read", 0, js_video_capture_method, 6),
-    JS_CFUNC_MAGIC_DEF("retrieve", 0, js_video_capture_method, 7),
+    JS_CFUNC_MAGIC_DEF("read", 1, js_video_capture_method, 6),
+    JS_CFUNC_MAGIC_DEF("retrieve", 1, js_video_capture_method, 7),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "VideoCapture", JS_PROP_CONFIGURABLE),
 
 };
