@@ -54,7 +54,7 @@ main() {
   FILES=`set -- $LIST; echo "${*##* }"`
   (set -- $LIST; echo "Got $# files." 1>&2)
 
-  (set -x; clang-format -style=file  ${WIDTH:+-style="{ColumnLimit:$WIDTH}"} -if $FILES)
+  (set -x; clang-format -style=file  ${WIDTH:+-style="{ColumnLimit:$WIDTH}"} -i $FILES)
 
   A=`temp_file "A"`
 
