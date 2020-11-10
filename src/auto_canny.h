@@ -22,7 +22,10 @@ medianMat(cv::Mat Input) {
 cv::Mat
 auto_canny(cv::Mat& image, cv::Mat& output, float sigma = 0.33) {
   // convert to grey colour space
-  cv::cvtColor(image, output, cv::COLOR_BGR2GRAY);
+  if(image.channels() >= 3)
+    cv::cvtColor(image, output, cv::COLOR_BGR2GRAY);
+  else
+    image.copyTo(output);
   // apply small amount of Gaussian blurring
   cv::GaussianBlur(output, output, cv::Size(3, 3), 0, 0);
   // get the median value of the matrix

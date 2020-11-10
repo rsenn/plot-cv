@@ -1199,6 +1199,24 @@ const CreateGrblSocket = async (port = 'tnt1') => {
   }
 };
 
+function HandleMessage(msg) {
+  const { type, origin, recipient, body } = msg;
+
+
+  switch(type) {
+    case 'CONTOURS': {
+      let { frame,width,height,contours } = body;
+
+      let lists = contours.split(/\s*\|\s*/g).map(pointStr => new PointList(pointStr));
+
+window.lists = lists;
+      console.log("HandleMessage",{type,width,height,frame},lists);
+
+      break;
+    }
+  }
+}
+
 const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
   // log = log || ((...args) => console.log(...args));
   socketURL = socketURL || Util.makeURL({ location: '/ws', protocol: 'ws' });
@@ -1223,10 +1241,12 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
   for await (event of ws) {
     if(event.type == 'message') {
       const { data } = event;
-      console.log('data:', Util.abbreviate(data, 40));
+   //   console.log('data:', Util.abbreviate(data, 40));
       let msg = new Message(data);
       window.msg = msg;
-      LogJS.info('WebSocket recv: ' + Util.toString(msg)); //fmsg[Symbol.toStringTag]());
+     // LogJS.info('WebSocket recv: ' + Util.toString(msg));
+                                             //console.log('WebSocket data:', msg);
+HandleMessage(msg);
       ws.dataAvailable !== 0;
     } else {
       console.log(`${event.type}:`, event);
