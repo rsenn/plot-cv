@@ -52,16 +52,16 @@ async function main(...args) {
 
     console.log('pl:', pl + '');
 
-    let c= new Contour(pl);
-for(let i = 0; i < pl.length; i++)
-    delete pl[i];
+    let c = new Contour(pl);
+    /*for(let i = 0; i < pl.length; i++)
+    delete pl[i];*/
     return c;
   }
 
   let contours = Util.repeat(4, () => randContour());
 
-  let contourStr = contours.map(c => c.toString());
-  let contourSource = contours.map(c => c.toSource());
+  let contourStr = contours.map(c => c.toString(Contour.FORMAT_NOBRACKET | Contour.FORMAT_SPACE | Contour.FORMAT_01));
+  //  let contourSource = contours.map(c => c.toSource());
 
   console.log('contours:',
     //contours.map(contour => contour.toArray())

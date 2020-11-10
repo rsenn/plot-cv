@@ -28,12 +28,10 @@ js_array_to_vector<int>(JSContext* ctx, JSValueConst arr, std::vector<int>& out)
   JSValue len = JS_GetPropertyStr(ctx, arr, "length");
   JS_ToInt64(ctx, &n, len);
   out.reserve(out.size() + n);
-  for(i = 0; i < n; i++) {
-    int32_t value;
+  for(i = 0; i < n; i++) {    int32_t value;
     JSValue item = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
     JS_ToInt32(ctx, &value, item);
     out.push_back(value);
-    
     JS_FreeValue(ctx, item);
   }
   return n;
@@ -48,9 +46,7 @@ js_array_to_vector<JSPointData>(JSContext* ctx, JSValueConst arr, std::vector<JS
   out.reserve(out.size() + n);
   for(i = 0; i < n; i++) {
     JSValue item = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
-
     out.push_back(js_point_get(ctx, item));
-
     JS_FreeValue(ctx, item);
   }
   return n;
@@ -1017,7 +1013,7 @@ js_contour_tostring(
   if(!s)
     return JS_EXCEPTION;
 
-  if(magic == 1)
+  if(magic == 1 && !(flags & 0x100))
     os << "new Contour(";
 
   if(argc > 0)
@@ -1025,21 +1021,31 @@ js_contour_tostring(
   else
     flags = 0;
 
+if(!(flags & 0x100))
   os << '[';
 
   std::for_each(s->begin(), s->end(), [&i, &os, flags, prec](const JSPointData& point) {
     if(i > 0)
-      os << ',';
+      os << ((flags  & 0x10) ? " " : ",");
 
-    if(flags)
-      os << "[" << std::setprecision(prec) << point.x << "," << point.y << "]";
+    if(!(flags & 0x100))
+      os << ((flags & 0x03) == 0 ? "{" : "[");
+
+
+if(flags & 0x03)
+      os <<  std::setprecision(prec) << point.x << "," << point.y;
     else
-      os << "{x:" << std::setprecision(prec) << point.x << ",y:" << point.y << "}";
+      os << "x:" << std::setprecision(prec) << point.x << ",y:" << point.y;
+
+    if(!(flags & 0x100))
+      os << ((flags & 0x03) == 0 ? "}" : "]");
+
     i++;
   });
+if(!(flags & 0x100))
   os << ']'; // << std::endl;
 
-  if(magic == 1)
+  if(magic == 1 && !(flags & 0x100))
     os << ")";
 
   return JS_NewString(ctx, os.str().c_str());
@@ -1124,7 +1130,14 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
 
 };
 const JSCFunctionListEntry js_contour_static_funcs[] = {
-    JS_CFUNC_DEF("fromRect", 1, js_contour_rect)};
+    JS_CFUNC_DEF("fromRect", 1, js_contour_rect),
+     JS_PROP_INT32_DEF("FORMAT_XY", 0x00, 0),
+    JS_PROP_INT32_DEF("FORMAT_01", 0x02, 0),
+    JS_PROP_INT32_DEF("FORMAT_SPACE", 0x10, 0),
+    JS_PROP_INT32_DEF("FORMAT_COMMA", 0x00, 0),
+    JS_PROP_INT32_DEF("FORMAT_BRACKET", 0x00, 0),
+    JS_PROP_INT32_DEF("FORMAT_NOBRACKET", 0x100, 0),
+};
 
 int
 js_contour_init(JSContext* ctx, JSModuleDef* m) {
