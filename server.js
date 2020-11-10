@@ -507,6 +507,8 @@ async function main() {
     //  Util.tryCatch(() => JSON.parse(str), d => data =d);
     stat = safeStat(configFile);
 
+    console.log("stat:", stat);
+
     res.json({ config: str, time: stat.mtime.getTime(), hash: Util.hashString(str) });
   });
   app.post('/config', async (req, res) => {
