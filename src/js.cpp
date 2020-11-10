@@ -17,6 +17,27 @@ char* normalize_module(JSContext* ctx,
                        const char* module_base_name,
                        const char* module_name,
                        void* opaque);
+
+struct JSString {
+  JSRefCountHeader header; /* must come first, 32-bit */
+  uint32_t len : 31;
+  uint8_t is_wide_char : 1; /* 0 = 8 bits, 1 = 16 bits characters */
+  /* for JS_ATOM_TYPE_SYMBOL: hash = 0, atom_type = 3,
+     for JS_ATOM_TYPE_PRIVATE: hash = 1, atom_type = 3
+     XXX: could change encoding to have one more bit in hash */
+  uint32_t hash : 30;
+  uint8_t atom_type : 2; /* != 0 if atom, JS_ATOM_TYPE_x */
+  uint32_t hash_next;    /* atom_index for JS_ATOM_TYPE_SYMBOL */
+#ifdef DUMP_LEAKS
+  struct list_head link; /* string list */
+#endif
+  union {
+    uint8_t str8[0]; /* 8 bit strings will get an extra null terminator */
+    uint16_t str16[0];
+  } u;
+};
+
+typedef struct JSString JSAtomStruct;
 };
 
 static JSValue
@@ -234,7 +255,7 @@ jsrt::is_color(const_value val) const {
 jsrt::global::global(jsrt& rt) : js(rt) { get(); }
 
 bool
-jsrt::global::get() {
+jsrt::global::get() const {
   if(js.ctx) {
     value global = JS_GetGlobalObject(js.ctx);
 
@@ -348,7 +369,7 @@ jsrt::set_global(const char* name, jsrt::value val) {
 }
 
 jsrt::value
-jsrt::get_global(const char* name) {
+jsrt::get_global(const char* name) const {
   value ret = JS_GetPropertyStr(ctx, global_object(), name);
   return ret;
 }
@@ -362,22 +383,27 @@ jsrt::is_promise(const_value val) {
 }
 
 jsrt::value
-jsrt::call(const char* name, size_t argc, value argv[]) {
+jsrt::call(const char* name, size_t argc, value argv[]) const {
   const_value func = get_global(name);
   return call(func, argc, argv);
 }
 
 jsrt::value
-jsrt::call(const_value func, std::vector<const_value>& args) {
+jsrt::call(const_value func, std::vector<value>& args) const {
   return call(func, args.size(), const_cast<value*>(args.data()));
 }
 
 jsrt::value
-jsrt::call(const_value func, size_t argc, value argv[]) {
-  value ret = JS_Call(ctx, func, global_object(), argc, const_cast<const_value*>(argv));
+jsrt::call(const_value func, const_value this_arg, size_t argc, value argv[]) const {
+  value ret = JS_Call(ctx, func, this_arg, argc, const_cast<const_value*>(argv));
   if(JS_IsException(ret))
     dump_error();
   return ret;
+}
+
+jsrt::value
+jsrt::call(const_value func, size_t argc, value argv[]) const {
+  return call(func, global_object(), argc, argv);
 }
 
 extern "C" char*
@@ -453,7 +479,7 @@ normalize_module(JSContext* ctx,
 }
 
 void
-jsrt::dump_error() {
+jsrt::dump_error() const {
   JSValue exception_val;
 
   exception_val = JS_GetException(ctx);
@@ -462,7 +488,7 @@ jsrt::dump_error() {
 }
 
 void
-jsrt::dump_exception(JSValueConst exception_val, bool is_throw) {
+jsrt::dump_exception(JSValueConst exception_val, bool is_throw) const {
   JSValue val;
   const char* stack;
   bool is_error;
@@ -480,4 +506,44 @@ jsrt::dump_exception(JSValueConst exception_val, bool is_throw) {
     }
     JS_FreeValue(ctx, val);
   }
+}
+
+jsrt::atom
+jsrt::new_atom(const char* buf, size_t len) {
+  return JS_NewAtomLen(ctx, buf, len);
+}
+jsrt::atom
+jsrt::new_atom(const char* str) {
+  return JS_NewAtom(ctx, str);
+}
+jsrt::atom
+jsrt::new_atom(uint32_t n) {
+  return JS_NewAtomUInt32(ctx, n);
+}
+void
+jsrt::free_atom(const jsrt::atom& a) {
+  JS_FreeAtom(ctx, a);
+}
+jsrt::value
+jsrt::atom_to_value(const jsrt::atom& a) {
+  return JS_AtomToValue(ctx, a);
+}
+jsrt::value
+jsrt::atom_to_string(const jsrt::atom& a) {
+  return JS_AtomToString(ctx, a);
+}
+const char*
+jsrt::atom_to_cstring(const jsrt::atom& a) {
+  return JS_AtomToCString(ctx, a);
+}
+
+jsrt::value
+jsrt::get_symbol(const char* name) const {
+  value ctor = get_global("Symbol");
+  if(has_property(ctor, name))
+    return get_property(ctor, name);
+
+  const_value for_fn = get_property(ctor, "for");
+  value arg = new_string(name);
+  return call(for_fn, ctor, 1, &arg);
 }

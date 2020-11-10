@@ -8,6 +8,8 @@
 #include "geometry.h"
 #include "psimpl.h"
 
+#include <iomanip>
+
 #if defined(JS_CONTOUR_MODULE) || defined(quickjs_contour_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
 #else
@@ -379,6 +381,21 @@ js_contour_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst*
   if(JS_IsException(obj))
     goto fail;
   JS_SetOpaque(obj, v);
+
+  if(argc > 0) {
+    int i;
+    jsrt js(ctx);
+
+    JSValue sym = js.get_symbol("iterator");
+
+    for(i = 0; i < argc; i++) {
+      JSValue iter = JS_GetPropertyStr(ctx, argv[i], "[Symbol.iterator]");
+
+      std::string t = js.typestr(iter);
+      std::cout << "iter = " << t << std::endl;
+    }
+  }
+
   return obj;
 fail:
   js_free(ctx, v);
@@ -962,21 +979,36 @@ js_contour_tostring(
   JSContourData* s = js_contour_data(ctx, this_val);
   std::ostringstream os;
   int i = 0;
+  int prec = 9;
+  int32_t flags;
+
   if(!s)
     return JS_EXCEPTION;
 
-  if(magic == 0)
-    os << "Contour";
+  if(magic == 1)
+    os << "new Contour(";
+
+  if(argc > 0)
+    JS_ToInt32(ctx, &flags, argv[0]);
+  else
+    flags = 0;
 
   os << '[';
 
-  std::for_each(s->begin(), s->end(), [&i, &os](const JSPointData& point) {
+  std::for_each(s->begin(), s->end(), [&i, &os, flags, prec](const JSPointData& point) {
     if(i > 0)
       os << ',';
-    os << "{x:" << point.x << ",y:" << point.y << "}";
+
+    if(flags)
+      os << "[" << std::setprecision(prec) << point.x << "," << point.y << "]";
+    else
+      os << "{x:" << std::setprecision(prec) << point.x << ",y:" << point.y << "}";
     i++;
   });
   os << ']'; // << std::endl;
+
+  if(magic == 1)
+    os << ")";
 
   return JS_NewString(ctx, os.str().c_str());
 }

@@ -28,6 +28,7 @@ struct jsiter;
 struct jsrt {
   typedef JSValue value;
   typedef JSValueConst const_value;
+  typedef JSAtom atom;
 
   value _true, _false, _null, _undefined;
 
@@ -35,7 +36,13 @@ struct jsrt {
   bool create(JSContext* ctx = 0);
 
   jsrt() : global(*this) {}
+  jsrt(JSContext* c) : ctx(c), global(*this) { rt = JS_GetRuntime(ctx); }
   ~jsrt();
+
+  value
+  new_string(const char* str) const {
+    return JS_NewString(ctx, str);
+  }
 
   typedef value c_function(jsrt* rt, const_value this_val, int argc, const_value* argv);
 
@@ -95,18 +102,27 @@ struct jsrt {
 
   std::string function_name(const_value fn) const;
 
-  value get_global(const char* name);
+  value get_global(const char* name) const;
   void set_global(const char* name, value v);
 
+  value get_symbol(const char* name) const;
+
+  const_value
+  global_object() const {
+    global.get();
+    return global;
+  }
   value
   global_object() {
     global.get();
     return global;
   }
 
-  value call(const_value func, size_t argc, value argv[]);
-  value call(const_value func, std::vector<const_value>& args);
-  value call(const char* name, size_t argc, value argv[]);
+  value call(const_value func, size_t argc, value argv[]) const;
+  value call(const_value func, std::vector< value>& args) const;
+  value call(const char* name, size_t argc, value argv[]) const;
+  value call(const_value func, const_value this_arg, size_t argc, value argv[]) const;
+
 
   /*  value call(const_value func, size_t argc, const_value argv[]) {
       return call(func, argc, const_cast<value*>(argv));
@@ -127,17 +143,28 @@ struct jsrt {
                                           bool enum_only = true,
                                           bool recursive = true) const;
 
-  void dump_error();
+  void dump_error() const;
 
-  void dump_exception(JSValueConst exception_val, bool is_throw);
+  void dump_exception(JSValueConst exception_val, bool is_throw) const;
 
   bool is_number(const_value val) const;
+  bool is_big_int(const_value val) const;
+  bool is_big_float(const_value val) const;
+  bool is_big_decimal(const_value val) const;
+  bool is_bool(const_value val) const;
+  bool is_null(const_value val) const;
   bool is_undefined(const_value val) const;
-  bool is_array(const_value val) const;
+  bool is_exception(const_value val) const;
+  bool is_uninitialized(const_value val) const;
+  bool is_string(const_value val) const;
+  bool is_symbol(const_value val) const;
   bool is_object(const_value val) const;
-  bool is_boolean(const_value val) const;
+  bool is_error(const_value val) const;
   bool is_function(const_value val) const;
   bool is_constructor(const_value val) const;
+  bool is_array(const_value val) const;
+  bool is_extensible(const_value val) const;
+
   bool is_promise(const_value val);
   bool is_point(const_value val) const;
   bool is_rect(const_value val) const;
@@ -148,19 +175,24 @@ struct jsrt {
   tag(const_value val) const {
     return JS_VALUE_GET_TAG(val);
   }
+
   std::string
   typestr(const_value val) const {
     if(is_number(val))
       return "number";
-    else if(is_boolean(val))
+    else if(is_bool(val))
       return "boolean";
     else if(is_function(val))
       return "function";
+    else if(is_symbol(val))
+      return "symbol";
+    else if(is_undefined(val))
+      return "undefined";
     /*   else if(is_constructor(val))
          return "constructor";*/
     else if(is_array(val))
       return "array";
-    else if(is_object(val))
+    else if(is_object(val) || is_null(val))
       return "object";
     else if(is_point(val))
       return "point";
@@ -168,8 +200,6 @@ struct jsrt {
       return "rect";
     else if(is_color(val))
       return "color";
-    else if(is_undefined(val))
-      return "undefined";
     return "unknown";
   }
 
@@ -179,6 +209,16 @@ struct jsrt {
     get_string(arg, ret);
     return ret;
   }
+
+  atom new_atom(const char*, size_t);
+  atom new_atom(const char*);
+  atom new_atom(uint32_t);
+
+  void free_atom(const atom& a);
+
+  value atom_to_value(const atom& a);
+  value atom_to_string(const atom& a);
+  const char* atom_to_cstring(const atom& a);
 
 protected:
   struct global {
@@ -191,9 +231,9 @@ protected:
 
   private:
     friend class jsrt;
-    bool get();
+    bool get() const;
 
-    value val;
+    mutable value val;
     jsrt& js;
   } global;
 
@@ -565,40 +605,73 @@ jsrt::has_property<uint32_t>(const_value obj, uint32_t index) const {
   JS_FreeAtom(ctx, atom);
   return present;
 }
-
 inline bool
 jsrt::is_number(const_value val) const {
   return JS_IsNumber(val);
 }
-
+inline bool
+jsrt::is_big_int(const_value val) const {
+  return JS_IsBigInt(ctx, val);
+}
+inline bool
+jsrt::is_big_float(const_value val) const {
+  return JS_IsBigFloat(val);
+}
+inline bool
+jsrt::is_big_decimal(const_value val) const {
+  return JS_IsBigDecimal(val);
+}
+inline bool
+jsrt::is_bool(const_value val) const {
+  return JS_IsBool(val);
+}
+inline bool
+jsrt::is_null(const_value val) const {
+  return JS_IsNull(val);
+}
 inline bool
 jsrt::is_undefined(const_value val) const {
   return JS_IsUndefined(val);
 }
-
 inline bool
-jsrt::is_array(const_value val) const {
-  return JS_IsArray(ctx, val);
+jsrt::is_exception(const_value val) const {
+  return JS_IsException(val);
 }
-
+inline bool
+jsrt::is_uninitialized(const_value val) const {
+  return JS_IsUninitialized(val);
+}
+inline bool
+jsrt::is_string(const_value val) const {
+  return JS_IsString(val);
+}
+inline bool
+jsrt::is_symbol(const_value val) const {
+  return JS_IsSymbol(val);
+}
 inline bool
 jsrt::is_object(const_value val) const {
   return JS_IsObject(val);
 }
-
 inline bool
-jsrt::is_boolean(const_value val) const {
-  return JS_IsBool(val);
+jsrt::is_error(const_value val) const {
+  return JS_IsError(ctx, val);
 }
-
 inline bool
 jsrt::is_function(const_value val) const {
   return JS_IsFunction(ctx, val);
 }
-
 inline bool
 jsrt::is_constructor(const_value val) const {
   return JS_IsConstructor(ctx, val);
+}
+inline bool
+jsrt::is_array(const_value val) const {
+  return JS_IsArray(ctx, val);
+}
+inline bool
+jsrt::is_extensible(const_value val) const {
+  return JS_IsExtensible(ctx, val);
 }
 
 inline bool

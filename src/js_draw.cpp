@@ -40,7 +40,7 @@ js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const
   if(argc > i && js.is_number(argv[i]))
     js.get_number(argv[i++], thickness);
 
-  if(argc > i && js.is_boolean(argv[i]))
+  if(argc > i && js.is_bool(argv[i]))
     js.get_boolean(argv[i++], antialias);
 
   if(dptr != nullptr) {
@@ -74,7 +74,7 @@ js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   if(argc > i && js.is_number(argv[i]))
     js.get_number(argv[i++], thickness);
 
-  if(argc > i && js.is_boolean(argv[i]))
+  if(argc > i && js.is_bool(argv[i]))
     js.get_boolean(argv[i++], antialias);
 
   if(dptr != nullptr)
@@ -104,7 +104,7 @@ js_draw_line(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
   if(argc > i && js.is_number(argv[i]))
     js.get_number(argv[i++], thickness);
 
-  if(argc > i && js.is_boolean(argv[i]))
+  if(argc > i && js.is_bool(argv[i]))
     js.get_boolean(argv[i++], antialias);
 
   cv::line(*dptr, points[0], points[1], color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
@@ -128,7 +128,7 @@ js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   if(argc > i && js.is_number(argv[i]))
     js.get_number(argv[i++], thickness);
 
-  if(argc > i && js.is_boolean(argv[i]))
+  if(argc > i && js.is_bool(argv[i]))
     js.get_boolean(argv[i++], antialias);
 
   if(dptr != nullptr) {
@@ -164,7 +164,7 @@ js_draw_rect(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
   if(argc > i && js.is_number(argv[i]))
     js.get_number(argv[i++], thickness);
 
-  if(argc > i && js.is_boolean(argv[i]))
+  if(argc > i && js.is_bool(argv[i]))
     js.get_boolean(argv[i++], antialias);
 
   points[0].x = rect.x;
