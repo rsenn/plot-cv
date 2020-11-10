@@ -28,7 +28,8 @@ js_array_to_vector<int>(JSContext* ctx, JSValueConst arr, std::vector<int>& out)
   JSValue len = JS_GetPropertyStr(ctx, arr, "length");
   JS_ToInt64(ctx, &n, len);
   out.reserve(out.size() + n);
-  for(i = 0; i < n; i++) {    int32_t value;
+  for(i = 0; i < n; i++) {
+    int32_t value;
     JSValue item = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
     JS_ToInt32(ctx, &value, item);
     out.push_back(value);
@@ -1021,19 +1022,18 @@ js_contour_tostring(
   else
     flags = 0;
 
-if(!(flags & 0x100))
-  os << '[';
+  if(!(flags & 0x100))
+    os << '[';
 
   std::for_each(s->begin(), s->end(), [&i, &os, flags, prec](const JSPointData& point) {
     if(i > 0)
-      os << ((flags  & 0x10) ? " " : ",");
+      os << ((flags & 0x10) ? " " : ",");
 
     if(!(flags & 0x100))
       os << ((flags & 0x03) == 0 ? "{" : "[");
 
-
-if(flags & 0x03)
-      os <<  std::setprecision(prec) << point.x << "," << point.y;
+    if(flags & 0x03)
+      os << std::setprecision(prec) << point.x << "," << point.y;
     else
       os << "x:" << std::setprecision(prec) << point.x << ",y:" << point.y;
 
@@ -1042,8 +1042,8 @@ if(flags & 0x03)
 
     i++;
   });
-if(!(flags & 0x100))
-  os << ']'; // << std::endl;
+  if(!(flags & 0x100))
+    os << ']'; // << std::endl;
 
   if(magic == 1 && !(flags & 0x100))
     os << ")";
@@ -1131,7 +1131,7 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
 };
 const JSCFunctionListEntry js_contour_static_funcs[] = {
     JS_CFUNC_DEF("fromRect", 1, js_contour_rect),
-     JS_PROP_INT32_DEF("FORMAT_XY", 0x00, 0),
+    JS_PROP_INT32_DEF("FORMAT_XY", 0x00, 0),
     JS_PROP_INT32_DEF("FORMAT_01", 0x02, 0),
     JS_PROP_INT32_DEF("FORMAT_SPACE", 0x10, 0),
     JS_PROP_INT32_DEF("FORMAT_COMMA", 0x00, 0),

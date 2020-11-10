@@ -133,6 +133,6 @@ function encodeBody(body) {
   if(body == undefined) return undefined;
 
   //console.debug('encodeBody', JSON.stringify(body));
-  return ':' + escape(JSON.stringify(body));
+  return ':' + /*escape*/ JSON.stringify(body);
 }
 export default Message;

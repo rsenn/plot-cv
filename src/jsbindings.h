@@ -347,11 +347,11 @@ js_point_read(JSContext* ctx, JSValueConst point, JSPointData* out) {
 
 static JSPointData
 js_point_get(JSContext* ctx, JSValueConst point) {
-  JSPointData r,*ptr;
-  if((ptr = js_point_data(ctx, point)) != nullptr)
-    r = *ptr;
-  else 
-    js_point_read(ctx, point, &r);
+  JSPointData r; /*, *ptr;
+   if((ptr = js_point_data(ctx, point)) != nullptr)
+     r = *ptr;
+   else*/
+  js_point_read(ctx, point, &r);
   return r;
 }
 
@@ -359,8 +359,8 @@ static inline bool
 js_is_point(JSContext* ctx, JSValueConst point) {
   JSPointData r;
 
-if(js_point_data(ctx, point))
-  return true;
+  if(js_point_data(ctx, point))
+    return true;
 
   if(js_point_read(ctx, point, &r))
     return true;

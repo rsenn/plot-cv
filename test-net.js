@@ -5,16 +5,21 @@ import { Contour } from 'contour';
 import * as cv from 'cv';
 import { Point } from 'point';
 import { PointIterator } from 'point-iterator';
+import { VideoCapture } from 'video-capture';
+import { Mat } from 'mat';
 import { PointList } from './lib/geom.js';
 import { Alea } from './lib/alea.js';
 import * as os from 'os';
 
-let prng = new Alea(1337);
+let prng = new Alea(Date.now());
+const hr = Util.hrtime;
 
 async function main(...args) {
+  let start;
+  let begin = hr();
   await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
 
-  function connect() {
+  /*  function connect() {
     print('CLIENT');
     net.client({
       port: 3001,
@@ -34,44 +39,28 @@ async function main(...args) {
       }
     });
   }
-  console.log('globalThis.cv:', globalThis.cv);
-  //console.log('global.cv:', global.cv);
+*/
+  console.log('Setup duration:', hr(begin));
 
-  const getTicks = (() => {
-    const f = cv.getTickFrequency();
-    const ns = f / 10000000;
-    const ms = f / 1000;
-    const s = f;
+  let raw = new Mat();
+  let cap = new VideoCapture();
+  cap.open(0, cv.CAP_V4L2);
 
-    return () => {
-      const ticks = cv.getTickCount();
-      return [Math.floor(ticks / s), Math.floor(ticks / ns)];
-    };
-  })();
+  cap.read(raw);
+  const width = raw.cols;
+  const height = raw.rows;
 
-  console.log('Symbol.iterator:', Symbol.iterator);
-  console.log('fetch:', fetch);
-  console.log('cv:', cv);
-  console.log('cv.getTickCount:', cv.getTickCount);
-  console.log('cv.getTickCount():', cv.getTickCount());
-  console.log('getTicks():', getTicks());
+  console.log('raw', raw.cols, raw.rows);
 
-  const hr = Util.hrtime;
-  const times = Util.repeat(4, undefined);
+  console.log('Preamble duration:', hr(begin));
 
-  times[0] = hr();
-  os.sleep(10);
-  times[1] = hr();
-  os.sleep(100);
-  times[2] = hr();
-  os.sleep(1000);
-  times[3] = hr();
-
-  for(let i = 0; i < times.length; i++) console.log(`times[${i}] =`, times[i]);
+  start = hr();
 
   function randContour() {
     let pl = new PointList();
-    Util.repeat(Util.randInt(10, 100, prng), () => pl.push(Util.randInt(0, 1024, prng), Util.randInt(0, 1024, prng)));
+    Util.repeat(Util.randInt(10, 100, prng), () =>
+      pl.push(Util.randInt(0, width, prng), Util.randInt(0, height, prng))
+    );
     let ctr = pl.centroid();
     let bb = pl.bbox();
     pl.translate(-ctr.x, -ctr.y);
@@ -90,23 +79,27 @@ async function main(...args) {
 
   let contours = Util.repeat(4, () => randContour());
   let contourStr = contours.map(c => c.toString(Contour.FORMAT_NOBRACKET | Contour.FORMAT_SPACE | Contour.FORMAT_01));
-  //console.log('contours:', contours.map(contour => [...contour]));
+  let body;
+  body = JSON.stringify({ contours: contourStr, frame: 0, width, height });
+  console.log('Prepare duration:', hr(start));
 
-  let body; // = Util.encodeQuery({ data: Util.repeat(10, 'TEST\n').join(''), num: 1234 });
-
-  body = JSON.stringify({ contours: contourStr, frame: 0 });
+  start = hr();
 
   let response = await fetch('http://127.0.0.1:3001/contours', {
     method: 'post',
     headers: {
       'Content-Type': 'application/json',
-      //'User-Agent': 'meep!meep!',
-      'user-agent': 'meep!meep!'
+      'User-Agent': 'meep!meep!'
     },
     body
   });
+
+  console.log('Request duration:', hr(start));
+
   console.log('response:', response);
   console.log('response:', Util.getMemberNames(response));
-  return 'done';
+
+  console.log('Total duration:', hr(begin));
 }
+
 Util.callMain(main, true);

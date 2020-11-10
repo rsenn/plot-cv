@@ -1,5 +1,6 @@
 import * as net from 'net.so';
 import { Contour } from 'contour.so';
+import { Mat } from 'mat.so';
 import PortableConsole from './lib/consoleSetup.js';
 import Util from './lib/util.js';
 const { client, server, fetch } = net;
@@ -27,30 +28,24 @@ function connect() {
   });
 }
 
-globalThis.process = async function process(contours, hier, ...args) {
+let frame = 0;
+let g = Util.getGlobalObject();
+
+g.process = async function process(contours, hier, ...args) {
   //let size = new Size(imgOriginal.cols, imgOriginal.rows);
+  const time = Date.now();
   const [images, ...rest] = args;
-  const {
-    cols,
-    rows,
-    imgBlurred,
-    imgCanny,
-    imgGrayscale,
-    imgMorphology,
-    imgOriginal,
-    imgRaw,
-    imgTemp,
-    imgVector
-  } = images;
-  console.log('console.log: ', console.log);
-  let m = imgRaw;
+  const { imgBlurred, imgCanny, imgGrayscale, imgMorphology, imgOriginal, imgRaw, imgTemp, imgVector } = images;
+  console.log('images: ', Object.keys(images));
+  let m = images.imgVector;
   /*  console.log('Images: ', typeof images);
   console.log('Images: ', Object.keys(images));
   console.log('Images: ', Util.inspect(images));
   console.log('rest.length: ', rest.length);
   console.log('rest: ', ...rest);*/
+  const { cols, rows } = m;
 
-  console.log('imgRaw: ', Util.className(m));
+  console.log('m: ', m);
   console.log(`Video resolution: ${cols}x${rows}`);
   console.log('Num contours: ', contours.length);
   console.log('Contours: ', Util.className(contours));
@@ -59,17 +54,33 @@ globalThis.process = async function process(contours, hier, ...args) {
   // console.log('contours[0]: ', contours[0]);
   console.log('contours[0][0]: ', contours[0][0]);
 
-  let body = contours.map(contour => contour.toString()).join(',');
+  let data = {
+    width: cols,
+    height: rows,
+    frame,
+    time,
+    contours: contours
+      .map(c => c.toString(Contour.FORMAT_NOBRACKET | Contour.FORMAT_SPACE | Contour.FORMAT_01))
+      .join('|')
+  };
+  let body = JSON.stringify(data);
+  console.log('body: ', Util.abbreviate(body));
 
-  console.log('body: ', body);
+  frame++;
 
-  let response = await fetch('http://127.0.0.1:3001/contours', { method: 'POST', body });
+  let response = await fetch('http://127.0.0.1:3001/contours', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body
+  });
+
   console.log('response: ', response);
+  return response;
 };
 
-let args = Util.getArgv();
+/*let args = Util.getArgv();
 console.log('args:', args);
 
 if(args.length >= 1) process([new Contour()], [], {});
-
+*/
 //client();

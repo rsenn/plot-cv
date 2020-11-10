@@ -79,9 +79,14 @@ async function runMount(dirsIterator) {
 
 async function RequestContours(req, res) {
   const { body } = req;
-  console.log(`${req.url} body:`, body);
+  const { contours, frame, width, height } = body;
+  console.log(`${req.url}`, { contours, frame, width, height });
 
-  res.json({ status: 'OK' });
+  res.status(200).send('OK');
+
+  Socket.sendAll({ type: 'DATA', body /*: `#${frame} ${width} ${height} : ${contours.join(' | ')}`*/ });
+
+  //  res.json({ status: 'OK' });
 }
 
 //console.log('Serving from', p);
@@ -100,7 +105,7 @@ async function main() {
 
   app.use(express.text({ type: 'application/xml', limit: '16384kb' }));
 
-  app.use(bodyParser.json());
+  app.use(bodyParser.json({ limit: '200mb' }));
   app.use(bodyParser.raw({ type: 'text/plain;charset=UTF-8', limit: '524288kb' }));
   app.use(bodyParser.raw({ type: 'text/plain', limit: '524288kb' }));
   app.use(bodyParser.raw({ type: 'application/octet-stream', limit: '524288kb' }));

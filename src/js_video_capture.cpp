@@ -14,7 +14,7 @@ js_video_capture_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValue
   JSVideoCaptureData* s;
   JSValue obj = JS_UNDEFINED;
   JSValue proto, ret;
-  int32_t camID, apiPreference;
+  int32_t camID, apiPreference = cv::CAP_ANY;
 
   s = static_cast<JSVideoCaptureData*>(js_mallocz(ctx, sizeof(JSVideoCaptureData)));
   if(!s)
@@ -23,8 +23,9 @@ js_video_capture_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValue
   new(s) JSVideoCaptureData();
 
   if(!JS_ToInt32(ctx, &camID, argv[0])) {
-    if(JS_ToInt32(ctx, &apiPreference, argv[1]))
-      apiPreference = cv::CAP_ANY;
+    if(argc > 1)
+      if(JS_ToInt32(ctx, &apiPreference, argv[1]))
+        apiPreference = cv::CAP_ANY;
 
     s->open(camID, apiPreference);
   }
@@ -59,6 +60,8 @@ js_video_capture_finalizer(JSRuntime* rt, JSValue val) {
 
   s->~JSVideoCaptureData();
   js_free_rt(rt, s);
+
+  JS_FreeValueRT(rt, val);
 }
 
 static JSValue
@@ -67,7 +70,7 @@ js_video_capture_method(
   JSVideoCaptureData* s = static_cast<JSVideoCaptureData*>(
       JS_GetOpaque2(ctx, video_capture, js_video_capture_class_id));
   JSValue ret = JS_UNDEFINED;
-  JSPointData point = js_point_get(ctx, argv[0]);
+
   if(magic == 0) {
     int32_t propID;
     double value = 0;
@@ -95,10 +98,11 @@ js_video_capture_method(
   if(magic == 4)
     ret = JS_NewBool(ctx, s->isOpened());
   if(magic == 5) {
-    int32_t camID, apiPreference;
+    int32_t camID, apiPreference = cv::CAP_ANY;
     if(!JS_ToInt32(ctx, &camID, argv[0])) {
-      if(JS_ToInt32(ctx, &apiPreference, argv[1]))
-        apiPreference = cv::CAP_ANY;
+      if(argc > 1)
+        if(JS_ToInt32(ctx, &apiPreference, argv[1]))
+          apiPreference = cv::CAP_ANY;
 
       ret = JS_NewBool(ctx, s->open(camID, apiPreference));
     } else
@@ -148,7 +152,7 @@ const JSCFunctionListEntry js_video_capture_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("getBackendName", 0, js_video_capture_method, 2),
     JS_CFUNC_MAGIC_DEF("grab", 0, js_video_capture_method, 3),
     JS_CFUNC_MAGIC_DEF("isOpened", 0, js_video_capture_method, 4),
-    JS_CFUNC_MAGIC_DEF("open", 0, js_video_capture_method, 5),
+    JS_CFUNC_MAGIC_DEF("open", 1, js_video_capture_method, 5),
     JS_CFUNC_MAGIC_DEF("read", 1, js_video_capture_method, 6),
     JS_CFUNC_MAGIC_DEF("retrieve", 1, js_video_capture_method, 7),
 
