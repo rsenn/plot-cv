@@ -1225,7 +1225,6 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
   ws.send = (...args) => {
     let [msg] = args;
     if(!(msg instanceof Message)) msg = new Message(...args);
-    console.log('msg:', msg, args);
     console.log('send:', msg.data);
     return send.call(ws, msg.data);
   };
