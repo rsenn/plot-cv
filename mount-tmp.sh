@@ -21,6 +21,9 @@ fi
 echo "$*" 1>&2
 
 mkdir -m 1777 -p tmp
+if [ ! -d data ]; then
+  mkdir -p data
+fi
 
 set -- data=RW "$@"
 
