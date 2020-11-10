@@ -2,7 +2,7 @@ import { Point } from 'point';
 import { Size } from 'size';
 import { Rect } from 'rect';
 import { Mat } from 'mat';
-import { cv } from 'cv';
+import * as cv from 'cv';
 import { Line } from 'line';
 import { Draw, drawLine, drawCircle } from 'draw';
 import inspect from './lib/objectInspect.js';
@@ -28,7 +28,7 @@ async function main(...args) {
   console.log('line', line);
 
   let image;
-  cv.namedWindow('main');
+  cv.namedWindow('main', cv.WINDOW_NORMAL|cv.WINDOW_KEEPRATIO);
   cv.createTrackbar('threshold', 'main', 0, 100, function(value, count, name, window) {
     console.log('Trackbar', { value, count, name, window });
   });
@@ -125,7 +125,7 @@ async function main(...args) {
 
   let key;
 
-  while((key = cv.waitKey())) {
+  while((key = cv.waitKey(0))) {
     console.log('key:', key);
 
     if(key == 'q' || key == '\x1b') break;

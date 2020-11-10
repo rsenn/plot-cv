@@ -22,6 +22,7 @@ export class Message {
     const { origin, recipient, type, body } = this;
 
     //console.log('new Message', Util.filterOutMembers({ origin, recipient, type, body }, v => v == undefined));
+    //console.log('new Message',  Util.abbreviate(this.encode(),80));
   }
 
   static isId(char) {
@@ -92,12 +93,11 @@ export class Message {
       ? (str, code) => prepend((code == Message.SENDER_ID ? ':' : '') + str)
       : (str, code) => prepend((r = String.fromCodePoint(code) + str + String.fromCodePoint(code)));
 
-    if(type) r = insertField(type, Message.TYPE_ID);
 
     if(recipient) r = insertField(recipient, Message.RECIPIENT_ID);
+   r = insertField(type || 'x', Message.TYPE_ID);
     if(origin) r = insertField(origin, Message.SENDER_ID);
-    //console.log('Message.encode =', r);
-
+ 
     return r;
   }
 

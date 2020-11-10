@@ -273,7 +273,7 @@ js_cv_normalize(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 static JSValue
 js_cv_named_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   const char* name;
-  int32_t flags = cv::WINDOW_AUTOSIZE;
+  int32_t flags = cv::WINDOW_NORMAL;
   name = JS_ToCString(ctx, argv[0]);
 
   if(argc > 1)
@@ -855,9 +855,15 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_PROP_INT32_DEF("CAP_PROP_AUTO_WB", cv::CAP_PROP_AUTO_WB, 0),
     JS_PROP_INT32_DEF("CAP_PROP_WB_TEMPERATURE", cv::CAP_PROP_WB_TEMPERATURE, 0),
     JS_PROP_INT32_DEF("CAP_PROP_CODEC_PIXEL_FORMAT", cv::CAP_PROP_CODEC_PIXEL_FORMAT, 0),
-    JS_PROP_INT32_DEF("CAP_PROP_BITRATE", cv::CAP_PROP_BITRATE, 0),
-    JS_PROP_INT32_DEF("CAP_PROP_ORIENTATION_META", cv::CAP_PROP_ORIENTATION_META, 0),
-    JS_PROP_INT32_DEF("CAP_PROP_ORIENTATION_AUTO", cv::CAP_PROP_ORIENTATION_AUTO, 0),
+
+    JS_PROP_INT32_DEF("WINDOW_NORMAL     ", cv::WINDOW_NORMAL     , 0),
+    JS_PROP_INT32_DEF("WINDOW_AUTOSIZE   ", cv::WINDOW_AUTOSIZE   , 0),
+    JS_PROP_INT32_DEF("WINDOW_OPENGL     ", cv::WINDOW_OPENGL     , 0),
+    JS_PROP_INT32_DEF("WINDOW_FULLSCREEN ", cv::WINDOW_FULLSCREEN , 0),
+    JS_PROP_INT32_DEF("WINDOW_FREERATIO  ", cv::WINDOW_FREERATIO  , 0),
+    JS_PROP_INT32_DEF("WINDOW_KEEPRATIO  ", cv::WINDOW_KEEPRATIO  , 0),
+    JS_PROP_INT32_DEF("WINDOW_GUI_EXPANDED", cv::WINDOW_GUI_EXPANDED, 0),
+    JS_PROP_INT32_DEF("WINDOW_GUI_NORMAL ", cv::WINDOW_GUI_NORMAL , 0),
 
 };
 

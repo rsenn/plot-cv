@@ -17,6 +17,7 @@ import WebSocket from 'ws';
 import PortableFileSystem from './lib/filesystem.js';
 import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import { Repeater } from './lib/repeater/repeater.js';
+import { Message } from './message.js';
 
 SerialStream.Binding = SerialBinding;
 
@@ -84,7 +85,7 @@ async function RequestContours(req, res) {
 
   res.status(200).send('OK');
 
-  Socket.sendAll({ type: 'DATA', body /*: `#${frame} ${width} ${height} : ${contours.join(' | ')}`*/ });
+  Socket.sendAll({ type: 'CONTOURS', origin: '*', recipient: '*', body });
 
   //  res.json({ status: 'OK' });
 }
