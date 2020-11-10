@@ -762,6 +762,8 @@ js_mat_init(JSContext* ctx, JSModuleDef* m) {
   int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
   int32array_proto = JS_GetPrototype(ctx, int32array_ctor);
 
+  JS_FreeValue(ctx, g);
+
   if(m)
     JS_SetModuleExport(ctx, m, "Mat", mat_class);
   /*else

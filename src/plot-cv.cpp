@@ -30,6 +30,7 @@
 #include "plot-cv.h"
 #include "polygon.h"
 #include "psimpl.h"
+#include "auto_canny.h"
 
 using std::string;
 using std::chrono::duration;
@@ -89,9 +90,11 @@ check_eval() {
       std::cerr << "plot-cv.js changed, reloading..." << std::endl;
 
     ret = js.eval_file("plot-cv.js");
-    global_obj = js.global_object();
-    std::cerr << "ret: " << js.typestr(ret) << std::endl;
-    processFn = js.get_property(global_obj, "process");
+    global_obj = JS_GetGlobalObject(js.ctx); // js.global_object();
+                                             //
+    std::cerr << "global_obj: " << js.typestr(global_obj) << std::endl;
+
+    processFn = js.get_property<const char*>(global_obj, "process");
     std::cerr << "processFn: " << js.typestr(processFn) << std::endl;
   }
   return ret;
@@ -562,9 +565,14 @@ write_image(image_type img) {
 }
 
 void
-draw_all_contours(image_type& out, contour2i_vector& contours, int thickness) {
+draw_all_contours_except(image_type& out,
+                         contour2i_vector& contours,
+                         int except = -1,
+                         int thickness = 1) {
 
-  for(size_t i = 0; i < contours.size(); i++) {
+  for(int i = 0; i < contours.size(); i++) {
+    if(i == except)
+      continue;
     const color_type color = hsv_to_rgb((i * 360 * 10 / contours.size()) % 360, 1.0, 1.0);
     auto contour = simplify_polyline(contours[i]);
     contours[i] = contour;
@@ -575,6 +583,11 @@ draw_all_contours(image_type& out, contour2i_vector& contours, int thickness) {
 
     cv::drawContours(out, contours, i, color, thickness, cv::LINE_AA);
   }
+}
+
+void
+draw_all_contours(image_type& out, contour2i_vector& contours, int thickness) {
+  draw_all_contours_except(out, contours, -1, thickness);
 }
 
 image_type
@@ -648,7 +661,8 @@ process_raster(std::function<void(std::string, cv::Mat*)> display_image, int sho
                       (double)config.blur_sigma_r * 0.01,
                       config.blur_kernel_size * 2 + 1);
 
-  cv::Canny(imgBlurred, imgCanny, thresh, thresh2, apertureSize);
+  auto_canny(imgBlurred, imgCanny);
+  //  cv::Canny(imgBlurred, imgCanny, thresh, thresh2, apertureSize);
 
   image_type strel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(19, 19));
 
@@ -720,13 +734,16 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
   int largestIndex = get_largest_contour(contours, largestContour);
 
   if(largestIndex != -1) {
-    draw_all_contours(imgVector, contours, 1);
+    draw_all_contours_except(imgVector, contours, largestIndex, 1);
 
     if(show_diagnostics)
       std::cerr << "largestIndex: " << largestIndex << std::endl;
 
     cv::drawContours(imgVector, contours, largestIndex, color_type(0, 0, 255, 255), 2, cv::LINE_8);
+  } else {
+    draw_all_contours(imgVector, contours, 1);
   }
+  display_image("imgVector", &imgVector);
 
   cv::cvtColor(imgCanny, imgCanny, cv::COLOR_GRAY2BGR);
 
@@ -734,12 +751,8 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
 
   display_image("imgCanny", &imgCanny);
 
-  draw_all_contours(imgVector, contours, 1);
-
   /* if(dptr != nullptr)
      cv::drawContours(*dptr, contours, -1, color_type(0, 0, 255), 1, cv::LINE_AA);*/
-
-  display_image("imgVector", &imgVector);
 
   if(contours.empty()) {
     logfile << "No contours" << std::endl;
@@ -1070,8 +1083,8 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
     // cv::drawContours(imgOriginal, list, -1, color_type(255, 255, 0), 1);
   });
 
-  draw_all_contours(imgVector, contours);
-  display_image("imgVector", &imgVector);
+  /*draw_all_contours(imgVector, contours);
+  display_image("imgVector", &imgVector);*/
 }
 
 void
@@ -1202,12 +1215,12 @@ js_init(int argc, char* argv[]) {
 
   /*
     std::cerr << "property names: " << js.property_names(global_obj) << std::endl;
-    std::cerr << "'console' property names: " << js.property_names(js.get_property(global_obj,
-    "console"))
+    std::cerr << "'console' property names: " << js.property_names(js.get_property<const
+    char*>(global_obj, "console"))
               << std::endl;
   */
-  /*  JSValue testFn = js.get_property(global_obj, "test");
-    JSValue drawContourFn = js.get_property(js.global_object(), "drawContour");
+  /*  JSValue testFn = js.get_property<const char*>(global_obj, "test");
+    JSValue drawContourFn = js.get_property<const char*>(js.global_object(), "drawContour");
     JSValue jsPoint = js.create_point(150, 100);
    */ /*
     if(show_diagnostics)

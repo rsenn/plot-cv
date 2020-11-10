@@ -26,7 +26,7 @@ main(int argc, char* argv[]) {
   }
 
   jsrt::value promise = js.get_global("Promise");
-  jsrt::value promise_proto = js.get_property(promise, "prototype");
+  jsrt::value promise_proto = js.get_property<const char*>(promise, "prototype");
 
   std::cerr << "Promise is_function " << js.is_constructor(promise) << std::endl;
   std::cerr << "Promise type=" << js.typestr(promise) << std::endl;

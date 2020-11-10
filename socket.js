@@ -46,13 +46,13 @@ const sendBuf = client => {
 function sendTo(sock, msg, ...args) {
   if(Util.isArray(msg)) {
     let lines = msg.map(m => new Message(m).data);
-    return this.sendTo(sock, lines.join('\n'));
+    return sendTo(sock, lines.join('\n'));
   }
 
   if(!(args.length == 0 && typeof msg == 'string')) msg = new Message(msg, ...args);
   if(msg instanceof Message) msg = msg.data;
 
-  const { writable } = this;
+  const { writable } = this || { writable: true };
   // console.debug(`[${sock.id}] sendTo '${msg.replace(/\n/g, '\\n')}'`);
 
   return Util.tryCatch(async () => {
@@ -73,7 +73,7 @@ function sendMany(except, msg, ...args) {
   }
   return Promise.all(sockets
       .filter(sock => !(sock == except || sock.id == except || sock.ws == except))
-      .map(sock => this.sendTo(sock, msg))
+      .map(sock => sendTo.call(this, sock, msg))
   );
 }
 
@@ -153,17 +153,15 @@ export class Socket {
     }
   });
 
-  static endpoint = async (ws, req) => {
+  static async endpoint(ws, req) {
     const { connection, client, headers } = req;
     const { path } = req;
     let { remoteAddress, remotePort, localAddress, localPort } = client;
     const { _host, _peername } = connection;
     let { address, port } = _peername;
     const { cookie } = headers;
-
     if(localAddress == '::1') localAddress = 'localhost';
     if(remoteAddress == '::1') remoteAddress = 'localhost';
-
     let s = Socket.map(ws,
       {
         local: localAddress.replace(/^::ffff:/, '') + ':' + localPort,
@@ -176,23 +174,14 @@ export class Socket {
     );
     console.log('WebSocket connected:', s, headers);
     let i = sockets.length;
-
     Object.assign(client, { sendTo, sendMany });
-    //   s.send = sendBuf(client);
     s.closeConnection = async function closeConnection(reason) {
       console.debug(`[${this.id}] closeConnection:`, reason);
-
-      /*  if(this.ws.connected) */ await this.ws.close();
+      await this.ws.close();
       if(removeItem(sockets, this.ws, 'ws')) await client.sendMany(this, reason || 'closed', this.id, null, 'QUIT');
     };
-    //  s.flush = async () => await s.send.flush(s);
-
     s.lastMessage = Date.now();
-
     sockets.push(s);
-
-    //console.log('sockets:', sockets.map(s => Util.filterKeys(s, /^(address|port|id)/)));
-
     s.on('close', async function(arg) {
       console.log(`[${s.id}] close`);
       await s.closeConnection();
@@ -201,24 +190,20 @@ export class Socket {
       console.log(`[${s.id}] error`, arg);
       await s.closeConnection('error');
     });
-    //  s.on('open', onOpen);
-
     s.on('message', async function(data) {
-      //console.log(`[${this.id}] message`, this);
       await sendBuf(client)(s, async function(send) {
         for(let line of data.split(/\n/g)) await this.processLine(line, send);
       });
     });
     await client.sendMany(s, { origin: s.id, type: 'JOIN' });
-
     await sendBuf(client)(s, function(send) {
       this.lastMessage = Date.now();
-
       send({ type: 'HELLO', body: this.id });
-
       if(sockets.length) send({ type: 'USERS', body: sockets.map(s => s.id).filter(s => typeof s == 'string') });
     });
-  };
+  }
+
+  static sendAll = async (...args) => await sendMany(null, ...args);
 }
 
 export default Socket;

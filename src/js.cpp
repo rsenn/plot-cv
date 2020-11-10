@@ -193,13 +193,13 @@ bool
 jsrt::is_point(const_value val) const {
   if(is_array(val)) {
     int32_t length = -1;
-    get_number(get_property(val, "length"), length);
+    get_number(get_property<const char*>(val, "length"), length);
     if(length == 2)
       return true;
   } else if(is_object(val)) {
     JSValue x, y;
-    x = get_property(val, "x");
-    y = get_property(val, "y");
+    x = get_property<const char*>(val, "x");
+    y = get_property<const char*>(val, "y");
     if(is_number(x) && is_number(y))
       return true;
   }
@@ -211,10 +211,10 @@ bool
 jsrt::is_rect(const_value val) const {
   if(is_object(val)) {
     JSValue x, y, w, h;
-    x = get_property(val, "x");
-    y = get_property(val, "y");
-    w = get_property(val, "width");
-    h = get_property(val, "height");
+    x = get_property<const char*>(val, "x");
+    y = get_property<const char*>(val, "y");
+    w = get_property<const char*>(val, "width");
+    h = get_property<const char*>(val, "height");
     if(is_number(x) && is_number(y))
       if(is_number(w) && is_number(h))
         return true;
@@ -229,21 +229,22 @@ jsrt::is_color(const_value val) const {
 
   if(is_array_like(val)) {
     uint32_t length;
-    get_number(get_property(val, "length"), length);
+    get_number(get_property<const char*>(val, "length"), length);
 
     if(length == 3 || length == 4) {
-      b = get_property(val, 0);
-      g = get_property(val, 1);
-      r = get_property(val, 2);
-      a = length > 3 ? get_property(val, 3) : const_cast<jsrt*>(this)->create<int32_t>(255);
+      b = get_property<uint32_t>(val, 0);
+      g = get_property<uint32_t>(val, 1);
+      r = get_property<uint32_t>(val, 2);
+      a = length > 3 ? get_property<uint32_t>(val, 3)
+                     : const_cast<jsrt*>(this)->create<int32_t>(255);
     } else {
       return false;
     }
   } else if(is_object(val)) {
-    b = get_property(val, "b");
-    g = get_property(val, "g");
-    r = get_property(val, "r");
-    a = get_property(val, "a");
+    b = get_property<const char*>(val, "b");
+    g = get_property<const char*>(val, "g");
+    r = get_property<const char*>(val, "r");
+    a = get_property<const char*>(val, "a");
   }
 
   if(is_number(b) && is_number(g) && is_number(r) && is_number(a))
@@ -378,7 +379,7 @@ jsrt::get_global(const char* name) const {
 bool
 jsrt::is_promise(const_value val) {
   jsrt::value promise = get_global("Promise");
-  jsrt::value promise_proto = get_property(promise, "prototype");
+  jsrt::value promise_proto = get_property<const char*>(promise, "prototype");
   return is_object(val) &&
          (JS_IsInstanceOf(ctx, val, promise) || JS_IsInstanceOf(ctx, val, promise_proto));
 }
@@ -418,24 +419,18 @@ normalize_module(JSContext* ctx,
 
   char* name;
   jsrt* js = static_cast<jsrt*>(opaque);
-  /*
-    std::string str = "The quick brown fox";
-    std::regex re{R"(\s+)"};
-  auto begin =
-      std::regex_token_iterator(str.cbegin(), str.cend(), re, -1,
-  std::regex_constants::match_default), end= std::regex_token_iterator();
-  */
+
   std::string module_dir = std::string(CONFIG_PREFIX) + "/lib/quickjs";
 
-  std::cerr << "module_base_name: " << module_base_name << std::endl;
+  /*std::cerr << "module_base_name: " << module_base_name << std::endl;
   std::cerr << "module_name: " << module_name << std::endl;
-  std::cerr << "module_dir: " << module_dir << std::endl;
+  std::cerr << "module_dir: " << module_dir << std::endl;*/
 
   if(module_name[0] == '.' && module_name[1] == '/')
     module_name += 2;
 
   const char* module_ext = strrchr(module_name, '.');
-  std::cerr << "module_ext: " << module_ext << std::endl;
+  // std::cerr << "module_ext: " << module_ext << std::endl;
 
   std::string module;
   path module_path;
@@ -450,7 +445,7 @@ normalize_module(JSContext* ctx,
 
   std::string module_pathstr;
 
-  std::cerr << "module_path: " << module_path.string() << std::endl;
+  // std::cerr << "module_path: " << module_path.string() << std::endl;
 
   bool present = exists(module_path);
   /*  std::cerr << "exists module_path: " << present << std::endl;*/
@@ -462,9 +457,9 @@ normalize_module(JSContext* ctx,
 
     present = exists(module_path);
   }
-  std::cerr << "module_pathstr: " << module_pathstr << std::endl;
+  /*std::cerr << "module_pathstr: " << module_pathstr << std::endl;
   std::cerr << "module_name: " << module_name << std::endl;
-  std::cerr << "present: " << present << std::endl;
+  std::cerr << "present: " << present << std::endl;*/
 
   if(true) {
 
@@ -546,9 +541,9 @@ jsrt::value
 jsrt::get_symbol(const char* name) const {
   value ctor = get_global("Symbol");
   if(has_property(ctor, name))
-    return get_property(ctor, name);
+    return get_property<const char*>(ctor, name);
 
-  const_value for_fn = get_property(ctor, "for");
+  const_value for_fn = get_property<const char*>(ctor, "for");
   value arg = new_string(name);
   return call(for_fn, ctor, 1, &arg);
 }
@@ -556,7 +551,7 @@ jsrt::get_symbol(const char* name) const {
 jsrt::value
 jsrt::get_property_symbol(const_value obj, const char* symbol) {
   value sym = get_symbol(symbol);
-  value ret = get_property(obj, sym);
+  value ret = get_property<value>(obj, sym);
   free_value(sym);
   return ret;
 }
@@ -580,10 +575,10 @@ jsrt::get_iterator_next(const_value obj, const char* symbol) {
   value ret = _undefined, next = _undefined;
 
   if(is_object(iter) && !is_null(iter)) {
-    next = get_property(iter, "next");
+    next = get_property<const char*>(iter, "next");
 
     if(is_function(next) && has_property(next, "bind")) {
-      ret = call(get_property(next, "bind"), iter, 0, nullptr);
+      ret = call(get_property<const char*>(next, "bind"), iter, 0, nullptr);
       //   free_value(next);
     }
   }

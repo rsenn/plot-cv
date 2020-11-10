@@ -1218,12 +1218,20 @@ const CreateWebSocket = async (socketURL, log, socketFn = () => {}) => {
   socketFn(ws);
   ws.send('PING main.js:data!');
   let data;
-  for await (data of ws) {
-    console.log('data:', data);
-    let msg = new Message(data);
-    window.msg = msg;
-    LogJS.info('WebSocket recv: ' + Util.toString(msg)); //fmsg[Symbol.toStringTag]());
-    ws.dataAvailable !== 0;
+  console.log('ws.on:', ws.on);
+
+  for await (event of ws) {
+    if(event.type == 'message') {
+      const { data } = event;
+      console.log('data:', Util.abbreviate(data, 40));
+      let msg = new Message(data);
+      window.msg = msg;
+      LogJS.info('WebSocket recv: ' + Util.toString(msg)); //fmsg[Symbol.toStringTag]());
+      ws.dataAvailable !== 0;
+    } else {
+      console.log(`${event.type}:`, event);
+      break;
+    }
   }
   await ws.disconnect();
 };
@@ -1480,7 +1488,13 @@ const AppMain = (window.onload = async () => {
   };
 
   UpdateProjectList();
-  CreateWebSocket(null, null, ws => (window.socket = ws));
+
+  (async function() {
+    while(true) {
+      await CreateWebSocket(null, null, ws => (window.socket = ws)).catch(console.error);
+      await Util.waitFor(1000);
+    }
+  })();
 
   const crosshair = { show: trkl(false), position: trkl({ x: 0, y: 0 }) };
 

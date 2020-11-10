@@ -78,9 +78,10 @@ struct jsrt {
   template<class T> value create_point(T x, T y);
 
   template<class T>
-  value
+  value // typename std::enable_if< std::is_integral<T>::value, value >::type
   get_property(const_value obj, T prop) const {
-    return get_undefined();
+    throw std::runtime_error("template specialization");
+    // return get_undefined();
   }
   /*value get_property(const_value obj, uint32_t) const;
   value get_property(const_value obj,const std::string&) const;
@@ -345,9 +346,9 @@ inline void
 jsrt::get_int_array(const_value val, T& ref) const {
   uint32_t i, n, length = 0, arr = JS_IsArray(ctx, val);
   if(arr) {
-    get_number(get_property(val, "length"), length);
+    get_number(get_property<const char*>(val, "length"), length);
     for(i = 0; i < length; i++) {
-      value v = get_property(val, i);
+      value v = get_property<uint32_t>(val, i);
       get_number(v, n);
       ref[i] = n;
     }
@@ -361,16 +362,16 @@ jsrt::get_point(const_value val, T& ref) const {
 
   if(is_array(val)) {
     uint32_t length;
-    get_number(get_property(val, "length"), length);
+    get_number(get_property<const char*>(val, "length"), length);
     if(length >= 2) {
-      vx = get_property(val, 0);
-      vy = get_property(val, 1);
+      vx = get_property<uint32_t>(val, 0);
+      vy = get_property<uint32_t>(val, 1);
     } else {
       return;
     }
   } else if(is_object(val) && has_property(val, "x") && has_property(val, "y")) {
-    vx = get_property(val, "x");
-    vy = get_property(val, "y");
+    vx = get_property<const char*>(val, "x");
+    vy = get_property<const char*>(val, "y");
   }
 
   get_number(vx, ref.x);
@@ -385,8 +386,8 @@ jsrt::get_rect(const_value val, T& ref) const {
 
     get_point(val, ref);
 
-    get_number(get_property(val, "width"), vw);
-    get_number(get_property(val, "height"), vh);
+    get_number(get_property<const char*>(val, "width"), vw);
+    get_number(get_property<const char*>(val, "height"), vh);
 
     ref.width = vw;
     ref.height = vh;
@@ -399,18 +400,18 @@ jsrt::get_color(const_value val, T& ref) const {
   const_value vr = _undefined, vg = _undefined, vb = _undefined, va = _undefined;
 
   if(is_object(val) && has_property(val, "r") && has_property(val, "g") && has_property(val, "b")) {
-    vr = get_property(val, "r");
-    vg = get_property(val, "g");
-    vb = get_property(val, "b");
-    va = get_property(val, "a");
+    vr = get_property<const char*>(val, "r");
+    vg = get_property<const char*>(val, "g");
+    vb = get_property<const char*>(val, "b");
+    va = get_property<const char*>(val, "a");
   } else if(is_array_like(val)) {
     uint32_t length;
-    get_number(get_property(val, "length"), length);
+    get_number(get_property<const char*>(val, "length"), length);
     if(length >= 3) {
-      vr = get_property(val, 0);
-      vg = get_property(val, 1);
-      vb = get_property(val, 2);
-      va = get_property(val, 3);
+      vr = get_property<uint32_t>(val, 0);
+      vg = get_property<uint32_t>(val, 1);
+      vb = get_property<uint32_t>(val, 2);
+      va = get_property<uint32_t>(val, 3);
     } else {
       return;
     }
@@ -427,11 +428,11 @@ jsrt::get_point_array(const_value val, std::vector<T>& ref) const {
   if(is_array_like(val)) {
     uint32_t i, length;
 
-    get_number(get_property(val, "length"), length);
+    get_number(get_property<const char*>(val, "length"), length);
     ref.resize(length);
 
     for(i = 0; i < length; i++) {
-      JSValueConst pt = get_property(val, i);
+      JSValueConst pt = get_property<uint32_t>(val, i);
 
       get_point(pt, ref[i]);
     }
@@ -501,22 +502,38 @@ jsrt::get_property<uint32_t>(const_value obj, uint32_t index) const {
 
 template<>
 inline jsrt::value
+jsrt::get_property<int>(const_value obj, int index) const {
+  return JS_GetPropertyUint32(ctx, obj, index);
+}
+
+template<>
+inline jsrt::value
 jsrt::get_property<const std::string&>(const_value obj, const std::string& name) const {
   return JS_GetPropertyStr(ctx, obj, name.c_str());
+}
+template<>
+inline jsrt::value
+jsrt::get_property<const char*>(const_value obj, const char* name) const {
+  return JS_GetPropertyStr(ctx, obj, name);
 }
 inline jsrt::value
 jsrt::get_property_atom(const_value obj, atom a) const {
   return JS_GetProperty(ctx, obj, a);
 }
-template<>
+/*template<>
 inline jsrt::value
 jsrt::get_property<jsrt::const_value>(const_value obj, const_value prop) const {
-  return get_property(obj, value_to_atom(prop));
+  return get_property_atom(obj, value_to_atom(prop));
+}*/
+template<>
+inline jsrt::value
+jsrt::get_property<jsrt::value>(const_value obj, value prop) const {
+  return get_property_atom(obj, value_to_atom(prop));
 }
 
 inline jsrt::value
 jsrt::get_constructor(jsrt::const_value obj) const {
-  return get_property(get_prototype(obj), "constructor");
+  return get_property<const char*>(get_prototype(obj), "constructor");
 }
 
 inline bool
@@ -536,7 +553,7 @@ jsrt::has_prototype(jsrt::const_value obj) const {
 
 inline std::string
 jsrt::function_name(jsrt::const_value fn) const {
-  return to_string(get_property(fn, "name"));
+  return to_string(get_property<const char*>(fn, "name"));
 }
 
 template<>
@@ -713,7 +730,7 @@ jsrt::is_array_like(const_value val) const {
     return true;
 
   if(has_property(val, "length")) {
-    if(is_number(get_property(val, "length")))
+    if(is_number(get_property<const char*>(val, "length")))
       return true;
   }
   return false;
@@ -799,7 +816,7 @@ private:
 inline int32_t
 jsrt::get_length(const jsrt::const_value& a) const {
   uint32_t length;
-  JSValue v = get_property(a, "length");
+  JSValue v = get_property<const char*>(a, "length");
   if(is_undefined(v))
     return -1;
   get_number(v, length);
@@ -835,7 +852,7 @@ jsrt::is_iterable(const_value val) {
   bool ret = false;
   value sym = get_symbol("iterator");
   if(is_object(val) && has_property(val, sym)) {
-    value iter = get_property(val, sym);
+    value iter = get_property<value>(val, sym);
     ret = is_function(iter);
   }
   free_value(sym);
@@ -845,7 +862,7 @@ jsrt::is_iterable(const_value val) {
 inline bool
 jsrt::is_iterator(const_value val) const {
   if(is_object(val) && has_property(val, "next")) {
-    value next = get_property(val, "next");
+    value next = get_property<const char*>(val, "next");
     return is_function(next);
   }
   return false;
