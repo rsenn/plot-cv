@@ -1,6 +1,4 @@
-[submodule "lib"]
-	path = lib
-	url = https://github.com/rsenn/libweb.git
 [submodule "quickjs"]
 	path = quickjs
 	url = https://github.com/rsenn/quickjs.git
+  branch = master
