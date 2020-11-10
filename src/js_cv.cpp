@@ -460,6 +460,22 @@ js_cv_findcontours(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   return ret;
 }
 
+static JSValue
+js_cv_getticks(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSValue ret = JS_UNDEFINED;
+  switch(magic) {
+    case 0: ret = JS_NewInt64(ctx, cv::getTickCount()); break;
+
+    case 1: ret = JS_NewFloat64(ctx, cv::getTickFrequency()); break;
+
+    case 2: {
+      ret = JS_NewInt64(ctx, cv::getCPUTickCount());
+      break;
+    }
+  }
+  return ret;
+}
+
 JSValue cv_proto, cv_class;
 JSClassID js_cv_class_id;
 
@@ -488,6 +504,9 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_CFUNC_DEF("getPerspectiveTransform", 2, js_cv_getperspectivetransform),
     JS_CFUNC_DEF("getAffineTransform", 2, js_cv_getaffinetransform),
     JS_CFUNC_DEF("findContours", 1, js_cv_findcontours),
+    JS_CFUNC_MAGIC_DEF("getTickCount", 0, js_cv_getticks, 0),
+    JS_CFUNC_MAGIC_DEF("getTickFrequency", 0, js_cv_getticks, 1),
+    JS_CFUNC_MAGIC_DEF("getCPUTickCount", 0, js_cv_getticks, 2),
     JS_PROP_INT32_DEF("CV_VERSION_MAJOR", CV_VERSION_MAJOR, JS_PROP_ENUMERABLE),
     JS_PROP_INT32_DEF("CV_VERSION_MINOR", CV_VERSION_MINOR, JS_PROP_ENUMERABLE),
     JS_PROP_INT32_DEF("CV_VERSION_REVISION", CV_VERSION_REVISION, JS_PROP_ENUMERABLE),
@@ -765,13 +784,21 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
 
 int
 js_cv_init(JSContext* ctx, JSModuleDef* m) {
-  /* cv_class = JS_NewObject(ctx);
-   JS_SetPropertyFunctionList(ctx, cv_class, js_cv_static_funcs, countof(js_cv_static_funcs));*/
-  /* JSValue g = JS_GetGlobalObject(ctx);
 
+  /*
    int32array_ctor = JS_GetProperty(ctx, g, JS_ATOM_Int32Array);
    int32array_proto = JS_GetPrototype(ctx, int32array_ctor);*/
   JS_SetModuleExportList(ctx, m, js_cv_static_funcs, countof(js_cv_static_funcs));
+
+  JSValue g = JS_GetGlobalObject(ctx);
+
+  if(JS_IsObject(g)) {
+    cv_class = JS_NewObject(ctx);
+    JS_SetPropertyFunctionList(ctx, cv_class, js_cv_static_funcs, countof(js_cv_static_funcs));
+
+    JS_SetPropertyStr(ctx, g, "cv", cv_class);
+  }
+
   /*if(m)
     JS_SetModuleExport(ctx, m, "cv", cv_class);
 */
@@ -784,6 +811,7 @@ JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   m = JS_NewCModule(ctx, module_name, &js_cv_init);
   if(!m)
     return NULL;
-  JS_AddModuleExport(ctx, m, "cv");
+  JS_AddModuleExportList(ctx, m, js_cv_static_funcs, countof(js_cv_static_funcs));
+  // JS_AddModuleExport(ctx, m, "cv");
   return m;
 }

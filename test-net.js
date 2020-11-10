@@ -2,10 +2,12 @@ import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import { client, server, fetch } from 'net';
 import { Contour } from 'contour';
+import * as cv from 'cv';
 import { Point } from 'point';
 import { PointIterator } from 'point-iterator';
 import { PointList } from './lib/geom.js';
 import { Alea } from './lib/alea.js';
+import * as os from 'os';
 
 let prng = new Alea(1337);
 
@@ -32,9 +34,40 @@ async function main(...args) {
       }
     });
   }
+  console.log('globalThis.cv:', globalThis.cv);
+  //console.log('global.cv:', global.cv);
+
+  const getTicks = (() => {
+    const f = cv.getTickFrequency();
+    const ns = f / 10000000;
+    const ms = f / 1000;
+    const s = f;
+
+    return () => {
+      const ticks = cv.getTickCount();
+      return [Math.floor(ticks / s), Math.floor(ticks / ns)];
+    };
+  })();
 
   console.log('Symbol.iterator:', Symbol.iterator);
   console.log('fetch:', fetch);
+  console.log('cv:', cv);
+  console.log('cv.getTickCount:', cv.getTickCount);
+  console.log('cv.getTickCount():', cv.getTickCount());
+  console.log('getTicks():', getTicks());
+
+  const hr = Util.hrtime;
+  const times = Util.repeat(4, undefined);
+
+  times[0] = hr();
+  os.sleep(10);
+  times[1] = hr();
+  os.sleep(100);
+  times[2] = hr();
+  os.sleep(1000);
+  times[3] = hr();
+
+  for(let i = 0; i < times.length; i++) console.log(`times[${i}] =`, times[i]);
 
   function randContour() {
     let pl = new PointList();
@@ -51,34 +84,17 @@ async function main(...args) {
     pl.round(1);
 
     console.log('pl:', pl + '');
-
     let c = new Contour(pl);
-    /*for(let i = 0; i < pl.length; i++)
-    delete pl[i];*/
     return c;
   }
 
   let contours = Util.repeat(4, () => randContour());
-
   let contourStr = contours.map(c => c.toString(Contour.FORMAT_NOBRACKET | Contour.FORMAT_SPACE | Contour.FORMAT_01));
-  //  let contourSource = contours.map(c => c.toSource());
+  //console.log('contours:', contours.map(contour => [...contour]));
 
-  console.log('contours:',
-    //contours.map(contour => contour.toArray())
-    contours.map(contour => [...contour])
-    //contours.map(contour => contour.toSource())
-  );
-  /*  console.log('contours:',
-    contours.map(contour => {
-      let r = [];
-      for(let i = 0; i < contour.length; i++) r.push({ x: contour.get(i).x, y: contour.get(i) });
-      return r;
-    })
-  );*/
+  let body; // = Util.encodeQuery({ data: Util.repeat(10, 'TEST\n').join(''), num: 1234 });
 
-  let body = Util.encodeQuery({ data: Util.repeat(10, 'TEST\n').join(''), num: 1234 });
-
-  body = JSON.stringify({ data: contourStr, num: 1234 });
+  body = JSON.stringify({ contours: contourStr, frame: 0 });
 
   let response = await fetch('http://127.0.0.1:3001/contours', {
     method: 'post',
