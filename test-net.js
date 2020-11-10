@@ -52,8 +52,12 @@ async function main(...args) {
 
     console.log('pl:', pl + '');
 
-    return new Contour([...pl]);
+    let c= new Contour(pl);
+for(let i = 0; i < pl.length; i++)
+    delete pl[i];
+    return c;
   }
+
   let contours = Util.repeat(4, () => randContour());
 
   let contourStr = contours.map(c => c.toString());

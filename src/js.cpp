@@ -232,11 +232,10 @@ jsrt::is_color(const_value val) const {
     get_number(get_property(val, "length"), length);
 
     if(length == 3 || length == 4) {
-      b = get_property<uint32_t>(val, 0);
-      g = get_property<uint32_t>(val, 1);
-      r = get_property<uint32_t>(val, 2);
-      a = length > 3 ? get_property<uint32_t>(val, 3)
-                     : const_cast<jsrt*>(this)->create<int32_t>(255);
+      b = get_property(val, 0);
+      g = get_property(val, 1);
+      r = get_property(val, 2);
+      a = length > 3 ? get_property(val, 3) : const_cast<jsrt*>(this)->create<int32_t>(255);
     } else {
       return false;
     }
@@ -252,20 +251,22 @@ jsrt::is_color(const_value val) const {
   return false;
 }
 
-jsrt::global::global(jsrt& rt) : js(rt) { get(); }
+jsrt::global::global(jsrt& rt) : val(JS_UNDEFINED), js(rt) {}
 
 bool
 jsrt::global::get() const {
-  if(js.ctx) {
-    value global = JS_GetGlobalObject(js.ctx);
+  if(JS_IsUndefined((const_value)val)) {
+    if(js.ctx) {
+      value global = JS_GetGlobalObject(js.ctx);
 
-    JS_SetPropertyStr(js.ctx, global, "global", JS_DupValue(js.ctx, global));
-    JS_FreeValue(js.ctx, global);
-  }
+      JS_SetPropertyStr(js.ctx, global, "global", JS_DupValue(js.ctx, global));
+      JS_FreeValue(js.ctx, global);
+    }
 
-  if(js.ctx) {
-    val = JS_GetGlobalObject(js.ctx);
-    return true;
+    if(js.ctx) {
+      val = JS_GetGlobalObject(js.ctx);
+      return true;
+    }
   }
   return false;
 }
@@ -509,32 +510,36 @@ jsrt::dump_exception(JSValueConst exception_val, bool is_throw) const {
 }
 
 jsrt::atom
-jsrt::new_atom(const char* buf, size_t len) {
+jsrt::new_atom(const char* buf, size_t len) const {
   return JS_NewAtomLen(ctx, buf, len);
 }
 jsrt::atom
-jsrt::new_atom(const char* str) {
+jsrt::new_atom(const char* str) const {
   return JS_NewAtom(ctx, str);
 }
 jsrt::atom
-jsrt::new_atom(uint32_t n) {
+jsrt::new_atom(uint32_t n) const {
   return JS_NewAtomUInt32(ctx, n);
 }
 void
-jsrt::free_atom(const jsrt::atom& a) {
+jsrt::free_atom(const jsrt::atom& a) const {
   JS_FreeAtom(ctx, a);
 }
 jsrt::value
-jsrt::atom_to_value(const jsrt::atom& a) {
+jsrt::atom_to_value(const jsrt::atom& a) const {
   return JS_AtomToValue(ctx, a);
 }
 jsrt::value
-jsrt::atom_to_string(const jsrt::atom& a) {
+jsrt::atom_to_string(const jsrt::atom& a) const {
   return JS_AtomToString(ctx, a);
 }
 const char*
-jsrt::atom_to_cstring(const jsrt::atom& a) {
+jsrt::atom_to_cstring(const jsrt::atom& a) const {
   return JS_AtomToCString(ctx, a);
+}
+jsrt::atom
+jsrt::value_to_atom(const const_value& v) const {
+  return JS_ValueToAtom(ctx, v);
 }
 
 jsrt::value
@@ -546,4 +551,57 @@ jsrt::get_symbol(const char* name) const {
   const_value for_fn = get_property(ctor, "for");
   value arg = new_string(name);
   return call(for_fn, ctor, 1, &arg);
+}
+
+jsrt::value
+jsrt::get_property_symbol(const_value obj, const char* symbol) {
+  value sym = get_symbol(symbol);
+  value ret = get_property(obj, sym);
+  free_value(sym);
+  return ret;
+}
+
+jsrt::value
+jsrt::get_iterator(const_value obj, const char* symbol) {
+  value fn = get_property_symbol(obj, symbol);
+  value ret = _undefined;
+
+  if(is_function(fn))
+    ret = call(fn, obj, 0, nullptr);
+
+  free_value(fn);
+
+  return ret;
+}
+
+jsrt::value
+jsrt::get_iterator_next(const_value obj, const char* symbol) {
+  value iter = get_iterator(obj, symbol);
+  value ret = _undefined, next = _undefined;
+
+  if(is_object(iter) && !is_null(iter)) {
+    next = get_property(iter, "next");
+
+    if(is_function(next) && has_property(next, "bind")) {
+      ret = call(get_property(next, "bind"), iter, 0, nullptr);
+      //   free_value(next);
+    }
+  }
+
+  // free_value(iter);
+
+  return ret;
+}
+
+/*int
+jsrt::tag(const_value val) const {
+  return JS_VALUE_GET_TAG(val);
+}*/
+int
+jsrt::tag(value val) const {
+  return JS_VALUE_GET_TAG(val);
+}
+void*
+jsrt::obj(const_value val) const {
+  return JS_VALUE_GET_OBJ(val);
 }

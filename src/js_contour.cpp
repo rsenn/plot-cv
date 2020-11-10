@@ -23,16 +23,35 @@ int64_t js_array_to_vector(JSContext* ctx, JSValueConst arr, std::vector<Value>&
 
 template<>
 int64_t
-js_array_to_vector(JSContext* ctx, JSValueConst arr, std::vector<int>& out) {
+js_array_to_vector<int>(JSContext* ctx, JSValueConst arr, std::vector<int>& out) {
   int64_t i, n;
   JSValue len = JS_GetPropertyStr(ctx, arr, "length");
   JS_ToInt64(ctx, &n, len);
-  out.resize(n);
+  out.reserve(out.size() + n);
   for(i = 0; i < n; i++) {
     int32_t value;
     JSValue item = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
     JS_ToInt32(ctx, &value, item);
-    out[i] = value;
+    out.push_back(value);
+    
+    JS_FreeValue(ctx, item);
+  }
+  return n;
+}
+
+template<>
+int64_t
+js_array_to_vector<JSPointData>(JSContext* ctx, JSValueConst arr, std::vector<JSPointData>& out) {
+  int64_t i, n;
+  JSValue len = JS_GetPropertyStr(ctx, arr, "length");
+  JS_ToInt64(ctx, &n, len);
+  out.reserve(out.size() + n);
+  for(i = 0; i < n; i++) {
+    JSValue item = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
+
+    out.push_back(js_point_get(ctx, item));
+
+    JS_FreeValue(ctx, item);
   }
   return n;
 }
@@ -384,15 +403,28 @@ js_contour_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst*
 
   if(argc > 0) {
     int i;
-    jsrt js(ctx);
-
-    JSValue sym = js.get_symbol("iterator");
+    // jsrt js(ctx);
 
     for(i = 0; i < argc; i++) {
-      JSValue iter = JS_GetPropertyStr(ctx, argv[i], "[Symbol.iterator]");
+      JSPointData p;
+      if(JS_IsArray(ctx, argv[i])) {
+        if(js_array_length(ctx, argv[i]) > 0) {
+          JSValue pt = JS_GetPropertyUint32(ctx, argv[i], 0);
 
-      std::string t = js.typestr(iter);
-      std::cout << "iter = " << t << std::endl;
+          if(js_is_point(ctx, pt)) {
+            js_array_to_vector<JSPointData>(ctx, argv[i], *v);
+            JS_FreeValue(ctx, pt);
+            continue;
+          }
+          JS_FreeValue(ctx, pt);
+        }
+      }
+
+      if(js_point_read(ctx, argv[i], &p)) {
+        v->push_back(p);
+        continue;
+      }
+      goto fail;
     }
   }
 

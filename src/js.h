@@ -1,4 +1,3 @@
-
 #ifndef JS_H
 #define JS_H
 
@@ -36,7 +35,7 @@ struct jsrt {
   bool create(JSContext* ctx = 0);
 
   jsrt() : global(*this) {}
-  jsrt(JSContext* c) : ctx(c), global(*this) { rt = JS_GetRuntime(ctx); }
+  jsrt(JSContext* c) : global(*this), ctx(c), rt(JS_GetRuntime(c)) {}
   ~jsrt();
 
   value
@@ -83,6 +82,12 @@ struct jsrt {
   get_property(const_value obj, T prop) const {
     return get_undefined();
   }
+  /*value get_property(const_value obj, uint32_t) const;
+  value get_property(const_value obj,const std::string&) const;
+  value get_property(const_value obj, const_value) const;*/
+
+  value get_property_atom(const_value obj, atom) const;
+  value get_property_symbol(const_value obj, const char* symbol);
 
   template<class T>
   bool
@@ -106,6 +111,8 @@ struct jsrt {
   void set_global(const char* name, value v);
 
   value get_symbol(const char* name) const;
+  value get_iterator(const_value obj, const char* symbol = "iterator");
+  value get_iterator_next(const_value obj, const char* symbol = "iterator");
 
   const_value
   global_object() const {
@@ -119,10 +126,9 @@ struct jsrt {
   }
 
   value call(const_value func, size_t argc, value argv[]) const;
-  value call(const_value func, std::vector< value>& args) const;
+  value call(const_value func, std::vector<value>& args) const;
   value call(const char* name, size_t argc, value argv[]) const;
   value call(const_value func, const_value this_arg, size_t argc, value argv[]) const;
-
 
   /*  value call(const_value func, size_t argc, const_value argv[]) {
       return call(func, argc, const_cast<value*>(argv));
@@ -171,10 +177,12 @@ struct jsrt {
   bool is_color(const_value val) const;
   bool is_array_like(const_value val) const;
 
-  int
-  tag(const_value val) const {
-    return JS_VALUE_GET_TAG(val);
-  }
+  bool is_iterable(const_value val);
+  bool is_iterator(const_value val) const;
+
+  // int tag(const_value val) const;
+  int tag(value val) const;
+  void* obj(const_value val) const;
 
   std::string
   typestr(const_value val) const {
@@ -182,24 +190,28 @@ struct jsrt {
       return "number";
     else if(is_bool(val))
       return "boolean";
-    else if(is_function(val))
-      return "function";
     else if(is_symbol(val))
       return "symbol";
     else if(is_undefined(val))
       return "undefined";
+
     /*   else if(is_constructor(val))
-         return "constructor";*/
-    else if(is_array(val))
-      return "array";
-    else if(is_object(val) || is_null(val))
+       return "constructor";*/
+    else if(is_object(val) || is_null(val)) {
+      if(!is_null(val) && obj(val)) {
+        if(is_function(val))
+          return "function";
+        else if(is_array(val))
+          return "array";
+        else if(is_point(val))
+          return "point";
+        else if(is_rect(val))
+          return "rect";
+        else if(is_color(val))
+          return "color";
+      }
       return "object";
-    else if(is_point(val))
-      return "point";
-    else if(is_rect(val))
-      return "rect";
-    else if(is_color(val))
-      return "color";
+    }
     return "unknown";
   }
 
@@ -210,15 +222,21 @@ struct jsrt {
     return ret;
   }
 
-  atom new_atom(const char*, size_t);
-  atom new_atom(const char*);
-  atom new_atom(uint32_t);
+  atom new_atom(const char*, size_t) const;
+  atom new_atom(const char*) const;
+  atom new_atom(uint32_t) const;
+  atom value_to_atom(const const_value& v) const;
 
-  void free_atom(const atom& a);
+  void free_atom(const atom& a) const;
 
-  value atom_to_value(const atom& a);
-  value atom_to_string(const atom& a);
-  const char* atom_to_cstring(const atom& a);
+  value atom_to_value(const atom& a) const;
+  value atom_to_string(const atom& a) const;
+  const char* atom_to_cstring(const atom& a) const;
+
+  void
+  free_value(const value& v) const {
+    JS_FreeValue(ctx, v);
+  }
 
 protected:
   struct global {
@@ -226,8 +244,14 @@ protected:
     global(global&& o) noexcept;
     ~global();
 
-    operator const_value() const { return val; }
-    operator value() { return val; }
+    operator const_value() const {
+      get();
+      return val;
+    }
+    operator value() {
+      get();
+      return val;
+    }
 
   private:
     friend class jsrt;
@@ -323,7 +347,7 @@ jsrt::get_int_array(const_value val, T& ref) const {
   if(arr) {
     get_number(get_property(val, "length"), length);
     for(i = 0; i < length; i++) {
-      value v = get_property<uint32_t>(val, i);
+      value v = get_property(val, i);
       get_number(v, n);
       ref[i] = n;
     }
@@ -339,8 +363,8 @@ jsrt::get_point(const_value val, T& ref) const {
     uint32_t length;
     get_number(get_property(val, "length"), length);
     if(length >= 2) {
-      vx = get_property<uint32_t>(val, 0);
-      vy = get_property<uint32_t>(val, 1);
+      vx = get_property(val, 0);
+      vy = get_property(val, 1);
     } else {
       return;
     }
@@ -383,10 +407,10 @@ jsrt::get_color(const_value val, T& ref) const {
     uint32_t length;
     get_number(get_property(val, "length"), length);
     if(length >= 3) {
-      vr = get_property<uint32_t>(val, 0);
-      vg = get_property<uint32_t>(val, 1);
-      vb = get_property<uint32_t>(val, 2);
-      va = get_property<uint32_t>(val, 3);
+      vr = get_property(val, 0);
+      vg = get_property(val, 1);
+      vb = get_property(val, 2);
+      va = get_property(val, 3);
     } else {
       return;
     }
@@ -407,7 +431,7 @@ jsrt::get_point_array(const_value val, std::vector<T>& ref) const {
     ref.resize(length);
 
     for(i = 0; i < length; i++) {
-      JSValueConst pt = get_property<uint32_t>(val, i);
+      JSValueConst pt = get_property(val, i);
 
       get_point(pt, ref[i]);
     }
@@ -477,8 +501,17 @@ jsrt::get_property<uint32_t>(const_value obj, uint32_t index) const {
 
 template<>
 inline jsrt::value
-jsrt::get_property<const char*>(const_value obj, const char* name) const {
-  return JS_GetPropertyStr(ctx, obj, name);
+jsrt::get_property<const std::string&>(const_value obj, const std::string& name) const {
+  return JS_GetPropertyStr(ctx, obj, name.c_str());
+}
+inline jsrt::value
+jsrt::get_property_atom(const_value obj, atom a) const {
+  return JS_GetProperty(ctx, obj, a);
+}
+template<>
+inline jsrt::value
+jsrt::get_property<jsrt::const_value>(const_value obj, const_value prop) const {
+  return get_property(obj, value_to_atom(prop));
 }
 
 inline jsrt::value
@@ -795,6 +828,27 @@ jsrt::index() const {
 inline std::function<JSValue(uint32_t)>
 jsrt::index(const JSValueConst& a) const {
   return std::bind(&jsrt::get_property<uint32_t>, this, a, std::placeholders::_1);
+}
+
+inline bool
+jsrt::is_iterable(const_value val) {
+  bool ret = false;
+  value sym = get_symbol("iterator");
+  if(is_object(val) && has_property(val, sym)) {
+    value iter = get_property(val, sym);
+    ret = is_function(iter);
+  }
+  free_value(sym);
+  return ret;
+}
+
+inline bool
+jsrt::is_iterator(const_value val) const {
+  if(is_object(val) && has_property(val, "next")) {
+    value next = get_property(val, "next");
+    return is_function(next);
+  }
+  return false;
 }
 
 extern "C" jsrt js;

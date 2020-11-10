@@ -162,10 +162,9 @@ static inline int32_t
 js_array_length(JSContext* ctx, const JSValueConst& arr) {
   int32_t ret = -1;
   if(JS_IsArray(ctx, arr)) {
-
     JSValue v = JS_GetPropertyStr(ctx, arr, "length");
-
     JS_ToInt32(ctx, &ret, v);
+    JS_FreeValue(ctx, v);
   }
   return ret;
 }
@@ -269,6 +268,10 @@ js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData* out) {
     ret &= !JS_ToFloat64(ctx, &out->width, w);
     ret &= !JS_ToFloat64(ctx, &out->height, h);
   }
+  JS_FreeValue(ctx, x);
+  JS_FreeValue(ctx, y);
+  JS_FreeValue(ctx, w);
+  JS_FreeValue(ctx, h);
   return ret;
 }
 
@@ -308,6 +311,8 @@ js_size_read(JSContext* ctx, JSValueConst size, JSSizeData* out) {
   } else {
     ret = 0;
   }
+  JS_FreeValue(ctx, w);
+  JS_FreeValue(ctx, h);
   return ret;
 }
 
@@ -321,23 +326,46 @@ js_size_get(JSContext* ctx, JSValueConst size) {
 static inline int
 js_point_read(JSContext* ctx, JSValueConst point, JSPointData* out) {
   int ret = 1;
-  JSValue x = JS_GetPropertyStr(ctx, point, "x");
-  JSValue y = JS_GetPropertyStr(ctx, point, "y");
-
+  JSValue x, y;
+  if(JS_IsArray(ctx, point)) {
+    x = JS_GetPropertyUint32(ctx, point, 0);
+    y = JS_GetPropertyUint32(ctx, point, 1);
+  } else {
+    x = JS_GetPropertyStr(ctx, point, "x");
+    y = JS_GetPropertyStr(ctx, point, "y");
+  }
   if(JS_IsNumber(x) && JS_IsNumber(y)) {
     ret &= !JS_ToFloat64(ctx, &out->x, x);
     ret &= !JS_ToFloat64(ctx, &out->y, y);
   } else {
     ret = 0;
   }
+  JS_FreeValue(ctx, x);
+  JS_FreeValue(ctx, y);
   return ret;
 }
 
 static JSPointData
 js_point_get(JSContext* ctx, JSValueConst point) {
-  JSPointData r = {0, 0};
-  js_point_read(ctx, point, &r);
+  JSPointData r,*ptr;
+  if((ptr = js_point_data(ctx, point)) != nullptr)
+    r = *ptr;
+  else 
+    js_point_read(ctx, point, &r);
   return r;
+}
+
+static inline bool
+js_is_point(JSContext* ctx, JSValueConst point) {
+  JSPointData r;
+
+if(js_point_data(ctx, point))
+  return true;
+
+  if(js_point_read(ctx, point, &r))
+    return true;
+
+  return false;
 }
 
 static inline int
