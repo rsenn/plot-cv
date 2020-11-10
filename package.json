@@ -16,16 +16,20 @@
   "author": "Roman Senn <roman.l.senn@gmail.com>",
   "license": "MIT",
   "dependencies": {
-     "express": "^4.17.1",
+    "express": "^4.17.1",
     "express-ws": "^4.0.0",
     "@serialport/bindings": "^9.0.2",
     "@serialport/stream": "^9.0.1",
     "body-parser": "^1.19.0",
+    "htm": "^3.0.4",
     "isomorphic-fetch": "^2.2.1",
+    "preact": "^10.4.1",
+    "preact-ssr-prepass": "^1.1.2",
+    "preact-compat": "^3.19.0",
     "promisify-child-process": "^4.1.1",
     "serialport": "^9.0.1",
     "ws": "^7.3.1"
-   },
+  },
   "_oldDependencies": {
     "@app-elements/use-store-path": "^1.0.1",
     "@bikeshaving/crank": "^0.2.1",
@@ -42,9 +46,8 @@
     "duplex-child-process": "^1.0.1",
     "es6-promise": "^4.2.8",
     "exec-stream": "^0.1.0",
-     "gcode-interpreter": "^2.1.0",
+    "gcode-interpreter": "^2.1.0",
     "gerber-parser": "^4.2.1",
-    "htm": "^3.0.4",
     "interpret-gcode": "^0.0.1",
     "isomorphic-ws": "^4.0.1",
     "it-ws": "^3.0.0",
@@ -54,14 +57,11 @@
     "module-alias": "^2.2.2",
     "node-pty": "^0.9.0",
     "outline-stroke": "^0.0.0",
-    "preact": "^10.4.1",
-    "preact-compat": "^3.19.0",
     "preact-context": "^1.1.4",
     "preact-custom-element": "^4.2.1",
     "preact-infinite-viewer": "^0.5.0",
     "preact-mui": "^0.1.1",
     "preact-render-to-string": "^5.1.10",
-    "preact-ssr-prepass": "^1.1.2",
     "preact-tiny-virtual-list": "^2.2.0",
     "proxy-lists": "^1.23.0",
     "pure-cache": "^1.0.5",
@@ -80,7 +80,6 @@
     "websocket-iterator": "https://github.com/vadzim/websocket-iterator",
     "webusb-serial": "^2.0.1",
     "xterm": "https://github.com/xtermjs/xterm.js"
-
   },
   "_moduleAliases": {
     "fs": "lib/filesystem.js",
@@ -120,10 +119,7 @@
     "node": ">= 14"
   },
   "lint-staged": {
-    "*.{js,jsx}": [
-      "eslint . --ext .js --ext .jsx --ignore-path .eslintignore --fix",
-      "git add"
-    ]
+    "*.{js,jsx}": ["eslint . --ext .js --ext .jsx --ignore-path .eslintignore --fix", "git add"]
   },
   "stylelint": {
     "extends": "stylelint.config.js"
