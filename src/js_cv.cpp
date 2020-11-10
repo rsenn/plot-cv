@@ -465,13 +465,9 @@ js_cv_getticks(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
   JSValue ret = JS_UNDEFINED;
   switch(magic) {
     case 0: ret = JS_NewInt64(ctx, cv::getTickCount()); break;
-
     case 1: ret = JS_NewFloat64(ctx, cv::getTickFrequency()); break;
-
-    case 2: {
-      ret = JS_NewInt64(ctx, cv::getCPUTickCount());
-      break;
-    }
+    case 2: ret = JS_NewInt64(ctx, cv::getCPUTickCount());
+    default: ret = JS_EXCEPTION;
   }
   return ret;
 }
