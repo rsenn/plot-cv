@@ -480,7 +480,8 @@ async function main() {
       c => {
         str = c;
         let stat = safeStat(configFile);
-        time = stat.mtime.getTime();
+        if(Util.isObject(stat.mtime))
+          time = stat.mtime.getTime();
       },
       () => (str = '{}')
     );
