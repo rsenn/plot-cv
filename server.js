@@ -480,14 +480,12 @@ async function main() {
       c => {
         str = c;
         let stat = safeStat(configFile);
+    console.log('stat:', stat);
         if(Util.isObject(stat.mtime))
           time = stat.mtime.getTime();
       },
       () => (str = '{}')
     );
-
-    console.log('stat:', stat);
-
     res.json({ config: str, time, hash: Util.hashString(str) });
   });
   app.post('/config', async (req, res) => {
