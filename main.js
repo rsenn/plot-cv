@@ -951,9 +951,8 @@ async function LoadDocument(project, parentElem) {
       let e;
       if(props.id && (e = Element.find(`#${props.id}`))) return e;
 
-      transform =
-        (Element.find('g.elements', svg) || Element.find('g.instances', svg)).getAttribute('transform') +
-        (transform ? ' ' + transform : '');
+      let groupElement = Element.find('g.elements', svg) || Element.find('g.instances', svg);
+      transform = (groupElement ? groupElement.getAttribute('transform') : '') + (transform ? ' ' + transform : '');
       return (e = SVG.create('g', { ...props, transform }, svg));
     };
 
