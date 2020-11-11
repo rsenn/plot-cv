@@ -6,9 +6,28 @@
     <link rel="stylesheet" type="text/css" href="static/fonts.css?ts=<?TS?>" />
     <link rel="stylesheet" type="text/css" href="static/tlite.css?ts=<?TS?>" />
     <script type="module" src="./main.js"></script>
+    <script>
+       async function register(script) {
+          if ('serviceWorker' in navigator) {
+            const { serviceWorker } = navigator;
+            console.log('register service worker');
+            let result = await serviceWorker.register(script);
+            console.log('Service Worker Registered', result);
+            let registration = await serviceWorker.ready;
+            console.log('Service Worker ready', registration);
+            // At this point, a Service Worker is controlling the current page
+            let response = serviceWorker.controller.postMessage({
+              type: 'MESSAGE_IDENTIFIER',
+              data: 'blah'
+            });
+            return response;
+          }
+        }
+        register('/sw.js');
+    </script>
   </head>
   <body>
-    <div id="preact" style=" max-height: 100vh;"></div>
+    <div id="preact" style="max-height: 100vh;"></div>
     <main id="main"></main>
     <div id="display"></div>
     <div id="doc" style="display: none;"></div>

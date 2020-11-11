@@ -480,9 +480,8 @@ async function main() {
       c => {
         str = c;
         let stat = safeStat(configFile);
-    console.log('stat:', stat);
-        if(Util.isObject(stat.mtime))
-          time = stat.mtime.getTime();
+        console.log('stat:', stat);
+        if(Util.isObject(stat.mtime)) time = stat.mtime.getTime();
       },
       () => (str = '{}')
     );
