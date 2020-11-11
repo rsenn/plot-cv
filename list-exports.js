@@ -113,10 +113,10 @@ async function main(...args) {
 
       let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportStatement || value.exported === true);
 
-      exports = exports.map(([p,e]) => 'declarations' in e && !Util.isArray(e.declarations) ? [[...p,'declarations'],e.declarations] : [p,e]);
-      
+      exports = exports.map(([p, e]) => ('declarations' in e && !Util.isArray(e.declarations) ? [[...p, 'declarations'], e.declarations] : [p, e]));
+
       for(let [path, node] of exports) {
-    //    log(`export ${path}`, node);
+        //    log(`export ${path}`, node);
         deep.set(ast, path, node.declarations[0]);
       }
 
@@ -131,11 +131,10 @@ async function main(...args) {
       exports = exports.map(([p, stmt]) => ((Util.isObject(stmt.declarations) && Util.isObject(stmt.declarations.id) && Util.isObject(stmt.declarations.id.value)) == (Util.isObject(stmt.what) && Util.isObject(stmt.what.value)) ? stmt.declarations : stmt));
       exports = exports.map(decl => (decl instanceof ObjectBindingPattern ? decl.properties.map(prop => ('id' in prop ? prop.id : prop)) : decl instanceof ObjectLiteral ? decl.members.map(prop => ('id' in prop ? prop.id : prop)) : decl));
       exports = exports.map(decls => decls.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl)));
-    
 
-//      exportProps =exportProps.map(ep => 'id' in ep ? ep.id.value : ep);
+      //      exportProps =exportProps.map(ep => 'id' in ep ? ep.id.value : ep);
 
-  log(`exports==`, exports);
+      log(`exports==`, exports);
 
       let exportProps = exports.reduce((a, stmt) => {
         if('declarations' in stmt) stmt = stmt.declarations;
@@ -145,8 +144,7 @@ async function main(...args) {
         return [...a, ...stmt];
       }, []);
 
-      exportProps =exportProps.map(ep => 'id' in ep ? ep.id.value : ep);
-
+      exportProps = exportProps.map(ep => ('id' in ep ? ep.id.value : ep));
 
       log(`exportProps==`, exportProps);
 
