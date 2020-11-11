@@ -28,7 +28,7 @@ async function main(...args) {
   console.log('line', line);
 
   let image;
-  cv.namedWindow('main', cv.WINDOW_NORMAL|cv.WINDOW_KEEPRATIO);
+  cv.namedWindow('main', cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);
   cv.createTrackbar('threshold', 'main', 0, 100, function(value, count, name, window) {
     console.log('Trackbar', { value, count, name, window });
   });

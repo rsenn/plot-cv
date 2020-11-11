@@ -63,11 +63,10 @@ trackbar(int input, void* u) {
 
 void
 trackbar_prop(int input, void* u) {
-  int propId =  (int)(ptrdiff_t)(u);
-double value = input;
+  int propId = (int)(ptrdiff_t)(u);
+  double value = input;
 
-  capWebcam.set(propId, input/255);
-
+  capWebcam.set(propId, input / 255);
 };
 
 int
@@ -97,22 +96,16 @@ create_trackbar(const char* name,
                 const std::string& window,
                 int* value,
                 int count,
-                cv::TrackbarCallback onChange ,
+                cv::TrackbarCallback onChange,
                 int propId) {
   std::string barName = name;
   std::string windowName = views[window] ? window : "imgOriginal";
- 
 
   trackbars[barName] = name;
 
-  int ret = cv::createTrackbar(name,
-                            windowName,
-                            value,
-                            count,
-                            onChange,
-                           (void*)(ptrdiff_t)propId);
+  int ret = cv::createTrackbar(name, windowName, value, count, onChange, (void*)(ptrdiff_t)propId);
 
-  cv::setTrackbarPos(name,windowName, capWebcam.get(propId)*255);
+  cv::setTrackbarPos(name, windowName, capWebcam.get(propId) * 255);
   return ret;
 }
 
@@ -260,10 +253,11 @@ main(int argc, char* argv[]) {
     cv::namedWindow(window, cv::WINDOW_NORMAL);
   }
 
-  create_trackbar("brightness", "imgOriginal", &image_index, 255, trackbar_prop, (int)cv::CAP_PROP_BRIGHTNESS);
-  create_trackbar("exposure", "imgOriginal", &image_index, 255, trackbar_prop, (int)cv::CAP_PROP_EXPOSURE);
-  create_trackbar("gain", "imgOriginal", &image_index, 255, trackbar_prop,  (int)cv::CAP_PROP_GAIN);
-
+  create_trackbar(
+      "brightness", "imgOriginal", &image_index, 255, trackbar_prop, (int)cv::CAP_PROP_BRIGHTNESS);
+  create_trackbar(
+      "exposure", "imgOriginal", &image_index, 255, trackbar_prop, (int)cv::CAP_PROP_EXPOSURE);
+  create_trackbar("gain", "imgOriginal", &image_index, 255, trackbar_prop, (int)cv::CAP_PROP_GAIN);
 
   create_trackbar("frame", "imgCanny", &image_index, 255, trackbar, "frame");
   create_trackbar("threshold2", "imgCanny", &thresh2, 255, trackbar, "thres2");

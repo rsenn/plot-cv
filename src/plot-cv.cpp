@@ -661,7 +661,7 @@ process_raster(std::function<void(std::string, cv::Mat*)> display_image, int sho
                       (double)config.blur_sigma_r * 0.01,
                       config.blur_kernel_size * 2 + 1);
 
-  //auto_canny(imgBlurred, imgCanny,1);
+  // auto_canny(imgBlurred, imgCanny,1);
   cv::Canny(imgBlurred, imgCanny, thresh, thresh2, apertureSize);
 
   image_type strel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(19, 19));

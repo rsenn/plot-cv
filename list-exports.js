@@ -20,7 +20,9 @@ console.log('main');
 Util.callMain(main);
 
 /*
-const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg"> <defs /> */ function PrefixRemover(reOrStr, replacement = '') {
+const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg"> <defs /> */ function PrefixRemover(reOrStr,
+  replacement = ''
+) {
   if(!(Util.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
 
   return arg => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), arg);
@@ -46,7 +48,14 @@ async function main(...args) {
   // cwd = process.cwd() || fs.realpath('.');
   console.log('cwd=', cwd);
 
-  if(args.length == 0) args = [/*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js', 'lib/geom/size.js', 'lib/geom/trbl.js', 'lib/geom/rect.js', 'lib/dom/element.js'];
+  if(args.length == 0)
+    args = [
+      /*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js',
+      'lib/geom/size.js',
+      'lib/geom/trbl.js',
+      'lib/geom/rect.js',
+      'lib/dom/element.js'
+    ];
   let r = [];
   let processed = [];
   console.log('args=', args);
@@ -111,9 +120,12 @@ async function main(...args) {
       );
       //log(`keys==`, [...flat].map(([k,v]) => [k.join('.'), Util.className(v)]));
 
-      let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportStatement || value.exported === true);
+      let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportStatement || value.exported === true
+      );
 
-      exports = exports.map(([p, e]) => ('declarations' in e && !Util.isArray(e.declarations) ? [[...p, 'declarations'], e.declarations] : [p, e]));
+      exports = exports.map(([p, e]) =>
+        'declarations' in e && !Util.isArray(e.declarations) ? [[...p, 'declarations'], e.declarations] : [p, e]
+      );
 
       for(let [path, node] of exports) {
         //    log(`export ${path}`, node);
@@ -128,8 +140,20 @@ async function main(...args) {
         })
       );
 
-      exports = exports.map(([p, stmt]) => ((Util.isObject(stmt.declarations) && Util.isObject(stmt.declarations.id) && Util.isObject(stmt.declarations.id.value)) == (Util.isObject(stmt.what) && Util.isObject(stmt.what.value)) ? stmt.declarations : stmt));
-      exports = exports.map(decl => (decl instanceof ObjectBindingPattern ? decl.properties.map(prop => ('id' in prop ? prop.id : prop)) : decl instanceof ObjectLiteral ? decl.members.map(prop => ('id' in prop ? prop.id : prop)) : decl));
+      exports = exports.map(([p, stmt]) =>
+        (Util.isObject(stmt.declarations) &&
+          Util.isObject(stmt.declarations.id) &&
+          Util.isObject(stmt.declarations.id.value)) == (Util.isObject(stmt.what) && Util.isObject(stmt.what.value))
+          ? stmt.declarations
+          : stmt
+      );
+      exports = exports.map(decl =>
+        decl instanceof ObjectBindingPattern
+          ? decl.properties.map(prop => ('id' in prop ? prop.id : prop))
+          : decl instanceof ObjectLiteral
+          ? decl.members.map(prop => ('id' in prop ? prop.id : prop))
+          : decl
+      );
       exports = exports.map(decls => decls.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl)));
 
       //      exportProps =exportProps.map(ep => 'id' in ep ? ep.id.value : ep);
@@ -138,7 +162,12 @@ async function main(...args) {
 
       let exportProps = exports.reduce((a, stmt) => {
         if('declarations' in stmt) stmt = stmt.declarations;
-        if('properties' in stmt) stmt = stmt.properties.map(({ property, id }) => (id.value && property.value && id.value != property.value ? `${property.value} as ${id.value}` : property.value || id.value));
+        if('properties' in stmt)
+          stmt = stmt.properties.map(({ property, id }) =>
+            id.value && property.value && id.value != property.value
+              ? `${property.value} as ${id.value}`
+              : property.value || id.value
+          );
         if('value' in stmt) stmt = [stmt.value];
         if(!Util.isArray(stmt)) console.error('stmt error:', stmt);
         return [...a, ...stmt];

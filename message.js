@@ -93,11 +93,10 @@ export class Message {
       ? (str, code) => prepend((code == Message.SENDER_ID ? ':' : '') + str)
       : (str, code) => prepend((r = String.fromCodePoint(code) + str + String.fromCodePoint(code)));
 
-
     if(recipient) r = insertField(recipient, Message.RECIPIENT_ID);
-   r = insertField(type || 'x', Message.TYPE_ID);
+    r = insertField(type || 'x', Message.TYPE_ID);
     if(origin) r = insertField(origin, Message.SENDER_ID);
- 
+
     return r;
   }
 
