@@ -1206,8 +1206,9 @@ function HandleMessage(msg) {
   switch (type) {
     case 'CONTOURS': {
       let { frame, width, height, contours } = body;
+      console.log('HandleMessage', { contours });
 
-      let lists = contours.split(/\s*\|\s*/g).map(pointStr => new PointList(pointStr));
+      let lists = (typeof(contours) == 'string' ? contours.split(/\s*\|\s*/g) : contours).map(pointStr => new Polyline  (pointStr));
 
       window.lists = lists;
       console.log('HandleMessage', { type, width, height, frame }, lists);
