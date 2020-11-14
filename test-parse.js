@@ -7,6 +7,8 @@ import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import PortableFileSystem from './lib/filesystem.js';
 import path from './lib/path.js';
+import Cowbird from './lib/parse/cowbird.js';
+import deep from './lib/deep.js';
 
 let filesystem;
 
@@ -20,12 +22,11 @@ function dumpFile(name, data) {
 }
 
 async function main(...args) {
-  await PortableFileSystem(fs => filesystem = fs);
-  await ConsoleSetup({ depth: 2 });
+  await PortableFileSystem(fs => (filesystem = fs));
+  await ConsoleSetup({ depth: 4 });
 
   let [filename = './lib/grammars/INI.g4'] = args;
   let basename = path.basename(filename, '.g4');
-
 
   let src = filesystem.readFile(filename).toString();
 
@@ -35,60 +36,58 @@ async function main(...args) {
   grammar.parse();
   //console.log('grammar:', grammar);
   //console.log('grammar:', grammar.generate());
-  dumpFile(`grammar-${basename}.js`, grammar.generate());
+  dumpFile(`grammar-${basename}.js`, grammar.generate('./lib/parse/'));
   //grammar.resolveRules();
 
   //console.log("CGrammar", CGrammar);
   //console.log('CGrammar.compilationUnit', CGrammar.compilationUnit);
 
-  filename = './seek_set.c';
-  filename = '../pictest/build/mplab/7segtest-16f876a-xc8-debug.mcp';
-  src = filesystem.readFile(filename).toString();
+  //filename = './seek_set.c';
+  //filename = '../pictest/build/mplab/7segtest-16f876a-xc8-debug.mcp';
+  //src = filesystem.readFile(filename).toString();
   //let result = CGrammar.compilationUnit(`int seek_set(int fd, seek_pos pos) {if(lseek(fd, (off_t)pos, SET) == -1) return -1; return 0; } `, 0);
   //let result = CGrammar.ini(src, 0);
   //console.log('parsed:', result);
+  let a = [];
+  for(let [name, rule] of grammar.rules) {
+    a.push(rule.toCowbird(a, name));
+  }
 
-  let clex = new Lexer(src, filename);
+  /* let flat = deep.flatten(grammar.rules, new Map(), it => typeof it == 'object' || true);
+
+  console.log('flat:', flat);
+  let aMatch = grammar.rules.get('ini').productions[0];
+  console.log('aMatch:', aMatch);
+  console.log('aMatch:', aMatch.clone());*/
+
+  let cowbirdGrammar = grammar.toCowbird();
+  console.log('cowbird:', cowbirdGrammar);
+
+  let data = filesystem.readFile('../pictest/build/mplab/7segtest-16f876a-xc8-debug.mcp');
+  console.log('data:', Util.abbreviate(data, 100));
+  let parser = new Cowbird(cowbirdGrammar, 'ini', true);
+  console.log('parser:', parser);
+
+  let result = parser.parse(data);
+  console.log('result:', result);
+
+  return;
+
+  /*let clex = new Lexer(src, filename);
   let cparse = new Parser(clex);
 
-  for(let [name, rule] of grammar.rules.entries()) {
-    let ok = rule.match(cparse);
-
-    if(ok != -1 && ok) {
-      //console.log('ok:', ok);
-      //console.log(`rule[${ok}]:`, rule[ok]);
-      //console.log(`${clex.line}:${clex.column} rule ${name}:`, rule.toString());
-    }
-  }
-
-  //console.log('cparse:', cparse);
-
-  /*
-  for(let { tok, str } of lex) {
-    tok = (tok + '').replace(/([\n\r\t])/g, '\\$1');
-    //console.log(`token: ${lex.position} ${tok} ${str}`);
-  }
-  */
   let rule = grammar.getRule('typeSpecifier');
-  //console.log('rule:', rule);
-
   let buffer = filesystem.readFile('./lib/ecmascript/es6.ebnf');
-
   process.exit(0);
   let parser = new Ebnf2Parser(buffer.toString());
-
   grammar = parser.parseGrammar();
-  //console.log('grammar:', grammar);
-  //console.log('grammar.nodeLength():', grammar.nodeLength());
-
   if(grammar != null) parser.state.advance(grammar.nodeLength());
   if(parser.state.current == '') {
     grammar.print(0);
     process.exit(0);
   } else {
-    //console.log('incomplete parse: lineNumber=' + parser.state.lineNumber + ' input=' + parser.state.buffer.substring(parser.state.offset, parser.state.offset + 50));
     process.exit(-1);
-  }
+  }*/
 }
 
 Util.callMain(main, true);
