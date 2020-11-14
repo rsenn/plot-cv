@@ -8,6 +8,7 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import tXml from './lib/tXml.js';
 import { XPath } from './lib/xml.js';
 import { toXML } from './lib/json.js';
+
 async function main(...args) {
   await PortableFileSystem();
   await ConsoleSetup({ depth: 2 });
@@ -154,4 +155,5 @@ async function main(...args) {
 end`;
   }
 }
+
 Util.callMain(main, true);
