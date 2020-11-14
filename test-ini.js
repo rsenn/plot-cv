@@ -11,7 +11,6 @@ import { toXML } from './lib/json.js';
 
 let filesystem;
 
-
 function dumpFile(name, data) {
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
@@ -22,7 +21,7 @@ function dumpFile(name, data) {
 }
 
 async function main(...args) {
-  await PortableFileSystem(fs => filesystem = fs);
+  await PortableFileSystem(fs => (filesystem = fs));
   await ConsoleSetup({ depth: 4 });
 
   let xy = new Point();
@@ -39,14 +38,14 @@ async function main(...args) {
     //console.log('src:', src);
     let [done, data, pos] = INIGrammar.ini(src, 0);
 
-    let createMap = entries =>  /*Object.fromEntries(entries) ||*/ new Map(entries);
- 
+    let createMap = entries => /*Object.fromEntries(entries) ||*/ new Map(entries);
+
     let sections = data[0].reduce((acc, sdata) => {
-      console.log("sdata:",sdata);
+      console.log('sdata:', sdata);
       return { ...acc, [sdata[0]]: createMap(sdata[1] || []) };
     }, {});
 
-      const flat = deep.flatten(sections,
+    const flat = deep.flatten(sections,
       new Map(),
       k => k.length > 0,
       (k, v) => [k.slice(1), v]
@@ -83,7 +82,7 @@ async function main(...args) {
 
       Object.assign(svg.attributes, { width, height });
       Util.weakAssign(svg.attributes, { viewBox: new BBox(0, 0, iconSize.width, iconSize.height) });
-     dumpFile(svgFile, toXML(svgData));
+      dumpFile(svgFile, toXML(svgData));
 
       console.log(' :', {
         attr,
