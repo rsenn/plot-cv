@@ -59,7 +59,8 @@ g.process = async function process(contours, hier, ...args) {
     height: rows,
     frame,
     time,
-    contours: contours.filter(c => c.length >= 4)
+    contours: contours
+      .filter(c => c.length >= 4)
       .map(c => c.toString(Contour.FORMAT_NOBRACKET | Contour.FORMAT_SPACE | Contour.FORMAT_01))
       .join('|')
   };

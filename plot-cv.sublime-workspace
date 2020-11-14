@@ -1,949 +1,1509 @@
 {
-  "auto_complete": {
-    "selected_items": [
-      ["previous", "previousTimestamp"],
-      ["Github", "GithubListRepositories"],
-      ["max", "maxLineGap"],
-      ["ali", "alignmentTransform"],
-      ["align", "alignmentTransform"],
-      ["instru", "instrumentateParser"],
-      ["Eleme", "ElementToClass"],
-      ["Function", "FunctionArgument"],
-      ["Varia", "VariableDeclarator"],
-      ["PipeTo", "PipeToRepeater"],
-      ["ini", "initializer"],
-      ["parseFunc", "parseFunctionParametersAndBody"],
-      ["Calc", "CalculateArc"],
-      ["package", "packageGeometries"],
-      ["Package", "PackageGeometries"],
-      ["TextDec", "TextDecoderStream"],
-      ["Generate", "GenerateDistinctVariableDeclarations"],
-      ["decl", "declStatement"],
-      ["Trans", "TransformationList"],
-      ["HAVE_", "HAVE_MALLOC_USABLE_SIZE_DEFINITION"],
-      ["js_mat_itera", "js_mat_iterator_class_id"],
-      ["JSMat", "JSMatIteratorData"],
-      ["mat_iterator", "mat_iterator_proto"],
-      ["Obj", "ObjectBindingPattern"],
-      ["Mut", "MutablePath"],
-      ["Conso", "ConsoleSetup"],
-      ["ES6I", "ES6ImportExport.prototype"]
-    ]
-  },
-  "buffers": [
-    {
-      "contents": "",
-      "settings": {
-        "buffer_size": 0,
-        "line_ending": "Unix",
-        "name": "𝌆 Outline",
-        "scratch": true
-      }
-    },
-    {
-      "file": "src/auto_canny.h",
-      "settings": {
-        "buffer_size": 1260,
-        "encoding": "UTF-8",
-        "line_ending": "Unix"
-      }
-    },
-    {
-      "file": "quickjs/net/minnet.c",
-      "settings": {
-        "buffer_size": 17594,
-        "encoding": "UTF-8",
-        "line_ending": "Unix"
-      }
-    },
-    {
-      "file": "plot-cv.js",
-      "settings": {
-        "buffer_size": 2415,
-        "line_ending": "Unix"
-      }
-    },
-    {
-      "file": "src/highgui-viewer.cpp",
-      "settings": {
-        "buffer_size": 12280,
-        "encoding": "UTF-8",
-        "line_ending": "Unix"
-      }
-    },
-    {
-      "file": "/home/roman/Dokumente/Sources/opencv/samples/cpp/warpPerspective_demo.cpp",
-      "settings": {
-        "buffer_size": 6441,
-        "line_ending": "Unix"
-      }
-    },
-    {
-      "file": "main.js",
-      "settings": {
-        "buffer_size": 88124,
-        "encoding": "UTF-8",
-        "line_ending": "Unix"
-      }
-    },
-    {
-      "contents": "Package Control Messages\n========================\n\nBetter JavaScript\n-----------------\n\n  Better JavaScript is now installed! To ensure that the updated syntax file and symbol list take\n  effect, you may need to do the following:\n\n  1. Close all open JavaScript/JSON files (including .sublime-settings files)\n  2. Exit Sublime\n  3. Delete the cache and index files in your Sublime user directory\n  4. Re-open Sublime\n\n\n  Uninstalling\n  ------------\n  Before uninstalling Better JavaScript, be sure close all open JavaScript/JSON\n  files, and remove \"JavaScript\" from the \"ignored_packages\" list in your Sublime\n  user settings. You can now safely uninstall the Better JavaScript package.\n\n  It's normal to see a few errors from Sublime about not being able to find syntax files. Just exit\n  Sublime and re-open it, and everything should be fixed.",
-      "settings": {
-        "buffer_size": 846,
-        "line_ending": "Unix",
-        "name": "Package Control Messages",
-        "read_only": true,
-        "scratch": true
-      }
-    }
-  ],
-  "build_system": "",
-  "build_system_choices": [],
-  "build_varint": "",
-  "command_palette": {
-    "height": 0.0,
-    "last_filter": "",
-    "selected_items": [
-      ["instal", "Package Control: Install Package"],
-      ["remove pac", "Package Control: Remove Package"],
-      ["install", "Package Control: Install Package"],
-      ["add re", "Package Control: Add Repository"],
-      ["install pac", "Package Control: Install Package"],
-      ["outline", "Browse Mode: Outline (Right)"],
-      ["tag", "CTags: Rebuild Tags"],
-      ["remove pack", "Package Control: Remove Channel"],
-      ["instal pac", "Package Control: Install Package"],
-      ["out", "Browse Mode: Outline (Right)"],
-      ["install pa", "Package Control: Install Package"],
-      ["tags", "CTags: Rebuild Tags"],
-      ["ctag", "CTags: Rebuild Tags"],
-      ["svgo", "SVGO: Prettify SVG"],
-      ["prett", "SVGO: Prettify SVG"],
-      ["add repo", "Package Control: Add Repository"],
-      ["pret", "SVGO: Prettify SVG"],
-      ["svg", "SVGO: Minify SVG"],
-      ["outlin", "Browse Mode: Outline (Right)"],
-      ["install pack", "Package Control: Install Package"],
-      ["rebuild", "Build With: Rebuild CTags"],
-      ["install ", "Package Control: Install Package"],
-      ["unicode", "Unicode Character Insert: Show Panel"],
-      ["math", "UnicodeMath: Insert"],
-      ["remove", "Package Control: Remove Package"],
-      ["install p", "Package Control: Install Package"],
-      ["remove p", "Package Control: Remove Package"],
-      ["adv", "Package Control: Advanced Install Package"],
-      ["adva", "Package Control: Advanced Install Package"],
-      ["min", "SVGO: Minify SVG"],
-      ["isntall", "Package Control: Install Package"],
-      ["ins", "Package Control: Install Package"],
-      ["", "Bookmarks: Select All"],
-      ["add ", "Package Control: Add Repository"],
-      ["extract pack", "PackageResourceViewer: Extract Package"],
-      ["symbol", "CTags: Show Symbols (all)"],
-      ["ctags", "CTags: Show Symbols (file)"],
-      ["extract fn", "Extract Javascript Function to Regular Function"],
-      ["insta", "Package Control: Install Package"],
-      ["add rep", "Package Control: Add Repository"],
-      ["cmake", "CMake Format: Format Selection"],
-      ["remove ", "Package Control: Remove Package"],
-      ["list p", "Package Control: List Packages"],
-      ["outli", "Browse Mode: Outline (Right)"],
-      ["list pac", "Package Control: List Packages"],
-      ["prettier", "JsPrettier: Format Code"],
-      ["Package Control: ", "Package Control: Remove Package"],
-      ["instalk", "Package Control: Install Package"],
-      ["Package Control: install", "Package Control: Install Package"],
-      ["extract", "Extract Sublime Package: Extract all packages"],
-      ["extra", "Extract Sublime Package: Extract all packages"],
-      ["build", "Build: Cancel"]
-    ],
-    "width": 0.0
-  },
-  "console": {
-    "height": 300.0,
-    "history": ["sublime.log_commands(True)", "sublime.log_commands(True).", " sublime.log_commands(True)"]
-  },
-  "distraction_free": {
-    "menu_visible": true,
-    "show_minimap": false,
-    "show_open_files": false,
-    "show_tabs": false,
-    "side_bar_visible": false,
-    "status_bar_visible": false
-  },
-  "expanded_folders": ["/home/roman/Dokumente/Sources/plot-cv", "/home/roman/Dokumente/Sources/plot-cv/interactive-svg", "/home/roman/Dokumente/Sources/plot-cv/lib"],
-  "file_history": [
-    "/home/roman/Dokumente/Sources/plot-cv/plot-cv.js",
-    "/home/roman/Dokumente/Sources/plot-cv/commands.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/net/websocket-async.js",
-    "/home/roman/Dokumente/Sources/plot-cv/src/js_cv.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/src/highgui-viewer.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/server.js",
-    "/home/roman/Dokumente/Sources/plot-cv/main.js",
-    "/home/roman/Dokumente/Sources/plot-cv/src/js_video_capture.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/src/plot-cv.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/test-net.js",
-    "/home/roman/Dokumente/Sources/plot-cv/src/js.h",
-    "/home/roman/Dokumente/Sources/plot-cv/src/plot-cv.h",
-    "/home/roman/Dokumente/Sources/plot-cv/src/data.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/src/cli.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/src/js.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.h",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/consoleSetup.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/objectInspect.js",
-    "/home/roman/Dokumente/Sources/plot-cv/src/js_mat.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.h",
-    "/home/roman/Dokumente/Sources/plot-cv/socket.js",
-    "/home/roman/Dokumente/Sources/plot-cv/message.js",
-    "/home/roman/Dokumente/Sources/plot-cv/test-minnet.js",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/net/minnet.c",
-    "/home/roman/Dokumente/Sources/plot-cv/js-bindings.cmake",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.c",
-    "/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/src/js_contour.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/src/js_draw.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/src/js_point.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/examples/fib.c",
-    "/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
-    "/home/roman/Dokumente/Sources/plot-cv/src/js_point_iterator.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/src/js_size.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/src/js_rect.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/src/js_line.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/scripts/format-sources.sh",
-    "/home/roman/Dokumente/Sources/plot-cv/test-console.js",
-    "/home/roman/Dokumente/Sources/plot-cv/test-quickjs.js",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/sepheaders.c",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/rtsp.c",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/sftpuploadresume.c",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/ftpuploadresume.c",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/persistent.c",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/cacertinmem.c",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/ftpgetresp.c",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/simplessl.c",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/synctime.c",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/usercertinmem.c",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/ftpgetinfo.c",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/multi-post.c",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-libc.c",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/doc/quickjs.html",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/doc/jsbignum.md",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/doc/quickjs.md",
-    "/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
-    "/home/roman/Dokumente/Sources/plot-cv/src/geometry.h",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/net/README.md",
-    "/home/roman/Dokumente/Sources/plot-cv/.clang-format",
-    "/home/roman/Dokumente/Sources/plot-cv/mount-tmp.sh",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/github.js",
-    "/opt/opencv-4.5.0/include/opencv4/opencv2/videoio.hpp",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/childProcess.js",
-    "/home/roman/Dokumente/Sources/sw-utils/libswsh/lib/util.sh.in",
-    "/home/roman/Dokumente/Sources/plot-cv/cfg.sh",
-    "/home/roman/Dokumente/Sources/c-utils/tryselect.c",
-    "/home/roman/Dokumente/Sources/opencv/cfg.sh",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/cfg.sh",
-    "/home/roman/Dokumente/Sources/opencv/tmp.txt",
-    "/home/roman/Dokumente/Sources/opencv/platforms/js/build_js.py",
-    "/opt/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
-    "/home/roman/Dokumente/Sources/ssl-libraries/wolfssl-4.5.0/CMakeLists.txt",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/net/CMakeLists.txt",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/filesystem.js",
-    "/home/roman/Dokumente/Sources/plot-cv/test-childprocess.js",
-    "/home/roman/Dokumente/Sources/plot-cv/scripts/iwatch.sh",
-    "/home/roman/Dokumente/Sources/plot-cv/src/auto_canny.h",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-atom.h",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs/net/libwebsockets/minimal-examples/dbus-server/minimal-dbus-ws-proxy/protocol_lws_minimal_dbus_ws_proxy.c",
-    "/home/roman/Dokumente/Sources/plot-cv/src/imgui-viewer.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/test-opencv.js",
-    "/tmp/r.diff",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs-2019-10-27/quickjs-libc.c",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs-2019-10-27/examples/point.c",
-    "/home/roman/Dokumente/Sources/plot-cv/test-dlfcn.c",
-    "/opt/opencv-4.5.0/include/opencv4/opencv2/core/matx.hpp",
-    "/home/roman/Dokumente/Sources/plot-cv/highgui-viewer.cmake",
-    "/home/roman/Dokumente/Sources/plot-cv/quickjs.html",
-    "/opt/opencv-4.5.0/include/opencv4/opencv2/core.hpp",
-    "/home/roman/Dokumente/Sources/plot-cv/src/line.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/opencv/live_demo.cpp",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/color/rgba.js",
-    "/home/roman/Dokumente/Sources/opencv-detect/opencv/tutorial/houghlines.cpp",
-    "/opt/opencv4/include/opencv4/opencv2/core/cvdef.h",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/instance.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pin.js",
-    "/home/roman/Dokumente/Sources/plot-cv/index.html",
-    "/home/roman/Dokumente/Sources/plot-cv/components.js",
-    "/home/roman/Dokumente/Sources/plot-cv/inst/usr/local/include/quickjs/quickjs.h",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/geom/circle.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/.gitmodules",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/geom/align.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/circle.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/geom/polyline.js",
-    "/home/roman/Dokumente/Sources/plot-cv/test-geom.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/geom.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/libraryRenderer.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/nodeMap.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/wirePath.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/geom/bbox.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/geom/line.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/polygon.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pad.js",
-    "/home/roman/Dokumente/Sources/plot-cv/Simple-NPN-Regen-Receiver.brd",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/wire.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/element.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/package.js",
-    "/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js"
-  ],
-  "find": {
-    "height": 39.0
-  },
-  "find_in_files": {
-    "height": 306.0,
-    "where_history": [
-      "/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*,/home/roman/Dokumente/Sources/plot-cv,*.cpp,*.hpp,*.h",
-      "/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*",
-      "/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json",
-      "/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,*.c,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json",
-      "/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,*.c,*.h,-.*,-tags,-*.orig,-*.log,-*.json",
-      "/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json",
-      "/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
-      "/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
-      "/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
-      "/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
-      "/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,-.*,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
-      "/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
-      "/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,/home/roman/Dokumente/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Dokumente/Sources/plot-cv/quickjs,*.h,*,c",
-      "/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,,/home/roman/Dokumente/Sources/plot-cv/src,*.h,*,cpp",
-      "/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,,/home/roman/Dokumente/Sources/plot-cv/src,*.h",
-      "/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,,/home/roman/Dokumente/Sources/plot-cv/src,*.cpp,*.h",
-      "/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,<open files>",
-      "/home/roman/Dokumente/Sources/plot-cv,-*node_modules*,*.js,<open files>",
-      "/home/roman/Dokumente/Sources/plot-cv,-node_modules,*.js,<open files>",
-      "/home/roman/Dokumente/Sources/plot-cv,*.js,<open files>",
-      "/home/roman/Dokumente/Sources/plot-cv,*.js",
-      ""
-    ]
-  },
-  "find_state": {
-    "case_sensitive": true,
-    "find_history": [
-      "auto_cann",
-      "auto_canny",
-      "CreateWeb",
-      "CreateWebSocket",
-      "WebSocketClient",
-      "CreateWeb",
-      "Canny",
-      "draw_all_contours",
-      "Parser",
-      "\\.json",
-      "Video res",
-      "get_property\\(",
-      "get_property<",
-      "get_property\\(",
-      "get_property",
-      "get_property\\(",
-      "get_property",
-      "ret:",
-      "escape",
-      "stringify",
-      "JSON.string",
-      "GetGlobal",
-      "point_get",
-      "point_data",
-      "point",
-      "point_data",
-      "js_point",
-      "js_mat_",
-      "point",
-      "CAP",
-      "sendTo\\(",
-      "sendTo",
-      "\\.call",
-      "sendTo.call",
-      "writable",
-      "this",
-      "sendTo",
-      "sendMany",
-      "endpoint",
-      "Socket.endpoint",
-      " Socket.endpoint",
-      "res\\.",
-      "RequestContours",
-      "contours",
-      "customIn",
-      "customInsp",
-      "HighRes",
-      "Symbol.for\\('nodejs.util.inspect.custom'\\)",
-      "odejs.util.inspect.custom",
-      "JS_SetProperty",
-      "JSModuleDef",
-      "JS_SetProperty",
-      "JS_DefineProperty",
-      "hrtime",
-      "hrtime =",
-      "JS_AddModuleExport",
-      "hrtime",
-      "hrtime =",
-      "hrtime",
-      "JS_VALUE_GET_PTR",
-      "JS_VALUE_GET_OBJ",
-      "GetProperty",
-      "js_array_",
-      "JS_[^ ]*Array",
-      "JS_HasProperty",
-      "js_point_get",
-      "js_point_",
-      "js_array_to_vector",
-      "array_to",
-      "IsFunction",
-      " IsFunction",
-      "IsFunction",
-      "is_func",
-      "jsrt::get_prop",
-      "JSAtom JS_",
-      "JS_GetProperty",
-      "get_property<uint32_t>",
-      "get_property<",
-      "get_property",
-      "::get_property",
-      "get_property",
-      "jsrt::value\npointer_to_js",
-      "global::",
-      "get\\(",
-      "get",
-      "JS_IteratorNext",
-      "iterator",
-      "Iterator",
-      "::global",
-      "JS_IsFunc",
-      "JS_VALUE_GET_OBJ",
-      "JS_VALUE_GET_TAG",
-      "JS_VALUE_GET",
-      "JS_VALUE",
-      "JS_VALUE_GET_TAG",
-      "int JS_IsArray",
-      "JS_IsArray",
-      "^JS_IsArray",
-      "JS_IsArray",
-      "is_function",
-      "JS_IsFunction",
-      "is_func",
-      "get_property_sy",
-      "get_property",
-      "is_iter",
-      " get_prop",
-      "get_prop",
-      "get_symbol",
-      "_ctor",
-      "JS_Call",
-      "JS_IsSymbol",
-      "JS_GetRuntime",
-      "jsrt",
-      "::create",
-      "::global_object",
-      "global_object",
-      "dump_err",
-      "global",
-      "get_globa",
-      "get_global",
-      "::call",
-      "JS_NewString",
-      "_string",
-      "get_constructor",
-      "JS_NewSymbol",
-      "js_symbol_for",
-      "\"for\"",
-      "JS_ATOM_Symbol_toPrimitive"
-    ],
-    "highlight": true,
-    "in_selection": false,
-    "preserve_case": false,
-    "regex": true,
-    "replace_history": [
-      "inspectSymbol",
-      "get_property",
-      "set_property(obj, ",
-      "point2i_type",
-      "",
-      "create_trackbar",
-      "high_resolution_clock",
-      "",
-      "createTrackbar",
-      " ",
-      ", .def_type = JS_DEF_",
-      ", .magic = 0,",
-      ".prop_flags = ",
-      "js_array_iterator",
-      "`",
-      " cv::String",
-      "cv::QT_RADIOBOX",
-      "(cv::Range",
-      "cv::ximgproc::dtFilter",
-      "cv::COLOR_",
-      " cv::Range",
-      "",
-      " cv::Mat",
-      ".component",
-      "window.component",
-      "console",
-      "for(let",
-      "let s = ",
-      "let \\1;",
-      "\\n\\n",
-      "",
-      "console.reallog",
-      "if",
-      "} else if(",
-      "",
-      "multiplySelf",
-      "deg2rad",
-      "//",
-      "\\1//\\2",
-      "\\1//console.",
-      "LocalStore",
-      "const ",
-      "\"",
-      "let ",
-      " ",
-      "defs",
-      "case '\\1': return `${part.code} ",
-      "`;",
-      "/",
-      "export const",
-      " CONFIG_BIGNUM CONFIG_CHECK_JSVALUE ",
-      "s->vec\\[\\1\\]",
-      "s->vec[\\1]",
-      " line.",
-      " this.send(",
-      "send(",
-      "bytes",
-      "await client.send",
-      "Port.prototype",
-      "#",
-      "minnet",
-      "LIBWEBSOCKETS",
-      "PI",
-      "\\\\n",
-      "log(\\1",
-      "console.log",
-      "",
-      " *",
-      "ElementGeometries",
-      "elementGeometries",
-      "function \\1",
-      "Encode",
-      "ArrayBufferToString",
-      "StringToArrayBuffer",
-      "close",
-      "destroy",
-      "filesystem.",
-      "close",
-      "open",
-      "close",
-      "open",
-      "State.v",
-      "isObject",
-      "isUndefined",
-      "Util",
-      "Util.\\1",
-      "Util.isObject",
-      "inspectSymbol",
-      "map",
-      "\\1//console.",
-      "\\1console.",
-      "this.",
-      "Line.b",
-      "Line.a",
-      "Point.y",
-      "Point.x",
-      ".x2",
-      ".y2",
-      ".y1",
-      ".x1",
-      "\\1//\\2",
-      "console.log",
-      "FetchURL, FetchCached, ",
-      "\\t"
-    ],
-    "reverse": false,
-    "show_context": true,
-    "use_buffer2": true,
-    "whole_word": false,
-    "wrap": true
-  },
-  "groups": [
-    {
-      "selected": 0,
-      "sheets": [
-        {
-          "buffer": 0,
-          "semi_transient": false,
-          "settings": {
-            "buffer_size": 0,
-            "regions": {},
-            "selection": [],
-            "settings": {
-              "current_file": null,
-              "function_name_status_row": 1,
-              "outline_rename_mode": false,
-              "syntax": "Packages/Outline/outline.hidden-tmLanguage",
-              "tab_size": 2,
-              "translate_tabs_to_spaces": true
-            },
-            "translation.x": 0.0,
-            "translation.y": 0.0,
-            "zoom_level": 1.0
-          },
-          "stack_index": 6,
-          "type": "text"
-        }
-      ]
-    },
-    {
-      "selected": 6,
-      "sheets": [
-        {
-          "buffer": 1,
-          "file": "src/auto_canny.h",
-          "semi_transient": false,
-          "settings": {
-            "buffer_size": 1260,
-            "regions": {},
-            "selection": [[421, 421]],
-            "settings": {
-              "function_name_status_row": 14,
-              "syntax": "Packages/C++/C++.sublime-syntax",
-              "tab_size": 2,
-              "translate_tabs_to_spaces": true
-            },
-            "translation.x": 0.0,
-            "translation.y": 0.0,
-            "zoom_level": 1.0
-          },
-          "stack_index": 7,
-          "type": "text"
-        },
-        {
-          "buffer": 2,
-          "file": "quickjs/net/minnet.c",
-          "semi_transient": false,
-          "settings": {
-            "buffer_size": 17594,
-            "regions": {},
-            "selection": [[14835, 14835]],
-            "settings": {
-              "function_name_status_row": 554,
-              "syntax": "Packages/C Improved/C Improved.tmLanguage",
-              "translate_tabs_to_spaces": false
-            },
-            "translation.x": 0.0,
-            "translation.y": 10067.0,
-            "zoom_level": 1.0
-          },
-          "stack_index": 5,
-          "type": "text"
-        },
-        {
-          "buffer": 3,
-          "file": "plot-cv.js",
-          "semi_transient": false,
-          "settings": {
-            "buffer_size": 2415,
-            "regions": {},
-            "selection": [[2415, 2415]],
-            "settings": {
-              "function_name_status_row": 86,
-              "syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-              "tab_size": 2,
-              "translate_tabs_to_spaces": true
-            },
-            "translation.x": 0.0,
-            "translation.y": 0.0,
-            "zoom_level": 1.0
-          },
-          "stack_index": 4,
-          "type": "text"
-        },
-        {
-          "buffer": 4,
-          "file": "src/highgui-viewer.cpp",
-          "semi_transient": false,
-          "settings": {
-            "buffer_size": 12280,
-            "regions": {},
-            "selection": [[3064, 3064]],
-            "settings": {
-              "function_name_status_row": 115,
-              "syntax": "Packages/C++/C++.sublime-syntax",
-              "tab_size": 2,
-              "translate_tabs_to_spaces": true
-            },
-            "translation.x": 0.0,
-            "translation.y": 1499.0,
-            "zoom_level": 1.0
-          },
-          "stack_index": 3,
-          "type": "text"
-        },
-        {
-          "buffer": 5,
-          "file": "/home/roman/Dokumente/Sources/opencv/samples/cpp/warpPerspective_demo.cpp",
-          "semi_transient": false,
-          "settings": {
-            "buffer_size": 6441,
-            "regions": {},
-            "selection": [[4119, 4119]],
-            "settings": {
-              "function_name_status_row": 104,
-              "syntax": "Packages/C++/C++.sublime-syntax",
-              "tab_size": 4,
-              "translate_tabs_to_spaces": true
-            },
-            "translation.x": 0.0,
-            "translation.y": 1134.0,
-            "zoom_level": 1.0
-          },
-          "stack_index": 2,
-          "type": "text"
-        },
-        {
-          "buffer": 6,
-          "file": "main.js",
-          "semi_transient": false,
-          "settings": {
-            "buffer_size": 88124,
-            "regions": {},
-            "selection": [[9282, 9282]],
-            "settings": {
-              "function_name_status_row": 145,
-              "syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-              "tab_size": 2,
-              "translate_tabs_to_spaces": true
-            },
-            "translation.x": 0.0,
-            "translation.y": 2862.0,
-            "zoom_level": 1.0
-          },
-          "stack_index": 1,
-          "type": "text"
-        },
-        {
-          "buffer": 7,
-          "semi_transient": false,
-          "settings": {
-            "buffer_size": 846,
-            "regions": {},
-            "selection": [[846, 846]],
-            "settings": {
-              "auto_indent": false,
-              "function_name_status_row": 22,
-              "syntax": "Packages/Text/Plain text.tmLanguage",
-              "tab_width": 2,
-              "word_wrap": true
-            },
-            "translation.x": 0.0,
-            "translation.y": 0.0,
-            "zoom_level": 1.0
-          },
-          "stack_index": 0,
-          "type": "text"
-        }
-      ]
-    }
-  ],
-  "incremental_find": {
-    "height": 39.0
-  },
-  "input": {
-    "height": 95.0
-  },
-  "layout": {
-    "cells": [
-      [2, 0, 3, 2],
-      [0, 0, 2, 2]
-    ],
-    "cols": [0.0, 0.2, 0.8, 1.0],
-    "rows": [0.0, 0.5, 1.0]
-  },
-  "menu_visible": true,
-  "output.YAMLMacros": {
-    "height": 169.0
-  },
-  "output.exec": {
-    "height": 121.0
-  },
-  "output.find_results": {
-    "height": 0.0
-  },
-  "pinned_build_system": "Rebuild CTags",
-  "project": "plot-cv.sublime-project",
-  "replace": {
-    "height": 70.0
-  },
-  "save_all_on_build": true,
-  "select_file": {
-    "height": 0.0,
-    "last_filter": "",
-    "selected_items": [
-      ["plot-c", "plot-cv.js"],
-      ["minnet.c", "quickjs/net/minnet.c"],
-      ["plot-cv.cpp", "src/plot-cv.cpp"],
-      ["test-net", "test-net.js"],
-      ["command", "commands.js"],
-      ["main", "main.js"],
-      ["server", "server.js"],
-      ["plot-cv.h", "src/plot-cv.h"],
-      ["js.h", "src/js.h"],
-      ["data.cpp", "src/data.cpp"],
-      ["message", "message.js"],
-      ["server.js", "server.js"],
-      ["mat.cpp", "src/js_mat.cpp"],
-      ["js_mat", "src/js_mat.cpp"],
-      ["js-bin", "js-bindings.cmake"],
-      ["js_vide", "src/js_video_capture.cpp"],
-      ["socket.js", "socket.js"],
-      ["minne.c", "quickjs/net/minnet.c"],
-      ["minnet", "test-minnet.js"],
-      ["ConsoleSe", "lib/consoleSetup.js"],
-      ["objectIn", "lib/objectInspect.js"],
-      ["quickjs.h", "quickjs/quickjs.h"],
-      ["util.js", "lib/util.js"],
-      ["point.cpp", "src/js_point.cpp"],
-      ["quickjs.c", "quickjs/quickjs.c"],
-      ["js.cpp", "src/js.cpp"],
-      ["plot-cv", "plot-cv.js"],
-      ["js_cont", "src/js_contour.cpp"],
-      ["point.js", "lib/geom/point.js"],
-      ["format", "scripts/format-sources.sh"],
-      ["format-s", "scripts/format-sources.sh"],
-      ["quickjs", "quickjs/quickjs.c"],
-      ["util", "lib/util.js"],
-      ["test-qui", "test-quickjs.js"],
-      ["test-con", "test-console.js"],
-      ["test-cons", "test-console.js"],
-      ["js-bind", "js-bindings.cmake"],
-      ["cmakelists", "CMakeLists.txt"],
-      ["quickjs-libc", "quickjs/quickjs-libc.c"],
-      ["test-quickjs.j", "test-quickjs.js"],
-      ["plot-cv.js", "plot-cv.js"],
-      ["util.", "lib/util.js"],
-      ["", ".clang-format"],
-      ["cmakeli", "CMakeLists.txt"],
-      ["jsbin", "js-bindings.cmake"],
-      ["mount-", "mount-tmp.sh"],
-      ["childPr", "lib/childProcess.js"],
-      ["mount-t", "mount-tmp.sh"],
-      ["child", "lib/childProcess.js"],
-      ["cfg.sh", "cfg.sh"],
-      ["cmake", "CMakeLists.txt"],
-      ["test-chil", "test-childprocess.js"],
-      ["childProc", "lib/childProcess.js"],
-      ["autoca", "src/auto_canny.h"],
-      ["tinyproxy", "quickjs/net/libwebsockets/minimal-examples/dbus-server/minimal-dbus-ws-proxy/protocol_lws_minimal_dbus_ws_proxy.c"],
-      ["high", "src/highgui-viewer.cpp"],
-      [".clang", ".clang-format"],
-      ["highgui", "src/highgui-viewer.cpp"],
-      ["test-dl", "test-dlfcn.c"],
-      ["test-ope", "test-opencv.js"],
-      ["jsb", "js-bindings.cmake"],
-      ["test-open", "test-opencv.js"],
-      ["uickjs.h", "quickjs.html"],
-      ["filesys", "lib/filesystem.js"],
-      ["rgba.", "lib/color/rgba.js"],
-      ["test-op", "test-opencv.js"],
-      ["components", "components.js"],
-      ["main.js", "main.js"],
-      ["NPN-Reg", "Simple-NPN-Regen-Receiver.brd"],
-      ["RGBA", "lib/color/rgba.js"],
-      ["ic.lbr", "tmp/ic.lbr"],
-      ["geom.", "lib/geom.js"],
-      ["geom.js", "test-geom.js"],
-      ["style.css", "style.css"],
-      ["compon", "components.js"],
-      ["element", "lib/dom/element.js"],
-      ["transformation", "lib/geom/transformation.js"],
-      [".lbr", "tmp/ic.lbr"],
-      ["transform", "lib/geom/transformation.js"],
-      ["preactcom", "lib/dom/preactComponent.js"],
-      ["svgre", "lib/eagle/svgRenderer.js"],
-      ["commands", "commands.js"],
-      ["Headphone", "tmp/Headphone-Amplifier-ClassAB-alt2.brd"],
-      [".brd", "tmp/7seg.brd"],
-      ["filesystem", "test-filesystem.js"],
-      ["test-io", "test-io.js"],
-      ["test-file", "test-filesystem.js"],
-      ["test-cli", "test-cli.js"],
-      ["test-quickjs", "test-quickjs.js"],
-      ["test-repe", "test-repeater.js"],
-      ["test-xml", "test-xml.js"],
-      ["grbl-set", "grbl-settings.txt"],
-      ["test.js", "test.js"],
-      ["test-fi", "test-filesystem.js"],
-      ["consoleset", "lib/consoleSetup.js"],
-      ["objectInspe", "lib/objectInspect.js"],
-      ["check-im", "scripts/check-imports.sh"],
-      ["tinytest", "lib/tinyTest.js"],
-      ["comman", "commands.js"],
-      ["matrix.js", "lib/geom/matrix.js"],
-      ["main.j", "main.js"],
-      ["cfg.", "cfg.sh"],
-      ["get-msys", "get-msys-packages.js"],
-      ["peter", "PeterUndCharlie2_opt.svg"],
-      ["Peter", "PeterUndCharlie2_orig.svg"],
-      ["xpath.js", "lib/xml/xpath.js"],
-      ["resolve", "resolve-imports.js"],
-      ["style.cs", "style.css"],
-      ["r.lbr", "r.lbr"],
-      ["trkl", "lib/trkl.js"],
-      ["transfor", "lib/geom/transformation.js"],
-      ["component", "components.js"],
-      ["rect", "lib/geom/rect.js"],
-      ["rect.", "lib/geom/rect.js"],
-      ["eagle.js", "lib/eagle.js"],
-      ["hooks.js", "lib/hooks.js"],
-      ["index.", "index.html"],
-      ["componen", "components.js"],
-      ["simple", "Simple-NPN-Regen-Receiver.brd"],
-      ["line.js", "lib/geom/line.js"],
-      ["main.", "main.js"],
-      ["estree", "lib/ecmascript/estree.js"],
-      ["test-ec", "test-ecmascript.js"],
-      ["size.js", "lib/geom/size.js"],
-      ["autoSt", "lib/autoStore.js"],
-      ["filesyste", "lib/filesystem.js"],
-      ["test-fil", "test-filesystem.js"],
-      ["renderUt", "lib/eagle/renderUtils.js"]
-    ],
-    "width": 0.0
-  },
-  "select_project": {
-    "height": 0.0,
-    "last_filter": "",
-    "selected_items": [],
-    "width": 0.0
-  },
-  "select_symbol": {
-    "height": 392.0,
-    "last_filter": "",
-    "selected_items": [],
-    "width": 1050.0
-  },
-  "selected_group": 1,
-  "settings": {},
-  "show_minimap": true,
-  "show_open_files": false,
-  "show_tabs": true,
-  "side_bar_visible": true,
-  "side_bar_width": 352.0,
-  "status_bar_visible": true,
-  "template_settings": {}
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"previous",
+				"previousTimestamp"
+			],
+			[
+				"Github",
+				"GithubListRepositories"
+			],
+			[
+				"max",
+				"maxLineGap"
+			],
+			[
+				"ali",
+				"alignmentTransform"
+			],
+			[
+				"align",
+				"alignmentTransform"
+			],
+			[
+				"instru",
+				"instrumentateParser"
+			],
+			[
+				"Eleme",
+				"ElementToClass"
+			],
+			[
+				"Function",
+				"FunctionArgument"
+			],
+			[
+				"Varia",
+				"VariableDeclarator"
+			],
+			[
+				"PipeTo",
+				"PipeToRepeater"
+			],
+			[
+				"ini",
+				"initializer"
+			],
+			[
+				"parseFunc",
+				"parseFunctionParametersAndBody"
+			],
+			[
+				"Calc",
+				"CalculateArc"
+			],
+			[
+				"package",
+				"packageGeometries"
+			],
+			[
+				"Package",
+				"PackageGeometries"
+			],
+			[
+				"TextDec",
+				"TextDecoderStream"
+			],
+			[
+				"Generate",
+				"GenerateDistinctVariableDeclarations"
+			],
+			[
+				"decl",
+				"declStatement"
+			],
+			[
+				"Trans",
+				"TransformationList"
+			],
+			[
+				"HAVE_",
+				"HAVE_MALLOC_USABLE_SIZE_DEFINITION"
+			],
+			[
+				"js_mat_itera",
+				"js_mat_iterator_class_id"
+			],
+			[
+				"JSMat",
+				"JSMatIteratorData"
+			],
+			[
+				"mat_iterator",
+				"mat_iterator_proto"
+			],
+			[
+				"Obj",
+				"ObjectBindingPattern"
+			],
+			[
+				"Mut",
+				"MutablePath"
+			],
+			[
+				"Conso",
+				"ConsoleSetup"
+			],
+			[
+				"ES6I",
+				"ES6ImportExport.prototype"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "",
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Unix",
+				"name": "𝌆 Outline",
+				"scratch": true
+			}
+		},
+		{
+			"file": "lib/grammars/bnf.g4",
+			"settings":
+			{
+				"buffer_size": 2294,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"extract pack",
+				"PackageResourceViewer: Extract Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"indent",
+				"Indexing Status"
+			],
+			[
+				"oinstall pa",
+				"Package Control: Install Package"
+			],
+			[
+				"add",
+				"Package Control: Add Repository"
+			],
+			[
+				"add re",
+				"Package Control: Add Repository"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"remove pac",
+				"Package Control: Remove Package"
+			],
+			[
+				"install pac",
+				"Package Control: Install Package"
+			],
+			[
+				"outline",
+				"Browse Mode: Outline (Right)"
+			],
+			[
+				"tag",
+				"CTags: Rebuild Tags"
+			],
+			[
+				"remove pack",
+				"Package Control: Remove Channel"
+			],
+			[
+				"instal pac",
+				"Package Control: Install Package"
+			],
+			[
+				"out",
+				"Browse Mode: Outline (Right)"
+			],
+			[
+				"install pa",
+				"Package Control: Install Package"
+			],
+			[
+				"tags",
+				"CTags: Rebuild Tags"
+			],
+			[
+				"ctag",
+				"CTags: Rebuild Tags"
+			],
+			[
+				"svgo",
+				"SVGO: Prettify SVG"
+			],
+			[
+				"prett",
+				"SVGO: Prettify SVG"
+			],
+			[
+				"add repo",
+				"Package Control: Add Repository"
+			],
+			[
+				"pret",
+				"SVGO: Prettify SVG"
+			],
+			[
+				"svg",
+				"SVGO: Minify SVG"
+			],
+			[
+				"outlin",
+				"Browse Mode: Outline (Right)"
+			],
+			[
+				"install pack",
+				"Package Control: Install Package"
+			],
+			[
+				"rebuild",
+				"Build With: Rebuild CTags"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
+				"unicode",
+				"Unicode Character Insert: Show Panel"
+			],
+			[
+				"math",
+				"UnicodeMath: Insert"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"install p",
+				"Package Control: Install Package"
+			],
+			[
+				"remove p",
+				"Package Control: Remove Package"
+			],
+			[
+				"adv",
+				"Package Control: Advanced Install Package"
+			],
+			[
+				"adva",
+				"Package Control: Advanced Install Package"
+			],
+			[
+				"min",
+				"SVGO: Minify SVG"
+			],
+			[
+				"isntall",
+				"Package Control: Install Package"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"",
+				"Bookmarks: Select All"
+			],
+			[
+				"add ",
+				"Package Control: Add Repository"
+			],
+			[
+				"symbol",
+				"CTags: Show Symbols (all)"
+			],
+			[
+				"ctags",
+				"CTags: Show Symbols (file)"
+			],
+			[
+				"extract fn",
+				"Extract Javascript Function to Regular Function"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"add rep",
+				"Package Control: Add Repository"
+			],
+			[
+				"cmake",
+				"CMake Format: Format Selection"
+			],
+			[
+				"remove ",
+				"Package Control: Remove Package"
+			],
+			[
+				"list p",
+				"Package Control: List Packages"
+			],
+			[
+				"outli",
+				"Browse Mode: Outline (Right)"
+			],
+			[
+				"list pac",
+				"Package Control: List Packages"
+			],
+			[
+				"prettier",
+				"JsPrettier: Format Code"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Remove Package"
+			],
+			[
+				"instalk",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: install",
+				"Package Control: Install Package"
+			],
+			[
+				"extract",
+				"Extract Sublime Package: Extract all packages"
+			],
+			[
+				"extra",
+				"Extract Sublime Package: Extract all packages"
+			],
+			[
+				"build",
+				"Build: Cancel"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 300.0,
+		"history":
+		[
+			"sublime.log_commands(True)",
+			"sublime.log_commands(True).",
+			" sublime.log_commands(True)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/roman/Dokumente/Sources/plot-cv",
+		"/home/roman/Dokumente/Sources/plot-cv/lib",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/parse",
+		"/home/roman/Dokumente/Sources/plot-cv/src"
+	],
+	"file_history":
+	[
+		"/home/roman/Dokumente/Sources/plot-cv/test-ini.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/cowbird.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/deep.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-parse.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-antlr.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/path.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/grammar.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/lexer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/INI.g4",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/HTMLParser.g4",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/CMake.g4",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/C.g4",
+		"/home/roman/Dokumente/Sources/plot-cv/scripts/prettier.sh",
+		"/home/roman/Dokumente/Sources/plot-cv/$",
+		"/home/roman/Dokumente/Sources/plot-cv/server.js",
+		"/home/roman/Dokumente/Sources/plot-cv/socket.js",
+		"/home/roman/Dokumente/Sources/plot-cv/sw.js",
+		"/home/roman/Dokumente/Sources/plot-cv/index.html",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/pointList.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/polyline.js",
+		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/ini-grammar.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/ebnf2.js",
+		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/README.md",
+		"/home/roman/Dokumente/Sources/plot-cv/tmp.js",
+		"/home/roman/Dokumente/Sources/plot-cv/list-exports.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/async/helpers.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/async/events.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/package.json",
+		"/home/roman/Dokumente/Sources/plot-cv/test-opencv.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_cv.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/message.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-net.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/auto_canny.h",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/minnet.c",
+		"/home/roman/Dokumente/Sources/plot-cv/src/highgui-viewer.cpp",
+		"/home/roman/Dokumente/Sources/opencv/samples/cpp/warpPerspective_demo.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/commands.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/net/websocket-async.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_video_capture.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/plot-cv.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js.h",
+		"/home/roman/Dokumente/Sources/plot-cv/src/plot-cv.h",
+		"/home/roman/Dokumente/Sources/plot-cv/src/data.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/cli.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.h",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/consoleSetup.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/objectInspect.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_mat.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.h",
+		"/home/roman/Dokumente/Sources/plot-cv/test-minnet.js",
+		"/home/roman/Dokumente/Sources/plot-cv/js-bindings.cmake",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.c",
+		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_contour.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_draw.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_point.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/examples/fib.c",
+		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_point_iterator.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_size.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_rect.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/js_line.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/scripts/format-sources.sh",
+		"/home/roman/Dokumente/Sources/plot-cv/test-console.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-quickjs.js",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/sepheaders.c",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/rtsp.c",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/sftpuploadresume.c",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/ftpuploadresume.c",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/persistent.c",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/cacertinmem.c",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/ftpgetresp.c",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/simplessl.c",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/synctime.c",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/usercertinmem.c",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/ftpgetinfo.c",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/multi-post.c",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-libc.c",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/doc/quickjs.html",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/doc/jsbignum.md",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/doc/quickjs.md",
+		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/src/geometry.h",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/README.md",
+		"/home/roman/Dokumente/Sources/plot-cv/.clang-format",
+		"/home/roman/Dokumente/Sources/plot-cv/mount-tmp.sh",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/github.js",
+		"/opt/opencv-4.5.0/include/opencv4/opencv2/videoio.hpp",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/childProcess.js",
+		"/home/roman/Dokumente/Sources/sw-utils/libswsh/lib/util.sh.in",
+		"/home/roman/Dokumente/Sources/plot-cv/cfg.sh",
+		"/home/roman/Dokumente/Sources/c-utils/tryselect.c",
+		"/home/roman/Dokumente/Sources/opencv/cfg.sh",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/cfg.sh",
+		"/home/roman/Dokumente/Sources/opencv/tmp.txt",
+		"/home/roman/Dokumente/Sources/opencv/platforms/js/build_js.py",
+		"/opt/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
+		"/home/roman/Dokumente/Sources/ssl-libraries/wolfssl-4.5.0/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/filesystem.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-childprocess.js",
+		"/home/roman/Dokumente/Sources/plot-cv/scripts/iwatch.sh",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-atom.h",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/libwebsockets/minimal-examples/dbus-server/minimal-dbus-ws-proxy/protocol_lws_minimal_dbus_ws_proxy.c",
+		"/home/roman/Dokumente/Sources/plot-cv/src/imgui-viewer.cpp",
+		"/tmp/r.diff",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs-2019-10-27/quickjs-libc.c",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs-2019-10-27/examples/point.c",
+		"/home/roman/Dokumente/Sources/plot-cv/test-dlfcn.c",
+		"/opt/opencv-4.5.0/include/opencv4/opencv2/core/matx.hpp",
+		"/home/roman/Dokumente/Sources/plot-cv/highgui-viewer.cmake",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs.html",
+		"/opt/opencv-4.5.0/include/opencv4/opencv2/core.hpp",
+		"/home/roman/Dokumente/Sources/plot-cv/src/line.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/opencv/live_demo.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/color/rgba.js",
+		"/home/roman/Dokumente/Sources/opencv-detect/opencv/tutorial/houghlines.cpp"
+	],
+	"find":
+	{
+		"height": 43.0
+	},
+	"find_in_files":
+	{
+		"height": 306.0,
+		"where_history":
+		[
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*,/home/roman/Dokumente/Sources/plot-cv,*.cpp,*.hpp,*.h",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,*.c,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,*.c,*.h,-.*,-tags,-*.orig,-*.log,-*.json",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,-.*,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,/home/roman/Dokumente/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Dokumente/Sources/plot-cv/quickjs,*.h,*,c",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,,/home/roman/Dokumente/Sources/plot-cv/src,*.h,*,cpp",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,,/home/roman/Dokumente/Sources/plot-cv/src,*.h",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,,/home/roman/Dokumente/Sources/plot-cv/src,*.cpp,*.h",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,<open files>",
+			"/home/roman/Dokumente/Sources/plot-cv,-*node_modules*,*.js,<open files>",
+			"/home/roman/Dokumente/Sources/plot-cv,-node_modules,*.js,<open files>",
+			"/home/roman/Dokumente/Sources/plot-cv,*.js,<open files>",
+			"/home/roman/Dokumente/Sources/plot-cv,*.js",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"filesystem.writeFile",
+			"throw",
+			"          ",
+			"36",
+			"matches",
+			"Util.safeFunction",
+			"Util.callMain",
+			"throw ",
+			"throw 0",
+			"check",
+			"buildPr",
+			"buildProd",
+			"\\(\\)",
+			"Util.isObject =",
+			") ",
+			"'/'",
+			"'/",
+			"30",
+			"RegEx",
+			"toRegExp",
+			"Util.escape",
+			"Util\\.[^ ]*[Ee]scape",
+			"Util\\.[^ ]*[Rr]eg[Ee]x",
+			"escape",
+			"`'",
+			"\\.\\.",
+			"'..'",
+			"' \\| '",
+			"c",
+			"Symbol",
+			"toCowbird",
+			"parseRule",
+			"parsePatterns",
+			"new Rule",
+			"LINE_COMMENT",
+			"writeFile",
+			"n",
+			"log",
+			"lib/parse/fn",
+			"ini-grammar.js",
+			"getLength",
+			"CreateWebSocket",
+			"connected",
+			"console",
+			"console.log",
+			"this.debug",
+			"new Renderer",
+			"Static req",
+			"WORKER: ",
+			"console.log",
+			"<TS>",
+			"parseVariableDeclarationList",
+			" parseVariableDeclarationList",
+			"parseVariableStatement",
+			" parseVariableStatement",
+			"parseVariableStatement",
+			"parseVariableDeclarationList",
+			"exported",
+			"=='",
+			"==",
+			"\\n\\n",
+			"/\\* --- \\*/",
+			"//",
+			"printImport",
+			"once",
+			"WINDOW_",
+			"message",
+			"send.*{",
+			"send.*type",
+			"auto_cann",
+			"auto_canny",
+			"CreateWeb",
+			"CreateWebSocket",
+			"WebSocketClient",
+			"CreateWeb",
+			"Canny",
+			"draw_all_contours",
+			"Parser",
+			"\\.json",
+			"Video res",
+			"get_property\\(",
+			"get_property<",
+			"get_property\\(",
+			"get_property",
+			"get_property\\(",
+			"get_property",
+			"ret:",
+			"escape",
+			"stringify",
+			"JSON.string",
+			"GetGlobal",
+			"point_get",
+			"point_data",
+			"point",
+			"point_data",
+			"js_point",
+			"js_mat_",
+			"point",
+			"CAP",
+			"sendTo\\(",
+			"sendTo",
+			"\\.call",
+			"sendTo.call",
+			"writable",
+			"this",
+			"sendTo",
+			"sendMany",
+			"endpoint",
+			"Socket.endpoint",
+			" Socket.endpoint",
+			"res\\.",
+			"RequestContours",
+			"contours",
+			"customIn",
+			"customInsp",
+			"HighRes",
+			"Symbol.for\\('nodejs.util.inspect.custom'\\)",
+			"odejs.util.inspect.custom",
+			"JS_SetProperty",
+			"JSModuleDef",
+			"JS_SetProperty",
+			"JS_DefineProperty",
+			"hrtime",
+			"hrtime =",
+			"JS_AddModuleExport",
+			"hrtime",
+			"hrtime =",
+			"hrtime"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+			"dumpFile",
+			"",
+			"log",
+			"\\n",
+			"",
+			"// ",
+			"inspectSymbol",
+			"get_property",
+			"set_property(obj, ",
+			"point2i_type",
+			"",
+			"create_trackbar",
+			"high_resolution_clock",
+			"",
+			"createTrackbar",
+			" ",
+			", .def_type = JS_DEF_",
+			", .magic = 0,",
+			".prop_flags = ",
+			"js_array_iterator",
+			"`",
+			" cv::String",
+			"cv::QT_RADIOBOX",
+			"(cv::Range",
+			"cv::ximgproc::dtFilter",
+			"cv::COLOR_",
+			" cv::Range",
+			"",
+			" cv::Mat",
+			".component",
+			"window.component",
+			"console",
+			"for(let",
+			"let s = ",
+			"let \\1;",
+			"\\n\\n",
+			"",
+			"console.reallog",
+			"if",
+			"} else if(",
+			"",
+			"multiplySelf",
+			"deg2rad",
+			"//",
+			"\\1//\\2",
+			"\\1//console.",
+			"LocalStore",
+			"const ",
+			"\"",
+			"let ",
+			" ",
+			"defs",
+			"case '\\1': return `${part.code} ",
+			"`;",
+			"/",
+			"export const",
+			" CONFIG_BIGNUM CONFIG_CHECK_JSVALUE ",
+			"s->vec\\[\\1\\]",
+			"s->vec[\\1]",
+			" line.",
+			" this.send(",
+			"send(",
+			"bytes",
+			"await client.send",
+			"Port.prototype",
+			"#",
+			"minnet",
+			"LIBWEBSOCKETS",
+			"PI",
+			"\\\\n",
+			"log(\\1",
+			"console.log",
+			"",
+			" *",
+			"ElementGeometries",
+			"elementGeometries",
+			"function \\1",
+			"Encode",
+			"ArrayBufferToString",
+			"StringToArrayBuffer",
+			"close",
+			"destroy",
+			"filesystem.",
+			"close",
+			"open",
+			"close",
+			"open",
+			"State.v",
+			"isObject",
+			"isUndefined",
+			"Util",
+			"Util.\\1",
+			"Util.isObject",
+			"inspectSymbol",
+			"map",
+			"\\1//console.",
+			"\\1console.",
+			"this.",
+			"Line.b",
+			"Line.a",
+			"Point.y",
+			"Point.x",
+			".x2",
+			".y2",
+			".y1",
+			".x1",
+			"\\1//\\2",
+			"console.log",
+			"FetchURL, FetchCached, ",
+			"\\t"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/grammars/bnf.g4",
+							"function_name_status_row": -1,
+							"outline_rename_mode": false,
+							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 1,
+					"file": "lib/grammars/bnf.g4",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2294,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 0,
+							"syntax": "Packages/Regular Expressions/RegExp.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 30.0
+	},
+	"input":
+	{
+		"height": 95.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				2,
+				0,
+				3,
+				2
+			],
+			[
+				0,
+				0,
+				2,
+				2
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.2,
+			0.799185496363,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			0.5,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.Debugger":
+	{
+		"height": 145.0
+	},
+	"output.YAMLMacros":
+	{
+		"height": 169.0
+	},
+	"output.exec":
+	{
+		"height": 121.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Rebuild CTags",
+	"project": "plot-cv.sublime-project",
+	"replace":
+	{
+		"height": 77.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"test-antl",
+				"test-antlr.js"
+			],
+			[
+				"test-ini",
+				"test-ini.js"
+			],
+			[
+				"deep",
+				"lib/deep.js"
+			],
+			[
+				"util",
+				"lib/util.js"
+			],
+			[
+				"cowbird",
+				"lib/parse/cowbird.js"
+			],
+			[
+				"objectIns",
+				"lib/objectInspect.js"
+			],
+			[
+				"test-parse",
+				"test-parse.js"
+			],
+			[
+				"ini.g4",
+				"lib/grammars/INI.g4"
+			],
+			[
+				"C.g4",
+				"lib/grammars/C.g4"
+			],
+			[
+				"util.",
+				"lib/util.js"
+			],
+			[
+				"test-par",
+				"test-parse.js"
+			],
+			[
+				"th.js",
+				"lib/path.js"
+			],
+			[
+				"lexer",
+				"lib/parse/lexer.js"
+			],
+			[
+				"prettier",
+				"scripts/prettier.sh"
+			],
+			[
+				"st-ini",
+				"test-ini.js"
+			],
+			[
+				"",
+				"$"
+			],
+			[
+				"pointList",
+				"lib/geom/pointList.js"
+			],
+			[
+				"plot-cv",
+				"plot-cv.js"
+			],
+			[
+				"socket",
+				"socket.js"
+			],
+			[
+				"boardRender",
+				"lib/eagle/boardRenderer.js"
+			],
+			[
+				"renderUt",
+				"lib/eagle/renderUtils.js"
+			],
+			[
+				"renderer",
+				"lib/eagle/renderer.js"
+			],
+			[
+				"index",
+				"index.html"
+			],
+			[
+				"sw.",
+				"sw.js"
+			],
+			[
+				"main.",
+				"main.js"
+			],
+			[
+				"parser.js",
+				"lib/ecmascript/parser.js"
+			],
+			[
+				"helpers",
+				"lib/async/helpers.js"
+			],
+			[
+				"printer",
+				"lib/ecmascript/printer.js"
+			],
+			[
+				"list-ex",
+				"list-exports.js"
+			],
+			[
+				"sw.js",
+				"sw.js"
+			],
+			[
+				"server.js",
+				"server.js"
+			],
+			[
+				"test-open",
+				"test-opencv.js"
+			],
+			[
+				"message",
+				"message.js"
+			],
+			[
+				"server",
+				"server.js"
+			],
+			[
+				"test-net",
+				"test-net.js"
+			],
+			[
+				"main",
+				"main.js"
+			],
+			[
+				"plot-c",
+				"plot-cv.js"
+			],
+			[
+				"minnet.c",
+				"quickjs/net/minnet.c"
+			],
+			[
+				"plot-cv.cpp",
+				"src/plot-cv.cpp"
+			],
+			[
+				"command",
+				"commands.js"
+			],
+			[
+				"plot-cv.h",
+				"src/plot-cv.h"
+			],
+			[
+				"js.h",
+				"src/js.h"
+			],
+			[
+				"data.cpp",
+				"src/data.cpp"
+			],
+			[
+				"mat.cpp",
+				"src/js_mat.cpp"
+			],
+			[
+				"js_mat",
+				"src/js_mat.cpp"
+			],
+			[
+				"js-bin",
+				"js-bindings.cmake"
+			],
+			[
+				"js_vide",
+				"src/js_video_capture.cpp"
+			],
+			[
+				"socket.js",
+				"socket.js"
+			],
+			[
+				"minne.c",
+				"quickjs/net/minnet.c"
+			],
+			[
+				"minnet",
+				"test-minnet.js"
+			],
+			[
+				"ConsoleSe",
+				"lib/consoleSetup.js"
+			],
+			[
+				"objectIn",
+				"lib/objectInspect.js"
+			],
+			[
+				"quickjs.h",
+				"quickjs/quickjs.h"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"point.cpp",
+				"src/js_point.cpp"
+			],
+			[
+				"quickjs.c",
+				"quickjs/quickjs.c"
+			],
+			[
+				"js.cpp",
+				"src/js.cpp"
+			],
+			[
+				"js_cont",
+				"src/js_contour.cpp"
+			],
+			[
+				"point.js",
+				"lib/geom/point.js"
+			],
+			[
+				"format",
+				"scripts/format-sources.sh"
+			],
+			[
+				"format-s",
+				"scripts/format-sources.sh"
+			],
+			[
+				"quickjs",
+				"quickjs/quickjs.c"
+			],
+			[
+				"test-qui",
+				"test-quickjs.js"
+			],
+			[
+				"test-con",
+				"test-console.js"
+			],
+			[
+				"test-cons",
+				"test-console.js"
+			],
+			[
+				"js-bind",
+				"js-bindings.cmake"
+			],
+			[
+				"cmakelists",
+				"CMakeLists.txt"
+			],
+			[
+				"quickjs-libc",
+				"quickjs/quickjs-libc.c"
+			],
+			[
+				"test-quickjs.j",
+				"test-quickjs.js"
+			],
+			[
+				"plot-cv.js",
+				"plot-cv.js"
+			],
+			[
+				"cmakeli",
+				"CMakeLists.txt"
+			],
+			[
+				"jsbin",
+				"js-bindings.cmake"
+			],
+			[
+				"mount-",
+				"mount-tmp.sh"
+			],
+			[
+				"childPr",
+				"lib/childProcess.js"
+			],
+			[
+				"mount-t",
+				"mount-tmp.sh"
+			],
+			[
+				"child",
+				"lib/childProcess.js"
+			],
+			[
+				"cfg.sh",
+				"cfg.sh"
+			],
+			[
+				"cmake",
+				"CMakeLists.txt"
+			],
+			[
+				"test-chil",
+				"test-childprocess.js"
+			],
+			[
+				"childProc",
+				"lib/childProcess.js"
+			],
+			[
+				"autoca",
+				"src/auto_canny.h"
+			],
+			[
+				"tinyproxy",
+				"quickjs/net/libwebsockets/minimal-examples/dbus-server/minimal-dbus-ws-proxy/protocol_lws_minimal_dbus_ws_proxy.c"
+			],
+			[
+				"high",
+				"src/highgui-viewer.cpp"
+			],
+			[
+				".clang",
+				".clang-format"
+			],
+			[
+				"highgui",
+				"src/highgui-viewer.cpp"
+			],
+			[
+				"test-dl",
+				"test-dlfcn.c"
+			],
+			[
+				"test-ope",
+				"test-opencv.js"
+			],
+			[
+				"jsb",
+				"js-bindings.cmake"
+			],
+			[
+				"uickjs.h",
+				"quickjs.html"
+			],
+			[
+				"filesys",
+				"lib/filesystem.js"
+			],
+			[
+				"rgba.",
+				"lib/color/rgba.js"
+			],
+			[
+				"test-op",
+				"test-opencv.js"
+			],
+			[
+				"components",
+				"components.js"
+			],
+			[
+				"main.js",
+				"main.js"
+			],
+			[
+				"NPN-Reg",
+				"Simple-NPN-Regen-Receiver.brd"
+			],
+			[
+				"RGBA",
+				"lib/color/rgba.js"
+			],
+			[
+				"ic.lbr",
+				"tmp/ic.lbr"
+			],
+			[
+				"geom.",
+				"lib/geom.js"
+			],
+			[
+				"geom.js",
+				"test-geom.js"
+			],
+			[
+				"style.css",
+				"style.css"
+			],
+			[
+				"compon",
+				"components.js"
+			],
+			[
+				"element",
+				"lib/dom/element.js"
+			],
+			[
+				"transformation",
+				"lib/geom/transformation.js"
+			],
+			[
+				".lbr",
+				"tmp/ic.lbr"
+			],
+			[
+				"transform",
+				"lib/geom/transformation.js"
+			],
+			[
+				"preactcom",
+				"lib/dom/preactComponent.js"
+			],
+			[
+				"svgre",
+				"lib/eagle/svgRenderer.js"
+			],
+			[
+				"commands",
+				"commands.js"
+			],
+			[
+				"Headphone",
+				"tmp/Headphone-Amplifier-ClassAB-alt2.brd"
+			],
+			[
+				".brd",
+				"tmp/7seg.brd"
+			],
+			[
+				"filesystem",
+				"test-filesystem.js"
+			],
+			[
+				"test-io",
+				"test-io.js"
+			],
+			[
+				"test-file",
+				"test-filesystem.js"
+			],
+			[
+				"test-cli",
+				"test-cli.js"
+			],
+			[
+				"test-quickjs",
+				"test-quickjs.js"
+			],
+			[
+				"test-repe",
+				"test-repeater.js"
+			],
+			[
+				"test-xml",
+				"test-xml.js"
+			],
+			[
+				"grbl-set",
+				"grbl-settings.txt"
+			],
+			[
+				"test.js",
+				"test.js"
+			],
+			[
+				"test-fi",
+				"test-filesystem.js"
+			],
+			[
+				"consoleset",
+				"lib/consoleSetup.js"
+			],
+			[
+				"objectInspe",
+				"lib/objectInspect.js"
+			],
+			[
+				"check-im",
+				"scripts/check-imports.sh"
+			],
+			[
+				"tinytest",
+				"lib/tinyTest.js"
+			],
+			[
+				"comman",
+				"commands.js"
+			],
+			[
+				"matrix.js",
+				"lib/geom/matrix.js"
+			],
+			[
+				"main.j",
+				"main.js"
+			],
+			[
+				"cfg.",
+				"cfg.sh"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 1050.0
+	},
+	"selected_group": 1,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 352.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
 }

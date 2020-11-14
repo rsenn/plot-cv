@@ -172,7 +172,7 @@ export class Socket {
       },
       { client, connection }
     );
-   // console.log('WebSocket connected:', s, headers);
+    // console.log('WebSocket connected:', s, headers);
     let i = sockets.length;
     Object.assign(client, { sendTo, sendMany });
     s.closeConnection = async function closeConnection(reason) {

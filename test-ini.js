@@ -1,4 +1,4 @@
-import INIGrammar from './ini-grammar.js';
+import INIGrammar from './grammar-INI.js';
 import PortableFileSystem from './lib/filesystem.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
@@ -8,9 +8,21 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import tXml from './lib/tXml.js';
 import { XPath } from './lib/xml.js';
 import { toXML } from './lib/json.js';
+
+let filesystem;
+
+function dumpFile(name, data) {
+  if(Util.isArray(data)) data = data.join('\n');
+  if(typeof data != 'string') data = '' + data;
+
+  filesystem.writeFile(name, data + '\n');
+
+  console.log(`Wrote ${name}: ${data.length} bytes`);
+}
+
 async function main(...args) {
-  await PortableFileSystem();
-  await ConsoleSetup({ depth: 2 });
+  await PortableFileSystem(fs => (filesystem = fs));
+  await ConsoleSetup({ depth: 4 });
 
   let xy = new Point();
   let size = new Size(128, 128);
@@ -26,8 +38,13 @@ async function main(...args) {
     //console.log('src:', src);
     let [done, data, pos] = INIGrammar.ini(src, 0);
 
-    let createMap = entries => Object.fromEntries(entries) || new Map(entries);
-    let sections = data[0].reduce((acc, sdata) => ({ ...acc, [sdata[0]]: createMap(sdata[1]) }), {});
+    let createMap = entries => /*Object.fromEntries(entries) ||*/ new Map(entries);
+
+    let sections = data[0].reduce((acc, sdata) => {
+      console.log('sdata:', sdata);
+      return { ...acc, [sdata[0]]: createMap(sdata[1] || []) };
+    }, {});
+
     const flat = deep.flatten(sections,
       new Map(),
       k => k.length > 0,
@@ -65,7 +82,7 @@ async function main(...args) {
 
       Object.assign(svg.attributes, { width, height });
       Util.weakAssign(svg.attributes, { viewBox: new BBox(0, 0, iconSize.width, iconSize.height) });
-      filesystem.writeFile(svgFile, toXML(svgData));
+      dumpFile(svgFile, toXML(svgData));
 
       console.log(' :', {
         attr,
@@ -88,7 +105,7 @@ async function main(...args) {
       }
 
       const ideskEntry = makeIDeskEntry({ ...desktopEntry, Icon: iconFile });
-      filesystem.writeFile(lnkFile, ideskEntry);
+      dumpFile(lnkFile, ideskEntry);
       console.log(`Wrote '${lnkFile}'.`);
       console.log(`ideskEntry: `, ideskEntry);
       console.log(`pos:`, xy);
@@ -138,7 +155,7 @@ async function main(...args) {
 
     //console.log('out:', out);
 
-    filesystem.writeFile(filename, out);
+    dumpFile(filename, out);
   }
 
   function makeIDeskEntry({ Exec, Icon, Terminal, Type, Name, GenericName, StartupNotify }) {
@@ -154,4 +171,5 @@ async function main(...args) {
 end`;
   }
 }
+
 Util.callMain(main, true);
