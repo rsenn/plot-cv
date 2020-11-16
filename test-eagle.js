@@ -8,6 +8,8 @@ import { Graph } from './lib/fd-graph.js';
 import ptr from './lib/json-ptr.js';
 import LogJS from './lib/log.js';
 
+let filesystem;
+
 function xmlize(obj, depth = 2) {
   return obj.toXML ? obj.toXML().replace(/>\s*</g, '>\n    <') : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
@@ -50,7 +52,6 @@ function testJsonPointer() {
   ptr.assign(pointer2)(data, 'test name');
 }
 
-let filesystem;
 let graph, project;
 
 async function testGraph(proj) {
@@ -153,7 +154,7 @@ function alignAll(doc) {
 }
 
 async function testEagle(filename) {
-  filesystem = await PortableFileSystem();
+  await PortableFileSystem(fs => (filesystem = fs));
 
   console.log('testEagle: ', filename);
   let proj = new EagleProject(filename, filesystem);
@@ -273,8 +274,7 @@ async function testEagle(filename) {
 
   return proj;
 }
-(async () => {
-  let args = Util.getArgs();
+async function main(...args) {
   if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
   for(let arg of args) {
     //arg = arg.replace(/\.(brd|sch|lbr)$/i, '');
@@ -285,5 +285,6 @@ async function testEagle(filename) {
       process.exit(1);
     }
   }
-  process.exit(0);
-})();
+}
+
+Util.callMain(main, true);

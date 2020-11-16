@@ -1,7 +1,14 @@
-EXTRACHARS=. toksubst.sh -i listURL config.listURL main.js
-EXTRACHARS=. toksubst.sh -i searchFilter config.searchFilter main.js
-EXTRACHARS=. toksubst.sh -i zoomLog config.zoomLog main.js
-EXTRACHARS=. toksubst.sh -i logSize config.logSize main.js
-EXTRACHARS=. toksubst.sh -i debugFlag config.debugFlag main.js
-EXTRACHARS=. toksubst.sh -i credentials config.credentials main.js
-EXTRACHARS=. toksubst.sh -i showGrid config.showGrid main.js
+toksubst.sh -i re html "$@"
+toksubst.sh -i T render "$@"
+toksubst.sh -i d Component "$@"
+toksubst.sh -i U createContext "$@"
+toksubst.sh -i q useState "$@"
+toksubst.sh -i B useReducer "$@"
+toksubst.sh -i $ useEffect "$@"
+toksubst.sh -i j useLayoutEffect "$@"
+toksubst.sh -i z useRef "$@"
+toksubst.sh -i G useImperativeHandle "$@"
+toksubst.sh -i J useMemo "$@"
+toksubst.sh -i K useCallback "$@"
+toksubst.sh -i Q useContext "$@"
+toksubst.sh -i X useDebugValue "$@"

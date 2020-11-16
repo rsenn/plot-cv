@@ -367,7 +367,7 @@ async function main(...args) {
   await ConsoleSetup({ colors: true, depth: 6 });
   filesystem = await PortableFileSystem();
 
-  const re = /(lib\/util.js$|\.mjs$|node_modules\/)/;
+  const re = /(lib\/util.js$|\.mjs$)/;
   let parameters = [];
 
   while(/^-/.test(args[0])) parameters.push(args.shift());
@@ -488,7 +488,7 @@ async function main(...args) {
 
         if(imports.length) {
           console.log('imports:', imports);
-          console.log('ast.body:', ast.body);
+          //console.log('ast.body:', ast.body);
           let importStatements = imports.map(([stmt, imp]) => imp);
           let declPaths = Util.unique(importNodes.map(([stmt]) => stmt.toString()));
           console.log('importNodes:', importNodes);
@@ -569,6 +569,9 @@ async function main(...args) {
       let recurseFiles = recurseImports.map(imp => path.relative(ES6Env.cwd, getFromPath([imp.path, imp.node], file)));
 
       recurseFiles = recurseFiles.filter(f => processed.indexOf(f) == -1);
+
+      console.log(`recurseFiles [${depth}]:`, recurseFiles);
+      console.log(`re:`, re);
       recurseFiles = recurseFiles.filter(f => !re.test(f));
 
       imports = imports.filter(({ file, ...module }) => !re.test(file));
@@ -605,7 +608,7 @@ async function main(...args) {
         })
       );
 
-      //  console.log(`moduleExports:`, moduleExports);
+      console.log(`moduleExports:`, moduleExports);
 
       let output = '';
       output = PrintAst(ast, parser.comments, printer);
@@ -890,7 +893,7 @@ function getDeclarations(ast, paths) {
   console.log('path:', path);
   let node = path.apply(ast); //deep.get(ast, [...path]);
 
-  console.log('node:', node);
+  // console.log('node:', node);
   if(node.id && node.init) return [[node.id, node.init]];
 
   //console.log('getDeclarations:', node);
