@@ -1,7 +1,7 @@
 import { EagleDocument, Renderer } from './lib/eagle.js';
 import { ReactComponent } from './lib/dom/preactComponent.js';
 import ConsoleSetup from './lib/consoleSetup.js';
-import { render, Component } from './lib/preact.mjs';
+import { render, Component } from './lib/preact.js';
 import { ColoredText } from './lib/color/coloredText.js';
 import { BBox } from './lib/geom.js';
 import { RGBA } from './lib/color.js';
@@ -62,6 +62,12 @@ async function testRenderBoard(file) {
 async function main(...args) {
   await ConsoleSetup({ depth: 10 });
   await PortableFileSystem(fs => (filesystem = fs));
+
+  if(Util.platform == 'quickjs')
+    await import('os').then(({ setTimeout, setInterval, clearInterval, clearTimeout }) => {
+      Object.assign(globalThis, { setTimeout, setInterval, clearInterval, clearTimeout });
+    });
+
   //console.log.setFilters([/(test-rend|.*)/i]);
   //
   if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt');
