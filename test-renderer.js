@@ -23,7 +23,8 @@ function dumpFile(name, data) {
 }
 
 const debug = (Util.getEnv('APP_ENV') + '').startsWith('devel');
-/*||process.env.NODE_ENV.startsWith('devel')*/ async function testRenderSchematic(file) {
+/*||process.env.NODE_ENV.startsWith('devel')*/
+async function testRenderSchematic(file) {
   let doc = new EagleDocument(filesystem.readFile(`${file}.sch`));
   //console.log('doc:', doc.get('eagle/drawing'));
   let renderer = new Renderer(doc, ReactComponent.append, debug);
@@ -38,7 +39,7 @@ const debug = (Util.getEnv('APP_ENV') + '').startsWith('devel');
 
   let outFile = file.replace(/.*\//g, '').replace(/\.[a-z]+$/, '');
 
-  let outStr = renderToString(output);
+  let outStr = renderToString(output, {}, { pretty: '  ' });
   dumpFile(`tmp/${outFile}.schematic.svg`, outStr);
   return outStr.length;
 }
@@ -53,13 +54,13 @@ async function testRenderBoard(file) {
   //console.log('bounds:', doc.getBounds());
 
   let outFile = file.replace(/.*\//g, '').replace(/\.[a-z]+$/, '');
-  let outStr = renderToString(output);
+  let outStr = renderToString(output, {}, { pretty: '  ' });
   dumpFile(`tmp/${outFile}.board.svg`, outStr);
   return outStr.length;
 }
 
 async function main(...args) {
-  await ConsoleSetup();
+  await ConsoleSetup({ depth: 10 });
   await PortableFileSystem(fs => (filesystem = fs));
   //console.log.setFilters([/(test-rend|.*)/i]);
   //

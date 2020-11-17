@@ -367,7 +367,7 @@ async function main(...args) {
   await ConsoleSetup({ colors: true, depth: 6 });
   filesystem = await PortableFileSystem();
 
-  const re = /(lib\/util.js$|\.mjs$)/;
+  const re = /(lib\/util.js$)/;
   let parameters = [];
 
   while(/^-/.test(args[0])) parameters.push(args.shift());

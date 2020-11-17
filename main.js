@@ -6,6 +6,7 @@ import { iterator, eventIterator } from './lib/dom/iterator.js';
 import keysim from './lib/dom/keysim.js';
 import geom, { isBBox, BBox, Polygon, Circle, LineList, Arc } from './lib/geom.js';
 import { normalizePath, reverseNormalizedPath, reverseSubPath, reversePath } from './lib/svg/pathReverse.js';
+import { FixedMedium } from './lib/svg/fixedMedium.js';
 import { TouchListener } from './lib/touchHandler.js';
 import { trkl } from './lib/trkl.js';
 import { ColorMap } from './lib/draw/colorMap.js';
@@ -902,7 +903,7 @@ async function LoadDocument(project, parentElem) {
     }
     //console.
     aspectListener(aspectRatio);
-    debug('aspectRatio:', aspectRatio);
+    console.debug('aspectRatio:', aspectRatio);
     Component =
       // h(Zoomable, { /*className: 'zoomable',*/ style: size.toCSS('mm') }, [Component]) ||
       h(Fence, {
@@ -1307,7 +1308,7 @@ const AuthorizationDialog = ({ onAuth, ...props }) => {
 const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 
 const AppMain = (window.onload = async () => {
-  Util(globalThis);
+  // Util(globalThis);
   //prettier-ignore
   const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, MutableXPath,ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser,  PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian,CartesianToPolar, RotateTransformation, VERTICAL, useTrkl,ElementToClass, MakeRotation, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, GithubListContents, ListGithubRepoServer, classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG  };
 
@@ -1347,7 +1348,8 @@ const AppMain = (window.onload = async () => {
     DrawBinaryTree,
     EagleMaps,
     SaveConfig,
-    LoadConfig
+    LoadConfig,
+    FixedMedium
   };
 
   if(store.keys().length == 0) {
@@ -1446,7 +1448,9 @@ const AppMain = (window.onload = async () => {
 
   const testComponent = props => html` <div>This is a test</div> `;
 
-  let c = testComponent({});
+  let c = h(testComponent, {});
+
+  console.log('testComponent', c);
   window.testComponent = c;
 
   const UpdateProjectList = async (opts = config.listURL() ? { url: config.listURL(), ...credentials } : {}) => {
