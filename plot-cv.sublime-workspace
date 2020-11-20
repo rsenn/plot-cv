@@ -124,180 +124,37 @@
 	"buffers":
 	[
 		{
-			"contents": "Text",
+			"contents": "  stat:function(cb)\n  statm:function(cb)\n  status:function(cb)\n  argv:function(cb)\n  env:function(cb)\n  cwd:function(cb)\n  io:function(cb)\n  fds:function(cb)\n  threads:function(cb)\n  thread:function(tid)\n  net:function(cb)\n  work\n  next\n  .fd\n  done\n  .cpu\n  .meminfo\n  .tcp\n  .udp\n  .unix\n  .net\n  .wifi\n  .disk\n  assoc\n  sectiontable\n  nulldelim\n  _pp",
 			"settings":
 			{
-				"buffer_size": 4,
+				"buffer_size": 353,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "lib/dom/preactComponent.js",
+			"file": "/home/roman/.config/sublime-text-3/Packages/Outline/outline.py",
 			"settings":
 			{
-				"buffer_size": 9628,
+				"buffer_size": 4794,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/eagle/schematicRenderer.js",
+			"file": "test-debug.js",
 			"settings":
 			{
-				"buffer_size": 8139,
-				"encoding": "UTF-8",
+				"buffer_size": 1513,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "test-renderer.js",
+			"file": "node-procfs-stats/index.js",
 			"settings":
 			{
-				"buffer_size": 3043,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/util.js",
-			"settings":
-			{
-				"buffer_size": 157650,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "Searching 3708 files for \"assignGlobal\" (regex, case sensitive)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/util.js:\n    8  \n    9  export function Util(g) {\n   10:   Util.assignGlobal(g);\n   11    //if(g) Util.globalObject = g;\n   12  }\n   ..\n 4460  };\n 4461  \n 4462: Util.assignGlobal = () => Util.weakAssign(Util.getGlobalObject(), Util);\n 4463  \n 4464  Util.weakMapper = function(createFn, map = new WeakMap()) {\n\n/home/roman/Dokumente/Sources/plot-cv/tamper.js:\n 4818      if(!act) throw new Error(format('ASSERTION_S', message));\n 4819    };\n 4820:   Util.assignGlobal = () => Util.weakAssign(Util.getGlobalObject(), Util);\n 4821  \n 4822    Util.weakMapper = function(createFn, map = new WeakMap()) {\n\n/home/roman/Dokumente/Sources/plot-cv/lib/util.js:\n    8  \n    9  export function Util(g) {\n   10:   Util.assignGlobal(g);\n   11    //if(g) Util.globalObject = g;\n   12  }\n   ..\n 4460  };\n 4461  \n 4462: Util.assignGlobal = () => Util.weakAssign(Util.getGlobalObject(), Util);\n 4463  \n 4464  Util.weakMapper = function(createFn, map = new WeakMap()) {\n\n/home/roman/Dokumente/Sources/plot-cv/tamper.js:\n 4818      if(!act) throw new Error(format('ASSERTION_S', message));\n 4819    };\n 4820:   Util.assignGlobal = () => Util.weakAssign(Util.getGlobalObject(), Util);\n 4821  \n 4822    Util.weakMapper = function(createFn, map = new WeakMap()) {\n\n6 matches across 4 files\n\n\nSearching 3708 files for \"Util\\(\" (regex, case sensitive)\n\n/home/roman/Dokumente/Sources/plot-cv/lib/util.js:\n    7  const inspectSymbol = Symbol.for('nodejs.util.inspect.custom');\n    8  \n    9: export function Util(g) {\n   10    Util.assignGlobal(g);\n   11    //if(g) Util.globalObject = g;\n\n/home/roman/Dokumente/Sources/plot-cv/main.js:\n 1309  \n 1310  const AppMain = (window.onload = async () => {\n 1311:   Util(globalThis);\n 1312    //prettier-ignore\n 1313    const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, MutableXPath,ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser,  PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian,CartesianToPolar, RotateTransformation, VERTICAL, useTrkl,ElementToClass, MakeRotation, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, GithubListContents, ListGithubRepoServer, classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG  };\n\n/home/roman/Dokumente/Sources/plot-cv/lib/util.js:\n    7  const inspectSymbol = Symbol.for('nodejs.util.inspect.custom');\n    8  \n    9: export function Util(g) {\n   10    Util.assignGlobal(g);\n   11    //if(g) Util.globalObject = g;\n\n/home/roman/Dokumente/Sources/plot-cv/main.js:\n 1309  \n 1310  const AppMain = (window.onload = async () => {\n 1311:   Util(globalThis);\n 1312    //prettier-ignore\n 1313    const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, MutableXPath,ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser,  PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian,CartesianToPolar, RotateTransformation, VERTICAL, useTrkl,ElementToClass, MakeRotation, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, GithubListContents, ListGithubRepoServer, classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG  };\n\n4 matches across 4 files\n",
-			"settings":
-			{
-				"buffer_size": 7672,
-				"line_ending": "Unix",
-				"name": "Find Results",
-				"scratch": true
-			}
-		},
-		{
-			"file": "lib/eagle/components/instance.js",
-			"settings":
-			{
-				"buffer_size": 1404,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/components/wirePath.js",
-			"settings":
-			{
-				"buffer_size": 1137,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/geom/lineList.js",
-			"settings":
-			{
-				"buffer_size": 9019,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/components/text.js",
-			"settings":
-			{
-				"buffer_size": 2165,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/components/textElement.js",
-			"settings":
-			{
-				"buffer_size": 1850,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/components/pad.js",
-			"settings":
-			{
-				"buffer_size": 3617,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/renderUtils.js",
-			"settings":
-			{
-				"buffer_size": 13897,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/color/rgba.js",
-			"settings":
-			{
-				"buffer_size": 21927,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/components/svg.js",
-			"settings":
-			{
-				"buffer_size": 593,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/boardRenderer.js",
-			"settings":
-			{
-				"buffer_size": 13803,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/components/element.js",
-			"settings":
-			{
-				"buffer_size": 1219,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/svg/miscFixed.js",
-			"settings":
-			{
-				"buffer_size": 44373,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/svg/fixedMedium.js",
-			"settings":
-			{
-				"buffer_size": 116055,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "main.js",
-			"settings":
-			{
-				"buffer_size": 88853,
-				"encoding": "UTF-8",
+				"buffer_size": 11833,
 				"line_ending": "Unix"
 			}
 		}
@@ -313,6 +170,14 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"remove pac",
+				"Package Control: Remove Package"
+			],
+			[
+				"remove p",
+				"Package Control: Remove Package"
+			],
 			[
 				"extract pack",
 				"PackageResourceViewer: Extract Package"
@@ -340,10 +205,6 @@
 			[
 				"instal",
 				"Package Control: Install Package"
-			],
-			[
-				"remove pac",
-				"Package Control: Remove Package"
 			],
 			[
 				"install pac",
@@ -432,10 +293,6 @@
 			[
 				"install p",
 				"Package Control: Install Package"
-			],
-			[
-				"remove p",
-				"Package Control: Remove Package"
 			],
 			[
 				"adv",
@@ -558,33 +415,75 @@
 	"expanded_folders":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
-		"/home/roman/Dokumente/Sources/plot-cv/lib",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom",
-		"/home/roman/Dokumente/Sources/plot-cv/src"
+		"/home/roman/Dokumente/Sources/plot-cv/MIDI-js",
+		"/home/roman/Dokumente/Sources/plot-cv/node-debugprotocol-client",
+		"/home/roman/Dokumente/Sources/plot-cv/node-debugprotocol-client/dist",
+		"/home/roman/Dokumente/Sources/plot-cv/node-debugprotocol-client/src",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs",
+		"/home/roman/Dokumente/Sources/plot-cv/react-selections"
 	],
 	"file_history":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv/lib/preact.js",
+		"/home/roman/Dokumente/Sources/plot-cv/node-debugprotocol-client/src/protocol.ts",
+		"/home/roman/Dokumente/Sources/plot-cv/node-debugprotocol-client/src/index.ts",
+		"/home/roman/Dokumente/Sources/plot-cv/node-debugprotocol-client/src/base-debug-client.ts",
+		"/home/roman/Dokumente/Sources/plot-cv/test-debug.js",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.c",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-debugger.c",
+		"/home/roman/Dokumente/Sources/plot-cv/node-debugprotocol-client/src/utils.ts",
+		"/home/roman/Dokumente/Sources/plot-cv/node-debugprotocol-client/src/stream-debug-client.ts",
+		"/home/roman/Dokumente/Sources/plot-cv/node-debugprotocol-client/src/socket-debug-client.ts",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/cross-fetch/node_modules/node-fetch/lib/index.mjs",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/node-debugprotocol-client/dist/base-debug-client.js",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/node-debugprotocol-client/dist/index.js",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/node-debugprotocol-client/dist/protocol.js",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/node-debugprotocol-client/dist/socket-debug-client.js",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/node-debugprotocol-client/dist/stream-debug-client.js",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/node-debugprotocol-client/dist/utils.js",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/node-debugprotocol-client/src/base-debug-client.ts",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/node-debugprotocol-client/src/protocol.ts",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/node-debugprotocol-client/src/index.ts",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/node-debugprotocol-client/src/socket-debug-client.ts",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/node-debugprotocol-client/src/stream-debug-client.ts",
+		"/home/roman/Dokumente/Sources/plot-cv/node_modules/node-debugprotocol-client/src/utils.ts",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-debugger-transport-unix.c",
+		"/home/roman/Dokumente/Sources/plot-cv/strace.log",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-debugger-transport-win.c",
+		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
+		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/opencv/tracking_by_matching.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/text.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-stack.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-debugger.h",
+		"/home/roman/Dokumente/Sources/plot-cv/style.css",
+		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/fixedMedium.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/miscFixed.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/svg.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/color/rgba.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pad.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/textElement.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/instance.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/wirePath.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/lineList.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/preact.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/symbol.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/text.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/circle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/wire.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/instance.js",
 		"/home/roman/Dokumente/Sources/plot-cv/u.svg",
 		"/home/roman/Dokumente/Sources/plot-cv/data/font.svg",
 		"/home/roman/Sources/plot-cv/lib/svg/fixedMedium.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/svg.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/drawing.js",
 		"/home/roman/Dokumente/Sources/plot-cv/static/fonts/MiscFixedSC613.svg",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/miscFixed.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/fixedMedium.js",
 		"/home/roman/Downloads/AnyConv.com__Fixed-Medium.svg",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/frame.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/preact-render-to-string.js",
@@ -592,13 +491,9 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/useActive.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/useConditional.js",
 		"/home/roman/Dokumente/Sources/plot-cv/preact/hooks/src/index.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/useTrkl.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/grid.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
-		"/home/roman/Dokumente/Sources/plot-cv/main.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/resolve-imports.js",
@@ -607,10 +502,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/test-ini.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/C.g4",
 		"/home/roman/Dokumente/Sources/shish/doc/arith.ebnf",
 		"/home/roman/Dokumente/Sources/plot-cv/grammar-INI.js",
@@ -659,41 +551,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/src/js.h",
 		"/home/roman/Dokumente/Sources/plot-cv/src/plot-cv.h",
 		"/home/roman/Dokumente/Sources/plot-cv/src/data.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/cli.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.h",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/consoleSetup.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/objectInspect.js",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_mat.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.h",
-		"/home/roman/Dokumente/Sources/plot-cv/test-minnet.js",
-		"/home/roman/Dokumente/Sources/plot-cv/js-bindings.cmake",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.c",
-		"/home/roman/Dokumente/Sources/plot-cv/src/jsbindings.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_contour.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_draw.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_point.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/examples/fib.c",
-		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/point.js",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_point_iterator.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_size.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_rect.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_line.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/scripts/format-sources.sh",
-		"/home/roman/Dokumente/Sources/plot-cv/test-console.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-quickjs.js",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/sepheaders.c",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/rtsp.c",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/sftpuploadresume.c",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/ftpuploadresume.c",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/persistent.c",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/cacertinmem.c",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/ftpgetresp.c",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/simplessl.c",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/synctime.c",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/usercertinmem.c",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/curl/docs/examples/ftpgetinfo.c"
+		"/home/roman/Dokumente/Sources/plot-cv/src/cli.cpp"
 	],
 	"find":
 	{
@@ -733,6 +591,43 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"js_transport_read_fully",
+			"js_debugger_get_variable",
+			"JS_SetPropertyStr",
+			"\"attach ",
+			"\"initialize\"",
+			"DebugProtocol.Request",
+			"js_transport_send_response",
+			"connect\\(",
+			"write\\(",
+			"sendf",
+			"453",
+			"node_mod",
+			"debugger",
+			"port_string",
+			"getenv",
+			"is_debugging",
+			"'output:'",
+			"^Util.callMain",
+			"new Util.stackFra",
+			"^Util.stackFrame",
+			"^\\s*console\\.[a-z]*\\([^,)]*\\)",
+			"^\\s*Util.log\\([^,)]*\\)",
+			"^\\s*console.[a-z]*\\([^,)]*\\)",
+			"^Util.stackFrame",
+			"getCallerStack",
+			"console.log('getCallerStack:', Util.getCallerStack());\n  console.log('test:', 1);",
+			"^\\s*console.[a-z]*\\([^,)]*\\)",
+			"^\\s*console.debug\\([^,)]*\\)",
+			"^\\s*console.log\\([^,)]*\\)",
+			"console.log\\([^,)]*\\)",
+			"console.log\\([^,)]*",
+			"console.log\\([^,)]*\\",
+			"console.log\\([^,)]*\\)",
+			"getCallerStack",
+			"ConsoleSetup",
+			"$",
+			"^\\.button",
 			"font-size",
 			" if(ret.curve !== undefined) ",
 			"'g',",
@@ -823,44 +718,7 @@
 			"RegEx",
 			"toRegExp",
 			"Util.escape",
-			"Util\\.[^ ]*[Ee]scape",
-			"Util\\.[^ ]*[Rr]eg[Ee]x",
-			"escape",
-			"`'",
-			"\\.\\.",
-			"'..'",
-			"' \\| '",
-			"c",
-			"Symbol",
-			"toCowbird",
-			"parseRule",
-			"parsePatterns",
-			"new Rule",
-			"LINE_COMMENT",
-			"writeFile",
-			"n",
-			"log",
-			"lib/parse/fn",
-			"ini-grammar.js",
-			"getLength",
-			"CreateWebSocket",
-			"connected",
-			"console",
-			"console.log",
-			"this.debug",
-			"new Renderer",
-			"Static req",
-			"WORKER: ",
-			"console.log",
-			"<TS>",
-			"parseVariableDeclarationList",
-			" parseVariableDeclarationList",
-			"parseVariableStatement",
-			" parseVariableStatement",
-			"parseVariableStatement",
-			"parseVariableDeclarationList",
-			"exported",
-			"=='"
+			"Util\\.[^ ]*[Ee]scape"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1001,7 +859,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4,
+						"buffer_size": 353,
 						"regions":
 						{
 						},
@@ -1011,19 +869,149 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/text.js",
-							"function_name_status_row": 10,
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/node-procfs-stats/index.js",
+							"function_name_status_row": -1,
 							"outline_rename_mode": false,
 							"symkeys":
 							[
 								[
-									352,
-									449
+									387,
+									404
+								],
+								[
+									672,
+									690
+								],
+								[
+									1028,
+									1047
+								],
+								[
+									1155,
+									1172
+								],
+								[
+									1288,
+									1304
+								],
+								[
+									1420,
+									1436
+								],
+								[
+									1538,
+									1553
+								],
+								[
+									1691,
+									1707
+								],
+								[
+									1941,
+									1961
+								],
+								[
+									2279,
+									2299
+								],
+								[
+									2360,
+									2376
+								],
+								[
+									2751,
+									2766
+								],
+								[
+									3118,
+									3133
+								],
+								[
+									3417,
+									3442
+								],
+								[
+									3718,
+									3735
+								],
+								[
+									4123,
+									4142
+								],
+								[
+									4670,
+									4694
+								],
+								[
+									5141,
+									5160
+								],
+								[
+									5542,
+									5561
+								],
+								[
+									5945,
+									5965
+								],
+								[
+									6397,
+									6416
+								],
+								[
+									6641,
+									6661
+								],
+								[
+									6878,
+									6898
+								],
+								[
+									9625,
+									9654
+								],
+								[
+									10090,
+									10116
+								],
+								[
+									11201,
+									11224
+								],
+								[
+									11350,
+									11369
 								]
 							],
 							"symlist":
 							[
-								"Text"
+								"  stat:function(cb)",
+								"  statm:function(cb)",
+								"  status:function(cb)",
+								"  argv:function(cb)",
+								"  env:function(cb)",
+								"  cwd:function(cb)",
+								"  io:function(cb)",
+								"  fds:function(cb)",
+								"  threads:function(cb)",
+								"  thread:function(tid)",
+								"  net:function(cb)",
+								"  work",
+								"  next",
+								"  .fd",
+								"  done",
+								"  .cpu",
+								"  .meminfo",
+								"  .tcp",
+								"  .udp",
+								"  .unix",
+								"  .net",
+								"  .wifi",
+								"  .disk",
+								"  assoc",
+								"  sectiontable",
+								"  nulldelim",
+								"  _pp"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
 							"tab_size": 2,
@@ -1033,540 +1021,52 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 19,
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 8,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "lib/dom/preactComponent.js",
+					"file": "/home/roman/.config/sublime-text-3/Packages/Outline/outline.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9628,
+						"buffer_size": 4794,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4492,
-								4492
+								1565,
+								1565
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 165,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2581.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 13,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "lib/eagle/schematicRenderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8139,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4980,
-								4980
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 148,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2221.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "test-renderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3043,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2135,
-								2135
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 56,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 216.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 12,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "lib/util.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 157650,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								61,
-								61
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 6,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 16,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7672,
-						"regions":
-						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										171,
-										183
-									],
-									[
-										273,
-										285
-									],
-									[
-										561,
-										573
-									],
-									[
-										813,
-										825
-									],
-									[
-										915,
-										927
-									],
-									[
-										1203,
-										1215
-									],
-									[
-										1588,
-										1593
-									],
-									[
-										1788,
-										1793
-									],
-									[
-										4694,
-										4699
-									],
-									[
-										4894,
-										4899
-									]
-								],
-								"scope": ""
-							}
-						},
-						"selection":
-						[
-							[
-								1791,
-								1791
-							]
-						],
-						"settings":
-						{
-							"detect_indentation": false,
-							"function_name_status_row": 57,
-							"line_numbers": false,
-							"output_tag": 2,
-							"result_base_dir": "",
-							"result_file_regex": "^([^ \t].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
+							"function_name_status_row": 44,
+							"syntax": "Packages/Python/Python.sublime-syntax",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 792.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 15,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "lib/eagle/components/instance.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1404,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								939,
-								939
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 29,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 432.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "lib/eagle/components/wirePath.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1137,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 0,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "lib/geom/lineList.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 9019,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								143,
-								143
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 3,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "lib/eagle/components/text.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2165,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1666,
-								1666
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 37,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "lib/eagle/components/textElement.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1850,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1824,
-								1824
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 50,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 432.0,
+						"translation.y": 306.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 11,
-					"file": "lib/eagle/components/pad.js",
+					"buffer": 2,
+					"file": "test-debug.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3617,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2578,
-								2578
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 71,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 864.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 12,
-					"file": "lib/eagle/renderUtils.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 13897,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								11363,
-								11363
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 356,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 5731.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 13,
-					"file": "lib/color/rgba.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 21927,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								9446,
-								9446
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 298,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 4957.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 14,
-					"file": "lib/eagle/components/svg.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 593,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								579,
-								579
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 16,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 15,
-					"file": "lib/eagle/boardRenderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 13803,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7683,
-								7683
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 211,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 3399.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 16,
-					"file": "lib/eagle/components/element.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1219,
+						"buffer_size": 1513,
 						"regions":
 						{
 						},
@@ -1581,107 +1081,44 @@
 						{
 							"function_name_status_row": 0,
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 714.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 11,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 17,
-					"file": "lib/svg/miscFixed.js",
+					"buffer": 3,
+					"file": "node-procfs-stats/index.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 44373,
+						"buffer_size": 11833,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								9249,
+								9249
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 0,
+							"function_name_status_row": 364,
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 7907.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 18,
-					"type": "text"
-				},
-				{
-					"buffer": 18,
-					"file": "lib/svg/fixedMedium.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 116055,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								104,
-								104
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 2,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 17,
-					"type": "text"
-				},
-				{
-					"buffer": 19,
-					"file": "main.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 88853,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								35456,
-								35456
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 0,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 16657.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 14,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -1757,6 +1194,42 @@
 		"selected_items":
 		[
 			[
+				"test-deb",
+				"test-debug.js"
+			],
+			[
+				"test-debug",
+				"test-debug.js"
+			],
+			[
+				"test-de",
+				"test-debug.js"
+			],
+			[
+				"debugger",
+				"quickjs/quickjs-debugger.c"
+			],
+			[
+				"quickjs.c",
+				"quickjs/quickjs.c"
+			],
+			[
+				"util.",
+				"lib/util.js"
+			],
+			[
+				"test-stack",
+				"test-stack.js"
+			],
+			[
+				"test-rend",
+				"test-renderer.js"
+			],
+			[
+				"style.cs",
+				"style.css"
+			],
+			[
 				"test-render",
 				"test-renderer.js"
 			],
@@ -1803,10 +1276,6 @@
 			[
 				"test-ea",
 				"test-eagle.js"
-			],
-			[
-				"test-rend",
-				"test-renderer.js"
 			],
 			[
 				"resolve-im",
@@ -1883,10 +1352,6 @@
 			[
 				"C.g4",
 				"lib/grammars/C.g4"
-			],
-			[
-				"util.",
-				"lib/util.js"
 			],
 			[
 				"th.js",
@@ -2055,10 +1520,6 @@
 			[
 				"point.cpp",
 				"src/js_point.cpp"
-			],
-			[
-				"quickjs.c",
-				"quickjs/quickjs.c"
 			],
 			[
 				"js.cpp",
@@ -2243,30 +1704,6 @@
 			[
 				"transformation",
 				"lib/geom/transformation.js"
-			],
-			[
-				".lbr",
-				"tmp/ic.lbr"
-			],
-			[
-				"transform",
-				"lib/geom/transformation.js"
-			],
-			[
-				"preactcom",
-				"lib/dom/preactComponent.js"
-			],
-			[
-				"svgre",
-				"lib/eagle/svgRenderer.js"
-			],
-			[
-				"commands",
-				"commands.js"
-			],
-			[
-				"Headphone",
-				"tmp/Headphone-Amplifier-ClassAB-alt2.brd"
 			]
 		],
 		"width": 0.0

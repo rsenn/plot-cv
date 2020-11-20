@@ -102,6 +102,7 @@
     "fetch-with-proxy": "https://github.com/touv/node-fetch-with-proxy",
     "free-proxy": "^0.1.6",
     "http": "0.0.0",
+    "node-debugprotocol-client": "^0.1.1",
     "opentype": "^0.1.2",
     "proxynova": "^0.1.0",
     "sc-random": "^1.0.0",
