@@ -1,4 +1,6 @@
 import { client, server, fetch } from 'net';
+import Util from './lib/util.js';
+import ConsoleSetup from './lib/consoleSetup.js';
 
 function CreateServer() {
   print('SERVER');
@@ -42,27 +44,34 @@ function CreateClient() {
   });
 }
 
-function getDownloadCount() {
-  const res = fetch('https://api.github.com/repos/khanhas/spicetify-cli/releases');
-  const dl_count = res.json().reduce((total, tag) => {
-    return (total += tag.assets.reduce((tag_total, asset) => {
-      return (tag_total += asset.download_count);
-    }, 0));
-  }, 0);
-  print('Fetch:', res.url);
-  print('STATUS: ', res.status, 'OK: ', res.ok, 'TYPE: ', res.type);
-  print('RESULT: ', dl_count);
-  return `${dl_count}`;
+function getJSON() {
+  console.log('getJSON');
+  const res = fetch('https://api.github.com/repos/rsenn/plot-cv', { method: 'head' });
+  const { ok, status, type } = res;
+  console.log('res:', { ok, status, type });
+
+  const json = res.json();
+  console.log('json:', json);
+
+  const data = new Map(Object.entries(json));
+  console.log('data:', data);
+  return data;
 }
 
-switch (scriptArgs[1]) {
-  case 's':
-    CreateServer();
-    break;
-  case 'c':
-    CreateClient();
-    break;
-  case 'f':
-    getDownloadCount();
-    break;
+async function main(...args) {
+  await ConsoleSetup({ depth: 10 });
+
+  switch (args[0]) {
+    case 's':
+      CreateServer();
+      break;
+    case 'c':
+      CreateClient();
+      break;
+    case 'f':
+      getJSON();
+      break;
+  }
 }
+
+Util.callMain(main, true);

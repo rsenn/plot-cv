@@ -19,6 +19,7 @@
     "@serialport/bindings": "^9.0.2",
     "@serialport/stream": "^9.0.1",
     "body-parser": "^1.19.0",
+    "cross-spawn": "^7.0.3",
     "express": "^4.17.1",
     "express-ws": "^4.0.0",
     "htm": "^3.0.4",

@@ -32,7 +32,6 @@ async function testRenderSchematic(file) {
   console.log('console.log.filters:', console.log.filters);
   console.log('functionName:', Util.getStackFrame());
 
-
   let outFile = file.replace(/.*\//g, '').replace(/\.[a-z]+$/, '');
 
   let outStr = renderToString(output, {}, { pretty: '  ' });
@@ -62,19 +61,14 @@ async function main(...args) {
       Object.assign(globalThis, { setTimeout, setInterval, clearInterval, clearTimeout });
     });
 
-
   if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt');
 
   for(let filename of args) {
-
-
     let r = [await testRenderBoard(filename), await testRenderSchematic(filename)];
     console.log('r:', r);
   }
 
   console.log('finished');
-
 }
 
-main().catch(err => console.log("error:", err));
-
+main().catch(err => console.log('error:', err));
