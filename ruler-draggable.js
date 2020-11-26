@@ -9,6 +9,7 @@ const rulerImgVertical = '/static/ruler/rulerVertical.svg';
 const rulerImg = '/static/ruler/rulerHorizontal.svg';
 const Ruler = forwardRef((props, ref) => {
   //console.log("Ruler props =", props);
+  console.log('Ruler props = ', props);
   const {
     frictionCoefficient = 0.93,
     multiplicatorLength = 20,
@@ -23,8 +24,10 @@ const Ruler = forwardRef((props, ref) => {
     backgroundImage = null,
     disabledDragRuler = false,
     disabledMouseWheel = false,
-    disabledCursorDrag = false
+    disabledCursorDrag = false,
+    handlers
   } = props;
+  console.log('Ruler forwarded ref = ', ref);
   const FRICTION_COEFF = Math.min(0.99, Math.max(0.01, frictionCoefficient));
   const MULTIPLICATOR_LENGTH = multiplicatorLength;
   const totalWidth = longLength * MULTIPLICATOR_LENGTH;
@@ -190,7 +193,7 @@ const Ruler = forwardRef((props, ref) => {
     }, 70);
   };
 
-  useImperativeHandle(ref, () => ({
+  /*  useImperativeHandle(ref, () => ({
     pressingUp() {
       timer(load, 1);
     },
@@ -200,7 +203,18 @@ const Ruler = forwardRef((props, ref) => {
     stopPressing() {
       clearInterval(timerID.current);
     }
-  }));
+  }));*/ handlers({
+      pressingUp() {
+        timer(load, 1);
+      },
+      pressingDown() {
+        timer(load, -1);
+      },
+      stopPressing() {
+        clearInterval(timerID.current);
+      }
+    }
+  );
   useMemo(() => {
     if(!counterJS.current) onChanged(draggerJS.current);
   }, [draggerJS.current]);

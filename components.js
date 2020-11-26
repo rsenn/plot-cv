@@ -8,17 +8,25 @@ import deepDiff from './lib/deep-diff.js';
 import { useValue } from './lib/repeater/react-hooks.js';
 import RulerDraggable from './ruler-draggable.js';
 
-export function Ruler({ handleChange }) {
+export function Ruler({ handleChange, style = {}, class: className }) {
   const refRuler = useRef();
   const [value, setValue] = useState(null);
 
-  console.log("Ruler refRuler: ", refRuler);
-  console.log("Ruler value: ", value);
+  console.log('Ruler refRuler: ', refRuler);
+  console.log('Ruler value: ', value);
 
+  const handlers = trkl(null);
+  let commands;
 
-  const pressingDown = () => refRuler.current.pressingDown();
-  const pressingUp = () => refRuler.current.pressingUp();
-  const stopPressing = () => refRuler.current.stopPressing();
+  handlers.subscribe(value => {
+    if(!commands && Util.isObject(value)) commands = value;
+    console.log('trkl handlers value =', value);
+    console.log('commands =', commands);
+  });
+
+  const pressingDown = () => commands.pressingDown();
+  const pressingUp = () => commands.pressingUp();
+  const stopPressing = () => commands.stopPressing();
   let onChanged = value => setValue(value);
 
   if(typeof handleChange == 'function') {
@@ -29,7 +37,7 @@ export function Ruler({ handleChange }) {
     };
   }
 
-  return h('div', {}, [
+  return h('div', { style, class: className }, [
     h('button', {
         onMouseDown: pressingDown,
         onMouseUp: stopPressing
@@ -40,9 +48,10 @@ export function Ruler({ handleChange }) {
         onMouseUp: stopPressing
       }, ['Up']
     ),
-    h('div', {}, [value]),
+    h('div', {}, [Util.roundTo(value, 0.001, 3)]),
     h(RulerDraggable, {
         ref: refRuler,
+        handlers,
         defaultValue: 50,
         onChanged,
         longLength: 600,

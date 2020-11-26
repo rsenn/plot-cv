@@ -2075,8 +2075,13 @@ const AppMain = (window.onload = async () => {
       h(Slot, { name: 'layers' }),
       h(Conditional, { signal: wantAuthorization }, h(AuthorizationDialog, { onAuth: config.credentials })),
       h(Ruler, {
+        class: 'ruler-container vertical ',
         handleChange: e => {
           console.log('Ruler changed:', e);
+        },
+        style: {
+          position: 'absolute',
+          right: 0
         }
       })
     ]),
