@@ -124,136 +124,65 @@
 	"buffers":
 	[
 		{
-			"contents": "  main\n  syscall\n  sockaddr_in\n  get af()\n  get port()\n  get addr()\n  getu32\n  setu32\n  str2buf\n  buf2str\n  fd_set\nFD_SET\nFD_CLR\nFD_ISSET\nFD_ZERO\n  fd_array",
+			"contents": "Cursor\nCursorImage",
 			"settings":
 			{
-				"buffer_size": 156,
+				"buffer_size": 18,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "/home/roman/.config/sublime-text-3/Packages/Outline/outline.py",
+			"file": "cursor.js",
 			"settings":
 			{
-				"buffer_size": 4794,
+				"buffer_size": 1996,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "test-debug.js",
+			"file": "ruler-draggable.js",
 			"settings":
 			{
-				"buffer_size": 1548,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "node-procfs-stats/index.js",
-			"settings":
-			{
-				"buffer_size": 11833,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-minnet.js",
-			"settings":
-			{
-				"buffer_size": 1659,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "quickjs/net/minnet.c",
-			"settings":
-			{
-				"buffer_size": 17890,
+				"buffer_size": 13344,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "quickjs/ffi/test.js",
+			"file": "components.js",
 			"settings":
 			{
-				"buffer_size": 4212,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "ffi.js",
-			"settings":
-			{
-				"buffer_size": 9752,
+				"buffer_size": 34705,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "test-renderer.js",
+			"file": "main.js",
 			"settings":
 			{
-				"buffer_size": 2475,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "quickjs/quickjs-debugger.c",
-			"settings":
-			{
-				"buffer_size": 26152,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "quickjs/quickjs-debugger.h",
-			"settings":
-			{
-				"buffer_size": 3317,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "quickjs/net/CMakeLists.txt",
-			"settings":
-			{
-				"buffer_size": 5464,
+				"buffer_size": 88876,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "quickjs/net/minnet.h",
+			"file": "tmp-ruler.js",
 			"settings":
 			{
-				"buffer_size": 4014,
+				"buffer_size": 854,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "quickjs/net/example.mjs",
+			"file": "modules/react-ruler-draggable/README.md",
 			"settings":
 			{
-				"buffer_size": 1672,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "quickjs/quickjs.c",
-			"settings":
-			{
-				"buffer_size": 1754658,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "quickjs/quickjs-libc.c",
-			"settings":
-			{
-				"buffer_size": 107990,
+				"buffer_size": 2708,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		}
@@ -513,20 +442,49 @@
 	},
 	"expanded_folders":
 	[
-		"/home/roman/Sources/plot-cv",
-		"/home/roman/Sources/plot-cv/quickjs",
-		"/home/roman/Sources/plot-cv/quickjs/ffi",
-		"/home/roman/Sources/plot-cv/quickjs/net",
-		"/home/roman/Sources/plot-cv/react-selections"
+		"/home/roman/Dokumente/Sources/plot-cv",
+		"/home/roman/Dokumente/Sources/plot-cv/modules",
+		"/home/roman/Dokumente/Sources/plot-cv/modules/react-ruler-draggable"
 	],
 	"file_history":
 	[
+		"/home/roman/Dokumente/Sources/plot-cv/ruler-draggable.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-parsetmpl.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/cursor.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/preact.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/preact.mjs",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/useDebounce.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/preact.standalone.js",
+		"/home/roman/Dokumente/Sources/plot-cv/components.js",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-libc.c",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.c",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/example.mjs",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/minnet.h",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-debugger.h",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-debugger.c",
+		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
+		"/home/roman/Dokumente/Sources/plot-cv/modules/react-swipe-ruler/examples/simple.html",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/preact/forwardRef.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/useDebouncedCallback.js",
+		"/home/roman/.config/sublime-text-3/Packages/Outline/outline.py",
+		"/home/roman/Dokumente/Sources/plot-cv/test-debug.js",
+		"/home/roman/Dokumente/Sources/plot-cv/node-procfs-stats/index.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-minnet.js",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/minnet.c",
+		"/home/roman/Dokumente/Sources/plot-cv/ffi.js",
+		"/home/roman/Dokumente/Sources/plot-cv/modules/react-ruler-draggable/README.md",
+		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/react-ruler-draggable.js",
+		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
 		"/home/roman/Dokumente/Sources/plot-cv/node-debugprotocol-client/src/protocol.ts",
 		"/home/roman/Dokumente/Sources/plot-cv/node-debugprotocol-client/src/index.ts",
 		"/home/roman/Dokumente/Sources/plot-cv/node-debugprotocol-client/src/base-debug-client.ts",
-		"/home/roman/Dokumente/Sources/plot-cv/test-debug.js",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.c",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-debugger.c",
 		"/home/roman/Dokumente/Sources/plot-cv/node-debugprotocol-client/src/utils.ts",
 		"/home/roman/Dokumente/Sources/plot-cv/node-debugprotocol-client/src/stream-debug-client.ts",
 		"/home/roman/Dokumente/Sources/plot-cv/node-debugprotocol-client/src/socket-debug-client.ts",
@@ -546,18 +504,13 @@
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-debugger-transport-unix.c",
 		"/home/roman/Dokumente/Sources/plot-cv/strace.log",
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-debugger-transport-win.c",
-		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
-		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/CMakeLists.txt",
 		"/home/roman/Dokumente/Sources/plot-cv/opencv/tracking_by_matching.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/text.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/node.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-stack.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-debugger.h",
 		"/home/roman/Dokumente/Sources/plot-cv/style.css",
-		"/home/roman/Dokumente/Sources/plot-cv/main.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/fixedMedium.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/miscFixed.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/element.js",
@@ -567,12 +520,10 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pad.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/textElement.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/instance.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/wirePath.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/lineList.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/preact.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/symbol.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/circle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/wire.js",
@@ -590,9 +541,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/preact/hooks/src/index.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/useTrkl.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/grid.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/resolve-imports.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/bnf.g4",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
@@ -626,29 +575,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/ini-grammar.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/ebnf2.js",
 		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/README.md",
-		"/home/roman/Dokumente/Sources/plot-cv/tmp.js",
-		"/home/roman/Dokumente/Sources/plot-cv/list-exports.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/async/helpers.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/async/events.js",
-		"/home/roman/Dokumente/Sources/plot-cv/package.json",
-		"/home/roman/Dokumente/Sources/plot-cv/test-opencv.js",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_cv.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/message.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-net.js",
-		"/home/roman/Dokumente/Sources/plot-cv/src/auto_canny.h",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/minnet.c",
-		"/home/roman/Dokumente/Sources/plot-cv/src/highgui-viewer.cpp",
-		"/home/roman/Dokumente/Sources/opencv/samples/cpp/warpPerspective_demo.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/commands.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/net/websocket-async.js",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js_video_capture.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/plot-cv.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/js.h",
-		"/home/roman/Dokumente/Sources/plot-cv/src/plot-cv.h",
-		"/home/roman/Dokumente/Sources/plot-cv/src/data.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/src/cli.cpp"
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderer.js"
 	],
 	"find":
 	{
@@ -688,6 +615,13 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"global\\.",
+			"backgroundImageDefault",
+			"options",
+			"put",
+			"3718",
+			"Cursor",
+			"node_mod",
 			"fnctl",
 			"#define",
 			"Promise",
@@ -808,14 +742,7 @@
 			"matches",
 			"Util.safeFunction",
 			"Util.callMain",
-			"throw ",
-			"throw 0",
-			"check",
-			"buildPr",
-			"buildProd",
-			"\\(\\)",
-			"Util.isObject =",
-			") "
+			"throw "
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -958,7 +885,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 156,
+						"buffer_size": 18,
 						"regions":
 						{
 						},
@@ -968,94 +895,24 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Sources/plot-cv/ffi.js",
-							"function_name_status_row": 120,
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/cursor.js",
+							"function_name_status_row": 61,
 							"outline_rename_mode": false,
 							"symkeys":
 							[
 								[
-									728,
-									756
+									150,
+									178
 								],
 								[
-									4498,
-									4537
-								],
-								[
-									4720,
-									4776
-								],
-								[
-									5070,
-									5078
-								],
-								[
-									5175,
-									5185
-								],
-								[
-									5282,
-									5292
-								],
-								[
-									5465,
-									5485
-								],
-								[
-									5598,
-									5623
-								],
-								[
-									5791,
-									5812
-								],
-								[
-									5985,
-									6011
-								],
-								[
-									6183,
-									6209
-								],
-								[
-									6275,
-									6298
-								],
-								[
-									6393,
-									6416
-								],
-								[
-									6514,
-									6539
-								],
-								[
-									6626,
-									6647
-								],
-								[
-									6763,
-									6785
+									739,
+									766
 								]
 							],
 							"symlist":
 							[
-								"  main",
-								"  syscall",
-								"  sockaddr_in",
-								"  get af()",
-								"  get port()",
-								"  get addr()",
-								"  getu32",
-								"  setu32",
-								"  str2buf",
-								"  buf2str",
-								"  fd_set",
-								"FD_SET",
-								"FD_CLR",
-								"FD_ISSET",
-								"FD_ZERO",
-								"  fd_array"
+								"Cursor",
+								"CursorImage"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
 							"tab_size": 2,
@@ -1065,126 +922,128 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 15,
+					"stack_index": 6,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 6,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "/home/roman/.config/sublime-text-3/Packages/Outline/outline.py",
+					"file": "cursor.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4794,
+						"buffer_size": 1996,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1565,
-								1565
+								627,
+								627
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 44,
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 306.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 14,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "test-debug.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1548,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 0,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "node-procfs-stats/index.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 11833,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4144,
-								4144
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 181,
+							"function_name_status_row": -1,
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3077.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 11,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "test-minnet.js",
+					"buffer": 2,
+					"file": "ruler-draggable.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1659,
+						"buffer_size": 13344,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								129,
-								129
+								298,
+								298
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 3,
+							"function_name_status_row": 4,
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "components.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 34705,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1149,
+								1149
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 28,
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "main.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 88876,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								927,
+								927
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 16,
 							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
@@ -1198,29 +1057,30 @@
 				},
 				{
 					"buffer": 5,
-					"file": "quickjs/net/minnet.c",
+					"file": "tmp-ruler.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 17890,
+						"buffer_size": 854,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								13732,
-								13732
+								854,
+								854
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 513,
-							"syntax": "Packages/C Improved/C Improved.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"function_name_status_row": 34,
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 8908.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 3,
@@ -1228,311 +1088,33 @@
 				},
 				{
 					"buffer": 6,
-					"file": "quickjs/ffi/test.js",
+					"file": "modules/react-ruler-draggable/README.md",
 					"semi_transient": true,
 					"settings":
 					{
-						"buffer_size": 4212,
+						"buffer_size": 2708,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4212,
-								4212
+								659,
+								659
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 164,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"function_name_status_row": 47,
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "ffi.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 9752,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5043,
-								5043
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 167,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 5031.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "test-renderer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2475,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 0,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "quickjs/quickjs-debugger.c",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 26152,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								18700,
-								18700
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 472,
-							"syntax": "Packages/C Improved/C Improved.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 8024.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "quickjs/quickjs-debugger.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3317,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								364,
-								364
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 18,
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 306.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "quickjs/net/CMakeLists.txt",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5464,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2259,
-								2259
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 87,
-							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 12,
-					"type": "text"
-				},
-				{
-					"buffer": 12,
-					"file": "quickjs/net/minnet.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4014,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3662,
-								3662
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 109,
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1395.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 13,
-					"file": "quickjs/net/example.mjs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1672,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1307,
-								1307
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 48,
-							"syntax": "Packages/Ecmascript Syntax/~ecmascript-safe.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 13,
-					"type": "text"
-				},
-				{
-					"buffer": 14,
-					"file": "quickjs/quickjs.c",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1754658,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1486702,
-								1486702
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 45969,
-							"syntax": "Packages/C Improved/C Improved.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 785825.0,
+						"translation.y": 510.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 15,
-					"file": "quickjs/quickjs-libc.c",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 107990,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								72783,
-								72796
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 2522,
-							"syntax": "Packages/C Improved/C Improved.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 42448.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
 					"type": "text"
 				}
 			]
@@ -1608,6 +1190,54 @@
 		"selected_items":
 		[
 			[
+				"cursor",
+				"cursor.js"
+			],
+			[
+				"dragga",
+				"ruler-draggable.js"
+			],
+			[
+				"cursor.js",
+				"cursor.js"
+			],
+			[
+				"main.j",
+				"main.js"
+			],
+			[
+				"tmp-",
+				"tmp-ruler.js"
+			],
+			[
+				"ruler-dra",
+				"ruler-draggable.js"
+			],
+			[
+				"print",
+				"lib/ecmascript/printer.js"
+			],
+			[
+				"test-parset",
+				"test-parsetmpl.js"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"util",
+				"lib/util.js"
+			],
+			[
+				"forwa",
+				"lib/preact/forwardRef.js"
+			],
+			[
+				"compon",
+				"components.js"
+			],
+			[
 				"minnet.h",
 				"quickjs/net/minnet.h"
 			],
@@ -1666,10 +1296,6 @@
 			[
 				"test-render",
 				"test-renderer.js"
-			],
-			[
-				"util.js",
-				"lib/util.js"
 			],
 			[
 				"main.js",
@@ -1758,10 +1384,6 @@
 			[
 				"deep",
 				"lib/deep.js"
-			],
-			[
-				"util",
-				"lib/util.js"
 			],
 			[
 				"cowbird",
@@ -2078,46 +1700,6 @@
 			[
 				"jsb",
 				"js-bindings.cmake"
-			],
-			[
-				"uickjs.h",
-				"quickjs.html"
-			],
-			[
-				"filesys",
-				"lib/filesystem.js"
-			],
-			[
-				"rgba.",
-				"lib/color/rgba.js"
-			],
-			[
-				"test-op",
-				"test-opencv.js"
-			],
-			[
-				"components",
-				"components.js"
-			],
-			[
-				"NPN-Reg",
-				"Simple-NPN-Regen-Receiver.brd"
-			],
-			[
-				"RGBA",
-				"lib/color/rgba.js"
-			],
-			[
-				"ic.lbr",
-				"tmp/ic.lbr"
-			],
-			[
-				"geom.",
-				"lib/geom.js"
-			],
-			[
-				"geom.js",
-				"test-geom.js"
 			]
 		],
 		"width": 0.0
