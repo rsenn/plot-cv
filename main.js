@@ -2074,7 +2074,11 @@ const AppMain = (window.onload = async () => {
       ]),
       h(Slot, { name: 'layers' }),
       h(Conditional, { signal: wantAuthorization }, h(AuthorizationDialog, { onAuth: config.credentials })),
-      h(Ruler)
+      h(Ruler, {
+        handleChange: e => {
+          console.log('Ruler changed:', e);
+        }
+      })
     ]),
     Element.find('#preact')
   );

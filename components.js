@@ -8,16 +8,24 @@ import deepDiff from './lib/deep-diff.js';
 import { useValue } from './lib/repeater/react-hooks.js';
 import RulerDraggable from './ruler-draggable.js';
 
-export function Ruler() {
+export function Ruler({ handleChange }) {
   const refRuler = useRef();
   const [value, setValue] = useState(null);
 
   const pressingDown = () => refRuler.current.pressingDown();
   const pressingUp = () => refRuler.current.pressingUp();
   const stopPressing = () => refRuler.current.stopPressing();
-  const onChanged = value => setValue(value);
+  let onChanged = value => setValue(value);
 
-  return h(RulerDraggable, {}, [
+  if(typeof handleChange == 'function') {
+    const prevHandler = onChanged;
+    onChanged = value => {
+      prevHandler(value);
+      handleChange(value);
+    };
+  }
+
+  return h('div', {}, [
     h('button', {
         onMouseDown: pressingDown,
         onMouseUp: stopPressing
@@ -29,13 +37,13 @@ export function Ruler() {
       }, ['Up']
     ),
     h('div', {}, [value]),
-    h(Ruler, {
+    h(RulerDraggable, {
         ref: refRuler,
         defaultValue: 50,
         onChanged,
-        longLength: 1280,
+        longLength: 600,
         shortLength: 60,
-        horizontal: true
+        horizontal: false
       }, []
     )
   ]);
