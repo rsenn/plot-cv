@@ -1,11 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="48" height="1001mm" shape-rendering="crispEdges">
   <defs/>
   <defs>
-    <pattern id="rulerVertical_svg__b" patternTransform="scale(1 1)" href="#rulerVertical_svg__a"/>
-    <pattern id="rulerVertical_svg__a" width="100mm" height="10mm" x="0" y="0" patternContentUnits="userSpaceOnUse" patternUnits="userSpaceOnUse">
+    <pattern id="ruler-vertical-b" patternTransform="scale(1 1)" href="#ruler-vertical-a"/>
+    <pattern id="ruler-vertical-a" width="100mm" height="10mm" x="0" y="0" patternContentUnits="userSpaceOnUse" patternUnits="userSpaceOnUse">
       <path stroke="#000" stroke-width=".265" d="M18.898 8.059L0 8.06m18.898 15.116L0 23.177m18.898 7.558L0 30.736M37.795.5H0m18.898 15.117L0 15.618"/>
     </pattern>
-  
   </defs>
-   <rect fill="url(#rulerVertical_svg__b)" width="48" height="1001mm"  color="#000"/>
+   <rect fill="url(#ruler-vertical-b)" width="48" height="1001mm"  color="#000"/>
  </svg>
