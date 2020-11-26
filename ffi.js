@@ -153,7 +153,7 @@ async function main(...args) {
     return (...args) => call(name, ...args);
   }
 
-  function sockaddr_in(af, port, addr) {
+  function sockaddr_in(af = 0, port = 0, addr = '0.0.0.0') {
     let buf = new ArrayBuffer(16);
     let arr = new Uint8Array(buf);
     arr[0] = af & 0xff;
@@ -165,7 +165,35 @@ async function main(...args) {
       .split(/\./g)
       .map(n => +n)
       .forEach((n, i) => (arr[4 + i] = n));
+    Object.assign(buf, {
+      get af() {
+        let arr = new Uint8Array(this);
+        return arr[0] | (arr[1] << 8);
+      },
+      get port() {
+        let arr = new Uint8Array(this);
+        return arr[3] | (arr[2] << 8);
+      },
+      get addr() {
+        let arr = new Uint8Array(this);
+        return arr
+          .slice(4, 8)
+          .map(n => n + '')
+          .join('.');
+      }
+    });
     return buf;
+  }
+  function getu32(buf) {
+    let arr = new Uint8Array(buf);
+    return (arr[3] << 24) | (arr[2] << 16) | (arr[1] << 8) | arr[0];
+  }
+  function setu32(buf, num) {
+    let arr = new Uint8Array(buf);
+    arr[3] = (num >> 24) & 0xff;
+    arr[2] = (num >> 16) & 0xff;
+    arr[1] = (num >> 8) & 0xff;
+    arr[0] = num & 0xff;
   }
 
   function str2buf(str) {
@@ -231,14 +259,6 @@ async function main(...args) {
 
   let ret;
 
-  let flags = fcntl(fd, F_GETFL);
-  console.log('fcntl() flags = ', ret);
-  if(flags == -1) console.log('fcntl() errno() = ', errno());
-  console.log(`fcntl(${fd}, F_SETFL, 0o${(+flags | 0o4000).toString(8)})`);
-  fcntl(fd, F_SETFL, flags | 0o4000);
-  flags = fcntl(fd, F_GETFL);
-  console.log('fcntl() flags = ', ret);
-
   let connect = syscall('connect', 'int', 'int', 'void *', 'int');
   let sa = sockaddr_in(2, 3000, '127.0.0.1');
 
@@ -248,12 +268,42 @@ async function main(...args) {
   console.log('ret = ', ret);
   if(ret == -1) console.log('errno() = ', errno());
 
+  let flags = fcntl(fd, F_GETFL);
+  console.log('fcntl() flags = ', ret);
+  if(flags == -1) console.log('fcntl() errno() = ', errno());
+  console.log(`fcntl(${fd}, F_SETFL, 0o${(+flags | 0o4000).toString(8)})`);
+  fcntl(fd, F_SETFL, flags | 0o4000);
+  flags = fcntl(fd, F_GETFL);
+  console.log('fcntl() flags = ', ret);
+
   let send = syscall('send', 'int', 'int', 'void *', 'int', 'int');
   let recv = syscall('recv', 'int', 'int', 'void *', 'int', 'int');
 
   let req = str2buf('GET / HTTP/1.0\r\nHost: 127.0.0.1\r\n\r\n');
   ret = send(fd, req, req.byteLength, 0);
   console.log('ret = ', ret);
+
+  let getsockname = syscall('getsockname', 'int', 'int', 'void *', 'void *');
+  let getpeername = syscall('getpeername', 'int', 'int', 'void *', 'void *');
+
+  let namelen = new ArrayBuffer(8);
+  setu32(namelen, 16);
+  let addr = sockaddr_in();
+  ret = getsockname(fd, addr, namelen);
+  console.log('getsockname() ret = ', ret);
+  console.log('getsockname() getu32(namelen) = ', getu32(namelen));
+  setu32(namelen, 16);
+  console.log('getu32(namelen) = ', getu32(namelen));
+  addr = sockaddr_in();
+
+  ret = getpeername(fd, addr, namelen);
+  console.log('getpeername() ret = ', ret);
+  console.log('getpeername() getu32(namelen) = ', getu32(namelen));
+
+  console.log('getpeername() addr = ', buf2str(addr));
+  console.log('getpeername() addr.af = ', addr.af);
+  console.log('getpeername() addr.port = ', addr.port);
+  console.log('getpeername() addr.addr = ', addr.addr);
 
   let select = syscall('select', 'int', 'int', 'void *', 'void *', 'void *', 'void *');
 

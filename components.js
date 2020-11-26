@@ -6,6 +6,40 @@ import { classNames } from './lib/classNames.js';
 import { useEvent, useElement, useDoubleClick, useDimensions, usePanZoom } from './lib/hooks.js';
 import deepDiff from './lib/deep-diff.js';
 import { useValue } from './lib/repeater/react-hooks.js';
+import RulerDraggable from './ruler-draggable.js';
+
+export function Ruler() {
+  const refRuler = useRef();
+  const [value, setValue] = useState(null);
+
+  const pressingDown = () => refRuler.current.pressingDown();
+  const pressingUp = () => refRuler.current.pressingUp();
+  const stopPressing = () => refRuler.current.stopPressing();
+  const onChanged = value => setValue(value);
+
+  return h(RulerDraggable, {}, [
+    h('button', {
+        onMouseDown: pressingDown,
+        onMouseUp: stopPressing
+      }, ['Down']
+    ),
+    h('button', {
+        onMouseDown: pressingUp,
+        onMouseUp: stopPressing
+      }, ['Up']
+    ),
+    h('div', {}, [value]),
+    h(Ruler, {
+        ref: refRuler,
+        defaultValue: 50,
+        onChanged,
+        longLength: 300,
+        shortLength: 60,
+        horizontal: true
+      }, []
+    )
+  ]);
+}
 
 export const ClickHandler = callback => e => {
   if(e.type) {

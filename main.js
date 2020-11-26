@@ -39,7 +39,7 @@ import { Object2Array, XmlObject, XmlAttr, ImmutableXPath, MutableXPath } from '
 import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
 import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
-import components, { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable, DisplayList } from './components.js';
+import components, { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable, DisplayList, Ruler } from './components.js';
 import { Message } from './message.js';
 
 import { useEvent, useElement, useDoubleClick, useDimensions } from './lib/hooks.js';
@@ -2073,7 +2073,8 @@ const AppMain = (window.onload = async () => {
         }) /*])*/
       ]),
       h(Slot, { name: 'layers' }),
-      h(Conditional, { signal: wantAuthorization }, h(AuthorizationDialog, { onAuth: config.credentials }))
+      h(Conditional, { signal: wantAuthorization }, h(AuthorizationDialog, { onAuth: config.credentials })),
+      h(Ruler)
     ]),
     Element.find('#preact')
   );

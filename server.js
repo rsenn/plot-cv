@@ -347,7 +347,7 @@ async function main() {
         return res.redirect('/' + overridePath);
       }
     }
-    if(/lib\/preact.js/.test(req.url)) req.url = '/node_modules/htm/preact/standalone.module.js';
+    if(/lib\/preact.js/.test(req.url)) req.url = '/lib/preact.mjs';
 
     if(!/lib\//.test(req.url)) {
       const { path, url, method, headers, query, body } = req;
