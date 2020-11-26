@@ -12,6 +12,10 @@ export function Ruler({ handleChange }) {
   const refRuler = useRef();
   const [value, setValue] = useState(null);
 
+  console.log("Ruler refRuler: ", refRuler);
+  console.log("Ruler value: ", value);
+
+
   const pressingDown = () => refRuler.current.pressingDown();
   const pressingUp = () => refRuler.current.pressingUp();
   const stopPressing = () => refRuler.current.stopPressing();
