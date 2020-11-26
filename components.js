@@ -33,7 +33,7 @@ export function Ruler() {
         ref: refRuler,
         defaultValue: 50,
         onChanged,
-        longLength: 300,
+        longLength: 1280,
         shortLength: 60,
         horizontal: true
       }, []

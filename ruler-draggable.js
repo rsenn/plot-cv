@@ -3,11 +3,12 @@ import PropTypes from './lib/prop-types.js';
 import { useDebounce } from './lib/hooks/useDebounce.js';
 import Cursor from './cursor.js';
 import Util from './lib/util.js';
+import { classNames } from './lib/classNames.js';
 //import rulerImg from './static/ruler/exportedRulerHorizontal.png';
 //import rulerImgVertical from './static/ruler/exportedRulerVertical.png';
 //import './static/ruler.css';
-const rulerImgVertical = './static/ruler/exportedRulerVertical.png';
-const rulerImg = './static/ruler/exportedRulerHorizontal.png';
+const rulerImgVertical = '/static/ruler/rulerVertical.svg';
+const rulerImg = '/static/ruler/rulerHorizontal.svg';
 const Ruler = forwardRef((
     {
       frictionCoefficient,
@@ -215,18 +216,19 @@ const Ruler = forwardRef((
 
     return h('div',
       {
-        className: 'ruler__container'
+        class: 'ruler__container'
       }, [
         h('div', {
             ref: inputEl,
             style: { position: 'relative' }
           }, [
             h('div', {
-                className: `ruler ${horizontal && ' horizontal'}`,
-                style: {
+                class: classNames('ruler', horizontal && 'horizontal' || 'vertical'),
+                                 'data-image':  backgroundImage || backgroundImageDefault ,
+ style: {
                   width: horizontal ? longLength : shortLength,
                   height: horizontal ? shortLength : longLength,
-                  backgroundImage: `${backgroundImage || backgroundImageDefault}`,
+                  'background':  backgroundImage || backgroundImageDefault ,
                   backgroundPositionX: horizontal ? inertiaJS.current : undefined,
                   backgroundPositionY: !horizontal ? inertiaJS.current : undefined,
                   transition: `all ${timeJS.current}ms cubic-bezier(.35,.7,.42,1)`
@@ -240,7 +242,7 @@ const Ruler = forwardRef((
                     onMouseDown: onDragStart,
                     onMouseUp: onDragEnd,
                     onTouchMove: onTouchCursor,
-                    className: `dragger ${horizontal && 'horizontal'}`,
+                    class: `dragger ${horizontal && 'horizontal'}`,
                     ref: dragSomethingRef,
                     style: {
                       cursor: isDragging.current ? 'grabbing' : 'grab',
@@ -351,7 +353,7 @@ Ruler.defaultProps = {
   cursor: null,
   incremental: 1,
   defaultValue: null,
-  longLength: 300,
+  longLength: 1280,
   shortLength: 60,
   backgroundImage: null,
   disabledDragRuler: false,

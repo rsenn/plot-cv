@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1001mm" height="48" shape-rendering="crispEdges">
+  <defs/>
+  <defs>
+    <pattern id="rulerH_svg__d" height="100mm" width="10mm" x="0" y="0" patternContentUnits="userSpaceOnUse" patternUnits="userSpaceOnUse">
+ 
+      <path stroke-width=".265" stroke="#000"  d="M0.66,40 V0 M10.66,25 V0 M20.66,25 V0 M30.66,25 V0 M40.66,25 V0"   />
+
+
+    </pattern>
+   
+  </defs>
+     
+ <rect fill="url(#rulerH_svg__d)" width="1001mm" height="48"  color="#000"/>
+<!--   <path fill="url(#rulerH_svg__d)" d="M0 48V17.764h3783.307V48z" color="#000"/> -->
+</svg>

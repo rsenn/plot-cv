@@ -1,7 +1,9 @@
 @font-face {
   font-family: 'osifont';
   src: url('fonts/osifont.eot');
-  src: url('fonts/osifont.eot?#iefix') format('embedded-opentype'), url('fonts/osifont.woff2') format('woff2'), url('fonts/osifont.woff') format('woff'), url('fonts/osifont.ttf') format('truetype'), url('fonts/osifont.svg#osifont') format('svg');
+  src: url('fonts/osifont.eot?#iefix') format('embedded-opentype'), url('fonts/osifont.woff2') format('woff2'),
+    url('fonts/osifont.woff') format('woff'), url('fonts/osifont.ttf') format('truetype'),
+    url('fonts/osifont.svg#osifont') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -10,7 +12,9 @@
 @font-face {
   font-family: 'osifont';
   src: url('fonts/osifont_1.eot');
-  src: url('fonts/osifont_1.eot?#iefix') format('embedded-opentype'), url('fonts/osifont_1.woff2') format('woff2'), url('fonts/osifont_1.woff') format('woff'), url('fonts/osifont_1.ttf') format('truetype'), url('fonts/osifont_1.svg#osifont') format('svg');
+  src: url('fonts/osifont_1.eot?#iefix') format('embedded-opentype'), url('fonts/osifont_1.woff2') format('woff2'),
+    url('fonts/osifont_1.woff') format('woff'), url('fonts/osifont_1.ttf') format('truetype'),
+    url('fonts/osifont_1.svg#osifont') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -19,7 +23,9 @@
 @font-face {
   font-family: 'osifont';
   src: url('fonts/osifont_2.eot');
-  src: url('fonts/osifont_2.eot?#iefix') format('embedded-opentype'), url('fonts/osifont_2.woff2') format('woff2'), url('fonts/osifont_2.woff') format('woff'), url('fonts/osifont_2.ttf') format('truetype'), url('fonts/osifont_2.svg#osifont') format('svg');
+  src: url('fonts/osifont_2.eot?#iefix') format('embedded-opentype'), url('fonts/osifont_2.woff2') format('woff2'),
+    url('fonts/osifont_2.woff') format('woff'), url('fonts/osifont_2.ttf') format('truetype'),
+    url('fonts/osifont_2.svg#osifont') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: swap;

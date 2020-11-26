@@ -1,7 +1,9 @@
 @font-face {
   font-family: 'Fixed Medium';
   src: url('fonts/Fixed-Medium.eot');
-  src: url('fonts/Fixed-Medium.eot?#iefix') format('embedded-opentype'), url('fonts/Fixed-Medium.woff2') format('woff2'), url('fonts/Fixed-Medium.woff') format('woff'), url('fonts/Fixed-Medium.ttf') format('truetype'), url('fonts/Fixed-Medium.svg#Fixed-Medium') format('svg');
+  src: url('fonts/Fixed-Medium.eot?#iefix') format('embedded-opentype'), url('fonts/Fixed-Medium.woff2') format('woff2'),
+    url('fonts/Fixed-Medium.woff') format('woff'), url('fonts/Fixed-Medium.ttf') format('truetype'),
+    url('fonts/Fixed-Medium.svg#Fixed-Medium') format('svg');
   font-weight: 500;
   font-style: normal;
 }
