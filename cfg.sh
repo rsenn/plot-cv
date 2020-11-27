@@ -110,7 +110,7 @@ cfg() {
     : ${builddir:=build/$os-$machine-$link${suffix:+-$suffix}}
  (mkdir -p $builddir
   : ${relsrcdir=`realpath --relative-to "$builddir" .`}
-  set -x
+  #set -x
   cd $builddir
   ${CMAKE_WRAPPER} ${CMAKE:-cmake} -Wno-dev \
     -G "$generator" \

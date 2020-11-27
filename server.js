@@ -375,7 +375,7 @@ async function main() {
   app.use('/components', express.static(path.join(p, 'components')));
   app.use('/lib', express.static(path.join(p, 'lib')));
   app.use('/tmp', express.static(path.join(p, 'tmp')));
-  app.use('/static', express.static(p));
+  app.use('/', express.static(p));
 
   app.get('/favicon.ico', (req, res) =>
     res.sendFile(path.join(p, 'lib/eagle/icon/eagleicon.ico'), {

@@ -70,8 +70,7 @@ JSRectData* js_rect_data(JSContext* ctx, JSValue val);
 
 JSValue js_mat_wrap(JSContext* ctx, const cv::Mat& mat);
 
-extern "C++" template<class Type>
-JSValue js_contour_new(JSContext* ctx, const std::vector<Type>& points);
+extern "C++" template<class Type> JSValue js_contour_new(JSContext* ctx, const std::vector<Type>& points);
 
 JSValue
 js_vector_vec4i_to_array(JSContext* ctx, const std::vector<cv::Vec4i>& vec) {

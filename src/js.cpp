@@ -13,10 +13,7 @@ extern "C" {
 
 jsrt js;
 
-char* normalize_module(JSContext* ctx,
-                       const char* module_base_name,
-                       const char* module_name,
-                       void* opaque);
+char* normalize_module(JSContext* ctx, const char* module_base_name, const char* module_name, void* opaque);
 
 struct JSString {
   JSRefCountHeader header; /* must come first, 32-bit */
@@ -163,21 +160,13 @@ jsrt::property_names(const_value obj, bool enum_only, bool recursive) const {
 }
 
 void
-jsrt::property_names(const_value obj,
-                     std::vector<const char*>& out,
-                     bool enum_only,
-                     bool recursive) const {
+jsrt::property_names(const_value obj, std::vector<const char*>& out, bool enum_only, bool recursive) const {
   JSPropertyEnum* props;
   uint32_t nprops;
   while(JS_IsObject(obj)) {
     props = nullptr;
     nprops = 0;
-    JS_GetOwnPropertyNames(ctx,
-                           &props,
-                           &nprops,
-                           obj,
-                           JS_GPN_STRING_MASK | JS_GPN_SYMBOL_MASK |
-                               (enum_only ? JS_GPN_ENUM_ONLY : 0));
+    JS_GetOwnPropertyNames(ctx, &props, &nprops, obj, JS_GPN_STRING_MASK | JS_GPN_SYMBOL_MASK | (enum_only ? JS_GPN_ENUM_ONLY : 0));
     for(uint32_t i = 0; i < nprops; i++) {
       const char* s = JS_AtomToCString(ctx, props[i].atom);
       out.push_back(s);
@@ -235,8 +224,7 @@ jsrt::is_color(const_value val) const {
       b = get_property<uint32_t>(val, 0);
       g = get_property<uint32_t>(val, 1);
       r = get_property<uint32_t>(val, 2);
-      a = length > 3 ? get_property<uint32_t>(val, 3)
-                     : const_cast<jsrt*>(this)->create<int32_t>(255);
+      a = length > 3 ? get_property<uint32_t>(val, 3) : const_cast<jsrt*>(this)->create<int32_t>(255);
     } else {
       return false;
     }
@@ -380,8 +368,7 @@ bool
 jsrt::is_promise(const_value val) {
   jsrt::value promise = get_global("Promise");
   jsrt::value promise_proto = get_property<const char*>(promise, "prototype");
-  return is_object(val) &&
-         (JS_IsInstanceOf(ctx, val, promise) || JS_IsInstanceOf(ctx, val, promise_proto));
+  return is_object(val) && (JS_IsInstanceOf(ctx, val, promise) || JS_IsInstanceOf(ctx, val, promise_proto));
 }
 
 jsrt::value
@@ -409,10 +396,7 @@ jsrt::call(const_value func, size_t argc, value argv[]) const {
 }
 
 extern "C" char*
-normalize_module(JSContext* ctx,
-                 const char* module_base_name,
-                 const char* module_name,
-                 void* opaque) {
+normalize_module(JSContext* ctx, const char* module_base_name, const char* module_name, void* opaque) {
   using std::filesystem::exists;
   using std::filesystem::path;
   using std::filesystem::weakly_canonical;
@@ -439,8 +423,7 @@ normalize_module(JSContext* ctx,
     module_path = path(module);
   } else {
     module = module_base_name;
-    module_path =
-        path(module).replace_filename(path(module_name, module_name + strlen(module_name)));
+    module_path = path(module).replace_filename(path(module_name, module_name + strlen(module_name)));
   }
 
   std::string module_pathstr;

@@ -6,7 +6,7 @@
 */
 
 #include <opencv2/opencv.hpp>
-#include <opencv2/videoio/legacy/constants_c.h>
+#include <opencv2/videoio.hpp>
 #include <iostream>
 #include <stdio.h>
 

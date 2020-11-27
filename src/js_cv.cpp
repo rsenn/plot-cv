@@ -3,6 +3,7 @@
 #include "../quickjs/cutils.h"
 
 #include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 
 #if defined(JS_CV_MODULE) || defined(quickjs_cv_EXPORTS)
@@ -324,10 +325,7 @@ js_cv_create_trackbar(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
         Trackbar const& data = *static_cast<Trackbar*>(ptr);
 
         if(JS_IsFunction(data.ctx, data.handler)) {
-          JSValueConst argv[] = {JS_NewInt32(data.ctx, newValue),
-                                 data.count,
-                                 data.name,
-                                 data.window};
+          JSValueConst argv[] = {JS_NewInt32(data.ctx, newValue), data.count, data.name, data.window};
 
           JS_Call(data.ctx, data.handler, JS_UNDEFINED, 4, argv);
         }
@@ -382,17 +380,11 @@ js_cv_getperspectivetransform(JSContext* ctx, JSValueConst this_val, int argc, J
     }
   }
 
-  std::transform(v->begin(),
-                 v->end(),
-                 std::back_inserter(a),
-                 [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
+  std::transform(v->begin(), v->end(), std::back_inserter(a), [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
 
-  std::transform(other->begin(),
-                 other->end(),
-                 std::back_inserter(b),
-                 [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
+  std::transform(other->begin(), other->end(), std::back_inserter(b), [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
 
-  matrix = cv::getPerspectiveTransform(a, b, solveMethod);
+  matrix = cv::getPerspectiveTransform(a, b /*, solveMethod*/);
 
   ret = js_mat_wrap(ctx, matrix);
   return ret;
@@ -414,15 +406,9 @@ js_cv_getaffinetransform(JSContext* ctx, JSValueConst this_val, int argc, JSValu
     other = static_cast<JSContourData*>(JS_GetOpaque2(ctx, argv[1], js_contour_class_id));
   }
 
-  std::transform(v->begin(),
-                 v->end(),
-                 std::back_inserter(a),
-                 [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
+  std::transform(v->begin(), v->end(), std::back_inserter(a), [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
 
-  std::transform(other->begin(),
-                 other->end(),
-                 std::back_inserter(b),
-                 [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
+  std::transform(other->begin(), other->end(), std::back_inserter(b), [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
 
   matrix = cv::getAffineTransform(a, b);
 
@@ -798,7 +784,7 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_PROP_INT32_DEF("CAP_MSMF", cv::CAP_MSMF, 0),
     JS_PROP_INT32_DEF("CAP_WINRT", cv::CAP_WINRT, 0),
     JS_PROP_INT32_DEF("CAP_INTELPERC", cv::CAP_INTELPERC, 0),
-    JS_PROP_INT32_DEF("CAP_REALSENSE", cv::CAP_REALSENSE, 0),
+    // JS_PROP_INT32_DEF("CAP_REALSENSE", cv::CAP_REALSENSE, 0),
     JS_PROP_INT32_DEF("CAP_OPENNI2", cv::CAP_OPENNI2, 0),
     JS_PROP_INT32_DEF("CAP_OPENNI2_ASUS", cv::CAP_OPENNI2_ASUS, 0),
     JS_PROP_INT32_DEF("CAP_GPHOTO2", cv::CAP_GPHOTO2, 0),

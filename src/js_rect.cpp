@@ -165,23 +165,22 @@ JSClassDef js_rect_class = {
     .finalizer = js_rect_finalizer,
 };
 
-const JSCFunctionListEntry js_rect_proto_funcs[] = {
-    JS_CGETSET_ENUMERABLE_DEF("x", js_rect_get_xywh, js_rect_set_xywh, 0),
-    JS_CGETSET_ENUMERABLE_DEF("y", js_rect_get_xywh, js_rect_set_xywh, 1),
-    JS_CGETSET_ENUMERABLE_DEF("width", js_rect_get_xywh, js_rect_set_xywh, 2),
-    JS_CGETSET_ENUMERABLE_DEF("height", js_rect_get_xywh, js_rect_set_xywh, 3),
-    JS_CGETSET_MAGIC_DEF("x2", js_rect_get_xywh, js_rect_set_xywh, 4),
-    JS_CGETSET_MAGIC_DEF("y2", js_rect_get_xywh, js_rect_set_xywh, 5),
-    JS_ALIAS_DEF("x1", "x"),
-    JS_ALIAS_DEF("y1", "y"),
-    JS_CFUNC_MAGIC_DEF("contains", 0, js_rect_method, 0),
-    JS_CFUNC_MAGIC_DEF("empty", 0, js_rect_method, 1),
-    JS_CFUNC_MAGIC_DEF("area", 0, js_rect_method, 2),
-    JS_CFUNC_MAGIC_DEF("br", 0, js_rect_method, 3),
-    JS_CFUNC_MAGIC_DEF("tl", 0, js_rect_method, 4),
-    JS_CFUNC_MAGIC_DEF("size", 0, js_rect_method, 5),
-    JS_CFUNC_DEF("toString", 0, js_rect_to_string),
-    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Rect", JS_PROP_CONFIGURABLE)
+const JSCFunctionListEntry js_rect_proto_funcs[] = {JS_CGETSET_ENUMERABLE_DEF("x", js_rect_get_xywh, js_rect_set_xywh, 0),
+                                                    JS_CGETSET_ENUMERABLE_DEF("y", js_rect_get_xywh, js_rect_set_xywh, 1),
+                                                    JS_CGETSET_ENUMERABLE_DEF("width", js_rect_get_xywh, js_rect_set_xywh, 2),
+                                                    JS_CGETSET_ENUMERABLE_DEF("height", js_rect_get_xywh, js_rect_set_xywh, 3),
+                                                    JS_CGETSET_MAGIC_DEF("x2", js_rect_get_xywh, js_rect_set_xywh, 4),
+                                                    JS_CGETSET_MAGIC_DEF("y2", js_rect_get_xywh, js_rect_set_xywh, 5),
+                                                    JS_ALIAS_DEF("x1", "x"),
+                                                    JS_ALIAS_DEF("y1", "y"),
+                                                    JS_CFUNC_MAGIC_DEF("contains", 0, js_rect_method, 0),
+                                                    JS_CFUNC_MAGIC_DEF("empty", 0, js_rect_method, 1),
+                                                    JS_CFUNC_MAGIC_DEF("area", 0, js_rect_method, 2),
+                                                    JS_CFUNC_MAGIC_DEF("br", 0, js_rect_method, 3),
+                                                    JS_CFUNC_MAGIC_DEF("tl", 0, js_rect_method, 4),
+                                                    JS_CFUNC_MAGIC_DEF("size", 0, js_rect_method, 5),
+                                                    JS_CFUNC_DEF("toString", 0, js_rect_to_string),
+                                                    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Rect", JS_PROP_CONFIGURABLE)
 
 };
 

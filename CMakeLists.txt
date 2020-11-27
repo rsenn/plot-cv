@@ -1,7 +1,14 @@
 cmake_minimum_required(VERSION 3.0)
 project(plot-cv)
 
-set(DISABLE_WERROR ON)
+set(DISABLE_WERROR TRUE CACHE BOOL "Disable -Werror flag" FORCE)                                                           
+
+SET(CMAKE_BUILD_TYPE "Debug" CACHE STRING "build type")
+
+SET_PROPERTY(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release MinSizeRel RelWithDebInfo) 
+
+set(CMAKE_BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR}" CACHE PATH "Build with local rpath" FORCE)                    
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib" CACHE PATH "Build with install rpath" FORCE) 
 
 set(quickjs_sources_root ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
 include(${quickjs_sources_root}/defs.cmake)
@@ -88,6 +95,9 @@ if(F_OPT_PIC)
 endif(F_OPT_PIC)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   # option(USE_EFENCE "Enable electric fence" OFF)
+  set(DEBUG_OUTPUT TRUE CACHE BOOL "Debug output" FORCE)
+  add_definitions(-DDEBUG=1)
+
 
   check_cxx_compiler_flag("-O0" O_OPT_NONE)
   if(O_OPT_NONE)
@@ -96,6 +106,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   endif(O_OPT_NONE)
 
 endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+if(DEBUG_OUTPUT)
+  add_definitions(-DDEBUG_OUTPUT=1)
+endif(DEBUG_OUTPUT)
 
 check_c_compiler_flag("-flto" HAS_F_LTO_FLAG)
 

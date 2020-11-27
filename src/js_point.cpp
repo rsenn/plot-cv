@@ -282,10 +282,7 @@ js_point_init(JSContext* ctx, JSModuleDef* m) {
     JS_NewClass(JS_GetRuntime(ctx), js_point_class_id, &js_point_class);
 
     point_proto = JS_NewObject(ctx);
-    JS_SetPropertyFunctionList(ctx,
-                               point_proto,
-                               js_point_proto_funcs,
-                               countof(js_point_proto_funcs));
+    JS_SetPropertyFunctionList(ctx, point_proto, js_point_proto_funcs, countof(js_point_proto_funcs));
     JS_SetClassProto(ctx, js_point_class_id, point_proto);
 
     point_class = JS_NewCFunction2(ctx, js_point_ctor, "Point", 2, JS_CFUNC_constructor, 0);

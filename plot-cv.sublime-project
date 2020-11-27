@@ -12,6 +12,7 @@
       "path": ".",
       "file_exclude_patterns": [
         "tags",
+        "*.es",
         "*.bz2",
         "*.gz",
         "*.txz",
