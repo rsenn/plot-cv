@@ -388,7 +388,7 @@ async function main() {
 
   //app.get('/components.js', async (req, res) => res.sendFile(path.join(p, 'components.js')));
 
-  app.get('/style.css', async (req, res) =>
+  app.get(/\/[^\/]*\.css$/, async (req, res) =>
     res.sendFile(path.join(p, 'style.css'), {
       headers: { 'Content-Type': 'text/css', cacheControl: false }
     })

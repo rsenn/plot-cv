@@ -115,6 +115,7 @@
     "http": "0.0.0",
     "node-debugprotocol-client": "^0.1.1",
     "opentype": "^0.1.2",
+    "proxy-lists": "^1.23.0",
     "proxynova": "^0.1.0",
     "sc-random": "^1.0.0",
     "trace": "^3.1.1"

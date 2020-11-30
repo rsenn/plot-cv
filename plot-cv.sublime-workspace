@@ -134,10 +134,10 @@
 			}
 		},
 		{
-			"file": "quickjs/net/CMakeLists.txt",
+			"file": "quickjs/CMakeLists.txt",
 			"settings":
 			{
-				"buffer_size": 7174,
+				"buffer_size": 13376,
 				"line_ending": "Unix"
 			}
 		}
@@ -423,6 +423,7 @@
 	],
 	"file_history":
 	[
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/CMakeLists.txt",
 		"/home/roman/Dokumente/Sources/plot-cv/main.js",
 		"/home/roman/.config/sublime-text-3/Packages/MySignaturePlugin/MySignaturePlugin.sublime-settings",
 		"/home/roman/.config/sublime-text-3/Packages/BrowserIntegration/BrowserIntegration.sublime-settings",
@@ -467,7 +468,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs.c",
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/example.mjs",
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/minnet.h",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/CMakeLists.txt",
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-debugger.h",
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-debugger.c",
 		"/home/roman/Dokumente/Sources/plot-cv/test-renderer.js",
@@ -590,6 +590,7 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"MUX_MET",
 			"\\.static",
 			"esolution",
 			"Resolut",
@@ -716,8 +717,7 @@
 			"ampersand",
 			"unicode=\"&",
 			"unicode",
-			"can only",
-			"parseBreak"
+			"can only"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -866,18 +866,14 @@
 						},
 						"selection":
 						[
-							[
-								0,
-								0
-							]
 						],
 						"settings":
 						{
 							"actual_mode": true,
 							"av_input": true,
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/quickjs/net/CMakeLists.txt",
-							"function_name_status_row": 0,
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/quickjs/CMakeLists.txt",
+							"function_name_status_row": -1,
 							"outline_rename_mode": false,
 							"symkeys":
 							[
@@ -904,30 +900,30 @@
 			[
 				{
 					"buffer": 1,
-					"file": "quickjs/net/CMakeLists.txt",
+					"file": "quickjs/CMakeLists.txt",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7174,
+						"buffer_size": 13376,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2090,
-								2090
+								0,
+								0
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 62,
+							"function_name_status_row": 0,
 							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 16.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -1538,7 +1534,7 @@
 		],
 		"width": 1050.0
 	},
-	"selected_group": 0,
+	"selected_group": 1,
 	"settings":
 	{
 	},

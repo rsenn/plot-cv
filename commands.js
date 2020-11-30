@@ -109,7 +109,7 @@ export async function ListProjects(opts = {}) {
   } else {
     response = await GithubListContents(url, null, null, '\\.(brd|sch|lbr)$', opts);
 
-    console.log('GithubListContents response:', response);
+    //console.log('GithubListContents response:', response);
     if(Util.isArray(response)) {
       let fileList = response.map((file, i) => {
         let project = { ...file, name: response.at(i) };
@@ -118,7 +118,7 @@ export async function ListProjects(opts = {}) {
       response = { files: fileList };
     }
   }
-  console.log('ListProjects', { response });
+  //console.log('ListProjects', { response });
   return response;
 }
 

@@ -12,16 +12,16 @@ export function Ruler({ handleChange, style = {}, class: className }) {
   const refRuler = useRef();
   const [value, setValue] = useState(null);
 
-  console.log('Ruler refRuler: ', refRuler);
-  console.log('Ruler value: ', value);
+  /*console.log('Ruler refRuler: ', refRuler);
+  console.log('Ruler value: ', value);*/
 
   const handlers = trkl(null);
   let commands;
 
   handlers.subscribe(value => {
     if(!commands && Util.isObject(value)) commands = value;
-    console.log('trkl handlers value =', value);
-    console.log('commands =', commands);
+    /*console.log('trkl handlers value =', value);
+    console.log('commands =', commands);*/
   });
 
   const pressingDown = () => commands.pressingDown();
@@ -435,13 +435,13 @@ export const Chooser = ({
     .filter(p => !/:\/\//.test(p));
   const plus = list2re(preFilter.filter(p => p.startsWith('+')).map(p => p.replace(/\+/g, '')));
   const rest = preFilter.filter(p => !p.startsWith('+')).join(' ');
-  console.log('filter', { plus, rest });
+  //console.log('filter', { plus, rest });
   const reList = rest
     .split(/\|/g)
     .map(p => p.trim())
     .filter(p => p != '')
     .map(p => list2re(p.split(/\s\s*/g)));
-  console.debug('regex:', ...reList);
+  //Sconsole.debug('regex:', ...reList);
   const pred = name => !reList.every(c => !c.every(re => re.test(name))) && plus.every(re => re.test(name));
   const other = list.filter(({ name }) => !pred(name)).map(i => i.name);
   const children = list
