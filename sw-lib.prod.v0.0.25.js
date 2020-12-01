@@ -15,8 +15,6 @@
 
 this.goog = this.goog || {};
 this.goog.SWLib = (function () {
-  'use strict';
-
   class ErrorFactory$1 {
     constructor(a) {
       this._errors = a;
@@ -876,7 +874,6 @@ this.goog.SWLib = (function () {
   }
 
   var idb = createCommonjsModule(function (a) {
-    'use strict';
     (function () {
       function b(r) {
         return Array.prototype.slice.call(r);
