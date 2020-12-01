@@ -114,7 +114,6 @@
     "eslint": "^7.7.0",
     "eslint-plugin-class-property": "^1.1.0",
     "eslint-plugin-preact": "^0.1.0",
-    "extends": "^0.0.4",
     "fetch-with-proxy": "https://github.com/touv/node-fetch-with-proxy",
     "free-proxy": "^0.1.6",
     "http": "0.0.0",
