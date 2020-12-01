@@ -124,20 +124,21 @@
 	"buffers":
 	[
 		{
-			"contents": "",
+			"contents": "Ruler\n  value =>\n  pressingDown\n  pressingUp\n  stopPressing\n  onChanged\n  onChanged\nClickHandler\nToggleHandler\nMouseEvents\nContainer\nButton\n  onPush: state\nFloatingPanel\n  updateSize\n  updateHide\nLabel\nDynamicLabel\n  value =>\nItem\nIcon\nProgress\nSchematicIcon\nBoardIcon\nLibraryIcon\nConditional\n  value =>\nShowHide\n  value =>\nEditBox\n  .ref\n  .onSubmit\nFile\n  data =>\n  state =>\n  line =>\n  tooltip\n  onChange\n  onPush\n  pushHandler\n  value =>\n  list2re\n  part =>\n  pred\n  re =>\n  re =>\nToolTipFn\n  value =>\n  value =>\n  itemClass: item\n  onChange: (...args)\nPanel\nWrapInAspectBox\n  onChange\n  onInput\nCanvas\n  handleMouseMove\n  startDrawing\n  stopDrawing\nColorWheel\n  onInit: (ctx, canvas, size)\n  drawCircle\n  xy2polar\n  rad2deg\n  hsv2rgb\nCrossHair\n  value =>\n  value =>\nMoveCursor\nDropDown\n(false), ...props }) =>\n  value =>\n  element =>\n  onMouseWheel\nFence\n  value =>\n  value =>\nZoomable\n  onPan\n  onZoom\n  ref\nDisplayList\n  function* ()",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 940,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "quickjs/CMakeLists.txt",
+			"file": "commands.js",
 			"settings":
 			{
-				"buffer_size": 13376,
+				"buffer_size": 12937,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		}
@@ -153,6 +154,14 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"svgo",
+				"SVGO: Prettify SVG"
+			],
+			[
+				"install pac",
+				"Package Control: Install Package"
+			],
 			[
 				"Package Control: ",
 				"Package Control: Remove Package"
@@ -172,10 +181,6 @@
 			[
 				"mini",
 				"SVGO: Minify SVG"
-			],
-			[
-				"svgo",
-				"SVGO: Prettify SVG"
 			],
 			[
 				"remove",
@@ -215,10 +220,6 @@
 			],
 			[
 				"instal",
-				"Package Control: Install Package"
-			],
-			[
-				"install pac",
 				"Package Control: Install Package"
 			],
 			[
@@ -406,25 +407,30 @@
 	"expanded_folders":
 	[
 		"/home/roman/Dokumente/Sources/plot-cv",
-		"/home/roman/Dokumente/Sources/plot-cv/interactive-svg",
-		"/home/roman/Dokumente/Sources/plot-cv/opencv-js-webworker",
-		"/home/roman/Dokumente/Sources/plot-cv/opencv-js-webworker/public",
-		"/home/roman/Dokumente/Sources/plot-cv/opencv-js-webworker/public/js",
-		"/home/roman/Dokumente/Sources/plot-cv/opencv-js-webworker/services",
-		"/home/roman/Dokumente/Sources/plot-cv/react-measure",
-		"/home/roman/Dokumente/Sources/plot-cv/react-measure/src",
-		"/home/roman/Dokumente/Sources/plot-cv/ruler",
-		"/home/roman/Dokumente/Sources/plot-cv/ruler/demo",
-		"/home/roman/Dokumente/Sources/plot-cv/ruler/demo/images",
-		"/home/roman/Dokumente/Sources/plot-cv/ruler/demo/src",
-		"/home/roman/Dokumente/Sources/plot-cv/ruler/dist",
-		"/home/roman/Dokumente/Sources/plot-cv/ruler/src",
-		"/home/roman/Dokumente/Sources/plot-cv/scena"
+		"/home/roman/Dokumente/Sources/plot-cv/lib"
 	],
 	"file_history":
 	[
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/components.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/svg/path.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/preact-render-to-string.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/objectInspect.js",
+		"/home/roman/Dokumente/Sources/plot-cv/static/ruler/rulerVPattern.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/preact/forwardRef.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/matrix.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/geom/transformation.js",
 		"/home/roman/Dokumente/Sources/plot-cv/main.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/element.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
+		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
+		"/home/roman/Dokumente/Sources/plot-cv/commands.js",
+		"/home/roman/Dokumente/Sources/plot-cv/blackbody.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-cli.js",
+		"/home/roman/Dokumente/Sources/plot-cv/rulerVPattern.svg",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/CMakeLists.txt",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/CMakeLists.txt",
 		"/home/roman/.config/sublime-text-3/Packages/MySignaturePlugin/MySignaturePlugin.sublime-settings",
 		"/home/roman/.config/sublime-text-3/Packages/BrowserIntegration/BrowserIntegration.sublime-settings",
 		"/home/roman/.config/sublime-text-3/Packages/Chromium X-Refs/Default.sublime-keymap",
@@ -433,7 +439,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/opencv-js-webworker/services/cv.js",
 		"/home/roman/Dokumente/Sources/plot-cv/server.js",
 		"/home/roman/Dokumente/Sources/plot-cv/plot-cv.sublime-project",
-		"/home/roman/Dokumente/Sources/plot-cv/quickjs/CMakeLists.txt",
 		"/home/roman/.config/sublime-text-3/Packages/Goto Usage/GotoUsage.sublime-settings",
 		"/home/roman/.config/sublime-text-3/Packages/User/Babel.sublime-settings",
 		"/home/roman/.config/sublime-text-3/Packages/Babel/Babel.sublime-settings",
@@ -443,25 +448,20 @@
 		"/home/roman/Dokumente/Sources/plot-cv/highgui-viewer.cmake",
 		"/home/roman/Dokumente/Sources/plot-cv/ruler-draggable.js",
 		"/home/roman/Dokumente/Sources/plot-cv/static/ruler/rulerVertical.svg",
-		"/home/roman/Dokumente/Sources/plot-cv/components.js",
 		"/home/roman/Dokumente/Sources/plot-cv/static/ruler.css",
 		"/home/roman/Dokumente/Sources/plot-cv/exportedRulerVertical.svg",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/preact/forwardRef.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/preact.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/preact.mjs",
 		"/home/roman/Dokumente/Sources/plot-cv/modules/react-ruler-draggable/README.md",
 		"/home/roman/Dokumente/Sources/plot-cv/static/ruler/rulerHorizontal.svg",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/svg.js",
 		"/home/roman/Dokumente/Sources/plot-cv/static/ruler/ruler.svg",
 		"/home/roman/Dokumente/Sources/plot-cv/cursor.js",
 		"/home/roman/Dokumente/Sources/plot-cv/static/ruler/cursor.svg",
 		"/home/roman/Dokumente/Sources/plot-cv/ruler.svg",
 		"/home/roman/Dokumente/Sources/plot-cv/tmp-ruler.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/util.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-parsetmpl.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/parser.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/printer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/dom/preactComponent.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/useDebounce.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/preact.standalone.js",
 		"/home/roman/Dokumente/Sources/plot-cv/quickjs/quickjs-libc.c",
@@ -514,7 +514,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/boardRenderer.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/svg.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/color/rgba.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/renderUtils.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/pad.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/textElement.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/schematicRenderer.js",
@@ -531,7 +530,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/static/fonts/MiscFixedSC613.svg",
 		"/home/roman/Downloads/AnyConv.com__Fixed-Medium.svg",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/frame.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/preact-render-to-string.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/usePanZoom.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/useActive.js",
 		"/home/roman/Dokumente/Sources/plot-cv/lib/hooks/useConditional.js",
@@ -540,17 +538,7 @@
 		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/components/grid.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-eagle.js",
 		"/home/roman/Dokumente/Sources/plot-cv/resolve-imports.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/bnf.g4",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/ecmascript/estree.js",
-		"/home/roman/Dokumente/Sources/plot-cv/test-ini.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/svgRenderer.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/eagle/element.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/json/path.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/C.g4",
-		"/home/roman/Dokumente/Sources/shish/doc/arith.ebnf",
-		"/home/roman/Dokumente/Sources/plot-cv/grammar-INI.js",
-		"/home/roman/Dokumente/Sources/plot-cv/lib/parse/grammar.js",
-		"/home/roman/Dokumente/Sources/plot-cv/grammar-arith.js"
+		"/home/roman/Dokumente/Sources/plot-cv/lib/grammars/bnf.g4"
 	],
 	"find":
 	{
@@ -561,6 +549,8 @@
 		"height": 306.0,
 		"where_history":
 		[
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*",
+			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*",
 			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*,/home/roman/Dokumente/Sources/plot-cv,*.cpp,*.hpp,*.h",
 			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*",
 			"/home/roman/Dokumente/Sources/plot-cv,-*/node_modules/*,*.js,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json",
@@ -590,6 +580,42 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			" style=\"line-height:1.25\"",
+			"text-anchor=\"middle\" y=\"2\"",
+			"dominant-baseline=\"hanging\" transform",
+			"y=\"0\"",
+			" font-family=\"Share-TechMono\"",
+			"x=\"0\" y=\"",
+			"font-family=\"Share-TechMono\"",
+			"\\(90\\)",
+			"hare-TechMono\" transform=\"rotate.90.\"",
+			"hare-TechMono\" transform=\"rotate(90)\"",
+			" dominant-baseline=\"hanging\"",
+			"middle",
+			" x=\"[^\"]*\"",
+			" transform=\"rotate(-90 44.56 -7.44)\"",
+			"font-family=\"Share-TechMono\" x=\"34.11\" y=\"-37.747\"",
+			"translate",
+			"rotate =",
+			"Fragment",
+			"preact.js",
+			"imports",
+			"preact",
+			"render.*to.*string",
+			"static rect",
+			"LoadSVG",
+			"create",
+			"SaveSVG",
+			" stroke=\"#000\"",
+			"H48\"",
+			" style=\"-inkscape-font-specification:Share-TechMono\"",
+			"-inkscape-font-specification:'Ubuntu Mono'",
+			"digits",
+			"localFun",
+			"import",
+			"Util.isArray =",
+			"Util.isArray",
+			"relative",
 			"MUX_MET",
 			"\\.static",
 			"esolution",
@@ -681,43 +707,7 @@
 			"console.log\\([^,)]*\\)",
 			"console.log\\([^,)]*",
 			"console.log\\([^,)]*\\",
-			"console.log\\([^,)]*\\)",
-			"getCallerStack",
-			"ConsoleSetup",
-			"$",
-			"^\\.button",
-			"font-size",
-			" if(ret.curve !== undefined) ",
-			"'g',",
-			"Util\\(",
-			"assignGlobal",
-			"weakAssign",
-			"debug",
-			", Util",
-			"weakAssign",
-			"toObject\\(",
-			"lib/svg",
-			"'\\\\u(....);",
-			"'\\\\u(...);",
-			"'\\\\u(..);",
-			"'\\&#x",
-			"mu'0",
-			"mu'",
-			"'mu'",
-			"mega'",
-			"&#xb5;",
-			"mu'",
-			"'u'0",
-			"mu'",
-			"3bc",
-			"mega",
-			"unicode: ''",
-			"backslash",
-			"const",
-			"ampersand",
-			"unicode=\"&",
-			"unicode",
-			"can only"
+			"console.log\\([^,)]*\\)"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -725,6 +715,24 @@
 		"regex": true,
 		"replace_history":
 		[
+			"",
+			"y=\"2\"",
+			"text-anchor=\"middle\"",
+			"transform",
+			"y=\"2\"",
+			"",
+			"y=\"0\" x=\"-",
+			"font-family=\"Share-TechMono\" text-anchor=\"middle\"",
+			"(-90)",
+			"hare-TechMono\"",
+			" dominant-baseline=\"hanging\" transform=\"rotate(90)\"",
+			"hanging",
+			" x=\"0\"",
+			"",
+			"font-family=\"Share-TechMono\"",
+			"",
+			" H48\"",
+			"",
 			"fcntl",
 			"const ",
 			"'\\\\u\\1",
@@ -834,14 +842,7 @@
 			"Line.a",
 			"Point.y",
 			"Point.x",
-			".x2",
-			".y2",
-			".y1",
-			".x1",
-			"\\1//\\2",
-			"console.log",
-			"FetchURL, FetchCached, ",
-			"\\t"
+			".x2"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -860,26 +861,445 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 0,
+						"buffer_size": 940,
 						"regions":
 						{
 						},
 						"selection":
 						[
+							[
+								0,
+								0
+							]
 						],
 						"settings":
 						{
 							"actual_mode": true,
 							"av_input": true,
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Dokumente/Sources/plot-cv/quickjs/CMakeLists.txt",
-							"function_name_status_row": -1,
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/components.js",
+							"function_name_status_row": 0,
 							"outline_rename_mode": false,
 							"symkeys":
 							[
+								[
+									587,
+									649
+								],
+								[
+									884,
+									892
+								],
+								[
+									1064,
+									1084
+								],
+								[
+									1118,
+									1136
+								],
+								[
+									1168,
+									1188
+								],
+								[
+									1220,
+									1240
+								],
+								[
+									1340,
+									1360
+								],
+								[
+									1970,
+									1996
+								],
+								[
+									2107,
+									2156
+								],
+								[
+									2346,
+									2364
+								],
+								[
+									3487,
+									3560
+								],
+								[
+									3690,
+									3710
+								],
+								[
+									4105,
+									4121
+								],
+								[
+									4358,
+									4440
+								],
+								[
+									4820,
+									4846
+								],
+								[
+									5454,
+									5480
+								],
+								[
+									6033,
+									6101
+								],
+								[
+									6398,
+									6456
+								],
+								[
+									6527,
+									6535
+								],
+								[
+									6614,
+									6697
+								],
+								[
+									6957,
+									7017
+								],
+								[
+									7099,
+									7147
+								],
+								[
+									7964,
+									7988
+								],
+								[
+									10184,
+									10204
+								],
+								[
+									12370,
+									12392
+								],
+								[
+									12833,
+									12929
+								],
+								[
+									13054,
+									13062
+								],
+								[
+									13182,
+									13264
+								],
+								[
+									13393,
+									13401
+								],
+								[
+									13541,
+									13637
+								],
+								[
+									13680,
+									13695
+								],
+								[
+									13824,
+									13844
+								],
+								[
+									14057,
+									14162
+								],
+								[
+									14240,
+									14247
+								],
+								[
+									14304,
+									14318
+								],
+								[
+									15342,
+									15349
+								],
+								[
+									15747,
+									15762
+								],
+								[
+									15819,
+									15835
+								],
+								[
+									15842,
+									15856
+								],
+								[
+									16249,
+									16267
+								],
+								[
+									16518,
+									16526
+								],
+								[
+									16558,
+									16575
+								],
+								[
+									16596,
+									16603
+								],
+								[
+									17276,
+									17290
+								],
+								[
+									17319,
+									17324
+								],
+								[
+									17355,
+									17360
+								],
+								[
+									18382,
+									18422
+								],
+								[
+									18998,
+									19006
+								],
+								[
+									19047,
+									19055
+								],
+								[
+									19634,
+									19652
+								],
+								[
+									19787,
+									19809
+								],
+								[
+									19874,
+									19920
+								],
+								[
+									20018,
+									20100
+								],
+								[
+									22760,
+									22779
+								],
+								[
+									22887,
+									22901
+								],
+								[
+									24216,
+									24250
+								],
+								[
+									24962,
+									24989
+								],
+								[
+									25295,
+									25319
+								],
+								[
+									25657,
+									25679
+								],
+								[
+									25976,
+									26019
+								],
+								[
+									26123,
+									26153
+								],
+								[
+									26370,
+									26391
+								],
+								[
+									27733,
+									27756
+								],
+								[
+									27946,
+									27967
+								],
+								[
+									28221,
+									28261
+								],
+								[
+									29145,
+									29203
+								],
+								[
+									29324,
+									29332
+								],
+								[
+									29366,
+									29374
+								],
+								[
+									30234,
+									30255
+								],
+								[
+									30910,
+									30963
+								],
+								[
+									30967,
+									30990
+								],
+								[
+									31123,
+									31131
+								],
+								[
+									31223,
+									31233
+								],
+								[
+									32335,
+									32359
+								],
+								[
+									32671,
+									32748
+								],
+								[
+									32941,
+									32949
+								],
+								[
+									33047,
+									33055
+								],
+								[
+									33493,
+									33552
+								],
+								[
+									33811,
+									33830
+								],
+								[
+									33872,
+									33892
+								],
+								[
+									34015,
+									34026
+								],
+								[
+									34448,
+									34485
+								],
+								[
+									34555,
+									34573
+								]
 							],
 							"symlist":
 							[
+								"Ruler",
+								"  value =>",
+								"  pressingDown",
+								"  pressingUp",
+								"  stopPressing",
+								"  onChanged",
+								"  onChanged",
+								"ClickHandler",
+								"ToggleHandler",
+								"MouseEvents",
+								"Container",
+								"Button",
+								"  onPush: state",
+								"FloatingPanel",
+								"  updateSize",
+								"  updateHide",
+								"Label",
+								"DynamicLabel",
+								"  value =>",
+								"Item",
+								"Icon",
+								"Progress",
+								"SchematicIcon",
+								"BoardIcon",
+								"LibraryIcon",
+								"Conditional",
+								"  value =>",
+								"ShowHide",
+								"  value =>",
+								"EditBox",
+								"  .ref",
+								"  .onSubmit",
+								"File",
+								"  data =>",
+								"  state =>",
+								"  line =>",
+								"  tooltip",
+								"  onChange",
+								"  onPush",
+								"  pushHandler",
+								"  value =>",
+								"  list2re",
+								"  part =>",
+								"  pred",
+								"  re =>",
+								"  re =>",
+								"ToolTipFn",
+								"  value =>",
+								"  value =>",
+								"  itemClass: item",
+								"  onChange: (...args)",
+								"Panel",
+								"WrapInAspectBox",
+								"  onChange",
+								"  onInput",
+								"Canvas",
+								"  handleMouseMove",
+								"  startDrawing",
+								"  stopDrawing",
+								"ColorWheel",
+								"  onInit: (ctx, canvas, size)",
+								"  drawCircle",
+								"  xy2polar",
+								"  rad2deg",
+								"  hsv2rgb",
+								"CrossHair",
+								"  value =>",
+								"  value =>",
+								"MoveCursor",
+								"DropDown",
+								"(false), ...props }) =>",
+								"  value =>",
+								"  element =>",
+								"  onMouseWheel",
+								"Fence",
+								"  value =>",
+								"  value =>",
+								"Zoomable",
+								"  onPan",
+								"  onZoom",
+								"  ref",
+								"DisplayList",
+								"  function* ()"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
 							"tab_size": 2,
@@ -900,30 +1320,30 @@
 			[
 				{
 					"buffer": 1,
-					"file": "quickjs/CMakeLists.txt",
+					"file": "commands.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 13376,
+						"buffer_size": 12937,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								4223,
+								4223
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 0,
-							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
+							"function_name_status_row": 120,
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 603.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -934,7 +1354,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 39.0
+		"height": 27.0
 	},
 	"input":
 	{
@@ -1002,16 +1422,68 @@
 		"selected_items":
 		[
 			[
+				"forward",
+				"lib/preact/forwardRef.js"
+			],
+			[
+				"renderU",
+				"lib/eagle/renderUtils.js"
+			],
+			[
+				"render-to-str",
+				"lib/preact-render-to-string.js"
+			],
+			[
+				"element",
+				"lib/dom/element.js"
+			],
+			[
+				"rulerVP",
+				"static/ruler/rulerVPattern.svg"
+			],
+			[
+				"rulerVPa",
+				"rulerVPattern.svg"
+			],
+			[
+				"commands",
+				"commands.js"
+			],
+			[
+				"main.js",
+				"main.js"
+			],
+			[
+				"util.",
+				"lib/util.js"
+			],
+			[
+				"path",
+				"lib/svg/path.js"
+			],
+			[
+				"test-",
+				"test-cli.js"
+			],
+			[
+				"blackbody",
+				"blackbody.js"
+			],
+			[
+				"main",
+				"main.js"
+			],
+			[
+				"objectIn",
+				"lib/objectInspect.js"
+			],
+			[
 				"cmakeli",
 				"quickjs/CMakeLists.txt"
 			],
 			[
 				"server",
 				"server.js"
-			],
-			[
-				"main",
-				"main.js"
 			],
 			[
 				"cmakelists",
@@ -1048,10 +1520,6 @@
 			[
 				"dra",
 				"ruler-draggable.js"
-			],
-			[
-				"main.js",
-				"main.js"
 			],
 			[
 				"preact.mj",
@@ -1178,10 +1646,6 @@
 				"quickjs/quickjs-debugger.c"
 			],
 			[
-				"util.",
-				"lib/util.js"
-			],
-			[
 				"test-stack",
 				"test-stack.js"
 			],
@@ -1256,10 +1720,6 @@
 			[
 				"grammar-ar",
 				"grammar-arith.js"
-			],
-			[
-				"path",
-				"lib/path.js"
 			],
 			[
 				"test-par",
@@ -1446,10 +1906,6 @@
 				"lib/consoleSetup.js"
 			],
 			[
-				"objectIn",
-				"lib/objectInspect.js"
-			],
-			[
 				"quickjs.h",
 				"quickjs/quickjs.h"
 			],
@@ -1476,42 +1932,6 @@
 			[
 				"format-s",
 				"scripts/format-sources.sh"
-			],
-			[
-				"quickjs",
-				"quickjs/quickjs.c"
-			],
-			[
-				"test-qui",
-				"test-quickjs.js"
-			],
-			[
-				"test-con",
-				"test-console.js"
-			],
-			[
-				"test-cons",
-				"test-console.js"
-			],
-			[
-				"js-bind",
-				"js-bindings.cmake"
-			],
-			[
-				"quickjs-libc",
-				"quickjs/quickjs-libc.c"
-			],
-			[
-				"test-quickjs.j",
-				"test-quickjs.js"
-			],
-			[
-				"plot-cv.js",
-				"plot-cv.js"
-			],
-			[
-				"jsbin",
-				"js-bindings.cmake"
 			]
 		],
 		"width": 0.0
@@ -1534,7 +1954,7 @@
 		],
 		"width": 1050.0
 	},
-	"selected_group": 1,
+	"selected_group": 0,
 	"settings":
 	{
 	},

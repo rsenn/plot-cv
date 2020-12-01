@@ -18,7 +18,6 @@ const testtmpl = `this is\na test`;
 
 const code = `
 (function() {
-  "use strict";
 
   for(let [value, path] of deep.iterate(x, (v, k) => /data-/.test(k[k.length - 1]))) deep.unset(x, path);
 })();

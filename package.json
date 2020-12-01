@@ -99,13 +99,17 @@
     "react": "lib/dom/preactComponent.js",
     "react-dom": "node_modules/preact/compat",
     "react-ssr-prepass": "node_modules/preact-ssr-prepass",
-    "react-ruler-draggable": "ruler-draggable.js"
+    "react-ruler-draggable": "ruler-draggable.js",
+    "node-c-lexer": "node_modules/node-c-lexer/index.js",
+    "path": "lib/path.js",
+    "util": "lib/util.js"
   },
   "resolutions": {
     "lodash": "4.17.14"
   },
   "devDependencies": {
     "@aerian/eslint-config-preact": "^9.1.0",
+    "c-ast": "^1.0.0",
     "clarify": "^2.1.0",
     "eslint": "^7.7.0",
     "eslint-plugin-class-property": "^1.1.0",
@@ -113,6 +117,8 @@
     "fetch-with-proxy": "https://github.com/touv/node-fetch-with-proxy",
     "free-proxy": "^0.1.6",
     "http": "0.0.0",
+    "node-c-lexer": "^1.0.5",
+    "node-c-parser": "^1.0.11",
     "node-debugprotocol-client": "^0.1.1",
     "opentype": "^0.1.2",
     "proxy-lists": "^1.23.0",
