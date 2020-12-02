@@ -255,6 +255,7 @@ async function main(country = 'de') {
         //  let response = await Check(proxy);
 
         await writeResults(results, 'txt');
+        await writeResults(results, 'sh');
         await writeResults(results, 'json');
       }
     } catch(err) {
@@ -274,6 +275,7 @@ async function writeResults(results, format = 'txt', outputName = 'proxies') {
     let output = await fsPromises.open(tempfile, 'w');
     let method = {
       txt: r => r.map(p => p.toString()).join('\n'),
+      sh: r => r.map(p => `tcping -t 10 ${p.ip} ${p.port} 1>&2 && echo ${p.toString()}`).join('\n'),
       json: r => `[\n${r.map(p => '  ' + Util.toSource(p)).join(',\n')}\n]`
     }[format];
 
