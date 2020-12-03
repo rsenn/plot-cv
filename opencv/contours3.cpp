@@ -5,7 +5,7 @@
 #include <opencv2/core/mat.hpp>
 #include "highgui.h"
 #include <iostream>
-#include <std::vector>
+#include <vector>
 
 // Get thresholded image in HSV format
 IplImage*

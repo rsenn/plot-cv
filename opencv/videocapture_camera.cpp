@@ -1,7 +1,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp> // cv::Canny()
+#include <opencv2/imgproc.hpp> // Canny()
 #include <iostream>
 
 using namespace cv;

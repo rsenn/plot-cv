@@ -1,7 +1,7 @@
 #include <iostream> // for standard I/O
 #include <string>   // for strings
 
-#include <opencv2/core/core.hpp>       // Basic OpenCV structures (cv::Mat)
+#include <opencv2/core/core.hpp>       // Basic OpenCV structures (Mat)
 #include <opencv2/highgui/highgui.hpp> // Video write
 #include <opencv2/videoio.hpp>
 

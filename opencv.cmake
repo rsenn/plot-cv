@@ -50,6 +50,9 @@ if(NOT OPENCV_CHECKED)
     link_directories(${OpenCV_LIB_DIR})
     include_directories(${OpenCV_INCLUDE_DIRS})
 
+    set(CMAKE_INSTALL_RPATH "${OpenCV_LIB_DIR}:${CMAKE_INSTALL_RPATH}")
+    set(CMAKE_BUILD_RPATH "${OpenCV_LIB_DIR}:${CMAKE_BUILD_RPATH}")
+
     message(STATUS "${OPENCV_RESULT}")
   else(OPENCV_FOUND OR OpenCV_LIBS)
     message(STATUS "fail")

@@ -2,7 +2,7 @@
 // --- Please read help() below: ---
 
 #include <iostream>
-#include <std::vector>
+#include <vector>
 
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/core/core.hpp>

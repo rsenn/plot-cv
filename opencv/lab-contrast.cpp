@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <opencv2/core/core.hpp>
-#include <vector> // std::vector
+#include <vector> // vector
 #include "opencv2/core/utility.hpp"
 #include "opencv2/highgui.hpp"
 #include <opencv2/imgproc/imgproc.hpp>

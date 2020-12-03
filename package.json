@@ -117,6 +117,7 @@
     "fetch-with-proxy": "https://github.com/touv/node-fetch-with-proxy",
     "free-proxy": "^0.1.6",
     "http": "0.0.0",
+    "lebab": "^3.1.0",
     "node-c-lexer": "^1.0.5",
     "node-c-parser": "^1.0.11",
     "node-debugprotocol-client": "^0.1.1",

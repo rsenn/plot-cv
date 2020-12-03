@@ -4,7 +4,7 @@
 #include <opencv2/video/background_segm.hpp>
 #include <cstdio>
 #include <string>
-#include <std::vector>
+#include <vector>
 
 using namespace cv;
 

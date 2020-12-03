@@ -27,7 +27,7 @@
 #include <iostream>
 #include <ctype.h>
 #include <cstdlib>
-#include <std::vector>
+#include <vector>
 #include <math.h>
 
 using namespace cv;

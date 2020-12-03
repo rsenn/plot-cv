@@ -201,8 +201,7 @@ async function main(...args) {
 
   for(let doc of documents) {
     let main = doc.mainElement;
-     console.log('main:', main);
-
+    console.log('main:', main);
 
     let parts = [...(main.elements || main.parts)].map(([name, elem]) => [name, elem.value]);
 
@@ -241,10 +240,10 @@ async function main(...args) {
 
   /*console.log('components:', components);
   console.log('histograms:', histograms);*/
-  console.log('values:\n   '+
-    Object.entries(values)
-      .map(([key, list]) => `${key}:\n\t${list.join('\n\t')}`)
-      .join('\n   ')
+  console.log('values:\n   ' +
+      Object.entries(values)
+        .map(([key, list]) => `${key}:\n\t${list.join('\n\t')}`)
+        .join('\n   ')
   );
 }
 

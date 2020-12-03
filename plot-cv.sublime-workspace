@@ -124,59 +124,13 @@
 	"buffers":
 	[
 		{
-			"contents": "",
+			"contents": "  main",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 6,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
-			}
-		},
-		{
-			"file": "eagle-query.js",
-			"settings":
-			{
-				"buffer_size": 6966,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "Package Control Messages\n========================\n\nPretty Shell\n------------\n\n  🐚 Pretty Shell - Shell Script Formatter\n\n  ----------------------------------------------------------\n\n  ⚠️ macOS Users\n      If your default shell does not have the path to shfmt,\n      you need to specify it in the settings.\n\n  ⚠️ *nix / Windows Users\n      You need to specify the path to shfmt in the settings.\n\n  ----------------------------------------------------------\n\n  ⚙️ Example:\n      \"shfmt_bin_path\": \"Absolute Path to shfmt\"\n\n  ----------------------------------------------------------\n\n  ℹ️ Visit repository for more details:\n      • https://github.com/aerobounce/Sublime-Pretty-Shell",
-			"settings":
-			{
-				"buffer_size": 682,
-				"line_ending": "Unix",
-				"name": "Package Control Messages",
-				"read_only": true,
-				"scratch": true
-			}
-		},
-		{
-			"file": "cfg.sh",
-			"settings":
-			{
-				"buffer_size": 12356,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "list-proxies.js",
-			"settings":
-			{
-				"buffer_size": 9686,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/common.js",
-			"settings":
-			{
-				"buffer_size": 4307,
-				"line_ending": "Unix"
 			}
 		},
 		{
@@ -189,54 +143,72 @@
 			}
 		},
 		{
-			"contents": "Searching 1105 files for \"histogram\\(\" (regex, case sensitive)\n\n/home/roman/Sources/plot-cv/eagle-query.js:\n  188        components[key].sort();\n  189  \n  190:       histograms[key] = Util.histogram(components[key]);\n  191      }\n  192  \n\n/home/roman/Sources/plot-cv/lib/lua.js:\n  579      function moonscript_table_expression(node) {\n  580        let list = 0;\n  581:       //const types = Util.histogram(node.fields.map(f => f.type));\n  582        const indent = `${generator.indent}  `;\n  583        //console.error('TYPES: ', types);\n\n/home/roman/Sources/plot-cv/main.js:\n 2000                        });\n 2001                        /*\n 2002:                       layer.sublayers = Util.histogram(Element.walk(layer.dom, (e, acc) => (e.tagName.endsWith('g') ? acc : [...acc, e]), []),\n 2003                          e => e.getAttribute('style'),\n 2004                          new Map(),\n\n/home/roman/Sources/plot-cv/test-xml.js:\n  366          console.log(`idx2hue`, idx2hue);\n  367          /* prettier-ignore */ const getIds4Hue = (hue) => idx2hue.map((h, i) => [i, h]) .filter(([i, h]) => h == hue).map(([i, h]) => i);\n  368:         /* prettier-ignore */ let hues = Util.histogram(colors, (v, i) => [v.h, v], new Map(), () => new Set(), (v, i) => [v.h, i]);\n  369          // console.log(`hues`, hues);\n  370  \n  ...\n  388          //console.log(`hueData`, hueData);\n  389  \n  390:         //console.log(`zhistogram`, Util.histogram(colors, (c, i) => [c.h, i], new Map(), () => new Set(), i => [colors[i].h, i] ) ); //new Map(Object.entries(idx2hue).map(([idx,hue]) => [+idx,+hue])));\n  391          console.log(`hueCounts`, hueCounts);\n  392  \n\n5 matches across 4 files\n\n\nSearching 1105 files for \"histogram\\(\" (regex, case sensitive)\n\n/home/roman/Sources/plot-cv/eagle-query.js:\n  188        components[key].sort();\n  189  \n  190:       histograms[key] = Util.histogram(components[key], new Map(), (item,i) => []);\n  191      }\n  192  \n\n/home/roman/Sources/plot-cv/lib/lua.js:\n  579      function moonscript_table_expression(node) {\n  580        let list = 0;\n  581:       //const types = Util.histogram(node.fields.map(f => f.type));\n  582        const indent = `${generator.indent}  `;\n  583        //console.error('TYPES: ', types);\n\n/home/roman/Sources/plot-cv/main.js:\n 2000                        });\n 2001                        /*\n 2002:                       layer.sublayers = Util.histogram(Element.walk(layer.dom, (e, acc) => (e.tagName.endsWith('g') ? acc : [...acc, e]), []),\n 2003                          e => e.getAttribute('style'),\n 2004                          new Map(),\n\n/home/roman/Sources/plot-cv/test-xml.js:\n  366          console.log(`idx2hue`, idx2hue);\n  367          /* prettier-ignore */ const getIds4Hue = (hue) => idx2hue.map((h, i) => [i, h]) .filter(([i, h]) => h == hue).map(([i, h]) => i);\n  368:         /* prettier-ignore */ let hues = Util.histogram(colors, (v, i) => [v.h, v], new Map(), () => new Set(), (v, i) => [v.h, i]);\n  369          // console.log(`hues`, hues);\n  370  \n  ...\n  388          //console.log(`hueData`, hueData);\n  389  \n  390:         //console.log(`zhistogram`, Util.histogram(colors, (c, i) => [c.h, i], new Map(), () => new Set(), i => [colors[i].h, i] ) ); //new Map(Object.entries(idx2hue).map(([idx,hue]) => [+idx,+hue])));\n  391          console.log(`hueCounts`, hueCounts);\n  392  \n\n5 matches across 4 files\n\n\nSearching 1105 files for \"log..this:\" (regex, case sensitive)\n\n/home/roman/Sources/plot-cv/lib/color/coloredText.js:\n  230      if(state[FG] !== null || state[BG] !== null) {\n  231        this.push(NC);\n  232:       //  console.log(\"this:\",[...this].map(partToStr).join(\"\").split(\"\\x1b\"));\n  233        return this.toAnsi256();\n  234      }\n\n/home/roman/Sources/plot-cv/lib/eagle/document.js:\n  297  \n  298    getMainElement = Util.memoize(function () {\n  299:     console.log('this:', this);\n  300      switch (this.type) {\n  301        case 'brd':\n\n/home/roman/Sources/plot-cv/lib/geom/line.js:\n  212    //Util.log(\"a:\",a, \" b:\",b);\n  213    //Util.log('a:', a, ' b:', b);\n  214:   //Util.log('this:', this);\n  215    return Point.prototype.distance.call(a, b);\n  216  };\n\n/home/roman/Sources/plot-cv/lib/json/path.js:\n   85  \n   86      MutablePath.parse(p, this, separator);\n   87:     //console.log('this:',this);\n   88  \n   89      //console.log(`\\nnew Path(${[...arguments].length}):  length:`,  length,\"\", (first ? \"first:\" : ''), first||'',(last ? \"  last:\" : ''), last || '',\"array:\",a);\n\n/home/roman/Sources/plot-cv/lib/util.js:\n 3422    toString(color = false) {\n 3423      let { fileName, lineNumber, columnNumber, functionName } = this;\n 3424:     console.log('this:', this, { fileName, lineNumber, columnNumber, functionName });\n 3425      fileName = fileName.replace(Util.makeURL({ location: '' }), '');\n 3426      let text = /*color ? new this.colorCtor() : */ '';\n ....\n 3727    columnWidths: {\n 3728      get() {\n 3729:       // console.log('this:', [...this]);\n 3730        return this.reduce((a, f) =>\n 3731            ['getFunction'].map((fn, i) => Math.max(a[i], ((typeof f[fn] == 'function' ? f[fn]() : '') + '').length)),\n\n/home/roman/Sources/plot-cv/tamper.js:\n 5996      //Util.log('a:', a, ' b:', b);\n 5997  \n 5998:     //Util.log('this:', this);\n 5999  \n 6000      return Point.prototype.distance.call(a, b);\n\n7 matches across 6 files\n\n\nSearching 1105 files for \"log..adder\" (regex, case sensitive)\n\n/home/roman/Sources/plot-cv/lib/util.js:\n  229      console.debug('adder', self.fn + '');\n  230  \n  231:     // if(!self.fn) console.log('adder', { target, thisObj: this, fn: self.fn + '', arg });\n  232      return self.fn(obj, arg);\n  233    };\n\n/home/roman/Sources/plot-cv/tamper.js:\n  275        //console.debug('adder', self.fn + '');\n  276  \n  277:       // if(!self.fn) console.log('adder', { target, thisObj: this, fn: self.fn + '', arg });\n  278  \n  279        return self.fn(obj, arg);\n\n2 matches across 2 files\n",
+			"file": "CMakeLists.txt",
 			"settings":
 			{
-				"buffer_size": 5945,
-				"line_ending": "Unix",
-				"name": "Find Results",
-				"scratch": true
-			}
-		},
-		{
-			"file": "test-xml.js",
-			"settings":
-			{
-				"buffer_size": 18714,
+				"buffer_size": 6870,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/filesystem.js",
+			"file": "opencv/CMakeLists.txt",
 			"settings":
 			{
-				"buffer_size": 21147,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/preact.js",
-			"settings":
-			{
-				"buffer_size": 40366,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/eagle/document.js",
-			"settings":
-			{
-				"buffer_size": 9518,
+				"buffer_size": 5438,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "test-cparse.js",
+			"contents": "§#pragma once\n#include \"objecttracking.h\"\n#include \"Serial.h\"\n\nusing namespace std;\n\nEntity::Entity() {}\nEntity::~Entity() {}\n\nEntity::Entity(string name) {\n  setType(name);\n  if(name == \"playerfront\") { // predefined HSV values for automatic detection\n    setHSVmin(Scalar(0, 140, 240));\n    setHSVmax(Scalar(11, 181, 256));\n    setColor(Scalar(0, 0, 255));\n  }\n  if(name == \"playerrear\") { // predefined HSV values for automatic detection\n    setHSVmin(Scalar(37, 72, 221));\n    setHSVmax(Scalar(117, 117, 256));\n    setColor(Scalar(255, 0, 0));\n  }\n  if(name == \"ball\") { // predefined HSV values for automatic detection\n    setHSVmin(Scalar(11, 96, 217));\n    setHSVmax(Scalar(26, 255, 255));\n    setColor(Scalar(0, 255, 125));\n  }\n  if(name == \"goal\") { // predefined HSV values for automatic detection\n    setHSVmin(Scalar(32, 72, 158));\n    setHSVmax(Scalar(40, 163, 223));\n    setColor(Scalar(0, 255, 0));\n  }\n}\n\nint\nEntity::getXPos() { // get x and y coordinates of the car\n  return Entity::xPos;\n}\nint\nEntity::getYPos() {\n  return Entity::yPos;\n}\nvoid\nEntity::setXPos(int x) { // set x and y coordinates of the car\n  Entity::xPos = x;\n}\nvoid\nEntity::setYPos(int y) {\n  Entity::yPos = y;\n}\n\nScalar\nEntity::getHSVmin() { // getters for HSV min and max values\n  return Entity::HSVmin;\n}\n\nScalar\nEntity::getHSVmax() {\n  return Entity::HSVmax;\n}\n\nvoid\nEntity::setHSVmin(Scalar min) { // setters for HSV min and max values\n  Entity::HSVmin = min;\n}\n\nvoid\nEntity::setHSVmax(Scalar max) {\n  Entity::HSVmax = max;\n}\n\nstring\nfindDirection(Entity playerrear, Entity ball) {\n  if(playerrear.getXPos() >= ball.getXPos() &&\n     playerrear.getYPos() >= ball.getYPos()) // if ball is in the left top corner\n    return \"NORTHWEST\";\n  if(playerrear.getXPos() >= ball.getXPos() &&\n     playerrear.getYPos() <= ball.getYPos()) // if the ball is in the left bottom corner\n    return \"SOUTHWEST\";\n  if(playerrear.getXPos() <= ball.getXPos() &&\n     playerrear.getYPos() <= ball.getYPos()) // if the ball is in the bottom right corner\n    return \"SOUTHEAST\";\n  if(playerrear.getXPos() <= ball.getXPos() &&\n     playerrear.getYPos() >= ball.getYPos()) // if the ball is in the top right corner\n    return \"NORTHEAST\";\n}\n//\n// void movePlayer(string balld, Entity playerfront, Entity playerrear, Entity ball,Serial &serial)\n// {\n//  int x, y;\n//  //if direction is northwest x and y both are decreased until they match\n//  if (balld == \"NORTHWEST\")\n//  {\n//    if (!((playerrear.getXPos() - playerfront.getXPos() > 0) && (playerfront.getYPos() ==\n// playerrear.getYPos())))\n//    {\n//      myData(\"L\",serial);\n//    }\n//    if (!(playerrear.getXPos() == ball.getXPos()))\n//    {\n//      myData(\"F\", serial);\n//    }\n//    if (!((playerrear.getYPos() - playerfront.getYPos() > 0) && (playerfront.getXPos() ==\n// playerrear.getXPos())))\n//    {\n//      myData(\"R\", serial);\n//    }\n//    if (!(playerfront.getYPos() == ball.getYPos()-5))\n//    {\n//      myData(\"F\", serial);\n//    }\n//  }\n//  //if direction is southwest x is decreased and y is increased until they match\n//  if (balld == \"SOUTHWEST\") {\n//    //turn left until car rear x - car front x >= whatever distance is between them && car's front\n// y == car's rear y\n//    //go forward until ball's x coordinate == car's x coordinate\n//    //turn left until car's front y - car rear y >= whatever distance between them && car's front\n// x == car's rear x\n//    //go forward until ball's y coordinate == car's y coordinate\n//    //stop\n//    if (!((playerrear.getXPos() - playerfront.getXPos() > 0) && (playerfront.getYPos() ==\n// playerrear.getYPos()))) {       myData(\"L\", serial);\n//    }\n//    if (!(playerrear.getXPos() == ball.getXPos())) {\n//      myData(\"F\", serial);\n//    }\n//    if (!((playerfront.getYPos() - playerrear.getYPos() > 0) && (playerfront.getXPos() ==\n// playerrear.getXPos()))) {       myData(\"L\", serial);\n//    }\n//    if (!(playerfront.getYPos() == ball.getYPos()-5)) {\n//      myData(\"F\", serial);\n//    }\n//  }\n//  //if direction is southeast x and y both are increased until they match\n//  if (balld == \"SOUTHEAST\") {\n//    //turn right until car front x - car rear x >= whatever distance is between them && car's\n// front y == car's rear\n// y\n//    //go forward until ball's x coordinate == car's x coordinate\n//    //turn right until car's front y - car rear y >= whatever distance between them && car's front\n// x == car's rear x\n//    //go forward until ball's y coordinate == car's y coordinate\n//    //stop\n//    if (!((playerfront.getXPos() - playerrear.getXPos() > 0) && (playerfront.getYPos() ==\n// playerrear.getYPos()))) {       myData(\"R\", serial);\n//    }\n//    if (!(playerrear.getXPos() == ball.getXPos())) {\n//      myData(\"F\", serial);\n//    }\n//    if (!((playerfront.getYPos() - playerrear.getYPos() > 0) && (playerfront.getXPos() ==\n// playerrear.getXPos()))) {       myData(\"R\", serial);\n//    }\n//    if (!(playerfront.getYPos() == ball.getYPos()-5)) {\n//      myData(\"F\", serial);\n//    }\n//  }\n//  //if direction is northeast x is increased and y is decreased until they match\n//  if (balld == \"NORTHEAST\") {\n//    //turn right until car front x - car rear x >= whatever distance is between them && car's\n// front y == car's rear\n// y\n//    //go forward until ball's x coordinate == car's x coordinate\n//    //turn left until car's rear y - car front y >= whatever distance between them && car's front\n// x == car's rear x\n//    //go forward until ball's y coordinate == car's y coordinate\n//    //stop\n//    if (!((playerfront.getXPos() - playerrear.getXPos() > 0) && (playerfront.getYPos() ==\n// playerrear.getYPos()))) {       myData(\"R\", serial);\n//    }\n//    if (!(playerrear.getXPos() == ball.getXPos())) {\n//      myData(\"F\", serial);\n//    }\n//    if (!((playerrear.getYPos() - playerfront.getYPos() > 0) && (playerfront.getXPos() ==\n// playerrear.getXPos()))) {       myData(\"L\", serial);\n//    }\n//    if (!(playerfront.getYPos() == ball.getYPos() - 5)) {\n//      myData(\"F\", serial);\n//    }\n//  }\n//}\n//\n//\n//\n",
+			"file": "opencv/objecttracking.cpp",
+			"file_size": 6202,
+			"file_write_time": 132513678197648476,
 			"settings":
 			{
-				"buffer_size": 4216,
+				"buffer_size": 6020,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "opencv/SimpleGrab.cpp",
+			"settings":
+			{
+				"buffer_size": 764,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "opencv/multitracker.cpp",
+			"settings":
+			{
+				"buffer_size": 3780,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "quickjs/CMakeLists.txt",
+			"settings":
+			{
+				"buffer_size": 12756,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "quickjs/net/CMakeLists.txt",
+			"settings":
+			{
+				"buffer_size": 9194,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "opencv/tutorial_multitracker.cpp",
+			"settings":
+			{
+				"buffer_size": 2236,
 				"line_ending": "Unix"
 			}
 		}
@@ -252,6 +224,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"remove pa",
+				"Package Control: Remove Package"
+			],
 			[
 				"shell",
 				"Pretty Shell: Minify Selection"
@@ -302,10 +278,6 @@
 			],
 			[
 				"remove ",
-				"Package Control: Remove Package"
-			],
-			[
-				"remove pa",
 				"Package Control: Remove Package"
 			],
 			[
@@ -517,11 +489,22 @@
 	"expanded_folders":
 	[
 		"/home/roman/Sources/plot-cv",
-		"/home/roman/Sources/plot-cv/lib",
-		"/home/roman/Sources/plot-cv/lib/eagle"
+		"/home/roman/Sources/plot-cv/opencv"
 	],
 	"file_history":
 	[
+		"/home/roman/Sources/plot-cv/js-bindings.cmake",
+		"/home/roman/Sources/plot-cv/opencv.cmake",
+		"/home/roman/Sources/plot-cv/opencv/OpenCVWebcam.cpp",
+		"/home/roman/Sources/plot-cv/eagle-query.js",
+		"/home/roman/Sources/plot-cv/cfg.sh",
+		"/home/roman/Sources/plot-cv/list-proxies.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/common.js",
+		"/home/roman/Sources/plot-cv/test-xml.js",
+		"/home/roman/Sources/plot-cv/lib/filesystem.js",
+		"/home/roman/Sources/plot-cv/lib/preact.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/document.js",
+		"/home/roman/Sources/plot-cv/test-cparse.js",
 		"/tmp/mozilla_roman0/OmegaOptions.bak",
 		"/tmp/mozilla_roman0/OmegaOptions-1.bak",
 		"/tmp/mozilla_roman0/OmegaLog_1606860180842.txt",
@@ -531,7 +514,6 @@
 		"/home/roman/Sources/plot-cv/test-childprocess.js",
 		"/home/roman/Sources/plot-cv/lib/cpp.js",
 		"/home/roman/Sources/plot-cv/lib/consoleSetup.js",
-		"/home/roman/Sources/plot-cv/test-cparse.js",
 		"/home/roman/.config/sublime-text-3/Packages/Goto Usage/GotoUsage.sublime-settings",
 		"/home/roman/.config/sublime-text-3/Packages/User/GotoUsage.sublime-settings",
 		"/home/roman/.config/sublime-text-3/Packages/Goto Usage/Default (Linux).sublime-keymap",
@@ -539,7 +521,6 @@
 		"/home/roman/Sources/plot-cv/lib/util.js",
 		"/home/roman/Sources/plot-cv/test-cli.js",
 		"/home/roman/Sources/plot-cv/lib/path.js",
-		"/home/roman/Sources/plot-cv/lib/filesystem.js",
 		"/home/roman/Sources/plot-cv/childProcess.js",
 		"/home/roman/Sources/plot-cv/lib/stream/utils.js",
 		"/home/roman/Sources/plot-cv/lib/objectInspect.js",
@@ -578,7 +559,6 @@
 		"/home/roman/Sources/plot-cv/static/ruler/rulerVertical.svg",
 		"/home/roman/Sources/plot-cv/static/ruler.css",
 		"/home/roman/Sources/plot-cv/exportedRulerVertical.svg",
-		"/home/roman/Sources/plot-cv/lib/preact.js",
 		"/home/roman/Sources/plot-cv/lib/preact.mjs",
 		"/home/roman/Sources/plot-cv/modules/react-ruler-draggable/README.md",
 		"/home/roman/Sources/plot-cv/static/ruler/rulerHorizontal.svg",
@@ -634,22 +614,13 @@
 		"/home/roman/Sources/plot-cv/lib/eagle/components/text.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/node.js",
 		"/home/roman/Sources/plot-cv/test-stack.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/document.js",
 		"/home/roman/Sources/plot-cv/style.css",
 		"/home/roman/Sources/plot-cv/lib/svg/fixedMedium.js",
 		"/home/roman/Sources/plot-cv/lib/svg/miscFixed.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/components/element.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/boardRenderer.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/components/svg.js",
-		"/home/roman/Sources/plot-cv/lib/color/rgba.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/components/pad.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/components/textElement.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/schematicRenderer.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/components/instance.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/components/wirePath.js",
-		"/home/roman/Sources/plot-cv/lib/geom/lineList.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/components/symbol.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/components/circle.js"
+		"/home/roman/Sources/plot-cv/lib/color/rgba.js"
 	],
 	"find":
 	{
@@ -691,6 +662,17 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"src/",
+			"polygon",
+			"CMAKE_CURRENT_BINARY_DIR",
+			"aruco",
+			"opencv/",
+			"detectLine",
+			"add_prog",
+			"LWS_",
+			"dd_sub",
+			"set_tar",
+			"BUILD_LIBWEB",
 			".txt",
 			"max",
 			"236",
@@ -807,18 +789,7 @@
 			"digits",
 			"localFun",
 			"import",
-			"Util.isArray =",
-			"Util.isArray",
-			"relative",
-			"MUX_MET",
-			"\\.static",
-			"esolution",
-			"Resolut",
-			"Video res",
-			"Video ",
-			"\"FPS",
-			"image_ind",
-			"waitKey"
+			"Util.isArray ="
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -826,6 +797,9 @@
 		"regex": true,
 		"replace_history":
 		[
+			"${CMAKE_SOURCE_DIR}/src/",
+			"CMAKE_CURRENT_SOURCE_DIR",
+			"${CMAKE_CURRENT_BINARY_DIR}/",
 			"function \\1(",
 			" \\1(",
 			"",
@@ -950,10 +924,7 @@
 			"map",
 			"\\1//console.",
 			"\\1console.",
-			"this.",
-			"Line.b",
-			"Line.a",
-			"Point.y"
+			"this."
 		],
 		"reverse": false,
 		"show_context": true,
@@ -972,7 +943,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 0,
+						"buffer_size": 6,
 						"regions":
 						{
 						},
@@ -984,14 +955,19 @@
 							"actual_mode": true,
 							"av_input": true,
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": null,
-							"function_name_status_row": 22,
+							"current_file": "/home/roman/Sources/plot-cv/opencv/SimpleGrab.cpp",
+							"function_name_status_row": 2,
 							"outline_rename_mode": false,
 							"symkeys":
 							[
+								[
+									127,
+									131
+								]
 							],
 							"symlist":
 							[
+								"  main"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
 							"tab_size": 2,
@@ -1001,172 +977,17 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 12,
+					"stack_index": 9,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 6,
+			"selected": 4,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "eagle-query.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6966,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3179,
-								3179
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 109,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1864.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 682,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								682,
-								682
-							]
-						],
-						"settings":
-						{
-							"auto_indent": false,
-							"function_name_status_row": 25,
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"tab_width": 2,
-							"word_wrap": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "cfg.sh",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 12356,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2434,
-								2434
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 77,
-							"syntax": "Packages/ShellScript/Bash.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "list-proxies.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 9686,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								8454,
-								8454
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 255,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 4646.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "lib/eagle/common.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4307,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 0,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
 					"file": "lib/util.js",
 					"semi_transient": false,
 					"settings":
@@ -1190,7 +1011,162 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 76154.0,
+						"translation.y": 3706.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "CMakeLists.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6870,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4231,
+								4231
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 130,
+							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1812.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "opencv/CMakeLists.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5438,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5436,
+								5436
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 211,
+							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2719.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "opencv/objecttracking.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6020,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1,
+								1
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 0,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "opencv/SimpleGrab.cpp",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 764,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 0,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "opencv/multitracker.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3780,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								638,
+								638
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 17,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 5,
@@ -1198,10 +1174,11 @@
 				},
 				{
 					"buffer": 7,
+					"file": "quickjs/CMakeLists.txt",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5945,
+						"buffer_size": 12756,
 						"regions":
 						{
 						},
@@ -1214,177 +1191,78 @@
 						],
 						"settings":
 						{
-							"detect_indentation": false,
 							"function_name_status_row": 0,
-							"line_numbers": false,
-							"output_tag": 4,
-							"result_base_dir": "",
-							"result_file_regex": "^([^ \t].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 72.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "test-xml.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 18714,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								15743,
-								15743
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 398,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 6723.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 8,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
-					"file": "lib/filesystem.js",
+					"buffer": 8,
+					"file": "quickjs/net/CMakeLists.txt",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 21147,
+						"buffer_size": 9194,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6217,
-								6217
+								4979,
+								4979
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 233,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"function_name_status_row": 137,
+							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3717.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "lib/preact.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 40366,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 0,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "lib/eagle/document.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 9518,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								9177,
-								9177
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 298,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 4923.0,
+						"translation.y": 1831.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 12,
-					"file": "test-cparse.js",
+					"buffer": 9,
+					"file": "opencv/tutorial_multitracker.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4216,
+						"buffer_size": 2236,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								118,
-								118
+								2236,
+								2236
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 2,
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"function_name_status_row": 90,
+							"syntax": "Packages/C++/C++.sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 687.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 11,
+					"stack_index": 6,
 					"type": "text"
 				}
 			]
@@ -1392,7 +1270,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 27.0
+		"height": 26.0
 	},
 	"input":
 	{
@@ -1459,6 +1337,30 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"tuto",
+				"opencv/tutorial_multitracker.cpp"
+			],
+			[
+				"opencv",
+				"opencv/OpenCVWebcam.cpp"
+			],
+			[
+				".cmake",
+				"js-bindings.cmake"
+			],
+			[
+				"",
+				"quickjs/CMakeLists.txt"
+			],
+			[
+				"cmakelists.txt",
+				"quickjs/net/CMakeLists.txt"
+			],
+			[
+				"cmake",
+				"quickjs/CMakeLists.txt"
+			],
 			[
 				"list-proxies",
 				"list-proxies.js"
@@ -1622,10 +1524,6 @@
 			[
 				"high",
 				"src/highgui-viewer.cpp"
-			],
-			[
-				"cmake",
-				"CMakeLists.txt"
 			],
 			[
 				"highg",
@@ -1884,10 +1782,6 @@
 				"test-ini.js"
 			],
 			[
-				"",
-				"$"
-			],
-			[
 				"pointList",
 				"lib/geom/pointList.js"
 			],
@@ -1954,22 +1848,6 @@
 			[
 				"message",
 				"message.js"
-			],
-			[
-				"test-net",
-				"test-net.js"
-			],
-			[
-				"plot-c",
-				"plot-cv.js"
-			],
-			[
-				"minnet.c",
-				"quickjs/net/minnet.c"
-			],
-			[
-				"plot-cv.cpp",
-				"src/plot-cv.cpp"
 			]
 		],
 		"width": 0.0
