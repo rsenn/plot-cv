@@ -128,119 +128,71 @@
 	"buffers":
 	[
 		{
-			"contents": "—Ⓒ– pss { … } ; — type\n—Ⓕ– callback_http ( ) { … } — function\n—Ⓕ– sigint_handler ( ) { … } — function\n—Ⓕ– main ( ) { … } — function",
+			"contents": "  res =>\n  entries()\nGetProject\n  add\n  useSlot\n  trklGetSet\nMouseEvents\n  append_to(elem, p)\nDrawSVG\n  append_to(elem, p)\n  adjustViewBox\n  calcViewBox\n  setViewBox\nElementToXML\n  readFile(filename)\n  writeFile(filename, data, overwrite = true)\n  exists(filename)\n  realpath(filename)\nLoadFile\nSaveFile\nSaveSVG\n  predicate\nLoadSVG\nLoadImage\nRenderComponent\nModifyColors\nFindLayer\n  maxZIndex\n  randomColor\nDrawArc\n  props =>\n  hex =>\n  add\nRecurseBinaryNode\n  item =>\nDrawNode\nDrawEdge\nGetPaths\nPathToPolylines\n  poly =>\n  poly =>\nPathToPolyline\nPathsToPolylines\nOutsetPath\n  .toPolylines\nOutsetPaths\nClipPath\n  add\n  .toPolylines\n  function saveItemsProperty(itemList, get\n(item.\n  restoreItemsProperty\n(Util.is.\nEagleMaps\n  transformPath\n  ret =>\n  eagle =>\n  function* PackageNames(doc\nLoadDocument\n  err =>\n  ent =>\n  ent =>\n  renamePackages()\n  value =>\n  layer =>\n  layer =>\n  .makeGroup\n  id =>\n  value =>\n  value =>\nChooseDocument\nGenerateVoronoi\n  add\nPackageChildren\n  function ElementChildren(layer\n  function ElementGeometries(layer\n  ent =>\n  pts =>\nNewPath\nMakeFitAction\n  event =>\n  function ZoomFactor(val\nZoomLog\n  function AdjustZoom(l\nCreateGrblSocket\nHandleMessage\n  pointStr =>\n  socketFn\n  .send\nAuthorizationDialog\n  onSubmit: ()\n  onInput: e\n  onInput: e\n  onClick: e\n  arg =>\n  .onload\n  response =>\nTestArc: ()\n  .keystroke\n  .focusSearch\n  children: ()\n  geometries: ()\n  value =>\n  testComponent\nFile\nFile.prototype.toString = function()\n  function()\n  ws =>\n  value =>\n  value =>\n  value =>\n  value =>\n  value =>\n  value =>\n  updateIfChanged\n  changeInput\n  arg =>\nConsumer\n  function* ()\n  log(type, time, msg)\nLogger\n  function* ()\nDumper\n  value =>\nCommander\n  handler\nToggle\nLayer\n  setVisible\n  item =>\n  onMouseMove: e\n  onMouseUp: e\n  onMouseDown: e\nDocumentList\n  constructor()\n  add(name, component)\n  addEntry([name, component])\n  remove(name)\n  update()\n  fn: e\n  fn: ()\n  open =>\n  props =>\n  props =>\n  side =>\n  create: (project, props\n  name =>\n  makeLayerName\n  fn: ()\n  onCommand: cmdStr\n  handleChange: e\n  event =>\nMoveEvent\n  function* WalkUp(e)\n  classes =>\nTouchEvent\n  size =>\n  border =>\n  mod\n  cancel\n  .oncontextmenu\n  .processEvents\n  event =>\n  onRuntimeInitialized: ()\n  print: txt",
 			"settings":
 			{
-				"buffer_size": 131,
+				"buffer_size": 2241,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "lib/util.js",
+			"file": "lib/eagle/element.js",
 			"settings":
 			{
-				"buffer_size": 158657,
+				"buffer_size": 30541,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "main.js",
+			"settings":
+			{
+				"buffer_size": 89979,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "dump-ast.js",
+			"contents": "Searching 1106 files for \"BoardToGerber\" (regex, case sensitive)\n\n/home/roman/Sources/plot-cv/commands.js:\n  149  };\n  150  \n  151: export async function BoardToGerber(proj, opts = { fetch: true }) {\n  152    let data;\n  153    let request = { ...opts, board: proj.name, raw: false },\n  ...\n  164      response.data = await FetchURL(`static/${response.file.replace(/^\\.\\//, '')}`).then(NormalizeResponse);\n  165  \n  166:   console.debug('BoardToGerber response =', Util.filterOutKeys(response, /(data)/));\n  167    return response;\n  168  }\n\n/home/roman/Sources/plot-cv/main.js:\n   64  //import PureCache from 'pure-cache';\n   65  import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };\n   66: import commands, { NormalizeResponse, ResponseData, FetchURL, FetchCached, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ClearCache } from './commands.js';\n   67  import github, { GithubListRepositories, GithubRepositories, GithubListContents, ListGithubRepoServer } from './lib/github.js';\n   68  // prettier-ignore-end\n   ..\n 1061  }\n 1062  \n 1063: /* gerber=await BoardToGerber(project.name); gc=await GerberToGcode('tmp/7seg-2.54.GBL'); geom=gcodetogeometry(gc.data);lines = geom.lines.map(({start,end}) => new Line(start,end)) */\n 1064  \n 1065  const GenerateVoronoi = () => {\n ....\n 1337    // Util(globalThis);\n 1338    //prettier-ignore\n 1339:   const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, MutableXPath,ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser,  PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian,CartesianToPolar, RotateTransformation, VERTICAL, useTrkl,ElementToClass, MakeRotation, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer,EagleElementProxy,  BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, GithubListContents, ListGithubRepoServer, classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG, objectInspect, SvgPath, renderToString  };\n 1340  \n 1341    const localFunctions = {\n ....\n 1912                //console.debug('CAM Button');\n 1913                for(let side of ['back', 'front', 'drill', 'outline']) {\n 1914:                 let gerber = await BoardToGerber(project, {\n 1915                    side,\n 1916                    [side]: true,\n ....\n 1919  \n 1920                  if(gerber) {\n 1921:                   console.debug('BoardToGerber gerber =', gerber);\n 1922                    project.gerber[side] = gerber;\n 1923                    if(gerber.data) {\n ....\n 1927                      gerber.points = gerber.cmds.filter(i => i.coord).map(({ coord }) => new Point(coord.x, coord.y));\n 1928                    }\n 1929:                   console.debug('BoardToGerber side =', side, ' file =', gerber.file);\n 1930                  }\n 1931                }\n\n8 matches across 2 files\n",
 			"settings":
 			{
-				"buffer_size": 8535,
-				"encoding": "UTF-8",
+				"buffer_size": 5126,
+				"line_ending": "Unix",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "commands.js",
+			"settings":
+			{
+				"buffer_size": 12937,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "quickjs/net.old/libwebsockets/minimal-examples/http-client/minimal-http-client-post/minimal-http-client-post.c",
+			"file": "lib/eagle.js",
 			"settings":
 			{
-				"buffer_size": 7302,
+				"buffer_size": 954,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/consoleSetup.js",
+			"file": "lib/eagle/nodeList.js",
 			"settings":
 			{
-				"buffer_size": 2597,
-				"encoding": "UTF-8",
+				"buffer_size": 4716,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/geom/transformation.js",
+			"file": "lib/eagle/elementProxy.js",
 			"settings":
 			{
-				"buffer_size": 21104,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/childProcess.js",
-			"settings":
-			{
-				"buffer_size": 5774,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/deep.js",
-			"settings":
-			{
-				"buffer_size": 5534,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/filesystem.js",
-			"settings":
-			{
-				"buffer_size": 21287,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "get-msys-packages.js",
-			"settings":
-			{
-				"buffer_size": 7099,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "resolve-imports.js",
-			"settings":
-			{
-				"buffer_size": 33154,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "server.js",
-			"settings":
-			{
-				"buffer_size": 22737,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-childprocess.js",
-			"settings":
-			{
-				"buffer_size": 1507,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-cparse.js",
-			"settings":
-			{
-				"buffer_size": 4216,
+				"buffer_size": 1736,
 				"line_ending": "Unix"
 			}
 		}
@@ -256,6 +208,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"svgo",
+				"SVGO: Minify SVG"
+			],
 			[
 				"remove pa",
 				"Package Control: Remove Package"
@@ -295,10 +251,6 @@
 			[
 				"goto us",
 				"Goto Usage"
-			],
-			[
-				"svgo",
-				"SVGO: Prettify SVG"
 			],
 			[
 				"install pac",
@@ -520,13 +472,40 @@
 	},
 	"expanded_folders":
 	[
-		"/home/roman/Sources/plot-cv"
+		"/home/roman/Sources/plot-cv",
+		"/home/roman/Sources/plot-cv/lib",
+		"/home/roman/Sources/plot-cv/lib/eagle",
+		"/home/roman/Sources/plot-cv/lib/eagle/components",
+		"/home/roman/Sources/plot-cv/lib/eda"
 	],
 	"file_history":
 	[
-		"/home/roman/Sources/plot-cv/dump-ast.js",
-		"/home/roman/Sources/plot-cv/lib/stream/utils.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/components/element.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/components/textElement.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/boardRenderer.js",
+		"/home/roman/Sources/plot-cv/lib/geom/line.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/nodeMap.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/elementProxy.js",
+		"/home/roman/Sources/plot-cv/main.js",
 		"/home/roman/Sources/plot-cv/lib/util.js",
+		"/home/roman/Sources/plot-cv/dump-ast.js",
+		"/home/roman/Sources/plot-cv/quickjs/net.old/libwebsockets/minimal-examples/http-client/minimal-http-client-post/minimal-http-client-post.c",
+		"/home/roman/Sources/plot-cv/r-colors.svg",
+		"/home/roman/Sources/plot-cv/eagle-query.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/project.js",
+		"/home/roman/Sources/plot-cv/lib/eagle/element.js",
+		"/home/roman/Sources/plot-cv/lib/eda/colorCoding.js",
+		"/home/roman/Sources/plot-cv/lib/consoleSetup.js",
+		"/home/roman/Sources/plot-cv/lib/geom/transformation.js",
+		"/home/roman/Sources/plot-cv/lib/childProcess.js",
+		"/home/roman/Sources/plot-cv/lib/deep.js",
+		"/home/roman/Sources/plot-cv/lib/filesystem.js",
+		"/home/roman/Sources/plot-cv/get-msys-packages.js",
+		"/home/roman/Sources/plot-cv/resolve-imports.js",
+		"/home/roman/Sources/plot-cv/server.js",
+		"/home/roman/Sources/plot-cv/test-childprocess.js",
+		"/home/roman/Sources/plot-cv/test-cparse.js",
+		"/home/roman/Sources/plot-cv/lib/stream/utils.js",
 		"/home/roman/Sources/plot-cv/CMakeLists.txt",
 		"/home/roman/Sources/plot-cv/opencv/CMakeLists.txt",
 		"/home/roman/Sources/plot-cv/opencv/objecttracking.cpp",
@@ -537,28 +516,20 @@
 		"/home/roman/Sources/plot-cv/js-bindings.cmake",
 		"/home/roman/Sources/plot-cv/opencv.cmake",
 		"/home/roman/Sources/plot-cv/opencv/OpenCVWebcam.cpp",
-		"/home/roman/Sources/plot-cv/eagle-query.js",
 		"/home/roman/Sources/plot-cv/cfg.sh",
 		"/home/roman/Sources/plot-cv/list-proxies.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/common.js",
 		"/home/roman/Sources/plot-cv/test-xml.js",
-		"/home/roman/Sources/plot-cv/lib/filesystem.js",
 		"/home/roman/Sources/plot-cv/lib/preact.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/document.js",
-		"/home/roman/Sources/plot-cv/test-cparse.js",
 		"/tmp/mozilla_roman0/OmegaOptions.bak",
 		"/tmp/mozilla_roman0/OmegaOptions-1.bak",
 		"/tmp/mozilla_roman0/OmegaLog_1606860180842.txt",
 		"/home/roman/Sources/plot-cv/lib/cparse.js",
-		"/home/roman/Sources/plot-cv/resolve-imports.js",
-		"/home/roman/Sources/plot-cv/lib/deep.js",
-		"/home/roman/Sources/plot-cv/test-childprocess.js",
 		"/home/roman/Sources/plot-cv/lib/cpp.js",
-		"/home/roman/Sources/plot-cv/lib/consoleSetup.js",
 		"/home/roman/.config/sublime-text-3/Packages/Goto Usage/GotoUsage.sublime-settings",
 		"/home/roman/.config/sublime-text-3/Packages/User/GotoUsage.sublime-settings",
 		"/home/roman/.config/sublime-text-3/Packages/Goto Usage/Default (Linux).sublime-keymap",
-		"/home/roman/Sources/plot-cv/lib/childProcess.js",
 		"/home/roman/Sources/plot-cv/test-cli.js",
 		"/home/roman/Sources/plot-cv/lib/path.js",
 		"/home/roman/Sources/plot-cv/childProcess.js",
@@ -571,8 +542,6 @@
 		"/home/roman/Sources/plot-cv/lib/preact/forwardRef.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/renderUtils.js",
 		"/home/roman/Sources/plot-cv/lib/geom/matrix.js",
-		"/home/roman/Sources/plot-cv/lib/geom/transformation.js",
-		"/home/roman/Sources/plot-cv/main.js",
 		"/home/roman/Sources/plot-cv/lib/dom/element.js",
 		"/home/roman/Sources/plot-cv/lib/dom/preactComponent.js",
 		"/home/roman/Sources/plot-cv/lib/dom/svg.js",
@@ -584,7 +553,6 @@
 		"/home/roman/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap",
 		"/home/roman/Sources/plot-cv/interactive-svg/Readme.md",
 		"/home/roman/Sources/plot-cv/opencv-js-webworker/services/cv.js",
-		"/home/roman/Sources/plot-cv/server.js",
 		"/home/roman/Sources/plot-cv/plot-cv.sublime-project",
 		"/home/roman/.config/sublime-text-3/Packages/User/Babel.sublime-settings",
 		"/home/roman/.config/sublime-text-3/Packages/Babel/Babel.sublime-settings",
@@ -639,23 +607,11 @@
 		"/home/roman/Sources/plot-cv/node_modules/node-debugprotocol-client/dist/utils.js",
 		"/home/roman/Sources/plot-cv/node_modules/node-debugprotocol-client/src/base-debug-client.ts",
 		"/home/roman/Sources/plot-cv/node_modules/node-debugprotocol-client/src/protocol.ts",
-		"/home/roman/Sources/plot-cv/node_modules/node-debugprotocol-client/src/index.ts",
-		"/home/roman/Sources/plot-cv/node_modules/node-debugprotocol-client/src/socket-debug-client.ts",
-		"/home/roman/Sources/plot-cv/node_modules/node-debugprotocol-client/src/stream-debug-client.ts",
-		"/home/roman/Sources/plot-cv/node_modules/node-debugprotocol-client/src/utils.ts",
-		"/home/roman/Sources/plot-cv/quickjs/quickjs-debugger-transport-unix.c",
-		"/home/roman/Sources/plot-cv/strace.log",
-		"/home/roman/Sources/plot-cv/quickjs/quickjs-debugger-transport-win.c",
-		"/home/roman/Sources/plot-cv/opencv/tracking_by_matching.cpp",
-		"/home/roman/Sources/plot-cv/lib/eagle/components/text.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/node.js",
-		"/home/roman/Sources/plot-cv/test-stack.js",
-		"/home/roman/Sources/plot-cv/style.css",
-		"/home/roman/Sources/plot-cv/lib/svg/fixedMedium.js"
+		"/home/roman/Sources/plot-cv/node_modules/node-debugprotocol-client/src/index.ts"
 	],
 	"find":
 	{
-		"height": 44.0
+		"height": 40.0
 	},
 	"find_in_files":
 	{
@@ -693,6 +649,18 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"BoardToGerber",
+			"BoardRen",
+			"EagleEleme",
+			"Element, ",
+			"Element",
+			"nodeProxy",
+			"children.*Node",
+			"children",
+			"Line\\.",
+			"LinesTo",
+			"bandColors",
+			"GetFac",
 			"k.join",
 			"join",
 			"once",
@@ -808,19 +776,7 @@
 			"y=\"0\"",
 			" font-family=\"Share-TechMono\"",
 			"x=\"0\" y=\"",
-			"font-family=\"Share-TechMono\"",
-			"\\(90\\)",
-			"hare-TechMono\" transform=\"rotate.90.\"",
-			"hare-TechMono\" transform=\"rotate(90)\"",
-			" dominant-baseline=\"hanging\"",
-			"middle",
-			" x=\"[^\"]*\"",
-			" transform=\"rotate(-90 44.56 -7.44)\"",
-			"font-family=\"Share-TechMono\" x=\"34.11\" y=\"-37.747\"",
-			"translate",
-			"rotate =",
-			"Fragment",
-			"preact.js"
+			"font-family=\"Share-TechMono\""
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -974,50 +930,851 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 131,
+						"buffer_size": 2241,
 						"regions":
 						{
 						},
 						"selection":
 						[
-							[
-								0,
-								0
-							]
 						],
 						"settings":
 						{
 							"actual_mode": true,
 							"av_input": true,
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Sources/plot-cv/quickjs/net.old/libwebsockets/minimal-examples/http-client/minimal-http-client-post/minimal-http-client-post.c",
-							"function_name_status_row": 4,
+							"current_file": "/home/roman/Sources/plot-cv/main.js",
+							"function_name_status_row": 58,
 							"outline_rename_mode": false,
 							"symkeys":
 							[
 								[
-									631,
-									634
+									8775,
+									8781
 								],
 								[
-									669,
-									682
+									9002,
+									9011
 								],
 								[
-									4706,
-									4720
+									9511,
+									9530
 								],
 								[
-									4757,
-									4761
+									10011,
+									10035
+								],
+								[
+									10076,
+									10097
+								],
+								[
+									10139,
+									10174
+								],
+								[
+									10290,
+									10308
+								],
+								[
+									10731,
+									10749
+								],
+								[
+									11406,
+									11431
+								],
+								[
+									11477,
+									11495
+								],
+								[
+									12431,
+									12458
+								],
+								[
+									12813,
+									12838
+								],
+								[
+									13177,
+									13211
+								],
+								[
+									13719,
+									13751
+								],
+								[
+									14298,
+									14322
+								],
+								[
+									14382,
+									14431
+								],
+								[
+									14673,
+									14695
+								],
+								[
+									14702,
+									14726
+								],
+								[
+									14734,
+									14763
+								],
+								[
+									15489,
+									15541
+								],
+								[
+									16136,
+									16222
+								],
+								[
+									16418,
+									16440
+								],
+								[
+									16953,
+									16985
+								],
+								[
+									17313,
+									17347
+								],
+								[
+									17492,
+									17528
+								],
+								[
+									17717,
+									17742
+								],
+								[
+									17933,
+									17958
+								],
+								[
+									18854,
+									18871
+								],
+								[
+									19141,
+									19160
+								],
+								[
+									19375,
+									19410
+								],
+								[
+									19448,
+									19456
+								],
+								[
+									20739,
+									20745
+								],
+								[
+									22740,
+									22762
+								],
+								[
+									22939,
+									22999
+								],
+								[
+									23398,
+									23405
+								],
+								[
+									23491,
+									23522
+								],
+								[
+									23742,
+									23775
+								],
+								[
+									24791,
+									24844
+								],
+								[
+									24985,
+									25028
+								],
+								[
+									25240,
+									25247
+								],
+								[
+									25274,
+									25281
+								],
+								[
+									25641,
+									25683
+								],
+								[
+									26064,
+									26109
+								],
+								[
+									26302,
+									26372
+								],
+								[
+									26802,
+									26827
+								],
+								[
+									27003,
+									27075
+								],
+								[
+									27821,
+									27886
+								],
+								[
+									27973,
+									27999
+								],
+								[
+									28238,
+									28263
+								],
+								[
+									28377,
+									28436
+								],
+								[
+									28438,
+									28444
+								],
+								[
+									28556,
+									28629
+								],
+								[
+									28636,
+									28645
+								],
+								[
+									28716,
+									28743
+								],
+								[
+									28752,
+									28772
+								],
+								[
+									29114,
+									29128
+								],
+								[
+									29914,
+									29922
+								],
+								[
+									31127,
+									31168
+								],
+								[
+									33159,
+									33207
+								],
+								[
+									33388,
+									33394
+								],
+								[
+									33575,
+									33582
+								],
+								[
+									33678,
+									33685
+								],
+								[
+									34316,
+									34332
+								],
+								[
+									34968,
+									34976
+								],
+								[
+									35413,
+									35421
+								],
+								[
+									35511,
+									35519
+								],
+								[
+									37646,
+									37697
+								],
+								[
+									38105,
+									38110
+								],
+								[
+									39049,
+									39057
+								],
+								[
+									39902,
+									39910
+								],
+								[
+									40004,
+									40045
+								],
+								[
+									40627,
+									40650
+								],
+								[
+									42244,
+									42268
+								],
+								[
+									43489,
+									43529
+								],
+								[
+									43770,
+									43826
+								],
+								[
+									43988,
+									44046
+								],
+								[
+									44097,
+									44104
+								],
+								[
+									44492,
+									44498
+								],
+								[
+									44597,
+									44619
+								],
+								[
+									44704,
+									44728
+								],
+								[
+									44729,
+									44743
+								],
+								[
+									45861,
+									45894
+								],
+								[
+									45956,
+									45980
+								],
+								[
+									46021,
+									46052
+								],
+								[
+									46306,
+									46349
+								],
+								[
+									46653,
+									46680
+								],
+								[
+									46971,
+									46982
+								],
+								[
+									47193,
+									47209
+								],
+								[
+									47412,
+									47432
+								],
+								[
+									48329,
+									48376
+								],
+								[
+									48720,
+									48735
+								],
+								[
+									48952,
+									48965
+								],
+								[
+									49242,
+									49255
+								],
+								[
+									49461,
+									49474
+								],
+								[
+									49698,
+									49704
+								],
+								[
+									49754,
+									49775
+								],
+								[
+									53343,
+									53354
+								],
+								[
+									54664,
+									54678
+								],
+								[
+									55244,
+									55290
+								],
+								[
+									55405,
+									55428
+								],
+								[
+									55710,
+									55725
+								],
+								[
+									55750,
+									55767
+								],
+								[
+									55834,
+									55842
+								],
+								[
+									56026,
+									56050
+								],
+								[
+									56692,
+									56719
+								],
+								[
+									57205,
+									57241
+								],
+								[
+									58378,
+									58394
+								],
+								[
+									58454,
+									58460
+								],
+								[
+									58707,
+									58715
+								],
+								[
+									58831,
+									58839
+								],
+								[
+									58959,
+									58967
+								],
+								[
+									59082,
+									59090
+								],
+								[
+									59147,
+									59155
+								],
+								[
+									59627,
+									59635
+								],
+								[
+									59820,
+									59867
+								],
+								[
+									60187,
+									60205
+								],
+								[
+									60449,
+									60456
+								],
+								[
+									60702,
+									60721
+								],
+								[
+									60753,
+									60771
+								],
+								[
+									61280,
+									61300
+								],
+								[
+									61625,
+									61642
+								],
+								[
+									61850,
+									61868
+								],
+								[
+									62589,
+									62606
+								],
+								[
+									62698,
+									62706
+								],
+								[
+									63115,
+									63155
+								],
+								[
+									63220,
+									63234
+								],
+								[
+									63796,
+									63812
+								],
+								[
+									63850,
+									63925
+								],
+								[
+									64170,
+									64191
+								],
+								[
+									64728,
+									64736
+								],
+								[
+									65271,
+									65288
+								],
+								[
+									65380,
+									65395
+								],
+								[
+									65441,
+									65458
+								],
+								[
+									66245,
+									66257
+								],
+								[
+									66264,
+									66277
+								],
+								[
+									66434,
+									66454
+								],
+								[
+									66634,
+									66661
+								],
+								[
+									66715,
+									66727
+								],
+								[
+									66845,
+									66853
+								],
+								[
+									67254,
+									67262
+								],
+								[
+									68128,
+									68137
+								],
+								[
+									68363,
+									68370
+								],
+								[
+									68463,
+									68485
+								],
+								[
+									68684,
+									68706
+								],
+								[
+									70276,
+									70283
+								],
+								[
+									72275,
+									72307
+								],
+								[
+									73074,
+									73081
+								],
+								[
+									74241,
+									74289
+								],
+								[
+									74873,
+									74882
+								],
+								[
+									76907,
+									76927
+								],
+								[
+									77411,
+									77429
+								],
+								[
+									78066,
+									78075
+								],
+								[
+									78189,
+									78225
+								],
+								[
+									78406,
+									78431
+								],
+								[
+									79716,
+									79727
+								],
+								[
+									82501,
+									82527
+								],
+								[
+									83644,
+									83652
+								],
+								[
+									84158,
+									84167
+								],
+								[
+									84385,
+									84411
+								],
+								[
+									86379,
+									86400
+								],
+								[
+									86608,
+									86636
+								],
+								[
+									87003,
+									87046
+								],
+								[
+									88377,
+									88386
+								],
+								[
+									89779,
+									89806
+								],
+								[
+									89929,
+									89942
 								]
 							],
 							"symlist":
 							[
-								"—Ⓒ– pss { … } ; — type",
-								"—Ⓕ– callback_http ( ) { … } — function",
-								"—Ⓕ– sigint_handler ( ) { … } — function",
-								"—Ⓕ– main ( ) { … } — function"
+								"  res =>",
+								"  entries()",
+								"GetProject",
+								"  add",
+								"  useSlot",
+								"  trklGetSet",
+								"MouseEvents",
+								"  append_to(elem, p)",
+								"DrawSVG",
+								"  append_to(elem, p)",
+								"\tadjustViewBox",
+								"  calcViewBox",
+								"  setViewBox",
+								"ElementToXML",
+								"  readFile(filename)",
+								"  writeFile(filename, data, overwrite = true)",
+								"  exists(filename)",
+								"  realpath(filename)",
+								"LoadFile",
+								"SaveFile",
+								"SaveSVG",
+								"  predicate",
+								"LoadSVG",
+								"LoadImage",
+								"RenderComponent",
+								"ModifyColors",
+								"FindLayer",
+								"  maxZIndex",
+								"  randomColor",
+								"DrawArc",
+								"  props =>",
+								"  hex =>",
+								"  add",
+								"RecurseBinaryNode",
+								"  item =>",
+								"DrawNode",
+								"DrawEdge",
+								"GetPaths",
+								"PathToPolylines",
+								"  poly =>",
+								"  poly =>",
+								"PathToPolyline",
+								"PathsToPolylines",
+								"OutsetPath",
+								"  .toPolylines",
+								"OutsetPaths",
+								"ClipPath",
+								"  add",
+								"  .toPolylines",
+								"  function saveItemsProperty(itemList, get",
+								"(item.",
+								"  restoreItemsProperty",
+								"(Util.is.",
+								"EagleMaps",
+								"  transformPath",
+								"\tret =>",
+								"  eagle =>",
+								"  function* PackageNames(doc",
+								"LoadDocument",
+								"  err =>",
+								"\tent =>",
+								"\tent =>",
+								"  renamePackages()",
+								"  value =>",
+								"  layer =>",
+								"  layer =>",
+								"  .makeGroup",
+								"  id =>",
+								"  value =>",
+								"  value =>",
+								"ChooseDocument",
+								"GenerateVoronoi",
+								"  add",
+								"PackageChildren",
+								"  function ElementChildren(layer",
+								"  function ElementGeometries(layer",
+								"\tent =>",
+								"  pts =>",
+								"NewPath",
+								"MakeFitAction",
+								"  event =>",
+								"  function ZoomFactor(val",
+								"ZoomLog",
+								"  function AdjustZoom(l",
+								"CreateGrblSocket",
+								"HandleMessage",
+								"  pointStr =>",
+								"  socketFn",
+								"  .send",
+								"AuthorizationDialog",
+								"  onSubmit: ()",
+								"  onInput: e",
+								"  onInput: e",
+								"  onClick: e",
+								"  arg =>",
+								"  .onload",
+								"  response =>",
+								"TestArc: ()",
+								"  .keystroke",
+								"  .focusSearch",
+								"  children: ()",
+								"  geometries: ()",
+								"  value =>",
+								"  testComponent",
+								"File",
+								"File.prototype.toString = function()",
+								"  function()",
+								"\tws =>",
+								"  value =>",
+								"  value =>",
+								"  value =>",
+								"  value =>",
+								"  value =>",
+								"  value =>",
+								"  updateIfChanged",
+								"  changeInput",
+								"\targ =>",
+								"Consumer",
+								"  function* ()",
+								"  log(type, time, msg)",
+								"Logger",
+								"  function* ()",
+								"Dumper",
+								"  value =>",
+								"Commander",
+								"  handler",
+								"Toggle",
+								"Layer",
+								"  setVisible",
+								"\titem =>",
+								"  onMouseMove: e",
+								"  onMouseUp: e",
+								"  onMouseDown: e",
+								"DocumentList",
+								"  constructor()",
+								"  add(name, component)",
+								"  addEntry([name, component])",
+								"  remove(name)",
+								"  update()",
+								"  fn: e",
+								"  fn: ()",
+								"  open =>",
+								"\tprops =>",
+								"\tprops =>",
+								"  side =>",
+								"  create: (project, props",
+								"  name =>",
+								"\tmakeLayerName",
+								"  fn: ()",
+								"  onCommand: cmdStr",
+								"  handleChange: e",
+								"\tevent =>",
+								"MoveEvent",
+								"\tfunction* WalkUp(e)",
+								"\tclasses =>",
+								"TouchEvent",
+								"\tsize =>",
+								"  border =>",
+								"\tmod",
+								"\tcancel",
+								"  .oncontextmenu",
+								"  .processEvents",
+								"\tevent =>",
+								"  onRuntimeInitialized: ()",
+								"  print: txt"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
 							"tab_size": 2,
@@ -1027,282 +1784,203 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 13,
+					"stack_index": 7,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 2,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "lib/util.js",
+					"file": "lib/eagle/element.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 158657,
+						"buffer_size": 30541,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								146239,
-								146239
+								10653,
+								10653
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 4918,
+							"function_name_status_row": 285,
 							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 83178.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "dump-ast.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8535,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3915,
-								3915
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 184,
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2634.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "quickjs/net.old/libwebsockets/minimal-examples/http-client/minimal-http-client-post/minimal-http-client-post.c",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7302,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 0,
-							"syntax": "Packages/C Improved/C Improved.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "lib/consoleSetup.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2597,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2596,
-								2596
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 79,
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 887.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "lib/geom/transformation.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 21104,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3548,
-								3548
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 136,
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1878.0,
+						"translation.y": 561.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 5,
 					"type": "text"
 				},
 				{
-					"buffer": 6,
-					"file": "lib/childProcess.js",
+					"buffer": 2,
+					"file": "main.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5774,
+						"buffer_size": 89979,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4706,
-								4706
+								74973,
+								75024
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 191,
+							"function_name_status_row": 2039,
 							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2550.0,
+						"translation.y": 34486.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 7,
-					"file": "lib/deep.js",
+					"buffer": 3,
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5534,
+						"buffer_size": 5126,
 						"regions":
 						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										154,
+										167
+									],
+									[
+										438,
+										451
+									],
+									[
+										924,
+										937
+									],
+									[
+										1218,
+										1231
+									],
+									[
+										4016,
+										4029
+									],
+									[
+										4482,
+										4495
+									],
+									[
+										4667,
+										4680
+									],
+									[
+										4998,
+										5011
+									]
+								],
+								"scope": ""
+							}
 						},
 						"selection":
 						[
 							[
-								2097,
-								2097
+								162,
+								162
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 78,
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"detect_indentation": false,
+							"function_name_status_row": 5,
+							"line_numbers": false,
+							"output_tag": 1,
+							"result_base_dir": "",
+							"result_file_regex": "^([^ \t].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 2193.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 8,
-					"file": "lib/filesystem.js",
+					"buffer": 4,
+					"file": "commands.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 21287,
+						"buffer_size": 12937,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								8662,
-								8662
+								5697,
+								5697
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 341,
+							"function_name_status_row": 163,
 							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 5409.0,
+						"translation.y": 2108.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
-					"file": "get-msys-packages.js",
+					"buffer": 5,
+					"file": "lib/eagle.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7099,
+						"buffer_size": 954,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								123,
-								123
+								843,
+								843
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 2,
+							"function_name_status_row": 26,
 							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
@@ -1311,16 +1989,16 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 12,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
-					"buffer": 10,
-					"file": "resolve-imports.js",
+					"buffer": 6,
+					"file": "lib/eagle/nodeList.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 33154,
+						"buffer_size": 4716,
 						"regions":
 						{
 						},
@@ -1339,63 +2017,32 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3162.0,
+						"translation.y": 255.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 11,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
-					"buffer": 11,
-					"file": "server.js",
+					"buffer": 7,
+					"file": "lib/eagle/elementProxy.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 22737,
+						"buffer_size": 1736,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								648,
+								648
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 0,
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1734.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 12,
-					"file": "test-childprocess.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1507,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 0,
+							"function_name_status_row": 20,
 							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
@@ -1404,38 +2051,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 13,
-					"file": "test-cparse.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4216,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1243,
-								1243
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 46,
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 459.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -1443,7 +2059,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 31.0
+		"height": 26.0
 	},
 	"input":
 	{
@@ -1501,7 +2117,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 79.0
+		"height": 71.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1510,6 +2126,30 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"eagle",
+				"lib/eagle.js"
+			],
+			[
+				"main",
+				"main.js"
+			],
+			[
+				"line.",
+				"lib/geom/line.js"
+			],
+			[
+				"boardre",
+				"lib/eagle/boardRenderer.js"
+			],
+			[
+				"eagle-qu",
+				"eagle-query.js"
+			],
+			[
+				"r-co",
+				"r-colors.svg"
+			],
 			[
 				"httptest.c",
 				"quickjs/net.old/libwebsockets/minimal-examples/http-client/minimal-http-client-post/minimal-http-client-post.c"
@@ -1701,10 +2341,6 @@
 			[
 				"blackbody",
 				"blackbody.js"
-			],
-			[
-				"main",
-				"main.js"
 			],
 			[
 				"cmakeli",
@@ -2001,26 +2637,6 @@
 			[
 				"renderer",
 				"lib/eagle/renderer.js"
-			],
-			[
-				"index",
-				"index.html"
-			],
-			[
-				"sw.",
-				"sw.js"
-			],
-			[
-				"main.",
-				"main.js"
-			],
-			[
-				"parser.js",
-				"lib/ecmascript/parser.js"
-			],
-			[
-				"helpers",
-				"lib/async/helpers.js"
 			]
 		],
 		"width": 0.0

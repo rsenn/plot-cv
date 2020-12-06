@@ -60,7 +60,7 @@ import { Slot, SlotProvider } from './slots.js';
 import Voronoi from './lib/geom/voronoi.js';
 import GerberParser from './lib/gerber/parser.js';
 import { lazyInitializer } from './lib/lazyInitializer.js';
-import { BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, LibraryRenderer, makeEagleElement, makeEagleNode } from './lib/eagle.js';
+import { EagleElementProxy, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, LibraryRenderer, makeEagleElement, makeEagleNode } from './lib/eagle.js';
 //import PureCache from 'pure-cache';
 import { brcache, lscache, BaseCache, CachedFetch } from './lib/lscache.js'; //const React = {Component, Fragment, create: h, html, render, useLayoutEffect, useRef, useState };
 import commands, { NormalizeResponse, ResponseData, FetchURL, FetchCached, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, ClearCache } from './commands.js';
@@ -1336,7 +1336,7 @@ const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 const AppMain = (window.onload = async () => {
   // Util(globalThis);
   //prettier-ignore
-  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, MutableXPath,ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser,  PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian,CartesianToPolar, RotateTransformation, VERTICAL, useTrkl,ElementToClass, MakeRotation, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer, BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, GithubListContents, ListGithubRepoServer, classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG, objectInspect, SvgPath, renderToString  };
+  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, MutableXPath,ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient, CTORS, ECMAScriptParser,  PathReplacer, Printer, Stack, Token, PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian,CartesianToPolar, RotateTransformation, VERTICAL, useTrkl,ElementToClass, MakeRotation, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer,EagleElementProxy,  BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, GithubListContents, ListGithubRepoServer, classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG, objectInspect, SvgPath, renderToString  };
 
   const localFunctions = {
     PackageChildren,
@@ -1920,8 +1920,8 @@ const AppMain = (window.onload = async () => {
                 if(gerber) {
                   console.debug('BoardToGerber gerber =', gerber);
                   project.gerber[side] = gerber;
-                  if(gerber.data) {
-                    gerber.cmds = await GerberParser.parse(gerber.data);
+                  if(gerber.data && gerber.data.data) {
+                    gerber.cmds = await GerberParser.parse(gerber.data.data);
                     gerber.unit = gerber.cmds.find(i => i.prop == 'units');
 
                     gerber.points = gerber.cmds.filter(i => i.coord).map(({ coord }) => new Point(coord.x, coord.y));
@@ -1942,72 +1942,78 @@ const AppMain = (window.onload = async () => {
               console.debug('GerberToGcode allGcode = ', allGcode);
               let bbox;
               for(let side of ['outline', 'back', 'front', 'drill']) {
-                let gerb = project.gerber[side];
-                let data = allGcode[side];
-                let file = allGcode.files[side];
+                try {
+                  let gerb = project.gerber[side];
+                  let data = allGcode[side];
+                  let file = gerb.data.file || allGcode.data.files[side];
 
-                if(data) {
-                  let gc = (project.gcode[side] = { data, file });
+                  if(data) {
+                    let gc = (project.gcode[side] = { data, file });
 
-                  if(side != 'drill') {
-                    let processed = file.replace(/\.ngc$/, '.svg');
-                    gc.svg = await FetchURL(processed).then(ResponseData);
-                    let pos;
+                    if(side != 'drill') {
+                      let processed = file.replace(/\.ngc$/, '.svg');
+                      gc.svg = await FetchURL(processed).then(ResponseData);
+                      let pos;
 
-                    if(gc.svg) {
-                      if((pos = gc.svg.indexOf('<svg ')) != -1) gc.svg = gc.svg.substring(pos);
+                      if(gc.svg) {
+                        if((pos = gc.svg.indexOf('<svg ')) != -1) gc.svg = gc.svg.substring(pos);
 
-                      console.debug('processed', processed, Util.abbreviate(gc.svg));
+                        console.debug('processed', processed, Util.abbreviate(gc.svg));
 
-                      if(side == 'outline') {
-                        let xmlData = tXml(gc.svg);
-                        let svgPath = Util.tail(xmlData[0].children).children[0];
-                        let points = SVG.pathToPoints(svgPath.attributes);
-                        console.debug('points:', points);
-                        bbox = new Rect(new BBox().update(points)).round(0.001);
-                        console.debug('bbox:', bbox);
+                        if(side == 'outline') {
+                          let xmlData = tXml(gc.svg);
+                          let svgPath = Util.tail(xmlData[0].children).children[0];
+                          let points = SVG.pathToPoints(svgPath.attributes);
+                          console.debug('points:', points);
+                          bbox = new Rect(new BBox().update(points)).round(0.001);
+                          console.debug('bbox:', bbox);
 
-                        continue;
-                      }
-                      //  console.debug('gc.svg ',gc.svg );
-                      let layer = GetLayer({
-                        name: makeLayerName('processed', side),
-                        'data-filename': processed,
-                        create: (project, props = {}) => {
-                          let g = SVG.create('g', { innerHTML: gc.svg, ...props }, project.svgElement);
-                          g.innerHTML = gc.svg;
-                          if(g.firstElementChild && g.firstElementChild.tagName == 'svg') {
-                            let svg = g.firstElementChild;
-                            ['width', 'height', 'xmlns', 'xmlns:xlink', 'version'].forEach(a => svg.removeAttribute(a));
-                            svg.setAttribute('viewBox', bbox);
-                          }
-                          Element.findAll('path', g)
-                            .filter(e => e.style['fill-opacity'] == 1)
-                            .forEach(e => (e.style.display = 'none'));
-
-                          ['fill', 'stroke'].forEach(name =>
-                            Element.findAll(`[style*="${name}:"]`, g).forEach(e => {
-                              const value = e.style[name];
-                              if(value != 'rgb(0, 0, 0)' && value != 'none') {
-                                e.setAttribute(name, value);
-                                e.style.removeProperty(name);
-                              }
-                            })
-                          );
-
-                          return g;
+                          continue;
                         }
-                      });
-                      /*
+                        //  console.debug('gc.svg ',gc.svg );
+                        let layer = GetLayer({
+                          name: makeLayerName('processed', side),
+                          'data-filename': processed,
+                          create: (project, props = {}) => {
+                            let g = SVG.create('g', { innerHTML: gc.svg, ...props }, project.svgElement);
+                            g.innerHTML = gc.svg;
+                            if(g.firstElementChild && g.firstElementChild.tagName == 'svg') {
+                              let svg = g.firstElementChild;
+                              ['width', 'height', 'xmlns', 'xmlns:xlink', 'version'].forEach(a =>
+                                svg.removeAttribute(a)
+                              );
+                              svg.setAttribute('viewBox', bbox);
+                            }
+                            Element.findAll('path', g)
+                              .filter(e => e.style['fill-opacity'] == 1)
+                              .forEach(e => (e.style.display = 'none'));
+
+                            ['fill', 'stroke'].forEach(name =>
+                              Element.findAll(`[style*="${name}:"]`, g).forEach(e => {
+                                const value = e.style[name];
+                                if(value != 'rgb(0, 0, 0)' && value != 'none') {
+                                  e.setAttribute(name, value);
+                                  e.style.removeProperty(name);
+                                }
+                              })
+                            );
+
+                            return g;
+                          }
+                        });
+                        /*
                       layer.sublayers = Util.histogram(Element.walk(layer.dom, (e, acc) => (e.tagName.endsWith('g') ? acc : [...acc, e]), []),
                         e => e.getAttribute('style'),
                         new Map(),
                         () => new Set()
                       );*/
+                      }
                     }
-                  }
 
-                  console.debug('GerberToGcode side =', side, ' gc =', gc.file, ' svg =', Util.abbreviate(gc.svg));
+                    console.debug('GerberToGcode side =', side, ' gc =', gc.file, ' svg =', Util.abbreviate(gc.svg));
+                  }
+                } catch(e) {
+                  Util.putError(e);
                 }
               }
               gcode(project.gcode);
@@ -2033,7 +2039,7 @@ const AppMain = (window.onload = async () => {
               const colors = { front: 'hsl(300,100%,70%)', back: 'hsl(230,100%,70%)' };
               for(let side of ['back', 'front']) {
                 let gc = project.gcode[side];
-                //console.debug('GcodeToPolylines =', { side }, colors[side], gc);
+                console.debug('GcodeToPolylines =', project.gcode);
                 GcodeToPolylines(gc.data, { fill: false, color: colors[side], side });
               }
             },
@@ -2136,118 +2142,119 @@ const AppMain = (window.onload = async () => {
     window.elements = [...elems].filter(e => e.tagName == 'path');
   });
 
-  false && moveHandler.subscribe(function MoveEvent(event, prevEvent) {
-    const { x, y, clientX, clientY, index, buttons, start, type, target } = event;
-    window.lastMoveEvent = event;
-    event.elements = document.elementsFromPoint(x, y);
-    function* WalkUp(e) {
-      while(e) {
-        yield e;
-        e = e.parentElement;
+  false &&
+    moveHandler.subscribe(function MoveEvent(event, prevEvent) {
+      const { x, y, clientX, clientY, index, buttons, start, type, target } = event;
+      window.lastMoveEvent = event;
+      event.elements = document.elementsFromPoint(x, y);
+      function* WalkUp(e) {
+        while(e) {
+          yield e;
+          e = e.parentElement;
+        }
       }
-    }
-    let zIndex = Util.find(Util.map(WalkUp(event.target), e => e.style.getPropertyValue('z-index')),
-      z => /^[0-9]/.test(z)
-    );
-    if(zIndex > 0) Util.clear(event.elements);
-    for(let e of event.elements)
-      Element.walkUp(e)
-        .slice(1)
-        .forEach(p => Util.remove(event.elements, p));
-    Util.remove(event.elements, document.documentElement);
-
-    event.layers = new Map(event.elements.map(e => [
-        e,
-        Element.walkUp(e, e => {
-          if(e.hasAttribute('data-layer')) throw e.getAttribute('data-layer');
-        })
-      ])
-    );
-    event.colors = new Map();
-    for(let [e, layer] of event.layers) {
-      if(!layer || /(Measure|Dimension)/.test(layer)) continue;
-      let l = FindLayer(layer);
-      if(l) event.colors.set(e, l.color.setOpacity(0.8) || '#000');
-    }
-    event.classes = new Map(event.elements.map(e => [
-        e,
-        Util.ifThenElse(v => v,
-          l => l.map(e => e.classList.value),
-          () => ''
-        )(Element.walkUp(e, (e, depth) => !e.classList.value.startsWith('aspect') && e.classList.value))
-      ])
-    );
-    Util.removeIf(event.classes, classes => classes == '');
-    Util.removeIf(event.elements, e => e.tagName == 'polyline');
-    Util.removeIf(event.elements, e => !(event.classes.has(e) || event.colors.has(e)));
-    const group =
-      project &&
-      project.makeGroup &&
-      project.makeGroup({
-        id: 'rects',
-        stroke: '#ff6f00',
-        'stroke-width': 0.127,
-        fill: 'none',
-        'stroke-linecap': 'square',
-        'vector-effect': 'non-scaling-stroke',
-        'pointer-events': 'none'
-      });
-
-    if(prevEvent && group) {
-      let u = Util.union(prevEvent.elements, event.elements, (a, b) => a.isSameNode(b));
-      let [remove, add] = Util.difference(prevEvent.elements,
-        event.elements,
-        (a, b) => a.findIndex(Node.prototype.isSameNode, b) != -1
+      let zIndex = Util.find(Util.map(WalkUp(event.target), e => e.style.getPropertyValue('z-index')),
+        z => /^[0-9]/.test(z)
       );
+      if(zIndex > 0) Util.clear(event.elements);
+      for(let e of event.elements)
+        Element.walkUp(e)
+          .slice(1)
+          .forEach(p => Util.remove(event.elements, p));
+      Util.remove(event.elements, document.documentElement);
 
-      //  console.log('difference:', [remove,add], 'union:', u);
-      //  console.log('add:', add);
-
-      const bboxes = new Map(add.map(e => [e, new Rect(e.getBBox ? e.getBBox() : e.getBoundingClientRect())]));
-
-      for(let [e, rect] of bboxes) {
-        let transforms =
-          Element.walkUp(e, (p, d, set, stop) =>
-            p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement)
-              ? stop()
-              : p.hasAttribute('transform') && set(p.getAttribute('transform'))
-          ) || [];
-        transforms = transforms.reverse();
-        elems.add(e);
-        let props = { ...rect.round(0.001).toObject(), transform: transforms.join(' ') };
-        rects.set(e, [
-          // SVG.create('rect', { ...props, stroke: '#000', 'stroke-width': 0.127 * 2 }, group),
-          SVG.create('rect', { ...props, 'stroke-dasharray': '0.508 0.508', stroke: '#000' }, group),
-          SVG.create('rect', {
-              ...props,
-              'stroke-dasharray': '0.508 0.508',
-              'stroke-dashoffset': 0.508,
-              stroke: '#ff0'
-            },
-            group
-          )
-        ]);
+      event.layers = new Map(event.elements.map(e => [
+          e,
+          Element.walkUp(e, e => {
+            if(e.hasAttribute('data-layer')) throw e.getAttribute('data-layer');
+          })
+        ])
+      );
+      event.colors = new Map();
+      for(let [e, layer] of event.layers) {
+        if(!layer || /(Measure|Dimension)/.test(layer)) continue;
+        let l = FindLayer(layer);
+        if(l) event.colors.set(e, l.color.setOpacity(0.8) || '#000');
       }
-      /*
+      event.classes = new Map(event.elements.map(e => [
+          e,
+          Util.ifThenElse(v => v,
+            l => l.map(e => e.classList.value),
+            () => ''
+          )(Element.walkUp(e, (e, depth) => !e.classList.value.startsWith('aspect') && e.classList.value))
+        ])
+      );
+      Util.removeIf(event.classes, classes => classes == '');
+      Util.removeIf(event.elements, e => e.tagName == 'polyline');
+      Util.removeIf(event.elements, e => !(event.classes.has(e) || event.colors.has(e)));
+      const group =
+        project &&
+        project.makeGroup &&
+        project.makeGroup({
+          id: 'rects',
+          stroke: '#ff6f00',
+          'stroke-width': 0.127,
+          fill: 'none',
+          'stroke-linecap': 'square',
+          'vector-effect': 'non-scaling-stroke',
+          'pointer-events': 'none'
+        });
+
+      if(prevEvent && group) {
+        let u = Util.union(prevEvent.elements, event.elements, (a, b) => a.isSameNode(b));
+        let [remove, add] = Util.difference(prevEvent.elements,
+          event.elements,
+          (a, b) => a.findIndex(Node.prototype.isSameNode, b) != -1
+        );
+
+        //  console.log('difference:', [remove,add], 'union:', u);
+        //  console.log('add:', add);
+
+        const bboxes = new Map(add.map(e => [e, new Rect(e.getBBox ? e.getBBox() : e.getBoundingClientRect())]));
+
+        for(let [e, rect] of bboxes) {
+          let transforms =
+            Element.walkUp(e, (p, d, set, stop) =>
+              p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement)
+                ? stop()
+                : p.hasAttribute('transform') && set(p.getAttribute('transform'))
+            ) || [];
+          transforms = transforms.reverse();
+          elems.add(e);
+          let props = { ...rect.round(0.001).toObject(), transform: transforms.join(' ') };
+          rects.set(e, [
+            // SVG.create('rect', { ...props, stroke: '#000', 'stroke-width': 0.127 * 2 }, group),
+            SVG.create('rect', { ...props, 'stroke-dasharray': '0.508 0.508', stroke: '#000' }, group),
+            SVG.create('rect', {
+                ...props,
+                'stroke-dasharray': '0.508 0.508',
+                'stroke-dashoffset': 0.508,
+                stroke: '#ff0'
+              },
+              group
+            )
+          ]);
+        }
+        /*
       add.forEach(e => {
         elems.add(e);
         rects.set(e, devtools.rect(new Rect(e.getBoundingClientRect()), event.colors.get(e) || '#00000000', event.colors.get(e)));
       });*/
-      remove.forEach(e => {
-        let rect = rects.get(e);
-        rects.delete(e);
+        remove.forEach(e => {
+          let rect = rects.get(e);
+          rects.delete(e);
 
-        if(Util.isArray(rect)) rect.forEach(e => Element.remove(e));
-      });
+          if(Util.isArray(rect)) rect.forEach(e => Element.remove(e));
+        });
 
-      if(bboxes.size) {
-        /* console.log('event.elements:', event.elements);
+        if(bboxes.size) {
+          /* console.log('event.elements:', event.elements);
         console.log('event.classes:', event.classes);
         console.log('event.target:', zIndex);*/
-        //  console.log('rects:', Util.clone(bboxes));
+          //  console.log('rects:', Util.clone(bboxes));
+        }
       }
-    }
-  });
+    });
   let css = { cursor: undefined, 'pointer-events': undefined, 'user-select': undefined };
 
   touchHandler.subscribe(function TouchEvent(event) {
