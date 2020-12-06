@@ -105,7 +105,9 @@ cfg-diet() {
     : ${CC="diet-gcc"}
     export CC
 
-    if type pkgconf >/dev/null; then
+    if type pkgcfg 2>/dev/null >/dev/null; then
+      export PKG_CONFIG=pkgcfg
+    elif type pkgconf 2>/dev/null >/dev/null; then
       export PKG_CONFIG=pkgconf
     fi
 

@@ -9,6 +9,7 @@ import ptr from './lib/json-ptr.js';
 import LogJS from './lib/log.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import tXml from './lib/tXml.js';
+import { digit2color } from './lib/eda/colorCoding.js';
 
 let filesystem,
   documents = [];
@@ -245,6 +246,7 @@ async function main(...args) {
         .map(([key, list]) => `${key}:\n\t${list.join('\n\t')}`)
         .join('\n   ')
   );
+  console.log("digit2color:", digit2color);
 }
 
 Util.callMain(main, true);

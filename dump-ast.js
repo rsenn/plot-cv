@@ -118,15 +118,15 @@ function *GetLocations(tree) {
 }
 
 function *GetNodes(tree, pred = n => true) {
-  for(let [node,path] of deep.iterate(tree, (v,p) => Util.isObject(v) && typeof(v.kind) == 'string' && pred(v, p)))
+  for(let [node,path] of deep.iterate(tree, (v,p) => Util.isObject(v) && typeof(v.kind) == 'string' && v.kind != 'TranslationUnitDecl' && pred(v, p)))
     yield [path.join('.'),node];
 }
 function  GetLocation(node) {
   let loc = node.range || node.loc;
 
 if(!Util.isObject(loc)) {
-  console.log("node:", node);
-  return {};
+  //console.log("node:", node);
+  loc = {};
 }
 
   if(loc.begin)
@@ -134,6 +134,8 @@ if(!Util.isObject(loc)) {
 
   if(loc.expansionLoc)
     loc = loc.expansionLoc;
+  if(Util.isEmpty(loc))
+    return null;
 
 return loc;
 }
@@ -181,7 +183,7 @@ function processCallExpr(loc, func, ...args) {
 
 async function main(...args) {
   const cols = await Util.getEnv('COLUMNS');
-  console.log('cols:', cols, process.env.COLUMNS);
+ // console.log('cols:', cols, process.env.COLUMNS);
   await ConsoleSetup({ colors: true, depth: 8, breakLength: 138 });
   await PortableFileSystem(fs => (filesystem = fs));
   await PortableChildProcess(cp => (childProcess = cp));
@@ -245,9 +247,9 @@ async function main(...args) {
       console.log('inner:', /*value.*/ inner);
       //  console.log('nodes:', nodes.map(([k, n]) => [k.join('.'), n.kind , NodeToString(n)]));
     }
-  await ConsoleSetup({ colors: true, depth: 4, breakLength: 138 });
+  await ConsoleSetup({ colors: true, depth: 6, breakLength: 138 });
 
-    console.log("ranges:", [...GetNodes(ast, n => GetLocation(n).file == arg)]);
+    console.log("ranges:", [...GetNodes(ast, (n,k) => n.kind !=  'TranslationUnitDecl' && GetLocation(n) && !GetLocation(n).includedFrom && [undefined,null, arg].contains(GetLocation(n).file))]);
   }
 }
 
