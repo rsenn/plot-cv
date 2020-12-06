@@ -2135,15 +2135,11 @@ const AppMain = (window.onload = async () => {
   window.addEventListener('pointerdown', event => {
     window.elements = [...elems].filter(e => e.tagName == 'path');
   });
-  moveHandler.subscribe(function MoveEvent(event, prevEvent) {
+
+  false && moveHandler.subscribe(function MoveEvent(event, prevEvent) {
     const { x, y, clientX, clientY, index, buttons, start, type, target } = event;
-    //console.log('moveHandler', { x, y });
-    /*   console.log('moveHandlerObject.keys(event));*/
     window.lastMoveEvent = event;
-
     event.elements = document.elementsFromPoint(x, y);
-
-    //if(event.elements.length) console.log('moveHandler', { x, y }, event.elements );
     function* WalkUp(e) {
       while(e) {
         yield e;
@@ -2153,11 +2149,7 @@ const AppMain = (window.onload = async () => {
     let zIndex = Util.find(Util.map(WalkUp(event.target), e => e.style.getPropertyValue('z-index')),
       z => /^[0-9]/.test(z)
     );
-
-    //let zIndex = Math.max(...Element.walkUp(event.target, (e, d, set) => set(Element.getCSS(e, 'z-index'))).filter(z => !isNaN(+z)) );
-
     if(zIndex > 0) Util.clear(event.elements);
-
     for(let e of event.elements)
       Element.walkUp(e)
         .slice(1)
@@ -2172,16 +2164,10 @@ const AppMain = (window.onload = async () => {
       ])
     );
     event.colors = new Map();
-
     for(let [e, layer] of event.layers) {
-      if(!layer || /(Measure|Dimension)/.test(layer)) {
-        //  Util.remove(event.elements, e);
-        continue;
-      }
+      if(!layer || /(Measure|Dimension)/.test(layer)) continue;
       let l = FindLayer(layer);
-      if(l) {
-        event.colors.set(e, l.color.setOpacity(0.8) || '#000');
-      }
+      if(l) event.colors.set(e, l.color.setOpacity(0.8) || '#000');
     }
     event.classes = new Map(event.elements.map(e => [
         e,
@@ -2191,12 +2177,9 @@ const AppMain = (window.onload = async () => {
         )(Element.walkUp(e, (e, depth) => !e.classList.value.startsWith('aspect') && e.classList.value))
       ])
     );
-
     Util.removeIf(event.classes, classes => classes == '');
-
     Util.removeIf(event.elements, e => e.tagName == 'polyline');
     Util.removeIf(event.elements, e => !(event.classes.has(e) || event.colors.has(e)));
-    // console.log('event.classes:', event.classes, '\nevent.layers:', event.layers);
     const group =
       project &&
       project.makeGroup &&
@@ -2269,7 +2252,6 @@ const AppMain = (window.onload = async () => {
 
   touchHandler.subscribe(function TouchEvent(event) {
     const { x, y, index, buttons, start, type, target } = event;
-
     //  console.log('touchHandler', event);
     if(type.endsWith('end') || type.endsWith('up')) return cancel();
     if(event.buttons === 0 && type.endsWith('move')) return cancel();
@@ -2284,15 +2266,12 @@ const AppMain = (window.onload = async () => {
         } while((e = e.parentElement));
       })(target);
       //console.log('box:', box);
-
       if(event.buttons && event.buttons != 1) {
         if('preventDefault' in event) event.preventDefault();
         if(!resize && box) {
           let edges = Element.rect(box).toPoints();
           let corners = [edges[0], edges[2]].map((p, i) => [i, p.distance(new Point(start).sum(x, y)), p]);
-
           let edge = corners.sort((a, b) => a[1] - b[1])[0];
-
           window.resize = resize = Element.resizeRelative(box, null, edge[0] ? -1 : 1, size => {
             //    console.log('resizeRelative:', { elemId, size });
             if(elemId == 'console') config.logSize(size);
@@ -2316,7 +2295,6 @@ const AppMain = (window.onload = async () => {
         function mod(n, m) {
           return ((n % m) + m) % m;
         }
-
         let rad = p.diff(rects[0].center).toAngle();
         let deg = Math.round((rad * 180) / Math.PI);
         let sector = mod(Math.floor(((180 - deg) * 8) / 360), 8);
@@ -2325,7 +2303,6 @@ const AppMain = (window.onload = async () => {
         //console.log('box: ', id, ...inside, inBorder, p, { sector, deg });
         let compass = directions[sector];
       }
-
       if(box) {
         let translation = new Translation();
         let transformList = new TransformationList([translation]).concat(transform());

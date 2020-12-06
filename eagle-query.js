@@ -1,14 +1,9 @@
-import { EagleDocument, EagleProject } from './lib/eagle.js';
+import { EagleDocument } from './lib/eagle.js';
 import PortableFileSystem from './lib/filesystem.js';
 import { LineList, Rect } from './lib/geom.js';
 import { toXML } from './lib/json.js';
 import Util from './lib/util.js';
-import deep from './lib/deep.js';
-import { Graph } from './lib/fd-graph.js';
-import ptr from './lib/json-ptr.js';
-import LogJS from './lib/log.js';
 import ConsoleSetup from './lib/consoleSetup.js';
-import tXml from './lib/tXml.js';
 import { digit2color, GetFactor, GetColorBands, ValueToNumber, NumberToValue, GetExponent, GetMantissa } from './lib/eda/colorCoding.js';
 
 let filesystem,
