@@ -414,7 +414,7 @@ async function main() {
   const descMap = Util.weakMapper(getDescription, new Map());
 
   async function GetFilesList(dir = './tmp', opts = {}) {
-    let { filter = '.*\\.(brd|sch|lbr)$', descriptions = false, names } = opts;
+    let { filter = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$', descriptions = false, names } = opts;
     const re = new RegExp(filter, 'i');
     const f = ent => re.test(ent);
 

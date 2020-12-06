@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg249" width="128" height="128" version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://web.resource.org/cc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs id="defs3">
+  <radialGradient id="radialGradient15668" cx="8.1436" cy="7.2679" r="38.159" gradientTransform="matrix(.9748 0 0 1.0327 3.1601 .64844)" gradientUnits="userSpaceOnUse">
+   <stop id="stop15664" stop-color="#fff" offset="0"/>
+   <stop id="stop15666" stop-color="#f8f8f8" offset="1"/>
+  </radialGradient>
+  <linearGradient id="linearGradient3688">
+   <stop id="stop3690" offset="0"/>
+   <stop id="stop3692" stop-opacity="0" offset="1"/>
+  </linearGradient>
+  <radialGradient id="radialGradient2088" cx="4.993" cy="43.5" r="2.5" gradientTransform="matrix(2.0038 0 0 1.4 27.988 -17.4)" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3688"/>
+  <radialGradient id="radialGradient2090" cx="4.993" cy="43.5" r="2.5" gradientTransform="matrix(2.0038 0 0 1.4 -20.012 -104.4)" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3688"/>
+  <linearGradient id="linearGradient2092" x1="25.058" x2="25.058" y1="47.028" y2="39.999" gradientUnits="userSpaceOnUse">
+   <stop id="stop3704" stop-opacity="0" offset="0"/>
+   <stop id="stop3710" offset=".5"/>
+   <stop id="stop3706" stop-opacity="0" offset="1"/>
+  </linearGradient>
+ </defs>
+ <metadata id="metadata4">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title>PCB layout</dc:title>
+    <dc:subject>
+     <rdf:Bag/>
+    </dc:subject>
+    <cc:license rdf:resource="http://creativecommons.org/licenses/GPL/2.0/"/>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Peter Clifton, Tomaz Solc, Jakub Steiner</dc:title>
+     </cc:Agent>
+    </dc:creator>
+    <dc:source/>
+   </cc:Work>
+   <cc:License rdf:about="http://creativecommons.org/licenses/GPL/2.0/">
+    <cc:permits rdf:resource="http://web.resource.org/cc/Reproduction"/>
+    <cc:permits rdf:resource="http://web.resource.org/cc/Distribution"/>
+    <cc:requires rdf:resource="http://web.resource.org/cc/Notice"/>
+    <cc:permits rdf:resource="http://web.resource.org/cc/DerivativeWorks"/>
+    <cc:requires rdf:resource="http://web.resource.org/cc/ShareAlike"/>
+    <cc:requires rdf:resource="http://web.resource.org/cc/SourceCode"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer5">
+  <g id="g2225" transform="scale(2.6667)">
+   <g id="g2033" transform="translate(-2e-6 2.8387e-5)">
+    <g id="g3712" transform="matrix(1.0526 0 0 1.2857 -1.2632 -13.429)" opacity=".4">
+     <rect id="rect2801" x="38" y="40" width="5" height="7" fill="url(#radialGradient2088)" opacity="1"/>
+     <rect id="rect3696" transform="scale(-1)" x="-10" y="-47" width="5" height="7" fill="url(#radialGradient2090)" opacity="1"/>
+     <rect id="rect3700" x="10" y="40" width="28" height="7" fill="url(#linearGradient2092)" opacity="1"/>
+    </g>
+   </g>
+   <path id="rect15391" d="m7.6528 3.6467s32.655-0.14006 32.672-0.1406c0.65379-0.020137 1.1843 0.4967 1.1843 1.1322l-0.03125 38.714c0 0.63552-0.51399 1.1472-1.1524 1.1472h-32.673c-0.63845 0-1.1524-0.51163-1.1524-1.1472v-38.559c0-0.63552 0.51399-1.1472 1.1524-1.1472z" color="#000000" display="block" fill="#4e9a06" stroke="#a1a1a1" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.0006"/>
+   <path id="rect15660" d="m7.6517 4.5856s32.629-0.089514 32.778-0.078125c0.13353 0.010202 0.083906 0.11449 0.083906 0.19706l-0.015625 38.675c0 0.082566-0.066923 0.14904-0.15005 0.14904h-32.697c-0.083129 0-0.15005-0.06647-0.15005-0.14904v-38.645c0-0.082566 0.066923-0.14904 0.15005-0.14904z" color="#000000" display="block" fill="none" stroke="url(#radialGradient15668)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.0033"/>
+   <g id="g5326">
+    <g id="g3535">
+     <path id="path2828" d="m10.5 7.5h5l5 5v10" color="#000000" display="block" fill="none" stroke="#5fc500" stroke-linecap="round" stroke-linejoin="round"/>
+     <path id="path2830" d="m24.5 22.5v-12l-3-3" color="#000000" display="block" fill="none" stroke="#5fc500" stroke-linecap="round" stroke-linejoin="round"/>
+     <path id="path2832" d="m28.5 22.5v-14l-1-1" color="#000000" display="block" fill="none" stroke="#5fc500" stroke-linecap="round" stroke-linejoin="round"/>
+     <path id="path2890" d="m32.5 22.5v-15" color="#000000" display="block" fill="none" stroke="#5fc500" stroke-linecap="round" stroke-linejoin="round"/>
+     <path id="path2910" d="m20.5 33.5v4l-3 3h-7" color="#000000" display="block" fill="none" stroke="#5fc500" stroke-linecap="round" stroke-linejoin="round"/>
+     <path id="path2912" d="m24.5 33.5v7" color="#000000" display="block" fill="none" stroke="#5fc500" stroke-linecap="round" stroke-linejoin="round"/>
+     <path id="path2914" d="m28.5 33.5v4l3 3h6" color="#000000" display="block" fill="none" stroke="#5fc500" stroke-linecap="round" stroke-linejoin="round"/>
+     <path id="path2916" d="m32.5 33.5 2 2h3" color="#000000" display="block" fill="none" stroke="#5fc500" stroke-linecap="round" stroke-linejoin="round"/>
+     <path id="path2918" d="m10.5 10.5h4l3 3v22l-2 2h-5v-27z" color="#000000" display="block" fill="#5fc500" stroke="#5fc500" stroke-linecap="round" stroke-linejoin="round"/>
+     <path id="path3125" d="m37.461 32.477-0.96094 0.023438v-3-9l-1.0391-1.0234 0.03125-11.969h2l-0.03125 24.969z" color="#000000" display="block" fill="#5fc500" stroke="#5fc500" stroke-linecap="round" stroke-linejoin="round"/>
+     <rect id="rect2920" x="17.5" y="19.5" width="18" height="17" rx="2.6517" ry="2.6517" color="#000000" display="block" fill="none" stroke="#eeeeec" stroke-linecap="round" stroke-linejoin="round"/>
+     <path id="path2228" d="m17.906 29.516c2.1489-0.015625 2.1247-2.989-0.02968-3.0431" fill="none" stroke="#eeeeec" stroke-width="1px"/>
+    </g>
+    <g id="g5316" fill="none" stroke="#d3d7cf" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+     <path id="path2894" d="m20.5 22.5v2" color="#000000" display="block"/>
+     <path id="path2896" d="m24.5 22.5v2" color="#000000" display="block"/>
+     <path id="path2898" d="m28.5 22.5v2" color="#000000" display="block"/>
+     <path id="path2900" d="m32.5 22.5v2" color="#000000" display="block"/>
+     <path id="path2902" d="m32.5 31.5v2" color="#000000" display="block"/>
+     <path id="path2904" d="m28.5 31.5v2" color="#000000" display="block"/>
+     <path id="path2906" d="m24.5 31.5v2" color="#000000" display="block"/>
+     <path id="path2908" d="m20.5 31.5v2" color="#000000" display="block"/>
+    </g>
+   </g>
+  </g>
+ </g>
+</svg>
