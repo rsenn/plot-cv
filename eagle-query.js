@@ -9,7 +9,7 @@ import ptr from './lib/json-ptr.js';
 import LogJS from './lib/log.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import tXml from './lib/tXml.js';
-import { digit2color } from './lib/eda/colorCoding.js';
+import { digit2color, GetFactor, GetColorBands, ValueToNumber, NumberToValue, GetExponent, GetMantissa } from './lib/eda/colorCoding.js';
 
 let filesystem,
   documents = [];
@@ -66,43 +66,8 @@ function alignAll(doc) {
   return !!changed;
 }
 
-function exponent(value) {
-  const suffix = value.replace(/[^KkMmnpuμ]/g, '');
-  let exp = 0;
-  if(suffix.length > 1) throw new Error(`Suffix '${suffix}' length > 1`);
-  switch (suffix) {
-    case 'M':
-      exp = 6;
-      break;
-    case 'K':
-    case 'k':
-      exp = 3;
-      break;
-    case 'm':
-      exp = -3;
-      break;
-    case 'μ':
-    case 'u':
-      exp = -6;
-      break;
-    case 'n':
-      exp = -9;
-      break;
-    case 'p':
-      exp = -12;
-      break;
-  }
-  return exp;
-}
-
-function mantissa(value) {
-  let mantissa = value.replace(/[KkMmnpuμ]$/, '');
-  if(isNaN(+mantissa)) throw new Error(`Mantissa '${mantissa}' not a valid number`);
-  return +mantissa;
-}
-
 function scientific(value) {
-  let sci = [mantissa(value), exponent(value)];
+  let sci = [GetMantissa(value), GetExponent(value)];
 
   Util.define(sci, {
     toString() {
@@ -112,41 +77,6 @@ function scientific(value) {
   });
   return sci;
 }
-
-function rational(value) {
-  let exp = exponent(value);
-  let man = mantissa(value);
-
-  return man * 10 ** exp;
-}
-
-const multipliers = [10, 100, 1e3, 1e4, 1e5, 1e6, 1e7];
-
-function factor(num) {
-  //console.log('num:', num);
-  let multipliers = [10, 100, 1e3, 1e4, 1e5, 1e6, 1e7];
-  let i = -1;
-  for(let max of multipliers) {
-    //console.log('', { num, max, i });
-    if(num >= max) i++;
-    else break;
-  }
-  return i;
-  //  return upper.reduce((acc, max,i) => (num < max ? i : acc), -1);
-}
-
-function bands(num) {
-  let f = factor(num);
-  let multiplier = multipliers[f];
-  let x = num / multiplier;
-
-  //console.log('bands', { f, x });
-  let a = Math.floor(x);
-  let b = Math.round((x % 1) * 10);
-
-  return [a, b, f];
-}
-
 const bandColors = [
   [48, 5, 16], // black
   [48, 5, 94], // brown
@@ -170,9 +100,8 @@ const largeSquares = ['⬛', '⬜'];
 
 function num2color(num, square = true) {
   let sym = square ? largeSquares : verticalRectangles;
-  let c = typeof num == 'number' ? bands(num) : num;
-  /*console.log('c:', c);
-  console.log('num:', num);*/
+  let c = typeof num == 'number' ? GetColorBands(num) : num;
+
   return c
     .map(n => color.text(n ? sym[0] : color.text(sym[1], 38, 5, 236), n ? 38 : 48, ...bandColors[n].slice(1)))
     .join('');
@@ -231,11 +160,11 @@ async function main(...args) {
     values[key] = [...histograms[key]]
       .map(([value, count]) =>
         //rational(value).toExponential()
-        [value || scientific(value).toString(), rational(value), count]
+        [value || scientific(value).toString(), ValueToNumber(value), count]
       )
       .sort((a, b) => a[1] - b[1])
       .map(([val, rat, count]) =>
-        [(val + '').padStart(4, ' '), /*rat, factor(rat),*/ rat >= 1 ? num2color(rat) : '', `  × ${count}`].join(' ')
+        [(val + '').padStart(4, ' '), /*rat, GetFactor(rat),*/ rat >= 1 ? num2color(rat) : '', `  × ${count}`].join(' ')
       );
   }
 
@@ -246,7 +175,16 @@ async function main(...args) {
         .map(([key, list]) => `${key}:\n\t${list.join('\n\t')}`)
         .join('\n   ')
   );
-  console.log("digit2color:", digit2color);
+  console.log('digit2color:', digit2color);
+
+  for(let value of [33000, 1800, 470, 1e6, 4.7e3]) {
+    console.log('GetColorBands', GetColorBands(value, 3));
+    console.log('GetColorBands', GetColorBands(value, 2));
+    console.log('NumberToValue', NumberToValue(value));
+  }
+  for(let value of ['33k', '1.8k', '470', '1.8k', '47k', '10M', '4.7k']) {
+    console.log(`ValueToNumber(${value})`, ValueToNumber(value));
+  }
 }
 
 Util.callMain(main, true);

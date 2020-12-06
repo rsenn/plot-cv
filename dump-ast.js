@@ -107,37 +107,35 @@ function NodeToString(node, locKey = 'expansionLoc' || 'spellingLoc', startOffse
   return loc.string;
 }
 
-function *GetRanges(tree) {
-  for(let [node,path] of deep.iterate(tree, v => Util.isObject(v) && v.begin))
-    yield [path.join('.'),node];
+function* GetRanges(tree) {
+  for(let [node, path] of deep.iterate(tree, v => Util.isObject(v) && v.begin)) yield [path.join('.'), node];
 }
 
-function *GetLocations(tree) {
-  for(let [node,path] of deep.iterate(tree, v => Util.isObject(v) && typeof(v.offset) == 'number'))
-    yield [path.join('.'),node];
+function* GetLocations(tree) {
+  for(let [node, path] of deep.iterate(tree, v => Util.isObject(v) && typeof v.offset == 'number'))
+    yield [path.join('.'), node];
 }
 
-function *GetNodes(tree, pred = n => true) {
-  for(let [node,path] of deep.iterate(tree, (v,p) => Util.isObject(v) && typeof(v.kind) == 'string' && v.kind != 'TranslationUnitDecl' && pred(v, p)))
-    yield [path.join('.'),node];
+function* GetNodes(tree, pred = n => true) {
+  for(let [node, path] of deep.iterate(tree,
+    (v, p) => Util.isObject(v) && typeof v.kind == 'string' && v.kind != 'TranslationUnitDecl' && pred(v, p)
+  ))
+    yield [path.join('.'), node];
 }
-function  GetLocation(node) {
+function GetLocation(node) {
   let loc = node.range || node.loc;
 
-if(!Util.isObject(loc)) {
-  //console.log("node:", node);
-  loc = {};
-}
+  if(!Util.isObject(loc)) {
+    //console.log("node:", node);
+    loc = {};
+  }
 
-  if(loc.begin)
-    loc = loc.begin;
+  if(loc.begin) loc = loc.begin;
 
-  if(loc.expansionLoc)
-    loc = loc.expansionLoc;
-  if(Util.isEmpty(loc))
-    return null;
+  if(loc.expansionLoc) loc = loc.expansionLoc;
+  if(Util.isEmpty(loc)) return null;
 
-return loc;
+  return loc;
 }
 
 Array.prototype.contains = function(arg) {
@@ -180,10 +178,9 @@ function processCallExpr(loc, func, ...args) {
   console.log('parts:', parts);
 }
 
-
 async function main(...args) {
   const cols = await Util.getEnv('COLUMNS');
- // console.log('cols:', cols, process.env.COLUMNS);
+  // console.log('cols:', cols, process.env.COLUMNS);
   await ConsoleSetup({ colors: true, depth: 8, breakLength: 138 });
   await PortableFileSystem(fs => (filesystem = fs));
   await PortableChildProcess(cp => (childProcess = cp));
@@ -247,9 +244,17 @@ async function main(...args) {
       console.log('inner:', /*value.*/ inner);
       //  console.log('nodes:', nodes.map(([k, n]) => [k.join('.'), n.kind , NodeToString(n)]));
     }
-  await ConsoleSetup({ colors: true, depth: 6, breakLength: 138 });
+    await ConsoleSetup({ colors: true, depth: 6, breakLength: 138 });
 
-    console.log("ranges:", [...GetNodes(ast, (n,k) => n.kind !=  'TranslationUnitDecl' && GetLocation(n) && !GetLocation(n).includedFrom && [undefined,null, arg].contains(GetLocation(n).file))]);
+    console.log('ranges:', [
+      ...GetNodes(ast,
+        (n, k) =>
+          n.kind != 'TranslationUnitDecl' &&
+          GetLocation(n) &&
+          !GetLocation(n).includedFrom &&
+          [undefined, null, arg].contains(GetLocation(n).file)
+      )
+    ]);
   }
 }
 
