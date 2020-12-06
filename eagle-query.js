@@ -77,22 +77,6 @@ function scientific(value) {
   });
   return sci;
 }
-const bandColors = [
-  [48, 5, 16], // black
-  [48, 5, 94], // brown
-  [48, 5, 160], // red
-  [48, 5, 208], // orange
-  [48, 5, 226], // yellow
-  [48, 5, 40], // green
-  [48, 5, 27], // blue
-  [48, 5, 63], // violet
-  [48, 5, 241], // grey
-  [48, 5, 231], // white
-  [48, 5, 172], // gold
-  //  [48,5,251],
-  [48, 5, 249] // silver
-];
-
 const color = Util.coloring(true);
 
 const verticalRectangles = ['▮', '▯'];
@@ -101,58 +85,43 @@ const largeSquares = ['⬛', '⬜'];
 function num2color(num, square = true) {
   let sym = square ? largeSquares : verticalRectangles;
   let c = typeof num == 'number' ? GetColorBands(num) : num;
-
   return c
-    .map(n => color.text(n ? sym[0] : color.text(sym[1], 38, 5, 236), n ? 38 : 48, ...bandColors[n].slice(1)))
+    .map(n => color.text(n ? sym[0] : color.text(sym[1], 38, 5, 236), n ? 38 : 48, ...digit2color.ansi[n].slice(1)))
     .join('');
 }
-
 async function main(...args) {
   await ConsoleSetup({ colors: true, depth: Infinity, breakLength: 100 });
   await PortableFileSystem(fs => (filesystem = fs));
-
   if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt2.brd');
-
   args = Util.unique(args);
-
   for(let arg of args) {
     let data = filesystem.readFile(arg);
     console.log(`loaded '${arg}' length: ${data.length}`);
     let doc = new EagleDocument(data, null, arg);
     documents.push(doc);
   }
-  //console.log('documents:', documents);
-
   let components = {
     C: [],
     L: [],
     R: []
   };
-
   for(let doc of documents) {
     let main = doc.mainElement;
     console.log('main:', main);
-
     let parts = [...(main.elements || main.parts)].map(([name, elem]) => [name, elem.value]);
-
     let matchers = [
       [/^R/, /^[0-9.]+([kKmM]Ω?|Ω)(|\/[0-9.]+W)$/],
       [/^C/, /^[0-9.]+([pnuμm]F?|F)(|\/[0-9.]+V)$/],
       [/^L/, /^[0-9.]+([nuμm]H?|H)$/]
     ];
-
     let nameValueMap = new Map(parts.filter(([name, value]) => matchers.some(m => m[0].test(name) && m[1].test(value)))
     );
-
     for(let [name, value] of nameValueMap) {
-      //  Util.insertSorted(components[name[0]], value); X
       components[name[0]].push(value.replace(/[ΩFH]$/, '').replace(/^\./, '0.'));
     }
-    // console.log('nameValueMap:',nameValueMap);
   }
   let histograms = {};
   let values = {};
-
   for(let key in components) {
     components[key].sort();
     let hist = Util.histogram(components[key], (item, i) => [item[1], i], new Map());
@@ -167,7 +136,6 @@ async function main(...args) {
         [(val + '').padStart(4, ' '), /*rat, GetFactor(rat),*/ rat >= 1 ? num2color(rat) : '', `  × ${count}`].join(' ')
       );
   }
-
   /*console.log('components:', components);
   console.log('histograms:', histograms);*/
   console.log('values:\n   ' +
@@ -176,7 +144,6 @@ async function main(...args) {
         .join('\n   ')
   );
   console.log('digit2color:', digit2color);
-
   for(let value of [33000, 1800, 470, 1e6, 4.7e3]) {
     console.log('GetColorBands', GetColorBands(value, 3));
     console.log('GetColorBands', GetColorBands(value, 2));
