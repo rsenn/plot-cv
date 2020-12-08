@@ -480,6 +480,46 @@ js_cv_dilate(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
 }
 
 static JSValue
+js_cv_morphology_ex(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+
+  cv::Mat *src, *dst, *kernel;
+  JSPointData anchor = cv::Point(-1, -1);
+
+  int32_t op, iterations = 1, borderType = cv::BORDER_CONSTANT;
+  cv::Scalar borderValue = cv::morphologyDefaultBorderValue();
+
+  src = js_mat_data(ctx, argv[0]);
+  dst = js_mat_data(ctx, argv[1]);
+  JS_ToInt32(ctx, &op, argv[2]);
+  kernel = js_mat_data(ctx, argv[3]);
+
+  if(src == nullptr || dst == nullptr || kernel == nullptr || argc < 3)
+    return JS_EXCEPTION;
+
+  if(argc >= 5)
+    if(!js_point_read(ctx, argv[4], &anchor))
+      return JS_EXCEPTION;
+
+  if(argc >= 6)
+    JS_ToInt32(ctx, &iterations, argv[5]);
+
+  if(argc >= 7)
+    JS_ToInt32(ctx, &borderType, argv[6]);
+
+  if(argc >= 8) {
+    std::vector<double> value;
+    if(!JS_IsArray(ctx, argv[7]))
+      return JS_EXCEPTION;
+
+    js_array_to_vector(ctx, argv[7], value);
+    borderValue = cv::Scalar(value[0], value[1], value[2], value[3]);
+  }
+
+  cv::morphologyEx(*src, *dst, op, *kernel, anchor, iterations, borderType, borderValue);
+  return JS_UNDEFINED;
+}
+
+static JSValue
 js_cv_get_structuring_element(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   int32_t shape;
   JSSizeData ksize;
@@ -536,6 +576,26 @@ js_cv_merge(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
 }
 
 static JSValue
+js_cv_mix_channels(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  std::vector<cv::Mat> srcs, dsts;
+  std::vector<int> fromTo;
+
+  cv::Mat* dst;
+
+  if(js_array_to_vector(ctx, argv[0], srcs) == -1)
+    return JS_EXCEPTION;
+  if(js_array_to_vector(ctx, argv[1], dsts) == -1)
+    return JS_EXCEPTION;
+
+  if(js_array_to_vector(ctx, argv[2], fromTo) == -1)
+    return JS_EXCEPTION;
+
+  cv::mixChannels(const_cast<const cv::Mat*>(srcs.data()), srcs.size(), dsts.data(), dsts.size(), fromTo.data(), fromTo.size() >> 1);
+
+  return JS_UNDEFINED;
+}
+
+static JSValue
 js_cv_min_max_loc(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   cv::Mat *src, *mask = nullptr;
   double minVal, maxVal;
@@ -546,7 +606,6 @@ js_cv_min_max_loc(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 
   if(src == nullptr)
     return JS_EXCEPTION;
-
 
   if(argc >= 2)
     if((mask = js_mat_data(ctx, argv[1])) == nullptr)
@@ -804,9 +863,11 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_CFUNC_DEF("cornerHarris", 5, js_cv_corner_harris),
     JS_CFUNC_DEF("calcHist", 8, js_cv_calc_hist),
     JS_CFUNC_DEF("dilate", 3, js_cv_dilate),
+    JS_CFUNC_DEF("morphologyEx", 4, js_cv_morphology_ex),
     JS_CFUNC_DEF("getStructuringElement", 2, js_cv_get_structuring_element),
     JS_CFUNC_DEF("medianBlur", 3, js_cv_median_blur),
     JS_CFUNC_DEF("merge", 2, js_cv_merge),
+    JS_CFUNC_DEF("mixChannels", 3, js_cv_mix_channels),
     JS_CFUNC_DEF("minMaxLoc", 2, js_cv_min_max_loc),
 
     JS_CFUNC_MAGIC_DEF("getTickCount", 0, js_cv_getticks, 0),

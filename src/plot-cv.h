@@ -46,7 +46,6 @@ extern "C" {
 
 int js_init(int argc, char*[]);
 extern cv::Mat* dptr;
-
 }
 
 enum { CANNY = 0, ORIGINAL, GRAYSCALE, MORPHOLOGY };
