@@ -77,6 +77,21 @@ js_size_new(JSContext* ctx, double w, double h) {
   return ret;
 }
 
+VISIBLE JSValue
+js_size_wrap(JSContext* ctx, const JSSizeData& sz) {
+  JSValue ret;
+  JSSizeData* s;
+
+  ret = JS_NewObjectProtoClass(ctx, size_proto, js_size_class_id);
+
+  s = static_cast<JSSizeData*>(js_mallocz(ctx, sizeof(JSSizeData)));
+  s->width = sz.width;
+  s->height = sz.height;
+
+  JS_SetOpaque(ret, s);
+  return ret;
+}
+
 static JSValue
 js_size_set_wh(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magic) {
   JSSizeData* s = js_size_data(ctx, this_val);

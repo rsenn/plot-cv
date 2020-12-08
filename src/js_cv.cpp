@@ -22,6 +22,60 @@ js_cv_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv
 }
 
 static JSValue
+js_cv_gaussian_blur(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  cv::Mat* image;
+  JSSizeData size;
+  double sigmaX, sigmaY = 0;
+  cv::Mat *input, *output;
+  int32_t borderType = cv::BORDER_DEFAULT;
+
+  JSValue ret;
+
+  input = js_mat_data(ctx, argv[0]);
+  output = js_mat_data(ctx, argv[1]);
+
+  if(argc < 4 || input == nullptr || output == nullptr)
+    return JS_EXCEPTION;
+
+  size = js_size_get(ctx, argv[2]);
+
+  JS_ToFloat64(ctx, &sigmaX, argv[3]);
+  if(argc >= 5)
+    JS_ToFloat64(ctx, &sigmaY, argv[4]);
+  if(argc >= 6)
+    JS_ToInt32(ctx, &borderType, argv[5]);
+
+  cv::GaussianBlur(*input, *output, size, sigmaX, sigmaY, borderType);
+
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_cv_corner_harris(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  cv::Mat* image;
+  double k;
+  cv::Mat *input, *output;
+  int32_t blockSize, ksize, borderType = cv::BORDER_DEFAULT;
+
+  input = js_mat_data(ctx, argv[0]);
+  output = js_mat_data(ctx, argv[1]);
+
+  if(argc < 5 || input == nullptr || output == nullptr)
+    return JS_EXCEPTION;
+  JS_ToInt32(ctx, &blockSize, argv[2]);
+  JS_ToInt32(ctx, &ksize, argv[3]);
+
+  JS_ToFloat64(ctx, &k, argv[4]);
+
+  if(argc >= 6)
+    JS_ToInt32(ctx, &borderType, argv[5]);
+
+  cv::cornerHarris(*input, *output, blockSize, ksize, k, borderType);
+
+  return JS_UNDEFINED;
+}
+
+static JSValue
 js_cv_hough_lines(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   cv::Mat* image;
   JSValueConst array;
@@ -272,6 +326,120 @@ js_cv_normalize(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 }
 
 static JSValue
+js_cv_convert_scale_abs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+
+  cv::Mat *src, *dst;
+  double alpha = 1, beta = 0;
+
+  src = js_mat_data(ctx, argv[0]);
+  dst = js_mat_data(ctx, argv[1]);
+
+  if(src == nullptr || dst == nullptr)
+    return JS_EXCEPTION;
+
+  if(argc >= 3)
+    JS_ToFloat64(ctx, &alpha, argv[2]);
+  if(argc >= 4)
+    JS_ToFloat64(ctx, &beta, argv[3]);
+
+  cv::convertScaleAbs(*src, *dst, alpha, beta);
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_cv_threshold(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+
+  cv::Mat *src, *dst;
+  double thresh, maxval;
+  int32_t type;
+
+  src = js_mat_data(ctx, argv[0]);
+  dst = js_mat_data(ctx, argv[1]);
+
+  if(src == nullptr || dst == nullptr || argc < 5)
+    return JS_EXCEPTION;
+
+  JS_ToFloat64(ctx, &thresh, argv[2]);
+  JS_ToFloat64(ctx, &maxval, argv[3]);
+  JS_ToInt32(ctx, &type, argv[4]);
+
+  cv::threshold(*src, *dst, thresh, maxval, type);
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_cv_bilateral_filter(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+
+  cv::Mat *src, *dst;
+  double sigmaColor, sigmaSpace;
+  int32_t d, borderType = cv::BORDER_DEFAULT;
+
+  src = js_mat_data(ctx, argv[0]);
+  dst = js_mat_data(ctx, argv[1]);
+
+  if(src == nullptr || dst == nullptr || argc < 5)
+    return JS_EXCEPTION;
+  JS_ToInt32(ctx, &d, argv[2]);
+
+  JS_ToFloat64(ctx, &sigmaColor, argv[3]);
+  JS_ToFloat64(ctx, &sigmaSpace, argv[4]);
+
+  if(argc >= 6)
+    JS_ToInt32(ctx, &borderType, argv[5]);
+
+  cv::bilateralFilter(*src, *dst, d, sigmaColor, sigmaSpace, borderType);
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_cv_calc_hist(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  std::vector<cv::Mat> images;
+  std::vector<int> channels, histSize;
+  std::vector<std::vector<float>> ranges;
+
+  cv::Mat *mask, *hist;
+  int32_t dims;
+  bool uniform = true, accumulate = false;
+
+  if(js_array_to_vector(ctx, argv[0], images) == -1)
+    return JS_EXCEPTION;
+
+  if(js_array_to_vector(ctx, argv[1], channels) == -1)
+    return JS_EXCEPTION;
+  mask = js_mat_data(ctx, argv[2]);
+  hist = js_mat_data(ctx, argv[3]);
+
+  if(mask == nullptr || hist == nullptr || argc < 8)
+    return JS_EXCEPTION;
+  JS_ToInt32(ctx, &dims, argv[4]);
+
+  if(js_array_to_vector(ctx, argv[5], histSize) == -1)
+    return JS_EXCEPTION;
+
+  if(js_array_to_vector(ctx, argv[6], ranges) == -1)
+    return JS_EXCEPTION;
+
+  if(argc >= 8)
+    uniform = JS_ToBool(ctx, argv[7]);
+  if(argc >= 9)
+    accumulate = JS_ToBool(ctx, argv[8]);
+
+  {
+    std::vector<const float*> rangePtr(ranges.size());
+
+    for(size_t i = 0; i < ranges.size(); i++) {
+      if(ranges[i].size() < 2)
+        ranges[i].resize(2);
+
+      rangePtr[i] = ranges[i].data();
+    }
+
+    cv::calcHist(const_cast<const cv::Mat*>(images.data()), images.size(), channels.data(), *mask, *hist, dims, histSize.data(), rangePtr.data(), uniform, accumulate);
+  }
+  return JS_UNDEFINED;
+}
+
+static JSValue
 js_cv_named_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   const char* name;
   int32_t flags = cv::WINDOW_NORMAL;
@@ -447,6 +615,24 @@ js_cv_findcontours(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
 }
 
 static JSValue
+js_cv_point_polygon_test(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSContourData* contour;
+  cv::Point2f point;
+  bool measureDist = false;
+
+  contour = js_contour_data(ctx, argv[0]);
+
+  if(contour == nullptr)
+    return JS_EXCEPTION;
+
+  point = js_point_get(ctx, argv[1]);
+  if(argc >= 3)
+    measureDist = JS_ToBool(ctx, argv[2]);
+
+  return JS_NewFloat64(ctx, cv::pointPolygonTest(*contour, point, measureDist));
+}
+
+static JSValue
 js_cv_getticks(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSValue ret = JS_UNDEFINED;
   switch(magic) {
@@ -471,6 +657,7 @@ js_cv_finalizer(JSRuntime* rt, JSValue val) {
 JSClassDef js_cv_class = {.class_name = "cv", .finalizer = js_cv_finalizer};
 
 const JSCFunctionListEntry js_cv_static_funcs[] = {
+    JS_CFUNC_DEF("GaussianBlur", 4, js_cv_gaussian_blur),
     JS_CFUNC_DEF("HoughLines", 5, js_cv_hough_lines),
     JS_CFUNC_DEF("HoughLinesP", 5, js_cv_hough_lines_p),
     JS_CFUNC_DEF("Canny", 4, js_cv_canny),
@@ -480,15 +667,23 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_CFUNC_DEF("cvtColor", 3, js_cv_cvt_color),
     JS_CFUNC_DEF("split", 2, js_cv_split),
     JS_CFUNC_DEF("normalize", 2, js_cv_normalize),
+    JS_CFUNC_DEF("convertScaleAbs", 2, js_cv_convert_scale_abs),
+    JS_CFUNC_DEF("threshold", 5, js_cv_threshold),
+    JS_CFUNC_DEF("bilateralFilter", 5, js_cv_bilateral_filter),
     JS_CFUNC_DEF("namedWindow", 1, js_cv_named_window),
     JS_CFUNC_DEF("createTrackbar", 5, js_cv_create_trackbar),
     JS_CFUNC_DEF("waitKey", 0, js_cv_wait_key),
     JS_CFUNC_DEF("getPerspectiveTransform", 2, js_cv_getperspectivetransform),
     JS_CFUNC_DEF("getAffineTransform", 2, js_cv_getaffinetransform),
     JS_CFUNC_DEF("findContours", 1, js_cv_findcontours),
+    JS_CFUNC_DEF("pointPolygonTest", 2, js_cv_point_polygon_test),
+    JS_CFUNC_DEF("cornerHarris", 5, js_cv_corner_harris),
+    JS_CFUNC_DEF("calcHist", 8, js_cv_calc_hist),
+
     JS_CFUNC_MAGIC_DEF("getTickCount", 0, js_cv_getticks, 0),
     JS_CFUNC_MAGIC_DEF("getTickFrequency", 0, js_cv_getticks, 1),
     JS_CFUNC_MAGIC_DEF("getCPUTickCount", 0, js_cv_getticks, 2),
+
     JS_PROP_INT32_DEF("CV_VERSION_MAJOR", CV_VERSION_MAJOR, JS_PROP_ENUMERABLE),
     JS_PROP_INT32_DEF("CV_VERSION_MINOR", CV_VERSION_MINOR, JS_PROP_ENUMERABLE),
     JS_PROP_INT32_DEF("CV_VERSION_REVISION", CV_VERSION_REVISION, JS_PROP_ENUMERABLE),
@@ -850,6 +1045,25 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_PROP_INT32_DEF("WINDOW_KEEPRATIO  ", cv::WINDOW_KEEPRATIO, 0),
     JS_PROP_INT32_DEF("WINDOW_GUI_EXPANDED", cv::WINDOW_GUI_EXPANDED, 0),
     JS_PROP_INT32_DEF("WINDOW_GUI_NORMAL ", cv::WINDOW_GUI_NORMAL, 0),
+
+    JS_PROP_INT32_DEF("BORDER_CONSTANT", cv::BORDER_CONSTANT, 0),
+    JS_PROP_INT32_DEF("BORDER_REPLICATE", cv::BORDER_REPLICATE, 0),
+    JS_PROP_INT32_DEF("BORDER_REFLECT", cv::BORDER_REFLECT, 0),
+    JS_PROP_INT32_DEF("BORDER_WRAP", cv::BORDER_WRAP, 0),
+    JS_PROP_INT32_DEF("BORDER_REFLECT_101", cv::BORDER_REFLECT_101, 0),
+    JS_PROP_INT32_DEF("BORDER_TRANSPARENT", cv::BORDER_TRANSPARENT, 0),
+    JS_PROP_INT32_DEF("BORDER_REFLECT101", cv::BORDER_REFLECT101, 0),
+    JS_PROP_INT32_DEF("BORDER_DEFAULT", cv::BORDER_DEFAULT, 0),
+    JS_PROP_INT32_DEF("BORDER_ISOLATED", cv::BORDER_ISOLATED, 0),
+
+    JS_PROP_INT32_DEF("THRESH_BINARY", cv::THRESH_BINARY, 0),
+    JS_PROP_INT32_DEF("THRESH_BINARY_INV", cv::THRESH_BINARY_INV, 0),
+    JS_PROP_INT32_DEF("THRESH_TRUNC", cv::THRESH_TRUNC, 0),
+    JS_PROP_INT32_DEF("THRESH_TOZERO", cv::THRESH_TOZERO, 0),
+    JS_PROP_INT32_DEF("THRESH_TOZERO_INV", cv::THRESH_TOZERO_INV, 0),
+    JS_PROP_INT32_DEF("THRESH_MASK", cv::THRESH_MASK, 0),
+    JS_PROP_INT32_DEF("THRESH_OTSU", cv::THRESH_OTSU, 0),
+    JS_PROP_INT32_DEF("THRESH_TRIANGLE", cv::THRESH_TRIANGLE, 0),
 
 };
 

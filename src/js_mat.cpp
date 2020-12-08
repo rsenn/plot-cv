@@ -534,6 +534,88 @@ js_mat_getrotationmatrix2d(JSContext* ctx, JSValueConst this_val, int argc, JSVa
   return ret;
 }
 
+static JSValue
+js_mat_convert_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSMatData *m, *output;
+  int32_t rtype;
+  double alpha = 1, beta = 0;
+
+  m = js_mat_data(ctx, this_val);
+  output = js_mat_data(ctx, argv[0]);
+
+  if(m == nullptr || output == nullptr)
+    return JS_EXCEPTION;
+
+  JS_ToInt32(ctx, &rtype, argv[1]);
+
+  if(argc >= 3)
+    JS_ToFloat64(ctx, &alpha, argv[2]);
+
+  if(argc >= 4)
+    JS_ToFloat64(ctx, &beta, argv[3]);
+
+  m->convertTo(*output, rtype, alpha, beta);
+
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_mat_copy_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSMatData *m, *output;
+
+  m = js_mat_data(ctx, this_val);
+  output = js_mat_data(ctx, argv[0]);
+
+  if(m == nullptr || output == nullptr)
+    return JS_EXCEPTION;
+
+  m->copyTo(*output);
+
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_mat_reshape(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSMatData *m, ret;
+  int32_t cn, rows = 0;
+
+  m = js_mat_data(ctx, this_val);
+
+  if(m == nullptr || argc < 1)
+    return JS_EXCEPTION;
+
+  if(argc >= 1)
+    JS_ToInt32(ctx, &cn, argv[0]);
+
+  if(argc >= 2) {
+    std::vector<int> newshape;
+
+    if(JS_IsArray(ctx, argv[1])) {
+      js_array_to_vector(ctx, argv[1], newshape);
+
+      if(argc >= 3 && JS_IsNumber(argv[2])) {
+        uint32_t ndims;
+        JS_ToUint32(ctx, &ndims, argv[2]);
+
+        if(ndims > newshape.size())
+          return JS_EXCEPTION;
+
+        ret = m->reshape(cn, ndims, &newshape[0]);
+      } else {
+        ret = m->reshape(cn, newshape);
+      }
+      goto end;
+
+    } else if(JS_IsNumber(argv[1])) {
+      JS_ToInt32(ctx, &rows, argv[1]);
+    }
+  }
+
+  ret = m->reshape(cn, rows);
+end:
+  return js_mat_wrap(ctx, ret);
+}
+
 VISIBLE JSValue
 js_mat_wrap(JSContext* ctx, const cv::Mat& mat) {
   JSValue ret;
@@ -685,6 +767,9 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {JS_CGETSET_MAGIC_DEF("cols", 
                                                    JS_CFUNC_DEF("at", 1, js_mat_at),
                                                    JS_CFUNC_DEF("set", 2, js_mat_set),
                                                    JS_CFUNC_DEF("setTo", 0, js_mat_set_to),
+                                                   JS_CFUNC_DEF("convertTo", 2, js_mat_convert_to),
+                                                   JS_CFUNC_DEF("copyTo", 1, js_mat_copy_to),
+                                                   JS_CFUNC_DEF("reshape", 1, js_mat_reshape),
                                                    JS_CFUNC_MAGIC_DEF("keys", 0, js_create_mat_iterator, 0),
                                                    JS_CFUNC_MAGIC_DEF("values", 0, js_create_mat_iterator, 1),
                                                    JS_CFUNC_MAGIC_DEF("entries", 0, js_create_mat_iterator, 2),

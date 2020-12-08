@@ -15,6 +15,7 @@ typedef cv::Size2d JSSizeData;
 typedef cv::Point2d JSPointData;
 typedef cv::Point2i JSPointDataI;
 typedef cv::VideoCapture JSVideoCaptureData;
+typedef cv::Ptr<cv::CLAHE> JSCLAHEData;
 
 typedef union {
   std::array<double, 4> arr;
@@ -66,6 +67,7 @@ void js_point_constructor(JSContext* ctx, JSValue parent, const char* name);
 JSModuleDef* js_init_point_module(JSContext*, const char* module_name);
 
 VISIBLE JSValue js_size_new(JSContext* ctx, double w, double h);
+VISIBLE JSValue js_size_wrap(JSContext* ctx, const JSSizeData& size);
 VISIBLE JSSizeData* js_size_data(JSContext*, JSValueConst val);
 
 int js_size_init(JSContext*, JSModuleDef* m);
@@ -216,8 +218,6 @@ js_contours_new(JSContext* ctx, const std::vector<std::vector<cv::Point_<T>>>& c
 
 JSValue js_vector_vec4i_to_array(JSContext*, const std::vector<cv::Vec4i>& vec);
 
-template<class Value> int64_t js_array_to_vector(JSContext*, JSValue arr, std::vector<Value>& out);
-
 inline JSValueConst
 js_ctor(JSContext* ctx, const char* name) {
   JSValue global = JS_GetGlobalObject(ctx);
@@ -248,10 +248,19 @@ extern "C" JSValue js_point_clone(JSContext* ctx, const JSPointData& point);
 static inline int
 js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData* out) {
   int ret = 1;
-  JSValue x = JS_GetPropertyStr(ctx, rect, "x");
-  JSValue y = JS_GetPropertyStr(ctx, rect, "y");
-  JSValue w = JS_GetPropertyStr(ctx, rect, "width");
-  JSValue h = JS_GetPropertyStr(ctx, rect, "height");
+  JSValue x, y, w, h;
+  if(JS_IsArray(ctx, rect)) {
+    x = JS_GetPropertyUint32(ctx, rect, 0);
+    y = JS_GetPropertyUint32(ctx, rect, 1);
+    w = JS_GetPropertyUint32(ctx, rect, 2);
+    h = JS_GetPropertyUint32(ctx, rect, 3);
+
+  } else {
+    x = JS_GetPropertyStr(ctx, rect, "x");
+    y = JS_GetPropertyStr(ctx, rect, "y");
+    w = JS_GetPropertyStr(ctx, rect, "width");
+    h = JS_GetPropertyStr(ctx, rect, "height");
+  }
   if(JS_IsNumber(x) && JS_IsNumber(y) && JS_IsNumber(w) && JS_IsNumber(h)) {
     ret &= !JS_ToFloat64(ctx, &out->x, x);
     ret &= !JS_ToFloat64(ctx, &out->y, y);
@@ -292,9 +301,15 @@ js_rect_set(JSContext* ctx, JSValue out, double x, double y, double w, double h)
 static inline int
 js_size_read(JSContext* ctx, JSValueConst size, JSSizeData* out) {
   int ret = 1;
-  JSValue w = JS_GetPropertyStr(ctx, size, "width");
-  JSValue h = JS_GetPropertyStr(ctx, size, "height");
+  JSValue w, h;
 
+  if(JS_IsArray(ctx, size)) {
+    w = JS_GetPropertyUint32(ctx, size, 0);
+    h = JS_GetPropertyUint32(ctx, size, 1);
+  } else {
+    w = JS_GetPropertyStr(ctx, size, "width");
+    h = JS_GetPropertyStr(ctx, size, "height");
+  }
   if(JS_IsNumber(w) && JS_IsNumber(h)) {
     ret &= !JS_ToFloat64(ctx, &out->width, w);
     ret &= !JS_ToFloat64(ctx, &out->height, h);
@@ -369,5 +384,134 @@ js_contour_get(JSContext* ctx, JSValueConst contour) {
   JSContourData r = {};
   js_contour_read(ctx, contour, &r);
   return r;
+}
+
+template<class T> class js_array {
+public:
+  static int64_t
+  to_vector(JSContext* ctx, JSValueConst arr, std::vector<T>& out) {
+    int64_t i, n;
+    JSValue len;
+    if(!JS_IsArray(ctx, arr))
+      return -1;
+    len = JS_GetPropertyStr(ctx, arr, "length");
+    JS_ToInt64(ctx, &n, len);
+    out.reserve(out.size() + n);
+    for(i = 0; i < n; i++) {
+      double value;
+      JSValue item = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
+      if(JS_ToFloat64(ctx, &value, item) == -1) {
+        JS_FreeValue(ctx, item);
+        out.clear();
+        return -1;
+      }
+      out.push_back(value);
+      JS_FreeValue(ctx, item);
+    }
+    return n;
+  }
+
+  template<size_t N> static int64_t to_array(JSContext* ctx, JSValueConst arr, std::array<T, N>& out);
+};
+
+template<class T>
+template<size_t N>
+int64_t
+js_array<T>::to_array(JSContext* ctx, JSValueConst arr, std::array<T, N>& out) {
+  std::vector<T> tmp;
+  to_vector(ctx, arr, tmp);
+  if(tmp.size() < N)
+    return -1;
+  for(size_t i = 0; i < N; i++) out[i] = tmp[i];
+  return N;
+}
+
+template<class T> class js_array<cv::Point_<T>> {
+public:
+  static int64_t
+  to_vector(JSContext* ctx, JSValueConst arr, std::vector<cv::Point_<T>>& out) {
+    int64_t i, n;
+    JSValue len;
+    if(!JS_IsArray(ctx, arr))
+      return -1;
+    len = JS_GetPropertyStr(ctx, arr, "length");
+    JS_ToInt64(ctx, &n, len);
+    out.reserve(out.size() + n);
+    for(i = 0; i < n; i++) {
+      JSPointData value;
+      JSValue item = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
+      if(!js_point_read(ctx, item, &value)) {
+        JS_FreeValue(ctx, item);
+        out.clear();
+        return -1;
+      }
+      out.push_back(value);
+      JS_FreeValue(ctx, item);
+    }
+    return n;
+  }
+  template<size_t N> static int64_t to_array(JSContext* ctx, JSValueConst arr, std::array<cv::Mat, N>& out);
+};
+
+template<> class js_array<cv::Mat> {
+public:
+  static int64_t
+  to_vector(JSContext* ctx, JSValueConst arr, std::vector<cv::Mat>& out) {
+    int64_t i, n;
+    JSValue len;
+    if(!JS_IsArray(ctx, arr))
+      return -1;
+    len = JS_GetPropertyStr(ctx, arr, "length");
+    JS_ToInt64(ctx, &n, len);
+    out.reserve(out.size() + n);
+    for(i = 0; i < n; i++) {
+      JSMatData* value;
+      JSValue item = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
+      value = js_mat_data(ctx, item);
+      if(value == nullptr) {
+        JS_FreeValue(ctx, item);
+        out.clear();
+        return -1;
+      }
+      out.push_back(*value);
+      JS_FreeValue(ctx, item);
+    }
+    return n;
+  }
+  template<size_t N> static int64_t to_array(JSContext* ctx, JSValueConst arr, std::array<cv::Mat, N>& out);
+};
+
+template<class T> class js_array<std::vector<T>> {
+public:
+  static int64_t
+  to_vector(JSContext* ctx, JSValueConst arr, std::vector<std::vector<T>>& out) {
+    int64_t i, n;
+    JSValue len;
+    if(!JS_IsArray(ctx, arr))
+      return -1;
+    len = JS_GetPropertyStr(ctx, arr, "length");
+    JS_ToInt64(ctx, &n, len);
+    out.reserve(out.size() + n);
+    for(i = 0; i < n; i++) {
+      std::vector<T> value;
+      JSValue item = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
+      if(js_array<T>::to_vector(ctx, arr, value) == -1) {
+        JS_FreeValue(ctx, item);
+        out.clear();
+        return -1;
+      }
+      out.push_back(value);
+      JS_FreeValue(ctx, item);
+    }
+    return n;
+  }
+
+  template<size_t N> static int64_t to_array(JSContext* ctx, JSValueConst arr, std::array<std::vector<T>, N>& out);
+};
+
+template<class T>
+inline int64_t
+js_array_to_vector(JSContext* ctx, JSValueConst arr, std::vector<T>& out) {
+  return js_array<T>::to_vector(ctx, arr, out);
 }
 #endif

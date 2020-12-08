@@ -9,11 +9,7 @@
 #include "cvmatsurfacesource.hpp"
 #include <QTime>
 
-CaptureWorker::CaptureWorker(const QString& device,
-                             CaptureController* captureController,
-                             QObject* parent)
-    : QObject(parent), m_device(device), m_captureController(captureController),
-      m_loopRunning(true) {}
+CaptureWorker::CaptureWorker(const QString& device, CaptureController* captureController, QObject* parent) : QObject(parent), m_device(device), m_captureController(captureController), m_loopRunning(true) {}
 
 void
 CaptureWorker::stop() {
@@ -27,10 +23,9 @@ CaptureWorker::doWork() {
   if(ok) {
     m_capture = new cv::VideoCapture(deviceId);
   } else {
-    m_capture = new cv::VideoCapture(
-        "rkcamsrc device=/dev/video0 io-mode=4 ! video/x-raw,format=NV12,width=640,height=480 ! "
-        "videoconvert ! appsink",
-        cv::CAP_GSTREAMER);
+    m_capture = new cv::VideoCapture("rkcamsrc device=/dev/video0 io-mode=4 ! video/x-raw,format=NV12,width=640,height=480 ! "
+                                     "videoconvert ! appsink",
+                                     cv::CAP_GSTREAMER);
   }
   if(!m_capture->isOpened()) {
     qWarning() << "Can't capture" << m_device;
@@ -41,8 +36,7 @@ CaptureWorker::doWork() {
   bool isVideoFile = static_cast<int>(m_capture->get(cv::CAP_PROP_FRAME_COUNT)) > 0;
   unsigned long sleepBetweenFrames = 0;
   if(isVideoFile)
-    sleepBetweenFrames =
-        static_cast<unsigned long>((1.0 / m_capture->get(cv::CAP_PROP_FPS)) * 1000000);
+    sleepBetweenFrames = static_cast<unsigned long>((1.0 / m_capture->get(cv::CAP_PROP_FPS)) * 1000000);
   m_captureController->setStatus(CaptureController::Status::Started);
   while(m_loopRunning) {
     if(!m_capture->grab()) {
@@ -68,8 +62,7 @@ CaptureWorker::doWork() {
   emit workDone();
 }
 
-CaptureController::CaptureController(QObject* parent)
-    : QObject(parent), m_worker(nullptr), m_lock(nullptr), m_status(Status::Stopped) {}
+CaptureController::CaptureController(QObject* parent) : QObject(parent), m_worker(nullptr), m_lock(nullptr), m_status(Status::Stopped) {}
 
 CaptureController::~CaptureController() { stop(); }
 

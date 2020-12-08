@@ -17,20 +17,27 @@
 #endif
 
 using namespace cv;
-
+/*
 template<class Value> int64_t js_array_to_vector(JSContext* ctx, JSValueConst arr, std::vector<Value>& out);
 
 template<>
 int64_t
 js_array_to_vector<int>(JSContext* ctx, JSValueConst arr, std::vector<int>& out) {
   int64_t i, n;
-  JSValue len = JS_GetPropertyStr(ctx, arr, "length");
+  JSValue len;
+  if(!JS_IsArray(ctx, arr))
+    return -1;
+  len = JS_GetPropertyStr(ctx, arr, "length");
   JS_ToInt64(ctx, &n, len);
   out.reserve(out.size() + n);
   for(i = 0; i < n; i++) {
     int32_t value;
     JSValue item = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
-    JS_ToInt32(ctx, &value, item);
+    if(JS_ToInt32(ctx, &value, item) == -1) {
+      JS_FreeValue(ctx, item);
+      out.clear();
+      return -1;
+    }
     out.push_back(value);
     JS_FreeValue(ctx, item);
   }
@@ -41,17 +48,26 @@ template<>
 int64_t
 js_array_to_vector<JSPointData>(JSContext* ctx, JSValueConst arr, std::vector<JSPointData>& out) {
   int64_t i, n;
-  JSValue len = JS_GetPropertyStr(ctx, arr, "length");
+  JSValue len;
+  if(!JS_IsArray(ctx, arr))
+    return -1;
+  len = JS_GetPropertyStr(ctx, arr, "length");
   JS_ToInt64(ctx, &n, len);
   out.reserve(out.size() + n);
   for(i = 0; i < n; i++) {
+    JSPointData point;
     JSValue item = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
-    out.push_back(js_point_get(ctx, item));
+    if(!js_point_read(ctx, item, &point)) {
+      JS_FreeValue(ctx, item);
+      out.clear();
+      return -1;
+    }
+    out.push_back(point);
     JS_FreeValue(ctx, item);
   }
   return n;
 }
-
+*/
 static JSValue
 js_contour_new(JSContext* ctx, const std::vector<cv::Point_<float>>& points) {
   JSValue ret;
@@ -386,7 +402,7 @@ js_contour_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst*
           JSValue pt = JS_GetPropertyUint32(ctx, argv[i], 0);
 
           if(js_is_point(ctx, pt)) {
-            js_array_to_vector<JSPointData>(ctx, argv[i], *v);
+            js_array_to_vector /*<JSPointData>*/ (ctx, argv[i], *v);
             JS_FreeValue(ctx, pt);
             continue;
           }
