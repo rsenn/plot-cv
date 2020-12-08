@@ -326,6 +326,20 @@ js_cv_normalize(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 }
 
 static JSValue
+js_cv_equalize_hist(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+
+  cv::Mat *src, *dst;
+  src = js_mat_data(ctx, argv[0]);
+  dst = js_mat_data(ctx, argv[1]);
+
+  if(src == nullptr || dst == nullptr)
+    return JS_EXCEPTION;
+
+  cv::equalizeHist(*src, *dst);
+  return JS_UNDEFINED;
+}
+
+static JSValue
 js_cv_convert_scale_abs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
 
   cv::Mat *src, *dst;
@@ -844,6 +858,7 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_CFUNC_DEF("cvtColor", 3, js_cv_cvt_color),
     JS_CFUNC_DEF("split", 2, js_cv_split),
     JS_CFUNC_DEF("normalize", 2, js_cv_normalize),
+    JS_CFUNC_DEF("equalizeHist", 2, js_cv_equalize_hist),
     JS_CFUNC_DEF("convertScaleAbs", 2, js_cv_convert_scale_abs),
     JS_CFUNC_DEF("threshold", 5, js_cv_threshold),
     JS_CFUNC_DEF("bilateralFilter", 5, js_cv_bilateral_filter),

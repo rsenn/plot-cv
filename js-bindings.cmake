@@ -75,6 +75,7 @@ target_link_libraries(quickjs-line quickjs-point)
 target_link_libraries(quickjs-rect quickjs-size quickjs-point)
 target_link_libraries(quickjs-video-capture quickjs-mat)
 target_link_libraries(quickjs-cv quickjs-mat quickjs-contour quickjs-line)
+target_link_libraries(quickjs-draw quickjs-mat )
 
 # add_dependencies(quickjs-point-iterator quickjs-contour quickjs-mat)
 

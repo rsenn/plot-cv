@@ -20,7 +20,7 @@ using namespace boost::asio::ip;
 
 VideoCapture camera;
 Mat frame, frame_grey;
-std::string message  = "";
+std::string message = "";
 bool frameExists = false;
 bool byColor = false;
 char key;
@@ -41,10 +41,11 @@ void denoiseMat(Mat, int);
 double rectangularity(vector<Point>, Rect);
 double circularity(vector<Point>, float);
 
-int main(int argc, char *argv[]) {
-  //printf("CUDA: %i", getCudaEnabledDeviceCount());
+int
+main(int argc, char* argv[]) {
+  // printf("CUDA: %i", getCudaEnabledDeviceCount());
   VideoCapture camera;
-  if (argc > 1 && boost::starts_with(argv[1], "http://")) {
+  if(argc > 1 && boost::starts_with(argv[1], "http://")) {
     std::string address;
     address.append(argv[1]);
     address.append("video?x.mjpeg");
@@ -65,42 +66,41 @@ int main(int argc, char *argv[]) {
     std::cout << e.what();
   }*/
 
-  for (;;) {
+  for(;;) {
     frameExists = camera.read(frame);
 
-    if (!frameExists) {
+    if(!frameExists) {
       printf("Cannot read image from camera. \n");
       return -1;
     }
 
-    key = waitKey(10);     // Capture Keyboard stroke
-    if (char(key) == 27) {
+    key = waitKey(10); // Capture Keyboard stroke
+    if(char(key) == 27) {
       printf("\n");
-      break;      // If you hit ESC key loop will break.
+      break; // If you hit ESC key loop will break.
     }
 
     namedWindow("Image", cv::WINDOW_AUTOSIZE);
     imshow("Image", frame);
 
-
     createTrackbar("Canny Threshold:", "Image", &thresh, max_thresh, thresh_callback);
     createTrackbar("Canny Max", "Image", &thresh_max, max_thresh, thresh_callback);
-    createTrackbar("LowH", "Image", &lowH, 179); //Hue (0 - 179)
+    createTrackbar("LowH", "Image", &lowH, 179); // Hue (0 - 179)
     createTrackbar("HighH", "Image", &highH, 179);
 
-    createTrackbar("LowS", "Image", &lowS, 255); //Saturation (0 - 255)
+    createTrackbar("LowS", "Image", &lowS, 255); // Saturation (0 - 255)
     createTrackbar("HighS", "Image", &highS, 255);
 
-    createTrackbar("LowV", "Image", &lowV, 255); //Value (0 - 255)
+    createTrackbar("LowV", "Image", &lowV, 255); // Value (0 - 255)
     createTrackbar("HighV", "Image", &highV, 255);
 
     createTrackbar("Min Contour Size:", "Image", &minContourSize, 64);
 
     message = "";
 
-    #pragma omp task
+#pragma omp task
     thresh_callback(0, 0);
-    //socket.send_to(boost::asio::buffer(message), receiver_endpoint);
+    // socket.send_to(boost::asio::buffer(message), receiver_endpoint);
   }
 
   waitKey(0);
@@ -108,19 +108,19 @@ int main(int argc, char *argv[]) {
 }
 
 /** @function thresh_callback */
-void thresh_callback(int, void*) {
+void
+thresh_callback(int, void*) {
   Mat frame_hsv, frame_grey, frame_thresh, frame_thresh_circle, canny_output, drawing;
-  vector<vector<Point> > contours;
+  vector<vector<Point>> contours;
   vector<Vec4i> hierarchy, lines;
   vector<Vec3f> circles;
 
-
-  cvtColor(frame, frame_hsv, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
-  inRange(frame_hsv, Scalar(lowH, lowS, lowV), Scalar(highH, highS, highV), frame_thresh); //Threshold the image
+  cvtColor(frame, frame_hsv, COLOR_BGR2HSV);                                               // Convert the captured frame from BGR to HSV
+  inRange(frame_hsv, Scalar(lowH, lowS, lowV), Scalar(highH, highS, highV), frame_thresh); // Threshold the image
 
   //#pragma omp task
-  //denoiseMat(frame_thresh, 4);
-  //GaussianBlur(frame_thresh, frame_thresh, Size(3, 3), 2, 2);
+  // denoiseMat(frame_thresh, 4);
+  // GaussianBlur(frame_thresh, frame_thresh, Size(3, 3), 2, 2);
   namedWindow("Thresholded Image", cv::WINDOW_AUTOSIZE);
   imshow("Thresholded Image", frame_thresh);
 
@@ -131,7 +131,7 @@ void thresh_callback(int, void*) {
   // Find contours
   findContours(canny_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, Point(0, 0));
 
-  vector<vector<Point> > contours_poly(contours.size());
+  vector<vector<Point>> contours_poly(contours.size());
   vector<Point2f> centre(contours.size());
   vector<float> radius(contours.size());
   Scalar circle_colour(0, 0, 255);
@@ -142,12 +142,13 @@ void thresh_callback(int, void*) {
   double largest_area = -1;
   Point largest_rect;
 
-  #pragma omp parallel for simd
-  for (int i = 0; i < contours.size(); i++) {
-    #pragma omp task
+#pragma omp parallel for simd
+  for(int i = 0; i < contours.size(); i++) {
+#pragma omp task
     approxPolyDP(contours[i], contours_poly[i], 0.012 * arcLength(contours[i], true), true);
     double area = contourArea(contours_poly[i]);
-    if (!isContourConvex(contours_poly[i]) || area < minContourSize) continue;
+    if(!isContourConvex(contours_poly[i]) || area < minContourSize)
+      continue;
 
     minEnclosingCircle((Mat)contours_poly[i], centre[i], radius[i]);
     bool isCircle = (circularity(contours_poly[i], radius[i])) > 80;
@@ -155,27 +156,36 @@ void thresh_callback(int, void*) {
     Rect rect = boundingRect(contours_poly[i]);
     bool isRect = (rectangularity(contours_poly[i], rect)) > 80;
 
-    if (contours_poly[i].size() != 4 && contours_poly[i].size() < 12 && !isRect && !isCircle) continue;
+    if(contours_poly[i].size() != 4 && contours_poly[i].size() < 12 && !isRect && !isCircle)
+      continue;
 
-    if (contours_poly[i].size() == 4 || isRect) {
-      if (area > largest_area) largest_rect = Point((rect.x + rect.width)/2, (rect.y + rect.height)/2);
-      drawContours(drawing, contours_poly, i, rect_colour,
-        -1, // line thickness
-        8, //line type
-        hierarchy,
-        0, //max level to draw
-        Point(0, 0)); // Point() offset
+    if(contours_poly[i].size() == 4 || isRect) {
+      if(area > largest_area)
+        largest_rect = Point((rect.x + rect.width) / 2, (rect.y + rect.height) / 2);
+      drawContours(drawing,
+                   contours_poly,
+                   i,
+                   rect_colour,
+                   -1, // line thickness
+                   8,  // line type
+                   hierarchy,
+                   0,            // max level to draw
+                   Point(0, 0)); // Point() offset
     }
-    if (contours_poly[i].size() >= 12 || isCircle) {
-      if (radius[i] > largest_radius) largest_circle = centre[i];
-      //circle(drawing, centre[i], 3, circle_colour, -1, 4, 0);
-      //circle(drawing, centre[i], radius[i], circle_colour, -1, 4, 0);
-      drawContours(drawing, contours_poly, i, circle_colour,
-        -1, // line thickness
-        8, //line type
-        hierarchy,
-        0, //max level to draw
-        Point(0, 0)); // Point() offset
+    if(contours_poly[i].size() >= 12 || isCircle) {
+      if(radius[i] > largest_radius)
+        largest_circle = centre[i];
+      // circle(drawing, centre[i], 3, circle_colour, -1, 4, 0);
+      // circle(drawing, centre[i], radius[i], circle_colour, -1, 4, 0);
+      drawContours(drawing,
+                   contours_poly,
+                   i,
+                   circle_colour,
+                   -1, // line thickness
+                   8,  // line type
+                   hierarchy,
+                   0,            // max level to draw
+                   Point(0, 0)); // Point() offset
     }
   }
   message += "circle: ";
@@ -194,23 +204,25 @@ void thresh_callback(int, void*) {
   imshow("Shapes", drawing);
 }
 
-void denoiseMat(Mat frame, int structure_size) {
-  //morphological opening (remove small objects from the foreground)
+void
+denoiseMat(Mat frame, int structure_size) {
+  // morphological opening (remove small objects from the foreground)
   erode(frame, frame, getStructuringElement(MORPH_RECT, Size(structure_size, structure_size)));
   dilate(frame, frame, getStructuringElement(MORPH_RECT, Size(structure_size, structure_size)));
 
-  //morphological closing (fill small holes in the foreground)
+  // morphological closing (fill small holes in the foreground)
   dilate(frame, frame, getStructuringElement(MORPH_RECT, Size(structure_size, structure_size)));
   erode(frame, frame, getStructuringElement(MORPH_RECT, Size(structure_size, structure_size)));
-
 }
 
-double rectangularity(vector<Point> polygon, Rect boundRect) {
+double
+rectangularity(vector<Point> polygon, Rect boundRect) {
   double boundRectArea = boundRect.width * boundRect.height;
   return (contourArea(polygon, false) / boundRectArea) * 100;
 }
 
-double circularity(vector<Point> polygon, float radius) {
-  double boundCircleArea = PI*pow(radius, 2);
+double
+circularity(vector<Point> polygon, float radius) {
+  double boundCircleArea = PI * pow(radius, 2);
   return (contourArea(polygon, false) / boundCircleArea) * 100;
 }

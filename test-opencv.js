@@ -13,6 +13,28 @@ import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 
 let filesystem;
+function saveMat(name, mat) {
+  let ext = mat.channels == 1 ? 'pgm' : 'ppm';
+  let p = mat.channels == 1 ? 'P2' : 'P3';
+  let colors = [];
+  for(let [pos, value] of image) {
+    let c = value;
+    colors.push(c);
+  }
+  filesystem.writeFile(`${name}.${ext}`, `${p}\n${image.cols} ${image.rows}\n255\n${colors.flat().join('\n')}`);
+}
+
+function dumpMat(name, mat) {
+  console.log(`${name}`, mat);
+  console.log(`${name}.cols`, mat.cols);
+  console.log(`${name}.rows`, mat.rows);
+  console.log(`${name}.depth`, mat.depth);
+  console.log(`${name}.channels`, mat.channels);
+
+  let typeName = Object.entries(cv).filter(([name, value]) => /^CV_[0-9]/.test(name) && value == mat.type);
+
+  console.log(`${name}.type`, typeName.length == 1 ? typeName[0][0] : mat.type);
+}
 
 async function main(...args) {
   await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
@@ -29,9 +51,6 @@ async function main(...args) {
 
   let image;
   cv.namedWindow('main', cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);
-  cv.createTrackbar('threshold', 'main', 0, 100, function(value, count, name, window) {
-    console.log('Trackbar', { value, count, name, window });
-  });
 
   //image = cv.imread('../an-tronics/images/5.19.jpg');
   image = cv.imread(args[0] || 'OpenOTA-board.png');
@@ -46,18 +65,6 @@ async function main(...args) {
   cv.split(rgbImage, rgbChannels);
   cv.split(labImage, labChannels);
 
-  function dumpMat(name, mat) {
-    console.log(`${name}`, mat);
-    console.log(`${name}.cols`, mat.cols);
-    console.log(`${name}.rows`, mat.rows);
-    console.log(`${name}.depth`, mat.depth);
-    console.log(`${name}.channels`, mat.channels);
-
-    let typeName = Object.entries(cv).filter(([name, value]) => /^CV_[0-9]/.test(name) && value == mat.type);
-
-    console.log(`${name}.type`, typeName.length == 1 ? typeName[0][0] : mat.type);
-  }
-
   dumpMat('image', image);
   dumpMat('labImage', labImage);
 
@@ -67,42 +74,29 @@ async function main(...args) {
   console.log(`image.row( ${y})`, image.row(y));
 
   const row = image.row(y);
-  /* let colors = [],
-    grays = [];
-  for(let [pos, value] of image) {
-    let c = [value % 256, (value / 256) % 256, (value / 65536) % 256];
-    colors.push(c);
-    grays.push(Math.round((c[0] + c[1] + c[2]) / 3));
-  }*/
-
-  function saveMat(name, mat) {
-    let ext = mat.channels == 1 ? 'pgm' : 'ppm';
-    let p = mat.channels == 1 ? 'P2' : 'P3';
-    let colors = [];
-    for(let [pos, value] of image) {
-      let c = value;
-      colors.push(c);
-    }
-    filesystem.writeFile(`${name}.${ext}`, `${p}\n${image.cols} ${image.rows}\n255\n${colors.flat().join('\n')}`);
-  }
-
-  /*  saveMat('output', image);
-  saveMat('r', channels[0]);
-  saveMat('g', channels[1]);
-  saveMat('b', channels[2]);*/
 
   cv.imwrite('output.png', image);
-  /* cv.imwrite('r.png', rgbChannels[0]);
-  cv.imwrite('g.png', rgbChannels[1]);
-  cv.imwrite('b.png', rgbChannels[2]);
-*/
-  for(let channel of labChannels) cv.normalize(channel, channel, 0, 255, cv.NORM_MINMAX);
+
+//  for(let channel of labChannels) cv.normalize(channel, channel, 0, 255, cv.NORM_MINMAX);
 
   cv.imwrite('l.png', labChannels[0]);
   cv.imwrite('a.png', labChannels[1]);
   cv.imwrite('b.png', labChannels[2]);
+  let thrs_mat = new Mat();
 
-  cv.imshow('main', labChannels[0]);
+  cv.equalizeHist(labChannels[0], labChannels[0]);
+
+  function calcThreshold(min = 20) {
+    cv.threshold(labChannels[0], thrs_mat, min, 255, cv.THRESH_BINARY);
+
+    cv.imshow('main', thrs_mat);
+  }
+
+  cv.createTrackbar('threshold', 'main', 0, 255, function(value, count, name, window) {
+    //console.log('Trackbar', { value, count, name, window });
+
+    calcThreshold(value);
+  });
 
   let edges = new Mat();
   cv.Canny(labChannels[0], edges, 10, 20);
@@ -113,15 +107,6 @@ async function main(...args) {
 
   //  console.log('lines:', lines);
   console.log('at(0,0):', labImage.at(37, 47));
-
-  // cv.imwrite('gray.png', labChannels[0]);
-  /*
-  filesystem.writeFile('output.ppm', `P3\n${image.cols} ${image.rows}\n${colors.flat().join('\n')}`);
-  filesystem.writeFile('gray.pgm', `P2\n${image.cols} ${image.rows}\n${grays.join('\n')}`);*/
-  //console.log("colors:", colors);
-  //console.log('image', [...image]);
-  //
-  //
 
   let key;
 

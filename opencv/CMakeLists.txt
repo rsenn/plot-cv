@@ -6,7 +6,7 @@ macro(add_prog)
   list(REMOVE_AT ARGS 0)
   add_executable(${name} ${CMAKE_CURRENT_SOURCE_DIR}/${name}.cpp ${ARGS})
   target_link_libraries(${name} ${OpenCV_LIBS})
-  install(TARGETS ${name} DESTINATION bin)
+  #install(TARGETS ${name} DESTINATION bin)
 endmacro()
 
 add_prog(mouth)
