@@ -116,49 +116,49 @@ CV_IMPL CvCapture*
 cvCreateCameraCapture(int index) {
   int domains[] = {
 #ifdef HAVE_DSHOW
-    CV_CAP_DSHOW,
+    cv::CAP_DSHOW,
 #endif
 #ifdef HAVE_MSMF
-    CV_CAP_MSMF,
+    cv::CAP_MSMF,
 #endif
 #if 1
-    CV_CAP_IEEE1394, // identical to CV_CAP_DC1394
+    cv::CAP_IEEE1394, // identical to cv::CAP_DC1394
 #endif
 #ifdef HAVE_TYZX
-    CV_CAP_STEREO,
+    cv::CAP_STEREO,
 #endif
 #ifdef HAVE_PVAPI
-    CV_CAP_PVAPI,
+    cv::CAP_PVAPI,
 #endif
 #if 1
-    CV_CAP_VFW, // identical to CV_CAP_V4L
+    cv::CAP_VFW, // identical to cv::CAP_V4L
 #endif
 #ifdef HAVE_MIL
-    CV_CAP_MIL,
+    cv::CAP_MIL,
 #endif
 #if defined(HAVE_QUICKTIME) || defined(HAVE_QTKIT)
-    CV_CAP_QT,
+    cv::CAP_QT,
 #endif
 #ifdef HAVE_UNICAP
-    CV_CAP_UNICAP,
+    cv::CAP_UNICAP,
 #endif
 #ifdef HAVE_OPENNI
-    CV_CAP_OPENNI,
+    cv::CAP_OPENNI,
 #endif
 #ifdef HAVE_ANDROID_NATIVE_CAMERA
-    CV_CAP_ANDROID,
+    cv::CAP_ANDROID,
 #endif
 #ifdef HAVE_XIMEA
-    CV_CAP_XIAPI,
+    cv::CAP_XIAPI,
 #endif
 #ifdef HAVE_AVFOUNDATION
-    CV_CAP_AVFOUNDATION,
+    cv::CAP_AVFOUNDATION,
 #endif
 #ifdef HAVE_GIGE_API
-    CV_CAP_GIGANETIX,
+    cv::CAP_GIGANETIX,
 #endif
 #ifdef HAVE_INTELPERC
-    CV_CAP_INTELPERC,
+    cv::CAP_INTELPERC,
 #endif
     -1
   };
@@ -173,41 +173,35 @@ cvCreateCameraCapture(int index) {
 
   // try every possibly installed camera API
   for(int i = 0; domains[i] >= 0; i++) {
-#if defined(HAVE_DSHOW) || defined(HAVE_MSMF) || defined(HAVE_TYZX) || defined(HAVE_VFW) ||        \
-    defined(HAVE_LIBV4L) || defined(HAVE_CAMV4L) || defined(HAVE_CAMV4L2) ||                       \
-    defined(HAVE_VIDEOIO) || defined(HAVE_GSTREAMER) || defined(HAVE_DC1394_2) ||                  \
-    defined(HAVE_DC1394) || defined(HAVE_CMU1394) || defined(HAVE_MIL) ||                          \
-    defined(HAVE_QUICKTIME) || defined(HAVE_QTKIT) || defined(HAVE_UNICAP) ||                      \
-    defined(HAVE_PVAPI) || defined(HAVE_OPENNI) || defined(HAVE_XIMEA) ||                          \
-    defined(HAVE_AVFOUNDATION) || defined(HAVE_ANDROID_NATIVE_CAMERA) || defined(HAVE_GIGE_API) || \
-    defined(HAVE_INTELPERC) || (0)
+#if defined(HAVE_DSHOW) || defined(HAVE_MSMF) || defined(HAVE_TYZX) || defined(HAVE_VFW) || defined(HAVE_LIBV4L) || defined(HAVE_CAMV4L) || defined(HAVE_CAMV4L2) || defined(HAVE_VIDEOIO) || defined(HAVE_GSTREAMER) || defined(HAVE_DC1394_2) || defined(HAVE_DC1394) || defined(HAVE_CMU1394) || defined(HAVE_MIL) ||       \
+    defined(HAVE_QUICKTIME) || defined(HAVE_QTKIT) || defined(HAVE_UNICAP) || defined(HAVE_PVAPI) || defined(HAVE_OPENNI) || defined(HAVE_XIMEA) || defined(HAVE_AVFOUNDATION) || defined(HAVE_ANDROID_NATIVE_CAMERA) || defined(HAVE_GIGE_API) || defined(HAVE_INTELPERC) || (0)
     // local variable to memorize the captured device
     CvCapture* capture;
 #endif
 
     switch(domains[i]) {
 #ifdef HAVE_DSHOW
-      case CV_CAP_DSHOW:
+      case cv::CAP_DSHOW:
         capture = cvCreateCameraCapture_DShow(index);
         if(capture)
           return capture;
         break;
 #endif
 #ifdef HAVE_MSMF
-      case CV_CAP_MSMF:
+      case cv::CAP_MSMF:
         capture = cvCreateCameraCapture_MSMF(index);
         if(capture)
           return capture;
         break;
 #endif
 #ifdef HAVE_TYZX
-      case CV_CAP_STEREO:
+      case cv::CAP_STEREO:
         capture = cvCreateCameraCapture_TYZX(index);
         if(capture)
           return capture;
         break;
 #endif
-      case CV_CAP_VFW:
+      case cv::CAP_VFW:
 #ifdef HAVE_VFW
         capture = cvCreateCameraCapture_VFW(index);
         if(capture)
@@ -220,16 +214,16 @@ cvCreateCameraCapture(int index) {
 #endif
 
 #ifdef HAVE_GSTREAMER
-        capture = cvCreateCapture_GStreamer(CV_CAP_GSTREAMER_V4L2, reinterpret_cast<char*>(index));
+        capture = cvCreateCapture_GStreamer(cv::CAP_GSTREAMER_V4L2, reinterpret_cast<char*>(index));
         if(capture)
           return capture;
-        capture = cvCreateCapture_GStreamer(CV_CAP_GSTREAMER_V4L, reinterpret_cast<char*>(index));
+        capture = cvCreateCapture_GStreamer(cv::CAP_GSTREAMER_V4L, reinterpret_cast<char*>(index));
         if(capture)
           return capture;
 #endif
-        break; // CV_CAP_VFW
+        break; // cv::CAP_VFW
 
-      case CV_CAP_FIREWIRE:
+      case cv::CAP_FIREWIRE:
 #ifdef HAVE_DC1394_2
         capture = cvCreateCameraCapture_DC1394_2(index);
         if(capture)
@@ -250,14 +244,14 @@ cvCreateCameraCapture(int index) {
 
 #if defined(HAVE_GSTREAMER) && 0
         // Re-enable again when gstreamer 1394 support will land in the backend code
-        capture = cvCreateCapture_GStreamer(CV_CAP_GSTREAMER_1394, 0);
+        capture = cvCreateCapture_GStreamer(cv::CAP_GSTREAMER_1394, 0);
         if(capture)
           return capture;
 #endif
-        break; // CV_CAP_FIREWIRE
+        break; // cv::CAP_FIREWIRE
 
 #ifdef HAVE_MIL
-      case CV_CAP_MIL:
+      case cv::CAP_MIL:
         capture = cvCreateCameraCapture_MIL(index);
         if(capture)
           return capture;
@@ -265,7 +259,7 @@ cvCreateCameraCapture(int index) {
 #endif
 
 #if defined(HAVE_QUICKTIME) || defined(HAVE_QTKIT)
-      case CV_CAP_QT:
+      case cv::CAP_QT:
         capture = cvCreateCameraCapture_QT(index);
         if(capture)
           return capture;
@@ -273,7 +267,7 @@ cvCreateCameraCapture(int index) {
 #endif
 
 #ifdef HAVE_UNICAP
-      case CV_CAP_UNICAP:
+      case cv::CAP_UNICAP:
         capture = cvCreateCameraCapture_Unicap(index);
         if(capture)
           return capture;
@@ -281,7 +275,7 @@ cvCreateCameraCapture(int index) {
 #endif
 
 #ifdef HAVE_PVAPI
-      case CV_CAP_PVAPI:
+      case cv::CAP_PVAPI:
         capture = cvCreateCameraCapture_PvAPI(index);
         if(capture)
           return capture;
@@ -289,7 +283,7 @@ cvCreateCameraCapture(int index) {
 #endif
 
 #ifdef HAVE_OPENNI
-      case CV_CAP_OPENNI:
+      case cv::CAP_OPENNI:
         capture = cvCreateCameraCapture_OpenNI(index);
         if(capture)
           return capture;
@@ -297,7 +291,7 @@ cvCreateCameraCapture(int index) {
 #endif
 
 #ifdef HAVE_ANDROID_NATIVE_CAMERA
-      case CV_CAP_ANDROID:
+      case cv::CAP_ANDROID:
         capture = cvCreateCameraCapture_Android(index);
         if(capture)
           return capture;
@@ -305,7 +299,7 @@ cvCreateCameraCapture(int index) {
 #endif
 
 #ifdef HAVE_XIMEA
-      case CV_CAP_XIAPI:
+      case cv::CAP_XIAPI:
         capture = cvCreateCameraCapture_XIMEA(index);
         if(capture)
           return capture;
@@ -313,7 +307,7 @@ cvCreateCameraCapture(int index) {
 #endif
 
 #ifdef HAVE_AVFOUNDATION
-      case CV_CAP_AVFOUNDATION:
+      case cv::CAP_AVFOUNDATION:
         capture = cvCreateCameraCapture_AVFoundation(index);
         if(capture)
           return capture;
@@ -321,19 +315,19 @@ cvCreateCameraCapture(int index) {
 #endif
 
 #ifdef HAVE_GIGE_API
-      case CV_CAP_GIGANETIX:
+      case cv::CAP_GIGANETIX:
         capture = cvCreateCameraCapture_Giganetix(index);
         if(capture)
           return capture;
-        break; // CV_CAP_GIGANETIX
+        break; // cv::CAP_GIGANETIX
 #endif
 
 #ifdef HAVE_INTELPERC
-      case CV_CAP_INTELPERC:
+      case cv::CAP_INTELPERC:
         capture = cvCreateCameraCapture_IntelPerC(index);
         if(capture)
           return capture;
-        break; // CV_CAP_INTEL_PERC
+        break; // cv::CAP_INTEL_PERC
 #endif
     }
   }
@@ -372,7 +366,7 @@ cvCreateFileCapture(const char* filename) {
 
 #ifdef HAVE_GSTREAMER
   if(!result)
-    result = cvCreateCapture_GStreamer(CV_CAP_GSTREAMER_FILE, filename);
+    result = cvCreateCapture_GStreamer(cv::CAP_GSTREAMER_FILE, filename);
 #endif
 
 #if defined(HAVE_QUICKTIME) || defined(HAVE_QTKIT)
@@ -444,9 +438,7 @@ cvCreateVideoWriter(const char* filename, int fourcc, double fps, CvSize frameSi
     result = cvCreateVideoWriter_GStreamer(filename, fourcc, fps, frameSize, is_color);
 #endif
 
-#if !defined(HAVE_FFMPEG) && !defined(HAVE_VFW) && !defined(HAVE_MSMF) &&                          \
-    !defined(HAVE_AVFOUNDATION) && !defined(HAVE_QUICKTIME) && !defined(HAVE_QTKIT) &&             \
-    !defined(HAVE_GSTREAMER)
+#if !defined(HAVE_FFMPEG) && !defined(HAVE_VFW) && !defined(HAVE_MSMF) && !defined(HAVE_AVFOUNDATION) && !defined(HAVE_QUICKTIME) && !defined(HAVE_QTKIT) && !defined(HAVE_GSTREAMER)
   // If none of the writers is used
   // these statements suppress 'unused parameter' warnings.
   (void)frameSize;
@@ -556,10 +548,7 @@ VideoCapture::get(int propId) {
 
 VideoWriter::VideoWriter() {}
 
-VideoWriter::VideoWriter(
-    const string& filename, int fourcc, double fps, Size frameSize, bool isColor) {
-  open(filename, fourcc, fps, frameSize, isColor);
-}
+VideoWriter::VideoWriter(const string& filename, int fourcc, double fps, Size frameSize, bool isColor) { open(filename, fourcc, fps, frameSize, isColor); }
 
 void
 VideoWriter::release() {

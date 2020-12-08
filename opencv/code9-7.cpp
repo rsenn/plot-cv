@@ -68,10 +68,10 @@ void
 disparity::show_disparity(Size image_size) {
   VideoCapture capr(1), capl(2);
   // reduce frame size
-  capl.set(CV_CAP_PROP_FRAME_HEIGHT, image_size.height);
-  capl.set(CV_CAP_PROP_FRAME_WIDTH, image_size.width);
-  capr.set(CV_CAP_PROP_FRAME_HEIGHT, image_size.height);
-  capr.set(CV_CAP_PROP_FRAME_WIDTH, image_size.width);
+  capl.set(cv::CAP_PROP_FRAME_HEIGHT, image_size.height);
+  capl.set(cv::CAP_PROP_FRAME_WIDTH, image_size.width);
+  capr.set(cv::CAP_PROP_FRAME_HEIGHT, image_size.height);
+  capr.set(cv::CAP_PROP_FRAME_WIDTH, image_size.width);
 
   min_disp = 30;
   num_disp = ((image_size.width / 8) + 15) & -16;
@@ -108,8 +108,7 @@ disparity::show_disparity(Size image_size) {
     reprojectImageTo3D(disp_compute, pointcloud, Q, true);
 
     // Draw red rectangle around 40 px wide square area im image
-    int xmin = framel.cols / 2 - 20, xmax = framel.cols / 2 + 20, ymin = framel.rows / 2 - 20,
-        ymax = framel.rows / 2 + 20;
+    int xmin = framel.cols / 2 - 20, xmax = framel.cols / 2 + 20, ymin = framel.rows / 2 - 20, ymax = framel.rows / 2 + 20;
     rectangle(framel_rect, Point(xmin, ymin), Point(xmax, ymax), Scalar(0, 0, 255));
 
     // Extract depth of 40 px rectangle and print out their mean

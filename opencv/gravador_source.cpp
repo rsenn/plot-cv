@@ -14,18 +14,18 @@ main(int argc, char** argv) {
     return -1;
   }
 
-  double count = cap.get(CV_CAP_PROP_FRAME_COUNT); // get the frame count
+  double count = cap.get(cv::CAP_PROP_FRAME_COUNT); // get the frame count
 
   double Pos = 0; // evitar o primeiro frame
   cout << count << endl;
-  cap.set(CV_CAP_PROP_POS_FRAMES, Pos); // Set index to first frame (simbolo da playstation)
+  cap.set(cv::CAP_PROP_POS_FRAMES, Pos); // Set index to first frame (simbolo da playstation)
   /*namedWindow("MyVideo", CV_WINDOW_AUTOSIZE);
   namedWindow("Teste_Gray", CV_WINDOW_AUTOSIZE);
   namedWindow("Teste_GaussianBlur", CV_WINDOW_AUTOSIZE);
   namedWindow("Teste_Canny", CV_WINDOW_AUTOSIZE);
   */
   while(Pos <= count) {
-    cap.set(CV_CAP_PROP_POS_FRAMES, Pos); // Set index to first frame (simbolo da playstation)
+    cap.set(cv::CAP_PROP_POS_FRAMES, Pos); // Set index to first frame (simbolo da playstation)
     Mat frame;
     bool success = cap.read(frame);
     if(!success) {

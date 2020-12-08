@@ -45,8 +45,7 @@ get_camera() {
   cv::VideoCapture camera(0);
 
   if(!camera.isOpened()) {
-    std::cerr << "Failed to open the camera. Have you run 'sudo modprobe bcm2835-v4l2'?"
-              << std::endl;
+    std::cerr << "Failed to open the camera. Have you run 'sudo modprobe bcm2835-v4l2'?" << std::endl;
     return 1;
   }
 

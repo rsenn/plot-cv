@@ -175,9 +175,7 @@ public:
     query_param(id, CL_DEVICE_MAX_CONSTANT_ARGS, m_max_constant_args);
 #if defined(CL_VERSION_2_0)
     query_param(id, CL_DEVICE_MAX_GLOBAL_VARIABLE_SIZE, m_max_global_variable_size);
-    query_param(id,
-                CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE,
-                m_global_variable_preferred_total_size);
+    query_param(id, CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE, m_global_variable_preferred_total_size);
 #endif
     query_param(id, CL_DEVICE_LOCAL_MEM_TYPE, m_local_mem_type);
     query_param(id, CL_DEVICE_LOCAL_MEM_SIZE, m_local_mem_size);
@@ -426,8 +424,7 @@ public:
   int initVideoSource();
 
   int process_frame_with_open_cl(cv::Mat& frame, bool use_buffer, cl_mem* cl_buffer);
-  int process_cl_buffer_with_opencv(
-      cl_mem buffer, size_t step, int rows, int cols, int type, cv::UMat& u);
+  int process_cl_buffer_with_opencv(cl_mem buffer, size_t step, int rows, int cols, int type, cv::UMat& u);
   int process_cl_image_with_opencv(cl_mem image, cv::UMat& u);
 
   int run();
@@ -593,9 +590,7 @@ App::initOpenCL() {
 
   // create context from first platform with GPU device
   for(i = 0; i < m_platform_ids.size(); i++) {
-    cl_context_properties props[] = {CL_CONTEXT_PLATFORM,
-                                     (cl_context_properties)(m_platform_ids[i]),
-                                     0};
+    cl_context_properties props[] = {CL_CONTEXT_PLATFORM, (cl_context_properties)(m_platform_ids[i]), 0};
 
     m_context = clCreateContextFromType(props, CL_DEVICE_TYPE_GPU, 0, 0, &res);
     if(0 == m_context || CL_SUCCESS != res)
@@ -814,8 +809,7 @@ App::process_frame_with_open_cl(cv::Mat& frame, bool use_buffer, cl_mem* mem_obj
 // and OpenCV UMat objects. It converts (without copying data) OpenCL buffer
 // to OpenCV UMat and then do blur on these data
 int
-App::process_cl_buffer_with_opencv(
-    cl_mem buffer, size_t step, int rows, int cols, int type, cv::UMat& u) {
+App::process_cl_buffer_with_opencv(cl_mem buffer, size_t step, int rows, int cols, int type, cv::UMat& u) {
   cv::ocl::convertFromBuffer(buffer, step, rows, cols, type, u);
 
   // process right half of frame in OpenCV
@@ -891,12 +885,7 @@ App::run() {
       process_frame_with_open_cl(m_frameGray, useBuffer(), &m_mem_obj);
 
       if(useBuffer())
-        process_cl_buffer_with_opencv(m_mem_obj,
-                                      m_frameGray.step[0],
-                                      m_frameGray.rows,
-                                      m_frameGray.cols,
-                                      m_frameGray.type(),
-                                      uframe);
+        process_cl_buffer_with_opencv(m_mem_obj, m_frameGray.step[0], m_frameGray.rows, m_frameGray.cols, m_frameGray.type(), uframe);
       else
         process_cl_image_with_opencv(m_mem_obj, uframe);
     } else {
@@ -907,42 +896,12 @@ App::run() {
 
     uframe.copyTo(img_to_show);
 
-    putText(img_to_show,
-            "Version : " + m_platformInfo.Version(),
-            Point(5, 30),
-            FONT_HERSHEY_SIMPLEX,
-            1.,
-            Scalar(255, 100, 0),
-            2);
-    putText(img_to_show,
-            "Name : " + m_platformInfo.Name(),
-            Point(5, 60),
-            FONT_HERSHEY_SIMPLEX,
-            1.,
-            Scalar(255, 100, 0),
-            2);
-    putText(img_to_show,
-            "Device : " + m_deviceInfo.Name(),
-            Point(5, 90),
-            FONT_HERSHEY_SIMPLEX,
-            1.,
-            Scalar(255, 100, 0),
-            2);
+    putText(img_to_show, "Version : " + m_platformInfo.Version(), Point(5, 30), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
+    putText(img_to_show, "Name : " + m_platformInfo.Name(), Point(5, 60), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
+    putText(img_to_show, "Device : " + m_deviceInfo.Name(), Point(5, 90), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
     cv::String memtype = useBuffer() ? "buffer" : "image";
-    putText(img_to_show,
-            "interop with OpenCL " + memtype,
-            Point(5, 120),
-            FONT_HERSHEY_SIMPLEX,
-            1.,
-            Scalar(255, 100, 0),
-            2);
-    putText(img_to_show,
-            "Time : " + timeStr() + " msec",
-            Point(5, 150),
-            FONT_HERSHEY_SIMPLEX,
-            1.,
-            Scalar(255, 100, 0),
-            2);
+    putText(img_to_show, "interop with OpenCL " + memtype, Point(5, 120), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
+    putText(img_to_show, "Time : " + timeStr() + " msec", Point(5, 150), FONT_HERSHEY_SIMPLEX, 1., Scalar(255, 100, 0), 2);
 
     imshow("opencl_interop", img_to_show);
 

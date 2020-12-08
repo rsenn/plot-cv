@@ -424,7 +424,7 @@ js_array<T>::to_array(JSContext* ctx, JSValueConst arr, std::array<T, N>& out) {
   return N;
 }
 
-template<class T> 
+template<class T>
 int64_t
 js_array<T>::to_scalar(JSContext* ctx, JSValueConst arr, cv::Scalar_<T>& out) {
   size_t n;
@@ -461,7 +461,7 @@ public:
     return n;
   }
   template<size_t N> static int64_t to_array(JSContext* ctx, JSValueConst arr, std::array<cv::Mat, N>& out);
- };
+};
 
 template<> class js_array<cv::Mat> {
 public:
@@ -527,13 +527,13 @@ js_array_to_vector(JSContext* ctx, JSValueConst arr, std::vector<T>& out) {
 
 template<class T, size_t N>
 inline int64_t
-js_array_to_array(JSContext* ctx, JSValueConst arr,std::array<T, N>& out) {
+js_array_to_array(JSContext* ctx, JSValueConst arr, std::array<T, N>& out) {
   return js_array<T>::to_array<N>(ctx, arr, out);
 }
 
 template<class T>
 inline int64_t
-js_array_to_scalar(JSContext* ctx, JSValueConst arr,cv::Scalar_<T>& out) {
+js_array_to_scalar(JSContext* ctx, JSValueConst arr, cv::Scalar_<T>& out) {
   return js_array<T>::to_scalar(ctx, arr, out);
 }
 

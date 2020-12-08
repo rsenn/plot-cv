@@ -176,249 +176,54 @@ MEDIASUBTYPE_GREY : TGUID ='{59455247-0000-0010-8000-00AA00389B71}';
 
 #include <initguid.h>
 
-DEFINE_GUID(
-    MEDIASUBTYPE_GREY, 0x59455247, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
-DEFINE_GUID(
-    MEDIASUBTYPE_Y8, 0x20203859, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
-DEFINE_GUID(
-    MEDIASUBTYPE_Y800, 0x30303859, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+DEFINE_GUID(MEDIASUBTYPE_GREY, 0x59455247, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+DEFINE_GUID(MEDIASUBTYPE_Y8, 0x20203859, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+DEFINE_GUID(MEDIASUBTYPE_Y800, 0x30303859, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
 
-DEFINE_GUID(CLSID_CaptureGraphBuilder2,
-            0xbf87b6e1,
-            0x8c27,
-            0x11d0,
-            0xb3,
-            0xf0,
-            0x00,
-            0xaa,
-            0x00,
-            0x37,
-            0x61,
-            0xc5);
-DEFINE_GUID(
-    CLSID_FilterGraph, 0xe436ebb3, 0x524f, 0x11ce, 0x9f, 0x53, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
-DEFINE_GUID(
-    CLSID_NullRenderer, 0xc1f400a4, 0x3f08, 0x11d3, 0x9f, 0x0b, 0x00, 0x60, 0x08, 0x03, 0x9e, 0x37);
-DEFINE_GUID(CLSID_SampleGrabber,
-            0xc1f400a0,
-            0x3f08,
-            0x11d3,
-            0x9f,
-            0x0b,
-            0x00,
-            0x60,
-            0x08,
-            0x03,
-            0x9e,
-            0x37);
-DEFINE_GUID(CLSID_SystemDeviceEnum,
-            0x62be5d10,
-            0x60eb,
-            0x11d0,
-            0xbd,
-            0x3b,
-            0x00,
-            0xa0,
-            0xc9,
-            0x11,
-            0xce,
-            0x86);
-DEFINE_GUID(CLSID_VideoInputDeviceCategory,
-            0x860bb310,
-            0x5d01,
-            0x11d0,
-            0xbd,
-            0x3b,
-            0x00,
-            0xa0,
-            0xc9,
-            0x11,
-            0xce,
-            0x86);
-DEFINE_GUID(
-    FORMAT_VideoInfo, 0x05589f80, 0xc356, 0x11ce, 0xbf, 0x01, 0x00, 0xaa, 0x00, 0x55, 0x59, 0x5a);
-DEFINE_GUID(IID_IAMAnalogVideoDecoder,
-            0xc6e13350,
-            0x30ac,
-            0x11d0,
-            0xa1,
-            0x8c,
-            0x00,
-            0xa0,
-            0xc9,
-            0x11,
-            0x89,
-            0x56);
-DEFINE_GUID(IID_IAMCameraControl,
-            0xc6e13370,
-            0x30ac,
-            0x11d0,
-            0xa1,
-            0x8c,
-            0x00,
-            0xa0,
-            0xc9,
-            0x11,
-            0x89,
-            0x56);
-DEFINE_GUID(
-    IID_IAMCrossbar, 0xc6e13380, 0x30ac, 0x11d0, 0xa1, 0x8c, 0x00, 0xa0, 0xc9, 0x11, 0x89, 0x56);
-DEFINE_GUID(IID_IAMStreamConfig,
-            0xc6e13340,
-            0x30ac,
-            0x11d0,
-            0xa1,
-            0x8c,
-            0x00,
-            0xa0,
-            0xc9,
-            0x11,
-            0x89,
-            0x56);
-DEFINE_GUID(IID_IAMVideoProcAmp,
-            0xc6e13360,
-            0x30ac,
-            0x11d0,
-            0xa1,
-            0x8c,
-            0x00,
-            0xa0,
-            0xc9,
-            0x11,
-            0x89,
-            0x56);
-DEFINE_GUID(
-    IID_IBaseFilter, 0x56a86895, 0x0ad4, 0x11ce, 0xb0, 0x3a, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
-DEFINE_GUID(IID_ICaptureGraphBuilder2,
-            0x93e5a4e0,
-            0x2d50,
-            0x11d2,
-            0xab,
-            0xfa,
-            0x00,
-            0xa0,
-            0xc9,
-            0xc6,
-            0xe3,
-            0x8d);
-DEFINE_GUID(
-    IID_ICreateDevEnum, 0x29840822, 0x5b84, 0x11d0, 0xbd, 0x3b, 0x00, 0xa0, 0xc9, 0x11, 0xce, 0x86);
-DEFINE_GUID(
-    IID_IGraphBuilder, 0x56a868a9, 0x0ad4, 0x11ce, 0xb0, 0x3a, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
-DEFINE_GUID(
-    IID_IMPEG2PIDMap, 0xafb6c2a1, 0x2c41, 0x11d3, 0x8a, 0x60, 0x00, 0x00, 0xf8, 0x1e, 0x0e, 0x4a);
-DEFINE_GUID(
-    IID_IMediaControl, 0x56a868b1, 0x0ad4, 0x11ce, 0xb0, 0x3a, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
-DEFINE_GUID(
-    IID_IMediaEventEx, 0x56a868c0, 0x0ad4, 0x11ce, 0xb0, 0x3a, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
-DEFINE_GUID(
-    IID_IMediaFilter, 0x56a86899, 0x0ad4, 0x11ce, 0xb0, 0x3a, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
-DEFINE_GUID(
-    IID_ISampleGrabber, 0x6b652fff, 0x11fe, 0x4fce, 0x92, 0xad, 0x02, 0x66, 0xb5, 0xd7, 0xc7, 0x8f);
-DEFINE_GUID(
-    LOOK_UPSTREAM_ONLY, 0xac798be0, 0x98e3, 0x11d1, 0xb3, 0xf1, 0x00, 0xaa, 0x00, 0x37, 0x61, 0xc5);
-DEFINE_GUID(
-    MEDIASUBTYPE_AYUV, 0x56555941, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
-DEFINE_GUID(
-    MEDIASUBTYPE_IYUV, 0x56555949, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
-DEFINE_GUID(
-    MEDIASUBTYPE_RGB24, 0xe436eb7d, 0x524f, 0x11ce, 0x9f, 0x53, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
-DEFINE_GUID(
-    MEDIASUBTYPE_RGB32, 0xe436eb7e, 0x524f, 0x11ce, 0x9f, 0x53, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
-DEFINE_GUID(MEDIASUBTYPE_RGB555,
-            0xe436eb7c,
-            0x524f,
-            0x11ce,
-            0x9f,
-            0x53,
-            0x00,
-            0x20,
-            0xaf,
-            0x0b,
-            0xa7,
-            0x70);
-DEFINE_GUID(MEDIASUBTYPE_RGB565,
-            0xe436eb7b,
-            0x524f,
-            0x11ce,
-            0x9f,
-            0x53,
-            0x00,
-            0x20,
-            0xaf,
-            0x0b,
-            0xa7,
-            0x70);
-DEFINE_GUID(
-    MEDIASUBTYPE_I420, 0x30323449, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
-DEFINE_GUID(
-    MEDIASUBTYPE_UYVY, 0x59565955, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
-DEFINE_GUID(
-    MEDIASUBTYPE_Y211, 0x31313259, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
-DEFINE_GUID(
-    MEDIASUBTYPE_Y411, 0x31313459, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
-DEFINE_GUID(
-    MEDIASUBTYPE_Y41P, 0x50313459, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
-DEFINE_GUID(
-    MEDIASUBTYPE_YUY2, 0x32595559, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
-DEFINE_GUID(
-    MEDIASUBTYPE_YUYV, 0x56595559, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
-DEFINE_GUID(
-    MEDIASUBTYPE_YV12, 0x32315659, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
-DEFINE_GUID(
-    MEDIASUBTYPE_YVU9, 0x39555659, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
-DEFINE_GUID(
-    MEDIASUBTYPE_YVYU, 0x55595659, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
-DEFINE_GUID(MEDIASUBTYPE_MJPG,
-            0x47504A4D,
-            0x0000,
-            0x0010,
-            0x80,
-            0x00,
-            0x00,
-            0xaa,
-            0x00,
-            0x38,
-            0x9b,
+DEFINE_GUID(CLSID_CaptureGraphBuilder2, 0xbf87b6e1, 0x8c27, 0x11d0, 0xb3, 0xf0, 0x00, 0xaa, 0x00, 0x37, 0x61, 0xc5);
+DEFINE_GUID(CLSID_FilterGraph, 0xe436ebb3, 0x524f, 0x11ce, 0x9f, 0x53, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
+DEFINE_GUID(CLSID_NullRenderer, 0xc1f400a4, 0x3f08, 0x11d3, 0x9f, 0x0b, 0x00, 0x60, 0x08, 0x03, 0x9e, 0x37);
+DEFINE_GUID(CLSID_SampleGrabber, 0xc1f400a0, 0x3f08, 0x11d3, 0x9f, 0x0b, 0x00, 0x60, 0x08, 0x03, 0x9e, 0x37);
+DEFINE_GUID(CLSID_SystemDeviceEnum, 0x62be5d10, 0x60eb, 0x11d0, 0xbd, 0x3b, 0x00, 0xa0, 0xc9, 0x11, 0xce, 0x86);
+DEFINE_GUID(CLSID_VideoInputDeviceCategory, 0x860bb310, 0x5d01, 0x11d0, 0xbd, 0x3b, 0x00, 0xa0, 0xc9, 0x11, 0xce, 0x86);
+DEFINE_GUID(FORMAT_VideoInfo, 0x05589f80, 0xc356, 0x11ce, 0xbf, 0x01, 0x00, 0xaa, 0x00, 0x55, 0x59, 0x5a);
+DEFINE_GUID(IID_IAMAnalogVideoDecoder, 0xc6e13350, 0x30ac, 0x11d0, 0xa1, 0x8c, 0x00, 0xa0, 0xc9, 0x11, 0x89, 0x56);
+DEFINE_GUID(IID_IAMCameraControl, 0xc6e13370, 0x30ac, 0x11d0, 0xa1, 0x8c, 0x00, 0xa0, 0xc9, 0x11, 0x89, 0x56);
+DEFINE_GUID(IID_IAMCrossbar, 0xc6e13380, 0x30ac, 0x11d0, 0xa1, 0x8c, 0x00, 0xa0, 0xc9, 0x11, 0x89, 0x56);
+DEFINE_GUID(IID_IAMStreamConfig, 0xc6e13340, 0x30ac, 0x11d0, 0xa1, 0x8c, 0x00, 0xa0, 0xc9, 0x11, 0x89, 0x56);
+DEFINE_GUID(IID_IAMVideoProcAmp, 0xc6e13360, 0x30ac, 0x11d0, 0xa1, 0x8c, 0x00, 0xa0, 0xc9, 0x11, 0x89, 0x56);
+DEFINE_GUID(IID_IBaseFilter, 0x56a86895, 0x0ad4, 0x11ce, 0xb0, 0x3a, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
+DEFINE_GUID(IID_ICaptureGraphBuilder2, 0x93e5a4e0, 0x2d50, 0x11d2, 0xab, 0xfa, 0x00, 0xa0, 0xc9, 0xc6, 0xe3, 0x8d);
+DEFINE_GUID(IID_ICreateDevEnum, 0x29840822, 0x5b84, 0x11d0, 0xbd, 0x3b, 0x00, 0xa0, 0xc9, 0x11, 0xce, 0x86);
+DEFINE_GUID(IID_IGraphBuilder, 0x56a868a9, 0x0ad4, 0x11ce, 0xb0, 0x3a, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
+DEFINE_GUID(IID_IMPEG2PIDMap, 0xafb6c2a1, 0x2c41, 0x11d3, 0x8a, 0x60, 0x00, 0x00, 0xf8, 0x1e, 0x0e, 0x4a);
+DEFINE_GUID(IID_IMediaControl, 0x56a868b1, 0x0ad4, 0x11ce, 0xb0, 0x3a, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
+DEFINE_GUID(IID_IMediaEventEx, 0x56a868c0, 0x0ad4, 0x11ce, 0xb0, 0x3a, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
+DEFINE_GUID(IID_IMediaFilter, 0x56a86899, 0x0ad4, 0x11ce, 0xb0, 0x3a, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
+DEFINE_GUID(IID_ISampleGrabber, 0x6b652fff, 0x11fe, 0x4fce, 0x92, 0xad, 0x02, 0x66, 0xb5, 0xd7, 0xc7, 0x8f);
+DEFINE_GUID(LOOK_UPSTREAM_ONLY, 0xac798be0, 0x98e3, 0x11d1, 0xb3, 0xf1, 0x00, 0xaa, 0x00, 0x37, 0x61, 0xc5);
+DEFINE_GUID(MEDIASUBTYPE_AYUV, 0x56555941, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+DEFINE_GUID(MEDIASUBTYPE_IYUV, 0x56555949, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+DEFINE_GUID(MEDIASUBTYPE_RGB24, 0xe436eb7d, 0x524f, 0x11ce, 0x9f, 0x53, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
+DEFINE_GUID(MEDIASUBTYPE_RGB32, 0xe436eb7e, 0x524f, 0x11ce, 0x9f, 0x53, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
+DEFINE_GUID(MEDIASUBTYPE_RGB555, 0xe436eb7c, 0x524f, 0x11ce, 0x9f, 0x53, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
+DEFINE_GUID(MEDIASUBTYPE_RGB565, 0xe436eb7b, 0x524f, 0x11ce, 0x9f, 0x53, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
+DEFINE_GUID(MEDIASUBTYPE_I420, 0x30323449, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+DEFINE_GUID(MEDIASUBTYPE_UYVY, 0x59565955, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+DEFINE_GUID(MEDIASUBTYPE_Y211, 0x31313259, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+DEFINE_GUID(MEDIASUBTYPE_Y411, 0x31313459, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+DEFINE_GUID(MEDIASUBTYPE_Y41P, 0x50313459, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+DEFINE_GUID(MEDIASUBTYPE_YUY2, 0x32595559, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+DEFINE_GUID(MEDIASUBTYPE_YUYV, 0x56595559, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+DEFINE_GUID(MEDIASUBTYPE_YV12, 0x32315659, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+DEFINE_GUID(MEDIASUBTYPE_YVU9, 0x39555659, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+DEFINE_GUID(MEDIASUBTYPE_YVYU, 0x55595659, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+DEFINE_GUID(MEDIASUBTYPE_MJPG, 0x47504A4D, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
             0x71); // MGB
-DEFINE_GUID(MEDIATYPE_Interleaved,
-            0x73766169,
-            0x0000,
-            0x0010,
-            0x80,
-            0x00,
-            0x00,
-            0xaa,
-            0x00,
-            0x38,
-            0x9b,
-            0x71);
-DEFINE_GUID(
-    MEDIATYPE_Video, 0x73646976, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
-DEFINE_GUID(PIN_CATEGORY_CAPTURE,
-            0xfb6c4281,
-            0x0353,
-            0x11d1,
-            0x90,
-            0x5f,
-            0x00,
-            0x00,
-            0xc0,
-            0xcc,
-            0x16,
-            0xba);
-DEFINE_GUID(PIN_CATEGORY_PREVIEW,
-            0xfb6c4282,
-            0x0353,
-            0x11d1,
-            0x90,
-            0x5f,
-            0x00,
-            0x00,
-            0xc0,
-            0xcc,
-            0x16,
-            0xba);
+DEFINE_GUID(MEDIATYPE_Interleaved, 0x73766169, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+DEFINE_GUID(MEDIATYPE_Video, 0x73646976, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+DEFINE_GUID(PIN_CATEGORY_CAPTURE, 0xfb6c4281, 0x0353, 0x11d1, 0x90, 0x5f, 0x00, 0x00, 0xc0, 0xcc, 0x16, 0xba);
+DEFINE_GUID(PIN_CATEGORY_PREVIEW, 0xfb6c4282, 0x0353, 0x11d1, 0x90, 0x5f, 0x00, 0x00, 0xc0, 0xcc, 0x16, 0xba);
 
 interface ISampleGrabberCB : public IUnknown {
   virtual HRESULT STDMETHODCALLTYPE SampleCB(double SampleTime, IMediaSample* pSample) = 0;
@@ -439,8 +244,7 @@ interface ISampleGrabber : public IUnknown {
 
   virtual HRESULT STDMETHODCALLTYPE GetCurrentSample(IMediaSample * *ppSample) = 0;
 
-  virtual HRESULT STDMETHODCALLTYPE SetCallback(ISampleGrabberCB * pCallback,
-                                                LONG WhichMethodToCallback) = 0;
+  virtual HRESULT STDMETHODCALLTYPE SetCallback(ISampleGrabberCB * pCallback, LONG WhichMethodToCallback) = 0;
 };
 
 #ifndef HEADER
@@ -676,9 +480,7 @@ public:
   // some devices will stop delivering frames after a while - this method gives you the option to
   // try and reconnect to a device if videoInput detects that a device has stopped delivering
   // frames. you MUST CALL isFrameNew every app loop for this to have any effect
-  void setAutoReconnectOnFreeze(int deviceNumber,
-                                bool doReconnect,
-                                int numMissedFramesBeforeReconnect);
+  void setAutoReconnectOnFreeze(int deviceNumber, bool doReconnect, int numMissedFramesBeforeReconnect);
 
   // Choose one of these five to setup your device
   bool setupDevice(int deviceID);
@@ -717,29 +519,13 @@ public:
 
   // Manual control over settings thanks.....
   // These are experimental for now.
-  bool setVideoSettingFilter(
-      int deviceID, long Property, long lValue, long Flags = 0, bool useDefaultValue = false);
+  bool setVideoSettingFilter(int deviceID, long Property, long lValue, long Flags = 0, bool useDefaultValue = false);
   bool setVideoSettingFilterPct(int deviceID, long Property, float pctValue, long Flags = 0);
-  bool getVideoSettingFilter(int deviceID,
-                             long Property,
-                             long& min,
-                             long& max,
-                             long& SteppingDelta,
-                             long& currentValue,
-                             long& flags,
-                             long& defaultValue);
+  bool getVideoSettingFilter(int deviceID, long Property, long& min, long& max, long& SteppingDelta, long& currentValue, long& flags, long& defaultValue);
 
-  bool setVideoSettingCamera(
-      int deviceID, long Property, long lValue, long Flags = 0, bool useDefaultValue = false);
+  bool setVideoSettingCamera(int deviceID, long Property, long lValue, long Flags = 0, bool useDefaultValue = false);
   bool setVideoSettingCameraPct(int deviceID, long Property, float pctValue, long Flags = 0);
-  bool getVideoSettingCamera(int deviceID,
-                             long Property,
-                             long& min,
-                             long& max,
-                             long& SteppingDelta,
-                             long& currentValue,
-                             long& flags,
-                             long& defaultValue);
+  bool getVideoSettingCamera(int deviceID, long Property, long& min, long& max, long& SteppingDelta, long& currentValue, long& flags, long& defaultValue);
 
   // bool setVideoSettingCam(int deviceID, long Property, long lValue, long Flags = NULL, bool
   // useDefaultValue = false);
@@ -760,7 +546,7 @@ public:
   // number of devices available
   int devicesFound;
 
-  // mapping from OpenCV CV_CAP_PROP to videoinput/dshow properties
+  // mapping from OpenCV cv::CAP_PROP to videoinput/dshow properties
   int getVideoPropertyFromCV(int cv_property);
   int getCameraPropertyFromCV(int cv_property);
 
@@ -770,8 +556,7 @@ private:
   void setPhyCon(int deviceID, int conn);
   void setAttemptCaptureSize(int deviceID, int w, int h, GUID mediaType = MEDIASUBTYPE_RGB24);
   bool setup(int deviceID);
-  void processPixels(
-      unsigned char* src, unsigned char* dst, int width, int height, bool bRGB, bool bFlip);
+  void processPixels(unsigned char* src, unsigned char* dst, int width, int height, bool bRGB, bool bFlip);
   int start(int deviceID, videoDevice* VD);
   int getDeviceCount();
   void getMediaSubtypeAsString(GUID type, char* typeAsString);
@@ -786,10 +571,7 @@ private:
   static HRESULT ShowStreamPropertyPages(IAMStreamConfig* pStream);
 
   HRESULT SaveGraphFile(IGraphBuilder* pGraph, WCHAR* wszPath);
-  HRESULT routeCrossbar(ICaptureGraphBuilder2** ppBuild,
-                        IBaseFilter** pVidInFilter,
-                        int conType,
-                        GUID captureMode);
+  HRESULT routeCrossbar(ICaptureGraphBuilder2** ppBuild, IBaseFilter** pVidInFilter, int conType, GUID captureMode);
 
   // don't touch
   static bool comInit();
@@ -1359,9 +1141,7 @@ videoInput::setIdealFramerate(int deviceNumber, int idealFramerate) {
 // ----------------------------------------------------------------------
 
 void
-videoInput::setAutoReconnectOnFreeze(int deviceNumber,
-                                     bool doReconnect,
-                                     int numMissedFramesBeforeReconnect) {
+videoInput::setAutoReconnectOnFreeze(int deviceNumber, bool doReconnect, int numMissedFramesBeforeReconnect) {
   if(deviceNumber >= VI_MAX_CAMERAS)
     return;
 
@@ -1478,21 +1258,13 @@ videoInput::setFormat(int deviceNumber, int format) {
 
     if(VDList[deviceNumber]->specificFormat) {
 
-      HRESULT hr = getDevice(&VDList[deviceNumber]->pVideoInputFilter,
-                             deviceNumber,
-                             VDList[deviceNumber]->wDeviceName,
-                             VDList[deviceNumber]->nDeviceName);
+      HRESULT hr = getDevice(&VDList[deviceNumber]->pVideoInputFilter, deviceNumber, VDList[deviceNumber]->wDeviceName, VDList[deviceNumber]->nDeviceName);
       if(hr != S_OK) {
         return false;
       }
 
       IAMAnalogVideoDecoder* pVideoDec = NULL;
-      hr = VDList[deviceNumber]->pCaptureGraph->FindInterface(
-          NULL,
-          &MEDIATYPE_Video,
-          VDList[deviceNumber]->pVideoInputFilter,
-          IID_IAMAnalogVideoDecoder,
-          (void**)&pVideoDec);
+      hr = VDList[deviceNumber]->pCaptureGraph->FindInterface(NULL, &MEDIATYPE_Video, VDList[deviceNumber]->pVideoInputFilter, IID_IAMAnalogVideoDecoder, (void**)&pVideoDec);
 
       // in case the settings window some how freed them first
       if(VDList[deviceNumber]->pVideoInputFilter)
@@ -1556,11 +1328,7 @@ videoInput::listDevices(bool silent) {
   IEnumMoniker* pEnum = NULL;
   int deviceCounter = 0;
 
-  HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum,
-                                NULL,
-                                CLSCTX_INPROC_SERVER,
-                                IID_ICreateDevEnum,
-                                reinterpret_cast<void**>(&pDevEnum));
+  HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, reinterpret_cast<void**>(&pDevEnum));
 
   if(SUCCEEDED(hr)) {
     // Create an enumerator for the video capture category.
@@ -1791,8 +1559,7 @@ videoInput::isFrameNew(int id) {
   result = VDList[id]->sgCallback->newFrame;
 
   // we need to give it some time at the begining to start up so lets check after 400 frames
-  if(VDList[id]->nFramesRunning > 400 &&
-     VDList[id]->sgCallback->freezeCheck > VDList[id]->nFramesForReconnect) {
+  if(VDList[id]->nFramesRunning > 400 && VDList[id]->sgCallback->freezeCheck > VDList[id]->nFramesForReconnect) {
     freeze = true;
   }
 
@@ -1860,10 +1627,7 @@ videoInput::showSettingsWindow(int id) {
     // we reconnect to the device as we have freed our reference to it
     // why have we freed our reference? because there seemed to be an issue
     // with some mpeg devices if we didn't
-    HRESULT hr = getDevice(&VDList[id]->pVideoInputFilter,
-                           id,
-                           VDList[id]->wDeviceName,
-                           VDList[id]->nDeviceName);
+    HRESULT hr = getDevice(&VDList[id]->pVideoInputFilter, id, VDList[id]->wDeviceName, VDList[id]->nDeviceName);
     if(hr == S_OK) {
       // myTempThread = (HANDLE)
       _beginthread(basicThread, 0, (void*)&VDList[id]);
@@ -1873,14 +1637,7 @@ videoInput::showSettingsWindow(int id) {
 
 // Set a video signal setting using IAMVideoProcAmp
 bool
-videoInput::getVideoSettingFilter(int deviceID,
-                                  long Property,
-                                  long& min,
-                                  long& max,
-                                  long& SteppingDelta,
-                                  long& currentValue,
-                                  long& flags,
-                                  long& defaultValue) {
+videoInput::getVideoSettingFilter(int deviceID, long Property, long& min, long& max, long& SteppingDelta, long& currentValue, long& flags, long& defaultValue) {
   if(!isDeviceSetup(deviceID))
     return false;
 
@@ -1913,14 +1670,7 @@ videoInput::getVideoSettingFilter(int deviceID,
   DebugPrintOut("Setting video setting %s.\n", propStr);
 
   pAMVideoProcAmp->GetRange(Property, &min, &max, &SteppingDelta, &defaultValue, &flags);
-  DebugPrintOut(
-      "Range for video setting %s: Min:%ld Max:%ld SteppingDelta:%ld Default:%ld Flags:%ld\n",
-      propStr,
-      min,
-      max,
-      SteppingDelta,
-      defaultValue,
-      flags);
+  DebugPrintOut("Range for video setting %s: Min:%ld Max:%ld SteppingDelta:%ld Default:%ld Flags:%ld\n", propStr, min, max, SteppingDelta, defaultValue, flags);
   pAMVideoProcAmp->Get(Property, &currentValue, &flags);
 
   if(pAMVideoProcAmp)
@@ -1941,8 +1691,7 @@ videoInput::setVideoSettingFilterPct(int deviceID, long Property, float pctValue
 
   long min, max, currentValue, flags, defaultValue, stepAmnt;
 
-  if(!getVideoSettingFilter(
-         deviceID, Property, min, max, stepAmnt, currentValue, flags, defaultValue))
+  if(!getVideoSettingFilter(deviceID, Property, min, max, stepAmnt, currentValue, flags, defaultValue))
     return false;
 
   if(pctValue > 1.0)
@@ -1974,13 +1723,7 @@ videoInput::setVideoSettingFilterPct(int deviceID, long Property, float pctValue
       rasterValue -= mod;
     else
       rasterValue += stepAmnt - mod;
-    DebugPrintOut(
-        "RASTER - pctValue is %f - value is %li - step is %li - mod is %li - rasterValue is %li\n",
-        pctValue,
-        value,
-        stepAmnt,
-        mod,
-        rasterValue);
+    DebugPrintOut("RASTER - pctValue is %f - value is %li - step is %li - mod is %li - rasterValue is %li\n", pctValue, value, stepAmnt, mod, rasterValue);
   }
 
   return setVideoSettingFilter(deviceID, Property, rasterValue, Flags, false);
@@ -1988,8 +1731,7 @@ videoInput::setVideoSettingFilterPct(int deviceID, long Property, float pctValue
 
 // Set a video signal setting using IAMVideoProcAmp
 bool
-videoInput::setVideoSettingFilter(
-    int deviceID, long Property, long lValue, long Flags, bool useDefaultValue) {
+videoInput::setVideoSettingFilter(int deviceID, long Property, long lValue, long Flags, bool useDefaultValue) {
   if(!isDeviceSetup(deviceID))
     return false;
 
@@ -2023,20 +1765,10 @@ videoInput::setVideoSettingFilter(
   long CurrVal, Min, Max, SteppingDelta, Default, CapsFlags, AvailableCapsFlags = 0;
 
   pAMVideoProcAmp->GetRange(Property, &Min, &Max, &SteppingDelta, &Default, &AvailableCapsFlags);
-  DebugPrintOut(
-      "Range for video setting %s: Min:%ld Max:%ld SteppingDelta:%ld Default:%ld Flags:%ld\n",
-      propStr,
-      Min,
-      Max,
-      SteppingDelta,
-      Default,
-      AvailableCapsFlags);
+  DebugPrintOut("Range for video setting %s: Min:%ld Max:%ld SteppingDelta:%ld Default:%ld Flags:%ld\n", propStr, Min, Max, SteppingDelta, Default, AvailableCapsFlags);
   pAMVideoProcAmp->Get(Property, &CurrVal, &CapsFlags);
 
-  DebugPrintOut("Current value: %ld Flags %ld (%s)\n",
-                CurrVal,
-                CapsFlags,
-                (CapsFlags == 1 ? "Auto" : (CapsFlags == 2 ? "Manual" : "Unknown")));
+  DebugPrintOut("Current value: %ld Flags %ld (%s)\n", CurrVal, CapsFlags, (CapsFlags == 1 ? "Auto" : (CapsFlags == 2 ? "Manual" : "Unknown")));
 
   if(useDefaultValue) {
     pAMVideoProcAmp->Set(Property, Default, VideoProcAmp_Flags_Auto);
@@ -2062,8 +1794,7 @@ videoInput::setVideoSettingCameraPct(int deviceID, long Property, float pctValue
 
   long min, max, currentValue, flags, defaultValue, stepAmnt;
 
-  if(!getVideoSettingCamera(
-         deviceID, Property, min, max, stepAmnt, currentValue, flags, defaultValue))
+  if(!getVideoSettingCamera(deviceID, Property, min, max, stepAmnt, currentValue, flags, defaultValue))
     return false;
 
   if(pctValue > 1.0)
@@ -2095,35 +1826,24 @@ videoInput::setVideoSettingCameraPct(int deviceID, long Property, float pctValue
       rasterValue -= mod;
     else
       rasterValue += stepAmnt - mod;
-    DebugPrintOut(
-        "RASTER - pctValue is %f - value is %li - step is %li - mod is %li - rasterValue is %li\n",
-        pctValue,
-        value,
-        stepAmnt,
-        mod,
-        rasterValue);
+    DebugPrintOut("RASTER - pctValue is %f - value is %li - step is %li - mod is %li - rasterValue is %li\n", pctValue, value, stepAmnt, mod, rasterValue);
   }
 
   return setVideoSettingCamera(deviceID, Property, rasterValue, Flags, false);
 }
 
 bool
-videoInput::setVideoSettingCamera(
-    int deviceID, long Property, long lValue, long Flags, bool useDefaultValue) {
+videoInput::setVideoSettingCamera(int deviceID, long Property, long lValue, long Flags, bool useDefaultValue) {
   IAMCameraControl* pIAMCameraControl;
   if(isDeviceSetup(deviceID)) {
     HRESULT hr;
-    hr = getDevice(&VDList[deviceID]->pVideoInputFilter,
-                   deviceID,
-                   VDList[deviceID]->wDeviceName,
-                   VDList[deviceID]->nDeviceName);
+    hr = getDevice(&VDList[deviceID]->pVideoInputFilter, deviceID, VDList[deviceID]->wDeviceName, VDList[deviceID]->nDeviceName);
 
     char propStr[16];
     getCameraPropertyAsString(Property, propStr);
 
     DebugPrintOut("Setting video setting %s.\n", propStr);
-    hr = VDList[deviceID]->pVideoInputFilter->QueryInterface(IID_IAMCameraControl,
-                                                             (void**)&pIAMCameraControl);
+    hr = VDList[deviceID]->pVideoInputFilter->QueryInterface(IID_IAMCameraControl, (void**)&pIAMCameraControl);
     if(FAILED(hr)) {
       DebugPrintOut("Error\n");
       if(VDList[deviceID]->pVideoInputFilter)
@@ -2133,21 +1853,10 @@ videoInput::setVideoSettingCamera(
       return false;
     } else {
       long CurrVal, Min, Max, SteppingDelta, Default, CapsFlags, AvailableCapsFlags;
-      pIAMCameraControl->GetRange(
-          Property, &Min, &Max, &SteppingDelta, &Default, &AvailableCapsFlags);
-      DebugPrintOut(
-          "Range for video setting %s: Min:%ld Max:%ld SteppingDelta:%ld Default:%ld Flags:%ld\n",
-          propStr,
-          Min,
-          Max,
-          SteppingDelta,
-          Default,
-          AvailableCapsFlags);
+      pIAMCameraControl->GetRange(Property, &Min, &Max, &SteppingDelta, &Default, &AvailableCapsFlags);
+      DebugPrintOut("Range for video setting %s: Min:%ld Max:%ld SteppingDelta:%ld Default:%ld Flags:%ld\n", propStr, Min, Max, SteppingDelta, Default, AvailableCapsFlags);
       pIAMCameraControl->Get(Property, &CurrVal, &CapsFlags);
-      DebugPrintOut("Current value: %ld Flags %ld (%s)\n",
-                    CurrVal,
-                    CapsFlags,
-                    (CapsFlags == 1 ? "Auto" : (CapsFlags == 2 ? "Manual" : "Unknown")));
+      DebugPrintOut("Current value: %ld Flags %ld (%s)\n", CurrVal, CapsFlags, (CapsFlags == 1 ? "Auto" : (CapsFlags == 2 ? "Manual" : "Unknown")));
       if(useDefaultValue) {
         pIAMCameraControl->Set(Property, Default, CameraControl_Flags_Auto);
       } else {
@@ -2167,14 +1876,7 @@ videoInput::setVideoSettingCamera(
 }
 
 bool
-videoInput::getVideoSettingCamera(int deviceID,
-                                  long Property,
-                                  long& min,
-                                  long& max,
-                                  long& SteppingDelta,
-                                  long& currentValue,
-                                  long& flags,
-                                  long& defaultValue) {
+videoInput::getVideoSettingCamera(int deviceID, long Property, long& min, long& max, long& SteppingDelta, long& currentValue, long& flags, long& defaultValue) {
   if(!isDeviceSetup(deviceID))
     return false;
 
@@ -2206,14 +1908,7 @@ videoInput::getVideoSettingCamera(int deviceID,
   DebugPrintOut("Setting video setting %s.\n", propStr);
 
   pIAMCameraControl->GetRange(Property, &min, &max, &SteppingDelta, &defaultValue, &flags);
-  DebugPrintOut(
-      "Range for video setting %s: Min:%ld Max:%ld SteppingDelta:%ld Default:%ld Flags:%ld\n",
-      propStr,
-      min,
-      max,
-      SteppingDelta,
-      defaultValue,
-      flags);
+  DebugPrintOut("Range for video setting %s: Min:%ld Max:%ld SteppingDelta:%ld Default:%ld Flags:%ld\n", propStr, min, max, SteppingDelta, defaultValue, flags);
   pIAMCameraControl->Get(Property, &currentValue, &flags);
 
   if(pIAMCameraControl)
@@ -2394,18 +2089,14 @@ videoInput::setup(int deviceNumber) {
   devicesFound = getDeviceCount();
 
   if(deviceNumber > devicesFound - 1) {
-    DebugPrintOut("SETUP: device[%i] not found - you have %i devices available\n",
-                  deviceNumber,
-                  devicesFound);
+    DebugPrintOut("SETUP: device[%i] not found - you have %i devices available\n", deviceNumber, devicesFound);
     if(devicesFound >= 0)
-      DebugPrintOut("SETUP: this means that the last device you can use is device[%i]\n",
-                    devicesFound - 1);
+      DebugPrintOut("SETUP: this means that the last device you can use is device[%i]\n", devicesFound - 1);
     return false;
   }
 
   if(VDList[deviceNumber]->readyToCapture) {
-    DebugPrintOut("SETUP: can't setup, device %i is currently being used\n",
-                  VDList[deviceNumber]->myID);
+    DebugPrintOut("SETUP: can't setup, device %i is currently being used\n", VDList[deviceNumber]->myID);
     return false;
   }
 
@@ -2422,8 +2113,7 @@ videoInput::setup(int deviceNumber) {
 // ----------------------------------------------------------------------
 
 void
-videoInput::processPixels(
-    unsigned char* src, unsigned char* dst, int width, int height, bool bRGB, bool bFlip) {
+videoInput::processPixels(unsigned char* src, unsigned char* dst, int width, int height, bool bRGB, bool bFlip) {
 
   int widthInBytes = width * 3;
   int numBytes = widthInBytes * height;
@@ -2583,25 +2273,25 @@ videoInput::getVideoPropertyFromCV(int cv_property) {
 
   // see VideoProcAmpProperty in strmif.h
   switch(cv_property) {
-    case CV_CAP_PROP_BRIGHTNESS: return VideoProcAmp_Brightness;
+    case cv::CAP_PROP_BRIGHTNESS: return VideoProcAmp_Brightness;
 
-    case CV_CAP_PROP_CONTRAST: return VideoProcAmp_Contrast;
+    case cv::CAP_PROP_CONTRAST: return VideoProcAmp_Contrast;
 
-    case CV_CAP_PROP_HUE: return VideoProcAmp_Hue;
+    case cv::CAP_PROP_HUE: return VideoProcAmp_Hue;
 
-    case CV_CAP_PROP_SATURATION: return VideoProcAmp_Saturation;
+    case cv::CAP_PROP_SATURATION: return VideoProcAmp_Saturation;
 
-    case CV_CAP_PROP_SHARPNESS: return VideoProcAmp_Sharpness;
+    case cv::CAP_PROP_SHARPNESS: return VideoProcAmp_Sharpness;
 
-    case CV_CAP_PROP_GAMMA: return VideoProcAmp_Gamma;
+    case cv::CAP_PROP_GAMMA: return VideoProcAmp_Gamma;
 
-    case CV_CAP_PROP_MONOCHROME: return VideoProcAmp_ColorEnable;
+    case cv::CAP_PROP_MONOCHROME: return VideoProcAmp_ColorEnable;
 
-    case CV_CAP_PROP_WHITE_BALANCE_BLUE_U: return VideoProcAmp_WhiteBalance;
+    case cv::CAP_PROP_WHITE_BALANCE_BLUE_U: return VideoProcAmp_WhiteBalance;
 
-    case CV_CAP_PROP_BACKLIGHT: return VideoProcAmp_BacklightCompensation;
+    case cv::CAP_PROP_BACKLIGHT: return VideoProcAmp_BacklightCompensation;
 
-    case CV_CAP_PROP_GAIN: return VideoProcAmp_Gain;
+    case cv::CAP_PROP_GAIN: return VideoProcAmp_Gain;
   }
   return -1;
 }
@@ -2611,19 +2301,19 @@ videoInput::getCameraPropertyFromCV(int cv_property) {
 
   // see CameraControlProperty in strmif.h
   switch(cv_property) {
-    case CV_CAP_PROP_PAN: return CameraControl_Pan;
+    case cv::CAP_PROP_PAN: return CameraControl_Pan;
 
-    case CV_CAP_PROP_TILT: return CameraControl_Tilt;
+    case cv::CAP_PROP_TILT: return CameraControl_Tilt;
 
-    case CV_CAP_PROP_ROLL: return CameraControl_Roll;
+    case cv::CAP_PROP_ROLL: return CameraControl_Roll;
 
-    case CV_CAP_PROP_ZOOM: return CameraControl_Zoom;
+    case cv::CAP_PROP_ZOOM: return CameraControl_Zoom;
 
-    case CV_CAP_PROP_EXPOSURE: return CameraControl_Exposure;
+    case cv::CAP_PROP_EXPOSURE: return CameraControl_Exposure;
 
-    case CV_CAP_PROP_IRIS: return CameraControl_Iris;
+    case cv::CAP_PROP_IRIS: return CameraControl_Iris;
 
-    case CV_CAP_PROP_FOCUS: return CameraControl_Focus;
+    case cv::CAP_PROP_FOCUS: return CameraControl_Focus;
   }
   return -1;
 }
@@ -2675,8 +2365,7 @@ videoInput::getCameraPropertyAsString(int prop, char* propertyAsString) {
 
 //-------------------------------------------------------------------------------------------
 static void
-findClosestSizeAndSubtype(
-    videoDevice* VD, int widthIn, int heightIn, int& widthOut, int& heightOut, GUID& mediatypeOut) {
+findClosestSizeAndSubtype(videoDevice* VD, int widthIn, int heightIn, int& widthOut, int& heightOut, GUID& mediatypeOut) {
   HRESULT hr;
 
   // find perfect match or closest size
@@ -2754,8 +2443,7 @@ findClosestSizeAndSubtype(
         // otherwise lets see if this filters closest size is the closest
         // available. the closest size is determined by the sum difference
         // of the widths and heights
-        else if(abs(widthIn - tempW) + abs(heightIn - tempH) <
-                abs(widthIn - nearW) + abs(heightIn - nearH)) {
+        else if(abs(widthIn - tempW) + abs(heightIn - tempH) < abs(widthIn - nearW) + abs(heightIn - nearH)) {
           nearW = tempW;
           nearH = tempH;
 
@@ -2800,8 +2488,7 @@ setSizeAndSubtype(videoDevice* VD, int attemptWidth, int attemptHeight, GUID med
   // buffer size
   if(mediatype == MEDIASUBTYPE_RGB24) {
     VD->pAmMediaType->lSampleSize = attemptWidth * attemptHeight * 3;
-  } else if((mediatype == MEDIASUBTYPE_YUY2) || (mediatype == MEDIASUBTYPE_YVYU) ||
-            (mediatype == MEDIASUBTYPE_UYVY)) {
+  } else if((mediatype == MEDIASUBTYPE_YUY2) || (mediatype == MEDIASUBTYPE_YVYU) || (mediatype == MEDIASUBTYPE_UYVY)) {
 
     VD->pAmMediaType->lSampleSize = attemptWidth * attemptHeight * 2;
   } else {
@@ -2840,17 +2527,13 @@ videoInput::start(int deviceID, videoDevice* VD) {
   VD->myID = deviceID;
   VD->setupStarted = true;
   CAPTURE_MODE = PIN_CATEGORY_CAPTURE; // Don't worry - it ends up being preview (which is faster)
-  callbackSetCount = 1; // make sure callback method is not changed after setup called
+  callbackSetCount = 1;                // make sure callback method is not changed after setup called
 
   DebugPrintOut("SETUP: Setting up device %i\n", deviceID);
 
   // CREATE THE GRAPH BUILDER //
   // Create the filter graph manager and query for interfaces.
-  hr = CoCreateInstance(CLSID_CaptureGraphBuilder2,
-                        NULL,
-                        CLSCTX_INPROC_SERVER,
-                        IID_ICaptureGraphBuilder2,
-                        (void**)&VD->pCaptureGraph);
+  hr = CoCreateInstance(CLSID_CaptureGraphBuilder2, NULL, CLSCTX_INPROC_SERVER, IID_ICaptureGraphBuilder2, (void**)&VD->pCaptureGraph);
   if(FAILED(hr)) { // FAILED is a macro that tests the return value
     DebugPrintOut("ERROR - Could not create the Filter Graph Manager\n");
     return hr;
@@ -2858,8 +2541,7 @@ videoInput::start(int deviceID, videoDevice* VD) {
 
   // FITLER GRAPH MANAGER//
   // Create the Filter Graph Manager.
-  hr = CoCreateInstance(
-      CLSID_FilterGraph, 0, CLSCTX_INPROC_SERVER, IID_IGraphBuilder, (void**)&VD->pGraph);
+  hr = CoCreateInstance(CLSID_FilterGraph, 0, CLSCTX_INPROC_SERVER, IID_IGraphBuilder, (void**)&VD->pGraph);
   if(FAILED(hr)) {
     DebugPrintOut("ERROR - Could not add the graph builder!\n");
     stopDevice(deviceID);
@@ -2908,11 +2590,7 @@ videoInput::start(int deviceID, videoDevice* VD) {
 
   // LOOK FOR PREVIEW PIN IF THERE IS NONE THEN WE USE CAPTURE PIN AND THEN SMART TEE TO PREVIEW
   IAMStreamConfig* streamConfTest = NULL;
-  hr = VD->pCaptureGraph->FindInterface(&PIN_CATEGORY_PREVIEW,
-                                        &MEDIATYPE_Video,
-                                        VD->pVideoInputFilter,
-                                        IID_IAMStreamConfig,
-                                        (void**)&streamConfTest);
+  hr = VD->pCaptureGraph->FindInterface(&PIN_CATEGORY_PREVIEW, &MEDIATYPE_Video, VD->pVideoInputFilter, IID_IAMStreamConfig, (void**)&streamConfTest);
   if(FAILED(hr)) {
     DebugPrintOut("SETUP: Couldn't find preview pin using SmartTee\n");
   } else {
@@ -2931,11 +2609,7 @@ videoInput::start(int deviceID, videoDevice* VD) {
   }
 
   // we do this because webcams don't have a preview mode
-  hr = VD->pCaptureGraph->FindInterface(&CAPTURE_MODE,
-                                        &MEDIATYPE_Video,
-                                        VD->pVideoInputFilter,
-                                        IID_IAMStreamConfig,
-                                        (void**)&VD->streamConf);
+  hr = VD->pCaptureGraph->FindInterface(&CAPTURE_MODE, &MEDIATYPE_Video, VD->pVideoInputFilter, IID_IAMStreamConfig, (void**)&VD->streamConf);
   if(FAILED(hr)) {
     DebugPrintOut("ERROR: Couldn't config the stream!\n");
     stopDevice(deviceID);
@@ -2964,10 +2638,7 @@ videoInput::start(int deviceID, videoDevice* VD) {
     char guidStr[8];
     // try specified format and size
     getMediaSubtypeAsString(VD->tryVideoType, guidStr);
-    DebugPrintOut("SETUP: trying specified format %s @ %ix%i\n",
-                  guidStr,
-                  VD->tryWidth,
-                  VD->tryHeight);
+    DebugPrintOut("SETUP: trying specified format %s @ %ix%i\n", guidStr, VD->tryWidth, VD->tryHeight);
 
     if(setSizeAndSubtype(VD, VD->tryWidth, VD->tryHeight, VD->tryVideoType)) {
       VD->setSize(VD->tryWidth, VD->tryHeight);
@@ -2997,16 +2668,12 @@ videoInput::start(int deviceID, videoDevice* VD) {
       int closestHeight = -1;
       GUID newMediaSubtype;
 
-      findClosestSizeAndSubtype(
-          VD, VD->tryWidth, VD->tryHeight, closestWidth, closestHeight, newMediaSubtype);
+      findClosestSizeAndSubtype(VD, VD->tryWidth, VD->tryHeight, closestWidth, closestHeight, newMediaSubtype);
 
       if(closestWidth != -1 && closestHeight != -1) {
         getMediaSubtypeAsString(newMediaSubtype, guidStr);
 
-        DebugPrintOut("SETUP: closest supported size is %s @ %i %i\n",
-                      guidStr,
-                      closestWidth,
-                      closestHeight);
+        DebugPrintOut("SETUP: closest supported size is %s @ %i %i\n", guidStr, closestWidth, closestHeight);
         if(setSizeAndSubtype(VD, closestWidth, closestHeight, newMediaSubtype)) {
           VD->setSize(closestWidth, closestHeight);
           foundSize = true;
@@ -3027,8 +2694,7 @@ videoInput::start(int deviceID, videoDevice* VD) {
 
   // SAMPLE GRABBER (ALLOWS US TO GRAB THE BUFFER)//
   // Create the Sample Grabber.
-  hr = CoCreateInstance(
-      CLSID_SampleGrabber, NULL, CLSCTX_INPROC_SERVER, IID_IBaseFilter, (void**)&VD->pGrabberF);
+  hr = CoCreateInstance(CLSID_SampleGrabber, NULL, CLSCTX_INPROC_SERVER, IID_IBaseFilter, (void**)&VD->pGrabberF);
   if(FAILED(hr)) {
     DebugPrintOut("Could not Create Sample Grabber - CoCreateInstance()\n");
     stopDevice(deviceID);
@@ -3096,8 +2762,7 @@ videoInput::start(int deviceID, videoDevice* VD) {
 
   // NULL RENDERER//
   // used to give the video stream somewhere to go to.
-  hr = CoCreateInstance(
-      CLSID_NullRenderer, NULL, CLSCTX_INPROC_SERVER, IID_IBaseFilter, (void**)(&VD->pDestFilter));
+  hr = CoCreateInstance(CLSID_NullRenderer, NULL, CLSCTX_INPROC_SERVER, IID_IBaseFilter, (void**)(&VD->pDestFilter));
   if(FAILED(hr)) {
     DebugPrintOut("ERROR: Could not create filter - NullRenderer\n");
     stopDevice(deviceID);
@@ -3113,11 +2778,7 @@ videoInput::start(int deviceID, videoDevice* VD) {
 
   // RENDER STREAM//
   // This is where the stream gets put together.
-  hr = VD->pCaptureGraph->RenderStream(&PIN_CATEGORY_PREVIEW,
-                                       &MEDIATYPE_Video,
-                                       VD->pVideoInputFilter,
-                                       VD->pGrabberF,
-                                       VD->pDestFilter);
+  hr = VD->pCaptureGraph->RenderStream(&PIN_CATEGORY_PREVIEW, &MEDIATYPE_Video, VD->pVideoInputFilter, VD->pGrabberF, VD->pDestFilter);
 
   if(FAILED(hr)) {
     DebugPrintOut("ERROR: Could not connect pins - RenderStream()\n");
@@ -3190,11 +2851,7 @@ videoInput::getDeviceCount() {
   IEnumMoniker* pEnum = NULL;
   int deviceCounter = 0;
 
-  HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum,
-                                NULL,
-                                CLSCTX_INPROC_SERVER,
-                                IID_ICreateDevEnum,
-                                reinterpret_cast<void**>(&pDevEnum));
+  HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, reinterpret_cast<void**>(&pDevEnum));
 
   if(SUCCEEDED(hr)) {
     // Create an enumerator for the video capture category.
@@ -3239,17 +2896,13 @@ videoInput::getDeviceCount() {
 // ----------------------------------------------------------------------
 
 HRESULT
-videoInput::getDevice(IBaseFilter** gottaFilter,
-                      int deviceId,
-                      WCHAR* wDeviceName,
-                      char* nDeviceName) {
+videoInput::getDevice(IBaseFilter** gottaFilter, int deviceId, WCHAR* wDeviceName, char* nDeviceName) {
   BOOL done = false;
   int deviceCounter = 0;
 
   // Create the System Device Enumerator.
   ICreateDevEnum* pSysDevEnum = NULL;
-  HRESULT hr = CoCreateInstance(
-      CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void**)&pSysDevEnum);
+  HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void**)&pSysDevEnum);
   if(FAILED(hr)) {
     return hr;
   }
@@ -3372,18 +3025,14 @@ videoInput::SaveGraphFile(IGraphBuilder* pGraph, WCHAR* wszPath) {
   IStorage* pStorage = NULL;
 
   // First, create a document file which will hold the GRF file
-  hr = StgCreateDocfile(wszPath,
-                        STGM_CREATE | STGM_TRANSACTED | STGM_READWRITE | STGM_SHARE_EXCLUSIVE,
-                        0,
-                        &pStorage);
+  hr = StgCreateDocfile(wszPath, STGM_CREATE | STGM_TRANSACTED | STGM_READWRITE | STGM_SHARE_EXCLUSIVE, 0, &pStorage);
   if(FAILED(hr)) {
     return hr;
   }
 
   // Next, create a stream to store.
   IStream* pStream;
-  hr = pStorage->CreateStream(
-      wszStreamName, STGM_WRITE | STGM_CREATE | STGM_SHARE_EXCLUSIVE, 0, 0, &pStream);
+  hr = pStorage->CreateStream(wszStreamName, STGM_WRITE | STGM_CREATE | STGM_SHARE_EXCLUSIVE, 0, 0, &pStream);
   if(FAILED(hr)) {
     pStorage->Release();
     return hr;
@@ -3408,10 +3057,7 @@ videoInput::SaveGraphFile(IGraphBuilder* pGraph, WCHAR* wszPath) {
 // ----------------------------------------------------------------------
 
 HRESULT
-videoInput::routeCrossbar(ICaptureGraphBuilder2** ppBuild,
-                          IBaseFilter** pVidInFilter,
-                          int conType,
-                          GUID captureMode) {
+videoInput::routeCrossbar(ICaptureGraphBuilder2** ppBuild, IBaseFilter** pVidInFilter, int conType, GUID captureMode) {
 
   // create local ICaptureGraphBuilder2
   ICaptureGraphBuilder2* pBuild = NULL;
@@ -3423,8 +3069,7 @@ videoInput::routeCrossbar(ICaptureGraphBuilder2** ppBuild,
 
   // Search upstream for a crossbar.
   IAMCrossbar* pXBar1 = NULL;
-  HRESULT hr = pBuild->FindInterface(
-      &LOOK_UPSTREAM_ONLY, NULL, pVidFilter, IID_IAMCrossbar, (void**)&pXBar1);
+  HRESULT hr = pBuild->FindInterface(&LOOK_UPSTREAM_ONLY, NULL, pVidFilter, IID_IAMCrossbar, (void**)&pXBar1);
   if(SUCCEEDED(hr)) {
 
     bool foundDevice = false;
@@ -3433,12 +3078,10 @@ videoInput::routeCrossbar(ICaptureGraphBuilder2** ppBuild,
     pXBar1->Release();
 
     IAMCrossbar* Crossbar;
-    hr = pBuild->FindInterface(
-        &captureMode, &MEDIATYPE_Interleaved, pVidFilter, IID_IAMCrossbar, (void**)&Crossbar);
+    hr = pBuild->FindInterface(&captureMode, &MEDIATYPE_Interleaved, pVidFilter, IID_IAMCrossbar, (void**)&Crossbar);
 
     if(hr != NOERROR) {
-      hr = pBuild->FindInterface(
-          &captureMode, &MEDIATYPE_Video, pVidFilter, IID_IAMCrossbar, (void**)&Crossbar);
+      hr = pBuild->FindInterface(&captureMode, &MEDIATYPE_Video, pVidFilter, IID_IAMCrossbar, (void**)&Crossbar);
     }
 
     LONG lInpin, lOutpin;
@@ -3502,8 +3145,7 @@ videoInput::routeCrossbar(ICaptureGraphBuilder2** ppBuild,
 namespace cv {
 videoInput VideoCapture_DShow::g_VI;
 
-VideoCapture_DShow::VideoCapture_DShow(int index)
-    : m_index(-1), m_width(-1), m_height(-1), m_fourcc(-1), m_widthSet(-1), m_heightSet(-1) {
+VideoCapture_DShow::VideoCapture_DShow(int index) : m_index(-1), m_width(-1), m_height(-1), m_fourcc(-1), m_widthSet(-1), m_heightSet(-1) {
   CoInitialize(0);
   open(index);
 }
@@ -3519,48 +3161,34 @@ VideoCapture_DShow::getProperty(int propIdx) const {
 
   switch(propIdx) {
     // image format properties
-    case CV_CAP_PROP_FRAME_WIDTH: return g_VI.getWidth(m_index);
-    case CV_CAP_PROP_FRAME_HEIGHT: return g_VI.getHeight(m_index);
-    case CV_CAP_PROP_FOURCC: return g_VI.getFourcc(m_index);
-    case CV_CAP_PROP_FPS: return g_VI.getFPS(m_index);
+    case cv::CAP_PROP_FRAME_WIDTH: return g_VI.getWidth(m_index);
+    case cv::CAP_PROP_FRAME_HEIGHT: return g_VI.getHeight(m_index);
+    case cv::CAP_PROP_FOURCC: return g_VI.getFourcc(m_index);
+    case cv::CAP_PROP_FPS: return g_VI.getFPS(m_index);
 
     // video filter properties
-    case CV_CAP_PROP_BRIGHTNESS:
-    case CV_CAP_PROP_CONTRAST:
-    case CV_CAP_PROP_HUE:
-    case CV_CAP_PROP_SATURATION:
-    case CV_CAP_PROP_SHARPNESS:
-    case CV_CAP_PROP_GAMMA:
-    case CV_CAP_PROP_MONOCHROME:
-    case CV_CAP_PROP_WHITE_BALANCE_BLUE_U:
-    case CV_CAP_PROP_BACKLIGHT:
-    case CV_CAP_PROP_GAIN:
-      if(g_VI.getVideoSettingFilter(m_index,
-                                    g_VI.getVideoPropertyFromCV(propIdx),
-                                    min_value,
-                                    max_value,
-                                    stepping_delta,
-                                    current_value,
-                                    flags,
-                                    defaultValue))
+    case cv::CAP_PROP_BRIGHTNESS:
+    case cv::CAP_PROP_CONTRAST:
+    case cv::CAP_PROP_HUE:
+    case cv::CAP_PROP_SATURATION:
+    case cv::CAP_PROP_SHARPNESS:
+    case cv::CAP_PROP_GAMMA:
+    case cv::CAP_PROP_MONOCHROME:
+    case cv::CAP_PROP_WHITE_BALANCE_BLUE_U:
+    case cv::CAP_PROP_BACKLIGHT:
+    case cv::CAP_PROP_GAIN:
+      if(g_VI.getVideoSettingFilter(m_index, g_VI.getVideoPropertyFromCV(propIdx), min_value, max_value, stepping_delta, current_value, flags, defaultValue))
         return (double)current_value;
 
     // camera properties
-    case CV_CAP_PROP_PAN:
-    case CV_CAP_PROP_TILT:
-    case CV_CAP_PROP_ROLL:
-    case CV_CAP_PROP_ZOOM:
-    case CV_CAP_PROP_EXPOSURE:
-    case CV_CAP_PROP_IRIS:
-    case CV_CAP_PROP_FOCUS:
-      if(g_VI.getVideoSettingCamera(m_index,
-                                    g_VI.getCameraPropertyFromCV(propIdx),
-                                    min_value,
-                                    max_value,
-                                    stepping_delta,
-                                    current_value,
-                                    flags,
-                                    defaultValue))
+    case cv::CAP_PROP_PAN:
+    case cv::CAP_PROP_TILT:
+    case cv::CAP_PROP_ROLL:
+    case cv::CAP_PROP_ZOOM:
+    case cv::CAP_PROP_EXPOSURE:
+    case cv::CAP_PROP_IRIS:
+    case cv::CAP_PROP_FOCUS:
+      if(g_VI.getVideoSettingCamera(m_index, g_VI.getCameraPropertyFromCV(propIdx), min_value, max_value, stepping_delta, current_value, flags, defaultValue))
         return (double)current_value;
   }
 
@@ -3572,17 +3200,17 @@ VideoCapture_DShow::setProperty(int propIdx, double propVal) {
   // image capture properties
   bool handled = false;
   switch(propIdx) {
-    case CV_CAP_PROP_FRAME_WIDTH:
+    case cv::CAP_PROP_FRAME_WIDTH:
       m_width = cvRound(propVal);
       handled = true;
       break;
 
-    case CV_CAP_PROP_FRAME_HEIGHT:
+    case cv::CAP_PROP_FRAME_HEIGHT:
       m_height = cvRound(propVal);
       handled = true;
       break;
 
-    case CV_CAP_PROP_FOURCC:
+    case cv::CAP_PROP_FOURCC:
       m_fourcc = (int)(unsigned long)(propVal);
       if(-1 == m_fourcc) {
         // following cvCreateVideo usage will pop up caprturepindialog here if fourcc=-1
@@ -3591,7 +3219,7 @@ VideoCapture_DShow::setProperty(int propIdx, double propVal) {
       handled = true;
       break;
 
-    case CV_CAP_PROP_FPS:
+    case cv::CAP_PROP_FPS:
       int fps = cvRound(propVal);
       if(fps != g_VI.getFPS(m_index)) {
         g_VI.stopDevice(m_index);
@@ -3607,8 +3235,7 @@ VideoCapture_DShow::setProperty(int propIdx, double propVal) {
   if(handled) {
     // a stream setting
     if(m_width > 0 && m_height > 0) {
-      if(m_width != g_VI.getWidth(m_index) ||
-         m_height != g_VI.getHeight(m_index)) { //|| fourcc != VI.getFourcc(index) )
+      if(m_width != g_VI.getWidth(m_index) || m_height != g_VI.getHeight(m_index)) { //|| fourcc != VI.getFourcc(index) )
         int fps = static_cast<int>(g_VI.getFPS(m_index));
         g_VI.stopDevice(m_index);
         g_VI.setIdealFramerate(m_index, fps);
@@ -3627,40 +3254,34 @@ VideoCapture_DShow::setProperty(int propIdx, double propVal) {
   }
 
   // show video/camera filter dialog
-  if(propIdx == CV_CAP_PROP_SETTINGS) {
+  if(propIdx == cv::CAP_PROP_SETTINGS) {
     g_VI.showSettingsWindow(m_index);
     return true;
   }
 
   // video Filter properties
   switch(propIdx) {
-    case CV_CAP_PROP_BRIGHTNESS:
-    case CV_CAP_PROP_CONTRAST:
-    case CV_CAP_PROP_HUE:
-    case CV_CAP_PROP_SATURATION:
-    case CV_CAP_PROP_SHARPNESS:
-    case CV_CAP_PROP_GAMMA:
-    case CV_CAP_PROP_MONOCHROME:
-    case CV_CAP_PROP_WHITE_BALANCE_BLUE_U:
-    case CV_CAP_PROP_BACKLIGHT:
-    case CV_CAP_PROP_GAIN:
-      return g_VI.setVideoSettingFilter(m_index,
-                                        g_VI.getVideoPropertyFromCV(propIdx),
-                                        (long)propVal);
+    case cv::CAP_PROP_BRIGHTNESS:
+    case cv::CAP_PROP_CONTRAST:
+    case cv::CAP_PROP_HUE:
+    case cv::CAP_PROP_SATURATION:
+    case cv::CAP_PROP_SHARPNESS:
+    case cv::CAP_PROP_GAMMA:
+    case cv::CAP_PROP_MONOCHROME:
+    case cv::CAP_PROP_WHITE_BALANCE_BLUE_U:
+    case cv::CAP_PROP_BACKLIGHT:
+    case cv::CAP_PROP_GAIN: return g_VI.setVideoSettingFilter(m_index, g_VI.getVideoPropertyFromCV(propIdx), (long)propVal);
   }
 
   // camera properties
   switch(propIdx) {
-    case CV_CAP_PROP_PAN:
-    case CV_CAP_PROP_TILT:
-    case CV_CAP_PROP_ROLL:
-    case CV_CAP_PROP_ZOOM:
-    case CV_CAP_PROP_EXPOSURE:
-    case CV_CAP_PROP_IRIS:
-    case CV_CAP_PROP_FOCUS:
-      return g_VI.setVideoSettingCamera(m_index,
-                                        g_VI.getCameraPropertyFromCV(propIdx),
-                                        (long)propVal);
+    case cv::CAP_PROP_PAN:
+    case cv::CAP_PROP_TILT:
+    case cv::CAP_PROP_ROLL:
+    case cv::CAP_PROP_ZOOM:
+    case cv::CAP_PROP_EXPOSURE:
+    case cv::CAP_PROP_IRIS:
+    case cv::CAP_PROP_FOCUS: return g_VI.setVideoSettingCamera(m_index, g_VI.getCameraPropertyFromCV(propIdx), (long)propVal);
   }
 
   return false;
@@ -3678,7 +3299,7 @@ VideoCapture_DShow::retrieveFrame(int, OutputArray frame) {
 }
 int
 VideoCapture_DShow::getCaptureDomain() {
-  return CV_CAP_DSHOW;
+  return cv::CAP_DSHOW;
 }
 bool
 VideoCapture_DShow::isOpened() const {

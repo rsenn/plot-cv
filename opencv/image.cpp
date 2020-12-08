@@ -8,8 +8,8 @@ bool f_line = 0;
 void draw_line(const geometry_msgs::Twist& msg);
 int
 main(int argc, char** argv) {
-  cap.set(CV_CAP_PROP_FRAME_WIDTH, 320);  // cap.set(3,320);
-  cap.set(CV_CAP_PROP_FRAME_HEIGHT, 240); // cap.set(4,240);
+  cap.set(cv::CAP_PROP_FRAME_WIDTH, 320);  // cap.set(3,320);
+  cap.set(cv::CAP_PROP_FRAME_HEIGHT, 240); // cap.set(4,240);
   cap.set(CAP_PROP_FPS, my_FPS);
   ros::init(argc, argv, "Image");
   ros::NodeHandle nh;
@@ -51,23 +51,13 @@ FindCircle() {
                  circles[i][1]); // declare variable that are two integer type variables(x,y).
     Point g_center(circles[i][0], circles[i][1]);
     if(f_line == true) {
-      line(frame,
-           Point(g_center),
-           Point((g_center.x + efrt_roll), (g_center.y + efrt_pitch)),
-           Scalar(0, 0, 255),
-           5,
-           CV_AA);
+      line(frame, Point(g_center), Point((g_center.x + efrt_roll), (g_center.y + efrt_pitch)), Scalar(0, 0, 255), 5, CV_AA);
       // line(frame, g_center, (g_center[0][0], (g_center[0][1] + efrt_pitch)), Scalar(0, 0, 255),
       // 5, CV_AA);
       f_line = 0;
     }
     radius = cvRound(circles[i][2]); // rounding the data number before assign to radius.
-    circle(frame,
-           center,
-           radius,
-           Scalar(0, 0, 255),
-           1,
-           8,
+    circle(frame, center, radius, Scalar(0, 0, 255), 1, 8,
            0); // drawing a circle and the circle is solid
     circle(frame, center, 1, Scalar(0, 255, 0), 1, 8, 0);
 

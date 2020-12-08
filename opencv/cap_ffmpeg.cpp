@@ -114,7 +114,7 @@ public:
   }
   virtual int
   getCaptureDomain() CV_OVERRIDE {
-    return CV_CAP_FFMPEG;
+    return cv::CAP_FFMPEG;
   }
 
 protected:

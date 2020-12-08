@@ -111,9 +111,7 @@ initPOSIT(std::vector<Cvcv::Point3D32f>* modelcv::Points) {
 }
 
 static void
-foundCorners(std::vector<Cvcv::Point2D32f>* srcImagecv::Points,
-             const cv::Mat& source,
-             cv::Mat& grayImage) {
+foundCorners(std::vector<Cvcv::Point2D32f>* srcImagecv::Points, const cv::Mat& source, cv::Mat& grayImage) {
   cvtColor(source, grayImage, COLOR_RGB2GRAY);
   GaussianBlur(grayImage, grayImage, Size(11, 11), 0, 0);
   normalize(grayImage, grayImage, 0, 255, NORM_MINMAX);
@@ -133,8 +131,7 @@ foundCorners(std::vector<Cvcv::Point2D32f>* srcImagecv::Points,
 
       for(size_t j = 0; j < contours[i].size(); j++) p += contours[i][j];
 
-      srcImagecv::Points_temp.at(i) =
-          cvcv::Point2D32f(float(p.x) / contours[i].size(), float(p.y) / contours[i].size());
+      srcImagecv::Points_temp.at(i) = cvcv::Point2D32f(float(p.x) / contours[i].size(), float(p.y) / contours[i].size());
     }
 
     // Need to keep the same order
@@ -176,22 +173,17 @@ foundCorners(std::vector<Cvcv::Point2D32f>* srcImagecv::Points,
     for(size_t i = 0; i < srcImagecv::Points_temp.size(); i++) {
       ss << i;
       circle(Msource, srcImagecv::Points->at(i), 5, Scalar(0, 0, 255));
-      putText(
-          Msource, ss.str(), srcImagecv::Points->at(i), FONT_HERSHEY_SIMPLEX, 1, Scalar(0, 0, 255));
+      putText(Msource, ss.str(), srcImagecv::Points->at(i), FONT_HERSHEY_SIMPLEX, 1, Scalar(0, 0, 255));
       ss.str("");
 
       // new coordinate system in the middle of the frame and reversed (camera coordinate system)
-      srcImagecv::Points->at(i) =
-          cvcv::Point2D32f(srcImagecv::Points_temp.at(i).x - source.cols / 2,
-                           source.rows / 2 - srcImagecv::Points_temp.at(i).y);
+      srcImagecv::Points->at(i) = cvcv::Point2D32f(srcImagecv::Points_temp.at(i).x - source.cols / 2, source.rows / 2 - srcImagecv::Points_temp.at(i).y);
     }
   }
 }
 
 static void
-createOpenGLcv::MatrixFrom(float* posePOSIT,
-                           const Cvcv::Matr32f& rotationcv::Matrix,
-                           const CvVect32f& translationVector) {
+createOpenGLcv::MatrixFrom(float* posePOSIT, const Cvcv::Matr32f& rotationcv::Matrix, const CvVect32f& translationVector) {
   // coordinate system returned is relative to the first 3D input point
   for(int f = 0; f < 3; f++)
     for(int c = 0; c < 3; c++) posePOSIT[c * 4 + f] = rotationcv::Matrix[f * 3 + c]; // transposed
@@ -237,8 +229,7 @@ main(void) {
   initPOSIT(&modelcv::Points);
 
   // Create the POSIT object with the model points
-  CvPOSITObject* positObject =
-      cvCreatePOSITObject(&modelcv::Points[0], (int)modelcv::Points.size());
+  CvPOSITObject* positObject = cvCreatePOSITObject(&modelcv::Points[0], (int)modelcv::Points.size());
 
   Cvcv::Matr32f rotation_matrix = new float[9];
   CvVect32f translation_std::vector = new float[3];
@@ -253,18 +244,13 @@ main(void) {
     imshow("Original", source);
 
     foundCorners(&srcImagecv::Points, source, grayImage);
-    cvPOSIT(positObject,
-            &srcImagecv::Points[0],
-            FOCAL_LENGTH,
-            criteria,
-            rotation_matrix,
-            translation_std::vector);
+    cvPOSIT(positObject, &srcImagecv::Points[0], FOCAL_LENGTH, criteria, rotation_matrix, translation_std::vector);
     createOpenGLcv::MatrixFrom(OpenGLcv::Matrix, rotation_matrix, translation_std::vector);
 
     updateWindow("POSIT");
 
-    if(video.get(CV_CAP_PROP_POS_AVI_RATIO) > 0.99)
-      video.set(CV_CAP_PROP_POS_AVI_RATIO, 0);
+    if(video.get(cv::CAP_PROP_POS_AVI_RATIO) > 0.99)
+      video.set(cv::CAP_PROP_POS_AVI_RATIO, 0);
   }
 
   setOpenGlDrawCallback("POSIT", NULL, NULL);

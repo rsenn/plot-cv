@@ -47,8 +47,7 @@ displayState(Mat& canvas, bool bHelp, bool bGpu, bool bLargestFace, bool bFilter
   ss << "FPS = " << setprecision(1) << fixed << fps;
   matPrint(canvas, 0, fontColorRed, ss.str());
   ss.str("");
-  ss << "[" << canvas.cols << "x" << canvas.rows << "], " << (bGpu ? "GPU, " : "CPU, ")
-     << (bLargestFace ? "OneFace, " : "MultiFace, ") << (bFilter ? "Filter:ON" : "Filter:OFF");
+  ss << "[" << canvas.cols << "x" << canvas.rows << "], " << (bGpu ? "GPU, " : "CPU, ") << (bLargestFace ? "OneFace, " : "MultiFace, ") << (bFilter ? "Filter:ON" : "Filter:OFF");
   matPrint(canvas, 1, fontColorRed, ss.str());
 
   if(bHelp) {
@@ -105,25 +104,8 @@ process(Mat* srcdst,
   roi.height = d_src.height();
 
   Ncv32u numDetections;
-  ncvStat = ncvDetectObjectsMultiScale_device(d_src,
-                                              roi,
-                                              d_rects,
-                                              numDetections,
-                                              haar,
-                                              h_haarStages,
-                                              d_haarStages,
-                                              d_haarNodes,
-                                              d_haarFeatures,
-                                              haar.ClassifierSize,
-                                              (bFilterRects || bLargestFace) ? 4 : 0,
-                                              1.2f,
-                                              1,
-                                              (bLargestFace ? NCVPipeObjDet_FindLargestObject : 0) |
-                                                  NCVPipeObjDet_VisualizeInPlace,
-                                              gpuAllocator,
-                                              cpuAllocator,
-                                              devProp,
-                                              0);
+  ncvStat = ncvDetectObjectsMultiScale_device(
+      d_src, roi, d_rects, numDetections, haar, h_haarStages, d_haarStages, d_haarNodes, d_haarFeatures, haar.ClassifierSize, (bFilterRects || bLargestFace) ? 4 : 0, 1.2f, 1, (bLargestFace ? NCVPipeObjDet_FindLargestObject : 0) | NCVPipeObjDet_VisualizeInPlace, gpuAllocator, cpuAllocator, devProp, 0);
   ncvAssertReturnNcvStat(ncvStat);
   ncvAssertCUDAReturn(cudaStreamSynchronize(0), NCV_CUDA_ERROR);
 
@@ -149,9 +131,7 @@ main(int argc, const char** argv) {
   cout << "Syntax: exename <cascade_file> <image_or_video_or_cameraid>" << endl;
   cout << "=========================================" << endl;
 
-  ncvAssertPrintReturn(cv::gpu::getCudaEnabledDeviceCount() != 0,
-                       "No GPU found or the library is compiled without GPU support",
-                       -1);
+  ncvAssertPrintReturn(cv::gpu::getCudaEnabledDeviceCount() != 0, "No GPU found or the library is compiled without GPU support", -1);
   ncvAssertPrintReturn(argc == 3, "Invalid number of arguments", -1);
 
   cv::gpu::printShortCudaDeviceInfo(cv::gpu::getDevice());
@@ -194,16 +174,13 @@ main(int argc, const char** argv) {
   NcvBool bHelpScreen = false;
 
   CascadeClassifier classifierOpenCV;
-  ncvAssertPrintReturn(classifierOpenCV.load(cascadeName) != 0,
-                       "Error (in OpenCV) opening classifier",
-                       -1);
+  ncvAssertPrintReturn(classifierOpenCV.load(cascadeName) != 0, "Error (in OpenCV) opening classifier", -1);
 
   int devId;
   ncvAssertCUDAReturn(cudaGetDevice(&devId), -1);
   cudaDeviceProp devProp;
   ncvAssertCUDAReturn(cudaGetDeviceProperties(&devProp, devId), -1);
-  cout << "Using GPU: " << devId << "(" << devProp.name << "), arch=" << devProp.major << "."
-       << devProp.minor << endl;
+  cout << "Using GPU: " << devId << "(" << devProp.name << "), arch=" << devProp.major << "." << devProp.minor << endl;
 
   //==============================================================================
   //
@@ -212,22 +189,14 @@ main(int argc, const char** argv) {
   //
   //==============================================================================
 
-  NCVMemNativeAllocator gpuCascadeAllocator(NCVMemoryTypeDevice,
-                                            static_cast<Ncv32u>(devProp.textureAlignment));
-  ncvAssertPrintReturn(gpuCascadeAllocator.isInitialized(),
-                       "Error creating cascade GPU allocator",
-                       -1);
-  NCVMemNativeAllocator cpuCascadeAllocator(NCVMemoryTypeHostPinned,
-                                            static_cast<Ncv32u>(devProp.textureAlignment));
-  ncvAssertPrintReturn(cpuCascadeAllocator.isInitialized(),
-                       "Error creating cascade CPU allocator",
-                       -1);
+  NCVMemNativeAllocator gpuCascadeAllocator(NCVMemoryTypeDevice, static_cast<Ncv32u>(devProp.textureAlignment));
+  ncvAssertPrintReturn(gpuCascadeAllocator.isInitialized(), "Error creating cascade GPU allocator", -1);
+  NCVMemNativeAllocator cpuCascadeAllocator(NCVMemoryTypeHostPinned, static_cast<Ncv32u>(devProp.textureAlignment));
+  ncvAssertPrintReturn(cpuCascadeAllocator.isInitialized(), "Error creating cascade CPU allocator", -1);
 
   Ncv32u haarNumStages, haarNumNodes, haarNumFeatures;
   ncvStat = ncvHaarGetClassifierSize(cascadeName, haarNumStages, haarNumNodes, haarNumFeatures);
-  ncvAssertPrintReturn(ncvStat == NCV_SUCCESS,
-                       "Error reading classifier size (check the file)",
-                       -1);
+  ncvAssertPrintReturn(ncvStat == NCV_SUCCESS, "Error reading classifier size (check the file)", -1);
 
   NCVVectorAlloc<HaarStage64> h_haarStages(cpuCascadeAllocator, haarNumStages);
   ncvAssertPrintReturn(h_haarStages.isMemAllocated(), "Error in cascade CPU allocator", -1);
@@ -266,28 +235,12 @@ main(int argc, const char** argv) {
   NCVMemStackAllocator cpuCounter(static_cast<Ncv32u>(devProp.textureAlignment));
   ncvAssertPrintReturn(cpuCounter.isInitialized(), "Error creating CPU memory counter", -1);
 
-  ncvStat = process(NULL,
-                    frameSize.width,
-                    frameSize.height,
-                    false,
-                    false,
-                    haar,
-                    d_haarStages,
-                    d_haarNodes,
-                    d_haarFeatures,
-                    h_haarStages,
-                    gpuCounter,
-                    cpuCounter,
-                    devProp);
+  ncvStat = process(NULL, frameSize.width, frameSize.height, false, false, haar, d_haarStages, d_haarNodes, d_haarFeatures, h_haarStages, gpuCounter, cpuCounter, devProp);
   ncvAssertPrintReturn(ncvStat == NCV_SUCCESS, "Error in memory counting pass", -1);
 
-  NCVMemStackAllocator gpuAllocator(NCVMemoryTypeDevice,
-                                    gpuCounter.maxSize(),
-                                    static_cast<Ncv32u>(devProp.textureAlignment));
+  NCVMemStackAllocator gpuAllocator(NCVMemoryTypeDevice, gpuCounter.maxSize(), static_cast<Ncv32u>(devProp.textureAlignment));
   ncvAssertPrintReturn(gpuAllocator.isInitialized(), "Error creating GPU memory allocator", -1);
-  NCVMemStackAllocator cpuAllocator(NCVMemoryTypeHostPinned,
-                                    cpuCounter.maxSize(),
-                                    static_cast<Ncv32u>(devProp.textureAlignment));
+  NCVMemStackAllocator cpuAllocator(NCVMemoryTypeHostPinned, cpuCounter.maxSize(), static_cast<Ncv32u>(devProp.textureAlignment));
   ncvAssertPrintReturn(cpuAllocator.isInitialized(), "Error creating CPU memory allocator", -1);
 
   printf("Initialized for frame size [%dx%d]\n", frameSize.width, frameSize.height);
@@ -323,33 +276,14 @@ main(int argc, const char** argv) {
     NcvTimer timer = ncvStartTimer();
 
     if(bUseGPU) {
-      ncvStat = process(&gray,
-                        frameSize.width,
-                        frameSize.height,
-                        bFilterRects,
-                        bLargestObject,
-                        haar,
-                        d_haarStages,
-                        d_haarNodes,
-                        d_haarFeatures,
-                        h_haarStages,
-                        gpuAllocator,
-                        cpuAllocator,
-                        devProp);
+      ncvStat = process(&gray, frameSize.width, frameSize.height, bFilterRects, bLargestObject, haar, d_haarStages, d_haarNodes, d_haarFeatures, h_haarStages, gpuAllocator, cpuAllocator, devProp);
       ncvAssertPrintReturn(ncvStat == NCV_SUCCESS, "Error in memory counting pass", -1);
     } else {
       vector<Rect> rectsOpenCV;
 
-      classifierOpenCV.detectMultiScale(gray,
-                                        rectsOpenCV,
-                                        1.2f,
-                                        bFilterRects ? 4 : 0,
-                                        (bLargestObject ? CV_HAAR_FIND_BIGGEST_OBJECT : 0) |
-                                            CV_HAAR_SCALE_IMAGE,
-                                        Size(minSize.width, minSize.height));
+      classifierOpenCV.detectMultiScale(gray, rectsOpenCV, 1.2f, bFilterRects ? 4 : 0, (bLargestObject ? CV_HAAR_FIND_BIGGEST_OBJECT : 0) | CV_HAAR_SCALE_IMAGE, Size(minSize.width, minSize.height));
 
-      for(size_t rt = 0; rt < rectsOpenCV.size(); ++rt)
-        rectangle(gray, rectsOpenCV[rt], Scalar(255));
+      for(size_t rt = 0; rt < rectsOpenCV.size(); ++rt) rectangle(gray, rectsOpenCV[rt], Scalar(255));
     }
 
     avgTime = (Ncv32f)ncvEndQueryTimerMs(timer);

@@ -33,8 +33,8 @@ int
 main() {
   // Capturing multiple AVT cameras can be done by simply initiating
   // two VideoCaptures after eachother.
-  VideoCapture camera1(0 + CV_CAP_PVAPI);
-  VideoCapture camera2(0 + CV_CAP_PVAPI);
+  VideoCapture camera1(0 + cv::CAP_PVAPI);
+  VideoCapture camera2(0 + cv::CAP_PVAPI);
   Mat frame1, frame2;
 
   for(;;) {

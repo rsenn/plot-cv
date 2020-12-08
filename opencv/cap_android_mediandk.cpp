@@ -47,8 +47,7 @@ deleter_AMediaFormat(AMediaFormat* format) {
 class AndroidMediaNdkCapture : public IVideoCapture {
 
 public:
-  AndroidMediaNdkCapture()
-      : sawInputEOS(false), sawOutputEOS(false), frameWidth(0), frameHeight(0), colorFormat(0) {}
+  AndroidMediaNdkCapture() : sawInputEOS(false), sawOutputEOS(false), frameWidth(0), frameHeight(0), colorFormat(0) {}
   std::shared_ptr<AMediaExtractor> mediaExtractor;
   std::shared_ptr<AMediaCodec> mediaCodec;
   bool sawInputEOS;
@@ -69,8 +68,7 @@ public:
         if(bufferIndex >= 0) {
           size_t bufferSize;
           auto inputBuffer = AMediaCodec_getInputBuffer(mediaCodec.get(), bufferIndex, &bufferSize);
-          auto sampleSize =
-              AMediaExtractor_readSampleData(mediaExtractor.get(), inputBuffer, bufferSize);
+          auto sampleSize = AMediaExtractor_readSampleData(mediaExtractor.get(), inputBuffer, bufferSize);
           if(sampleSize < 0) {
             sampleSize = 0;
             sawInputEOS = true;
@@ -78,12 +76,7 @@ public:
           }
           auto presentationTimeUs = AMediaExtractor_getSampleTime(mediaExtractor.get());
 
-          AMediaCodec_queueInputBuffer(mediaCodec.get(),
-                                       bufferIndex,
-                                       0,
-                                       sampleSize,
-                                       presentationTimeUs,
-                                       sawInputEOS ? AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM : 0);
+          AMediaCodec_queueInputBuffer(mediaCodec.get(), bufferIndex, 0, sampleSize, presentationTimeUs, sawInputEOS ? AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM : 0);
           AMediaExtractor_advance(mediaExtractor.get());
         }
       }
@@ -93,14 +86,11 @@ public:
         auto bufferIndex = AMediaCodec_dequeueOutputBuffer(mediaCodec.get(), &info, 0);
         if(bufferIndex >= 0) {
           size_t bufferSize = 0;
-          auto mediaFormat =
-              std::shared_ptr<AMediaFormat>(AMediaCodec_getOutputFormat(mediaCodec.get()),
-                                            deleter_AMediaFormat);
+          auto mediaFormat = std::shared_ptr<AMediaFormat>(AMediaCodec_getOutputFormat(mediaCodec.get()), deleter_AMediaFormat);
           AMediaFormat_getInt32(mediaFormat.get(), AMEDIAFORMAT_KEY_WIDTH, &frameWidth);
           AMediaFormat_getInt32(mediaFormat.get(), AMEDIAFORMAT_KEY_HEIGHT, &frameHeight);
           AMediaFormat_getInt32(mediaFormat.get(), AMEDIAFORMAT_KEY_COLOR_FORMAT, &colorFormat);
-          uint8_t* codecBuffer =
-              AMediaCodec_getOutputBuffer(mediaCodec.get(), bufferIndex, &bufferSize);
+          uint8_t* codecBuffer = AMediaCodec_getOutputBuffer(mediaCodec.get(), bufferIndex, &bufferSize);
           buffer = std::vector<uint8_t>(codecBuffer + info.offset, codecBuffer + bufferSize);
           LOGV("colorFormat: %d", colorFormat);
           LOGV("buffer size: %zu", bufferSize);
@@ -165,8 +155,8 @@ public:
   double
   getProperty(int property_id) const CV_OVERRIDE {
     switch(property_id) {
-      case CV_CAP_PROP_FRAME_WIDTH: return frameWidth;
-      case CV_CAP_PROP_FRAME_HEIGHT: return frameHeight;
+      case cv::CAP_PROP_FRAME_WIDTH: return frameWidth;
+      case cv::CAP_PROP_FRAME_HEIGHT: return frameHeight;
     }
     return 0;
   }
@@ -191,13 +181,11 @@ public:
       return false;
     }
 
-    mediaExtractor =
-        std::shared_ptr<AMediaExtractor>(AMediaExtractor_new(), deleter_AMediaExtractor);
+    mediaExtractor = std::shared_ptr<AMediaExtractor>(AMediaExtractor_new(), deleter_AMediaExtractor);
     if(!mediaExtractor) {
       return false;
     }
-    media_status_t err =
-        AMediaExtractor_setDataSourceFd(mediaExtractor.get(), fd, 0, statBuffer.st_size);
+    media_status_t err = AMediaExtractor_setDataSourceFd(mediaExtractor.get(), fd, 0, statBuffer.st_size);
     close(fd);
     if(err != AMEDIA_OK) {
       LOGV("setDataSource error: %d", err);
@@ -208,9 +196,7 @@ public:
 
     LOGV("input has %d tracks", numtracks);
     for(int i = 0; i < numtracks; i++) {
-      auto format =
-          std::shared_ptr<AMediaFormat>(AMediaExtractor_getTrackFormat(mediaExtractor.get(), i),
-                                        deleter_AMediaFormat);
+      auto format = std::shared_ptr<AMediaFormat>(AMediaExtractor_getTrackFormat(mediaExtractor.get(), i), deleter_AMediaFormat);
       if(!format) {
         continue;
       }
@@ -228,8 +214,7 @@ public:
         if(AMediaExtractor_selectTrack(mediaExtractor.get(), i) != AMEDIA_OK) {
           continue;
         }
-        mediaCodec = std::shared_ptr<AMediaCodec>(AMediaCodec_createDecoderByType(mime),
-                                                  deleter_AMediaCodec);
+        mediaCodec = std::shared_ptr<AMediaCodec>(AMediaCodec_createDecoderByType(mime), deleter_AMediaCodec);
         if(!mediaCodec) {
           continue;
         }

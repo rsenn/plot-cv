@@ -35,7 +35,7 @@ function(make_shared_module FNAME)
                RPATH "${OPENCV_LIBRARY_DIRS}:${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/quickjs"
                OUTPUT_NAME "${NAME}"
                # COMPILE_FLAGS "-fvisibility=hidden"
-               BUILD_RPATH "${CMAKE_BINARY_DIR};${CMAKE_CURRENT_BINARY_DIR};${CMAKE_BINARY_DIR}/quickjs;${CMAKE_CURRENT_BINARY_DIR}/quickjs")
+               BUILD_RPATH "${CMAKE_BINARY_DIR}:${CMAKE_CURRENT_BINARY_DIR}:${CMAKE_BINARY_DIR}/quickjs:${CMAKE_CURRENT_BINARY_DIR}/quickjs")
   target_compile_definitions(${TARGET_NAME} PRIVATE -DJS_${UNAME}_MODULE=1 -DCONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}")
   install(TARGETS ${TARGET_NAME} DESTINATION lib/quickjs)
 

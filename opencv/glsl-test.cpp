@@ -43,9 +43,9 @@ main(int argc, char* argv[]) {
   }
   // We can try to set these, but the camera may ignore this anyway...
 #if(CV_MAJOR_VERSION < 3)
-  capture.set(CV_CAP_PROP_FRAME_WIDTH, width);
-  capture.set(CV_CAP_PROP_FRAME_HEIGHT, height);
-  capture.set(CV_CAP_PROP_FPS, 30);
+  capture.set(cv::CAP_PROP_FRAME_WIDTH, width);
+  capture.set(cv::CAP_PROP_FRAME_HEIGHT, height);
+  capture.set(cv::CAP_PROP_FPS, 30);
 #else
   capture.set(cv::CAP_PROP_FRAME_WIDTH, width);
   capture.set(cv::CAP_PROP_FRAME_HEIGHT, height);
@@ -57,7 +57,7 @@ main(int argc, char* argv[]) {
   // FILE *fp = fopen("log.txt", "w");
 
 #if(CV_MAJOR_VERSION < 3)
-  GLThreshold t(capture.get(CV_CAP_PROP_FRAME_WIDTH), capture.get(CV_CAP_PROP_FRAME_HEIGHT));
+  GLThreshold t(capture.get(cv::CAP_PROP_FRAME_WIDTH), capture.get(cv::CAP_PROP_FRAME_HEIGHT));
 #else
   GLThreshold t(capture.get(cv::CAP_PROP_FRAME_WIDTH), capture.get(cv::CAP_PROP_FRAME_HEIGHT));
 #endif // (CV_MAJOR_VERSION < 3)

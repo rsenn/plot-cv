@@ -43,12 +43,11 @@ main(int argc, char** argv) {
     return -1;
   }
 
-  cap.set(CV_CAP_PROP_FRAME_WIDTH, FRAME_WIDTH);
-  cap.set(CV_CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT);
-  cap.set(CV_CAP_PROP_FPS, 30);
+  cap.set(cv::CAP_PROP_FRAME_WIDTH, FRAME_WIDTH);
+  cap.set(cv::CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT);
+  cap.set(cv::CAP_PROP_FPS, 30);
   cv::Point2f frameCenter(FRAME_WIDTH / 2, FRAME_HEIGHT / 2);
-  CascadeClassifier frontalface = CascadeClassifier(
-      "/home/pi/projects/git/cvtest/classifiers/haarcascade_frontalface_alt2.xml");
+  CascadeClassifier frontalface = CascadeClassifier("/home/pi/projects/git/cvtest/classifiers/haarcascade_frontalface_alt2.xml");
   // CascadeClassifier profileface =
   // CascadeClassifier("/home/pi/projects/git/cvtest/classifiers/haarcascade_profileface.xml");
 
@@ -72,13 +71,7 @@ main(int argc, char** argv) {
     bool bSuccess = cap.read(frame);
     if(bSuccess) {
       if(counter % 2 == 0) {
-        frontalface.detectMultiScale(frame,
-                                     faces,
-                                     1.2,
-                                     2,
-                                     0 | CV_HAAR_SCALE_IMAGE,
-                                     Size(min_face_size, min_face_size),
-                                     Size(max_face_size, max_face_size));
+        frontalface.detectMultiScale(frame, faces, 1.2, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(min_face_size, min_face_size), Size(max_face_size, max_face_size));
 
         if(!faces.empty()) {
           Rect face = faces[0];

@@ -15,9 +15,7 @@ void get_svm_detector(const Ptr<SVM>& svm, vector<float>& hog_detector);
 void convert_to_ml(const std::vector<cv::Mat>& train_samples, cv::Mat& trainData);
 void load_images(const string& prefix, const string& filename, vector<Mat>& img_lst);
 void sample_neg(const vector<Mat>& full_neg_lst, vector<Mat>& neg_lst, const Size& size);
-Mat get_hogdescriptor_visu(const Mat& color_origImg,
-                           vector<float>& descriptorValues,
-                           const Size& size);
+Mat get_hogdescriptor_visu(const Mat& color_origImg, vector<float>& descriptorValues, const Size& size);
 void compute_hog(const vector<Mat>& img_lst, vector<Mat>& gradient_lst, const Size& size);
 void train_svm(const vector<Mat>& gradient_lst, const vector<int>& labels);
 void draw_locations(Mat& img, const vector<Rect>& locations, const Scalar& color);
@@ -33,8 +31,7 @@ get_svm_detector(const Ptr<SVM>& svm, vector<float>& hog_detector) {
   double rho = svm->getDecisionFunction(0, alpha, svidx);
 
   CV_Assert(alpha.total() == 1 && svidx.total() == 1 && sv_total == 1);
-  CV_Assert((alpha.type() == CV_64F && alpha.at<double>(0) == 1.) ||
-            (alpha.type() == CV_32F && alpha.at<float>(0) == 1.f));
+  CV_Assert((alpha.type() == CV_64F && alpha.at<double>(0) == 1.) || (alpha.type() == CV_32F && alpha.at<float>(0) == 1.f));
   CV_Assert(sv.type() == CV_32F);
   hog_detector.clear();
 
@@ -125,22 +122,16 @@ sample_neg(const vector<Mat>& full_neg_lst, vector<Mat>& neg_lst, const Size& si
 // From
 // http://www.juergenwiki.de/work/wiki/doku.php?id=public:hog_descriptor_computation_and_visualization
 Mat
-get_hogdescriptor_visu(const Mat& color_origImg,
-                       vector<float>& descriptorValues,
-                       const Size& size) {
+get_hogdescriptor_visu(const Mat& color_origImg, vector<float>& descriptorValues, const Size& size) {
   const int DIMX = size.width;
   const int DIMY = size.height;
   float zoomFac = 3;
   Mat visu;
-  resize(color_origImg,
-         visu,
-         Size((int)(color_origImg.cols * zoomFac), (int)(color_origImg.rows * zoomFac)));
+  resize(color_origImg, visu, Size((int)(color_origImg.cols * zoomFac), (int)(color_origImg.rows * zoomFac)));
 
   int cellSize = 8;
   int gradientBinSize = 9;
-  float radRangeForOneBin =
-      (float)(CV_PI /
-              (float)gradientBinSize); // dividing 180 into 9 bins, how large (in rad) is one bin?
+  float radRangeForOneBin = (float)(CV_PI / (float)gradientBinSize); // dividing 180 into 9 bins, how large (in rad) is one bin?
 
   // prepare data structure: 9 orientation / gradient strenghts for each cell
   int cells_in_x_dir = DIMX / cellSize;
@@ -224,11 +215,7 @@ get_hogdescriptor_visu(const Mat& color_origImg,
       int mx = drawX + cellSize / 2;
       int my = drawY + cellSize / 2;
 
-      rectangle(visu,
-                Point((int)(drawX * zoomFac), (int)(drawY * zoomFac)),
-                Point((int)((drawX + cellSize) * zoomFac), (int)((drawY + cellSize) * zoomFac)),
-                Scalar(100, 100, 100),
-                1);
+      rectangle(visu, Point((int)(drawX * zoomFac), (int)(drawY * zoomFac)), Point((int)((drawX + cellSize) * zoomFac), (int)((drawY + cellSize) * zoomFac)), Scalar(100, 100, 100), 1);
 
       // draw in each cell all 9 gradient strengths
       for(int bin = 0; bin < gradientBinSize; bin++) {
@@ -252,11 +239,7 @@ get_hogdescriptor_visu(const Mat& color_origImg,
         float y2 = my + dirVecY * currentGradStrength * maxVecLen * scale;
 
         // draw gradient visualization
-        line(visu,
-             Point((int)(x1 * zoomFac), (int)(y1 * zoomFac)),
-             Point((int)(x2 * zoomFac), (int)(y2 * zoomFac)),
-             Scalar(0, 255, 0),
-             1);
+        line(visu, Point((int)(x1 * zoomFac), (int)(y1 * zoomFac)), Point((int)(x2 * zoomFac), (int)(y2 * zoomFac)), Scalar(0, 255, 0), 1);
 
       } // for (all bins)
 
@@ -405,10 +388,7 @@ main(int argc, char** argv) {
   string neg_dir = parser.get<string>("nd");
   string neg = parser.get<string>("n");
   if(pos_dir.empty() || pos.empty() || neg_dir.empty() || neg.empty()) {
-    cout << "Wrong number of parameters." << endl
-         << "Usage: " << argv[0] << " --pd=pos_dir -p=pos.lst --nd=neg_dir -n=neg.lst" << endl
-         << "example: " << argv[0]
-         << " --pd=/INRIA_dataset/ -p=Train/pos.lst --nd=/INRIA_dataset/ -n=Train/neg.lst" << endl;
+    cout << "Wrong number of parameters." << endl << "Usage: " << argv[0] << " --pd=pos_dir -p=pos.lst --nd=neg_dir -n=neg.lst" << endl << "example: " << argv[0] << " --pd=/INRIA_dataset/ -p=Train/pos.lst --nd=/INRIA_dataset/ -n=Train/neg.lst" << endl;
     exit(-1);
   }
   load_images(pos_dir, pos, pos_lst);

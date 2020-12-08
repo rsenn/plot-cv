@@ -16,8 +16,8 @@ main() {
   namedWindow("Hello");
 
   VideoCapture cap(0);
-  cap.set(CV_CAP_PROP_FRAME_WIDTH, 320);
-  cap.set(CV_CAP_PROP_FRAME_HEIGHT, 240);
+  cap.set(cv::CAP_PROP_FRAME_WIDTH, 320);
+  cap.set(cv::CAP_PROP_FRAME_HEIGHT, 240);
 
   Mat im, im_g;
   double time = 0;

@@ -210,9 +210,9 @@ main(int argc, char** argv) {
 
   // setup camera
   raspicam::RaspiCam_Cv Camera;
-  Camera.set(CV_CAP_PROP_FORMAT, CV_8UC1);
-  Camera.set(CV_CAP_PROP_FRAME_WIDTH, CAMERA_IMG_WIDTH);
-  Camera.set(CV_CAP_PROP_FRAME_HEIGHT, CAMERA_IMG_HEIGHT);
+  Camera.set(cv::CAP_PROP_FORMAT, CV_8UC1);
+  Camera.set(cv::CAP_PROP_FRAME_WIDTH, CAMERA_IMG_WIDTH);
+  Camera.set(cv::CAP_PROP_FRAME_HEIGHT, CAMERA_IMG_HEIGHT);
   cout << "Connecting to camera" << endl;
 
   if(!Camera.open()) {

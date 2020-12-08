@@ -17,10 +17,7 @@ randomColor(RNG& rng) {
 }
 
 void
-perspectiveCorrection(const string& img1Path,
-                      const string& img2Path,
-                      const Size& patternSize,
-                      RNG& rng) {
+perspectiveCorrection(const string& img1Path, const string& img2Path, const Size& patternSize, RNG& rng) {
   Mat img1 = imread(img1Path);
   Mat img2 = imread(img2Path);
 
@@ -86,10 +83,7 @@ main(int argc, char* argv[]) {
   }
 
   Size patternSize(parser.get<int>("width"), parser.get<int>("height"));
-  perspectiveCorrection(parser.get<String>("image1"),
-                        parser.get<String>("image2"),
-                        patternSize,
-                        rng);
+  perspectiveCorrection(parser.get<String>("image1"), parser.get<String>("image2"), patternSize, rng);
 
   return 0;
 }

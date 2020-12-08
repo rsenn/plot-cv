@@ -38,7 +38,7 @@ int
 main() {
 
   VideoCapture capture("C:/Users/Jameson/Desktop/data/specvid.avi");
-  Tensile* object = new Tensile(capture.get(CV_CAP_PROP_FRAME_COUNT));
+  Tensile* object = new Tensile(capture.get(cv::CAP_PROP_FRAME_COUNT));
 
   cv::Mat currentFrame;
 

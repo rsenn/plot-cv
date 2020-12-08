@@ -48,8 +48,7 @@ main(int argc, char** argv) {
   cv::Mat_<Vec3b> mouth = extractMouthROI(face);
 
   cv::Mat_<uchar> pseudo_hue_plane = transformPseudoHue(mouth);
-  cv::Mat_<uchar> pseudo_hue_bin =
-      binaryThresholding(pseudo_hue_plane, returnImageStats(pseudo_hue_plane));
+  cv::Mat_<uchar> pseudo_hue_bin = binaryThresholding(pseudo_hue_plane, returnImageStats(pseudo_hue_plane));
 
   // A clone image is required because findContours() modifies the input image
   cv::Mat binary_clone = pseudo_hue_bin.clone();
@@ -119,18 +118,8 @@ main(int argc, char** argv) {
   // Mark mid-points
   for(int i = 0; i < mid_y_values.size(); ++i) {
     circle(image_contour, cv::Point(closest_mid_x, mid_y_values[i]), 3.0, Scalar(0, 0, 255), -1, 8);
-    line(image_contour,
-         cv::Point(closest_mid_x, mid_y_values[i]),
-         cv::Point(min_x, min_y),
-         Scalar(0, 0, 255),
-         1,
-         8);
-    line(image_contour,
-         cv::Point(closest_mid_x, mid_y_values[i]),
-         cv::Point(max_x, max_y),
-         Scalar(0, 0, 255),
-         1,
-         8);
+    line(image_contour, cv::Point(closest_mid_x, mid_y_values[i]), cv::Point(min_x, min_y), Scalar(0, 0, 255), 1, 8);
+    line(image_contour, cv::Point(closest_mid_x, mid_y_values[i]), cv::Point(max_x, max_y), Scalar(0, 0, 255), 1, 8);
   }
 
   // imshow("Face-ROI", face);
@@ -336,8 +325,7 @@ returnImageStats(const cv::Mat_<uchar>& image) {
 
   int sum_sq = 0;
   for(int i = 0; i < image.rows; ++i) {
-    for(int j = 0; j < image.cols; ++j)
-      sum_sq += ((image.at<uchar>(i, j) - mean) * (image.at<uchar>(i, j) - mean));
+    for(int j = 0; j < image.cols; ++j) sum_sq += ((image.at<uchar>(i, j) - mean) * (image.at<uchar>(i, j) - mean));
   }
   std_dev = sqrt((double)sum_sq / total_pixels);
 

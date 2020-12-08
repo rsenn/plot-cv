@@ -26,44 +26,24 @@ createProcessingGraph(ivx::Image& inputImage, ivx::Image& outputImage) {
   vx_uint32 height = inputImage.height();
 
   // Intermediate images
-  Image yuv = Image::createVirtual(graph, 0, 0, VX_DF_IMAGE_YUV4),
-        gray = Image::createVirtual(graph), smoothed = Image::createVirtual(graph),
-        cannied = Image::createVirtual(graph),
-        halfImg = Image::create(context, width, height, VX_DF_IMAGE_U8),
-        halfCanny = Image::create(context, width, height, VX_DF_IMAGE_U8);
+  Image yuv = Image::createVirtual(graph, 0, 0, VX_DF_IMAGE_YUV4), gray = Image::createVirtual(graph), smoothed = Image::createVirtual(graph), cannied = Image::createVirtual(graph), halfImg = Image::create(context, width, height, VX_DF_IMAGE_U8), halfCanny = Image::create(context, width, height, VX_DF_IMAGE_U8);
 
   // Constants
   vx_uint32 threshCannyMin = 127;
   vx_uint32 threshCannyMax = 192;
-  Threshold threshCanny =
-      Threshold::createRange(context, VX_TYPE_UINT8, threshCannyMin, threshCannyMax);
+  Threshold threshCanny = Threshold::createRange(context, VX_TYPE_UINT8, threshCannyMin, threshCannyMax);
 
   ivx::Scalar alpha = ivx::Scalar::create<VX_TYPE_FLOAT32>(context, 0.5);
 
   // Sequence of some image operations
   Node::create(graph, VX_KERNEL_COLOR_CONVERT, inputImage, yuv);
-  Node::create(graph,
-               VX_KERNEL_CHANNEL_EXTRACT,
-               yuv,
-               ivx::Scalar::create<VX_TYPE_ENUM>(context, VX_CHANNEL_Y),
-               gray);
+  Node::create(graph, VX_KERNEL_CHANNEL_EXTRACT, yuv, ivx::Scalar::create<VX_TYPE_ENUM>(context, VX_CHANNEL_Y), gray);
   // node can also be added in function-like style
   nodes::gaussian3x3(graph, gray, smoothed);
-  Node::create(graph,
-               VX_KERNEL_CANNY_EDGE_DETECTOR,
-               smoothed,
-               threshCanny,
-               ivx::Scalar::create<VX_TYPE_INT32>(context, 3),
-               ivx::Scalar::create<VX_TYPE_ENUM>(context, VX_NORM_L2),
-               cannied);
+  Node::create(graph, VX_KERNEL_CANNY_EDGE_DETECTOR, smoothed, threshCanny, ivx::Scalar::create<VX_TYPE_INT32>(context, 3), ivx::Scalar::create<VX_TYPE_ENUM>(context, VX_NORM_L2), cannied);
   Node::create(graph, VX_KERNEL_ACCUMULATE_WEIGHTED, gray, alpha, halfImg);
   Node::create(graph, VX_KERNEL_ACCUMULATE_WEIGHTED, cannied, alpha, halfCanny);
-  Node::create(graph,
-               VX_KERNEL_ADD,
-               halfImg,
-               halfCanny,
-               ivx::Scalar::create<VX_TYPE_ENUM>(context, VX_CONVERT_POLICY_SATURATE),
-               outputImage);
+  Node::create(graph, VX_KERNEL_ADD, halfImg, halfCanny, ivx::Scalar::create<VX_TYPE_ENUM>(context, VX_CONVERT_POLICY_SATURATE), outputImage);
 
   graph.verify();
 
@@ -97,8 +77,7 @@ ovxDemo(std::string inputPath, UserMemoryMode mode) {
     if(mode == COPY) {
       ivxImage = Image::create(context, width, height, color);
     } else {
-      ivxImage =
-          Image::createFromHandle(context, color, Image::createAddressing(frame), frame.data);
+      ivxImage = Image::createFromHandle(context, color, Image::createAddressing(frame), frame.data);
     }
 
     Image ivxResult;
@@ -110,10 +89,7 @@ ovxDemo(std::string inputPath, UserMemoryMode mode) {
     } else { // if (mode == MAP_TO_VX)
       // create vx_image based on user data, no copying required
       output = cv::Mat(height, width, CV_8U, cv::Scalar(0));
-      ivxResult = Image::createFromHandle(context,
-                                          Image::matTypeToFormat(CV_8U),
-                                          Image::createAddressing(output),
-                                          output.data);
+      ivxResult = Image::createFromHandle(context, Image::matTypeToFormat(CV_8U), Image::createAddressing(output), output.data);
     }
 
     Graph graph = createProcessingGraph(ivxImage, ivxResult);

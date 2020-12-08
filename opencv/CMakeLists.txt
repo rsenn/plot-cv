@@ -136,6 +136,8 @@ add_prog(videocapture_gstreamer_pipeline)
 # add_prog(webcam_demo)
 add_prog(homography_from_camera_displacement)
 add_prog(aruco_ar_demo)
+add_prog(scannerLite)
+add_prog(scanner)
 # add_prog(tracking_calibration_with_img) target_link_libraries(tracking_calibration_with_img yaml-cpp roslib rospack roscpp )
 #[[
 add_prog(a)

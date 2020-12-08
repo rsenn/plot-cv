@@ -135,16 +135,14 @@ CvCapture_Images::retrieveFrame(int, OutputArray out) {
 double
 CvCapture_Images::getProperty(int id) const {
   switch(id) {
-    case CV_CAP_PROP_POS_MSEC: CV_WARN("collections of images don't have framerates"); return 0;
-    case CV_CAP_PROP_POS_FRAMES: return currentframe;
-    case CV_CAP_PROP_FRAME_COUNT: return length;
-    case CV_CAP_PROP_POS_AVI_RATIO: return (double)currentframe / (double)(length - 1);
-    case CV_CAP_PROP_FRAME_WIDTH: return frame.cols;
-    case CV_CAP_PROP_FRAME_HEIGHT: return frame.rows;
-    case CV_CAP_PROP_FPS: CV_WARN("collections of images don't have framerates"); return 1;
-    case CV_CAP_PROP_FOURCC:
-      CV_WARN("collections of images don't have 4-character codes");
-      return 0;
+    case cv::CAP_PROP_POS_MSEC: CV_WARN("collections of images don't have framerates"); return 0;
+    case cv::CAP_PROP_POS_FRAMES: return currentframe;
+    case cv::CAP_PROP_FRAME_COUNT: return length;
+    case cv::CAP_PROP_POS_AVI_RATIO: return (double)currentframe / (double)(length - 1);
+    case cv::CAP_PROP_FRAME_WIDTH: return frame.cols;
+    case cv::CAP_PROP_FRAME_HEIGHT: return frame.rows;
+    case cv::CAP_PROP_FPS: CV_WARN("collections of images don't have framerates"); return 1;
+    case cv::CAP_PROP_FOURCC: CV_WARN("collections of images don't have 4-character codes"); return 0;
   }
   return 0;
 }
@@ -152,8 +150,8 @@ CvCapture_Images::getProperty(int id) const {
 bool
 CvCapture_Images::setProperty(int id, double value) {
   switch(id) {
-    case CV_CAP_PROP_POS_MSEC:
-    case CV_CAP_PROP_POS_FRAMES:
+    case cv::CAP_PROP_POS_MSEC:
+    case cv::CAP_PROP_POS_FRAMES:
       if(value < 0) {
         CV_WARN("seeking to negative positions does not work - clamping");
         value = 0;
@@ -166,7 +164,7 @@ CvCapture_Images::setProperty(int id, double value) {
       if(currentframe != 0)
         grabbedInOpen = false; // grabbed frame is not valid anymore
       return true;
-    case CV_CAP_PROP_POS_AVI_RATIO:
+    case cv::CAP_PROP_POS_AVI_RATIO:
       if(value > 1) {
         CV_WARN("seeking beyond end of sequence - clamping");
         value = 1;
@@ -200,8 +198,7 @@ icvExtractPattern(const std::string& filename, unsigned* offset) {
       pos++;
       CV_Assert(pos < len);
     }
-    if(filename[pos] >= '1' &&
-       filename[pos] <= '9') { // optional numeric size (1..9) (one symbol only)
+    if(filename[pos] >= '1' && filename[pos] <= '9') { // optional numeric size (1..9) (one symbol only)
       pos++;
       CV_Assert(pos < len);
     }
@@ -214,8 +211,7 @@ icvExtractPattern(const std::string& filename, unsigned* offset) {
         return filename; // no more patterns
       CV_Error_(Error::StsBadArg, ("CAP_IMAGES: invalid multiple patterns: %s", filename.c_str()));
     }
-    CV_Error_(Error::StsBadArg,
-              ("CAP_IMAGES: error, expected '0?[1-9][du]' pattern, got: %s", filename.c_str()));
+    CV_Error_(Error::StsBadArg, ("CAP_IMAGES: error, expected '0?[1-9][du]' pattern, got: %s", filename.c_str()));
   } else { // no pattern filename was given - extract the pattern
     pos = filename.rfind('/');
 #ifdef _WIN32
@@ -230,9 +226,7 @@ icvExtractPattern(const std::string& filename, unsigned* offset) {
     while(pos < len && !isdigit(filename[pos])) pos++;
 
     if(pos == len) {
-      CV_Error_(Error::StsBadArg,
-                ("CAP_IMAGES: can't find starting number (in the name of file): %s",
-                 filename.c_str()));
+      CV_Error_(Error::StsBadArg, ("CAP_IMAGES: can't find starting number (in the name of file): %s", filename.c_str()));
     }
 
     std::string::size_type pos0 = pos;

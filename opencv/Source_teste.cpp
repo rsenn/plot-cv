@@ -14,9 +14,9 @@ main(int argc, char** argv) {
     return -1;
   }
 
-  double count = cap.get(CV_CAP_PROP_FRAME_COUNT); // get the frame count
+  double count = cap.get(cv::CAP_PROP_FRAME_COUNT); // get the frame count
   cout << count;
-  cap.set(CV_CAP_PROP_POS_FRAMES, count - 1000); // Set index to last frame
+  cap.set(cv::CAP_PROP_POS_FRAMES, count - 1000); // Set index to last frame
   namedWindow("MyVideo", CV_WINDOW_AUTOSIZE);
   namedWindow("Teste_Gray", CV_WINDOW_AUTOSIZE);
   namedWindow("Teste_GaussianBlur", CV_WINDOW_AUTOSIZE);

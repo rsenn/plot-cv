@@ -73,9 +73,8 @@ main(int argc, char** argv) {
       if(i - last != 1) {
         if(first != -1) {
           avgrows.push_back(((float)last + (float)first) / 2.0);
-          staffbegins.push_back(
-              first); // making a std::vector of all the beginning staffline locations
-          staffends.push_back(last); // making a std::vector of all the end staffline locations
+          staffbegins.push_back(first); // making a std::vector of all the beginning staffline locations
+          staffends.push_back(last);    // making a std::vector of all the end staffline locations
         }
         first = i;
       }
@@ -271,8 +270,7 @@ createCookBook(cv::Mat staveReg, int rightIndex) {
 
   threshold(staveReg, threshold_output, thresh, 255, THRESH_BINARY);
   /// Find contours
-  findContours(
-      threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+  findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Approximate contours to polygons + get bounding rects and circles
   std::vector<std::vector<cv::Point>> contours_poly(contours.size());
@@ -353,8 +351,7 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
 
   threshold(staveReg, threshold_output, thresh, 255, THRESH_BINARY);
   /// Find contours
-  findContours(
-      threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+  findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Approximate contours to polygons + get bounding rects and circles
   std::vector<std::vector<cv::Point>> contours_poly(contours.size());
@@ -396,8 +393,7 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
     namedWindow(result_window, CV_WINDOW_AUTOSIZE);
     imshow(result_window, result);
     waitKey();
-    if(boundRect[i].area() >= templateQuarter.size[0] * templateQuarter.size[1] &&
-       boundRect[i].area() <= 3 * (templateQuarter.size[0] * templateQuarter.size[1])) {
+    if(boundRect[i].area() >= templateQuarter.size[0] * templateQuarter.size[1] && boundRect[i].area() <= 3 * (templateQuarter.size[0] * templateQuarter.size[1])) {
       // know you're in business
 
       // construct a new cv::Mat from boundRect coordinates in staveRegion
@@ -443,13 +439,7 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
 
       if(maxVal > NOTE_THRESHOLD) {
 
-        rectangle(staveReg,
-                  cv::Point(matchLoc.x + boundRect[i].tl().x, boundRect[i].tl().y + matchLoc.y),
-                  cv::Point(matchLoc.x + boundRect[i].br().x, boundRect[i].br().y + matchLoc.y),
-                  Scalar::all(0),
-                  2,
-                  8,
-                  0);
+        rectangle(staveReg, cv::Point(matchLoc.x + boundRect[i].tl().x, boundRect[i].tl().y + matchLoc.y), cv::Point(matchLoc.x + boundRect[i].br().x, boundRect[i].br().y + matchLoc.y), Scalar::all(0), 2, 8, 0);
       }
 
       imshow("stave section", staveReg);

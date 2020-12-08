@@ -59,8 +59,7 @@ main(int argc, char** argv) {
   }
 
   // Draw largest contour on the blank image
-  cout << "Size of the contour image: " << image_contour.rows << " X " << image_contour.cols
-       << "\n";
+  cout << "Size of the contour image: " << image_contour.rows << " X " << image_contour.cols << "\n";
   int largest_contour_idx = returnLargestContourIndex(contours);
   for(int i = 0; i < contours[largest_contour_idx].size(); ++i) {
     cv::Point_<int> pt = contours[largest_contour_idx][i];
@@ -91,8 +90,7 @@ exponentialTransform(const cv::Mat_<uchar>& image) {
 
   cv::Mat_<uchar> image_exp(image.size());
   for(int i = 0; i < image.rows; ++i) {
-    for(int j = 0; j < image.cols; ++j)
-      image_exp.at<uchar>(i, j) = exponential_transform[image.at<uchar>(i, j)];
+    for(int j = 0; j < image.cols; ++j) image_exp.at<uchar>(i, j) = exponential_transform[image.at<uchar>(i, j)];
   }
   return image_exp;
 }
@@ -110,8 +108,7 @@ returnImageStats(const cv::Mat_<uchar>& image) {
 
   int sum_sq = 0;
   for(int i = 0; i < image.rows; ++i) {
-    for(int j = 0; j < image.cols; ++j)
-      sum_sq += ((image.at<uchar>(i, j) - mean) * (image.at<uchar>(i, j) - mean));
+    for(int j = 0; j < image.cols; ++j) sum_sq += ((image.at<uchar>(i, j) - mean) * (image.at<uchar>(i, j) - mean));
   }
   std_dev = sqrt((double)sum_sq / total_pixels);
 

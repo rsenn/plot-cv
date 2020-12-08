@@ -18,7 +18,7 @@ main(int argc, char* argv[]) {
     return 1;
 
   // Get the frame rate
-  double rate = 30; // capture.get(CV_CAP_PROP_FPS);
+  double rate = 30; // capture.get(cv::CAP_PROP_FPS);
   double delay = 1000 / rate;
   bool stop(false);
   cv::Mat frame; // current video frame

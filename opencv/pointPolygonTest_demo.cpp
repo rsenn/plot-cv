@@ -49,8 +49,7 @@ main(void) {
 
   for(int j = 0; j < src.rows; j++) {
     for(int i = 0; i < src.cols; i++) {
-      raw_dist.at<float>(j, i) =
-          (float)pointPolygonTest(contours[0], cv::Point2f((float)i, (float)j), true);
+      raw_dist.at<float>(j, i) = (float)pointPolygonTest(contours[0], cv::Point2f((float)i, (float)j), true);
     }
   }
 

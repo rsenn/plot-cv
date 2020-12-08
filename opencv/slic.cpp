@@ -81,15 +81,13 @@ main(int argc, char** argv) {
 
     double t = (double)getTickCount();
 
-    Ptr<SuperpixelSLIC> slic =
-        createSuperpixelSLIC(converted, algorithm + SLIC, region_size, float(ruler));
+    Ptr<SuperpixelSLIC> slic = createSuperpixelSLIC(converted, algorithm + SLIC, region_size, float(ruler));
     slic->iterate(num_iterations);
     if(min_element_size > 0)
       slic->enforceLabelConnectivity(min_element_size);
 
     t = ((double)getTickCount() - t) / getTickFrequency();
-    cout << "SLIC" << (algorithm ? 'O' : ' ') << " segmentation took " << (int)(t * 1000)
-         << " ms with " << slic->getNumberOfSuperpixels() << " superpixels" << endl;
+    cout << "SLIC" << (algorithm ? 'O' : ' ') << " segmentation took " << (int)(t * 1000) << " ms with " << slic->getNumberOfSuperpixels() << " superpixels" << endl;
 
     // get the contours for displaying
     slic->getLabelContourMask(mask, true);

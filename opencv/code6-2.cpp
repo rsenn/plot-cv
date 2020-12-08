@@ -26,9 +26,7 @@ make_contours_closed(std::vector<std::vector<cv::Point>> contours) {
 
 // Function to find the index of smalledst enclosing contour in 'contours'
 int
-smallest_contour(cv::Point p,
-                 std::vector<std::vector<cv::Point>> contours,
-                 std::vector<Vec4i> heirarchy) {
+smallest_contour(cv::Point p, std::vector<std::vector<cv::Point>> contours, std::vector<Vec4i> heirarchy) {
   int idx = 0, prev_idx = -1;
   while(idx >= 0) {
     std::vector<cv::Point> c = contours[idx];

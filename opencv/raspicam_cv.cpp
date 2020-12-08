@@ -43,7 +43,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace raspicam {
 RaspiCam_Cv::RaspiCam_Cv() {
   _impl = new _private::Private_Impl();
-  set(CV_CAP_PROP_FORMAT, CV_8UC3);
+  set(cv::CAP_PROP_FORMAT, CV_8UC3);
 }
 RaspiCam_Cv::~RaspiCam_Cv() { delete _impl; }
 
@@ -94,24 +94,24 @@ RaspiCam_Cv::get(int propId) {
 
   switch(propId) {
 
-    case CV_CAP_PROP_FRAME_WIDTH: return _impl->getWidth();
-    case CV_CAP_PROP_FRAME_HEIGHT: return _impl->getHeight();
-    case CV_CAP_PROP_FPS: return 30;
-    case CV_CAP_PROP_FORMAT: return imgFormat;
-    case CV_CAP_PROP_MODE: return 0;
-    case CV_CAP_PROP_BRIGHTNESS: return _impl->getBrightness();
-    case CV_CAP_PROP_CONTRAST: return Scaler::scale(-100, 100, 0, 100, _impl->getContrast());
-    case CV_CAP_PROP_SATURATION: return Scaler::scale(-100, 100, 0, 100, _impl->getSaturation()); ;
-    //     case CV_CAP_PROP_HUE : return _cam_impl->getSharpness();
-    case CV_CAP_PROP_GAIN: return Scaler::scale(0, 800, 0, 100, _impl->getISO());
-    case CV_CAP_PROP_EXPOSURE:
+    case cv::CAP_PROP_FRAME_WIDTH: return _impl->getWidth();
+    case cv::CAP_PROP_FRAME_HEIGHT: return _impl->getHeight();
+    case cv::CAP_PROP_FPS: return 30;
+    case cv::CAP_PROP_FORMAT: return imgFormat;
+    case cv::CAP_PROP_MODE: return 0;
+    case cv::CAP_PROP_BRIGHTNESS: return _impl->getBrightness();
+    case cv::CAP_PROP_CONTRAST: return Scaler::scale(-100, 100, 0, 100, _impl->getContrast());
+    case cv::CAP_PROP_SATURATION: return Scaler::scale(-100, 100, 0, 100, _impl->getSaturation()); ;
+    //     case cv::CAP_PROP_HUE : return _cam_impl->getSharpness();
+    case cv::CAP_PROP_GAIN: return Scaler::scale(0, 800, 0, 100, _impl->getISO());
+    case cv::CAP_PROP_EXPOSURE:
       if(_impl->getShutterSpeed() == 0)
         return -1; // auto
       else
         return Scaler::scale(0, 330000, 0, 100, _impl->getShutterSpeed());
       break;
-    case CV_CAP_PROP_CONVERT_RGB: return (imgFormat == CV_8UC3);
-    //     case CV_CAP_PROP_WHITE_BALANCE :return _cam_impl->getAWB();
+    case cv::CAP_PROP_CONVERT_RGB: return (imgFormat == CV_8UC3);
+    //     case cv::CAP_PROP_WHITE_BALANCE :return _cam_impl->getAWB();
     default: return -1;
   };
 }
@@ -124,9 +124,9 @@ RaspiCam_Cv::set(int propId, double value) {
 
   switch(propId) {
 
-    case CV_CAP_PROP_FRAME_WIDTH: _impl->setWidth(value); break;
-    case CV_CAP_PROP_FRAME_HEIGHT: _impl->setHeight(value); break;
-    case CV_CAP_PROP_FORMAT: {
+    case cv::CAP_PROP_FRAME_WIDTH: _impl->setWidth(value); break;
+    case cv::CAP_PROP_FRAME_HEIGHT: _impl->setHeight(value); break;
+    case cv::CAP_PROP_FORMAT: {
       bool res = true;
       if(value == CV_8UC1) {
         _impl->setFormat(RASPICAM_FORMAT_GRAY);
@@ -138,15 +138,15 @@ RaspiCam_Cv::set(int propId, double value) {
         res = false; // error int format
       return res;
     } break;
-    case CV_CAP_PROP_MODE: // nothing to  do yet
+    case cv::CAP_PROP_MODE: // nothing to  do yet
       return false;
       break;
-    case CV_CAP_PROP_BRIGHTNESS: _impl->setBrightness(value); break;
-    case CV_CAP_PROP_CONTRAST: _impl->setContrast(Scaler::scale(0, 100, -100, 100, value)); break;
-    case CV_CAP_PROP_SATURATION: _impl->setSaturation(Scaler::scale(0, 100, -100, 100, value)); break;
-    //     case CV_CAP_PROP_HUE : return _cam_impl->getSharpness();
-    case CV_CAP_PROP_GAIN: _impl->setISO(Scaler::scale(0, 100, 0, 800, value)); break;
-    case CV_CAP_PROP_EXPOSURE:
+    case cv::CAP_PROP_BRIGHTNESS: _impl->setBrightness(value); break;
+    case cv::CAP_PROP_CONTRAST: _impl->setContrast(Scaler::scale(0, 100, -100, 100, value)); break;
+    case cv::CAP_PROP_SATURATION: _impl->setSaturation(Scaler::scale(0, 100, -100, 100, value)); break;
+    //     case cv::CAP_PROP_HUE : return _cam_impl->getSharpness();
+    case cv::CAP_PROP_GAIN: _impl->setISO(Scaler::scale(0, 100, 0, 800, value)); break;
+    case cv::CAP_PROP_EXPOSURE:
       if(value > 0 && value <= 100) {
         _impl->setShutterSpeed(Scaler::scale(0, 100, 0, 330000, value));
       } else {
@@ -154,8 +154,8 @@ RaspiCam_Cv::set(int propId, double value) {
         _impl->setShutterSpeed(0);
       }
       break;
-    case CV_CAP_PROP_CONVERT_RGB: imgFormat = CV_8UC3; break;
-    //     case CV_CAP_PROP_WHITE_BALANCE :return _cam_impl->getAWB();
+    case cv::CAP_PROP_CONVERT_RGB: imgFormat = CV_8UC3; break;
+    //     case cv::CAP_PROP_WHITE_BALANCE :return _cam_impl->getAWB();
     default: return false;
   };
   return true;

@@ -47,10 +47,7 @@ searchForMovement(cv::Mat thresholdImage, cv::Mat& cameraFeed) {
   // find contours of filtered image using openCV findContours function
   // findContours(temp,contours,hierarchy,CV_RETR_CCOMP,CV_CHAIN_APPROX_SIMPLE );// retrieves all
   // contours
-  findContours(temp,
-               contours,
-               hierarchy,
-               CV_RETR_EXTERNAL,
+  findContours(temp, contours, hierarchy, CV_RETR_EXTERNAL,
                CV_CHAIN_APPROX_SIMPLE); // retrieves external contours
 
   // if contours std::vector is not empty, we have found some objects
@@ -82,13 +79,7 @@ searchForMovement(cv::Mat thresholdImage, cv::Mat& cameraFeed) {
   line(cameraFeed, cv::Point(x, y), cv::Point(x, y + 25), Scalar(0, 255, 0), 2);
   line(cameraFeed, cv::Point(x, y), cv::Point(x - 25, y), Scalar(0, 255, 0), 2);
   line(cameraFeed, cv::Point(x, y), cv::Point(x + 25, y), Scalar(0, 255, 0), 2);
-  putText(cameraFeed,
-          "Tracking object at (" + intToString(x) + "," + intToString(y) + ")",
-          cv::Point(x, y),
-          1,
-          1,
-          Scalar(255, 0, 0),
-          2);
+  putText(cameraFeed, "Tracking object at (" + intToString(x) + "," + intToString(y) + ")", cv::Point(x, y), 1, 1, Scalar(255, 0, 0), 2);
 }
 int
 main() {
@@ -128,7 +119,7 @@ main() {
     // check if the video has reach its last frame.
     // we add '-1' because we are reading two frames from the video at a time.
     // if this is not included, we get a memory error!
-    while(capture.get(CV_CAP_PROP_POS_FRAMES) < capture.get(CV_CAP_PROP_FRAME_COUNT) - 1) {
+    while(capture.get(cv::CAP_PROP_POS_FRAMES) < capture.get(cv::CAP_PROP_FRAME_COUNT) - 1) {
       bool success;
       // read first frame
       success = capture.read(frame1);

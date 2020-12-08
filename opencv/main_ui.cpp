@@ -55,8 +55,8 @@ main(int argc, char* argv[]) {
   if(cap.isOpened()) {
     haveRGBCamera = true;
 
-    cap.set(CV_CAP_PROP_FRAME_WIDTH, 640.0);
-    cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480.0);
+    cap.set(cv::CAP_PROP_FRAME_WIDTH, 640.0);
+    cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480.0);
   } // check if we succeeded
 
   std::string windowName = "Thermal";
@@ -71,10 +71,7 @@ main(int argc, char* argv[]) {
                                     // cv::Vec4f(.8,0.3,0.3,1.0),
                                     cv::Vec4f(.9, 0.9, 0.9, 1.0)};
 
-  cv::Mat palette_jet(1,
-                      sizeof(palette_jet_colors) / sizeof(palette_jet_colors[0]),
-                      CV_32FC4,
-                      palette_jet_colors);
+  cv::Mat palette_jet(1, sizeof(palette_jet_colors) / sizeof(palette_jet_colors[0]), CV_32FC4, palette_jet_colors);
 
   cv::Mat palette_show;
 
@@ -154,8 +151,7 @@ main(int argc, char* argv[]) {
       if(M(0, 0) < 0.001) {
 
         float rgbFocal = rgbFocalVGA * float(cameraFrameGray.cols) / 640.0;
-        float gridEyeFocal =
-            float(colorized_resized.cols) * 0.5 / tan(gridEyeFOV * 0.5 * CV_PI / 180.0);
+        float gridEyeFocal = float(colorized_resized.cols) * 0.5 / tan(gridEyeFOV * 0.5 * CV_PI / 180.0);
 
         // Principle point to principle point
 
@@ -180,13 +176,7 @@ main(int argc, char* argv[]) {
 
       int warpFlags = cv::INTER_LINEAR; //| cv::WARP_FILL_OUTLIERS;
 
-      cv::warpAffine(diff,
-                     diffWarped,
-                     M,
-                     colorized_resized.size(),
-                     warpFlags,
-                     cv::BORDER_CONSTANT,
-                     cv::Scalar::all(128));
+      cv::warpAffine(diff, diffWarped, M, colorized_resized.size(), warpFlags, cv::BORDER_CONSTANT, cv::Scalar::all(128));
 
       cv::cvtColor(diffWarped, diffWarped, CV_GRAY2RGBA);
 
@@ -194,9 +184,7 @@ main(int argc, char* argv[]) {
 
       int ctr_x = gridEyePixels.cols / 2;
       int ctr_y = gridEyePixels.rows / 2;
-      float centerVal =
-          gridEyePixels.at<float>(ctr_y, ctr_x) + gridEyePixels.at<float>(ctr_y + 1, ctr_x) +
-          gridEyePixels.at<float>(ctr_y + 1, ctr_x + 1) + gridEyePixels.at<float>(ctr_y, ctr_x + 1);
+      float centerVal = gridEyePixels.at<float>(ctr_y, ctr_x) + gridEyePixels.at<float>(ctr_y + 1, ctr_x) + gridEyePixels.at<float>(ctr_y + 1, ctr_x + 1) + gridEyePixels.at<float>(ctr_y, ctr_x + 1);
 
       centerVal *= 1.0 / 4.0;
       std::string val_str = cv::format("% 4.1f°C", centerVal);
@@ -208,10 +196,8 @@ main(int argc, char* argv[]) {
       std::string thermistor_val_str = cv::format("Thermistor:%.1f°C", thermistorValue);
 
       cv::Point2f pos(0, combined.rows);
-      cv::putText(
-          combined, thermistor_val_str, pos, cv::FONT_HERSHEY_PLAIN, 1.0, cv::Scalar::all(0.0), 4);
-      cv::putText(
-          combined, thermistor_val_str, pos, cv::FONT_HERSHEY_PLAIN, 1.0, cv::Scalar::all(255), 2);
+      cv::putText(combined, thermistor_val_str, pos, cv::FONT_HERSHEY_PLAIN, 1.0, cv::Scalar::all(0.0), 4);
+      cv::putText(combined, thermistor_val_str, pos, cv::FONT_HERSHEY_PLAIN, 1.0, cv::Scalar::all(255), 2);
 
       cv::imshow(windowName2, combined);
     }

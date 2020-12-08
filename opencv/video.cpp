@@ -17,8 +17,8 @@ int
 main(int argc, char** argv) {
 
   VideoCapture capture(0);
-  capture.set(CV_CAP_PROP_FRAME_WIDTH, 320);
-  capture.set(CV_CAP_PROP_FRAME_HEIGHT, 240);
+  capture.set(cv::CAP_PROP_FRAME_WIDTH, 320);
+  capture.set(cv::CAP_PROP_FRAME_HEIGHT, 240);
   ros::init(argc, argv, "circle_node");
   ros::NodeHandle nh;
 

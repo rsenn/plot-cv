@@ -160,8 +160,7 @@ process::printTable(Table table[SEGMENTSIZE + 1]) {
 }
 
 int
-process::startOpencv(
-    int width, int height, int mode, ParkingInfo info, std::string answer, std::string ip) {
+process::startOpencv(int width, int height, int mode, ParkingInfo info, std::string answer, std::string ip) {
 
 #if FROM == CAMERA
   VideoCapture camera;
@@ -179,8 +178,8 @@ process::startOpencv(
 #endif
   }
 
-  camera.set(CV_CAP_PROP_FRAME_WIDTH, width);
-  camera.set(CV_CAP_PROP_FRAME_HEIGHT, height);
+  camera.set(cv::CAP_PROP_FRAME_WIDTH, width);
+  camera.set(cv::CAP_PROP_FRAME_HEIGHT, height);
 
 #endif
 
@@ -259,8 +258,7 @@ process::startOpencv(
         continue;
 
       /* 각각의 주차 영역 계산 */
-      for(int i = 0; i < SEGMENTSIZE; i++)
-        area[i] = Rect(image.cols * i / SEGMENTSIZE, 0, image.cols / SEGMENTSIZE, image.rows);
+      for(int i = 0; i < SEGMENTSIZE; i++) area[i] = Rect(image.cols * i / SEGMENTSIZE, 0, image.cols / SEGMENTSIZE, image.rows);
 
 #elif FROM == FILESYSTEM
 
@@ -314,8 +312,7 @@ process::startOpencv(
 #endif // CAMERA로터 입력받는 경우
 
         if(mode & COSTTIME)
-          cout << "\t\tCost Time In the FindTexts : " << findText_t * 1000 / getTickFrequency()
-               << "ms" << endl;
+          cout << "\t\tCost Time In the FindTexts : " << findText_t * 1000 / getTickFrequency() << "ms" << endl;
 
         /* 주차 영역 번호 */
         int zoneIndex = 0;

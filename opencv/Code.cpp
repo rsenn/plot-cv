@@ -66,8 +66,7 @@ left() {
   straight();
 }
 
-int low = 18, high = 135, thresholdd = 100, thresholdp = 2, linelength = 50, maxlinegap = 200,
-    bin_threshold = 80;
+int low = 18, high = 135, thresholdd = 100, thresholdp = 2, linelength = 50, maxlinegap = 200, bin_threshold = 80;
 
 void
 detectAndDisplay(Mat frame) {
@@ -80,16 +79,7 @@ detectAndDisplay(Mat frame) {
   face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(10, 10));
   for(size_t i = 0; i < faces.size(); i++) {
     Point center(faces[i].x + faces[i].width / 2, faces[i].y + faces[i].height / 2);
-    ellipse(frame,
-            center,
-            Size(faces[i].width / 2, faces[i].height / 2),
-            0,
-            0,
-            360,
-            Scalar(255, 0, 255),
-            2,
-            8,
-            0);
+    ellipse(frame, center, Size(faces[i].width / 2, faces[i].height / 2), 0, 0, 360, Scalar(255, 0, 255), 2, 8, 0);
     imwrite("stop1.jpg", frame);
     stop();
     delay(5000);

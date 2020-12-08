@@ -21,14 +21,7 @@ static void
 on_trackbar(int, void*) {
   cv::Mat cnt_img = cv::Mat::zeros(w, w, CV_8UC3);
   int _levels = levels - 3;
-  drawContours(cnt_img,
-               contours,
-               _levels <= 0 ? 3 : -1,
-               Scalar(128, 255, 255),
-               3,
-               LINE_AA,
-               hierarchy,
-               std::abs(_levels));
+  drawContours(cnt_img, contours, _levels <= 0 ? 3 : -1, Scalar(128, 255, 255), 3, LINE_AA, hierarchy, std::abs(_levels));
   imshow("contours", cnt_img);
 }
 int
@@ -48,15 +41,7 @@ main(int argc, char** argv) {
     if(i == 0) {
       for(int j = 0; j <= 10; j++) {
         double angle = (j + 5) * CV_PI / 21;
-        line(img,
-             cv::Point(cvRound(dx + 100 + j * 10 - 80 * cos(angle)),
-                       cvRound(dy + 100 - 90 * sin(angle))),
-             cv::Point(cvRound(dx + 100 + j * 10 - 30 * cos(angle)),
-                       cvRound(dy + 100 - 30 * sin(angle))),
-             white,
-             1,
-             8,
-             0);
+        line(img, cv::Point(cvRound(dx + 100 + j * 10 - 80 * cos(angle)), cvRound(dy + 100 - 90 * sin(angle))), cv::Point(cvRound(dx + 100 + j * 10 - 30 * cos(angle)), cvRound(dy + 100 - 30 * sin(angle))), white, 1, 8, 0);
       }
     }
     ellipse(img, cv::Point(dx + 150, dy + 100), Size(100, 70), 0, 0, 360, white, -1, 8, 0);
@@ -78,8 +63,7 @@ main(int argc, char** argv) {
   std::vector<std::vector<cv::Point>> contours0;
   findContours(img, contours0, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
   contours.resize(contours0.size());
-  for(size_t k = 0; k < contours0.size(); k++)
-    approxPolyDP(cv::Mat(contours0[k]), contours[k], 3, true);
+  for(size_t k = 0; k < contours0.size(); k++) approxPolyDP(cv::Mat(contours0[k]), contours[k], 3, true);
   namedWindow("contours", 1);
   createTrackbar("levels+3", "contours", &levels, 7, on_trackbar);
   on_trackbar(0, 0);

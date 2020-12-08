@@ -3245,8 +3245,8 @@ public:
   virtual IplImage* retrieveFrame(int);
   virtual int
   getCaptureDomain() {
-    return CV_CAP_MSMF;
-  } // Return the type of the capture object: CV_CAP_VFW, etc...
+    return cv::CAP_MSMF;
+  } // Return the type of the capture object: cv::CAP_VFW, etc...
 protected:
   void init();
   int index, width, height, fourcc;
@@ -3357,9 +3357,9 @@ double
 CvCaptureCAM_MSMF::getProperty(int property_id) {
   // image format proprrties
   switch(property_id) {
-    case CV_CAP_PROP_FRAME_WIDTH: return VI.getWidth(index);
-    case CV_CAP_PROP_FRAME_HEIGHT: return VI.getHeight(index);
-    case CV_CAP_PROP_FPS: return VI.getFrameRate(index);
+    case cv::CAP_PROP_FRAME_WIDTH: return VI.getWidth(index);
+    case cv::CAP_PROP_FRAME_HEIGHT: return VI.getHeight(index);
+    case cv::CAP_PROP_FPS: return VI.getFrameRate(index);
     default: break;
   }
   return 0;
@@ -3370,17 +3370,17 @@ CvCaptureCAM_MSMF::setProperty(int property_id, double value) {
   unsigned int fps = 0;
   bool handled = false;
   switch(property_id) {
-    case CV_CAP_PROP_FRAME_WIDTH:
+    case cv::CAP_PROP_FRAME_WIDTH:
       width = cvRound(value);
       fps = VI.getFrameRate(index);
       handled = true;
       break;
-    case CV_CAP_PROP_FRAME_HEIGHT:
+    case cv::CAP_PROP_FRAME_HEIGHT:
       height = cvRound(value);
       fps = VI.getFrameRate(index);
       handled = true;
       break;
-    case CV_CAP_PROP_FPS:
+    case cv::CAP_PROP_FPS:
       width = (int)VI.getHeight(index);
       height = (int)VI.getWidth(index);
       fps = cvRound(value);
@@ -3416,7 +3416,7 @@ public:
   virtual IplImage* retrieveFrame(int);
   virtual int
   getCaptureDomain() {
-    return CV_CAP_MSMF;
+    return cv::CAP_MSMF;
   }
 
 protected:
@@ -3516,16 +3516,16 @@ double
 CvCaptureFile_MSMF::getProperty(int property_id) {
   // image format proprrties
   switch(property_id) {
-    case CV_CAP_PROP_FRAME_WIDTH: return captureFormats[captureFormatIndex].width;
-    case CV_CAP_PROP_FRAME_HEIGHT: return captureFormats[captureFormatIndex].height;
-    case CV_CAP_PROP_FRAME_COUNT: {
+    case cv::CAP_PROP_FRAME_WIDTH: return captureFormats[captureFormatIndex].width;
+    case cv::CAP_PROP_FRAME_HEIGHT: return captureFormats[captureFormatIndex].height;
+    case cv::CAP_PROP_FRAME_COUNT: {
       MFTIME duration;
       getSourceDuration(this->videoFileSource, &duration);
       double fps = ((double)captureFormats[captureFormatIndex].MF_MT_FRAME_RATE_NUMERATOR) / ((double)captureFormats[captureFormatIndex].MF_MT_FRAME_RATE_DENOMINATOR);
       return (double)floor(((double)duration / 1e7) * fps + 0.5);
     }
-    case CV_CAP_PROP_FOURCC: return captureFormats[captureFormatIndex].MF_MT_SUBTYPE.Data1;
-    case CV_CAP_PROP_FPS: return ((double)captureFormats[captureFormatIndex].MF_MT_FRAME_RATE_NUMERATOR) / ((double)captureFormats[captureFormatIndex].MF_MT_FRAME_RATE_DENOMINATOR);
+    case cv::CAP_PROP_FOURCC: return captureFormats[captureFormatIndex].MF_MT_SUBTYPE.Data1;
+    case cv::CAP_PROP_FPS: return ((double)captureFormats[captureFormatIndex].MF_MT_FRAME_RATE_NUMERATOR) / ((double)captureFormats[captureFormatIndex].MF_MT_FRAME_RATE_DENOMINATOR);
   }
 
   return -1;

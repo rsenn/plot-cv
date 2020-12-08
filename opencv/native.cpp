@@ -85,9 +85,7 @@ engine_draw_frame(Engine* engine, const cv::Mat& frame) {
   for(int yy = 0; yy < frame.rows; yy++) {
     if(left_indent > 0) {
       memset(pixels, 0, left_indent * sizeof(int32_t));
-      memset(pixels + left_indent + frame.cols,
-             0,
-             (buffer.stride - frame.cols - left_indent) * sizeof(int32_t));
+      memset(pixels + left_indent + frame.cols, 0, (buffer.stride - frame.cols - left_indent) * sizeof(int32_t));
     }
     int32_t* line = pixels + left_indent;
     size_t line_size = frame.cols * 4 * sizeof(unsigned char);
@@ -112,7 +110,7 @@ engine_handle_cmd(android_app* app, int32_t cmd) {
           double prop;
           const char* name;
         } u;
-        u.prop = engine->capture->get(CV_CAP_PROP_SUPPORTED_PREVIEW_SIZES_STRING);
+        u.prop = engine->capture->get(cv::CAP_PROP_SUPPORTED_PREVIEW_SIZES_STRING);
 
         int view_width = ANativeWindow_getWidth(app->window);
         int view_height = ANativeWindow_getHeight(app->window);
@@ -122,29 +120,22 @@ engine_handle_cmd(android_app* app, int32_t cmd) {
           camera_resolution = calc_optimal_camera_resolution(u.name, 640, 480);
         else {
           LOGE("Cannot get supported camera camera_resolutions");
-          camera_resolution =
-              cv::Size(ANativeWindow_getWidth(app->window), ANativeWindow_getHeight(app->window));
+          camera_resolution = cv::Size(ANativeWindow_getWidth(app->window), ANativeWindow_getHeight(app->window));
         }
 
         if((camera_resolution.width != 0) && (camera_resolution.height != 0)) {
-          engine->capture->set(CV_CAP_PROP_FRAME_WIDTH, camera_resolution.width);
-          engine->capture->set(CV_CAP_PROP_FRAME_HEIGHT, camera_resolution.height);
+          engine->capture->set(cv::CAP_PROP_FRAME_WIDTH, camera_resolution.width);
+          engine->capture->set(cv::CAP_PROP_FRAME_HEIGHT, camera_resolution.height);
         }
 
-        float scale = std::min((float)view_width / camera_resolution.width,
-                               (float)view_height / camera_resolution.height);
+        float scale = std::min((float)view_width / camera_resolution.width, (float)view_height / camera_resolution.height);
 
-        if(ANativeWindow_setBuffersGeometry(app->window,
-                                            (int)(view_width / scale),
-                                            int(view_height / scale),
-                                            WINDOW_FORMAT_RGBA_8888) < 0) {
+        if(ANativeWindow_setBuffersGeometry(app->window, (int)(view_width / scale), int(view_height / scale), WINDOW_FORMAT_RGBA_8888) < 0) {
           LOGE("Cannot set pixel format!");
           return;
         }
 
-        LOGI("Camera initialized at resolution %dx%d",
-             camera_resolution.width,
-             camera_resolution.height);
+        LOGI("Camera initialized at resolution %dx%d", camera_resolution.width, camera_resolution.height);
       }
       break;
     case APP_CMD_TERM_WINDOW:
@@ -200,17 +191,11 @@ android_main(android_app* app) {
     // Capture frame from camera and draw it
     if(!engine.capture.empty()) {
       if(engine.capture->grab())
-        engine.capture->retrieve(drawing_frame, CV_CAP_ANDROID_COLOR_FRAME_RGBA);
+        engine.capture->retrieve(drawing_frame, cv::CAP_ANDROID_COLOR_FRAME_RGBA);
 
       char buffer[256];
-      sprintf(
-          buffer, "Display performance: %dx%d @ %.3f", drawing_frame.cols, drawing_frame.rows, fps);
-      cv::putText(drawing_frame,
-                  std::string(buffer),
-                  cv::Point(8, 64),
-                  cv::FONT_HERSHEY_COMPLEX_SMALL,
-                  1,
-                  cv::Scalar(0, 255, 0, 255));
+      sprintf(buffer, "Display performance: %dx%d @ %.3f", drawing_frame.cols, drawing_frame.rows, fps);
+      cv::putText(drawing_frame, std::string(buffer), cv::Point(8, 64), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(0, 255, 0, 255));
       engine_draw_frame(&engine, drawing_frame);
     }
 

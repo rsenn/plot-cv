@@ -33,7 +33,7 @@ init_raspicam(void) {
   cv::Mat image;
   int nCount = 10;
   // set camera params
-  Camera.set(CV_CAP_PROP_FORMAT, CV_8UC1);
+  Camera.set(cv::CAP_PROP_FORMAT, CV_8UC1);
   // Open camera
   cout << "Opening Camera..." << endl;
   if(!Camera.open()) {

@@ -1,8 +1,10 @@
 // source: http://docs.opencv.org/modules/highgui/doc/reading_and_writing_images_and_video.html
-#include "opencv2/opencv.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/video/background_segm.hpp"
-#include "opencv2/videoio.hpp"
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/video/background_segm.hpp>
+#include <opencv2/videoio.hpp>
+#include <opencv2/core/cvdef.h>
+#include <opencv2/videoio/legacy/constants_c.h>
 
 #include <iostream>
 #include <cstring>

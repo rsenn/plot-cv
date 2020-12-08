@@ -136,7 +136,5 @@ main(int argc, char** argv) {
   }
 
   cout << "Elapsed sec: " << static_cast<double>(tick_counter) / cv::getTickFrequency() << endl;
-  cout << "FPS: "
-       << ((double)(frame_idx)) / (static_cast<double>(tick_counter) / cv::getTickFrequency())
-       << endl;
+  cout << "FPS: " << ((double)(frame_idx)) / (static_cast<double>(tick_counter) / cv::getTickFrequency()) << endl;
 }

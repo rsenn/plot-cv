@@ -92,8 +92,8 @@ main(int argc, char** argv) {
       return 0;
     }
     cout << "Opened camera" << endl;
-    cap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
-    cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
+    cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
+    cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
     cap >> frame;
   }
 

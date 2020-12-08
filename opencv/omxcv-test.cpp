@@ -42,26 +42,20 @@ main(int argc, char* argv[]) {
   }
   // We can try to set these, but the camera may ignore this anyway...
 #if(CV_MAJOR_VERSION < 3)
-  capture.set(CV_CAP_PROP_FRAME_WIDTH, width);
-  capture.set(CV_CAP_PROP_FRAME_HEIGHT, height);
-  capture.set(CV_CAP_PROP_FPS, 30);
+  capture.set(cv::CAP_PROP_FRAME_WIDTH, width);
+  capture.set(cv::CAP_PROP_FRAME_HEIGHT, height);
+  capture.set(cv::CAP_PROP_FPS, 30);
 
-  OmxCv* e = new OmxCv((const char*)"save.mkv",
-                       (int)capture.get(CV_CAP_PROP_FRAME_WIDTH),
-                       (int)capture.get(CV_CAP_PROP_FRAME_HEIGHT),
-                       4000);
+  OmxCv* e = new OmxCv((const char*)"save.mkv", (int)capture.get(cv::CAP_PROP_FRAME_WIDTH), (int)capture.get(cv::CAP_PROP_FRAME_HEIGHT), 4000);
   // OmxCvJpeg *j = new
-  // OmxCvJpeg((int)capture.get(CV_CAP_PROP_FRAME_WIDTH),(int)capture.get(CV_CAP_PROP_FRAME_HEIGHT),
+  // OmxCvJpeg((int)capture.get(cv::CAP_PROP_FRAME_WIDTH),(int)capture.get(cv::CAP_PROP_FRAME_HEIGHT),
   // 50);
 #else
   capture.set(cv::CAP_PROP_FRAME_WIDTH, width);
   capture.set(cv::CAP_PROP_FRAME_HEIGHT, height);
   capture.set(cv::CAP_PROP_FPS, 30);
 
-  OmxCv* e = new OmxCv((const char*)"save.mkv",
-                       (int)capture.get(cv::CAP_PROP_FRAME_WIDTH),
-                       (int)capture.get(cv::CAP_PROP_FRAME_HEIGHT),
-                       4000);
+  OmxCv* e = new OmxCv((const char*)"save.mkv", (int)capture.get(cv::CAP_PROP_FRAME_WIDTH), (int)capture.get(cv::CAP_PROP_FRAME_HEIGHT), 4000);
   // OmxCvJpeg *j = new
   // OmxCvJpeg((int)capture.get(cv::CAP_PROP_FRAME_WIDTH),(int)capture.get(cv::CAP_PROP_FRAME_HEIGHT),
   // 50);
@@ -94,11 +88,7 @@ main(int argc, char* argv[]) {
 
   printf("Average FPS: %.2f\n", (processed * 1000000) / (float)TIMEDIFF(totstart));
   printf("Processed: %d, Dropped: %d\n", processed, framecount - processed);
-  printf("DEPTH: %d, WIDTH: %d, HEIGHT: %d, IW: %d\n",
-         image.depth(),
-         image.cols,
-         image.rows,
-         static_cast<int>(image.step));
+  printf("DEPTH: %d, WIDTH: %d, HEIGHT: %d, IW: %d\n", image.depth(), image.cols, image.rows, static_cast<int>(image.step));
   // sleep_for(milliseconds(300));
 
   // bcm_host_deinit();

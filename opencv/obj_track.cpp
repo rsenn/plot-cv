@@ -189,8 +189,8 @@ trackObjectloop() {
   // open capture object at location zero (default location for webcam)
   capture.open(0);
   // set height and width of capture frame
-  capture.set(CV_CAP_PROP_FRAME_WIDTH, FRAME_WIDTH);
-  capture.set(CV_CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT);
+  capture.set(cv::CAP_PROP_FRAME_WIDTH, FRAME_WIDTH);
+  capture.set(cv::CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT);
   // start an infinite loop where webcam feed is copied to cameraFeed matrix
   // all of our operations will be performed within this loop
   while(1) {

@@ -67,9 +67,7 @@ class XINECapture : public IVideoCapture {
   bool seekable;
 
 public:
-  XINECapture()
-      : xine(0), stream(0), vo_port(0), frame_number(-1), frame_rate(0.), frame_duration(0.),
-        seekable(false) {
+  XINECapture() : xine(0), stream(0), vo_port(0), frame_number(-1), frame_rate(0.), frame_duration(0.), seekable(false) {
     xine_video_frame_t z = {};
     xine_frame = z;
   }
@@ -205,14 +203,13 @@ public:
     bool res = (bool)xine_get_pos_length(stream, &pos_l, &pos_t, &length);
 
     switch(property_id) {
-      case CV_CAP_PROP_POS_MSEC: return res ? pos_t : 0;
-      case CV_CAP_PROP_POS_FRAMES: return frame_number;
-      case CV_CAP_PROP_POS_AVI_RATIO: return length && res ? pos_l / 65535.0 : 0.0;
-      case CV_CAP_PROP_FRAME_WIDTH: return size.width;
-      case CV_CAP_PROP_FRAME_HEIGHT: return size.height;
-      case CV_CAP_PROP_FPS: return frame_rate;
-      case CV_CAP_PROP_FOURCC:
-        return (double)xine_get_stream_info(stream, XINE_STREAM_INFO_VIDEO_FOURCC);
+      case cv::CAP_PROP_POS_MSEC: return res ? pos_t : 0;
+      case cv::CAP_PROP_POS_FRAMES: return frame_number;
+      case cv::CAP_PROP_POS_AVI_RATIO: return length && res ? pos_l / 65535.0 : 0.0;
+      case cv::CAP_PROP_FRAME_WIDTH: return size.width;
+      case cv::CAP_PROP_FRAME_HEIGHT: return size.height;
+      case cv::CAP_PROP_FPS: return frame_rate;
+      case cv::CAP_PROP_FOURCC: return (double)xine_get_stream_info(stream, XINE_STREAM_INFO_VIDEO_FOURCC);
     }
     return 0;
   }
@@ -222,9 +219,9 @@ public:
     CV_Assert(stream);
     CV_Assert(vo_port);
     switch(property_id) {
-      case CV_CAP_PROP_POS_MSEC: return seekTime((int)value);
-      case CV_CAP_PROP_POS_FRAMES: return seekFrame((int)value);
-      case CV_CAP_PROP_POS_AVI_RATIO: return seekRatio(value);
+      case cv::CAP_PROP_POS_MSEC: return seekTime((int)value);
+      case cv::CAP_PROP_POS_FRAMES: return seekFrame((int)value);
+      case cv::CAP_PROP_POS_AVI_RATIO: return seekRatio(value);
       default: return false;
     }
   }

@@ -72,8 +72,8 @@ main() {
   // Create a VideoCapture object to read from video file
   // 0 is the ID of the built-in laptop camera, change if you want to use other camera
   VideoCapture cap(0);
-  cap.set(CV_CAP_PROP_FRAME_WIDTH, 320);
-  cap.set(CV_CAP_PROP_FRAME_HEIGHT, 240);
+  cap.set(cv::CAP_PROP_FRAME_WIDTH, 320);
+  cap.set(cv::CAP_PROP_FRAME_HEIGHT, 240);
 
   // check if the file was opened properly
   if(!cap.isOpened()) {

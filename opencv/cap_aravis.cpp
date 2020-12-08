@@ -101,7 +101,7 @@ public:
   virtual IplImage* retrieveFrame(int);
   virtual int
   getCaptureDomain() {
-    return CV_CAP_ARAVIS;
+    return cv::CAP_ARAVIS;
   }
 
 protected:
@@ -218,16 +218,13 @@ CvCaptureCAM_Aravis::init_buffers() {
     stream = NULL;
   }
   if((stream = arv_camera_create_stream(camera, NULL, NULL))) {
-    g_object_set(
-        stream, "socket-buffer", ARV_GV_STREAM_SOCKET_BUFFER_AUTO, "socket-buffer-size", 0, NULL);
+    g_object_set(stream, "socket-buffer", ARV_GV_STREAM_SOCKET_BUFFER_AUTO, "socket-buffer-size", 0, NULL);
     g_object_set(stream, "packet-resend", ARV_GV_STREAM_PACKET_RESEND_NEVER, NULL);
-    g_object_set(
-        stream, "packet-timeout", (unsigned)40000, "frame-retention", (unsigned)200000, NULL);
+    g_object_set(stream, "packet-timeout", (unsigned)40000, "frame-retention", (unsigned)200000, NULL);
 
     payload = arv_camera_get_payload(camera);
 
-    for(int i = 0; i < num_buffers; i++)
-      arv_stream_push_buffer(stream, arv_buffer_new(payload, NULL));
+    for(int i = 0; i < num_buffers; i++) arv_stream_push_buffer(stream, arv_buffer_new(payload, NULL));
 
     return true;
   }
@@ -315,8 +312,7 @@ CvCaptureCAM_Aravis::retrieveFrame(int) {
       cvInitImageHeader(&src, cvSize(width, height), depth, channels, IPL_ORIGIN_TL, 4);
 
       cvSetData(&src, framebuffer, src.widthStep);
-      if(!frame || frame->width != src.width || frame->height != src.height ||
-         frame->depth != src.depth || frame->nChannels != src.nChannels) {
+      if(!frame || frame->width != src.width || frame->height != src.height || frame->depth != src.depth || frame->nChannels != src.nChannels) {
 
         cvReleaseImage(&frame);
         frame = cvCreateImage(cvGetSize(&src), src.depth, channels);
@@ -415,34 +411,34 @@ CvCaptureCAM_Aravis::autoExposureControl(IplImage* image) {
 double
 CvCaptureCAM_Aravis::getProperty(int property_id) const {
   switch(property_id) {
-    case CV_CAP_PROP_POS_MSEC: return (double)frameID / fps;
+    case cv::CAP_PROP_POS_MSEC: return (double)frameID / fps;
 
-    case CV_CAP_PROP_FRAME_WIDTH: return width;
+    case cv::CAP_PROP_FRAME_WIDTH: return width;
 
-    case CV_CAP_PROP_FRAME_HEIGHT: return height;
+    case cv::CAP_PROP_FRAME_HEIGHT: return height;
 
-    case CV_CAP_PROP_AUTO_EXPOSURE: return (controlExposure ? 1 : 0);
+    case cv::CAP_PROP_AUTO_EXPOSURE: return (controlExposure ? 1 : 0);
 
-    case CV_CAP_PROP_EXPOSURE:
+    case cv::CAP_PROP_EXPOSURE:
       if(exposureAvailable) {
         /* exposure time in seconds, like 1/100 s */
         return arv_camera_get_exposure_time(camera) / 1e6;
       }
       break;
 
-    case CV_CAP_PROP_FPS:
+    case cv::CAP_PROP_FPS:
       if(fpsAvailable) {
         return arv_camera_get_frame_rate(camera);
       }
       break;
 
-    case CV_CAP_PROP_GAIN:
+    case cv::CAP_PROP_GAIN:
       if(gainAvailable) {
         return arv_camera_get_gain(camera);
       }
       break;
 
-    case CV_CAP_PROP_FOURCC: {
+    case cv::CAP_PROP_FOURCC: {
       ArvPixelFormat currFormat = arv_camera_get_pixel_format(camera);
       switch(currFormat) {
         case ARV_PIXEL_FORMAT_MONO_8: return MODE_Y800;
@@ -450,7 +446,7 @@ CvCaptureCAM_Aravis::getProperty(int property_id) const {
       }
     } break;
 
-    case CV_CAP_PROP_BUFFERSIZE:
+    case cv::CAP_PROP_BUFFERSIZE:
       if(stream) {
         int in, out;
         arv_stream_get_n_buffers(stream, &in, &out);
@@ -465,7 +461,7 @@ CvCaptureCAM_Aravis::getProperty(int property_id) const {
 bool
 CvCaptureCAM_Aravis::setProperty(int property_id, double value) {
   switch(property_id) {
-    case CV_CAP_PROP_AUTO_EXPOSURE:
+    case cv::CAP_PROP_AUTO_EXPOSURE:
       if(exposureAvailable || gainAvailable) {
         if((controlExposure = (bool)(int)value)) {
           exposure = exposureAvailable ? arv_camera_get_exposure_time(camera) : 0;
@@ -474,7 +470,7 @@ CvCaptureCAM_Aravis::setProperty(int property_id, double value) {
       }
       break;
 
-    case CV_CAP_PROP_EXPOSURE:
+    case cv::CAP_PROP_EXPOSURE:
       if(exposureAvailable) {
         /* exposure time in seconds, like 1/100 s */
         value *= 1e6; // -> from s to us
@@ -484,14 +480,14 @@ CvCaptureCAM_Aravis::setProperty(int property_id, double value) {
       } else
         return false;
 
-    case CV_CAP_PROP_FPS:
+    case cv::CAP_PROP_FPS:
       if(fpsAvailable) {
         arv_camera_set_frame_rate(camera, fps = CLIP(value, fpsMin, fpsMax));
         break;
       } else
         return false;
 
-    case CV_CAP_PROP_GAIN:
+    case cv::CAP_PROP_GAIN:
       if(gainAvailable) {
         if((autoGain = (-1 == value)))
           break;
@@ -501,7 +497,7 @@ CvCaptureCAM_Aravis::setProperty(int property_id, double value) {
       } else
         return false;
 
-    case CV_CAP_PROP_FOURCC: {
+    case cv::CAP_PROP_FOURCC: {
       ArvPixelFormat newFormat = pixelFormat;
       switch((int)value) {
         case MODE_GREY:
@@ -521,7 +517,7 @@ CvCaptureCAM_Aravis::setProperty(int property_id, double value) {
       }
     } break;
 
-    case CV_CAP_PROP_BUFFERSIZE: {
+    case cv::CAP_PROP_BUFFERSIZE: {
       int x = (int)value;
       if((x > 0) && (x != num_buffers)) {
         stopCapture();
