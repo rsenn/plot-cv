@@ -1,4 +1,4 @@
-﻿//
+//
 // MainPage.xaml.cpp
 // Implementation of the MainPage class.
 //

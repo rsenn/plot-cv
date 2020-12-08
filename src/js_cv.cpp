@@ -726,15 +726,12 @@ js_cv_getperspectivetransform(JSContext* ctx, JSValueConst this_val, int argc, J
   if(argc > 1) {
     other = static_cast<JSContourData*>(JS_GetOpaque2(ctx, argv[1], js_contour_class_id));
 
-    if(argc > 2) {
+    if(argc > 2)
       JS_ToInt32(ctx, &solveMethod, argv[2]);
-    }
   }
 
   std::transform(v->begin(), v->end(), std::back_inserter(a), [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
-
   std::transform(other->begin(), other->end(), std::back_inserter(b), [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
-
   matrix = cv::getPerspectiveTransform(a, b /*, solveMethod*/);
 
   ret = js_mat_wrap(ctx, matrix);
@@ -753,14 +750,11 @@ js_cv_getaffinetransform(JSContext* ctx, JSValueConst this_val, int argc, JSValu
   if(!v)
     return JS_EXCEPTION;
 
-  if(argc > 1) {
+  if(argc > 1)
     other = static_cast<JSContourData*>(JS_GetOpaque2(ctx, argv[1], js_contour_class_id));
-  }
 
   std::transform(v->begin(), v->end(), std::back_inserter(a), [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
-
   std::transform(other->begin(), other->end(), std::back_inserter(b), [](const cv::Point2d& pt) -> cv::Point2f { return cv::Point2f(pt.x, pt.y); });
-
   matrix = cv::getAffineTransform(a, b);
 
   ret = js_mat_wrap(ctx, matrix);
