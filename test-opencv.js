@@ -77,7 +77,7 @@ async function main(...args) {
 
   cv.imwrite('output.png', image);
 
-//  for(let channel of labChannels) cv.normalize(channel, channel, 0, 255, cv.NORM_MINMAX);
+  //  for(let channel of labChannels) cv.normalize(channel, channel, 0, 255, cv.NORM_MINMAX);
 
   cv.imwrite('l.png', labChannels[0]);
   cv.imwrite('a.png', labChannels[1]);
@@ -88,14 +88,30 @@ async function main(...args) {
 
   function calcThreshold(min = 20) {
     cv.threshold(labChannels[0], thrs_mat, min, 255, cv.THRESH_BINARY);
-
     cv.imshow('main', thrs_mat);
   }
+  calcThreshold(20);
 
-  cv.createTrackbar('threshold', 'main', 0, 255, function(value, count, name, window) {
+  let gray32 = new Mat();
+  thrs_mat.convertTo(gray32, cv.CV_32FC1);
+
+  function detectCorners(k = 0.04) {
+    let corners = new Mat(gray32.rows, gray32.cols, cv.CV_32FC1);
+    cv.cornerHarris(gray32, corners, 2, 3, k);
+    corners.convertTo(corners, cv.CV_8UC1);
+    cv.imshow('corners', corners);
+  }
+  detectCorners(0.04);
+
+  cv.createTrackbar('threshold', 'main', 20, 255, function(value, count, name, window) {
     //console.log('Trackbar', { value, count, name, window });
 
     calcThreshold(value);
+  });
+  cv.createTrackbar('k', 'corners', 4, 100, function(value, count, name, window) {
+    //console.log('Trackbar', { value, count, name, window });
+
+    detectCorners(value / 100);
   });
 
   let edges = new Mat();
