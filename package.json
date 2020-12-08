@@ -109,6 +109,7 @@
   },
   "devDependencies": {
     "@aerian/eslint-config-preact": "^9.1.0",
+    "@deque/dot": "^1.1.5",
     "c-ast": "^1.0.0",
     "clarify": "^2.1.0",
     "eslint": "^7.7.0",

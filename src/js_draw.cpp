@@ -28,7 +28,7 @@ js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const
   int thickness = -1;
   int lineType = cv::LINE_AA;
 
-  if(argc > i && (dst = js_mat_data(argv[i])))
+  if(argc > i && (dst = js_mat_data(ctx, argv[i])))
     i++;
   else
     dst = dptr;
@@ -71,7 +71,7 @@ js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   int thickness = 1;
   bool antialias = true;
 
-  if(argc > i && (dst = js_mat_data(argv[i])))
+  if(argc > i && (dst = js_mat_data(ctx, argv[i])))
     i++;
   else
     dst = dptr;
@@ -107,7 +107,7 @@ js_draw_line(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
   int thickness = 1;
   bool antialias = true;
 
-  if(argc > i && (dst = js_mat_data(argv[i])))
+  if(argc > i && (dst = js_mat_data(ctx, argv[i])))
     i++;
   else
     dst = dptr;
@@ -143,7 +143,7 @@ js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   bool antialias = true;
   int thickness = -1;
 
-  if(argc > i && (dst = js_mat_data(argv[i])))
+  if(argc > i && (dst = js_mat_data(ctx, argv[i])))
     i++;
   else
     dst = dptr;
@@ -184,7 +184,7 @@ js_draw_rect(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
   int thickness = 1;
   bool antialias = true;
 
-  if(argc > i && (dst = js_mat_data(argv[i])))
+  if(argc > i && (dst = js_mat_data(ctx, argv[i])))
     i++;
   else
     dst = dptr;

@@ -1,6 +1,7 @@
 #include "plot-cv.h"
 #include "geometry.h"
 #include "js.h"
+#include "jsbindings.h"
 #include "quickjs/cutils.h"
 #include "quickjs/quickjs.h"
 

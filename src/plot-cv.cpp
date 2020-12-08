@@ -30,6 +30,7 @@
 #include "polygon.h"
 #include "psimpl.h"
 #include "auto_canny.h"
+#include "jsbindings.h"
 
 using std::string;
 using std::chrono::duration;

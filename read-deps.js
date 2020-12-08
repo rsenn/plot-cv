@@ -21,6 +21,19 @@ Util.define(Array.prototype, {
   }
 });
 
+function DummyPreproc(source) {
+  let data = filesystem.readFile(source);
+
+  let lines = data.split(/\n/g).map((line, i) => [i + 1, line]);
+  let pp = lines.filter(([no, str]) => /^\s*#/.test(str));
+  const includeRegex = /^\s*#\s*include\s+/g;
+  let includeDirectives = pp.filter(([no, str]) => includeRegex.test(str));
+
+  const removeQuotes = /^[<"](.*)[">]$/;
+  let includeFiles = includeDirectives.map(([lineno, str]) => [lineno, str.replace(includeRegex, '')]);
+  return includeFiles.map(([lineno, file]) => [lineno, file.replace(removeQuotes, '$1'), file.startsWith('<')]);
+}
+
 async function DumpDeps(sources, includeDirs = []) {
   //let stderr = filesystem.open('deps.err', 'w+');$
   let includes = includeDirs.reduce((acc, dir) => (/^\/opt/.test(dir) ? [...acc, '-isystem', dir] : [...acc, `-I${dir}`]),
@@ -72,8 +85,14 @@ async function main(...sources) {
   console.log(`DumpDeps(`, sources, `)`);
 
   let deps = await DumpDeps(sources, includes);
-
   console.log(`DumpDeps() = `, deps);
+
+  for(let [source, depfiles] of deps) {
+    let pp = DummyPreproc(source);
+
+    console.log(`${source} deps:`, depfiles);
+    console.log(`${source} pp:`, pp);
+  }
 }
 
 Util.callMain(main, true);

@@ -128,8 +128,8 @@ async function main(...args) {
       );
 
       for(let [path, node] of exports) {
-        //    log(`export ${path}`, node);
-        deep.set(ast, path, node.declarations[0]);
+        log(`export ${path}`, node);
+        if(node.declarations) deep.set(ast, path, node.declarations[0]);
       }
 
       allExports.splice(allExports.length,
@@ -140,13 +140,20 @@ async function main(...args) {
         })
       );
 
-      exports = exports.map(([p, stmt]) =>
-        (Util.isObject(stmt.declarations) &&
-          Util.isObject(stmt.declarations.id) &&
-          Util.isObject(stmt.declarations.id.value)) == (Util.isObject(stmt.what) && Util.isObject(stmt.what.value))
-          ? stmt.declarations
-          : stmt
-      );
+      exports = exports.map(([p, stmt]) => [p, stmt.declarations || stmt.properties || stmt]);
+
+      console.log('exports [1]:', exports);
+      exports = exports.map(([p, stmt]) => stmt);
+
+      /*exports = exports.map(([p, stmt]) => {
+       for(let prop in ['declarations','properties']) 
+        if((Util.isObject(stmt[prop]) &&
+          Util.isObject(stmt[prop].id) &&
+          Util.isObject(stmt[prop].id.value)) == (Util.isObject(stmt.what) && Util.isObject(stmt.what.value)))
+          return stmt[prop];
+        return stmt;
+      });*/
+      console.log('exports [2]:', exports);
       exports = exports.map(decl =>
         decl instanceof ObjectBindingPattern
           ? decl.properties.map(prop => ('id' in prop ? prop.id : prop))
@@ -154,7 +161,9 @@ async function main(...args) {
           ? decl.members.map(prop => ('id' in prop ? prop.id : prop))
           : decl
       );
-      exports = exports.map(decls => decls.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl)));
+      console.log('exports [3]:', exports);
+      //exports = exports.map(decls => decls.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl)));
+      exports = exports.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl));
 
       //      exportProps =exportProps.map(ep => 'id' in ep ? ep.id.value : ep);
 
@@ -173,7 +182,9 @@ async function main(...args) {
         return [...a, ...stmt];
       }, []);
 
-      exportProps = exportProps.map(ep => ('id' in ep ? ep.id.value : ep));
+      exportProps = exportProps
+        .map(ep => (Util.isObject(ep) && 'id' in ep ? ep.id : ep))
+        .map(ep => (Util.isObject(ep) && 'value' in ep ? ep.value : ep));
 
       log(`exportProps==`, exportProps);
 
@@ -208,6 +219,8 @@ async function main(...args) {
   console.log('exportMap:', exportMap);
   let output = '';
   for(let [source, list] of exportMap) {
+    // list.sort();
+    list = Util.unique(list);
     output += `export { ${list.join(', ')} } from './${source}';\n`;
   }
   console.log(output);

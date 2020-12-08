@@ -42,8 +42,12 @@ template<class T> struct vector_vector_traits {
   typedef T value_type;
   typedef std::vector<std::vector<T>> type;
 };*/
+extern "C" {
+
 int js_init(int argc, char*[]);
-extern "C" cv::Mat* dptr;
+extern cv::Mat* dptr;
+
+}
 
 enum { CANNY = 0, ORIGINAL, GRAYSCALE, MORPHOLOGY };
 
