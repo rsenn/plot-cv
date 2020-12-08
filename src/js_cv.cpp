@@ -534,6 +534,7 @@ js_cv_merge(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
 
   return JS_UNDEFINED;
 }
+
 static JSValue
 js_cv_min_max_loc(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   cv::Mat *src, *mask = nullptr;
@@ -545,6 +546,12 @@ js_cv_min_max_loc(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 
   if(src == nullptr)
     return JS_EXCEPTION;
+
+
+  if(argc >= 2)
+    if((mask = js_mat_data(ctx, argv[1])) == nullptr)
+      return JS_EXCEPTION;
+
   cv::minMaxLoc(*src, &minVal, &maxVal, &minLoc, &maxLoc, mask == nullptr ? cv::noArray() : *mask);
 
   ret = JS_NewObject(ctx);
@@ -800,6 +807,7 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_CFUNC_DEF("getStructuringElement", 2, js_cv_get_structuring_element),
     JS_CFUNC_DEF("medianBlur", 3, js_cv_median_blur),
     JS_CFUNC_DEF("merge", 2, js_cv_merge),
+    JS_CFUNC_DEF("minMaxLoc", 2, js_cv_min_max_loc),
 
     JS_CFUNC_MAGIC_DEF("getTickCount", 0, js_cv_getticks, 0),
     JS_CFUNC_MAGIC_DEF("getTickFrequency", 0, js_cv_getticks, 1),

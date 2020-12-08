@@ -453,9 +453,9 @@ async function main(...args) {
 
   console.log('processed files:', processed);
 
-  console.log(`\nModules:\n\n  ` + ES6Module.tree().replace(/\n/g, '\n  '));
-
   DumpFile(`${name}.es`, r.join('\n'));
+
+  console.log(`\nModules:\n\n  ` + ES6Module.tree().replace(/\n/g, '\n  '));
 
   /*  console.log(`ES6Imports:`, new Map(ES6Module.list.map((module) => [module.file, module.imports])));
   console.log(`ES6Exports:`, Util.toString(new Map(ES6Module.list.map((module) => [module.file, new Map(module.exports.map((exp) => [exp.position && exp.position.clone(true, false), exp.bindings]))])), { colors: true, multiline: true, toString: Symbol.toStringTag }));
