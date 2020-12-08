@@ -701,6 +701,36 @@ js_cv_create_trackbar(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
 }
 
 static JSValue
+js_cv_get_trackbar_pos(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  const char *name, *window;
+
+  name = JS_ToCString(ctx, argv[0]);
+  window = JS_ToCString(ctx, argv[1]);
+
+  if(name == nullptr || window == nullptr)
+    return JS_EXCEPTION;
+
+  return JS_NewInt32(ctx, cv::getTrackbarPos(name, window));
+}
+
+static JSValue
+js_cv_set_trackbar_pos(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  const char *name, *window;
+  int32_t pos;
+
+  name = JS_ToCString(ctx, argv[0]);
+  window = JS_ToCString(ctx, argv[1]);
+
+  if(name == nullptr || window == nullptr)
+    return JS_EXCEPTION;
+
+  JS_ToInt32(ctx, &pos, argv[2]);
+
+  cv::setTrackbarPos(name, window, pos);
+  return JS_UNDEFINED;
+}
+
+static JSValue
 js_cv_wait_key(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   int32_t delay = 0;
   union {
@@ -864,6 +894,8 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_CFUNC_DEF("bilateralFilter", 5, js_cv_bilateral_filter),
     JS_CFUNC_DEF("namedWindow", 1, js_cv_named_window),
     JS_CFUNC_DEF("createTrackbar", 5, js_cv_create_trackbar),
+    JS_CFUNC_DEF("getTrackbarPos", 2, js_cv_get_trackbar_pos),
+    JS_CFUNC_DEF("setTrackbarPos", 3, js_cv_set_trackbar_pos),
     JS_CFUNC_DEF("waitKey", 0, js_cv_wait_key),
     JS_CFUNC_DEF("getPerspectiveTransform", 2, js_cv_getperspectivetransform),
     JS_CFUNC_DEF("getAffineTransform", 2, js_cv_getaffinetransform),

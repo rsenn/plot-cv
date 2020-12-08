@@ -41,7 +41,7 @@ async function main(...args) {
   await PortableFileSystem(fs => (filesystem = fs));
 
   console.log('cv', cv);
-  console.log('Object.keys(cv)', Object.keys(cv));
+  //console.log('Object.keys(cv)', Object.keys(cv));
   console.log('Util.getMethodNames(cv)', Util.getMethodNames(cv, Infinity, 0));
   console.log('cv.HoughLines', cv.HoughLines);
 
@@ -127,7 +127,8 @@ async function main(...args) {
   let key;
 
   while((key = cv.waitKey(0))) {
-    console.log('key:', key);
+    if(key != -1)
+      console.log('key:', key);
 
     if(key == 'q' || key == '\x1b') break;
   }
