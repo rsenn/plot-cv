@@ -288,7 +288,7 @@ set(ADDPROGS2
    Shape-Finder
    #Shape_Detect
    shape_detection
-
+ voronoi
 )
 foreach(P ${ADDPROGS2})
   add_prog("${P}")
