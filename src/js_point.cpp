@@ -42,6 +42,11 @@ js_point_new(JSContext* ctx, double x, double y) {
   return ret;
 }
 
+VISIBLE JSValue
+js_point_wrap(JSContext* ctx, const JSPointData& point) {
+  return js_point_new(ctx, point.x, point.y);
+}
+
 JSValue
 js_point_clone(JSContext* ctx, const JSPointData& point) {
   return js_point_new(ctx, point.x, point.y);

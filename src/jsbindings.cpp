@@ -1,4 +1,3 @@
-#include "jsbindings.h"
 #include "plot-cv.h"
 #include "geometry.h"
 #include "js.h"

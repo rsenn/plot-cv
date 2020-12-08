@@ -24,7 +24,6 @@
 #include "data.h"
 #include "geometry.h"
 #include "js.h"
-#include "jsbindings.h"
 #include "line.h"
 #include "matrix.h"
 #include "plot-cv.h"

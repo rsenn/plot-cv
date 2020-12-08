@@ -19,14 +19,22 @@ cv::Mat* dptr = 0;
 
 static JSValue
 js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
-
+  cv::Mat* dst;
   int i = 0, ret = -1;
   point2i_type point;
   int radius = 0;
   cv::Scalar color;
-
   bool antialias = true;
   int thickness = -1;
+  int lineType = cv::LINE_AA;
+
+  if(argc > i && (dst = js_mat_data(argv[i])))
+    i++;
+  else
+    dst = dptr;
+
+  if(dst == nullptr)
+    return JS_EXCEPTION;
 
   if(argc > i && js.is_point(argv[i]))
     js.get_point(argv[i++], point);
@@ -39,30 +47,37 @@ js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const
 
   if(argc > i && js.is_number(argv[i]))
     js.get_number(argv[i++], thickness);
+  /**/
+  if(argc > i) {
+    if(js.is_bool(argv[i])) {
+      js.get_boolean(argv[i++], antialias);
+      lineType = antialias ? cv::LINE_AA : cv::LINE_8;
 
-  if(argc > i && js.is_bool(argv[i]))
-    js.get_boolean(argv[i++], antialias);
-
-  if(dptr != nullptr) {
-    int lineType = antialias ? cv::LINE_AA : cv::LINE_8;
-
-    /* std::cerr << "drawCircle() center: " << (point) << " radius: " << radius
-             << " color: " << to_string(color) << std::endl;*/
-
-    // cv::fillPoly(*dptr, points, color, antialias ? cv::LINE_AA : cv::LINE_8);
-    cv::circle(*dptr, point, radius, color, thickness < 0 ? cv::FILLED : thickness, lineType);
+    } else if(js.is_number(argv[i])) {
+      js.get_number(argv[i++], lineType);
+    }
   }
-  return js._true;
+
+  cv::circle(*dst, point, radius, color, thickness < 0 ? cv::FILLED : thickness, lineType);
+  return js._undefined;
 }
 
 static JSValue
 js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
-
+  cv::Mat* dst;
   int i = 0, ret = -1;
   contour2i_vector points;
   color_type color;
   int thickness = 1;
   bool antialias = true;
+
+  if(argc > i && (dst = js_mat_data(argv[i])))
+    i++;
+  else
+    dst = dptr;
+
+  if(dst == nullptr)
+    return JS_EXCEPTION;
 
   points.resize(1);
   if(argc > i && js.is_array(argv[i]))
@@ -77,20 +92,28 @@ js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   if(argc > i && js.is_bool(argv[i]))
     js.get_boolean(argv[i++], antialias);
 
-  if(dptr != nullptr)
-    cv::drawContours(*dptr, points, -1, color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
+     cv::drawContours(*dptr, points, -1, color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
 
   std::cerr << "draw_contour() ret:" << ret << " color: " << color << std::endl;
-  return js._true;
+  return js._undefined;
 }
 
 static JSValue
 js_draw_line(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
-  int i = 0, ret = -1;
+   cv::Mat* dst;
+ int i = 0, ret = -1;
   point2f_type points[2];
   color_type color;
   int thickness = 1;
   bool antialias = true;
+
+  if(argc > i && (dst = js_mat_data(argv[i])))
+    i++;
+  else
+    dst = dptr;
+
+  if(dst == nullptr)
+    return JS_EXCEPTION;
 
   if(argc > i && js.is_point(argv[i]))
     js.get_point(argv[i++], points[0]);
@@ -108,18 +131,23 @@ js_draw_line(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
     js.get_boolean(argv[i++], antialias);
 
   cv::line(*dptr, points[0], points[1], color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
-  return js._true;
+  return js._undefined;
 }
 
 static JSValue
 js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
-
+   cv::Mat* dst;
   int i = 0, ret = -1;
   point2i_vector points;
   cv::Scalar color;
   bool antialias = true;
   int thickness = -1;
 
+  if(argc > i && (dst = js_mat_data(argv[i])))
+    i++;
+  else
+    dst = dptr;
+ 
   if(argc > i && js.is_array_like(argv[i]))
     js.get_point_array(argv[i++], points);
   if(argc > i && js.is_color(argv[i]))
@@ -140,18 +168,29 @@ js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
 
     // cv::fillPoly(*dptr, points, color, antialias ? cv::LINE_AA : cv::LINE_8);
     (thickness <= 0 ? cv::fillPoly(*dptr, &pts, &size, 1, color, lineType) : cv::polylines(*dptr, &pts, &size, 1, true, color, thickness, lineType));
-  }
-  return js._true;
+ 
+  return js._undefined;
+}
+return JS_EXCEPTION;
 }
 
 static JSValue
 js_draw_rect(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
-  int i = 0, ret = -1;
+     cv::Mat* dst;
+int i = 0, ret = -1;
   cv::Rect2f rect;
   point2f_type points[2];
   color_type color;
   int thickness = 1;
   bool antialias = true;
+
+  if(argc > i && (dst = js_mat_data(argv[i])))
+    i++;
+  else
+    dst = dptr;
+ 
+  if(dst == nullptr)
+    return JS_EXCEPTION;
 
   if(argc > i && js.is_rect(argv[i]))
     js.get_rect(argv[i++], rect);
@@ -172,7 +211,7 @@ js_draw_rect(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
 
   cv::rectangle(*dptr, points[0], points[1], color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
 
-  return js._true;
+  return js._undefined;
 }
 
 JSValue draw_proto, draw_class;
@@ -184,10 +223,9 @@ JSClassDef js_draw_class = {
 };
 
 const JSCFunctionListEntry js_draw_proto_funcs[] = {
-
-    //  JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Draw", JS_PROP_CONFIGURABLE),
-
+  JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Draw", JS_PROP_CONFIGURABLE),
 };
+
 const JSCFunctionListEntry js_draw_static_funcs[] = {
     JS_CFUNC_DEF("circle", 1, &js_draw_circle),
     JS_CFUNC_DEF("contour", 1, &js_draw_contour),

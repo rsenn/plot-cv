@@ -440,6 +440,123 @@ js_cv_calc_hist(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 }
 
 static JSValue
+js_cv_dilate(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+
+  cv::Mat *src, *dst, *kernel;
+  JSPointData anchor = cv::Point(-1, -1);
+
+  double sigmaColor, sigmaSpace;
+  int32_t iterations = 1, borderType = cv::BORDER_CONSTANT;
+  cv::Scalar borderValue = cv::morphologyDefaultBorderValue();
+
+  src = js_mat_data(ctx, argv[0]);
+  dst = js_mat_data(ctx, argv[1]);
+  kernel = js_mat_data(ctx, argv[2]);
+
+  if(src == nullptr || dst == nullptr || kernel == nullptr || argc < 3)
+    return JS_EXCEPTION;
+
+  if(argc >= 4)
+    if(!js_point_read(ctx, argv[3], &anchor))
+      return JS_EXCEPTION;
+
+  if(argc >= 5)
+    JS_ToInt32(ctx, &iterations, argv[4]);
+
+  if(argc >= 6)
+    JS_ToInt32(ctx, &borderType, argv[5]);
+
+  if(argc >= 7) {
+    std::vector<double> value;
+    if(!JS_IsArray(ctx, argv[6]))
+      return JS_EXCEPTION;
+
+    js_array_to_vector(ctx, argv[6], value);
+    borderValue = cv::Scalar(value[0], value[1], value[2], value[3]);
+  }
+
+  cv::dilate(*src, *dst, *kernel, anchor, iterations, borderType, borderValue);
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_cv_get_structuring_element(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  int32_t shape;
+  JSSizeData ksize;
+  JSPointData anchor = cv::Point(-1, -1);
+
+  if(argc < 2)
+    return JS_EXCEPTION;
+
+  if(JS_ToInt32(ctx, &shape, argv[0]) == -1)
+    return JS_EXCEPTION;
+
+  if(!js_size_read(ctx, argv[1], &ksize))
+    return JS_EXCEPTION;
+  if(argc >= 3)
+    if(!js_point_read(ctx, argv[2], &anchor))
+      return JS_EXCEPTION;
+
+  return js_mat_wrap(ctx, cv::getStructuringElement(shape, ksize, anchor));
+}
+
+static JSValue
+js_cv_median_blur(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  cv::Mat *src, *dst;
+  int32_t ksize;
+
+  src = js_mat_data(ctx, argv[0]);
+  dst = js_mat_data(ctx, argv[1]);
+
+  if(src == nullptr || dst == nullptr)
+    return JS_EXCEPTION;
+
+  JS_ToInt32(ctx, &ksize, argv[2]);
+
+  cv::medianBlur(*src, *dst, ksize);
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_cv_merge(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  std::vector<cv::Mat> mv;
+  cv::Mat* dst;
+
+  if(js_array_to_vector(ctx, argv[0], mv) == -1)
+    return JS_EXCEPTION;
+
+  dst = js_mat_data(ctx, argv[1]);
+
+  if(dst == nullptr)
+    return JS_EXCEPTION;
+
+  cv::merge(const_cast<const cv::Mat*>(mv.data()), mv.size(), *dst);
+
+  return JS_UNDEFINED;
+}
+static JSValue
+js_cv_min_max_loc(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  cv::Mat *src, *mask = nullptr;
+  double minVal, maxVal;
+  cv::Point minLoc, maxLoc;
+  JSValue ret;
+
+  src = js_mat_data(ctx, argv[0]);
+
+  if(src == nullptr)
+    return JS_EXCEPTION;
+  cv::minMaxLoc(*src, &minVal, &maxVal, &minLoc, &maxLoc, mask == nullptr ? cv::noArray() : *mask);
+
+  ret = JS_NewObject(ctx);
+  JS_SetPropertyStr(ctx, ret, "minVal", JS_NewFloat64(ctx, minVal));
+  JS_SetPropertyStr(ctx, ret, "maxVal", JS_NewFloat64(ctx, maxVal));
+  JS_SetPropertyStr(ctx, ret, "minLoc", js_point_wrap(ctx, minLoc));
+  JS_SetPropertyStr(ctx, ret, "maxLoc", js_point_wrap(ctx, maxLoc));
+
+  return ret;
+}
+
+static JSValue
 js_cv_named_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   const char* name;
   int32_t flags = cv::WINDOW_NORMAL;
@@ -679,6 +796,10 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_CFUNC_DEF("pointPolygonTest", 2, js_cv_point_polygon_test),
     JS_CFUNC_DEF("cornerHarris", 5, js_cv_corner_harris),
     JS_CFUNC_DEF("calcHist", 8, js_cv_calc_hist),
+    JS_CFUNC_DEF("dilate", 3, js_cv_dilate),
+    JS_CFUNC_DEF("getStructuringElement", 2, js_cv_get_structuring_element),
+    JS_CFUNC_DEF("medianBlur", 3, js_cv_median_blur),
+    JS_CFUNC_DEF("merge", 2, js_cv_merge),
 
     JS_CFUNC_MAGIC_DEF("getTickCount", 0, js_cv_getticks, 0),
     JS_CFUNC_MAGIC_DEF("getTickFrequency", 0, js_cv_getticks, 1),
@@ -1064,6 +1185,10 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_PROP_INT32_DEF("THRESH_MASK", cv::THRESH_MASK, 0),
     JS_PROP_INT32_DEF("THRESH_OTSU", cv::THRESH_OTSU, 0),
     JS_PROP_INT32_DEF("THRESH_TRIANGLE", cv::THRESH_TRIANGLE, 0),
+
+    JS_PROP_INT32_DEF("MORPH_RECT", cv::MORPH_RECT, 0),
+    JS_PROP_INT32_DEF("MORPH_CROSS", cv::MORPH_CROSS, 0),
+    JS_PROP_INT32_DEF("MORPH_ELLIPSE", cv::MORPH_ELLIPSE, 0),
 
 };
 

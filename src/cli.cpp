@@ -1,7 +1,6 @@
 #include "plot-cv.h"
 #include "color.h"
 #include "js.h"
-#include "jsbindings.h"
 #include "line.h"
 #include "geometry.h"
 #include "matrix.h"

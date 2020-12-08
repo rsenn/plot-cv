@@ -13,15 +13,10 @@ extern "C" VISIBLE JSValue
 js_clahe_new(JSContext* ctx, double clipLimit = 40.0, cv::Size tileGridSize = cv::Size(8, 8)) {
   JSValue ret;
   JSCLAHEData* s;
-
   ret = JS_NewObjectProtoClass(ctx, clahe_proto, js_clahe_class_id);
-
   s = static_cast<JSCLAHEData*>(js_mallocz(ctx, sizeof(JSCLAHEData)));
-
   new(s) JSCLAHEData();
-
   *s = cv::createCLAHE(clipLimit, tileGridSize);
-
   JS_SetOpaque(ret, s);
   return ret;
 }
@@ -30,13 +25,11 @@ static JSValue
 js_clahe_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   double clipLimit = 40.0;
   cv::Size_<double> tileGridSize = cv::Size2d(8, 8);
-
   if(argc >= 1)
     JS_ToFloat64(ctx, &clipLimit, argv[0]);
   if(argc >= 2)
     if(!js_size_read(ctx, argv[1], &tileGridSize))
       return JS_EXCEPTION;
-
   return js_clahe_new(ctx, clipLimit, tileGridSize);
 }
 
@@ -63,15 +56,12 @@ js_clahe_method(JSContext* ctx, JSValueConst clahe, int argc, JSValueConst* argv
   switch(magic) {
     case 0: {
       cv::Mat *input, *output;
-
       if(argc < 2)
         return JS_EXCEPTION;
-
       input = js_mat_data(ctx, argv[0]);
       output = js_mat_data(ctx, argv[1]);
       if(input == nullptr || output == nullptr)
         return JS_EXCEPTION;
-
       (*s)->apply(*input, *output);
       break;
     }
@@ -91,7 +81,6 @@ js_clahe_method(JSContext* ctx, JSValueConst clahe, int argc, JSValueConst* argv
       double clipLimit;
       if(argc < 1 || JS_ToFloat64(ctx, &clipLimit, argv[0]) == -1)
         return JS_EXCEPTION;
-
       (*s)->setClipLimit(clipLimit);
       break;
     }
@@ -99,7 +88,6 @@ js_clahe_method(JSContext* ctx, JSValueConst clahe, int argc, JSValueConst* argv
       cv::Size_<double> size;
       if(argc < 1 || !js_size_read(ctx, argv[0], &size))
         return JS_EXCEPTION;
-
       (*s)->setTilesGridSize(size);
       break;
     }

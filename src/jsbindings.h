@@ -53,12 +53,12 @@ struct JSPointIteratorData : public std::pair<JSPointData*, JSPointData*> {
 
 extern "C" {
 
-int js_init(int argc, char*[]);
 
 int js_draw_functions(JSContext* ctx, JSValue parent);
 int js_draw_init(JSContext*, JSModuleDef*);
 
 VISIBLE JSValue js_point_new(JSContext*, double x, double y);
+VISIBLE JSValue js_point_wrap(JSContext*, const JSPointData&);
 VISIBLE JSPointData* js_point_data(JSContext*, JSValueConst val);
 
 int js_point_init(JSContext*, JSModuleDef* m);
@@ -125,8 +125,6 @@ VISIBLE JSValue js_mat_wrap(JSContext*, const cv::Mat& mat);
 VISIBLE JSValue js_contour2d_new(JSContext*, const std::vector<cv::Point_<double>>& points);
 VISIBLE JSValue js_contour2f_new(JSContext*, const std::vector<cv::Point_<float>>& points);
 VISIBLE JSValue js_contour2i_new(JSContext*, const std::vector<cv::Point_<int>>& points);
-
-extern cv::Mat* dptr;
 }
 
 extern "C" JSValue contour_proto;

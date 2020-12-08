@@ -129,12 +129,15 @@ async function main(...args) {
       )
       .sort((a, b) => a[1] - b[1])
       .map(([val, rat, count]) =>
-        [(val + '').padStart(4, ' ')+UnitForName(key), /*rat, GetFactor(rat),*/ rat >= 1 ? num2color(rat) : '', `  × ${count}`].join(' ')
+        [
+          (val + '').padStart(4, ' ') + UnitForName(key),
+          /*rat, GetFactor(rat),*/ rat >= 1 ? num2color(rat) : '',
+          `  × ${count}`
+        ].join(' ')
       );
   }
   console.log('components:', components);
   /*console.log('histograms:', histograms);*/
-
 
   console.log('values:\n   ' +
       Object.entries(values)
