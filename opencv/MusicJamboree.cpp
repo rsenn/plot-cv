@@ -52,7 +52,7 @@ main(int argc, char** argv) {
   // }
   //}
 
-  // namedWindow( "Hough Circle Transform Demo", CV_WINDOW_AUTOSIZE );
+  // namedWindow( "Hough Circle Transform Demo", cv::WINDOW_AUTOSIZE );
   // imshow( "Hough Circle Transform Demo", dest );
   // waitKey();
   // End display code
@@ -153,7 +153,7 @@ main(int argc, char** argv) {
 
   removeStaves(bw, staffbegins, staffends, cleanImage);
 
-  namedWindow("Before Image", CV_WINDOW_AUTOSIZE);
+  namedWindow("Before Image", cv::WINDOW_AUTOSIZE);
   imshow("After", cleanImage);
   waitKey();
 
@@ -195,7 +195,7 @@ main(int argc, char** argv) {
 
     /*
     findNotes(testcv::Mat,avgrows);
-    namedWindow( "Hough Circle Transform Demo", CV_WINDOW_AUTOSIZE );
+    namedWindow( "Hough Circle Transform Demo", cv::WINDOW_AUTOSIZE );
     imshow( "Hough Circle Transform Demo", testcv::Mat );
     waitKey();
     */
@@ -270,7 +270,7 @@ createCookBook(cv::Mat staveReg, int rightIndex) {
 
   threshold(staveReg, threshold_output, thresh, 255, THRESH_BINARY);
   /// Find contours
-  findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+  findContours(threshold_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Approximate contours to polygons + get bounding rects and circles
   std::vector<std::vector<cv::Point>> contours_poly(contours.size());
@@ -289,7 +289,7 @@ createCookBook(cv::Mat staveReg, int rightIndex) {
   }
 
   /// Show in a window
-  /*namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
+  /*namedWindow( "Contours", cv::WINDOW_AUTOSIZE );
      imshow( "Contours", drawing );
      waitKey();*/
 
@@ -303,7 +303,7 @@ createCookBook(cv::Mat staveReg, int rightIndex) {
     templateQuarter = staveReg.rowRange(startRow, endRow);
     templateQuarter = templateQuarter.colRange(startCol, endCol);
 
-    /*namedWindow( "Quarter Note", CV_WINDOW_AUTOSIZE );
+    /*namedWindow( "Quarter Note", cv::WINDOW_AUTOSIZE );
     imshow( "Quarter Note", templateQuarter);
     waitKey();*/
   }
@@ -316,7 +316,7 @@ createCookBook(cv::Mat staveReg, int rightIndex) {
     templateHalf = staveReg.rowRange(startRow, endRow);
     templateHalf = templateHalf.colRange(startCol, endCol);
 
-    /*namedWindow( "Half Note", CV_WINDOW_AUTOSIZE );
+    /*namedWindow( "Half Note", cv::WINDOW_AUTOSIZE );
     imshow( "Half Note", templateHalf);
     waitKey()*/
     ;
@@ -329,7 +329,7 @@ createCookBook(cv::Mat staveReg, int rightIndex) {
     int endRow = boundRect[holeIndex].br().y;
     templateHole = staveReg.rowRange(startRow, endRow);
     templateHole = templateHole.colRange(startCol, endCol);
-    /* namedWindow( "Whole Note", CV_WINDOW_AUTOSIZE );
+    /* namedWindow( "Whole Note", cv::WINDOW_AUTOSIZE );
     imshow( "Whole Note", templateHole);
     waitKey()*/
     ;
@@ -345,13 +345,13 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
   std::vector<std::vector<cv::Point>> contours;
   std::vector<Vec4i> hierarchy;
 
-  namedWindow("original", CV_WINDOW_AUTOSIZE);
+  namedWindow("original", cv::WINDOW_AUTOSIZE);
   imshow("Original Stave", staveReg);
   waitKey();
 
   threshold(staveReg, threshold_output, thresh, 255, THRESH_BINARY);
   /// Find contours
-  findContours(threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+  findContours(threshold_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Approximate contours to polygons + get bounding rects and circles
   std::vector<std::vector<cv::Point>> contours_poly(contours.size());
@@ -369,7 +369,7 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
     rectangle(drawing, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0);
   }
 
-  namedWindow("Rectangles", CV_WINDOW_AUTOSIZE);
+  namedWindow("Rectangles", cv::WINDOW_AUTOSIZE);
   imshow("Corect", drawing);
   waitKey();
 
@@ -390,7 +390,7 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
     matchTemplate(staveReg, templateQuarter, result, match_method);
     normalize(result, result, 0, 1, NORM_MINMAX, -1, cv::Mat());
     char* result_window = "Result window";
-    namedWindow(result_window, CV_WINDOW_AUTOSIZE);
+    namedWindow(result_window, cv::WINDOW_AUTOSIZE);
     imshow(result_window, result);
     waitKey();
     if(boundRect[i].area() >= templateQuarter.size[0] * templateQuarter.size[1] && boundRect[i].area() <= 3 * (templateQuarter.size[0] * templateQuarter.size[1])) {
@@ -414,7 +414,7 @@ findNotes(cv::Mat staveReg, Vector<float> staveLoc) {
       normalize(result, result, 0, 1, NORM_MINMAX, -1, cv::Mat());
 
       char* result_window = "Result window";
-      namedWindow(result_window, CV_WINDOW_AUTOSIZE);
+      namedWindow(result_window, cv::WINDOW_AUTOSIZE);
       imshow(result_window, result);
       waitKey();
 

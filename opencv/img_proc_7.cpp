@@ -153,7 +153,7 @@ main(int argc, char* argv[]) {
     std::cout << "frame " << i << " of " << j << std::endl;
     myVideo >> myImage;
     process_image(myImage, myMask);
-    cvtColor(myMask, myCopy, CV_GRAY2BGR);
+    cvtColor(myMask, myCopy, cv::COLOR_GRAY2BGR);
     add_tracking(myMask, myCopy);
     myImage.copyTo(myLeft);
     myCopy.copyTo(myRight);

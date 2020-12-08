@@ -77,8 +77,8 @@ disparity::show_disparity(Size image_size) {
   min_disp = 30;
   num_disp = ((image_size.width / 8) + 15) & -16;
 
-  namedWindow("Disparity", CV_WINDOW_NORMAL);
-  namedWindow("Left", CV_WINDOW_NORMAL);
+  namedWindow("Disparity", cv::WINDOW_NORMAL);
+  namedWindow("Left", cv::WINDOW_NORMAL);
   createTrackbar("minDisparity + 30", "Disparity", &min_disp, 60, on_minDisp, (void*)this);
   createTrackbar("numDisparity", "Disparity", &num_disp, 150, on_numDisp, (void*)this);
 

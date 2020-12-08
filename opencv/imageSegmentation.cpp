@@ -74,8 +74,8 @@ main(int, char** argv) {
   //! [bin]
   // Create binary image from source image
   cv::Mat bw;
-  cvtColor(src, bw, CV_BGR2GRAY);
-  threshold(bw, bw, 40, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+  cvtColor(src, bw, cv::COLOR_BGR2GRAY);
+  threshold(bw, bw, 40, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
   imshow("Binary Image", bw);
   //! [bin]
 
@@ -93,7 +93,7 @@ main(int, char** argv) {
   //! [peaks]
   // Threshold to obtain the peaks
   // This will be the markers for the foreground objects
-  threshold(dist, dist, .4, 1., CV_THRESH_BINARY);
+  threshold(dist, dist, .4, 1., cv::THRESH_BINARY);
 
   // Dilate a bit the dist image
   cv::Mat kernel1 = cv::Mat::ones(3, 3, CV_8UC1);
@@ -109,7 +109,7 @@ main(int, char** argv) {
 
   // Find total markers
   std::vector<std::vector<cv::Point>> contours;
-  findContours(dist_8u, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+  findContours(dist_8u, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
   // Create the marker image for the watershed algorithm
   cv::Mat markers = cv::Mat::zeros(dist.size(), CV_32SC1);

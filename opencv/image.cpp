@@ -43,7 +43,7 @@ FindCircle() {
   vector<Vec3f> circles;
   cvtColor(frame, dst, COLOR_BGR2GRAY);
   GaussianBlur(dst, dst, Size(5, 5), 1.3, 1.3);
-  HoughCircles(dst, circles, CV_HOUGH_GRADIENT, 2, 50, 200, 100, 0, 320); // 30
+  HoughCircles(dst, circles, cv::HOUGH_GRADIENT, 2, 50, 200, 100, 0, 320); // 30
   if(circles.size() > 0)
     f_line = 1;
   for(int i = 0; i < circles.size(); i++) {

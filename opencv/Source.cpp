@@ -43,9 +43,9 @@ CannyDetect() {
   // Running the Canny detector
   Canny(detected_edges, detected_edges, lowThreshold, lowThreshold * ratio, kernel_size);
   // finding contours
-  findContours(detected_edges, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE, cv::Point(0, 0));
+  findContours(detected_edges, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE, cv::Point(0, 0));
   // converting image from grayscale to coloured
-  cvtColor(detected_edges, detected_edges, CV_GRAY2BGR);
+  cvtColor(detected_edges, detected_edges, cv::COLOR_GRAY2BGR);
 
   // add the detected edges on top of the image with partial visibility
   addWeighted(src, 1.0, detected_edges, 0.5, 0.0, dst);
@@ -89,10 +89,10 @@ main(int argc, char** argv) {
   dst.create(src.size(), src.type());
 
   /// Convert the image to grayscale
-  cvtColor(src, src_gray, CV_BGR2GRAY);
+  cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
 
   /// Create a window
-  namedWindow(window_name, CV_WINDOW_AUTOSIZE);
+  namedWindow(window_name, cv::WINDOW_AUTOSIZE);
 
   // The threshold of detecting edges of the jellyfish
   lowThreshold = 90;

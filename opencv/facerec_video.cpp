@@ -104,7 +104,7 @@ main(int argc, const char* argv[]) {
     Mat original = frame.clone();
     // Convert the current frame to grayscale:
     Mat gray;
-    cvtColor(original, gray, CV_BGR2GRAY);
+    cvtColor(original, gray, cv::COLOR_BGR2GRAY);
     // Find the faces in the frame:
     vector<Rect_<int>> faces;
     haar_cascade.detectMultiScale(gray, faces);

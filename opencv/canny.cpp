@@ -39,7 +39,7 @@ doCanny() {
   /// Detect edges using canny
   Canny(src_gray, canny_output, lowThreshold, lowThreshold * 2, 3);
   /// Find contours
-  findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+  findContours(canny_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Draw contours
   final = cv::Mat::zeros(canny_output.size(), CV_8UC4);
@@ -111,10 +111,10 @@ main(int argc, char** argv) {
   dst.create(src.size(), src.type());
 
   /// Convert the image to grayscale
-  cvtColor(src, src_gray, CV_BGR2GRAY);
+  cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
 
   /// Create a window
-  namedWindow(window_name, CV_WINDOW_AUTOSIZE);
+  namedWindow(window_name, cv::WINDOW_AUTOSIZE);
 
   /// Create a Trackbar for user to enter threshold
   createTrackbar("Min Threshold:", window_name, &lowThreshold, max_lowThreshold, CannyThreshold);

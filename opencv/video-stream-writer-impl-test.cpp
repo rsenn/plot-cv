@@ -15,12 +15,12 @@ SCENARIO("Can make a video stream") {
 
     WHEN("Fed with some images") {
 
-      mat = imread(string(pathToImagesFolder).append("/abc-a.png"), CV_LOAD_IMAGE_COLOR);
+      mat = imread(string(pathToImagesFolder).append("/abc-a.png"), cv::LOAD_IMAGE_COLOR);
       Size size = mat.size();
       videoStreamWriter.openStream(mat);
-      mat = imread(string(pathToImagesFolder).append("/abc-b.png"), CV_LOAD_IMAGE_COLOR);
+      mat = imread(string(pathToImagesFolder).append("/abc-b.png"), cv::LOAD_IMAGE_COLOR);
       videoStreamWriter.addImage(mat);
-      mat = imread(string(pathToImagesFolder).append("/abc-c.png"), CV_LOAD_IMAGE_COLOR);
+      mat = imread(string(pathToImagesFolder).append("/abc-c.png"), cv::LOAD_IMAGE_COLOR);
       videoStreamWriter.addImage(mat);
 
       videoStreamWriter.closeStream();

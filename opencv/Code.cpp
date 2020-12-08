@@ -76,7 +76,7 @@ detectAndDisplay(Mat frame) {
   cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
   equalizeHist(frame_gray, frame_gray);
 
-  face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(10, 10));
+  face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | cv::CASCADE_SCALE_IMAGE, Size(10, 10));
   for(size_t i = 0; i < faces.size(); i++) {
     Point center(faces[i].x + faces[i].width / 2, faces[i].y + faces[i].height / 2);
     ellipse(frame, center, Size(faces[i].width / 2, faces[i].height / 2), 0, 0, 360, Scalar(255, 0, 255), 2, 8, 0);
@@ -102,7 +102,7 @@ main() {
     int height = (img1.rows / 2), width = (img1.cols);
     Rect r(0, height, width, height - 1);
     ROI = img1(r);
-    cvtColor(ROI, grey, CV_RGB2GRAY);
+    cvtColor(ROI, grey, cv::COLOR_RGB2GRAY);
     threshold(grey, binary, bin_threshold, 255, THRESH_BINARY);
     dilate(binary, dil, Mat(), Point(-1, -1), 1);
     erode(dil, erod, Mat(), Point(-1, -1), 5);

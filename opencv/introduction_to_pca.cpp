@@ -111,14 +111,14 @@ main(int, char** argv) {
 
   // Convert image to binary
   cv::Mat bw;
-  threshold(gray, bw, 50, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+  threshold(gray, bw, 50, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
   //! [pre-process]
 
   //! [contours]
   // Find all the contours in the thresholded image
   std::vector<Vec4i> hierarchy;
   std::vector<std::vector<cv::Point>> contours;
-  findContours(bw, contours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
+  findContours(bw, contours, hierarchy, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 
   for(size_t i = 0; i < contours.size(); ++i) {
     // Calculate the area of each contour

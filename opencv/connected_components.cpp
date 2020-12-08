@@ -17,7 +17,7 @@ on_trackbar(int, void*) {
   std::vector<std::vector<cv::Point>> contours;
   std::vector<Vec4i> hierarchy;
 
-  findContours(bw, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
+  findContours(bw, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
 
   cv::Mat dst = cv::Mat::zeros(img.size(), CV_8UC3);
 
@@ -27,7 +27,7 @@ on_trackbar(int, void*) {
     int idx = 0;
     for(; idx >= 0; idx = hierarchy[idx][0]) {
       Scalar color((rand() & 255), (rand() & 255), (rand() & 255));
-      drawContours(dst, contours, idx, color, CV_FILLED, 8, hierarchy);
+      drawContours(dst, contours, idx, color, cv::FILLED, 8, hierarchy);
     }
   }
 

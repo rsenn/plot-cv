@@ -28,7 +28,7 @@ detectCurve(Mat& src) {
   /*Detect Lines*/
   vector<Vec4i> linesP;
   Mat temp;
-  cvtColor(img_plg, temp, CV_GRAY2BGR);
+  cvtColor(img_plg, temp, cv::COLOR_GRAY2BGR);
   calcLinesP(temp, linesP);
   /*Only preserve vertical and horizontal lines*/
   for(int i = linesP.size() - 1; i >= 0; i--) {
@@ -62,7 +62,7 @@ detectCurve(Mat& src) {
   vector<Vec4i> straight_lines;
   vector<vector<Point>> curves;
   Mat img_all;
-  cvtColor(src, img_all, CV_GRAY2BGR);
+  cvtColor(src, img_all, cv::COLOR_GRAY2BGR);
   curves.push_back(curve);
   createStraightLines(rectCorners, curveEnds, straight_lines);
   drawStraightLines(img_all, straight_lines);
@@ -122,7 +122,7 @@ mycircle(Mat src, vector<Vec3f>& circles) {
 
   // binarize
   Mat image_bin;
-  threshold(src, image_bin, 0, 255, CV_THRESH_OTSU);
+  threshold(src, image_bin, 0, 255, cv::THRESH_OTSU);
 
   // Gaussian Blur
   Mat image_blur;

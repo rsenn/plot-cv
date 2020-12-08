@@ -8,7 +8,8 @@
  * Also will now find the centers of various shapes.
  *
  */
-#include "/home/pi/OpenCV-2.4.3/modules/highgui/include/opencv2/highgui/highgui.hpp"
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 #include <vector>
 #include <stdio.h>
@@ -77,8 +78,8 @@ help(char** av) {
 int
 process(VideoCapture& capture) {
 
-  namedWindow("Original Image", CV_WINDOW_KEEPRATIO);
-  namedWindow("Threshold Image", CV_WINDOW_KEEPRATIO);
+  namedWindow("Original Image", cv::WINDOW_KEEPRATIO);
+  namedWindow("Threshold Image", cv::WINDOW_KEEPRATIO);
   Mat frame;    // mat of the original image
   Mat newframe; // mat of the threshholded (threshheld?) image
 

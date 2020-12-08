@@ -67,12 +67,12 @@ main() {
     Mat frame_result;
     equalizeHist(frame_gray, frame_result);
     /*----- Phat hien khuon mat ---------------------*/
-    face_cascade.detectMultiScale(frame_result,            // anh xu ly
-                                  faces,                   // vector ket qua
-                                  1.1,                     // Scale
-                                  2,                       // so diem xung quanh giu lai
-                                  0 | CV_HAAR_SCALE_IMAGE, // Co tham so thu vien HAAR
-                                  Size(30, 30));           // Kich thuoc doi tuong
+    face_cascade.detectMultiScale(frame_result,                // anh xu ly
+                                  faces,                       // vector ket qua
+                                  1.1,                         // Scale
+                                  2,                           // so diem xung quanh giu lai
+                                  0 | cv::CASCADE_SCALE_IMAGE, // Co tham so thu vien HAAR
+                                  Size(30, 30));               // Kich thuoc doi tuong
     getNow(timetext);
     printf("[%s] Phat hien %d khuon mat\r\n", timetext, faces.size());
     for(int i = 0; i < faces.size(); i++) {
@@ -82,7 +82,7 @@ main() {
       // Tim mat
       Mat faceROI = frame_result(faces[i]);
       std::vector<Rect> eyes;
-      eyes_cascade.detectMultiScale(faceROI, eyes, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(30, 30));
+      eyes_cascade.detectMultiScale(faceROI, eyes, 1.1, 2, 0 | cv::CASCADE_SCALE_IMAGE, Size(30, 30));
       printf("[%s] Khuon mat %d co %d mat\r\n", timetext, i, eyes.size());
       for(int j = 0; j < eyes.size(); j++) {
         Point center_eye(faces[i].x + eyes[j].x + eyes[j].width * 0.5, faces[i].y + eyes[j].y + eyes[j].height * 0.5);

@@ -293,7 +293,7 @@ main(int argc, char** argv) {
     exit(-1);
   }
 
-  cv::Mat image = imread(argv[1], CV_LOAD_IMAGE_COLOR);
+  cv::Mat image = imread(argv[1], cv::LOAD_IMAGE_COLOR);
   if(!image.data) {
     cout << "Could not open file " << argv[1] << endl;
     exit(-1);
@@ -315,7 +315,7 @@ main(int argc, char** argv) {
   // Convert the image to a gray scale image and invert it (B/W) when necessary.
   // Then perform opening to facilitate detection of contours on adjacent objects.
   // Note that these steps are NOT part of SimpleBlobDetector's algorithms.
-  cvtColor(image, image, CV_BGR2GRAY);
+  cvtColor(image, image, cv::COLOR_BGR2GRAY);
   if(!lightObjectsOnDarkBackground)
     bitwise_not(image, image);
   dilate(image, image, cv::Mat::ones(5, 5, CV_32F));

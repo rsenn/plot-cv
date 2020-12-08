@@ -38,7 +38,7 @@ main(int argc, char* argv[]) {
 
     std::vector<std::vector<Size>> contors;
     std::vector<Vec4i> heirarcy;
-    findContours(img_gray, contors, heirarcy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+    findContours(img_gray, contors, heirarcy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
     std::vector<Rect> boundRect(contors.size());
     std::vector<std::vector<cv::Point>> contor_poly(contors.size());

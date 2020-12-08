@@ -103,7 +103,7 @@ main(int argc, char* argv[]) {
 
   namedWindow("frame");
   namedWindow("mask");
-  namedWindow("trackbar", CV_WINDOW_FREERATIO);
+  namedWindow("trackbar", cv::WINDOW_FREERATIO);
   setMouseCallback("frame", leftClick);
 
   createTrackbar("H Low", "trackbar", &intLow[0], 255, on_trackbar);
@@ -115,7 +115,7 @@ main(int argc, char* argv[]) {
   createTrackbar("V Up", "trackbar", &intUp[2], 255, on_trackbar);
 
   for(;;) {
-    frame = imread(path + "/image_capture/image.jpg", CV_LOAD_IMAGE_COLOR);
+    frame = imread(path + "/image_capture/image.jpg", cv::LOAD_IMAGE_COLOR);
 
     if(!getROI) {
       if(!sampling && !saveROI) {

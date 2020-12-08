@@ -59,7 +59,7 @@ thresh_callback(int, void*) {
   /// Detect edges using canny
   Canny(src_gray, canny_output, thresh, thresh * 2, 3);
   /// Find contours
-  findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+  findContours(canny_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Get the moments
   std::vector<Moments> mu(contours.size());

@@ -64,7 +64,7 @@ processImage(int /*h*/, void*) {
   std::vector<std::vector<cv::Point>> contours;
   cv::Mat bimage = image >= sliderPos;
 
-  findContours(bimage, contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
+  findContours(bimage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 
   cv::Mat cimage = cv::Mat::zeros(bimage.size(), CV_8UC3);
 

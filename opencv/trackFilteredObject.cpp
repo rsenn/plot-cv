@@ -153,7 +153,7 @@ trackFiliteredObject::trackObjcet(int& x, int& y, cv::Mat threshold, cv::Mat& ca
   std::vector<std::vector<cv::Point>> contours;
   std::vector<Vec4i> hierarchy;
   // find contours of filtered image using Opencv find Contours function
-  findContours(temp, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
+  findContours(temp, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
   // use moments method to find our filtered object
   double refArea = 0;
   bool objectFound = false;

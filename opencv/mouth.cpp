@@ -53,7 +53,7 @@ main(int argc, char** argv) {
   // A clone image is required because findContours() modifies the input image
   cv::Mat binary_clone = pseudo_hue_bin.clone();
   std::vector<std::vector<cv::Point>> contours;
-  findContours(binary_clone, contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
+  findContours(binary_clone, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 
   // Initialize blank image (for drawing contours)
   cv::Mat_<Vec3b> image_contour(pseudo_hue_bin.size());

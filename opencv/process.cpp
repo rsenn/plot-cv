@@ -368,7 +368,7 @@ process::startOpencv(int width, int height, int mode, ParkingInfo info, std::str
           }
 
           Rect textArea = Rect(SAMPLESIZE * j, 0, SAMPLESIZE, SAMPLESIZE);
-          cvtColor(canonical, textCollection(textArea), CV_GRAY2BGR);
+          cvtColor(canonical, textCollection(textArea), cv::COLOR_GRAY2BGR);
 
           /* ºÓÀº »ç°¢Çü hightlight */
           rectangle(textCollection, textArea, red);

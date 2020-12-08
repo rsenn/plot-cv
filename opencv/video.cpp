@@ -28,7 +28,7 @@ main(int argc, char** argv) {
     cv::Mat frame;
     capture >> frame;
     cv::Mat midImage;
-    // resize(frame, frame, Size(240, 320), 0, 0, CV_INTER_AREA);
+    // resize(frame, frame, Size(240, 320), 0, 0, cv::INTER_AREA);
     // cvtColor(frame, midImage, COLOR_BGR2HSV);
     // flip(frame,frame,1);
     cvtColor(frame, midImage, COLOR_BGR2GRAY);

@@ -120,7 +120,7 @@ camera_c::update(void) {
         cv::absdiff(imageSnap, image, buf);
 
         imageDiff = buf.clone();
-        cv::threshold(imageDiff, imageDiff, threshold, 255, CV_THRESH_BINARY_INV);
+        cv::threshold(imageDiff, imageDiff, threshold, 255, cv::THRESH_BINARY_INV);
         cv::cvtColor(imageDiff, imageDiff, cv::COLOR_BGR2GRAY);
         checkZones();
 

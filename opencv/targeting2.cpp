@@ -203,8 +203,8 @@ targetinginit() {
   }
   capturen = capture;
 
-  namedWindow("Original Image", CV_WINDOW_KEEPRATIO);
-  namedWindow("Threshold Image", CV_WINDOW_KEEPRATIO);
+  namedWindow("Original Image", cv::WINDOW_KEEPRATIO);
+  namedWindow("Threshold Image", cv::WINDOW_KEEPRATIO);
 
   cvCreateTrackbar("Threshold", "Threshold Image", &thresh, 200, NULL);
 }

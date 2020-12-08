@@ -69,7 +69,7 @@ categorizer::categorizer(int _clusters) {
     string category = remove_extension(i->path().filename().string());
     Mat im = imread(filename), templ_im;
     objects[category] = im;
-    cvtColor(im, templ_im, CV_BGR2GRAY);
+    cvtColor(im, templ_im, cv::COLOR_BGR2GRAY);
     templates[category] = templ_im;
   }
   cout << "Initialized" << endl;
@@ -94,7 +94,7 @@ categorizer::make_train_set() {
       // File name with path
       string filename = string(TRAIN_FOLDER) + category + string("/") + (i->path()).filename().string();
       // Make a pair of string and Mat to insert into multimap
-      pair<string, Mat> p(category, imread(filename, CV_LOAD_IMAGE_GRAYSCALE));
+      pair<string, Mat> p(category, imread(filename, cv::LOAD_IMAGE_GRAYSCALE));
       train_set.insert(p);
     }
   }
@@ -202,7 +202,7 @@ categorizer::categorize(VideoCapture cap) {
     cap >> frame;
     imshow("Image", frame);
 
-    cvtColor(frame, frame_g, CV_BGR2GRAY);
+    cvtColor(frame, frame_g, cv::COLOR_BGR2GRAY);
 
     // Extract frame BOW descriptor
     vector<KeyPoint> kp;

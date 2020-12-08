@@ -140,7 +140,7 @@ main(int argc, char* argv[]) {
 
       cv::imshow("rgb", cameraFrame);
 
-      cv::cvtColor(cameraFrame, cameraFrameGray, CV_BGR2GRAY);
+      cv::cvtColor(cameraFrame, cameraFrameGray, cv::COLOR_BGR2GRAY);
 
       cv::GaussianBlur(cameraFrameGray, cameraFrameBlurred, cv::Size(0, 0), 4.0, 4.0);
 

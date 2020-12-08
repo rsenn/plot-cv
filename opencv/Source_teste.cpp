@@ -17,10 +17,10 @@ main(int argc, char** argv) {
   double count = cap.get(cv::CAP_PROP_FRAME_COUNT); // get the frame count
   cout << count;
   cap.set(cv::CAP_PROP_POS_FRAMES, count - 1000); // Set index to last frame
-  namedWindow("MyVideo", CV_WINDOW_AUTOSIZE);
-  namedWindow("Teste_Gray", CV_WINDOW_AUTOSIZE);
-  namedWindow("Teste_GaussianBlur", CV_WINDOW_AUTOSIZE);
-  namedWindow("Teste_Canny", CV_WINDOW_AUTOSIZE);
+  namedWindow("MyVideo", cv::WINDOW_AUTOSIZE);
+  namedWindow("Teste_Gray", cv::WINDOW_AUTOSIZE);
+  namedWindow("Teste_GaussianBlur", cv::WINDOW_AUTOSIZE);
+  namedWindow("Teste_Canny", cv::WINDOW_AUTOSIZE);
 
   while(1) {
 
@@ -34,7 +34,7 @@ main(int argc, char** argv) {
 
     // parte de tu a tentar um grayscale
     Mat frame_gray;
-    cvtColor(frame, frame_gray, CV_BGR2GRAY);
+    cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
     imshow("Teste_Gray", frame_gray);
     // GaussianBlur
     Mat frame_gaussian;

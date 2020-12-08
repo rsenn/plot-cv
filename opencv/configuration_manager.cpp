@@ -413,7 +413,7 @@ Configuration_Manager::display_all_feeds() {
     cameras.push_back(scheduler_temp->get_camera());
     window_name_temp = "Feed From Camera_" + scheduler_temp->get_camera_index();
     windows.push_back(window_name_temp);
-    namedWindow(window_name_temp, CV_WINDOW_AUTOSIZE);
+    namedWindow(window_name_temp, cv::WINDOW_AUTOSIZE);
   }
 
   while(1) {                                           // Read frames and update windows until exit signal

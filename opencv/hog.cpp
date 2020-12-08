@@ -296,7 +296,7 @@ App::run() {
 
       // Change format of the image
       if(make_gray)
-        cvtColor(frame, img_aux, CV_BGR2GRAY);
+        cvtColor(frame, img_aux, cv::COLOR_BGR2GRAY);
       else if(use_gpu)
         cvtColor(frame, img_aux, CV_BGR2BGRA);
       else
@@ -350,7 +350,7 @@ App::run() {
         }
 
         if(make_gray)
-          cvtColor(img_to_show, img, CV_GRAY2BGR);
+          cvtColor(img_to_show, img, cv::COLOR_GRAY2BGR);
         else
           cvtColor(img_to_show, img, CV_BGRA2BGR);
 

@@ -24,7 +24,7 @@ main() {
 
   while(true) {
     cam >> src;
-    cvtColor(src, gray, CV_BGR2GRAY);
+    cvtColor(src, gray, cv::COLOR_BGR2GRAY);
 
     // Reduce the noise so we avoid false circle detection
     GaussianBlur(gray, gray, Size(9, 9), 2, 2);
@@ -34,7 +34,7 @@ main() {
     vector<Vec3f> circles;
 
     // Apply the Hough Transform to find the circles
-    HoughCircles(gray, circles, CV_HOUGH_GRADIENT, 1, 30, 200, 50, 0, 0);
+    HoughCircles(gray, circles, cv::HOUGH_GRADIENT, 1, 30, 200, 50, 0, 0);
 
     // Draw the circles detected
     for(size_t i = 0; i < circles.size(); i++) {

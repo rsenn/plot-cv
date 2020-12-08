@@ -116,7 +116,7 @@ loadFaceRecognizerTrainingImages(string openCVFaceRecognizerImagesPath, vector<c
     cout << "Loading face recognizer images and labels..." << faceImageFilename << endl;
 
     // Load the face image and add to array
-    faceRecognizerImageLoad = cv::imread(openCVFaceRecognizerImagesPath + faceImageFilename, CV_LOAD_IMAGE_GRAYSCALE);
+    faceRecognizerImageLoad = cv::imread(openCVFaceRecognizerImagesPath + faceImageFilename, cv::LOAD_IMAGE_GRAYSCALE);
     cv::resize(faceRecognizerImageLoad, faceRecognizerImageLoad, cv::Size(100, 100));
     faceRecognizerImages.push_back(faceRecognizerImageLoad);
 
@@ -164,7 +164,7 @@ detectFaces(vector<cv::Mat>& faceROIImages, cv::Mat frame, cv::CascadeClassifier
   cv::equalizeHist(frameGrey, frameGrey);
 
   // Detect any faces
-  faceCascade.detectMultiScale(frameGrey, faces, 1.1, 5, CV_HAAR_SCALE_IMAGE, cv::Size(10, 10), cv::Size(400, 400));
+  faceCascade.detectMultiScale(frameGrey, faces, 1.1, 5, cv::CASCADE_SCALE_IMAGE, cv::Size(10, 10), cv::Size(400, 400));
 
   // Loop through each face
   for(size_t i = 0; i < faces.size(); i++) {
@@ -179,7 +179,7 @@ detectFaces(vector<cv::Mat>& faceROIImages, cv::Mat frame, cv::CascadeClassifier
     // lineType, 0);
 
     // Detect eyes
-    eyeCascade.detectMultiScale(faceROIGrey, eyes, 1.1, 5, CV_HAAR_SCALE_IMAGE, cv::Size(10, 10), cv::Size(50, 50));
+    eyeCascade.detectMultiScale(faceROIGrey, eyes, 1.1, 5, cv::CASCADE_SCALE_IMAGE, cv::Size(10, 10), cv::Size(50, 50));
 
     // Draw an ellipse around each eye
     if(eyes.size() == 2 && !trainingMode) {
@@ -190,7 +190,7 @@ detectFaces(vector<cv::Mat>& faceROIImages, cv::Mat frame, cv::CascadeClassifier
     }
 
     // Detect nose
-    noseCascade.detectMultiScale(faceROIGrey, nose, 1.1, 5, CV_HAAR_SCALE_IMAGE, cv::Size(10, 10), cv::Size(200, 200));
+    noseCascade.detectMultiScale(faceROIGrey, nose, 1.1, 5, cv::CASCADE_SCALE_IMAGE, cv::Size(10, 10), cv::Size(200, 200));
 
     // Draw a rectangle around the nose
     if(nose.size() == 1 && !trainingMode) {

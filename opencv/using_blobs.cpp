@@ -18,7 +18,7 @@ int
 main() {
   CvTracks tracks;
 
-  cvNamedWindow("red_object_tracking", CV_WINDOW_NORMAL);
+  cvNamedWindow("red_object_tracking", cv::WINDOW_NORMAL);
 
   // CvCapture *capture = cvCaptureFromCAM(0);
   cv::VideoCapture capture;

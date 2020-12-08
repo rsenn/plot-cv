@@ -153,10 +153,10 @@ main() {
     return (0);
   }
 
-  namedWindow("MORPH", CV_WINDOW_NORMAL);
+  namedWindow("MORPH", cv::WINDOW_NORMAL);
   createTrackbar("morph_pixel", "MORPH", &morph_pixel, 20);
 
-  namedWindow("ColorField", CV_WINDOW_NORMAL);
+  namedWindow("ColorField", cv::WINDOW_NORMAL);
   createTrackbar("Y1", "ColorField", &Y1, 255);
   createTrackbar("Cr1", "ColorField", &Cr1, 255);
   createTrackbar("Cb1", "ColorField", &Cb1, 255);
@@ -164,7 +164,7 @@ main() {
   createTrackbar("Cr2", "ColorField", &Cr2, 255);
   createTrackbar("Cb2", "ColorField", &Cb2, 255);
 
-  namedWindow("Circle", CV_WINDOW_NORMAL);
+  namedWindow("Circle", cv::WINDOW_NORMAL);
   createTrackbar("acc_res", "Circle", &acc_res, 255);
   createTrackbar("min_dis", "Circle", &min_dis, 255);
   createTrackbar("high_thres", "Circle", &high_thres, 255);
@@ -189,7 +189,7 @@ main() {
 
     dilate(matProcessed, matProcessed, getStructuringElement(MORPH_ELLIPSE, Size(morph_pixel, morph_pixel)));
 
-    HoughCircles(matProcessed, v3fCircles, CV_HOUGH_GRADIENT, acc_res, min_dis, high_thres, low_thres, min_rad, max_rad);
+    HoughCircles(matProcessed, v3fCircles, cv::HOUGH_GRADIENT, acc_res, min_dis, high_thres, low_thres, min_rad, max_rad);
 
     for(int i = 0; i < v3fCircles.size(); i++) {
 
@@ -197,7 +197,7 @@ main() {
       x_center = (int)v3fCircles[i][0]; // koordinat x bola
       y_center = (int)v3fCircles[i][1]; // koordinat y bola
 
-      circle(matOriginal, Point(x_center, y_center), 1, Scalar(255, 0, 0), CV_FILLED);
+      circle(matOriginal, Point(x_center, y_center), 1, Scalar(255, 0, 0), cv::FILLED);
       circle(matOriginal, Point(x_center, y_center), (int)v3fCircles[i][2], Scalar(0, 0, 255), 2);
       line(matOriginal, Point(160, 240), Point(x_center, y_center), Scalar(0, 255, 0), 2, CV_AA);
 

@@ -102,9 +102,9 @@ main(int argc, char** argv) {
   cout << "\n--> Transferring  (" << img0.cols << "x" << img0.rows << ")  images to the:  " << server_ip << ":" << server_port << endl;
 
   /* Didn't compile with the namedwindow options because we don't have GTK.
-  cv::namedWindow("stream_client", CV_WINDOW_AUTOSIZE);
+  cv::namedWindow("stream_client", cv::WINDOW_AUTOSIZE);
                   flip(img0, img0, 1);
-                  cvtColor(img0, img1, CV_BGR2GRAY);
+                  cvtColor(img0, img1, cv::COLOR_BGR2GRAY);
 
   */
 

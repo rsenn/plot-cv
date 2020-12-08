@@ -69,8 +69,8 @@ main(int argc, char* argv[]) {
   const char* WIN_RF = "Reference";
 
   // Windows
-  namedWindow(WIN_RF, CV_WINDOW_AUTOSIZE);
-  namedWindow(WIN_UT, CV_WINDOW_AUTOSIZE);
+  namedWindow(WIN_RF, cv::WINDOW_AUTOSIZE);
+  namedWindow(WIN_UT, cv::WINDOW_AUTOSIZE);
   cvMoveWindow(WIN_RF, 400, 0);        // 750,  2 (bernat =0)
   cvMoveWindow(WIN_UT, refS.width, 0); // 1500, 2
 

@@ -125,7 +125,7 @@ rateFrame(Mat& frame) {
   unsigned long int sum = 0;
   unsigned long int size = frame.cols * frame.rows;
   Mat edges;
-  cvtColor(frame, edges, CV_BGR2GRAY);
+  cvtColor(frame, edges, cv::COLOR_BGR2GRAY);
   GaussianBlur(edges, edges, Size(7, 7), 1.5, 1.5);
   Canny(edges, edges, 0, 30, 3);
 

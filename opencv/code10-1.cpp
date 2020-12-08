@@ -25,7 +25,7 @@ main() {
   while(char(waitKey(1)) != 'q') {
     double t0 = getTickCount();
     cap >> im;
-    cvtColor(im, im_g, CV_BGR2GRAY);
+    cvtColor(im, im_g, cv::COLOR_BGR2GRAY);
     frames++;
     imshow("Hello", im_g);
     time += (getTickCount() - t0) / getTickFrequency();

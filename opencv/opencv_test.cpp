@@ -51,7 +51,7 @@ main(int argc, char** argv) {
   // CascadeClassifier profileface =
   // CascadeClassifier("/home/pi/projects/git/cvtest/classifiers/haarcascade_profileface.xml");
 
-  // namedWindow("Output",CV_WINDOW_AUTOSIZE);
+  // namedWindow("Output",cv::WINDOW_AUTOSIZE);
 
   ServoController* servoController = new ServoController();
   servoController->MovePanServoTo(100);
@@ -71,7 +71,7 @@ main(int argc, char** argv) {
     bool bSuccess = cap.read(frame);
     if(bSuccess) {
       if(counter % 2 == 0) {
-        frontalface.detectMultiScale(frame, faces, 1.2, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(min_face_size, min_face_size), Size(max_face_size, max_face_size));
+        frontalface.detectMultiScale(frame, faces, 1.2, 2, 0 | cv::CASCADE_SCALE_IMAGE, Size(min_face_size, min_face_size), Size(max_face_size, max_face_size));
 
         if(!faces.empty()) {
           Rect face = faces[0];

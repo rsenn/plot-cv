@@ -19,10 +19,10 @@ main(int argc, char** argv) {
   double Pos = 0; // evitar o primeiro frame
   cout << count << endl;
   cap.set(cv::CAP_PROP_POS_FRAMES, Pos); // Set index to first frame (simbolo da playstation)
-  /*namedWindow("MyVideo", CV_WINDOW_AUTOSIZE);
-  namedWindow("Teste_Gray", CV_WINDOW_AUTOSIZE);
-  namedWindow("Teste_GaussianBlur", CV_WINDOW_AUTOSIZE);
-  namedWindow("Teste_Canny", CV_WINDOW_AUTOSIZE);
+  /*namedWindow("MyVideo", cv::WINDOW_AUTOSIZE);
+  namedWindow("Teste_Gray", cv::WINDOW_AUTOSIZE);
+  namedWindow("Teste_GaussianBlur", cv::WINDOW_AUTOSIZE);
+  namedWindow("Teste_Canny", cv::WINDOW_AUTOSIZE);
   */
   while(Pos <= count) {
     cap.set(cv::CAP_PROP_POS_FRAMES, Pos); // Set index to first frame (simbolo da playstation)
@@ -36,7 +36,7 @@ main(int argc, char** argv) {
 
     // parte de tu a tentar um grayscale
     Mat frame_gray;
-    cvtColor(frame, frame_gray, CV_BGR2GRAY);
+    cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
     //	imshow("Teste_Gray", frame_gray);
     // GaussianBlur
     Mat frame_gaussian;

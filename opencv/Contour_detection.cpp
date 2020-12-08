@@ -26,12 +26,12 @@ main(int argc, char** argv) {
   src = imread(argv[1], 1);
 
   /// Convert image to gray and blur it
-  cvtColor(src, src_gray, CV_BGR2GRAY);
+  cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
   blur(src_gray, src_gray, Size(3, 3));
 
   /// Create Window
   const char* source_window = "Source";
-  namedWindow(source_window, CV_WINDOW_AUTOSIZE);
+  namedWindow(source_window, cv::WINDOW_AUTOSIZE);
   imshow(source_window, src);
 
   createTrackbar(" Canny thresh:", "Source", &thresh, max_thresh, thresh_callback);
@@ -51,7 +51,7 @@ thresh_callback(int, void*) {
   /// Detect edges using canny
   Canny(src_gray, canny_output, thresh, thresh * 2, 3);
   /// Find contours
-  findContours(canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+  findContours(canny_output, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
   /// Draw contours
   cv::Mat drawing = cv::Mat::zeros(canny_output.size(), CV_8UC3);
@@ -61,6 +61,6 @@ thresh_callback(int, void*) {
   }
 
   /// Show in a window
-  namedWindow("Contours", CV_WINDOW_AUTOSIZE);
+  namedWindow("Contours", cv::WINDOW_AUTOSIZE);
   imshow("Contours", drawing);
 }

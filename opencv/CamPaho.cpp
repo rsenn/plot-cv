@@ -255,7 +255,7 @@ main(int argc, char** argv) {
         // cout << "timeNow:" << timeNow << endl;
         capture1.retrieve(oriImage);
         if(!oriImage.empty()) {
-          // resize(oriImage, oriImage, Size(640, 480), 0, 0, CV_INTER_LINEAR);
+          // resize(oriImage, oriImage, Size(640, 480), 0, 0, cv::INTER_LINEAR);
           findCentroid(oriImage, region, Number_of_regions, centroid);
           if(centroid.size() > 0) {
             timeNowStream << timeNow;

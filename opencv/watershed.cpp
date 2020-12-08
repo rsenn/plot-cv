@@ -82,7 +82,7 @@ main(int argc, char** argv) {
       std::vector<std::vector<cv::Point>> contours;
       std::vector<Vec4i> hierarchy;
 
-      findContours(markerMask, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
+      findContours(markerMask, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
 
       if(contours.empty())
         continue;

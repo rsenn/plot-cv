@@ -86,7 +86,7 @@ detectAndDisplay(Mat frame) {
     std::vector<Rect> eyes;
 
     //-- In each face, detect eyes
-    eyes_cascade.detectMultiScale(faceROI, eyes, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(30, 30));
+    eyes_cascade.detectMultiScale(faceROI, eyes, 1.1, 2, 0 | cv::CASCADE_SCALE_IMAGE, Size(30, 30));
     if(eyes.size() == 2) {
       //-- Draw the face
       Point center(faces[i].x + faces[i].width / 2, faces[i].y + faces[i].height / 2);

@@ -50,7 +50,7 @@ main(int argc, char** argv) {
   // A clone image is required because findContours() modifies the input image
   cv::Mat image_binary_clone = image_binary.clone();
   std::vector<std::vector<cv::Point>> contours;
-  findContours(image_binary_clone, contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
+  findContours(image_binary_clone, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 
   // Initialize blank image (for drawing contours)
   cv::Mat_<uchar> image_contour(image_binary.size());

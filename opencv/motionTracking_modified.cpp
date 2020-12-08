@@ -66,7 +66,7 @@ main(int argc, char** argv) {
   if(argc > 4)
     MIN_OBJ_AREA = char_to_int(argv[4]);
 
-  namedWindow("Frame1", CV_WINDOW_NORMAL);
+  namedWindow("Frame1", cv::WINDOW_NORMAL);
 
   while(1) {
 
@@ -107,10 +107,10 @@ main(int argc, char** argv) {
       threshold(differenceImage, thresholdImage, SENSITIVITY_VALUE, 255, THRESH_BINARY);
       if(debugMode) {
         // show the difference image and threshold image
-        namedWindow("Difference Image", CV_WINDOW_NORMAL);
+        namedWindow("Difference Image", cv::WINDOW_NORMAL);
         imshow("Difference Image", differenceImage);
         resizeWindow("Difference Image", 512, 384);
-        namedWindow("Threshold Image", CV_WINDOW_NORMAL);
+        namedWindow("Threshold Image", cv::WINDOW_NORMAL);
         imshow("Threshold Image", thresholdImage);
         resizeWindow("Threshold Image", 512, 384);
       } else {
@@ -127,7 +127,7 @@ main(int argc, char** argv) {
 
       if(debugMode) {
         // show the threshold image after it's been "blurred"
-        namedWindow("Final Threshold Image", CV_WINDOW_NORMAL);
+        namedWindow("Final Threshold Image", cv::WINDOW_NORMAL);
         imshow("Final Threshold Image", thresholdImage);
         resizeWindow("Final Threshold Image", 512, 384);
       } else {
@@ -216,7 +216,7 @@ searchForMovement(cv::Mat thresholdImage, cv::Mat& cameraFeed) {
   std::vector<Vec4i> hierarchy;
 
   // retrieves external contours
-  findContours(temp, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+  findContours(temp, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
   if(contours.size() > 0) {
     i = contours.size() - 1;

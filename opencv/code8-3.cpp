@@ -13,7 +13,7 @@ using namespace std;
 int
 main() {
   Mat train = imread("template.jpg"), train_g;
-  cvtColor(train, train_g, CV_BGR2GRAY);
+  cvtColor(train, train_g, cv::COLOR_BGR2GRAY);
 
   // detect SIFT keypoints and extract descriptors in the train image
   vector<KeyPoint> train_kp;
@@ -42,7 +42,7 @@ main() {
     if(test.empty())
       continue;
 
-    cvtColor(test, test_g, CV_BGR2GRAY);
+    cvtColor(test, test_g, cv::COLOR_BGR2GRAY);
 
     // detect SIFT keypoints and extract descriptors in the test image
     vector<KeyPoint> test_kp;

@@ -79,7 +79,7 @@ findSquares(const cv::Mat& image, std::vector<std::vector<cv::Point>>& squares) 
       }
 
       // find contours and store them all as a list
-      findContours(gray, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+      findContours(gray, contours, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
 
       std::vector<cv::Point> approx;
 

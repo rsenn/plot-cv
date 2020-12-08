@@ -78,9 +78,9 @@ main(int argc, char** argv) {
   /* print the width and height of the frame, needed by the client */
   cout << "\n--> Transferring  (" << img0.cols << "x" << img0.rows << ")  images to the:  " << server_ip << ":" << server_port << endl;
 
-  namedWindow("stream_client", CV_WINDOW_AUTOSIZE);
+  namedWindow("stream_client", cv::WINDOW_AUTOSIZE);
   flip(img0, img0, 1);
-  cvtColor(img0, img1, CV_BGR2GRAY);
+  cvtColor(img0, img1, cv::COLOR_BGR2GRAY);
 
   while(key != 'q') {
     /* get a frame from camera */
@@ -93,7 +93,7 @@ main(int argc, char** argv) {
     pthread_mutex_lock(&amutex);
 
     flip(img0, img0, 1);
-    cvtColor(img0, img1, CV_BGR2GRAY);
+    cvtColor(img0, img1, cv::COLOR_BGR2GRAY);
 
     // Example image processing goes here?
     GaussianBlur(img1, img1, Size(7, 7), 1.5, 1.5);

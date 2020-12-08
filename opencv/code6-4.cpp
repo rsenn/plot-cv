@@ -85,7 +85,7 @@ public:
     cv::Mat edges;
     Canny(img_b, edges, l_canny, h_canny);
     std::vector<std::vector<cv::Point>> c;
-    findContours(edges, c, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
+    findContours(edges, c, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
     // Remove small spurious short contours
     for(int i = 0; i < c.size(); i++) {
       bool is_closed = false;

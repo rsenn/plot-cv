@@ -54,7 +54,7 @@ getPoints(Mat image) {
       }
 
       // Find contours and store them in a list
-      findContours(gray, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+      findContours(gray, contours, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
 
       // Test contours
       vector<Point> approx;
@@ -180,7 +180,7 @@ mat_to_bitmap(JNIEnv* env, Mat& src, bool needPremultiplyAlpha, jobject bitmap_c
       // info.format == ANDROID_BITMAP_FORMAT_RGB_565
       Mat tmp(info.height, info.width, CV_8UC2, pixels);
       if(src.type() == CV_8UC1) {
-        cvtColor(src, tmp, CV_GRAY2BGR565);
+        cvtColor(src, tmp, cv::COLOR_GRAY2BGR565);
       } else if(src.type() == CV_8UC3) {
         cvtColor(src, tmp, CV_RGB2BGR565);
       } else if(src.type() == CV_8UC4) {
@@ -302,7 +302,7 @@ Java_com_scanlibrary_ScanActivity_getBWBitmap(JNIEnv* env, jobject thiz, jobject
   // init our output image
   Mat dst = mbgra.clone();
 
-  cvtColor(mbgra, dst, CV_BGR2GRAY);
+  cvtColor(mbgra, dst, cv::COLOR_BGR2GRAY);
   //    float alpha = 2.2;
   //    float beta = 0;
   //    dst.convertTo(dst, -1, alpha, beta);
@@ -344,7 +344,7 @@ Java_com_scanlibrary_ScanActivity_getGrayBitmap(JNIEnv* env, jobject thiz, jobje
   // init our output image
   Mat dst = mbgra.clone();
 
-  cvtColor(mbgra, dst, CV_BGR2GRAY);
+  cvtColor(mbgra, dst, cv::COLOR_BGR2GRAY);
 
   // get source bitmap's config
   jclass java_bitmap_class = (jclass)env->FindClass("android/graphics/Bitmap");

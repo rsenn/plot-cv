@@ -531,7 +531,7 @@ maskFromTemplate(const std::vector<cv::linemod::Template>& templates, int num_mo
 
   cv::Mat mask_copy = mask.clone();
   IplImage mask_copy_ipl = mask_copy;
-  cvFindContours(&mask_copy_ipl, lp_storage, &lp_contour, sizeof(CvContour), CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
+  cvFindContours(&mask_copy_ipl, lp_storage, &lp_contour, sizeof(CvContour), cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
 
   std::vector<Cvcv::Point> l_pts1; // to use as input to cv_primesensor::filter_plane
 

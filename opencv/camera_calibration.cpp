@@ -131,7 +131,7 @@ public:
       inputCapture >> view0;
       view0.copyTo(result);
     } else if(atImageList < (int)imageList.size())
-      result = imread(imageList[atImageList++], CV_LOAD_IMAGE_COLOR);
+      result = imread(imageList[atImageList++], cv::LOAD_IMAGE_COLOR);
 
     return result;
   }

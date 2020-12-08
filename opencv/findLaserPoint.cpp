@@ -62,7 +62,7 @@ findBrightPoint(cv::Mat& img) {
   std::vector<std::vector<cv::Point>> contours;
   std::vector<Vec4i> hierarchy;
   cv::Mat imgProcCopy = img.clone();
-  findContours(imgProcCopy, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+  findContours(imgProcCopy, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
   if(contours.size() == 0)
     return cv::Point(-1, -1);
   int maxArea = 0, maxAreaIndex = -1;
@@ -109,14 +109,14 @@ main() {
   while(waitKey(30) != 27) {
     cap >> imgRaw;
     cv::Mat imgRawCopy = imgRaw.clone();
-    cvtColor(imgRaw, imgProc, CV_BGR2GRAY);
+    cvtColor(imgRaw, imgProc, cv::COLOR_BGR2GRAY);
     cvtColor(imgRaw, imgHSV, CV_BGR2HSV_FULL);
     threshold(imgProc, imgProc, thresholdValue, 255, 0);
     std::vector<std::vector<cv::Point>> contours;
     std::vector<std::vector<cv::Point>> wall;
     std::vector<Vec4i> hierarchy;
     cv::Mat imgProcCopy = imgProc.clone();
-    findContours(imgProcCopy, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+    findContours(imgProcCopy, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
     int left = 1000, right = 0, up = 1000, down = 0;
     int maxArea = 0, maxAreaIndex = -1;
     for(int i = 0; i < contours.size(); i++) {
@@ -202,7 +202,7 @@ main() {
 
       cv::Mat imgPoint;
 
-      cvtColor(imgToMap, imgToMapProc, CV_BGR2GRAY);
+      cvtColor(imgToMap, imgToMapProc, cv::COLOR_BGR2GRAY);
       threshold(imgToMapProc, imgPoint, 254, 255, 0);
       threshold(imgToMapProc, imgToMapProc, thresholdValue, 255, 0);
 

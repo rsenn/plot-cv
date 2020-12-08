@@ -43,7 +43,7 @@ main(int argc, char** argv) {
       imshow("threshold_blue", threshold_blue);
 
       if(!threshold_blue.empty()) {
-        findContours(threshold_blue, contours, hierarchy, CV_RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
+        findContours(threshold_blue, contours, hierarchy, cv::RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
         if(!contours.empty()) {
           for(int i = 0; i < contours.size(); i++) {
             if(hierarchy[i][0] == -1) {

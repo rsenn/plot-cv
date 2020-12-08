@@ -120,7 +120,7 @@ foundCorners(std::vector<Cvcv::Point2D32f>* srcImagecv::Points, const cv::Mat& s
   cv::Mat MgrayImage = grayImage;
   std::vector<std::vector<cv::Point>> contours;
   std::vector<Vec4i> hierarchy;
-  findContours(MgrayImage, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+  findContours(MgrayImage, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
 
   cv::Point p;
   std::vector<Cvcv::Point2D32f> srcImagecv::Points_temp(4, cvcv::Point2D32f(0, 0));
@@ -211,8 +211,8 @@ main(void) {
   cv::Mat source, grayImage;
   video >> source;
 
-  namedWindow("Original", WINDOW_AUTOSIZE | CV_WINDOW_FREERATIO);
-  namedWindow("POSIT", WINDOW_OPENGL | CV_WINDOW_FREERATIO);
+  namedWindow("Original", WINDOW_AUTOSIZE | cv::WINDOW_FREERATIO);
+  namedWindow("POSIT", WINDOW_OPENGL | cv::WINDOW_FREERATIO);
   resizeWindow("POSIT", source.cols, source.rows);
 
   displayOverlay("POSIT",

@@ -278,7 +278,7 @@ Scheduler::display_camera_feed() {
   } else {
     Mat frame;
     string window_name = "Camera Feed: camera_index= " + this->camera_index;
-    namedWindow(window_name, CV_WINDOW_AUTOSIZE);
+    namedWindow(window_name, cv::WINDOW_AUTOSIZE);
 
     while(1) {
       if(!this->camera.read(frame)) {

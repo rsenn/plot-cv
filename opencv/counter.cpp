@@ -405,7 +405,7 @@ search_for_movement(cv::Mat& thresholdImage, cv::Mat& display, bool loop_switch,
 
   thresholdImage.copyTo(temp);
 
-  findContours(temp, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+  findContours(temp, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
   for(std::vector<std::vector<cv::Point>>::iterator it_0 = contours.begin(); it_0 != contours.end(); it_0++) {
     temp_rect = boundingRect(*it_0);
     obj_area = temp_rect.area();
@@ -504,7 +504,7 @@ dynamic_threshold(cv::Mat& input_image, cv::Mat& threshold_image, float percent_
       line(histImage, cv::Point(bin_w * (i - 1), hist_h - cvRound(hist.at<float>(i - 1))), cv::Point(bin_w * (i), hist_h - cvRound(hist.at<float>(i))), Scalar(255, 0, 0), 2, 8, 0);
     }
 
-    namedWindow("Histogram", CV_WINDOW_NORMAL);
+    namedWindow("Histogram", cv::WINDOW_NORMAL);
     imshow("Histogram", histImage);
     resizeWindow("Histogram", 512, 384);
   } else {

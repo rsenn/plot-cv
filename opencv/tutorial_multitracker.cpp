@@ -1,6 +1,3 @@
-// Brian Gravelle
-// not my code; from http://docs.opencv.org/3.1.0/d5/d07/tutorial_multitracker.html#gsc.tab=0
-
 /*----------------------------------------------
  * Usage:
  * example_tracking_multitracker <video_name> [algorithm]
@@ -11,12 +8,13 @@
  *--------------------------------------------------*/
 
 #include <opencv2/core/utility.hpp>
-#include <opencv2/highgui.hpp>
 #include <opencv2/tracking.hpp>
 #include <opencv2/videoio.hpp>
+#include <opencv2/highgui.hpp>
 #include <iostream>
 #include <cstring>
 #include <ctime>
+#include "samples_utility.hpp"
 
 using namespace std;
 using namespace cv;
@@ -41,11 +39,14 @@ main(int argc, char** argv) {
     trackingAlg = argv[2];
 
   // create the tracker
-  MultiTracker trackers(trackingAlg);
+  //! [create]
+  MultiTracker trackers;
+  //! [create]
 
   // container of the tracked objects
+  //! [roi]
   vector<Rect2d> objects;
-  // vector<Rect> objects;
+  //! [roi]
 
   // set input video
   std::string video = argv[1];
@@ -55,14 +56,25 @@ main(int argc, char** argv) {
 
   // get bounding box
   cap >> frame;
-  selectROI("tracker", frame, objects);
+  //! [selectmulti]
+  vector<Rect> ROIs;
+  selectROIs("tracker", frame, ROIs);
+  //! [selectmulti]
 
   // quit when the tracked object(s) is not provided
-  if(objects.size() < 1)
+  if(ROIs.size() < 1)
     return 0;
 
   // initialize the tracker
-  trackers.add(frame, objects);
+  //! [init]
+  std::vector<Ptr<Tracker>> algorithms;
+  for(size_t i = 0; i < ROIs.size(); i++) {
+    algorithms.push_back(createTrackerByName(trackingAlg));
+    objects.push_back(ROIs[i]);
+  }
+
+  trackers.add(algorithms, frame, objects);
+  //! [init]
 
   // do the tracking
   printf("Start the tracking process, press ESC to quit.\n");
@@ -75,10 +87,14 @@ main(int argc, char** argv) {
       break;
 
     // update the tracking result
+    //! [update]
     trackers.update(frame);
+    //! [update]
 
+    //! [result]
     // draw the tracked object
-    for(unsigned i = 0; i < trackers.objects.size(); i++) rectangle(frame, trackers.objects[i], Scalar(255, 0, 0), 2, 1);
+    for(unsigned i = 0; i < trackers.getObjects().size(); i++) rectangle(frame, trackers.getObjects()[i], Scalar(255, 0, 0), 2, 1);
+    //! [result]
 
     // show image with the tracked object
     imshow("tracker", frame);

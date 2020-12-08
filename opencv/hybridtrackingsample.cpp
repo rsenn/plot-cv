@@ -129,7 +129,7 @@ main(int argc, char** argv) {
       int values_read = fscanf(f, "%d %f %f %f %f\n", &i, &w[0], &w[1], &w[2], &w[3]);
       CV_Assert(values_read == 5);
       sprintf(img_file, "seqG/%04d.png", i);
-      image = imread(img_file, CV_LOAD_IMAGE_COLOR);
+      image = imread(img_file, cv::LOAD_IMAGE_COLOR);
       if(image.empty())
         break;
       selection = Rect(cvRound(w[0] * image.cols), cvRound(w[1] * image.rows), cvRound(w[2] * image.cols), cvRound(w[3] * image.rows));

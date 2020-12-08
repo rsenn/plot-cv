@@ -18,9 +18,8 @@
 #include <opencv2/core/utility.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/video/background_segm.hpp>
-#include <opencv2\calib3d.hpp>
-#include <opencv\cv.h>
-#include <Windows.h>
+#include <opencv2/calib3d.hpp>
+#include <opencv/cv.h>
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -59,9 +58,9 @@ createTrackbars() {
   namedWindow(trackbarWindow, 0);
   // create memory to store trackbar name on window
   char TrackbarName[100];
-  sprintf_s(TrackbarName, "S_MIN", smin);
-  sprintf_s(TrackbarName, "V_MIN", vmin);
-  sprintf_s(TrackbarName, "V_MAX", vmax);
+  /*sprintf(TrackbarName, "S_MIN", smin);
+  sprintf(TrackbarName, "V_MIN", vmin);
+  sprintf(TrackbarName, "V_MAX", vmax);*/
 
   // create trackbars and insert them into window
   createTrackbar("S_MIN", trackbarWindow, &smin, 256, is_trackbar);
@@ -74,12 +73,12 @@ createTrackbarsBG() {
   namedWindow(trackbarWindow, 0);
   // create memory to store trackbar name on window
   char TrackbarName[50];
-  sprintf_s(TrackbarName, "H_MIN", 0);
+  /*sprintf_s(TrackbarName, "H_MIN", 0);
   sprintf_s(TrackbarName, "H_MAX", 256);
   sprintf_s(TrackbarName, "S_MIN", smin);
   sprintf_s(TrackbarName, "S_MAX", 256); // threshold values during program options
   sprintf_s(TrackbarName, "V_MIN", vmin);
-  sprintf_s(TrackbarName, "V_MAX", vmax);
+  sprintf_s(TrackbarName, "V_MAX", vmax);*/
   // create trackbars and insert them into window
 
   createTrackbar("H_MIN", trackbarWindow, &hueMin, hueMax, is_trackbar);

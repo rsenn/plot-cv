@@ -251,7 +251,7 @@ TEST(meanShift) {
 #ifdef HAVE_OPENCV_NONFREE
 
 TEST(SURF) {
-  Mat src = imread(abspath("aloeL.jpg"), CV_LOAD_IMAGE_GRAYSCALE);
+  Mat src = imread(abspath("aloeL.jpg"), cv::LOAD_IMAGE_GRAYSCALE);
   if(src.empty())
     throw runtime_error("can't open aloeL.jpg");
 
@@ -280,7 +280,7 @@ TEST(SURF) {
 #endif
 
 TEST(FAST) {
-  Mat src = imread(abspath("aloeL.jpg"), CV_LOAD_IMAGE_GRAYSCALE);
+  Mat src = imread(abspath("aloeL.jpg"), cv::LOAD_IMAGE_GRAYSCALE);
   if(src.empty())
     throw runtime_error("can't open aloeL.jpg");
 
@@ -304,7 +304,7 @@ TEST(FAST) {
 }
 
 TEST(ORB) {
-  Mat src = imread(abspath("aloeL.jpg"), CV_LOAD_IMAGE_GRAYSCALE);
+  Mat src = imread(abspath("aloeL.jpg"), cv::LOAD_IMAGE_GRAYSCALE);
   if(src.empty())
     throw runtime_error("can't open aloeL.jpg");
 
@@ -559,18 +559,18 @@ TEST(cvtColor) {
   gen(src, 4000, 4000, CV_8UC1, 0, 255);
   d_src.upload(src);
 
-  SUBTEST << "4000x4000, 8UC1, CV_GRAY2BGRA";
+  SUBTEST << "4000x4000, 8UC1, cv::COLOR_GRAY2BGRA";
 
-  cvtColor(src, dst, CV_GRAY2BGRA, 4);
+  cvtColor(src, dst, cv::COLOR_GRAY2BGRA, 4);
 
   CPU_ON;
-  cvtColor(src, dst, CV_GRAY2BGRA, 4);
+  cvtColor(src, dst, cv::COLOR_GRAY2BGRA, 4);
   CPU_OFF;
 
-  gpu::cvtColor(d_src, d_dst, CV_GRAY2BGRA, 4);
+  gpu::cvtColor(d_src, d_dst, cv::COLOR_GRAY2BGRA, 4);
 
   GPU_ON;
-  gpu::cvtColor(d_src, d_dst, CV_GRAY2BGRA, 4);
+  gpu::cvtColor(d_src, d_dst, cv::COLOR_GRAY2BGRA, 4);
   GPU_OFF;
 
   cv::swap(src, dst);
@@ -987,7 +987,7 @@ TEST(equalizeHist) {
 }
 
 TEST(Canny) {
-  Mat img = imread(abspath("aloeL.jpg"), CV_LOAD_IMAGE_GRAYSCALE);
+  Mat img = imread(abspath("aloeL.jpg"), cv::LOAD_IMAGE_GRAYSCALE);
 
   if(img.empty())
     throw runtime_error("can't open aloeL.jpg");

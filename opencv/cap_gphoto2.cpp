@@ -862,7 +862,7 @@ DigitalCameraCapture::readFrameFromFile(CameraFile* file, OutputArray outputFram
   if(size > 0) {
     Mat buf = Mat(1, size, CV_8UC1, (void*)data);
     if(!buf.empty()) {
-      frame = imdecode(buf, CV_LOAD_IMAGE_UNCHANGED);
+      frame = imdecode(buf, cv::LOAD_IMAGE_UNCHANGED);
     }
     frame.copyTo(outputFrame);
   }

@@ -742,7 +742,7 @@ MotionJpegCapture::retrieveFrame(int, OutputArray output_frame) {
     std::vector<char> data = readFrame(m_frame_iterator);
 
     if(data.size()) {
-      m_current_frame = imdecode(data, CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_COLOR);
+      m_current_frame = imdecode(data, cv::LOAD_IMAGE_ANYDEPTH | cv::LOAD_IMAGE_COLOR);
     }
 
     m_current_frame.copyTo(output_frame);

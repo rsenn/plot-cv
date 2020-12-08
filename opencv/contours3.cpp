@@ -49,7 +49,7 @@ main() {
     // Find the contours.
     std::vector<std::vector<cv::Point>> contours;
     cv::Mat contourOutput = imageThreshcv::Mat.clone();
-    cv::findContours(contourOutput, contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
+    cv::findContours(contourOutput, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 
     // Draw the contours
     cv::Mat contourImage = framecv::Mat.clone();

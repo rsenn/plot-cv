@@ -87,9 +87,9 @@ calibrator::calc_image_points(bool show) {
     if(l_pattern_found && r_pattern_found) {
       object_points.push_back(ob_p);
       Mat gray;
-      cvtColor(lim, gray, CV_BGR2GRAY);
+      cvtColor(lim, gray, cv::COLOR_BGR2GRAY);
       cornerSubPix(gray, l_im_p, Size(5, 5), Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
-      cvtColor(rim, gray, CV_BGR2GRAY);
+      cvtColor(rim, gray, cv::COLOR_BGR2GRAY);
       cornerSubPix(gray, r_im_p, Size(5, 5), Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
       l_image_points.push_back(l_im_p);
       r_image_points.push_back(r_im_p);

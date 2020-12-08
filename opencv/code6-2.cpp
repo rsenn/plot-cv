@@ -69,14 +69,14 @@ main() {
   cv::Mat img = imread("rects.png");
   cv::Mat edges;
   Canny(img, edges, 50, 100);
-  findContours(edges, contours, heirarchy, CV_RETR_TREE, CV_CHAIN_APPROX_NONE);
+  findContours(edges, contours, heirarchy, cv::RETR_TREE, cv::CHAIN_APPROX_NONE);
   // Make the contours closed
   make_contours_closed(contours);
   img_all_contours = img.clone();
   // Draw all contours using a thin green line
   drawContours(img_all_contours, contours, -1, Scalar(0, 255, 0));
 
-  namedWindow("Contours", CV_WINDOW_AUTOSIZE);
+  namedWindow("Contours", cv::WINDOW_AUTOSIZE);
   imshow("Contours", img_all_contours);
 
   setMouseCallback("Contours", on_mouse);

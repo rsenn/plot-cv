@@ -81,7 +81,7 @@ FindLineCenter(raspicam::RaspiCam_Cv& Camera, int32_t nTick, int32_t& nCenterX, 
 #endif
 #if !TESTROI
     // printf("findContours image\n");
-    cv::findContours(roiImg, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+    cv::findContours(roiImg, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
     int nMaxAreaContourIndex = -1;
     float fMaxArea = 0.f;
 

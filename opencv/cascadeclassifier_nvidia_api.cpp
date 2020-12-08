@@ -256,7 +256,7 @@ main(int argc, const char** argv) {
 
   do {
     Mat gray;
-    cvtColor((image.empty() ? frame : image), gray, CV_BGR2GRAY);
+    cvtColor((image.empty() ? frame : image), gray, cv::COLOR_BGR2GRAY);
 
     //
     // process
@@ -281,14 +281,14 @@ main(int argc, const char** argv) {
     } else {
       vector<Rect> rectsOpenCV;
 
-      classifierOpenCV.detectMultiScale(gray, rectsOpenCV, 1.2f, bFilterRects ? 4 : 0, (bLargestObject ? CV_HAAR_FIND_BIGGEST_OBJECT : 0) | CV_HAAR_SCALE_IMAGE, Size(minSize.width, minSize.height));
+      classifierOpenCV.detectMultiScale(gray, rectsOpenCV, 1.2f, bFilterRects ? 4 : 0, (bLargestObject ? cv::HAAR_FIND_BIGGEST_OBJECT : 0) | cv::CASCADE_SCALE_IMAGE, Size(minSize.width, minSize.height));
 
       for(size_t rt = 0; rt < rectsOpenCV.size(); ++rt) rectangle(gray, rectsOpenCV[rt], Scalar(255));
     }
 
     avgTime = (Ncv32f)ncvEndQueryTimerMs(timer);
 
-    cvtColor(gray, frameDisp, CV_GRAY2BGR);
+    cvtColor(gray, frameDisp, cv::COLOR_GRAY2BGR);
     displayState(frameDisp, bHelpScreen, bUseGPU, bLargestObject, bFilterRects, 1000.0f / avgTime);
     imshow(wndTitle, frameDisp);
 

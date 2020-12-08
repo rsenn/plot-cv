@@ -194,7 +194,7 @@ main(int argc, char* argv[]) {
 
   namedWindow("frame");
   namedWindow("mask");
-  namedWindow("trackbar", CV_WINDOW_FREERATIO);
+  namedWindow("trackbar", cv::WINDOW_FREERATIO);
   setMouseCallback("frame", leftClick);
 
   createTrackbar("H Low", "trackbar", &intLow[0], 255, on_trackbar);

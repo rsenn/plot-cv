@@ -5,24 +5,28 @@
  *      Author: erublee
  */
 
-#include "opencv2/calib3d/calib3d.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/features2d/features2d.hpp"
 #include <iostream>
+#include "opencv2/opencv_modules.hpp"
+
+#ifdef HAVE_OPENCV_CALIB3D
+
+#include "opencv2/calib3d.hpp"
+#include "opencv2/videoio.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/features2d.hpp"
+#include "opencv2/xfeatures2d.hpp"
 #include <list>
 #include <vector>
 
 using namespace std;
 using namespace cv;
+using namespace cv::xfeatures2d;
 
 static void
 help(char** av) {
-  cout << "\nThis program demonstrated the use of features2d with the Fast corner detector and "
-          "brief descriptors\n"
-       << "to track planar objects by computing their homography from the key (training) image to "
-          "the query (test) "
-          "image\n\n"
+  cout << "\nThis program demonstrated the use of features2d with the Fast corner detector and brief descriptors\n"
+       << "to track planar objects by computing their homography from the key (training) image to the query (test) image\n\n"
        << endl;
   cout << "usage: " << av[0] << " <video device number>\n" << endl;
   cout << "The following keys do stuff:" << endl;
@@ -110,7 +114,7 @@ main(int ac, char** av) {
     return 1;
   }
 
-  BriefDescriptorExtractor brief(32);
+  Ptr<BriefDescriptorExtractor> brief = BriefDescriptorExtractor::create(32);
 
   VideoCapture capture;
   capture.open(atoi(av[1]));
@@ -129,7 +133,7 @@ main(int ac, char** av) {
 
   vector<DMatch> matches;
 
-  BFMatcher desc_matcher(NORM_HAMMING);
+  BFMatcher desc_matcher(brief->defaultNorm());
 
   vector<Point2f> train_pts, query_pts;
   vector<KeyPoint> train_kpts, query_kpts;
@@ -140,8 +144,7 @@ main(int ac, char** av) {
   bool ref_live = true;
 
   Mat train_desc, query_desc;
-  const int DESIRED_FTRS = 500;
-  GridAdaptedFeatureDetector detector(new FastFeatureDetector(10, true), DESIRED_FTRS, 4, 4);
+  Ptr<FastFeatureDetector> detector = FastFeatureDetector::create(10, true);
 
   Mat H_prev = Mat::eye(3, 3, CV_32FC1);
   for(;;) {
@@ -151,18 +154,16 @@ main(int ac, char** av) {
 
     cvtColor(frame, gray, COLOR_RGB2GRAY);
 
-    detector.detect(gray, query_kpts); // Find interest points
-
-    brief.compute(gray, query_kpts,
-                  query_desc); // Compute brief descriptors at each keypoint location
+    detector->detect(gray, query_kpts);           // Find interest points
+    brief->compute(gray, query_kpts, query_desc); // Compute brief descriptors at each keypoint location
 
     if(!train_kpts.empty()) {
 
       vector<KeyPoint> test_kpts;
       warpKeypoints(H_prev.inv(), query_kpts, test_kpts);
 
-      Mat mask = windowedMatchingMask(test_kpts, train_kpts, 25, 25);
-      desc_matcher.match(query_desc, train_desc, matches, mask);
+      // Mat mask = windowedMatchingMask(test_kpts, train_kpts, 25, 25);
+      desc_matcher.match(query_desc, train_desc, matches, Mat());
       drawKeypoints(frame, test_kpts, frame, Scalar(255, 0, 0), DrawMatchesFlags::DRAW_OVER_OUTIMG);
 
       matches2points(train_kpts, query_kpts, matches, train_pts, query_pts);
@@ -208,3 +209,13 @@ main(int ac, char** av) {
   }
   return 0;
 }
+
+#else
+
+int
+main() {
+  std::cerr << "OpenCV was built without calib3d module" << std::endl;
+  return 0;
+}
+
+#endif

@@ -58,7 +58,7 @@ main(int argc, char** argv) {
     src.copyTo(src_copy);
     // src.copyTo(src_HSV); //20170420  *************src_HSV ���ӷ�(�O�����m)�Msrc�@��
     src_HSV = src.clone(); ////20170420*************** ����ƻs�@�Msrc�X�� ,output���ӷ�(�O�����m)�M���P
-    cvtColor(src_copy, src_copy, CV_BGR2GRAY);
+    cvtColor(src_copy, src_copy, cv::COLOR_BGR2GRAY);
     cvtColor(src_HSV, src_HSV, CV_BGR2HSV); // 20170420
     // threshold(src_copy, src_copy, 70, 255, THRESH_BINARY_INV); //20170420
     // threshold(src_copy, src_copy, 100, 255, THRESH_OTSU);      //20170420
@@ -72,7 +72,7 @@ main(int argc, char** argv) {
     add(src_HSV, src_HSV, src_add_mask, hsv_threshold);                           // 20170420
     int num = 0;
     if(!src_HSV.empty()) { // 20170420
-      findContours(hsv_threshold, contours_2, hierarchy_2, CV_RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
+      findContours(hsv_threshold, contours_2, hierarchy_2, cv::RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
       if(!contours_2.empty()) {
         //#pragma omp parallel for
         for(int i = 0; i < contours_2.size(); i++) {
@@ -82,7 +82,7 @@ main(int argc, char** argv) {
       }
     }
     if(!src_copy.empty()) {
-      findContours(src_copy, contours, hierarchy, CV_RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
+      findContours(src_copy, contours, hierarchy, cv::RETR_TREE, CHAIN_APPROX_NONE, cv::Point(0, 0));
       if(!contours.empty()) {
         //#pragma omp parallel for
         for(int i = 0; i < contours.size(); i++) {
