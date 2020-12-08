@@ -92,7 +92,7 @@ js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   if(argc > i && js.is_bool(argv[i]))
     js.get_boolean(argv[i++], antialias);
 
-     cv::drawContours(*dptr, points, -1, color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
+  cv::drawContours(*dptr, points, -1, color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
 
   std::cerr << "draw_contour() ret:" << ret << " color: " << color << std::endl;
   return js._undefined;
@@ -100,8 +100,8 @@ js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
 
 static JSValue
 js_draw_line(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
-   cv::Mat* dst;
- int i = 0, ret = -1;
+  cv::Mat* dst;
+  int i = 0, ret = -1;
   point2f_type points[2];
   color_type color;
   int thickness = 1;
@@ -136,7 +136,7 @@ js_draw_line(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
 
 static JSValue
 js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
-   cv::Mat* dst;
+  cv::Mat* dst;
   int i = 0, ret = -1;
   point2i_vector points;
   cv::Scalar color;
@@ -147,7 +147,7 @@ js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
     i++;
   else
     dst = dptr;
- 
+
   if(argc > i && js.is_array_like(argv[i]))
     js.get_point_array(argv[i++], points);
   if(argc > i && js.is_color(argv[i]))
@@ -168,16 +168,16 @@ js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
 
     // cv::fillPoly(*dptr, points, color, antialias ? cv::LINE_AA : cv::LINE_8);
     (thickness <= 0 ? cv::fillPoly(*dptr, &pts, &size, 1, color, lineType) : cv::polylines(*dptr, &pts, &size, 1, true, color, thickness, lineType));
- 
-  return js._undefined;
-}
-return JS_EXCEPTION;
+
+    return js._undefined;
+  }
+  return JS_EXCEPTION;
 }
 
 static JSValue
 js_draw_rect(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
-     cv::Mat* dst;
-int i = 0, ret = -1;
+  cv::Mat* dst;
+  int i = 0, ret = -1;
   cv::Rect2f rect;
   point2f_type points[2];
   color_type color;
@@ -188,7 +188,7 @@ int i = 0, ret = -1;
     i++;
   else
     dst = dptr;
- 
+
   if(dst == nullptr)
     return JS_EXCEPTION;
 
@@ -223,7 +223,7 @@ JSClassDef js_draw_class = {
 };
 
 const JSCFunctionListEntry js_draw_proto_funcs[] = {
-  JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Draw", JS_PROP_CONFIGURABLE),
+    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Draw", JS_PROP_CONFIGURABLE),
 };
 
 const JSCFunctionListEntry js_draw_static_funcs[] = {

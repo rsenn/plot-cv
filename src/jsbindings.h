@@ -53,7 +53,6 @@ struct JSPointIteratorData : public std::pair<JSPointData*, JSPointData*> {
 
 extern "C" {
 
-
 int js_draw_functions(JSContext* ctx, JSValue parent);
 int js_draw_init(JSContext*, JSModuleDef*);
 
