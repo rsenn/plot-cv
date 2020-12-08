@@ -34,7 +34,7 @@
 #include <process.h>
 #include <conio.h>
 #include <windows.h>
-#include "tserial.h"
+#include <tserial.h>
 
 /* -------------------------------------------------------------------- */
 /* -------------------------    Tserial   ----------------------------- */

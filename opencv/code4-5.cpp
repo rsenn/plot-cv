@@ -20,7 +20,7 @@ main() {
   }
 
   // Get size of frames
-  Size S = Size((int)cap.get(CV_CAP_PROP_FRAME_WIDTH), (int)cap.get(CV_CAP_PROP_FRAME_HEIGHT));
+  Size S = Size((int)cap.get(cv::CAP_PROP_FRAME_WIDTH), (int)cap.get(cv::CAP_PROP_FRAME_HEIGHT));
 
   // Make a video writer object and initialize it
   VideoWriter put("output.mpg", CV_FOURCC('M', 'P', 'E', 'G'), 30, S);

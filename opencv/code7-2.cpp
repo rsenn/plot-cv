@@ -72,7 +72,7 @@ main() {
       cout << "Video over" << endl;
       break;
     }
-    cvtColor(frame, frame_hsv, CV_BGR2HSV);
+    cvtColor(frame, frame_hsv, cv::COLOR_BGR2HSV);
 
     // extract the hue and saturation channels
     int from_to[] = {0, 0, 1, 1};

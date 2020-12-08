@@ -6,7 +6,7 @@
 //
 //
 
-#include "image_track.hpp"
+#include <image_track.hpp>
 using namespace std;
 using namespace cv;
 void static onMouse(int event, int x, int y, int, void*) {
@@ -31,13 +31,13 @@ void static onMouse(int event, int x, int y, int, void*) {
     cout << "after selection = " << selection << endl;
   }
   switch(event) {
-    case CV_EVENT_LBUTTONDOWN:
+    case cv::EVENT_LBUTTONDOWN:
       origin = cv::Point(x, y);
       selection = cv::Rect(x, y, 0, 0);
       selectObject = true;
 
       break;
-    case CV_EVENT_LBUTTONUP:
+    case cv::EVENT_LBUTTONUP:
       selectObject = false;
       if(selection.width > 0 && selection.height > 0)
         trackObject = -1;
@@ -106,7 +106,7 @@ image_track::track_start(cv::VideoCapture video) {
           int cols = backproj.cols, rows = backproj.rows, r = (MIN(cols, rows) + 5) / 6;
           trackWindow = cv::Rect(trackWindow.x - r, trackWindow.y - r, trackWindow.x + r, trackWindow.y + r) & cv::Rect(0, 0, cols, rows);
         }
-        ellipse(image, trackBox, cv::Scalar(0, 0, 255), 3, CV_AA);
+        ellipse(image, trackBox, cv::Scalar(0, 0, 255), 3, cv::LINE_AA);
       }
       if(selectObject && selection.width > 0 && selection.height > 0) {
         cv::Mat roi(image, selection);

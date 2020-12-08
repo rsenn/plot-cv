@@ -118,7 +118,7 @@ add_prog(dis_opticalflow)
 add_prog(facemark_lbf_fitting)
 add_prog(filterdemo)
 add_prog(mace_webcam)
-add_prog(main ${CMAKE_CURRENT_SOURCE_DIR}/detectLines.cpp ${CMAKE_CURRENT_SOURCE_DIR}/getExteriorContour.cpp)
+add_prog(main 	${CMAKE_CURRENT_SOURCE_DIR}/getExteriorContour.cpp	${CMAKE_CURRENT_SOURCE_DIR}/detectLines.cpp)
 add_prog(oil)
 add_prog(optical_flow_dense)
 add_prog(qrcode)
@@ -140,7 +140,7 @@ add_prog(morpho)
 add_prog(test2)
 add_prog(test)
 add_prog(documentScanner)
- 
+
 add_prog(segment_objects)
 add_prog(tracker)
 add_prog(tutorial_multitracker)
@@ -150,8 +150,148 @@ add_prog(objectDetection)
 add_prog(objectDetection2)
 add_prog(obj_track)
 
+set(ADDPROGS
+    8.Face_eye_detect
+    a
+    adaptiveThresholding
+    alexnet
+    api_example
+    App
+    aruco_simple
+    backend_plugin
+    benchmark
+    bgfg_gmg
+    bgfg_segm
+    BGMain_Raspberry
+    caffenet
+    camera_calibration
+    CamPaho
+    camshiftdemo
+    # cap cap_android_mediandk cap_aravis cap_dc1394_v2 cap_dshow cap_ffmpeg cap_gphoto2 cap_gstreamer cap_images cap_intelperc cap_librealsense cap_mfx_reader cap_mjpeg_decoder cap_msmf cap_pvapi capture_positives cap_v4l cap_ximea cap_xine
+    cascadeclassifier
+    cascadeclassifier_nvidia_api
+    classification
+    Code
+    code10-3
+    code6-4
+    code6-5
+    code7-1
+    code7-5
+    code8-1
+    code8-2
+    code8-3
+    code8-4
+    code8-5
+    code9-3
+    code9-5
+    code9-6
+    code9-7
+    contours3
+    contours4
+    counter
+    count_things
+    csrt
+    CV
+    cvcap
+    cvv_demo
+    # d3d10_interop d3d11_interop d3d9ex_interop d3d9_interop
+    Demo
+    detect_board
+    detect_board_charuco
+    detect_markers
+    distance_Measurement
+    eyebrow
+    facedetect
+    face-recognition-start
+    facerec_video
+    fitellipse
+    glsl-test
+    gms_matcher
+    googlenet
+    gravador_source
+    hog
+    hybridtrackingsample
+    image
+    img_proc_7
+    intelperc_capture
+    introduction_to_pca
+    ippasync_sample
+    kcf
+    kinfu_demo
+    linemod
+    lkdemo
+    lock
+    magica
+    main_detection
+    main_pi_sdl_test
+    main_ui
+    mjpeg-opencv
+    motionTracking
+    motionTracking_modified
+    mulobject
+    multitracker
+    MusicJamboree
+    native
+    netcvc
+    objDetWithLoc
+    object_detection
+    ObjectProcessor
+    omxcv-test
+    opencl-opencv-interop
+    opencv_test
+    opengl_interop
+    openni_capture
+    paper-fix
+    pct_webcam
+    phase_corr
+    pibilight
+    piSender_aruco
+    planar_tracking
+    # qt_opengl raspicam_cv_stream_2
+    retinaDemo
+    retina_tutorial
+    sampleDetectLandmarksvideo
+    segmentation
+    select3dobj
+    shape_example
+    SimplerBlobDetector
+    smiledetect
+    Source
+    Source_teste
+    squares
+    stereo_multi
+    targeting
+    testlanedetector
+    testlanedetector2
+    text_detection
+    tracking_by_matching
+    train_HOG
+    tutorial_customizing_cn_tracker
+    tutorial_introduction_to_tracker
+    tvl1_optical_flow
+    usb_alexnet
+    using_blobs
+    videocapture_intelperc
+    video_dmtx
+    video_reader
+    video_writer
+    webcam_demo
+    wrappers_video)
 
+find_package(Boost 1.56 REQUIRED COMPONENTS system)
 
-foreach(P 8.Face_eye_detect a adaptiveThresholding alexnet api_example App aruco_simple backend_plugin benchmark bgfg_gmg bgfg_segm BGMain_Raspberry caffenet camera_calibration cameranavigator CamPaho camshiftdemo cap cap_android_mediandk cap_aravis cap_dc1394_v2 cap_dshow cap_ffmpeg cap_gphoto2 cap_gstreamer cap_images cap_intelperc cap_librealsense cap_mfx_reader cap_mjpeg_decoder cap_msmf cap_pvapi capture_positives cap_v4l cap_ximea cap_xine cascadeclassifier cascadeclassifier_nvidia_api classification Code code10-3 code6-4 code6-5 code7-1 code7-5 code8-1 code8-2 code8-3 code8-4 code8-5 code9-3 code9-5 code9-6 code9-7 contours3 contours4 counter count_things csrt CV cvcap cvv_demo d3d10_interop d3d11_interop d3d9ex_interop d3d9_interop Demo detect_board detect_board_charuco detect_markers Measurement eyebrow facedetect face-recognition-start facerec_video fitellipse glsl-test gms_matcher googlenet gravador_source hog hybridtrackingsample image img_proc_7 intelperc_capture introduction_to_pca ippasync_sample kcf kinfu_demo linemod lkdemo lock magica Main main_detection main_pi_sdl_test main_ui mjpeg-opencv motionTracking motionTracking_modified mulobject multitracker MusicJamboree native netcvc objDetWithLoc object_detection ObjectProcessor omxcv-test opencl-opencv-interop opencv_test opengl_interop openni_capture paper-fix pct_webcam phase_corr pibilight piSender_aruco planar_tracking qt_opengl raspicam_cv_stream_2 retinaDemo retina_tutorial sampleDetectLandmarksvideo segmentation select3dobj shape_example SimplerBlobDetector smiledetect Source Source_teste squares stereo_multi tags targeting testlanedetector testlanedetector2 text_detection tracking_by_matching tracking_calibration tracking_calibration_with_img train_HOG tutorial_customizing_cn_tracker tutorial_introduction_to_tracker tvl1_optical_flow usb_alexnet using_blobs video videocapture_intelperc video_dmtx video_reader video_writer v_point v_point_pid webcam_demo wrappers_video)
+set(ADDPROGS2
+   Image-Recognition
+   Measure-objects
+   rtTracker
+   shapefinder
+   Shape-Finder
+   #Shape_Detect
+   shape_detection
+
+)
+foreach(P ${ADDPROGS2})
   add_prog("${P}")
 endforeach()
+add_prog(Multiple_Object_Tracking_by_Image_Subtraction ${CMAKE_CURRENT_SOURCE_DIR}/Blob.cpp)
+target_link_libraries(Shape-Finder Boost::system)

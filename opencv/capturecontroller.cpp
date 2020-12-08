@@ -1,4 +1,4 @@
-#include "capturecontroller.hpp"
+#include <capturecontroller.hpp>
 
 #include <QReadWriteLock>
 #include <QDebug>
@@ -6,7 +6,7 @@
 #include <opencv2/opencv.hpp>
 
 // remove
-#include "cvmatsurfacesource.hpp"
+#include <cvmatsurfacesource.hpp>
 #include <QTime>
 
 CaptureWorker::CaptureWorker(const QString& device, CaptureController* captureController, QObject* parent) : QObject(parent), m_device(device), m_captureController(captureController), m_loopRunning(true) {}

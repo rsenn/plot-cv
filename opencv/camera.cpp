@@ -109,7 +109,7 @@ CameraOpen(uv_work_t* req) {
     // TODO : Add image parameters here
 
     std::vector<int> compression_parameters = std::vector<int>(2);
-    compression_parameters[0] = CV_IMWRITE_JPEG_QUALITY;
+    compression_parameters[0] = cv::IMWRITE_JPEG_QUALITY;
     compression_parameters[1] = 85;
 
     // Encode to jpg

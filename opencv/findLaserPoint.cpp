@@ -26,7 +26,7 @@ trackbar2(int input, void* u) {
 }
 void
 mouseCall1(int eventIndex, int x, int y, int flag, void* param) {
-  if(eventIndex == CV_EVENT_LBUTTONDOWN) {
+  if(eventIndex == cv::EVENT_LBUTTONDOWN) {
     mouseY = y;
     mouseX = x;
   }
@@ -110,7 +110,7 @@ main() {
     cap >> imgRaw;
     cv::Mat imgRawCopy = imgRaw.clone();
     cvtColor(imgRaw, imgProc, cv::COLOR_BGR2GRAY);
-    cvtColor(imgRaw, imgHSV, CV_BGR2HSV_FULL);
+    cvtColor(imgRaw, imgHSV, cv::COLOR_BGR2HSV_FULL);
     threshold(imgProc, imgProc, thresholdValue, 255, 0);
     std::vector<std::vector<cv::Point>> contours;
     std::vector<std::vector<cv::Point>> wall;

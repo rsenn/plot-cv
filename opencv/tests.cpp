@@ -1,16 +1,16 @@
 #include <stdexcept>
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/calib3d/calib3d.hpp"
-#include "opencv2/video/video.hpp"
-#include "opencv2/gpu/gpu.hpp"
-#include "opencv2/legacy/legacy.hpp"
-#include "performance.h"
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/calib3d/calib3d.hpp>
+#include <opencv2/video/video.hpp>
+#include <opencv2/gpu/gpu.hpp>
+#include <opencv2/legacy/legacy.hpp>
+#include <performance.h>
 
-#include "opencv2/opencv_modules.hpp"
+#include <opencv2/opencv_modules.hpp>
 #ifdef HAVE_OPENCV_NONFREE
-#include "opencv2/nonfree/gpu.hpp"
-#include "opencv2/nonfree/nonfree.hpp"
+#include <opencv2/nonfree/gpu.hpp>
+#include <opencv2/nonfree/nonfree.hpp>
 #endif
 
 using namespace std;
@@ -644,18 +644,18 @@ TEST(cvtColor) {
   cv::swap(src, dst);
   d_src.swap(d_dst);
 
-  SUBTEST << "4000x4000, 8UC3 vs 8UC4, CV_BGR2HSV";
+  SUBTEST << "4000x4000, 8UC3 vs 8UC4, cv::COLOR_BGR2HSV";
 
-  cvtColor(src, dst, CV_BGR2HSV);
+  cvtColor(src, dst, cv::COLOR_BGR2HSV);
 
   CPU_ON;
-  cvtColor(src, dst, CV_BGR2HSV);
+  cvtColor(src, dst, cv::COLOR_BGR2HSV);
   CPU_OFF;
 
-  gpu::cvtColor(d_src, d_dst, CV_BGR2HSV, 4);
+  gpu::cvtColor(d_src, d_dst, cv::COLOR_BGR2HSV, 4);
 
   GPU_ON;
-  gpu::cvtColor(d_src, d_dst, CV_BGR2HSV, 4);
+  gpu::cvtColor(d_src, d_dst, cv::COLOR_BGR2HSV, 4);
   GPU_OFF;
 
   cv::swap(src, dst);

@@ -1,4 +1,4 @@
-#include "sourcemanager.h"
+#include <sourcemanager.h>
 
 SourceManager::SourceManager() {
   cameraCount = -1;

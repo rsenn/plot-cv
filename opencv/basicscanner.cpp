@@ -7,7 +7,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include "simple_svg_1.0.0.hpp"
+#include <simple_svg_1.0.0.hpp>
 
 using namespace cv;
 using namespace std;
@@ -106,7 +106,7 @@ main(int argc, char** argv) {
     export_svg(bigContour, "contour.svg");
 
     if(showWindow) {
-      while(cvWaitKey(1) != '\80') {
+      while(cv::waitKey(1) != '\80') {
       }
     }
   }

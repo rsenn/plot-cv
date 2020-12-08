@@ -1,4 +1,4 @@
-#include "yastereocam.h"
+#include <yastereocam.h>
 #include <QDebug>
 #include <QImage>
 #include <QCoreApplication>

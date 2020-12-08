@@ -4,9 +4,9 @@
  * @brief A simplified version of facedetect.cpp, show how to load a cascade classifier and how to
  * find objects (Face + eyes) in a video stream - Using LBP here
  */
-#include "opencv2/objdetect/objdetect.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
+#include <opencv2/objdetect/objdetect.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 #include <iostream>
 #include <stdio.h>

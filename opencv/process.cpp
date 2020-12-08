@@ -4,23 +4,23 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#include "win.hpp"
+#include <win.hpp>
 #else // On Windows
 
 #include <unistd.h>
-#include "network/serverAPI.hpp"
-#include "network/proxyAPI.hpp"
+#include <network/serverAPI.hpp>
+#include <network/proxyAPI.hpp>
 #endif // On Linux
 
-#include "opencv/plate.hpp"
-#include "opencv/svm.hpp"
-#include "opencv/ocr.hpp"
-#include "opencv/tools.hpp"
+#include <opencv/plate.hpp>
+#include <opencv/svm.hpp>
+#include <opencv/ocr.hpp>
+#include <opencv/tools.hpp>
 
-#include "wiringpi/lcd.hpp"
-#include "wiringpi/barricade.hpp"
+#include <wiringpi/lcd.hpp>
+#include <wiringpi/barricade.hpp>
 
-#include "process.hpp"
+#include <process.hpp>
 
 using namespace cv;
 using namespace std;

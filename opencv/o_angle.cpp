@@ -59,7 +59,7 @@ main(int argc, char** argv) {
     // src.copyTo(src_HSV); //20170420  *************src_HSV ���ӷ�(�O�����m)�Msrc�@��
     src_HSV = src.clone(); ////20170420*************** ����ƻs�@�Msrc�X�� ,output���ӷ�(�O�����m)�M���P
     cvtColor(src_copy, src_copy, cv::COLOR_BGR2GRAY);
-    cvtColor(src_HSV, src_HSV, CV_BGR2HSV); // 20170420
+    cvtColor(src_HSV, src_HSV, cv::COLOR_BGR2HSV); // 20170420
     // threshold(src_copy, src_copy, 70, 255, THRESH_BINARY_INV); //20170420
     // threshold(src_copy, src_copy, 100, 255, THRESH_OTSU);      //20170420
     inRange(src_copy, 0, 89, src_copy); // 20170420

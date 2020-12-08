@@ -1,7 +1,7 @@
-#include "movie-maker.hpp"
-#include "test-config.h"
+#include <movie-maker.hpp>
+#include <test-config.h>
 
-#include "catch.hpp"
+#include <catch.hpp>
 
 #include <opencv2/highgui.hpp>
 

@@ -14,7 +14,7 @@
 #include <iostream>
 #include <cstring>
 #include <ctime>
-#include "samples_utility.hpp"
+#include <samples_utility.hpp>
 
 using namespace std;
 using namespace cv;

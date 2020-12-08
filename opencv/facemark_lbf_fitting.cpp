@@ -48,10 +48,10 @@ Mentor: Delia Passalacqua
 #include <stdio.h>
 #include <ctime>
 #include <iostream>
-#include "opencv2/core.hpp"
-#include "opencv2/highgui.hpp"
-#include "opencv2/imgproc.hpp"
-#include "opencv2/face.hpp"
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/face.hpp>
 
 using namespace std;
 using namespace cv;

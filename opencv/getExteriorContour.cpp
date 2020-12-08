@@ -4,7 +4,7 @@
  *   Binarize -> dilate -> edge -> findContour -> select contour that has largest area
  */
 
-#include "getExteriorContour.hpp"
+#include <getExteriorContour.hpp>
 
 // #define DEBUG_EXTERIOR
 

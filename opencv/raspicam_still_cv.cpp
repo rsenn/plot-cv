@@ -35,9 +35,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ****************************************************************/
 
-#include "private_still/private_still_impl.h"
-#include "raspicam_still_cv.h"
-#include "scaler.h"
+#include <private_still/private_still_impl.h>
+#include <raspicam_still_cv.h>
+#include <scaler.h>
 using namespace cv;
 namespace raspicam {
 RaspiCam_Still_Cv::RaspiCam_Still_Cv() {

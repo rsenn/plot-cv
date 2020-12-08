@@ -1,8 +1,8 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/types_c.h>
-#include "detectLines.hpp"
-#include "Measure_Origins.hpp"
-#include "getExteriorContour.hpp"
+#include <detectLines.hpp>
+#include <Measure_Origins.hpp>
+#include <getExteriorContour.hpp>
 // #define DEBUG_CIRCLE
 
 void

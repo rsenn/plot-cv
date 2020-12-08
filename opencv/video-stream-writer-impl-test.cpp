@@ -1,6 +1,6 @@
-#include "video-stream-writer-impl.hpp"
-#include "catch.hpp"
-#include "test-config.h"
+#include <video-stream-writer-impl.hpp>
+#include <catch.hpp>
+#include <test-config.h>
 
 using namespace std;
 using namespace cv;

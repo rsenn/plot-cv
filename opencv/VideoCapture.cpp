@@ -1,11 +1,11 @@
 #define LOG_TAG "org.opencv.highgui.VideoCapture"
-#include "common.h"
+#include <common.h>
 
-#include "opencv2/opencv_modules.hpp"
+#include <opencv2/opencv_modules.hpp>
 #ifdef HAVE_OPENCV_HIGHGUI
 
-#include "opencv2/highgui/highgui_c.h"
-#include "opencv2/highgui/highgui.hpp"
+#include <opencv2/highgui/highgui_c.h>
+#include <opencv2/highgui/highgui.hpp>
 using namespace cv;
 
 /// throw java exception

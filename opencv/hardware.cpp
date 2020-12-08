@@ -1,6 +1,6 @@
 // Grayson Pike, 2018
 
-#include "hardware.hpp"
+#include <hardware.hpp>
 #include <iostream>
 #include <cstdio>
 #include <ctime>

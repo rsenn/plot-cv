@@ -13,8 +13,8 @@
 // Implementation of the AdvancedCapture class
 //
 
-#include "pch.h"
-#include "AdvancedCapture.xaml.h"
+#include <pch.h>
+#include <AdvancedCapture.xaml.h>
 
 using namespace SDKSample::MediaCapture;
 

@@ -1,7 +1,7 @@
-#include "camshiftkalman.h"
-#include "camShift.h"
+#include <camshiftkalman.h>
+#include <camShift.h>
 
-//#include "marco.h"
+//#include <marco.h>
 
 #define DEBUG
 
@@ -47,7 +47,7 @@ camShiftKalman::extractTargetModel() {
    */
   Mat hsv, mask;
 
-  cvtColor(currentFrame, hsv, CV_BGR2HSV);
+  cvtColor(currentFrame, hsv, cv::COLOR_BGR2HSV);
   inRange(hsv, Scalar(0, sMin, MIN(vMin, vMax)), Scalar(180, 256, MAX(vMin, vMax)), mask);
 
   Mat ROIMask(mask, trackWindow);
@@ -191,7 +191,7 @@ camShiftKalman::track() {
     cout << "nframe : " << video.get(cv::CAP_PROP_POS_FRAMES) << endl;
 #endif
 
-    cvtColor(currentFrame, hsv, CV_BGR2HSV);
+    cvtColor(currentFrame, hsv, cv::COLOR_BGR2HSV);
     inRange(hsv, Scalar(0, sMin, MIN(vMin, vMax)), Scalar(180, 256, MAX(vMin, vMax)), mask);
 
     switch(type) {
@@ -397,10 +397,10 @@ camShiftKalman::drawTrackResult() {
 
   currentFrame.copyTo(image);
 
-  circle(image, camCenter, 2, Scalar(255, 0, 0), 2, CV_AA);       // draw camshift result
-  circle(image, KFPredictCenter, 2, Scalar(0, 255, 0), 2, CV_AA); // draw kalman predict result
-  circle(image, KFCorrectCenter, 2, Scalar(0, 0, 255), 2, CV_AA); // draw kalman correct result
-  rectangle(image, trackWindow, Scalar(0, 0, 255), 3, CV_AA);     // draw track window
+  circle(image, camCenter, 2, Scalar(255, 0, 0), 2, cv::LINE_AA);       // draw camshift result
+  circle(image, KFPredictCenter, 2, Scalar(0, 255, 0), 2, cv::LINE_AA); // draw kalman predict result
+  circle(image, KFCorrectCenter, 2, Scalar(0, 0, 255), 2, cv::LINE_AA); // draw kalman correct result
+  rectangle(image, trackWindow, Scalar(0, 0, 255), 3, cv::LINE_AA);     // draw track window
 
   imshow(winName, image);
 }

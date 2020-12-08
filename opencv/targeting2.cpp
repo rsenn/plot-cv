@@ -8,9 +8,9 @@
  * Also will now find the centers of various shapes.
  *
  */
-#include "opencv2/highgui/highgui.hpp"
+#include <opencv2/highgui/highgui.hpp>
 #include <opencv2/highgui/highgui_c.h>
-#include "opencv2/imgproc/imgproc.hpp"
+#include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/videoio.hpp>
 
 #include <iostream>
@@ -325,14 +325,14 @@ my_mouse_callback(int event, int x, int y, int flags, void* param) {
 
   switch(event) {
 
-    case CV_EVENT_LBUTTONDOWN:
+    case cv::EVENT_LBUTTONDOWN:
       catnumx = y;
       catnumy = x;
       currentpix++;
       editcurrent = true;
       break;
 
-    case CV_EVENT_RBUTTONDOWN:
+    case cv::EVENT_RBUTTONDOWN:
       // outfile.close();
       // outfile.open("bgrout.txt", ios::trunc);
 

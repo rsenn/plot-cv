@@ -355,7 +355,7 @@ main(int argc, char** argv) {
   // cout << "no of clusters: " << k << endl;
 
   // Mat hsv;
-  // cvtColor(input, hsv, CV_BGR2HSV);
+  // cvtColor(input, hsv, cv::COLOR_BGR2HSV);
 
   // showReducedImage("hsv", hsv);
   // waitKey(0);

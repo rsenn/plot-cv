@@ -1,10 +1,10 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include "janeladecalibragem.h"
+#include <mainwindow.h>
+#include <ui_mainwindow.h>
+#include <janeladecalibragem.h>
 #include <QWidget>
 #include <cv.h>
 #include <highgui.h>
-#include "camera.h"
+#include <camera.h>
 
 using namespace std;
 using namespace cv;

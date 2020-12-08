@@ -114,7 +114,7 @@ main(int argc, char* argv[]) {
     imshow(WIN_RF, frameReference);
     imshow(WIN_UT, frameUnderTest);
 
-    c = (char)cvWaitKey(delay);
+    c = (char)cv::waitKey(delay);
     if(c == 27)
       break;
   }

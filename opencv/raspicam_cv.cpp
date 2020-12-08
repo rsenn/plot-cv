@@ -35,11 +35,11 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ****************************************************************/
 
-#include "raspicam_cv.h"
-#include "private/private_impl.h"
+#include <raspicam_cv.h>
+#include <private/private_impl.h>
 #include <iostream>
 #include <opencv2/highgui/highgui.hpp>
-#include "scaler.h"
+#include <scaler.h>
 namespace raspicam {
 RaspiCam_Cv::RaspiCam_Cv() {
   _impl = new _private::Private_Impl();

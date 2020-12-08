@@ -3,8 +3,8 @@
 // Implementation of the MainPage class.
 //
 
-#include "pch.h"
-#include "MainPage.xaml.h"
+#include <pch.h>
+#include <MainPage.xaml.h>
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>

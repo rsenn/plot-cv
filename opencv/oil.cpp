@@ -2,7 +2,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/xphoto.hpp>
-#include "opencv2/xphoto/oilpainting.hpp"
+#include <opencv2/xphoto/oilpainting.hpp>
 #include <iostream>
 
 using namespace cv;

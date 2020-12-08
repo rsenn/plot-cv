@@ -69,7 +69,7 @@ SurveillancePhoto::execute_event(VideoCapture input_cap, int camera_index, strin
       save_directory += this->get_eventName();
       save_directory += ".jpg";
       vector<int> compression_params;
-      compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
+      compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
       compression_params.push_back(100);
 
       bool write_success = imwrite(save_directory, frame, compression_params);

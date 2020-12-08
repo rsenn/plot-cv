@@ -1,4 +1,4 @@
-#include "cameraimages.h"
+#include <cameraimages.h>
 #include <opencv2/opencv.hpp>
 
 CameraImages::CameraImages(std::string aPath) {

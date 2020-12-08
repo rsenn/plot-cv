@@ -3,8 +3,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include <iostream>
-#include "../src/polygon.h"
-#include "data.h"
+#include <../src/polygon.h>
+#include <data.h>
 
 using namespace cv;
 using namespace std;
@@ -17,7 +17,7 @@ cv::Mat float2byte(const cv::Mat& If);
 
 void
 onMouse1(int event, int x, int y, int foo, void* p) {
-  if(event != CV_EVENT_LBUTTONDOWN)
+  if(event != cv::EVENT_LBUTTONDOWN)
     return;
   cv::Point m1(x, y);
   Data* D = (Data*)p;

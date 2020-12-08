@@ -1,12 +1,12 @@
-#include "camera_c.h"
-#include "mask_c.h"
-#include "diff_c.h"
-#include "util.h"
+#include <camera_c.h>
+#include <mask_c.h>
+#include <diff_c.h>
+#include <util.h>
 #include <libv4l2.h>
 #include <linux/videodev2.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
-#include "qelapsedtimer.h"
+#include <qelapsedtimer.h>
 
 using namespace cv;
 

@@ -31,11 +31,11 @@ static void
 onMouse(int event, int x, int y, int flags, void*) {
   if(x < 0 || x >= img.cols || y < 0 || y >= img.rows)
     return;
-  if(event == CV_EVENT_LBUTTONUP || !(flags & CV_EVENT_FLAG_LBUTTON))
+  if(event == cv::EVENT_LBUTTONUP || !(flags & cv::EVENT_FLAG_LBUTTON))
     prevPt = cv::Point(-1, -1);
-  else if(event == CV_EVENT_LBUTTONDOWN)
+  else if(event == cv::EVENT_LBUTTONDOWN)
     prevPt = cv::Point(x, y);
-  else if(event == CV_EVENT_MOUSEMOVE && (flags & CV_EVENT_FLAG_LBUTTON)) {
+  else if(event == cv::EVENT_MOUSEMOVE && (flags & cv::EVENT_FLAG_LBUTTON)) {
     cv::Point pt(x, y);
     if(prevPt.x < 0)
       prevPt = pt;

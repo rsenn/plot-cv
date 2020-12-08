@@ -25,11 +25,11 @@
 // WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
 // WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "precomp.hpp"
-#include "cap_winrt_capture.hpp"
-#include "cap_winrt_bridge.hpp"
-#include "cap_winrt_video.hpp"
-#include <opencv2\videoio\cap_winrt.hpp>
+#include <precomp.hpp>
+#include <cap_winrt_capture.hpp>
+#include <cap_winrt_bridge.hpp>
+#include <cap_winrt_video.hpp>
+#include <opencv2/videoio/cap_winrt.hpp>
 
 using namespace Windows::Foundation;
 using namespace Windows::Media::Capture;

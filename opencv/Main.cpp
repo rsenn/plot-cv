@@ -2,11 +2,11 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 #include <fstream>
-#include <opencv2\features2d\features2d.hpp>
+#include <opencv2/features2d/features2d.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <stdio.h>
 
-#include "Tensile.h"
+#include <Tensile.h>
 
 using namespace cv;
 using namespace std;

@@ -25,7 +25,7 @@
 // WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
 // WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "cap_winrt_video.hpp"
+#include <cap_winrt_video.hpp>
 
 #include <ppl.h>
 #include <ppltasks.h>
@@ -47,7 +47,7 @@ using namespace Windows::Media::Capture;
 using namespace Windows::UI::Xaml::Media::Imaging;
 using namespace Windows::Devices::Enumeration;
 
-#include "cap_winrt/CaptureFrameGrabber.hpp"
+#include <cap_winrt/CaptureFrameGrabber.hpp>
 
 // pull in Media Foundation libs
 #pragma comment(lib, "mfplat")
@@ -58,7 +58,7 @@ using namespace Windows::Devices::Enumeration;
 #pragma comment(lib, "Shlwapi")
 #endif
 
-#include "cap_winrt_bridge.hpp"
+#include <cap_winrt_bridge.hpp>
 
 Video::Video() {}
 
