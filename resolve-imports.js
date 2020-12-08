@@ -218,7 +218,7 @@ class ES6ImportExport {
     obj.importNode = obj.importNode || [];
 
     let importNode = obj.importNode.filter(p => p instanceof Path);
-    console.log('importNode', importNode);
+    //console.log('importNode:', importNode);
 
     let importNodes = importNode
       //   .filter(p => p.length < 3)
@@ -552,14 +552,14 @@ async function main(...args) {
             // let key = imp[0].removeStart(expr[0])[0];
             //
             if(imp[0].length == 2) continue;
-            console.log('imp[0]:', imp);
+            //console.log('imp[0]:', imp);
 
             let stmt = Path2Ptr(ast, imp[0].slice(0, 2));
             let root = Path2Ptr(ast, imp[0].slice(0, 1));
             let pos = imp[0][1];
 
             let source = GetFrom([imp[1], imp[0]])[0];
-            console.log('source:', source);
+            //console.log('source:', source);
 
             let name = Util.camelize(path.basename(source));
 
@@ -605,7 +605,7 @@ async function main(...args) {
           }
           return acc;
         }, []);
-        console.log('importValues:', importValues /*.map(values => values.map(([p, n]) => n))*/);
+        //console.log('importValues:', importValues);
 
         if(imports.length) {
           //console.log('ast.body:', ast.body);
@@ -644,9 +644,7 @@ async function main(...args) {
         )
       );
 
-      console.log('importDeclarations:',
-        importDeclarations /*.map(ids => ids.map(a => a.map(n => Literal.string(n))))*/
-      );
+      //console.log('importDeclarations:', importDeclarations);
 
       imports = imports
         .map(([path, node]) => [path, node, Literal.string(GetLiteral(node))])
@@ -662,7 +660,7 @@ async function main(...args) {
         const decls = importDeclarations[i].map(a => a.slice(1).map(n => new Identifier(Literal.string(n))));
         const importNode = imports[i];
 
-        console.log('ES6ImportExport:', { path, node, fromPath, decls, importNode });
+        //console.log('ES6ImportExport:', { path, node, fromPath, decls, importNode });
 
         return ES6ImportExport.create({
           ast,
