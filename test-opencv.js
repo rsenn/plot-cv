@@ -127,8 +127,7 @@ async function main(...args) {
   let key;
 
   while((key = cv.waitKey(0))) {
-    if(key != -1)
-      console.log('key:', key);
+    if(key != -1) console.log('key:', key);
 
     if(key == 'q' || key == '\x1b') break;
   }

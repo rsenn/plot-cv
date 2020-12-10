@@ -140,21 +140,63 @@
 	"buffers":
 	[
 		{
-			"contents": "",
+			"contents": "WriteFile\nLocation\n  file =>\n  constructor(file, begin, end)\n  static from(obj)\nLocation\n  get token()\n  valueOf()\n  static equal(a, b)\n  toString()\nNodeToString\n  function* GetRanges(tree)\n  function* GetLocations(tree)\n  function* GetNodes(tree, pred\nGetLocation\n  contains(arg)\n  startsWith(other)\n  endsWith(other)\nDumpAst\n  processCallExpr\n  main\n  cp =>\n  generateFlat",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 374,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "opencv/CMakeLists.txt",
+			"file": "dump-ast.js",
 			"settings":
 			{
-				"buffer_size": 6579,
+				"buffer_size": 10118,
 				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/path.js",
+			"settings":
+			{
+				"buffer_size": 15941,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/deep.js",
+			"settings":
+			{
+				"buffer_size": 5710,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/objectInspect.js",
+			"settings":
+			{
+				"buffer_size": 14296,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "Searching 2956 files for \"log..file.read\" (regex, case sensitive)\n\n/home/roman/Sources/plot-cv/lib/filesystem.js:\n  424  \n  425        //     file = this.fileno(file);\n  426:       console.log('file.read', file.read);\n  427  \n  428        return CatchError(() => {\n  ...\n  438          } else {\n  439            ret = file.read(length);\n  440:           console.log('file.read()', { ret, length });\n  441            if(typeof ret == 'object' && ret !== null) {\n  442              ret.copy(buf, offset, 0, ret.length);\n\n2 matches in 1 file\n",
+			"settings":
+			{
+				"buffer_size": 539,
+				"line_ending": "Unix",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "lib/filesystem.js",
+			"settings":
+			{
+				"buffer_size": 24094,
 				"line_ending": "Unix"
 			}
 		}
@@ -170,6 +212,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"outli",
+				"Browse Mode: Outline (Right)"
+			],
 			[
 				"svgo",
 				"SVGO: Minify SVG"
@@ -379,10 +425,6 @@
 				"Package Control: List Packages"
 			],
 			[
-				"outli",
-				"Browse Mode: Outline (Right)"
-			],
-			[
 				"list pac",
 				"Package Control: List Packages"
 			],
@@ -435,17 +477,21 @@
 	"expanded_folders":
 	[
 		"/home/roman/Sources/plot-cv",
+		"/home/roman/Sources/plot-cv/lib",
+		"/home/roman/Sources/plot-cv/lib/container",
+		"/home/roman/Sources/plot-cv/lib/xml",
 		"/home/roman/Sources/plot-cv/src"
 	],
 	"file_history":
 	[
+		"/home/roman/Sources/plot-cv/opencv/CMakeLists.txt",
 		"/home/roman/Sources/plot-cv/test-opencv.js",
 		"/home/roman/Sources/plot-cv/src/js_cv.cpp",
+		"/home/roman/Sources/plot-cv/test-childprocess.js",
 		"/home/roman/Sources/plot-cv/src/plot-cv.cpp",
 		"/home/roman/Sources/plot-cv/resolve-imports.js",
 		"/home/roman/Sources/plot-cv/CMakeLists.txt",
 		"/home/roman/Sources/plot-cv/quickjs/quickjs.h",
-		"/home/roman/Sources/plot-cv/opencv/CMakeLists.txt",
 		"/home/roman/Sources/plot-cv/js-bindings.cmake",
 		"/home/roman/Sources/plot-cv/src/js_draw.cpp",
 		"/home/roman/Sources/plot-cv/src/js_mat.cpp",
@@ -503,7 +549,6 @@
 		"/home/roman/Sources/plot-cv/lib/consoleSetup.js",
 		"/home/roman/Sources/plot-cv/lib/geom/transformation.js",
 		"/home/roman/Sources/plot-cv/get-msys-packages.js",
-		"/home/roman/Sources/plot-cv/test-childprocess.js",
 		"/home/roman/Sources/plot-cv/test-cparse.js",
 		"/home/roman/Sources/plot-cv/opencv/objecttracking.cpp",
 		"/home/roman/Sources/plot-cv/opencv/multitracker.cpp",
@@ -570,7 +615,7 @@
 	],
 	"find":
 	{
-		"height": 40.0
+		"height": 42.0
 	},
 	"find_in_files":
 	{
@@ -613,6 +658,15 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"cwd",
+			"unflatten",
+			"unflatt",
+			"ast.json",
+			"maxStringLength",
+			"opts\\.",
+			"inner:",
+			"log..file.read",
+			"getTrackbarPos",
 			"Harris",
 			"imshow",
 			"mat_data",
@@ -731,16 +785,7 @@
 			"moduleAliases",
 			"packagesPath",
 			"searchPath",
-			"MakeSearchPath",
-			"ReaddirRec",
-			"GetFromPath",
-			"GetFile",
-			"SearchModuleInPath",
-			"GetFromPath",
-			"instrumentate",
-			"instrumentateParser",
-			"onReturnNode",
-			"position\\.file"
+			"MakeSearchPath"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -894,7 +939,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 0,
+						"buffer_size": 374,
 						"regions":
 						{
 						},
@@ -903,27 +948,138 @@
 						],
 						"settings":
 						{
-							"actual_mode": true,
-							"av_input": true,
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Sources/plot-cv/opencv/CMakeLists.txt",
-							"function_name_status_row": -1,
+							"current_file": "/home/roman/Sources/plot-cv/dump-ast.js",
+							"function_name_status_row": 5,
 							"outline_rename_mode": false,
 							"symkeys":
 							[
+								[
+									765,
+									795
+								],
+								[
+									1003,
+									1011
+								],
+								[
+									1072,
+									1079
+								],
+								[
+									1122,
+									1151
+								],
+								[
+									1316,
+									1332
+								],
+								[
+									1430,
+									1438
+								],
+								[
+									1764,
+									1775
+								],
+								[
+									1940,
+									1949
+								],
+								[
+									2092,
+									2110
+								],
+								[
+									2197,
+									2207
+								],
+								[
+									2269,
+									2351
+								],
+								[
+									3268,
+									3293
+								],
+								[
+									3409,
+									3437
+								],
+								[
+									3577,
+									3619
+								],
+								[
+									3818,
+									3844
+								],
+								[
+									4096,
+									4109
+								],
+								[
+									4155,
+									4172
+								],
+								[
+									4328,
+									4343
+								],
+								[
+									4553,
+									4583
+								],
+								[
+									5261,
+									5305
+								],
+								[
+									5986,
+									6014
+								],
+								[
+									6286,
+									6291
+								],
+								[
+									6509,
+									6529
+								]
 							],
 							"symlist":
 							[
+								"WriteFile",
+								"Location",
+								"  file =>",
+								"  constructor(file, begin, end)",
+								"  static from(obj)",
+								"Location",
+								"  get token()",
+								"  valueOf()",
+								"  static equal(a, b)",
+								"  toString()",
+								"NodeToString",
+								"  function* GetRanges(tree)",
+								"  function* GetLocations(tree)",
+								"  function* GetNodes(tree, pred",
+								"GetLocation",
+								"  contains(arg)",
+								"  startsWith(other)",
+								"  endsWith(other)",
+								"DumpAst",
+								"  processCallExpr",
+								"  main",
+								"  cp =>",
+								"  generateFlat"
 							],
-							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 6,
 					"type": "text"
 				}
 			]
@@ -934,33 +1090,208 @@
 			[
 				{
 					"buffer": 1,
-					"file": "opencv/CMakeLists.txt",
+					"file": "dump-ast.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6579,
+						"buffer_size": 10118,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6377,
-								6377
+								8456,
+								8456
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 290,
-							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
-							"tab_size": 4,
+							"function_name_status_row": 243,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 4556.0,
+						"translation.y": 4568.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "lib/path.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 15941,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3974,
+								3974
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 118,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1740.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "lib/deep.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5710,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5557,
+								5557
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 212,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3800.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "lib/objectInspect.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 14296,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								13145,
+								13145
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 469,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 9462.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 539,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										189,
+										203
+									],
+									[
+										362,
+										376
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								356,
+								356
+							]
+						],
+						"settings":
+						{
+							"detect_indentation": false,
+							"function_name_status_row": 11,
+							"line_numbers": false,
+							"output_tag": 1,
+							"result_base_dir": "",
+							"result_file_regex": "^([^ \t].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "lib/filesystem.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 24094,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6293,
+								6293
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 232,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4327.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
@@ -968,7 +1299,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 26.0
+		"height": 30.0
 	},
 	"input":
 	{
@@ -995,7 +1326,7 @@
 		[
 			0.0,
 			0.2,
-			0.796260563837,
+			0.8,
 			1.0
 		],
 		"rows":
@@ -1035,6 +1366,34 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"filesys",
+				"lib/filesystem.js"
+			],
+			[
+				"path.js",
+				"lib/path.js"
+			],
+			[
+				"deep",
+				"lib/deep.js"
+			],
+			[
+				"objectIn",
+				"lib/objectInspect.js"
+			],
+			[
+				"dump",
+				"dump-ast.js"
+			],
+			[
+				"test-open",
+				"test-opencv.js"
+			],
+			[
+				"test",
+				"test-childprocess.js"
+			],
 			[
 				"opencv/CMa",
 				"opencv/CMakeLists.txt"
@@ -1084,10 +1443,6 @@
 				"lib/json/path.js"
 			],
 			[
-				"path.js",
-				"lib/path.js"
-			],
-			[
 				"util.js",
 				"lib/util.js"
 			],
@@ -1106,10 +1461,6 @@
 			[
 				"lexer",
 				"lib/ecmascript/lexer.js"
-			],
-			[
-				"filesys",
-				"lib/filesystem.js"
 			],
 			[
 				"parser.js",
@@ -1240,10 +1591,6 @@
 				"lib/filesystem.js"
 			],
 			[
-				"dump",
-				"dump-ast.js"
-			],
-			[
 				"tuto",
 				"opencv/tutorial_multitracker.cpp"
 			],
@@ -1288,10 +1635,6 @@
 				"resolve-imports.js"
 			],
 			[
-				"deep",
-				"lib/deep.js"
-			],
-			[
 				"test-chil",
 				"test-childprocess.js"
 			],
@@ -1320,16 +1663,8 @@
 				"lib/cparse.js"
 			],
 			[
-				"objectIn",
-				"lib/objectInspect.js"
-			],
-			[
 				"Util.js",
 				"lib/util.js"
-			],
-			[
-				"test",
-				"test-cli.js"
 			],
 			[
 				"forward",
@@ -1542,10 +1877,6 @@
 			[
 				"test-render",
 				"test-renderer.js"
-			],
-			[
-				"u.svg",
-				"u.svg"
 			]
 		],
 		"width": 0.0
