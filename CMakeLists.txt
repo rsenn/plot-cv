@@ -35,8 +35,6 @@ include(CheckLibraryExists)
 include(CheckTypeSize)
 include(FindPkgConfig)
 
-option(ENABLE_CCACHE "Enable compiler cache" ON)
-
 if(ENABLE_CCACHE)
   include("${CMAKE_CURRENT_SOURCE_DIR}/ccache.cmake")
   enable_ccache()

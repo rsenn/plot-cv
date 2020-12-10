@@ -25,13 +25,13 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM ${__FIND_ROOT_PATH_MODE_PROGRAM})
 set(__FIND_ROOT_PATH_MODE_PROGRAM)
 
 #.rst:
-# .. command:: enable_ccache
+# .. command:: use_ccache
 #
 # This command finds and enables ccache, if able to, for a given
 # project.
-macro(enable_ccache)
+macro(use_ccache)
   if (NOT CCACHE_EXECUTABLE)
-    message(FATAL_ERROR "enable_ccache: ccache not found.")
+    message(FATAL_ERROR "use_ccache: ccache not found.")
   endif ()
 
   if (CMAKE_VERSION VERSION_LESS 3.4)
@@ -76,3 +76,11 @@ function(target_enable_ccache target)
     set_property(TARGET "${target}" PROPERTY RULE_LAUNCH_LINK "${CCACHE_EXECUTABLE}")
   endif ()
 endfunction()
+
+if(CCACHE_EXECUTABLE)
+  option(ENABLE_CCACHE "Enable compiler cache" OFF)
+endif(CCACHE_EXECUTABLE)
+
+if(ENABLE_CCACHE)
+  use_ccache()
+endif(ENABLE_CCACHE)
