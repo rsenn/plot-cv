@@ -230,7 +230,7 @@ function GetNodeChildren(ast, [k, v]) {
     let children = [...deep.iterate(v, (v, p) =>  Util.isObject(v))].map(GetValueKey);
 children = children.filter(([key,child])=> typeof child.kind == 'string' && child.kind != '');
 
-return children.map(([key,child]) => [new ImmutablePath(key),GetNodeProps([key,child]) ||  child]);
+return children.reduce((acc,[key,child]) => [...acc,new ImmutablePath(key),GetNodeProps([key,child]) ||  child], []);
 }
 
 
