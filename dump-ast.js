@@ -209,7 +209,7 @@ function RelativeTo(to, k) {
 function GetNodeProps([k, v]) {
   let props = [...Util.getMemberNames(v)].map(n => [n, v[n]]).filter(([n, v]) => !Util.isObject(v) && v != '');
 
-  if(props.filter(([prop, value]) =>  prop != 'kind').length) return Object.fromEntries(props);
+  if(props.filter(([prop, value]) => prop != 'kind').length) return Object.fromEntries(props);
 }
 
 function GetNodeTypes(ast, [k, v]) {
@@ -226,13 +226,15 @@ function GetNodeTypes(ast, [k, v]) {
   }
   return ret;
 }
+
 function GetNodeChildren(ast, [k, v]) {
-    let children = [...deep.iterate(v, (v, p) =>  Util.isObject(v))].map(GetValueKey);
-children = children.filter(([key,child])=> typeof child.kind == 'string' && child.kind != '');
+  let children = [...deep.iterate(v, (v, p) => Util.isObject(v))].map(GetValueKey);
+  children = children.filter(([key, child]) => typeof child.kind == 'string' && child.kind != '');
 
-return children.reduce((acc,[key,child]) => [...acc,new ImmutablePath(key),GetNodeProps([key,child]) ||  child], []);
+  return children.reduce((acc, [key, child]) => [...acc, new ImmutablePath(key), GetNodeProps([key, child]) || child],
+    []
+  );
 }
-
 
 function GetNameOrId(ast, [key, node], pred = id => id != '') {
   let [k, n] = GetOwned(ast, key);
@@ -378,7 +380,7 @@ async function main(...args) {
               GetNameOrId(ast, [k, v], id2 => id2 != '' && id != id2),
               GetRecord(v) || v,
               GetNodeTypes(ast, [k, v]),
-              GetNodeChildren(ast, [k,v])
+              GetNodeChildren(ast, [k, v])
             ])
             .filter(([h, d, k, name, v]) => !/FunctionDecl/.test(v.kind + ''))
         ])
