@@ -1,1915 +1,1028 @@
 {
-	"auto_complete":
-	{
-		"selected_items":
-		[
-			[
-				"ptr",
-				"description-reverse\tArray"
-			],
-			[
-				"js_cv_get",
-				"js_cv_get_structuring_element\tabc"
-			],
-			[
-				"h",
-				"h"
-			],
-			[
-				"forma",
-				"formattedCalls"
-			],
-			[
-				"Al",
-				"AlignmentAttrs"
-			],
-			[
-				"printExp",
-				"printExportStatement"
-			],
-			[
-				"previous",
-				"previousTimestamp"
-			],
-			[
-				"Github",
-				"GithubListRepositories"
-			],
-			[
-				"max",
-				"maxLineGap"
-			],
-			[
-				"ali",
-				"alignmentTransform"
-			],
-			[
-				"align",
-				"alignmentTransform"
-			],
-			[
-				"instru",
-				"instrumentateParser"
-			],
-			[
-				"Eleme",
-				"ElementToClass"
-			],
-			[
-				"Function",
-				"FunctionArgument"
-			],
-			[
-				"Varia",
-				"VariableDeclarator"
-			],
-			[
-				"PipeTo",
-				"PipeToRepeater"
-			],
-			[
-				"ini",
-				"initializer"
-			],
-			[
-				"parseFunc",
-				"parseFunctionParametersAndBody"
-			],
-			[
-				"Calc",
-				"CalculateArc"
-			],
-			[
-				"package",
-				"packageGeometries"
-			],
-			[
-				"Package",
-				"PackageGeometries"
-			],
-			[
-				"TextDec",
-				"TextDecoderStream"
-			],
-			[
-				"Generate",
-				"GenerateDistinctVariableDeclarations"
-			],
-			[
-				"decl",
-				"declStatement"
-			],
-			[
-				"Trans",
-				"TransformationList"
-			],
-			[
-				"HAVE_",
-				"HAVE_MALLOC_USABLE_SIZE_DEFINITION"
-			],
-			[
-				"js_mat_itera",
-				"js_mat_iterator_class_id"
-			],
-			[
-				"JSMat",
-				"JSMatIteratorData"
-			],
-			[
-				"mat_iterator",
-				"mat_iterator_proto"
-			],
-			[
-				"Obj",
-				"ObjectBindingPattern"
-			],
-			[
-				"Mut",
-				"MutablePath"
-			],
-			[
-				"Conso",
-				"ConsoleSetup"
-			],
-			[
-				"ES6I",
-				"ES6ImportExport.prototype"
-			]
-		]
-	},
-	"buffers":
-	[
-		{
-			"contents": "WriteFile\nLocation\n  file =>\n  constructor(file, begin, end)\n  static from(obj)\nLocation\n  get token()\n  valueOf()\n  static equal(a, b)\n  toString()\nNodeToString\n  function* GetRanges(tree)\n  function* GetLocations(tree)\n  function* GetNodes(tree, pred\nGetLocation\n  contains(arg)\n  startsWith(other)\n  endsWith(other)\nDumpAst\n  processCallExpr\n  main\n  cp =>\n  generateFlat",
-			"settings":
-			{
-				"buffer_size": 374,
-				"line_ending": "Unix",
-				"name": "𝌆 Outline",
-				"scratch": true
-			}
-		},
-		{
-			"file": "dump-ast.js",
-			"settings":
-			{
-				"buffer_size": 10118,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/path.js",
-			"settings":
-			{
-				"buffer_size": 15941,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/deep.js",
-			"settings":
-			{
-				"buffer_size": 5710,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/objectInspect.js",
-			"settings":
-			{
-				"buffer_size": 14296,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "Searching 2956 files for \"log..file.read\" (regex, case sensitive)\n\n/home/roman/Sources/plot-cv/lib/filesystem.js:\n  424  \n  425        //     file = this.fileno(file);\n  426:       console.log('file.read', file.read);\n  427  \n  428        return CatchError(() => {\n  ...\n  438          } else {\n  439            ret = file.read(length);\n  440:           console.log('file.read()', { ret, length });\n  441            if(typeof ret == 'object' && ret !== null) {\n  442              ret.copy(buf, offset, 0, ret.length);\n\n2 matches in 1 file\n",
-			"settings":
-			{
-				"buffer_size": 539,
-				"line_ending": "Unix",
-				"name": "Find Results",
-				"scratch": true
-			}
-		},
-		{
-			"file": "lib/filesystem.js",
-			"settings":
-			{
-				"buffer_size": 24094,
-				"line_ending": "Unix"
-			}
-		}
-	],
-	"build_system": "",
-	"build_system_choices":
-	[
-	],
-	"build_varint": "",
-	"command_palette":
-	{
-		"height": 0.0,
-		"last_filter": "",
-		"selected_items":
-		[
-			[
-				"outli",
-				"Browse Mode: Outline (Right)"
-			],
-			[
-				"svgo",
-				"SVGO: Minify SVG"
-			],
-			[
-				"remove pa",
-				"Package Control: Remove Package"
-			],
-			[
-				"shell",
-				"Pretty Shell: Minify Selection"
-			],
-			[
-				"",
-				"Arithmetic"
-			],
-			[
-				"remove pac",
-				"Package Control: Remove Package"
-			],
-			[
-				"shfmt",
-				"Pretty Shell: Format"
-			],
-			[
-				"extract pack",
-				"PackageResourceViewer: Extract Package"
-			],
-			[
-				"install",
-				"Package Control: Install Package"
-			],
-			[
-				"add rep",
-				"Package Control: Add Repository"
-			],
-			[
-				"add re",
-				"Package Control: Add Repository"
-			],
-			[
-				"goto us",
-				"Goto Usage"
-			],
-			[
-				"install pac",
-				"Package Control: Install Package"
-			],
-			[
-				"Package Control: ",
-				"Package Control: Remove Package"
-			],
-			[
-				"remove ",
-				"Package Control: Remove Package"
-			],
-			[
-				"install p",
-				"Package Control: Install Package"
-			],
-			[
-				"mini",
-				"SVGO: Minify SVG"
-			],
-			[
-				"remove",
-				"JavaScriptTemplateLiteralEnhancements: Convert into template literal"
-			],
-			[
-				"remove p",
-				"Package Control: Remove Package"
-			],
-			[
-				"indent",
-				"Indexing Status"
-			],
-			[
-				"oinstall pa",
-				"Package Control: Install Package"
-			],
-			[
-				"add",
-				"Package Control: Add Repository"
-			],
-			[
-				"instal",
-				"Package Control: Install Package"
-			],
-			[
-				"outline",
-				"Browse Mode: Outline (Right)"
-			],
-			[
-				"tag",
-				"CTags: Rebuild Tags"
-			],
-			[
-				"remove pack",
-				"Package Control: Remove Channel"
-			],
-			[
-				"instal pac",
-				"Package Control: Install Package"
-			],
-			[
-				"out",
-				"Browse Mode: Outline (Right)"
-			],
-			[
-				"install pa",
-				"Package Control: Install Package"
-			],
-			[
-				"tags",
-				"CTags: Rebuild Tags"
-			],
-			[
-				"ctag",
-				"CTags: Rebuild Tags"
-			],
-			[
-				"prett",
-				"SVGO: Prettify SVG"
-			],
-			[
-				"add repo",
-				"Package Control: Add Repository"
-			],
-			[
-				"pret",
-				"SVGO: Prettify SVG"
-			],
-			[
-				"svg",
-				"SVGO: Minify SVG"
-			],
-			[
-				"outlin",
-				"Browse Mode: Outline (Right)"
-			],
-			[
-				"install pack",
-				"Package Control: Install Package"
-			],
-			[
-				"rebuild",
-				"Build With: Rebuild CTags"
-			],
-			[
-				"install ",
-				"Package Control: Install Package"
-			],
-			[
-				"unicode",
-				"Unicode Character Insert: Show Panel"
-			],
-			[
-				"math",
-				"UnicodeMath: Insert"
-			],
-			[
-				"adv",
-				"Package Control: Advanced Install Package"
-			],
-			[
-				"adva",
-				"Package Control: Advanced Install Package"
-			],
-			[
-				"min",
-				"SVGO: Minify SVG"
-			],
-			[
-				"isntall",
-				"Package Control: Install Package"
-			],
-			[
-				"ins",
-				"Package Control: Install Package"
-			],
-			[
-				"add ",
-				"Package Control: Add Repository"
-			],
-			[
-				"symbol",
-				"CTags: Show Symbols (all)"
-			],
-			[
-				"ctags",
-				"CTags: Show Symbols (file)"
-			],
-			[
-				"extract fn",
-				"Extract Javascript Function to Regular Function"
-			],
-			[
-				"insta",
-				"Package Control: Install Package"
-			],
-			[
-				"cmake",
-				"CMake Format: Format Selection"
-			],
-			[
-				"list p",
-				"Package Control: List Packages"
-			],
-			[
-				"list pac",
-				"Package Control: List Packages"
-			],
-			[
-				"prettier",
-				"JsPrettier: Format Code"
-			],
-			[
-				"instalk",
-				"Package Control: Install Package"
-			],
-			[
-				"Package Control: install",
-				"Package Control: Install Package"
-			],
-			[
-				"extract",
-				"Extract Sublime Package: Extract all packages"
-			],
-			[
-				"extra",
-				"Extract Sublime Package: Extract all packages"
-			],
-			[
-				"build",
-				"Build: Cancel"
-			]
-		],
-		"width": 0.0
-	},
-	"console":
-	{
-		"height": 300.0,
-		"history":
-		[
-			"sublime.log_commands(True)",
-			"sublime.log_commands(True).",
-			" sublime.log_commands(True)"
-		]
-	},
-	"distraction_free":
-	{
-		"menu_visible": true,
-		"show_minimap": false,
-		"show_open_files": false,
-		"show_tabs": false,
-		"side_bar_visible": false,
-		"status_bar_visible": false
-	},
-	"expanded_folders":
-	[
-		"/home/roman/Sources/plot-cv",
-		"/home/roman/Sources/plot-cv/lib",
-		"/home/roman/Sources/plot-cv/lib/container",
-		"/home/roman/Sources/plot-cv/lib/xml",
-		"/home/roman/Sources/plot-cv/src"
-	],
-	"file_history":
-	[
-		"/home/roman/Sources/plot-cv/opencv/CMakeLists.txt",
-		"/home/roman/Sources/plot-cv/test-opencv.js",
-		"/home/roman/Sources/plot-cv/src/js_cv.cpp",
-		"/home/roman/Sources/plot-cv/test-childprocess.js",
-		"/home/roman/Sources/plot-cv/src/plot-cv.cpp",
-		"/home/roman/Sources/plot-cv/resolve-imports.js",
-		"/home/roman/Sources/plot-cv/CMakeLists.txt",
-		"/home/roman/Sources/plot-cv/quickjs/quickjs.h",
-		"/home/roman/Sources/plot-cv/js-bindings.cmake",
-		"/home/roman/Sources/plot-cv/src/js_draw.cpp",
-		"/home/roman/Sources/plot-cv/src/js_mat.cpp",
-		"/home/roman/Sources/plot-cv/src/jsbindings.h",
-		"/home/roman/Sources/plot-cv/src/js_rect.cpp",
-		"/home/roman/Sources/plot-cv/opencv/seeds.cpp",
-		"/home/roman/Sources/plot-cv/opencv/decompose_homography.cpp",
-		"/home/roman/Sources/plot-cv/src/js_video_capture.cpp",
-		"/home/roman/Sources/plot-cv/src/js_size.cpp",
-		"/home/roman/Sources/plot-cv/lib/util.js",
-		"/home/roman/Sources/plot-cv/lib/json/path.js",
-		"/home/roman/Sources/plot-cv/lib/deep.js",
-		"/home/roman/Sources/plot-cv/lib/ecmascript/estree.js",
-		"/home/roman/Sources/plot-cv/lib/childProcess.js",
-		"/home/roman/Sources/plot-cv/lib/filesystem.js",
-		"/home/roman/Sources/plot-cv/t.js",
-		"/home/roman/Sources/plot-cv/lib/path.js",
-		"/home/roman/Sources/plot-cv/lib/ecmascript/lexer.js",
-		"/home/roman/Sources/plot-cv/lib/ecmascript/parser.js",
-		"/home/roman/Sources/plot-cv/lib/stream/utils.js",
-		"/home/roman/Sources/plot-cv/read-deps.js",
-		"/home/roman/Sources/plot-cv/list-exports.js",
-		"/home/roman/Sources/plot-cv/test-filesystem.js",
-		"/home/roman/Sources/plot-cv/test-readdir.js",
-		"/home/roman/Sources/plot-cv/src/js_clahe.cpp",
-		"/home/roman/Sources/plot-cv/src/js_contour.cpp",
-		"/home/roman/Sources/plot-cv/src/js_point.cpp",
-		"/home/roman/Sources/plot-cv/src/jsbindings.cpp",
-		"/home/roman/Sources/plot-cv/src/plot-cv.h",
-		"/home/roman/Sources/plot-cv/ccache.cmake",
-		"/home/roman/Sources/plot-cv/quickjs/net/libwebsockets/lib/CMakeLists.txt",
-		"/home/roman/Sources/plot-cv/quickjs/quickjs.c",
-		"/home/roman/Sources/plot-cv/src/js_line.cpp",
-		"/home/roman/Sources/plot-cv/lib/eagle/elementProxy.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/nodeList.js",
-		"/home/roman/Sources/plot-cv/lib/eagle.js",
-		"/home/roman/Sources/plot-cv/commands.js",
-		"/home/roman/Sources/plot-cv/main.js",
-		"/home/roman/Sources/plot-cv/lib/eda/units.js",
-		"/home/roman/Sources/plot-cv/lib/eda/colorCoding.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/element.js",
-		"/home/roman/Sources/plot-cv/server.js",
-		"/home/roman/Sources/plot-cv/components.js",
-		"/home/roman/Sources/plot-cv/eagle-query.js",
-		"/tmp/mozilla_roman0/my-drawing.txt",
-		"/home/roman/Sources/plot-cv/lib/eagle/components/element.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/components/textElement.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/boardRenderer.js",
-		"/home/roman/Sources/plot-cv/lib/geom/line.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/nodeMap.js",
-		"/home/roman/Sources/plot-cv/dump-ast.js",
-		"/home/roman/Sources/plot-cv/quickjs/net.old/libwebsockets/minimal-examples/http-client/minimal-http-client-post/minimal-http-client-post.c",
-		"/home/roman/Sources/plot-cv/r-colors.svg",
-		"/home/roman/Sources/plot-cv/lib/eagle/project.js",
-		"/home/roman/Sources/plot-cv/lib/consoleSetup.js",
-		"/home/roman/Sources/plot-cv/lib/geom/transformation.js",
-		"/home/roman/Sources/plot-cv/get-msys-packages.js",
-		"/home/roman/Sources/plot-cv/test-cparse.js",
-		"/home/roman/Sources/plot-cv/opencv/objecttracking.cpp",
-		"/home/roman/Sources/plot-cv/opencv/multitracker.cpp",
-		"/home/roman/Sources/plot-cv/quickjs/CMakeLists.txt",
-		"/home/roman/Sources/plot-cv/quickjs/net/CMakeLists.txt",
-		"/home/roman/Sources/plot-cv/opencv/tutorial_multitracker.cpp",
-		"/home/roman/Sources/plot-cv/opencv.cmake",
-		"/home/roman/Sources/plot-cv/opencv/OpenCVWebcam.cpp",
-		"/home/roman/Sources/plot-cv/cfg.sh",
-		"/home/roman/Sources/plot-cv/list-proxies.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/common.js",
-		"/home/roman/Sources/plot-cv/test-xml.js",
-		"/home/roman/Sources/plot-cv/lib/preact.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/document.js",
-		"/tmp/mozilla_roman0/OmegaOptions.bak",
-		"/tmp/mozilla_roman0/OmegaOptions-1.bak",
-		"/tmp/mozilla_roman0/OmegaLog_1606860180842.txt",
-		"/home/roman/Sources/plot-cv/lib/cparse.js",
-		"/home/roman/Sources/plot-cv/lib/cpp.js",
-		"/home/roman/.config/sublime-text-3/Packages/Goto Usage/GotoUsage.sublime-settings",
-		"/home/roman/.config/sublime-text-3/Packages/User/GotoUsage.sublime-settings",
-		"/home/roman/.config/sublime-text-3/Packages/Goto Usage/Default (Linux).sublime-keymap",
-		"/home/roman/Sources/plot-cv/test-cli.js",
-		"/home/roman/Sources/plot-cv/childProcess.js",
-		"/home/roman/Sources/plot-cv/lib/objectInspect.js",
-		"/home/roman/Sources/plot-cv/lib/svg/path.js",
-		"/home/roman/Sources/plot-cv/lib/preact-render-to-string.js",
-		"/home/roman/Sources/plot-cv/static/ruler/rulerVPattern.svg",
-		"/home/roman/Sources/plot-cv/lib/preact/forwardRef.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/renderUtils.js",
-		"/home/roman/Sources/plot-cv/lib/geom/matrix.js",
-		"/home/roman/Sources/plot-cv/lib/dom/element.js",
-		"/home/roman/Sources/plot-cv/lib/dom/preactComponent.js",
-		"/home/roman/Sources/plot-cv/lib/dom/svg.js",
-		"/home/roman/Sources/plot-cv/blackbody.js",
-		"/home/roman/Sources/plot-cv/rulerVPattern.svg",
-		"/home/roman/.config/sublime-text-3/Packages/MySignaturePlugin/MySignaturePlugin.sublime-settings",
-		"/home/roman/.config/sublime-text-3/Packages/BrowserIntegration/BrowserIntegration.sublime-settings",
-		"/home/roman/.config/sublime-text-3/Packages/Chromium X-Refs/Default.sublime-keymap",
-		"/home/roman/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap",
-		"/home/roman/Sources/plot-cv/interactive-svg/Readme.md",
-		"/home/roman/Sources/plot-cv/opencv-js-webworker/services/cv.js",
-		"/home/roman/Sources/plot-cv/plot-cv.sublime-project",
-		"/home/roman/.config/sublime-text-3/Packages/User/Babel.sublime-settings",
-		"/home/roman/.config/sublime-text-3/Packages/Babel/Babel.sublime-settings",
-		"/home/roman/Sources/plot-cv/src/highgui-viewer.cpp",
-		"/home/roman/Sources/plot-cv/highgui-viewer.cmake",
-		"/home/roman/Sources/plot-cv/ruler-draggable.js",
-		"/home/roman/Sources/plot-cv/static/ruler/rulerVertical.svg",
-		"/home/roman/Sources/plot-cv/static/ruler.css",
-		"/home/roman/Sources/plot-cv/exportedRulerVertical.svg",
-		"/home/roman/Sources/plot-cv/lib/preact.mjs",
-		"/home/roman/Sources/plot-cv/modules/react-ruler-draggable/README.md",
-		"/home/roman/Sources/plot-cv/static/ruler/rulerHorizontal.svg",
-		"/home/roman/Sources/plot-cv/static/ruler/ruler.svg",
-		"/home/roman/Sources/plot-cv/cursor.js",
-		"/home/roman/Sources/plot-cv/static/ruler/cursor.svg",
-		"/home/roman/Sources/plot-cv/ruler.svg",
-		"/home/roman/Sources/plot-cv/tmp-ruler.js",
-		"/home/roman/Sources/plot-cv/test-parsetmpl.js",
-		"/home/roman/Sources/plot-cv/lib/ecmascript/printer.js",
-		"/home/roman/Sources/plot-cv/lib/hooks/useDebounce.js",
-		"/home/roman/Sources/plot-cv/lib/preact.standalone.js"
-	],
-	"find":
-	{
-		"height": 42.0
-	},
-	"find_in_files":
-	{
-		"height": 306.0,
-		"where_history":
-		[
-			"/home/roman/Sources/plot-cv,*CMakeLists.txt,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*\n/home/roman/Sources/plot-cv/src,*.cpp,*.h,-*/opencv-js-webworker/*",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*,CMakeLists.txt\n/home/roman/Sources/plot-cv/src,*.cpp,*.h,-*/opencv-js-webworker/*",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*\n/home/roman/Sources/plot-cv/src,*.cpp,*.h,-*/opencv-js-webworker/*",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*\n/home/roman/Sources/plot-cv/src,*.cpp,*.h",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*,/home/roman/Sources/plot-cv/src,*.cpp,*.h",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*,/home/roman/Sources/plot-cv,*.cpp,*.hpp,*.h",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,*.c,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,*.c,*.h,-.*,-tags,-*.orig,-*.log,-*.json",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,,/home/roman/Sources/plot-cv/src,*.h,*,cpp",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,,/home/roman/Sources/plot-cv/src,*.h",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,,/home/roman/Sources/plot-cv/src,*.cpp,*.h",
-			"/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,<open files>",
-			"/home/roman/Sources/plot-cv,-*node_modules*,*.js,<open files>",
-			"/home/roman/Sources/plot-cv,-node_modules,*.js,<open files>",
-			"/home/roman/Sources/plot-cv,*.js,<open files>",
-			"/home/roman/Sources/plot-cv,*.js",
-			""
-		]
-	},
-	"find_state":
-	{
-		"case_sensitive": true,
-		"find_history":
-		[
-			"cwd",
-			"unflatten",
-			"unflatt",
-			"ast.json",
-			"maxStringLength",
-			"opts\\.",
-			"inner:",
-			"log..file.read",
-			"getTrackbarPos",
-			"Harris",
-			"imshow",
-			"mat_data",
-			"RPATH",
-			"add_prog",
-			"main",
-			"text_det",
-			"^(\\s*)",
-			"^",
-			"opencv",
-			"isOpened",
-			"empty",
-			"DefaultBorder",
-			"defaultBorder",
-			"minMaxLoc",
-			"min_max",
-			"DumpFile",
-			"getImport =",
-			"getImport",
-			"getImport =",
-			"GetFrom\\(",
-			"GetFrom",
-			"GetFrom\\(",
-			"GetFrom",
-			"GetFrom\\(",
-			"GetFrom",
-			"GenerateFlatMap",
-			"generateFlatAndMap",
-			"root =",
-			"root ",
-			"Array.proto",
-			"/*  ",
-			"startsWith",
-			"Array.proto",
-			"ParentExpr",
-			"imp",
-			"ParentExpr",
-			"expr:",
-			"isReq",
-			"isRequ",
-			"importNode:",
-			"importNode",
-			"importNode =",
-			"SwitchS",
-			"Default",
-			"getImport\\(",
-			"getImport(",
-			"getImport =",
-			"importDeclarations",
-			"GetDeclarations",
-			"importDeclarations",
-			"Builtin",
-			"console.debug",
-			"log..import.*Decl",
-			"log..import",
-			"FindMod",
-			"packages",
-			"MakeSearch",
-			"ParentPackage",
-			"GetMain",
-			"GetPackage",
-			"ParentPack",
-			"path\\.dirname",
-			"path\\.",
-			"path",
-			"search =",
-			"GetPack",
-			"packages",
-			"class Literal",
-			"GetDecl",
-			"GetDeclarations",
-			"getImport",
-			"getImports",
-			"instanceof Mem",
-			"concat",
-			"getImport",
-			"getImport =",
-			"iterate =",
-			"getImport",
-			"getImport\\(",
-			"getImport",
-			"imports:",
-			"ConsoleSet",
-			"getImport",
-			"imports:",
-			"31",
-			"tree",
-			"DumpFile",
-			"dumpFile",
-			"DumpFile",
-			"brk:",
-			"processed files",
-			"FindModule",
-			"processFile",
-			"log..stack:",
-			"stack:",
-			"indexes:",
-			"CheckExists",
-			"module:",
-			"validator",
-			"'validator",
-			"child",
-			"Prettier",
-			"stack methods",
-			"\\...MakeNames",
-			"MakeNames",
-			"FindMod",
-			"ConsoleSetup",
-			"CheckExists",
-			"AddPackage",
-			"isDir",
-			"AddPackage",
-			"isDir",
-			"is",
-			"MakeSea",
-			"moduleAliases",
-			"packagesPath",
-			"searchPath",
-			"MakeSearchPath"
-		],
-		"highlight": true,
-		"in_selection": false,
-		"preserve_case": false,
-		"regex": true,
-		"replace_history":
-		[
-			"\\1#",
-			"#",
-			"console.log",
-			"",
-			"search.aliases",
-			"search.packages",
-			"search.path",
-			"js_mat_data(ctx, argv",
-			"return js._undefined",
-			"(*s)->",
-			"JSCLAHEData",
-			"${CMAKE_SOURCE_DIR}/src/",
-			"CMAKE_CURRENT_SOURCE_DIR",
-			"${CMAKE_CURRENT_BINARY_DIR}/",
-			"function \\1(",
-			" \\1(",
-			"",
-			"y=\"2\"",
-			"text-anchor=\"middle\"",
-			"transform",
-			"y=\"2\"",
-			"",
-			"y=\"0\" x=\"-",
-			"font-family=\"Share-TechMono\" text-anchor=\"middle\"",
-			"(-90)",
-			"hare-TechMono\"",
-			" dominant-baseline=\"hanging\" transform=\"rotate(90)\"",
-			"hanging",
-			" x=\"0\"",
-			"",
-			"font-family=\"Share-TechMono\"",
-			"",
-			" H48\"",
-			"",
-			"fcntl",
-			"const ",
-			"'\\\\u\\1",
-			"'\\\\u0\\1",
-			"'\\\\u00\\1",
-			"'\\\\u00\\1;",
-			"'\\\\u",
-			"dumpFile",
-			"",
-			"log",
-			"\\n",
-			"",
-			"// ",
-			"inspectSymbol",
-			"get_property",
-			"set_property(obj, ",
-			"point2i_type",
-			"",
-			"create_trackbar",
-			"high_resolution_clock",
-			"",
-			"createTrackbar",
-			" ",
-			", .def_type = JS_DEF_",
-			", .magic = 0,",
-			".prop_flags = ",
-			"js_array_iterator",
-			"`",
-			" cv::String",
-			"cv::QT_RADIOBOX",
-			"(cv::Range",
-			"cv::ximgproc::dtFilter",
-			"cv::COLOR_",
-			" cv::Range",
-			"",
-			" cv::Mat",
-			".component",
-			"window.component",
-			"console",
-			"for(let",
-			"let s = ",
-			"let \\1;",
-			"\\n\\n",
-			"",
-			"console.reallog",
-			"if",
-			"} else if(",
-			"",
-			"multiplySelf",
-			"deg2rad",
-			"//",
-			"\\1//\\2",
-			"\\1//console.",
-			"LocalStore",
-			"const ",
-			"\"",
-			"let ",
-			" ",
-			"defs",
-			"case '\\1': return `${part.code} ",
-			"`;",
-			"/",
-			"export const",
-			" CONFIG_BIGNUM CONFIG_CHECK_JSVALUE ",
-			"s->vec\\[\\1\\]",
-			"s->vec[\\1]",
-			" line.",
-			" this.send(",
-			"send(",
-			"bytes",
-			"await client.send",
-			"Port.prototype",
-			"#",
-			"minnet",
-			"LIBWEBSOCKETS",
-			"PI",
-			"\\\\n",
-			"log(\\1",
-			"console.log",
-			"",
-			" *",
-			"ElementGeometries",
-			"elementGeometries",
-			"function \\1",
-			"Encode",
-			"ArrayBufferToString",
-			"StringToArrayBuffer",
-			"close",
-			"destroy",
-			"filesystem.",
-			"close",
-			"open",
-			"close",
-			"open"
-		],
-		"reverse": false,
-		"show_context": true,
-		"use_buffer2": true,
-		"whole_word": false,
-		"wrap": true
-	},
-	"groups":
-	[
-		{
-			"selected": 0,
-			"sheets":
-			[
-				{
-					"buffer": 0,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 374,
-						"regions":
-						{
-						},
-						"selection":
-						[
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/home/roman/Sources/plot-cv/dump-ast.js",
-							"function_name_status_row": 5,
-							"outline_rename_mode": false,
-							"symkeys":
-							[
-								[
-									765,
-									795
-								],
-								[
-									1003,
-									1011
-								],
-								[
-									1072,
-									1079
-								],
-								[
-									1122,
-									1151
-								],
-								[
-									1316,
-									1332
-								],
-								[
-									1430,
-									1438
-								],
-								[
-									1764,
-									1775
-								],
-								[
-									1940,
-									1949
-								],
-								[
-									2092,
-									2110
-								],
-								[
-									2197,
-									2207
-								],
-								[
-									2269,
-									2351
-								],
-								[
-									3268,
-									3293
-								],
-								[
-									3409,
-									3437
-								],
-								[
-									3577,
-									3619
-								],
-								[
-									3818,
-									3844
-								],
-								[
-									4096,
-									4109
-								],
-								[
-									4155,
-									4172
-								],
-								[
-									4328,
-									4343
-								],
-								[
-									4553,
-									4583
-								],
-								[
-									5261,
-									5305
-								],
-								[
-									5986,
-									6014
-								],
-								[
-									6286,
-									6291
-								],
-								[
-									6509,
-									6529
-								]
-							],
-							"symlist":
-							[
-								"WriteFile",
-								"Location",
-								"  file =>",
-								"  constructor(file, begin, end)",
-								"  static from(obj)",
-								"Location",
-								"  get token()",
-								"  valueOf()",
-								"  static equal(a, b)",
-								"  toString()",
-								"NodeToString",
-								"  function* GetRanges(tree)",
-								"  function* GetLocations(tree)",
-								"  function* GetNodes(tree, pred",
-								"GetLocation",
-								"  contains(arg)",
-								"  startsWith(other)",
-								"  endsWith(other)",
-								"DumpAst",
-								"  processCallExpr",
-								"  main",
-								"  cp =>",
-								"  generateFlat"
-							],
-							"syntax": "Packages/Outline/outline.hidden-tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 0,
-			"sheets":
-			[
-				{
-					"buffer": 1,
-					"file": "dump-ast.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 10118,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								8456,
-								8456
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 243,
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 4568.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "lib/path.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 15941,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3974,
-								3974
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 118,
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1740.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "lib/deep.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5710,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5557,
-								5557
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 212,
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 3800.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "lib/objectInspect.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 14296,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								13145,
-								13145
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 469,
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 9462.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 539,
-						"regions":
-						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										189,
-										203
-									],
-									[
-										362,
-										376
-									]
-								],
-								"scope": ""
-							}
-						},
-						"selection":
-						[
-							[
-								356,
-								356
-							]
-						],
-						"settings":
-						{
-							"detect_indentation": false,
-							"function_name_status_row": 11,
-							"line_numbers": false,
-							"output_tag": 1,
-							"result_base_dir": "",
-							"result_file_regex": "^([^ \t].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "lib/filesystem.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 24094,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6293,
-								6293
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 232,
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 4327.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				}
-			]
-		}
-	],
-	"incremental_find":
-	{
-		"height": 30.0
-	},
-	"input":
-	{
-		"height": 95.0
-	},
-	"layout":
-	{
-		"cells":
-		[
-			[
-				2,
-				0,
-				3,
-				2
-			],
-			[
-				0,
-				0,
-				2,
-				2
-			]
-		],
-		"cols":
-		[
-			0.0,
-			0.2,
-			0.8,
-			1.0
-		],
-		"rows":
-		[
-			0.0,
-			0.5,
-			1.0
-		]
-	},
-	"menu_visible": true,
-	"output.Debugger":
-	{
-		"height": 145.0
-	},
-	"output.YAMLMacros":
-	{
-		"height": 169.0
-	},
-	"output.exec":
-	{
-		"height": 121.0
-	},
-	"output.find_results":
-	{
-		"height": 0.0
-	},
-	"pinned_build_system": "Rebuild CTags",
-	"project": "plot-cv.sublime-project",
-	"replace":
-	{
-		"height": 71.0
-	},
-	"save_all_on_build": true,
-	"select_file":
-	{
-		"height": 0.0,
-		"last_filter": "",
-		"selected_items":
-		[
-			[
-				"filesys",
-				"lib/filesystem.js"
-			],
-			[
-				"path.js",
-				"lib/path.js"
-			],
-			[
-				"deep",
-				"lib/deep.js"
-			],
-			[
-				"objectIn",
-				"lib/objectInspect.js"
-			],
-			[
-				"dump",
-				"dump-ast.js"
-			],
-			[
-				"test-open",
-				"test-opencv.js"
-			],
-			[
-				"test",
-				"test-childprocess.js"
-			],
-			[
-				"opencv/CMa",
-				"opencv/CMakeLists.txt"
-			],
-			[
-				"test-opencv",
-				"test-opencv.js"
-			],
-			[
-				"js_draw",
-				"src/js_draw.cpp"
-			],
-			[
-				"cmake",
-				"CMakeLists.txt"
-			],
-			[
-				"js-bin",
-				"js-bindings.cmake"
-			],
-			[
-				"opencv/CM",
-				"opencv/CMakeLists.txt"
-			],
-			[
-				"quickjs.h",
-				"quickjs/quickjs.h"
-			],
-			[
-				"decompo",
-				"opencv/decompose_homography.cpp"
-			],
-			[
-				"seeds",
-				"opencv/seeds.cpp"
-			],
-			[
-				"js_mat",
-				"src/js_mat.cpp"
-			],
-			[
-				"js_cv",
-				"src/js_cv.cpp"
-			],
-			[
-				"path.",
-				"lib/json/path.js"
-			],
-			[
-				"util.js",
-				"lib/util.js"
-			],
-			[
-				"deep.js",
-				"lib/deep.js"
-			],
-			[
-				"estree",
-				"lib/ecmascript/estree.js"
-			],
-			[
-				"childPr",
-				"lib/childProcess.js"
-			],
-			[
-				"lexer",
-				"lib/ecmascript/lexer.js"
-			],
-			[
-				"parser.js",
-				"lib/ecmascript/parser.js"
-			],
-			[
-				"utils.js",
-				"lib/stream/utils.js"
-			],
-			[
-				"list-export",
-				"list-exports.js"
-			],
-			[
-				"utils.",
-				"lib/stream/utils.js"
-			],
-			[
-				"test-file",
-				"test-filesystem.js"
-			],
-			[
-				"resolve-im",
-				"resolve-imports.js"
-			],
-			[
-				"deps.js",
-				"read-deps.js"
-			],
-			[
-				"ccache",
-				"ccache.cmake"
-			],
-			[
-				"lib/cmakelists",
-				"quickjs/net/libwebsockets/lib/CMakeLists.txt"
-			],
-			[
-				"plot-cv.h",
-				"src/plot-cv.h"
-			],
-			[
-				"plot-cv.cpp",
-				"src/plot-cv.cpp"
-			],
-			[
-				"child",
-				"lib/childProcess.js"
-			],
-			[
-				"test-read",
-				"test-readdir.js"
-			],
-			[
-				"filesyste",
-				"lib/filesystem.js"
-			],
-			[
-				"read-de",
-				"read-deps.js"
-			],
-			[
-				"jsbind",
-				"src/jsbindings.h"
-			],
-			[
-				"js_ma",
-				"src/js_mat.cpp"
-			],
-			[
-				"quickjs.c",
-				"quickjs/quickjs.c"
-			],
-			[
-				"eagle-q",
-				"eagle-query.js"
-			],
-			[
-				"compo",
-				"components.js"
-			],
-			[
-				"server",
-				"server.js"
-			],
-			[
-				"eagle",
-				"lib/eagle.js"
-			],
-			[
-				"main",
-				"main.js"
-			],
-			[
-				"line.",
-				"lib/geom/line.js"
-			],
-			[
-				"boardre",
-				"lib/eagle/boardRenderer.js"
-			],
-			[
-				"eagle-qu",
-				"eagle-query.js"
-			],
-			[
-				"r-co",
-				"r-colors.svg"
-			],
-			[
-				"httptest.c",
-				"quickjs/net.old/libwebsockets/minimal-examples/http-client/minimal-http-client-post/minimal-http-client-post.c"
-			],
-			[
-				"console",
-				"lib/consoleSetup.js"
-			],
-			[
-				"ast",
-				"dump-ast.js"
-			],
-			[
-				"utils",
-				"lib/stream/utils.js"
-			],
-			[
-				"filesystem",
-				"lib/filesystem.js"
-			],
-			[
-				"tuto",
-				"opencv/tutorial_multitracker.cpp"
-			],
-			[
-				"opencv",
-				"opencv/OpenCVWebcam.cpp"
-			],
-			[
-				".cmake",
-				"js-bindings.cmake"
-			],
-			[
-				"",
-				"quickjs/CMakeLists.txt"
-			],
-			[
-				"cmakelists.txt",
-				"quickjs/net/CMakeLists.txt"
-			],
-			[
-				"list-proxies",
-				"list-proxies.js"
-			],
-			[
-				"cfg",
-				"cfg.sh"
-			],
-			[
-				"preact.js",
-				"lib/preact.js"
-			],
-			[
-				"test-cp",
-				"test-cparse.js"
-			],
-			[
-				"childP",
-				"lib/childProcess.js"
-			],
-			[
-				"resol",
-				"resolve-imports.js"
-			],
-			[
-				"test-chil",
-				"test-childprocess.js"
-			],
-			[
-				"test-cpa",
-				"test-cparse.js"
-			],
-			[
-				"Console",
-				"lib/consoleSetup.js"
-			],
-			[
-				"consoleSetup",
-				"lib/consoleSetup.js"
-			],
-			[
-				"cpp.js",
-				"lib/cpp.js"
-			],
-			[
-				"resolve",
-				"resolve-imports.js"
-			],
-			[
-				"cparse",
-				"lib/cparse.js"
-			],
-			[
-				"Util.js",
-				"lib/util.js"
-			],
-			[
-				"forward",
-				"lib/preact/forwardRef.js"
-			],
-			[
-				"renderU",
-				"lib/eagle/renderUtils.js"
-			],
-			[
-				"render-to-str",
-				"lib/preact-render-to-string.js"
-			],
-			[
-				"element",
-				"lib/dom/element.js"
-			],
-			[
-				"rulerVP",
-				"static/ruler/rulerVPattern.svg"
-			],
-			[
-				"rulerVPa",
-				"rulerVPattern.svg"
-			],
-			[
-				"commands",
-				"commands.js"
-			],
-			[
-				"main.js",
-				"main.js"
-			],
-			[
-				"util.",
-				"lib/util.js"
-			],
-			[
-				"path",
-				"lib/svg/path.js"
-			],
-			[
-				"test-",
-				"test-cli.js"
-			],
-			[
-				"blackbody",
-				"blackbody.js"
-			],
-			[
-				"cmakeli",
-				"quickjs/CMakeLists.txt"
-			],
-			[
-				"cmakelists",
-				"CMakeLists.txt"
-			],
-			[
-				"high",
-				"src/highgui-viewer.cpp"
-			],
-			[
-				"highg",
-				"src/highgui-viewer.cpp"
-			],
-			[
-				"highgu",
-				"highgui-viewer.cmake"
-			],
-			[
-				"ruler-",
-				"ruler-draggable.js"
-			],
-			[
-				"rulerver",
-				"static/ruler/rulerVertical.svg"
-			],
-			[
-				"ruler.css",
-				"static/ruler.css"
-			],
-			[
-				"dra",
-				"ruler-draggable.js"
-			],
-			[
-				"preact.mj",
-				"lib/preact.mjs"
-			],
-			[
-				"compon",
-				"components.js"
-			],
-			[
-				"rulerVer",
-				"static/ruler/rulerVertical.svg"
-			],
-			[
-				"ruler-dra",
-				"ruler-draggable.js"
-			],
-			[
-				"vertical",
-				"static/ruler/rulerVertical.svg"
-			],
-			[
-				"rulerHor",
-				"static/ruler/rulerHorizontal.svg"
-			],
-			[
-				"rulerVe",
-				"static/ruler/rulerVertical.svg"
-			],
-			[
-				"ruler.svg",
-				"static/ruler/ruler.svg"
-			],
-			[
-				"cursor.svg",
-				"static/ruler/cursor.svg"
-			],
-			[
-				"ursor",
-				"cursor.js"
-			],
-			[
-				"cursor",
-				"cursor.js"
-			],
-			[
-				"dragga",
-				"ruler-draggable.js"
-			],
-			[
-				"cursor.js",
-				"cursor.js"
-			],
-			[
-				"main.j",
-				"main.js"
-			],
-			[
-				"tmp-",
-				"tmp-ruler.js"
-			],
-			[
-				"print",
-				"lib/ecmascript/printer.js"
-			],
-			[
-				"test-parset",
-				"test-parsetmpl.js"
-			],
-			[
-				"util",
-				"lib/util.js"
-			],
-			[
-				"forwa",
-				"lib/preact/forwardRef.js"
-			],
-			[
-				"minnet.h",
-				"quickjs/net/minnet.h"
-			],
-			[
-				"test-ren",
-				"test-renderer.js"
-			],
-			[
-				"cmakelist",
-				"quickjs/net/CMakeLists.txt"
-			],
-			[
-				"test-minn",
-				"test-minnet.js"
-			],
-			[
-				"quickjs-libc.c",
-				"quickjs/quickjs-libc.c"
-			],
-			[
-				"test-deb",
-				"test-debug.js"
-			],
-			[
-				"test-debug",
-				"test-debug.js"
-			],
-			[
-				"test-de",
-				"test-debug.js"
-			],
-			[
-				"debugger",
-				"quickjs/quickjs-debugger.c"
-			],
-			[
-				"test-stack",
-				"test-stack.js"
-			],
-			[
-				"test-rend",
-				"test-renderer.js"
-			],
-			[
-				"style.cs",
-				"style.css"
-			],
-			[
-				"test-render",
-				"test-renderer.js"
-			]
-		],
-		"width": 0.0
-	},
-	"select_project":
-	{
-		"height": 0.0,
-		"last_filter": "",
-		"selected_items":
-		[
-		],
-		"width": 0.0
-	},
-	"select_symbol":
-	{
-		"height": 392.0,
-		"last_filter": "",
-		"selected_items":
-		[
-		],
-		"width": 1050.0
-	},
-	"selected_group": 1,
-	"settings":
-	{
-	},
-	"show_minimap": true,
-	"show_open_files": false,
-	"show_tabs": true,
-	"side_bar_visible": true,
-	"side_bar_width": 352.0,
-	"status_bar_visible": true,
-	"template_settings":
-	{
-	}
+  "auto_complete": {
+    "selected_items": [
+      ["ptr", "description-reverse\tArray"],
+      ["js_cv_get", "js_cv_get_structuring_element\tabc"],
+      ["h", "h"],
+      ["forma", "formattedCalls"],
+      ["Al", "AlignmentAttrs"],
+      ["printExp", "printExportStatement"],
+      ["previous", "previousTimestamp"],
+      ["Github", "GithubListRepositories"],
+      ["max", "maxLineGap"],
+      ["ali", "alignmentTransform"],
+      ["align", "alignmentTransform"],
+      ["instru", "instrumentateParser"],
+      ["Eleme", "ElementToClass"],
+      ["Function", "FunctionArgument"],
+      ["Varia", "VariableDeclarator"],
+      ["PipeTo", "PipeToRepeater"],
+      ["ini", "initializer"],
+      ["parseFunc", "parseFunctionParametersAndBody"],
+      ["Calc", "CalculateArc"],
+      ["package", "packageGeometries"],
+      ["Package", "PackageGeometries"],
+      ["TextDec", "TextDecoderStream"],
+      ["Generate", "GenerateDistinctVariableDeclarations"],
+      ["decl", "declStatement"],
+      ["Trans", "TransformationList"],
+      ["HAVE_", "HAVE_MALLOC_USABLE_SIZE_DEFINITION"],
+      ["js_mat_itera", "js_mat_iterator_class_id"],
+      ["JSMat", "JSMatIteratorData"],
+      ["mat_iterator", "mat_iterator_proto"],
+      ["Obj", "ObjectBindingPattern"],
+      ["Mut", "MutablePath"],
+      ["Conso", "ConsoleSetup"],
+      ["ES6I", "ES6ImportExport.prototype"]
+    ]
+  },
+  "buffers": [
+    {
+      "contents": "WriteFile\nLocation\n  file =>\n  constructor(file, begin, end)\n  static from(obj)\nLocation\n  get token()\n  valueOf()\n  static equal(a, b)\n  toString()\nNodeToString\n  function* GetRanges(tree)\n  function* GetLocations(tree)\n  function* GetNodes(tree, pred\nGetLocation\n  contains(arg)\n  startsWith(other)\n  endsWith(other)\nDumpAst\n  processCallExpr\n  main\n  cp =>\n  generateFlat",
+      "settings": {
+        "buffer_size": 374,
+        "line_ending": "Unix",
+        "name": "𝌆 Outline",
+        "scratch": true
+      }
+    },
+    {
+      "file": "dump-ast.js",
+      "settings": {
+        "buffer_size": 10118,
+        "encoding": "UTF-8",
+        "line_ending": "Unix"
+      }
+    },
+    {
+      "file": "lib/path.js",
+      "settings": {
+        "buffer_size": 15941,
+        "line_ending": "Unix"
+      }
+    },
+    {
+      "file": "lib/deep.js",
+      "settings": {
+        "buffer_size": 5710,
+        "line_ending": "Unix"
+      }
+    },
+    {
+      "file": "lib/objectInspect.js",
+      "settings": {
+        "buffer_size": 14296,
+        "line_ending": "Unix"
+      }
+    },
+    {
+      "contents": "Searching 2956 files for \"log..file.read\" (regex, case sensitive)\n\n/home/roman/Sources/plot-cv/lib/filesystem.js:\n  424  \n  425        //     file = this.fileno(file);\n  426:       console.log('file.read', file.read);\n  427  \n  428        return CatchError(() => {\n  ...\n  438          } else {\n  439            ret = file.read(length);\n  440:           console.log('file.read()', { ret, length });\n  441            if(typeof ret == 'object' && ret !== null) {\n  442              ret.copy(buf, offset, 0, ret.length);\n\n2 matches in 1 file\n",
+      "settings": {
+        "buffer_size": 539,
+        "line_ending": "Unix",
+        "name": "Find Results",
+        "scratch": true
+      }
+    },
+    {
+      "file": "lib/filesystem.js",
+      "settings": {
+        "buffer_size": 24094,
+        "line_ending": "Unix"
+      }
+    }
+  ],
+  "build_system": "",
+  "build_system_choices": [],
+  "build_varint": "",
+  "command_palette": {
+    "height": 0.0,
+    "last_filter": "",
+    "selected_items": [
+      ["outli", "Browse Mode: Outline (Right)"],
+      ["svgo", "SVGO: Minify SVG"],
+      ["remove pa", "Package Control: Remove Package"],
+      ["shell", "Pretty Shell: Minify Selection"],
+      ["", "Arithmetic"],
+      ["remove pac", "Package Control: Remove Package"],
+      ["shfmt", "Pretty Shell: Format"],
+      ["extract pack", "PackageResourceViewer: Extract Package"],
+      ["install", "Package Control: Install Package"],
+      ["add rep", "Package Control: Add Repository"],
+      ["add re", "Package Control: Add Repository"],
+      ["goto us", "Goto Usage"],
+      ["install pac", "Package Control: Install Package"],
+      ["Package Control: ", "Package Control: Remove Package"],
+      ["remove ", "Package Control: Remove Package"],
+      ["install p", "Package Control: Install Package"],
+      ["mini", "SVGO: Minify SVG"],
+      ["remove", "JavaScriptTemplateLiteralEnhancements: Convert into template literal"],
+      ["remove p", "Package Control: Remove Package"],
+      ["indent", "Indexing Status"],
+      ["oinstall pa", "Package Control: Install Package"],
+      ["add", "Package Control: Add Repository"],
+      ["instal", "Package Control: Install Package"],
+      ["outline", "Browse Mode: Outline (Right)"],
+      ["tag", "CTags: Rebuild Tags"],
+      ["remove pack", "Package Control: Remove Channel"],
+      ["instal pac", "Package Control: Install Package"],
+      ["out", "Browse Mode: Outline (Right)"],
+      ["install pa", "Package Control: Install Package"],
+      ["tags", "CTags: Rebuild Tags"],
+      ["ctag", "CTags: Rebuild Tags"],
+      ["prett", "SVGO: Prettify SVG"],
+      ["add repo", "Package Control: Add Repository"],
+      ["pret", "SVGO: Prettify SVG"],
+      ["svg", "SVGO: Minify SVG"],
+      ["outlin", "Browse Mode: Outline (Right)"],
+      ["install pack", "Package Control: Install Package"],
+      ["rebuild", "Build With: Rebuild CTags"],
+      ["install ", "Package Control: Install Package"],
+      ["unicode", "Unicode Character Insert: Show Panel"],
+      ["math", "UnicodeMath: Insert"],
+      ["adv", "Package Control: Advanced Install Package"],
+      ["adva", "Package Control: Advanced Install Package"],
+      ["min", "SVGO: Minify SVG"],
+      ["isntall", "Package Control: Install Package"],
+      ["ins", "Package Control: Install Package"],
+      ["add ", "Package Control: Add Repository"],
+      ["symbol", "CTags: Show Symbols (all)"],
+      ["ctags", "CTags: Show Symbols (file)"],
+      ["extract fn", "Extract Javascript Function to Regular Function"],
+      ["insta", "Package Control: Install Package"],
+      ["cmake", "CMake Format: Format Selection"],
+      ["list p", "Package Control: List Packages"],
+      ["list pac", "Package Control: List Packages"],
+      ["prettier", "JsPrettier: Format Code"],
+      ["instalk", "Package Control: Install Package"],
+      ["Package Control: install", "Package Control: Install Package"],
+      ["extract", "Extract Sublime Package: Extract all packages"],
+      ["extra", "Extract Sublime Package: Extract all packages"],
+      ["build", "Build: Cancel"]
+    ],
+    "width": 0.0
+  },
+  "console": {
+    "height": 300.0,
+    "history": ["sublime.log_commands(True)", "sublime.log_commands(True).", " sublime.log_commands(True)"]
+  },
+  "distraction_free": {
+    "menu_visible": true,
+    "show_minimap": false,
+    "show_open_files": false,
+    "show_tabs": false,
+    "side_bar_visible": false,
+    "status_bar_visible": false
+  },
+  "expanded_folders": ["/home/roman/Sources/plot-cv", "/home/roman/Sources/plot-cv/lib", "/home/roman/Sources/plot-cv/lib/container", "/home/roman/Sources/plot-cv/lib/xml", "/home/roman/Sources/plot-cv/src"],
+  "file_history": [
+    "/home/roman/Sources/plot-cv/opencv/CMakeLists.txt",
+    "/home/roman/Sources/plot-cv/test-opencv.js",
+    "/home/roman/Sources/plot-cv/src/js_cv.cpp",
+    "/home/roman/Sources/plot-cv/test-childprocess.js",
+    "/home/roman/Sources/plot-cv/src/plot-cv.cpp",
+    "/home/roman/Sources/plot-cv/resolve-imports.js",
+    "/home/roman/Sources/plot-cv/CMakeLists.txt",
+    "/home/roman/Sources/plot-cv/quickjs/quickjs.h",
+    "/home/roman/Sources/plot-cv/js-bindings.cmake",
+    "/home/roman/Sources/plot-cv/src/js_draw.cpp",
+    "/home/roman/Sources/plot-cv/src/js_mat.cpp",
+    "/home/roman/Sources/plot-cv/src/jsbindings.h",
+    "/home/roman/Sources/plot-cv/src/js_rect.cpp",
+    "/home/roman/Sources/plot-cv/opencv/seeds.cpp",
+    "/home/roman/Sources/plot-cv/opencv/decompose_homography.cpp",
+    "/home/roman/Sources/plot-cv/src/js_video_capture.cpp",
+    "/home/roman/Sources/plot-cv/src/js_size.cpp",
+    "/home/roman/Sources/plot-cv/lib/util.js",
+    "/home/roman/Sources/plot-cv/lib/json/path.js",
+    "/home/roman/Sources/plot-cv/lib/deep.js",
+    "/home/roman/Sources/plot-cv/lib/ecmascript/estree.js",
+    "/home/roman/Sources/plot-cv/lib/childProcess.js",
+    "/home/roman/Sources/plot-cv/lib/filesystem.js",
+    "/home/roman/Sources/plot-cv/t.js",
+    "/home/roman/Sources/plot-cv/lib/path.js",
+    "/home/roman/Sources/plot-cv/lib/ecmascript/lexer.js",
+    "/home/roman/Sources/plot-cv/lib/ecmascript/parser.js",
+    "/home/roman/Sources/plot-cv/lib/stream/utils.js",
+    "/home/roman/Sources/plot-cv/read-deps.js",
+    "/home/roman/Sources/plot-cv/list-exports.js",
+    "/home/roman/Sources/plot-cv/test-filesystem.js",
+    "/home/roman/Sources/plot-cv/test-readdir.js",
+    "/home/roman/Sources/plot-cv/src/js_clahe.cpp",
+    "/home/roman/Sources/plot-cv/src/js_contour.cpp",
+    "/home/roman/Sources/plot-cv/src/js_point.cpp",
+    "/home/roman/Sources/plot-cv/src/jsbindings.cpp",
+    "/home/roman/Sources/plot-cv/src/plot-cv.h",
+    "/home/roman/Sources/plot-cv/ccache.cmake",
+    "/home/roman/Sources/plot-cv/quickjs/net/libwebsockets/lib/CMakeLists.txt",
+    "/home/roman/Sources/plot-cv/quickjs/quickjs.c",
+    "/home/roman/Sources/plot-cv/src/js_line.cpp",
+    "/home/roman/Sources/plot-cv/lib/eagle/elementProxy.js",
+    "/home/roman/Sources/plot-cv/lib/eagle/nodeList.js",
+    "/home/roman/Sources/plot-cv/lib/eagle.js",
+    "/home/roman/Sources/plot-cv/commands.js",
+    "/home/roman/Sources/plot-cv/main.js",
+    "/home/roman/Sources/plot-cv/lib/eda/units.js",
+    "/home/roman/Sources/plot-cv/lib/eda/colorCoding.js",
+    "/home/roman/Sources/plot-cv/lib/eagle/element.js",
+    "/home/roman/Sources/plot-cv/server.js",
+    "/home/roman/Sources/plot-cv/components.js",
+    "/home/roman/Sources/plot-cv/eagle-query.js",
+    "/tmp/mozilla_roman0/my-drawing.txt",
+    "/home/roman/Sources/plot-cv/lib/eagle/components/element.js",
+    "/home/roman/Sources/plot-cv/lib/eagle/components/textElement.js",
+    "/home/roman/Sources/plot-cv/lib/eagle/boardRenderer.js",
+    "/home/roman/Sources/plot-cv/lib/geom/line.js",
+    "/home/roman/Sources/plot-cv/lib/eagle/nodeMap.js",
+    "/home/roman/Sources/plot-cv/dump-ast.js",
+    "/home/roman/Sources/plot-cv/quickjs/net.old/libwebsockets/minimal-examples/http-client/minimal-http-client-post/minimal-http-client-post.c",
+    "/home/roman/Sources/plot-cv/r-colors.svg",
+    "/home/roman/Sources/plot-cv/lib/eagle/project.js",
+    "/home/roman/Sources/plot-cv/lib/consoleSetup.js",
+    "/home/roman/Sources/plot-cv/lib/geom/transformation.js",
+    "/home/roman/Sources/plot-cv/get-msys-packages.js",
+    "/home/roman/Sources/plot-cv/test-cparse.js",
+    "/home/roman/Sources/plot-cv/opencv/objecttracking.cpp",
+    "/home/roman/Sources/plot-cv/opencv/multitracker.cpp",
+    "/home/roman/Sources/plot-cv/quickjs/CMakeLists.txt",
+    "/home/roman/Sources/plot-cv/quickjs/net/CMakeLists.txt",
+    "/home/roman/Sources/plot-cv/opencv/tutorial_multitracker.cpp",
+    "/home/roman/Sources/plot-cv/opencv.cmake",
+    "/home/roman/Sources/plot-cv/opencv/OpenCVWebcam.cpp",
+    "/home/roman/Sources/plot-cv/cfg.sh",
+    "/home/roman/Sources/plot-cv/list-proxies.js",
+    "/home/roman/Sources/plot-cv/lib/eagle/common.js",
+    "/home/roman/Sources/plot-cv/test-xml.js",
+    "/home/roman/Sources/plot-cv/lib/preact.js",
+    "/home/roman/Sources/plot-cv/lib/eagle/document.js",
+    "/tmp/mozilla_roman0/OmegaOptions.bak",
+    "/tmp/mozilla_roman0/OmegaOptions-1.bak",
+    "/tmp/mozilla_roman0/OmegaLog_1606860180842.txt",
+    "/home/roman/Sources/plot-cv/lib/cparse.js",
+    "/home/roman/Sources/plot-cv/lib/cpp.js",
+    "/home/roman/.config/sublime-text-3/Packages/Goto Usage/GotoUsage.sublime-settings",
+    "/home/roman/.config/sublime-text-3/Packages/User/GotoUsage.sublime-settings",
+    "/home/roman/.config/sublime-text-3/Packages/Goto Usage/Default (Linux).sublime-keymap",
+    "/home/roman/Sources/plot-cv/test-cli.js",
+    "/home/roman/Sources/plot-cv/childProcess.js",
+    "/home/roman/Sources/plot-cv/lib/objectInspect.js",
+    "/home/roman/Sources/plot-cv/lib/svg/path.js",
+    "/home/roman/Sources/plot-cv/lib/preact-render-to-string.js",
+    "/home/roman/Sources/plot-cv/static/ruler/rulerVPattern.svg",
+    "/home/roman/Sources/plot-cv/lib/preact/forwardRef.js",
+    "/home/roman/Sources/plot-cv/lib/eagle/renderUtils.js",
+    "/home/roman/Sources/plot-cv/lib/geom/matrix.js",
+    "/home/roman/Sources/plot-cv/lib/dom/element.js",
+    "/home/roman/Sources/plot-cv/lib/dom/preactComponent.js",
+    "/home/roman/Sources/plot-cv/lib/dom/svg.js",
+    "/home/roman/Sources/plot-cv/blackbody.js",
+    "/home/roman/Sources/plot-cv/rulerVPattern.svg",
+    "/home/roman/.config/sublime-text-3/Packages/MySignaturePlugin/MySignaturePlugin.sublime-settings",
+    "/home/roman/.config/sublime-text-3/Packages/BrowserIntegration/BrowserIntegration.sublime-settings",
+    "/home/roman/.config/sublime-text-3/Packages/Chromium X-Refs/Default.sublime-keymap",
+    "/home/roman/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap",
+    "/home/roman/Sources/plot-cv/interactive-svg/Readme.md",
+    "/home/roman/Sources/plot-cv/opencv-js-webworker/services/cv.js",
+    "/home/roman/Sources/plot-cv/plot-cv.sublime-project",
+    "/home/roman/.config/sublime-text-3/Packages/User/Babel.sublime-settings",
+    "/home/roman/.config/sublime-text-3/Packages/Babel/Babel.sublime-settings",
+    "/home/roman/Sources/plot-cv/src/highgui-viewer.cpp",
+    "/home/roman/Sources/plot-cv/highgui-viewer.cmake",
+    "/home/roman/Sources/plot-cv/ruler-draggable.js",
+    "/home/roman/Sources/plot-cv/static/ruler/rulerVertical.svg",
+    "/home/roman/Sources/plot-cv/static/ruler.css",
+    "/home/roman/Sources/plot-cv/exportedRulerVertical.svg",
+    "/home/roman/Sources/plot-cv/lib/preact.mjs",
+    "/home/roman/Sources/plot-cv/modules/react-ruler-draggable/README.md",
+    "/home/roman/Sources/plot-cv/static/ruler/rulerHorizontal.svg",
+    "/home/roman/Sources/plot-cv/static/ruler/ruler.svg",
+    "/home/roman/Sources/plot-cv/cursor.js",
+    "/home/roman/Sources/plot-cv/static/ruler/cursor.svg",
+    "/home/roman/Sources/plot-cv/ruler.svg",
+    "/home/roman/Sources/plot-cv/tmp-ruler.js",
+    "/home/roman/Sources/plot-cv/test-parsetmpl.js",
+    "/home/roman/Sources/plot-cv/lib/ecmascript/printer.js",
+    "/home/roman/Sources/plot-cv/lib/hooks/useDebounce.js",
+    "/home/roman/Sources/plot-cv/lib/preact.standalone.js"
+  ],
+  "find": {
+    "height": 42.0
+  },
+  "find_in_files": {
+    "height": 306.0,
+    "where_history": [
+      "/home/roman/Sources/plot-cv,*CMakeLists.txt,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*\n/home/roman/Sources/plot-cv/src,*.cpp,*.h,-*/opencv-js-webworker/*",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*,CMakeLists.txt\n/home/roman/Sources/plot-cv/src,*.cpp,*.h,-*/opencv-js-webworker/*",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*\n/home/roman/Sources/plot-cv/src,*.cpp,*.h,-*/opencv-js-webworker/*",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*\n/home/roman/Sources/plot-cv/src,*.cpp,*.h",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*,/home/roman/Sources/plot-cv/src,*.cpp,*.h",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*,/home/roman/Sources/plot-cv,*.cpp,*.hpp,*.h",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json,-*/opencv/*",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,*.c,*.cpp,*.h,-.*,-tags,-*.orig,-*.log,-*.json",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,*.c,*.h,-.*,-tags,-*.orig,-*.log,-*.json",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,-*.json,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,-*.log,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,-*.orig,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,-tags,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,-.*,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,/home/roman/Sources/plot-cv/src,*.h,*,cpp,/home/roman/Sources/plot-cv/quickjs,*.h,*,c",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,,/home/roman/Sources/plot-cv/src,*.h,*,cpp",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,,/home/roman/Sources/plot-cv/src,*.h",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,,/home/roman/Sources/plot-cv/src,*.cpp,*.h",
+      "/home/roman/Sources/plot-cv,-*/node_modules/*,*.js,<open files>",
+      "/home/roman/Sources/plot-cv,-*node_modules*,*.js,<open files>",
+      "/home/roman/Sources/plot-cv,-node_modules,*.js,<open files>",
+      "/home/roman/Sources/plot-cv,*.js,<open files>",
+      "/home/roman/Sources/plot-cv,*.js",
+      ""
+    ]
+  },
+  "find_state": {
+    "case_sensitive": true,
+    "find_history": [
+      "cwd",
+      "unflatten",
+      "unflatt",
+      "ast.json",
+      "maxStringLength",
+      "opts\\.",
+      "inner:",
+      "log..file.read",
+      "getTrackbarPos",
+      "Harris",
+      "imshow",
+      "mat_data",
+      "RPATH",
+      "add_prog",
+      "main",
+      "text_det",
+      "^(\\s*)",
+      "^",
+      "opencv",
+      "isOpened",
+      "empty",
+      "DefaultBorder",
+      "defaultBorder",
+      "minMaxLoc",
+      "min_max",
+      "DumpFile",
+      "getImport =",
+      "getImport",
+      "getImport =",
+      "GetFrom\\(",
+      "GetFrom",
+      "GetFrom\\(",
+      "GetFrom",
+      "GetFrom\\(",
+      "GetFrom",
+      "GenerateFlatMap",
+      "generateFlatAndMap",
+      "root =",
+      "root ",
+      "Array.proto",
+      "/*  ",
+      "startsWith",
+      "Array.proto",
+      "ParentExpr",
+      "imp",
+      "ParentExpr",
+      "expr:",
+      "isReq",
+      "isRequ",
+      "importNode:",
+      "importNode",
+      "importNode =",
+      "SwitchS",
+      "Default",
+      "getImport\\(",
+      "getImport(",
+      "getImport =",
+      "importDeclarations",
+      "GetDeclarations",
+      "importDeclarations",
+      "Builtin",
+      "console.debug",
+      "log..import.*Decl",
+      "log..import",
+      "FindMod",
+      "packages",
+      "MakeSearch",
+      "ParentPackage",
+      "GetMain",
+      "GetPackage",
+      "ParentPack",
+      "path\\.dirname",
+      "path\\.",
+      "path",
+      "search =",
+      "GetPack",
+      "packages",
+      "class Literal",
+      "GetDecl",
+      "GetDeclarations",
+      "getImport",
+      "getImports",
+      "instanceof Mem",
+      "concat",
+      "getImport",
+      "getImport =",
+      "iterate =",
+      "getImport",
+      "getImport\\(",
+      "getImport",
+      "imports:",
+      "ConsoleSet",
+      "getImport",
+      "imports:",
+      "31",
+      "tree",
+      "DumpFile",
+      "dumpFile",
+      "DumpFile",
+      "brk:",
+      "processed files",
+      "FindModule",
+      "processFile",
+      "log..stack:",
+      "stack:",
+      "indexes:",
+      "CheckExists",
+      "module:",
+      "validator",
+      "'validator",
+      "child",
+      "Prettier",
+      "stack methods",
+      "\\...MakeNames",
+      "MakeNames",
+      "FindMod",
+      "ConsoleSetup",
+      "CheckExists",
+      "AddPackage",
+      "isDir",
+      "AddPackage",
+      "isDir",
+      "is",
+      "MakeSea",
+      "moduleAliases",
+      "packagesPath",
+      "searchPath",
+      "MakeSearchPath"
+    ],
+    "highlight": true,
+    "in_selection": false,
+    "preserve_case": false,
+    "regex": true,
+    "replace_history": [
+      "\\1#",
+      "#",
+      "console.log",
+      "",
+      "search.aliases",
+      "search.packages",
+      "search.path",
+      "js_mat_data(ctx, argv",
+      "return js._undefined",
+      "(*s)->",
+      "JSCLAHEData",
+      "${CMAKE_SOURCE_DIR}/src/",
+      "CMAKE_CURRENT_SOURCE_DIR",
+      "${CMAKE_CURRENT_BINARY_DIR}/",
+      "function \\1(",
+      " \\1(",
+      "",
+      "y=\"2\"",
+      "text-anchor=\"middle\"",
+      "transform",
+      "y=\"2\"",
+      "",
+      "y=\"0\" x=\"-",
+      "font-family=\"Share-TechMono\" text-anchor=\"middle\"",
+      "(-90)",
+      "hare-TechMono\"",
+      " dominant-baseline=\"hanging\" transform=\"rotate(90)\"",
+      "hanging",
+      " x=\"0\"",
+      "",
+      "font-family=\"Share-TechMono\"",
+      "",
+      " H48\"",
+      "",
+      "fcntl",
+      "const ",
+      "'\\\\u\\1",
+      "'\\\\u0\\1",
+      "'\\\\u00\\1",
+      "'\\\\u00\\1;",
+      "'\\\\u",
+      "dumpFile",
+      "",
+      "log",
+      "\\n",
+      "",
+      "// ",
+      "inspectSymbol",
+      "get_property",
+      "set_property(obj, ",
+      "point2i_type",
+      "",
+      "create_trackbar",
+      "high_resolution_clock",
+      "",
+      "createTrackbar",
+      " ",
+      ", .def_type = JS_DEF_",
+      ", .magic = 0,",
+      ".prop_flags = ",
+      "js_array_iterator",
+      "`",
+      " cv::String",
+      "cv::QT_RADIOBOX",
+      "(cv::Range",
+      "cv::ximgproc::dtFilter",
+      "cv::COLOR_",
+      " cv::Range",
+      "",
+      " cv::Mat",
+      ".component",
+      "window.component",
+      "console",
+      "for(let",
+      "let s = ",
+      "let \\1;",
+      "\\n\\n",
+      "",
+      "console.reallog",
+      "if",
+      "} else if(",
+      "",
+      "multiplySelf",
+      "deg2rad",
+      "//",
+      "\\1//\\2",
+      "\\1//console.",
+      "LocalStore",
+      "const ",
+      "\"",
+      "let ",
+      " ",
+      "defs",
+      "case '\\1': return `${part.code} ",
+      "`;",
+      "/",
+      "export const",
+      " CONFIG_BIGNUM CONFIG_CHECK_JSVALUE ",
+      "s->vec\\[\\1\\]",
+      "s->vec[\\1]",
+      " line.",
+      " this.send(",
+      "send(",
+      "bytes",
+      "await client.send",
+      "Port.prototype",
+      "#",
+      "minnet",
+      "LIBWEBSOCKETS",
+      "PI",
+      "\\\\n",
+      "log(\\1",
+      "console.log",
+      "",
+      " *",
+      "ElementGeometries",
+      "elementGeometries",
+      "function \\1",
+      "Encode",
+      "ArrayBufferToString",
+      "StringToArrayBuffer",
+      "close",
+      "destroy",
+      "filesystem.",
+      "close",
+      "open",
+      "close",
+      "open"
+    ],
+    "reverse": false,
+    "show_context": true,
+    "use_buffer2": true,
+    "whole_word": false,
+    "wrap": true
+  },
+  "groups": [
+    {
+      "selected": 0,
+      "sheets": [
+        {
+          "buffer": 0,
+          "semi_transient": false,
+          "settings": {
+            "buffer_size": 374,
+            "regions": {},
+            "selection": [],
+            "settings": {
+              "color_scheme": "Packages/Outline/outline.hidden-tmTheme",
+              "current_file": "/home/roman/Sources/plot-cv/dump-ast.js",
+              "function_name_status_row": 5,
+              "outline_rename_mode": false,
+              "symkeys": [
+                [765, 795],
+                [1003, 1011],
+                [1072, 1079],
+                [1122, 1151],
+                [1316, 1332],
+                [1430, 1438],
+                [1764, 1775],
+                [1940, 1949],
+                [2092, 2110],
+                [2197, 2207],
+                [2269, 2351],
+                [3268, 3293],
+                [3409, 3437],
+                [3577, 3619],
+                [3818, 3844],
+                [4096, 4109],
+                [4155, 4172],
+                [4328, 4343],
+                [4553, 4583],
+                [5261, 5305],
+                [5986, 6014],
+                [6286, 6291],
+                [6509, 6529]
+              ],
+              "symlist": [
+                "WriteFile",
+                "Location",
+                "  file =>",
+                "  constructor(file, begin, end)",
+                "  static from(obj)",
+                "Location",
+                "  get token()",
+                "  valueOf()",
+                "  static equal(a, b)",
+                "  toString()",
+                "NodeToString",
+                "  function* GetRanges(tree)",
+                "  function* GetLocations(tree)",
+                "  function* GetNodes(tree, pred",
+                "GetLocation",
+                "  contains(arg)",
+                "  startsWith(other)",
+                "  endsWith(other)",
+                "DumpAst",
+                "  processCallExpr",
+                "  main",
+                "  cp =>",
+                "  generateFlat"
+              ],
+              "syntax": "Packages/Outline/outline.hidden-tmLanguage"
+            },
+            "translation.x": 0.0,
+            "translation.y": 0.0,
+            "zoom_level": 1.0
+          },
+          "stack_index": 6,
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "selected": 0,
+      "sheets": [
+        {
+          "buffer": 1,
+          "file": "dump-ast.js",
+          "semi_transient": false,
+          "settings": {
+            "buffer_size": 10118,
+            "regions": {},
+            "selection": [[8456, 8456]],
+            "settings": {
+              "function_name_status_row": 243,
+              "syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+              "tab_size": 2,
+              "translate_tabs_to_spaces": true
+            },
+            "translation.x": 0.0,
+            "translation.y": 4568.0,
+            "zoom_level": 1.0
+          },
+          "stack_index": 0,
+          "type": "text"
+        },
+        {
+          "buffer": 2,
+          "file": "lib/path.js",
+          "semi_transient": false,
+          "settings": {
+            "buffer_size": 15941,
+            "regions": {},
+            "selection": [[3974, 3974]],
+            "settings": {
+              "function_name_status_row": 118,
+              "syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+              "tab_size": 2,
+              "translate_tabs_to_spaces": true
+            },
+            "translation.x": 0.0,
+            "translation.y": 1740.0,
+            "zoom_level": 1.0
+          },
+          "stack_index": 1,
+          "type": "text"
+        },
+        {
+          "buffer": 3,
+          "file": "lib/deep.js",
+          "semi_transient": false,
+          "settings": {
+            "buffer_size": 5710,
+            "regions": {},
+            "selection": [[5557, 5557]],
+            "settings": {
+              "function_name_status_row": 212,
+              "syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+              "tab_size": 2,
+              "translate_tabs_to_spaces": true
+            },
+            "translation.x": 0.0,
+            "translation.y": 3800.0,
+            "zoom_level": 1.0
+          },
+          "stack_index": 3,
+          "type": "text"
+        },
+        {
+          "buffer": 4,
+          "file": "lib/objectInspect.js",
+          "semi_transient": false,
+          "settings": {
+            "buffer_size": 14296,
+            "regions": {},
+            "selection": [[13145, 13145]],
+            "settings": {
+              "function_name_status_row": 469,
+              "syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+              "tab_size": 2,
+              "translate_tabs_to_spaces": true
+            },
+            "translation.x": 0.0,
+            "translation.y": 9462.0,
+            "zoom_level": 1.0
+          },
+          "stack_index": 4,
+          "type": "text"
+        },
+        {
+          "buffer": 5,
+          "semi_transient": false,
+          "settings": {
+            "buffer_size": 539,
+            "regions": {
+              "match": {
+                "flags": 112,
+                "regions": [
+                  [189, 203],
+                  [362, 376]
+                ],
+                "scope": ""
+              }
+            },
+            "selection": [[356, 356]],
+            "settings": {
+              "detect_indentation": false,
+              "function_name_status_row": 11,
+              "line_numbers": false,
+              "output_tag": 1,
+              "result_base_dir": "",
+              "result_file_regex": "^([^ \t].*):$",
+              "result_line_regex": "^ +([0-9]+):",
+              "scroll_past_end": true,
+              "syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+            },
+            "translation.x": 0.0,
+            "translation.y": 0.0,
+            "zoom_level": 1.0
+          },
+          "stack_index": 5,
+          "type": "text"
+        },
+        {
+          "buffer": 6,
+          "file": "lib/filesystem.js",
+          "semi_transient": false,
+          "settings": {
+            "buffer_size": 24094,
+            "regions": {},
+            "selection": [[6293, 6293]],
+            "settings": {
+              "function_name_status_row": 232,
+              "syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+              "tab_size": 2,
+              "translate_tabs_to_spaces": true
+            },
+            "translation.x": 0.0,
+            "translation.y": 4327.0,
+            "zoom_level": 1.0
+          },
+          "stack_index": 2,
+          "type": "text"
+        }
+      ]
+    }
+  ],
+  "incremental_find": {
+    "height": 30.0
+  },
+  "input": {
+    "height": 95.0
+  },
+  "layout": {
+    "cells": [
+      [2, 0, 3, 2],
+      [0, 0, 2, 2]
+    ],
+    "cols": [0.0, 0.2, 0.8, 1.0],
+    "rows": [0.0, 0.5, 1.0]
+  },
+  "menu_visible": true,
+  "output.Debugger": {
+    "height": 145.0
+  },
+  "output.YAMLMacros": {
+    "height": 169.0
+  },
+  "output.exec": {
+    "height": 121.0
+  },
+  "output.find_results": {
+    "height": 0.0
+  },
+  "pinned_build_system": "Rebuild CTags",
+  "project": "plot-cv.sublime-project",
+  "replace": {
+    "height": 71.0
+  },
+  "save_all_on_build": true,
+  "select_file": {
+    "height": 0.0,
+    "last_filter": "",
+    "selected_items": [
+      ["filesys", "lib/filesystem.js"],
+      ["path.js", "lib/path.js"],
+      ["deep", "lib/deep.js"],
+      ["objectIn", "lib/objectInspect.js"],
+      ["dump", "dump-ast.js"],
+      ["test-open", "test-opencv.js"],
+      ["test", "test-childprocess.js"],
+      ["opencv/CMa", "opencv/CMakeLists.txt"],
+      ["test-opencv", "test-opencv.js"],
+      ["js_draw", "src/js_draw.cpp"],
+      ["cmake", "CMakeLists.txt"],
+      ["js-bin", "js-bindings.cmake"],
+      ["opencv/CM", "opencv/CMakeLists.txt"],
+      ["quickjs.h", "quickjs/quickjs.h"],
+      ["decompo", "opencv/decompose_homography.cpp"],
+      ["seeds", "opencv/seeds.cpp"],
+      ["js_mat", "src/js_mat.cpp"],
+      ["js_cv", "src/js_cv.cpp"],
+      ["path.", "lib/json/path.js"],
+      ["util.js", "lib/util.js"],
+      ["deep.js", "lib/deep.js"],
+      ["estree", "lib/ecmascript/estree.js"],
+      ["childPr", "lib/childProcess.js"],
+      ["lexer", "lib/ecmascript/lexer.js"],
+      ["parser.js", "lib/ecmascript/parser.js"],
+      ["utils.js", "lib/stream/utils.js"],
+      ["list-export", "list-exports.js"],
+      ["utils.", "lib/stream/utils.js"],
+      ["test-file", "test-filesystem.js"],
+      ["resolve-im", "resolve-imports.js"],
+      ["deps.js", "read-deps.js"],
+      ["ccache", "ccache.cmake"],
+      ["lib/cmakelists", "quickjs/net/libwebsockets/lib/CMakeLists.txt"],
+      ["plot-cv.h", "src/plot-cv.h"],
+      ["plot-cv.cpp", "src/plot-cv.cpp"],
+      ["child", "lib/childProcess.js"],
+      ["test-read", "test-readdir.js"],
+      ["filesyste", "lib/filesystem.js"],
+      ["read-de", "read-deps.js"],
+      ["jsbind", "src/jsbindings.h"],
+      ["js_ma", "src/js_mat.cpp"],
+      ["quickjs.c", "quickjs/quickjs.c"],
+      ["eagle-q", "eagle-query.js"],
+      ["compo", "components.js"],
+      ["server", "server.js"],
+      ["eagle", "lib/eagle.js"],
+      ["main", "main.js"],
+      ["line.", "lib/geom/line.js"],
+      ["boardre", "lib/eagle/boardRenderer.js"],
+      ["eagle-qu", "eagle-query.js"],
+      ["r-co", "r-colors.svg"],
+      ["httptest.c", "quickjs/net.old/libwebsockets/minimal-examples/http-client/minimal-http-client-post/minimal-http-client-post.c"],
+      ["console", "lib/consoleSetup.js"],
+      ["ast", "dump-ast.js"],
+      ["utils", "lib/stream/utils.js"],
+      ["filesystem", "lib/filesystem.js"],
+      ["tuto", "opencv/tutorial_multitracker.cpp"],
+      ["opencv", "opencv/OpenCVWebcam.cpp"],
+      [".cmake", "js-bindings.cmake"],
+      ["", "quickjs/CMakeLists.txt"],
+      ["cmakelists.txt", "quickjs/net/CMakeLists.txt"],
+      ["list-proxies", "list-proxies.js"],
+      ["cfg", "cfg.sh"],
+      ["preact.js", "lib/preact.js"],
+      ["test-cp", "test-cparse.js"],
+      ["childP", "lib/childProcess.js"],
+      ["resol", "resolve-imports.js"],
+      ["test-chil", "test-childprocess.js"],
+      ["test-cpa", "test-cparse.js"],
+      ["Console", "lib/consoleSetup.js"],
+      ["consoleSetup", "lib/consoleSetup.js"],
+      ["cpp.js", "lib/cpp.js"],
+      ["resolve", "resolve-imports.js"],
+      ["cparse", "lib/cparse.js"],
+      ["Util.js", "lib/util.js"],
+      ["forward", "lib/preact/forwardRef.js"],
+      ["renderU", "lib/eagle/renderUtils.js"],
+      ["render-to-str", "lib/preact-render-to-string.js"],
+      ["element", "lib/dom/element.js"],
+      ["rulerVP", "static/ruler/rulerVPattern.svg"],
+      ["rulerVPa", "rulerVPattern.svg"],
+      ["commands", "commands.js"],
+      ["main.js", "main.js"],
+      ["util.", "lib/util.js"],
+      ["path", "lib/svg/path.js"],
+      ["test-", "test-cli.js"],
+      ["blackbody", "blackbody.js"],
+      ["cmakeli", "quickjs/CMakeLists.txt"],
+      ["cmakelists", "CMakeLists.txt"],
+      ["high", "src/highgui-viewer.cpp"],
+      ["highg", "src/highgui-viewer.cpp"],
+      ["highgu", "highgui-viewer.cmake"],
+      ["ruler-", "ruler-draggable.js"],
+      ["rulerver", "static/ruler/rulerVertical.svg"],
+      ["ruler.css", "static/ruler.css"],
+      ["dra", "ruler-draggable.js"],
+      ["preact.mj", "lib/preact.mjs"],
+      ["compon", "components.js"],
+      ["rulerVer", "static/ruler/rulerVertical.svg"],
+      ["ruler-dra", "ruler-draggable.js"],
+      ["vertical", "static/ruler/rulerVertical.svg"],
+      ["rulerHor", "static/ruler/rulerHorizontal.svg"],
+      ["rulerVe", "static/ruler/rulerVertical.svg"],
+      ["ruler.svg", "static/ruler/ruler.svg"],
+      ["cursor.svg", "static/ruler/cursor.svg"],
+      ["ursor", "cursor.js"],
+      ["cursor", "cursor.js"],
+      ["dragga", "ruler-draggable.js"],
+      ["cursor.js", "cursor.js"],
+      ["main.j", "main.js"],
+      ["tmp-", "tmp-ruler.js"],
+      ["print", "lib/ecmascript/printer.js"],
+      ["test-parset", "test-parsetmpl.js"],
+      ["util", "lib/util.js"],
+      ["forwa", "lib/preact/forwardRef.js"],
+      ["minnet.h", "quickjs/net/minnet.h"],
+      ["test-ren", "test-renderer.js"],
+      ["cmakelist", "quickjs/net/CMakeLists.txt"],
+      ["test-minn", "test-minnet.js"],
+      ["quickjs-libc.c", "quickjs/quickjs-libc.c"],
+      ["test-deb", "test-debug.js"],
+      ["test-debug", "test-debug.js"],
+      ["test-de", "test-debug.js"],
+      ["debugger", "quickjs/quickjs-debugger.c"],
+      ["test-stack", "test-stack.js"],
+      ["test-rend", "test-renderer.js"],
+      ["style.cs", "style.css"],
+      ["test-render", "test-renderer.js"]
+    ],
+    "width": 0.0
+  },
+  "select_project": {
+    "height": 0.0,
+    "last_filter": "",
+    "selected_items": [],
+    "width": 0.0
+  },
+  "select_symbol": {
+    "height": 392.0,
+    "last_filter": "",
+    "selected_items": [],
+    "width": 1050.0
+  },
+  "selected_group": 1,
+  "settings": {},
+  "show_minimap": true,
+  "show_open_files": false,
+  "show_tabs": true,
+  "side_bar_visible": true,
+  "side_bar_width": 352.0,
+  "status_bar_visible": true,
+  "template_settings": {}
 }

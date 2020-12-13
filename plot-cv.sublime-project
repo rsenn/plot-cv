@@ -80,7 +80,7 @@
         "*.eslintignore",
         "*.?#?"
       ],
-      "folder_exclude_patterns": [".*", "build", "inst", "htm", "*/htm/*","npm", ".next", "*.next/*", "quickjs-*", "tmp", "data"]
+      "folder_exclude_patterns": [".*", "build", "inst", "htm", "*/htm/*", "npm", ".next", "*.next/*", "quickjs-*", "tmp", "data"]
     }
   ],
   "build_systems": [
@@ -110,6 +110,16 @@
       "name": "prettier",
       "working_dir": "${project_path:${folder:${file_path}}}",
       "shell_cmd": "yarn run format"
+    },
+    {
+      "name": "CMake",
+      "working_dir": "${project_path}",
+      "shell_cmd": ". ./cfg.sh; TYPE=Debug cfg"
+    },
+    {
+      "name": "make",
+      "working_dir": "${project_path}",
+      "shell_cmd": "make -C build/`gcc -dumpmachine`"
     },
     {
       "shell_cmd": "(set -x; {  ARG='${file}'; NAME=\\${ARG##*/}; NAME=\\${NAME%.g4}; DIR=\\$(echo \"\\$NAME\" |  tr '[[:upper:]]' '[[:lower:]]'); DIR=\\${DIR%parser*}; DIR=\\${DIR%lexer*}; mkdir -p lib/antlr/\\$DIR; java -Xmx500M -cp '/usr/local/lib/antlr-4.8-complete.jar:$CLASSPATH' org.antlr.v4.Tool  -Dlanguage=JavaScript -lib lib/grammars -o lib/antlr/\\$DIR -visitor -Xexact-output-dir \\${ARG:-lib/grammars/C.g4}; } 0<>1 || echo failed) 2>&1",
