@@ -29,8 +29,8 @@ async function main(...args) {
 
     let obj = Object.assign(Object.create(null), {
       null: null,
-      '0': 0,
-      '1': 1,
+      0: 0,
+      1: 1,
       false: false,
       true: true
     });

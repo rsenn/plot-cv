@@ -257,10 +257,7 @@ async function main(...args) {
         node2path.set(node, path);
         nodeKeys.push(path);
       }
-      let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
-          pos * 10 - 1,
-          { comment, pos, len, node: posMap.keyOf(node) }
-        ]),
+      let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node: posMap.keyOf(node) }]),
         (a, b) => a - b
       );
 

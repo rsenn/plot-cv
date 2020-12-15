@@ -139,6 +139,8 @@ struct jsrt {
 
   std::string to_str(const_value val);
 
+  template<class T> T to(const_value val);
+
   const_value prototype(const_value obj) const;
 
   void property_names(const_value obj, std::vector<const char*>& out, bool enum_only = false, bool recursive = false) const;
@@ -856,5 +858,11 @@ jsrt::is_iterator(const_value val) const {
 }
 
 extern "C" jsrt js;
+
+template<>
+inline std::string
+jsrt::to<std::string>(jsrt::const_value val) {
+  return jsrt::to_string(val);
+}
 
 #endif // defined JS_H

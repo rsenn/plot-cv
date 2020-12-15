@@ -73,7 +73,5 @@ function MakeArray(buf, numBytes) {
 
 function ArrayBufToHex(buf, numBytes = 8) {
   let arr = MakeArray(buf, numBytes);
-  return arr.reduce((s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
-    ''
-  );
+  return arr.reduce((s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)), '');
 }

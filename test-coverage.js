@@ -53,9 +53,7 @@ function processFile(arg, re) {
   re = typeof re == 'string' ? new RegExp(re) : /.*/;
   //if(!(json instanceof Array)) return 1;
 
-  let scripts = json
-    .map(({ url, ...item }) => [url.replace(/.*:\/\/[^/]*\//g, ''), item])
-    .filter(([file]) => re.test(file));
+  let scripts = json.map(({ url, ...item }) => [url.replace(/.*:\/\/[^/]*\//g, ''), item]).filter(([file]) => re.test(file));
 
   for(let [file, obj] of scripts) {
     let { ranges, text } = obj;

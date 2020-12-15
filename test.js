@@ -240,14 +240,7 @@ let ctor = Point.prototype.constructor;
 /*console.log("Point.prototype: ", Point.prototype);
 //console.log("Point.prototype.constructor: ", Point.prototype.constructor);
 */
-let points = [
-  new Point(0, 0),
-  new Point(50, 0),
-  new Point(100, 0),
-  new Point(100, 50),
-  new Point(100, 100),
-  new Point(100, 200)
-];
+let points = [new Point(0, 0), new Point(50, 0), new Point(100, 0), new Point(100, 50), new Point(100, 100), new Point(100, 200)];
 //console.log('points[0]: ', points[0]);
 //console.log('points[last]: ', points[points.length - 1]);
 //console.log('points: ', points.map(p => `{x:${p.x},y:${p.y}}`).join(', '));

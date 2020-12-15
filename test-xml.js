@@ -94,16 +94,10 @@ async function main(...args) {
     newObj = deep.clone(xml[0]);
     let flat = deep.flatten(xml[0],
       new Map(),
-      (v, p) =>
-        (typeof v != 'object' && p.indexOf('attributes') == -1) ||
-        (p.length && p.indexOf('attributes') == p.length - 1),
+      (v, p) => (typeof v != 'object' && p.indexOf('attributes') == -1) || (p.length && p.indexOf('attributes') == p.length - 1),
       (p, v) => [new Path(p), v]
     );
-    colors = new Map([...Iterator.filter(flat, ([path, value]) => /^#[0-9A-Fa-f]*$/.test(value))].map(([path, value]) => [
-        path,
-        new RGBA(value)
-      ])
-    );
+    colors = new Map([...Iterator.filter(flat, ([path, value]) => /^#[0-9A-Fa-f]*$/.test(value))].map(([path, value]) => [path, new RGBA(value)]));
     let it = new IteratorForwarder(colors.entries());
     let paths = Iterator.map(colors, ([path, value]) => [XPath.from(path, xml[0]), deep.get(xml[0], path), path]);
     let o = it.map(([path, value]) => {
@@ -118,9 +112,7 @@ async function main(...args) {
           let value = deep.get(xml[0], p);
           const children = Util.isObject(value) && value.children ? value.children : [];
           const text = typeof children[0] == 'string' ? children[0] : '';
-          if(['Next', 'settings', 'scope', 'name', 'gutter'].indexOf(text) != -1 ||
-            /* text.startsWith('#') ||*/ typeof children[0] != 'string'
-          ) {
+          if(['Next', 'settings', 'scope', 'name', 'gutter'].indexOf(text) != -1 || /* text.startsWith('#') ||*/ typeof children[0] != 'string') {
             skip();
           }
           if(text.startsWith('#')) {
@@ -166,23 +158,14 @@ async function main(...args) {
       let r = [];
       for(i = 0; i < 10; i++) {
         const c = i < key.length ? key.charCodeAt(i) : 0;
-        const x =
-          c >= 0x30 && c <= 0x39
-            ? c - 0x30
-            : c >= 0x41 && c <= 0x5a
-            ? c - 0x41 + 10
-            : c >= 0x61 && c <= 0x7a
-            ? c - 0x61 + 36
-            : 0;
+        const x = c >= 0x30 && c <= 0x39 ? c - 0x30 : c >= 0x41 && c <= 0x5a ? c - 0x41 + 10 : c >= 0x61 && c <= 0x7a ? c - 0x61 + 36 : 0;
         r.push(x);
       }
       return r;
     };
     //    console.log("colors:",colors);
 
-    const hash = key =>
-      ((a, b) => a / b)(...lexOrder(key).reduce((acc, c) => [acc[0] * (10 + 26 + 26) + c, acc[1] * (10 + 26 + 26)], [0, 1])
-      );
+    const hash = key => ((a, b) => a / b)(...lexOrder(key).reduce((acc, c) => [acc[0] * (10 + 26 + 26) + c, acc[1] * (10 + 26 + 26)], [0, 1]));
 
     console.log(`palette.getMinMax():`, palette.getMinMax());
     const mm = palette.getMinMax();
@@ -353,8 +336,7 @@ async function main(...args) {
           i++;
         }
 
-        const getHSLA = idx_or_hex =>
-          colors[typeof idx_or_hex == 'string' ? hex2idx[idx_or_hex] : idx_or_hex] || palette.get(idx2path[idx_or_hex]);
+        const getHSLA = idx_or_hex => colors[typeof idx_or_hex == 'string' ? hex2idx[idx_or_hex] : idx_or_hex] || palette.get(idx2path[idx_or_hex]);
         console.log('changed ', [...changed].join(', '));
         colors = [...palette.entries()].map(([path, color], idx) => color);
         /* prettier-ignore */ console.log('colors = ', Util.toString(colors.map((c) => [...c]), { multiline: false, colors: false }));
@@ -368,23 +350,14 @@ async function main(...args) {
         /* prettier-ignore */ let hues = Util.histogram(colors, (v, i) => [v.h, v], new Map(), () => new Set(), (v, i) => [v.h, i]);
         // console.log(`hues`, hues);
 
-        let hueIds = [...hues.entries()]
-          .map(([hue, colorCodes], idx) => [
-            +hue,
-            /* [...colorCodes].join(',') || */ colorCodes || new Set([...colorCodes].map(hex => getHSLA(hex)))
-          ])
-          .map(([hue, ids]) => [hue, [...ids] + '']);
+        let hueIds = [...hues.entries()].map(([hue, colorCodes], idx) => [+hue, /* [...colorCodes].join(',') || */ colorCodes || new Set([...colorCodes].map(hex => getHSLA(hex)))]).map(([hue, ids]) => [hue, [...ids] + '']);
         console.log(`hueIds`, hueIds);
 
-        let hueCounts = /*new Map*/ hueIds
-          .map(([hue, ids], i) => [i, [hue, ids.split(',').map(id => +id)]])
-          .map(([idx, [hue, ids]]) => [idx, ids.length]);
+        let hueCounts = /*new Map*/ hueIds.map(([hue, ids], i) => [i, [hue, ids.split(',').map(id => +id)]]).map(([idx, [hue, ids]]) => [idx, ids.length]);
 
         console.log(`hueCounts`, hueCounts);
 
-        let hueData = hueIds
-          .map(([hue, ids], idx) => [idx, hue, ids /*.split(',').map((v) => +v)*/])
-          .reduce((acc, [idx, hue, ids = getIds4Hue(hue)]) => [...acc, [idx, hue, ids.split(',').map(p => +p)]], []);
+        let hueData = hueIds.map(([hue, ids], idx) => [idx, hue, ids /*.split(',').map((v) => +v)*/]).reduce((acc, [idx, hue, ids = getIds4Hue(hue)]) => [...acc, [idx, hue, ids.split(',').map(p => +p)]], []);
         //console.log(`hueData`, hueData);
 
         //console.log(`zhistogram`, Util.histogram(colors, (c, i) => [c.h, i], new Map(), () => new Set(), i => [colors[i].h, i] ) ); //new Map(Object.entries(idx2hue).map(([idx,hue]) => [+idx,+hue])));
@@ -424,18 +397,11 @@ async function main(...args) {
               deep.set(newObj, path, newColor);
               let [fromColor, toColor] = [removedColor.hex(), newColor].map(c => new RGBA(c).toHSLA());
 
-              console.info(`changed #${i}`,
-                fromColor,
-                ` -> #${index} `,
-                toColor,
-                ` Δ ${Util.roundTo(distance, 0.1, 2)}`
-              );
+              console.info(`changed #${i}`, fromColor, ` -> #${index} `, toColor, ` Δ ${Util.roundTo(distance, 0.1, 2)}`);
               return removedColor;
             }
           });
-        let modifyIds = colors
-          .map((c, idx) => [idx2path[idx], c])
-          .map(([path, color]) => [path, color, new RGBA(deep.get(xml[0], path)).toHSLA()]);
+        let modifyIds = colors.map((c, idx) => [idx2path[idx], c]).map(([path, color]) => [path, color, new RGBA(deep.get(xml[0], path)).toHSLA()]);
       }
     };
     let prevPalette = new Map(palette.entries());
@@ -449,9 +415,7 @@ async function main(...args) {
     );
 
     cmds.forEach(cmd => {
-      cmd = cmd.map(p =>
-        /^.?time?$/i.test(p) ? +mtime : /^now$/i.test(p) ? Date.now() : /^p?r?a?n[dg]o?m?$/i.test(p) ? prng.uint32() : p
-      );
+      cmd = cmd.map(p => (/^.?time?$/i.test(p) ? +mtime : /^now$/i.test(p) ? Date.now() : /^p?r?a?n[dg]o?m?$/i.test(p) ? prng.uint32() : p));
       console.log('Command ', cmd);
       //  Util.putStack();
       let ret = handlers[cmd[0]](...cmd.slice(1));

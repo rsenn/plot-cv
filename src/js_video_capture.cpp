@@ -9,12 +9,16 @@
 JSClassID js_video_capture_class_id;
 JSValue video_capture_proto = JS_UNDEFINED, video_capture_class = JS_UNDEFINED;
 
+static inline int
+is_numeric(const std::string& s) {
+  return std::all_of(s.begin(), s.end(), [](unsigned char c) { return std::isdigit(c); });
+}
+
 static JSValue
 js_video_capture_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   JSVideoCaptureData* s;
   JSValue obj = JS_UNDEFINED;
   JSValue proto, ret;
-  int32_t camID, apiPreference = cv::CAP_ANY;
 
   s = static_cast<JSVideoCaptureData*>(js_mallocz(ctx, sizeof(JSVideoCaptureData)));
   if(!s)
@@ -22,12 +26,25 @@ js_video_capture_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValue
 
   new(s) JSVideoCaptureData();
 
-  if(!JS_ToInt32(ctx, &camID, argv[0])) {
+  if(argc > 0) {
+    int32_t camID, apiPreference = cv::CAP_ANY;
+    cv::String filename;
+
     if(argc > 1)
       if(JS_ToInt32(ctx, &apiPreference, argv[1]))
         apiPreference = cv::CAP_ANY;
 
-    s->open(camID, apiPreference);
+    // if(JS_ToInt32(ctx, &camID, argv[0]))
+    filename = JS_ToCString(ctx, argv[0]);
+
+    if(is_numeric(filename))
+      JS_ToInt32(ctx, &camID, argv[0]);
+
+    if(filename.empty()) {
+      s->open(camID, apiPreference);
+    } else {
+      s->open(filename, apiPreference);
+    }
   }
 
   /* using new_target to get the prototype is necessary when the
@@ -67,20 +84,21 @@ static JSValue
 js_video_capture_method(JSContext* ctx, JSValueConst video_capture, int argc, JSValueConst* argv, int magic) {
   JSVideoCaptureData* s = static_cast<JSVideoCaptureData*>(JS_GetOpaque2(ctx, video_capture, js_video_capture_class_id));
   JSValue ret = JS_UNDEFINED;
+  int32_t propID;
+  double value = 0;
 
   if(magic == 0) {
-    int32_t propID;
-    double value = 0;
-    if(!JS_ToInt32(ctx, &propID, argv[0]))
-      ret = JS_NewFloat64(ctx, s->get(propID));
-    else
+    if(!JS_ToInt32(ctx, &propID, argv[0])) {
+      value = s->get(propID);
+      ret = JS_NewFloat64(ctx, value);
+    } else {
       ret = JS_EXCEPTION;
+    }
   }
   if(magic == 1) {
-    int32_t propID;
-    double value = 0;
     if(!JS_ToInt32(ctx, &propID, argv[0])) {
       JS_ToFloat64(ctx, &value, argv[1]);
+
       s->set(propID, value);
     } else
       ret = JS_EXCEPTION;
@@ -137,13 +155,6 @@ JSClassDef js_video_capture_class = {
 };
 
 const JSCFunctionListEntry js_video_capture_proto_funcs[] = {
-    /*JS_CGETSET_ENUMERABLE_DEF("x", js_video_capture_get_xywh, js_video_capture_set_xywh, 0),
-    JS_CGETSET_ENUMERABLE_DEF("y", js_video_capture_get_xywh, js_video_capture_set_xywh, 1),
-    JS_CGETSET_ENUMERABLE_DEF("width", js_video_capture_get_xywh, js_video_capture_set_xywh, 2),
-    JS_CGETSET_ENUMERABLE_DEF("height", js_video_capture_get_xywh, js_video_capture_set_xywh, 3),
-    JS_CGETSET_MAGIC_DEF("x2", js_video_capture_get_xywh, js_video_capture_set_xywh, 4),
-    JS_CGETSET_MAGIC_DEF("y2", js_video_capture_get_xywh, js_video_capture_set_xywh, 5),
-*/
     JS_CFUNC_MAGIC_DEF("get", 1, js_video_capture_method, 0),
     JS_CFUNC_MAGIC_DEF("set", 2, js_video_capture_method, 1),
     JS_CFUNC_MAGIC_DEF("getBackendName", 0, js_video_capture_method, 2),

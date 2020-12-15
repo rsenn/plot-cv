@@ -408,6 +408,24 @@ public:
     return n;
   }
 
+  static JSValue
+  from_vector(JSContext* ctx, const std::vector<T>& in) {
+    return from_sequence(ctx, in.cbegin(), in.cend());
+  }
+
+  template<class Iterator>
+  static JSValue
+  from_sequence(JSContext* ctx, const Iterator& start, const Iterator& end) {
+    JSValue arr = JS_NewArray(ctx);
+    size_t i = 0;
+    for(Iterator it = start; it != end; ++it) {
+      JSValue item = JS_NewFloat64(ctx, *it);
+      JS_SetPropertyUint32(ctx, arr, i, item);
+      ++i;
+    }
+    return arr;
+  }
+
   template<size_t N> static int64_t to_array(JSContext* ctx, JSValueConst arr, std::array<T, N>& out);
   static int64_t to_scalar(JSContext* ctx, JSValueConst arr, cv::Scalar_<T>& out);
 };
@@ -536,5 +554,30 @@ inline int64_t
 js_array_to_scalar(JSContext* ctx, JSValueConst arr, cv::Scalar_<T>& out) {
   return js_array<T>::to_scalar(ctx, arr, out);
 }
+
+template<class Iterator>
+inline JSValue
+js_array_from(JSContext* ctx, const Iterator& start, const Iterator& end) {
+  return js_array<typename Iterator::value_type>::from_sequence(ctx, start, end);
+}
+
+template<class Container>
+inline JSValue
+js_array_from(JSContext* ctx, const Container& v) {
+  return js_array<typename Container::value_type>::from_sequence(ctx, v.cbegin(), v.cend());
+}
+
+class js_object {
+public:
+  template<class T>
+  static int64_t
+  to_map(JSContext* ctx, JSValueConst obj, std::map<std::string, T>& out) {
+    jsrt js(ctx);
+    auto names = js.property_names(obj);
+
+    for(auto name : names) {
+    }
+  }
+};
 
 #endif
