@@ -1082,7 +1082,7 @@ js_init(int argc, char* argv[]) {
 
   js.init(argc, argv);
 
-  JSValue* fn = js.get_function("drawContour");
+  //  JSValue* fn = js.get_function("drawContour");
   JSValue global_obj = js.global_object();
 
   /*  js_point_constructor(js.ctx, js.global_object(), nullptr);

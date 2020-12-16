@@ -86,7 +86,6 @@ private:
   }
 
   JSAtom _a;
-  /* JSContext* _ctx;*/
 };
 
 struct jsrt {
@@ -94,13 +93,13 @@ struct jsrt {
   typedef JSValueConst const_value;
   typedef JSAtom atom;
 
-  value _true, _false, _null, _undefined;
+  static value _true, _false, _null, _undefined;
 
   bool init(int argc, char* argv[]);
   bool create(JSContext* ctx = 0);
 
-  jsrt() : global(*this) {}
-  jsrt(JSContext* c) : global(*this), ctx(c), rt(JS_GetRuntime(c)) {}
+  jsrt() {}
+  jsrt(JSContext* c) : ctx(JS_DupContext(c)) {}
   ~jsrt();
 
   value
@@ -113,7 +112,7 @@ struct jsrt {
   value eval_buf(const char* buf, int buf_len, const char* filename, int eval_flags);
   value eval_file(const char* filename, int module = -1);
 
-  value add_function(const char* name, JSCFunction* fn, int args = 0);
+  // value add_function(const char* name, JSCFunction* fn, int args = 0);
 
   template<class T> void get_number(const_value val, T& ref) const;
   void get_string(const_value val, std::string& str) const;
@@ -143,14 +142,10 @@ struct jsrt {
   template<class T> value create_point(T x, T y);
 
   template<class T>
-  value // typename std::enable_if< std::is_integral<T>::value, value >::type
+  value
   get_property(const_value obj, T prop) const {
     throw std::runtime_error("template specialization");
-    // return get_undefined();
   }
-  /*value get_property(const_value obj, uint32_t) const;
-  value get_property(const_value obj,const std::string&) const;
-  value get_property(const_value obj, const_value) const;*/
 
   value get_property_atom(const_value obj, atom) const;
   value get_property_symbol(const_value obj, const char* symbol);
@@ -226,25 +221,19 @@ struct jsrt {
 
   const_value
   global_object() const {
-    global.get();
-    return global;
+    value globalThis = JS_GetGlobalObject(ctx);
+    return globalThis;
   }
   value
   global_object() {
-    global.get();
-    return global;
+    value globalThis = JS_GetGlobalObject(ctx);
+    return globalThis;
   }
 
   value call(const_value func, size_t argc, value argv[]) const;
   value call(const_value func, std::vector<value>& args) const;
   value call(const char* name, size_t argc, value argv[]) const;
   value call(const_value func, const_value this_arg, size_t argc, value argv[]) const;
-
-  /*  value call(const_value func, size_t argc, const_value argv[]) {
-      return call(func, argc, const_cast<value*>(argv));
-    }*/
-
-  value* get_function(const char* name);
 
   std::string to_str(const_value val);
 
@@ -348,28 +337,6 @@ struct jsrt {
   }
 
 protected:
-  struct global {
-    global(jsrt& js);
-    global(global&& o) noexcept;
-    ~global();
-
-    operator const_value() const {
-      get();
-      return val;
-    }
-    operator value() {
-      get();
-      return val;
-    }
-
-  private:
-    friend class jsrt;
-    bool get() const;
-
-    mutable value val;
-    jsrt& js;
-  } global;
-
   value get_undefined() const;
   value get_null() const;
   value get_true() const;
@@ -379,9 +346,10 @@ public:
   JSContext* ctx;
 
 private:
-  JSRuntime* rt;
-
-  std::unordered_map<const char*, std::pair<JSCFunction*, value>> funcmap;
+  JSRuntime*
+  get_runtime() const {
+    return JS_GetRuntime(ctx);
+  }
 
 public:
   int32_t get_length(const const_value& v) const;
@@ -619,20 +587,18 @@ inline jsrt::value
 jsrt::get_property<const std::string&>(const_value obj, const std::string& name) const {
   return JS_GetPropertyStr(ctx, obj, name.c_str());
 }
+
 template<>
 inline jsrt::value
 jsrt::get_property<const char*>(const_value obj, const char* name) const {
   return JS_GetPropertyStr(ctx, obj, name);
 }
+
 inline jsrt::value
 jsrt::get_property_atom(const_value obj, atom a) const {
   return JS_GetProperty(ctx, obj, a);
 }
-/*template<>
-inline jsrt::value
-jsrt::get_property<jsrt::const_value>(const_value obj, const_value prop) const {
-  return get_property_atom(obj, value_to_atom(prop));
-}*/
+
 template<>
 inline jsrt::value
 jsrt::get_property<jsrt::value>(const_value obj, value prop) const {
@@ -756,24 +722,7 @@ inline std::string
 to_string(const char* s) {
   return std::string(s);
 }
-/*
-template<>
-inline bool
-jsrt::has_property<const char*>(const_value obj, const char* name) const {
-  JSAtom atom = JS_NewAtom(ctx, name);
-  bool present = !!JS_HasProperty(ctx, obj, atom);
-  JS_FreeAtom(ctx, atom);
-  return present;
-}
 
-template<>
-inline bool
-jsrt::has_property<uint32_t>(const_value obj, uint32_t index) const {
-  JSAtom atom = JS_NewAtomUInt32(ctx, index);
-  bool present = !!JS_HasProperty(ctx, obj, atom);
-  JS_FreeAtom(ctx, atom);
-  return present;
-}*/
 inline bool
 jsrt::is_number(const_value val) const {
   return JS_IsNumber(val);

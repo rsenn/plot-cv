@@ -66,12 +66,18 @@ js_point_cross(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
 static JSValue
 js_point_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   double x, y;
+  JSPointData point;
 
-  if(JS_ToFloat64(ctx, &x, argv[0]))
-    return JS_EXCEPTION;
-  if(JS_ToFloat64(ctx, &y, argv[1]))
-    return JS_EXCEPTION;
-
+  if(js_point_read(ctx, argv[0], &point)) {
+    x = point.x;
+    y = point.y;
+  } else {
+    if(JS_ToFloat64(ctx, &x, argv[0]))
+      return JS_EXCEPTION;
+    if(JS_ToFloat64(ctx, &y, argv[1]))
+      return JS_EXCEPTION;
+  }
+  
   return js_point_new(ctx, x, y);
 }
 

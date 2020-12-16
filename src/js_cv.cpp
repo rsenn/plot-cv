@@ -1545,9 +1545,7 @@ join(const Iterator& start, const Iterator& end, const std::string& delim) {
 
 std::string
 js_prop_flags(int flags) {
-
   std::vector<const char*> names;
-
   if(flags & JS_PROP_CONFIGURABLE)
     names.push_back("CONFIGURABLE");
   if(flags & JS_PROP_WRITABLE)
@@ -1562,7 +1560,6 @@ js_prop_flags(int flags) {
     names.push_back("VARREF");
   if(flags & JS_PROP_AUTOINIT)
     names.push_back("AUTOINIT");
-
   return join(names.cbegin(), names.cend(), "|");
 }
 
@@ -1570,8 +1567,7 @@ template<class Stream>
 Stream&
 operator<<(Stream& s, const JSCFunctionListEntry& entry) {
   std::string name(entry.name);
-
-  s << /*"name: " <<*/ name << std::setw(30 - name.size()) << ' ';
+  s << name << std::setw(30 - name.size()) << ' ';
   s << "type = "
     << (std::vector<const char*>{"CFUNC",
                                  "CGETSET",
@@ -1584,7 +1580,6 @@ operator<<(Stream& s, const JSCFunctionListEntry& entry) {
                                  "OBJECT",
                                  "ALIAS"})[entry.def_type]
     << ", ";
-
   switch(entry.def_type) {
     case JS_DEF_CGETSET_MAGIC: s << "magic = " << (unsigned int)entry.magic << ", "; break;
     case JS_DEF_PROP_INT32: s << "value = " << std::setw(9) << entry.u.i32 << ", "; break;
@@ -1596,7 +1591,6 @@ operator<<(Stream& s, const JSCFunctionListEntry& entry) {
       break;
     case JS_DEF_PROP_STRING: s << "value = " << std::setw(9) << entry.u.str << ", "; break;
   }
-
   s << "flags = " << js_prop_flags(entry.prop_flags) << std::endl;
   return s;
 }
@@ -1617,14 +1611,9 @@ operator<<(Stream& s, const std::vector<Item>& vector) {
 int
 js_cv_init(JSContext* ctx, JSModuleDef* m) {
 
-  std::cerr << "js_cv_static_funcs:" << std::endl << js_cv_static_funcs;
-  std::cerr << "js_cv_static_funcs.size() = " << js_cv_static_funcs.size() << std::endl;
+  /* std::cerr << "js_cv_static_funcs:" << std::endl << js_cv_static_funcs;
+   std::cerr << "js_cv_static_funcs.size() = " << js_cv_static_funcs.size() << std::endl;*/
 
-  /*  std::copy(js_cv_core_flags.cbegin(), js_cv_core_flags.cend(), std::back_inserter(js_cv_static_funcs));
-    std::copy(js_cv_videocapture_flags.cbegin(), js_cv_videocapture_flags.cend(),
-    std::back_inserter(js_cv_static_funcs)); std::copy(js_cv_highgui_flags.cbegin(), js_cv_highgui_flags.cend(),
-    std::back_inserter(js_cv_static_funcs));
-  */
   JS_SetModuleExportList(ctx, m, js_cv_static_funcs.data(), js_cv_static_funcs.size());
 
   JSValue g = JS_GetGlobalObject(ctx);
@@ -1636,8 +1625,6 @@ js_cv_init(JSContext* ctx, JSModuleDef* m) {
     atom = JS_NewAtom(ctx, "cv");
     JS_SetPropertyInternal(ctx, g, atom, cv_class, 0);
   }
-  /*
-    JS_SetModuleExport(ctx, m, "default", cv_class);*/
 
   JS_FreeValue(ctx, g);
   return 0;

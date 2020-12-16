@@ -181,16 +181,20 @@ export class VideoSource {
     let ms, s, m, h;
 
     ms = Util.mod(pos, 1000);
-    s = Math.floor(pos / 1000);
+    s = pos / 1000;
     m = Math.floor(s / 60);
     s = Util.mod(s, 60);
     h = Math.floor(m / 60);
     m = Util.mod(m, 60);
     h = Math.floor(h);
 
-    const pad = (i, n) => ('0'.repeat(n) + i).slice(-n);
+    const pad = (i, n, frac) => {
+      const s = (frac !== undefined ? i.toFixed(frac) : i) + '';
+      const a = s.split('.');
+      return '0'.repeat(n - a[0].length) + s;
+    };
 
-    return pad(h, 2) + ':' + pad(m, 2) + ':' + pad(s, 2) + '.' + pad(ms, 3);
+    return pad(h, 2) + ':' + pad(m, 2) + ':' + pad(s, 2, 3); //+ '.' + pad(ms, 3);
   }
 }
 

@@ -14,6 +14,36 @@ import { Alea } from './lib/alea.js';
 let prng = new Alea(Date.now());
 const hr = Util.hrtime;
 
+let symbols = [
+  [
+    { x: 28.703, y: 28.665 },
+    { x: 28.703, y: 21.77 },
+    { x: 35.565, y: 21.77 },
+    { x: 35.565, y: 28.664 },
+    { x: 28.703, y: 28.665 }
+  ],
+  [
+    { x: 34.527, y: 8.103 },
+    { x: 34.527, y: 0 },
+    { x: 42.604, y: 4.051 },
+    { x: 34.527, y: 8.103 }
+  ],
+  [
+    { x: 34.527, y: 18.676 },
+    { x: 34.527, y: 10.593999999999998 },
+    { x: 38.428, y: 10.593999999999998 },
+    { x: 38.428, y: 18.676 },
+    { x: 34.527, y: 18.676 }
+  ],
+  [
+    { x: 28.703, y: 39.843 },
+    { x: 28.703, y: 31.76 },
+    { x: 32.604, y: 31.76 },
+    { x: 32.604, y: 39.843 },
+    { x: 28.703, y: 39.843 }
+  ]
+];
+
 function dumpMat(name, mat) {
   console.log(`${name} =`,
     Object.create(
@@ -57,10 +87,10 @@ function to32bit(mat) {
   const max = Math.pow(2, bits) - 1;
   const type = cv.CV_32F | ((mat.channels - 1) << 3);
 
-  console.log('max:', max);
+  /* console.log('max:', max);
   console.log('const:', findType(type), type, cv[findType(type)]);
   console.log('channels:', mat.channels);
-  console.log('constants:', getConstants(['CV_32F', 'CV_32FC1', 'CV_32FC3', 'CV_32FC4', 'CV_8U', 'CV_8UC1', 'CV_8UC3', 'CV_8UC4']));
+  console.log('constants:', getConstants(['CV_32F', 'CV_32FC1', 'CV_32FC3', 'CV_32FC4', 'CV_8U', 'CV_8UC1', 'CV_8UC3', 'CV_8UC4']));*/
   mat.convertTo(ret, type, 1.0 / max);
   return ret;
 }
@@ -97,17 +127,17 @@ function modifierMap(keyCode) {
 async function main(...args) {
   let start;
   let begin = hr();
-  await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
-  console.log('cv:', cv);
-
-  for(let name of ['CV_VERSION_MAJOR', 'NORM_MINMAX', 'COLOR_BGR2Lab', 'RETR_EXTERNAL', 'THRESH_BINARY', 'CAP_FFMPEG', 'CAP_V4L2', 'CAP_PROP_POS_FRAMES', 'CAP_PROP_BACKEND', 'CAP_PROP_CODEC_PIXEL_FORMAT', 'WINDOW_NORMAL', 'WINDOW_AUTOSIZE', 'WINDOW_FULLSCREEN']) console.log(`cv.${name}`, cv[name]);
+  await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20, multiline: false });
 
   let win = new Window('gray', cv.WINDOW_AUTOSIZE);
-  //console.log('Mouse :', { MouseEvents, MouseFlags });
+  console.log('Mouse :', { MouseEvents, MouseFlags });
   //console.log('cv.EVENT_MOUSEMOVE', cv.EVENT_MOUSEMOVE);
+  //
+  const printFlags = flags => [...Util.bitsToNames(MouseFlags)];
+  console.log('printFlags:', printFlags + '');
 
   win.setMouseCallback(function (event, x, y, flags) {
-    /* event = Mouse.printEvent(event);*/
+    event = Mouse.printEvent(event);
     flags = Mouse.printFlags(flags);
 
     console.log('Mouse event:', { event, x, y, flags });
@@ -135,7 +165,7 @@ async function main(...args) {
 
     bgr = toBGR(gray);
 
-    draw.circle(bgr, [50, 50], 25, 0xff00ff || { r: 255, g: 0, b: 0 }, 2, cv.LINE_AA);
+    //  draw.circle(bgr, [50, 50], 25, 0x00ff00 || { r: 255, g: 0, b: 0 }, 2, cv.LINE_AA);
     let baseY;
 
     let font = new TextStyle(cv.FONT_HERSHEY_PLAIN, 1.0, 1);
@@ -144,13 +174,13 @@ async function main(...args) {
     let tPos = new Point(...tSize.div(2))
       .floor()
       .mul(-1)
-      .add(50, 10 + tSize.y * 1.6);
+      .add(50, video.get('frame_height') - tSize.y * 0.8);
 
     tPos.x = 5;
 
     //  console.log('tPos:', tPos);
 
-    font.draw(bgr, video.time, tPos, 0xffff00 || { r: 255, g: 0, b: 0 });
+    font.draw(bgr, video.time + ' ⏩', tPos, 0xffffff || { r: 0, g: 255, b: 0 });
 
     win.show(bgr);
 
@@ -162,6 +192,12 @@ async function main(...args) {
     let modifierList = modifierMap(key).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc), []);
 
     switch (key & 0xfff) {
+      /* home */ case 0xf50:
+        video.set('pos_frames', 0);
+        break;
+      /* end */ case 0xf57:
+        video.set('pos_frames', video.get('frame_count') - Math.round(video.fps * 3));
+        break;
       /* left */ case 0xf51:
       /* right */ case 0xf53:
       /* up */ case 0xf52:

@@ -4,13 +4,19 @@ import { Size } from 'size';
 
 import Util from './lib/util.js';
 
-export const MouseEvents = ['EVENT_MOUSEMOVE', 'EVENT_LBUTTONDOWN', 'EVENT_RBUTTONDOWN', 'EVENT_MBUTTONDOWN', 'EVENT_LBUTTONUP', 'EVENT_RBUTTONUP', 'EVENT_MBUTTONUP', 'EVENT_LBUTTONDBLCLK', 'EVENT_RBUTTONDBLCLK', 'EVENT_MBUTTONDBLCLK', 'EVENT_MOUSEWHEEL', 'EVENT_MOUSEHWHEEL'].reduce((acc, name) => ({ ...acc, [name]: cv[name] }), {});
+export const MouseEvents = ['EVENT_MOUSEMOVE', 'EVENT_LBUTTONDOWN', 'EVENT_RBUTTONDOWN', 'EVENT_MBUTTONDOWN', 'EVENT_LBUTTONUP', 'EVENT_RBUTTONUP', 'EVENT_MBUTTONUP', 'EVENT_LBUTTONDBLCLK', 'EVENT_RBUTTONDBLCLK', 'EVENT_MBUTTONDBLCLK', 'EVENT_MOUSEWHEEL', 'EVENT_MOUSEHWHEEL'].reduce((acc, name) => ({ ...acc, [cv[name]]: name }), {});
 
 export const MouseFlags = ['EVENT_FLAG_LBUTTON', 'EVENT_FLAG_RBUTTON', 'EVENT_FLAG_MBUTTON', 'EVENT_FLAG_CTRLKEY', 'EVENT_FLAG_SHIFTKEY', 'EVENT_FLAG_ALTKEY'].reduce((acc, name) => ({ ...acc, [name]: cv[name] }), {});
 
 export const Mouse = {
-  printFlags: Util.bitsToNames(MouseFlags),
-  printEvents: Util.bitsToNames(MouseEvents)
+  printEvent: (() => {
+    return event => MouseEvents[event].replace(/EVENT_/, '');
+  })(),
+  printFlags: (() => {
+    const toks = Util.bitsToNames(MouseFlags, name => name.replace(/EVENT_FLAG_/, ''));
+
+    return flags => [...toks(flags)];
+  })()
 };
 
 export class Window {

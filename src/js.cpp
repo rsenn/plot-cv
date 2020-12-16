@@ -58,6 +58,11 @@ js_print(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
 struct JSProperty;
 struct JSShapeProperty;
 
+jsrt::value jsrt::_undefined = JS_UNDEFINED;
+jsrt::value jsrt::_true = JS_TRUE;
+jsrt::value jsrt::_false = JS_FALSE;
+jsrt::value jsrt::_null = JS_NULL;
+
 bool
 jsrt::init(int argc, char* argv[]) {
   int load_std = 0;
@@ -83,14 +88,14 @@ jsrt::init(int argc, char* argv[]) {
   }
 
   /* loader for ES6 modules */
-  JS_SetModuleLoaderFunc(rt, &normalize_module, js_module_loader, this);
+  JS_SetModuleLoaderFunc(get_runtime(), &normalize_module, js_module_loader, this);
 
-  global.get();
+  // global.get();
 
-  this->_undefined = get_undefined();
-  this->_null = get_null();
-  this->_true = get_true();
-  this->_false = get_false();
+  /*  this->_undefined = get_undefined();
+    this->_null = get_null();
+    this->_true = get_true();
+    this->_false = get_false();*/
 
   return ctx != nullptr;
 }
@@ -99,8 +104,9 @@ bool
 jsrt::create(JSContext* _ctx) {
   assert(ctx == nullptr);
   if(_ctx) {
-    rt = JS_GetRuntime(ctx = _ctx);
+    // rt = JS_GetRuntime(ctx = _ctx);
   } else {
+    JSRuntime* rt;
     if((rt = JS_NewRuntime())) {
       js_std_init_handlers(rt);
 
@@ -110,7 +116,7 @@ jsrt::create(JSContext* _ctx) {
   return ctx != nullptr;
 }
 
-jsrt::value*
+/*jsrt::value*
 jsrt::get_function(const char* name) {
   auto it = funcmap.find(name);
   if(it != funcmap.end()) {
@@ -118,7 +124,7 @@ jsrt::get_function(const char* name) {
     return &val.second;
   }
   return nullptr;
-}
+}*/
 
 std::string
 jsrt::to_str(const_value val) {
@@ -240,7 +246,7 @@ jsrt::is_color(const_value val) const {
     return true;
   return false;
 }
-
+/*
 jsrt::global::global(jsrt& rt) : val(JS_UNDEFINED), js(rt) {}
 
 bool
@@ -266,7 +272,7 @@ jsrt::global::global(global&& o) noexcept : val(std::move(o.val)), js(o.js) {}
 jsrt::global::~global() {
   if(js.ctx)
     JS_FreeValue(js.ctx, val);
-}
+}*/
 
 jsrt::value
 jsrt::get_undefined() const {
@@ -286,20 +292,14 @@ jsrt::get_false() const {
 }
 
 jsrt::~jsrt() {
-  if(ctx) {
+  if(ctx)
     JS_FreeContext(ctx);
-
-    /*  if(rt)
-        JS_FreeRuntime(rt);*/
-  }
   ctx = nullptr;
-  rt = nullptr;
 }
 
 JSValue
 jsrt::eval_buf(const char* buf, int buf_len, const char* filename, int eval_flags) {
   jsrt::value val;
-  // int ret;
   if((eval_flags & JS_EVAL_TYPE_MASK) == JS_EVAL_TYPE_MODULE) {
     val = JS_Eval(ctx, buf, buf_len, filename, eval_flags | JS_EVAL_FLAG_COMPILE_ONLY);
     if(!JS_IsException(val)) {
@@ -311,11 +311,8 @@ jsrt::eval_buf(const char* buf, int buf_len, const char* filename, int eval_flag
   }
   if(JS_IsException(val)) {
     js_std_dump_error(ctx);
-    //  ret = -1;
   } else {
-    // ret = 0;
   }
-  // JS_FreeValue(ctx, val);
   return val;
 }
 
@@ -343,25 +340,16 @@ jsrt::eval_file(const char* filename, int module) {
   return ret;
 }
 
-jsrt::value
-jsrt::add_function(const char* name, JSCFunction* fn, int args) {
-  value function = JS_NewCFunction(ctx, fn, name, args);
-
-  funcmap[name] = std::make_pair(fn, function);
-
-  JS_SetPropertyStr(ctx, global_object(), name, function);
-  return function;
-}
-
 void
 jsrt::set_global(const char* name, jsrt::value val) {
-
-  JS_SetPropertyStr(ctx, global_object(), name, val);
+  value globalThis = JS_GetGlobalObject(ctx);
+  JS_SetPropertyStr(ctx, globalThis, name, val);
 }
 
 jsrt::value
 jsrt::get_global(const char* name) const {
-  value ret = JS_GetPropertyStr(ctx, global_object(), name);
+  value globalThis = JS_GetGlobalObject(ctx);
+  value ret = JS_GetPropertyStr(ctx, globalThis, name);
   return ret;
 }
 
@@ -492,30 +480,37 @@ jsrt::atom
 jsrt::new_atom(const char* buf, size_t len) const {
   return JS_NewAtomLen(ctx, buf, len);
 }
+
 jsrt::atom
 jsrt::new_atom(const char* str) const {
   return JS_NewAtom(ctx, str);
 }
+
 jsrt::atom
 jsrt::new_atom(uint32_t n) const {
   return JS_NewAtomUInt32(ctx, n);
 }
+
 void
 jsrt::free_atom(const jsrt::atom& a) const {
   JS_FreeAtom(ctx, a);
 }
+
 jsrt::value
 jsrt::atom_to_value(const jsrt::atom& a) const {
   return JS_AtomToValue(ctx, a);
 }
+
 jsrt::value
 jsrt::atom_to_string(const jsrt::atom& a) const {
   return JS_AtomToString(ctx, a);
 }
+
 const char*
 jsrt::atom_to_cstring(const jsrt::atom& a) const {
   return JS_AtomToCString(ctx, a);
 }
+
 jsrt::atom
 jsrt::value_to_atom(const const_value& v) const {
   return JS_ValueToAtom(ctx, v);
@@ -566,16 +561,10 @@ jsrt::call_iterator_next(const_value obj, const char* symbol) {
       //   free_value(next);
     }
   }
-
   // free_value(iter);
-
   return ret;
 }
 
-/*int
-jsrt::tag(const_value val) const {
-  return JS_VALUE_GET_TAG(val);
-}*/
 int
 jsrt::tag(value val) const {
   return JS_VALUE_GET_TAG(val);
