@@ -86,8 +86,7 @@ js_vector_vec4i_to_array(JSContext* ctx, const std::vector<cv::Vec4i>& vec) {
   return ret;
 }
 
-
- int
+int
 js_color_read(JSContext* ctx, JSValueConst color, JSColorData* out) {
   int ret = 1;
   std::array<double, 4> c;
@@ -104,9 +103,9 @@ js_color_read(JSContext* ctx, JSValueConst color, JSColorData* out) {
       b = JS_GetPropertyStr(ctx, color, "b");
       a = JS_GetPropertyStr(ctx, color, "a");
     }
-    JS_ToFloat64(ctx, &c[0], r);
+    JS_ToFloat64(ctx, &c[0], b);
     JS_ToFloat64(ctx, &c[1], g);
-    JS_ToFloat64(ctx, &c[2], b);
+    JS_ToFloat64(ctx, &c[2], r);
     JS_ToFloat64(ctx, &c[3], a);
 
     JS_FreeValue(ctx, r);

@@ -84,7 +84,11 @@ add_executable(
   imgui/libs/gl3w/GL/gl3w.c
   ${IMGUI_VIEWER_SOURCES}
   ${QUICKJS_SOURCES})
-target_compile_definitions(imgui-viewer PRIVATE CONFIG_VERSION="${quickjs_version}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1 ${PLOTCV_DEFS})
+target_compile_definitions(
+  imgui-viewer
+  PRIVATE CONFIG_VERSION="${quickjs_version}"
+          CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1
+          ${PLOTCV_DEFS})
 
 # link
 target_link_libraries(

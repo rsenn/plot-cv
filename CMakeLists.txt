@@ -171,7 +171,6 @@ macro(NOWARN_FLAG FLAG)
   endif(${VARNAME})
 endmacro(NOWARN_FLAG FLAG)
 
-
 string(REGEX REPLACE " -Wall" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 string(REGEX REPLACE " -Wall" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
@@ -179,10 +178,10 @@ nowarn_flag(-Wno-unused-value)
 nowarn_flag(-Wno-unused-variable)
 nowarn_flag(-Wno-deprecated-anon-enum-enum-conversion)
 nowarn_flag(-Wno-extern-c-compat)
-
+nowarn_flag(-Wno-implicit-int-float-conversion)
 
 dump(CMAKE_C_FLAGS CMAKE_CXX_FLAGS)
-dump(  CMAKE_CXX_FLAGS_DEBUG)
+dump(CMAKE_CXX_FLAGS_DEBUG)
 
 #[[
 check_c_compiler_flag("-Wno-unused-value" WARN_NO_UNUSED_VALUE)

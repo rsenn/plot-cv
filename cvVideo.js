@@ -1,6 +1,5 @@
 import * as cv from 'cv';
 import { Mat } from 'mat';
-import { drawCircle, drawContour, drawLine, drawPolygon, drawRect } from 'draw';
 import { VideoCapture } from 'video-capture';
 import Util from './lib/util.js';
 

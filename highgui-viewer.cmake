@@ -25,7 +25,11 @@ add_definitions(-D_GNU_SOURCE=1)
 
 add_executable(highgui-viewer src/highgui-viewer.cpp ${HIGHGUI_VIEWER_SOURCES}
                               ${QUICKJS_SOURCES})
-target_compile_definitions(highgui-viewer PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${quickjs_version}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1 ${PLOTCV_DEFS})
+target_compile_definitions(
+  highgui-viewer
+  PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${quickjs_version}"
+          CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1
+          ${PLOTCV_DEFS})
 
 target_link_libraries(
   highgui-viewer

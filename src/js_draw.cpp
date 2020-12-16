@@ -290,7 +290,7 @@ js_draw_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetPropertyFunctionList(ctx, draw_class, js_draw_static_funcs, countof(js_draw_static_funcs));
 
   if(m) {
-    JS_SetModuleExportList(ctx, m, js_draw_global_funcs, countof(js_draw_global_funcs));
+    JS_SetModuleExportList(ctx, m, js_draw_static_funcs, countof(js_draw_static_funcs));
     JS_SetModuleExport(ctx, m, "Draw", draw_class);
   }
   /*  else
@@ -305,7 +305,7 @@ JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   if(!m)
     return NULL;
   JS_AddModuleExport(ctx, m, "Draw");
-  JS_AddModuleExportList(ctx, m, js_draw_global_funcs, countof(js_draw_global_funcs));
+  JS_AddModuleExportList(ctx, m, js_draw_static_funcs, countof(js_draw_static_funcs));
   return m;
 }
 

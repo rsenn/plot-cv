@@ -2,53 +2,15 @@ import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 //import { client, server, fetch } from 'net';
 import * as cv from 'cv';
+import * as draw from 'draw';
 import { Mat } from 'mat';
-import { VideoSource } from './videoSource.js';
+import { VideoSource } from './cvVideo.js';
+import { Window } from './cvHighGUI.js';
 import { Alea } from './lib/alea.js';
+//import { drawCircle, drawContour, drawLine, drawPolygon, drawRect } from 'draw';
 
 let prng = new Alea(Date.now());
 const hr = Util.hrtime;
-
-class Window {
-  constructor(name, flags = cv.WINDOW_NORMAL) {
-    this.name = name;
-    this.flags = flags;
-
-    cv.namedWindow(this.name, this.flags);
-  }
-
-  move(x, y) {
-    cv.moveWindow(this.name, x, y);
-  }
-
-  resize(width, height) {
-    cv.resizeWindow(this.name, width, height);
-  }
-
-  get imageRect() {
-    return cv.getWindowImageRect(this.name);
-  }
-
-  get(propId) {
-    return cv.getWindowProperty(this.name, propId);
-  }
-  set(propId, value) {
-    cv.setWindowProperty(this.name, propId, value);
-  }
-
-  setTitle(title) {
-    this.title = title;
-    cv.setWindowTitle(this.name, title);
-  }
-
-  setMouseCallback(fn) {
-    cv.setMouseCallback(this.name, (event, x, y, flags) => fn.call(this, event, x, y, flags));
-  }
-
-  show(mat) {
-    cv.imshow(this.name, mat);
-  }
-}
 
 function dumpMat(name, mat) {
   console.log(`${name} =`,
@@ -160,7 +122,9 @@ async function main(...args) {
 
     bgr = toBGR(gray);
 
-    drawCircle(bgr, [50, 50], 25);
+    //console.log("draw:",draw);
+
+    draw.circle(bgr, [50, 50], 25, 0xff00ff || { r: 255, g: 0, b: 0 }, 2, cv.LINE_AA);
 
     win.show(bgr);
 
