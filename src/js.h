@@ -24,6 +24,71 @@ enum {
 
 struct jsiter;
 
+struct jsatom {
+
+  static jsatom
+  create(JSContext* ctx, const char* str) {
+    return jsatom(JS_NewAtom(ctx, str));
+  }
+  static jsatom
+  create(JSContext* ctx, uint32_t num) {
+    return jsatom(JS_NewAtomUInt32(ctx, num));
+  }
+  static jsatom
+  create(JSContext* ctx, const char* x, size_t n) {
+    return jsatom(JS_NewAtomLen(ctx, x, n));
+  }
+  static jsatom
+  create(JSContext* ctx, const jsatom& atom) {
+    return jsatom(JS_DupAtom(ctx, atom));
+  }
+  static jsatom
+  create(JSContext* ctx, const JSValueConst& value) {
+    return jsatom(JS_ValueToAtom(ctx, value));
+  }
+  static jsatom
+  create(JSContext* ctx, const std::string& str) {
+    return create(ctx, str.data(), str.size());
+  }
+
+  //~jsatom() { destroy(); }
+
+  static void
+  destroy(JSContext* ctx, jsatom& a) {
+    JS_FreeAtom(ctx, a._a);
+    a._a = JS_ATOM_NULL;
+  }
+
+  operator JSAtom() const { return _a; }
+
+  const char*
+  to_cstring(JSContext* _ctx) const {
+    return JS_AtomToCString(_ctx, _a);
+  }
+
+  JSValue
+  to_value(JSContext* _ctx) const {
+    return JS_AtomToValue(_ctx, _a);
+  }
+
+  JSValue
+  to_string(JSContext* _ctx) const {
+    return JS_AtomToString(_ctx, _a);
+  }
+
+private:
+  jsatom(JSAtom a) : _a(a) {}
+
+  static jsatom
+  create(JSAtom a) {
+    jsatom ret(a);
+    return ret;
+  }
+
+  JSAtom _a;
+  /* JSContext* _ctx;*/
+};
+
 struct jsrt {
   typedef JSValue value;
   typedef JSValueConst const_value;
@@ -90,15 +155,55 @@ struct jsrt {
   value get_property_atom(const_value obj, atom) const;
   value get_property_symbol(const_value obj, const char* symbol);
 
-  template<class T>
+  bool has_property(const_value obj, const jsatom& atom) const;
+
   bool
-  has_property(const_value obj, T prop) const {
-    return false;
+  has_property(const_value obj, const std::string& name) const {
+    jsatom atom = jsatom::create(ctx, name);
+    bool ret = has_property(obj, atom);
+    jsatom::destroy(ctx, atom);
+    return ret;
+  }
+  bool
+  has_property(const_value obj, uint32_t index) const {
+    jsatom atom = jsatom::create(ctx, index);
+    bool ret = has_property(obj, atom);
+    jsatom::destroy(ctx, atom);
+    return ret;
+  }
+  bool
+  has_property(const_value obj, const const_value& prop) const {
+    jsatom atom = jsatom::create(ctx, prop);
+    bool ret = has_property(obj, atom);
+    jsatom::destroy(ctx, atom);
+    return ret;
   }
 
   template<class T>
   void
   set_property(const_value obj, T prop, value val) {}
+
+  void set_property(const_value obj, const jsatom& atom, value val, int flags);
+  void
+  set_property(const_value obj, const std::string& name, value val, int flags) {
+    jsatom atom = jsatom::create(ctx, name);
+    set_property(obj, atom, val, flags);
+    jsatom::destroy(ctx, atom);
+  }
+
+  void
+  set_property(const_value obj, uint32_t index, value val, int flags) {
+    jsatom atom = jsatom::create(ctx, index);
+    set_property(obj, atom, val, flags);
+    jsatom::destroy(ctx, atom);
+  }
+
+  void
+  set_property(const_value obj, const const_value& prop, value val, int flags) {
+    jsatom atom = jsatom::create(ctx, prop);
+    set_property(obj, atom, val, flags);
+    jsatom::destroy(ctx, atom);
+  }
 
   value get_constructor(const_value obj) const;
   bool has_constructor(const_value obj) const;
@@ -554,6 +659,11 @@ jsrt::function_name(jsrt::const_value fn) const {
   return to_string(get_property<const char*>(fn, "name"));
 }
 
+inline bool
+jsrt::has_property(const_value obj, const jsatom& atom) const {
+  return JS_HasProperty(ctx, obj, atom);
+}
+
 template<>
 inline void
 jsrt::set_property<const char*>(const_value obj, const char* name, value val) {
@@ -565,6 +675,17 @@ template<>
 inline void
 jsrt::set_property<uint32_t>(const_value obj, uint32_t index, value val) {
   JS_SetPropertyUint32(ctx, obj, index, val);
+}
+
+template<>
+inline void
+jsrt::set_property<const jsatom&>(const_value obj, const jsatom& atom, value val) {
+  JS_SetProperty(ctx, obj, atom, val);
+}
+
+inline void
+jsrt::set_property(const_value obj, const jsatom& atom, value val, int flags) {
+  JS_SetPropertyInternal(ctx, obj, atom, val, flags);
 }
 
 template<class T>
@@ -630,7 +751,7 @@ inline std::string
 to_string(const char* s) {
   return std::string(s);
 }
-
+/*
 template<>
 inline bool
 jsrt::has_property<const char*>(const_value obj, const char* name) const {
@@ -647,7 +768,7 @@ jsrt::has_property<uint32_t>(const_value obj, uint32_t index) const {
   bool present = !!JS_HasProperty(ctx, obj, atom);
   JS_FreeAtom(ctx, atom);
   return present;
-}
+}*/
 inline bool
 jsrt::is_number(const_value val) const {
   return JS_IsNumber(val);

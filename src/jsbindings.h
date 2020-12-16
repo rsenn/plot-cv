@@ -588,11 +588,10 @@ public:
   from_map(JSContext* ctx, const std::map<std::string, T>& in) {
     typedef std::pair<std::string, T> entry_type;
     jsrt js(ctx);
-    JSValue obj = js.create_object();
+    JSValue obj = JS_NewObject(ctx);;
 
-    for(entry_type entry : in) {
-      js.set_property(obj, entry.first, js.create<T>(entry.second));
-    }
+    for(entry_type entry : in) js.set_property(obj, entry.first, js.create<T>(entry.second), JS_PROP_C_W_E);
+
     return obj;
   }
 };

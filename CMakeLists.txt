@@ -43,7 +43,7 @@ endif(ENABLE_CCACHE)
 macro(check_size TYPE VAR)
   check_type_size("${TYPE}" CMAKE_${VAR})
   if(${CMAKE_${VAR}})
-    add_definitions(-D${VAR}=${CMAKE_${VAR}})
+    list(APPEND PLOTCV_DEFS ${VAR}=${CMAKE_${VAR}})
   endif(${CMAKE_${VAR}})
   message(STATUS "size of ${TYPE} ${CMAKE_${VAR}}")
 endmacro(check_size TYPE VAR)
@@ -106,10 +106,13 @@ if(F_OPT_PIC)
   set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fPIC")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fPIC")
 endif(F_OPT_PIC)
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   # option(USE_EFENCE "Enable electric fence" OFF)
   set(DEBUG_OUTPUT TRUE CACHE BOOL "Debug output" FORCE)
-  add_definitions(-DDEBUG=1)
+  list(APPEND PLOTCV_DEFS DEBUG=1)
+
+  #add_definitions(-DDEBUG=1)
 
   check_cxx_compiler_flag("-O0" O_OPT_NONE)
   if(O_OPT_NONE)
@@ -119,7 +122,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 if(DEBUG_OUTPUT)
-  add_definitions(-DDEBUG_OUTPUT=1)
+    list(APPEND PLOTCV_DEFS DEBUG_OUTPUT=1)
+#add_definitions(-DDEBUG_OUTPUT=1)
 endif(DEBUG_OUTPUT)
 
 check_c_compiler_flag("-flto" HAS_F_LTO_FLAG)
@@ -155,6 +159,7 @@ function(src_program NAME SOURCES)
   message("${NAME}_SOURCES: ${SOURCES}")
   add_executable(${NAME} src/${NAME}.cpp ${${NAME}_SOURCES})
   target_link_libraries(${NAME} ${ARGN})
+  target_compile_definitions(${NAME} PRIVATE ${PLOTCV_DEFS})
   install(TARGETS ${NAME} DESTINATION bin)
 endfunction()
 
@@ -186,13 +191,13 @@ src_program(
   #
 )
 
-target_compile_definitions(cli PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${quickjs_version}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM CONFIG_CHECK_JSVALUE)
+target_compile_definitions(cli PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${quickjs_version}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM CONFIG_CHECK_JSVALUE ${PLOTCV_DEFS})
 
 add_executable(test-qjs test-qjs.c)
 
 target_link_libraries(test-qjs quickjs pthread dl m)
 
-target_compile_definitions(test-qjs PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${quickjs_version}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1)
+target_compile_definitions(test-qjs PRIVATE _GNU_SOURCE=1 CONFIG_VERSION="${quickjs_version}" CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" CONFIG_BIGNUM=1 ${PLOTCV_DEFS})
 
 option(ADDITIONAL_PROGS "Build other OpenCV programs" FALSE)
 

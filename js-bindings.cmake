@@ -25,7 +25,7 @@ function(make_shared_module FNAME)
   message("Module: ${NAME}")
   set(TARGET_NAME quickjs-${NAME})
 
-  add_library(${TARGET_NAME} SHARED src/js_${FNAME}.cpp src/jsbindings.cpp src/js.cpp)
+  add_library(${TARGET_NAME} SHARED src/js_${FNAME}.cpp src/jsbindings.h src/jsbindings.cpp src/js.h src/js.cpp)
 
   target_link_libraries(${TARGET_NAME} ${OpenCV_LIBS})
   set_target_properties(
@@ -36,7 +36,7 @@ function(make_shared_module FNAME)
                OUTPUT_NAME "${NAME}"
                # COMPILE_FLAGS "-fvisibility=hidden"
                BUILD_RPATH "${CMAKE_BINARY_DIR}:${CMAKE_CURRENT_BINARY_DIR}:${CMAKE_BINARY_DIR}/quickjs:${CMAKE_CURRENT_BINARY_DIR}/quickjs")
-  target_compile_definitions(${TARGET_NAME} PRIVATE -DJS_${UNAME}_MODULE=1 -DCONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}")
+  target_compile_definitions(${TARGET_NAME} PRIVATE JS_${UNAME}_MODULE=1 CONFIG_PREFIX="${CMAKE_INSTALL_PREFIX}" ${PLOTCV_DEFS})
   install(TARGETS ${TARGET_NAME} DESTINATION lib/quickjs)
 
   config_shared_module(${TARGET_NAME})
@@ -103,7 +103,7 @@ config_shared_module(quickjs-opencv)
 set_target_properties(quickjs-opencv PROPERTIES # COMPILE_FLAGS "-fvisibility=hidden"
       RPATH "${OPENCV_LIBRARY_DIRS}:${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/quickjs"
        OUTPUT_NAME "opencv" PREFIX "")
-target_compile_definitions(quickjs-opencv PRIVATE -DJS_BINDINGS_INIT_MODULE=1 -DCONFIG_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
+target_compile_definitions(quickjs-opencv PRIVATE -DJS_BINDINGS_INIT_MODULE=1 -DCONFIG_PREFIX=\"${CMAKE_INSTALL_PREFIX}\" ${PLOTCV_DEFS})
 
 target_link_libraries(quickjs-opencv ${OpenCV_LIBS})
 # link

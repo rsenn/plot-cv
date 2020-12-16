@@ -1,5 +1,26 @@
+
+
+function(OPENCV_CHANGE VAR ACCESS VALUE LIST_FILE STACK)
+
+  if("${VAR}" STREQUAL "OpenCV_Dir" OR "${VAR}" STREQUAL "OPENCV_ROOT")
+  unset(OPENCV_FOUND CACHE)
+  unset(OPENCV_FOUND)
+
+  endif("${VAR}" STREQUAL "OpenCV_Dir" OR "${VAR}" STREQUAL "OPENCV_ROOT")
+endfunction(OPENCV_CHANGE VAR ACCESS VALUE LIST_FILE STACK)
+variable_watch(OpenCV_Dir OPENCV_CHANGE)
+
 if(NOT OPENCV_CHECKED)
   message(STATUS "Finding opencv library")
+
+if(OpenCV_Dir)
+set(OPENCV_ROOT "${OpenCV_Dir}")
+endif(OpenCV_Dir)
+
+  if(OPENCV_ROOT)
+    list(APPEND CMAKE_PREFIX_PATH "${OPENCV_ROOT}")
+  endif(OPENCV_ROOT)
+
   if(NOT OPENCV_FOUND)
     pkg_search_module(OPENCV REQUIRED NO_CMAKE_PATH NO_CMAKE_ENVIRONMENT_PATH opencv opencv4)
   endif(NOT OPENCV_FOUND)
