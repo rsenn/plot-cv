@@ -61,7 +61,8 @@ ImageViewer::init() {
   SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
   SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
   // SDL_Window*
-  window = SDL_CreateWindow("OpenCV/ImGUI Viewer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+  window =
+      SDL_CreateWindow("OpenCV/ImGUI Viewer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
   // SDL_GLContext
   gl_context = SDL_GL_CreateContext(window);
   SDL_GL_SetSwapInterval(1); // Enable vsync
@@ -127,7 +128,9 @@ ImageViewer::imshow(std::string frame_name, cv::Mat* frame) {
   if(frame->empty())
     return;
 
-  if(std::any_of(frame_names.cbegin(), frame_names.cend(), [&frame_name](std::string str) -> bool { return frame_name == str; }))
+  if(std::any_of(frame_names.cbegin(), frame_names.cend(), [&frame_name](std::string str) -> bool {
+       return frame_name == str;
+     }))
     return;
 
   frame_names.push_back(frame_name);
@@ -221,7 +224,8 @@ ImageViewer::handleEvent() {
     ImGui_ImplSDL2_ProcessEvent(&event);
     if(event.type == SDL_QUIT)
       done = true;
-    if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
+    if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE &&
+       event.window.windowID == SDL_GetWindowID(window))
       done = true;
   }
   return done;

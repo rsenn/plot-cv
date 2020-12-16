@@ -1,4 +1,17 @@
-import * as cv from 'cv';
+import cv from 'cv';
+import Util from './lib/util.js';
+
+export const MouseEvents = ["EVENT_MOUSEMOVE", "EVENT_LBUTTONDOWN", "EVENT_RBUTTONDOWN", "EVENT_MBUTTONDOWN", "EVENT_LBUTTONUP", "EVENT_RBUTTONUP", "EVENT_MBUTTONUP", "EVENT_LBUTTONDBLCLK", "EVENT_RBUTTONDBLCLK", "EVENT_MBUTTONDBLCLK", "EVENT_MOUSEWHEEL", "EVENT_MOUSEHWHEEL"
+].reduce((acc,name) => ({ ...acc, [name]: cv[name] }), {});
+
+export const MouseFlags =   ["EVENT_FLAG_LBUTTON", "EVENT_FLAG_RBUTTON", "EVENT_FLAG_MBUTTON", "EVENT_FLAG_CTRLKEY", "EVENT_FLAG_SHIFTKEY", "EVENT_FLAG_ALTKEY"
+].reduce((acc,name) => ({ ...acc, [name]: cv[name] }), {});
+
+export const Mouse = {
+  printFlags: Util.bitsToNames(MouseFlags),
+  printEvents: Util.bitsToNames(MouseEvents),
+
+};
 
 export class Window {
   constructor(name, flags = cv.WINDOW_NORMAL) {
@@ -33,7 +46,10 @@ export class Window {
   }
 
   setMouseCallback(fn) {
-    cv.setMouseCallback(this.name, (event, x, y, flags) => fn.call(this, event, x, y, flags));
+    cv.setMouseCallback(this.name, (event, x, y, flags) => {
+      //console.log("MouseCallback", {event,x,y,flags});
+      fn.call(this, event, x, y, flags);
+    });
   }
 
   show(mat) {

@@ -5,7 +5,7 @@ import * as cv from 'cv';
 import * as draw from 'draw';
 import { Mat } from 'mat';
 import { VideoSource } from './cvVideo.js';
-import { Window } from './cvHighGUI.js';
+import { Window, MouseFlags, MouseEvents, Mouse } from './cvHighGUI.js';
 import { Alea } from './lib/alea.js';
 //import { drawCircle, drawContour, drawLine, drawPolygon, drawRect } from 'draw';
 
@@ -94,8 +94,20 @@ async function main(...args) {
   let start;
   let begin = hr();
   await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
+    console.log('cv:', cv);
+    console.log('cv.WINDOW_AUTOSIZE', cv.WINDOW_AUTOSIZE);
 
   let win = new Window('gray', cv.WINDOW_AUTOSIZE);
+    console.log('Mouse :', { MouseEvents, MouseFlags });
+    console.log('cv.EVENT_MOUSEMOVE', cv.EVENT_MOUSEMOVE);
+
+  win.setMouseCallback(function (event, x, y, flags) {
+/* event = Mouse.printEvent(event);*/
+ flags = Mouse.printFlags(flags);
+
+
+    console.log('Mouse event:', { event, x, y, flags });
+  });
 
   console.log('Setup duration:', hr(begin));
 

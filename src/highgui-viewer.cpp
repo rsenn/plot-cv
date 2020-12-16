@@ -29,7 +29,12 @@ using std::chrono::steady_clock;
 using std::chrono::time_point;
 
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
-std::map<std::string, bool> views{{"imgOriginal", true}, {"imgBlurred", false}, {"imgCanny", true}, {"imgGrayscale", false}, {"imgMorphology", false}, {"imgVector", true}};
+std::map<std::string, bool> views{{"imgOriginal", true},
+                                  {"imgBlurred", false},
+                                  {"imgCanny", true},
+                                  {"imgGrayscale", false},
+                                  {"imgMorphology", false},
+                                  {"imgVector", true}};
 
 std::map<std::string, std::string> trackbars;
 
@@ -73,17 +78,24 @@ trackbar_prop(int input, void* u) {
 };
 
 int
-create_trackbar(const char* name, const std::string& window, int* value, int count, cv::TrackbarCallback onChange = 0, const char* caption = nullptr) {
+create_trackbar(const char* name,
+                const std::string& window,
+                int* value,
+                int count,
+                cv::TrackbarCallback onChange = 0,
+                const char* caption = nullptr) {
   std::string barName = name;
   std::string windowName = views[window] ? window : "imgOriginal";
   if(caption == nullptr)
     caption = name;
   trackbars[barName] = caption;
-  return cv::createTrackbar(caption, windowName, value, count, onChange, const_cast<void*>(static_cast<const void*>(name)));
+  return cv::createTrackbar(
+      caption, windowName, value, count, onChange, const_cast<void*>(static_cast<const void*>(name)));
 }
 
 int
-create_trackbar(const char* name, const std::string& window, int* value, int count, cv::TrackbarCallback onChange, int propId) {
+create_trackbar(
+    const char* name, const std::string& window, int* value, int count, cv::TrackbarCallback onChange, int propId) {
   std::string barName = name;
   std::string windowName = views[window] ? window : "imgOriginal";
   trackbars[barName] = name;
@@ -175,7 +187,9 @@ main(int argc, char* argv[]) {
   std::string range;
 
   std::cerr << "num files: " << arguments.size() << std::endl;
-  std::cerr << "files 0.." << end << ": " << implode(std::vector<std::string>(arguments.cbegin(), arguments.cbegin() + end), ", ", range) << std::endl;
+  std::cerr << "files 0.." << end << ": "
+            << implode(std::vector<std::string>(arguments.cbegin(), arguments.cbegin() + end), ", ", range)
+            << std::endl;
 
   num_images = arguments.size();
 
@@ -256,9 +270,11 @@ main(int argc, char* argv[]) {
   create_trackbar("gain", "imgOriginal", &gain, 255, trackbar_prop, (int)cv::CAP_PROP_GAIN);
   create_trackbar("frame", "imgCanny", &image_index, num_images - 1, trackbar, "frame");
   create_trackbar("threshold2", "imgCanny", &thresh2, 255, trackbar, "thres2");
-  create_trackbar("morphology_kernel_size", "imgMorphology", &config.morphology_kernel_size, 2, trackbar, "Morphology kernel size");
+  create_trackbar(
+      "morphology_kernel_size", "imgMorphology", &config.morphology_kernel_size, 2, trackbar, "Morphology kernel size");
   create_trackbar("morphology_enable", "imgMorphology", &morphology_enable, 1, trackbar, "Morphology enable");
-  create_trackbar("morphology_operator", "imgMorphology", &config.morphology_operator, 3, trackbar, "Morphology operator");
+  create_trackbar(
+      "morphology_operator", "imgMorphology", &config.morphology_operator, 3, trackbar, "Morphology operator");
   create_trackbar("blur_sigma", "imgBlurred", &config.blur_sigma, 300, trackbar, "blur sigma");
   create_trackbar("blur_kernel_size", "imgBlurred", &config.blur_kernel_size, 2, trackbar, "Blur kernel size");
   create_trackbar("hough_rho", "imgVector", &config.hough_rho, 10, trackbar, "Hough rho");
