@@ -77,7 +77,7 @@ js_point_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* a
     if(JS_ToFloat64(ctx, &y, argv[1]))
       return JS_EXCEPTION;
   }
-  
+
   return js_point_new(ctx, x, y);
 }
 
