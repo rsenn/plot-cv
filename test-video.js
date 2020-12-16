@@ -5,6 +5,7 @@ import * as cv from 'cv';
 import * as draw from 'draw';
 import { Mat } from 'mat';
 import { Size } from 'size';
+import { Point } from 'point';
 import { VideoSource } from './cvVideo.js';
 import { Window, MouseFlags, MouseEvents, Mouse } from './cvHighGUI.js';
 import { Alea } from './lib/alea.js';
@@ -141,8 +142,8 @@ async function main(...args) {
     let s = draw.textSize('TEST', cv.FONT_HERSHEY_PLAIN, 1.0, 1, baseLine => console.log('baseLine y:', baseLine));
     console.log('s:', s);
     let tSize = new Size(...s);
-        console.log('tSize:', tSize[Symbol.iterator]());
-let tPos = [...tSize.div(2)];
+    console.log('tSize:', tSize[Symbol.iterator]());
+    let tPos = new Point(...tSize.div(2)).floor().prod(-1);
 
     console.log('tPos:', tPos);
 

@@ -162,7 +162,7 @@ js_point_norm(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
 }
 
 static JSValue
-js_point_prod(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+js_point_mul(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSPointData* s = js_point_data(ctx, this_val);
   double factor = 1.0;
   JS_ToFloat64(ctx, &factor, argv[0]);
@@ -170,8 +170,7 @@ js_point_prod(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
   if(!s || argc < 1)
     return JS_EXCEPTION;
 
-  ret = js_point_new(ctx, s->x * factor, s->y * factor);
-  return ret;
+  return js_point_new(ctx, s->x * factor, s->y * factor);
 }
 
 static JSValue
@@ -203,16 +202,29 @@ js_point_set_xy(JSContext* ctx, JSValueConst this_val, JSValueConst val, int mag
 }
 
 static JSValue
-js_point_sum(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSPointData* s = js_point_data(ctx, this_val);
-  JSPointData* other = js_point_data(ctx, argv[0]);
+js_point_add(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSPointData other, *s = js_point_data(ctx, this_val);
+  double x, y;
 
-  JSValue ret;
-  if(!s || !other)
-    return JS_EXCEPTION;
+  if(js_point_read(ctx, argv[0], &other)) {
+    x = other.x;
+    y = other.y;
+  } else {
+    JS_ToFloat64(ctx, &x, argv[0]);
+    JS_ToFloat64(ctx, &y, argv[1]);
+  }
 
-  ret = js_point_new(ctx, s->x + other->x, s->y + other->y);
-  return ret;
+  switch(magic) {
+    case 0:
+      x += s->x;
+      y += s->y;
+      break;
+    case 1:
+      x -= s->x;
+      y -= s->y;
+      break;
+  }
+  return js_point_new(ctx, x, y);
 }
 
 static JSValue
@@ -274,6 +286,43 @@ js_point_symbol_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValu
   return JS_Call(ctx, iter, arr, 0, argv);
 }
 
+static JSValue
+js_point_round(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSPointData point, *s = js_point_data(ctx, this_val);
+  double x, y;
+  double prec = 1;
+  point = *s;
+  JSValue ret = JS_UNDEFINED;
+
+  switch(magic) {
+    case 0:
+      if(argc > 0)
+        JS_ToFloat64(ctx, &prec, argv[0]);
+
+      x = round(s->x / prec);
+      y = round(s->y / prec);
+      ret = js_point_new(ctx, x * prec, y * prec);
+      break;
+    case 1:
+      if(argc > 0)
+        JS_ToFloat64(ctx, &prec, argv[0]);
+
+      x = floor(s->x / prec);
+      y = floor(s->y / prec);
+      ret = js_point_new(ctx, x * prec, y * prec);
+      break;
+    case 2:
+      if(argc > 0)
+        JS_ToFloat64(ctx, &prec, argv[0]);
+
+      x = ceil(s->x / prec);
+      y = ceil(s->y / prec);
+      ret = js_point_new(ctx, x * prec, y * prec);
+      break;
+  }
+  return ret;
+}
+
 JSValue point_class = JS_UNDEFINED;
 
 JSClassDef js_point_class = {
@@ -288,10 +337,14 @@ const JSCFunctionListEntry js_point_proto_funcs[] = {
     JS_CFUNC_DEF("dot", 1, js_point_ddot),
     JS_CFUNC_DEF("inside", 1, js_point_inside),
     JS_CFUNC_DEF("diff", 1, js_point_diff),
-    JS_CFUNC_DEF("sum", 1, js_point_sum),
-    JS_CFUNC_DEF("prod", 1, js_point_prod),
+    JS_CFUNC_MAGIC_DEF("add", 1, js_point_add, 0),
+    JS_CFUNC_MAGIC_DEF("sub", 1, js_point_add, 1),
+    JS_CFUNC_DEF("mul", 1, js_point_mul),
     JS_CFUNC_DEF("quot", 1, js_point_quot),
     JS_CFUNC_DEF("norm", 0, js_point_norm),
+    JS_CFUNC_MAGIC_DEF("round", 0, js_point_round, 0),
+    JS_CFUNC_MAGIC_DEF("floor", 0, js_point_round, 1),
+    JS_CFUNC_MAGIC_DEF("ceil", 0, js_point_round, 2),
     JS_CFUNC_MAGIC_DEF("toString", 0, js_point_to_string, 0),
     JS_CFUNC_DEF("toArray", 0, js_point_to_array),
     JS_CFUNC_DEF("[Symbol.iterator]", 0, js_point_symbol_iterator),
