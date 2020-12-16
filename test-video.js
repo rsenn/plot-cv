@@ -19,58 +19,59 @@ function dumpMat(name, mat) {
 }
 
 function getConstants(names) {
-  return Object.fromEntries(names.map(name => [name, '0x'+cv[name].toString(16)]));
+  return Object.fromEntries(names.map(name => [name, '0x' + cv[name].toString(16)]));
 }
 
-
 function findConstant(value, keyCond = k => /^CV/.test(k)) {
-  return Util.findKey(cv, (v,k) => v == value && keyCond(k) );
+  return Util.findKey(cv, (v, k) => v == value && keyCond(k));
 }
 
 function findType(value) {
   return findConstant(value, k => /^CV_[0-9]+[A-Z]+C[0-9]/.test(k));
 }
 
-
 function getBitDepth(mat) {
-  switch(mat.depth) {
+  switch (mat.depth) {
     case cv.CV_8U:
-    case cv.CV_8S: return 8;
+    case cv.CV_8S:
+      return 8;
     case cv.CV_16U:
-    case cv.CV_16S: return 16;
-    case cv.CV_32F: return 32;
-    case cv.CV_64F: return 64;
+    case cv.CV_16S:
+      return 16;
+    case cv.CV_32F:
+      return 32;
+    case cv.CV_64F:
+      return 64;
   }
 }
 
 function to32bit(mat) {
   const bits = getBitDepth(mat);
-  if(bits == 32)
-    return mat;
+  if(bits == 32) return mat;
   let ret = new Mat();
   const max = Math.pow(2, bits) - 1;
-  const type=cv.CV_32F | ((mat.channels-1) << 3);
+  const type = cv.CV_32F | ((mat.channels - 1) << 3);
 
-  console.log("max:", max);
-  console.log("const:", findType(type), type, cv[findType(type)]);
- console.log("channels:", mat.channels);
- console.log("constants:", getConstants(['CV_32F','CV_32FC1','CV_32FC3','CV_32FC4','CV_8U','CV_8UC1','CV_8UC3','CV_8UC4']));
-  mat.convertTo(ret, type, 1.0/max);
-return ret;
+  console.log('max:', max);
+  console.log('const:', findType(type), type, cv[findType(type)]);
+  console.log('channels:', mat.channels);
+  console.log('constants:', getConstants(['CV_32F', 'CV_32FC1', 'CV_32FC3', 'CV_32FC4', 'CV_8U', 'CV_8UC1', 'CV_8UC3', 'CV_8UC4']));
+  mat.convertTo(ret, type, 1.0 / max);
+  return ret;
 }
 
 function toGrayscale(mat) {
   let lab = new Mat();
-let channels =    [new Mat(), new Mat(), new Mat() ];
-   cv.cvtColor(mat, lab, cv.COLOR_BGR2Lab);
-   cv.split(lab, channels);
-   return channels[0];
+  let channels = [new Mat(), new Mat(), new Mat()];
+  cv.cvtColor(mat, lab, cv.COLOR_BGR2Lab);
+  cv.split(lab, channels);
+  return channels[0];
 }
 
 function minMax(mat) {
- const ret =  cv.minMaxLoc(mat);
- return [ ret.minVal, ret.maxVal];
-  }
+  const ret = cv.minMaxLoc(mat);
+  return [ret.minVal, ret.maxVal];
+}
 
 async function main(...args) {
   let start;
@@ -90,12 +91,12 @@ async function main(...args) {
 
   dumpMat('bgr', bgr);
 
- let gray = /*to32bit*/(toGrayscale(bgr));
+  let gray = /*to32bit*/ toGrayscale(bgr);
   dumpMat('gray', gray);
-  console.log('gray row(0):', [...gray.col(gray.cols-1).values()]);
+  console.log('gray row(0):', [...gray.col(gray.cols - 1).values()]);
   console.log('gray minMax:', cv.minMaxLoc(gray));
 
- cv.imshow("gray", gray);
+  cv.imshow('gray', gray);
 
   console.log('props:', video.dump());
 }
