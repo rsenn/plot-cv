@@ -74,7 +74,7 @@ JSModuleDef* js_init_size_module(JSContext*, const char* module_name);
 void js_size_constructor(JSContext* ctx, JSValue parent, const char* name);
 
 VISIBLE JSRectData* js_rect_data(JSContext*, JSValueConst val);
-
+VISIBLE JSValue js_rect_wrap(JSContext*, const JSRectData&);
 int js_rect_init(JSContext*, JSModuleDef*);
 JSModuleDef* js_init_rect_module(JSContext*, const char* module_name);
 
@@ -588,7 +588,8 @@ public:
   from_map(JSContext* ctx, const std::map<std::string, T>& in) {
     typedef std::pair<std::string, T> entry_type;
     jsrt js(ctx);
-    JSValue obj = JS_NewObject(ctx);;
+    JSValue obj = JS_NewObject(ctx);
+    ;
 
     for(entry_type entry : in) js.set_property(obj, entry.first, js.create<T>(entry.second), JS_PROP_C_W_E);
 

@@ -25,6 +25,11 @@ js_rect_new(JSContext* ctx, double x, double y, double w, double h) {
   return ret;
 }
 
+VISIBLE JSValue
+js_rect_wrap(JSContext* ctx, const JSRectData& rect) {
+  return js_rect_new(ctx, rect.x, rect.y, rect.width, rect.height);
+}
+
 static JSValue
 js_rect_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   double x, y, w, h;

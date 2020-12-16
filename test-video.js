@@ -9,6 +9,47 @@ import { Alea } from './lib/alea.js';
 let prng = new Alea(Date.now());
 const hr = Util.hrtime;
 
+class Window {
+  constructor(name, flags = cv.WINDOW_NORMAL) {
+    this.name = name;
+    this.flags = flags;
+
+    cv.namedWindow(this.name, this.flags);
+  }
+
+  move(x, y) {
+    cv.moveWindow(this.name, x, y);
+  }
+
+  resize(width, height) {
+    cv.resizeWindow(this.name, width, height);
+  }
+
+  get imageRect() {
+    return cv.getWindowImageRect(this.name);
+  }
+
+  get(propId) {
+    return cv.getWindowProperty(this.name, propId);
+  }
+  set(propId, value) {
+    cv.setWindowProperty(this.name, propId, value);
+  }
+
+  setTitle(title) {
+    this.title = title;
+    cv.setWindowTitle(this.name, title);
+  }
+
+  setMouseCallback(fn) {
+    cv.setMouseCallback(this.name, (event,x,y,flags) => fn.call(this, event,x,y,flags));
+  }
+
+  show(mat) {
+    cv.imshow(this.name, mat);
+  }
+}
+
 function dumpMat(name, mat) {
   console.log(`${name} =`,
     Object.create(
@@ -78,6 +119,9 @@ async function main(...args) {
   let begin = hr();
   await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
 
+
+ let win = new Window('gray', cv.WINDOW_AUTOSIZE);
+
   console.log('Setup duration:', hr(begin));
 
   let video = new VideoSource(...args);
@@ -86,17 +130,28 @@ async function main(...args) {
   console.log('backend:', video.backend);
   console.log('grab():', video.grab);
   console.log('read():', [...Util.repeat(10, () => video.grab())]);
+  let frameCount = video.get('frame_count');
 
-  video.retrieve(bgr);
+  for(;;) {
+    let frameNo = video.get('pos_frames');
+    if(frameNo == frameCount) video.set('pos_frames', 0);
 
-  dumpMat('bgr', bgr);
+    video.read(bgr);
 
-  let gray = /*to32bit*/ toGrayscale(bgr);
-  dumpMat('gray', gray);
-  console.log('gray row(0):', [...gray.col(gray.cols - 1).values()]);
-  console.log('gray minMax:', cv.minMaxLoc(gray));
+    //dumpMat(`bgr #${frameNo}/${frameCount}`, bgr);
 
-  cv.imshow('gray', gray);
+    let gray = toGrayscale(bgr);
+    /* dumpMat('gray', gray);
+    console.log('gray row(0):', [...gray.col(gray.cols - 1).values()]);
+  console.log('gray minMax:', cv.minMaxLoc(gray));*/
+
+   win.show(gray);
+
+    let key = cv.waitKeyEx(50);
+
+    if(key == 27) break;
+    if(key != -1) console.log(`keypress 0x${key.toString(16)}`);
+  }
 
   console.log('props:', video.dump());
 }

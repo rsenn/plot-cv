@@ -8,13 +8,19 @@ export class ImageSequence {
     const imgs = this;
     this.images = images;
     this.frame = null;
+    this.index = 0;
     this.props = {
       get frame_count() {
         return imgs.images.length;
       },
       fps: 1,
       backend: 'imread',
-      pos_frames: 0,
+      get pos_frames() {
+        return imgs.index;
+      },
+      set pos_frames(value) {
+        imgs.index = Util.mod(value, images.length);
+      },
       get pos_msec() {
         return (this.pos_frames * 1000) / this.fps;
       },
@@ -53,6 +59,8 @@ export class ImageSequence {
   }
 }
 
+const isVideoPath = arg => /\.(3gp|avi|f4v|flv|m4v|m2v|mkv|mov|mp4|mpeg|mpg|ogm|vob|webm|wmv)$/i.test(arg);
+
 export class VideoSource {
   static backends = Object.fromEntries(['ANY', 'VFW', 'V4L', 'V4L2', 'FIREWIRE', 'FIREWARE', 'IEEE1394', 'DC1394', 'CMU1394', 'QT', 'UNICAP', 'DSHOW', 'PVAPI', 'OPENNI', 'OPENNI_ASUS', 'ANDROID', 'XIAPI', 'AVFOUNDATION', 'GIGANETIX', 'MSMF', 'WINRT', 'INTELPERC', 'REALSENSE', 'OPENNI2', 'OPENNI2_ASUS', 'GPHOTO2', 'GSTREAMER', 'FFMPEG', 'IMAGES', 'ARAVIS', 'OPENCV_MJPEG', 'INTEL_MFX', 'XINE'].map(name => [name, cv['CAP_' + name]])
   );
@@ -60,12 +68,12 @@ export class VideoSource {
   constructor(...args) {
     if(args.length > 0) {
       let [device, backend = 'ANY'] = args;
-      if(typeof device == 'string' && /\.(3gp|avi|f4v|flv|m4v|m2v|mkv|mov|mp4|mpeg|mpg|ogm|vob|webm|wmv)$/i.test(device)) {
-        if(backend == 'ANY') backend = 'FFMPEG';
-      }
+
+      if(typeof device == 'string' && isVideoPath(device)) if (backend == 'ANY') backend = 'FFMPEG';
 
       const driverId = VideoSource.backends[backend];
       console.log('VideoSource', { device, backend, driverId, args });
+
       if(typeof driverId == 'number') {
         this.capture(device, driverId);
       } else {
@@ -116,7 +124,8 @@ export class VideoSource {
   }
 
   get(prop) {
-    return this.cap.get(this.propId(prop));
+    const { cap } = this;
+    if(cap && typeof cap.get == 'function') return this.cap.get(this.propId(prop));
   }
 
   set(prop, value) {
@@ -124,12 +133,32 @@ export class VideoSource {
   }
 
   get backend() {
-    const id = this.get('BACKEND');
-    return Util.findKey(VideoSource.backends, id);
+    const { cap } = this;
+    if(cap && typeof cap.getBackendName == 'function') return cap.getBackendName();
+
+    if(typeof this.get == 'function') {
+      const id = this.get('BACKEND');
+      return Util.findKey(VideoSource.backends, id);
+    }
+  }
+
+  get fps() {
+    return this.get('fps');
   }
 
   dump(props = ['frame_count', 'frame_width', 'frame_height', 'fps', 'format', 'fourcc', 'backend', 'pos_frames', 'pos_msec']) {
     return new Map(props.map(propName => [propName, this.get(propName)]).filter(([k, v]) => v !== undefined));
+  }
+
+  seek_frames(relative) {
+    const pos = this.get('pos_frames') + relative;
+    this.set('pos_frames', pos);
+    return this.get('pos_frames');
+  }
+
+  seek_msecs(relative) {
+    const msec_per_frame = 1000 / this.fps;
+    return this.seek_frames(relative / msec_per_frame);
   }
 }
 

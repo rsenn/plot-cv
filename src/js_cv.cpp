@@ -650,6 +650,95 @@ js_cv_named_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
 }
 
 static JSValue
+js_cv_move_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  const char* name;
+  int32_t x, y;
+  JSPointData point;
+  name = JS_ToCString(ctx, argv[0]);
+
+  if(js_point_read(ctx, argv[1], &point)) {
+    x = point.x;
+    y = point.y;
+  } else {
+    JS_ToInt32(ctx, &x, argv[1]);
+    JS_ToInt32(ctx, &y, argv[2]);
+  }
+  cv::moveWindow(name, x, y);
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_cv_resize_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  const char* name;
+  uint32_t w, h;
+  JSSizeData size;
+  name = JS_ToCString(ctx, argv[0]);
+
+  if(js_size_read(ctx, argv[1], &size)) {
+    w = size.width;
+    h = size.height;
+  } else {
+    JS_ToUint32(ctx, &w, argv[1]);
+    JS_ToUint32(ctx, &h, argv[2]);
+  }
+
+  cv::resizeWindow(name, w, h);
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_cv_get_window_image_rect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  const char* name;
+  JSRectData rect;
+  name = JS_ToCString(ctx, argv[0]);
+
+  rect = cv::getWindowImageRect(name);
+  return js_rect_wrap(ctx, rect);
+}
+
+static JSValue
+js_cv_get_window_property(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  const char* name;
+  int32_t propId;
+  name = JS_ToCString(ctx, argv[0]);
+  JS_ToInt32(ctx, &propId, argv[1]);
+
+  return JS_NewFloat64(ctx, cv::getWindowProperty(name, propId));
+}
+
+static JSValue
+js_cv_set_window_property(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  const char* name;
+  int32_t propId;
+  double value;
+  name = JS_ToCString(ctx, argv[0]);
+  JS_ToInt32(ctx, &propId, argv[1]);
+  JS_ToFloat64(ctx, &value, argv[2]);
+  cv::setWindowProperty(name, propId, value);
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_cv_set_window_title(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  const char *name, *title;
+  name = JS_ToCString(ctx, argv[0]);
+  title = JS_ToCString(ctx, argv[1]);
+
+  cv::setWindowTitle(name, title);
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_cv_destroy_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  const char* name;
+  int32_t propId;
+  name = JS_ToCString(ctx, argv[0]);
+
+  cv::destroyWindow(name);
+  return JS_UNDEFINED;
+}
+
+static JSValue
 js_cv_create_trackbar(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   const char *name, *window;
   int32_t ret, count;
@@ -731,6 +820,50 @@ js_cv_set_trackbar_pos(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
 }
 
 static JSValue
+js_cv_get_mouse_wheel_delta(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  int32_t flags;
+
+  JS_ToInt32(ctx, &flags, argv[0]);
+
+  return JS_NewInt32(ctx, cv::getMouseWheelDelta(flags));
+}
+
+static JSValue
+js_cv_set_mouse_callback(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  const char* name;
+  struct MouseHandler {
+    JSValue window;
+    JSValueConst handler;
+    JSContext* ctx;
+  };
+  MouseHandler* userdata;
+
+  userdata = static_cast<MouseHandler*>(js_mallocz(ctx, sizeof(MouseHandler)));
+
+  name = JS_ToCString(ctx, argv[0]);
+
+  userdata->handler = argv[1];
+
+  cv::setMouseCallback(
+      name,
+      [](int event, int x, int y, int flags, void* ptr) {
+        MouseHandler const& data = *static_cast<MouseHandler*>(ptr);
+
+        if(JS_IsFunction(data.ctx, data.handler)) {
+          JSValueConst argv[] = {JS_NewInt32(data.ctx, event),
+                                 JS_NewInt32(data.ctx, x),
+                                 JS_NewInt32(data.ctx, y),
+
+                                 JS_NewInt32(data.ctx, flags)};
+
+          JS_Call(data.ctx, data.handler, JS_UNDEFINED, 4, argv);
+        }
+      },
+      userdata);
+  return JS_UNDEFINED;
+}
+
+static JSValue
 js_cv_wait_key(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   int32_t delay = 0;
   union {
@@ -744,7 +877,7 @@ js_cv_wait_key(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
 
   key.i = cv::waitKey(delay);
 
-  if(key.i >= 0 && key.i <= 255) {
+  if(0 && isalnum(key.c)) {
     char ch[2] = {key.c, 0};
 
     ret = JS_NewString(ctx, ch);
@@ -752,6 +885,20 @@ js_cv_wait_key(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
     ret = JS_NewInt32(ctx, key.i);
   }
   return ret;
+}
+
+static JSValue
+js_cv_wait_key_ex(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  int32_t delay = 0;
+  int keyCode;
+  JSValue ret;
+
+  if(argc > 0)
+    JS_ToInt32(ctx, &delay, argv[0]);
+
+  keyCode = cv::waitKeyEx(delay);
+
+  return JS_NewInt32(ctx, keyCode);
 }
 
 static JSValue
@@ -893,10 +1040,19 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_CFUNC_DEF("threshold", 5, js_cv_threshold),
     JS_CFUNC_DEF("bilateralFilter", 5, js_cv_bilateral_filter),
     JS_CFUNC_DEF("namedWindow", 1, js_cv_named_window),
+    JS_CFUNC_DEF("moveWindow", 2, js_cv_move_window),
+    JS_CFUNC_DEF("resizeWindow", 2, js_cv_resize_window),
+    JS_CFUNC_DEF("getWindowImageRect", 1, js_cv_get_window_image_rect),
+    JS_CFUNC_DEF("getWindowProperty", 2, js_cv_get_window_property),
+    JS_CFUNC_DEF("setWindowProperty", 3, js_cv_set_window_property),
+    JS_CFUNC_DEF("setWindowTitle", 2, js_cv_set_window_title),
     JS_CFUNC_DEF("createTrackbar", 5, js_cv_create_trackbar),
     JS_CFUNC_DEF("getTrackbarPos", 2, js_cv_get_trackbar_pos),
     JS_CFUNC_DEF("setTrackbarPos", 3, js_cv_set_trackbar_pos),
+    JS_CFUNC_DEF("getMouseWheelDelta", 1, js_cv_get_mouse_wheel_delta),
+    JS_CFUNC_DEF("setMouseCallback", 2, js_cv_set_mouse_callback),
     JS_CFUNC_DEF("waitKey", 0, js_cv_wait_key),
+    JS_CFUNC_DEF("waitKeyEx", 0, js_cv_wait_key_ex),
     JS_CFUNC_DEF("getPerspectiveTransform", 2, js_cv_getperspectivetransform),
     JS_CFUNC_DEF("getAffineTransform", 2, js_cv_getaffinetransform),
     JS_CFUNC_DEF("findContours", 1, js_cv_findcontours),
@@ -1299,6 +1455,13 @@ const JSCFunctionListEntry js_cv_static_funcs[] = {
     JS_PROP_INT32_DEF("MORPH_RECT", cv::MORPH_RECT, 0),
     JS_PROP_INT32_DEF("MORPH_CROSS", cv::MORPH_CROSS, 0),
     JS_PROP_INT32_DEF("MORPH_ELLIPSE", cv::MORPH_ELLIPSE, 0),
+
+    JS_PROP_INT32_DEF("WND_PROP_FULLSCREEN", cv::WND_PROP_FULLSCREEN, 0),
+    JS_PROP_INT32_DEF("WND_PROP_AUTOSIZE", cv::WND_PROP_AUTOSIZE, 0),
+    JS_PROP_INT32_DEF("WND_PROP_ASPECT_RATIO", cv::WND_PROP_ASPECT_RATIO, 0),
+    JS_PROP_INT32_DEF("WND_PROP_OPENGL", cv::WND_PROP_OPENGL, 0),
+    JS_PROP_INT32_DEF("WND_PROP_VISIBLE", cv::WND_PROP_VISIBLE, 0),
+    JS_PROP_INT32_DEF("WND_PROP_TOPMOST", cv::WND_PROP_TOPMOST, 0),
 
 };
 
