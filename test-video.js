@@ -4,6 +4,7 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import * as cv from 'cv';
 import * as draw from 'draw';
 import { Mat } from 'mat';
+import { Size } from 'size';
 import { VideoSource } from './cvVideo.js';
 import { Window, MouseFlags, MouseEvents, Mouse } from './cvHighGUI.js';
 import { Alea } from './lib/alea.js';
@@ -94,17 +95,17 @@ async function main(...args) {
   let start;
   let begin = hr();
   await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
-    console.log('cv:', cv);
-    console.log('cv.WINDOW_AUTOSIZE', cv.WINDOW_AUTOSIZE);
+  console.log('cv:', cv);
+
+  for(let name of ['CV_VERSION_MAJOR', 'NORM_MINMAX', 'COLOR_BGR2Lab', 'RETR_EXTERNAL', 'THRESH_BINARY', 'CAP_FFMPEG', 'CAP_V4L2', 'CAP_PROP_POS_FRAMES', 'CAP_PROP_BACKEND', 'CAP_PROP_CODEC_PIXEL_FORMAT', 'WINDOW_NORMAL', 'WINDOW_AUTOSIZE', 'WINDOW_FULLSCREEN']) console.log(`cv.${name}`, cv[name]);
 
   let win = new Window('gray', cv.WINDOW_AUTOSIZE);
-    console.log('Mouse :', { MouseEvents, MouseFlags });
-    console.log('cv.EVENT_MOUSEMOVE', cv.EVENT_MOUSEMOVE);
+  //console.log('Mouse :', { MouseEvents, MouseFlags });
+  //console.log('cv.EVENT_MOUSEMOVE', cv.EVENT_MOUSEMOVE);
 
   win.setMouseCallback(function (event, x, y, flags) {
-/* event = Mouse.printEvent(event);*/
- flags = Mouse.printFlags(flags);
-
+    /* event = Mouse.printEvent(event);*/
+    flags = Mouse.printFlags(flags);
 
     console.log('Mouse event:', { event, x, y, flags });
   });
@@ -137,10 +138,19 @@ async function main(...args) {
     //console.log("draw:",draw);
 
     draw.circle(bgr, [50, 50], 25, 0xff00ff || { r: 255, g: 0, b: 0 }, 2, cv.LINE_AA);
+    let s = draw.textSize('TEST', cv.FONT_HERSHEY_PLAIN, 1.0, 1, baseLine => console.log('baseLine y:', baseLine));
+    console.log('s:', s);
+    let tSize = new Size(...s);
+        console.log('tSize:', tSize[Symbol.iterator]());
+let tPos = [...tSize.div(2)];
+
+    console.log('tPos:', tPos);
+
+    draw.text(bgr, 'TEST', [40, 50], cv.FONT_HERSHEY_PLAIN, 1.0, 0xffff00 || { r: 255, g: 0, b: 0 }, 1, cv.LINE_AA);
 
     win.show(bgr);
 
-    let key = cv.waitKeyEx(50);
+    let key = cv.waitKeyEx(1000 / video.fps);
 
     if(key == 27) break;
 

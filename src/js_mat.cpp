@@ -663,7 +663,7 @@ js_mat_create_vec(JSContext* ctx, int len, JSValue* vec) {
 }
 
 JSValue
-js_create_mat_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+js_mat_iterator_new(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSValue enum_obj, mat;
   JSMatIteratorData* it;
   mat = JS_DupValue(ctx, this_val);
@@ -778,9 +778,9 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {JS_CGETSET_MAGIC_DEF("cols", 
                                                    JS_CFUNC_DEF("convertTo", 2, js_mat_convert_to),
                                                    JS_CFUNC_DEF("copyTo", 1, js_mat_copy_to),
                                                    JS_CFUNC_DEF("reshape", 1, js_mat_reshape),
-                                                   JS_CFUNC_MAGIC_DEF("keys", 0, js_create_mat_iterator, 0),
-                                                   JS_CFUNC_MAGIC_DEF("values", 0, js_create_mat_iterator, 1),
-                                                   JS_CFUNC_MAGIC_DEF("entries", 0, js_create_mat_iterator, 2),
+                                                   JS_CFUNC_MAGIC_DEF("keys", 0, js_mat_iterator_new, 0),
+                                                   JS_CFUNC_MAGIC_DEF("values", 0, js_mat_iterator_new, 1),
+                                                   JS_CFUNC_MAGIC_DEF("entries", 0, js_mat_iterator_new, 2),
                                                    JS_ALIAS_DEF("[Symbol.iterator]", "entries"),
                                                    JS_ALIAS_DEF("[Symbol.toPrimitive]", "toString"),
 

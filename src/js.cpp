@@ -541,8 +541,8 @@ jsrt::get_property_symbol(const_value obj, const char* symbol) {
 }
 
 jsrt::value
-jsrt::get_iterator(const_value obj, const char* symbol) {
-  value fn = get_property_symbol(obj, symbol);
+jsrt::call_iterator(const_value obj, const char* symbol) {
+  value fn = get_iterator(obj, symbol);
   value ret = _undefined;
 
   if(is_function(fn))
@@ -554,7 +554,7 @@ jsrt::get_iterator(const_value obj, const char* symbol) {
 }
 
 jsrt::value
-jsrt::get_iterator_next(const_value obj, const char* symbol) {
+jsrt::call_iterator_next(const_value obj, const char* symbol) {
   value iter = get_iterator(obj, symbol);
   value ret = _undefined, next = _undefined;
 

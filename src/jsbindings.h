@@ -425,6 +425,13 @@ public:
     return n;
   }
 
+  template<class Container>
+
+  static JSValue
+  from(JSContext* ctx, const Container& in) {
+    return from_sequence<typename Container::const_iterator>(ctx, in.cbegin(), in.cend());
+  }
+
   static JSValue
   from_vector(JSContext* ctx, const std::vector<T>& in) {
     return from_sequence(ctx, in.cbegin(), in.cend());

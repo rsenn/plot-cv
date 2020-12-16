@@ -253,6 +253,27 @@ js_point_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   return JS_NewString(ctx, os.str().c_str());
 }
 
+static JSValue
+js_point_to_array(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSPointData* s = js_point_data(ctx, this_val);
+  std::array<double, 2> arr;
+
+  arr[0] = s->x;
+  arr[1] = s->y;
+
+  return js_array<double>::from_sequence(ctx, arr.cbegin(), arr.cend());
+}
+
+static JSValue
+js_point_symbol_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSValue arr, iter, symbol;
+  jsrt js(ctx);
+  arr = js_point_to_array(ctx, this_val, argc, argv);
+  symbol = js.get_symbol("iterator");
+  iter = js.get_property(arr, symbol);
+  return JS_Call(ctx, iter, arr, 0, argv);
+}
+
 JSValue point_class = JS_UNDEFINED;
 
 JSClassDef js_point_class = {
@@ -271,8 +292,9 @@ const JSCFunctionListEntry js_point_proto_funcs[] = {
     JS_CFUNC_DEF("prod", 1, js_point_prod),
     JS_CFUNC_DEF("quot", 1, js_point_quot),
     JS_CFUNC_DEF("norm", 0, js_point_norm),
-    // JS_CFUNC_DEF("getRotationMatrix2D", 0, js_point_getrotationmatrix2d),
     JS_CFUNC_MAGIC_DEF("toString", 0, js_point_to_string, 0),
+    JS_CFUNC_DEF("toArray", 0, js_point_to_array),
+    JS_CFUNC_DEF("[Symbol.iterator]", 0, js_point_symbol_iterator),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Point", JS_PROP_CONFIGURABLE),
 
     // JS_CFUNC_MAGIC_DEF("[Symbol.toStringTag]", 0, js_point_to_string, 1),

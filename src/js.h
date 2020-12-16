@@ -217,8 +217,12 @@ struct jsrt {
   void set_global(const char* name, value v);
 
   value get_symbol(const char* name) const;
-  value get_iterator(const_value obj, const char* symbol = "iterator");
-  value get_iterator_next(const_value obj, const char* symbol = "iterator");
+  value
+  get_iterator(const_value obj, const char* symbol = "iterator") {
+    return get_property_symbol(obj, symbol);
+  }
+  value call_iterator(const_value obj, const char* symbol = "iterator");
+  value call_iterator_next(const_value obj, const char* symbol = "iterator");
 
   const_value
   global_object() const {

@@ -103,8 +103,6 @@ js_size_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
   std::ostringstream os;
   JSValue wv, hv;
   double width = -1, height = -1;
-  /* if(!s)
-     return JS_EXCEPTION;*/
 
   wv = JS_GetPropertyStr(ctx, this_val, "width");
   hv = JS_GetPropertyStr(ctx, this_val, "height");
@@ -122,6 +120,53 @@ js_size_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
   return JS_NewString(ctx, os.str().c_str());
 }
 
+static JSValue
+js_size_to_array(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSSizeData* s = js_size_data(ctx, this_val);
+  std::array<double, 2> arr;
+
+  arr[0] = s->width;
+  arr[1] = s->height;
+
+  return js_array<double>::from_sequence(ctx, arr.cbegin(), arr.cend());
+}
+
+static JSValue
+js_size_mul(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSSizeData size, *s = js_size_data(ctx, this_val);
+  double factor;
+  JS_ToFloat64(ctx, &factor, argv[0]);
+
+  size = *s;
+  size.width *= factor;
+  size.height *= factor;
+
+  return js_size_wrap(ctx, size);
+}
+
+static JSValue
+js_size_div(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSSizeData size, *s = js_size_data(ctx, this_val);
+  double divider;
+  JS_ToFloat64(ctx, &divider, argv[0]);
+
+  size = *s;
+  size.width /= divider;
+  size.height /= divider;
+
+  return js_size_wrap(ctx, size);
+}
+
+static JSValue
+js_size_symbol_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSValue arr, iter, symbol;
+  jsrt js(ctx);
+  arr = js_size_to_array(ctx, this_val, argc, argv);
+  symbol = js.get_symbol("iterator");
+  iter = js.get_property(arr, symbol);
+  return JS_Call(ctx, iter, arr, 0, argv);
+}
+
 JSValue size_proto, size_class;
 JSClassID js_size_class_id;
 
@@ -134,6 +179,11 @@ const JSCFunctionListEntry js_size_proto_funcs[] = {
     JS_CGETSET_ENUMERABLE_DEF("width", js_size_get_wh, js_size_set_wh, 0),
     JS_CGETSET_ENUMERABLE_DEF("height", js_size_get_wh, js_size_set_wh, 1),
     JS_CFUNC_DEF("toString", 0, js_size_to_string),
+    JS_CFUNC_DEF("toArray", 0, js_size_to_array),
+    JS_CFUNC_DEF("mul", 1, js_size_mul),
+    JS_CFUNC_DEF("div", 1, js_size_div),
+    JS_ALIAS_DEF("values", "toArray"),
+    JS_CFUNC_DEF("[Symbol.iterator]", 0, js_size_symbol_iterator),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Size", JS_PROP_CONFIGURABLE),
 };
 

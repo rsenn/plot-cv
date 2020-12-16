@@ -70,7 +70,7 @@ js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const
 
   cv::circle(
       *dst, point, radius, *reinterpret_cast<cv::Scalar*>(&color), thickness < 0 ? cv::FILLED : thickness, lineType);
-  return js._undefined;
+  return JS_UNDEFINED;
 }
 
 static JSValue
@@ -103,10 +103,10 @@ js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   if(argc > i && js.is_bool(argv[i]))
     js.get_boolean(argv[i++], antialias);
 
-  cv::drawContours(*dptr, points, -1, color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
+  cv::drawContours(*dst, points, -1, color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
 
   std::cerr << "draw_contour() ret:" << ret << " color: " << color << std::endl;
-  return js._undefined;
+  return JS_UNDEFINED;
 }
 
 static JSValue
@@ -141,8 +141,8 @@ js_draw_line(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
   if(argc > i && js.is_bool(argv[i]))
     js.get_boolean(argv[i++], antialias);
 
-  cv::line(*dptr, points[0], points[1], color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
-  return js._undefined;
+  cv::line(*dst, points[0], points[1], color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
+  return JS_UNDEFINED;
 }
 
 static JSValue
@@ -178,10 +178,10 @@ js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
     std::cerr << "drawPolygon() points: " << (points) << " color: " << to_string(color) << std::endl;
 
     // cv::fillPoly(*dptr, points, color, antialias ? cv::LINE_AA : cv::LINE_8);
-    (thickness <= 0 ? cv::fillPoly(*dptr, &pts, &size, 1, color, lineType)
-                    : cv::polylines(*dptr, &pts, &size, 1, true, color, thickness, lineType));
+    (thickness <= 0 ? cv::fillPoly(*dst, &pts, &size, 1, color, lineType)
+                    : cv::polylines(*dst, &pts, &size, 1, true, color, thickness, lineType));
 
-    return js._undefined;
+    return JS_UNDEFINED;
   }
   return JS_EXCEPTION;
 }
@@ -221,9 +221,133 @@ js_draw_rect(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
   points[1].x = rect.x + rect.width;
   points[1].y = rect.y + rect.height;
 
-  cv::rectangle(*dptr, points[0], points[1], color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
+  cv::rectangle(*dst, points[0], points[1], color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
 
-  return js._undefined;
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_put_text(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
+  cv::Mat* dst;
+  int i = 0, ret = -1;
+  JSColorData color;
+  JSPointData point;
+  const char* text;
+  int32_t fontFace = cv::FONT_HERSHEY_SIMPLEX, thickness = 1, lineType = cv::LINE_8;
+  double fontScale = 1;
+  bool bottomLeftOrigin = false;
+
+  if(argc > i && (dst = js_mat_data(ctx, argv[i])))
+    i++;
+  else
+    dst = dptr;
+
+  if(dst == nullptr)
+    return JS_EXCEPTION;
+
+  text = JS_ToCString(ctx, argv[i++]);
+
+  if(js_point_read(ctx, argv[i], &point)) {
+    i++;
+  } else {
+    int32_t x, y;
+    JS_ToInt32(ctx, &x, argv[i]);
+    JS_ToInt32(ctx, &y, argv[i + 1]);
+
+    point.x = x;
+    point.y = y;
+    i += 2;
+  }
+
+  if(argc > i && js.is_number(argv[i]))
+    js.get_number(argv[i++], fontFace);
+
+  if(argc > i && js.is_number(argv[i]))
+    js.get_number(argv[i++], fontScale);
+
+  if(argc > i) {
+    js_color_read(ctx, argv[i], &color);
+    i++;
+  }
+
+  if(argc > i && js.is_number(argv[i]))
+    js.get_number(argv[i++], thickness);
+
+  if(argc > i && js.is_number(argv[i]))
+    js.get_number(argv[i++], lineType);
+
+  if(argc > i)
+    bottomLeftOrigin = JS_ToBool(ctx, argv[i++]);
+
+  cv::putText(*dst,
+              text,
+              point,
+              fontFace,
+              fontScale,
+              *reinterpret_cast<cv::Scalar*>(&color),
+              thickness,
+              lineType,
+              bottomLeftOrigin);
+
+  return JS_UNDEFINED;
+}
+
+static JSValue
+js_get_text_size(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
+  int i = 0, baseline = 0;
+  JSSizeData size;
+  const char* text;
+  int32_t fontFace = cv::FONT_HERSHEY_SIMPLEX, thickness = 1;
+  double fontScale = 1;
+  JSValue baselineVal;
+  std::array<int32_t, 2> dim;
+
+  text = JS_ToCString(ctx, argv[i++]);
+
+  if(argc > i && js.is_number(argv[i]))
+    js.get_number(argv[i++], fontFace);
+
+  if(argc > i && js.is_number(argv[i]))
+    js.get_number(argv[i++], fontScale);
+
+  if(argc > i && js.is_number(argv[i]))
+    js.get_number(argv[i++], thickness);
+
+  size = cv::getTextSize(text, fontFace, fontScale, thickness, &baseline);
+
+  baselineVal = JS_NewInt32(ctx, baseline);
+
+  if(JS_IsFunction(ctx, argv[i])) {
+    JS_Call(ctx, argv[i], JS_UNDEFINED, 1, const_cast<JSValueConst*>(&baselineVal));
+  } else if(JS_IsArray(ctx, argv[i])) {
+    JS_SetPropertyUint32(ctx, argv[i], 0, baselineVal);
+  } else if(JS_IsObject(argv[i])) {
+    JS_SetPropertyStr(ctx, argv[i], "y", baselineVal);
+  }
+  dim[0] = size.width;
+  dim[1] = size.height;
+
+  return js_array<int32_t>::from_sequence(ctx, dim.cbegin(), dim.cend());
+}
+
+static JSValue
+js_get_font_scale_from_height(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
+  int i = 0, baseline = 0;
+  int32_t fontFace, pixelHeight, thickness = 1;
+  double fontScale;
+
+  if(argc > i && js.is_number(argv[i]))
+    js.get_number(argv[i++], fontFace);
+
+  if(argc > i && js.is_number(argv[i]))
+    js.get_number(argv[i++], pixelHeight);
+
+  if(argc > i && js.is_number(argv[i]))
+    js.get_number(argv[i++], thickness);
+
+  fontScale = cv::getFontScaleFromHeight(fontFace, pixelHeight, thickness);
+
+  return JS_NewFloat64(ctx, fontScale);
 }
 
 JSValue draw_proto, draw_class;
@@ -238,13 +362,16 @@ const JSCFunctionListEntry js_draw_proto_funcs[] = {
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Draw", JS_PROP_CONFIGURABLE),
 };
 
-const JSCFunctionListEntry js_draw_static_funcs[] = {
-    JS_CFUNC_DEF("circle", 1, &js_draw_circle),
-    JS_CFUNC_DEF("contour", 1, &js_draw_contour),
-    JS_CFUNC_DEF("line", 1, &js_draw_line),
-    JS_CFUNC_DEF("polygon", 1, &js_draw_polygon),
-    JS_CFUNC_DEF("rect", 1, &js_draw_rect),
-};
+const JSCFunctionListEntry js_draw_static_funcs[] = {JS_CFUNC_DEF("circle", 1, &js_draw_circle),
+                                                     JS_CFUNC_DEF("contour", 1, &js_draw_contour),
+                                                     JS_CFUNC_DEF("line", 1, &js_draw_line),
+                                                     JS_CFUNC_DEF("polygon", 1, &js_draw_polygon),
+                                                     JS_CFUNC_DEF("rect", 1, &js_draw_rect),
+                                                     JS_CFUNC_DEF("text", 2, &js_put_text),
+                                                     JS_CFUNC_DEF("textSize", 5, &js_get_text_size),
+                                                     JS_CFUNC_DEF("fontScaleFromHeight",
+                                                                  2,
+                                                                  &js_get_font_scale_from_height)};
 
 const JSCFunctionListEntry js_draw_global_funcs[] = {
     JS_CFUNC_DEF("drawCircle", 1, &js_draw_circle),
@@ -252,6 +379,9 @@ const JSCFunctionListEntry js_draw_global_funcs[] = {
     JS_CFUNC_DEF("drawLine", 1, &js_draw_line),
     JS_CFUNC_DEF("drawPolygon", 1, &js_draw_polygon),
     JS_CFUNC_DEF("drawRect", 1, &js_draw_rect),
+    JS_CFUNC_DEF("putText", 2, &js_put_text),
+    JS_CFUNC_DEF("getTextSize", 5, &js_get_text_size),
+    JS_CFUNC_DEF("getFontScaleFromHeight", 2, &js_get_font_scale_from_height),
 };
 
 static JSValue
