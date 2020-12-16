@@ -572,11 +572,28 @@ public:
   template<class T>
   static int64_t
   to_map(JSContext* ctx, JSValueConst obj, std::map<std::string, T>& out) {
+    int64_t i = 0;
     jsrt js(ctx);
     auto names = js.property_names(obj);
-
     for(auto name : names) {
+      T prop = js.to<T>(js.get_property(obj, name));
+      out[name] = prop;
+      ++i;
     }
+    return i;
+  }
+
+  template<class T>
+  static JSValue
+  from_map(JSContext* ctx, const std::map<std::string, T>& in) {
+    typedef std::pair<std::string, T> entry_type;
+    jsrt js(ctx);
+    JSValue obj = js.create_object();
+
+    for(entry_type entry : in) {
+      js.set_property(obj, entry.first, js.create<T>(entry.second));
+    }
+    return obj;
   }
 };
 

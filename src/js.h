@@ -140,6 +140,7 @@ struct jsrt {
   std::string to_str(const_value val);
 
   template<class T> T to(const_value val);
+  template<class T> value from(const T& val);
 
   const_value prototype(const_value obj) const;
 
@@ -863,6 +864,44 @@ template<>
 inline std::string
 jsrt::to<std::string>(jsrt::const_value val) {
   return jsrt::to_string(val);
+}
+
+template<>
+inline int32_t
+jsrt::to<int32_t>(jsrt::const_value val) {
+  int32_t ret;
+  jsrt::get_number(val, ret);
+  return ret;
+}
+
+template<>
+inline uint32_t
+jsrt::to<uint32_t>(jsrt::const_value val) {
+  uint32_t ret;
+  jsrt::get_number(val, ret);
+  return ret;
+}
+
+template<>
+inline float
+jsrt::to<float>(jsrt::const_value val) {
+  float ret;
+  jsrt::get_number(val, ret);
+  return ret;
+}
+
+template<>
+inline double
+jsrt::to<double>(jsrt::const_value val) {
+  double ret;
+  jsrt::get_number(val, ret);
+  return ret;
+}
+
+template<>
+inline jsrt::value
+jsrt::from<std::string>(const std::string& value) {
+  return new_string(value.c_str());
 }
 
 #endif // defined JS_H
