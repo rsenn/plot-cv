@@ -33,6 +33,16 @@ typedef union {
   std::pair<JSPointDataI, JSPointDataI> pt;
 } JSLineDataI;
 
+typedef union {
+  std::array<double, 4> arr;
+  //cv::Vec4d vec;
+  //cv::Scalar scalar;
+  struct {
+    double r, g, b, a;
+  } rgb;
+
+} JSColorData;
+
 typedef std::vector<JSPointData> JSContourData;
 struct JSPointIteratorData : public std::pair<JSPointData*, JSPointData*> {
   int magic;
@@ -369,6 +379,9 @@ js_is_point(JSContext* ctx, JSValueConst point) {
 
   return false;
 }
+
+extern "C" int
+js_color_read(JSContext* ctx, JSValueConst color, JSColorData* out);
 
 static inline int
 js_contour_read(JSContext* ctx, JSValueConst contour, JSContourData* out) {

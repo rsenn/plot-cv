@@ -86,6 +86,49 @@ js_vector_vec4i_to_array(JSContext* ctx, const std::vector<cv::Vec4i>& vec) {
   return ret;
 }
 
+
+ int
+js_color_read(JSContext* ctx, JSValueConst color, JSColorData* out) {
+  int ret = 1;
+  std::array<double, 4> c;
+  if(JS_IsObject(color)) {
+    JSValue r, g, b, a;
+    if(JS_IsArray(ctx, color)) {
+      r = JS_GetPropertyUint32(ctx, color, 0);
+      g = JS_GetPropertyUint32(ctx, color, 1);
+      b = JS_GetPropertyUint32(ctx, color, 2);
+      a = JS_GetPropertyUint32(ctx, color, 3);
+    } else {
+      r = JS_GetPropertyStr(ctx, color, "r");
+      g = JS_GetPropertyStr(ctx, color, "g");
+      b = JS_GetPropertyStr(ctx, color, "b");
+      a = JS_GetPropertyStr(ctx, color, "a");
+    }
+    JS_ToFloat64(ctx, &c[0], r);
+    JS_ToFloat64(ctx, &c[1], g);
+    JS_ToFloat64(ctx, &c[2], b);
+    JS_ToFloat64(ctx, &c[3], a);
+
+    JS_FreeValue(ctx, r);
+    JS_FreeValue(ctx, g);
+    JS_FreeValue(ctx, b);
+    JS_FreeValue(ctx, a);
+  } else if(JS_IsNumber(color)) {
+    uint32_t value;
+    JS_ToUint32(ctx, &value, color);
+    c[0] = value & 0xff;
+    c[1] = (value >> 8) & 0xff;
+    c[2] = (value >> 16) & 0xff;
+    c[3] = (value >> 24) & 0xff;
+  } else {
+    ret = 0;
+  }
+
+  std::copy(c.cbegin(), c.cend(), out->arr.begin());
+
+  return ret;
+}
+
 #ifdef JS_BINDINGS_INIT_MODULE
 static int
 js_bindings_init(JSContext* ctx, JSModuleDef* m) {

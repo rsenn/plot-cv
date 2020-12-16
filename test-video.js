@@ -42,7 +42,7 @@ class Window {
   }
 
   setMouseCallback(fn) {
-    cv.setMouseCallback(this.name, (event,x,y,flags) => fn.call(this, event,x,y,flags));
+    cv.setMouseCallback(this.name, (event, x, y, flags) => fn.call(this, event, x, y, flags));
   }
 
   show(mat) {
@@ -109,9 +109,23 @@ function toGrayscale(mat) {
   return channels[0];
 }
 
+function toBGR(mat) {
+  let bgr = new Mat();
+  cv.cvtColor(mat, bgr, cv.COLOR_GRAY2BGR);
+  return bgr;
+}
+
 function minMax(mat) {
   const ret = cv.minMaxLoc(mat);
   return [ret.minVal, ret.maxVal];
+}
+
+function modifierMap(keyCode) {
+  return [
+    ['shift', 0x10000],
+    ['alt', 0x80000],
+    ['ctrl', 0x40000]
+  ].map(([modifier, flag]) => [modifier, keyCode & flag ? 1 : 0]);
 }
 
 async function main(...args) {
@@ -119,8 +133,7 @@ async function main(...args) {
   let begin = hr();
   await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
 
-
- let win = new Window('gray', cv.WINDOW_AUTOSIZE);
+  let win = new Window('gray', cv.WINDOW_AUTOSIZE);
 
   console.log('Setup duration:', hr(begin));
 
@@ -145,12 +158,40 @@ async function main(...args) {
     console.log('gray row(0):', [...gray.col(gray.cols - 1).values()]);
   console.log('gray minMax:', cv.minMaxLoc(gray));*/
 
-   win.show(gray);
+    bgr = toBGR(gray);
+
+    drawCircle(bgr, [50, 50], 25);
+
+    win.show(bgr);
 
     let key = cv.waitKeyEx(50);
 
     if(key == 27) break;
-    if(key != -1) console.log(`keypress 0x${key.toString(16)}`);
+
+    let modifiers = Object.fromEntries(modifierMap(key));
+    let modifierList = modifierMap(key).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc), []);
+
+    switch (key & 0xfff) {
+      /* left */ case 0xf51:
+      /* right */ case 0xf53:
+      /* up */ case 0xf52:
+      /* down */ case 0xf54: {
+        const method = key & 0x1 ? 'frames' : 'msecs';
+        const distance = (key & 0x1 ? 1 : 1000) * (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
+        const offset = key & 0x2 ? +distance : -distance;
+
+        //console.log('seek', { method, distance, offset });
+        video['seek_' + method](offset);
+        let pos = video.position(method);
+
+        console.log('seek_' + method + ' ' + offset + ' pos =', pos, ` (${Util.roundTo(video.position('%'), 0.001)}%)`);
+        break;
+      }
+      default: {
+        if(key != -1) console.log(`keypress [${modifierList}] 0x${(key & ~0xd000).toString(16)}`);
+        break;
+      }
+    }
   }
 
   console.log('props:', video.dump());

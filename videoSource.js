@@ -1,5 +1,6 @@
 import * as cv from 'cv';
 import { Mat } from 'mat';
+import { drawCircle, drawContour, drawLine, drawPolygon, drawRect } from 'draw';
 import { VideoCapture } from 'video-capture';
 import Util from './lib/util.js';
 
@@ -22,7 +23,8 @@ export class ImageSequence {
         imgs.index = Util.mod(value, images.length);
       },
       get pos_msec() {
-        return (this.pos_frames * 1000) / this.fps;
+        const { pos_frames, fps } = this;
+        return (pos_frames * 1000) / fps;
       },
       get frame_width() {
         if(imgs.frame) return imgs.frame.cols;
@@ -158,7 +160,20 @@ export class VideoSource {
 
   seek_msecs(relative) {
     const msec_per_frame = 1000 / this.fps;
-    return this.seek_frames(relative / msec_per_frame);
+    this.seek_frames(relative / msec_per_frame);
+    return this.get('pos_msec');
+  }
+
+  get duration_msecs() {
+    const msec_per_frame = 1000 / this.fps;
+    return +(this.get('frame_count') * msec_per_frame).toFixed(3);
+  }
+
+  position(type = 'frames') {
+    if(type.startsWith('frame')) return [this.get('pos_frames'), this.get('frame_count')];
+    if(type.startsWith('percent') || type == '%') return (this.get('pos_frames') * 100) / this.get('frame_count');
+
+    return [+this.get('pos_msec').toFixed(3), this.duration_msecs];
   }
 }
 

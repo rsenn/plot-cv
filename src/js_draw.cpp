@@ -21,9 +21,10 @@ static JSValue
 js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
   cv::Mat* dst;
   int i = 0, ret = -1;
-  point2i_type point;
+  JSPointData point;
+  int32_t x, y;
   int radius = 0;
-  cv::Scalar color;
+  JSColorData color;
   bool antialias = true;
   int thickness = -1;
   int lineType = cv::LINE_AA;
@@ -36,14 +37,23 @@ js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const
   if(dst == nullptr)
     return JS_EXCEPTION;
 
-  if(argc > i && js.is_point(argv[i]))
-    js.get_point(argv[i++], point);
+  if(js_point_read(ctx, argv[i], &point)) {
+    x = point.x;
+    y = point.y;
+    i++;
+  } else {
+    JS_ToInt32(ctx, &x, argv[i]);
+    JS_ToInt32(ctx, &y, argv[i + 1]);
+    i += 2;
+  }
 
   if(argc > i && js.is_number(argv[i]))
     js.get_number(argv[i++], radius);
 
-  if(argc > i && js.is_color(argv[i]))
-    js.get_color(argv[i++], color);
+  if(argc > i) {
+    js_color_read(ctx, argv[i], &color);
+    i++;
+  }
 
   if(argc > i && js.is_number(argv[i]))
     js.get_number(argv[i++], thickness);
@@ -58,7 +68,7 @@ js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const
     }
   }
 
-  cv::circle(*dst, point, radius, color, thickness < 0 ? cv::FILLED : thickness, lineType);
+  cv::circle(*dst, point, radius, *reinterpret_cast<cv::Scalar*>(&color), thickness < 0 ? cv::FILLED : thickness, lineType);
   return js._undefined;
 }
 
