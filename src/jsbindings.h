@@ -318,7 +318,7 @@ js_size_read(JSContext* ctx, JSValueConst size, JSSizeData* out) {
   if(JS_IsArray(ctx, size)) {
     w = JS_GetPropertyUint32(ctx, size, 0);
     h = JS_GetPropertyUint32(ctx, size, 1);
-  } else {
+  } else if(JS_IsObject(size)) {
     w = JS_GetPropertyStr(ctx, size, "width");
     h = JS_GetPropertyStr(ctx, size, "height");
   }
@@ -347,7 +347,7 @@ js_point_read(JSContext* ctx, JSValueConst point, JSPointData* out) {
   if(JS_IsArray(ctx, point)) {
     x = JS_GetPropertyUint32(ctx, point, 0);
     y = JS_GetPropertyUint32(ctx, point, 1);
-  } else {
+  } else if(JS_IsObject(point)) {
     x = JS_GetPropertyStr(ctx, point, "x");
     y = JS_GetPropertyStr(ctx, point, "y");
   }

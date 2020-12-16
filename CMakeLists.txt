@@ -179,6 +179,7 @@ nowarn_flag(-Wno-unused-variable)
 nowarn_flag(-Wno-deprecated-anon-enum-enum-conversion)
 nowarn_flag(-Wno-extern-c-compat)
 nowarn_flag(-Wno-implicit-int-float-conversion)
+nowarn_flag(-Wno-deprecated-enum-enum-conversion)
 
 dump(CMAKE_C_FLAGS CMAKE_CXX_FLAGS)
 dump(CMAKE_CXX_FLAGS_DEBUG)
