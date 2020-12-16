@@ -2,7 +2,7 @@
 IFS="
 "
 dump() {
-  while [ $# -gt 0 ]; do 
+  [ "$DEBUG" = true ] && while [ $# -gt 0 ]; do 
     eval "echo \"$1='\${$1}'\""
     shift
   done 1>&2
@@ -29,13 +29,17 @@ main() {
   PATTERNS=
   while [ $# -gt 0 ]; do
     case "$1" in
+      -x* | --debug*) DEBUG=true ;;
       -d* | --def*) DEFINE=true ;;
       -e* | --empty*) EMPTY=true ;;
       -t* | --type*) TYPE=true ;;
       -q* | --q*) QUOTE=true ;;
       -Q* | --force*q*) FORCE_QUOTE=true ;;
+      -i* | --int*) INTERNAL=true ;;
+
       -C | --no-cmake*) NO_CMAKE=true ;;
       -n | --escape*n*) ESCAPE_NEWLINES=true ;;
+      -V | --no-v*) NO_VALUE=true ;;
       \\* | /*/*) PATTERNS="${PATTERNS:+$PATTERNS$IFS}$1" ;;
       *) 
     if [ -f "$1" ]; then
@@ -52,15 +56,21 @@ esac
     PATTERNS="/^[-A-Z0-9_]\+:[A-Z]\+=/"
   fi
   MATCH=
-  if [ "$QUOTE" = true ]; then
+ if [ "$INTERNAL" != true ]; then
+    MATCH="${MATCH:+$MATCH; }"'/:INTERNAL/d'
+  fi
+   if [ "$TYPE" != true ]; then
+    MATCH="${MATCH:+$MATCH; }"'s|:\([A-Z]\+\)=|=|'
+  fi
+
+if [ "$NO_VALUE" = true ]; then
+    MATCH="${MATCH:+$MATCH; }"'s|=.*||'
+  elif [ "$QUOTE" = true ]; then
     MATCH="${MATCH:+$MATCH; }"'s|=\(.*\s.*\)|="\1"|'
   elif [ "$FORCE_QUOTE" = true ]; then
     MATCH="${MATCH:+$MATCH; }"'s|=\(.*\)|="\1"|'
   fi
-  if [ "$TYPE" != true ]; then
-    MATCH="${MATCH:+$MATCH; }"'s|:\([A-Z]\+\)=|=|'
-  fi
-  if [ "$EMPTY" != true ]; then
+   if [ "$EMPTY" != true ]; then
     MATCH="${MATCH:+$MATCH; }"'/=\s*$/d'
   fi
   if [ "$NO_CMAKE" = true ]; then
@@ -76,7 +86,7 @@ esac
   for PATTERN in $PATTERNS; do 
     MATCH="$PATTERN { $MATCH }"
   done
- EXPR="\\|^\s*//|d; /^\s*\$/d; /INTERNAL/d; $MATCH" 
+ EXPR="\\|^\s*//|d; /^\s*\$/d; $MATCH" 
   dump MATCH EXPR
   CMD='sed -n -e "$EXPR" $FILES'
   if [ "$ESCAPE_NEWLINES" = true ]; then

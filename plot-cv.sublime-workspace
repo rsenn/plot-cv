@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"let",
+				"let\tES6 Let"
+			],
+			[
 				"Immu",
 				"ImmutablePath"
 			],
@@ -148,62 +152,97 @@
 	"buffers":
 	[
 		{
-			"contents": "  int8_t\n  uint8_t\n  int16_t\n  uint16_t\n  int32_t\n  uint32_t\n  uint64_t\n  int64_t\nTO_BROTLI_BOOL\nBROTLI_MAKE_UINT64_T",
+			"contents": "",
 			"settings":
 			{
-				"buffer_size": 117,
+				"buffer_size": 0,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
 			}
 		},
 		{
-			"file": "dump-ast.js",
+			"file": "imgui-viewer.cmake",
 			"settings":
 			{
-				"buffer_size": 16842,
+				"buffer_size": 2527,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/usr/include/brotli/types.h",
+			"file": "src/js_draw.cpp",
 			"settings":
 			{
-				"buffer_size": 2615,
+				"buffer_size": 8335,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "plot-cv.sublime-project",
+			"file": "src/js_cv.cpp",
 			"settings":
 			{
-				"buffer_size": 3677,
+				"buffer_size": 51628,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/deep.js",
+			"file": "src/js_mat.cpp",
 			"settings":
 			{
-				"buffer_size": 5710,
+				"buffer_size": 24721,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/json.js",
+			"file": "src/jsbindings.h",
 			"settings":
 			{
-				"buffer_size": 512,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/util.js",
-			"settings":
-			{
-				"buffer_size": 160042,
+				"buffer_size": 18817,
 				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/roman/Dokumente/Sources/plot-cv/quickjs/CMakeLists.txt",
+			"settings":
+			{
+				"buffer_size": 12975,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
+			"settings":
+			{
+				"buffer_size": 7576,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/roman/Dokumente/Sources/plot-cv/opencv.cmake",
+			"settings":
+			{
+				"buffer_size": 5405,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "scripts/get-cmake-cache.sh",
+			"settings":
+			{
+				"buffer_size": 2342,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "quickjs/quickjs.h",
+			"settings":
+			{
+				"buffer_size": 41625,
 				"line_ending": "Unix"
 			}
 		}
@@ -219,6 +258,14 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"adva",
+				"Package Control: Advanced Install Package"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
 			[
 				"",
 				"About"
@@ -372,10 +419,6 @@
 				"Build With: Rebuild CTags"
 			],
 			[
-				"install ",
-				"Package Control: Install Package"
-			],
-			[
 				"unicode",
 				"Unicode Character Insert: Show Panel"
 			],
@@ -385,10 +428,6 @@
 			],
 			[
 				"adv",
-				"Package Control: Advanced Install Package"
-			],
-			[
-				"adva",
 				"Package Control: Advanced Install Package"
 			],
 			[
@@ -484,36 +523,51 @@
 	"expanded_folders":
 	[
 		"/home/roman/Sources/plot-cv",
-		"/home/roman/Sources/plot-cv/lib",
-		"/home/roman/Sources/plot-cv/lib/xml",
+		"/home/roman/Sources/plot-cv/include",
 		"/home/roman/Sources/plot-cv/src"
 	],
 	"file_history":
 	[
+		"/home/roman/Sources/plot-cv/src/js.h",
+		"/home/roman/Sources/plot-cv/js-bindings.cmake",
+		"/home/roman/Sources/plot-cv/highgui-viewer.cmake",
+		"/home/roman/Sources/plot-cv/src/js_cv.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/test-video.js",
+		"/home/roman/Sources/plot-cv/src/js_point.cpp",
+		"/home/roman/Sources/plot-cv/quickjs/quickjs.h",
+		"/home/roman/Sources/plot-cv/src/js.cpp",
+		"/home/roman/Sources/plot-cv/quickjs/quickjs.c",
+		"/home/roman/Sources/plot-cv/lib/util.js",
+		"/home/roman/Sources/plot-cv/test-opencv.js",
+		"/home/roman/Sources/plot-cv/plot-cv.sublime-project",
+		"/home/roman/Dokumente/Sources/plot-cv/videoSource.js",
+		"/home/roman/Sources/plot-cv/lib/hu.js",
+		"/home/roman/Dokumente/Sources/plot-cv/test-opencv.js",
+		"/home/roman/Sources/plot-cv/src/js_video_capture.cpp",
+		"/home/roman/Sources/plot-cv/src/js_mat.cpp",
+		"/home/roman/Dokumente/Sources/plot-cv/Next.tmTheme",
+		"/opt/opencv-4.5.0/include/opencv4/opencv2/videoio.hpp",
+		"/home/roman/.config/sublime-text-3/Packages/JavaScriptNext - ES6 Syntax/Next.tmTheme",
+		"/home/roman/Sources/plot-cv/lib/json.js",
+		"/home/roman/Sources/plot-cv/lib/deep.js",
+		"/home/roman/Sources/plot-cv/dump-ast.js",
+		"/home/roman/Sources/plot-cv/server.js",
+		"/usr/include/brotli/types.h",
 		"/home/roman/Sources/plot-cv/quickjs/net.old/libwebsockets_emscripten/lib/roles/http/compression/brotli/brotli.c",
 		"/home/roman/Sources/plot-cv/lib/filesystem.js",
 		"/home/roman/Sources/plot-cv/lib/objectInspect.js",
-		"/home/roman/Sources/plot-cv/lib/deep.js",
 		"/home/roman/Sources/plot-cv/lib/path.js",
-		"/home/roman/Sources/plot-cv/dump-ast.js",
 		"/home/roman/Sources/plot-cv/opencv/CMakeLists.txt",
-		"/home/roman/Sources/plot-cv/test-opencv.js",
-		"/home/roman/Sources/plot-cv/src/js_cv.cpp",
 		"/home/roman/Sources/plot-cv/test-childprocess.js",
 		"/home/roman/Sources/plot-cv/src/plot-cv.cpp",
 		"/home/roman/Sources/plot-cv/resolve-imports.js",
 		"/home/roman/Sources/plot-cv/CMakeLists.txt",
-		"/home/roman/Sources/plot-cv/quickjs/quickjs.h",
-		"/home/roman/Sources/plot-cv/js-bindings.cmake",
 		"/home/roman/Sources/plot-cv/src/js_draw.cpp",
-		"/home/roman/Sources/plot-cv/src/js_mat.cpp",
 		"/home/roman/Sources/plot-cv/src/jsbindings.h",
 		"/home/roman/Sources/plot-cv/src/js_rect.cpp",
 		"/home/roman/Sources/plot-cv/opencv/seeds.cpp",
 		"/home/roman/Sources/plot-cv/opencv/decompose_homography.cpp",
-		"/home/roman/Sources/plot-cv/src/js_video_capture.cpp",
 		"/home/roman/Sources/plot-cv/src/js_size.cpp",
-		"/home/roman/Sources/plot-cv/lib/util.js",
 		"/home/roman/Sources/plot-cv/lib/json/path.js",
 		"/home/roman/Sources/plot-cv/lib/ecmascript/estree.js",
 		"/home/roman/Sources/plot-cv/lib/childProcess.js",
@@ -527,12 +581,10 @@
 		"/home/roman/Sources/plot-cv/test-readdir.js",
 		"/home/roman/Sources/plot-cv/src/js_clahe.cpp",
 		"/home/roman/Sources/plot-cv/src/js_contour.cpp",
-		"/home/roman/Sources/plot-cv/src/js_point.cpp",
 		"/home/roman/Sources/plot-cv/src/jsbindings.cpp",
 		"/home/roman/Sources/plot-cv/src/plot-cv.h",
 		"/home/roman/Sources/plot-cv/ccache.cmake",
 		"/home/roman/Sources/plot-cv/quickjs/net/libwebsockets/lib/CMakeLists.txt",
-		"/home/roman/Sources/plot-cv/quickjs/quickjs.c",
 		"/home/roman/Sources/plot-cv/src/js_line.cpp",
 		"/home/roman/Sources/plot-cv/lib/eagle/elementProxy.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/nodeList.js",
@@ -542,7 +594,6 @@
 		"/home/roman/Sources/plot-cv/lib/eda/units.js",
 		"/home/roman/Sources/plot-cv/lib/eda/colorCoding.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/element.js",
-		"/home/roman/Sources/plot-cv/server.js",
 		"/home/roman/Sources/plot-cv/components.js",
 		"/home/roman/Sources/plot-cv/eagle-query.js",
 		"/tmp/mozilla_roman0/my-drawing.txt",
@@ -598,30 +649,17 @@
 		"/home/roman/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap",
 		"/home/roman/Sources/plot-cv/interactive-svg/Readme.md",
 		"/home/roman/Sources/plot-cv/opencv-js-webworker/services/cv.js",
-		"/home/roman/Sources/plot-cv/plot-cv.sublime-project",
 		"/home/roman/.config/sublime-text-3/Packages/User/Babel.sublime-settings",
 		"/home/roman/.config/sublime-text-3/Packages/Babel/Babel.sublime-settings",
 		"/home/roman/Sources/plot-cv/src/highgui-viewer.cpp",
-		"/home/roman/Sources/plot-cv/highgui-viewer.cmake",
 		"/home/roman/Sources/plot-cv/ruler-draggable.js",
 		"/home/roman/Sources/plot-cv/static/ruler/rulerVertical.svg",
 		"/home/roman/Sources/plot-cv/static/ruler.css",
-		"/home/roman/Sources/plot-cv/exportedRulerVertical.svg",
-		"/home/roman/Sources/plot-cv/lib/preact.mjs",
-		"/home/roman/Sources/plot-cv/modules/react-ruler-draggable/README.md",
-		"/home/roman/Sources/plot-cv/static/ruler/rulerHorizontal.svg",
-		"/home/roman/Sources/plot-cv/static/ruler/ruler.svg",
-		"/home/roman/Sources/plot-cv/cursor.js",
-		"/home/roman/Sources/plot-cv/static/ruler/cursor.svg",
-		"/home/roman/Sources/plot-cv/ruler.svg",
-		"/home/roman/Sources/plot-cv/tmp-ruler.js",
-		"/home/roman/Sources/plot-cv/test-parsetmpl.js",
-		"/home/roman/Sources/plot-cv/lib/ecmascript/printer.js",
-		"/home/roman/Sources/plot-cv/lib/hooks/useDebounce.js"
+		"/home/roman/Sources/plot-cv/exportedRulerVertical.svg"
 	],
 	"find":
 	{
-		"height": 40.0
+		"height": 44.0
 	},
 	"find_in_files":
 	{
@@ -664,6 +702,66 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"\\(LIBSSL",
+			" ssl ",
+			"definitions",
+			"compil",
+			"add_exec",
+			"-D",
+			"DEBUG",
+			"DDEBUG",
+			"BUILD_SHARED_LIBS",
+			"option",
+			"DEBUG",
+			"if",
+			"-g",
+			"has_property",
+			"has_prop",
+			"set_prop",
+			"get:orio",
+			"has_property",
+			"HasProperty",
+			"set_prop",
+			"\\)\\) {}",
+			"atom",
+			"AtomTo",
+			"JS_SetProperty",
+			"set_property",
+			"jsrt::from",
+			"new_string",
+			"minMax",
+			"min_max",
+			"GetOwn",
+			"JS_GetOwnPropertyNames",
+			"plen",
+			"JS_GetOwnPropertyNames",
+			"JSPropertyEnum",
+			"OwnProp",
+			"PropertyName",
+			"JSPropertyEnum",
+			"from_sequence",
+			"NewArray",
+			"JS_NewObject",
+			"js_mallocz",
+			"js_malloc",
+			"js_point_wrap",
+			"minMaxLoc",
+			"to32bit",
+			"split",
+			"JS_SetProper",
+			"Prop.*Flag",
+			"Property.*Flag",
+			"JS_CGETSET_MAGIC_DEF",
+			"Util.getMethodNames",
+			"^Util.bindMethods",
+			"props",
+			"^Util.repeat",
+			"Util",
+			"FFMPEG",
+			"propId",
+			"fontSty",
+			"italic",
+			"FFMPEG",
 			"GetNameOrId",
 			"NameOr",
 			"GetRecord",
@@ -731,67 +829,7 @@
 			"importDeclarations",
 			"Builtin",
 			"console.debug",
-			"log..import.*Decl",
-			"log..import",
-			"FindMod",
-			"packages",
-			"MakeSearch",
-			"ParentPackage",
-			"GetMain",
-			"GetPackage",
-			"ParentPack",
-			"path\\.dirname",
-			"path\\.",
-			"path",
-			"search =",
-			"GetPack",
-			"packages",
-			"class Literal",
-			"GetDecl",
-			"GetDeclarations",
-			"getImport",
-			"getImports",
-			"instanceof Mem",
-			"concat",
-			"getImport",
-			"getImport =",
-			"iterate =",
-			"getImport",
-			"getImport\\(",
-			"getImport",
-			"imports:",
-			"ConsoleSet",
-			"getImport",
-			"imports:",
-			"31",
-			"tree",
-			"DumpFile",
-			"dumpFile",
-			"DumpFile",
-			"brk:",
-			"processed files",
-			"FindModule",
-			"processFile",
-			"log..stack:",
-			"stack:",
-			"indexes:",
-			"CheckExists",
-			"module:",
-			"validator",
-			"'validator",
-			"child",
-			"Prettier",
-			"stack methods",
-			"\\...MakeNames",
-			"MakeNames",
-			"FindMod",
-			"ConsoleSetup",
-			"CheckExists",
-			"AddPackage",
-			"isDir",
-			"AddPackage",
-			"isDir",
-			"is"
+			"log..import.*Decl"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -799,6 +837,8 @@
 		"regex": true,
 		"replace_history":
 		[
+			")); }",
+			"); }",
 			"\\1#",
 			"#",
 			"console.log",
@@ -924,8 +964,6 @@
 			"destroy",
 			"filesystem.",
 			"close",
-			"open",
-			"close",
 			"open"
 		],
 		"reverse": false,
@@ -945,7 +983,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 117,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
@@ -955,64 +993,14 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": "/usr/include/brotli/types.h",
-							"function_name_status_row": 30,
+							"current_file": "/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
+							"function_name_status_row": 45,
 							"outline_rename_mode": false,
 							"symkeys":
 							[
-								[
-									395,
-									401
-								],
-								[
-									427,
-									434
-								],
-								[
-									452,
-									459
-								],
-								[
-									486,
-									494
-								],
-								[
-									512,
-									519
-								],
-								[
-									546,
-									554
-								],
-								[
-									581,
-									589
-								],
-								[
-									607,
-									614
-								],
-								[
-									1661,
-									1675
-								],
-								[
-									1725,
-									1745
-								]
 							],
 							"symlist":
 							[
-								"  int8_t",
-								"  uint8_t",
-								"  int16_t",
-								"  uint16_t",
-								"  int32_t",
-								"  uint32_t",
-								"  uint64_t",
-								"  int64_t",
-								"TO_BROTLI_BOOL",
-								"BROTLI_MAKE_UINT64_T"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
 							"tab_size": 2,
@@ -1022,22 +1010,53 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 10,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 1,
+			"selected": 6,
 			"sheets":
 			[
 				{
 					"buffer": 1,
-					"file": "dump-ast.js",
+					"file": "imgui-viewer.cmake",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 16842,
+						"buffer_size": 2527,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2090,
+								2090
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 86,
+							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1123.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/js_draw.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8335,
 						"regions":
 						{
 						},
@@ -1050,104 +1069,75 @@
 						],
 						"settings":
 						{
-							"function_name_status_row": 231,
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"function_name_status_row": 0,
+							"syntax": "Packages/C++/C++.sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3393.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "/usr/include/brotli/types.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2615,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								435,
-								435
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 18,
-							"syntax": "Packages/C++/C++.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 138.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "plot-cv.sublime-project",
+					"file": "src/js_cv.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3677,
+						"buffer_size": 51628,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								576,
-								576
+								15866,
+								15866
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 24,
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JSON (JavaScriptNext).tmLanguage",
+							"function_name_status_row": 632,
+							"syntax": "Packages/C++/C++.sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 819.0,
+						"translation.y": 12.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
 					"buffer": 4,
-					"file": "lib/deep.js",
+					"file": "src/js_mat.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5710,
+						"buffer_size": 24721,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2621,
-								2621
+								22298,
+								22298
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 100,
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"function_name_status_row": 776,
+							"syntax": "Packages/C++/C++.sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1040.0,
+						"translation.y": 13795.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 3,
@@ -1155,62 +1145,188 @@
 				},
 				{
 					"buffer": 5,
-					"file": "lib/json.js",
+					"file": "src/jsbindings.h",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 512,
+						"buffer_size": 18817,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								10,
-								10
+								18673,
+								18673
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 0,
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "lib/util.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 160042,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								79069,
-								79069
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 2692,
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"function_name_status_row": 590,
+							"syntax": "Packages/C++/C++.sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 45867.0,
+						"translation.y": 10113.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/home/roman/Dokumente/Sources/plot-cv/quickjs/CMakeLists.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 12975,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1010,
+								1010
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 41,
+							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 267.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/home/roman/Dokumente/Sources/plot-cv/CMakeLists.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7576,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								860,
+								864
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 160,
+							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 151.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "/home/roman/Dokumente/Sources/plot-cv/opencv.cmake",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5405,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3601,
+								3601
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 113,
+							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1716.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "scripts/get-cmake-cache.sh",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2342,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1490,
+								1490
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 65,
+							"syntax": "Packages/ShellScript/Bash.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 241.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "quickjs/quickjs.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 41625,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								14584,
+								14584
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 417,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 7143.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
 					"type": "text"
 				}
 			]
@@ -1218,7 +1334,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 26.0
+		"height": 31.0
 	},
 	"input":
 	{
@@ -1276,7 +1392,7 @@
 	"project": "plot-cv.sublime-project",
 	"replace":
 	{
-		"height": 48.0
+		"height": 79.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1285,6 +1401,46 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"cmake-",
+				"scripts/get-cmake-cache.sh"
+			],
+			[
+				"js-bi",
+				"js-bindings.cmake"
+			],
+			[
+				"high",
+				"highgui-viewer.cmake"
+			],
+			[
+				"imgui",
+				"imgui-viewer.cmake"
+			],
+			[
+				"js-bin",
+				"js-bindings.cmake"
+			],
+			[
+				"quickjs.h",
+				"quickjs/quickjs.h"
+			],
+			[
+				"quickjs.c",
+				"quickjs/quickjs.c"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"test-ope",
+				"test-opencv.js"
+			],
+			[
+				"server.js",
+				"server.js"
+			],
 			[
 				"_brotli",
 				"quickjs/net.old/libwebsockets_emscripten/lib/roles/http/compression/brotli/brotli.c"
@@ -1342,16 +1498,8 @@
 				"CMakeLists.txt"
 			],
 			[
-				"js-bin",
-				"js-bindings.cmake"
-			],
-			[
 				"opencv/CM",
 				"opencv/CMakeLists.txt"
-			],
-			[
-				"quickjs.h",
-				"quickjs/quickjs.h"
 			],
 			[
 				"decompo",
@@ -1372,10 +1520,6 @@
 			[
 				"path.",
 				"lib/json/path.js"
-			],
-			[
-				"util.js",
-				"lib/util.js"
 			],
 			[
 				"deep.js",
@@ -1460,10 +1604,6 @@
 			[
 				"js_ma",
 				"src/js_mat.cpp"
-			],
-			[
-				"quickjs.c",
-				"quickjs/quickjs.c"
 			],
 			[
 				"eagle-q",
@@ -1650,10 +1790,6 @@
 				"CMakeLists.txt"
 			],
 			[
-				"high",
-				"src/highgui-viewer.cpp"
-			],
-			[
 				"highg",
 				"src/highgui-viewer.cpp"
 			],
@@ -1776,26 +1912,6 @@
 			[
 				"test-deb",
 				"test-debug.js"
-			],
-			[
-				"test-debug",
-				"test-debug.js"
-			],
-			[
-				"test-de",
-				"test-debug.js"
-			],
-			[
-				"debugger",
-				"quickjs/quickjs-debugger.c"
-			],
-			[
-				"test-stack",
-				"test-stack.js"
-			],
-			[
-				"test-rend",
-				"test-renderer.js"
 			]
 		],
 		"width": 0.0
@@ -1826,7 +1942,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 352.0,
+	"side_bar_width": 355.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
