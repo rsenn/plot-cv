@@ -74,6 +74,8 @@ function toGrayscale(mat) {
 }
 
 function toBGR(mat) {
+  if(mat.channels >= 3) return mat.clone();
+
   let bgr = new Mat();
   cv.cvtColor(mat, bgr, cv.COLOR_GRAY2BGR);
   return bgr;
@@ -137,17 +139,18 @@ async function main(...args) {
     let baseY;
 
     let font = new TextStyle(cv.FONT_HERSHEY_PLAIN, 1.0, 1);
-    let tSize = font.size('TEST');
+    let tSize = font.size(video.time);
 
     let tPos = new Point(...tSize.div(2))
       .floor()
       .mul(-1)
-      .add(50, 50 + tSize.y * 1.6);
+      .add(50, 10 + tSize.y * 1.6);
 
-    console.log('tPos:', tPos);
+    tPos.x = 5;
 
-    font.draw(bgr, 'TEST', tPos, 0xffff00 || { r: 255, g: 0, b: 0 });
+    //  console.log('tPos:', tPos);
 
+    font.draw(bgr, video.time, tPos, 0xffff00 || { r: 255, g: 0, b: 0 });
 
     win.show(bgr);
 

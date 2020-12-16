@@ -174,6 +174,24 @@ export class VideoSource {
 
     return [+this.get('pos_msec').toFixed(3), this.duration_msecs];
   }
+
+  get time() {
+    let [pos, duration] = this.position('msec');
+
+    let ms, s, m, h;
+
+    ms = Util.mod(pos, 1000);
+    s = Math.floor(pos / 1000);
+    m = Math.floor(s / 60);
+    s = Util.mod(s, 60);
+    h = Math.floor(m / 60);
+    m = Util.mod(m, 60);
+    h = Math.floor(h);
+
+    const pad = (i, n) => ('0'.repeat(n) + i).slice(-n);
+
+    return pad(h, 2) + ':' + pad(m, 2) + ':' + pad(s, 2) + '.' + pad(ms, 3);
+  }
 }
 
 export default VideoSource;
