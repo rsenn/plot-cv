@@ -7,7 +7,7 @@ import { Mat } from 'mat';
 import { Size } from 'size';
 import { Point } from 'point';
 import { VideoSource } from './cvVideo.js';
-import { Window, MouseFlags, MouseEvents, Mouse } from './cvHighGUI.js';
+import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.js';
 import { Alea } from './lib/alea.js';
 //import { drawCircle, drawContour, drawLine, drawPolygon, drawRect } from 'draw';
 
@@ -130,24 +130,24 @@ async function main(...args) {
     //dumpMat(`bgr #${frameNo}/${frameCount}`, bgr);
 
     let gray = toGrayscale(bgr);
-    /* dumpMat('gray', gray);
-    console.log('gray row(0):', [...gray.col(gray.cols - 1).values()]);
-  console.log('gray minMax:', cv.minMaxLoc(gray));*/
 
     bgr = toBGR(gray);
 
-    //console.log("draw:",draw);
-
     draw.circle(bgr, [50, 50], 25, 0xff00ff || { r: 255, g: 0, b: 0 }, 2, cv.LINE_AA);
-    let s = draw.textSize('TEST', cv.FONT_HERSHEY_PLAIN, 1.0, 1, baseLine => console.log('baseLine y:', baseLine));
-    console.log('s:', s);
-    let tSize = new Size(...s);
-    console.log('tSize:', tSize[Symbol.iterator]());
-    let tPos = new Point(...tSize.div(2)).floor().prod(-1);
+    let baseY;
+
+    let font = new TextStyle(cv.FONT_HERSHEY_PLAIN, 1.0, 1);
+    let tSize = font.size('TEST');
+
+    let tPos = new Point(...tSize.div(2))
+      .floor()
+      .mul(-1)
+      .add(50, 50 + tSize.y * 1.6);
 
     console.log('tPos:', tPos);
 
-    draw.text(bgr, 'TEST', [40, 50], cv.FONT_HERSHEY_PLAIN, 1.0, 0xffff00 || { r: 255, g: 0, b: 0 }, 1, cv.LINE_AA);
+    font.draw(bgr, 'TEST', tPos, 0xffff00 || { r: 255, g: 0, b: 0 });
+
 
     win.show(bgr);
 

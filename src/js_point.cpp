@@ -160,7 +160,7 @@ js_point_norm(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
     return JS_EXCEPTION;
   return JS_NewFloat64(ctx, sqrt((double)s->x * s->x + (double)s->y * s->y));
 }
-
+/*
 static JSValue
 js_point_mul(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSPointData* s = js_point_data(ctx, this_val);
@@ -184,7 +184,7 @@ js_point_quot(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
 
   ret = js_point_new(ctx, s->x / divisor, s->y / divisor);
   return ret;
-}
+}*/
 
 static JSValue
 js_point_set_xy(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magic) {
@@ -203,7 +203,7 @@ js_point_set_xy(JSContext* ctx, JSValueConst this_val, JSValueConst val, int mag
 
 static JSValue
 js_point_add(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
-  JSPointData other, *s = js_point_data(ctx, this_val);
+  JSPointData other, point, *s = js_point_data(ctx, this_val);
   double x, y;
 
   if(js_point_read(ctx, argv[0], &other)) {
@@ -211,20 +211,32 @@ js_point_add(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
     y = other.y;
   } else {
     JS_ToFloat64(ctx, &x, argv[0]);
-    JS_ToFloat64(ctx, &y, argv[1]);
+    if(argc < 2)
+      y = x;
+    else
+      JS_ToFloat64(ctx, &y, argv[1]);
   }
 
   switch(magic) {
     case 0:
-      x += s->x;
-      y += s->y;
+      point.x = s->x + x;
+      point.y = s->y + y;
+
       break;
     case 1:
-      x -= s->x;
-      y -= s->y;
+      point.x = s->x - x;
+      point.y = s->y - y;
+      break;
+    case 2:
+      point.x = s->x * x;
+      point.y = s->y * y;
+      break;
+    case 3:
+      point.x = s->x / x;
+      point.y = s->y / y;
       break;
   }
-  return js_point_new(ctx, x, y);
+  return js_point_wrap(ctx, point);
 }
 
 static JSValue
@@ -339,8 +351,10 @@ const JSCFunctionListEntry js_point_proto_funcs[] = {
     JS_CFUNC_DEF("diff", 1, js_point_diff),
     JS_CFUNC_MAGIC_DEF("add", 1, js_point_add, 0),
     JS_CFUNC_MAGIC_DEF("sub", 1, js_point_add, 1),
-    JS_CFUNC_DEF("mul", 1, js_point_mul),
-    JS_CFUNC_DEF("quot", 1, js_point_quot),
+    JS_CFUNC_MAGIC_DEF("mul", 1, js_point_add, 2),
+    JS_CFUNC_MAGIC_DEF("div", 1, js_point_add, 3),
+    /*  JS_CFUNC_DEF("mul", 1, js_point_mul),
+      JS_CFUNC_DEF("quot", 1, js_point_quot),*/
     JS_CFUNC_DEF("norm", 0, js_point_norm),
     JS_CFUNC_MAGIC_DEF("round", 0, js_point_round, 0),
     JS_CFUNC_MAGIC_DEF("floor", 0, js_point_round, 1),
