@@ -16,58 +16,8 @@
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module_contour
 #endif
 
-using namespace cv;
-/*
-template<class Value> int64_t js_array_to_vector(JSContext* ctx, JSValueConst arr, std::vector<Value>& out);
+// using namespace cv;
 
-template<>
-int64_t
-js_array_to_vector<int>(JSContext* ctx, JSValueConst arr, std::vector<int>& out) {
-  int64_t i, n;
-  JSValue len;
-  if(!JS_IsArray(ctx, arr))
-    return -1;
-  len = JS_GetPropertyStr(ctx, arr, "length");
-  JS_ToInt64(ctx, &n, len);
-  out.reserve(out.size() + n);
-  for(i = 0; i < n; i++) {
-    int32_t value;
-    JSValue item = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
-    if(JS_ToInt32(ctx, &value, item) == -1) {
-      JS_FreeValue(ctx, item);
-      out.clear();
-      return -1;
-    }
-    out.push_back(value);
-    JS_FreeValue(ctx, item);
-  }
-  return n;
-}
-
-template<>
-int64_t
-js_array_to_vector<JSPointData>(JSContext* ctx, JSValueConst arr, std::vector<JSPointData>& out) {
-  int64_t i, n;
-  JSValue len;
-  if(!JS_IsArray(ctx, arr))
-    return -1;
-  len = JS_GetPropertyStr(ctx, arr, "length");
-  JS_ToInt64(ctx, &n, len);
-  out.reserve(out.size() + n);
-  for(i = 0; i < n; i++) {
-    JSPointData point;
-    JSValue item = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
-    if(!js_point_read(ctx, item, &point)) {
-      JS_FreeValue(ctx, item);
-      out.clear();
-      return -1;
-    }
-    out.push_back(point);
-    JS_FreeValue(ctx, item);
-  }
-  return n;
-}
-*/
 static JSValue
 js_contour_new(JSContext* ctx, const std::vector<cv::Point_<float>>& points) {
   JSValue ret;

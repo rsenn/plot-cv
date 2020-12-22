@@ -260,7 +260,7 @@ extern "C" JSValue js_point_clone(JSContext* ctx, const JSPointData& point);
 static inline int
 js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData* out) {
   int ret = 1;
-  JSValue x, y, w, h;
+  JSValue x = JS_UNDEFINED, y = JS_UNDEFINED, w = JS_UNDEFINED, h = JS_UNDEFINED;
   if(JS_IsArray(ctx, rect)) {
     x = JS_GetPropertyUint32(ctx, rect, 0);
     y = JS_GetPropertyUint32(ctx, rect, 1);
@@ -278,11 +278,17 @@ js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData* out) {
     ret &= !JS_ToFloat64(ctx, &out->y, y);
     ret &= !JS_ToFloat64(ctx, &out->width, w);
     ret &= !JS_ToFloat64(ctx, &out->height, h);
+  } else {
+    ret = 0;
   }
-  JS_FreeValue(ctx, x);
-  JS_FreeValue(ctx, y);
-  JS_FreeValue(ctx, w);
-  JS_FreeValue(ctx, h);
+  if(!JS_IsUndefined(x))
+    JS_FreeValue(ctx, x);
+  if(!JS_IsUndefined(y))
+    JS_FreeValue(ctx, y);
+  if(!JS_IsUndefined(w))
+    JS_FreeValue(ctx, w);
+  if(!JS_IsUndefined(h))
+    JS_FreeValue(ctx, h);
   return ret;
 }
 
@@ -313,7 +319,7 @@ js_rect_set(JSContext* ctx, JSValue out, double x, double y, double w, double h)
 static inline int
 js_size_read(JSContext* ctx, JSValueConst size, JSSizeData* out) {
   int ret = 1;
-  JSValue w, h;
+  JSValue w = JS_UNDEFINED, h = JS_UNDEFINED;
 
   if(JS_IsArray(ctx, size)) {
     w = JS_GetPropertyUint32(ctx, size, 0);
@@ -328,8 +334,10 @@ js_size_read(JSContext* ctx, JSValueConst size, JSSizeData* out) {
   } else {
     ret = 0;
   }
-  JS_FreeValue(ctx, w);
-  JS_FreeValue(ctx, h);
+  if(!JS_IsUndefined(w))
+    JS_FreeValue(ctx, w);
+  if(!JS_IsUndefined(h))
+    JS_FreeValue(ctx, h);
   return ret;
 }
 
@@ -343,7 +351,7 @@ js_size_get(JSContext* ctx, JSValueConst size) {
 static inline int
 js_point_read(JSContext* ctx, JSValueConst point, JSPointData* out) {
   int ret = 1;
-  JSValue x, y;
+  JSValue x = JS_UNDEFINED, y = JS_UNDEFINED;
   if(JS_IsArray(ctx, point)) {
     x = JS_GetPropertyUint32(ctx, point, 0);
     y = JS_GetPropertyUint32(ctx, point, 1);
@@ -357,8 +365,10 @@ js_point_read(JSContext* ctx, JSValueConst point, JSPointData* out) {
   } else {
     ret = 0;
   }
-  JS_FreeValue(ctx, x);
-  JS_FreeValue(ctx, y);
+  if(!JS_IsUndefined(x))
+    JS_FreeValue(ctx, x);
+  if(!JS_IsUndefined(y))
+    JS_FreeValue(ctx, y);
   return ret;
 }
 
@@ -426,7 +436,6 @@ public:
   }
 
   template<class Container>
-
   static JSValue
   from(JSContext* ctx, const Container& in) {
     return from_sequence<typename Container::const_iterator>(ctx, in.cbegin(), in.cend());

@@ -14,6 +14,48 @@ import { Alea } from './lib/alea.js';
 let prng = new Alea(Date.now());
 const hr = Util.hrtime;
 
+function Pipeline(processors = [], callback) {
+  let self;
+
+  self = function(mat) {
+    let i = 0;
+    for(let processor of self.processors) {
+      let start = hr();
+
+      mat = processor.call(self, mat, self.images[i], i);
+      if(mat) self.images[i] = mat;
+      self.times[i] = hr(start);
+
+      if(typeof callback == 'function')
+        callback.call(self, self.images[i], i, self.processors.length);
+      i++;
+    }
+    return mat;
+  };
+
+  Util.define(self, { processors, images: new Array(processors.length), callback });
+  self.times = new Array(processors.length);
+
+  return Object.assign(self, Pipeline.prototype);
+}
+
+Object.setPrototypeOf(Pipeline.prototype, Function.prototype);
+
+Object.defineProperties(Pipeline.prototype, {
+  size: {
+    get() {
+      return this.processors.length;
+    }
+  }
+});
+
+Pipeline.call = (fn, ...args) =>
+  function(mat, out, i) {
+    if(!out) out = new Mat();
+    fn.call(this, mat, out, ...args);
+    return out;
+  };
+
 let symbols = [
   [
     { x: 28.703, y: 28.665 },
@@ -48,7 +90,9 @@ function dumpMat(name, mat) {
   console.log(`${name} =`,
     Object.create(
       Mat.prototype,
-      ['cols', 'rows', 'depth', 'channels', 'type'].reduce((acc, prop) => ({ ...acc, [prop]: { value: mat[prop], enumerable: true } }), {})
+      ['cols', 'rows', 'depth', 'channels', 'type'].reduce((acc, prop) => ({ ...acc, [prop]: { value: mat[prop], enumerable: true } }),
+        {}
+      )
     )
   );
 }
@@ -127,9 +171,17 @@ function modifierMap(keyCode) {
 async function main(...args) {
   let start;
   let begin = hr();
-  await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20, multiline: false });
+  let running = true;
+  let paused = false;
 
-  let win = new Window('gray', cv.WINDOW_AUTOSIZE);
+  await ConsoleSetup({
+    breakLength: 120,
+    maxStringLength: 200,
+    maxArrayLength: 20,
+    multiline: false
+  });
+
+  let win = new Window('gray', cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);
   console.log('Mouse :', { MouseEvents, MouseFlags });
   //console.log('cv.EVENT_MOUSEMOVE', cv.EVENT_MOUSEMOVE);
   //
@@ -147,70 +199,109 @@ async function main(...args) {
 
   let video = new VideoSource(...args);
 
+  let font = new TextStyle(cv.FONT_HERSHEY_PLAIN, 1.0, 1);
+  let tSize = font.size(video.time);
+
+  let tPos = new Point(...tSize.div(2))
+    .floor()
+    .mul(-1)
+    .add(50, video.get('frame_height') - tSize.y * 0.8);
+
+  tPos.x = 5;
+
   let bgr = new Mat();
   console.log('backend:', video.backend);
   console.log('grab():', video.grab);
   console.log('read():', [...Util.repeat(10, () => video.grab())]);
   let frameCount = video.get('frame_count');
+  let frameShow = -1;
 
-  for(;;) {
+  let pipeline = new Pipeline([
+      Pipeline.call((mat, output) => video.read(output)),
+      toGrayscale,
+      Pipeline.call(cv.GaussianBlur, [3, 3], 0),
+      Pipeline.call(cv.Canny, 10, 20, 3),
+      toBGR
+    ],
+    (mat, i, n) => {
+      const showIndex = Util.mod(frameShow, n);
+      if(showIndex == i) {
+        mat = toBGR(mat);
+        font.draw(mat, video.time + ' ⏩', tPos, 0xffffff || { r: 0, g: 255, b: 0 });
+        font.draw(mat, `#${showIndex + 1}/${n}`, [5, 5 + tSize.y], { r: 255, g: 255, b: 0 });
+        win.show(mat);
+      }
+    }
+  );
+
+  while(running) {
     let frameNo = video.get('pos_frames');
     if(frameNo == frameCount) video.set('pos_frames', 0);
 
-    video.read(bgr);
+    //   video.read(bgr);
 
     //dumpMat(`bgr #${frameNo}/${frameCount}`, bgr);
 
-    let gray = toGrayscale(bgr);
+    let gray = pipeline(bgr);
+    // console.log('pipeline:', pipeline);
 
-    bgr = toBGR(gray);
+    //  bgr = toBGR(gray);
 
     //  draw.circle(bgr, [50, 50], 25, 0x00ff00 || { r: 255, g: 0, b: 0 }, 2, cv.LINE_AA);
-    let baseY;
+    /*
+    font.draw(gray, video.time + ' ⏩', tPos, 0xffffff || { r: 0, g: 255, b: 0 });
 
-    let font = new TextStyle(cv.FONT_HERSHEY_PLAIN, 1.0, 1);
-    let tSize = font.size(video.time);
-
-    let tPos = new Point(...tSize.div(2))
-      .floor()
-      .mul(-1)
-      .add(50, video.get('frame_height') - tSize.y * 0.8);
-
-    tPos.x = 5;
-
-    //  console.log('tPos:', tPos);
-
-    font.draw(bgr, video.time + ' ⏩', tPos, 0xffffff || { r: 0, g: 255, b: 0 });
-
-    win.show(bgr);
+    win.show(gray);*/
 
     let key = cv.waitKeyEx(1000 / video.fps);
 
     if(key == 27) break;
 
     let modifiers = Object.fromEntries(modifierMap(key));
-    let modifierList = modifierMap(key).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc), []);
+    let modifierList = modifierMap(key).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc),
+      []
+    );
 
     switch (key & 0xfff) {
-      /* home */ case 0xf50:
+      case 0x51:
+      case 0x71:
+        running = false;
+        break;
+      case 0x20:
+        paused = !paused;
+        break;
+      case 0x6e:
+      case 0x4e:
+        frameShow++;
+        break;
+      case 0x70:
+      case 0x50:
+        frameShow--;
+        break;
+      case 0xf50 /* home */:
         video.set('pos_frames', 0);
         break;
-      /* end */ case 0xf57:
+      case 0xf57 /* end */:
         video.set('pos_frames', video.get('frame_count') - Math.round(video.fps * 3));
         break;
-      /* left */ case 0xf51:
-      /* right */ case 0xf53:
-      /* up */ case 0xf52:
-      /* down */ case 0xf54: {
+      case 0xf51: /* left */
+      case 0xf53: /* right */
+      case 0xf52: /* up */
+      case 0xf54: /* down */ {
         const method = key & 0x1 ? 'frames' : 'msecs';
-        const distance = (key & 0x1 ? 1 : 1000) * (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
+        const distance =
+          (key & 0x1 ? 1 : 1000) *
+          (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
         const offset = key & 0x2 ? +distance : -distance;
 
         //console.log('seek', { method, distance, offset });
         video['seek_' + method](offset);
         let pos = video.position(method);
 
-        console.log('seek_' + method + ' ' + offset + ' pos =', pos, ` (${Util.roundTo(video.position('%'), 0.001)}%)`);
+        console.log('seek_' + method + ' ' + offset + ' pos =',
+          pos,
+          ` (${Util.roundTo(video.position('%'), 0.001)}%)`
+        );
         break;
       }
       default: {
@@ -218,6 +309,8 @@ async function main(...args) {
         break;
       }
     }
+
+    if(paused) video.seek_frames(-1);
   }
 
   console.log('props:', video.dump());

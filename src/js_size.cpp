@@ -17,10 +17,15 @@ js_size_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* ar
     return JS_EXCEPTION;
   new(s) JSSizeData();
 
-  if(JS_ToFloat64(ctx, &s->width, argv[0]))
-    goto fail;
-  if(JS_ToFloat64(ctx, &s->height, argv[1]))
-    goto fail;
+  if(argc > 0) {
+    if(!js_size_read(ctx, argv[0], s)) {
+      if(JS_ToFloat64(ctx, &s->width, argv[0]))
+        goto fail;
+      if(argc < 2 || JS_ToFloat64(ctx, &s->height, argv[1]))
+        goto fail;
+    }
+  }
+
   /* using new_target to get the prototype is necessary when the
      class is extended. */
   proto = JS_GetPropertyStr(ctx, new_target, "prototype");
@@ -198,7 +203,7 @@ js_size_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetPropertyFunctionList(ctx, size_proto, js_size_proto_funcs, countof(js_size_proto_funcs));
   JS_SetClassProto(ctx, js_size_class_id, size_proto);
 
-  size_class = JS_NewCFunction2(ctx, js_size_ctor, "Size", 2, JS_CFUNC_constructor, 0);
+  size_class = JS_NewCFunction2(ctx, js_size_ctor, "Size", 0, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, size_class, size_proto);
 

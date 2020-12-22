@@ -68,14 +68,16 @@ js_point_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* a
   double x, y;
   JSPointData point;
 
-  if(js_point_read(ctx, argv[0], &point)) {
-    x = point.x;
-    y = point.y;
-  } else {
-    if(JS_ToFloat64(ctx, &x, argv[0]))
-      return JS_EXCEPTION;
-    if(JS_ToFloat64(ctx, &y, argv[1]))
-      return JS_EXCEPTION;
+  if(argc > 0) {
+    if(js_point_read(ctx, argv[0], &point)) {
+      x = point.x;
+      y = point.y;
+    } else {
+      if(JS_ToFloat64(ctx, &x, argv[0]))
+        return JS_EXCEPTION;
+      if(argc < 2 || JS_ToFloat64(ctx, &y, argv[1]))
+        return JS_EXCEPTION;
+    }
   }
 
   return js_point_new(ctx, x, y);
@@ -385,7 +387,7 @@ js_point_init(JSContext* ctx, JSModuleDef* m) {
     JS_SetPropertyFunctionList(ctx, point_proto, js_point_proto_funcs, countof(js_point_proto_funcs));
     JS_SetClassProto(ctx, js_point_class_id, point_proto);
 
-    point_class = JS_NewCFunction2(ctx, js_point_ctor, "Point", 2, JS_CFUNC_constructor, 0);
+    point_class = JS_NewCFunction2(ctx, js_point_ctor, "Point", 0, JS_CFUNC_constructor, 0);
     /* set proto.constructor and ctor.prototype */
     JS_SetConstructor(ctx, point_class, point_proto);
   }

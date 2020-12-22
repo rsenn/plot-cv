@@ -33,15 +33,38 @@ js_rect_wrap(JSContext* ctx, const JSRectData& rect) {
 static JSValue
 js_rect_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   double x, y, w, h;
+  JSRectData rect;
 
-  if(JS_ToFloat64(ctx, &x, argv[0]))
-    return JS_EXCEPTION;
-  if(JS_ToFloat64(ctx, &y, argv[1]))
-    return JS_EXCEPTION;
-  if(JS_ToFloat64(ctx, &w, argv[2]))
-    return JS_EXCEPTION;
-  if(JS_ToFloat64(ctx, &h, argv[3]))
-    return JS_EXCEPTION;
+  if(argc > 0) {
+    if(!js_rect_read(ctx, argv[0], &rect)) {
+      JSPointData point;
+      if(argc >= 2 && js_point_read(ctx, argv[0], &point)) {
+        JSSizeData size;
+        JSPointData point2;
+
+        x = point.x;
+        y = point.y;
+        if(js_size_read(ctx, argv[1], &size)) {
+          w = size.width;
+          h = size.height;
+        } else if(js_point_read(ctx, argv[1], &point2)) {
+          w = point2.x - point.x;
+          h = point2.y - point.y;
+        } else {
+          return JS_EXCEPTION;
+        }
+      } else {
+        if(JS_ToFloat64(ctx, &x, argv[0]))
+          return JS_EXCEPTION;
+        if(argc < 2 || JS_ToFloat64(ctx, &y, argv[1]))
+          return JS_EXCEPTION;
+        if(argc < 3 || JS_ToFloat64(ctx, &w, argv[2]))
+          return JS_EXCEPTION;
+        if(argc < 4 || JS_ToFloat64(ctx, &h, argv[3]))
+          return JS_EXCEPTION;
+      }
+    }
+  }
 
   return js_rect_new(ctx, x, y, w, h);
 }
@@ -201,7 +224,7 @@ js_rect_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetPropertyFunctionList(ctx, rect_proto, js_rect_proto_funcs, countof(js_rect_proto_funcs));
   JS_SetClassProto(ctx, js_rect_class_id, rect_proto);
 
-  rect_class = JS_NewCFunction2(ctx, js_rect_ctor, "Rect", 2, JS_CFUNC_constructor, 0);
+  rect_class = JS_NewCFunction2(ctx, js_rect_ctor, "Rect", 0, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, rect_class, rect_proto);
 
