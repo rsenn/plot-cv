@@ -19,23 +19,21 @@
 
 #include "color.h"
 #include "js.h"
+#include "geometry.h"
 
 typedef std::vector<int> ref_list;
-typedef cv::Mat image_type;
-typedef cv::Point point2i_type;
-typedef cv::Point2d point2d_type;
-typedef cv::Point2f point2f_type;
-
+typedef cv::Mat image_type; 
+/*
 typedef std::vector<cv::Vec4i> vec4i_list;
-typedef std::vector<cv::Point> point2i_list;
-typedef std::vector<cv::Point> point2i_vector;
-typedef std::vector<cv::Point2f> point2f_list;
-typedef std::vector<cv::Point2f> point2f_vector;
-typedef std::vector<cv::Point2d> point2d_list;
+typedef std::vector<cv::Point> point_vector<int>;
+typedef std::vector<cv::Point> point_vector<int>;
+typedef std::vector<cv::Point2f> point_vector<float>;
+typedef std::vector<cv::Point2f> point_vector<float>;
+typedef std::vector<cv::Point2d> point_vector<double>;
 typedef std::vector<cv::Point2d> point2d_vector;
 
-typedef std::vector<point2i_vector> contour2i_vector;
-typedef std::vector<point2f_list> contour2f_vector;
+typedef std::vector<point_vector<int>> contour_vector<int>;
+typedef std::vector<point_vector<float>> contour_vector<float>;*/
 
 /*
 template<class T> struct vector_vector_traits {
@@ -112,11 +110,11 @@ extern "C" image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, img
     imgMorphology; // Canny edge image
 
 void image_info(image_type img);
-std::vector<point2i_list> get_contours(image_type src, std::vector<cv::Vec4i>& hierarchy, int flag = CV_RETR_TREE);
+std::vector<point_vector<int>> get_contours(image_type src, std::vector<cv::Vec4i>& hierarchy, int flag = CV_RETR_TREE);
 
 void svg_draw_polyline(svg::Document& doc,
-                       const point2f_list& contour_arg,
-                       std::function<svg::Color(const point2f_list&)> color_fn);
+                       const point_vector<float>& contour_arg,
+                       std::function<svg::Color(const point_vector<float>&)> color_fn);
 
 struct config_values {
   int morphology_kernel_size;
@@ -176,7 +174,7 @@ get_largest_contour(const std::vector<std::vector<cv::Point_<T>>>& contours_un,
 
 extern config_values config;
 
-void draw_all_contours(image_type& out, std::vector<point2i_list>& contours, int thickness = 1);
+void draw_all_contours(image_type& out, std::vector<point_vector<int>>& contours, int thickness = 1);
 
 // Function that calculates the absolute value
 
@@ -205,7 +203,7 @@ out_hier(O& os, const cv::Vec4i& v) {
  */
 template<class O>
 inline void
-out_points(O& os, const point2i_vector& pl) {
+out_points(O& os, const point_vector<int>& pl) {
   size_t i, n = pl.size();
   for(i = 0; i < n; ++i) {
     if(i > 0)
@@ -230,7 +228,7 @@ draw_all_lines(
     if(len < 8)
       continue;
 
-    cv::line(out, point2i_type(it->a), point2i_type(it->b), color, 1, cv::LINE_AA);
+    cv::line(out, point_type<int>(it->a), point_type<int>(it->b), color, 1, cv::LINE_AA);
   }
 }
 
@@ -248,7 +246,7 @@ svg_export_file(const std::vector<std::vector<cv::Point_<T>>>& contours, std::st
                  contours.end(),
                  std::back_inserter(areas),
                  [](const std::vector<cv::Point_<T>>& contour) -> double {
-                   point2f_vector vec = contour;
+                   point_vector<float> vec = contour;
                    return cv::contourArea(vec);
                  });
   const auto& it = std::max_element(areas.begin(), areas.end());
@@ -283,7 +281,7 @@ points_to_js(const std::vector<P>& v) {
 
 template<> JSValue points_to_js<cv::Point>(const std::vector<cv::Point>& v);
 
-void find_rectangles(const contour2i_vector& contours, contour2i_vector& squares);
+void find_rectangles(const contour_vector<int>& contours, contour_vector<int>& squares);
 JSValue vec4i_to_js(const cv::Vec4i& v);
 
 void write_image(image_type img);

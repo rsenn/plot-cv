@@ -1,5 +1,8 @@
-#include "./jsbindings.h"
-#include "./geometry.h"
+#include "jsbindings.h"
+#include "js_size.h"
+#include "js_point.h"
+#include "js_rect.h"
+#include "geometry.h"
 #include "../quickjs/cutils.h"
 
 #if defined(JS_MAT_MODULE) || defined(quickjs_mat_EXPORTS)
@@ -45,7 +48,7 @@ static JSValue
 js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
-  JSSizeData size;
+  JSSizeData<double> size;
 
   int64_t cols = 0, rows = 0;
   uint32_t type = CV_32FC1;
@@ -91,7 +94,7 @@ static JSValue
 js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSValue ret = JS_UNDEFINED;
   int64_t i = -1, i2 = -1;
-  JSPointData pt;
+  JSPointData<double> pt;
   JSMatData* m = js_mat_data(ctx, this_val);
 
   if(argc > 0) {
@@ -127,7 +130,7 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
   } else if(magic == 5) {
     ret = js_mat_wrap(ctx, m->clone());
   } else if(magic == 6) {
-    JSRectData rect = {0, 0, 0, 0};
+    JSRectData<double> rect = {0, 0, 0, 0};
 
     if(argc > 0)
       rect = js_rect_get(ctx, argv[0]);
@@ -135,7 +138,7 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
     ret = js_mat_wrap(ctx, (*m)(rect));
 
   } else if(magic == 7) {
-    JSRectData rect = {0, 0, 0, 0};
+    JSRectData<double> rect = {0, 0, 0, 0};
 
     if(argc > 0)
       rect = js_rect_get(ctx, argv[0]);
@@ -247,7 +250,7 @@ js_mat_at(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSMatData* m = js_mat_data(ctx, this_val);
   if(!m)
     return JS_EXCEPTION;
-  JSPointData pt;
+  JSPointData<double> pt;
   JSValue ret;
   uint32_t row = 0, col = 0;
   if(js_point_read(ctx, argv[0], &pt)) {
@@ -277,7 +280,7 @@ js_mat_set(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) 
   if(!m)
     return JS_EXCEPTION;
 
-  JSPointData pt;
+  JSPointData<double> pt;
   JSValue ret;
   int64_t col = -1, row = -1;
 
@@ -518,7 +521,7 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 
 static JSValue
 js_mat_getrotationmatrix2d(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSPointData s;
+  JSPointData<double> s;
 
   double angle = 0, scale = 1;
   cv::Mat m;

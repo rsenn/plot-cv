@@ -1,4 +1,7 @@
-#include "./jsbindings.h"
+#include "jsbindings.h"
+#include "js_rect.h"
+#include "js_size.h"
+#include "js_point.h"
 
 #if defined(JS_RECT_MODULE) || defined(quickjs_rect_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
@@ -9,13 +12,13 @@
 extern "C" VISIBLE JSValue
 js_rect_new(JSContext* ctx, double x, double y, double w, double h) {
   JSValue ret;
-  JSRectData* s;
+  JSRectData<double>* s;
 
   ret = JS_NewObjectProtoClass(ctx, rect_proto, js_rect_class_id);
 
-  s = static_cast<JSRectData*>(js_mallocz(ctx, sizeof(JSRectData)));
+  s = static_cast<JSRectData<double>*>(js_mallocz(ctx, sizeof(JSRectData<double>)));
 
-  new(s) JSRectData();
+  new(s) JSRectData<double>();
   s->x = x;
   s->y = y;
   s->width = w;
@@ -26,21 +29,21 @@ js_rect_new(JSContext* ctx, double x, double y, double w, double h) {
 }
 
 VISIBLE JSValue
-js_rect_wrap(JSContext* ctx, const JSRectData& rect) {
+js_rect_wrap(JSContext* ctx, const JSRectData<double>& rect) {
   return js_rect_new(ctx, rect.x, rect.y, rect.width, rect.height);
 }
 
 static JSValue
 js_rect_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   double x, y, w, h;
-  JSRectData rect;
+  JSRectData<double> rect;
 
   if(argc > 0) {
     if(!js_rect_read(ctx, argv[0], &rect)) {
-      JSPointData point;
+      JSPointData<double> point;
       if(argc >= 2 && js_point_read(ctx, argv[0], &point)) {
-        JSSizeData size;
-        JSPointData point2;
+        JSSizeData<double> size;
+        JSPointData<double> point2;
 
         x = point.x;
         y = point.y;
@@ -69,24 +72,24 @@ js_rect_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* ar
   return js_rect_new(ctx, x, y, w, h);
 }
 
-VISIBLE JSRectData*
+VISIBLE JSRectData<double>*
 js_rect_data(JSContext* ctx, JSValueConst val) {
-  return static_cast<JSRectData*>(JS_GetOpaque2(ctx, val, js_rect_class_id));
+  return static_cast<JSRectData<double>*>(JS_GetOpaque2(ctx, val, js_rect_class_id));
 }
 
 void
 js_rect_finalizer(JSRuntime* rt, JSValue val) {
-  JSRectData* s = static_cast<JSRectData*>(JS_GetOpaque(val, js_rect_class_id));
+  JSRectData<double>* s = static_cast<JSRectData<double>*>(JS_GetOpaque(val, js_rect_class_id));
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
 
-  s->~JSRectData();
+  s->~JSRectData<double>();
   js_free_rt(rt, s);
 }
 
 static JSValue
 js_rect_get_xywh(JSContext* ctx, JSValueConst this_val, int magic) {
   JSValue ret = JS_UNDEFINED;
-  JSRectData* s = static_cast<JSRectData*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id));
+  JSRectData<double>* s = static_cast<JSRectData<double>*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id));
   if(!s)
     ret = JS_EXCEPTION;
   else if(magic == 0)
@@ -106,7 +109,7 @@ js_rect_get_xywh(JSContext* ctx, JSValueConst this_val, int magic) {
 
 static JSValue
 js_rect_set_xywh(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magic) {
-  JSRectData* s = static_cast<JSRectData*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id));
+  JSRectData<double>* s = static_cast<JSRectData<double>*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id));
   double v;
   if(!s)
     return JS_EXCEPTION;
@@ -130,7 +133,7 @@ js_rect_set_xywh(JSContext* ctx, JSValueConst this_val, JSValueConst val, int ma
 
 static JSValue
 js_rect_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSRectData* s = static_cast<JSRectData*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id));
+  JSRectData<double>* s = static_cast<JSRectData<double>*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id));
   std::ostringstream os;
   JSValue xv, yv, wv, hv;
   double x = -1, y = -1, w = 0, h = 0;
@@ -163,9 +166,9 @@ js_rect_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 
 static JSValue
 js_rect_method(JSContext* ctx, JSValueConst rect, int argc, JSValueConst* argv, int magic) {
-  JSRectData* s = static_cast<JSRectData*>(JS_GetOpaque2(ctx, rect, js_rect_class_id));
+  JSRectData<double>* s = static_cast<JSRectData<double>*>(JS_GetOpaque2(ctx, rect, js_rect_class_id));
   JSValue ret = JS_UNDEFINED;
-  JSPointData point = js_point_get(ctx, argv[0]);
+  JSPointData<double> point = js_point_get(ctx, argv[0]);
   if(magic == 0)
     ret = JS_NewBool(ctx, s->contains(point));
   if(magic == 1)
@@ -174,7 +177,7 @@ js_rect_method(JSContext* ctx, JSValueConst rect, int argc, JSValueConst* argv, 
     ret = JS_NewFloat64(ctx, s->area());
 
   if(magic == 3 || magic == 4) {
-    cv::Point2d pt = magic == 3 ? s->br() : s->tl();
+    JSPointData<double> pt = magic == 3 ? s->br() : s->tl();
 
     ret = js_point_new(ctx, pt.x, pt.y);
   }

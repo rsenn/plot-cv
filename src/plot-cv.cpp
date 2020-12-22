@@ -31,6 +31,7 @@
 #include "psimpl.h"
 #include "auto_canny.h"
 #include "jsbindings.h"
+#include "js_contour.h"
 
 using std::string;
 using std::chrono::duration;
@@ -137,8 +138,8 @@ make_filename(const string& name, int count, const string& ext, const string& di
  */
 void
 svg_draw_polyline(svg::Document& doc,
-                  const point2f_vector& contour_arg,
-                  std::function<svg::Color(const point2f_vector&)> color_fn) {
+                  const point_vector<float>& contour_arg,
+                  std::function<svg::Color(const point_vector<float>&)> color_fn) {
   svg::Polyline polyline(svg::Stroke(1, color_fn(contour_arg)));
 
   for(size_t i = 0; i < contour_arg.size(); i++) {
@@ -280,28 +281,28 @@ image_to_binary(image_type start) {
  *
  * @return     The contours.
  */
-contour2i_vector
+contour_vector<int>
 get_contours(image_type src, std::vector<cv::Vec4i>& hierarchy, int flag) {
   image_type dst = image_type::zeros(src.rows, src.cols, CV_8UC3);
-  contour2i_vector contours;
+  contour_vector<int> contours;
   src = src > 1;
   cv::findContours(src, contours, hierarchy, flag, CV_CHAIN_APPROX_SIMPLE);
   return contours;
 }
 
 template<class InputIterator>
-point2i_vector
+point_vector<int>
 to_point_vec(InputIterator start, InputIterator end) {
-  point2i_vector ret;
+  point_vector<int> ret;
   std::for_each(start, end, [&ret](const typename InputIterator::value_type& pt) {
-    ret.push_back(point2i_type(pt.x, pt.y));
+    ret.push_back(point_type<int>(pt.x, pt.y));
   });
   return ret;
 }
 
 /*
 template<class Container>
-point2i_vector
+point_vector<int>
 to_point_vec(const Container& c) {
   return to_point_vec(c.cbegin(), c.cend());
 }
@@ -309,11 +310,11 @@ to_point_vec(const Container& c) {
 */
 
 void
-find_rectangles(const contour2i_vector& contours, contour2i_vector& squares) {
+find_rectangles(const contour_vector<int>& contours, contour_vector<int>& squares) {
 
   // test each contour
   for(size_t i = 0; i < contours.size(); i++) {
-    point2i_vector approx;
+    point_vector<int> approx;
     double arcLen = cv::arcLength(image_type(contours[i]), true);
 
     // approximate contour with accuracy proportional
@@ -364,7 +365,7 @@ invert_color(image_type& img) {
 
 /*
 void
-hough_lines(image_type& img, std::vector<point2i_vector>& ret) {
+hough_lines(image_type& img, std::vector<point_vector<int>>& ret) {
 
   std::vector<cv::Vec2f> lines;
 
@@ -373,10 +374,10 @@ hough_lines(image_type& img, std::vector<point2i_vector>& ret) {
 
   std::for_each(lines.cbegin(), lines.cend(), [&ret](const cv::Vec2f& v) {
     float rho = v[0], theta = v[1];
-    point2i_type pt1, pt2;
+    point_type<int> pt1, pt2;
     double a = cos(theta), b = sin(theta);
     double x0 = a * rho, y0 = b * rho;
-    point2i_vector l;
+    point_vector<int> l;
     pt1.x = cvRound(x0 + 1000 * (-b));
     pt1.y = cvRound(y0 + 1000 * (a));
     pt2.x = cvRound(x0 - 1000 * (-b));
@@ -433,7 +434,7 @@ draw_lines(image_type& target,
            int lineType = cv::LINE_8) {
 
   std::for_each(start, end, [target, color, thickness, lineType](const cv::Vec4i& vec) {
-    cv::line(target, point2i_type(vec[0], vec[1]), point2i_type(vec[2], vec[3]), color, thickness, lineType);
+    cv::line(target, point_type<int>(vec[0], vec[1]), point_type<int>(vec[2], vec[3]), color, thickness, lineType);
   });
 }
 
@@ -461,7 +462,7 @@ contour_detect(const image_type& input, image_type& drawing) {
   image_type mat;
   cv::cvtColor(input, mat, CV_BGR2GRAY);
   cv::GaussianBlur(mat, mat, cv::Size(3, 3), 0);
-  cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, point2i_type(9, 9));
+  cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, point_type<int>(9, 9));
   cv::Mat dilated;
   cv::dilate(mat, dilated, kernel);
 
@@ -474,23 +475,23 @@ contour_detect(const image_type& input, image_type& drawing) {
   std::vector<cv::Vec4i>::iterator it = lines.begin();
   for(; it != lines.end(); ++it) {
     cv::Vec4i l = *it;
-    cv::line(edges, point2i_type(l[0], l[1]), point2i_type(l[2], l[3]), cv::Scalar(255, 0, 0), 2, 8);
+    cv::line(edges, point_type<int>(l[0], l[1]), point_type<int>(l[2], l[3]), cv::Scalar(255, 0, 0), 2, 8);
   }
-  std::vector<std::vector<point2i_type>> contours;
+  std::vector<std::vector<point_type<int>>> contours;
   cv::findContours(edges, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
-  std::vector<std::vector<point2i_type>> contoursCleaned;
+  std::vector<std::vector<point_type<int>>> contoursCleaned;
   for(int i = 0; i < contours.size(); i++) {
     if(cv::arcLength(contours[i], false) > 100)
       contoursCleaned.push_back(contours[i]);
   }
-  std::vector<std::vector<point2i_type>> contoursArea;
+  std::vector<std::vector<point_type<int>>> contoursArea;
 
   for(int i = 0; i < contoursCleaned.size(); i++) {
     if(cv::contourArea(contoursCleaned[i]) > 10000) {
       contoursArea.push_back(contoursCleaned[i]);
     }
   }
-  std::vector<std::vector<point2i_type>> contoursDraw(contoursCleaned.size());
+  std::vector<std::vector<point_type<int>>> contoursDraw(contoursCleaned.size());
   for(int i = 0; i < contoursArea.size(); i++) {
     cv::approxPolyDP(cv::Mat(contoursArea[i]), contoursDraw[i], 40, true);
   }
@@ -499,7 +500,7 @@ contour_detect(const image_type& input, image_type& drawing) {
 }
 
 void
-corner_harris_detection(image_type& src, const std::function<void(const point2i_type& point)>& fn) {
+corner_harris_detection(image_type& src, const std::function<void(const point_type<int>& point)>& fn) {
   int thresh = 200;
   int max_thresh = 255;
   int blockSize = 2;
@@ -516,7 +517,7 @@ corner_harris_detection(image_type& src, const std::function<void(const point2i_
   for(int i = 0; i < dst_norm.rows; i++) {
     for(int j = 0; j < dst_norm.cols; j++) {
       if((int)dst_norm.at<float>(i, j) > thresh) {
-        fn(point2i_type(j, i));
+        fn(point_type<int>(j, i));
       }
     }
   }
@@ -559,7 +560,7 @@ write_image(image_type img) {
 }
 
 void
-draw_all_contours_except(image_type& out, contour2i_vector& contours, int except = -1, int thickness = 1) {
+draw_all_contours_except(image_type& out, contour_vector<int>& contours, int except = -1, int thickness = 1) {
   for(int i = 0; i < contours.size(); i++) {
     if(i == except)
       continue;
@@ -574,7 +575,7 @@ draw_all_contours_except(image_type& out, contour2i_vector& contours, int except
 }
 
 void
-draw_all_contours(image_type& out, contour2i_vector& contours, int thickness) {
+draw_all_contours(image_type& out, contour_vector<int>& contours, int thickness) {
   draw_all_contours_except(out, contours, -1, thickness);
 }
 
@@ -600,18 +601,18 @@ vec4i_to_js(const cv::Vec4i& v) {
 
 template<>
 JSValue
-points_to_js<point2i_type>(const std::vector<point2i_type>& v) {
-  std::function<JSValue(const point2i_type&)> fn(
-      [](const point2i_type& point) -> JSValue { return js.create_point(point.x, point.y); });
+points_to_js<point_type<int>>(const std::vector<point_type<int>>& v) {
+  std::function<JSValue(const point_type<int>&)> fn(
+      [](const point_type<int>& point) -> JSValue { return js.create_point(point.x, point.y); });
   return vector_to_js(js, v, fn);
 }
 
 jsrt::value
-contours_to_array(JSContext* ctx, const contour2i_vector& contours) {
+contours_to_array(JSContext* ctx, const contour_vector<int>& contours) {
   JSValue ret = JS_NewArray(ctx);
   uint32_t i, n = contours.size();
   for(i = 0; i < n; i++) {
-    JS_SetPropertyUint32(ctx, ret, i, js_contour2i_new(ctx, contours[i]));
+    JS_SetPropertyUint32(ctx, ret, i, js_contour_new<int>(ctx, contours[i]));
   }
   return ret;
 }
@@ -660,7 +661,7 @@ process_raster(std::function<void(std::string, cv::Mat*)> display_image, int sho
      houghLines.push_back(Line<int>(x1, y1, x2, y2));
    });*/
 
-  corner_harris_detection(imgGrayscale, [&](const point2i_type& pt) {
+  corner_harris_detection(imgGrayscale, [&](const point_type<int>& pt) {
     cv::circle(imgCanny, pt, 10, cv::Scalar(0, 255, 0, 255), 2, cv::LINE_8);
   });
 
@@ -682,13 +683,13 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
   std::vector<cv::Vec4i> hough;
   line_vector houghLines;
   std::vector<cv::Vec3f> circles;
-  std::vector<point2f_vector> contours2;
+  std::vector<point_vector<float>> contours2;
   std::vector<cv::Vec4i> hier;
   //  apply_clahe(imgOriginal, imgOriginal);XY
   (morphology_enable > 1) ? imgMorphology.copyTo(imgRaw) : imgCanny.copyTo(imgRaw);
-  std::vector<point2i_vector> contours =
+  std::vector<point_vector<int>> contours =
       get_contours((morphology_enable > 1) ? imgMorphology : imgCanny, hier, CV_RETR_TREE);
-  std::vector<point2i_vector> external =
+  std::vector<point_vector<int>> external =
       get_contours(morphology_enable > 1 ? imgMorphology : imgCanny, hier, CV_RETR_EXTERNAL);
   draw_all_contours(imgGrayscale, external, 1);
 
@@ -702,7 +703,7 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
 */
   if(show_diagnostics)
     std::cerr << "Num contours: " << contours.size() << std::endl;
-  point2i_vector largestContour;
+  point_vector<int> largestContour;
   int largestIndex = get_largest_contour(contours, largestContour);
   if(largestIndex != -1) {
     draw_all_contours_except(imgVector, contours, largestIndex, 1);
@@ -740,15 +741,15 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
   };
 
   int i = 0;
-  for(contour2i_vector::const_iterator it = contours.cbegin(); it != contours.cend(); ++i, ++it) {
-    const std::vector<point2i_type>& a = *it;
+  for(contour_vector<int>::const_iterator it = contours.cbegin(); it != contours.cend(); ++i, ++it) {
+    const std::vector<point_type<int>>& a = *it;
     int depth = contourDepth(i);
   }
   i = 0;
-  for(contour2i_vector::const_iterator it = contours.cbegin(); it != contours.cend(); ++i, ++it) {
-    const std::vector<point2i_type>& a = *it;
+  for(contour_vector<int>::const_iterator it = contours.cbegin(); it != contours.cend(); ++i, ++it) {
+    const std::vector<point_type<int>>& a = *it;
     if(a.size() >= 3) {
-      point2f_vector c;
+      point_vector<float> c;
       cv::approxPolyDP(a, c, 8, true);
       double area = cv::contourArea(c);
       int depth = contourDepth(i);
@@ -775,7 +776,7 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
     return;
   }
 
-  for_each(contours2.begin(), contours2.end(), [&lines](const std::vector<point2f_type>& a) {
+  for_each(contours2.begin(), contours2.end(), [&lines](const std::vector<point_type<float>>& a) {
     double len = cv::arcLength(a, false);
     double area = cv::contourArea(a);
     if(len >= 2) {
@@ -872,11 +873,11 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
           return int(ang * 180 / M_PI) % 180;
         });
 
-        point2i_vector centers;
+        point_vector<int> centers;
         std::transform(adjacent_lines.begin(),
                        adjacent_lines.end(),
                        back_inserter(centers),
-                       [](Line<float>* line) -> point2i_type { return line->center(); });
+                       [](Line<float>* line) -> point_type<int> { return line->center(); });
 
         Matrix<double> rot = Matrix<double>::rotation(-line.angle());
 
@@ -902,7 +903,7 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
 
       Matrix<double> m = Matrix<double>::identity();
       Matrix<double> s = Matrix<double>::scale(3);
-      Matrix<double> r = Matrix<double>::rotation(M_PI / 4, point2f_type(50, 50));
+      Matrix<double> r = Matrix<double>::rotation(M_PI / 4, point_type<float>(50, 50));
       Matrix<double> t = Matrix<double>::translation(120, -60);
       Matrix<double> mult;
 
@@ -914,9 +915,9 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
       logfile << "matrix rotate " << to_string(r) << std::endl;
       logfile << "matrix translate " << to_string(t) << std::endl;
 
-      point2f_type p(100, 50);
-      point2f_vector pl = {p};
-      point2f_vector ol;
+      point_type<float> p(100, 50);
+      point_vector<float> pl = {p};
+      point_vector<float> ol;
 
       mult.transform_points(pl.cbegin(), pl.cend(), std::back_inserter(ol));
       logfile << "transformed point: " << ol << std::endl;
@@ -943,7 +944,7 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
     rename("contour.svg.tmp", "contour.svg");
   }
 
-  std::vector<point2i_vector> squares;
+  std::vector<point_vector<int>> squares;
 
   {
     jsrt::value args[3] = {contours_to_array(js.ctx, contours), vector_to_js(js, hier, &vec4i_to_js)};
@@ -976,8 +977,8 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
   }
 
   {
-    point2f_vector src = {point2f_type(50, 50), point2f_type(100, 50), point2f_type(100, 100), point2f_type(50, 100)};
-    point2f_vector dst = {point2f_type(100, 0), point2f_type(150, 0), point2f_type(150, 50), point2f_type(100, 50)};
+    point_vector<float> src = {point_type<float>(50, 50), point_type<float>(100, 50), point_type<float>(100, 100), point_type<float>(50, 100)};
+    point_vector<float> dst = {point_type<float>(100, 0), point_type<float>(150, 0), point_type<float>(150, 50), point_type<float>(100, 50)};
     image_type perspective = cv::getPerspectiveTransform(src, dst);
     logfile << "perspective:" << perspective << std::endl;
   }
@@ -986,23 +987,23 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
 
   // Draw the circles detected
   for(size_t i = 0; i < circles.size(); i++) {
-    point2i_type center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+    point_type<int> center(cvRound(circles[i][0]), cvRound(circles[i][1]));
     int radius = cvRound(circles[i][2]);
     cv::circle(imgOriginal, center, 3, color_type(255, 0, 0), -1, 8, 0);     // circle center
     cv::circle(imgOriginal, center, radius, color_type(255, 0, 0), 3, 8, 0); // circle outline
     logfile << "center : " << center << "\nradius : " << radius << std::endl;
   }
 
-  std::vector<point2i_vector> approxim;
-  transform(contours2.begin(), contours2.end(), back_inserter(approxim), [](const point2f_vector& p) -> point2i_vector {
+  std::vector<point_vector<int>> approxim;
+  transform(contours2.begin(), contours2.end(), back_inserter(approxim), [](const point_vector<float>& p) -> point_vector<int> {
     return transform_points<int, float>(p);
   });
 
-  for_each(approxim.begin(), approxim.end(), [&](const point2i_vector& c) {
+  for_each(approxim.begin(), approxim.end(), [&](const point_vector<int>& c) {
     const double length = cv::arcLength(c, false);
     const double area = cv::contourArea(c, false);
     cv::Rect rect = cv::boundingRect(c);
-    std::vector<point2i_vector> list;
+    std::vector<point_vector<int>> list;
     list.push_back(c);
     // cv::drawContours(imgOriginal, list, -1, color_type(255, 255, 0), 1);
   });
@@ -1142,5 +1143,4 @@ js_init(int argc, char* argv[]) {
                 << std::endl;*/
   return 0;
 }
-
 }

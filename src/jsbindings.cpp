@@ -66,7 +66,7 @@ extern "C" {}
 JSValue int32array_proto, int32array_ctor;
 JSClassID int32array_class_id;
 
-JSRectData* js_rect_data(JSContext* ctx, JSValue val);
+JSRectData<double>* js_rect_data(JSContext* ctx, JSValue val);
 
 JSValue js_mat_wrap(JSContext* ctx, const cv::Mat& mat);
 
@@ -87,7 +87,7 @@ js_vector_vec4i_to_array(JSContext* ctx, const std::vector<cv::Vec4i>& vec) {
 }
 
 int
-js_color_read(JSContext* ctx, JSValueConst color, JSColorData* out) {
+js_color_read(JSContext* ctx, JSValueConst color, JSColorData<double>* out) {
   int ret = 1;
   std::array<double, 4> c;
   if(JS_IsObject(color)) {

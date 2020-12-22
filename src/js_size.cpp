@@ -1,4 +1,5 @@
-#include "./jsbindings.h"
+#include "jsbindings.h"
+#include "js_size.h"
 
 #if defined(JS_SIZE_MODULE) || defined(quickjs_size_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
@@ -8,14 +9,14 @@
 
 static JSValue
 js_size_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
-  JSSizeData* s;
+  JSSizeData<double>* s;
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
 
-  s = static_cast<JSSizeData*>(js_mallocz(ctx, sizeof(JSSizeData)));
+  s = static_cast<JSSizeData<double>*>(js_mallocz(ctx, sizeof(JSSizeData<double>)));
   if(!s)
     return JS_EXCEPTION;
-  new(s) JSSizeData();
+  new(s) JSSizeData<double>();
 
   if(argc > 0) {
     if(!js_size_read(ctx, argv[0], s)) {
@@ -43,21 +44,21 @@ fail:
   return JS_EXCEPTION;
 }
 
-VISIBLE JSSizeData*
+VISIBLE JSSizeData<double>*
 js_size_data(JSContext* ctx, JSValueConst val) {
-  return static_cast<JSSizeData*>(JS_GetOpaque2(ctx, val, js_size_class_id));
+  return static_cast<JSSizeData<double>*>(JS_GetOpaque2(ctx, val, js_size_class_id));
 }
 
 void
 js_size_finalizer(JSRuntime* rt, JSValue val) {
-  JSSizeData* s = static_cast<JSSizeData*>(JS_GetOpaque(val, js_size_class_id));
+  JSSizeData<double>* s = static_cast<JSSizeData<double>*>(JS_GetOpaque(val, js_size_class_id));
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
   js_free_rt(rt, s);
 }
 
 static JSValue
 js_size_get_wh(JSContext* ctx, JSValueConst this_val, int magic) {
-  JSSizeData* s = js_size_data(ctx, this_val);
+  JSSizeData<double>* s = js_size_data(ctx, this_val);
   if(!s)
     return JS_EXCEPTION;
   if(magic == 0)
@@ -70,11 +71,11 @@ js_size_get_wh(JSContext* ctx, JSValueConst this_val, int magic) {
 VISIBLE JSValue
 js_size_new(JSContext* ctx, double w, double h) {
   JSValue ret;
-  JSSizeData* s;
+  JSSizeData<double>* s;
 
   ret = JS_NewObjectProtoClass(ctx, size_proto, js_size_class_id);
 
-  s = static_cast<JSSizeData*>(js_mallocz(ctx, sizeof(JSSizeData)));
+  s = static_cast<JSSizeData<double>*>(js_mallocz(ctx, sizeof(JSSizeData<double>)));
   s->width = w;
   s->height = h;
 
@@ -83,13 +84,13 @@ js_size_new(JSContext* ctx, double w, double h) {
 }
 
 VISIBLE JSValue
-js_size_wrap(JSContext* ctx, const JSSizeData& sz) {
+js_size_wrap(JSContext* ctx, const JSSizeData<double>& sz) {
   return js_size_new(ctx, sz.width, sz.height);
 }
 
 static JSValue
 js_size_set_wh(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magic) {
-  JSSizeData* s = js_size_data(ctx, this_val);
+  JSSizeData<double>* s = js_size_data(ctx, this_val);
   double v;
   if(!s)
     return JS_EXCEPTION;
@@ -104,7 +105,7 @@ js_size_set_wh(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magi
 
 static JSValue
 js_size_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSSizeData* s = js_size_data(ctx, this_val);
+  JSSizeData<double>* s = js_size_data(ctx, this_val);
   std::ostringstream os;
   JSValue wv, hv;
   double width = -1, height = -1;
@@ -127,7 +128,7 @@ js_size_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 
 static JSValue
 js_size_to_array(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSSizeData* s = js_size_data(ctx, this_val);
+  JSSizeData<double>* s = js_size_data(ctx, this_val);
   std::array<double, 2> arr;
 
   arr[0] = s->width;
@@ -138,7 +139,7 @@ js_size_to_array(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* 
 
 static JSValue
 js_size_mul(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSSizeData size, *s = js_size_data(ctx, this_val);
+  JSSizeData<double> size, *s = js_size_data(ctx, this_val);
   double factor;
   JS_ToFloat64(ctx, &factor, argv[0]);
 
@@ -151,7 +152,7 @@ js_size_mul(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
 
 static JSValue
 js_size_div(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSSizeData size, *s = js_size_data(ctx, this_val);
+  JSSizeData<double> size, *s = js_size_data(ctx, this_val);
   double divider;
   JS_ToFloat64(ctx, &divider, argv[0]);
 

@@ -2,7 +2,7 @@
 #define JS_SIZE_H
 
 static inline int
-js_size_read(JSContext* ctx, JSValueConst size, JSSizeData* out) {
+js_size_read(JSContext* ctx, JSValueConst size, JSSizeData<double>* out) {
   int ret = 1;
   JSValue w = JS_UNDEFINED, h = JS_UNDEFINED;
 
@@ -26,9 +26,9 @@ js_size_read(JSContext* ctx, JSValueConst size, JSSizeData* out) {
   return ret;
 }
 
-static inline JSSizeData
+static inline JSSizeData<double>
 js_size_get(JSContext* ctx, JSValueConst size) {
-  JSSizeData r = {0, 0};
+  JSSizeData<double> r = {0, 0};
   js_size_read(ctx, size, &r);
   return r;
 }

@@ -119,12 +119,12 @@ display_image(std::string str, image_type* m) {
    image_type out(cvSize(m->cols, m->rows), m->type());
    if(dptr != nullptr && show_diagnostics) {
      cv::rectangle(*dptr,
-                   point2i_type(50, 50),
-                   point2i_type(out.cols - 50, out.rows - 50),
+                   point_type<int>(50, 50),
+                   point_type<int>(out.cols - 50, out.rows - 50),
                    color_type(255, 0, 255, 255));
      cv::rectangle(*dptr,
-                   point2i_type(51, 51),
-                   point2i_type(out.cols - 51, out.rows - 51),
+                   point_type<int>(51, 51),
+                   point_type<int>(out.cols - 51, out.rows - 51),
                    color_type(255, 0, 255, 255));
    }
    image_type mask = image_type::zeros(m->size(), CV_8UC1);
@@ -140,7 +140,7 @@ display_image(std::string str, image_type* m) {
      cv::Size textSize =
          cv::getTextSize(image_names[show_image], cv::FONT_HERSHEY_PLAIN, 1.5, 2, &baseLine);
 
-     point2i_type origin(out.cols - 20 - textSize.width, out.rows - 20 - textSize.height +
+     point_type<int> origin(out.cols - 20 - textSize.width, out.rows - 20 - textSize.height +
    baseLine);
 
      cv::putText(out,

@@ -11,10 +11,10 @@ js_point_create(JSContext* ctx, double x, double y) {
   return point;
 }*/
 
-extern "C" JSValue js_point_clone(JSContext* ctx, const JSPointData& point);
- 
+extern "C" JSValue js_point_clone(JSContext* ctx, const JSPointData<double>& point);
+
 static inline int
-js_point_read(JSContext* ctx, JSValueConst point, JSPointData* out) {
+js_point_read(JSContext* ctx, JSValueConst point, JSPointData<double>* out) {
   int ret = 1;
   JSValue x = JS_UNDEFINED, y = JS_UNDEFINED;
   if(JS_IsArray(ctx, point)) {
@@ -37,14 +37,27 @@ js_point_read(JSContext* ctx, JSValueConst point, JSPointData* out) {
   return ret;
 }
 
-static inline JSPointData
+static inline JSPointData<double>
 js_point_get(JSContext* ctx, JSValueConst point) {
-  JSPointData r; /*, *ptr;
+  JSPointData<double> r; /*, *ptr;
    if((ptr = js_point_data(ctx, point)) != nullptr)
      r = *ptr;
    else*/
   js_point_read(ctx, point, &r);
   return r;
+}
+
+static inline bool
+js_is_point(JSContext* ctx, JSValueConst point) {
+  JSPointData<double> r;
+
+  if(js_point_data(ctx, point))
+    return true;
+
+  if(js_point_read(ctx, point, &r))
+    return true;
+
+  return false;
 }
 
 #endif /* defined(JS_POINT_H) */

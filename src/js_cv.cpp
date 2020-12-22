@@ -1,5 +1,8 @@
-#include "./jsbindings.h"
-#include "./geometry.h"
+#include "jsbindings.h"
+#include "js_size.h"
+#include "js_point.h"
+#include "js_contour.h"
+#include "geometry.h"
 #include "../quickjs/cutils.h"
 
 #include <opencv2/imgcodecs.hpp>
@@ -16,7 +19,7 @@ static JSValue
 js_cv_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
-  JSSizeData size;
+  JSSizeData<double> size;
 
   return obj;
 }
@@ -24,7 +27,7 @@ js_cv_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv
 static JSValue
 js_cv_gaussian_blur(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   cv::Mat* image;
-  JSSizeData size;
+  JSSizeData<double> size;
   double sigmaX, sigmaY = 0;
   cv::Mat *input, *output;
   int32_t borderType = cv::BORDER_DEFAULT;
@@ -466,7 +469,7 @@ static JSValue
 js_cv_dilate(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
 
   cv::Mat *src, *dst, *kernel;
-  JSPointData anchor = cv::Point(-1, -1);
+  JSPointData<double> anchor = cv::Point(-1, -1);
 
   double sigmaColor, sigmaSpace;
   int32_t iterations = 1, borderType = cv::BORDER_CONSTANT;
@@ -506,7 +509,7 @@ static JSValue
 js_cv_morphology_ex(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
 
   cv::Mat *src, *dst, *kernel;
-  JSPointData anchor = cv::Point(-1, -1);
+  JSPointData<double> anchor = cv::Point(-1, -1);
 
   int32_t op, iterations = 1, borderType = cv::BORDER_CONSTANT;
   cv::Scalar borderValue = cv::morphologyDefaultBorderValue();
@@ -545,8 +548,8 @@ js_cv_morphology_ex(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 static JSValue
 js_cv_get_structuring_element(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   int32_t shape;
-  JSSizeData ksize;
-  JSPointData anchor = cv::Point(-1, -1);
+  JSSizeData<double> ksize;
+  JSPointData<double> anchor = cv::Point(-1, -1);
 
   if(argc < 2)
     return JS_EXCEPTION;
@@ -677,7 +680,7 @@ static JSValue
 js_cv_move_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   const char* name;
   int32_t x, y;
-  JSPointData point;
+  JSPointData<double> point;
   name = JS_ToCString(ctx, argv[0]);
 
   if(js_point_read(ctx, argv[1], &point)) {
@@ -695,7 +698,7 @@ static JSValue
 js_cv_resize_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   const char* name;
   uint32_t w, h;
-  JSSizeData size;
+  JSSizeData<double> size;
   name = JS_ToCString(ctx, argv[0]);
 
   if(js_size_read(ctx, argv[1], &size)) {
@@ -713,7 +716,7 @@ js_cv_resize_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 static JSValue
 js_cv_get_window_image_rect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   const char* name;
-  JSRectData rect;
+  JSRectData<double> rect;
   name = JS_ToCString(ctx, argv[0]);
 
   rect = cv::getWindowImageRect(name);
@@ -929,10 +932,10 @@ js_cv_wait_key_ex(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 
 static JSValue
 js_cv_getperspectivetransform(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSContourData *v, *other = nullptr, *ptr;
+  JSContourData<double>*v, *other = nullptr, *ptr;
   JSValue ret = JS_UNDEFINED;
   bool handleNested = true;
-  std::vector<cv::Point2f> a, b;
+  JSContourData<float> a, b;
   cv::Mat matrix;
   int32_t solveMethod = cv::DECOMP_LU;
 
@@ -941,17 +944,17 @@ js_cv_getperspectivetransform(JSContext* ctx, JSValueConst this_val, int argc, J
     return JS_EXCEPTION;
 
   if(argc > 1) {
-    other = static_cast<JSContourData*>(JS_GetOpaque2(ctx, argv[1], js_contour_class_id));
+    other = static_cast<JSContourData<double>*>(JS_GetOpaque2(ctx, argv[1], js_contour_class_id));
 
     if(argc > 2)
       JS_ToInt32(ctx, &solveMethod, argv[2]);
   }
 
-  std::transform(v->begin(), v->end(), std::back_inserter(a), [](const cv::Point2d& pt) -> cv::Point2f {
-    return cv::Point2f(pt.x, pt.y);
+  std::transform(v->begin(), v->end(), std::back_inserter(a), [](const JSPointData<double>& pt) -> JSPointData<float> {
+    return JSPointData<float>(pt.x, pt.y);
   });
-  std::transform(other->begin(), other->end(), std::back_inserter(b), [](const cv::Point2d& pt) -> cv::Point2f {
-    return cv::Point2f(pt.x, pt.y);
+  std::transform(other->begin(), other->end(), std::back_inserter(b), [](const JSPointData<double>& pt) -> JSPointData<float> {
+    return JSPointData<float>(pt.x, pt.y);
   });
   matrix = cv::getPerspectiveTransform(a, b /*, solveMethod*/);
 
@@ -961,10 +964,10 @@ js_cv_getperspectivetransform(JSContext* ctx, JSValueConst this_val, int argc, J
 
 static JSValue
 js_cv_getaffinetransform(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSContourData *v, *other = nullptr, *ptr;
+  JSContourData<double>*v, *other = nullptr, *ptr;
   JSValue ret = JS_UNDEFINED;
   bool handleNested = true;
-  std::vector<cv::Point2f> a, b;
+  JSContourData<float> a, b;
   cv::Mat matrix;
 
   v = js_contour_data(ctx, argv[0]);
@@ -972,13 +975,13 @@ js_cv_getaffinetransform(JSContext* ctx, JSValueConst this_val, int argc, JSValu
     return JS_EXCEPTION;
 
   if(argc > 1)
-    other = static_cast<JSContourData*>(JS_GetOpaque2(ctx, argv[1], js_contour_class_id));
+    other = static_cast<JSContourData<double>*>(JS_GetOpaque2(ctx, argv[1], js_contour_class_id));
 
-  std::transform(v->begin(), v->end(), std::back_inserter(a), [](const cv::Point2d& pt) -> cv::Point2f {
-    return cv::Point2f(pt.x, pt.y);
+  std::transform(v->begin(), v->end(), std::back_inserter(a), [](const JSPointData<double>& pt) -> JSPointData<float> {
+    return JSPointData<float>(pt.x, pt.y);
   });
-  std::transform(other->begin(), other->end(), std::back_inserter(b), [](const cv::Point2d& pt) -> cv::Point2f {
-    return cv::Point2f(pt.x, pt.y);
+  std::transform(other->begin(), other->end(), std::back_inserter(b), [](const JSPointData<double>& pt) -> JSPointData<float> {
+    return JSPointData<float>(pt.x, pt.y);
   });
   matrix = cv::getAffineTransform(a, b);
 
@@ -987,16 +990,16 @@ js_cv_getaffinetransform(JSContext* ctx, JSValueConst this_val, int argc, JSValu
 }
 
 static JSValue
-js_cv_findcontours(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   cv::Mat* m = js_mat_data(ctx, argv[0]);
   JSValue ret = JS_UNDEFINED;
   int mode = cv::RETR_TREE;
   int approx = cv::CHAIN_APPROX_SIMPLE;
   cv::Point offset(0, 0);
 
-  contour2i_vector contours;
+  JSContoursData<int> contours;
   vec4i_vector hier;
-  contour2f_vector poly;
+  JSContoursData<float> poly;
 
   cv::findContours(*m, contours, hier, mode, approx, offset);
 
@@ -1018,8 +1021,8 @@ js_cv_findcontours(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
 
 static JSValue
 js_cv_point_polygon_test(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSContourData* contour;
-  cv::Point2f point;
+  JSContourData<double>* contour;
+  JSPointData<float> point;
   bool measureDist = false;
 
   contour = js_contour_data(ctx, argv[0]);
@@ -1091,7 +1094,7 @@ js_function_list_t js_cv_static_funcs{
     JS_CFUNC_DEF("waitKeyEx", 0, js_cv_wait_key_ex),
     JS_CFUNC_DEF("getPerspectiveTransform", 2, js_cv_getperspectivetransform),
     JS_CFUNC_DEF("getAffineTransform", 2, js_cv_getaffinetransform),
-    JS_CFUNC_DEF("findContours", 1, js_cv_findcontours),
+    JS_CFUNC_DEF("findContours", 1, js_cv_find_contours),
     JS_CFUNC_DEF("pointPolygonTest", 2, js_cv_point_polygon_test),
     JS_CFUNC_DEF("cornerHarris", 5, js_cv_corner_harris),
     JS_CFUNC_DEF("calcHist", 8, js_cv_calc_hist),

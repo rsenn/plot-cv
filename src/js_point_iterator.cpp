@@ -1,4 +1,4 @@
-#include "./jsbindings.h"
+#include "jsbindings.h"
 #include "js.h"
 #include "quickjs/cutils.h"
 #include "quickjs/quickjs.h"
@@ -18,7 +18,7 @@ JSValue point_iterator_proto, point_iterator_class;
 VISIBLE JSClassID js_point_iterator_class_id;
 
 VISIBLE JSValue
-js_point_iterator_new(JSContext* ctx, const std::pair<JSPointData*, JSPointData*>& range, int magic) {
+js_point_iterator_new(JSContext* ctx, const std::pair<JSPointData<double>*, JSPointData<double>*>& range, int magic) {
   JSPointIteratorData* it;
   JSValue iterator;
   int class_id;
@@ -65,7 +65,7 @@ js_point_iterator_result(JSContext* ctx, JSValue val, BOOL done) {
 static JSValue
 js_point_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, BOOL* pdone, int magic) {
   JSPointIteratorData* it = static_cast<JSPointIteratorData*>(JS_GetOpaque(this_val, js_point_iterator_class_id));
-  //  JSPointData* ptr;
+  //  JSPointData<double>* ptr;
   JSValue result;
   // ptr = it->first;
   *pdone = it->first == nullptr || it->second == nullptr || (it->first == it->second);
@@ -97,7 +97,7 @@ js_point_iterator_finalizer(JSRuntime* rt, JSValue val) {
 static JSValue
 js_point_iterator_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   JSPointIteratorData* s;
-  JSContourData* v;
+  JSContourData<double>* v;
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
   assert(0);
@@ -108,7 +108,7 @@ js_point_iterator_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValu
 
   new(s) JSPointIteratorData();
 
-  v = static_cast<JSContourData*>(JS_GetOpaque(argv[0], 0 /*js_contour_class_id*/));
+  v = static_cast<JSContourData<double>*>(JS_GetOpaque(argv[0], 0 /*js_contour_class_id*/));
 
   s->first = &(*v)[0];
   s->second = s->first + v->size();
@@ -197,5 +197,4 @@ js_point_iterator_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSV
 
   return JS_NewString(ctx, os.str().c_str());
 }
-
 }

@@ -1,4 +1,4 @@
-#include "./jsbindings.h"
+#include "jsbindings.h"
 
 #if defined(JS_VIDEO_CAPTURE_MODULE) || defined(quickjs_video_capture_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module

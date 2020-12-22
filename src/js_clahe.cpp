@@ -1,4 +1,5 @@
-#include "./jsbindings.h"
+#include "jsbindings.h"
+#include "js_size.h"
 
 #if defined(JS_CLAHE_MODULE) || defined(quickjs_clahe_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
@@ -24,7 +25,7 @@ js_clahe_new(JSContext* ctx, double clipLimit = 40.0, cv::Size tileGridSize = cv
 static JSValue
 js_clahe_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   double clipLimit = 40.0;
-  cv::Size_<double> tileGridSize = cv::Size2d(8, 8);
+  JSSizeData<double> tileGridSize = cv::Size2d(8, 8);
   if(argc >= 1)
     JS_ToFloat64(ctx, &clipLimit, argv[0]);
   if(argc >= 2)
@@ -51,7 +52,7 @@ static JSValue
 js_clahe_method(JSContext* ctx, JSValueConst clahe, int argc, JSValueConst* argv, int magic) {
   JSCLAHEData* s = static_cast<JSCLAHEData*>(JS_GetOpaque2(ctx, clahe, js_clahe_class_id));
   JSValue ret = JS_UNDEFINED;
-  JSPointData point = js_point_get(ctx, argv[0]);
+  JSPointData<double> point = js_point_get(ctx, argv[0]);
 
   switch(magic) {
     case 0: {
@@ -85,7 +86,7 @@ js_clahe_method(JSContext* ctx, JSValueConst clahe, int argc, JSValueConst* argv
       break;
     }
     case 5: {
-      cv::Size_<double> size;
+      JSSizeData<double> size;
       if(argc < 1 || !js_size_read(ctx, argv[0], &size))
         return JS_EXCEPTION;
       (*s)->setTilesGridSize(size);

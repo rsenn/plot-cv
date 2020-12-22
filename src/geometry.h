@@ -10,25 +10,39 @@
 
 #include "psimpl.h"
 
+template<class T> struct point {
+  typedef T value_type;
+  typedef cv::Point_<T>  type;
+  typedef std::vector<type> vector_type;
+};
+
 template<class T> struct point_list {
+  typedef std::vector<typename point<T>::type >  type;
+};
+template<class T> struct contour {
   typedef T coord_type;
-  typedef cv::Point_<T> point_type;
+  typedef typename point<T>::type point_type;
   typedef std::vector<point_type> type;
 };
+
 template<class T> struct contour_list {
   typedef T coord_type;
-  typedef cv::Point_<T> point_type;
-  typedef std::vector<point_type> vector_type;
-  typedef std::vector<vector_type> type;
+  typedef typename contour<T>::point_type point_type;
+  typedef typename contour<T>:: type contour_type;
+  typedef std::vector<contour_type>  type;
 };
 
-typedef std::vector<cv::Point> point2i_vector;
-typedef std::vector<cv::Point_<float>> point2f_vector;
-typedef std::vector<cv::Point_<double>> point2d_vector;
+template<class T>
+using point_type = typename point<T>::type;
 
-typedef contour_list<int>::type contour2i_vector;
-typedef contour_list<float>::type contour2f_vector;
-typedef contour_list<double>::type contour2d_vector;
+template<class T>
+using point_vector = typename point_list <T>:: type;
+
+template<class T>
+using contour_type = typename contour<T>::type;
+
+template<class T>
+using contour_vector = typename contour_list<T>::type;
 
 typedef std::vector<cv::Vec4i> vec4i_vector;
 
@@ -60,7 +74,7 @@ polygon_area(std::vector<P> list) {
   return area; // Return The Area
 }
 
-point2f_vector get_mass_centers(std::vector<point2i_vector> contours);
+point_vector<float> get_mass_centers(std::vector<point_vector<int>> contours);
 
 template<class T, class Char = char>
 inline std::basic_string<Char>

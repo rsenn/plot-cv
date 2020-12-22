@@ -2,7 +2,7 @@
 #define JS_RECT_H
 
 static inline int
-js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData* out) {
+js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData<double>* out) {
   int ret = 1;
   JSValue x = JS_UNDEFINED, y = JS_UNDEFINED, w = JS_UNDEFINED, h = JS_UNDEFINED;
   if(JS_IsArray(ctx, rect)) {
@@ -36,15 +36,15 @@ js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData* out) {
   return ret;
 }
 
-static JSRectData
+static JSRectData<double>
 js_rect_get(JSContext* ctx, JSValueConst rect) {
-  JSRectData r = {0, 0, 0, 0};
+  JSRectData<double> r = {0, 0, 0, 0};
   js_rect_read(ctx, rect, &r);
   return r;
 }
 
 static inline int
-js_rect_write(JSContext* ctx, JSValue out, JSRectData rect) {
+js_rect_write(JSContext* ctx, JSValue out, JSRectData<double> rect) {
   int ret = 0;
   ret += JS_SetPropertyStr(ctx, out, "x", JS_NewFloat64(ctx, rect.x));
   ret += JS_SetPropertyStr(ctx, out, "y", JS_NewFloat64(ctx, rect.y));
@@ -53,9 +53,9 @@ js_rect_write(JSContext* ctx, JSValue out, JSRectData rect) {
   return ret;
 }
 
-static JSRectData
+static JSRectData<double>
 js_rect_set(JSContext* ctx, JSValue out, double x, double y, double w, double h) {
-  const JSRectData r = {x, y, w, h};
+  const JSRectData<double> r = {x, y, w, h};
   js_rect_write(ctx, out, r);
   return r;
 }

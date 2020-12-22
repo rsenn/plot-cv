@@ -1,4 +1,5 @@
-#include "./jsbindings.h"
+#include "jsbindings.h"
+#include "js_point.h"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -21,10 +22,10 @@ static JSValue
 js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
   cv::Mat* dst;
   int i = 0, ret = -1;
-  JSPointData point;
+  JSPointData<double> point;
   int32_t x, y;
   int radius = 0;
-  JSColorData color;
+  JSColorData<double> color;
   bool antialias = true;
   int thickness = -1;
   int lineType = cv::LINE_AA;
@@ -77,8 +78,8 @@ static JSValue
 js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
   cv::Mat* dst;
   int i = 0, ret = -1;
-  contour2i_vector points;
-  JSColorData color;
+  JSContoursData<int> points;
+  JSColorData<double> color;
   int thickness = 1;
   bool antialias = true;
 
@@ -105,7 +106,8 @@ js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   if(argc > i && js.is_bool(argv[i]))
     js.get_boolean(argv[i++], antialias);
 
-  cv::drawContours(*dst, points, -1,  *reinterpret_cast<cv::Scalar*>(&color), thickness, antialias ? cv::LINE_AA : cv::LINE_8);
+  cv::drawContours(
+      *dst, points, -1, *reinterpret_cast<cv::Scalar*>(&color), thickness, antialias ? cv::LINE_AA : cv::LINE_8);
 
   std::cerr << "draw_contour() ret:" << ret << " color: " << *reinterpret_cast<cv::Scalar*>(&color) << std::endl;
   return JS_UNDEFINED;
@@ -115,7 +117,7 @@ static JSValue
 js_draw_line(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
   cv::Mat* dst;
   int i = 0, ret = -1;
-  point2f_type points[2];
+  JSPointData<float> points[2];
   color_type color;
   int thickness = 1;
   bool antialias = true;
@@ -151,7 +153,7 @@ static JSValue
 js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
   cv::Mat* dst;
   int i = 0, ret = -1;
-  point2i_vector points;
+  point_vector<int> points;
   cv::Scalar color;
   bool antialias = true;
   int thickness = -1;
@@ -175,7 +177,7 @@ js_draw_polygon(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   if(dptr != nullptr) {
     const int size = points.size();
     int lineType = antialias ? cv::LINE_AA : cv::LINE_8;
-    const point2i_type* pts = points.data();
+    const JSPointData<int>* pts = points.data();
 
     std::cerr << "drawPolygon() points: " << (points) << " color: " << to_string(color) << std::endl;
 
@@ -193,7 +195,7 @@ js_draw_rect(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
   cv::Mat* dst;
   int i = 0, ret = -1;
   cv::Rect2f rect;
-  point2f_type points[2];
+  JSPointData<float> points[2];
   color_type color;
   int thickness = 1;
   bool antialias = true;
@@ -232,8 +234,8 @@ static JSValue
 js_put_text(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
   cv::Mat* dst;
   int i = 0, ret = -1;
-  JSColorData color;
-  JSPointData point;
+  JSColorData<double> color;
+  JSPointData<double> point;
   const char* text;
   int32_t fontFace = cv::FONT_HERSHEY_SIMPLEX, thickness = 1, lineType = cv::LINE_8;
   double fontScale = 1;
@@ -297,7 +299,7 @@ js_put_text(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_va
 static JSValue
 js_get_text_size(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
   int i = 0, baseline = 0;
-  JSSizeData size;
+  JSSizeData<double> size;
   const char* text;
   int32_t fontFace = cv::FONT_HERSHEY_SIMPLEX, thickness = 1;
   double fontScale = 1;
@@ -450,5 +452,4 @@ js_draw_constructor(JSContext* ctx, JSValue parent, const char* name) {
 
   JS_SetPropertyStr(ctx, parent, name ? name : "Draw", draw_class);
 }
-
 }
