@@ -157,6 +157,7 @@ js_line_points(JSContext* ctx, JSValueConst line, int argc, JSValueConst* argv) 
   }
   return obj;
 }
+
 static JSValue
 js_line_array(JSContext* ctx, JSValueConst line, int argc, JSValueConst* arg) {
   JSLineData* s = static_cast<JSLineData*>(JS_GetOpaque2(ctx, line, js_line_class_id));
@@ -208,6 +209,7 @@ js_line_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* 
 
   return ret;
 }
+
 JSValue line_proto = JS_UNDEFINED, line_class = JS_UNDEFINED;
 JSClassID js_line_class_id;
 
@@ -260,6 +262,7 @@ js_line_constructor(JSContext* ctx, JSValue parent, const char* name) {
 
   JS_SetPropertyStr(ctx, parent, name ? name : "Line", line_class);
 }
+
 #ifdef JS_LINE_MODULE
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
 #else
@@ -275,4 +278,5 @@ JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JS_AddModuleExport(ctx, m, "Line");
   return m;
 }
+
 }

@@ -270,4 +270,5 @@ ShowBezierDemo() {
   // easeOutBounce: not a bezier
   // easeInOutBounce: not a bezier
 }
+
 } // namespace ImGui

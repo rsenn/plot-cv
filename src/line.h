@@ -191,6 +191,7 @@ to_string(const T& t, size_t n_pad = 3, char ch_pad = ' ') {
 
   return ret;
 }
+
 /*
 template<class T>
 inline std::string
@@ -199,6 +200,7 @@ to_string(const cv::Point_<T>& pt, size_t n_pad = 3, char ch_pad = '0') {
   oss << to_string(pt.x) << ',' << to_string(pt.y);
   return oss.str();
 }
+
 */
 template<class T, class Char = char>
 inline std::string
@@ -242,6 +244,7 @@ operator<<(std::ostream& os, const typename line_list<Value>::type& c) {
   }
   return os;
 }
+
 /*
 template<class T>
 inline std::ostream&
@@ -272,6 +275,7 @@ find_nearest_line(typename ContainerT::value_type& line, ContainerT& lines) {
   }
   return ret;
 }
+
 template<class ContainerT>
 typename ContainerT::iterator
 find_nearest_line(typename ContainerT::iterator& line, ContainerT& lines) {
@@ -293,6 +297,7 @@ find_nearest_line(typename ContainerT::iterator& line, ContainerT& lines) {
   }
   return index;
 }
+
 /*
 template <class InputIterator>
 InputIterator
@@ -313,6 +318,7 @@ index = to;
   }
   return index;
 }
+
 */
 
 template<class T> class LineEnd {
@@ -402,6 +408,7 @@ inline std::pair<T, T>
 Line<T>::endpoint_distances(const cv::Point_<T>& p) const {
   return std::make_pair<T, T>(point_distance(a, p), point_distance(b, p));
 }
+
 #if SIZEOF_SIZE_T == SIZEOF_LONG
 template<class T>
 inline std::pair<T, unsigned long int>
@@ -411,6 +418,7 @@ Line<T>::endpoint_distances(const Line<T>& l) const {
   size_t offs = dist.first < dist.second ? offs1 : offs2;
   return std::make_pair(dist.first < dist.second ? dist.first : dist.second, offs);
 }
+
 #else
 template<class T>
 inline std::pair<T, unsigned long long int>
@@ -420,6 +428,7 @@ Line<T>::endpoint_distances(const Line<T>& l) const {
   size_t offs = dist.first < dist.second ? offs1 : offs2;
   return std::make_pair(dist.first < dist.second ? dist.first : dist.second, offs);
 }
+
 #endif
 
 template<class T>

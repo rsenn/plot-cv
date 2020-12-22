@@ -173,6 +173,7 @@ get_largest_contour(const std::vector<std::vector<cv::Point_<T>>>& contours_un,
   }
   return largestContour;
 }
+
 extern config_values config;
 
 void draw_all_contours(image_type& out, std::vector<point2i_list>& contours, int thickness = 1);

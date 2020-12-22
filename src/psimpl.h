@@ -192,6 +192,7 @@ inline void
 swap(scoped_array<T>& a, scoped_array<T>& b) {
   a.swap(b);
 }
+
 } // namespace util
 
 /*!
@@ -450,6 +451,7 @@ compute_statistics(InputIterator first, InputIterator last) {
   stats.std = std::sqrt(static_cast<double>(std::inner_product(first, last, first, init)) / count);
   return stats;
 }
+
 } // namespace math
 
 /*!
@@ -1836,6 +1838,7 @@ compute_positional_error_statistics(ForwardIterator original_first,
   return ps.compute_positional_error_statistics(
       original_first, original_last, simplified_first, simplified_last, valid);
 }
+
 } // namespace psimpl
 
 #endif // PSIMPL_GENERIC

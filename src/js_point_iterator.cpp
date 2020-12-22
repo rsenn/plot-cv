@@ -197,4 +197,5 @@ js_point_iterator_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSV
 
   return JS_NewString(ctx, os.str().c_str());
 }
+
 }

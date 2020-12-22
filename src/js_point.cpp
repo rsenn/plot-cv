@@ -168,6 +168,7 @@ js_point_norm(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
     return JS_EXCEPTION;
   return JS_NewFloat64(ctx, sqrt((double)s->x * s->x + (double)s->y * s->y));
 }
+
 /*
 static JSValue
 js_point_mul(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
@@ -416,4 +417,5 @@ JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JS_AddModuleExport(ctx, m, "Point");
   return m;
 }
+
 }

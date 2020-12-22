@@ -215,18 +215,28 @@ async function main(...args) {
   console.log('read():', [...Util.repeat(10, () => video.grab())]);
   let frameCount = video.get('frame_count');
   let frameShow = -1;
+  let contours, hier;
 
   let pipeline = new Pipeline([
       Pipeline.call((mat, output) => video.read(output)),
       toGrayscale,
       Pipeline.call(cv.GaussianBlur, [3, 3], 0),
-      Pipeline.call(cv.Canny, 10, 20, 3),
+      Pipeline.call((src,dst) => {
+        cv.Canny(src,dst, 10, 60, 3);
+        let result = cv.findContours(dst);
+contours = result.contours;
+hier =result.hier;
+
+      }),
       toBGR
     ],
     (mat, i, n) => {
       const showIndex = Util.mod(frameShow, n);
       if(showIndex == i) {
         mat = toBGR(mat);
+
+contours.forEach(contour => draw.contour(mat, contour, 0xffffff))
+
         font.draw(mat, video.time + ' ⏩', tPos, 0xffffff || { r: 0, g: 255, b: 0 });
         font.draw(mat, `#${showIndex + 1}/${n}`, [5, 5 + tSize.y], { r: 255, g: 255, b: 0 });
         win.show(mat);
@@ -243,6 +253,10 @@ async function main(...args) {
     //dumpMat(`bgr #${frameNo}/${frameCount}`, bgr);
 
     let gray = pipeline(bgr);
+
+
+    console.log("contours:", contours.length);
+    console.log("hier:", hier.length);
     // console.log('pipeline:', pipeline);
 
     //  bgr = toBGR(gray);

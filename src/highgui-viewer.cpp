@@ -156,6 +156,7 @@ display_image(std::string str, image_type* m) {
 
    cv::imshow(str.c_str(), out);*/
 }
+
 static std::string&
 implode(std::vector<std::string>&& elems, const std::string& delim, std::string& s) {
   for(std::vector<std::string>::const_iterator ii = elems.begin(); ii != elems.end(); ++ii) {

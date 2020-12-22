@@ -246,6 +246,7 @@ jsrt::is_color(const_value val) const {
     return true;
   return false;
 }
+
 /*
 jsrt::global::global(jsrt& rt) : val(JS_UNDEFINED), js(rt) {}
 
@@ -278,14 +279,17 @@ jsrt::value
 jsrt::get_undefined() const {
   return JS_UNDEFINED;
 }
+
 jsrt::value
 jsrt::get_null() const {
   return JS_NULL;
 }
+
 jsrt::value
 jsrt::get_true() const {
   return JS_TRUE;
 }
+
 jsrt::value
 jsrt::get_false() const {
   return JS_FALSE;
@@ -569,6 +573,7 @@ int
 jsrt::tag(value val) const {
   return JS_VALUE_GET_TAG(val);
 }
+
 void*
 jsrt::obj(const_value val) const {
   return JS_VALUE_GET_OBJ(val);

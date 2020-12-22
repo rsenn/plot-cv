@@ -74,6 +74,7 @@ config_values config = {.morphology_kernel_size = 1,
 image_type imgRaw, imgVector, imgOriginal, imgTemp, imgGrayscale, imgBlurred, imgCanny,
     imgMorphology; // Canny edge image
 }
+
 int32_t newmt, mt = -1;
 JSValue processFn;
 
@@ -297,12 +298,14 @@ to_point_vec(InputIterator start, InputIterator end) {
   });
   return ret;
 }
+
 /*
 template<class Container>
 point2i_vector
 to_point_vec(const Container& c) {
   return to_point_vec(c.cbegin(), c.cend());
 }
+
 */
 
 void
@@ -358,6 +361,7 @@ invert_color(image_type& img) {
   for(int i = 0; i < img.rows; i++)
     for(int j = 0; j < img.cols; j++) img.at<uchar>(i, j) = 255 - img.at<uchar>(i, j);
 }
+
 /*
 void
 hough_lines(image_type& img, std::vector<point2i_vector>& ret) {
@@ -1075,6 +1079,7 @@ js_print(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   std::cerr << std::endl;
   return JS_UNDEFINED;
 }
+
 extern "C" {
 
 int
@@ -1137,4 +1142,5 @@ js_init(int argc, char* argv[]) {
                 << std::endl;*/
   return 0;
 }
+
 }

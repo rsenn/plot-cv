@@ -1119,6 +1119,7 @@ js_contour_constructor(JSContext* ctx, JSValue parent, const char* name) {
 
   JS_SetPropertyStr(ctx, parent, name ? name : "Contour", contour_class);
 }
+
 }
 
 template<>

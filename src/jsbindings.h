@@ -208,6 +208,7 @@ static inline js_array_iterator
 js_begin(JSContext* c, const JSValueConst& a) {
   return js_array_iterator(c, a, 0);
 }
+
 static inline js_array_iterator
 js_end(JSContext* c, const JSValueConst& a) {
   return js_array_iterator(c, a, js_array_length(c, a));
@@ -236,152 +237,17 @@ js_ctor(JSContext* ctx, const char* name) {
   JSValueConst ctor = JS_GetPropertyStr(ctx, global, name);
   return ctor;
 }
+
 inline JSValueConst
 js_proto(JSContext* ctx, const char* name) {
   return JS_GetPrototype(ctx, js_ctor(ctx, name));
 }
+
 inline JSValue
 js_new(JSContext* ctx, const char* name) {
   return JS_NewObjectProto(ctx, js_proto(ctx, name));
 }
-
-/*static inline JSValue
-js_point_create(JSContext* ctx, double x, double y) {
-
-  JSValue point = js_new(ctx, "Point");
-
-  JS_SetPropertyStr(ctx, point, "x", JS_NewFloat64(ctx, x));
-  JS_SetPropertyStr(ctx, point, "y", JS_NewFloat64(ctx, y));
-  return point;
-}*/
-
-extern "C" JSValue js_point_clone(JSContext* ctx, const JSPointData& point);
-
-static inline int
-js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData* out) {
-  int ret = 1;
-  JSValue x = JS_UNDEFINED, y = JS_UNDEFINED, w = JS_UNDEFINED, h = JS_UNDEFINED;
-  if(JS_IsArray(ctx, rect)) {
-    x = JS_GetPropertyUint32(ctx, rect, 0);
-    y = JS_GetPropertyUint32(ctx, rect, 1);
-    w = JS_GetPropertyUint32(ctx, rect, 2);
-    h = JS_GetPropertyUint32(ctx, rect, 3);
-
-  } else {
-    x = JS_GetPropertyStr(ctx, rect, "x");
-    y = JS_GetPropertyStr(ctx, rect, "y");
-    w = JS_GetPropertyStr(ctx, rect, "width");
-    h = JS_GetPropertyStr(ctx, rect, "height");
-  }
-  if(JS_IsNumber(x) && JS_IsNumber(y) && JS_IsNumber(w) && JS_IsNumber(h)) {
-    ret &= !JS_ToFloat64(ctx, &out->x, x);
-    ret &= !JS_ToFloat64(ctx, &out->y, y);
-    ret &= !JS_ToFloat64(ctx, &out->width, w);
-    ret &= !JS_ToFloat64(ctx, &out->height, h);
-  } else {
-    ret = 0;
-  }
-  if(!JS_IsUndefined(x))
-    JS_FreeValue(ctx, x);
-  if(!JS_IsUndefined(y))
-    JS_FreeValue(ctx, y);
-  if(!JS_IsUndefined(w))
-    JS_FreeValue(ctx, w);
-  if(!JS_IsUndefined(h))
-    JS_FreeValue(ctx, h);
-  return ret;
-}
-
-static JSRectData
-js_rect_get(JSContext* ctx, JSValueConst rect) {
-  JSRectData r = {0, 0, 0, 0};
-  js_rect_read(ctx, rect, &r);
-  return r;
-}
-
-static inline int
-js_rect_write(JSContext* ctx, JSValue out, JSRectData rect) {
-  int ret = 0;
-  ret += JS_SetPropertyStr(ctx, out, "x", JS_NewFloat64(ctx, rect.x));
-  ret += JS_SetPropertyStr(ctx, out, "y", JS_NewFloat64(ctx, rect.y));
-  ret += JS_SetPropertyStr(ctx, out, "width", JS_NewFloat64(ctx, rect.width));
-  ret += JS_SetPropertyStr(ctx, out, "height", JS_NewFloat64(ctx, rect.height));
-  return ret;
-}
-
-static JSRectData
-js_rect_set(JSContext* ctx, JSValue out, double x, double y, double w, double h) {
-  const JSRectData r = {x, y, w, h};
-  js_rect_write(ctx, out, r);
-  return r;
-}
-
-static inline int
-js_size_read(JSContext* ctx, JSValueConst size, JSSizeData* out) {
-  int ret = 1;
-  JSValue w = JS_UNDEFINED, h = JS_UNDEFINED;
-
-  if(JS_IsArray(ctx, size)) {
-    w = JS_GetPropertyUint32(ctx, size, 0);
-    h = JS_GetPropertyUint32(ctx, size, 1);
-  } else if(JS_IsObject(size)) {
-    w = JS_GetPropertyStr(ctx, size, "width");
-    h = JS_GetPropertyStr(ctx, size, "height");
-  }
-  if(JS_IsNumber(w) && JS_IsNumber(h)) {
-    ret &= !JS_ToFloat64(ctx, &out->width, w);
-    ret &= !JS_ToFloat64(ctx, &out->height, h);
-  } else {
-    ret = 0;
-  }
-  if(!JS_IsUndefined(w))
-    JS_FreeValue(ctx, w);
-  if(!JS_IsUndefined(h))
-    JS_FreeValue(ctx, h);
-  return ret;
-}
-
-static inline JSSizeData
-js_size_get(JSContext* ctx, JSValueConst size) {
-  JSSizeData r = {0, 0};
-  js_size_read(ctx, size, &r);
-  return r;
-}
-
-static inline int
-js_point_read(JSContext* ctx, JSValueConst point, JSPointData* out) {
-  int ret = 1;
-  JSValue x = JS_UNDEFINED, y = JS_UNDEFINED;
-  if(JS_IsArray(ctx, point)) {
-    x = JS_GetPropertyUint32(ctx, point, 0);
-    y = JS_GetPropertyUint32(ctx, point, 1);
-  } else if(JS_IsObject(point)) {
-    x = JS_GetPropertyStr(ctx, point, "x");
-    y = JS_GetPropertyStr(ctx, point, "y");
-  }
-  if(JS_IsNumber(x) && JS_IsNumber(y)) {
-    ret &= !JS_ToFloat64(ctx, &out->x, x);
-    ret &= !JS_ToFloat64(ctx, &out->y, y);
-  } else {
-    ret = 0;
-  }
-  if(!JS_IsUndefined(x))
-    JS_FreeValue(ctx, x);
-  if(!JS_IsUndefined(y))
-    JS_FreeValue(ctx, y);
-  return ret;
-}
-
-static JSPointData
-js_point_get(JSContext* ctx, JSValueConst point) {
-  JSPointData r; /*, *ptr;
-   if((ptr = js_point_data(ctx, point)) != nullptr)
-     r = *ptr;
-   else*/
-  js_point_read(ctx, point, &r);
-  return r;
-}
-
+ 
 static inline bool
 js_is_point(JSContext* ctx, JSValueConst point) {
   JSPointData r;
@@ -396,19 +262,7 @@ js_is_point(JSContext* ctx, JSValueConst point) {
 }
 
 extern "C" int js_color_read(JSContext* ctx, JSValueConst color, JSColorData* out);
-
-static inline int
-js_contour_read(JSContext* ctx, JSValueConst contour, JSContourData* out) {
-  int ret = 0;
-  return ret;
-}
-
-static JSContourData
-js_contour_get(JSContext* ctx, JSValueConst contour) {
-  JSContourData r = {};
-  js_contour_read(ctx, contour, &r);
-  return r;
-}
+ 
 
 template<class T> class js_array {
 public:

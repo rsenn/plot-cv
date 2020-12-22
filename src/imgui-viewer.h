@@ -50,6 +50,7 @@ void*
 ImageTexture::getOpenglTexture() {
   return (void*)(intptr_t)my_opengl_texture;
 }
+
 ImVec2
 ImageTexture::getSize() {
   return ImVec2(width, height);
@@ -97,4 +98,5 @@ ImageViewer::ImageViewer() {
   // dynamic contents
   gain = 1.0f;
 }
+
 #endif // defined IMGUI_VIEWER_H

@@ -34,6 +34,7 @@ segment_cut(cv::Point_<T> p1, cv::Point_<T> p2, cv::Point_<T> q1, cv::Point_<T> 
   }
   return false;
 }
+
 template<class T>
 static cv::Point_<T>
 convex_point(cv::Point_<T> begin_point, cv::Point_<T> end_point, T t) {

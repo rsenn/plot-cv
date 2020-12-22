@@ -849,6 +849,7 @@ JS_INIT_MODULE(JSContext* ctx, const char* module_name) {
   JS_AddModuleExport(ctx, m, "Mat");
   return m;
 }
+
 /*
 void
 js_mat_constructor(JSContext* ctx, JSValue parent, const char* name) {

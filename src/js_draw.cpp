@@ -78,7 +78,7 @@ js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   cv::Mat* dst;
   int i = 0, ret = -1;
   contour2i_vector points;
-  color_type color;
+  JSColorData color;
   int thickness = 1;
   bool antialias = true;
 
@@ -94,8 +94,10 @@ js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   if(argc > i && js.is_array(argv[i]))
     js.get_point_array(argv[i++], points[0]);
 
-  if(argc > i && js.is_color(argv[i]))
-    js.get_color(argv[i++], color);
+  if(argc > i) {
+    js_color_read(ctx, argv[i], &color);
+    i++;
+  }
 
   if(argc > i && js.is_number(argv[i]))
     js.get_number(argv[i++], thickness);
@@ -103,9 +105,9 @@ js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   if(argc > i && js.is_bool(argv[i]))
     js.get_boolean(argv[i++], antialias);
 
-  cv::drawContours(*dst, points, -1, color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
+  cv::drawContours(*dst, points, -1,  *reinterpret_cast<cv::Scalar*>(&color), thickness, antialias ? cv::LINE_AA : cv::LINE_8);
 
-  std::cerr << "draw_contour() ret:" << ret << " color: " << color << std::endl;
+  std::cerr << "draw_contour() ret:" << ret << " color: " << *reinterpret_cast<cv::Scalar*>(&color) << std::endl;
   return JS_UNDEFINED;
 }
 
@@ -448,4 +450,5 @@ js_draw_constructor(JSContext* ctx, JSValue parent, const char* name) {
 
   JS_SetPropertyStr(ctx, parent, name ? name : "Draw", draw_class);
 }
+
 }

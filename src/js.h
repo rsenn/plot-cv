@@ -4,6 +4,7 @@
 extern "C" {
 #include "quickjs/quickjs-atom.h"
 }
+
 enum {
   JS_NULL,
 #define DEF(name, str) JS_ATOM_##name,
@@ -520,21 +521,25 @@ inline jsrt::value
 jsrt::create<double>(double num) {
   return JS_NewFloat64(ctx, num);
 }
+
 template<>
 inline jsrt::value
 jsrt::create<float>(float num) {
   return create(static_cast<double>(num));
 }
+
 template<>
 inline jsrt::value
 jsrt::create<int>(int num) {
   return JS_NewInt32(ctx, num);
 }
+
 template<>
 inline jsrt::value
 jsrt::create<const char*>(const char* str) {
   return JS_NewString(ctx, str);
 }
+
 template<>
 inline jsrt::value
 jsrt::create<bool>(bool b) {
@@ -727,66 +732,82 @@ inline bool
 jsrt::is_number(const_value val) const {
   return JS_IsNumber(val);
 }
+
 inline bool
 jsrt::is_big_int(const_value val) const {
   return JS_IsBigInt(ctx, val);
 }
+
 inline bool
 jsrt::is_big_float(const_value val) const {
   return JS_IsBigFloat(val);
 }
+
 inline bool
 jsrt::is_big_decimal(const_value val) const {
   return JS_IsBigDecimal(val);
 }
+
 inline bool
 jsrt::is_bool(const_value val) const {
   return JS_IsBool(val);
 }
+
 inline bool
 jsrt::is_null(const_value val) const {
   return JS_IsNull(val);
 }
+
 inline bool
 jsrt::is_undefined(const_value val) const {
   return JS_IsUndefined(val);
 }
+
 inline bool
 jsrt::is_exception(const_value val) const {
   return JS_IsException(val);
 }
+
 inline bool
 jsrt::is_uninitialized(const_value val) const {
   return JS_IsUninitialized(val);
 }
+
 inline bool
 jsrt::is_string(const_value val) const {
   return JS_IsString(val);
 }
+
 inline bool
 jsrt::is_symbol(const_value val) const {
   return JS_IsSymbol(val);
 }
+
 inline bool
 jsrt::is_object(const_value val) const {
   return JS_IsObject(val);
 }
+
 inline bool
 jsrt::is_error(const_value val) const {
   return JS_IsError(ctx, val);
 }
+
 inline bool
 jsrt::is_function(const_value val) const {
   return JS_IsFunction(ctx, val);
 }
+
 inline bool
 jsrt::is_constructor(const_value val) const {
   return JS_IsConstructor(ctx, val);
 }
+
 inline bool
 jsrt::is_array(const_value val) const {
   return JS_IsArray(ctx, val);
 }
+
 inline bool
 jsrt::is_extensible(const_value val) const {
   return JS_IsExtensible(ctx, val);
@@ -907,6 +928,7 @@ inline std::function<JSValue(JSValue, uint32_t)>
 jsrt::index() const {
   return std::bind(&jsrt::get_property<uint32_t>, this, std::placeholders::_1, std::placeholders::_2);
 }
+
 inline std::function<JSValue(uint32_t)>
 jsrt::index(const JSValueConst& a) const {
   return std::bind(&jsrt::get_property<uint32_t>, this, a, std::placeholders::_1);

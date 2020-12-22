@@ -151,4 +151,5 @@ js_init_module(JSContext* ctx, const char* module_name) {
 
   return m;
 }
+
 #endif
