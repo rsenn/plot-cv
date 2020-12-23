@@ -1000,8 +1000,7 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   int approx = cv::CHAIN_APPROX_SIMPLE;
   cv::Point offset(0, 0);
 
-      JSContoursData<int>
-          contours;
+  JSContoursData<int> contours;
   vec4i_vector hier;
   JSContoursData<float> poly;
 
@@ -1017,18 +1016,18 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   {
     size_t i, length = contours.size();
-    std::array<int32_t,4> v;
+    std::array<int32_t, 4> v;
 
     for(i = 0; i < length; i++) {
       JS_SetPropertyUint32(ctx, argv[1], i, js_contour_new(ctx, poly[i]));
 
-v[0] = hier[i][0];
-v[1] = hier[i][1];
-v[2] = hier[i][2];
-v[3] = hier[i][3];
- 
+      v[0] = hier[i][0];
+      v[1] = hier[i][1];
+      v[2] = hier[i][2];
+      v[3] = hier[i][3];
+
       JS_SetPropertyUint32(ctx, argv[2], i, js_array<int32_t>::from_sequence(ctx, v.cbegin(), v.cend()));
-         }
+    }
   }
   /*{
       JSValue hier_arr = js_vector_vec4i_to_array(ctx, hier);
