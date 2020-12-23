@@ -2,6 +2,7 @@
 #include "js_size.h"
 #include "js_point.h"
 #include "js_contour.h"
+#include "js_array.h"
 #include "geometry.h"
 #include "../quickjs/cutils.h"
 
@@ -953,9 +954,10 @@ js_cv_getperspectivetransform(JSContext* ctx, JSValueConst this_val, int argc, J
   std::transform(v->begin(), v->end(), std::back_inserter(a), [](const JSPointData<double>& pt) -> JSPointData<float> {
     return JSPointData<float>(pt.x, pt.y);
   });
-  std::transform(other->begin(), other->end(), std::back_inserter(b), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
+  std::transform(other->begin(),
+                 other->end(),
+                 std::back_inserter(b),
+                 [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
   matrix = cv::getPerspectiveTransform(a, b /*, solveMethod*/);
 
   ret = js_mat_wrap(ctx, matrix);
@@ -980,9 +982,10 @@ js_cv_getaffinetransform(JSContext* ctx, JSValueConst this_val, int argc, JSValu
   std::transform(v->begin(), v->end(), std::back_inserter(a), [](const JSPointData<double>& pt) -> JSPointData<float> {
     return JSPointData<float>(pt.x, pt.y);
   });
-  std::transform(other->begin(), other->end(), std::back_inserter(b), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
+  std::transform(other->begin(),
+                 other->end(),
+                 std::back_inserter(b),
+                 [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
   matrix = cv::getAffineTransform(a, b);
 
   ret = js_mat_wrap(ctx, matrix);
@@ -996,9 +999,9 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   int mode = cv::RETR_TREE;
   int approx = cv::CHAIN_APPROX_SIMPLE;
   cv::Point offset(0, 0);
-  JSValue 
 
-  JSContoursData<int> contours;
+      JSContoursData<int>
+          contours;
   vec4i_vector hier;
   JSContoursData<float> poly;
 
@@ -1006,23 +1009,36 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   if(JS_IsArray(ctx, argv[1])) {
     js_array_truncate(ctx, argv[1], 0);
-
-    
-  } 
+  }
 
   poly.resize(contours.size());
 
   transform_contours(contours.cbegin(), contours.cend(), poly.begin());
 
   {
-    JSValue hier_arr = js_vector_vec4i_to_array(ctx, hier);
-    JSValue contours_obj = js_contours_new(ctx, poly);
+    size_t i, length = contours.size();
+    std::array<int32_t,4> v;
 
-    ret = JS_NewObject(ctx);
+    for(i = 0; i < length; i++) {
+      JS_SetPropertyUint32(ctx, argv[1], i, js_contour_new(ctx, poly[i]));
 
-    JS_SetPropertyStr(ctx, ret, "hier", hier_arr);
-    JS_SetPropertyStr(ctx, ret, "contours", contours_obj);
+v[0] = hier[i][0];
+v[1] = hier[i][1];
+v[2] = hier[i][2];
+v[3] = hier[i][3];
+ 
+      JS_SetPropertyUint32(ctx, argv[2], i, js_array<int32_t>::from_sequence(ctx, v.cbegin(), v.cend()));
+         }
   }
+  /*{
+      JSValue hier_arr = js_vector_vec4i_to_array(ctx, hier);
+      JSValue contours_obj = js_contours_new(ctx, poly);
+
+      ret = JS_NewObject(ctx);
+
+      JS_SetPropertyStr(ctx, ret, "hier", hier_arr);
+      JS_SetPropertyStr(ctx, ret, "contours", contours_obj);
+    }*/
   return ret;
 }
 

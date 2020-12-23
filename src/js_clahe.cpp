@@ -1,5 +1,6 @@
 #include "jsbindings.h"
 #include "js_size.h"
+#include "js_point.h"
 
 #if defined(JS_CLAHE_MODULE) || defined(quickjs_clahe_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module

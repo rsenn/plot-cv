@@ -15,10 +15,10 @@ typedef cv::Mat JSMatData;
 typedef cv::Size2d JSSizeDataD;
 
 template<class T> using JSPointData = cv::Point_<T>;
-template<class T> using JSSizeData =  cv::Size_<T>;
-template<class T> using JSRectData =  cv::Rect_<T>;
-template<class T> using JSContourData = std::vector< JSPointData<T> >;
-template<class T> using JSContoursData = std::vector< JSContourData<T> >;
+template<class T> using JSSizeData = cv::Size_<T>;
+template<class T> using JSRectData = cv::Rect_<T>;
+template<class T> using JSContourData = std::vector<JSPointData<T>>;
+template<class T> using JSContoursData = std::vector<JSContourData<T>>;
 
 /*typedef JSPointData<int> JSPointData<int>;
 typedef JSPointData<float> JSPointDataF;
@@ -36,7 +36,7 @@ union JSLineData {
   std::array<JSPointData<T>, 2> points;
   std::pair<JSPointData<T>, JSPointData<T>> pt;
 };
- 
+
 template<class T> union JSColorData {
   std::array<T, 4> arr;
   struct {
@@ -44,7 +44,7 @@ template<class T> union JSColorData {
   };
 };
 
-template< > union JSColorData<uint8_t> {
+template<> union JSColorData<uint8_t> {
   std::array<uint8_t, 4> arr;
   struct {
     uint8_t r, g, b, a;
@@ -166,8 +166,6 @@ template<> JSValue js_contour_new<float>(JSContext* ctx, const JSContourData<flo
 template<> JSValue js_contour_new<int>(JSContext* ctx, const JSContourData<int>& points);
 */
 #define countof(x) (sizeof(x) / sizeof((x)[0]))
-
-
 
 JSValue js_vector_vec4i_to_array(JSContext*, const std::vector<cv::Vec4i>& vec);
 

@@ -12,13 +12,11 @@
 
 template<class T> struct point {
   typedef T value_type;
-  typedef cv::Point_<T>  type;
+  typedef cv::Point_<T> type;
   typedef std::vector<type> vector_type;
 };
 
-template<class T> struct point_list {
-  typedef std::vector<typename point<T>::type >  type;
-};
+template<class T> struct point_list { typedef std::vector<typename point<T>::type> type; };
 template<class T> struct contour {
   typedef T coord_type;
   typedef typename point<T>::type point_type;
@@ -28,21 +26,17 @@ template<class T> struct contour {
 template<class T> struct contour_list {
   typedef T coord_type;
   typedef typename contour<T>::point_type point_type;
-  typedef typename contour<T>:: type contour_type;
-  typedef std::vector<contour_type>  type;
+  typedef typename contour<T>::type contour_type;
+  typedef std::vector<contour_type> type;
 };
 
-template<class T>
-using point_type = typename point<T>::type;
+template<class T> using point_type = typename point<T>::type;
 
-template<class T>
-using point_vector = typename point_list <T>:: type;
+template<class T> using point_vector = typename point_list<T>::type;
 
-template<class T>
-using contour_type = typename contour<T>::type;
+template<class T> using contour_type = typename contour<T>::type;
 
-template<class T>
-using contour_vector = typename contour_list<T>::type;
+template<class T> using contour_vector = typename contour_list<T>::type;
 
 typedef std::vector<cv::Vec4i> vec4i_vector;
 

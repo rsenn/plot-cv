@@ -13,7 +13,7 @@ js_contour_new(JSContext* ctx, const JSContourData<T>& points) {
   new(contour) JSContourData<T>();
   contour->resize(points.size());
   transform_points(points.cbegin(), points.cend(), contour->begin());
-  
+
   JS_SetOpaque(ret, contour);
   return ret;
 };

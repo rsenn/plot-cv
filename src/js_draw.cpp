@@ -1,5 +1,6 @@
 #include "jsbindings.h"
 #include "js_point.h"
+#include "js_array.h"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>

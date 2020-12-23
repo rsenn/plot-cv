@@ -22,7 +22,7 @@
 #include "geometry.h"
 
 typedef std::vector<int> ref_list;
-typedef cv::Mat image_type; 
+typedef cv::Mat image_type;
 /*
 typedef std::vector<cv::Vec4i> vec4i_list;
 typedef std::vector<cv::Point> point_vector<int>;

@@ -1,4 +1,5 @@
 #include "jsbindings.h"
+#include "js_point.h"
 
 #if defined(JS_LINE_MODULE) || defined(quickjs_line_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module

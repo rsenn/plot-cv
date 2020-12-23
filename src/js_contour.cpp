@@ -2,6 +2,7 @@
 #include "js_point.h"
 #include "js_rect.h"
 #include "js_contour.h"
+#include "js_array.h"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -31,8 +32,8 @@ js_contour2i_new(JSContext* ctx, const JSContourData<int>& points) {
 
   contour = static_cast<JSContourData<double>*>(js_mallocz(ctx, sizeof(JSContourData<double>)));
 
-  std::transform(points.cbegin(), points.cend(), std::back_inserter(*contour), [](const cv::Point& pt) -> JSPointData<double> {
-    return JSPointData<double>(pt.x, pt.y);
+  std::transform(points.cbegin(), points.cend(), std::back_inserter(*contour), [](const cv::Point& pt) ->
+JSPointData<double> { return JSPointData<double>(pt.x, pt.y);
   });
 
   JS_SetOpaque(ret, contour);
@@ -163,9 +164,10 @@ js_contour_arclength(JSContext* ctx, JSValueConst this_val, int argc, JSValueCon
     closed = !!JS_ToBool(ctx, argv[0]);
   }
 
-  std::transform(v->begin(), v->end(), std::back_inserter(contour), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
+  std::transform(v->begin(),
+                 v->end(),
+                 std::back_inserter(contour),
+                 [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
 
   retval = cv::arcLength(contour, closed);
 
@@ -183,9 +185,10 @@ js_contour_area(JSContext* ctx, JSValueConst this_val) {
   v = js_contour_data(ctx, this_val);
   if(!v)
     return JS_EXCEPTION;
-  std::transform(v->begin(), v->end(), std::back_inserter(contour), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
+  std::transform(v->begin(),
+                 v->end(),
+                 std::back_inserter(contour),
+                 [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
   area = cv::contourArea(contour);
   ret = JS_NewFloat64(ctx, area);
   return ret;
@@ -204,9 +207,10 @@ js_contour_boundingrect(JSContext* ctx, JSValueConst this_val, int argc, JSValue
   if(!v)
     return JS_EXCEPTION;
 
-  std::transform(v->begin(), v->end(), std::back_inserter(curve), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
+  std::transform(v->begin(),
+                 v->end(),
+                 std::back_inserter(curve),
+                 [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
 
   rect = cv::boundingRect(curve);
 
@@ -265,9 +269,10 @@ js_contour_convexhull(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
     }
   }
 
-  std::transform(v->begin(), v->end(), std::back_inserter(curve), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
+  std::transform(v->begin(),
+                 v->end(),
+                 std::back_inserter(curve),
+                 [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
 
   if(returnPoints)
     cv::convexHull(curve, hull, clockwise, true);
@@ -398,9 +403,10 @@ js_contour_fitellipse(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
   if(!v)
     return JS_EXCEPTION;
 
-  std::transform(v->begin(), v->end(), std::back_inserter(contour), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
+  std::transform(v->begin(),
+                 v->end(),
+                 std::back_inserter(contour),
+                 [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
 
   rr = cv::fitEllipse(contour);
 
@@ -499,9 +505,10 @@ js_contour_intersectconvex(JSContext* ctx, JSValueConst this_val, int argc, JSVa
     return JSPointData<float>(pt.x, pt.y);
   });
 
-  std::transform(other->begin(), other->end(), std::back_inserter(b), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
+  std::transform(other->begin(),
+                 other->end(),
+                 std::back_inserter(b),
+                 [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
 
   cv::intersectConvexConvex(a, b, intersection, handleNested);
 
@@ -520,9 +527,10 @@ js_contour_isconvex(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   if(!v)
     return JS_EXCEPTION;
 
-  std::transform(v->begin(), v->end(), std::back_inserter(contour), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
+  std::transform(v->begin(),
+                 v->end(),
+                 std::back_inserter(contour),
+                 [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
 
   isConvex = cv::isContourConvex(contour);
 
@@ -552,9 +560,10 @@ js_contour_minarearect(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
   v = js_contour_data(ctx, this_val);
   if(!v)
     return JS_EXCEPTION;
-  std::transform(v->begin(), v->end(), std::back_inserter(contour), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
+  std::transform(v->begin(),
+                 v->end(),
+                 std::back_inserter(contour),
+                 [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
   rr = cv::minAreaRect(contour);
   minarea.resize(5);
   rr.points(minarea.data());
@@ -577,9 +586,10 @@ js_contour_minenclosingcircle(JSContext* ctx, JSValueConst this_val, int argc, J
   if(!v)
     return JS_EXCEPTION;
 
-  std::transform(v->begin(), v->end(), std::back_inserter(contour), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
+  std::transform(v->begin(),
+                 v->end(),
+                 std::back_inserter(contour),
+                 [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
 
   cv::minEnclosingCircle(contour, center, radius);
 
@@ -605,9 +615,10 @@ js_contour_minenclosingtriangle(JSContext* ctx, JSValueConst this_val, int argc,
   if(!v)
     return JS_EXCEPTION;
 
-  std::transform(v->begin(), v->end(), std::back_inserter(contour), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
+  std::transform(v->begin(),
+                 v->end(),
+                 std::back_inserter(contour),
+                 [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
 
   cv::minEnclosingTriangle(contour, triangle);
 
@@ -642,9 +653,10 @@ js_contour_pointpolygontest(JSContext* ctx, JSValueConst this_val, int argc, JSV
     }
   }
 
-  std::transform(v->begin(), v->end(), std::back_inserter(contour), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
+  std::transform(v->begin(),
+                 v->end(),
+                 std::back_inserter(contour),
+                 [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
 
   retval = cv::pointPolygonTest(contour, pt, measureDist);
 
@@ -871,9 +883,10 @@ js_contour_rotatedrectangleintersection(JSContext* ctx, JSValueConst this_val, i
     return JSPointData<float>(pt.x, pt.y);
   });
 
-  std::transform(other->begin(), other->end(), std::back_inserter(b), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
+  std::transform(other->begin(),
+                 other->end(),
+                 std::back_inserter(b),
+                 [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
   {
     cv::RotatedRect rra(a[0], a[1], a[2]);
     cv::RotatedRect rrb(b[0], b[1], b[2]);

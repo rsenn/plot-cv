@@ -977,8 +977,14 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
   }
 
   {
-    point_vector<float> src = {point_type<float>(50, 50), point_type<float>(100, 50), point_type<float>(100, 100), point_type<float>(50, 100)};
-    point_vector<float> dst = {point_type<float>(100, 0), point_type<float>(150, 0), point_type<float>(150, 50), point_type<float>(100, 50)};
+    point_vector<float> src = {point_type<float>(50, 50),
+                               point_type<float>(100, 50),
+                               point_type<float>(100, 100),
+                               point_type<float>(50, 100)};
+    point_vector<float> dst = {point_type<float>(100, 0),
+                               point_type<float>(150, 0),
+                               point_type<float>(150, 50),
+                               point_type<float>(100, 50)};
     image_type perspective = cv::getPerspectiveTransform(src, dst);
     logfile << "perspective:" << perspective << std::endl;
   }
@@ -995,9 +1001,10 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
   }
 
   std::vector<point_vector<int>> approxim;
-  transform(contours2.begin(), contours2.end(), back_inserter(approxim), [](const point_vector<float>& p) -> point_vector<int> {
-    return transform_points<int, float>(p);
-  });
+  transform(contours2.begin(),
+            contours2.end(),
+            back_inserter(approxim),
+            [](const point_vector<float>& p) -> point_vector<int> { return transform_points<int, float>(p); });
 
   for_each(approxim.begin(), approxim.end(), [&](const point_vector<int>& c) {
     const double length = cv::arcLength(c, false);

@@ -2,6 +2,7 @@
 #include "js_size.h"
 #include "js_point.h"
 #include "js_rect.h"
+#include "js_array.h"
 #include "geometry.h"
 #include "../quickjs/cutils.h"
 
