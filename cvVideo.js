@@ -130,7 +130,8 @@ export class VideoSource {
   }
 
   set(prop, value) {
-    return this.cap.set(this.propId(prop), value);
+    const { cap } = this;
+ if(cap && typeof cap.set == 'function') return this.cap.set(this.propId(prop), value);
   }
 
   get backend() {
@@ -172,7 +173,7 @@ export class VideoSource {
     if(type.startsWith('frame')) return [this.get('pos_frames'), this.get('frame_count')];
     if(type.startsWith('percent') || type == '%') return (this.get('pos_frames') * 100) / this.get('frame_count');
 
-    return [+this.get('pos_msec').toFixed(3), this.duration_msecs];
+    return [(+this.get('pos_msec')).toFixed(3), this.duration_msecs];
   }
 
   get time() {
@@ -191,7 +192,7 @@ export class VideoSource {
     const pad = (i, n, frac) => {
       const s = (frac !== undefined ? i.toFixed(frac) : i) + '';
       const a = s.split('.');
-      return '0'.repeat(n - a[0].length) + s;
+      return '0'.repeat(Math.max(0, n - a[0].length)) + s;
     };
 
     return pad(h, 2) + ':' + pad(m, 2) + ':' + pad(s, 2, 3); //+ '.' + pad(ms, 3);

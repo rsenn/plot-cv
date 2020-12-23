@@ -212,7 +212,7 @@ async function main(...args) {
   let bgr = new Mat();
   console.log('backend:', video.backend);
   console.log('grab():', video.grab);
-  console.log('read():', [...Util.repeat(10, () => video.grab())]);
+//  console.log('read():', [...Util.repeat(10, () => video.grab())]);
   let frameCount = video.get('frame_count');
   let frameShow = -1;
   let contours, hier;
