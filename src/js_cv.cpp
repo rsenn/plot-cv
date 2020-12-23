@@ -996,12 +996,19 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   int mode = cv::RETR_TREE;
   int approx = cv::CHAIN_APPROX_SIMPLE;
   cv::Point offset(0, 0);
+  JSValue 
 
   JSContoursData<int> contours;
   vec4i_vector hier;
   JSContoursData<float> poly;
 
   cv::findContours(*m, contours, hier, mode, approx, offset);
+
+  if(JS_IsArray(ctx, argv[1])) {
+    js_array_truncate(ctx, argv[1], 0);
+
+    
+  } 
 
   poly.resize(contours.size());
 
