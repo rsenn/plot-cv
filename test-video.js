@@ -165,6 +165,12 @@ function getAlpha(mat) {
   cv.split(mat, channels);
   return channels[3];
 }
+function alphaToMask(mat) {
+  let bgr = new Mat();
+  //    cv.cvtColor(mat, bgr, cv.COLOR_GRAY2BGR);
+  cv.merge([mat, mat, mat], bgr);
+  return bgr;
+}
 
 function toBGR(mat) {
   if(mat.channels >= 3) return mat.clone();
@@ -176,7 +182,7 @@ function toBGR(mat) {
 function toRGBA(mat) {
   if(mat.channels == 4) return mat.clone();
   let rgba = new Mat();
-  cv.cvtColor(mat, rgba, cv.COLOR_BGR2RGBA);
+  cv.cvtColor(mat, rgba, cv.COLOR_BGR2BGRA);
   return rgba;
 }
 
@@ -326,7 +332,7 @@ async function main(...args) {
         let out = new Mat(mat.size, cv.CV_8UC4);
 
         //   mat.convertTo(out, cv.CV_8UC4);
-        cv.cvtColor(mat, out, cv.COLOR_BGR2RGBA);
+        cv.cvtColor(mat, out, cv.COLOR_BGR2BGRA);
 
         let ids = [...getToplevel(hier)];
 
@@ -371,13 +377,17 @@ async function main(...args) {
           type
         });
         win.resize(size.width, size.height);
-          console.log('inspectMat', Object.entries({ out, surface}).map(([n,m]) => [n,inspectMat(m)]));
+        console.log('inspectMat',
+          Object.entries({ out, surface }).map(([n, m]) => [n, inspectMat(m)])
+        );
 
-        let mask = getAlpha(surface);
+        let mask = toBGR(getAlpha(surface));
 
-            surface.copyTo(out, mask);
+        out = Mat.add(out, surface);
 
-/*    cv.cvtColor(surface, surface, cv.COLOR_RGBA2BGR);
+        //            surface.copyTo(out, mask);
+
+        /*    cv.cvtColor(surface, surface, cv.COLOR_RGBA2BGR);
         surface.copyTo(out, mask);*/
 
         /*console.log("mask:", [...mask.row(100).values()] );

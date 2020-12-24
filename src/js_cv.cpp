@@ -1104,15 +1104,15 @@ js_cv_getticks(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
 
 static JSValue
 js_cv_bitwise(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
-   std::vector<JSMatData*> v;
+  std::vector<JSMatData*> v;
 
-    std::transform(&argv[0], &argv[argc], std::back_inserter(v), std::bind(&js_mat_data, ctx,  std::placeholders::_1));
- 
+  std::transform(&argv[0], &argv[argc], std::back_inserter(v), std::bind(&js_mat_data, ctx, std::placeholders::_1));
+
   switch(magic) {
-    case 0: cv::bitwise_and(*v[0], *v[1], *v[2], v[3] ? *v[3]  : cv::noArray()); break;
-    case 1: cv::bitwise_or(*v[0], *v[1], *v[2], v[3] ? *v[3]  : cv::noArray());break;
-    case 2: cv::bitwise_xor(*v[0], *v[1], *v[2], v[3] ? *v[3]  : cv::noArray()); break;
-    case 3: cv::bitwise_not(*v[0], *v[1], v[2] ? *v[2]  : cv::noArray()); break;
+    case 0: cv::bitwise_and(*v[0], *v[1], *v[2], v[3] ? *v[3] : cv::noArray()); break;
+    case 1: cv::bitwise_or(*v[0], *v[1], *v[2], v[3] ? *v[3] : cv::noArray()); break;
+    case 2: cv::bitwise_xor(*v[0], *v[1], *v[2], v[3] ? *v[3] : cv::noArray()); break;
+    case 3: cv::bitwise_not(*v[0], *v[1], v[2] ? *v[2] : cv::noArray()); break;
     default: return JS_EXCEPTION;
   }
   return JS_UNDEFINED;
