@@ -138,9 +138,9 @@ int js_video_capture_init(JSContext*, JSModuleDef*);
 
 VISIBLE JSValue js_video_capture_wrap(JSContext*, cv::VideoCapture* cap);
 
-extern "C" JSValue contour_class, contour_proto, int32array_ctor, int32array_proto, mat_class, mat_proto,
-    mat_iterator_proto, point_class, line_class, point_iterator_class, draw_class, point_iterator_proto, point_proto,
-    rect_class, rect_proto, size_class, size_proto, line_proto, draw_proto;
+extern "C" JSValue int32array_ctor, int32array_proto, mat_class, mat_proto, mat_iterator_proto, point_class, line_class,
+    point_iterator_class, draw_class, point_iterator_proto, point_proto, rect_class, rect_proto, size_class, size_proto,
+    line_proto, draw_proto;
 
 VISIBLE JSValue js_point_iterator_new(JSContext* ctx,
                                       const std::pair<JSPointData<double>*, JSPointData<double>*>& range,
@@ -148,9 +148,7 @@ VISIBLE JSValue js_point_iterator_new(JSContext* ctx,
 VISIBLE JSValue js_mat_wrap(JSContext*, const cv::Mat& mat);
 }
 
-extern "C" JSValue contour_proto;
-extern "C" JSClassDef js_contour_class, js_size_class, js_point_class, js_mat_class, js_rect_class;
-extern "C" JSClassID js_contour_class_id;
+extern "C" JSClassDef js_size_class, js_point_class, js_mat_class, js_rect_class;
 extern "C" JSClassID js_point_iterator_class_id, js_line_class_id, js_draw_class_id;
 
 extern "C" const JSCFunctionListEntry js_rect_proto_funcs[];

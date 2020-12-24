@@ -185,6 +185,39 @@ public:
   typedef JSContourData<T> contour_type;
   typedef JSPointData<T> point_type;
 
+  static int64_t
+  to_vector(JSContext* ctx, JSValueConst arr, std::vector<JSContourData<T>>& out) {
+    int64_t i, n;
+    JSValue len;
+    if(!JS_IsArray(ctx, arr))
+      return -1;
+    len = JS_GetPropertyStr(ctx, arr, "length");
+    JS_ToInt64(ctx, &n, len);
+    out.reserve(out.size() + n);
+    for(i = 0; i < n; i++) {
+      JSContourData<double>* ptr;
+      contour_type contour;
+      JSValue item = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
+      if((ptr = js_contour_data(ctx, item))) {
+        /*  std::transform(ptr->cbegin(),
+                         ptr->cend(),
+                         std::back_inserter(contour),
+                         [](const JSPointData<double>& point) -> JSPointData<T> {
+                           return JSPointData<T>(point.x, point.y);
+                         });*/
+        for(const auto& point : *ptr) {
+          contour.emplace_back(point.x, point.y);
+        }
+
+      } else {
+        js_array<JSPointData<T>>::to_vector(ctx, item, contour);
+      }
+      out.push_back(contour);
+      JS_FreeValue(ctx, item);
+    }
+    return n;
+  }
+
   template<class Iterator>
   static JSValue
   from_sequence(JSContext* ctx, const Iterator& start, const Iterator& end) {

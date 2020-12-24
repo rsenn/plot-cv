@@ -79,7 +79,9 @@ static JSValue
 js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
   cv::Mat* dst;
   int i = 0, ret = -1;
-  JSContoursData<int> points;
+  JSContoursData<int> contours;
+  int32_t contourIdx = -1, lineType = cv::LINE_8;
+
   JSColorData<double> color;
   int thickness = 1;
   bool antialias = true;
@@ -92,9 +94,14 @@ js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   if(dst == nullptr)
     return JS_EXCEPTION;
 
-  points.resize(1);
-  if(argc > i && js.is_array(argv[i]))
-    js.get_point_array(argv[i++], points[0]);
+  if(i == argc || !JS_IsArray(ctx, argv[++i]))
+    return JS_EXCEPTION;
+
+  // js_array<JSContourData<int>>::to_vector(ctx, argv[i], contours);
+
+  if(argc > i && JS_IsNumber(argv[++i])) {
+    JS_ToInt32(ctx, &contourIdx, argv[i]);
+  }
 
   if(argc > i) {
     js_color_read(ctx, argv[i], &color);
@@ -104,11 +111,13 @@ js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
   if(argc > i && js.is_number(argv[i]))
     js.get_number(argv[i++], thickness);
 
-  if(argc > i && js.is_bool(argv[i]))
-    js.get_boolean(argv[i++], antialias);
+  if(argc > i && JS_IsNumber(argv[++i])) {
+    JS_ToInt32(ctx, &lineType, argv[i]);
+  }
+  std::cerr << "draw_contour() contours.length=" << contours.size() << " contourIdx=" << contourIdx
+            << " thickness=" << thickness << std::endl;
 
-  cv::drawContours(
-      *dst, points, -1, *reinterpret_cast<cv::Scalar*>(&color), thickness, antialias ? cv::LINE_AA : cv::LINE_8);
+  cv::drawContours(*dst, contours, contourIdx, *reinterpret_cast<cv::Scalar*>(&color), thickness, lineType);
 
   std::cerr << "draw_contour() ret:" << ret << " color: " << *reinterpret_cast<cv::Scalar*>(&color) << std::endl;
   return JS_UNDEFINED;

@@ -1012,7 +1012,7 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   poly.resize(contours.size());
 
-  transform_contours(contours.cbegin(), contours.cend(), poly.begin());
+  transform_contours<JSContoursData<int>::const_iterator, JSContoursData<float>::iterator >(contours.cbegin(), contours.cend(), poly.begin());
 
   {
     size_t i, length = contours.size();
@@ -1039,6 +1039,35 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
       JS_SetPropertyStr(ctx, ret, "contours", contours_obj);
     }*/
   return ret;
+}
+
+static JSValue
+js_cv_draw_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSMatData* mat;
+  JSContoursData<int> contours;
+  JSColorData<double> color;
+  int32_t contourIdx = -1, thickness = 1, lineType = cv::LINE_8;
+
+  if((mat = js_mat_data(ctx, argv[0])) == nullptr)
+    return JS_EXCEPTION;
+
+  if(!JS_IsArray(ctx, argv[1]))
+    return JS_EXCEPTION;
+
+  js_array_to_vector(ctx, argv[1], contours);
+
+  JS_ToInt32(ctx, &contourIdx, argv[2]);
+
+  js_color_read(ctx, argv[3], &color);
+
+  if(argc > 4)
+    JS_ToInt32(ctx, &thickness, argv[4]);
+
+  if(argc > 5)
+    JS_ToInt32(ctx, &lineType, argv[5]);
+
+  cv::drawContours(*mat, contours, contourIdx, *reinterpret_cast<cv::Scalar*>(&color), thickness, lineType);
+  return JS_UNDEFINED;
 }
 
 static JSValue
@@ -1070,6 +1099,7 @@ js_cv_getticks(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
   }
   return ret;
 }
+
 
 JSValue cv_proto, cv_class;
 JSClassID js_cv_class_id;
@@ -1117,6 +1147,7 @@ js_function_list_t js_cv_static_funcs{
     JS_CFUNC_DEF("getPerspectiveTransform", 2, js_cv_getperspectivetransform),
     JS_CFUNC_DEF("getAffineTransform", 2, js_cv_getaffinetransform),
     JS_CFUNC_DEF("findContours", 1, js_cv_find_contours),
+    JS_CFUNC_DEF("drawContours", 4, js_cv_draw_contours),
     JS_CFUNC_DEF("pointPolygonTest", 2, js_cv_point_polygon_test),
     JS_CFUNC_DEF("cornerHarris", 5, js_cv_corner_harris),
     JS_CFUNC_DEF("calcHist", 8, js_cv_calc_hist),
@@ -1554,6 +1585,12 @@ js_function_list_t js_cv_static_funcs{
     JS_PROP_INT32_DEF("FONT_HERSHEY_SCRIPT_SIMPLEX", cv::FONT_HERSHEY_SCRIPT_SIMPLEX, 0),
     JS_PROP_INT32_DEF("FONT_HERSHEY_SCRIPT_COMPLEX", cv::FONT_HERSHEY_SCRIPT_COMPLEX, 0),
     JS_PROP_INT32_DEF("FONT_ITALIC", cv::FONT_ITALIC, 0),
+
+        JS_PROP_INT32_DEF("HIER_NEXT", 0, 0),
+        JS_PROP_INT32_DEF("HIER_PREV", 1, 0),
+        JS_PROP_INT32_DEF("HIER_CHILD", 2, 0),
+        JS_PROP_INT32_DEF("HIER_PARENT", 3, 0),
+
 
 };
 

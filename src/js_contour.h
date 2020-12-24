@@ -3,14 +3,20 @@
 
 #include "geometry.h"
 
+extern "C" {
+extern JSValue contour_class, contour_proto;
+extern JSClassDef js_contour_class;
+extern JSClassID js_contour_class_id;
+};
+
 template<class T>
 static inline JSValue
 js_contour_new(JSContext* ctx, const JSContourData<T>& points) {
   JSValue ret;
-  JSContourData<T>* contour;
+  JSContourData<double>* contour;
   ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
-  contour = static_cast<JSContourData<T>*>(js_mallocz(ctx, sizeof(JSContourData<T>)));
-  new(contour) JSContourData<T>();
+  contour = static_cast<JSContourData<double>*>(js_mallocz(ctx, sizeof(JSContourData<double>)));
+  new(contour) JSContourData<double>();
   contour->resize(points.size());
   transform_points(points.cbegin(), points.cend(), contour->begin());
 

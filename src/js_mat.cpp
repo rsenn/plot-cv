@@ -41,13 +41,14 @@ js_mat_new(JSContext* ctx, int cols, int rows, int type) {
 
   s->addref();
 
+  // std::cerr << "js_mat_new mat=" << (void*)s << std::endl;
+
   JS_SetOpaque(ret, s);
   return ret;
 }
 
 static JSValue
 js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
-  JSValue obj = JS_UNDEFINED;
   JSValue proto;
   JSSizeData<double> size;
 
@@ -75,20 +76,19 @@ js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* arg
     }
   }
 
-  obj = js_mat_new(ctx, cols, rows, type);
-
-  return obj;
+  return js_mat_new(ctx, cols, rows, type);
 }
 
 void
 js_mat_finalizer(JSRuntime* rt, JSValue val) {
   JSMatData* s = static_cast<JSMatData*>(JS_GetOpaque(val, js_mat_class_id));
 
+  // std::cerr << "js_mat_finalizer mat=" << (void*)s << std::endl;
+
   s->release();
+  JS_FreeValueRT(rt, val);
 
   js_free_rt(rt, s);
-
-  JS_FreeValueRT(rt, val);
 }
 
 static JSValue

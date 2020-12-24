@@ -63,7 +63,41 @@ export class ImageSequence {
 const isVideoPath = arg => /\.(3gp|avi|f4v|flv|m4v|m2v|mkv|mov|mp4|mpeg|mpg|ogm|vob|webm|wmv)$/i.test(arg);
 
 export class VideoSource {
-  static backends = Object.fromEntries(['ANY', 'VFW', 'V4L', 'V4L2', 'FIREWIRE', 'FIREWARE', 'IEEE1394', 'DC1394', 'CMU1394', 'QT', 'UNICAP', 'DSHOW', 'PVAPI', 'OPENNI', 'OPENNI_ASUS', 'ANDROID', 'XIAPI', 'AVFOUNDATION', 'GIGANETIX', 'MSMF', 'WINRT', 'INTELPERC', 'REALSENSE', 'OPENNI2', 'OPENNI2_ASUS', 'GPHOTO2', 'GSTREAMER', 'FFMPEG', 'IMAGES', 'ARAVIS', 'OPENCV_MJPEG', 'INTEL_MFX', 'XINE'].map(name => [name, cv['CAP_' + name]])
+  static backends = Object.fromEntries([
+      'ANY',
+      'VFW',
+      'V4L',
+      'V4L2',
+      'FIREWIRE',
+      'FIREWARE',
+      'IEEE1394',
+      'DC1394',
+      'CMU1394',
+      'QT',
+      'UNICAP',
+      'DSHOW',
+      'PVAPI',
+      'OPENNI',
+      'OPENNI_ASUS',
+      'ANDROID',
+      'XIAPI',
+      'AVFOUNDATION',
+      'GIGANETIX',
+      'MSMF',
+      'WINRT',
+      'INTELPERC',
+      'REALSENSE',
+      'OPENNI2',
+      'OPENNI2_ASUS',
+      'GPHOTO2',
+      'GSTREAMER',
+      'FFMPEG',
+      'IMAGES',
+      'ARAVIS',
+      'OPENCV_MJPEG',
+      'INTEL_MFX',
+      'XINE'
+    ].map(name => [name, cv['CAP_' + name]])
   );
 
   constructor(...args) {
@@ -131,7 +165,7 @@ export class VideoSource {
 
   set(prop, value) {
     const { cap } = this;
- if(cap && typeof cap.set == 'function') return this.cap.set(this.propId(prop), value);
+    if(cap && typeof cap.set == 'function') return this.cap.set(this.propId(prop), value);
   }
 
   get backend() {
@@ -148,7 +182,18 @@ export class VideoSource {
     return this.get('fps');
   }
 
-  dump(props = ['frame_count', 'frame_width', 'frame_height', 'fps', 'format', 'fourcc', 'backend', 'pos_frames', 'pos_msec']) {
+  dump(props = [
+      'frame_count',
+      'frame_width',
+      'frame_height',
+      'fps',
+      'format',
+      'fourcc',
+      'backend',
+      'pos_frames',
+      'pos_msec'
+    ]
+  ) {
     return new Map(props.map(propName => [propName, this.get(propName)]).filter(([k, v]) => v !== undefined));
   }
 

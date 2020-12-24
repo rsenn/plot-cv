@@ -125,11 +125,15 @@ function* GetRanges(tree) {
 }
 
 function* GetLocations(tree) {
-  for(let [node, path] of deep.iterate(tree, v => Util.isObject(v) && typeof v.offset == 'number')) yield [path.join('.'), node];
+  for(let [node, path] of deep.iterate(tree, v => Util.isObject(v) && typeof v.offset == 'number'))
+    yield [path.join('.'), node];
 }
 
 function* GetNodes(tree, pred = n => true) {
-  for(let [node, path] of deep.iterate(tree, (v, p) => Util.isObject(v) && typeof v.kind == 'string' && v.kind != 'TranslationUnitDecl' && pred(v, p))) yield [path.join('.'), node];
+  for(let [node, path] of deep.iterate(tree,
+    (v, p) => Util.isObject(v) && typeof v.kind == 'string' && v.kind != 'TranslationUnitDecl' && pred(v, p)
+  ))
+    yield [path.join('.'), node];
 }
 
 function GetLocation(node) {
@@ -227,7 +231,9 @@ function GetNodeChildren(ast, [k, v]) {
   let children = [...deep.iterate(v, (v, p) => Util.isObject(v))].map(GetValueKey);
   children = children.filter(([key, child]) => typeof child.kind == 'string' && child.kind != '');
 
-  return children.reduce((acc, [key, child]) => [...acc, new ImmutablePath(key), GetNodeProps([key, child]) || child], []);
+  return children.reduce((acc, [key, child]) => [...acc, new ImmutablePath(key), GetNodeProps([key, child]) || child],
+    []
+  );
 }
 
 function GetNameOrId(ast, [key, node], pred = id => id != '') {
@@ -238,7 +244,8 @@ function GetNameOrId(ast, [key, node], pred = id => id != '') {
     let value = deep.get(n, prop);
     if(typeof value == 'string' && pred(value)) return [[...k, ...prop], value];
   }
-  let names = [...deep.iterate(n, (v, p) => p[p.length - 1] == 'name' && typeof v == 'string' && v != '', [...k])].map(GetValueKey);
+  let names = [...deep.iterate(n, (v, p) => p[p.length - 1] == 'name' && typeof v == 'string' && v != '', [...k])].map(GetValueKey
+  );
 
   let ids = [...deep.iterate(n, (v, p) => p[p.length - 1] == 'id' && v, [...k])].map(GetValueKey);
 
@@ -254,7 +261,9 @@ function GetType(node) {
 }
 
 function GetRecord(node) {
-  if(Util.isObject(node) && Array.isArray(node.inner)) return new Map(node.inner.map(field => [field.name, ContainsDecls(field) ? GetRecord(field) : GetType(field) || field]));
+  if(Util.isObject(node) && Array.isArray(node.inner))
+    return new Map(node.inner.map(field => [field.name, ContainsDecls(field) ? GetRecord(field) : GetType(field) || field])
+    );
 }
 
 Util.define(Array.prototype, {
@@ -341,14 +350,17 @@ async function main(...args) {
     let line;
     const re = /^(__fbufsize|__flbf|__fpending|__fpurge|__freadable|__freading|__fwritable|clearerr|clearerr_unlocked|fclose|fdopen|feof|feof_unlocked|ferror|ferror_unlocked|fflush|fflush_unlocked|fgetc|fgetc_unlocked|fgetpos|fgets|fgets_unlocked|fileno|fileno_unlocked|fopen|fprintf|fputc|fputc_unlocked|fputs|fputs_unlocked|fread|fread_unlocked|freopen|fscanf|fseek|fseeko|fsetpos|ftell|ftello|fwrite|fwrite_unlocked|printf|putchar|puts|scanf|setvbuf|tmpfile|ungetc|vfprintf|vfscanf|vprintf|vscanf)$/;
     let allf = [...flat].filter(([k, v]) => Util.isObject(v) && v.kind == 'CallExpr');
-    let allst = [...flat].filter(([k, v]) => Util.isObject(v) && IsStruct(v) && typeRe.test(GetProperty(ast, k, v => v.name)));
+    let allst = [...flat].filter(([k, v]) => Util.isObject(v) && IsStruct(v) && typeRe.test(GetProperty(ast, k, v => v.name))
+    );
     let incfrom = [...flat].filter(([k, v]) => k[k.length - 1] == 'includedFrom');
 
     incfrom.forEach(([k, v]) => deep.set(ast, k, v.file));
     //incfrom.forEach(([k,v])  => flat.set( k, v.file));
     //
 
-    let refIds = [...flat].filter(([k, v]) => Util.isObject(v) && typeof v.id == 'string').map(([k, v]) => [k, v.id, v]);
+    let refIds = [...flat]
+      .filter(([k, v]) => Util.isObject(v) && typeof v.id == 'string')
+      .map(([k, v]) => [k, v.id, v]);
 
     refIds.sort((a, b) => a[1] - b[1]);
 
@@ -360,7 +372,15 @@ async function main(...args) {
           refIds
             .filter(([k, other, v]) => id == other)
             .map(([k, other, v]) => [GetHeight(k), ...GetOwned(ast, k)])
-            .map(([h, k, v]) => [h, GetDepth(v), new ImmutablePath(k), GetNameOrId(ast, [k, v], id2 => id2 != '' && id != id2), GetRecord(v) || v, GetNodeTypes(ast, [k, v]), GetNodeChildren(ast, [k, v])])
+            .map(([h, k, v]) => [
+              h,
+              GetDepth(v),
+              new ImmutablePath(k),
+              GetNameOrId(ast, [k, v], id2 => id2 != '' && id != id2),
+              GetRecord(v) || v,
+              GetNodeTypes(ast, [k, v]),
+              GetNodeChildren(ast, [k, v])
+            ])
             .filter(([h, d, k, name, v]) => !/FunctionDecl/.test(v.kind + ''))
         ])
         .filter(([id, keys]) => keys.length > 1)
@@ -425,7 +445,9 @@ async function main(...args) {
     let typeKeys = types.map(([k, v]) => k);
 
     console.log('types:',
-      types.filter(([k, v]) => IsStruct(v)).map(([k, v]) => [k, GetProperty(ast, k, v => v.name) || v.id, IsStruct(v) ? GetRecord(v) : v, locMap.get(v)])
+      types
+        .filter(([k, v]) => IsStruct(v))
+        .map(([k, v]) => [k, GetProperty(ast, k, v => v.name) || v.id, IsStruct(v) ? GetRecord(v) : v, locMap.get(v)])
     );
     //    console.log('types keys:', typeKeys);
     /* console.log('type fields: ',
@@ -437,7 +459,11 @@ async function main(...args) {
     await ConsoleSetup({ colors: true, depth: 4, breakLength: 138, maxArrayLength: 300 });
     //console.log('allf:', allf.map(([k, v]) =>   NodeToString(v, 'expansionLoc')));
     console.log('allst:',
-      allst.map(([k, v]) => [v.name, k.join('.'), deep.get(ast, k.slice(0, 4))]) /*.filter(([loc,st]) => loc.file.startsWith(process.cwd))*/
+      allst.map(([k, v]) => [
+        v.name,
+        k.join('.'),
+        deep.get(ast, k.slice(0, 4))
+      ]) /*.filter(([loc,st]) => loc.file.startsWith(process.cwd))*/
     );
     let fmtc = fmtfns
       .map(k => {

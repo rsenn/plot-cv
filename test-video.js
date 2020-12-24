@@ -6,36 +6,37 @@ import * as draw from 'draw';
 import { Mat } from 'mat';
 import { Size } from 'size';
 import { Point } from 'point';
+import { Contour } from 'contour';
 import { VideoSource } from './cvVideo.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.js';
 import { Alea } from './lib/alea.js';
+import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
+
 //import { drawCircle, drawContour, drawLine, drawPolygon, drawRect } from 'draw';
 
 let prng = new Alea(Date.now());
 const hr = Util.hrtime;
 
+let rainbow;
+
 function Pipeline(processors = [], callback) {
   let self;
-
   self = function(mat) {
     let i = 0;
     for(let processor of self.processors) {
       let start = hr();
-
       mat = processor.call(self, mat, self.images[i], i);
       if(mat) self.images[i] = mat;
       self.times[i] = hr(start);
-
       if(typeof callback == 'function')
         callback.call(self, self.images[i], i, self.processors.length);
       i++;
     }
     return mat;
   };
-
   Util.define(self, { processors, images: new Array(processors.length), callback });
   self.times = new Array(processors.length);
-
+  return Object.setPrototypeOf(self, Pipeline.prototype);
   return Object.assign(self, Pipeline.prototype);
 }
 
@@ -46,15 +47,97 @@ Object.defineProperties(Pipeline.prototype, {
     get() {
       return this.processors.length;
     }
+  },
+  names: {
+    get() {
+      return this.processors.map(p => p.name);
+    }
   }
 });
 
-Pipeline.call = (fn, ...args) =>
-  function(mat, out, i) {
+function Processor(fn, ...args) {
+  let self;
+  self = function(mat, out, i) {
     if(!out) out = new Mat();
     fn.call(this, mat, out, ...args);
     return out;
   };
+  Util.define(self, { name: Util.fnName(fn) });
+  Object.setPrototypeOf(self, Processor.prototype);
+  return self;
+}
+Object.setPrototypeOf(Processor.prototype, Function.prototype);
+Object.assign(Pipeline.prototype, {
+  setName(name) {
+    this.name = name;
+  }
+});
+
+class Param {
+  [Symbol.toPrimitive](hint) {
+    //console.log(`Param[Symbol.toPrimitive](${hint})`);
+    if(hint == 'number') return NumericParam.prototype.get.call(this);
+    else if(hint == 'string') return this.valueOf() + '';
+    else return this.valueOf();
+  }
+
+  valueOf() {
+    return this.get();
+  }
+
+  [Symbol.toStringTag]() {
+    return this.toString();
+  }
+
+  toString() {
+    return '' + this.valueOf();
+  }
+}
+
+class NumericParam extends Param {
+  constructor(value = 0, min = 0, max = 1) {
+    super();
+    Object.assign(this, { min, max });
+    Util.define(this, { alpha: (value - min) / (max - min) });
+  }
+
+  get() {
+    const { min, max, alpha } = this;
+    return min + alpha * (max - min);
+  }
+
+  set(num) {
+    const { min, max } = this;
+    Util.define(this, { alpha: (num - min) / (max - min) });
+  }
+}
+
+class EnumParam extends NumericParam {
+  constructor(...args) {
+    let values, init;
+    if(Util.isArray(args[0])) {
+      values = args[0];
+      init = args[1] || 0;
+    } else {
+      values = args;
+      init = 0;
+    }
+    super(init, 0, values.length - 1);
+    Util.define(this, { values });
+  }
+
+  get() {
+    return this.values[Math.floor(super.get())];
+  }
+
+  set(newVal) {
+    let i;
+    if(typeof newVal == 'number') i = newVal;
+    else if((i = this.values.indexOf(newVal)) == -1)
+      throw new Error(`No such value '${newVal}' in [${this.values}]`);
+    super.set(i);
+  }
+}
 
 let symbols = [
   [
@@ -168,6 +251,10 @@ function modifierMap(keyCode) {
   ].map(([modifier, flag]) => [modifier, keyCode & flag ? 1 : 0]);
 }
 
+function drawContour(mat, contour, color) {
+  cv.drawContours(mat, [contour], 0, color, 1, cv.LINE_AA);
+}
+
 async function main(...args) {
   let start;
   let begin = hr();
@@ -181,7 +268,14 @@ async function main(...args) {
     multiline: false
   });
 
-  let win = new Window('gray', cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO);
+  rainbow = Util.range(0, 360, 360 / 8)
+    .slice(0, -1)
+    .map(hue => new HSLA(hue, 100, 50))
+    .map(h => [...h.toRGBA()]);
+
+  console.log('rainbow:', rainbow);
+
+  let win = new Window('gray', cv.WINDOW_AUTOSIZE /*| cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO*/);
   console.log('Mouse :', { MouseEvents, MouseFlags });
   //console.log('cv.EVENT_MOUSEMOVE', cv.EVENT_MOUSEMOVE);
   //
@@ -212,60 +306,89 @@ async function main(...args) {
   let bgr = new Mat();
   console.log('backend:', video.backend);
   console.log('grab():', video.grab);
-//  console.log('read():', [...Util.repeat(10, () => video.grab())]);
+  //  console.log('read():', [...Util.repeat(10, () => video.grab())]);
   let frameCount = video.get('frame_count');
   let frameShow = -1;
   let contours, hier;
+  let contoursDepth;
+  function* getParents(idx) {
+    while(idx != -1) {
+      yield idx;
+
+      idx = hier[idx][cv.HIER_PARENT];
+    }
+  }
+  function getContourDepth(idx) {
+    return [...getParents(idx)].length;
+  }
+
+  let params = {
+    thresh1: new NumericParam(20, 0, 100),
+    thresh2: new NumericParam(60, 0, 100),
+    mode: new EnumParam(['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL'],
+      3
+    ),
+    method: new EnumParam([
+        'CHAIN_APPROX_NONE',
+        'CHAIN_APPROX_SIMPLE',
+        'CHAIN_APPROX_TC89_L1',
+        'CHAIN_APPROX_TC89_L189_KCOS'
+      ],
+      0
+    )
+  };
+  console.log('Params:',
+    [...Object.entries(params)].map(([name, param]) => [name, param.valueOf()])
+  );
 
   let pipeline = new Pipeline([
-      Pipeline.call((mat, output) => video.read(output)),
+      Processor(function acquireFrame(mat, output) {
+        video.read(output);
+      }),
       toGrayscale,
-      Pipeline.call(cv.GaussianBlur, [3, 3], 0),
-      Pipeline.call((src,dst) => {
-        cv.Canny(src,dst, 10, 60, 3);
-        let result = cv.findContours(dst);
-contours = result.contours;
-hier =result.hier;
-
+      Processor(cv.GaussianBlur, [3, 3], 0),
+      Processor(function edgeDetect(src, dst) {
+        cv.Canny(src, dst, 10, 60, 3);
+   
+       cv.findContours(dst, (contours = []), (hier = []), cv[params.mode], cv[params.method]);
       }),
       toBGR
     ],
     (mat, i, n) => {
       const showIndex = Util.mod(frameShow, n);
       if(showIndex == i) {
-        mat = toBGR(mat);
+        let name = pipeline.processors[showIndex].name;
 
-contours.forEach(contour => draw.contour(mat, contour, 0xffffff))
+        mat = toBGR(mat);
+        let depths = contours.map((contour, i) => {
+          let d = getContourDepth(i);
+          drawContour(mat, contour, rainbow[d % rainbow.length]);
+          return d;
+        });
+        contoursDepth = depths.length ? Math.max(...depths) : 0;
+        //   console.log('contoursDepth:', contoursDepth);
 
         font.draw(mat, video.time + ' ⏩', tPos, 0xffffff || { r: 0, g: 255, b: 0 });
-        font.draw(mat, `#${showIndex + 1}/${n}`, [5, 5 + tSize.y], { r: 255, g: 255, b: 0 });
+        font.draw(mat, `#${showIndex + 1}/${n}` + (name ? ` (${name})` : ''), [5, 5 + tSize.y], {
+          r: 255,
+          g: 255,
+          b: 0
+        });
         win.show(mat);
       }
     }
   );
 
+  console.log('Pipeline processor names:', pipeline.names);
+
   while(running) {
     let frameNo = video.get('pos_frames');
     if(frameNo == frameCount) video.set('pos_frames', 0);
 
-    //   video.read(bgr);
-
-    //dumpMat(`bgr #${frameNo}/${frameCount}`, bgr);
-
     let gray = pipeline(bgr);
 
-
-    console.log("contours:", contours.length);
-    console.log("hier:", hier.length);
-    // console.log('pipeline:', pipeline);
-
-    //  bgr = toBGR(gray);
-
-    //  draw.circle(bgr, [50, 50], 25, 0x00ff00 || { r: 255, g: 0, b: 0 }, 2, cv.LINE_AA);
-    /*
-    font.draw(gray, video.time + ' ⏩', tPos, 0xffffff || { r: 0, g: 255, b: 0 });
-
-    win.show(gray);*/
+    /* console.log('contours:', contours.length);
+    console.log('hier:', hier.length);*/
 
     let key = cv.waitKeyEx(1000 / video.fps);
 

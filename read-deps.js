@@ -36,7 +36,9 @@ function DummyPreproc(source) {
 
 async function DumpDeps(sources, includeDirs = []) {
   //let stderr = filesystem.open('deps.err', 'w+');$
-  let includes = includeDirs.reduce((acc, dir) => (/^\/opt/.test(dir) ? [...acc, '-isystem', dir] : [...acc, `-I${dir}`]), []);
+  let includes = includeDirs.reduce((acc, dir) => (/^\/opt/.test(dir) ? [...acc, '-isystem', dir] : [...acc, `-I${dir}`]),
+    []
+  );
   let argv = ['-MM', ...includes, '-c', ...sources];
   console.log('argv:', argv.join(' '));
   let proc = childProcess('g++', argv, {

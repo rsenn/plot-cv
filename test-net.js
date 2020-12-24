@@ -58,7 +58,9 @@ async function main(...args) {
 
   function randContour() {
     let pl = new PointList();
-    Util.repeat(Util.randInt(10, 100, prng), () => pl.push(Util.randInt(0, width, prng), Util.randInt(0, height, prng)));
+    Util.repeat(Util.randInt(10, 100, prng), () =>
+      pl.push(Util.randInt(0, width, prng), Util.randInt(0, height, prng))
+    );
     let ctr = pl.centroid();
     let bb = pl.bbox();
     pl.translate(-ctr.x, -ctr.y);
