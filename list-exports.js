@@ -85,7 +85,8 @@ async function main(...args) {
 
   // console.log("result:",r);
 
-  for(let ids of exportMap.values()) r.push(`Util.weakAssign(globalObj, { ${Util.unique(ids).join(', ')} });`);
+  for(let ids of exportMap.values())
+    r.push(`Util.weakAssign(globalObj, { ${Util.unique(ids).join(', ')} });`);
 
   let success = Object.entries(processed).filter(([k, v]) => !!v).length != 0;
 
@@ -124,7 +125,9 @@ async function main(...args) {
       );
 
       exports = exports.map(([p, e]) =>
-        'declarations' in e && !Util.isArray(e.declarations) ? [[...p, 'declarations'], e.declarations] : [p, e]
+        'declarations' in e && !Util.isArray(e.declarations)
+          ? [[...p, 'declarations'], e.declarations]
+          : [p, e]
       );
 
       for(let [path, node] of exports) {
@@ -203,12 +206,16 @@ async function main(...args) {
     }
     let output = '';
     output = printAst(ast, parser.comments, printer).trim();
-    if(output != '') r = r.concat(`/* --- concatenanted '${file}' --- */\n${output}\n`.split(/\n/g));
+    if(output != '')
+      r = r.concat(`/* --- concatenanted '${file}' --- */\n${output}\n`.split(/\n/g));
 
     function log(...args) {
-      const assoc = args.map(arg => arg instanceof ESNode && ESNode.assoc(arg)).filter(assoc => !!assoc);
+      const assoc = args
+        .map(arg => arg instanceof ESNode && ESNode.assoc(arg))
+        .filter(assoc => !!assoc);
       //if(assoc[0]) console.log('ASSOC:', assoc[0].position.clone());
-      const prefix = (assoc.length == 1 && assoc[0].position && assoc[0].position.clone()) || modulePath;
+      const prefix =
+        (assoc.length == 1 && assoc[0].position && assoc[0].position.clone()) || modulePath;
       console.log(prefix.toString() + ':', ...args);
     }
     return true;

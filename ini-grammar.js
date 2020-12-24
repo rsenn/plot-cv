@@ -76,7 +76,9 @@ function RBRACK(...args) {
 }
 
 function LINE_COMMENT(...args) {
-  return wrap(seq(token(';'), invert(any(choice(char('\n'), char('\r'))))), 'LINE_COMMENT')(...args);
+  return wrap(seq(token(';'), invert(any(choice(char('\n'), char('\r'))))),
+    'LINE_COMMENT'
+  )(...args);
 }
 
 function WS(...args) {

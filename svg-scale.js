@@ -78,7 +78,9 @@ function* formatPath(path) {
         yield `${part.code} ${x},${y}`;
         break;
       case 'A':
-        yield `${part.code} ${rx} ${ry} ${xAxisRotation} ${largeArc ? 1 : 0} ${sweep ? 1 : 0} ${x},${y}`;
+        yield `${part.code} ${rx} ${ry} ${xAxisRotation} ${largeArc ? 1 : 0} ${
+          sweep ? 1 : 0
+        } ${x},${y}`;
         break;
     }
   }

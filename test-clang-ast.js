@@ -42,7 +42,11 @@ async function processFiles(...files) {
     '-I/usr/x86_64-w64-mingw32/include'
   ];
 
-  let child = spawn(['clang', ...args, ...files], { stdin: 'inherit', stdio: 'pipe', stderr: 'pipe' });
+  let child = spawn(['clang', ...args, ...files], {
+    stdin: 'inherit',
+    stdio: 'pipe',
+    stderr: 'pipe'
+  });
 
   let json = '',
     errors = '';
@@ -67,7 +71,9 @@ async function processFiles(...files) {
 
   console.log('child.wait():', await child.wait());
   let errorLines = errors.split(/\n/g).filter(line => line.trim() != '');
-  const numErrors = +errorLines[errorLines.length - 1].replace(/.*\s([0-9]+)\serrors\sgenerated.*/g, '$1');
+  const numErrors = +errorLines[errorLines.length - 1].replace(/.*\s([0-9]+)\serrors\sgenerated.*/g,
+    '$1'
+  );
   errorLines = errorLines.filter(line => /error:/.test(line));
 
   let obj = JSON.parse(json);

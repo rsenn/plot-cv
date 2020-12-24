@@ -112,7 +112,11 @@ export class Socket {
       const id = sockets.findIndex(s => s.id == msg.body);
       if(id != -1) {
         const sock = sockets[id];
-        return await send({ ...this.info, idle: Date.now() - this.lastMessage }, sock.id, null, 'INFO');
+        return await send({ ...this.info, idle: Date.now() - this.lastMessage },
+          sock.id,
+          null,
+          'INFO'
+        );
       }
     } else if(msg.type == 'PING') {
       return await send(msg.body, null, msg.origin, 'PONG');
@@ -178,7 +182,8 @@ export class Socket {
     s.closeConnection = async function closeConnection(reason) {
       console.debug(`[${this.id}] closeConnection:`, reason);
       await this.ws.close();
-      if(removeItem(sockets, this.ws, 'ws')) await client.sendMany(this, reason || 'closed', this.id, null, 'QUIT');
+      if(removeItem(sockets, this.ws, 'ws'))
+        await client.sendMany(this, reason || 'closed', this.id, null, 'QUIT');
     };
     s.lastMessage = Date.now();
     sockets.push(s);
@@ -199,7 +204,8 @@ export class Socket {
     await sendBuf(client)(s, function(send) {
       this.lastMessage = Date.now();
       send({ type: 'HELLO', body: this.id });
-      if(sockets.length) send({ type: 'USERS', body: sockets.map(s => s.id).filter(s => typeof s == 'string') });
+      if(sockets.length)
+        send({ type: 'USERS', body: sockets.map(s => s.id).filter(s => typeof s == 'string') });
     });
   }
 

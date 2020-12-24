@@ -11,6 +11,7 @@ import { VideoSource } from './cvVideo.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.js';
 import { Alea } from './lib/alea.js';
 import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
+import { NumericParam, EnumParam } from './param.js';
 
 //import { drawCircle, drawContour, drawLine, drawPolygon, drawRect } from 'draw';
 
@@ -72,72 +73,6 @@ Object.assign(Pipeline.prototype, {
     this.name = name;
   }
 });
-
-class Param {
-  [Symbol.toPrimitive](hint) {
-    //console.log(`Param[Symbol.toPrimitive](${hint})`);
-    if(hint == 'number') return NumericParam.prototype.get.call(this);
-    else if(hint == 'string') return this.valueOf() + '';
-    else return this.valueOf();
-  }
-
-  valueOf() {
-    return this.get();
-  }
-
-  [Symbol.toStringTag]() {
-    return this.toString();
-  }
-
-  toString() {
-    return '' + this.valueOf();
-  }
-}
-
-class NumericParam extends Param {
-  constructor(value = 0, min = 0, max = 1) {
-    super();
-    Object.assign(this, { min, max });
-    Util.define(this, { alpha: (value - min) / (max - min) });
-  }
-
-  get() {
-    const { min, max, alpha } = this;
-    return min + alpha * (max - min);
-  }
-
-  set(num) {
-    const { min, max } = this;
-    Util.define(this, { alpha: (num - min) / (max - min) });
-  }
-}
-
-class EnumParam extends NumericParam {
-  constructor(...args) {
-    let values, init;
-    if(Util.isArray(args[0])) {
-      values = args[0];
-      init = args[1] || 0;
-    } else {
-      values = args;
-      init = 0;
-    }
-    super(init, 0, values.length - 1);
-    Util.define(this, { values });
-  }
-
-  get() {
-    return this.values[Math.floor(super.get())];
-  }
-
-  set(newVal) {
-    let i;
-    if(typeof newVal == 'number') i = newVal;
-    else if((i = this.values.indexOf(newVal)) == -1)
-      throw new Error(`No such value '${newVal}' in [${this.values}]`);
-    super.set(i);
-  }
-}
 
 let symbols = [
   [
@@ -323,7 +258,7 @@ async function main(...args) {
   }
 
   let params = {
-    thresh1: new NumericParam(20, 0, 100),
+    thresh1: new NumericParam(10, 0, 100),
     thresh2: new NumericParam(60, 0, 100),
     mode: new EnumParam(['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL'],
       3
@@ -349,8 +284,8 @@ async function main(...args) {
       Processor(cv.GaussianBlur, [3, 3], 0),
       Processor(function edgeDetect(src, dst) {
         cv.Canny(src, dst, 10, 60, 3);
-   
-       cv.findContours(dst, (contours = []), (hier = []), cv[params.mode], cv[params.method]);
+
+        cv.findContours(dst, (contours = []), (hier = []), cv[params.mode], cv[params.method]);
       }),
       toBGR
     ],

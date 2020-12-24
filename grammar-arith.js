@@ -34,7 +34,9 @@ function unaryExpression(...args) {
 }
 
 function unaryOperator(...args) {
-  return wrap(choice(token('&'), token('*'), token('+'), token('-'), token('~'), token('!')), 'unaryOperator')(...args);
+  return wrap(choice(token('&'), token('*'), token('+'), token('-'), token('~'), token('!')),
+    'unaryOperator'
+  )(...args);
 }
 
 function castExpression(...args) {
@@ -82,7 +84,10 @@ function logicalOrExpression(...args) {
 }
 
 function conditionalExpression(...args) {
-  return wrap(choice(logicalOrExpression, seq(logicalOrExpression, token('?'), expression, token(':'), conditionalExpression)),
+  return wrap(choice(
+      logicalOrExpression,
+      seq(logicalOrExpression, token('?'), expression, token(':'), conditionalExpression)
+    ),
     'conditionalExpression'
   )(...args);
 }

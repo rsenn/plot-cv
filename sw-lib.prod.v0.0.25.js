@@ -55,7 +55,8 @@ this.goog.SWLib = (function () {
   function atLeastOne(a) {
     const b = Object.keys(a);
     b.some(c => a[c] !== void 0) ||
-      throwError('Please set at least one of the following parameters: ' + b.map(c => `'${c}'`).join(', '));
+      throwError('Please set at least one of the following parameters: ' + b.map(c => `'${c}'`).join(', ')
+      );
   }
   function hasMethod(a, b) {
     const c = Object.keys(a).pop(),
@@ -114,7 +115,16 @@ this.goog.SWLib = (function () {
       b)
     );
   }
-  var assert = { atLeastOne, hasMethod, isInstance, isOneOf, isType, isValue, isArrayOfType, isArrayOfClass };
+  var assert = {
+    atLeastOne,
+    hasMethod,
+    isInstance,
+    isOneOf,
+    isType,
+    isValue,
+    isArrayOfType,
+    isArrayOfClass
+  };
 
   function normalizeHandler(a) {
     return 'object' == typeof a
@@ -130,7 +140,9 @@ this.goog.SWLib = (function () {
       (this.handler = normalizeHandler(b)),
         assert.isType({ match: a }, 'function'),
         (this.match = a),
-        c ? (assert.isOneOf({ method: c }, validMethods), (this.method = c)) : (this.method = defaultMethod);
+        c
+          ? (assert.isOneOf({ method: c }, validMethods), (this.method = c))
+          : (this.method = defaultMethod);
     }
   }
 
@@ -152,7 +164,10 @@ this.goog.SWLib = (function () {
     'g'
   );
   function parse(a, b) {
-    for(var k, d = [], e = 0, f = 0, g = '', h = (b && b.delimiter) || '/'; null != (k = PATH_REGEXP.exec(a)); ) {
+    for(var k, d = [], e = 0, f = 0, g = '', h = (b && b.delimiter) || '/';
+      null != (k = PATH_REGEXP.exec(a));
+
+    ) {
       var l = k[0],
         n = k[1],
         o = k.index;
@@ -200,7 +215,12 @@ this.goog.SWLib = (function () {
     for(var b = Array(a.length), d = 0; d < a.length; d++)
       'object' == typeof a[d] && (b[d] = new RegExp('^(?:' + a[d].pattern + ')$'));
     return function(e, f) {
-      for(var o, g = '', h = e || {}, k = f || {}, l = k.pretty ? encodeURIComponentPretty : encodeURIComponent, n = 0;
+      for(var o,
+          g = '',
+          h = e || {},
+          k = f || {},
+          l = k.pretty ? encodeURIComponentPretty : encodeURIComponent,
+          n = 0;
         n < a.length;
         n++
       ) {
@@ -217,20 +237,28 @@ this.goog.SWLib = (function () {
           } else throw new TypeError('Expected "' + o.name + '" to be defined');
         if(index$1(p)) {
           if(!o.repeat)
-            throw new TypeError('Expected "' + o.name + '" to not repeat, but received `' + JSON.stringify(p) + '`');
+            throw new TypeError('Expected "' + o.name + '" to not repeat, but received `' + JSON.stringify(p) + '`'
+            );
           if(0 === p.length)
             if(o.optional) continue;
             else throw new TypeError('Expected "' + o.name + '" to not be empty');
           for(var r = 0; r < p.length; r++) {
             if(((q = l(p[r])), !b[n].test(q)))
-              throw new TypeError('Expected all "' + o.name + '" to match "' + o.pattern + '", but received `' + JSON.stringify(q) + '`'
+              throw new TypeError('Expected all "' +
+                  o.name +
+                  '" to match "' +
+                  o.pattern +
+                  '", but received `' +
+                  JSON.stringify(q) +
+                  '`'
               );
             g += (0 === r ? o.prefix : o.delimiter) + q;
           }
           continue;
         }
         if(((q = o.asterisk ? encodeAsterisk(p) : l(p)), !b[n].test(q)))
-          throw new TypeError('Expected "' + o.name + '" to match "' + o.pattern + '", but received "' + q + '"');
+          throw new TypeError('Expected "' + o.name + '" to match "' + o.pattern + '", but received "' + q + '"'
+          );
         g += o.prefix + q;
       }
       return g;
@@ -281,7 +309,11 @@ this.goog.SWLib = (function () {
           n = '(?:' + k.pattern + ')';
         b.push(k),
           k.repeat && (n += '(?:' + l + n + ')*'),
-          (n = k.optional ? (k.partial ? l + '(' + n + ')?' : '(?:' + l + '(' + n + '))?') : l + '(' + n + ')'),
+          (n = k.optional
+            ? k.partial
+              ? l + '(' + n + ')?'
+              : '(?:' + l + '(' + n + '))?'
+            : l + '(' + n + ')'),
           (g += n);
       }
     var o = escapeString(d.delimiter || '/'),
@@ -294,7 +326,11 @@ this.goog.SWLib = (function () {
   function pathToRegexp(a, b, d) {
     return (index$1(b) || ((d = b || d), (b = [])),
       (d = d || {}),
-      a instanceof RegExp ? regexpToRegexp(a, b) : index$1(a) ? arrayToRegexp(a, b, d) : stringToRegexp(a, b, d)
+      a instanceof RegExp
+        ? regexpToRegexp(a, b)
+        : index$1(a)
+        ? arrayToRegexp(a, b, d)
+        : stringToRegexp(a, b, d)
     );
   }
   (index.parse = parse_1),
@@ -304,7 +340,8 @@ this.goog.SWLib = (function () {
 
   class ExpressRoute extends Route {
     constructor({ path: a, handler: b, method: c }) {
-      if(!(a.startsWith('/') || a.startsWith('http'))) throw ErrorFactory$3.createError('express-route-invalid-path');
+      if(!(a.startsWith('/') || a.startsWith('http')))
+        throw ErrorFactory$3.createError('express-route-invalid-path');
       let d = [];
       const e = index(a, d);
       super({
@@ -372,7 +409,9 @@ this.goog.SWLib = (function () {
       const b = a.logFunc ? a.logFunc : console.log;
       let c = a.message,
         d = [c];
-      a.colors && !this._isEdge && (d = d.concat(a.colors)), a.args && (d = d.concat(a.args)), b(...d);
+      a.colors && !this._isEdge && (d = d.concat(a.colors)),
+        a.args && (d = d.concat(a.args)),
+        b(...d);
     }
     _openGroup() {
       if(this._isPrimary) {
@@ -402,7 +441,13 @@ this.goog.SWLib = (function () {
   var environment = { isDevBuild, isLocalhost, isServiceWorkerGlobalScope };
 
   (self.goog = self.goog || {}),
-    (self.goog.LOG_LEVEL = self.goog.LOG_LEVEL || { none: -1, verbose: 0, debug: 1, warn: 2, error: 3 });
+    (self.goog.LOG_LEVEL = self.goog.LOG_LEVEL || {
+      none: -1,
+      verbose: 0,
+      debug: 1,
+      warn: 2,
+      error: 3
+    });
   const LIGHT_GREY = `#bdc3c7`;
   const DARK_GREY = `#7f8c8d`;
   const LIGHT_GREEN = `#2ecc71`;
@@ -411,7 +456,9 @@ this.goog.SWLib = (function () {
   const LIGHT_BLUE = `#3498db`;
   class LogHelper {
     constructor() {
-      this._defaultLogLevel = environment.isDevBuild() ? self.goog.LOG_LEVEL.debug : self.goog.LOG_LEVEL.warn;
+      this._defaultLogLevel = environment.isDevBuild()
+        ? self.goog.LOG_LEVEL.debug
+        : self.goog.LOG_LEVEL.warn;
     }
     log(a) {
       this._printMessage(self.goog.LOG_LEVEL.verbose, a);
@@ -471,7 +518,10 @@ this.goog.SWLib = (function () {
       const f = [`color: ${LIGHT_GREY}`, `color: ${d}`];
       let g;
       return ('string' == typeof b ? (g = b) : b.message && (g = b.message),
-        g && ((g = g.replace(/\s+/g, ' ')), (e += `%c ${g}`), f.push(`color: ${DARK_GREY}; font-weight: normal`)),
+        g &&
+          ((g = g.replace(/\s+/g, ' ')),
+          (e += `%c ${g}`),
+          f.push(`color: ${DARK_GREY}; font-weight: normal`)),
         { message: e, colors: f }
       );
     }
@@ -487,7 +537,8 @@ this.goog.SWLib = (function () {
 
   class NavigationRoute extends Route {
     constructor({ whitelist: a, blacklist: b, handler: c } = {}) {
-      assert.isArrayOfClass({ whitelist: a }, RegExp), b ? assert.isArrayOfClass({ blacklist: b }, RegExp) : (b = []);
+      assert.isArrayOfClass({ whitelist: a }, RegExp),
+        b ? assert.isArrayOfClass({ blacklist: b }, RegExp) : (b = []);
       super({
         match: ({ event: e, url: f }) => {
           let h,
@@ -526,7 +577,8 @@ this.goog.SWLib = (function () {
             ? e.origin !== location.origin && 0 !== f.index
               ? (logHelper.debug({
                   that: this,
-                  message: `Skipping route, because the RegExp match didn't occur ` + `at the start of the URL.`,
+                  message: `Skipping route, because the RegExp match didn't occur ` +
+                    `at the start of the URL.`,
                   data: { url: e.href, regExp: a }
                 }),
                 null)
@@ -541,7 +593,9 @@ this.goog.SWLib = (function () {
 
   class Router$2 {
     constructor({ handleFetch: a } = {}) {
-      'undefined' == typeof a && (a = !0), (this._routes = new Map()), a && this._addFetchListener();
+      'undefined' == typeof a && (a = !0),
+        (this._routes = new Map()),
+        a && this._addFetchListener();
     }
     _addFetchListener() {
       self.addEventListener('fetch', a => {
@@ -598,7 +652,8 @@ this.goog.SWLib = (function () {
     registerRoutes({ routes: a } = {}) {
       assert.isArrayOfClass({ routes: a }, Route);
       for(let b of a)
-        this._routes.has(b.method) || this._routes.set(b.method, []), this._routes.get(b.method).unshift(b);
+        this._routes.has(b.method) || this._routes.set(b.method, []),
+          this._routes.get(b.method).unshift(b);
     }
     registerRoute({ route: a } = {}) {
       assert.isInstance({ route: a }, Route), this.registerRoutes({ routes: [a] });
@@ -613,7 +668,8 @@ this.goog.SWLib = (function () {
       if(('function' == typeof b && (b = { handle: b }), 'string' == typeof a)) {
         if(0 === a.length) throw ErrorFactory.createError('empty-express-string');
         super.registerRoute({ route: new ExpressRoute({ path: a, handler: b }) });
-      } else if(a instanceof RegExp) super.registerRoute({ route: new RegExpRoute({ regExp: a, handler: b }) });
+      } else if(a instanceof RegExp)
+        super.registerRoute({ route: new RegExpRoute({ regExp: a, handler: b }) });
       else if(a instanceof Route) super.registerRoute({ route: a });
       else throw ErrorFactory.createError('unsupported-route-type');
     }
@@ -680,9 +736,16 @@ this.goog.SWLib = (function () {
 
   const getDefaultCacheName = ({ cacheId: a } = {}) => {
     let b = `sw-runtime-caching`;
-    return a && (b = `${a}-${b}`), self && self.registration && (b += `-${self.registration.scope}`), b;
+    return (a && (b = `${a}-${b}`), self && self.registration && (b += `-${self.registration.scope}`), b
+    );
   };
-  const pluginCallbacks = ['cacheDidUpdate', 'cacheWillMatch', 'cacheWillUpdate', 'fetchDidFail', 'requestWillFetch'];
+  const pluginCallbacks = [
+    'cacheDidUpdate',
+    'cacheWillMatch',
+    'cacheWillUpdate',
+    'fetchDidFail',
+    'requestWillFetch'
+  ];
 
   var cleanResponseCopy = ({ response: a }) => {
     assert.isInstance({ response: a }, Response);
@@ -695,7 +758,8 @@ this.goog.SWLib = (function () {
 
   class RequestWrapper {
     constructor({ cacheName: a, cacheId: b, plugins: c, fetchOptions: d, matchOptions: e } = {}) {
-      if(b && ('string' != typeof b || 0 === b.length)) throw ErrorFactory$4.createError('bad-cache-id');
+      if(b && ('string' != typeof b || 0 === b.length))
+        throw ErrorFactory$4.createError('bad-cache-id');
       a
         ? (assert.isType({ cacheName: a }, 'string'),
           (this.cacheName = a),
@@ -712,7 +776,8 @@ this.goog.SWLib = (function () {
                 if(!this.plugins.has(g)) this.plugins.set(g, []);
                 else if('cacheWillUpdate' === g)
                   throw ErrorFactory$4.createError('multiple-cache-will-update-plugins');
-                else if('cacheWillMatch' === g) throw ErrorFactory$4.createError('multiple-cache-will-match-plugins');
+                else if('cacheWillMatch' === g)
+                  throw ErrorFactory$4.createError('multiple-cache-will-match-plugins');
                 this.plugins.get(g).push(f);
               }
           })),
@@ -734,7 +799,12 @@ this.goog.SWLib = (function () {
       let c = await b.match(a, this.matchOptions);
       if(this.plugins.has('cacheWillMatch')) {
         const d = this.plugins.get('cacheWillMatch')[0];
-        c = d.cacheWillMatch({ request: a, cache: b, cachedResponse: c, matchOptions: this.matchOptions });
+        c = d.cacheWillMatch({
+          request: a,
+          cache: b,
+          cachedResponse: c,
+          matchOptions: this.matchOptions
+        });
       }
       return c;
     }
@@ -756,18 +826,29 @@ this.goog.SWLib = (function () {
         throw c;
       }
     }
-    async fetchAndCache({ request: a, waitOnCache: b, cacheKey: c, cacheResponsePlugin: d, cleanRedirects: e }) {
+    async fetchAndCache({
+      request: a,
+      waitOnCache: b,
+      cacheKey: c,
+      cacheResponsePlugin: d,
+      cleanRedirects: e
+    }) {
       assert.atLeastOne({ request: a });
       let f;
       const g = await this.fetch({ request: a }),
-        h = this._userSpecifiedCachableResponsePlugin || d || this.getDefaultCacheableResponsePlugin(),
+        h =
+          this._userSpecifiedCachableResponsePlugin ||
+          d ||
+          this.getDefaultCacheableResponsePlugin(),
         i = h.cacheWillUpdate({ request: a, response: g });
       if(i) {
         const j = e && g.redirected ? await cleanResponseCopy({ response: g }) : g.clone();
         f = this.getCache().then(async k => {
           let l;
           const m = c || a;
-          if(('opaque' !== g.type && this.plugins.has('cacheDidUpdate') && (l = await this.match({ request: m })),
+          if(('opaque' !== g.type &&
+              this.plugins.has('cacheDidUpdate') &&
+              (l = await this.match({ request: m })),
             await k.put(m, j),
             this.plugins.has('cacheDidUpdate'))
           )
@@ -797,13 +878,20 @@ this.goog.SWLib = (function () {
     async handle({ event: a } = {}) {
       assert.isInstance({ event: a }, FetchEvent);
       const b = await this.requestWrapper.match({ request: a.request });
-      return b || (await this.requestWrapper.fetchAndCache({ request: a.request, waitOnCache: this.waitOnCache }));
+      return (b ||
+        (await this.requestWrapper.fetchAndCache({
+          request: a.request,
+          waitOnCache: this.waitOnCache
+        }))
+      );
     }
   }
 
   class CacheOnly extends Handler {
     async handle({ event: a } = {}) {
-      return assert.isInstance({ event: a }, FetchEvent), await this.requestWrapper.match({ request: a.request });
+      return (assert.isInstance({ event: a }, FetchEvent),
+        await this.requestWrapper.match({ request: a.request })
+      );
     }
   }
 
@@ -811,7 +899,8 @@ this.goog.SWLib = (function () {
     constructor(a = {}) {
       super(a), (this._cacheablePlugin = new CacheableResponsePlugin({ statuses: [0, 200] }));
       const { networkTimeoutSeconds: b } = a;
-      b && (assert.isType({ networkTimeoutSeconds: b }, 'number'), (this.networkTimeoutSeconds = b));
+      b &&
+        (assert.isType({ networkTimeoutSeconds: b }, 'number'), (this.networkTimeoutSeconds = b));
     }
     async handle({ event: a } = {}) {
       assert.isInstance({ event: a }, FetchEvent);
@@ -831,7 +920,9 @@ this.goog.SWLib = (function () {
           cacheResponsePlugin: this._cacheablePlugin
         })
         .then(e => {
-          return c && clearTimeout(c), e ? e : Promise.reject(ErrorFactory$4.createError('no-response-received'));
+          return (c && clearTimeout(c),
+            e ? e : Promise.reject(ErrorFactory$4.createError('no-response-received'))
+          );
         })
         .catch(() => this.requestWrapper.match({ request: a.request }));
       return b.push(d), Promise.race(b);
@@ -840,7 +931,9 @@ this.goog.SWLib = (function () {
 
   class NetworkOnly extends Handler {
     async handle({ event: a } = {}) {
-      return assert.isInstance({ event: a }, FetchEvent), await this.requestWrapper.fetch({ request: a.request });
+      return (assert.isInstance({ event: a }, FetchEvent),
+        await this.requestWrapper.fetch({ request: a.request })
+      );
     }
   }
 
@@ -1041,7 +1134,8 @@ this.goog.SWLib = (function () {
               return new Promise(function (w) {
                 u.iterateCursor(s, function(x) {
                   return x
-                    ? (v.push(x.value), void 0 !== t && v.length == t ? void w(v) : void x.continue())
+                    ? (v.push(x.value),
+                      void 0 !== t && v.length == t ? void w(v) : void x.continue())
                     : void w(v);
                 });
               });
@@ -1081,7 +1175,8 @@ this.goog.SWLib = (function () {
     constructor({ maxEntries: a, maxAgeSeconds: b } = {}) {
       if(!(a || b)) throw ErrorFactory$5.createError('max-entries-or-age-required');
       if(a && 'number' != typeof a) throw ErrorFactory$5.createError('max-entries-must-be-number');
-      if(b && 'number' != typeof b) throw ErrorFactory$5.createError('max-age-seconds-must-be-number');
+      if(b && 'number' != typeof b)
+        throw ErrorFactory$5.createError('max-age-seconds-must-be-number');
       (this.maxEntries = a),
         (this.maxAgeSeconds = b),
         (this._dbs = new Map()),
@@ -1159,7 +1254,8 @@ this.goog.SWLib = (function () {
         g = f.objectStore(a),
         h = g.index(timestampPropertyName);
       return (h.iterateCursor(i => {
-          i && (i.value[timestampPropertyName] < c && d.push(i.value[urlPropertyName]), i.continue());
+          i &&
+            (i.value[timestampPropertyName] < c && d.push(i.value[urlPropertyName]), i.continue());
         }),
         await f.complete,
         d
@@ -1185,7 +1281,10 @@ this.goog.SWLib = (function () {
       );
     }
     async deleteFromCacheAndIDB({ cacheName: a, urls: b } = {}) {
-      if((assert.isType({ cacheName: a }, 'string'), assert.isArrayOfType({ urls: b }, 'string'), 0 < b.length)) {
+      if((assert.isType({ cacheName: a }, 'string'),
+        assert.isArrayOfType({ urls: b }, 'string'),
+        0 < b.length)
+      ) {
         const c = await this.getCache({ cacheName: a }),
           d = await this.getDB({ cacheName: a });
         for(let e of b) {
@@ -1228,7 +1327,11 @@ this.goog.SWLib = (function () {
       assert.isType({ cacheName: b }, 'string'),
       assert.isType({ source: d }, 'string'),
       assert.isType({ url: c }, 'string'),
-      a.postMessage({ type: cacheUpdatedMessageType, meta: d, payload: { cacheName: b, updatedUrl: c } });
+      a.postMessage({
+        type: cacheUpdatedMessageType,
+        meta: d,
+        payload: { cacheName: b, updatedUrl: c }
+      });
   }
 
   function responsesAreSame({ first: a, second: b, headersToCheck: c } = {}) {
@@ -1251,11 +1354,15 @@ this.goog.SWLib = (function () {
 
   class BroadcastCacheUpdate {
     constructor({ channelName: a, headersToCheck: b, source: c } = {}) {
-      if('string' != typeof a || 0 === a.length) throw ErrorFactory$6.createError('channel-name-required');
-      (this.channelName = a), (this.headersToCheck = b || defaultHeadersToCheck), (this.source = c || defaultSource);
+      if('string' != typeof a || 0 === a.length)
+        throw ErrorFactory$6.createError('channel-name-required');
+      (this.channelName = a),
+        (this.headersToCheck = b || defaultHeadersToCheck),
+        (this.source = c || defaultSource);
     }
     get channel() {
-      return this._channel || (this._channel = new BroadcastChannel(this.channelName)), this._channel;
+      return (this._channel || (this._channel = new BroadcastChannel(this.channelName)), this._channel
+      );
     }
     notifyIfUpdated({ first: a, second: b, cacheName: c, url: d }) {
       assert.isType({ cacheName: c }, 'string'),
@@ -1334,7 +1441,8 @@ this.goog.SWLib = (function () {
 
   class BaseCacheManager {
     constructor({ cacheName: a, cacheId: b, plugins: c } = {}) {
-      if(b && ('string' != typeof b || 0 === b.length)) throw ErrorFactory$7.createError('bad-cache-id');
+      if(b && ('string' != typeof b || 0 === b.length))
+        throw ErrorFactory$7.createError('bad-cache-id');
       (this._entriesToCache = new Map()),
         (this._requestWrapper = new RequestWrapper({
           cacheName: a,
@@ -1354,14 +1462,17 @@ this.goog.SWLib = (function () {
     }
     getCachedUrls() {
       return (this._parsedCacheUrls ||
-          (this._parsedCacheUrls = Array.from(this._entriesToCache.keys()).map(a => new URL(a, location).href)),
+          (this._parsedCacheUrls = Array.from(this._entriesToCache.keys()).map(a => new URL(a, location).href
+          )),
         this._parsedCacheUrls
       );
     }
     _addEntryToInstallList(a) {
       const b = a.entryID,
         c = this._entriesToCache.get(a.entryID);
-      return c ? void this._onDuplicateInstallEntryFound(a, c) : void this._entriesToCache.set(b, a);
+      return c
+        ? void this._onDuplicateInstallEntryFound(a, c)
+        : void this._entriesToCache.set(b, a);
     }
     async install() {
       if(0 === this._entriesToCache.size) return;
@@ -1516,7 +1627,10 @@ this.goog.SWLib = (function () {
         else {
           const c = new URL(a, location);
           (c.search +=
-            (c.search ? '&' : '') + encodeURIComponent(cacheBustParamName) + '=' + encodeURIComponent(this.revision)),
+            (c.search ? '&' : '') +
+            encodeURIComponent(cacheBustParamName) +
+            '=' +
+            encodeURIComponent(this.revision)),
             (a = c.toString());
         }
       return new Request(a, b);
@@ -1541,7 +1655,10 @@ this.goog.SWLib = (function () {
         0 === b.length)
       )
         throw ErrorFactory$7.createError('invalid-revisioned-entry',
-          new Error('Bad revision Parameter. It should be a string with at least one character: ' + JSON.stringify(b))
+          new Error(
+            'Bad revision Parameter. It should be a string with at least one character: ' +
+              JSON.stringify(b)
+          )
         );
       if((assert.isType({ url: c }, 'string'), 0 === c.length))
         throw ErrorFactory$7.createError('invalid-revisioned-entry',
@@ -1549,7 +1666,10 @@ this.goog.SWLib = (function () {
         );
       if((assert.isType({ entryID: a }, 'string'), 0 === a.length))
         throw ErrorFactory$7.createError('invalid-revisioned-entry',
-          new Error('Bad entryID Parameter. It should be a string with at least one character: ' + JSON.stringify(a))
+          new Error(
+            'Bad entryID Parameter. It should be a string with at least one character: ' +
+              JSON.stringify(a)
+          )
         );
       assert.isType({ cacheBust: d }, 'boolean'),
         super({ entryID: a, revision: b, request: new Request(c), cacheBust: d });
@@ -1654,7 +1774,8 @@ this.goog.SWLib = (function () {
       if(b && 'boolean' != typeof b) throw ErrorFactory.createError('bad-clients-claim');
       if('undefined' != typeof d)
         if(!1 === d || null === d) d = !1;
-        else if('string' != typeof d || 0 === d.length) throw ErrorFactory.createError('bad-directory-index');
+        else if('string' != typeof d || 0 === d.length)
+          throw ErrorFactory.createError('bad-directory-index');
       const g = [];
       e &&
         g.push(new BroadcastCacheUpdatePlugin({
@@ -1704,7 +1825,10 @@ this.goog.SWLib = (function () {
     _registerDefaultRoutes(a, b) {
       const c = [];
       (a || b) && c.push(this._getCacheMatchPlugin(a, b));
-      const d = this.strategies.cacheFirst({ cacheName: this._revisionedCacheManager.getCacheName(), plugins: c }),
+      const d = this.strategies.cacheFirst({
+          cacheName: this._revisionedCacheManager.getCacheName(),
+          plugins: c
+        }),
         e = new Route({
           match: ({ url: f }) => {
             const g = this._revisionedCacheManager.getCachedUrls();
@@ -1724,7 +1848,9 @@ this.goog.SWLib = (function () {
           if(f) return f;
           let h = this._removeIgnoreUrlParams(d.url, a);
           return e.match(h.toString(), g).then(i => {
-            return !i && h.pathname.endsWith('/') ? ((h.pathname += b), e.match(h.toString(), g)) : i;
+            return !i && h.pathname.endsWith('/')
+              ? ((h.pathname += b), e.match(h.toString(), g))
+              : i;
           });
         }
       };
