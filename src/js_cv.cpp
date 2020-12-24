@@ -1012,7 +1012,9 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   poly.resize(contours.size());
 
-  transform_contours<JSContoursData<int>::const_iterator, JSContoursData<float>::iterator >(contours.cbegin(), contours.cend(), poly.begin());
+  transform_contours<JSContoursData<int>::const_iterator, JSContoursData<float>::iterator>(contours.cbegin(),
+                                                                                           contours.cend(),
+                                                                                           poly.begin());
 
   {
     size_t i, length = contours.size();
@@ -1100,6 +1102,21 @@ js_cv_getticks(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
   return ret;
 }
 
+static JSValue
+js_cv_bitwise(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+   std::vector<JSMatData*> v;
+
+    std::transform(&argv[0], &argv[argc], std::back_inserter(v), std::bind(&js_mat_data, ctx,  std::placeholders::_1));
+ 
+  switch(magic) {
+    case 0: cv::bitwise_and(*v[0], *v[1], *v[2], v[3] ? *v[3]  : cv::noArray()); break;
+    case 1: cv::bitwise_or(*v[0], *v[1], *v[2], v[3] ? *v[3]  : cv::noArray());break;
+    case 2: cv::bitwise_xor(*v[0], *v[1], *v[2], v[3] ? *v[3]  : cv::noArray()); break;
+    case 3: cv::bitwise_not(*v[0], *v[1], v[2] ? *v[2]  : cv::noArray()); break;
+    default: return JS_EXCEPTION;
+  }
+  return JS_UNDEFINED;
+}
 
 JSValue cv_proto, cv_class;
 JSClassID js_cv_class_id;
@@ -1161,6 +1178,10 @@ js_function_list_t js_cv_static_funcs{
     JS_CFUNC_MAGIC_DEF("getTickCount", 0, js_cv_getticks, 0),
     JS_CFUNC_MAGIC_DEF("getTickFrequency", 0, js_cv_getticks, 1),
     JS_CFUNC_MAGIC_DEF("getCPUTickCount", 0, js_cv_getticks, 2),
+    JS_CFUNC_MAGIC_DEF("bitwise_and", 3, js_cv_bitwise, 0),
+    JS_CFUNC_MAGIC_DEF("bitwise_or", 3, js_cv_bitwise, 1),
+    JS_CFUNC_MAGIC_DEF("bitwise_xor", 3, js_cv_bitwise, 2),
+    JS_CFUNC_MAGIC_DEF("bitwise_not", 2, js_cv_bitwise, 3),
     /*};
     const js_function_list_t js_cv_core_flags{*/
     JS_PROP_INT32_DEF("CV_VERSION_MAJOR", CV_VERSION_MAJOR, 0),
@@ -1586,11 +1607,10 @@ js_function_list_t js_cv_static_funcs{
     JS_PROP_INT32_DEF("FONT_HERSHEY_SCRIPT_COMPLEX", cv::FONT_HERSHEY_SCRIPT_COMPLEX, 0),
     JS_PROP_INT32_DEF("FONT_ITALIC", cv::FONT_ITALIC, 0),
 
-        JS_PROP_INT32_DEF("HIER_NEXT", 0, 0),
-        JS_PROP_INT32_DEF("HIER_PREV", 1, 0),
-        JS_PROP_INT32_DEF("HIER_CHILD", 2, 0),
-        JS_PROP_INT32_DEF("HIER_PARENT", 3, 0),
-
+    JS_PROP_INT32_DEF("HIER_NEXT", 0, 0),
+    JS_PROP_INT32_DEF("HIER_PREV", 1, 0),
+    JS_PROP_INT32_DEF("HIER_CHILD", 2, 0),
+    JS_PROP_INT32_DEF("HIER_PARENT", 3, 0),
 
 };
 

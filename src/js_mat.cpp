@@ -474,8 +474,45 @@ js_mat_get_props(JSContext* ctx, JSValueConst this_val, int magic) {
     return JS_NewFloat64(ctx, m->total());
   else if(magic == 7)
     return js_size_new(ctx, m->cols, m->rows);
-  
+
   return JS_UNDEFINED;
+}
+
+static JSValue
+js_mat_class_func(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSValueConst *v = argv, *e = &argv[argc];
+  JSMatData result;
+  JSMatData *prev = nullptr, *mat = nullptr;
+
+  while(v < e) {
+    JSValueConst arg = *v++;
+
+    if(nullptr == (mat = js_mat_data(ctx, arg)))
+      return JS_EXCEPTION;
+
+    if(prev) {
+      JSMatData const &a = *prev, &b = *mat;
+
+      switch(magic) {
+        case 0: result = a + b; break;
+        case 1: result = a - b; break;
+        case 2: result = a * b; break;
+        case 3: result = a / b; break;
+        case 4: result = a & b; break;
+        case 5: result = a | b; break;
+        case 6: result = a ^ b; break;
+      }
+
+      prev = &result;
+    } else {
+      prev = mat;
+
+      result = cv::Mat::zeros(mat->rows, mat->cols, mat->type());
+      mat->copyTo(result);
+    }
+  }
+
+  return js_mat_wrap(ctx, result);
 }
 
 static JSValue
@@ -807,6 +844,13 @@ const JSCFunctionListEntry js_mat_iterator_proto_funcs[] = {
 
 const JSCFunctionListEntry js_mat_static_funcs[] = {
     JS_CFUNC_DEF("getRotationMatrix2D", 3, js_mat_getrotationmatrix2d),
+    JS_CFUNC_MAGIC_DEF("add", 2, js_mat_class_func, 0),
+    JS_CFUNC_MAGIC_DEF("sub", 2, js_mat_class_func, 1),
+    JS_CFUNC_MAGIC_DEF("mul", 2, js_mat_class_func, 2),
+    JS_CFUNC_MAGIC_DEF("div", 2, js_mat_class_func, 3),
+    JS_CFUNC_MAGIC_DEF("and", 2, js_mat_class_func, 4),
+    JS_CFUNC_MAGIC_DEF("or", 2, js_mat_class_func, 5),
+    JS_CFUNC_MAGIC_DEF("xor", 3, js_mat_class_func, 6),
     JS_PROP_INT32_DEF("CV_8U", CV_MAKETYPE(CV_8U, 1), JS_PROP_ENUMERABLE),
 };
 

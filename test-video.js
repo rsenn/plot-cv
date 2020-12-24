@@ -160,6 +160,11 @@ function toGrayscale(mat) {
   cv.split(lab, channels);
   return channels[0];
 }
+function getAlpha(mat) {
+  let channels = Util.repeat(mat.channels, () => new Mat());
+  cv.split(mat, channels);
+  return channels[3];
+}
 
 function toBGR(mat) {
   if(mat.channels >= 3) return mat.clone();
@@ -167,6 +172,12 @@ function toBGR(mat) {
   let bgr = new Mat();
   cv.cvtColor(mat, bgr, cv.COLOR_GRAY2BGR);
   return bgr;
+}
+function toRGBA(mat) {
+  if(mat.channels == 4) return mat.clone();
+  let rgba = new Mat();
+  cv.cvtColor(mat, rgba, cv.COLOR_BGR2RGBA);
+  return rgba;
 }
 
 function minMax(mat) {
@@ -196,15 +207,14 @@ async function main(...args) {
     breakLength: 120,
     maxStringLength: 200,
     maxArrayLength: 20,
-    multiline: false
+    multiline: true
   });
 
-  rainbow = Util.range(0, 360, 360 / 8)
-    .slice(0, -1)
-    .map(hue => new HSLA(hue, 100, 50))
-    .map(h => [...h.toRGBA()]);
-
-  console.log('rainbow:', rainbow);
+  const makeRainbow = steps =>
+    Util.range(0, 360, 360 / steps)
+      .slice(0, -1)
+      .map(hue => new HSLA(hue, 100, 50))
+      .map(h => h.toRGBA());
 
   let win = new Window('gray', /*cv.WINDOW_AUTOSIZE | cv.WINDOW_NORMAL  |*/ cv.WINDOW_KEEPRATIO);
   console.log('Mouse :', { MouseEvents, MouseFlags });
@@ -252,6 +262,24 @@ async function main(...args) {
   function getContourDepth(idx) {
     return [...getParents(idx)].length;
   }
+  function findRoot(hier) {
+    return hier.findIndex(h => h[cv.HIER_PREV] == -1 && h[cv.HIER_PARENT] == -1);
+  }
+  function* getToplevel(hier) {
+    for(let [i, h] of hier.entries()) if(h[cv.HIER_PARENT] == -1) yield i;
+  }
+  function* walkContours(hier, idx) {
+    idx = idx || findRoot(hier);
+    let h;
+
+    while((h = hier[idx])) {
+      yield idx;
+
+      if(h[cv.HIER_CHILD] != -1) yield* walkContours(hier, h[cv.HIER_CHILD]);
+
+      idx = h[cv.HIER_NEXT];
+    }
+  }
 
   let params = {
     thresh1: new NumericParam(10, 0, 100),
@@ -282,6 +310,10 @@ async function main(...args) {
         cv.Canny(src, dst, 10, 60, 3);
 
         cv.findContours(dst, (contours = []), (hier = []), cv[params.mode], cv[params.method]);
+
+        //console.log('hier:', hier .map((h, i) => [i, h]) .filter(([i, h]) => h[cv.HIER_PREV] == -1 && h[cv.HIER_PARENT] == -1));
+
+        // console.log('walkContours:', [...walkContours(hier)]);
       }),
       toBGR
     ],
@@ -289,32 +321,74 @@ async function main(...args) {
       const showIndex = Util.mod(frameShow, n);
       if(showIndex == i) {
         let name = pipeline.processors[showIndex].name;
-
         mat = toBGR(mat);
+        let surface = new Mat(mat.size, cv.CV_8UC4);
+        let out = new Mat(mat.size, cv.CV_8UC4);
+
+        //   mat.convertTo(out, cv.CV_8UC4);
+        cv.cvtColor(mat, out, cv.COLOR_BGR2RGBA);
+
+        let ids = [...getToplevel(hier)];
+
+        rainbow = makeRainbow(ids.length);
+        let palette = {};
+        // console.log('rainbow:', rainbow.map(c => c.hex()));
+
+        for(let [i, id] of ids.entries()) {
+          for(let child of walkContours(hier, id)) palette[child] = rainbow[i];
+        }
+
         let depths = contours.map((contour, i) => {
-          let d = getContourDepth(i);
-          drawContour(mat, contour, rainbow[d % rainbow.length]);
+          let p = [...getParents(i)];
+          let d = p.length;
+          let color = palette[i]; //rainbow[Util.mod(i, rainbow.length)];
+          // console.log("drawContour", {d,color});
+          drawContour(surface, contour, color);
           return d;
         });
         contoursDepth = depths.length ? Math.max(...depths) : 0;
         //   console.log('contoursDepth:', contoursDepth);
 
-        font.draw(mat, video.time + ' ⏩', tPos, 0xffffff || { r: 0, g: 255, b: 0 });
-        font.draw(mat, `#${showIndex + 1}/${n}` + (name ? ` (${name})` : ''), [5, 5 + tSize.y], {
-          r: 255,
-          g: 255,
-          b: 0
-        });
+        font.draw(surface, video.time + ' ⏩', tPos, 0xffffff || { r: 0, g: 255, b: 0, a: 255 });
+        font.draw(surface,
+          `#${showIndex + 1}/${n}` + (name ? ` (${name})` : ''),
+          [5, 5 + tSize.y],
+          {
+            r: 255,
+            g: 255,
+            b: 0,
+            a: 255
+          }
+        );
 
         let size = mat.size.mul(zoom);
 
+        const inspectMat = ({ rows, cols, channels, depth, type }) => ({
+          rows,
+          cols,
+          channels,
+          depth,
+          type
+        });
         win.resize(size.width, size.height);
-        win.show(mat);
+          console.log('inspectMat', Object.entries({ out, surface}).map(([n,m]) => [n,inspectMat(m)]));
+
+        let mask = getAlpha(surface);
+
+            surface.copyTo(out, mask);
+
+/*    cv.cvtColor(surface, surface, cv.COLOR_RGBA2BGR);
+        surface.copyTo(out, mask);*/
+
+        /*console.log("mask:", [...mask.row(100).values()] );
+ console.log("surface:", inspectMat(surface));*/
+        win.show(out);
       }
     }
   );
 
   console.log('Pipeline processor names:', pipeline.names);
+  video.seek_msecs(5000);
 
   while(running) {
     let frameNo = video.get('pos_frames');
