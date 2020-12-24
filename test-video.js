@@ -1,24 +1,20 @@
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
-//import { client, server, fetch } from 'net';
 import * as cv from 'cv';
 import * as draw from 'draw';
 import { Mat } from 'mat';
-import { Size } from 'size';
 import { Point } from 'point';
-import { Contour } from 'contour';
 import { VideoSource } from './cvVideo.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.js';
 import { Alea } from './lib/alea.js';
-import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
+import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam } from './param.js';
-
-//import { drawCircle, drawContour, drawLine, drawPolygon, drawRect } from 'draw';
 
 let prng = new Alea(Date.now());
 const hr = Util.hrtime;
 
 let rainbow;
+let zoom = 1;
 
 function Pipeline(processors = [], callback) {
   let self;
@@ -210,7 +206,7 @@ async function main(...args) {
 
   console.log('rainbow:', rainbow);
 
-  let win = new Window('gray', cv.WINDOW_AUTOSIZE /*| cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO*/);
+  let win = new Window('gray', /*cv.WINDOW_AUTOSIZE | cv.WINDOW_NORMAL  |*/ cv.WINDOW_KEEPRATIO);
   console.log('Mouse :', { MouseEvents, MouseFlags });
   //console.log('cv.EVENT_MOUSEMOVE', cv.EVENT_MOUSEMOVE);
   //
@@ -309,6 +305,10 @@ async function main(...args) {
           g: 255,
           b: 0
         });
+
+        let size = mat.size.mul(zoom);
+
+        win.resize(size.width, size.height);
         win.show(mat);
       }
     }

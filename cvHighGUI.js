@@ -51,8 +51,9 @@ export class Window {
     cv.moveWindow(this.name, x, y);
   }
 
-  resize(width, height) {
-    cv.resizeWindow(this.name, width, height);
+  resize(...args) {
+    let size = new Size(...args);
+    cv.resizeWindow(this.name, size.width, size.height);
   }
 
   get imageRect() {

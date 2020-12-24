@@ -1,3 +1,5 @@
+import Util from './lib/util.js';
+
 export class Param {
   [Symbol.toPrimitive](hint) {
     //console.log(`Param[Symbol.toPrimitive](${hint})`);
