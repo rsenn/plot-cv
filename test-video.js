@@ -414,7 +414,8 @@ async function main(...args) {
         cv.bitwise_or(out, surface, out);*/
 
         //surface.copyTo(out, mask);
-        out = Mat.add(out, surface);
+       // out = Mat.add(out, surface);
+        cv.addWeighted(out, 1, surface, 1, 0, out);
         // out = Mat.and(out, toBGR(mask));
         //        cv.bitwise_and(out,mask, out);
 

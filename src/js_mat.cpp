@@ -479,43 +479,6 @@ js_mat_get_props(JSContext* ctx, JSValueConst this_val, int magic) {
 }
 
 static JSValue
-js_mat_class_func(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
-  JSValueConst *v = argv, *e = &argv[argc];
-  JSMatData result;
-  JSMatData *prev = nullptr, *mat = nullptr;
-
-  while(v < e) {
-    JSValueConst arg = *v++;
-
-    if(nullptr == (mat = js_mat_data(ctx, arg)))
-      return JS_EXCEPTION;
-
-    if(prev) {
-      JSMatData const &a = *prev, &b = *mat;
-
-      switch(magic) {
-        case 0: result = a + b; break;
-        case 1: result = a - b; break;
-        case 2: result = a * b; break;
-        case 3: result = a / b; break;
-        case 4: result = a & b; break;
-        case 5: result = a | b; break;
-        case 6: result = a ^ b; break;
-      }
-
-      prev = &result;
-    } else {
-      prev = mat;
-
-      result = cv::Mat::zeros(mat->rows, mat->cols, mat->type());
-      mat->copyTo(result);
-    }
-  }
-
-  return js_mat_wrap(ctx, result);
-}
-
-static JSValue
 js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   cv::Mat* m = js_mat_data(ctx, this_val);
   int x, y;
@@ -786,6 +749,56 @@ js_mat_iterator_dup(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   return JS_DupValue(ctx, this_val);
 }
 
+static JSValue
+js_mat_class_func(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSValueConst *v = argv, *e = &argv[argc];
+  JSMatData result;
+  JSMatData *prev = nullptr, *mat = nullptr;
+
+  while(v < e) {
+    JSValueConst arg = *v++;
+
+    if(nullptr == (mat = js_mat_data(ctx, arg)))
+      return JS_EXCEPTION;
+
+    if(prev) {
+      JSMatData const &a = *prev, &b = *mat;
+
+      switch(magic) {
+        case 0: result = a + b; break;
+        case 1: result = a - b; break;
+        case 2: result = a * b; break;
+        case 3: result = a / b; break;
+        case 4: result = a & b; break;
+        case 5: result = a | b; break;
+        case 6: result = a ^ b; break;
+      }
+
+      prev = &result;
+    } else {
+      prev = mat;
+
+      result = cv::Mat::zeros(mat->rows, mat->cols, mat->type());
+      mat->copyTo(result);
+    }
+  }
+
+  return js_mat_wrap(ctx, result);
+}
+
+static JSValue
+js_mat_class_create(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSValue ret = js_mat_ctor(ctx, this_val, argc, argv);
+  JSMatData* mat = js_mat_data(ctx, ret);
+
+  switch(magic) {
+    case 0: *mat = cv::Mat::zeros(mat->rows, mat->cols, mat->type()); break;
+    case 1: *mat = cv::Mat::ones(mat->rows, mat->cols, mat->type()); break;
+  }
+
+  return ret;
+}
+
 JSValue mat_proto, mat_class, mat_iterator_proto, mat_iterator_class;
 JSClassID js_mat_class_id, js_mat_iterator_class_id;
 
@@ -851,6 +864,8 @@ const JSCFunctionListEntry js_mat_static_funcs[] = {
     JS_CFUNC_MAGIC_DEF("and", 2, js_mat_class_func, 4),
     JS_CFUNC_MAGIC_DEF("or", 2, js_mat_class_func, 5),
     JS_CFUNC_MAGIC_DEF("xor", 3, js_mat_class_func, 6),
+    JS_CFUNC_MAGIC_DEF("zeros", 1, js_mat_class_create, 0),
+    JS_CFUNC_MAGIC_DEF("ones", 1, js_mat_class_create, 1),
     JS_PROP_INT32_DEF("CV_8U", CV_MAKETYPE(CV_8U, 1), JS_PROP_ENUMERABLE),
 };
 
