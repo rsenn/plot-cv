@@ -35,9 +35,12 @@ js_mat_new(JSContext* ctx, int cols, int rows, int type) {
 
   s = static_cast<JSMatData*>(js_mallocz(ctx, sizeof(JSMatData)));
 
-  new(s) cv::Mat(cv::Size(cols, rows), type);
-
-  *s = cv::Mat::zeros(cv::Size(cols, rows), type);
+  if(cols > 0 && rows > 0) {
+    new(s) cv::Mat(cv::Size(cols, rows), type);
+    *s = cv::Mat::zeros(cv::Size(cols, rows), type);
+  } else {
+    new(s) cv::Mat();
+  }
 
   s->addref();
 
@@ -53,8 +56,8 @@ js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* arg
   JSSizeData<double> size;
 
   int64_t cols = 0, rows = 0;
-  uint32_t type = 0; 
-  
+  uint32_t type = 0;
+
   if(argc > 0) {
     if(js_size_read(ctx, argv[0], &size)) {
       cols = size.width;

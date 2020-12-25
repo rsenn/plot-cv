@@ -16,41 +16,35 @@ const hr = Util.hrtime;
 let rainbow;
 let zoom = 1;
 
-function Pipeline(processors = [], callback) {
-  let self;
-  self = function(mat) {
-    let i = 0;
-    for(let processor of self.processors) {
-      let start = hr();
-      mat = processor.call(self, mat, self.images[i], i);
-      if(mat) self.images[i] = mat;
-      self.times[i] = hr(start);
-      if(typeof callback == 'function')
-        callback.call(self, self.images[i], i, self.processors.length);
-      i++;
-    }
-    return mat;
-  };
-  Util.define(self, { processors, images: new Array(processors.length), callback });
-  self.times = new Array(processors.length);
-  return Object.setPrototypeOf(self, Pipeline.prototype);
-  return Object.assign(self, Pipeline.prototype);
-}
-
-Object.setPrototypeOf(Pipeline.prototype, Function.prototype);
-
-Object.defineProperties(Pipeline.prototype, {
-  size: {
-    get() {
-      return this.processors.length;
-    }
-  },
-  names: {
-    get() {
-      return this.processors.map(p => p.name);
-    }
+class Pipeline extends Function {
+  constructor(processors = [], callback) {
+    let self;
+    self = function(mat) {
+      let i = 0;
+      for(let processor of self.processors) {
+        let start = hr();
+        mat = processor.call(self, mat, self.images[i], i);
+        if(mat) self.images[i] = mat;
+        self.times[i] = hr(start);
+        if(typeof callback == 'function')
+          callback.call(self, self.images[i], i, self.processors.length);
+        i++;
+      }
+      return mat;
+    };
+    Util.define(self, { processors, images: new Array(processors.length), callback });
+    self.times = new Array(processors.length);
+    return Object.setPrototypeOf(self, Pipeline.prototype);
+    //return Object.assign(self, Pipeline.prototype);
   }
-});
+
+  get size() {
+    return this.processors.length;
+  }
+  get names() {
+    return this.processors.map(p => p.name);
+  }
+}
 
 function Processor(fn, ...args) {
   let self;
@@ -100,118 +94,6 @@ let symbols = [
   ]
 ];
 
-function dumpMat(name, mat) {
-  console.log(`${name} =`,
-    Object.create(
-      Mat.prototype,
-      ['cols', 'rows', 'depth', 'channels', 'type'].reduce((acc, prop) => ({ ...acc, [prop]: { value: mat[prop], enumerable: true } }),
-        {}
-      )
-    )
-  );
-}
-
-function getConstants(names) {
-  return Object.fromEntries(names.map(name => [name, '0x' + cv[name].toString(16)]));
-}
-
-function findConstant(value, keyCond = k => /^CV/.test(k)) {
-  return Util.findKey(cv, (v, k) => v == value && keyCond(k));
-}
-
-function findType(value) {
-  return findConstant(value, k => /^CV_[0-9]+[A-Z]+C[0-9]/.test(k));
-}
-
-function getBitDepth(mat) {
-  switch (mat.depth) {
-    case cv.CV_8U:
-    case cv.CV_8S:
-      return 8;
-    case cv.CV_16U:
-    case cv.CV_16S:
-      return 16;
-    case cv.CV_32F:
-      return 32;
-    case cv.CV_64F:
-      return 64;
-  }
-}
-
-function to32bit(mat) {
-  const bits = getBitDepth(mat);
-  if(bits == 32) return mat;
-  let ret = new Mat();
-  const max = Math.pow(2, bits) - 1;
-  const type = cv.CV_32F | ((mat.channels - 1) << 3);
-
-  /* console.log('max:', max);
-  console.log('const:', findType(type), type, cv[findType(type)]);
-  console.log('channels:', mat.channels);
-  console.log('constants:', getConstants(['CV_32F', 'CV_32FC1', 'CV_32FC3', 'CV_32FC4', 'CV_8U', 'CV_8UC1', 'CV_8UC3', 'CV_8UC4']));*/
-  mat.convertTo(ret, type, 1.0 / max);
-  return ret;
-}
-
-function to8bit(mat) {
-  const bits = getBitDepth(mat);
-  if(bits == 8) return mat;
-  let ret = new Mat();
-  const type = cv.CV_8U | ((mat.channels - 1) << 3);
-  mat.convertTo(ret, type, 255);
-  return ret;
-}
-
-function toGrayscale(mat) {
-  let lab = new Mat();
-  let channels = [new Mat(), new Mat(), new Mat()];
-  cv.cvtColor(mat, lab, cv.COLOR_BGR2Lab);
-  cv.split(lab, channels);
-  return channels[0];
-}
-function getAlpha(mat) {
-  let channels = Util.repeat(mat.channels, () => new Mat());
-  cv.split(mat, channels);
-  return channels[3];
-}
-function alphaToMask(mat) {
-  let bgr = new Mat();
-  //    cv.cvtColor(mat, bgr, cv.COLOR_GRAY2BGR);
-  cv.merge([mat, mat, mat], bgr);
-  return bgr;
-}
-
-function toBGR(mat) {
-  if(mat.channels >= 3) return mat.clone();
-
-  let bgr = new Mat();
-  cv.cvtColor(mat, bgr, cv.COLOR_GRAY2BGR);
-  return bgr;
-}
-function toRGBA(mat) {
-  if(mat.channels == 4) return mat.clone();
-  let rgba = new Mat();
-  cv.cvtColor(mat, rgba, cv.COLOR_BGR2BGRA);
-  return rgba;
-}
-
-function minMax(mat) {
-  const ret = cv.minMaxLoc(mat);
-  return [ret.minVal, ret.maxVal];
-}
-
-function modifierMap(keyCode) {
-  return [
-    ['shift', 0x10000],
-    ['alt', 0x80000],
-    ['ctrl', 0x40000]
-  ].map(([modifier, flag]) => [modifier, keyCode & flag ? 1 : 0]);
-}
-
-function drawContour(mat, contour, color) {
-  cv.drawContours(mat, [contour], 0, color, 1, cv.LINE_AA);
-}
-
 const inspectObj = obj => console.inspect(obj, { multiline: false });
 const inspectMat = ({ rows, cols, channels, depth, type }) =>
   inspectObj({
@@ -223,24 +105,28 @@ const inspectMat = ({ rows, cols, channels, depth, type }) =>
   });
 
 function Profiler(name) {
-  let self;
-  let i = 0;
+  let self,
+    i = 0;
+  let freq = cv.getTickFrequency();
+
+  let ticks = () => cv.getTickCount() || Util.hrtime();
   let prev,
-    start = Util.hrtime();
-  let time = () => Util.hrtime(start);
+    start = ticks();
   self = function() {
-    let t = time();
-    let split = prev ? t.since(prev) : t;
-    if(prev) console.log(`${name} #${i} ${split}`);
+    let t = ticks();
+    let split = t - (prev || start);
+    if(prev) console.log(`${name} #${i} ${split / freq}`);
     i++;
     return (prev = t);
   };
   Util.define(self, {
     get elapsed() {
-      return Util.hrtime(start);
+      let t = ticks();
+      return t - start;
     },
     get lap() {
-      return Util.hrtime(prev || start);
+      let t = ticks();
+      return t - (prev || start);
     }
   });
   return self;
@@ -271,12 +157,13 @@ async function main(...args) {
   //
   const printFlags = flags => [...Util.bitsToNames(MouseFlags)];
   console.log('printFlags:', printFlags + '');
+  console.log('tickFrequency:', cv.getTickFrequency());
 
   win.setMouseCallback(function (event, x, y, flags) {
     event = Mouse.printEvent(event);
     flags = Mouse.printFlags(flags);
 
-    console.log('Mouse event:', { event, x, y, flags });
+    console.log('Mouse event:', console.inspect({ event, x, y, flags }, { multiline: false }));
   });
 
   console.log('Setup duration:', hr(begin));
@@ -375,7 +262,7 @@ async function main(...args) {
         let name = pipeline.processors[showIndex].name;
         //  mat = toBGR(mat);
         let surface = new Mat(mat.rows, mat.cols, cv.CV_8UC4);
-        let out = Mat.zeros(mat.rows, mat.cols, surface.type);
+        let out = new Mat(/*mat.rows, mat.cols, surface.type*/);
 
         prof();
         //console.log('mat ' + inspectMat(mat));
@@ -528,3 +415,115 @@ async function main(...args) {
 }
 
 Util.callMain(main, true);
+
+function dumpMat(name, mat) {
+  console.log(`${name} =`,
+    Object.create(
+      Mat.prototype,
+      ['cols', 'rows', 'depth', 'channels', 'type'].reduce((acc, prop) => ({ ...acc, [prop]: { value: mat[prop], enumerable: true } }),
+        {}
+      )
+    )
+  );
+}
+
+function getConstants(names) {
+  return Object.fromEntries(names.map(name => [name, '0x' + cv[name].toString(16)]));
+}
+
+function findConstant(value, keyCond = k => /^CV/.test(k)) {
+  return Util.findKey(cv, (v, k) => v == value && keyCond(k));
+}
+
+function findType(value) {
+  return findConstant(value, k => /^CV_[0-9]+[A-Z]+C[0-9]/.test(k));
+}
+
+function getBitDepth(mat) {
+  switch (mat.depth) {
+    case cv.CV_8U:
+    case cv.CV_8S:
+      return 8;
+    case cv.CV_16U:
+    case cv.CV_16S:
+      return 16;
+    case cv.CV_32F:
+      return 32;
+    case cv.CV_64F:
+      return 64;
+  }
+}
+
+function to32bit(mat) {
+  const bits = getBitDepth(mat);
+  if(bits == 32) return mat;
+  let ret = new Mat();
+  const max = Math.pow(2, bits) - 1;
+  const type = cv.CV_32F | ((mat.channels - 1) << 3);
+
+  /* console.log('max:', max);
+  console.log('const:', findType(type), type, cv[findType(type)]);
+  console.log('channels:', mat.channels);
+  console.log('constants:', getConstants(['CV_32F', 'CV_32FC1', 'CV_32FC3', 'CV_32FC4', 'CV_8U', 'CV_8UC1', 'CV_8UC3', 'CV_8UC4']));*/
+  mat.convertTo(ret, type, 1.0 / max);
+  return ret;
+}
+
+function to8bit(mat) {
+  const bits = getBitDepth(mat);
+  if(bits == 8) return mat;
+  let ret = new Mat();
+  const type = cv.CV_8U | ((mat.channels - 1) << 3);
+  mat.convertTo(ret, type, 255);
+  return ret;
+}
+
+function toGrayscale(mat) {
+  let lab = new Mat();
+  let channels = [new Mat(), new Mat(), new Mat()];
+  cv.cvtColor(mat, lab, cv.COLOR_BGR2Lab);
+  cv.split(lab, channels);
+  return channels[0];
+}
+function getAlpha(mat) {
+  let channels = Util.repeat(mat.channels, () => new Mat());
+  cv.split(mat, channels);
+  return channels[3];
+}
+function alphaToMask(mat) {
+  let bgr = new Mat();
+  //    cv.cvtColor(mat, bgr, cv.COLOR_GRAY2BGR);
+  cv.merge([mat, mat, mat], bgr);
+  return bgr;
+}
+
+function toBGR(mat) {
+  if(mat.channels >= 3) return mat.clone();
+
+  let bgr = new Mat();
+  cv.cvtColor(mat, bgr, cv.COLOR_GRAY2BGR);
+  return bgr;
+}
+function toRGBA(mat) {
+  if(mat.channels == 4) return mat.clone();
+  let rgba = new Mat();
+  cv.cvtColor(mat, rgba, cv.COLOR_BGR2BGRA);
+  return rgba;
+}
+
+function minMax(mat) {
+  const ret = cv.minMaxLoc(mat);
+  return [ret.minVal, ret.maxVal];
+}
+
+function modifierMap(keyCode) {
+  return [
+    ['shift', 0x10000],
+    ['alt', 0x80000],
+    ['ctrl', 0x40000]
+  ].map(([modifier, flag]) => [modifier, keyCode & flag ? 1 : 0]);
+}
+
+function drawContour(mat, contour, color) {
+  cv.drawContours(mat, [contour], 0, color, 1, cv.LINE_AA);
+}
