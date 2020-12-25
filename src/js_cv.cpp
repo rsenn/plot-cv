@@ -259,7 +259,12 @@ js_cv_cvt_color(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   if(argc >= 4)
     JS_ToInt32(ctx, &dstCn, argv[3]);
 
-  cv::cvtColor(*src, *dst, code, dstCn);
+  try {
+    cv::cvtColor(*src, *dst, code, dstCn);
+  } catch(const cv::Exception& e) {
+    std::cerr << e.what() << std::endl;
+    return JS_EXCEPTION;
+  }
   return JS_UNDEFINED;
 }
 

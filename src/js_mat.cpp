@@ -19,7 +19,7 @@ typedef struct JSMatIteratorData {
 } JSMatIteratorData;
 
 typedef struct JSMatSizeData {
-  size_t rows, cols;
+  uint32_t rows, cols;
 } JSMatSizeData;
 
 VISIBLE JSMatData*
@@ -28,7 +28,7 @@ js_mat_data(JSContext* ctx, JSValueConst val) {
 }
 
 VISIBLE JSValue
-js_mat_new(JSContext* ctx, int cols, int rows, int type) {
+js_mat_new(JSContext* ctx, uint32_t cols, uint32_t rows, int type) {
   JSValue ret;
   JSMatData* s;
   ret = JS_NewObjectProtoClass(ctx, mat_proto, js_mat_class_id);
@@ -55,8 +55,8 @@ js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* arg
   JSValue proto;
   JSSizeData<double> size;
 
-  int64_t cols = 0, rows = 0;
-  uint32_t type = 0;
+  uint32_t cols = 0, rows = 0;
+  int32_t type = 0;
 
   if(argc > 0) {
     if(js_size_read(ctx, argv[0], &size)) {
@@ -65,14 +65,14 @@ js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* arg
       argv++;
       argc--;
     } else {
-      JS_ToInt64(ctx, &rows, argv[0]);
-      JS_ToInt64(ctx, &cols, argv[1]);
+      JS_ToUint32(ctx, &rows, argv[0]);
+      JS_ToUint32(ctx, &cols, argv[1]);
       argv += 2;
       argc -= 2;
     }
 
     if(argc > 0) {
-      if(!JS_ToUint32(ctx, &type, argv[0])) {
+      if(!JS_ToInt32(ctx, &type, argv[0])) {
         argv++;
         argc--;
       }
@@ -266,7 +266,7 @@ js_mat_at(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
     argc -= 2;
     argv += 2;
   } else if(argc >= 1 && JS_IsNumber(argv[0])) {
-    JSMatSizeData dim = {static_cast<size_t>(m->rows), static_cast<size_t>(m->cols)};
+    JSMatSizeData dim = {static_cast<uint32_t>(m->rows), static_cast<uint32_t>(m->cols)};
     uint32_t idx;
 
     JS_ToUint32(ctx, &idx, argv[0]);
@@ -286,7 +286,7 @@ js_mat_set(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) 
 
   JSPointData<double> pt;
   JSValue ret;
-  int64_t col = -1, row = -1;
+  int32_t col = -1, row = -1;
 
   if(js_point_read(ctx, argv[0], &pt)) {
     col = pt.x;
@@ -295,12 +295,12 @@ js_mat_set(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) 
     argv++;
   } else {
     if(argc >= 1) {
-      JS_ToInt64(ctx, &row, argv[0]);
+      JS_ToInt32(ctx, &row, argv[0]);
       argc--;
       argv++;
     }
     if(argc >= 1) {
-      JS_ToInt64(ctx, &col, argv[0]);
+      JS_ToInt32(ctx, &col, argv[0]);
       argc--;
       argv++;
     }
@@ -387,7 +387,7 @@ js_mat_vector_get(JSContext* ctx, int argc, JSValueConst* argv, std::vector<T>& 
 template<class T>
 static std::vector<T>
 js_mat_set_vector(JSContext* ctx, JSMatData* m, int argc, JSValueConst* argv) {
-  JSMatSizeData dim = {static_cast<size_t>(m->rows), static_cast<size_t>(m->cols)};
+  JSMatSizeData dim = {static_cast<uint32_t>(m->rows), static_cast<uint32_t>(m->cols)};
   uint32_t idx;
   std::vector<bool> defined;
   std::vector<T> v;
@@ -579,15 +579,21 @@ js_mat_convert_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 
 static JSValue
 js_mat_copy_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSMatData *m, *output;
+  JSMatData *m, *output, *mask;
 
   m = js_mat_data(ctx, this_val);
   output = js_mat_data(ctx, argv[0]);
 
+  if(argc > 1)
+    mask = js_mat_data(ctx, argv[1]);
+
   if(m == nullptr || output == nullptr)
     return JS_EXCEPTION;
 
-  m->copyTo(*output);
+  if(mask)
+    m->copyTo(*output, *mask);
+  else
+    m->copyTo(*output);
 
   return JS_UNDEFINED;
 }
@@ -643,7 +649,10 @@ js_mat_wrap(JSContext* ctx, const cv::Mat& mat) {
 
   s = static_cast<JSMatData*>(js_mallocz(ctx, sizeof(JSMatData)));
 
-  new(s) cv::Mat(cv::Size(mat.cols, mat.rows), mat.type());
+  if(mat.cols > 0 && mat.rows > 0)
+    new(s) cv::Mat(cv::Size(mat.cols, mat.rows), mat.type());
+  else
+    new(s) cv::Mat();
   *s = mat;
 
   s->addref();
@@ -794,9 +803,22 @@ js_mat_class_create(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   JSValue ret = js_mat_ctor(ctx, this_val, argc, argv);
   JSMatData* mat = js_mat_data(ctx, ret);
 
+  if(mat->rows == 0 || mat->cols == 0) {
+    JS_FreeValue(ctx, ret);
+    return JS_EXCEPTION;
+  }
+
   switch(magic) {
-    case 0: *mat = cv::Mat::zeros(mat->rows, mat->cols, mat->type()); break;
-    case 1: *mat = cv::Mat::ones(mat->rows, mat->cols, mat->type()); break;
+    case 0: {
+      cv::Mat init = cv::Mat::zeros(mat->rows, mat->cols, mat->type());
+      init.copyTo(*mat);
+      break;
+    }
+    case 1: {
+      cv::Mat init = cv::Mat::ones(mat->rows, mat->cols, mat->type());
+      init.copyTo(*mat);
+      break;
+    }
   }
 
   return ret;

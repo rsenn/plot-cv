@@ -254,18 +254,24 @@ async function main(...args) {
         // console.log('walkContours:', [...walkContours(hier)]);
       })
     ],
-    (mat, i, n) => {
+    (mat, i, n) => {       
+     console.log(pipeline.names[i]+' mat ' + inspectMat(mat));
+
       const showIndex = Util.mod(frameShow, n);
       if(showIndex == i) {
         let prof = new Profiler('callback');
 
         let name = pipeline.processors[showIndex].name;
-        //  mat = toBGR(mat);
-        let surface = new Mat(mat.rows, mat.cols, cv.CV_8UC4);
-        let out = new Mat(/*mat.rows, mat.cols, surface.type*/);
+              prof();
+  //  mat = toBGR(mat);
+              console.log('mat ', {rows: mat.rows, cols: mat.cols});
+                prof();
+let surface = new Mat(mat.rows, mat.cols, cv.CV_8UC4);
+                  prof();
+    let out = new Mat(/*mat.rows, mat.cols, surface.type*/);
 
         prof();
-        //console.log('mat ' + inspectMat(mat));
+        console.log('mat ' + inspectMat(mat));
 
         cv.cvtColor(mat, out, cv.COLOR_BGR2BGRA);
 
@@ -481,6 +487,8 @@ function to8bit(mat) {
 function toGrayscale(mat) {
   let lab = new Mat();
   let channels = [new Mat(), new Mat(), new Mat()];
+  console.log('toGrayscale mat ' + inspectMat(mat));
+
   cv.cvtColor(mat, lab, cv.COLOR_BGR2Lab);
   cv.split(lab, channels);
   return channels[0];
@@ -501,12 +509,15 @@ function toBGR(mat) {
   if(mat.channels >= 3) return mat.clone();
 
   let bgr = new Mat();
+  console.log('toGrayscale mat ' + inspectMat(mat));
   cv.cvtColor(mat, bgr, cv.COLOR_GRAY2BGR);
   return bgr;
 }
-function toRGBA(mat) {
+function toRGBA(matat) {
   if(mat.channels == 4) return mat.clone();
   let rgba = new Mat();
+  console.log('toRGBA mat ' + inspectMat(mat));
+
   cv.cvtColor(mat, rgba, cv.COLOR_BGR2BGRA);
   return rgba;
 }
