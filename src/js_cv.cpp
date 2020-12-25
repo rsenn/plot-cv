@@ -1106,7 +1106,9 @@ static JSValue
 js_cv_bitwise(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   std::vector<JSMatData*> v;
 
-  std::transform(&argv[0], &argv[argc], std::back_inserter(v), std::bind(&js_mat_data, ctx, std::placeholders::_1));
+  v.resize(4);
+
+  std::transform(&argv[0], &argv[argc], v.begin(), std::bind(&js_mat_data, ctx, std::placeholders::_1));
 
   switch(magic) {
     case 0: cv::bitwise_and(*v[0], *v[1], *v[2], v[3] ? *v[3] : cv::noArray()); break;

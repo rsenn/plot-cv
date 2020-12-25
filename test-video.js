@@ -153,6 +153,15 @@ function to32bit(mat) {
   return ret;
 }
 
+function to8bit(mat) {
+  const bits = getBitDepth(mat);
+  if(bits == 8) return mat;
+  let ret = new Mat();
+  const type = cv.CV_8U | ((mat.channels - 1) << 3);
+  mat.convertTo(ret, type, 255);
+  return ret;
+}
+
 function toGrayscale(mat) {
   let lab = new Mat();
   let channels = [new Mat(), new Mat(), new Mat()];
@@ -202,6 +211,16 @@ function modifierMap(keyCode) {
 function drawContour(mat, contour, color) {
   cv.drawContours(mat, [contour], 0, color, 1, cv.LINE_AA);
 }
+
+const inspectObj = obj => console.inspect(obj, { multiline: false });
+const inspectMat = ({ rows, cols, channels, depth, type }) =>
+  inspectObj({
+    rows,
+    cols,
+    channels,
+    depth,
+    type
+  });
 
 async function main(...args) {
   let start;
@@ -320,19 +339,29 @@ async function main(...args) {
         //console.log('hier:', hier .map((h, i) => [i, h]) .filter(([i, h]) => h[cv.HIER_PREV] == -1 && h[cv.HIER_PARENT] == -1));
 
         // console.log('walkContours:', [...walkContours(hier)]);
-      }),
-      toBGR
+      })
     ],
     (mat, i, n) => {
       const showIndex = Util.mod(frameShow, n);
       if(showIndex == i) {
         let name = pipeline.processors[showIndex].name;
-        mat = toBGR(mat);
+        //  mat = toBGR(mat);
         let surface = new Mat(mat.size, cv.CV_8UC4);
-        let out = new Mat(mat.size, cv.CV_8UC4);
+        let out = new Mat(/*mat.size, cv.CV_8UC4*/);
+
+        /*    if(mat.channels == 1) cv.cvtColor(mat, mat, cv.COLOR_GRAY2BGR);
+        if(mat.depth == cv.CV_32F) mat.convertTo(mat, cv.CV_8UC3);*/
+
+        console.log('mat ' + inspectMat(mat));
+        /*  if(out.type != mat.type)
+          mat.convertTo(out, out.type, 255);
+        else*/
+        //        mat.copyTo(out);
+        cv.cvtColor(mat, out, cv.COLOR_BGR2BGRA);
+
+        console.log('out ' + inspectMat(out));
 
         //   mat.convertTo(out, cv.CV_8UC4);
-        cv.cvtColor(mat, out, cv.COLOR_BGR2BGRA);
 
         let ids = [...getToplevel(hier)];
 
@@ -369,29 +398,26 @@ async function main(...args) {
 
         let size = mat.size.mul(zoom);
 
-        const inspectMat = ({ rows, cols, channels, depth, type }) => ({
-          rows,
-          cols,
-          channels,
-          depth,
-          type
-        });
         win.resize(size.width, size.height);
-        console.log('inspectMat',
-          Object.entries({ out, surface }).map(([n, m]) => [n, inspectMat(m)])
-        );
 
+        /*
+        cv.cvtColor(surface, surface, cv.COLOR_BGRA2BGR);
+        cv.cvtColor(out, out, cv.COLOR_BGRA2BGR);
+*/
         let mask = toBGR(getAlpha(surface));
+        console.log('inspectMat',
+          ...Object.entries({ out, surface, mask }).map(([n, m]) =>
+            [('\n' + n + ':').padEnd(10), inspectMat(m)].join('')
+          )
+        );
+        /*
+        cv.bitwise_or(out, surface, out);*/
 
+        //surface.copyTo(out, mask);
         out = Mat.add(out, surface);
+        // out = Mat.and(out, toBGR(mask));
+        //        cv.bitwise_and(out,mask, out);
 
-        //            surface.copyTo(out, mask);
-
-        /*    cv.cvtColor(surface, surface, cv.COLOR_RGBA2BGR);
-        surface.copyTo(out, mask);*/
-
-        /*console.log("mask:", [...mask.row(100).values()] );
- console.log("surface:", inspectMat(surface));*/
         win.show(out);
       }
     }
