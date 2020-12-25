@@ -31,8 +31,9 @@ js_video_capture_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValue
     cv::String filename;
 
     if(argc > 1)
-      if(JS_ToInt32(ctx, &apiPreference, argv[1]))
-        apiPreference = cv::CAP_ANY;
+      /* if(*/ JS_ToInt32(ctx, &apiPreference, argv[1]) /*)
+           apiPreference = cv::CAP_ANY*/
+          ;
 
     // if(JS_ToInt32(ctx, &camID, argv[0]))
     filename = JS_ToCString(ctx, argv[0]);
@@ -105,7 +106,12 @@ js_video_capture_method(JSContext* ctx, JSValueConst video_capture, int argc, JS
       ret = JS_EXCEPTION;
   }
   if(magic == 2) {
-    std::string backend = s->getBackendName();
+    std::string backend;
+    try {
+      backend = s->getBackendName();
+    } catch(const cv::Exception& e) {
+      backend = e.msg;
+    }
     ret = JS_NewString(ctx, backend.c_str());
   }
   if(magic == 3)
