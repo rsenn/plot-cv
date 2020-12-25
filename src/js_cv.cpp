@@ -330,6 +330,36 @@ js_cv_normalize(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 }
 
 static JSValue
+js_cv_add_weighted(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+
+  cv::Mat *src1, *src2, *dst;
+  double alpha, beta, gamma;
+  int32_t dtype = -1;
+
+  src1 = js_mat_data(ctx, argv[0]);
+
+  src2 = js_mat_data(ctx, argv[2]);
+  if(argc >= 6)
+    dst = js_mat_data(ctx, argv[5]);
+
+  if(src1 == nullptr || src2 == nullptr || dst == nullptr)
+    return JS_EXCEPTION;
+
+  if(argc >= 2)
+    JS_ToFloat64(ctx, &alpha, argv[1]);
+  if(argc >= 4)
+    JS_ToFloat64(ctx, &beta, argv[3]);
+  if(argc >= 5)
+    JS_ToFloat64(ctx, &gamma, argv[4]);
+
+  if(argc >= 7)
+    JS_ToInt32(ctx, &dtype, argv[6]);
+
+  cv::addWeighted(*src1, alpha, *src2, beta, gamma, *dst, dtype);
+  return JS_UNDEFINED;
+}
+
+static JSValue
 js_cv_equalize_hist(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
 
   cv::Mat *src, *dst;
@@ -1177,6 +1207,7 @@ js_function_list_t js_cv_static_funcs{
     JS_CFUNC_DEF("merge", 2, js_cv_merge),
     JS_CFUNC_DEF("mixChannels", 3, js_cv_mix_channels),
     JS_CFUNC_DEF("minMaxLoc", 2, js_cv_min_max_loc),
+    JS_CFUNC_DEF("addWeighted", 6, js_cv_add_weighted),
     JS_CFUNC_MAGIC_DEF("getTickCount", 0, js_cv_getticks, 0),
     JS_CFUNC_MAGIC_DEF("getTickFrequency", 0, js_cv_getticks, 1),
     JS_CFUNC_MAGIC_DEF("getCPUTickCount", 0, js_cv_getticks, 2),
