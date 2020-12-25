@@ -222,6 +222,30 @@ const inspectMat = ({ rows, cols, channels, depth, type }) =>
     type
   });
 
+function Profiler(name) {
+  let self;
+  let i = 0;
+  let prev,
+    start = Util.hrtime();
+  let time = () => Util.hrtime(start);
+  self = function() {
+    let t = time();
+    let split = prev ? t.since(prev) : t;
+    if(prev) console.log(`${name} #${i} ${split}`);
+    i++;
+    return (prev = t);
+  };
+  Util.define(self, {
+    get elapsed() {
+      return Util.hrtime(start);
+    },
+    get lap() {
+      return Util.hrtime(prev || start);
+    }
+  });
+  return self;
+}
+
 async function main(...args) {
   let start;
   let begin = hr();
@@ -272,6 +296,7 @@ async function main(...args) {
   let bgr = new Mat();
   console.log('backend:', video.backend);
   console.log('grab():', video.grab);
+  console.log('fps:', video.fps);
   //  console.log('read():', [...Util.repeat(10, () => video.grab())]);
   let frameCount = video.get('frame_count');
   let frameShow = -1;
@@ -332,7 +357,8 @@ async function main(...args) {
       toGrayscale,
       Processor(cv.GaussianBlur, [3, 3], 0),
       Processor(function edgeDetect(src, dst) {
-        cv.Canny(src, dst, 10, 60, 3);
+        cv.Canny(src, dst, 10, 20, 3);
+        //   console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
 
         cv.findContours(dst, (contours = []), (hier = []), cv[params.mode], cv[params.method]);
 
@@ -344,45 +370,39 @@ async function main(...args) {
     (mat, i, n) => {
       const showIndex = Util.mod(frameShow, n);
       if(showIndex == i) {
+        let prof = new Profiler('callback');
+
         let name = pipeline.processors[showIndex].name;
         //  mat = toBGR(mat);
-        let surface = new Mat(mat.size, cv.CV_8UC4);
-        let out = new Mat(/*mat.size, cv.CV_8UC4*/);
+        let surface = new Mat(mat.rows, mat.cols, cv.CV_8UC4);
+        let out = Mat.zeros(mat.rows, mat.cols, surface.type);
 
-        /*    if(mat.channels == 1) cv.cvtColor(mat, mat, cv.COLOR_GRAY2BGR);
-        if(mat.depth == cv.CV_32F) mat.convertTo(mat, cv.CV_8UC3);*/
+        prof();
+        //console.log('mat ' + inspectMat(mat));
 
-        console.log('mat ' + inspectMat(mat));
-        /*  if(out.type != mat.type)
-          mat.convertTo(out, out.type, 255);
-        else*/
-        //        mat.copyTo(out);
         cv.cvtColor(mat, out, cv.COLOR_BGR2BGRA);
 
-        console.log('out ' + inspectMat(out));
-
-        //   mat.convertTo(out, cv.CV_8UC4);
+        //console.log('out ' + inspectMat(out));
 
         let ids = [...getToplevel(hier)];
 
         rainbow = makeRainbow(ids.length);
         let palette = {};
-        // console.log('rainbow:', rainbow.map(c => c.hex()));
 
         for(let [i, id] of ids.entries()) {
           for(let child of walkContours(hier, id)) palette[child] = rainbow[i];
         }
+        prof();
 
         let depths = contours.map((contour, i) => {
           let p = [...getParents(i)];
           let d = p.length;
           let color = palette[i]; //rainbow[Util.mod(i, rainbow.length)];
-          // console.log("drawContour", {d,color});
           drawContour(surface, contour, color);
           return d;
         });
         contoursDepth = depths.length ? Math.max(...depths) : 0;
-        //   console.log('contoursDepth:', contoursDepth);
+        prof();
 
         font.draw(surface, video.time + ' ⏩', tPos, 0xffffff || { r: 0, g: 255, b: 0, a: 255 });
         font.draw(surface,
@@ -396,6 +416,7 @@ async function main(...args) {
           }
         );
 
+        prof();
         let size = mat.size.mul(zoom);
 
         win.resize(size.width, size.height);
@@ -405,19 +426,23 @@ async function main(...args) {
         cv.cvtColor(out, out, cv.COLOR_BGRA2BGR);
 */
         let mask = toBGR(getAlpha(surface));
-        console.log('inspectMat',
+        /*console.log('inspectMat',
           ...Object.entries({ out, surface, mask }).map(([n, m]) =>
             [('\n' + n + ':').padEnd(10), inspectMat(m)].join('')
           )
-        );
+        );*/
+        prof();
+
+        console.log('pipeline.times:', pipeline.times);
         /*
         cv.bitwise_or(out, surface, out);*/
 
         //surface.copyTo(out, mask);
-       // out = Mat.add(out, surface);
+        // out = Mat.add(out, surface);
         cv.addWeighted(out, 1, surface, 1, 0, out);
         // out = Mat.and(out, toBGR(mask));
         //        cv.bitwise_and(out,mask, out);
+        prof();
 
         win.show(out);
       }
@@ -426,6 +451,7 @@ async function main(...args) {
 
   console.log('Pipeline processor names:', pipeline.names);
   video.seek_msecs(5000);
+  let iter = new Profiler('loop');
 
   while(running) {
     let frameNo = video.get('pos_frames');
@@ -494,6 +520,8 @@ async function main(...args) {
     }
 
     if(paused) video.seek_frames(-1);
+
+    iter();
   }
 
   console.log('props:', video.dump());
