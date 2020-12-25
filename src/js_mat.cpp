@@ -53,8 +53,8 @@ js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* arg
   JSSizeData<double> size;
 
   int64_t cols = 0, rows = 0;
-  uint32_t type = CV_32FC1;
-
+  uint32_t type = 0; 
+  
   if(argc > 0) {
     if(js_size_read(ctx, argv[0], &size)) {
       cols = size.width;
