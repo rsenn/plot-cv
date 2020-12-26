@@ -201,8 +201,12 @@ async function main(...args) {
 
         cv.findContours(dst, (contours = []), (hier = []), cv[params.mode], cv[params.method]);
 
+        cv.cvtColor(dst, dst, cv.COLOR_GRAY2BGR);
 
-        pipeline.images[0].copyTo(dst, dst);
+        console.log('edge', dst.toString(), pipeline.images[0].toString());
+
+        dst.and(pipeline.images[0]);
+        //.copyTo(dst, dst);
 
         //console.log('hier:', hier .map((h, i) => [i, h]) .filter(([i, h]) => h[cv.HIER_PREV] == -1 && h[cv.HIER_PARENT] == -1));
       })
@@ -415,7 +419,7 @@ async function main(...args) {
     //let mask = toBGR(getAlpha(surface));
     let composite = MakeComposite();
 
-    cv.addWeighted(out, frameShow == pipeline.size - 1 ? 0 : 1, surface, 1, 0, composite);
+    cv.addWeighted(out, 1, surface, frameShow == pipeline.size - 1 ? 0 : 1, 0, composite);
     win.show(composite);
 
     //console.log("composite", composite.toString());

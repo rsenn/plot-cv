@@ -164,34 +164,68 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
 }
 
 static JSValue
-js_mat_bitwise(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+js_mat_expr(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSValue ret = JS_UNDEFINED;
   JSColorData<double> color;
+  JSMatData *m, *o;
+  double scale = 1.0;
 
-  JSMatData* m = js_mat_data(ctx, this_val);
-
-  if(argc > 0) {
-
-    if(!js_color_read(ctx, argv[0], &color))
-
-      return JS_EXCEPTION;
-  }
+  if((m = js_mat_data(ctx, this_val)) == nullptr)
+    return JS_EXCEPTION;
 
   cv::Mat& mat = *m;
-  cv::Scalar& scalar = *reinterpret_cast<cv::Scalar*>(&color);
 
-  switch(magic) {
-    case 0: {
-      mat &= scalar;
-      break;
+  if(argc < 1)
+    return JS_EXCEPTION;
+
+  if((o = js_mat_data(ctx, argv[0])) == nullptr)
+    if(!js_color_read(ctx, argv[0], &color))
+      return JS_EXCEPTION;
+
+  if(argc > 1)
+    JS_ToFloat64(ctx, &scale, argv[1]);
+
+  if(o == nullptr) {
+    cv::Scalar& scalar = *reinterpret_cast<cv::Scalar*>(&color);
+
+    switch(magic) {
+      case 0: {
+        mat &= scalar;
+        break;
+      }
+      case 1: {
+        mat |= scalar;
+        break;
+      }
+      case 2: {
+        mat ^= scalar;
+        break;
+      }
+      case 3: {
+        mat = mat.mul(scalar, scale);
+        break;
+      }
     }
-    case 1: {
-      mat |= scalar;
-      break;
-    }
-    case 2: {
-      mat ^= scalar;
-      break;
+  } else {
+    cv::Mat& other = *o;
+
+    switch(magic) {
+      case 0: {
+        mat &= other;
+        break;
+      }
+      case 1: {
+        mat |= other;
+        break;
+      }
+      case 2: {
+        mat ^= other;
+        break;
+      }
+      case 3: {
+        mat = mat.mul(other, scale);
+        break;
+      }
     }
   }
 
@@ -966,9 +1000,10 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {JS_CGETSET_MAGIC_DEF("cols", 
                                                    JS_CFUNC_MAGIC_DEF("roi", 0, js_mat_funcs, 6),
                                                    JS_CFUNC_MAGIC_DEF("release", 0, js_mat_funcs, 8),
 
-                                                   JS_CFUNC_MAGIC_DEF("and", 2, js_mat_bitwise, 0),
-                                                   JS_CFUNC_MAGIC_DEF("or", 2, js_mat_bitwise, 1),
-                                                   JS_CFUNC_MAGIC_DEF("xor", 3, js_mat_bitwise, 2),
+                                                   JS_CFUNC_MAGIC_DEF("and", 2, js_mat_expr, 0),
+                                                   JS_CFUNC_MAGIC_DEF("or", 2, js_mat_expr, 1),
+                                                   JS_CFUNC_MAGIC_DEF("xor", 3, js_mat_expr, 2),
+                                                   JS_CFUNC_MAGIC_DEF("mul", 3, js_mat_expr, 3),
 
                                                    JS_CFUNC_MAGIC_DEF("zero", 2, js_mat_fill, 0),
                                                    JS_CFUNC_MAGIC_DEF("one", 2, js_mat_fill, 1),

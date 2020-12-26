@@ -28,7 +28,7 @@ void drawBlobInfoOnImage(std::vector<Blob>& blobs, cv::Mat& imgFrame2Copy);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 int
-main(int argc, char *argv[]) {
+main(int argc, char* argv[]) {
 
   cv::VideoCapture capVideo;
 
