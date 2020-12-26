@@ -1002,7 +1002,7 @@ js_contour_rect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 }
 
 static JSValue
-js_contour_get(JSContext* ctx, JSValueConst this_val,   int magic) {
+js_contour_get(JSContext* ctx, JSValueConst this_val, int magic) {
   JSContourData<double>* s = js_contour_data(ctx, this_val);
   JSValue ret = JS_UNDEFINED;
 
@@ -1015,7 +1015,7 @@ js_contour_get(JSContext* ctx, JSValueConst this_val,   int magic) {
     }
     case 1: {
       double area = cv::contourArea(*s);
-       JSRectData<double> rect = cv::boundingRect(*s);
+      JSRectData<double> rect = cv::boundingRect(*s);
 
       ret = JS_NewFloat64(ctx, area / (rect.width * rect.height));
       break;

@@ -1,5 +1,7 @@
 import Util from './lib/util.js';
 
+const MinMax = (min, max) => value => Math.max(min, Math.min(max, value));
+
 export class Param {
   [Symbol.toPrimitive](hint) {
     //console.log(`Param[Symbol.toPrimitive](${hint})`);
@@ -25,18 +27,16 @@ export class NumericParam extends Param {
   constructor(value = 0, min = 0, max = 1, step = 1) {
     super();
     Object.assign(this, { min, max, step });
-    Util.define(this, { value /*alpha: (value - min) / (max - min)*/ });
+    Util.define(this, { value, trunc: MinMax(min, max) });
   }
 
   get() {
     return this.value;
-    /*const { min, max, alpha } = this;
-    return min + alpha * (max - min);*/
   }
 
   set(value) {
-    //const { min, max } = this;
-    this.value = Util.roundTo(value, this.step);
+    const { trunc, min, step } = this;
+    this.value = this.trunc(min + Util.roundTo(value - min, step));
   }
 
   get alpha() {
@@ -45,8 +45,8 @@ export class NumericParam extends Param {
   }
 
   set alpha(a) {
-    const { min, max, step } = this;
-    this.value = Util.roundTo(min + (max - min) * a, step);
+    const { min, max, step, trunc } = this;
+    this.value = this.trunc(min + Util.roundTo((max - min) * a, step));
   }
 
   get range() {

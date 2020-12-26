@@ -114,7 +114,8 @@ async function main(...args) {
     breakLength: 120,
     maxStringLength: 200,
     maxArrayLength: 20,
-    multiline: true
+    multiline: 1,
+    alignMap: true
   });
 
   const makeRainbow = steps =>
@@ -163,12 +164,13 @@ async function main(...args) {
   let contoursDepth;
 
   let params = {
+    ksize: new NumericParam(3, 1, 10),
     thresh1: new NumericParam(10, 0, 100),
     thresh2: new NumericParam(60, 0, 100),
+    apertureSize: new NumericParam(3, 3, 7, 2),
+    L2gradient: new NumericParam(0, 0, 1),
     mode: new EnumParam(['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL'], 3),
-    method: new EnumParam(['CHAIN_APPROX_NONE', 'CHAIN_APPROX_SIMPLE', 'CHAIN_APPROX_TC89_L1', 'CHAIN_APPROX_TC89_L189_KCOS'],
-      0
-    )
+    method: new EnumParam(['CHAIN_APPROX_NONE', 'CHAIN_APPROX_SIMPLE', 'CHAIN_APPROX_TC89_L1', 'CHAIN_APPROX_TC89_L189_KCOS'], 0)
   };
   let paramNav = new ParamNavigator(params);
   let dummyArray = [0, 1, 2, 3, 4, 5, 6, 7];
@@ -312,18 +314,14 @@ async function main(...args) {
         case 0xf52: /* up */
         case 0xf54: /* down */ {
           const method = key & 0x1 ? 'Frames' : 'Msecs';
-          const distance =
-            (key & 0x1 ? 1 : 1000) * (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
+          const distance = (key & 0x1 ? 1 : 1000) * (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
           const offset = key & 0x2 ? +distance : -distance;
 
           console.log('seek', { method, distance, offset });
           video['seek' + method](offset);
           let pos = video.position(method);
 
-          console.log('seek' + method + ' ' + offset + ' pos =',
-            pos,
-            ` (${Util.roundTo(video.position('%'), 0.001)}%)`
-          );
+          console.log('seek' + method + ' ' + offset + ' pos =', pos, ` (${Util.roundTo(video.position('%'), 0.001)}%)`);
           break;
         }
         default: {
@@ -353,8 +351,7 @@ async function main(...args) {
     }
     let ids = [...getToplevel(hier)];
 
-    let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]])
-    );
+    let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]]));
     let depths = contours.map((contour, i) => {
       let p = [...getParents(hier, i)];
       let d = p.length;
@@ -396,9 +393,7 @@ function dumpMat(name, mat) {
   console.log(`${name} =`,
     Object.create(
       Mat.prototype,
-      ['cols', 'rows', 'depth', 'channels', 'type'].reduce((acc, prop) => ({ ...acc, [prop]: { value: mat[prop], enumerable: true } }),
-        {}
-      )
+      ['cols', 'rows', 'depth', 'channels', 'type'].reduce((acc, prop) => ({ ...acc, [prop]: { value: mat[prop], enumerable: true } }), {})
     )
   );
 }

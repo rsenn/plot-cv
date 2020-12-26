@@ -188,7 +188,7 @@ js_cv_canny(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
   image = js_mat_data(ctx, argv[0]);
   edges = js_mat_data(ctx, argv[1]);
 
-  if(image == nullptr || edges == nullptr)
+  if(image == nullptr || edges == nullptr || image->empty())
     return JS_EXCEPTION;
 
   JS_ToFloat64(ctx, &threshold1, argv[2]);
@@ -196,8 +196,12 @@ js_cv_canny(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
 
   if(argc >= 5)
     JS_ToInt32(ctx, &apertureSize, argv[4]);
-  if(argc >= 6 && JS_IsBool(argv[4]))
+
+  if(argc >= 6)
     L2gradient = JS_ToBool(ctx, argv[5]);
+
+ /* std::cerr << "cv::Canny threshold1=" << threshold1 << " threshold2=" << threshold2 << " apertureSize=" << apertureSize
+            << " L2gradient=" << L2gradient << std::endl;*/
 
   cv::Canny(*image, *edges, threshold1, threshold2, apertureSize, L2gradient);
 
@@ -253,7 +257,7 @@ js_cv_cvt_color(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   src = js_mat_data(ctx, argv[0]);
   dst = js_mat_data(ctx, argv[1]);
 
-  if(src == nullptr || dst == nullptr)
+  if(src == nullptr || dst == nullptr || src->empty())
     return JS_EXCEPTION;
 
   JS_ToInt32(ctx, &code, argv[2]);
