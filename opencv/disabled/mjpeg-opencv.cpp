@@ -27,8 +27,9 @@ HOGDescriptor hog;
 deque<Mat> imgs;
 
 size_t i, j;
-boost::lockfree::spsc_queue<Mat, boost::lockfree::capacity<1024>> spsc_queue; /* spsc_queue用于图像的缓存，因为获取图像和处理图像都有较大的延时，所以采用生产者消费者模式，生产者即为一个专门处理获取图像的线程，消费者即为对图像处理的线程
-                                                                               */
+boost::lockfree::spsc_queue<Mat, boost::lockfree::capacity<1024>>
+    spsc_queue; /* spsc_queue用于图像的缓存，因为获取图像和处理图像都有较大的延时，所以采用生产者消费者模式，生产者即为一个专门处理获取图像的线程，消费者即为对图像处理的线程
+                 */
 
 /*
  * ===  FUNCTION  ======================================================================

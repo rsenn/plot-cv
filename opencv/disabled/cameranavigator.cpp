@@ -162,21 +162,27 @@ OffsetNavigator(ros::ServiceClient& client, float fXOffset) {
 
   srv2.request.nNewSpeed = 60; // max speed;
 
-  if(fabs(fXOffset) > 0.2 && fabs(fXOffset) < 0.4) {        // If the offset is more than 30% on either side from the center of the image
-    srv2.request.nNewSpeed = 60;                            // max speed;
-  } else if(fabs(fXOffset) > 0.4 && fabs(fXOffset) < 0.6) { // If the offset is more than 50% on either side from the center of the image
-    srv2.request.nNewSpeed = 65;                            // max speed;
-  } else if(fabs(fXOffset) > 0.6 && fabs(fXOffset) < 0.8) { // If the offset is more than 70% on either side from the center of the image
-    srv2.request.nNewSpeed = 70;                            // max speed;
-  } else if(fabs(fXOffset) > 0.8) {                         // If the offset is more than 90% on either side from the center of the image
-    srv2.request.nNewSpeed = 75;                            // max speed;
-  } else {                                                  // Move forward with the specified speed by the user
-    srv2.request.nNewSpeed = 60;                            // max speed;
-    srv2.request.nNewDirection = 1;                         // forward
+  if(fabs(fXOffset) > 0.2 &&
+     fabs(fXOffset) < 0.4) {     // If the offset is more than 30% on either side from the center of the image
+    srv2.request.nNewSpeed = 60; // max speed;
+  } else if(fabs(fXOffset) > 0.4 &&
+            fabs(fXOffset) < 0.6) { // If the offset is more than 50% on either side from the center of the image
+    srv2.request.nNewSpeed = 65;    // max speed;
+  } else if(fabs(fXOffset) > 0.6 &&
+            fabs(fXOffset) < 0.8) { // If the offset is more than 70% on either side from the center of the image
+    srv2.request.nNewSpeed = 70;    // max speed;
+  } else if(fabs(fXOffset) > 0.8) { // If the offset is more than 90% on either side from the center of the image
+    srv2.request.nNewSpeed = 75;    // max speed;
+  } else {                          // Move forward with the specified speed by the user
+    srv2.request.nNewSpeed = 60;    // max speed;
+    srv2.request.nNewDirection = 1; // forward
   }
   if(client.call(srv2)) {
     ROS_INFO("Set New Car direction=%d speed=%d", srv2.request.nNewDirection, srv2.request.nNewSpeed);
-    ROS_INFO("Last car status: RetCode=%d: last_dir=%d, last_speed=%d", srv2.response.nRetCode, srv2.response.nLastDirection, srv2.response.nLastSpeed);
+    ROS_INFO("Last car status: RetCode=%d: last_dir=%d, last_speed=%d",
+             srv2.response.nRetCode,
+             srv2.response.nLastDirection,
+             srv2.response.nLastSpeed);
     nRet = 1;
   } else {
     ROS_ERROR("Failed to call service set_direction_speed");

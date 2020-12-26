@@ -33,7 +33,9 @@ main(int argc, char** argv) {
   else if(argc >= 2) {
     cap.open(argv[1]);
     if(cap.isOpened())
-      cout << "Video " << argv[1] << ": width=" << cap.get(cv::CAP_PROP_FRAME_WIDTH) << ", height=" << cap.get(cv::CAP_PROP_FRAME_HEIGHT) << ", nframes=" << cap.get(cv::CAP_PROP_FRAME_COUNT) << endl;
+      cout << "Video " << argv[1] << ": width=" << cap.get(cv::CAP_PROP_FRAME_WIDTH)
+           << ", height=" << cap.get(cv::CAP_PROP_FRAME_HEIGHT) << ", nframes=" << cap.get(cv::CAP_PROP_FRAME_COUNT)
+           << endl;
     if(argc > 2 && isdigit(argv[2][0])) {
       int pos;
       sscanf(argv[2], "%d", &pos);

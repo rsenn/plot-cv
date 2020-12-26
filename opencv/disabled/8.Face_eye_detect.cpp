@@ -86,7 +86,8 @@ main() {
       printf("[%s] Khuon mat %d co %d mat\r\n", timetext, i, eyes.size());
       for(int j = 0; j < eyes.size(); j++) {
         Point center_eye(faces[i].x + eyes[j].x + eyes[j].width * 0.5, faces[i].y + eyes[j].y + eyes[j].height * 0.5);
-        ellipse(frame, center_eye, Size(eyes[j].width * 0.5, eyes[j].height * 0.5), 0, 0, 360, Scalar(0, 0, 255), 4, 8, 0);
+        ellipse(
+            frame, center_eye, Size(eyes[j].width * 0.5, eyes[j].height * 0.5), 0, 0, 360, Scalar(0, 0, 255), 4, 8, 0);
       }
     }
     printf("----------------------------------\r\n");

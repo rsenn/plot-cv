@@ -83,7 +83,8 @@ main(int argc, char** argv) {
   vector<Mat> pattern;
   graycode->generate(pattern);
 
-  cout << pattern.size() << " pattern images + 2 images for shadows mask computation to acquire with both cameras" << endl;
+  cout << pattern.size() << " pattern images + 2 images for shadows mask computation to acquire with both cameras"
+       << endl;
 
   // Generate the all-white and all-black images needed for shadows mask computation
   Mat white;
@@ -143,7 +144,8 @@ main(int argc, char** argv) {
 
       cout << "zoom cam 1: " << cap1.get(CAP_PROP_ZOOM) << endl << "zoom cam 2: " << cap2.get(CAP_PROP_ZOOM) << endl;
 
-      cout << "focus cam 1: " << cap1.get(CAP_PROP_FOCUS) << endl << "focus cam 2: " << cap2.get(CAP_PROP_FOCUS) << endl;
+      cout << "focus cam 1: " << cap1.get(CAP_PROP_FOCUS) << endl
+           << "focus cam 2: " << cap2.get(CAP_PROP_FOCUS) << endl;
 
       cout << "Press enter to save the photo or an other key to re-acquire the photo" << endl;
 
@@ -181,7 +183,10 @@ main(int argc, char** argv) {
           cout << "pattern cam1 and cam2 images number " << i + 1 << " saved" << endl << endl;
           i++;
         } else {
-          cout << "pattern cam1 and cam2 images number " << i + 1 << " NOT saved" << endl << endl << "Retry, check the path" << endl << endl;
+          cout << "pattern cam1 and cam2 images number " << i + 1 << " NOT saved" << endl
+               << endl
+               << "Retry, check the path" << endl
+               << endl;
         }
       }
       // Pressing escape, the program closes

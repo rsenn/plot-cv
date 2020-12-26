@@ -103,7 +103,11 @@ main(int argc, char** argv) {
             // center = -center;
             // msg_xy.angular.x = contours[0][0].x; msg_xy.angular.y = contours[0][0].y;
             // msg_xy.linear.x = double(320.0); msg_xy.linear.y = double(240.0);
-            line(src, cv::Point(contours[0][0].x, contours[0][0].y), cv::Point(contours[0][0].x, contours[0][0].y), Scalar(0, 255, 0), 5);
+            line(src,
+                 cv::Point(contours[0][0].x, contours[0][0].y),
+                 cv::Point(contours[0][0].x, contours[0][0].y),
+                 Scalar(0, 255, 0),
+                 5);
           }
           line(src, center, center, Scalar(0, 0, 255), 10);
           // contours[0][0].x = 0; contours[0][0].y = 0;

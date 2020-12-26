@@ -58,7 +58,8 @@ main(int argc, char* argv[]) {
     return -1;
   }
 
-  Size refS = Size((int)captRefrnc.get(cv::CAP_PROP_FRAME_WIDTH), (int)captRefrnc.get(cv::CAP_PROP_FRAME_HEIGHT)), uTSi = Size((int)captUndTst.get(cv::CAP_PROP_FRAME_WIDTH), (int)captUndTst.get(cv::CAP_PROP_FRAME_HEIGHT));
+  Size refS = Size((int)captRefrnc.get(cv::CAP_PROP_FRAME_WIDTH), (int)captRefrnc.get(cv::CAP_PROP_FRAME_HEIGHT)),
+       uTSi = Size((int)captUndTst.get(cv::CAP_PROP_FRAME_WIDTH), (int)captUndTst.get(cv::CAP_PROP_FRAME_HEIGHT));
 
   if(refS != uTSi) {
     cout << "Inputs have different size!!! Closing." << endl;
@@ -74,7 +75,8 @@ main(int argc, char* argv[]) {
   cvMoveWindow(WIN_RF, 400, 0);        // 750,  2 (bernat =0)
   cvMoveWindow(WIN_UT, refS.width, 0); // 1500, 2
 
-  cout << "Reference frame resolution: Width=" << refS.width << "  Height=" << refS.height << " of nr#: " << captRefrnc.get(cv::CAP_PROP_FRAME_COUNT) << endl;
+  cout << "Reference frame resolution: Width=" << refS.width << "  Height=" << refS.height
+       << " of nr#: " << captRefrnc.get(cv::CAP_PROP_FRAME_COUNT) << endl;
 
   cout << "PSNR trigger value " << setiosflags(ios::fixed) << setprecision(3) << psnrTriggerValue << endl;
 

@@ -136,10 +136,7 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
   const isRequire = node => node instanceof CallExpression && node.callee.value == 'require';
   const isImport = node => node instanceof ImportStatement;
 
-  let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
-      pos * 10 - 1,
-      { comment, pos, len, node }
-    ]),
+  let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node }]),
     (a, b) => a - b
   );
 
@@ -168,9 +165,7 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
 
   function getImports() {
     const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
-    const importStatements = imports
-      .map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path))
-      .map(path => [path, deep.get(ast, path)]);
+    const importStatements = imports.map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path)).map(path => [path, deep.get(ast, path)]);
 
     console.log('imports:', new Map(imports.map(([path, node]) => [ESNode.assoc(node).position, node])));
     console.log('importStatements:', importStatements);
@@ -178,9 +173,7 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
     const importedFiles = imports.map(([pos, node]) => Identifier.string(node.source || node.arguments[0]));
     console.log('importedFiles:', importedFiles);
 
-    let importIdentifiers = importStatements
-      .map(([p, n]) => [p, n.identifiers ? n.identifiers : n])
-      .map(([p, n]) => [p, n.declarations ? n.declarations : n]);
+    let importIdentifiers = importStatements.map(([p, n]) => [p, n.identifiers ? n.identifiers : n]).map(([p, n]) => [p, n.declarations ? n.declarations : n]);
     console.log('importIdentifiers:', importIdentifiers);
 
     /*  importIdentifiers = importIdentifiers.map(([p, n]) =>

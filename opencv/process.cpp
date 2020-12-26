@@ -258,7 +258,8 @@ process::startOpencv(int width, int height, int mode, ParkingInfo info, std::str
         continue;
 
       /* 각각의 주차 영역 계산 */
-      for(int i = 0; i < SEGMENTSIZE; i++) area[i] = Rect(image.cols * i / SEGMENTSIZE, 0, image.cols / SEGMENTSIZE, image.rows);
+      for(int i = 0; i < SEGMENTSIZE; i++)
+        area[i] = Rect(image.cols * i / SEGMENTSIZE, 0, image.cols / SEGMENTSIZE, image.rows);
 
 #elif FROM == FILESYSTEM
 

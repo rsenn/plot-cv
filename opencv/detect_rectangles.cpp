@@ -26,7 +26,8 @@ void drawDebugImage(int, Rect, vector<vector<Point>>, int, vector<Vec4i>);
 void setLabel(Mat&, const std::string, std::vector<Point>&);
 void split(const string&, char, vector<string>&);
 
-// ./bin/detect_rectangles [nom de l'image] w=[largeur] h=[hauteur] s=[épaisseur] nb=[nombre de rectangles] t=[threshold]
+// ./bin/detect_rectangles [nom de l'image] w=[largeur] h=[hauteur] s=[épaisseur] nb=[nombre de rectangles]
+// t=[threshold]
 // ./bin/detect_rectangles mon-image.jpg w=20 h=30 s=3 nb=12 debug=true
 int
 main(int argc, char* argv[]) {

@@ -53,7 +53,8 @@ main() {
     cv::waitKey(0);
 
     // calculate number of interest points, computation time as f(minHess)
-    int minHessVector[] = {100, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500, 9000, 9500, 10000};
+    int minHessVector[] = {100,  500,  1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000,
+                           5500, 6000, 6500, 7000, 7500, 8000, 8500, 9000, 9500, 10000};
     int minH;
     std::ofstream file;
     file.open("C:/School/Image Processing/TimingC.csv", std::ofstream::out);
@@ -86,7 +87,14 @@ main() {
           case 2: octaveS = '2'; break;
           default: break;
         }
-        putText(interestPointObject, octaveS, kpObject[i].pt, FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(0, 0, 250), 1, cv::LINE_AA);
+        putText(interestPointObject,
+                octaveS,
+                kpObject[i].pt,
+                FONT_HERSHEY_COMPLEX_SMALL,
+                1,
+                cv::Scalar(0, 0, 250),
+                1,
+                cv::LINE_AA);
       }
     }
     imshow("Good Matches", interestPointObject);
@@ -151,7 +159,8 @@ main() {
 
       for(int i = 0; i < min(des_image.rows - 1, (int)matches.size()); i++) // THIS LOOP IS SENSITIVE TO SEGFAULTS
       {
-        if((matches[i][0].distance < thresholdMatchingNN * (matches[i][1].distance)) && ((int)matches[i].size() <= 2 && (int)matches[i].size() > 0)) {
+        if((matches[i][0].distance < thresholdMatchingNN * (matches[i][1].distance)) &&
+           ((int)matches[i].size() <= 2 && (int)matches[i].size() > 0)) {
           good_matches.push_back(matches[i][0]);
         }
       }
@@ -160,12 +169,28 @@ main() {
       //	good_matches.resize(0,cv::DMatch);
 
       // Draw only "good" matches
-      drawMatches(object, kpObject, image, kp_image, good_matches, img_matches, Scalar::all(-1), Scalar::all(-1), vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+      drawMatches(object,
+                  kpObject,
+                  image,
+                  kp_image,
+                  good_matches,
+                  img_matches,
+                  Scalar::all(-1),
+                  Scalar::all(-1),
+                  vector<char>(),
+                  DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
 
       if(good_matches.size() >= thresholdGoodMatches) {
 
         // Display that the object is found
-        putText(img_matches, "Object Found", cv::Point(10, 50), FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 0, 250), 1, cv::LINE_AA);
+        putText(img_matches,
+                "Object Found",
+                cv::Point(10, 50),
+                FONT_HERSHEY_COMPLEX_SMALL,
+                2,
+                cv::Scalar(0, 0, 250),
+                1,
+                cv::LINE_AA);
         for(unsigned int i = 0; i < good_matches.size(); i++) {
           // Get the keypoints from the good matches
           obj.push_back(kpObject[good_matches[i].queryIdx].pt);
@@ -177,12 +202,29 @@ main() {
         perspectiveTransform(obj_corners, scene_corners, H);
 
         // Draw lines between the corners (the mapped object in the scene image )
-        line(img_matches, scene_corners[0] + Point2f(object.cols, 0), scene_corners[1] + Point2f(object.cols, 0), Scalar(0, 255, 0), 4);
-        line(img_matches, scene_corners[1] + Point2f(object.cols, 0), scene_corners[2] + Point2f(object.cols, 0), Scalar(0, 255, 0), 4);
-        line(img_matches, scene_corners[2] + Point2f(object.cols, 0), scene_corners[3] + Point2f(object.cols, 0), Scalar(0, 255, 0), 4);
-        line(img_matches, scene_corners[3] + Point2f(object.cols, 0), scene_corners[0] + Point2f(object.cols, 0), Scalar(0, 255, 0), 4);
+        line(img_matches,
+             scene_corners[0] + Point2f(object.cols, 0),
+             scene_corners[1] + Point2f(object.cols, 0),
+             Scalar(0, 255, 0),
+             4);
+        line(img_matches,
+             scene_corners[1] + Point2f(object.cols, 0),
+             scene_corners[2] + Point2f(object.cols, 0),
+             Scalar(0, 255, 0),
+             4);
+        line(img_matches,
+             scene_corners[2] + Point2f(object.cols, 0),
+             scene_corners[3] + Point2f(object.cols, 0),
+             Scalar(0, 255, 0),
+             4);
+        line(img_matches,
+             scene_corners[3] + Point2f(object.cols, 0),
+             scene_corners[0] + Point2f(object.cols, 0),
+             Scalar(0, 255, 0),
+             4);
       } else {
-        putText(img_matches, "", cv::Point(10, 50), FONT_HERSHEY_COMPLEX_SMALL, 3, cv::Scalar(0, 0, 250), 1, cv::LINE_AA);
+        putText(
+            img_matches, "", cv::Point(10, 50), FONT_HERSHEY_COMPLEX_SMALL, 3, cv::Scalar(0, 0, 250), 1, cv::LINE_AA);
       }
 
       // Show detected matches

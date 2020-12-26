@@ -25,7 +25,9 @@ void writeTo(Mat& img, string& name);
 // main
 int
 main(/*int argc, char** argv*/) {
-  /*if(!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help")) cout << "\nHelp: status flags\nargument 1:\n-h or --help: to display this help information\nProgram usage:\nThe program will take a image in and give the user a range of choices for modifying the image.\nEnter a value to modify the image; some modifiers will
+  /*if(!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help")) cout << "\nHelp: status flags\nargument 1:\n-h or --help:
+  to display this help information\nProgram usage:\nThe program will take a image in and give the user a range of
+  choices for modifying the image.\nEnter a value to modify the image; some modifiers will
   prompt for a threshold value between 1 - 255"; else	{*/
   // Create 3 matrixes, one for the source image, one for color convert, and one for any modifications
   char input = '7';
@@ -50,7 +52,10 @@ main(/*int argc, char** argv*/) {
     do {
       mod = gray.clone();
       // Prompt
-      cout << "Enter a number to select the methods that will process this image\n1. Morphologically Close\n2. Canny Edge Detection\n3. Canny + Ellipse fitting\n4. Close + Canny + Ellipse\n5. Blue removal\n6. Load a new image\n7. Exit the program" << endl;
+      cout << "Enter a number to select the methods that will process this image\n1. Morphologically Close\n2. Canny "
+              "Edge Detection\n3. Canny + Ellipse fitting\n4. Close + Canny + Ellipse\n5. Blue removal\n6. Load a new "
+              "image\n7. Exit the program"
+           << endl;
       cin >> input;
 
       namedWindow("Source", cv::WINDOW_AUTOSIZE);

@@ -84,7 +84,14 @@ printCommandLineParams() {
 }
 
 static void
-parseCommandLine(int argc, char* argv[], bool& isColorizeDisp, bool& isFixedMaxDisp, int& imageMode, bool retrievedImageFlags[], string& filename, bool& isFileReading) {
+parseCommandLine(int argc,
+                 char* argv[],
+                 bool& isColorizeDisp,
+                 bool& isFixedMaxDisp,
+                 int& imageMode,
+                 bool retrievedImageFlags[],
+                 string& filename,
+                 bool& isFileReading) {
   filename.clear();
   cv::CommandLineParser parser(argc, argv, "{h help||}{cd|1|}{fmd|0|}{mode|-1|}{m|010100|}{r||}");
   if(parser.has("h")) {
@@ -125,7 +132,8 @@ main(int argc, char* argv[]) {
   bool retrievedImageFlags[6];
   string filename;
   bool isVideoReading;
-  parseCommandLine(argc, argv, isColorizeDisp, isFixedMaxDisp, imageMode, retrievedImageFlags, filename, isVideoReading);
+  parseCommandLine(
+      argc, argv, isColorizeDisp, isFixedMaxDisp, imageMode, retrievedImageFlags, filename, isVideoReading);
 
   cout << "Device opening ..." << endl;
   VideoCapture capture;
@@ -198,7 +206,10 @@ main(int argc, char* argv[]) {
   }
 
   if(capture.get(CAP_OPENNI_IR_GENERATOR_PRESENT)) {
-    cout << "\nIR generator output mode:" << endl << "FRAME_WIDTH   " << capture.get(CAP_OPENNI_IR_GENERATOR + CAP_PROP_FRAME_WIDTH) << endl << "FRAME_HEIGHT  " << capture.get(CAP_OPENNI_IR_GENERATOR + CAP_PROP_FRAME_HEIGHT) << endl << "FPS           " << capture.get(CAP_OPENNI_IR_GENERATOR + CAP_PROP_FPS) << endl;
+    cout << "\nIR generator output mode:" << endl
+         << "FRAME_WIDTH   " << capture.get(CAP_OPENNI_IR_GENERATOR + CAP_PROP_FRAME_WIDTH) << endl
+         << "FRAME_HEIGHT  " << capture.get(CAP_OPENNI_IR_GENERATOR + CAP_PROP_FRAME_HEIGHT) << endl
+         << "FPS           " << capture.get(CAP_OPENNI_IR_GENERATOR + CAP_PROP_FPS) << endl;
   } else {
     cout << "\nDevice doesn't contain IR generator or it is not selected." << endl;
   }

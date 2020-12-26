@@ -396,7 +396,9 @@ protected:
   void removeFilter(const char* filter);
 };
 
-GStreamerCapture::GStreamerCapture() : duration(-1), width(-1), height(-1), fps(-1), isPosFramesSupported(false), isPosFramesEmulated(false), emulatedFrameNumber(-1) {}
+GStreamerCapture::GStreamerCapture()
+    : duration(-1), width(-1), height(-1), fps(-1), isPosFramesSupported(false), isPosFramesEmulated(false),
+      emulatedFrameNumber(-1) {}
 
 /*!
  * \brief CvCapture_GStreamer::close
@@ -1101,7 +1103,8 @@ GStreamerCapture::setProperty(int propId, double value) {
       return true;
     }
     case cv::CAP_PROP_POS_AVI_RATIO:
-      if(!gst_element_seek_simple(GST_ELEMENT(pipeline.get()), GST_FORMAT_PERCENT, flags, (gint64)(value * GST_FORMAT_PERCENT_MAX))) {
+      if(!gst_element_seek_simple(
+             GST_ELEMENT(pipeline.get()), GST_FORMAT_PERCENT, flags, (gint64)(value * GST_FORMAT_PERCENT_MAX))) {
         handleMessage(pipeline);
         CV_WARN("GStreamer: unable to seek");
       } else {
@@ -1244,7 +1247,9 @@ CvVideoWriter_GStreamer::close_() {
       bus.attach(gst_element_get_bus(pipeline));
       if(bus) {
         GSafePtr<GstMessage> msg;
-        msg.attach(gst_bus_timed_pop_filtered(bus, GST_CLOCK_TIME_NONE, (GstMessageType)(GST_MESSAGE_ERROR | GST_MESSAGE_EOS)));
+        msg.attach(gst_bus_timed_pop_filtered(bus,
+                                              GST_CLOCK_TIME_NONE,
+                                              (GstMessageType)(GST_MESSAGE_ERROR | GST_MESSAGE_EOS)));
         if(!msg || GST_MESSAGE_TYPE(msg.get()) == GST_MESSAGE_ERROR) {
           CV_WARN("Error during VideoWriter finalization");
           handleMessage(pipeline);
@@ -1343,7 +1348,8 @@ CvVideoWriter_GStreamer::filenameToMimetype(const char* filename) {
  *
  */
 bool
-CvVideoWriter_GStreamer::open(const std::string& filename, int fourcc, double fps, const cv::Size& frameSize, bool is_color) {
+CvVideoWriter_GStreamer::open(
+    const std::string& filename, int fourcc, double fps, const cv::Size& frameSize, bool is_color) {
   // check arguments
   CV_Assert(!filename.empty());
   CV_Assert(fps > 0);
@@ -1476,7 +1482,21 @@ CvVideoWriter_GStreamer::open(const std::string& filename, int fourcc, double fp
     input_pix_fmt = GST_VIDEO_FORMAT_BGR;
     bufsize = frameSize.width * frameSize.height * 3;
 
-    caps.attach(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "BGR", "width", G_TYPE_INT, frameSize.width, "height", G_TYPE_INT, frameSize.height, "framerate", GST_TYPE_FRACTION, gint(fps_num), gint(fps_denom), NULL));
+    caps.attach(gst_caps_new_simple("video/x-raw",
+                                    "format",
+                                    G_TYPE_STRING,
+                                    "BGR",
+                                    "width",
+                                    G_TYPE_INT,
+                                    frameSize.width,
+                                    "height",
+                                    G_TYPE_INT,
+                                    frameSize.height,
+                                    "framerate",
+                                    GST_TYPE_FRACTION,
+                                    gint(fps_num),
+                                    gint(fps_denom),
+                                    NULL));
     CV_Assert(caps);
     caps.attach(gst_caps_fixate(caps.detach()));
     CV_Assert(caps);
@@ -1484,7 +1504,21 @@ CvVideoWriter_GStreamer::open(const std::string& filename, int fourcc, double fp
     input_pix_fmt = GST_VIDEO_FORMAT_GRAY8;
     bufsize = frameSize.width * frameSize.height;
 
-    caps.attach(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "GRAY8", "width", G_TYPE_INT, frameSize.width, "height", G_TYPE_INT, frameSize.height, "framerate", GST_TYPE_FRACTION, gint(fps_num), gint(fps_denom), NULL));
+    caps.attach(gst_caps_new_simple("video/x-raw",
+                                    "format",
+                                    G_TYPE_STRING,
+                                    "GRAY8",
+                                    "width",
+                                    G_TYPE_INT,
+                                    frameSize.width,
+                                    "height",
+                                    G_TYPE_INT,
+                                    frameSize.height,
+                                    "framerate",
+                                    GST_TYPE_FRACTION,
+                                    gint(fps_num),
+                                    gint(fps_denom),
+                                    NULL));
     caps.attach(gst_caps_fixate(caps.detach()));
   }
 
@@ -1777,7 +1811,8 @@ cv_capture_retrieve(CvPluginCapture handle, int stream_idx, cv_videoio_retrieve_
 }
 
 static CvResult CV_API_CALL
-cv_writer_open(const char* filename, int fourcc, double fps, int width, int height, int isColor, CV_OUT CvPluginWriter* handle) {
+cv_writer_open(
+    const char* filename, int fourcc, double fps, int width, int height, int isColor, CV_OUT CvPluginWriter* handle) {
   CvVideoWriter_GStreamer* wrt = 0;
   try {
     wrt = new CvVideoWriter_GStreamer();
@@ -1828,7 +1863,14 @@ cv_writer_write(CvPluginWriter handle, const unsigned char* data, int step, int 
   }
 }
 
-static const OpenCV_VideoIO_Plugin_API_preview plugin_api_v0 = {{sizeof(OpenCV_VideoIO_Plugin_API_preview), ABI_VERSION, API_VERSION, CV_VERSION_MAJOR, CV_VERSION_MINOR, CV_VERSION_REVISION, CV_VERSION_STATUS, "GStreamer OpenCV Video I/O plugin"},
+static const OpenCV_VideoIO_Plugin_API_preview plugin_api_v0 = {{sizeof(OpenCV_VideoIO_Plugin_API_preview),
+                                                                 ABI_VERSION,
+                                                                 API_VERSION,
+                                                                 CV_VERSION_MAJOR,
+                                                                 CV_VERSION_MINOR,
+                                                                 CV_VERSION_REVISION,
+                                                                 CV_VERSION_STATUS,
+                                                                 "GStreamer OpenCV Video I/O plugin"},
                                                                 /*  1*/ CAP_GSTREAMER,
                                                                 /*  2*/ cv_capture_open,
                                                                 /*  3*/ cv_capture_release,
@@ -1845,7 +1887,9 @@ static const OpenCV_VideoIO_Plugin_API_preview plugin_api_v0 = {{sizeof(OpenCV_V
 } // namespace cv
 
 const OpenCV_VideoIO_Plugin_API_preview*
-opencv_videoio_plugin_init_v0(int requested_abi_version, int requested_api_version, void* /*reserved=NULL*/) CV_NOEXCEPT {
+opencv_videoio_plugin_init_v0(int requested_abi_version,
+                              int requested_api_version,
+                              void* /*reserved=NULL*/) CV_NOEXCEPT {
   if(requested_abi_version != 0)
     return NULL;
   if(requested_api_version != 0)

@@ -70,7 +70,8 @@ video_mode(ERFilter* er_filter, char filename[]) {
   VideoWriter original_writer;
   cap >> frame; // get 1 frame to know the frame size
   writer.open("video_result/result/result.wmv", cv::VideoWriter::fourcc('W', 'M', 'V', '2'), 20.0, frame.size(), true);
-  original_writer.open("video_result/result/input.wmv", cv::VideoWriter::fourcc('W', 'M', 'V', '2'), 20.0, frame.size(), true);
+  original_writer.open(
+      "video_result/result/input.wmv", cv::VideoWriter::fourcc('W', 'M', 'V', '2'), 20.0, frame.size(), true);
   if(!writer.isOpened()) {
     cerr << "Could not open the output video file for write\n";
   }
@@ -272,7 +273,15 @@ load_video_thread(VideoCapture& cap, Mat frame, Mat result, vector<Text>* text, 
 }
 
 void
-show_result(Mat& src, Mat& result_img, vector<Text>& text, vector<double> times, ERs tracked, vector<ERs> strong, vector<ERs> weak, vector<ERs> all, vector<ERs> pool) {
+show_result(Mat& src,
+            Mat& result_img,
+            vector<Text>& text,
+            vector<double> times,
+            ERs tracked,
+            vector<ERs> strong,
+            vector<ERs> weak,
+            vector<ERs> all,
+            vector<ERs> pool) {
   Mat all_img = src.clone();
   Mat pool_img = src.clone();
   Mat strong_img = src.clone();
@@ -325,11 +334,26 @@ show_result(Mat& src, Mat& result_img, vector<Text>& text, vector<double> times,
     // cv::FILLED); putText(result_img, "Text", Point(it.box.tl().x, it.box.tl().y-4),
     // FONT_HERSHEY_COMPLEX_SMALL, 1, Scalar(255, 255, 255), 1);
     circle(result_img, Point(it.box.tl().x + 5, it.box.tl().y - 12), 10, Scalar(30, 30, 200), cv::FILLED);
-    putText(result_img, "T", Point(it.box.tl().x - 2, it.box.tl().y - 5), FONT_HERSHEY_COMPLEX_SMALL, 1, Scalar(255, 255, 255), 1);
+    putText(result_img,
+            "T",
+            Point(it.box.tl().x - 2, it.box.tl().y - 5),
+            FONT_HERSHEY_COMPLEX_SMALL,
+            1,
+            Scalar(255, 255, 255),
+            1);
 #else
     Size text_size = getTextSize(it.word, FONT_HERSHEY_COMPLEX_SMALL, 1, 1, 0);
-    rectangle(result_img, Rect(it.box.tl().x, it.box.tl().y - 20, text_size.width, text_size.height + 5), Scalar(30, 30, 200, 0), cv::FILLED);
-    putText(result_img, it.word, Point(it.box.tl().x, it.box.tl().y - 4), FONT_HERSHEY_COMPLEX_SMALL, 1, Scalar(0xff, 0xff, 0xff), 1);
+    rectangle(result_img,
+              Rect(it.box.tl().x, it.box.tl().y - 20, text_size.width, text_size.height + 5),
+              Scalar(30, 30, 200, 0),
+              cv::FILLED);
+    putText(result_img,
+            it.word,
+            Point(it.box.tl().x, it.box.tl().y - 4),
+            FONT_HERSHEY_COMPLEX_SMALL,
+            1,
+            Scalar(0xff, 0xff, 0xff),
+            1);
 #endif
   }
 
@@ -928,13 +952,21 @@ calc_recall_rate() {
       }
     }
 
-    cout << "all candidate : " << flat[0].size() << " recall : " << recall_count[0] / (double)gt_box.size() << "    precision : " << match_count[0] / (double)flat[0].size() << endl;
-    cout << "nms candidate : " << flat[1].size() << " recall : " << recall_count[1] / (double)gt_box.size() << "    precision : " << match_count[1] / (double)flat[1].size() << endl;
-    cout << "strong candidate : " << flat[2].size() << " recall : " << recall_count[2] / (double)gt_box.size() << "    precision : " << match_count[2] / (double)flat[2].size() << endl;
-    cout << "weak candidate : " << flat[3].size() << " recall : " << recall_count[3] / (double)gt_box.size() << "    precision : " << match_count[3] / (double)flat[3].size() << endl;
-    cout << "classify candidate : " << flat[4].size() << " recall : " << recall_count[4] / (double)gt_box.size() << "    precision : " << match_count[4] / (double)flat[4].size() << endl;
-    cout << "track candidate : " << flat[5].size() << " recall : " << recall_count[5] / (double)gt_box.size() << "    precision : " << match_count[5] / (double)flat[5].size() << endl;
-    cout << "MSER candidate : " << flat[6].size() << " recall : " << recall_count[6] / (double)gt_box.size() << "    precision : " << match_count[6] / (double)flat[6].size() << endl << endl;
+    cout << "all candidate : " << flat[0].size() << " recall : " << recall_count[0] / (double)gt_box.size()
+         << "    precision : " << match_count[0] / (double)flat[0].size() << endl;
+    cout << "nms candidate : " << flat[1].size() << " recall : " << recall_count[1] / (double)gt_box.size()
+         << "    precision : " << match_count[1] / (double)flat[1].size() << endl;
+    cout << "strong candidate : " << flat[2].size() << " recall : " << recall_count[2] / (double)gt_box.size()
+         << "    precision : " << match_count[2] / (double)flat[2].size() << endl;
+    cout << "weak candidate : " << flat[3].size() << " recall : " << recall_count[3] / (double)gt_box.size()
+         << "    precision : " << match_count[3] / (double)flat[3].size() << endl;
+    cout << "classify candidate : " << flat[4].size() << " recall : " << recall_count[4] / (double)gt_box.size()
+         << "    precision : " << match_count[4] / (double)flat[4].size() << endl;
+    cout << "track candidate : " << flat[5].size() << " recall : " << recall_count[5] / (double)gt_box.size()
+         << "    precision : " << match_count[5] / (double)flat[5].size() << endl;
+    cout << "MSER candidate : " << flat[6].size() << " recall : " << recall_count[6] / (double)gt_box.size()
+         << "    precision : " << match_count[6] / (double)flat[6].size() << endl
+         << endl;
 
     img_count++;
     for(int i = 0; i < 7; i++) {
@@ -945,13 +977,21 @@ calc_recall_rate() {
   }
 
   std::cout << "Final candidates, recall and precision :" << endl;
-  std::cout << "all candidate : " << candidate_vec[0] << "    recall : " << recall_vec[0] / img_count << "    precision : " << precision_vec[0] / img_count << endl;
-  std::cout << "nms candidate : " << candidate_vec[1] << "    recall : " << recall_vec[1] / img_count << "    precision : " << precision_vec[1] / img_count << endl;
-  std::cout << "strong candidate : " << candidate_vec[2] << "    recall : " << recall_vec[2] / img_count << "    precision : " << precision_vec[2] / img_count << endl;
-  std::cout << "weak candidate : " << candidate_vec[3] << "    recall : " << recall_vec[3] / img_count << "    precision : " << precision_vec[3] / img_count << endl;
-  std::cout << "classify candidate : " << candidate_vec[4] << "    recall : " << recall_vec[4] / img_count << "    precision : " << precision_vec[4] / img_count << endl;
-  std::cout << "track candidate : " << candidate_vec[5] << "    recall : " << recall_vec[5] / img_count << "    precision : " << precision_vec[5] / img_count << endl;
-  std::cout << "MSER candidate : " << candidate_vec[6] << "    recall : " << recall_vec[6] / img_count << "    precision : " << precision_vec[6] / img_count << endl << endl;
+  std::cout << "all candidate : " << candidate_vec[0] << "    recall : " << recall_vec[0] / img_count
+            << "    precision : " << precision_vec[0] / img_count << endl;
+  std::cout << "nms candidate : " << candidate_vec[1] << "    recall : " << recall_vec[1] / img_count
+            << "    precision : " << precision_vec[1] / img_count << endl;
+  std::cout << "strong candidate : " << candidate_vec[2] << "    recall : " << recall_vec[2] / img_count
+            << "    precision : " << precision_vec[2] / img_count << endl;
+  std::cout << "weak candidate : " << candidate_vec[3] << "    recall : " << recall_vec[3] / img_count
+            << "    precision : " << precision_vec[3] / img_count << endl;
+  std::cout << "classify candidate : " << candidate_vec[4] << "    recall : " << recall_vec[4] / img_count
+            << "    precision : " << precision_vec[4] / img_count << endl;
+  std::cout << "track candidate : " << candidate_vec[5] << "    recall : " << recall_vec[5] / img_count
+            << "    precision : " << precision_vec[5] / img_count << endl;
+  std::cout << "MSER candidate : " << candidate_vec[6] << "    recall : " << recall_vec[6] / img_count
+            << "    precision : " << precision_vec[6] / img_count << endl
+            << endl;
 }
 
 void
@@ -976,7 +1016,8 @@ save_deteval_xml(vector<vector<Text>>& text, string det_name) {
         << "<imageName>img_" << i << ".jpg</imageName>" << endl;
     fgt << "\t\t<taggedRectangles>" << endl;
     for(int j = 0; j < gt.size(); j++) {
-      fgt << "\t\t\t<taggedRectangle x=\"" << gt[j][0] << "\" y=\"" << gt[j][1] << "\" width=\"" << gt[j][2] << "\" height=\"" << gt[j][3] << "\" offset=\"0\" />" << endl;
+      fgt << "\t\t\t<taggedRectangle x=\"" << gt[j][0] << "\" y=\"" << gt[j][1] << "\" width=\"" << gt[j][2]
+          << "\" height=\"" << gt[j][3] << "\" offset=\"0\" />" << endl;
     }
     fgt << "\t\t</taggedRectangles>" << endl;
     fgt << "\t</image>" << endl;
@@ -987,7 +1028,9 @@ save_deteval_xml(vector<vector<Text>>& text, string det_name) {
          << "<imageName>img_" << i << ".jpg</imageName>" << endl;
     fdet << "\t\t<taggedRectangles>" << endl;
     for(int j = 0; j < text[i - 1].size(); j++) {
-      fdet << "\t\t\t<taggedRectangle x=\"" << text[i - 1][j].box.x << "\" y=\"" << text[i - 1][j].box.y << "\" width=\"" << text[i - 1][j].box.width << "\" height=\"" << text[i - 1][j].box.height << "\" offset=\"0\" />" << endl;
+      fdet << "\t\t\t<taggedRectangle x=\"" << text[i - 1][j].box.x << "\" y=\"" << text[i - 1][j].box.y
+           << "\" width=\"" << text[i - 1][j].box.width << "\" height=\"" << text[i - 1][j].box.height
+           << "\" offset=\"0\" />" << endl;
     }
     fdet << "\t\t</taggedRectangles>" << endl;
     fdet << "\t</image>" << endl;
@@ -999,7 +1042,8 @@ save_deteval_xml(vector<vector<Text>>& text, string det_name) {
 
 void
 test_best_detval() {
-  ERFilter* er_filter = new ERFilter(THRESHOLD_STEP, MIN_ER_AREA, MAX_ER_AREA, NMS_STABILITY_T, NMS_OVERLAP_COEF, MIN_OCR_PROBABILITY);
+  ERFilter* er_filter =
+      new ERFilter(THRESHOLD_STEP, MIN_ER_AREA, MAX_ER_AREA, NMS_STABILITY_T, NMS_OVERLAP_COEF, MIN_OCR_PROBABILITY);
   er_filter->stc = new CascadeBoost("er_classifier/cascade1.classifier");
   er_filter->wtc = new CascadeBoost("er_classifier/weak.classifier");
   er_filter->ocr = new OCR("ocr_classifier/OCR.model", OCR_IMG_L, OCR_FEATURE_L);
@@ -1167,10 +1211,24 @@ calc_video_result() {
   double recall = tp / (double)gt_count;
   double precision = tp / (double)det_count;
   double f_score = 2 * recall * precision / (recall + precision);
-  cout << "Ground truth count: " << gt_count << endl << "Detected count: " << det_count << endl << "True postive: " << tp << endl << "False postive: " << fp << endl << "Miss detected: " << fn << endl << "Recall: " << recall << endl << "Precision: " << precision << endl << "f-score: " << f_score << endl;
+  cout << "Ground truth count: " << gt_count << endl
+       << "Detected count: " << det_count << endl
+       << "True postive: " << tp << endl
+       << "False postive: " << fp << endl
+       << "Miss detected: " << fn << endl
+       << "Recall: " << recall << endl
+       << "Precision: " << precision << endl
+       << "f-score: " << f_score << endl;
 
   fstream result_file("video_result/result3/result_file.txt", fstream::out);
-  result_file << "Ground truth count: " << gt_count << endl << "Detected count: " << det_count << endl << "True postive: " << tp << endl << "False postive: " << fp << endl << "Miss detected: " << fn << endl << "Recall: " << recall << endl << "Precision: " << precision << endl << "f-score: " << f_score << endl;
+  result_file << "Ground truth count: " << gt_count << endl
+              << "Detected count: " << det_count << endl
+              << "True postive: " << tp << endl
+              << "False postive: " << fp << endl
+              << "Miss detected: " << fn << endl
+              << "Recall: " << recall << endl
+              << "Precision: " << precision << endl
+              << "f-score: " << f_score << endl;
 }
 
 //==================================================
@@ -1189,7 +1247,9 @@ train_detection_classifier() {
   AdaBoost* adb1 = new CascadeBoost(AdaBoost::REAL, AdaBoost::DECISION_STUMP, Ftarget1, f1, d1);
   AdaBoost* adb2 = new CascadeBoost(AdaBoost::REAL, AdaBoost::DECISION_STUMP, Ftarget2, f2, d2);
 
-  std::cout << "Training text detection classifier, " << endl << "log are saved to \"training/detection_training_log.txt\", " << endl << "this would take serval minutes(depends on target false postive rate)" << endl;
+  std::cout << "Training text detection classifier, " << endl
+            << "log are saved to \"training/detection_training_log.txt\", " << endl
+            << "this would take serval minutes(depends on target false postive rate)" << endl;
   freopen("training/detection_training_log.txt", "w", stdout);
 
   chrono::high_resolution_clock::time_point start, middle, end;
@@ -1321,8 +1381,14 @@ void
 get_ocr_data() {
   const char* table = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&()"; // 10 num, 52 alphabet, 3
                                                                                            // symbol and 1 '\0'
-  vector<string> font_name = {"Arial",  "Bitter",    "Calibri", "Cambria", "Coda", "Comic_Sans_MS", "Courier_New", "Domine",    "Droid_Serif", "Fine_Ming", "Gill_Sans",      "Francois_One", "Georgia",           "Impact", "Lato",
-                              "Neuton", "Open_Sans", "Oswald",  "Oxygen",  "Play", "PT_Serif",      "Roboto_Slab", "Russo_One", "Sans_Serif",  "Syncopate", "Time_New_Roman", "Trebuchet_MS", "Twentieth_Century", "Ubuntu", "Verdana"};
+  vector<string> font_name = {"Arial",       "Bitter",         "Calibri",      "Cambria",
+                              "Coda",        "Comic_Sans_MS",  "Courier_New",  "Domine",
+                              "Droid_Serif", "Fine_Ming",      "Gill_Sans",    "Francois_One",
+                              "Georgia",     "Impact",         "Lato",         "Neuton",
+                              "Open_Sans",   "Oswald",         "Oxygen",       "Play",
+                              "PT_Serif",    "Roboto_Slab",    "Russo_One",    "Sans_Serif",
+                              "Syncopate",   "Time_New_Roman", "Trebuchet_MS", "Twentieth_Century",
+                              "Ubuntu",      "Verdana"};
   vector<string> font_type = {"Bold", "Bold_and_Italic", "Italic", "Normal"};
   vector<string> category = {"number", "upper", "lower", "symbol"};
   vector<int> cat_num = {10, 26, 26, 3};
@@ -1383,7 +1449,12 @@ train_ocr_model() {
   int probability_estimates = 1;
   int cost = 512;
   double gamma = 0.0078125;
-  snprintf(cmd, sizeof(cmd), "svm-train -b %d -c %d -g %f training/OCR.data training/OCR.model", probability_estimates, cost, gamma);
+  snprintf(cmd,
+           sizeof(cmd),
+           "svm-train -b %d -c %d -g %f training/OCR.data training/OCR.model",
+           probability_estimates,
+           cost,
+           gamma);
   cout << cmd << endl;
   system(cmd);
 }

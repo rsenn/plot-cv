@@ -125,7 +125,14 @@ update_mhi(const Mat& img, Mat& dst, int diff_threshold) {
     center = Point((comp_rect.x + comp_rect.width / 2), (comp_rect.y + comp_rect.height / 2));
 
     circle(img, center, cvRound(magnitude * 1.2), color, 3, 16, 0);
-    line(img, center, Point(cvRound(center.x + magnitude * cos(angle * CV_PI / 180)), cvRound(center.y - magnitude * sin(angle * CV_PI / 180))), color, 3, 16, 0);
+    line(img,
+         center,
+         Point(cvRound(center.x + magnitude * cos(angle * CV_PI / 180)),
+               cvRound(center.y - magnitude * sin(angle * CV_PI / 180))),
+         color,
+         3,
+         16,
+         0);
   }
 }
 

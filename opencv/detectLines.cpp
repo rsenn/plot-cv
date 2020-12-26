@@ -103,7 +103,11 @@ createStraightLines(vector<Point> rectCorners, vector<Point> curveEnds, vector<V
 void
 drawStraightLines(Mat& img_all, vector<Vec4i> straight_lines) {
   for(int i = 0; i < straight_lines.size(); i++) {
-    line(img_all, Point(straight_lines[i][0], straight_lines[i][1]), Point(straight_lines[i][2], straight_lines[i][3]), Scalar(255, 0, 0), 50);
+    line(img_all,
+         Point(straight_lines[i][0], straight_lines[i][1]),
+         Point(straight_lines[i][2], straight_lines[i][3]),
+         Scalar(255, 0, 0),
+         50);
   }
 }
 
@@ -237,7 +241,8 @@ bool
 isNearCircle(Point corner, vector<Vec3f> circles) {
   bool flag = false;
   for(int i = 0; i < circles.size(); i++) {
-    double dist = sqrt((corner.x - circles[i][0]) * (corner.x - circles[i][0]) + (corner.y - circles[i][1]) * (corner.y - circles[i][1]));
+    double dist = sqrt((corner.x - circles[i][0]) * (corner.x - circles[i][0]) +
+                       (corner.y - circles[i][1]) * (corner.y - circles[i][1]));
     if(dist <= circles[i][2] * 1.1) {
       flag = true;
     }
@@ -261,7 +266,8 @@ findCurveEnds(vector<Vec4i> linesP, vector<Vec3f> circles, vector<Point>& curveE
 
   curveEnds.push_back(temp[0]);
   for(int i = 1; i < temp.size(); i++) {
-    double dst = sqrt((curveEnds[0].x - temp[i].x) * (curveEnds[0].x - temp[i].x) + (curveEnds[0].y - temp[i].y) * (curveEnds[0].y - temp[i].y)); // dst between 1st pt and other pts
+    double dst = sqrt((curveEnds[0].x - temp[i].x) * (curveEnds[0].x - temp[i].x) +
+                      (curveEnds[0].y - temp[i].y) * (curveEnds[0].y - temp[i].y)); // dst between 1st pt and other pts
     if(dst >= circles[0][2] * 1.4) {
       curveEnds.push_back(temp[i]);
       break;
@@ -273,7 +279,8 @@ void
 extractCurve(vector<Point> contour, vector<Point> curveEnds, vector<Point>& curve) {
   //  ATTENTION: this function only work with 1 curve, which has 2 end points!
   for(int i = 0; i < contour.size(); i++) {
-    if(contour[i].x >= min(curveEnds[0].x, curveEnds[1].x) && contour[i].x <= max(curveEnds[0].x, curveEnds[1].x) && contour[i].y >= min(curveEnds[0].y, curveEnds[1].y) && contour[i].y <= max(curveEnds[0].y, curveEnds[1].y)) {
+    if(contour[i].x >= min(curveEnds[0].x, curveEnds[1].x) && contour[i].x <= max(curveEnds[0].x, curveEnds[1].x) &&
+       contour[i].y >= min(curveEnds[0].y, curveEnds[1].y) && contour[i].y <= max(curveEnds[0].y, curveEnds[1].y)) {
       curve.push_back(contour[i]);
     }
   }
@@ -290,7 +297,8 @@ isVorH(Vec4i line) {
     point1 = temp;
   } // keep point1 as the lower point and point2 as the higher point
   /* calculate cosine, cause we keep pt1 at low, the angle is between [0, pi] */
-  double cos = (point2.x - point1.x) / sqrt((point1.x - point2.x) * (point1.x - point2.x) + (point1.y - point2.y) * (point1.y - point2.y));
+  double cos = (point2.x - point1.x) /
+               sqrt((point1.x - point2.x) * (point1.x - point2.x) + (point1.y - point2.y) * (point1.y - point2.y));
   if(abs(cos) > 0.98 || abs(cos) < 0.02)
     return true;
   else

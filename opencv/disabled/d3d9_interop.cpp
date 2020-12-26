@@ -25,7 +25,8 @@ using namespace cv;
 
 class D3D9WinApp : public D3DSample {
 public:
-  D3D9WinApp(int width, int height, std::string& window_name, cv::VideoCapture& cap) : D3DSample(width, height, window_name, cap) {}
+  D3D9WinApp(int width, int height, std::string& window_name, cv::VideoCapture& cap)
+      : D3DSample(width, height, window_name, cap) {}
 
   ~D3D9WinApp() {}
 
@@ -42,7 +43,8 @@ public:
       return -1;
     }
 
-    DWORD flags = D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_PUREDEVICE | D3DCREATE_NOWINDOWCHANGES | D3DCREATE_MULTITHREADED | D3DCREATE_FPU_PRESERVE;
+    DWORD flags = D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_PUREDEVICE | D3DCREATE_NOWINDOWCHANGES |
+                  D3DCREATE_MULTITHREADED | D3DCREATE_FPU_PRESERVE;
 
     D3DPRESENT_PARAMETERS d3dpp;
     ::ZeroMemory(&d3dpp, sizeof(D3DPRESENT_PARAMETERS));

@@ -41,8 +41,8 @@ main(void) {
 
   if(!capVideo.isOpened()) {                                           // if unable to open video file
     std::cout << "error reading video file" << std::endl << std::endl; // show error message
-    getchar();                                                         // it may be necessary to change or remove this line if not using Windows
-    return (0);                                                        // and exit program
+    getchar();  // it may be necessary to change or remove this line if not using Windows
+    return (0); // and exit program
   }
 
   if(capVideo.get(cv::CAP_PROP_FRAME_COUNT) < 2) {
@@ -115,7 +115,9 @@ main(void) {
     for(auto& convexHull : convexHulls) {
       Blob possibleBlob(convexHull);
 
-      if(possibleBlob.currentBoundingRect.area() > 100 && possibleBlob.dblCurrentAspectRatio >= 0.2 && possibleBlob.dblCurrentAspectRatio <= 1.25 && possibleBlob.currentBoundingRect.width > 20 && possibleBlob.currentBoundingRect.height > 20 && possibleBlob.dblCurrentDiagonalSize > 30.0 &&
+      if(possibleBlob.currentBoundingRect.area() > 100 && possibleBlob.dblCurrentAspectRatio >= 0.2 &&
+         possibleBlob.dblCurrentAspectRatio <= 1.25 && possibleBlob.currentBoundingRect.width > 20 &&
+         possibleBlob.currentBoundingRect.height > 20 && possibleBlob.dblCurrentDiagonalSize > 30.0 &&
          (cv::contourArea(possibleBlob.currentContour) / (double)possibleBlob.currentBoundingRect.area()) > 0.40) {
         currentFrameBlobs.push_back(possibleBlob);
       }
@@ -133,7 +135,9 @@ main(void) {
 
     drawAndShowContours(imgThresh.size(), blobs, "imgBlobs");
 
-    imgFrame2Copy = imgFrame2.clone(); // get another copy of frame 2 since we changed the previous frame 2 copy in the processing above
+    imgFrame2Copy =
+        imgFrame2
+            .clone(); // get another copy of frame 2 since we changed the previous frame 2 copy in the processing above
 
     drawBlobInfoOnImage(blobs, imgFrame2Copy);
 
@@ -162,7 +166,8 @@ main(void) {
   if(chCheckForEscKey != 27) { // if the user did not press esc (i.e. we reached the end of the video)
     cv::waitKey(0);            // hold the windows open to allow the "end of video" message to show
   }
-  // note that if the user did press esc, we don't need to hold the windows open, we can simply let the program end which will close the windows
+  // note that if the user did press esc, we don't need to hold the windows open, we can simply let the program end
+  // which will close the windows
 
   return (0);
 }
@@ -185,7 +190,8 @@ matchCurrentFrameBlobsToExistingBlobs(std::vector<Blob>& existingBlobs, std::vec
 
     for(unsigned int i = 0; i < existingBlobs.size(); i++) {
       if(existingBlobs[i].blnStillBeingTracked == true) {
-        double dblDistance = distanceBetweenPoints(currentFrameBlob.centerPositions.back(), existingBlobs[i].predictedNextPosition);
+        double dblDistance =
+            distanceBetweenPoints(currentFrameBlob.centerPositions.back(), existingBlobs[i].predictedNextPosition);
 
         if(dblDistance < dblLeastDistance) {
           dblLeastDistance = dblDistance;
@@ -290,7 +296,13 @@ drawBlobInfoOnImage(std::vector<Blob>& blobs, cv::Mat& imgFrame2Copy) {
       double dblFontScale = blobs[i].dblCurrentDiagonalSize / 60.0;
       int intFontThickness = (int)std::round(dblFontScale * 1.0);
 
-      cv::putText(imgFrame2Copy, std::to_string(i), blobs[i].centerPositions.back(), intFontFace, dblFontScale, SCALAR_GREEN, intFontThickness);
+      cv::putText(imgFrame2Copy,
+                  std::to_string(i),
+                  blobs[i].centerPositions.back(),
+                  intFontFace,
+                  dblFontScale,
+                  SCALAR_GREEN,
+                  intFontThickness);
     }
   }
 }

@@ -32,17 +32,18 @@ myDetector(InputArray image, OutputArray faces, CascadeClassifier* face_cascade)
 int
 main(int argc, char** argv) {
   // Give the path to the directory containing all the files containing data
-  CommandLineParser parser(argc,
-                           argv,
-                           "{ help h usage ?    |      | give the following arguments in following format }"
-                           "{ model_filename f  |      | (required) path to binary file storing the trained model which "
-                           "is to be loaded "
-                           "[example - /data/file.dat]}"
-                           "{ video v           |      | (required) path to video in which face landmarks have to be "
-                           "detected.[example - "
-                           "/data/video.avi] }"
-                           "{ face_cascade c    |      | Path to the face cascade xml file which you want to use as a "
-                           "detector}");
+  CommandLineParser parser(
+      argc,
+      argv,
+      "{ help h usage ?    |      | give the following arguments in following format }"
+      "{ model_filename f  |      | (required) path to binary file storing the trained model which "
+      "is to be loaded "
+      "[example - /data/file.dat]}"
+      "{ video v           |      | (required) path to video in which face landmarks have to be "
+      "detected.[example - "
+      "/data/video.avi] }"
+      "{ face_cascade c    |      | Path to the face cascade xml file which you want to use as a "
+      "detector}");
   // Read in the input arguments
   if(parser.has("help")) {
     parser.printMessage();
@@ -100,7 +101,8 @@ main(int argc, char** argv) {
       // vector to store the landmarks of all the faces in the image
       if(facemark->fit(img, faces, shapes)) {
         for(unsigned long i = 0; i < faces.size(); i++) {
-          for(unsigned long k = 0; k < shapes[i].size(); k++) cv::circle(img, shapes[i][k], 3, cv::Scalar(0, 0, 255), FILLED);
+          for(unsigned long k = 0; k < shapes[i].size(); k++)
+            cv::circle(img, shapes[i][k], 3, cv::Scalar(0, 0, 255), FILLED);
         }
       }
     }

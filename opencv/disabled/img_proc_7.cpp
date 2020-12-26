@@ -197,7 +197,8 @@ process_image(Mat& inputImage, Mat& outputImage) {
   myKernel = getStructuringElement(MORPH_RECT, Size(elem_size_x, elem_size_y));
   cvtColor(inputImage, myCopy, COLOR_BGR2HSV);
 
-  for(i = 0; i < RANGES; i++) inRange(myCopy, Scalar(lowHue[i], lowSat[i], lowVal[i]), Scalar(highHue[i], highSat[i], highVal[i]), myMask[i]);
+  for(i = 0; i < RANGES; i++)
+    inRange(myCopy, Scalar(lowHue[i], lowSat[i], lowVal[i]), Scalar(highHue[i], highSat[i], highVal[i]), myMask[i]);
 
   myMask[0].copyTo(outputImage);
   outputImage = Scalar(0);

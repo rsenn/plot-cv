@@ -57,7 +57,9 @@ _tmain(int argc, _TCHAR* argv[]) {
     }
     int confidence = 0;
     for(int i = 0; i < boundRect.size(); i++) {
-      if((boundRect[i].x < boundRect[max_index].x + boundRect[max_index].width && boundRect[i].x > boundRect[max_index].x - int(0.1 * boundRect[max_index].width)) && (boundRect[i].y > boundRect[max_index].y))
+      if((boundRect[i].x < boundRect[max_index].x + boundRect[max_index].width &&
+          boundRect[i].x > boundRect[max_index].x - int(0.1 * boundRect[max_index].width)) &&
+         (boundRect[i].y > boundRect[max_index].y))
         confidence += 45;
     }
     if(boundRect.size() > 0) {

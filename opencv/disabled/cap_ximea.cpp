@@ -124,8 +124,8 @@ CvCaptureCAM_XIMEA::open(const char* serialNumber) {
 
 bool
 CvCaptureCAM_XIMEA::_open() {
-#define HandleXiResult(res)                                                                                                                                                                                                                                                                                                    \
-  if(res != XI_OK)                                                                                                                                                                                                                                                                                                             \
+#define HandleXiResult(res)                                                                                            \
+  if(res != XI_OK)                                                                                                     \
     goto error;
   int width = 0;
   int height = 0;
@@ -1711,7 +1711,9 @@ CvCaptureCAM_XIMEA::errMsg(const char* msg, int errNum) const {
     case XI_OLD_DRIVER_VERSION: error_message = "Old version of device driver installed to the system."; break;
     case XI_GET_LAST_ERROR: error_message = "To get error code please call GetLastError function."; break;
     case XI_CANT_PROCESS: error_message = "Data can't be processed"; break;
-    case XI_ACQUISITION_STOPED: error_message = "Acquisition has been stopped. It should be started before GetImage."; break;
+    case XI_ACQUISITION_STOPED:
+      error_message = "Acquisition has been stopped. It should be started before GetImage.";
+      break;
     case XI_ACQUISITION_STOPED_WERR: error_message = "Acquisition has been stopped with error."; break;
     case XI_INVALID_INPUT_ICC_PROFILE: error_message = "Input ICC profile missed or corrupted"; break;
     case XI_INVALID_OUTPUT_ICC_PROFILE: error_message = "Output ICC profile missed or corrupted"; break;
@@ -1726,7 +1728,9 @@ CvCaptureCAM_XIMEA::errMsg(const char* msg, int errNum) const {
     case XI_RESOURCE_OR_FUNCTION_LOCKED: error_message = "Resource(device) or function locked by mutex"; break;
     case XI_BUFFER_SIZE_TOO_SMALL: error_message = "Buffer provided by user is too small"; break;
     case XI_COULDNT_INIT_PROCESSOR: error_message = "Couldn't initialize processor."; break;
-    case XI_NOT_INITIALIZED: error_message = "The object/module/procedure/process being referred to has not been started."; break;
+    case XI_NOT_INITIALIZED:
+      error_message = "The object/module/procedure/process being referred to has not been started.";
+      break;
     case XI_RESOURCE_NOT_FOUND: error_message = "Resource not found(could be processor, file, item..)."; break;
     case XI_UNKNOWN_PARAM: error_message = "Unknown parameter"; break;
     case XI_WRONG_PARAM_VALUE: error_message = "Wrong parameter value"; break;
@@ -1737,7 +1741,9 @@ CvCaptureCAM_XIMEA::errMsg(const char* msg, int errNum) const {
     case XI_NOT_SUPPORTED_PARAM_INFO: error_message = "Parameter info not supported"; break;
     case XI_NOT_SUPPORTED_DATA_FORMAT: error_message = "Data format not supported"; break;
     case XI_READ_ONLY_PARAM: error_message = "Read only parameter"; break;
-    case XI_BANDWIDTH_NOT_SUPPORTED: error_message = "This camera does not support currently available bandwidth"; break;
+    case XI_BANDWIDTH_NOT_SUPPORTED:
+      error_message = "This camera does not support currently available bandwidth";
+      break;
     case XI_INVALID_FFS_FILE_NAME: error_message = "FFS file selector is invalid or NULL"; break;
     case XI_FFS_FILE_NOT_FOUND: error_message = "FFS file not found"; break;
     case XI_PROC_OTHER_ERROR: error_message = "Processing error - other"; break;

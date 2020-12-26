@@ -98,10 +98,15 @@ printStreamProperties(VideoCapture& capture) {
 
   profilesCount = (size_t)capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_PROFILE_COUNT);
   cout << "Depth stream." << endl;
-  cout << "  Low confidence value = " << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_DEPTH_LOW_CONFIDENCE_VALUE) << endl;
-  cout << "  Saturation value = " << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_DEPTH_SATURATION_VALUE) << endl;
-  cout << "  Confidence threshold = " << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_DEPTH_CONFIDENCE_THRESHOLD) << endl;
-  cout << "  Focal length = (" << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_HORZ) << ", " << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_VERT) << ")" << endl;
+  cout << "  Low confidence value = "
+       << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_DEPTH_LOW_CONFIDENCE_VALUE) << endl;
+  cout << "  Saturation value = "
+       << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_DEPTH_SATURATION_VALUE) << endl;
+  cout << "  Confidence threshold = "
+       << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_DEPTH_CONFIDENCE_THRESHOLD) << endl;
+  cout << "  Focal length = ("
+       << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_HORZ) << ", "
+       << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_VERT) << ")" << endl;
   cout << "Depth streams profiles:" << endl;
   for(size_t i = 0; i < profilesCount; i++) {
     capture.set(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_INTELPERC_PROFILE_IDX, (double)i);
@@ -295,8 +300,10 @@ main(int argc, char* argv[]) {
       imshowImage("color image", bgrImage, capture);
 
     if(g_printTiming) {
-      cout << "Image frame: " << capture.get(CAP_INTELPERC_IMAGE_GENERATOR | CAP_PROP_POS_FRAMES) << ", Depth(IR) frame: " << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_POS_FRAMES) << endl;
-      cout << "Image frame: " << capture.get(CAP_INTELPERC_IMAGE_GENERATOR | CAP_PROP_POS_MSEC) << ", Depth(IR) frame: " << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_POS_MSEC) << endl;
+      cout << "Image frame: " << capture.get(CAP_INTELPERC_IMAGE_GENERATOR | CAP_PROP_POS_FRAMES)
+           << ", Depth(IR) frame: " << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_POS_FRAMES) << endl;
+      cout << "Image frame: " << capture.get(CAP_INTELPERC_IMAGE_GENERATOR | CAP_PROP_POS_MSEC)
+           << ", Depth(IR) frame: " << capture.get(CAP_INTELPERC_DEPTH_GENERATOR | CAP_PROP_POS_MSEC) << endl;
     }
     if(waitKey(30) >= 0)
       break;

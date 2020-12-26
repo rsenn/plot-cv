@@ -98,12 +98,14 @@ main() {
 
     std::cout << "Find Contours\n";
     // finding all contours in the image
-    cv::FindContours(imgGrayScale, storage, &contours, sizeof(CvContour), cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+    cv::FindContours(
+        imgGrayScale, storage, &contours, sizeof(CvContour), cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
     std::cout << "Check\n";
     while(contours) {
 
       // obtain a sequence of points of contour, pointed by the variable 'contour'
-      result = cv::ApproxPoly(contours, sizeof(CvContour), storage, CV_POLY_APPROX_DP, cvContourPerimeter(contours) * 0.02, 0);
+      result = cv::ApproxPoly(
+          contours, sizeof(CvContour), storage, CV_POLY_APPROX_DP, cvContourPerimeter(contours) * 0.02, 0);
 
       // Triangle Detection
       // if there are 3  vertices  in the contour(It should be a triangle)
@@ -140,10 +142,12 @@ main() {
         double fourthAngle = acos(angle(pt[0], pt[2], pt[3]));
 
         // This If Statement Ensures that the edges are sufficiently large
-        if(abs(pt[1]->x - pt[0]->x) > 10 && abs(pt[1]->x - pt[2]->x) > 10 && abs(pt[2]->x - pt[3]->x) > 10 && abs(pt[3]->x - pt[0]->x) > 10) {
+        if(abs(pt[1]->x - pt[0]->x) > 10 && abs(pt[1]->x - pt[2]->x) > 10 && abs(pt[2]->x - pt[3]->x) > 10 &&
+           abs(pt[3]->x - pt[0]->x) > 10) {
 
           // This if statement checks the angles to see if its a rectangle or not (90 angles with 10% uncertainty)
-          if(firstAngle <= 1.884 && firstAngle >= 1.308 && secondAngle <= 1.884 && secondAngle >= 1.308 && thirdAngle <= 1.884 && thirdAngle >= 1.308 && fourthAngle <= 1.884 && fourthAngle >= 1.308) {
+          if(firstAngle <= 1.884 && firstAngle >= 1.308 && secondAngle <= 1.884 && secondAngle >= 1.308 &&
+             thirdAngle <= 1.884 && thirdAngle >= 1.308 && fourthAngle <= 1.884 && fourthAngle >= 1.308) {
             // drawing lines around the quadrilateral
             cv::line(frame, *pt[0], *pt[1], cv::Scalar(0, 255, 0), 4);
             cv::line(frame, *pt[1], *pt[2], cv::Scalar(0, 255, 0), 4);
@@ -184,7 +188,10 @@ main() {
 IplImage*
 GetThresholdedImage(IplImage* imgHSV) {
   IplImage* imgThresh = cv::CreateImage(cvGetSize(imgHSV), IPL_DEPTH_8U, 1);
-  cv::InRangeS(imgHSV, cv::Scalar(Hue_Min, Saturation_Min, Value_Min), cv::Scalar(Hue_Max, Saturation_Max, Value_Max), imgThresh);
+  cv::InRangeS(imgHSV,
+               cv::Scalar(Hue_Min, Saturation_Min, Value_Min),
+               cv::Scalar(Hue_Max, Saturation_Max, Value_Max),
+               imgThresh);
   return imgThresh;
 }
 

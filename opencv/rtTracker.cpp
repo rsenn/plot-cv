@@ -16,7 +16,14 @@ bool OVERLAY_ENABLED = true;
 bool VALID_H = false;
 
 void readme();
-void SURFAlgorithm(Mat& scene_img, Ptr<Feature2D>& surf, vector<KeyPoint>& keypoints1, vector<KeyPoint>& keypoints2, Mat& descriptors1, Mat& descriptors2, Mat& H, bool& Hrel);
+void SURFAlgorithm(Mat& scene_img,
+                   Ptr<Feature2D>& surf,
+                   vector<KeyPoint>& keypoints1,
+                   vector<KeyPoint>& keypoints2,
+                   Mat& descriptors1,
+                   Mat& descriptors2,
+                   Mat& H,
+                   bool& Hrel);
 void drawBox(std::vector<Point2f>& scene_corners, Mat& img_show);
 void getCameraData(std::string filename, Mat& cameraMatrix2, Mat& distCoeffs2);
 void drawAxis(std::vector<Point2f>& imagePoints, Mat& img_show);
@@ -165,7 +172,14 @@ getCameraData(std::string filename, Mat& cameraMatrix2, Mat& distCoeffs2) {
 }
 
 void
-SURFAlgorithm(Mat& scene_img, Ptr<Feature2D>& surf, vector<KeyPoint>& keypoints1, vector<KeyPoint>& keypoints2, Mat& descriptors1, Mat& descriptors2, Mat& H, bool& VALID_H) {
+SURFAlgorithm(Mat& scene_img,
+              Ptr<Feature2D>& surf,
+              vector<KeyPoint>& keypoints1,
+              vector<KeyPoint>& keypoints2,
+              Mat& descriptors1,
+              Mat& descriptors2,
+              Mat& H,
+              bool& VALID_H) {
   Mat gray_scene, H1, outlier_mask;
   cvtColor(scene_img, gray_scene, COLOR_BGR2GRAY);
   if(!gray_scene.data) {

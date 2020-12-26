@@ -125,9 +125,19 @@ scan(String file, bool debug = true) {
   // for visualization only
   if(debug) {
     line(img_proc, horizontals[0]._p1, horizontals[0]._p2, Scalar(0, 255, 0), 2, cv::LINE_AA);
-    line(img_proc, horizontals[horizontals.size() - 1]._p1, horizontals[horizontals.size() - 1]._p2, Scalar(0, 255, 0), 2, cv::LINE_AA);
+    line(img_proc,
+         horizontals[horizontals.size() - 1]._p1,
+         horizontals[horizontals.size() - 1]._p2,
+         Scalar(0, 255, 0),
+         2,
+         cv::LINE_AA);
     line(img_proc, verticals[0]._p1, verticals[0]._p2, Scalar(255, 0, 0), 2, cv::LINE_AA);
-    line(img_proc, verticals[verticals.size() - 1]._p1, verticals[verticals.size() - 1]._p2, Scalar(255, 0, 0), 2, cv::LINE_AA);
+    line(img_proc,
+         verticals[verticals.size() - 1]._p1,
+         verticals[verticals.size() - 1]._p2,
+         Scalar(255, 0, 0),
+         2,
+         cv::LINE_AA);
   }
 
   /* perspective transformation */

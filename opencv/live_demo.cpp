@@ -189,7 +189,8 @@ main() {
   cv::createTrackbar("Threads", cv::String(), &g_numberOfCPUs, cv::getNumberOfCPUs(), changeNumberOfCpuCallback);
 
   // Buttons to choose different modes
-  cv::createButton("Mode Details Enhancement", changeModeCallback, (void*)filterDetailEnhancement, cv::QT_RADIOBOX, true);
+  cv::createButton(
+      "Mode Details Enhancement", changeModeCallback, (void*)filterDetailEnhancement, cv::QT_RADIOBOX, true);
   cv::createButton("Mode Stylizing", changeModeCallback, (void*)filterStylize, cv::QT_RADIOBOX, false);
   cv::createButton("Mode Blurring", changeModeCallback, (void*)filterBlurring, cv::QT_RADIOBOX, false);
   cv::createButton("Mode DoNothing", changeModeCallback, (void*)filterDoNothing, cv::QT_RADIOBOX, false);

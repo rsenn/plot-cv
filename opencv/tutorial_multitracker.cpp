@@ -93,7 +93,8 @@ main(int argc, char** argv) {
 
     //! [result]
     // draw the tracked object
-    for(unsigned i = 0; i < trackers.getObjects().size(); i++) rectangle(frame, trackers.getObjects()[i], Scalar(255, 0, 0), 2, 1);
+    for(unsigned i = 0; i < trackers.getObjects().size(); i++)
+      rectangle(frame, trackers.getObjects()[i], Scalar(255, 0, 0), 2, 1);
     //! [result]
 
     // show image with the tracked object

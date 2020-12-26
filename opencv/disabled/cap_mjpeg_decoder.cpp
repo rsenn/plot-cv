@@ -357,7 +357,8 @@ protected:
   bool m_is_indx_present;
 };
 
-AviMjpegStream::AviMjpegStream() : m_stream_id(0), m_movi_start(0), m_movi_end(0), m_width(0), m_height(0), m_fps(0), m_is_indx_present(false) {}
+AviMjpegStream::AviMjpegStream()
+    : m_stream_id(0), m_movi_start(0), m_movi_end(0), m_width(0), m_height(0), m_fps(0), m_is_indx_present(false) {}
 
 size_t
 AviMjpegStream::getFramesCount() {
@@ -389,9 +390,15 @@ AviMjpegStream::printError(MjpegInputStream& in_str, RiffList& list, uint32_t ex
   if(!in_str) {
     fprintf(stderr, "Unexpected end of file while searching for %s list\n", fourccToString(expected_fourcc).c_str());
   } else if(list.m_riff_or_list_cc != LIST_CC) {
-    fprintf(stderr, "Unexpected element. Expected: %s. Got: %s.\n", fourccToString(LIST_CC).c_str(), fourccToString(list.m_riff_or_list_cc).c_str());
+    fprintf(stderr,
+            "Unexpected element. Expected: %s. Got: %s.\n",
+            fourccToString(LIST_CC).c_str(),
+            fourccToString(list.m_riff_or_list_cc).c_str());
   } else {
-    fprintf(stderr, "Unexpected list type. Expected: %s. Got: %s.\n", fourccToString(expected_fourcc).c_str(), fourccToString(list.m_list_type_cc).c_str());
+    fprintf(stderr,
+            "Unexpected list type. Expected: %s. Got: %s.\n",
+            fourccToString(expected_fourcc).c_str(),
+            fourccToString(list.m_list_type_cc).c_str());
   }
 }
 
@@ -400,7 +407,10 @@ AviMjpegStream::printError(MjpegInputStream& in_str, RiffChunk& chunk, uint32_t 
   if(!in_str) {
     fprintf(stderr, "Unexpected end of file while searching for %s chunk\n", fourccToString(expected_fourcc).c_str());
   } else {
-    fprintf(stderr, "Unexpected element. Expected: %s. Got: %s.\n", fourccToString(expected_fourcc).c_str(), fourccToString(chunk.m_four_cc).c_str());
+    fprintf(stderr,
+            "Unexpected element. Expected: %s. Got: %s.\n",
+            fourccToString(expected_fourcc).c_str(),
+            fourccToString(chunk.m_four_cc).c_str());
   }
 }
 
@@ -792,7 +802,8 @@ MotionJpegCapture::parseRiff(MjpegInputStream& in_str) {
 
     in_str >> riff_list;
 
-    if(in_str && riff_list.m_riff_or_list_cc == RIFF_CC && ((riff_list.m_list_type_cc == AVI_CC) | (riff_list.m_list_type_cc == AVIX_CC))) {
+    if(in_str && riff_list.m_riff_or_list_cc == RIFF_CC &&
+       ((riff_list.m_list_type_cc == AVI_CC) | (riff_list.m_list_type_cc == AVIX_CC))) {
       uint64_t next_riff = in_str.tellg();
       // RiffList::m_size includes fourCC field which we have already read
       next_riff += (riff_list.m_size - 4);

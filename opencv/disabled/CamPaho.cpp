@@ -145,7 +145,10 @@ floodFillStack(Mat& inputImage, int x, int y, vector<pair<int, int>>& domain) {
 }
 
 void
-findCentroid(Mat& inputImage, vector<vector<pair<int, int>>>& domain, const int& domainNumber, vector<pair<double, double>>& centroid) {
+findCentroid(Mat& inputImage,
+             vector<vector<pair<int, int>>>& domain,
+             const int& domainNumber,
+             vector<pair<double, double>>& centroid) {
 
   int colNumber = inputImage.cols;
   int rowNumber = inputImage.rows;

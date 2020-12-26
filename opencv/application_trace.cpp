@@ -44,7 +44,8 @@ main(int argc, char** argv) {
   int nframes = 0;
   if(capture.isOpened()) {
     nframes = (int)capture.get(CAP_PROP_FRAME_COUNT);
-    cout << "Video " << video << ": width=" << capture.get(CAP_PROP_FRAME_WIDTH) << ", height=" << capture.get(CAP_PROP_FRAME_HEIGHT) << ", nframes=" << nframes << endl;
+    cout << "Video " << video << ": width=" << capture.get(CAP_PROP_FRAME_WIDTH)
+         << ", height=" << capture.get(CAP_PROP_FRAME_HEIGHT) << ", nframes=" << nframes << endl;
   } else {
     cout << "Could not initialize video capturing...\n";
     return -1;

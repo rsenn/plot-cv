@@ -65,7 +65,8 @@ main(int argc, char* argv[]) {
     Rect r = boundingRect(contours[i]);
     int radius = r.width / 2;
 
-    if(std::abs(1 - ((double)r.width / r.height)) <= 0.2 && std::abs(1 - (area / (CV_PI * std::pow(radius, 2.0)))) <= 0.2 && (r.width <= 30)) {
+    if(std::abs(1 - ((double)r.width / r.height)) <= 0.2 &&
+       std::abs(1 - (area / (CV_PI * std::pow(radius, 2.0)))) <= 0.2 && (r.width <= 30)) {
       printf("x : %f\n", center.x);
       printf("y : %f\n", center.y);
       printf("radius: %d\n", radius);

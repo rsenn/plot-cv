@@ -62,7 +62,9 @@ public:
                     const Size& net_size = Size(300, 300),
                     const Scalar& net_mean = Scalar(127.5, 127.5, 127.5),
                     bool net_swapRB = false)
-      : desired_class_id(desired_class_id), confidence_threshold(confidence_threshold), net_input_name(net_input_name), net_output_name(net_output_name), net_scalefactor(net_scalefactor), net_size(net_size), net_mean(net_mean), net_swapRB(net_swapRB) {
+      : desired_class_id(desired_class_id), confidence_threshold(confidence_threshold), net_input_name(net_input_name),
+        net_output_name(net_output_name), net_scalefactor(net_scalefactor), net_size(net_size), net_mean(net_mean),
+        net_swapRB(net_swapRB) {
     net = dnn::readNetFromCaffe(net_caffe_model_path, net_caffe_weights_path);
     if(net.empty())
       CV_Error(Error::StsError, "Cannot read Caffe net");
@@ -122,7 +124,8 @@ createTrackerByMatchingWithFastDescriptor() {
 
   cv::Ptr<ITrackerByMatching> tracker = createTrackerByMatching(params);
 
-  std::shared_ptr<IImageDescriptor> descriptor_fast = std::make_shared<ResizedImageDescriptor>(cv::Size(16, 32), cv::InterpolationFlags::INTER_LINEAR);
+  std::shared_ptr<IImageDescriptor> descriptor_fast =
+      std::make_shared<ResizedImageDescriptor>(cv::Size(16, 32), cv::InterpolationFlags::INTER_LINEAR);
   std::shared_ptr<IDescriptorDistance> distance_fast = std::make_shared<MatchTemplateDistance>();
 
   tracker->setDescriptorFast(descriptor_fast);

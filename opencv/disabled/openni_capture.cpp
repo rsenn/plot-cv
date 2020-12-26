@@ -112,7 +112,14 @@ printCommandLineParams() {
 }
 
 static void
-parseCommandLine(int argc, char* argv[], bool& isColorizeDisp, bool& isFixedMaxDisp, int& imageMode, bool retrievedImageFlags[], string& filename, bool& isFileReading) {
+parseCommandLine(int argc,
+                 char* argv[],
+                 bool& isColorizeDisp,
+                 bool& isFixedMaxDisp,
+                 int& imageMode,
+                 bool retrievedImageFlags[],
+                 string& filename,
+                 bool& isFileReading) {
   // set defaut values
   isColorizeDisp = true;
   isFixedMaxDisp = false;
@@ -181,7 +188,8 @@ main(int argc, char* argv[]) {
   bool retrievedImageFlags[5];
   string filename;
   bool isVideoReading;
-  parseCommandLine(argc, argv, isColorizeDisp, isFixedMaxDisp, imageMode, retrievedImageFlags, filename, isVideoReading);
+  parseCommandLine(
+      argc, argv, isColorizeDisp, isFixedMaxDisp, imageMode, retrievedImageFlags, filename, isVideoReading);
 
   cout << "Device opening ..." << endl;
   VideoCapture capture;

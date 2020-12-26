@@ -108,8 +108,10 @@ process(VideoCapture& capture) {
         for(int h = 0; h <= currentpix; h++) {
 
           if(catnumx[h] + catnumy[h] != 0)
-            if((thisbee < bee[h] + thresh && thisbee > bee[h] - thresh) && (thisjee < jee[h] + thresh && thisjee > jee[h] - thresh) && (thisare < are[h] + thresh && thisare > are[h] - thresh)) { // if it's a match
-              newframe.at<cv::Vec3b>(i, j)[0] = 255;                                                                                                                                               // set to white
+            if((thisbee < bee[h] + thresh && thisbee > bee[h] - thresh) &&
+               (thisjee < jee[h] + thresh && thisjee > jee[h] - thresh) &&
+               (thisare < are[h] + thresh && thisare > are[h] - thresh)) { // if it's a match
+              newframe.at<cv::Vec3b>(i, j)[0] = 255;                       // set to white
               newframe.at<cv::Vec3b>(i, j)[1] = 255;
               newframe.at<cv::Vec3b>(i, j)[2] = 255;
               if(findcenter && matches == 0) {

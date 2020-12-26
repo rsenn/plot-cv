@@ -130,7 +130,12 @@ main(int argc, const char** argv) {
 
           for(int i = 0; i < hsize; i++) {
             int val = saturate_cast<int>(hist.at<float>(i) * histimg.rows / 255);
-            rectangle(histimg, Point(i * binW, histimg.rows), Point((i + 1) * binW, histimg.rows - val), Scalar(buf.at<Vec3b>(i)), -1, 8);
+            rectangle(histimg,
+                      Point(i * binW, histimg.rows),
+                      Point((i + 1) * binW, histimg.rows - val),
+                      Scalar(buf.at<Vec3b>(i)),
+                      -1,
+                      8);
           }
         }
 
@@ -139,7 +144,8 @@ main(int argc, const char** argv) {
         RotatedRect trackBox = CamShift(backproj, trackWindow, TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 10, 1));
         if(trackWindow.area() <= 1) {
           int cols = backproj.cols, rows = backproj.rows, r = (MIN(cols, rows) + 5) / 6;
-          trackWindow = Rect(trackWindow.x - r, trackWindow.y - r, trackWindow.x + r, trackWindow.y + r) & Rect(0, 0, cols, rows);
+          trackWindow =
+              Rect(trackWindow.x - r, trackWindow.y - r, trackWindow.x + r, trackWindow.y + r) & Rect(0, 0, cols, rows);
         }
 
         if(backprojMode)

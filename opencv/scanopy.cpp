@@ -152,9 +152,12 @@ scan(Mat img, jfloat x1, jfloat y1, jfloat x2, jfloat y2, jfloat x3, jfloat y3, 
 jobject
 mat_to_bitmap(JNIEnv* env, Mat& src, bool needPremultiplyAlpha, jobject bitmap_config) {
   jclass java_bitmap_class = (jclass)env->FindClass("android/graphics/Bitmap");
-  jmethodID mid = env->GetStaticMethodID(java_bitmap_class, "createBitmap", "(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;");
+  jmethodID mid = env->GetStaticMethodID(java_bitmap_class,
+                                         "createBitmap",
+                                         "(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;");
 
-  jobject bitmap = env->CallStaticObjectMethod(java_bitmap_class, mid, src.size().width, src.size().height, bitmap_config);
+  jobject bitmap =
+      env->CallStaticObjectMethod(java_bitmap_class, mid, src.size().width, src.size().height, bitmap_config);
   AndroidBitmapInfo info;
   void* pixels = 0;
 
@@ -205,7 +208,17 @@ mat_to_bitmap(JNIEnv* env, Mat& src, bool needPremultiplyAlpha, jobject bitmap_c
 }
 
 JNIEXPORT jobject JNICALL
-Java_com_scanlibrary_ScanActivity_getScannedBitmap(JNIEnv* env, jobject thiz, jobject bitmap, jfloat x1, jfloat y1, jfloat x2, jfloat y2, jfloat x3, jfloat y3, jfloat x4, jfloat y4) {
+Java_com_scanlibrary_ScanActivity_getScannedBitmap(JNIEnv* env,
+                                                   jobject thiz,
+                                                   jobject bitmap,
+                                                   jfloat x1,
+                                                   jfloat y1,
+                                                   jfloat x2,
+                                                   jfloat y2,
+                                                   jfloat x3,
+                                                   jfloat y3,
+                                                   jfloat x4,
+                                                   jfloat y4) {
   __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "Scaning getString");
   int ret;
   AndroidBitmapInfo info;

@@ -79,7 +79,13 @@ searchForMovement(cv::Mat thresholdImage, cv::Mat& cameraFeed) {
   line(cameraFeed, cv::Point(x, y), cv::Point(x, y + 25), Scalar(0, 255, 0), 2);
   line(cameraFeed, cv::Point(x, y), cv::Point(x - 25, y), Scalar(0, 255, 0), 2);
   line(cameraFeed, cv::Point(x, y), cv::Point(x + 25, y), Scalar(0, 255, 0), 2);
-  putText(cameraFeed, "Tracking object at (" + intToString(x) + "," + intToString(y) + ")", cv::Point(x, y), 1, 1, Scalar(255, 0, 0), 2);
+  putText(cameraFeed,
+          "Tracking object at (" + intToString(x) + "," + intToString(y) + ")",
+          cv::Point(x, y),
+          1,
+          1,
+          Scalar(255, 0, 0),
+          2);
 }
 int
 main() {

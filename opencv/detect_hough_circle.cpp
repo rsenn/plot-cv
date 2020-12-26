@@ -146,7 +146,8 @@ main(int argc, char** argv) {
   // if ( mysql_query(con, "DROP TABLE IF EXISTS Circles") )
   //   finishWithError(con);
 
-  // if ( mysql_query(con, "CREATE TABLE Circles(id INT, filename CHAR, left_x INT, left_y INT, right_x INT, right_y INT)") )
+  // if ( mysql_query(con, "CREATE TABLE Circles(id INT, filename CHAR, left_x INT, left_y INT, right_x INT, right_y
+  // INT)") )
   //     finishWithError(con);
 
   // char buffer [50];

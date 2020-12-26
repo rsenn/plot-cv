@@ -48,7 +48,8 @@ main(int argc, char* argv[]) {
 void
 drawQRCodeContour(cv::Mat& color_image, std::vector<cv::Point> transform) {
   if(!transform.empty()) {
-    double show_radius = (color_image.rows > color_image.cols) ? (2.813 * color_image.rows) / color_image.cols : (2.813 * color_image.cols) / color_image.rows;
+    double show_radius = (color_image.rows > color_image.cols) ? (2.813 * color_image.rows) / color_image.cols
+                                                               : (2.813 * color_image.cols) / color_image.rows;
     double contour_radius = show_radius * 0.4;
 
     std::vector<std::vector<cv::Point>> contours;

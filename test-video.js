@@ -165,12 +165,13 @@ async function main(...args) {
 
   let params = {
     ksize: new NumericParam(3, 1, 13, 2),
-    thresh1: new NumericParam(10, 0, 100),
-    thresh2: new NumericParam(60, 0, 100),
+    thresh1: new NumericParam(40, 0, 100),
+    thresh2: new NumericParam(90, 0, 100),
     apertureSize: new NumericParam(3, 3, 7, 2),
     L2gradient: new NumericParam(0, 0, 1),
     mode: new EnumParam(['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL'], 3),
-    method: new EnumParam(['CHAIN_APPROX_NONE', 'CHAIN_APPROX_SIMPLE', 'CHAIN_APPROX_TC89_L1', 'CHAIN_APPROX_TC89_L189_KCOS'], 0)
+    method: new EnumParam(['CHAIN_APPROX_NONE', 'CHAIN_APPROX_SIMPLE', 'CHAIN_APPROX_TC89_L1', 'CHAIN_APPROX_TC89_L189_KCOS'], 0),
+    lineWidth: new NumericParam(1, 0, 10)
   };
   let paramNav = new ParamNavigator(params);
   let dummyArray = [0, 1, 2, 3, 4, 5, 6, 7];
@@ -188,6 +189,9 @@ async function main(...args) {
         video.read(output);
       }),
       Grayscale,
+      Processor(function Norm(src, dst) {
+        cv.normalize(src, dst, 255, 0, cv.NORM_MINMAX);
+      }),
       Processor(function Blur(src, dst) {
         cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
       }),
@@ -226,10 +230,14 @@ async function main(...args) {
   let surface;
   let out = new Mat();
 
-  let makeSurface = Util.once((rows, cols) => {
+  const MakeSurface = Util.once((rows, cols) => {
     surface = new Mat(rows, cols, cv.CV_8UC4);
-
   });
+  const MakeComposite = Util.once(() => new Mat());
+
+  const ClearSurface = (rows, cols) => {
+    surface ? surface.zero() : MakeSurface(rows, cols);
+  };
 
   while(running) {
     meter.reset();
@@ -252,7 +260,7 @@ async function main(...args) {
 
       let sleepMsecs = deadline - Util.now();
 
-      sleepMsecs -= 10;
+      sleepMsecs -= 2;
       //console.log('sleepMsecs:', sleepMsecs, '/', frameDelay);
 
       if((key = cv.waitKeyEx(Math.max(1, sleepMsecs))) != -1) {
@@ -349,32 +357,42 @@ async function main(...args) {
   }
 
   function showOutput() {
-    makeSurface(outputMat.rows, outputMat.cols);
-
-  //  surface.and([0,0,0]);
-
+    //ClearSurface(outputMat.rows, outputMat.cols);
+    surface = new Mat(outputMat.rows, outputMat.cols, cv.CV_8UC4);
+    //MakeSurface(outputMat.rows, outputMat.cols);
+    //  surface.and([0,0,0]);
+    console.log('outputMat ' + outputMat.toString());
+    //      outputMat.copyTo(out);
+    out = outputMat /*.clone()*/;
     if(outputMat.channels == 1) {
-      cv.cvtColor(outputMat, out, cv.COLOR_GRAY2BGR);
-      cv.cvtColor(out, out, cv.COLOR_BGR2BGRA);
+      cv.cvtColor(out, out, cv.COLOR_GRAY2BGRA);
     } else {
       cv.cvtColor(out, out, cv.COLOR_BGR2BGRA);
     }
-    let ids = [...getToplevel(hier)];
 
-    let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]]));
-    let depths = contours.map((contour, i) => {
-      let p = [...getParents(hier, i)];
-      let d = p.length;
-      let color = palette[p[p.length - 1]];
-      drawContour(surface, contour, color);
-      return d;
-    });
-    contoursDepth = depths.length ? Math.max(...depths) : 0;
+    /* if(frameShow == pipeline.size - 1) {
+      out.and([0, 255, 255, 255]);
+      console.log('row 100:', [...out.row(100).values()]);
+    }*/
+    console.log('out ' + out.toString());
+
+    if(frameShow == 0) {
+      cv.drawContours(surface, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
+    } else {
+      let ids = [...getToplevel(hier)];
+
+      let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]]));
+      contours.forEach((contour, i) => {
+        let p = [...getParents(hier, i)];
+        let color = palette[p[p.length - 1]];
+        drawContour(surface, contour, color, +params.lineWidth);
+      });
+    }
     font.draw(surface, video.time + ' ⏩', tPos, /*0x00ff00 ||*/ { r: 0, g: 255, b: 0, a: 255 });
 
     let paramStr = `${paramNav.name} [${paramNav.param.range.join('-')}] = ${+paramNav.param}`;
     //console.log('paramStr: ', paramStr);
-    font.draw(surface, paramStr, [5, 100], /*0x00ffff ||*/ { r: 255, g: 0, b: 0, a: 255 });
+    font.draw(surface, paramStr, [tPos.x, tPos.y - 20], /*0x00ffff ||*/ { r: 255, g: 0, b: 0, a: 255 });
 
     font.draw(surface,
       `#${frameShow + 1}/${pipeline.size}` + (outputName ? ` (${outputName})` : ''),
@@ -389,12 +407,17 @@ async function main(...args) {
 
     resizeOutput();
 
-        console.log("row 100:", [...surface.row(100).values()]);
-
+    //console.log("row 100:", [...surface.row(100).values()]);
 
     //let mask = toBGR(getAlpha(surface));
-    cv.addWeighted(out, 1, surface, 1, 0, out);
-    win.show(out);
+    let composite = MakeComposite();
+
+    cv.addWeighted(out, frameShow == pipeline.size - 1 ? 0 : 1, surface, 1, 0, composite);
+    win.show(composite);
+
+    //console.log("composite", composite.toString());
+    //composite.release();
+    //console.log("composite.release()", composite.toString());
   }
 
   console.log('props:', video.dump());
@@ -513,8 +536,8 @@ function modifierMap(keyCode) {
   ].map(([modifier, flag]) => [modifier, keyCode & flag ? 1 : 0]);
 }
 
-function drawContour(mat, contour, color) {
-  cv.drawContours(mat, [contour], 0, color, 1, cv.LINE_AA);
+function drawContour(mat, contour, color, thickness = 1, lineType = cv.LINE_AA) {
+  cv.drawContours(mat, [contour], 0, color, thickness, lineType);
 }
 
 function* getParents(hier, contourId) {

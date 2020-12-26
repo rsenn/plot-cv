@@ -25,7 +25,8 @@ using namespace cv;
 
 class D3D10WinApp : public D3DSample {
 public:
-  D3D10WinApp(int width, int height, std::string& window_name, cv::VideoCapture& cap) : D3DSample(width, height, window_name, cap) {}
+  D3D10WinApp(int width, int height, std::string& window_name, cv::VideoCapture& cap)
+      : D3DSample(width, height, window_name, cap) {}
 
   ~D3D10WinApp() {}
 
@@ -52,7 +53,8 @@ public:
     scd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
     scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // allow full-screen switching
 
-    r = ::D3D10CreateDeviceAndSwapChain(NULL, D3D10_DRIVER_TYPE_HARDWARE, NULL, 0, D3D10_SDK_VERSION, &scd, &m_pD3D10SwapChain, &m_pD3D10Dev);
+    r = ::D3D10CreateDeviceAndSwapChain(
+        NULL, D3D10_DRIVER_TYPE_HARDWARE, NULL, 0, D3D10_SDK_VERSION, &scd, &m_pD3D10SwapChain, &m_pD3D10Dev);
     if(FAILED(r)) {
       return -1;
     }

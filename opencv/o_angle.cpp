@@ -126,7 +126,9 @@ main(int argc, char** argv) {
         vec_center_minus_red = center_2 - center;                   // 20170420
         vec_horizontal = cv::Point(300, 240) - cv::Point(200, 240); // 20170420
         ///////////////////�|(��)��!!!!!!!!!!! 20170420
-        arc_theta = acos(vec_center_minus_red.dot(vec_horizontal) / (pow(vec_center_minus_red.dot(vec_center_minus_red), 0.5) * pow(vec_horizontal.dot(vec_horizontal), 0.5)));
+        arc_theta =
+            acos(vec_center_minus_red.dot(vec_horizontal) / (pow(vec_center_minus_red.dot(vec_center_minus_red), 0.5) *
+                                                             pow(vec_horizontal.dot(vec_horizontal), 0.5)));
         theta = (arc_theta * 360) / (2 * pi); // 20170420
 
         if((center_2.x > center.x) && (center_2.y < center.y)) { // 20170420

@@ -230,12 +230,12 @@ private:
 /**
  * \brief Check if gPhoto2 function ends successfully. If not, throw an exception.
  */
-#define CR(GPHOTO2_FUN)                                                                                                                                                                                                                                                                                                        \
-  do {                                                                                                                                                                                                                                                                                                                         \
-    int r_0629c47b758;                                                                                                                                                                                                                                                                                                         \
-    if((r_0629c47b758 = (GPHOTO2_FUN)) < GP_OK) {                                                                                                                                                                                                                                                                              \
-      throw GPhoto2Exception(#GPHOTO2_FUN, r_0629c47b758);                                                                                                                                                                                                                                                                     \
-    };                                                                                                                                                                                                                                                                                                                         \
+#define CR(GPHOTO2_FUN)                                                                                                \
+  do {                                                                                                                 \
+    int r_0629c47b758;                                                                                                 \
+    if((r_0629c47b758 = (GPHOTO2_FUN)) < GP_OK) {                                                                      \
+      throw GPhoto2Exception(#GPHOTO2_FUN, r_0629c47b758);                                                             \
+    };                                                                                                                 \
   } while(0)
 
 /**
@@ -889,7 +889,8 @@ DigitalCameraCapture::widgetDescription(std::ostream& os, CameraWidget* widget) 
   if((type == GP_WIDGET_WINDOW) || (type == GP_WIDGET_SECTION) || (type == GP_WIDGET_BUTTON)) {
     readonly = 1;
   }
-  os << (id - noOfWidgets) << separator << label << separator << name << separator << info << separator << readonly << separator;
+  os << (id - noOfWidgets) << separator << label << separator << name << separator << info << separator << readonly
+     << separator;
 
   switch(type) {
     case GP_WIDGET_WINDOW: {

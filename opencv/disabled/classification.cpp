@@ -130,7 +130,9 @@ main(int argc, char** argv) {
     putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
 
     // Print predicted class.
-    label = format("%s: %.4f", (classes.empty() ? format("Class #%d", classId).c_str() : classes[classId].c_str()), confidence);
+    label = format("%s: %.4f",
+                   (classes.empty() ? format("Class #%d", classId).c_str() : classes[classId].c_str()),
+                   confidence);
     putText(frame, label, Point(0, 40), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
 
     imshow(kWinName, frame);

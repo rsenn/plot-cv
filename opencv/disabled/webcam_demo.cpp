@@ -27,7 +27,11 @@ private:
   std::vector<Ptr<ERFilter>> er_filter2;
 
 public:
-  Parallel_extractCSER(std::vector<cv::Mat>& _channels, std::vector<std::vector<ERStat>>& _regions, std::vector<Ptr<ERFilter>> _er_filter1, std::vector<Ptr<ERFilter>> _er_filter2) : channels(_channels), regions(_regions), er_filter1(_er_filter1), er_filter2(_er_filter2) {}
+  Parallel_extractCSER(std::vector<cv::Mat>& _channels,
+                       std::vector<std::vector<ERStat>>& _regions,
+                       std::vector<Ptr<ERFilter>> _er_filter1,
+                       std::vector<Ptr<ERFilter>> _er_filter2)
+      : channels(_channels), regions(_regions), er_filter1(_er_filter1), er_filter2(_er_filter2) {}
 
   virtual void
   operator()(const cv::Range& r) const CV_OVERRIDE {
@@ -50,8 +54,14 @@ private:
   std::vector<Ptr<T>>& ocrs;
 
 public:
-  Parallel_OCR(std::vector<cv::Mat>& _detections, std::vector<string>& _outputs, std::vector<std::vector<Rect>>& _boxes, std::vector<std::vector<string>>& _words, std::vector<std::vector<float>>& _confidences, std::vector<Ptr<T>>& _ocrs)
-      : detections(_detections), outputs(_outputs), boxes(_boxes), words(_words), confidences(_confidences), ocrs(_ocrs) {}
+  Parallel_OCR(std::vector<cv::Mat>& _detections,
+               std::vector<string>& _outputs,
+               std::vector<std::vector<Rect>>& _boxes,
+               std::vector<std::vector<string>>& _words,
+               std::vector<std::vector<float>>& _confidences,
+               std::vector<Ptr<T>>& _ocrs)
+      : detections(_detections), outputs(_outputs), boxes(_boxes), words(_words), confidences(_confidences),
+        ocrs(_ocrs) {}
 
   virtual void
   operator()(const cv::Range& r) const CV_OVERRIDE {
@@ -65,7 +75,10 @@ public:
 // Discard wrongly recognised strings
 bool isRepetitive(const string& s);
 // Draw ER's in an image via floodFill
-void er_draw(std::vector<cv::Mat>& channels, std::vector<std::vector<ERStat>>& regions, std::vector<Vec2i> group, cv::Mat& segmentation);
+void er_draw(std::vector<cv::Mat>& channels,
+             std::vector<std::vector<ERStat>>& regions,
+             std::vector<Vec2i> group,
+             cv::Mat& segmentation);
 
 const char* keys = {"{@input   | 0 | camera index or video file name}"
                     "{ image i |   | specify input image}"};
@@ -135,7 +148,8 @@ main(int argc, char* argv[]) {
   std::vector<Ptr<ERFilter>> er_filters1;
   std::vector<Ptr<ERFilter>> er_filters2;
   for(int i = 0; i < 2; i++) {
-    Ptr<ERFilter> er_filter1 = createERFilterNM1(loadClassifierNM1("trained_classifierNM1.xml"), 8, 0.00015f, 0.13f, 0.2f, true, 0.1f);
+    Ptr<ERFilter> er_filter1 =
+        createERFilterNM1(loadClassifierNM1("trained_classifierNM1.xml"), 8, 0.00015f, 0.13f, 0.2f, true, 0.1f);
     Ptr<ERFilter> er_filter2 = createERFilterNM2(loadClassifierNM2("trained_classifierNM2.xml"), 0.5);
     er_filters1.push_back(er_filter1);
     er_filters2.push_back(er_filter2);
@@ -160,7 +174,8 @@ main(int argc, char* argv[]) {
 
   std::vector<Ptr<OCRHMMDecoder>> decoders;
   for(int o = 0; o < num_ocrs; o++) {
-    decoders.push_back(OCRHMMDecoder::create(loadOCRHMMClassifierNM("OCRHMM_knn_model_data.xml.gz"), voc, transition_p, emission_p));
+    decoders.push_back(
+        OCRHMMDecoder::create(loadOCRHMMClassifierNM("OCRHMM_knn_model_data.xml.gz"), voc, transition_p, emission_p));
   }
   cout << " Done!" << endl;
 
@@ -182,12 +197,14 @@ main(int argc, char* argv[]) {
 
     switch(REGION_TYPE) {
       case 0: // ERStats
-        parallel_for_(cv::Range(0, (int)channels.size()), Parallel_extractCSER(channels, regions, er_filters1, er_filters2));
+        parallel_for_(cv::Range(0, (int)channels.size()),
+                      Parallel_extractCSER(channels, regions, er_filters1, er_filters2));
         break;
       case 1: // MSER
         std::vector<std::vector<cv::Point>> contours;
         std::vector<Rect> bboxes;
-        Ptr<MSER> mser = MSER::create(21, (int)(0.00002 * gray.cols * gray.rows), (int)(0.05 * gray.cols * gray.rows), 1, 0.7);
+        Ptr<MSER> mser =
+            MSER::create(21, (int)(0.00002 * gray.cols * gray.rows), (int)(0.05 * gray.cols * gray.rows), 1, 0.7);
         mser->detectRegions(gray, contours, bboxes);
 
         // Convert the output of MSER to suitable input for the grouping/recognition algorithms
@@ -204,7 +221,14 @@ main(int argc, char* argv[]) {
         erGrouping(frame, channels, regions, nm_region_groups, nm_boxes, ERGROUPING_ORIENTATION_HORIZ);
         break;
       case 1: // multioriented
-        erGrouping(frame, channels, regions, nm_region_groups, nm_boxes, ERGROUPING_ORIENTATION_ANY, "./trained_classifier_erGrouping.xml", 0.5);
+        erGrouping(frame,
+                   channels,
+                   regions,
+                   nm_region_groups,
+                   nm_boxes,
+                   ERGROUPING_ORIENTATION_ANY,
+                   "./trained_classifier_erGrouping.xml",
+                   0.5);
         break;
     }
 
@@ -266,23 +290,60 @@ main(int argc, char* argv[]) {
         boxes[i][j].y += nm_boxes[i].y - 15;
 
         // cout << "  word = " << words[j] << "\t confidence = " << confidences[j] << endl;
-        if((words[i][j].size() < 2) || (confidences[i][j] < min_confidence1) || ((words[i][j].size() == 2) && (words[i][j][0] == words[i][j][1])) || ((words[i][j].size() < 4) && (confidences[i][j] < min_confidence2)) || isRepetitive(words[i][j]))
+        if((words[i][j].size() < 2) || (confidences[i][j] < min_confidence1) ||
+           ((words[i][j].size() == 2) && (words[i][j][0] == words[i][j][1])) ||
+           ((words[i][j].size() < 4) && (confidences[i][j] < min_confidence2)) || isRepetitive(words[i][j]))
           continue;
         words_detection.push_back(words[i][j]);
         rectangle(out_img, boxes[i][j].tl(), boxes[i][j].br(), Scalar(255, 0, 255), 3);
-        Size word_size = getTextSize(words[i][j], FONT_HERSHEY_SIMPLEX, (double)scale_font, (int)(3 * scale_font), NULL);
-        rectangle(out_img, boxes[i][j].tl() - cv::Point(3, word_size.height + 3), boxes[i][j].tl() + cv::Point(word_size.width, 0), Scalar(255, 0, 255), -1);
-        putText(out_img, words[i][j], boxes[i][j].tl() - cv::Point(1, 1), FONT_HERSHEY_SIMPLEX, scale_font, Scalar(255, 255, 255), (int)(3 * scale_font));
+        Size word_size =
+            getTextSize(words[i][j], FONT_HERSHEY_SIMPLEX, (double)scale_font, (int)(3 * scale_font), NULL);
+        rectangle(out_img,
+                  boxes[i][j].tl() - cv::Point(3, word_size.height + 3),
+                  boxes[i][j].tl() + cv::Point(word_size.width, 0),
+                  Scalar(255, 0, 255),
+                  -1);
+        putText(out_img,
+                words[i][j],
+                boxes[i][j].tl() - cv::Point(1, 1),
+                FONT_HERSHEY_SIMPLEX,
+                scale_font,
+                Scalar(255, 255, 255),
+                (int)(3 * scale_font));
       }
     }
 
     t_all = ((double)getTickCount() - t_all) * 1000 / getTickFrequency();
     int text_thickness = 1 + (out_img.rows / 500);
     string fps_info = format("%2.1f Fps. %dx%d", (float)(1000 / t_all), frame.cols, frame.rows);
-    putText(out_img, fps_info, cv::Point(10, out_img.rows - 5), FONT_HERSHEY_DUPLEX, scale_font, Scalar(255, 0, 0), text_thickness);
-    putText(out_img, region_types_str[REGION_TYPE], cv::Point((int)(out_img.cols * 0.5), out_img.rows - (int)(bottom_bar_height / 1.5)), FONT_HERSHEY_DUPLEX, scale_font, Scalar(255, 0, 0), text_thickness);
-    putText(out_img, grouping_algorithms_str[GROUPING_ALGORITHM], cv::Point((int)(out_img.cols * 0.5), out_img.rows - ((int)(bottom_bar_height / 3) + 4)), FONT_HERSHEY_DUPLEX, scale_font, Scalar(255, 0, 0), text_thickness);
-    putText(out_img, recognitions_str[RECOGNITION], cv::Point((int)(out_img.cols * 0.5), out_img.rows - 5), FONT_HERSHEY_DUPLEX, scale_font, Scalar(255, 0, 0), text_thickness);
+    putText(out_img,
+            fps_info,
+            cv::Point(10, out_img.rows - 5),
+            FONT_HERSHEY_DUPLEX,
+            scale_font,
+            Scalar(255, 0, 0),
+            text_thickness);
+    putText(out_img,
+            region_types_str[REGION_TYPE],
+            cv::Point((int)(out_img.cols * 0.5), out_img.rows - (int)(bottom_bar_height / 1.5)),
+            FONT_HERSHEY_DUPLEX,
+            scale_font,
+            Scalar(255, 0, 0),
+            text_thickness);
+    putText(out_img,
+            grouping_algorithms_str[GROUPING_ALGORITHM],
+            cv::Point((int)(out_img.cols * 0.5), out_img.rows - ((int)(bottom_bar_height / 3) + 4)),
+            FONT_HERSHEY_DUPLEX,
+            scale_font,
+            Scalar(255, 0, 0),
+            text_thickness);
+    putText(out_img,
+            recognitions_str[RECOGNITION],
+            cv::Point((int)(out_img.cols * 0.5), out_img.rows - 5),
+            FONT_HERSHEY_DUPLEX,
+            scale_font,
+            Scalar(255, 0, 0),
+            text_thickness);
 
     imshow("recognition", out_img);
 
@@ -349,13 +410,23 @@ isRepetitive(const string& s) {
 }
 
 void
-er_draw(std::vector<cv::Mat>& channels, std::vector<std::vector<ERStat>>& regions, std::vector<Vec2i> group, cv::Mat& segmentation) {
+er_draw(std::vector<cv::Mat>& channels,
+        std::vector<std::vector<ERStat>>& regions,
+        std::vector<Vec2i> group,
+        cv::Mat& segmentation) {
   for(int r = 0; r < (int)group.size(); r++) {
     ERStat er = regions[group[r][0]][group[r][1]];
     if(er.parent != NULL) { // deprecate the root region
       int newMaskVal = 255;
       int flags = 4 + (newMaskVal << 8) + FLOODFILL_FIXED_RANGE + FLOODFILL_MASK_ONLY;
-      floodFill(channels[group[r][0]], segmentation, cv::Point(er.pixel % channels[group[r][0]].cols, er.pixel / channels[group[r][0]].cols), Scalar(255), 0, Scalar(er.level), Scalar(0), flags);
+      floodFill(channels[group[r][0]],
+                segmentation,
+                cv::Point(er.pixel % channels[group[r][0]].cols, er.pixel / channels[group[r][0]].cols),
+                Scalar(255),
+                0,
+                Scalar(er.level),
+                Scalar(0),
+                flags);
     }
   }
 }

@@ -34,7 +34,8 @@ determineCodecId(const String& filename) {
 
 //==========================================================================
 
-VideoCapture_IntelMFX::VideoCapture_IntelMFX(const cv::String& filename) : session(0), plugin(0), deviceHandler(0), bs(0), decoder(0), pool(0), outSurface(0), good(false) {
+VideoCapture_IntelMFX::VideoCapture_IntelMFX(const cv::String& filename)
+    : session(0), plugin(0), deviceHandler(0), bs(0), decoder(0), pool(0), outSurface(0), good(false) {
   mfxStatus res = MFX_ERR_NONE;
 
   // Init device and session

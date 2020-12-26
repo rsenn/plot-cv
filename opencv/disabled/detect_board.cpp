@@ -169,7 +169,8 @@ main(int argc, char* argv[]) {
   float axisLength = 0.5f * ((float)min(markersX, markersY) * (markerLength + markerSeparation) + markerSeparation);
 
   // create board object
-  Ptr<aruco::GridBoard> gridboard = aruco::GridBoard::create(markersX, markersY, markerLength, markerSeparation, dictionary);
+  Ptr<aruco::GridBoard> gridboard =
+      aruco::GridBoard::create(markersX, markersY, markerLength, markerSeparation, dictionary);
   Ptr<aruco::Board> board = gridboard.staticCast<aruco::Board>();
 
   double totalTime = 0;

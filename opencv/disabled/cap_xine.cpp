@@ -67,7 +67,8 @@ class XINECapture : public IVideoCapture {
   bool seekable;
 
 public:
-  XINECapture() : xine(0), stream(0), vo_port(0), frame_number(-1), frame_rate(0.), frame_duration(0.), seekable(false) {
+  XINECapture()
+      : xine(0), stream(0), vo_port(0), frame_number(-1), frame_rate(0.), frame_duration(0.), seekable(false) {
     xine_video_frame_t z = {};
     xine_frame = z;
   }

@@ -25,7 +25,8 @@ using namespace cv;
 
 class D3D11WinApp : public D3DSample {
 public:
-  D3D11WinApp(int width, int height, std::string& window_name, cv::VideoCapture& cap) : D3DSample(width, height, window_name, cap), m_nv12_available(false) {}
+  D3D11WinApp(int width, int height, std::string& window_name, cv::VideoCapture& cap)
+      : D3DSample(width, height, window_name, cap), m_nv12_available(false) {}
 
   ~D3D11WinApp() {}
 
@@ -52,7 +53,18 @@ public:
     scd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
     scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // allow full-screen switching
 
-    r = ::D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, NULL, 0, D3D11_SDK_VERSION, &scd, &m_pD3D11SwapChain, &m_pD3D11Dev, NULL, &m_pD3D11Ctx);
+    r = ::D3D11CreateDeviceAndSwapChain(NULL,
+                                        D3D_DRIVER_TYPE_HARDWARE,
+                                        NULL,
+                                        0,
+                                        NULL,
+                                        0,
+                                        D3D11_SDK_VERSION,
+                                        &scd,
+                                        &m_pD3D11SwapChain,
+                                        &m_pD3D11Dev,
+                                        NULL,
+                                        &m_pD3D11Ctx);
     if(FAILED(r)) {
       throw std::runtime_error("D3D11CreateDeviceAndSwapChain() failed!");
     }
@@ -175,7 +187,8 @@ public:
 
       convert_I420_to_NV12(m_frame_i420, m_frame_nv12, m_width, m_height);
 
-      m_pD3D11Ctx->UpdateSubresource(m_pSurfaceNV12, 0, 0, m_frame_nv12.data, (UINT)m_frame_nv12.step[0], (UINT)m_frame_nv12.total());
+      m_pD3D11Ctx->UpdateSubresource(
+          m_pSurfaceNV12, 0, 0, m_frame_nv12.data, (UINT)m_frame_nv12.step[0], (UINT)m_frame_nv12.total());
     } else {
       cv::cvtColor(m_frame_bgr, m_frame_rgba, CV_BGR2RGBA);
 

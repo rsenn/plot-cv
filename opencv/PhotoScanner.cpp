@@ -114,12 +114,16 @@ int g_dst_width; //最终图像的宽度
 
 void
 CalcDstSize(const vector<cv::Point2f>& corners) {
-  int h1 = sqrt((corners[0].x - corners[3].x) * (corners[0].x - corners[3].x) + (corners[0].y - corners[3].y) * (corners[0].y - corners[3].y));
-  int h2 = sqrt((corners[1].x - corners[2].x) * (corners[1].x - corners[2].x) + (corners[1].y - corners[2].y) * (corners[1].y - corners[2].y));
+  int h1 = sqrt((corners[0].x - corners[3].x) * (corners[0].x - corners[3].x) +
+                (corners[0].y - corners[3].y) * (corners[0].y - corners[3].y));
+  int h2 = sqrt((corners[1].x - corners[2].x) * (corners[1].x - corners[2].x) +
+                (corners[1].y - corners[2].y) * (corners[1].y - corners[2].y));
   g_dst_hight = MAX(h1, h2);
 
-  int w1 = sqrt((corners[0].x - corners[1].x) * (corners[0].x - corners[1].x) + (corners[0].y - corners[1].y) * (corners[0].y - corners[1].y));
-  int w2 = sqrt((corners[2].x - corners[3].x) * (corners[2].x - corners[3].x) + (corners[2].y - corners[3].y) * (corners[2].y - corners[3].y));
+  int w1 = sqrt((corners[0].x - corners[1].x) * (corners[0].x - corners[1].x) +
+                (corners[0].y - corners[1].y) * (corners[0].y - corners[1].y));
+  int w2 = sqrt((corners[2].x - corners[3].x) * (corners[2].x - corners[3].x) +
+                (corners[2].y - corners[3].y) * (corners[2].y - corners[3].y));
   g_dst_width = MAX(w1, w2);
 }
 
@@ -141,9 +145,11 @@ main() {
   GaussianBlur(img, img, Size(5, 5), 0, 0); //高斯滤波
 
   //获取自定义核
-  Mat element = getStructuringElement(MORPH_RECT, Size(1, 1)); //第一个参数MORPH_RECT表示矩形的卷积核，当然还可以选择椭圆形的、交叉型的
-                                                               //膨胀操作
-  dilate(img, img, element);                                   //实现过程中发现，适当的膨胀很重要
+  Mat element =
+      getStructuringElement(MORPH_RECT,
+                            Size(1, 1)); //第一个参数MORPH_RECT表示矩形的卷积核，当然还可以选择椭圆形的、交叉型的
+                                         //膨胀操作
+  dilate(img, img, element);             //实现过程中发现，适当的膨胀很重要
   imshow("dilate", img);
   Canny(img, img, 30, 120, 3); //边缘提取
   imshow("get contour", img);
@@ -197,7 +203,8 @@ main() {
       std::set<int> ErasePt;
       for(int i = 0; i < lines.size(); i++) {
         for(int j = i + 1; j < lines.size(); j++) {
-          if(IsBadLine(abs(lines[i][0] - lines[j][0]), abs(lines[i][1] - lines[j][1])) && (IsBadLine(abs(lines[i][2] - lines[j][2]), abs(lines[i][3] - lines[j][3])))) {
+          if(IsBadLine(abs(lines[i][0] - lines[j][0]), abs(lines[i][1] - lines[j][1])) &&
+             (IsBadLine(abs(lines[i][2] - lines[j][2]), abs(lines[i][3] - lines[j][3])))) {
             ErasePt.insert(j); //将该坏线加入集合
           }
         }
@@ -232,7 +239,8 @@ main() {
       //保证点与点的距离足够大以排除错误点
       for(int i = 0; i < corners.size(); i++) {
         for(int j = i + 1; j < corners.size(); j++) {
-          int distance = sqrt((corners[i].x - corners[j].x) * (corners[i].x - corners[j].x) + (corners[i].y - corners[j].y) * (corners[i].y - corners[j].y));
+          int distance = sqrt((corners[i].x - corners[j].x) * (corners[i].x - corners[j].x) +
+                              (corners[i].y - corners[j].y) * (corners[i].y - corners[j].y));
           if(distance < 5) {
             IsGoodPoints = false;
           }

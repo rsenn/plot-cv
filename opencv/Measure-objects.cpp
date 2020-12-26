@@ -10,8 +10,11 @@ using namespace std;
 
 int
 main() {
-  VideoCapture capture = VideoCapture(0);                                                                 // usb camera
-  string window_name[] = {"Obraz z kamery", "Wykrywanie konturow", "Obraz binarny 1", "Obraz binarny 2"}; // source, contour detection, binary 1, binary 2
+  VideoCapture capture = VideoCapture(0); // usb camera
+  string window_name[] = {"Obraz z kamery",
+                          "Wykrywanie konturow",
+                          "Obraz binarny 1",
+                          "Obraz binarny 2"}; // source, contour detection, binary 1, binary 2
   Mat frame, img, hsv_img, binary1, binary2;
 
   // export results to document
@@ -30,7 +33,8 @@ main() {
   int mt_seconds = 0;    // messuring time in seconds
   int frame_counter = 0; // frame counter set to 0
   int lowerb = 255, upperb = 255, low = 4, up = 255, odleglosc = 106;
-  float szerokosc1 = 0, wysokosc1 = 0, wymiar = 0, index = 750, // index; calculated; allow conversion dimensions in ppi to mm
+  float szerokosc1 = 0, wysokosc1 = 0, wymiar = 0,
+        index = 750, // index; calculated; allow conversion dimensions in ppi to mm
       szerokosc2 = 0, wysokosc2 = 0, wymiar2 = 0;
   createTrackbar("Odleglosc obiektywu od obiektu",
                  window_name[0],
@@ -108,10 +112,17 @@ main() {
                 8,
                 0);
       line(img, boundRect1.tl(), boundRect1.br(), Scalar(250, 250, 125), 1, 8, 0);
-      line(img, Point(boundRect1.x + boundRect1.width, boundRect1.y), Point(boundRect1.x, boundRect1.y + boundRect1.height), Scalar(250, 250, 125), 1, 8, 0);
+      line(img,
+           Point(boundRect1.x + boundRect1.width, boundRect1.y),
+           Point(boundRect1.x, boundRect1.y + boundRect1.height),
+           Scalar(250, 250, 125),
+           1,
+           8,
+           0);
       string s; // stream to put in text in window
       stringstream out;
-      out << "Srodek: " << boundRect1.x + boundRect1.width / 2 << "x" // information about rectangles' width and height in ppi
+      out << "Srodek: " << boundRect1.x + boundRect1.width / 2
+          << "x" // information about rectangles' width and height in ppi
           << boundRect1.y + boundRect1.height / 2;
       out << " Szerokosc: " << boundRect1.width << " Wysokosc: " << boundRect1.height;
       szerokosc1 = boundRect1.width; // width
@@ -125,7 +136,8 @@ main() {
               Scalar(20, 40, 80),
               1,
               8);
-      drawContours(drawing, contours1, i_cont1, Scalar(125, 125, 250), 2); // drawing detected contours in drawing window
+      drawContours(
+          drawing, contours1, i_cont1, Scalar(125, 125, 250), 2); // drawing detected contours in drawing window
     }
     if(i_cont2 >= 0) // analise of binary2 (hsv split 2), same as 1st
     {
@@ -134,7 +146,13 @@ main() {
       fillConvexPoly(drawing, contours_poly2, contours_poly2.size());
       rectangle(img, boundRect2.tl(), boundRect2.br(), Scalar(125, 125, 125), 1, 8, 0);
       line(img, boundRect2.tl(), boundRect2.br(), Scalar(250, 250, 125), 1, 8, 0);
-      line(img, Point(boundRect2.x + boundRect2.width, boundRect2.y), Point(boundRect2.x, boundRect2.y + boundRect2.height), Scalar(250, 250, 125), 1, 8, 0);
+      line(img,
+           Point(boundRect2.x + boundRect2.width, boundRect2.y),
+           Point(boundRect2.x, boundRect2.y + boundRect2.height),
+           Scalar(250, 250, 125),
+           1,
+           8,
+           0);
       string st;
       stringstream out1;
       out1 << "Srodek: " << boundRect2.x + boundRect2.width / 2 << "x" << boundRect2.y + boundRect2.height / 2;
@@ -167,7 +185,8 @@ main() {
             1,
             8);
     stream_to_file << "Czas: " << mt_seconds << " s. Klatka: " // puting dimensions in mm to stream_to_file
-                   << frame_counter << " Obiekt 1: " << szerokosc1 << " x " << wysokosc1 << " mm. Obiekt 2: " << szerokosc2 << " x " << wysokosc2 << " mm\n";
+                   << frame_counter << " Obiekt 1: " << szerokosc1 << " x " << wysokosc1
+                   << " mm. Obiekt 2: " << szerokosc2 << " x " << wysokosc2 << " mm\n";
     string_to_file = stream_to_file.str();
     stream_to_file.flush();
     imshow(window_name[1], drawing);

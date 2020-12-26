@@ -304,6 +304,6 @@ add_executable(test-dlfcn test-dlfcn.c)
 target_link_libraries(test-dlfcn dl)
 ]]
 
-if(ADDITIONAL_PROGS)
+#if(ADDITIONAL_PROGS)
   add_subdirectory(opencv ${CMAKE_CURRENT_BINARY_DIR}/opencv)
-endif(ADDITIONAL_PROGS)
+#endif(ADDITIONAL_PROGS)

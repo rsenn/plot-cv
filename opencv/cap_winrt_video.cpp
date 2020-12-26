@@ -96,54 +96,56 @@ Video::initGrabber(int device, int w, int h) {
 
   m_deviceID = device;
 
-  create_task(DeviceInformation::FindAllAsync(DeviceClass::VideoCapture)).then([this](task<DeviceInformationCollection ^> findTask) {
-    m_devices = findTask.get();
+  create_task(DeviceInformation::FindAllAsync(DeviceClass::VideoCapture))
+      .then([this](task<DeviceInformationCollection ^> findTask) {
+        m_devices = findTask.get();
 
-    // got selected device?
-    if((unsigned)m_deviceID >= m_devices.Get()->Size) {
-      OutputDebugStringA("Video::initGrabber - no video device found\n");
-      return false;
-    }
+        // got selected device?
+        if((unsigned)m_deviceID >= m_devices.Get()->Size) {
+          OutputDebugStringA("Video::initGrabber - no video device found\n");
+          return false;
+        }
 
-    auto devInfo = m_devices.Get()->GetAt(m_deviceID);
+        auto devInfo = m_devices.Get()->GetAt(m_deviceID);
 
-    auto settings = ref new MediaCaptureInitializationSettings();
-    settings->StreamingCaptureMode = StreamingCaptureMode::Video; // Video-only capture
-    settings->VideoDeviceId = devInfo->Id;
+        auto settings = ref new MediaCaptureInitializationSettings();
+        settings->StreamingCaptureMode = StreamingCaptureMode::Video; // Video-only capture
+        settings->VideoDeviceId = devInfo->Id;
 
-    auto location = devInfo->EnclosureLocation;
-    bFlipImageX = true;
-    if(location != nullptr && location->Panel == Windows::Devices::Enumeration::Panel::Back) {
-      bFlipImageX = false;
-    }
+        auto location = devInfo->EnclosureLocation;
+        bFlipImageX = true;
+        if(location != nullptr && location->Panel == Windows::Devices::Enumeration::Panel::Back) {
+          bFlipImageX = false;
+        }
 
-    m_capture = ref new MediaCapture();
-    create_task(m_capture->InitializeAsync(settings))
-        .then([this]() {
-          auto props = safe_cast<VideoEncodingProperties ^>(m_capture->VideoDeviceController->GetMediaStreamProperties(MediaStreamType::VideoPreview));
+        m_capture = ref new MediaCapture();
+        create_task(m_capture->InitializeAsync(settings))
+            .then([this]() {
+              auto props = safe_cast<VideoEncodingProperties ^>(
+                  m_capture->VideoDeviceController->GetMediaStreamProperties(MediaStreamType::VideoPreview));
 
-          // for 24 bpp
-          props->Subtype = MediaEncodingSubtypes::Rgb24;
-          bytesPerPixel = 3;
+              // for 24 bpp
+              props->Subtype = MediaEncodingSubtypes::Rgb24;
+              bytesPerPixel = 3;
 
-          // XAML & WBM use BGRA8, so it would look like
-          // props->Subtype = MediaEncodingSubtypes::Bgra8;   bytesPerPixel = 4;
+              // XAML & WBM use BGRA8, so it would look like
+              // props->Subtype = MediaEncodingSubtypes::Bgra8;   bytesPerPixel = 4;
 
-          props->Width = width;
-          props->Height = height;
+              props->Width = width;
+              props->Height = height;
 
-          return ::Media::CaptureFrameGrabber::CreateAsync(m_capture.Get(), props);
-        })
-        .then([this](::Media::CaptureFrameGrabber ^ frameGrabber) {
-          m_frameGrabber = frameGrabber;
-          bGrabberInited = true;
-          bGrabberInitInProgress = false;
-          // ready = true;
-          _GrabFrameAsync(frameGrabber);
-        });
+              return ::Media::CaptureFrameGrabber::CreateAsync(m_capture.Get(), props);
+            })
+            .then([this](::Media::CaptureFrameGrabber ^ frameGrabber) {
+              m_frameGrabber = frameGrabber;
+              bGrabberInited = true;
+              bGrabberInitInProgress = false;
+              // ready = true;
+              _GrabFrameAsync(frameGrabber);
+            });
 
-    return true;
-  });
+        return true;
+      });
 
   // nb. cannot block here - this will lock the UI thread:
 
@@ -276,21 +278,22 @@ Video::listDevicesTask() {
 
   auto settings = ref new MediaCaptureInitializationSettings();
 
-  create_task(DeviceInformation::FindAllAsync(DeviceClass::VideoCapture)).then([this, &ready](task<DeviceInformationCollection ^> findTask) {
-    m_devices = findTask.get();
+  create_task(DeviceInformation::FindAllAsync(DeviceClass::VideoCapture))
+      .then([this, &ready](task<DeviceInformationCollection ^> findTask) {
+        m_devices = findTask.get();
 
-    // TODO: collect device data
-    // for (size_t i = 0; i < m_devices->Size; i++)
-    // {
-    //   .. deviceInfo;
-    //   auto d = m_devices->GetAt(i);
-    //   deviceInfo.bAvailable = true;
-    //   deviceInfo.deviceName = PlatformStringToString(d->Name);
-    //   deviceInfo.hardwareName = deviceInfo.deviceName;
-    // }
+        // TODO: collect device data
+        // for (size_t i = 0; i < m_devices->Size; i++)
+        // {
+        //   .. deviceInfo;
+        //   auto d = m_devices->GetAt(i);
+        //   deviceInfo.bAvailable = true;
+        //   deviceInfo.deviceName = PlatformStringToString(d->Name);
+        //   deviceInfo.hardwareName = deviceInfo.deviceName;
+        // }
 
-    ready = true;
-  });
+        ready = true;
+      });
 
   // wait for async task to complete
   int count = 0;

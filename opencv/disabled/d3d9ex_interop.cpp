@@ -25,7 +25,8 @@ using namespace cv;
 
 class D3D9ExWinApp : public D3DSample {
 public:
-  D3D9ExWinApp(int width, int height, std::string& window_name, cv::VideoCapture& cap) : D3DSample(width, height, window_name, cap) {}
+  D3D9ExWinApp(int width, int height, std::string& window_name, cv::VideoCapture& cap)
+      : D3DSample(width, height, window_name, cap) {}
 
   ~D3D9ExWinApp() {}
 
@@ -42,7 +43,8 @@ public:
       return -1;
     }
 
-    DWORD flags = D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_PUREDEVICE | D3DCREATE_NOWINDOWCHANGES | D3DCREATE_MULTITHREADED | D3DCREATE_FPU_PRESERVE;
+    DWORD flags = D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_PUREDEVICE | D3DCREATE_NOWINDOWCHANGES |
+                  D3DCREATE_MULTITHREADED | D3DCREATE_FPU_PRESERVE;
 
     D3DPRESENT_PARAMETERS d3dpp;
     ::ZeroMemory(&d3dpp, sizeof(D3DPRESENT_PARAMETERS));
@@ -69,7 +71,8 @@ public:
       return -1;
     }
 
-    r = m_pD3D9DevEx->CreateOffscreenPlainSurface(m_width, m_height, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pSurface, NULL);
+    r = m_pD3D9DevEx->CreateOffscreenPlainSurface(
+        m_width, m_height, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pSurface, NULL);
     if(FAILED(r)) {
       std::cerr << "Can't create surface for result" << std::endl;
       return -1;

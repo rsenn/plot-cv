@@ -521,11 +521,25 @@ public:
   // These are experimental for now.
   bool setVideoSettingFilter(int deviceID, long Property, long lValue, long Flags = 0, bool useDefaultValue = false);
   bool setVideoSettingFilterPct(int deviceID, long Property, float pctValue, long Flags = 0);
-  bool getVideoSettingFilter(int deviceID, long Property, long& min, long& max, long& SteppingDelta, long& currentValue, long& flags, long& defaultValue);
+  bool getVideoSettingFilter(int deviceID,
+                             long Property,
+                             long& min,
+                             long& max,
+                             long& SteppingDelta,
+                             long& currentValue,
+                             long& flags,
+                             long& defaultValue);
 
   bool setVideoSettingCamera(int deviceID, long Property, long lValue, long Flags = 0, bool useDefaultValue = false);
   bool setVideoSettingCameraPct(int deviceID, long Property, float pctValue, long Flags = 0);
-  bool getVideoSettingCamera(int deviceID, long Property, long& min, long& max, long& SteppingDelta, long& currentValue, long& flags, long& defaultValue);
+  bool getVideoSettingCamera(int deviceID,
+                             long Property,
+                             long& min,
+                             long& max,
+                             long& SteppingDelta,
+                             long& currentValue,
+                             long& flags,
+                             long& defaultValue);
 
   // bool setVideoSettingCam(int deviceID, long Property, long lValue, long Flags = NULL, bool
   // useDefaultValue = false);
@@ -1258,13 +1272,20 @@ videoInput::setFormat(int deviceNumber, int format) {
 
     if(VDList[deviceNumber]->specificFormat) {
 
-      HRESULT hr = getDevice(&VDList[deviceNumber]->pVideoInputFilter, deviceNumber, VDList[deviceNumber]->wDeviceName, VDList[deviceNumber]->nDeviceName);
+      HRESULT hr = getDevice(&VDList[deviceNumber]->pVideoInputFilter,
+                             deviceNumber,
+                             VDList[deviceNumber]->wDeviceName,
+                             VDList[deviceNumber]->nDeviceName);
       if(hr != S_OK) {
         return false;
       }
 
       IAMAnalogVideoDecoder* pVideoDec = NULL;
-      hr = VDList[deviceNumber]->pCaptureGraph->FindInterface(NULL, &MEDIATYPE_Video, VDList[deviceNumber]->pVideoInputFilter, IID_IAMAnalogVideoDecoder, (void**)&pVideoDec);
+      hr = VDList[deviceNumber]->pCaptureGraph->FindInterface(NULL,
+                                                              &MEDIATYPE_Video,
+                                                              VDList[deviceNumber]->pVideoInputFilter,
+                                                              IID_IAMAnalogVideoDecoder,
+                                                              (void**)&pVideoDec);
 
       // in case the settings window some how freed them first
       if(VDList[deviceNumber]->pVideoInputFilter)
@@ -1328,7 +1349,8 @@ videoInput::listDevices(bool silent) {
   IEnumMoniker* pEnum = NULL;
   int deviceCounter = 0;
 
-  HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, reinterpret_cast<void**>(&pDevEnum));
+  HRESULT hr = CoCreateInstance(
+      CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, reinterpret_cast<void**>(&pDevEnum));
 
   if(SUCCEEDED(hr)) {
     // Create an enumerator for the video capture category.
@@ -1637,7 +1659,14 @@ videoInput::showSettingsWindow(int id) {
 
 // Set a video signal setting using IAMVideoProcAmp
 bool
-videoInput::getVideoSettingFilter(int deviceID, long Property, long& min, long& max, long& SteppingDelta, long& currentValue, long& flags, long& defaultValue) {
+videoInput::getVideoSettingFilter(int deviceID,
+                                  long Property,
+                                  long& min,
+                                  long& max,
+                                  long& SteppingDelta,
+                                  long& currentValue,
+                                  long& flags,
+                                  long& defaultValue) {
   if(!isDeviceSetup(deviceID))
     return false;
 
@@ -1670,7 +1699,13 @@ videoInput::getVideoSettingFilter(int deviceID, long Property, long& min, long& 
   DebugPrintOut("Setting video setting %s.\n", propStr);
 
   pAMVideoProcAmp->GetRange(Property, &min, &max, &SteppingDelta, &defaultValue, &flags);
-  DebugPrintOut("Range for video setting %s: Min:%ld Max:%ld SteppingDelta:%ld Default:%ld Flags:%ld\n", propStr, min, max, SteppingDelta, defaultValue, flags);
+  DebugPrintOut("Range for video setting %s: Min:%ld Max:%ld SteppingDelta:%ld Default:%ld Flags:%ld\n",
+                propStr,
+                min,
+                max,
+                SteppingDelta,
+                defaultValue,
+                flags);
   pAMVideoProcAmp->Get(Property, &currentValue, &flags);
 
   if(pAMVideoProcAmp)
@@ -1723,7 +1758,12 @@ videoInput::setVideoSettingFilterPct(int deviceID, long Property, float pctValue
       rasterValue -= mod;
     else
       rasterValue += stepAmnt - mod;
-    DebugPrintOut("RASTER - pctValue is %f - value is %li - step is %li - mod is %li - rasterValue is %li\n", pctValue, value, stepAmnt, mod, rasterValue);
+    DebugPrintOut("RASTER - pctValue is %f - value is %li - step is %li - mod is %li - rasterValue is %li\n",
+                  pctValue,
+                  value,
+                  stepAmnt,
+                  mod,
+                  rasterValue);
   }
 
   return setVideoSettingFilter(deviceID, Property, rasterValue, Flags, false);
@@ -1765,10 +1805,19 @@ videoInput::setVideoSettingFilter(int deviceID, long Property, long lValue, long
   long CurrVal, Min, Max, SteppingDelta, Default, CapsFlags, AvailableCapsFlags = 0;
 
   pAMVideoProcAmp->GetRange(Property, &Min, &Max, &SteppingDelta, &Default, &AvailableCapsFlags);
-  DebugPrintOut("Range for video setting %s: Min:%ld Max:%ld SteppingDelta:%ld Default:%ld Flags:%ld\n", propStr, Min, Max, SteppingDelta, Default, AvailableCapsFlags);
+  DebugPrintOut("Range for video setting %s: Min:%ld Max:%ld SteppingDelta:%ld Default:%ld Flags:%ld\n",
+                propStr,
+                Min,
+                Max,
+                SteppingDelta,
+                Default,
+                AvailableCapsFlags);
   pAMVideoProcAmp->Get(Property, &CurrVal, &CapsFlags);
 
-  DebugPrintOut("Current value: %ld Flags %ld (%s)\n", CurrVal, CapsFlags, (CapsFlags == 1 ? "Auto" : (CapsFlags == 2 ? "Manual" : "Unknown")));
+  DebugPrintOut("Current value: %ld Flags %ld (%s)\n",
+                CurrVal,
+                CapsFlags,
+                (CapsFlags == 1 ? "Auto" : (CapsFlags == 2 ? "Manual" : "Unknown")));
 
   if(useDefaultValue) {
     pAMVideoProcAmp->Set(Property, Default, VideoProcAmp_Flags_Auto);
@@ -1826,7 +1875,12 @@ videoInput::setVideoSettingCameraPct(int deviceID, long Property, float pctValue
       rasterValue -= mod;
     else
       rasterValue += stepAmnt - mod;
-    DebugPrintOut("RASTER - pctValue is %f - value is %li - step is %li - mod is %li - rasterValue is %li\n", pctValue, value, stepAmnt, mod, rasterValue);
+    DebugPrintOut("RASTER - pctValue is %f - value is %li - step is %li - mod is %li - rasterValue is %li\n",
+                  pctValue,
+                  value,
+                  stepAmnt,
+                  mod,
+                  rasterValue);
   }
 
   return setVideoSettingCamera(deviceID, Property, rasterValue, Flags, false);
@@ -1837,7 +1891,10 @@ videoInput::setVideoSettingCamera(int deviceID, long Property, long lValue, long
   IAMCameraControl* pIAMCameraControl;
   if(isDeviceSetup(deviceID)) {
     HRESULT hr;
-    hr = getDevice(&VDList[deviceID]->pVideoInputFilter, deviceID, VDList[deviceID]->wDeviceName, VDList[deviceID]->nDeviceName);
+    hr = getDevice(&VDList[deviceID]->pVideoInputFilter,
+                   deviceID,
+                   VDList[deviceID]->wDeviceName,
+                   VDList[deviceID]->nDeviceName);
 
     char propStr[16];
     getCameraPropertyAsString(Property, propStr);
@@ -1854,9 +1911,18 @@ videoInput::setVideoSettingCamera(int deviceID, long Property, long lValue, long
     } else {
       long CurrVal, Min, Max, SteppingDelta, Default, CapsFlags, AvailableCapsFlags;
       pIAMCameraControl->GetRange(Property, &Min, &Max, &SteppingDelta, &Default, &AvailableCapsFlags);
-      DebugPrintOut("Range for video setting %s: Min:%ld Max:%ld SteppingDelta:%ld Default:%ld Flags:%ld\n", propStr, Min, Max, SteppingDelta, Default, AvailableCapsFlags);
+      DebugPrintOut("Range for video setting %s: Min:%ld Max:%ld SteppingDelta:%ld Default:%ld Flags:%ld\n",
+                    propStr,
+                    Min,
+                    Max,
+                    SteppingDelta,
+                    Default,
+                    AvailableCapsFlags);
       pIAMCameraControl->Get(Property, &CurrVal, &CapsFlags);
-      DebugPrintOut("Current value: %ld Flags %ld (%s)\n", CurrVal, CapsFlags, (CapsFlags == 1 ? "Auto" : (CapsFlags == 2 ? "Manual" : "Unknown")));
+      DebugPrintOut("Current value: %ld Flags %ld (%s)\n",
+                    CurrVal,
+                    CapsFlags,
+                    (CapsFlags == 1 ? "Auto" : (CapsFlags == 2 ? "Manual" : "Unknown")));
       if(useDefaultValue) {
         pIAMCameraControl->Set(Property, Default, CameraControl_Flags_Auto);
       } else {
@@ -1876,7 +1942,14 @@ videoInput::setVideoSettingCamera(int deviceID, long Property, long lValue, long
 }
 
 bool
-videoInput::getVideoSettingCamera(int deviceID, long Property, long& min, long& max, long& SteppingDelta, long& currentValue, long& flags, long& defaultValue) {
+videoInput::getVideoSettingCamera(int deviceID,
+                                  long Property,
+                                  long& min,
+                                  long& max,
+                                  long& SteppingDelta,
+                                  long& currentValue,
+                                  long& flags,
+                                  long& defaultValue) {
   if(!isDeviceSetup(deviceID))
     return false;
 
@@ -1908,7 +1981,13 @@ videoInput::getVideoSettingCamera(int deviceID, long Property, long& min, long& 
   DebugPrintOut("Setting video setting %s.\n", propStr);
 
   pIAMCameraControl->GetRange(Property, &min, &max, &SteppingDelta, &defaultValue, &flags);
-  DebugPrintOut("Range for video setting %s: Min:%ld Max:%ld SteppingDelta:%ld Default:%ld Flags:%ld\n", propStr, min, max, SteppingDelta, defaultValue, flags);
+  DebugPrintOut("Range for video setting %s: Min:%ld Max:%ld SteppingDelta:%ld Default:%ld Flags:%ld\n",
+                propStr,
+                min,
+                max,
+                SteppingDelta,
+                defaultValue,
+                flags);
   pIAMCameraControl->Get(Property, &currentValue, &flags);
 
   if(pIAMCameraControl)
@@ -2365,7 +2444,8 @@ videoInput::getCameraPropertyAsString(int prop, char* propertyAsString) {
 
 //-------------------------------------------------------------------------------------------
 static void
-findClosestSizeAndSubtype(videoDevice* VD, int widthIn, int heightIn, int& widthOut, int& heightOut, GUID& mediatypeOut) {
+findClosestSizeAndSubtype(
+    videoDevice* VD, int widthIn, int heightIn, int& widthOut, int& heightOut, GUID& mediatypeOut) {
   HRESULT hr;
 
   // find perfect match or closest size
@@ -2533,7 +2613,8 @@ videoInput::start(int deviceID, videoDevice* VD) {
 
   // CREATE THE GRAPH BUILDER //
   // Create the filter graph manager and query for interfaces.
-  hr = CoCreateInstance(CLSID_CaptureGraphBuilder2, NULL, CLSCTX_INPROC_SERVER, IID_ICaptureGraphBuilder2, (void**)&VD->pCaptureGraph);
+  hr = CoCreateInstance(
+      CLSID_CaptureGraphBuilder2, NULL, CLSCTX_INPROC_SERVER, IID_ICaptureGraphBuilder2, (void**)&VD->pCaptureGraph);
   if(FAILED(hr)) { // FAILED is a macro that tests the return value
     DebugPrintOut("ERROR - Could not create the Filter Graph Manager\n");
     return hr;
@@ -2590,7 +2671,8 @@ videoInput::start(int deviceID, videoDevice* VD) {
 
   // LOOK FOR PREVIEW PIN IF THERE IS NONE THEN WE USE CAPTURE PIN AND THEN SMART TEE TO PREVIEW
   IAMStreamConfig* streamConfTest = NULL;
-  hr = VD->pCaptureGraph->FindInterface(&PIN_CATEGORY_PREVIEW, &MEDIATYPE_Video, VD->pVideoInputFilter, IID_IAMStreamConfig, (void**)&streamConfTest);
+  hr = VD->pCaptureGraph->FindInterface(
+      &PIN_CATEGORY_PREVIEW, &MEDIATYPE_Video, VD->pVideoInputFilter, IID_IAMStreamConfig, (void**)&streamConfTest);
   if(FAILED(hr)) {
     DebugPrintOut("SETUP: Couldn't find preview pin using SmartTee\n");
   } else {
@@ -2609,7 +2691,8 @@ videoInput::start(int deviceID, videoDevice* VD) {
   }
 
   // we do this because webcams don't have a preview mode
-  hr = VD->pCaptureGraph->FindInterface(&CAPTURE_MODE, &MEDIATYPE_Video, VD->pVideoInputFilter, IID_IAMStreamConfig, (void**)&VD->streamConf);
+  hr = VD->pCaptureGraph->FindInterface(
+      &CAPTURE_MODE, &MEDIATYPE_Video, VD->pVideoInputFilter, IID_IAMStreamConfig, (void**)&VD->streamConf);
   if(FAILED(hr)) {
     DebugPrintOut("ERROR: Couldn't config the stream!\n");
     stopDevice(deviceID);
@@ -2778,7 +2861,8 @@ videoInput::start(int deviceID, videoDevice* VD) {
 
   // RENDER STREAM//
   // This is where the stream gets put together.
-  hr = VD->pCaptureGraph->RenderStream(&PIN_CATEGORY_PREVIEW, &MEDIATYPE_Video, VD->pVideoInputFilter, VD->pGrabberF, VD->pDestFilter);
+  hr = VD->pCaptureGraph->RenderStream(
+      &PIN_CATEGORY_PREVIEW, &MEDIATYPE_Video, VD->pVideoInputFilter, VD->pGrabberF, VD->pDestFilter);
 
   if(FAILED(hr)) {
     DebugPrintOut("ERROR: Could not connect pins - RenderStream()\n");
@@ -2851,7 +2935,8 @@ videoInput::getDeviceCount() {
   IEnumMoniker* pEnum = NULL;
   int deviceCounter = 0;
 
-  HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, reinterpret_cast<void**>(&pDevEnum));
+  HRESULT hr = CoCreateInstance(
+      CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, reinterpret_cast<void**>(&pDevEnum));
 
   if(SUCCEEDED(hr)) {
     // Create an enumerator for the video capture category.
@@ -2902,7 +2987,8 @@ videoInput::getDevice(IBaseFilter** gottaFilter, int deviceId, WCHAR* wDeviceNam
 
   // Create the System Device Enumerator.
   ICreateDevEnum* pSysDevEnum = NULL;
-  HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void**)&pSysDevEnum);
+  HRESULT hr =
+      CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void**)&pSysDevEnum);
   if(FAILED(hr)) {
     return hr;
   }
@@ -3145,7 +3231,8 @@ videoInput::routeCrossbar(ICaptureGraphBuilder2** ppBuild, IBaseFilter** pVidInF
 namespace cv {
 videoInput VideoCapture_DShow::g_VI;
 
-VideoCapture_DShow::VideoCapture_DShow(int index) : m_index(-1), m_width(-1), m_height(-1), m_fourcc(-1), m_widthSet(-1), m_heightSet(-1) {
+VideoCapture_DShow::VideoCapture_DShow(int index)
+    : m_index(-1), m_width(-1), m_height(-1), m_fourcc(-1), m_widthSet(-1), m_heightSet(-1) {
   CoInitialize(0);
   open(index);
 }
@@ -3177,7 +3264,14 @@ VideoCapture_DShow::getProperty(int propIdx) const {
     case cv::CAP_PROP_WHITE_BALANCE_BLUE_U:
     case cv::CAP_PROP_BACKLIGHT:
     case cv::CAP_PROP_GAIN:
-      if(g_VI.getVideoSettingFilter(m_index, g_VI.getVideoPropertyFromCV(propIdx), min_value, max_value, stepping_delta, current_value, flags, defaultValue))
+      if(g_VI.getVideoSettingFilter(m_index,
+                                    g_VI.getVideoPropertyFromCV(propIdx),
+                                    min_value,
+                                    max_value,
+                                    stepping_delta,
+                                    current_value,
+                                    flags,
+                                    defaultValue))
         return (double)current_value;
 
     // camera properties
@@ -3188,7 +3282,14 @@ VideoCapture_DShow::getProperty(int propIdx) const {
     case cv::CAP_PROP_EXPOSURE:
     case cv::CAP_PROP_IRIS:
     case cv::CAP_PROP_FOCUS:
-      if(g_VI.getVideoSettingCamera(m_index, g_VI.getCameraPropertyFromCV(propIdx), min_value, max_value, stepping_delta, current_value, flags, defaultValue))
+      if(g_VI.getVideoSettingCamera(m_index,
+                                    g_VI.getCameraPropertyFromCV(propIdx),
+                                    min_value,
+                                    max_value,
+                                    stepping_delta,
+                                    current_value,
+                                    flags,
+                                    defaultValue))
         return (double)current_value;
   }
 
@@ -3235,7 +3336,8 @@ VideoCapture_DShow::setProperty(int propIdx, double propVal) {
   if(handled) {
     // a stream setting
     if(m_width > 0 && m_height > 0) {
-      if(m_width != g_VI.getWidth(m_index) || m_height != g_VI.getHeight(m_index)) { //|| fourcc != VI.getFourcc(index) )
+      if(m_width != g_VI.getWidth(m_index) ||
+         m_height != g_VI.getHeight(m_index)) { //|| fourcc != VI.getFourcc(index) )
         int fps = static_cast<int>(g_VI.getFPS(m_index));
         g_VI.stopDevice(m_index);
         g_VI.setIdealFramerate(m_index, fps);
@@ -3270,7 +3372,8 @@ VideoCapture_DShow::setProperty(int propIdx, double propVal) {
     case cv::CAP_PROP_MONOCHROME:
     case cv::CAP_PROP_WHITE_BALANCE_BLUE_U:
     case cv::CAP_PROP_BACKLIGHT:
-    case cv::CAP_PROP_GAIN: return g_VI.setVideoSettingFilter(m_index, g_VI.getVideoPropertyFromCV(propIdx), (long)propVal);
+    case cv::CAP_PROP_GAIN:
+      return g_VI.setVideoSettingFilter(m_index, g_VI.getVideoPropertyFromCV(propIdx), (long)propVal);
   }
 
   // camera properties
@@ -3281,7 +3384,8 @@ VideoCapture_DShow::setProperty(int propIdx, double propVal) {
     case cv::CAP_PROP_ZOOM:
     case cv::CAP_PROP_EXPOSURE:
     case cv::CAP_PROP_IRIS:
-    case cv::CAP_PROP_FOCUS: return g_VI.setVideoSettingCamera(m_index, g_VI.getCameraPropertyFromCV(propIdx), (long)propVal);
+    case cv::CAP_PROP_FOCUS:
+      return g_VI.setVideoSettingCamera(m_index, g_VI.getCameraPropertyFromCV(propIdx), (long)propVal);
   }
 
   return false;

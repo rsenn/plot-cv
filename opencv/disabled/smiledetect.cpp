@@ -109,7 +109,14 @@ main(int argc, const char** argv) {
 void
 detectAndDraw(Mat& img, CascadeClassifier& cascade, CascadeClassifier& nestedCascade, double scale, bool tryflip) {
   vector<Rect> faces, faces2;
-  const static Scalar colors[] = {Scalar(255, 0, 0), Scalar(255, 128, 0), Scalar(255, 255, 0), Scalar(0, 255, 0), Scalar(0, 128, 255), Scalar(0, 255, 255), Scalar(0, 0, 255), Scalar(255, 0, 255)};
+  const static Scalar colors[] = {Scalar(255, 0, 0),
+                                  Scalar(255, 128, 0),
+                                  Scalar(255, 255, 0),
+                                  Scalar(0, 255, 0),
+                                  Scalar(0, 128, 255),
+                                  Scalar(0, 255, 255),
+                                  Scalar(0, 0, 255),
+                                  Scalar(255, 0, 255)};
   Mat gray, smallImg;
 
   cvtColor(img, gray, COLOR_BGR2GRAY);
@@ -158,7 +165,13 @@ detectAndDraw(Mat& img, CascadeClassifier& cascade, CascadeClassifier& nestedCas
       radius = cvRound((r.width + r.height) * 0.25 * scale);
       circle(img, center, radius, color, 3, 8, 0);
     } else
-      rectangle(img, cvPoint(cvRound(r.x * scale), cvRound(r.y * scale)), cvPoint(cvRound((r.x + r.width - 1) * scale), cvRound((r.y + r.height - 1) * scale)), color, 3, 8, 0);
+      rectangle(img,
+                cvPoint(cvRound(r.x * scale), cvRound(r.y * scale)),
+                cvPoint(cvRound((r.x + r.width - 1) * scale), cvRound((r.y + r.height - 1) * scale)),
+                color,
+                3,
+                8,
+                0);
 
     const int half_height = cvRound((float)r.height / 2);
     r.y = r.y + half_height;

@@ -132,7 +132,8 @@ main(int argc, char* argv[]) {
     // override cornerRefinementMethod read from config file
     detectorParams->cornerRefinementMethod = parser.get<int>("refine");
   }
-  std::cout << "Corner refinement method (0: None, 1: Subpixel, 2:contour, 3: AprilTag 2): " << detectorParams->cornerRefinementMethod << std::endl;
+  std::cout << "Corner refinement method (0: None, 1: Subpixel, 2:contour, 3: AprilTag 2): "
+            << detectorParams->cornerRefinementMethod << std::endl;
 
   int camId = parser.get<int>("ci");
 
@@ -199,7 +200,8 @@ main(int argc, char* argv[]) {
       aruco::drawDetectedMarkers(imageCopy, corners, ids);
 
       if(estimatePose) {
-        for(unsigned int i = 0; i < ids.size(); i++) aruco::drawAxis(imageCopy, camcv::Matrix, distCoeffs, rvecs[i], tvecs[i], markerLength * 0.5f);
+        for(unsigned int i = 0; i < ids.size(); i++)
+          aruco::drawAxis(imageCopy, camcv::Matrix, distCoeffs, rvecs[i], tvecs[i], markerLength * 0.5f);
       }
     }
 

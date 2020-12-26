@@ -168,7 +168,8 @@ main(int argc, char* argv[]) {
   float axisLength = 0.5f * ((float)min(squaresX, squaresY) * (squareLength));
 
   // create charuco board object
-  Ptr<aruco::CharucoBoard> charucoboard = aruco::CharucoBoard::create(squaresX, squaresY, squareLength, markerLength, dictionary);
+  Ptr<aruco::CharucoBoard> charucoboard =
+      aruco::CharucoBoard::create(squaresX, squaresY, squareLength, markerLength, dictionary);
   Ptr<aruco::Board> board = charucoboard.staticCast<aruco::Board>();
 
   double totalTime = 0;
@@ -195,12 +196,14 @@ main(int argc, char* argv[]) {
     // interpolate charuco corners
     int interpolatedCorners = 0;
     if(markerIds.size() > 0)
-      interpolatedCorners = aruco::interpolateCornersCharuco(markerCorners, markerIds, image, charucoboard, charucoCorners, charucoIds, camMatrix, distCoeffs);
+      interpolatedCorners = aruco::interpolateCornersCharuco(
+          markerCorners, markerIds, image, charucoboard, charucoCorners, charucoIds, camMatrix, distCoeffs);
 
     // estimate charuco board pose
     bool validPose = false;
     if(camMatrix.total() != 0)
-      validPose = aruco::estimatePoseCharucoBoard(charucoCorners, charucoIds, charucoboard, camMatrix, distCoeffs, rvec, tvec);
+      validPose =
+          aruco::estimatePoseCharucoBoard(charucoCorners, charucoIds, charucoboard, camMatrix, distCoeffs, rvec, tvec);
 
     double currentTime = ((double)getTickCount() - tick) / getTickFrequency();
     totalTime += currentTime;

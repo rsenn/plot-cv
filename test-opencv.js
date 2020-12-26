@@ -28,9 +28,7 @@ function dumpMat(name, mat) {
   console.log(`${name} = Mat `,
     Object.create(
       Mat.prototype,
-      ['cols', 'rows', 'depth', 'channels'].reduce((acc, prop) => ({ ...acc, [prop]: { value: mat[prop], enumerable: true } }),
-        {}
-      )
+      ['cols', 'rows', 'depth', 'channels'].reduce((acc, prop) => ({ ...acc, [prop]: { value: mat[prop], enumerable: true } }), {})
     )
   );
 

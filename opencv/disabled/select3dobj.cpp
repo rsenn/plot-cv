@@ -102,7 +102,8 @@ calcChessboardCorners(Size boardSize, float squareSize, vector<Point3f>& corners
   corners.resize(0);
 
   for(int i = 0; i < boardSize.height; i++)
-    for(int j = 0; j < boardSize.width; j++) corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
+    for(int j = 0; j < boardSize.width; j++)
+      corners.push_back(Point3f(float(j * squareSize), float(i * squareSize), 0));
 }
 
 static Point3f
@@ -115,7 +116,15 @@ image2plane(Point2f imgpt, const Mat& R, const Mat& tvec, const Mat& cameraMatri
 }
 
 static Rect
-extract3DBox(const Mat& frame, Mat& shownFrame, Mat& selectedObjFrame, const Mat& cameraMatrix, const Mat& rvec, const Mat& tvec, const vector<Point3f>& box, int nobjpt, bool runExtraSegmentation) {
+extract3DBox(const Mat& frame,
+             Mat& shownFrame,
+             Mat& selectedObjFrame,
+             const Mat& cameraMatrix,
+             const Mat& rvec,
+             const Mat& tvec,
+             const vector<Point3f>& box,
+             int nobjpt,
+             bool runExtraSegmentation) {
   selectedObjFrame = Mat::zeros(frame.size(), frame.type());
   if(nobjpt == 0)
     return Rect();
@@ -175,7 +184,13 @@ extract3DBox(const Mat& frame, Mat& shownFrame, Mat& selectedObjFrame, const Mat
 }
 
 static int
-select3DBox(const string& windowname, const string& selWinName, const Mat& frame, const Mat& cameraMatrix, const Mat& rvec, const Mat& tvec, vector<Point3f>& box) {
+select3DBox(const string& windowname,
+            const string& selWinName,
+            const Mat& frame,
+            const Mat& cameraMatrix,
+            const Mat& rvec,
+            const Mat& tvec,
+            vector<Point3f>& box) {
   const float eps = 1e-3f;
   MouseEvent mouse;
 
@@ -228,7 +243,8 @@ select3DBox(const string& windowname, const string& selWinName, const Mat& frame
       }
       box[npt] = image2plane(imgpt[npt], R, tvec, cameraMatrix, npt < 3 ? 0 : Z);
 
-      if((npt == 0 && mouse.event == cv::EVENT_LBUTTONDOWN) || (npt > 0 && norm(box[npt] - box[npt - 1]) > eps && mouse.event == cv::EVENT_LBUTTONUP)) {
+      if((npt == 0 && mouse.event == cv::EVENT_LBUTTONDOWN) ||
+         (npt > 0 && norm(box[npt] - box[npt - 1]) > eps && mouse.event == cv::EVENT_LBUTTONUP)) {
         nobjpt++;
         if(nobjpt < 4) {
           imgpt[nobjpt] = imgpt[nobjpt - 1];
@@ -261,7 +277,11 @@ select3DBox(const string& windowname, const string& selWinName, const Mat& frame
 }
 
 static bool
-readModelViews(const string& filename, vector<Point3f>& box, vector<string>& imagelist, vector<Rect>& roiList, vector<Vec6f>& poseList) {
+readModelViews(const string& filename,
+               vector<Point3f>& box,
+               vector<string>& imagelist,
+               vector<Rect>& roiList,
+               vector<Vec6f>& poseList) {
   imagelist.resize(0);
   roiList.resize(0);
   poseList.resize(0);
@@ -290,7 +310,11 @@ readModelViews(const string& filename, vector<Point3f>& box, vector<string>& ima
 }
 
 static bool
-writeModelViews(const string& filename, const vector<Point3f>& box, const vector<string>& imagelist, const vector<Rect>& roiList, const vector<Vec6f>& poseList) {
+writeModelViews(const string& filename,
+                const vector<Point3f>& box,
+                const vector<string>& imagelist,
+                const vector<Rect>& roiList,
+                const vector<Vec6f>& poseList) {
   FileStorage fs(filename, FileStorage::WRITE);
   if(!fs.isOpened())
     return false;

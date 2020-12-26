@@ -37,7 +37,8 @@ setLabel(cv::Mat& im, const std::string label, std::vector<cv::Point>& contour) 
   cv::Rect r = cv::boundingRect(contour);
 
   cv::Point pt(r.x + ((r.width - text.width) / 2), r.y + ((r.height + text.height) / 2));
-  cv::rectangle(im, pt + cv::Point(0, baseline), pt + cv::Point(text.width, -text.height), CV_RGB(255, 255, 255), cv::FILLED);
+  cv::rectangle(
+      im, pt + cv::Point(0, baseline), pt + cv::Point(text.width, -text.height), CV_RGB(255, 255, 255), cv::FILLED);
   cv::putText(im, label, pt, fontface, scale, CV_RGB(0, 0, 0), thickness, 8);
 }
 
@@ -98,7 +99,9 @@ main() {
         // Use the degrees obtained above and the number of vertices to determine the shape of the contour
 
         // square
-        if(vtc == 4 && mincos >= -0.15 && maxcos <= 0.15 && (cv::minAreaRect(contours[i]).size.width / cv::minAreaRect(contours[i]).size.height > 0.8 && cv::minAreaRect(contours[i]).size.width / cv::minAreaRect(contours[i]).size.height < 1.2)) {
+        if(vtc == 4 && mincos >= -0.15 && maxcos <= 0.15 &&
+           (cv::minAreaRect(contours[i]).size.width / cv::minAreaRect(contours[i]).size.height > 0.8 &&
+            cv::minAreaRect(contours[i]).size.width / cv::minAreaRect(contours[i]).size.height < 1.2)) {
           setLabel(dst, "SQR", contours[i]);
         }
 
@@ -144,7 +147,8 @@ main() {
           double area = cv::contourArea(contours[i]);
           cv::Rect r = cv::boundingRect(contours[i]);
           int radius = r.width / 2;
-          if(std::abs(1 - ((double)r.width / r.height)) <= 0.2 && std::abs(1 - (area / (CV_PI * std::pow(radius, 2)))) <= 0.2) {
+          if(std::abs(1 - ((double)r.width / r.height)) <= 0.2 &&
+             std::abs(1 - (area / (CV_PI * std::pow(radius, 2)))) <= 0.2) {
             setLabel(dst, "CIR", contours[i]);
           }
 

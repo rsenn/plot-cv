@@ -51,7 +51,12 @@ FindCircle() {
                  circles[i][1]); // declare variable that are two integer type variables(x,y).
     Point g_center(circles[i][0], circles[i][1]);
     if(f_line == true) {
-      line(frame, Point(g_center), Point((g_center.x + efrt_roll), (g_center.y + efrt_pitch)), Scalar(0, 0, 255), 5, cv::LINE_AA);
+      line(frame,
+           Point(g_center),
+           Point((g_center.x + efrt_roll), (g_center.y + efrt_pitch)),
+           Scalar(0, 0, 255),
+           5,
+           cv::LINE_AA);
       // line(frame, g_center, (g_center[0][0], (g_center[0][1] + efrt_pitch)), Scalar(0, 0, 255),
       // 5, cv::LINE_AA);
       f_line = 0;

@@ -133,7 +133,8 @@ categorizer::make_pos_neg() {
   // Debug message
   for(int i = 0; i < categories; i++) {
     string category = category_names[i];
-    cout << "Category " << category << ": " << positive_data[category].rows << " Positives, " << negative_data[category].rows << " Negatives" << endl;
+    cout << "Category " << category << ": " << positive_data[category].rows << " Positives, "
+         << negative_data[category].rows << " Negatives" << endl;
   }
 }
 

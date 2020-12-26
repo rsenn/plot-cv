@@ -91,7 +91,8 @@ main(int argc, char** argv) {
     if(!init) {
       width = frame.size().width;
       height = frame.size().height;
-      seeds = createSuperpixelSEEDS(width, height, frame.channels(), num_superpixels, num_levels, prior, num_histogram_bins, double_step);
+      seeds = createSuperpixelSEEDS(
+          width, height, frame.channels(), num_superpixels, num_levels, prior, num_histogram_bins, double_step);
       init = true;
     }
     cv::Mat converted;

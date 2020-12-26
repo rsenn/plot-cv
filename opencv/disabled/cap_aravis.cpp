@@ -312,7 +312,8 @@ CvCaptureCAM_Aravis::retrieveFrame(int) {
       cvInitImageHeader(&src, cvSize(width, height), depth, channels, IPL_ORIGIN_TL, 4);
 
       cvSetData(&src, framebuffer, src.widthStep);
-      if(!frame || frame->width != src.width || frame->height != src.height || frame->depth != src.depth || frame->nChannels != src.nChannels) {
+      if(!frame || frame->width != src.width || frame->height != src.height || frame->depth != src.depth ||
+         frame->nChannels != src.nChannels) {
 
         cvReleaseImage(&frame);
         frame = cvCreateImage(cvGetSize(&src), src.depth, channels);

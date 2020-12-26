@@ -48,12 +48,28 @@ main(int argc, char* argv[]) {
     std::vector<DMatch> matchesAll, matchesGMS;
     matcher->match(descCur, descRef, matchesAll);
 
-    matchGMS(imgR.size(), imgL.size(), kpCur, kpRef, matchesAll, matchesGMS, cmd.get<bool>("withRotation"), cmd.get<bool>("withScale"));
+    matchGMS(imgR.size(),
+             imgL.size(),
+             kpCur,
+             kpRef,
+             matchesAll,
+             matchesGMS,
+             cmd.get<bool>("withRotation"),
+             cmd.get<bool>("withScale"));
     std::cout << "matchesGMS: " << matchesGMS.size() << std::endl;
 
     Mat frameMatches;
     if(cmd.get<bool>("drawSimple"))
-      drawMatches(imgR, kpCur, imgL, kpRef, matchesGMS, frameMatches, Scalar::all(-1), Scalar::all(-1), std::vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+      drawMatches(imgR,
+                  kpCur,
+                  imgL,
+                  kpRef,
+                  matchesGMS,
+                  frameMatches,
+                  Scalar::all(-1),
+                  Scalar::all(-1),
+                  std::vector<char>(),
+                  DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
     else
       drawMatches(imgR, kpCur, imgL, kpRef, matchesGMS, frameMatches);
     imshow("Matches GMS", frameMatches);
@@ -94,11 +110,27 @@ main(int argc, char* argv[]) {
       tm.stop();
       double t_match = tm.getTimeMilli();
 
-      matchGMS(frame.size(), frameRef.size(), kp, kpRef, matchesAll, matchesGMS, cmd.get<bool>("withRotation"), cmd.get<bool>("withScale"));
+      matchGMS(frame.size(),
+               frameRef.size(),
+               kp,
+               kpRef,
+               matchesAll,
+               matchesGMS,
+               cmd.get<bool>("withRotation"),
+               cmd.get<bool>("withScale"));
       tm.stop();
       Mat frameMatches;
       if(cmd.get<bool>("drawSimple"))
-        drawMatches(frame, kp, frameRef, kpRef, matchesGMS, frameMatches, Scalar::all(-1), Scalar::all(-1), std::vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+        drawMatches(frame,
+                    kp,
+                    frameRef,
+                    kpRef,
+                    matchesGMS,
+                    frameMatches,
+                    Scalar::all(-1),
+                    Scalar::all(-1),
+                    std::vector<char>(),
+                    DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
       else
         drawMatches(frame, kp, frameRef, kpRef, matchesGMS, frameMatches);
 
@@ -108,8 +140,18 @@ main(int argc, char* argv[]) {
       putText(frameMatches, label, Point(20, 40), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255));
       label = format("GMS matching: %.2f ms", tm.getTimeMilli());
       putText(frameMatches, label, Point(20, 60), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255));
-      putText(frameMatches, "Press r to reinitialize the reference image.", Point(frameMatches.cols - 380, 20), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255));
-      putText(frameMatches, "Press esc to quit.", Point(frameMatches.cols - 180, 40), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255));
+      putText(frameMatches,
+              "Press r to reinitialize the reference image.",
+              Point(frameMatches.cols - 380, 20),
+              FONT_HERSHEY_SIMPLEX,
+              0.5,
+              Scalar(0, 0, 255));
+      putText(frameMatches,
+              "Press esc to quit.",
+              Point(frameMatches.cols - 180, 40),
+              FONT_HERSHEY_SIMPLEX,
+              0.5,
+              Scalar(0, 0, 255));
 
       imshow("Matches GMS", frameMatches);
       int c = waitKey(30);

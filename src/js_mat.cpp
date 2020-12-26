@@ -153,7 +153,9 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
       rect = js_rect_get(ctx, argv[0]);
 
     ret = js_mat_wrap(ctx, (*m)(rect));
-  } else if(magic == 7) {
+  } else if(magic == 8) {
+    m->release();
+    // *m = cv::Mat();
   } else {
     ret = JS_EXCEPTION;
   }
@@ -573,7 +575,7 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   if(!m)
     return JS_EXCEPTION;
 
-  if(m->rows * m->cols > 50) {
+  if((m->rows > 0 && m->cols > 0) || m->depth() == CV_8U || m->channels() > 1) {
     os << "cv::Mat(" << m->rows << ", " << m->cols << ", ";
 
     const char* tstr =
@@ -802,11 +804,13 @@ js_mat_class_create(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   switch(magic) {
     case 0: {
-      mat = cv::Mat::zeros(params.first, params.second);
+      //      mat = cv::Mat::zeros(params.first, params.second);
+      mat = cv::Scalar::all(0);
       break;
     }
     case 1: {
-      mat = cv::Mat::ones(params.first, params.second);
+      //      mat = cv::Mat::ones(params.first, params.second);
+      mat = cv::Scalar::all(1);
       break;
     }
   }
@@ -960,6 +964,7 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {JS_CGETSET_MAGIC_DEF("cols", 
                                                    // JS_CFUNC_MAGIC_DEF("at", 1, js_mat_funcs, 4),
                                                    JS_CFUNC_MAGIC_DEF("clone", 0, js_mat_funcs, 5),
                                                    JS_CFUNC_MAGIC_DEF("roi", 0, js_mat_funcs, 6),
+                                                   JS_CFUNC_MAGIC_DEF("release", 0, js_mat_funcs, 8),
 
                                                    JS_CFUNC_MAGIC_DEF("and", 2, js_mat_bitwise, 0),
                                                    JS_CFUNC_MAGIC_DEF("or", 2, js_mat_bitwise, 1),

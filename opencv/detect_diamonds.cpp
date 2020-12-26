@@ -186,7 +186,14 @@ main(int argc, char* argv[]) {
 
     // detect diamonds
     if(markerIds.size() > 0)
-      aruco::detectCharucoDiamond(image, markerCorners, markerIds, squareLength / markerLength, diamondCorners, diamondIds, camMatrix, distCoeffs);
+      aruco::detectCharucoDiamond(image,
+                                  markerCorners,
+                                  markerIds,
+                                  squareLength / markerLength,
+                                  diamondCorners,
+                                  diamondIds,
+                                  camMatrix,
+                                  distCoeffs);
 
     // estimate diamond pose
     if(estimatePose && diamondIds.size() > 0) {
@@ -199,7 +206,8 @@ main(int argc, char* argv[]) {
           vector<vector<Point2f>> currentCorners;
           vector<Vec3d> currentRvec, currentTvec;
           currentCorners.push_back(diamondCorners[i]);
-          aruco::estimatePoseSingleMarkers(currentCorners, autoSquareLength, camMatrix, distCoeffs, currentRvec, currentTvec);
+          aruco::estimatePoseSingleMarkers(
+              currentCorners, autoSquareLength, camMatrix, distCoeffs, currentRvec, currentTvec);
           rvecs.push_back(currentRvec[0]);
           tvecs.push_back(currentTvec[0]);
         }
@@ -226,7 +234,8 @@ main(int argc, char* argv[]) {
       aruco::drawDetectedDiamonds(imageCopy, diamondCorners, diamondIds);
 
       if(estimatePose) {
-        for(unsigned int i = 0; i < diamondIds.size(); i++) aruco::drawAxis(imageCopy, camMatrix, distCoeffs, rvecs[i], tvecs[i], squareLength * 0.5f);
+        for(unsigned int i = 0; i < diamondIds.size(); i++)
+          aruco::drawAxis(imageCopy, camMatrix, distCoeffs, rvecs[i], tvecs[i], squareLength * 0.5f);
       }
     }
 

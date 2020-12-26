@@ -148,8 +148,7 @@ let config = {
 };
 
 const GetProject = arg => {
-  let ret =
-    typeof arg == 'number' ? projects()[arg] : typeof arg == 'string' ? projects().find(p => p.name == arg) : arg;
+  let ret = typeof arg == 'number' ? projects()[arg] : typeof arg == 'string' ? projects().find(p => p.name == arg) : arg;
   if(typeof ret == 'string') ret = { name: ret };
   return ret;
 };
@@ -188,14 +187,7 @@ const svgFactory = Util.memoize((parent, delegate) => {
     {
       viewBox: rect.toString(),
       style: `position: absolute; left: 0; top: 0; z-index: ${zIndex}; stroke: #000, fill: none;`
-    }, [
-      ['defs'],
-      [
-        'g',
-        { transform: ` scale(1,-1) translate(0,1.27) translate(0,${-rect.y2}) ` },
-        [['rect', { ...rect.toObject(), fill: 'hsla(0,0%,50%,0.3333)' }]]
-      ]
-    ]
+    }, [['defs'], ['g', { transform: ` scale(1,-1) translate(0,1.27) translate(0,${-rect.y2}) ` }, [['rect', { ...rect.toObject(), fill: 'hsla(0,0%,50%,0.3333)' }]]]]
   ];
   const element = (svgOwner = factory(...svg));
   factory.root = parent = element.lastElementChild;
@@ -272,8 +264,7 @@ const ElementToXML = (e, predicate) => {
     deep.set(x, path, value.trim().replace(/\s+/g, ' '));
   }
 
-  for(let [value, path] of deep.iterate(x, (v, k) => k[k.length - 1] == 'id' && v == 'rects'))
-    deep.unset(x, path.slice(0, -1));
+  for(let [value, path] of deep.iterate(x, (v, k) => k[k.length - 1] == 'id' && v == 'rects')) deep.unset(x, path.slice(0, -1));
   for(let [value, path] of deep.iterate(x, (v, k) => /(^data-|^class$)/.test(k[k.length - 1]))) deep.unset(x, path);
   //console.log('x:', x);
   return Element.toString(x, { newline: '\n' });
@@ -298,8 +289,7 @@ const filesystem = {
 };
 
 async function LoadFile(file) {
-  let { url, name: filename } =
-    typeof file == 'string' ? { url: file, name: file.replace(/.*\//g, '') } : GetProject(file);
+  let { url, name: filename } = typeof file == 'string' ? { url: file, name: file.replace(/.*\//g, '') } : GetProject(file);
   LogJS.info(`LoadFile ${url}`);
   url = /:\/\//.test(url) ? url : /^tmp\//.test(url) ? '/' + url : `/static/${filename}`;
   //console.log('LoadFile url=', url);
@@ -414,9 +404,7 @@ let svgDocFactory = Util.memoize((id = '#geom') =>
     height: window.innerHeight /*, style: "pointer-events: none;"*/
   })
 );
-let svgGroupFactory = Util.memoize((props = {}) =>
-  svgDocFactory().setRoot('g', { stroke: '#f00', 'stroke-width': 3, fill: 'none', ...props })
-);
+let svgGroupFactory = Util.memoize((props = {}) => svgDocFactory().setRoot('g', { stroke: '#f00', 'stroke-width': 3, fill: 'none', ...props }));
 
 const maxZIndex = () =>
   Math.max(...Element.findAll('*')
@@ -466,11 +454,7 @@ function DrawArc(start, end, angle) {
   console.log('slopes:', slopes);
 
   // r('rect', rect.toObject());
-  let rot = new TransformationList([
-    new Translation(middle.x, middle.y),
-    new Rotation(90),
-    new Translation(-middle.x, -middle.y)
-  ]);
+  let rot = new TransformationList([new Translation(middle.x, middle.y), new Rotation(90), new Translation(-middle.x, -middle.y)]);
   console.log('rot:', rot + '');
   let pivots = [middle, line.a, line.b];
   let colors = ['#EB1F00', '#F0CC11', '#34DB05', '#0078F0', '#8D1AE6'];
@@ -495,9 +479,7 @@ function DrawArc(start, end, angle) {
   console.log('approx:', approx);
   //range = range.map(v => v. sum(center));
 
-  points.forEach(({ x, y }, i) =>
-    b('circle', { cx: x, cy: y, r: 10, fill: rainbow[i], 'stroke-width': 2, stroke: 'black' })
-  );
+  points.forEach(({ x, y }, i) => b('circle', { cx: x, cy: y, r: 10, fill: rainbow[i], 'stroke-width': 2, stroke: 'black' }));
 
   let svg = g('line', { ...line.toObject() }).ownerSVGElement;
   console.log('svg:', svg);
@@ -574,31 +556,11 @@ const DrawBinaryTree = (tree, draw = DrawSVG()) => {
     draw('line', { ...Line(...points).round(0.001), stroke: '#000', 'stroke-width': 0.4 });
   }
 };
-DrawBinaryTree.bt = new BinaryTree(new BinaryTree.Node(
-    'A',
-    new BinaryTree.Node('B', new BinaryTree.Node('D')),
-    new BinaryTree.Node('C', new BinaryTree.Node('E', null, new BinaryTree.Node('G')), new BinaryTree.Node('F'))
-  )
-);
-DrawBinaryTree.bt = new BinaryTree(new BinaryTree.Node(
-    'V',
-    new BinaryTree.Node('H', new BinaryTree.Node(2), new BinaryTree.Node(1)),
-    new BinaryTree.Node(
-      'H',
-      new BinaryTree.Node('H',
-        new BinaryTree.Node('V', new BinaryTree.Node(6), new BinaryTree.Node(7)),
-        new BinaryTree.Node('V', new BinaryTree.Node(4), new BinaryTree.Node(5)),
-        new BinaryTree.Node('V')
-      ),
-      new BinaryTree.Node(3)
-    )
-  )
-);
+DrawBinaryTree.bt = new BinaryTree(new BinaryTree.Node('A', new BinaryTree.Node('B', new BinaryTree.Node('D')), new BinaryTree.Node('C', new BinaryTree.Node('E', null, new BinaryTree.Node('G')), new BinaryTree.Node('F'))));
+DrawBinaryTree.bt = new BinaryTree(new BinaryTree.Node('V', new BinaryTree.Node('H', new BinaryTree.Node(2), new BinaryTree.Node(1)), new BinaryTree.Node('H', new BinaryTree.Node('H', new BinaryTree.Node('V', new BinaryTree.Node(6), new BinaryTree.Node(7)), new BinaryTree.Node('V', new BinaryTree.Node(4), new BinaryTree.Node(5)), new BinaryTree.Node('V')), new BinaryTree.Node(3))));
 
 function GetPaths(query, parent = project.svgElement) {
-  return Element.findAll(query, parent).reduce((a, e) => a.concat(e.tagName != 'path' ? Element.findAll('path', e) : [e]),
-    []
-  );
+  return Element.findAll(query, parent).reduce((a, e) => a.concat(e.tagName != 'path' ? Element.findAll('path', e) : [e]), []);
 }
 
 function PathToPolylines(path, step = 0.01) {
@@ -613,10 +575,7 @@ function PathToPolylines(path, step = 0.01) {
   return polys
     .filter(poly => poly.length > 1)
     .map(poly => {
-      let transforms = new TransformationList(Element.walkUp(path, (p, d, set, stop) =>
-          p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform'))
-        ).reverse()
-      ).collapse();
+      let transforms = new TransformationList(Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse()).collapse();
       console.log('transforms', transforms);
       return new Polyline(poly).transform(transforms);
     });
@@ -625,10 +584,7 @@ function PathToPolylines(path, step = 0.01) {
 function PathToPolyline(path, step = 0.01) {
   let poly = [...SVG.pathIterator(path, { step })];
 
-  let transforms = new TransformationList(Element.walkUp(path, (p, d, set, stop) =>
-      p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform'))
-    ).reverse()
-  ).collapse();
+  let transforms = new TransformationList(Element.walkUp(path, (p, d, set, stop) => (p.parentElement.tagName == 'svg' ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))).reverse()).collapse();
   console.log('transforms', transforms);
   return new Polyline(poly).transform(transforms);
 }
@@ -642,10 +598,7 @@ function PathsToPolylines(paths, step = 0.01) {
 function OutsetPath(path, offset, miterLimit = 2, arcTolerance = 0.01) {
   let co = new ClipperLib.ClipperOffset(miterLimit, arcTolerance);
   let output = (window.output = new ClipperLib.Paths());
-  co.AddPath(path.closed ? path.slice(0, -1) : path,
-    ClipperLib.JoinType[path.closed ? 'jtRound' : 'jtSquare'],
-    ClipperLib.EndType[path.closed ? 'etClosedLine' /*'etClosedPolygon' */ : 'etOpenSquare' || 'etOpenRound']
-  );
+  co.AddPath(path.closed ? path.slice(0, -1) : path, ClipperLib.JoinType[path.closed ? 'jtRound' : 'jtSquare'], ClipperLib.EndType[path.closed ? 'etClosedLine' /*'etClosedPolygon' */ : 'etOpenSquare' || 'etOpenRound']);
   co.Execute(output, offset);
   console.log('output:', output);
   output.toPolylines = function() {
@@ -685,12 +638,7 @@ function OutsetPaths(paths, offset, miterLimit = 2, arcTolerance = 0.25) {
 function ClipPath(path, clip, mode = ClipperLib.ClipType.ctUnion) {
   let cl = new ClipperLib.Clipper();
   let output = new ClipperLib.Paths();
-  const add = (p, clip = false) =>
-    (Util.isArray(p[0]) ? cl.AddPaths : cl.AddPath).call(cl,
-      p,
-      clip ? ClipperLib.PolyType.ptClip : ClipperLib.PolyType.ptSubject,
-      true
-    );
+  const add = (p, clip = false) => (Util.isArray(p[0]) ? cl.AddPaths : cl.AddPath).call(cl, p, clip ? ClipperLib.PolyType.ptClip : ClipperLib.PolyType.ptSubject, true);
 
   add(path, false);
   add(clip, true);
@@ -714,10 +662,7 @@ function restoreItemsProperty(map, itemList, set = (item, value) => item.visible
 
 function EagleMaps(project) {
   let transformPath = p => p.replace(/\s*➟\s*/g, '/').replace(/\/([0-9]+)/g, '/[$1]');
-  let eagle2dom = [...Element.findAll('*[data-path]', project.object)].map(e => [
-    transformPath(e.getAttribute('data-path')),
-    e
-  ]);
+  let eagle2dom = [...Element.findAll('*[data-path]', project.object)].map(e => [transformPath(e.getAttribute('data-path')), e]);
   console.debug('eagle2dom:', eagle2dom);
 
   eagle2dom = eagle2dom
@@ -749,8 +694,7 @@ window.dom2eagle=eagle2dom.map(([k, v]) => [v, k]);*/
   //eagle2dom = eagle2dom.map(([p, r, e]) => [EagleElement.get(project.doc, p, r), e]);
   let maps = {};
 
-  maps.eagle2dom = Util.mapFunction(new WeakMap(mapElements.eagle.map(eagle => [eagle, eagle2dom.filter(([e, d]) => e === eagle).map(([e, d]) => d)]))
-  );
+  maps.eagle2dom = Util.mapFunction(new WeakMap(mapElements.eagle.map(eagle => [eagle, eagle2dom.filter(([e, d]) => e === eagle).map(([e, d]) => d)])));
   console.debug('maps.eagle2dom:', maps.eagle2dom);
   //console.debug('new WeakMap(eagle2dom):', new Map(eagle2dom));
   maps.dom2eagle = Util.mapFunction(new WeakMap(eagle2dom.map(([k, v]) => [v, k])));
@@ -758,15 +702,9 @@ window.dom2eagle=eagle2dom.map(([k, v]) => [v, k]);*/
   const [path2component, component2path] = project.renderer.maps.map(Util.mapFunction);
   const { path2obj, obj2path, path2eagle, eagle2path, eagle2obj, obj2eagle } = project.doc.maps;
 
-  const [component2eagle, eagle2component] = [
-    Util.mapAdapter((key, value) => (value === undefined ? path2eagle(component2path(key)) : undefined)),
-    Util.mapAdapter((key, value) => (value === undefined ? path2component(eagle2path(key)) : undefined))
-  ];
+  const [component2eagle, eagle2component] = [Util.mapAdapter((key, value) => (value === undefined ? path2eagle(component2path(key)) : undefined)), Util.mapAdapter((key, value) => (value === undefined ? path2component(eagle2path(key)) : undefined))];
 
-  const [component2dom, dom2component] = [
-    Util.mapAdapter((key, value) => (value === undefined ? maps.eagle2dom(component2eagle(key)) : undefined)),
-    Util.mapAdapter((key, value) => (value === undefined ? eagle2component(maps.dom2eagle(key)) : undefined))
-  ];
+  const [component2dom, dom2component] = [Util.mapAdapter((key, value) => (value === undefined ? maps.eagle2dom(component2eagle(key)) : undefined)), Util.mapAdapter((key, value) => (value === undefined ? eagle2component(maps.dom2eagle(key)) : undefined))];
   Object.assign(maps, {
     component2dom,
     component2eagle,
@@ -786,15 +724,7 @@ function* PackageNames(doc = project.doc) {
   let names = packages
     .map(e => [e, e.getBounds()])
     .map(([e, b]) => [e, b.width, b.height, Math.max(b.width, b.height), b.height > b.width])
-    .map(([e, w, h, m, v]) => [
-      e,
-      e.name,
-      [...tokenize(e.name)],
-      Util.roundTo(w, 0.01),
-      Util.roundTo(h, 0.01),
-      Math.floor(m),
-      v ? 'V' : ''
-    ]);
+    .map(([e, w, h, m, v]) => [e, e.name, [...tokenize(e.name)], Util.roundTo(w, 0.01), Util.roundTo(h, 0.01), Math.floor(m), v ? 'V' : '']);
 
   for(let [element, name, matches, w, h, size, orientation] of names) {
     let tokens = matches.map(({ index, ...match }) => match[0] + '');
@@ -870,8 +800,7 @@ async function LoadDocument(project, parentElem) {
       console.log('Package names', names);
       let changes = names.filter(a => a[0] != a[1]);
       console.log('Commands:\n' + changes.map(([oldName, newName]) => `RENAME ${oldName} ${newName};`).join('\n'));
-      console.log('Expressions:\n' + changes.map(([oldName, newName]) => `s|="${oldName}"|="${newName}"|g;`).join('\n')
-      );
+      console.log('Expressions:\n' + changes.map(([oldName, newName]) => `s|="${oldName}"|="${newName}"|g;`).join('\n'));
       return names;
     }
   });
@@ -983,9 +912,7 @@ async function LoadDocument(project, parentElem) {
       return (e = SVG.create('g', { ...props, transform }, svg));
     };
 
-    project.makeFactory = Util.memoize(id =>
-      SVG.factory(() => project.makeGroup({ ...((id !== undefined && { id }) || {}), 'stroke-width': 0.127 / 4 }))
-    );
+    project.makeFactory = Util.memoize(id => SVG.factory(() => project.makeGroup({ ...((id !== undefined && { id }) || {}), 'stroke-width': 0.127 / 4 })));
 
     project.makeFactory();
 
@@ -996,11 +923,7 @@ async function LoadDocument(project, parentElem) {
       let g = SVG.create('g', {});
 
       project.svgElement.appendChild(g);
-      let ll =
-        geometries.R4 &&
-        geometries.R4.lines.toSVG(ReactComponent.append, () =>
-          h('g', { ...elementDefaultAttributes, defaultTransform })
-        );
+      let ll = geometries.R4 && geometries.R4.lines.toSVG(ReactComponent.append, () => h('g', { ...elementDefaultAttributes, defaultTransform }));
 
       render(ll, g);
     }
@@ -1105,16 +1028,8 @@ const GenerateVoronoi = () => {
   let points2 = vertices.map(v => new Point(v).round(0.127, 4));
   const add = (arr, ...items) => [...(Util.isArray(arr) ? arr : []), ...items];
   const factory = SVG.factory();
-  const lines = [
-    ...rlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.01 }]),
-    ...vlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.01 }])
-  ];
-  const circles = [
-    ...holes.map(p => [
-      'circle',
-      { cx: p.x, cy: p.y, r: 0.254, fill: 'none', stroke: '#00f', 'stroke-width': 0.3 }
-    ]) /* ...points2.map(p => [ 'circle', { cx: p.x, cy: p.y, r: 0.254 * 2, fill: 'none', stroke: 'rgba(0,255,255,0.75)', 'stroke-width': 0.1 } ])*/
-  ];
+  const lines = [...rlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.01 }]), ...vlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.01 }])];
+  const circles = [...holes.map(p => ['circle', { cx: p.x, cy: p.y, r: 0.254, fill: 'none', stroke: '#00f', 'stroke-width': 0.3 }]) /* ...points2.map(p => [ 'circle', { cx: p.x, cy: p.y, r: 0.254 * 2, fill: 'none', stroke: 'rgba(0,255,255,0.75)', 'stroke-width': 0.1 } ])*/];
   const polylines = [
     ...cells.reduce((acc, { site, halfedges }) => [
         ...acc,
@@ -1139,9 +1054,7 @@ const GenerateVoronoi = () => {
 };
 
 function PackageChildren(element, layer) {
-  let children = [...element.children]
-    .map((c, i) => [i, c])
-    .filter(([i, p]) => p.layer && p.layer.name == 'tPlace' && p.tagName == 'wire');
+  let children = [...element.children].map((c, i) => [i, c]).filter(([i, p]) => p.layer && p.layer.name == 'tPlace' && p.tagName == 'wire');
   children.xml = children.map(([i, e]) => e.toXML()).join('\n');
   return children;
 }
@@ -1238,8 +1151,7 @@ function HandleMessage(msg) {
       let { frame, width, height, contours } = body;
       console.log('HandleMessage', { contours });
 
-      let lists = (typeof contours == 'string' ? contours.split(/\s*\|\s*/g) : contours).map(pointStr => new Polyline(pointStr)
-      );
+      let lists = (typeof contours == 'string' ? contours.split(/\s*\|\s*/g) : contours).map(pointStr => new Polyline(pointStr));
 
       window.lists = lists;
       console.log('HandleMessage', { type, width, height, frame }, lists);
@@ -1454,8 +1366,7 @@ const AppMain = (window.onload = async () => {
   //window.focusSearch = trkl();
   window.currentSearch = trkl(null);
 
-  window.keystroke = target => (key, modifiers = 0) =>
-    keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key), target);
+  window.keystroke = target => (key, modifiers = 0) => keysim.Keyboard.US_ENGLISH.dispatchEventsForKeystroke(new keysim.Keystroke(modifiers, key), target);
 
   window.focusSearch = state => {
     const input = currentSearch();
@@ -1503,10 +1414,7 @@ const AppMain = (window.onload = async () => {
         file.name = name;
         file.i = i;
         trkl.bind(file, { data });
-        LogJS.info(`Got file '${
-            name.replace(/.*:\/\//g, '').replace(/raw.githubusercontent.com/, 'github.com') || name.replace(/.*\//g, '')
-          }'`
-        );
+        LogJS.info(`Got file '${name.replace(/.*:\/\//g, '').replace(/raw.githubusercontent.com/, 'github.com') || name.replace(/.*\//g, '')}'`);
 
         return file;
       }
@@ -1640,13 +1548,7 @@ const AppMain = (window.onload = async () => {
   LogJS.addAppender(class extends LogJS.BaseAppender {
       log(type, time, msg) {
         let d = new Date(time);
-        if(typeof window.pushlog == 'function')
-          window.pushlog([
-            type,
-            Util.isoDate(d).replace(/-/g, ''),
-            d.toLocaleTimeString(navigator.language || 'de'),
-            msg
-          ]);
+        if(typeof window.pushlog == 'function') window.pushlog([type, Util.isoDate(d).replace(/-/g, ''), d.toLocaleTimeString(navigator.language || 'de'), msg]);
       }
     }
   );
@@ -1694,12 +1596,7 @@ const AppMain = (window.onload = async () => {
     for(let [key, value] of Object.entries(values)) lines.push([key, value]);
     return h('table',
       { border: '0', cellpadding: 3, cellspacing: 0, className: 'dumper' },
-      lines.map(([k, v], i) =>
-        h('tr', { className: 'watch' }, [
-          h('td', { className: 'name' }, k + ''),
-          h('td', { className: 'value' }, v + '')
-        ])
-      )
+      lines.map(([k, v], i) => h('tr', { className: 'watch' }, [h('td', { className: 'name' }, k + ''), h('td', { className: 'value' }, v + '')]))
     );
   };
 
@@ -1932,8 +1829,7 @@ const AppMain = (window.onload = async () => {
                   console.debug('BoardToGerber side =', side, ' file =', gerber.file);
                 }
               }
-              const sides = Object.fromEntries(['back', 'front', 'drill', 'outline'].map(side => [side, project.gerber[side].file])
-              );
+              const sides = Object.fromEntries(['back', 'front', 'drill', 'outline'].map(side => [side, project.gerber[side].file]));
               console.debug('  sides = ', sides);
               const allGcode = await GerberToGcode(project.name, {
                 ...sides,
@@ -1982,9 +1878,7 @@ const AppMain = (window.onload = async () => {
                             g.innerHTML = gc.svg;
                             if(g.firstElementChild && g.firstElementChild.tagName == 'svg') {
                               let svg = g.firstElementChild;
-                              ['width', 'height', 'xmlns', 'xmlns:xlink', 'version'].forEach(a =>
-                                svg.removeAttribute(a)
-                              );
+                              ['width', 'height', 'xmlns', 'xmlns:xlink', 'version'].forEach(a => svg.removeAttribute(a));
                               svg.setAttribute('viewBox', bbox);
                             }
                             Element.findAll('path', g)
@@ -2205,10 +2099,7 @@ const AppMain = (window.onload = async () => {
 
       if(prevEvent && group) {
         let u = Util.union(prevEvent.elements, event.elements, (a, b) => a.isSameNode(b));
-        let [remove, add] = Util.difference(prevEvent.elements,
-          event.elements,
-          (a, b) => a.findIndex(Node.prototype.isSameNode, b) != -1
-        );
+        let [remove, add] = Util.difference(prevEvent.elements, event.elements, (a, b) => a.findIndex(Node.prototype.isSameNode, b) != -1);
 
         //  console.log('difference:', [remove,add], 'union:', u);
         //  console.log('add:', add);
@@ -2216,12 +2107,7 @@ const AppMain = (window.onload = async () => {
         const bboxes = new Map(add.map(e => [e, new Rect(e.getBBox ? e.getBBox() : e.getBoundingClientRect())]));
 
         for(let [e, rect] of bboxes) {
-          let transforms =
-            Element.walkUp(e, (p, d, set, stop) =>
-              p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement)
-                ? stop()
-                : p.hasAttribute('transform') && set(p.getAttribute('transform'))
-            ) || [];
+          let transforms = Element.walkUp(e, (p, d, set, stop) => (p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement) ? stop() : p.hasAttribute('transform') && set(p.getAttribute('transform')))) || [];
           transforms = transforms.reverse();
           elems.add(e);
           let props = { ...rect.round(0.001).toObject(), transform: transforms.join(' ') };
@@ -2317,27 +2203,21 @@ const AppMain = (window.onload = async () => {
         let translation = new Translation();
         let transformList = new TransformationList([translation]).concat(transform());
 
-        let setStyle = Util.once(() =>
-          Element.setCSS(box, { cursor: 'move', 'pointer-events': 'none', 'user-select': 'none' })
-        );
+        let setStyle = Util.once(() => Element.setCSS(box, { cursor: 'move', 'pointer-events': 'none', 'user-select': 'none' }));
 
-        window.move = move = Element.moveRelative(box,
-          null,
-          id == 'console' ? ['right', 'bottom'] : ['left', 'top'],
-          (pos, last, first) => {
-            if(pos && first) {
-              let rel = Point.diff(pos, first);
-              if(rel.distanceSquared() > 0) {
-                setStyle();
+        window.move = move = Element.moveRelative(box, null, id == 'console' ? ['right', 'bottom'] : ['left', 'top'], (pos, last, first) => {
+          if(pos && first) {
+            let rel = Point.diff(pos, first);
+            if(rel.distanceSquared() > 0) {
+              setStyle();
 
-                translation.x = rel.x;
-                translation.y = rel.y;
-                transform(transformList.collapse());
-                //   console.log('TouchHandler transform:', transform());
-              }
+              translation.x = rel.x;
+              translation.y = rel.y;
+              transform(transformList.collapse());
+              //   console.log('TouchHandler transform:', transform());
             }
           }
-        );
+        });
       }
       return true;
     }
@@ -2383,48 +2263,7 @@ const AppMain = (window.onload = async () => {
   };
   window.processEvents = async function eventLoop() {
     for await (let e of new EventIterator('touch')) {
-      const {
-        altKey,
-        bubbles,
-        button,
-        buttons,
-        cancelBubble,
-        cancelable,
-        clientX,
-        clientY,
-        composed,
-        ctrlKey,
-        detail,
-        eventPhase,
-        fromElement,
-        isTrusted,
-        layerX,
-        layerY,
-        metaKey,
-        movementX,
-        movementY,
-        offsetX,
-        offsetY,
-        pageX,
-        pageY,
-        path,
-        region,
-        relatedTarget,
-        returnValue,
-        screenX,
-        screenY,
-        shiftKey,
-        srcElement,
-        target,
-        timeStamp,
-        toElement,
-        type,
-        view,
-        which,
-        x,
-        y,
-        ...event
-      } = e;
+      const { altKey, bubbles, button, buttons, cancelBubble, cancelable, clientX, clientY, composed, ctrlKey, detail, eventPhase, fromElement, isTrusted, layerX, layerY, metaKey, movementX, movementY, offsetX, offsetY, pageX, pageY, path, region, relatedTarget, returnValue, screenX, screenY, shiftKey, srcElement, target, timeStamp, toElement, type, view, which, x, y, ...event } = e;
       // LogJS.info(`${type} ` + /* Util.toSource(e)+ */ ` ${x},${y} → ${Element.xpath(target)}`);
     }
   };
@@ -2445,22 +2284,7 @@ const AppMain = (window.onload = async () => {
   });*/
 
   window.addEventListener('wheel', event => {
-    const {
-      deltaX,
-      deltaY,
-      screenX,
-      screenY,
-      clientX,
-      clientY,
-      pageX,
-      pageY,
-      x,
-      y,
-      offsetX,
-      offsetY,
-      layerX,
-      layerY
-    } = event;
+    const { deltaX, deltaY, screenX, screenY, clientX, clientY, pageX, pageY, x, y, offsetX, offsetY, layerX, layerY } = event;
 
     window.wheelEvent = event;
 

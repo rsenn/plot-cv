@@ -31,7 +31,11 @@ getTime() {
 }
 
 static void
-drawArrows(UMat& _frame, const vector<Point2f>& prevPts, const vector<Point2f>& nextPts, const vector<uchar>& status, Scalar line_color = Scalar(0, 0, 255)) {
+drawArrows(UMat& _frame,
+           const vector<Point2f>& prevPts,
+           const vector<Point2f>& nextPts,
+           const vector<uchar>& status,
+           Scalar line_color = Scalar(0, 0, 255)) {
   Mat frame = _frame.getMat(ACCESS_WRITE);
   for(size_t i = 0; i < prevPts.size(); ++i) {
     if(status[i]) {
