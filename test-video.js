@@ -9,7 +9,7 @@ import { VideoSource } from './cvVideo.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.js';
 import { Alea } from './lib/alea.js';
 import { HSLA } from './lib/color.js';
-import { NumericParam, EnumParam } from './param.js';
+import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 
 let prng = new Alea(Date.now());
 const hr = Util.hrtime;
@@ -170,9 +170,12 @@ async function main(...args) {
       0
     )
   };
-  console.log('Params:',
-    [...Object.entries(params)].map(([name, param]) => [name, param.valueOf()])
-  );
+  let paramNav = new ParamNavigator(params);
+  let dummyArray = [0, 1, 2, 3, 4, 5, 6, 7];
+  console.log('paramNav.map:', paramNav.map);
+  console.log('params.mode:', dummyArray[params.mode]);
+  console.log('params.method:', dummyArray[params.method]);
+  console.log('paramNav.param:', paramNav.param);
 
   rainbow = makeRainbow(256);
 
@@ -219,6 +222,7 @@ async function main(...args) {
   });
 
   while(running) {
+    meter.reset();
     meter.start();
     let deadline = Util.now() + frameDelay;
 
@@ -226,22 +230,20 @@ async function main(...args) {
     if(frameNo == frameCount) video.set('pos_frames', (frameNo = 0));
 
     let gray = pipeline();
-    console.log('outputMat: ' + outputMat.toString());
+    //console.log('outputMat: ' + outputMat.toString());
 
-    console.log('pipeline.times:',
-      pipeline.times.map((t, i) => [pipeline.names[i], +t.milliseconds.toFixed(3)])
-    );
-    console.log('pipeline.images:',
-      pipeline.images.map((mat, i) => [pipeline.names[i], mat.toString()])
-    );
+    //console.log('pipeline.times:', pipeline.times.map((t, i) => [pipeline.names[i], +t.milliseconds.toFixed(3)]));
+    //console.log('pipeline.images:', pipeline.images.map((mat, i) => [pipeline.names[i], mat.toString()]));
     showOutput();
-    console.log('processing time:', Util.now() - (deadline - frameDelay));
+    //console.log('processing time:', Util.now() - (deadline - frameDelay));
 
     while(true) {
       let key, modifiers, modifierList;
 
       let sleepMsecs = deadline - Util.now();
-      console.log('sleepMsecs:', sleepMsecs, '/', frameDelay);
+
+      sleepMsecs -= 10;
+      //console.log('sleepMsecs:', sleepMsecs, '/', frameDelay);
 
       if((key = cv.waitKeyEx(Math.max(1, sleepMsecs))) != -1) {
         modifiers = Object.fromEntries(modifierMap(key));
@@ -251,20 +253,52 @@ async function main(...args) {
       }
 
       switch (key & 0xfff) {
-        case 0x51:
-        case 0x71:
+        case 0x3c /* < */:
+          paramNav.prev();
+          break;
+        case 0x3e /* > */:
+          paramNav.next();
+          break;
+
+        case 0x2b /* + */:
+          paramNav.param.increment();
+          break;
+        case 0x2d /* - */:
+        case 0x2fad /* numpad - */:
+          paramNav.param.decrement();
+          break;
+
+        case 0x31: /* 1 */
+        case 0x32: /* 2 */
+        case 0x33: /* 3 */
+        case 0x34: /* 4 */
+        case 0x35: /* 5 */
+        case 0x36: /* 6 */
+        case 0x37: /* 7 */
+        case 0x38: /* 8 */
+        case 0x39: /* 9 */
+        case 0x30 /* 0 */:
+          let v = key & 0xf || 10;
+          paramNav.param.alpha = v / 10;
+          break;
+        case 0xa7 /* § */:
+          paramNav.param.alpha = 0;
+          break;
+        case 0x51: /* Q */
+        case 0x71: /* q */
+
         case 0x1b:
           running = false;
           break;
         case 0x20:
           paused = !paused;
           break;
-        case 0x6e:
-        case 0x4e:
+        case 0x6e: /* n */
+        case 0x4e /* N */:
           frameShow = wrapIndex(frameShow + 1);
           break;
-        case 0x70:
-        case 0x50:
+        case 0x70: /* p */
+        case 0x50 /* P */:
           frameShow = wrapIndex(frameShow - 1);
           break;
         case 0xf50 /* home */:
@@ -302,15 +336,21 @@ async function main(...args) {
     if(paused) video.seekFrames(-1);
 
     meter.stop();
-    console.log('Total time: ', meter.toString());
-    if(prevTime !== undefined) console.log('FPS: ', +(1 / (meter.timeSec - prevTime)).toFixed(2), '/', video.fps);
+    //console.log('Iteration time: ', meter.toString());
+    if(prevTime !== undefined) console.log('FPS: ', +(1 / meter.timeSec).toFixed(2), '/', video.fps);
+
     prevTime = meter.timeSec;
   }
 
   function showOutput() {
     let surface = new Mat(outputMat.rows, outputMat.cols, cv.CV_8UC4);
     let out = new Mat();
-    cv.cvtColor(outputMat, out, cv.COLOR_BGR2BGRA);
+    if(outputMat.channels == 1) {
+      cv.cvtColor(outputMat, out, cv.COLOR_GRAY2BGR);
+      cv.cvtColor(out, out, cv.COLOR_BGR2BGRA);
+    } else {
+      cv.cvtColor(out, out, cv.COLOR_BGR2BGRA);
+    }
     let ids = [...getToplevel(hier)];
 
     let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]])
@@ -323,12 +363,16 @@ async function main(...args) {
       return d;
     });
     contoursDepth = depths.length ? Math.max(...depths) : 0;
-    font.draw(surface, video.time + ' ⏩', tPos, 0xffffff || { r: 0, g: 255, b: 0, a: 255 });
+    font.draw(surface, video.time + ' ⏩', tPos, 0x00ff00 || { r: 0, g: 255, b: 0, a: 255 });
+
+    let paramStr = `${paramNav.name} [${paramNav.param.range.join('-')}] = ${+paramNav.param}`;
+    //console.log('paramStr: ', paramStr);
+    font.draw(surface, paramStr, [5, 100], 0x00ffff || { r: 255, g: 0, b: 0, a: 255 });
 
     font.draw(surface,
       `#${frameShow + 1}/${pipeline.size}` + (outputName ? ` (${outputName})` : ''),
       [5, 5 + tSize.y],
-      {
+      0xffff00 || {
         r: 255,
         g: 255,
         b: 0,

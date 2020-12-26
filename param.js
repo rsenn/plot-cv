@@ -9,7 +9,7 @@ export class Param {
   }
 
   valueOf() {
-    return this.get();
+    return NumericParam.prototype.get.call(this);
   }
 
   [Symbol.toStringTag]() {
@@ -22,20 +22,51 @@ export class Param {
 }
 
 export class NumericParam extends Param {
-  constructor(value = 0, min = 0, max = 1) {
+  constructor(value = 0, min = 0, max = 1, step = 1) {
     super();
-    Object.assign(this, { min, max });
-    Util.define(this, { alpha: (value - min) / (max - min) });
+    Object.assign(this, { min, max, step });
+    Util.define(this, { value /*alpha: (value - min) / (max - min)*/ });
   }
 
   get() {
-    const { min, max, alpha } = this;
-    return min + alpha * (max - min);
+    return this.value;
+    /*const { min, max, alpha } = this;
+    return min + alpha * (max - min);*/
   }
 
-  set(num) {
+  set(value) {
+    //const { min, max } = this;
+    this.value = Util.roundTo(value, this.step);
+  }
+
+  get alpha() {
+    const { value, min, max } = this;
+    return (value - min) / (max - min);
+  }
+
+  set alpha(a) {
+    const { min, max, step } = this;
+    this.value = Util.roundTo(min + (max - min) * a, step);
+  }
+
+  get range() {
     const { min, max } = this;
-    Util.define(this, { alpha: (num - min) / (max - min) });
+    let r = [min, max];
+    r.valueOf = function() {
+      return this[1] - this[0];
+    };
+    return r;
+  }
+
+  increment() {
+    let value = NumericParam.prototype.get.call(this);
+
+    NumericParam.prototype.set.call(this, value + this.step);
+  }
+
+  decrement() {
+    let value = NumericParam.prototype.get.call(this);
+    NumericParam.prototype.set.call(this, value - this.step);
   }
 }
 
@@ -64,3 +95,60 @@ export class EnumParam extends NumericParam {
     super.set(i);
   }
 }
+
+export function ParamNavigator(map) {
+  if(!new.target) return new ParamNavigator(map);
+
+  if(!(map instanceof Map)) map = Util.toMap(map);
+
+  const mod = Util.mod(map.size);
+
+  console.log('map:', map);
+
+  Util.define(this, {
+    map,
+    index: 0,
+    next() {
+      this.index = mod(this.index + 1);
+      console.log('ParamNavigator index =', this.index);
+    },
+    prev() {
+      this.index = mod(this.index - 1);
+      console.log('ParamNavigator index =', this.index);
+    }
+  });
+}
+
+Util.define(ParamNavigator.prototype, {
+  at(index) {
+    const { map } = this;
+    return [...map.entries()][index];
+  },
+  get current() {
+    return this.at(this.index);
+  },
+  get name() {
+    const { map, index } = this;
+    return [...map.keys()][index];
+  },
+  get param() {
+    const { map, index } = this;
+    return [...map.values()][index];
+  } /*,
+  get(name) {
+    return this.map.get(name).get();
+  },
+  set(name, value) {
+    return this.map.get(name).set(value);
+  },
+  get names() {
+    return [...this.map.keys()];
+  },
+  get values() {
+    let ret = {};
+    for(let [name, param] of this.map) {
+      ret[name] = +param;
+    }
+    return ret;
+  }*/
+});
