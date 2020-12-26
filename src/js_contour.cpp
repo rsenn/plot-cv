@@ -462,7 +462,7 @@ js_contour_fitline(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
 }
 
 static JSValue
-js_contour_get(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+js_contour_at(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSContourData<double>* v;
   JSValue ret;
   JSValue x, y;
@@ -1001,6 +1001,50 @@ js_contour_rect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   return ret;
 }
 
+static JSValue
+js_contour_get(JSContext* ctx, JSValueConst this_val,   int magic) {
+  JSContourData<double>* s = js_contour_data(ctx, this_val);
+  JSValue ret = JS_UNDEFINED;
+
+  switch(magic) {
+    case 0: {
+      JSRectData<double> rect = cv::boundingRect(*s);
+
+      ret = JS_NewFloat64(ctx, (double)rect.width / rect.height);
+      break;
+    }
+    case 1: {
+      double area = cv::contourArea(*s);
+       JSRectData<double> rect = cv::boundingRect(*s);
+
+      ret = JS_NewFloat64(ctx, area / (rect.width * rect.height));
+      break;
+    }
+    case 2: {
+      double area = cv::contourArea(*s);
+      JSContourData<double> hull;
+      cv::convexHull(*s, hull);
+      double hullArea = cv::contourArea(hull);
+
+      ret = JS_NewFloat64(ctx, area / cv::contourArea(hull));
+      break;
+    }
+    case 3: {
+      double area = cv::contourArea(*s);
+
+      ret = JS_NewFloat64(ctx, std::sqrt(4 * area / 3.14159265358979323846));
+      break;
+    }
+    case 4: {
+      cv::RotatedRect rect = cv::fitEllipse(*s);
+
+      ret = JS_NewFloat64(ctx, rect.angle);
+      break;
+    }
+  }
+  return ret;
+}
+
 JSValue contour_proto, contour_class;
 VISIBLE JSClassID js_contour_class_id;
 
@@ -1022,10 +1066,16 @@ const JSCFunctionListEntry js_contour_proto_funcs[] = {
     JS_CFUNC_DEF("unshift", 1, js_contour_unshift),
     JS_CFUNC_DEF("shift", 0, js_contour_shift),
     JS_CFUNC_DEF("concat", 1, js_contour_concat),
-    JS_CFUNC_DEF("get", 1, js_contour_get),
+    JS_CFUNC_DEF("at", 1, js_contour_at),
     JS_CGETSET_DEF("length", js_contour_length, NULL),
     JS_CGETSET_DEF("area", js_contour_area, NULL),
     JS_CGETSET_DEF("center", js_contour_center, NULL),
+    JS_CGETSET_MAGIC_DEF("aspectRatio", js_contour_get, NULL, 0),
+    JS_CGETSET_MAGIC_DEF("extent", js_contour_get, NULL, 1),
+    JS_CGETSET_MAGIC_DEF("solidity", js_contour_get, NULL, 2),
+    JS_CGETSET_MAGIC_DEF("equivalentDiameter", js_contour_get, NULL, 3),
+    JS_CGETSET_MAGIC_DEF("orientation", js_contour_get, NULL, 4),
+
     JS_CFUNC_DEF("approxPolyDP", 1, js_contour_approxpolydp),
     JS_CFUNC_DEF("convexHull", 1, js_contour_convexhull),
     JS_CFUNC_DEF("boundingRect", 0, js_contour_boundingrect),

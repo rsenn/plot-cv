@@ -60,8 +60,7 @@ export class EnumParam extends NumericParam {
   set(newVal) {
     let i;
     if(typeof newVal == 'number') i = newVal;
-    else if((i = this.values.indexOf(newVal)) == -1)
-      throw new Error(`No such value '${newVal}' in [${this.values}]`);
+    else if((i = this.values.indexOf(newVal)) == -1) throw new Error(`No such value '${newVal}' in [${this.values}]`);
     super.set(i);
   }
 }

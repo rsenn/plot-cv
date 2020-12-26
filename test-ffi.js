@@ -31,15 +31,7 @@ let efds = new ArrayBuffer(1024 / 8);
 let timeval = new ArrayBuffer(4 * 8);
 
 function TIMEVAL(sec, usec) {
-  let a = Uint16Array.of(sec & 0xffff,
-    (sec >> 16) & 0xfff,
-    (sec >> 32) & 0xfff,
-    (sec >> 48) & 0xfff,
-    0,
-    0,
-    0,
-    0
-  );
+  let a = Uint16Array.of(sec & 0xffff, (sec >> 16) & 0xfff, (sec >> 32) & 0xfff, (sec >> 48) & 0xfff, 0, 0, 0, 0);
   return a.buffer;
 }
 
@@ -81,8 +73,7 @@ function MakeArray(buf, numBytes) {
 
 function ArrayBufToHex(buf, numBytes = 8) {
   let arr = MakeArray(buf, numBytes);
-  return arr.reduce((s, code) =>
-      (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
+  return arr.reduce((s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
     ''
   );
 }

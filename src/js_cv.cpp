@@ -247,9 +247,8 @@ js_cv_cvt_color(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 
   cv::Mat *src, *dst;
   int code, dstCn = 0;
-  int64_t before, after;
-
-  before = cv::getTickCount();
+  /*int64_t before, after;
+  before = cv::getTickCount();*/
 
   src = js_mat_data(ctx, argv[0]);
   dst = js_mat_data(ctx, argv[1]);
@@ -271,11 +270,9 @@ js_cv_cvt_color(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
     return JS_EXCEPTION;
   }
 
-  after = cv::getTickCount();
-
+  /*after = cv::getTickCount();
   double t = static_cast<double>(after - before) / cv::getTickFrequency();
-
-  std::cerr << "cv::cvtColor duration = " << t << "s" << std::endl;
+  std::cerr << "cv::cvtColor duration = " << t << "s" << std::endl;*/
 
   return JS_UNDEFINED;
 }

@@ -9,18 +9,10 @@ export function Point(arg) {
     const matches = [...arg.matchAll(new RegExp('/([-+]?d*.?d+)(?:[eE]([-+]?d+))?/g'))];
     p.x = parseFloat(matches[0]);
     p.y = parseFloat(matches[1]);
-  } else if(typeof arg == 'object' &&
-    arg !== null &&
-    (arg.x !== undefined || arg.y !== undefined)
-  ) {
+  } else if(typeof arg == 'object' && arg !== null && (arg.x !== undefined || arg.y !== undefined)) {
     p.x = arg.x;
     p.y = arg.y;
-  } else if(typeof arg == 'object' &&
-    arg !== null &&
-    arg.length > 0 &&
-    x !== undefined &&
-    y !== undefined
-  ) {
+  } else if(typeof arg == 'object' && arg !== null && arg.length > 0 && x !== undefined && y !== undefined) {
     p.x = parseFloat(arg.shift());
     p.y = parseFloat(arg.shift());
   } else if(typeof args[0] === 'number' && typeof args[1] === 'number') {
@@ -112,8 +104,7 @@ Point.prototype.neg = function() {
   return this;
 };
 Point.prototype.distance = function(other = { x: 0, y: 0 }) {
-  return Math.sqrt((other.y - this.y) * (other.y - this.y) + (other.x - this.x) * (other.x - this.x)
-  );
+  return Math.sqrt((other.y - this.y) * (other.y - this.y) + (other.x - this.x) * (other.x - this.x));
 };
 Point.prototype.equal = function(other) {
   return this.x == other.x && this.y == other.y;
@@ -163,11 +154,7 @@ Point.prototype.toCSS = function() {
   };
 };
 Point.prototype.inside = function(rect) {
-  return (this.x >= rect.x &&
-    this.x < rect.x + rect.width &&
-    this.y >= rect.y &&
-    this.y < rect.y + rect.height
-  );
+  return this.x >= rect.x && this.x < rect.x + rect.width && this.y >= rect.y && this.y < rect.y + rect.height;
 };
 Point.prototype.transform = function(m) {
   Matrix.prototype.transform_point.call(m, this);
@@ -182,8 +169,7 @@ Point.prototype.normalize = function(minmax) {
 export const isPoint = o =>
   o &&
   ((o.x !== undefined && o.y !== undefined) ||
-    ((o.left !== undefined || o.right !== undefined) &&
-      (o.top !== undefined || o.bottom !== undefined)));
+    ((o.left !== undefined || o.right !== undefined) && (o.top !== undefined || o.bottom !== undefined)));
 Point.isPoint = isPoint;
 
 export function Size(arg) {
@@ -291,12 +277,7 @@ export function Line(x1, y1, x2, y2) {
   } else if(args.length == 1) {
     arg = args[0];
   }
-  if(arg &&
-    arg.x1 !== undefined &&
-    arg.y1 !== undefined &&
-    arg.x2 !== undefined &&
-    arg.y2 !== undefined
-  ) {
+  if(arg && arg.x1 !== undefined && arg.y1 !== undefined && arg.x2 !== undefined && arg.y2 !== undefined) {
     const { x1, y1, x2, y2 } = arg;
     obj.x1 = parseFloat(x1);
     obj.y1 = parseFloat(y1);
@@ -436,35 +417,21 @@ export function Rect(arg) {
   ['x', 'y', 'width', 'height'].forEach(field => {
     if(typeof obj[field] != 'number') obj[field] = 0;
   });
-  if(arg &&
-    arg.x1 !== undefined &&
-    arg.y1 !== undefined &&
-    arg.x2 !== undefined &&
-    arg.y2 !== undefined
-  ) {
+  if(arg && arg.x1 !== undefined && arg.y1 !== undefined && arg.x2 !== undefined && arg.y2 !== undefined) {
     const { x1, y1, x2, y2 } = arg;
     obj.x = x1;
     obj.y = y1;
     obj.width = x2 - x1;
     obj.height = y2 - y1;
     ret = 1;
-  } else if(arg &&
-    arg.x !== undefined &&
-    arg.y !== undefined &&
-    arg.x2 !== undefined &&
-    arg.y2 !== undefined
-  ) {
+  } else if(arg && arg.x !== undefined && arg.y !== undefined && arg.x2 !== undefined && arg.y2 !== undefined) {
     const { x, y, x2, y2 } = arg;
     obj.x = x;
     obj.y = y;
     obj.width = x2 - x;
     obj.height = y2 - y;
     ret = 1;
-  } else if(isPoint(arg) &&
-    arg.y !== undefined &&
-    arg.width !== undefined &&
-    arg.height !== undefined
-  ) {
+  } else if(isPoint(arg) && arg.y !== undefined && arg.width !== undefined && arg.height !== undefined) {
     obj.x = parseFloat(arg.x);
     obj.y = parseFloat(arg.y);
     obj.width = parseFloat(arg.width);
@@ -537,8 +504,7 @@ Rect.prototype.toString = function() {
   return this.x + ',' + this.y + ' ' + this.width + 'x' + this.height;
 };
 Rect.prototype.toSource = function() {
-  return ('new Rect(' + (this ? this.x + ',' + this.y + ',' + this.width + ',' + this.height : '') + ')'
-  );
+  return 'new Rect(' + (this ? this.x + ',' + this.y + ',' + this.width + ',' + this.height : '') + ')';
 };
 Object.defineProperty(Rect.prototype, 'x1', {
   get() {
@@ -631,11 +597,9 @@ function PointList(points) {
       ret.push(Point(coords));
     }
   } else if(args[0] && args[0].length == 2) {
-    for(let i = 0; i < args.length; i++)
-      ret.push(this instanceof PointList ? new Point(args[i]) : Point(args[i]));
+    for(let i = 0; i < args.length; i++) ret.push(this instanceof PointList ? new Point(args[i]) : Point(args[i]));
   } else if(isPoint(args[0])) {
-    for(let i = 0; i < args.length; i++)
-      ret.push(this instanceof PointList ? new Point(args[i]) : Point(args[i]));
+    for(let i = 0; i < args.length; i++) ret.push(this instanceof PointList ? new Point(args[i]) : Point(args[i]));
   }
   if(!(this instanceof PointList)) {
     return ret;
@@ -777,8 +741,7 @@ PointList.prototype.minmax = function() {
     y1: this[0].y,
     y2: this[0].y,
     toString() {
-      return `x ${this.x1.toFixed(3)}->${this.x2.toFixed(3)} y ${this.y1.toFixed(3
-      )}->${this.y2.toFixed(3)}`;
+      return `x ${this.x1.toFixed(3)}->${this.x2.toFixed(3)} y ${this.y1.toFixed(3)}->${this.y2.toFixed(3)}`;
     }
   };
   for(let i = 1; i < this.length; i++) {
@@ -873,8 +836,7 @@ PointList.prototype.lines = function(closed = false) {
 PointList.prototype.toString = function(prec) {
   return this.map(point => Point.prototype.toString.call(point, prec)).join(' ');
 };
-PointList.toString = pointList =>
-  '[' + [...pointList].map(p => `[${p.x || p[0]},${p.y || p[1]}]`).join(',') + ']';
+PointList.toString = pointList => '[' + [...pointList].map(p => `[${p.x || p[0]},${p.y || p[1]}]`).join(',') + ']';
 PointList.prototype.rotateRight = function(n) {
   return Util.rotateRight(this, n);
 };

@@ -60,19 +60,7 @@ const vectorAngle = (ux, uy, vx, vy) => {
   return sign * Math.acos(dot);
 };
 
-const getArcCenter = (px,
-  py,
-  cx,
-  cy,
-  rx,
-  ry,
-  largeArcFlag,
-  sweepFlag,
-  sinphi,
-  cosphi,
-  pxp,
-  pyp
-) => {
+const getArcCenter = (px, py, cx, cy, rx, ry, largeArcFlag, sweepFlag, sinphi, cosphi, pxp, pyp) => {
   const rxsq = Math.pow(rx, 2);
   const rysq = Math.pow(ry, 2);
   const pxpsq = Math.pow(pxp, 2);
@@ -112,17 +100,7 @@ const getArcCenter = (px,
   return [centerx, centery, ang1, ang2];
 };
 
-const arcToBezier = ({
-  px,
-  py,
-  cx,
-  cy,
-  rx,
-  ry,
-  xAxisRotation = 0,
-  largeArcFlag = 0,
-  sweepFlag = 0
-}) => {
+const arcToBezier = ({ px, py, cx, cy, rx, ry, xAxisRotation = 0, largeArcFlag = 0, sweepFlag = 0 }) => {
   const curves = [];
 
   if(rx === 0 || ry === 0) {

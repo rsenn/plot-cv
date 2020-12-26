@@ -73,22 +73,23 @@ js_tick_meter_get(JSContext* ctx, JSValueConst this_val, int magic) {
   if(!s)
     ret = JS_EXCEPTION;
   else if(magic == 0)
-    ret = JS_NewFloat64(ctx, s->getAvgTimeMilli());
-  else if(magic == 1)
-    ret = JS_NewFloat64(ctx, s->getAvgTimeSec());
-  else if(magic == 2)
     ret = JS_NewInt64(ctx, s->getCounter());
-  else if(magic == 3)
-    ret = JS_NewFloat64(ctx, s->getFPS());
-  else if(magic == 4)
+  else if(magic == 1)
     ret = JS_NewFloat64(ctx, s->getTimeMicro());
-  else if(magic == 5)
+  else if(magic == 2)
     ret = JS_NewFloat64(ctx, s->getTimeMilli());
-  else if(magic == 6)
+  else if(magic == 3)
     ret = JS_NewFloat64(ctx, s->getTimeSec());
-  else if(magic == 7)
+  else if(magic == 4)
     ret = JS_NewInt64(ctx, s->getTimeTicks());
-
+#if CV_VERSION_MAJOR >= 4 && CV_VERSION_MINOR >= 4
+  else if(magic == 5)
+    ret = JS_NewFloat64(ctx, s->getAvgTimeMilli());
+  else if(magic == 6)
+    ret = JS_NewFloat64(ctx, s->getAvgTimeSec());
+  else if(magic == 7)
+    ret = JS_NewFloat64(ctx, s->getFPS());
+#endif
   return ret;
 }
 
@@ -108,6 +109,20 @@ js_tick_meter_method(JSContext* ctx, JSValueConst this_val, int argc, JSValueCon
   return ret;
 }
 
+static JSValue
+js_tick_meter_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSTickMeterData* s;
+
+  if((s = static_cast<JSTickMeterData*>(JS_GetOpaque2(ctx, this_val, js_tick_meter_class_id)))) {
+    std::ostringstream os;
+    os << *s;
+    std::string str = os.str();
+    return JS_NewStringLen(ctx, str.data(), str.size());
+  }
+
+  return JS_EXCEPTION;
+}
+
 JSClassDef js_tick_meter_class = {
     .class_name = "TickMeter",
     .finalizer = js_tick_meter_finalizer,
@@ -117,15 +132,17 @@ const JSCFunctionListEntry js_tick_meter_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("reset", 0, js_tick_meter_method, 0),
     JS_CFUNC_MAGIC_DEF("start", 0, js_tick_meter_method, 1),
     JS_CFUNC_MAGIC_DEF("stop", 0, js_tick_meter_method, 2),
-
-    JS_CGETSET_MAGIC_DEF("avgTimeMilli", js_tick_meter_get, NULL, 0),
-    JS_CGETSET_MAGIC_DEF("avgTimeSec", js_tick_meter_get, NULL, 1),
-    JS_CGETSET_MAGIC_DEF("counter", js_tick_meter_get, NULL, 2),
-    JS_CGETSET_MAGIC_DEF("fps", js_tick_meter_get, NULL, 3),
-    JS_CGETSET_MAGIC_DEF("timeMicro", js_tick_meter_get, NULL, 4),
-    JS_CGETSET_MAGIC_DEF("timeMilli", js_tick_meter_get, NULL, 5),
-    JS_CGETSET_MAGIC_DEF("timeSec", js_tick_meter_get, NULL, 6),
-    JS_CGETSET_MAGIC_DEF("timeTicks", js_tick_meter_get, NULL, 7),
+    JS_CGETSET_MAGIC_DEF("counter", js_tick_meter_get, NULL, 0),
+    JS_CGETSET_MAGIC_DEF("timeMicro", js_tick_meter_get, NULL, 1),
+    JS_CGETSET_MAGIC_DEF("timeMilli", js_tick_meter_get, NULL, 2),
+    JS_CGETSET_MAGIC_DEF("timeSec", js_tick_meter_get, NULL, 3),
+    JS_CGETSET_MAGIC_DEF("timeTicks", js_tick_meter_get, NULL, 4),
+#if CV_VERSION_MAJOR >= 4 && CV_VERSION_MINOR >= 4
+    JS_CGETSET_MAGIC_DEF("avgTimeMilli", js_tick_meter_get, NULL, 5),
+    JS_CGETSET_MAGIC_DEF("avgTimeSec", js_tick_meter_get, NULL, 6),
+    JS_CGETSET_MAGIC_DEF("fps", js_tick_meter_get, NULL, 7),
+#endif
+    JS_CFUNC_DEF("toString", 0, js_tick_meter_tostring),
 
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "TickMeter", JS_PROP_CONFIGURABLE),
 };
@@ -140,7 +157,7 @@ js_tick_meter_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetPropertyFunctionList(ctx, tick_meter_proto, js_tick_meter_proto_funcs, countof(js_tick_meter_proto_funcs));
   JS_SetClassProto(ctx, js_tick_meter_class_id, tick_meter_proto);
 
-  tick_meter_class = JS_NewCFunction2(ctx, js_tick_meter_ctor, "TickMeter", 2, JS_CFUNC_constructor, 0);
+  tick_meter_class = JS_NewCFunction2(ctx, js_tick_meter_ctor, "TickMeter", 0, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, tick_meter_class, tick_meter_proto);
 

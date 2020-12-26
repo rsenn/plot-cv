@@ -501,7 +501,7 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
                         ? "CV_8UC3"
                         : (m->type() == CV_8UC1) ? "CV_8UC1" : (m->type() == CV_32FC1) ? "CV_32FC1" : "?";
 
-    os << tstr << ")" << std::endl;
+    os << tstr << ")" /*<< std::endl*/;
   } else {
     os << "Mat[";
     for(y = 0; y < m->rows; y++) {
@@ -518,7 +518,7 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
       }
     }
 
-    os << ']' << std::endl;
+    os << ']' /*<< std::endl*/;
   }
 
   return JS_NewString(ctx, os.str().c_str());

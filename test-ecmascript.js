@@ -172,14 +172,10 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
       .map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path))
       .map(path => [path, deep.get(ast, path)]);
 
-    console.log('imports:',
-      new Map(imports.map(([path, node]) => [ESNode.assoc(node).position, node]))
-    );
+    console.log('imports:', new Map(imports.map(([path, node]) => [ESNode.assoc(node).position, node])));
     console.log('importStatements:', importStatements);
 
-    const importedFiles = imports.map(([pos, node]) =>
-      Identifier.string(node.source || node.arguments[0])
-    );
+    const importedFiles = imports.map(([pos, node]) => Identifier.string(node.source || node.arguments[0]));
     console.log('importedFiles:', importedFiles);
 
     let importIdentifiers = importStatements

@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"v",
+				"value\tabc"
+			],
+			[
+				"JS_SetProp",
+				"JS_SetPropertyUint32\tabc"
+			],
+			[
 				"JSCFun",
 				"JSCFunctionListEntry\tabc"
 			],
@@ -160,13 +168,91 @@
 	"buffers":
 	[
 		{
-			"contents": "",
+			"contents": "JSValue\njs_tick_meter_new\n  js_tick_meter_ctor\n  js_tick_meter_data\n  js_tick_meter_finalizer\n  js_tick_meter_get\n  js_tick_meter_method\n  js_tick_meter_tostring\n  js_tick_meter_init\n  js_tick_meter_constructor\nJS_INIT_MODULE",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 225,
 				"line_ending": "Unix",
 				"name": "𝌆 Outline",
 				"scratch": true
+			}
+		},
+		{
+			"file": "test-video.js",
+			"settings":
+			{
+				"buffer_size": 14844,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "quickjs/CMakeLists.txt",
+			"settings":
+			{
+				"buffer_size": 13592,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "quickjs/defs.cmake",
+			"settings":
+			{
+				"buffer_size": 1323,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "quickjs/net/libwebsockets/win32port/zlib/zutil.h",
+			"settings":
+			{
+				"buffer_size": 7179,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "lib/util.js",
+			"settings":
+			{
+				"buffer_size": 159325,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/js_mat.cpp",
+			"settings":
+			{
+				"buffer_size": 27663,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "#include \"jsbindings.h\"\n\n#if defined(JS_UTILITY_MODULE) || defined(quickjs_utility_EXPORTS)\n#define JS_INIT_MODULE /*VISIBLE*/ js_init_module\n#else\n#define JS_INIT_MODULE /*VISIBLE*/ js_init_module_utility\n#endif\n\nextern \"C\" {\n\nJSValue tick_meter_proto = JS_UNDEFINED, tick_meter_class = JS_UNDEFINED;\nJSClassID js_tick_meter_class_id;\n\nVISIBLE JSValue\njs_tick_meter_new(JSContext* ctx) {\n  JSValue ret;\n  JSTickMeterData* s;\n\n  ret = JS_NewObjectProtoClass(ctx, tick_meter_proto, js_tick_meter_class_id);\n\n  s = static_cast<JSTickMeterData*>(js_mallocz(ctx, sizeof(JSTickMeterData)));\n\n  new(s) cv::TickMeter();\n\n  JS_SetOpaque(ret, s);\n  return ret;\n}\n\nstatic JSValue\njs_tick_meter_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {\n  JSTickMeterData* s;\n  JSValue obj = JS_UNDEFINED;\n  JSValue proto;\n\n  s = static_cast<JSTickMeterData*>(js_mallocz(ctx, sizeof(JSTickMeterData)));\n  if(!s)\n    return JS_EXCEPTION;\n  new(s) cv::TickMeter();\n\n  /* using new_target to get the prototype is necessary when the\n     class is extended. */\n  proto = JS_GetPropertyStr(ctx, new_target, \"prototype\");\n  if(JS_IsException(proto))\n    goto fail;\n  obj = JS_NewObjectProtoClass(ctx, proto, js_tick_meter_class_id);\n  JS_FreeValue(ctx, proto);\n  if(JS_IsException(obj))\n    goto fail;\n  JS_SetOpaque(obj, s);\n  return obj;\nfail:\n  js_free(ctx, s);\n  JS_FreeValue(ctx, obj);\n  return JS_EXCEPTION;\n}\n\nJSTickMeterData*\njs_tick_meter_data(JSContext* ctx, JSValueConst val) {\n  return static_cast<JSTickMeterData*>(JS_GetOpaque2(ctx, val, js_tick_meter_class_id));\n}\n\nvoid\njs_tick_meter_finalizer(JSRuntime* rt, JSValue val) {\n  JSTickMeterData* s = static_cast<JSTickMeterData*>(JS_GetOpaque(val, js_tick_meter_class_id));\n  /* Note: 's' can be NULL in case JS_SetOpaque() was not called */\n  js_free_rt(rt, s);\n}\n\nstatic JSValue\njs_tick_meter_get(JSContext* ctx, JSValueConst this_val, int magic) {\n  JSValue ret = JS_UNDEFINED;\n  JSTickMeterData* s = static_cast<JSTickMeterData*>(JS_GetOpaque2(ctx, this_val, js_tick_meter_class_id));\n  if(!s)\n    ret = JS_EXCEPTION;\n  else if(magic == 0)\n    ret = JS_NewInt64(ctx, s->getCounter());\n  else if(magic == 1)\n    ret = JS_NewFloat64(ctx, s->getTimeMicro());\n  else if(magic == 2)\n    ret = JS_NewFloat64(ctx, s->getTimeMilli());\n  else if(magic == 3)\n    ret = JS_NewFloat64(ctx, s->getTimeSec());\n  else if(magic == 4)\n    ret = JS_NewInt64(ctx, s->getTimeTicks());\n#if CV_VERSION_MAJOR >= 4 && CV_VERSION_MINOR >= 4\n  else if(magic == 5)\n    ret = JS_NewFloat64(ctx, s->getAvgTimeMilli());\n  else if(magic == 6)\n    ret = JS_NewFloat64(ctx, s->getAvgTimeSec());\n  else if(magic == 7)\n    ret = JS_NewFloat64(ctx, s->getFPS());\n#endif\n  return ret;\n}\n\nstatic JSValue\njs_tick_meter_method(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {\n  JSValue ret = JS_UNDEFINED;\n  JSTickMeterData* s = static_cast<JSTickMeterData*>(JS_GetOpaque2(ctx, this_val, js_tick_meter_class_id));\n  if(!s)\n    ret = JS_EXCEPTION;\n  else if(magic == 0)\n    s->reset();\n  else if(magic == 1)\n    s->start();\n  else if(magic == 2)\n    s->stop();\n\n  return ret;\n}\n\nstatic JSValue\njs_tick_meter_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {\n  JSTickMeterData* s;\n\n  if((s = static_cast<JSTickMeterData*>(JS_GetOpaque2(ctx, this_val, js_tick_meter_class_id)))) {\n    std::ostringstream os;\n    os << *s;\n    std::string str = os.str();\n    return JS_NewStringLen(ctx, str.data(), str.size());\n  }\n\n  return JS_EXCEPTION;\n}\n\nJSClassDef js_tick_meter_class = {\n    .class_name = \"TickMeter\",\n    .finalizer = js_tick_meter_finalizer,\n};\n\nconst JSCFunctionListEntry js_tick_meter_proto_funcs[] = {\n    JS_CFUNC_MAGIC_DEF(\"reset\", 0, js_tick_meter_method, 0),\n    JS_CFUNC_MAGIC_DEF(\"start\", 0, js_tick_meter_method, 1),\n    JS_CFUNC_MAGIC_DEF(\"stop\", 0, js_tick_meter_method, 2),\n    JS_CGETSET_MAGIC_DEF(\"counter\", js_tick_meter_get, NULL, 0),\n    JS_CGETSET_MAGIC_DEF(\"timeMicro\", js_tick_meter_get, NULL, 1),\n    JS_CGETSET_MAGIC_DEF(\"timeMilli\", js_tick_meter_get, NULL, 2),\n    JS_CGETSET_MAGIC_DEF(\"timeSec\", js_tick_meter_get, NULL, 3),\n    JS_CGETSET_MAGIC_DEF(\"timeTicks\", js_tick_meter_get, NULL, 4),\n#if CV_VERSION_MAJOR >= 4 && CV_VERSION_MINOR >= 4\n    JS_CGETSET_MAGIC_DEF(\"avgTimeMilli\", js_tick_meter_get, NULL, 5),\n    JS_CGETSET_MAGIC_DEF(\"avgTimeSec\", js_tick_meter_get, NULL, 6),\n    JS_CGETSET_MAGIC_DEF(\"fps\", js_tick_meter_get, NULL, 7),\n#endif\n    JS_CFUNC_DEF(\"toString\", 0, js_tick_meter_tostring),\n\n    JS_PROP_STRING_DEF(\"[Symbol.toStringTag]\", \"TickMeter\", JS_PROP_CONFIGURABLE),\n};\nint\njs_tick_meter_init(JSContext* ctx, JSModuleDef* m) {\n\n  /* create the TickMeter class */\n  JS_NewClassID(&js_tick_meter_class_id);\n  JS_NewClass(JS_GetRuntime(ctx), js_tick_meter_class_id, &js_tick_meter_class);\n\n  tick_meter_proto = JS_NewObject(ctx);\n  JS_SetPropertyFunctionList(ctx, tick_meter_proto, js_tick_meter_proto_funcs, countof(js_tick_meter_proto_funcs));\n  JS_SetClassProto(ctx, js_tick_meter_class_id, tick_meter_proto);\n\n  tick_meter_class = JS_NewCFunction2(ctx, js_tick_meter_ctor, \"TickMeter\", 2, JS_CFUNC_constructor, 0);\n  /* set proto.constructor and ctor.prototype */\n  JS_SetConstructor(ctx, tick_meter_class, tick_meter_proto);\n\n  if(m)\n    JS_SetModuleExport(ctx, m, \"TickMeter\", tick_meter_class);\n\n  return 0;\n}\n\nvoid\njs_tick_meter_constructor(JSContext* ctx, JSValue parent, const char* name) {\n  if(JS_IsUndefined(tick_meter_class))\n    js_tick_meter_init(ctx, 0);\n\n  JS_SetPropertyStr(ctx, parent, name ? name : \"TickMeter\", tick_meter_class);\n}\n\n#ifdef JS_UTILITY_MODULE\n#define JS_INIT_MODULE /*VISIBLE*/ js_init_module\n#else\n#define JS_INIT_MODULE /*VISIBLE*/ js_init_module_utility\n#endif\n\nJSModuleDef*\nJS_INIT_MODULE(JSContext* ctx, const char* module_name) {\n  JSModuleDef* m;\n  m = JS_NewCModule(ctx, module_name, &js_tick_meter_init);\n  if(!m)\n    return NULL;\n  JS_AddModuleExport(ctx, m, \"TickMeter\");\n  return m;\n}\n}\n",
+			"file": "src/js_utility.cpp",
+			"file_size": 5982,
+			"file_write_time": 132534258442635199,
+			"settings":
+			{
+				"buffer_size": 5978,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "quickjs/quickjs.h",
+			"settings":
+			{
+				"buffer_size": 41625,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/usr/include/opencv4/opencv2/core/utility.hpp",
+			"settings":
+			{
+				"buffer_size": 38223,
+				"line_ending": "Unix"
 			}
 		}
 	],
@@ -182,12 +268,32 @@
 		"selected_items":
 		[
 			[
+				"Package Control: ",
+				"Package Control: List Packages"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
 				"install",
 				"Package Control: Install Package"
 			],
 			[
 				"adva",
 				"Package Control: Advanced Install Package"
+			],
+			[
+				"schemeed",
+				"SchemeEditor: Edit Current Scheme"
+			],
+			[
+				"isntall",
+				"Package Control: Install Package"
+			],
+			[
+				"add re",
+				"Package Control: Add Repository"
 			],
 			[
 				"install ",
@@ -230,20 +336,12 @@
 				"Package Control: Add Repository"
 			],
 			[
-				"add re",
-				"Package Control: Add Repository"
-			],
-			[
 				"goto us",
 				"Goto Usage"
 			],
 			[
 				"install pac",
 				"Package Control: Install Package"
-			],
-			[
-				"Package Control: ",
-				"Package Control: Remove Package"
 			],
 			[
 				"remove ",
@@ -256,10 +354,6 @@
 			[
 				"mini",
 				"SVGO: Minify SVG"
-			],
-			[
-				"remove",
-				"JavaScriptTemplateLiteralEnhancements: Convert into template literal"
 			],
 			[
 				"remove p",
@@ -358,10 +452,6 @@
 				"SVGO: Minify SVG"
 			],
 			[
-				"isntall",
-				"Package Control: Install Package"
-			],
-			[
 				"ins",
 				"Package Control: Install Package"
 			],
@@ -426,7 +516,7 @@
 	},
 	"console":
 	{
-		"height": 300.0,
+		"height": 131.0,
 		"history":
 		[
 			"sublime.log_commands(True)",
@@ -447,49 +537,70 @@
 	[
 		"/home/roman/Sources/plot-cv",
 		"/home/roman/Sources/plot-cv/include",
+		"/home/roman/Sources/plot-cv/quickjs",
 		"/home/roman/Sources/plot-cv/src",
 		"/home/roman/Sources/plot-cv/static"
 	],
 	"file_history":
 	[
-		"/home/roman/Sources/plot-cv/src/js_contour.cpp",
-		"/home/roman/Sources/plot-cv/src/js_array.h",
-		"/home/roman/Sources/plot-cv/src/js_contour.h",
+		"/home/roman/Sources/plot-cv/src/js_size.h",
+		"/home/roman/Sources/plot-cv/src/jsbindings.h",
+		"/home/roman/Sources/plot-cv/quickjs/qjsc.c",
+		"/home/roman/Sources/plot-cv/quickjs/quickjs.h",
+		"/home/roman/Sources/plot-cv/quickjs/quickjs.c",
 		"/home/roman/Sources/plot-cv/src/js_cv.cpp",
-		"/home/roman/.local/share/endless-sky/saves/achmed tsingzhali~~previous-1.txt",
-		"/home/roman/.local/share/endless-sky/saves/achmed tsingzhali~~previous-2.txt",
-		"/home/roman/.local/share/endless-sky/saves/achmed tsingzhali~~previous-3.txt",
-		"/home/roman/.local/share/endless-sky/saves/achmed tsingzhali.txt",
-		"/home/roman/Sources/plot-cv/test-video.js",
-		"/home/roman/Sources/plot-cv/src/jsbindings.cpp",
+		"/home/roman/Sources/plot-cv/src/js_line.cpp",
+		"/home/roman/Sources/plot-cv/src/js_utility.cpp",
+		"/usr/include/opencv4/opencv2/core/utility.hpp",
+		"/home/roman/Sources/plot-cv/js-bindings.cmake",
+		"/home/roman/Dokumente/Sources/plot-cv/quickjs/net/CMakeLists.txt",
+		"/home/roman/Sources/plot-cv/src/js_video_capture.cpp",
+		"/home/roman/Sources/plot-cv/test-video.c",
+		"/home/roman/Sources/plot-cv/quickjs/quickjs-find-module.c",
+		"/home/roman/Sources/plot-cv/quickjs/quickjs-libc.h",
+		"/home/roman/Sources/plot-cv/quickjs/quickjs-libc.c",
 		"/home/roman/Sources/plot-cv/src/js_draw.cpp",
-		"/home/roman/Sources/plot-cv/src/js_clahe.cpp",
+		"/home/roman/Dokumente/Sources/c-utils/lib/cas.S",
+		"/home/roman/Sources/plot-cv/src/js_mat.cpp",
+		"/home/roman/Sources/plot-cv/cvVideo.js",
+		"/home/roman/.config/sublime-text-3/Packages/User/ES6 Next.tmTheme",
+		"/home/roman/Sources/plot-cv/lib/objectInspect.js",
+		"/home/roman/Sources/plot-cv/lib/consoleSetup.js",
 		"/home/roman/Sources/plot-cv/lib/util.js",
 		"/home/roman/Sources/plot-cv/cvHighGUI.js",
 		"/home/roman/Sources/plot-cv/src/js_size.cpp",
 		"/home/roman/Sources/plot-cv/src/js_rect.h",
+		"/home/roman/Sources/plot-cv/param.js",
+		"/home/roman/Sources/plot-cv/src/js_contour.h",
+		"/home/roman/Sources/plot-cv/src/js_contour.cpp",
+		"/home/roman/Sources/plot-cv/src/geometry.h",
+		"/home/roman/Sources/plot-cv/src/js_array.h",
+		"/home/roman/.config/sublime-text-3/Packages/Colorsublime/Colorsublime.sublime-settings",
+		"/home/roman/Dokumente/Sources/plot-cv/Next.tmTheme",
+		"/home/roman/.config/sublime-text-3/Packages/Outline/outline.py",
+		"/home/roman/Sources/plot-cv/test-video.js",
+		"/home/roman/Sources/plot-cv/src/js_clahe.cpp",
+		"/home/roman/Sources/plot-cv/quickjs/qjs.c",
 		"/home/roman/Sources/plot-cv/src/js_point.cpp",
+		"/home/roman/.screenrc-bg",
+		"/home/roman/.local/share/endless-sky/saves/achmed tsingzhali~~previous-1.txt",
+		"/home/roman/.local/share/endless-sky/saves/achmed tsingzhali~~previous-2.txt",
+		"/home/roman/.local/share/endless-sky/saves/achmed tsingzhali~~previous-3.txt",
+		"/home/roman/.local/share/endless-sky/saves/achmed tsingzhali.txt",
+		"/home/roman/Sources/plot-cv/src/jsbindings.cpp",
 		"/home/roman/Sources/plot-cv/src/js_rect.cpp",
 		"/home/roman/Sources/plot-cv/src/js.h",
-		"/home/roman/Sources/plot-cv/src/geometry.h",
 		"/home/roman/Sources/plot-cv/src/plot-cv.h",
 		"/home/roman/Sources/plot-cv/src/geometry.cpp",
-		"/home/roman/Sources/plot-cv/quickjs/quickjs.c",
 		"/home/roman/Sources/plot-cv/src/js.cpp",
 		"/home/roman/Dokumente/Sources/plot-cv/player-symbols.svg",
 		"/home/roman/Sources/plot-cv/src/plot-cv.cpp",
-		"/home/roman/Sources/plot-cv/src/jsbindings.h",
-		"/home/roman/Sources/plot-cv/src/js_mat.cpp",
 		"/home/roman/Sources/plot-cv/quickjs/CMakeLists.txt",
 		"/home/roman/Sources/plot-cv/src/js_point.h",
-		"/home/roman/Sources/plot-cv/src/js_size.h",
 		"/home/roman/Sources/plot-cv/src/line.h",
 		"/home/roman/Sources/plot-cv/CMakeLists.txt",
 		"/home/roman/Sources/plot-cv/quickjs/net/minnet.c",
-		"/home/roman/Sources/plot-cv/quickjs/quickjs.h",
 		"/home/roman/Dokumente/Sources/plot-cv/static/svg/player-symbols.svg",
-		"/home/roman/Sources/plot-cv/lib/objectInspect.js",
-		"/home/roman/Sources/plot-cv/js-bindings.cmake",
 		"/home/roman/Sources/plot-cv/videoSource.js",
 		"/home/roman/Sources/plot-cv/quickjs/ffi/ffi.c",
 		"/home/roman/Sources/plot-cv/quickjs/examples/point.c",
@@ -505,8 +616,6 @@
 		"/home/roman/Dokumente/Sources/plot-cv/videoSource.js",
 		"/home/roman/Sources/plot-cv/lib/hu.js",
 		"/home/roman/Dokumente/Sources/plot-cv/test-opencv.js",
-		"/home/roman/Sources/plot-cv/src/js_video_capture.cpp",
-		"/home/roman/Dokumente/Sources/plot-cv/Next.tmTheme",
 		"/opt/opencv-4.5.0/include/opencv4/opencv2/videoio.hpp",
 		"/home/roman/.config/sublime-text-3/Packages/JavaScriptNext - ES6 Syntax/Next.tmTheme",
 		"/home/roman/Sources/plot-cv/lib/json.js",
@@ -535,7 +644,6 @@
 		"/home/roman/Sources/plot-cv/test-readdir.js",
 		"/home/roman/Sources/plot-cv/ccache.cmake",
 		"/home/roman/Sources/plot-cv/quickjs/net/libwebsockets/lib/CMakeLists.txt",
-		"/home/roman/Sources/plot-cv/src/js_line.cpp",
 		"/home/roman/Sources/plot-cv/lib/eagle/elementProxy.js",
 		"/home/roman/Sources/plot-cv/lib/eagle/nodeList.js",
 		"/home/roman/Sources/plot-cv/lib/eagle.js",
@@ -555,7 +663,6 @@
 		"/home/roman/Sources/plot-cv/quickjs/net.old/libwebsockets/minimal-examples/http-client/minimal-http-client-post/minimal-http-client-post.c",
 		"/home/roman/Sources/plot-cv/r-colors.svg",
 		"/home/roman/Sources/plot-cv/lib/eagle/project.js",
-		"/home/roman/Sources/plot-cv/lib/consoleSetup.js",
 		"/home/roman/Sources/plot-cv/lib/geom/transformation.js",
 		"/home/roman/Sources/plot-cv/get-msys-packages.js",
 		"/home/roman/Sources/plot-cv/test-cparse.js",
@@ -563,27 +670,11 @@
 		"/home/roman/Sources/plot-cv/opencv/multitracker.cpp",
 		"/home/roman/Sources/plot-cv/quickjs/net/CMakeLists.txt",
 		"/home/roman/Sources/plot-cv/opencv/tutorial_multitracker.cpp",
-		"/home/roman/Sources/plot-cv/opencv.cmake",
-		"/home/roman/Sources/plot-cv/opencv/OpenCVWebcam.cpp",
-		"/home/roman/Sources/plot-cv/cfg.sh",
-		"/home/roman/Sources/plot-cv/list-proxies.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/common.js",
-		"/home/roman/Sources/plot-cv/test-xml.js",
-		"/home/roman/Sources/plot-cv/lib/preact.js",
-		"/home/roman/Sources/plot-cv/lib/eagle/document.js",
-		"/tmp/mozilla_roman0/OmegaOptions.bak",
-		"/tmp/mozilla_roman0/OmegaOptions-1.bak",
-		"/tmp/mozilla_roman0/OmegaLog_1606860180842.txt",
-		"/home/roman/Sources/plot-cv/lib/cparse.js",
-		"/home/roman/Sources/plot-cv/lib/cpp.js",
-		"/home/roman/.config/sublime-text-3/Packages/Goto Usage/GotoUsage.sublime-settings",
-		"/home/roman/.config/sublime-text-3/Packages/User/GotoUsage.sublime-settings",
-		"/home/roman/.config/sublime-text-3/Packages/Goto Usage/Default (Linux).sublime-keymap",
-		"/home/roman/Sources/plot-cv/test-cli.js"
+		"/home/roman/Sources/plot-cv/opencv.cmake"
 	],
 	"find":
 	{
-		"height": 46.0
+		"height": 39.0
 	},
 	"find_in_files":
 	{
@@ -627,6 +718,72 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"TickMeter",
+			"addref",
+			"js_module_loader",
+			"js_find_",
+			"JS_SetModuleLoaderFunc",
+			"could not load module",
+			"js_mat_ctor",
+			"cvtC",
+			"LIBWEB",
+			"= cv::CV_",
+			"int32_t.*type = ",
+			"type = ",
+			"type =",
+			"hrtime",
+			"hrtime =",
+			"hrtime=",
+			"times",
+			"add_we",
+			"beta",
+			" +",
+			" \\+",
+			"\\s+",
+			"inspectMat",
+			"objectInsp",
+			"consoleSet",
+			"COLOR_RGBA2BGR",
+			"inspectMa",
+			"RGBA",
+			"COLOR_BGR2RGBA",
+			"RGBA",
+			"mat_read",
+			"bitwise_and",
+			"hier:",
+			"rainbow =",
+			"2Lab",
+			"UC4",
+			"walk",
+			"rainbow",
+			"hier:",
+			"stripAnsi",
+			"arrObjKeys",
+			"singleLineValues",
+			"indentedJoin",
+			"breakLength",
+			"rainbow =",
+			"size:",
+			"get_prop",
+			"hier\\[",
+			"hier",
+			"contoursDept",
+			"Depth:",
+			"Param",
+			"findCon",
+			"\n    ",
+			"params =",
+			"findCont",
+			"Pipeline.call",
+			"find_con",
+			"contour_proto",
+			"js_color_read",
+			"js_mat_data",
+			"js_find_module",
+			"from_vec",
+			"from_",
+			"js_array_from",
+			"find_cont",
 			"js_contours_new",
 			"js_contour_wrap",
 			"js_array",
@@ -688,73 +845,7 @@
 			"check_cxx",
 			"CheckCXXCom",
 			"-Wno",
-			"point",
-			"Scalar",
-			"color",
-			"js_read",
-			"modifiers['shift'] ?",
-			"MouseCallback",
-			"\n    ",
-			"point_wrap",
-			"rect_wrap",
-			"is_size",
-			"CAP_PROP_SAT",
-			"CAP_PROP",
-			"GRAY",
-			"WINDOW_",
-			"\\(LIBSSL",
-			" ssl ",
-			"definitions",
-			"compil",
-			"add_exec",
-			"-D",
-			"DEBUG",
-			"DDEBUG",
-			"BUILD_SHARED_LIBS",
-			"option",
-			"DEBUG",
-			"if",
-			"-g",
-			"has_property",
-			"has_prop",
-			"set_prop",
-			"get:orio",
-			"has_property",
-			"HasProperty",
-			"set_prop",
-			"\\)\\) {}",
-			"atom",
-			"AtomTo",
-			"JS_SetProperty",
-			"set_property",
-			"jsrt::from",
-			"new_string",
-			"minMax",
-			"min_max",
-			"GetOwn",
-			"JS_GetOwnPropertyNames",
-			"plen",
-			"JS_GetOwnPropertyNames",
-			"JSPropertyEnum",
-			"OwnProp",
-			"PropertyName",
-			"JSPropertyEnum",
-			"from_sequence",
-			"NewArray",
-			"JS_NewObject",
-			"js_mallocz",
-			"js_malloc",
-			"js_point_wrap",
-			"minMaxLoc",
-			"to32bit",
-			"split",
-			"JS_SetProper",
-			"Prop.*Flag",
-			"Property.*Flag",
-			"JS_CGETSET_MAGIC_DEF",
-			"Util.getMethodNames",
-			"^Util.bindMethods",
-			"props"
+			"point"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -762,6 +853,10 @@
 		"regex": true,
 		"replace_history":
 		[
+			" ",
+			"COLOR_BGRA2BGR",
+			"COLOR_BGR2BGRA",
+			"Processor",
 			"Pipeline.call",
 			"js_point_round",
 			"JS_UNDEFINED",
@@ -885,11 +980,7 @@
 			"log(\\1",
 			"console.log",
 			"",
-			" *",
-			"ElementGeometries",
-			"elementGeometries",
-			"function \\1",
-			"Encode"
+			" *"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -908,7 +999,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 0,
+						"buffer_size": 225,
 						"regions":
 						{
 						},
@@ -918,15 +1009,65 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Outline/outline.hidden-tmTheme",
-							"current_file": null,
-							"function_name_status_row": -1,
+							"current_file": "/home/roman/Sources/plot-cv/src/js_utility.cpp",
+							"function_name_status_row": 18,
 							"outline_rename_mode": false,
-							"sorttabs_lastactivated": 1608738476.45,
+							"sorttabs_lastactivated": 1608952102.22,
 							"symkeys":
 							[
+								[
+									345,
+									370
+								],
+								[
+									670,
+									688
+								],
+								[
+									1435,
+									1453
+								],
+								[
+									1587,
+									1610
+								],
+								[
+									1845,
+									1862
+								],
+								[
+									2734,
+									2754
+								],
+								[
+									3154,
+									3176
+								],
+								[
+									4687,
+									4705
+								],
+								[
+									5433,
+									5458
+								],
+								[
+									5825,
+									5839
+								]
 							],
 							"symlist":
 							[
+								"JSValue\njs_tick_meter_new",
+								"  js_tick_meter_ctor",
+								"  js_tick_meter_data",
+								"  js_tick_meter_finalizer",
+								"  js_tick_meter_get",
+								"  js_tick_meter_method",
+								"  js_tick_meter_tostring",
+								"  js_tick_meter_init",
+								"  js_tick_meter_constructor",
+								"JS_INIT_MODULE"
 							],
 							"syntax": "Packages/Outline/outline.hidden-tmLanguage",
 							"tab_size": 2,
@@ -936,20 +1077,310 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 4,
 					"type": "text"
 				}
 			]
 		},
 		{
+			"selected": 6,
 			"sheets":
 			[
+				{
+					"buffer": 1,
+					"file": "test-video.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 14844,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10343,
+								10343
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/JavaScriptNext - ES6 Syntax/Next.tmTheme",
+							"function_name_status_row": 381,
+							"sorttabs_lastactivated": 1608948595.28,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 5805.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "quickjs/CMakeLists.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 13592,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10356,
+								10356
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 330,
+							"sorttabs_lastactivated": 1608945801.35,
+							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "quickjs/defs.cmake",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1323,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1091,
+								1091
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 26,
+							"sorttabs_lastactivated": 1608945855.33,
+							"syntax": "Packages/CMakeEditor/CMakeEditor.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "quickjs/net/libwebsockets/win32port/zlib/zutil.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7179,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 0,
+							"sorttabs_lastactivated": 1608945577.08,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "lib/util.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 159325,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								156765,
+								156765
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 5056,
+							"sorttabs_lastactivated": 1608951107.17,
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 80537.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "src/js_mat.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 27663,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								13152,
+								13152
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 482,
+							"sorttabs_lastactivated": 1608952102.22,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 7574.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "src/js_utility.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5978,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3442,
+								3442
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 119,
+							"sorttabs_lastactivated": 1608952282.61,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1632.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "quickjs/quickjs.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 41625,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								23646,
+								23646
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 693,
+							"sorttabs_lastactivated": 1608952187.32,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 10669.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "/usr/include/opencv4/opencv2/core/utility.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 38223,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								14105,
+								14105
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 406,
+							"sorttabs_lastactivated": 1608952172.47,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 7005.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 33.0
+		"height": 25.0
 	},
 	"input":
 	{
@@ -1021,16 +1452,96 @@
 				"quickjs/quickjs.h"
 			],
 			[
-				"cmake",
-				"CMakeLists.txt"
-			],
-			[
-				"cmakeli",
-				"quickjs/CMakeLists.txt"
+				"js-bin",
+				"js-bindings.cmake"
 			],
 			[
 				"test-vid",
 				"test-video.js"
+			],
+			[
+				"defs.",
+				"quickjs/defs.cmake"
+			],
+			[
+				"cmake",
+				"quickjs/CMakeLists.txt"
+			],
+			[
+				"test-video.c",
+				"test-video.c"
+			],
+			[
+				"util.js",
+				"lib/util.js"
+			],
+			[
+				"util.h",
+				"quickjs/net/libwebsockets/win32port/zlib/zutil.h"
+			],
+			[
+				"consoleset",
+				"lib/consoleSetup.js"
+			],
+			[
+				"objetIn",
+				"lib/objectInspect.js"
+			],
+			[
+				"jsbin",
+				"js-bindings.cmake"
+			],
+			[
+				"_cv.",
+				"src/js_cv.cpp"
+			],
+			[
+				"cvV",
+				"cvVideo.js"
+			],
+			[
+				"Util.js",
+				"lib/util.js"
+			],
+			[
+				"objectInsp",
+				"lib/objectInspect.js"
+			],
+			[
+				"cvHigh",
+				"cvHighGUI.js"
+			],
+			[
+				"jsbind",
+				"js-bindings.cmake"
+			],
+			[
+				"qjs.c",
+				"quickjs/qjs.c"
+			],
+			[
+				"jsc.c",
+				"quickjs/qjsc.c"
+			],
+			[
+				"test-vi",
+				"test-video.js"
+			],
+			[
+				"cvv",
+				"cvVideo.js"
+			],
+			[
+				"js_arra",
+				"src/js_array.h"
+			],
+			[
+				"js_cv",
+				"src/js_cv.cpp"
+			],
+			[
+				"cmakeli",
+				"quickjs/CMakeLists.txt"
 			],
 			[
 				"quickjs.c",
@@ -1045,28 +1556,12 @@
 				"lib/util.js"
 			],
 			[
-				"test-vi",
-				"test-video.js"
-			],
-			[
 				"js_cv.",
 				"src/js_cv.cpp"
 			],
 			[
 				"js.h",
 				"src/js.h"
-			],
-			[
-				"js-bin",
-				"js-bindings.cmake"
-			],
-			[
-				"util.js",
-				"lib/util.js"
-			],
-			[
-				"jsbind",
-				"src/jsbindings.h"
 			],
 			[
 				"videoSou",
@@ -1163,10 +1658,6 @@
 			[
 				"js_mat",
 				"src/js_mat.cpp"
-			],
-			[
-				"js_cv",
-				"src/js_cv.cpp"
 			],
 			[
 				"path.",
@@ -1381,10 +1872,6 @@
 				"lib/cparse.js"
 			],
 			[
-				"Util.js",
-				"lib/util.js"
-			],
-			[
 				"forward",
 				"lib/preact/forwardRef.js"
 			],
@@ -1471,62 +1958,6 @@
 			[
 				"ruler-dra",
 				"ruler-draggable.js"
-			],
-			[
-				"vertical",
-				"static/ruler/rulerVertical.svg"
-			],
-			[
-				"rulerHor",
-				"static/ruler/rulerHorizontal.svg"
-			],
-			[
-				"rulerVe",
-				"static/ruler/rulerVertical.svg"
-			],
-			[
-				"ruler.svg",
-				"static/ruler/ruler.svg"
-			],
-			[
-				"cursor.svg",
-				"static/ruler/cursor.svg"
-			],
-			[
-				"ursor",
-				"cursor.js"
-			],
-			[
-				"cursor",
-				"cursor.js"
-			],
-			[
-				"dragga",
-				"ruler-draggable.js"
-			],
-			[
-				"cursor.js",
-				"cursor.js"
-			],
-			[
-				"main.j",
-				"main.js"
-			],
-			[
-				"tmp-",
-				"tmp-ruler.js"
-			],
-			[
-				"print",
-				"lib/ecmascript/printer.js"
-			],
-			[
-				"test-parset",
-				"test-parsetmpl.js"
-			],
-			[
-				"util",
-				"lib/util.js"
 			]
 		],
 		"width": 0.0
