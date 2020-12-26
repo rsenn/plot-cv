@@ -27,7 +27,7 @@ js_mat_data(JSContext* ctx, JSValueConst val) {
   return static_cast<JSMatData*>(JS_GetOpaque2(ctx, val, js_mat_class_id));
 }
 
-VISIBLE JSValue
+/*VISIBLE*/ JSValue
 js_mat_new(JSContext* ctx, uint32_t cols, uint32_t rows, int type) {
   JSValue ret;
   JSMatData* s;
@@ -50,34 +50,41 @@ js_mat_new(JSContext* ctx, uint32_t cols, uint32_t rows, int type) {
   return ret;
 }
 
-static JSValue
-js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
-  // JSValue proto;
-  JSSizeData<uint32_t> size;
-  int32_t type = 0;
+static std::pair<JSSizeData<uint32_t>, int>
+js_mat_params(JSContext* ctx, int argc, JSValueConst* argv) {
+  std::pair<JSSizeData<uint32_t>, int> ret;
 
   if(argc > 0) {
-    if(js_size_read(ctx, argv[0], &size)) {
+    if(js_size_read(ctx, argv[0], &ret.first)) {
       /* cols = size.width;
        rows = size.height;*/
       argv++;
       argc--;
     } else {
-      JS_ToUint32(ctx, &size.height, argv[0]);
-      JS_ToUint32(ctx, &size.width, argv[1]);
+      JS_ToUint32(ctx, &ret.first.height, argv[0]);
+      JS_ToUint32(ctx, &ret.first.width, argv[1]);
       argv += 2;
       argc -= 2;
     }
 
     if(argc > 0) {
-      if(!JS_ToInt32(ctx, &type, argv[0])) {
+      if(!JS_ToInt32(ctx, &ret.second, argv[0])) {
         argv++;
         argc--;
       }
     }
   }
 
-  return js_mat_new(ctx, size.width, size.height, type);
+  return ret;
+}
+
+static JSValue
+js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
+  std::pair<JSSizeData<uint32_t>, int> params;
+
+  params = js_mat_params(ctx, argc, argv);
+
+  return js_mat_new(ctx, params.first.width, params.first.height, params.second);
 }
 
 void
@@ -146,8 +153,85 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
       rect = js_rect_get(ctx, argv[0]);
 
     ret = js_mat_wrap(ctx, (*m)(rect));
+  } else if(magic == 7) {
   } else {
     ret = JS_EXCEPTION;
+  }
+
+  return ret;
+}
+
+static JSValue
+js_mat_bitwise(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSValue ret = JS_UNDEFINED;
+  JSColorData<double> color;
+
+  JSMatData* m = js_mat_data(ctx, this_val);
+
+  if(argc > 0) {
+
+    if(!js_color_read(ctx, argv[0], &color))
+
+      return JS_EXCEPTION;
+  }
+
+  cv::Mat& mat = *m;
+  cv::Scalar& scalar = *reinterpret_cast<cv::Scalar*>(&color);
+
+  switch(magic) {
+    case 0: {
+      mat &= scalar;
+      break;
+    }
+    case 1: {
+      mat |= scalar;
+      break;
+    }
+    case 2: {
+      mat ^= scalar;
+      break;
+    }
+  }
+
+  return ret;
+}
+
+static JSValue
+js_mat_init(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSValue ret = JS_UNDEFINED;
+  std::pair<JSSizeData<uint32_t>, int> params;
+  JSMatData* m;
+
+  params = js_mat_params(ctx, argc, argv);
+
+  if((m = js_mat_data(ctx, this_val))) {
+    if(params.first.width == 0 || params.first.height == 0) {
+      if(m->rows && m->cols) {
+        params.first.width = m->cols;
+        params.first.height = m->rows;
+        params.second = m->type();
+      }
+    }
+    ret = JS_DupValue(ctx, this_val);
+  } else if(params.first.width > 0 && params.first.height > 0) {
+    ret = js_mat_new(ctx, params.first.width, params.first.height, params.second);
+
+    m = js_mat_data(ctx, ret);
+  } else {
+    return JS_EXCEPTION;
+  }
+
+  cv::Mat& mat = *m;
+
+  switch(magic) {
+    case 0: {
+      mat = cv::Mat::zeros(params.first, params.second);
+      break;
+    }
+    case 1: {
+      mat = cv::Mat::ones(params.first, params.second);
+      break;
+    }
   }
 
   return ret;
@@ -638,6 +722,98 @@ end:
   return js_mat_wrap(ctx, ret);
 }
 
+static JSValue
+js_mat_class_func(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSValueConst *v = argv, *e = &argv[argc];
+  JSMatData result;
+  JSMatData *prev = nullptr, *mat = nullptr;
+
+  while(v < e) {
+    JSValueConst arg = *v++;
+
+    if(nullptr == (mat = js_mat_data(ctx, arg)))
+      return JS_EXCEPTION;
+
+    if(prev) {
+      JSMatData const &a = *prev, &b = *mat;
+
+      switch(magic) {
+        case 0: result = a + b; break;
+        case 1: result = a - b; break;
+        case 2: result = a * b; break;
+        case 3: result = a / b; break;
+        case 4: result = a & b; break;
+        case 5: result = a | b; break;
+        case 6: result = a ^ b; break;
+      }
+
+      prev = &result;
+    } else {
+      prev = mat;
+
+      result = cv::Mat::zeros(mat->rows, mat->cols, mat->type());
+      mat->copyTo(result);
+    }
+  }
+
+  return js_mat_wrap(ctx, result);
+}
+
+static JSValue
+js_mat_fill(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSMatData* m;
+
+  m = js_mat_data(ctx, this_val);
+
+  if(m == nullptr)
+    return JS_EXCEPTION;
+
+  if(m->empty() || m->rows == 0 || m->cols == 0)
+    return JS_EXCEPTION;
+
+  cv::Mat& mat = *m;
+
+  switch(magic) {
+    case 0: {
+      mat = cv::Mat::zeros(mat.rows, mat.cols, mat.type());
+      break;
+    }
+    case 1: {
+      mat = cv::Mat::ones(mat.rows, mat.cols, mat.type());
+      break;
+    }
+  }
+
+  return JS_DupValue(ctx, this_val);
+}
+
+static JSValue
+js_mat_class_create(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSValue ret = JS_UNDEFINED;
+  std::pair<JSSizeData<uint32_t>, int> params;
+
+  params = js_mat_params(ctx, argc, argv);
+
+  if(params.first.width == 0 || params.first.height == 0)
+    return JS_EXCEPTION;
+
+  ret = js_mat_new(ctx, uint32_t(0), uint32_t(0), int(0));
+  JSMatData& mat = *js_mat_data(ctx, ret);
+
+  switch(magic) {
+    case 0: {
+      mat = cv::Mat::zeros(params.first, params.second);
+      break;
+    }
+    case 1: {
+      mat = cv::Mat::ones(params.first, params.second);
+      break;
+    }
+  }
+
+  return ret;
+}
+
 VISIBLE JSValue
 js_mat_wrap(JSContext* ctx, const cv::Mat& mat) {
   JSValue ret;
@@ -756,69 +932,6 @@ js_mat_iterator_dup(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   return JS_DupValue(ctx, this_val);
 }
 
-static JSValue
-js_mat_class_func(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
-  JSValueConst *v = argv, *e = &argv[argc];
-  JSMatData result;
-  JSMatData *prev = nullptr, *mat = nullptr;
-
-  while(v < e) {
-    JSValueConst arg = *v++;
-
-    if(nullptr == (mat = js_mat_data(ctx, arg)))
-      return JS_EXCEPTION;
-
-    if(prev) {
-      JSMatData const &a = *prev, &b = *mat;
-
-      switch(magic) {
-        case 0: result = a + b; break;
-        case 1: result = a - b; break;
-        case 2: result = a * b; break;
-        case 3: result = a / b; break;
-        case 4: result = a & b; break;
-        case 5: result = a | b; break;
-        case 6: result = a ^ b; break;
-      }
-
-      prev = &result;
-    } else {
-      prev = mat;
-
-      result = cv::Mat::zeros(mat->rows, mat->cols, mat->type());
-      mat->copyTo(result);
-    }
-  }
-
-  return js_mat_wrap(ctx, result);
-}
-
-static JSValue
-js_mat_class_create(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
-  JSValue ret = js_mat_ctor(ctx, this_val, argc, argv);
-  JSMatData* mat = js_mat_data(ctx, ret);
-
-  if(mat->rows == 0 || mat->cols == 0) {
-    JS_FreeValue(ctx, ret);
-    return JS_EXCEPTION;
-  }
-
-  switch(magic) {
-    case 0: {
-      cv::Mat init = cv::Mat::zeros(mat->rows, mat->cols, mat->type());
-      init.copyTo(*mat);
-      break;
-    }
-    case 1: {
-      cv::Mat init = cv::Mat::ones(mat->rows, mat->cols, mat->type());
-      init.copyTo(*mat);
-      break;
-    }
-  }
-
-  return ret;
-}
-
 JSValue mat_proto, mat_class, mat_iterator_proto, mat_iterator_class;
 JSClassID js_mat_class_id, js_mat_iterator_class_id;
 
@@ -847,6 +960,14 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {JS_CGETSET_MAGIC_DEF("cols", 
                                                    // JS_CFUNC_MAGIC_DEF("at", 1, js_mat_funcs, 4),
                                                    JS_CFUNC_MAGIC_DEF("clone", 0, js_mat_funcs, 5),
                                                    JS_CFUNC_MAGIC_DEF("roi", 0, js_mat_funcs, 6),
+
+                                                   JS_CFUNC_MAGIC_DEF("and", 2, js_mat_bitwise, 0),
+                                                   JS_CFUNC_MAGIC_DEF("or", 2, js_mat_bitwise, 1),
+                                                   JS_CFUNC_MAGIC_DEF("xor", 3, js_mat_bitwise, 2),
+
+                                                   JS_CFUNC_MAGIC_DEF("zero", 2, js_mat_fill, 0),
+                                                   JS_CFUNC_MAGIC_DEF("one", 2, js_mat_fill, 1),
+
                                                    // JS_CFUNC_MAGIC_DEF("set", 3, js_mat_funcs, 7),
                                                    // JS_CFUNC_DEF("findContours", 0, js_mat_findcontours),
                                                    JS_CFUNC_DEF("toString", 0, js_mat_tostring),

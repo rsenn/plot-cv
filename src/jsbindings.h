@@ -185,7 +185,8 @@ js_new(JSContext* ctx, const char* name) {
   return JS_NewObjectProto(ctx, js_proto(ctx, name));
 }
 
-extern "C" int js_color_read(JSContext* ctx, JSValueConst color, JSColorData<double>* out);
+int js_color_read(JSContext* ctx, JSValueConst color, JSColorData<double>* out);
+int js_color_read(JSContext* ctx, JSValueConst value, JSColorData<uint8_t>* out);
 
 template<class T>
 static inline int

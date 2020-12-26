@@ -128,6 +128,19 @@ js_color_read(JSContext* ctx, JSValueConst color, JSColorData<double>* out) {
   return ret;
 }
 
+int
+js_color_read(JSContext* ctx, JSValueConst value, JSColorData<uint8_t>* out) {
+  JSColorData<double> color;
+  if(js_color_read(ctx, value, &color)) {
+    out->r = color.r;
+    out->g = color.g;
+    out->b = color.b;
+    out->a = color.a;
+    return 1;
+  }
+  return 0;
+}
+
 #ifdef JS_BINDINGS_INIT_MODULE
 static int
 js_bindings_init(JSContext* ctx, JSModuleDef* m) {

@@ -164,7 +164,7 @@ async function main(...args) {
   let contoursDepth;
 
   let params = {
-    ksize: new NumericParam(3, 1, 10),
+    ksize: new NumericParam(3, 1, 13, 2),
     thresh1: new NumericParam(10, 0, 100),
     thresh2: new NumericParam(60, 0, 100),
     apertureSize: new NumericParam(3, 3, 7, 2),
@@ -188,16 +188,16 @@ async function main(...args) {
         video.read(output);
       }),
       Grayscale,
-      Processor(cv.GaussianBlur, [3, 3], 0),
+      Processor(function Blur(src, dst) {
+        cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
+      }),
       Processor(function EdgeDetect(src, dst) {
-        cv.Canny(src, dst, 10, 20, 3);
+        cv.Canny(src, dst, +params.thresh1, +params.thresh2, +params.apertureSize, +params.L2gradient);
         ////   console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
 
         cv.findContours(dst, (contours = []), (hier = []), cv[params.mode], cv[params.method]);
 
         //console.log('hier:', hier .map((h, i) => [i, h]) .filter(([i, h]) => h[cv.HIER_PREV] == -1 && h[cv.HIER_PARENT] == -1));
-
-        // console.log('walkContours:', [...walkContours(hier)]);
       })
     ],
     (mat, i, n) => {
@@ -221,6 +221,14 @@ async function main(...args) {
   const resizeOutput = Util.once(() => {
     let size = outputMat.size.mul(zoom);
     win.resize(size.width, size.height);
+  });
+
+  let surface;
+  let out = new Mat();
+
+  let makeSurface = Util.once((rows, cols) => {
+    surface = new Mat(rows, cols, cv.CV_8UC4);
+
   });
 
   while(running) {
@@ -341,8 +349,10 @@ async function main(...args) {
   }
 
   function showOutput() {
-    let surface = new Mat(outputMat.rows, outputMat.cols, cv.CV_8UC4);
-    let out = new Mat();
+    makeSurface(outputMat.rows, outputMat.cols);
+
+  //  surface.and([0,0,0]);
+
     if(outputMat.channels == 1) {
       cv.cvtColor(outputMat, out, cv.COLOR_GRAY2BGR);
       cv.cvtColor(out, out, cv.COLOR_BGR2BGRA);
@@ -360,16 +370,16 @@ async function main(...args) {
       return d;
     });
     contoursDepth = depths.length ? Math.max(...depths) : 0;
-    font.draw(surface, video.time + ' ⏩', tPos, 0x00ff00 || { r: 0, g: 255, b: 0, a: 255 });
+    font.draw(surface, video.time + ' ⏩', tPos, /*0x00ff00 ||*/ { r: 0, g: 255, b: 0, a: 255 });
 
     let paramStr = `${paramNav.name} [${paramNav.param.range.join('-')}] = ${+paramNav.param}`;
     //console.log('paramStr: ', paramStr);
-    font.draw(surface, paramStr, [5, 100], 0x00ffff || { r: 255, g: 0, b: 0, a: 255 });
+    font.draw(surface, paramStr, [5, 100], /*0x00ffff ||*/ { r: 255, g: 0, b: 0, a: 255 });
 
     font.draw(surface,
       `#${frameShow + 1}/${pipeline.size}` + (outputName ? ` (${outputName})` : ''),
       [5, 5 + tSize.y],
-      0xffff00 || {
+      /*0xffff00 ||*/ {
         r: 255,
         g: 255,
         b: 0,
@@ -378,6 +388,9 @@ async function main(...args) {
     );
 
     resizeOutput();
+
+        console.log("row 100:", [...surface.row(100).values()]);
+
 
     //let mask = toBGR(getAlpha(surface));
     cv.addWeighted(out, 1, surface, 1, 0, out);

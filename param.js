@@ -36,7 +36,9 @@ export class NumericParam extends Param {
 
   set(value) {
     const { trunc, min, step } = this;
-    this.value = this.trunc(min + Util.roundTo(value - min, step));
+    let newValue = this.trunc(min + Util.roundTo(value - min, step));
+    console.log("Param ", { oldValue: this.value, newValue })
+    this.value = newValue;
   }
 
   get alpha() {
