@@ -1,9 +1,10 @@
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
-import * as cv from 'cv';
-import * as draw from 'draw';
-import { Mat } from 'mat';
-import { Point } from 'point';
+import * as cv from 'cv.so';
+import * as draw from 'draw.so';
+import { Mat } from 'mat.so';
+import { Point } from 'point.so';
+import { TickMeter } from 'utility.so';
 import { VideoSource } from './cvVideo.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.js';
 import { Alea } from './lib/alea.js';
@@ -115,7 +116,7 @@ function Profiler(name) {
   self = function() {
     let t = ticks();
     let split = t - (prev || start);
-    if(prev) console.log(`${name} #${i} ${split / freq}`);
+    if(prev) console.log(`${name} #${i} ${printTime(split)}`);
     i++;
     return (prev = t);
   };
@@ -129,6 +130,25 @@ function Profiler(name) {
       return t - (prev || start);
     }
   });
+
+  function printTime(t) {
+    let time, unit;
+    if(t < freq * 1e-6) {
+      time = t / (freq * 1e-9);
+      unit = 'ns';
+    } else if(t < freq * 1e-3) {
+      time = t / (freq * 1e-6);
+      unit = '\u00b5s';
+    } else if(t < freq) {
+      time = t / (freq * 1e-3);
+      unit = 'ms';
+    } else {
+      time = t / freq;
+      unit = 's';
+    }
+    return time.toFixed(4 - Math.ceil(Math.log10(time))) + unit;
+  }
+
   return self;
 }
 
@@ -254,21 +274,21 @@ async function main(...args) {
         // console.log('walkContours:', [...walkContours(hier)]);
       })
     ],
-    (mat, i, n) => {       
-     console.log(pipeline.names[i]+' mat ' + inspectMat(mat));
+    (mat, i, n) => {
+      console.log(pipeline.names[i] + ' mat ' + inspectMat(mat));
 
       const showIndex = Util.mod(frameShow, n);
       if(showIndex == i) {
         let prof = new Profiler('callback');
 
         let name = pipeline.processors[showIndex].name;
-              prof();
-  //  mat = toBGR(mat);
-              console.log('mat ', {rows: mat.rows, cols: mat.cols});
-                prof();
-let surface = new Mat(mat.rows, mat.cols, cv.CV_8UC4);
-                  prof();
-    let out = new Mat(/*mat.rows, mat.cols, surface.type*/);
+        prof();
+        //  mat = toBGR(mat);
+        console.log('mat ', { rows: mat.rows, cols: mat.cols });
+        prof();
+        let surface = new Mat(mat.rows, mat.cols, cv.CV_8UC4);
+        prof();
+        let out = new Mat(/*mat.rows, mat.cols, surface.type*/);
 
         prof();
         console.log('mat ' + inspectMat(mat));
@@ -357,16 +377,19 @@ let surface = new Mat(mat.rows, mat.cols, cv.CV_8UC4);
 
     let key = cv.waitKeyEx(1000 / video.fps);
 
-    if(key == 27) break;
-
-    let modifiers = Object.fromEntries(modifierMap(key));
-    let modifierList = modifierMap(key).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc),
-      []
-    );
+    if(key != -1) {
+      let modifiers = Object.fromEntries(modifierMap(key));
+      let modifierList = modifierMap(key).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc),
+        []
+      );
+      let ch = String.fromCodePoint(key & 0xff);
+      console.log(`keypress [${modifierList}] 0x${(key & ~0xd000).toString(16)} '${ch}'`);
+    }
 
     switch (key & 0xfff) {
       case 0x51:
       case 0x71:
+      case 0x1b:
         running = false;
         break;
       case 0x20:
@@ -407,7 +430,6 @@ let surface = new Mat(mat.rows, mat.cols, cv.CV_8UC4);
         break;
       }
       default: {
-        if(key != -1) console.log(`keypress [${modifierList}] 0x${(key & ~0xd000).toString(16)}`);
         break;
       }
     }

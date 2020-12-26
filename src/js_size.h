@@ -1,8 +1,9 @@
 #ifndef JS_SIZE_H
 #define JS_SIZE_H
 
+template<class T>
 static inline int
-js_size_read(JSContext* ctx, JSValueConst size, JSSizeData<double>* out) {
+js_size_read(JSContext* ctx, JSValueConst size, JSSizeData<T>* out) {
   int ret = 1;
   JSValue w = JS_UNDEFINED, h = JS_UNDEFINED;
 
@@ -14,8 +15,8 @@ js_size_read(JSContext* ctx, JSValueConst size, JSSizeData<double>* out) {
     h = JS_GetPropertyStr(ctx, size, "height");
   }
   if(JS_IsNumber(w) && JS_IsNumber(h)) {
-    ret &= !JS_ToFloat64(ctx, &out->width, w);
-    ret &= !JS_ToFloat64(ctx, &out->height, h);
+    ret &= js_number_read(ctx, w, &out->width);
+    ret &= js_number_read(ctx, w, &out->height);
   } else {
     ret = 0;
   }

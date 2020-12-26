@@ -25,6 +25,7 @@ typedef JSPointData<float> JSPointDataF;
 typedef JSPointData<double> JSPointDataD;*/
 
 typedef cv::VideoCapture JSVideoCaptureData;
+typedef cv::TickMeter JSTickMeterData;
 typedef cv::Ptr<cv::CLAHE> JSCLAHEData;
 
 template<class T>
@@ -185,5 +186,33 @@ js_new(JSContext* ctx, const char* name) {
 }
 
 extern "C" int js_color_read(JSContext* ctx, JSValueConst color, JSColorData<double>* out);
+
+template<class T>
+static inline int
+js_number_read(JSContext* ctx, JSValueConst num, T* out) {
+  double d;
+  int ret;
+  if((ret = !JS_ToFloat64(ctx, &d, num)))
+    *out = d;
+  return ret;
+}
+
+template<>
+inline int
+js_number_read<int32_t>(JSContext* ctx, JSValueConst num, int32_t* out) {
+  return !JS_ToInt32(ctx, out, num);
+}
+
+template<>
+inline int
+js_number_read<uint32_t>(JSContext* ctx, JSValueConst num, uint32_t* out) {
+  return !JS_ToUint32(ctx, out, num);
+}
+
+template<>
+inline int
+js_number_read<int64_t>(JSContext* ctx, JSValueConst num, int64_t* out) {
+  return !JS_ToInt64(ctx, out, num);
+}
 
 #endif

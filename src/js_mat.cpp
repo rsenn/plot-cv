@@ -52,21 +52,19 @@ js_mat_new(JSContext* ctx, uint32_t cols, uint32_t rows, int type) {
 
 static JSValue
 js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
-  JSValue proto;
-  JSSizeData<double> size;
-
-  uint32_t cols = 0, rows = 0;
+  // JSValue proto;
+  JSSizeData<uint32_t> size;
   int32_t type = 0;
 
   if(argc > 0) {
     if(js_size_read(ctx, argv[0], &size)) {
-      cols = size.width;
-      rows = size.height;
+      /* cols = size.width;
+       rows = size.height;*/
       argv++;
       argc--;
     } else {
-      JS_ToUint32(ctx, &rows, argv[0]);
-      JS_ToUint32(ctx, &cols, argv[1]);
+      JS_ToUint32(ctx, &size.height, argv[0]);
+      JS_ToUint32(ctx, &size.width, argv[1]);
       argv += 2;
       argc -= 2;
     }
@@ -79,7 +77,7 @@ js_mat_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* arg
     }
   }
 
-  return js_mat_new(ctx, cols, rows, type);
+  return js_mat_new(ctx, size.width, size.height, type);
 }
 
 void
@@ -649,10 +647,7 @@ js_mat_wrap(JSContext* ctx, const cv::Mat& mat) {
 
   s = static_cast<JSMatData*>(js_mallocz(ctx, sizeof(JSMatData)));
 
-  if(mat.cols > 0 && mat.rows > 0)
-    new(s) cv::Mat(cv::Size(mat.cols, mat.rows), mat.type());
-  else
-    new(s) cv::Mat();
+  new(s) cv::Mat();
   *s = mat;
 
   s->addref();
