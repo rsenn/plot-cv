@@ -1,9 +1,9 @@
-#include <iostream>
-#include <Measure_Origins.hpp>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgcodecs.hpp>
-#include <math.h>
-#include <detectLines.hpp>
+#include <iostream>
+#include <cmath>
+#include "detectLines.hpp"
+#include "Measure_Origins.hpp"
 
 using namespace std;
 using namespace cv;

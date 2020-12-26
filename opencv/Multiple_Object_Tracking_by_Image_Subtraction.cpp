@@ -28,7 +28,7 @@ void drawBlobInfoOnImage(std::vector<Blob>& blobs, cv::Mat& imgFrame2Copy);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 int
-main(void) {
+main(int argc, char *argv[]) {
 
   cv::VideoCapture capVideo;
 
@@ -37,7 +37,7 @@ main(void) {
 
   std::vector<Blob> blobs;
 
-  capVideo.open("768x576.avi");
+  capVideo.open(argv[1] ? argv[1] : "768x576.avi");
 
   if(!capVideo.isOpened()) {                                           // if unable to open video file
     std::cout << "error reading video file" << std::endl << std::endl; // show error message
@@ -160,7 +160,7 @@ main(void) {
 
     blnFirstFrame = false;
     frameCount++;
-    chCheckForEscKey = cv::waitKey(1);
+    chCheckForEscKey = cv::waitKey(33);
   }
 
   if(chCheckForEscKey != 27) { // if the user did not press esc (i.e. we reached the end of the video)

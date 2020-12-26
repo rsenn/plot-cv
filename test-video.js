@@ -201,6 +201,9 @@ async function main(...args) {
 
         cv.findContours(dst, (contours = []), (hier = []), cv[params.mode], cv[params.method]);
 
+
+        pipeline.images[0].copyTo(dst, dst);
+
         //console.log('hier:', hier .map((h, i) => [i, h]) .filter(([i, h]) => h[cv.HIER_PREV] == -1 && h[cv.HIER_PARENT] == -1));
       })
     ],
