@@ -20,7 +20,9 @@ console.log('main');
 Util.callMain(main);
 
 /*
-const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg"> <defs /> */ function PrefixRemover(reOrStr, replacement = '') {
+const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg"> <defs /> */ function PrefixRemover(reOrStr,
+  replacement = ''
+) {
   if(!(Util.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
 
   return arg => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), arg);
@@ -46,7 +48,14 @@ async function main(...args) {
   // cwd = process.cwd() || fs.realpath('.');
   console.log('cwd=', cwd);
 
-  if(args.length == 0) args = [/*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js', 'lib/geom/size.js', 'lib/geom/trbl.js', 'lib/geom/rect.js', 'lib/dom/element.js'];
+  if(args.length == 0)
+    args = [
+      /*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js',
+      'lib/geom/size.js',
+      'lib/geom/trbl.js',
+      'lib/geom/rect.js',
+      'lib/dom/element.js'
+    ];
   let r = [];
   let processed = [];
   console.log('args=', args);
@@ -76,7 +85,8 @@ async function main(...args) {
 
   // console.log("result:",r);
 
-  for(let ids of exportMap.values()) r.push(`Util.weakAssign(globalObj, { ${Util.unique(ids).join(', ')} });`);
+  for(let ids of exportMap.values())
+    r.push(`Util.weakAssign(globalObj, { ${Util.unique(ids).join(', ')} });`);
 
   let success = Object.entries(processed).filter(([k, v]) => !!v).length != 0;
 
@@ -111,9 +121,14 @@ async function main(...args) {
       );
       //log(`keys==`, [...flat].map(([k,v]) => [k.join('.'), Util.className(v)]));
 
-      let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportStatement || value.exported === true);
+      let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportStatement || value.exported === true
+      );
 
-      exports = exports.map(([p, e]) => ('declarations' in e && !Util.isArray(e.declarations) ? [[...p, 'declarations'], e.declarations] : [p, e]));
+      exports = exports.map(([p, e]) =>
+        'declarations' in e && !Util.isArray(e.declarations)
+          ? [[...p, 'declarations'], e.declarations]
+          : [p, e]
+      );
 
       for(let [path, node] of exports) {
         log(`export ${path}`, node);
@@ -142,7 +157,13 @@ async function main(...args) {
         return stmt;
       });*/
       console.log('exports [2]:', exports);
-      exports = exports.map(decl => (decl instanceof ObjectBindingPattern ? decl.properties.map(prop => ('id' in prop ? prop.id : prop)) : decl instanceof ObjectLiteral ? decl.members.map(prop => ('id' in prop ? prop.id : prop)) : decl));
+      exports = exports.map(decl =>
+        decl instanceof ObjectBindingPattern
+          ? decl.properties.map(prop => ('id' in prop ? prop.id : prop))
+          : decl instanceof ObjectLiteral
+          ? decl.members.map(prop => ('id' in prop ? prop.id : prop))
+          : decl
+      );
       console.log('exports [3]:', exports);
       //exports = exports.map(decls => decls.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl)));
       exports = exports.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl));
@@ -153,13 +174,20 @@ async function main(...args) {
 
       let exportProps = exports.reduce((a, stmt) => {
         if('declarations' in stmt) stmt = stmt.declarations;
-        if('properties' in stmt) stmt = stmt.properties.map(({ property, id }) => (id.value && property.value && id.value != property.value ? `${property.value} as ${id.value}` : property.value || id.value));
+        if('properties' in stmt)
+          stmt = stmt.properties.map(({ property, id }) =>
+            id.value && property.value && id.value != property.value
+              ? `${property.value} as ${id.value}`
+              : property.value || id.value
+          );
         if('value' in stmt) stmt = [stmt.value];
         if(!Util.isArray(stmt)) console.error('stmt error:', stmt);
         return [...a, ...stmt];
       }, []);
 
-      exportProps = exportProps.map(ep => (Util.isObject(ep) && 'id' in ep ? ep.id : ep)).map(ep => (Util.isObject(ep) && 'value' in ep ? ep.value : ep));
+      exportProps = exportProps
+        .map(ep => (Util.isObject(ep) && 'id' in ep ? ep.id : ep))
+        .map(ep => (Util.isObject(ep) && 'value' in ep ? ep.value : ep));
 
       log(`exportProps==`, exportProps);
 
@@ -178,12 +206,16 @@ async function main(...args) {
     }
     let output = '';
     output = printAst(ast, parser.comments, printer).trim();
-    if(output != '') r = r.concat(`/* --- concatenanted '${file}' --- */\n${output}\n`.split(/\n/g));
+    if(output != '')
+      r = r.concat(`/* --- concatenanted '${file}' --- */\n${output}\n`.split(/\n/g));
 
     function log(...args) {
-      const assoc = args.map(arg => arg instanceof ESNode && ESNode.assoc(arg)).filter(assoc => !!assoc);
+      const assoc = args
+        .map(arg => arg instanceof ESNode && ESNode.assoc(arg))
+        .filter(assoc => !!assoc);
       //if(assoc[0]) console.log('ASSOC:', assoc[0].position.clone());
-      const prefix = (assoc.length == 1 && assoc[0].position && assoc[0].position.clone()) || modulePath;
+      const prefix =
+        (assoc.length == 1 && assoc[0].position && assoc[0].position.clone()) || modulePath;
       console.log(prefix.toString() + ':', ...args);
     }
     return true;

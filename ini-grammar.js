@@ -44,7 +44,23 @@ function text(...args) {
 }
 
 function TEXT(...args) {
-  return wrap(many(choice(seq(token('a'), regex(/../g), token('z')), seq(token('A'), regex(/../g), token('Z')), token('_'), seq(token('0'), regex(/../g), token('9')), token('/'), token('\\'), token(':'), token('*'), token('.'), token(','), token('@'), char(' '))), 'TEXT')(...args);
+  return wrap(many(
+      choice(seq(token('a'), regex(/../g), token('z')),
+        seq(token('A'), regex(/../g), token('Z')),
+        token('_'),
+        seq(token('0'), regex(/../g), token('9')),
+        token('/'),
+        token('\\'),
+        token(':'),
+        token('*'),
+        token('.'),
+        token(','),
+        token('@'),
+        char(' ')
+      )
+    ),
+    'TEXT'
+  )(...args);
 }
 
 function EQUALS(...args) {
@@ -60,7 +76,9 @@ function RBRACK(...args) {
 }
 
 function LINE_COMMENT(...args) {
-  return wrap(seq(token(';'), invert(any(choice(char('\n'), char('\r'))))), 'LINE_COMMENT')(...args);
+  return wrap(seq(token(';'), invert(any(choice(char('\n'), char('\r'))))),
+    'LINE_COMMENT'
+  )(...args);
 }
 
 function WS(...args) {

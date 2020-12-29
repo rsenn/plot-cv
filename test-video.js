@@ -4,6 +4,7 @@ import * as cv from 'cv';
 import * as draw from 'draw';
 import { Mat } from 'mat';
 import { Point } from 'point';
+import { Size } from 'size';
 import { TickMeter } from 'utility';
 import { VideoSource } from './cvVideo.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.js';
@@ -27,7 +28,8 @@ class Pipeline extends Function {
         mat = processor.call(self, mat, self.images[i], i);
         if(mat) self.images[i] = mat;
         self.times[i] = hr(start);
-        if(typeof callback == 'function') callback.call(self, self.images[i], i, self.processors.length);
+        if(typeof callback == 'function')
+          callback.call(self, self.images[i], i, self.processors.length);
         i++;
       }
       return mat;
@@ -169,8 +171,19 @@ async function main(...args) {
     thresh2: new NumericParam(90, 0, 100),
     apertureSize: new NumericParam(3, 3, 7, 2),
     L2gradient: new NumericParam(0, 0, 1),
-    mode: new EnumParam(['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL'], 3),
-    method: new EnumParam(['CHAIN_APPROX_NONE', 'CHAIN_APPROX_SIMPLE', 'CHAIN_APPROX_TC89_L1', 'CHAIN_APPROX_TC89_L189_KCOS'], 0),
+    numDilations: new NumericParam(0, 0, 10),
+    numErosions: new NumericParam(0, 0, 10),
+    mode: new EnumParam(['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL'],
+      3
+    ),
+    method: new EnumParam([
+        'CHAIN_APPROX_NONE',
+        'CHAIN_APPROX_SIMPLE',
+        'CHAIN_APPROX_TC89_L1',
+        'CHAIN_APPROX_TC89_L189_KCOS'
+      ],
+      0
+    ),
     lineWidth: new NumericParam(1, 0, 10)
   };
   let paramNav = new ParamNavigator(params);
@@ -183,6 +196,7 @@ async function main(...args) {
   rainbow = makeRainbow(256);
 
   let outputMat, outputName;
+  let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
 
   let pipeline = new Pipeline([
       Processor(function AcquireFrame(mat, output) {
@@ -196,19 +210,27 @@ async function main(...args) {
         cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
       }),
       Processor(function EdgeDetect(src, dst) {
-        cv.Canny(src, dst, +params.thresh1, +params.thresh2, +params.apertureSize, +params.L2gradient);
+        cv.Canny(src,
+          dst,
+          +params.thresh1,
+          +params.thresh2,
+          +params.apertureSize,
+          +params.L2gradient
+        );
         ////   console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
+      }),
+      Processor(function Morph(src, dst) {
+        cv.dilate(src, dst, structuringElement, new Point(-1, -1), +params.numDilations);
+        cv.erode(dst, dst, structuringElement, new Point(-1, -1), +params.numErosions);
+      }),
+      Processor(function Contours(src, dst) {
+        cv.findContours(src, (contours = []), (hier = []), cv[params.mode], cv[params.method]);
 
-        cv.findContours(dst, (contours = []), (hier = []), cv[params.mode], cv[params.method]);
-
-        cv.cvtColor(dst, dst, cv.COLOR_GRAY2BGR);
+        cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
 
         console.log('edge', dst.toString(), pipeline.images[0].toString());
 
         dst.and(pipeline.images[0]);
-        //.copyTo(dst, dst);
-
-        //console.log('hier:', hier .map((h, i) => [i, h]) .filter(([i, h]) => h[cv.HIER_PREV] == -1 && h[cv.HIER_PARENT] == -1));
       })
     ],
     (mat, i, n) => {
@@ -272,7 +294,9 @@ async function main(...args) {
 
       if((key = cv.waitKeyEx(Math.max(1, sleepMsecs))) != -1) {
         modifiers = Object.fromEntries(modifierMap(key));
-        modifierList = modifierMap(key).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc), []);
+        modifierList = modifierMap(key).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc),
+          []
+        );
         let ch = String.fromCodePoint(key & 0xff);
         console.log(`keypress [${modifierList}] 0x${(key & ~0xd000).toString(16)} '${ch}'`);
       }
@@ -337,14 +361,19 @@ async function main(...args) {
         case 0xf52: /* up */
         case 0xf54: /* down */ {
           const method = key & 0x1 ? 'Frames' : 'Msecs';
-          const distance = (key & 0x1 ? 1 : 1000) * (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
+          const distance =
+            (key & 0x1 ? 1 : 1000) *
+            (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
           const offset = key & 0x2 ? +distance : -distance;
 
           console.log('seek', { method, distance, offset });
           video['seek' + method](offset);
           let pos = video.position(method);
 
-          console.log('seek' + method + ' ' + offset + ' pos =', pos, ` (${Util.roundTo(video.position('%'), 0.001)}%)`);
+          console.log('seek' + method + ' ' + offset + ' pos =',
+            pos,
+            ` (${Util.roundTo(video.position('%'), 0.001)}%)`
+          );
           break;
         }
         default: {
@@ -358,7 +387,8 @@ async function main(...args) {
 
     meter.stop();
     //console.log('Iteration time: ', meter.toString());
-    if(prevTime !== undefined) console.log('FPS: ', +(1 / meter.timeSec).toFixed(2), '/', video.fps);
+    if(prevTime !== undefined)
+      console.log('FPS: ', +(1 / meter.timeSec).toFixed(2), '/', video.fps);
 
     prevTime = meter.timeSec;
   }
@@ -388,7 +418,8 @@ async function main(...args) {
     } else {
       let ids = [...getToplevel(hier)];
 
-      let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]]));
+      let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]])
+      );
       contours.forEach((contour, i) => {
         let p = [...getParents(hier, i)];
         let color = palette[p[p.length - 1]];
@@ -399,7 +430,11 @@ async function main(...args) {
 
     let paramStr = `${paramNav.name} [${paramNav.param.range.join('-')}] = ${+paramNav.param}`;
     //console.log('paramStr: ', paramStr);
-    font.draw(surface, paramStr, [tPos.x, tPos.y - 20], /*0x00ffff ||*/ { r: 255, g: 0, b: 0, a: 255 });
+    font.draw(surface,
+      paramStr,
+      [tPos.x, tPos.y - 20],
+      /*0x00ffff ||*/ { r: 255, g: 0, b: 0, a: 255 }
+    );
 
     font.draw(surface,
       `#${frameShow + 1}/${pipeline.size}` + (outputName ? ` (${outputName})` : ''),
@@ -436,7 +471,9 @@ function dumpMat(name, mat) {
   console.log(`${name} =`,
     Object.create(
       Mat.prototype,
-      ['cols', 'rows', 'depth', 'channels', 'type'].reduce((acc, prop) => ({ ...acc, [prop]: { value: mat[prop], enumerable: true } }), {})
+      ['cols', 'rows', 'depth', 'channels', 'type'].reduce((acc, prop) => ({ ...acc, [prop]: { value: mat[prop], enumerable: true } }),
+        {}
+      )
     )
   );
 }

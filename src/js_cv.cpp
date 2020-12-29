@@ -517,12 +517,9 @@ js_cv_calc_hist(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 }
 
 static JSValue
-js_cv_dilate(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-
+js_cv_morphology(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   cv::Mat *src, *dst, *kernel;
   JSPointData<double> anchor = cv::Point(-1, -1);
-
-  double sigmaColor, sigmaSpace;
   int32_t iterations = 1, borderType = cv::BORDER_CONSTANT;
   cv::Scalar borderValue = cv::morphologyDefaultBorderValue();
 
@@ -552,7 +549,11 @@ js_cv_dilate(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
     borderValue = cv::Scalar(value[0], value[1], value[2], value[3]);
   }
 
-  cv::dilate(*src, *dst, *kernel, anchor, iterations, borderType, borderValue);
+  switch(magic) {
+    case 0: cv::dilate(*src, *dst, *kernel, anchor, iterations, borderType, borderValue); break;
+    case 1: cv::erode(*src, *dst, *kernel, anchor, iterations, borderType, borderValue); break;
+  }
+
   return JS_UNDEFINED;
 }
 
@@ -1220,7 +1221,8 @@ js_function_list_t js_cv_static_funcs{
     JS_CFUNC_DEF("pointPolygonTest", 2, js_cv_point_polygon_test),
     JS_CFUNC_DEF("cornerHarris", 5, js_cv_corner_harris),
     JS_CFUNC_DEF("calcHist", 8, js_cv_calc_hist),
-    JS_CFUNC_DEF("dilate", 3, js_cv_dilate),
+    JS_CFUNC_MAGIC_DEF("dilate", 3, js_cv_morphology, 0),
+    JS_CFUNC_MAGIC_DEF("erode", 3, js_cv_morphology, 1),
     JS_CFUNC_DEF("morphologyEx", 4, js_cv_morphology_ex),
     JS_CFUNC_DEF("getStructuringElement", 2, js_cv_get_structuring_element),
     JS_CFUNC_DEF("medianBlur", 3, js_cv_median_blur),

@@ -167,13 +167,13 @@ static JSValue
 js_mat_expr(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
   JSValue ret = JS_UNDEFINED;
   JSColorData<double> color;
-  JSMatData *m, *o;
+  JSMatData *src, *dst, *o;
   double scale = 1.0;
 
-  if((m = js_mat_data(ctx, this_val)) == nullptr)
+  if((src = js_mat_data(ctx, this_val)) == nullptr)
     return JS_EXCEPTION;
 
-  cv::Mat& mat = *m;
+  cv::Mat& mat = *src;
 
   if(argc < 1)
     return JS_EXCEPTION;
@@ -182,27 +182,39 @@ js_mat_expr(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv,
     if(!js_color_read(ctx, argv[0], &color))
       return JS_EXCEPTION;
 
-  if(argc > 1)
+  if(magic == 3 && argc > 1) {
     JS_ToFloat64(ctx, &scale, argv[1]);
+    argv++;
+    argc--;
+  }
+
+  if(argc > 1) {
+    dst = js_mat_data(ctx, argv[1]);
+  }
+
+  if(dst == nullptr)
+    dst = src;
+
+  cv::Mat& out = *dst;
 
   if(o == nullptr) {
     cv::Scalar& scalar = *reinterpret_cast<cv::Scalar*>(&color);
 
     switch(magic) {
       case 0: {
-        mat &= scalar;
+        out = mat & scalar;
         break;
       }
       case 1: {
-        mat |= scalar;
+        out = mat | scalar;
         break;
       }
       case 2: {
-        mat ^= scalar;
+        out = mat ^ scalar;
         break;
       }
       case 3: {
-        mat = mat.mul(scalar, scale);
+        out = mat.mul(scalar, scale);
         break;
       }
     }
@@ -211,19 +223,19 @@ js_mat_expr(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv,
 
     switch(magic) {
       case 0: {
-        mat &= other;
+        out = mat & other;
         break;
       }
       case 1: {
-        mat |= other;
+        out = mat | other;
         break;
       }
       case 2: {
-        mat ^= other;
+        out = mat ^ other;
         break;
       }
       case 3: {
-        mat = mat.mul(other, scale);
+        out = mat.mul(other, scale);
         break;
       }
     }

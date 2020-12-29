@@ -13,7 +13,10 @@ async function main() {
   const url = 'ws://127.0.0.1:3000/ws';
   let ws = new WebSocketAsync(WebSocket);
 
-  const dump = () => console.log('ws:', Util.getKeys(ws, ['receiveDataQueue', 'receiveCallbacksQueue', 'connected']));
+  const dump = () =>
+    console.log('ws:',
+      Util.getKeys(ws, ['receiveDataQueue', 'receiveCallbacksQueue', 'connected'])
+    );
 
   await ws.connect(url);
 

@@ -11,7 +11,9 @@ import LogJS from './lib/log.js';
 let filesystem;
 
 function xmlize(obj, depth = 2) {
-  return obj.toXML ? obj.toXML().replace(/>\s*</g, '>\n    <') : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
+  return obj.toXML
+    ? obj.toXML().replace(/>\s*</g, '>\n    <')
+    : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
 
 function testLocator() {
@@ -136,7 +138,15 @@ function alignItem(item) {
     console.log('before:', Util.abbreviate(before));
     console.log('after:', Util.abbreviate(item.parentNode.toXML()));
     //console.log('geometry:', geometry);
-    console.log('align\n', item.xpath(), '\n newPos:', newPos, '\n diff:', diff, '\n attr:', item.raw.attributes);
+    console.log('align\n',
+      item.xpath(),
+      '\n newPos:',
+      newPos,
+      '\n diff:',
+      diff,
+      '\n attr:',
+      item.raw.attributes
+    );
   }
   return changed;
 }
@@ -178,7 +188,14 @@ async function testEagle(filename) {
 
   const packages = {
     board: (board && board.elements && [...board.elements].map(([name, e]) => e.package)) || [],
-    schematic: (schematic && schematic.sheets && [...schematic.sheets].map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)).flat()) || []
+    schematic: (schematic &&
+        schematic.sheets &&
+        [...schematic.sheets]
+          .map(e =>
+            [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined)
+          )
+          .flat()) ||
+      []
   };
   let parts = (schematic && schematic.parts) || [];
   let sheets = (schematic && schematic.sheets) || [];
@@ -261,7 +278,9 @@ async function testEagle(filename) {
   let desc = proj.documents.map(doc => [doc.filename, doc.find('description')]);
   console.log('desc', desc);
 
-  desc = desc.map(([file, e]) => [file, e && e.xpath()]).map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
+  desc = desc
+    .map(([file, e]) => [file, e && e.xpath()])
+    .map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
   desc = new Map(desc);
   console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
 
@@ -274,7 +293,10 @@ async function main(...args) {
     try {
       let project = await testEagle(arg);
     } catch(err) {
-      console.log('Err:', err.message, typeof err.stack == 'string' ? err.stack : [...err.stack].map(f => f + ''));
+      console.log('Err:',
+        err.message,
+        typeof err.stack == 'string' ? err.stack : [...err.stack].map(f => f + '')
+      );
       process.exit(1);
     }
   }

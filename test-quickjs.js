@@ -31,7 +31,8 @@ async function main(...args) {
   // console.log('modules:', inspect({ Point, Size, Rect }));
   let globalThis = Util.getGlobalObject();
   const moduleNames = ['Rect', 'Point', 'Size', 'Line', 'Mat', 'Contour', 'PointIterator', 'Draw'];
-  for(let moduleName of moduleNames) Util.tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
+  for(let moduleName of moduleNames)
+    Util.tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
 
   let ctors = new Map(moduleNames.map(name => [name, globalThis[name]]));
   console.log('globalThis:', Object.keys(globalThis));
@@ -139,17 +140,24 @@ async function main(...args) {
     }
     i = 0;
     for(let [key, value] of row0.entries()) {
-      console.log(`row0.entries() #${i++}`, key, '0x' + ('00000000' + value.toString(16)).slice(-8));
+      console.log(`row0.entries() #${i++}`,
+        key,
+        '0x' + ('00000000' + value.toString(16)).slice(-8)
+      );
     }
     i = 0;
     for(let [key, value] of col0.entries()) {
-      console.log(`col0.entries() #${i++}`, key, '0x' + ('00000000' + value.toString(16)).slice(-8));
+      console.log(`col0.entries() #${i++}`,
+        key,
+        '0x' + ('00000000' + value.toString(16)).slice(-8)
+      );
     }
 
     let range = mat.rowRange(2, 8);
     i = 0;
     for(let [[row, col], value] of range) {
-      console.log(`range[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
+      console.log(`range[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
+      );
     }
     i = 0;
 
@@ -157,9 +165,11 @@ async function main(...args) {
       let roi = mat.roi(rr);
 
       for(let [[row, col], value] of roi) {
-        console.log(`roi[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
+        console.log(`roi[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
+        );
       }
-      console.log(`roi rows=${roi.rows} cols=${roi.cols} depth=${roi.depth} channels=${roi.channels}`);
+      console.log(`roi rows=${roi.rows} cols=${roi.cols} depth=${roi.depth} channels=${roi.channels}`
+      );
 
       for(let r = 0; r < roi.rows; r++)
         for(let c = 0; c < roi.cols; c++) {
@@ -173,7 +183,8 @@ async function main(...args) {
 
     i = 0;
     for(let [[row, col], value] of mat) {
-      console.log(`mat[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
+      console.log(`mat[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`
+      );
     }
 
     let fmat = new Mat(new Size(10, 10), cv.CV_32FC1);
