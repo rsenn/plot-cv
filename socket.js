@@ -125,10 +125,10 @@ const { read, write, close, setReadHandler, setWriteHandler } = os;
 
 const syscall = {
   socket: foreign('socket', 'int', 'int', 'int', 'int'),
-  select: foreign('select', 'int', 'buffer', 'buffer', 'buffer', 'string'),
+  select: foreign('select', 'int', 'int', 'buffer', 'buffer', 'buffer', 'buffer'),
   connect: foreign('connect', 'int', 'int', 'void *', 'size_t'),
   bind: foreign('bind', 'int', 'int', 'void *', 'size_t'),
-  listen: foreign('listen', 'int', 'int'),
+  listen: foreign('listen', 'int', 'int', 'int'),
   accept: foreign('accept', 'int', 'int', 'buffer', 'buffer'),
   getsockopt: foreign('getsockopt', 'int', 'int', 'int', 'int', 'void *', 'buffer'),
   setsockopt: foreign('setsockopt', 'int', 'int', 'int', 'int', 'void *', 'size_t'),
@@ -187,6 +187,8 @@ export function accept(fd, addr, addrlen) {
 }
 
 export function listen(fd, backlog = 5) {
+  console.log(`listen(${fd}, ${backlog})`);
+
   return syscall.listen(+fd, backlog);
 }
 
@@ -228,11 +230,14 @@ export function setsockopt(sockfd, level, optname, optval, optlen) {
 }
 
 export class timeval extends ArrayBuffer {
-  constructor(sec = 0, usec = 0) {
+  constructor(sec, usec) {
     super(2 * 8);
 
-    this.sec = sec;
-    this.usec = usec;
+    if(sec !== undefined || usec !== undefined) {
+      let a = new Uint32Array(this);
+      a[0] = sec | 0;
+      a[1] = usec | 0;
+    }
   }
 
   set tv_sec(s) {
@@ -298,13 +303,15 @@ Object.defineProperties(sockaddr_in.prototype, {
   },
   sin_port: {
     set(port) {
-      let a = new Uint8Array(this);
+      new DataView(this, 2).setUint16(0, port, false);
+      /*let a = new Uint8Array(this);
       a[2] = port >> 8;
-      a[3] = port & 0xff;
+      a[3] = port & 0xff;*/
     },
     get() {
-      let a = new Uint8Array(this);
-      return (a[2] << 8) | a[3];
+      return new DataView(this, 2).getUint16(0, false);
+      /*let a = new Uint8Array(this);
+      return (a[2] << 8) | a[3];*/
     },
     enumerable: true
   },
@@ -313,19 +320,20 @@ Object.defineProperties(sockaddr_in.prototype, {
       if(typeof addr == 'string') addr = addr.split(/[.:]/).map(n => +n);
 
       if(addr instanceof Array) {
-        let a = new Uint8Array(this);
-        a[4] = addr[0];
-        a[5] = addr[1];
-        a[6] = addr[2];
-        a[7] = addr[3];
+        let a = new Uint8Array(this, 4);
+        a[0] = addr[0];
+        a[1] = addr[1];
+        a[2] = addr[2];
+        a[3] = addr[3];
       } else {
-        let a = new Uint32Array(this);
-        a[1] = addr;
+        new DataView(this, 4).setUint32(0, addr, false);
+        /*let a = new Uint32Array(this, 4);
+        a[0] = addr;*/
       }
     },
     get() {
-      let a = new Uint8Array(this);
-      return a.slice(4, 8).join('.');
+      let a = new Uint8Array(this, 4);
+      return a.slice(0, 4).join('.');
     },
     enumerable: true
   }
@@ -389,17 +397,15 @@ export function FD_SET(fd, set) {
 }
 
 export function FD_CLR(fd, set) {
-  let a = new Uint8Array(set);
-  let byte = fd >> 3;
+  let a = new Uint8Array(set, fd >> 3);
   let bit = fd & 0x7;
-  a[byte] &= ~(1 << bit);
+  a[0] &= ~(1 << bit);
 }
 
 export function FD_ISSET(fd, set) {
-  let a = new Uint8Array(set);
-  let byte = fd >> 3;
+  let a = new Uint8Array(set, fd >> 3);
   let bit = fd & 0x7;
-  return !!(a[byte] & (1 << bit));
+  return !!(a[0] & (1 << bit));
 }
 
 export function FD_ZERO(fd, set) {
@@ -450,9 +456,10 @@ export class Socket {
     let ret;
     if(addr != undefined) this.localAddress = addr;
     if(port != undefined) this.localPort = port;
-    if((ret = bind(this.fd, this.local, this.local.byteLength)) == -1) this.errno = syscall.errno;
 
     setsockopt(this.fd, SOL_SOCKET, SO_REUSEADDR, new socklen_t(1));
+
+    if((ret = bind(this.fd, this.local, this.local.byteLength)) == -1) this.errno = syscall.errno;
 
     return ret;
   }
@@ -483,7 +490,7 @@ export class Socket {
     const [buf, offset, len] = args;
     if(args.length == 0 || typeof buf != 'object') {
       let data = new ArrayBuffer(typeof buf == 'number' ? buf : 1024);
-      if((ret = this.read(data)) > 0) return dat.aslice(0, ret);
+      if((ret = this.read(data)) > 0) return data.slice(0, ret);
     } else if((ret = recv(this.fd, buf, offset, len)) <= 0) {
       if(ret < 0) this.errno = syscall.errno;
       else if(ret == 0) this.close();
