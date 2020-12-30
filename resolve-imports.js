@@ -4,7 +4,7 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import Lexer, { PathReplacer, Position, Range } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
 import { Token } from './lib/ecmascript/token.js';
-import estree, { AliasName, VariableDeclaration, VariableDeclarator, ImportStatement, ExportStatement, Identifier, MemberExpression, ESNode, CallExpression, ObjectBindingPattern, Literal, AssignmentExpression } from './lib/ecmascript/estree.js';
+import estree, { AliasName, VariableDeclaration, VariableDeclarator, ImportStatement, ExportStatement, Identifier, MemberExpression, ESNode, CallExpression, ObjectBindingPattern, Literal, AssignmentExpression, ExpressionStatement } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 import { ImmutablePath, Path } from './lib/json.js';
@@ -728,7 +728,7 @@ async function main(...args) {
         let nodes = importNodes[i];
         let { path, node } = imp;
         // console.log(`remove.forEach arg`, i, GetFromPath([path,node], file), importDeclarations[i].entries(), Util.className(node));
-        deep.set(ast, [...path], new Literal('"removed import"'));
+        deep.set(ast, [...path], new ExpressionStatement( new Literal('"removed import"')));
       });
 
       let recurseImports = Util.unique(remove.map(([idx, imp]) => imp || imports[idx]));
@@ -842,8 +842,8 @@ async function ParseFile(file) {
     //    data = filesystem.readFile(file);
 
     data = await Prettier(file);
-    // console.log('data:', Util.abbreviate(Util.unescape(data + ''), 40));
-    //   console.log('data:', data.length, data || Util.abbreviate(Util.unescape(data + ''), 40));
+    // console.log('data:', Util.abbreviate(Util.escape(data + ''), 40));
+    //   console.log('data:', data.length, data || Util.abbreviate(Util.escape(data + ''), 40));
 
     ECMAScriptParser.instrumentate();
     parser = new ECMAScriptParser(data.toString(), file, false);
@@ -975,7 +975,7 @@ function GetLiteral(node) {
   return (deep.find(node, n => n instanceof Literal) || {}).value;
 }
 function IsBuiltinModule(name) {
-  return /^(_http_agent|_http_client|_http_common|_http_incoming|_http_outgoing|_http_server|_stream_duplex|_stream_passthrough|_stream_readable|_stream_transform|_stream_wrap|_tls_common|_tls_wrap|assert|async_hooks|buffer|child_process|cluster|console|constants|crypto|dgram|dns|domain|events|fs|http|http2|https|inspector|module|net|os|path|perf_hooks|process|punycode|querystring|readline|repl|stream|string_decoder|timers|tls|trace_events|tty|url|util|v8|vm|worker_threads|zlib)$/.test(name
+  return /^(std|os|ffi|net|_http_agent|_http_client|_http_common|_http_incoming|_http_outgoing|_http_server|_stream_duplex|_stream_passthrough|_stream_readable|_stream_transform|_stream_wrap|_tls_common|_tls_wrap|assert|async_hooks|buffer|child_process|cluster|console|constants|crypto|dgram|dns|domain|events|fs|http|http2|https|inspector|module|net|os|path|perf_hooks|process|punycode|querystring|readline|repl|stream|string_decoder|timers|tls|trace_events|tty|url|util|v8|vm|worker_threads|zlib)$/.test(name
   );
 }
 

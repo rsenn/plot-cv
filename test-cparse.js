@@ -108,7 +108,7 @@ async function main(...args) {
       // console.log('completion_func', file);
 
       const code = filesystem.readFile(file);
-      console.log('include_func', { file, code: Util.abbreviate(Util.unescape(code + ''), 40) });
+      console.log('include_func', { file, code: Util.abbreviate(Util.escape(code + ''), 40) });
 
       resolve(code);
     },

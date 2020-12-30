@@ -1,5 +1,5 @@
 import { ECMAScriptParser, Printer, PathReplacer } from './lib/ecmascript.js';
-import { ObjectBindingPattern, ObjectLiteral, ImportStatement, ExportStatement, VariableDeclaration, estree, ESNode, Literal } from './lib/ecmascript.js';
+import { ObjectBindingPattern, ObjectExpression, ImportStatement, ExportStatement, VariableDeclaration, estree, ESNode, Literal } from './lib/ecmascript.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import Util from './lib/util.js';
 import { ImmutablePath } from './lib/json.js';
@@ -160,7 +160,7 @@ async function main(...args) {
       exports = exports.map(decl =>
         decl instanceof ObjectBindingPattern
           ? decl.properties.map(prop => ('id' in prop ? prop.id : prop))
-          : decl instanceof ObjectLiteral
+          : decl instanceof ObjectExpression
           ? decl.members.map(prop => ('id' in prop ? prop.id : prop))
           : decl
       );

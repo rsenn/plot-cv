@@ -5436,7 +5436,7 @@
       .reduce((acc, [match, replacement]) => acc.replace(match, replacement), haystack);
   };
 
-  Util.unescape = str => {
+  Util.escape = str => {
     let s = '';
 
     for(let i = 0; i < str.length; i++) {

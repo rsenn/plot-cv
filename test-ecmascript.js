@@ -27,7 +27,7 @@ const code = `
 Util.callMain(main, Util.putError);
 
 function dumpFile(name, data) {
-  console.log('dumpFile', { name, data: Util.abbreviate(Util.unescape(data)) });
+  console.log('dumpFile', { name, data: Util.abbreviate(Util.escape(data)) });
   if(Util.isArray(data)) data = data.join('\n');
   if(typeof data != 'string') data = '' + data;
 
@@ -98,7 +98,7 @@ async function processFile(file) {
   globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, false);
 
   console.log('prototypeChain:', Util.getPrototypeChain(parser));
-  console.log('OK, data: ', Util.abbreviate(Util.unescape(data)));
+  console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
   ast = parser.parseProgram();
   parser.addCommentsToNodes(ast);
 

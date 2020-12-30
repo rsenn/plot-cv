@@ -24,7 +24,7 @@ async function main(...args) {
 
   while((r = await child.stdout.read(ab, 0, bufSize))) {
     if(!(r > 0 && r == bufSize)) console.log('r:', r);
-    console.log('data:', Util.unescape(ArrayBufToString(ab, 0, r)));
+    console.log('data:', Util.escape(ArrayBufToString(ab, 0, r)));
   }
 }
 

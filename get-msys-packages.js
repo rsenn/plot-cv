@@ -183,7 +183,7 @@ async function processUrl(url, map) {
   let getProp;
   let obj;
   /* for await (let line of iterator) {
-    console.log('line:', Util.unescape(line));
+    console.log('line:', Util.escape(line));
   }*/
 
   for await (let line of iterator) {
