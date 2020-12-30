@@ -9,6 +9,7 @@ import Util from './lib/util.js';
 import path from './lib/path.js';
 import { ImmutablePath, Path } from './lib/json.js';
 import deep from './lib/deep.js';
+import tree from './lib/tree.js';
 import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll } from './lib/stream/utils.js';
@@ -519,8 +520,9 @@ async function main(...args) {
 
     let { data, error, ast, parser, printer } = await ParseFile(file);
     let flat, map;
+    let st = new tree(ast);
     //console.log(`${file} parsed:`, { data, error });
-
+    console.log(`st:`, st);
     function generateFlatAndMap() {
       flat = GenerateFlatMap(ast,
         [],
@@ -728,7 +730,7 @@ async function main(...args) {
         let nodes = importNodes[i];
         let { path, node } = imp;
         // console.log(`remove.forEach arg`, i, GetFromPath([path,node], file), importDeclarations[i].entries(), Util.className(node));
-        deep.set(ast, [...path], new ExpressionStatement( new Literal('"removed import"')));
+        deep.set(ast, [...path], new ExpressionStatement(new Literal('"removed import"')));
       });
 
       let recurseImports = Util.unique(remove.map(([idx, imp]) => imp || imports[idx]));

@@ -72,9 +72,7 @@ async function runMount(dirsIterator) {
     }
     readData(proc.stdout);
     readData(proc.stderr, data =>
-      console.log('stderr data:',
-        Util.abbreviate(Util.escape(data), Util.getEnv('COLUMNS') || 120)
-      )
+      console.log('stderr data:', Util.abbreviate(Util.escape(data), Util.getEnv('COLUMNS') || 120))
     );
     let exitCode = await waitChild(proc);
     console.log('exitCode:', exitCode);
