@@ -9,7 +9,7 @@ import Util from './lib/util.js';
 import path from './lib/path.js';
 import { ImmutablePath, Path } from './lib/json.js';
 import deep from './lib/deep.js';
-import tree from './lib/tree.js';
+import Tree from './lib/tree.js';
 import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater, Reader, ReadAll } from './lib/stream/utils.js';
@@ -470,7 +470,9 @@ async function main(...args) {
   while(args.length > 0) {
     let arg = args.shift();
     while(/:[0-9]+:?$/.test(arg)) arg = arg.replace(/:[0-9]*$/g, '');
-    await processFile(ES6Env.pathTransform(arg));
+    let ret;
+
+    if((ret = await processFile(ES6Env.pathTransform(arg))) < 0) return -ret;
     optind++;
   }
 
@@ -520,7 +522,7 @@ async function main(...args) {
 
     let { data, error, ast, parser, printer } = await ParseFile(file);
     let flat, map;
-    let st = new tree(ast);
+    let st = new Tree(ast);
     //console.log(`${file} parsed:`, { data, error });
     console.log(`st:`, st);
     function generateFlatAndMap() {
@@ -798,7 +800,7 @@ async function main(...args) {
     } catch(err) {
       console.error(err.message);
       Util.putStack(err.stack);
-      process.exit(1);
+      return -1;
     }
   }
 }
@@ -853,9 +855,10 @@ async function ParseFile(file) {
     ast = parser.parseProgram();
     parser.addCommentsToNodes(ast);
   } catch(err) {
+    console.log('err:', err);
     error = err;
   } finally {
-    if(!ast) if (!error) error = new Error(`No ast for file '${file}'`);
+    if(!ast) if (error === undefined) error = new Error(`No ast for file '${file}'`);
   }
   if(error) throw error;
   printer = new Printer({ indent: 4 });
