@@ -1,7 +1,7 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
-import { estree, ESNode, BlockStatement, SequenceExpression, TemplateLiteral, CallExpression, ImportDeclaration, Identifier, ObjectBindingPattern, ArrowFunction, Program } from './lib/ecmascript/estree.js';
+import { estree, ESNode, BlockStatement, SequenceExpression, TemplateLiteral, CallExpression, ImportDeclaration, Identifier, ObjectPattern, ArrowFunctionExpression, Program } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import { Path } from './lib/json.js';
@@ -120,7 +120,7 @@ async function processFile(file) {
 console.log("find:",[...flat].find(([path,node]) => node instanceof CallExpression));
 console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpression));*/
 
-  /*  let [path, fn] = Util.find(flat, (value, key) => value instanceof ArrowFunction);
+  /*  let [path, fn] = Util.find(flat, (value, key) => value instanceof ArrowFunctionExpression);
   path = path.slice(0, path.lastIndexOf('arguments') + 1);
   console.log('path:', path);
 
@@ -189,7 +189,7 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
 
     /*  importIdentifiers = importIdentifiers.map(([p, n]) =>
     n
-      .map(decl => (decl.id instanceof ObjectBindingPattern ? decl.id.properties : [decl.id]))
+      .map(decl => (decl.id instanceof ObjectPattern ? decl.id.properties : [decl.id]))
       .flat()
       .map(n => [n.id ? n.id : n])
       .flat()

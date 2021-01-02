@@ -4,7 +4,7 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import Lexer, { PathReplacer, Position, Range } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
 import { Token } from './lib/ecmascript/token.js';
-import estree, { ImportSpecifier, VariableDeclaration, VariableDeclarator, ModuleSpecifier, ImportDeclaration, ExportStatement, Identifier, MemberExpression, ESNode, CallExpression, ObjectBindingPattern, Literal, AssignmentExpression, ExpressionStatement, ClassDeclaration } from './lib/ecmascript/estree.js';
+import estree, { ImportSpecifier, VariableDeclaration, VariableDeclarator, ModuleSpecifier, ImportDeclaration, ExportNamedDeclaration, Identifier, MemberExpression, ESNode, CallExpression, ObjectPattern, Literal, AssignmentExpression, ExpressionStatement, ClassDeclaration, AssignmentProperty } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 import { ImmutablePath, Path } from './lib/json.js';
@@ -332,7 +332,7 @@ class ES6ImportExport {
 const isRequire = ([path, node]) =>
   node instanceof CallExpression && node.callee.value == 'require';
 const isImport = ([path, node]) => node instanceof ImportDeclaration;
-const isES6Export = ([path, node]) => node instanceof ExportStatement;
+const isES6Export = ([path, node]) => node instanceof ExportNamedDeclaration;
 const isCJSExport = ([path, node]) =>
   node instanceof MemberExpression &&
   node.object instanceof Identifier &&
@@ -366,7 +366,7 @@ const getImport = ([p, n]) => {
   return r;
 };
 const getExport = ([p, n]) => [
-  n instanceof ExportStatement ? p : p.slice(0, 2),
+  n instanceof ExportNamedDeclaration ? p : p.slice(0, 2),
   p
 ]; /*.map(p => [...p])*/
 
@@ -524,6 +524,11 @@ async function main(...args) {
     let { data, error, ast, parser, printer } = await ParseFile(file);
     let flat, map;
     let st = new Tree(ast);
+
+    filesystem.writeFile(path.basename(file.replace(/\.[^\/]*$/, '')) + '.ast.json',
+      JSON.stringify(ast)
+    );
+
     //console.log(`${file} parsed:`, { data, error });
     console.log(`st:`, st);
     function generateFlatAndMap() {
@@ -752,7 +757,7 @@ async function main(...args) {
 
       //console.log(`recurseFiles [${depth}]:`, recurseFiles);
       recurseFiles = recurseFiles.filter(f => processed.indexOf(f) == -1);
-//      recurseFiles = recurseFiles.filter(f => !re.path.test(f));
+      recurseFiles = recurseFiles.filter(f => !re.path.test(f));
 
       imports = imports.filter(({ file, ...module }) => !re.path.test(file));
 
@@ -801,7 +806,7 @@ async function main(...args) {
       //console.log(`moduleExports:`, moduleExports);
       //
       let testClass = deep.find(ast,
-        node => node instanceof ClassDeclaration && node.id.name == 'timeval'
+        node => node instanceof AssignmentProperty && node.key.name == 'addr'
       )?.value;
 
       console.log('testClass:', testClass);
@@ -919,7 +924,7 @@ function GetFromValue(...args) {
     (n, p) =>
       true ||
       Util.isArray(n) ||
-      [ExportStatement, ImportDeclaration, ObjectBindingPattern, Literal].some(ctor => n instanceof ctor
+      [ExportNamedDeclaration, ImportDeclaration, ObjectPattern, Literal].some(ctor => n instanceof ctor
       ),
     (p, n) => [
       p,

@@ -1,7 +1,7 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
-import { estree, ESNode, Literal, TemplateLiteral, CallExpression, ImportDeclaration, Identifier, ObjectBindingPattern } from './lib/ecmascript/estree.js';
+import { estree, ESNode, Literal, TemplateLiteral, CallExpression, ImportDeclaration, Identifier, ObjectPattern } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import { Path } from './lib/json.js';
