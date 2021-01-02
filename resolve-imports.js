@@ -4,7 +4,7 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import Lexer, { PathReplacer, Position, Range } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
 import { Token } from './lib/ecmascript/token.js';
-import estree, { AliasName, VariableDeclaration, VariableDeclarator, ImportStatement, ExportStatement, Identifier, MemberExpression, ESNode, CallExpression, ObjectBindingPattern, Literal, AssignmentExpression, ExpressionStatement } from './lib/ecmascript/estree.js';
+import estree, { ImportSpecifier, VariableDeclaration, VariableDeclarator, ModuleSpecifier, ImportDeclaration, ExportStatement, Identifier, MemberExpression, ESNode, CallExpression, ObjectBindingPattern, Literal, AssignmentExpression, ExpressionStatement, ClassDeclaration } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 import { ImmutablePath, Path } from './lib/json.js';
@@ -331,7 +331,7 @@ class ES6ImportExport {
 
 const isRequire = ([path, node]) =>
   node instanceof CallExpression && node.callee.value == 'require';
-const isImport = ([path, node]) => node instanceof ImportStatement;
+const isImport = ([path, node]) => node instanceof ImportDeclaration;
 const isES6Export = ([path, node]) => node instanceof ExportStatement;
 const isCJSExport = ([path, node]) =>
   node instanceof MemberExpression &&
@@ -342,7 +342,6 @@ const isCJSExport = ([path, node]) =>
 
 const getImport = ([p, n]) => {
   let r = [];
-  //console.log('getImport', { p, n });
   if(n instanceof CallExpression && Util.isObject(n) && n.callee && n.callee.value == 'require') {
     let idx = p.lastIndexOf('init');
     let start = idx != -1 ? idx + 1 : p.length;
@@ -355,14 +354,15 @@ const getImport = ([p, n]) => {
       start++;
     }
     r.push(imp);
-  } /* if(!(n instanceof ImportStatement))*/ else {
+  } /* if(!(n instanceof ImportDeclaration))*/ else {
     let source = p.concat(['source']);
-    for(let [node, path] of deep.iterate(n, v => v instanceof AliasName)) {
+    for(let [node, path] of deep.iterate(n, v => v instanceof ModuleSpecifier)) {
       const name = p.concat([...path, 'name']);
       const alias = p.concat([...path, 'as']);
       r.push([source, alias, name]);
     }
   }
+  //console.log('getImport', { p, n, r });
   return r;
 };
 const getExport = ([p, n]) => [
@@ -437,7 +437,7 @@ function GenerateDistinctVariableDeclarations(variableDeclaration) {
 }
 
 async function main(...args) {
-  await ConsoleSetup({ colors: true, depth: 6 });
+  await ConsoleSetup({ colors: true, depth: 6, breakLength: 80 });
   await PortableFileSystem(fs => (filesystem = fs));
   await PortableChildProcess(cp => (childProcess = cp));
 
@@ -459,6 +459,7 @@ async function main(...args) {
     ];
   let r = [];
   let processed = [];
+  let allImports = [];
 
   const dirs = [ES6Env.cwd, ...args.map(arg => path.dirname(arg))];
 
@@ -517,7 +518,7 @@ async function main(...args) {
 
     let thisdir = path.dirname(file);
     let absthisdir = path.resolve(thisdir);
-    let imports;
+    let moduleImports, imports;
     // console.log('processing:', { file, thisdir });
 
     let { data, error, ast, parser, printer } = await ParseFile(file);
@@ -572,11 +573,11 @@ async function main(...args) {
       again: while(true) {
         generateFlatAndMap();
 
-        imports = [...flat].filter(it => isRequire(it) || isImport(it));
+        moduleImports = [...flat].filter(it => isRequire(it) || isImport(it));
         // console.log("imports:",imports.map(([p,n]) => [p,n]));
         //console.log("flat:",flat);
 
-        for(let imp of imports) {
+        for(let imp of moduleImports) {
           let expr = ParentExpr(ast, imp);
 
           if(!(expr instanceof AssignmentExpression || expr instanceof VariableDeclarator)) {
@@ -592,7 +593,7 @@ async function main(...args) {
 
             deep.set(ast, imp[0], new Identifier(name));
 
-            let importStatement = new ImportStatement([new AliasName(new Identifier('default'), new Identifier(name))],
+            let importStatement = new ImportDeclaration([new ImportSpecifier(new Identifier('default'), new Identifier(name))],
               new Literal(source)
             );
 
@@ -609,10 +610,10 @@ async function main(...args) {
         }
 
         //console.log('imports:', imports);
-        importNodes = imports.map(it => getImport(it));
+        importNodes = moduleImports.map(it => getImport(it));
         //console.log('importNodes:', importNodes);
 
-        importValues = imports.map(it => {
+        importValues = moduleImports.map(it => {
           let importIds = getImport(it);
           //console.log('importIds:', importIds);
           let acc = [];
@@ -635,9 +636,10 @@ async function main(...args) {
         }, []);
         //console.log('importValues:', importValues);
 
-        if(imports.length) {
+        if(moduleImports.length) {
           //console.log('ast.body:', ast.body);
-          let importStatements = imports.map(([stmt, imp]) => imp);
+          let importStatements = moduleImports.map(([stmt, imp]) => imp);
+          //  console.log('importNodes:',importNodes);
           let declPaths = Util.unique(importNodes.map(([stmt]) => stmt.toString()));
 
           let declStatements = declPaths
@@ -673,9 +675,9 @@ async function main(...args) {
         )
       );
 
-      //console.log('importDeclarations:', importDeclarations);
+      console.log('moduleImports:', moduleImports);
 
-      imports = imports
+      imports = moduleImports
         .map(([path, node]) => [path, node, Literal.string(GetLiteral(node))])
         .filter(([path, node, module]) => !re.name.test(module));
 
@@ -708,6 +710,7 @@ async function main(...args) {
           bindings: new Map(decls)
         });
       });
+
       let statement2module = imports.map(imp => [imp.node, imp]);
       statement2module = new WeakMap(statement2module);
 
@@ -732,7 +735,10 @@ async function main(...args) {
         let nodes = importNodes[i];
         let { path, node } = imp;
         // console.log(`remove.forEach arg`, i, GetFromPath([path,node], file), importDeclarations[i].entries(), Util.className(node));
-        deep.set(ast, [...path], new ExpressionStatement(new Literal('"removed import"')));
+        deep.set(ast,
+          [...path],
+          new ExpressionStatement(new Literal(`"removed ${PrintAst(node)}"`))
+        );
       });
 
       let recurseImports = Util.unique(remove.map(([idx, imp]) => imp || imports[idx]));
@@ -745,8 +751,8 @@ async function main(...args) {
       let recurseFiles = recursePaths.map(paths => path.relative(...paths.slice(0, 2)));
 
       //console.log(`recurseFiles [${depth}]:`, recurseFiles);
-      recurseFiles = recurseFiles.filter(f => processed.indexOf(f) == -1 && !re.path.test(f));
-      recurseFiles = recurseFiles.filter(f => !re.path.test(f));
+      recurseFiles = recurseFiles.filter(f => processed.indexOf(f) == -1);
+//      recurseFiles = recurseFiles.filter(f => !re.path.test(f));
 
       imports = imports.filter(({ file, ...module }) => !re.path.test(file));
 
@@ -793,6 +799,12 @@ async function main(...args) {
       );
 
       //console.log(`moduleExports:`, moduleExports);
+      //
+      let testClass = deep.find(ast,
+        node => node instanceof ClassDeclaration && node.id.name == 'timeval'
+      )?.value;
+
+      console.log('testClass:', testClass);
 
       let output = '';
       output = PrintAst(ast, parser.comments, printer);
@@ -800,6 +812,11 @@ async function main(...args) {
     } catch(err) {
       console.error(err.message);
       Util.putStack(err.stack);
+      let { node } = err;
+      console.log('file:', file);
+      console.log('path:', st.pathOf(node));
+      console.log('node:', node);
+      throw err;
       return -1;
     }
   }
@@ -902,7 +919,7 @@ function GetFromValue(...args) {
     (n, p) =>
       true ||
       Util.isArray(n) ||
-      [ExportStatement, ImportStatement, ObjectBindingPattern, Literal].some(ctor => n instanceof ctor
+      [ExportStatement, ImportDeclaration, ObjectBindingPattern, Literal].some(ctor => n instanceof ctor
       ),
     (p, n) => [
       p,
@@ -958,7 +975,7 @@ function GetFrom([node, path]) {
     node = node.arguments[0];
     path = path.down('arguments', 0);
   }
-  if(node instanceof ImportStatement) {
+  if(node instanceof ImportDeclaration) {
     node = node.source;
     path = path.down('source');
   }

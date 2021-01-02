@@ -475,7 +475,8 @@ export class Socket {
     let ret = accept(this.fd, remote, len);
 
     //console.log(`Socket.accept(${remote}, ${len})`, { ret, remote });
-    if(ret == -1) this.errno = syscall.errno;
+    if(ret == -1)
+      this.errno = syscall.errno;
     else
       ret = Object.create(Socket.prototype, {
         fd: { value: ret, enumerable: true },

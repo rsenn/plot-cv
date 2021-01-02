@@ -1,5 +1,5 @@
 import { ECMAScriptParser, Printer, PathReplacer } from './lib/ecmascript.js';
-import { ObjectBindingPattern, ObjectExpression, ImportStatement, ExportStatement, VariableDeclaration, estree, ESNode, Literal } from './lib/ecmascript.js';
+import { ObjectBindingPattern, ObjectExpression, ImportDeclaration, ExportStatement, VariableDeclaration, estree, ESNode, Literal } from './lib/ecmascript.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import Util from './lib/util.js';
 import { ImmutablePath } from './lib/json.js';
@@ -231,7 +231,9 @@ async function main(...args) {
           if(!predicate(node, path)) continue;
           console.log('removeStatements loop:', new ImmutablePath(path), printAst(node));
 
-          if(node instanceof ImportStatement || (Util.isObject(node) && node.what == 'default')) {
+          if(node instanceof ImportDeclaration ||
+            (Util.isObject(node) && node.what == 'default')
+          ) {
             deep.unset(ast, path);
           } else {
             console.log('i:', deep.get(ast, path.slice(0, -2)));
@@ -247,7 +249,7 @@ async function main(...args) {
       const getRelative = filename => path.join(thisdir, filename);
       const getFile = Util.memoize(module => searchModuleInPath(module, file));
       let imports,
-        importStatements = [...flat.entries()].filter(([key, node]) => node instanceof ImportStatement
+        importStatements = [...flat.entries()].filter(([key, node]) => node instanceof ImportDeclaration
         );
       imports = importStatements.map(([path, node], i) => {
         //   console.debug("node:",node);

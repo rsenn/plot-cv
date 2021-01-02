@@ -1,7 +1,7 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
-import { estree, ESNode, BlockStatement, SequenceExpression, TemplateLiteral, CallExpression, ImportStatement, Identifier, ObjectBindingPattern, ArrowFunction, Program } from './lib/ecmascript/estree.js';
+import { estree, ESNode, BlockStatement, SequenceExpression, TemplateLiteral, CallExpression, ImportDeclaration, Identifier, ObjectBindingPattern, ArrowFunction, Program } from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import { Path } from './lib/json.js';
@@ -134,7 +134,7 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
   }
 */
   const isRequire = node => node instanceof CallExpression && node.callee.value == 'require';
-  const isImport = node => node instanceof ImportStatement;
+  const isImport = node => node instanceof ImportDeclaration;
 
   let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
       pos * 10 - 1,
