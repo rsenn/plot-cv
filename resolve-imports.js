@@ -526,7 +526,7 @@ async function main(...args) {
     let st = new Tree(ast);
 
     filesystem.writeFile(path.basename(file.replace(/\.[^\/]*$/, '')) + '.ast.json',
-      JSON.stringify(ast)
+      JSON.stringify(ast, null, 2)
     );
 
     //console.log(`${file} parsed:`, { data, error });

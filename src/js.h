@@ -1,6 +1,8 @@
 #ifndef JS_H
 #define JS_H
 
+#include <errno.h>
+
 extern "C" {
 #include "quickjs/quickjs-atom.h"
 }
