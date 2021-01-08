@@ -184,7 +184,7 @@ export async function GerberToGcode(project, allOpts = {}) {
     ...opts
   };
   let response,
-    result = project.gcode[side] = {};
+    result = (project.gcode[side] = {});
   if (typeof side == 'string') request[side] = 1;
   response = await FetchURL(`/gcode${side ? '?side=' + side : ''}`, {
     method: 'POST',
@@ -193,28 +193,29 @@ export async function GerberToGcode(project, allOpts = {}) {
   })
     .then(NormalizeResponse)
     .catch((error) => ({ error }));
- if (response.data) {
-let { data } = response;
-if(data[side]) {
-   console.debug('GerberToGcode data =', data);
-result.data = data[side];
-result.file  = data.files[side];
-result.cmd = data.cmd;
-result.output = data.output;
-}
-}
- if ((opts.fetch || typeof result.data != 'string') && result.file ) {
+  if (response.data) {
+    let { data } = response;
+    if (data[side]) {
+      console.debug('GerberToGcode data =', data);
+      result.data = data[side];
+      result.file = data.files[side];
+      result.cmd = data.cmd;
+      result.output = data.output;
+    }
+  }
+  if ((opts.fetch || typeof result.data != 'string') && result.file) {
     response = await FetchCached(`static/${response.file.replace(/^\.\//, '')}`).then(ResponseData);
-     console.debug('GerberToGcode result =', result);
-  if (response.data) result.data = response.data;
+    console.debug('GerberToGcode result =', result);
+    if (response.data) result.data = response.data;
   }
 
   console.debug('GerberToGcode result =', result);
-  if(!result.data) 
-Util.lazyProperty(result, 'data',async  () => {
-    let response = await FetchCached(`static/${response.file}`).then(ResponseData);
- return response;
-});return result;
+  if (!result.data)
+    Util.lazyProperty(result, 'data', async () => {
+      let response = await FetchCached(`static/${response.file}`).then(ResponseData);
+      return response;
+    });
+  return result;
 }
 
 export const GcodeToPolylines = (data, opts = {}) => {

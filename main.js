@@ -1796,29 +1796,26 @@ const AppMain = (window.onload = async () => {
         id: `layer-${i}`,
         onClick: useDoubleClick(
           (e) => {
-let { target } = e;
+            let { target } = e;
 
-while(!target.hasAttribute('id') && target.parentElement)
-target = target.parentElement;
-            console.log('Double click', { solo , i , target});
+            while (!target.hasAttribute('id') && target.parentElement) target = target.parentElement;
+            console.log('Double click', { solo, i, target });
             let layers = [...layerList()];
-              let visibleLayers = layers.filter((l) => Util.is.on(l.visible()));
-              let hiddenLayers = layers.filter((l) => !Util.is.on(l.visible()));
-                      console.log('Layer.onClick' ,  { visibleLayers,hiddenLayers, solo });
+            let visibleLayers = layers.filter((l) => Util.is.on(l.visible()));
+            let hiddenLayers = layers.filter((l) => !Util.is.on(l.visible()));
+            console.log('Layer.onClick', { visibleLayers, hiddenLayers, solo });
 
             if (solo) {
-if(target) {
-let id = +target.getAttribute('id').replace(/.*-/g, '');
-if(i == id) {
-  let restoreData = solo;
-              setSolo(null);
-              restoreItemsProperty(restoreData, layers, (item, value) => item.visible(Util.is.on(value)));
-     
-}
-
-}
-                 //for (let l of hiddenLayers) l.visible('yes');
-} else {
+              if (target) {
+                let id = +target.getAttribute('id').replace(/.*-/g, '');
+                if (i == id) {
+                  let restoreData = solo;
+                  setSolo(null);
+                  restoreItemsProperty(restoreData, layers, (item, value) => item.visible(Util.is.on(value)));
+                }
+              }
+              //for (let l of hiddenLayers) l.visible('yes');
+            } else {
               setSolo(saveItemsProperty(visibleLayers, (item) => Util.is.on(item.visible())));
               for (let l of visibleLayers) l.visible('no');
               setVisible(true);
@@ -1829,7 +1826,7 @@ if(i == id) {
             let layers = [...layerList()];
 
             if (solo) {
-           /*   let restoreData = solo;
+              /*   let restoreData = solo;
               setSolo(null);
               restoreItemsProperty(restoreData, layers, (item, value) => item.visible(Util.is.on(value)));*/
             } else {
@@ -2028,17 +2025,17 @@ if(i == id) {
                 allGcode[side] = gcode;
                 //project.gcode[side] = gcode.data && gcode.data.data ? gcode.data.data : gcode.data;
               }
-                            console.debug('GerberToGcode allGcode = ', allGcode);
-  let bbox;
+              console.debug('GerberToGcode allGcode = ', allGcode);
+              let bbox;
               for (let side of ['outline', 'back', 'front', 'drill']) {
                 try {
                   let gerber = project.gerber[side];
                   let data = allGcode[side];
                   let file = gerber.file || allGcode.data.files[side];
-                            console.debug('GerberToGcode  ', {gerber,data,file});
+                  console.debug('GerberToGcode  ', { gerber, data, file });
 
                   if (data) {
-                    let gc = (  { data, file });
+                    let gc = { data, file };
 
                     if (side != 'drill') {
                       let processed = file.replace(/\.ngc$/, '.svg');
