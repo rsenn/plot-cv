@@ -41,7 +41,7 @@ const fp = dlsym(RTLD_DEFAULT, 'fcntl');
 define('fcntl', fp, null, 'int', 'int', 'int', 'int');
 
 export function fcntl(fd, cmd, arg) {
-    return call('fcntl', fd, cmd, arg);
+  return call('fcntl', fd, cmd, arg);
 }
 
 export default fcntl;

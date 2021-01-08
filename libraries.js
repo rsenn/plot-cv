@@ -23,7 +23,8 @@ async function Search(q, languages) {
   const [doc] = tXml(html);
   console.log('doc:', doc);
 
-  const flat = deep.flatten(doc,
+  const flat = deep.flatten(
+    doc,
     new Map(),
     (v, p) => typeof v == 'object' && v != null && 'tagName' in v,
     (p, v) => [XPath.from(p, doc), v]
@@ -40,11 +41,11 @@ async function main(...args) {
     multiline: 1,
     alignMap: true
   });
-  if(args.length == 0) args = ['parser'];
+  if (args.length == 0) args = ['parser'];
   let languages;
   const add = (arr, ...items) => [...(arr ? arr : []), ...items];
 
-  while(/^-/.test(args[0])) {
+  while (/^-/.test(args[0])) {
     let opt = args.shift();
 
     switch (opt) {
@@ -55,7 +56,7 @@ async function main(...args) {
     }
   }
 
-  for(let arg of args) {
+  for (let arg of args) {
     Search(arg, languages);
   }
 }

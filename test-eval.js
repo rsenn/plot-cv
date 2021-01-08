@@ -36,10 +36,7 @@ async function main(args) {
       Symbol: { species: Symbol.for('species') },
       console: {
         log(...args) {
-          console.debug('console.log(',
-            ...args.map(arg => `'${arg}'`).reduce((acc, arg) => (acc ? [...acc, ',', arg] : [arg]), null),
-            ')'
-          );
+          console.debug('console.log(', ...args.map((arg) => `'${arg}'`).reduce((acc, arg) => (acc ? [...acc, ',', arg] : [arg]), null), ')');
         }
       },
       trkl
@@ -50,7 +47,7 @@ async function main(args) {
     let iter = env.generate(ast);
     console.log('iter:', iter);
 
-    for(let it of iter()) console.info('it:', it);
+    for (let it of iter()) console.info('it:', it);
   });
 
   let output = printer.print(ast);
@@ -60,6 +57,6 @@ async function main(args) {
 }
 try {
   Util.callMain(main, true);
-} catch(error) {
+} catch (error) {
   console.error('ERROR:', error);
 }

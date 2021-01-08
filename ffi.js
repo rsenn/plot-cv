@@ -22,7 +22,28 @@
 
 import * as std from 'std';
 import * as os from 'os';
-import { debug, dlopen, dlerror, dlclose, dlsym, define, call, toString, toArrayBuffer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
+import {
+  debug,
+  dlopen,
+  dlerror,
+  dlclose,
+  dlsym,
+  define,
+  call,
+  toString,
+  toArrayBuffer,
+  errno,
+  JSContext,
+  RTLD_LAZY,
+  RTLD_NOW,
+  RTLD_GLOBAL,
+  RTLD_LOCAL,
+  RTLD_NODELETE,
+  RTLD_NOLOAD,
+  RTLD_DEEPBIND,
+  RTLD_DEFAULT,
+  RTLD_NEXT
+} from 'ffi';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 
@@ -36,26 +57,26 @@ async function main(...args) {
   console.log('RTLD_NOW = ', RTLD_NOW);
   /* Expect an error -- libc.so is (usually) a linker script */
   console.log('dlopen = ', (r = dlopen('libc.so.6', RTLD_NOW)));
-  if(r == null) console.log('dlerror = ', dlerror());
+  if (r == null) console.log('dlerror = ', dlerror());
   /* But, using libc.so.6 should work */
   console.log('dlopen = ', (h = dlopen('libc.so.6', RTLD_NOW)));
-  if(h == null) console.log('dlerror = ', dlerror());
+  if (h == null) console.log('dlerror = ', dlerror());
   console.log('dlsym = ', (r = dlsym(h, 'malloc')));
-  if(r == null) console.log('dlerror = ', dlerror());
+  if (r == null) console.log('dlerror = ', dlerror());
   console.log('dlclose = ', (r = dlclose(h)));
-  if(r != 0) console.log('dlerror = ', dlerror());
+  if (r != 0) console.log('dlerror = ', dlerror());
   console.log('dlopen = ', (h = dlopen(null, RTLD_NOW)));
-  if(h == null) console.log('dlerror = ', dlerror());
+  if (h == null) console.log('dlerror = ', dlerror());
   console.log('dlsym = ', (r = dlsym(h, 'malloc')));
-  if(r == null) console.log('dlerror = ', dlerror());
+  if (r == null) console.log('dlerror = ', dlerror());
   console.log('dlclose = ', (r = dlclose(h)));
-  if(r != 0) console.log('dlerror = ', dlerror());
+  if (r != 0) console.log('dlerror = ', dlerror());
   var malloc;
   console.log('dlsym = ', (malloc = dlsym(RTLD_DEFAULT, 'malloc')));
-  if(malloc == null) console.log('dlerror = ', dlerror());
+  if (malloc == null) console.log('dlerror = ', dlerror());
   var free;
   console.log('dlsym = ', (free = dlsym(RTLD_DEFAULT, 'free')));
-  if(free == null) console.log('dlerror = ', dlerror());
+  if (free == null) console.log('dlerror = ', dlerror());
 
   /* We have function pointers to malloc and free -- define the ffi
    * functions
@@ -74,7 +95,7 @@ async function main(...args) {
    */
   var strlen;
   strlen = dlsym(RTLD_DEFAULT, 'strlen');
-  if(strlen == null) console.log(dlerror());
+  if (strlen == null) console.log(dlerror());
   define('strlen', strlen, null, 'int', 'char *');
 
   var n;
@@ -86,7 +107,7 @@ async function main(...args) {
    */
   var strdup;
   strdup = dlsym(RTLD_DEFAULT, 'strdup');
-  if(strdup == null) console.log(dlerror());
+  if (strdup == null) console.log(dlerror());
   define('strdup', strdup, null, 'char *', 'char *');
 
   p = call('strdup', 'dup this');
@@ -101,11 +122,11 @@ async function main(...args) {
   console.log();
   console.log('testing test.so functions');
   h = dlopen('./test.so', RTLD_NOW);
-  if(h == null) console.log("can't load ./test.so: ", dlerror());
+  if (h == null) console.log("can't load ./test.so: ", dlerror());
   var fp;
   fp = dlsym(h, 'test1');
-  if(fp == null) console.log("can't find symbol test1: ", dlerror());
-  if(!define('test1', fp, null, 'int', 'void *')) console.log("can't define test1");
+  if (fp == null) console.log("can't find symbol test1: ", dlerror());
+  if (!define('test1', fp, null, 'int', 'void *')) console.log("can't define test1");
   /* test1 takes a buffer but a string will work -- changes to the string
    * are lost, because a writable buffer is passed, but discarded before
    * the return.
@@ -136,7 +157,7 @@ async function main(...args) {
   call('free', p);
 
   fp = dlsym(RTLD_DEFAULT, 'strtoul');
-  if(fp == null) console.log(dlerror());
+  if (fp == null) console.log(dlerror());
   define('strtoul', fp, null, 'ulong', 'string', 'string', 'int');
   n = call('strtoul', '1234', null, 0);
   console.log(n, 'Should be 1234');
@@ -148,7 +169,7 @@ async function main(...args) {
 
   function syscall(name, retval, ...args) {
     let fn = dlsym(RTLD_DEFAULT, name);
-    if(fn == null) console.log(dlerror());
+    if (fn == null) console.log(dlerror());
     define(name, fn, null, retval, ...args);
     return (...args) => call(name, ...args);
   }
@@ -163,7 +184,7 @@ async function main(...args) {
 
     addr
       .split(/\./g)
-      .map(n => +n)
+      .map((n) => +n)
       .forEach((n, i) => (arr[4 + i] = n));
     Object.assign(buf, {
       get af() {
@@ -178,7 +199,7 @@ async function main(...args) {
         let arr = new Uint8Array(this);
         return arr
           .slice(4, 8)
-          .map(n => n + '')
+          .map((n) => n + '')
           .join('.');
       }
     });
@@ -199,7 +220,7 @@ async function main(...args) {
   function str2buf(str) {
     let buf = new ArrayBuffer(str.length);
     let arr = new Uint8Array(buf);
-    for(let i = 0; i < str.length; i++) arr[i] = str.codePointAt(i);
+    for (let i = 0; i < str.length; i++) arr[i] = str.codePointAt(i);
     return buf;
   }
 
@@ -207,7 +228,7 @@ async function main(...args) {
     let arr = new Uint8Array(buf);
     let s = '';
     len = len || arr.length;
-    for(let i = 0; i < len; i++) s += String.fromCodePoint(arr[i]);
+    for (let i = 0; i < len; i++) s += String.fromCodePoint(arr[i]);
     return s;
   }
 
@@ -231,15 +252,15 @@ async function main(...args) {
   }
   function FD_ZERO(buf) {
     let arr = new Uint8Array(buf);
-    for(let i = 0; i < buf.byteLength; i++) arr[i] = 0;
+    for (let i = 0; i < buf.byteLength; i++) arr[i] = 0;
     return buf;
   }
   function fd_array(buf) {
     let arr = new Uint8Array(buf);
     let size = buf.byteLength * 8;
     let ret = [];
-    for(let fd = 0; fd < size; fd++) {
-      if((+arr[fd >> 3] >> (fd & 0x7)) & 1) ret.push(fd);
+    for (let fd = 0; fd < size; fd++) {
+      if ((+arr[fd >> 3] >> (fd & 0x7)) & 1) ret.push(fd);
     }
     return ret;
   }
@@ -247,7 +268,7 @@ async function main(...args) {
   let socket = syscall('socket', 'int', 'int', 'int', 'int');
   let fd = socket(2, 1, 6);
   console.log('fd = ', fd);
-  if(fd == -1) console.log('errno() = ', errno());
+  if (fd == -1) console.log('errno() = ', errno());
 
   let fcntl = syscall('fcntl', 'int', 'int', 'int', 'int');
 
@@ -266,11 +287,11 @@ async function main(...args) {
   console.log('sa.byteLength = ', sa.byteLength);
   ret = connect(fd, sa, sa.byteLength);
   console.log('ret = ', ret);
-  if(ret == -1) console.log('errno() = ', errno());
+  if (ret == -1) console.log('errno() = ', errno());
 
   let flags = fcntl(fd, F_GETFL);
   console.log('fcntl() flags = ', ret);
-  if(flags == -1) console.log('fcntl() errno() = ', errno());
+  if (flags == -1) console.log('fcntl() errno() = ', errno());
   console.log(`fcntl(${fd}, F_SETFL, 0o${(+flags | 0o4000).toString(8)})`);
   fcntl(fd, F_SETFL, flags | 0o4000);
   flags = fcntl(fd, F_GETFL);

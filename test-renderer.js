@@ -13,8 +13,8 @@ let filesystem;
 Util.colorCtor = ColoredText;
 
 function dumpFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
-  if(typeof data != 'string') data = '' + data;
+  if (Util.isArray(data)) data = data.join('\n');
+  if (typeof data != 'string') data = '' + data;
 
   filesystem.writeFile(name, data + '\n');
 
@@ -54,16 +54,16 @@ async function testRenderBoard(file) {
 
 async function main(...args) {
   await ConsoleSetup({ depth: 10 });
-  await PortableFileSystem(fs => (filesystem = fs));
+  await PortableFileSystem((fs) => (filesystem = fs));
 
-  if(Util.platform == 'quickjs')
+  if (Util.platform == 'quickjs')
     await import('os').then(({ setTimeout, setInterval, clearInterval, clearTimeout }) => {
       Object.assign(globalThis, { setTimeout, setInterval, clearInterval, clearTimeout });
     });
 
-  if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt');
+  if (args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt');
 
-  for(let filename of args) {
+  for (let filename of args) {
     let r = [await testRenderBoard(filename), await testRenderSchematic(filename)];
     console.log('r:', r);
   }
@@ -71,4 +71,4 @@ async function main(...args) {
   console.log('finished');
 }
 
-main().catch(err => console.log('error:', err));
+main().catch((err) => console.log('error:', err));

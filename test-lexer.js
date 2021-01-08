@@ -13,7 +13,7 @@ const Code = `
   
  `;
 
-(async arg => {
+(async (arg) => {
   await ConsoleSetup();
   let data = Code || (await fs.readFile(arg || './lib/ecmascript/parser.js'));
   console.log('data:', data);
@@ -25,8 +25,8 @@ const Code = `
       token = lexer.lex();
 
       console.info('tok:', tokenColor(token));
-    } while(token.type != 'eof');
-  } catch(err) {
+    } while (token.type != 'eof');
+  } catch (err) {
     console.log('ERROR:', err);
   }
 })(...Util.getArgs());

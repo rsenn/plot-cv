@@ -19,23 +19,19 @@ export const MouseEvents = [
   'EVENT_MOUSEHWHEEL'
 ].reduce((acc, name) => ({ ...acc, [cv[name]]: name }), {});
 
-export const MouseFlags = [
-  'EVENT_FLAG_LBUTTON',
-  'EVENT_FLAG_RBUTTON',
-  'EVENT_FLAG_MBUTTON',
-  'EVENT_FLAG_CTRLKEY',
-  'EVENT_FLAG_SHIFTKEY',
-  'EVENT_FLAG_ALTKEY'
-].reduce((acc, name) => ({ ...acc, [name]: cv[name] }), {});
+export const MouseFlags = ['EVENT_FLAG_LBUTTON', 'EVENT_FLAG_RBUTTON', 'EVENT_FLAG_MBUTTON', 'EVENT_FLAG_CTRLKEY', 'EVENT_FLAG_SHIFTKEY', 'EVENT_FLAG_ALTKEY'].reduce(
+  (acc, name) => ({ ...acc, [name]: cv[name] }),
+  {}
+);
 
 export const Mouse = {
   printEvent: (() => {
-    return event => MouseEvents[event].replace(/EVENT_/, '');
+    return (event) => MouseEvents[event].replace(/EVENT_/, '');
   })(),
   printFlags: (() => {
-    const toks = Util.bitsToNames(MouseFlags, name => name.replace(/EVENT_FLAG_/, ''));
+    const toks = Util.bitsToNames(MouseFlags, (name) => name.replace(/EVENT_FLAG_/, ''));
 
-    return flags => [...toks(flags)];
+    return (flags) => [...toks(flags)];
   })()
 };
 
@@ -92,7 +88,7 @@ Object.assign(TextStyle.prototype, {
   size(text) {
     const { fontFace, fontScale, thickness } = this;
     let baseY;
-    let size = new Size(...draw.textSize(text, fontFace, fontScale, thickness, y => (baseY = y)));
+    let size = new Size(...draw.textSize(text, fontFace, fontScale, thickness, (y) => (baseY = y)));
 
     size.y = baseY;
     return size;

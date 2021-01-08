@@ -5,11 +5,11 @@ const immutableClass = (orig, ...proto) => {
   let imName = 'Immutable' + name;
   proto = proto || [];
 
-  let initialProto = proto.map(p =>
+  let initialProto = proto.map((p) =>
     Util.isArrowFunction(p)
       ? p
-      : ctor => {
-          for(let n in p) ctor.prototype.n = p.n;
+      : (ctor) => {
+          for (let n in p) ctor.prototype.n = p.n;
         }
   );
 
@@ -25,7 +25,7 @@ const immutableClass = (orig, ...proto) => {
     
     return ${imName};`;
 
-  for(let p of initialProto) p(orig);
+  for (let p of initialProto) p(orig);
   let ctor = new Function(name, body)(orig);
 
   //console.log('immutableClass', { initialProto, body }, orig);

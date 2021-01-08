@@ -12,11 +12,11 @@ function FdReader(fd, bufferSize = 1024) {
     do {
       let r = await filesystem.waitRead(fd);
       ret = filesystem.read(fd, buf);
-      if(ret > 0) {
+      if (ret > 0) {
         let data = buf.slice(0, ret);
         await push(filesystem.bufferToString(data));
       }
-    } while(ret == bufferSize);
+    } while (ret == bufferSize);
     stop();
     filesystem.close(fd);
   });
@@ -24,7 +24,7 @@ function FdReader(fd, bufferSize = 1024) {
 
 async function main(...args) {
   await ConsoleSetup({ colors: true, depth: Infinity });
-  await PortableChildProcess(p => (childProcess = p));
+  await PortableChildProcess((p) => (childProcess = p));
 
   let proc = childProcess('ls', ['-la'], { block: false, stdio: ['pipe', 'pipe', 'pipe'] });
 

@@ -1826,13 +1826,14 @@ const AppMain = (window.onload = async () => {
             let layers = [...layerList()];
 
             if (solo) {
-              /*   let restoreData = solo;
+              let restoreData = solo;
               setSolo(null);
-              restoreItemsProperty(restoreData, layers, (item, value) => item.visible(Util.is.on(value)));*/
+              //   restoreItemsProperty(restoreData, layers, (item, value) => item.visible(Util.is.on(value)));
             } else {
             }
             layerList(layers);
-          }
+          },
+          { timeout: 40 }
         ),
         onMouseMove: (e) => {
           if (e.buttons & 1 && setTo !== undefined) setVisible(setTo);
@@ -1840,12 +1841,12 @@ const AppMain = (window.onload = async () => {
         onMouseUp: (e) => {
           setTo = null;
         },
-        onMouseDown: (e) => {
-          if (e.buttons & 1) {
+        onMouseDown: Util.debounce((e) => {
+          /* if (e.buttons & 1) {
             setVisible((setTo = !isVisible));
             return true;
-          }
-        }
+          }*/
+        }, 200)
       },
       [
         h(

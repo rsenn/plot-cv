@@ -214,12 +214,13 @@ var offlineFundamentals = [
    You can use this event to prepare the service worker to be able to serve
    files while visitors are offline.
 */
-self.addEventListener('install', event => {
+self.addEventListener('install', (event) => {
   log('install event in progress.');
   /* Using event.waitUntil(p) blocks the installation process on the provided
      promise. If the promise is rejected, the service worker won't be installed.
   */
-  event.waitUntil(/* The caches built-in is a promise-based API that helps you cache responses,
+  event.waitUntil(
+    /* The caches built-in is a promise-based API that helps you cache responses,
        as well as finding and deleting them.
     */
     caches
@@ -228,7 +229,7 @@ self.addEventListener('install', event => {
          one fell swoop later, when phasing out an older service worker.
       */
       .open(version + 'fundamentals')
-      .then(cache =>
+      .then((cache) =>
         /* After the cache is opened, we can fill it with the offline fundamentals.
            The method below will add all resources in `offlineFundamentals` to the
            cache, after making requests for them.
@@ -240,15 +241,15 @@ self.addEventListener('install', event => {
 });
 let messagePort;
 
-self.addEventListener('message', event => {
+self.addEventListener('message', (event) => {
   const { data } = event;
 
-  if(data) {
+  if (data) {
     const { type } = data;
 
-    if(type == 'INIT_PORT') {
+    if (type == 'INIT_PORT') {
       messagePort = event.ports[0];
-    } else if(data == 'REQUESTED') {
+    } else if (data == 'REQUESTED') {
       messagePort.postMessage({ requested });
     }
 
@@ -261,7 +262,7 @@ self.addEventListener('message', event => {
    comprehends even the request for the HTML page on first load, as well as JS and
    CSS resources, fonts, any images, etc.
 */
-self.addEventListener('fetch', event => {
+self.addEventListener('fetch', (event) => {
   const { request } = event;
   const { url } = request;
   const location = url.replace(/^[^\/]*:\/\/[^\/]*/, '');
@@ -271,7 +272,7 @@ self.addEventListener('fetch', event => {
   /* We should only cache GET requests, and deal with the rest of method in the
      client-side, by handling failed POST,PUT,PATCH,etc. requests.
   */
-  if(event.request.method !== 'GET') {
+  if (event.request.method !== 'GET') {
     /* If we don't block the event as shown below, then the request will go to
        the network as usual. */
     log('fetch event ignored.', event.request.method, location);
@@ -284,13 +285,14 @@ self.addEventListener('fetch', event => {
      Fulfillment result will be used as the response, and rejection will end in a
      HTTP response indicating failure.
   */
-  event.respondWith(caches
+  event.respondWith(
+    caches
       /* This method returns a promise that resolves to a cache entry matching
          the request. Once the promise is settled, we can then provide a response
          to the fetch request.
       */
       .match(event.request)
-      .then(cached => {
+      .then((cached) => {
         /* Even if the response is in our cache, we go to the network as well.
            This pattern is known for producing "eventually fresh" responses,
            where we return cached responses immediately, and meanwhile pull
@@ -321,7 +323,7 @@ self.addEventListener('fetch', event => {
           caches
             // We open a cache to store the response for this request.
             .open(version + 'pages')
-            .then(cache =>
+            .then((cache) =>
               /* We store the response for this request. It'll later become
                  available to caches.match(event.request) calls, when looking
                  for cached responses.
@@ -369,21 +371,23 @@ self.addEventListener('fetch', event => {
    this point you know that the new worker was installed correctly. In this example,
    we delete old caches that don't match the version in the worker we just finished
    installing. */
-self.addEventListener('activate', event => {
+self.addEventListener('activate', (event) => {
   /* Just like with the install event, event.waitUntil blocks activate on a promise.
      Activation will fail unless the promise is fulfilled. */
   log('activate event in progress.');
 
-  event.waitUntil(caches
+  event.waitUntil(
+    caches
       /* This method returns a promise which will resolve to an array of available
          cache keys.  */
       .keys()
       // We return a promise that settles when all outdated caches are deleted.
-      .then(keys =>
-        Promise.all(keys
+      .then((keys) =>
+        Promise.all(
+          keys
             // Filter by keys that don't start with the latest version prefix.
-            .filter(key => !key.startsWith(version))
-            .map(key => caches.delete(key))
+            .filter((key) => !key.startsWith(version))
+            .map((key) => caches.delete(key))
         )
       )
       .then(() => log('activate completed.'))

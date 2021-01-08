@@ -48,8 +48,8 @@ const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" view
 
 */
 function dumpFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
-  if(typeof data != 'string') data = '' + data;
+  if (Util.isArray(data)) data = data.join('\n');
+  if (typeof data != 'string') data = '' + data;
 
   filesystem.writeFile(name, data + '\n');
 
@@ -82,7 +82,7 @@ function transformTagged(node) {
     const len = parts.length;
 
     function nextProp() {
-      if(propName) {
+      if (propName) {
         a.push([propName, value]);
         value = [];
         propName = '';
@@ -90,30 +90,30 @@ function transformTagged(node) {
     }
 
     function nextTag() {
-      if(propName) nextProp();
+      if (propName) nextProp();
 
-      if(children) {
-        children = children.filter(part => typeof part != 'string' || !isSpace(part));
+      if (children) {
+        children = children.filter((part) => typeof part != 'string' || !isSpace(part));
 
-        if(children.length) r.push(children);
+        if (children.length) r.push(children);
 
         children = [];
       }
 
-      if(a.length) {
-        if(!Util.isArray(a[0])) {
+      if (a.length) {
+        if (!Util.isArray(a[0])) {
           let tag = a.shift();
           let t = a.length == 0 ? { tag } : { tag, attrs: a };
-          if(closing) t.closing = closing;
+          if (closing) t.closing = closing;
           r.push(t);
-        } else if(a.length) {
+        } else if (a.length) {
           r.push(a);
         }
         a = [];
       }
     }
     function concat(a, str) {
-      if(a.length == 0 || typeof a[a.length - 1] != typeof str) a.push(str);
+      if (a.length == 0 || typeof a[a.length - 1] != typeof str) a.push(str);
       else a[a.length - 1] += str;
     }
 
@@ -121,16 +121,16 @@ function transformTagged(node) {
       return /^[\ \t\s\r\n]*$/.test(char);
     }
 
-    for(; j < len; j++) {
+    for (; j < len; j++) {
       const arg = parts[j];
       const str = arg instanceof Literal ? Literal.string(arg) : null;
 
-      if(arg instanceof Literal)
-        for(let i = 0; i < str.length; i++) {
-          if(!inTag && str[i] == '<') {
+      if (arg instanceof Literal)
+        for (let i = 0; i < str.length; i++) {
+          if (!inTag && str[i] == '<') {
             inTag = true;
             tagName = '';
-            if(str[i + 1] == '/') {
+            if (str[i + 1] == '/') {
               closing = true;
               i++;
             } else {
@@ -138,49 +138,49 @@ function transformTagged(node) {
             }
             nextTag();
             continue;
-          } else if(!inTag) {
+          } else if (!inTag) {
             concat(children, str[i]);
             continue;
-          } else if(inTag && str[i] == '>') {
+          } else if (inTag && str[i] == '>') {
             //  console.log("rest:", str.substring(i, str.length));
-            if(tagName) {
+            if (tagName) {
               a.push(tagName);
               tagName = '';
             }
             nextTag();
             closing = inValue = inTag = inProps = false;
             continue;
-          } else if(inTag && !inProps && !isSpace(str[i])) {
+          } else if (inTag && !inProps && !isSpace(str[i])) {
             tagName += str[i];
-          } else if(inTag && !inProps && isSpace(str[i])) {
+          } else if (inTag && !inProps && isSpace(str[i])) {
             inProps = !closing;
             inValue = false;
             propName = '';
             value = [];
-            if(tagName) {
+            if (tagName) {
               a.push(tagName);
               tagName = '';
             }
             nextProp();
             continue;
-          } else if(inProps && str[i] == '=') {
-            if('\'`"'.indexOf(str[i + 1]) != -1) value = [(inValue = str[++i])];
+          } else if (inProps && str[i] == '=') {
+            if ('\'`"'.indexOf(str[i + 1]) != -1) value = [(inValue = str[++i])];
             else inValue = ' \r\n\t';
             continue;
-          } else if(inProps && propName == '' && str[i] == '/') {
+          } else if (inProps && propName == '' && str[i] == '/') {
             closing = true;
             continue;
-          } else if(inProps && !inValue && !isSpace(str[i])) {
+          } else if (inProps && !inValue && !isSpace(str[i])) {
             propName += str[i];
-            if(propName == '...') inValue = ' \r\n\t';
+            if (propName == '...') inValue = ' \r\n\t';
 
             continue;
-          } else if(inProps && inValue && inValue.indexOf(str[i]) == -1) {
+          } else if (inProps && inValue && inValue.indexOf(str[i]) == -1) {
             concat(value, str[i]);
             continue;
-          } else if(inValue && inValue.indexOf(str[i]) != -1) {
+          } else if (inValue && inValue.indexOf(str[i]) != -1) {
             //   console.log("",{ propName, inValue, value });
-            if('\'`"'.indexOf(str[i]) != -1) {
+            if ('\'`"'.indexOf(str[i]) != -1) {
               concat(value, str[i]);
             }
 
@@ -190,12 +190,12 @@ function transformTagged(node) {
           }
         }
       else {
-        if(!inTag) {
+        if (!inTag) {
           concat(children, arg);
         }
-        if(inTag && !inProps) {
+        if (inTag && !inProps) {
           tagName = arg;
-        } else if(inProps && inValue) {
+        } else if (inProps && inValue) {
           concat(value, arg);
         }
       }
@@ -212,7 +212,7 @@ globalThis.parser = null;
 let files = {};
 
 async function main(...args) {
-  if(args.length == 0) args.push('-');
+  if (args.length == 0) args.push('-');
   //await import('tty');
   const stdout = (await import('process')).stdout;
 
@@ -222,12 +222,12 @@ async function main(...args) {
 
   filesystem = await PortableFileSystem();
 
-  if(args.length == 0) args.push('./lib/ecmascript/parser.js');
-  for(let file of args) {
+  if (args.length == 0) args.push('./lib/ecmascript/parser.js');
+  for (let file of args) {
     let data, b, ret;
-    if(file == '-') file = '/dev/stdin';
+    if (file == '-') file = '/dev/stdin';
 
-    if(filesystem.exists(file)) data = filesystem.readFile(file);
+    if (filesystem.exists(file)) data = filesystem.readFile(file);
 
     console.log(`opened '${file}':`, Util.abbreviate(data));
     let ast, error;
@@ -241,9 +241,10 @@ async function main(...args) {
 
       parser.addCommentsToNodes(ast);
 
-      let flat = deep.flatten(ast,
+      let flat = deep.flatten(
+        ast,
         new Map(),
-        node => node instanceof ESNode,
+        (node) => node instanceof ESNode,
         (path, value) => {
           path = new Path(path);
           return [path, value];
@@ -253,14 +254,12 @@ async function main(...args) {
       let node2path = new WeakMap();
       let nodeKeys = [];
 
-      for(let [path, node] of flat) {
+      for (let [path, node] of flat) {
         node2path.set(node, path);
         nodeKeys.push(path);
       }
-      let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
-          pos * 10 - 1,
-          { comment, pos, len, node: posMap.keyOf(node) }
-        ]),
+      let commentMap = new Map(
+        [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node: posMap.keyOf(node) }]),
         (a, b) => a - b
       );
 
@@ -271,7 +270,8 @@ async function main(...args) {
       const taggedCalls = taggedTemplates.map(([path, node]) => [path.up(), deep.get(ast, path.up())]);
 
       console.log('taggedCalls:', taggedCalls);
-      console.log('transformTagged:',
+      console.log(
+        'transformTagged:',
         taggedCalls.map(([path, node]) => transformTagged(node))
       );
 
@@ -280,13 +280,13 @@ async function main(...args) {
       //console.log('output:', output);
 
       dumpFile(output_file, output);
-    } catch(err) {
+    } catch (err) {
       error = err;
       console.log('error:', err);
     }
     files[file] = finish(error);
 
-    if(error) Util.exit(1);
+    if (error) Util.exit(1);
 
     console.log('files:', files);
   }
@@ -296,14 +296,14 @@ async function main(...args) {
 
 function finish(err) {
   let fail = !!err;
-  if(fail) {
+  if (fail) {
     err.stack = PathReplacer()('' + err.stack)
       .split(/\n/g)
-      .filter(s => !/esfactory/.test(s))
+      .filter((s) => !/esfactory/.test(s))
       .join('\n');
   }
 
-  if(err) {
+  if (err) {
     console.log(parser.lexer.currentLine());
     console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
@@ -312,7 +312,7 @@ function finish(err) {
   let t = [];
   console.log(parser.trace());
   dumpFile('trace.log', parser.trace());
-  if(fail) {
+  if (fail) {
     console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
   }
   console.log('finish: ' + (fail ? 'error' : 'success'));

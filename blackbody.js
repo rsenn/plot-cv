@@ -262,10 +262,7 @@ async function main(arg = '3400k') {
   const [r = 1.0, g = 1.0, b = 1.0] = gamma;
 
   console.log('Gamma RGB:', { r, g, b });
-  console.log(`-vf eq2=${[eq2_gamma, contrast, brightness, saturation, r, g, b, weight]
-      .map(n => Util.roundTo(n, 0.0001, 5))
-      .join(':')}`
-  );
+  console.log(`-vf eq2=${[eq2_gamma, contrast, brightness, saturation, r, g, b, weight].map((n) => Util.roundTo(n, 0.0001, 5)).join(':')}`);
 }
 
 Util.callMain(main, true);

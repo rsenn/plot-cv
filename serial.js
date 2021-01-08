@@ -1,7 +1,7 @@
 export const serial = {
   getPorts() {
-    return navigator.usb.getDevices().then(devices => {
-      return devices.map(device => new Port(device));
+    return navigator.usb.getDevices().then((devices) => {
+      return devices.map((device) => new Port(device));
     });
   },
   requestPort() {
@@ -9,7 +9,7 @@ export const serial = {
       { vendorId: 0x239a }, // Adafruit boards
       { vendorId: 0xcafe } // TinyUSB example
     ];
-    return navigator.usb.requestDevice({ filters: filters }).then(device => new serial.Port(device));
+    return navigator.usb.requestDevice({ filters: filters }).then((device) => new serial.Port(device));
   },
   Port
 };
@@ -21,13 +21,14 @@ export function Port(device) {
   this.endpointOut = 0;
 }
 
-Port.prototype.connect = function() {
+Port.prototype.connect = function () {
   let readLoop = () => {
-    this.device_.transferIn(this.endpointIn, 64).then(result => {
+    this.device_.transferIn(this.endpointIn, 64).then(
+      (result) => {
         this.onReceive(result.data);
         readLoop();
       },
-      error => {
+      (error) => {
         this.onReceiveError(error);
       }
     );
@@ -36,21 +37,21 @@ Port.prototype.connect = function() {
   return this.device_
     .open()
     .then(() => {
-      if(this.device_.configuration === null) {
+      if (this.device_.configuration === null) {
         return this.device_.selectConfiguration(1);
       }
     })
     .then(() => {
       var interfaces = this.device_.configuration.interfaces;
-      interfaces.forEach(element => {
-        element.alternates.forEach(elementalt => {
-          if(elementalt.interfaceClass == 0xff) {
+      interfaces.forEach((element) => {
+        element.alternates.forEach((elementalt) => {
+          if (elementalt.interfaceClass == 0xff) {
             this.interfaceNumber = element.interfaceNumber;
-            elementalt.endpoints.forEach(elementendpoint => {
-              if(elementendpoint.direction == 'out') {
+            elementalt.endpoints.forEach((elementendpoint) => {
+              if (elementendpoint.direction == 'out') {
                 this.endpointOut = elementendpoint.endpointNumber;
               }
-              if(elementendpoint.direction == 'in') {
+              if (elementendpoint.direction == 'in') {
                 this.endpointIn = elementendpoint.endpointNumber;
               }
             });
@@ -74,7 +75,7 @@ Port.prototype.connect = function() {
     });
 };
 
-Port.prototype.disconnect = function() {
+Port.prototype.disconnect = function () {
   return this.device_
     .controlTransferOut({
       requestType: 'class',
@@ -86,7 +87,7 @@ Port.prototype.disconnect = function() {
     .then(() => this.device_.close());
 };
 
-Port.prototype.send = function(data) {
+Port.prototype.send = function (data) {
   return this.device_.transferOut(this.endpointOut, data);
 };
 

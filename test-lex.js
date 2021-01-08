@@ -2,7 +2,7 @@ import Lexer from './lib/ecmascript/lexer.js';
 import Util from './lib/util.js';
 
 let args = Util.getArgs();
-if(args.length == 0) args.push('-');
+if (args.length == 0) args.push('-');
 
 let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
 
@@ -11,11 +11,11 @@ main(args);
 globalThis.lexer = null;
 
 function main(args) {
-  if(args.length == 0) args.push('./components.js');
+  if (args.length == 0) args.push('./components.js');
 
-  for(let file of args) {
+  for (let file of args) {
     let data, b, ret;
-    if(file == '-') file = '/dev/stdin';
+    if (file == '-') file = '/dev/stdin';
     //console.log('file:', file);
     data = filesystem.readFile(file);
     //console.log('opened:', data);
@@ -23,7 +23,7 @@ function main(args) {
 
     globalThis.lexer = new Lexer(data.toString(), file);
     try {
-      while((token = lexer.lex())) {
+      while ((token = lexer.lex())) {
         //const { type, value, length, start, end } = token;
         //const position = token.position.start.toString();
         //console.log("position:", position);
@@ -31,7 +31,7 @@ function main(args) {
         //console.log(token.position.start.toString());
       }
       //console.log("nodes:", parser.nodes.map(n =>  [Util.className(n), n.position.toString()]));
-    } catch(err) {
+    } catch (err) {
       error = err;
       const { msg } = error;
       //console.log('ERROR:', error);

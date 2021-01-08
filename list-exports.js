@@ -20,17 +20,18 @@ console.log('main');
 Util.callMain(main);
 
 /*
-const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg"> <defs /> */ function PrefixRemover(reOrStr,
+const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" viewBox="0 0 8.996 14.817" xmlns="http://www.w3.org/2000/svg"> <defs /> */ function PrefixRemover(
+  reOrStr,
   replacement = ''
 ) {
-  if(!(Util.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
+  if (!(Util.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
 
-  return arg => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), arg);
+  return (arg) => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), arg);
 }
 
 function dumpFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
-  if(typeof data != 'string') data = '' + data;
+  if (Util.isArray(data)) data = data.join('\n');
+  if (typeof data != 'string') data = '' + data;
   filesystem.writeFile(name, data + '\n');
   console.log(`Wrote ${name}: ${data.length} bytes`);
 }
@@ -40,7 +41,7 @@ function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments))
 }
 
 async function main(...args) {
-  await PortableFileSystem(fs => (filesystem = fs));
+  await PortableFileSystem((fs) => (filesystem = fs));
   await ConsoleSetup({ depth: 5 });
 
   cwd = filesystem.realpath('.');
@@ -48,20 +49,13 @@ async function main(...args) {
   // cwd = process.cwd() || fs.realpath('.');
   console.log('cwd=', cwd);
 
-  if(args.length == 0)
-    args = [
-      /*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js',
-      'lib/geom/size.js',
-      'lib/geom/trbl.js',
-      'lib/geom/rect.js',
-      'lib/dom/element.js'
-    ];
+  if (args.length == 0) args = [/*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js', 'lib/geom/size.js', 'lib/geom/trbl.js', 'lib/geom/rect.js', 'lib/dom/element.js'];
   let r = [];
   let processed = [];
   console.log('args=', args);
   console.log('test', path.dirname('/usr/bin/ls'));
   console.log('test', path.resolve('/proc/self/../ls'));
-  const argDirs = [...args].map(arg => path.dirname(arg));
+  const argDirs = [...args].map((arg) => path.dirname(arg));
   // console.log('argDirs',Util.toString(argDirs));
 
   const dirs = [cwd].concat(argDirs);
@@ -75,25 +69,24 @@ async function main(...args) {
   try {
     console.log('relative()', path.relative(cwd, argDirs[0], cwd));
     console.log('relative()', path.relative(argDirs[0], cwd, cwd));
-  } catch(err) {
+  } catch (err) {
     console.log(err);
   }
   const name = args.join(', ');
-  while(args.length > 0) {
-    if(!processFile(args.shift())) throw error;
+  while (args.length > 0) {
+    if (!processFile(args.shift())) throw error;
   }
 
   // console.log("result:",r);
 
-  for(let ids of exportMap.values())
-    r.push(`Util.weakAssign(globalObj, { ${Util.unique(ids).join(', ')} });`);
+  for (let ids of exportMap.values()) r.push(`Util.weakAssign(globalObj, { ${Util.unique(ids).join(', ')} });`);
 
   let success = Object.entries(processed).filter(([k, v]) => !!v).length != 0;
 
   function removeFile(file) {
     let idx = args.indexOf(file);
-    if(idx != -1) args.splice(idx, idx + 1);
-    if(processed.indexOf(file) != -1) return false;
+    if (idx != -1) args.splice(idx, idx + 1);
+    if (processed.indexOf(file) != -1) return false;
     processed.push(file);
     return true;
   }
@@ -101,7 +94,7 @@ async function main(...args) {
   function processFile(file) {
     let data, b, ret;
 
-    if(!removeFile(file)) return;
+    if (!removeFile(file)) return;
     const modulePath = removeModulesDir(file);
     console.log('processing:', modulePath);
 
@@ -114,28 +107,25 @@ async function main(...args) {
     try {
       ast = parser.parseProgram();
       parser.addCommentsToNodes(ast);
-      let flat = deep.flatten(ast,
+      let flat = deep.flatten(
+        ast,
         new Map(),
-        node => node instanceof ESNode,
+        (node) => node instanceof ESNode,
         (path, value) => [path, value]
       );
       //log(`keys==`, [...flat].map(([k,v]) => [k.join('.'), Util.className(v)]));
 
-      let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportNamedDeclaration || value.exported === true
-      );
+      let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportNamedDeclaration || value.exported === true);
 
-      exports = exports.map(([p, e]) =>
-        'declarations' in e && !Util.isArray(e.declarations)
-          ? [[...p, 'declarations'], e.declarations]
-          : [p, e]
-      );
+      exports = exports.map(([p, e]) => ('declarations' in e && !Util.isArray(e.declarations) ? [[...p, 'declarations'], e.declarations] : [p, e]));
 
-      for(let [path, node] of exports) {
+      for (let [path, node] of exports) {
         log(`export ${path}`, node);
-        if(node.declarations) deep.set(ast, path, node.declarations[0]);
+        if (node.declarations) deep.set(ast, path, node.declarations[0]);
       }
 
-      allExports.splice(allExports.length,
+      allExports.splice(
+        allExports.length,
         0,
         ...exports.map(([key, value]) => {
           const { position } = ESNode.assoc(value);
@@ -157,37 +147,31 @@ async function main(...args) {
         return stmt;
       });*/
       console.log('exports [2]:', exports);
-      exports = exports.map(decl =>
+      exports = exports.map((decl) =>
         decl instanceof ObjectPattern
-          ? decl.properties.map(prop => ('id' in prop ? prop.id : prop))
+          ? decl.properties.map((prop) => ('id' in prop ? prop.id : prop))
           : decl instanceof ObjectExpression
-          ? decl.members.map(prop => ('id' in prop ? prop.id : prop))
+          ? decl.members.map((prop) => ('id' in prop ? prop.id : prop))
           : decl
       );
       console.log('exports [3]:', exports);
       //exports = exports.map(decls => decls.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl)));
-      exports = exports.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl));
+      exports = exports.map((decl) => (Util.isObject(decl) && 'id' in decl ? decl.id : decl));
 
       //      exportProps =exportProps.map(ep => 'id' in ep ? ep.id.value : ep);
 
       log(`exports==`, exports);
 
       let exportProps = exports.reduce((a, stmt) => {
-        if('declarations' in stmt) stmt = stmt.declarations;
-        if('properties' in stmt)
-          stmt = stmt.properties.map(({ property, id }) =>
-            id.value && property.value && id.value != property.value
-              ? `${property.value} as ${id.value}`
-              : property.value || id.value
-          );
-        if('value' in stmt) stmt = [stmt.value];
-        if(!Util.isArray(stmt)) console.error('stmt error:', stmt);
+        if ('declarations' in stmt) stmt = stmt.declarations;
+        if ('properties' in stmt)
+          stmt = stmt.properties.map(({ property, id }) => (id.value && property.value && id.value != property.value ? `${property.value} as ${id.value}` : property.value || id.value));
+        if ('value' in stmt) stmt = [stmt.value];
+        if (!Util.isArray(stmt)) console.error('stmt error:', stmt);
         return [...a, ...stmt];
       }, []);
 
-      exportProps = exportProps
-        .map(ep => (Util.isObject(ep) && 'id' in ep ? ep.id : ep))
-        .map(ep => (Util.isObject(ep) && 'value' in ep ? ep.value : ep));
+      exportProps = exportProps.map((ep) => (Util.isObject(ep) && 'id' in ep ? ep.id : ep)).map((ep) => (Util.isObject(ep) && 'value' in ep ? ep.value : ep));
 
       log(`exportProps==`, exportProps);
 
@@ -197,7 +181,7 @@ async function main(...args) {
       log(`exports =`, exports.join(', '));*/
 
       exportMap.set(modulePath, Util.unique(exportProps));
-    } catch(err) {
+    } catch (err) {
       console.error(err.message);
       Util.putStack(err.stack);
       error = err;
@@ -206,16 +190,12 @@ async function main(...args) {
     }
     let output = '';
     output = printAst(ast, parser.comments, printer).trim();
-    if(output != '')
-      r = r.concat(`/* --- concatenanted '${file}' --- */\n${output}\n`.split(/\n/g));
+    if (output != '') r = r.concat(`/* --- concatenanted '${file}' --- */\n${output}\n`.split(/\n/g));
 
     function log(...args) {
-      const assoc = args
-        .map(arg => arg instanceof ESNode && ESNode.assoc(arg))
-        .filter(assoc => !!assoc);
+      const assoc = args.map((arg) => arg instanceof ESNode && ESNode.assoc(arg)).filter((assoc) => !!assoc);
       //if(assoc[0]) console.log('ASSOC:', assoc[0].position.clone());
-      const prefix =
-        (assoc.length == 1 && assoc[0].position && assoc[0].position.clone()) || modulePath;
+      const prefix = (assoc.length == 1 && assoc[0].position && assoc[0].position.clone()) || modulePath;
       console.log(prefix.toString() + ':', ...args);
     }
     return true;
@@ -225,7 +205,7 @@ async function main(...args) {
   //console.log('exports:', allExports);
   console.log('exportMap:', exportMap);
   let output = '';
-  for(let [source, list] of exportMap) {
+  for (let [source, list] of exportMap) {
     // list.sort();
     list = Util.unique(list);
     output += `export { ${list.join(', ')} } from './${source}';\n`;
@@ -236,13 +216,13 @@ async function main(...args) {
 
 function finish(err) {
   let fail = !!err;
-  if(fail) {
+  if (fail) {
     err.stack = PathReplacer()('' + err.stack)
       .split(/\n/g)
-      .filter(s => !/esfactory/.test(s))
+      .filter((s) => !/esfactory/.test(s))
       .join('\n');
   }
-  if(err) {
+  if (err) {
     console.log(parser.lexer.currentLine());
     console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
@@ -250,7 +230,7 @@ function finish(err) {
   let t = [];
   //console.log(parser.trace() );
   dumpFile('trace.log', parser.trace());
-  if(fail) {
+  if (fail) {
     console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
   }
   console.log('finish: ' + (fail ? 'error' : 'success'));

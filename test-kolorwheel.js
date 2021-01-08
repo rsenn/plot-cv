@@ -134,16 +134,16 @@ const layerColors = {
   trash: 'rgb(189,133,64)'
 };
 
-const findAllKeys = color => {
+const findAllKeys = (color) => {
   let keys = [];
-  for(let name in layerColors) {
+  for (let name in layerColors) {
     const c = layerColors[name];
-    if(c == color) keys.push(name);
+    if (c == color) keys.push(name);
   }
   return keys;
 };
 
-for(let name in layerColors) {
+for (let name in layerColors) {
   const c = RGBA.fromString(layerColors[name]).hex();
   layerColors[name] = c;
 }
@@ -153,19 +153,17 @@ const allColors = Util.unique(Object.values(layerColors));
 
 let keyList = [];
 
-for(let color of allColors) {
+for (let color of allColors) {
   let keys = findAllKeys(color);
   keyList.push(keys);
   //
 }
 //console.log("keyList:", keyList);
 
-const GeneratePalette = numColors => {
+const GeneratePalette = (numColors) => {
   let ret = [];
   let base = new HSLA(Util.randInt(0, 360, prng), 100, 50).toRGBA();
-  let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360],
-    []
-  );
+  let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360], []);
   offsets = offsets.sort((a, b) => a - b);
   //offsets = Util.shuffle(offsets, prng);
   //console.log('offsets:', offsets);
@@ -185,11 +183,11 @@ const palette = GeneratePalette(5);
 //console.log('keyList.length:', keyList.length);
 
 let s = '';
-for(let i = 0; i < keyList.length; i++) {
+for (let i = 0; i < keyList.length; i++) {
   //console.log(`keys[${i}]:`, keyList[i]);
 
-  for(let key of keyList[i]) {
-    if(s != '') s += ', ';
+  for (let key of keyList[i]) {
+    if (s != '') s += ', ';
     s += `${key}: palette[${i}]`;
   }
 }

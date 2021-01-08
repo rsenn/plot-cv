@@ -1,7 +1,28 @@
 import * as std from 'std';
 import * as os from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
-import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toArrayBuffer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
+import {
+  debug,
+  dlopen,
+  define,
+  dlerror,
+  dlclose,
+  dlsym,
+  call,
+  toString,
+  toArrayBuffer,
+  errno,
+  JSContext,
+  RTLD_LAZY,
+  RTLD_NOW,
+  RTLD_GLOBAL,
+  RTLD_LOCAL,
+  RTLD_NODELETE,
+  RTLD_NOLOAD,
+  RTLD_DEEPBIND,
+  RTLD_DEFAULT,
+  RTLD_NEXT
+} from 'ffi';
 import * as ffi from 'ffi';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
@@ -20,7 +41,7 @@ let dlopen_ = foreign('dlopen', 'void *', 'string', 'int');
 let dlsym_ = foreign('dlsym', 'void *', 'string');
 let snprintf = foreign('snprintf', 'int', 'buffer', 'size_t', 'string', 'void *');
 
-ArrayBuffer.prototype.toPointer = function(hint = 'string') {
+ArrayBuffer.prototype.toPointer = function (hint = 'string') {
   let out = new ArrayBuffer(100);
   sprintf(out, '%p', this);
   let ret = ArrayBufToString(out);
@@ -51,14 +72,12 @@ async function main(...args) {
   console.log('ffi:', ffi);
   console.log('strdup:', strdup('BLAH').toString(16));
   console.log('dlsym_(RTLD_DEFAULT, "strdup"):', dlsym(RTLD_DEFAULT, 'strdup').toString(16));
-  console.log('snprintf(outBuf, outBuf.byteLength, "%p", -1):',
-    snprintf(outBuf, outBuf.byteLength, '%p', 0x7fffffffffffffff)
-  );
+  console.log('snprintf(outBuf, outBuf.byteLength, "%p", -1):', snprintf(outBuf, outBuf.byteLength, '%p', 0x7fffffffffffffff));
   console.log('outBuf:', ArrayBufToString(outBuf));
   console.log('Util.isatty(1):', await Util.isatty(1));
   console.log('F_GETFL:', toHex((flags = fcntl(fd, F_GETFL, 0))));
 
-  if(newState) flags |= O_NONBLOCK;
+  if (newState) flags |= O_NONBLOCK;
   else flags &= ~O_NONBLOCK;
 
   console.log('fcntl:', [...flagNames(flags)]);
@@ -115,7 +134,7 @@ function toHex(n, b = 2) {
 function ArrayBufToString(buf, offset, length) {
   let arr = new Uint8Array(buf, offset || 0, length || buf.byteLength);
   let len = arr.indexOf(0);
-  if(len != -1) arr = arr.slice(0, len);
+  if (len != -1) arr = arr.slice(0, len);
   return arr.reduce((s, code) => s + String.fromCharCode(code), '');
 }
 
@@ -128,18 +147,17 @@ function MakeArray(buf, numBytes) {
         return new Uint32Array(buf);
       case 2:
         return new Uint16Array(buf);
-      default: return new Uint8Array(buf);
+      default:
+        return new Uint8Array(buf);
     }
-  } catch(error) {
+  } catch (error) {
     console.error(`MakeArray(${Util.className(buf)}[${buf.byteLength}], ${numBytes}): ${error.message}`);
   }
 }
 
 function ArrayBufToHex(buf, numBytes = 8) {
   let arr = MakeArray(buf, numBytes);
-  return arr.reduce((s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
-    ''
-  );
+  return arr.reduce((s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)), '');
 }
 
 function timeval(sec = 0, usec = 0) {
@@ -147,17 +165,29 @@ function timeval(sec = 0, usec = 0) {
     constructor(sec, usec) {
       super(2 * 8);
 
-      if(sec !== undefined || usec !== undefined) {
+      if (sec !== undefined || usec !== undefined) {
         let a = new BigUint64Array(this);
         a[0] = BigInt(sec || 0n);
         a[1] = BigInt(usec || 0n);
       }
     }
 
-    set tv_sec(s) { let a = new BigUint64Array(this); a[0] = BigInt(s); }
-    get tv_sec() { let a = new BigUint64Array(this); return a[0]; }
-    set tv_usec(us) { let a = new BigUint64Array(this); a[1] = BigInt(us); }
-    get tv_usec() { let a = new BigUint64Array(this); return a[1]; }
+    set tv_sec(s) {
+      let a = new BigUint64Array(this);
+      a[0] = BigInt(s);
+    }
+    get tv_sec() {
+      let a = new BigUint64Array(this);
+      return a[0];
+    }
+    set tv_usec(us) {
+      let a = new BigUint64Array(this);
+      a[1] = BigInt(us);
+    }
+    get tv_usec() {
+      let a = new BigUint64Array(this);
+      return a[1];
+    }
 
     toString() {
       const { tv_sec, tv_usec } = this;

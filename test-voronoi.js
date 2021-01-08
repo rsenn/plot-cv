@@ -17,14 +17,14 @@ async function testVoronoi(filename) {
   //console.log('doc', doc);
   let points = new PointList();
 
-  for(let element of doc.elements.list) {
+  for (let element of doc.elements.list) {
     const pkg = element.package;
     let { x, y } = element;
     //console.log('element:', element, { x, y });
     let origin = new Point(x, y);
 
-    for(let item of pkg.children) {
-      if(item.drill !== undefined) {
+    for (let item of pkg.children) {
+      if (item.drill !== undefined) {
         let pos = new Point(+item.x, +item.y).add(origin);
         //console.log('pos:', pos);
 
@@ -42,7 +42,7 @@ async function testVoronoi(filename) {
     //console.log('item:', item);
   }*/
 
-  let sites = points.map(p => p.toObject());
+  let sites = points.map((p) => p.toObject());
   //xl, xr means x left, x right
   //yt, yb means y top, y bottom
   //console.log('bbox:', bb);
@@ -58,44 +58,33 @@ async function testVoronoi(filename) {
   let { site, cells, edges, vertices, execTime } = result;
   //console.log('cells:', cells);
 
-  let holes = edges.filter(e => !e.rSite).map(({ lSite, rSite, ...edge }) => new Point(lSite));
-  let rlines = edges.filter(e => e.rSite).map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
-  let vlines = edges.filter(e => e.va && e.vb).map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
-  let points2 = vertices.map(v => new Point(v).round(0.127, 4));
+  let holes = edges.filter((e) => !e.rSite).map(({ lSite, rSite, ...edge }) => new Point(lSite));
+  let rlines = edges.filter((e) => e.rSite).map(({ lSite, rSite, ...edge }) => new Line(lSite, rSite));
+  let vlines = edges.filter((e) => e.va && e.vb).map(({ va, vb, ...edge }) => new Line(va, vb).round(0.127, 4));
+  let points2 = vertices.map((v) => new Point(v).round(0.127, 4));
   const add = (arr, ...items) => [...(Util.isArray(arr) ? arr : []), ...items];
 
   const factory = SVG.factory({
-    create: tag => ({ tagName: tag }),
+    create: (tag) => ({ tagName: tag }),
     append_to: (elem, parent) => (parent.children = add(parent.children, elem)),
     setattr: (elem, name, value) => {
-      if(!elem.attributes) elem.attributes = {};
+      if (!elem.attributes) elem.attributes = {};
       elem.attributes[name] = value;
     }
   });
 
   const lines = [
-    ...rlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#000', 'stroke-width': 0.1 }]),
-    ...vlines.map(l => ['line', { ...l.toObject(t => t + ''), stroke: '#f00', 'stroke-width': 0.1 }])
+    ...rlines.map((l) => ['line', { ...l.toObject((t) => t + ''), stroke: '#000', 'stroke-width': 0.1 }]),
+    ...vlines.map((l) => ['line', { ...l.toObject((t) => t + ''), stroke: '#f00', 'stroke-width': 0.1 }])
   ];
 
   const circles = [
-    ...holes.map(p => ['circle', { cx: p.x, cy: p.y, r: 0.254, fill: 'none', stroke: '#00f', 'stroke-width': 0.1 }]),
-    ...points2.map(p => [
-      'circle',
-      { cx: p.x, cy: p.y, r: 0.254 * 2, fill: 'none', stroke: '#0f0', 'stroke-width': 0.1 }
-    ])
+    ...holes.map((p) => ['circle', { cx: p.x, cy: p.y, r: 0.254, fill: 'none', stroke: '#00f', 'stroke-width': 0.1 }]),
+    ...points2.map((p) => ['circle', { cx: p.x, cy: p.y, r: 0.254 * 2, fill: 'none', stroke: '#0f0', 'stroke-width': 0.1 }])
   ];
 
   const polylines = [
-    ...cells.reduce((acc, { site, halfedges }) => [
-        ...acc,
-        [
-          'polyline',
-          { points: new PointList(halfedges.map(({ site }) => site)).toString(), stroke: '#f0f', 'stroke-width': 0.1 }
-        ]
-      ],
-      []
-    )
+    ...cells.reduce((acc, { site, halfedges }) => [...acc, ['polyline', { points: new PointList(halfedges.map(({ site }) => site)).toString(), stroke: '#f0f', 'stroke-width': 0.1 }]], [])
   ];
 
   const svg = ['svg', { viewBox: bb.toString() }, [['defs'], ...lines, ...circles, ...polylines]];
@@ -107,11 +96,11 @@ async function testVoronoi(filename) {
 }
 (() => {
   let args = Util.getArgs();
-  if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd');
-  for(let arg of args) {
+  if (args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd');
+  for (let arg of args) {
     try {
       let project = testVoronoi(arg);
-    } catch(err) {
+    } catch (err) {
       //console.log('Err:', err.message, err.stack);
       throw err;
     }

@@ -376,33 +376,22 @@ export const VWERASE = 14;
 export const VLNEXT = 15;
 export const VEOL2 = 16;
 
-const cterm = [
-  'tcdrain',
-  'tcgetsid',
-  'tcsendbreak',
-  'tcsetattr',
-  'tcflow',
-  'tcsetpgrp',
-  'tcflush',
-  'tcgetattr',
-  'tcgetpgrp',
-  'cfgetospeed',
-  'cfsetospeed',
-  'cfgetispeed',
-  'cfsetispeed'
-].reduce((o, s) => {
-  let fp = dlsym(RTLD_DEFAULT, s);
-  if(fp == null) {
-    console.log(dlerror());
-    return o;
-  }
-  return { ...o, [s]: fp };
-}, {});
+const cterm = ['tcdrain', 'tcgetsid', 'tcsendbreak', 'tcsetattr', 'tcflow', 'tcsetpgrp', 'tcflush', 'tcgetattr', 'tcgetpgrp', 'cfgetospeed', 'cfsetospeed', 'cfgetispeed', 'cfsetispeed'].reduce(
+  (o, s) => {
+    let fp = dlsym(RTLD_DEFAULT, s);
+    if (fp == null) {
+      console.log(dlerror());
+      return o;
+    }
+    return { ...o, [s]: fp };
+  },
+  {}
+);
 
 function def(name, abi, ...params) {
   let defined = false;
   return (...args) => {
-    if(!defined) {
+    if (!defined) {
       define(name, cterm[name], abi, ...params);
       defined = true;
     }
@@ -458,14 +447,30 @@ export class winsize extends ArrayBuffer {
     this.ws_xpixel = x | 0;
     this.ws_ypixel = y | 0;
   }
-  get ws_row() { return new Uint16Array(this, 0)[0]; }
-  set ws_row(v) { new Uint16Array(this, 0)[0] = v >>> 0; }
-  get ws_col() { return new Uint16Array(this, 2)[0]; }
-  set ws_col(v) { new Uint16Array(this, 2)[0] = v >>> 0; }
-  get ws_xpixel() { return new Uint16Array(this, 4)[0]; }
-  set ws_xpixel(v) { new Uint16Array(this, 4)[0] = v >>> 0; }
-  get ws_ypixel() { return new Uint16Array(this, 6)[0]; }
-  set ws_ypixel(v) { new Uint16Array(this, 6)[0] = v >>> 0; }
+  get ws_row() {
+    return new Uint16Array(this, 0)[0];
+  }
+  set ws_row(v) {
+    new Uint16Array(this, 0)[0] = v >>> 0;
+  }
+  get ws_col() {
+    return new Uint16Array(this, 2)[0];
+  }
+  set ws_col(v) {
+    new Uint16Array(this, 2)[0] = v >>> 0;
+  }
+  get ws_xpixel() {
+    return new Uint16Array(this, 4)[0];
+  }
+  set ws_xpixel(v) {
+    new Uint16Array(this, 4)[0] = v >>> 0;
+  }
+  get ws_ypixel() {
+    return new Uint16Array(this, 6)[0];
+  }
+  set ws_ypixel(v) {
+    new Uint16Array(this, 6)[0] = v >>> 0;
+  }
 }
 
 export class termio extends ArrayBuffer {
@@ -473,18 +478,44 @@ export class termio extends ArrayBuffer {
   constructor() {
     super(18);
   }
-  get c_iflag() { return new termio.fields(this, 0)[0]; }
-  set c_iflag(v) { new termio.fields(this, 0)[0] = v >>> 0; }
-  get c_oflag() { return new termio.fields(this, 2)[0]; }
-  set c_oflag(v) { new termio.fields(this, 2)[0] = v >>> 0; }
-  get c_cflag() { return new termio.fields(this, 4)[0]; }
-  set c_cflag(v) { new termio.fields(this, 4)[0] = v >>> 0; }
-  get c_lflag() { return new termio.fields(this, 6)[0]; }
-  set c_lflag(v) { new termio.fields(this, 6)[0] = v >>> 0; }
-  get c_line() { return new Uint8Array(this, 8)[0]; }
-  set c_line(v) { new Uint8Array(this, 8)[0] =  typeof(v) == 'string' ? v.charCodeAt(0) : v; }
-  get c_cc() { return new Uint8Array(this, 9).slice(0,NCC); }
-  set c_cc(v) { const a = new Uint8Array(this, 9, NCC); const n = Math.min(v.length, a.length); for(let i = 0; i < n; i++) a[i] = typeof(v[i]) == 'string' ? v[i].charCodeAt(0) : v[i]; }
+  get c_iflag() {
+    return new termio.fields(this, 0)[0];
+  }
+  set c_iflag(v) {
+    new termio.fields(this, 0)[0] = v >>> 0;
+  }
+  get c_oflag() {
+    return new termio.fields(this, 2)[0];
+  }
+  set c_oflag(v) {
+    new termio.fields(this, 2)[0] = v >>> 0;
+  }
+  get c_cflag() {
+    return new termio.fields(this, 4)[0];
+  }
+  set c_cflag(v) {
+    new termio.fields(this, 4)[0] = v >>> 0;
+  }
+  get c_lflag() {
+    return new termio.fields(this, 6)[0];
+  }
+  set c_lflag(v) {
+    new termio.fields(this, 6)[0] = v >>> 0;
+  }
+  get c_line() {
+    return new Uint8Array(this, 8)[0];
+  }
+  set c_line(v) {
+    new Uint8Array(this, 8)[0] = typeof v == 'string' ? v.charCodeAt(0) : v;
+  }
+  get c_cc() {
+    return new Uint8Array(this, 9).slice(0, NCC);
+  }
+  set c_cc(v) {
+    const a = new Uint8Array(this, 9, NCC);
+    const n = Math.min(v.length, a.length);
+    for (let i = 0; i < n; i++) a[i] = typeof v[i] == 'string' ? v[i].charCodeAt(0) : v[i];
+  }
 }
 
 export class termios extends ArrayBuffer {
@@ -492,18 +523,44 @@ export class termios extends ArrayBuffer {
   constructor() {
     super(60);
   }
-  get c_iflag() { return new termios.fields(this, 0)[0]; }
-  set c_iflag(v) { new termios.fields(this, 0)[0] = v >>> 0; }
-  get c_oflag() { return new termios.fields(this, 4)[0]; }
-  set c_oflag(v) { new termios.fields(this, 4)[0] = v >>> 0; }
-  get c_cflag() { return new termios.fields(this, 8)[0]; }
-  set c_cflag(v) { new termios.fields(this, 8)[0] = v >>> 0; }
-  get c_lflag() { return new termios.fields(this, 12)[0]; }
-  set c_lflag(v) { new termios.fields(this, 12)[0] = v >>> 0; }
-  get c_line() { return new Uint8Array(this, 16)[0]; }
-  set c_line(v) { new Uint8Array(this, 16)[0] = v >>> 0; }
-  get c_cc() { return new Uint8Array(this, 17, NCCS)/*.map(c => String.fromCharCode(c))*/; }
-  set c_cc(v) { const a = new Uint8Array(this, 17, NCCS); const n = Math.min(v.length, a.length); for(let i = 0; i < n; i++) a[i] =  typeof(v[i]) == 'string' ? v[i].charCodeAt(0) : v[i]; }
+  get c_iflag() {
+    return new termios.fields(this, 0)[0];
+  }
+  set c_iflag(v) {
+    new termios.fields(this, 0)[0] = v >>> 0;
+  }
+  get c_oflag() {
+    return new termios.fields(this, 4)[0];
+  }
+  set c_oflag(v) {
+    new termios.fields(this, 4)[0] = v >>> 0;
+  }
+  get c_cflag() {
+    return new termios.fields(this, 8)[0];
+  }
+  set c_cflag(v) {
+    new termios.fields(this, 8)[0] = v >>> 0;
+  }
+  get c_lflag() {
+    return new termios.fields(this, 12)[0];
+  }
+  set c_lflag(v) {
+    new termios.fields(this, 12)[0] = v >>> 0;
+  }
+  get c_line() {
+    return new Uint8Array(this, 16)[0];
+  }
+  set c_line(v) {
+    new Uint8Array(this, 16)[0] = v >>> 0;
+  }
+  get c_cc() {
+    return new Uint8Array(this, 17, NCCS) /*.map(c => String.fromCharCode(c))*/;
+  }
+  set c_cc(v) {
+    const a = new Uint8Array(this, 17, NCCS);
+    const n = Math.min(v.length, a.length);
+    for (let i = 0; i < n; i++) a[i] = typeof v[i] == 'string' ? v[i].charCodeAt(0) : v[i];
+  }
 
   /* prettier-ignore */
   toString() {
@@ -559,16 +616,16 @@ return `{ .c_iflag=${this.c_iflag}, .c_oflag=${this.c_oflag}, .c_cflag=${this.c_
 
   static flags(flags, obj) {
     const r = [];
-    for(const name in obj) {
+    for (const name in obj) {
       const bit = obj[name];
-      if(typeof bit[0] == 'function') {
+      if (typeof bit[0] == 'function') {
         const [mask, o] = bit;
         const h = mask(flags);
         const e = Object.entries(o).find(([name, b]) => mask(b) == h);
-        if(e) r.push(e[0]);
+        if (e) r.push(e[0]);
       } else {
-        if(countBits(bit) > 1) throw new Error(`flags name=${name} bit=0x${bit.toString(16)}`);
-        if(flags & bit) r.push(name);
+        if (countBits(bit) > 1) throw new Error(`flags name=${name} bit=0x${bit.toString(16)}`);
+        if (flags & bit) r.push(name);
       }
     }
     return r.join(' | ') || 0;
@@ -579,7 +636,7 @@ function countBits(num) {
   return num
     .toString(2)
     .split('')
-    .map(n => +n)
+    .map((n) => +n)
     .reduce((a, b) => a + b, 0);
 }
 

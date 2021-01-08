@@ -12,8 +12,8 @@ import { toXML } from './lib/json.js';
 let filesystem;
 
 function dumpFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
-  if(typeof data != 'string') data = '' + data;
+  if (Util.isArray(data)) data = data.join('\n');
+  if (typeof data != 'string') data = '' + data;
 
   filesystem.writeFile(name, data + '\n');
 
@@ -21,7 +21,7 @@ function dumpFile(name, data) {
 }
 
 async function main(...args) {
-  await PortableFileSystem(fs => (filesystem = fs));
+  await PortableFileSystem((fs) => (filesystem = fs));
   await ConsoleSetup({ depth: 4 });
 
   let xy = new Point();
@@ -32,26 +32,27 @@ async function main(...args) {
   let count = 0;
   let iconSize, iconAspect;
 
-  for(let filename of args) {
+  for (let filename of args) {
     let src = filesystem.readFile(filename);
 
     //console.log('src:', src);
     let [done, data, pos] = INIGrammar.ini(src, 0);
 
-    let createMap = entries => /*Object.fromEntries(entries) ||*/ new Map(entries);
+    let createMap = (entries) => /*Object.fromEntries(entries) ||*/ new Map(entries);
 
     let sections = data[0].reduce((acc, sdata) => {
       console.log('sdata:', sdata);
       return { ...acc, [sdata[0]]: createMap(sdata[1] || []) };
     }, {});
 
-    const flat = deep.flatten(sections,
+    const flat = deep.flatten(
+      sections,
       new Map(),
-      k => k.length > 0,
+      (k) => k.length > 0,
       (k, v) => [k.slice(1), v]
     );
     console.log('flat:', flat);
-    if(sections['Desktop Entry']) {
+    if (sections['Desktop Entry']) {
       const desktopEntry = sections['Desktop Entry'];
 
       /*  const { Exec, Icon, Terminal, Type, Name, GenericName, StartupNotify } = desktopEntry;
@@ -70,8 +71,7 @@ async function main(...args) {
       const viewBoxStr = attr && attr.viewBox;
       const viewCoords = (viewBoxStr && viewBoxStr.split(' ')) || [0, 0, svg.attributes.width, svg.attributes.height];
       const [x1, y1, x2, y2] = viewCoords;
-      const viewBox = new Rect(svg.attributes && svg.attributes.viewBox ? { x1, y1, x2, y2 } : ['width', 'height'].map(a => svg.attributes[a])
-      );
+      const viewBox = new Rect(svg.attributes && svg.attributes.viewBox ? { x1, y1, x2, y2 } : ['width', 'height'].map((a) => svg.attributes[a]));
       iconSize = viewBox.size; //new Size(viewBox.width, viewBox.height);
       iconAspect = iconSize.aspect();
       const scale = iconAspect > 1 ? size.width / iconSize.width : size.height / iconSize.height;
@@ -99,7 +99,7 @@ async function main(...args) {
         iconAspect
       });
 
-      if(xy.x + size.width >= maxWidth) {
+      if (xy.x + size.width >= maxWidth) {
         xy.x = 0;
         xy.y += size.height + spacing;
       }
@@ -113,42 +113,42 @@ async function main(...args) {
       xy.x += size.width + spacing;
 
       count++;
-    } else if(sections.FILE_INFO) {
+    } else if (sections.FILE_INFO) {
       let file_keys = sections.FILE_INFO.keys();
-      let file_sections = Object.keys(sections).filter(name => /FILE/.test(name));
+      let file_sections = Object.keys(sections).filter((name) => /FILE/.test(name));
 
       let files = [];
-      for(let key of file_keys) {
+      for (let key of file_keys) {
         let file = {};
-        for(let sect of file_sections) {
+        for (let sect of file_sections) {
           let value = sections[sect].get(key);
-          if(value) file[sect] = value;
+          if (value) file[sect] = value;
         }
         files.push(file);
       }
 
-      for(let sect of file_sections) {
+      for (let sect of file_sections) {
         sections[sect].clear();
       }
 
-      let filenames = files.map(f => f.FILE_INFO);
+      let filenames = files.map((f) => f.FILE_INFO);
 
-      files = files.filter(file => !/.*(buffer|comparator|lcd|format|ds18b20|hd44).*/.test(file.FILE_INFO));
+      files = files.filter((file) => !/.*(buffer|comparator|lcd|format|ds18b20|hd44).*/.test(file.FILE_INFO));
 
       //console.log('data:', file_sections);
       //console.log('files:', filenames);
       let i = 0;
-      for(let file of files) {
-        for(let field in file) sections[field].set(`file_${(i + '').padStart(3, '0')}`, file[field]);
+      for (let file of files) {
+        for (let field in file) sections[field].set(`file_${(i + '').padStart(3, '0')}`, file[field]);
 
         i++;
       }
     }
 
     let out = '';
-    for(let section in sections) {
+    for (let section in sections) {
       out += `[${section}]\r\n`;
-      for(let [key, value] of Util.entries(sections[section])) {
+      for (let [key, value] of Util.entries(sections[section])) {
         out += `${key}=${value}\r\n`;
       }
     }

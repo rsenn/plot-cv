@@ -59,11 +59,11 @@ async function testGraph(proj) {
   const { board } = proj;
   graph = new Graph();
 
-  for(let [name, element] of board.elements) {
+  for (let [name, element] of board.elements) {
     const { x, y } = element;
     const { attributes } = element.raw;
-    let lib = board.get(e => e.tagName == 'library' && e.attributes.name == attributes.library);
-    const pkg = lib.get(e => e.tagName == 'package' && e.attributes.name == attributes.package);
+    let lib = board.get((e) => e.tagName == 'library' && e.attributes.name == attributes.library);
+    const pkg = lib.get((e) => e.tagName == 'package' && e.attributes.name == attributes.package);
     const bb = element.getBounds();
     let rect = bb.rect;
     let pos = rect.center;
@@ -73,13 +73,13 @@ async function testGraph(proj) {
     n.width = rect.width;
     n.height = rect.height;
     let pads = [...pkg.getAll('pad')];
-    let padNames = pads.map(p => p.name);
-    for(let pad of pads) {
+    let padNames = pads.map((p) => p.name);
+    for (let pad of pads) {
     }
   }
 
-  for(let [name, signal] of board.signals) {
-    for(let contactref of signal.getAll('contactref')) {
+  for (let [name, signal] of board.signals) {
+    for (let contactref of signal.getAll('contactref')) {
       const elementName = contactref.attributes.element;
       const element = board.get({ tagName: 'element', name: elementName });
       const { name } = element.raw.attributes;
@@ -90,18 +90,19 @@ async function testGraph(proj) {
 }
 
 function updateMeasures(board) {
-  if(!board) return false;
+  if (!board) return false;
   let bounds = board.getBounds();
   let measures = board.getMeasures();
 
-  if(measures) {
+  if (measures) {
     console.log('got measures:', measures);
   } else {
     let rect = new Rect(bounds.rect);
-    let lines = rect.toLines(lines => new LineList(lines));
+    let lines = rect.toLines((lines) => new LineList(lines));
     let { plain } = board;
-    plain.remove(e => e.tagName == 'wire' && e.attributes.layer == '47');
-    plain.append(...lines.map(line => ({
+    plain.remove((e) => e.tagName == 'wire' && e.attributes.layer == '47');
+    plain.append(
+      ...lines.map((line) => ({
         tagName: 'wire',
         attributes: { ...line.toObject(), layer: 47, width: 0 }
       }))
@@ -132,7 +133,7 @@ function alignItem(item) {
 
   let changed = !diff.isNull();
 
-  if(changed) {
+  if (changed) {
     console.log('before:', Util.abbreviate(before));
     console.log('after:', Util.abbreviate(item.parentNode.toXML()));
     //console.log('geometry:', geometry);
@@ -142,19 +143,19 @@ function alignItem(item) {
 }
 
 function alignAll(doc) {
-  if(!doc) return false;
+  if (!doc) return false;
 
   let items = doc.getAll(doc.type == 'brd' ? 'element' : 'instance');
   let changed = false;
-  for(let item of items) changed |= alignItem(item);
+  for (let item of items) changed |= alignItem(item);
   let signals_nets = doc.getAll(/(signals|nets)/);
   //console.log('signals_nets:', signals_nets);
-  for(let net of signals_nets) for (let item of net.getAll('wire')) changed |= alignItem(item);
+  for (let net of signals_nets) for (let item of net.getAll('wire')) changed |= alignItem(item);
   return !!changed;
 }
 
 async function testEagle(filename) {
-  await PortableFileSystem(fs => (filesystem = fs));
+  await PortableFileSystem((fs) => (filesystem = fs));
 
   console.log('testEagle: ', filename);
   let proj = new EagleProject(filename, filesystem);
@@ -178,22 +179,17 @@ async function testEagle(filename) {
 
   const packages = {
     board: (board && board.elements && [...board.elements].map(([name, e]) => e.package)) || [],
-    schematic: (schematic &&
-        schematic.sheets &&
-        [...schematic.sheets]
-          .map(e => [...e.instances].map(([name, i]) => i.part.device.package).filter(p => p !== undefined))
-          .flat()) ||
-      []
+    schematic: (schematic && schematic.sheets && [...schematic.sheets].map((e) => [...e.instances].map(([name, i]) => i.part.device.package).filter((p) => p !== undefined)).flat()) || []
   };
   let parts = (schematic && schematic.parts) || [];
   let sheets = (schematic && schematic.sheets) || [];
   let libraries = (board && board.libraries) || [];
   let elements = (board && board.elements) || [];
 
-  for(let [libName, lib] of libraries) {
-    for(let [pkgName, pkg] of lib.packages)
-      for(let pad of pkg.children) {
-        if(pad.tagName !== 'pad') continue;
+  for (let [libName, lib] of libraries) {
+    for (let [pkgName, pkg] of lib.packages)
+      for (let pad of pkg.children) {
+        if (pad.tagName !== 'pad') continue;
         pad.setAttribute('drill', '0.7');
         pad.setAttribute('diameter', '1.778');
         pad.removeAttribute('stop');
@@ -202,17 +198,17 @@ async function testEagle(filename) {
       }
   }
   let cmds = [];
-  for(let [name, elem] of elements) {
+  for (let [name, elem] of elements) {
     cmds.push(`MOVE ${elem.name} ${elem.pos};`);
-    if(elem.rot) cmds.push(`ROTATE ${elem.rot} ${elem.name};`);
+    if (elem.rot) cmds.push(`ROTATE ${elem.rot} ${elem.name};`);
   }
 
   /*  for(let description of board.getAll('description')) {
   }*/
   console.log('proj.board', proj.board);
-  if(proj.board) updateMeasures(proj.board);
+  if (proj.board) updateMeasures(proj.board);
 
-  if(alignAll(board) || alignAll(schematic)) console.log('Saved:', await proj.saveTo('tmp', true));
+  if (alignAll(board) || alignAll(schematic)) console.log('Saved:', await proj.saveTo('tmp', true));
 
   console.log('documents', proj.documents);
 
@@ -231,11 +227,11 @@ async function testEagle(filename) {
   }
 */
 
-  for(let doc of proj.documents) {
+  for (let doc of proj.documents) {
     let changed = false;
     console.log('eagle:', Util.className(doc.find('eagle')));
 
-    for(let pkg of doc.find('eagle').getAll('package')) {
+    for (let pkg of doc.find('eagle').getAll('package')) {
       let indexes = [...pkg.children].map((child, i, a) =>
         a
           .slice(i + 1)
@@ -245,43 +241,41 @@ async function testEagle(filename) {
       );
 
       indexes = indexes.flat().reverse();
-      let paths = indexes.map(i => pkg.path.down('children', i));
+      let paths = indexes.map((i) => pkg.path.down('children', i));
 
       //console.log("pkg.children", pkg.children.toXML());
       console.log('indexes', pkg.name, paths);
 
       //console.log('remove', paths.map(i => deep.get(doc.raw, [...i])));
 
-      paths.forEach(i => deep.unset(doc.raw, [...i]));
+      paths.forEach((i) => deep.unset(doc.raw, [...i]));
       changed = changed || indexes.length > 0;
 
       //console.log("indexes:", new Map(indexes.map((j,i) => [i, j]).filter(([i,j]) => j.length).map(([i,j]) => [i,pkg.children[j]])));
     }
-    if(changed) {
+    if (changed) {
       doc.saveTo(doc.filename);
       console.log('Saved:', doc.filename);
     }
   }
 
-  let desc = proj.documents.map(doc => [doc.filename, doc.find('description')]);
+  let desc = proj.documents.map((doc) => [doc.filename, doc.find('description')]);
   console.log('desc', desc);
 
-  desc = desc
-    .map(([file, e]) => [file, e && e.xpath()])
-    .map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
+  desc = desc.map(([file, e]) => [file, e && e.xpath()]).map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
   desc = new Map(desc);
   console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
 
   return proj;
 }
 async function main(...args) {
-  if(args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
-  for(let arg of args) {
+  if (args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
+  for (let arg of args) {
     //arg = arg.replace(/\.(brd|sch|lbr)$/i, '');
     try {
       let project = await testEagle(arg);
-    } catch(err) {
-      console.log('Err:', err.message, typeof err.stack == 'string' ? err.stack : [...err.stack].map(f => f + ''));
+    } catch (err) {
+      console.log('Err:', err.message, typeof err.stack == 'string' ? err.stack : [...err.stack].map((f) => f + ''));
       Util.exit(1);
     }
   }

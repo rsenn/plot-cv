@@ -26,10 +26,10 @@ export class ImageSequence {
         return (pos_frames * 1000) / fps;
       },
       get frame_width() {
-        if(imgs.frame) return imgs.frame.cols;
+        if (imgs.frame) return imgs.frame.cols;
       },
       get frame_height() {
-        if(imgs.frame) return imgs.frame.rows;
+        if (imgs.frame) return imgs.frame.rows;
       }
     };
   }
@@ -51,19 +51,20 @@ export class ImageSequence {
     return !!(this.frame = cv.imread(images[props.pos_frames++]));
   }
   retrieve(mat) {
-    if(!mat) return this.frame;
-    if(this.frame) this.frame.copyTo(mat);
+    if (!mat) return this.frame;
+    if (this.frame) this.frame.copyTo(mat);
     return !!this.frame;
   }
   read(mat) {
-    if(this.grab()) return this.retrieve(mat);
+    if (this.grab()) return this.retrieve(mat);
   }
 }
 
-const isVideoPath = arg => /\.(3gp|avi|f4v|flv|m4v|m2v|mkv|mov|mp4|mpeg|mpg|ogm|vob|webm|wmv)$/i.test(arg);
+const isVideoPath = (arg) => /\.(3gp|avi|f4v|flv|m4v|m2v|mkv|mov|mp4|mpeg|mpg|ogm|vob|webm|wmv)$/i.test(arg);
 
 export class VideoSource {
-  static backends = Object.fromEntries([
+  static backends = Object.fromEntries(
+    [
       'ANY',
       'VFW',
       'V4L',
@@ -97,19 +98,19 @@ export class VideoSource {
       'OPENCV_MJPEG',
       'INTEL_MFX',
       'XINE'
-    ].map(name => [name, cv['CAP_' + name]])
+    ].map((name) => [name, cv['CAP_' + name]])
   );
 
   constructor(...args) {
-    if(args.length > 0) {
+    if (args.length > 0) {
       let [device, backend = 'ANY'] = args;
 
-      if(typeof device == 'string' && isVideoPath(device)) if (backend == 'ANY') backend = 'FFMPEG';
+      if (typeof device == 'string' && isVideoPath(device)) if (backend == 'ANY') backend = 'FFMPEG';
 
       const driverId = VideoSource.backends[backend];
       console.log('VideoSource', { device, backend, driverId, args });
 
-      if(typeof driverId == 'number') {
+      if (typeof driverId == 'number') {
         this.capture(device, driverId);
       } else {
         this.fromImages(...args);
@@ -121,24 +122,24 @@ export class VideoSource {
     let cap = new VideoCapture(device, driverId);
     this.cap = cap;
 
-    this.propId = prop => {
-      if(typeof prop == 'string') {
+    this.propId = (prop) => {
+      if (typeof prop == 'string') {
         prop = prop.toUpperCase();
-        if(!prop.startsWith('CAP_PROP_')) prop = 'CAP_PROP_' + prop;
+        if (!prop.startsWith('CAP_PROP_')) prop = 'CAP_PROP_' + prop;
         prop = cv[prop];
       }
       return prop;
     };
 
-    this.read = function(mat) {
+    this.read = function (mat) {
       const { cap } = this;
-      if(!mat) mat = new Mat();
-      if(cap.read(mat)) return mat;
+      if (!mat) mat = new Mat();
+      if (cap.read(mat)) return mat;
     };
-    this.retrieve = function(mat) {
+    this.retrieve = function (mat) {
       const { cap } = this;
-      if(!mat) mat = new Mat();
-      if(cap.retrieve(mat)) return mat;
+      if (!mat) mat = new Mat();
+      if (cap.retrieve(mat)) return mat;
     };
     Util.weakAssign(this, Util.bindMethods(this.cap, VideoCapture.prototype));
   }
@@ -147,10 +148,10 @@ export class VideoSource {
     let cap = new ImageSequence(images);
     this.cap = cap;
 
-    this.propId = prop => {
-      if(typeof prop == 'string') {
+    this.propId = (prop) => {
+      if (typeof prop == 'string') {
         prop = prop.toLowerCase();
-        if(prop.startsWith('cap_prop_')) prop = prop.slice(9);
+        if (prop.startsWith('cap_prop_')) prop = prop.slice(9);
       }
       return prop;
     };
@@ -160,7 +161,7 @@ export class VideoSource {
 
   get(prop) {
     const { cap } = this;
-    if(cap && typeof cap.get == 'function') return this.cap.get(this.propId(prop));
+    if (cap && typeof cap.get == 'function') return this.cap.get(this.propId(prop));
   }
 
   set(prop, value) {
@@ -169,9 +170,9 @@ export class VideoSource {
 
   get backend() {
     const { cap } = this;
-    if(cap && typeof cap.getBackendName == 'function') return cap.getBackendName();
+    if (cap && typeof cap.getBackendName == 'function') return cap.getBackendName();
 
-    if(typeof this.get == 'function') {
+    if (typeof this.get == 'function') {
       const id = this.get('BACKEND');
       return Util.findKey(VideoSource.backends, id);
     }
@@ -181,19 +182,8 @@ export class VideoSource {
     return this.get('fps');
   }
 
-  dump(props = [
-      'frame_count',
-      'frame_width',
-      'frame_height',
-      'fps',
-      'format',
-      'fourcc',
-      'backend',
-      'pos_frames',
-      'pos_msec'
-    ]
-  ) {
-    return new Map(props.map(propName => [propName, this.get(propName)]).filter(([k, v]) => v !== undefined));
+  dump(props = ['frame_count', 'frame_width', 'frame_height', 'fps', 'format', 'fourcc', 'backend', 'pos_frames', 'pos_msec']) {
+    return new Map(props.map((propName) => [propName, this.get(propName)]).filter(([k, v]) => v !== undefined));
   }
 
   seekFrames(relative) {
@@ -214,8 +204,8 @@ export class VideoSource {
   }
 
   position(type = 'frames') {
-    if(type.startsWith('frame')) return [this.get('pos_frames'), this.get('frame_count')];
-    if(type.startsWith('percent') || type == '%') return (this.get('pos_frames') * 100) / this.get('frame_count');
+    if (type.startsWith('frame')) return [this.get('pos_frames'), this.get('frame_count')];
+    if (type.startsWith('percent') || type == '%') return (this.get('pos_frames') * 100) / this.get('frame_count');
 
     return [+this.get('pos_msec').toFixed(3), this.durationMsecs];
   }

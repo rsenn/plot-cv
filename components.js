@@ -18,8 +18,8 @@ export function Ruler({ handleChange, style = {}, class: className }) {
   const handlers = trkl(null);
   let commands;
 
-  handlers.subscribe(value => {
-    if(!commands && Util.isObject(value)) commands = value;
+  handlers.subscribe((value) => {
+    if (!commands && Util.isObject(value)) commands = value;
     /*console.log('trkl handlers value =', value);
     console.log('commands =', commands);*/
   });
@@ -27,29 +27,37 @@ export function Ruler({ handleChange, style = {}, class: className }) {
   const pressingDown = () => commands.pressingDown();
   const pressingUp = () => commands.pressingUp();
   const stopPressing = () => commands.stopPressing();
-  let onChanged = value => setValue(value);
+  let onChanged = (value) => setValue(value);
 
-  if(typeof handleChange == 'function') {
+  if (typeof handleChange == 'function') {
     const prevHandler = onChanged;
-    onChanged = value => {
+    onChanged = (value) => {
       prevHandler(value);
       handleChange(value);
     };
   }
 
   return h('div', { style, class: className }, [
-    h('button', {
+    h(
+      'button',
+      {
         onMouseDown: pressingDown,
         onMouseUp: stopPressing
-      }, ['Down']
+      },
+      ['Down']
     ),
-    h('button', {
+    h(
+      'button',
+      {
         onMouseDown: pressingUp,
         onMouseUp: stopPressing
-      }, ['Up']
+      },
+      ['Up']
     ),
     h('div', {}, [Util.roundTo(value, 0.001, 3)]),
-    h(RulerDraggable, {
+    h(
+      RulerDraggable,
+      {
         ref: refRuler,
         handlers,
         defaultValue: 50,
@@ -57,23 +65,24 @@ export function Ruler({ handleChange, style = {}, class: className }) {
         longLength: 600,
         shortLength: 60,
         horizontal: false
-      }, []
+      },
+      []
     )
   ]);
 }
 
-export const ClickHandler = callback => e => {
-  if(e.type) {
+export const ClickHandler = (callback) => (e) => {
+  if (e.type) {
     const press = e.type.endsWith('down');
     callback(e, press);
   }
 };
 
-export const ToggleHandler = (callback, getState, setState) => e => {
-  if(e.type) {
+export const ToggleHandler = (callback, getState, setState) => (e) => {
+  if (e.type) {
     const press = e.type.endsWith('down');
 
-    if(press) {
+    if (press) {
       let state = !getState();
       setState(state);
       callback(e, state);
@@ -81,7 +90,7 @@ export const ToggleHandler = (callback, getState, setState) => e => {
   }
 };
 
-export const MouseEvents = h => ({
+export const MouseEvents = (h) => ({
   onMouseDown: h,
 
   /*  onBlur: h,*/
@@ -89,37 +98,27 @@ export const MouseEvents = h => ({
   onMouseUp: h
 });
 
-export const Overlay = ({
-  className = 'overlay',
-  title,
-  tooltip,
-  active = true,
-  toggle,
-  state,
-  onPush,
-  text,
-  children,
-  ...props
-}) => {
-  const [pushed, setPushed] =
-    typeof state == 'function' ? [useTrkl(state), state] : useState(false);
-  const events = MouseEvents((toggle ? ToggleHandler : ClickHandler)(
+export const Overlay = ({ className = 'overlay', title, tooltip, active = true, toggle, state, onPush, text, children, ...props }) => {
+  const [pushed, setPushed] = typeof state == 'function' ? [useTrkl(state), state] : useState(false);
+  const events = MouseEvents(
+    (toggle ? ToggleHandler : ClickHandler)(
       (e, state) => {
         const prev = pushed;
-        if(e.buttons && e.buttons != 1) return;
-        if(!e.type.endsWith('down') && !e.type.endsWith('up')) return;
+        if (e.buttons && e.buttons != 1) return;
+        if (!e.type.endsWith('down') && !e.type.endsWith('up')) return;
         let ret;
-        if(typeof onPush == 'function') ret = onPush(e, state);
-        if(ret === true || ret === false) state = ret;
+        if (typeof onPush == 'function') ret = onPush(e, state);
+        if (ret === true || ret === false) state = ret;
         setPushed(state);
       },
       () => pushed,
       setPushed
     )
   );
-  if(typeof title == 'string' && title.length > 0) props.title = title;
-  if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
-  return h('div',
+  if (typeof title == 'string' && title.length > 0) props.title = title;
+  if (typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
+  return h(
+    'div',
     {
       className: classNames(className, pushed && 'pushed', active ? 'active' : 'inactive'),
       ...props,
@@ -134,12 +133,12 @@ export const Container = ({ className = 'panel', tag = 'div', children, ...props
   return h(tag, { className, ...props }, children);
 };
 
-export const Button = allProps => {
+export const Button = (allProps) => {
   let { className, caption, image, fn, state, style = {}, ...props } = allProps;
 
-  if(!props.children) props.children = [];
-  if(typeof image == 'string') image = h('img', { src: image });
-  else if(typeof image == 'function') image = image(allProps);
+  if (!props.children) props.children = [];
+  if (typeof image == 'string') image = h('img', { src: image });
+  else if (typeof image == 'function') image = image(allProps);
 
   props.children.unshift(image);
 
@@ -147,7 +146,7 @@ export const Button = allProps => {
     className: classNames('button', className),
     text: caption,
     state,
-    onPush: state => (state && typeof fn == 'function' ? fn(state) : undefined),
+    onPush: (state) => (state && typeof fn == 'function' ? fn(state) : undefined),
     style,
     ...props
   });
@@ -170,19 +169,18 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
   const hasOnSize = typeof onSize == 'function' && typeof onSize.subscribe == 'function';
 
   function updateSize(value) {
-    if(!noUpdate) setSize(value);
+    if (!noUpdate) setSize(value);
   }
   useEffect(() => {
     hasOnSize && onSize.subscribe(updateSize);
     return () => hasOnSize && onSize.unsubscribe(updateSize);
   }, []);
 
-  if(hasOnSize) {
+  if (hasOnSize) {
     const tmpSize = onSize();
     noUpdate = true;
     // if(tmpSize.width != width || tmpSize.height != height)
-    if(Util.isObject(tmpSize) && (tmpSize.width === undefined || tmpSize.height === undefined))
-      if(width !== undefined && height !== undefined) onSize({ width, height });
+    if (Util.isObject(tmpSize) && (tmpSize.width === undefined || tmpSize.height === undefined)) if (width !== undefined && height !== undefined) onSize({ width, height });
     noUpdate = false;
   }
   const hasOnHide = typeof onHide == 'function' && typeof onHide.subscribe == 'function';
@@ -195,49 +193,44 @@ export const FloatingPanel = ({ children, className, onSize, onHide, style = {},
     return () => hasOnHide && onHide.unsubscribe(updateHide);
   }, []);
 
-  if(size) {
-    if(!isNaN(+size.width)) style.width = `${size.width}px`;
-    if(!isNaN(+size.height)) style.height = `${size.height}px`;
+  if (size) {
+    if (!isNaN(+size.width)) style.width = `${size.width}px`;
+    if (!isNaN(+size.height)) style.height = `${size.height}px`;
     //    console.log('FloatingPanel size:', size);
   }
 
-  if(hidden) style.display = 'none';
+  if (hidden) style.display = 'none';
 
-  return h(Overlay,
-    { ref, className: classNames('floating', hidden && 'hidden', className), ...props, style },
-    children
-  );
+  return h(Overlay, { ref, className: classNames('floating', hidden && 'hidden', className), ...props, style }, children);
 };
 
 export const Label = ({ className, text, title, tooltip, children, ...props }) => {
-  if(typeof title == 'string' && title.length > 0) props.title = title;
-  if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
-  return h('div',
-    { className: classNames('caption', className), ...props },
-    (text ? [text] : []).concat(children)
-  );
+  if (typeof title == 'string' && title.length > 0) props.title = title;
+  if (typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
+  return h('div', { className: classNames('caption', className), ...props }, (text ? [text] : []).concat(children));
 };
 
 export const DynamicLabel = ({ caption, title, children, ...props }) => {
   const [text, setText] = useState(caption());
 
-  caption.subscribe(value => setText(value));
+  caption.subscribe((value) => setText(value));
 
   return h(Label, { ...props, text }, []);
 };
 
 export const Item = ({ className = 'item', title, tooltip, label, icon, children, ...props }) => {
-  if(typeof title == 'string' && title.length > 0) props.title = title;
-  if(typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
+  if (typeof title == 'string' && title.length > 0) props.title = title;
+  if (typeof tooltip == 'string' && tooltip.length > 0) props['data-tooltip'] = tooltip;
 
   return h(Overlay, { className, ...props }, h(Label, { text: icon }, label));
 };
 
-export const Icon = ({ className = 'icon', caption, image, ...props }) =>
-  h(Container, { className, ...props }, h('img', { src: image }));
+export const Icon = ({ className = 'icon', caption, image, ...props }) => h(Container, { className, ...props }, h('img', { src: image }));
 
 export const Progress = ({ className, percent, ...props }) =>
-  h(Overlay, {
+  h(
+    Overlay,
+    {
       className: classNames('progress', 'center', className),
       text: percent + '%',
       style: {
@@ -266,7 +259,7 @@ export const Progress = ({ className, percent, ...props }) =>
 </svg>
 `;*/
 
-export const SchematicIcon = props => html`
+export const SchematicIcon = (props) => html`
   <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
     <defs />
     <path
@@ -286,7 +279,7 @@ export const SchematicIcon = props => html`
   </svg>
 `;
 
-export const BoardIcon = props => html`
+export const BoardIcon = (props) => html`
   <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
     <defs />
     <path
@@ -305,7 +298,7 @@ export const BoardIcon = props => html`
   </svg>
 `;
 
-export const LibraryIcon = props => html`
+export const LibraryIcon = (props) => html`
   <svg xmlns="http://www.w3.org/2000/svg">
     <path
       d="M3.398 6.487v26.942c0 3.085 2.13 5.675 5.011 6.406V.107a6.56 6.56 0 00-5.011 6.38M30.122 0H11.644v40.009h18.478c3.64 0 6.59-2.967 6.59-6.581V6.487c0-3.641-2.95-6.487-6.59-6.487"
@@ -316,17 +309,10 @@ export const LibraryIcon = props => html`
   </svg>
 `;
 
-export const Conditional = ({
-  initialState,
-  component = Fragment,
-  className,
-  children,
-  signal,
-  ...props
-}) => {
+export const Conditional = ({ initialState, component = Fragment, className, children, signal, ...props }) => {
   const [show, setShown] = useState(initialState !== undefined ? initialState : signal());
 
-  if(signal) signal.subscribe(value => setShown(value));
+  if (signal) signal.subscribe((value) => setShown(value));
 
   return show ? h(component, { className, ...props }, children) : h(Fragment, {});
 };
@@ -334,27 +320,20 @@ export const Conditional = ({
 export const ShowHide = ({ initialState, component, className, children, signal, ...props }) => {
   const [hidden, setHidden] = useState(initialState !== undefined ? initialState : !signal());
 
-  if(signal) signal.subscribe(value => setHidden(!value));
+  if (signal) signal.subscribe((value) => setHidden(!value));
 
   return h(component, { className: classNames(className, hidden && 'hidden'), ...props }, children);
 };
 
-export const EditBox = ({
-  value = '',
-  type = 'div',
-  className,
-  hidden = false,
-  current,
-  focus,
-  ...props
-}) => {
-  if(typeof current == 'function') props.ref = input => current(input);
+export const EditBox = ({ value = '', type = 'div', className, hidden = false, current, focus, ...props }) => {
+  if (typeof current == 'function') props.ref = (input) => current(input);
 
   const outerProps = { className: classNames(className, hidden && 'hidden') };
 
-  if(type == 'form') outerProps.onSubmit = event => event.preventDefault();
+  if (type == 'form') outerProps.onSubmit = (event) => event.preventDefault();
 
-  return h(type,
+  return h(
+    type,
     outerProps,
     h('input', {
       type: 'text',
@@ -365,38 +344,20 @@ export const EditBox = ({
   );
 };
 
-export const File = ({
-  label,
-  name,
-  description,
-  i,
-  key,
-  className = 'file',
-  onPush,
-  signal,
-  data,
-  doc,
-  ...props
-}) => {
+export const File = ({ label, name, description, i, key, className = 'file', onPush, signal, data, doc, ...props }) => {
   const [loaded, setLoaded] = useState(NaN);
-  if(signal) signal.subscribe(data => setLoaded(data.percent));
+  if (signal) signal.subscribe((data) => setLoaded(data.percent));
   onPush =
     onPush ||
-    (async state => {
+    (async (state) => {
       //console.debug(`loading "${name}"...`);
       await load(name);
     });
   let id = key || i;
   let style = { minWidth: '40px', width: '40px', height: '40px' };
-  let icon = /brd$/i.test(id + className)
-    ? h(BoardIcon, { style })
-    : /sch$/i.test(id + className)
-    ? h(SchematicIcon, {})
-    : /lbr$/i.test(id + className)
-    ? h(LibraryIcon, {})
-    : undefined;
+  let icon = /brd$/i.test(id + className) ? h(BoardIcon, { style }) : /sch$/i.test(id + className) ? h(SchematicIcon, {}) : /lbr$/i.test(id + className) ? h(LibraryIcon, {}) : undefined;
   icon = h('div', { style }, icon);
-  if(id) {
+  if (id) {
     id = isNaN(+id) ? i : id;
     id = 'file-' + id;
     //  name = id;
@@ -405,17 +366,16 @@ export const File = ({
   label = label.replace(/\.[^.]*$/, '').replace(/([^\s])-([^\s])/g, '$1 $2');
   let ext = name.replace(/.*\//g, '').replace(/.*\./g, '');
   label = h(Label, { text: Util.wordWrap(label, 50, '\n') });
-  if(description) {
-    let s = Util.multiParagraphWordWrap(Util.stripXML(Util.decodeHTMLEntities(description)),
-      60,
-      '\n'
-    );
+  if (description) {
+    let s = Util.multiParagraphWordWrap(Util.stripXML(Util.decodeHTMLEntities(description)), 60, '\n');
 
     let d = s.split(/\n/g).slice(0, 1);
     label = h('div', {}, [
       label,
-      h('div', { className: 'description' },
-        d.map(line => h('pre', { className: 'description' }, [line]))
+      h(
+        'div',
+        { className: 'description' },
+        d.map((line) => h('pre', { className: 'description' }, [line]))
       )
     ]);
   }
@@ -423,66 +383,47 @@ export const File = ({
   //data = signal();
   //console.debug(`File`, { name, label });
 
-  return h(Item,
-    { className, id, 'data-filename': name, label, onPush, icon, ...props },
-    h(Progress, { className: !isNaN(loaded) ? 'visible' : 'hidden', percent: loaded })
-  );
+  return h(Item, { className, id, 'data-filename': name, label, onPush, icon, ...props }, h(Progress, { className: !isNaN(loaded) ? 'visible' : 'hidden', percent: loaded }));
 };
 
-export const Chooser = ({
-  className = 'list',
-  itemClass = 'item',
-  tooltip = () => '',
-  itemComponent = Overlay,
-  itemFilter,
-  items,
-  onChange = () => {},
-  onPush = () => {},
-  ...props
-}) => {
+export const Chooser = ({ className = 'list', itemClass = 'item', tooltip = () => '', itemComponent = Overlay, itemFilter, items, onChange = () => {}, onPush = () => {}, ...props }) => {
   const [active, setActive] = useState(-1);
   const [filter, setFilter] = useState('*');
   const [list, setList] = /*useState(items);*/ trkl.is(items) ? useState(items()) : [items];
 
-  if(trkl.is(items)) items.subscribe(setList);
+  if (trkl.is(items)) items.subscribe(setList);
 
-   //if(typeof items == 'function') console.error('items():', items());
- 
-  const pushHandler = i => (e, state) => {
+  //if(typeof items == 'function') console.error('items():', items());
+
+  const pushHandler = (i) => (e, state) => {
     const prev = active;
     state == true && setActive(i);
-    if(i != prev && e.type.endsWith('down')) onChange(e, list[i], i);
+    if (i != prev && e.type.endsWith('down')) onChange(e, list[i], i);
     onPush(e, i, state);
   };
 
-  if(itemFilter) {
+  if (itemFilter) {
     setFilter(itemFilter());
-    itemFilter.subscribe(value => setFilter(value));
+    itemFilter.subscribe((value) => setFilter(value));
   }
-  const list2re = list =>
-    list
-      .map(part =>
-        Util.tryCatch(() => new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i'))
-      )
-      .filter(r => r !== null);
+  const list2re = (list) => list.map((part) => Util.tryCatch(() => new RegExp(part.trim().replace(/\./g, '\\.').replace(/\*/g, '.*'), 'i'))).filter((r) => r !== null);
   const bar = html``;
   const preFilter = filter
     .replace(/\|/g, ' | ')
     .replace(/\+/, ' +')
     .split(/\s+/g)
-    .filter(p => !/:\/\//.test(p));
-  const plus = list2re(preFilter.filter(p => p.startsWith('+')).map(p => p.replace(/\+/g, '')));
-  const rest = preFilter.filter(p => !p.startsWith('+')).join(' ');
+    .filter((p) => !/:\/\//.test(p));
+  const plus = list2re(preFilter.filter((p) => p.startsWith('+')).map((p) => p.replace(/\+/g, '')));
+  const rest = preFilter.filter((p) => !p.startsWith('+')).join(' ');
   //console.log('filter', { plus, rest });
   const reList = rest
     .split(/\|/g)
-    .map(p => p.trim())
-    .filter(p => p != '')
-    .map(p => list2re(p.split(/\s\s*/g)));
+    .map((p) => p.trim())
+    .filter((p) => p != '')
+    .map((p) => list2re(p.split(/\s\s*/g)));
   //Sconsole.debug('regex:', ...reList);
-  const pred = name =>
-    !reList.every(c => !c.every(re => re.test(name))) && plus.every(re => re.test(name));
-  const other = list.filter(({ name }) => !pred(name)).map(i => i.name);
+  const pred = (name) => !reList.every((c) => !c.every((re) => re.test(name))) && plus.every((re) => re.test(name));
+  const other = list.filter(({ name }) => !pred(name)).map((i) => i.name);
   const children = list
     .filter(({ name }) => pred(name))
     .map((value, key) => {
@@ -494,9 +435,7 @@ export const Chooser = ({
       return h(itemComponent, {
         key: i,
         i,
-        className: typeof itemClass == 'function'
-            ? itemClass(value)
-            : classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
+        className: typeof itemClass == 'function' ? itemClass(value) : classNames(itemClass || className + '-item', (name + '').replace(/.*\./, '')),
         active: i == active,
         onPush: pushHandler(i),
         label: name.replace(new RegExp('.*/'), ''),
@@ -507,41 +446,25 @@ export const Chooser = ({
       });
     });
 
-  return h(Container,
-    { className: classNames('panel', 'no-select', className), ...props },
-    children
-  );
+  return h(Container, { className: classNames('panel', 'no-select', className), ...props }, children);
 };
 
 const ToolTipFn = ({ name, data, ...item }) => {
   let tooltip = `name\t${name.replace(new RegExp('.*/', 'g'), '')}`;
 
-  for(let field of ['type', 'size', 'sha', 'path'])
-    if(item[field] !== undefined) tooltip += `\n${field}\t${item[field]}`;
+  for (let field of ['type', 'size', 'sha', 'path']) if (item[field] !== undefined) tooltip += `\n${field}\t${item[field]}`;
 
-  if(data) tooltip += `\ndata\t${Util.abbreviate(data)}`;
+  if (data) tooltip += `\ndata\t${Util.abbreviate(data)}`;
   return tooltip;
 };
 
-export const FileList = ({
-  files,
-  onChange,
-  onActive,
-  filter,
-  showSearch,
-  focusSearch,
-  currentInput,
-  changeInput,
-  tag = 'div',
-  listTag = 'div',
-  ...props
-}) => {
+export const FileList = ({ files, onChange, onActive, filter, showSearch, focusSearch, currentInput, changeInput, tag = 'div', listTag = 'div', ...props }) => {
   const [active, setActive] = useState(true);
   const [items, setItems] = useState(files());
 
-  files.subscribe(value => setItems(value));
+  files.subscribe((value) => setItems(value));
 
-  onActive.subscribe(value => setActive(value));
+  onActive.subscribe((value) => setActive(value));
   const className = classNames('sidebar', active ? 'active' : 'inactive');
 
   return h(tag, { className }, [
@@ -564,7 +487,7 @@ export const FileList = ({
       tag: listTag,
       className: 'list',
       itemComponent: File,
-      itemClass: item => classNames('file', 'hcenter', item.name.replace(/.*\./g, '')),
+      itemClass: (item) => classNames('file', 'hcenter', item.name.replace(/.*\./g, '')),
       itemFilter: filter,
       items,
       tooltip: ToolTipFn,
@@ -574,12 +497,12 @@ export const FileList = ({
   ]);
 };
 
-export const Panel = ({ className, children, ...props }) =>
-  h(Container, { className: classNames('panel', className), ...props }, children);
+export const Panel = ({ className, children, ...props }) => h(Container, { className: classNames('panel', className), ...props }, children);
 
 export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className }, children) =>
   enable
-    ? h(SizedAspectRatioBox,
+    ? h(
+        SizedAspectRatioBox,
         {
           className,
           width,
@@ -588,7 +511,8 @@ export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className 
         },
         children
       )
-    : h('div',
+    : h(
+        'div',
         {
           className,
           style: { width }
@@ -596,7 +520,8 @@ export const WrapInAspectBox = (enable, { width = '100%', aspect = 1, className 
         children
       );
 
-export const AspectRatioBox = ({
+export const AspectRatioBox = (
+  {
     aspect = 1.0,
     children,
     insideClassName,
@@ -607,11 +532,16 @@ export const AspectRatioBox = ({
   } /* console.debug('AspectRatioBox ', { props, aspect, children, insideClassName, outsideClassName, style });*/
 ) =>
   h(Fragment, {}, [
-    h('div', {
+    h(
+      'div',
+      {
         className: classNames('aspect-ratio-box', outsideClassName),
         style: { height: 0, paddingBottom: (1.0 / aspect) * 100 + '%', ...style }
-      }, [
-        h('div', {
+      },
+      [
+        h(
+          'div',
+          {
             className: classNames('aspect-ratio-box-inside', insideClassName)
           },
           children
@@ -636,20 +566,19 @@ export const SizedAspectRatioBox = ({
   onClick,
   ...props
 }) =>
-  h('div', {
-      className: classNames('aspect-ratio-box-size',
-        className && className + '-size',
-        sizeClassName
-      ),
+  h(
+    'div',
+    {
+      className: classNames('aspect-ratio-box-size', className && className + '-size', sizeClassName),
       style: { position: 'relative', width, height, ...style },
       onClick,
       id
-    }, [
-      h(AspectRatioBox, {
-          outsideClassName: classNames('aspect-ratio-box-outside',
-            className && className + '-outside',
-            outsideClassName
-          ),
+    },
+    [
+      h(
+        AspectRatioBox,
+        {
+          outsideClassName: classNames('aspect-ratio-box-outside', className && className + '-outside', outsideClassName),
           outsideProps,
           insideClassName: insideClassName || className,
           onClick,
@@ -660,16 +589,7 @@ export const SizedAspectRatioBox = ({
     ]
   );
 
-export const TransformedElement = ({
-  type = 'div',
-  id,
-  aspect,
-  listener,
-  style = { position: 'relative' },
-  className,
-  children = [],
-  ...props
-}) => {
+export const TransformedElement = ({ type = 'div', id, aspect, listener, style = { position: 'relative' }, className, children = [], ...props }) => {
   /*  const [transform, setTransform] = useState(new TransformationList());
   //console.debug('TransformedElement:', { aspect });
   //
@@ -679,7 +599,8 @@ export const TransformedElement = ({
       if(value !== undefined) setTransform(value + '');
     });*/
   let transform = useTrkl(listener);
-  return h(type,
+  return h(
+    type,
     {
       id,
       className: classNames('transformed-element', className && className + '-size'),
@@ -691,21 +612,9 @@ export const TransformedElement = ({
   );
 };
 
-export const Slider = ({
-  min = 0,
-  max = 100,
-  value: initialValue = 0,
-  step = 1,
-  name = 'slider',
-  orient = 'horizontal',
-  label,
-  onChange = value => {},
-  style = {},
-  length,
-  ...props
-}) => {
+export const Slider = ({ min = 0, max = 100, value: initialValue = 0, step = 1, name = 'slider', orient = 'horizontal', label, onChange = (value) => {}, style = {}, length, ...props }) => {
   const [value, setValue] = useState(initialValue);
-  const onInput = e => {
+  const onInput = (e) => {
     const { target } = e;
 
     setValue(target.value);
@@ -714,7 +623,8 @@ export const Slider = ({
   label = label || name;
   let dim = length ? { [orient == 'horizontal' ? 'width' : 'height']: length } : {};
 
-  return h('div',
+  return h(
+    'div',
     {
       style: {
         display: 'inline-flex',
@@ -725,7 +635,8 @@ export const Slider = ({
         fontSize: '0.8em',
         ...style
       }
-    }, [
+    },
+    [
       //h('label', { for: name }, label),
       label,
       h('input', {
@@ -782,8 +693,7 @@ export const Canvas = ({ onInit, ...props }) => {
     //console.debug('ctx.current', ctx.current);
     const { offsetLeft: x, offsetTop: y } = canvasRef.current;
 
-    if(typeof onInit == 'function')
-      onInit(ctx.current, canvasRef.current, { width, height, x, y });
+    if (typeof onInit == 'function') onInit(ctx.current, canvasRef.current, { width, height, x, y });
   }, []);
 
   /*  const [windowWidth, windowHeight] = useWindowSize(() => {
@@ -793,15 +703,12 @@ export const Canvas = ({ onInit, ...props }) => {
 
   function handleMouseMove(e) {
     //actual coordinates
-    const coords = [
-      e.clientX - canvasRef.current.offsetLeft,
-      e.clientY - canvasRef.current.offsetTop
-    ];
-    if(drawing) {
+    const coords = [e.clientX - canvasRef.current.offsetLeft, e.clientY - canvasRef.current.offsetTop];
+    if (drawing) {
       ctx.current.lineTo(...coords);
       ctx.current.stroke();
     }
-    if(props.handleMouseMove) {
+    if (props.handleMouseMove) {
       props.handleMouseMove(...coords);
     }
   }
@@ -813,9 +720,7 @@ export const Canvas = ({ onInit, ...props }) => {
     ctx.current.strokeStyle = props.color;
     ctx.current.beginPath();
     //actual coordinates
-    ctx.current.moveTo(e.clientX - canvasRef.current.offsetLeft,
-      e.clientY - canvasRef.current.offsetTop
-    );
+    ctx.current.moveTo(e.clientX - canvasRef.current.offsetLeft, e.clientY - canvasRef.current.offsetTop);
     setDrawing(true);
   }
 
@@ -824,7 +729,8 @@ export const Canvas = ({ onInit, ...props }) => {
     setDrawing(false);
   }
 
-  return h('canvas',
+  return h(
+    'canvas',
     {
       ref: canvasRef,
       width,
@@ -833,7 +739,8 @@ export const Canvas = ({ onInit, ...props }) => {
       onMouseUp: stopDrawing,
       onMouseOut: stopDrawing,
       onMouseMove: handleMouseMove
-    }, []
+    },
+    []
   );
 };
 
@@ -858,11 +765,11 @@ export const ColorWheel = ({ radius = 50, ...props }) => {
         let image = ctx.createImageData(2 * radius, 2 * radius);
         data = image.data;
 
-        for(let x = -radius; x < radius; x++) {
-          for(let y = -radius; y < radius; y++) {
+        for (let x = -radius; x < radius; x++) {
+          for (let y = -radius; y < radius; y++) {
             let [r, phi] = xy2polar(x, y);
 
-            if(r > radius) {
+            if (r > radius) {
               //skip all (x,y) coordinates that are outside of the circle
               continue;
             }
@@ -911,17 +818,17 @@ export const ColorWheel = ({ radius = 50, ...props }) => {
         let hue1 = hue / 60;
         let x = chroma * (1 - Math.abs((hue1 % 2) - 1));
         let r1, g1, b1;
-        if(hue1 >= 0 && hue1 <= 1) {
+        if (hue1 >= 0 && hue1 <= 1) {
           [r1, g1, b1] = [chroma, x, 0];
-        } else if(hue1 >= 1 && hue1 <= 2) {
+        } else if (hue1 >= 1 && hue1 <= 2) {
           [r1, g1, b1] = [x, chroma, 0];
-        } else if(hue1 >= 2 && hue1 <= 3) {
+        } else if (hue1 >= 2 && hue1 <= 3) {
           [r1, g1, b1] = [0, chroma, x];
-        } else if(hue1 >= 3 && hue1 <= 4) {
+        } else if (hue1 >= 3 && hue1 <= 4) {
           [r1, g1, b1] = [0, x, chroma];
-        } else if(hue1 >= 4 && hue1 <= 5) {
+        } else if (hue1 >= 4 && hue1 <= 5) {
           [r1, g1, b1] = [x, 0, chroma];
-        } else if(hue1 >= 5 && hue1 <= 6) {
+        } else if (hue1 >= 5 && hue1 <= 6) {
           [r1, g1, b1] = [chroma, 0, x];
         }
 
@@ -939,10 +846,11 @@ export const CrossHair = ({ position, show, radius = 20, ...props }) => {
   const [pos, setPos] = useState(position());
   const [visible, setVisible] = useState(show());
 
-  position.subscribe(value => setPos(value));
-  show.subscribe(value => setVisible(value));
+  position.subscribe((value) => setPos(value));
+  show.subscribe((value) => setVisible(value));
 
-  return h('div',
+  return h(
+    'div',
     {
       style: {
         position: 'fixed',
@@ -959,7 +867,8 @@ export const CrossHair = ({ position, show, radius = 20, ...props }) => {
         style: { position: 'relative', width: `${radius * 2}px`, height: `${radius * 2}px` }
       },
       h('path', {
-        d: 'M11.004 22c-.007-9.184-.013-12.816 0-22M0 11.005c9.183-.007 12.816-.013 22 0M15.27 11A4.271 4.271 0 0111 15.27 4.271 4.271 0 016.729 11 4.271 4.271 0 0111 6.729a4.271 4.271 0 014.271 4.27zm3.645.015a7.932 7.931 0 01-7.932 7.932 7.932 7.931 0 01-7.931-7.932 7.932 7.931 0 017.931-7.931 7.932 7.931 0 017.932 7.931z',
+        d:
+          'M11.004 22c-.007-9.184-.013-12.816 0-22M0 11.005c9.183-.007 12.816-.013 22 0M15.27 11A4.271 4.271 0 0111 15.27 4.271 4.271 0 016.729 11 4.271 4.271 0 0111 6.729a4.271 4.271 0 014.271 4.27zm3.645.015a7.932 7.931 0 01-7.932 7.932 7.932 7.931 0 01-7.931-7.932 7.932 7.931 0 017.931-7.931 7.932 7.931 0 017.932 7.931z',
         fill: 'none',
         stroke: '#000',
         strokeWidth: 1
@@ -968,15 +877,19 @@ export const CrossHair = ({ position, show, radius = 20, ...props }) => {
   );
 };
 
-export const MoveCursor = props =>
-  h('svg', {
+export const MoveCursor = (props) =>
+  h(
+    'svg',
+    {
       height: '22',
       width: '22',
       xmlns: 'http://www.w3.org/2000/svg'
-    }, [
+    },
+    [
       h('defs', {}),
       h('path', {
-        d: 'M19.173 11.722l-2.393 2.393 1.044 1.044L22 10.983l-4.176-4.177L16.78 7.85l3.132 3.133zM5.221 14.115l-3.132-3.132L5.22 7.851 4.177 6.806 0 10.983l4.177 4.177zm6.535-11.288l2.398 2.394 1.044-1.044L11.018 0 6.84 4.177 7.885 5.22l3.132-3.133zm-1.473 16.345L7.885 16.78l-1.044 1.044L11.017 22l4.181-4.177-1.044-1.044-3.136 3.132zm-7.455-7.45h16.345l.739-.74-.74-.739H2.829l-.74.74zm8.928-8.895l-.739-.739-.734.74v7.415h1.473zm-1.473 16.345l.734.74.74-.74v-7.455h-1.474z'
+        d:
+          'M19.173 11.722l-2.393 2.393 1.044 1.044L22 10.983l-4.176-4.177L16.78 7.85l3.132 3.133zM5.221 14.115l-3.132-3.132L5.22 7.851 4.177 6.806 0 10.983l4.177 4.177zm6.535-11.288l2.398 2.394 1.044-1.044L11.018 0 6.84 4.177 7.885 5.22l3.132-3.133zm-1.473 16.345L7.885 16.78l-1.044 1.044L11.017 22l4.181-4.177-1.044-1.044-3.136 3.132zm-7.455-7.45h16.345l.739-.74-.74-.739H2.829l-.74.74zm8.928-8.895l-.739-.739-.734.74v7.415h1.473zm-1.473 16.345l.734.74.74-.74v-7.455h-1.474z'
       })
     ]
   );
@@ -984,15 +897,16 @@ export const MoveCursor = props =>
 export const DropDown = ({ children, into /* = 'body'*/, isOpen = trkl(false), ...props }) => {
   let [button, overlay] = ReactComponent.toChildArray(children);
   const [open, setOpen] = useState(isOpen());
-  isOpen.subscribe(value => setOpen(value));
+  isOpen.subscribe((value) => setOpen(value));
   const [ref, rect, element] = useDimensions();
-  const oref = useElement(element => {
-    if(rect) {
+  const oref = useElement((element) => {
+    if (rect) {
       const xy = new Rect(rect).toPoints()[3];
       Element.setCSS(element, xy.toCSS());
     }
   });
-  const event = useCallback(trkl().subscribe((e, prev) => {
+  const event = useCallback(
+    trkl().subscribe((e, prev) => {
       const { x, y, buttons, button, timeStamp } = e;
       const orect = Element.rect(oref.current);
       const timeStep = timeStamp - (prev ? prev.timeStamp : NaN);
@@ -1001,11 +915,11 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen = trkl(false), .
       const dist = Point.distance(...points);
       const inside = orect && orect.inside({ x, y });
       //   console.debug(e.type, diff, dist, {timeStep, orect, inside, x, y, buttons, button, timeStamp });
-      if(e.button == 2) {
+      if (e.button == 2) {
         e.preventDefault();
         return false;
       }
-      if(oref.current && open && !inside) {
+      if (oref.current && open && !inside) {
         isOpen(false);
         return false;
       }
@@ -1015,8 +929,8 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen = trkl(false), .
 
   useEvent('mousedown', event);
 
-  if(typeof button == 'function') button = button({ ref: ref, ...props });
-  if(typeof overlay == 'function') overlay = overlay({ ref: oref, onMouseWheel });
+  if (typeof button == 'function') button = button({ ref: ref, ...props });
+  if (typeof overlay == 'function') overlay = overlay({ ref: oref, onMouseWheel });
   console.log('DropDown open=', { open });
 
   function onMouseWheel(e) {
@@ -1032,11 +946,11 @@ export const DropDown = ({ children, into /* = 'body'*/, isOpen = trkl(false), .
 export const Fence = ({ children, style = {}, sizeListener, aspectListener, ...props }) => {
   const [dimensions, setDimensions] = useState(sizeListener());
   const [aspect, setAspect] = useState(aspectListener());
-  if(sizeListener && sizeListener.subscribe) sizeListener.subscribe(value => setDimensions(value));
-  if(aspectListener && aspectListener.subscribe)
-    aspectListener.subscribe(value => setAspect(value));
+  if (sizeListener && sizeListener.subscribe) sizeListener.subscribe((value) => setDimensions(value));
+  if (aspectListener && aspectListener.subscribe) aspectListener.subscribe((value) => setAspect(value));
   console.debug('Fence dimensions:', dimensions);
-  return h(TransformedElement,
+  return h(
+    TransformedElement,
     {
       id: 'fence',
       type: 'div' || SizedAspectRatioBox,
@@ -1073,7 +987,7 @@ export const Zoomable = ({ type = 'div', style, children, ...props }) => {
   }
   // console.log('Zoomable transform:', transform);
   let inner = trkl();
-  const ref = el => {
+  const ref = (el) => {
     /*  if(el && typeof el.getBoundingClientRect == 'function')
           console.log('Zoomable.container:', el.getBoundingClientRect());
 
@@ -1081,7 +995,8 @@ export const Zoomable = ({ type = 'div', style, children, ...props }) => {
           console.log('Zoomable.inner:', inner().getBoundingClientRect());*/
     setContainer(el);
   };
-  return h(type,
+  return h(
+    type,
     {
       ...props,
       ...panZoomHandlers
@@ -1100,7 +1015,7 @@ export const DisplayList = ({ data, ...props }) => {
     }
   });
 
-  if(itemData) setItems(itemData);
+  if (itemData) setItems(itemData);
 
   //console.log('itemData:', itemData);
 

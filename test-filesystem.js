@@ -51,7 +51,7 @@ const tests = {
   },
   'filesystem.read': () => {
     let ret, str;
-    for(let str of ['abcdefg\n', '123456789']) {
+    for (let str of ['abcdefg\n', '123456789']) {
       ret = filesystem.read(handle, buffer, 0, str.length);
       assertEquals(ret, str.length);
       assertEquals(filesystem.bufferToString(buffer).slice(0, ret), str);
@@ -107,8 +107,8 @@ const tests = {
     assert(filesystem.lstat(tmpdir + '/file').isSymbolicLink());
   },
   'filesystem.unlink': () => {
-    for(let file of filesystem.readdir(tmpdir)) {
-      if(file[0] == '.') continue;
+    for (let file of filesystem.readdir(tmpdir)) {
+      if (file[0] == '.') continue;
       let path = `${tmpdir}/${file}`;
       assertEquals(filesystem.unlink(path), 0);
       assert(!filesystem.exists(path));
@@ -146,13 +146,14 @@ const tests = {
 
 async function main(...args) {
   await ConsoleSetup({ colors: true, depth: Infinity });
-  await PortableFileSystem(fs => (filesystem = fs));
+  await PortableFileSystem((fs) => (filesystem = fs));
   //  Util.getGlobalObject().console = {};
 
   console.log('Console:', Object.getPrototypeOf(console));
   console.log('log:', Object.getPrototypeOf(console).log);
 
-  console.log('ARGS:',
+  console.log(
+    'ARGS:',
     new Map([
       ['a', 1],
       ['b', 2]
@@ -160,10 +161,11 @@ async function main(...args) {
     { u: undefined, n: null, args: Util.getArgs(), filesystem }
   );
   tmpdir = `/tmp/${Util.randStr(10)}`;
-  TinyTest.run(Util.filter(tests, t => t));
+  TinyTest.run(Util.filter(tests, (t) => t));
   return;
-  console.log(Util.getMethodNames(filesystem)
-      .map(n => `  'filesystem.${n}': null,`)
+  console.log(
+    Util.getMethodNames(filesystem)
+      .map((n) => `  'filesystem.${n}': null,`)
       .join('\n')
   );
 }

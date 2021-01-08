@@ -5,21 +5,21 @@ import PortableConsole from './lib/consoleSetup.js';
 import Util from './lib/util.js';
 const { client, server, fetch } = net;
 
-PortableConsole(console => console.log('net: ', { client, server, fetch }));
+PortableConsole((console) => console.log('net: ', { client, server, fetch }));
 
 function connect() {
   print('CLIENT');
   net.client({
     port: 3001,
     server: 'localhost',
-    onConnect: socket => {
+    onConnect: (socket) => {
       print('Connected to server');
       socket.send('hello');
     },
     onMessage: (socket, msg) => {
       print('Received from server: ', msg);
     },
-    onClose: why => {
+    onClose: (why) => {
       print('Disconnected from server. Reason: ', why);
     },
     onPong: (socket, data) => {
@@ -35,16 +35,7 @@ g.process = async function process(contours, hier, ...args) {
   //let size = new Size(imgOriginal.cols, imgOriginal.rows);
   const time = Date.now();
   const [images, ...rest] = args;
-  const {
-    imgBlurred,
-    imgCanny,
-    imgGrayscale,
-    imgMorphology,
-    imgOriginal,
-    imgRaw,
-    imgTemp,
-    imgVector
-  } = images;
+  const { imgBlurred, imgCanny, imgGrayscale, imgMorphology, imgOriginal, imgRaw, imgTemp, imgVector } = images;
   console.log('images: ', Object.keys(images));
   let m = images.imgVector;
   /*  console.log('Images: ', typeof images);
@@ -69,8 +60,8 @@ g.process = async function process(contours, hier, ...args) {
     frame,
     time,
     contours: contours
-      .filter(c => c.length >= 4)
-      .map(c => c.toString(Contour.FORMAT_NOBRACKET | Contour.FORMAT_SPACE | Contour.FORMAT_01))
+      .filter((c) => c.length >= 4)
+      .map((c) => c.toString(Contour.FORMAT_NOBRACKET | Contour.FORMAT_SPACE | Contour.FORMAT_01))
       .join('|')
   };
   let body = JSON.stringify(data);

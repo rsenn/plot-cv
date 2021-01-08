@@ -1,7 +1,19 @@
 import { ECMAScriptParser } from './lib/ecmascript.js';
 import Lexer, { PathReplacer } from './lib/ecmascript/lexer.js';
 import Printer from './lib/ecmascript/printer.js';
-import { estree, ESNode, BlockStatement, SequenceExpression, TemplateLiteral, CallExpression, ImportDeclaration, Identifier, ObjectPattern, ArrowFunctionExpression, Program } from './lib/ecmascript/estree.js';
+import {
+  estree,
+  ESNode,
+  BlockStatement,
+  SequenceExpression,
+  TemplateLiteral,
+  CallExpression,
+  ImportDeclaration,
+  Identifier,
+  ObjectPattern,
+  ArrowFunctionExpression,
+  Program
+} from './lib/ecmascript/estree.js';
 import Util from './lib/util.js';
 import deep from './lib/deep.js';
 import { Path } from './lib/json.js';
@@ -26,12 +38,12 @@ Util.callMain(main, Util.putError);
 
 function dumpFile(name, data) {
   console.log('dumpFile', { name, data: Util.abbreviate(Util.escape(data)) });
-  if(Util.isArray(data)) data = data.join('\n');
-  if(typeof data != 'string') data = '' + data;
+  if (Util.isArray(data)) data = data.join('\n');
+  if (typeof data != 'string') data = '' + data;
 
   data = data.trim();
 
-  if(data != '') {
+  if (data != '') {
     filesystem.writeFile(name, data + '\n');
     console.log(`Wrote ${name}: ${data.length} bytes`);
   }
@@ -47,7 +59,7 @@ let files = {};
 
 async function main(...args) {
   await ConsoleSetup({ depth: 3, breakLength: 80 });
-  await PortableFileSystem(fs => (filesystem = fs));
+  await PortableFileSystem((fs) => (filesystem = fs));
 
   console.log('main args =', args);
   console.log('console.depth:', console.depth);
@@ -63,15 +75,15 @@ async function main(...args) {
 
   //await import('tty');
 
-  if(args.length == 0) args.push(null); //'./lib/ecmascript/parser.js');
-  for(let file of args) {
+  if (args.length == 0) args.push(null); //'./lib/ecmascript/parser.js');
+  for (let file of args) {
     let error;
 
     await Util.safeCall(processFile, file);
 
     files[file] = finish(error);
 
-    if(error) {
+    if (error) {
       Util.putError(error);
       Util.exit(1);
     }
@@ -84,8 +96,8 @@ async function main(...args) {
 
 async function processFile(file) {
   let data, b, ret;
-  if(file == '-') file = '/dev/stdin';
-  if(file && filesystem.exists(file)) data = filesystem.readFile(file);
+  if (file == '-') file = '/dev/stdin';
+  if (file && filesystem.exists(file)) data = filesystem.readFile(file);
   else {
     file = 'stdin';
     data = code;
@@ -100,9 +112,10 @@ async function processFile(file) {
   ast = parser.parseProgram();
   parser.addCommentsToNodes(ast);
 
-  let flat = deep.flatten(ast,
+  let flat = deep.flatten(
+    ast,
     new Map(),
-    node => node instanceof ESNode || Util.isArray(node),
+    (node) => node instanceof ESNode || Util.isArray(node),
     (path, value) => {
       //   path = /*path.join("."); //*/ new Path(path);
       return [path, value];
@@ -131,13 +144,11 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
     nodeKeys.push(path);
   }
 */
-  const isRequire = node => node instanceof CallExpression && node.callee.value == 'require';
-  const isImport = node => node instanceof ImportDeclaration;
+  const isRequire = (node) => node instanceof CallExpression && node.callee.value == 'require';
+  const isImport = (node) => node instanceof ImportDeclaration;
 
-  let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
-      pos * 10 - 1,
-      { comment, pos, len, node }
-    ]),
+  let commentMap = new Map(
+    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node }]),
     (a, b) => a - b
   );
 
@@ -149,7 +160,8 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
   const output_file = file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
 
   let tree = new Tree(ast);
-  console.log('tree:',
+  console.log(
+    'tree:',
     tree.flat(null, ([path, node]) => {
       return !Util.isPrimitive(node);
     })
@@ -173,9 +185,7 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
 
   function getImports() {
     const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
-    const importStatements = imports
-      .map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path))
-      .map(path => [path, deep.get(ast, path)]);
+    const importStatements = imports.map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path)).map((path) => [path, deep.get(ast, path)]);
 
     console.log('imports:', new Map(imports.map(([path, node]) => [ESNode.assoc(node).position, node])));
     console.log('importStatements:', importStatements);
@@ -183,9 +193,7 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
     const importedFiles = imports.map(([pos, node]) => Identifier.string(node.source || node.arguments[0]));
     console.log('importedFiles:', importedFiles);
 
-    let importIdentifiers = importStatements
-      .map(([p, n]) => [p, n.identifiers ? n.identifiers : n])
-      .map(([p, n]) => [p, n.declarations ? n.declarations : n]);
+    let importIdentifiers = importStatements.map(([p, n]) => [p, n.identifiers ? n.identifiers : n]).map(([p, n]) => [p, n.declarations ? n.declarations : n]);
     console.log('importIdentifiers:', importIdentifiers);
 
     /*  importIdentifiers = importIdentifiers.map(([p, n]) =>
@@ -207,14 +215,14 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
 
 function finish(err) {
   let fail = !!err;
-  if(fail) {
+  if (fail) {
     err.stack = PathReplacer()('' + err.stack)
       .split(/\n/g)
-      .filter(s => !/esfactory/.test(s))
+      .filter((s) => !/esfactory/.test(s))
       .join('\n');
   }
 
-  if(err) {
+  if (err) {
     console.log(parser.lexer.currentLine());
     console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
@@ -223,7 +231,7 @@ function finish(err) {
   let t = [];
   console.log(parser.trace());
   dumpFile('trace.log', parser.trace());
-  if(fail) {
+  if (fail) {
     console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
   }
   console.log('finish: ' + (fail ? 'error' : 'success'));

@@ -26,10 +26,10 @@ async function main(...args) {
 
   let objs = [];
 
-  for(let ctor of ctors) {
+  for (let ctor of ctors) {
     objs.push(new ctor(0, 0, 0, 0));
   }
-  for(let obj of objs) {
+  for (let obj of objs) {
     console.log('keys: ', Util.getMemberNames(obj));
     console.log('obj: ', obj.constructor.name, obj);
   }
@@ -46,14 +46,14 @@ async function main(...args) {
   console.log('pl1:', pl1);
   console.log('pl2:', pl2);
 
-  for(let point of pl1) ct1.push(point);
-  for(let point of pl2) ct2.push(point);
+  for (let point of pl1) ct1.push(point);
+  for (let point of pl2) ct2.push(point);
   let it = ct1[Symbol.iterator]();
 
   let item;
 
-  for(; (item = it.next()), !item.done; ) console.log('Item:', item);
+  for (; (item = it.next()), !item.done; ) console.log('Item:', item);
   let i = 0;
-  for(let p of ct1.concat(ct2)) console.log(`p[${i++}]:`, p);
+  for (let p of ct1.concat(ct2)) console.log(`p[${i++}]:`, p);
 }
 Util.callMain(main, true);

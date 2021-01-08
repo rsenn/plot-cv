@@ -55,13 +55,13 @@ class ES6ImportExport {
 
     /* this.node = node;*/
     //console.log('ES6ImportExport; obj:', ret);
-    if(!new.target) return Object.setPrototypeOf(ret, ES6ImportExport.prototype);
+    if (!new.target) return Object.setPrototypeOf(ret, ES6ImportExport.prototype);
     return ret;
   }
 
   get from() {
     let value = this.node.source;
-    while(Util.isObject(value) && value.value) value = value.value;
+    while (Util.isObject(value) && value.value) value = value.value;
     return value;
   }
   set from(value) {
@@ -84,14 +84,14 @@ const LoginIcon = ({ style }) => (<svg style={style} height="56" width="34" view
 */
 
 function PrefixRemover(reOrStr, replacement = '') {
-  if(!(Util.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
+  if (!(Util.isArray(reOrStr) || Util.isIterable(reOrStr))) reOrStr = [reOrStr];
 
-  return arg => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), arg);
+  return (arg) => reOrStr.reduce((acc, re, i) => acc.replace(re, replacement), arg);
 }
 
 function dumpFile(name, data) {
-  if(Util.isArray(data)) data = data.join('\n');
-  if(typeof data != 'string') data = '' + data;
+  if (Util.isArray(data)) data = data.join('\n');
+  if (typeof data != 'string') data = '' + data;
   filesystem.writeFile(name, data + '\n');
   console.log(`Wrote ${name}: ${data.length} bytes`);
 }
@@ -101,7 +101,7 @@ function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments))
 }
 
 async function main(...args) {
-  await PortableFileSystem(fs => (filesystem = fs));
+  await PortableFileSystem((fs) => (filesystem = fs));
   await ConsoleSetup({ depth: 5 });
 
   cwd = filesystem.realpath('.');
@@ -109,20 +109,13 @@ async function main(...args) {
   // cwd = process.cwd() || fs.realpath('.');
   console.log('cwd=', cwd);
 
-  if(args.length == 0)
-    args = [
-      /*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js',
-      'lib/geom/size.js',
-      'lib/geom/trbl.js',
-      'lib/geom/rect.js',
-      'lib/dom/element.js'
-    ];
+  if (args.length == 0) args = [/*'lib/geom/align.js', 'lib/geom/bbox.js','lib/geom/line.js'*/ 'lib/geom/point.js', 'lib/geom/size.js', 'lib/geom/trbl.js', 'lib/geom/rect.js', 'lib/dom/element.js'];
   let r = [];
   let processed = [];
   console.log('args=', args);
   console.log('test', path.dirname('/usr/bin/ls'));
   console.log('test', path.resolve('/proc/self/../ls'));
-  const argDirs = [...args].map(arg => path.dirname(arg));
+  const argDirs = [...args].map((arg) => path.dirname(arg));
   // console.log('argDirs',Util.toString(argDirs));
 
   const dirs = [cwd].concat(argDirs); /*.map(p => path.resolve(p))*/
@@ -136,7 +129,7 @@ async function main(...args) {
   try {
     console.log('relative()', path.relative(cwd, argDirs[0], cwd));
     console.log('relative()', path.relative(argDirs[0], cwd, cwd));
-  } catch(err) {
+  } catch (err) {
     console.log(err);
   }
 
@@ -147,10 +140,9 @@ async function main(...args) {
   moduleAliases = packagesPath.reduce((acc, p) => {
     let json = JSON.parse(filesystem.readFile(p));
     let aliases = json._moduleAliases || {};
-    for(let alias in aliases) {
+    for (let alias in aliases) {
       let module = path.join(path.dirname(p), aliases[alias]);
-      if(!filesystem.exists(module))
-        throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`);
+      if (!filesystem.exists(module)) throw new Error(`No such module alias from '${alias}' to '${aliases[alias]}'`);
       let file = findModule(module);
       // let st = filesystem.stat(file);
       acc.set(alias, file);
@@ -159,18 +151,17 @@ async function main(...args) {
   }, new Map());
   console.log('moduleAliases=', moduleAliases);
   const name = args.join(', ');
-  while(args.length > 0) processFile(args.shift());
+  while (args.length > 0) processFile(args.shift());
   // console.log("result:",r);
 
-  for(let ids of exportMap.values())
-    r.push(`Util.weakAssign(globalObj, { ${Util.unique(ids).join(', ')} });`);
+  for (let ids of exportMap.values()) r.push(`Util.weakAssign(globalObj, { ${Util.unique(ids).join(', ')} });`);
 
   const script = `// ==UserScript==
 
 // @name         ${name}
 // @namespace    create-tamper
 // @version      0.2
-// @description  ${processed.map(p => path.basename(p)).join(', ')}
+// @description  ${processed.map((p) => path.basename(p)).join(', ')}
 // @author       You
 // @match        *://*/*
 // @exclude      *://127.0.0.1*/*
@@ -195,8 +186,8 @@ async function main(...args) {
 
   function removeFile(file) {
     let idx = args.indexOf(file);
-    if(idx != -1) args.splice(idx, idx + 1);
-    if(processed.indexOf(file) != -1) return false;
+    if (idx != -1) args.splice(idx, idx + 1);
+    if (processed.indexOf(file) != -1) return false;
     processed.push(file);
     return true;
   }
@@ -204,7 +195,7 @@ async function main(...args) {
   function processFile(file) {
     let data, b, ret;
 
-    if(!removeFile(file)) return;
+    if (!removeFile(file)) return;
     const modulePath = removeModulesDir(file);
     console.log('processing:', modulePath);
 
@@ -217,27 +208,26 @@ async function main(...args) {
     try {
       ast = parser.parseProgram();
       parser.addCommentsToNodes(ast);
-      let flat = deep.flatten(ast,
+      let flat = deep.flatten(
+        ast,
         new Map(),
-        node => node instanceof ESNode,
+        (node) => node instanceof ESNode,
         (path, value) => [path, value]
       );
-      function removeStatements(statements, predicate = stmt => true) {
+      function removeStatements(statements, predicate = (stmt) => true) {
         //  if(Util.isArray(statements)) statements = new Map(statements);
         // /* prettier-ignore */ console.log('removeStatements:', [...statements].map(mod=> printAst(mod.stmt)));
         // /* prettier-ignore */ console.log('removeStatements:', [...statements].map(([path, stmt]) => stmt));
         let removed = [];
-        for(let [path, node] of statements) {
-          if(!predicate(node, path)) continue;
+        for (let [path, node] of statements) {
+          if (!predicate(node, path)) continue;
           console.log('removeStatements loop:', new ImmutablePath(path), printAst(node));
 
-          if(node instanceof ImportDeclaration ||
-            (Util.isObject(node) && node.what == 'default')
-          ) {
+          if (node instanceof ImportDeclaration || (Util.isObject(node) && node.what == 'default')) {
             deep.unset(ast, path);
           } else {
             console.log('i:', deep.get(ast, path.slice(0, -2)));
-            if(!Util.isArray(node.declarations)) node = node.declarations;
+            if (!Util.isArray(node.declarations)) node = node.declarations;
             else Object.setPrototypeOf(node, VariableDeclaration.prototype);
             deep.set(ast, path, node);
           }
@@ -245,12 +235,11 @@ async function main(...args) {
         }
         return removed;
       }
-      const getBase = filename => filename.replace(/\.[a-z0-9]*$/, '');
-      const getRelative = filename => path.join(thisdir, filename);
-      const getFile = Util.memoize(module => searchModuleInPath(module, file));
+      const getBase = (filename) => filename.replace(/\.[a-z0-9]*$/, '');
+      const getRelative = (filename) => path.join(thisdir, filename);
+      const getFile = Util.memoize((module) => searchModuleInPath(module, file));
       let imports,
-        importStatements = [...flat.entries()].filter(([key, node]) => node instanceof ImportDeclaration
-        );
+        importStatements = [...flat.entries()].filter(([key, node]) => node instanceof ImportDeclaration);
       imports = importStatements.map(([path, node], i) => {
         //   console.debug("node:",node);
         const getFromValue = Util.memoize(() => Literal.string(node.source));
@@ -268,10 +257,10 @@ async function main(...args) {
           fromValue: getFromValue()
         });
       });
-      let statement2module = imports.map(imp => [imp.node, imp]);
+      let statement2module = imports.map((imp) => [imp.node, imp]);
       statement2module = new WeakMap(statement2module);
       let alter = imports.filter(({ fromPath, ...module }) => /^lib/.test(fromPath));
-      alter = alter.map(node => {
+      alter = alter.map((node) => {
         const to = node.fromPath;
         const from = node.fromValue;
         node.from = new Literal(`'${to}'`);
@@ -279,75 +268,66 @@ async function main(...args) {
         return node;
       });
 
-      log(`imports =`,
-        imports.map(imp => imp.toSource())
+      log(
+        `imports =`,
+        imports.map((imp) => imp.toSource())
       );
-      log(`alter =`,
-        alter.map(imp => printAst(imp.node))
+      log(
+        `alter =`,
+        alter.map((imp) => printAst(imp.node))
       );
-      let remove = imports
-        .map((imp, idx) => [idx, imp.node])
-        .filter((imp, idx) => !/^lib/.test(imp.fromPath));
-      log(`remove =`,
-        remove
-          .reduce((acc, [i, imp]) => [...acc, imp /*(imp.fromPath),imp.toSource()*/], [])
-          .map(imp => Util.className(imp))
+      let remove = imports.map((imp, idx) => [idx, imp.node]).filter((imp, idx) => !/^lib/.test(imp.fromPath));
+      log(
+        `remove =`,
+        remove.reduce((acc, [i, imp]) => [...acc, imp /*(imp.fromPath),imp.toSource()*/], []).map((imp) => Util.className(imp))
       );
 
       removeStatements(remove.map(([idx, node]) => [imports[idx].path, node]));
 
-      let recurseFiles = remove
-        .map(([idx, node]) => imports[idx])
-        .filter(imp => processed.indexOf(imp.fromPath) == -1);
+      let recurseFiles = remove.map(([idx, node]) => imports[idx]).filter((imp) => processed.indexOf(imp.fromPath) == -1);
       //recurseFiles = recurseFiles.map(([path,module]) => { console.log("module:",module.fromPath); return module.fromPath; });
       // removeFile(modulePath);
 
-      log(`recurseFiles =`,
-        recurseFiles.map(imp => imp.fromPath)
+      log(
+        `recurseFiles =`,
+        recurseFiles.map((imp) => imp.fromPath)
       );
-      recurseFiles.forEach(imp => processFile(imp.fromPath));
-      let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportNamedDeclaration || value.exported === true
-      );
+      recurseFiles.forEach((imp) => processFile(imp.fromPath));
+      let exports = [...flat.entries()].filter(([key, value]) => value instanceof ExportNamedDeclaration || value.exported === true);
 
-      for(let [path, node] of exports) {
+      for (let [path, node] of exports) {
         log(`export ${path}`, node);
         deep.set(ast, path, node.declarations[0]);
       }
 
       exports = exports.map(([p, stmt]) =>
-        (Util.isObject(stmt.declarations) &&
-          Util.isObject(stmt.declarations.id) &&
-          Util.isObject(stmt.declarations.id.value)) ==
-        (Util.isObject(stmt.what) && Util.isObject(stmt.what.value))
+        (Util.isObject(stmt.declarations) && Util.isObject(stmt.declarations.id) && Util.isObject(stmt.declarations.id.value)) == (Util.isObject(stmt.what) && Util.isObject(stmt.what.value))
           ? stmt.declarations
           : stmt
       );
-      exports = exports.map(decl =>
+      exports = exports.map((decl) =>
         decl instanceof ObjectPattern
-          ? decl.properties.map(prop => ('id' in prop ? prop.id : prop))
+          ? decl.properties.map((prop) => ('id' in prop ? prop.id : prop))
           : decl instanceof ObjectExpression
-          ? decl.members.map(prop => ('id' in prop ? prop.id : prop))
+          ? decl.members.map((prop) => ('id' in prop ? prop.id : prop))
           : decl
       );
-      exports = exports.map(decl => (Util.isObject(decl) && 'id' in decl ? decl.id : decl));
-      exports = exports.map(e => e.value);
+      exports = exports.map((decl) => (Util.isObject(decl) && 'id' in decl ? decl.id : decl));
+      exports = exports.map((e) => e.value);
       log(`exports =`, exports.join(', '));
 
       exportMap.set(modulePath, Util.unique(exports.flat()));
-    } catch(err) {
+    } catch (err) {
       console.error(err.message);
       Util.putStack(err.stack);
       Util.exit(1);
     }
     let output = '';
     output = printAst(ast, parser.comments, printer).trim();
-    if(output != '')
-      r = r.concat(`/* --- concatenanted '${file}' --- */\n${output}\n`.split(/\n/g));
+    if (output != '') r = r.concat(`/* --- concatenanted '${file}' --- */\n${output}\n`.split(/\n/g));
 
     function log(...args) {
-      const assoc = args
-        .map(arg => arg instanceof ESNode && ESNode.assoc(arg))
-        .filter(assoc => !!assoc);
+      const assoc = args.map((arg) => arg instanceof ESNode && ESNode.assoc(arg)).filter((assoc) => !!assoc);
       //if(assoc[0]) console.log('ASSOC:', assoc[0].position.clone());
       const prefix = (assoc.length == 1 && assoc[0].position.clone()) || modulePath;
       console.log(prefix.toString() + ':', ...args);
@@ -361,13 +341,13 @@ async function main(...args) {
 
 function finish(err) {
   let fail = !!err;
-  if(fail) {
+  if (fail) {
     err.stack = PathReplacer()('' + err.stack)
       .split(/\n/g)
-      .filter(s => !/esfactory/.test(s))
+      .filter((s) => !/esfactory/.test(s))
       .join('\n');
   }
-  if(err) {
+  if (err) {
     console.log(parser.lexer.currentLine());
     console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
   }
@@ -375,7 +355,7 @@ function finish(err) {
   let t = [];
   //console.log(parser.trace() );
   dumpFile('trace.log', parser.trace());
-  if(fail) {
+  if (fail) {
     console.log('\nerror:', err.msg, '\n', parser.lexer.currentLine());
   }
   console.log('finish: ' + (fail ? 'error' : 'success'));
@@ -384,20 +364,20 @@ function finish(err) {
 
 function makeSearchPath(dirs, extra = 'node_modules') {
   let r = [];
-  const addPath = p => ((p = path.relative(cwd, p)), r.indexOf(p) == -1 && r.push(p));
+  const addPath = (p) => ((p = path.relative(cwd, p)), r.indexOf(p) == -1 && r.push(p));
   let i = 0;
-  for(let cwd of dirs) {
+  for (let cwd of dirs) {
     let parts = (cwd + '').split(/[\\\/]/g);
     //console.log('parts=', parts);
-    while(parts.length && parts[parts.length - 1] != '') {
+    while (parts.length && parts[parts.length - 1] != '') {
       const dir = parts.join('/');
       const extra_dir = path.join(dir, extra);
-      if(extra == 'node_modules') if (i == 0) addPath(dir);
-      if(filesystem.exists(extra_dir)) addPath(extra_dir);
+      if (extra == 'node_modules') if (i == 0) addPath(dir);
+      if (filesystem.exists(extra_dir)) addPath(extra_dir);
       i++;
       parts.pop();
     }
-    if(extra == 'node_modules') i = 0;
+    if (extra == 'node_modules') i = 0;
   }
   return r;
 }
@@ -411,7 +391,7 @@ function checkExists(path) {
 function findModule(relpath) {
   let st = filesystem.stat(relpath);
   let module;
-  if(st.isDirectory()) {
+  if (st.isDirectory()) {
     const name = path.basename(relpath);
     let indexes = [
       ...makeNames(relpath + '/dist/' + name),
@@ -420,11 +400,11 @@ function findModule(relpath) {
       ...makeNames(relpath + '/' + name),
       ...makeNames(relpath + '/index')
     ];
-    module = indexes.find(i => checkExists(i));
-  } else if(st.isFile()) {
+    module = indexes.find((i) => checkExists(i));
+  } else if (st.isFile()) {
     module = relpath;
   }
-  if(!module) throw new Error(`Module '${relpath}' not found`);
+  if (!module) throw new Error(`Module '${relpath}' not found`);
   return module;
 }
 
@@ -437,25 +417,20 @@ function searchModuleInPath(name, _from) {
   console.log('_from:', _from);*/
 
   name = name.replace(/\..?js$/g, '');
-  if(moduleAliases.has(name)) return moduleAliases.get(name);
+  if (moduleAliases.has(name)) return moduleAliases.get(name);
 
   let names = makeNames(name);
-  let indexes = [
-    ...makeNames(name + '/dist/' + name),
-    ...makeNames(name + '/build/' + name),
-    ...makeNames(name + '/' + name),
-    ...makeNames(name + '/index')
-  ];
+  let indexes = [...makeNames(name + '/dist/' + name), ...makeNames(name + '/build/' + name), ...makeNames(name + '/' + name), ...makeNames(name + '/index')];
 
-  for(let dir of [thisdir, ...searchPath]) {
+  for (let dir of [thisdir, ...searchPath]) {
     let searchFor = dir.endsWith('node_modules') ? [name] : names;
-    for(let module of searchFor) {
+    for (let module of searchFor) {
       let modPath = path.join(dir, module);
-      if(filesystem.exists(modPath)) {
+      if (filesystem.exists(modPath)) {
         //console.log('modPath', modPath);
         let path = findModule(modPath);
         //console.log('path', path);
-        if(path) return path;
+        if (path) return path;
       }
     }
   }
@@ -463,11 +438,5 @@ function searchModuleInPath(name, _from) {
 }
 
 function makeNames(prefix) {
-  return [
-    prefix + '.es6.js',
-    prefix + '.esm.js',
-    prefix + '.module.js',
-    prefix + '.module.ejs',
-    prefix + '.js'
-  ];
+  return [prefix + '.es6.js', prefix + '.esm.js', prefix + '.module.js', prefix + '.module.ejs', prefix + '.js'];
 }

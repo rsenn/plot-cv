@@ -30,14 +30,14 @@ const sources = [
 ];
 const includeDirs = ['/opt/diet/include', '.'];
 
-const FindIncludeFunc = source => {
+const FindIncludeFunc = (source) => {
   const dirs = [path.dirname(source), ...includeDirs];
 
-  return name => {
-    for(let dir of dirs) {
+  return (name) => {
+    for (let dir of dirs) {
       let file = path.join(dir, name);
       //console.log('file:', file);
-      if(filesystem.exists(file)) return file;
+      if (filesystem.exists(file)) return file;
     }
   };
 };
@@ -52,12 +52,12 @@ function* Reader(input) {
     console.log('ret:', ret);
 
     yield buffer.slice(0, ret);
-  } while(ret == 1024);
+  } while (ret == 1024);
 }
 
 function ReadAll(input) {
   let data = '';
-  for(let chunk of Reader(input)) {
+  for (let chunk of Reader(input)) {
     console.log('chunk:', chunk);
     console.log('chunk.length:', filesystem.bufferSize(chunk));
     data += filesystem.bufferToString(chunk);
@@ -69,26 +69,21 @@ function ReadAll(input) {
 function StripPP(code) {
   return code
     .split(/\n/g)
-    .filter(line => !/^\s*#/.test(line))
+    .filter((line) => !/^\s*#/.test(line))
     .join('\n');
 }
 
 async function main(...args) {
   await ConsoleSetup({ depth: 10, breakLength: 80 });
-  await PortableFileSystem(fs => (filesystem = fs));
-  await PortableChildProcess(cp => (childProcess = cp));
+  await PortableFileSystem((fs) => (filesystem = fs));
+  await PortableChildProcess((cp) => (childProcess = cp));
 
   const file = 'quickjs/hello.c' || getSource();
 
   console.log('Source file:', file);
   //const output = filesystem.open('out.e', 'w');
   // console.log('out fd:', filesystem.fileno(output));
-  let cmd = [
-    '/usr/lib/gcc/x86_64-linux-gnu/10/cc1',
-    '-E',
-    ...includeDirs.map(dir => `-I${dir}`),
-    file /*, '-o', 'out.e'*/
-  ];
+  let cmd = ['/usr/lib/gcc/x86_64-linux-gnu/10/cc1', '-E', ...includeDirs.map((dir) => `-I${dir}`), file /*, '-o', 'out.e'*/];
   console.log('cmd:', cmd.join(' '));
   let proc = childProcess(cmd[0], cmd.slice(1), { block: false, stdio: [null, 'pipe', 'pipe'] });
 
@@ -141,21 +136,13 @@ async function main(...args) {
 
   const ast = cparse(code, {
     file,
-    types: [
-      /*'int8_t','int16_t','int32_t','int64_t', 'uint8_t','uint16_t','uint32_t','uint64_t',*/ 'void',
-      'char',
-      'short',
-      'int',
-      'long',
-      'float',
-      'double'
-    ]
+    types: [/*'int8_t','int16_t','int32_t','int64_t', 'uint8_t','uint16_t','uint32_t','uint64_t',*/ 'void', 'char', 'short', 'int', 'long', 'float', 'double']
   });
 
   console.log(ast);
 }
 
-Util.callMain(main, e => {
+Util.callMain(main, (e) => {
   console.log('STACK:', e.stack);
   console.log('ERROR:', e, '\n', [...e.stack][2].functionName);
 });

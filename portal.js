@@ -8,8 +8,8 @@ import React, { h, html, render, Fragment, Component, useState, useLayoutEffect,
  */
 export class Portal extends Component {
   componentDidUpdate(props) {
-    for(let i in props) {
-      if(props[i] !== this.props[i]) {
+    for (let i in props) {
+      if (props[i] !== this.props[i]) {
         return setTimeout(this.renderLayer);
       }
     }
@@ -24,7 +24,7 @@ export class Portal extends Component {
   componentWillUnmount() {
     this.renderLayer(false);
     this.isMounted = false;
-    if(this.remote && this.remote.parentNode) this.remote.parentNode.removeChild(this.remote);
+    if (this.remote && this.remote.parentNode) this.remote.parentNode.removeChild(this.remote);
   }
 
   findNode(node) {
@@ -32,21 +32,18 @@ export class Portal extends Component {
   }
 
   renderLayer(show = true) {
-    if(!this.isMounted) return;
+    if (!this.isMounted) return;
 
     // clean up old node if moving bases:
-    if(this.props.into !== this.intoPointer) {
+    if (this.props.into !== this.intoPointer) {
       this.intoPointer = this.props.into;
-      if(this.into && this.remote) {
+      if (this.into && this.remote) {
         this.remote = render(h(PortalProxy), this.into, this.remote);
       }
       this.into = this.findNode(this.props.into);
     }
 
-    this.remote = render((h(PortalProxy, { context: this.context }), (show && this.props.children) || null),
-      this.into,
-      this.remote
-    );
+    this.remote = render((h(PortalProxy, { context: this.context }), (show && this.props.children) || null), this.into, this.remote);
   }
 
   render() {
