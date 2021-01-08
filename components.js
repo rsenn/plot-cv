@@ -446,10 +446,8 @@ export const Chooser = ({
 
   if(trkl.is(items)) items.subscribe(setList);
 
-  //  console.error('list:', list);
-  if(typeof items == 'function') console.error('items():', items());
-  //const list = items;
-
+   //if(typeof items == 'function') console.error('items():', items());
+ 
   const pushHandler = i => (e, state) => {
     const prev = active;
     state == true && setActive(i);

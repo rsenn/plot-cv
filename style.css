@@ -686,6 +686,9 @@ input.commander {
   /*border: 1px solid red;*/
   max-height: 80vh;
   overflow-y: auto;
+} 
+div.panel.no-select.layers {
+  position: fixed;
 }
 div.layers {
   flex-flow: column nowrap;
