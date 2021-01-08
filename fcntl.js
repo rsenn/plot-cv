@@ -41,12 +41,7 @@ const fp = dlsym(RTLD_DEFAULT, 'fcntl');
 define('fcntl', fp, null, 'int', 'int', 'int', 'int');
 
 export function fcntl(fd, cmd, arg) {
-  return call('fcntl', fd, cmd, arg);
+    return call('fcntl', fd, cmd, arg);
 }
-/*
-Object.assign(fcntl, {F_DUPFD, F_GETFD, F_SETFD, F_GETFL, F_SETFL, F_GETLK, F_SETLK, F_SETLKW, F_GETLK64, F_SETLK64, F_SETLKW64, F_GETOWN, F_SETOWN, F_SETSIG, F_GETSIG
-});
-Object.assign(fcntl, {O_RDONLY, O_WRONLY, O_RDWR, O_ACCMODE, O_CREAT, O_EXCL, O_NOCTTY, O_TRUNC, O_APPEND, O_NDELAY, O_NONBLOCK, O_DSYNC, O_ASYNC, O_DIRECTORY, O_NOFOLLOW, O_CLOEXEC, O_RSYNC, O_SYNC, O_LARGEFILE, O_NOATIME
-});
-*/
+
 export default fcntl;

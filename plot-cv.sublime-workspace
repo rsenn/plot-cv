@@ -282,7 +282,7 @@
 			"file": "sockval.c",
 			"settings":
 			{
-				"buffer_size": 2516,
+				"buffer_size": 4765,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -1037,13 +1037,17 @@
 						},
 						"selection":
 						[
+							[
+								819,
+								819
+							]
 						],
 						"settings":
 						{
 							"current_file": "/home/roman/Sources/plot-cv/src/js_contour.cpp",
-							"function_name_status_row": 33,
+							"function_name_status_row": 35,
 							"outline_rename_mode": false,
-							"sorttabs_lastactivated": 1610055694.14,
+							"sorttabs_lastactivated": 1610111511.34,
 							"symkeys":
 							[
 								[
@@ -1234,7 +1238,7 @@
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
-						"translation.x": 0.0,
+						"translation.x": 95.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
@@ -1386,20 +1390,20 @@
 						"selection":
 						[
 							[
-								26208,
-								26208
+								32170,
+								32192
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 1003,
-							"sorttabs_lastactivated": 1610057206.87,
+							"function_name_status_row": 1158,
+							"sorttabs_lastactivated": 1610111511.34,
 							"syntax": "Packages/C++/C++.sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 16696.0,
+						"translation.y": 19313.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -1475,15 +1479,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2516,
+						"buffer_size": 4765,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								847,
-								847
+								0,
+								0
 							]
 						],
 						"settings":
