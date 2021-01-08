@@ -28,19 +28,22 @@ prettier() {
 }
 
 main() {
-  EXPR='1 { /@format/ { N; /\n$/ { d } } }'
+  PRE_EXPR='/^\s*[sg]et\s[^\s\t ]\+\s*([^)]*)\s*{/ s|^\(\s*\)|\1/* prettier-ignore */ |'
+  PRE_EXPR='/^\s*[sg]et\s\+/ s|^\(\s*\)|\1/* prettier-ignore */ |'
+  POST_EXPR='1 { /@format/ { N; /\n$/ { d } } }'
   for KW in "if" "for" "do" "while" "catch" "function"; do
-    EXPR="$EXPR; s|\s${KW}\s*(| ${KW}(|"
-    EXPR="$EXPR; s|^${KW}\s*(|${KW}(|"
+    POST_EXPR="$POST_EXPR; s|\s${KW}\s*(| ${KW}(|"
+    POST_EXPR="$POST_EXPR; s|^${KW}\s*(|${KW}(|"
   done
-  EXPR="$EXPR; /($/ { N; s|(\n\s*|(| }"
-  EXPR="$EXPR; /([^,]*,$/ { N; s|^\(\s*[^ ]*([^,]*,\)\n\s*{|\1 {| }"
-  EXPR="$EXPR; /^\s*[^ ]\+:$/ { N; s|^\(\s*[^ ]\+:\)\n\s*|\1 | }"
-  EXPR="$EXPR; /^\s*},$/  { N; s|^\(\s*},\)\n\s*\[|\1 [| }"
-  #EXPR="$EXPR; /^\s*let\s/ { :lp; /;\s*$/! { N; s,\s*\n\s*, ,g; b lp } }"
-  #EXPR="$EXPR; /^\s*const\s/ { :lp; /;\s*$/! { N; s,\s*\n\s*, ,g; b lp } }"
-  #EXPR="$EXPR; /^\s*var\s/ { :lp; /;\s*$/! { N; s,\s*\n\s*, ,g; b lp } }"
-  EXPR="$EXPR; /^import/ { :lp; /;$/! { N; b lp };  s|\n\s*| |g }"
+  POST_EXPR="$POST_EXPR; /($/ { N; s|(\n\s*|(| }"
+  POST_EXPR="$POST_EXPR; /([^,]*,$/ { N; s|^\(\s*[^ ]*([^,]*,\)\n\s*{|\1 {| }"
+  POST_EXPR="$POST_EXPR; /^\s*[^ ]\+:$/ { N; s|^\(\s*[^ ]\+:\)\n\s*|\1 | }"
+  POST_EXPR="$POST_EXPR; /^\s*},$/  { N; s|^\(\s*},\)\n\s*\[|\1 [| }"
+  POST_EXPR="$POST_EXPR; /^\s*let\s/ { :lp; /;\s*$/! { N; s,\s*\n\s*, ,g; b lp } }"
+  POST_EXPR="$POST_EXPR; /^\s*const\s/ { :lp; /;\s*$/! { N; s,\s*\n\s*, ,g; b lp } }"
+  POST_EXPR="$POST_EXPR; /^\s*var\s/ { :lp; /;\s*$/! { N; s,\s*\n\s*, ,g; b lp } }"
+  POST_EXPR="$POST_EXPR; /^import/ { :lp; /;$/! { N; b lp };  s|\n\s*| |g }"
+  POST_EXPR="$POST_EXPR; /\*\/\s[gs]et\s/ s|/\* prettier-ignore \*/ ||g"
 
   SEP=${IFS%"${IFS#?}"}
 
@@ -76,13 +79,13 @@ main() {
       *.css) : ${PARSER="css"} ;;
       *) ;;
     esac
-    prettier <"$ARG" >"$TMPFILE"; R=$?
+    sed <"$ARG" "$PRE_EXPR" | prettier >"$TMPFILE"; R=$?
 
     if [ $R != 0 ]; then
       cat "$TMPFILE" 1>&2 
       exit 1
      fi
-    (: set -x; sed -i  "$EXPR" "$TMPFILE") &&
+    (: set -x; sed -i  "$POST_EXPR" "$TMPFILE") &&
     {  diff -u "$ARG" "$TMPFILE" | sed "s|$TMPFILE|$ARG|g; s|$ARG|${ARG##*/}|" | tee "$DIFFFILE" |  diffstat |sed "1! d; /0 files/d"  ;  (cd "$DIR" && patch -p0 ) <"$DIFFFILE" && rm -f "$TMPFILE" || mv -vf "$TMPFILE" "$ARG"; }) || {
       echo "SOURCE=$SOURCE" 1>&2
       return $?
