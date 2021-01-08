@@ -104,7 +104,7 @@ async function main() {
   let mounter = runMount(new Repeater(async (push, stop) => {
       while(true) await push(mountDirs);
     })
-  ).then(exitCode => (exitCode == 127 ? process.exit(127) : exitCode));
+  ).then(exitCode => (exitCode == 127 ? Util.exit(127) : exitCode));
 
   app.use(express.text({ type: 'application/xml', limit: '16384kb' }));
 

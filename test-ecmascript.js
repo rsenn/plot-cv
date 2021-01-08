@@ -8,6 +8,7 @@ import { Path } from './lib/json.js';
 import { SortedMap } from './lib/container/sortedMap.js';
 import PortableFileSystem from './lib/filesystem.js';
 import { ImmutablePath } from './lib/json.js';
+import Tree from './lib/tree.js';
 import { ConsoleSetup } from './lib/consoleSetup.js';
 
 let filesystem;
@@ -16,10 +17,7 @@ let globalThis;
 const testfn = () => true;
 const testtmpl = `this is\na test`;
 
-const code = `
-(function() {
-
-  for(let [value, path] of deep.iterate(x, (v, k) => /data-/.test(k[k.length - 1]))) deep.unset(x, path);
+const code = ` (function() { for(let [value, path] of deep.iterate(x, (v, k) => /data-/.test(k[k.length - 1]))) deep.unset(x, path);
 })();
 
 `;
@@ -48,9 +46,9 @@ function printAst(ast, comments, printer = globalThis.printer) {
 let files = {};
 
 async function main(...args) {
+  await ConsoleSetup({ depth: 3, breakLength: 80 });
   await PortableFileSystem(fs => (filesystem = fs));
 
-  await ConsoleSetup({ depth: 3 });
   console.log('main args =', args);
   console.log('console.depth:', console.depth);
   console.log('console.colors:', console.colors);
@@ -75,13 +73,13 @@ async function main(...args) {
 
     if(error) {
       Util.putError(error);
-      process.exit(1);
+      Util.exit(1);
     }
 
     console.log('files:', files);
   }
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
-  process.exit(Number(files.length == 0));
+  Util.exit(Number(files.length == 0));
 }
 
 async function processFile(file) {
@@ -102,11 +100,7 @@ async function processFile(file) {
   ast = parser.parseProgram();
   parser.addCommentsToNodes(ast);
 
-  let flat = deep.flatten(ast,
-    new Map(),
-    node => node instanceof ESNode || Util.isArray(node),
-    (path, value) => {
-      //   path = /*path.join("."); //*/ new Path(path);
+  let flat = deep.flatten(ast, new Map(), node => node instanceof ESNode || Util.isArray(node), (path, value) => { //   path = /*path.join("."); //*/ new Path(path);
       return [path, value];
     }
   );
@@ -136,12 +130,7 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
   const isRequire = node => node instanceof CallExpression && node.callee.value == 'require';
   const isImport = node => node instanceof ImportDeclaration;
 
-  let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
-      pos * 10 - 1,
-      { comment, pos, len, node }
-    ]),
-    (a, b) => a - b
-  );
+  let commentMap = new Map([...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [ pos * 10 - 1, { comment, pos, len, node } ]), (a, b) => a - b );
 
   console.log('commentMap:', commentMap);
   // let allNodes = nodeKeys.map((path, i) => [i, flat.get(path)]);
@@ -149,6 +138,13 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
   // for(let [i, n] of allNodes) console.log(new ImmutablePath(node2path.get(n)), n);
 
   const output_file = file.replace(/.*\//, '').replace(/\.[^.]*$/, '') + '.es';
+
+  let tree = new Tree(ast);
+  console.log('tree:',
+    tree.flat(null, ([path, node]) => {
+      return !Util.isPrimitive(node);
+    })
+  );
 
   let st = deep.get(ast, ['body', 0, 'callee', 'expressions', 0].join('.')) || ast;
 
@@ -168,23 +164,15 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
 
   function getImports() {
     const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
-    const importStatements = imports
-      .map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path))
-      .map(path => [path, deep.get(ast, path)]);
+    const importStatements = imports .map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path)) .map(path => [path, deep.get(ast, path)]);
 
-    console.log('imports:',
-      new Map(imports.map(([path, node]) => [ESNode.assoc(node).position, node]))
-    );
+    console.log('imports:', new Map(imports.map(([path, node]) => [ESNode.assoc(node).position, node])));
     console.log('importStatements:', importStatements);
 
-    const importedFiles = imports.map(([pos, node]) =>
-      Identifier.string(node.source || node.arguments[0])
-    );
+    const importedFiles = imports.map(([pos, node]) => Identifier.string(node.source || node.arguments[0]));
     console.log('importedFiles:', importedFiles);
 
-    let importIdentifiers = importStatements
-      .map(([p, n]) => [p, n.identifiers ? n.identifiers : n])
-      .map(([p, n]) => [p, n.declarations ? n.declarations : n]);
+    let importIdentifiers = importStatements .map(([p, n]) => [p, n.identifiers ? n.identifiers : n]) .map(([p, n]) => [p, n.declarations ? n.declarations : n]);
     console.log('importIdentifiers:', importIdentifiers);
 
     /*  importIdentifiers = importIdentifiers.map(([p, n]) =>

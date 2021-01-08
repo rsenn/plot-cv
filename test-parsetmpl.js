@@ -290,12 +290,12 @@ async function main(...args) {
     }
     files[file] = finish(error);
 
-    if(error) process.exit(1);
+    if(error) Util.exit(1);
 
     console.log('files:', files);
   }
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
-  process.exit(Number(files.length == 0));
+  Util.exit(Number(files.length == 0));
 }
 
 function finish(err) {

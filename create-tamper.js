@@ -337,7 +337,7 @@ async function main(...args) {
     } catch(err) {
       console.error(err.message);
       Util.putStack(err.stack);
-      process.exit(1);
+      Util.exit(1);
     }
     let output = '';
     output = printAst(ast, parser.comments, printer).trim();
@@ -356,7 +356,7 @@ async function main(...args) {
 
   console.log('processed:', ...processed);
   console.log('exportMap:', exportMap);
-  process.exit(Number(processed.length == 0));
+  Util.exit(Number(processed.length == 0));
 }
 
 function finish(err) {

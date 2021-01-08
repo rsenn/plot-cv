@@ -31,21 +31,10 @@ function readXML(filename) {
 const push_back = (arr, ...items) => [...(arr || []), ...items];
 const push_front = (arr, ...items) => [...items, ...(arr || [])];
 
-const GeneratePalette = (counts = { h: 3, s: 3, l: 5 },
-  deltas = { h: 360, s: 100, l: 30 },
-  prng
-) => {
-  let ret = [];
+const GeneratePalette = (counts = { h: 3, s: 3, l: 5 }, deltas = { h: 360, s: 100, l: 30 }, prng) => { let ret = [];
   let base = new HSLA(Util.randInt(-deltas.h / 2, deltas.h / 2, prng), 100, 50).toRGBA();
-  const makeRange = (count, delta) =>
-    Util.range(0, count - 1)
-      .map(v => (v * delta) / (count - 1) - delta / 2)
-      .map(Math.round);
-  let ranges = {
-    h: makeRange(counts.h, deltas.h),
-    s: makeRange(counts.s, deltas.s),
-    l: makeRange(counts.l, deltas.l)
-  };
+  const makeRange = (count, delta) => Util.range(0, count - 1) .map(v => (v * delta) / (count - 1) - delta / 2) .map(Math.round);
+  let ranges = { h: makeRange(counts.h, deltas.h), s: makeRange(counts.s, deltas.s), l: makeRange(counts.l, deltas.l) };
   //const numColors = ranges.reduce((acc, r) => acc * r.length, 1);
   //ranges.push(numColors);
   console.log('ranges:', ranges);
@@ -72,8 +61,7 @@ async function main(...args) {
   filesystem = await PortableFileSystem();
 
   console.log('main', args);
-  if(args.length == 0)
-    args = ['/home/roman/.config/sublime-text-3/Packages/Babel/Next.tmTheme' /*  */];
+  if(args.length == 0) args = ['/home/roman/.config/sublime-text-3/Packages/Babel/Next.tmTheme' /*  */];
   let filename = args.shift();
   let basename = path.basename(filename).replace(/\.[^.]*$/, '');
   let outfile;
@@ -100,32 +88,17 @@ async function main(...args) {
     filesystem.writeFile(basename + '.json', json);
     xmlData = xml[0];
     newObj = deep.clone(xml[0]);
-    let flat = deep.flatten(xml[0],
-      new Map(),
-      (v, p) =>
-        (typeof v != 'object' && p.indexOf('attributes') == -1) ||
-        (p.length && p.indexOf('attributes') == p.length - 1),
-      (p, v) => [new Path(p), v]
-    );
-    colors = new Map([
-        ...Iterator.filter(flat, ([path, value]) => /^#[0-9A-Fa-f]*$/.test(value))
-      ].map(([path, value]) => [path, new RGBA(value)])
+    let flat = deep.flatten(xml[0], new Map(), (v, p) => (typeof v != 'object' && p.indexOf('attributes') == -1) || (p.length && p.indexOf('attributes') == p.length - 1), (p, v) => [new Path(p), v] );
+    colors = new Map([...Iterator.filter(flat, ([path, value]) => /^#[0-9A-Fa-f]*$/.test(value))].map(([path, value]) => [
+        path,
+        new RGBA(value)
+      ])
     );
     let it = new IteratorForwarder(colors.entries());
-    let paths = Iterator.map(colors, ([path, value]) => [
-      XPath.from(path, xml[0]),
-      deep.get(xml[0], path),
-      path
-    ]);
-    let o = it.map(([path, value]) => {
-      const key = path.up(0);
-      let prev = new Path([]),
-        prevValue = {},
-        list = [],
-        numString = 0;
-      let paths = [
-        ...key.walk((p, i, abort, skip) => {
-          let r;
+    let paths = Iterator.map(colors, ([path, value]) => [XPath.from(path, xml[0]), deep.get(xml[0], path), path]);
+    let o = it.map(([path, value]) => { const key = path.up(0);
+      let prev = new Path([]), prevValue = {}, list = [], numString = 0;
+      let paths = [ ...key.walk((p, i, abort, skip) => { let r;
           let value = deep.get(xml[0], p);
           const children = Util.isObject(value) && value.children ? value.children : [];
           const text = typeof children[0] == 'string' ? children[0] : '';
@@ -172,31 +145,18 @@ async function main(...args) {
 
     console.log('palette.getMinMax():', palette.getMinMax());
 
-    const lexOrder = key => {
-      let i = 0;
+    const lexOrder = key => { let i = 0;
       let r = [];
       for(i = 0; i < 10; i++) {
         const c = i < key.length ? key.charCodeAt(i) : 0;
-        const x =
-          c >= 0x30 && c <= 0x39
-            ? c - 0x30
-            : c >= 0x41 && c <= 0x5a
-            ? c - 0x41 + 10
-            : c >= 0x61 && c <= 0x7a
-            ? c - 0x61 + 36
-            : 0;
+        const x = c >= 0x30 && c <= 0x39 ? c - 0x30 : c >= 0x41 && c <= 0x5a ? c - 0x41 + 10 : c >= 0x61 && c <= 0x7a ? c - 0x61 + 36 : 0;
         r.push(x);
       }
       return r;
     };
     //    console.log("colors:",colors);
 
-    const hash = key =>
-      ((a, b) => a / b)(...lexOrder(key).reduce(
-          (acc, c) => [acc[0] * (10 + 26 + 26) + c, acc[1] * (10 + 26 + 26)],
-          [0, 1]
-        )
-      );
+    const hash = key => ((a, b) => a / b)( ...lexOrder(key).reduce((acc, c) => [acc[0] * (10 + 26 + 26) + c, acc[1] * (10 + 26 + 26)], [0, 1]) );
 
     console.log(`palette.getMinMax():`, palette.getMinMax());
     const mm = palette.getMinMax();
@@ -207,8 +167,7 @@ async function main(...args) {
       cmds.unshift(['normalize']);
       //cmds.unshift(['remap', 'l', 50, 60]);
     }
-    const UpdatePalette = pal => {
-      pal = pal || palette;
+    const UpdatePalette = pal => { pal = pal || palette;
       // console.log('UpdatePalette:', pal);
       for(let [path, color] of pal) {
         color = typeof color == 'function' ? color() : color;
@@ -233,9 +192,7 @@ async function main(...args) {
         console.log(`idx2path`, idx2path);*/
     };
 
-    let handlers = {
-      shuffle(...seed) {
-        let rng = prng.clone();
+    let handlers = { shuffle(...seed) { let rng = prng.clone();
         if(seed) rng.mash(...seed);
         const keys = [...palette.keys()];
         let values = keys.reduce((acc, key) => [...acc, palette.get(key)], []);
@@ -266,10 +223,7 @@ async function main(...args) {
             let obj = path2.apply(newObj, true);
             console.log(`path2=${path2} obj=`, obj);
           }
-          const { value, index, distance } = RGBA.nearestColor(color.toRGBA(),
-            newColors,
-            distanceChecker
-          );
+          const { value, index, distance } = RGBA.nearestColor(color.toRGBA(), newColors, distanceChecker);
           console.log(`value=`, value);
           palette.set(path, value.toHSLA());
         }
@@ -319,13 +273,7 @@ async function main(...args) {
         for(let item of palette) {
           let [path, color] = item;
           const key = keys.get(path);
-          const hashes = key
-            .split('/')
-            .slice(0)
-            .map(k => [k, k.split(/,? /g).map(k => k.split(/\./g).map(h => hash(h)))])
-            .flat()
-            .filter(i => typeof i != 'string')
-            .flat();
+          const hashes = key .split('/') .slice(0) .map(k => [k, k.split(/,? /g).map(k => k.split(/\./g).map(h => hash(h)))]) .flat() .filter(i => typeof i != 'string') .flat();
           if(/(background)/i.test(key)) continue;
           prng();
           color = Util.draw(newPal, 1, rng);
@@ -370,9 +318,7 @@ async function main(...args) {
           i++;
         }
 
-        const getHSLA = idx_or_hex =>
-          colors[typeof idx_or_hex == 'string' ? hex2idx[idx_or_hex] : idx_or_hex] ||
-          palette.get(idx2path[idx_or_hex]);
+        const getHSLA = idx_or_hex => colors[typeof idx_or_hex == 'string' ? hex2idx[idx_or_hex] : idx_or_hex] || palette.get(idx2path[idx_or_hex]);
         console.log('changed ', [...changed].join(', '));
         colors = [...palette.entries()].map(([path, color], idx) => color);
         /* prettier-ignore */ console.log('colors = ', Util.toString(colors.map((c) => [...c]), { multiline: false, colors: false }));
@@ -386,29 +332,14 @@ async function main(...args) {
         /* prettier-ignore */ let hues = Util.histogram(colors, (v, i) => [v.h, v], new Map(), () => new Set(), (v, i) => [v.h, i]);
         // console.log(`hues`, hues);
 
-        let hueIds = [...hues.entries()]
-          .map(([hue, colorCodes], idx) => [
-            +hue,
-            /* [...colorCodes].join(',') || */ colorCodes ||
-              new Set([...colorCodes].map(hex => getHSLA(hex)))
-          ])
-          .map(([hue, ids]) => [hue, [...ids] + '']);
+        let hueIds = [...hues.entries()] .map(([hue, colorCodes], idx) => [ +hue, /* [...colorCodes].join(',') || */ colorCodes || new Set([...colorCodes].map(hex => getHSLA(hex))) ]) .map(([hue, ids]) => [hue, [...ids] + '']);
         console.log(`hueIds`, hueIds);
 
-        let hueCounts = /*new Map*/ hueIds
-          .map(([hue, ids], i) => [i, [hue, ids.split(',').map(id => +id)]])
-          .map(([idx, [hue, ids]]) => [idx, ids.length]);
+        let hueCounts = /*new Map*/ hueIds .map(([hue, ids], i) => [i, [hue, ids.split(',').map(id => +id)]]) .map(([idx, [hue, ids]]) => [idx, ids.length]);
 
         console.log(`hueCounts`, hueCounts);
 
-        let hueData = hueIds
-          .map(([hue, ids], idx) => [idx, hue, ids /*.split(',').map((v) => +v)*/])
-          .reduce((acc, [idx, hue, ids = getIds4Hue(hue)]) => [
-              ...acc,
-              [idx, hue, ids.split(',').map(p => +p)]
-            ],
-            []
-          );
+        let hueData = hueIds .map(([hue, ids], idx) => [idx, hue, ids /*.split(',').map((v) => +v)*/]) .reduce((acc, [idx, hue, ids = getIds4Hue(hue)]) => [...acc, [idx, hue, ids.split(',').map(p => +p)]], []);
         //console.log(`hueData`, hueData);
 
         //console.log(`zhistogram`, Util.histogram(colors, (c, i) => [c.h, i], new Map(), () => new Set(), i => [colors[i].h, i] ) ); //new Map(Object.entries(idx2hue).map(([idx,hue]) => [+idx,+hue])));
@@ -429,10 +360,7 @@ async function main(...args) {
         const idx2hsla = colorsRGBA.map(([i]) => palette.get(idx2path[i]));
         //console.log(`rgba:`, newPalette);
 
-        let rem = removeIds
-          .map(id => [id, colors[id].toRGBA()])
-          .map(([i, c]) => {
-            let path = idx2path[i];
+        let rem = removeIds .map(id => [id, colors[id].toRGBA()]) .map(([i, c]) => { let path = idx2path[i];
             let oldColor = /*new RGBA*/ deep.get(newObj, path);
             //    console.log('oldColor', { oldColor });
             const r = RGBA.nearestColor(oldColor, newPalette, distanceChecker);
@@ -446,9 +374,7 @@ async function main(...args) {
               let [removedColor] = colors.splice(i, 1, nearColor);
               let newColor = nearColor.hex();
               deep.set(newObj, path, newColor);
-              let [fromColor, toColor] = [removedColor.hex(), newColor].map(c =>
-                new RGBA(c).toHSLA()
-              );
+              let [fromColor, toColor] = [removedColor.hex(), newColor].map(c => new RGBA(c).toHSLA());
 
               console.info(`changed #${i}`,
                 fromColor,
@@ -459,9 +385,7 @@ async function main(...args) {
               return removedColor;
             }
           });
-        let modifyIds = colors
-          .map((c, idx) => [idx2path[idx], c])
-          .map(([path, color]) => [path, color, new RGBA(deep.get(xml[0], path)).toHSLA()]);
+        let modifyIds = colors .map((c, idx) => [idx2path[idx], c]) .map(([path, color]) => [path, color, new RGBA(deep.get(xml[0], path)).toHSLA()]);
       }
     };
     let prevPalette = new Map(palette.entries());
@@ -476,13 +400,7 @@ async function main(...args) {
 
     cmds.forEach(cmd => {
       cmd = cmd.map(p =>
-        /^.?time?$/i.test(p)
-          ? +mtime
-          : /^now$/i.test(p)
-          ? Date.now()
-          : /^p?r?a?n[dg]o?m?$/i.test(p)
-          ? prng.uint32()
-          : p
+        /^.?time?$/i.test(p) ? +mtime : /^now$/i.test(p) ? Date.now() : /^p?r?a?n[dg]o?m?$/i.test(p) ? prng.uint32() : p
       );
       console.log('Command ', cmd);
       //  Util.putStack();

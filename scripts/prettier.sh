@@ -44,7 +44,7 @@ main() {
   POST_EXPR="$POST_EXPR; /^\s*var\s/ { :lp; /;\s*$/! { N; s,\s*\n\s*, ,g; b lp } }"
   POST_EXPR="$POST_EXPR; /^import/ { :lp; /;$/! { N; b lp };  s|\n\s*| |g }"
   POST_EXPR="$POST_EXPR; /\*\/\s[gs]et\s/ s|/\* prettier-ignore \*/ ||g"
-  POST_EXPR="$POST_EXPR; /^\s*[gs]et(/ { N; /\n\s*[^{}\n]*$/ { N };   /\n\s*},$/ { s,\n\s*, ,g } }"
+  POST_EXPR="$POST_EXPR; "':st; /^\s*[gs]et(/ { N; /\n\s*[^{}\n]*$/  N;  /\/\//! { /\n\s*},$/ s,\n\s*, ,g } }'
 
   SEP=${IFS%"${IFS#?}"}
 

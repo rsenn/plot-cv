@@ -76,7 +76,7 @@ async function main() {
 */
 
   // Close the connection.
-  process.exit(0);
+  Util.exit(0);
   dump();
 }
 

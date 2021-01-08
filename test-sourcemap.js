@@ -31,6 +31,6 @@ async function main(...args) {
 
 Util.callMain(main);
 
-/*  .then(() => process.exit(0))
-  .catch(() => process.exit(1));
+/*  .then(() => Util.exit(0))
+  .catch(() => Util.exit(1));
 */

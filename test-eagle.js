@@ -297,7 +297,7 @@ async function main(...args) {
         err.message,
         typeof err.stack == 'string' ? err.stack : [...err.stack].map(f => f + '')
       );
-      process.exit(1);
+      Util.exit(1);
     }
   }
 }

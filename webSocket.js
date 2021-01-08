@@ -10,13 +10,11 @@ let sockets = [];
 let client;
 const enqueue = (q, ...items) => [...(q ? q : []), ...items];
 
-const removeItem = (arr, item, key = 'ws') => {
-  let i = arr.findIndex(e => e[key] === item);
+const removeItem = (arr, item, key = 'ws') => { let i = arr.findIndex(e => e[key] === item);
   if(i != -1) return arr.splice(i, 1);
 };
 
-const sendBuf = client => {
-  let self;
+const sendBuf = client => { let self;
   let lines = [];
   self = async function(sock, fn) {
     let ret = await fn.call(sock, (...args) => self.send.call(sock, ...args));
@@ -90,8 +88,7 @@ export class Socket {
 
   on(event, fn) {
     if(this.handlers.has(event)) return;
-    const handler = fn; /* async (...args) => {
-      this.send = sendBuf(this.client);
+    const handler = fn; /* async (...args) => { this.send = sendBuf(this.client);
       let r = await fn.call(this, ...args);
       await this.send.flush(this);
       this.send = null;
@@ -112,11 +109,7 @@ export class Socket {
       const id = sockets.findIndex(s => s.id == msg.body);
       if(id != -1) {
         const sock = sockets[id];
-        return await send({ ...this.info, idle: Date.now() - this.lastMessage },
-          sock.id,
-          null,
-          'INFO'
-        );
+        return await send({ ...this.info, idle: Date.now() - this.lastMessage }, sock.id, null, 'INFO');
       }
     } else if(msg.type == 'PING') {
       return await send(msg.body, null, msg.origin, 'PONG');
@@ -166,24 +159,14 @@ export class Socket {
     const { cookie } = headers;
     if(localAddress == '::1') localAddress = 'localhost';
     if(remoteAddress == '::1') remoteAddress = 'localhost';
-    let s = Socket.map(ws,
-      {
-        local: localAddress.replace(/^::ffff:/, '') + ':' + localPort,
-        remote: remoteAddress.replace(/^::ffff:/, '') + ':' + remotePort,
-        cookie,
-        userAgent: headers['user-agent'],
-        path
-      },
-      { client, connection }
-    );
+    let s = Socket.map(ws, { local: localAddress.replace(/^::ffff:/, '') + ':' + localPort, remote: remoteAddress.replace(/^::ffff:/, '') + ':' + remotePort, cookie, userAgent: headers['user-agent'], path }, { client, connection } );
     // console.log('WebSocket connected:', s, headers);
     let i = sockets.length;
     Object.assign(client, { sendTo, sendMany });
     s.closeConnection = async function closeConnection(reason) {
       console.debug(`[${this.id}] closeConnection:`, reason);
       await this.ws.close();
-      if(removeItem(sockets, this.ws, 'ws'))
-        await client.sendMany(this, reason || 'closed', this.id, null, 'QUIT');
+      if(removeItem(sockets, this.ws, 'ws')) await client.sendMany(this, reason || 'closed', this.id, null, 'QUIT');
     };
     s.lastMessage = Date.now();
     sockets.push(s);
@@ -204,8 +187,7 @@ export class Socket {
     await sendBuf(client)(s, function(send) {
       this.lastMessage = Date.now();
       send({ type: 'HELLO', body: this.id });
-      if(sockets.length)
-        send({ type: 'USERS', body: sockets.map(s => s.id).filter(s => typeof s == 'string') });
+      if(sockets.length) send({ type: 'USERS', body: sockets.map(s => s.id).filter(s => typeof s == 'string') });
     });
   }
 

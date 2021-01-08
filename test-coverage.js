@@ -84,4 +84,4 @@ function main(args) {
   return 0;
 }
 
-process.exit(main(Util.getArgs()));
+Util.exit(main(Util.getArgs()));

@@ -42,5 +42,5 @@ function main(args) {
 
   //console.log("files:", files);
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
-  process.exit(Number(files.length == 0));
+  Util.exit(Number(files.length == 0));
 }

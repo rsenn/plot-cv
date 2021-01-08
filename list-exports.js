@@ -202,7 +202,7 @@ async function main(...args) {
       Util.putStack(err.stack);
       error = err;
       return false;
-      process.exit(1);
+      Util.exit(1);
     }
     let output = '';
     output = printAst(ast, parser.comments, printer).trim();
@@ -231,7 +231,7 @@ async function main(...args) {
     output += `export { ${list.join(', ')} } from './${source}';\n`;
   }
   console.log(output);
-  process.exit(Number(processed.length == 0));
+  Util.exit(Number(processed.length == 0));
 }
 
 function finish(err) {

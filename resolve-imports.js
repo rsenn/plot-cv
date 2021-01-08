@@ -480,7 +480,7 @@ async function main(...args) {
   //console.log('processed:', ...processed.map(file => `\n  ${file}`));
 
   let success = Object.entries(processed).filter(([k, v]) => !!v).length != 0;
-  // process.exit(Number(processed.length == 0));
+  // Util.exit(Number(processed.length == 0));
 
   console.log('processed files:', processed);
 

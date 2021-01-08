@@ -70,11 +70,11 @@ async function main(...args) {
       console.log(pos && pos.toString ? error.pos.toString() : pos);
       Util.putError(error);
 
-      process.exit(1);
+      Util.exit(1);
     }
   }
   let success = Object.entries(files).filter(([k, v]) => !!v).length != 0;
-  process.exit(Number(files.length == 0));
+  Util.exit(Number(files.length == 0));
 }
 function finish(err) {
   let fail = !!err;

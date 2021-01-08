@@ -166,7 +166,7 @@ async function main(country = 'de') {
   console.log("sock:", sock);*/
   /*let h = await new HTTPRequest('http://www.google.com', '178.238.229.236', 80);
   console.log('h:', h);
-  process.exit(0);*/
+  Util.exit(0);*/
   console.log(`Searching proxies in country '${country}'`);
   const proxies = [
     new Repeater(async (push, stop) => {

@@ -2130,7 +2130,7 @@ const AppMain = (window.onload = async () => {
               const colors = { front: 'hsl(300,100%,70%)', back: 'hsl(230,100%,70%)' };
               for(let side of ['back', 'front']) {
                 let gc = project.gcode[side];
-                console.debug('GcodeToPolylines =', project.gcode);
+                console.debug('GcodeToPolylines =', project.gcode, {gc});
                 GcodeToPolylines(gc.data, { fill: false, color: colors[side], side });
               }
             },

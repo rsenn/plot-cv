@@ -13,17 +13,10 @@ function dump(o, depth = 2, breakLength = 400) {
   return s;
 }
 function xmlize(obj, depth = 2) {
-  return obj.toXML
-    ? obj.toXML().replace(/>\s*</g, '>\n    <')
-    : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
+  return obj.toXML ? obj.toXML().replace(/>\s*</g, '>\n    <') : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
 function testLocator() {
-  let testobj = [
-    0,
-    1,
-    2,
-    { name: 'roman', children: ['x', 'y', { id: 1, items: ['a', 'b', 'c'] }] }
-  ];
+  let testobj = [0, 1, 2, { name: 'roman', children: ['x', 'y', { id: 1, items: ['a', 'b', 'c'] }] }];
   let l = new EagleLocator([3, 'children', 2, 'items', -2]);
   let a = [l.slice(), l.slice()];
   //Util.log('l:', dump(l));
@@ -38,12 +31,9 @@ function testLocator() {
 async function testEagle(filename) {
   let proj = new EagleProject(filename);
   let { board, schematic, libraries } = proj;
-  const getPackage = e => {
-    const { document } = e;
+  const getPackage = e => { const { document } = e;
     if(e.tagName == 'part') {
-      const device = e.deviceset.find(v => v.tagName == 'device' && v.attributes.name == e.attributes.device,
-        ([v]) => v
-      );
+      const device = e.deviceset.find(v => v.tagName == 'device' && v.attributes.name == e.attributes.device, ([v]) => v );
       return device.package;
     }
     return e.package;
@@ -66,9 +56,7 @@ async function testEagle(filename) {
 (async () => {
   try {
     await testLocator();
-    await testEagle('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3').then(result =>
-      Util.log(result)
-    );
+    await testEagle('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3').then(result => Util.log(result));
   } catch(err) {
     const stack = err.stack;
 
