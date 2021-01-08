@@ -37,8 +37,7 @@ const proxyObject = (root, handler) => {
 
           if(key == 'attributes') return prop;
 
-          if(key !== 'attributes' && (Util.isObject(prop) || Util.isArray(prop)))
-            return new node([...path, key]);
+          if(key !== 'attributes' && (Util.isObject(prop) || Util.isArray(prop))) return new node([...path, key]);
 
           return handler && handler.get ? handler.get(prop, key) : prop;
         },
@@ -68,9 +67,7 @@ const proxyObject = (root, handler) => {
 
 async function main() {
   await ConsoleSetup();
-  let str = filesystem
-    .readFile('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd')
-    .toString();
+  let str = filesystem.readFile('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
 
   let xml = tXml(str);
   //console.log('xml:', Util.abbreviate(xml));

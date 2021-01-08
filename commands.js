@@ -24,8 +24,7 @@ export async function NormalizeResponse(resp) {
     let disp = headers.get('Content-Disposition');
     let type = headers.get('Content-Type');
     if(ok) {
-      if(!disp && /json/.test(type) && typeof resp.json == 'function')
-        resp = { data: await resp.json() };
+      if(!disp && /json/.test(type) && typeof resp.json == 'function') resp = { data: await resp.json() };
       else if(typeof resp.text == 'function') resp = { data: await resp.text() };
       if(disp && !resp.file) resp.file = disp.replace(/.*['"]([^"]+)['"].*/, '$1');
       if(disp && type) resp.type = type;
@@ -128,8 +127,7 @@ export const FindLayer = (name, project = window.project) => {
   return layers.find(l => l.name === name);
 };
 
-export const GetLayer = (layer, project = window.project) =>
-  FindLayer(layer.name, project) || AddLayer(layer, project);
+export const GetLayer = (layer, project = window.project) => FindLayer(layer.name, project) || AddLayer(layer, project);
 
 export const AddLayer = (layer, project = window.project) => {
   const { color, name, create, ...props } = layer;
@@ -162,11 +160,17 @@ export async function BoardToGerber(proj, opts = { fetch: true }) {
     .then(NormalizeResponse)
     .catch(error => ({ error }));
 
-  if(opts.fetch && response.file && !response.data)
-    response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then(NormalizeResponse
-    );
+  if(opts.fetch && response.file && !response.data) {
+    data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then(NormalizeResponse);
+  }
+  data = data || response.data;
+  if(data) {
+    const { code, file, output } = data;
+    Object.assign(response, { code, file, output });
+  }
+  //if(response.data) delete response.data;
 
-  console.debug('BoardToGerber response =', Util.filterOutKeys(response, /(data)/));
+  console.debug('BoardToGerber response =', /*response ||*/ Util.filterOutKeys(response, /(data)/));
   return response;
 }
 
@@ -191,8 +195,7 @@ export async function GerberToGcode(file, allOpts = {}) {
     .catch(error => ({ error }));
 
   if(opts.fetch && response.file && !response.data)
-    response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then(NormalizeResponse
-    );
+    response.data = await FetchURL(`static/${response.file.replace(/^\.\//, '')}`).then(NormalizeResponse);
 
   response.opts = opts;
   console.debug('GerberToGcode response =', Util.filterOutKeys(response, /(data)/));
@@ -201,11 +204,7 @@ export async function GerberToGcode(file, allOpts = {}) {
 
 export const GcodeToPolylines = (data, opts = {}) => {
   const { fill = false, color, side } = opts;
-  let gc = [
-    ...Util.filter(parseGcode(data),
-      g => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args
-    )
-  ];
+  let gc = [...Util.filter(parseGcode(data), g => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args)];
   console.debug('GcodeToPolylines', Util.abbreviate(data), { opts, gc });
   let polylines = [];
   let polyline = null;
@@ -260,8 +259,7 @@ export const GcodeToPolylines = (data, opts = {}) => {
     polylines = polylines.map(pl => new Polyline([]).push(...pl));
     let inside = new Map(polylines.map((polyline2, i) => [
         polyline2,
-        polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2)
-        )
+        polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2))
       ])
     );
     let insideOf = polylines.map((polyline, i) => [
@@ -291,10 +289,7 @@ export const GcodeToPolylines = (data, opts = {}) => {
   let ids = polylines.map((pl, i) => i).filter(i => !remove.has(i));
   let polys = [
     ...ids.map(i =>
-      polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` },
-        grp,
-        0.01
-      )
+      polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` }, grp, 0.01)
     ),
     ...paths
       .map(([i, d]) => ({ ...props(polyline, i), id: `polygon-${polylines.indexOf(polyline)}`, d }))

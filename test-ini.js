@@ -58,11 +58,9 @@ async function main(...args) {
 
       console.log("Desktop Entry:",  { Exec, Icon, Terminal, Type, Name, GenericName, StartupNotify });*/
       //     let r = Rect.bind(new Rect(), { x: () => pos.x, y: () => pos.y, width: () => size.width, height: () => size.height });
-      const lnkFile =
-        '/home/roman/mnt/lexy/.idesktop/' + path.basename(filename, '.desktop') + '.lnk';
+      const lnkFile = '/home/roman/mnt/lexy/.idesktop/' + path.basename(filename, '.desktop') + '.lnk';
 
-      const svgFile =
-        '/home/roman/mnt/ubuntu/' + desktopEntry.Icon.replace(/\.[a-z]*$/, '') + '.svg';
+      const svgFile = '/home/roman/mnt/ubuntu/' + desktopEntry.Icon.replace(/\.[a-z]*$/, '') + '.svg';
       const iconFile = '/home/lexy/.logos/' + path.basename(svgFile, '.svg') + '.png';
       console.log(' :', { svgFile, iconFile });
       let svgData = tXml(filesystem.readFile(svgFile));
@@ -70,16 +68,9 @@ async function main(...args) {
       let svg = svgData[0] || { attributes: {} };
       const attr = svg && svg.attributes;
       const viewBoxStr = attr && attr.viewBox;
-      const viewCoords = (viewBoxStr && viewBoxStr.split(' ')) || [
-        0,
-        0,
-        svg.attributes.width,
-        svg.attributes.height
-      ];
+      const viewCoords = (viewBoxStr && viewBoxStr.split(' ')) || [0, 0, svg.attributes.width, svg.attributes.height];
       const [x1, y1, x2, y2] = viewCoords;
-      const viewBox = new Rect(svg.attributes && svg.attributes.viewBox
-          ? { x1, y1, x2, y2 }
-          : ['width', 'height'].map(a => svg.attributes[a])
+      const viewBox = new Rect(svg.attributes && svg.attributes.viewBox ? { x1, y1, x2, y2 } : ['width', 'height'].map(a => svg.attributes[a])
       );
       iconSize = viewBox.size; //new Size(viewBox.width, viewBox.height);
       iconAspect = iconSize.aspect();
@@ -142,15 +133,13 @@ async function main(...args) {
 
       let filenames = files.map(f => f.FILE_INFO);
 
-      files = files.filter(file => !/.*(buffer|comparator|lcd|format|ds18b20|hd44).*/.test(file.FILE_INFO)
-      );
+      files = files.filter(file => !/.*(buffer|comparator|lcd|format|ds18b20|hd44).*/.test(file.FILE_INFO));
 
       //console.log('data:', file_sections);
       //console.log('files:', filenames);
       let i = 0;
       for(let file of files) {
-        for(let field in file)
-          sections[field].set(`file_${(i + '').padStart(3, '0')}`, file[field]);
+        for(let field in file) sections[field].set(`file_${(i + '').padStart(3, '0')}`, file[field]);
 
         i++;
       }

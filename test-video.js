@@ -28,8 +28,7 @@ class Pipeline extends Function {
         mat = processor.call(self, mat, self.images[i], i);
         if(mat) self.images[i] = mat;
         self.times[i] = hr(start);
-        if(typeof callback == 'function')
-          callback.call(self, self.images[i], i, self.processors.length);
+        if(typeof callback == 'function') callback.call(self, self.images[i], i, self.processors.length);
         i++;
       }
       return mat;
@@ -173,15 +172,8 @@ async function main(...args) {
     L2gradient: new NumericParam(0, 0, 1),
     numDilations: new NumericParam(0, 0, 10),
     numErosions: new NumericParam(0, 0, 10),
-    mode: new EnumParam(['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL'],
-      3
-    ),
-    method: new EnumParam([
-        'CHAIN_APPROX_NONE',
-        'CHAIN_APPROX_SIMPLE',
-        'CHAIN_APPROX_TC89_L1',
-        'CHAIN_APPROX_TC89_L189_KCOS'
-      ],
+    mode: new EnumParam(['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL'], 3),
+    method: new EnumParam(['CHAIN_APPROX_NONE', 'CHAIN_APPROX_SIMPLE', 'CHAIN_APPROX_TC89_L1', 'CHAIN_APPROX_TC89_L189_KCOS'],
       0
     ),
     lineWidth: new NumericParam(1, 0, 10)
@@ -210,13 +202,7 @@ async function main(...args) {
         cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
       }),
       Processor(function EdgeDetect(src, dst) {
-        cv.Canny(src,
-          dst,
-          +params.thresh1,
-          +params.thresh2,
-          +params.apertureSize,
-          +params.L2gradient
-        );
+        cv.Canny(src, dst, +params.thresh1, +params.thresh2, +params.apertureSize, +params.L2gradient);
         ////   console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
       }),
       Processor(function Morph(src, dst) {
@@ -294,9 +280,7 @@ async function main(...args) {
 
       if((key = cv.waitKeyEx(Math.max(1, sleepMsecs))) != -1) {
         modifiers = Object.fromEntries(modifierMap(key));
-        modifierList = modifierMap(key).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc),
-          []
-        );
+        modifierList = modifierMap(key).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc), []);
         let ch = String.fromCodePoint(key & 0xff);
         console.log(`keypress [${modifierList}] 0x${(key & ~0xd000).toString(16)} '${ch}'`);
       }
@@ -362,8 +346,7 @@ async function main(...args) {
         case 0xf54: /* down */ {
           const method = key & 0x1 ? 'Frames' : 'Msecs';
           const distance =
-            (key & 0x1 ? 1 : 1000) *
-            (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
+            (key & 0x1 ? 1 : 1000) * (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
           const offset = key & 0x2 ? +distance : -distance;
 
           console.log('seek', { method, distance, offset });
@@ -387,8 +370,7 @@ async function main(...args) {
 
     meter.stop();
     //console.log('Iteration time: ', meter.toString());
-    if(prevTime !== undefined)
-      console.log('FPS: ', +(1 / meter.timeSec).toFixed(2), '/', video.fps);
+    if(prevTime !== undefined) console.log('FPS: ', +(1 / meter.timeSec).toFixed(2), '/', video.fps);
 
     prevTime = meter.timeSec;
   }
@@ -430,11 +412,7 @@ async function main(...args) {
 
     let paramStr = `${paramNav.name} [${paramNav.param.range.join('-')}] = ${+paramNav.param}`;
     //console.log('paramStr: ', paramStr);
-    font.draw(surface,
-      paramStr,
-      [tPos.x, tPos.y - 20],
-      /*0x00ffff ||*/ { r: 255, g: 0, b: 0, a: 255 }
-    );
+    font.draw(surface, paramStr, [tPos.x, tPos.y - 20], /*0x00ffff ||*/ { r: 255, g: 0, b: 0, a: 255 });
 
     font.draw(surface,
       `#${frameShow + 1}/${pipeline.size}` + (outputName ? ` (${outputName})` : ''),

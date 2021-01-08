@@ -10,11 +10,13 @@ let sockets = [];
 let client;
 const enqueue = (q, ...items) => [...(q ? q : []), ...items];
 
-const removeItem = (arr, item, key = 'ws') => { let i = arr.findIndex(e => e[key] === item);
+const removeItem = (arr, item, key = 'ws') => {
+  let i = arr.findIndex(e => e[key] === item);
   if(i != -1) return arr.splice(i, 1);
 };
 
-const sendBuf = client => { let self;
+const sendBuf = client => {
+  let self;
   let lines = [];
   self = async function(sock, fn) {
     let ret = await fn.call(sock, (...args) => self.send.call(sock, ...args));
@@ -159,7 +161,16 @@ export class Socket {
     const { cookie } = headers;
     if(localAddress == '::1') localAddress = 'localhost';
     if(remoteAddress == '::1') remoteAddress = 'localhost';
-    let s = Socket.map(ws, { local: localAddress.replace(/^::ffff:/, '') + ':' + localPort, remote: remoteAddress.replace(/^::ffff:/, '') + ':' + remotePort, cookie, userAgent: headers['user-agent'], path }, { client, connection } );
+    let s = Socket.map(ws,
+      {
+        local: localAddress.replace(/^::ffff:/, '') + ':' + localPort,
+        remote: remoteAddress.replace(/^::ffff:/, '') + ':' + remotePort,
+        cookie,
+        userAgent: headers['user-agent'],
+        path
+      },
+      { client, connection }
+    );
     // console.log('WebSocket connected:', s, headers);
     let i = sockets.length;
     Object.assign(client, { sendTo, sendMany });

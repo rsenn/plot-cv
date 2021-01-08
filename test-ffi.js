@@ -131,15 +131,13 @@ function MakeArray(buf, numBytes) {
       default: return new Uint8Array(buf);
     }
   } catch(error) {
-    console.error(`MakeArray(${Util.className(buf)}[${buf.byteLength}], ${numBytes}): ${error.message}`
-    );
+    console.error(`MakeArray(${Util.className(buf)}[${buf.byteLength}], ${numBytes}): ${error.message}`);
   }
 }
 
 function ArrayBufToHex(buf, numBytes = 8) {
   let arr = MakeArray(buf, numBytes);
-  return arr.reduce((s, code) =>
-      (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
+  return arr.reduce((s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
     ''
   );
 }
@@ -156,10 +154,10 @@ function timeval(sec = 0, usec = 0) {
       }
     }
 
-    /* prettier-ignore */ set tv_sec(s) { let a = new BigUint64Array(this); a[0] = BigInt(s); }
-    /* prettier-ignore */ get tv_sec() { let a = new BigUint64Array(this); return a[0]; }
-    /* prettier-ignore */ set tv_usec(us) { let a = new BigUint64Array(this); a[1] = BigInt(us); }
-    /* prettier-ignore */ get tv_usec() { let a = new BigUint64Array(this); return a[1]; }
+    set tv_sec(s) { let a = new BigUint64Array(this); a[0] = BigInt(s); }
+    get tv_sec() { let a = new BigUint64Array(this); return a[0]; }
+    set tv_usec(us) { let a = new BigUint64Array(this); a[1] = BigInt(us); }
+    get tv_usec() { let a = new BigUint64Array(this); return a[1]; }
 
     toString() {
       const { tv_sec, tv_usec } = this;

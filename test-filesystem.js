@@ -38,9 +38,7 @@ const tests = {
     assert(filesystem.exists(tmpdir));
   },
   'filesystem.open': () => {
-    assert((handle = filesystem.open(tmpdir + '/rdwr', 'w+')) != null,
-      `open("${tmpdir}/rdwr", "w+") == null`
-    );
+    assert((handle = filesystem.open(tmpdir + '/rdwr', 'w+')) != null, `open("${tmpdir}/rdwr", "w+") == null`);
   },
   'filesystem.write': () => {
     assertEquals(filesystem.write(handle, data), data.length);
