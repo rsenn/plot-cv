@@ -31,9 +31,12 @@ function testLocator() {
 async function testEagle(filename) {
   let proj = new EagleProject(filename);
   let { board, schematic, libraries } = proj;
-  const getPackage = e => { const { document } = e;
+  const getPackage = e => {
+    const { document } = e;
     if(e.tagName == 'part') {
-      const device = e.deviceset.find(v => v.tagName == 'device' && v.attributes.name == e.attributes.device, ([v]) => v );
+      const device = e.deviceset.find(v => v.tagName == 'device' && v.attributes.name == e.attributes.device,
+        ([v]) => v
+      );
       return device.package;
     }
     return e.package;
