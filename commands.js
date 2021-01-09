@@ -152,7 +152,7 @@ export async function BoardToGerber(proj, opts = { fetch: true }) {
   })
     .then(NormalizeResponse)
     .catch((error) => ({ error }));
-  console.debug('FetchURL response =', response);
+  //console.debug('FetchURL response =', response);
   if (!gerber[opts.side]) gerber[opts.side] = {};
   result = gerber[opts.side];
 
@@ -162,18 +162,18 @@ export async function BoardToGerber(proj, opts = { fetch: true }) {
 
   if ((opts.fetch || !gerber[opts.side].data) && response.file) {
     response = await FetchCached(`static/${r.file.replace(/^\.\//, '')}`).then(ResponseData);
-    console.debug('FetchURL response =', response);
+    //console.debug('FetchURL response =', response);
     if (response) result.data = response;
   }
 
-  console.debug('BoardToGerber result =', Util.filterOutKeys(result, ['headers', 'code']));
+  //console.debug('BoardToGerber result =', Util.filterOutKeys(result, ['headers', 'code']));
   return result;
 }
 
 export async function GerberToGcode(project, allOpts = {}) {
   const { side, ...opts } = allOpts;
-  console.debug('GerberToGcode', { side, allOpts });
-  console.debug('project.gerber', project.gerber);
+  //console.debug('GerberToGcode', { side, allOpts });
+  //  console.debug('project.gerber', project.gerber);
   const gerber = project.gerber[side];
   const file = allOpts.file || gerber.file;
   let request = {
@@ -196,7 +196,7 @@ export async function GerberToGcode(project, allOpts = {}) {
   if (response.data) {
     let { data } = response;
     if (data[side]) {
-      console.debug('GerberToGcode data =', data);
+      //      console.debug('GerberToGcode data =', data);
       result.data = data[side];
       result.file = data.files[side];
       result.cmd = data.cmd;
@@ -205,11 +205,11 @@ export async function GerberToGcode(project, allOpts = {}) {
   }
   if ((opts.fetch || typeof result.data != 'string') && result.file) {
     response = await FetchCached(`static/${response.file.replace(/^\.\//, '')}`).then(ResponseData);
-    console.debug('GerberToGcode result =', result);
+    //console.debug('GerberToGcode result =', result);
     if (response.data) result.data = response.data;
   }
 
-  console.debug('GerberToGcode result =', result);
+  //  console.debug('GerberToGcode result =', result);
   if (!result.data)
     Util.lazyProperty(result, 'data', async () => {
       let response = await FetchCached(`static/${response.file}`).then(ResponseData);
@@ -220,7 +220,7 @@ export async function GerberToGcode(project, allOpts = {}) {
 
 export const GcodeToPolylines = (data, opts = {}) => {
   const { fill = false, color, side } = opts;
-  console.debug('GcodeToPolylines', { data, opts });
+  //console.debug('GcodeToPolylines', { data, opts });
 
   let gc = [...Util.filter(parseGcode(data), (g) => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args)];
   let polylines = [];

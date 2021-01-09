@@ -762,14 +762,12 @@ function ClipPath(path, clip, mode = ClipperLib.ClipType.ctUnion) {
   return output;
 }
 
-function saveItemsProperty(itemList, get = (item) => Util.is.on(item.visible())) {
-  let map = new WeakMap();
-  for (let item of itemList) map.set(item, get(item));
-  return map;
+function saveItemStates(itemList, get = (item) => Util.is.on(item.visible())) {
+  return itemList.map((item) => [item, get(item)]);
 }
 
-function restoreItemsProperty(map, itemList, set = (item, value) => item.visible(Util.is.on(value))) {
-  for (let item of itemList) set(item, map.get(item));
+function restoreItemStates(itemStates, set = (item, value) => item.visible(value ? 'yes' : 'no')) {
+  for (let [item, state] of itemStates) set(item, state);
 }
 
 function EagleMaps(project) {
@@ -952,7 +950,17 @@ async function LoadDocument(project, parentElem) {
           name: layer.name,
           color: layer.getColor(),
           element: layer,
-          visible: layer.handlers.visible
+          visible: (() => {
+            let fn;
+            const handler = layer.handlers.visible;
+            fn = function (v) {
+              if (v !== undefined) handler(Util.is.on(v) ? 'yes' : 'no');
+              else return handler();
+            };
+            fn.subscribe = handler.subscribe;
+            fn.unsubscribe = handler.unsubscribe;
+            return fn;
+          })()
         }))
       )
     );
@@ -1788,12 +1796,19 @@ const AppMain = (window.onload = async () => {
     if (Util.isObject(element) && 'visible' in element) setVisible = (value) => (element.visible = value);
     let [solo, setSolo] = useState(null);
 
-    //console.log(`Layer #${i} ${name} isVisible=${isVisible}`);
+    const onMouseDown = Util.debounce((e) => {
+      if (e.buttons & 1) {
+        setVisible((setTo = !isVisible));
+        return true;
+      }
+    }, 200);
+    // console.log(`Layer #${i} ${name} isVisible=${isVisible}`);
     return h(
       'div',
       {
         className: classNames(className, !isVisible && 'gray'),
         id: `layer-${i}`,
+        'data-layer': `${(element && element.number) || i} ${(element && element.name) || name}`,
         onClick: useDoubleClick(
           (e) => {
             let { target } = e;
@@ -1806,33 +1821,35 @@ const AppMain = (window.onload = async () => {
             console.log('Layer.onClick', { visibleLayers, hiddenLayers, solo });
 
             if (solo) {
-              if (target) {
-                let id = +target.getAttribute('id').replace(/.*-/g, '');
-                if (i == id) {
-                  let restoreData = solo;
-                  setSolo(null);
-                  restoreItemsProperty(restoreData, layers, (item, value) => item.visible(Util.is.on(value)));
-                }
-              }
-              //for (let l of hiddenLayers) l.visible('yes');
+              onMouseDown.clear();
+              let restoreData = solo;
+
+              setSolo(null);
+              restoreItemStates(restoreData, (item, value) => item.visible(value ? 'yes' : 'no'));
+
+              console.debug('restoreData:', restoreData);
             } else {
-              setSolo(saveItemsProperty(visibleLayers, (item) => Util.is.on(item.visible())));
-              for (let l of visibleLayers) l.visible('no');
+              let saved = saveItemStates(layers, (item) => Util.is.on(item.visible()));
+              console.debug('saved:', saved);
+              setSolo(saved);
+              console.debug('layers:', layers);
+              const states = layers.map((l) => [l, l.i == i]);
+              console.debug('states:', states);
+              states.forEach(([l, state]) => l.visible(state ? 'yes' : 'no'));
+              //    for (let l of layers) l.visible(l.name == name ? 'no' : 'yes');
               setVisible(true);
             }
             layerList(layers);
           },
-          (e) => {
-            let layers = [...layerList()];
+          onMouseDown ||
+            ((e) => {
+              let layers = [...layerList()];
+              if (solo) {
+              } else {
+              }
 
-            if (solo) {
-              let restoreData = solo;
-              setSolo(null);
-              //   restoreItemsProperty(restoreData, layers, (item, value) => item.visible(Util.is.on(value)));
-            } else {
-            }
-            layerList(layers);
-          },
+              layerList(layers);
+            }),
           { timeout: 40 }
         ),
         onMouseMove: (e) => {
@@ -1840,13 +1857,8 @@ const AppMain = (window.onload = async () => {
         },
         onMouseUp: (e) => {
           setTo = null;
-        },
-        onMouseDown: Util.debounce((e) => {
-          /* if (e.buttons & 1) {
-            setVisible((setTo = !isVisible));
-            return true;
-          }*/
-        }, 200)
+        } /*,
+        onMouseDown*/
       },
       [
         h(
@@ -2127,7 +2139,7 @@ const AppMain = (window.onload = async () => {
               for (let side of ['back', 'front']) {
                 let gc = project.gcode[side];
                 if (gc) {
-                  console.debug('draw gcode gc =', gc);
+                  //console.debug('draw gcode gc =', gc);
                   GcodeToPolylines(gc.data, { fill: false, color: colors[side], side });
                 }
               }
