@@ -15,7 +15,12 @@ import SerialBinding from '@serialport/bindings';
 import Socket from './webSocket.js';
 import WebSocket from 'ws';
 import PortableFileSystem from './lib/filesystem.js';
-import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
+import PortableChildProcess, {
+  SIGTERM,
+  SIGKILL,
+  SIGSTOP,
+  SIGCONT
+} from './lib/childProcess.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { Message } from './message.js';
 
@@ -51,9 +56,13 @@ async function runMount(dirsIterator) {
   for await (let dirs of await dirsIterator) {
     console.debug(`Mount ${dirs} to tmp/`);
 
-    let proc = childProcess('./mount-tmp.sh', ['-f', ...Util.unique(dirs || [])], {
-      env: { OPTS: 'auto_unmount,atomic_o_trunc,big_writes,kernel_cache' }
-    });
+    let proc = childProcess(
+      './mount-tmp.sh',
+      ['-f', ...Util.unique(dirs || [])],
+      {
+        env: { OPTS: 'auto_unmount,atomic_o_trunc,big_writes,kernel_cache' }
+      }
+    );
     async function readData(output, callback = (d) => {}) {
       try {
         for await (let data of new Repeater((push, stop) => {
@@ -65,14 +74,20 @@ async function runMount(dirsIterator) {
             console.log('output EOF');
             //return;
           }
-          if (typeof data == 'string') data.split(/\n/g).forEach((line) => callback(line));
+          if (typeof data == 'string')
+            data.split(/\n/g).forEach((line) => callback(line));
         }
       } catch (e) {
         return e;
       }
     }
     readData(proc.stdout);
-    readData(proc.stderr, (data) => console.log('stderr data:', Util.abbreviate(Util.escape(data), Util.getEnv('COLUMNS') || 120)));
+    readData(proc.stderr, (data) =>
+      console.log(
+        'stderr data:',
+        Util.abbreviate(Util.escape(data), Util.getEnv('COLUMNS') || 120)
+      )
+    );
     let exitCode = await waitChild(proc);
     console.log('exitCode:', exitCode);
     return exitCode;
@@ -94,7 +109,11 @@ async function RequestContours(req, res) {
 //console.log('Serving from', p);
 
 async function main() {
-  await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: Infinity });
+  await ConsoleSetup({
+    breakLength: 120,
+    maxStringLength: 200,
+    maxArrayLength: Infinity
+  });
   await PortableFileSystem((fs) => (filesystem = fs));
   await PortableChildProcess((cp) => (childProcess = cp));
 
@@ -109,21 +128,34 @@ async function main() {
   app.use(express.text({ type: 'application/xml', limit: '16384kb' }));
 
   app.use(bodyParser.json({ limit: '200mb' }));
-  app.use(bodyParser.raw({ type: 'text/plain;charset=UTF-8', limit: '524288kb' }));
+  app.use(
+    bodyParser.raw({ type: 'text/plain;charset=UTF-8', limit: '524288kb' })
+  );
   app.use(bodyParser.raw({ type: 'text/plain', limit: '524288kb' }));
-  app.use(bodyParser.raw({ type: 'application/octet-stream', limit: '524288kb' }));
+  app.use(
+    bodyParser.raw({ type: 'application/octet-stream', limit: '524288kb' })
+  );
   app.use(bodyParser.raw({ type: 'multipart/mixed', limit: '16384kb' }));
 
   app.use((req, res, next) => {
-    res.append('Access-Control-Allow-Origin', `https://api.github.com, http://127.0.0.1:${port}`);
+    res.append(
+      'Access-Control-Allow-Origin',
+      `https://api.github.com, http://127.0.0.1:${port}`
+    );
     res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    res.append('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization');
+    res.append(
+      'Access-Control-Allow-Headers',
+      'Content-Type, Accept, Authorization'
+    );
     res.append('Access-Control-Allow-Credentials', 'true');
     next();
   });
 
   function SendRaw(res, file, data, type = 'application/octet-stream') {
-    res.setHeader('Content-Disposition', `attachment; filename="${path.basename(file)}"`);
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${path.basename(file)}"`
+    );
 
     if (type) res.setHeader('Content-Type', type);
     if (data) return res.send(data);
@@ -136,7 +168,11 @@ async function main() {
   const convertToGerber = async (boardFile, opts = {}) => {
     console.log('convertToGerber', { boardFile, opts });
     let {
-      layers = opts.side == 'outline' ? ['Measures'] : opts.drill ? ['Drills', 'Holes'] : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'],
+      layers = opts.side == 'outline'
+        ? ['Measures']
+        : opts.drill
+        ? ['Drills', 'Holes']
+        : [opts.front ? 'Top' : 'Bottom', 'Pads', 'Vias'],
       format = opts.drill ? 'EXCELLON' : 'GERBER_RS274X',
       data,
       fetch = false,
@@ -145,13 +181,22 @@ async function main() {
     } = opts;
     const base = path.basename(boardFile, '.brd');
     const formatToExt = (layers, format) => {
-      if (opts.drill || format.startsWith('EXCELLON') || layers.indexOf('Drills') != -1 || layers.indexOf('Holes') != -1) return 'TXT';
-      if (layers.indexOf('Bottom') != -1 || format.startsWith('GERBER')) return opts.side == 'outline' ? 'GKO' : front ? 'GTL' : 'GBL';
+      if (
+        opts.drill ||
+        format.startsWith('EXCELLON') ||
+        layers.indexOf('Drills') != -1 ||
+        layers.indexOf('Holes') != -1
+      )
+        return 'TXT';
+      if (layers.indexOf('Bottom') != -1 || format.startsWith('GERBER'))
+        return opts.side == 'outline' ? 'GKO' : front ? 'GTL' : 'GBL';
 
       return 'rs274x';
     };
     const gerberFile = `./tmp/${base}.${formatToExt(layers, format)}`;
-    const cmd = `eagle -X -d ${format} -o "${gerberFile}" "${boardFile}" ${layers.join(' ')}`;
+    const cmd = `eagle -X -d ${format} -o "${gerberFile}" "${boardFile}" ${layers.join(
+      ' '
+    )}`;
     console.log(`executing '${cmd}'`);
     const child = exec(`${cmd} 2>&1`, {});
     // do whatever you want with `child` here - it's a ChildProcess instance just
@@ -165,7 +210,8 @@ async function main() {
     if (code !== 0) throw new Error(output);
     if (output) output = output.replace(/\s*\r*\n/g, '\n');
     let result = { code, output };
-    if (opts.fetch) result.data = await (await fsPromises.readFile(gerberFile)).toString();
+    if (opts.fetch)
+      result.data = await (await fsPromises.readFile(gerberFile)).toString();
     result.file = gerberFile;
     console.log('convertToGerber result =', result);
     return result;
@@ -181,12 +227,17 @@ async function main() {
       if (save) {
         filename = filename || typeof save == 'string' ? save : null;
         filename = `tmp/` + filename.replace(/.*\/([^\/])*\.[^\/.]*$/g, '$1');
-        await fsPromises.writeFile(filename, result.data).then((res) => console.log('Wrote file:', res));
+        await fsPromises
+          .writeFile(filename, result.data)
+          .then((res) => console.log('Wrote file:', res));
       }
     } catch (error) {
       result = { error };
     }
-    console.log('Response /gerber', Util.filterOutKeys(result, /(output|data)/));
+    console.log(
+      'Response /gerber',
+      Util.filterOutKeys(result, /(output|data)/)
+    );
 
     if (/get/i.test(req.method) || raw) {
       const { file } = result;
@@ -220,7 +271,12 @@ async function main() {
       'output-dir': './tmp/',
       ...opts
     };
-    if (opts.front == undefined && opts.back == undefined && opts.drill == undefined) opts.back = gerberFile;
+    if (
+      opts.front == undefined &&
+      opts.back == undefined &&
+      opts.drill == undefined
+    )
+      opts.back = gerberFile;
     let sides = [];
 
     for (let side of ['front', 'back', 'drill', 'outline'])
@@ -237,8 +293,15 @@ async function main() {
     }
 
     const params = [...Object.entries(opts)]
-      .filter(([k, v]) => typeof v == 'string' || typeof v == 'number' || (typeof v == 'boolean' && v === true))
-      .map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? '=' + v : ''}`);
+      .filter(
+        ([k, v]) =>
+          typeof v == 'string' ||
+          typeof v == 'number' ||
+          (typeof v == 'boolean' && v === true)
+      )
+      .map(
+        ([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? '=' + v : ''}`
+      );
     console.log('Request /gcode', { gerberFile, fetch, raw });
     //console.warn(`gerberToGcode`, Util.abbreviate(gerberFile), { gcodeFile, opts });
 
@@ -255,7 +318,8 @@ async function main() {
       wait = await child.catch((error) => ({ code: -1, error }));
 
       const { stdout, stderr, code, signal } = wait;
-      if (output) output = Util.abbreviate(output.replace(/\s*\r*\n/g, '\n'), 200);
+      if (output)
+        output = Util.abbreviate(output.replace(/\s*\r*\n/g, '\n'), 200);
       console.log('Response /gcode', { stdout, output, sides });
 
       //   if(code !== 0) throw new Error(output);
@@ -263,21 +327,31 @@ async function main() {
       const gcodeFile = makePath('ngc', sides[0]);
       const svgFile = makePath('svg', sides[0], 'processed');
 
-      for (let [file, to] of sides.map((side) => [makePath('svg', side, 'processed'), makePath('svg', side)])) if (fs.existsSync(file)) fs.renameSync(file, to);
+      for (let [file, to] of sides.map((side) => [
+        makePath('svg', side, 'processed'),
+        makePath('svg', side)
+      ]))
+        if (fs.existsSync(file)) fs.renameSync(file, to);
 
-      let files = sides.map((side) => [side, makePath('ngc', side)]).filter(([side, file]) => fs.existsSync(file));
+      let files = sides
+        .map((side) => [side, makePath('ngc', side)])
+        .filter(([side, file]) => fs.existsSync(file));
       console.log('Response /gcode', { files });
 
       let result = { code, output, cmd };
       if (fetch) {
-        for (let [side, file] of files) result[side] = await (await fsPromises.readFile(file)).toString();
+        for (let [side, file] of files)
+          result[side] = await (await fsPromises.readFile(file)).toString();
       }
       if (/*/get/i.test(req.method) || */ raw) {
         const { file } = result;
         return SendRaw(res, file, result.data);
       }
       result.files = Object.fromEntries(files);
-      console.log('Response /gcode', Util.filterOutKeys(result, /(Xoutput|data)/));
+      console.log(
+        'Response /gcode',
+        Util.filterOutKeys(result, /(Xoutput|data)/)
+      );
       return result;
     } catch (error) {
       Util.putError(error);
@@ -347,7 +421,10 @@ async function main() {
           'Static request:',
           { path, url, method, headers, query, body } /* Object.keys(req), */,
           ...Util.if(
-            Util.filterOutKeys(req.headers, /(^sec|^accept|^cache|^dnt|-length|^host$|^if-|^connect|^user-agent|-type$|^origin$|^referer$)/),
+            Util.filterOutKeys(
+              req.headers,
+              /(^sec|^accept|^cache|^dnt|-length|^host$|^if-|^connect|^user-agent|-type$|^origin$|^referer$)/
+            ),
             () => [],
             (value) => ['headers: ', value],
             Util.isEmpty
@@ -375,7 +452,9 @@ async function main() {
       }
     })
   );
-  app.get(/\/[^\/]*\.js$/, async (req, res) => res.sendFile(path.join(p, req.path)));
+  app.get(/\/[^\/]*\.js$/, async (req, res) =>
+    res.sendFile(path.join(p, req.path))
+  );
 
   //app.get('/components.js', async (req, res) => res.sendFile(path.join(p, 'components.js')));
 
@@ -398,18 +477,27 @@ async function main() {
       .map((re) => re.exec(chunk))
       .map((m) => m && m.index);
     let d = chunk.substring(...indexes);
-    if (d.startsWith('<description')) return Util.decodeHTMLEntities(d.substring(a[0].length));
+    if (d.startsWith('<description'))
+      return Util.decodeHTMLEntities(d.substring(a[0].length));
     return '';
   }
 
   const descMap = Util.weakMapper(getDescription, new Map());
 
   async function GetFilesList(dir = './tmp', opts = {}) {
-    let { filter = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$', descriptions = false, names } = opts;
+    let {
+      filter = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$',
+      descriptions = false,
+      names
+    } = opts;
     const re = new RegExp(filter, 'i');
     const f = (ent) => re.test(ent);
 
-    console.log('GetFilesList()', { filter, descriptions }, ...(names ? [names.length] : []));
+    console.log(
+      'GetFilesList()',
+      { filter, descriptions },
+      ...(names ? [names.length] : [])
+    );
 
     if (!names) names = [...(await fs.promises.readdir(dir))].filter(f);
 
@@ -452,7 +540,13 @@ async function main() {
   app.get(/\/list-serial/, async (req, res) => {
     const list = await SerialPort.list();
 
-    res.json(list.filter((port) => ['manufacturer', 'pnpId', 'vendorId', 'productId'].some((key) => port[key])));
+    res.json(
+      list.filter((port) =>
+        ['manufacturer', 'pnpId', 'vendorId', 'productId'].some(
+          (key) => port[key]
+        )
+      )
+    );
   });
 
   app.ws('/serial', async (ws, req) => {
@@ -523,7 +617,11 @@ async function main() {
     let ret = filesystem.writeFile(configFile, text);
     console.log('ret:', ret);
     let stat = safeStat(configFile);
-    res.json({ size: ret, time: stat.mtime.getTime(), hash: Util.hashString(text) });
+    res.json({
+      size: ret,
+      time: stat.mtime.getTime(),
+      hash: Util.hashString(text)
+    });
   });
 
   app.get(/\/github/, async (req, res) => {
@@ -532,7 +630,9 @@ async function main() {
         const { body } = req;
         const url = Util.parseURL(req.url);
         const { location, query } = url;
-        let args = location.split(/\//g).filter((p) => !/(^github$|^$)/.test(p));
+        let args = location
+          .split(/\//g)
+          .filter((p) => !/(^github$|^$)/.test(p));
         let options = { ...query, ...body };
 
         if (args.length > 0) {
@@ -545,7 +645,13 @@ async function main() {
         let result;
         const { owner, repo, dir, filter, tab, after } = options;
 
-        if (owner && repo && dir) result = await GithubListContents(owner, repo, dir, filter && new RegExp(filter, 'g'));
+        if (owner && repo && dir)
+          result = await GithubListContents(
+            owner,
+            repo,
+            dir,
+            filter && new RegExp(filter, 'g')
+          );
         else if (owner && (tab || after)) {
           let proxyUrl = Util.makeURL({
             ...url,
@@ -579,23 +685,33 @@ async function main() {
     console.log('POST github', { owner, repo, dir, filter });
 
     res.json(
-      await GithubListContents(owner, repo, dir, filter && new RegExp(filter, 'g'))
+      await GithubListContents(
+        owner,
+        repo,
+        dir,
+        filter && new RegExp(filter, 'g')
+      )
         .then((result) => FilesURLs(result.map((file) => file.download_url)))
         .catch((error) => ({ error }))
     );
   });
 
-  app.get(/^\/files/, async (req, res) => res.json({ files: await GetFilesList() }));
+  app.get(/^\/files/, async (req, res) =>
+    res.json({ files: await GetFilesList() })
+  );
   app.post(/^\/(files|list).html/, async (req, res) => {
     const { body } = req;
     let { filter, descriptions, names } = body;
 
     if (names !== undefined) {
       if (typeof names == 'string') names = names.split(/\n/g);
-      if (Util.isArray(names)) names = names.map((name) => name.replace(/.*\//g, ''));
+      if (Util.isArray(names))
+        names = names.map((name) => name.replace(/.*\//g, ''));
     }
 
-    res.json({ files: await GetFilesList('tmp', { filter, descriptions, names }) });
+    res.json({
+      files: await GetFilesList('tmp', { filter, descriptions, names })
+    });
   });
 
   app.get('/index.html', async (req, res) => {
@@ -627,10 +743,17 @@ async function main() {
     const { body } = req;
     console.log('req.headers:', req.headers);
     console.log('body:', body, Util.className(body), Util.toString(body));
-    console.log('save body:', typeof body == 'string' ? Util.abbreviate(body, 100) : body);
+    console.log(
+      'save body:',
+      typeof body == 'string' ? Util.abbreviate(body, 100) : body
+    );
     let st,
       err,
-      filename = (req.headers['content-disposition'] || '').replace(new RegExp('.*"([^"]*)".*', 'g'), '$1') || 'output.svg';
+      filename =
+        (req.headers['content-disposition'] || '').replace(
+          new RegExp('.*"([^"]*)".*', 'g'),
+          '$1'
+        ) || 'output.svg';
     filename = 'tmp/' + filename.replace(/^tmp\//, '');
     await fs.promises
       .writeFile(filename, body, { mode: 0x0180, flag: 'w' })

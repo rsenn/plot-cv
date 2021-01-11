@@ -1,5 +1,12 @@
 const SvgPath = require('./lib/svg/path.js');
-const { Point, Matrix, SVG, Line, PointList, Polygon } = require('./lib/dom.cjs');
+const {
+  Point,
+  Matrix,
+  SVG,
+  Line,
+  PointList,
+  Polygon
+} = require('./lib/dom.cjs');
 const { parseSVG, makeAbsolute } = require('./lib/svg/path-parser.js');
 const { Console } = require('console');
 const PointAtLength = require('point-at-length');
@@ -53,14 +60,19 @@ for (let i = 0; i < path.length; i++) {
   let points = [new Point(x, y), new Point(x1, y1), new Point(x2, y2)];
   //console.log(`path[${i}]:`, c);
 
-  if (!relative) points = points.map((p) => (p.x !== undefined ? t.transform_point({ x: p.x, y: p.y }) : p));
+  if (!relative)
+    points = points.map((p) =>
+      p.x !== undefined ? t.transform_point({ x: p.x, y: p.y }) : p
+    );
 
   if (command == 'A') points[0] = new Point(x, y);
 
   points.push(new Point(rx, ry));
 
   relative ? newPath.rel() : newPath.abs();
-  points = points.map((p) => (p.x !== undefined ? { x: p.x.toFixed(3), y: p.y.toFixed(3) } : p));
+  points = points.map((p) =>
+    p.x !== undefined ? { x: p.x.toFixed(3), y: p.y.toFixed(3) } : p
+  );
 
   switch (code) {
     case 'M': {
@@ -69,7 +81,15 @@ for (let i = 0; i < path.length; i++) {
     }
     case 'A': {
       const { xAxisRotation, largeArc, sweep } = c;
-      newPath.arc(points[3].x, points[3].y, xAxisRotation, largeArc ? 1 : 0, sweep ? 1 : 0, points[0].x, points[0].y);
+      newPath.arc(
+        points[3].x,
+        points[3].y,
+        xAxisRotation,
+        largeArc ? 1 : 0,
+        sweep ? 1 : 0,
+        points[0].x,
+        points[0].y
+      );
       break;
     }
     case 'H': {
@@ -87,7 +107,14 @@ for (let i = 0; i < path.length; i++) {
       }
       '';
     case 'C': {
-      newPath.bezier3(points[1].x, points[1].y, points[2].x, points[2].y, points[0].x, points[0].y);
+      newPath.bezier3(
+        points[1].x,
+        points[1].y,
+        points[2].x,
+        points[2].y,
+        points[0].x,
+        points[0].y
+      );
       break;
     }
     case 'Q': {

@@ -126,7 +126,8 @@ async function main(...args) {
   var fp;
   fp = dlsym(h, 'test1');
   if (fp == null) console.log("can't find symbol test1: ", dlerror());
-  if (!define('test1', fp, null, 'int', 'void *')) console.log("can't define test1");
+  if (!define('test1', fp, null, 'int', 'void *'))
+    console.log("can't define test1");
   /* test1 takes a buffer but a string will work -- changes to the string
    * are lost, because a writable buffer is passed, but discarded before
    * the return.
@@ -326,7 +327,15 @@ async function main(...args) {
   console.log('getpeername() addr.port = ', addr.port);
   console.log('getpeername() addr.addr = ', addr.addr);
 
-  let select = syscall('select', 'int', 'int', 'void *', 'void *', 'void *', 'void *');
+  let select = syscall(
+    'select',
+    'int',
+    'int',
+    'void *',
+    'void *',
+    'void *',
+    'void *'
+  );
 
   let rfd = fd_set(),
     wfd = fd_set(),

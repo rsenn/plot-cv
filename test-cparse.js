@@ -5,7 +5,12 @@ import cparse from './lib/cparse.js';
 import cpp from './lib/cpp.js';
 import path from './lib/path.js';
 import PortableFileSystem from './lib/filesystem.js';
-import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
+import PortableChildProcess, {
+  SIGTERM,
+  SIGKILL,
+  SIGSTOP,
+  SIGCONT
+} from './lib/childProcess.js';
 
 let filesystem,
   childProcess,
@@ -83,9 +88,17 @@ async function main(...args) {
   console.log('Source file:', file);
   //const output = filesystem.open('out.e', 'w');
   // console.log('out fd:', filesystem.fileno(output));
-  let cmd = ['/usr/lib/gcc/x86_64-linux-gnu/10/cc1', '-E', ...includeDirs.map((dir) => `-I${dir}`), file /*, '-o', 'out.e'*/];
+  let cmd = [
+    '/usr/lib/gcc/x86_64-linux-gnu/10/cc1',
+    '-E',
+    ...includeDirs.map((dir) => `-I${dir}`),
+    file /*, '-o', 'out.e'*/
+  ];
   console.log('cmd:', cmd.join(' '));
-  let proc = childProcess(cmd[0], cmd.slice(1), { block: false, stdio: [null, 'pipe', 'pipe'] });
+  let proc = childProcess(cmd[0], cmd.slice(1), {
+    block: false,
+    stdio: [null, 'pipe', 'pipe']
+  });
 
   //filesystem.close(output);
 
@@ -103,7 +116,10 @@ async function main(...args) {
       // console.log('completion_func', file);
 
       const code = filesystem.readFile(file);
-      console.log('include_func', { file, code: Util.abbreviate(Util.escape(code + ''), 40) });
+      console.log('include_func', {
+        file,
+        code: Util.abbreviate(Util.escape(code + ''), 40)
+      });
 
       resolve(code);
     },
@@ -136,7 +152,15 @@ async function main(...args) {
 
   const ast = cparse(code, {
     file,
-    types: [/*'int8_t','int16_t','int32_t','int64_t', 'uint8_t','uint16_t','uint32_t','uint64_t',*/ 'void', 'char', 'short', 'int', 'long', 'float', 'double']
+    types: [
+      /*'int8_t','int16_t','int32_t','int64_t', 'uint8_t','uint16_t','uint32_t','uint64_t',*/ 'void',
+      'char',
+      'short',
+      'int',
+      'long',
+      'float',
+      'double'
+    ]
   });
 
   console.log(ast);

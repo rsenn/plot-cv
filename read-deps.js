@@ -30,13 +30,24 @@ function DummyPreproc(source) {
   let includeDirectives = pp.filter(([no, str]) => includeRegex.test(str));
 
   const removeQuotes = /^[<"](.*)[">]$/;
-  let includeFiles = includeDirectives.map(([lineno, str]) => [lineno, str.replace(includeRegex, '')]);
-  return includeFiles.map(([lineno, file]) => [lineno, file.replace(removeQuotes, '$1'), file.startsWith('<')]);
+  let includeFiles = includeDirectives.map(([lineno, str]) => [
+    lineno,
+    str.replace(includeRegex, '')
+  ]);
+  return includeFiles.map(([lineno, file]) => [
+    lineno,
+    file.replace(removeQuotes, '$1'),
+    file.startsWith('<')
+  ]);
 }
 
 async function DumpDeps(sources, includeDirs = []) {
   //let stderr = filesystem.open('deps.err', 'w+');$
-  let includes = includeDirs.reduce((acc, dir) => (/^\/opt/.test(dir) ? [...acc, '-isystem', dir] : [...acc, `-I${dir}`]), []);
+  let includes = includeDirs.reduce(
+    (acc, dir) =>
+      /^\/opt/.test(dir) ? [...acc, '-isystem', dir] : [...acc, `-I${dir}`],
+    []
+  );
   let argv = ['-MM', ...includes, '-c', ...sources];
   console.log('argv:', argv.join(' '));
   let proc = childProcess('g++', argv, {
@@ -72,7 +83,12 @@ async function main(...sources) {
   await PortableChildProcess((cp) => (childProcess = cp));
 
   const env = await Util.env;
-  const includes = ['quickjs', 'src', '/opt/opencv-4.5.0/include', '/opt/opencv-4.5.0/include/opencv4'];
+  const includes = [
+    'quickjs',
+    'src',
+    '/opt/opencv-4.5.0/include',
+    '/opt/opencv-4.5.0/include/opencv4'
+  ];
 
   if (sources.length == 0) {
     let files = filesystem.readdir('src').map((file) => `src/${file}`);

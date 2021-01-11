@@ -25,7 +25,11 @@ class C {
 
 x_setter = C._x_setter;
 
-C.prototype.m = logged(C.prototype.m, { kind: 'method', name: 'm', isStatic: false });
+C.prototype.m = logged(C.prototype.m, {
+  kind: 'method',
+  name: 'm',
+  isStatic: false
+});
 x_setter = logged(x_setter, { kind: 'setter', isStatic: false });
 
 let o = new C();

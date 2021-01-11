@@ -105,7 +105,11 @@ async function processFile(file) {
   console.log('opened:', file);
   let ast, error;
   globalThis.parser = null;
-  globalThis.parser = new ECMAScriptParser(data ? data.toString() : data, file, false);
+  globalThis.parser = new ECMAScriptParser(
+    data ? data.toString() : data,
+    file,
+    false
+  );
 
   console.log('prototypeChain:', Util.getPrototypeChain(parser));
   console.log('OK, data: ', Util.abbreviate(Util.escape(data)));
@@ -144,11 +148,15 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
     nodeKeys.push(path);
   }
 */
-  const isRequire = (node) => node instanceof CallExpression && node.callee.value == 'require';
+  const isRequire = (node) =>
+    node instanceof CallExpression && node.callee.value == 'require';
   const isImport = (node) => node instanceof ImportDeclaration;
 
   let commentMap = new Map(
-    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [pos * 10 - 1, { comment, pos, len, node }]),
+    [...parser.comments].map(({ comment, text, node, pos, len, ...item }) => [
+      pos * 10 - 1,
+      { comment, pos, len, node }
+    ]),
     (a, b) => a - b
   );
 
@@ -167,7 +175,8 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
     })
   );
 
-  let st = deep.get(ast, ['body', 0, 'callee', 'expressions', 0].join('.')) || ast;
+  let st =
+    deep.get(ast, ['body', 0, 'callee', 'expressions', 0].join('.')) || ast;
 
   let [p, n] = [...flat].find(([path, node]) => node instanceof BlockStatement);
   console.log('find:', [...p]);
@@ -184,16 +193,31 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
   dumpFile(output_file, output);
 
   function getImports() {
-    const imports = [...flat].filter(([path, node]) => isRequire(node) || isImport(node));
-    const importStatements = imports.map(([path, node]) => (isRequire(node) || true ? path.slice(0, 2) : path)).map((path) => [path, deep.get(ast, path)]);
+    const imports = [...flat].filter(
+      ([path, node]) => isRequire(node) || isImport(node)
+    );
+    const importStatements = imports
+      .map(([path, node]) =>
+        isRequire(node) || true ? path.slice(0, 2) : path
+      )
+      .map((path) => [path, deep.get(ast, path)]);
 
-    console.log('imports:', new Map(imports.map(([path, node]) => [ESNode.assoc(node).position, node])));
+    console.log(
+      'imports:',
+      new Map(
+        imports.map(([path, node]) => [ESNode.assoc(node).position, node])
+      )
+    );
     console.log('importStatements:', importStatements);
 
-    const importedFiles = imports.map(([pos, node]) => Identifier.string(node.source || node.arguments[0]));
+    const importedFiles = imports.map(([pos, node]) =>
+      Identifier.string(node.source || node.arguments[0])
+    );
     console.log('importedFiles:', importedFiles);
 
-    let importIdentifiers = importStatements.map(([p, n]) => [p, n.identifiers ? n.identifiers : n]).map(([p, n]) => [p, n.declarations ? n.declarations : n]);
+    let importIdentifiers = importStatements
+      .map(([p, n]) => [p, n.identifiers ? n.identifiers : n])
+      .map(([p, n]) => [p, n.declarations ? n.declarations : n]);
     console.log('importIdentifiers:', importIdentifiers);
 
     /*  importIdentifiers = importIdentifiers.map(([p, n]) =>
@@ -204,11 +228,16 @@ console.log("find:",[...flat].find(([path,node]) => node instanceof SequenceExpr
       .flat()
       .map(n => Identifier.string(n))
   );*/
-    console.log('importIdentifiers:', Util.unique(importIdentifiers.flat()).join(', '));
+    console.log(
+      'importIdentifiers:',
+      Util.unique(importIdentifiers.flat()).join(', ')
+    );
   }
 
   await ConsoleSetup({ depth: Infinity });
-  const templates = [...flat].filter(([path, node]) => node instanceof TemplateLiteral);
+  const templates = [...flat].filter(
+    ([path, node]) => node instanceof TemplateLiteral
+  );
 
   console.log('templates:', templates);
 }
@@ -224,7 +253,9 @@ function finish(err) {
 
   if (err) {
     console.log(parser.lexer.currentLine());
-    console.log(Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack);
+    console.log(
+      Util.className(err) + ': ' + (err.msg || err) + '\n' + err.stack
+    );
   }
 
   let lexer = parser.lexer;

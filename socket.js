@@ -145,7 +145,9 @@ export const SOL_SOCKET = 1;
 /* prettier-ignore */
 const syscall = { socket: foreign('socket', 'int', 'int', 'int', 'int'), select: foreign( 'select', 'int', 'int', 'buffer', 'buffer', 'buffer', 'buffer' ), connect: foreign('connect', 'int', 'int', 'void *', 'size_t'), bind: foreign('bind', 'int', 'int', 'void *', 'size_t'), listen: foreign('listen', 'int', 'int', 'int'), accept: foreign('accept', 'int', 'int', 'buffer', 'buffer'), getsockopt: foreign( 'getsockopt', 'int', 'int', 'int', 'int', 'void *', 'buffer' ), setsockopt: foreign( 'setsockopt', 'int', 'int', 'int', 'int', 'void *', 'size_t' ), recv: foreign('recv', 'int', 'int', 'buffer', 'size_t', 'int'), recvfrom: foreign( 'recvfrom', 'int', 'int', 'buffer', 'size_t', 'int', 'buffer', 'buffer' ), send: foreign('send', 'int', 'int', 'buffer', 'size_t', 'int'), sendto: foreign( 'sendto', 'int', 'int', 'buffer', 'size_t', 'int', 'buffer', 'size_t' ) };
 
-export const errnos = Object.fromEntries(Object.getOwnPropertyNames(Error).map((name) => [Error[name], name]));
+export const errnos = Object.fromEntries(
+  Object.getOwnPropertyNames(Error).map((name) => [Error[name], name])
+);
 
 export function socket(af = AF_INET, type = SOCK_STREAM, proto = IPPROTO_IP) {
   return syscall.socket(af, type, proto);
@@ -198,20 +200,42 @@ export function send(fd, buf, offset, len, flags = 0) {
   return syscall.send(+fd, buf, offset, len, flags);
 }
 
-export function select(nfds, readfds = null, writefds = null, exceptfds = null, timeout = null) {
+export function select(
+  nfds,
+  readfds = null,
+  writefds = null,
+  exceptfds = null,
+  timeout = null
+) {
   if (!(typeof nfds == 'number')) {
-    let maxfd = Math.max(...[readfds, writefds, exceptfds].filter((s) => s instanceof fd_set).map((s) => s.maxfd));
+    let maxfd = Math.max(
+      ...[readfds, writefds, exceptfds]
+        .filter((s) => s instanceof fd_set)
+        .map((s) => s.maxfd)
+    );
     nfds = maxfd + 1;
   }
   return syscall.select(nfds, readfds, writefds, exceptfds, timeout);
 }
 
 export function getsockopt(sockfd, level, optname, optval, optlen) {
-  return syscall.getsockopt(sockfd, level, optname, optval, optlen || optval.byteLength);
+  return syscall.getsockopt(
+    sockfd,
+    level,
+    optname,
+    optval,
+    optlen || optval.byteLength
+  );
 }
 
 export function setsockopt(sockfd, level, optname, optval, optlen) {
-  return syscall.setsockopt(sockfd, level, optname, optval, optlen || optval.byteLength);
+  return syscall.setsockopt(
+    sockfd,
+    level,
+    optname,
+    optval,
+    optlen || optval.byteLength
+  );
 }
 
 export class timeval extends ArrayBuffer {
@@ -326,7 +350,8 @@ export class fd_set extends ArrayBuffer {
     const a = new Uint8Array(this);
     const n = a.byteLength;
     const r = [];
-    for (let i = 0; i < n; i++) for (let j = 0; j < 8; j++) if (a[i] & (1 << j)) r.push(i * 8 + j);
+    for (let i = 0; i < n; i++)
+      for (let j = 0; j < 8; j++) if (a[i] & (1 << j)) r.push(i * 8 + j);
     return r;
   }
 
@@ -368,7 +393,8 @@ export function FD_ZERO(fd, set) {
 
 export class Socket {
   constructor(proto = IPPROTO_IP) {
-    this.type = [IPPROTO_UDP, SOCK_DGRAM].indexOf(proto) != -1 ? SOCK_DGRAM : SOCK_STREAM;
+    this.type =
+      [IPPROTO_UDP, SOCK_DGRAM].indexOf(proto) != -1 ? SOCK_DGRAM : SOCK_STREAM;
     this.fd = socket(this.family, this.type, proto);
     this.remote = new sockaddr_in(this.family);
     this.local = new sockaddr_in(this.family);
@@ -428,7 +454,8 @@ export class Socket {
     if (addr != undefined) this.localAddress = addr;
     if (port != undefined) this.localPort = port;
     setsockopt(this.fd, SOL_SOCKET, SO_REUSEADDR, new socklen_t(1));
-    if ((ret = bind(this.fd, this.local, this.local.byteLength)) == -1) this.errno = syscall.errno;
+    if ((ret = bind(this.fd, this.local, this.local.byteLength)) == -1)
+      this.errno = syscall.errno;
     return ret;
   }
 
@@ -467,7 +494,8 @@ export class Socket {
 
   write(buf, offset, len) {
     let ret;
-    if ((ret = write(this.fd, buf, offset, len)) == -1) this.errno = syscall.errno;
+    if ((ret = write(this.fd, buf, offset, len)) == -1)
+      this.errno = syscall.errno;
     return ret;
   }
 
@@ -476,7 +504,14 @@ export class Socket {
   }
 
   sendto(buf, len, flags = 0, dest_addr = null, addrlen) {
-    return syscall.sendto(this.fd, buf, len, flags, dest_addr, addrlen === undefined ? dest_addr.byteLength : addrlen);
+    return syscall.sendto(
+      this.fd,
+      buf,
+      len,
+      flags,
+      dest_addr,
+      addrlen === undefined ? dest_addr.byteLength : addrlen
+    );
   }
 
   close() {

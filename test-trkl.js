@@ -4,7 +4,9 @@ let testObj = {};
 
 let testValues = [1, 2, 3, 4, 5];
 
-trkl.bind(testObj, 'prop1', (value) => (value === undefined ? testValues[0] : (testValues[0] = value)));
+trkl.bind(testObj, 'prop1', (value) =>
+  value === undefined ? testValues[0] : (testValues[0] = value)
+);
 
 console.log('testObj.prop1', testObj.prop1);
 testObj.prop1 = 'a';

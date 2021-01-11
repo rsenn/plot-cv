@@ -1,4 +1,13 @@
-import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
+import React, {
+  h,
+  html,
+  render,
+  Fragment,
+  Component,
+  useState,
+  useLayoutEffect,
+  useRef
+} from './lib/dom/preactComponent.js';
 
 /** Redirect rendering of descendants into the given CSS selector.
  *  @example
@@ -24,7 +33,8 @@ export class Portal extends Component {
   componentWillUnmount() {
     this.renderLayer(false);
     this.isMounted = false;
-    if (this.remote && this.remote.parentNode) this.remote.parentNode.removeChild(this.remote);
+    if (this.remote && this.remote.parentNode)
+      this.remote.parentNode.removeChild(this.remote);
   }
 
   findNode(node) {
@@ -43,7 +53,12 @@ export class Portal extends Component {
       this.into = this.findNode(this.props.into);
     }
 
-    this.remote = render((h(PortalProxy, { context: this.context }), (show && this.props.children) || null), this.into, this.remote);
+    this.remote = render(
+      (h(PortalProxy, { context: this.context }),
+      (show && this.props.children) || null),
+      this.into,
+      this.remote
+    );
   }
 
   render() {

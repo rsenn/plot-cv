@@ -7,7 +7,13 @@ import { Point } from 'point';
 import { Size } from 'size';
 import { TickMeter } from 'utility';
 import { VideoSource } from './cvVideo.js';
-import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.js';
+import {
+  Window,
+  MouseFlags,
+  MouseEvents,
+  Mouse,
+  TextStyle
+} from './cvHighGUI.js';
 import { Alea } from './lib/alea.js';
 import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
@@ -28,12 +34,17 @@ class Pipeline extends Function {
         mat = processor.call(self, mat, self.images[i], i);
         if (mat) self.images[i] = mat;
         self.times[i] = hr(start);
-        if (typeof callback == 'function') callback.call(self, self.images[i], i, self.processors.length);
+        if (typeof callback == 'function')
+          callback.call(self, self.images[i], i, self.processors.length);
         i++;
       }
       return mat;
     };
-    Util.define(self, { processors, images: new Array(processors.length), callback });
+    Util.define(self, {
+      processors,
+      images: new Array(processors.length),
+      callback
+    });
     self.times = new Array(processors.length);
     return Object.setPrototypeOf(self, Pipeline.prototype);
     //return Object.assign(self, Pipeline.prototype);
@@ -125,7 +136,10 @@ async function main(...args) {
       .map((hue) => new HSLA(hue, 100, 50))
       .map((h) => h.toRGBA());
 
-  let win = new Window('gray', /*cv.WINDOW_AUTOSIZE | cv.WINDOW_NORMAL  |*/ cv.WINDOW_KEEPRATIO);
+  let win = new Window(
+    'gray',
+    /*cv.WINDOW_AUTOSIZE | cv.WINDOW_NORMAL  |*/ cv.WINDOW_KEEPRATIO
+  );
   console.log('Mouse :', { MouseEvents, MouseFlags });
   //console.log('cv.EVENT_MOUSEMOVE', cv.EVENT_MOUSEMOVE);
   //
@@ -137,7 +151,10 @@ async function main(...args) {
     event = Mouse.printEvent(event);
     flags = Mouse.printFlags(flags);
 
-    console.log('Mouse event:', console.inspect({ event, x, y, flags }, { multiline: false }));
+    console.log(
+      'Mouse event:',
+      console.inspect({ event, x, y, flags }, { multiline: false })
+    );
   });
 
   console.log('Setup duration:', hr(begin));
@@ -172,8 +189,25 @@ async function main(...args) {
     L2gradient: new NumericParam(0, 0, 1),
     numDilations: new NumericParam(0, 0, 10),
     numErosions: new NumericParam(0, 0, 10),
-    mode: new EnumParam(['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL'], 3),
-    method: new EnumParam(['CHAIN_APPROX_NONE', 'CHAIN_APPROX_SIMPLE', 'CHAIN_APPROX_TC89_L1', 'CHAIN_APPROX_TC89_L189_KCOS'], 0),
+    mode: new EnumParam(
+      [
+        'RETR_EXTERNAL',
+        'RETR_LIST',
+        'RETR_CCOMP',
+        'RETR_TREE',
+        'RETR_FLOODFILL'
+      ],
+      3
+    ),
+    method: new EnumParam(
+      [
+        'CHAIN_APPROX_NONE',
+        'CHAIN_APPROX_SIMPLE',
+        'CHAIN_APPROX_TC89_L1',
+        'CHAIN_APPROX_TC89_L189_KCOS'
+      ],
+      0
+    ),
     lineWidth: new NumericParam(1, 0, 10)
   };
   let paramNav = new ParamNavigator(params);
@@ -186,7 +220,10 @@ async function main(...args) {
   rainbow = makeRainbow(256);
 
   let outputMat, outputName;
-  let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
+  let structuringElement = cv.getStructuringElement(
+    cv.MORPH_CROSS,
+    new Size(3, 3)
+  );
 
   let pipeline = new Pipeline(
     [
@@ -198,18 +235,50 @@ async function main(...args) {
         cv.normalize(src, dst, 255, 0, cv.NORM_MINMAX);
       }),
       Processor(function Blur(src, dst) {
-        cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
+        cv.GaussianBlur(
+          src,
+          dst,
+          [+params.ksize, +params.ksize],
+          0,
+          0,
+          cv.BORDER_REPLICATE
+        );
       }),
       Processor(function EdgeDetect(src, dst) {
-        cv.Canny(src, dst, +params.thresh1, +params.thresh2, +params.apertureSize, +params.L2gradient);
+        cv.Canny(
+          src,
+          dst,
+          +params.thresh1,
+          +params.thresh2,
+          +params.apertureSize,
+          +params.L2gradient
+        );
         ////   console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
       }),
       Processor(function Morph(src, dst) {
-        cv.dilate(src, dst, structuringElement, new Point(-1, -1), +params.numDilations);
-        cv.erode(dst, dst, structuringElement, new Point(-1, -1), +params.numErosions);
+        cv.dilate(
+          src,
+          dst,
+          structuringElement,
+          new Point(-1, -1),
+          +params.numDilations
+        );
+        cv.erode(
+          dst,
+          dst,
+          structuringElement,
+          new Point(-1, -1),
+          +params.numErosions
+        );
       }),
       Processor(function Contours(src, dst) {
-        cv.findContours(src, (contours = []), (hier = []), cv[params.mode], cv[params.method]);
+        cv.findContours(
+          src,
+          (contours = []),
+          (hier = []),
+          cv[params.mode],
+          cv[params.method]
+        );
 
         cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
 
@@ -279,9 +348,14 @@ async function main(...args) {
 
       if ((key = cv.waitKeyEx(Math.max(1, sleepMsecs))) != -1) {
         modifiers = Object.fromEntries(modifierMap(key));
-        modifierList = modifierMap(key).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc), []);
+        modifierList = modifierMap(key).reduce(
+          (acc, [modifier, active]) => (active ? [...acc, modifier] : acc),
+          []
+        );
         let ch = String.fromCodePoint(key & 0xff);
-        console.log(`keypress [${modifierList}] 0x${(key & ~0xd000).toString(16)} '${ch}'`);
+        console.log(
+          `keypress [${modifierList}] 0x${(key & ~0xd000).toString(16)} '${ch}'`
+        );
       }
 
       switch (key & 0xfff) {
@@ -337,21 +411,36 @@ async function main(...args) {
           video.set('pos_frames', 0);
           break;
         case 0xf57 /* end */:
-          video.set('pos_frames', video.get('frame_count') - Math.round(video.fps * 3));
+          video.set(
+            'pos_frames',
+            video.get('frame_count') - Math.round(video.fps * 3)
+          );
           break;
         case 0xf51: /* left */
         case 0xf53: /* right */
         case 0xf52: /* up */
         case 0xf54: /* down */ {
           const method = key & 0x1 ? 'Frames' : 'Msecs';
-          const distance = (key & 0x1 ? 1 : 1000) * (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
+          const distance =
+            (key & 0x1 ? 1 : 1000) *
+            (modifiers['ctrl']
+              ? 1000
+              : modifiers['shift']
+              ? 100
+              : modifiers['alt']
+              ? 1
+              : 10);
           const offset = key & 0x2 ? +distance : -distance;
 
           console.log('seek', { method, distance, offset });
           video['seek' + method](offset);
           let pos = video.position(method);
 
-          console.log('seek' + method + ' ' + offset + ' pos =', pos, ` (${Util.roundTo(video.position('%'), 0.001)}%)`);
+          console.log(
+            'seek' + method + ' ' + offset + ' pos =',
+            pos,
+            ` (${Util.roundTo(video.position('%'), 0.001)}%)`
+          );
           break;
         }
         default: {
@@ -365,7 +454,8 @@ async function main(...args) {
 
     meter.stop();
     //console.log('Iteration time: ', meter.toString());
-    if (prevTime !== undefined) console.log('FPS: ', +(1 / meter.timeSec).toFixed(2), '/', video.fps);
+    if (prevTime !== undefined)
+      console.log('FPS: ', +(1 / meter.timeSec).toFixed(2), '/', video.fps);
 
     prevTime = meter.timeSec;
   }
@@ -391,26 +481,51 @@ async function main(...args) {
     console.log('out ' + out.toString());
 
     if (frameShow == 0) {
-      cv.drawContours(surface, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
+      cv.drawContours(
+        surface,
+        contours,
+        -1,
+        { r: 0, g: 255, b: 0, a: 255 },
+        1,
+        cv.LINE_AA
+      );
     } else {
       let ids = [...getToplevel(hier)];
 
-      let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]]));
+      let palette = Object.fromEntries(
+        [...ids.entries()].map(([i, id]) => [
+          id,
+          rainbow[Math.floor((i * 256) / (ids.length - 1))]
+        ])
+      );
       contours.forEach((contour, i) => {
         let p = [...getParents(hier, i)];
         let color = palette[p[p.length - 1]];
         drawContour(surface, contour, color, +params.lineWidth);
       });
     }
-    font.draw(surface, video.time + ' ⏩', tPos, /*0x00ff00 ||*/ { r: 0, g: 255, b: 0, a: 255 });
+    font.draw(
+      surface,
+      video.time + ' ⏩',
+      tPos,
+      /*0x00ff00 ||*/ { r: 0, g: 255, b: 0, a: 255 }
+    );
 
-    let paramStr = `${paramNav.name} [${paramNav.param.range.join('-')}] = ${+paramNav.param}`;
+    let paramStr = `${paramNav.name} [${paramNav.param.range.join(
+      '-'
+    )}] = ${+paramNav.param}`;
     //console.log('paramStr: ', paramStr);
-    font.draw(surface, paramStr, [tPos.x, tPos.y - 20], /*0x00ffff ||*/ { r: 255, g: 0, b: 0, a: 255 });
+    font.draw(
+      surface,
+      paramStr,
+      [tPos.x, tPos.y - 20],
+      /*0x00ffff ||*/ { r: 255, g: 0, b: 0, a: 255 }
+    );
 
     font.draw(
       surface,
-      `#${frameShow + 1}/${pipeline.size}` + (outputName ? ` (${outputName})` : ''),
+      `#${frameShow + 1}/${pipeline.size}` +
+        (outputName ? ` (${outputName})` : ''),
       [5, 5 + tSize.y],
       /*0xffff00 ||*/ {
         r: 255,
@@ -427,7 +542,14 @@ async function main(...args) {
     //let mask = toBGR(getAlpha(surface));
     let composite = MakeComposite();
 
-    cv.addWeighted(out, 1, surface, frameShow == pipeline.size - 1 ? 0 : 1, 0, composite);
+    cv.addWeighted(
+      out,
+      1,
+      surface,
+      frameShow == pipeline.size - 1 ? 0 : 1,
+      0,
+      composite
+    );
     win.show(composite);
 
     //console.log("composite", composite.toString());
@@ -445,13 +567,21 @@ function dumpMat(name, mat) {
     `${name} =`,
     Object.create(
       Mat.prototype,
-      ['cols', 'rows', 'depth', 'channels', 'type'].reduce((acc, prop) => ({ ...acc, [prop]: { value: mat[prop], enumerable: true } }), {})
+      ['cols', 'rows', 'depth', 'channels', 'type'].reduce(
+        (acc, prop) => ({
+          ...acc,
+          [prop]: { value: mat[prop], enumerable: true }
+        }),
+        {}
+      )
     )
   );
 }
 
 function getConstants(names) {
-  return Object.fromEntries(names.map((name) => [name, '0x' + cv[name].toString(16)]));
+  return Object.fromEntries(
+    names.map((name) => [name, '0x' + cv[name].toString(16)])
+  );
 }
 
 function findConstant(value, keyCond = (k) => /^CV/.test(k)) {
@@ -552,7 +682,13 @@ function modifierMap(keyCode) {
   ].map(([modifier, flag]) => [modifier, keyCode & flag ? 1 : 0]);
 }
 
-function drawContour(mat, contour, color, thickness = 1, lineType = cv.LINE_AA) {
+function drawContour(
+  mat,
+  contour,
+  color,
+  thickness = 1,
+  lineType = cv.LINE_AA
+) {
   cv.drawContours(mat, [contour], 0, color, thickness, lineType);
 }
 
@@ -567,7 +703,9 @@ function getContourDepth(hier, contourId) {
   return [...getParents(hier, contourId)].length;
 }
 function findRoot(hier) {
-  return hier.findIndex((h) => h[cv.HIER_PREV] == -1 && h[cv.HIER_PARENT] == -1);
+  return hier.findIndex(
+    (h) => h[cv.HIER_PREV] == -1 && h[cv.HIER_PARENT] == -1
+  );
 }
 function* getToplevel(hier) {
   for (let [i, h] of hier.entries()) if (h[cv.HIER_PARENT] == -1) yield i;
@@ -585,7 +723,11 @@ function* walkContours(hier, contourId) {
   }
 }
 
-function Profiler(name, ticks = () => cv.getTickCount(), freq = cv.getTickFrequency()) {
+function Profiler(
+  name,
+  ticks = () => cv.getTickCount(),
+  freq = cv.getTickFrequency()
+) {
   let self,
     i = 0,
     prev,

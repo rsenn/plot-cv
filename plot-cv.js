@@ -35,7 +35,16 @@ g.process = async function process(contours, hier, ...args) {
   //let size = new Size(imgOriginal.cols, imgOriginal.rows);
   const time = Date.now();
   const [images, ...rest] = args;
-  const { imgBlurred, imgCanny, imgGrayscale, imgMorphology, imgOriginal, imgRaw, imgTemp, imgVector } = images;
+  const {
+    imgBlurred,
+    imgCanny,
+    imgGrayscale,
+    imgMorphology,
+    imgOriginal,
+    imgRaw,
+    imgTemp,
+    imgVector
+  } = images;
   console.log('images: ', Object.keys(images));
   let m = images.imgVector;
   /*  console.log('Images: ', typeof images);
@@ -61,7 +70,11 @@ g.process = async function process(contours, hier, ...args) {
     time,
     contours: contours
       .filter((c) => c.length >= 4)
-      .map((c) => c.toString(Contour.FORMAT_NOBRACKET | Contour.FORMAT_SPACE | Contour.FORMAT_01))
+      .map((c) =>
+        c.toString(
+          Contour.FORMAT_NOBRACKET | Contour.FORMAT_SPACE | Contour.FORMAT_01
+        )
+      )
       .join('|')
   };
   let body = JSON.stringify(data);

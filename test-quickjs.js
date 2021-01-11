@@ -20,18 +20,35 @@ let filesystem;
 
 async function main(...args) {
   //std.print("TEST PRINT\n");
-  await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
+  await ConsoleSetup({
+    breakLength: 120,
+    maxStringLength: 200,
+    maxArrayLength: 20
+  });
   console.log('console', Util.className(console));
   console.log('console.log', console.log);
 
   await PortableFileSystem((fs) => (filesystem = fs));
   console.log('start');
   console.log('isBrowser:', Util.isBrowser());
-  console.log('Util.copyTextToClipboard()', await Util.copyTextToClipboard('TEST'));
+  console.log(
+    'Util.copyTextToClipboard()',
+    await Util.copyTextToClipboard('TEST')
+  );
   // console.log('modules:', inspect({ Point, Size, Rect }));
   let globalThis = Util.getGlobalObject();
-  const moduleNames = ['Rect', 'Point', 'Size', 'Line', 'Mat', 'Contour', 'PointIterator', 'Draw'];
-  for (let moduleName of moduleNames) Util.tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
+  const moduleNames = [
+    'Rect',
+    'Point',
+    'Size',
+    'Line',
+    'Mat',
+    'Contour',
+    'PointIterator',
+    'Draw'
+  ];
+  for (let moduleName of moduleNames)
+    Util.tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
 
   let ctors = new Map(moduleNames.map((name) => [name, globalThis[name]]));
   console.log('globalThis:', Object.keys(globalThis));
@@ -141,17 +158,29 @@ async function main(...args) {
     }
     i = 0;
     for (let [key, value] of row0.entries()) {
-      console.log(`row0.entries() #${i++}`, key, '0x' + ('00000000' + value.toString(16)).slice(-8));
+      console.log(
+        `row0.entries() #${i++}`,
+        key,
+        '0x' + ('00000000' + value.toString(16)).slice(-8)
+      );
     }
     i = 0;
     for (let [key, value] of col0.entries()) {
-      console.log(`col0.entries() #${i++}`, key, '0x' + ('00000000' + value.toString(16)).slice(-8));
+      console.log(
+        `col0.entries() #${i++}`,
+        key,
+        '0x' + ('00000000' + value.toString(16)).slice(-8)
+      );
     }
 
     let range = mat.rowRange(2, 8);
     i = 0;
     for (let [[row, col], value] of range) {
-      console.log(`range[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
+      console.log(
+        `range[${i++}] row=${row} col=${col} value=0x${(
+          '00000000' + value.toString(16)
+        ).slice(-8)}`
+      );
     }
     i = 0;
 
@@ -159,15 +188,24 @@ async function main(...args) {
       let roi = mat.roi(rr);
 
       for (let [[row, col], value] of roi) {
-        console.log(`roi[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
+        console.log(
+          `roi[${i++}] row=${row} col=${col} value=0x${(
+            '00000000' + value.toString(16)
+          ).slice(-8)}`
+        );
       }
-      console.log(`roi rows=${roi.rows} cols=${roi.cols} depth=${roi.depth} channels=${roi.channels}`);
+      console.log(
+        `roi rows=${roi.rows} cols=${roi.cols} depth=${roi.depth} channels=${roi.channels}`
+      );
 
       for (let r = 0; r < roi.rows; r++)
         for (let c = 0; c < roi.cols; c++) {
           const v = 0x7f000000 | ((r << 16) | c);
           console.log(`roi.set(${r},${c},0x${v.toString(16)})`);
-          console.log(`roi.set(${r},${c},0x${v.toString(16)})`, roi.set(r, c, v));
+          console.log(
+            `roi.set(${r},${c},0x${v.toString(16)})`,
+            roi.set(r, c, v)
+          );
         }
 
       roi.setTo(...Util.repeat(4 * 5, 0xffffffff));
@@ -175,7 +213,11 @@ async function main(...args) {
 
     i = 0;
     for (let [[row, col], value] of mat) {
-      console.log(`mat[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
+      console.log(
+        `mat[${i++}] row=${row} col=${col} value=0x${(
+          '00000000' + value.toString(16)
+        ).slice(-8)}`
+      );
     }
 
     let fmat = new Mat(new Size(10, 10), cv.CV_32FC1);
@@ -188,7 +230,11 @@ async function main(...args) {
   }
 
   if (globalThis.Line) {
-    let ll = [new Line(0, 0, 50, 50), new Line(50, 50, 50, 75), new Line(50, 75, 100, 75)];
+    let ll = [
+      new Line(0, 0, 50, 50),
+      new Line(50, 50, 50, 75),
+      new Line(50, 75, 100, 75)
+    ];
 
     for (let line of ll) {
       console.log('line:', line.x1, line.y1, line.x2, line.y2);
@@ -210,7 +256,10 @@ async function main(...args) {
       );
 
       console.log('toString(): ', line.toString());
-      console.log('new Line(50,50,320-50,240-25): ', new Line(50, 50, 320 - 50, 240 - 25));
+      console.log(
+        'new Line(50,50,320-50,240-25): ',
+        new Line(50, 50, 320 - 50, 240 - 25)
+      );
       let [x1, y1, x2, y2] = arr;
 
       console.log(`Line{${x1},${y1} ${x2},${y2}}`);

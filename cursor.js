@@ -21,7 +21,12 @@ const Cursor = ({ horizontal }) =>
           alt: 'cursor',
           width: '512',
           height: '512',
-          style: { height: '30px', width: 'auto', objectFit: 'cover', transform: 'rotate(90deg)' }
+          style: {
+            height: '30px',
+            width: 'auto',
+            objectFit: 'cover',
+            transform: 'rotate(90deg)'
+          }
         } /*,  h(CursorImage)*/
       );
 

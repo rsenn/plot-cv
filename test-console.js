@@ -2,13 +2,20 @@ import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 
 async function main(...args) {
-  await ConsoleSetup({ breakLength: 120, maxStringLength: 200, maxArrayLength: 20 });
+  await ConsoleSetup({
+    breakLength: 120,
+    maxStringLength: 200,
+    maxArrayLength: 20
+  });
 
   let c = console;
   console.log('console', c.log);
   console.log('globalThis["console"]', globalThis['console']);
   console.log('globalThis["console"]', typeof globalThis['console']);
-  console.log('globalThis["console"] == undefined', globalThis['console'] == undefined);
+  console.log(
+    'globalThis["console"] == undefined',
+    globalThis['console'] == undefined
+  );
   console.log('console.log', console.log);
 
   if (1) {

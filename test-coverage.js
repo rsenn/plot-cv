@@ -27,7 +27,10 @@ function extractRanges(ranges, text) {
       pos: lineColumn(start, text),
       code: text.substring(start, end),
       toString(filename) {
-        return `${filename}:${this.pos.toString()}\n${Util.abbreviate(this.code, 100)}`;
+        return `${filename}:${this.pos.toString()}\n${Util.abbreviate(
+          this.code,
+          100
+        )}`;
       }
     });
   }
@@ -53,7 +56,9 @@ function processFile(arg, re) {
   re = typeof re == 'string' ? new RegExp(re) : /.*/;
   //if(!(json instanceof Array)) return 1;
 
-  let scripts = json.map(({ url, ...item }) => [url.replace(/.*:\/\/[^/]*\//g, ''), item]).filter(([file]) => re.test(file));
+  let scripts = json
+    .map(({ url, ...item }) => [url.replace(/.*:\/\/[^/]*\//g, ''), item])
+    .filter(([file]) => re.test(file));
 
   for (let [file, obj] of scripts) {
     let { ranges, text } = obj;

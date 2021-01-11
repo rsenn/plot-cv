@@ -49,7 +49,9 @@ function TCPSocket(host, port) {
     tcp.setTimeout(defaultTimeout);
     tcp.setNoDelay(true);
     console.log(`Connecting to ${host}:${port} ...`);
-    tcp.connect(port, host, () => finish(`Connected to ${host}:${port}`, start));
+    tcp.connect(port, host, () =>
+      finish(`Connected to ${host}:${port}`, start)
+    );
     tcp.on('close', () => finish(null, start));
     tcp.on('error', (err) => finish(err, -1));
     tcp.on('timeout', () => finish('timeout', -1));
@@ -128,7 +130,9 @@ function Proxy(obj) {
   const propNames = ['protocol', 'ip', 'port', 'country', 'source'];
   let i = propNames.findIndex((prop) => p[prop] === undefined);
   if (i != -1) {
-    throw new Error(`Property '${propNames[i]}' missing on: ` + Util.toSource(p));
+    throw new Error(
+      `Property '${propNames[i]}' missing on: ` + Util.toSource(p)
+    );
   }
   //console.log('new proxy:', p);
   return p;
@@ -199,7 +203,9 @@ async function main(country = 'de') {
     new Repeater(async (push, stop) => {
       try {
         const proxyList = new ProxyList();
-        for (const p of await proxyList.getByCountryCode(country.toUpperCase())) {
+        for (const p of await proxyList.getByCountryCode(
+          country.toUpperCase()
+        )) {
           let proxy = new Proxy({ source: 'free-proxy', ...p });
           await proxy.ping().then(push).catch(console.log);
           /*  let check = await Check(proxy);
@@ -212,7 +218,8 @@ async function main(country = 'de') {
     }),
     new Repeater(async (push, stop) => {
       proxynova([country], 1000, async (err, proxies) => {
-        for (let p of proxies) await new Proxy(p).ping().then(push).catch(console.log);
+        for (let p of proxies)
+          await new Proxy(p).ping().then(push).catch(console.log);
       });
     }),
 
@@ -302,7 +309,12 @@ async function writeResults(results, format = 'txt', outputName = 'proxies') {
     let output = await fsPromises.open(tempfile, 'w');
     let method = {
       txt: (r) => r.map((p) => p.toString()).join('\n'),
-      sh: (r) => r.map((p) => `tcping -t 10 ${p.ip} ${p.port} 1>&2 && echo ${p.toString()}`).join('\n'),
+      sh: (r) =>
+        r
+          .map(
+            (p) => `tcping -t 10 ${p.ip} ${p.port} 1>&2 && echo ${p.toString()}`
+          )
+          .join('\n'),
       json: (r) => `[\n${r.map((p) => '  ' + Util.toSource(p)).join(',\n')}\n]`
     }[format];
 

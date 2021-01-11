@@ -46,7 +46,9 @@ function CreateClient() {
 
 function getJSON() {
   console.log('getJSON');
-  const res = fetch('https://api.github.com/repos/rsenn/plot-cv', { method: 'head' });
+  const res = fetch('https://api.github.com/repos/rsenn/plot-cv', {
+    method: 'head'
+  });
   const { ok, status, type } = res;
   console.log('res:', { ok, status, type });
 

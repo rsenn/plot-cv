@@ -1,4 +1,12 @@
-import React, { h, useState, useMemo, useEffect, useRef, forwardRef, useImperativeHandle } from './lib/dom/preactComponent.js';
+import React, {
+  h,
+  useState,
+  useMemo,
+  useEffect,
+  useRef,
+  forwardRef,
+  useImperativeHandle
+} from './lib/dom/preactComponent.js';
 import PropTypes from './lib/prop-types.js';
 import { useDebounce } from './lib/hooks/useDebounce.js';
 import Cursor from './cursor.js';
@@ -33,7 +41,13 @@ const Ruler = forwardRef((props, ref) => {
   const totalWidth = longLength * MULTIPLICATOR_LENGTH;
   const timerID = useRef(null);
   const counterJS = useRef(null);
-  const draggerJS = useRef(defaultValue ? (horizontal ? 1 * defaultValue : 1 * (1 - defaultValue).toFixed(3)) : 50);
+  const draggerJS = useRef(
+    defaultValue
+      ? horizontal
+        ? 1 * defaultValue
+        : 1 * (1 - defaultValue).toFixed(3)
+      : 50
+  );
   const dragSomethingRef = useRef();
   const velocityJS = useRef(0);
   const positionJS = useRef(0);
@@ -113,7 +127,10 @@ const Ruler = forwardRef((props, ref) => {
     const delta = horizontal ? e.deltaX : e.deltaY;
     if (Math.abs(delta) > 0) {
       const [i, d] = velocityResolver(-delta);
-      inertiaJS.current = Math.min(totalWidth, Math.max(0, inertiaJS.current + d));
+      inertiaJS.current = Math.min(
+        totalWidth,
+        Math.max(0, inertiaJS.current + d)
+      );
       timeJS.current = i * 20;
     }
     velocityJS.current = 0;
@@ -122,12 +139,17 @@ const Ruler = forwardRef((props, ref) => {
   const onMouseMove = (e) => {
     if (!isDragging.current || disabledDragRuler) return;
     draggerJS.current = (100 * inertiaJS.current) / totalWidth;
-    velocityJS.current = horizontal ? e.clientX - positionJS.current : e.clientY - positionJS.current;
+    velocityJS.current = horizontal
+      ? e.clientX - positionJS.current
+      : e.clientY - positionJS.current;
     positionJS.current = horizontal ? e.clientX : e.clientY;
     if (Math.abs(velocityJS.current) > 1) {
       const [i, d] = velocityResolver(velocityJS.current);
       const initialInertia = inertiaJS.current;
-      inertiaJS.current = Math.min(totalWidth, Math.max(0, inertiaJS.current + d));
+      inertiaJS.current = Math.min(
+        totalWidth,
+        Math.max(0, inertiaJS.current + d)
+      );
 
       timeJS.current = i * 20;
       startCounter(i, d, initialInertia);
@@ -139,11 +161,16 @@ const Ruler = forwardRef((props, ref) => {
     const { pageX } = e.touches[0];
     const { pageY } = e.touches[0];
     draggerJS.current = (100 * inertiaJS.current) / totalWidth;
-    velocityJS.current = horizontal ? pageX - positionJS.current : pageY - positionJS.current;
+    velocityJS.current = horizontal
+      ? pageX - positionJS.current
+      : pageY - positionJS.current;
     positionJS.current = horizontal ? pageX : pageY;
     if (Math.abs(velocityJS.current) > 1) {
       const [i, d] = velocityResolver(velocityJS.current);
-      inertiaJS.current = Math.min(totalWidth, Math.max(0, inertiaJS.current + d));
+      inertiaJS.current = Math.min(
+        totalWidth,
+        Math.max(0, inertiaJS.current + d)
+      );
       timeJS.current = i * 20;
     }
     velocityJS.current = 0;
@@ -151,9 +178,17 @@ const Ruler = forwardRef((props, ref) => {
   };
   const onTouchCursor = (e) => {
     const client = horizontal ? e.touches[0].pageX : e.touches[0].pageY;
-    const offset = horizontal ? inputEl.current.offsetLeft + cursorLength.current / 2 : inputEl.current.offsetTop + cursorLength.current / 2;
-    draggerJS.current = Math.min(100, Math.max(0, (100 * (client - offset)) / longLength));
-    inertiaJS.current = Math.min(totalWidth, Math.max(0, (totalWidth * (client - offset)) / longLength));
+    const offset = horizontal
+      ? inputEl.current.offsetLeft + cursorLength.current / 2
+      : inputEl.current.offsetTop + cursorLength.current / 2;
+    draggerJS.current = Math.min(
+      100,
+      Math.max(0, (100 * (client - offset)) / longLength)
+    );
+    inertiaJS.current = Math.min(
+      totalWidth,
+      Math.max(0, (totalWidth * (client - offset)) / longLength)
+    );
     timeJS.current = 150;
     requestAnimationFrame(() => setLoad(load + 1));
   };
@@ -161,23 +196,43 @@ const Ruler = forwardRef((props, ref) => {
     if (!isDragging.current || disabledCursorDrag) return;
     const client = horizontal ? e.clientX : e.clientY;
     if (client === 0) return;
-    const offset = horizontal ? inputEl.current.offsetLeft + cursorLength.current / 2 : inputEl.current.offsetTop + cursorLength.current / 2;
-    draggerJS.current = Math.min(100, Math.max(0, (100 * (client - offset)) / longLength));
-    inertiaJS.current = Math.min(totalWidth, Math.max(0, (totalWidth * (client - offset)) / longLength));
+    const offset = horizontal
+      ? inputEl.current.offsetLeft + cursorLength.current / 2
+      : inputEl.current.offsetTop + cursorLength.current / 2;
+    draggerJS.current = Math.min(
+      100,
+      Math.max(0, (100 * (client - offset)) / longLength)
+    );
+    inertiaJS.current = Math.min(
+      totalWidth,
+      Math.max(0, (totalWidth * (client - offset)) / longLength)
+    );
     timeJS.current = 150;
     requestAnimationFrame(() => setLoad(load + 1));
   };
   const onUp = () => {
-    draggerJS.current = Math.max(0, draggerJS.current - (100 * incremental) / 100);
+    draggerJS.current = Math.max(
+      0,
+      draggerJS.current - (100 * incremental) / 100
+    );
     if (draggerJS.current > 0) {
-      inertiaJS.current = Math.min(totalWidth, Math.max(0, inertiaJS.current * 0.99));
+      inertiaJS.current = Math.min(
+        totalWidth,
+        Math.max(0, inertiaJS.current * 0.99)
+      );
       timeJS.current = 150;
     }
   };
   const onDown = () => {
-    draggerJS.current = Math.min(100, draggerJS.current + (100 * incremental) / 100);
+    draggerJS.current = Math.min(
+      100,
+      draggerJS.current + (100 * incremental) / 100
+    );
     if (draggerJS.current < 100) {
-      inertiaJS.current = Math.min(totalWidth, Math.max(0, inertiaJS.current * 1.01));
+      inertiaJS.current = Math.min(
+        totalWidth,
+        Math.max(0, inertiaJS.current * 1.01)
+      );
       timeJS.current = 150;
     }
   };
@@ -239,14 +294,19 @@ const Ruler = forwardRef((props, ref) => {
           h(
             'div',
             {
-              class: classNames('ruler', (horizontal && 'horizontal') || 'vertical'),
+              class: classNames(
+                'ruler',
+                (horizontal && 'horizontal') || 'vertical'
+              ),
               'data-image': backgroundImage || backgroundImageDefault,
               style: {
                 width: horizontal ? longLength : shortLength,
                 height: horizontal ? shortLength : longLength,
                 background: backgroundImage || backgroundImageDefault,
                 backgroundPositionX: horizontal ? inertiaJS.current : undefined,
-                backgroundPositionY: !horizontal ? inertiaJS.current : undefined,
+                backgroundPositionY: !horizontal
+                  ? inertiaJS.current
+                  : undefined,
                 transition: `all ${timeJS.current}ms cubic-bezier(.35,.7,.42,1)`
               }
             },

@@ -7,10 +7,15 @@ import Shape from './lib/clipper.js';
 const d =
   'M 193.54706,178.86683 163.80521,218.90155 116.21174,233.8085 68.945718,217.89373 40.061173,177.23615 40.591015,127.36556 70.332862,87.330839 117.92634,72.423889 165.19236,88.338658 194.0769,128.99624 Z';
 
-const d2 = 'M6.13 26.94L16.33 4.5l4.887 25.657 13.16-26.689 5.545 1.948 14.276 4.896-18.561 8.397-7.08 15.744 30.796-4.765 8.73-18.562-1.895-3.904.087-.066';
+const d2 =
+  'M6.13 26.94L16.33 4.5l4.887 25.657 13.16-26.689 5.545 1.948 14.276 4.896-18.561 8.397-7.08 15.744 30.796-4.765 8.73-18.562-1.895-3.904.087-.066';
 
-const data = new PointList(SVG.pathParse(d).filter(({ x, y }) => x !== undefined && y !== undefined));
-const data2 = new PointList(parse(d2).filter(({ x, y }) => x !== undefined && y !== undefined));
+const data = new PointList(
+  SVG.pathParse(d).filter(({ x, y }) => x !== undefined && y !== undefined)
+);
+const data2 = new PointList(
+  parse(d2).filter(({ x, y }) => x !== undefined && y !== undefined)
+);
 
 function testOffset() {
   const path = data2.map(({ x, y }) => new ClipperLib.DoublePoint(x, y));
@@ -23,7 +28,11 @@ function testOffset() {
 
   const offset = new ClipperLib.ClipperOffset();
   const outer = new ClipperLib.Paths();
-  offset.AddPath(path, ClipperLib.JoinType.jtRound, ClipperLib.EndType.etOpenRound);
+  offset.AddPath(
+    path,
+    ClipperLib.JoinType.jtRound,
+    ClipperLib.EndType.etOpenRound
+  );
 
   offset.Execute(outer, 1);
 
@@ -72,7 +81,9 @@ function testShape() {
     miterLimit: 2.0,
     roundPrecision: 0.25
   });
-  let points = new PointList(outset.paths[0].map(({ X, Y }) => new Point(X, Y)));
+  let points = new PointList(
+    outset.paths[0].map(({ X, Y }) => new Point(X, Y))
+  );
 
   /*  let inset = shape.offset(-10, {
     jointType: 'jtSquare',

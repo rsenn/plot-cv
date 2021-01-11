@@ -376,17 +376,28 @@ export const VWERASE = 14;
 export const VLNEXT = 15;
 export const VEOL2 = 16;
 
-const cterm = ['tcdrain', 'tcgetsid', 'tcsendbreak', 'tcsetattr', 'tcflow', 'tcsetpgrp', 'tcflush', 'tcgetattr', 'tcgetpgrp', 'cfgetospeed', 'cfsetospeed', 'cfgetispeed', 'cfsetispeed'].reduce(
-  (o, s) => {
-    let fp = dlsym(RTLD_DEFAULT, s);
-    if (fp == null) {
-      console.log(dlerror());
-      return o;
-    }
-    return { ...o, [s]: fp };
-  },
-  {}
-);
+const cterm = [
+  'tcdrain',
+  'tcgetsid',
+  'tcsendbreak',
+  'tcsetattr',
+  'tcflow',
+  'tcsetpgrp',
+  'tcflush',
+  'tcgetattr',
+  'tcgetpgrp',
+  'cfgetospeed',
+  'cfsetospeed',
+  'cfgetispeed',
+  'cfsetispeed'
+].reduce((o, s) => {
+  let fp = dlsym(RTLD_DEFAULT, s);
+  if (fp == null) {
+    console.log(dlerror());
+    return o;
+  }
+  return { ...o, [s]: fp };
+}, {});
 
 function def(name, abi, ...params) {
   let defined = false;
@@ -514,7 +525,8 @@ export class termio extends ArrayBuffer {
   set c_cc(v) {
     const a = new Uint8Array(this, 9, NCC);
     const n = Math.min(v.length, a.length);
-    for (let i = 0; i < n; i++) a[i] = typeof v[i] == 'string' ? v[i].charCodeAt(0) : v[i];
+    for (let i = 0; i < n; i++)
+      a[i] = typeof v[i] == 'string' ? v[i].charCodeAt(0) : v[i];
   }
 }
 
@@ -559,7 +571,8 @@ export class termios extends ArrayBuffer {
   set c_cc(v) {
     const a = new Uint8Array(this, 17, NCCS);
     const n = Math.min(v.length, a.length);
-    for (let i = 0; i < n; i++) a[i] = typeof v[i] == 'string' ? v[i].charCodeAt(0) : v[i];
+    for (let i = 0; i < n; i++)
+      a[i] = typeof v[i] == 'string' ? v[i].charCodeAt(0) : v[i];
   }
 
   /* prettier-ignore */
@@ -624,7 +637,8 @@ return `{ .c_iflag=${this.c_iflag}, .c_oflag=${this.c_oflag}, .c_cflag=${this.c_
         const e = Object.entries(o).find(([name, b]) => mask(b) == h);
         if (e) r.push(e[0]);
       } else {
-        if (countBits(bit) > 1) throw new Error(`flags name=${name} bit=0x${bit.toString(16)}`);
+        if (countBits(bit) > 1)
+          throw new Error(`flags name=${name} bit=0x${bit.toString(16)}`);
         if (flags & bit) r.push(name);
       }
     }

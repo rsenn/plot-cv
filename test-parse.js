@@ -45,7 +45,9 @@ async function main(...args) {
   let cowbirdGrammar = grammar.toCowbird();
   console.log('cowbird:', cowbirdGrammar);
 
-  let data = filesystem.readFile('../pictest/build/mplab/7segtest-16f876a-xc8-debug.mcp');
+  let data = filesystem.readFile(
+    '../pictest/build/mplab/7segtest-16f876a-xc8-debug.mcp'
+  );
   console.log('data:', Util.abbreviate(data, 100));
   let parser = new Cowbird(cowbirdGrammar, 'ini', true);
   console.log('parser:', parser);

@@ -31,14 +31,26 @@ function readXML(filename) {
 const push_back = (arr, ...items) => [...(arr || []), ...items];
 const push_front = (arr, ...items) => [...items, ...(arr || [])];
 
-const GeneratePalette = (counts = { h: 3, s: 3, l: 5 }, deltas = { h: 360, s: 100, l: 30 }, prng) => {
+const GeneratePalette = (
+  counts = { h: 3, s: 3, l: 5 },
+  deltas = { h: 360, s: 100, l: 30 },
+  prng
+) => {
   let ret = [];
-  let base = new HSLA(Util.randInt(-deltas.h / 2, deltas.h / 2, prng), 100, 50).toRGBA();
+  let base = new HSLA(
+    Util.randInt(-deltas.h / 2, deltas.h / 2, prng),
+    100,
+    50
+  ).toRGBA();
   const makeRange = (count, delta) =>
     Util.range(0, count - 1)
       .map((v) => (v * delta) / (count - 1) - delta / 2)
       .map(Math.round);
-  let ranges = { h: makeRange(counts.h, deltas.h), s: makeRange(counts.s, deltas.s), l: makeRange(counts.l, deltas.l) };
+  let ranges = {
+    h: makeRange(counts.h, deltas.h),
+    s: makeRange(counts.s, deltas.s),
+    l: makeRange(counts.l, deltas.l)
+  };
   //const numColors = ranges.reduce((acc, r) => acc * r.length, 1);
   //ranges.push(numColors);
   console.log('ranges:', ranges);
@@ -65,7 +77,10 @@ async function main(...args) {
   filesystem = await PortableFileSystem();
 
   console.log('main', args);
-  if (args.length == 0) args = ['/home/roman/.config/sublime-text-3/Packages/Babel/Next.tmTheme' /*  */];
+  if (args.length == 0)
+    args = [
+      '/home/roman/.config/sublime-text-3/Packages/Babel/Next.tmTheme' /*  */
+    ];
   let filename = args.shift();
   let basename = path.basename(filename).replace(/\.[^.]*$/, '');
   let outfile;
@@ -95,12 +110,24 @@ async function main(...args) {
     let flat = deep.flatten(
       xml[0],
       new Map(),
-      (v, p) => (typeof v != 'object' && p.indexOf('attributes') == -1) || (p.length && p.indexOf('attributes') == p.length - 1),
+      (v, p) =>
+        (typeof v != 'object' && p.indexOf('attributes') == -1) ||
+        (p.length && p.indexOf('attributes') == p.length - 1),
       (p, v) => [new Path(p), v]
     );
-    colors = new Map([...Iterator.filter(flat, ([path, value]) => /^#[0-9A-Fa-f]*$/.test(value))].map(([path, value]) => [path, new RGBA(value)]));
+    colors = new Map(
+      [
+        ...Iterator.filter(flat, ([path, value]) =>
+          /^#[0-9A-Fa-f]*$/.test(value)
+        )
+      ].map(([path, value]) => [path, new RGBA(value)])
+    );
     let it = new IteratorForwarder(colors.entries());
-    let paths = Iterator.map(colors, ([path, value]) => [XPath.from(path, xml[0]), deep.get(xml[0], path), path]);
+    let paths = Iterator.map(colors, ([path, value]) => [
+      XPath.from(path, xml[0]),
+      deep.get(xml[0], path),
+      path
+    ]);
     let o = it.map(([path, value]) => {
       const key = path.up(0);
       let prev = new Path([]),
@@ -111,9 +138,14 @@ async function main(...args) {
         ...key.walk((p, i, abort, skip) => {
           let r;
           let value = deep.get(xml[0], p);
-          const children = Util.isObject(value) && value.children ? value.children : [];
+          const children =
+            Util.isObject(value) && value.children ? value.children : [];
           const text = typeof children[0] == 'string' ? children[0] : '';
-          if (['Next', 'settings', 'scope', 'name', 'gutter'].indexOf(text) != -1 || /* text.startsWith('#') ||*/ typeof children[0] != 'string') {
+          if (
+            ['Next', 'settings', 'scope', 'name', 'gutter'].indexOf(text) !=
+              -1 ||
+            /* text.startsWith('#') ||*/ typeof children[0] != 'string'
+          ) {
             skip();
           }
           if (text.startsWith('#')) {
@@ -121,7 +153,10 @@ async function main(...args) {
             numString++;
           }
           if (numString > 1) skip();
-          if (numString == 2 || ('' + (prevValue.children && prevValue.children[0]))[0] == '#') {
+          if (
+            numString == 2 ||
+            ('' + (prevValue.children && prevValue.children[0]))[0] == '#'
+          ) {
             //skip() ;
             prev = p;
             prevValue = value;
@@ -160,14 +195,27 @@ async function main(...args) {
       let r = [];
       for (i = 0; i < 10; i++) {
         const c = i < key.length ? key.charCodeAt(i) : 0;
-        const x = c >= 0x30 && c <= 0x39 ? c - 0x30 : c >= 0x41 && c <= 0x5a ? c - 0x41 + 10 : c >= 0x61 && c <= 0x7a ? c - 0x61 + 36 : 0;
+        const x =
+          c >= 0x30 && c <= 0x39
+            ? c - 0x30
+            : c >= 0x41 && c <= 0x5a
+            ? c - 0x41 + 10
+            : c >= 0x61 && c <= 0x7a
+            ? c - 0x61 + 36
+            : 0;
         r.push(x);
       }
       return r;
     };
     //    console.log("colors:",colors);
 
-    const hash = (key) => ((a, b) => a / b)(...lexOrder(key).reduce((acc, c) => [acc[0] * (10 + 26 + 26) + c, acc[1] * (10 + 26 + 26)], [0, 1]));
+    const hash = (key) =>
+      ((a, b) => a / b)(
+        ...lexOrder(key).reduce(
+          (acc, c) => [acc[0] * (10 + 26 + 26) + c, acc[1] * (10 + 26 + 26)],
+          [0, 1]
+        )
+      );
 
     console.log(`palette.getMinMax():`, palette.getMinMax());
     const mm = palette.getMinMax();
@@ -214,7 +262,10 @@ async function main(...args) {
         keys.forEach((key, i) => palette.set(key, values[i]));
       },
       remap(channel, start, end) {
-        return palette.remapChannel(channel, Util.remap(mm[channel], start, end));
+        return palette.remapChannel(
+          channel,
+          Util.remap(mm[channel], start, end)
+        );
       },
       set(...args) {
         let colors = '#' + args.join(',');
@@ -237,13 +288,19 @@ async function main(...args) {
             let obj = path2.apply(newObj, true);
             console.log(`path2=${path2} obj=`, obj);
           }
-          const { value, index, distance } = RGBA.nearestColor(color.toRGBA(), newColors, distanceChecker);
+          const { value, index, distance } = RGBA.nearestColor(
+            color.toRGBA(),
+            newColors,
+            distanceChecker
+          );
           console.log(`value=`, value);
           palette.set(path, value.toHSLA());
         }
       },
       grayscale(amount = 1.0) {
-        return palette.remapChannel('s', (s) => Util.clamp(0, 100, 100 - (100 - s) * amount));
+        return palette.remapChannel('s', (s) =>
+          Util.clamp(0, 100, 100 - (100 - s) * amount)
+        );
       },
       normalize() {
         return this.remap('l', 50, 75);
@@ -255,7 +312,9 @@ async function main(...args) {
         return palette.remapChannel('l', (l) => Util.clamp(0, 100, l + by));
       },
       brighter(by) {
-        return palette.remapChannel('l', (l) => Util.clamp(0, 100, 100 - (100 - l) * by));
+        return palette.remapChannel('l', (l) =>
+          Util.clamp(0, 100, 100 - (100 - l) * by)
+        );
       },
       darker(by) {
         return palette.remapChannel('l', (l) => Util.clamp(0, 100, l * by));
@@ -264,19 +323,27 @@ async function main(...args) {
         return palette.remapChannel('s', (s) => Util.clamp(0, 100, s - s * by));
       },
       saturate(by) {
-        return palette.remapChannel('s', (s) => Util.clamp(0, 100, 100 - (100 - s) * by));
+        return palette.remapChannel('s', (s) =>
+          Util.clamp(0, 100, 100 - (100 - s) * by)
+        );
       },
       generate(...seed) {
         let rng = prng.clone();
         if (seed) rng.mash(...seed);
         let i = 0;
         let sz = 1 << Math.ceil(Math.log2(palette.size));
-        let gcd = [3, 4, 6, 8, 12, 16, 32].map((n) => Util.greatestCommonDenominator(sz, n));
+        let gcd = [3, 4, 6, 8, 12, 16, 32].map((n) =>
+          Util.greatestCommonDenominator(sz, n)
+        );
         let numHues = 8;
         let step = Math.ceil(Math.pow(sz, 1 / 2) / 1.85);
         console.log('sz:', sz);
         console.log('step:', step);
-        let newPal = GeneratePalette({ l: step, s: 3, h: numHues || Math.ceil(sz / step / 3) });
+        let newPal = GeneratePalette({
+          l: step,
+          s: 3,
+          h: numHues || Math.ceil(sz / step / 3)
+        });
         console.log('palette.size:', palette.size);
         console.log('newPal.length:', newPal.length);
         newObj = {};
@@ -290,7 +357,10 @@ async function main(...args) {
           const hashes = key
             .split('/')
             .slice(0)
-            .map((k) => [k, k.split(/,? /g).map((k) => k.split(/\./g).map((h) => hash(h)))])
+            .map((k) => [
+              k,
+              k.split(/,? /g).map((k) => k.split(/\./g).map((h) => hash(h)))
+            ])
             .flat()
             .filter((i) => typeof i != 'string')
             .flat();
@@ -338,12 +408,17 @@ async function main(...args) {
           i++;
         }
 
-        const getHSLA = (idx_or_hex) => colors[typeof idx_or_hex == 'string' ? hex2idx[idx_or_hex] : idx_or_hex] || palette.get(idx2path[idx_or_hex]);
+        const getHSLA = (idx_or_hex) =>
+          colors[
+            typeof idx_or_hex == 'string' ? hex2idx[idx_or_hex] : idx_or_hex
+          ] || palette.get(idx2path[idx_or_hex]);
         console.log('changed ', [...changed].join(', '));
         colors = [...palette.entries()].map(([path, color], idx) => color);
         /* prettier-ignore */ console.log('colors = ', Util.toString(colors.map((c) => [...c]), { multiline: false, colors: false }));
         // let idx2hex = colors.map( (color,i) =>  color.hex());
-        hex2idx = Object.fromEntries(colors.map((color, i) => [color.hex(), i]));
+        hex2idx = Object.fromEntries(
+          colors.map((color, i) => [color.hex(), i])
+        );
         console.log(`hex2idx`, hex2idx);
 
         idx2hue = colors.map((color, i) => color.h);
@@ -353,17 +428,33 @@ async function main(...args) {
         // console.log(`hues`, hues);
 
         let hueIds = [...hues.entries()]
-          .map(([hue, colorCodes], idx) => [+hue, /* [...colorCodes].join(',') || */ colorCodes || new Set([...colorCodes].map((hex) => getHSLA(hex)))])
+          .map(([hue, colorCodes], idx) => [
+            +hue,
+            /* [...colorCodes].join(',') || */ colorCodes ||
+              new Set([...colorCodes].map((hex) => getHSLA(hex)))
+          ])
           .map(([hue, ids]) => [hue, [...ids] + '']);
         console.log(`hueIds`, hueIds);
 
-        let hueCounts = /*new Map*/ hueIds.map(([hue, ids], i) => [i, [hue, ids.split(',').map((id) => +id)]]).map(([idx, [hue, ids]]) => [idx, ids.length]);
+        let hueCounts = /*new Map*/ hueIds
+          .map(([hue, ids], i) => [i, [hue, ids.split(',').map((id) => +id)]])
+          .map(([idx, [hue, ids]]) => [idx, ids.length]);
 
         console.log(`hueCounts`, hueCounts);
 
         let hueData = hueIds
-          .map(([hue, ids], idx) => [idx, hue, ids /*.split(',').map((v) => +v)*/])
-          .reduce((acc, [idx, hue, ids = getIds4Hue(hue)]) => [...acc, [idx, hue, ids.split(',').map((p) => +p)]], []);
+          .map(([hue, ids], idx) => [
+            idx,
+            hue,
+            ids /*.split(',').map((v) => +v)*/
+          ])
+          .reduce(
+            (acc, [idx, hue, ids = getIds4Hue(hue)]) => [
+              ...acc,
+              [idx, hue, ids.split(',').map((p) => +p)]
+            ],
+            []
+          );
         //console.log(`hueData`, hueData);
 
         //console.log(`zhistogram`, Util.histogram(colors, (c, i) => [c.h, i], new Map(), () => new Set(), i => [colors[i].h, i] ) ); //new Map(Object.entries(idx2hue).map(([idx,hue]) => [+idx,+hue])));
@@ -372,10 +463,16 @@ async function main(...args) {
         const removeHues = hueCounts.filter(([idx, count]) => count < 2);
         console.log(`removeHues`, removeHues);
         const removeIds = removeHues.map(([idx]) => idx).sort((a, b) => b - a);
-        console.log(`removeIds.reverse()`, /*Util.histogram*/ [...removeIds].reverse());
+        console.log(
+          `removeIds.reverse()`,
+          /*Util.histogram*/ [...removeIds].reverse()
+        );
 
         //console.log(`removeIds`, removeIds);
-        const colorsRGBA = [...palette.entries()].map(([path, c], i) => [i, c.toRGBA()]); //[...palette.entries()].map(([path,c], i) => [i, c.toRGBA()]).filter(([i, c]) => removeIds.indexOf(i) == -1);
+        const colorsRGBA = [...palette.entries()].map(([path, c], i) => [
+          i,
+          c.toRGBA()
+        ]); //[...palette.entries()].map(([path,c], i) => [i, c.toRGBA()]).filter(([i, c]) => removeIds.indexOf(i) == -1);
         //  console.log(`[...palette.entries()].:`, );
         console.log(`colorsRGBA:`, colorsRGBA.length);
         let rgba = colorsRGBA.filter(([i, c]) => removeIds.indexOf(i) == -1);
@@ -401,13 +498,28 @@ async function main(...args) {
               let [removedColor] = colors.splice(i, 1, nearColor);
               let newColor = nearColor.hex();
               deep.set(newObj, path, newColor);
-              let [fromColor, toColor] = [removedColor.hex(), newColor].map((c) => new RGBA(c).toHSLA());
+              let [fromColor, toColor] = [
+                removedColor.hex(),
+                newColor
+              ].map((c) => new RGBA(c).toHSLA());
 
-              console.info(`changed #${i}`, fromColor, ` -> #${index} `, toColor, ` Δ ${Util.roundTo(distance, 0.1, 2)}`);
+              console.info(
+                `changed #${i}`,
+                fromColor,
+                ` -> #${index} `,
+                toColor,
+                ` Δ ${Util.roundTo(distance, 0.1, 2)}`
+              );
               return removedColor;
             }
           });
-        let modifyIds = colors.map((c, idx) => [idx2path[idx], c]).map(([path, color]) => [path, color, new RGBA(deep.get(xml[0], path)).toHSLA()]);
+        let modifyIds = colors
+          .map((c, idx) => [idx2path[idx], c])
+          .map(([path, color]) => [
+            path,
+            color,
+            new RGBA(deep.get(xml[0], path)).toHSLA()
+          ]);
       }
     };
     let prevPalette = new Map(palette.entries());
@@ -421,7 +533,15 @@ async function main(...args) {
     );
 
     cmds.forEach((cmd) => {
-      cmd = cmd.map((p) => (/^.?time?$/i.test(p) ? +mtime : /^now$/i.test(p) ? Date.now() : /^p?r?a?n[dg]o?m?$/i.test(p) ? prng.uint32() : p));
+      cmd = cmd.map((p) =>
+        /^.?time?$/i.test(p)
+          ? +mtime
+          : /^now$/i.test(p)
+          ? Date.now()
+          : /^p?r?a?n[dg]o?m?$/i.test(p)
+          ? prng.uint32()
+          : p
+      );
       console.log('Command ', cmd);
       //  Util.putStack();
       let ret = handlers[cmd[0]](...cmd.slice(1));

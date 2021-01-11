@@ -9,7 +9,8 @@ import { ConsoleSetup } from './lib/consoleSetup.js';
 
 let filesystem;
 
-const code = "Point.toSource = (point, { space = ' ', padding = ' ', separator = ',' }) => `{${padding}x:${space}${point.x}${separator}y:${space}${point.y}${padding}}`;";
+const code =
+  "Point.toSource = (point, { space = ' ', padding = ' ', separator = ',' }) => `{${padding}x:${space}${point.x}${separator}y:${space}${point.y}${padding}}`;";
 
 let args = Util.getArgs();
 let files = args.reduce((acc, file) => ({ ...acc, [file]: undefined }), {});
@@ -22,7 +23,11 @@ function dumpFile(name, data) {
   filesystem.writeFile(name, data + '\n');
 }
 
-function printAst(ast, comments, printer = new Printer({ indent: 4 }, comments)) {
+function printAst(
+  ast,
+  comments,
+  printer = new Printer({ indent: 4 }, comments)
+) {
   return printer.print(ast);
 }
 
@@ -47,7 +52,14 @@ async function main(...args) {
 
       //    ret = interpreter.run(ast);
       parser.addCommentsToNodes(ast);
-      let imports = [...deep.iterate(ast, (node) => node instanceof CallExpression && /console.log/.test(printer.print(node)))].map(([node, path]) => node);
+      let imports = [
+        ...deep.iterate(
+          ast,
+          (node) =>
+            node instanceof CallExpression &&
+            /console.log/.test(printer.print(node))
+        )
+      ].map(([node, path]) => node);
     } catch (err) {
       error = err;
     }
@@ -56,7 +68,8 @@ async function main(...args) {
 
     files[file] = finish(error);
     if (!error) {
-      const output_file = file.replace(/.*\/?/, '').replace(/\.[^.]*$/, '') + '.es';
+      const output_file =
+        file.replace(/.*\/?/, '').replace(/\.[^.]*$/, '') + '.es';
       const output = printAst(ast, parser.comments, printer);
       console.log('ret:', ret);
       dumpFile(output_file, output);

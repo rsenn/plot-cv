@@ -93,8 +93,12 @@ async function main(...args) {
 
   dumpFile('packages.list', packages.join('\n'));
 
-  let locations = packages.map((url) => url.replace('https://repo.msys2.org/', ''));
-  let names = locations.map((url) => url.replace(/(.*)(-[^-.]+)(\.pkg\..*)/g, '$1|$2|$3').split(/\|/g));
+  let locations = packages.map((url) =>
+    url.replace('https://repo.msys2.org/', '')
+  );
+  let names = locations.map((url) =>
+    url.replace(/(.*)(-[^-.]+)(\.pkg\..*)/g, '$1|$2|$3').split(/\|/g)
+  );
   console.log('names.length:', names.length);
 
   console.log('names:', names.slice(-10, -1));
@@ -107,19 +111,44 @@ async function main(...args) {
       ver = null;
     }
 
-    let re = new RegExp(arg.startsWith('/') ? name + '-' + (ver || 'r?[0-9]') : arg, 'gi');
+    let re = new RegExp(
+      arg.startsWith('/') ? name + '-' + (ver || 'r?[0-9]') : arg,
+      'gi'
+    );
     let matches = [...Util.filter(names, (item) => re.test(item[0]))];
     let pkgs = matches.map((loc) => 'https://repo.msys2.org/' + loc.join(''));
     /*console.log("re:", re+'');
 console.log("matches:", matches);*/
     if (pkgs.length == 0 || packages.length == pkgs.length) {
-      console.log('re =', re, ' pkgs.length =', pkgs.length, ' pacakges.length =', packages.length);
-      pkgs = Util.filter(packages, (re = new RegExp(arg.startsWith('/') ? name + '-[a-z]+-' + (ver || 'r?[0-9]') : arg, 'gi')));
+      console.log(
+        're =',
+        re,
+        ' pkgs.length =',
+        pkgs.length,
+        ' pacakges.length =',
+        packages.length
+      );
+      pkgs = Util.filter(
+        packages,
+        (re = new RegExp(
+          arg.startsWith('/') ? name + '-[a-z]+-' + (ver || 'r?[0-9]') : arg,
+          'gi'
+        ))
+      );
       if (pkgs.length == 0 || packages.length == pkgs.length) {
-        console.log('re =', re, ' pkgs.length =', pkgs.length, ' pacakges.length =', packages.length);
+        console.log(
+          're =',
+          re,
+          ' pkgs.length =',
+          pkgs.length,
+          ' pacakges.length =',
+          packages.length
+        );
         console.error(`Number of packages ${pkgs.length} when matching ${re}`);
         continue;
-        throw new Error(`Number of packages ${pkgs.length} when matching ${re}`);
+        throw new Error(
+          `Number of packages ${pkgs.length} when matching ${re}`
+        );
       }
     }
     for (let pkg of pkgs) {
@@ -133,7 +162,9 @@ console.log("matches:", matches);*/
       Util.pushUnique(files, pkg);
     }
   }
-  let dirs = Util.unique(files.map((file) => path.dirname(file))).map((dir) => Util.parseURL(dir).location);
+  let dirs = Util.unique(files.map((file) => path.dirname(file))).map(
+    (dir) => Util.parseURL(dir).location
+  );
   //  console.debug("dirs:", dirs);
 
   let host = dirs[0]
@@ -148,7 +179,9 @@ console.log("matches:", matches);*/
   for (let file of files) {
     let parts = file.split('/');
     let [system, arch] = parts.slice(-3, -1);
-    let [os, kernel, rootDir] = system.startsWith('mingw') ? ['w64', 'mingw32', '/sysroot/mingw'] : ['pc', 'msys', ''];
+    let [os, kernel, rootDir] = system.startsWith('mingw')
+      ? ['w64', 'mingw32', '/sysroot/mingw']
+      : ['pc', 'msys', ''];
     let extractDest = `/usr/${arch}-${os}-${kernel}${rootDir}`;
     let compressProgram = file.endsWith('xz') ? 'xz' : 'zstd';
     // let line =  `CMD="curl -s '${file}' | tar --use-compress-program=${compressProgram} -C ${extractDest} --strip-components=1 -xv 2>/dev/null"; eval "$CMD" || { R=$?; echo "ERROR: $CMD" ; exit $R; }\n`;
@@ -172,7 +205,9 @@ async function processUrl(url, map) {
   let expired = stat.mtime + 5 * 60 * 1000 < new Date();
 
   console.log('expired:', expired);
-  let stream = expired ? execStream('sh', ['-c', `curl -s ${url}  | zcat | tee ${base}`]) : fs.createReadStream(base);
+  let stream = expired
+    ? execStream('sh', ['-c', `curl -s ${url}  | zcat | tee ${base}`])
+    : fs.createReadStream(base);
 
   let transform = await LineBufferStream();
 
@@ -202,7 +237,10 @@ async function processUrl(url, map) {
     } else if (!key && pkg !== null) {
       pkg = null;
       continue;
-    } else if (!key && (pkg === null || (typeof pkg == 'string' && pkg.length))) {
+    } else if (
+      !key &&
+      (pkg === null || (typeof pkg == 'string' && pkg.length))
+    ) {
       obj = null;
       pkg = line.trim();
       continue;

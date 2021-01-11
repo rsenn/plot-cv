@@ -3,7 +3,11 @@ import Timers from './lib/repeater/timers.js';
 import { spawn } from 'child_process';
 
 export function execStream(cmd, args, options = { stdio: 'pipe' }) {
-  var AB = new Stream.Duplex({ ...options, readableHighWaterMark: 1, writableHighWaterMark: 1 });
+  var AB = new Stream.Duplex({
+    ...options,
+    readableHighWaterMark: 1,
+    writableHighWaterMark: 1
+  });
   var A = new Stream.PassThrough();
   var B = new Stream.PassThrough();
   // console.log = function() {}

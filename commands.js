@@ -1,6 +1,14 @@
 import dom from './lib/dom.js';
 import geom from './lib/geom.js';
-import { BBox, Rect, Point, Polyline, Line, PointList, isPoint } from './lib/geom.js';
+import {
+  BBox,
+  Rect,
+  Point,
+  Polyline,
+  Line,
+  PointList,
+  isPoint
+} from './lib/geom.js';
 import Util from './lib/util.js';
 import path from './lib/path.js';
 import { parseGcode } from './lib/gcode.js';
@@ -12,7 +20,12 @@ import { trkl } from './lib/trkl.js';
 import Alea from './lib/alea.js';
 import KolorWheel from './lib/KolorWheel.js';
 import { SVG, Element } from './lib/dom.js';
-import github, { GithubListRepositories, GithubRepositories, GithubListContents, ListGithubRepoServer } from './lib/github.js';
+import github, {
+  GithubListRepositories,
+  GithubRepositories,
+  GithubListContents,
+  ListGithubRepoServer
+} from './lib/github.js';
 
 const prng = new Alea(1598127218);
 
@@ -24,11 +37,15 @@ export async function NormalizeResponse(resp) {
     let disp = headers.get('Content-Disposition');
     let type = headers.get('Content-Type');
     if (ok) {
-      if (!disp && /json/.test(type) && typeof resp.json == 'function') resp = { data: await resp.json() };
-      else if (typeof resp.text == 'function') resp = { data: await resp.text() };
-      if (disp && !resp.file) resp.file = disp.replace(/.*['"]([^"]+)['"].*/, '$1');
+      if (!disp && /json/.test(type) && typeof resp.json == 'function')
+        resp = { data: await resp.json() };
+      else if (typeof resp.text == 'function')
+        resp = { data: await resp.text() };
+      if (disp && !resp.file)
+        resp.file = disp.replace(/.*['"]([^"]+)['"].*/, '$1');
       if (disp && type) resp.type = type;
-      if (resp.file) if (!/tmp\//.test(resp.file)) resp.file = 'tmp/' + resp.file;
+      if (resp.file)
+        if (!/tmp\//.test(resp.file)) resp.file = 'tmp/' + resp.file;
     } else {
       console.info('resp:', resp);
       resp = { ...resp, error: resp.statusText };
@@ -38,7 +55,10 @@ export async function NormalizeResponse(resp) {
 
     let fn = Util.mapFunction(headers);
     //let { keys, get } = fn;
-    resp.headers = Util.define(Object.fromEntries(fn.entries()), { keys: fn, get: fn });
+    resp.headers = Util.define(Object.fromEntries(fn.entries()), {
+      keys: fn,
+      get: fn
+    });
   }
   return resp;
 }
@@ -49,10 +69,33 @@ export async function ResponseData(resp) {
 
 export const FetchCached = Util.cachedFetch({
   debug: true,
-  print({ cached, ok, status, redirected, statusText, type, url }, fn, ...args) {
+  print(
+    { cached, ok, status, redirected, statusText, type, url },
+    fn,
+    ...args
+  ) {
     console.debug(
-      `FetchCached(${args.map((a, i) => (typeof a == 'string' ? '"' + a + '"' : i == 1 ? Util.toSource({ ...this.opts, ...a }, { colors: false, multiline: false }) : a)).join(', ')}) =`,
-      { cached, ok, status, redirected, statusText, type, url } /*.then(  NormalizeResponse)*/
+      `FetchCached(${args
+        .map((a, i) =>
+          typeof a == 'string'
+            ? '"' + a + '"'
+            : i == 1
+            ? Util.toSource(
+                { ...this.opts, ...a },
+                { colors: false, multiline: false }
+              )
+            : a
+        )
+        .join(', ')}) =`,
+      {
+        cached,
+        ok,
+        status,
+        redirected,
+        statusText,
+        type,
+        url
+      } /*.then(  NormalizeResponse)*/
     );
   }
 });
@@ -100,7 +143,13 @@ export async function ListProjects(opts = {}) {
     if(response) response = JSON.parse(response);*/
     if (Util.isObject(response)) response = response.data;
   } else {
-    response = await GithubListContents(url, null, null, '\\.(brd|sch|lbr)$', opts);
+    response = await GithubListContents(
+      url,
+      null,
+      null,
+      '\\.(brd|sch|lbr)$',
+      opts
+    );
 
     //console.log('GithubListContents response:', response);
     if (Util.isArray(response)) {
@@ -120,19 +169,24 @@ export const FindLayer = (name, project = window.project) => {
   return layers.find((l) => l.name === name);
 };
 
-export const GetLayer = (layer, project = window.project) => FindLayer(layer.name, project) || AddLayer(layer, project);
+export const GetLayer = (layer, project = window.project) =>
+  FindLayer(layer.name, project) || AddLayer(layer, project);
 
 export const AddLayer = (layer, project = window.project) => {
   const { color, name, create, ...props } = layer;
   let layers = window.layers;
   let i = Math.max(...layers.map((l) => l.i)) + 1;
 
-  let dom = create ? create(project, { ...props, 'data-layer': `${i} ${name}` }) : SVG.create('g', { i, stroke: color, ...props }, project.svgElement);
+  let dom = create
+    ? create(project, { ...props, 'data-layer': `${i} ${name}` })
+    : SVG.create('g', { i, stroke: color, ...props }, project.svgElement);
   let visible = trkl(true);
 
   visible.subscribe((value) => {
     //console.warn(`layer ${name} visible=${value}`);
-    value ? dom.style.removeProperty('display') : dom.style.setProperty('display', 'none');
+    value
+      ? dom.style.removeProperty('display')
+      : dom.style.setProperty('display', 'none');
   });
   layer = { i, name, color, visible, dom };
   window.layers = [...layers, layer];
@@ -145,11 +199,14 @@ export async function BoardToGerber(proj, opts = { fetch: true }) {
   let params = { ...opts, board: proj.name, raw: false },
     response,
     result;
-  response = await FetchURL(`/gerber/${opts.side ? '?side=' + opts.side : ''}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(params)
-  })
+  response = await FetchURL(
+    `/gerber/${opts.side ? '?side=' + opts.side : ''}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    }
+  )
     .then(NormalizeResponse)
     .catch((error) => ({ error }));
   //console.debug('FetchURL response =', response);
@@ -161,7 +218,9 @@ export async function BoardToGerber(proj, opts = { fetch: true }) {
   result.data = response.data.data;
 
   if ((opts.fetch || !gerber[opts.side].data) && response.file) {
-    response = await FetchCached(`static/${r.file.replace(/^\.\//, '')}`).then(ResponseData);
+    response = await FetchCached(`static/${r.file.replace(/^\.\//, '')}`).then(
+      ResponseData
+    );
     //console.debug('FetchURL response =', response);
     if (response) result.data = response;
   }
@@ -204,7 +263,9 @@ export async function GerberToGcode(project, allOpts = {}) {
     }
   }
   if ((opts.fetch || typeof result.data != 'string') && result.file) {
-    response = await FetchCached(`static/${response.file.replace(/^\.\//, '')}`).then(ResponseData);
+    response = await FetchCached(
+      `static/${response.file.replace(/^\.\//, '')}`
+    ).then(ResponseData);
     //console.debug('GerberToGcode result =', result);
     if (response.data) result.data = response.data;
   }
@@ -212,7 +273,9 @@ export async function GerberToGcode(project, allOpts = {}) {
   //  console.debug('GerberToGcode result =', result);
   if (!result.data)
     Util.lazyProperty(result, 'data', async () => {
-      let response = await FetchCached(`static/${response.file}`).then(ResponseData);
+      let response = await FetchCached(`static/${response.file}`).then(
+        ResponseData
+      );
       return response;
     });
   return result;
@@ -222,7 +285,12 @@ export const GcodeToPolylines = (data, opts = {}) => {
   const { fill = false, color, side } = opts;
   //console.debug('GcodeToPolylines', { data, opts });
 
-  let gc = [...Util.filter(parseGcode(data), (g) => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args)];
+  let gc = [
+    ...Util.filter(
+      parseGcode(data),
+      (g) => /G0[01]/.test(g.command + '') && 'x' in g.args && 'y' in g.args
+    )
+  ];
   let polylines = [];
   let polyline = null;
   let bb = new BBox();
@@ -259,7 +327,10 @@ export const GcodeToPolylines = (data, opts = {}) => {
       class: `gcode ${side} side`,
       color,
       'stroke-width': 0.15,
-      transform: ` translate(-0.3175,0) ` + (side == 'front' ? 'scale(-1,-1)' : 'scale(1,-1)') + ` translate(${0},${-bb.y2})  translate(0,0)`
+      transform:
+        ` translate(-0.3175,0) ` +
+        (side == 'front' ? 'scale(-1,-1)' : 'scale(1,-1)') +
+        ` translate(${0},${-bb.y2})  translate(0,0)`
     },
     project
   ).dom;
@@ -270,20 +341,37 @@ export const GcodeToPolylines = (data, opts = {}) => {
     //console.log('polylines(2):', polylines);
     polylines = polylines.map((pl) => geom.simplify(pl, 0.02, true));
     //console.log('polylines(3):', polylines);
-    polylines = polylines.map((pl) => Util.chunkArray(pl, 2).map((pt) => new Point(...pt)));
+    polylines = polylines.map((pl) =>
+      Util.chunkArray(pl, 2).map((pt) => new Point(...pt))
+    );
     //console.log('polylines(4):', polylines);
     polylines = polylines.map((pl) => new Polyline([]).push(...pl));
-    let inside = new Map(polylines.map((polyline2, i) => [polyline2, polylines.filter((polyline, j) => polyline !== polyline2 && i !== j && Polyline.inside(polyline, polyline2))]));
+    let inside = new Map(
+      polylines.map((polyline2, i) => [
+        polyline2,
+        polylines.filter(
+          (polyline, j) =>
+            polyline !== polyline2 &&
+            i !== j &&
+            Polyline.inside(polyline, polyline2)
+        )
+      ])
+    );
     let insideOf = polylines.map((polyline, i) => [
       i,
       polylines
         .map((polyline2, j) => [inside.get(polyline2).length, j, polyline2])
-        .filter(([n, j, polyline2]) => i !== j && inside.get(polyline2).indexOf(polyline) != -1)
+        .filter(
+          ([n, j, polyline2]) =>
+            i !== j && inside.get(polyline2).indexOf(polyline) != -1
+        )
         .sort(([a], [b]) => a - b)
     ]);
     //console.log('GcodeToPolylines insideOf:', insideOf);
     let holes = polylines.map((polyline, i) => new Set());
-    insideOf.filter(([i, list]) => list.length == 1).map(([i, list]) => holes[list[0][1]].add(i));
+    insideOf
+      .filter(([i, list]) => list.length == 1)
+      .map(([i, list]) => holes[list[0][1]].add(i));
     //console.log('GcodeToPolylines holes:', holes);
     let remove = new Set();
     for (let [i, inner] of holes.entries()) {
@@ -300,8 +388,21 @@ export const GcodeToPolylines = (data, opts = {}) => {
   }
   let ids = polylines.map((pl, i) => i).filter((i) => !remove.has(i));
   let polys = [
-    ...ids.map((i) => polylines[i].toSVG((...args) => args, { ...props(polylines[i], i), id: `polyline-${i}` }, grp, 0.01)),
-    ...paths.map(([i, d]) => ({ ...props(polyline, i), id: `polygon-${polylines.indexOf(polyline)}`, d })).map((p, i) => ['path', p, grp])
+    ...ids.map((i) =>
+      polylines[i].toSVG(
+        (...args) => args,
+        { ...props(polylines[i], i), id: `polyline-${i}` },
+        grp,
+        0.01
+      )
+    ),
+    ...paths
+      .map(([i, d]) => ({
+        ...props(polyline, i),
+        id: `polygon-${polylines.indexOf(polyline)}`,
+        d
+      }))
+      .map((p, i) => ['path', p, grp])
   ];
   // console.log('GcodeToPolylines polys:', polys.length, { bb, color });
   let svgAttr = Element.attr(project.svgElement);
@@ -313,7 +414,13 @@ export const GcodeToPolylines = (data, opts = {}) => {
 export function GeneratePalette(numColors) {
   let ret = [];
   let base = new HSLA(Util.randInt(0, 360, prng), 100, 50).toRGBA();
-  let offsets = Util.range(1, numColors).reduce((acc, i) => [...acc, ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360], []);
+  let offsets = Util.range(1, numColors).reduce(
+    (acc, i) => [
+      ...acc,
+      ((acc[acc.length - 1] || 0) + Util.randInt(20, 80)) % 360
+    ],
+    []
+  );
   offsets = offsets.sort((a, b) => a - b);
   //offsets = Util.shuffle(offsets, prng);
   //Util.log('offsets:', offsets);
@@ -361,11 +468,17 @@ export async function GetCache(match = /.*/) {
   for (let request of await cache.keys()) {
     let response = await cache.match(request);
     let time = Date.parse(response.headers.get('date')) / 1000;
-    let headers = new Map(Util.map(response.headers.keys(), (k) => [k, response.headers.get(k)]));
+    let headers = new Map(
+      Util.map(response.headers.keys(), (k) => [k, response.headers.get(k)])
+    );
     delete response.headers;
     let methods = Util.bindMethods(Util.getMethods(response), response);
 
-    response = Object.assign(Util.getMembers(response), { headers, time, ...methods });
+    response = Object.assign(Util.getMembers(response), {
+      headers,
+      time,
+      ...methods
+    });
     entries.push([request.url.replace(baseUrl, ''), response]);
   }
   return entries;

@@ -50,7 +50,12 @@ async function main(...args) {
     'VISUAL',
     'WINDOW'
   ];
-  let envEntries = Util.chunkArray(await Promise.all(varNames.reduce((acc, n) => [...acc, n, Util.getEnv(n)], [])), 2);
+  let envEntries = Util.chunkArray(
+    await Promise.all(
+      varNames.reduce((acc, n) => [...acc, n, Util.getEnv(n)], [])
+    ),
+    2
+  );
   let envMap = new Map(envEntries);
   //console.log('Environment:', Util.toSource(envEntries, { quote: '"'}).replace(/\n/g, "\\n"));
   console.log('Environment:', Util.toString(envMap));
@@ -62,7 +67,8 @@ async function main(...args) {
   let colors, keys;
   let attributes = new Map();
   let numeric = new Set();
-  const printSet = (set) => [...set.values()].map((n) => "'" + n + "'").join(', ');
+  const printSet = (set) =>
+    [...set.values()].map((n) => "'" + n + "'").join(', ');
 
   const setAttributes = (tag, attrs) => {
     if (!attributes.has(tag)) attributes.set(tag, new Set());

@@ -11,7 +11,9 @@ import LogJS from './lib/log.js';
 let filesystem;
 
 function xmlize(obj, depth = 2) {
-  return obj.toXML ? obj.toXML().replace(/>\s*</g, '>\n    <') : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
+  return obj.toXML
+    ? obj.toXML().replace(/>\s*</g, '>\n    <')
+    : EagleDocument.toXML(obj, depth).split(/\n/g)[0];
 }
 
 function testLocator() {
@@ -62,8 +64,12 @@ async function testGraph(proj) {
   for (let [name, element] of board.elements) {
     const { x, y } = element;
     const { attributes } = element.raw;
-    let lib = board.get((e) => e.tagName == 'library' && e.attributes.name == attributes.library);
-    const pkg = lib.get((e) => e.tagName == 'package' && e.attributes.name == attributes.package);
+    let lib = board.get(
+      (e) => e.tagName == 'library' && e.attributes.name == attributes.library
+    );
+    const pkg = lib.get(
+      (e) => e.tagName == 'package' && e.attributes.name == attributes.package
+    );
     const bb = element.getBounds();
     let rect = bb.rect;
     let pos = rect.center;
@@ -137,7 +143,16 @@ function alignItem(item) {
     console.log('before:', Util.abbreviate(before));
     console.log('after:', Util.abbreviate(item.parentNode.toXML()));
     //console.log('geometry:', geometry);
-    console.log('align\n', item.xpath(), '\n newPos:', newPos, '\n diff:', diff, '\n attr:', item.raw.attributes);
+    console.log(
+      'align\n',
+      item.xpath(),
+      '\n newPos:',
+      newPos,
+      '\n diff:',
+      diff,
+      '\n attr:',
+      item.raw.attributes
+    );
   }
   return changed;
 }
@@ -150,7 +165,8 @@ function alignAll(doc) {
   for (let item of items) changed |= alignItem(item);
   let signals_nets = doc.getAll(/(signals|nets)/);
   //console.log('signals_nets:', signals_nets);
-  for (let net of signals_nets) for (let item of net.getAll('wire')) changed |= alignItem(item);
+  for (let net of signals_nets)
+    for (let item of net.getAll('wire')) changed |= alignItem(item);
   return !!changed;
 }
 
@@ -178,8 +194,22 @@ async function testEagle(filename) {
   let { board, schematic } = proj;
 
   const packages = {
-    board: (board && board.elements && [...board.elements].map(([name, e]) => e.package)) || [],
-    schematic: (schematic && schematic.sheets && [...schematic.sheets].map((e) => [...e.instances].map(([name, i]) => i.part.device.package).filter((p) => p !== undefined)).flat()) || []
+    board:
+      (board &&
+        board.elements &&
+        [...board.elements].map(([name, e]) => e.package)) ||
+      [],
+    schematic:
+      (schematic &&
+        schematic.sheets &&
+        [...schematic.sheets]
+          .map((e) =>
+            [...e.instances]
+              .map(([name, i]) => i.part.device.package)
+              .filter((p) => p !== undefined)
+          )
+          .flat()) ||
+      []
   };
   let parts = (schematic && schematic.parts) || [];
   let sheets = (schematic && schematic.sheets) || [];
@@ -208,7 +238,8 @@ async function testEagle(filename) {
   console.log('proj.board', proj.board);
   if (proj.board) updateMeasures(proj.board);
 
-  if (alignAll(board) || alignAll(schematic)) console.log('Saved:', await proj.saveTo('tmp', true));
+  if (alignAll(board) || alignAll(schematic))
+    console.log('Saved:', await proj.saveTo('tmp', true));
 
   console.log('documents', proj.documents);
 
@@ -259,23 +290,38 @@ async function testEagle(filename) {
     }
   }
 
-  let desc = proj.documents.map((doc) => [doc.filename, doc.find('description')]);
+  let desc = proj.documents.map((doc) => [
+    doc.filename,
+    doc.find('description')
+  ]);
   console.log('desc', desc);
 
-  desc = desc.map(([file, e]) => [file, e && e.xpath()]).map(([file, xpath]) => [file, xpath && xpath.toCode('', { spacing: '', function: true })]);
+  desc = desc
+    .map(([file, e]) => [file, e && e.xpath()])
+    .map(([file, xpath]) => [
+      file,
+      xpath && xpath.toCode('', { spacing: '', function: true })
+    ]);
   desc = new Map(desc);
   console.log('descriptions', [...Util.map(desc, ([k, v]) => [k, v])]);
 
   return proj;
 }
 async function main(...args) {
-  if (args.length == 0) args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
+  if (args.length == 0)
+    args.unshift('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3');
   for (let arg of args) {
     //arg = arg.replace(/\.(brd|sch|lbr)$/i, '');
     try {
       let project = await testEagle(arg);
     } catch (err) {
-      console.log('Err:', err.message, typeof err.stack == 'string' ? err.stack : [...err.stack].map((f) => f + ''));
+      console.log(
+        'Err:',
+        err.message,
+        typeof err.stack == 'string'
+          ? err.stack
+          : [...err.stack].map((f) => f + '')
+      );
       Util.exit(1);
     }
   }

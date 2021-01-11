@@ -1,5 +1,10 @@
 import Util from './lib/util.js';
-import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
+import PortableChildProcess, {
+  SIGTERM,
+  SIGKILL,
+  SIGSTOP,
+  SIGCONT
+} from './lib/childProcess.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import { Repeater } from './lib/repeater/repeater.js';
 
@@ -26,7 +31,10 @@ async function main(...args) {
   await ConsoleSetup({ colors: true, depth: Infinity });
   await PortableChildProcess((p) => (childProcess = p));
 
-  let proc = childProcess('ls', ['-la'], { block: false, stdio: ['pipe', 'pipe', 'pipe'] });
+  let proc = childProcess('ls', ['-la'], {
+    block: false,
+    stdio: ['pipe', 'pipe', 'pipe']
+  });
 
   // console.log('proc:', proc);
   proc.kill(SIGSTOP);
