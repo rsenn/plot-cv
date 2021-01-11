@@ -392,7 +392,7 @@ const cterm = [
   'cfsetispeed'
 ].reduce((o, s) => {
   let fp = dlsym(RTLD_DEFAULT, s);
-  if (fp == null) {
+  if(fp == null) {
     console.log(dlerror());
     return o;
   }
@@ -402,7 +402,7 @@ const cterm = [
 function def(name, abi, ...params) {
   let defined = false;
   return (...args) => {
-    if (!defined) {
+    if(!defined) {
       define(name, cterm[name], abi, ...params);
       defined = true;
     }
@@ -525,7 +525,7 @@ export class termio extends ArrayBuffer {
   set c_cc(v) {
     const a = new Uint8Array(this, 9, NCC);
     const n = Math.min(v.length, a.length);
-    for (let i = 0; i < n; i++)
+    for(let i = 0; i < n; i++)
       a[i] = typeof v[i] == 'string' ? v[i].charCodeAt(0) : v[i];
   }
 }
@@ -571,7 +571,7 @@ export class termios extends ArrayBuffer {
   set c_cc(v) {
     const a = new Uint8Array(this, 17, NCCS);
     const n = Math.min(v.length, a.length);
-    for (let i = 0; i < n; i++)
+    for(let i = 0; i < n; i++)
       a[i] = typeof v[i] == 'string' ? v[i].charCodeAt(0) : v[i];
   }
 
@@ -629,17 +629,16 @@ return `{ .c_iflag=${this.c_iflag}, .c_oflag=${this.c_oflag}, .c_cflag=${this.c_
 
   static flags(flags, obj) {
     const r = [];
-    for (const name in obj) {
+    for(const name in obj) {
       const bit = obj[name];
-      if (typeof bit[0] == 'function') {
+      if(typeof bit[0] == 'function') {
         const [mask, o] = bit;
         const h = mask(flags);
         const e = Object.entries(o).find(([name, b]) => mask(b) == h);
-        if (e) r.push(e[0]);
+        if(e) r.push(e[0]);
       } else {
-        if (countBits(bit) > 1)
-          throw new Error(`flags name=${name} bit=0x${bit.toString(16)}`);
-        if (flags & bit) r.push(name);
+        if(countBits(bit) > 1) throw new Error(`flags name=${name} bit=0x${bit.toString(16)}`);
+        if(flags & bit) r.push(name);
       }
     }
     return r.join(' | ') || 0;
@@ -650,7 +649,7 @@ function countBits(num) {
   return num
     .toString(2)
     .split('')
-    .map((n) => +n)
+    .map(n => +n)
     .reduce((a, b) => a + b, 0);
 }
 

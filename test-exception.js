@@ -6,7 +6,7 @@ import { ConsoleSetup } from './lib/consoleSetup.js';
 let filesystem;
 let globalThis;
 
-Util.callMain(main, (error) => {
+Util.callMain(main, error => {
   let { message, stack } = error;
 
   console.log('ERROR message =', message);
@@ -14,7 +14,7 @@ Util.callMain(main, (error) => {
 });
 
 async function main(...args) {
-  await PortableFileSystem((fs) => (filesystem = fs));
+  await PortableFileSystem(fs => (filesystem = fs));
 
   console.log('main args =', args);
 

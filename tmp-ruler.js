@@ -7,37 +7,28 @@ export function Ruler() {
   const pressingDown = () => refRuler.current.pressingDown();
   const pressingUp = () => refRuler.current.pressingUp();
   const stopPressing = () => refRuler.current.stopPressing();
-  const onChanged = (value) => setValue(value);
+  const onChanged = value => setValue(value);
 
   return h(RulerDraggable, {}, [
-    h(
-      'button',
-      {
+    h('button', {
         onMouseDown: pressingDown,
         onMouseUp: stopPressing
-      },
-      [Down]
+      }, [Down]
     ),
-    h(
-      'button',
-      {
+    h('button', {
         onMouseDown: pressingUp,
         onMouseUp: stopPressing
-      },
-      [Up]
+      }, [Up]
     ),
     h('div', {}, [value]),
-    h(
-      Ruler,
-      {
+    h(Ruler, {
         ref: refRuler,
         defaultValue: 50,
         onChanged,
         longLength: 300,
         shortLength: 60,
         horizontal: true
-      },
-      []
+      }, []
     )
   ]);
 }

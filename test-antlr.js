@@ -30,6 +30,6 @@ try {
   //console.log(output);
 
   //console.log(tree.toStringTree(parser.ruleNames));
-} catch (error) {
+} catch(error) {
   //console.log(error);
 }

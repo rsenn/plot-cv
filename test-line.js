@@ -2,8 +2,8 @@ import { Rect, PointList, LineList, Line } from './lib/geom.js';
 
 let rect = new Rect(19, 13, 193, 127);
 
-let pl = rect.toPoints((points) => new PointList(points));
-let ll = rect.toLines((lines) => new LineList(lines));
+let pl = rect.toPoints(points => new PointList(points));
+let ll = rect.toLines(lines => new LineList(lines));
 
 const sym = Symbol.for('nodejs.util.inspect.custom');
 

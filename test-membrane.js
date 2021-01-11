@@ -4,12 +4,7 @@ import Util from './lib/util.js';
 import { ImmutablePath, PathMapper, toXML, TreeObserver } from './lib/json.js';
 import { ImmutableXPath, parseXPath, XMLIterator } from './lib/xml.js';
 
-const inspect = (
-  arg,
-  depth = 10,
-  colors = true,
-  breakLength = Number.Infinity
-) =>
+const inspect = (arg, depth = 10, colors = true, breakLength = Number.Infinity) =>
   util.inspect(arg, {
     depth,
     breakLength,
@@ -17,7 +12,7 @@ const inspect = (
     showProxy: true,
     colors
   });
-const printNode = (node) => {
+const printNode = node => {
   let s = toXML(node).replace(/\n.*/g, '');
   return s;
 };
@@ -37,21 +32,16 @@ const CH = 'children';
 try {
   function main(...args) {
     let str = filesystem
-      .readFile(
-        args.length
-          ? args[0]
-          : '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd'
-      )
+      .readFile(args.length ? args[0] : '../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd')
       .toString();
     let xml = tXml(str)[0];
     const mapper = new PathMapper(xml, parseXPath);
     let observer = new TreeObserver(mapper, false);
-    const path2obj = (path) => mapper.get(path);
+    const path2obj = path => mapper.get(path);
     const obj2path = observer.getField('path');
     const obj2type = observer.getField('type');
-    const path2xpath = (path) => {
-      if (!(path instanceof ImmutablePath))
-        path = new ImmutablePath(path, true);
+    const path2xpath = path => {
+      if(!(path instanceof ImmutablePath)) path = new ImmutablePath(path, true);
       return path;
     };
 
@@ -64,18 +54,18 @@ try {
       let p = new ImmutablePath(path);
       path = p.toArray();
       let thisParent = p.parent;
-      if (thisParent.equal(prev)) path = p.relativeTo(thisParent);
-      if (prev.equal(thisParent)) {
+      if(thisParent.equal(prev)) path = p.relativeTo(thisParent);
+      if(prev.equal(thisParent)) {
         relTo = prev;
         path = p.relativeTo(relTo);
-      } else if (thisParent.equal(prevParent)) {
+      } else if(thisParent.equal(prevParent)) {
         relTo = prevParent;
         path = p.relativeTo(relTo);
       } else {
         prev = p.makeAbsolute(relTo);
         relTo = [];
       }
-      if (prevParent && !prevParent.equal(thisParent)) {
+      if(prevParent && !prevParent.equal(thisParent)) {
         relTo = [];
       }
       prevParent = thisParent;
@@ -114,30 +104,29 @@ try {
      * @return     {Object}  { description_of_the_return_value }
      */
     const incr = (obj, prop, i = 1) => {
-      if (!obj) obj = {};
+      if(!obj) obj = {};
       return { ...obj, [prop]: (obj[prop] || 0) + i };
     };
 
     let tags = {};
-    let iter = new XMLIterator(
-      {
+    let iter = new XMLIterator({
         children: xml.children,
         tagName: tree.tagName,
         attributes: tree.attributes
       },
       (v, p) => true
     );
-    for (let [v, p] of iter) {
-      if (!(p instanceof ImmutablePath)) p = new ImmutablePath(p, true);
+    for(let [v, p] of iter) {
+      if(!(p instanceof ImmutablePath)) p = new ImmutablePath(p, true);
       tags = incr(tags, v.tagName);
     }
     let lists = [];
-    for (let key in tags) {
+    for(let key in tags) {
       let lkey = key == 'library' ? 'libraries' : key + 's';
-      if (tags[lkey] !== undefined) lists.push(lkey);
+      if(tags[lkey] !== undefined) lists.push(lkey);
     }
     tags = Object.entries(tags).sort((a, b) => a[1] - b[1]);
-    tags = lists.map((t) => {
+    tags = lists.map(t => {
       let { path, value } = deep.find(xml, (v, p) => v.tagName == t);
       let selected = deep.select(xml, (v, p) => v.tagName == t);
       let xpath = ImmutableXPath.from(path, xml);
@@ -145,34 +134,18 @@ try {
       let q = new RegExp('(.)*');
       path = obj2path(value);
 
-      let dumps = selected.map(({ path, value }) => [
-        new ImmutablePath(path, true),
-        value
-      ]);
+      let dumps = selected.map(({ path, value }) => [new ImmutablePath(path, true), value]);
 
       dumps = dumps.map(([p, v]) => [ImmutableXPath.from(p, xml), v]);
 
       dumps = dumps.map(([p, v]) => [
         p,
         v,
-        p.offset(
-          (o, i, p) =>
-            !(/(\[|board$|sheets$)/.test(o) || p[i + 1] == 'attributes')
-        )
+        p.offset((o, i, p) => !(/(\[|board$|sheets$)/.test(o) || p[i + 1] == 'attributes'))
       ]);
 
-      dumps = dumps.map(([p, v, o]) => [
-        p.slice(o - 2),
-        p.slice(0, o - 2),
-        v,
-        o
-      ]);
-      dumps = dumps.map(([p, s, v, o]) => [
-        p,
-        s,
-        `children: ${v.children.length}`,
-        `offset: ${o}`
-      ]);
+      dumps = dumps.map(([p, v, o]) => [p.slice(o - 2), p.slice(0, o - 2), v, o]);
+      dumps = dumps.map(([p, s, v, o]) => [p, s, `children: ${v.children.length}`, `offset: ${o}`]);
       dumps = dumps.map(([p, s, v, o]) => [p, s, v, p.toRegExp()]);
 
       dumps = dumps
@@ -188,26 +161,21 @@ try {
         .map(([p, s, ...rest]) => [
           p[Symbol.for('nodejs.util.inspect.custom')](),
           s[Symbol.for('nodejs.util.inspect.custom')](),
-          ...rest.map((i) => Util.toSource(i))
+          ...rest.map(i => Util.toSource(i))
         ])
         .map(([p]) => p + '')
         .join('\n  |');
 
       //console.log('result:\n  ', dumps);
-      return [
-        xpath,
-        new Map(
-          selected.map(({ path, value }) => [path2xpath(path).down('*'), value])
-        )
-      ];
+      return [xpath, new Map(selected.map(({ path, value }) => [path2xpath(path).down('*'), value]))];
     });
 
     tags = Object.fromEntries(tags);
-    for (let [search, value] of Object.entries(tags)) {
+    for(let [search, value] of Object.entries(tags)) {
       let path = new ImmutablePath(search);
     }
     let x = new ImmutableXPath('/eagle/drawing/board');
-    let drawing = deep.find(xml, (v) => v.tagName == 'drawing');
+    let drawing = deep.find(xml, v => v.tagName == 'drawing');
     let w = new ImmutablePath('children/0/children/0/children/3', true);
     //console.log('w:', w.toString());
     let y = ImmutableXPath.from(w, xml);
@@ -217,4 +185,4 @@ try {
     //console.log('z:', z);
   }
   Util.callMain(main);
-} catch (err) {}
+} catch(err) {}

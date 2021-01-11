@@ -28,7 +28,7 @@ function writeXML(filename, xml) {
     filesystem.writeFile(tempFileName, str) > 0 &&
     filesystem.unlink(filename) == 0 &&
     filesystem.rename(tempFileName, filename) == 0;
-  if (ret) console.log(`Wrote '${filename}'.`);
+  if(ret) console.log(`Wrote '${filename}'.`);
   return ret;
 }
 
@@ -38,7 +38,7 @@ function isPositive(n) {
 
 function parseStyle(styleStr) {
   let style = {};
-  for (let entry of styleStr.split(/\s*;\s*/g)) {
+  for(let entry of styleStr.split(/\s*;\s*/g)) {
     let index = entry.indexOf(':');
     let name = entry.substring(0, index).trim();
     let value = entry.substring(index + 1).trim();
@@ -49,21 +49,8 @@ function parseStyle(styleStr) {
 }
 
 function* formatPath(path) {
-  for (let part of path) {
-    const {
-      largeArc,
-      relative,
-      rx,
-      ry,
-      sweep,
-      x,
-      x1,
-      x2,
-      xAxisRotation,
-      y,
-      y1,
-      y2
-    } = part;
+  for(let part of path) {
+    const { largeArc, relative, rx, ry, sweep, x, x1, x2, xAxisRotation, y, y1, y2 } = part;
 
     switch (part.code.toUpperCase()) {
       case 'M':
@@ -91,9 +78,7 @@ function* formatPath(path) {
         yield `${part.code} ${x},${y}`;
         break;
       case 'A':
-        yield `${part.code} ${rx} ${ry} ${xAxisRotation} ${largeArc ? 1 : 0} ${
-          sweep ? 1 : 0
-        } ${x},${y}`;
+        yield `${part.code} ${rx} ${ry} ${xAxisRotation} ${largeArc ? 1 : 0} ${sweep ? 1 : 0} ${x},${y}`;
         break;
     }
   }
@@ -102,43 +87,35 @@ function* formatPath(path) {
 let props = [];
 
 function flatSVG(svg) {
-  return deep.flatten(
-    svg,
-    new Map(),
-    (v, p) => typeof v == 'object' && 'tagName' in v
-  );
+  return deep.flatten(svg, new Map(), (v, p) => typeof v == 'object' && 'tagName' in v);
 }
 
 function scaleSVG(file, size) {
   let svg = readXML(file);
-  if (svg[0].tagName == '?xml') svg = svg[0].children;
+  if(svg[0].tagName == '?xml') svg = svg[0].children;
 
-  let defsIndex = svg[0].children.findIndex((e) => e.tagName == 'defs');
+  let defsIndex = svg[0].children.findIndex(e => e.tagName == 'defs');
 
-  if (defsIndex > 0) svg[0].children.splice(0, defsIndex);
+  if(defsIndex > 0) svg[0].children.splice(0, defsIndex);
 
   let flat = flatSVG(svg);
   let css = new Map();
   let styleNodes = [];
 
-  for (let [key, value] of flat) {
+  for(let [key, value] of flat) {
     let { tagName, attributes, children } = value;
 
-    if (tagName.indexOf(':') != -1) {
+    if(tagName.indexOf(':') != -1) {
       flat.delete(key);
       deep.unset(svg, key);
       continue;
     }
 
-    if (tagName == 'style') {
+    if(tagName == 'style') {
       let styleSheet = CSS.parse(children.join('\n').trim());
       css = Util.merge(styleSheet, css);
 
-      deep.set(svg, key + '.children', [
-        '',
-        ...CSS.format(styleSheet).trim().split(/\n/g),
-        ''
-      ]);
+      deep.set(svg, key + '.children', ['', ...CSS.format(styleSheet).trim().split(/\n/g), '']);
 
       styleNodes.push(key);
       continue;
@@ -146,27 +123,24 @@ function scaleSVG(file, size) {
       continue;*/
     }
 
-    if (attributes) {
-      attributes = Util.filter(
-        attributes,
-        (value, key) => key.indexOf(':') == -1
-      );
+    if(attributes) {
+      attributes = Util.filter(attributes, (value, key) => key.indexOf(':') == -1);
 
-      if ('style' in attributes) {
+      if('style' in attributes) {
         let style = parseStyle(attributes.style);
         Object.assign(attributes, style);
         delete attributes.style;
         console.log('style:', style);
       }
 
-      if (tagName == 'path' && attributes.d) {
+      if(tagName == 'path' && attributes.d) {
         let path = parsePath(attributes.d);
         attributes.d = [...formatPath(path)].join(' ');
 
         console.log('path:', path.length);
       }
 
-      if ('id' in attributes) delete attributes.id;
+      if('id' in attributes) delete attributes.id;
     }
 
     flat.set(key, { tagName, attributes });
@@ -174,10 +148,10 @@ function scaleSVG(file, size) {
     deep.set(svg, key + '.attributes', attributes);
   }
 
-  for (let [key, value] of flat) {
+  for(let [key, value] of flat) {
     let { tagName, attributes, children } = value;
     console.log('attributes', Object.keys(attributes));
-    if (attributes && 'class' in attributes) {
+    if(attributes && 'class' in attributes) {
       let className = attributes['class'];
       console.log('className', className);
 
@@ -185,7 +159,7 @@ function scaleSVG(file, size) {
 
       console.log('styleDeclarations', styleDeclarations);
 
-      if (styleDeclarations.size) {
+      if(styleDeclarations.size) {
         let styles = Object.fromEntries([...styleDeclarations]);
 
         Object.assign(attributes, styles);
@@ -201,7 +175,7 @@ function scaleSVG(file, size) {
   //  console.log('flat:', flatSVG(svg));
   console.log('css:', css);
   console.log('styleNodes:', styleNodes);
-  styleNodes.forEach((path) => deep.unset(svg, path));
+  styleNodes.forEach(path => deep.unset(svg, path));
 
   //console.log("svg:", svg);
 
@@ -212,9 +186,9 @@ function scaleSVG(file, size) {
   let viewSize = width && height ? new Size(width, height) : viewRect.size;
   let aspect = viewSize.aspect();
 
-  if (!isPositive(size.width)) size.width = size.height * aspect;
+  if(!isPositive(size.width)) size.width = size.height * aspect;
 
-  if (!isPositive(size.height)) size.height = size.width / aspect;
+  if(!isPositive(size.height)) size.height = size.width / aspect;
 
   delete attrs.xmlns;
   delete attrs.version;
@@ -233,8 +207,8 @@ async function main(...args) {
 
   let size, arg;
 
-  while ((arg = args.shift())) {
-    if (/^[-.\d]+[\*x][-.\d]+$/.test(arg)) {
+  while((arg = args.shift())) {
+    if(/^[-.\d]+[\*x][-.\d]+$/.test(arg)) {
       size = Size.fromString(arg);
       console.log(size);
       continue;

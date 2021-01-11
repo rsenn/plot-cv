@@ -1,7 +1,4 @@
-import {
-  SocketDebugClient,
-  LogLevel
-} from './node-debugprotocol-client/dist/index.js';
+import { SocketDebugClient, LogLevel } from './node-debugprotocol-client/dist/index.js';
 
 async function main(...args) {
   // create a client instance
@@ -22,8 +19,7 @@ async function main(...args) {
 
   // tell the debug adapter to attach to a debuggee which is already running somewhere
   // SpecificAttachArguments has to extend DebugProtocol.AttachRequestArguments
-  await client.attach(
-    /*<SpecificAttachArguments>*/ {
+  await client.attach(/*<SpecificAttachArguments>*/ {
       // ...
     }
   );
@@ -41,8 +37,8 @@ async function main(...args) {
   });
 
   // listen to events such as "stopped"
-  const unsubscribable = client.onStopped(async (stoppedEvent) => {
-    if (stoppedEvent.reason === 'breakpoint') {
+  const unsubscribable = client.onStopped(async stoppedEvent => {
+    if(stoppedEvent.reason === 'breakpoint') {
       // we hit a breakpoint!
 
       // do some debugging

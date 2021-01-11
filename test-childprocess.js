@@ -1,10 +1,5 @@
 import Util from './lib/util.js';
-import PortableChildProcess, {
-  SIGTERM,
-  SIGKILL,
-  SIGSTOP,
-  SIGCONT
-} from './lib/childProcess.js';
+import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import { Repeater } from './lib/repeater/repeater.js';
 
@@ -17,11 +12,11 @@ function FdReader(fd, bufferSize = 1024) {
     do {
       let r = await filesystem.waitRead(fd);
       ret = filesystem.read(fd, buf);
-      if (ret > 0) {
+      if(ret > 0) {
         let data = buf.slice(0, ret);
         await push(filesystem.bufferToString(data));
       }
-    } while (ret == bufferSize);
+    } while(ret == bufferSize);
     stop();
     filesystem.close(fd);
   });
@@ -29,7 +24,7 @@ function FdReader(fd, bufferSize = 1024) {
 
 async function main(...args) {
   await ConsoleSetup({ colors: true, depth: Infinity });
-  await PortableChildProcess((p) => (childProcess = p));
+  await PortableChildProcess(p => (childProcess = p));
 
   let proc = childProcess('ls', ['-la'], {
     block: false,
@@ -42,7 +37,7 @@ async function main(...args) {
   console.log('proc.stdout:', proc.stdout);
 
   let output = '';
-  for await (let data of FdReader(proc.stdout)) {
+  for await(let data of FdReader(proc.stdout)) {
     console.log('data:', data);
     output += data;
     console.log('output.length:', output.length);

@@ -385,7 +385,7 @@ async function main(...args) {
     output = printAst(ast, parser.comments, printer).trim();
     if (output != '')
       r = r.concat(
-        `/* --- concatenanted '${file}' --- */\n${output}\n`.split(/\n/g)
+        `/* --- concatenated '${file}' --- */\n${output}\n`.split(/\n/g)
       );
 
     function log(...args) {

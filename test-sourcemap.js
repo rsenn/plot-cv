@@ -11,7 +11,7 @@ async function main(...args) {
 
   console.log('sourceMap');
 
-  if (args.length == 0)
+  if(args.length == 0)
     args = [
       'htm/dist/htm.module.js.map',
       'htm/htm.js.map',
@@ -21,12 +21,8 @@ async function main(...args) {
       'htm/standalone.js.map'
     ];
   console.log('args:', args);
-  for (let arg of args) {
-    let map = SourceMap.fromMapFileComment(
-      `//# sourceMappingURL=${arg} \r\n`,
-      '.',
-      filesystem
-    );
+  for(let arg of args) {
+    let map = SourceMap.fromMapFileComment(`//# sourceMappingURL=${arg} \r\n`, '.', filesystem);
 
     console.log('map.toBase64():', map.toBase64());
     console.log('map.toComment():', map.toComment());

@@ -49,31 +49,18 @@ const vectorAngle = (ux, uy, vx, vy) => {
 
   let dot = ux * vx + uy * vy;
 
-  if (dot > 1) {
+  if(dot > 1) {
     dot = 1;
   }
 
-  if (dot < -1) {
+  if(dot < -1) {
     dot = -1;
   }
 
   return sign * Math.acos(dot);
 };
 
-const getArcCenter = (
-  px,
-  py,
-  cx,
-  cy,
-  rx,
-  ry,
-  largeArcFlag,
-  sweepFlag,
-  sinphi,
-  cosphi,
-  pxp,
-  pyp
-) => {
+const getArcCenter = (px, py, cx, cy, rx, ry, largeArcFlag, sweepFlag, sinphi, cosphi, pxp, pyp) => {
   const rxsq = Math.pow(rx, 2);
   const rysq = Math.pow(ry, 2);
   const pxpsq = Math.pow(pxp, 2);
@@ -81,7 +68,7 @@ const getArcCenter = (
 
   let radicant = rxsq * rysq - rxsq * pypsq - rysq * pxpsq;
 
-  if (radicant < 0) {
+  if(radicant < 0) {
     radicant = 0;
   }
 
@@ -102,31 +89,21 @@ const getArcCenter = (
   let ang1 = vectorAngle(1, 0, vx1, vy1);
   let ang2 = vectorAngle(vx1, vy1, vx2, vy2);
 
-  if (sweepFlag === 0 && ang2 > 0) {
+  if(sweepFlag === 0 && ang2 > 0) {
     ang2 -= TAU;
   }
 
-  if (sweepFlag === 1 && ang2 < 0) {
+  if(sweepFlag === 1 && ang2 < 0) {
     ang2 += TAU;
   }
 
   return [centerx, centery, ang1, ang2];
 };
 
-const arcToBezier = ({
-  px,
-  py,
-  cx,
-  cy,
-  rx,
-  ry,
-  xAxisRotation = 0,
-  largeArcFlag = 0,
-  sweepFlag = 0
-}) => {
+const arcToBezier = ({ px, py, cx, cy, rx, ry, xAxisRotation = 0, largeArcFlag = 0, sweepFlag = 0 }) => {
   const curves = [];
 
-  if (rx === 0 || ry === 0) {
+  if(rx === 0 || ry === 0) {
     return [];
   }
 
@@ -136,23 +113,21 @@ const arcToBezier = ({
   const pxp = (cosphi * (px - cx)) / 2 + (sinphi * (py - cy)) / 2;
   const pyp = (-sinphi * (px - cx)) / 2 + (cosphi * (py - cy)) / 2;
 
-  if (pxp === 0 && pyp === 0) {
+  if(pxp === 0 && pyp === 0) {
     return [];
   }
 
   rx = Math.abs(rx);
   ry = Math.abs(ry);
 
-  const lambda =
-    Math.pow(pxp, 2) / Math.pow(rx, 2) + Math.pow(pyp, 2) / Math.pow(ry, 2);
+  const lambda = Math.pow(pxp, 2) / Math.pow(rx, 2) + Math.pow(pyp, 2) / Math.pow(ry, 2);
 
-  if (lambda > 1) {
+  if(lambda > 1) {
     rx *= Math.sqrt(lambda);
     ry *= Math.sqrt(lambda);
   }
 
-  let [centerx, centery, ang1, ang2] = getArcCenter(
-    px,
+  let [centerx, centery, ang1, ang2] = getArcCenter(px,
     py,
     cx,
     cy,
@@ -171,7 +146,7 @@ const arcToBezier = ({
   // unecessary split, and adds extra points to the bezier curve. To alleviate
   // this issue, we round to 1.0 when the ratio is close to 1.0.
   let ratio = Math.abs(ang2) / (TAU / 4);
-  if (Math.abs(1.0 - ratio) < 0.0000001) {
+  if(Math.abs(1.0 - ratio) < 0.0000001) {
     ratio = 1.0;
   }
 
@@ -179,39 +154,15 @@ const arcToBezier = ({
 
   ang2 /= segments;
 
-  for (let i = 0; i < segments; i++) {
+  for(let i = 0; i < segments; i++) {
     curves.push(approxUnitArc(ang1, ang2));
     ang1 += ang2;
   }
 
-  return curves.map((curve) => {
-    const { x: x1, y: y1 } = mapToEllipse(
-      curve[0],
-      rx,
-      ry,
-      cosphi,
-      sinphi,
-      centerx,
-      centery
-    );
-    const { x: x2, y: y2 } = mapToEllipse(
-      curve[1],
-      rx,
-      ry,
-      cosphi,
-      sinphi,
-      centerx,
-      centery
-    );
-    const { x, y } = mapToEllipse(
-      curve[2],
-      rx,
-      ry,
-      cosphi,
-      sinphi,
-      centerx,
-      centery
-    );
+  return curves.map(curve => {
+    const { x: x1, y: y1 } = mapToEllipse(curve[0], rx, ry, cosphi, sinphi, centerx, centery);
+    const { x: x2, y: y2 } = mapToEllipse(curve[1], rx, ry, cosphi, sinphi, centerx, centery);
+    const { x, y } = mapToEllipse(curve[2], rx, ry, cosphi, sinphi, centerx, centery);
 
     return { x1, y1, x2, y2, x, y };
   });

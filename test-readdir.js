@@ -12,10 +12,10 @@ let data2;
 
 async function main(...args) {
   await ConsoleSetup({ colors: true, depth: Infinity });
-  await PortableFileSystem((fs) => (filesystem = fs));
+  await PortableFileSystem(fs => (filesystem = fs));
 
-  let files = filesystem.readdir('src').map((file) => `src/${file}`);
-  let sources = files.filter((path) => /\.[ch]/.test(path));
+  let files = filesystem.readdir('src').map(file => `src/${file}`);
+  let sources = files.filter(path => /\.[ch]/.test(path));
 
   console.log('readdir', sources);
 }

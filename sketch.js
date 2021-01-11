@@ -7,7 +7,7 @@ function setup() {
 }
 
 function draw() {
-  for (let i = 0; i < 100; i++) {
+  for(let i = 0; i < 100; i++) {
     drawPoint();
     nextPoint();
   }
@@ -25,13 +25,13 @@ function nextPoint() {
   let nextY;
   let r = random(1);
 
-  if (r < 0.01) {
+  if(r < 0.01) {
     nextY = 0.16 * y;
     nextX = 0;
-  } else if (r < 0.86) {
+  } else if(r < 0.86) {
     nextX = 0.85 * x + 0.04 * y;
     nextY = -0.04 * x + 0.85 * y + 1.6;
-  } else if (r < 0.93) {
+  } else if(r < 0.93) {
     nextX = 0.2 * x + -0.26 * y;
     nextY = 0.23 * x + 0.22 * y + 1.6;
   } else {

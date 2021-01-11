@@ -12,16 +12,13 @@ async function main(...args) {
   console.log('console', c.log);
   console.log('globalThis["console"]', globalThis['console']);
   console.log('globalThis["console"]', typeof globalThis['console']);
-  console.log(
-    'globalThis["console"] == undefined',
-    globalThis['console'] == undefined
-  );
+  console.log('globalThis["console"] == undefined', globalThis['console'] == undefined);
   console.log('console.log', console.log);
 
-  if (1) {
+  if(1) {
     let args = Util.getArgs();
     let path = args[0];
-    let fn = function (...args) {
+    let fn = function(...args) {
       return args;
     };
     let boundFn = fn.bind(fn);

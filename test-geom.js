@@ -4,11 +4,11 @@ import Util from './lib/util.js';
 function main(args) {
   let file = 'lib/geom/point.js';
 
-  if (args.length == 0) args = ['0,0', '50,100', '100,100', '100,50'];
+  if(args.length == 0) args = ['0,0', '50,100', '100,100', '100,50'];
 
-  args = args.map((arg) => arg.split(',').map((n) => +n));
+  args = args.map(arg => arg.split(',').map(n => +n));
 
-  args = args.map((arg) => new Point(arg));
+  args = args.map(arg => new Point(arg));
 
   let list = new PointList(args);
 
@@ -51,9 +51,7 @@ function main(args) {
 
   console.log('l.toSource():', l.toSource({ plainObj: true, asString: true }));
   console.log('l:', l);
-  let l2 = new PointList(
-    '-47.88,5.53 52.120000000000005,55.53 2.12,-44.47 -47.88,-44.47 19.12,22.53 -13.88,-10.47'
-  );
+  let l2 = new PointList('-47.88,5.53 52.120000000000005,55.53 2.12,-44.47 -47.88,-44.47 19.12,22.53 -13.88,-10.47');
   console.log('l2:', l2);
   let bbox = { xl: 0, xr: 800, yt: 0, yb: 600 };
 
@@ -61,7 +59,7 @@ function main(args) {
   console.log('v:', v);
   let computation = v.compute(l2, bbox);
 
-  computation.vertices.map((p) => Object.setPrototypeOf(p, Point.prototype));
+  computation.vertices.map(p => Object.setPrototypeOf(p, Point.prototype));
   console.log('compute:', computation);
 
   let vertices = computation.vertices; /*.map(p => new Point(p))*/
@@ -73,6 +71,6 @@ function main(args) {
 
 try {
   main(Util.getArgs());
-} catch (error) {
+} catch(error) {
   Util.putError(error);
 }

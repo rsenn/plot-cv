@@ -6,7 +6,7 @@ function CreateServer() {
   print('SERVER');
   server({
     port: 3300,
-    onConnect: (socket) => {
+    onConnect: socket => {
       print('Client connected');
       print('Socket: ' + socket);
       socket.send('Hello from server');
@@ -14,7 +14,7 @@ function CreateServer() {
     onMessage: (socket, msg) => {
       print('Received: ', msg);
     },
-    onClose: (why) => {
+    onClose: why => {
       print('Client disconnected. Reason: ', why);
     },
     onPong: (socket, data) => {
@@ -28,14 +28,14 @@ function CreateClient() {
   client({
     port: 7981,
     server: 'localhost',
-    onConnect: (socket) => {
+    onConnect: socket => {
       print('Connected to server');
       socket.send('Hello from client');
     },
     onMessage: (socket, msg) => {
       print('Received from server: ', msg);
     },
-    onClose: (why) => {
+    onClose: why => {
       print('Disconnected from server. Reason: ', why);
     },
     onPong: (socket, data) => {

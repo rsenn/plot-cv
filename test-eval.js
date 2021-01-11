@@ -25,11 +25,7 @@ async function main(args) {
 
   let data = /* code ||*/ filesystem.readFile(file).toString();
 
-  let parser = new ECMAScriptParser(
-    data,
-    code ? process.argv[1].replace(/.*\//g, '') : file,
-    true
-  );
+  let parser = new ECMAScriptParser(data, code ? process.argv[1].replace(/.*\//g, '') : file, true);
   let ast = parser.parseProgram();
   let printer = new Printer({ indent: 2 });
 
@@ -40,11 +36,8 @@ async function main(args) {
       Symbol: { species: Symbol.for('species') },
       console: {
         log(...args) {
-          console.debug(
-            'console.log(',
-            ...args
-              .map((arg) => `'${arg}'`)
-              .reduce((acc, arg) => (acc ? [...acc, ',', arg] : [arg]), null),
+          console.debug('console.log(',
+            ...args.map(arg => `'${arg}'`).reduce((acc, arg) => (acc ? [...acc, ',', arg] : [arg]), null),
             ')'
           );
         }
@@ -57,19 +50,16 @@ async function main(args) {
     let iter = env.generate(ast);
     console.log('iter:', iter);
 
-    for (let it of iter()) console.info('it:', it);
+    for(let it of iter()) console.info('it:', it);
   });
 
   let output = printer.print(ast);
 
   let outputFile = 'output.es';
-  console.log(
-    `wrote '${outputFile}'`,
-    await filesystem.writeFile('output.es', output)
-  );
+  console.log(`wrote '${outputFile}'`, await filesystem.writeFile('output.es', output));
 }
 try {
   Util.callMain(main, true);
-} catch (error) {
+} catch(error) {
   console.error('ERROR:', error);
 }

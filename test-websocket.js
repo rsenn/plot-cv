@@ -13,21 +13,13 @@ async function main() {
   const url = 'ws://127.0.0.1:3000/ws';
   let ws = new WebSocketAsync(WebSocket);
 
-  const dump = () =>
-    console.log(
-      'ws:',
-      Util.getKeys(ws, [
-        'receiveDataQueue',
-        'receiveCallbacksQueue',
-        'connected'
-      ])
-    );
+  const dump = () => console.log('ws:', Util.getKeys(ws, ['receiveDataQueue', 'receiveCallbacksQueue', 'connected']));
 
   await ws.connect(url);
 
   // await ws.send('test-websocket.js data!');
 
-  ws.sendMessage = function (...args) {
+  ws.sendMessage = function(...args) {
     let { data } = new Message(...args);
     console.debug(`send => '${data}'`);
 
@@ -36,8 +28,8 @@ async function main() {
 
   let myId;
   ws.sendMessage({ type: 'PING', body: Date.now() });
-  for await (let data of ws) {
-    for (let line of data.split(/\n/g)) {
+  for await(let data of ws) {
+    for(let line of data.split(/\n/g)) {
       let msg = new Message(line);
       //console.log(`line = '${line}'`);
 
@@ -53,14 +45,13 @@ async function main() {
         }
         case 'USERS': {
           console.log(`USERS '${msg.body}'`);
-          for (let id of [...msg.body, myId]) ws.send(`INFO ${id}`);
+          for(let id of [...msg.body, myId]) ws.send(`INFO ${id}`);
           break;
         }
         case 'INFO': {
           console.log(`Info for '${msg.origin}':`, msg.body);
 
-          if (msg.origin == myId)
-            ws.sendMessage({ type: 'QUIT', body: 'reason' });
+          if(msg.origin == myId) ws.sendMessage({ type: 'QUIT', body: 'reason' });
 
           break;
         }

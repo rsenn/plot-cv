@@ -28,7 +28,7 @@ const colors = [
   '#a5a5a5'
 ];
 
-let out = colors.map((hex) => {
+let out = colors.map(hex => {
   let rgba = RGBA.fromHex(hex);
   let hsla = rgba.toHSLA();
 

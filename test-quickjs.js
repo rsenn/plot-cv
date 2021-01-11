@@ -28,33 +28,20 @@ async function main(...args) {
   console.log('console', Util.className(console));
   console.log('console.log', console.log);
 
-  await PortableFileSystem((fs) => (filesystem = fs));
+  await PortableFileSystem(fs => (filesystem = fs));
   console.log('start');
   console.log('isBrowser:', Util.isBrowser());
-  console.log(
-    'Util.copyTextToClipboard()',
-    await Util.copyTextToClipboard('TEST')
-  );
+  console.log('Util.copyTextToClipboard()', await Util.copyTextToClipboard('TEST'));
   // console.log('modules:', inspect({ Point, Size, Rect }));
   let globalThis = Util.getGlobalObject();
-  const moduleNames = [
-    'Rect',
-    'Point',
-    'Size',
-    'Line',
-    'Mat',
-    'Contour',
-    'PointIterator',
-    'Draw'
-  ];
-  for (let moduleName of moduleNames)
-    Util.tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
+  const moduleNames = ['Rect', 'Point', 'Size', 'Line', 'Mat', 'Contour', 'PointIterator', 'Draw'];
+  for(let moduleName of moduleNames) Util.tryCatch(() => eval(`globalThis[moduleName] = ${moduleName};`));
 
-  let ctors = new Map(moduleNames.map((name) => [name, globalThis[name]]));
+  let ctors = new Map(moduleNames.map(name => [name, globalThis[name]]));
   console.log('globalThis:', Object.keys(globalThis));
   console.log('modules:', inspect(ctors));
 
-  if (globalThis.Contour) {
+  if(globalThis.Contour) {
     let c = new Contour();
     c.push(new Point(0, 0));
     /*   c.push({x: 50, y: 0});
@@ -83,7 +70,7 @@ async function main(...args) {
   console.log(`Object.keys(Object.getPrototypeOf(rect))`, Object.keys(Object.getPrototypeOf(rect)));
   console.log(`Object.keys(rect)`, Object.keys(rect));
   console.log(`inspect(rect)`, inspect(rect));*/
-  if (globalThis.Point) {
+  if(globalThis.Point) {
     let point = new Point(25, 75);
     console.log(`inspect(point)`, inspect(point));
   }
@@ -92,14 +79,14 @@ async function main(...args) {
     return '0x' + '0'.repeat(Math.ceil(s.length / b) * b - s.length) + s;
   }
   let rr;
-  if (globalThis.Rect) {
+  if(globalThis.Rect) {
     rr = new Rect(5, 3, 4, 5);
-    if (rr) {
+    if(rr) {
       const { x, y, width, height } = rr;
       console.log('rect:', x, y, width, height);
     }
   }
-  if (globalThis.Mat) {
+  if(globalThis.Mat) {
     let mat = new Mat(new Size(10, 10), cv.CV_8UC4);
     console.log(`cv.CV_8UC3`, toHex(cv.CV_8UC3), cv.CV_8UC3);
     console.log(`cv.CV_8UC4`, toHex(cv.CV_8UC4), cv.CV_8UC4);
@@ -112,21 +99,19 @@ async function main(...args) {
     console.log(`mat.channels`, mat.channels);
     console.log(`mat.depth`, mat.depth);
     console.log(`1 << mat.depth`, 1 << mat.depth);
-    console.log(
-      `Mat[DEPTH]`,
-      Object.keys(Mat).find((k) => Mat[k] === mat.depth)
+    console.log(`Mat[DEPTH]`,
+      Object.keys(Mat).find(k => Mat[k] === mat.depth)
     );
-    console.log(
-      `Mat[TYPE]`,
-      Object.keys(Mat).find((k) => Mat[k] === mat.type)
+    console.log(`Mat[TYPE]`,
+      Object.keys(Mat).find(k => Mat[k] === mat.type)
     );
     let row0 = mat.row(0);
     let col0 = mat.col(0);
 
     console.log(`mat.row(0)`, row0);
 
-    for (let r = 0; r < mat.rows; r++)
-      for (let c = 0; c < mat.cols; c++) {
+    for(let r = 0; r < mat.rows; r++)
+      for(let c = 0; c < mat.cols; c++) {
         const v = (r << 24) | c;
         console.log(`mat.set(${r},${c},0x${v.toString(16)})`, mat.set(r, c, v));
       }
@@ -142,7 +127,7 @@ async function main(...args) {
     let step = it.next();
     console.log(`it.next()`, step.done, step.value);
     let i = 0;
-    for (let x of row0.values()) {
+    for(let x of row0.values()) {
       console.log(`row0.values()[${i++}]`, x);
     }
     i = 0;
@@ -151,92 +136,63 @@ async function main(...args) {
     console.log(`row0.keys().next`, it.next);
     console.log(`row0.keys()[Symbol.iterator]`, it[Symbol.iterator]);
     let v;
-    while (true) {
+    while(true) {
       v = it.next();
-      if (v.done) break;
+      if(v.done) break;
       console.log(`row0.keys() #${i++}`, v.value, v.value.length);
     }
     i = 0;
-    for (let [key, value] of row0.entries()) {
-      console.log(
-        `row0.entries() #${i++}`,
-        key,
-        '0x' + ('00000000' + value.toString(16)).slice(-8)
-      );
+    for(let [key, value] of row0.entries()) {
+      console.log(`row0.entries() #${i++}`, key, '0x' + ('00000000' + value.toString(16)).slice(-8));
     }
     i = 0;
-    for (let [key, value] of col0.entries()) {
-      console.log(
-        `col0.entries() #${i++}`,
-        key,
-        '0x' + ('00000000' + value.toString(16)).slice(-8)
-      );
+    for(let [key, value] of col0.entries()) {
+      console.log(`col0.entries() #${i++}`, key, '0x' + ('00000000' + value.toString(16)).slice(-8));
     }
 
     let range = mat.rowRange(2, 8);
     i = 0;
-    for (let [[row, col], value] of range) {
-      console.log(
-        `range[${i++}] row=${row} col=${col} value=0x${(
-          '00000000' + value.toString(16)
-        ).slice(-8)}`
-      );
+    for(let [[row, col], value] of range) {
+      console.log(`range[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
     }
     i = 0;
 
-    if (globalThis.Rect) {
+    if(globalThis.Rect) {
       let roi = mat.roi(rr);
 
-      for (let [[row, col], value] of roi) {
-        console.log(
-          `roi[${i++}] row=${row} col=${col} value=0x${(
-            '00000000' + value.toString(16)
-          ).slice(-8)}`
-        );
+      for(let [[row, col], value] of roi) {
+        console.log(`roi[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
       }
-      console.log(
-        `roi rows=${roi.rows} cols=${roi.cols} depth=${roi.depth} channels=${roi.channels}`
-      );
+      console.log(`roi rows=${roi.rows} cols=${roi.cols} depth=${roi.depth} channels=${roi.channels}`);
 
-      for (let r = 0; r < roi.rows; r++)
-        for (let c = 0; c < roi.cols; c++) {
+      for(let r = 0; r < roi.rows; r++)
+        for(let c = 0; c < roi.cols; c++) {
           const v = 0x7f000000 | ((r << 16) | c);
           console.log(`roi.set(${r},${c},0x${v.toString(16)})`);
-          console.log(
-            `roi.set(${r},${c},0x${v.toString(16)})`,
-            roi.set(r, c, v)
-          );
+          console.log(`roi.set(${r},${c},0x${v.toString(16)})`, roi.set(r, c, v));
         }
 
       roi.setTo(...Util.repeat(4 * 5, 0xffffffff));
     }
 
     i = 0;
-    for (let [[row, col], value] of mat) {
-      console.log(
-        `mat[${i++}] row=${row} col=${col} value=0x${(
-          '00000000' + value.toString(16)
-        ).slice(-8)}`
-      );
+    for(let [[row, col], value] of mat) {
+      console.log(`mat[${i++}] row=${row} col=${col} value=0x${('00000000' + value.toString(16)).slice(-8)}`);
     }
 
     let fmat = new Mat(new Size(10, 10), cv.CV_32FC1);
     const values = Util.repeat(fmat.rows * fmat.cols, 0.5);
     console.log(`fmat setTo`, values);
     fmat.setTo(...values);
-    for (let [[row, col], value] of fmat) {
+    for(let [[row, col], value] of fmat) {
       console.log(`fmat[${i++}] row=${row} col=${col} value=${value}`);
     }
   }
 
-  if (globalThis.Line) {
-    let ll = [
-      new Line(0, 0, 50, 50),
-      new Line(50, 50, 50, 75),
-      new Line(50, 75, 100, 75)
-    ];
+  if(globalThis.Line) {
+    let ll = [new Line(0, 0, 50, 50), new Line(50, 50, 50, 75), new Line(50, 75, 100, 75)];
 
-    for (let line of ll) {
+    for(let line of ll) {
       console.log('line:', line.x1, line.y1, line.x2, line.y2);
       const { a, b } = line;
 
@@ -250,31 +206,27 @@ async function main(...args) {
       let arr = line.toArray();
       console.log('toArray:', line.toArray().join(','));
       console.log('values(): ', line.values());
-      console.log(
-        'toPoints(): ',
-        [...line.toPoints()].map((p) => Util.className(p))
+      console.log('toPoints(): ',
+        [...line.toPoints()].map(p => Util.className(p))
       );
 
       console.log('toString(): ', line.toString());
-      console.log(
-        'new Line(50,50,320-50,240-25): ',
-        new Line(50, 50, 320 - 50, 240 - 25)
-      );
+      console.log('new Line(50,50,320-50,240-25): ', new Line(50, 50, 320 - 50, 240 - 25));
       let [x1, y1, x2, y2] = arr;
 
       console.log(`Line{${x1},${y1} ${x2},${y2}}`);
-      for (let num of line) {
+      for(let num of line) {
         console.log('num:', i++, num);
       }
     }
 
-    if (globalThis.Rect) {
+    if(globalThis.Rect) {
       let r = new Rect(50, 100, 350, 200);
       console.log('r.br(): ', r.br());
       console.log('r.tl(): ', r.tl());
       console.log('r.area(): ', r.area());
 
-      if (globalThis.Point) {
+      if(globalThis.Point) {
         let pt = new Point(75, 150);
         console.log(`r.contains(${pt}): `, r.contains(pt));
         pt = new Point(51, 99);
@@ -313,7 +265,7 @@ async function main(...args) {
     //console.log('contour:', inspect(c));
 */
   //throw new Error("ERROR");
-  if (1) {
+  if(1) {
     console.log(`std.gc`, std.gc);
     console.log(`args`, args);
     console.log(`path`, console.inspect(path));

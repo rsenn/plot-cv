@@ -13,8 +13,8 @@ import deep from './lib/deep.js';
 let filesystem;
 
 function dumpFile(name, data) {
-  if (Util.isArray(data)) data = data.join('\n');
-  if (typeof data != 'string') data = '' + data;
+  if(Util.isArray(data)) data = data.join('\n');
+  if(typeof data != 'string') data = '' + data;
 
   filesystem.writeFile(name, data + '\n');
 
@@ -22,7 +22,7 @@ function dumpFile(name, data) {
 }
 
 async function main(...args) {
-  await PortableFileSystem((fs) => (filesystem = fs));
+  await PortableFileSystem(fs => (filesystem = fs));
   await ConsoleSetup({ depth: 4 });
 
   let [filename = './lib/grammars/INI.g4'] = args;
@@ -38,16 +38,14 @@ async function main(...args) {
   dumpFile(`grammar-${basename}.js`, grammar.generate('./lib/parse/'));
 
   let a = [];
-  for (let [name, rule] of grammar.rules) {
+  for(let [name, rule] of grammar.rules) {
     a.push(rule.toCowbird(a, name));
   }
 
   let cowbirdGrammar = grammar.toCowbird();
   console.log('cowbird:', cowbirdGrammar);
 
-  let data = filesystem.readFile(
-    '../pictest/build/mplab/7segtest-16f876a-xc8-debug.mcp'
-  );
+  let data = filesystem.readFile('../pictest/build/mplab/7segtest-16f876a-xc8-debug.mcp');
   console.log('data:', Util.abbreviate(data, 100));
   let parser = new Cowbird(cowbirdGrammar, 'ini', true);
   console.log('parser:', parser);

@@ -10,7 +10,7 @@ let filesystem, spawn;
 async function main(...args) {
   console.log('main(', ...args, ')');
   await ConsoleSetup({ breakLength: 80 });
-  await PortableFileSystem((fs) => (filesystem = fs));
+  await PortableFileSystem(fs => (filesystem = fs));
   spawn = await PortableSpawn();
   //console.log('spawn:', spawn);
   let child = spawn(['ls', '-la' /*, 'CMakeLists.txt'*/]);
@@ -22,8 +22,8 @@ async function main(...args) {
   let ab = new ArrayBuffer(bufSize);
   let r;
 
-  while ((r = await child.stdout.read(ab, 0, bufSize))) {
-    if (!(r > 0 && r == bufSize)) console.log('r:', r);
+  while((r = await child.stdout.read(ab, 0, bufSize))) {
+    if(!(r > 0 && r == bufSize)) console.log('r:', r);
     console.log('data:', Util.escape(ArrayBufToString(ab, 0, r)));
   }
 }

@@ -32,19 +32,13 @@ const tests = {
     assertEquals(filesystem.bufferToString(buffer2), 'abcdefg\n');
   },
   'filesystem.mkdir': () => {
-    assert(
-      !(filesystem.mkdir(tmpdir, 0o1777) < 0),
-      `mkdir("${tmpdir}", 0o1777) < 0`
-    );
+    assert(!(filesystem.mkdir(tmpdir, 0o1777) < 0), `mkdir("${tmpdir}", 0o1777) < 0`);
   },
   'filesystem.exists': () => {
     assert(filesystem.exists(tmpdir));
   },
   'filesystem.open': () => {
-    assert(
-      (handle = filesystem.open(tmpdir + '/rdwr', 'w+')) != null,
-      `open("${tmpdir}/rdwr", "w+") == null`
-    );
+    assert((handle = filesystem.open(tmpdir + '/rdwr', 'w+')) != null, `open("${tmpdir}/rdwr", "w+") == null`);
   },
   'filesystem.write': () => {
     assertEquals(filesystem.write(handle, data), data.length);
@@ -57,7 +51,7 @@ const tests = {
   },
   'filesystem.read': () => {
     let ret, str;
-    for (let str of ['abcdefg\n', '123456789']) {
+    for(let str of ['abcdefg\n', '123456789']) {
       ret = filesystem.read(handle, buffer, 0, str.length);
       assertEquals(ret, str.length);
       assertEquals(filesystem.bufferToString(buffer).slice(0, ret), str);
@@ -96,10 +90,7 @@ const tests = {
     assertEquals(filesystem.getcwd(), tmpdir);
   },
   'filesystem.readdir': () => {
-    assertEquals(
-      filesystem.readdir('.').sort().join(','),
-      '.,..,file,link,rdwr,wrf'
-    );
+    assertEquals(filesystem.readdir('.').sort().join(','), '.,..,file,link,rdwr,wrf');
   },
   'filesystem.rename': () => {
     assertEquals(filesystem.rename('link', 'link2'), 0);
@@ -116,8 +107,8 @@ const tests = {
     assert(filesystem.lstat(tmpdir + '/file').isSymbolicLink());
   },
   'filesystem.unlink': () => {
-    for (let file of filesystem.readdir(tmpdir)) {
-      if (file[0] == '.') continue;
+    for(let file of filesystem.readdir(tmpdir)) {
+      if(file[0] == '.') continue;
       let path = `${tmpdir}/${file}`;
       assertEquals(filesystem.unlink(path), 0);
       assert(!filesystem.exists(path));
@@ -155,14 +146,13 @@ const tests = {
 
 async function main(...args) {
   await ConsoleSetup({ colors: true, depth: Infinity });
-  await PortableFileSystem((fs) => (filesystem = fs));
+  await PortableFileSystem(fs => (filesystem = fs));
   //  Util.getGlobalObject().console = {};
 
   console.log('Console:', Object.getPrototypeOf(console));
   console.log('log:', Object.getPrototypeOf(console).log);
 
-  console.log(
-    'ARGS:',
+  console.log('ARGS:',
     new Map([
       ['a', 1],
       ['b', 2]
@@ -170,11 +160,10 @@ async function main(...args) {
     { u: undefined, n: null, args: Util.getArgs(), filesystem }
   );
   tmpdir = `/tmp/${Util.randStr(10)}`;
-  TinyTest.run(Util.filter(tests, (t) => t));
+  TinyTest.run(Util.filter(tests, t => t));
   return;
-  console.log(
-    Util.getMethodNames(filesystem)
-      .map((n) => `  'filesystem.${n}': null,`)
+  console.log(Util.getMethodNames(filesystem)
+      .map(n => `  'filesystem.${n}': null,`)
       .join('\n')
   );
 }

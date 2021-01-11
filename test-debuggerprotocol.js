@@ -2,23 +2,7 @@ import { strerror, Error } from 'std';
 import * as os from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
 import { errno } from 'ffi';
-import {
-  Socket,
-  socket,
-  AF_INET,
-  SOCK_STREAM,
-  ndelay,
-  connect,
-  sockaddr_in,
-  select,
-  fd_set,
-  timeval,
-  FD_SET,
-  FD_ISSET,
-  FD_ZERO,
-  send,
-  recv
-} from './socket.js';
+import { Socket, socket, AF_INET, SOCK_STREAM, ndelay, connect, sockaddr_in, select, fd_set, timeval, FD_SET, FD_ISSET, FD_ZERO, send, recv } from './socket.js';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 
@@ -41,7 +25,7 @@ async function main(...args) {
 
   let ret;
 
-  if (listen) {
+  if(listen) {
     ret = sock.bind(addr, port);
     retValue(ret, `sock.bind(${addr}, ${port})`);
     ret = sock.listen();
@@ -65,10 +49,10 @@ async function main(...args) {
     FD_ZERO(rfds);
     FD_ZERO(wfds);
 
-    if (sock.connecting) FD_SET(+sock, wfds);
+    if(sock.connecting) FD_SET(+sock, wfds);
     else FD_SET(+sock, rfds);
 
-    if (connection) {
+    if(connection) {
       FD_SET(+connection, rfds);
       FD_SET(0, rfds);
     }
@@ -77,29 +61,29 @@ async function main(...args) {
 
     ret = select(null, rfds, null, null, timeout);
 
-    if (FD_ISSET(+sock, wfds)) {
+    if(FD_ISSET(+sock, wfds)) {
       connection = sock;
     }
 
-    if (FD_ISSET(+sock, rfds)) {
-      if (listen) {
+    if(FD_ISSET(+sock, rfds)) {
+      if(listen) {
         connection = sock.accept();
 
         retValue(connection, 'sock.accept()');
       }
     }
 
-    if (FD_ISSET(+connection, rfds)) {
+    if(FD_ISSET(+connection, rfds)) {
       let data = ArrayBufToString(connection.read(9));
 
       let length = parseInt(ArrayBufToString(data), 16);
 
-      if (length > 0) {
+      if(length > 0) {
         console.log('length:', length);
         data = connection.read(length);
         let message = JSON.parse(ArrayBufToString(data));
 
-        if (message.type == 'event') {
+        if(message.type == 'event') {
           handleEvent(connection, message.event);
         } else {
           console.log('message:', message);
@@ -109,17 +93,17 @@ async function main(...args) {
       }
     }
 
-    if (FD_ISSET(0, rfds)) {
+    if(FD_ISSET(0, rfds)) {
       readCommand(connection);
     }
-  } while (!sock.destroyed);
+  } while(!sock.destroyed);
   console.log('end');
 }
 
 function readCommand(connection) {
   let line;
 
-  while ((line = std.in.getline())) {
+  while((line = std.in.getline())) {
     console.log('Command:', line);
 
     sendRequest(connection, line);
@@ -147,7 +131,7 @@ const seqNumbers = new WeakMap();
 
 function getSeq(sock) {
   let num = seqNumbers.get(sock);
-  if (typeof num != 'number') num = 0;
+  if(typeof num != 'number') num = 0;
   seqNumbers.set(sock, ++num);
   return num;
 }
@@ -158,12 +142,7 @@ function sendRequest(sock, command, args = {}) {
 }
 
 function retValue(ret, ...args) {
-  console.log(
-    ...args,
-    `ret =`,
-    ret,
-    ...(ret == -1 ? [' errno =', errno(), ' error =', strerror(errno())] : [])
-  );
+  console.log(...args, `ret =`, ret, ...(ret == -1 ? [' errno =', errno(), ' error =', strerror(errno())] : []));
 }
 
 function toHex(n, b = 2) {
@@ -172,7 +151,7 @@ function toHex(n, b = 2) {
 }
 
 function ArrayBufToString(buf, offset, length) {
-  if (typeof buf == 'object' && buf != null && buf instanceof ArrayBuffer) {
+  if(typeof buf == 'object' && buf != null && buf instanceof ArrayBuffer) {
     let arr = new Uint8Array(buf, offset, length);
     return arr.reduce((s, code) => s + String.fromCodePoint(code), '');
   }
@@ -187,18 +166,14 @@ function MakeArray(buf, numBytes) {
       return new Uint32Array(buf);
     case 2:
       return new Uint16Array(buf);
-    default:
-      return new Uint8Array(buf);
+    default: return new Uint8Array(buf);
   }
 }
 
 function ArrayBufToHex(buf, numBytes = 8) {
-  if (typeof buf == 'object' && buf != null && buf instanceof ArrayBuffer) {
+  if(typeof buf == 'object' && buf != null && buf instanceof ArrayBuffer) {
     let arr = MakeArray(buf, numBytes);
-    return arr.reduce(
-      (s, code) =>
-        (s != '' ? s + ' ' : '') +
-        ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
+    return arr.reduce((s, code) => (s != '' ? s + ' ' : '') + ('000000000000000' + code.toString(16)).slice(-(numBytes * 2)),
       ''
     );
   }

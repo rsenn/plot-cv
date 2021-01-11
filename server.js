@@ -15,12 +15,7 @@ import SerialBinding from '@serialport/bindings';
 import Socket from './webSocket.js';
 import WebSocket from 'ws';
 import PortableFileSystem from './lib/filesystem.js';
-import PortableChildProcess, {
-  SIGTERM,
-  SIGKILL,
-  SIGSTOP,
-  SIGCONT
-} from './lib/childProcess.js';
+import PortableChildProcess, { SIGTERM, SIGKILL, SIGSTOP, SIGCONT } from './lib/childProcess.js';
 import { Repeater } from './lib/repeater/repeater.js';
 import { Message } from './message.js';
 
@@ -53,40 +48,32 @@ async function waitChild(proc) {
 
 async function runMount(dirsIterator) {
   console.debug(`runMount ${dirsIterator}`);
-  for await (let dirs of await dirsIterator) {
+  for await(let dirs of await dirsIterator) {
     console.debug(`Mount ${dirs} to tmp/`);
 
-    let proc = childProcess(
-      './mount-tmp.sh',
-      ['-f', ...Util.unique(dirs || [])],
-      {
-        env: { OPTS: 'auto_unmount,atomic_o_trunc,big_writes,kernel_cache' }
-      }
-    );
-    async function readData(output, callback = (d) => {}) {
+    let proc = childProcess('./mount-tmp.sh', ['-f', ...Util.unique(dirs || [])], {
+      env: { OPTS: 'auto_unmount,atomic_o_trunc,big_writes,kernel_cache' }
+    });
+    async function readData(output, callback = d => {}) {
       try {
-        for await (let data of new Repeater((push, stop) => {
-          output.on('data', (chunk) => push(chunk.toString()));
+        for await(let data of new Repeater((push, stop) => {
+          output.on('data', chunk => push(chunk.toString()));
           proc.on('exit', stop);
           //          output.on('close', () => push(null));
         })) {
-          if (data === null) {
+          if(data === null) {
             console.log('output EOF');
             //return;
           }
-          if (typeof data == 'string')
-            data.split(/\n/g).forEach((line) => callback(line));
+          if(typeof data == 'string') data.split(/\n/g).forEach(line => callback(line));
         }
-      } catch (e) {
+      } catch(e) {
         return e;
       }
     }
     readData(proc.stdout);
-    readData(proc.stderr, (data) =>
-      console.log(
-        'stderr data:',
-        Util.abbreviate(Util.escape(data), Util.getEnv('COLUMNS') || 120)
-      )
+    readData(proc.stderr, data =>
+      console.log('stderr data:', Util.abbreviate(Util.escape(data), Util.getEnv('COLUMNS') || 120))
     );
     let exitCode = await waitChild(proc);
     console.log('exitCode:', exitCode);
@@ -114,52 +101,38 @@ async function main() {
     maxStringLength: 200,
     maxArrayLength: Infinity
   });
-  await PortableFileSystem((fs) => (filesystem = fs));
-  await PortableChildProcess((cp) => (childProcess = cp));
+  await PortableFileSystem(fs => (filesystem = fs));
+  await PortableChildProcess(cp => (childProcess = cp));
 
   Socket.timeoutCycler();
 
-  let mounter = runMount(
-    new Repeater(async (push, stop) => {
-      while (true) await push(mountDirs);
+  let mounter = runMount(new Repeater(async (push, stop) => {
+      while(true) await push(mountDirs);
     })
-  ).then((exitCode) => (exitCode == 127 ? Util.exit(127) : exitCode));
+  ).then(exitCode => (exitCode == 127 ? Util.exit(127) : exitCode));
 
   app.use(express.text({ type: 'application/xml', limit: '16384kb' }));
 
   app.use(bodyParser.json({ limit: '200mb' }));
-  app.use(
-    bodyParser.raw({ type: 'text/plain;charset=UTF-8', limit: '524288kb' })
-  );
+  app.use(bodyParser.raw({ type: 'text/plain;charset=UTF-8', limit: '524288kb' }));
   app.use(bodyParser.raw({ type: 'text/plain', limit: '524288kb' }));
-  app.use(
-    bodyParser.raw({ type: 'application/octet-stream', limit: '524288kb' })
-  );
+  app.use(bodyParser.raw({ type: 'application/octet-stream', limit: '524288kb' }));
   app.use(bodyParser.raw({ type: 'multipart/mixed', limit: '16384kb' }));
 
   app.use((req, res, next) => {
-    res.append(
-      'Access-Control-Allow-Origin',
-      `https://api.github.com, http://127.0.0.1:${port}`
-    );
+    res.append('Access-Control-Allow-Origin', `https://api.github.com, http://127.0.0.1:${port}`);
     res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    res.append(
-      'Access-Control-Allow-Headers',
-      'Content-Type, Accept, Authorization'
-    );
+    res.append('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization');
     res.append('Access-Control-Allow-Credentials', 'true');
     next();
   });
 
   function SendRaw(res, file, data, type = 'application/octet-stream') {
-    res.setHeader(
-      'Content-Disposition',
-      `attachment; filename="${path.basename(file)}"`
-    );
+    res.setHeader('Content-Disposition', `attachment; filename="${path.basename(file)}"`);
 
-    if (type) res.setHeader('Content-Type', type);
-    if (data) return res.send(data);
-    else if (file && typeof file == 'string') {
+    if(type) res.setHeader('Content-Type', type);
+    if(data) return res.send(data);
+    else if(file && typeof file == 'string') {
       console.log('sendFile', { file });
       return res.sendFile(file, { root: process.cwd() });
     }
@@ -181,37 +154,33 @@ async function main() {
     } = opts;
     const base = path.basename(boardFile, '.brd');
     const formatToExt = (layers, format) => {
-      if (
-        opts.drill ||
+      if(opts.drill ||
         format.startsWith('EXCELLON') ||
         layers.indexOf('Drills') != -1 ||
         layers.indexOf('Holes') != -1
       )
         return 'TXT';
-      if (layers.indexOf('Bottom') != -1 || format.startsWith('GERBER'))
+      if(layers.indexOf('Bottom') != -1 || format.startsWith('GERBER'))
         return opts.side == 'outline' ? 'GKO' : front ? 'GTL' : 'GBL';
 
       return 'rs274x';
     };
     const gerberFile = `./tmp/${base}.${formatToExt(layers, format)}`;
-    const cmd = `eagle -X -d ${format} -o "${gerberFile}" "${boardFile}" ${layers.join(
-      ' '
-    )}`;
+    const cmd = `eagle -X -d ${format} -o "${gerberFile}" "${boardFile}" ${layers.join(' ')}`;
     console.log(`executing '${cmd}'`);
     const child = exec(`${cmd} 2>&1`, {});
     // do whatever you want with `child` here - it's a ChildProcess instance just
     // with promise-friendly `.then()` & `.catch()` functions added to it!
     let output = '';
-    child.stdout.on('data', (data) => (output += data));
-    child.stderr.on('data', (data) => (output += data));
+    child.stdout.on('data', data => (output += data));
+    child.stderr.on('data', data => (output += data));
     const { stdout, stderr, code, signal } = await child;
     console.log(`code: ${code}`);
     //  console.log(`output: ${output}`);
-    if (code !== 0) throw new Error(output);
-    if (output) output = output.replace(/\s*\r*\n/g, '\n');
+    if(code !== 0) throw new Error(output);
+    if(output) output = output.replace(/\s*\r*\n/g, '\n');
     let result = { code, output };
-    if (opts.fetch)
-      result.data = await (await fsPromises.readFile(gerberFile)).toString();
+    if(opts.fetch) result.data = await (await fsPromises.readFile(gerberFile)).toString();
     result.file = gerberFile;
     console.log('convertToGerber result =', result);
     return result;
@@ -224,22 +193,17 @@ async function main() {
     console.log('Request /gerber', { board, save, opts });
     try {
       result = await convertToGerber(board, opts);
-      if (save) {
+      if(save) {
         filename = filename || typeof save == 'string' ? save : null;
         filename = `tmp/` + filename.replace(/.*\/([^\/])*\.[^\/.]*$/g, '$1');
-        await fsPromises
-          .writeFile(filename, result.data)
-          .then((res) => console.log('Wrote file:', res));
+        await fsPromises.writeFile(filename, result.data).then(res => console.log('Wrote file:', res));
       }
-    } catch (error) {
+    } catch(error) {
       result = { error };
     }
-    console.log(
-      'Response /gerber',
-      Util.filterOutKeys(result, /(output|data)/)
-    );
+    console.log('Response /gerber', Util.filterOutKeys(result, /(output|data)/));
 
-    if (/get/i.test(req.method) || raw) {
+    if(/get/i.test(req.method) || raw) {
       const { file } = result;
       return SendRaw(res, file, result.data);
     }
@@ -271,21 +235,16 @@ async function main() {
       'output-dir': './tmp/',
       ...opts
     };
-    if (
-      opts.front == undefined &&
-      opts.back == undefined &&
-      opts.drill == undefined
-    )
-      opts.back = gerberFile;
+    if(opts.front == undefined && opts.back == undefined && opts.drill == undefined) opts.back = gerberFile;
     let sides = [];
 
-    for (let side of ['front', 'back', 'drill', 'outline'])
-      if (side in opts) {
-        if (typeof opts[side] != 'string') opts[side] = gerberFile;
+    for(let side of ['front', 'back', 'drill', 'outline'])
+      if(side in opts) {
+        if(typeof opts[side] != 'string') opts[side] = gerberFile;
         sides.push(side);
       }
 
-    if (opts.voronoi && !opts.vectorial) opts.vectorial = 1;
+    if(opts.voronoi && !opts.vectorial) opts.vectorial = 1;
 
     console.debug(`gerberToGcode`, opts);
     function makePath(ext, side, base = basename) {
@@ -293,15 +252,8 @@ async function main() {
     }
 
     const params = [...Object.entries(opts)]
-      .filter(
-        ([k, v]) =>
-          typeof v == 'string' ||
-          typeof v == 'number' ||
-          (typeof v == 'boolean' && v === true)
-      )
-      .map(
-        ([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? '=' + v : ''}`
-      );
+      .filter(([k, v]) => typeof v == 'string' || typeof v == 'number' || (typeof v == 'boolean' && v === true))
+      .map(([k, v]) => `--${k}${typeof v != 'boolean' && v != '' ? '=' + v : ''}`);
     console.log('Request /gcode', { gerberFile, fetch, raw });
     //console.warn(`gerberToGcode`, Util.abbreviate(gerberFile), { gcodeFile, opts });
 
@@ -313,13 +265,12 @@ async function main() {
       // do whatever you want with `child` here - it's a ChildProcess instance just
       // with promise-friendly `.then()` & `.catch()` functions added to it!
       let output = '';
-      child.stdout.on('data', (data) => (output += data));
-      child.stderr.on('data', (data) => (output += data));
-      wait = await child.catch((error) => ({ code: -1, error }));
+      child.stdout.on('data', data => (output += data));
+      child.stderr.on('data', data => (output += data));
+      wait = await child.catch(error => ({ code: -1, error }));
 
       const { stdout, stderr, code, signal } = wait;
-      if (output)
-        output = Util.abbreviate(output.replace(/\s*\r*\n/g, '\n'), 200);
+      if(output) output = Util.abbreviate(output.replace(/\s*\r*\n/g, '\n'), 200);
       console.log('Response /gcode', { stdout, output, sides });
 
       //   if(code !== 0) throw new Error(output);
@@ -327,33 +278,24 @@ async function main() {
       const gcodeFile = makePath('ngc', sides[0]);
       const svgFile = makePath('svg', sides[0], 'processed');
 
-      for (let [file, to] of sides.map((side) => [
-        makePath('svg', side, 'processed'),
-        makePath('svg', side)
-      ]))
-        if (fs.existsSync(file)) fs.renameSync(file, to);
+      for(let [file, to] of sides.map(side => [makePath('svg', side, 'processed'), makePath('svg', side)]))
+        if(fs.existsSync(file)) fs.renameSync(file, to);
 
-      let files = sides
-        .map((side) => [side, makePath('ngc', side)])
-        .filter(([side, file]) => fs.existsSync(file));
+      let files = sides.map(side => [side, makePath('ngc', side)]).filter(([side, file]) => fs.existsSync(file));
       console.log('Response /gcode', { files });
 
       let result = { code, output, cmd };
-      if (fetch) {
-        for (let [side, file] of files)
-          result[side] = await (await fsPromises.readFile(file)).toString();
+      if(fetch) {
+        for(let [side, file] of files) result[side] = await (await fsPromises.readFile(file)).toString();
       }
-      if (/*/get/i.test(req.method) || */ raw) {
+      if(/*/get/i.test(req.method) || */ raw) {
         const { file } = result;
         return SendRaw(res, file, result.data);
       }
       result.files = Object.fromEntries(files);
-      console.log(
-        'Response /gcode',
-        Util.filterOutKeys(result, /(Xoutput|data)/)
-      );
+      console.log('Response /gcode', Util.filterOutKeys(result, /(Xoutput|data)/));
       return result;
-    } catch (error) {
+    } catch(error) {
       Util.putError(error);
     }
   };
@@ -364,8 +306,8 @@ async function main() {
     let result;
 
     try {
-      result = await gerberToGcode(file, opts).catch((error) => ({ error }));
-    } catch (error) {
+      result = await gerberToGcode(file, opts).catch(error => ({ error }));
+    } catch(error) {
       result = { error };
     } finally {
       res.json(result);
@@ -380,7 +322,7 @@ async function main() {
     let response = await fetch(url);
     let result = JSON.parse(await response.text());
     console.log('result', result);
-    if (filter) {
+    if(filter) {
       const re = new RegExp(filter, 'g');
       result = result.filter(({ name }) => re.test(name));
     }
@@ -388,45 +330,42 @@ async function main() {
   };
 
   app.use(async (req, res, next) => {
-    if (!/overrides\//.test(req.path)) {
+    if(!/overrides\//.test(req.path)) {
       let relativePath = path.join('.', req.path);
       let overridePath = path.join('overrides', req.path);
       let isFile = false;
 
       await fsPromises
         .stat(relativePath)
-        .then((st) => (isFile = st.isFile()))
-        .catch((err) => {});
+        .then(st => (isFile = st.isFile()))
+        .catch(err => {});
 
       let override = false;
 
-      if (isFile)
+      if(isFile)
         await fsPromises
           .access(overridePath, fs.constants.F_OK)
           .then(() => (override = true))
-          .catch((err) => {});
+          .catch(err => {});
 
-      if (override) {
+      if(override) {
         console.log('Static request:', { overridePath, override, res });
 
         return res.redirect('/' + overridePath);
       }
     }
-    if (/lib\/preact.js/.test(req.url)) req.url = '/lib/preact.mjs';
+    if(/lib\/preact.js/.test(req.url)) req.url = '/lib/preact.mjs';
 
-    if (!/lib\//.test(req.url)) {
+    if(!/lib\//.test(req.url)) {
       const { path, url, method, headers, query, body } = req;
       false &&
-        console.log(
-          'Static request:',
-          { path, url, method, headers, query, body } /* Object.keys(req), */,
-          ...Util.if(
-            Util.filterOutKeys(
+        console.log('Static request:', { path, url, method, headers, query, body } /* Object.keys(req), */,
+          ...Util.if(Util.filterOutKeys(
               req.headers,
               /(^sec|^accept|^cache|^dnt|-length|^host$|^if-|^connect|^user-agent|-type$|^origin$|^referer$)/
             ),
             () => [],
-            (value) => ['headers: ', value],
+            value => ['headers: ', value],
             Util.isEmpty
           )
         );
@@ -452,9 +391,7 @@ async function main() {
       }
     })
   );
-  app.get(/\/[^\/]*\.js$/, async (req, res) =>
-    res.sendFile(path.join(p, req.path))
-  );
+  app.get(/\/[^\/]*\.js$/, async (req, res) => res.sendFile(path.join(p, req.path)));
 
   //app.get('/components.js', async (req, res) => res.sendFile(path.join(p, 'components.js')));
 
@@ -465,55 +402,44 @@ async function main() {
   );
 
   async function getDescription(file) {
-    let str = await fs.promises.readFile(file).then((r) => r.toString());
+    let str = await fs.promises.readFile(file).then(r => r.toString());
     let r = [...Util.matchAll('<(/)?(board|schematic|library)[ >]', str)]
-      .map((m) => m.index)
+      .map(m => m.index)
       .sort((a, b) => a - b)
       .slice(0, 2);
     let chunk = str.substring(...r);
     let a = ['<description>', '</description>'];
     let indexes = a
-      .map((s) => new RegExp(s))
-      .map((re) => re.exec(chunk))
-      .map((m) => m && m.index);
+      .map(s => new RegExp(s))
+      .map(re => re.exec(chunk))
+      .map(m => m && m.index);
     let d = chunk.substring(...indexes);
-    if (d.startsWith('<description'))
-      return Util.decodeHTMLEntities(d.substring(a[0].length));
+    if(d.startsWith('<description')) return Util.decodeHTMLEntities(d.substring(a[0].length));
     return '';
   }
 
   const descMap = Util.weakMapper(getDescription, new Map());
 
   async function GetFilesList(dir = './tmp', opts = {}) {
-    let {
-      filter = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$',
-      descriptions = false,
-      names
-    } = opts;
+    let { filter = '.*\\.(brd|sch|lbr|GBL|GTL|GKO|ngc)$', descriptions = false, names } = opts;
     const re = new RegExp(filter, 'i');
-    const f = (ent) => re.test(ent);
+    const f = ent => re.test(ent);
 
-    console.log(
-      'GetFilesList()',
-      { filter, descriptions },
-      ...(names ? [names.length] : [])
-    );
+    console.log('GetFilesList()', { filter, descriptions }, ...(names ? [names.length] : []));
 
-    if (!names) names = [...(await fs.promises.readdir(dir))].filter(f);
+    if(!names) names = [...(await fs.promises.readdir(dir))].filter(f);
 
-    return Promise.all(
-      names
-        .map((entry) => `${dir}/${entry}`)
+    return Promise.all(names
+        .map(entry => `${dir}/${entry}`)
         .reduce((acc, file) => {
           let description = descriptions ? descMap(file) : descMap.get(file);
           //   console.log('descMap:', util.inspect(descMap, { depth: 1 }));
           let obj = {
             name: file
           };
-          if (typeof description == 'string') obj.description = description;
+          if(typeof description == 'string') obj.description = description;
 
-          acc.push(
-            fs.promises
+          acc.push(fs.promises
               .stat(file)
               .then(({ ctime, mtime, mode, size }) =>
                 Object.assign(obj, {
@@ -523,16 +449,16 @@ async function main() {
                   size
                 })
               )
-              .catch((err) => {})
+              .catch(err => {})
           );
           return acc;
         }, [])
-    ).then((a) => a.filter((i) => i != null));
+    ).then(a => a.filter(i => i != null));
   }
 
   function FilesURLs(list) {
     const base_url = list[0].replace(/\/[^\/]*$/, '');
-    const files = list.map((url) => url.replace(/.*\//g, ''));
+    const files = list.map(url => url.replace(/.*\//g, ''));
     return { base_url, files };
   }
   //app.use("/serialport", remoteSerialPort.http({ verbose: true }));
@@ -540,13 +466,7 @@ async function main() {
   app.get(/\/list-serial/, async (req, res) => {
     const list = await SerialPort.list();
 
-    res.json(
-      list.filter((port) =>
-        ['manufacturer', 'pnpId', 'vendorId', 'productId'].some(
-          (key) => port[key]
-        )
-      )
-    );
+    res.json(list.filter(port => ['manufacturer', 'pnpId', 'vendorId', 'productId'].some(key => port[key])));
   });
 
   app.ws('/serial', async (ws, req) => {
@@ -557,7 +477,7 @@ async function main() {
 
     let serial = new SerialStream(port || '/dev/tnt1');
 
-    duplex.on('data', async (data) => {
+    duplex.on('data', async data => {
       data = data + '' + '\r\n';
 
       console.debug('ws -> serial:', escape(data));
@@ -566,7 +486,7 @@ async function main() {
       serial.flush();
     });
 
-    serial.on('data', async (data) => {
+    serial.on('data', async data => {
       data = (data + '').replace(/\r?\n?$/, '');
 
       console.debug('serial -> ws:', escape(data));
@@ -581,9 +501,8 @@ async function main() {
     const { port } = body;
   });
   const configFile = 'config.json';
-  const safeStat = Util.tryFunction(
-    (f) => filesystem.stat(f),
-    (st) => st,
+  const safeStat = Util.tryFunction(f => filesystem.stat(f),
+    st => st,
     () => {}
   );
 
@@ -591,19 +510,17 @@ async function main() {
     let str = '',
       data = {},
       time = 0;
-    Util.tryCatch(
-      () => filesystem.readFile(configFile),
-      (c) => {
+    Util.tryCatch(() => filesystem.readFile(configFile),
+      c => {
         str = c;
         let stat = safeStat(configFile);
         console.log('stat:', stat);
-        if (Util.isObject(stat.mtime)) time = stat.mtime.getTime();
+        if(Util.isObject(stat.mtime)) time = stat.mtime.getTime();
       },
       () => (str = '{}')
     );
-    let config = Util.tryCatch(
-      () => JSON.parse(str),
-      (o) => o,
+    let config = Util.tryCatch(() => JSON.parse(str),
+      o => o,
       () => ({})
     );
     console.log('config:', config);
@@ -625,17 +542,14 @@ async function main() {
   });
 
   app.get(/\/github/, async (req, res) => {
-    Util.tryCatch(
-      async () => {
+    Util.tryCatch(async () => {
         const { body } = req;
         const url = Util.parseURL(req.url);
         const { location, query } = url;
-        let args = location
-          .split(/\//g)
-          .filter((p) => !/(^github$|^$)/.test(p));
+        let args = location.split(/\//g).filter(p => !/(^github$|^$)/.test(p));
         let options = { ...query, ...body };
 
-        if (args.length > 0) {
+        if(args.length > 0) {
           const [owner, repo, dir, filter] = args;
           Util.weakAssign(options, { owner, repo, dir, filter });
         }
@@ -645,14 +559,9 @@ async function main() {
         let result;
         const { owner, repo, dir, filter, tab, after } = options;
 
-        if (owner && repo && dir)
-          result = await GithubListContents(
-            owner,
-            repo,
-            dir,
-            filter && new RegExp(filter, 'g')
-          );
-        else if (owner && (tab || after)) {
+        if(owner && repo && dir)
+          result = await GithubListContents(owner, repo, dir, filter && new RegExp(filter, 'g'));
+        else if(owner && (tab || after)) {
           let proxyUrl = Util.makeURL({
             ...url,
             protocol: 'https',
@@ -671,7 +580,7 @@ async function main() {
           return;
         }
 
-        res.json(FilesURLs(result.map((file) => file.download_url)));
+        res.json(FilesURLs(result.map(file => file.download_url)));
       },
       () => {},
       Util.putError
@@ -684,29 +593,20 @@ async function main() {
     const { owner, repo, dir, filter } = body;
     console.log('POST github', { owner, repo, dir, filter });
 
-    res.json(
-      await GithubListContents(
-        owner,
-        repo,
-        dir,
-        filter && new RegExp(filter, 'g')
-      )
-        .then((result) => FilesURLs(result.map((file) => file.download_url)))
-        .catch((error) => ({ error }))
+    res.json(await GithubListContents(owner, repo, dir, filter && new RegExp(filter, 'g'))
+        .then(result => FilesURLs(result.map(file => file.download_url)))
+        .catch(error => ({ error }))
     );
   });
 
-  app.get(/^\/files/, async (req, res) =>
-    res.json({ files: await GetFilesList() })
-  );
+  app.get(/^\/files/, async (req, res) => res.json({ files: await GetFilesList() }));
   app.post(/^\/(files|list).html/, async (req, res) => {
     const { body } = req;
     let { filter, descriptions, names } = body;
 
-    if (names !== undefined) {
-      if (typeof names == 'string') names = names.split(/\n/g);
-      if (Util.isArray(names))
-        names = names.map((name) => name.replace(/.*\//g, ''));
+    if(names !== undefined) {
+      if(typeof names == 'string') names = names.split(/\n/g);
+      if(Util.isArray(names)) names = names.map(name => name.replace(/.*\//g, ''));
     }
 
     res.json({
@@ -743,24 +643,18 @@ async function main() {
     const { body } = req;
     console.log('req.headers:', req.headers);
     console.log('body:', body, Util.className(body), Util.toString(body));
-    console.log(
-      'save body:',
-      typeof body == 'string' ? Util.abbreviate(body, 100) : body
-    );
+    console.log('save body:', typeof body == 'string' ? Util.abbreviate(body, 100) : body);
     let st,
       err,
       filename =
-        (req.headers['content-disposition'] || '').replace(
-          new RegExp('.*"([^"]*)".*', 'g'),
-          '$1'
-        ) || 'output.svg';
+        (req.headers['content-disposition'] || '').replace(new RegExp('.*"([^"]*)".*', 'g'), '$1') || 'output.svg';
     filename = 'tmp/' + filename.replace(/^tmp\//, '');
     await fs.promises
       .writeFile(filename, body, { mode: 0x0180, flag: 'w' })
       .then(() => (st = fs.statSync(filename)))
-      .catch((error) => (err = error));
+      .catch(error => (err = error));
 
-    if (err) {
+    if(err) {
       console.log('save error:', err);
       res.json(err);
     } else {

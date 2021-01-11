@@ -4,33 +4,30 @@ function readFile(path) {
   let ret;
   try {
     ret = filesystem.readFile(path).toString();
-  } catch (err) {}
+  } catch(err) {}
   return ret;
 }
 
 function invertRanges(ranges, len) {
   let prev = 0;
   let ret = [];
-  for (let { start, end } of ranges) {
-    if (start > prev) ret.push({ start: prev, end: start });
+  for(let { start, end } of ranges) {
+    if(start > prev) ret.push({ start: prev, end: start });
 
     prev = end;
   }
-  if (prev < len) ret.push({ start: prev, end: len });
+  if(prev < len) ret.push({ start: prev, end: len });
   return ret;
 }
 
 function extractRanges(ranges, text) {
   let ret = [];
-  for (let { start, end } of ranges) {
+  for(let { start, end } of ranges) {
     ret.push({
       pos: lineColumn(start, text),
       code: text.substring(start, end),
       toString(filename) {
-        return `${filename}:${this.pos.toString()}\n${Util.abbreviate(
-          this.code,
-          100
-        )}`;
+        return `${filename}:${this.pos.toString()}\n${Util.abbreviate(this.code, 100)}`;
       }
     });
   }
@@ -60,7 +57,7 @@ function processFile(arg, re) {
     .map(({ url, ...item }) => [url.replace(/.*:\/\/[^/]*\//g, ''), item])
     .filter(([file]) => re.test(file));
 
-  for (let [file, obj] of scripts) {
+  for(let [file, obj] of scripts) {
     let { ranges, text } = obj;
     try {
       let lines = text /* || readFile(file)*/
@@ -76,14 +73,14 @@ function processFile(arg, re) {
       //console.log('inverted:', inverted);*/
       //console.log('used:', used.map(u => u.toString(file).replace(/\n/g, '\\n')).join('\n'));
       //console.log('unused:', unused.map(u => u.toString(file)).join('\n\n'));
-    } catch (err) {}
+    } catch(err) {}
   }
 }
 
 function main(args) {
   const [file, expr] = args;
 
-  if (!processFile(file, expr)) return 1;
+  if(!processFile(file, expr)) return 1;
   return 0;
 }
 

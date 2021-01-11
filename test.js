@@ -16,7 +16,7 @@ import inspect from './lib/objectInspect.js';
 
 const lib = { Point, Size, Line, Rect, PointList, RGBA, HSLA, Matrix };
 
-Point.prototype.atan2 = function () {
+Point.prototype.atan2 = function() {
   return Math.atan2(this.x, this.y);
 };
 Object.defineProperty(Point.prototype, 'distance', {
@@ -92,14 +92,14 @@ function testPointVector() {
 }
 
 globalThis.test_array = [1, 2, 3, 4, 5, 6];
-globalThis.process = function (contours, hier) {
+globalThis.process = function(contours, hier) {
   let areas = [];
 
   let outlines = {
     contours,
     hier
   };
-  contours = contours.filter((c) => c.length > 3);
+  contours = contours.filter(c => c.length > 3);
 
   let c = contours[0];
 
@@ -173,8 +173,8 @@ globalThis.process = function (contours, hier) {
 
   function processContours(contours) {
     contours.sort((a, b) => a.length - b.length);
-    contours = contours.filter((c) => c.length >= 4);
-    for (let i = 0; i < contours.length; i++) {
+    contours = contours.filter(c => c.length >= 4);
+    for(let i = 0; i < contours.length; i++) {
       const [next, prev, child, parent] = hier[i];
       let list = new PointList(contours[i]);
       let bbox = list.bbox();
@@ -184,7 +184,7 @@ globalThis.process = function (contours, hier) {
       contours[i].bbox = bbox;
       contours[i].rect = rect;
       areas.push(rect.area);
-      list = list.map((p) => {
+      list = list.map(p => {
         p.x += 2;
         p.y += 2;
         return p;
@@ -192,7 +192,7 @@ globalThis.process = function (contours, hier) {
       drawContour(list, new RGBA(255, 0, 255), 8, false);
     }
     contours.sort((a, b) => b.area - a.area);
-    areas = contours.map((c) => c.area);
+    areas = contours.map(c => c.area);
     dumpContour(contours[0]);
     drawContour(contours[0], new RGBA(255, 0, 0), 20, false);
     return contours;
@@ -223,7 +223,7 @@ globalThis.process = function (contours, hier) {
 */
   const do_log = false;
 
-  if (do_log) {
+  if(do_log) {
     //console.log(`polygons: [\n  ${polygons.join(',\n  ')}\n]`);
     //console.log('PROCESS contours: ', contours.map(c => '[' + c.map(pt => `{x:${pt.x},y:${pt.y}}`).join(', ') + ']').join(', '));
     //console.log('PROCESS hier: ', '[' + hier.map(h => `[${h.join(',')}]`).join(', '));

@@ -27,38 +27,30 @@ class NodeList {
 }
 
 const proxyObject = (root, handler) => {
-  const ptr = (path) => path.reduce((a, i) => a[i], root);
-  const nodes = Util.weakMapper(
-    (value, path) =>
-      new Proxy(
-        handler && handler.construct ? handler.construct(value, path) : value,
-        {
-          get(target, key) {
-            let prop = value[key];
+  const ptr = path => path.reduce((a, i) => a[i], root);
+  const nodes = Util.weakMapper((value, path) =>
+      new Proxy(handler && handler.construct ? handler.construct(value, path) : value, {
+        get(target, key) {
+          let prop = value[key];
 
-            //console.log('get ', { key, prop });
+          //console.log('get ', { key, prop });
 
-            if (key == 'attributes') return prop;
+          if(key == 'attributes') return prop;
 
-            if (
-              key !== 'attributes' &&
-              (Util.isObject(prop) || Util.isArray(prop))
-            )
-              return new node([...path, key]);
+          if(key !== 'attributes' && (Util.isObject(prop) || Util.isArray(prop))) return new node([...path, key]);
 
-            return handler && handler.get ? handler.get(prop, key) : prop;
-          },
-          ownKeys(target) {
-            if ('attributes' in value) {
-              //console.log('ownKeys', Object.keys(value.attributes));
+          return handler && handler.get ? handler.get(prop, key) : prop;
+        },
+        ownKeys(target) {
+          if('attributes' in value) {
+            //console.log('ownKeys', Object.keys(value.attributes));
 
-              return Object.keys(value.attributes);
-            }
-
-            return Reflect.keys(target);
+            return Object.keys(value.attributes);
           }
+
+          return Reflect.keys(target);
         }
-      )
+      })
   );
 
   function node(path) {
@@ -75,9 +67,7 @@ const proxyObject = (root, handler) => {
 
 async function main() {
   await ConsoleSetup();
-  let str = filesystem
-    .readFile('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd')
-    .toString();
+  let str = filesystem.readFile('../an-tronics/eagle/Headphone-Amplifier-ClassAB-alt3.brd').toString();
 
   let xml = tXml(str);
   //console.log('xml:', Util.abbreviate(xml));
@@ -85,9 +75,7 @@ async function main() {
   let p = proxyObject(xml[0], {
     construct(value, path) {
       //console.log('construct', { value, path });
-      return 'tagName' in value
-        ? new Node(value, path)
-        : new NodeList(value, path);
+      return 'tagName' in value ? new Node(value, path) : new NodeList(value, path);
     }
   });
   //console.log('obj', p);
@@ -96,15 +84,14 @@ async function main() {
   //console.log('children[0].tagName', p.children[0].tagName);
   //console.log('keys(children[0])', Object.keys(p.children[0]));
 
-  let result = deep.select(
-    p,
+  let result = deep.select(p,
     (
       o //console.log('o:', o);
     ) => Util.isObject(o) && o.attributes !== undefined && o.name !== undefined
   );
   //console.log('result:', result);
 
-  for (let { path, value } of result) {
+  for(let { path, value } of result) {
     const {
       tagName: type,
       attributes: { name }

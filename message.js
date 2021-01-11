@@ -8,19 +8,16 @@ export class Message {
   constructor(...args) {
     //console.log('new Message(', ...args, ')');
 
-    if (args.length == 1) {
-      Object.assign(
-        this,
-        typeof args[0] == 'string'
-          ? Message.decode(args[0])
-          : Util.filterOutMembers(args[0], (v) => v == undefined)
+    if(args.length == 1) {
+      Object.assign(this,
+        typeof args[0] == 'string' ? Message.decode(args[0]) : Util.filterOutMembers(args[0], v => v == undefined)
       );
     } else {
       const [body, origin, recipient, type] = args;
-      if (origin !== undefined) this.origin = origin;
-      if (recipient !== undefined) this.recipient = recipient;
-      if (type !== undefined) this.type = type;
-      if (body !== undefined) this.body = body;
+      if(origin !== undefined) this.origin = origin;
+      if(recipient !== undefined) this.recipient = recipient;
+      if(type !== undefined) this.type = type;
+      if(body !== undefined) this.body = body;
     }
     const { origin, recipient, type, body } = this;
 
@@ -32,11 +29,11 @@ export class Message {
     const { RECIPIENT_ID, SENDER_ID, TYPE_ID } = Message;
     const num = typeof char == 'string' ? char.codePointAt(0) : char;
 
-    return [SENDER_ID, RECIPIENT_ID, TYPE_ID].some((code) => code == num);
+    return [SENDER_ID, RECIPIENT_ID, TYPE_ID].some(code => code == num);
   }
 
   static decode(m) {
-    if (Message.isId(m[0])) {
+    if(Message.isId(m[0])) {
       const o = {
         origin: getPrefix(Message.SENDER_ID),
         recipient: getPrefix(Message.RECIPIENT_ID),
@@ -45,7 +42,7 @@ export class Message {
 
       function getPrefix(code) {
         let r, i;
-        if (m.codePointAt(0) == code) {
+        if(m.codePointAt(0) == code) {
           i = m.lastIndexOf(String.fromCodePoint(code));
           r = m.substring(1, i);
           m = m.substring(i + 1);
@@ -56,24 +53,24 @@ export class Message {
     }
     let o = {};
     let len;
-    if (m[0] == ':') {
+    if(m[0] == ':') {
       len = m.indexOf(' ');
-      if (len == -1) len = m.length;
+      if(len == -1) len = m.length;
       o.origin = m.substring(1, len);
       m = m.substring(len + 1);
     }
     len = m.indexOf(' ');
-    if (len == -1) len = m.length;
+    if(len == -1) len = m.length;
     o.type = m.substring(0, len);
     m = m.substring(len + 1);
 
     len = m.indexOf(' ');
-    if (len != -1) {
+    if(len != -1) {
       o.recipient = m.substring(0, len);
       m = m.substring(len + 1);
     }
 
-    if (m.length) o.body = decodeBody(m);
+    if(m.length) o.body = decodeBody(m);
 
     return o;
   }
@@ -90,28 +87,22 @@ export class Message {
     //console.log('Message.encode',{body,recipient,origin, type});
     let r = encodeBody(body) || '';
 
-    const prepend = plain
-      ? (str) => (r = str + (r != '' ? ' ' : '') + r)
-      : (str) => (r = str + r);
+    const prepend = plain ? str => (r = str + (r != '' ? ' ' : '') + r) : str => (r = str + r);
 
     const insertField = plain
       ? (str, code) => prepend((code == Message.SENDER_ID ? ':' : '') + str)
-      : (str, code) =>
-          prepend(
-            (r = String.fromCodePoint(code) + str + String.fromCodePoint(code))
-          );
+      : (str, code) => prepend((r = String.fromCodePoint(code) + str + String.fromCodePoint(code)));
 
-    if (recipient) r = insertField(recipient, Message.RECIPIENT_ID);
+    if(recipient) r = insertField(recipient, Message.RECIPIENT_ID);
     r = insertField(type || 'x', Message.TYPE_ID);
-    if (origin) r = insertField(origin, Message.SENDER_ID);
+    if(origin) r = insertField(origin, Message.SENDER_ID);
 
     return r;
   }
 
   get json() {
     const { body } = this;
-    let r = Util.tryCatch(
-      () => JSON.parse(body),
+    let r = Util.tryCatch(() => JSON.parse(body),
       (obj) => obj,
       () => null
     );
@@ -124,18 +115,12 @@ export class Message {
   }
   [Symbol.toStringTag]() {
     const { origin, recipient, type, body } = this;
-    return (
-      'new Message',
-      Util.filterOutMembers(
-        { origin, recipient, type, body },
-        (v) => v == undefined
-      )
-    );
+    return 'new Message', Util.filterOutMembers({ origin, recipient, type, body }, v => v == undefined);
   }
 }
 
 function decodeBody(str) {
-  if (str[0] == ':') {
+  if(str[0] == ':') {
     //console.debug('decodeBody', str);
     return JSON.parse(unescape(str.substring(1)));
   }
@@ -143,8 +128,8 @@ function decodeBody(str) {
 }
 
 function encodeBody(body) {
-  if (typeof body == 'string') return body;
-  if (body == undefined) return undefined;
+  if(typeof body == 'string') return body;
+  if(body == undefined) return undefined;
 
   //console.debug('encodeBody', JSON.stringify(body));
   return ':' + /*escape*/ JSON.stringify(body);

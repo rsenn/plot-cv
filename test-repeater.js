@@ -15,7 +15,7 @@ async function main() {
 
   pushEvent('new value');
 
-  for await (let value of r) {
+  for await(let value of r) {
     console.log('value:', value);
   }
 
@@ -32,12 +32,12 @@ async function main() {
 
   console.log('p:', p);
 
-  for await (let value of subscriber) {
+  for await(let value of subscriber) {
     console.log('value:', value);
   }*/
 }
 try {
   main(Util.getArgs());
-} catch (err) {
+} catch(err) {
   console.error('error:', err);
 }
