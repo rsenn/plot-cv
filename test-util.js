@@ -1,3 +1,6 @@
-const Util = require('./lib/util.cjs');
+import { Util } from './lib/util.js';
 
-//console.log(require('./lib/util.cjs').default);
+console.log(Util.escape(read('/proc/self/cmdline')));
+console.log(Util.escape(read('/etc/hosts')));
+console.log(globalThis.options());
+console.log(Util.getArgv());

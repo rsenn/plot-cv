@@ -12,33 +12,7 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import fetch from 'isomorphic-fetch';
 import deep from './lib/deep.js';
 import { promises as fsPromises } from 'fs';
-import {
-  isStream,
-  AcquireReader,
-  AcquireWriter,
-  ArrayWriter,
-  readStream,
-  PipeTo,
-  WritableRepeater,
-  WriteIterator,
-  AsyncWrite,
-  AsyncRead,
-  ReadFromIterator,
-  WriteToRepeater,
-  LogSink,
-  StringReader,
-  LineReader,
-  DebugTransformStream,
-  CreateWritableStream,
-  CreateTransformStream,
-  RepeaterSource,
-  RepeaterSink,
-  LineBufferStream,
-  TextTransformStream,
-  ChunkReader,
-  ByteReader,
-  PipeToRepeater
-} from './lib/stream.js';
+import { isStream, AcquireReader, AcquireWriter, ArrayWriter, readStream, PipeTo, WritableRepeater, WriteIterator, AsyncWrite, AsyncRead, ReadFromIterator, WriteToRepeater, LogSink, StringReader, LineReader, DebugTransformStream, CreateWritableStream, CreateTransformStream, RepeaterSource, RepeaterSink, LineBufferStream, TextTransformStream, ChunkReader, ByteReader, PipeToRepeater } from './lib/stream.js';
 
 function TCPSocket(host, port) {
   const defaultTimeout = 30000;
@@ -49,16 +23,14 @@ function TCPSocket(host, port) {
     tcp.setTimeout(defaultTimeout);
     tcp.setNoDelay(true);
     console.log(`Connecting to ${host}:${port} ...`);
-    tcp.connect(port, host, () =>
-      finish(`Connected to ${host}:${port}`, start)
-    );
+    tcp.connect(port, host, () => finish(`Connected to ${host}:${port}`, start));
     tcp.on('close', () => finish(null, start));
-    tcp.on('error', (err) => finish(err, -1));
+    tcp.on('error', err => finish(err, -1));
     tcp.on('timeout', () => finish('timeout', -1));
 
     function finish(msg, start = -1, end = Date.now()) {
-      if (msg) console.error(msg);
-      if (start < 0) {
+      if(msg) console.error(msg);
+      if(start < 0) {
         tcp.destroy();
         reject(msg);
       } else {
@@ -72,8 +44,7 @@ function HTTPRequest(url, proxy_host, proxy_port) {
   const defaultTimeout = 30000;
   let ctor = url.startsWith('https') ? https.request : http.request;
   return new Promise((resolve, reject) => {
-    const req = new ctor(
-      url,
+    const req = new ctor(url,
       {
         host: proxy_host,
         port: proxy_port,
@@ -82,7 +53,7 @@ function HTTPRequest(url, proxy_host, proxy_port) {
         method: 'CONNECT',
         path: 'www.google.com:80'
       },
-      (res) => {
+      res => {
         console.log('got result!');
         resolve(res);
 
@@ -113,35 +84,33 @@ function HTTPRequest(url, proxy_host, proxy_port) {
 function Proxy(obj) {
   const p = this instanceof Proxy ? this : {};
 
-  for (let prop in obj) {
+  for(let prop in obj) {
     const v = obj[prop];
 
-    if (Util.isIpAddress(v)) {
+    if(Util.isIpAddress(v)) {
       p.ip = v;
-    } else if (Util.isPortNumber(v)) {
+    } else if(Util.isPortNumber(v)) {
       p.port = +v;
-    } else if (/proto/i.test(prop)) {
+    } else if(/proto/i.test(prop)) {
       p.protocol = Util.isArray(v) ? v[0] : v;
-      if (/https/.test(p.protocol)) p.protocol = 'http';
-    } else if (/(country|source)/i.test(prop)) {
+      if(/https/.test(p.protocol)) p.protocol = 'http';
+    } else if(/(country|source)/i.test(prop)) {
       p[prop] = v;
     }
   }
   const propNames = ['protocol', 'ip', 'port', 'country', 'source'];
-  let i = propNames.findIndex((prop) => p[prop] === undefined);
-  if (i != -1) {
-    throw new Error(
-      `Property '${propNames[i]}' missing on: ` + Util.toSource(p)
-    );
+  let i = propNames.findIndex(prop => p[prop] === undefined);
+  if(i != -1) {
+    throw new Error(`Property '${propNames[i]}' missing on: ` + Util.toSource(p));
   }
   //console.log('new proxy:', p);
   return p;
 }
 Proxy.prototype.defaultTimeout = 30000;
-Proxy.prototype.valueOf = function () {
+Proxy.prototype.valueOf = function() {
   return this.time;
 };
-Proxy.prototype.toSource = function () {
+Proxy.prototype.toSource = function() {
   const { protocol, ip, port, country, time, source } = this;
   return Util.toSource({
     protocol,
@@ -152,15 +121,15 @@ Proxy.prototype.toSource = function () {
     source
   });
 };
-Proxy.prototype.toString = function () {
+Proxy.prototype.toString = function() {
   const { protocol, ip, port } = this;
   return `${protocol} ${ip} ${port}`;
 };
-Proxy.prototype.check = function (url) {
+Proxy.prototype.check = function(url) {
   return Check(this, url);
 };
 
-Proxy.prototype.ping = function () {
+Proxy.prototype.ping = function() {
   const proxy = this;
   const { protocol, ip, port } = proxy;
   return new Promise((resolve, reject) => {
@@ -171,18 +140,18 @@ Proxy.prototype.ping = function () {
     console.log(`Connecting to ${ip}:${port} ...`);
     tcp.connect(port, ip, () => finish(`Connected to ${ip}:${port}`, start));
     tcp.on('close', () => finish(null, start));
-    tcp.on('error', (err) => finish(err, -1));
+    tcp.on('error', err => finish(err, -1));
     tcp.on('timeout', () => finish('timeout', -1));
 
     function finish(msg, start = -1, end = Date.now()) {
       proxy.time = start >= 0 ? end - start : Number.Infinity;
       tcp.destroy();
-      if (msg) console.error(msg, proxy.time + 'msecs');
+      if(msg) console.error(msg, proxy.time + 'msecs');
       start < 0 ? reject(msg) : resolve(proxy);
     }
   });
 };
-Proxy.prototype[Symbol.for('nodejs.util.inspect.custom')] = function () {
+Proxy.prototype[Symbol.for('nodejs.util.inspect.custom')] = function() {
   const coloring = Util.coloring(!Util.isBrowser());
 };
 
@@ -203,23 +172,20 @@ async function main(country = 'de') {
     new Repeater(async (push, stop) => {
       try {
         const proxyList = new ProxyList();
-        for (const p of await proxyList.getByCountryCode(
-          country.toUpperCase()
-        )) {
+        for(const p of await proxyList.getByCountryCode(country.toUpperCase())) {
           let proxy = new Proxy({ source: 'free-proxy', ...p });
           await proxy.ping().then(push).catch(console.log);
           /*  let check = await Check(proxy);
           console.log('\nPROXY:', proxy, check, '\n');
           push(proxy);*/
         }
-      } catch (error) {
+      } catch(error) {
         stop(new Error(error));
       }
     }),
     new Repeater(async (push, stop) => {
       proxynova([country], 1000, async (err, proxies) => {
-        for (let p of proxies)
-          await new Proxy(p).ping().then(push).catch(console.log);
+        for(let p of proxies) await new Proxy(p).ping().then(push).catch(console.log);
       });
     }),
 
@@ -231,18 +197,18 @@ async function main(country = 'de') {
           delay: 50
         }
       })
-        .on('data', async (proxies) => {
+        .on('data', async proxies => {
           console.log('got some proxies', proxies.length);
-          for (let p of proxies) {
+          for(let p of proxies) {
             console.log('got proxy', p);
             let proxy = new Proxy(p);
             await proxy
               .ping()
               .then(push)
-              .catch((err) => console.error('err:', err));
+              .catch(err => console.error('err:', err));
           }
         })
-        .on('error', (error) => {
+        .on('error', error => {
           console.error('error!', (error + '').split(/\n/g)[0]);
         })
         .once('end', () => {
@@ -281,7 +247,7 @@ async function main(country = 'de') {
     try {
       console.log(`Start`);
       let i = 0;
-      for await (const proxy of Repeater.merge(proxies.slice(-1))) {
+      for await(const proxy of Repeater.merge(proxies.slice(-1))) {
         const { host, port, type } = proxy;
         console.log(`Proxy #${++i}:`, proxy); // 1, 2
         Util.insertSorted(results, proxy);
@@ -292,7 +258,7 @@ async function main(country = 'de') {
         await writeResults(results, 'sh');
         await writeResults(results, 'json');
       }
-    } catch (err) {
+    } catch(err) {
       console.log('ERROR:', err); // TimeoutError: 1000 ms elapsed
     }
 
@@ -308,23 +274,18 @@ async function writeResults(results, format = 'txt', outputName = 'proxies') {
   try {
     let output = await fsPromises.open(tempfile, 'w');
     let method = {
-      txt: (r) => r.map((p) => p.toString()).join('\n'),
-      sh: (r) =>
-        r
-          .map(
-            (p) => `tcping -t 10 ${p.ip} ${p.port} 1>&2 && echo ${p.toString()}`
-          )
-          .join('\n'),
-      json: (r) => `[\n${r.map((p) => '  ' + Util.toSource(p)).join(',\n')}\n]`
+      txt: r => r.map(p => p.toString()).join('\n'),
+      sh: r => r.map(p => `tcping -t 10 ${p.ip} ${p.port} 1>&2 && echo ${p.toString()}`).join('\n'),
+      json: r => `[\n${r.map(p => '  ' + Util.toSource(p)).join(',\n')}\n]`
     }[format];
 
     ret = await output.write(method(results) + '\n');
     await output.close();
 
-    await fsPromises.unlink(filename).catch((err) => {});
+    await fsPromises.unlink(filename).catch(err => {});
     await fsPromises.link(tempfile, filename);
     await fsPromises.unlink(tempfile);
-  } catch (err) {
+  } catch(err) {
     console.log(`ERROR writing '${filename}':`, err);
     throw err;
   }

@@ -2,7 +2,7 @@ $(function () {
   var scale = 60;
   var numberOfPoints = 4000 * scale;
 
-  var setupCanvas = function () {
+  var setupCanvas = function() {
     $('#painthere').empty();
     $('#painthere').append($('<canvas></canvas>'));
     return $('#painthere canvas')[0];
@@ -22,18 +22,18 @@ $(function () {
     ctx.fillStyle = 'darkgreen';
 
     x = y = a = b = c = d = f = 0;
-    for (i = 0; i < numberOfPoints; i++) {
+    for(i = 0; i < numberOfPoints; i++) {
       let r = Math.random();
 
-      if (r < 0.02) {
+      if(r < 0.02) {
         a = b = c = f = 0;
         d = 0.16;
-      } else if (r < 0.86) {
+      } else if(r < 0.86) {
         a = d = 0.85;
         b = 0.04;
         c = -0.04;
         f = 1.6;
-      } else if (r < 0.93) {
+      } else if(r < 0.93) {
         a = 0.2;
         b = -0.26;
         c = 0.23;

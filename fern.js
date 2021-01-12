@@ -1,7 +1,7 @@
 function pick(p) {
   var r = Math.random();
-  for (var i = 0; i < p.length; i++) {
-    if (r < p[i]) return i;
+  for(var i = 0; i < p.length; i++) {
+    if(r < p[i]) return i;
   }
   return p.length - 1;
 }
@@ -32,9 +32,9 @@ var fern_M = [
 var fern_P = cumsum([0.01, 0.85, 0.07, 0.07]);
 function ifs(M, p, niter) {
   var pt = [0.5, 0.5, 1]; // start at an arbitrary point
-  for (var i = 1; i < niter + 10; i++) {
+  for(var i = 1; i < niter + 10; i++) {
     pt = mul(M[pick(p)], pt);
-    if (i > 10) {
+    if(i > 10) {
       // wait 10 iterations to make sure we approach the attractor
       point((pt[0] + 4) / 14, 1 - pt[1] / 10.2);
     }
@@ -48,7 +48,7 @@ ifs(fern_M, fern_P, 16000);
 function cumsum(a) {
   var r = [];
   var s = 0;
-  for (var i = 0; i < a.length; i++) {
+  for(var i = 0; i < a.length; i++) {
     s += a[i];
     r.push(s);
   }
@@ -56,9 +56,9 @@ function cumsum(a) {
 }
 function mul(m, p) {
   var r = [];
-  for (var j = 0; j < m.length; j++) {
+  for(var j = 0; j < m.length; j++) {
     var s = 0;
-    for (var i = 0; i < p.length; i++) {
+    for(var i = 0; i < p.length; i++) {
       s += p[i] * m[j][i];
     }
     r.push(s);

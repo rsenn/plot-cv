@@ -98,7 +98,7 @@ async function RequestContours(req, res) {
 async function main() {
   await ConsoleSetup({
     breakLength: 120,
-    maxStringLength: 200,
+    maxStringLength: Infinity,
     maxArrayLength: Infinity
   });
   await PortableFileSystem(fs => (filesystem = fs));

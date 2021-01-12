@@ -51,7 +51,7 @@ import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import * as ecmascript from './lib/ecmascript.js';
 import { PipeTo, AsyncRead, AsyncWrite, DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater, WritableStream, ReadFromIterator } from './lib/stream.js?ts=<?TS?>';
 import { PrimitiveComponents, ElementNameToComponent, ElementToComponent } from './lib/eagle/components.js';
-import { SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian, CartesianToPolar, RotateTransformation, VERTICAL, useTrkl, ElementToClass, MakeRotation, DEBUG, log } from './lib/eagle/renderUtils.js';
+import { useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes, RenderArc } from './lib/eagle/renderUtils.js';
 import { Wire } from './lib/eagle/components/wire.js';
 import { Instance } from './lib/eagle/components/instance.js';
 import { SchematicSymbol } from './lib/eagle/components/symbol.js';
@@ -1108,10 +1108,10 @@ async function LoadDocument(project, parentElem) {
     project.status = SaveSVG();
   }, Util.putError);
 
-  sizeListener.subscribe(value => {
+  /* sizeListener.subscribe(value => {
     console.log('sizeListener', { value }, Util.getCallers());
   });
-
+*/
   return project;
 }
 
@@ -1423,7 +1423,8 @@ const BindGlobal = Util.once(arg => trkl.bind(window, arg));
 const AppMain = (window.onload = async () => {
   // Util(globalThis);
   //prettier-ignore
-  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, MutableXPath,ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient,    PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, PrimitiveComponents, ElementNameToComponent, ElementToComponent, SVGAlignments, AlignmentAttrs, Alignment, AlignmentAngle, Arc, CalculateArcRadius, ClampAngle, EagleAlignments, HORIZONTAL, HORIZONTAL_VERTICAL, InvertY, LayerAttributes, LinesToPath, MakeCoordTransformer, PolarToCartesian,CartesianToPolar, RotateTransformation, VERTICAL, useTrkl,ElementToClass, MakeRotation, Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer,EagleElementProxy,  BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, GithubListContents, ListGithubRepoServer, classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG, objectInspect, SvgPath, renderToString , ...ecmascript };
+  const imports = {Transformation, Rotation, Translation, Scaling, MatrixTransformation, TransformationList, dom, ReactComponent, iterator, eventIterator, keysim, geom, isBBox, BBox, LineList, Polygon, Circle, TouchListener, trkl, ColorMap, ClipperLib, Shape, devtools, Util, tlite, debounceAsync, tXml, deep, Alea, path, TimeoutError, Timers, asyncHelpers, Cache, CacheStorage, InterpretGcode, gcodetogeometry, GcodeObject, gcodeToObject, objectToGcode, parseGcode, GcodeParser, GCodeLineStream, parseStream, parseFile, parseFileSync, parseString, parseStringSync, noop, Interpreter, Iterator, Functional, makeLocalStorage, Repeater, useResult, LogJS, useDimensions, toXML, MutablePath, ImmutablePath, MutablePath,arrayDiff, objectDiff, Object2Array, XmlObject, XmlAttr, MutableXPath,ImmutableXPath, RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText, React, h, html, render, Fragment, Component, useState, useLayoutEffect, useRef, components, Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Message, WebSocketClient,    PipeTo, AsyncRead, AsyncWrite,   DebugTransformStream, TextEncodeTransformer, TextEncoderStream, TextDecodeTransformer, TextDecoderStream, TransformStreamSink, TransformStreamSource, TransformStreamDefaultController, TransformStream, ArrayWriter, readStream, WriteToRepeater, LogSink, RepeaterSink, StringReader, LineReader, ChunkReader, ByteReader, PipeToRepeater,ReadFromIterator, WritableStream, useTrkl, RAD2DEG, DEG2RAD, VERTICAL, HORIZONTAL, HORIZONTAL_VERTICAL, DEBUG, log, setDebug, PinSizes, EscapeClassName, UnescapeClassName, LayerToClass, ElementToClass, ClampAngle, AlignmentAngle, MakeRotation, EagleAlignments, Alignment, SVGAlignments, AlignmentAttrs, RotateTransformation, LayerAttributes, InvertY, PolarToCartesian, CartesianToPolar, RenderArc,
+ CalculateArcRadius, LinesToPath, MakeCoordTransformer, useAttributes , Wire, Instance, SchematicSymbol, Emitter, EventIterator, Slot, SlotProvider, Voronoi, GerberParser, lazyInitializer, LibraryRenderer,EagleElementProxy,  BoardRenderer, DereferenceError, EagleDocument, EagleElement, EagleNode, EagleNodeList, EagleNodeMap, EagleProject, EagleRef, EagleReference, EagleSVGRenderer, Renderer, SchematicRenderer, makeEagleElement, makeEagleNode, brcache, lscache, BaseCache, CachedFetch, NormalizeResponse, ResponseData, FetchURL, FetchCached, GetProject, ListProjects, GetLayer, AddLayer, BoardToGerber, GerberToGcode, GcodeToPolylines, GithubListContents, ListGithubRepoServer, classNames , BinaryTree, normalizePath, reverseNormalizedPath, reverseSubPath, reversePath, ...commands,  DEBUG, objectInspect, SvgPath, renderToString , ...ecmascript };
 
   const localFunctions = {
     PackageChildren,
@@ -1825,7 +1826,8 @@ const AppMain = (window.onload = async () => {
     let [solo, setSolo] = useState(null);
 
     const onMouseDown = Util.debounce(e => {
-      if(e.buttons & 1) {
+      console.log('onMouseDown', e);
+      /* if(e.buttons & 1)*/ {
         setVisible((setTo = !isVisible));
         return true;
       }
@@ -2072,15 +2074,15 @@ const AppMain = (window.onload = async () => {
 
                     if(side != 'drill') {
                       let processed = file.replace(/\.ngc$/, '.svg');
+                      console.debug('processed', processed);
                       gc.svg = await FetchURL(processed).then(ResponseData);
                       let pos;
 
                       if(gc.svg) {
                         if((pos = gc.svg.indexOf('<svg ')) != -1) gc.svg = gc.svg.substring(pos);
 
-                        console.debug('processed', processed, Util.abbreviate(gc.svg));
-
                         if(side == 'outline') {
+                          console.debug('outline', gc.svg);
                           let xmlData = tXml(gc.svg);
                           let svgPath = Util.tail(xmlData[0].children).children[0];
                           let points = SVG.pathToPoints(svgPath.attributes);
@@ -2140,12 +2142,7 @@ const AppMain = (window.onload = async () => {
 
               function makeLayerName(name, side) {
                 const prefix = side == 'front' ? 't-' : side == 'back' ? 'b-' : '';
-                return Util.camelize(prefix +
-                    path
-                      .basename(name)
-                      .replace(new RegExp(`_${side}`), '')
-                      .replace(/\.[A-Za-z0-9]{3}$/, '')
-                );
+                return Util.camelize(prefix + path.basename(name, /\.[^.]+$/).replace(new RegExp(`_${side}`), ''));
               }
             }, 100),
             'data-tooltip': 'Generate Gerber RS274-X CAM data',
@@ -2163,7 +2160,7 @@ const AppMain = (window.onload = async () => {
               for(let side of ['back', 'front']) {
                 let gc = project.gcode[side];
                 if(gc) {
-                  //console.debug('draw gcode gc =', gc);
+                  console.debug(`${side} gcode gc =`, gc);
                   GcodeToPolylines(gc.data, {
                     fill: false,
                     color: colors[side],
@@ -2277,122 +2274,122 @@ const AppMain = (window.onload = async () => {
     window.elements = [...elems].filter(e => e.tagName == 'path');
   });
 
-  false &&
-    moveHandler.subscribe(function MoveEvent(event, prevEvent) {
-      const { x, y, clientX, clientY, index, buttons, start, type, target } = event;
-      window.lastMoveEvent = event;
-      event.elements = document.elementsFromPoint(x, y);
-      function* WalkUp(e) {
-        while(e) {
-          yield e;
-          e = e.parentElement;
-        }
+  /*false &&*/
+  moveHandler.subscribe(function MoveEvent(event, prevEvent) {
+    const { x, y, clientX, clientY, index, buttons, start, type, target } = event;
+    window.lastMoveEvent = event;
+    event.elements = document.elementsFromPoint(x, y);
+    function* WalkUp(e) {
+      while(e) {
+        yield e;
+        e = e.parentElement;
       }
-      let zIndex = Util.find(Util.map(WalkUp(event.target), e => e.style.getPropertyValue('z-index')),
-        z => /^[0-9]/.test(z)
-      );
-      if(zIndex > 0) Util.clear(event.elements);
-      for(let e of event.elements)
-        Element.walkUp(e)
-          .slice(1)
-          .forEach(p => Util.remove(event.elements, p));
-      Util.remove(event.elements, document.documentElement);
+    }
+    let zIndex = Util.find(Util.map(WalkUp(event.target), e => e.style.getPropertyValue('z-index')),
+      z => /^[0-9]/.test(z)
+    );
+    if(zIndex > 0) Util.clear(event.elements);
+    for(let e of event.elements)
+      Element.walkUp(e)
+        .slice(1)
+        .forEach(p => Util.remove(event.elements, p));
+    Util.remove(event.elements, document.documentElement);
 
-      event.layers = new Map(event.elements.map(e => [
-          e,
-          Element.walkUp(e, e => {
-            if(e.hasAttribute('data-layer')) throw e.getAttribute('data-layer');
-          })
-        ])
+    event.layers = new Map(event.elements.map(e => [
+        e,
+        Element.walkUp(e, e => {
+          if(e.hasAttribute('data-layer')) throw e.getAttribute('data-layer');
+        })
+      ])
+    );
+    event.colors = new Map();
+    for(let [e, layer] of event.layers) {
+      if(!layer || /(Measure|Dimension)/.test(layer)) continue;
+      let l = FindLayer(layer);
+      if(l) event.colors.set(e, l.color.setOpacity(0.8) || '#000');
+    }
+    event.classes = new Map(event.elements.map(e => [
+        e,
+        Util.ifThenElse(v => v,
+          l => l.map(e => e.classList.value),
+          () => ''
+        )(Element.walkUp(e, (e, depth) => !e.classList.value.startsWith('aspect') && e.classList.value))
+      ])
+    );
+    Util.removeIf(event.classes, classes => classes == '');
+    Util.removeIf(event.elements, e => e.tagName == 'polyline');
+    Util.removeIf(event.elements, e => !(event.classes.has(e) || event.colors.has(e)));
+    const group =
+      project &&
+      project.makeGroup &&
+      project.makeGroup({
+        id: 'rects',
+        stroke: '#ff6f00',
+        'stroke-width': 0.127,
+        fill: 'none',
+        'stroke-linecap': 'square',
+        'vector-effect': 'non-scaling-stroke',
+        'pointer-events': 'none'
+      });
+
+    if(prevEvent && group) {
+      let u = Util.union(prevEvent.elements, event.elements, (a, b) => a.isSameNode(b));
+      let [remove, add] = Util.difference(prevEvent.elements,
+        event.elements,
+        (a, b) => a.findIndex(Node.prototype.isSameNode, b) != -1
       );
-      event.colors = new Map();
-      for(let [e, layer] of event.layers) {
-        if(!layer || /(Measure|Dimension)/.test(layer)) continue;
-        let l = FindLayer(layer);
-        if(l) event.colors.set(e, l.color.setOpacity(0.8) || '#000');
+
+      //  console.log('difference:', [remove,add], 'union:', u);
+      //  console.log('add:', add);
+
+      const bboxes = new Map(add.map(e => [e, new Rect(e.getBBox ? e.getBBox() : e.getBoundingClientRect())]));
+
+      for(let [e, rect] of bboxes) {
+        let transforms =
+          Element.walkUp(e, (p, d, set, stop) =>
+            p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement)
+              ? stop()
+              : p.hasAttribute('transform') && set(p.getAttribute('transform'))
+          ) || [];
+        transforms = transforms.reverse();
+        elems.add(e);
+        let props = {
+          ...rect.round(0.001).toObject(),
+          transform: transforms.join(' ')
+        };
+        rects.set(e, [
+          // SVG.create('rect', { ...props, stroke: '#000', 'stroke-width': 0.127 * 2 }, group),
+          SVG.create('rect', { ...props, 'stroke-dasharray': '0.508 0.508', stroke: '#000' }, group),
+          SVG.create('rect', {
+              ...props,
+              'stroke-dasharray': '0.508 0.508',
+              'stroke-dashoffset': 0.508,
+              stroke: '#ff0'
+            },
+            group
+          )
+        ]);
       }
-      event.classes = new Map(event.elements.map(e => [
-          e,
-          Util.ifThenElse(v => v,
-            l => l.map(e => e.classList.value),
-            () => ''
-          )(Element.walkUp(e, (e, depth) => !e.classList.value.startsWith('aspect') && e.classList.value))
-        ])
-      );
-      Util.removeIf(event.classes, classes => classes == '');
-      Util.removeIf(event.elements, e => e.tagName == 'polyline');
-      Util.removeIf(event.elements, e => !(event.classes.has(e) || event.colors.has(e)));
-      const group =
-        project &&
-        project.makeGroup &&
-        project.makeGroup({
-          id: 'rects',
-          stroke: '#ff6f00',
-          'stroke-width': 0.127,
-          fill: 'none',
-          'stroke-linecap': 'square',
-          'vector-effect': 'non-scaling-stroke',
-          'pointer-events': 'none'
-        });
-
-      if(prevEvent && group) {
-        let u = Util.union(prevEvent.elements, event.elements, (a, b) => a.isSameNode(b));
-        let [remove, add] = Util.difference(prevEvent.elements,
-          event.elements,
-          (a, b) => a.findIndex(Node.prototype.isSameNode, b) != -1
-        );
-
-        //  console.log('difference:', [remove,add], 'union:', u);
-        //  console.log('add:', add);
-
-        const bboxes = new Map(add.map(e => [e, new Rect(e.getBBox ? e.getBBox() : e.getBoundingClientRect())]));
-
-        for(let [e, rect] of bboxes) {
-          let transforms =
-            Element.walkUp(e, (p, d, set, stop) =>
-              p.parentElement == null || p.parentElement.isSameNode(p.ownerSVGElement)
-                ? stop()
-                : p.hasAttribute('transform') && set(p.getAttribute('transform'))
-            ) || [];
-          transforms = transforms.reverse();
-          elems.add(e);
-          let props = {
-            ...rect.round(0.001).toObject(),
-            transform: transforms.join(' ')
-          };
-          rects.set(e, [
-            // SVG.create('rect', { ...props, stroke: '#000', 'stroke-width': 0.127 * 2 }, group),
-            SVG.create('rect', { ...props, 'stroke-dasharray': '0.508 0.508', stroke: '#000' }, group),
-            SVG.create('rect', {
-                ...props,
-                'stroke-dasharray': '0.508 0.508',
-                'stroke-dashoffset': 0.508,
-                stroke: '#ff0'
-              },
-              group
-            )
-          ]);
-        }
-        /*
+      /*
       add.forEach(e => {
         elems.add(e);
         rects.set(e, devtools.rect(new Rect(e.getBoundingClientRect()), event.colors.get(e) || '#00000000', event.colors.get(e)));
       });*/
-        remove.forEach(e => {
-          let rect = rects.get(e);
-          rects.delete(e);
+      remove.forEach(e => {
+        let rect = rects.get(e);
+        rects.delete(e);
 
-          if(Util.isArray(rect)) rect.forEach(e => Element.remove(e));
-        });
+        if(Util.isArray(rect)) rect.forEach(e => Element.remove(e));
+      });
 
-        if(bboxes.size) {
-          /* console.log('event.elements:', event.elements);
+      if(bboxes.size) {
+        /* console.log('event.elements:', event.elements);
         console.log('event.classes:', event.classes);
         console.log('event.target:', zIndex);*/
-          //  console.log('rects:', Util.clone(bboxes));
-        }
+        //  console.log('rects:', Util.clone(bboxes));
       }
-    });
+    }
+  });
   let css = {
     cursor: undefined,
     'pointer-events': undefined,

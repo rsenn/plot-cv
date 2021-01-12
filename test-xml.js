@@ -71,7 +71,7 @@ async function main(...args) {
   console.log('main', args);
   if(args.length == 0) args = ['/home/roman/.config/sublime-text-3/Packages/Babel/Next.tmTheme' /*  */];
   let filename = args.shift();
-  let basename = path.basename(filename).replace(/\.[^.]*$/, '');
+  let basename = path.basename(filename, /\.[^.]+$/g);
   let outfile;
   if(/\.(xml|tmThem)/.test(args[0])) outfile = args.shift();
   else {
@@ -92,7 +92,7 @@ async function main(...args) {
     //prng = new Alea().seed((ino * 256 + rdev) ^ mtime.valueOf());
 
     console.log('prng.uint32():', prng.uint32());
-    let basename = path.basename(filename).replace(/\.[^.]*$/, '');
+    let basename = path.basename(filename, /\.[^.]+$/);
     filesystem.writeFile(basename + '.json', json);
     xmlData = xml[0];
     newObj = deep.clone(xml[0]);

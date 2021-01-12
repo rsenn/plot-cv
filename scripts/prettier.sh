@@ -28,8 +28,9 @@ prettier() {
 }
 
 main() {
-  PRE_EXPR='/^\s*[sg]et\s[^\s\t ]\+\s*([^)]*)\s*{/ s|^\(\s*\)|\1/* prettier-ignore */ |'
-  PRE_EXPR='/^\s*[sg]et\s\+/ s|^\(\s*\)|\1/* prettier-ignore */ |'
+  PRE_EXPR='\|/\*| { :lp; \|\*/|! { N; b lp }; n }'
+  #PRE_EXPR='/^\s*[sg]et\s[^\s\t ]\+\s*([^)]*)\s*{/ s|^\(\s*\)|\1/* prettier-ignore */ |'
+  PRE_EXPR="$PRE_EXPR;; "'/^\s*[sg]et\s\+/ s|^\(\s*\)|\1/* prettier-ignore */ |'
   POST_EXPR='1 { /@format/ { N; /\n$/ { d } } }'
   for KW in "if" "for" "for await" "do" "while" "catch" "function"; do
     POST_EXPR="$POST_EXPR; s|\s${KW}\s*(| ${KW}(|"

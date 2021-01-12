@@ -11,18 +11,18 @@ export function execStream(cmd, args, options = { stdio: 'pipe' }) {
   var A = new Stream.PassThrough();
   var B = new Stream.PassThrough();
   // console.log = function() {}
-  AB._write = function (chunk, encoding, cb) {
+  AB._write = function(chunk, encoding, cb) {
     return A.write(chunk, encoding, cb);
   };
-  AB.on('finish', function () {
+  AB.on('finish', function() {
     A.end();
     A.emit('end');
   });
-  AB._read = function (n) {};
-  B.on('readable', function () {
+  AB._read = function(n) {};
+  B.on('readable', function() {
     AB.push(B.read());
   });
-  B.on('end', function () {
+  B.on('end', function() {
     AB.end();
     AB.emit('end');
   });
@@ -36,15 +36,15 @@ export function exec(cmd, args = [], options = { stdio: 'pipe' }) {
   let child = spawn(cmd, args, options);
   const { stdin, stdout, stderr } = child;
 
-  child.stdout.on('data', (data) => {
+  child.stdout.on('data', data => {
     console.log(`stdout: ${data}`);
   });
 
-  child.stderr.on('data', (data) => {
+  child.stderr.on('data', data => {
     console.error(`stderr: ${data}`);
   });
 
-  child.on('close', (code) => {
+  child.on('close', code => {
     console.log(`child process exited with code ${code}`);
   });
   return [stdin, stdout, stderr];

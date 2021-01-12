@@ -523,7 +523,7 @@ async function main(...args) {
     let flat, map;
     let st = new Tree(ast);
 
-    filesystem.writeFile(path.basename(file.replace(/\.[^\/]*$/, '')) + '.ast.json', JSON.stringify(ast, null, 2));
+    filesystem.writeFile(path.basename(file, /\.[^.]+$/) + '.ast.json', JSON.stringify(ast, null, 2));
 
     //console.log(`${file} parsed:`, { data, error });
 
@@ -1059,7 +1059,7 @@ function GetFromPath([path, node], position) {
 }
 
 function GetBase(filename) {
-  return path.basename(filename).replace(/\.[a-z0-9]*$/, '');
+  return path.basename(filename, /\.[^.]+$/);
 }
 
 function ReaddirRecursive(dir) {

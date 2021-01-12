@@ -9,8 +9,8 @@ let filesystem,
   documents = [];
 
 function WriteFile(name, data) {
-  if (Util.isArray(data)) data = data.join('\n');
-  if (typeof data != 'string') data = '' + data;
+  if(Util.isArray(data)) data = data.join('\n');
+  if(typeof data != 'string') data = '' + data;
   filesystem.writeFile(name, data + '\n');
   console.log(`Wrote ${name}: ${data.length} bytes`);
 }
@@ -30,22 +30,13 @@ function DummyPreproc(source) {
   let includeDirectives = pp.filter(([no, str]) => includeRegex.test(str));
 
   const removeQuotes = /^[<"](.*)[">]$/;
-  let includeFiles = includeDirectives.map(([lineno, str]) => [
-    lineno,
-    str.replace(includeRegex, '')
-  ]);
-  return includeFiles.map(([lineno, file]) => [
-    lineno,
-    file.replace(removeQuotes, '$1'),
-    file.startsWith('<')
-  ]);
+  let includeFiles = includeDirectives.map(([lineno, str]) => [lineno, str.replace(includeRegex, '')]);
+  return includeFiles.map(([lineno, file]) => [lineno, file.replace(removeQuotes, '$1'), file.startsWith('<')]);
 }
 
 async function DumpDeps(sources, includeDirs = []) {
   //let stderr = filesystem.open('deps.err', 'w+');$
-  let includes = includeDirs.reduce(
-    (acc, dir) =>
-      /^\/opt/.test(dir) ? [...acc, '-isystem', dir] : [...acc, `-I${dir}`],
+  let includes = includeDirs.reduce((acc, dir) => (/^\/opt/.test(dir) ? [...acc, '-isystem', dir] : [...acc, `-I${dir}`]),
     []
   );
   let argv = ['-MM', ...includes, '-c', ...sources];
@@ -63,15 +54,15 @@ async function DumpDeps(sources, includeDirs = []) {
   let i = 0;
   let ret = [];
   let lines = out.split(/\n/g);
-  for (let line of lines) {
+  for(let line of lines) {
     let source = sources[i++];
     let idx = line.indexOf(': ');
-    if (idx == -1) continue;
+    if(idx == -1) continue;
     let obj = line.substring(0, idx - 2);
     let deps = line.substring(idx + 2).split(/\s+/g);
-    if (deps[0] == source) deps.shift();
+    if(deps[0] == source) deps.shift();
     deps.sort();
-    deps = deps.map((dep) => path.normalize(dep));
+    deps = deps.map(dep => path.normalize(dep));
     ret.push([source, deps]);
   }
   return new Map(ret);
@@ -79,20 +70,15 @@ async function DumpDeps(sources, includeDirs = []) {
 
 async function main(...sources) {
   await ConsoleSetup({ colors: true, depth: 8, breakLength: 138 });
-  await PortableFileSystem((fs) => (filesystem = fs));
-  await PortableChildProcess((cp) => (childProcess = cp));
+  await PortableFileSystem(fs => (filesystem = fs));
+  await PortableChildProcess(cp => (childProcess = cp));
 
   const env = await Util.env;
-  const includes = [
-    'quickjs',
-    'src',
-    '/opt/opencv-4.5.0/include',
-    '/opt/opencv-4.5.0/include/opencv4'
-  ];
+  const includes = ['quickjs', 'src', '/opt/opencv-4.5.0/include', '/opt/opencv-4.5.0/include/opencv4'];
 
-  if (sources.length == 0) {
-    let files = filesystem.readdir('src').map((file) => `src/${file}`);
-    sources = files.filter((path) => /\.[ch]/.test(path));
+  if(sources.length == 0) {
+    let files = filesystem.readdir('src').map(file => `src/${file}`);
+    sources = files.filter(path => /\.[ch]/.test(path));
     sources.sort();
   }
 
@@ -101,7 +87,7 @@ async function main(...sources) {
   let deps = await DumpDeps(sources, includes);
   console.log(`DumpDeps() = `, deps);
 
-  for (let [source, depfiles] of deps) {
+  for(let [source, depfiles] of deps) {
     let pp = DummyPreproc(source);
 
     console.log(`${source} deps:`, depfiles);

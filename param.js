@@ -1,12 +1,12 @@
 import Util from './lib/util.js';
 
-const MinMax = (min, max) => (value) => Math.max(min, Math.min(max, value));
+const MinMax = (min, max) => value => Math.max(min, Math.min(max, value));
 
 export class Param {
   [Symbol.toPrimitive](hint) {
     //console.log(`Param[Symbol.toPrimitive](${hint})`);
-    if (hint == 'number') return NumericParam.prototype.get.call(this);
-    else if (hint == 'string') return this.valueOf() + '';
+    if(hint == 'number') return NumericParam.prototype.get.call(this);
+    else if(hint == 'string') return this.valueOf() + '';
     else return this.valueOf();
   }
 
@@ -54,7 +54,7 @@ export class NumericParam extends Param {
   get range() {
     const { min, max } = this;
     let r = [min, max];
-    r.valueOf = function () {
+    r.valueOf = function() {
       return this[1] - this[0];
     };
     return r;
@@ -75,7 +75,7 @@ export class NumericParam extends Param {
 export class EnumParam extends NumericParam {
   constructor(...args) {
     let values, init;
-    if (Util.isArray(args[0])) {
+    if(Util.isArray(args[0])) {
       values = args[0];
       init = args[1] || 0;
     } else {
@@ -92,17 +92,16 @@ export class EnumParam extends NumericParam {
 
   set(newVal) {
     let i;
-    if (typeof newVal == 'number') i = newVal;
-    else if ((i = this.values.indexOf(newVal)) == -1)
-      throw new Error(`No such value '${newVal}' in [${this.values}]`);
+    if(typeof newVal == 'number') i = newVal;
+    else if((i = this.values.indexOf(newVal)) == -1) throw new Error(`No such value '${newVal}' in [${this.values}]`);
     super.set(i);
   }
 }
 
 export function ParamNavigator(map) {
-  if (!new.target) return new ParamNavigator(map);
+  if(!new.target) return new ParamNavigator(map);
 
-  if (!(map instanceof Map)) map = Util.toMap(map);
+  if(!(map instanceof Map)) map = Util.toMap(map);
 
   const mod = Util.mod(map.size);
 
