@@ -42,7 +42,7 @@ import { Object2Array, XmlObject, XmlAttr, ImmutableXPath, MutableXPath } from '
 import { RGBA, isRGBA, ImmutableRGBA, HSLA, isHSLA, ImmutableHSLA, ColoredText } from './lib/color.js';
 //import { hydrate, Fragment, createRef, isValidElement, cloneElement, toChildArray } from './modules/preact/dist/preact.mjs';
 import React, { h, html, render, Fragment, Component, useState, useLayoutEffect, useRef } from './lib/dom/preactComponent.js';
-import components, { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable, DisplayList, Ruler } from './components.js';
+import components, { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable, DisplayList, Ruler, Toggle } from './components.js';
 import { Message } from './message.js';
 
 import { useEvent, useElement, useDoubleClick, useDimensions } from './lib/hooks.js';
@@ -1815,7 +1815,7 @@ const AppMain = (window.onload = async () => {
 
   const layersDropDown = trkl(false);
 
-  const Toggle = trkl => trkl(!trkl());
+  const toggle = trkl => trkl(!trkl());
   let setTo;
 
   const Layer = ({ title, name, label, i, color, element, className, ...props }) => {
@@ -1952,6 +1952,8 @@ const AppMain = (window.onload = async () => {
   let data;
   window.documentList = data = new DocumentList();
   React.render(h(DisplayList, { data }), Element.find('#display'));
+
+  let sortOrder = trkl(false);
 
   React.render(h(SlotProvider, {}, [
       h(Panel, { className: classNames('buttons', 'no-select'), tag: 'header' }, [
@@ -2173,6 +2175,10 @@ const AppMain = (window.onload = async () => {
             image: 'static/svg/voronoi.svg'
           })
         ]),
+        h(Toggle, {
+          state: sortOrder,
+          images: ['static/svg/sort-asc.svg', 'static/svg/sort-desc.svg']
+        }),
         h(DynamicLabel, {
           className: 'vcenter pad-lr',
           caption: documentTitle

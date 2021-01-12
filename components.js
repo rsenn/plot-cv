@@ -108,6 +108,7 @@ export const Overlay = ({
         if(e.buttons && e.buttons != 1) return;
         if(!e.type.endsWith('down') && !e.type.endsWith('up')) return;
         let ret;
+        // console.log("MouseEvent", {type: e.type, state});
         if(typeof onPush == 'function') ret = onPush(e, state);
         if(ret === true || ret === false) state = ret;
         setPushed(state);
@@ -134,7 +135,16 @@ export const Container = ({ className = 'panel', tag = 'div', children, ...props
 };
 
 export const Button = allProps => {
-  let { className, caption, image, fn, state, style = {}, ...props } = allProps;
+  let {
+    className,
+    caption,
+    image,
+    fn,
+    state,
+    onPush = state => (state && typeof fn == 'function' ? fn(state) : undefined),
+    style = {},
+    ...props
+  } = allProps;
 
   if(!props.children) props.children = [];
   if(typeof image == 'string') image = h('img', { src: image });
@@ -145,9 +155,36 @@ export const Button = allProps => {
   return h(Overlay, {
     className: classNames('button', className),
     text: caption,
+    toggle: true,
     state,
-    onPush: state => (state && typeof fn == 'function' ? fn(state) : undefined),
+    onPush,
     style,
+    ...props
+  });
+};
+
+export const Toggle = ({ className, images, fn, state, style = {}, ...props }) => {
+  const pushed = useTrkl(state);
+
+  const image = images[pushed | 0];
+
+  state.subscribe(value => {
+    console.log("Toggled:", value);
+  })
+
+  return h(Button, {
+    className,
+    fn,
+    state,
+    image,
+    style/*,
+    onPush: (e, state) => {
+       if(state && e.type.endsWith('up')) {
+        state(false);
+        return;
+      }
+      if(!state && e.type.endsWith('up')) return !state;
+    }*/,
     ...props
   });
 };
