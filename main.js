@@ -45,7 +45,7 @@ import React, { h, html, render, Fragment, Component, useState, useLayoutEffect,
 import components, { Chooser, DynamicLabel, Button, FileList, Panel, SizedAspectRatioBox, TransformedElement, Canvas, ColorWheel, Slider, CrossHair, FloatingPanel, DropDown, Conditional, Fence, Zoomable, DisplayList, Ruler, Toggle } from './components.js';
 import { Message } from './message.js';
 
-import { useEvent, useElement, useDoubleClick, useDimensions } from './lib/hooks.js';
+import {  useActive, useClickout, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useRecognizers, useDrag, usePinch, useWheel, useMove, useScroll, useGesture, useHover, useMousePosition, usePanZoom, useToggleButtonGroupState } from './lib/hooks.js';
 
 import { WebSocketClient } from './lib/net/websocket-async.js';
 /* prettier-ignore */ import * as ecmascript from './lib/ecmascript.js';
@@ -1953,7 +1953,7 @@ const AppMain = (window.onload = async () => {
   window.documentList = data = new DocumentList();
   React.render(h(DisplayList, { data }), Element.find('#display'));
 
-  let sortOrder = trkl(false);
+  let sortOrder = window.sortOrder = trkl(false);
 
   React.render(h(SlotProvider, {}, [
       h(Panel, { className: classNames('buttons', 'no-select'), tag: 'header' }, [

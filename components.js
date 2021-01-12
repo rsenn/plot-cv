@@ -3,7 +3,7 @@ import { trkl } from './lib/trkl.js';
 import { Element } from './lib/dom.js';
 import { useTrkl } from './lib/hooks/useTrkl.js';
 import { classNames } from './lib/classNames.js';
-import { useEvent, useElement, useDoubleClick, useDimensions, usePanZoom } from './lib/hooks.js';
+import {  useActive, useClickout, useDimensions, useDoubleClick, useElement, EventTracker, useEvent, useFocus, useRecognizers, useDrag, usePinch, useWheel, useMove, useScroll, useGesture, useHover, useMousePosition, usePanZoom, useToggleButtonGroupState } from './lib/hooks.js';
 import deepDiff from './lib/deep-diff.js';
 import { useValue } from './lib/repeater/react-hooks.js';
 import RulerDraggable from './ruler-draggable.js';
@@ -165,26 +165,32 @@ export const Button = allProps => {
 
 export const Toggle = ({ className, images, fn, state, style = {}, ...props }) => {
   const pushed = useTrkl(state);
-
   const image = images[pushed | 0];
-
   state.subscribe(value => {
-    console.log("Toggled:", value);
-  })
-
+    console.log('Toggled:', value);
+  });
   return h(Button, {
     className,
     fn,
     state,
     image,
-    style/*,
-    onPush: (e, state) => {
-       if(state && e.type.endsWith('up')) {
-        state(false);
-        return;
-      }
-      if(!state && e.type.endsWith('up')) return !state;
-    }*/,
+    style,
+    ...props
+  });
+};
+
+export const ButtonGroup = ({ className, images, fn, state, style = {}, ...props }) => {
+  const pushed = useTrkl(state);
+  const image = images[pushed | 0];
+  state.subscribe(value => {
+    console.log('Toggled:', value);
+  });
+  return h(Button, {
+    className,
+    fn,
+    state,
+    image,
+    style,
     ...props
   });
 };
