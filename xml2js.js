@@ -4,8 +4,9 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import deep from './lib/deep.js';
 import path from './lib/path.js';
 import tXml from './lib/tXml.js';
+import { toXML } from './lib/xml.js';
 import Tree from './lib/tree.js';
-import { toXML, Path } from './lib/json.js';
+import { Path } from './lib/json.js';
 import Alea from './lib/alea.js';
 import * as diff from './lib/json/diff.js';
 import inspect from './lib/objectInspect.js';
@@ -25,7 +26,7 @@ function dumpFile(name, data) {
   if(!data.endsWith('\n')) data += '\n';
 
   if(name == '-' || typeof name != 'string') {
-    let stdout = filesystem.fdopen(1, 'r');
+    //  let stdout = filesystem.fdopen(1, 'r');
     let buffer = filesystem.bufferFrom(data);
     filesystem.write(1, buffer, 0, buffer.byteLength);
     return;
@@ -42,7 +43,7 @@ const push_front = (arr, ...items) => [...items, ...(arr || [])];
 const tail = arr => arr[arr.length - 1];
 
 async function main(...args) {
-  await ConsoleSetup({ depth: 10 });
+  await ConsoleSetup({ depth: 20, colors: true, breakLength: 80 });
   filesystem = await PortableFileSystem();
 
   let params = Util.getOpt({
@@ -51,6 +52,9 @@ async function main(...args) {
       xml: [true, null, 'x'],
       json: [true, null, 'j'],
       tag: [true, null, 't'],
+      include: [true, null, 'I'],
+      exclude: [true, null, 'X'],
+      'no-remove-empty': [false, null, 'E'],
       '@': 'input,output,xml'
     },
     Util.getArgs().slice(1)
@@ -68,6 +72,7 @@ async function main(...args) {
   let xmlfile = params.xml || basename + '.out.xml';
   let jsonfile = params.json || basename + '.out.json';
   let tagkey = params.tag || 'type';
+  let { include, exclude } = params;
 
   let cmds = args;
   let newObj = {};
@@ -76,7 +81,7 @@ async function main(...args) {
   try {
     let xml = readXML(filename);
     let tree = new Tree(xml);
-    for(let [path, node] of tree) {
+    for(let [node, path] of tree) {
       let parentPath = path.slice(0, -1);
       let key = tail(path);
       let parentNode = tree.at(parentPath);
@@ -85,16 +90,11 @@ async function main(...args) {
         delete parentNode.children;
         Object.assign(parentNode, children.length ? { ...parentNode, children } : parentNode);
       }
-      /*if(parentNode && typeof node == 'string')  {
-        if(!isNaN(+node))
-          node = +node;
-        parentNode[key] = node;
-      }*/
 
-      if(key == 'tagName') {
+      /*  if(key == 'tagName') {
         if(key) delete parentNode[key];
         Object.assign(parentNode, { ...parentNode, [tagkey]: node, ...parentNode });
-      }
+      }*/
       if(key == 'attributes') {
         let parent = tree.at(path.slice(0, -1)) || tree.parentNode(node);
         let { attributes } = parent;
@@ -105,10 +105,54 @@ async function main(...args) {
         tree.replace(parent, { ...parent, ...attributes });
       }
 
-      if(Array.isArray(node) && node.length == 0) tree.remove(node);
-      if(Util.isObject(node) && Util.isEmpty(node)) tree.remove(node);
+      if(Array.isArray(node) && node.length == 0) tree.removeAt(path);
+      if(Util.isObject(node) && Util.isEmpty(node)) tree.removeAt(path);
     }
-    let js = inspect(xml, {
+    let js;
+    let json = JSON.stringify(xml, null, '  ');
+    dumpFile(jsonfile, json);
+
+    let flat = tree.flat();
+    // console.log('flat:', flat);
+
+    let rebuilt = [];
+
+    if(include) {
+      let pred = Util.predicate(`(<${include}[ \\t>/].*|.*\\s${include}=)`, (arg, pred) => {
+        const { tagName, children, ...attributes } = arg;
+        let node = { tagName, attributes };
+        let str = toXML(node);
+
+        if(pred(str)) {
+                 console.log('pred:', { str, pred: pred.valueOf() });
+ return true;
+        }
+      });
+
+      let output = [];
+       newObj = [];
+      for(let [path, node] of tree.filter((n, p) => n.tagName !== undefined)) {
+        let { tagName, children, ...attributes } = node;
+        let str = toXML({ tagName, children, attributes });
+
+        /*       console.log('deep.set:',  { path });
+       deep.set(rebuilt, path, node);*/
+        if(pred(node)) {
+          output.push(str);
+          newObj.push(node);
+        }
+      }
+      //console.log('output:', { output });
+     // dumpFile(outfile, output.join('\n'));
+      xmlData = output.map(str => tXml(str));
+    } else {
+      xmlData = xml[0];
+      newObj = deep.clone(xmlData);
+  }
+    /*   let rebuilt = tree.build(flat);
+    console.log('rebuilt:', rebuilt);*/
+console.log('newObj:', { newObj });
+    js = inspect(newObj, {
       depth: Number.MAX_SAFE_INTEGER,
       multiline: true,
       breakLength: 80,
@@ -116,27 +160,15 @@ async function main(...args) {
       colors: false
     });
     dumpFile(outfile, js);
-    let json = JSON.stringify(xml, null, '  ');
-    dumpFile(jsonfile, json);
-
-    let flat = tree.flat();
-    console.log('flat:', flat);
-
-    let rebuilt = tree.build(flat);
-    console.log('rebuilt:', rebuilt);
-
-    xmlData = xml[0];
-    newObj = deep.clone(xml[0]);
-
     /*= deep.flatten(xml[0],
-      new Map(),
+      new Map(),a
       (v, p) =>
         (typeof v != 'object' && p.indexOf('attributes') == -1) ||
         (p.length && p.indexOf('attributes') == p.length - 1),
       (p, v) => [new Path(p), v]
     );*/
 
-    dumpFile(xmlfile, toXML(newObj));
+    dumpFile(xmlfile, toXML(xmlData));
   } catch(err) {
     let st = Util.stack(err.stack);
     // console.log(err.message, '\n', st.toString()); //st.map(f =>  Util.toString(f)));
