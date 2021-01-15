@@ -14,6 +14,13 @@ import inspect from './lib/objectInspect.js';
 let filesystem;
 let prng = new Alea().seed(Date.now());
 
+async function readBJSON(filename) {
+  let data = filesystem.readFile(filename, null);
+  let obj = await import('bjson')
+    .then(({ read }) => read(data, 0, data.byteLength))
+    .catch(err => console.log(err));
+  return obj;
+}
 function readXML(filename) {
   //console.log('readXML', filename);
   let data = filesystem.readFile(filename);
@@ -33,6 +40,7 @@ function dumpFile(name, data) {
   }
 
   if(Util.isArray(data)) data = data.join('\n');
+  q;
   // if(typeof data != 'string') data = '' + data;
   filesystem.writeFile(name, data);
   console.log(`Wrote ${name}: ${data.length} bytes`);
@@ -79,97 +87,14 @@ async function main(...args) {
   let xmlData;
 
   try {
-    let xml = readXML(filename);
-    let tree = new Tree(xml);
-    for(let [node, path] of tree) {
-      let parentPath = path.slice(0, -1);
-      let key = tail(path);
-      let parentNode = tree.at(parentPath);
-      if(key == 'children') {
-        let { children } = parentNode;
-        delete parentNode.children;
-        Object.assign(parentNode, children.length ? { ...parentNode, children } : parentNode);
-      }
+    let js = await readBJSON(filename);
+    let json = JSON.stringify(js, null, '  ');
 
-      /*  if(key == 'tagName') {
-        if(key) delete parentNode[key];
-        Object.assign(parentNode, { ...parentNode, [tagkey]: node, ...parentNode });
-      }*/
-      if(key == 'attributes') {
-        let parent = tree.at(path.slice(0, -1)) || tree.parentNode(node);
-        let { attributes } = parent;
-        delete parent.attributes;
+    //   await import('bjson').then(({ read, write }) => json = write(xml)).catch(err => console.error(err));
 
-        for(let key in attributes) if(!isNaN(+attributes[key])) attributes[key] = +attributes[key];
+    dumpFile(outfile, json);
 
-        tree.replace(parent, { ...parent, ...attributes });
-      }
-
-      if(Array.isArray(node) && node.length == 0) tree.removeAt(path);
-      if(Util.isObject(node) && Util.isEmpty(node)) tree.removeAt(path);
-    }
-    let js;
-    let json = JSON.stringify(xml, null, '  ');
-
-    await import('bjson')
-      .then(({ read, write }) => (json = write(xml)))
-      .catch(err => console.error(err));
-
-    dumpFile(jsonfile, json);
-
-    let flat = tree.flat();
-    let rebuilt = [];
-
-    if(include) {
-      let pred = Util.predicate(`(<${include}[ \\t>/].*|.*\\s${include}=)`, (arg, pred) => {
-        const { tagName, children, ...attributes } = arg;
-        let node = { tagName, attributes };
-        let str = toXML(node);
-
-        if(pred(str)) {
-          // console.log('pred:', { str, pred: pred.valueOf() });
-          return true;
-        }
-      });
-
-      let output = [];
-      newObj = [];
-      for(let [path, node] of tree.filter((n, p) => n.tagName !== undefined)) {
-        let { tagName, children, ...attributes } = node;
-        let str = toXML({ tagName, children, attributes });
-
-        if(pred(node)) {
-          output.push(str);
-          newObj.push(node);
-        }
-      }
-      xmlData = output.map(str => tXml(str));
-      js = newObj
-        .map(obj =>
-          inspect(obj, {
-            depth: Number.MAX_SAFE_INTEGER,
-            multiline: false,
-            breakLength: 80,
-            indent: 2,
-            colors: false
-          })
-        )
-        .join(',\n');
-    } else {
-      xmlData = xml[0];
-      newObj = deep.clone(xmlData);
-      js = inspect(newObj, {
-        depth: Number.MAX_SAFE_INTEGER,
-        multiline: true,
-        breakLength: 80,
-        indent: 2,
-        colors: false
-      });
-    }
-    //console.log('newObj:', newObj);
-
-    dumpFile(outfile, js);
-    dumpFile(xmlfile, toXML(xmlData));
+    // dumpFile(xmlfile, toXML(xmlData));
   } catch(err) {
     let st = Util.stack(err.stack);
     // console.log(err.message, '\n', st.toString()); //st.map(f =>  Util.toString(f)));
