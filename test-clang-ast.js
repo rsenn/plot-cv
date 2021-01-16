@@ -530,35 +530,6 @@ async function main(...args) {
             .join('\n')
       );
 
-      /*
-          switch (decl.kind) {
-            case 'TypedefDecl': {
-              return [name, `typedef ${type} ${name};`];
-            }
-            case 'FunctionDecl': {
-              // console.log('FunctionDecl', decl);
-              break;
-              return [name, `function ${name}`];
-            }
-            case 'EnumConstantDecl': {
-              if (!decl.inner) console.log('EnumConstantDecl', { decl });
-
-              const expr = (decl.inner && decl.inner[0]) || decl || {};
-              const value = ((expr && expr.inner && expr.inner[0]) || expr || {}).value;
-              console.log('EnumConstantDecl', { name, type, value });
-              return [name, `enum ${name} ${type} ${value}`];
-            }
-            case 'RecordDecl': {
-              break;
-            }
-            default: {
-              throw new Error(`Node '${decl.kind}' type=${type} name=${name}`);
-            }
-          }
-          return null;
-        })
-      );*/
-
       let records = [...tree.filter((node) => node.kind == 'RecordDecl')];
 
       let getIds = (id, exclude) =>
@@ -670,13 +641,7 @@ async function main(...args) {
         }
       }
       let recordIds = recordNodes.map(([p, id]) => id);
-      // let idNodes = [...tree.filter(node => typeof node == 'string' && node.startsWith('0x'))].map(([p,n]) => p.slice(0,-1)).map(p => [p, tree.at(p)]);
 
-      /*      console.log(
-        'recordNodes:',
-        recordNodes.map((n) => n )
-      );
-*/
       let getId = (id, exclude) => [
         ...tree.filter((node, path) => node.id == id && node != exclude)
       ];
@@ -687,13 +652,7 @@ async function main(...args) {
         )
       ].map(([p, n]) => [p, getId(n.id, n).map(([p, n]) => p /*.join('.')*/), n]);
 
-      //  let structs = [...records.map(([path,node]) => [path.slice(0,-2),tree.at(path.slice(0,-2))])];
-      //   let fields = [...tree.filter(node => node.kind == 'FieldDecl')];
-
-      /* console.log('records:', records);
-    console.log('recordTypes:', recordTypes);*/
-      //console.log("fields:",fields);
-      //
+  
       console.log('number of nodes:', nodes.size);
       console.log('nodes with offset:', offsetNodes.length);
       console.log(
@@ -708,41 +667,7 @@ async function main(...args) {
       function BasePathIndex(path) {
         return path.findIndex((k) => !(k == 'inner' || Util.isNumeric(k)));
       }
-      /*  const ids = deep
-      .select(ast, (v, p) => /^0x/.test(v + '') && p[p.length - 1] != 'id')
-      .map(({ path, value }) => [
-        path.slice(BasePathIndex(path)).join('.'),
-        ...(n => [n.id, n.kind])(deep.get(ast, path.slice(0, BasePathIndex(path)))),
-        value,
-        idmap[value].map((f, i) => (i == 2 ? f.toString() : f)).slice(1),
-        Path2Loc(path).toString()
-      ])
-      .map(([path, declId, refKind, refId, [declNode, declLoc], refLoc]) => [
-        path,
-        refId,
-        refKind,
-        refLoc,
-        declId,
-        declNode.kind,
-        declLoc
-      ]);
-     const refs = ids.map(([path, refId, refKind, refLoc, declId, declKind, declLoc]) => [
-      path,
-      [refId, refKind, refLoc],
-      [declId, declKind, declLoc]
-    ]);
- 
-    const assoc = {};
-    0x12cef10;
-    const usages = {};
-    const getDecl = Util.getOrCreate(assoc, () => new Set());
-
-    refs.forEach(([path, ref, decl]) => {
-      if(decl[1] != 'BuiltinType') getDecl(ref[0]).add(decl[0]);
-     });*/
-
-      //console.log('assoc:', assoc);
-
+     
       function FindBackwards(node, pred = ([p, n]) => false) {
         for (let i = indexes.get(node); i >= 0; i--) {
           if (pred(entries[i])) return entries[i][1];
