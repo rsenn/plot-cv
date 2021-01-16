@@ -62,7 +62,7 @@ async function readBJSON(filename) {
   let data = filesystem.readFile(filename, null);
   let obj = await import('bjson')
     .then(({ read }) => read(data, 0, data.byteLength))
-    .catch((err) => console.log(err));
+    .catch(err => console.log(err));
   return obj;
 }
 
@@ -107,7 +107,7 @@ function readXML(filename) {
 
 function dumpFile(name, data) {
   console.log('dumpFile', { name });
-  if (typeof data == 'string' && !data.endsWith('\n')) data += '\n';
+  if(typeof data == 'string' && !data.endsWith('\n')) data += '\n';
 
   let raw = filesystem.bufferFrom(data);
   console.log('raw =', raw && raw.byteLength);
@@ -116,14 +116,14 @@ function dumpFile(name, data) {
   console.log('compressed =', compressed);
   console.log('compressed.length =', compressed && compressed.byteLength);
 
-  if (name == '-' || typeof name != 'string') {
+  if(name == '-' || typeof name != 'string') {
     //  let stdout = filesystem.fdopen(1, 'r');
     let buffer = data instanceof ArrayBuffer ? data : filesystem.bufferFrom(data);
     filesystem.write(1, buffer, 0, buffer.byteLength);
     return;
   }
 
-  if (Util.isArray(data)) data = data.join('\n');
+  if(Util.isArray(data)) data = data.join('\n');
   // if(typeof data != 'string') data = '' + data;
 
   //
@@ -134,14 +134,13 @@ function dumpFile(name, data) {
 
 const push_back = (arr, ...items) => [...(arr || []), ...items];
 const push_front = (arr, ...items) => [...items, ...(arr || [])];
-const tail = (arr) => arr[arr.length - 1];
+const tail = arr => arr[arr.length - 1];
 
 async function main(...args) {
   await ConsoleSetup({ depth: 20, colors: true, breakLength: 80 });
   filesystem = await PortableFileSystem();
 
-  let params = Util.getOpt(
-    {
+  let params = Util.getOpt({
       output: [true, null, 'o'],
       input: [true, null, 'i'],
       xml: [true, null, 'x'],
@@ -155,7 +154,7 @@ async function main(...args) {
     Util.getArgs().slice(1)
   );
   console.log('main', args, params);
-  if (params['@'].length == 0 && !params.input) {
+  if(params['@'].length == 0 && !params.input) {
     console.log(`Usage: ${Util.getArgs()[0]} <...files>`);
     return 1;
   }
@@ -182,7 +181,7 @@ async function main(...args) {
     dumpFile(outfile, json);
 
     // dumpFile(xmlfile, toXML(xmlData));
-  } catch (err) {
+  } catch(err) {
     console.log('error:', { err });
     throw err;
   }
