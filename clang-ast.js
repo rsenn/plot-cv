@@ -206,6 +206,7 @@ export async function AstDump(file, args) {
     errors = '';
   console.log('child:', child);
 
+if(Util.platform == 'quickjs') {
   (function () {
     let r;
     let buf = new ArrayBuffer(1024);
@@ -215,8 +216,8 @@ export async function AstDump(file, args) {
     json += r;
     console.log('read:', r);
   })();
-
-  /*AcquireReader(child.stdout, async (reader) => {
+} else {
+  AcquireReader(child.stdout, async (reader) => {
     let r, str;
     while((r = await reader.read())) {
       if(!r.done) {
@@ -233,7 +234,7 @@ export async function AstDump(file, args) {
       if(!r.done) errors += r.value.toString();
     }
   });
-*/
+}
   console.log('child.wait():', await child.wait());
   console.log('errors:', errors);
   let errorLines = errors.split(/\n/g).filter(line => line.trim() != '');
