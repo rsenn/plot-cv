@@ -7,172 +7,10 @@ import path from './lib/path.js';
 import fs from 'fs';
 import deep from './lib/deep.js';
 import Tree from './lib/tree.js';
+import { Type, AstDump } from './clang-ast.js';
 
 //prettier-ignore
 let filesystem, spawn;
-
-const word_size = 8;
-
-class Type {
-  constructor(s) {
-    let str = ((Util.isObject(s) && (s.desugaredQualType || s.qualType)) || s) + '';
-    str = str.replace(/\s*restrict\s*/g, '');
-    str = str.replace(/\s*const\s*/g, '');
-
-    //    super(str);
-
-    if (Util.isObject(str)) {
-      if (str.qualType) Util.define(this, { qualType: str.qualType });
-      if (str.desugaredQualType !== undefined)
-        Util.define(this, { desugaredQualType: str.desugaredQualType });
-      if (str.typeAliasDeclId !== undefined)
-        Util.define(this, { typeAliasDeclId: str.typeAliasDeclId });
-    } else {
-      Util.define(this, { qualType: str + '' });
-    }
-  }
-
-  get name() {
-    return this.qualType || this.desugaredQualType || this.typeAliasDeclId;
-  }
-  get desugared() {
-    return this.desugaredQualType || this.qualType;
-  } 
-
-  get typeAlias() {
-    return this.typeAliasDeclId;
-  }  
-  get regExp() {
-    return new RegExp(`(?:${this.qualType}${this.typeAlias ? '|'+this.typeAlias : ''})`, 'g');
-  }
-  get subscripts() {
-    let match;
-    let str = this + '';
-    while ((match = /\[([0-9]+)\]/g.exec(str))) {
-      console.log('match:', match);
-    }
-  }
-  get pointer() {
-    let str = this + '';
-    let match = Util.if(
-      /^([^\(\)]*)(\(?\*\)?\s*)(\(.*\)$|)/g.exec(str),
-      (m) => [...m].slice(1),
-      () => []
-    );
-    if (match[1]) return new Type([match[0].trimEnd(), match[2]].join(''));
-  }
-  get unsigned() {
-    let str = this + '';
-    return /(unsigned|ushort|uint|ulong)/.test(str);
-  }
-
-  get ffi() {
-    if (this.pointer == 'char') return 'char *';
-    if (this.size == word_size && !this.pointer)
-      return ['', 'unsigned '][this.unsigned | 0] + 'long';
-    if (this.size == word_size && this.unsigned) return 'size_t';
-    if (this.size == word_size / 2 && !this.unsigned) return 'int';
-    if (this.size == 4) return ['', 'u'][this.unsigned | 0] + 'int32';
-    if (this.size == 2) return ['', 'u'][this.unsigned | 0] + 'int16';
-    if (this.size == 1) return ['', 'u'][this.unsigned | 0] + 'int8';
-
-    if (this.pointer) return 'void *';
-    if (this.size > word_size) return 'void *';
-    if (this.size === 0) return 'void';
-
-    throw new Error(`No ffi type '${this}' ${this.size}`);
-  }
-
-  get size() {
-    const { desugared: name } = this;
-    const re = /^[^0-9]*([0-9]+)(_t|)$/;
-    let size, match;
-    if ((match = re.exec(name))) {
-      const [, bits] = match;
-      if (!isNaN(+bits)) return +bits / 8;
-    }
-    if ((match = /^[^\(]*\(([^\)]*)\).*/.exec(name))) {
-      if (match[1] == '*') return word_size;
-    }
-    match = /^(unsigned\s+|signed\s+|const\s+|volatile\s+|long\s+|short\s+)*([^\[]*[^ \[\]]) *\[?([^\]]*).*$/g.exec(
-      name
-    );
-    switch (match[2]) {
-      case 'char': {
-        size = 1;
-        break;
-      }
-      case 'int8_t':
-      case 'uint8_t':
-      case 'bool': {
-        size = 1;
-        break;
-      }
-      case 'size_t':
-      case 'ptrdiff_t':
-      case 'void *':
-      case 'long': {
-        size = word_size;
-        break;
-      }
-      case 'float':
-      case 'unsigned int':
-      case 'int': {
-        size = 4;
-        break;
-      }
-      case 'long double': {
-        size = 16;
-        break;
-      }
-      case 'long long': {
-        size = 8;
-        break;
-      }
-      case 'float': {
-        size = 4;
-        break;
-      }
-      case 'double': {
-        size = 8;
-        break;
-      }
-      case 'void': {
-        size = 0;
-        break;
-      }
-    }
-    if (size === undefined && match[2].endsWith('*')) size = word_size;
-    if (size === undefined && this.name.startsWith('enum ')) size = 4;
-
-    if (match[3]) {
-      const num = parseInt(match[3]);
-      //console.log('num:', { match, size, num });
-      size *= num;
-    }
-    if (size === undefined) {
-      // throw new Error(`Type sizeof(${name}) ${this.desugaredQualType}`);
-      size = NaN;
-    }
-    return size;
-  }
-
-  get [Symbol.toStringTag]() {
-    return `${(this.typeAlias&& this.typeAlias+'/' ||'')+this.name}, ${this.size}${(this.pointer && ', ' + this.pointer) || ''}`;
-  }
-
-  [Symbol.toPrimitive](hint) {
-    if (hint == 'default' || hint == 'string') return this.name; //this+'';
-    return this;
-  }
-  valueOf() {
-    return this.name;
-  }
-
-  toString() {
-    return this.name;
-  }
-}
 
 Array.prototype.findLastIndex = function findLastIndex(predicate) {
   for (let i = this.length - 1; i >= 0; --i) {
@@ -251,11 +89,22 @@ async function main(...args) {
 
   async function processFiles(...files) {
     for (let file of files) {
-      let json = await AstDump(file, args);
+      let json, ast;
+      let outfile = file.replace(/(?:.*\/|)(.*)(?:\.[^.]*|)$/, '$1.ast.json');
+      let st = [file, outfile].map((name) => filesystem.stat(name));
 
-      let ast = JSON.parse(json);
+      let times = st.map((stat) => stat.mtime);
 
-      /* for(let [node,path] of deep.iterate(ast)) {
+      if (times[1] >= times[0]) {
+        console.log('Reading cached AST from:', outfile);
+        json = filesystem.readFile(outfile);
+        ast = JSON.parse(json);
+      } else {
+        json = await AstDump(file, args);
+        ast = JSON.parse(json);
+
+        dumpFile(outfile, JSON.stringify(ast, null, 2));
+      } /* for(let [node,path] of deep.iterate(ast)) {
    if(Util.isObject(node) && /Comment/.test(node.kind)) 
      deep.unset(ast, path);
  }*/
@@ -310,10 +159,6 @@ async function main(...args) {
           path.set(n, p);
         }
       }
-      dumpFile(
-        file.replace(/(?:.*\/|)(.*)(?:\.[^.]*|)$/, '$1.ast.json'),
-        JSON.stringify(ast, null, 2)
-      );
 
       function Path2Loc(path) {
         if (Array.isArray(path)) path = path.join('.');
@@ -330,6 +175,21 @@ async function main(...args) {
 
       let typedefs = [...Util.filter(mainNodes, ([path, decl]) => decl.kind == 'TypedefDecl')];
 
+      Type.declarations = new Map(
+        [...entries]
+          .filter(([p, n]) => Util.isObject(n) && /Decl/.test(n.kind) && n.name)
+          .map(([p, n]) => [n.name, n])
+      );
+
+      console.log('Type.declarations:', [...Type.declarations.keys()]);
+      console.log(
+        'Type.declarations. "BrotliDecoderErrorCode" :',
+        Type.declarations.get('BrotliDecoderErrorCode')
+      );
+      console.log(
+        'Type.declarations. "BrotliDecoderParameter" :',
+        Type.declarations.get('BrotliDecoderParameter')
+      );
       //typedefs = NoSystemIncludes(typedefs);
 
       const names = (decls) => [...decls].map(([path, decl]) => decl.name);
@@ -404,6 +264,7 @@ async function main(...args) {
           .filter(([path, node, id, name, type, kind]) => !/ParmVar/.test(kind))
           .map((decl) =>
             decl
+              .slice(2)
               .map((field, i) =>
                 (
                   Util.abbreviate(
@@ -416,15 +277,16 @@ async function main(...args) {
           )
           .join('\n')
       );
-      let typeDeclarations;
       let findDecl = (node) =>
-        deep.find(
-          node,
-          (n, p) => {
-            //console.log('findDecl', p);
-            return ['ownedTagDecl', 'decl'].indexOf(p[p.length - 1]) != -1;
-          },
-          []
+        (
+          deep.find(
+            node,
+            (n, p) => {
+              //console.log('findDecl', p);
+              return ['ownedTagDecl', 'decl'].indexOf(p[p.length - 1]) != -1;
+            },
+            []
+          ) || {}
         ).value;
 
       let findType = (name) =>
@@ -437,8 +299,8 @@ async function main(...args) {
               if (typeof typeAliasDeclId == 'string')
                 type.typeAliasDecl = idNodes.get(typeAliasDeclId);
 
-              if (typeDeclarations && typeDeclarations.has(t.desugaredQualType)) {
-                type = typeDeclarations.get(t.desugaredQualType);
+              if (Type.declarations && Type.declarations.has(t.desugaredQualType)) {
+                type = Type.declarations.get(t.desugaredQualType);
               }
 
               if (Util.isObject(type) && Util.isObject(type.type)) type = type.type;
@@ -500,19 +362,39 @@ async function main(...args) {
       let structSize = (map) =>
         [...map].reduce((acc, [name, [type, offset, size]]) => acc + size, 0);
 
-      typeDeclarations = new Map(
-        [...namedDecls].map(([name, decl]) => {
-          name = nodeName(decl, name);
-          let type = nodeType(decl);
-          return [name, decl];
-        })
+      let paramDeclarations = Util.unique(
+        [...entries]
+          .filter(([p, n]) => Util.isObject(n) && n.kind && n.kind.startsWith('Parm'))
+          .map(([p, n]) => {
+            let name = nodeName(n);
+            let type = nodeType(n);
+            return [name, type];
+          })
+          .filter(([n, t]) => !/unused/i.test(n))
+          .filter(([n, t]) => t.pointer && ['void', 'char'].indexOf(t.pointer + '') == -1)
+          .map(([n, t]) => [n, [t + '', t.pointer + '']])
+          .filter(([n, [t, p]]) => p.endsWith('int'))
+        /*.map(([n,[t,p]]) => p)*/
       );
-      //   console.log('typeDeclarations:', typeDeclarations.get('lzma_check'));
+
+      console.log('paramDeclarations:', paramDeclarations);
+
+      let scalars = new Map(
+        decls
+          .filter(
+            ([path, node, id, name, type, kind]) =>
+              kind != 'FunctionDecl' && /(\*)/.test(type) && !/\(.*\)$/.test(type)
+          )
+          .map(([path, node]) => nodeType(node))
+          .map((t) => [t + '', t.pointer])
+      );
+      console.log('scalars:', scalars);
+
       let structs = new Map(
         decls
           .filter(
             ([path, node, id, name, type, kind]) =>
-              /Typedef/.test(kind) && /(struct|union)\s/.test(type)
+              /Typedef/.test(kind) && /(struct|union)/.test(type)
           )
           .map(([path, node, id, name, type, kind]) => [findDecl(node), node])
           .map(([decl, node]) => [node.name, fieldDecls(findNode(decl.id, decl.kind, decl))])
@@ -520,6 +402,7 @@ async function main(...args) {
           .map(([name, fields]) => [name, [structSize(fields), fields]])
         /* .filter(([name, [size, value]]) => !isNaN(size))*/
       );
+      console.log('structs:', structs);
       let prototypes = new Map(
         [...entries]
           .filter(([path, node]) => /FunctionDecl/.test(node.kind))
@@ -528,14 +411,16 @@ async function main(...args) {
             inner = inner && inner.map((sub) => [nodeName(sub), nodeType(sub)]);
             type = nodeType(node);
             type = type + '';
-            console.log('type:', type);
+            //console.log('type:', type);
             let match;
             if (inner && inner[0]) {
-
-console.log("inner[0]", inner[0]);
-                      if((match = inner[0][1].regExp.exec(type)))
-              type = type.slice(0, match.index).trimEnd();
-          }
+              //console.log("inner[0]", inner[0]);
+              if ((match = inner[0][1].regExp.exec(type))) {
+                type = type
+                  .slice(0, type[match.index - 1] == '(' ? match.index - 1 : match.index)
+                  .trimEnd();
+              }
+            }
             type = new Type(type);
             return [
               name,
@@ -566,22 +451,30 @@ console.log("inner[0]", inner[0]);
         );
         let lib = GetLibraryFor(name);
         let libname = lib && lib.replace(/\.so.*/g, '');
-        let varname = `dlsym(RTLD_DEFAULT, '${name}')`;
+        let varname = (n) => `dlsym(RTLD_DEFAULT, '${n}')`;
         if (lib) {
           if (!libraries.has(lib)) {
             libraries.set(lib, libname);
             output.push(`const ${libname} = dlopen('${lib}', RTLD_NOW);`);
           }
-          varname = libraries.get(lib);
+          varname = (name) => `dlsym(${libraries.get(lib)}, '${name}')`;
         }
-
-        if (ret)
+        if (ret) {
           output.push(
-            `define('${name}', ${varname}, null, '${ret}'${[...(params || [])]
+            `\ndefine('${name}', ${varname(name)}, null, '${ret}'${[...(params || [])]
               .map(([name, [param, offset]]) => ", '" + param.ffi + "'")
               .join('')});`
           );
+          let paramNames = [...(params || [])].map(([name], i) => name || `arg${i}`);
+          output.push(
+            `export function ${name}(${paramNames.join(', ')}) {
+  ${ret == 'void' ? '' : 'return '}call('${name}'${paramNames.map((n) => `, ${n}`).join('')});
+}
+`
+          );
+        }
       }
+      console.log('output:', output);
 
       for (let [name, proto] of prototypes) {
         //  console.log("proto:", proto);
@@ -589,7 +482,6 @@ console.log("inner[0]", inner[0]);
         output.push(DefinePrototype(name, retType, params));
       }
 
-      console.log('structs:', structs);
       console.log('prototypes:', prototypes);
 
       let generateGetSet = (name, offset, size) => [
@@ -599,7 +491,7 @@ console.log("inner[0]", inner[0]);
         `get ${name}() { return new ${ByteLength2TypedArray(size)}(this, ${offset})[0]; }`
       ];
 
-      console.log('structs:', structs);
+      // console.log('structs:', structs);
       for (let [name, [size, map]] of structs) {
         output.push('');
         output.push(`class ${name} extends ArrayBuffer {`);
@@ -630,7 +522,13 @@ console.log("inner[0]", inner[0]);
         output.push('}');
       }
 
-      console.log('output: ' + output.join('\n'));
+      console.log(
+        'output: ' +
+          output
+            .filter((p) => typeof p == 'string')
+            .map((p) => (p || '').trimRight())
+            .join('\n')
+      );
 
       /*
           switch (decl.kind) {
@@ -888,46 +786,6 @@ function dumpFile(name, data) {
   let ret = filesystem.writeFile(name, data);
 
   console.log(`Wrote ${name}: ${ret} bytes`);
-}
-
-async function AstDump(file, extraArgs) {
-  let child = spawn(['clang', ...extraArgs, file], {
-    stdin: 'inherit',
-    stdio: 'pipe',
-    stderr: 'pipe'
-  });
-
-  let json = '',
-    errors = '';
-
-  AcquireReader(child.stdout, async (reader) => {
-    let r, str;
-    while ((r = await reader.read())) {
-      if (!r.done) {
-        str = r.value.toString();
-        //  console.log('stdout:', );
-        json += str;
-      }
-    }
-  });
-
-  AcquireReader(child.stderr, async (reader) => {
-    let r;
-    while ((r = await reader.read())) {
-      if (!r.done) errors += r.value.toString();
-    }
-  });
-
-  console.log('child.wait():', await child.wait());
-  console.log('errors:', errors);
-  let errorLines = errors.split(/\n/g).filter((line) => line.trim() != '');
-  const numErrors =
-    errorLines.length &&
-    +errorLines[errorLines.length - 1].replace(/.*\s([0-9]+)\serrors\sgenerated.*/g, '$1');
-  errorLines = errorLines.filter((line) => /error:/.test(line));
-  console.log(`numErrors: ${numErrors}`);
-  console.log('errorLines:', errorLines);
-  return json;
 }
 
 function GetLibraryFor(symbolName) {
