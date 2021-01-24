@@ -1,7 +1,7 @@
 import * as std from 'std';
 import * as os from 'os';
 import { O_NONBLOCK, F_GETFL, F_SETFL, fcntl } from './fcntl.js';
-import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toArrayBuffer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
+import { debug, dlopen, define, dlerror, dlclose, dlsym, call, toString, toArrayBuffer, toPointer, errno, JSContext, RTLD_LAZY, RTLD_NOW, RTLD_GLOBAL, RTLD_LOCAL, RTLD_NODELETE, RTLD_NOLOAD, RTLD_DEEPBIND, RTLD_DEFAULT, RTLD_NEXT } from 'ffi';
 import * as ffi from 'ffi';
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
@@ -19,18 +19,100 @@ let strdup = foreign('strdup', 'void *', 'string');
 let dlopen_ = foreign('dlopen', 'void *', 'string', 'int');
 let dlsym_ = foreign('dlsym', 'void *', 'string');
 let snprintf = foreign('snprintf', 'int', 'buffer', 'size_t', 'string', 'void *');
+let mmap = foreign('mmap', 'ulong', 'pointer', 'size_t', 'int', 'int', 'int', 'size_t');
+let munmap = foreign('munmap', 'void', 'ulong', 'ulong');
+let fork = foreign('fork', 'int');
+let strcpy = foreign('strcpy', 'pointer', 'pointer', 'pointer');
+let setjmp = foreign('setjmp', 'int', 'pointer');
+let longjmp = foreign('longjmp', 'int', 'pointer', 'int');
+let printf = foreign('printf', 'int', 'string', 'pointer');
 
-ArrayBuffer.prototype.toPointer = function(hint = 'string') {
-  let out = new ArrayBuffer(100);
-  sprintf(out, '%p', this);
-  let ret = ArrayBufToString(out);
-  switch (hint) {
-    case 'bigint':
-      ret = BigInt(ret);
-      break;
+Util.define(ArrayBuffer.prototype, {
+  toPointer(hint = 'string') {
+    let out = new ArrayBuffer(100);
+    sprintf(out, '%p', this);
+    let ret = ArrayBufToString(out);
+    switch (hint) {
+      case 'bigint':
+        ret = BigInt(ret);
+        break;
+    }
+    return ret;
   }
-  return ret;
-};
+});
+
+class Registers extends ArrayBuffer {
+  constructor(obj = {}) {
+    super(256);
+    // Object.assign(this, obj);
+  }
+  get [Symbol.toStringTag]() {
+    return `[Registers @ ${toPointer(this)} ]`;
+  }
+
+  set rax(v) {
+    new BigUint64Array(this, 0, 1)[0] = BigInt(v);
+  }
+  get rax() {
+    let a = new BigUint64Array(this, 0, 1);
+    return a[0];
+  }
+
+  set rbx(v) {
+    new BigUint64Array(this, 8, 1)[0] = BigInt(v);
+  }
+  get rbx() {
+    let a = new BigUint64Array(this, 8, 1);
+    return a[0];
+  }
+
+  set rcx(v) {
+    new BigUint64Array(this, 16, 1)[0] = BigInt(v);
+  }
+  get rcx() {
+    let a = new BigUint64Array(this, 16, 1);
+    return a[0];
+  }
+  set rdx(v) {
+    new BigUint64Array(this, 24, 1)[0] = BigInt(v);
+  }
+  get rdx() {
+    let a = new BigUint64Array(this, 24, 1);
+    return a[0];
+  }
+  set rsi(v) {
+    new BigUint64Array(this, 32, 1)[0] = BigInt(v);
+  }
+  get rsi() {
+    let a = new BigUint64Array(this, 32, 1);
+    return a[0];
+  }
+  set rdi(v) {
+    new BigUint64Array(this, 40, 1)[0] = BigInt(v);
+  }
+  get rdi() {
+    let a = new BigUint64Array(this, 40, 1);
+    return a[0];
+  }
+  set rsp(v) {
+    new BigUint64Array(this, 48, 1)[0] = BigInt(v);
+  }
+  get rsp() {
+    let a = new BigUint64Array(this, 48, 1);
+    return a[0];
+  }
+  set rbp(v) {
+    new BigUint64Array(this, 56, 1)[0] = BigInt(v);
+  }
+  get rbp() {
+    let a = new BigUint64Array(this, 56, 1);
+    return a[0];
+  }
+
+  toString() {
+    return `Registers { .rax = ${this.rax}, .rbx = ${this.rbx}, .rcx = ${this.rcx}, .rdx = ${this.rdx}, .rsi = ${this.rsi}, .rdi = ${this.rdi}, .rsp = ${this.rsp}, .rbp = ${this.rbp} }`;
+  }
+}
 
 async function main(...args) {
   await ConsoleSetup({
@@ -101,6 +183,54 @@ async function main(...args) {
   console.log('rfds.toPointer():', rfds.toPointer());
   console.log('BigInt methods:', Util.getMethodNames(BigInt));
   console.log('BigInt toString(16):', BigInt(1337).toString(16));
+
+  const MAP_ANONYMOUS = 0x20;
+
+  let base_addr = 0x7f0000000000 - 1024;
+
+  let area = mmap((0x2000000 || 0x7f0000000000) - 8192, 8192, 0x7, 0x02 | MAP_ANONYMOUS, -1, 0);
+  console.log('area:', area.toString(16));
+  let fp = dlsym(RTLD_DEFAULT, 'strchr');
+  console.log('fp:', fp.toString(16));
+  strcpy(area, '\x48\x31\xc0\xc3');
+  //  strcpy(area+0, '\x48\x31\xc0\x48\xff\xc0\xc3');
+
+  let returnRAX = area + 100;
+  strcpy(area + 100, '\x48\x31\xc0\x48\xff\xc0\xc3');
+  let returnADDR = area + 200;
+  strcpy(area + 200, '\x48\x8b\x04\x24\xc3');
+  let writeREGS = area + 300;
+  strcpy(area + 300,
+    '\xf3\x0f\x1e\xfa\x48\x89\x07\x48\x89\x5f\x08\x48\x89\x4f\x10\x48\x89\x57\x18\x48\x89\x77\x20\x48\x89\x7f\x28\x48\x89\x6f\x30\x48\x89\x67\x38\x48\x31\xc0\x48\xff\xc0\xc3'
+  );
+  console.log('writeREGS:', writeREGS.toString(16));
+  let ret;
+  printf('area: %s\n', StringToHex(area + 0));
+
+  printf('returnRAX: %p\n', +returnRAX);
+  printf('returnADDR: %s\n', StringToHex(returnADDR));
+  printf('writeREGS: %p\n', +writeREGS);
+  printf('writeREGS: %s\n', StringToHex(writeREGS));
+
+  define('asm', area, null, 'uint64', 'uint64', 'uint64');
+  define('returnRAX', +returnRAX, null, 'uint64');
+  define('returnADDR', +returnADDR, null, 'uint64');
+  define('writeREGS', +writeREGS, null, 'uint64', 'pointer', 'uint64', 'pointer', 'uint64');
+
+  let regs = new Registers();
+
+  ret = call('returnRAX', 1, 2);
+  console.log('returnRAX() =', ret);
+  ret = call('returnADDR');
+  console.log('returnADDR() =', ret);
+
+  ret = call('writeREGS', +toPointer(regs), +toPointer(regs), regs, regs); // setjmp(jb);
+  console.log('writeREGS() =', ret);
+
+  console.log('regs =', regs.toString());
+
+  //if(ret != 1337)
+  // longjmp(jb, 1337);
 }
 
 Util.callMain(main, true);
@@ -110,6 +240,18 @@ function toHex(n, b = 2) {
 
   let s = (+n).toString(16);
   return '0'.repeat(Math.ceil(s.length / b) * b - s.length) + s;
+}
+function StringToHex(str, bytes = 1) {
+  if(typeof str != 'string') str = toString(str);
+  let buf = StringToArrayBuffer(str, bytes);
+  return ArrayBufToHex(buf, bytes);
+}
+
+function StringToArrayBuffer(str, bytes = 1) {
+  const buf = new ArrayBuffer(str.length * bytes);
+  const view = new Uint8Array(buf);
+  for(let i = 0, strLen = str.length; i < strLen; i++) view[i] = str.charCodeAt(i);
+  return buf;
 }
 
 function ArrayBufToString(buf, offset, length) {

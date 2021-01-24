@@ -398,8 +398,7 @@ async function main(...args) {
           output.push(`export function ${name}(${paramNames.join(', ')}) {
   ${ret == 'void' ? '' : 'return '}call('${name}'${paramNames.map(n => `, ${n}`).join('')});
 }
-`
-          );
+`);
         }
       }
       console.log('output:', output);

@@ -206,35 +206,35 @@ export async function AstDump(file, args) {
     errors = '';
   console.log('child:', child);
 
-if(Util.platform == 'quickjs') {
-  (function () {
-    let r;
-    let buf = new ArrayBuffer(1024);
-    console.log('stdout:', child.stdout);
-    r = filesystem.readAll(child.stdout.fd);
-    //const str = filesystem.bufferToString(buf.slice(0, r));
-    json += r;
-    console.log('read:', r);
-  })();
-} else {
-  AcquireReader(child.stdout, async (reader) => {
-    let r, str;
-    while((r = await reader.read())) {
-      if(!r.done) {
-        str = r.value.toString();
-         console.log('stdout:', );
-        json += str;
+  if(Util.platform == 'quickjs') {
+    (function () {
+      let r;
+      let buf = new ArrayBuffer(1024);
+      console.log('stdout:', child.stdout);
+      r = filesystem.readAll(child.stdout.fd);
+      //const str = filesystem.bufferToString(buf.slice(0, r));
+      json += r;
+      console.log('read:', r);
+    })();
+  } else {
+    AcquireReader(child.stdout, async reader => {
+      let r, str;
+      while((r = await reader.read())) {
+        if(!r.done) {
+          str = r.value.toString();
+          console.log('stdout:');
+          json += str;
+        }
       }
-    }
-  });
+    });
 
-  AcquireReader(child.stderr, async (reader) => {
-    let r;
-    while((r = await reader.read())) {
-      if(!r.done) errors += r.value.toString();
-    }
-  });
-}
+    AcquireReader(child.stderr, async reader => {
+      let r;
+      while((r = await reader.read())) {
+        if(!r.done) errors += r.value.toString();
+      }
+    });
+  }
   console.log('child.wait():', await child.wait());
   console.log('errors:', errors);
   let errorLines = errors.split(/\n/g).filter(line => line.trim() != '');
