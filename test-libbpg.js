@@ -80,16 +80,12 @@ class BPGImageInfo extends ArrayBuffer {
 
 var importObject = {
   //c: { imported_func: arg => console.log(arg) },
-  a(arg) {
+  abort: async function (arg) {
     console.log(arg);
   },
-  b: function (arg) {
-    console.log(arg);
-  },
-  imports: {
-    abort: arg => {
+  env: {
+    abort(arg) {
       console.log(arg);
-      return () => {};
     },
     emscripten_resize_heap: arg => {
       console.log(arg);
@@ -99,8 +95,19 @@ var importObject = {
       console.log(arg);
       return () => {};
     }
+  },
+  imports: {
+    abort: async function(arg) {
+      console.log(arg);
+      /*  return () => {};*/
+    },
+    env: arg => {
+      console.log(arg);
+    }
   }
 };
+Object.assign(importObject.imports.env, importObject);
+Object.assign(importObject, { a: importObject.imports });
 
 let functionNames = {
   d: 'memory',
@@ -204,6 +211,7 @@ async function BPGDecode(buffer, outputFmt = BPG_OUTPUT_FORMAT_RGB24) {
   if(typeof buffer == 'string') {
     buffer = await fetch(buffer).then(response => response.arrayBuffer());
   }
+  console.log('buffer:', buffer.byteLength);
 
   let decoder = bpg.bpg_decoder_open();
   console.log('decoder:', decoder);
@@ -211,14 +219,13 @@ async function BPGDecode(buffer, outputFmt = BPG_OUTPUT_FORMAT_RGB24) {
   let output;
 
   let ret;
+  if((ret = bpg.bpg_decoder_decode(decoder, buffer, buffer.byteLength)) < 0) throw new Error(`bpg_decoder_decode: ${ret}`);
   if((ret = bpg.bpg_decoder_get_info(decoder, info)) < 0) throw new Error(`bpg_decoder_get_info: ${ret}`);
 
   console.log('info:', info);
 
   output = new Array(info.height).map(() => new ArrayBuffer(info.width));
   if((ret = bpg.bpg_decoder_start(decoder, outputFmt)) < 0) throw new Error(`bpg_decoder_start: ${ret}`);
-
-  if((ret = bpg_decoder_decode(decoder, buffer, buffer.byteLength)) < 0) throw new Error(`bpg_decoder_decode: ${ret}`);
 }
 
 window.BPGDecode = BPGDecode;
