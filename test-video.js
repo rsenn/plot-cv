@@ -119,16 +119,6 @@ Object.assign(Pipeline.prototype, {
   }
 });
 
-/*const inspectObj = obj => console.inspect(obj, { multiline: false });
-const inspectMat = ({ rows, cols, channels, depth, type }) =>
-  inspectObj({
-    rows,
-    cols,
-    channels,
-    depth,
-    type
-  });*/
-
 function SaveConfig(configObj) {
   return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'),
     JSON.stringify(configObj, null, 2) + '\n'
@@ -280,15 +270,15 @@ function drawContour(mat, contour, color, thickness = 1, lineType = cv.LINE_AA) 
   cv.drawContours(mat, [contour], 0, color, thickness, lineType);
 }
 
-function* getParents(hier, contourId) {
-  while(contourId != -1) {
-    yield contourId;
+function* getParents(hier, id) {
+  while(id != -1) {
+    yield id;
 
-    contourId = hier[contourId][cv.HIER_PARENT];
+    id = hier[id][cv.HIER_PARENT];
   }
 }
-function getContourDepth(hier, contourId) {
-  return [...getParents(hier, contourId)].length;
+function getContourDepth(hier, id) {
+  return [...getParents(hier, id)].length;
 }
 function findRoot(hier) {
   return hier.findIndex(h => h[cv.HIER_PREV] == -1 && h[cv.HIER_PARENT] == -1);
@@ -296,16 +286,16 @@ function findRoot(hier) {
 function* getToplevel(hier) {
   for(let [i, h] of hier.entries()) if(h[cv.HIER_PARENT] == -1) yield i;
 }
-function* walkContours(hier, contourId) {
-  contourId = contourId || findRoot(hier);
+function* walkContours(hier, id) {
+  id = id || findRoot(hier);
   let h;
 
-  while((h = hier[contourId])) {
-    yield contourId;
+  while((h = hier[id])) {
+    yield id;
 
     if(h[cv.HIER_CHILD] != -1) yield* walkContours(hier, h[cv.HIER_CHILD]);
 
-    contourId = h[cv.HIER_NEXT];
+    id = h[cv.HIER_NEXT];
   }
 }
 
@@ -474,7 +464,8 @@ async function main(...args) {
       Processor(function Contours(src, dst) {
         cv.findContours(src, (contours = []), (hier = []), cv[params.mode], cv[params.method]);
 
-        src.copyTo(dst);
+        //src.copyTo(dst);
+        cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
 
         if(+params.maskColor) {
           let edge = [dst.toString(), pipeline.images[0].toString()];
@@ -497,8 +488,8 @@ async function main(...args) {
         );
         //console.log('lines.length', lines.length);
         //console.log('lines: '+lines.map(l => l.toString()).join(', '));
-
-        cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
+src.copyTo(dst);
+        //cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
       })
     ],
     (mat, i, n) => {
