@@ -112,14 +112,19 @@ export function ParamNavigator(map, index = 0) {
     index,
     next() {
       this.index = mod(this.index + 1);
-      console.log('ParamNavigator index =', this.index);
+      // console.log('ParamNavigator index =', this.index);
     },
     prev() {
       this.index = mod(this.index - 1);
-      console.log('ParamNavigator index =', this.index);
+      // console.log('ParamNavigator index =', this.index);
     }
   });
 }
+Util.define(ParamNavigator.prototype, {
+  nameOf(param) {
+    for(let [name, value] of this.map) if(value === param) return name;
+  }
+});
 
 Util.define(ParamNavigator.prototype, {
   at(index) {
@@ -136,6 +141,10 @@ Util.define(ParamNavigator.prototype, {
   get param() {
     const { map, index } = this;
     return [...map.values()][index];
+  },
+  get size() {
+    const { map } = this;
+    return map.size;
   } /*,
   get(name) {
     return this.map.get(name).get();

@@ -16,7 +16,7 @@ js_contour_new(JSContext* ctx, const JSContourData<T>& points) {
   JSValue ret;
   JSContourData<double>* contour;
   ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
-  contour = js_allocate  <JSContourData<double> >(ctx);
+  contour = js_allocate<JSContourData<double>>(ctx);
   new(contour) JSContourData<double>();
   contour->resize(points.size());
   transform_points(points.cbegin(), points.cend(), contour->begin());

@@ -57,7 +57,7 @@ template<class T> struct js_alloc_quickjs {
 
   static T*
   allocate(JSContext* ctx) {
-    return static_cast<T*>(js_mallocz( ctx, size));
+    return static_cast<T*>(js_mallocz(ctx, size));
   }
 
   static void

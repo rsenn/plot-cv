@@ -1,6 +1,7 @@
 #include "jsbindings.h"
 #include "js_point.h"
 #include "js_array.h"
+#include "js_rect.h"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -209,9 +210,10 @@ static JSValue
 js_draw_rect(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
   cv::Mat* dst;
   int i = 0, ret = -1;
-  cv::Rect2f rect;
-  JSPointData<float> points[2];
-  color_type color;
+  JSRectData<double> rect;
+  JSPointData<double> points[2];
+  JSColorData<uint8_t> color;
+  cv::Scalar scalar;
   int thickness = 1;
   bool antialias = true;
 
@@ -223,11 +225,21 @@ js_draw_rect(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
   if(dst == nullptr)
     return JS_EXCEPTION;
 
-  if(argc > i && js.is_rect(argv[i]))
-    js.get_rect(argv[i++], rect);
+  if(argc > i) {
+    if(js_rect_read(ctx, argv[i], &rect))
+      i++;
+    //    js.get_rect(argv[i++], rect);
+  }
 
-  if(argc > i && js.is_color(argv[i]))
-    js.get_color(argv[i++], color);
+  if(argc > i)
+    if(js_color_read(ctx, argv[i], &color)) {
+      i++;
+
+      scalar[0] = color.arr[0];
+      scalar[1] = color.arr[1];
+      scalar[2] = color.arr[2];
+      scalar[3] = color.arr[3];
+    }
 
   if(argc > i && js.is_number(argv[i]))
     js.get_number(argv[i++], thickness);
@@ -240,7 +252,8 @@ js_draw_rect(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
   points[1].x = rect.x + rect.width;
   points[1].y = rect.y + rect.height;
 
-  cv::rectangle(*dst, points[0], points[1], color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
+  // cv::rectangle(*dst, points[0], points[1], color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
+  cv::rectangle(*dst, rect, scalar, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
 
   return JS_UNDEFINED;
 }

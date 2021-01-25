@@ -1073,7 +1073,7 @@ js_mat_iterator_new(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
     enum_obj = JS_NewObjectProtoClass(ctx, mat_iterator_proto, js_mat_iterator_class_id);
     if(!JS_IsException(enum_obj)) {
       it = js_allocate<JSMatIteratorData>(ctx);
-      
+
       it->obj = mat;
       it->row = 0;
       it->col = 0;

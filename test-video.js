@@ -4,6 +4,7 @@ import * as draw from 'draw';
 import * as std from 'std';
 import { Point } from 'point';
 import { Size } from 'size';
+import { Rect } from 'rect';
 import { TickMeter } from 'utility';
 import { VideoSource } from './cvVideo.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.js';
@@ -428,8 +429,8 @@ async function main(...args) {
     thresh2: new NumericParam(config.thresh2 ?? 90, 0, 100),
     apertureSize: new NumericParam(config.apertureSize ?? 3, 3, 7, 2),
     L2gradient: new NumericParam(config.L2gradient ?? 0, 0, 1),
-    numDilations: new NumericParam(config.numDilations ?? 0, 0, 10),
-    numErosions: new NumericParam(config.numErosions ?? 0, 0, 10),
+    dilations: new NumericParam(config.dilations ?? 0, 0, 10),
+    erosions: new NumericParam(config.erosions ?? 0, 0, 10),
     mode: new EnumParam(config.mode ?? 3, ['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL']),
     method: new EnumParam(config.method ?? 0, [
       'CHAIN_APPROX_NONE',
@@ -439,7 +440,7 @@ async function main(...args) {
     ]),
     maskColor: new EnumParam(config.maskColor ?? false, ['OFF', 'ON']),
     lineWidth: new NumericParam(config.lineWidth ?? 1, 0, 10),
-    fontThickness: new NumericParam(config.fontThickness ??  1, 0, 10)
+    fontThickness: new NumericParam(config.fontThickness ?? 1, 0, 10)
   };
   let paramNav = new ParamNavigator(params, config.currentParam);
   let dummyArray = [0, 1, 2, 3, 4, 5, 6, 7];
@@ -469,8 +470,8 @@ async function main(...args) {
         ////console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
       }),
       Processor(function Morph(src, dst) {
-        cv.dilate(src, dst, structuringElement, new Point(-1, -1), +params.numDilations);
-        cv.erode(dst, dst, structuringElement, new Point(-1, -1), +params.numErosions);
+        cv.dilate(src, dst, structuringElement, new Point(-1, -1), +params.dilations);
+        cv.erode(dst, dst, structuringElement, new Point(-1, -1), +params.erosions);
       }),
       Processor(function Contours(src, dst) {
         cv.findContours(src, (contours = []), (hier = []), cv[params.mode], cv[params.method]);
@@ -541,12 +542,14 @@ async function main(...args) {
     //console.log('processing time:', Util.now() - (deadline - frameDelay));
 
     while(true) {
-      let sleepMsecs = deadline - Util.now();
+      let now = Util.now();
+      let sleepMsecs = deadline - now;
 
       sleepMsecs -= 2;
       //console.log('sleepMsecs:', sleepMsecs, '/', frameDelay);
-
-      if((keyCode = cv.waitKeyEx(Math.max(1, sleepMsecs))) != -1) {
+      let key;
+      if((key = cv.waitKeyEx(Math.max(1, sleepMsecs))) != -1) {
+        keyCode = key;
         keyTime = Util.now();
         modifiers = Object.fromEntries(modifierMap(keyCode));
         modifierList = modifierMap(keyCode).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc),
@@ -556,7 +559,7 @@ async function main(...args) {
         console.log(`keypress [${modifierList}] 0x${(keyCode & ~0xd000).toString(16)} '${ch}'`);
       }
 
-      switch (keyCode & 0xfff) {
+      switch (key & 0xfff) {
         case 0x3c /* < */:
           paramNav.prev();
           break;
@@ -606,7 +609,7 @@ async function main(...args) {
           frameShow = wrapIndex(frameShow - 1);
           break;
         case 0xf50 /* home */:
-          video.set('pos_frames', 0);
+          video.se4t('pos_frames', 0);
           break;
         case 0xf57 /* end */:
           video.set('pos_frames', video.get('frame_count') - Math.round(video.fps * 3));
@@ -647,7 +650,7 @@ async function main(...args) {
   }
 
   function showOutput() {
-    let mat = surface(outputMat.rows, outputMat.cols, cv.CV_8UC4);
+    let over = surface(outputMat.rows, outputMat.cols, cv.CV_8UC4);
     let now = Util.now();
 
     //console.log('showOutput:', [now, now - keyTime].map(t => Math.floor(t)));
@@ -659,7 +662,7 @@ async function main(...args) {
     }
 
     if(frameShow == 0) {
-      cv.drawContours(mat, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
+      cv.drawContours(over, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
     } else {
       let ids = [...getToplevel(hier)];
 
@@ -668,19 +671,53 @@ async function main(...args) {
       contours.forEach((contour, i) => {
         let p = [...getParents(hier, i)];
         let color = palette[p[p.length - 1]];
-        drawContour(mat, contour, color, +params.lineWidth);
+        drawContour(over, contour, color, +params.lineWidth);
       });
     }
-     font.draw(mat, video.time + ' ⏩', tPos, /*0x00ff00 ||*/ { r: 0, g: 255, b: 0, a: 255 }, +params.fontThickness);
-    let paramValue = paramNav.param.get();
+    font.draw(over, video.time + ' ⏩', tPos, /*0x00ff00 ||*/ { r: 0, g: 255, b: 0, a: 255 }, +params.fontThickness);
 
-    if('' + paramValue != '' + +paramNav.param) paramValue += ` (${+paramNav.param})`;
+    function drawParam(param, y, color) {
+      const name = paramNav.nameOf(param);
+      const value = param.get() + (param.get() != (param | 0) + '' ? ` (${+param})` : '');
+      const arrow = Number.isInteger(y) && paramNav.name == name ? '=>' : '  ';
+      const text = `${arrow}${name}` + (Number.isInteger(y) ? `[${param.range.join('-')}]` : '') + ` = ${value}`;
+      color = color || { r: 0xb7, g: 0x35, b: 255, a: 255 };
+      y = tPos.y - 20 - (y | 0);
+      font.draw(over, text, [tPos.x, y], { r: 0, g: 0, b: 0, a: 255 }, params.fontThickness * 2);
+      font.draw(over, text, [tPos.x, y], color, +params.fontThickness);
+    }
 
-    let paramStr = `${paramNav.name} [${paramNav.param.range.join('-')}] = ${paramValue}`;
-    //console.log('paramStr: ', paramStr);
-    font.draw(mat, paramStr, [tPos.x, tPos.y - 20], /*0x00ffff ||*/ { r: 255, g: 0, b: 0, a: 255 }, +params.fontThickness);
+    //console.log('keyCode:', '0x' + Util.hex(keyCode & 0xff, 2));
+    let elapsed = now - keyTime;
+    let maskRect;
+    if((keyCode & 0b00111101) == 0b00111100 && elapsed < 2000) {
+      let { index, size } = paramNav;
+      let start = 0;
+      if(index > 4) {
+        start = index - 4;
+      }
+      let trailing = size - (index + 1);
+      if(trailing > 4) {
+        size -= trailing - 4;
+        //trailing = 4;
+      }
+      let y = 0;
+      let h = 0;
+      let x = Util.mod(size);
+      for(let i = size - 1; i >= start; i--) h += 20;
+      maskRect = new Rect(tPos.x, tPos.y - 20 - h, 200, h);
 
-    font.draw(mat,
+      for(let i = size - 1; i >= start; i--) {
+        const pos = x(i);
+        const [name, param] = paramNav.at(pos);
+        drawParam(param, y, paramNav.index == pos && { r: 255, g: 255, b: 0, a: 255 });
+        y += 20;
+      }
+    } else {
+      drawParam(paramNav.param);
+    }
+
+    font.draw(over,
       `#${frameShow + 1}/${pipeline.size}` + (outputName ? ` (${outputName})` : ''),
       [5, 5 + tSize.y],
       /*0xffff00 ||*/ {
@@ -688,35 +725,32 @@ async function main(...args) {
         g: 255,
         b: 0,
         a: 255
-      }, +params.fontThickness
+      },
+      +params.fontThickness
     );
 
     resizeOutput();
 
-    //console.log("row 100:", [...mat.row(100).values()]);
-
-    //let mask = toBGR(getAlpha(mat));
-    let composite = MakeMatFor(showOutput);
+    //console.log("row 100:", [...over.row(100).values()]);
     const showOverlay = frameShow != pipeline.size - 1 || now - keyTime < 2000;
-    cv.addWeighted(out, 1, mat, showOverlay ? 1 : 0, 0, composite);
+    if(maskRect && showOverlay) {
+      draw.rect(out, maskRect, [0, 0, 0, 255], -1);
+      draw.rect(out, maskRect, [255, 255, 255, 255], 1);
+    }
+    //let mask = toBGR(getAlpha(over));
+    let composite = MakeMatFor(showOutput);
+    cv.addWeighted(out, 1, over, showOverlay ? 1 : 0, 0, composite);
+    if(maskRect && showOverlay) {
+      draw.rect(composite, maskRect, [255, 255, 255, 255], 1);
+    }
+
     win.show(composite);
 
     //console.log("composite", composite.toString());
     //composite.release();
     //console.log("composite.release()", composite.toString());
   }
-  const {
-    ksize,
-    thresh1,
-    thresh2,
-    apertureSize,
-    L2gradient,
-    numDilations,
-    numErosions,
-    mode,
-    method,
-    lineWidth
-  } = params;
+  const { ksize, thresh1, thresh2, apertureSize, L2gradient, dilations, erosions, mode, method, lineWidth } = params;
   SaveConfig(Object.entries({
       frameShow,
       ksize,
@@ -724,8 +758,8 @@ async function main(...args) {
       thresh2,
       apertureSize,
       L2gradient,
-      numDilations,
-      numErosions,
+      dilations,
+      erosions,
       mode,
       method,
       lineWidth,
