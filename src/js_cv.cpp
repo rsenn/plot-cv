@@ -16,6 +16,8 @@
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module_cv
 #endif
 
+static std::vector<cv::String> window_list;
+
 static JSValue
 js_cv_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   JSValue obj = JS_UNDEFINED;
@@ -49,7 +51,8 @@ js_cv_gaussian_blur(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   if(argc >= 6)
     JS_ToInt32(ctx, &borderType, argv[5]);
 
-  //std::cerr << "cv::GaussianBlur size=" << size << " sigmaX=" << sigmaX << " sigmaY=" << sigmaY << " borderType=" << borderType << std::endl;
+  // std::cerr << "cv::GaussianBlur size=" << size << " sigmaX=" << sigmaX << " sigmaY=" << sigmaY << "
+  // borderType=" << borderType << std::endl;
   cv::GaussianBlur(*input, *output, size, sigmaX, sigmaY, borderType);
 
   return JS_UNDEFINED;
@@ -201,7 +204,8 @@ js_cv_canny(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
   if(argc >= 6)
     L2gradient = JS_ToBool(ctx, argv[5]);
 
-  //std::cerr << "cv::Canny threshold1=" << threshold1 << " threshold2=" << threshold2 << " apertureSize=" << apertureSize << " L2gradient=" << L2gradient << std::endl;
+  // std::cerr << "cv::Canny threshold1=" << threshold1 << " threshold2=" << threshold2 << " apertureSize="
+  // << apertureSize << " L2gradient=" << L2gradient << std::endl;
 
   cv::Canny(*image, *edges, threshold1, threshold2, apertureSize, L2gradient);
 
@@ -700,15 +704,16 @@ js_cv_min_max_loc(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
   JS_SetPropertyStr(ctx,
                     ret,
                     "minLoc",
-                    js_array_from(ctx, std::array<int, 2>{minLoc.x, minLoc.y})); // js_point_wrap(ctx, minLoc));
-  JS_SetPropertyStr(ctx,
-                    ret,
-                    "maxLoc",
-                    js_object::from_map(ctx,
-                                        std::map<std::string, int>{
-                                            std::pair<std::string, int>{"x", maxLoc.x},
-                                            std::pair<std::string, int>{"y",
-                                                                        maxLoc.y}})); // js_point_wrap(ctx, maxLoc));
+                    js_array_from(ctx,
+                                  std::array<int, 2>{minLoc.x, minLoc.y})); // js_point_wrap(ctx, minLoc));
+  JS_SetPropertyStr(
+      ctx,
+      ret,
+      "maxLoc",
+      js_object::from_map(ctx,
+                          std::map<std::string, int>{
+                              std::pair<std::string, int>{"x", maxLoc.x},
+                              std::pair<std::string, int>{"y", maxLoc.y}})); // js_point_wrap(ctx, maxLoc));
 
   return ret;
 }
@@ -723,6 +728,10 @@ js_cv_named_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
     JS_ToInt32(ctx, &flags, argv[1]);
 
   cv::namedWindow(name, flags);
+
+  if(std::find(window_list.cbegin(), window_list.cend(), name) == window_list.cend())
+    window_list.push_back(name);
+
   return JS_UNDEFINED;
 }
 
@@ -812,6 +821,11 @@ js_cv_destroy_window(JSContext* ctx, JSValueConst this_val, int argc, JSValueCon
   name = JS_ToCString(ctx, argv[0]);
 
   cv::destroyWindow(name);
+  auto it = std::find(window_list.cbegin(), window_list.cend(), name);
+
+  if(it != window_list.cend())
+    window_list.erase(it);
+
   return JS_UNDEFINED;
 }
 
@@ -1000,13 +1014,18 @@ js_cv_getperspectivetransform(JSContext* ctx, JSValueConst this_val, int argc, J
       JS_ToInt32(ctx, &solveMethod, argv[2]);
   }
 
-  std::transform(v->begin(), v->end(), std::back_inserter(a), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
+  std::transform(v->begin(),
+                 v->end(),
+                 std::back_inserter(a),
+                 [](const JSPointData<double>& pt) -> JSPointData<float> {
+                   return JSPointData<float>(pt.x, pt.y);
+                 });
   std::transform(other->begin(),
                  other->end(),
                  std::back_inserter(b),
-                 [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
+                 [](const JSPointData<double>& pt) -> JSPointData<float> {
+                   return JSPointData<float>(pt.x, pt.y);
+                 });
   matrix = cv::getPerspectiveTransform(a, b /*, solveMethod*/);
 
   ret = js_mat_wrap(ctx, matrix);
@@ -1028,13 +1047,18 @@ js_cv_getaffinetransform(JSContext* ctx, JSValueConst this_val, int argc, JSValu
   if(argc > 1)
     other = static_cast<JSContourData<double>*>(JS_GetOpaque2(ctx, argv[1], js_contour_class_id));
 
-  std::transform(v->begin(), v->end(), std::back_inserter(a), [](const JSPointData<double>& pt) -> JSPointData<float> {
-    return JSPointData<float>(pt.x, pt.y);
-  });
+  std::transform(v->begin(),
+                 v->end(),
+                 std::back_inserter(a),
+                 [](const JSPointData<double>& pt) -> JSPointData<float> {
+                   return JSPointData<float>(pt.x, pt.y);
+                 });
   std::transform(other->begin(),
                  other->end(),
                  std::back_inserter(b),
-                 [](const JSPointData<double>& pt) -> JSPointData<float> { return JSPointData<float>(pt.x, pt.y); });
+                 [](const JSPointData<double>& pt) -> JSPointData<float> {
+                   return JSPointData<float>(pt.x, pt.y);
+                 });
   matrix = cv::getAffineTransform(a, b);
 
   ret = js_mat_wrap(ctx, matrix);
@@ -1061,9 +1085,8 @@ js_cv_find_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   poly.resize(contours.size());
 
-  transform_contours<JSContoursData<int>::const_iterator, JSContoursData<float>::iterator>(contours.cbegin(),
-                                                                                           contours.cend(),
-                                                                                           poly.begin());
+  transform_contours<JSContoursData<int>::const_iterator, JSContoursData<float>::iterator>(
+      contours.cbegin(), contours.cend(), poly.begin());
 
   {
     size_t i, length = contours.size();
@@ -1174,6 +1197,11 @@ JSClassID js_cv_class_id;
 
 void
 js_cv_finalizer(JSRuntime* rt, JSValue val) {
+
+  for(const auto& name : window_list) {
+    std::cerr << "Destroy window '" << name << "'" << std::endl;
+    cv::destroyWindow(name);
+  }
 
   JS_FreeValueRT(rt, val);
   // JS_FreeValueRT(rt, cv_class);

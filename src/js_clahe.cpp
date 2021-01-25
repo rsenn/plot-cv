@@ -102,15 +102,14 @@ JSClassDef js_clahe_class = {
     .finalizer = js_clahe_finalizer,
 };
 
-const JSCFunctionListEntry js_clahe_proto_funcs[] = {JS_CFUNC_MAGIC_DEF("apply", 0, js_clahe_method, 0),
-                                                     JS_CFUNC_MAGIC_DEF("collectGarbage", 0, js_clahe_method, 1),
-                                                     JS_CFUNC_MAGIC_DEF("getClipLimit", 0, js_clahe_method, 2),
-                                                     JS_CFUNC_MAGIC_DEF("getTilesGridSize", 0, js_clahe_method, 3),
-                                                     JS_CFUNC_MAGIC_DEF("setClipLimit", 0, js_clahe_method, 4),
-                                                     JS_CFUNC_MAGIC_DEF("setTilesGridSize", 0, js_clahe_method, 5),
-                                                     JS_PROP_STRING_DEF("[Symbol.toStringTag]",
-                                                                        "CLAHE",
-                                                                        JS_PROP_CONFIGURABLE)};
+const JSCFunctionListEntry js_clahe_proto_funcs[] = {
+    JS_CFUNC_MAGIC_DEF("apply", 0, js_clahe_method, 0),
+    JS_CFUNC_MAGIC_DEF("collectGarbage", 0, js_clahe_method, 1),
+    JS_CFUNC_MAGIC_DEF("getClipLimit", 0, js_clahe_method, 2),
+    JS_CFUNC_MAGIC_DEF("getTilesGridSize", 0, js_clahe_method, 3),
+    JS_CFUNC_MAGIC_DEF("setClipLimit", 0, js_clahe_method, 4),
+    JS_CFUNC_MAGIC_DEF("setTilesGridSize", 0, js_clahe_method, 5),
+    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "CLAHE", JS_PROP_CONFIGURABLE)};
 
 int
 js_clahe_init(JSContext* ctx, JSModuleDef* m) {

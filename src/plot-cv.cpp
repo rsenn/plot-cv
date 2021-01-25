@@ -327,7 +327,8 @@ find_rectangles(const contour_vector<int>& contours, contour_vector<int>& square
     // Note: absolute value of an area is used because
     // area may be positive or negative - in accordance with the
     // contour orientation
-    if(arcLen > 80 || fabs(cv::contourArea(image_type(approx))) > 200 /*|| cv::isContourConvex(image_type(approx))*/) {
+    if(arcLen > 80 ||
+       fabs(cv::contourArea(image_type(approx))) > 200 /*|| cv::isContourConvex(image_type(approx))*/) {
       /*      double maxCosine = 0;
 
             for(int j = 2; j < 5; j++) {
@@ -408,7 +409,9 @@ hough_lines(image_type& img, const std::function<void(int, int, int, int)>& fn) 
   std::vector<cv::Vec4i> lines;
 
   hough_lines(img, lines);
-  std::for_each(lines.cbegin(), lines.cend(), [fn](const cv::Vec4i& vec) { fn(vec[0], vec[1], vec[2], vec[3]); });
+  std::for_each(lines.cbegin(), lines.cend(), [fn](const cv::Vec4i& vec) {
+    fn(vec[0], vec[1], vec[2], vec[3]);
+  });
 }
 
 template<class InputIterator>
@@ -434,7 +437,12 @@ draw_lines(image_type& target,
            int lineType = cv::LINE_8) {
 
   std::for_each(start, end, [target, color, thickness, lineType](const cv::Vec4i& vec) {
-    cv::line(target, point_type<int>(vec[0], vec[1]), point_type<int>(vec[2], vec[3]), color, thickness, lineType);
+    cv::line(target,
+             point_type<int>(vec[0], vec[1]),
+             point_type<int>(vec[2], vec[3]),
+             color,
+             thickness,
+             lineType);
   });
 }
 
@@ -560,7 +568,10 @@ write_image(image_type img) {
 }
 
 void
-draw_all_contours_except(image_type& out, contour_vector<int>& contours, int except = -1, int thickness = 1) {
+draw_all_contours_except(image_type& out,
+                         contour_vector<int>& contours,
+                         int except = -1,
+                         int thickness = 1) {
   for(int i = 0; i < contours.size(); i++) {
     if(i == except)
       continue;
@@ -591,7 +602,8 @@ get_alpha_channel(image_type m) {
 void
 image_info(image_type img) {
   std::cerr << "image cols=" << img.cols << " rows=" << img.rows << " channels=" << img.channels()
-            << " depth=" << (img.depth() == CV_8U ? "CV_8U" : img.depth() == CV_32F ? "CV_32F" : "CV_??") << std::endl;
+            << " depth=" << (img.depth() == CV_8U ? "CV_8U" : img.depth() == CV_32F ? "CV_32F" : "CV_??")
+            << std::endl;
 }
 
 JSValue
@@ -759,7 +771,8 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
       if(contourStr.str().size())
         contourStr << "\n";
       /*  out_points(contourStr, a);
-        logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] << ", " << hier[i][2] << ", " << hier[i][3] << ", "
+        logfile << "hier[i] = {" << hier[i][0] << ", " << hier[i][1] << ", " << hier[i][2] << ", " <<
+        hier[i][3] << ", "
                 << "} " << std::endl;
         logfile << "contourDepth(i) = " << depth << std::endl;
 
@@ -838,13 +851,15 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
         auto it = min_element(distances.begin(), distances.end());
         int min = *it;
 
-        std::transform(adjacent.begin(), adjacent.end(), back_inserter(adjacent_lines), [&](int index) -> Line<float>* {
-          return &lines[index];
-        });
+        std::transform(adjacent.begin(),
+                       adjacent.end(),
+                       back_inserter(adjacent_lines),
+                       [&](int index) -> Line<float>* { return &lines[index]; });
 
-        std::vector<int> parallel = filter_lines(lines.begin(), lines.end(), [&line](Line<float>& l2, size_t) {
-          return fabs((line.angle() - l2.angle()) * 180 / M_PI) < 3;
-        });
+        std::vector<int> parallel =
+            filter_lines(lines.begin(), lines.end(), [&line](Line<float>& l2, size_t) {
+              return fabs((line.angle() - l2.angle()) * 180 / M_PI) < 3;
+            });
         /*
                   logfile << "adjacent " << adjacent << std::endl;
                   logfile << "parallel " << parallel << std::endl;
@@ -869,9 +884,10 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
                        [&line](Line<float>* l2) -> float { return line.angle_diff(*l2); });
         std::vector<int> angleoffs_i;
 
-        std::transform(angleoffs.begin(), angleoffs.end(), back_inserter(angleoffs_i), [](const float ang) -> int {
-          return int(ang * 180 / M_PI) % 180;
-        });
+        std::transform(angleoffs.begin(),
+                       angleoffs.end(),
+                       back_inserter(angleoffs_i),
+                       [](const float ang) -> int { return int(ang * 180 / M_PI) % 180; });
 
         point_vector<int> centers;
         std::transform(adjacent_lines.begin(),
@@ -927,7 +943,9 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
     std::for_each(histogram.begin(), histogram.end(), [](const int count) { logfile << ' ' << count; });
     logfile << std::endl;
     logfile << "angles:";
-    std::for_each(angles.begin(), angles.end(), [](const float a) { logfile << ' ' << (int)(a * 180 / M_PI); });
+    std::for_each(angles.begin(), angles.end(), [](const float a) {
+      logfile << ' ' << (int)(a * 180 / M_PI);
+    });
     logfile << std::endl;
     draw_all_lines(imgGrayscale, filteredLines, [&](int index, size_t len) -> int {
       return lines[index].length() * 10;
@@ -1004,7 +1022,9 @@ process_geometry(std::function<void(std::string, cv::Mat*)> display_image, int s
   transform(contours2.begin(),
             contours2.end(),
             back_inserter(approxim),
-            [](const point_vector<float>& p) -> point_vector<int> { return transform_points<int, float>(p); });
+            [](const point_vector<float>& p) -> point_vector<int> {
+              return transform_points<int, float>(p);
+            });
 
   for_each(approxim.begin(), approxim.end(), [&](const point_vector<int>& c) {
     const double length = cv::arcLength(c, false);

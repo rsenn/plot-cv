@@ -70,8 +70,12 @@ js_draw_circle(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const
     }
   }
 
-  cv::circle(
-      *dst, point, radius, *reinterpret_cast<cv::Scalar*>(&color), thickness < 0 ? cv::FILLED : thickness, lineType);
+  cv::circle(*dst,
+             point,
+             radius,
+             *reinterpret_cast<cv::Scalar*>(&color),
+             thickness < 0 ? cv::FILLED : thickness,
+             lineType);
   return JS_UNDEFINED;
 }
 
@@ -119,7 +123,8 @@ js_draw_contour(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::cons
 
   cv::drawContours(*dst, contours, contourIdx, *reinterpret_cast<cv::Scalar*>(&color), thickness, lineType);
 
-  std::cerr << "draw_contour() ret:" << ret << " color: " << *reinterpret_cast<cv::Scalar*>(&color) << std::endl;
+  std::cerr << "draw_contour() ret:" << ret << " color: " << *reinterpret_cast<cv::Scalar*>(&color)
+            << std::endl;
   return JS_UNDEFINED;
 }
 
@@ -345,7 +350,10 @@ js_get_text_size(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::con
 }
 
 static JSValue
-js_get_font_scale_from_height(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
+js_get_font_scale_from_height(JSContext* ctx,
+                              jsrt::const_value this_val,
+                              int argc,
+                              jsrt::const_value* argv) {
   int i = 0, baseline = 0;
   int32_t fontFace, pixelHeight, thickness = 1;
   double fontScale;

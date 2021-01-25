@@ -18,7 +18,9 @@ JSValue point_iterator_proto, point_iterator_class;
 VISIBLE JSClassID js_point_iterator_class_id;
 
 VISIBLE JSValue
-js_point_iterator_new(JSContext* ctx, const std::pair<JSPointData<double>*, JSPointData<double>*>& range, int magic) {
+js_point_iterator_new(JSContext* ctx,
+                      const std::pair<JSPointData<double>*, JSPointData<double>*>& range,
+                      int magic) {
   JSPointIteratorData* it;
   JSValue iterator;
   int class_id;
@@ -63,8 +65,10 @@ js_point_iterator_result(JSContext* ctx, JSValue val, BOOL done) {
 }
 
 static JSValue
-js_point_iterator_next(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, BOOL* pdone, int magic) {
-  JSPointIteratorData* it = static_cast<JSPointIteratorData*>(JS_GetOpaque(this_val, js_point_iterator_class_id));
+js_point_iterator_next(
+    JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, BOOL* pdone, int magic) {
+  JSPointIteratorData* it =
+      static_cast<JSPointIteratorData*>(JS_GetOpaque(this_val, js_point_iterator_class_id));
   //  JSPointData<double>* ptr;
   JSValue result;
   // ptr = it->first;
@@ -154,7 +158,8 @@ js_point_iterator_init(JSContext* ctx, JSModuleDef* m) {
                              countof(js_point_iterator_proto_funcs));
   JS_SetClassProto(ctx, js_point_iterator_class_id, point_iterator_proto);
 
-  point_iterator_class = JS_NewCFunction2(ctx, js_point_iterator_ctor, "PointIterator", 2, JS_CFUNC_constructor, 0);
+  point_iterator_class =
+      JS_NewCFunction2(ctx, js_point_iterator_ctor, "PointIterator", 2, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */
 
   JS_SetConstructor(ctx, point_iterator_class, point_iterator_proto);
@@ -188,7 +193,8 @@ js_point_iterator_constructor(JSContext* ctx, JSValue parent, const char* name) 
 
 static JSValue
 js_point_iterator_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSPointIteratorData* s = static_cast<JSPointIteratorData*>(JS_GetOpaque2(ctx, this_val, js_point_iterator_class_id));
+  JSPointIteratorData* s =
+      static_cast<JSPointIteratorData*>(JS_GetOpaque2(ctx, this_val, js_point_iterator_class_id));
   std::ostringstream os;
   if(!s)
     return JS_EXCEPTION;

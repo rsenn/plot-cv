@@ -3,6 +3,7 @@
 #include "js_point.h"
 #include "js_rect.h"
 #include "js_array.h"
+#include "js_alloc.h"
 #include "geometry.h"
 #include "../quickjs/cutils.h"
 #include <list>
@@ -34,7 +35,7 @@ js_mat_data(JSContext* ctx, JSValueConst val) {
 
 static inline JSMatData*
 js_mat_track(JSContext* ctx, JSMatData* s) {
-  std::vector<void*> deallocate;
+  std::vector<cv::Mat*> deallocate;
 
   for(;;) {
     auto it2 = std::find(mat_freed.cbegin(), mat_freed.cend(), s);
@@ -44,7 +45,7 @@ js_mat_track(JSContext* ctx, JSMatData* s) {
       // std::cerr << "allocated @" << static_cast<void*>(s) << " which is in free list" << std::endl;
 
       // mat_freed.erase(it2);
-      s = static_cast<JSMatData*>(js_mallocz(ctx, sizeof(JSMatData)));
+      s = js_allocate<cv::Mat> (ctx);
       memcpy(s, deallocate[deallocate.size() - 1], sizeof(JSMatData));
 
     } else {
@@ -54,10 +55,11 @@ js_mat_track(JSContext* ctx, JSMatData* s) {
 
   mat_list.push_back(s);
 
-  for(const auto& ptr : deallocate) js_free(ctx, ptr);
+  for(const auto& ptr : deallocate)  js_deallocate(ctx, ptr);
   return s;
 }
 
+#ifdef DEBUG_MAT
 static inline std::map<void*, std::vector<JSMatData*>>
 js_mat_data(void* data = nullptr) {
   std::map<void*, std::vector<JSMatData*>> ret;
@@ -126,6 +128,7 @@ js_mat_dump(JSMatData* const s) {
       std::cerr << ", size=" << u->size;
   }
 }
+#endif
 
 VISIBLE JSValue
 js_mat_new(JSContext* ctx, uint32_t rows, uint32_t cols, int type) {
@@ -133,7 +136,7 @@ js_mat_new(JSContext* ctx, uint32_t rows, uint32_t cols, int type) {
   JSMatData* s;
   ret = JS_NewObjectProtoClass(ctx, mat_proto, js_mat_class_id);
 
-  s = js_mat_track(ctx, static_cast<JSMatData*>(js_mallocz(ctx, sizeof(JSMatData))));
+  s = js_mat_track(ctx, js_allocate<cv::Mat>(ctx));
 
   if(cols > 0 && rows > 0) {
     new(s) cv::Mat(cv::Size(cols, rows), type);
@@ -159,7 +162,7 @@ js_mat_wrap(JSContext* ctx, const cv::Mat& mat) {
   JSMatData* s;
   ret = JS_NewObjectProtoClass(ctx, mat_proto, js_mat_class_id);
 
-  s = js_mat_track(ctx, static_cast<JSMatData*>(js_mallocz(ctx, sizeof(JSMatData))));
+  s = js_mat_track(ctx, js_allocate<cv::Mat>(ctx));
   new(s) cv::Mat();
 
   *s = mat;
@@ -179,10 +182,10 @@ js_mat_wrap(JSContext* ctx, const cv::Mat& mat) {
   }
 
   js_mat_dump(s);
-#endif
   std::cerr << std::endl;
 
-  js_mat_print_data(js_mat_data(s->u), 2);
+  js_mat_print_data(ctx, js_mat_data(s->u), 2);
+#endif
 
   JS_SetOpaque(ret, s);
   return ret;
@@ -230,8 +233,9 @@ js_mat_finalizer(JSRuntime* rt, JSValue val) {
   if(it2 != mat_freed.cend()) {
 #ifdef DEBUG_MAT
     std::cerr << "js_mat_finalizer";
-#endif
     js_mat_dump(s);
+#endif
+
     std::cerr << " ERROR: already freed" << std::endl;
     return;
   }
@@ -266,10 +270,9 @@ js_mat_finalizer(JSRuntime* rt, JSValue val) {
 #endif
   } else {
 #ifdef DEBUG_MAT
-
     std::cerr << "js_mat_finalizer";
-#endif
     js_mat_dump(s);
+#endif
     std::cerr << " ERROR: not found" << std::endl;
   }
 
