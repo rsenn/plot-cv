@@ -72,7 +72,7 @@ void
 js_line_finalizer(JSRuntime* rt, JSValue val) {
   JSLineData<double>* s = static_cast<JSLineData<double>*>(JS_GetOpaque(val, js_line_class_id));
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
-  js_free_rt(rt, s);
+  js_deallocate(rt, s);
 }
 
 static JSValue

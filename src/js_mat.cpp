@@ -276,7 +276,7 @@ js_mat_finalizer(JSRuntime* rt, JSValue val) {
     std::cerr << " ERROR: not found" << std::endl;
   }
 
-  js_free_rt(rt, s);
+  js_deallocate(rt, s);
 }
 
 static JSValue
@@ -1072,8 +1072,8 @@ js_mat_iterator_new(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   if(!JS_IsException(mat)) {
     enum_obj = JS_NewObjectProtoClass(ctx, mat_iterator_proto, js_mat_iterator_class_id);
     if(!JS_IsException(enum_obj)) {
-      it = static_cast<JSMatIteratorData*>(js_malloc(ctx, sizeof(JSMatIteratorData)));
-
+      it = js_allocate<JSMatIteratorData>(ctx);
+      
       it->obj = mat;
       it->row = 0;
       it->col = 0;
@@ -1137,7 +1137,7 @@ js_mat_iterator_next(
 void
 js_mat_iterator_finalizer(JSRuntime* rt, JSValue val) {
   JSMatIteratorData* it = static_cast<JSMatIteratorData*>(JS_GetOpaque(val, js_mat_iterator_class_id));
-  js_free_rt(rt, it);
+  js_deallocate(rt, it);
 }
 
 static JSValue

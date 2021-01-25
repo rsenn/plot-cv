@@ -398,7 +398,7 @@ js_contour_finalizer(JSRuntime* rt, JSValue val) {
   JSContourData<double>* s = static_cast<JSContourData<double>*>(JS_GetOpaque(val, js_contour_class_id));
 
   if(s != nullptr)
-    js_free_rt(rt, s);
+    js_deallocate(rt, s);
 
   JS_FreeValueRT(rt, val);
 }

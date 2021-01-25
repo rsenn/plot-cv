@@ -55,7 +55,7 @@ void
 js_size_finalizer(JSRuntime* rt, JSValue val) {
   JSSizeData<double>* s = static_cast<JSSizeData<double>*>(JS_GetOpaque(val, js_size_class_id));
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
-  js_free_rt(rt, s);
+  js_deallocate(rt, s);
 }
 
 static JSValue

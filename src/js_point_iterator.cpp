@@ -94,7 +94,7 @@ js_point_iterator_finalizer(JSRuntime* rt, JSValue val) {
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
 
   if(s != nullptr)
-    js_free_rt(rt, s);
+    js_deallocate(rt, s);
 
   JS_FreeValueRT(rt, val);
 }

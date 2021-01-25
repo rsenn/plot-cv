@@ -47,7 +47,7 @@ js_clahe_finalizer(JSRuntime* rt, JSValue val) {
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
 
   s->~JSCLAHEData();
-  js_free_rt(rt, s);
+  js_deallocate(rt, s);
 }
 
 static JSValue

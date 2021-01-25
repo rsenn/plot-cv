@@ -131,7 +131,7 @@ js_point_finalizer(JSRuntime* rt, JSValue val) {
       std::cerr << "isObject: " << isObject << std::endl;
       std::cerr << "isNumber: " << isNumber << std::endl;
     }
-    js_free_rt(rt, s);
+    js_deallocate(rt, s);
   }
 
   JS_FreeValueRT(rt, val);

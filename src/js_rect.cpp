@@ -84,7 +84,7 @@ js_rect_finalizer(JSRuntime* rt, JSValue val) {
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
 
   s->~JSRectData<double>();
-  js_free_rt(rt, s);
+  js_deallocate(rt, s);
 }
 
 static JSValue

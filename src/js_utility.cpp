@@ -64,7 +64,7 @@ void
 js_tick_meter_finalizer(JSRuntime* rt, JSValue val) {
   JSTickMeterData* s = static_cast<JSTickMeterData*>(JS_GetOpaque(val, js_tick_meter_class_id));
   /* Note: 's' can be NULL in case JS_SetOpaque() was not called */
-  js_free_rt(rt, s);
+  js_deallocate(rt, s);
 }
 
 static JSValue

@@ -1,6 +1,5 @@
 import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
-import * as cv from 'cv';
 import * as draw from 'draw';
 import * as std from 'std';
 import { Point } from 'point';
@@ -13,6 +12,7 @@ import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import PortableFileSystem from './lib/filesystem.js';
 import { Mat as cvMat } from 'mat';
+import * as cv from 'cv';
 
 let prng = new Alea(Date.now());
 const hr = Util.hrtime;
