@@ -45,7 +45,7 @@ js_mat_track(JSContext* ctx, JSMatData* s) {
       // std::cerr << "allocated @" << static_cast<void*>(s) << " which is in free list" << std::endl;
 
       // mat_freed.erase(it2);
-      s = js_allocate<cv::Mat> (ctx);
+      s = js_allocate<cv::Mat>(ctx);
       memcpy(s, deallocate[deallocate.size() - 1], sizeof(JSMatData));
 
     } else {
@@ -55,7 +55,7 @@ js_mat_track(JSContext* ctx, JSMatData* s) {
 
   mat_list.push_back(s);
 
-  for(const auto& ptr : deallocate)  js_deallocate(ctx, ptr);
+  for(const auto& ptr : deallocate) js_deallocate(ctx, ptr);
   return s;
 }
 

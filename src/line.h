@@ -168,7 +168,8 @@ moment_from_angle(double phi, cv::Point_<T>& point) {
 }
 
 template<class T,
-         typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type* = nullptr>
+         typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type* =
+             nullptr>
 inline std::string
 to_string(const T& t, size_t n_pad = 3, char ch_pad = ' ') {
   std::ostringstream oss;
@@ -483,7 +484,9 @@ Line<T>::intersect(const Line<T>& line2, cv::Point_<T>* pt) const {
 template<class T, class Pred>
 inline std::vector<int>
 filter_lines(const std::vector<T>& c, bool (&pred)(const Line<T>&, size_t)) {
-  return filter_lines<typename line_list<T>::type::iterator, bool(Line<T>&, size_t)>(c.begin(), c.end(), pred);
+  return filter_lines<typename line_list<T>::type::iterator, bool(Line<T>&, size_t)>(c.begin(),
+                                                                                     c.end(),
+                                                                                     pred);
 }
 
 template<class ValueT, class InputIterator>
@@ -508,7 +511,9 @@ angle_diffs(Line<ValueT>& line, InputIterator from, InputIterator to) {
 
 template<class InputIterator>
 inline std::vector<float>
-line_distances(typename std::iterator_traits<InputIterator>::value_type& line, InputIterator from, InputIterator to) {
+line_distances(typename std::iterator_traits<InputIterator>::value_type& line,
+               InputIterator from,
+               InputIterator to) {
   typedef InputIterator iterator_type;
   typedef typename std::iterator_traits<InputIterator>::value_type line_type;
   typedef typename line_type::value_type value_type;

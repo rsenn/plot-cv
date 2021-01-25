@@ -3,6 +3,7 @@
 #include "js_rect.h"
 #include "js_contour.h"
 #include "js_array.h"
+#include "js_alloc.h"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -30,7 +31,7 @@ js_contour2i_new(JSContext* ctx, const JSContourData<int>& points) {
 
   ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
 
-  contour = static_cast<JSContourData<double>*>(js_mallocz(ctx, sizeof(JSContourData<double>)));
+  contour = js_allocate<JSContourData<double>>(ctx);
 
   std::transform(points.cbegin(), points.cend(), std::back_inserter(*contour), [](const cv::Point& pt) ->
 JSPointData<double> { return JSPointData<double>(pt.x, pt.y);
@@ -47,7 +48,7 @@ js_contour2d_new(JSContext* ctx, const JSContourData<double>& points) {
 
   ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
 
-  contour = static_cast<JSContourData<double>*>(js_mallocz(ctx, sizeof(JSContourData<double>)));
+  contour = js_allocate<JSContourData<double>>(ctx);
 
   std::copy(points.cbegin(), points.cend(), std::back_inserter(*contour));
 
@@ -70,7 +71,7 @@ js_vector_to_array(JSContext* ctx, const std::vector<int>& vec) {
 
 template<class Vector>
 static JSValue
-js_vector_to_array(std::enable_if_t<std::is_same<Vector, cv::Vec4i>::value, JSContext*> ctx,
+js_vector_to_array(std::enable_if_t<std::is_same<Vector, cv::Vec4i>::value, void*> ctx,
                    const std::vector<Vector>& vec) {
   JSValue ret = JS_NewArray(ctx);
   uint32_t i, j, n = vec.size();
@@ -225,7 +226,7 @@ js_contour_boundingrect(JSContext* ctx, JSValueConst this_val, int argc, JSValue
 
   ret = js_new(ctx, "Rect");
   // ret = JS_NewObject(ctx, rect_proto, js_rect_class_id);
-  // r = static_cast< JSRectData<double> *>(js_mallocz(ctx, sizeof(JSRectData<double>)));
+  // r = js_allocate< JSRectData<double> >(ctx);
   //*r = rect;
   // JS_SetOpaque(ret, r);
   //
@@ -336,7 +337,7 @@ js_contour_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst*
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
 
-  v = static_cast<JSContourData<double>*>(js_mallocz(ctx, sizeof(JSContourData<double>)));
+  v = js_allocate<JSContourData<double>>(ctx);
   if(!v)
     return JS_EXCEPTION;
 
@@ -382,7 +383,7 @@ js_contour_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst*
 
   return obj;
 fail:
-  js_free(ctx, v);
+  js_deallocate(ctx, v);
   JS_FreeValue(ctx, obj);
   return JS_EXCEPTION;
 }
@@ -1209,7 +1210,7 @@ js_contour_new<float>(JSContext* ctx, const JSContourData<float>& points) {
 
   ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
 
-  contour = static_cast<JSContourData<double>*>(js_mallocz(ctx, sizeof(JSContourData<double>)));
+  contour = js_allocate<JSContourData<double>>(ctx);
 
   contour->resize(points.size());
 
@@ -1227,7 +1228,7 @@ js_contour_new<double>(JSContext* ctx, const JSContourData<double>& points) {
 
   ret = JS_NewObjectProtoClass(ctx, contour_proto, js_contour_class_id);
 
-  contour = static_cast<JSContourData<double>*>(js_mallocz(ctx, sizeof(JSContourData<double>)));
+  contour = js_allocate<JSContourData<double>>(ctx);
 
   std::copy(points.cbegin(), points.cend(), std::back_inserter(*contour));
 

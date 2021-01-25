@@ -1,5 +1,6 @@
 #include "jsbindings.h"
 #include "js.h"
+#include "js_alloc.h"
 #include "quickjs/cutils.h"
 #include "quickjs/quickjs.h"
 
@@ -28,7 +29,7 @@ js_point_iterator_new(JSContext* ctx,
   iterator = JS_NewObjectProtoClass(ctx, point_iterator_proto, js_point_iterator_class_id);
   if(JS_IsException(iterator))
     goto fail;
-  it = static_cast<JSPointIteratorData*>(js_mallocz(ctx, sizeof(JSPointIteratorData)));
+  it = js_allocate<JSPointIteratorData>(ctx);
   if(!it)
     goto fail1;
   new(it) JSPointIteratorData();
@@ -106,7 +107,7 @@ js_point_iterator_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValu
   JSValue proto;
   assert(0);
 
-  s = static_cast<JSPointIteratorData*>(js_mallocz(ctx, sizeof(JSPointIteratorData)));
+  s = js_allocate<JSPointIteratorData>(ctx);
   if(!s)
     return JS_EXCEPTION;
 
@@ -127,7 +128,7 @@ js_point_iterator_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValu
   JS_SetOpaque(obj, s);
   return obj;
 fail:
-  js_free(ctx, s);
+  js_deallocate(ctx, s);
   JS_FreeValue(ctx, obj);
   return JS_EXCEPTION;
 }

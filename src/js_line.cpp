@@ -1,5 +1,6 @@
 #include "jsbindings.h"
 #include "js_point.h"
+#include "js_alloc.h"
 
 #if defined(JS_LINE_MODULE) || defined(quickjs_line_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
@@ -16,7 +17,7 @@ js_line_new(JSContext* ctx, double x1, double y1, double x2, double y2) {
 
   ret = JS_NewObjectProtoClass(ctx, line_proto, js_line_class_id);
 
-  s = static_cast<JSLineData<double>*>(js_mallocz(ctx, sizeof(JSLineData<double>)));
+  s = js_allocate<JSLineData<double>>(ctx);
   s->arr[0] = x1;
   s->arr[1] = y1;
   s->arr[2] = x2;
@@ -32,7 +33,7 @@ js_line_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* ar
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
 
-  s = static_cast<JSLineData<double>*>(js_mallocz(ctx, sizeof(JSLineData<double>)));
+  s = js_allocate<JSLineData<double>>(ctx);
   if(!s)
     return JS_EXCEPTION;
   // new(s) JSLineData<double>();
@@ -57,7 +58,7 @@ js_line_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* ar
   JS_SetOpaque(obj, s);
   return obj;
 fail:
-  js_free(ctx, s);
+  js_deallocate(ctx, s);
   JS_FreeValue(ctx, obj);
   return JS_EXCEPTION;
 }

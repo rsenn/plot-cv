@@ -1,6 +1,7 @@
 #include "jsbindings.h"
 #include "js_size.h"
 #include "js_array.h"
+#include "js_alloc.h"
 
 #if defined(JS_SIZE_MODULE) || defined(quickjs_size_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
@@ -14,7 +15,7 @@ js_size_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* ar
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
 
-  s = static_cast<JSSizeData<double>*>(js_mallocz(ctx, sizeof(JSSizeData<double>)));
+  s = js_allocate<JSSizeData<double>>(ctx);
   if(!s)
     return JS_EXCEPTION;
   new(s) JSSizeData<double>();
@@ -40,7 +41,7 @@ js_size_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* ar
   JS_SetOpaque(obj, s);
   return obj;
 fail:
-  js_free(ctx, s);
+  js_deallocate(ctx, s);
   JS_FreeValue(ctx, obj);
   return JS_EXCEPTION;
 }
@@ -76,7 +77,7 @@ js_size_new(JSContext* ctx, double w, double h) {
 
   ret = JS_NewObjectProtoClass(ctx, size_proto, js_size_class_id);
 
-  s = static_cast<JSSizeData<double>*>(js_mallocz(ctx, sizeof(JSSizeData<double>)));
+  s = js_allocate<JSSizeData<double>>(ctx);
   s->width = w;
   s->height = h;
 

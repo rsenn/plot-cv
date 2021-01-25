@@ -1,4 +1,5 @@
 #include "jsbindings.h"
+#include "js_alloc.h"
 
 #if defined(JS_VIDEO_CAPTURE_MODULE) || defined(quickjs_video_capture_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
@@ -20,7 +21,7 @@ js_video_capture_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValue
   JSValue obj = JS_UNDEFINED;
   JSValue proto, ret;
 
-  s = static_cast<JSVideoCaptureData*>(js_mallocz(ctx, sizeof(JSVideoCaptureData)));
+  s = js_allocate<JSVideoCaptureData>(ctx);
   if(!s)
     return JS_EXCEPTION;
 
@@ -60,7 +61,7 @@ js_video_capture_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValue
   JS_SetOpaque(obj, s);
   return obj;
 fail:
-  js_free(ctx, s);
+  js_deallocate(ctx, s);
   JS_FreeValue(ctx, obj);
   return JS_EXCEPTION;
 }

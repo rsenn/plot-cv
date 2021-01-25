@@ -3,6 +3,7 @@
 #include "js_point.h"
 #include "js_contour.h"
 #include "js_array.h"
+#include "js_alloc.h"
 #include "geometry.h"
 #include "../quickjs/cutils.h"
 
@@ -847,7 +848,7 @@ js_cv_create_trackbar(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
   if(name == nullptr || window == nullptr)
     return JS_EXCEPTION;
 
-  userdata = static_cast<Trackbar*>(js_mallocz(ctx, sizeof(Trackbar)));
+  userdata = js_allocate<Trackbar>(ctx);
 
   JS_ToInt32(ctx, &userdata->value, argv[2]);
   JS_ToInt32(ctx, &count, argv[3]);
@@ -929,7 +930,7 @@ js_cv_set_mouse_callback(JSContext* ctx, JSValueConst this_val, int argc, JSValu
   };
   MouseHandler* userdata;
 
-  userdata = static_cast<MouseHandler*>(js_mallocz(ctx, sizeof(MouseHandler)));
+  userdata = js_allocate<MouseHandler>(ctx);
 
   name = JS_ToCString(ctx, argv[0]);
 

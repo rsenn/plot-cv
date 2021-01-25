@@ -1,4 +1,5 @@
 #include "jsbindings.h"
+#include "js_alloc.h"
 
 #if defined(JS_UTILITY_MODULE) || defined(quickjs_utility_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
@@ -18,7 +19,7 @@ js_tick_meter_new(JSContext* ctx) {
 
   ret = JS_NewObjectProtoClass(ctx, tick_meter_proto, js_tick_meter_class_id);
 
-  s = static_cast<JSTickMeterData*>(js_mallocz(ctx, sizeof(JSTickMeterData)));
+  s = js_allocate<JSTickMeterData>(ctx);
 
   new(s) cv::TickMeter();
 
@@ -32,7 +33,7 @@ js_tick_meter_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueCon
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
 
-  s = static_cast<JSTickMeterData*>(js_mallocz(ctx, sizeof(JSTickMeterData)));
+  s = js_allocate<JSTickMeterData>(ctx);
   if(!s)
     return JS_EXCEPTION;
   new(s) cv::TickMeter();
@@ -49,7 +50,7 @@ js_tick_meter_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueCon
   JS_SetOpaque(obj, s);
   return obj;
 fail:
-  js_free(ctx, s);
+  js_deallocate(ctx, s);
   JS_FreeValue(ctx, obj);
   return JS_EXCEPTION;
 }

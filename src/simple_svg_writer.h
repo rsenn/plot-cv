@@ -150,7 +150,8 @@ protected:
 
 public:
   Base(const std::string& tag) : tag(tag) {}
-  Base(const std::string& tag, const std::vector<Attribute>& attributes) : tag(tag), attributes(attributes) {}
+  Base(const std::string& tag, const std::vector<Attribute>& attributes)
+      : tag(tag), attributes(attributes) {}
 
   virtual ~Base() {}
 
@@ -230,7 +231,8 @@ public:
 class Rect : public Base {
 public:
   Rect() : Base("rect") {}
-  Rect(double x, double y, double w, double h) : Base("rect", {{"x", x}, {"y", y}, {"width", w}, {"height", h}}) {}
+  Rect(double x, double y, double w, double h)
+      : Base("rect", {{"x", x}, {"y", y}, {"width", w}, {"height", h}}) {}
   Rect(double w, double h) : Base("rect", {{"width", w}, {"height", h}}) {}
 };
 
@@ -361,7 +363,8 @@ protected:
 
 public:
   GroupBase(std::string group_tag) : Base(group_tag) {}
-  GroupBase(std::string group_tag, const std::vector<Attribute>& attributes) : Base(group_tag, attributes) {}
+  GroupBase(std::string group_tag, const std::vector<Attribute>& attributes)
+      : Base(group_tag, attributes) {}
   virtual ~GroupBase() override {}
 
   template<typename T>

@@ -2,6 +2,7 @@
 #include "js_rect.h"
 #include "js_size.h"
 #include "js_point.h"
+#include "js_alloc.h"
 
 #if defined(JS_RECT_MODULE) || defined(quickjs_rect_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
@@ -16,7 +17,7 @@ js_rect_new(JSContext* ctx, double x, double y, double w, double h) {
 
   ret = JS_NewObjectProtoClass(ctx, rect_proto, js_rect_class_id);
 
-  s = static_cast<JSRectData<double>*>(js_mallocz(ctx, sizeof(JSRectData<double>)));
+  s = js_allocate<JSRectData<double>>(ctx);
 
   new(s) JSRectData<double>();
   s->x = x;

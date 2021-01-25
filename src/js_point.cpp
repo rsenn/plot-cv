@@ -3,6 +3,7 @@
 #include "js_point.h"
 #include "js_rect.h"
 #include "js_array.h"
+#include "js_alloc.h"
 #include "quickjs/cutils.h"
 #include "quickjs/quickjs.h"
 
@@ -33,7 +34,7 @@ js_point_new(JSContext* ctx, double x, double y) {
 
   ret = JS_NewObjectProtoClass(ctx, point_proto, js_point_class_id);
 
-  s = static_cast<JSPointData<double>*>(js_mallocz(ctx, sizeof(JSPointData<double>)));
+  s = js_allocate<JSPointData<double>>(ctx);
 
   new(s) JSPointData<double>();
   s->x = x;

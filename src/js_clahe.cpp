@@ -1,6 +1,7 @@
 #include "jsbindings.h"
 #include "js_size.h"
 #include "js_point.h"
+#include "js_alloc.h"
 
 #if defined(JS_CLAHE_MODULE) || defined(quickjs_clahe_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
@@ -16,7 +17,7 @@ js_clahe_new(JSContext* ctx, double clipLimit = 40.0, cv::Size tileGridSize = cv
   JSValue ret;
   JSCLAHEData* s;
   ret = JS_NewObjectProtoClass(ctx, clahe_proto, js_clahe_class_id);
-  s = static_cast<JSCLAHEData*>(js_mallocz(ctx, sizeof(JSCLAHEData)));
+  s = js_allocate<JSCLAHEData>(ctx);
   new(s) JSCLAHEData();
   *s = cv::createCLAHE(clipLimit, tileGridSize);
   JS_SetOpaque(ret, s);
