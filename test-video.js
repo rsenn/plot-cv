@@ -5,6 +5,7 @@ import * as std from 'std';
 import { Point } from 'point';
 import { Size } from 'size';
 import { Rect } from 'rect';
+import { Line } from 'line';
 import { TickMeter } from 'utility';
 import { VideoSource } from './cvVideo.js';
 import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.js';
@@ -22,26 +23,27 @@ let rainbow;
 let zoom = 1;
 let debug = false;
 
-const Mat = (debug == false)  ? 
-  cvMat :
-  class Mat extends cvMat {
-    static map = Util.weakMapper(() => []);
-    static list = new Set();
+const Mat =
+  debug == false
+    ? cvMat
+    : class Mat extends cvMat {
+        static map = Util.weakMapper(() => []);
+        static list = new Set();
 
-    constructor(...args) {
-      super(...args);
+        constructor(...args) {
+          super(...args);
 
-      let stack = Mat.map(this);
-      for(let frame of Util.stack(null, 3)) stack.push(frame);
+          let stack = Mat.map(this);
+          for(let frame of Util.stack(null, 3)) stack.push(frame);
 
-      Mat.list.add(this);
-    }
+          Mat.list.add(this);
+        }
 
-    static backtrace(mat) {
-      let array = Mat.map(mat);
-      return array.length ? array : null;
-    }
-  };
+        static backtrace(mat) {
+          let array = Mat.map(mat);
+          return array.length ? array : null;
+        }
+      };
 
 class Pipeline extends Function {
   constructor(processors = [], callback) {
@@ -74,6 +76,26 @@ class Pipeline extends Function {
   get names() {
     return this.processors.map((p) => p.name);
   }
+
+  getProcessor(name_or_fn) {
+    let index;
+    if((index = this.processors.indexOf(name_or_fn)) != -1) return this.processors[index];
+    return this.processors.find(processor => Util.fnName(processor) == name_or_fn);
+  }
+
+  processorIndex(fn) {
+    if(typeof fn != 'function') fn = this.getProcessor(fn);
+    return this.processors.indexOf(fn);
+  }
+
+  inputOf(processor) {
+    let index = this.processorIndex(processor);
+    return this.images[index];
+  }
+  outputOf(processor) {
+    let index = this.processorIndex(processor);
+    return this.images[index + 1];
+  }
 }
 
 function Processor(fn, ...args) {
@@ -96,36 +118,6 @@ Object.assign(Pipeline.prototype, {
     this.name = name;
   }
 });
-
-/*let symbols = [
-  [
-    { x: 28.703, y: 28.665 },
-    { x: 28.703, y: 21.77 },
-    { x: 35.565, y: 21.77 },
-    { x: 35.565, y: 28.664 },
-    { x: 28.703, y: 28.665 }
-  ],
-  [
-    { x: 34.527, y: 8.103 },
-    { x: 34.527, y: 0 },
-    { x: 42.604, y: 4.051 },
-    { x: 34.527, y: 8.103 }
-  ],
-  [
-    { x: 34.527, y: 18.676 },
-    { x: 34.527, y: 10.593999999999998 },
-    { x: 38.428, y: 10.593999999999998 },
-    { x: 38.428, y: 18.676 },
-    { x: 34.527, y: 18.676 }
-  ],
-  [
-    { x: 28.703, y: 39.843 },
-    { x: 28.703, y: 31.76 },
-    { x: 32.604, y: 31.76 },
-    { x: 32.604, y: 39.843 },
-    { x: 28.703, y: 39.843 }
-  ]
-];*/
 
 /*const inspectObj = obj => console.inspect(obj, { multiline: false });
 const inspectMat = ({ rows, cols, channels, depth, type }) =>
@@ -423,11 +415,16 @@ async function main(...args) {
   console.log('frameShow:', frameShow);
   let contours, hier;
   let contoursDepth;
+  let lines, circles;
 
   let params = {
     ksize: new NumericParam(config.ksize ?? 3, 1, 13, 2),
     thresh1: new NumericParam(config.thresh1 ?? 40, 0, 100),
     thresh2: new NumericParam(config.thresh2 ?? 90, 0, 100),
+    threshc: new NumericParam(config.threshc ?? 50, 0, 100),
+    angleResolution: new NumericParam(config.angleResolution ?? 2, 0, 180),
+    minLineLength: new NumericParam(config.minLineLength ?? 30, 0, 500),
+    maxLineGap: new NumericParam(config.maxLineGap ?? 10, 0, 500),
     apertureSize: new NumericParam(config.apertureSize ?? 3, 3, 7, 2),
     L2gradient: new NumericParam(config.L2gradient ?? 0, 0, 1),
     dilations: new NumericParam(config.dilations ?? 0, 0, 10),
@@ -477,7 +474,7 @@ async function main(...args) {
       Processor(function Contours(src, dst) {
         cv.findContours(src, (contours = []), (hier = []), cv[params.mode], cv[params.method]);
 
-        cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
+        src.copyTo(dst);
 
         if(+params.maskColor) {
           let edge = [dst.toString(), pipeline.images[0].toString()];
@@ -485,6 +482,16 @@ async function main(...args) {
 
           dst.and(pipeline.images[0]);
         }
+      }),
+      Processor(function HoughLines(src, dst) {
+        let edges = pipeline.outputOf('EdgeDetect');
+        //  console.log('edges: '+edges);
+
+        cv.HoughLinesP(edges, (lines = []), 2, +params.angleResolution * Math.PI / 180, +params.threshc, +params.minLineLength, +params.maxLineGap);
+        //console.log('lines.length', lines.length);
+        //console.log('lines: '+lines.map(l => l.toString()).join(', '));
+
+        cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
       })
     ],
     (mat, i, n) => {
@@ -663,8 +670,16 @@ async function main(...args) {
     } else {
       cv.cvtColor(out, out, cv.COLOR_BGR2BGRA);
     }
+    const processor = pipeline.processors[frameShow];
+    //console.log('processor:', processor);
 
-    if(frameShow == 0) {
+    if(Util.fnName(processor) == 'HoughLines') {
+      for(let line of lines) {
+        const { a, b } = line;
+        // console.log("line", {a,b});
+        draw.line(over, line.a, line.b, { r: 255, g: 0, b: 0, a: 255 }, 2, cv.LINE_AA, 0);
+      }
+    } else if(frameShow == 0) {
       cv.drawContours(over, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
     } else {
       let ids = [...getToplevel(hier)];

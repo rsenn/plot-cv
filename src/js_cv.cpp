@@ -173,11 +173,12 @@ js_cv_hough_lines_p(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   cv::HoughLinesP(*image, lines, rho, theta, threshold, minLineLength, maxLineGap);
 
   i = 0;
+  js_array_truncate(ctx, array, 0);
 
-  for(const cv::Vec4i& line : lines) {
+  for(const auto& line : lines) {
     JSValue v = js_line_new(ctx, line[0], line[1], line[2], line[3]);
 
-    JS_SetPropertyUint32(ctx, argv[1], i++, v);
+    JS_SetPropertyUint32(ctx, array, i++, v);
   }
 
   return JS_UNDEFINED;
@@ -1693,6 +1694,12 @@ js_function_list_t js_cv_static_funcs{
     JS_PROP_INT32_DEF("HIER_PREV", 1, 0),
     JS_PROP_INT32_DEF("HIER_CHILD", 2, 0),
     JS_PROP_INT32_DEF("HIER_PARENT", 3, 0),
+
+    JS_PROP_INT32_DEF("HOUGH_STANDARD", cv::HOUGH_STANDARD, 0),
+    JS_PROP_INT32_DEF("HOUGH_PROBABILISTIC", cv::HOUGH_PROBABILISTIC, 0),
+    JS_PROP_INT32_DEF("HOUGH_MULTI_SCALE", cv::HOUGH_MULTI_SCALE, 0),
+    JS_PROP_INT32_DEF("HOUGH_GRADIENT", cv::HOUGH_GRADIENT, 0),
+    // JS_PROP_INT32_DEF("HOUGH_GRADIENT_ALT", cv::HOUGH_GRADIENT_ALT, 0),
 
 };
 

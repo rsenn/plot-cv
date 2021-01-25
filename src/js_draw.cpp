@@ -133,8 +133,9 @@ static JSValue
 js_draw_line(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_value* argv) {
   cv::Mat* dst;
   int i = 0, ret = -1;
-  JSPointData<float> points[2];
-  color_type color;
+  JSPointData<double> points[2];
+  JSColorData<uint8_t> color;
+  cv::Scalar scalar;
   int thickness = 1;
   bool antialias = true;
 
@@ -146,14 +147,24 @@ js_draw_line(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
   if(dst == nullptr)
     return JS_EXCEPTION;
 
-  if(argc > i && js.is_point(argv[i]))
-    js.get_point(argv[i++], points[0]);
+  if(argc > i)
+    if(js_point_read(ctx, argv[i], &points[0])) {
+      i++;
+    }
+  if(argc > i)
+    if(js_point_read(ctx, argv[i], &points[1])) {
+      i++;
+    }
 
-  if(argc > i && js.is_point(argv[1]))
-    js.get_point(argv[i++], points[1]);
+  if(argc > i)
+    if(js_color_read(ctx, argv[i], &color)) {
+      i++;
 
-  if(argc > i && js.is_color(argv[i]))
-    js.get_color(argv[i++], color);
+      scalar[0] = color.arr[0];
+      scalar[1] = color.arr[1];
+      scalar[2] = color.arr[2];
+      scalar[3] = color.arr[3];
+    }
 
   if(argc > i && js.is_number(argv[i]))
     js.get_number(argv[i++], thickness);
@@ -161,7 +172,7 @@ js_draw_line(JSContext* ctx, jsrt::const_value this_val, int argc, jsrt::const_v
   if(argc > i && js.is_bool(argv[i]))
     js.get_boolean(argv[i++], antialias);
 
-  cv::line(*dst, points[0], points[1], color, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
+  cv::line(*dst, points[0], points[1], scalar, thickness, antialias ? cv::LINE_AA : cv::LINE_8);
   return JS_UNDEFINED;
 }
 

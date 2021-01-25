@@ -891,7 +891,7 @@ js_mat_convert_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 
 static JSValue
 js_mat_copy_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSMatData *m, *output, *mask;
+  JSMatData *m = nullptr, *output = nullptr, *mask = nullptr;
 
   m = js_mat_data(ctx, this_val);
   output = js_mat_data(ctx, argv[0]);
@@ -906,6 +906,10 @@ js_mat_copy_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
     m->copyTo(*output, *mask);
   else
     m->copyTo(*output);
+  /*if(mask)
+    m->copyTo(*output, *mask);
+  else
+    *output = *m;*/
 
   return JS_UNDEFINED;
 }

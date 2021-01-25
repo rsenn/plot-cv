@@ -18,10 +18,10 @@ js_line_new(JSContext* ctx, double x1, double y1, double x2, double y2) {
   ret = JS_NewObjectProtoClass(ctx, line_proto, js_line_class_id);
 
   s = js_allocate<JSLineData<double>>(ctx);
-  s->arr[0] = x1;
-  s->arr[1] = y1;
-  s->arr[2] = x2;
-  s->arr[3] = y2;
+  s->vec[0] = x1;
+  s->vec[1] = y1;
+  s->vec[2] = x2;
+  s->vec[3] = y2;
 
   JS_SetOpaque(ret, s);
   return ret;
