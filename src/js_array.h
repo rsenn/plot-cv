@@ -291,7 +291,8 @@ public:
     return n;
   }
 
-  template<size_t N> static int64_t to_array(JSContext* ctx, JSValueConst arr, std::array<std::vector<T>, N>& out);
+  template<size_t N>
+  static int64_t to_array(JSContext* ctx, JSValueConst arr, std::array<std::vector<T>, N>& out);
 };
 
 template<class T>

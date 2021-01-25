@@ -23,8 +23,7 @@ let zoom = 1;
 class Mat extends cvMat {
   static map = Util.weakMapper(() => []);
   static list = new Set();
-  static stackMap = {};
-
+ 
   constructor(...args) {
     super(...args);
 
@@ -32,15 +31,6 @@ class Mat extends cvMat {
     for(let frame of Util.stack(null, 3)) stack.push(frame);
 
     Mat.list.add(this);
-
-    /*    let stackStr = Mat.backtrace(this).toString();
-    if(Mat.stackMap[stackStr]) {
-      let mat = Mat.stackMap[stackStr];
-      console.error('mat:', mat);
-      console.error('stackStr:', stackStr);
-      throw new Error(`Mat.stackMap[${stackStr}]`);
-    }
-    Mat.stackMap[stackStr] = this;*/
   }
 
   static backtrace(mat) {

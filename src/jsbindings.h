@@ -65,12 +65,12 @@ struct JSPointIteratorData : public std::pair<JSPointData<double>*, JSPointData<
 #define HIDDEN __attribute__((visibility("hidden")))
 #endif
 
-#define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter, magic_num)                                              \
-  {                                                                                                                    \
-    .name = prop_name, .prop_flags = JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE, .def_type = JS_DEF_CGETSET_MAGIC,      \
-    .magic = magic_num, .u = {                                                                                         \
-      .getset = {.get = {.getter_magic = fgetter}, .set = {.setter_magic = fsetter}}                                   \
-    }                                                                                                                  \
+#define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter, magic_num)                                  \
+  {                                                                                                        \
+    .name = prop_name, .prop_flags = JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE,                            \
+    .def_type = JS_DEF_CGETSET_MAGIC, .magic = magic_num, .u = {                                           \
+      .getset = {.get = {.getter_magic = fgetter}, .set = {.setter_magic = fsetter}}                       \
+    }                                                                                                      \
   }
 
 extern "C" {
@@ -139,9 +139,9 @@ int js_video_capture_init(JSContext*, JSModuleDef*);
 
 VISIBLE JSValue js_video_capture_wrap(JSContext*, cv::VideoCapture* cap);
 
-extern "C" JSValue int32array_ctor, int32array_proto, mat_class, mat_proto, mat_iterator_proto, point_class, line_class,
-    point_iterator_class, draw_class, point_iterator_proto, point_proto, rect_class, rect_proto, size_class, size_proto,
-    line_proto, draw_proto;
+extern "C" JSValue int32array_ctor, int32array_proto, mat_class, mat_proto, mat_iterator_proto, point_class,
+    line_class, point_iterator_class, draw_class, point_iterator_proto, point_proto, rect_class, rect_proto,
+    size_class, size_proto, line_proto, draw_proto;
 
 VISIBLE JSValue js_point_iterator_new(JSContext* ctx,
                                       const std::pair<JSPointData<double>*, JSPointData<double>*>& range,
@@ -154,7 +154,8 @@ extern "C" JSClassID js_point_iterator_class_id, js_line_class_id, js_draw_class
 
 extern "C" const JSCFunctionListEntry js_rect_proto_funcs[];
 
-extern "C" JSClassID js_point_class_id, js_size_class_id, js_rect_class_id, js_mat_class_id, js_mat_iterator_class_id;
+extern "C" JSClassID js_point_class_id, js_size_class_id, js_rect_class_id, js_mat_class_id,
+    js_mat_iterator_class_id;
 /*
 template<class Type> JSValue js_contour_new(JSContext* ctx, const JSContourData<Type>& points);
 
