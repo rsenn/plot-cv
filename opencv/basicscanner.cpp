@@ -106,7 +106,7 @@ main(int argc, char** argv) {
     export_svg(bigContour, "contour.svg");
 
     if(showWindow) {
-      while(cv::waitKey(1) != '\80') {
+      while(cv::waitKey(1) != '\x80') {
       }
     }
   }
