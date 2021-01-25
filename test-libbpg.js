@@ -109,11 +109,18 @@ const BPG_OUTPUT_FORMAT_PIXELSIZE = {
   [BPG_OUTPUT_FORMAT_CMYK64]: 64 / 8
 };
 
- 
+function isBPG(buf) {
+  if(buf instanceof ArrayBuffer) buf = new Uint8Array(buf);
+
+  if(!buf || buf.length < 4) return false;
+
+  // file_magic: 0x425047fb
+  return buf[0] === 66 && buf[1] === 80 && buf[2] === 71 && buf[3] === 251;
+}
+
 class BPGLoader extends BPGDecoder {
   static Module = BPGDecoder.Module;
-
-      static HeapU8 = null;
+  static HeapU8 = null;
 
   constructor() {
     super();
@@ -138,8 +145,18 @@ class BPGLoader extends BPGDecoder {
 
   async load(buffer) {
     if(typeof buffer == 'string') buffer = await fetch(buffer).then(response => response.arrayBuffer());
-    this.buffer = buffer;
-    return this.buffer.byteLength;
+
+    if(!isBPG(buffer)) {
+      const magic = new Uint8Array(buffer, 0, 4);
+      throw new Error(`BPGLoader.load: is not a BPG (${magic.join(', ')}) '${[...magic]
+          .map(code =>
+            code < 32 || code >= 127 ? `\\x${('0' + code.toString(16)).slice(-2)}` : String.fromCharCode(code)
+          )
+          .join('')}'`
+      );
+    }
+
+    return (this.buffer = buffer).byteLength;
   }
 
   decode() {
@@ -164,8 +181,7 @@ class BPGLoader extends BPGDecoder {
 
   start(format) {
     const { handle, bpg_decoder_start, info } = this;
-    if(format == undefined)
-      format = info.has_alpha ? BPG_OUTPUT_FORMAT_RGBA32 : BPG_OUTPUT_FORMAT_RGB24;
+    if(format == undefined) format = info.format; //info.has_alpha ? BPG_OUTPUT_FORMAT_RGBA32 : BPG_OUTPUT_FORMAT_RGB24;
     this.format = format;
     this.pixelSize = BPG_OUTPUT_FORMAT_PIXELSIZE[format];
     this.lineSize = this.pixelSize * info.width;
@@ -182,9 +198,8 @@ class BPGLoader extends BPGDecoder {
     let data = this.malloc(lineSize);
     let ret = bpg_decoder_get_line(handle, data);
     if(ret < 0) throw new Error(`bpg_decoder_get_line ret=${ret}`);
-    if(BPGLoader.HeapU8 == null)
-       BPGLoader.HeapU8 = BPGDecoder.Module.HEAPU8.buffer;
-     let array = new Uint8Array(BPGLoader.HeapU8, data, lineSize);
+    if(BPGLoader.HeapU8 == null) BPGLoader.HeapU8 = BPGLoader.Module.HEAPU8.buffer;
+    let array = new Uint8Array(BPGLoader.HeapU8, data, lineSize);
     this.free(data);
     return array;
   }
@@ -200,7 +215,7 @@ class BPGLoader extends BPGDecoder {
 
   getImageData() {
     const { info } = this;
-    const { width, height } = info;
+    const { width, height, has_alpha } = info;
     let ret = new ImageData(width, height);
     let { data } = ret;
     this.start();
@@ -211,7 +226,7 @@ class BPGLoader extends BPGDecoder {
         let r = line[x];
         let g = line[x + 1];
         let b = line[x + 2];
-        let a = 0xff;
+        let a = has_alpha ? line[x + 3] : 0xff;
         data[p++] = r;
         data[p++] = g;
         data[p++] = b;
@@ -228,17 +243,21 @@ window.addEventListener('load', async event => {
   let decoder = new BPGLoader();
   window.decoder = decoder;
   console.log('window onload', { decoder });
-  let result = await decoder.load('data/your-bpg-picture.bpg');
+  let result = await decoder.load('data/me.bpg');
   console.log('decode', decoder.decode());
-  console.log('info', decoder.info + ''); 
+  console.log('info', decoder.info + '');
   let y = 0;
   let { width, height } = decoder.info;
   let { pixelSize } = decoder;
-  
+
   let canvas = document.querySelector('#output');
+
+  canvas.setAttribute('width', width);
+  canvas.setAttribute('height', height);
+
   let ctx = canvas.getContext('2d');
 
-  let imageData =  window.imageData =  decoder.getImageData();
- 
+  let imageData = (window.imageData = decoder.getImageData());
+
   ctx.putImageData(imageData, 0, 0);
 });

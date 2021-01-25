@@ -2,7 +2,7 @@ import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import * as cv from 'cv';
 import * as draw from 'draw';
-import { Mat } from 'mat';
+import { Mat as cvMat } from 'mat';
 import { Point } from 'point';
 import { Size } from 'size';
 import { TickMeter } from 'utility';
@@ -11,12 +11,42 @@ import { Window, MouseFlags, MouseEvents, Mouse, TextStyle } from './cvHighGUI.j
 import { Alea } from './lib/alea.js';
 import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
+import PortableFileSystem from './lib/filesystem.js';
 
 let prng = new Alea(Date.now());
 const hr = Util.hrtime;
-
+let filesystem;
 let rainbow;
 let zoom = 1;
+
+class Mat extends cvMat {
+  static map = Util.weakMapper(() => []);
+  static list = new Set();
+  static stackMap = {};
+
+  constructor(...args) {
+    super(...args);
+
+    let stack = Mat.map(this);
+    for(let frame of Util.stack(null, 3)) stack.push(frame);
+
+    Mat.list.add(this);
+
+/*    let stackStr = Mat.backtrace(this).toString();
+    if(Mat.stackMap[stackStr]) {
+      let mat = Mat.stackMap[stackStr];
+      console.error('mat:', mat);
+      console.error('stackStr:', stackStr);
+      throw new Error(`Mat.stackMap[${stackStr}]`);
+    }
+    Mat.stackMap[stackStr] = this;*/
+  }
+
+  static backtrace(mat) {
+    let array = Mat.map(mat);
+    return array.length ? array : null;
+  }
+}
 
 class Pipeline extends Function {
   constructor(processors = [], callback) {
@@ -53,8 +83,11 @@ class Pipeline extends Function {
 
 function Processor(fn, ...args) {
   let self;
+  let mapper = Util.weakMapper(() => new Mat());
+
   self = function(mat, out, i) {
-    if(!out) out = new Mat();
+    if(!out) out = mapper(self);
+
     fn.call(this, mat, out, ...args);
     return out;
   };
@@ -109,6 +142,16 @@ const inspectMat = ({ rows, cols, channels, depth, type }) =>
     type
   });
 
+function SaveConfig(configObj) {
+  return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'), JSON.stringify(configObj, null, 2));
+}
+
+function LoadConfig() {
+  let str = filesystem.readFile(Util.getArgv()[1].replace(/\.js$/, '.config.json')).toString();
+  console.log('LoadConfig:', str);
+  return JSON.parse(str);
+}
+
 async function main(...args) {
   let start;
   let begin = hr();
@@ -122,6 +165,7 @@ async function main(...args) {
     multiline: 1,
     alignMap: true
   });
+  await PortableFileSystem(fs => (filesystem = fs));
 
   const makeRainbow = steps =>
     Util.range(0, 360, 360 / steps)
@@ -162,9 +206,10 @@ async function main(...args) {
   console.log('backend:', video.backend);
   console.log('grab():', video.grab);
   console.log('fps:', video.fps);
-  //  console.log('read():', [...Util.repeat(10, () => video.grab())]);
+  //console.log('read():', [...Util.repeat(10, () => video.grab())]);
   let frameCount = video.get('frame_count');
-  let frameShow;
+  let { frameShow } = LoadConfig();
+  console.log('frameShow:', frameShow);
   let contours, hier;
   let contoursDepth;
 
@@ -184,10 +229,10 @@ async function main(...args) {
   };
   let paramNav = new ParamNavigator(params);
   let dummyArray = [0, 1, 2, 3, 4, 5, 6, 7];
-  console.log('paramNav.map:', paramNav.map);
-  console.log('params.mode:', dummyArray[params.mode]);
-  console.log('params.method:', dummyArray[params.method]);
-  console.log('paramNav.param:', paramNav.param);
+  //console.log('paramNav.map:', paramNav.map);
+  //console.log('params.mode:', dummyArray[params.mode]);
+  //console.log('params.method:', dummyArray[params.method]);
+  //console.log('paramNav.param:', paramNav.param);
 
   rainbow = makeRainbow(256);
 
@@ -207,7 +252,7 @@ async function main(...args) {
       }),
       Processor(function EdgeDetect(src, dst) {
         cv.Canny(src, dst, +params.thresh1, +params.thresh2, +params.apertureSize, +params.L2gradient);
-        ////   console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
+        ////console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
       }),
       Processor(function Morph(src, dst) {
         cv.dilate(src, dst, structuringElement, new Point(-1, -1), +params.numDilations);
@@ -217,10 +262,10 @@ async function main(...args) {
         cv.findContours(src, (contours = []), (hier = []), cv[params.mode], cv[params.method]);
 
         cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
+        let edge = [dst.toString(), pipeline.images[0].toString()];
+        //console.log('edge', edge);
 
-        console.log('edge', dst.toString(), pipeline.images[0].toString());
-
-        dst.and(pipeline.images[0]);
+        //  dst.and(pipeline.images[0]);
       })
     ],
     (mat, i, n) => {
@@ -228,6 +273,8 @@ async function main(...args) {
         outputName = pipeline.processors[frameShow].name;
         outputMat = mat;
       }
+
+      // let m = (outputMat || mat) ?  (outputMat || mat).dup() : null;
     }
   );
 
@@ -239,24 +286,22 @@ async function main(...args) {
   console.log('frameDelay:', frameDelay);
 
   const wrapIndex = Util.mod(pipeline.size);
-  frameShow = wrapIndex(-1);
+
+  if(frameShow === undefined) frameShow = wrapIndex(-1);
 
   const resizeOutput = Util.once(() => {
     let size = outputMat.size.mul(zoom);
     win.resize(size.width, size.height);
   });
 
-  let surface;
   let out = new Mat();
+  let size;
 
-  const MakeSurface = Util.once((rows, cols) => {
-    surface = new Mat(rows, cols, cv.CV_8UC4);
-  });
+  const ClearSurface = mat => (mat.setTo([0, 0, 0, 0]), mat);
+  const MakeSurface = () =>
+    Util.once((...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)), null, ClearSurface);
   const MakeComposite = Util.once(() => new Mat());
-
-  const ClearSurface = (rows, cols) => {
-    surface ? surface.zero() : MakeSurface(rows, cols);
-  };
+  let surface = MakeSurface();
 
   while(running) {
     meter.reset();
@@ -353,7 +398,7 @@ async function main(...args) {
             (key & 0x1 ? 1 : 1000) * (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
           const offset = key & 0x2 ? +distance : -distance;
 
-          console.log('seek', { method, distance, offset });
+          //console.log('seek', { method, distance, offset });
           video['seek' + method](offset);
           let pos = video.position(method);
 
@@ -373,20 +418,18 @@ async function main(...args) {
     if(paused) video.seekFrames(-1);
 
     meter.stop();
-    //console.log('Iteration time: ', meter.toString());
-    if(prevTime !== undefined) console.log('FPS: ', +(1 / meter.timeSec).toFixed(2), '/', video.fps);
+    //if(prevTime !== undefined) console.log('FPS: ', +(1 / meter.timeSec).toFixed(2), '/', video.fps);
 
     prevTime = meter.timeSec;
   }
 
   function showOutput() {
-    //ClearSurface(outputMat.rows, outputMat.cols);
-    surface = new Mat(outputMat.rows, outputMat.cols, cv.CV_8UC4);
-    //MakeSurface(outputMat.rows, outputMat.cols);
-    //  surface.and([0,0,0]);
-    console.log('outputMat ' + outputMat.toString());
-    //      outputMat.copyTo(out);
-    out = outputMat /*.clone()*/;
+    let mat = surface(outputMat.rows, outputMat.cols, cv.CV_8UC4);
+    /*    if(!surface) surface = new Mat(outputMat.rows, outputMat.cols, cv.CV_8UC4);
+    else surface.setTo([0, 0, 0, 0]);*/
+
+    console.log('mat:', mat.toString());
+    out = outputMat;
     if(outputMat.channels == 1) {
       cv.cvtColor(out, out, cv.COLOR_GRAY2BGRA);
     } else {
@@ -397,10 +440,10 @@ async function main(...args) {
       out.and([0, 255, 255, 255]);
       console.log('row 100:', [...out.row(100).values()]);
     }*/
-    console.log('out ' + out.toString());
+    //console.log('out ' + out.toString());
 
     if(frameShow == 0) {
-      cv.drawContours(surface, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
+      cv.drawContours(mat, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
     } else {
       let ids = [...getToplevel(hier)];
 
@@ -409,16 +452,16 @@ async function main(...args) {
       contours.forEach((contour, i) => {
         let p = [...getParents(hier, i)];
         let color = palette[p[p.length - 1]];
-        drawContour(surface, contour, color, +params.lineWidth);
+        drawContour(mat, contour, color, +params.lineWidth);
       });
     }
-    font.draw(surface, video.time + ' ⏩', tPos, /*0x00ff00 ||*/ { r: 0, g: 255, b: 0, a: 255 });
+    font.draw(mat, video.time + ' ⏩', tPos, /*0x00ff00 ||*/ { r: 0, g: 255, b: 0, a: 255 });
 
     let paramStr = `${paramNav.name} [${paramNav.param.range.join('-')}] = ${+paramNav.param}`;
     //console.log('paramStr: ', paramStr);
-    font.draw(surface, paramStr, [tPos.x, tPos.y - 20], /*0x00ffff ||*/ { r: 255, g: 0, b: 0, a: 255 });
+    font.draw(mat, paramStr, [tPos.x, tPos.y - 20], /*0x00ffff ||*/ { r: 255, g: 0, b: 0, a: 255 });
 
-    font.draw(surface,
+    font.draw(mat,
       `#${frameShow + 1}/${pipeline.size}` + (outputName ? ` (${outputName})` : ''),
       [5, 5 + tSize.y],
       /*0xffff00 ||*/ {
@@ -431,12 +474,12 @@ async function main(...args) {
 
     resizeOutput();
 
-    //console.log("row 100:", [...surface.row(100).values()]);
+    //console.log("row 100:", [...mat.row(100).values()]);
 
-    //let mask = toBGR(getAlpha(surface));
-    let composite = MakeComposite();
+    //let mask = toBGR(getAlpha(mat));
+    let composite = MakeMatFor(showOutput);
 
-    cv.addWeighted(out, 1, surface, frameShow == pipeline.size - 1 ? 0 : 1, 0, composite);
+    cv.addWeighted(out, 1, mat, frameShow == pipeline.size - 1 ? 0 : 1, 0, composite);
     win.show(composite);
 
     //console.log("composite", composite.toString());
@@ -444,6 +487,19 @@ async function main(...args) {
     //console.log("composite.release()", composite.toString());
   }
 
+  SaveConfig({ frameShow });
+
+  for(let mat of Mat.list) {
+    let stack = Mat.backtrace(mat)
+      //.slice(0,-1)
+      .filter(frame =>
+          frame.functionName != '<anonymous>' && (frame.lineNumber !== undefined || /test-video/.test(frame.fileName))
+      )
+      .map(frame => frame.toString())
+      .join('\n  ');
+
+    console.log('mat=' + mat.toString() + '\n  ' + stack);
+  }
   console.log('props:', video.dump());
 }
 
@@ -490,67 +546,85 @@ function getBitDepth(mat) {
   }
 }
 
-function to32bit(mat) {
-  const bits = getBitDepth(mat);
-  if(bits == 32) return mat;
-  let ret = new Mat();
-  const max = Math.pow(2, bits) - 1;
-  const type = cv.CV_32F | ((mat.channels - 1) << 3);
+const MakeMatFor = Util.weakMapper((...args) => new Mat(...args));
 
-  /* console.log('max:', max);
-  console.log('const:', findType(type), type, cv[findType(type)]);
-  console.log('channels:', mat.channels);
-  console.log('constants:', getConstants(['CV_32F', 'CV_32FC1', 'CV_32FC3', 'CV_32FC4', 'CV_8U', 'CV_8UC1', 'CV_8UC3', 'CV_8UC4']));*/
-  mat.convertTo(ret, type, 1.0 / max);
-  return ret;
-}
+const to32bit = (() => {
+  const mapper = Util.weakMapper(() => new Mat());
+  return function to32bit(mat) {
+    const bits = getBitDepth(mat);
+    if(bits == 32) return mat;
+    let ret = mapper(mat);
+    const max = Math.pow(2, bits) - 1;
+    const type = cv.CV_32F | ((mat.channels - 1) << 3);
 
-function to8bit(mat) {
-  const bits = getBitDepth(mat);
-  if(bits == 8) return mat;
-  let ret = new Mat();
-  const type = cv.CV_8U | ((mat.channels - 1) << 3);
-  mat.convertTo(ret, type, 255);
-  return ret;
-}
+    mat.convertTo(ret, type, 1.0 / max);
+    return ret;
+  };
+})();
 
-function Grayscale(mat) {
-  let lab = new Mat();
-  let channels = [new Mat(), new Mat(), new Mat()];
-  //console.log('Grayscale mat ' + inspectMat(mat));
+const to8bit = (() => {
+  const mapper = Util.weakMapper(() => new Mat());
+  return function to8bit(mat) {
+    const bits = getBitDepth(mat);
+    if(bits == 8) return mat;
+    let ret = mapper(mat);
+    const type = cv.CV_8U | ((mat.channels - 1) << 3);
+    mat.convertTo(ret, type, 255);
+    return ret;
+  };
+})();
 
-  cv.cvtColor(mat, lab, cv.COLOR_BGR2Lab);
-  cv.split(lab, channels);
-  return channels[0];
-}
-function getAlpha(mat) {
-  let channels = Util.repeat(mat.channels, () => new Mat());
-  cv.split(mat, channels);
-  return channels[3];
-}
-function alphaToMask(mat) {
-  let bgr = new Mat();
-  //    cv.cvtColor(mat, bgr, cv.COLOR_GRAY2BGR);
-  cv.merge([mat, mat, mat], bgr);
-  return bgr;
-}
+const Grayscale = (() => {
+  const mapper = Util.weakMapper(() => [new Mat(), new Mat(), new Mat(), new Mat()], new WeakMap(), (obj,mat) => {
 
-function toBGR(mat) {
-  if(mat.channels >= 3) return mat.clone();
+    console.log("Mat for ", obj, " = ", mat); 
+   // throw new Error("Mat for Grayscale");
+  });
+  return function Grayscale(mat) {
+    let channels = mapper(mat);
+    cv.cvtColor(mat, channels[0], cv.COLOR_BGR2Lab);
+    cv.split(channels[0], channels);
+    return channels[0];
+  };
+})();
 
-  let bgr = new Mat();
-  //console.log('Grayscale mat ' + inspectMat(mat));
-  cv.cvtColor(mat, bgr, cv.COLOR_GRAY2BGR);
-  return bgr;
-}
-function toRGBA(matat) {
-  if(mat.channels == 4) return mat.clone();
-  let rgba = new Mat();
-  //console.log('toRGBA mat ' + inspectMat(mat));
+const getAlpha = (() => {
+  const mapper = Util.weakMapper(() => [new Mat(), new Mat(), new Mat(), new Mat()]);
+  return function getAlpha(mat) {
+    let channels = mapper(mat);
+    cv.split(mat, channels);
+    return channels[3];
+  };
+})();
 
-  cv.cvtColor(mat, rgba, cv.COLOR_BGR2BGRA);
-  return rgba;
-}
+const alphaToMask = (() => {
+  const mapper = Util.weakMapper(() => new Mat());
+  return function alphaToMask(mat) {
+    let mask = mapper(mat);
+    cv.merge([mat, mat, mat], mask);
+    return mask;
+  };
+})();
+
+const toBGR = (() => {
+  const mapper = Util.weakMapper(() => new Mat());
+  return function toBGR(mat) {
+    if(mat.channels >= 3) return mat.dup();
+    let bgr = mapper(mat);
+    cv.cvtColor(mat, bgr, cv.COLOR_GRAY2BGR);
+    return bgr;
+  };
+})();
+
+const toRGBA = (() => {
+  const mapper = Util.weakMapper(() => new Mat());
+  return function toRGBA(mat) {
+    if(mat.channels == 4) return mat.dup();
+    let rgba = mapper(mat);
+    cv.cvtColor(mat, rgba, cv.COLOR_BGR2BGRA);
+    return rgba;
+  };
+})();
 
 function minMax(mat) {
   const ret = cv.minMaxLoc(mat);

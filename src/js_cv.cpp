@@ -49,8 +49,7 @@ js_cv_gaussian_blur(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   if(argc >= 6)
     JS_ToInt32(ctx, &borderType, argv[5]);
 
-  std::cerr << "cv::GaussianBlur size=" << size << " sigmaX=" << sigmaX << " sigmaY=" << sigmaY
-            << " borderType=" << borderType << std::endl;
+  //std::cerr << "cv::GaussianBlur size=" << size << " sigmaX=" << sigmaX << " sigmaY=" << sigmaY << " borderType=" << borderType << std::endl;
   cv::GaussianBlur(*input, *output, size, sigmaX, sigmaY, borderType);
 
   return JS_UNDEFINED;
@@ -202,8 +201,7 @@ js_cv_canny(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
   if(argc >= 6)
     L2gradient = JS_ToBool(ctx, argv[5]);
 
-  std::cerr << "cv::Canny threshold1=" << threshold1 << " threshold2=" << threshold2 << " apertureSize=" << apertureSize
-            << " L2gradient=" << L2gradient << std::endl;
+  //std::cerr << "cv::Canny threshold1=" << threshold1 << " threshold2=" << threshold2 << " apertureSize=" << apertureSize << " L2gradient=" << L2gradient << std::endl;
 
   cv::Canny(*image, *edges, threshold1, threshold2, apertureSize, L2gradient);
 
