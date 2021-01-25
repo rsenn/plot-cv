@@ -2,6 +2,7 @@ import Util from './lib/util.js';
 import ConsoleSetup from './lib/consoleSetup.js';
 import * as cv from 'cv';
 import * as draw from 'draw';
+import * as std from 'std';
 import { Mat as cvMat } from 'mat';
 import { Point } from 'point';
 import { Size } from 'size';
@@ -32,7 +33,7 @@ class Mat extends cvMat {
 
     Mat.list.add(this);
 
-/*    let stackStr = Mat.backtrace(this).toString();
+    /*    let stackStr = Mat.backtrace(this).toString();
     if(Mat.stackMap[stackStr]) {
       let mat = Mat.stackMap[stackStr];
       console.error('mat:', mat);
@@ -501,6 +502,9 @@ async function main(...args) {
     console.log('mat=' + mat.toString() + '\n  ' + stack);
   }
   console.log('props:', video.dump());
+    console.log('gc:',std.gc());
+    console.log('exit:',std.exit(0));
+
 }
 
 Util.callMain(main, true);
@@ -575,11 +579,13 @@ const to8bit = (() => {
 })();
 
 const Grayscale = (() => {
-  const mapper = Util.weakMapper(() => [new Mat(), new Mat(), new Mat(), new Mat()], new WeakMap(), (obj,mat) => {
-
-    console.log("Mat for ", obj, " = ", mat); 
-   // throw new Error("Mat for Grayscale");
-  });
+  const mapper = Util.weakMapper(() => [new Mat(), new Mat(), new Mat(), new Mat()],
+    new WeakMap(),
+    (obj, mat) => {
+      console.log('Mat for ', obj, ' = ', mat);
+      // throw new Error("Mat for Grayscale");
+    }
+  );
   return function Grayscale(mat) {
     let channels = mapper(mat);
     cv.cvtColor(mat, channels[0], cv.COLOR_BGR2Lab);
