@@ -1,12 +1,4 @@
 
-var Module = (function() {
-  var _scriptDir = import.meta.url;
-  
-  return (
-function(Module) {
-  Module = Module || {};
-
-
 
 // The Module object: Our interface to the outside world. We import
 // and export values on it. There are various ways Module can be used:
@@ -22,13 +14,6 @@ function(Module) {
 // before the code. Then that object will be used in the code, and you
 // can continue to use Module afterwards as well.
 var Module = typeof Module !== 'undefined' ? Module : {};
-
-// Set up the promise that indicates the Module is initialized
-var readyPromiseResolve, readyPromiseReject;
-Module['ready'] = new Promise(function(resolve, reject) {
-  readyPromiseResolve = resolve;
-  readyPromiseReject = reject;
-});
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
@@ -144,7 +129,9 @@ readBinary = function readBinary(filename) {
 
   arguments_ = process['argv'].slice(2);
 
-  // MODULARIZE will export the module in the proper place outside, we don't need to export here
+  if (typeof module !== 'undefined') {
+    module['exports'] = Module;
+  }
 
   process['on']('uncaughtException', function(ex) {
     // suppress ExitStatus exceptions from showing an error
@@ -209,11 +196,6 @@ if (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) {
     scriptDirectory = self.location.href;
   } else if (typeof document !== 'undefined' && document.currentScript) { // web
     scriptDirectory = document.currentScript.src;
-  }
-  // When MODULARIZE, this JS may be executed later, after document.currentScript
-  // is gone, so we saved it, and we use it here instead of any other info.
-  if (_scriptDir) {
-    scriptDirectory = _scriptDir;
   }
   // blob urls look like blob:http://site.com/etc/etc and we cannot infer anything from them.
   // otherwise, slice off the final part of the url to find the script directory.
@@ -1288,7 +1270,6 @@ function abort(what) {
   // simply make the program stop.
   var e = new WebAssembly.RuntimeError(what);
 
-  readyPromiseReject(e);
   // Throw the error whether or not MODULARIZE is set because abort is used
   // in code paths apart from instantiation where an exception is expected
   // to be thrown when abort is called.
@@ -1461,8 +1442,7 @@ function createWasm() {
     }
   }
 
-  // If instantiation fails, reject the module ready promise.
-  instantiateAsync().catch(readyPromiseReject);
+  instantiateAsync();
   return {}; // no exports yet; we'll fill them in later
 }
 
@@ -1715,7 +1695,6 @@ function run(args) {
 
     preMain();
 
-    readyPromiseResolve(Module);
     if (Module['onRuntimeInitialized']) Module['onRuntimeInitialized']();
 
     postRun();
@@ -1848,7 +1827,7 @@ _onload: function(request, event)
     var img, w, h, img_info_buf, cimg, p0, rgba_line, w4, frame_count;
     var heap8, heap16, heap32, dst, v, i, y, func, duration, frames, loop_count;
 
-    //    console.log("loaded " + data.byteLength + " bytes");
+        console.log("loaded " + data.byteLength + " bytes");
 
     img = this.bpg_decoder_open();
 
@@ -1995,10 +1974,3 @@ window.onload = function() {
 /* end of dummy function enclosing all the emscripten code */
 })();
 
-
-
-  return Module.ready
-}
-);
-})();
-export default Module;

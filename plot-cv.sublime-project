@@ -80,7 +80,7 @@
         "*.eslintignore",
         "*.?#?"
       ],
-      "folder_exclude_patterns": [".*", "node_modules", "build", "inst", "htm", "*/htm/*", "npm", ".next", "*.next/*", "quickjs-*", "tmp", "data"]
+      "folder_exclude_patterns": [".*", ".git", ".git/*", "node_modules", "build", "inst", "htm", "*/htm/*", "npm", ".next", "*.next/*", "quickjs-*", "tmp", "data"]
     }
   ],
   "build_systems": [

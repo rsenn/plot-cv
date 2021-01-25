@@ -1,3 +1,5 @@
+//import Util from './lib/util.js';
+
 const BPG_OUTPUT_FORMAT_RGB24 = 1;
 const BPG_OUTPUT_FORMAT_RGBA32 = 2;
 const BPG_OUTPUT_FORMAT_RGB48 = 3;
@@ -12,6 +14,8 @@ class BPGImageInfo extends ArrayBuffer {
   }
 
   static from(arrayBuf) {
+    if(typeof arrayBuf.buffer == 'object') arrayBuf = arrayBuf.buffer;
+
     return Object.setPrototypeOf(arrayBuf.slice(), BPGImageInfo.prototype);
   }
   get [Symbol.toStringTag]() { return `[struct BPGImageInfo @ ${this} ]`; }
@@ -25,40 +29,40 @@ class BPGImageInfo extends ArrayBuffer {
   get height() { return new Uint32Array(this, 4, 1)[0]; }
 
   /* format@8 uint8_t 1 */
-  set format(v) { new Uint8Array(this, 8)[0] = v; }
-  get format() { return new Uint8Array(this, 8)[0]; }
+  set format(v) { new Uint8Array(this, 8, 1)[0] = v; }
+  get format() { return new Uint8Array(this, 8, 1)[0]; }
 
   /* has_alpha@9 uint8_t 1 */
-  set has_alpha(v) { new Uint8Array(this, 9)[0] = v; }
-  get has_alpha() { return new Uint8Array(this, 9)[0]; }
+  set has_alpha(v) { new Uint8Array(this, 9, 1)[0] = v; }
+  get has_alpha() { return new Uint8Array(this, 9, 1)[0]; }
 
   /* color_space@10 uint8_t 1 */
-  set color_space(v) { new Uint8Array(this, 10)[0] = v; }
-  get color_space() { return new Uint8Array(this, 10)[0]; }
+  set color_space(v) { new Uint8Array(this, 10, 1)[0] = v; }
+  get color_space() { return new Uint8Array(this, 10, 1)[0]; }
 
   /* bit_depth@11 uint8_t 1 */
-  set bit_depth(v) { new Uint8Array(this, 11)[0] = v; }
-  get bit_depth() { return new Uint8Array(this, 11)[0]; }
+  set bit_depth(v) { new Uint8Array(this, 11, 1)[0] = v; }
+  get bit_depth() { return new Uint8Array(this, 11, 1)[0]; }
 
   /* premultiplied_alpha@12 uint8_t 1 */
-  set premultiplied_alpha(v) { new Uint8Array(this, 12)[0] = v; }
-  get premultiplied_alpha() { return new Uint8Array(this, 12)[0]; }
+  set premultiplied_alpha(v) { new Uint8Array(this, 12, 1)[0] = v; }
+  get premultiplied_alpha() { return new Uint8Array(this, 12, 1)[0]; }
 
   /* has_w_plane@13 uint8_t 1 */
-  set has_w_plane(v) { new Uint8Array(this, 13)[0] = v; }
-  get has_w_plane() { return new Uint8Array(this, 13)[0]; }
+  set has_w_plane(v) { new Uint8Array(this, 13, 1)[0] = v; }
+  get has_w_plane() { return new Uint8Array(this, 13, 1)[0]; }
 
   /* limited_range@14 uint8_t 1 */
-  set limited_range(v) { new Uint8Array(this, 14)[0] = v; }
-  get limited_range() { return new Uint8Array(this, 14)[0]; }
+  set limited_range(v) { new Uint8Array(this, 14, 1)[0] = v; }
+  get limited_range() { return new Uint8Array(this, 14, 1)[0]; }
 
   /* has_animation@15 uint8_t 1 */
-  set has_animation(v) { new Uint8Array(this, 15)[0] = v; }
-  get has_animation() { return new Uint8Array(this, 15)[0]; }
+  set has_animation(v) { new Uint8Array(this, 15, 1)[0] = v; }
+  get has_animation() { return new Uint8Array(this, 15, 1)[0]; }
 
   /* loop_count@16 uint16_t NaN */
-  set loop_count(v) { new Uint8Array(this, 16)[0] = v; }
-  get loop_count() { return new Uint8Array(this, 16)[0]; }
+  set loop_count(v) { new Uint8Array(this, 16, 1)[0] = v; }
+  get loop_count() { return new Uint8Array(this, 16, 1)[0]; }
 
   toString() {
     const {
@@ -78,74 +82,7 @@ class BPGImageInfo extends ArrayBuffer {
   }
 }
 
-var importObject = {
-  //c: { imported_func: arg => console.log(arg) },
-  abort: async function (arg) {
-    console.log(arg);
-  },
-  env: {
-    abort(arg) {
-      console.log(arg);
-    },
-    emscripten_resize_heap: arg => {
-      console.log(arg);
-      return () => {};
-    },
-    emscripten_memcpy_big: arg => {
-      console.log(arg);
-      return () => {};
-    }
-  },
-  imports: {
-    abort: async function(arg) {
-      console.log(arg);
-      /*  return () => {};*/
-    },
-    env: arg => {
-      console.log(arg);
-    }
-  }
-};
-Object.assign(importObject.imports.env, importObject);
-Object.assign(importObject, { a: importObject.imports });
-
-let functionNames = {
-  d: 'memory',
-  e: 'tables',
-  g: '_malloc',
-  h: '_free',
-  i: '_bpg_decoder_get_info',
-  j: '_bpg_decoder_start',
-  k: '_bpg_decoder_get_frame_duration',
-  l: '_bpg_decoder_get_line',
-  m: '_bpg_decoder_open',
-  n: '_bpg_decoder_decode',
-  o: '_bpg_decoder_close',
-  p: 'stackSave',
-  q: 'stackRestore',
-  r: 'stackAlloc'
-};
-
-function loadWebAssembly(fileName, impObj = {}) {
-  return fetch(fileName)
-    .then(response => response.arrayBuffer())
-    .then(buffer => convertBufferStringToInstance(buffer, impObj));
-}
-
-let bpgdec = {};
-
-async function convertBufferStringToInstance(bufferArrayString, impObj = {}) {
-  const buffer = new Uint8Array(typeof bufferArrayString == 'string' ? bufferArrayString.split(',') : bufferArrayString
-  );
-  const module = await WebAssembly.compile(buffer);
-  console.log('convertBufferStringToInstance', { module, impObj });
-  return WebAssembly.instantiate(buffer, impObj);
-}
 Object.assign(window, {
-  loadWebAssembly,
-  importObject,
-  convertBufferStringToInstance,
-  bpgdec,
   BPG_OUTPUT_FORMAT_RGB24,
   BPG_OUTPUT_FORMAT_RGBA32,
   BPG_OUTPUT_FORMAT_RGB48,
@@ -154,78 +91,154 @@ Object.assign(window, {
   BPG_OUTPUT_FORMAT_CMYK64
 });
 
-window.addEventListener('load', async event => {
-  console.log('onload');
+const BPG_OUTPUT_FORMAT_NAMES = {
+  [BPG_OUTPUT_FORMAT_RGB24]: 'BPG_OUTPUT_FORMAT_RGB24',
+  [BPG_OUTPUT_FORMAT_RGBA32]: 'BPG_OUTPUT_FORMAT_RGBA32',
+  [BPG_OUTPUT_FORMAT_RGB48]: 'BPG_OUTPUT_FORMAT_RGB48',
+  [BPG_OUTPUT_FORMAT_RGBA64]: 'BPG_OUTPUT_FORMAT_RGBA64',
+  [BPG_OUTPUT_FORMAT_CMYK32]: 'BPG_OUTPUT_FORMAT_CMYK32',
+  [BPG_OUTPUT_FORMAT_CMYK64]: 'BPG_OUTPUT_FORMAT_CMYK64'
+};
 
-  let wasm = await loadWebAssembly('/static/wasm/bpgdec8a.wasm', importObject).then(instance => {
-    console.log('instance:', instance);
-    console.log('instance.exports:', instance.exports);
-    // bpgdec = instance.exports._Z7squareri;
-    console.log('Finished compiling! Ready when you are...');
-    return instance;
-  });
+const BPG_OUTPUT_FORMAT_PIXELSIZE = {
+  [BPG_OUTPUT_FORMAT_RGB24]: 4 || 24 / 8,
+  [BPG_OUTPUT_FORMAT_RGBA32]: 32 / 8,
+  [BPG_OUTPUT_FORMAT_RGB48]: 48 / 8,
+  [BPG_OUTPUT_FORMAT_RGBA64]: 64 / 8,
+  [BPG_OUTPUT_FORMAT_CMYK32]: 32 / 8,
+  [BPG_OUTPUT_FORMAT_CMYK64]: 64 / 8
+};
 
-  window.wasm = wasm;
+ 
+class BPGLoader extends BPGDecoder {
+  static Module = BPGDecoder.Module;
 
-  console.log('wasm:', wasm);
-  console.log('wasm.instance.exports:', wasm.instance.exports);
+      static HeapU8 = null;
 
-  const {
-    free,
-    malloc,
-    __wasm_call_ctors,
-    stackAlloc,
-    stackRestore,
-    stackSave,
-    bpg_decoder_close,
-    bpg_decoder_decode,
-    bpg_decoder_open,
-    bpg_decoder_get_line,
-    bpg_decoder_get_frame_duration,
-    bpg_decoder_start,
-    bpg_decoder_get_info
-  } = wasm.instance.exports;
-
-  /*  let bpgdec = {free, g, f, stackAlloc, stackRestore, stackSave, bpg_decoder_close, bpg_decoder_decode, bpg_decoder_open, bpg_decoder_get_line, bpg_decoder_get_frame_duration, bpg_decoder_start, bpg_decoder_get_info, e, d } || Object.fromEntries(Object.keys(functionNames).map(name => [functionNames[name], wasm.instance.exports[name]]));*/
-  window.bpg = Object.assign(bpgdec, {
-    free,
-    malloc,
-    __wasm_call_ctors,
-    stackAlloc,
-    stackRestore,
-    stackSave,
-    bpg_decoder_close,
-    bpg_decoder_decode,
-    bpg_decoder_open,
-    bpg_decoder_get_line,
-    bpg_decoder_get_frame_duration,
-    bpg_decoder_start,
-    bpg_decoder_get_info
-  });
-  console.log(' window.bpg:', window.bpg);
-
-  console.log('__wasm_call_ctors', __wasm_call_ctors());
-});
-
-async function BPGDecode(buffer, outputFmt = BPG_OUTPUT_FORMAT_RGB24) {
-  if(typeof buffer == 'string') {
-    buffer = await fetch(buffer).then(response => response.arrayBuffer());
+  constructor() {
+    super();
   }
-  console.log('buffer:', buffer.byteLength);
 
-  let decoder = bpg.bpg_decoder_open();
-  console.log('decoder:', decoder);
-  let info = new BPGImageInfo();
-  let output;
+  open() {
+    if(!this.open) {
+      const { bpg_decoder_open } = this;
+      this.handle = this.bpg_decoder_open();
+      this.open = true;
+    }
+  }
 
-  let ret;
-  if((ret = bpg.bpg_decoder_decode(decoder, buffer, buffer.byteLength)) < 0) throw new Error(`bpg_decoder_decode: ${ret}`);
-  if((ret = bpg.bpg_decoder_get_info(decoder, info)) < 0) throw new Error(`bpg_decoder_get_info: ${ret}`);
+  close() {
+    if(this.open) {
+      const { bpg_decoder_close } = this;
+      this.bpg_decoder_close(this.handle);
+      this.handle = null;
+      this.open = false;
+    }
+  }
 
-  console.log('info:', info);
+  async load(buffer) {
+    if(typeof buffer == 'string') buffer = await fetch(buffer).then(response => response.arrayBuffer());
+    this.buffer = buffer;
+    return this.buffer.byteLength;
+  }
 
-  output = new Array(info.height).map(() => new ArrayBuffer(info.width));
-  if((ret = bpg.bpg_decoder_start(decoder, outputFmt)) < 0) throw new Error(`bpg_decoder_start: ${ret}`);
+  decode() {
+    const { handle, bpg_decoder_decode } = this;
+    this.open();
+    let array = new Uint8Array(this.buffer);
+    let ret = bpg_decoder_decode(handle, array, array.length);
+    if(ret < 0) throw new Error(`bpc_decoder_decode ret=${ret}`);
+    return ret;
+  }
+
+  get info() {
+    const { handle, bpg_decoder_get_info } = this;
+    let info = this.malloc(5 * 4);
+    let ret = bpg_decoder_get_info(handle, info);
+    if(ret < 0) throw new Error(`bpg_decoder_get_info ret=${ret}`);
+    let arrayBuf = BPGDecoder.Module.HEAPU8.buffer.slice(info);
+    this.free(info);
+    ret = BPGImageInfo.from(arrayBuf);
+    return ret;
+   }
+
+  start(format) {
+    const { handle, bpg_decoder_start, info } = this;
+    if(format == undefined)
+      format = info.has_alpha ? BPG_OUTPUT_FORMAT_RGBA32 : BPG_OUTPUT_FORMAT_RGB24;
+    this.format = format;
+    this.pixelSize = BPG_OUTPUT_FORMAT_PIXELSIZE[format];
+    this.lineSize = this.pixelSize * info.width;
+    const { pixelSize, lineSize } = this;
+    console.log(`bpg_decoder_start(${format})`, { pixelSize, lineSize });
+    let ret = bpg_decoder_start(handle, format);
+    if(ret < 0) throw new Error(`bpg_decoder_start(${format}) ret=${ret}`);
+    return ret;
+  }
+
+  get_line() {
+    const { handle, bpg_decoder_get_line, lineSize } = this;
+    // console.log(`get_line()`, {  lineSize  });
+    let data = this.malloc(lineSize);
+    let ret = bpg_decoder_get_line(handle, data);
+    if(ret < 0) throw new Error(`bpg_decoder_get_line ret=${ret}`);
+    if(BPGLoader.HeapU8 == null)
+       BPGLoader.HeapU8 = BPGDecoder.Module.HEAPU8.buffer;
+     let array = new Uint8Array(BPGLoader.HeapU8, data, lineSize);
+    this.free(data);
+    return array;
+  }
+
+  *[Symbol.iterator]() {
+    const { info } = this;
+    const { width, height } = info;
+    for(let i = 0; i < height; i++) {
+      let line = this.get_line();
+      yield line;
+    }
+  }
+
+  getImageData() {
+    const { info } = this;
+    const { width, height } = info;
+    let ret = new ImageData(width, height);
+    let { data } = ret;
+    this.start();
+    const { pixelSize } = this;
+    let p = 0;
+    for(let line of this) {
+      for(let x = 0; x < line.length; x += pixelSize) {
+        let r = line[x];
+        let g = line[x + 1];
+        let b = line[x + 2];
+        let a = 0xff;
+        data[p++] = r;
+        data[p++] = g;
+        data[p++] = b;
+        data[p++] = a;
+      }
+    }
+    console.log(`p = ${p}`);
+    console.log(`width * height * 4 = ${width * height * 4}`);
+    return ret;
+  }
 }
 
-window.BPGDecode = BPGDecode;
+window.addEventListener('load', async event => {
+  let decoder = new BPGLoader();
+  window.decoder = decoder;
+  console.log('window onload', { decoder });
+  let result = await decoder.load('data/your-bpg-picture.bpg');
+  console.log('decode', decoder.decode());
+  console.log('info', decoder.info + ''); 
+  let y = 0;
+  let { width, height } = decoder.info;
+  let { pixelSize } = decoder;
+  
+  let canvas = document.querySelector('#output');
+  let ctx = canvas.getContext('2d');
+
+  let imageData =  window.imageData =  decoder.getImageData();
+ 
+  ctx.putImageData(imageData, 0, 0);
+});
