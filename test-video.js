@@ -628,9 +628,11 @@ async function main(...args) {
           video['seek' + method](offset);
           let pos = video.position(method);
 
-          console.log('seek' + method + ' ' + offset + ' pos =',
-            pos,
-            ` (${Util.roundTo(video.position('%'), 0.001)}%)`
+          console.log('seek' +
+              method +
+              ' ' +
+              offset +
+              ` distance = ${distance} pos = ${pos} (${Util.roundTo(video.position('%'), 0.001)}%)`
           );
           break;
         }
