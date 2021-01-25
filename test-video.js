@@ -487,7 +487,14 @@ async function main(...args) {
         let edges = pipeline.outputOf('EdgeDetect');
         //  console.log('edges: '+edges);
 
-        cv.HoughLinesP(edges, (lines = []), 2, +params.angleResolution * Math.PI / 180, +params.threshc, +params.minLineLength, +params.maxLineGap);
+        cv.HoughLinesP(edges,
+          (lines = []),
+          2,
+          (+params.angleResolution * Math.PI) / 180,
+          +params.threshc,
+          +params.minLineLength,
+          +params.maxLineGap
+        );
         //console.log('lines.length', lines.length);
         //console.log('lines: '+lines.map(l => l.toString()).join(', '));
 
