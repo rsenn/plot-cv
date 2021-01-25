@@ -181,6 +181,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
   message("!!!!DEBUG MODE!!!")
   # option(USE_EFENCE "Enable electric fence" OFF)
   set(DEBUG_OUTPUT TRUE CACHE BOOL "Debug output" FORCE)
+  set(DEBUG_MAT FALSE CACHE BOOL "Debug cv::Mat" FORCE)
   list(APPEND PLOTCV_DEFS DEBUG=1)
 
   # add_definitions(-DDEBUG=1)
@@ -215,8 +216,10 @@ endif("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 
 if(DEBUG_OUTPUT)
   list(APPEND PLOTCV_DEFS DEBUG_OUTPUT=1)
-  # add_definitions(-DDEBUG_OUTPUT=1)
 endif(DEBUG_OUTPUT)
+if(DEBUG_MAT)
+  list(APPEND PLOTCV_DEFS DEBUG_MAT=1)
+endif(DEBUG_MAT)
 
 check_c_compiler_flag("-flto" HAS_F_LTO_FLAG)
 

@@ -3,7 +3,6 @@ import ConsoleSetup from './lib/consoleSetup.js';
 import * as cv from 'cv';
 import * as draw from 'draw';
 import * as std from 'std';
-import { Mat as cvMat } from 'mat';
 import { Point } from 'point';
 import { Size } from 'size';
 import { TickMeter } from 'utility';
@@ -13,6 +12,7 @@ import { Alea } from './lib/alea.js';
 import { HSLA } from './lib/color.js';
 import { NumericParam, EnumParam, ParamNavigator } from './param.js';
 import PortableFileSystem from './lib/filesystem.js';
+import { Mat as cvMat } from 'mat';
 
 let prng = new Alea(Date.now());
 const hr = Util.hrtime;
@@ -20,24 +20,26 @@ let filesystem;
 let rainbow;
 let zoom = 1;
 
-class Mat extends cvMat {
-  static map = Util.weakMapper(() => []);
-  static list = new Set();
- 
-  constructor(...args) {
-    super(...args);
+const Mat =
+  cvMat ||
+  class Mat extends cvMat {
+    static map = Util.weakMapper(() => []);
+    static list = new Set();
 
-    let stack = Mat.map(this);
-    for(let frame of Util.stack(null, 3)) stack.push(frame);
+    constructor(...args) {
+      super(...args);
 
-    Mat.list.add(this);
-  }
+      let stack = Mat.map(this);
+      for(let frame of Util.stack(null, 3)) stack.push(frame);
 
-  static backtrace(mat) {
-    let array = Mat.map(mat);
-    return array.length ? array : null;
-  }
-}
+      Mat.list.add(this);
+    }
+
+    static backtrace(mat) {
+      let array = Mat.map(mat);
+      return array.length ? array : null;
+    }
+  };
 
 class Pipeline extends Function {
   constructor(processors = [], callback) {
@@ -134,7 +136,9 @@ const inspectMat = ({ rows, cols, channels, depth, type }) =>
   });
 
 function SaveConfig(configObj) {
-  return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'), JSON.stringify(configObj, null, 2));
+  return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'),
+    JSON.stringify(configObj, null, 2) + '\n'
+  );
 }
 
 function LoadConfig() {
@@ -142,362 +146,6 @@ function LoadConfig() {
   console.log('LoadConfig:', str);
   return JSON.parse(str);
 }
-
-async function main(...args) {
-  let start;
-  let begin = hr();
-  let running = true;
-  let paused = false;
-
-  await ConsoleSetup({
-    breakLength: 120,
-    maxStringLength: 200,
-    maxArrayLength: 20,
-    multiline: 1,
-    alignMap: true
-  });
-  await PortableFileSystem(fs => (filesystem = fs));
-
-  const makeRainbow = steps =>
-    Util.range(0, 360, 360 / steps)
-      .slice(0, -1)
-      .map(hue => new HSLA(hue, 100, 50))
-      .map(h => h.toRGBA());
-
-  let win = new Window('gray', /*cv.WINDOW_AUTOSIZE | cv.WINDOW_NORMAL  |*/ cv.WINDOW_KEEPRATIO);
-  console.log('Mouse :', { MouseEvents, MouseFlags });
-  //console.log('cv.EVENT_MOUSEMOVE', cv.EVENT_MOUSEMOVE);
-  //
-  const printFlags = flags => [...Util.bitsToNames(MouseFlags)];
-  console.log('printFlags:', printFlags + '');
-  console.log('tickFrequency:', cv.getTickFrequency());
-
-  win.setMouseCallback(function (event, x, y, flags) {
-    event = Mouse.printEvent(event);
-    flags = Mouse.printFlags(flags);
-
-    console.log('Mouse event:', console.inspect({ event, x, y, flags }, { multiline: false }));
-  });
-
-  console.log('Setup duration:', hr(begin));
-
-  let video = new VideoSource(...args);
-
-  let font = new TextStyle(cv.FONT_HERSHEY_PLAIN, 1.0, 1);
-  let tSize = font.size(video.time);
-
-  let tPos = new Point(...tSize.div(2))
-    .floor()
-    .mul(-1)
-    .add(50, video.get('frame_height') - tSize.y * 0.8);
-
-  tPos.x = 5;
-
-  // let bgr = new Mat();
-  console.log('backend:', video.backend);
-  console.log('grab():', video.grab);
-  console.log('fps:', video.fps);
-  //console.log('read():', [...Util.repeat(10, () => video.grab())]);
-  let frameCount = video.get('frame_count');
-  let { frameShow } = LoadConfig();
-  console.log('frameShow:', frameShow);
-  let contours, hier;
-  let contoursDepth;
-
-  let params = {
-    ksize: new NumericParam(3, 1, 13, 2),
-    thresh1: new NumericParam(40, 0, 100),
-    thresh2: new NumericParam(90, 0, 100),
-    apertureSize: new NumericParam(3, 3, 7, 2),
-    L2gradient: new NumericParam(0, 0, 1),
-    numDilations: new NumericParam(0, 0, 10),
-    numErosions: new NumericParam(0, 0, 10),
-    mode: new EnumParam(['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL'], 3),
-    method: new EnumParam(['CHAIN_APPROX_NONE', 'CHAIN_APPROX_SIMPLE', 'CHAIN_APPROX_TC89_L1', 'CHAIN_APPROX_TC89_L189_KCOS'],
-      0
-    ),
-    lineWidth: new NumericParam(1, 0, 10)
-  };
-  let paramNav = new ParamNavigator(params);
-  let dummyArray = [0, 1, 2, 3, 4, 5, 6, 7];
-  //console.log('paramNav.map:', paramNav.map);
-  //console.log('params.mode:', dummyArray[params.mode]);
-  //console.log('params.method:', dummyArray[params.method]);
-  //console.log('paramNav.param:', paramNav.param);
-
-  rainbow = makeRainbow(256);
-
-  let outputMat, outputName;
-  let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
-
-  let pipeline = new Pipeline([
-      Processor(function AcquireFrame(mat, output) {
-        video.read(output);
-      }),
-      Grayscale,
-      Processor(function Norm(src, dst) {
-        cv.normalize(src, dst, 255, 0, cv.NORM_MINMAX);
-      }),
-      Processor(function Blur(src, dst) {
-        cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
-      }),
-      Processor(function EdgeDetect(src, dst) {
-        cv.Canny(src, dst, +params.thresh1, +params.thresh2, +params.apertureSize, +params.L2gradient);
-        ////console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
-      }),
-      Processor(function Morph(src, dst) {
-        cv.dilate(src, dst, structuringElement, new Point(-1, -1), +params.numDilations);
-        cv.erode(dst, dst, structuringElement, new Point(-1, -1), +params.numErosions);
-      }),
-      Processor(function Contours(src, dst) {
-        cv.findContours(src, (contours = []), (hier = []), cv[params.mode], cv[params.method]);
-
-        cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
-        let edge = [dst.toString(), pipeline.images[0].toString()];
-        //console.log('edge', edge);
-
-        //  dst.and(pipeline.images[0]);
-      })
-    ],
-    (mat, i, n) => {
-      if(frameShow == i) {
-        outputName = pipeline.processors[frameShow].name;
-        outputMat = mat;
-      }
-
-      // let m = (outputMat || mat) ?  (outputMat || mat).dup() : null;
-    }
-  );
-
-  console.log('Pipeline processor names:', pipeline.names);
-  video.seekMsecs(5000);
-  let meter = new TickMeter();
-  let prevTime;
-  let frameDelay = Math.floor(1000 / video.fps);
-  console.log('frameDelay:', frameDelay);
-
-  const wrapIndex = Util.mod(pipeline.size);
-
-  if(frameShow === undefined) frameShow = wrapIndex(-1);
-
-  const resizeOutput = Util.once(() => {
-    let size = outputMat.size.mul(zoom);
-    win.resize(size.width, size.height);
-  });
-
-  let out = new Mat();
-  let size;
-
-  const ClearSurface = mat => (mat.setTo([0, 0, 0, 0]), mat);
-  const MakeSurface = () =>
-    Util.once((...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)), null, ClearSurface);
-  const MakeComposite = Util.once(() => new Mat());
-  let surface = MakeSurface();
-
-  while(running) {
-    meter.reset();
-    meter.start();
-    let deadline = Util.now() + frameDelay;
-
-    let frameNo = video.get('pos_frames');
-    if(frameNo == frameCount) video.set('pos_frames', (frameNo = 0));
-
-    let gray = pipeline();
-    //console.log('outputMat: ' + outputMat.toString());
-
-    //console.log('pipeline.times:', pipeline.times.map((t, i) => [pipeline.names[i], +t.milliseconds.toFixed(3)]));
-    //console.log('pipeline.images:', pipeline.images.map((mat, i) => [pipeline.names[i], mat.toString()]));
-    showOutput();
-    //console.log('processing time:', Util.now() - (deadline - frameDelay));
-
-    while(true) {
-      let key, modifiers, modifierList;
-
-      let sleepMsecs = deadline - Util.now();
-
-      sleepMsecs -= 2;
-      //console.log('sleepMsecs:', sleepMsecs, '/', frameDelay);
-
-      if((key = cv.waitKeyEx(Math.max(1, sleepMsecs))) != -1) {
-        modifiers = Object.fromEntries(modifierMap(key));
-        modifierList = modifierMap(key).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc), []);
-        let ch = String.fromCodePoint(key & 0xff);
-        console.log(`keypress [${modifierList}] 0x${(key & ~0xd000).toString(16)} '${ch}'`);
-      }
-
-      switch (key & 0xfff) {
-        case 0x3c /* < */:
-          paramNav.prev();
-          break;
-        case 0x3e /* > */:
-          paramNav.next();
-          break;
-
-        case 0x2b /* + */:
-          paramNav.param.increment();
-          break;
-        case 0x2d /* - */:
-        case 0x2fad /* numpad - */:
-          paramNav.param.decrement();
-          break;
-
-        case 0x31: /* 1 */
-        case 0x32: /* 2 */
-        case 0x33: /* 3 */
-        case 0x34: /* 4 */
-        case 0x35: /* 5 */
-        case 0x36: /* 6 */
-        case 0x37: /* 7 */
-        case 0x38: /* 8 */
-        case 0x39: /* 9 */
-        case 0x30 /* 0 */:
-          let v = key & 0xf || 10;
-          paramNav.param.alpha = v / 10;
-          break;
-        case 0xa7 /* § */:
-          paramNav.param.alpha = 0;
-          break;
-        case 0x51: /* Q */
-        case 0x71: /* q */
-
-        case 0x1b:
-          running = false;
-          break;
-        case 0x20:
-          paused = !paused;
-          break;
-        case 0x6e: /* n */
-        case 0x4e /* N */:
-          frameShow = wrapIndex(frameShow + 1);
-          break;
-        case 0x70: /* p */
-        case 0x50 /* P */:
-          frameShow = wrapIndex(frameShow - 1);
-          break;
-        case 0xf50 /* home */:
-          video.set('pos_frames', 0);
-          break;
-        case 0xf57 /* end */:
-          video.set('pos_frames', video.get('frame_count') - Math.round(video.fps * 3));
-          break;
-        case 0xf51: /* left */
-        case 0xf53: /* right */
-        case 0xf52: /* up */
-        case 0xf54: /* down */ {
-          const method = key & 0x1 ? 'Frames' : 'Msecs';
-          const distance =
-            (key & 0x1 ? 1 : 1000) * (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
-          const offset = key & 0x2 ? +distance : -distance;
-
-          //console.log('seek', { method, distance, offset });
-          video['seek' + method](offset);
-          let pos = video.position(method);
-
-          console.log('seek' + method + ' ' + offset + ' pos =',
-            pos,
-            ` (${Util.roundTo(video.position('%'), 0.001)}%)`
-          );
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-      if(sleepMsecs <= 0) break;
-    }
-
-    if(paused) video.seekFrames(-1);
-
-    meter.stop();
-    //if(prevTime !== undefined) console.log('FPS: ', +(1 / meter.timeSec).toFixed(2), '/', video.fps);
-
-    prevTime = meter.timeSec;
-  }
-
-  function showOutput() {
-    let mat = surface(outputMat.rows, outputMat.cols, cv.CV_8UC4);
-    /*    if(!surface) surface = new Mat(outputMat.rows, outputMat.cols, cv.CV_8UC4);
-    else surface.setTo([0, 0, 0, 0]);*/
-
-    console.log('mat:', mat.toString());
-    out = outputMat;
-    if(outputMat.channels == 1) {
-      cv.cvtColor(out, out, cv.COLOR_GRAY2BGRA);
-    } else {
-      cv.cvtColor(out, out, cv.COLOR_BGR2BGRA);
-    }
-
-    /* if(frameShow == pipeline.size - 1) {
-      out.and([0, 255, 255, 255]);
-      console.log('row 100:', [...out.row(100).values()]);
-    }*/
-    //console.log('out ' + out.toString());
-
-    if(frameShow == 0) {
-      cv.drawContours(mat, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
-    } else {
-      let ids = [...getToplevel(hier)];
-
-      let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]])
-      );
-      contours.forEach((contour, i) => {
-        let p = [...getParents(hier, i)];
-        let color = palette[p[p.length - 1]];
-        drawContour(mat, contour, color, +params.lineWidth);
-      });
-    }
-    font.draw(mat, video.time + ' ⏩', tPos, /*0x00ff00 ||*/ { r: 0, g: 255, b: 0, a: 255 });
-
-    let paramStr = `${paramNav.name} [${paramNav.param.range.join('-')}] = ${+paramNav.param}`;
-    //console.log('paramStr: ', paramStr);
-    font.draw(mat, paramStr, [tPos.x, tPos.y - 20], /*0x00ffff ||*/ { r: 255, g: 0, b: 0, a: 255 });
-
-    font.draw(mat,
-      `#${frameShow + 1}/${pipeline.size}` + (outputName ? ` (${outputName})` : ''),
-      [5, 5 + tSize.y],
-      /*0xffff00 ||*/ {
-        r: 255,
-        g: 255,
-        b: 0,
-        a: 255
-      }
-    );
-
-    resizeOutput();
-
-    //console.log("row 100:", [...mat.row(100).values()]);
-
-    //let mask = toBGR(getAlpha(mat));
-    let composite = MakeMatFor(showOutput);
-
-    cv.addWeighted(out, 1, mat, frameShow == pipeline.size - 1 ? 0 : 1, 0, composite);
-    win.show(composite);
-
-    //console.log("composite", composite.toString());
-    //composite.release();
-    //console.log("composite.release()", composite.toString());
-  }
-
-  SaveConfig({ frameShow });
-
-  for(let mat of Mat.list) {
-    let stack = Mat.backtrace(mat)
-      //.slice(0,-1)
-      .filter(frame =>
-          frame.functionName != '<anonymous>' && (frame.lineNumber !== undefined || /test-video/.test(frame.fileName))
-      )
-      .map(frame => frame.toString())
-      .join('\n  ');
-
-    console.log('mat=' + mat.toString() + '\n  ' + stack);
-  }
-  console.log('props:', video.dump());
-    console.log('gc:',std.gc());
-    console.log('exit:',std.exit(0));
-
-}
-
-Util.callMain(main, true);
 
 function dumpMat(name, mat) {
   console.log(`${name} =`,
@@ -572,8 +220,7 @@ const Grayscale = (() => {
   const mapper = Util.weakMapper(() => [new Mat(), new Mat(), new Mat(), new Mat()],
     new WeakMap(),
     (obj, mat) => {
-      console.log('Mat for ', obj, ' = ', mat);
-      // throw new Error("Mat for Grayscale");
+      //console.log('Mat for ', obj, ' = ', mat);
     }
   );
   return function Grayscale(mat) {
@@ -713,3 +360,393 @@ function Profiler(name, ticks = () => cv.getTickCount(), freq = cv.getTickFreque
 
   return self;
 }
+
+async function main(...args) {
+  let start;
+  let begin = hr();
+  let running = true;
+  let paused = false;
+
+  await ConsoleSetup({
+    breakLength: 120,
+    maxStringLength: 200,
+    maxArrayLength: 20,
+    multiline: 1,
+    alignMap: true
+  });
+  await PortableFileSystem(fs => (filesystem = fs));
+
+  const makeRainbow = steps =>
+    Util.range(0, 360, 360 / steps)
+      .slice(0, -1)
+      .map(hue => new HSLA(hue, 100, 50))
+      .map(h => h.toRGBA());
+
+  let win = new Window('gray', /*cv.WINDOW_AUTOSIZE | cv.WINDOW_NORMAL  |*/ cv.WINDOW_KEEPRATIO);
+  console.log('Mouse :', { MouseEvents, MouseFlags });
+  //console.log('cv.EVENT_MOUSEMOVE', cv.EVENT_MOUSEMOVE);
+  //
+  const printFlags = flags => [...Util.bitsToNames(MouseFlags)];
+  console.log('printFlags:', printFlags + '');
+  console.log('tickFrequency:', cv.getTickFrequency());
+
+  win.setMouseCallback(function (event, x, y, flags) {
+    event = Mouse.printEvent(event);
+    flags = Mouse.printFlags(flags);
+
+    console.log('Mouse event:', console.inspect({ event, x, y, flags }, { multiline: false }));
+  });
+
+  console.log('Setup duration:', hr(begin));
+
+  let video = new VideoSource(...args);
+  let thickness = 1;
+  let font = new TextStyle(cv.FONT_HERSHEY_PLAIN, 1.0, thickness);
+  let tSize = font.size(video.time);
+
+  let tPos = new Point(...tSize.div(2))
+    .floor()
+    .mul(-1)
+    .add(50, video.get('frame_height') - tSize.y * 0.8);
+
+  tPos.x = 5;
+
+  // let bgr = new Mat();
+  console.log('backend:', video.backend);
+  console.log('grab():', video.grab);
+  console.log('fps:', video.fps);
+  //console.log('read():', [...Util.repeat(10, () => video.grab())]);
+  let frameCount = video.get('frame_count');
+  let { frameShow, ...config } = LoadConfig();
+  console.log('frameShow:', frameShow);
+  let contours, hier;
+  let contoursDepth;
+
+  let params = {
+    ksize: new NumericParam(config.ksize ?? 3, 1, 13, 2),
+    thresh1: new NumericParam(config.thresh1 ?? 40, 0, 100),
+    thresh2: new NumericParam(config.thresh2 ?? 90, 0, 100),
+    apertureSize: new NumericParam(config.apertureSize ?? 3, 3, 7, 2),
+    L2gradient: new NumericParam(config.L2gradient ?? 0, 0, 1),
+    numDilations: new NumericParam(config.numDilations ?? 0, 0, 10),
+    numErosions: new NumericParam(config.numErosions ?? 0, 0, 10),
+    mode: new EnumParam(config.mode ?? 3, ['RETR_EXTERNAL', 'RETR_LIST', 'RETR_CCOMP', 'RETR_TREE', 'RETR_FLOODFILL']),
+    method: new EnumParam(config.method ?? 0, [
+      'CHAIN_APPROX_NONE',
+      'CHAIN_APPROX_SIMPLE',
+      'CHAIN_APPROX_TC89_L1',
+      'CHAIN_APPROX_TC89_L189_KCOS'
+    ]),
+    maskColor: new EnumParam(config.maskColor ?? false, ['OFF', 'ON']),
+    lineWidth: new NumericParam(config.lineWidth ?? 1, 0, 10),
+    fontThickness: new NumericParam(config.fontThickness ??  1, 0, 10)
+  };
+  let paramNav = new ParamNavigator(params, config.currentParam);
+  let dummyArray = [0, 1, 2, 3, 4, 5, 6, 7];
+  //console.log('paramNav.map:', paramNav.map);
+  //console.log('params.mode:', dummyArray[params.mode]);
+  //console.log('params.method:', dummyArray[params.method]);
+  //console.log('paramNav.param:', paramNav.param);
+
+  rainbow = makeRainbow(256);
+
+  let outputMat, outputName;
+  let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
+
+  let pipeline = new Pipeline([
+      Processor(function AcquireFrame(mat, output) {
+        video.read(output);
+      }),
+      Grayscale,
+      Processor(function Norm(src, dst) {
+        cv.normalize(src, dst, 255, 0, cv.NORM_MINMAX);
+      }),
+      Processor(function Blur(src, dst) {
+        cv.GaussianBlur(src, dst, [+params.ksize, +params.ksize], 0, 0, cv.BORDER_REPLICATE);
+      }),
+      Processor(function EdgeDetect(src, dst) {
+        cv.Canny(src, dst, +params.thresh1, +params.thresh2, +params.apertureSize, +params.L2gradient);
+        ////console.log('canny dst: ' +inspectMat(dst), [...dst.row(50).values()]);
+      }),
+      Processor(function Morph(src, dst) {
+        cv.dilate(src, dst, structuringElement, new Point(-1, -1), +params.numDilations);
+        cv.erode(dst, dst, structuringElement, new Point(-1, -1), +params.numErosions);
+      }),
+      Processor(function Contours(src, dst) {
+        cv.findContours(src, (contours = []), (hier = []), cv[params.mode], cv[params.method]);
+
+        cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
+
+        if(+params.maskColor) {
+          let edge = [dst.toString(), pipeline.images[0].toString()];
+          console.log('edge', edge);
+
+          dst.and(pipeline.images[0]);
+        }
+      })
+    ],
+    (mat, i, n) => {
+      if(frameShow == i) {
+        outputName = pipeline.processors[frameShow].name;
+        outputMat = mat;
+      }
+
+      // let m = (outputMat || mat) ?  (outputMat || mat).dup() : null;
+    }
+  );
+
+  console.log('Pipeline processor names:', pipeline.names);
+  video.seekMsecs(5000);
+  let meter = new TickMeter();
+  let prevTime;
+  let frameDelay = Math.floor(1000 / video.fps);
+  console.log('frameDelay:', frameDelay);
+
+  const wrapIndex = Util.mod(pipeline.size);
+
+  if(frameShow === undefined) frameShow = wrapIndex(-1);
+
+  const resizeOutput = Util.once(() => {
+    let size = outputMat.size.mul(zoom);
+    win.resize(size.width, size.height);
+  });
+
+  let out = new Mat();
+  let size;
+
+  const ClearSurface = mat => (mat.setTo([0, 0, 0, 0]), mat);
+  const MakeSurface = () =>
+    Util.once((...args) => new Mat(...(args.length == 2 ? args.concat([cv.CV_8UC4]) : args)), null, ClearSurface);
+  const MakeComposite = Util.once(() => new Mat());
+  let surface = MakeSurface();
+  let keyCode,
+    keyTime = Util.now(),
+    modifiers,
+    modifierList;
+
+  while(running) {
+    meter.reset();
+    meter.start();
+    let deadline = Util.now() + frameDelay;
+
+    let frameNo = video.get('pos_frames');
+    if(frameNo == frameCount) video.set('pos_frames', (frameNo = 0));
+
+    let gray = pipeline();
+    //console.log('outputMat: ' + outputMat.toString());
+
+    //console.log('pipeline.times:', pipeline.times.map((t, i) => [pipeline.names[i], +t.milliseconds.toFixed(3)]));
+    //console.log('pipeline.images:', pipeline.images.map((mat, i) => [pipeline.names[i], mat.toString()]));
+    showOutput();
+    //console.log('processing time:', Util.now() - (deadline - frameDelay));
+
+    while(true) {
+      let sleepMsecs = deadline - Util.now();
+
+      sleepMsecs -= 2;
+      //console.log('sleepMsecs:', sleepMsecs, '/', frameDelay);
+
+      if((keyCode = cv.waitKeyEx(Math.max(1, sleepMsecs))) != -1) {
+        keyTime = Util.now();
+        modifiers = Object.fromEntries(modifierMap(keyCode));
+        modifierList = modifierMap(keyCode).reduce((acc, [modifier, active]) => (active ? [...acc, modifier] : acc),
+          []
+        );
+        let ch = String.fromCodePoint(keyCode & 0xff);
+        console.log(`keypress [${modifierList}] 0x${(keyCode & ~0xd000).toString(16)} '${ch}'`);
+      }
+
+      switch (keyCode & 0xfff) {
+        case 0x3c /* < */:
+          paramNav.prev();
+          break;
+        case 0x3e /* > */:
+          paramNav.next();
+          break;
+
+        case 0x2b /* + */:
+          paramNav.param.increment();
+          break;
+        case 0x2d /* - */:
+        case 0x2fad /* numpad - */:
+          paramNav.param.decrement();
+          break;
+
+        case 0x31: /* 1 */
+        case 0x32: /* 2 */
+        case 0x33: /* 3 */
+        case 0x34: /* 4 */
+        case 0x35: /* 5 */
+        case 0x36: /* 6 */
+        case 0x37: /* 7 */
+        case 0x38: /* 8 */
+        case 0x39: /* 9 */
+        case 0x30 /* 0 */:
+          let v = keyCode & 0xf || 10;
+          paramNav.param.alpha = v / 10;
+          break;
+        case 0xa7 /* § */:
+          paramNav.param.alpha = 0;
+          break;
+        case 0x51: /* Q */
+        case 0x71: /* q */
+
+        case 0x1b:
+          running = false;
+          break;
+        case 0x20:
+          paused = !paused;
+          break;
+        case 0x6e: /* n */
+        case 0x4e /* N */:
+          frameShow = wrapIndex(frameShow + 1);
+          break;
+        case 0x70: /* p */
+        case 0x50 /* P */:
+          frameShow = wrapIndex(frameShow - 1);
+          break;
+        case 0xf50 /* home */:
+          video.set('pos_frames', 0);
+          break;
+        case 0xf57 /* end */:
+          video.set('pos_frames', video.get('frame_count') - Math.round(video.fps * 3));
+          break;
+        case 0xf51: /* left */
+        case 0xf53: /* right */
+        case 0xf52: /* up */
+        case 0xf54: /* down */ {
+          const method = keyCode & 0x1 ? 'Frames' : 'Msecs';
+          const distance =
+            (keyCode & 0x1 ? 1 : 1000) *
+            (modifiers['ctrl'] ? 1000 : modifiers['shift'] ? 100 : modifiers['alt'] ? 1 : 10);
+          const offset = keyCode & 0x2 ? +distance : -distance;
+
+          //console.log('seek', { method, distance, offset });
+          video['seek' + method](offset);
+          let pos = video.position(method);
+
+          console.log('seek' + method + ' ' + offset + ' pos =',
+            pos,
+            ` (${Util.roundTo(video.position('%'), 0.001)}%)`
+          );
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+      if(sleepMsecs <= 0) break;
+    }
+
+    if(paused) video.seekFrames(-1);
+
+    meter.stop();
+    //if(prevTime !== undefined) console.log('FPS: ', +(1 / meter.timeSec).toFixed(2), '/', video.fps);
+
+    prevTime = meter.timeSec;
+  }
+
+  function showOutput() {
+    let mat = surface(outputMat.rows, outputMat.cols, cv.CV_8UC4);
+    let now = Util.now();
+
+    //console.log('showOutput:', [now, now - keyTime].map(t => Math.floor(t)));
+    out = outputMat;
+    if(outputMat.channels == 1) {
+      cv.cvtColor(out, out, cv.COLOR_GRAY2BGRA);
+    } else {
+      cv.cvtColor(out, out, cv.COLOR_BGR2BGRA);
+    }
+
+    if(frameShow == 0) {
+      cv.drawContours(mat, contours, -1, { r: 0, g: 255, b: 0, a: 255 }, 1, cv.LINE_AA);
+    } else {
+      let ids = [...getToplevel(hier)];
+
+      let palette = Object.fromEntries([...ids.entries()].map(([i, id]) => [id, rainbow[Math.floor((i * 256) / (ids.length - 1))]])
+      );
+      contours.forEach((contour, i) => {
+        let p = [...getParents(hier, i)];
+        let color = palette[p[p.length - 1]];
+        drawContour(mat, contour, color, +params.lineWidth);
+      });
+    }
+     font.draw(mat, video.time + ' ⏩', tPos, /*0x00ff00 ||*/ { r: 0, g: 255, b: 0, a: 255 }, +params.fontThickness);
+    let paramValue = paramNav.param.get();
+
+    if('' + paramValue != '' + +paramNav.param) paramValue += ` (${+paramNav.param})`;
+
+    let paramStr = `${paramNav.name} [${paramNav.param.range.join('-')}] = ${paramValue}`;
+    //console.log('paramStr: ', paramStr);
+    font.draw(mat, paramStr, [tPos.x, tPos.y - 20], /*0x00ffff ||*/ { r: 255, g: 0, b: 0, a: 255 }, +params.fontThickness);
+
+    font.draw(mat,
+      `#${frameShow + 1}/${pipeline.size}` + (outputName ? ` (${outputName})` : ''),
+      [5, 5 + tSize.y],
+      /*0xffff00 ||*/ {
+        r: 255,
+        g: 255,
+        b: 0,
+        a: 255
+      }, +params.fontThickness
+    );
+
+    resizeOutput();
+
+    //console.log("row 100:", [...mat.row(100).values()]);
+
+    //let mask = toBGR(getAlpha(mat));
+    let composite = MakeMatFor(showOutput);
+    const showOverlay = frameShow != pipeline.size - 1 || now - keyTime < 2000;
+    cv.addWeighted(out, 1, mat, showOverlay ? 1 : 0, 0, composite);
+    win.show(composite);
+
+    //console.log("composite", composite.toString());
+    //composite.release();
+    //console.log("composite.release()", composite.toString());
+  }
+  const {
+    ksize,
+    thresh1,
+    thresh2,
+    apertureSize,
+    L2gradient,
+    numDilations,
+    numErosions,
+    mode,
+    method,
+    lineWidth
+  } = params;
+  SaveConfig(Object.entries({
+      frameShow,
+      ksize,
+      thresh1,
+      thresh2,
+      apertureSize,
+      L2gradient,
+      numDilations,
+      numErosions,
+      mode,
+      method,
+      lineWidth,
+      currentParam: paramNav.index
+    }).reduce((a, [k, v]) => ({ ...a, [k]: +v }), {})
+  );
+
+  for(let mat of Mat.list || []) {
+    let stack = Mat.backtrace(mat)
+      //.slice(0,-1)
+      .filter(frame =>
+          frame.functionName != '<anonymous>' && (frame.lineNumber !== undefined || /test-video/.test(frame.fileName))
+      )
+      .map(frame => frame.toString())
+      .join('\n  ');
+
+    console.log('mat=' + mat.toString() + '\n  ' + stack);
+  }
+  console.log('props:', video.dump());
+  console.log('gc:', std.gc());
+  console.log('exit:', std.exit(0));
+}
+
+Util.callMain(main, true);

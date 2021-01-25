@@ -37,7 +37,7 @@ export class NumericParam extends Param {
   set(value) {
     const { trunc, min, step } = this;
     let newValue = this.trunc(min + Util.roundTo(value - min, step));
-    console.log('Param ', { oldValue: this.value, newValue });
+    //console.log(`Param.set oldValue=${this.value} new=${newValue}`);
     this.value = newValue;
   }
 
@@ -79,8 +79,8 @@ export class EnumParam extends NumericParam {
       values = args[0];
       init = args[1] || 0;
     } else {
-      values = args;
-      init = 0;
+      init = args.shift();
+      values = Util.isArray(args[0]) ? args[0] : args;
     }
     super(init, 0, values.length - 1);
     Util.define(this, { values });
@@ -98,7 +98,7 @@ export class EnumParam extends NumericParam {
   }
 }
 
-export function ParamNavigator(map) {
+export function ParamNavigator(map, index = 0) {
   if(!new.target) return new ParamNavigator(map);
 
   if(!(map instanceof Map)) map = Util.toMap(map);
@@ -109,7 +109,7 @@ export function ParamNavigator(map) {
 
   Util.define(this, {
     map,
-    index: 0,
+    index,
     next() {
       this.index = mod(this.index + 1);
       console.log('ParamNavigator index =', this.index);

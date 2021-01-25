@@ -98,8 +98,16 @@ Object.assign(TextStyle.prototype, {
     return size;
   },
 
-  draw(mat, text, pos, color = 0xffffff, lineType = cv.LINE_AA) {
+  draw(mat, text, pos, color, lineThickness, lineType) {
     const { fontFace, fontScale, thickness } = this;
-    draw.text(mat, text, pos, fontFace, fontScale, color, thickness, lineType);
+    draw.text(mat,
+      text,
+      pos,
+      fontFace,
+      fontScale,
+      color ?? 0xffffff,
+      lineThickness ?? thickness,
+      lineType ?? cv.LINE_AA
+    );
   }
 });
