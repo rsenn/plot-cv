@@ -20,9 +20,10 @@ const hr = Util.hrtime;
 let filesystem;
 let rainbow;
 let zoom = 1;
+let debug = false;
 
-const Mat =
-  cvMat ||
+const Mat = (debug == false)  ? 
+  cvMat :
   class Mat extends cvMat {
     static map = Util.weakMapper(() => []);
     static list = new Set();
@@ -96,7 +97,7 @@ Object.assign(Pipeline.prototype, {
   }
 });
 
-let symbols = [
+/*let symbols = [
   [
     { x: 28.703, y: 28.665 },
     { x: 28.703, y: 21.77 },
@@ -124,9 +125,9 @@ let symbols = [
     { x: 32.604, y: 39.843 },
     { x: 28.703, y: 39.843 }
   ]
-];
+];*/
 
-const inspectObj = obj => console.inspect(obj, { multiline: false });
+/*const inspectObj = obj => console.inspect(obj, { multiline: false });
 const inspectMat = ({ rows, cols, channels, depth, type }) =>
   inspectObj({
     rows,
@@ -134,7 +135,7 @@ const inspectMat = ({ rows, cols, channels, depth, type }) =>
     channels,
     depth,
     type
-  });
+  });*/
 
 function SaveConfig(configObj) {
   return filesystem.writeFile(Util.getArgv()[1].replace(/\.js$/, '.config.json'),
