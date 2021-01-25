@@ -488,7 +488,7 @@ async function main(...args) {
         );
         //console.log('lines.length', lines.length);
         //console.log('lines: '+lines.map(l => l.toString()).join(', '));
-src.copyTo(dst);
+        src.copyTo(dst);
         //cv.cvtColor(src, dst, cv.COLOR_GRAY2BGR);
       })
     ],
