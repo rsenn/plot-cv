@@ -37,6 +37,11 @@ union JSLineData {
   std::array<JSPointData<T>, 2> points;
   std::pair<JSPointData<T>, JSPointData<T>> pt;
 };
+template<class T> struct JSLineTraits {
+  typedef std::array<T, 4> array_type;
+  typedef cv::Vec<T, 4> vector_type;
+  typedef cv::Scalar_<T> scalar_type;
+};
 
 template<class T> union JSColorData {
   std::array<T, 4> arr;

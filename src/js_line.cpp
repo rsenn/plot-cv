@@ -248,7 +248,7 @@ js_line_from(JSContext* ctx, JSValueConst line, int argc, JSValueConst* argv) {
   } else if(JS_IsArray(ctx, argv[0])) {
     js_array_to(ctx, argv[0], array);
   } else {
-    JSLineData<double> line{0,0,0,0};
+    JSLineData<double> line{0, 0, 0, 0};
     js_line_read(ctx, argv[0], &line);
     array = line.arr;
   }
