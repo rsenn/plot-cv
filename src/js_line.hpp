@@ -1,5 +1,5 @@
-#ifndef JS_LINE_H
-#define JS_LINE_H
+#ifndef JS_LINE_HPP
+#define JS_LINE_HPP
 
 #include "jsbindings.hpp"
 

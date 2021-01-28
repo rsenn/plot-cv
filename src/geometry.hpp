@@ -1,5 +1,5 @@
-#ifndef GEOMETRY_H
-#define GEOMETRY_H
+#ifndef GEOMETRY_HPP
+#define GEOMETRY_HPP
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/types_c.h>
@@ -188,4 +188,4 @@ transform_contours(InputIterator s, InputIterator e, OutputIterator o) {
   return o;
 }
 
-#endif // defined GEOMETRY_H
+#endif // defined GEOMETRY_HPP

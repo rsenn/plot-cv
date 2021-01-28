@@ -1,5 +1,5 @@
-#ifndef MATRIX_H
-#define MATRIX_H
+#ifndef MATRIX_HPP
+#define MATRIX_HPP
 
 #include <array>
 #include <functional>
@@ -341,4 +341,4 @@ Matrix<T>::ptr(int row, int col) {
   return ptr;
 }
 
-#endif // defined MATRIX_H
+#endif // defined MATRIX_HPP

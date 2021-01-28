@@ -1,5 +1,5 @@
-#ifndef JSBINDINGS_H
-#define JSBINDINGS_H
+#ifndef JSBINDINGS_HPP
+#define JSBINDINGS_HPP
 
 #include "js.hpp"
 

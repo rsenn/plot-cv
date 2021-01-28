@@ -1,5 +1,5 @@
-#ifndef JS_SIZE_H
-#define JS_SIZE_H
+#ifndef JS_SIZE_HPP
+#define JS_SIZE_HPP
 
 template<class T>
 static inline int

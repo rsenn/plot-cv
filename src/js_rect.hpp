@@ -1,5 +1,5 @@
-#ifndef JS_RECT_H
-#define JS_RECT_H
+#ifndef JS_RECT_HPP
+#define JS_RECT_HPP
 
 #include "jsbindings.hpp"
 

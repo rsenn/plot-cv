@@ -1,5 +1,5 @@
-#ifndef PSIMPL_H
-#define PSIMPL_H
+#ifndef PSIMPL_HPP
+#define PSIMPL_HPP
 
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1
@@ -1863,4 +1863,4 @@ compute_positional_error_statistics(ForwardIterator original_first,
 } // namespace psimpl
 
 #endif // PSIMPL_GENERIC
-#endif // defined PSIMPL_H
+#endif // defined PSIMPL_HPP

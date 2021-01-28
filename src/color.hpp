@@ -1,5 +1,5 @@
-#ifndef COLOR_H
-#define COLOR_H
+#ifndef COLOR_HPP
+#define COLOR_HPP
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/types_c.h>
@@ -22,4 +22,4 @@ from_scalar(const color_type& s) {
   return svg::Color(s[0], s[1], s[2]);
 }
 
-#endif // defined COLOR_H
+#endif // defined COLOR_HPP

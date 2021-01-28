@@ -1,5 +1,5 @@
-#ifndef SIMPLE_SVG_WRITER_H
-#define SIMPLE_SVG_WRITER_H
+#ifndef SIMPLE_SVG_WRITER_HPP
+#define SIMPLE_SVG_WRITER_HPP
 
 #pragma once
 #include <string>
@@ -481,4 +481,4 @@ public:
 };
 
 } // namespace simple_svg
-#endif // defined SIMPLE_SVG_WRITER_H
+#endif // defined SIMPLE_SVG_WRITER_HPP

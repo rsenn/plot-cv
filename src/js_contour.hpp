@@ -1,5 +1,5 @@
-#ifndef JS_CONTOUR_H
-#define JS_CONTOUR_H
+#ifndef JS_CONTOUR_HPP
+#define JS_CONTOUR_HPP
 
 #include "js_alloc.hpp"
 #include "geometry.hpp"

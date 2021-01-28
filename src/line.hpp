@@ -1,5 +1,5 @@
-#ifndef LINE_H
-#define LINE_H
+#ifndef LINE_HPP
+#define LINE_HPP
 
 #include <opencv2/core/core.hpp>
 #include <cmath>
@@ -580,4 +580,4 @@ Line<T>::str(const std::string& comma, const std::string& sep) const {
   return os.str();
 }
 
-#endif // defined LINE_H
+#endif // defined LINE_HPP

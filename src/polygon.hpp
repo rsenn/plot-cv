@@ -1,5 +1,5 @@
-#ifndef POLYGON_H
-#define POLYGON_H
+#ifndef POLYGON_HPP
+#define POLYGON_HPP
 
 #pragma once
 #include <opencv2/highgui/highgui.hpp>
@@ -57,4 +57,4 @@ typedef Polygon_<int> Polygon2i;
 
 typedef Polygon2d Polygon;
 
-#endif // defined POLYGON_H
+#endif // defined POLYGON_HPP

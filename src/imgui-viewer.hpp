@@ -1,5 +1,5 @@
-#ifndef IMGUI_VIEWER_H
-#define IMGUI_VIEWER_H
+#ifndef IMGUI_VIEWER_HPP
+#define IMGUI_VIEWER_HPP
 
 #include <string>
 #include <vector>
@@ -99,4 +99,4 @@ ImageViewer::ImageViewer() {
   gain = 1.0f;
 }
 
-#endif // defined IMGUI_VIEWER_H
+#endif // defined IMGUI_VIEWER_HPP

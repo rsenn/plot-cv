@@ -1,5 +1,5 @@
-#ifndef DATA_H
-#define DATA_H
+#ifndef DATA_HPP
+#define DATA_HPP
 
 #pragma once
 #include <opencv2/highgui/highgui.hpp>
@@ -29,4 +29,4 @@ public:
   // les bords de l'image.
 };
 
-#endif // defined DATA_H
+#endif // defined DATA_HPP

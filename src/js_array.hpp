@@ -1,5 +1,5 @@
-#ifndef JS_ARRAY_H
-#define JS_ARRAY_H
+#ifndef JS_ARRAY_HPP
+#define JS_ARRAY_HPP
 #include <type_traits>
 
 static inline int64_t

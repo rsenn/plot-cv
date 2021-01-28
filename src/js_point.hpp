@@ -1,5 +1,5 @@
-#ifndef JS_POINT_H
-#define JS_POINT_H
+#ifndef JS_POINT_HPP
+#define JS_POINT_HPP
 
 /*static inline JSValue
 js_point_create(JSContext* ctx, double x, double y) {

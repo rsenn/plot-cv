@@ -1,5 +1,5 @@
-#ifndef JS_H
-#define JS_H
+#ifndef JS_HPP
+#define JS_HPP
 
 #include <errno.h>
 
@@ -1010,4 +1010,4 @@ jsrt::from<std::string>(const std::string& value) {
   return new_string(value.c_str());
 }
 
-#endif // defined JS_H
+#endif // defined JS_HPP

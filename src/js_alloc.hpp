@@ -1,5 +1,5 @@
-#ifndef JS_ALLOC_H
-#define JS_ALLOC_H
+#ifndef JS_ALLOC_HPP
+#define JS_ALLOC_HPP
 
 #include <unistd.h>
 #include <sys/mman.h>
