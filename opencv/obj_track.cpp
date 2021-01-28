@@ -11,7 +11,7 @@
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/video.hpp>
-#include <opencv/cv.h>
+#include <opencv2/cv.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/core/ocl.hpp>
 #include <opencv2/core/utility.hpp>

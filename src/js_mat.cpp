@@ -839,6 +839,25 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
 }
 
 static JSValue
+js_mat_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  cv::Mat* m = js_mat_data(ctx, this_val);
+  int x, y;
+
+  std::ostringstream os;
+  std::string str;
+  int i = 0;
+  if(!m)
+    return JS_EXCEPTION;
+  os << "Mat "
+     << "@" << static_cast<void*>(m) << " { rows: " << m->rows << ", cols: " << m->cols
+     << ", depth: " << m->depth() << ", channels: " << m->channels() << "}";
+
+  str = os.str();
+
+  return JS_NewStringLen(ctx, str.data(), str.size());
+}
+
+static JSValue
 js_mat_getrotationmatrix2d(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSPointData<double> s;
 
@@ -1192,6 +1211,7 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     // JS_CFUNC_MAGIC_DEF("set", 3, js_mat_funcs, 7),
     // JS_CFUNC_DEF("findContours", 0, js_mat_findcontours),
     JS_CFUNC_DEF("toString", 0, js_mat_tostring),
+    JS_CFUNC_DEF("inspect", 0, js_mat_inspect),
     JS_CFUNC_DEF("at", 1, js_mat_at),
     JS_CFUNC_DEF("set", 2, js_mat_set),
     JS_CFUNC_DEF("setTo", 0, js_mat_set_to),

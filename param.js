@@ -1,4 +1,5 @@
 import Util from './lib/util.js';
+import { Repeater } from './lib/repeater/repeater.js';
 
 const MinMax = (min, max) => value => Math.max(min, Math.min(max, value));
 
@@ -20,6 +21,14 @@ export class Param {
 
   toString() {
     return '' + this.valueOf();
+  }
+
+  async createTrackbar(trackbarname, winname) {
+    const cv = await import('cv');
+
+    return new Repeater(async (push, stop) => {
+      cv.createTrackbar(trackbarname, winname, this.value, this.max, value => push(value));
+    });
   }
 }
 
@@ -145,21 +154,5 @@ Util.define(ParamNavigator.prototype, {
   get size() {
     const { map } = this;
     return map.size;
-  } /*,
-  get(name) {
-    return this.map.get(name).get();
-  },
-  set(name, value) {
-    return this.map.get(name).set(value);
-  },
-  get names() {
-    return [...this.map.keys()];
-  },
-  get values() {
-    let ret = {};
-    for(let [name, param] of this.map) {
-      ret[name] = +param;
-    }
-    return ret;
-  }*/
+  }
 });

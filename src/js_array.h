@@ -1,5 +1,6 @@
 #ifndef JS_ARRAY_H
 #define JS_ARRAY_H
+#include <type_traits>
 
 static inline int64_t
 js_array_length(JSContext* ctx, const JSValueConst& arr) {
@@ -180,6 +181,66 @@ public:
   template<size_t N> static int64_t to_array(JSContext* ctx, JSValueConst arr, std::array<cv::Mat, N>& out);
 };
 
+template<> class js_array<double> {
+public:
+  static int64_t
+  to_vector(JSContext* ctx, JSValueConst arr, std::vector<double>& out) {
+    int64_t i, n;
+    JSValue len;
+    if(!JS_IsArray(ctx, arr))
+      return -1;
+    len = JS_GetPropertyStr(ctx, arr, "length");
+    JS_ToInt64(ctx, &n, len);
+    out.reserve(out.size() + n);
+    for(i = 0; i < n; i++) {
+      double value;
+      JSValue item = JS_GetPropertyUint32(ctx, arr, (uint32_t)i);
+      if(JS_ToFloat64(ctx, &value, item)) {
+        JS_FreeValue(ctx, item);
+        out.clear();
+        return -1;
+      }
+      out.push_back(value);
+      JS_FreeValue(ctx, item);
+    }
+    return n;
+  }
+
+  template<class Iterator>
+  static JSValue
+  from_sequence(JSContext* ctx, const Iterator& start, const Iterator& end) {
+    JSValue arr = JS_NewArray(ctx);
+    size_t i = 0;
+    for(Iterator it = start; it != end; ++it) {
+      JSValue item = JS_NewFloat64(ctx, *it);
+      JS_SetPropertyUint32(ctx, arr, i, item);
+      ++i;
+    }
+    return arr;
+  }
+
+  static int64_t
+  to_scalar(JSContext* ctx, JSValueConst arr, cv::Scalar_<double>& out) {
+    std::vector<double> tmp;
+    size_t n;
+    to_vector(ctx, arr, tmp);
+    n = tmp.size();
+
+    for(size_t i = 0; i < 4; i++) out[i] = tmp[i];
+    return n;
+  }
+
+  template<size_t N>
+  static int64_t
+  to_array(JSContext* ctx, JSValueConst arr, std::array<double, N>& out) {
+    std::vector<double> tmp;
+    to_vector(ctx, arr, tmp);
+
+    for(size_t i = 0; i < N; i++) out[i] = tmp[i];
+    return N;
+  }
+};
+
 template<class T> class js_array<JSContourData<T>> {
 public:
   typedef JSContourData<T> contour_type;
@@ -304,7 +365,8 @@ js_array_to_vector(JSContext* ctx, JSValueConst arr, std::vector<T>& out) {
 template<class T, size_t N>
 inline int64_t
 js_array_to_array(JSContext* ctx, JSValueConst arr, std::array<T, N>& out) {
-  return js_array<T>::to_array<N>(ctx, arr, out);
+  typedef js_array<T> array_type;
+  return array_type::to_array(ctx, arr, out);
 }
 
 template<class T>
@@ -312,9 +374,21 @@ inline int64_t
 js_array_to_scalar(JSContext* ctx, JSValueConst arr, cv::Scalar_<T>& out) {
   return js_array<T>::to_scalar(ctx, arr, out);
 }
+/*
+
+template <class IteratorType>
+struct iterator_traits {
+  typedef typename std::remove_pointer<IteratorType>::type;
+};*/
+
+template<class T>
+inline JSValue
+js_array_from(JSContext* ctx, const T* start, const T* end) {
+  return js_array<T>::from_sequence(ctx, start, end);
+}
 
 template<class Iterator>
-inline JSValue
+inline std::enable_if_t<Iterator::value_type, JSValue>
 js_array_from(JSContext* ctx, const Iterator& start, const Iterator& end) {
   return js_array<typename Iterator::value_type>::from_sequence(ctx, start, end);
 }

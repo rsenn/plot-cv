@@ -3,6 +3,7 @@
 #include "js_size.h"
 #include "js_point.h"
 #include "js_alloc.h"
+#include "js_array.h"
 
 #if defined(JS_RECT_MODULE) || defined(quickjs_rect_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
@@ -105,6 +106,10 @@ js_rect_get_xywh(JSContext* ctx, JSValueConst this_val, int magic) {
     ret = JS_NewFloat64(ctx, s->x + s->width);
   else if(magic == 5)
     ret = JS_NewFloat64(ctx, s->y + s->height);
+  else if(magic == 6)
+    ret = js_point_new(ctx, s->x, s->y);
+  else if(magic == 7)
+    ret = js_size_new(ctx, s->width, s->height);
   return ret;
 }
 
@@ -128,39 +133,105 @@ js_rect_set_xywh(JSContext* ctx, JSValueConst this_val, JSValueConst val, int ma
     s->width = v - s->x;
   else if(magic == 5)
     s->height = v - s->y;
-
+  else if(magic == 6) {
+    JSPointData<double> point;
+    js_point_read(ctx, val, &point);
+    s->x = point.x;
+    s->y = point.y;
+  } else if(magic == 7) {
+    JSSizeData<double> size;
+    js_size_read(ctx, val, &size);
+    s->width = size.width;
+    s->height = size.height;
+  }
   return JS_UNDEFINED;
 }
 
 static JSValue
 js_rect_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSRectData<double>* s = static_cast<JSRectData<double>*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id));
+  JSRectData<double> rect, *s;
   std::ostringstream os;
-  JSValue xv, yv, wv, hv;
-  double x = -1, y = -1, w = 0, h = 0;
-  /* if(!s)
-     return JS_EXCEPTION;*/
 
-  if(s) {
-    x = s->x;
-    y = s->y;
-    w = s->width;
-    h = s->height;
+  if((s = static_cast<JSRectData<double>*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id))) != nullptr) {
+    rect = *s;
   } else {
-    xv = JS_GetPropertyStr(ctx, this_val, "x");
-    yv = JS_GetPropertyStr(ctx, this_val, "y");
-    wv = JS_GetPropertyStr(ctx, this_val, "width");
-    hv = JS_GetPropertyStr(ctx, this_val, "height");
-
-    if(JS_IsNumber(xv) && JS_IsNumber(yv) && JS_IsNumber(wv) && JS_IsNumber(hv)) {
-      JS_ToFloat64(ctx, &x, xv);
-      JS_ToFloat64(ctx, &y, yv);
-      JS_ToFloat64(ctx, &w, wv);
-      JS_ToFloat64(ctx, &h, hv);
-    }
+    js_rect_read(ctx, this_val, &rect);
   }
 
-  os << "{x:" << x << ",y:" << y << ",width:" << w << ",height:" << h << "}" << std::endl;
+  os << rect.x << "," << rect.y << "|" << rect.width << "x" << rect.height;
+
+  return JS_NewString(ctx, os.str().c_str());
+}
+static JSValue
+js_rect_to_source(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSRectData<double> rect, *s;
+  std::ostringstream os;
+
+  if((s = static_cast<JSRectData<double>*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id))) != nullptr) {
+    rect = *s;
+  } else {
+    js_rect_read(ctx, this_val, &rect);
+  }
+
+  os << "{x:" << rect.x << ",y:" << rect.y << ",width:" << rect.width << ",height:" << rect.height << "}";
+
+  return JS_NewString(ctx, os.str().c_str());
+}
+
+static JSValue
+js_rect_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSRectData<double> rect, other, *s, *a;
+  JSValue ret = JS_EXCEPTION;
+
+  if((s = js_rect_data(ctx, this_val)) == nullptr)
+    return ret;
+
+  rect = *s;
+
+  if(magic == 0) {
+    js_rect_read(ctx, argv[0], &other);
+    bool equals =
+        rect.x == other.x && rect.y == other.y && rect.width == other.width && rect.height == other.height;
+    ret = JS_NewBool(ctx, equals);
+  } else if(magic == 1) {
+    double x, y, width, height, f;
+    int32_t precision = 0;
+    if(argc > 0)
+      JS_ToInt32(ctx, &precision, argv[0]);
+    f = std::pow(10, precision);
+    x = std::round(rect.x * f) / f;
+    y = std::round(rect.y * f) / f;
+    width = std::round(rect.width * f) / f;
+    height = std::round(rect.height * f) / f;
+    ret = js_rect_new(ctx, x, y, width, height);
+  } else if(magic == 2) {
+    ret = JS_NewObject(ctx);
+
+    JS_SetPropertyStr(ctx, ret, "x", JS_NewFloat64(ctx, rect.x));
+    JS_SetPropertyStr(ctx, ret, "y", JS_NewFloat64(ctx, rect.y));
+    JS_SetPropertyStr(ctx, ret, "width", JS_NewFloat64(ctx, rect.width));
+    JS_SetPropertyStr(ctx, ret, "height", JS_NewFloat64(ctx, rect.height));
+  } else if(magic == 3) {
+    std::array<double, 4> array{rect.x, rect.y, rect.width, rect.height};
+
+    ret = js_array_from(ctx, array.cbegin(), array.cend());
+  }
+  return ret;
+}
+
+static JSValue
+js_rect_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSRectData<double> rect, *s;
+  std::ostringstream os;
+
+  if((s = static_cast<JSRectData<double>*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id))) != nullptr) {
+    rect = *s;
+  } else {
+    js_rect_read(ctx, this_val, &rect);
+  }
+
+  os << "{ x: \x1b[0;33m" << rect.x << "\x1b[0m, y: \x1b[0;33m" << rect.y << "\x1b[0m, width: \x1b[0;33m"
+     << rect.width << "\x1b[0m, height: \x1b[0;33m" << rect.height << "\x1b[0m }";
 
   return JS_NewString(ctx, os.str().c_str());
 }
@@ -189,6 +260,29 @@ js_rect_method(JSContext* ctx, JSValueConst rect, int argc, JSValueConst* argv, 
   return ret;
 }
 
+static JSValue
+js_rect_from(JSContext* ctx, JSValueConst rect, int argc, JSValueConst* argv) {
+  std::array<double, 4> array;
+  JSValue ret = JS_EXCEPTION;
+
+  if(JS_IsString(argv[0])) {
+    const char* str = JS_ToCString(ctx, argv[0]);
+    char* endptr = nullptr;
+    for(size_t i = 0; i < 4; i++) {
+      while(!isdigit(*str) && *str != '-' && *str != '+' && !(*str == '.' && isdigit(str[1]))) str++;
+      if(*str == '\0')
+        break;
+      array[i] = strtod(str, &endptr);
+      str = endptr;
+    }
+  } else if(JS_IsArray(ctx, argv[0])) {
+    js_array_to_array<double, 4>(ctx, argv[0], array);
+  }
+  if(array[2] > 0 && array[3] > 0)
+    ret = js_rect_new(ctx, array[0], array[1], array[2], array[3]);
+  return ret;
+}
+
 JSValue rect_proto = JS_UNDEFINED, rect_class = JS_UNDEFINED;
 JSClassID js_rect_class_id;
 
@@ -204,6 +298,8 @@ const JSCFunctionListEntry js_rect_proto_funcs[] = {
     JS_CGETSET_ENUMERABLE_DEF("height", js_rect_get_xywh, js_rect_set_xywh, 3),
     JS_CGETSET_MAGIC_DEF("x2", js_rect_get_xywh, js_rect_set_xywh, 4),
     JS_CGETSET_MAGIC_DEF("y2", js_rect_get_xywh, js_rect_set_xywh, 5),
+    JS_CGETSET_MAGIC_DEF("point", js_rect_get_xywh, js_rect_set_xywh, 6),
+    JS_CGETSET_MAGIC_DEF("size", js_rect_get_xywh, js_rect_set_xywh, 7),
     JS_ALIAS_DEF("x1", "x"),
     JS_ALIAS_DEF("y1", "y"),
     JS_CFUNC_MAGIC_DEF("contains", 0, js_rect_method, 0),
@@ -211,11 +307,18 @@ const JSCFunctionListEntry js_rect_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("area", 0, js_rect_method, 2),
     JS_CFUNC_MAGIC_DEF("br", 0, js_rect_method, 3),
     JS_CFUNC_MAGIC_DEF("tl", 0, js_rect_method, 4),
-    JS_CFUNC_MAGIC_DEF("size", 0, js_rect_method, 5),
+    // JS_CFUNC_MAGIC_DEF("size", 0, js_rect_method, 5),
     JS_CFUNC_DEF("toString", 0, js_rect_to_string),
+    JS_CFUNC_DEF("toSource", 0, js_rect_to_source),
+    JS_CFUNC_DEF("inspect", 0, js_rect_inspect),
+    JS_CFUNC_MAGIC_DEF("equals", 1, js_rect_funcs, 0),
+    JS_CFUNC_MAGIC_DEF("round", 0, js_rect_funcs, 1),
+    JS_CFUNC_MAGIC_DEF("toObject", 0, js_rect_funcs, 2),
+    JS_CFUNC_MAGIC_DEF("toArray", 0, js_rect_funcs, 3),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Rect", JS_PROP_CONFIGURABLE)
 
 };
+const JSCFunctionListEntry js_rect_static_funcs[] = {JS_CFUNC_DEF("from", 1, js_rect_from)};
 
 int
 js_rect_init(JSContext* ctx, JSModuleDef* m) {
@@ -231,6 +334,7 @@ js_rect_init(JSContext* ctx, JSModuleDef* m) {
   rect_class = JS_NewCFunction2(ctx, js_rect_ctor, "Rect", 0, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, rect_class, rect_proto);
+  JS_SetPropertyFunctionList(ctx, rect_class, js_rect_static_funcs, countof(js_rect_static_funcs));
 
   if(m)
     JS_SetModuleExport(ctx, m, "Rect", rect_class);

@@ -100,10 +100,17 @@ class Pipeline extends Function {
 
 function Processor(fn, ...args) {
   let self;
-  let mapper = Util.weakMapper(() => new Mat());
+  let mapper = Util.weakMapper(() => {
+    let mat = new Mat();
+
+    console.log('New Mat', mat);
+    return mat;
+  });
 
   self = function(mat, out, i) {
-    if(!out) out = mapper(self);
+    if(!out) {
+      out = mapper(self);
+    }
 
     fn.call(this, mat, out, ...args);
     return out;
@@ -359,6 +366,8 @@ async function main(...args) {
     alignMap: true
   });
   await PortableFileSystem(fs => (filesystem = fs));
+  console.log('Rect.from:', Rect.from('1,2,3,4'));
+  console.log('Rect[1,2,3,4]:', Rect.from([1, 2, 3, 4]));
 
   const makeRainbow = steps =>
     Util.range(0, 360, 360 / steps)
@@ -367,9 +376,8 @@ async function main(...args) {
       .map(h => h.toRGBA());
 
   let win = new Window('gray', /*cv.WINDOW_AUTOSIZE | cv.WINDOW_NORMAL  |*/ cv.WINDOW_KEEPRATIO);
-  console.log('Mouse :', { MouseEvents, MouseFlags });
-  //console.log('cv.EVENT_MOUSEMOVE', cv.EVENT_MOUSEMOVE);
-  //
+  console.debug('Mouse :', { MouseEvents, MouseFlags });
+
   const printFlags = flags => [...Util.bitsToNames(MouseFlags)];
   console.log('printFlags:', printFlags + '');
   console.log('tickFrequency:', cv.getTickFrequency());
@@ -378,12 +386,15 @@ async function main(...args) {
     event = Mouse.printEvent(event);
     flags = Mouse.printFlags(flags);
 
-    console.log('Mouse event:', console.inspect({ event, x, y, flags }, { multiline: false }));
+    //console.debug('Mouse event:', console.inspect({ event, x, y, flags }, { multiline: false }));
   });
 
   console.log('Setup duration:', hr(begin));
 
   let video = new VideoSource(...args);
+
+  if(!video.isVideo) video.size = new Size(960, 540);
+
   let thickness = 1;
   let font = new TextStyle(cv.FONT_HERSHEY_PLAIN, 1.0, thickness);
   let tSize = font.size(video.time);
@@ -442,9 +453,16 @@ async function main(...args) {
   let outputMat, outputName;
   let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
 
+  let videoSize = video.size; //new Size(video.get('frame_width'), video.get('frame_height'));
+  console.log(`videoSize`, videoSize);
+
   let pipeline = new Pipeline([
       Processor(function AcquireFrame(mat, output) {
         video.read(output);
+        console.log(`AcquireFrame`, output.size);
+
+        if(!videoSize.equals(output.size))
+          throw new Error(`AcquireFrame videoSize = ${videoSize} output.size = ${output.size}`);
       }),
       Grayscale,
       Processor(function Norm(src, dst) {
@@ -501,6 +519,8 @@ async function main(...args) {
       // let m = (outputMat || mat) ?  (outputMat || mat).dup() : null;
     }
   );
+  console.log(`pipeline.images = `, pipeline.images.map(Util.className));
+  console.log(`pipeline.images = { ` + pipeline.images.map(image => '\n  ' + image) + '\n}');
 
   console.log('Pipeline processor names:', pipeline.names);
   video.seekMsecs(5000);
@@ -755,6 +775,11 @@ async function main(...args) {
     }
     //let mask = toBGR(getAlpha(over));
     let composite = MakeMatFor(showOutput);
+
+    console.log('showOutput', { out, over });
+
+    //    over = over.roi(new Rect(0,0, ...out.size));
+
     cv.addWeighted(out, 1, over, showOverlay ? 1 : 0, 0, composite);
     if(maskRect && showOverlay) {
       draw.rect(composite, maskRect, [255, 255, 255, 255], 1);

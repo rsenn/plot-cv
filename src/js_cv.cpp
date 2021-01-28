@@ -384,6 +384,42 @@ js_cv_add_weighted(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
 }
 
 static JSValue
+js_cv_resize(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+
+  cv::Mat *src, *dst;
+  double fx, fy;
+  JSSizeData<double> dsize;
+  int32_t interpolation;
+
+  src = js_mat_data(ctx, argv[0]);
+
+  dst = js_mat_data(ctx, argv[1]);
+
+  if(src == nullptr || dst == nullptr)
+    return JS_EXCEPTION;
+
+  if(!js_size_read(ctx, argv[2], &dsize) || dsize.width == 0 || dsize.height == 0) {
+    uint32_t w, h;
+
+    w = dst->cols > 0 ? dst->cols : src->cols;
+    h = dst->rows > 0 ? dst->rows : src->rows;
+
+    dsize = JSSizeData<double>(w, h);
+  }
+
+  if(argc > 3)
+    JS_ToFloat64(ctx, &fx, argv[3]);
+  if(argc > 4)
+    JS_ToFloat64(ctx, &fy, argv[4]);
+  if(argc > 5)
+    JS_ToInt32(ctx, &interpolation, argv[5]);
+
+  cv::resize(*src, *dst, dsize, fx, fy, interpolation);
+
+  return JS_UNDEFINED;
+}
+
+static JSValue
 js_cv_equalize_hist(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
 
   cv::Mat *src, *dst;
@@ -1258,6 +1294,7 @@ js_function_list_t js_cv_static_funcs{
     JS_CFUNC_DEF("mixChannels", 3, js_cv_mix_channels),
     JS_CFUNC_DEF("minMaxLoc", 2, js_cv_min_max_loc),
     JS_CFUNC_DEF("addWeighted", 6, js_cv_add_weighted),
+    JS_CFUNC_DEF("resize", 3, js_cv_resize),
     JS_CFUNC_MAGIC_DEF("getTickCount", 0, js_cv_getticks, 0),
     JS_CFUNC_MAGIC_DEF("getTickFrequency", 0, js_cv_getticks, 1),
     JS_CFUNC_MAGIC_DEF("getCPUTickCount", 0, js_cv_getticks, 2),
@@ -1700,6 +1737,13 @@ js_function_list_t js_cv_static_funcs{
     JS_PROP_INT32_DEF("HOUGH_MULTI_SCALE", cv::HOUGH_MULTI_SCALE, 0),
     JS_PROP_INT32_DEF("HOUGH_GRADIENT", cv::HOUGH_GRADIENT, 0),
     // JS_PROP_INT32_DEF("HOUGH_GRADIENT_ALT", cv::HOUGH_GRADIENT_ALT, 0),
+    JS_PROP_INT32_DEF("INTER_NEAREST", cv::INTER_NEAREST, 0),
+    JS_PROP_INT32_DEF("INTER_LINEAR", cv::INTER_LINEAR, 0),
+    JS_PROP_INT32_DEF("INTER_CUBIC", cv::INTER_CUBIC, 0),
+    JS_PROP_INT32_DEF("INTER_AREA", cv::INTER_AREA, 0),
+    JS_PROP_INT32_DEF("INTER_LANCZOS4", cv::INTER_LANCZOS4, 0),
+    JS_PROP_INT32_DEF("INTER_LINEAR_EXACT", cv::INTER_LINEAR_EXACT, 0),
+    JS_PROP_INT32_DEF("INTER_MAX", cv::INTER_MAX, 0),
 
 };
 

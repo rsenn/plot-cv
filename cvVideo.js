@@ -1,10 +1,76 @@
+import { Size } from 'size';
+import { Rect } from 'rect';
 import * as cv from 'cv';
 import { Mat } from 'mat';
 import { VideoCapture } from 'video-capture';
 import Util from './lib/util.js';
 
+const Crop = (() => {
+  const mapper = Util.weakMapper(() => new Mat());
+  return function Crop(mat, rect) {
+    let tmp = mapper(mat);
+
+    mat.roi(rect).copyTo(tmp);
+    return tmp;
+  };
+})();
+
+function ImageSize(src, dst, dsize) {
+  let s,
+    roi,
+    f,
+    ssize = src.size;
+  console.debug('ImageSize', { src, dst, ssize, dsize });
+  if(!ssize.equals(dsize)) {
+    let [fx, fy] = dsize.div(ssize);
+    if(fx != fy) {
+      //console.warn(`Aspect mismatch ${ssize} -> ${dsize}`);
+      if(fx < fy) {
+        s = dsize.div((f = fy)) /*.round()*/;
+        roi = new Rect(Math.floor((src.cols - s.width) / 2), 0, ...s);
+      } else {
+        s = dsize.div((f = fx)) /*.round()*/;
+        roi = new Rect(0, Math.floor((src.rows - s.height) / 2), ...s);
+      }
+      //console.debug('VideoSource resize', { fx, fy, s, roi });
+      //
+      if(roi.x || roi.y) {
+        console.warn(`Crop ${ssize} -> ${roi}`);
+        let cropped = Crop(src, roi);
+        src = cropped;
+        ssize = src.size;
+        [fx, fy] = dsize.div(ssize);
+        //console.debug('VideoSource cropped', src.size, ' -> ', cropped.size, { fx, fy });
+      }
+    }
+    let aspects = [ssize, dsize].map(s => s.aspect);
+
+    if(!ssize.equals(dsize)) {
+      let factors = dsize.div(ssize);
+      [fx, fy] = factors;
+      //console.debug('fx/fy =', fx / fy);
+      factors.sort((a, b) => b - a);
+      if(fx != fy) {
+        //console.debug('factors =', factors);
+        dsize = ssize.mul(factors[0]);
+        //console.debug('dsize =', dsize);
+        factors = dsize.div(ssize);
+        [fx, fy] = factors;
+
+        dsize = dsize.round();
+        //console.debug('dsize =', dsize);
+      }
+      console.warn(`Scale ${ssize} -> ${dsize} (${f == fx ? 'fx' : 'fy'} = ${f}) ( ${dsize.div(ssize)} )`);
+      cv.resize(src, dst, dsize, 0, 0, cv.INTER_CUBIC);
+      return;
+    }
+    console.debug('dist.size', dst.size);
+  }
+  console.warn(`copyTo ${src} -> ${dst}`);
+  src.copyTo(dst);
+}
 export class ImageSequence {
-  constructor(images = []) {
+  constructor(images = [], dimensions) {
     const imgs = this;
     this.images = images;
     this.frame = null;
@@ -24,14 +90,22 @@ export class ImageSequence {
       get pos_msec() {
         const { pos_frames, fps } = this;
         return (pos_frames * 1000) / fps;
-      },
+      } /*,
       get frame_width() {
         if(imgs.frame) return imgs.frame.cols;
       },
       get frame_height() {
         if(imgs.frame) return imgs.frame.rows;
-      }
+      }*/
     };
+
+    if(!dimensions) {
+      let mat = cv.imread(images[0]);
+      dimensions = mat.size;
+    }
+    console.debug('dimensions', dimensions);
+    this.set('frame_width', dimensions.width);
+    this.set('frame_height', dimensions.height);
   }
 
   getBackendName() {
@@ -41,14 +115,33 @@ export class ImageSequence {
     return true;
   }
   get(prop) {
+    /*   if(prop.endsWith('width')) return this.size.width;
+    if(prop.endsWith('height')) return this.size.height;*/
+
     return this.props[prop.toLowerCase()];
   }
   set(prop, value) {
+    const { props } = this;
+    console.debug('ImageSequence.set', { prop, value, props });
     this.props[prop.toLowerCase()] = value;
   }
+  get size() {
+return new Size(this.get('frame_width'), this.get('frame_height'));
+  }
+
   grab() {
     const { images, props } = this;
-    return !!(this.frame = cv.imread(images[props.pos_frames++]));
+    let ret = !!(this.frame = cv.imread(images[props.pos_frames++]));
+    let { frame, size } = this;
+
+    if(frame.cols != size.width || frame.rows != size.height) {
+      console.debug('ImageSequence.grab', frame.size, ' -> ', size);
+      let mat = this.frame;
+      this.frame = new Mat(size, mat.type);
+      ImageSize(mat, this.frame, size);
+    }
+
+    return ret;
   }
   retrieve(mat) {
     if(!mat) return this.frame;
@@ -103,17 +196,22 @@ export class VideoSource {
   constructor(...args) {
     if(args.length > 0) {
       let [device, backend = 'ANY'] = args;
+      let isVideo = true;
 
-      if(typeof device == 'string' && isVideoPath(device)) if (backend == 'ANY') backend = 'FFMPEG';
+      if(cv.imread(args[0])) isVideo = false;
+      console.log('VideoSource', { args, isVideo });
 
-      const driverId = VideoSource.backends[backend];
-      console.log('VideoSource', { device, backend, driverId, args });
+      if(isVideo) {
+        if(typeof device == 'string' && isVideoPath(device)) if (backend == 'ANY') backend = 'FFMPEG';
 
-      if(typeof driverId == 'number') {
+        const driverId = VideoSource.backends[backend];
+        console.log('VideoSource', { device, backend, driverId, args });
+
         this.capture(device, driverId);
       } else {
-        this.fromImages(...args);
+        this.fromImages(args);
       }
+      this.isVideo = true;
     }
   }
 
@@ -133,7 +231,11 @@ export class VideoSource {
     this.read = function(mat) {
       const { cap } = this;
       if(!mat) mat = new Mat();
-      if(cap.read(mat)) return mat;
+      if(!cap.read(mat)) return null;
+
+      console.log('VideoSource.read', { cap, mat });
+
+      return mat;
     };
     this.retrieve = function(mat) {
       const { cap } = this;
@@ -143,8 +245,8 @@ export class VideoSource {
     Util.weakAssign(this, Util.bindMethods(this.cap, VideoCapture.prototype));
   }
 
-  fromImages(...images) {
-    let cap = new ImageSequence(images);
+  fromImages(...args) {
+    let cap = new ImageSequence(...args);
     this.cap = cap;
 
     this.propId = prop => {
@@ -155,7 +257,14 @@ export class VideoSource {
       return prop;
     };
 
-    Util.weakAssign(this, Util.bindMethods(this.cap, ImageSequence.prototype));
+    Util.define(this, Util.bindMethods(this.cap, ImageSequence.prototype));
+
+    // this.size = new Size(1280, 720);
+
+    this.read = function(mat) {
+      let ret = ImageSequence.prototype.read.call(this, mat);
+      if(!ret) return null;
+    };
   }
 
   get(prop) {
@@ -222,11 +331,24 @@ export class VideoSource {
     return [(+this.get('pos_msec')).toFixed(3), this.durationMsecs];
   }
 
+  get size() {
+  let width = this.get('frame_width');
+  let height = this.get('frame_height');
+console.debug("VideoCapture.size", {width,height});
+return new Size(width, height);
+  }
+
+  set size(size) {
+    size = size instanceof Size ?  size : new Size(size);
+ this.set('frame_width', size.width);
+ this.set('frame_height', size.height);
+ }
+
   get time() {
     let [pos, duration] = this.position('msec');
 
-    let ms, s, m, h;
-
+ let ms, s, m, h;
+ 
     ms = Util.mod(pos, 1000);
     s = pos / 1000;
     m = Math.floor(s / 60);

@@ -1,6 +1,7 @@
 #include "jsbindings.h"
 #include "js_point.h"
 #include "js_alloc.h"
+#include "js_array.h"
 
 #if defined(JS_LINE_MODULE) || defined(quickjs_line_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
@@ -212,6 +213,29 @@ js_line_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* 
   return ret;
 }
 
+static JSValue
+js_line_from(JSContext* ctx, JSValueConst line, int argc, JSValueConst* argv) {
+  std::array<double, 4> array;
+  JSValue ret = JS_EXCEPTION;
+
+  if(JS_IsString(argv[0])) {
+    const char* str = JS_ToCString(ctx, argv[0]);
+    char* endptr = nullptr;
+    for(size_t i = 0; i < 4; i++) {
+      while(!isdigit(*str) && *str != '-' && *str != '+' && !(*str == '.' && isdigit(str[1]))) str++;
+      if(*str == '\0')
+        break;
+      array[i] = strtod(str, &endptr);
+      str = endptr;
+    }
+  } else if(JS_IsArray(ctx, argv[0])) {
+    js_array_to_array<double, 4>(ctx, argv[0], array);
+  }
+  if(array[2] > 0 && array[3] > 0)
+    ret = js_line_new(ctx, array[0], array[1], array[2], array[3]);
+  return ret;
+}
+
 JSValue line_proto = JS_UNDEFINED, line_class = JS_UNDEFINED;
 JSClassID js_line_class_id;
 
@@ -236,6 +260,9 @@ const JSCFunctionListEntry js_line_proto_funcs[] = {
     JS_ALIAS_DEF("[Symbol.iterator]", "values"),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Line", JS_PROP_CONFIGURABLE),
 };
+
+const JSCFunctionListEntry js_line_static_funcs[] = {JS_CFUNC_DEF("from", 1, js_line_from)};
+
 int
 js_line_init(JSContext* ctx, JSModuleDef* m) {
 
@@ -250,6 +277,7 @@ js_line_init(JSContext* ctx, JSModuleDef* m) {
   line_class = JS_NewCFunction2(ctx, js_line_ctor, "Line", 2, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, line_class, line_proto);
+  JS_SetPropertyFunctionList(ctx, line_class, js_line_static_funcs, countof(js_line_static_funcs));
 
   if(m)
     JS_SetModuleExport(ctx, m, "Line", line_class);

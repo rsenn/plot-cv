@@ -298,7 +298,7 @@ js_point_to_array(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
   arr[0] = s->x;
   arr[1] = s->y;
 
-  return js_array<double>::from_sequence(ctx, arr.cbegin(), arr.cend());
+  return js_array_from(ctx, arr.cbegin(), arr.cend());
 }
 
 static JSValue
@@ -348,6 +348,29 @@ js_point_round(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
   return ret;
 }
 
+static JSValue
+js_point_from(JSContext* ctx, JSValueConst point, int argc, JSValueConst* argv) {
+  std::array<double, 2> array;
+  JSValue ret = JS_EXCEPTION;
+
+  if(JS_IsString(argv[0])) {
+    const char* str = JS_ToCString(ctx, argv[0]);
+    char* endptr = nullptr;
+    for(size_t i = 0; i < 2; i++) {
+      while(!isdigit(*str) && *str != '-' && *str != '+' && !(*str == '.' && isdigit(str[1]))) str++;
+      if(*str == '\0')
+        break;
+      array[i] = strtod(str, &endptr);
+      str = endptr;
+    }
+  } else if(JS_IsArray(ctx, argv[0])) {
+    js_array_to_array<double, 2>(ctx, argv[0], array);
+  }
+  if(array[0] > 0 && array[1] > 0)
+    ret = js_point_new(ctx, array[0], array[1]);
+  return ret;
+}
+
 JSValue point_class = JS_UNDEFINED;
 
 JSClassDef js_point_class = {
@@ -379,6 +402,7 @@ const JSCFunctionListEntry js_point_proto_funcs[] = {
 
     // JS_CFUNC_MAGIC_DEF("[Symbol.toStringTag]", 0, js_point_to_string, 1),
 };
+const JSCFunctionListEntry js_point_static_funcs[] = {JS_CFUNC_DEF("from", 1, js_point_from)};
 
 int
 js_point_init(JSContext* ctx, JSModuleDef* m) {
@@ -395,6 +419,7 @@ js_point_init(JSContext* ctx, JSModuleDef* m) {
     point_class = JS_NewCFunction2(ctx, js_point_ctor, "Point", 0, JS_CFUNC_constructor, 0);
     /* set proto.constructor and ctor.prototype */
     JS_SetConstructor(ctx, point_class, point_proto);
+    JS_SetPropertyFunctionList(ctx, point_class, js_point_static_funcs, countof(js_point_static_funcs));
   }
 
   if(m)

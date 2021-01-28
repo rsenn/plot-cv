@@ -67,6 +67,8 @@ js_size_get_wh(JSContext* ctx, JSValueConst this_val, int magic) {
     return JS_NewFloat64(ctx, s->width);
   else if(magic == 1)
     return JS_NewFloat64(ctx, s->height);
+  else if(magic == 2)
+    return JS_NewFloat64(ctx, s->width / s->height);
   return JS_UNDEFINED;
 }
 
@@ -107,6 +109,33 @@ js_size_set_wh(JSContext* ctx, JSValueConst this_val, JSValueConst val, int magi
 
 static JSValue
 js_size_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSSizeData<double> size, *s;
+  std::ostringstream os;
+  if((s = js_size_data(ctx, this_val)) == nullptr) {
+    js_size_read(ctx, this_val, &size);
+  } else {
+    size = *s;
+  }
+  os << size.width << "x" << size.height;
+
+  return JS_NewString(ctx, os.str().c_str());
+}
+static JSValue
+js_size_to_source(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSSizeData<double> size, *s;
+  std::ostringstream os;
+  if((s = js_size_data(ctx, this_val)) == nullptr) {
+    js_size_read(ctx, this_val, &size);
+  } else {
+    size = *s;
+  }
+  os << "{width:" << size.width << ",height:" << size.height << "}";
+
+  return JS_NewString(ctx, os.str().c_str());
+}
+
+static JSValue
+js_size_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSSizeData<double>* s = js_size_data(ctx, this_val);
   std::ostringstream os;
   JSValue wv, hv;
@@ -123,20 +152,46 @@ js_size_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
     height = s->height;
   }
 
-  os << "{width:" << width << ",height:" << height << "}" << std::endl;
+  os << "{ width: \x1b[0;33m" << width << "\x1b[0m, height: \x1b[0;33m" << height << "\x1b[0m }";
 
   return JS_NewString(ctx, os.str().c_str());
 }
 
 static JSValue
-js_size_to_array(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSSizeData<double>* s = js_size_data(ctx, this_val);
-  std::array<double, 2> arr;
+js_size_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSSizeData<double> size, *s, *a;
+  JSValue ret = JS_EXCEPTION;
 
-  arr[0] = s->width;
-  arr[1] = s->height;
+  if((s = js_size_data(ctx, this_val)) == nullptr)
+    return ret;
 
-  return js_array<double>::from_sequence(ctx, arr.cbegin(), arr.cend());
+  size = *s;
+
+  if(magic == 0) {
+    a = js_size_data(ctx, argv[0]);
+    bool equals = s->width == a->width && s->height == a->height;
+    ret = JS_NewBool(ctx, equals);
+  } else if(magic == 1) {
+    double width, height, f;
+    int32_t precision = 0;
+    if(argc > 0)
+      JS_ToInt32(ctx, &precision, argv[0]);
+    f = std::pow(10, precision);
+    width = std::round(size.width * f) / f;
+    height = std::round(size.height * f) / f;
+    ret = js_size_new(ctx, width, height);
+  } else if(magic == 2) {
+    ret = JS_NewObject(ctx);
+
+    JS_SetPropertyStr(ctx, ret, "width", JS_NewFloat64(ctx, size.width));
+    JS_SetPropertyStr(ctx, ret, "height", JS_NewFloat64(ctx, size.height));
+  } else if(magic == 3) {
+    ret = JS_NewArray(ctx);
+
+    JS_SetPropertyUint32(ctx, ret, 0, JS_NewFloat64(ctx, size.width));
+    JS_SetPropertyUint32(ctx, ret, 1, JS_NewFloat64(ctx, size.height));
+  }
+  return ret;
 }
 
 static JSValue
@@ -154,25 +209,65 @@ js_size_mul(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
 
 static JSValue
 js_size_div(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSSizeData<double> size, *s = js_size_data(ctx, this_val);
-  double divider;
-  JS_ToFloat64(ctx, &divider, argv[0]);
+  JSSizeData<double> size, other, *s, *a = nullptr;
+  JSValue ret = JS_EXCEPTION;
+  if((s = js_size_data(ctx, this_val)) != nullptr) {
+    size = *s;
 
-  size = *s;
-  size.width /= divider;
-  size.height /= divider;
+    if(JS_IsNumber(argv[0])) {
+      double divider;
+      JS_ToFloat64(ctx, &divider, argv[0]);
+      size.width /= divider;
+      size.height /= divider;
+      ret = js_size_wrap(ctx, size);
+    } else {
+      if((a = js_size_data(ctx, argv[0])) != nullptr)
+        other = *a;
+      else {
+        js_size_read(ctx, argv[0], &other);
+        a = &other;
+      }
+      std::array<double, 2> result{size.width / other.width, size.height / other.height};
+      ret = JS_NewArray(ctx);
 
-  return js_size_wrap(ctx, size);
+      JS_SetPropertyUint32(ctx, ret, 0, JS_NewFloat64(ctx, result[0]));
+      JS_SetPropertyUint32(ctx, ret, 1, JS_NewFloat64(ctx, result[1]));
+    }
+  }
+  return ret;
 }
 
 static JSValue
 js_size_symbol_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSValue arr, iter, symbol;
   jsrt js(ctx);
-  arr = js_size_to_array(ctx, this_val, argc, argv);
+  arr = js_size_funcs(ctx, this_val, argc, argv, 3);
   symbol = js.get_symbol("iterator");
   iter = js.get_property(arr, symbol);
   return JS_Call(ctx, iter, arr, 0, argv);
+}
+
+static JSValue
+js_size_from(JSContext* ctx, JSValueConst size, int argc, JSValueConst* argv) {
+  std::array<double, 2> array;
+  JSValue ret = JS_EXCEPTION;
+
+  if(JS_IsString(argv[0])) {
+    const char* str = JS_ToCString(ctx, argv[0]);
+    char* endptr = nullptr;
+    for(size_t i = 0; i < 2; i++) {
+      while(!isdigit(*str) && *str != '-' && *str != '+' && !(*str == '.' && isdigit(str[1]))) str++;
+      if(*str == '\0')
+        break;
+      array[i] = strtod(str, &endptr);
+      str = endptr;
+    }
+  } else if(JS_IsArray(ctx, argv[0])) {
+    js_array_to_array<double, 2>(ctx, argv[0], array);
+  }
+  if(array[0] > 0 && array[1] > 0)
+    ret = js_size_new(ctx, array[0], array[1]);
+  return ret;
 }
 
 JSValue size_proto, size_class;
@@ -186,14 +281,21 @@ JSClassDef js_size_class = {
 const JSCFunctionListEntry js_size_proto_funcs[] = {
     JS_CGETSET_ENUMERABLE_DEF("width", js_size_get_wh, js_size_set_wh, 0),
     JS_CGETSET_ENUMERABLE_DEF("height", js_size_get_wh, js_size_set_wh, 1),
+    JS_CGETSET_ENUMERABLE_DEF("aspect", js_size_get_wh, 0, 2),
+    JS_CFUNC_MAGIC_DEF("equals", 1, js_size_funcs, 0),
+    JS_CFUNC_MAGIC_DEF("round", 0, js_size_funcs, 1),
+    JS_CFUNC_MAGIC_DEF("toObject", 0, js_size_funcs, 2),
+    JS_CFUNC_MAGIC_DEF("toArray", 0, js_size_funcs, 3),
+    JS_CFUNC_DEF("inspect", 0, js_size_inspect),
     JS_CFUNC_DEF("toString", 0, js_size_to_string),
-    JS_CFUNC_DEF("toArray", 0, js_size_to_array),
+    JS_CFUNC_DEF("toSource", 0, js_size_to_source),
     JS_CFUNC_DEF("mul", 1, js_size_mul),
     JS_CFUNC_DEF("div", 1, js_size_div),
     JS_ALIAS_DEF("values", "toArray"),
     JS_CFUNC_DEF("[Symbol.iterator]", 0, js_size_symbol_iterator),
-    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Size", JS_PROP_CONFIGURABLE),
-};
+    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "Size", JS_PROP_CONFIGURABLE)};
+
+const JSCFunctionListEntry js_size_static_funcs[] = {JS_CFUNC_DEF("from", 1, js_size_from)};
 
 int
 js_size_init(JSContext* ctx, JSModuleDef* m) {
@@ -204,11 +306,13 @@ js_size_init(JSContext* ctx, JSModuleDef* m) {
 
   size_proto = JS_NewObject(ctx);
   JS_SetPropertyFunctionList(ctx, size_proto, js_size_proto_funcs, countof(js_size_proto_funcs));
+
   JS_SetClassProto(ctx, js_size_class_id, size_proto);
 
   size_class = JS_NewCFunction2(ctx, js_size_ctor, "Size", 0, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, size_class, size_proto);
+  JS_SetPropertyFunctionList(ctx, size_class, js_size_static_funcs, countof(js_size_static_funcs));
 
   if(m)
     JS_SetModuleExport(ctx, m, "Size", size_class);

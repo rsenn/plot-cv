@@ -1,11 +1,13 @@
 include_directories(${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/opencv)
 
+
 macro(add_prog)
   set(ARGS ${ARGN})
   list(GET ARGS 0 name)
   list(REMOVE_AT ARGS 0)
   add_executable(${name} ${CMAKE_CURRENT_SOURCE_DIR}/${name}.cpp ${ARGS})
   target_link_libraries(${name} ${OpenCV_LIBS})
+  target_include_directories(${name} PUBLIC ${OPENCV_INCLUDE_DIRS})
   # install(TARGETS ${name} DESTINATION bin)
 endmacro()
 
@@ -69,7 +71,7 @@ if(ADDITIONAL_PROGS)
   add_prog(Threshold_inRange)
   add_prog(ufacedetect)
   add_prog(videocapture_basic)
-   add_prog(videocapture_gphoto2_autofocus)
+  add_prog(videocapture_gphoto2_autofocus)
   add_prog(videocapture_image_sequence)
   add_prog(videocapture_openni)
   add_prog(videocapture_pvapi)
@@ -105,14 +107,14 @@ if(ADDITIONAL_PROGS)
   add_prog(facemark_lbf_fitting)
   add_prog(filterdemo)
   add_prog(mace_webcam)
- # add_prog(main ${CMAKE_CURRENT_SOURCE_DIR}/getExteriorContour.cpp ${CMAKE_CURRENT_SOURCE_DIR}/detectLines.cpp)
+  # add_prog(main ${CMAKE_CURRENT_SOURCE_DIR}/getExteriorContour.cpp ${CMAKE_CURRENT_SOURCE_DIR}/detectLines.cpp)
   add_prog(oil)
   add_prog(optical_flow_dense)
   add_prog(qrcode)
   add_prog(videocapture_gstreamer_pipeline)
   add_prog(homography_from_camera_displacement)
   add_prog(aruco_ar_demo)
-    add_prog(bounding_rect_circle)
+  add_prog(bounding_rect_circle)
   add_prog(detect_checked_boxes)
   add_prog(detect_rectangles)
   add_prog(morpho)
@@ -121,8 +123,8 @@ if(ADDITIONAL_PROGS)
   add_prog(segment_objects)
   add_prog(tracker)
   add_prog(tutorial_multitracker)
-  add_prog(video_homography)
-
+ 
+ 
   add_prog(objectDetection)
   add_prog(objectDetection2)
   add_prog(obj_track)
@@ -199,7 +201,7 @@ if(ADDITIONAL_PROGS_2)
       kcf
       kinfu_demo
       linemod
-       lock
+      lock
       magica
       main_detection
       main_pi_sdl_test
@@ -258,22 +260,35 @@ if(ADDITIONAL_PROGS_2)
       wrappers_video)
 endif(ADDITIONAL_PROGS_2)
 
+include(CheckIncludeFileCXX)
+
+list(APPEND CMAKE_REQUIRED_INCLUDES "${OPENCV_INCLUDE_DIRS}")
+
+check_include_file_cxx(opencv2/xfeatures2d.hpp HAVE_XFEATURES2D)
+
+if(HAVE_XFEATURES2D)
+  set(ADDPROGS ${ADDPROGS} rtObjectRecognition rtTracker video_homography)
+endif(HAVE_XFEATURES2D)
+
 if(ADDITIONAL_PROGS)
   find_package(Boost 1.56 REQUIRED COMPONENTS system)
   set(ADDPROGS
-      ${ADDPROGS} Image-Recognition Measure-objects 
-      #rtTracker
-      shapefinder Shape-Finder
+      ${ADDPROGS}
+      Image-Recognition
+      Measure-objects
+      # rtTracker
+      shapefinder
+      Shape-Finder
       # Shape_Detect
-      shape_detection voronoi)
-
+      shape_detection
+      voronoi)
 
   set(ADDPROGS ${ADDPROGS} cornerSubPix_Demo goodFeaturesToTrack_Demo lkdemo optical_flow pyrlk_optical_flow)
 
   set(ADDPROGS
       ${ADDPROGS} application_trace autofocus basicscanner canny CannyDetector_Demo circles code6-1 code6-2 contours Contour_detection detect_circle detect_geo_shapes detect_hough_circle documentScanner edge findContours_demo
       # getExteriorContour
-       moments_demo Open-Source-CamScanner PhotoScanner readGraph scanner scannerLite  videocapture_camera)
+      moments_demo Open-Source-CamScanner PhotoScanner readGraph scanner scannerLite videocapture_camera)
 
   foreach(P ${ADDPROGS})
     add_prog("${P}")
