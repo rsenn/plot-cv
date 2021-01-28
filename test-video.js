@@ -367,21 +367,21 @@ async function main(...args) {
   await PortableFileSystem(fs => (filesystem = fs));
 
   let opts = Util.getOpt({
-      input: [true, (file,current) => [...(current||[]), file], 'i'],
+      input: [true, (file, current) => [...(current || []), file], 'i'],
       driver: [
         true,
-        (arg, current, options,results) => {
+        (arg, current, options, results) => {
           let driverId = arg in VideoSource.backends ? arg : current;
           console.log('driver', { arg, current, driverId });
-          if(driverId === undefined){
+          if(driverId === undefined) {
             const input = results['input'];
-            let  args = [arg];
+            let args = [arg];
             if(input) {
-              args= results['input'].concat(args);
-              results['input']= undefined;
+              args = results['input'].concat(args);
+              results['input'] = undefined;
             }
             results['@'] = results['@'].concat(args);
-             }
+          }
           return driverId;
         },
         'd'

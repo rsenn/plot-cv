@@ -137,22 +137,10 @@ export class ImageSequence {
     this.framePos = this.index++;
     this.frameFile = images[this.framePos];
     const { index, framePos, frameFile } = this;
-    console.debug(`ImageSequence.grab[${this.framePos}] ${frameFile}`);
+    //console.debug(`ImageSequence.grab[${this.framePos}] ${frameFile}`);
 
     let ret = !!(this.frame = cv.imread(frameFile));
-    //    if(ret) this.framePos = pos_frames;
-    /*let { frame, size: targetSize } = this;
-    let { size: frameSize } = frame;
-    console.debug(`ImageSequence.grab[${pos_frames}]`, { ret, frame, targetSize });
-
-    if(!frameSize.equals(targetSize)) {
-      let mat = this.frame;
-      this.frame = new Mat(targetSize, mat.type);
-      ImageSize(mat, this.frame, targetSize);
-    }
-
-    console.debug(`ImageSequence.grab[${pos_frames}]`, { frameSize, targetSize });*/
-
+  
     return ret;
   }
   retrieve(mat) {
