@@ -1,7 +1,7 @@
-#include "jsbindings.h"
-#include "js_size.h"
-#include "js_array.h"
-#include "js_alloc.h"
+#include "jsbindings.hpp"
+#include "js_size.hpp"
+#include "js_array.hpp"
+#include "js_alloc.hpp"
 
 #if defined(JS_SIZE_MODULE) || defined(quickjs_size_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module

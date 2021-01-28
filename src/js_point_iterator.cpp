@@ -1,6 +1,6 @@
-#include "jsbindings.h"
-#include "js.h"
-#include "js_alloc.h"
+#include "jsbindings.hpp"
+#include "js.hpp"
+#include "js_alloc.hpp"
 #include "quickjs/cutils.h"
 #include "quickjs/quickjs.h"
 

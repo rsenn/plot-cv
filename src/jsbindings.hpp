@@ -1,7 +1,7 @@
 #ifndef JSBINDINGS_H
 #define JSBINDINGS_H
 
-#include "js.h"
+#include "js.hpp"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>

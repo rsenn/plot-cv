@@ -17,9 +17,9 @@
 #include <chrono>
 #include <iostream>
 
-#include "color.h"
-#include "js.h"
-#include "geometry.h"
+#include "color.hpp"
+#include "js.hpp"
+#include "geometry.hpp"
 
 typedef std::vector<int> ref_list;
 typedef cv::Mat image_type;

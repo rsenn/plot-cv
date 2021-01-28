@@ -7,7 +7,7 @@
 // using namespace cv;
 using namespace std;
 
-#include "polygon.h"
+#include "polygon.hpp"
 enum SegmentationMode { BALLOON_MODE, CURV_MODE, ALL_MODE };
 
 class Data {

@@ -25,8 +25,8 @@ function(make_shared_module FNAME)
   message("Module: ${NAME}")
   set(TARGET_NAME quickjs-${NAME})
 
-  add_library(${TARGET_NAME} SHARED src/js_${FNAME}.cpp src/jsbindings.h
-                                    src/jsbindings.cpp src/js.h src/js.cpp)
+  add_library(${TARGET_NAME} SHARED src/js_${FNAME}.cpp src/jsbindings.hpp
+                                    src/jsbindings.cpp src/js.hpp src/js.cpp)
 
   target_link_libraries(${TARGET_NAME} ${OpenCV_LIBS})
   set_target_properties(

@@ -269,7 +269,7 @@ if(IMGUI_VIEWER)
   include(imgui-viewer.cmake)
 endif(IMGUI_VIEWER)
 
-set(QUICKJS_SOURCES_LIST "quickjs/quickjs.c;quickjs/quickjs.h;quickjs/libregexp.c;quickjs/libunicode.c;quickjs/cutils.c;quickjs/quickjs-libc.c;quickjs/quickjs-libc.h;quickjs/quickjs-find-module.c;quickjs/libbf.c")
+set(QUICKJS_SOURCES_LIST "quickjs/quickjs.c;quickjs/quickjs.hpp;quickjs/libregexp.c;quickjs/libunicode.c;quickjs/cutils.c;quickjs/quickjs-libc.c;quickjs/quickjs-libc.h;quickjs/quickjs-find-module.c;quickjs/libbf.c")
 # add_definitions(-D_GNU_SOURCE=1)
 
 macro(find_static_library VAR NAME)

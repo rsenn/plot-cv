@@ -1,8 +1,8 @@
 #ifndef JS_CONTOUR_H
 #define JS_CONTOUR_H
 
-#include "js_alloc.h"
-#include "geometry.h"
+#include "js_alloc.hpp"
+#include "geometry.hpp"
 
 extern "C" {
 extern JSValue contour_class, contour_proto;

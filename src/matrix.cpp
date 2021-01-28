@@ -1,6 +1,6 @@
-#include "matrix.h"
-#include "line.h"
-#include "plot-cv.h"
+#include "matrix.hpp"
+#include "line.hpp"
+#include "plot-cv.hpp"
 
 std::string
 to_string(const cv::Mat& mat) {

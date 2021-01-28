@@ -2,8 +2,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
 #include <math.h>
-#include "polygon.h"
-#include "color.h"
+#include "polygon.hpp"
+#include "color.hpp"
 // using namespace cv;
 
 #include <vector>

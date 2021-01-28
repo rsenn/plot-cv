@@ -20,18 +20,18 @@
 #include <unistd.h>
 #include <iomanip> // std::setbase
 
-#include "color.h"
-#include "data.h"
-#include "geometry.h"
-#include "js.h"
-#include "line.h"
-#include "matrix.h"
-#include "plot-cv.h"
-#include "polygon.h"
-#include "psimpl.h"
-#include "auto_canny.h"
-#include "jsbindings.h"
-#include "js_contour.h"
+#include "color.hpp"
+#include "data.hpp"
+#include "geometry.hpp"
+#include "js.hpp"
+#include "line.hpp"
+#include "matrix.hpp"
+#include "plot-cv.hpp"
+#include "polygon.hpp"
+#include "psimpl.hpp"
+#include "auto_canny.hpp"
+#include "jsbindings.hpp"
+#include "js_contour.hpp"
 
 using std::string;
 using std::chrono::duration;

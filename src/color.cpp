@@ -1,4 +1,4 @@
-#include "color.h"
+#include "color.hpp"
 
 /*
  * H(Hue): 0 - 360 degree (integer)

@@ -1,17 +1,17 @@
-#include "jsbindings.h"
-#include "js_point.h"
-#include "js_rect.h"
-#include "js_contour.h"
-#include "js_array.h"
-#include "js_alloc.h"
+#include "jsbindings.hpp"
+#include "js_point.hpp"
+#include "js_rect.hpp"
+#include "js_contour.hpp"
+#include "js_array.hpp"
+#include "js_alloc.hpp"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include "plot-cv.h"
-#include "color.h"
-#include "geometry.h"
-#include "psimpl.h"
+#include "plot-cv.hpp"
+#include "color.hpp"
+#include "geometry.hpp"
+#include "psimpl.hpp"
 
 #include <iomanip>
 

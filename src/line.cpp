@@ -1,5 +1,5 @@
-#include "line.h"
-#include "psimpl.h"
+#include "line.hpp"
+#include "psimpl.hpp"
 
 float
 point_distance(const cv::Point2f& p1, const cv::Point2f& p2) {

@@ -1,11 +1,11 @@
-#include "plot-cv.h"
-#include "color.h"
-#include "js.h"
-#include "line.h"
-#include "geometry.h"
-#include "matrix.h"
+#include "plot-cv.hpp"
+#include "color.hpp"
+#include "js.hpp"
+#include "line.hpp"
+#include "geometry.hpp"
+#include "matrix.hpp"
 
-#include "js.h"
+#include "js.hpp"
 #include "../quickjs/quickjs-libc.h"
 
 #include <libgen.h>

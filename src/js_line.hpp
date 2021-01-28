@@ -1,7 +1,7 @@
 #ifndef JS_LINE_H
 #define JS_LINE_H
 
-#include "jsbindings.h"
+#include "jsbindings.hpp"
 
 template<class T>
 static inline int

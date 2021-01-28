@@ -152,7 +152,7 @@ js_array<T>::to_scalar(JSContext* ctx, JSValueConst arr, cv::Scalar_<T>& out) {
   return n;
 }
 
-#include "js_point.h"
+#include "js_point.hpp"
 
 template<class T> class js_array<JSPointData<T>> {
 public:

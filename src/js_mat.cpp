@@ -1,11 +1,11 @@
-#include "jsbindings.h"
-#include "js_size.h"
-#include "js_point.h"
-#include "js_rect.h"
-#include "js_array.h"
-#include "js_alloc.h"
-#include "geometry.h"
-#include "util.h"
+#include "jsbindings.hpp"
+#include "js_size.hpp"
+#include "js_point.hpp"
+#include "js_rect.hpp"
+#include "js_array.hpp"
+#include "js_alloc.hpp"
+#include "geometry.hpp"
+#include "util.hpp"
 #include "../quickjs/cutils.h"
 #include <list>
 #include <map>
@@ -840,8 +840,7 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   return JS_NewStringLen(ctx, str.data(), str.size());
 }
 
-static size_t heap_base = 0;
-
+ 
 static JSValue
 js_mat_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   cv::Mat* m = js_mat_data(ctx, this_val);
@@ -862,23 +861,10 @@ js_mat_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
     return std::to_string(n);
   });
 
-  if(!heap_base) {
-    std::ifstream infile("/proc/self/maps");
-    infile >> std::hex;
-
-    for(std::string line; std::getline(infile, line);) {
-      if(line.find("[heap]") != std::string::npos) {
-        size_t start = line.find("-");
-
-        heap_base = strtoull(line.c_str() + start + 1, nullptr, 16);
-      }
-    }
-    infile >> heap_base;
-    std::cerr << "heap_base: " << heap_base << std::endl;
-  }
+   
 
   os << "Mat "
-     << "@ " << static_cast<void*>(reinterpret_cast<char*>(m) - heap_base) << " [ ";
+     << "@ " << reinterpret_cast<void*>(reinterpret_cast<char*>(m) - reinterpret_cast<char*>(get_heap_base())) << " [ ";
   if(sizes.size() || m->type()) {
     os << "size = " << join(sizes.cbegin(), sizes.cend(), "x") << ", ";
     os << "type = CV_" << (bytes * 8) << sign << 'C' << m->channels();

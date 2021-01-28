@@ -1,8 +1,8 @@
-#include "jsbindings.h"
-#include "js_point.h"
-#include "js_alloc.h"
-#include "js_line.h"
-#include "js_array.h"
+#include "jsbindings.hpp"
+#include "js_point.hpp"
+#include "js_alloc.hpp"
+#include "js_line.hpp"
+#include "js_array.hpp"
 
 #if defined(JS_LINE_MODULE) || defined(quickjs_line_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module

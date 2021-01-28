@@ -1,14 +1,14 @@
-#include "jsbindings.h"
-#include "js_point.h"
-#include "js_array.h"
-#include "js_rect.h"
+#include "jsbindings.hpp"
+#include "js_point.hpp"
+#include "js_array.hpp"
+#include "js_rect.hpp"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include "plot-cv.h"
-#include "color.h"
-#include "geometry.h"
+#include "plot-cv.hpp"
+#include "color.hpp"
+#include "geometry.hpp"
 
 #if defined(JS_DRAW_MODULE) || defined(quickjs_draw_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module

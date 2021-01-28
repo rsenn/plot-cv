@@ -1,7 +1,7 @@
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW 1
 #include <GL/glew.h> // Initialize with glewInit()
 
-//#include "../imgui/libs/gl3w/GL/gl3w.h"
+//#include "../imgui/libs/gl3w/GL/gl3w.hpp"
 
 #include <cstdio>
 #include <fstream>
@@ -10,14 +10,14 @@
 
 #include <opencv2/opencv.hpp>
 
-#include "../imgui/imgui.h"
-#include "../imgui/imgui_impl_opengl3.h"
-#include "../imgui/imgui_impl_sdl.h"
+#include "../imgui/imgui.hpp"
+#include "../imgui/imgui_impl_opengl3.hpp"
+#include "../imgui/imgui_impl_sdl.hpp"
 
-#include "imgui-viewer.h"
-#include "color.h"
-#include "simple_svg_writer.h"
-#include "plot-cv.h"
+#include "imgui-viewer.hpp"
+#include "color.hpp"
+#include "simple_svg_writer.hpp"
+#include "plot-cv.hpp"
 
 std::ofstream logfile("plot-cv.log", std::ios_base::out | std::ios_base::ate);
 

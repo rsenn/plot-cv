@@ -2,6 +2,7 @@
 #define UTIL_H
 
 #include <string>
+#include <numeric>
 
 template<class Iterator>
 static inline std::string
@@ -14,6 +15,6 @@ join(const Iterator& start, const Iterator& end, const std::string& delim) {
                          });
 }
 
-void* get_heap_base();
+extern "C" void* get_heap_base();
 
 #endif // defined(UTIL_H)

@@ -1,9 +1,9 @@
-#include "jsbindings.h"
-#include "js_rect.h"
-#include "js_size.h"
-#include "js_point.h"
-#include "js_alloc.h"
-#include "js_array.h"
+#include "jsbindings.hpp"
+#include "js_rect.hpp"
+#include "js_size.hpp"
+#include "js_point.hpp"
+#include "js_alloc.hpp"
+#include "js_array.hpp"
 
 #if defined(JS_RECT_MODULE) || defined(quickjs_rect_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module

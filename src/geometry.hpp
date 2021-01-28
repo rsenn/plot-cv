@@ -8,7 +8,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include "psimpl.h"
+#include "psimpl.hpp"
 
 template<class T> struct point {
   typedef T value_type;

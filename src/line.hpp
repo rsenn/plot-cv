@@ -9,7 +9,7 @@
 #include <string>
 #include <functional>
 #include <array>
-#include "psimpl.h"
+#include "psimpl.hpp"
 
 template<class T> class LineEnd;
 

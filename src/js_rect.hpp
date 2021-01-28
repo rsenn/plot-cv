@@ -1,7 +1,7 @@
 #ifndef JS_RECT_H
 #define JS_RECT_H
 
-#include "jsbindings.h"
+#include "jsbindings.hpp"
 
 static inline int
 js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData<double>* out) {

@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <cstdlib>
+#include "util.hpp"
 
 static size_t heap_base = 0;
 
