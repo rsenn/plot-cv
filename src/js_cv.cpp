@@ -509,10 +509,10 @@ js_cv_calc_hist(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   int32_t dims;
   bool uniform = true, accumulate = false;
 
-  if(js_array_to_vector(ctx, argv[0], images) == -1)
+  if(js_array_to(ctx, argv[0], images) == -1)
     return JS_EXCEPTION;
 
-  if(js_array_to_vector(ctx, argv[1], channels) == -1)
+  if(js_array_to(ctx, argv[1], channels) == -1)
     return JS_EXCEPTION;
   mask = js_mat_data(ctx, argv[2]);
   hist = js_mat_data(ctx, argv[3]);
@@ -521,10 +521,10 @@ js_cv_calc_hist(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
     return JS_EXCEPTION;
   JS_ToInt32(ctx, &dims, argv[4]);
 
-  if(js_array_to_vector(ctx, argv[5], histSize) == -1)
+  if(js_array_to(ctx, argv[5], histSize) == -1)
     return JS_EXCEPTION;
 
-  if(js_array_to_vector(ctx, argv[6], ranges) == -1)
+  if(js_array_to(ctx, argv[6], ranges) == -1)
     return JS_EXCEPTION;
 
   if(argc >= 8)
@@ -585,7 +585,7 @@ js_cv_morphology(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* 
     if(!JS_IsArray(ctx, argv[6]))
       return JS_EXCEPTION;
 
-    js_array_to_vector(ctx, argv[6], value);
+    js_array_to(ctx, argv[6], value);
     borderValue = cv::Scalar(value[0], value[1], value[2], value[3]);
   }
 
@@ -629,7 +629,7 @@ js_cv_morphology_ex(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
     if(!JS_IsArray(ctx, argv[7]))
       return JS_EXCEPTION;
 
-    js_array_to_vector(ctx, argv[7], value);
+    js_array_to(ctx, argv[7], value);
     borderValue = cv::Scalar(value[0], value[1], value[2], value[3]);
   }
 
@@ -680,7 +680,7 @@ js_cv_merge(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
   std::vector<cv::Mat> mv;
   cv::Mat* dst;
 
-  if(js_array_to_vector(ctx, argv[0], mv) == -1)
+  if(js_array_to(ctx, argv[0], mv) == -1)
     return JS_EXCEPTION;
 
   dst = js_mat_data(ctx, argv[1]);
@@ -700,12 +700,12 @@ js_cv_mix_channels(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
 
   cv::Mat* dst;
 
-  if(js_array_to_vector(ctx, argv[0], srcs) == -1)
+  if(js_array_to(ctx, argv[0], srcs) == -1)
     return JS_EXCEPTION;
-  if(js_array_to_vector(ctx, argv[1], dsts) == -1)
+  if(js_array_to(ctx, argv[1], dsts) == -1)
     return JS_EXCEPTION;
 
-  if(js_array_to_vector(ctx, argv[2], fromTo) == -1)
+  if(js_array_to(ctx, argv[2], fromTo) == -1)
     return JS_EXCEPTION;
 
   cv::mixChannels(const_cast<const cv::Mat*>(srcs.data()),
@@ -1166,7 +1166,7 @@ js_cv_draw_contours(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   if(!JS_IsArray(ctx, argv[1]))
     return JS_EXCEPTION;
 
-  js_array_to_vector(ctx, argv[1], contours);
+  js_array_to(ctx, argv[1], contours);
 
   JS_ToInt32(ctx, &contourIdx, argv[2]);
 

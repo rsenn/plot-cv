@@ -237,13 +237,19 @@ js_size_div(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv)
   return ret;
 }
 
+static JSValue iterator_symbol = JS_UNDEFINED;
+
 static JSValue
 js_size_symbol_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSValue arr, iter, symbol;
+  JSValue arr, iter;
   jsrt js(ctx);
   arr = js_size_funcs(ctx, this_val, argc, argv, 3);
-  symbol = js.get_symbol("iterator");
-  iter = js.get_property(arr, symbol);
+
+  if(JS_IsUndefined(iterator_symbol))
+    iterator_symbol = js.get_symbol("iterator");
+
+  if(!JS_IsFunction(ctx, (iter = js.get_property(arr, iterator_symbol))))
+    return JS_EXCEPTION;
   return JS_Call(ctx, iter, arr, 0, argv);
 }
 
@@ -263,7 +269,7 @@ js_size_from(JSContext* ctx, JSValueConst size, int argc, JSValueConst* argv) {
       str = endptr;
     }
   } else if(JS_IsArray(ctx, argv[0])) {
-    js_array_to_array<double, 2>(ctx, argv[0], array);
+    js_array_to<double, 2>(ctx, argv[0], array);
   }
   if(array[0] > 0 && array[1] > 0)
     ret = js_size_new(ctx, array[0], array[1]);

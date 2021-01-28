@@ -725,7 +725,7 @@ js_mat_set_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
 
   if(argc >= 1 && JS_IsArray(ctx, argv[0])) {
     cv::Scalar s;
-    size_t n = js_array_to_scalar(ctx, argv[0], s);
+    size_t n = js_array_to(ctx, argv[0], s);
 
     // std::cerr << "Scalar [ " << s[0] << ", " << s[1] << ", " << s[2] << ", " << s[3] << " ]" <<
     // std::endl; std::cerr << "Scalar.size() = " << n << std::endl;
@@ -950,7 +950,7 @@ js_mat_reshape(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
     std::vector<int> newshape;
 
     if(JS_IsArray(ctx, argv[1])) {
-      js_array_to_vector(ctx, argv[1], newshape);
+      js_array_to(ctx, argv[1], newshape);
 
       if(argc >= 3 && JS_IsNumber(argv[2])) {
         uint32_t ndims;

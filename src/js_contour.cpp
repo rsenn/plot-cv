@@ -315,7 +315,7 @@ js_contour_convexitydefects(JSContext* ctx, JSValueConst this_val, int argc, JSV
   std::vector<cv::Vec4i> defects;
 
   if(argc > 0) {
-    int64_t n = js_array_to_vector(ctx, argv[0], hullIndices);
+    int64_t n = js_array_to(ctx, argv[0], hullIndices);
     if(n == 0)
       return JS_EXCEPTION;
   }
@@ -365,7 +365,7 @@ js_contour_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst*
           JSValue pt = JS_GetPropertyUint32(ctx, argv[i], 0);
 
           if(js_is_point(ctx, pt)) {
-            js_array_to_vector /*< JSPointData<double> >*/ (ctx, argv[i], *v);
+            js_array_to /*< JSPointData<double> >*/ (ctx, argv[i], *v);
             JS_FreeValue(ctx, pt);
             continue;
           }

@@ -1,21 +1,21 @@
-#ifndef JS_RECT_H
-#define JS_RECT_H
+#ifndef JS_LINE_H
+#define JS_LINE_H
 
 static inline int
-js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData<double>* out) {
+js_line_read(JSContext* ctx, JSValueConst line, JSLineData<double>* out) {
   int ret = 1;
   JSValue x = JS_UNDEFINED, y = JS_UNDEFINED, w = JS_UNDEFINED, h = JS_UNDEFINED;
-  if(JS_IsArray(ctx, rect)) {
-    x = JS_GetPropertyUint32(ctx, rect, 0);
-    y = JS_GetPropertyUint32(ctx, rect, 1);
-    w = JS_GetPropertyUint32(ctx, rect, 2);
-    h = JS_GetPropertyUint32(ctx, rect, 3);
+  if(JS_IsArray(ctx, line)) {
+    x = JS_GetPropertyUint32(ctx, line, 0);
+    y = JS_GetPropertyUint32(ctx, line, 1);
+    w = JS_GetPropertyUint32(ctx, line, 2);
+    h = JS_GetPropertyUint32(ctx, line, 3);
 
   } else {
-    x = JS_GetPropertyStr(ctx, rect, "x");
-    y = JS_GetPropertyStr(ctx, rect, "y");
-    w = JS_GetPropertyStr(ctx, rect, "width");
-    h = JS_GetPropertyStr(ctx, rect, "height");
+    x = JS_GetPropertyStr(ctx, line, "x");
+    y = JS_GetPropertyStr(ctx, line, "y");
+    w = JS_GetPropertyStr(ctx, line, "width");
+    h = JS_GetPropertyStr(ctx, line, "height");
   }
   if(JS_IsNumber(x) && JS_IsNumber(y) && JS_IsNumber(w) && JS_IsNumber(h)) {
     ret &= !JS_ToFloat64(ctx, &out->x, x);
@@ -36,28 +36,28 @@ js_rect_read(JSContext* ctx, JSValueConst rect, JSRectData<double>* out) {
   return ret;
 }
 
-static JSRectData<double>
-js_rect_get(JSContext* ctx, JSValueConst rect) {
-  JSRectData<double> r = {0, 0, 0, 0};
-  js_rect_read(ctx, rect, &r);
+static JSLineData<double>
+js_line_get(JSContext* ctx, JSValueConst line) {
+  JSLineData<double> r = {0, 0, 0, 0};
+  js_line_read(ctx, line, &r);
   return r;
 }
 
 static inline int
-js_rect_write(JSContext* ctx, JSValue out, JSRectData<double> rect) {
+js_line_write(JSContext* ctx, JSValue out, JSLineData<double> line) {
   int ret = 0;
-  ret += JS_SetPropertyStr(ctx, out, "x", JS_NewFloat64(ctx, rect.x));
-  ret += JS_SetPropertyStr(ctx, out, "y", JS_NewFloat64(ctx, rect.y));
-  ret += JS_SetPropertyStr(ctx, out, "width", JS_NewFloat64(ctx, rect.width));
-  ret += JS_SetPropertyStr(ctx, out, "height", JS_NewFloat64(ctx, rect.height));
+  ret += JS_SetPropertyStr(ctx, out, "x", JS_NewFloat64(ctx, line.x));
+  ret += JS_SetPropertyStr(ctx, out, "y", JS_NewFloat64(ctx, line.y));
+  ret += JS_SetPropertyStr(ctx, out, "width", JS_NewFloat64(ctx, line.width));
+  ret += JS_SetPropertyStr(ctx, out, "height", JS_NewFloat64(ctx, line.height));
   return ret;
 }
 
-static JSRectData<double>
-js_rect_set(JSContext* ctx, JSValue out, double x, double y, double w, double h) {
-  const JSRectData<double> r = {x, y, w, h};
-  js_rect_write(ctx, out, r);
+static JSLineData<double>
+js_line_set(JSContext* ctx, JSValue out, double x, double y, double w, double h) {
+  const JSLineData<double> r = {x, y, w, h};
+  js_line_write(ctx, out, r);
   return r;
 }
 
-#endif /* defined(JS_RECT_H) */
+#endif /* defined(JS_LINE_H) */

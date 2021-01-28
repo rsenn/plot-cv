@@ -358,20 +358,20 @@ public:
 
 template<class T>
 inline int64_t
-js_array_to_vector(JSContext* ctx, JSValueConst arr, std::vector<T>& out) {
+js_array_to(JSContext* ctx, JSValueConst arr, std::vector<T>& out) {
   return js_array<T>::to_vector(ctx, arr, out);
 }
 
 template<class T, size_t N>
 inline int64_t
-js_array_to_array(JSContext* ctx, JSValueConst arr, std::array<T, N>& out) {
+js_array_to(JSContext* ctx, JSValueConst arr, std::array<T, N>& out) {
   typedef js_array<T> array_type;
   return array_type::to_array(ctx, arr, out);
 }
 
 template<class T>
 inline int64_t
-js_array_to_scalar(JSContext* ctx, JSValueConst arr, cv::Scalar_<T>& out) {
+js_array_to(JSContext* ctx, JSValueConst arr, cv::Scalar_<T>& out) {
   return js_array<T>::to_scalar(ctx, arr, out);
 }
 /*

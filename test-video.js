@@ -393,7 +393,7 @@ async function main(...args) {
 
   let video = new VideoSource(...args);
 
-  if(!video.isVideo) video.size = new Size(960, 540);
+ // if(!video.isVideo) video.size = new Size(960, 540);
 
   let thickness = 1;
   let font = new TextStyle(cv.FONT_HERSHEY_PLAIN, 1.0, thickness);

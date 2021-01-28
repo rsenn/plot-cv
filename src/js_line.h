@@ -1,0 +1,63 @@
+#ifndef JS_LINE_H
+#define JS_LINE_H
+
+static inline int
+js_line_read(JSContext* ctx, JSValueConst line, JSLineData<double>* out) {
+  int ret = 1;
+  JSValue x1 = JS_UNDEFINED, y1 = JS_UNDEFINED, x2 = JS_UNDEFINED, y2 = JS_UNDEFINED;
+  if(JS_IsArray(ctx, line)) {
+    x1 = JS_GetPropertyUint32(ctx, line, 0);
+    y1 = JS_GetPropertyUint32(ctx, line, 1);
+    x2 = JS_GetPropertyUint32(ctx, line, 2);
+    y2 = JS_GetPropertyUint32(ctx, line, 3);
+
+  } else {
+    x1 = JS_GetPropertyStr(ctx, line, "x1");
+    y1 = JS_GetPropertyStr(ctx, line, "y1");
+    x2 = JS_GetPropertyStr(ctx, line, "x2");
+    y2 = JS_GetPropertyStr(ctx, line, "y2");
+  }
+  if(JS_IsNumber(x1) && JS_IsNumber(y1) && JS_IsNumber(x2) && JS_IsNumber(y2)) {
+    ret &= !JS_ToFloat64(ctx, &out->x1, x1);
+    ret &= !JS_ToFloat64(ctx, &out->y1, y1);
+    ret &= !JS_ToFloat64(ctx, &out->x2, x2);
+    ret &= !JS_ToFloat64(ctx, &out->y2, y2);
+  } else {
+    ret = 0;
+  }
+  if(!JS_IsUndefined(x1))
+    JS_FreeValue(ctx, x1);
+  if(!JS_IsUndefined(y1))
+    JS_FreeValue(ctx, y1);
+  if(!JS_IsUndefined(x2))
+    JS_FreeValue(ctx, x2);
+  if(!JS_IsUndefined(y2))
+    JS_FreeValue(ctx, y2);
+  return ret;
+}
+
+static JSLineData<double>
+js_line_get(JSContext* ctx, JSValueConst line) {
+  JSLineData<double> r = {0, 0, 0, 0};
+  js_line_read(ctx, line, &r);
+  return r;
+}
+
+static inline int
+js_line_write(JSContext* ctx, JSValue out, JSLineData<double> line) {
+  int ret = 0;
+  ret += JS_SetPropertyStr(ctx, out, "x1", JS_NewFloat64(ctx, line.x1));
+  ret += JS_SetPropertyStr(ctx, out, "y1", JS_NewFloat64(ctx, line.y1));
+  ret += JS_SetPropertyStr(ctx, out, "x2", JS_NewFloat64(ctx, line.x2));
+  ret += JS_SetPropertyStr(ctx, out, "y2", JS_NewFloat64(ctx, line.y2));
+  return ret;
+}
+
+static JSLineData<double>
+js_line_set(JSContext* ctx, JSValue out, double x1, double y1, double x2, double y2) {
+  const JSLineData<double> r = {x1, y1, x2, y2};
+  js_line_write(ctx, out, r);
+  return r;
+}
+
+#endif /* defined(JS_LINE_H) */
