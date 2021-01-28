@@ -393,7 +393,7 @@ async function main(...args) {
 
   let video = new VideoSource(...args);
 
-  // if(!video.isVideo) video.size = new Size(960, 540);
+  if(!video.isVideo) video.size = new Size(960, 540);
 
   let thickness = 1;
   let font = new TextStyle(cv.FONT_HERSHEY_PLAIN, 1.0, thickness);
@@ -453,16 +453,20 @@ async function main(...args) {
   let outputMat, outputName;
   let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
 
-  let videoSize = video.size; //new Size(video.get('frame_width'), video.get('frame_height'));
-  console.log(`videoSize`, videoSize);
+  let videoSize;
 
   let pipeline = new Pipeline([
-      Processor(function AcquireFrame(mat, output) {
-        video.read(output);
-        console.log(`AcquireFrame`, output.size);
+      Processor(function AcquireFrame(src, dst) {
+        console.log(`AcquireFrame`, { src, dst });
+        video.read(dst);
 
-        if(!videoSize.equals(output.size))
-          throw new Error(`AcquireFrame videoSize = ${videoSize} output.size = ${output.size}`);
+        if(videoSize === undefined || videoSize.empty) {
+          videoSize = video.size.area ? video.size : dst.size;
+          console.log(`videoSize`, videoSize);
+        }
+
+        if(!videoSize.equals(dst.size))
+          throw new Error(`AcquireFrame videoSize = ${videoSize} dst.size = ${dst.size}`);
       }),
       Grayscale,
       Processor(function Norm(src, dst) {
@@ -523,7 +527,7 @@ async function main(...args) {
   console.log(`pipeline.images = { ` + pipeline.images.map(image => '\n  ' + image) + '\n}');
 
   console.log('Pipeline processor names:', pipeline.names);
-  video.seekMsecs(5000);
+  //  video.seekMsecs(5000);
   let meter = new TickMeter();
   let prevTime;
   let frameDelay = Math.floor(1000 / video.fps);

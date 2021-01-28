@@ -69,6 +69,7 @@ function ImageSize(src, dst, dsize) {
   console.warn(`copyTo ${src} -> ${dst}`);
   src.copyTo(dst);
 }
+
 export class ImageSequence {
   constructor(images = [], dimensions) {
     const imgs = this;
@@ -123,30 +124,37 @@ export class ImageSequence {
   set(prop, value) {
     const { props } = this;
     console.debug('ImageSequence.set', { prop, value, props });
+    if(prop == 'pos_frames') throw new Error(`ImageSequence.set ${prop} = ${value}`);
     this.props[prop.toLowerCase()] = value;
   }
   get size() {
-return new Size(this.get('frame_width'), this.get('frame_height'));
+    return new Size(this.get('frame_width'), this.get('frame_height'));
   }
 
   grab() {
     const { images, props } = this;
+    const { pos_frames } = props;
     let ret = !!(this.frame = cv.imread(images[props.pos_frames++]));
-    let { frame, size } = this;
+    let { frame, size: targetSize } = this;
+    let { size: frameSize } = frame;
+    console.debug(`ImageSequence.grab[${pos_frames}]`, { ret, frame, targetSize });
 
-    if(frame.cols != size.width || frame.rows != size.height) {
-      console.debug('ImageSequence.grab', frame.size, ' -> ', size);
+    if(!frameSize.equals(targetSize)) {
       let mat = this.frame;
-      this.frame = new Mat(size, mat.type);
-      ImageSize(mat, this.frame, size);
+      this.frame = new Mat(targetSize, mat.type);
+      ImageSize(mat, this.frame, targetSize);
     }
+
+    console.debug(`ImageSequence.grab[${pos_frames}]`, { frameSize, targetSize });
 
     return ret;
   }
   retrieve(mat) {
-    if(!mat) return this.frame;
-    if(this.frame) this.frame.copyTo(mat);
-    return !!this.frame;
+    if(mat) {
+      this.frame.copyTo(mat);
+      return !!this.frame;
+    }
+    return this.frame;
   }
   read(mat) {
     if(this.grab()) return this.retrieve(mat);
@@ -196,15 +204,15 @@ export class VideoSource {
   constructor(...args) {
     if(args.length > 0) {
       let [device, backend = 'ANY'] = args;
-      let isVideo = true;
+      const driverId = VideoSource.backends[backend];
+      let isVideo = args.length <= 2 && backend in VideoSource.backends;
 
-      if(cv.imread(args[0])) isVideo = false;
-      console.log('VideoSource', { args, isVideo });
+      // if(cv.imread(args[0])) isVideo = false;
+      console.log('VideoSource', { args, backend, driverId, isVideo });
 
       if(isVideo) {
         if(typeof device == 'string' && isVideoPath(device)) if (backend == 'ANY') backend = 'FFMPEG';
 
-        const driverId = VideoSource.backends[backend];
         console.log('VideoSource', { device, backend, driverId, args });
 
         this.capture(device, driverId);
@@ -332,23 +340,22 @@ export class VideoSource {
   }
 
   get size() {
-  let width = this.get('frame_width');
-  let height = this.get('frame_height');
-console.debug("VideoCapture.size", {width,height});
-return new Size(width, height);
+    let size =  new Size(this.get('frame_width'), this.get('frame_height'));
+    //console.debug(`VideoCapture.size = ${size}`);
+    return size;
   }
 
   set size(size) {
     size = size instanceof Size ?  size : new Size(size);
- this.set('frame_width', size.width);
- this.set('frame_height', size.height);
- }
+    this.set('frame_width', size.width);
+    this.set('frame_height', size.height);
+  }
 
   get time() {
     let [pos, duration] = this.position('msec');
 
- let ms, s, m, h;
- 
+    let ms, s, m, h;
+
     ms = Util.mod(pos, 1000);
     s = pos / 1000;
     m = Math.floor(s / 60);

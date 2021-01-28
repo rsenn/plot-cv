@@ -5,9 +5,11 @@
 #include "js_array.h"
 #include "js_alloc.h"
 #include "geometry.h"
+#include "util.h"
 #include "../quickjs/cutils.h"
 #include <list>
 #include <map>
+#include <fstream>
 
 #if defined(JS_MAT_MODULE) || defined(quickjs_mat_EXPORTS)
 #define JS_INIT_MODULE /*VISIBLE*/ js_init_module
@@ -838,6 +840,8 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   return JS_NewStringLen(ctx, str.data(), str.size());
 }
 
+static size_t heap_base = 0;
+
 static JSValue
 js_mat_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   cv::Mat* m = js_mat_data(ctx, this_val);
@@ -848,12 +852,43 @@ js_mat_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
   int i = 0;
   if(!m)
     return JS_EXCEPTION;
+
+  int bytes = 1 << ((m->type() & 0x7) >> 1);
+  char sign = (m->type() & 0x7) >= 5 ? 'F' : (m->type() & 1) ? 'S' : 'U';
+  const cv::MatSize size = m->size;
+  std::vector<std::string> sizes;
+
+  std::transform(&size[0], &size[size.dims()], std::back_inserter(sizes), [](int n) -> std::string {
+    return std::to_string(n);
+  });
+
+  if(!heap_base) {
+    std::ifstream infile("/proc/self/maps");
+    infile >> std::hex;
+
+    for(std::string line; std::getline(infile, line);) {
+      if(line.find("[heap]") != std::string::npos) {
+        size_t start = line.find("-");
+
+        heap_base = strtoull(line.c_str() + start + 1, nullptr, 16);
+      }
+    }
+    infile >> heap_base;
+    std::cerr << "heap_base: " << heap_base << std::endl;
+  }
+
   os << "Mat "
-     << "@" << static_cast<void*>(m) << " { rows: " << m->rows << ", cols: " << m->cols
-     << ", depth: " << m->depth() << ", channels: " << m->channels() << "}";
-
+     << "@ " << static_cast<void*>(reinterpret_cast<char*>(m) - heap_base) << " [ ";
+  if(sizes.size() || m->type()) {
+    os << "size = " << join(sizes.cbegin(), sizes.cend(), "x") << ", ";
+    os << "type = CV_" << (bytes * 8) << sign << 'C' << m->channels();
+  } else {
+    os << "empty";
+  }
+  if(m->u)
+    os << ", refcount = " << m->u->refcount;
+  os << " ]";
   str = os.str();
-
   return JS_NewStringLen(ctx, str.data(), str.size());
 }
 

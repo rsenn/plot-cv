@@ -69,6 +69,10 @@ js_size_get_wh(JSContext* ctx, JSValueConst this_val, int magic) {
     return JS_NewFloat64(ctx, s->height);
   else if(magic == 2)
     return JS_NewFloat64(ctx, s->width / s->height);
+  else if(magic == 3)
+    return JS_NewBool(ctx, s->width == 0 || s->height == 0);
+  else if(magic == 4)
+    return JS_NewFloat64(ctx, s->width * s->height);
   return JS_UNDEFINED;
 }
 
@@ -288,6 +292,8 @@ const JSCFunctionListEntry js_size_proto_funcs[] = {
     JS_CGETSET_ENUMERABLE_DEF("width", js_size_get_wh, js_size_set_wh, 0),
     JS_CGETSET_ENUMERABLE_DEF("height", js_size_get_wh, js_size_set_wh, 1),
     JS_CGETSET_ENUMERABLE_DEF("aspect", js_size_get_wh, 0, 2),
+    JS_CGETSET_ENUMERABLE_DEF("empty", js_size_get_wh, 0, 3),
+    JS_CGETSET_ENUMERABLE_DEF("area", js_size_get_wh, 0, 4),
     JS_CFUNC_MAGIC_DEF("equals", 1, js_size_funcs, 0),
     JS_CFUNC_MAGIC_DEF("round", 0, js_size_funcs, 1),
     JS_CFUNC_MAGIC_DEF("toObject", 0, js_size_funcs, 2),

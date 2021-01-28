@@ -5,6 +5,7 @@
 #include "js_array.h"
 #include "js_alloc.h"
 #include "geometry.h"
+#include "util.h"
 #include "../quickjs/cutils.h"
 
 #include <opencv2/imgcodecs.hpp>
@@ -1746,17 +1747,6 @@ js_function_list_t js_cv_static_funcs{
     JS_PROP_INT32_DEF("INTER_MAX", cv::INTER_MAX, 0),
 
 };
-
-template<class Iterator>
-std::string
-join(const Iterator& start, const Iterator& end, const std::string& delim) {
-  return std::accumulate(start,
-                         end,
-                         std::string(),
-                         [&delim](const std::string& a, const std::string& b) -> std::string {
-                           return a + (a.length() > 0 ? delim : "") + b;
-                         });
-}
 
 std::string
 js_prop_flags(int flags) {
