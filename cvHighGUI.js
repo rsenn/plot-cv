@@ -82,6 +82,10 @@ export class Window {
   show(mat) {
     cv.imshow(this.name, mat);
   }
+
+  valueOf() {
+    return this.name;
+  }
 }
 
 export function TextStyle(fontFace = cv.FONT_HERSHEY_PLAIN, fontScale = 1.0, thickness = 1) {

@@ -15,27 +15,33 @@ const Crop = (() => {
   };
 })();
 
-function ImageSize(src, dst, dsize) {
+function ImageSize(src, dst, dsize, action = (name, arg1, arg2) => console.debug(`${name} ${arg1} -> ${arg2}`)) {
   let s,
     roi,
     f,
     ssize = src.size;
-  console.debug('ImageSize', { src, dst, ssize, dsize });
+  //console.debug('ImageSize', { src, dst, ssize, dsize });
   if(!ssize.equals(dsize)) {
     let [fx, fy] = dsize.div(ssize);
     if(fx != fy) {
+      roi = new Rect(0, 0, ...ssize);
+
       //console.warn(`Aspect mismatch ${ssize} -> ${dsize}`);
       if(fx < fy) {
-        s = dsize.div((f = fy)) /*.round()*/;
-        roi = new Rect(Math.floor((src.cols - s.width) / 2), 0, ...s);
+        s = dsize.div((f = fy));
+
+        roi.size = s.round();
+
+        roi.x = Math.floor((src.cols - s.width) / 2);
       } else {
-        s = dsize.div((f = fx)) /*.round()*/;
-        roi = new Rect(0, Math.floor((src.rows - s.height) / 2), ...s);
+        s = dsize.div((f = fx));
+        roi.size = s.round();
+        roi.y = Math.floor((src.rows - s.height) / 2);
       }
-      //console.debug('VideoSource resize', { fx, fy, s, roi });
-      //
+      //console.debug('VideoSource resize', { ssize, dsize, s, roi });
+
       if(roi.x || roi.y) {
-        console.warn(`Crop ${ssize} -> ${roi}`);
+        action('Crop', ssize, roi);
         let cropped = Crop(src, roi);
         src = cropped;
         ssize = src.size;
@@ -48,23 +54,20 @@ function ImageSize(src, dst, dsize) {
     if(!ssize.equals(dsize)) {
       let factors = dsize.div(ssize);
       [fx, fy] = factors;
-      //console.debug('fx/fy =', fx / fy);
       factors.sort((a, b) => b - a);
       if(fx != fy) {
-        //console.debug('factors =', factors);
         dsize = ssize.mul(factors[0]);
-        //console.debug('dsize =', dsize);
         factors = dsize.div(ssize);
         [fx, fy] = factors;
-
         dsize = dsize.round();
-        //console.debug('dsize =', dsize);
       }
-      console.warn(`Scale ${ssize} -> ${dsize} (${f == fx ? 'fx' : 'fy'} = ${f}) ( ${dsize.div(ssize)} )`);
+      action(`Scale (·${factors[0].toFixed(5)})`, ssize, dsize);
+      dst.reset();
       cv.resize(src, dst, dsize, 0, 0, cv.INTER_CUBIC);
+      dst.resize(dsize.height);
+      //console.debug(`Scale ${src} -> ${dst}`);
       return;
     }
-    console.debug('dist.size', dst.size);
   }
   console.warn(`copyTo ${src} -> ${dst}`);
   src.copyTo(dst);
@@ -104,7 +107,7 @@ export class ImageSequence {
       let mat = cv.imread(images[0]);
       dimensions = mat.size;
     }
-    console.debug('dimensions', dimensions);
+    //console.debug('dimensions', dimensions);
     this.set('frame_width', dimensions.width);
     this.set('frame_height', dimensions.height);
   }
@@ -116,15 +119,12 @@ export class ImageSequence {
     return true;
   }
   get(prop) {
-    /*   if(prop.endsWith('width')) return this.size.width;
-    if(prop.endsWith('height')) return this.size.height;*/
-
     return this.props[prop.toLowerCase()];
   }
   set(prop, value) {
     const { props } = this;
-    console.debug('ImageSequence.set', { prop, value, props });
-    if(prop == 'pos_frames') throw new Error(`ImageSequence.set ${prop} = ${value}`);
+    //console.debug('ImageSequence.set', { prop, value, props });
+    // if(prop == 'pos_frames') throw new Error(`ImageSequence.set ${prop} = ${value}`);
     this.props[prop.toLowerCase()] = value;
   }
   get size() {
@@ -133,9 +133,15 @@ export class ImageSequence {
 
   grab() {
     const { images, props } = this;
-    const { pos_frames } = props;
-    let ret = !!(this.frame = cv.imread(images[props.pos_frames++]));
-    let { frame, size: targetSize } = this;
+    if(this.index >= images.length) this.index = 0;
+    this.framePos = this.index++;
+    this.frameFile = images[this.framePos];
+    const { index, framePos, frameFile } = this;
+    console.debug(`ImageSequence.grab[${this.framePos}] ${frameFile}`);
+
+    let ret = !!(this.frame = cv.imread(frameFile));
+    //    if(ret) this.framePos = pos_frames;
+    /*let { frame, size: targetSize } = this;
     let { size: frameSize } = frame;
     console.debug(`ImageSequence.grab[${pos_frames}]`, { ret, frame, targetSize });
 
@@ -145,14 +151,23 @@ export class ImageSequence {
       ImageSize(mat, this.frame, targetSize);
     }
 
-    console.debug(`ImageSequence.grab[${pos_frames}]`, { frameSize, targetSize });
+    console.debug(`ImageSequence.grab[${pos_frames}]`, { frameSize, targetSize });*/
 
     return ret;
   }
   retrieve(mat) {
+    let { framePos, frame, size: targetSize } = this;
     if(mat) {
-      this.frame.copyTo(mat);
-      return !!this.frame;
+      let { size: frameSize } = frame;
+      let doResize = !frameSize.equals(targetSize);
+      //console.debug(`ImageSequence.retrieve[${framePos}]`, { frame, frameSize, mat, targetSize, doResize });
+      if(doResize)
+        ImageSize(frame, mat, targetSize, (name, arg1, arg2) =>
+          console.debug(`ImageSize[${this.framePos}] ${name} ${arg1} -> ${arg2}`)
+        );
+      else frame.copyTo(mat);
+      //console.debug(`ImageSequence.retrieve[${framePos}]`, { mat });
+      return !mat.emtpy;
     }
     return this.frame;
   }
@@ -208,12 +223,12 @@ export class VideoSource {
       let isVideo = args.length <= 2 && backend in VideoSource.backends;
 
       // if(cv.imread(args[0])) isVideo = false;
-      console.log('VideoSource', { args, backend, driverId, isVideo });
+      //console.debug('VideoSource', { args, backend, driverId, isVideo });
 
       if(isVideo) {
         if(typeof device == 'string' && isVideoPath(device)) if (backend == 'ANY') backend = 'FFMPEG';
 
-        console.log('VideoSource', { device, backend, driverId, args });
+        //console.debug('VideoSource', { device, backend, driverId, args });
 
         this.capture(device, driverId);
       } else {
@@ -241,7 +256,7 @@ export class VideoSource {
       if(!mat) mat = new Mat();
       if(!cap.read(mat)) return null;
 
-      console.log('VideoSource.read', { cap, mat });
+      //console.debug('VideoSource.read', { cap, mat });
 
       return mat;
     };

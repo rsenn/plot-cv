@@ -100,7 +100,6 @@
 				"*.editorconfig",
 				"*.un~",
 				"*.out",
-				"*.hpp",
 				"*.gitkeep",
 				"*.DS_Store",
 				"*.diff",

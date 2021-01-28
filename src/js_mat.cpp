@@ -35,6 +35,31 @@ js_mat_data(JSContext* ctx, JSValueConst val) {
   return static_cast<JSMatData*>(JS_GetOpaque2(ctx, val, js_mat_class_id));
 }
 
+static inline std::vector<int>
+js_mat_sizes(const JSMatData& mat) {
+  const cv::MatSize size(mat.size);
+  std::vector<int> sizes;
+  if(mat.dims == 2) {
+    sizes.push_back(mat.rows);
+    sizes.push_back(mat.cols);
+  } else {
+    std::copy(&size[0], &size[size.dims()], std::back_inserter(sizes));
+  }
+  return sizes;
+}
+
+static inline std::vector<std::string>
+js_mat_dimensions(const JSMatData& mat) {
+  std::vector<int> sizes = js_mat_sizes(mat);
+  std::vector<std::string> dimensions;
+
+  std::transform(sizes.cbegin(),
+                 sizes.cend(),
+                 std::back_inserter(dimensions),
+                 static_cast<std::string (*)(int)>(&std::to_string));
+  return dimensions;
+}
+
 static inline JSMatData*
 js_mat_track(JSContext* ctx, JSMatData* s) {
   std::vector<cv::Mat*> deallocate;
@@ -341,6 +366,21 @@ js_mat_funcs(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv
   } else if(magic == 9) {
     ret = js_mat_wrap(ctx, *m);
 
+  } else if(magic == 10) {
+    *m = cv::Mat::zeros(m->rows, m->cols, m->type());
+  } else if(magic == 11) {
+    *m = cv::Mat();
+  } else if(magic == 12) {
+    uint32_t rows = 0;
+    cv::Scalar color{0, 0, 0, 0};
+
+    JS_ToUint32(ctx, &rows, argv[0]);
+    if(argc > 1) {
+      js_color_read(ctx, argv[1], &color);
+      m->resize(rows, color);
+    } else {
+      m->resize(rows);
+    }
   } else {
     ret = JS_EXCEPTION;
   }
@@ -804,9 +844,17 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   if(!m)
     return JS_EXCEPTION;
 
-  if((m->rows > 0 && m->cols > 0) || m->depth() == CV_8U || m->channels() > 1) {
-    os << "Mat(" << m->rows << ", " << m->cols << ", ";
+  os << "Mat(";
 
+  if(false && (m->rows > 0 && m->cols > 0) && m->dims == 2) {
+    os << m->rows << ", " << m->cols;
+  } else {
+    std::vector<std::string> sizeStrs = js_mat_dimensions(*m);
+    os << "[" << join(sizeStrs.cbegin(), sizeStrs.cend(), ", ") << "]";
+  }
+
+  if(m->depth() == CV_8U || m->channels() > 1) {
+    os << ", ";
     const char* tstr =
         (m->type() == CV_8UC4)
             ? "CV_8UC4"
@@ -840,7 +888,6 @@ js_mat_tostring(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* a
   return JS_NewStringLen(ctx, str.data(), str.size());
 }
 
- 
 static JSValue
 js_mat_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   cv::Mat* m = js_mat_data(ctx, this_val);
@@ -854,19 +901,16 @@ js_mat_inspect(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
 
   int bytes = 1 << ((m->type() & 0x7) >> 1);
   char sign = (m->type() & 0x7) >= 5 ? 'F' : (m->type() & 1) ? 'S' : 'U';
-  const cv::MatSize size = m->size;
-  std::vector<std::string> sizes;
 
-  std::transform(&size[0], &size[size.dims()], std::back_inserter(sizes), [](int n) -> std::string {
-    return std::to_string(n);
-  });
-
-   
+  std::vector<std::string> sizeStrs = js_mat_dimensions(*m);
+  ;
 
   os << "Mat "
-     << "@ " << reinterpret_cast<void*>(reinterpret_cast<char*>(m) - reinterpret_cast<char*>(get_heap_base())) << " [ ";
-  if(sizes.size() || m->type()) {
-    os << "size = " << join(sizes.cbegin(), sizes.cend(), "x") << ", ";
+     << "@ "
+     << reinterpret_cast<void*>(reinterpret_cast<char*>(m) - reinterpret_cast<char*>(get_heap_base()))
+     << " [ ";
+  if(sizeStrs.size() || m->type()) {
+    os << "size = " << join(sizeStrs.cbegin(), sizeStrs.cend(), "x") << ", ";
     os << "type = CV_" << (bytes * 8) << sign << 'C' << m->channels();
   } else {
     os << "empty";
@@ -956,44 +1000,49 @@ js_mat_copy_to(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* ar
 
 static JSValue
 js_mat_reshape(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSMatData *m, ret;
+  JSMatData *m, mat;
   int32_t cn, rows = 0;
+  JSValue ret = JS_EXCEPTION;
 
   m = js_mat_data(ctx, this_val);
 
   if(m == nullptr || argc < 1)
-    return JS_EXCEPTION;
+    return ret;
 
-  if(argc >= 1)
+  if(argc >= 1 && JS_IsNumber(argv[0])) {
     JS_ToInt32(ctx, &cn, argv[0]);
+    argv++;
+    argc--;
+  } else {
+    cn = m->channels();
+  }
 
-  if(argc >= 2) {
+  if(argc >= 1) {
     std::vector<int> newshape;
 
-    if(JS_IsArray(ctx, argv[1])) {
-      js_array_to(ctx, argv[1], newshape);
+    if(JS_IsArray(ctx, argv[0])) {
+      js_array_to(ctx, argv[0], newshape);
 
-      if(argc >= 3 && JS_IsNumber(argv[2])) {
+      if(argc >= 2 && JS_IsNumber(argv[1])) {
         uint32_t ndims;
-        JS_ToUint32(ctx, &ndims, argv[2]);
+        JS_ToUint32(ctx, &ndims, argv[1]);
 
         if(ndims > newshape.size())
           return JS_EXCEPTION;
 
-        ret = m->reshape(cn, ndims, &newshape[0]);
+        mat = m->reshape(cn, ndims, &newshape[0]);
       } else {
-        ret = m->reshape(cn, newshape);
+        mat = m->reshape(cn, newshape);
       }
-      goto end;
 
-    } else if(JS_IsNumber(argv[1])) {
-      JS_ToInt32(ctx, &rows, argv[1]);
+    } else if(JS_IsNumber(argv[0])) {
+      JS_ToInt32(ctx, &rows, argv[0]);
+      mat = m->reshape(cn, rows);
     }
+    ret = js_mat_wrap(ctx, mat);
   }
 
-  ret = m->reshape(cn, rows);
-end:
-  return js_mat_wrap(ctx, ret);
+  return ret;
 }
 
 static JSValue
@@ -1220,6 +1269,9 @@ const JSCFunctionListEntry js_mat_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("roi", 0, js_mat_funcs, 6),
     JS_CFUNC_MAGIC_DEF("release", 0, js_mat_funcs, 8),
     JS_CFUNC_MAGIC_DEF("dup", 0, js_mat_funcs, 9),
+    JS_CFUNC_MAGIC_DEF("clear", 0, js_mat_funcs, 10),
+    JS_CFUNC_MAGIC_DEF("reset", 0, js_mat_funcs, 11),
+    JS_CFUNC_MAGIC_DEF("resize", 1, js_mat_funcs, 12),
 
     JS_CFUNC_MAGIC_DEF("and", 2, js_mat_expr, 0),
     JS_CFUNC_MAGIC_DEF("or", 2, js_mat_expr, 1),

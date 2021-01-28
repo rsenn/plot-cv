@@ -16,6 +16,7 @@ file(
   src/line.cpp
   src/matrix.cpp
   src/polygon.cpp
+  src/util.cpp
   src/*.h
   src/*.hpp)
 

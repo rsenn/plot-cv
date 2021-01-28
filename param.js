@@ -23,12 +23,15 @@ export class Param {
     return '' + this.valueOf();
   }
 
-  async createTrackbar(trackbarname, winname) {
+  async createTrackbar(name, win) {
     const cv = await import('cv');
 
-    return new Repeater(async (push, stop) => {
-      cv.createTrackbar(trackbarname, winname, this.value, this.max, value => push(value));
-    });
+    //const winName = win+'';
+    //console.debug(`createTrackbar`, { name,winName,cv});
+    //console.debug(`createTrackbar`, cv.createTrackbar);
+    // return new Repeater(async (push, stop) => {
+    cv.createTrackbar(name, win + '', this.value, this.max, value => this.set(value));
+    // });
   }
 }
 

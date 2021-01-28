@@ -102,8 +102,7 @@ function Processor(fn, ...args) {
   let self;
   let mapper = Util.weakMapper(() => {
     let mat = new Mat();
-
-    console.log('New Mat', mat);
+    //console.debug('New Mat', mat);
     return mat;
   });
 
@@ -366,6 +365,33 @@ async function main(...args) {
     alignMap: true
   });
   await PortableFileSystem(fs => (filesystem = fs));
+
+  let opts = Util.getOpt({
+      input: [true, (file,current) => [...(current||[]), file], 'i'],
+      driver: [
+        true,
+        (arg, current, options,results) => {
+          let driverId = arg in VideoSource.backends ? arg : current;
+          console.log('driver', { arg, current, driverId });
+          if(driverId === undefined){
+            const input = results['input'];
+            let  args = [arg];
+            if(input) {
+              args= results['input'].concat(args);
+              results['input']= undefined;
+            }
+            results['@'] = results['@'].concat(args);
+             }
+          return driverId;
+        },
+        'd'
+      ],
+      size: [true, null, 's'],
+      '@': 'input,driver'
+    },
+    args
+  );
+  console.log('main', opts);
   console.log('Rect.from:', Rect.from('1,2,3,4'));
   console.log('Rect[1,2,3,4]:', Rect.from([1, 2, 3, 4]));
 
@@ -391,7 +417,7 @@ async function main(...args) {
 
   console.log('Setup duration:', hr(begin));
 
-  let video = new VideoSource(...args);
+  let video = new VideoSource(...opts['@']);
 
   if(!video.isVideo) video.size = new Size(960, 540);
 
@@ -446,18 +472,43 @@ async function main(...args) {
   //console.log('paramNav.map:', paramNav.map);
   //console.log('params.mode:', dummyArray[params.mode]);
   //console.log('params.method:', dummyArray[params.method]);
-  //console.log('paramNav.param:', paramNav.param);
 
+  await params.apertureSize.createTrackbar('apertureSize', win); //console.log('paramNav.param:', paramNav.param);
+
+  //std.exit(0);
   rainbow = makeRainbow(256);
 
   let outputMat, outputName;
   let structuringElement = cv.getStructuringElement(cv.MORPH_CROSS, new Size(3, 3));
 
-  let videoSize;
+  let dst0Size, firstSize, videoSize;
+
+  /*  let testSizes = [
+    new Size({ width: 1300, height: 976 }),
+    new Size({ width: 850, height: 333 }),
+    new Size({ width: 1300, height: 976 }),
+    new Size(1089, 1936),
+    new Size(1750, 1160)
+  ];
+  let fitSize = new Size(1280, 720);
+  let fitModes = ['fitWidth', 'fitHeight', 'fitInside', 'fitOutside'];
+
+  for(let sz of testSizes) {
+    const results = fitModes.map(mode => [sz, mode, sz[mode](fitSize)]);
+    for(let [size, mode, result] of results) console.debug(`${size}.${mode}(${fitSize}) = ${result}`);
+  }
+  std.exit(0);*/
 
   let pipeline = new Pipeline([
       Processor(function AcquireFrame(src, dst) {
-        console.log(`AcquireFrame`, { src, dst });
+        const dstEmpty = dst.empty;
+        if(dst.empty) {
+          console.log(`AcquireFrame`, { src, dst });
+
+          dst0Size = dst.size;
+        }
+        /*console.log(`video`, video);
+        console.log(`video.read`, video.read);*/
         video.read(dst);
 
         if(videoSize === undefined || videoSize.empty) {
@@ -465,8 +516,12 @@ async function main(...args) {
           console.log(`videoSize`, videoSize);
         }
 
+        if(dstEmpty) {
+          firstSize = new Size(...videoSize);
+        }
+
         if(!videoSize.equals(dst.size))
-          throw new Error(`AcquireFrame videoSize = ${videoSize} dst.size = ${dst.size}`);
+          throw new Error(`AcquireFrame videoSize = ${videoSize} firstSize=${firstSize} dst.size = ${dst.size}`);
       }),
       Grayscale,
       Processor(function Norm(src, dst) {
@@ -780,7 +835,7 @@ async function main(...args) {
     //let mask = toBGR(getAlpha(over));
     let composite = MakeMatFor(showOutput);
 
-    console.log('showOutput', { out, over });
+    //console.debug('showOutput', { out, over });
 
     //    over = over.roi(new Rect(0,0, ...out.size));
 

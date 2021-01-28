@@ -194,6 +194,19 @@ js_new(JSContext* ctx, const char* name) {
 int js_color_read(JSContext* ctx, JSValueConst color, JSColorData<double>* out);
 int js_color_read(JSContext* ctx, JSValueConst value, JSColorData<uint8_t>* out);
 
+static inline int
+js_color_read(JSContext* ctx, JSValueConst value, cv::Scalar* out) {
+  JSColorData<double> color;
+  int ret;
+  if((ret = js_color_read(ctx, value, &color))) {
+    (*out)[0] = color.arr[0];
+    (*out)[1] = color.arr[1];
+    (*out)[2] = color.arr[2];
+    (*out)[3] = color.arr[3];
+  }
+  return ret;
+}
+
 template<class T>
 static inline int
 js_number_read(JSContext* ctx, JSValueConst num, T* out) {
