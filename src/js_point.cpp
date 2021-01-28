@@ -257,9 +257,12 @@ js_point_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   JSPointData<double>* s = js_point_data(ctx, this_val);
   std::ostringstream os;
   JSValue xv, yv;
+  const char* delim = ",";
   double x = -1, y = -1;
   /* if(!s)
      return JS_EXCEPTION;*/
+  if(argc > 0)
+    delim = JS_ToCString(ctx, argv[0]);
 
   xv = JS_GetPropertyStr(ctx, this_val, "x");
   yv = JS_GetPropertyStr(ctx, this_val, "y");

@@ -61,7 +61,7 @@ function ImageSize(src, dst, dsize, action = (name, arg1, arg2) => console.debug
         [fx, fy] = factors;
         dsize = dsize.round();
       }
-      action(`Scale (·${factors[0].toFixed(5)})`, ssize, dsize);
+      action(`Scale (ₓ${factors[0].toFixed(5)})`, ssize, dsize);
       dst.reset();
       cv.resize(src, dst, dsize, 0, 0, cv.INTER_CUBIC);
       dst.resize(dsize.height);
@@ -163,7 +163,7 @@ export class ImageSequence {
       //console.debug(`ImageSequence.retrieve[${framePos}]`, { frame, frameSize, mat, targetSize, doResize });
       if(doResize)
         ImageSize(frame, mat, targetSize, (name, arg1, arg2) =>
-          console.debug(`ImageSize[${this.framePos}] ${name} ${arg1} -> ${arg2}`)
+          console.debug(`ImageSize[${this.framePos}] ${name} ${arg1.toString()} -> ${arg2.toString()}`)
         );
       else frame.copyTo(mat);
       //console.debug(`ImageSequence.retrieve[${framePos}]`, { mat });

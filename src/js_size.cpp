@@ -170,8 +170,8 @@ js_size_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
     size = *s;
   }
 
-  if(argc > 1)
-    delim = JS_ToCString(ctx, argv[1]);
+  if(argc > 0)
+    delim = JS_ToCString(ctx, argv[0]);
 
   os << size.width << delim << size.height;
 

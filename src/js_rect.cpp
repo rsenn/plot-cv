@@ -151,6 +151,14 @@ static JSValue
 js_rect_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSRectData<double> rect, *s;
   std::ostringstream os;
+  const char* delims[3] = {
+      ",",
+      "∣" /*"｜⧸⦁⎮∥∣⸾⼁❘❙⟊⍿⎸⏐｜│￨" "︲" "︱" " ❘" "|" "｜"*/,
+      "×" /*"𝅃🅧𝚡🅧🅇𝘹𝚡𝘹𝐱ꭗ𝐗𝑿𝅃𝅃xˣₓ⒳Ⓧⓧ✕✘✗⨉⨯⨂✖⨻⦁⋅⊗⊠∗×⨯×"*/};
+
+  for(size_t i = 0; i < argc; i++) {
+    delims[i] = JS_ToCString(ctx, argv[i]);
+  }
 
   if((s = static_cast<JSRectData<double>*>(JS_GetOpaque2(ctx, this_val, js_rect_class_id))) != nullptr) {
     rect = *s;
@@ -158,7 +166,7 @@ js_rect_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
     js_rect_read(ctx, this_val, &rect);
   }
 
-  os << rect.x << "," << rect.y << "|" << rect.width << "x" << rect.height;
+  os << rect.x << delims[0] << rect.y << delims[1] << rect.width << delims[2] << rect.height;
 
   return JS_NewString(ctx, os.str().c_str());
 }
